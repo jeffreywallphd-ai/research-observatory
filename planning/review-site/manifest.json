@@ -39853,9 +39853,9 @@
       "approval_path": "planning/wave-amendment-approvals/W2.A03.json",
       "approval_sha256": "8852d6631a6656e94cc75e4f9dc705c7095ecf111786748e5630fe13b8fa9087",
       "approval_status": "APPROVED",
-      "lifecycle_status": "APPROVED",
+      "lifecycle_status": "ACTIVE",
       "bootstrap_status": "APPROVED",
-      "campaign_status": "NONE",
+      "campaign_status": "ACTIVE",
       "bootstrap_attempts": [
         {
           "id": "R01",
@@ -40319,7 +40319,34 @@
         "referenceApprovalStatus": "approved"
       },
       "scope_addenda": [],
-      "task_reviews": [],
+      "task_reviews": [
+        {
+          "task_id": "W2.A03.T01",
+          "title": "Bind exact 1.8 presentation and UI control authority",
+          "status": "IN_PROGRESS",
+          "mode": "latest-review-only",
+          "latest_review": {
+            "reviewer": null,
+            "result": null,
+            "reviewed_at": null,
+            "notes": null
+          },
+          "review_control": null
+        },
+        {
+          "task_id": "W2.A03.T02",
+          "title": "Activate approved 1.8 desktop consumers and pinned baseline",
+          "status": "NOT_STARTED",
+          "mode": "latest-review-only",
+          "latest_review": {
+            "reviewer": null,
+            "result": null,
+            "reviewed_at": null,
+            "notes": null
+          },
+          "review_control": null
+        }
+      ],
       "exit_review": {
         "amendment_id": "W2.A03",
         "mode": "latest-completion-only",

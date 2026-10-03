@@ -53522,14 +53522,17 @@ wave_amendments:
     - Do not claim original CAP-05.S01.T01 current-product gate, native attachment, S05 integration or W2 qualification from
       T01 controls alone.
     packet_task_sha256: 47e24fc5ffd3e89ce7d3b49d311ec262c1180089c9a12d0f9f8f3abaf9da9d3f
-    status: READY
-    owner: null
-    branch: null
-    base_sha: null
-    worktree: null
-    lease: null
-    started_at: null
-    updated_at: '2026-10-03T21:52:27+00:00'
+    status: IN_PROGRESS
+    owner: codex-w2-implementation
+    branch: codex/w2-implementation
+    base_sha: cd61bae9681690f92b754e443cd61f2c62026288
+    worktree: .
+    lease:
+      claimed_by: codex-w2-implementation
+      claimed_at: '2026-10-03T21:57:02+00:00'
+      expires_at: '2026-10-04T05:57:02+00:00'
+    started_at: '2026-10-03T21:57:02+00:00'
+    updated_at: '2026-10-03T21:57:02+00:00'
     completed_at: null
     blocker: null
     implementation_notes: ''

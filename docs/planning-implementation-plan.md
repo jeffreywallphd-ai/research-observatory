@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 4beb9a7c5b5d1989351cf9a8e3ce1213454e423cc1e325b020d8f7a9473980e0
+source_sha256: 390bb78e65e294868a28fb54bbdfb8df2c71ad233e956502e2ea825fed7b2792
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -27,7 +27,7 @@ This YAML file is the authoritative task, dependency, gate, and progress ledger.
 | Capabilities | 20 |
 | Slices | 117 |
 | Tasks | 356 |
-| Enabler tasks | 18 |
+| Enabler tasks | 20 |
 | Waves | 12 |
 | Wave approval bases | 2 |
 | Wave amendments | 12 |
@@ -52,7 +52,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 | `W1` | `W1.A09` | `ECR-0008` | `planning/wave-amendment-approvals/W1.A09.json` | `ADOPTED` |
 | `W2` | `W2.A01` | `ECR-0009` | `planning/wave-amendment-approvals/W2.A01.json` | `ADOPTED` |
 | `W2` | `W2.A02` | `ECR-0010` | `planning/wave-amendment-approvals/W2.A02.json` | `ADOPTED` |
-| `W2` | `W2.A03` | `ECR-0011` | `planning/wave-amendment-approvals/W2.A03.json` | `APPROVED` |
+| `W2` | `W2.A03` | `ECR-0011` | `planning/wave-amendment-approvals/W2.A03.json` | `ACTIVE` |
 
 ## Waves
 
@@ -2763,11 +2763,13 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 **Approval record:** `planning/wave-amendment-approvals/W2.A03.json` (`8852d6631a6656e94cc75e4f9dc705c7095ecf111786748e5630fe13b8fa9087`)
 
-**Lifecycle / bootstrap / campaign / completion:** `APPROVED` / `APPROVED` / `NONE` / `PENDING`
+**Lifecycle / bootstrap / campaign / completion:** `ACTIVE` / `APPROVED` / `ACTIVE` / `PENDING`
 
 **Append-only lifecycle history:**
 
 - `E01` `APPROVED` at `2026-10-03T21:08:57Z` by human:repository-owner: The repository owner answered 'Approve this exact reviewed packet' to the displayed ECR-0011/W2.A03 decision identifying exact reviewed candidate 746c05dcd7dbabaa7f5eebee8e3fa56b8ac6b9b5, packet SHA-256 31a31459b0895316972203e6b2b301ca9bc2fb83bdd566034ff61e1bc0a3b0e3, and independent R01 approval recorded at c29e582fd161bd4df740191e532e47e3c5e991a3. This approves only the bounded already-approved Academic Minimal 1.8 desktop witness/control and consumer activation amendment in that packet: W2.A03.B00, W2.A03.S01, ordered W2.A03.T01 then W2.A03.T02, exact source envelopes, checks and independent reviews. Approval is inert until supported B00 bootstrap, separate B00 review, materialization and activation. It does not change the approved 1.8 reference, original CAP-05.S01.T01 base or criteria, Core/native security or migration authority, or the unresolved fifth-D3D finding. W2 remains PAUSED and original CAP-05.S01.T01 remains BLOCKED; joined CAP-04.S05 integration, original T01 native/Core/current-UI proof, W2 qualification and separate human release decision remain due. This timestamp records binding of the owner's explicit answer to the exact reviewed packet, not a new release decision.
+- `E02` `MATERIALIZED` at `2026-10-03T21:48:31+00:00` by codex-w2-implementation: Materialized the exact human-approved task inventory.
+- `E03` `ACTIVE` at `2026-10-03T21:52:27+00:00` by codex-w2-implementation: Activated the bounded amendment campaign.
 
 ### Amendment-exit review and adoption — W2.A03
 
@@ -2784,6 +2786,63 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - None
 
 **Bounded tasks:**
+
+### - [ ] W2.A03.T01 - Bind exact 1.8 presentation and UI control authority
+
+**Status / owner / review:** `IN_PROGRESS` / codex-w2-implementation / - (`-`)
+
+**Dependencies:** `W2.A03.B00`
+
+**Objective:** Create a committed exact-delta approved-1.8 presentation witness and narrowly reviewed v1.4 full-base UI gate lane, including authentic GOV26/A03 history, without consumer/product/reference edits.
+
+**Acceptance criteria:**
+
+- New presentation-compatibility-1.8.json authenticates exact approved 1.8 publication/package after its introduction and frozen approved 1.5 source bytes. WORKFLOW_CATALOG changes only identity/version. CAPABILITY_COVERAGE changes only identity/version/date, the CAP-05 page-list insertion, exact ingestion purpose and CAP-05 addition, inherited source-manager appended region, four exact ingestion regions inserted in order before reversible merge decisions, and exact reader purpose/one appended region; no open-ended semantic exception.
+- A closed schemaVersion 1.4 CAP-05.S01.T01 restoration lane retains the exact v1.3 adoptedContinuationAuthority and adds one required closed referenceActivationAuthority object with the proposal-frozen amendmentId/changeRequestId/controlTaskId/consumerTaskId, referenceApprovalPath/witnessPath, publicationCommit/witnessCommit/adoptionCommit/reactivationCommit and activationUiFiles/activationUiCommits fields. The gate derives and authenticates W2.A03/ECR-0011 approval, T01/T02 reviewed control-to-consumer commits, exact independently reviewed GOV-MAINT-0026 candidate/review/projection, inherited W2.A01/A02 and C10 histories, original 6506 base, and independent current 1.8 classification. It preserves exactly historical W2.A01.T02 v1.2 plus one current T01 contract, v1.0-v1.3 behavior, per-commit path/input closure and all denial cases; no generic amendment/maintenance allowlist.
+- Limit task source to exactly packages/contracts/workflow-profile/presentation-compatibility-1.8.json, tools/ui_conformance.py, tests/contracts/test_workflow_profile_contracts.py, tests/desktop/test_ui_conformance.py, tools/ui_change_gate.py, tests/foundation/test_ui_change_gate.py, design/ui-change.schema.json, docs/automation/design-first-ui-changes.md, docs/automation/ui-conformance-verification.md, docs/adr/ADR-0039-bind-approved-desktop-reference-activation.md, docs/adr/index.json. Task-owned evidence/reviews and generated projections are separately declared workflow output; no renderer, consumer assembler, activation JSON, visual baseline, Core/native, 1.8 reference, original task-base, migration or release edit.
+- Introduce one indexed Proposed ADR-0039 for the protected control/witness boundary without superseding Accepted ADR-0003/0004 or Proposed ADR-0037; obtain expanded independent control/security/ADR review on exact committed candidate.
+
+**Verification:**
+
+- Focused 1.8 semantic/witness tests deny missing/extra/reordered/changed deltas, stale or wrong approval/package, dirty or redirected inputs; retain 1.6/1.7 and frozen 1.5 compatibility denials.
+- Focused schema and real-Git v1.4 full-original-base tests authenticate exact A01/A02/A03 and GOV25/GOV26/C10 chains, two-contract count, current classification/capture producer and dependent inputs, intermediate control/product changes, forged review, changed mode/bytes, hidden add/revert, foreign task, shortened base and old v1.0-v1.3 cases. Run ADR association, selected foundation/quality checks and expanded independent review.
+- Do not claim original CAP-05.S01.T01 current-product gate, native attachment, S05 integration or W2 qualification from T01 controls alone.
+
+#### Review history — W2.A03.T01
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
+
+### - [ ] W2.A03.T02 - Activate approved 1.8 desktop consumers and pinned baseline
+
+**Status / owner / review:** `NOT_STARTED` / - / - (`-`)
+
+**Dependencies:** `W2.A03.B00`, `W2.A03.T01`
+
+**Objective:** Bind exact approved 1.8 identity/package into both desktop assemblers and protected activation, then produce a guarded Windows-x64 66-capture visual baseline for all 33 product pages.
+
+**Acceptance criteria:**
+
+- After independently approved T01 committed witness/control, align verification/extensions/desktop-ui.json and both desktop assemblers to exact approved Academic Minimal 1.8 ID/package; both emitted bundles match the published reference, and the product bundle excludes reference-only pages.
+- Generate verification/baselines/desktop-ui.json only with guarded pinned Windows-x64 Chromium writer after committed clean witness/activation/build input; preserve 33 pages and 66 light/dark captures, viewport/scale/locale/font/animation/browser/platform settings, prior 1.7 lineage and same-reference overwrite denial. Independently review exact baseline candidate; never fabricate digests or suppress diffs.
+- Limit task source to exactly verification/extensions/desktop-ui.json, verification/baselines/desktop-ui.json, apps/desktop/scripts/assemble-reference.mjs, apps/desktop/scripts/assemble-application.mjs, tests/desktop/test_desktop_app_check.py, tests/desktop/test_ui_conformance.py, tests/foundation/test_ui_reference_check.py. The three test modules update mutable current-identity expectations while retaining historical 1.7 adversarial cases; no governed 1.8 reference, Core/native drop, permission, release or original T01 edit.
+
+**Verification:**
+
+- Check both assemblers, generated manifest and production desktop capture against approved 1.8 package; run focused reference/desktop/checker tests and exact-candidate pinned 33-page/66-capture conformance.
+- Deny stale 1.7 or mixed package, extra/missing product pages or captures, reference-only page leakage, changed baseline settings, same-reference overwrite and unreviewed/dirty inputs; independent protected activation/baseline review precedes S01 integration.
+- Fresh original CAP-05.S01.T01 product/native/Core evidence and full-base gate remain later obligations, including unresolved authentic fifth D3D child characterization.
+
+#### Review history — W2.A03.T02
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
 
 
 ## Linked corrective tasks
