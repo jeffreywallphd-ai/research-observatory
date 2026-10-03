@@ -3,7 +3,7 @@
   "documentType": "governance-control-maintenance",
   "maintenanceId": "GOV-MAINT-0025",
   "title": "Close the active W2 Python quality inventory with canonical control provenance",
-  "status": "candidate",
+  "status": "adopted",
   "riskTier": 2,
   "humanApprovalRequired": false,
   "implementationAgent": "agent:w2-quality-inventory-prepare",
@@ -86,8 +86,28 @@
     "retainedAdverseScope": "The independent isolated GOV-MAINT-0022 diagnosis found three Ruff formatting failures and thirteen mypy errors in the ten original CAP-05 Python paths. Those ten Git blobs are unchanged from 369cd712 through this predecessor; the results are prior-source evidence, not a fresh full-quality run or an active-branch approval. CAP-05.S01.T01 must repair them under its original task after Wave resume."
   },
   "rollback": "Preserve rejected 665e4d32, 511564a0, bd2db157 and all adverse logs. If this candidate receives a finding, retain its exact record and review attempt, then use a descendant control-only remediation with explicit closure. Do not alter approved W2.A01 history, import divergent side commits, weaken quality or UI controls, or claim full quality from inventory closure.",
-  "reviewAttempts": [],
-  "review": null,
+  "reviewAttempts": [
+    {
+      "reviewId": "GOV-MAINT-0025.R01",
+      "reviewedCommit": "52ff3d04a4a6dd61b8f49c7de620ea4cbc9cfb0e",
+      "reviewer": "agent:quality-independent-reviewer",
+      "reviewedAt": "2026-10-03T02:09:53Z",
+      "disposition": "APPROVED",
+      "findings": [],
+      "path": "planning/governance-migrations/GOV-MAINT-0025.review-R01.json",
+      "sha256": "95901d3e47db6328445b71511b0525205b62e8a9e42c86375e5311460573301b"
+    }
+  ],
+  "review": {
+    "reviewId": "GOV-MAINT-0025.R01",
+    "reviewedCommit": "52ff3d04a4a6dd61b8f49c7de620ea4cbc9cfb0e",
+    "reviewer": "agent:quality-independent-reviewer",
+    "reviewedAt": "2026-10-03T02:09:53Z",
+    "disposition": "APPROVED",
+    "findings": [],
+    "path": "planning/governance-migrations/GOV-MAINT-0025.review-R01.json",
+    "sha256": "95901d3e47db6328445b71511b0525205b62e8a9e42c86375e5311460573301b"
+  },
   "priorAdverseCandidates": [
     {
       "maintenanceId": "GOV-MAINT-0023",
