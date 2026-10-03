@@ -17,6 +17,8 @@ use webview2_com::Microsoft::Web::WebView2::Win32::{
 };
 #[cfg(feature = "integration-harness")]
 use windows::Win32::Graphics::Gdi::ClientToScreen;
+#[cfg(feature = "integration-harness")]
+use windows::Win32::UI::WindowsAndMessaging::IsWindow;
 use windows::{
     Win32::{
         Foundation::{DRAGDROP_E_NOTREGISTERED, HWND, LPARAM, POINT, POINTL, RECT},
@@ -728,6 +730,62 @@ fn in_host_subtree(hwnd: HWND, host: HWND, nodes: &[TargetNode]) -> bool {
     false
 }
 
+#[cfg(feature = "integration-harness")]
+fn diagnostic_class(class: &str) -> &'static str {
+    match class {
+        "WRY_WEBVIEW" => "WRY_WEBVIEW",
+        "Chrome_WidgetWin_0" => "Chrome_WidgetWin_0",
+        "Chrome_WidgetWin_1" => "Chrome_WidgetWin_1",
+        "Chrome_RenderWidgetHostHWND" => "Chrome_RenderWidgetHostHWND",
+        "Intermediate D3D Window" => "Intermediate_D3D_Window",
+        _ => "other",
+    }
+}
+
+#[cfg(feature = "integration-harness")]
+fn sole_diagnostic_node<'a>(nodes: &'a [TargetNode], class: &str) -> Option<&'a TargetNode> {
+    let mut matches = nodes.iter().filter(|node| node.class == class);
+    let first = matches.next()?;
+    matches.next().is_none().then_some(first)
+}
+
+#[cfg(feature = "integration-harness")]
+fn diagnostic_parent_chain(
+    node: &TargetNode,
+    root: HWND,
+    nodes: &[TargetNode],
+    host: Option<HWND>,
+) -> (String, bool) {
+    let mut current = node.parent;
+    let mut classes = Vec::new();
+    for _ in 0..nodes.len().min(32) {
+        if current == root {
+            classes.push("root");
+            return (classes.join(">"), false);
+        }
+        let Some(parent) = nodes.iter().find(|parent| parent.hwnd == current) else {
+            classes.push("unresolved");
+            return (classes.join(">"), false);
+        };
+        classes.push(diagnostic_class(&parent.class));
+        if Some(parent.hwnd) == host {
+            return (classes.join(">"), true);
+        }
+        current = parent.parent;
+    }
+    classes.push("bounded");
+    (classes.join(">"), false)
+}
+
+#[cfg(feature = "integration-harness")]
+fn diagnostic_same_nonzero(value: u32, reference: Option<u32>) -> &'static str {
+    match reference {
+        Some(other) if value != 0 && other != 0 && value == other => "true",
+        Some(other) if value != 0 && other != 0 && value != other => "false",
+        _ => "unknown",
+    }
+}
+
 fn planned_webview_targets(
     root: HWND,
     nodes: &[TargetNode],
@@ -838,12 +896,39 @@ pub(crate) fn install(
                 {
                     let ui_thread = unsafe { windows_sys::Win32::System::Threading::GetCurrentThreadId() };
                     let ui_process = unsafe { windows_sys::Win32::System::Threading::GetCurrentProcessId() };
-                    eprintln!("RO-DROP-SETUP child-count={}", nodes.len());
+                    let host = sole_diagnostic_node(&nodes, "WRY_WEBVIEW");
+                    let widget = sole_diagnostic_node(&nodes, "Chrome_WidgetWin_1");
+                    let render = sole_diagnostic_node(&nodes, "Chrome_RenderWidgetHostHWND");
+                    eprintln!(
+                        "RO-DROP-SETUP child-count={} wry-unique={} widget1-unique={} render-unique={}",
+                        nodes.len(), host.is_some(), widget.is_some(), render.is_some()
+                    );
                     for (index, node) in nodes.iter().take(32).enumerate() {
+                        let (parent_index, parent_class) = if node.parent == parent {
+                            ("root".to_string(), "root")
+                        } else if let Some((parent_index, parent_node)) = nodes
+                            .iter()
+                            .enumerate()
+                            .find(|(_, candidate)| candidate.hwnd == node.parent)
+                        {
+                            (parent_index.to_string(), diagnostic_class(&parent_node.class))
+                        } else {
+                            ("unresolved".to_string(), "unresolved")
+                        };
+                        let (parent_chain, reaches_wry) = diagnostic_parent_chain(
+                            node, parent, &nodes, host.map(|node| node.hwnd),
+                        );
                         eprintln!(
-                            "RO-DROP-SETUP child-index={index} hwnd={} class={} ui-thread={} ui-process={}",
-                            node.hwnd.0 as isize, node.class,
-                            node.thread == ui_thread, node.process == ui_process
+                            "RO-DROP-SETUP child-index={index} class={} parent-index={parent_index} parent-class={parent_class} parent-chain={parent_chain} reaches-wry={reaches_wry} live={} thread-nonzero={} process-nonzero={} ui-thread={} ui-process={} same-pid-wry={} same-thread-wry={} same-pid-widget1={} same-thread-widget1={} same-pid-render={} same-thread-render={}",
+                            diagnostic_class(&node.class), unsafe { IsWindow(Some(node.hwnd)) }.as_bool(),
+                            node.thread != 0, node.process != 0,
+                            node.thread == ui_thread, node.process == ui_process,
+                            diagnostic_same_nonzero(node.process, host.map(|item| item.process)),
+                            diagnostic_same_nonzero(node.thread, host.map(|item| item.thread)),
+                            diagnostic_same_nonzero(node.process, widget.map(|item| item.process)),
+                            diagnostic_same_nonzero(node.thread, widget.map(|item| item.thread)),
+                            diagnostic_same_nonzero(node.process, render.map(|item| item.process)),
+                            diagnostic_same_nonzero(node.thread, render.map(|item| item.thread)),
                         );
                     }
                 }
@@ -1011,6 +1096,27 @@ mod tests {
         assert_eq!(
             planned_webview_targets(hwnd(10), &nodes, 7, 9),
             Err("RO-DOCUMENT-WEBVIEW-DROP-TARGET-AMBIGUOUS")
+        );
+    }
+
+    #[cfg(feature = "integration-harness")]
+    #[test]
+    fn setup_diagnostic_redacts_unknown_class_and_traces_only_bounded_parent_classes() {
+        let nodes = vec![
+            node(11, 10, "WRY_WEBVIEW", 7, 9),
+            node(12, 11, "Chrome_WidgetWin_0", 7, 9),
+            node(13, 12, "Chrome_WidgetWin_1", 8, 10),
+            node(14, 13, "Chrome_RenderWidgetHostHWND", 8, 10),
+            node(15, 14, "Intermediate D3D Window", 8, 10),
+        ];
+        assert_eq!(diagnostic_class("private-work-title"), "other");
+        assert_eq!(
+            diagnostic_parent_chain(&nodes[4], hwnd(10), &nodes, Some(hwnd(11))),
+            (
+                "Chrome_RenderWidgetHostHWND>Chrome_WidgetWin_1>Chrome_WidgetWin_0>WRY_WEBVIEW"
+                    .to_string(),
+                true
+            )
         );
     }
 
