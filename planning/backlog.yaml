@@ -53752,3 +53752,64 @@ wave_amendments:
     reviewed_at: null
     evidence: []
     notes: null
+- id: W2.A04
+  change_request_id: ECR-0012
+  target_wave: W2
+  kind: product-scope-security-experience
+  approval_reference:
+    path: planning/wave-amendment-approvals/W2.A04.json
+    sha256: e769cb71efbf8725c0fadeac079713f4484f57f7cf871cdfb037ef9a4df27807
+    introduction_commit: ba95f68bd2747ebce99e67eeb4daec53ed3ba87b
+  lifecycle:
+    status: APPROVED
+    history:
+    - id: E01
+      status: APPROVED
+      actor: human:repository-owner
+      at: '2026-10-04T13:02:32Z'
+      rationale: The repository owner answered 'Approved.' after the exact ECR-0012/W2.A04 approval request identifying candidate
+        7f35c7a8e49eb8415ffdffa5a2e04374161f0eae and packet SHA-256 eb1cbf1b827bffdd5914f9255c6f0bba374621f916711b3e05815202d0312b8c.
+        This approves only the independently reviewed one-task five-source ADR and gate correction, its bounded bootstrap
+        and required reviews, with the exact combined claim/block/pause snapshot and paused-predecessor return. Preserve A03's
+        frozen approval, DONE T01, blocked T02 criteria and ca8b1448 base, accepted ADRs and approved 1.8 reference. Only
+        after reviewed A04 adoption and exact return may A03 activate and T02 reopen. This is not ordinary W2 resumption,
+        native/Core qualification or release approval. The timestamp records binding of this explicit answer to its exact
+        reviewed packet.
+  bootstrap:
+    id: W2.A04.B00
+    status: REVIEW
+    implementer: codex-w2-implementation
+    implementation_commit: 202d4270273c746b3d1c67f1aee87cbde76768be
+    submission_branch: codex/w2-implementation
+    scope_addenda: []
+    evidence:
+    - type: criterion-manifest
+      path: artifacts/evidence/W2.A04.B00.json
+      sha256: 3bad8334859874a69118b7702ff87db9f8ff8ce91a08a6c370cfe5a54b182117
+      commit: 202d4270273c746b3d1c67f1aee87cbde76768be
+      recorded_at: '2026-10-04T13:27:39+00:00'
+    review:
+      reviewer: null
+      result: null
+      reviewed_at: null
+      notes: null
+  campaign: null
+  tasks: []
+  completion:
+    status: PENDING
+    reviewer: null
+    reviewed_at: null
+    evidence: []
+    notes: null
+  correction:
+    id: W2.A03
+    changeRequestId: ECR-0011
+    status: PAUSED
+    packetCommit: 746c05dcd7dbabaa7f5eebee8e3fa56b8ac6b9b5
+    approvalReference:
+      path: planning/wave-amendment-approvals/W2.A03.json
+      sha256: 8852d6631a6656e94cc75e4f9dc705c7095ecf111786748e5630fe13b8fa9087
+      introductionCommit: c972e2116113afa7ad84f0e43bdad58660cc69bb
+    effectiveStateCommit: a211f24107f21f6b87221fd8b60c04b95a97fc8b
+    recordSha256: f099fd8f6a15dcdcddea9ac6dca1ca5cac62d8692991e2d6e4366b1393c6ac6c
+    returnPolicy: paused-predecessor

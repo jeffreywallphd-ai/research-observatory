@@ -1,0 +1,77 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "W2.A04.B00",
+  "commit": "202d4270273c746b3d1c67f1aee87cbde76768be",
+  "baseCommit": "ba95f68bd2747ebce99e67eeb4daec53ed3ba87b",
+  "branch": "codex/w2-implementation",
+  "changedFiles": [
+    "planning/review-site/enablers/ECR-0012.html",
+    "planning/review-site/enablers/index.html",
+    "planning/review-site/manifest.json"
+  ],
+  "checks": [
+    {
+      "command": ".venv/Scripts/python.exe tools/planctl.py --repo . ecr validate ECR-0012 --require-approved",
+      "exitCode": 0,
+      "result": "Corrected retained check passes: exact owner approval, independent R01 ledger, packet, paused predecessor and approved reference are immutable and history-bound. Check origin HEAD 37dbfc27; the successor changes only two generated site projections, with every authority/validator/schema/backlog input unchanged."
+    },
+    {
+      "command": ".venv/Scripts/python.exe tools/plan_review_check.py --repo . --report artifacts/tmp/W2.A04.B00.canonical-approval-site-check.json",
+      "exitCode": 0,
+      "result": "Corrected generated snapshot passes: 19 capabilities, 111 slices, 337 tasks, 496 HTML pages; no errors or warnings. Report SHA-256 36d9ef07d75f96c66ace442e1e5fe6b0dac37d2ca367994da501ae1959e9714c. This exact checked output was committed without other input changes."
+    },
+    {
+      "command": "../../.venv/Scripts/python.exe -m unittest -v test_taskctl_workflow.TaskctlWorkflowTests.test_paused_correction_bootstrap_append_preserves_exact_parent_and_schema_dispatch test_taskctl_workflow.TaskctlWorkflowTests.test_paused_correction_materialization_uses_real_cas_without_half_entry",
+      "exitCode": 0,
+      "result": "Both real-controller fixture tests passed at committed 37dbfc27 (19.967 seconds). The corrected successor changes only generated pages; all test, tool, schema and backlog inputs remain byte-identical. No new test execution or real A04 transition is inferred from this retained outcome."
+    },
+    {
+      "command": "git diff --check ba95f68bd2747ebce99e67eeb4daec53ed3ba87b..202d4270273c746b3d1c67f1aee87cbde76768be; git diff --name-only ba95f68bd2747ebce99e67eeb4daec53ed3ba87b..202d4270273c746b3d1c67f1aee87cbde76768be",
+      "exitCode": 0,
+      "result": "The complete approval-to-candidate range changes exactly the three authorized regular generated site files. The prior adverse 37dbfc27 authority check is preserved; no approval or protected source was rewritten."
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "Owner approval at ba95f68b binds reviewed candidate 7f35c7a8, packet eb1cbf1b, independent R01 d66a1441 and immutable LF owner-record SHA-256 e769cb71efbf8725c0fadeac079713f4484f57f7cf871cdfb037ef9a4df27807. The corrected approved/history-bound validator passes.",
+        "That approved packet reauthenticates the complete paused A03 record at a211f241/f099fd8f, unchanged DONE T01, blocked T02 at ca8b1448, original W2/adopted A01/A02/GOV-MIG-0001 and the approved 55-file Academic Minimal 1.8 package. No authority input changes in B00."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "The complete B00 source range contains only the three authorized approval projections; it shows human APPROVED, A04 NOT_MATERIALIZED and B00 NOT_SUBMITTED before append.",
+        "The supported bootstrap-submit mutation remains due. It must append only A04 with B00 REVIEW and tasks:[], freeze the exact paused A03 predecessor and preserve W2/ordinary-task records. Independent B00 review must inspect that actual committed submitted shell; this pre-submit candidate does not claim the shell already exists."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "Two focused controller tests prove paused-predecessor bootstrap preservation and atomic exact materialization. The real independently reviewed B00 append must precede materialization of the sole approved W2.A04.S01/T01 and hold transfer.",
+        "W2/A03 remain paused, original CAP-05.S01.T01 and A03.T02 remain blocked, and no ordinary task lease is active. B00 changes no product/reference/native/Core/consumer/baseline, frozen packet, DONE T01, T02 definition/base or release source. Later A04 implementation, slice/exit/security review, adoption return and explicit A03 activation/T02 reopen remain separate transitions."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "verificationSelection": {
+    "riskAnalysis": "Projection-only bootstrap over an existing supported paused-predecessor adapter. Exact owner/packet/review history validation, corrected whole-site snapshot, bounded Git scope and two real-controller transition tests cover authority, integrity and atomicity. No runtime source or dependency changes. Retained test/check origins have closed unchanged inputs across the final projection-only successor; no fresh execution is claimed for them.",
+    "deferred": "Actual B00 REVIEW shell is checked independently after supported append. A04.T01 owns the five-source ADR/gate correction and hostile proof; later T02 captures, original native/Core work, slice/Wave qualification and release remain open."
+  },
+  "adverseResults": [
+    {
+      "candidateCommit": "37dbfc27a65415a924de2bd58d2d92bc31b072e2",
+      "command": "planctl ecr validate ECR-0012 --require-approved",
+      "exitCode": 1,
+      "output": "artifacts/tmp/W2.A04.B00.ecr-approved-check.log",
+      "rootCause": "Windows CRLF working approval differed from its immutable LF Git blob, and generated projections used the working hash. Restore only the working file from its existing committed bytes, refresh the Git stat cache and regenerate affected projections; preserve the committed approval and failed candidate."
+    }
+  ],
+  "reviewerDisposition": {
+    "status": "pending-review",
+    "requiredGate": "independent-control-review",
+    "note": "Review exact candidate and actual separately committed B00 REVIEW shell before independent bootstrap approval; no owner reapproval, task execution or Wave release is implied."
+  }
+}
