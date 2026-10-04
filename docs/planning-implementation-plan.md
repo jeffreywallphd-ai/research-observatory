@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 7f4a7d28091d77f5a8b644807fa4c6bc13cea1115ea0909d9e12883c119fe2a2
+source_sha256: bc2c879ad26e337aa29e3aa173342162035f89566a47aef05c926941671bca4f
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -2857,9 +2857,9 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 **Currently open findings:** -
 
-### - [ ] W2.A03.T02 - Activate approved 1.8 desktop consumers and pinned baseline
+### - [x] W2.A03.T02 - Activate approved 1.8 desktop consumers and pinned baseline
 
-**Status / owner / review:** `REVIEW` / codex-w2-implementation / - (`-`)
+**Status / owner / review:** `DONE` / codex-w2-implementation / agent:/root/a03_t02_authority_review (`approved`)
 
 **Dependencies:** `W2.A03.B00`, `W2.A03.T01`
 
@@ -2883,9 +2883,11 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 #### Review history — W2.A03.T02
 
-**Review mode:** `append-only v1` / 0 completed round(s)
+**Review mode:** `append-only v1` / 1 completed round(s)
 
-**Current immutable submission awaiting review:** `R01` / packet SHA-256 `ed16baccd8ea38e9d5e6bdea917bae0d19296ad612e329fc899b58235749cd13`
+##### Round R01
+
+**Immutable submission packet:** `R01` / packet SHA-256 `ed16baccd8ea38e9d5e6bdea917bae0d19296ad612e329fc899b58235749cd13`
 
 - Candidate / base / branch: `06a69348c5de5c60cccecde400ab2271200ec50d` / `ca8b1448e094b637bbd06c3129b69a78df792619` / `codex/w2-implementation`
 - Submitted by / at: codex-w2-implementation / `2026-10-04T18:51:12+00:00`
@@ -2899,9 +2901,25 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - Prior round / replayed open findings: `-` / -
 - Root-cause escalation: -
 
-**Current latest-review projection:** `-` by - at `-`
+**Disposition / reviewer / time:** `approved` / agent:/root/a03_t02_authority_review / `2026-10-04T19:13:28+00:00`
 
-**Latest notes:** Reopened: ECR-0012 correction independently approved and adopted at 8f1a47f8; fresh exact paused-return check passed at 51245218; A03 separately reactivated at de50bff2. Resume approved seven-source activation task with retained ca8b1448 base and unchanged authority.
+**Immutable review ledger:** `artifacts/evidence/W2.A03.T02.review-R01.json` / `6dddd39b9a0303fa2febd78d00e3bc6d7106038c111b7181bf406b82af68ff15`
+
+**Review notes:** Independent expanded protected activation/baseline, control/security/ADR and evidence review of source candidate 06a69348 and actual immutable supported R01 REVIEW submission b607124d. The full retained ca8b1448 range has exactly seven T02 consumer/test source paths plus the separately owner-approved, independently reviewed and adopted five-source A04 correction; no source segment is hidden or shortened. Actual ordered delivery preserves the committed T01 witness, separate A03 activation and supported retained-base reopen, six non-baseline consumer changes at da0f1328 before baseline aab29ed2, and 66 real retained reference PNGs delivered at 8804a66c. ADR-0040 remains Proposed. Accepted ADR-0001 permits task-linked Proposed/Accepted association; approved ECR-0012 and reviewed adopted A04 authorize the exact correction. The original worksheet Accepted wording remains in history, with explicit append-only corrections in the manifest and R01 worksheet. The source/evidence audit authenticated all 42 referenced raw/artifact hashes, all 66 PNG digests/dimensions and capture/baseline key equality, 769 producer input identities, source-before-baseline ordering, unchanged prior 1.7 lineage and settings, complete DONE T01 and adopted A04 records, reference bytes, and active prospective privacy seal/admission preservation. I visually inspected the four changed reference captures; the distinct independent privacy reviewer inspected all 66 and its exact committed disposition remains the privacy admission proof. Producer qualification contains 21 fresh exact-candidate raw command runs: 20 exit zero and one official accessibility exit one. The manifest has 22 named passing checks by adding the separately executed source-invariant and exact accessibility adjudication predicates; the failing official command remains only adverse evidence. The static naming checker ignores explicit for/id association on the approved file input. Fresh pinned Chromium resolves the exact visible label Local full-text file through native labelfor; removing only that label in memory removes the contract name and label locator. The combined predicate requires the exact sole official error and unchanged 33-page/66-responsive/66-visual coverage. This proves only the explicit naming criterion and does not change the official accessibility result or assert a desktop-profile PASS. Generic checker maintenance remains due through a lawful source-attribution route; this review grants no expansion of the closed seven-source envelope, waiver, reference edit or test weakening. I previously performed read-only A03/A04 authority/control reviews, independently reviewed ECR-0012 and A04 task/slice/exit/security stages, and authored the disclosed accessibility adjudication and ignored advisory note. I authored no T02 product/consumer source, baseline, capture implementation or criterion manifest. Producer execution is distinguished from my independent source/history, immutable Git, hash, state and evidence examination; I did not repeat the completed qualification suites. There are no prior controlled task review attempts or open findings; pre-submission advisories are not invented RNN findings or closures. This approves W2.A03.T02 only. Integrated A03.S01, amendment exit and separate security/adoption review remain required. These reference-fixture captures and functional product keyboard checks do not complete joined CAP-04.S05 real signed-worker/Core happy/denial/cancellation/restart/recovery proof or original CAP-05.S01.T01 product/reference/native/Core proof, retained 6506 base/full gate and authentic fifth-D3D characterization. Remaining CAP-05 work, fresh full W2 repository/profile/security/privacy/rights/accessibility/performance/packaging/cross-capability checks, independent Wave review and separate human release remain due.
+
+**Findings opened:**
+
+- None
+
+**Prior finding closures:**
+
+- None
+
+**Current immutable submission awaiting review:** None
+
+**Current latest-review projection:** `approved` by agent:/root/a03_t02_authority_review at `2026-10-04T19:13:28+00:00`
+
+**Latest notes:** Independent expanded protected activation/baseline, control/security/ADR and evidence review of source candidate 06a69348 and actual immutable supported R01 REVIEW submission b607124d. The full retained ca8b1448 range has exactly seven T02 consumer/test source paths plus the separately owner-approved, independently reviewed and adopted five-source A04 correction; no source segment is hidden or shortened. Actual ordered delivery preserves the committed T01 witness, separate A03 activation and supported retained-base reopen, six non-baseline consumer changes at da0f1328 before baseline aab29ed2, and 66 real retained reference PNGs delivered at 8804a66c. ADR-0040 remains Proposed. Accepted ADR-0001 permits task-linked Proposed/Accepted association; approved ECR-0012 and reviewed adopted A04 authorize the exact correction. The original worksheet Accepted wording remains in history, with explicit append-only corrections in the manifest and R01 worksheet. The source/evidence audit authenticated all 42 referenced raw/artifact hashes, all 66 PNG digests/dimensions and capture/baseline key equality, 769 producer input identities, source-before-baseline ordering, unchanged prior 1.7 lineage and settings, complete DONE T01 and adopted A04 records, reference bytes, and active prospective privacy seal/admission preservation. I visually inspected the four changed reference captures; the distinct independent privacy reviewer inspected all 66 and its exact committed disposition remains the privacy admission proof. Producer qualification contains 21 fresh exact-candidate raw command runs: 20 exit zero and one official accessibility exit one. The manifest has 22 named passing checks by adding the separately executed source-invariant and exact accessibility adjudication predicates; the failing official command remains only adverse evidence. The static naming checker ignores explicit for/id association on the approved file input. Fresh pinned Chromium resolves the exact visible label Local full-text file through native labelfor; removing only that label in memory removes the contract name and label locator. The combined predicate requires the exact sole official error and unchanged 33-page/66-responsive/66-visual coverage. This proves only the explicit naming criterion and does not change the official accessibility result or assert a desktop-profile PASS. Generic checker maintenance remains due through a lawful source-attribution route; this review grants no expansion of the closed seven-source envelope, waiver, reference edit or test weakening. I previously performed read-only A03/A04 authority/control reviews, independently reviewed ECR-0012 and A04 task/slice/exit/security stages, and authored the disclosed accessibility adjudication and ignored advisory note. I authored no T02 product/consumer source, baseline, capture implementation or criterion manifest. Producer execution is distinguished from my independent source/history, immutable Git, hash, state and evidence examination; I did not repeat the completed qualification suites. There are no prior controlled task review attempts or open findings; pre-submission advisories are not invented RNN findings or closures. This approves W2.A03.T02 only. Integrated A03.S01, amendment exit and separate security/adoption review remain required. These reference-fixture captures and functional product keyboard checks do not complete joined CAP-04.S05 real signed-worker/Core happy/denial/cancellation/restart/recovery proof or original CAP-05.S01.T01 product/reference/native/Core proof, retained 6506 base/full gate and authentic fifth-D3D characterization. Remaining CAP-05 work, fresh full W2 repository/profile/security/privacy/rights/accessibility/performance/packaging/cross-capability checks, independent Wave review and separate human release remain due.
 
 **Currently open findings:** -
 

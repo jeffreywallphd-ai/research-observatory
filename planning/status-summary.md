@@ -1,7 +1,7 @@
 ---
 document_type: generated-backlog-status-summary
 source: planning/backlog.yaml
-source_sha256: 7f4a7d28091d77f5a8b644807fa4c6bc13cea1115ea0909d9e12883c119fe2a2
+source_sha256: bc2c879ad26e337aa29e3aa173342162035f89566a47aef05c926941671bca4f
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -69,8 +69,7 @@ manual_edit: prohibited
 
 | Status | Count |
 |---|---:|
-| `REVIEW` | 1 |
-| `DONE` | 20 |
+| `DONE` | 21 |
 
 ## Wave authority and append-only amendments
 
@@ -812,7 +811,7 @@ Append-only rounds remain distinct from the current latest-review projection. Le
 | `W2.A01.T02` | `append-only v1` | 2 | `-` | approved / agent:/root/t02_gate_maintenance_review | - |
 | `W2.A02.T01` | `append-only v1` | 1 | `-` | approved / agent:/root/activation_privacy_review | - |
 | `W2.A03.T01` | `append-only v1` | 1 | `-` | approved / agent:/root/maint26_independent_review | - |
-| `W2.A03.T02` | `append-only v1` | 0 | `R01` | - / - | - |
+| `W2.A03.T02` | `append-only v1` | 1 | `-` | approved / agent:/root/a03_t02_authority_review | - |
 | `W2.A04.T01` | `append-only v1` | 1 | `-` | approved / agent:/root/a03_t02_authority_review | - |
 | `W1.C01.T01` | `append-only v1` | 1 | `-` | approved / agent:/root/ui_guard_planning | - |
 | `W1.C02.T01` | `append-only v1` | 1 | `-` | approved / agent:/root/cap07_slice_review | - |
@@ -893,7 +892,6 @@ Append-only rounds remain distinct from the current latest-review projection. Le
 | Task | Status | Owner | Branch |
 |---|---|---|---|
 | `CAP-05.S01.T01` Implement local document attachment and version association | `BLOCKED` | codex-w2-implementation | `codex/w2-implementation` |
-| `W2.A03.T02` Activate approved 1.8 desktop consumers and pinned baseline | `REVIEW` | codex-w2-implementation | `codex/w2-implementation` |
 
 ## Linked corrective tasks
 

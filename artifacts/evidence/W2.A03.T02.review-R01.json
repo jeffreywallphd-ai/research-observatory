@@ -1,0 +1,72 @@
+{
+  "task_id": "W2.A03.T02",
+  "attempt_id": "R01",
+  "candidate_commit": "06a69348c5de5c60cccecde400ab2271200ec50d",
+  "base_commit": "ca8b1448e094b637bbd06c3129b69a78df792619",
+  "submission_record_commit": "b607124da3067d66a697651b36c6a989b49b80a4",
+  "reviewer": "agent:/root/a03_t02_authority_review",
+  "result": "approved",
+  "approvalAvailable": true,
+  "evidence_path": "artifacts/evidence/W2.A03.T02.json",
+  "evidence_sha256": "6c7d9b8491f33e529001cde6bf9327c7412e9cdada9f8644b2d4af5f23d2855f",
+  "packet_sha256": "ed16baccd8ea38e9d5e6bdea917bae0d19296ad612e329fc899b58235749cd13",
+  "acceptance_criteria_sha256": "2b2164cd1495ff1f3e0335588cf5b182e468b7d3f50f6372320e1294f23cbaad",
+  "selection_sha256": "f6bcf1f9412502c20e2b4bde5a6762e5d750d5a6e04dcd1591418270c381472d",
+  "notes": "Independent expanded protected activation/baseline, control/security/ADR and evidence review of source candidate 06a69348 and actual immutable supported R01 REVIEW submission b607124d. The full retained ca8b1448 range has exactly seven T02 consumer/test source paths plus the separately owner-approved, independently reviewed and adopted five-source A04 correction; no source segment is hidden or shortened. Actual ordered delivery preserves the committed T01 witness, separate A03 activation and supported retained-base reopen, six non-baseline consumer changes at da0f1328 before baseline aab29ed2, and 66 real retained reference PNGs delivered at 8804a66c. ADR-0040 remains Proposed. Accepted ADR-0001 permits task-linked Proposed/Accepted association; approved ECR-0012 and reviewed adopted A04 authorize the exact correction. The original worksheet Accepted wording remains in history, with explicit append-only corrections in the manifest and R01 worksheet. The source/evidence audit authenticated all 42 referenced raw/artifact hashes, all 66 PNG digests/dimensions and capture/baseline key equality, 769 producer input identities, source-before-baseline ordering, unchanged prior 1.7 lineage and settings, complete DONE T01 and adopted A04 records, reference bytes, and active prospective privacy seal/admission preservation. I visually inspected the four changed reference captures; the distinct independent privacy reviewer inspected all 66 and its exact committed disposition remains the privacy admission proof. Producer qualification contains 21 fresh exact-candidate raw command runs: 20 exit zero and one official accessibility exit one. The manifest has 22 named passing checks by adding the separately executed source-invariant and exact accessibility adjudication predicates; the failing official command remains only adverse evidence. The static naming checker ignores explicit for/id association on the approved file input. Fresh pinned Chromium resolves the exact visible label Local full-text file through native labelfor; removing only that label in memory removes the contract name and label locator. The combined predicate requires the exact sole official error and unchanged 33-page/66-responsive/66-visual coverage. This proves only the explicit naming criterion and does not change the official accessibility result or assert a desktop-profile PASS. Generic checker maintenance remains due through a lawful source-attribution route; this review grants no expansion of the closed seven-source envelope, waiver, reference edit or test weakening. I previously performed read-only A03/A04 authority/control reviews, independently reviewed ECR-0012 and A04 task/slice/exit/security stages, and authored the disclosed accessibility adjudication and ignored advisory note. I authored no T02 product/consumer source, baseline, capture implementation or criterion manifest. Producer execution is distinguished from my independent source/history, immutable Git, hash, state and evidence examination; I did not repeat the completed qualification suites. There are no prior controlled task review attempts or open findings; pre-submission advisories are not invented RNN findings or closures. This approves W2.A03.T02 only. Integrated A03.S01, amendment exit and separate security/adoption review remain required. These reference-fixture captures and functional product keyboard checks do not complete joined CAP-04.S05 real signed-worker/Core happy/denial/cancellation/restart/recovery proof or original CAP-05.S01.T01 product/reference/native/Core proof, retained 6506 base/full gate and authentic fifth-D3D characterization. Remaining CAP-05 work, fresh full W2 repository/profile/security/privacy/rights/accessibility/performance/packaging/cross-capability checks, independent Wave review and separate human release remain due.",
+  "acceptance_reviews": [
+    {
+      "criterion_index": 1,
+      "result": "satisfied",
+      "assessment": "Both desktop assemblers and protected extension bind the exact owner-approved Academic Minimal 1.8 identity/package cd8995fd under the completed independently approved T01 witness and adopted A04 correction. Fresh actual pinned builds, functional product workspace/keyboard runtime, affected identity/reference units, token/route/workflow checks and physical stale/mixed selector denials pass. The reference fixture contains all 33 catalog pages; the functional product manifest exposes only its existing implemented application and excludes reference-only demo/HTML pages. Exact reference bytes remain unchanged. Actual Chromium positive and in-memory negative plus the exact-error predicate establish the file-input naming requirement while preserving official accessibility FAIL. No original CAP-05 full product/reference or native/Core completion is inferred."
+    },
+    {
+      "criterion_index": 2,
+      "result": "satisfied",
+      "assessment": "The original actual guarded Windows-x64 pinned writer ran at clean committed da0f1328 after T01 and ordered consumer input. The ensuing aab29ed2 baseline and 8804a66c retained capture delivery have exactly 33 pages and 66 unique light/dark keys, matching every real PNG digest and 1440x900 dimension with all inherited scale/locale/font/animation/browser/platform settings and 1.7 history preserved. Only four approved changed reader/ingestion reference capture digests differ. Capture producer input/build identities and independent privacy admission are authenticated; fresh exact-candidate delivery and all 66 visual comparisons pass. Missing/extra/duplicate/co-tampered capture, changed-source/settings, same-reference overwrite, dirty/unreviewed input and selector boundaries remain tested and fail closed. Writer generation/earlier denial receipts retain their original provenance and are not relabeled fresh profile execution. This independent protected baseline task disposition precedes integrated S01 review."
+    },
+    {
+      "criterion_index": 3,
+      "result": "satisfied",
+      "assessment": "Direct source and per-commit history audit identifies exactly the seven frozen consumer/test paths; the full retained ca8 range additionally includes only the separately authorized reviewed A04 five-source correction and authenticated inert workflow/evidence outputs. Six non-baseline paths precede the baseline; only mutable current-identity expectations changed in three test modules and historical 1.7 adversarial cases remain. Complete completed T01 and adopted A04 records, immutable 1.8 package/approval and original CAP-05 task/base are preserved. Actual retained-range ADR/UI gate and source-invariant proof, Python quality/types, diff and planning/view/site checks pass. No governed reference, original T01, Core/native drop, permission, migration or release source change is admitted."
+    }
+  ],
+  "independent_checks": [
+    {
+      "check": "Authentic R01 submission, immutable evidence and packet identity",
+      "result": "passed",
+      "observation": "b607124d is the direct child of source candidate 06a69348. The committed regular LF criterion manifest equals the physical exact bytes and SHA 6c7d9b84. Independently recomputed canonical packet ed16bacc, acceptance criteria 2b2164cd and verification selection f6bcf1f9 match the frozen current_submission. Candidate/base/branch/evidence reference, 118 actual Git changed paths, all 22 check commands, 14 canonical command IDs, deferred checks and rationale equal the manifest. R01 has no prior attempt, open findings or fabricated root-cause round; reviewer identity differs from actual submitted owner."
+    },
+    {
+      "check": "Incremental submission integrity and append-only attribution",
+      "result": "passed",
+      "observation": "The seven-path candidate-to-submission diff comprises only the canonical manifest, appended task-start worksheet, backlog, two generated Markdown views and ECR-0011 page/site manifest. The full semantic backlog delta is confined to T02 evidence, implementation_notes, review_control, status, updated_at and verification_state. Every other field/record is equal to the source candidate, including whole A04 and T01, task definition/hash, retained base, owner, branch and current lease. The exact worksheet and manifest clarification correctly preserve Proposed ADR-0040 and supersede the inaccurate earlier wording without rewriting it or inventing ADR acceptance. Supported submit and 496-page regenerated-site receipts are retained producer evidence."
+    },
+    {
+      "check": "Approved source authority and retained full history",
+      "result": "passed",
+      "observation": "Independent ECR-0011 frozen criteria/seven-source authentication and ECR-0012/A04 correction replay cover every source commit in the real ca8 range. Source candidates da0f1328, baseline aab29ed2 and delivery 8804a66c are actual ordered immutable commits under the separate supported active claim. No unapproved extra source or rewritten packet is admitted. Original CAP-05.S01.T01 remains blocked at its original 6506 base. A04 source tests/ADR/index/procedure and completed T01 remain protected; actual final ADR/UI outputs pass without treating Proposed ADR-0040 as Accepted."
+    },
+    {
+      "check": "Capture authenticity, baseline preservation and privacy protection",
+      "result": "passed",
+      "observation": "Independently matched all 66 delivered PNG SHA-256 values and decoded dimensions to the committed capture manifest and baseline, authenticated all 769 producer input identities and unchanged build/settings/reference inputs, and inspected all four changed capture images. The separate genuine privacy reviewer disposition SHA 55fd24f2 covers its complete 66-image inspection and retained generic-digest scanner triage. Active hook/guard/policy/scanner/admission pins match; the 378-entry admission registry preserves the complete 311-entry historical prefix and preservation record. No ignored local account/session paths are introduced by this ledger. I did not re-execute the credential scanner or replace the independent privacy admission."
+    },
+    {
+      "check": "Exact-candidate execution and verification selection",
+      "result": "passed",
+      "observation": "All 42 referenced raw/artifact hashes were independently recomputed in the completed source/evidence audit and remain bound by the unchanged manifest. The fresh candidate report records 20 exit-zero raw commands and the sole official accessibility exit-one command; the 22 selected passing predicates include source invariants and exact accessibility adjudication. Retained runs cover both pinned builds, functional product runtime, 16 affected unit cases, three capture guards, physical selector denials, 66-image delivery/visual history, tokens/routes/workflows, ADR/UI, Python lint/format/types, diff, backlog/views/site. Selected/deferred reasoning matches the frozen packet. These are producer executions, not new reviewer reruns; earlier setup/type/capture/ADR diagnostics remain adverse provenance."
+    },
+    {
+      "check": "Explicit-label false-positive adjudication and official failure preservation",
+      "result": "passed",
+      "observation": "The committed original adjudication SHA bddb1702 and original official failed report are preserved; fresh candidate AX report SHA 74cfbedb and combined predicate SHA bfd4325f authenticate unchanged source/build inputs. Approved input attachment-file has its visible explicit for/id label. Chromium reports a nonignored button with exact Local full-text file name sourced from native labelfor and one exact label locator; sole in-memory label removal loses that name/locator. Static accessible_name omits explicit label association, explaining the sole official error. Combined proof admits only that exact error with all 33/66/66 checks present and reports officialCommandPassed:false and desktopProfilePassed:false. This is bounded criterion adjudication, no waiver or profile PASS; lawful future checker maintenance and full W2 accessibility qualification remain due."
+    },
+    {
+      "check": "Independent disposition and subsequent stage limits",
+      "result": "passed",
+      "observation": "Reviewer agent:/root/a03_t02_authority_review implemented no T02 source/baseline/capture or manifest; prior authority reviews and accessibility adjudication are disclosed. Only this task R01 ledger is authored now. No taskctl mutation, source/view edit, Git ref movement or completed suite repetition occurs. No findings or formal closures are fabricated from advisory planning notes. Task approval permits the supported task disposition and subsequent stage reviews; it does not grant A03.S01/exit/adoption, CAP-04.S05, original CAP-05/native/Core/D3D, W2 or human release approval."
+    }
+  ],
+  "findings": [],
+  "closures": []
+}
