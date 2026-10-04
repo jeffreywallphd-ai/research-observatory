@@ -75,14 +75,14 @@
     "document-reader.html::dark": {
       "height": 900,
       "page": "document-reader.html",
-      "sha256": "4986ac8be8c5ff6ebed2b30db51236d00acd5375f47e0e301ae126e491ab3a7e",
+      "sha256": "c6b7b6b769588a362d80d3d83d426d9ceaa8a81af63b5c35ba0b912b26f9831d",
       "theme": "dark",
       "width": 1440
     },
     "document-reader.html::light": {
       "height": 900,
       "page": "document-reader.html",
-      "sha256": "f4b16cc579c2c8657e52a755d991651be6fffa175d37f60b8228c6d65d591da5",
+      "sha256": "c26959b45f173dd674f63fb350ff873446341c726fef0c6eb029b91bc981562e",
       "theme": "light",
       "width": 1440
     },
@@ -131,14 +131,14 @@
     "ingestion-reconciliation.html::dark": {
       "height": 900,
       "page": "ingestion-reconciliation.html",
-      "sha256": "3da020e13b051ade400e163f108e79812967b134c4c3b93f5613887698fbdadd",
+      "sha256": "5c1b2f3be6ec566aac114a2ee14e862b1cc8281853bed0d8c1e3701f4854d6ac",
       "theme": "dark",
       "width": 1440
     },
     "ingestion-reconciliation.html::light": {
       "height": 900,
       "page": "ingestion-reconciliation.html",
-      "sha256": "50b1b0ecaee16b80003a2a25be42c434f2a4de5591d364701cebffda47a08140",
+      "sha256": "1af6b08946575c485c417dfb2892e845519753b399055431b565e6a5b2670dee",
       "theme": "light",
       "width": 1440
     },
@@ -467,9 +467,9 @@
   },
   "platform": "windows-x64",
   "playwrightVersion": "1.58.0",
-  "referenceApprovalCommit": "14b89c07a435a26bf894242a9e5f3e6429065055",
-  "referenceId": "RO-UI-ACADEMIC-MINIMAL-1.7",
-  "referencePackageSha256": "dcf31147ee386d48e8ac95725d648ee2b08c74ef0dd42c139c5f78508a90f878",
+  "referenceApprovalCommit": "acdc67b616f5ecdec448f57a7efe46e4f359aa9f",
+  "referenceId": "RO-UI-ACADEMIC-MINIMAL-1.8",
+  "referencePackageSha256": "cd8995fdcea2fe44452eaa1fdd258b6f9fab5714cbd443a81a8e5b4251220b94",
   "schemaVersion": "1.0",
   "settings": {
     "animations": "disabled",
