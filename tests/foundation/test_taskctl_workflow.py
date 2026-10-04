@@ -583,6 +583,205 @@ class TaskctlWorkflowTests(unittest.TestCase):
                 global_program_position(appended, *taskctl_module.index_backlog(appended)[2:])["amendment"]["id"],
             )
 
+    def test_sequential_bootstrap_composes_paused_parent_without_sorting_declared_adoptions(self) -> None:
+        # Exact historical inputs expose the A04-after-paused-A03 defect. The
+        # authority subprocess is a fixture prerequisite; actual CLI evidence is
+        # retained separately. Stop before evidence admission or persistence.
+        original = taskctl_module.historical_backlog_document(REPO, "771e54a3657cdc5ff308d3a53d7b71eb48bb9214")
+        assert original is not None
+        packet = json.loads(
+            subprocess.check_output(
+                [
+                    "git",
+                    "show",
+                    "55c6389ce39a656f4da3851cae32ae12ac80e796:planning/enabler-change-requests/ECR-0013.packet.json",
+                ],
+                cwd=REPO,
+            )
+        )
+        approval_commit = "b54f24c222f631700056574a08056f660696d305"
+        approval_payload = subprocess.check_output(
+            ["git", "show", approval_commit + ":planning/wave-amendment-approvals/W2.A05.json"], cwd=REPO
+        )
+        candidate = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=REPO, text=True).strip()
+        original_run = subprocess.run
+
+        def authority_fixture(command: list[str], *args: Any, **kwargs: Any) -> subprocess.CompletedProcess[Any]:
+            if len(command) > 1 and str(command[1]).endswith("planctl.py"):
+                return subprocess.CompletedProcess(command, 0, "Synthetic authority prerequisite", "")
+            return original_run(command, *args, **kwargs)
+
+        variants = {
+            "valid-interposed-return": packet,
+            "declared-reorder": copy.deepcopy(packet),
+            "duplicate-adoption": copy.deepcopy(packet),
+            "missing-return": copy.deepcopy(packet),
+            "foreign-paused-parent": copy.deepcopy(packet),
+        }
+        variants["declared-reorder"]["authorityChain"]["orderedAmendments"].reverse()
+        variants["duplicate-adoption"]["authorityChain"]["orderedAmendments"].append(
+            copy.deepcopy(packet["authorityChain"]["orderedAmendments"][-1])
+        )
+        variants["missing-return"]["authorityChain"]["orderedAmendments"].pop()
+        variants["foreign-paused-parent"]["authorityChain"]["pausedPredecessor"]["id"] = "W1.A03"
+        disk_before = (REPO / "planning/backlog.yaml").read_bytes()
+        for name, selected in variants.items():
+            with self.subTest(name=name):
+                data = copy.deepcopy(original)
+                frozen = taskctl_module.exact_record_snapshot(data, "wave_amendments")
+                args = Namespace(
+                    amendment="W2.A05",
+                    approval_commit=approval_commit,
+                    implementation_commit=candidate,
+                    evidence="unused",
+                    agent="fixture",
+                    file=str(REPO / "planning/backlog.yaml"),
+                )
+                with (
+                    patch("taskctl.subprocess.run", side_effect=authority_fixture),
+                    patch("taskctl.canonical_control_artifact_path", side_effect=RuntimeError("predecessors accepted")),
+                ):
+                    expected = RuntimeError if name == "valid-interposed-return" else SystemExit
+                    message = (
+                        "predecessors accepted"
+                        if name == "valid-interposed-return"
+                        else "predecessor authority differs"
+                    )
+                    with self.assertRaisesRegex(expected, message):
+                        taskctl_module.command_amendment_v4_bootstrap_submit(
+                            args,
+                            data,
+                            taskctl_module.index_backlog(data)[3],
+                            repo=REPO,
+                            approval=json.loads(approval_payload),
+                            packet=selected,
+                            approval_payload=approval_payload,
+                            frozen_amendments=frozen,
+                            frozen_wave_bases=taskctl_module.exact_record_snapshot(
+                                data, "wave_approval_bases", identity_field="wave_id"
+                            ),
+                        )
+                self.assertEqual(frozen, taskctl_module.exact_record_snapshot(data, "wave_amendments"))
+        self.assertEqual(disk_before, (REPO / "planning/backlog.yaml").read_bytes())
+
+    def test_sequential_bootstrap_real_persistence_preserves_returned_sibling_and_cas(self) -> None:
+        # Synthetic B00 evidence admission is isolated from real persisted CAS
+        # and Git snapshots. This fixture cannot authorize the real A05 shell.
+        original = taskctl_module.historical_backlog_document(REPO, "771e54a3657cdc5ff308d3a53d7b71eb48bb9214")
+        assert original is not None
+        packet = json.loads(
+            subprocess.check_output(
+                [
+                    "git",
+                    "show",
+                    "55c6389ce39a656f4da3851cae32ae12ac80e796:planning/enabler-change-requests/ECR-0013.packet.json",
+                ],
+                cwd=REPO,
+            )
+        )
+        approval_commit = "b54f24c222f631700056574a08056f660696d305"
+        approval_payload = subprocess.check_output(
+            ["git", "show", approval_commit + ":planning/wave-amendment-approvals/W2.A05.json"], cwd=REPO
+        )
+        candidate = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=REPO, text=True).strip()
+        frozen = taskctl_module.exact_record_snapshot(original, "wave_amendments")
+        frozen_waves = taskctl_module.exact_record_snapshot(original, "waves")
+        original_run = subprocess.run
+
+        def authority_fixture(command: list[str], *args: Any, **kwargs: Any) -> subprocess.CompletedProcess[Any]:
+            if len(command) > 1 and str(command[1]).endswith("planctl.py"):
+                return subprocess.CompletedProcess(command, 0, "Synthetic authority prerequisite", "")
+            return original_run(command, *args, **kwargs)
+
+        for stale in (True, False):
+            with self.subTest(stale=stale), tempfile.TemporaryDirectory() as temporary:
+                root = Path(temporary)
+                path = root / "planning/backlog.yaml"
+                data = copy.deepcopy(original)
+                save_validated(str(path), data)
+                before = path.read_bytes()
+                subprocess.run(["git", "init", "--quiet", "-b", "codex/bootstrap-fixture"], cwd=root, check=True)
+                subprocess.run(["git", "config", "user.name", "Bootstrap Fixture"], cwd=root, check=True)
+                subprocess.run(["git", "config", "user.email", "fixture@example.invalid"], cwd=root, check=True)
+                subprocess.run(["git", "config", "core.autocrlf", "false"], cwd=root, check=True)
+                predecessor = self.commit_all(root, "synthetic unchanged predecessor")
+                evidence = root / "bootstrap.json"
+                evidence.write_text("{}\n", encoding="utf-8")
+                args = Namespace(
+                    amendment="W2.A05",
+                    approval_commit=approval_commit,
+                    implementation_commit=candidate,
+                    evidence=str(evidence),
+                    agent="fixture",
+                    file=str(path),
+                    source_sha256="f" * 64 if stale else hashlib.sha256(before).hexdigest(),
+                )
+                with (
+                    patch("taskctl.subprocess.run", side_effect=authority_fixture),
+                    patch(
+                        "taskctl.canonical_control_artifact_path",
+                        return_value=("artifacts/evidence/W2.A05.B00.fixture.json", evidence),
+                    ),
+                    patch("taskctl.require_clean_repository"),
+                    patch("taskctl.load_bootstrap_scope_addenda", return_value=([], [])),
+                    patch("taskctl.bootstrap_candidate_authorization", return_value=([], [])),
+                    patch("taskctl.bootstrap_attempt_errors", return_value=[]),
+                    patch(
+                        "taskctl.save_validated",
+                        side_effect=lambda *a, **kw: save_validated(*a, **{**kw, "repo": None}),
+                    ),
+                ):
+                    if stale:
+                        with self.assertRaisesRegex(SystemExit, "changed after taskctl loaded"):
+                            taskctl_module.command_amendment_v4_bootstrap_submit(
+                                args,
+                                data,
+                                taskctl_module.index_backlog(data)[3],
+                                repo=REPO,
+                                approval=json.loads(approval_payload),
+                                packet=packet,
+                                approval_payload=approval_payload,
+                                frozen_amendments=frozen,
+                                frozen_wave_bases=taskctl_module.exact_record_snapshot(
+                                    data, "wave_approval_bases", identity_field="wave_id"
+                                ),
+                            )
+                        self.assertEqual(before, path.read_bytes())
+                        continue
+                    taskctl_module.command_amendment_v4_bootstrap_submit(
+                        args,
+                        data,
+                        taskctl_module.index_backlog(data)[3],
+                        repo=REPO,
+                        approval=json.loads(approval_payload),
+                        packet=packet,
+                        approval_payload=approval_payload,
+                        frozen_amendments=frozen,
+                        frozen_wave_bases=taskctl_module.exact_record_snapshot(
+                            data, "wave_approval_bases", identity_field="wave_id"
+                        ),
+                    )
+                after = load(str(path))[0]
+                self.assertEqual(
+                    frozen, taskctl_module.exact_record_snapshot(after, "wave_amendments", identities=set(frozen))
+                )
+                self.assertEqual(frozen_waves, taskctl_module.exact_record_snapshot(after, "waves"))
+                shell = after["wave_amendments"][-1]
+                self.assertEqual("W2.A05", shell["id"])
+                self.assertEqual("REVIEW", shell["bootstrap"]["status"])
+                self.assertEqual([], shell["tasks"])
+                self.assertIsNone(shell["campaign"])
+                self.assertEqual(packet["authorityChain"]["pausedPredecessor"], shell["correction"])
+                self.assertEqual("W2.A03", taskctl_module.correction_roles(after)[-1]["holdOwner"])
+                successor = self.commit_all(root, "synthetic reviewed-shell candidate")
+                self.assertEqual(
+                    predecessor,
+                    subprocess.check_output(["git", "rev-parse", successor + "^"], cwd=root, text=True).strip(),
+                )
+                self.assertEqual(
+                    before, subprocess.check_output(["git", "show", predecessor + ":planning/backlog.yaml"], cwd=root)
+                )
+
     def test_paused_correction_adoption_returns_once_through_real_git_and_cas(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)

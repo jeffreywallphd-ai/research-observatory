@@ -8078,6 +8078,7 @@ def command_amendment_v4_bootstrap_submit(
     ordered = chain.get("orderedAmendments") or []
     reserved = chain.get("reservedAmendments") or []
     paused = chain.get("pausedPredecessor")
+    declared_adopted_ids = [str(item.get("id") or "") for item in ordered]
     if paused is not None:
         ordered = [*ordered, paused]
     adopted_ids = [str(item.get("id") or "") for item in ordered]
@@ -8097,7 +8098,7 @@ def command_amendment_v4_bootstrap_submit(
     if (
         len(predecessor_ids) != len(set(predecessor_ids))
         or any(amendment_ordinal(item) == 100 for item in predecessor_ids)
-        or adopted_ids != sorted(adopted_ids, key=amendment_ordinal)
+        or declared_adopted_ids != sorted(declared_adopted_ids, key=amendment_ordinal)
         or reserved_ids != sorted(reserved_ids, key=amendment_ordinal)
         or predecessor_ids != expected_predecessors
         or existing_ids != predecessor_ids[: len(existing_ids)]
