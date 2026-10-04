@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "1.0",
+  "kind": "independent-packet-preflight",
+  "changeRequestId": "ECR-0012",
+  "candidateCommit": "be305d1b859499f5ca36b6f1ec63698d67ae9a81",
+  "packetSha256": "2df416eb21f2bded8d77f96d1e266311521ba4c39d364fae998108b3f777054f",
+  "reviewer": "agent:/root/a03_t02_authority_review",
+  "result": "clarification-required-before-formal-review",
+  "authorityChecks": "All 58 committed input rows were regular blobs with matching raw hashes; all 55 reference rows matched ECR-0011; complete paused A03 hash and preserved DONE T01/blocked T02 records matched. Read-only committed-blob inspection; no executed product qualification or formal approval round.",
+  "finding": {
+    "id": "ECR-0012.PF01",
+    "boundary": "Exact retained claim and correction delivery authentication",
+    "observation": "a211f24107f21f6b87221fd8b60c04b95a97fc8b is one child of ca8b1448e094b637bbd06c3129b69a78df792619 and records T02 BLOCKED/A03 PAUSED. Claim, block and pause were committed together; no intermediate committed T02 IN_PROGRESS claim exists. The existing gate expects READY-to-IN_PROGRESS claim attribution.",
+    "requiredClosure": "Explicitly authorize authentication of this exact owner-approved combined frozen snapshot, including preserved base/owner/branch/worktree/timestamps/blocker/pause and absence of source edits, followed by the real later supported reopen. Preserve the absence of an intermediate claim commit; do not fabricate history or introduce a generic missing-claim exemption."
+  },
+  "mutationPerformed": false
+}
