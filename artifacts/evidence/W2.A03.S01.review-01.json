@@ -1,0 +1,240 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "amendment-contribution-independent-review",
+  "amendmentId": "W2.A03",
+  "sliceId": "W2.A03.S01",
+  "capabilityId": "CAP-05",
+  "title": "Approved 1.8 desktop verification and consumer activation",
+  "reviewer": "agent:/root/a03_t02_authority_review",
+  "reviewedAt": "2026-10-04T19:33:23.398736+00:00",
+  "result": "changes-requested",
+  "reviewedCompletionDeliveryCommit": "b2fd64fdd9bc840cdb91eb667655e461e5736d7a",
+  "taskBindings": [
+    {
+      "taskId": "W2.A03.T01",
+      "candidateCommit": "aa09664678ca3ca8fa7a428cb60f3565d2c0e9bd"
+    },
+    {
+      "taskId": "W2.A03.T02",
+      "candidateCommit": "06a69348c5de5c60cccecde400ab2271200ec50d"
+    }
+  ],
+  "notes": "Independent integrated review of the exact approved ECR-0011 contribution at actual clean task-DONE/local-main delivery b2fd64fd. Both tasks are authentically DONE/approved with immutable R01 manifests/ledgers, no task leases, no pending submissions and no findings. Current witness, seven consumer sources and captured baseline remain unchanged from their reviewed candidates; the later shared gate change is the separately approved reviewed adopted A04 correction. Actual runtime/capture/denial proof remains historical exact-task evidence and is not relabeled fresh slice execution. The fresh actual integrated producer invocation failed in the generic per-commit-versus-net attribution check. Independent bounded Git diagnosis corroborates the sole legitimate historical W2.html projection and six exact commits; there is no omitted product/control source in that mismatch. This is a material combined integration/control compatibility defect under slice criterion 3 and prevents S01 approval. Both task approvals and correct net manifests remain valid; no retrospective task finding or fabricated prior slice round is invented. The failed invocation and producer structured adverse record remain adverse, with actual stderr preserved in the tool transcript rather than reconstructed into an empty stdout log. ADR-0039 and ADR-0040 remain Proposed. Official accessibility/profile FAIL and the narrow real-browser naming adjudication are preserved. This ledger gives no exit/security/adoption, ordinary Wave resume, native/Core/S05/D3D/current original CAP-05.S01.T01, full W2 or human release approval.",
+  "independence": {
+    "implementationOwner": "codex-w2-implementation",
+    "statement": "This reviewer is independent of the task/campaign owner and authored no A03 consumer/control implementation, baseline, captures or criterion manifest. I previously performed independent read-only A03/A04 control and authority review, ECR-0012/A04 packet/task/slice/exit/security reviews, T02 R01 and the disclosed explicit-label accessibility adjudication. T01 task R01 was approved by agent:/root/maint26_independent_review. Those roles are disclosed and not presented as different identities. Only this canonical contribution ledger is authored now; no source/backlog/view/controller/Git ref mutation or runtime/profile suite repeat occurs."
+  },
+  "authority": {
+    "approvedPacketCommit": "746c05dcd7dbabaa7f5eebee8e3fa56b8ac6b9b5",
+    "packetPath": "planning/enabler-change-requests/ECR-0011.packet.json",
+    "packetRawSha256": "31a31459b0895316972203e6b2b301ca9bc2fb83bdd566034ff61e1bc0a3b0e3",
+    "amendmentApprovalPath": "planning/wave-amendment-approvals/W2.A03.json",
+    "amendmentApprovalRawSha256": "8852d6631a6656e94cc75e4f9dc705c7095ecf111786748e5630fe13b8fa9087",
+    "amendmentApprovalIntroductionCommit": "c972e2116113afa7ad84f0e43bdad58660cc69bb",
+    "sliceDefinitionCanonicalSha256": "8b1e5c57a16f3a314634aaa3ba01ca025253f8f0f76f427a9dc6337cb388d942",
+    "sliceCriteriaCanonicalSha256": "5c722b5e79c206caa884ec9bbcdef58681e70503e72f7d9980ba3b6c76688785",
+    "referenceId": "RO-UI-ACADEMIC-MINIMAL-1.8",
+    "referencePackageSha256": "cd8995fdcea2fe44452eaa1fdd258b6f9fab5714cbd443a81a8e5b4251220b94",
+    "correctionAmendmentId": "W2.A04",
+    "correctionChangeRequestId": "ECR-0012",
+    "correctionStatus": "ADOPTED",
+    "adr0040Status": "Proposed"
+  },
+  "taskReviewReferences": [
+    {
+      "taskId": "W2.A03.T01",
+      "status": "DONE",
+      "reviewResult": "approved",
+      "reviewer": "agent:/root/maint26_independent_review",
+      "attemptId": "R01",
+      "candidateCommit": "aa09664678ca3ca8fa7a428cb60f3565d2c0e9bd",
+      "baseCommit": "cd61bae9681690f92b754e443cd61f2c62026288",
+      "packetSha256": "db9f32de6ea1c746755792dc625811ec70a2ee2555a4f581bc864d6172cd6d29",
+      "doneTaskRecordCanonicalSha256": "3c54731c29569c1e0c1ea72a67dece286540bb009b4f047a6e75aadafebda348",
+      "references": {
+        "manifest": {
+          "path": "artifacts/evidence/W2.A03.T01.json",
+          "sha256": "3c16cfc101bfd9aea58197b44eab35c628180ae718b366da43eef8e1a89f883a",
+          "rawSha256": "3c16cfc101bfd9aea58197b44eab35c628180ae718b366da43eef8e1a89f883a",
+          "introductionCommit": "206960d50ce5be77bd120de09d04d144afa8f7d1"
+        },
+        "ledger": {
+          "path": "artifacts/evidence/W2.A03.T01.review-R01.json",
+          "sha256": "c0c9c10e3e6d271edd13db1c767ed8d4d07b5564b8a28f5b4c383173cf14d159",
+          "rawSha256": "c0c9c10e3e6d271edd13db1c767ed8d4d07b5564b8a28f5b4c383173cf14d159",
+          "introductionCommit": "c62adc8510a7bcbe49223909118428e434a9c665"
+        }
+      }
+    },
+    {
+      "taskId": "W2.A03.T02",
+      "status": "DONE",
+      "reviewResult": "approved",
+      "reviewer": "agent:/root/a03_t02_authority_review",
+      "attemptId": "R01",
+      "candidateCommit": "06a69348c5de5c60cccecde400ab2271200ec50d",
+      "baseCommit": "ca8b1448e094b637bbd06c3129b69a78df792619",
+      "packetSha256": "ed16baccd8ea38e9d5e6bdea917bae0d19296ad612e329fc899b58235749cd13",
+      "doneTaskRecordCanonicalSha256": "8edda1f0a940c344bcc924897e5c1333dfd6b72331346359950ff28a869a91bd",
+      "references": {
+        "manifest": {
+          "path": "artifacts/evidence/W2.A03.T02.json",
+          "sha256": "6c7d9b8491f33e529001cde6bf9327c7412e9cdada9f8644b2d4af5f23d2855f",
+          "rawSha256": "6c7d9b8491f33e529001cde6bf9327c7412e9cdada9f8644b2d4af5f23d2855f",
+          "introductionCommit": "b607124da3067d66a697651b36c6a989b49b80a4"
+        },
+        "ledger": {
+          "path": "artifacts/evidence/W2.A03.T02.review-R01.json",
+          "sha256": "6dddd39b9a0303fa2febd78d00e3bc6d7106038c111b7181bf406b82af68ff15",
+          "rawSha256": "6dddd39b9a0303fa2febd78d00e3bc6d7106038c111b7181bf406b82af68ff15",
+          "introductionCommit": "b2fd64fdd9bc840cdb91eb667655e461e5736d7a"
+        }
+      }
+    }
+  ],
+  "criterionDispositions": [
+    {
+      "criterionIndex": 1,
+      "result": "satisfied-at-reviewed-control-boundary",
+      "basis": "Authentic independent T01 R01 binds exact 1.8 package/witness, closed v1.4 continuation/control, frozen 1.5 semantic root and historical denials. Its task record and immutable review are unchanged; A04 is separately reviewed/adopted. This reuses authenticated exact-task control proof and does not claim a fresh full original-task lane pass."
+    },
+    {
+      "criterionIndex": 2,
+      "result": "satisfied-at-reviewed-consumer-boundary",
+      "basis": "T01 approval genuinely precedes retained ca8 claim base and actual legal reopen/consumer delivery. Approved T02 exact 1.8 assemblers/extension and guarded 33-page/66-capture baseline/lineage, reference-only exclusion and explicit denials remain unchanged at local integration; source and evidence suffix is metadata only. Prior actual pinned runtime/capture results remain historical task proof; official accessibility/profile FAIL is preserved with the separate naming predicate."
+    },
+    {
+      "criterionIndex": 3,
+      "result": "blocked",
+      "findingIds": [
+        "W2.A03.S01-R01-F01"
+      ],
+      "basis": "Fresh actual combined history authentication exits1 before exact A04/consumer attribution because authorized historical generated W2.html changed then reverted and is correctly absent from T02 net paths. This prevents the required integrated S01 control-to-consumer review. The frozen rollback policy retains adverse descendants, W2 PAUSED and original T01 BLOCKED; no unreviewed rollback/control bypass is permitted. Amendment exit and separate security review/adoption remain later obligations."
+    }
+  ],
+  "checksPerformedForThisContributionReview": [
+    {
+      "check": "Actual immutable DONE and review authority",
+      "result": "passed",
+      "testedCommit": "b2fd64fdd9bc840cdb91eb667655e461e5736d7a",
+      "observation": "Independently recomputed frozen packet, manifest/ledger bindings and full task record hashes. task_review_control_errors and task_review_telemetry_errors returned empty for both authentic DONE R01 tasks. No lease/current_submission/open finding remains. T02 submission equals exact b607 current_submission. Every non-T02 record, A04, T01 and all other backlog fields remain unchanged through DONE; source-candidate suffix comprises only evidence/review, supported metadata and projections. HEAD and local main both equal the actual reviewed commit."
+    },
+    {
+      "check": "Authentic failed actual integrated producer observation",
+      "result": "failed",
+      "testedCommit": "b2fd64fdd9bc840cdb91eb667655e461e5736d7a",
+      "producerCommand": ".venv/Scripts/python.exe -B artifacts/tmp/W2.A03.S01.inspect-integrated.py",
+      "observationPath": "artifacts/tmp/W2.A03.S01.integrated-adverse-b2fd64fd.json",
+      "observationSha256": "1d9b71a2c4c37dfab09502c6bfc2596061f607436bbdeaa618eafb4b2e8d3a89",
+      "producerScriptPath": "artifacts/tmp/W2.A03.S01.inspect-integrated.py",
+      "producerScriptSha256": "19078fb06bb3fa7bf572d1394b786af891fe638cd2067bdff1046ae55ba51ff7",
+      "stdoutPath": "artifacts/tmp/W2.A03.S01.integrated-observation.log",
+      "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "observation": "Producer script and structured adverse report are independently read and hashed. The actual invocation failed with the exact generic history ValueError; no pass report was emitted. Structured report accurately labels its diagnostic, preserves real stderr in the tool transcript, and does not fabricate a raw traceback log or approval."
+    },
+    {
+      "check": "Independent bounded per-commit source/net mismatch diagnosis",
+      "result": "reproduced-blocking-finding",
+      "testedCommit": "b2fd64fdd9bc840cdb91eb667655e461e5736d7a",
+      "observations": [
+        {
+          "taskId": "W2.A03.T02",
+          "attemptId": "R01",
+          "base": "ca8b1448e094b637bbd06c3129b69a78df792619",
+          "candidate": "06a69348c5de5c60cccecde400ab2271200ec50d",
+          "commit": "7f35c7a8e49eb8415ffdffa5a2e04374161f0eae",
+          "pathsAbsentFromNet": [
+            "planning/review-site/waves/W2.html"
+          ]
+        },
+        {
+          "taskId": "W2.A03.T02",
+          "attemptId": "R01",
+          "base": "ca8b1448e094b637bbd06c3129b69a78df792619",
+          "candidate": "06a69348c5de5c60cccecde400ab2271200ec50d",
+          "commit": "a8f864b847170c62b1e03422911eee862fa4a50d",
+          "pathsAbsentFromNet": [
+            "planning/review-site/waves/W2.html"
+          ]
+        },
+        {
+          "taskId": "W2.A03.T02",
+          "attemptId": "R01",
+          "base": "ca8b1448e094b637bbd06c3129b69a78df792619",
+          "candidate": "06a69348c5de5c60cccecde400ab2271200ec50d",
+          "commit": "53673ae2748af3e7c3c975e8381987d8b470dd42",
+          "pathsAbsentFromNet": [
+            "planning/review-site/waves/W2.html"
+          ]
+        },
+        {
+          "taskId": "W2.A03.T02",
+          "attemptId": "R01",
+          "base": "ca8b1448e094b637bbd06c3129b69a78df792619",
+          "candidate": "06a69348c5de5c60cccecde400ab2271200ec50d",
+          "commit": "75d8d094d9833f30445f56bbb3c1fe39ff052221",
+          "pathsAbsentFromNet": [
+            "planning/review-site/waves/W2.html"
+          ]
+        },
+        {
+          "taskId": "W2.A03.T02",
+          "attemptId": "R01",
+          "base": "ca8b1448e094b637bbd06c3129b69a78df792619",
+          "candidate": "06a69348c5de5c60cccecde400ab2271200ec50d",
+          "commit": "512452182a483f82d4478420434841ff23b4668c",
+          "pathsAbsentFromNet": [
+            "planning/review-site/waves/W2.html"
+          ]
+        },
+        {
+          "taskId": "W2.A03.T02",
+          "attemptId": "R01",
+          "base": "ca8b1448e094b637bbd06c3129b69a78df792619",
+          "candidate": "06a69348c5de5c60cccecde400ab2271200ec50d",
+          "commit": "f967f97123ad0286ad90cb8a335ce295f8c53d9d",
+          "pathsAbsentFromNet": [
+            "planning/review-site/waves/W2.html"
+          ]
+        }
+      ],
+      "observation": "T01 four-commit source range has no per-commit path absent from its net inventory. T02 real retained39-commit range has only the six W2.html projection mismatches above; base and final bytes are identical. These exact paths/commits independently match the producer diagnostic. The correct net inventory and all immutable source/task approvals are preserved."
+    },
+    {
+      "check": "Historical runtime/capture proof and adverse limits",
+      "result": "authenticated-historical-proof",
+      "testedCommit": "b2fd64fdd9bc840cdb91eb667655e461e5736d7a",
+      "observation": "Existing T01 and T02 candidate-bound task manifests/review hashes, unchanged source and capture delivery were authenticated rather than executed again. T02 42hash/66PNG/769input/privacy audit is reused from its immediately preceding independent R01; no changed source/runtime input justifies a repeat. Historical task successes are not a passing current integrated helper or a full profile. Original accessibility failure, exact browser naming proof, generation anchors and setup/adverse records remain intact."
+    }
+  ],
+  "findings": [
+    {
+      "id": "W2.A03.S01-R01-F01",
+      "severity": "high",
+      "blocking": true,
+      "criterion_index": 3,
+      "title": "Integrated retained-range attribution rejects an authorized reverted planning projection",
+      "reproduction": "At exact clean integrated/local-main b2fd64fdd9bc840cdb91eb667655e461e5736d7a, the actual producer command .venv/Scripts/python.exe -B artifacts/tmp/W2.A03.S01.inspect-integrated.py exits 1. reference_activation_reviewed_tasks calls adopted_continuation_reviewed_task_commits, whose per-commit subset check at tools/ui_change_gate.py:4798 raises ValueError: adopted continuation task review has hidden or overlapping source paths. Independent Git diagnosis of T02 R01 ca8b1448..06a69348 finds the sole absent-from-net path planning/review-site/waves/W2.html in exactly six historical commits: 7f35c7a8, a8f864b8, 53673ae2, 75d8d094, 51245218 and f967f971. Its final bytes equal the retained claim base, so the immutable 118-path net changedFiles is correct and excludes it. This is an authorized generated A04/A03 workflow projection, already explicitly allowed downstream, rather than a hidden product/control source. Generic net-subset rejection runs before exact reviewed A04/control attribution and therefore blocks the actual combined integration despite correctly approved task source and evidence.",
+      "required_remediation": "Preserve the failed actual observation, every approved task/packet/manifest/review and its correct net inventory. Provide a strict-descendant, independently reviewed authority-preserving correction that attributes only authenticated inert historical workflow outputs separately from the exact net source inventory, before the generic subset rejection. Do not ignore arbitrary paths, filename prefixes or hidden source add/revert, shorten the retained range, fabricate changedFiles, rewrite approved task hashes, weaken current identity/claim/order checks or present this failed invocation as a pass. Prove the actual real-Git retained-range positive and explicit denial of unauthenticated/extra workflow output and product/control add-revert. Before any source edit, establish a lawful exact source-delivery/ADR attribution route: ordinary bounded maintenance grants no automatic exception to A03 frozen source history; unfinished A03 prevents the linked correction route, T02 excludes gate source, and T01 remediation would overlap already reviewed A04/T02 and break its envelope/order. If no existing supported restoration route can admit the narrow repair honestly, use an append-only approved exact correction segment. Then rerun the fresh integrated check and replay this finding in immutable S01 review-02; exit/security/adoption stay pending."
+    }
+  ],
+  "closures": [],
+  "openFindingIds": [
+    "W2.A03.S01-R01-F01"
+  ],
+  "retainedObligations": [
+    "Resolve this concrete integration finding through a lawful exact source-attribution/ADR route and immutable subsequent S01 review; no ordinary or amendment adoption transition is approved by this ledger.",
+    "Independent A03 exit and separate committed security/control review before adoption remain due; ordinary W2 stays PAUSED and original CAP-05.S01.T01 stays BLOCKED at original6506 base.",
+    "Official accessibility/profile FAIL remains adverse. The associated-label browser predicate proves only its exact naming criterion; lawful checker maintenance and fresh full W2 accessibility qualification remain due.",
+    "Joined CAP-04.S05 real signed-worker/Core integration, original CAP-05 product/reference/native/Core/fifth-D3D/classification/full-base evidence, remaining W2 slices/profiles/security/privacy/rights/performance/packaging and independent Wave/human release gates remain due."
+  ],
+  "reviewerSafety": {
+    "productOrControlMutation": false,
+    "backlogOrSiteMutation": false,
+    "gitRefMutation": false,
+    "remoteEffect": false,
+    "canonicalFilesAuthored": [
+      "artifacts/evidence/W2.A03.S01.review-01.json"
+    ]
+  }
+}
