@@ -1,7 +1,7 @@
 ---
 document_type: generated-backlog-status-summary
 source: planning/backlog.yaml
-source_sha256: 82b26debb71b712173ac16da7f689b0f1777b58a4c259850f88713dff556f291
+source_sha256: 8c9543a9e1a7d085c1c1149b530bc8bf8353cd07981c4e19e176b2844a4fba78
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -93,7 +93,7 @@ Proposal approval, materialization lifecycle, and campaign state remain distinct
 | `W2` | `W2.A01` | `ECR-0009` | `planning/wave-amendment-approvals/W2.A01.json` | `ADOPTED` | `APPROVED` | `COMPLETE` | 2 |
 | `W2` | `W2.A02` | `ECR-0010` | `planning/wave-amendment-approvals/W2.A02.json` | `ADOPTED` | `APPROVED` | `COMPLETE` | 1 |
 | `W2` | `W2.A03` | `ECR-0011` | `planning/wave-amendment-approvals/W2.A03.json` | `PAUSED` | `APPROVED` | `PAUSED` | 2 |
-| `W2` | `W2.A04` | `ECR-0012` | `planning/wave-amendment-approvals/W2.A04.json` | `REVIEW` | `APPROVED` | `REVIEW` | 1 |
+| `W2` | `W2.A04` | `ECR-0012` | `planning/wave-amendment-approvals/W2.A04.json` | `REVIEW` | `APPROVED` | `COMPLETE` | 1 |
 
 ## Amendment-exit review and adoption projections
 
@@ -662,9 +662,11 @@ Immutable exit rounds, the latest completion projection, and bound adoption chec
 
 ### Amendment-exit review and adoption — W2.A04
 
-**Exit-review mode:** `append-only v1` / 0 completed round(s)
+**Exit-review mode:** `append-only v1` / 1 completed round(s)
 
-**Current immutable amendment-exit submission awaiting review:** `R01` / packet SHA-256 `f51ee18890332d47401220f09118b815e49dbab84587fd1ed47cde6d0f00a8ae`
+#### Exit round R01
+
+**Immutable amendment-exit packet:** `R01` / packet SHA-256 `f51ee18890332d47401220f09118b815e49dbab84587fd1ed47cde6d0f00a8ae`
 
 - Candidate / declared candidate / branch: `10e555d2269a0333048622cd4e84803cb410c3a9` / `83266005c0a828033c2705a6105364435e02afcd` / `codex/w2-implementation`
 - Submitted by / at: codex-w2-implementation / `2026-10-04T16:38:44+00:00`
@@ -674,11 +676,29 @@ Immutable exit rounds, the latest completion projection, and bound adoption chec
 - Selected checks: `.venv/Scripts/python.exe -B artifacts/tmp/W2.A04.inspect-integrated-state.py slice`
 - Prior round / replayed open findings: `-` / -
 
-**Latest completion projection:** `REVIEW` by - at `-`
+**Disposition / reviewer / time:** `approved` / agent:/root/a03_t02_authority_review / `2026-10-04T16:56:13+00:00`
+
+**Reviewed state commit:** `1733931c7cec344ed86a9cbf8507e3cfda17ab9a`
+
+**Immutable exit-review ledger:** `artifacts/evidence/W2.A04.exit-review-R01.json` / `ca7e7e84fd121029e70aa8a11e45fd861c40ed8fe4ff90f1fc1ce1fbb69df24a`
+
+**Review notes:** Independent W2.A04 amendment-exit R01 approval of the exact supported frozen REVIEW state 1733931c, its committed manifest candidate 10e555d2 and declared integrated S01 delivery 83266005. All five exit criteria match the exact approved ECR-0012 packet; evidence, criteria, selected-check and immutable packet hashes independently recompute to their frozen values, and strict read-only submission validation returns no errors. B00, the sole five-source T01 and integrated S01 have committed independent approvals with no open findings. No control/product source changes occur after reviewed task candidate 6a07f37d, including hidden changes in the complete suffix. The full original A03 record remains equal to a211f241/f099fd8f with T01 DONE and T02 BLOCKED at ca8b1448. The one Proposed ADR-0040/index append and narrow v1.4 history attribution resolve the documented protected-path association through separate reviewed correction delivery while retaining original task bases, schemas, reference, consumer scope and security authority. Advisory PF01/PF02/PF03 and regression-first adverse/setup/interrupted outcomes remain preserved; existing exact-candidate output hashes were authenticated without claiming fresh exit suite executions. The actual integrated slice observation confirms persisted reviewed task and S01 source/control authority, but disposable future records and mocked capture readers prove only control enforcement. This exit disposition supplies only the required independent exit review. Actual separate committed security checkpoint review and supported adoption/exact return to paused A03, later A03 activation/T02 reopen and captures, original native/Core/D3D and CAP-05/ joined CAP-04.S05, W2 qualification and separate human release remain required.
+
+**Findings opened:**
+
+- None
+
+**Prior finding closures:**
+
+- None
+
+**Current immutable amendment-exit submission awaiting review:** None
+
+**Latest completion projection:** `APPROVED` by agent:/root/a03_t02_authority_review at `2026-10-04T16:56:13+00:00`
 
 **Latest completion evidence:** `artifacts/evidence/W2.A04.exit.json`
 
-**Latest completion notes:** -
+**Latest completion notes:** Independent W2.A04 amendment-exit R01 approval of the exact supported frozen REVIEW state 1733931c, its committed manifest candidate 10e555d2 and declared integrated S01 delivery 83266005. All five exit criteria match the exact approved ECR-0012 packet; evidence, criteria, selected-check and immutable packet hashes independently recompute to their frozen values, and strict read-only submission validation returns no errors. B00, the sole five-source T01 and integrated S01 have committed independent approvals with no open findings. No control/product source changes occur after reviewed task candidate 6a07f37d, including hidden changes in the complete suffix. The full original A03 record remains equal to a211f241/f099fd8f with T01 DONE and T02 BLOCKED at ca8b1448. The one Proposed ADR-0040/index append and narrow v1.4 history attribution resolve the documented protected-path association through separate reviewed correction delivery while retaining original task bases, schemas, reference, consumer scope and security authority. Advisory PF01/PF02/PF03 and regression-first adverse/setup/interrupted outcomes remain preserved; existing exact-candidate output hashes were authenticated without claiming fresh exit suite executions. The actual integrated slice observation confirms persisted reviewed task and S01 source/control authority, but disposable future records and mocked capture readers prove only control enforcement. This exit disposition supplies only the required independent exit review. Actual separate committed security checkpoint review and supported adoption/exact return to paused A03, later A03 activation/T02 reopen and captures, original native/Core/D3D and CAP-05/ joined CAP-04.S05, W2 qualification and separate human release remain required.
 
 **Bound amendment-adoption checkpoints:**
 

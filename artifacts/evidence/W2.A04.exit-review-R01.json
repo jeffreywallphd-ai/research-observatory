@@ -1,0 +1,100 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "wave-amendment-exit-independent-review",
+  "amendment_id": "W2.A04",
+  "attempt_id": "R01",
+  "reviewer": "agent:/root/a03_t02_authority_review",
+  "reviewedAt": "2026-10-04T16:46:25.529611+00:00",
+  "result": "approved",
+  "reviewed_state_commit": "1733931c7cec344ed86a9cbf8507e3cfda17ab9a",
+  "candidate_commit": "10e555d2269a0333048622cd4e84803cb410c3a9",
+  "declared_candidate_commit": "83266005c0a828033c2705a6105364435e02afcd",
+  "evidence": {
+    "path": "artifacts/evidence/W2.A04.exit.json",
+    "sha256": "aa98cc71b49c6810b3b668ba550976bc723af8c7a95ff599c61ad5f36d162d73"
+  },
+  "acceptance_criteria_sha256": "7806a788f93745bc97f1e76f0771f883a092e5e0877759967d04cf67891236f7",
+  "selected_checks_sha256": "741620660f0682507adfa15b4d3bb6c07854d568bcedaf65486dc6237734927f",
+  "packet_sha256": "f51ee18890332d47401220f09118b815e49dbab84587fd1ed47cde6d0f00a8ae",
+  "notes": "Independent W2.A04 amendment-exit R01 approval of the exact supported frozen REVIEW state 1733931c, its committed manifest candidate 10e555d2 and declared integrated S01 delivery 83266005. All five exit criteria match the exact approved ECR-0012 packet; evidence, criteria, selected-check and immutable packet hashes independently recompute to their frozen values, and strict read-only submission validation returns no errors. B00, the sole five-source T01 and integrated S01 have committed independent approvals with no open findings. No control/product source changes occur after reviewed task candidate 6a07f37d, including hidden changes in the complete suffix. The full original A03 record remains equal to a211f241/f099fd8f with T01 DONE and T02 BLOCKED at ca8b1448. The one Proposed ADR-0040/index append and narrow v1.4 history attribution resolve the documented protected-path association through separate reviewed correction delivery while retaining original task bases, schemas, reference, consumer scope and security authority. Advisory PF01/PF02/PF03 and regression-first adverse/setup/interrupted outcomes remain preserved; existing exact-candidate output hashes were authenticated without claiming fresh exit suite executions. The actual integrated slice observation confirms persisted reviewed task and S01 source/control authority, but disposable future records and mocked capture readers prove only control enforcement. This exit disposition supplies only the required independent exit review. Actual separate committed security checkpoint review and supported adoption/exact return to paused A03, later A03 activation/T02 reopen and captures, original native/Core/D3D and CAP-05/ joined CAP-04.S05, W2 qualification and separate human release remain required.",
+  "independence": {
+    "campaignOwner": "codex-w2-implementation",
+    "bootstrapReviewer": "agent:/root/a03_t02_authority_review",
+    "taskReviewer": "agent:/root/a03_t02_authority_review",
+    "sliceReviewer": "agent:/root/a03_t02_authority_review",
+    "statement": "The reviewer did not author the ECR-0012 proposal/owner approval, B00 implementation, task source/manifest or exit manifest and does not own the campaign. Earlier independent ECR-0012/B00/task/S01 reviews and read-only advisories are disclosed; this exit review independently examines the later frozen five-criterion submission and writes only this exit ledger. Task and slice review reuse is explicit, not a fabricated different reviewer. Repository guidance requires independence from the campaign/task owner and does not demand a new agent identity at each boundary. No source, backlog, site, controller or Git ref is mutated during this examination."
+  },
+  "criterion_dispositions": [
+    {
+      "criterionIndex": 1,
+      "result": "satisfied",
+      "basis": "Actual source, integrated task/S01 and submitted exit states preserve the exact full A03 record at a211f241 with f099fd8f hash, original approved ECR-0011 references, complete DONE T01 and retained blocked T02 ca8b1448 base/definition/hash/review history. The corrected gate authenticates the sole ca8b1448 parent and only the combined snapshot, without inventing an intermediate IN_PROGRESS claim or generic exemption. Later separate activation/reopen remains an enforced subsequent transition."
+    },
+    {
+      "criterionIndex": 2,
+      "result": "satisfied-at-reviewed-control-boundary",
+      "basis": "The retained original ADR preflight raw bytes recompute to a63b91ae and remain adverse. A04’s separate exact five-path claim/source range introduces one jointly indexed Proposed ADR-0040 linked to A04.T01 and A03.T02. Actual task-base ADR association passes, and the freshly tested disposable future consumer passes at unchanged ca8b1448. No widened/substituted base, pre-claim ADR substitution, bootstrap addendum or silent envelope expansion is used. Actual later T02 must still execute its own complete retained-range proof."
+    },
+    {
+      "criterionIndex": 3,
+      "result": "satisfied",
+      "basis": "The exact independently reviewed ECR-0012 packet eb1cbf1b and immutable owner approval e769cb71 retain their authenticated original W2, adopted A01/A02, GOV-MIG-0001, approved 55-file Academic Minimal 1.8/publication, GOV26/C10 and completed A03 T01 prerequisites. The independent packet review precedes explicit owner approval and bounded bootstrap/materialization. That immutable input closure is unchanged through this exit: source edits remain the authorized five paths, non-A04 records are preserved, and no reference/product/schema/controller or native/security redesign is present."
+    },
+    {
+      "criterionIndex": 4,
+      "result": "satisfied-at-integrated-exit-boundary",
+      "basis": "B00’s committed independent disposition precedes the exact one-task materialization and separate claim. T01’s actual R01 approval at 75d416d7 binds source 6a07f37d, manifest afd3a1fb and ledger fbe33e86; integrated S01 ledger 49b94f6a was separately introduced at 83266005. The five-source envelope and one ADR/index append remain unchanged. The complete source suffix contains only typed task/slice/exit evidence, supported backlog transitions and generated projections. Reviewed controls partition the future A04 correction from all seven T02 consumer sources without shortening the real range, and authenticate separate security review, exact return and later legal consumer start."
+    },
+    {
+      "criterionIndex": 5,
+      "result": "satisfied-at-exit-review-boundary",
+      "basis": "Committed independent task and integrated S01 approvals are authenticated; this ledger supplies the distinct actual frozen exit disposition. A04 is REVIEW, has no completed exit round or adoption, and its pending packet has no prior/open findings. The supported submit transition cleared only the active-amendment marker while ordinary W2 remains PAUSED/amendment-hold and original A03 remains fully PAUSED with T02 BLOCKED. Actual separate committed security checkpoint review and taskctl adoption must still return the exact paused A03 hold; only later legal A03 activation/T02 reopen permits consumer delivery. Native/product/W2 qualification and human release remain separate."
+    }
+  ],
+  "independent_checks_performed_for_exit": [
+    {
+      "check": "Exact actual frozen R01 packet and strict semantic validation",
+      "result": "passed",
+      "observation": "The reviewed state 1733931c is the sole child of manifest introduction/candidate 10e555d2, itself the sole child of declared integrated S01 83266005. All five criterion strings match approved acceptanceCriteria. Independently recomputed manifest aa98cc71, criteria 7806a788, selected checks 74162066 and packet f51ee188 hashes match stored current_submission. Current physical manifest equals committed LF bytes. Read-only amendment_exit_submission_errors with strict_state=True returned an empty list; no current approval/adoption is inferred from that validation."
+    },
+    {
+      "check": "Integrated persistence, immutable review and exact source suffix",
+      "result": "passed",
+      "observation": "The task manifest, task R01 ledger and S01 ledger recomputed to afd3a1fb, fbe33e86 and 49b94f6a respectively and have separate actual introductions 7d8992af, 75d416d7 and 83266005. The task remains DONE/approved without a lease. Every commit after source 6a07f37d changes only the nine exact evidence/backlog/generated paths; no control/product source changed or was added then reverted. The full A03 frozen record and all non-A04 amendment records persist. The only non-amendment backlog change since S01 is the active-amendment marker A04-to-null explicitly performed by taskctl’s supported submit path; it is not adoption or return."
+    },
+    {
+      "check": "Actual slice observation and unchanged task checks authenticated",
+      "result": "passed",
+      "observationPath": "artifacts/tmp/W2.A04.slice-integrated-83266005.json",
+      "observationSha256": "fad0a28b35757075b46ce5b4cc4aecab0a0f23e664fe6cf32ecf8f3084b581c2",
+      "stdoutPath": "artifacts/tmp/W2.A04.slice-integrated-observation.log",
+      "stdoutSha256": "71c32c4eaa233c05c4e0a73b4466129f5c08610e98ea2c0710a4593017804224",
+      "producerScriptSha256": "8bde7bca4c942f052ef896087f5fc3b0f018213b56483de83ae59a76d90c814d",
+      "observation": "The exact declared slice observation reports reviewed-task/source persistence, authenticated canonical S01 review and full paused-predecessor preservation; report/stdout/script digests were independently checked. Local main contains the reviewed task source at 75d416d7, an ancestor of integrated S01 and this exit. All 16 prior task raw output hashes still match the unchanged candidate manifest and remain earlier executions, not fresh exit tests. The producer slice observation is distinguished from this reviewer’s independent Git/hash/state checks."
+    },
+    {
+      "check": "Adverse history, scope and proof limits",
+      "result": "passed",
+      "observation": "The task-start worksheet and ignored advisory records preserve PF01 temporary adopted-record mutation, PF02 legal append-only evidence rejection and PF03 missing/rejected separate checkpoint review, plus their regression-first adverse evidence. Their narrow corrections and fresh 6a07f37d preservation/remediation/security/full-base/denial cases were independently reviewed and remain authenticated. No formal prior exit findings/rounds are fabricated. Full source scope is unchanged; disposable future approval/adoption and capture fixtures remain synthetic control evidence and cannot substitute for real consumer/native/Wave proof."
+    }
+  ],
+  "retained_history_and_limits": [
+    "PF01/PF02/PF03 advisories and adverse setup/failure/interrupted histories remain append-only evidence. They are not invented controlled task or exit rounds, and this first exit attempt has no prior findings requiring formal closures.",
+    "The exact reviewed correction enforces full retained history, regular source ownership, preserved ordinary/completed records, authenticated append-only task/slice/exit/security reviews and separate return/activation/reopen. Synthetic future state and capture readers prove only this control route.",
+    "Actual separate committed security checkpoint review and supported A04 adoption must return the original hold to still-paused A03, preserving DONE T01 and BLOCKED T02 at ca8b1448. Later activation/reopen, fresh 66-image T02 capture/ADR/UI and A03 completion/adoption remain due.",
+    "Original CAP-05 native/Core/D3D and current classification/original-base proof, joined CAP-04.S05, remaining W2 slices/checkpoints and full Windows x64 repository/profile/security/privacy/rights/accessibility/performance/packaging qualification, independent Wave review and human release remain separate."
+  ],
+  "pending_adoption_contract": {
+    "approvedExitAttempt": "R01",
+    "requiresSeparateCommittedCheckpointEvidence": true,
+    "requiresSeparateIndependentSecurityReview": true,
+    "requiresTaskctlAdopt": true,
+    "expectedWaveAfterAdoption": "PAUSED with amendment-hold scope",
+    "expectedPausedPredecessor": "W2.A03",
+    "expectedPredecessorRecordSha256": "f099fd8f6a15dcdcddea9ac6dca1ca5cac62d8692991e2d6e4366b1393c6ac6c",
+    "consumerActivationAndReopenRequireSeparateCommands": true,
+    "releaseApprovalGranted": false
+  },
+  "findings": [],
+  "closures": []
+}
