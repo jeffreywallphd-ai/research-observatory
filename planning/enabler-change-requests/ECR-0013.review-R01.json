@@ -1,0 +1,362 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "enabler-change-request-packet-review",
+  "changeRequestId": "ECR-0013",
+  "proposedAmendmentId": "W2.A05",
+  "targetWave": "W2",
+  "attemptId": "R01",
+  "candidateCommit": "55c6389ce39a656f4da3851cae32ae12ac80e796",
+  "packetSha256": "56f521d708266021121b2a3391506cc771c7d32e32442d29dc5e58ba356f20c1",
+  "reviewer": "agent:/root/a05_packet_review",
+  "reviewedAt": "2026-10-04T20:42:50Z",
+  "result": "approved",
+  "approvalAvailable": true,
+  "summary": "The exact pending ECR-0013 candidate is decision-complete for two ordered W2.A05 control repairs through eight unique source paths. It preserves the complete paused A03 record with both tasks DONE and independently approved, adopted A04, the correct retained 118-path net inventory, all historical adverse observations, the approved 55-file 1.8 reference, the original 6506 task base and the unchanged Wave budget. The separate exact GOV-MAINT-0027 source/evidence sequence is authenticated as historical bounded maintenance, including its adverse R01 and approved R02. Fresh fixed-candidate planning checks pass. This disposition makes the packet eligible for an exact owner decision after the sole review-ledger commit; it is not owner approval, implementation authority, task or amendment completion, ordinary W2 resume or release.",
+  "independence": {
+    "implementationOwner": "codex-w2-implementation",
+    "proposalPacketOrSiteAuthoredByReviewer": false,
+    "priorParticipation": "Read-only preflight and exact committed-candidate review in this independent agent. I authored no proposal, packet, binding, generated site, maintenance source or evidence, product/control implementation, task manifest, owner approval or backlog transition. I independently read governing contracts, authenticated Git objects and retained producer outputs, and ran bounded read-only hash/path/link inspections. I did not rerun the already independently reviewed maintenance control suites or product/native/profile suites.",
+    "persistentWrites": [
+      "planning/enabler-change-requests/ECR-0013.review-R01.json"
+    ],
+    "workflowMutations": "Only this canonical review ledger is authored. No taskctl mutation, owner approval, bootstrap, materialization, claim, source/site change, Git ref change, integration, push or release action is performed by this reviewer."
+  },
+  "bindings": {
+    "packet": {
+      "path": "planning/enabler-change-requests/ECR-0013.packet.json",
+      "sha256": "56f521d708266021121b2a3391506cc771c7d32e32442d29dc5e58ba356f20c1"
+    },
+    "canonicalProposal": {
+      "path": "planning/enabler-change-requests/ECR-0013.md",
+      "sha256": "1515e5f073bd19ed33d1c4552f9325d56ce84f1c61b8d18e3d8b1183691f4d14"
+    },
+    "humanReview": {
+      "path": "planning/enabler-change-requests/ECR-0013-review.html",
+      "sha256": "18bbbd6ecc0dee72c46a2f5169021ba5c2294ce408c67f85f98663d5beaa9187"
+    },
+    "proposalSchema": {
+      "path": "planning/enabler-change-requests/enabler-change-request.v4.1.schema.json",
+      "sha256": "f51e2162aa45ca0a1c9b88adadaf4a5fe4536ec086cfcf7503054d9c0827786c"
+    },
+    "preflight": {
+      "path": "planning/enabler-change-requests/ECR-0013.preflight-01.json",
+      "sha256": "140350618878d3f73f921f092054c75c7cb7352fb3ed9a0ebc9bea646918a991"
+    },
+    "preservedProposalValidationAdverse": {
+      "path": "planning/enabler-change-requests/ECR-0013.validation-adverse-01.json",
+      "sha256": "13c035da400a72349c9bd20b56cefc1a09b7f8226a1adb1ce6c2a85b770d50a2",
+      "disposition": "Historical inert-proposal validation failure remains adverse; it is not a formal earlier packet-review attempt or implementation qualification."
+    },
+    "maintenanceSourceHistory": {
+      "path": "planning/enabler-change-requests/ECR-0013.maintenance-binding.json",
+      "sha256": "d550768944a0b142035270af47e2dcace88c7021edd0251d0a30e5ffc3e09be5",
+      "predecessorCommit": "7604e7ee94e930548d3078c691ade0f4934a76c9",
+      "orderedCommits": [
+        "29139a46b77ef2a1e73031b759067fbc2b0e7118",
+        "037959481142cdb64f873d66ff5166733a40935e",
+        "6295697db3dd16d185f77e055b84dfa54a1211bf",
+        "a6d2f0b522b691a36bc54b906aa777d50369e085"
+      ],
+      "authenticatedChangedPathRows": 17,
+      "authenticatedFinalSourceFiles": 7,
+      "authenticatedFinalEvidenceFiles": 5,
+      "importedAuthorityPaths": [
+        "tools/governance_kernel.py",
+        "tools/planctl.py",
+        "tools/taskctl.py"
+      ],
+      "preservedBacklogGitBlobSha256": "4355f55e1b431b8ff40d99cf615536dccd9d84a8a4945544984ec81f7068d49d",
+      "provenance": "Every sole parent, exact per-commit changed-path inventory, before/after regular Git mode and raw SHA-256, final source/evidence object and immutable R01/R02 identity was independently authenticated. The eight R02 check-group logs and raw receipt match their recorded hashes. These remain historical candidate-bound maintenance proof, not fresh A05, original-task or product qualification."
+    },
+    "pausedPredecessor": {
+      "id": "W2.A03",
+      "effectiveStateCommit": "771e54a3657cdc5ff308d3a53d7b71eb48bb9214",
+      "recordSha256": "bdad5e81327e32ee322db436dc569898ce314d29058e53b0cfe67ed6192e0b03",
+      "returnPolicy": "paused-predecessor",
+      "taskStates": [
+        {
+          "id": "W2.A03.T01",
+          "status": "DONE",
+          "reviewResult": "approved",
+          "attemptId": "R01",
+          "candidateCommit": "aa09664678ca3ca8fa7a428cb60f3565d2c0e9bd"
+        },
+        {
+          "id": "W2.A03.T02",
+          "status": "DONE",
+          "reviewResult": "approved",
+          "attemptId": "R01",
+          "candidateCommit": "06a69348c5de5c60cccecde400ab2271200ec50d"
+        }
+      ],
+      "preservedSliceReview": {
+        "path": "artifacts/evidence/W2.A03.S01.review-01.json",
+        "sha256": "75d03f4f1d72ee966e70bcbdf66a7afc9bcbdb9fa222533e02d7c52e3d9f76f3",
+        "result": "changes-requested",
+        "openFindingId": "W2.A03.S01-R01-F01"
+      }
+    },
+    "adoptedSibling": {
+      "id": "W2.A04",
+      "status": "ADOPTED",
+      "recordSha256": "c15d980f77933ba92e926980d6bc57b0f918430a4d0272952b922889a97e9ffc"
+    },
+    "preservedNamingEvidence": [
+      {
+        "path": "artifacts/evidence/W2.A03.T02.accessibility-official-failed-aab29ed2.json",
+        "sha256": "87daa692dd752159a0c4961e231bb53359e5bde4928cb410acac7b61c7b9b74d",
+        "disposition": "Official accessibility FAIL remains false/unnamed-input adverse evidence at 33 pages and 66 responsive states."
+      },
+      {
+        "path": "artifacts/evidence/W2.A03.T02.accessibility-browser-aab29ed2.json",
+        "sha256": "713f966999820752c4f5e9a07a27b86cd5f1a2d940188d9e56fd3b11c2fa5bd6",
+        "disposition": "Historical actual Chromium names the associated input Local full-text file; removing the label in memory produces Choose File and fails that exact expected-name predicate."
+      },
+      {
+        "path": "artifacts/evidence/W2.A03.T02.accessibility-adjudication-R01.json",
+        "sha256": "bddb17022f17fc5d3ac26d99b652b20874b79586c37dca4cbb5b99d82c8aac00",
+        "disposition": "Independent historical adjudication covers only the challenged associated-label predicate; it does not convert the official command or desktop profile to PASS."
+      }
+    ],
+    "governedReference": {
+      "id": "RO-UI-ACADEMIC-MINIMAL-1.8",
+      "packageSha256": "cd8995fdcea2fe44452eaa1fdd258b6f9fab5714cbd443a81a8e5b4251220b94",
+      "unchangedFileCount": 55,
+      "equality": "All 55 rows equal the frozen ECR-0011 reference inventory and are authenticated regular 100644 Git blobs at this candidate."
+    },
+    "generatedReviewPage": {
+      "path": "planning/review-site/enablers/ECR-0013.html",
+      "sha256": "a7cf573e2d70c39c9354cdd1c6e904b406fffaeaf07ede9081ba97161a1d04c1"
+    },
+    "freshPlanningChecks": {
+      "path": "artifacts/tmp/ECR-0013.55c6389c.attempt-02.checks.json",
+      "sha256": "fce1a200c1f1be0b59bbeb8cbc9ef6db2b946d0b69d1b2711722f1fc745e1496",
+      "candidateCommit": "55c6389ce39a656f4da3851cae32ae12ac80e796",
+      "producerPath": "artifacts/tmp/ECR-0013.verify-final-packet-02.py",
+      "producerSha256": "6653c0c394b8283104b3d6ddd6002b9e3241791cf692c49ebb19be8feedca6be",
+      "inputsStable": true,
+      "trackedInputsCount": 4701,
+      "trackedInputsSha256": "9f72112e4ebaa62a50ab3d67bc43804201824289a9880d6c803bc365409ebfc8",
+      "fresh": true,
+      "reuse": false,
+      "checks": [
+        {
+          "id": "packet",
+          "commandArgs": [
+            ".venv/Scripts/python.exe",
+            "-B",
+            "tools/planctl.py",
+            "--repo",
+            ".",
+            "ecr",
+            "review",
+            "ECR-0013"
+          ],
+          "exitCode": 0,
+          "durationSeconds": 62.911,
+          "log": "artifacts/tmp/ECR-0013.55c6389c.attempt-02.packet.log",
+          "logSha256": "5fd56c1136960d390871e580c3e3ff13ee9178c4ed26e2e7741653238218e19f"
+        },
+        {
+          "id": "backlog",
+          "commandArgs": [
+            ".venv/Scripts/python.exe",
+            "-B",
+            "tools/taskctl.py",
+            "validate"
+          ],
+          "exitCode": 0,
+          "durationSeconds": 209.591,
+          "log": "artifacts/tmp/ECR-0013.55c6389c.attempt-02.backlog.log",
+          "logSha256": "d97d5b8d4d0a12904cada3ff677b3c739845ef523cf4f2fe70c0674e7afb2ea1"
+        },
+        {
+          "id": "views",
+          "commandArgs": [
+            ".venv/Scripts/python.exe",
+            "-B",
+            "tools/backlog_views.py",
+            "--repo",
+            ".",
+            "--check"
+          ],
+          "exitCode": 0,
+          "durationSeconds": 3.419,
+          "log": "artifacts/tmp/ECR-0013.55c6389c.attempt-02.views.log",
+          "logSha256": "36ebe8ba5eed16d416087f957ce901132e936a4ed14c97dbcb91651c3e2678aa"
+        },
+        {
+          "id": "site",
+          "commandArgs": [
+            ".venv/Scripts/python.exe",
+            "-B",
+            "tools/plan_review_check.py",
+            "--repo",
+            ".",
+            "--report",
+            "artifacts/tmp/ECR-0013.55c6389c.attempt-02.site-report.json"
+          ],
+          "exitCode": 0,
+          "durationSeconds": 309.65,
+          "log": "artifacts/tmp/ECR-0013.55c6389c.attempt-02.site.log",
+          "logSha256": "d6b4aabfbf04f2e0e52f0737fc127f4236f25f394f67a0092fcd99e5d5de45e3"
+        },
+        {
+          "id": "site-script",
+          "commandArgs": [
+            "node",
+            "--check",
+            "planning/review-site/assets/review.js"
+          ],
+          "exitCode": 0,
+          "durationSeconds": 0.038,
+          "log": "artifacts/tmp/ECR-0013.55c6389c.attempt-02.site-script.log",
+          "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "id": "diff",
+          "commandArgs": [
+            "git",
+            "-c",
+            "core.safecrlf=false",
+            "diff",
+            "--check",
+            "a6d2f0b522b691a36bc54b906aa777d50369e085",
+            "55c6389ce39a656f4da3851cae32ae12ac80e796"
+          ],
+          "exitCode": 0,
+          "durationSeconds": 0.057,
+          "log": "artifacts/tmp/ECR-0013.55c6389c.attempt-02.diff.log",
+          "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      ],
+      "siteReport": {
+        "path": "artifacts/tmp/ECR-0013.55c6389c.attempt-02.site-report.json",
+        "sha256": "8e26f455bb97bf76a441d6d734b6e7e04cb4f030f3eeacc2f09fcfb039af1916",
+        "status": "pass",
+        "htmlPageCount": 497,
+        "errors": 0,
+        "warnings": 0
+      },
+      "provenance": "Implementation-owner fresh execution at the clean fixed candidate. I independently read the producer, receipt, command logs and site report, recomputed every recorded digest and the current 4701-file tracked-input digest, and confirmed exact candidate HEAD and a clean worktree before authoring this ledger. The six selected commands are read-only for tracked inputs. This is authenticated fresh producer proof, not a reviewer-run product suite, reusable-runtime certification or execution authority."
+    },
+    "preservedSetupAttempt": {
+      "path": "artifacts/tmp/ECR-0013.a6d2f0b5.checks.json",
+      "sha256": "d98ff232e516a55143ca1662cf12a14fc8fa27221f985c42947184232b3dafb4",
+      "declaredCandidateCommit": "a6d2f0b522b691a36bc54b906aa777d50369e085",
+      "inputsStable": false,
+      "overallQualifierExitCode": 1,
+      "unsupportedViewsCommand": [
+        ".venv/Scripts/python.exe",
+        "-B",
+        "tools/taskctl.py",
+        "regen",
+        "--check"
+      ],
+      "unsupportedViewsExitCode": 2,
+      "unsupportedViewsLog": "artifacts/tmp/ECR-0013.a6d2f0b5.views.log",
+      "unsupportedViewsLogSha256": "a4259440753d5d03f7cdcc407e19f377a51e1c6cd475bcf41e18b0bc42ecf529",
+      "disposition": "Nonqualifying stale/setup attempt: it began while the commit hook was finishing, its HEAD/input boundary changed, and argparse rejected the unsupported regen command. The receipt and all six raw log digests were authenticated and remain preserved. Its other successful command outputs and same-base diff check are historical observations only; none substitutes for the corrected attempt-02 proof."
+    }
+  },
+  "checks": [
+    {
+      "id": "IR-R01-exact-candidate-and-authority",
+      "result": "PASS",
+      "criteria": "Packet acceptance 1; immutable authority, task identity and quiescent activation boundary.",
+      "observation": "Candidate 55c6389c is the sole-parent 11-path inert proposal/site child of a6d2f0b5. All 58 packet inputs are regular 100644 Git objects with their exact raw SHA-256 values. Original W2, A01/A02/A03/A04 approval references, ancestry and GOV-MIG-0001 bytes match. Whole paused A03 and adopted A04 records have the bound canonical hashes. Both A03 original R01 manifests, ledgers, approved outcomes and exact Git net inventories match. Original CAP-05.S01.T01 remains BLOCKED at 6506c68461144747b0ee9be10853211717aa381d without lease; no ordinary W2 task is IN_PROGRESS or REVIEW, and no active amendment, A05 shell, owner approval or ADR-0041 implementation exists."
+    },
+    {
+      "id": "IR-R01-authentic-defects-and-adverse-history",
+      "result": "PASS",
+      "criteria": "Packet acceptance 2; truthful diagnosis and preserved failed actual evidence.",
+      "observation": "Independently recomputed the real ca8b1448..06a69348 endpoint net inventory of 118 paths and all retained per-commit paths. The only absent-from-net path is W2.html in exactly the six preflight commits; every before/after mode/hash matches and the first/final bytes cancel. The current generic subset rejection precedes explicit attribution, corroborating the preserved actual S01 finding. A03 S01 review-01 and its failed integrated observation retain their hashes and open finding. Historical official accessibility remains FAIL, while the separate actual-browser/adjudication records identify the standard explicit-label omission without claiming an empty browser fallback name or profile PASS."
+    },
+    {
+      "id": "IR-R01-exact-preceding-maintenance",
+      "result": "PASS_HISTORICAL_EVIDENCE_AUTHENTICATED",
+      "criteria": "Packet acceptance 3; directly authenticated imported control source without history rewriting.",
+      "observation": "The exact four-commit GOV-MAINT-0027 sequence, 17 per-commit path rows, seven final source objects, five final evidence objects, both independent review identities and both fresh-check attempts match immutable Git. The first actual note is prepared, lacks reviewAttempts and has its unsorted original envelope; the existing UI gate/helper remained untouched during maintenance. R01's two findings and taskctl failure remain adverse. R02 binds exact remediation 6295697d, has no findings, and the final note explicitly closes both R01 findings. All eight R02 selected groups and raw output hashes match. The proposal requests recognition of only this exact preceding imported-source segment through later owner-approved ECR authority, grants no further imported-tool edit, and forbids weakening the older helper."
+    },
+    {
+      "id": "IR-R01-eight-path-scope-and-ADR-association",
+      "result": "PASS_WITH_LATER_TASK_PROOF_REQUIRED",
+      "criteria": "Packet acceptance 4-5; exact closed source envelopes and Accepted ADR-0001/0003/0004.",
+      "observation": "T01 has exactly five source paths and introduces one indexed Proposed ADR-0041 linked to both tasks with one append-only index entry. T02 has exactly four source paths, sharing only that ADR, and permits only a bounded body append while retaining its metadata/index entry. The two real reviewed ADR body versions satisfy the task-range companion requirement without widening bases or superseding accepted decisions. Generic per-commit inert attribution defaults empty and is distinct from frozen net changedFiles; only the six independently authenticated historical projection rows are eligible. Same-filename, arbitrary generated-output, hidden source/add-revert, overlap, redirected mode, unreviewed/mixed segment, forged review and imported-source/adverse-history substitutions remain required denials. Implementation and hostile real-Git proof are not inferred from this planning review."
+    },
+    {
+      "id": "IR-R01-naming-proof-and-unchanged-experience",
+      "result": "PASS_WITH_LATER_TASK_PROOF_REQUIRED",
+      "criteria": "Packet acceptance 6; accurate associated labels and unchanged approved reference/baseline.",
+      "observation": "The existing checker handles wrapping labels and selected attributes/text but omits explicit for/id association. The narrow proposal preserves existing naming behavior and adds same-document standard association, including later labels, with missing/empty/hidden/wrong-target/duplicate-ID/non-labelable and reference-drift denials. It requires actual pinned Chromium expected-name positive and association-removal/wrong-target negatives plus fresh unmodified official 33-page/66-responsive accessibility exit 0 at the exact T02 candidate. All 55 reference inputs remain identical to ECR-0011; no reference, pixel, renderer, activation consumer, witness, capture setting or baseline edit is authorized."
+    },
+    {
+      "id": "IR-R01-review-adoption-and-parent-return",
+      "result": "PASS_WITH_LATER_ACTUAL_INTEGRATION_REQUIRED",
+      "criteria": "Packet acceptance 7; immutable independent dispositions and distinct return/resume gates.",
+      "observation": "Owner approval precedes empty-shell B00 and independent bootstrap disposition, exact materialization and separate ordered task claims/reviews. Actual integrated A05 S01, exit, separate committed security review and adoption must precede exact return to still-paused A03 with both original tasks DONE. Separate later A03 activation, fresh actual integrated replay and independent S01 review-02 closure of W2.A03.S01-R01-F01, then A03's own exit/security/adoption precede explicit ordinary W2 resume. Synthetic future records provide control proof only and cannot complete an actual owner, task, parent return, native or Wave gate."
+    },
+    {
+      "id": "IR-R01-fresh-planning-and-review-surface",
+      "result": "PASS_FRESH_PRODUCER_OUTPUT_AUTHENTICATED",
+      "criteria": "Packet verification 1 and 4; exact proposal hashes, canonical projections and review links.",
+      "observation": "All six corrected exact-candidate check groups exit 0 with inputsStable=true; the producer, receipt, logs, site report and current 4701 tracked-input digest were independently authenticated. The site report has 497 HTML pages and no errors/warnings. The site manifest binds exact packet/proposal/human-review hashes and truthfully displays pending/non-executable A05 and PAUSED A03. All 101 local links/assets/anchors across the human and generated ECR-0013 pages resolve against committed Git objects. The initial stale unsupported-command run remains nonqualifying rather than being relabeled PASS."
+    },
+    {
+      "id": "IR-R01-budget-rollback-and-decision",
+      "result": "PASS",
+      "criteria": "Budget, rollback, alternatives and decision-complete handoff.",
+      "observation": "Two additional planned restorative tasks are estimated L/5 then M/3; no supplemental structural cleanup or budget reset is authorized. Original W2 33-task/143-point baseline, 530 engineering-hour P and one cumulative 79.5-hour supplemental-refactoring ceiling remain fixed. Empty proposal allocations do not claim unmeasured cumulative spending or spare capacity. Deferral keeps A03/W2 paused; broader governed replanning is a separate alternative if the narrow remedy proves infeasible. Failures preserve adverse descendants, original DONE task history, blocked original CAP-05 task, reference/baseline and append-only review rounds."
+    }
+  ],
+  "nonBlockingAdvisories": [
+    {
+      "id": "ECR-0013.IR-R01.A01",
+      "severity": "advisory",
+      "blocking": false,
+      "subject": "Distinguish first maintenance check outcome from its independent review disposition.",
+      "observation": "maintenance-binding freshCheckSequence[0].result is changes-requested, describing authentic R01 disposition. The exact hashed checks-01 payload.result is adverse-preserved and its taskctl group exits 1. All raw bytes and the failure are preserved; neither label reports a passing first attempt.",
+      "requiredFutureInterpretation": "Authenticate the bound raw checks-01 bytes and failed exit separately from the R01 review disposition. Do not mechanically reinterpret the projection label as a PASS or rewrite the original check/note/review. This semantic distinction requires no proposal or historical-byte edit and is not a formal blocking finding or fabricated prior review round."
+    }
+  ],
+  "findings": [],
+  "closures": [],
+  "verificationSelection": {
+    "selected": "Inert packet/schema/authority identity, canonical backlog/views, planning site/link/script integrity and bounded diff hygiene; independent exact Git, hash, task/evidence, maintenance and actual adverse-record authentication.",
+    "deferred": "A05 source/checker implementation, focused adversarial real-Git and naming tests, fresh official accessibility, actual adoption/return/A03 finding closure, original product/native/Core/D3D and complete profile/Wave qualification remain at their required later gates.",
+    "rationale": "The final 11-path increment changes only inert proposal/binding and generated planning outputs. The already independently reviewed maintenance source is unchanged and authenticated as historical proof. No concrete new product/native/runtime impact justifies repeating its full control audit or unrelated product suites at packet-review scope.",
+    "primaryReadOnlySources": [
+      {
+        "title": "Git diff documentation: endpoint comparison",
+        "url": "https://git-scm.com/docs/git-diff"
+      },
+      {
+        "title": "HTML Standard: label association",
+        "url": "https://html.spec.whatwg.org/multipage/forms.html#the-label-element"
+      }
+    ]
+  },
+  "readiness": {
+    "exactPacketReviewAccepted": true,
+    "humanApprovalRecorded": false,
+    "referenceApprovalRecorded": true,
+    "recordingCondition": "Commit this exact independent R01 ledger as the sole changed path after 55c6389ce39a656f4da3851cae32ae12ac80e796. A later explicit owner approval must bind that exact packet candidate/digest, this reviewer and the ledger's exact SHA-256/introduction commit, with empty formal finding closures. Do not mix packet, site, source or authority mutations into the review-ledger commit.",
+    "executionCondition": "Only explicit owner approval of this exact reviewed ECR-0013 may permit supported W2.A05.B00, independent bootstrap review, exact two-task materialization, separate activation/claims and implementation inside the approved envelopes. Independently reviewed actual task/S01/exit/separate security/adoption and exact paused-A03 return must be completed before separate A03 activation and fresh finding closure. A03 own exit/security/adoption and explicit taskctl W2 resume remain required before ordinary task work."
+  },
+  "retainedObligations": [
+    "Actual A05 B00, materialization, separate ordered task claims, exact-candidate control/naming proof, integrated S01, exit, separate security disposition, adoption and exact paused-parent return.",
+    "Separate A03 activation; fresh actual integrated review-01 finding replay and explicit review-02 closure; A03's own exit/security/adoption before ordinary W2 resume.",
+    "Original CAP-05.S01.T01 retained 6506 base, current classification/product-reference/native picker/drop/protected Core rights/provenance/receipt/restart and authentic fifth-D3D startup-denial proof.",
+    "Joined CAP-04.S05 signed-worker/Core happy/failure/denial/cancellation/restart/recovery integration; remaining 18 CAP-05 tasks and later slices.",
+    "Fresh full W2 repository/profile/cross-capability security/privacy/rights/accessibility/performance/packaging qualification, independent Wave review and separate human release gate."
+  ],
+  "authorityLimits": {
+    "humanProductOrControlApproval": false,
+    "newReferencePublished": false,
+    "amendmentMaterializedOrAdopted": false,
+    "originalTaskReopenedOrClaimed": false,
+    "taskOrSliceCompletedByThisReview": false,
+    "ordinaryTaskOrWaveComplete": false,
+    "releaseAuthorized": false
+  }
+}
