@@ -1,0 +1,45 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "wave-amendment-bootstrap-review-generated-artifact-precommit-check",
+  "bootstrapUnit": "W2.A05.B00",
+  "contextCommit": "10f0d06e220b43272bfe2f54f791530b634f8b8b",
+  "qualifyingTaskEvidence": false,
+  "commandArgs": [
+    ".venv/Scripts/python.exe",
+    "-B",
+    "tools/plan_review_check.py",
+    "--repo",
+    ".",
+    "--report",
+    "artifacts/tmp/W2.A05.B00.review-site-precommit-01.site-report.json"
+  ],
+  "exitCode": 0,
+  "durationSeconds": 347.494,
+  "inputsStable": true,
+  "changedPaths": [
+    "docs/planning-implementation-plan.md",
+    "planning/backlog.yaml",
+    "planning/review-site/enablers/ECR-0013.html",
+    "planning/review-site/enablers/index.html",
+    "planning/review-site/manifest.json",
+    "planning/review-site/waves/W2.html",
+    "planning/status-summary.md"
+  ],
+  "changedPathHashes": {
+    "docs/planning-implementation-plan.md": "3eb7731066e455f474b7283480d480dcbc06fc8b47d7ad1cac05c94bac81c78c",
+    "planning/backlog.yaml": "6ea57e9954fce36d12841dd39401e0ff59c2785bad9dec1c531554ce1fb8588a",
+    "planning/review-site/enablers/ECR-0013.html": "f05c025a790627fb758f893b4f477356336b34f8c6f0752ac80453b234956503",
+    "planning/review-site/enablers/index.html": "15a34fe243fd6f90e5bfaa837e95b433134e9a6b9f3196e67d2ee55a9776b0cc",
+    "planning/review-site/manifest.json": "6273dc20c684feb269af7e376ad9f1d4feb7372de05bfbcc39bcca517a3b0685",
+    "planning/review-site/waves/W2.html": "d24c0147a394188dde20d84fb67b1a65f185495142e022f82de4d1099448a175",
+    "planning/status-summary.md": "e9f1561c4cd01e77cf14a01a13c7ebe28efe9e433ddb8e85082241ab582aeb80"
+  },
+  "log": "artifacts/tmp/W2.A05.B00.review-site-precommit-01.log",
+  "logSha256": "d6b4aabfbf04f2e0e52f0737fc127f4236f25f394f67a0092fcd99e5d5de45e3",
+  "producer": {
+    "path": "artifacts/tmp/W2.A05.B00.review-site-precommit-01.py",
+    "sha256": "2ec762ef7560314948afb5f4fa330e2cd25a60c7eb25f5f813e6ad703b2b2b78"
+  },
+  "result": "PASS",
+  "limit": "Generated planning artifacts after the actual independently approved B00 disposition only. No task materialization, activation, implementation, adoption, product or Wave completion claim."
+}
