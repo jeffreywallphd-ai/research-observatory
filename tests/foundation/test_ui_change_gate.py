@@ -754,7 +754,12 @@ class UiChangeGateTests(unittest.TestCase):
         return self.commit(root, f"synthetic {identity} independent disposition")
 
     def reference_activation_git_fixture(
-        self, temporary: str, *, inject_unapproved_site_asset: bool = False
+        self,
+        temporary: str,
+        *,
+        inject_unapproved_site_asset: bool = False,
+        correction: bool = False,
+        correction_attack: str | None = None,
     ) -> tuple[Path, str, dict[str, Any], str, str, str]:
         """Extend actual GOV26/C10/A03 Git ancestry with test-only future adoption."""
         root = Path(temporary) / "reference-activation-fixture"
@@ -771,46 +776,154 @@ class UiChangeGateTests(unittest.TestCase):
         self.git(root, "config", "user.name", "UI Gate Test")
         self.git(root, "config", "user.email", "ui-gate@example.invalid")
         self.git(root, "config", "core.autocrlf", "false")
-        self.git(root, "switch", "-C", "codex/w2-implementation", "9824e2ba")
+        self.git(
+            root,
+            "switch",
+            "-C",
+            "codex/w2-implementation",
+            "53d510464e2f9a2ab64bc9e78d09ae7b3996bba7" if correction else "9824e2ba",
+        )
         backlog_path = root / "planning/backlog.yaml"
         backlog = yaml.safe_load(backlog_path.read_text(encoding="utf-8"))
         amendment = next(item for item in backlog["wave_amendments"] if item["id"] == "W2.A03")
         t01, t02 = amendment["tasks"]
-        self.assertEqual("IN_PROGRESS", t01["status"])
-        self.assertEqual("cd61bae9681690f92b754e443cd61f2c62026288", t01["base_sha"])
-        for relative in ui_gate.REFERENCE_ACTIVATION_CONTROL_SOURCE:
-            source = REPO / relative
-            if source.is_file():
+        if correction:
+            self.assertFalse(inject_unapproved_site_asset)
+            self.assertEqual("DONE", t01["status"])
+            self.assertEqual("BLOCKED", t02["status"])
+            frozen_parent = copy.deepcopy(amendment)
+            child = next(item for item in backlog["wave_amendments"] if item["id"] == "W2.A04")
+            child_task = child["tasks"][0]
+            self.assertEqual("IN_PROGRESS", child_task["status"])
+            # Test-only persisted renewal keeps the fixture independent of wall
+            # time without changing the real claim or mocking lease checks.
+            child_task["lease"]["expires_at"] = "2099-01-01T00:00:00Z"
+            child["campaign"]["lease"]["expires_at"] = "2099-01-01T00:00:00Z"
+            self.write_yaml(backlog_path, backlog)
+            self.commit(root, "test-only persisted A04 task and campaign renewal")
+            correction_source = {
+                "tools/ui_change_gate.py",
+                "tests/foundation/test_ui_change_gate.py",
+                "docs/automation/design-first-ui-changes.md",
+                "docs/adr/index.json",
+                "docs/adr/ADR-0040-document-protected-desktop-activation-correction.md",
+            }
+            for relative in correction_source:
                 target = root / relative
                 target.parent.mkdir(parents=True, exist_ok=True)
-                shutil.copy2(source, target)
-        if inject_unapproved_site_asset:
-            asset = root / "planning/review-site/assets/unreviewed-activation.css"
-            asset.parent.mkdir(parents=True, exist_ok=True)
-            asset.write_text("body { display: none; }\n", encoding="utf-8")
-        control_candidate = self.commit(root, "synthetic reviewed 1.8 witness and v1.4 control candidate")
-        control_disposition = self.approve_activation_fixture_task(root, backlog, t01, control_candidate)
+                target.write_bytes((REPO / relative).read_bytes())
+                # Touch an unchanged Python input during the test-first pass.
+                if (
+                    relative.endswith(".py")
+                    and ui_gate.tree_entry(root, "HEAD", relative) is not None
+                    and target.read_bytes() == ui_gate.blob(root, "HEAD", relative)
+                ):
+                    target.write_bytes(target.read_bytes() + b"\n# Test-only correction source touch.\n")
+            if correction_attack == "hidden-source":
+                extra = root / "tools/undeclared_activation_source.py"
+                extra.write_bytes(b"# Unapproved intermediate source, later removed.\n")
+                self.commit(root, "test-only unapproved hidden correction source")
+                extra.unlink()
+            if correction_attack == "mixed-consumer":
+                consumer_path = root / "apps/desktop/scripts/assemble-reference.mjs"
+                consumer_path.write_bytes(consumer_path.read_bytes() + b"\n// Unapproved mixed consumer delivery.\n")
+            if correction_attack == "extra-adr-index":
+                registry_path = root / "docs/adr/index.json"
+                registry = json.loads(registry_path.read_bytes())
+                registry["records"].append({"id": "ADR-0041", "status": "Proposed"})
+                self.write_json(registry_path, registry)
+            if correction_attack == "nonregular-source":
+                self.git(root, "add", "docs/automation/design-first-ui-changes.md")
+                self.git(root, "update-index", "--chmod=+x", "docs/automation/design-first-ui-changes.md")
+            if correction_attack == "changed-ordinary":
+                original = ui_gate.backlog_task(backlog, "CAP-05.S01.T01")
+                assert original is not None
+                frozen_notes = original["implementation_notes"]
+                original["implementation_notes"] = "Unapproved intermediate change to original W2 task."
+                self.write_yaml(backlog_path, backlog)
+                self.commit(root, "test-only intermediate ordinary task tampering")
+                original["implementation_notes"] = frozen_notes
+                self.write_yaml(backlog_path, backlog)
+            child_candidate = self.commit(root, "test-only A04 five-source correction candidate")
+            self.approve_activation_fixture_task(root, backlog, child_task, child_candidate)
+            if correction_attack == "missing-return":
+                t02["status"] = "READY"
+            self.complete_activation_fixture_amendment(root, backlog, child, {child_task["id"]: child_candidate})
+            if correction_attack == "missing-return":
+                t02["status"] = "BLOCKED"
+            self.assertEqual(frozen_parent, amendment)
+            if correction_attack == "premature-consumer":
+                consumer_path = root / "apps/desktop/scripts/assemble-reference.mjs"
+                consumer_path.write_bytes(consumer_path.read_bytes() + b"\n// Consumer before A03 activation/reopen.\n")
+                self.commit(root, "test-only premature consumer after correction return")
+            lease = {
+                "claimed_by": t02["owner"],
+                "claimed_at": "2026-10-04T14:10:00Z",
+                "expires_at": "2099-01-01T00:00:00Z",
+            }
+            amendment["campaign"].update(
+                status="ACTIVE",
+                base_sha=self.git(root, "rev-parse", "HEAD"),
+                pause_reason=None,
+                lease=lease,
+                updated_at="2026-10-04T14:10:00Z",
+            )
+            if correction_attack == "foreign-activation":
+                amendment["campaign"]["owner"] = "foreign-agent"
+            amendment["lifecycle"]["status"] = "ACTIVE"
+            amendment["lifecycle"]["history"].append(
+                {
+                    "id": f"E{len(amendment['lifecycle']['history']) + 1:02d}",
+                    "status": "ACTIVE",
+                    "actor": t02["owner"],
+                    "at": "2026-10-04T14:10:00Z",
+                    "rationale": "Test-only separate A03 activation; T02 remains blocked.",
+                }
+            )
+            backlog["control_plane"]["active_amendment"] = "W2.A03"
+            self.write_yaml(backlog_path, backlog)
+            self.commit(root, "test-only A03 activation after exact paused return")
+            self.assertEqual("BLOCKED", t02["status"])
+            t02.update(status="IN_PROGRESS", blocker=None, lease=lease, updated_at="2026-10-04T14:11:00Z")
+            self.write_yaml(backlog_path, backlog)
+            self.commit(root, "test-only retained-base T02 reopen after separate activation")
+            control_candidate = t01["review_control"]["attempts"][-1]["submission"]["candidate_commit"]
+        else:
+            self.assertEqual("IN_PROGRESS", t01["status"])
+            self.assertEqual("cd61bae9681690f92b754e443cd61f2c62026288", t01["base_sha"])
+            # Preserve the old uncorrected lane with exact historical T01 bytes.
+            # Current A04 source must never be laundered into a synthetic old T01.
+            for relative in ui_gate.REFERENCE_ACTIVATION_CONTROL_SOURCE:
+                target = root / relative
+                target.parent.mkdir(parents=True, exist_ok=True)
+                target.write_bytes(ui_gate.blob(REPO, "aa09664678ca3ca8fa7a428cb60f3565d2c0e9bd", relative))
+            if inject_unapproved_site_asset:
+                asset = root / "planning/review-site/assets/unreviewed-activation.css"
+                asset.parent.mkdir(parents=True, exist_ok=True)
+                asset.write_text("body { display: none; }\n", encoding="utf-8")
+            control_candidate = self.commit(root, "synthetic reviewed 1.8 witness and v1.4 control candidate")
+            control_disposition = self.approve_activation_fixture_task(root, backlog, t01, control_candidate)
 
-        owner = "codex-w2-implementation"
-        branch = "codex/w2-implementation"
-        lease = {
-            "claimed_by": owner,
-            "claimed_at": "2026-10-03T22:02:00Z",
-            "expires_at": "2099-01-01T00:00:00Z",
-        }
-        t02.update(
-            status="IN_PROGRESS",
-            owner=owner,
-            branch=branch,
-            worktree=".",
-            base_sha=control_disposition,
-            started_at="2026-10-03T22:02:00Z",
-            updated_at="2026-10-03T22:02:00Z",
-            lease=lease,
-        )
-        amendment["campaign"]["lease"] = lease
-        self.write_yaml(backlog_path, backlog)
-        self.commit(root, "synthetic W2.A03.T02 claim after independent T01 review")
+            owner = "codex-w2-implementation"
+            branch = "codex/w2-implementation"
+            lease = {
+                "claimed_by": owner,
+                "claimed_at": "2026-10-03T22:02:00Z",
+                "expires_at": "2099-01-01T00:00:00Z",
+            }
+            t02.update(
+                status="IN_PROGRESS",
+                owner=owner,
+                branch=branch,
+                worktree=".",
+                base_sha=control_disposition,
+                started_at="2026-10-03T22:02:00Z",
+                updated_at="2026-10-03T22:02:00Z",
+                lease=lease,
+            )
+            amendment["campaign"]["lease"] = lease
+            self.write_yaml(backlog_path, backlog)
+            self.commit(root, "synthetic W2.A03.T02 claim after independent T01 review")
 
         approved_id = "RO-UI-ACADEMIC-MINIMAL-1.8"
         approved_package = "cd8995fdcea2fe44452eaa1fdd258b6f9fab5714cbd443a81a8e5b4251220b94"
@@ -846,19 +959,32 @@ class UiChangeGateTests(unittest.TestCase):
         )
         self.approve_activation_fixture_task(root, backlog, t02, consumer_candidate)
 
+        adoption = self.complete_activation_fixture_amendment(
+            root, backlog, amendment, {t01["id"]: control_candidate, t02["id"]: consumer_candidate}
+        )
+        return root, adoption, backlog, control_candidate, consumer_candidate, activation_commit
+
+    def complete_activation_fixture_amendment(
+        self, root: Path, backlog: dict[str, Any], amendment: dict[str, Any], candidates: dict[str, str]
+    ) -> str:
+        """Disposable integrated slice/exit/checkpoint/adoption, never actual approval."""
+        identity = str(amendment["id"])
+        change_request = str(amendment["change_request_id"])
+        backlog_path = root / "planning/backlog.yaml"
+        owner = "codex-w2-implementation"
+        branch = "codex/w2-implementation"
         self.write_json(
-            root / "artifacts/evidence/W2.A03.S01.review-01.json",
+            root / f"artifacts/evidence/{identity}.S01.review-01.json",
             {
                 "schemaVersion": "1.0",
                 "documentType": "amendment-contribution-independent-review",
-                "sliceId": "W2.A03.S01",
-                "amendmentId": "W2.A03",
+                "sliceId": f"{identity}.S01",
+                "amendmentId": identity,
                 "capabilityId": "CAP-05",
                 "reviewer": "agent:/root/synthetic-independent-slice-review",
                 "result": "approved",
                 "taskBindings": [
-                    {"taskId": "W2.A03.T01", "candidateCommit": control_candidate},
-                    {"taskId": "W2.A03.T02", "candidateCommit": consumer_candidate},
+                    {"taskId": task["id"], "candidateCommit": candidates[task["id"]]} for task in amendment["tasks"]
                 ],
                 "findings": [],
                 "openFindingIds": [],
@@ -867,17 +993,17 @@ class UiChangeGateTests(unittest.TestCase):
         )
         contribution_commit = self.commit(root, "synthetic W2.A03.S01 independent contribution")
         packet = json.loads(
-            (root / "planning/enabler-change-requests/ECR-0011.packet.json").read_text(encoding="utf-8")
+            (root / f"planning/enabler-change-requests/{change_request}.packet.json").read_text(encoding="utf-8")
         )
         wave = next(item for item in backlog["waves"] if item["id"] == "W2")
-        exit_path = "artifacts/evidence/W2.A03.exit.json"
+        exit_path = f"artifacts/evidence/{identity}.exit.json"
         self.write_json(
             root / exit_path,
             {
                 "schemaVersion": "1.0",
                 "documentType": "wave-amendment-exit-evidence",
-                "amendmentId": "W2.A03",
-                "changeRequestId": "ECR-0011",
+                "amendmentId": identity,
+                "changeRequestId": change_request,
                 "targetWave": "W2",
                 "branch": branch,
                 "candidateCommit": contribution_commit,
@@ -902,7 +1028,7 @@ class UiChangeGateTests(unittest.TestCase):
         )
         exit_evidence_commit = self.commit(root, "synthetic W2.A03 exit evidence")
         exit_submission = taskctl.build_amendment_exit_submission(
-            Namespace(file=str(backlog_path), amendment="W2.A03", agent=owner),
+            Namespace(file=str(backlog_path), amendment=identity, agent=owner),
             backlog,
             amendment,
             str(root / exit_path),
@@ -910,7 +1036,7 @@ class UiChangeGateTests(unittest.TestCase):
         amendment["lifecycle"]["status"] = "REVIEW"
         amendment["lifecycle"]["history"].append(
             {
-                "id": "E04",
+                "id": f"E{len(amendment['lifecycle']['history']) + 1:02d}",
                 "status": "REVIEW",
                 "actor": owner,
                 "at": "2026-10-03T22:04:00Z",
@@ -926,9 +1052,9 @@ class UiChangeGateTests(unittest.TestCase):
         self.write_yaml(backlog_path, backlog)
         reviewed_state = self.commit(root, "synthetic W2.A03 exit submission")
         exit_reviewer = "agent:/root/synthetic-independent-exit-review"
-        exit_ledger_path = "artifacts/evidence/W2.A03.exit-review-R01.json"
+        exit_ledger_path = f"artifacts/evidence/{identity}.exit-review-R01.json"
         exit_ledger = {
-            "amendment_id": "W2.A03",
+            "amendment_id": identity,
             "attempt_id": "R01",
             "reviewed_state_commit": reviewed_state,
             "candidate_commit": exit_evidence_commit,
@@ -959,13 +1085,13 @@ class UiChangeGateTests(unittest.TestCase):
         )
         self.write_yaml(backlog_path, backlog)
         approved_completion = self.commit(root, "synthetic W2.A03 independent exit review")
-        adoption_path = "artifacts/evidence/W2.A03.adoption.json"
+        adoption_path = f"artifacts/evidence/{identity}.adoption.json"
         self.write_json(
             root / adoption_path,
             {
                 "schemaVersion": "1.0",
                 "documentType": "wave-amendment-adoption-evidence",
-                "amendmentId": "W2.A03",
+                "amendmentId": identity,
                 "targetWave": "W2",
                 "branch": branch,
                 "candidateCommit": approved_completion,
@@ -974,18 +1100,22 @@ class UiChangeGateTests(unittest.TestCase):
                 "notes": "Synthetic authority fixture, not a real amendment adoption.",
             },
         )
+        if amendment.get("correction"):
+            record = json.loads((root / adoption_path).read_bytes())
+            record["correctionReturn"] = amendment["correction"]
+            self.write_json(root / adoption_path, record)
         adoption_sha = hashlib.sha256((root / adoption_path).read_bytes()).hexdigest()
         adoption_evidence_commit = self.commit(root, "synthetic W2.A03 security checkpoint evidence")
         wave.setdefault("checkpoints", []).append(
             {
-                "id": "W2.CP04",
+                "id": f"W2.CP{len(wave.get('checkpoints', [])) + 1:02d}",
                 "kind": "security",
                 "recorded_by": owner,
                 "recorded_at": "2026-10-03T22:05:00Z",
                 "evidence": [
                     {
                         "type": "amendment-adoption-evidence",
-                        "amendment_id": "W2.A03",
+                        "amendment_id": identity,
                         "path": adoption_path,
                         "sha256": adoption_sha,
                         "commit": adoption_evidence_commit,
@@ -997,7 +1127,7 @@ class UiChangeGateTests(unittest.TestCase):
         amendment["lifecycle"]["status"] = "ADOPTED"
         amendment["lifecycle"]["history"].append(
             {
-                "id": "E05",
+                "id": f"E{len(amendment['lifecycle']['history']) + 1:02d}",
                 "status": "ADOPTED",
                 "actor": owner,
                 "at": "2026-10-03T22:06:00Z",
@@ -1005,10 +1135,10 @@ class UiChangeGateTests(unittest.TestCase):
             }
         )
         backlog["control_plane"]["active_amendment"] = None
-        wave["campaign"]["scope"] = "wave"
+        wave["campaign"]["scope"] = "amendment-hold" if amendment.get("correction") else "wave"
         self.write_yaml(backlog_path, backlog)
         adoption = self.commit(root, "synthetic W2.A03 adoption with ordinary W2 still paused")
-        return root, adoption, backlog, control_candidate, consumer_candidate, activation_commit
+        return adoption
 
     def reactivate_adopted_continuation(
         self, root: Path, adoption: str, backlog: dict[str, Any], *, activation: bool = False
@@ -1077,12 +1207,13 @@ class UiChangeGateTests(unittest.TestCase):
         *,
         inject_unapproved_control_source: bool = False,
         activation: bool = False,
+        correction: bool = False,
     ) -> tuple[Path, str, str, dict[str, Any], dict[str, Any], dict[str, Any]]:
         """Build a test-only current classification atop authenticated historical Git."""
         if activation:
             self.assertFalse(inject_unapproved_control_source)
             root, adoption, backlog, _control_candidate, consumer_candidate, activation_commit = (
-                self.reference_activation_git_fixture(temporary)
+                self.reference_activation_git_fixture(temporary, correction=correction)
             )
             prior_adoption = "04d6ae3fb29a133e6e31c8191ba1d6b80fa0b0cf"
             prior_reactivation = "f18a037b96d43392599f7779a668fb1928f74475"
@@ -3276,6 +3407,177 @@ class UiChangeGateTests(unittest.TestCase):
             amendment = next(item for item in backlog["wave_amendments"] if item["id"] == "W2.A03")
             with self.assertRaisesRegex(ValueError, "outside its ECR-0011 packet envelope"):
                 ui_gate.reference_activation_reviewed_tasks(root, adoption, amendment)
+
+    def test_reference_activation_correction_partitions_combined_history_and_retained_adr(self) -> None:
+        # The prefix is real approved/claimed Git; later reviews and adoption are
+        # disposable test-only states, not an actual A04 or desktop qualification.
+        with tempfile.TemporaryDirectory() as temporary:
+            root, adoption, backlog, _control, consumer_candidate, _activation = self.reference_activation_git_fixture(
+                temporary, correction=True
+            )
+            parent = next(item for item in backlog["wave_amendments"] if item["id"] == "W2.A03")
+            child = next(item for item in backlog["wave_amendments"] if item["id"] == "W2.A04")
+            admitted, consumer_commits, _witness = ui_gate.reference_activation_reviewed_tasks(root, adoption, parent)
+            correction_candidate = child["tasks"][0]["review_control"]["attempts"][-1]["submission"]["candidate_commit"]
+            self.assertIn(correction_candidate, admitted)
+            self.assertNotIn(correction_candidate, consumer_commits)
+            self.assertEqual("ca8b1448e094b637bbd06c3129b69a78df792619", parent["tasks"][1]["base_sha"])
+            adr = subprocess.run(
+                [
+                    sys.executable,
+                    str(root / "tools/adr_check.py"),
+                    "--repo",
+                    str(root),
+                    "--base",
+                    parent["tasks"][1]["base_sha"],
+                    "--head",
+                    consumer_candidate,
+                ],
+                capture_output=True,
+                text=True,
+                check=False,
+            )
+            self.assertEqual(0, adr.returncode, adr.stdout + adr.stderr)
+
+    def test_reference_activation_correction_exact_predecessor_and_claim_denials(self) -> None:
+        head = self.git(REPO, "rev-parse", "HEAD")
+        document = yaml.load(
+            ui_gate.blob(REPO, "53d510464e2f9a2ab64bc9e78d09ae7b3996bba7", "planning/backlog.yaml"),
+            Loader=yaml.CSafeLoader,
+        )
+        parent = ui_gate.amendment_record(document, "W2.A03")
+        binding = ui_gate.amendment_record(document, "W2.A04")["correction"]
+        self.assertEqual(parent, ui_gate.reference_activation_correction_predecessor(REPO, head, binding, parent))
+        for field, value in (
+            ("effectiveStateCommit", parent["tasks"][1]["base_sha"]),
+            ("recordSha256", "0" * 64),
+            ("packetCommit", head),
+        ):
+            with self.subTest(binding=field):
+                changed = copy.deepcopy(binding)
+                changed[field] = value
+                with self.assertRaises(ValueError):
+                    ui_gate.reference_activation_correction_predecessor(REPO, head, changed, parent)
+        for task_index, field, value in (
+            (0, "implementation_notes", "Altered completed task"),
+            (1, "base_sha", head),
+            (1, "owner", "foreign-agent"),
+            (1, "packet_task_sha256", "0" * 64),
+            (1, "worktree", "other"),
+        ):
+            with self.subTest(task=task_index, field=field):
+                changed = copy.deepcopy(parent)
+                changed["tasks"][task_index][field] = value
+                with self.assertRaises(ValueError):
+                    ui_gate.reference_activation_correction_predecessor(REPO, head, binding, changed)
+        task = ui_gate.backlog_task(document, "W2.A04.T01")
+        assert task is not None
+        args = (
+            "W2.A04.T01",
+            task["base_sha"],
+            "850cf16281779c09691e566ac453547338eb16a3",
+            task["owner"],
+            task["branch"],
+        )
+        observed = int(self.git(REPO, "show", "-s", "--format=%ct", "53d510464e2f9a2ab64bc9e78d09ae7b3996bba7"))
+        self.assertTrue(ui_gate.reference_activation_correction_active(document, *args, observed_at=observed))
+        for target, field, value in (
+            ("task", "status", "READY"),
+            ("task", "base_sha", head),
+            ("task", "branch", "codex/foreign"),
+            ("task", "worktree", "elsewhere"),
+            ("campaign", "owner", "foreign-agent"),
+            ("campaign", "base_sha", head),
+        ):
+            with self.subTest(target=target, field=field):
+                changed = copy.deepcopy(document)
+                record = (
+                    ui_gate.backlog_task(changed, "W2.A04.T01")
+                    if target == "task"
+                    else ui_gate.amendment_record(changed, "W2.A04")["campaign"]
+                )
+                assert record is not None
+                record[field] = value
+                self.assertFalse(ui_gate.reference_activation_correction_active(changed, *args, observed_at=observed))
+        for target in ("task", "campaign"):
+            with self.subTest(expired=target):
+                changed = copy.deepcopy(document)
+                record = (
+                    ui_gate.backlog_task(changed, "W2.A04.T01")
+                    if target == "task"
+                    else ui_gate.amendment_record(changed, "W2.A04")["campaign"]
+                )
+                assert record is not None
+                record["lease"]["expires_at"] = "2020-01-01T00:00:00Z"
+                self.assertFalse(ui_gate.reference_activation_correction_active(changed, *args, observed_at=observed))
+
+    def test_reference_activation_correction_denies_hidden_mixed_and_premature_source(self) -> None:
+        expected = {
+            "hidden-source": "hidden or overlapping",
+            "mixed-consumer": "five-path envelope",
+            "premature-consumer": "preceded reopen",
+        }
+        for attack, message in expected.items():
+            with self.subTest(attack=attack), tempfile.TemporaryDirectory() as temporary:
+                root, adoption, backlog, _control, _consumer, _activation = self.reference_activation_git_fixture(
+                    temporary, correction=True, correction_attack=attack
+                )
+                parent = ui_gate.amendment_record(backlog, "W2.A03")
+                with self.assertRaisesRegex(ValueError, message):
+                    ui_gate.reference_activation_reviewed_tasks(root, adoption, parent)
+
+    def test_reference_activation_correction_denies_registry_ordinary_and_foreign_activation(self) -> None:
+        expected = {
+            "extra-adr-index": "one jointly introduced appended entry",
+            "nonregular-source": "executable or redirected",
+            "changed-ordinary": "ordinary records or checkpoint history",
+            "missing-return": "did not return the exact paused predecessor",
+            "foreign-activation": "premature or foreign A03 activation",
+        }
+        for attack, message in expected.items():
+            with self.subTest(attack=attack), tempfile.TemporaryDirectory() as temporary:
+                root, adoption, backlog, _control, _consumer, _activation = self.reference_activation_git_fixture(
+                    temporary, correction=True, correction_attack=attack
+                )
+                parent = ui_gate.amendment_record(backlog, "W2.A03")
+                with self.assertRaisesRegex(ValueError, message):
+                    ui_gate.reference_activation_reviewed_tasks(root, adoption, parent)
+
+    def test_reference_activation_correction_requires_slice_and_clean_inputs(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root, adoption, backlog, _control, _consumer, _activation = self.reference_activation_git_fixture(
+                temporary, correction=True
+            )
+            parent = ui_gate.amendment_record(backlog, "W2.A03")
+            source = root / "docs/adr/ADR-0040-document-protected-desktop-activation-correction.md"
+            frozen = source.read_bytes()
+            source.write_bytes(frozen + b"\nUnreviewed working source.\n")
+            with self.assertRaisesRegex(ValueError, "dirty or redirected"):
+                ui_gate.reference_activation_reviewed_tasks(root, adoption, parent)
+            source.write_bytes(frozen)
+            review_path = root / "artifacts/evidence/W2.A04.S01.review-01.json"
+            record = json.loads(review_path.read_bytes())
+            record["taskBindings"][0]["candidateCommit"] = parent["tasks"][1]["base_sha"]
+            self.write_json(review_path, record)
+            attack = self.commit(root, "test-only replaced S01 independent review")
+            with self.assertRaisesRegex(ValueError, "immutable introduction"):
+                ui_gate.reference_activation_reviewed_tasks(root, attack, parent)
+
+    def test_reference_activation_corrected_v14_authenticates_full_original_base(self) -> None:
+        # Real historical prefix plus synthetic future reviews and capture mocks;
+        # this proves the control route, not actual desktop/native qualification.
+        with tempfile.TemporaryDirectory() as temporary:
+            root, base, head, _contract, manifest, _scope = self.classified_adopted_continuation_fixture(
+                temporary, activation=True, correction=True
+            )
+            with (
+                patch("product_style_check.read_capture_bundle", return_value=manifest),
+                patch("desktop_app_check.qualification_capture_contract", return_value=[]),
+                patch("desktop_app_check.qualification_report_errors", return_value=[]),
+                patch("product_style_check.capture_producer_snapshot", return_value=manifest["producer"]),
+            ):
+                report = validate(root, base, head)
+            self.assertTrue(report["ok"], report["errors"])
 
     def test_reference_activation_v14_authenticates_future_full_base_git(self) -> None:
         # The clone extends real approved history with disposable, synthetic

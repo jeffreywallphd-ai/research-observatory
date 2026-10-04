@@ -1044,7 +1044,8 @@
         "W3"
       ],
       "interrupting_change_request_ids": [
-        "ECR-0011"
+        "ECR-0011",
+        "ECR-0012"
       ],
       "interrupting_recovery_request_ids": [],
       "corrective_tasks": [
@@ -40494,10 +40495,32 @@
       "approval_path": "planning/wave-amendment-approvals/W2.A04.json",
       "approval_sha256": "e769cb71efbf8725c0fadeac079713f4484f57f7cf871cdfb037ef9a4df27807",
       "approval_status": "APPROVED",
-      "lifecycle_status": "NOT_MATERIALIZED",
-      "bootstrap_status": "NOT_SUBMITTED",
-      "campaign_status": "NONE",
-      "bootstrap_attempts": [],
+      "lifecycle_status": "ACTIVE",
+      "bootstrap_status": "APPROVED",
+      "campaign_status": "ACTIVE",
+      "bootstrap_attempts": [
+        {
+          "id": "R01",
+          "implementer": "codex-w2-implementation",
+          "implementation_commit": "202d4270273c746b3d1c67f1aee87cbde76768be",
+          "evidence": [
+            {
+              "type": "criterion-manifest",
+              "path": "artifacts/evidence/W2.A04.B00.json",
+              "sha256": "3bad8334859874a69118b7702ff87db9f8ff8ce91a08a6c370cfe5a54b182117",
+              "commit": "202d4270273c746b3d1c67f1aee87cbde76768be",
+              "recorded_at": "2026-10-04T13:27:39+00:00"
+            }
+          ],
+          "review": {
+            "reviewer": "agent:/root/a03_t02_authority_review",
+            "result": "approved",
+            "reviewed_at": "2026-10-04T13:36:11+00:00",
+            "notes": "Independent R01 approves exact source 202d4270273c746b3d1c67f1aee87cbde76768be and submitted REVIEW shell 17673b41e5453d41070ea4d1d9618cc1b2e6f28f. Ledger artifacts/evidence/W2.A04.B00.review-R01.json SHA-256 d6b0e4c0684c14a602bf26932f542fd1fc2bd87a5a6957b386fb3a1e292db073, zero findings; retained adverse EOL result and status/evidence limits. Separate materialization, task, slice, exit, security adoption and paused-parent return remain due."
+          },
+          "current_status": "APPROVED"
+        }
+      ],
       "slice_contributions": [
         {
           "id": "W2.A04.S01",
@@ -40936,15 +40959,29 @@
         "referenceApprovalStatus": "approved"
       },
       "scope_addenda": [],
-      "task_reviews": [],
+      "task_reviews": [
+        {
+          "task_id": "W2.A04.T01",
+          "title": "Bind protected activation ADR correction and exact return lineage",
+          "status": "IN_PROGRESS",
+          "mode": "latest-review-only",
+          "latest_review": {
+            "reviewer": null,
+            "result": null,
+            "reviewed_at": null,
+            "notes": null
+          },
+          "review_control": null
+        }
+      ],
       "exit_review": {
         "amendment_id": "W2.A04",
         "mode": "latest-completion-only",
         "latest_completion": {
-          "status": null,
+          "status": "PENDING",
           "reviewer": null,
           "reviewed_at": null,
-          "evidence": null,
+          "evidence": [],
           "notes": null
         },
         "exit_review_control": null

@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: cbe1aa1e80d287227ff16a18fae7e19808f159be49e3c16a321e0bd8399ab59e
+source_sha256: 94683c177de562772b978c73387e39a993b4c2d6aaf13d8e88c72bec88dc407f
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -27,10 +27,10 @@ This YAML file is the authoritative task, dependency, gate, and progress ledger.
 | Capabilities | 20 |
 | Slices | 117 |
 | Tasks | 356 |
-| Enabler tasks | 20 |
+| Enabler tasks | 21 |
 | Waves | 12 |
 | Wave approval bases | 2 |
-| Wave amendments | 12 |
+| Wave amendments | 13 |
 | Release gates | 12 |
 
 See `planning/status-summary.md` for the generated status distributions and capability progress table.
@@ -53,6 +53,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 | `W2` | `W2.A01` | `ECR-0009` | `planning/wave-amendment-approvals/W2.A01.json` | `ADOPTED` |
 | `W2` | `W2.A02` | `ECR-0010` | `planning/wave-amendment-approvals/W2.A02.json` | `ADOPTED` |
 | `W2` | `W2.A03` | `ECR-0011` | `planning/wave-amendment-approvals/W2.A03.json` | `PAUSED` |
+| `W2` | `W2.A04` | `ECR-0012` | `planning/wave-amendment-approvals/W2.A04.json` | `ACTIVE` |
 
 ## Waves
 
@@ -2876,6 +2877,67 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - Fresh original CAP-05.S01.T01 product/native/Core evidence and full-base gate remain later obligations, including unresolved authentic fifth D3D child characterization.
 
 #### Review history — W2.A03.T02
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
+
+## W2.A04 - ECR-0012
+
+**Target Wave / class:** `W2` / `product-scope-security-experience`
+
+**Approval record:** `planning/wave-amendment-approvals/W2.A04.json` (`e769cb71efbf8725c0fadeac079713f4484f57f7cf871cdfb037ef9a4df27807`)
+
+**Lifecycle / bootstrap / campaign / completion:** `ACTIVE` / `APPROVED` / `ACTIVE` / `PENDING`
+
+**Append-only lifecycle history:**
+
+- `E01` `APPROVED` at `2026-10-04T13:02:32Z` by human:repository-owner: The repository owner answered 'Approved.' after the exact ECR-0012/W2.A04 approval request identifying candidate 7f35c7a8e49eb8415ffdffa5a2e04374161f0eae and packet SHA-256 eb1cbf1b827bffdd5914f9255c6f0bba374621f916711b3e05815202d0312b8c. This approves only the independently reviewed one-task five-source ADR and gate correction, its bounded bootstrap and required reviews, with the exact combined claim/block/pause snapshot and paused-predecessor return. Preserve A03's frozen approval, DONE T01, blocked T02 criteria and ca8b1448 base, accepted ADRs and approved 1.8 reference. Only after reviewed A04 adoption and exact return may A03 activate and T02 reopen. This is not ordinary W2 resumption, native/Core qualification or release approval. The timestamp records binding of this explicit answer to its exact reviewed packet.
+- `E02` `MATERIALIZED` at `2026-10-04T13:40:52+00:00` by codex-w2-implementation: Materialized the exact human-approved task inventory.
+- `E03` `ACTIVE` at `2026-10-04T13:47:43+00:00` by codex-w2-implementation: Activated the bounded amendment campaign.
+
+### Amendment-exit review and adoption — W2.A04
+
+**Exit-review mode:** `legacy latest-completion-only projection` — no immutable exit rounds are recorded; this view does not fabricate history.
+
+**Latest completion projection:** `PENDING` by - at `-`
+
+**Latest completion evidence:** -
+
+**Latest completion notes:** -
+
+**Bound amendment-adoption checkpoints:**
+
+- None
+
+**Bounded tasks:**
+
+### - [ ] W2.A04.T01 - Bind protected activation ADR correction and exact return lineage
+
+**Status / owner / review:** `IN_PROGRESS` / codex-w2-implementation / - (`-`)
+
+**Dependencies:** `W2.A04.B00`
+
+**Objective:** Deliver one companion Proposed ADR and narrow exact-correction attribution so the existing protected consumer can qualify at its unchanged real claim base, preserving original approvals and security boundaries.
+
+**Acceptance criteria:**
+
+- Introduce only one indexed Proposed ADR-0040 linked to W2.A04.T01 and W2.A03.T02. Cover actual protected gate changes and later extension/baseline changes under Accepted ADR-0001; supersede no accepted decision and leave ADR-0039 unchanged. Its one new index entry and document are separate reviewed A04 delivery after the retained T02 base, not retroactive T01 or T02-owned consumer source.
+- Preserve the closed schemaVersion 1.4 contract and existing field shapes. Derive and authenticate only exact ECR-0012/W2.A04 packet, approval, B00, materialization, five-path source candidate and independent review, integrated slice, exit/security checkpoint and adopted paused-predecessor return. No new asserted contract field, generic amendment exemption, scope-addendum writer or controller.
+- Authenticate frozen paused A03 complete record, unchanged DONE T01 and retained T02 hash/criteria/base ca8b1448e094b637bbd06c3129b69a78df792619. Explicitly authenticate only exact combined claim/block/pause snapshot a211f24107f21f6b87221fd8b60c04b95a97fc8b, its single ca8b1448 parent, base/owner/branch/worktree/timestamps/blocker/pause event and absence of consumer source edits. Git contains no intermediate IN_PROGRESS claim; never fabricate one or grant a generic missing-claim exception. Bind actual later A03 activation and supported T02 reopen while preserving owner, branch/worktree, exact base and current lease. Partition reviewed A04 correction commits from A03 T01 and later T02 seven-file consumers without dropping any source or hidden add/revert history from the actual range.
+- Limit A04 source to exactly tools/ui_change_gate.py, tests/foundation/test_ui_change_gate.py, docs/automation/design-first-ui-changes.md, docs/adr/ADR-0040-document-protected-desktop-activation-correction.md, docs/adr/index.json. Permit one appended ADR-0040 index entry only. Preserve frozen packets, existing ADRs, reference/witness, schemas, taskctl/kernel, original task definitions, seven T02 consumer paths, original CAP-05 base/two-contract inventory, current classification/capture input closure and all product/native/Core/migration/release authority.
+- Focused real-Git cases prove the exact combined committed claim/block/pause snapshot without an intermediate committed claim, followed by correction/return/activate/reopen and actual retained-base ADR association in a disposable future consumer fixture. Deny stale/forked/forged packet or review, changed predecessor/T01/task hash, fabricated/missing/substituted combined claim snapshot, shortened T02 base, missing return/adoption, premature or foreign activation/reopen, mixed delivery, extra source or ADR/index changes, dirty/redirected blobs and hidden add/revert. Preserve old v1.0-v1.4 positive and denial cases in their original authority; mocked capture fixtures are synthetic control proof only.
+- Obtain expanded independent exact-candidate control/security/ADR task disposition, integrated S01 review, amendment exit review and separate committed adoption checkpoint binding exact paused-predecessor return. Leave A03 paused and T02 blocked until separate supported activation/reopen. Fresh T02 captures, original native/Core/D3D, joined CAP-04.S05 and W2/release gates remain due.
+
+**Verification:**
+
+- Run focused real-Git correction/return/source-attribution and retained task-base ADR-association positives and denials; retain selected old v1.0-v1.4 cases. Preserve all adverse attempts and label synthetic future-state or mocked capture evidence.
+- At clean exact committed A04 task candidate run actual task-base ADR/UI control checks, affected Python lint/format/type, canonical taskctl/backlog/views/site checks. Independently review changed protected controls and immutable predecessor/source envelope.
+- Integrated slice/exit/security review proves persistence and exact return without claiming T02 desktop baseline, original CAP-05 native/Core or W2 completion. Future T02 runs its real ca8b1448-base ADR check and all original capture and consumer obligations.
+
+#### Review history — W2.A04.T01
 
 **Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
 

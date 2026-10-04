@@ -386,6 +386,16 @@
       "linkedTasks": [
         "W2.A03.T01"
       ]
+    },
+    {
+      "id": "ADR-0040",
+      "path": "docs/adr/ADR-0040-document-protected-desktop-activation-correction.md",
+      "title": "Document protected desktop activation correction",
+      "status": "Proposed",
+      "linkedTasks": [
+        "W2.A04.T01",
+        "W2.A03.T02"
+      ]
     }
   ]
 }

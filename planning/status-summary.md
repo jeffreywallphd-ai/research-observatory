@@ -1,7 +1,7 @@
 ---
 document_type: generated-backlog-status-summary
 source: planning/backlog.yaml
-source_sha256: cbe1aa1e80d287227ff16a18fae7e19808f159be49e3c16a321e0bd8399ab59e
+source_sha256: 94683c177de562772b978c73387e39a993b4c2d6aaf13d8e88c72bec88dc407f
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -17,10 +17,10 @@ manual_edit: prohibited
 | Capabilities | 20 |
 | Slices | 117 |
 | Tasks | 356 |
-| Enabler tasks | 20 |
+| Enabler tasks | 21 |
 | Waves | 12 |
 | Wave approval bases | 2 |
-| Wave amendments | 12 |
+| Wave amendments | 13 |
 | Release gates | 12 |
 
 ## Status distributions
@@ -61,6 +61,7 @@ manual_edit: prohibited
 
 | Status | Count |
 |---|---:|
+| `ACTIVE` | 1 |
 | `ADOPTED` | 10 |
 | `PAUSED` | 1 |
 | `SUPERSEDED` | 1 |
@@ -69,6 +70,7 @@ manual_edit: prohibited
 
 | Status | Count |
 |---|---:|
+| `IN_PROGRESS` | 1 |
 | `BLOCKED` | 1 |
 | `DONE` | 19 |
 
@@ -92,6 +94,7 @@ Proposal approval, materialization lifecycle, and campaign state remain distinct
 | `W2` | `W2.A01` | `ECR-0009` | `planning/wave-amendment-approvals/W2.A01.json` | `ADOPTED` | `APPROVED` | `COMPLETE` | 2 |
 | `W2` | `W2.A02` | `ECR-0010` | `planning/wave-amendment-approvals/W2.A02.json` | `ADOPTED` | `APPROVED` | `COMPLETE` | 1 |
 | `W2` | `W2.A03` | `ECR-0011` | `planning/wave-amendment-approvals/W2.A03.json` | `PAUSED` | `APPROVED` | `PAUSED` | 2 |
+| `W2` | `W2.A04` | `ECR-0012` | `planning/wave-amendment-approvals/W2.A04.json` | `ACTIVE` | `APPROVED` | `ACTIVE` | 1 |
 
 ## Amendment-exit review and adoption projections
 
@@ -658,6 +661,20 @@ Immutable exit rounds, the latest completion projection, and bound adoption chec
 
 - None
 
+### Amendment-exit review and adoption — W2.A04
+
+**Exit-review mode:** `legacy latest-completion-only projection` — no immutable exit rounds are recorded; this view does not fabricate history.
+
+**Latest completion projection:** `PENDING` by - at `-`
+
+**Latest completion evidence:** -
+
+**Latest completion notes:** -
+
+**Bound amendment-adoption checkpoints:**
+
+- None
+
 
 ## Task review history projections
 
@@ -846,6 +863,7 @@ Append-only rounds remain distinct from the current latest-review projection. Le
 |---|---|---|---|
 | `CAP-05.S01.T01` Implement local document attachment and version association | `BLOCKED` | codex-w2-implementation | `codex/w2-implementation` |
 | `W2.A03.T02` Activate approved 1.8 desktop consumers and pinned baseline | `BLOCKED` | codex-w2-implementation | `codex/w2-implementation` |
+| `W2.A04.T01` Bind protected activation ADR correction and exact return lineage | `IN_PROGRESS` | codex-w2-implementation | `codex/w2-implementation` |
 
 ## Linked corrective tasks
 

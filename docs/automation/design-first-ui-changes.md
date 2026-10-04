@@ -198,6 +198,34 @@ capture and independent baseline review, the current T01 classification and
 native/Core evidence, joined slice checks, W2 qualification, and human release
 decision remain separate.
 
+### Exact protected activation correction
+
+The owner-approved ECR-0012 permits only W2.A04's separately reviewed five-source
+correction within the existing v1.4 lane. No new contract field or schema is
+introduced. Authenticate its immutable packet/owner/independent review, B00,
+separate materialization/activation/claim, source submissions and task review,
+integrated S01, exit and separate security adoption checkpoint. The new Proposed
+ADR-0040 links A04.T01 and A03.T02 and is introduced with one appended registry
+entry; prior entries, registry metadata, accepted ADRs and ADR-0039 stay unchanged.
+
+Only exact `a211f241` with sole `ca8b1448` parent represents the combined T02
+claim/block/A03 pause without an intermediate committed IN_PROGRESS claim. Bind
+its complete frozen record and unchanged DONE T01; do not generalize that
+exception. Adoption returns the exact PAUSED predecessor with T02 BLOCKED.
+Separate later A03 activation must leave T02 blocked; supported reopen retains
+its original base, definition/hash, criteria, owner, branch/worktree and matching
+lease. Every consumer source commit follows reopen under that active claim.
+
+Attribute every reviewed A04 correction commit separately from T01 and T02 while
+walking T02's entire retained range. Inert ECR-0012 authority and task-owned
+workflow output do not admit extra source, mixed delivery or hidden add/revert.
+Missing/forked/stale/forged authority, altered completed history, missing return,
+premature activation/reopen, extra ADR/index changes and redirected/dirty inputs
+deny. Preserve original-task base/two-contract inventory, current classification,
+capture input closure and all prior v1.0-v1.4 denials. T02's actual retained-base
+ADR check, actual captures, native/Core, slice/Wave qualification and human
+release remain separate obligations.
+
 ## Linked completed-task restoration (existing 1.0)
 
 An admitted `Wn.Cnn.T01` linked correction uses the existing v1.0
