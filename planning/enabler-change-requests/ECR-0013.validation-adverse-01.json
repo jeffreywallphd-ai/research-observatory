@@ -1,0 +1,26 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "inert-proposal-validation-adverse-observation",
+  "changeRequestId": "ECR-0013",
+  "executionState": "non-executable",
+  "candidateCommit": "11f8a60b0d2630e95bbf2f55f62730ef49745cf1",
+  "command": ".venv/Scripts/python.exe -B tools/planctl.py --repo . ecr validate ECR-0013",
+  "exitCode": 1,
+  "observedToolStderrErrors": [
+    "Paused correction predecessor snapshot is invalid: Paused correction must name its immediate non-correction predecessor",
+    "ECR v4 adopted predecessor chain is incomplete, gapped, reordered, or forked",
+    "ECR v4 paused predecessor is stale or not quiescent: Paused correction must name its immediate non-correction predecessor",
+    "ECR v4 task W2.A05.T02 does not depend on the approved bootstrap"
+  ],
+  "stderrProvenance": "Errors transcribed from the actual tool result; no raw stderr file was captured.",
+  "stdoutLog": "artifacts/tmp/ECR-0013.draft-validation.log",
+  "stdoutLogSha256": "e0dc83f424f5ea8df09f28d42b67d9c6b0e3bda0965799a1a54183e5b7fcba18",
+  "subsequentInertRepair": {
+    "commit": "4a243e51e5c52e02ae656ddaa1c6d8fea1e85965",
+    "description": "T02 draft dependencies now include both B00 and T01; packet file hashes refreshed from committed blobs."
+  },
+  "remainingBoundary": "The numeric-adjacency and lifetime-one-child assumptions still reject a second correction after authenticated completed return. GOV-MIG-0001 bounded maintenance will preserve all approval and ownership gates.",
+  "limits": [
+    "No approval, execution, qualification, amendment/task/release mutation or integration is authorized by this observation."
+  ]
+}
