@@ -43744,7 +43744,7 @@ verification_profiles:
 control_plane:
   revision: 12
   minimum_tool_revision: 12
-  active_amendment: W2.A04
+  active_amendment: null
   recovery_holds:
   - id: HOLD-W1-GRR-0001
     recovery_request_id: GRR-0001
@@ -53761,7 +53761,7 @@ wave_amendments:
     sha256: e769cb71efbf8725c0fadeac079713f4484f57f7cf871cdfb037ef9a4df27807
     introduction_commit: ba95f68bd2747ebce99e67eeb4daec53ed3ba87b
   lifecycle:
-    status: ACTIVE
+    status: REVIEW
     history:
     - id: E01
       status: APPROVED
@@ -53785,6 +53785,11 @@ wave_amendments:
       actor: codex-w2-implementation
       at: '2026-10-04T13:47:43+00:00'
       rationale: Activated the bounded amendment campaign.
+    - id: E04
+      status: REVIEW
+      actor: codex-w2-implementation
+      at: '2026-10-04T16:38:44+00:00'
+      rationale: Submitted amendment exit for review.
   bootstrap:
     id: W2.A04.B00
     status: APPROVED
@@ -53807,7 +53812,7 @@ wave_amendments:
         zero findings; retained adverse EOL result and status/evidence limits. Separate materialization, task, slice, exit,
         security adoption and paused-parent return remain due.
   campaign:
-    status: ACTIVE
+    status: REVIEW
     scope: wave-amendment
     owner: codex-w2-implementation
     branch: codex/w2-implementation
@@ -53816,12 +53821,9 @@ wave_amendments:
     profile: LOC
     platform: windows-x64
     started_at: '2026-10-04T13:47:43+00:00'
-    updated_at: '2026-10-04T13:47:43+00:00'
+    updated_at: '2026-10-04T16:38:44+00:00'
     pause_reason: null
-    lease:
-      claimed_by: codex-w2-implementation
-      claimed_at: '2026-10-04T13:47:43+00:00'
-      expires_at: '2026-10-05T13:47:43+00:00'
+    lease: null
   tasks:
   - id: W2.A04.T01
     amendment_id: W2.A04
@@ -54041,11 +54043,35 @@ wave_amendments:
             closed_finding_ids: []
       current_submission: null
   completion:
-    status: PENDING
+    status: REVIEW
     reviewer: null
     reviewed_at: null
-    evidence: []
-    notes: null
+    evidence:
+    - artifacts/evidence/W2.A04.exit.json
+    notes: ''
+    exit_review_control:
+      version: 1
+      attempts: []
+      current_submission:
+        id: R01
+        submitted_by: codex-w2-implementation
+        submitted_at: '2026-10-04T16:38:44+00:00'
+        candidate_commit: 10e555d2269a0333048622cd4e84803cb410c3a9
+        declared_candidate_commit: 83266005c0a828033c2705a6105364435e02afcd
+        branch: codex/w2-implementation
+        evidence_reference:
+          type: amendment-exit-evidence
+          amendment_id: W2.A04
+          path: artifacts/evidence/W2.A04.exit.json
+          sha256: aa98cc71b49c6810b3b668ba550976bc723af8c7a95ff599c61ad5f36d162d73
+          commit: 10e555d2269a0333048622cd4e84803cb410c3a9
+        acceptance_criteria_sha256: 7806a788f93745bc97f1e76f0771f883a092e5e0877759967d04cf67891236f7
+        selected_checks:
+        - .venv/Scripts/python.exe -B artifacts/tmp/W2.A04.inspect-integrated-state.py slice
+        selected_checks_sha256: 741620660f0682507adfa15b4d3bb6c07854d568bcedaf65486dc6237734927f
+        prior_attempt_id: null
+        open_finding_ids: []
+        packet_sha256: f51ee18890332d47401220f09118b815e49dbab84587fd1ed47cde6d0f00a8ae
   correction:
     id: W2.A03
     changeRequestId: ECR-0011

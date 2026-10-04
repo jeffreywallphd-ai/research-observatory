@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 6c326a854c0039ed2a58aed2de3990d7f59340ffdd46bde8b2aef372ed9fad72
+source_sha256: 82b26debb71b712173ac16da7f689b0f1777b58a4c259850f88713dff556f291
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -53,7 +53,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 | `W2` | `W2.A01` | `ECR-0009` | `planning/wave-amendment-approvals/W2.A01.json` | `ADOPTED` |
 | `W2` | `W2.A02` | `ECR-0010` | `planning/wave-amendment-approvals/W2.A02.json` | `ADOPTED` |
 | `W2` | `W2.A03` | `ECR-0011` | `planning/wave-amendment-approvals/W2.A03.json` | `PAUSED` |
-| `W2` | `W2.A04` | `ECR-0012` | `planning/wave-amendment-approvals/W2.A04.json` | `ACTIVE` |
+| `W2` | `W2.A04` | `ECR-0012` | `planning/wave-amendment-approvals/W2.A04.json` | `REVIEW` |
 
 ## Waves
 
@@ -2890,21 +2890,32 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 **Approval record:** `planning/wave-amendment-approvals/W2.A04.json` (`e769cb71efbf8725c0fadeac079713f4484f57f7cf871cdfb037ef9a4df27807`)
 
-**Lifecycle / bootstrap / campaign / completion:** `ACTIVE` / `APPROVED` / `ACTIVE` / `PENDING`
+**Lifecycle / bootstrap / campaign / completion:** `REVIEW` / `APPROVED` / `REVIEW` / `REVIEW`
 
 **Append-only lifecycle history:**
 
 - `E01` `APPROVED` at `2026-10-04T13:02:32Z` by human:repository-owner: The repository owner answered 'Approved.' after the exact ECR-0012/W2.A04 approval request identifying candidate 7f35c7a8e49eb8415ffdffa5a2e04374161f0eae and packet SHA-256 eb1cbf1b827bffdd5914f9255c6f0bba374621f916711b3e05815202d0312b8c. This approves only the independently reviewed one-task five-source ADR and gate correction, its bounded bootstrap and required reviews, with the exact combined claim/block/pause snapshot and paused-predecessor return. Preserve A03's frozen approval, DONE T01, blocked T02 criteria and ca8b1448 base, accepted ADRs and approved 1.8 reference. Only after reviewed A04 adoption and exact return may A03 activate and T02 reopen. This is not ordinary W2 resumption, native/Core qualification or release approval. The timestamp records binding of this explicit answer to its exact reviewed packet.
 - `E02` `MATERIALIZED` at `2026-10-04T13:40:52+00:00` by codex-w2-implementation: Materialized the exact human-approved task inventory.
 - `E03` `ACTIVE` at `2026-10-04T13:47:43+00:00` by codex-w2-implementation: Activated the bounded amendment campaign.
+- `E04` `REVIEW` at `2026-10-04T16:38:44+00:00` by codex-w2-implementation: Submitted amendment exit for review.
 
 ### Amendment-exit review and adoption — W2.A04
 
-**Exit-review mode:** `legacy latest-completion-only projection` — no immutable exit rounds are recorded; this view does not fabricate history.
+**Exit-review mode:** `append-only v1` / 0 completed round(s)
 
-**Latest completion projection:** `PENDING` by - at `-`
+**Current immutable amendment-exit submission awaiting review:** `R01` / packet SHA-256 `f51ee18890332d47401220f09118b815e49dbab84587fd1ed47cde6d0f00a8ae`
 
-**Latest completion evidence:** -
+- Candidate / declared candidate / branch: `10e555d2269a0333048622cd4e84803cb410c3a9` / `83266005c0a828033c2705a6105364435e02afcd` / `codex/w2-implementation`
+- Submitted by / at: codex-w2-implementation / `2026-10-04T16:38:44+00:00`
+- Bound exit evidence: amendment `W2.A04` / `artifacts/evidence/W2.A04.exit.json` / `aa98cc71b49c6810b3b668ba550976bc723af8c7a95ff599c61ad5f36d162d73` / `10e555d2269a0333048622cd4e84803cb410c3a9`
+- Acceptance-criteria SHA-256: `7806a788f93745bc97f1e76f0771f883a092e5e0877759967d04cf67891236f7`
+- Selected-check SHA-256: `741620660f0682507adfa15b4d3bb6c07854d568bcedaf65486dc6237734927f`
+- Selected checks: `.venv/Scripts/python.exe -B artifacts/tmp/W2.A04.inspect-integrated-state.py slice`
+- Prior round / replayed open findings: `-` / -
+
+**Latest completion projection:** `REVIEW` by - at `-`
+
+**Latest completion evidence:** `artifacts/evidence/W2.A04.exit.json`
 
 **Latest completion notes:** -
 
