@@ -5267,6 +5267,29 @@ def wave_authority_errors(data: dict[str, Any], repo: Path | None) -> list[str]:
         return errors
     waves = wave_map(data)
     base_map = wave_approval_base_map(data)
+    # A completed sibling is immutable live history once another correction
+    # follows it. Frozen proposal snapshots alone cannot authenticate a later
+    # load of its full record. The latest adoption must still publish through
+    # the existing reviewed checkpoint/CAS path before its first Git commit.
+    serialized = serializable_backlog(data)
+    try:
+        relations = project_paused_corrections(serialized.get("wave_amendments", []))
+    except KernelValidationError as exc:
+        errors.append(f"Invalid paused amendment correction: {exc}")
+        relations = []
+    latest_corrections = {relation["parentId"]: relation["correctionId"] for relation in relations}
+    historical_siblings = {
+        relation["correctionId"]
+        for relation in relations
+        if relation["phase"] == "returned" and latest_corrections[relation["parentId"]] != relation["correctionId"]
+    }
+    if historical_siblings:
+        from planctl import _returned_correction_errors
+
+        current_head, _branch = git_head_branch(repo)
+        for sibling in serialized.get("wave_amendments", []):
+            if sibling.get("id") in historical_siblings:
+                errors.extend(_returned_correction_errors(repo, sibling, serialized, current_head))
     for amendment in amendments:
         if "correction" in amendment and (amendment.get("lifecycle") or {}).get("status") == "ADOPTED":
             from planctl import _paused_predecessor_errors

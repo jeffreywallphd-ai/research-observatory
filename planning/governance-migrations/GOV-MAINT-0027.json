@@ -3,7 +3,7 @@
   "documentType": "governance-control-maintenance",
   "maintenanceId": "GOV-MAINT-0027",
   "title": "Recognize authenticated completed correction siblings without competing hold ownership",
-  "status": "changes-requested",
+  "status": "candidate",
   "riskTier": 2,
   "humanApprovalRequired": false,
   "implementationAgent": "agent:codex-w2-implementation",
@@ -60,7 +60,7 @@
     ]
   },
   "verification": {
-    "status": "Fresh29139a46 fixed-input qualification is changes-requested: seven check groups PASS; retained taskctl fixture FAIL. Independent R01 also confirms the live completed-history gap. No integration.",
+    "status": "R01 F01/F02 remediation candidate awaits fixed committed fresh checks and independent R02; first adverse qualification and R01 are retained.",
     "selected": [
       "Pure kernel single/sequential phases and denial cases",
       "Real Git paused predecessor/returned sibling approval, adoption, exact checkpoint and source substitution denials",
@@ -118,5 +118,39 @@
         "GOV-MAINT-0027-R01-F02"
       ]
     }
-  ]
+  ],
+  "remediation": {
+    "predecessorReviewCommit": "037959481142cdb64f873d66ff5166733a40935e",
+    "findingIds": [
+      "GOV-MAINT-0027-R01-F01",
+      "GOV-MAINT-0027-R01-F02"
+    ],
+    "rootCause": [
+      "Frozen effective-state authentication did not also bind whole live completed sibling records after a later correction appeared. Loaded-input CAS preserves a pre-load substitution unless the adapter authenticates it against immutable Git history.",
+      "The retained explicitly synthetic activation fixture copied a foreign campaign worktree into a disposable repository before exercising the unchanged canonical identity guard."
+    ],
+    "changes": [
+      "Authenticate every already returned prior sibling from its full live serialized record against current committed Git history; preserve latest in-memory adoption until ordinary reviewed checkpoint/CAS publication and first Git commit.",
+      "Rebind only the synthetic parent campaign before freezing its test relation and retain explicit foreign-worktree denial plus the positive activation."
+    ],
+    "missedAcceptanceRows": [
+      "Whole live completed-history identity across later correction replay -> authentic A04 lifecycle rationale substitution must deny through actual wave_authority_errors.",
+      "Canonical fixture principal during returned activation -> owned disposable repository binding must pass; another worktree must deny without changing stored bytes."
+    ],
+    "admissionLimit": "The initial29139a46 record is preserved as actually committed (prepared, no reviewAttempts); it is not retroactively a candidate under the old pre-UI generic helper. ECR-0013/A05 must directly authenticate this exact original candidate, R01 projection, remediation, final review and all imported tool source bytes. No generic helper is weakened and no new maintenance ID/controller is created.",
+    "developmentProof": [
+      {
+        "findingId": "GOV-MAINT-0027-R01-F01",
+        "path": "artifacts/tmp/GOV-MAINT-0027.remediation-F01-development-03.log",
+        "sha256": "e1687a1fada459cd3dd89b88134a1de87101bebec000ff78b1838f3f5e75f394",
+        "exitCode": 0
+      },
+      {
+        "findingId": "GOV-MAINT-0027-R01-F02",
+        "path": "artifacts/tmp/GOV-MAINT-0027.remediation-F02-development.log",
+        "sha256": "85cb62c9777fade88825058f8bf2f516948c1050b7f5e07d3c2701c332273968",
+        "exitCode": 0
+      }
+    ]
+  }
 }

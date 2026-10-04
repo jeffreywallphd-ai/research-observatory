@@ -437,6 +437,47 @@ class TaskctlWorkflowTests(unittest.TestCase):
                 },
             )
 
+    def test_sequential_runtime_rejects_preload_edits_to_completed_sibling_history(self) -> None:
+        source = taskctl_module.historical_backlog_document(REPO, "771e54a3657cdc5ff308d3a53d7b71eb48bb9214")
+        assert source is not None
+        # Keep all actual W2 records, immutable authority and real Git. Unrelated
+        # W1 authority is outside this selected replay; no mutation is performed.
+        source["wave_amendments"] = [item for item in source["wave_amendments"] if item["target_wave"] == "W2"]
+        source["wave_approval_bases"] = [item for item in source["wave_approval_bases"] if item["wave_id"] == "W2"]
+        prior = source["wave_amendments"][-1]
+        packet = json.loads(
+            subprocess.check_output(
+                [
+                    "git",
+                    "show",
+                    "7604e7ee94e930548d3078c691ade0f4934a76c9:planning/enabler-change-requests/ECR-0013.packet.json",
+                ],
+                cwd=REPO,
+            )
+        )
+        # Inert synthetic later shell deliberately has no approval: its denial
+        # remains in both baselines. It cannot authorize execution by projection.
+        source["wave_amendments"].append(
+            {
+                "id": "W2.A05",
+                "target_wave": "W2",
+                "change_request_id": "ECR-0013",
+                "approval_reference": {
+                    "path": "planning/wave-amendment-approvals/W2.A05.json",
+                    "sha256": "0" * 64,
+                    "introduction_commit": "0" * 40,
+                },
+                "lifecycle": {"status": "APPROVED"},
+                "correction": packet["authorityChain"]["pausedPredecessor"],
+            }
+        )
+        baseline = taskctl_module.wave_authority_errors(source, REPO)
+        self.assertTrue(any("W2.A05" in error for error in baseline))
+        self.assertFalse(any("completed correction record changed" in error for error in baseline), baseline)
+        prior["lifecycle"]["history"][-1]["rationale"] += " synthetic pre-load substitution"
+        changed = taskctl_module.wave_authority_errors(source, REPO)
+        self.assertEqual({"W2.A04: completed correction record changed after return"}, set(changed) - set(baseline))
+
     def test_paused_correction_older_adapter_fails_closed_at_every_hold_phase(self) -> None:
         legacy = types.ModuleType("fixture_legacy_taskctl")
         legacy.__file__ = str(REPO / "tools/taskctl.py")
@@ -546,8 +587,15 @@ class TaskctlWorkflowTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)
             path = root / "planning/backlog.yaml"
-            context, _parent, child, packet = self.paused_correction_workflow()
+            context, parent, child, packet = self.paused_correction_workflow()
             data = context[0]
+            # This is a synthetic authority fixture in its own repository. Bind
+            # its parent before freezing, rather than weakening the real guard.
+            parent["campaign"]["worktree"] = root.as_posix()
+            child["correction"]["recordSha256"] = canonical_json_sha256(
+                taskctl_module.serializable_backlog(data)["wave_amendments"][-2]
+            )
+            packet["authorityChain"]["pausedPredecessor"] = copy.deepcopy(child["correction"])
             template = next(item for item in data["wave_amendments"] if item["id"] == "W1.A07")
             fixture_branch = next(wave for wave in data["waves"] if wave["id"] == "W1")["campaign"]["branch"]
             child["campaign"] = copy.deepcopy(template["campaign"])
@@ -662,6 +710,12 @@ class TaskctlWorkflowTests(unittest.TestCase):
                     "taskctl.save_validated", side_effect=lambda *a, **kw: save_validated(*a, **{**kw, "repo": None})
                 ),
             ):
+                wrong = copy.deepcopy(context[0])
+                wrong["wave_amendments"][-2]["campaign"]["worktree"] = (root / "other-worktree").as_posix()
+                frozen_backlog = path.read_bytes()
+                with self.assertRaisesRegex(SystemExit, "worktree binding does not match"):
+                    taskctl_module.command_amendment_activate(activation, *taskctl_module.index_backlog(wrong))
+                self.assertEqual(frozen_backlog, path.read_bytes())
                 taskctl_module.command_amendment_activate(activation, *context)
             resumed = load(str(path))
             self.assertEqual([], validate(*resumed))
