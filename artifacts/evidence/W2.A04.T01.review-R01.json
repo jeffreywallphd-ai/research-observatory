@@ -1,0 +1,76 @@
+{
+  "task_id": "W2.A04.T01",
+  "attempt_id": "R01",
+  "candidate_commit": "6a07f37de16e9d5da49cb0b36400e6fe2fb195e0",
+  "base_commit": "223f48a0cfac0612049fc6bf0537dac79f90be36",
+  "submission_record_commit": "7d8992af391d20ccd737fe9315bd8ca804caa911",
+  "reviewer": "agent:/root/a03_t02_authority_review",
+  "result": "approved",
+  "approvalAvailable": true,
+  "evidence_sha256": "afd3a1fb76652d8ddb7d54072e2279a3cd02d38d3549f9a633456886a576187f",
+  "packet_sha256": "a0a0da4b619123d139d47b9076e32c68ae39659397e7c59be2c0d284c97c22e7",
+  "acceptance_criteria_sha256": "91af3c7184a386e2467ba6fbcb19b9b856a67317c4a8d1472aab7181b93903d4",
+  "selection_sha256": "fcf37e88a349e96345de8f482ca2bde50d31d733d5e348c4e2b5b0c4f96e2dda",
+  "notes": "Independent expanded control/security/ADR R01 review of source candidate 6a07f37d and actual supported frozen REVIEW submission 7d8992af. The exact 13-path claim-base diff contains precisely the five ECR-0012 source paths and eight task-owned or generated planning outputs. One jointly introduced regular Proposed ADR-0040/index entry links A04.T01 and A03.T02; all older registry records, metadata and ADRs, including ADR-0039, are preserved. The closed v1.4 gate derives only the exact approved ECR-0012 correction, authenticates the sole-parent combined a211f241/f099fd8f snapshot without fabricating an intermediate claim, preserves the complete DONE T01 and retained T02 definition/base, and partitions independently reviewed A04 source from every commit in the real later T02 range. Supported later return, separate A03 activation and retained-base T02 reopen with matching current authority remain enforced. Advisory PF01-F01/PF02-F01/PF03-F01 were raised before any controlled submission; their adverse evidence and missed acceptance rows are retained. Their narrow fixes freeze the complete adopted A04 record through consumer delivery and the post-candidate suffix, derive task/exit output paths from authenticated immutable attempt references, replay contiguous S01 findings and closures, and authenticate separate immutable pre-adoption security review rounds against the exact committed manifest. These advisories are not invented prior controlled review rounds and have no fabricated formal closures. All 16 exact-candidate retained output hashes were independently recomputed and match the committed manifest; producer outputs report passing selected real-Git positives/denials, compatibility, original-base control, ADR/UI, Python quality and planning checks. I independently inspected Git scope/state/history and reproduced the original PF01 bypass in a disposable real Git history and the original PF03 envelope denial using its exact isolated predicate; I did not rerun the producer suites during formal review. Future review/adoption records and capture readers in the fixtures are explicitly synthetic control proof. The task-base UI gate reports uiFiles:[] and does not prove later desktop conformance. I previously independently reviewed the ECR-0012 packet and A04.B00 and performed the disclosed read-only task preflights; I authored neither this task implementation nor its criterion manifest. This ledger approves only the task-stage correction implementation. Actual integrated S01, exit, separate security checkpoint/adoption, exact paused A03 return, legal activation/T02 reopen, fresh 66-image consumer proof, original CAP-05 native/Core/D3D and joined CAP-04.S05 evidence, W2 qualification and human release remain subsequent required gates.",
+  "acceptance_reviews": [
+    {
+      "criterion_index": 1,
+      "result": "satisfied",
+      "assessment": "Exactly one regular indexed Proposed ADR-0040 is introduced jointly with one appended registry record and links W2.A04.T01 and W2.A03.T02. Its affected paths include the actual protected gate and future extension/baseline, it supersedes nothing, and ADR-0039 plus every older registry record and metadata field remain unchanged. The retained actual claim-base ADR output passes over all 13 paths; the fresh disposable consumer positive performs ADR association at unchanged ca8b1448. Actual later T02 must still run that check on its own committed range."
+    },
+    {
+      "criterion_index": 2,
+      "result": "satisfied",
+      "assessment": "No schema/controller/kernel or asserted contract field changes. The A04-only v1.4 branch binds the exact ECR-0012 packet/owner approval, independently reviewed B00, separate materialization/activation/claim, five-path reviewed submissions, ordered integrated S01, authenticated exit/security checkpoint and exact adopted return. Task/exit manifests and ledgers come from already authenticated attempt references; S01 and checkpoint rounds are canonical, immutable, independently bound and preserve finding replay. Fresh full-original-base and separate-checkpoint positives and scoped authority denials pass; old lanes remain governed by their unchanged authority."
+    },
+    {
+      "criterion_index": 3,
+      "result": "satisfied",
+      "assessment": "The gate authenticates the exact a211f241 whole paused record/hash and sole ca8b1448 parent, expressly preserves the absence of a committed intermediate claim, and requires unchanged completed T01 and retained T02 hash/criteria/base/identity. It authenticates later separate A03 activation and supported reopen under matching owner, branch, worktree and lease. Every correction and consumer source commit is attributed without shortening the real range, and every historical post-adoption A04 record must equal the exact adopted record. Independent actual candidate/submission comparisons preserve the complete frozen A03 record; fresh PF01 preservation and predecessor/claim denials pass."
+    },
+    {
+      "criterion_index": 4,
+      "result": "satisfied",
+      "assessment": "The manifest and frozen packet changed paths exactly equal the Git base-to-candidate inventory: approved gate, tests, procedure, ADR-0040 and index, plus worksheet, separate claim backlog and generated projections. All five source paths are regular 100644 blobs. The source history contains only those paths under the claimed task, with exactly one new registry entry. Frozen approvals/packets, approved reference/witness, schemas, taskctl/kernel, original definitions, seven consumer source paths, product/native/Core/migration and release inputs are unchanged. Fresh actual task-range ADR/UI, Python quality, diff, backlog/views/site checks pass."
+    },
+    {
+      "criterion_index": 5,
+      "result": "satisfied",
+      "assessment": "Fresh retained real-Git runs cover the exact combined snapshot, separately reviewed correction/return/activation/reopen and retained-base ADR association; affected precursor/source/claim substitutions, hidden add/revert, mixed/premature delivery, registry, ordinary-record, dirty/redirected and review denials pass. PF01 temporary adopted-record mutation is denied both during consumer source and after its candidate. PF02 legal R01 adverse/R02 approved task/S01/exit histories are admitted only through authenticated references, with unbound output, forged references and missing/replayed/malformed slice rounds denied. PF03 separately committed checkpoint review and adverse-to-approved security rounds pass, while missing/forged/self/late reviews deny. Eight selected legacy authority cases pass. These disposable future records and mocked capture readers prove control enforcement only; adverse setup/failure/interrupted runs remain distinguished from qualifying passes."
+    },
+    {
+      "criterion_index": 6,
+      "result": "satisfied",
+      "assessment": "This ledger supplies the required independent exact-candidate expanded task control/security/ADR disposition. Implemented ordering and synthetic integration proof require task, integrated S01, exit and separate committed security review before adoption, exact paused-parent return, and later separate activation/reopen. Actual A03 remains PAUSED, T01 DONE and T02 BLOCKED at ca8b1448 in the submitted state; ordinary W2 remains paused. The later actual S01/exit/checkpoint/adoption/return, consumer captures, native/Core/D3D, joined CAP-04.S05, W2 and human release obligations are explicitly retained and are not claimed complete by this task approval."
+    }
+  ],
+  "independent_checks": [
+    {
+      "check": "Actual immutable submission and exact packet binding",
+      "result": "passed",
+      "observation": "Git commit 7d8992af is the direct child of source 6a07f37d and adds only the manifest, supported REVIEW backlog transition and two generated backlog views. Stored current_submission is R01 with no prior attempts or open findings. Committed regular LF manifest bytes match evidence SHA afd3a1fb and physical file bytes. Independently recomputed canonical criteria 91af3c71, verification selection fcf37e88 and packet a0a0da4b hashes match every stored binding. Frozen commands, canonical IDs, deferred coverage, rationale, base/branch and all 13 paths match the manifest; read-only packet semantic validation returned no errors."
+    },
+    {
+      "check": "Immutable authority, scope, ADR and predecessor preservation",
+      "result": "passed",
+      "observation": "Recomputed approved ECR-0012 packet eb1cbf1b and immutable owner approval e769cb71 hashes match their existing authority. The six task criteria equal the approved packet. Direct Git inventory and commit-history inspection show exactly five source paths and regular blobs, one Proposed ADR-0040/index append, unchanged old registry metadata/records and ADR-0039, and unchanged taskctl/kernel. The complete A03 record equals immutable a211f241 at source and submission; every non-A04 amendment and all non-amendment backlog fields are preserved through claim/source/submission. Required newer source-examination corrections stay within this approved envelope."
+    },
+    {
+      "check": "Retained fresh execution and honest deferred proof",
+      "result": "passed",
+      "observation": "All 16 raw output files exist and independently match their manifest SHA-256 values. Their seven selected unittest command outputs report 19 test methods passing, including corrected full-original-base, preserved remediation and separate security review histories; denial subcases are included. Actual ADR, control-only UI, Ruff, format, mypy, diff, backlog, generated views and 496-page site outputs pass; the site report has no errors or warnings. Verification selection explains directly affected control risk and defers unchanged costly legacy cases and product/native/Wave profiles. These producer executions remain distinct from this reviewer’s read-only authentication and the explicitly synthetic future/capture fixtures."
+    },
+    {
+      "check": "Advisory finding replay and adverse preservation",
+      "result": "passed",
+      "observation": "PF01 original disposable bypass observation, PF02 valid-remediation rejection and PF03 exact isolated path denial remain advisory pre-submission records. Their retained regression-first red output hashes were recomputed and match the worksheet/sidecars; fixture setup and draft wiring errors stay separate from product failures and qualification. The committed acceptance rows record the missed boundaries. Independent incremental source closures plus fresh final-candidate preservation, remediation, checkpoint and denial evidence resolve the three defects without inventing prior controlled RNN attempts or formal finding closures."
+    },
+    {
+      "check": "Review independence and stage authority",
+      "result": "passed",
+      "observation": "Reviewer agent:/root/a03_t02_authority_review differs from campaign/task owner and authored no implementation or task criterion evidence. Prior independent ECR-0012/B00 reviews and pre-submission advisories are disclosed. Only this canonical task review ledger is written during formal review; no controller, source, approval or Git ref is changed. Approval applies to W2.A04.T01 only; actual subsequent integration, slice/exit/security/adoption, return/reopen and W2/human release gates remain required."
+    }
+  ],
+  "findings": [],
+  "closures": []
+}

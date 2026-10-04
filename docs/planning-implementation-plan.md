@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 4a2cb91f4b8c863e554bac4c9ae31026cff9cd1090e7590eba7fb27c56a691d8
+source_sha256: 6c326a854c0039ed2a58aed2de3990d7f59340ffdd46bde8b2aef372ed9fad72
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -2914,9 +2914,9 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 **Bounded tasks:**
 
-### - [ ] W2.A04.T01 - Bind protected activation ADR correction and exact return lineage
+### - [x] W2.A04.T01 - Bind protected activation ADR correction and exact return lineage
 
-**Status / owner / review:** `REVIEW` / codex-w2-implementation / - (`-`)
+**Status / owner / review:** `DONE` / codex-w2-implementation / agent:/root/a03_t02_authority_review (`approved`)
 
 **Dependencies:** `W2.A04.B00`
 
@@ -2943,9 +2943,11 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 #### Review history — W2.A04.T01
 
-**Review mode:** `append-only v1` / 0 completed round(s)
+**Review mode:** `append-only v1` / 1 completed round(s)
 
-**Current immutable submission awaiting review:** `R01` / packet SHA-256 `a0a0da4b619123d139d47b9076e32c68ae39659397e7c59be2c0d284c97c22e7`
+##### Round R01
+
+**Immutable submission packet:** `R01` / packet SHA-256 `a0a0da4b619123d139d47b9076e32c68ae39659397e7c59be2c0d284c97c22e7`
 
 - Candidate / base / branch: `6a07f37de16e9d5da49cb0b36400e6fe2fb195e0` / `223f48a0cfac0612049fc6bf0537dac79f90be36` / `codex/w2-implementation`
 - Submitted by / at: codex-w2-implementation / `2026-10-04T16:03:14+00:00`
@@ -2959,9 +2961,25 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - Prior round / replayed open findings: `-` / -
 - Root-cause escalation: -
 
-**Current latest-review projection:** `-` by - at `-`
+**Disposition / reviewer / time:** `approved` / agent:/root/a03_t02_authority_review / `2026-10-04T16:20:11+00:00`
 
-**Latest notes:** -
+**Immutable review ledger:** `artifacts/evidence/W2.A04.T01.review-R01.json` / `fbe33e8621195d977cd336653fbf633d7e74506d6d1f2a72887b68bb074bb8d1`
+
+**Review notes:** Independent expanded control/security/ADR R01 review of source candidate 6a07f37d and actual supported frozen REVIEW submission 7d8992af. The exact 13-path claim-base diff contains precisely the five ECR-0012 source paths and eight task-owned or generated planning outputs. One jointly introduced regular Proposed ADR-0040/index entry links A04.T01 and A03.T02; all older registry records, metadata and ADRs, including ADR-0039, are preserved. The closed v1.4 gate derives only the exact approved ECR-0012 correction, authenticates the sole-parent combined a211f241/f099fd8f snapshot without fabricating an intermediate claim, preserves the complete DONE T01 and retained T02 definition/base, and partitions independently reviewed A04 source from every commit in the real later T02 range. Supported later return, separate A03 activation and retained-base T02 reopen with matching current authority remain enforced. Advisory PF01-F01/PF02-F01/PF03-F01 were raised before any controlled submission; their adverse evidence and missed acceptance rows are retained. Their narrow fixes freeze the complete adopted A04 record through consumer delivery and the post-candidate suffix, derive task/exit output paths from authenticated immutable attempt references, replay contiguous S01 findings and closures, and authenticate separate immutable pre-adoption security review rounds against the exact committed manifest. These advisories are not invented prior controlled review rounds and have no fabricated formal closures. All 16 exact-candidate retained output hashes were independently recomputed and match the committed manifest; producer outputs report passing selected real-Git positives/denials, compatibility, original-base control, ADR/UI, Python quality and planning checks. I independently inspected Git scope/state/history and reproduced the original PF01 bypass in a disposable real Git history and the original PF03 envelope denial using its exact isolated predicate; I did not rerun the producer suites during formal review. Future review/adoption records and capture readers in the fixtures are explicitly synthetic control proof. The task-base UI gate reports uiFiles:[] and does not prove later desktop conformance. I previously independently reviewed the ECR-0012 packet and A04.B00 and performed the disclosed read-only task preflights; I authored neither this task implementation nor its criterion manifest. This ledger approves only the task-stage correction implementation. Actual integrated S01, exit, separate security checkpoint/adoption, exact paused A03 return, legal activation/T02 reopen, fresh 66-image consumer proof, original CAP-05 native/Core/D3D and joined CAP-04.S05 evidence, W2 qualification and human release remain subsequent required gates.
+
+**Findings opened:**
+
+- None
+
+**Prior finding closures:**
+
+- None
+
+**Current immutable submission awaiting review:** None
+
+**Current latest-review projection:** `approved` by agent:/root/a03_t02_authority_review at `2026-10-04T16:20:11+00:00`
+
+**Latest notes:** Independent expanded control/security/ADR R01 review of source candidate 6a07f37d and actual supported frozen REVIEW submission 7d8992af. The exact 13-path claim-base diff contains precisely the five ECR-0012 source paths and eight task-owned or generated planning outputs. One jointly introduced regular Proposed ADR-0040/index entry links A04.T01 and A03.T02; all older registry records, metadata and ADRs, including ADR-0039, are preserved. The closed v1.4 gate derives only the exact approved ECR-0012 correction, authenticates the sole-parent combined a211f241/f099fd8f snapshot without fabricating an intermediate claim, preserves the complete DONE T01 and retained T02 definition/base, and partitions independently reviewed A04 source from every commit in the real later T02 range. Supported later return, separate A03 activation and retained-base T02 reopen with matching current authority remain enforced. Advisory PF01-F01/PF02-F01/PF03-F01 were raised before any controlled submission; their adverse evidence and missed acceptance rows are retained. Their narrow fixes freeze the complete adopted A04 record through consumer delivery and the post-candidate suffix, derive task/exit output paths from authenticated immutable attempt references, replay contiguous S01 findings and closures, and authenticate separate immutable pre-adoption security review rounds against the exact committed manifest. These advisories are not invented prior controlled review rounds and have no fabricated formal closures. All 16 exact-candidate retained output hashes were independently recomputed and match the committed manifest; producer outputs report passing selected real-Git positives/denials, compatibility, original-base control, ADR/UI, Python quality and planning checks. I independently inspected Git scope/state/history and reproduced the original PF01 bypass in a disposable real Git history and the original PF03 envelope denial using its exact isolated predicate; I did not rerun the producer suites during formal review. Future review/adoption records and capture readers in the fixtures are explicitly synthetic control proof. The task-base UI gate reports uiFiles:[] and does not prove later desktop conformance. I previously independently reviewed the ECR-0012 packet and A04.B00 and performed the disclosed read-only task preflights; I authored neither this task implementation nor its criterion manifest. This ledger approves only the task-stage correction implementation. Actual integrated S01, exit, separate security checkpoint/adoption, exact paused A03 return, legal activation/T02 reopen, fresh 66-image consumer proof, original CAP-05 native/Core/D3D and joined CAP-04.S05 evidence, W2 qualification and human release remain subsequent required gates.
 
 **Currently open findings:** -
 
