@@ -3,7 +3,7 @@
   "documentType": "governance-control-maintenance",
   "maintenanceId": "GOV-MAINT-0027",
   "title": "Recognize authenticated completed correction siblings without competing hold ownership",
-  "status": "prepared",
+  "status": "changes-requested",
   "riskTier": 2,
   "humanApprovalRequired": false,
   "implementationAgent": "agent:codex-w2-implementation",
@@ -60,7 +60,7 @@
     ]
   },
   "verification": {
-    "status": "pending exact committed candidate checks and independent control review",
+    "status": "Fresh29139a46 fixed-input qualification is changes-requested: seven check groups PASS; retained taskctl fixture FAIL. Independent R01 also confirms the live completed-history gap. No integration.",
     "selected": [
       "Pure kernel single/sequential phases and denial cases",
       "Real Git paused predecessor/returned sibling approval, adoption, exact checkpoint and source substitution denials",
@@ -73,15 +73,50 @@
       "path": "artifacts/tmp/GOV-MAINT-0027.development-types-02.log",
       "exitCode": 0,
       "scope": "Six affected tool/test modules with tools and tests/foundation on MYPYPATH. Fresh candidate check remains due."
-    }
+    },
+    "freshAttempts": [
+      {
+        "candidateCommit": "29139a46b77ef2a1e73031b759067fbc2b0e7118",
+        "path": "planning/governance-migrations/GOV-MAINT-0027.checks-01.json",
+        "sha256": "d4cee4d77397218599f4467abb45bc1ed956e7ea26b5632044eb3bce76f15837",
+        "result": "changes-requested"
+      }
+    ]
   },
   "refactoring": "No structural cleanup or debt repayment; bounded restorative control correction only. Shared Wave budget is unchanged.",
   "rollback": "Do not integrate on failure or before independent approval. Preserve the exact clean predecessor and all adverse rounds. No remote action or destructive rollback.",
-  "review": null,
+  "review": {
+    "reviewId": "GOV-MAINT-0027.R01",
+    "reviewedCommit": "29139a46b77ef2a1e73031b759067fbc2b0e7118",
+    "reviewer": "agent:maint27-independent-control-review",
+    "reviewedAt": "2026-10-04T20:06:26Z",
+    "disposition": "CHANGES_REQUESTED",
+    "path": "planning/governance-migrations/GOV-MAINT-0027.review-R01.json",
+    "sha256": "bd702be6943bd5dbc6c0edc05f6c0fd9e11b83d9e016b6af5cfacd2a19bea2b1",
+    "findings": [
+      "GOV-MAINT-0027-R01-F01",
+      "GOV-MAINT-0027-R01-F02"
+    ]
+  },
   "implementationNotes": [
     "The terminal-scope validator now recognizes older returned siblings by their parent relation, while only the latest projection exposes a current hold owner.",
     "One pre-existing Ruff RUF059 in affected activation code is repaired by naming the unused validated worktree tuple value _worktree; identity validation and persistence behavior are unchanged.",
     "The synthetic second-transition test isolates CAS and real Git checkpoint persistence; immutable authority is independently exercised by the actual reviewed A04 return. It supplies no real owner approval.",
     "Development setup failure (direct dotted unittest import omitted foundation discovery path) and initial new fixture/hash assertions are preserved in development-02 through development-05 logs. The sixth targeted CAS rehearsal passes; final committed-candidate proof is still due."
+  ],
+  "reviewAttempts": [
+    {
+      "reviewId": "GOV-MAINT-0027.R01",
+      "reviewedCommit": "29139a46b77ef2a1e73031b759067fbc2b0e7118",
+      "reviewer": "agent:maint27-independent-control-review",
+      "reviewedAt": "2026-10-04T20:06:26Z",
+      "disposition": "CHANGES_REQUESTED",
+      "path": "planning/governance-migrations/GOV-MAINT-0027.review-R01.json",
+      "sha256": "bd702be6943bd5dbc6c0edc05f6c0fd9e11b83d9e016b6af5cfacd2a19bea2b1",
+      "findings": [
+        "GOV-MAINT-0027-R01-F01",
+        "GOV-MAINT-0027-R01-F02"
+      ]
+    }
   ]
 }

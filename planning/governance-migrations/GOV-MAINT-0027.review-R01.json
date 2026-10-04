@@ -1,0 +1,43 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "governance-control-maintenance-review",
+  "maintenanceId": "GOV-MAINT-0027",
+  "reviewId": "GOV-MAINT-0027.R01",
+  "reviewedCommit": "29139a46b77ef2a1e73031b759067fbc2b0e7118",
+  "reviewer": "agent:maint27-independent-control-review",
+  "reviewedAt": "2026-10-04T20:06:26Z",
+  "disposition": "CHANGES_REQUESTED",
+  "authorityPreserved": false,
+  "candidateChangedPaths": [
+    "docs/automation/governance-automation-simplification.md",
+    "planning/governance-migrations/GOV-MAINT-0027.json",
+    "tests/foundation/test_governance_kernel.py",
+    "tests/foundation/test_planctl_amendments.py",
+    "tests/foundation/test_taskctl_workflow.py",
+    "tools/governance_kernel.py",
+    "tools/planctl.py",
+    "tools/taskctl.py"
+  ],
+  "findings": [
+    {
+      "id": "GOV-MAINT-0027-R01-F01",
+      "severity": "P1",
+      "blocking": true,
+      "title": "Live replay does not authenticate complete historical returned sibling records",
+      "criterion": "GOV-MAINT-0027 intendedDelta preserves immutable completed correction records and denies rewritten completed history; AGENTS.md requires immutable approvals, adverse findings, evidence and history.",
+      "reproduction": "At the exact candidate, change only the final ADOPTED lifecycle event rationale in the serialized live W2.A04 record. On a W2-only authority input preserving the actual W2 records and base, wave_authority_errors returns [] for both the pristine record and this substitution; amendment_exit_review_control_errors and amendment_adoption_reference_errors also return []. The narrowed semantic baseline and altered error lists are exactly identical (the narrowing is not a complete repository validation). Direct _returned_correction_errors against the actual candidate HEAD rejects the same substitution with 'W2.A04: completed correction record changed after return'. The new _paused_predecessor_errors authenticates earlier siblings only from immutable effectiveStateCommit. Runtime wave_authority_errors calls that frozen authentication for a child's parent without comparing the whole live prior sibling to it. Thus a historical lifecycle edit before a later runtime load is not rejected by the live replay path; loaded-input CAS and lifecycle prefix preservation do not authenticate those pre-load bytes against Git.",
+      "requiredResolution": "Authenticate every prior returned sibling in live complete same-parent context through the adapter at runtime, using the full serialized live record and current committed Git history. Preserve the distinction between already returned historical siblings and the newest reviewed in-memory ADOPTED transition, which must remain able to publish through the existing checkpoint/CAS path before its first ADOPTED Git commit. Add a real-Git regression with an authentic completed sibling, positive later-context replay, and a schema-valid completed lifecycle rationale substitution that the actual runtime authority boundary rejects. Retain all gap, order, foreign/nested parent, unfinished sibling, completed task/review/checkpoint, ownership and disposal denials; projection alone must confer no authority.",
+      "notes": "The independent read-only probe is retained at artifacts/tmp/GOV-MAINT-0027.control-review-probe-04.log, SHA-256 d98d4535755d45dda1031e9fe446078070ccaa33c96bcb57ff2f8baebc72b6ec. Earlier setup/interruption observations remain in probe-01 through probe-03 logs. A completion.notes substitution was rejected by existing exit projection validation and is not claimed as this finding. The bounded repair route is lawful under GOV-MIG-0001 futureControlRepair; it does not approve ECR-0013/A05, original CAP-05.S01.T01 work, ordinary W2 execution or release. ECR-0013/A05 must independently bind the exact reviewed GOV-MAINT-0027 imported-authority source and review sequence before its separate owner approval."
+    },
+    {
+      "id": "GOV-MAINT-0027-R01-F02",
+      "severity": "P2",
+      "blocking": true,
+      "title": "The selected adoption and parent-activation regression has a foreign worktree fixture",
+      "criterion": "GOV-MAINT-0027 selected verification requires real CAS materialization/adoption and recovery boundaries with unchanged identity guards; bounded maintenance must pass affected checks before integration.",
+      "reproduction": "The fresh fixed-candidate taskctl group ran seven selected tests and exited 1. test_paused_correction_adoption_returns_once_through_real_git_and_cas completes adoption but fails its positive subsequent parent activation at test_taskctl_workflow.py:665. prospective_worktree_binding correctly rejects the retained parent's historical worktree binding because it does not identify the disposable canonical repository: 'Existing worktree binding does not match the canonical repository'. Activation production logic is unchanged apart from the unused tuple variable rename. The other six selected taskctl tests passed, including synthetic sequential CAS materialization/adoption; kernel, planctl, Ruff, format, mypy, inert ECR validation and diff hygiene passed.",
+      "requiredResolution": "Bind this explicitly synthetic fixture's parent campaign to its owned disposable repository before freezing/materializing its relation, and recompute the synthetic parent record hash from those exact fixture bytes. Add a wrong-worktree activation denial before the positive activation. Preserve every existing assertion and the production canonical worktree/identity guard, then rerun the affected regression and final candidate checks with fixed inputs. Do not reclassify the retained failed run as passing.",
+      "notes": "Fresh receipt artifacts/tmp/GOV-MAINT-0027.29139a46.checks.json, SHA-256 0d534fbddec783ac646e56e1d20c43cdcaf7833507306765bb6c943d522c48d3, binds this candidate, exact predecessor 7604e7ee94e930548d3078c691ade0f4934a76c9 and 4695 stable tracked inputs. Its taskctl raw log has SHA-256 444abfa6fa9e0cf227278bdbfc4536a50b96f48bf15a665b8b47dc8f417756ed. No whole product/native/browser/profile or Wave qualification is inferred from these control checks."
+    }
+  ]
+}
