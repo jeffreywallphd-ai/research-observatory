@@ -53872,14 +53872,17 @@ wave_amendments:
       CAP-05 native/Core or W2 completion. Future T02 runs its real ca8b1448-base ADR check and all original capture and consumer
       obligations.
     packet_task_sha256: 5fa9bc5e66e76694b933cb59aa4eac9bdb793107c8b3af618633ef168d66bf7b
-    status: READY
-    owner: null
-    branch: null
-    base_sha: null
-    worktree: null
-    lease: null
-    started_at: null
-    updated_at: '2026-10-04T13:47:43+00:00'
+    status: IN_PROGRESS
+    owner: codex-w2-implementation
+    branch: codex/w2-implementation
+    base_sha: 223f48a0cfac0612049fc6bf0537dac79f90be36
+    worktree: .
+    lease:
+      claimed_by: codex-w2-implementation
+      claimed_at: '2026-10-04T13:51:44+00:00'
+      expires_at: '2026-10-04T21:51:44+00:00'
+    started_at: '2026-10-04T13:51:44+00:00'
+    updated_at: '2026-10-04T13:51:44+00:00'
     completed_at: null
     blocker: null
     implementation_notes: ''
