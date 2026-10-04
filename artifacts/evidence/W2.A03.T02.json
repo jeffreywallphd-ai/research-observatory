@@ -1,0 +1,658 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "W2.A03.T02",
+  "baseCommit": "ca8b1448e094b637bbd06c3129b69a78df792619",
+  "commit": "06a69348c5de5c60cccecde400ab2271200ec50d",
+  "branch": "codex/w2-implementation",
+  "changedFiles": [
+    "apps/desktop/scripts/assemble-application.mjs",
+    "apps/desktop/scripts/assemble-reference.mjs",
+    "artifacts/evidence/W2.A03.T02.accessibility-adjudication-R01.json",
+    "artifacts/evidence/W2.A03.T02.accessibility-browser-aab29ed2.json",
+    "artifacts/evidence/W2.A03.T02.accessibility-official-failed-aab29ed2.json",
+    "artifacts/evidence/W2.A03.T02.accessibility-probe-original.py",
+    "artifacts/evidence/W2.A03.T02.accessibility-probe.py",
+    "artifacts/evidence/W2.A03.T02.baseline-captures/075845819a6b0ad97a84335eee80fd580d21676fea3c99faaae4de66456348f8.png",
+    "artifacts/evidence/W2.A03.T02.baseline-captures/0835c6e6fae71e29313e941c070e442266e3e2c939177377245e5df99e7f1752.png",
+    "artifacts/evidence/W2.A03.T02.baseline-captures/09ec55701fd8c604cb07c0e7877256c5d922aebc37be5a0d10a90d52b428b4a2.png",
+    "artifacts/evidence/W2.A03.T02.baseline-captures/13b1f1726eddb6a2e8f1d8a4ad7d22fd9baff65203c5f5fbb061c8f42d0a918e.png",
+    "artifacts/evidence/W2.A03.T02.baseline-captures/159135ca70c3b6520a01298b93a2bf320b5881c5db9665921e01b14f84fdf69a.png",
+    "artifacts/evidence/W2.A03.T02.baseline-captures/17ce410b3b73d1e3cdfe7c81b72b90aeed5cb32802f0564587fb929995cad884.png",
+    "artifacts/evidence/W2.A03.T02.baseline-captures/204c62d2cd36bacbf43f107c7abd6f7fffd45a91c2b4057fce538d2b4a98faf1.png",
+    "artifacts/evidence/W2.A03.T02.baseline-captures/2279f1a27a8abae8305b54a3abce8b4502dfbeb1a64060cc288aedf0360d25a6.png",
+    "artifacts/evidence/W2.A03.T02.baseline-captures/242118085bc09f148cf2ff042d1edea7cb60922f35a7dabc7b743173a5bdca7e.png",
+    "artifacts/evidence/W2.A03.T02.baseline-captures/280883300d7c21545314b6192a0138098f53eafb5a0c4f6a800d6cb5180217a7.png",
+    "artifacts/evidence/W2.A03.T02.baseline-captures/2915cafc4cbd32818aa0ca2c02a33bf6306d1db3c7555912aa9b2277b94536e1.png",
+    "artifacts/evidence/W2.A03.T02.baseline-captures/29e6ba2af6df0921d3a8d7b5e45da83f0dfe3533ccb4ccbf8f8b87630cc5dfc9.png",
+    "artifacts/evidence/W2.A03.T02.baseline-captures/2a23ba4d2af94d9d642bd416e701ebfef575b3e6bd66751ea2e480280ff0e998.png",
+    "artifacts/evidence/W2.A03.T02.baseline-captures/2a2538cb063c91104a526150309a3ebe4f17f9ca58759b166abab061d5390df9.png",
+    "artifacts/evidence/W2.A03.T02.baseline-captures/2b07bbf219da820060b11a22e0443bf05aa66ff4b0daeb6076a6504b1dd3ce6d.png",
+    "artifacts/evidence/W2.A03.T02.baseline-captures/2e8cbde6b93ea4fd0cf5c16cf8f07b46ea80caa6adff1aebf9685f3f3050fce7.png",
+    "artifacts/evidence/W2.A03.T02.baseline-captures/32e9f464033b2b161198d1b3f87d9f30d495c8553ba57c82118c9879d30b9623.png",
+    "artifacts/evidence/W2.A03.T02.baseline-captures/34c4f4d49f1ffdd5e63b8e6d91b93b6489fd7d2104eccf4806b0b196af3206f3.png",
+    "artifacts/evidence/W2.A03.T02.baseline-captures/3d137512f2033c55d883e7187b3ba4d08454b038ccd3f7770811c45c837e3899.png",
+    "artifacts/evidence/W2.A03.T02.baseline-captures/40b3bcb924e4e192c4d8f2df2b6b5864d1f4c8d5ec621670b519bc74cfe16cf1.png",
+    "artifacts/evidence/W2.A03.T02.baseline-captures/4288fc341cb388cf9fb3d5ff3a0dc57d7fd1d45b4c03705de397d85b2ca39e33.png",
+    "artifacts/evidence/W2.A03.T02.baseline-captures/4466480fc5b8868ce299921522997141259cbb804119e1474881356d51ce3c99.png",
+    "artifacts/evidence/W2.A03.T02.baseline-captures/5337a25e226676d3d8d57bfd138c75cf2ac8079aeb83ae8c7b6f5531c13f341c.png",
+    "artifacts/evidence/W2.A03.T02.baseline-captures/53c144dd6ce7d3a5fc5f6145de2b797caf2c559f71e3dae4b0793e19ae0a77d6.png",
+    "artifacts/evidence/W2.A03.T02.baseline-captures/58600cf70eb5d143cf5719bd92f247541c0d5a2b83c94002ca0bf5479191b57b.png",
+    "artifacts/evidence/W2.A03.T02.baseline-captures/58d7e4a672323f495c6ec916cdae1c24788ab1f4dedb972f1e109fc4a40e0830.png",
+    "artifacts/evidence/W2.A03.T02.baseline-captures/5d9e6d1817a7d402b7573d32e1cb5ca1d826a07170a84e2f36d67f04f8009cb2.png",
+    "artifacts/evidence/W2.A03.T02.baseline-captures/5f0caa73991c94baa551d9dd09d3b45d12bbb178313b72cbeff3cb7473105b67.png",
+    "artifacts/evidence/W2.A03.T02.baseline-captures/62b2654685f3368aec42c86b3383802df6857351409f4ab33a61ee620a3dcfa1.png",
+    "artifacts/evidence/W2.A03.T02.baseline-captures/62fb47536308f017c407c1cfe083b390185511e40329a4a52feddf52232f3821.png",
+    "artifacts/evidence/W2.A03.T02.baseline-captures/660534d333bf9d59ec258dd7643a38b60a4032ac3a43eb3d109c6a709c7f3489.png",
+    "artifacts/evidence/W2.A03.T02.baseline-captures/69cae888657a777088258cda664e7add4628610e05585378ae831db7a6e636a0.png",
+    "artifacts/evidence/W2.A03.T02.baseline-captures/713006b86c6dafb20ab81ac9a37dc00f40fe0d4e1306066c6c6a21c4e8449070.png",
+    "artifacts/evidence/W2.A03.T02.baseline-captures/75eee8da7b9c584c5cc416882d95a1f861f038db24b9f575e7e23061bd14b95f.png",
+    "artifacts/evidence/W2.A03.T02.baseline-captures/789f63e17b3f734def5b46cf1c29e8094dc50498be8d22091b49da6843c0ad7f.png",
+    "artifacts/evidence/W2.A03.T02.baseline-captures/791247f69adfc786c020adc79da32f155ae9976a8b29a2ed33ae2f9a4bf32d75.png",
+    "artifacts/evidence/W2.A03.T02.baseline-captures/791e480ef0557cb6043215eec103f2bd6fa74dc08b029f89da3dee0e3aadb95d.png",
+    "artifacts/evidence/W2.A03.T02.baseline-captures/792fc5a26c511aaf580be287cbc2c52d388b031882eafc06bbe4e66d453ddeed.png",
+    "artifacts/evidence/W2.A03.T02.baseline-captures/809094e9ccc33c8e5c8134ab2f8329b2968daf81d0b3b148448ee659040e4854.png",
+    "artifacts/evidence/W2.A03.T02.baseline-captures/84b6d0a71440c3aa2d7b2cf798f08f02762c82b6d607a17f88e93e489788a8ea.png",
+    "artifacts/evidence/W2.A03.T02.baseline-captures/84bb1c729fdac0dfacea91e93906555855a54e0fc860ab6b04a7cdc3d8c89af4.png",
+    "artifacts/evidence/W2.A03.T02.baseline-captures/95efb92553d1f79e7733f6dfbf8d0c7923ab84627b6ffd8ba3f92fa8de62d303.png",
+    "artifacts/evidence/W2.A03.T02.baseline-captures/9af8c720f2d87a5ced79fea6169cfa46622a881c9e4ec93fb1df7432556663de.png",
+    "artifacts/evidence/W2.A03.T02.baseline-captures/9b9cd5d87d816d76b24758a1f5ceb69f967f7763a66b86389bb6fd720fdb18ce.png",
+    "artifacts/evidence/W2.A03.T02.baseline-captures/9bdede544a927d3fcedacf8fc7953ce39aad3e1b4f0f7b41b16c7d139578bf1e.png",
+    "artifacts/evidence/W2.A03.T02.baseline-captures/a9d0e4b50623d998d3f8438c68fcf07f56c0e17b3cad04af0a2e982292876f5d.png",
+    "artifacts/evidence/W2.A03.T02.baseline-captures/af4fb2c8644f87e3ceeb6451c0cd652bb39a321ec634469a5f30870cba0fb6f9.png",
+    "artifacts/evidence/W2.A03.T02.baseline-captures/b0037add8c6118429df1a5eebfef8b07c5a749386d62db29d8908655515d1a12.png",
+    "artifacts/evidence/W2.A03.T02.baseline-captures/b038524ffcc69602f0173d66eb18269182b4a2e95ff4339c0c066a91a72d4fd6.png",
+    "artifacts/evidence/W2.A03.T02.baseline-captures/b71b4a30d3d084e0fa76d05dfa674f9720d84dbb2a6bed7f95e7e3cb1b04c80e.png",
+    "artifacts/evidence/W2.A03.T02.baseline-captures/bab5e5c35ba4f435d45bfa4771b15239da72dffa910af7aa8d50d759331bced9.png",
+    "artifacts/evidence/W2.A03.T02.baseline-captures/bab93aa404f6a4480efc81b2bddd6716fb2716dffb1f20486fae2f64c3352dce.png",
+    "artifacts/evidence/W2.A03.T02.baseline-captures/bf559f320ccda3829f9c0cff6ef2bc02a942ef63746e6563a5161831893e75b6.png",
+    "artifacts/evidence/W2.A03.T02.baseline-captures/bfc6bfa5ceb48e529878f6c072d6625bb438d7a9f24ad3692c218e80a92b37c0.png",
+    "artifacts/evidence/W2.A03.T02.baseline-captures/c30681e35828b3acc653fcc7a9f00e090ee521ac74a7df3324760f068dc8d8d6.png",
+    "artifacts/evidence/W2.A03.T02.baseline-captures/cc4a9f7799aaa88b509d800141602f5f372ef0111369ba0e856e97ba56b31870.png",
+    "artifacts/evidence/W2.A03.T02.baseline-captures/cf657ae9c8eaae5a6da043ce064b4da7767b99704bba561279a52988b06725f3.png",
+    "artifacts/evidence/W2.A03.T02.baseline-captures/d0cd22de2846c2190bd92505b9163ce1c6ca273afce454420e9b789fcb5a39ea.png",
+    "artifacts/evidence/W2.A03.T02.baseline-captures/d2701885268610f76e372894150ac9445bce87c0ba87f4cfb6060ccb0572f8fb.png",
+    "artifacts/evidence/W2.A03.T02.baseline-captures/d9b003f6e842a3a4e855a06d8a7b793c99e25130ddc778bc0396c6af8ff1d971.png",
+    "artifacts/evidence/W2.A03.T02.baseline-captures/e2c14d554ef71d6b1d8300e903982102a566c161456306b268689899c7edff93.png",
+    "artifacts/evidence/W2.A03.T02.baseline-captures/e30bb0e78d3ccae0471d52b9543fb6a38abaa6daec9d10fd6da5debb4cabc9e4.png",
+    "artifacts/evidence/W2.A03.T02.baseline-captures/e989360443c24d3b93c5fb2bdfcc43a57a8bd9a63ea9ac65b9d720403296ceff.png",
+    "artifacts/evidence/W2.A03.T02.baseline-captures/f2a69fe5c23a01fa4450d9ba1d486dc76d66d4779d46c4c7fabaced0f1cda3ae.png",
+    "artifacts/evidence/W2.A03.T02.baseline-captures/f554257fc6a121100840b716b0abd674b17b54fb58b6d23d5fa7425696321691.png",
+    "artifacts/evidence/W2.A03.T02.baseline-captures/fd79285fa76174d4b9af97794bae0fedc29ea925d4a0e0cfc4116af1ef0421b8.png",
+    "artifacts/evidence/W2.A03.T02.baseline-captures/manifest.json",
+    "artifacts/evidence/W2.A03.T02.baseline-writer-da0f1328.json",
+    "artifacts/evidence/W2.A03.T02.build-pinned.py",
+    "artifacts/evidence/W2.A03.T02.capture-privacy-review.json",
+    "artifacts/evidence/W2.A03.T02.capture-producer.py",
+    "artifacts/evidence/W2.A03.T02.consumer-denial-probe.py",
+    "artifacts/evidence/W2.A03.T02.consumer-denials-aab29ed2.json",
+    "artifacts/evidence/W2.A03.T02.same-reference-denial-observation-aab29ed2.json",
+    "artifacts/evidence/W2.A03.T02.task-start.md",
+    "artifacts/evidence/W2.A03.T02.verify-candidate.py",
+    "artifacts/evidence/W2.A04.B00.json",
+    "artifacts/evidence/W2.A04.B00.review-R01.json",
+    "artifacts/evidence/W2.A04.S01.review-01.json",
+    "artifacts/evidence/W2.A04.T01.json",
+    "artifacts/evidence/W2.A04.T01.review-R01.json",
+    "artifacts/evidence/W2.A04.T01.task-start.md",
+    "artifacts/evidence/W2.A04.adoption.json",
+    "artifacts/evidence/W2.A04.adoption.review-01.json",
+    "artifacts/evidence/W2.A04.exit-review-R01.json",
+    "artifacts/evidence/W2.A04.exit.json",
+    "docs/adr/ADR-0040-document-protected-desktop-activation-correction.md",
+    "docs/adr/index.json",
+    "docs/automation/design-first-ui-changes.md",
+    "docs/planning-implementation-plan.md",
+    "planning/backlog.yaml",
+    "planning/enabler-change-requests/ECR-0012-review.html",
+    "planning/enabler-change-requests/ECR-0012.md",
+    "planning/enabler-change-requests/ECR-0012.packet.json",
+    "planning/enabler-change-requests/ECR-0012.preflight-01.json",
+    "planning/enabler-change-requests/ECR-0012.review-R01.json",
+    "planning/review-site/README.md",
+    "planning/review-site/enablers/ECR-0011.html",
+    "planning/review-site/enablers/ECR-0012.html",
+    "planning/review-site/enablers/index.html",
+    "planning/review-site/index.html",
+    "planning/review-site/manifest.json",
+    "planning/status-summary.md",
+    "planning/wave-amendment-approvals/W2.A04.json",
+    "tests/desktop/test_desktop_app_check.py",
+    "tests/desktop/test_ui_conformance.py",
+    "tests/foundation/test_ui_change_gate.py",
+    "tests/foundation/test_ui_reference_check.py",
+    "tools/ui_change_gate.py",
+    "verification/baselines/desktop-ui.json",
+    "verification/extensions/desktop-ui.json"
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "After independently approved T01 witness/control and adopted A04 correction, both actual pinned bundles select exact approved 1.8 ID/package. The reference fixture contains all 33 catalog product pages; the functional product is the existing application bundle and excludes reference-only HTML/demo pages. Fresh actual built-product keyboard/workspace runtime passes. This is activation proof, not original CAP-05 native/Core qualification or the full product/reference workflow comparison."
+      ],
+      "checkIds": [
+        "build",
+        "product-runtime",
+        "focused-units",
+        "ui-tokens",
+        "ui-routes",
+        "ui-workflows",
+        "accessibility-browser",
+        "accessibility-adjudicated",
+        "selector-denials"
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "The actual guarded writer ran at clean committed da0f1328 after approved T01; committed baseline aab29ed2 preserves 33 pages/66 light-dark entries and all prior pinned settings. The independent privacy-reviewed 66 PNG bundle has producer aab29ed2 and exact delivery 8804a66c; fresh current-candidate delivery authentication and full visual/history conformance pass. Same-reference writer denial at aab and unchanged before/after digest are preserved as artifact-generation provenance; fresh regression cases preserve overwrite, missing/extra images, changed settings/source and co-tampered delivery denials. Prior 1.7 baseline remains immutable in Git. Independent protected task review follows frozen submission; integrated slice/exit/security reviews follow task approval."
+      ],
+      "checkIds": [
+        "ui-visual",
+        "delivery",
+        "capture-guards",
+        "focused-units",
+        "selector-denials",
+        "source-invariants"
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "Actual source history after adopted correction contains exactly the seven authorized consumer/test paths plus declared task-owned evidence and generated workflow outputs. All six non-baseline source edits precede the first baseline commit. The whole A04 record and DONE T01 remain unchanged; approved 1.8 reference bytes match publication. Only mutable current expectations changed; the historical 1.7 fixture remains. Retained ca8 task base includes separately approved A04 source and authority outputs, authenticated by the actual-range ADR check. No original CAP-05 task, Core/native/drop, permission, migration or release source edit."
+      ],
+      "checkIds": [
+        "source-invariants",
+        "adr",
+        "ui-gate",
+        "ruff",
+        "format",
+        "mypy",
+        "diff",
+        "backlog",
+        "views",
+        "site",
+        "focused-units"
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "verificationSelection": {
+    "riskAnalysis": "Seven-path identity rebinding and protected 66-capture baseline. Fresh exact candidate pinned both-bundle build, functional product browser runtime, 16 affected units, three capture guards, physical selector/baseline denials, real Chromium naming positive/negative, all five conformance domains, current Git/ADR/source and planning/quality checks. Artifact generation origins retain their original producer/delivery commits and adverse outcomes. No prior runtime PASS is reused as current qualification; unchanged product/native/Core implementation does not justify an early full repository/native profile. The official accessibility command is preserved as FAIL; exact sole false-positive guard plus independent adjudication and fresh AX proof establish the unchanged naming requirement.",
+    "selectedCommandIds": [
+      "desktop:application",
+      "desktop:unit",
+      "desktop:ui-reference-integrity",
+      "desktop:ui-token",
+      "desktop:ui-route-page",
+      "desktop:ui-workflow",
+      "desktop:ui-accessibility",
+      "desktop:ui-visual-regression",
+      "foundation:unit",
+      "foundation:adr",
+      "foundation:ui-change",
+      "foundation:quality",
+      "foundation:backlog",
+      "foundation:backlog-views"
+    ],
+    "deferred": [
+      "A03 integrated S01, exit and separate security/control adoption remain due after independent task disposition.",
+      "CAP-04.S05 joined real signed-worker/Core two-page, authority denial/cancellation/restart/recovery and independent slice review remain due.",
+      "Original CAP-05.S01.T01 retains 6506 base, actual product/reference workflow captures, independent classification/full-base gate, authentic fifth-D3D characterization, native Windows picker/drop and encrypted Core receipt/restart/failure/cancellation proof.",
+      "Remaining CAP-05 tasks and fresh complete W2 repository/profile/packaging/security/privacy/rights/accessibility/performance/cross-capability qualification, independent Wave review and separate human release gate remain due.",
+      "The generic explicit-label accessibility checker defect is preserved for its lawful future authority-preserving control repair; no checker/profile PASS is claimed."
+    ]
+  },
+  "checks": [
+    {
+      "id": "accessibility-browser",
+      "command": ".venv/Scripts/python.exe -B artifacts/evidence/W2.A03.T02.accessibility-probe.py",
+      "workingDirectory": ".",
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "commit": "06a69348c5de5c60cccecde400ab2271200ec50d",
+      "rawOutput": "artifacts/tmp/W2.A03.T02.final-06a69348.accessibility-browser.log",
+      "rawOutputSha256": "6e89aa8678c588c2c3a3408081809a07bde15759557c7cdb111003ed0055479a",
+      "startedAt": "2026-10-04T18:43:19.337143+00:00",
+      "finishedAt": "2026-10-04T18:43:42.618805+00:00",
+      "durationSeconds": 23.36,
+      "provenance": "Fresh local execution at fixed clean committed candidate; no cached result."
+    },
+    {
+      "id": "adr",
+      "command": ".venv/Scripts/python.exe -B tools/adr_check.py --repo . --base ca8b1448e094b637bbd06c3129b69a78df792619 --head 06a69348c5de5c60cccecde400ab2271200ec50d",
+      "workingDirectory": ".",
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "commit": "06a69348c5de5c60cccecde400ab2271200ec50d",
+      "rawOutput": "artifacts/tmp/W2.A03.T02.final-06a69348.adr.log",
+      "rawOutputSha256": "9d9c1cb894b4bab9138d631f62059233320799a158eb6b4a4c5237f71f35be44",
+      "startedAt": "2026-10-04T18:43:42.726804+00:00",
+      "finishedAt": "2026-10-04T18:43:44.524960+00:00",
+      "durationSeconds": 1.876,
+      "provenance": "Fresh local execution at fixed clean committed candidate; no cached result."
+    },
+    {
+      "id": "backlog",
+      "command": ".venv/Scripts/python.exe -B tools/taskctl.py --file planning/backlog.yaml validate",
+      "workingDirectory": ".",
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "commit": "06a69348c5de5c60cccecde400ab2271200ec50d",
+      "rawOutput": "artifacts/tmp/W2.A03.T02.final-06a69348.backlog.log",
+      "rawOutputSha256": "d97d5b8d4d0a12904cada3ff677b3c739845ef523cf4f2fe70c0674e7afb2ea1",
+      "startedAt": "2026-10-04T18:43:48.922002+00:00",
+      "finishedAt": "2026-10-04T18:47:28.160322+00:00",
+      "durationSeconds": 219.313,
+      "provenance": "Fresh local execution at fixed clean committed candidate; no cached result."
+    },
+    {
+      "id": "build",
+      "command": ".venv/Scripts/python.exe -B artifacts/evidence/W2.A03.T02.build-pinned.py",
+      "workingDirectory": ".",
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "commit": "06a69348c5de5c60cccecde400ab2271200ec50d",
+      "rawOutput": "artifacts/tmp/W2.A03.T02.final-06a69348.build.log",
+      "rawOutputSha256": "a950df70de9e9d98bc8922f0b7adf632d32f7c945c3da462d325b05da8e90502",
+      "startedAt": "2026-10-04T18:42:06.853440+00:00",
+      "finishedAt": "2026-10-04T18:42:09.157957+00:00",
+      "durationSeconds": 2.382,
+      "provenance": "Fresh local execution at fixed clean committed candidate; no cached result."
+    },
+    {
+      "id": "capture-guards",
+      "command": ".venv/Scripts/python.exe -B -m unittest -v tests.desktop.test_product_style_check.CaptureBundleTests.test_duplicate_missing_extra_and_invalid_png_captures_never_publish tests.desktop.test_product_style_check.CaptureBundleTests.test_source_change_during_capture_never_publishes tests.desktop.test_product_style_check.CaptureBundleTests.test_co_tampered_manifest_and_png_fail_against_delivery",
+      "workingDirectory": ".",
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "commit": "06a69348c5de5c60cccecde400ab2271200ec50d",
+      "rawOutput": "artifacts/tmp/W2.A03.T02.final-06a69348.capture-guards.log",
+      "rawOutputSha256": "4214274718be584de817ac616c9a08ba51cabfe3efc426a7ab92a5a30fa03c3c",
+      "startedAt": "2026-10-04T18:43:16.860783+00:00",
+      "finishedAt": "2026-10-04T18:43:19.225851+00:00",
+      "durationSeconds": 2.443,
+      "provenance": "Fresh local execution at fixed clean committed candidate; no cached result."
+    },
+    {
+      "id": "delivery",
+      "command": ".venv/Scripts/python.exe -B artifacts/evidence/W2.A03.T02.capture-producer.py --delivery-commit 8804a66c9acd23ab8e398197fd46654bccfc1a09",
+      "workingDirectory": ".",
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "commit": "06a69348c5de5c60cccecde400ab2271200ec50d",
+      "rawOutput": "artifacts/tmp/W2.A03.T02.final-06a69348.delivery.log",
+      "rawOutputSha256": "c9074e56ce93328b3338424c3d02a709405b83619cae202afc8c89e9608a14ee",
+      "startedAt": "2026-10-04T18:43:21.806459+00:00",
+      "finishedAt": "2026-10-04T18:44:10.788602+00:00",
+      "durationSeconds": 49.156,
+      "provenance": "Fresh local execution at fixed clean committed candidate; no cached result."
+    },
+    {
+      "id": "diff",
+      "command": "git diff --check ca8b1448e094b637bbd06c3129b69a78df792619 06a69348c5de5c60cccecde400ab2271200ec50d",
+      "workingDirectory": ".",
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "commit": "06a69348c5de5c60cccecde400ab2271200ec50d",
+      "rawOutput": "artifacts/tmp/W2.A03.T02.final-06a69348.diff.log",
+      "rawOutputSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "startedAt": "2026-10-04T18:43:48.666902+00:00",
+      "finishedAt": "2026-10-04T18:43:48.818474+00:00",
+      "durationSeconds": 0.223,
+      "provenance": "Fresh local execution at fixed clean committed candidate; no cached result."
+    },
+    {
+      "id": "focused-units",
+      "command": ".venv/Scripts/python.exe -B -m unittest -v tests.foundation.test_ui_reference_check tests.desktop.test_ui_conformance.UiConformanceTests.test_active_presentation_requires_its_exact_compatibility_witness tests.desktop.test_ui_conformance.UiConformanceTests.test_application_inventory_excludes_only_canonical_root_generated_directories tests.desktop.test_ui_conformance.UiConformanceTests.test_application_mode_requires_a_bound_build_manifest tests.desktop.test_ui_conformance.UiConformanceTests.test_application_inventory_detects_content_type_and_membership_races tests.desktop.test_ui_conformance.UiConformanceTests.test_application_inventory_guard_holds_source_and_output_snapshot_through_completion tests.desktop.test_ui_conformance.UiConformanceTests.test_strict_baseline_and_approval_records_reject_malformed_history_shapes tests.desktop.test_ui_conformance.UiConformanceTests.test_controlled_font_check_rejects_a_missing_face tests.desktop.test_ui_conformance.UiConformanceTests.test_same_reference_baseline_rewrite_requires_new_approval tests.desktop.test_ui_conformance.UiConformanceTests.test_visual_mismatch_maps_to_normative_page_contract",
+      "workingDirectory": ".",
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "commit": "06a69348c5de5c60cccecde400ab2271200ec50d",
+      "rawOutput": "artifacts/tmp/W2.A03.T02.final-06a69348.focused-units.log",
+      "rawOutputSha256": "62abe3e08bd14f933f78a3601f2f4bd939bf1f8195148ad0341bc97545985598",
+      "startedAt": "2026-10-04T18:43:16.858630+00:00",
+      "finishedAt": "2026-10-04T18:43:52.978340+00:00",
+      "durationSeconds": 36.194,
+      "provenance": "Fresh local execution at fixed clean committed candidate; no cached result."
+    },
+    {
+      "id": "format",
+      "command": ".venv/Scripts/python.exe -B -m ruff format --check tests/desktop/test_desktop_app_check.py tests/desktop/test_ui_conformance.py tests/foundation/test_ui_reference_check.py",
+      "workingDirectory": ".",
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "commit": "06a69348c5de5c60cccecde400ab2271200ec50d",
+      "rawOutput": "artifacts/tmp/W2.A03.T02.final-06a69348.format.log",
+      "rawOutputSha256": "eee76f865de5a9f2456950f710ae5d5f9b5bd0ea02aa54f614c5eed6642a0bfd",
+      "startedAt": "2026-10-04T18:43:48.077028+00:00",
+      "finishedAt": "2026-10-04T18:43:48.171928+00:00",
+      "durationSeconds": 0.169,
+      "provenance": "Fresh local execution at fixed clean committed candidate; no cached result."
+    },
+    {
+      "id": "mypy",
+      "command": ".venv/Scripts/python.exe -B -m mypy --no-namespace-packages tests/desktop/test_desktop_app_check.py tests/desktop/test_ui_conformance.py tests/foundation/test_ui_reference_check.py",
+      "workingDirectory": ".",
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "commit": "06a69348c5de5c60cccecde400ab2271200ec50d",
+      "rawOutput": "artifacts/tmp/W2.A03.T02.final-06a69348.mypy.log",
+      "rawOutputSha256": "281a094c39385b4d7b53e5db635f52158036861433c2a4975b9039e77a627a24",
+      "startedAt": "2026-10-04T18:43:48.278984+00:00",
+      "finishedAt": "2026-10-04T18:43:48.561903+00:00",
+      "durationSeconds": 0.357,
+      "provenance": "Fresh local execution at fixed clean committed candidate; no cached result."
+    },
+    {
+      "id": "product-runtime",
+      "command": ".venv/Scripts/python.exe -B -m unittest -v tests.desktop.test_desktop_app_check.DesktopAppCheckTests.test_built_product_exposes_only_implemented_functional_workspaces_and_is_keyboard_accessible",
+      "workingDirectory": ".",
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "commit": "06a69348c5de5c60cccecde400ab2271200ec50d",
+      "rawOutput": "artifacts/tmp/W2.A03.T02.final-06a69348.product-runtime.log",
+      "rawOutputSha256": "21b1b22dc5bbc7f5a7ea8d6a6aef9ebdf7aa02c1c4b1e8738d3f15803166d870",
+      "startedAt": "2026-10-04T18:42:09.266290+00:00",
+      "finishedAt": "2026-10-04T18:43:16.744940+00:00",
+      "durationSeconds": 67.554,
+      "provenance": "Fresh local execution at fixed clean committed candidate; no cached result."
+    },
+    {
+      "id": "ruff",
+      "command": ".venv/Scripts/python.exe -B -m ruff check tests/desktop/test_desktop_app_check.py tests/desktop/test_ui_conformance.py tests/foundation/test_ui_reference_check.py",
+      "workingDirectory": ".",
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "commit": "06a69348c5de5c60cccecde400ab2271200ec50d",
+      "rawOutput": "artifacts/tmp/W2.A03.T02.final-06a69348.ruff.log",
+      "rawOutputSha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18",
+      "startedAt": "2026-10-04T18:43:47.870265+00:00",
+      "finishedAt": "2026-10-04T18:43:47.969152+00:00",
+      "durationSeconds": 0.17,
+      "provenance": "Fresh local execution at fixed clean committed candidate; no cached result."
+    },
+    {
+      "id": "selector-denials",
+      "command": ".venv/Scripts/python.exe -B artifacts/evidence/W2.A03.T02.consumer-denial-probe.py",
+      "workingDirectory": ".",
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "commit": "06a69348c5de5c60cccecde400ab2271200ec50d",
+      "rawOutput": "artifacts/tmp/W2.A03.T02.final-06a69348.selector-denials.log",
+      "rawOutputSha256": "132a5a06635f7ff9750f6919d22b0cc97bd4272102fe70a3f84ad092062433fb",
+      "startedAt": "2026-10-04T18:43:16.860900+00:00",
+      "finishedAt": "2026-10-04T18:43:21.699021+00:00",
+      "durationSeconds": 4.915,
+      "provenance": "Fresh local execution at fixed clean committed candidate; no cached result."
+    },
+    {
+      "id": "site",
+      "command": ".venv/Scripts/python.exe -B tools/plan_review_check.py --repo .",
+      "workingDirectory": ".",
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "commit": "06a69348c5de5c60cccecde400ab2271200ec50d",
+      "rawOutput": "artifacts/tmp/W2.A03.T02.final-06a69348.site.log",
+      "rawOutputSha256": "fbd6db5eec428ac0845fd1b6ce32ae93a2bd3c8bd19d1e4540d3737bbf8c5c9c",
+      "startedAt": "2026-10-04T18:43:56.198877+00:00",
+      "finishedAt": "2026-10-04T18:49:46.152886+00:00",
+      "durationSeconds": 350.024,
+      "provenance": "Fresh local execution at fixed clean committed candidate; no cached result."
+    },
+    {
+      "id": "ui-gate",
+      "command": ".venv/Scripts/python.exe -B tools/ui_change_gate.py --repo . --base ca8b1448e094b637bbd06c3129b69a78df792619 --head 06a69348c5de5c60cccecde400ab2271200ec50d",
+      "workingDirectory": ".",
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "commit": "06a69348c5de5c60cccecde400ab2271200ec50d",
+      "rawOutput": "artifacts/tmp/W2.A03.T02.final-06a69348.ui-gate.log",
+      "rawOutputSha256": "d64d93c291a3c314b21d077186e1234c6de7a62d6fc7dbf1c0ea6633f5e977cd",
+      "startedAt": "2026-10-04T18:43:44.632462+00:00",
+      "finishedAt": "2026-10-04T18:43:47.760779+00:00",
+      "durationSeconds": 3.207,
+      "provenance": "Fresh local execution at fixed clean committed candidate; no cached result."
+    },
+    {
+      "id": "ui-routes",
+      "command": ".venv/Scripts/python.exe -B tools/ui_conformance.py --repo . --check routes --report artifacts/tmp/W2.A03.T02.final-06a69348.ui-routes.json",
+      "workingDirectory": ".",
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "commit": "06a69348c5de5c60cccecde400ab2271200ec50d",
+      "rawOutput": "artifacts/tmp/W2.A03.T02.final-06a69348.ui-routes.log",
+      "rawOutputSha256": "3fe1c59f9e28d90fcfc4bab0e5cd9bf5a7dc84c27f066dc772d95c968983fce4",
+      "startedAt": "2026-10-04T18:44:35.742983+00:00",
+      "finishedAt": "2026-10-04T18:45:01.395462+00:00",
+      "durationSeconds": 25.819,
+      "provenance": "Fresh local execution at fixed clean committed candidate; no cached result."
+    },
+    {
+      "id": "ui-tokens",
+      "command": ".venv/Scripts/python.exe -B tools/ui_conformance.py --repo . --check tokens --report artifacts/tmp/W2.A03.T02.final-06a69348.ui-tokens.json",
+      "workingDirectory": ".",
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "commit": "06a69348c5de5c60cccecde400ab2271200ec50d",
+      "rawOutput": "artifacts/tmp/W2.A03.T02.final-06a69348.ui-tokens.log",
+      "rawOutputSha256": "fd70f373b9fcf0eb5aa66604a3609584dac84a4fa2b56053c1de3140d30cda71",
+      "startedAt": "2026-10-04T18:44:10.991178+00:00",
+      "finishedAt": "2026-10-04T18:44:35.584312+00:00",
+      "durationSeconds": 24.722,
+      "provenance": "Fresh local execution at fixed clean committed candidate; no cached result."
+    },
+    {
+      "id": "ui-visual",
+      "command": ".venv/Scripts/python.exe -B tools/ui_conformance.py --repo . --check visual --report artifacts/tmp/W2.A03.T02.final-06a69348.ui-visual.json",
+      "workingDirectory": ".",
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "commit": "06a69348c5de5c60cccecde400ab2271200ec50d",
+      "rawOutput": "artifacts/tmp/W2.A03.T02.final-06a69348.ui-visual.log",
+      "rawOutputSha256": "b9122cf475e6ad0d2ad9ecbde32c3279042bc8cdaaab4cb8d88a9c03583d968d",
+      "startedAt": "2026-10-04T18:45:45.314934+00:00",
+      "finishedAt": "2026-10-04T18:50:50.275166+00:00",
+      "durationSeconds": 305.031,
+      "provenance": "Fresh local execution at fixed clean committed candidate; no cached result."
+    },
+    {
+      "id": "ui-workflows",
+      "command": ".venv/Scripts/python.exe -B tools/ui_conformance.py --repo . --check workflows --report artifacts/tmp/W2.A03.T02.final-06a69348.ui-workflows.json",
+      "workingDirectory": ".",
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "commit": "06a69348c5de5c60cccecde400ab2271200ec50d",
+      "rawOutput": "artifacts/tmp/W2.A03.T02.final-06a69348.ui-workflows.log",
+      "rawOutputSha256": "b9534ad91f04f8c92e81aeecb5ced0009757bdd2c87363a894ca79bee0800bc0",
+      "startedAt": "2026-10-04T18:45:01.592443+00:00",
+      "finishedAt": "2026-10-04T18:45:45.207443+00:00",
+      "durationSeconds": 43.69,
+      "provenance": "Fresh local execution at fixed clean committed candidate; no cached result."
+    },
+    {
+      "id": "views",
+      "command": ".venv/Scripts/python.exe -B tools/backlog_views.py --repo . --check",
+      "workingDirectory": ".",
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "commit": "06a69348c5de5c60cccecde400ab2271200ec50d",
+      "rawOutput": "artifacts/tmp/W2.A03.T02.final-06a69348.views.log",
+      "rawOutputSha256": "36ebe8ba5eed16d416087f957ce901132e936a4ed14c97dbcb91651c3e2678aa",
+      "startedAt": "2026-10-04T18:43:53.082245+00:00",
+      "finishedAt": "2026-10-04T18:43:56.098183+00:00",
+      "durationSeconds": 3.086,
+      "provenance": "Fresh local execution at fixed clean committed candidate; no cached result."
+    },
+    {
+      "id": "accessibility-adjudicated",
+      "command": ".venv/Scripts/python.exe -B artifacts/tmp/W2.A03.T02.prepare-manifest.py",
+      "exitCode": 0,
+      "commit": "06a69348c5de5c60cccecde400ab2271200ec50d",
+      "report": {
+        "path": "artifacts/tmp/W2.A03.T02.accessibility-combined-06a69348.json",
+        "sha256": "bfd4325f811859c6d5e14d9ffd64d8f9f32e4aeb8ad46a7ef9fa929884e484db"
+      },
+      "probe": {
+        "path": "artifacts/tmp/W2.A03.T02.prepare-manifest.py",
+        "sha256": "4ae802d950f7c203a4ef1c08c346b476cc77a5e4ebb40045b4ed7f771808633c"
+      },
+      "provenance": "Fresh exact-result assertions from official adverse report and real Chromium positive/negative report; official command remains FAIL."
+    },
+    {
+      "id": "source-invariants",
+      "command": ".venv/Scripts/python.exe -B artifacts/tmp/W2.A03.T02.source-invariants-probe.py",
+      "exitCode": 0,
+      "commit": "06a69348c5de5c60cccecde400ab2271200ec50d",
+      "report": {
+        "path": "artifacts/tmp/W2.A03.T02.source-invariants-06a69348.json",
+        "sha256": "623444cb545f4212592bcd67c76195cd00ca4a46d94a178b74a2129aafc0f5d8"
+      },
+      "probe": {
+        "path": "artifacts/tmp/W2.A03.T02.source-invariants-probe.py",
+        "sha256": "9fb0db303b2f3e095dcc83de8552d3a2055e1e1db23fc5d0b5b0b215c627d6b4"
+      },
+      "rawOutput": "artifacts/tmp/W2.A03.T02.source-invariants-06a69348.log",
+      "provenance": "Fresh actual Git/backlog identity and source-order assertions; external boundary tests not implied."
+    }
+  ],
+  "appendOnlyClarifications": [
+    {
+      "path": "artifacts/evidence/W2.A03.T02.task-start.md",
+      "section": "Lawful remedy and retained-base resumption",
+      "originalWording": "Accepted ADR-0040 supplies",
+      "correction": "ADR-0040 remains Proposed. Accepted ADR-0001 admits task-linked Proposed/Accepted association; owner-approved ECR-0012 and independently reviewed adopted W2.A04 authorize the exact correction. The worksheet wording is preserved as an adverse attribution and is superseded by this clarification; no ADR acceptance is inferred."
+    }
+  ],
+  "adverseEvidence": [
+    {
+      "id": "ui-accessibility",
+      "command": ".venv/Scripts/python.exe -B tools/ui_conformance.py --repo . --check accessibility --report artifacts/tmp/W2.A03.T02.final-06a69348.ui-accessibility.json",
+      "workingDirectory": ".",
+      "exitCode": 1,
+      "expectedExitCode": 1,
+      "commit": "06a69348c5de5c60cccecde400ab2271200ec50d",
+      "rawOutput": "artifacts/tmp/W2.A03.T02.final-06a69348.ui-accessibility.log",
+      "rawOutputSha256": "87e4b9043c4c717100de2364f39f270a19853cb6edc3d9fd2b638459c603ac00",
+      "startedAt": "2026-10-04T18:47:28.365038+00:00",
+      "finishedAt": "2026-10-04T18:48:05.721151+00:00",
+      "durationSeconds": 37.524,
+      "provenance": "Fresh local execution at fixed clean committed candidate; no cached result."
+    },
+    {
+      "officialReport": {
+        "path": "artifacts/tmp/W2.A03.T02.final-06a69348.ui-accessibility.json",
+        "sha256": "87daa692dd752159a0c4961e231bb53359e5bde4928cb410acac7b61c7b9b74d"
+      },
+      "adjudication": {
+        "path": "artifacts/evidence/W2.A03.T02.accessibility-adjudication-R01.json",
+        "sha256": "bddb17022f17fc5d3ac26d99b652b20874b79586c37dca4cbb5b99d82c8aac00"
+      },
+      "disposition": "Official command remains FAIL; fresh exact-error assertions prevent any other failure hiding under exit1."
+    },
+    {
+      "artifact": {
+        "path": "artifacts/tmp/W2.A03.T02.adr-preflight.log",
+        "sha256": "a63b91aec33c5f8bc0b6b9592521b5092f8ecd2ba10ee4eb2f8fec54770cb173"
+      },
+      "disposition": "Preserved original setup/adverse/generation diagnostic; not fresh current-candidate qualification."
+    },
+    {
+      "artifact": {
+        "path": "artifacts/tmp/W2.A03.T02.pre-activation-characterization.log",
+        "sha256": "e19ebca603092c077796c02270dbcadca3b970d6bfa87fc69f7502af0d6e751a"
+      },
+      "disposition": "Preserved original setup/adverse/generation diagnostic; not fresh current-candidate qualification."
+    },
+    {
+      "artifact": {
+        "path": "artifacts/tmp/W2.A03.T02.types-da0f1328.log",
+        "sha256": "2ecc6d6d31b3bf731419dd2c03c306bb9b299680a0c23dabc844f6e698cbaedf"
+      },
+      "disposition": "Preserved original setup/adverse/generation diagnostic; not fresh current-candidate qualification."
+    },
+    {
+      "artifact": {
+        "path": "artifacts/tmp/W2.A03.T02.types-with-repo-imports-da0f1328.log",
+        "sha256": "281a094c39385b4d7b53e5db635f52158036861433c2a4975b9039e77a627a24"
+      },
+      "disposition": "Preserved original setup/adverse/generation diagnostic; not fresh current-candidate qualification."
+    },
+    {
+      "artifact": {
+        "path": "artifacts/tmp/W2.A03.T02.consumer-denials.setup-01.log",
+        "sha256": "e0214daa6c57c137dfbed11822b5e2b267ef1ef6db7f69657b5f00f6dce142c2"
+      },
+      "disposition": "Preserved original setup/adverse/generation diagnostic; not fresh current-candidate qualification."
+    },
+    {
+      "artifact": {
+        "path": "artifacts/tmp/W2.A03.T02.capture-delivery-8804a66c.log",
+        "sha256": "7d7a51c75f1fe8ad6b7036d1ed50ef16c1c813b9c20f5032c23c20d6ef3503fc"
+      },
+      "disposition": "Preserved original setup/adverse/generation diagnostic; not fresh current-candidate qualification."
+    },
+    {
+      "artifact": {
+        "path": "artifacts/tmp/W2.A03.T02.capture-delivery-8804a66c-full-id.log",
+        "sha256": "c9074e56ce93328b3338424c3d02a709405b83619cae202afc8c89e9608a14ee"
+      },
+      "disposition": "Preserved original setup/adverse/generation diagnostic; not fresh current-candidate qualification."
+    },
+    {
+      "artifact": {
+        "path": "artifacts/tmp/W2.A03.T02.baseline-writer-da0f1328.log",
+        "sha256": "3d34daa704e1e3176b7bdd53583bf74244815df135e9f3c3342e131bb1367f2e"
+      },
+      "disposition": "Preserved original setup/adverse/generation diagnostic; not fresh current-candidate qualification."
+    },
+    {
+      "artifact": {
+        "path": "artifacts/tmp/W2.A03.T02.baseline-shape-da0f1328.log",
+        "sha256": "fdacc8e63fb4918f42cf8349c517489e9e822039ac82ce6aa36378246e7e600a"
+      },
+      "disposition": "Preserved original setup/adverse/generation diagnostic; not fresh current-candidate qualification."
+    },
+    {
+      "artifact": {
+        "path": "artifacts/tmp/W2.A03.T02.same-reference-denial-aab29ed2.log",
+        "sha256": "8cfb367170b7b728c614560533c7d4468c2ebab3cb90b0616e5a259d27b3644e"
+      },
+      "disposition": "Preserved original setup/adverse/generation diagnostic; not fresh current-candidate qualification."
+    },
+    {
+      "artifact": {
+        "path": "artifacts/tmp/W2.A03.T02.retained-capture-aab29ed2.log",
+        "sha256": "7d1eb99589d9bed597d1e8ef07b8cd801dcfaf642b93756ff5559f4cbcdc6baf"
+      },
+      "disposition": "Preserved original setup/adverse/generation diagnostic; not fresh current-candidate qualification."
+    }
+  ],
+  "artifactOrigins": {
+    "baselineWriterCommit": "da0f1328537b4228c8e41a68d0c70ad7da6ac977",
+    "baselineCommit": "aab29ed2413027d720d9064abb68f085e77c5c69",
+    "captureProducerCommit": "aab29ed2413027d720d9064abb68f085e77c5c69",
+    "captureDeliveryCommit": "8804a66c9acd23ab8e398197fd46654bccfc1a09",
+    "baselineWriterReport": {
+      "path": "artifacts/evidence/W2.A03.T02.baseline-writer-da0f1328.json",
+      "sha256": "b5acb4a0c7d34922f979f787d22019f1bd7d99267ebb7d2620cf5d16bbfc859f"
+    },
+    "sameReferenceDenial": {
+      "path": "artifacts/evidence/W2.A03.T02.same-reference-denial-observation-aab29ed2.json",
+      "sha256": "cffdf1c1061d4bcded02dc9153e720d5ac4cd0c8e605850ac4bfdb2195cc5021"
+    },
+    "captureManifest": {
+      "path": "artifacts/evidence/W2.A03.T02.baseline-captures/manifest.json",
+      "sha256": "7f9642e49b2bbe6def164b833b94c9091f54936922d3f0842550b77d5ddfd271"
+    },
+    "privacyReview": {
+      "path": "artifacts/evidence/W2.A03.T02.capture-privacy-review.json",
+      "sha256": "55fd24f20fc1cf222a015f1e364a139b19322d4e27883094043ffa628b4a2e8c"
+    },
+    "generationLimit": "One-time guarded baseline generation and retained image delivery are provenance, not reused fresh runtime/profile qualification."
+  },
+  "reviewerDisposition": {
+    "openFindingIds": []
+  }
+}

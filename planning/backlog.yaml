@@ -53737,7 +53737,7 @@ wave_amendments:
     - Fresh original CAP-05.S01.T01 product/native/Core evidence and full-base gate remain later obligations, including unresolved
       authentic fifth D3D child characterization.
     packet_task_sha256: 5dc2789685c520f534b336c05a8663f50e00e6bb1ea80f4a9bfd6da3a4f100c8
-    status: IN_PROGRESS
+    status: REVIEW
     owner: codex-w2-implementation
     branch: codex/w2-implementation
     base_sha: ca8b1448e094b637bbd06c3129b69a78df792619
@@ -53747,12 +53747,19 @@ wave_amendments:
       claimed_at: '2026-10-04T17:55:13+00:00'
       expires_at: '2026-10-05T01:55:13+00:00'
     started_at: '2026-10-04T12:23:01+00:00'
-    updated_at: '2026-10-04T17:55:13+00:00'
+    updated_at: '2026-10-04T18:51:12+00:00'
     completed_at: null
     blocker: null
-    implementation_notes: ''
-    evidence: []
-    verification_state: null
+    implementation_notes: Exact seven-source activation and guarded baseline evidence at 06a69348; official accessibility
+      false-positive remains adverse with fresh Chromium proof and independent adjudication. Request expanded protected task
+      disposition; native/Core and W2 gates remain pending.
+    evidence:
+    - type: criterion-manifest
+      path: artifacts/evidence/W2.A03.T02.json
+      sha256: 6c7d9b8491f33e529001cde6bf9327c7412e9cdada9f8644b2d4af5f23d2855f
+      commit: 06a69348c5de5c60cccecde400ab2271200ec50d
+      recorded_at: '2026-10-04T18:51:12+00:00'
+    verification_state: passed
     review:
       reviewer: null
       result: null
@@ -53760,6 +53767,214 @@ wave_amendments:
       notes: 'Reopened: ECR-0012 correction independently approved and adopted at 8f1a47f8; fresh exact paused-return check
         passed at 51245218; A03 separately reactivated at de50bff2. Resume approved seven-source activation task with retained
         ca8b1448 base and unchanged authority.'
+    review_control:
+      version: 1
+      attempts: []
+      current_submission:
+        id: R01
+        submitted_by: codex-w2-implementation
+        submitted_at: '2026-10-04T18:51:12+00:00'
+        candidate_commit: 06a69348c5de5c60cccecde400ab2271200ec50d
+        base_commit: ca8b1448e094b637bbd06c3129b69a78df792619
+        branch: codex/w2-implementation
+        evidence_reference:
+          type: criterion-manifest
+          path: artifacts/evidence/W2.A03.T02.json
+          sha256: 6c7d9b8491f33e529001cde6bf9327c7412e9cdada9f8644b2d4af5f23d2855f
+          commit: 06a69348c5de5c60cccecde400ab2271200ec50d
+          recorded_at: '2026-10-04T18:51:12+00:00'
+        acceptance_criteria_sha256: 2b2164cd1495ff1f3e0335588cf5b182e468b7d3f50f6372320e1294f23cbaad
+        changed_paths:
+        - apps/desktop/scripts/assemble-application.mjs
+        - apps/desktop/scripts/assemble-reference.mjs
+        - artifacts/evidence/W2.A03.T02.accessibility-adjudication-R01.json
+        - artifacts/evidence/W2.A03.T02.accessibility-browser-aab29ed2.json
+        - artifacts/evidence/W2.A03.T02.accessibility-official-failed-aab29ed2.json
+        - artifacts/evidence/W2.A03.T02.accessibility-probe-original.py
+        - artifacts/evidence/W2.A03.T02.accessibility-probe.py
+        - artifacts/evidence/W2.A03.T02.baseline-captures/075845819a6b0ad97a84335eee80fd580d21676fea3c99faaae4de66456348f8.png
+        - artifacts/evidence/W2.A03.T02.baseline-captures/0835c6e6fae71e29313e941c070e442266e3e2c939177377245e5df99e7f1752.png
+        - artifacts/evidence/W2.A03.T02.baseline-captures/09ec55701fd8c604cb07c0e7877256c5d922aebc37be5a0d10a90d52b428b4a2.png
+        - artifacts/evidence/W2.A03.T02.baseline-captures/13b1f1726eddb6a2e8f1d8a4ad7d22fd9baff65203c5f5fbb061c8f42d0a918e.png
+        - artifacts/evidence/W2.A03.T02.baseline-captures/159135ca70c3b6520a01298b93a2bf320b5881c5db9665921e01b14f84fdf69a.png
+        - artifacts/evidence/W2.A03.T02.baseline-captures/17ce410b3b73d1e3cdfe7c81b72b90aeed5cb32802f0564587fb929995cad884.png
+        - artifacts/evidence/W2.A03.T02.baseline-captures/204c62d2cd36bacbf43f107c7abd6f7fffd45a91c2b4057fce538d2b4a98faf1.png
+        - artifacts/evidence/W2.A03.T02.baseline-captures/2279f1a27a8abae8305b54a3abce8b4502dfbeb1a64060cc288aedf0360d25a6.png
+        - artifacts/evidence/W2.A03.T02.baseline-captures/242118085bc09f148cf2ff042d1edea7cb60922f35a7dabc7b743173a5bdca7e.png
+        - artifacts/evidence/W2.A03.T02.baseline-captures/280883300d7c21545314b6192a0138098f53eafb5a0c4f6a800d6cb5180217a7.png
+        - artifacts/evidence/W2.A03.T02.baseline-captures/2915cafc4cbd32818aa0ca2c02a33bf6306d1db3c7555912aa9b2277b94536e1.png
+        - artifacts/evidence/W2.A03.T02.baseline-captures/29e6ba2af6df0921d3a8d7b5e45da83f0dfe3533ccb4ccbf8f8b87630cc5dfc9.png
+        - artifacts/evidence/W2.A03.T02.baseline-captures/2a23ba4d2af94d9d642bd416e701ebfef575b3e6bd66751ea2e480280ff0e998.png
+        - artifacts/evidence/W2.A03.T02.baseline-captures/2a2538cb063c91104a526150309a3ebe4f17f9ca58759b166abab061d5390df9.png
+        - artifacts/evidence/W2.A03.T02.baseline-captures/2b07bbf219da820060b11a22e0443bf05aa66ff4b0daeb6076a6504b1dd3ce6d.png
+        - artifacts/evidence/W2.A03.T02.baseline-captures/2e8cbde6b93ea4fd0cf5c16cf8f07b46ea80caa6adff1aebf9685f3f3050fce7.png
+        - artifacts/evidence/W2.A03.T02.baseline-captures/32e9f464033b2b161198d1b3f87d9f30d495c8553ba57c82118c9879d30b9623.png
+        - artifacts/evidence/W2.A03.T02.baseline-captures/34c4f4d49f1ffdd5e63b8e6d91b93b6489fd7d2104eccf4806b0b196af3206f3.png
+        - artifacts/evidence/W2.A03.T02.baseline-captures/3d137512f2033c55d883e7187b3ba4d08454b038ccd3f7770811c45c837e3899.png
+        - artifacts/evidence/W2.A03.T02.baseline-captures/40b3bcb924e4e192c4d8f2df2b6b5864d1f4c8d5ec621670b519bc74cfe16cf1.png
+        - artifacts/evidence/W2.A03.T02.baseline-captures/4288fc341cb388cf9fb3d5ff3a0dc57d7fd1d45b4c03705de397d85b2ca39e33.png
+        - artifacts/evidence/W2.A03.T02.baseline-captures/4466480fc5b8868ce299921522997141259cbb804119e1474881356d51ce3c99.png
+        - artifacts/evidence/W2.A03.T02.baseline-captures/5337a25e226676d3d8d57bfd138c75cf2ac8079aeb83ae8c7b6f5531c13f341c.png
+        - artifacts/evidence/W2.A03.T02.baseline-captures/53c144dd6ce7d3a5fc5f6145de2b797caf2c559f71e3dae4b0793e19ae0a77d6.png
+        - artifacts/evidence/W2.A03.T02.baseline-captures/58600cf70eb5d143cf5719bd92f247541c0d5a2b83c94002ca0bf5479191b57b.png
+        - artifacts/evidence/W2.A03.T02.baseline-captures/58d7e4a672323f495c6ec916cdae1c24788ab1f4dedb972f1e109fc4a40e0830.png
+        - artifacts/evidence/W2.A03.T02.baseline-captures/5d9e6d1817a7d402b7573d32e1cb5ca1d826a07170a84e2f36d67f04f8009cb2.png
+        - artifacts/evidence/W2.A03.T02.baseline-captures/5f0caa73991c94baa551d9dd09d3b45d12bbb178313b72cbeff3cb7473105b67.png
+        - artifacts/evidence/W2.A03.T02.baseline-captures/62b2654685f3368aec42c86b3383802df6857351409f4ab33a61ee620a3dcfa1.png
+        - artifacts/evidence/W2.A03.T02.baseline-captures/62fb47536308f017c407c1cfe083b390185511e40329a4a52feddf52232f3821.png
+        - artifacts/evidence/W2.A03.T02.baseline-captures/660534d333bf9d59ec258dd7643a38b60a4032ac3a43eb3d109c6a709c7f3489.png
+        - artifacts/evidence/W2.A03.T02.baseline-captures/69cae888657a777088258cda664e7add4628610e05585378ae831db7a6e636a0.png
+        - artifacts/evidence/W2.A03.T02.baseline-captures/713006b86c6dafb20ab81ac9a37dc00f40fe0d4e1306066c6c6a21c4e8449070.png
+        - artifacts/evidence/W2.A03.T02.baseline-captures/75eee8da7b9c584c5cc416882d95a1f861f038db24b9f575e7e23061bd14b95f.png
+        - artifacts/evidence/W2.A03.T02.baseline-captures/789f63e17b3f734def5b46cf1c29e8094dc50498be8d22091b49da6843c0ad7f.png
+        - artifacts/evidence/W2.A03.T02.baseline-captures/791247f69adfc786c020adc79da32f155ae9976a8b29a2ed33ae2f9a4bf32d75.png
+        - artifacts/evidence/W2.A03.T02.baseline-captures/791e480ef0557cb6043215eec103f2bd6fa74dc08b029f89da3dee0e3aadb95d.png
+        - artifacts/evidence/W2.A03.T02.baseline-captures/792fc5a26c511aaf580be287cbc2c52d388b031882eafc06bbe4e66d453ddeed.png
+        - artifacts/evidence/W2.A03.T02.baseline-captures/809094e9ccc33c8e5c8134ab2f8329b2968daf81d0b3b148448ee659040e4854.png
+        - artifacts/evidence/W2.A03.T02.baseline-captures/84b6d0a71440c3aa2d7b2cf798f08f02762c82b6d607a17f88e93e489788a8ea.png
+        - artifacts/evidence/W2.A03.T02.baseline-captures/84bb1c729fdac0dfacea91e93906555855a54e0fc860ab6b04a7cdc3d8c89af4.png
+        - artifacts/evidence/W2.A03.T02.baseline-captures/95efb92553d1f79e7733f6dfbf8d0c7923ab84627b6ffd8ba3f92fa8de62d303.png
+        - artifacts/evidence/W2.A03.T02.baseline-captures/9af8c720f2d87a5ced79fea6169cfa46622a881c9e4ec93fb1df7432556663de.png
+        - artifacts/evidence/W2.A03.T02.baseline-captures/9b9cd5d87d816d76b24758a1f5ceb69f967f7763a66b86389bb6fd720fdb18ce.png
+        - artifacts/evidence/W2.A03.T02.baseline-captures/9bdede544a927d3fcedacf8fc7953ce39aad3e1b4f0f7b41b16c7d139578bf1e.png
+        - artifacts/evidence/W2.A03.T02.baseline-captures/a9d0e4b50623d998d3f8438c68fcf07f56c0e17b3cad04af0a2e982292876f5d.png
+        - artifacts/evidence/W2.A03.T02.baseline-captures/af4fb2c8644f87e3ceeb6451c0cd652bb39a321ec634469a5f30870cba0fb6f9.png
+        - artifacts/evidence/W2.A03.T02.baseline-captures/b0037add8c6118429df1a5eebfef8b07c5a749386d62db29d8908655515d1a12.png
+        - artifacts/evidence/W2.A03.T02.baseline-captures/b038524ffcc69602f0173d66eb18269182b4a2e95ff4339c0c066a91a72d4fd6.png
+        - artifacts/evidence/W2.A03.T02.baseline-captures/b71b4a30d3d084e0fa76d05dfa674f9720d84dbb2a6bed7f95e7e3cb1b04c80e.png
+        - artifacts/evidence/W2.A03.T02.baseline-captures/bab5e5c35ba4f435d45bfa4771b15239da72dffa910af7aa8d50d759331bced9.png
+        - artifacts/evidence/W2.A03.T02.baseline-captures/bab93aa404f6a4480efc81b2bddd6716fb2716dffb1f20486fae2f64c3352dce.png
+        - artifacts/evidence/W2.A03.T02.baseline-captures/bf559f320ccda3829f9c0cff6ef2bc02a942ef63746e6563a5161831893e75b6.png
+        - artifacts/evidence/W2.A03.T02.baseline-captures/bfc6bfa5ceb48e529878f6c072d6625bb438d7a9f24ad3692c218e80a92b37c0.png
+        - artifacts/evidence/W2.A03.T02.baseline-captures/c30681e35828b3acc653fcc7a9f00e090ee521ac74a7df3324760f068dc8d8d6.png
+        - artifacts/evidence/W2.A03.T02.baseline-captures/cc4a9f7799aaa88b509d800141602f5f372ef0111369ba0e856e97ba56b31870.png
+        - artifacts/evidence/W2.A03.T02.baseline-captures/cf657ae9c8eaae5a6da043ce064b4da7767b99704bba561279a52988b06725f3.png
+        - artifacts/evidence/W2.A03.T02.baseline-captures/d0cd22de2846c2190bd92505b9163ce1c6ca273afce454420e9b789fcb5a39ea.png
+        - artifacts/evidence/W2.A03.T02.baseline-captures/d2701885268610f76e372894150ac9445bce87c0ba87f4cfb6060ccb0572f8fb.png
+        - artifacts/evidence/W2.A03.T02.baseline-captures/d9b003f6e842a3a4e855a06d8a7b793c99e25130ddc778bc0396c6af8ff1d971.png
+        - artifacts/evidence/W2.A03.T02.baseline-captures/e2c14d554ef71d6b1d8300e903982102a566c161456306b268689899c7edff93.png
+        - artifacts/evidence/W2.A03.T02.baseline-captures/e30bb0e78d3ccae0471d52b9543fb6a38abaa6daec9d10fd6da5debb4cabc9e4.png
+        - artifacts/evidence/W2.A03.T02.baseline-captures/e989360443c24d3b93c5fb2bdfcc43a57a8bd9a63ea9ac65b9d720403296ceff.png
+        - artifacts/evidence/W2.A03.T02.baseline-captures/f2a69fe5c23a01fa4450d9ba1d486dc76d66d4779d46c4c7fabaced0f1cda3ae.png
+        - artifacts/evidence/W2.A03.T02.baseline-captures/f554257fc6a121100840b716b0abd674b17b54fb58b6d23d5fa7425696321691.png
+        - artifacts/evidence/W2.A03.T02.baseline-captures/fd79285fa76174d4b9af97794bae0fedc29ea925d4a0e0cfc4116af1ef0421b8.png
+        - artifacts/evidence/W2.A03.T02.baseline-captures/manifest.json
+        - artifacts/evidence/W2.A03.T02.baseline-writer-da0f1328.json
+        - artifacts/evidence/W2.A03.T02.build-pinned.py
+        - artifacts/evidence/W2.A03.T02.capture-privacy-review.json
+        - artifacts/evidence/W2.A03.T02.capture-producer.py
+        - artifacts/evidence/W2.A03.T02.consumer-denial-probe.py
+        - artifacts/evidence/W2.A03.T02.consumer-denials-aab29ed2.json
+        - artifacts/evidence/W2.A03.T02.same-reference-denial-observation-aab29ed2.json
+        - artifacts/evidence/W2.A03.T02.task-start.md
+        - artifacts/evidence/W2.A03.T02.verify-candidate.py
+        - artifacts/evidence/W2.A04.B00.json
+        - artifacts/evidence/W2.A04.B00.review-R01.json
+        - artifacts/evidence/W2.A04.S01.review-01.json
+        - artifacts/evidence/W2.A04.T01.json
+        - artifacts/evidence/W2.A04.T01.review-R01.json
+        - artifacts/evidence/W2.A04.T01.task-start.md
+        - artifacts/evidence/W2.A04.adoption.json
+        - artifacts/evidence/W2.A04.adoption.review-01.json
+        - artifacts/evidence/W2.A04.exit-review-R01.json
+        - artifacts/evidence/W2.A04.exit.json
+        - docs/adr/ADR-0040-document-protected-desktop-activation-correction.md
+        - docs/adr/index.json
+        - docs/automation/design-first-ui-changes.md
+        - docs/planning-implementation-plan.md
+        - planning/backlog.yaml
+        - planning/enabler-change-requests/ECR-0012-review.html
+        - planning/enabler-change-requests/ECR-0012.md
+        - planning/enabler-change-requests/ECR-0012.packet.json
+        - planning/enabler-change-requests/ECR-0012.preflight-01.json
+        - planning/enabler-change-requests/ECR-0012.review-R01.json
+        - planning/review-site/README.md
+        - planning/review-site/enablers/ECR-0011.html
+        - planning/review-site/enablers/ECR-0012.html
+        - planning/review-site/enablers/index.html
+        - planning/review-site/index.html
+        - planning/review-site/manifest.json
+        - planning/status-summary.md
+        - planning/wave-amendment-approvals/W2.A04.json
+        - tests/desktop/test_desktop_app_check.py
+        - tests/desktop/test_ui_conformance.py
+        - tests/foundation/test_ui_change_gate.py
+        - tests/foundation/test_ui_reference_check.py
+        - tools/ui_change_gate.py
+        - verification/baselines/desktop-ui.json
+        - verification/extensions/desktop-ui.json
+        selected_checks:
+        - .venv/Scripts/python.exe -B artifacts/evidence/W2.A03.T02.accessibility-probe.py
+        - .venv/Scripts/python.exe -B tools/adr_check.py --repo . --base ca8b1448e094b637bbd06c3129b69a78df792619 --head 06a69348c5de5c60cccecde400ab2271200ec50d
+        - .venv/Scripts/python.exe -B tools/taskctl.py --file planning/backlog.yaml validate
+        - .venv/Scripts/python.exe -B artifacts/evidence/W2.A03.T02.build-pinned.py
+        - .venv/Scripts/python.exe -B -m unittest -v tests.desktop.test_product_style_check.CaptureBundleTests.test_duplicate_missing_extra_and_invalid_png_captures_never_publish
+          tests.desktop.test_product_style_check.CaptureBundleTests.test_source_change_during_capture_never_publishes tests.desktop.test_product_style_check.CaptureBundleTests.test_co_tampered_manifest_and_png_fail_against_delivery
+        - .venv/Scripts/python.exe -B artifacts/evidence/W2.A03.T02.capture-producer.py --delivery-commit 8804a66c9acd23ab8e398197fd46654bccfc1a09
+        - git diff --check ca8b1448e094b637bbd06c3129b69a78df792619 06a69348c5de5c60cccecde400ab2271200ec50d
+        - .venv/Scripts/python.exe -B -m unittest -v tests.foundation.test_ui_reference_check tests.desktop.test_ui_conformance.UiConformanceTests.test_active_presentation_requires_its_exact_compatibility_witness
+          tests.desktop.test_ui_conformance.UiConformanceTests.test_application_inventory_excludes_only_canonical_root_generated_directories
+          tests.desktop.test_ui_conformance.UiConformanceTests.test_application_mode_requires_a_bound_build_manifest tests.desktop.test_ui_conformance.UiConformanceTests.test_application_inventory_detects_content_type_and_membership_races
+          tests.desktop.test_ui_conformance.UiConformanceTests.test_application_inventory_guard_holds_source_and_output_snapshot_through_completion
+          tests.desktop.test_ui_conformance.UiConformanceTests.test_strict_baseline_and_approval_records_reject_malformed_history_shapes
+          tests.desktop.test_ui_conformance.UiConformanceTests.test_controlled_font_check_rejects_a_missing_face tests.desktop.test_ui_conformance.UiConformanceTests.test_same_reference_baseline_rewrite_requires_new_approval
+          tests.desktop.test_ui_conformance.UiConformanceTests.test_visual_mismatch_maps_to_normative_page_contract
+        - .venv/Scripts/python.exe -B -m ruff format --check tests/desktop/test_desktop_app_check.py tests/desktop/test_ui_conformance.py
+          tests/foundation/test_ui_reference_check.py
+        - .venv/Scripts/python.exe -B -m mypy --no-namespace-packages tests/desktop/test_desktop_app_check.py tests/desktop/test_ui_conformance.py
+          tests/foundation/test_ui_reference_check.py
+        - .venv/Scripts/python.exe -B -m unittest -v tests.desktop.test_desktop_app_check.DesktopAppCheckTests.test_built_product_exposes_only_implemented_functional_workspaces_and_is_keyboard_accessible
+        - .venv/Scripts/python.exe -B -m ruff check tests/desktop/test_desktop_app_check.py tests/desktop/test_ui_conformance.py
+          tests/foundation/test_ui_reference_check.py
+        - .venv/Scripts/python.exe -B artifacts/evidence/W2.A03.T02.consumer-denial-probe.py
+        - .venv/Scripts/python.exe -B tools/plan_review_check.py --repo .
+        - .venv/Scripts/python.exe -B tools/ui_change_gate.py --repo . --base ca8b1448e094b637bbd06c3129b69a78df792619 --head
+          06a69348c5de5c60cccecde400ab2271200ec50d
+        - .venv/Scripts/python.exe -B tools/ui_conformance.py --repo . --check routes --report artifacts/tmp/W2.A03.T02.final-06a69348.ui-routes.json
+        - .venv/Scripts/python.exe -B tools/ui_conformance.py --repo . --check tokens --report artifacts/tmp/W2.A03.T02.final-06a69348.ui-tokens.json
+        - .venv/Scripts/python.exe -B tools/ui_conformance.py --repo . --check visual --report artifacts/tmp/W2.A03.T02.final-06a69348.ui-visual.json
+        - .venv/Scripts/python.exe -B tools/ui_conformance.py --repo . --check workflows --report artifacts/tmp/W2.A03.T02.final-06a69348.ui-workflows.json
+        - .venv/Scripts/python.exe -B tools/backlog_views.py --repo . --check
+        - .venv/Scripts/python.exe -B artifacts/tmp/W2.A03.T02.prepare-manifest.py
+        - .venv/Scripts/python.exe -B artifacts/tmp/W2.A03.T02.source-invariants-probe.py
+        deferred_checks:
+        - A03 integrated S01, exit and separate security/control adoption remain due after independent task disposition.
+        - CAP-04.S05 joined real signed-worker/Core two-page, authority denial/cancellation/restart/recovery and independent
+          slice review remain due.
+        - Original CAP-05.S01.T01 retains 6506 base, actual product/reference workflow captures, independent classification/full-base
+          gate, authentic fifth-D3D characterization, native Windows picker/drop and encrypted Core receipt/restart/failure/cancellation
+          proof.
+        - Remaining CAP-05 tasks and fresh complete W2 repository/profile/packaging/security/privacy/rights/accessibility/performance/cross-capability
+          qualification, independent Wave review and separate human release gate remain due.
+        - The generic explicit-label accessibility checker defect is preserved for its lawful future authority-preserving
+          control repair; no checker/profile PASS is claimed.
+        selection_rationale: Seven-path identity rebinding and protected 66-capture baseline. Fresh exact candidate pinned
+          both-bundle build, functional product browser runtime, 16 affected units, three capture guards, physical selector/baseline
+          denials, real Chromium naming positive/negative, all five conformance domains, current Git/ADR/source and planning/quality
+          checks. Artifact generation origins retain their original producer/delivery commits and adverse outcomes. No prior
+          runtime PASS is reused as current qualification; unchanged product/native/Core implementation does not justify an
+          early full repository/native profile. The official accessibility command is preserved as FAIL; exact sole false-positive
+          guard plus independent adjudication and fresh AX proof establish the unchanged naming requirement.
+        selection_sha256: f6bcf1f9412502c20e2b4bde5a6762e5d750d5a6e04dcd1591418270c381472d
+        prior_attempt_id: null
+        open_finding_ids: []
+        root_cause_analysis: null
+        selected_command_ids:
+        - desktop:application
+        - desktop:unit
+        - desktop:ui-reference-integrity
+        - desktop:ui-token
+        - desktop:ui-route-page
+        - desktop:ui-workflow
+        - desktop:ui-accessibility
+        - desktop:ui-visual-regression
+        - foundation:unit
+        - foundation:adr
+        - foundation:ui-change
+        - foundation:quality
+        - foundation:backlog
+        - foundation:backlog-views
+        packet_sha256: ed16baccd8ea38e9d5e6bdea917bae0d19296ad612e329fc899b58235749cd13
   completion:
     status: PENDING
     reviewer: null
