@@ -43744,7 +43744,7 @@ verification_profiles:
 control_plane:
   revision: 12
   minimum_tool_revision: 12
-  active_amendment: null
+  active_amendment: W2.A04
   recovery_holds:
   - id: HOLD-W1-GRR-0001
     recovery_request_id: GRR-0001
@@ -53761,7 +53761,7 @@ wave_amendments:
     sha256: e769cb71efbf8725c0fadeac079713f4484f57f7cf871cdfb037ef9a4df27807
     introduction_commit: ba95f68bd2747ebce99e67eeb4daec53ed3ba87b
   lifecycle:
-    status: MATERIALIZED
+    status: ACTIVE
     history:
     - id: E01
       status: APPROVED
@@ -53780,6 +53780,11 @@ wave_amendments:
       actor: codex-w2-implementation
       at: '2026-10-04T13:40:52+00:00'
       rationale: Materialized the exact human-approved task inventory.
+    - id: E03
+      status: ACTIVE
+      actor: codex-w2-implementation
+      at: '2026-10-04T13:47:43+00:00'
+      rationale: Activated the bounded amendment campaign.
   bootstrap:
     id: W2.A04.B00
     status: APPROVED
@@ -53801,7 +53806,22 @@ wave_amendments:
         Ledger artifacts/evidence/W2.A04.B00.review-R01.json SHA-256 d6b0e4c0684c14a602bf26932f542fd1fc2bd87a5a6957b386fb3a1e292db073,
         zero findings; retained adverse EOL result and status/evidence limits. Separate materialization, task, slice, exit,
         security adoption and paused-parent return remain due.
-  campaign: null
+  campaign:
+    status: ACTIVE
+    scope: wave-amendment
+    owner: codex-w2-implementation
+    branch: codex/w2-implementation
+    worktree: .
+    base_sha: 850cf16281779c09691e566ac453547338eb16a3
+    profile: LOC
+    platform: windows-x64
+    started_at: '2026-10-04T13:47:43+00:00'
+    updated_at: '2026-10-04T13:47:43+00:00'
+    pause_reason: null
+    lease:
+      claimed_by: codex-w2-implementation
+      claimed_at: '2026-10-04T13:47:43+00:00'
+      expires_at: '2026-10-05T13:47:43+00:00'
   tasks:
   - id: W2.A04.T01
     amendment_id: W2.A04
@@ -53852,14 +53872,14 @@ wave_amendments:
       CAP-05 native/Core or W2 completion. Future T02 runs its real ca8b1448-base ADR check and all original capture and consumer
       obligations.
     packet_task_sha256: 5fa9bc5e66e76694b933cb59aa4eac9bdb793107c8b3af618633ef168d66bf7b
-    status: NOT_STARTED
+    status: READY
     owner: null
     branch: null
     base_sha: null
     worktree: null
     lease: null
     started_at: null
-    updated_at: null
+    updated_at: '2026-10-04T13:47:43+00:00'
     completed_at: null
     blocker: null
     implementation_notes: ''
