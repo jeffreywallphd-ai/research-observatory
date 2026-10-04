@@ -1,0 +1,105 @@
+{
+  "builtFixtureSha256": "8de12cd5be4a333b73ae6a8fd04bebd95e88f93c0c9fc28c3bff458aed43ee55",
+  "candidateCommit": "aab29ed2413027d720d9064abb68f085e77c5c69",
+  "observations": [
+    {
+      "ax": {
+        "ignored": false,
+        "name": "Local full-text file",
+        "nameSources": [
+          {
+            "attribute": "aria-labelledby",
+            "type": "relatedElement"
+          },
+          {
+            "attribute": "aria-label",
+            "type": "attribute"
+          },
+          {
+            "nativeSource": "labelfor",
+            "nativeSourceValue": {
+              "relatedNodes": [
+                {
+                  "backendDOMNodeId": 43,
+                  "text": "Local full-text file"
+                }
+              ],
+              "type": "nodeList"
+            },
+            "type": "relatedElement",
+            "value": {
+              "type": "computedString",
+              "value": "Local full-text file"
+            }
+          },
+          {
+            "attribute": "value",
+            "superseded": true,
+            "type": "contents",
+            "value": {
+              "type": "computedString",
+              "value": "Choose File"
+            }
+          },
+          {
+            "superseded": true,
+            "type": "contents"
+          },
+          {
+            "attribute": "title",
+            "superseded": true,
+            "type": "attribute"
+          }
+        ],
+        "role": "button"
+      },
+      "case": "unchanged approved explicit for/id label",
+      "labelLocatorCount": 1
+    },
+    {
+      "ax": {
+        "ignored": false,
+        "name": "Choose File",
+        "nameSources": [
+          {
+            "attribute": "aria-labelledby",
+            "type": "relatedElement"
+          },
+          {
+            "attribute": "aria-label",
+            "type": "attribute"
+          },
+          {
+            "nativeSource": "label",
+            "type": "relatedElement"
+          },
+          {
+            "attribute": "value",
+            "type": "contents",
+            "value": {
+              "type": "computedString",
+              "value": "Choose File"
+            }
+          },
+          {
+            "superseded": true,
+            "type": "contents"
+          },
+          {
+            "attribute": "title",
+            "superseded": true,
+            "type": "attribute"
+          }
+        ],
+        "role": "button"
+      },
+      "case": "in-memory label removal only",
+      "labelLocatorCount": 0
+    }
+  ],
+  "ok": true,
+  "page": "ingestion-reconciliation.html",
+  "referenceSourceSha256": "83df119e8e28ab69fcfd999855a29b896bed7928f17588c31944765ec593d0d8",
+  "scope": "single challenged reference-fixture input; no native or Core proof; no checker waiver or source edit",
+  "staticCheckerName": ""
+}

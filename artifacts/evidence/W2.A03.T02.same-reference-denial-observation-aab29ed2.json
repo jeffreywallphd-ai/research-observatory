@@ -1,0 +1,9 @@
+{
+  "actualRawExitCode": 1,
+  "baselineAfterSha256": "4faeeff7aef8b93271dd0664c4a0b8980eb6597bb0d29a6fe5643b220aafd72c",
+  "baselineBeforeSha256": "4faeeff7aef8b93271dd0664c4a0b8980eb6597bb0d29a6fe5643b220aafd72c",
+  "candidateCommit": "aab29ed2413027d720d9064abb68f085e77c5c69",
+  "expectedRawExitCode": 1,
+  "meaning": "Actual guarded writer denied same-reference overwrite without changing committed baseline",
+  "result": "PASS"
+}

@@ -1,0 +1,110 @@
+{
+  "candidateCommit": "aab29ed2413027d720d9064abb68f085e77c5c69",
+  "cases": [
+    {
+      "case": "valid selectors reach required build boundary",
+      "expectedDenial": "application manifest",
+      "result": "PASS"
+    },
+    {
+      "case": "stale 1.7 selector",
+      "expectedDenial": "reference ID does not match",
+      "result": "PASS"
+    },
+    {
+      "case": "mixed old package",
+      "expectedDenial": "package SHA-256 does not match",
+      "result": "PASS"
+    },
+    {
+      "case": "missing capture",
+      "errors": [
+        "missing capture: every page requires exact light/dark entries; incomplete=['application-settings.html']"
+      ],
+      "result": "PASS"
+    },
+    {
+      "case": "extra capture",
+      "errors": [
+        "extra capture#foreign-page.html::light: visual entry key, page, and theme are inconsistent",
+        "extra capture: every page requires exact light/dark entries; incomplete=['foreign-page.html']",
+        "extra capture: entry pages must exactly match product routes; missing=[], extra=['foreign-page.html']"
+      ],
+      "result": "PASS"
+    },
+    {
+      "case": "changed renderer viewport",
+      "errors": [
+        "changed renderer viewport#application-settings.html::dark: visual dimensions must equal the governed viewport",
+        "changed renderer viewport#application-settings.html::light: visual dimensions must equal the governed viewport",
+        "changed renderer viewport#audit-lineage.html::dark: visual dimensions must equal the governed viewport",
+        "changed renderer viewport#audit-lineage.html::light: visual dimensions must equal the governed viewport",
+        "changed renderer viewport#claim-graph.html::dark: visual dimensions must equal the governed viewport",
+        "changed renderer viewport#claim-graph.html::light: visual dimensions must equal the governed viewport",
+        "changed renderer viewport#corpus-canvas.html::dark: visual dimensions must equal the governed viewport",
+        "changed renderer viewport#corpus-canvas.html::light: visual dimensions must equal the governed viewport",
+        "changed renderer viewport#critical-lens.html::dark: visual dimensions must equal the governed viewport",
+        "changed renderer viewport#critical-lens.html::light: visual dimensions must equal the governed viewport",
+        "changed renderer viewport#document-reader.html::dark: visual dimensions must equal the governed viewport",
+        "changed renderer viewport#document-reader.html::light: visual dimensions must equal the governed viewport",
+        "changed renderer viewport#evidence-matrix.html::dark: visual dimensions must equal the governed viewport",
+        "changed renderer viewport#evidence-matrix.html::light: visual dimensions must equal the governed viewport",
+        "changed renderer viewport#help-onboarding.html::dark: visual dimensions must equal the governed viewport",
+        "changed renderer viewport#help-onboarding.html::light: visual dimensions must equal the governed viewport",
+        "changed renderer viewport#index.html::dark: visual dimensions must equal the governed viewport",
+        "changed renderer viewport#index.html::light: visual dimensions must equal the governed viewport",
+        "changed renderer viewport#ingestion-reconciliation.html::dark: visual dimensions must equal the governed viewport",
+        "changed renderer viewport#ingestion-reconciliation.html::light: visual dimensions must equal the governed viewport",
+        "changed renderer viewport#intent-contract.html::dark: visual dimensions must equal the governed viewport",
+        "changed renderer viewport#intent-contract.html::light: visual dimensions must equal the governed viewport",
+        "changed renderer viewport#living-monitor.html::dark: visual dimensions must equal the governed viewport",
+        "changed renderer viewport#living-monitor.html::light: visual dimensions must equal the governed viewport",
+        "changed renderer viewport#manuscript-blueprint.html::dark: visual dimensions must equal the governed viewport",
+        "changed renderer viewport#manuscript-blueprint.html::light: visual dimensions must equal the governed viewport",
+        "changed renderer viewport#manuscript-studio.html::dark: visual dimensions must equal the governed viewport",
+        "changed renderer viewport#manuscript-studio.html::light: visual dimensions must equal the governed viewport",
+        "changed renderer viewport#model-center.html::dark: visual dimensions must equal the governed viewport",
+        "changed renderer viewport#model-center.html::light: visual dimensions must equal the governed viewport",
+        "changed renderer viewport#new-project.html::dark: visual dimensions must equal the governed viewport",
+        "changed renderer viewport#new-project.html::light: visual dimensions must equal the governed viewport",
+        "changed renderer viewport#novelty-audit.html::dark: visual dimensions must equal the governed viewport",
+        "changed renderer viewport#novelty-audit.html::light: visual dimensions must equal the governed viewport",
+        "changed renderer viewport#opportunity-radar.html::dark: visual dimensions must equal the governed viewport",
+        "changed renderer viewport#opportunity-radar.html::light: visual dimensions must equal the governed viewport",
+        "changed renderer viewport#parsing-quality.html::dark: visual dimensions must equal the governed viewport",
+        "changed renderer viewport#parsing-quality.html::light: visual dimensions must equal the governed viewport",
+        "changed renderer viewport#project-settings.html::dark: visual dimensions must equal the governed viewport",
+        "changed renderer viewport#project-settings.html::light: visual dimensions must equal the governed viewport",
+        "changed renderer viewport#projects.html::dark: visual dimensions must equal the governed viewport",
+        "changed renderer viewport#projects.html::light: visual dimensions must equal the governed viewport",
+        "changed renderer viewport#research-notebook.html::dark: visual dimensions must equal the governed viewport",
+        "changed renderer viewport#research-notebook.html::light: visual dimensions must equal the governed viewport",
+        "changed renderer viewport#reviewer-simulation.html::dark: visual dimensions must equal the governed viewport",
+        "changed renderer viewport#reviewer-simulation.html::light: visual dimensions must equal the governed viewport",
+        "changed renderer viewport#revision-response.html::dark: visual dimensions must equal the governed viewport",
+        "changed renderer viewport#revision-response.html::light: visual dimensions must equal the governed viewport",
+        "changed renderer viewport#schema-manager.html::dark: visual dimensions must equal the governed viewport",
+        "changed renderer viewport#schema-manager.html::light: visual dimensions must equal the governed viewport",
+        "changed renderer viewport#screening.html::dark: visual dimensions must equal the governed viewport",
+        "changed renderer viewport#screening.html::light: visual dimensions must equal the governed viewport",
+        "changed renderer viewport#search-studio.html::dark: visual dimensions must equal the governed viewport",
+        "changed renderer viewport#search-studio.html::light: visual dimensions must equal the governed viewport",
+        "changed renderer viewport#source-manager.html::dark: visual dimensions must equal the governed viewport",
+        "changed renderer viewport#source-manager.html::light: visual dimensions must equal the governed viewport",
+        "changed renderer viewport#study-design.html::dark: visual dimensions must equal the governed viewport",
+        "changed renderer viewport#study-design.html::light: visual dimensions must equal the governed viewport",
+        "changed renderer viewport#synthesis-studio.html::dark: visual dimensions must equal the governed viewport",
+        "changed renderer viewport#synthesis-studio.html::light: visual dimensions must equal the governed viewport",
+        "changed renderer viewport#task-center.html::dark: visual dimensions must equal the governed viewport",
+        "changed renderer viewport#task-center.html::light: visual dimensions must equal the governed viewport",
+        "changed renderer viewport#technical-reports.html::dark: visual dimensions must equal the governed viewport",
+        "changed renderer viewport#technical-reports.html::light: visual dimensions must equal the governed viewport",
+        "changed renderer viewport#theory-map.html::dark: visual dimensions must equal the governed viewport",
+        "changed renderer viewport#theory-map.html::light: visual dimensions must equal the governed viewport"
+      ],
+      "result": "PASS"
+    }
+  ],
+  "ok": true,
+  "scope": "physical isolated selector fixture and actual baseline structural validation; no native/Core claim"
+}

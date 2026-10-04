@@ -1,0 +1,64 @@
+{
+  "documentType": "independent-prospective-artifact-privacy-review-summary",
+  "taskId": "W2.A03.T02",
+  "reviewer": "agent:/root/activation_privacy_review",
+  "implementer": "codex-w2-implementation",
+  "producerCommit": "aab29ed2413027d720d9064abb68f085e77c5c69",
+  "stagedPaths": 67,
+  "pngCount": 66,
+  "manifestPath": "artifacts/evidence/W2.A03.T02.baseline-captures/manifest.json",
+  "manifestSha256": "7f9642e49b2bbe6def164b833b94c9091f54936922d3f0842550b77d5ddfd271",
+  "referenceId": "RO-UI-ACADEMIC-MINIMAL-1.8",
+  "referencePackageSha256": "cd8995fdcea2fe44452eaa1fdd258b6f9fab5714cbd443a81a8e5b4251220b94",
+  "producerInputCount": 769,
+  "producerSnapshotMatched": true,
+  "baselineEntriesMatched": true,
+  "visualInspection": "All 66 decoded PNGs inspected as 33 light/dark reference-fixture pairs in 11 ignored local contact sheets. Existing approved static reference labels include the repository owner name and a fictional C:/Users/Researcher example path; no runtime local account, research document or user-supplied content was observed. This is privacy admission only, not product workflow or native/Core qualification.",
+  "pngMetadata": "All 66 PNGs decode as 1440x900 RGB and contain only IHDR, IDAT and IEND chunks; no text, EXIF or ancillary metadata chunks.",
+  "manifestPrivacy": {
+    "nonEmailTokens": 19,
+    "profilePathMatches": 0,
+    "workspacePathMatches": 0,
+    "tokenDisposition": "Each apparent email is an exact relative icon asset filename with @ scale suffix."
+  },
+  "credentialScan": {
+    "pinnedScannerSha256": "17157e2ee8b76fc8b1d8bee607a250e34b8a8023c8bc81822d4b5ee4d78fcb7c",
+    "pinnedConfigSha256": "839fab7649bfe0d45a0e5b1dfba2b401d03b37169c32ebbc1f00313eddc9f7b1",
+    "scannedBlobs": 67,
+    "pngFindings": 0,
+    "manifestFindings": 35,
+    "rule": "generic-api-key",
+    "manifestDisposition": "All 35 exact redacted findings independently mapped to immutable Git blob IDs or source/build artifact SHA-256 digests; no credential values found.",
+    "pathFindings": 0
+  },
+  "priorSeal": {
+    "path": ".local/push-guard-dcbdb54379a848a89c8cc68ec73ae184/reviewed-artifacts.json",
+    "sha256": "4c7a03b6b39113d7d0d73037013764607235708c89ab224901e8cff4b4aca49d",
+    "admissionCount": 311,
+    "preservationCanonicalSha256": "84641183f75e5c815bd77fd4e3eeabfcd1e868fcbcaecf2a7ec8305cdcaf3a8a",
+    "preserved": true
+  },
+  "newRegistry": {
+    "path": ".local/W2.A03.T02-baseline-captures-independent-privacy-review.json",
+    "sha256": "0e36a69d98a6b5e23cfd9d9b2853384683a84e3d732f54c460e84f3e6cc948bc",
+    "admissionCount": 378,
+    "newExactAdmissions": 67,
+    "binaryReviewedCount": 66,
+    "manifestCredentialFingerprints": 35
+  },
+  "pinnedGuardInspection": {
+    "sourceGuardEqual": true,
+    "allFiveSealPinsValid": true,
+    "scannerValid": true,
+    "parserWorkerValid": true,
+    "noSuppressions": true,
+    "stagedResult": "PASS",
+    "stagedEntriesChecked": 67,
+    "stagedFindings": []
+  },
+  "findings": [],
+  "limits": [
+    "No hook activation or tracked commit was performed by reviewer.",
+    "Delivery-commit bundle authentication and task-specific qualification follow after exact capture commit."
+  ]
+}

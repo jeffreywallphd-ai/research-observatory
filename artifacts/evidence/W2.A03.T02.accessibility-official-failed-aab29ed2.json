@@ -1,0 +1,37 @@
+{
+  "check": "accessibility",
+  "details": {
+    "pages": 33,
+    "responsiveCases": 66,
+    "responsiveVisualCases": 66,
+    "standard": "approved-reference accessibility and responsive contract"
+  },
+  "documentType": "desktop-ui-conformance-report",
+  "errors": [
+    "design/ui-reference/STYLE_GUIDE.md#ingestion-reconciliation.html: unnamed interactive <input>"
+  ],
+  "illustrativeExclusions": [
+    "mock names",
+    "studies",
+    "sources",
+    "providers",
+    "counts",
+    "dates",
+    "prose",
+    "chart values",
+    "nonfunctional actions"
+  ],
+  "mode": "approved-reference-application",
+  "normativeSources": {
+    "approval": "design/ui-reference/APPROVAL.yaml",
+    "pages": "design/ui-reference/CAPABILITY_COVERAGE.json",
+    "routes": "design/ui-reference/SITE_MANIFEST.json",
+    "style": "design/ui-reference/STYLE_GUIDE.md",
+    "tokens": "design/ui-reference/assets/tokens.css",
+    "workflows": "design/ui-reference/WORKFLOW_CATALOG.json"
+  },
+  "ok": false,
+  "referenceId": "RO-UI-ACADEMIC-MINIMAL-1.8",
+  "referencePackageSha256": "cd8995fdcea2fe44452eaa1fdd258b6f9fab5714cbd443a81a8e5b4251220b94",
+  "schemaVersion": "1.0"
+}

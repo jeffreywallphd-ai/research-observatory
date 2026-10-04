@@ -1,0 +1,161 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "accessibility-finding-independent-adjudication",
+  "taskId": "W2.A03.T02",
+  "adjudicationId": "W2.A03.T02.accessibility-adjudication-R01",
+  "candidateCommit": "aab29ed2413027d720d9064abb68f085e77c5c69",
+  "reviewer": {
+    "actor": "agent:/root/a03_t02_authority_review",
+    "independentOfImplementationOwner": true,
+    "executionDisclosure": "Independently inspected committed source, governing authority, retained report/probe/stdout bytes and their hashes. Did not execute the producer browser probe or repeat conformance. Earlier independent ECR, A04 task/slice/exit/adoption reviews are disclosed; no consumer/checker implementation was authored."
+  },
+  "result": "non-blocking-false-positive",
+  "namingCriterion": {
+    "requirement": "The unchanged approved input#attachment-file must have the computed accessible name Local full-text file through its explicit label[for=attachment-file] association. Removing only that association must fail this exact naming requirement.",
+    "authority": "ECR-0011 W2.A03.T02 exact-candidate current conformance verification and unchanged approved Academic Minimal 1.8 page contract.",
+    "scope": "Only the sole challenged unnamed-input finding; not final task, slice, amendment, Wave or release disposition."
+  },
+  "adjudicatedFinding": {
+    "officialError": "design/ui-reference/STYLE_GUIDE.md#ingestion-reconciliation.html: unnamed interactive <input>",
+    "cause": "tools/ui_conformance.py accessible_name reads a wrapping label and selected attributes/text but omits explicit for/id label association. It returns an empty string for this approved input.",
+    "positive": {
+      "axRole": "button",
+      "axIgnored": false,
+      "computedName": "Local full-text file",
+      "computedNameSource": "nativeSource=labelfor; related label text Local full-text file",
+      "exactLabelLocatorCount": 1
+    },
+    "negative": {
+      "mutation": "In-memory removal of only label[for=attachment-file]; no physical/source change.",
+      "computedName": "Choose File",
+      "exactLabelLocatorCount": 0,
+      "interpretation": "Generic browser name Choose File no longer satisfies the approved exact naming criterion."
+    }
+  },
+  "evidence": {
+    "officialFailReport": {
+      "path": "artifacts/tmp/W2.A03.T02.accessibility-aab29ed2.json",
+      "sha256": "87daa692dd752159a0c4961e231bb53359e5bde4928cb410acac7b61c7b9b74d"
+    },
+    "browserCharacterizationReport": {
+      "path": "artifacts/tmp/W2.A03.T02.file-input-accessibility-aab29ed2.json",
+      "sha256": "713f966999820752c4f5e9a07a27b86cd5f1a2d940188d9e56fd3b11c2fa5bd6"
+    },
+    "reproducibleBrowserProbe": {
+      "path": "artifacts/tmp/W2.A03.T02.file-input-accessibility-probe.py",
+      "sha256": "3a221866a2ca858099e4772682dc82fae2b66df76d29b99c9c9c36ce36ac4c5b"
+    },
+    "browserCharacterizationStdout": {
+      "path": "artifacts/tmp/W2.A03.T02.file-input-accessibility-aab29ed2.log",
+      "sha256": "12c6a1609d1dcbee4f384409d1b88d55055a11b147d5bb8cac1dbfb4f61ac678"
+    }
+  },
+  "inputIdentity": {
+    "sourceCommit": "aab29ed2413027d720d9064abb68f085e77c5c69",
+    "committedGitBlobSha256": {
+      "design/ui-reference/ingestion-reconciliation.html": "83df119e8e28ab69fcfd999855a29b896bed7928f17588c31944765ec593d0d8",
+      "tools/ui_conformance.py": "475b5fc570f16ddb58846956f28bb69d7b0a02bdb9ef29e4b3bfff6c822fa175",
+      "verification/extensions/desktop-ui.json": "f7cab0dca35bbed27511e7bde3bf1824b83925c79955bdc0f6ec4daa9f09d708",
+      "apps/desktop/scripts/assemble-reference.mjs": "ba0657afbc13adb4a41bf19c0a9ecb5b01b09698c4377452d5ee32de174102ad",
+      "apps/desktop/scripts/assemble-application.mjs": "931bf104f401acdc3361d437aae0c04e46103700e083c6326c3309c71eb6c5d5"
+    },
+    "builtFixture": {
+      "path": "apps/desktop/dist/ingestion-reconciliation.html",
+      "sha256": "8de12cd5be4a333b73ae6a8fd04bebd95e88f93c0c9fc28c3bff458aed43ee55"
+    },
+    "referenceId": "RO-UI-ACADEMIC-MINIMAL-1.8",
+    "referencePackageSha256": "cd8995fdcea2fe44452eaa1fdd258b6f9fab5714cbd443a81a8e5b4251220b94",
+    "pinnedRenderer": {
+      "baselinePath": "verification/baselines/desktop-ui.json",
+      "platform": "windows-x64",
+      "engine": "chromium",
+      "playwrightVersion": "1.58.0",
+      "browserVersion": "145.0.7632.6",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "responsiveViewports": [
+        {
+          "width": 1280,
+          "height": 720,
+          "label": "minimum-desktop"
+        },
+        {
+          "width": 720,
+          "height": 450,
+          "label": "windows-200-percent-effective"
+        }
+      ],
+      "deviceScaleFactor": 1,
+      "locale": "en-US",
+      "timezoneId": "UTC",
+      "reducedMotion": "reduce",
+      "colorSchemes": [
+        "light",
+        "dark"
+      ],
+      "requiredFonts": [
+        "Segoe UI",
+        "Georgia",
+        "Consolas"
+      ],
+      "animations": "disabled"
+    },
+    "rendererProofLimit": "The inspected probe enforces Windows x64, pinned Playwright version and actual browser.version and uses the normal context helpers. This record does not independently attest every installed browser/dependency executable byte; preserve the campaign selected-input evidence separately."
+  },
+  "preservedOfficialFailure": {
+    "ok": false,
+    "errors": [
+      "design/ui-reference/STYLE_GUIDE.md#ingestion-reconciliation.html: unnamed interactive <input>"
+    ],
+    "pages": 33,
+    "responsiveCases": 66,
+    "responsiveVisualCases": 66,
+    "reportBytesRemainUnchanged": true,
+    "officialAccessibilityCommandPassed": false,
+    "desktopProfilePassed": false
+  },
+  "criterionEvidenceRoute": {
+    "disposition": "Passing actual-browser positive/negative proof may close this unchanged naming assertion with independent adjudication. The official report remains adverse evidence and provides producer observations for unaffected predicates; it must never be relabeled PASS.",
+    "requirements": [
+      "Bind exact candidate, report/probe/raw-output hashes and unchanged source/build inputs in the task criterion map.",
+      "Preserve the original failed command/report and distinguish its result from the passing browser characterization.",
+      "Retain all remaining capture admission, visual/conformance, protected source/history and independent task/slice obligations.",
+      "Use the supported evidence/controller route; do not waive a semantic requirement, suppress a diff, modify reference bytes, rewrite approval, shorten a base or invent a formal earlier review."
+    ],
+    "governingRoutes": [
+      {
+        "path": "docs/automation/codex-tracking-guide.md",
+        "section": "Evidence and Independent review",
+        "basis": "Acceptance criteria require named passing machine proof and immutable candidate-bound evidence; narrative alone cannot complete work."
+      },
+      {
+        "path": "docs/automation/project-automation-guide.md",
+        "section": "8.1 Verification breadth by workflow stage",
+        "basis": "Command inventories are coverage domains/candidate commands; criterion-linked risk-selected proof is required."
+      },
+      {
+        "path": "planning/enabler-change-requests/ECR-0011.md",
+        "section": "Ordered amendment and exact source envelopes; verification",
+        "basis": "T02 preserves seven-source envelope, exact approved package, pinned 33-page/66-capture current conformance and independent protected review."
+      }
+    ]
+  },
+  "maintenanceStillDue": {
+    "defect": "Generic static accessible-name resolution must eventually handle valid explicit labels through its lawful control-maintenance route.",
+    "governingRoute": "docs/automation/workflow-efficiency.md#bounded-maintenance",
+    "currentConstraint": "tools/ui_conformance.py is outside T02 seven-source envelope. Completed T01 and exact A04 correction remain frozen; tools/ui_change_gate.py reference_activation_source_history rejects unauthenticated later A03 source edits.",
+    "authorityLimits": "Bounded maintenance preserves existing authority and does not itself require new product approval. It cannot silently expand a closed approved source envelope. Establish lawful exact source attribution before any repair commit; if existing freezes preclude it, obtain append-only approved correction authority. This record authorizes no source repair or new gate exception.",
+    "waveLimit": "The official desktop accessibility/profile FAIL has not been converted into a PASS. Prescribed full W2 qualification remains due."
+  },
+  "preservation": {
+    "sourceEdits": false,
+    "referenceEdits": false,
+    "checkerEdits": false,
+    "controllerMutation": false,
+    "newApproval": false,
+    "finalTaskApproval": false,
+    "recordLocation": "Ignored local adjudication; root may later copy these exact reviewed bytes and probe into task-owned evidence."
+  }
+}
