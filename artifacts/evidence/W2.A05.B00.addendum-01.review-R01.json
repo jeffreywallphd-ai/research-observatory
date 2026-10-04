@@ -1,0 +1,313 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "inert-bootstrap-scope-addendum-proposal-independent-review",
+  "reviewId": "W2.A05.B00.addendum-01.R01",
+  "amendmentId": "W2.A05",
+  "bootstrapUnit": "W2.A05.B00",
+  "reviewer": "agent:/root/a05_packet_review",
+  "reviewedAt": "2026-10-04T21:24:33.412181Z",
+  "result": "approved",
+  "disposition": "ready-for-owner-scope-decision-only",
+  "ownerDecisionAvailable": true,
+  "actualBootstrapApproved": false,
+  "ownerApprovalRecorded": false,
+  "qualifyingTaskEvidence": false,
+  "candidateCommit": "df04d58bb36842abddd49fb1dc40462b8eaaa990",
+  "soleParent": "f747708fbf03a099534a4d6c930af339040dcfbc",
+  "reviewScope": "Independent readiness review of the immutable inert proposal and proposed two-file patch. This is not a taskctl B00 disposition, approval of actual source integration, owner scope approval, materialization authority, execution lease, adoption or Wave qualification.",
+  "independence": {
+    "independent": true,
+    "notes": "The reviewer did not author the proposal, source patch, tests, checks, approval or canonical state. Review operations read fixed committed inputs and raw retained evidence, reconstructed the patch in memory, and used git apply --check without applying it. Only this new readiness ledger was authored."
+  },
+  "bindings": {
+    "proposal": {
+      "path": "artifacts/evidence/W2.A05.B00.addendum-01.proposal.json",
+      "sha256": "2222d84429772151da87fd8fbadaa71d1aa01205db91083bb509f48bbec2620f"
+    },
+    "sourcePatch": {
+      "path": "artifacts/evidence/W2.A05.B00.addendum-01.source.patch",
+      "sha256": "dcd0de9e22a89d6b8cc33256cd9327f4e4f15c16cc4c12de530aaa02244a9c75"
+    },
+    "prospectiveDisplayReceipt": {
+      "path": "artifacts/evidence/W2.A05.B00.addendum-01.prospective-checks.json",
+      "sha256": "f0562a259f22d2d21a45f1260e13bf4a61e9a611a4ca8d3b05f29f14286e7c38"
+    },
+    "humanReviewPage": {
+      "path": "artifacts/evidence/W2.A05.B00.addendum-01.review.html",
+      "sha256": "2851312fc28d84b227a67ae63865b0516672d5f4b6e2cd857020289ee11cf17f"
+    },
+    "originalPacket": {
+      "commit": "55c6389ce39a656f4da3851cae32ae12ac80e796",
+      "path": "planning/enabler-change-requests/ECR-0013.packet.json",
+      "sha256": "56f521d708266021121b2a3391506cc771c7d32e32442d29dc5e58ba356f20c1"
+    },
+    "originalOwnerApproval": {
+      "path": "planning/wave-amendment-approvals/W2.A05.json",
+      "sha256": "9ad5b3f5fca7d3fd9c7fd8a42200f570f46250d506765b30e2705e299c7e8101",
+      "introductionCommit": "b54f24c222f631700056574a08056f660696d305"
+    },
+    "existingAddendumSchema": {
+      "path": "planning/wave-amendment-approvals/bootstrap-scope-addendum.schema.json",
+      "sha256": "6cf9c69cdd4e0e56c9d4282c51bc947d8d23f6aba4988de1c70e3fc865122445"
+    },
+    "sourceBindings": [
+      {
+        "path": "tools/taskctl.py",
+        "mode": "100644",
+        "beforeGitBlob": "248eb565f36fbb7616d75a76f6ea0808b6fa90df",
+        "beforeSha256": "fa528b0b22858564ef04cb5a5e7ef84d4e28ddb8ddd73deaf52f0aa4034d44ea",
+        "afterSha256": "9337fe41e90fd4b4d9bf39c32ca299ccca1c26f6f6b6a1d0b426a8ac062bc7e3"
+      },
+      {
+        "path": "tests/foundation/test_taskctl_workflow.py",
+        "mode": "100644",
+        "beforeGitBlob": "95eb011e44c0cc533f0ed2f5186898875d0271e4",
+        "beforeSha256": "3554d04ce4982057e3190162313241627b5140a459af80a4a14ea18cb8ef63dd",
+        "afterSha256": "3ae9593dab6df27366160f68fee0c2957452d3f72bdd6d8f1a41d9c2a3f14b01"
+      }
+    ],
+    "originalGOV27Binding": {
+      "path": "planning/enabler-change-requests/ECR-0013.maintenance-binding.json",
+      "sha256": "d550768944a0b142035270af47e2dcace88c7021edd0251d0a30e5ffc3e09be5",
+      "dispositionCommit": "a6d2f0b522b691a36bc54b906aa777d50369e085"
+    }
+  },
+  "independentChecks": [
+    {
+      "id": "fixed-candidate-and-closed-inert-increment",
+      "result": "PASS",
+      "notes": "Resolved exact df04 candidate and sole f747 parent. Exactly four newly added inert proposal/patch/receipt/HTML paths; no source, backlog, approval, reference or other path change. HEAD fixed and worktree clean before ledger creation."
+    },
+    {
+      "id": "source-authenticity-and-in-memory-patch",
+      "result": "PASS",
+      "notes": "Authenticated both before Git blobs and regular 100644 modes. Reconstructed every unified-diff hunk against the immutable before bytes without applying it; both resulting raw SHA256 values match sourceBindings. Python syntax parses. git apply --check returns exit0. Actual source files still equal immutable before bytes."
+    },
+    {
+      "id": "minimal-controller-delta-and-denials",
+      "result": "PASS",
+      "notes": "Production patch adds declared_adopted_ids before paused-parent composition and checks declared order instead of combined order. Canonical numeric predecessor composition already exists. Duplicate/gap/invalid ID, reserved order, backlog prefix, missing predecessor, next ID, quiescence, migration, packet/approval, evidence/scope, immutable record, CAS and downstream release checks remain intact. The authority subprocess continues to authenticate returned sibling and paused parent."
+    },
+    {
+      "id": "prospective-origin-and-input-closure",
+      "result": "PASS_FOR_PREPARATION_ONLY",
+      "notes": "Raw receipt, producer and all seven raw log hashes authenticate. Independently reconstructed the 4708 tracked-input digest at f747 using exactly the two prospective source bytes: 5b872e68da9f868953464b295de306f2a7fe2907d3f116bed85e9c8201f38344. Durable receipt changes only workflow/planctl executable display paths and adds explicit raw provenance. Receipt reports stable fresh inputs; source was uncommitted and execution/toolchain closure is not qualifying or reusable actual task proof."
+    },
+    {
+      "id": "authority-and-state-preservation",
+      "result": "PASS",
+      "notes": "Original 55c packet and sole-path b54 owner record authenticate. Current committed backlog equals the exact paused 771 Git blob (4355f55e1b431b8ff40d99cf615536dccd9d84a8a4945544984ec81f7068d49d); working newline form parses to the same document. A03 complete record hash bdad5e81327e32ee322db436dc569898ce314d29058e53b0cfe67ed6192e0b03 and adopted A04 hash c15d980f77933ba92e926980d6bc57b0f918430a4d0272952b922889a97e9ffc remain exact. All seven GOV27 final committed source hashes remain unchanged. A03 tasks remain DONE, W2/A03 paused, ordinary task blocked, no A05 shell/addendum/lease and active_amendment null."
+    },
+    {
+      "id": "schema-and-downstream-authority-feasibility",
+      "result": "PASS_FOR_NEW_OWNER_DECISION_ONLY",
+      "notes": "Existing closed v1.0 addendum schema can express the proposal using its existing fields and constraints; a hypothetical record shape validated only in memory. No actual approved record was created. Helper authenticates immutable reference/hash/introduction/ancestry and pins additional source paths to latest introduction blobs. It does not enforce every prose reference, baseApprovalCommit or downstream constraint; operator, independent actual review and T01 must authenticate them explicitly. T01 retains its five source paths and closed v1.4 contract."
+    },
+    {
+      "id": "human-review-surface",
+      "result": "PASS_STRUCTURAL",
+      "notes": "All nine local links resolve. Three native details elements each have a summary and no open attribute, leaving exact files, evidence and constraints collapsed. Canonical proposal/patch hashes and limitations are visible in page source. Browser rendering was unavailable: no browsers were exposed, so no rendered or interactive-browser claim is made."
+    },
+    {
+      "id": "inert-candidate-whitespace-check",
+      "result": "ADVISORY_PRESERVED",
+      "exitCode": 1,
+      "notes": "Full git diff --check f747..df04 reports only source.patch line8, the required single-space unified-diff context representation of an unchanged empty source line. Source patch apply check passes; separate JSON/receipt/HTML diff check exits0. This artifact warning is not reinterpreted as a passing full candidate diff check and does not alter the authenticated source patch."
+    }
+  ],
+  "prospectiveChecks": {
+    "contextCommit": "f747708fbf03a099534a4d6c930af339040dcfbc",
+    "sourceState": "uncommitted prospective owner-decision draft",
+    "qualifyingTaskEvidence": false,
+    "fresh": true,
+    "reuse": false,
+    "receipt": {
+      "path": "artifacts/tmp/W2.A05.B00.f747708f.draft-01.checks.json",
+      "sha256": "4bb0d1002c869748648a35bb4d8a7b1d0e867dbb91908f43193c0a7a18282685"
+    },
+    "producer": {
+      "path": "artifacts/tmp/W2.A05.B00.qualify-draft-01.py",
+      "sha256": "f58e19b34c8cbbadbeabec55cb650d9cd48841c764409874ea1634211b371b49"
+    },
+    "inputsStableReported": true,
+    "inputCount": 4708,
+    "inputDigestIndependentlyReconstructed": "5b872e68da9f868953464b295de306f2a7fe2907d3f116bed85e9c8201f38344",
+    "checks": [
+      {
+        "id": "workflow",
+        "commandArgs": [
+          "../../.venv/Scripts/python.exe",
+          "-B",
+          "-m",
+          "unittest",
+          "-v",
+          "test_taskctl_workflow.TaskctlWorkflowTests.test_sequential_bootstrap_composes_paused_parent_without_sorting_declared_adoptions",
+          "test_taskctl_workflow.TaskctlWorkflowTests.test_sequential_bootstrap_real_persistence_preserves_returned_sibling_and_cas",
+          "test_taskctl_workflow.TaskctlWorkflowTests.test_paused_correction_bootstrap_append_preserves_exact_parent_and_schema_dispatch",
+          "test_taskctl_workflow.TaskctlWorkflowTests.test_paused_correction_materialization_uses_real_cas_without_half_entry",
+          "test_taskctl_workflow.TaskctlWorkflowTests.test_sequential_runtime_rejects_preload_edits_to_completed_sibling_history",
+          "test_taskctl_workflow.TaskctlWorkflowTests.test_bootstrap_scope_addendum_is_hash_bound_and_history_bound",
+          "test_taskctl_workflow.TaskctlWorkflowTests.test_bootstrap_resubmission_discovers_and_freezes_new_scope_addenda_fail_closed",
+          "test_taskctl_workflow.TaskctlWorkflowTests.test_bootstrap_candidate_authorization_binds_latest_reauthorization_blob"
+        ],
+        "cwd": "tests/foundation",
+        "exitCode": 0,
+        "durationSeconds": 144.666,
+        "log": "artifacts/tmp/W2.A05.B00.f747708f.draft-01.workflow.log",
+        "logSha256": "a9ab49f5bd4946af9f680358e51c23b68b10459bc423c998767e5f2dd75a2499"
+      },
+      {
+        "id": "planctl",
+        "commandArgs": [
+          "../../.venv/Scripts/python.exe",
+          "-B",
+          "-m",
+          "unittest",
+          "-v",
+          "test_planctl_amendments.PlanctlAmendmentTests.test_sequential_correction_authenticates_actual_completed_return_in_git",
+          "test_planctl_amendments.PlanctlAmendmentTests.test_returned_sibling_denies_adopted_flags_and_changed_completed_records",
+          "test_planctl_amendments.PlanctlAmendmentTests.test_sequential_chain_composes_paused_authority_without_reordering_declared_adoptions"
+        ],
+        "cwd": "tests/foundation",
+        "exitCode": 0,
+        "durationSeconds": 193.652,
+        "log": "artifacts/tmp/W2.A05.B00.f747708f.draft-01.planctl.log",
+        "logSha256": "46da7bf31e67abd4431e64b13a07596fd6760ae61d1f8ef7066e3680ba074188"
+      },
+      {
+        "id": "backlog",
+        "commandArgs": [
+          ".venv/Scripts/python.exe",
+          "-B",
+          "tools/taskctl.py",
+          "validate"
+        ],
+        "cwd": ".",
+        "exitCode": 0,
+        "durationSeconds": 213.582,
+        "log": "artifacts/tmp/W2.A05.B00.f747708f.draft-01.backlog.log",
+        "logSha256": "d97d5b8d4d0a12904cada3ff677b3c739845ef523cf4f2fe70c0674e7afb2ea1"
+      },
+      {
+        "id": "ruff",
+        "commandArgs": [
+          ".venv/Scripts/ruff.exe",
+          "check",
+          "tools/taskctl.py",
+          "tests/foundation/test_taskctl_workflow.py"
+        ],
+        "cwd": ".",
+        "exitCode": 0,
+        "durationSeconds": 0.026,
+        "log": "artifacts/tmp/W2.A05.B00.f747708f.draft-01.ruff.log",
+        "logSha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18"
+      },
+      {
+        "id": "format",
+        "commandArgs": [
+          ".venv/Scripts/ruff.exe",
+          "format",
+          "--check",
+          "tools/taskctl.py",
+          "tests/foundation/test_taskctl_workflow.py"
+        ],
+        "cwd": ".",
+        "exitCode": 0,
+        "durationSeconds": 0.023,
+        "log": "artifacts/tmp/W2.A05.B00.f747708f.draft-01.format.log",
+        "logSha256": "3bc53bf3e981a98a34a852e175bf9b77af841edea74fca595d9aedcbaf9a4938"
+      },
+      {
+        "id": "mypy",
+        "commandArgs": [
+          ".venv/Scripts/mypy.exe",
+          "--no-namespace-packages",
+          "tools/taskctl.py",
+          "tests/foundation/test_taskctl_workflow.py"
+        ],
+        "cwd": ".",
+        "exitCode": 0,
+        "durationSeconds": 0.288,
+        "log": "artifacts/tmp/W2.A05.B00.f747708f.draft-01.mypy.log",
+        "logSha256": "0c37c4158c91ef55c724ba017bf6465f26018199badb08e3ff13f98acdf056c2"
+      },
+      {
+        "id": "diff",
+        "commandArgs": [
+          "git",
+          "-c",
+          "core.safecrlf=false",
+          "diff",
+          "--check",
+          "HEAD"
+        ],
+        "cwd": ".",
+        "exitCode": 0,
+        "durationSeconds": 0.049,
+        "log": "artifacts/tmp/W2.A05.B00.f747708f.draft-01.diff.log",
+        "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    ],
+    "notes": "All seven groups returned exit0 on the prospective uncommitted source. Workflow log reports eight tests without skips; planctl log reports three tests without skips. New ordering regression mocks authority admission and stops before persistence. Disposable append regression uses real file CAS and Git snapshots while mocking authority/evidence prerequisites. These are explicitly synthetic fixtures, not actual A05 execution. Durations are process wall time from the receipt, distinct from unittest-reported durations. Original raw invocation bytes stay only in the ignored receipt."
+  },
+  "preservedAdverseEvidence": [
+    {
+      "path": "artifacts/evidence/W2.A05.B00.append-adverse-01.json",
+      "sha256": "fae89788563e70498b0a7e84cd30e29aff892222629b598b4bbe598a4716dfc1",
+      "notes": "Actual supported bootstrap exit1 at d630881307311334782947ddcde0959ad8c29603; unchanged-input receipt and raw failure log authenticate. No shell or persistence was inferred."
+    },
+    {
+      "path": "artifacts/evidence/W2.A05.B00.regression-characterization-01.json",
+      "sha256": "6650efc7d09a9af087d985bec1846241bbcfe4c8ab002119b18dc07c942c61cb",
+      "notes": "Original two regression tests failed with one failure and two errors at the authentic ordering rejection. Producer and log hashes authenticate; synthetic prerequisites remain explicit."
+    },
+    {
+      "path": "artifacts/evidence/W2.A05.B00.privacy-adverse-01.json",
+      "sha256": "c76bc7fec0da35a53414ca54db58304c393b7b8fe2381ffff3605a75370eb4aa",
+      "notes": "Prospective commit hook failed on a concrete workspace executable path; no source commit was created. Only durable display argv was normalized, preserving exact ignored raw receipt and failure. No privacy scanner or historical exception was weakened."
+    },
+    {
+      "path": "artifacts/evidence/W2.A05.B00.correction-exploratory-adverse-01.json",
+      "sha256": "9b4cfbb4665d39ae8b56b2940281156d74ee310fd2003e8c8434a31d7ef81e02",
+      "notes": "Invocation working-directory, disposable fixture CRLF/Git and mypy discovery setup findings remain adverse and nonqualifying. The unchanged byte assertion remains; only disposable Git autocrlf and the existing governed mypy option address setup."
+    }
+  ],
+  "futureAuthorityRequirements": [
+    "Only a new explicit trusted owner approval can permit this exact source exception and downstream T01 recognition. The original ECR-0013 approval and GOV27 authority do not already authorize it. Do not create an APPROVED addendum or apply/persist the source before that decision.",
+    "The actual v1.0 addendum decision/constraints must bind full inert candidate df04d58bb36842abddd49fb1dc40462b8eaaa990, canonical proposal SHA256 2222d84429772151da87fd8fbadaa71d1aa01205db91083bb509f48bbec2620f, patch SHA256 dcd0de9e22a89d6b8cc33256cd9327f4e4f15c16cc4c12de530aaa02244a9c75, original base approval b54f24c222f631700056574a08056f660696d305, this canonical review path and its exact raw SHA256 and immutable introduction commit after delivery. Schema shape alone is insufficient.",
+    "AuthorizedAdditionalPaths must be exactly tools/taskctl.py and tests/foundation/test_taskctl_workflow.py. Their regular 100644 introduction and final B00 blobs must have SHA256 9337fe41e90fd4b4d9bf39c32ca299ccca1c26f6f6b6a1d0b426a8ac062bc7e3 and 3ae9593dab6df27366160f68fee0c2957452d3f72bdd6d8f1a41d9c2a3f14b01 respectively, with authenticated before blobs and sole-parent changed-path history. Any later source change requires later separately authenticated authority.",
+    "Actual addendum constraints must explicitly authorize T01, within its original five paths, to authenticate this exact separately reviewed owner-approved B00 source segment using immutable scope_addenda references, proposal/patch/review hashes, original packet/owner record, candidate/introduction ancestry, actual committed checks and later actual B00 review. No generic filename, maintenance, prefix or self-declared exemption; no added asserted v1.4 field.",
+    "First authenticate the unchanged original d550 GOV27 four-commit segment, adverse R01 and passing R02 as their historical facts. Authenticate the later B00 correction separately. Kernel and planctl stay equal to original final hashes; changed taskctl/workflow tests must equal only the new exact approved introduction blobs. No second maintenance ID or weakening of the old pre-UI maintenance helper/schema.",
+    "After approval and source commit, collect fresh fixed-input committed-candidate affected control checks and an independent actual source/B00 disposition before integration/materialization. Preserve adverse actual and exploratory records. This readiness ledger and prospective test pass cannot substitute for those gates.",
+    "Preserve original scope, references/baseline, 33 tasks/143 points/530 hours, shared79.5-hour budget, A03/A04 whole records, ordinary blocked task and absence of lease. Actual empty shell, B00 review, exact task materialization, separate claims, T01/T02 task reviews, S01/exit/separate security/adoption and exact paused-A03 return remain mandatory. Later separate A03 activation/finding closure/exit/adoption and ordinary W2 resume remain due.",
+    "Native/Core/S05/fifth-D3D/full Wave qualification, human release and any external effect remain unapproved and due. The explicit 2026-10-04T23:25:00Z stop remains binding."
+  ],
+  "nonblockingAdvisories": [
+    {
+      "id": "html-separator-encoding",
+      "notes": "Actual UTF-8 page contains mojibake separator characters (U+00E2/U+20AC/U+201D and U+00C2/U+00B7). Decision, constraints and links remain readable; retain this fixed candidate and avoid optional styling iteration."
+    },
+    {
+      "id": "unified-patch-context-whitespace",
+      "notes": "Preserve the raw candidate whitespace warning described in independentChecks; it is inherent to the authenticated unified patch context and not source trailing whitespace."
+    },
+    {
+      "id": "GOV27-first-check-label",
+      "notes": "Prior exact GOV27 binding remains unchanged. Its first changes-requested projection describes authentic R01 disposition; raw checks-01 is adverse-preserved with taskctl exit1, never a passing check."
+    }
+  ],
+  "automaticApprovalReview": {
+    "action": "Commit persistent tools/taskctl.py and tests/foundation/test_taskctl_workflow.py draft before separate approval",
+    "result": "REJECTED",
+    "reason": "The governance controller/test commit is explicitly outside frozen ECR-0013 scope and before required separate owner approval. Evidence-only preservation is low risk. Do not bypass through a workaround or indirect execution.",
+    "resolutionVerified": "Actual source restored byte-exact; no persistent corrective source commit/apply or indirect workaround. Only four inert proposal artifacts were committed. New owner decision remains required."
+  },
+  "findings": [],
+  "closures": [],
+  "limits": [
+    "This independent approval is only readiness for a new owner scope decision on the exact inert candidate. No actual B00 shell, owner addendum, control implementation, task/materialization lease, adoption, ordinary Wave resume, native/profile completion or release is approved.",
+    "No source patch was applied, no taskctl or planctl mutation was performed, no source/packet/state/approval/schema was edited and no remote effect occurred.",
+    "Focused raw preparation evidence was authenticated rather than rerun or promoted to commit-bound qualification. Installed executable/runtime closure and absence of transient changes are not established for actual qualification; fresh committed proof remains mandatory.",
+    "Visual/browser interaction was unavailable; HTML review is semantic/structural and link-based. This is an inert approval brief, with no governed product/reference change."
+  ]
+}
