@@ -3789,6 +3789,17 @@ waves:
       sha256: ff767dcbc6aab20106500d827865b0892852416c6dedf55e05e43d0fec44aaa5
       commit: db7edd6c6021ed78afd9084b37d2ef48e1fc12cb
     notes: Adopt independently reviewed ECR-0010 control route; retain original CAP-05.S01.T01 and W2 gates
+  - id: W2.CP04
+    kind: security
+    recorded_by: codex-w2-implementation
+    recorded_at: '2026-10-04T17:19:15+00:00'
+    evidence:
+    - type: amendment-adoption-evidence
+      amendment_id: W2.A04
+      path: artifacts/evidence/W2.A04.adoption.json
+      sha256: ece0d58fc04b3b8ac6ff755088fdd9420dabf172fcbab8df3c8ea5a7983f9051
+      commit: 75d8d094d9833f30445f56bbb3c1fe39ff052221
+    notes: Adopted W2.A04 control-plane amendment.
   completion:
     status: PAUSED
     reviewer: null
@@ -53761,7 +53772,7 @@ wave_amendments:
     sha256: e769cb71efbf8725c0fadeac079713f4484f57f7cf871cdfb037ef9a4df27807
     introduction_commit: ba95f68bd2747ebce99e67eeb4daec53ed3ba87b
   lifecycle:
-    status: REVIEW
+    status: ADOPTED
     history:
     - id: E01
       status: APPROVED
@@ -53790,6 +53801,11 @@ wave_amendments:
       actor: codex-w2-implementation
       at: '2026-10-04T16:38:44+00:00'
       rationale: Submitted amendment exit for review.
+    - id: E05
+      status: ADOPTED
+      actor: codex-w2-implementation
+      at: '2026-10-04T17:19:15+00:00'
+      rationale: Adopted via W2.CP04.
   bootstrap:
     id: W2.A04.B00
     status: APPROVED
