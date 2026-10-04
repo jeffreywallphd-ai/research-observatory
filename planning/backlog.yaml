@@ -53737,24 +53737,19 @@ wave_amendments:
     - Fresh original CAP-05.S01.T01 product/native/Core evidence and full-base gate remain later obligations, including unresolved
       authentic fifth D3D child characterization.
     packet_task_sha256: 5dc2789685c520f534b336c05a8663f50e00e6bb1ea80f4a9bfd6da3a4f100c8
-    status: BLOCKED
+    status: IN_PROGRESS
     owner: codex-w2-implementation
     branch: codex/w2-implementation
     base_sha: ca8b1448e094b637bbd06c3129b69a78df792619
     worktree: .
-    lease: null
+    lease:
+      claimed_by: codex-w2-implementation
+      claimed_at: '2026-10-04T17:55:13+00:00'
+      expires_at: '2026-10-05T01:55:13+00:00'
     started_at: '2026-10-04T12:23:01+00:00'
-    updated_at: '2026-10-04T12:26:49+00:00'
+    updated_at: '2026-10-04T17:55:13+00:00'
     completed_at: null
-    blocker:
-      reason: Accepted ADR-0001 requires a changed indexed task-linked ADR for protected activation/baseline, but the frozen
-        ECR-0011 T02 seven-source envelope excludes ADR/index delivery; retained planned-path preflight exits 1. No product
-        edits.
-      next_action: Prepare independently reviewed append-only ECR-0012/W2.A04 paused-predecessor correction binding companion
-        ADR delivery and exact gate/source lineage; obtain owner approval before implementation. Preserve original T02 claim
-        base ca8b1448e094b637bbd06c3129b69a78df792619 and completed T01 history.
-      recorded_at: '2026-10-04T12:26:49+00:00'
-      owner: codex-w2-implementation
+    blocker: null
     implementation_notes: ''
     evidence: []
     verification_state: null
@@ -53762,7 +53757,9 @@ wave_amendments:
       reviewer: null
       result: null
       reviewed_at: null
-      notes: null
+      notes: 'Reopened: ECR-0012 correction independently approved and adopted at 8f1a47f8; fresh exact paused-return check
+        passed at 51245218; A03 separately reactivated at de50bff2. Resume approved seven-source activation task with retained
+        ca8b1448 base and unchanged authority.'
   completion:
     status: PENDING
     reviewer: null
