@@ -40963,15 +40963,87 @@
         {
           "task_id": "W2.A04.T01",
           "title": "Bind protected activation ADR correction and exact return lineage",
-          "status": "IN_PROGRESS",
-          "mode": "latest-review-only",
+          "status": "REVIEW",
+          "mode": "append-only",
           "latest_review": {
             "reviewer": null,
             "result": null,
             "reviewed_at": null,
             "notes": null
           },
-          "review_control": null
+          "review_control": {
+            "version": 1,
+            "attempts": [],
+            "current_submission": {
+              "id": "R01",
+              "submitted_by": "codex-w2-implementation",
+              "submitted_at": "2026-10-04T16:03:14+00:00",
+              "candidate_commit": "6a07f37de16e9d5da49cb0b36400e6fe2fb195e0",
+              "base_commit": "223f48a0cfac0612049fc6bf0537dac79f90be36",
+              "branch": "codex/w2-implementation",
+              "evidence_reference": {
+                "type": "criterion-manifest",
+                "path": "artifacts/evidence/W2.A04.T01.json",
+                "sha256": "afd3a1fb76652d8ddb7d54072e2279a3cd02d38d3549f9a633456886a576187f",
+                "commit": "6a07f37de16e9d5da49cb0b36400e6fe2fb195e0",
+                "recorded_at": "2026-10-04T16:03:14+00:00"
+              },
+              "acceptance_criteria_sha256": "91af3c7184a386e2467ba6fbcb19b9b856a67317c4a8d1472aab7181b93903d4",
+              "changed_paths": [
+                "artifacts/evidence/W2.A04.T01.task-start.md",
+                "docs/adr/ADR-0040-document-protected-desktop-activation-correction.md",
+                "docs/adr/index.json",
+                "docs/automation/design-first-ui-changes.md",
+                "docs/planning-implementation-plan.md",
+                "planning/backlog.yaml",
+                "planning/review-site/enablers/ECR-0012.html",
+                "planning/review-site/enablers/index.html",
+                "planning/review-site/manifest.json",
+                "planning/review-site/waves/W2.html",
+                "planning/status-summary.md",
+                "tests/foundation/test_ui_change_gate.py",
+                "tools/ui_change_gate.py"
+              ],
+              "selected_checks": [
+                "../../.venv/Scripts/python.exe -B -m unittest -v test_ui_change_gate.UiChangeGateTests.test_reference_activation_correction_authenticates_append_only_remediation",
+                "../../.venv/Scripts/python.exe -B -m unittest -v test_ui_change_gate.UiChangeGateTests.test_reference_activation_corrected_v14_authenticates_full_original_base",
+                "../../.venv/Scripts/python.exe -B -m unittest -v test_ui_change_gate.UiChangeGateTests.test_reference_activation_correction_preserves_adopted_record_through_consumer_delivery",
+                "../../.venv/Scripts/python.exe -B -m unittest -v test_ui_change_gate.UiChangeGateTests.test_reference_activation_correction_exact_predecessor_and_claim_denials test_ui_change_gate.UiChangeGateTests.test_reference_activation_correction_denies_hidden_mixed_and_premature_source test_ui_change_gate.UiChangeGateTests.test_reference_activation_correction_denies_registry_ordinary_and_foreign_activation test_ui_change_gate.UiChangeGateTests.test_reference_activation_correction_rejects_unbound_remediation_outputs test_ui_change_gate.UiChangeGateTests.test_reference_activation_correction_replays_slice_findings_and_canonical_rounds test_ui_change_gate.UiChangeGateTests.test_reference_activation_correction_requires_slice_and_clean_inputs",
+                "../../.venv/Scripts/python.exe -B -m unittest -v test_ui_change_gate.UiChangeGateTests.test_linked_correction_authenticates_without_mutating_origin_metadata test_ui_change_gate.UiChangeGateTests.test_linked_rejects_authority_and_live_claim_substitutions test_ui_change_gate.UiChangeGateTests.test_resumed_amendment_schema_is_opt_in_and_cannot_authorize_ordinary_tasks test_ui_change_gate.UiChangeGateTests.test_intentional_amendment_schema_is_exact_and_cannot_extend_legacy_lanes test_ui_change_gate.UiChangeGateTests.test_adopted_continuation_schema_is_closed_and_exact_to_original_t01 test_ui_change_gate.UiChangeGateTests.test_reference_activation_v14_schema_requires_both_closed_authorities test_ui_change_gate.UiChangeGateTests.test_reference_activation_historical_t03_binds_reviewed_protected_source_commits test_ui_change_gate.UiChangeGateTests.test_reference_activation_actual_a02_adoption_accepts_stable_ancestor_evidence_only",
+                "../../.venv/Scripts/python.exe -B -m unittest -v test_ui_change_gate.UiChangeGateTests.test_reference_activation_correction_requires_separate_checkpoint_review",
+                "../../.venv/Scripts/python.exe -B -m unittest -v test_ui_change_gate.UiChangeGateTests.test_reference_activation_correction_denies_missing_forged_self_and_late_checkpoint_review",
+                ".venv/Scripts/python.exe tools/adr_check.py --repo . --base 223f48a0cfac0612049fc6bf0537dac79f90be36 --head 6a07f37de16e9d5da49cb0b36400e6fe2fb195e0",
+                ".venv/Scripts/python.exe tools/ui_change_gate.py --repo . --base 223f48a0cfac0612049fc6bf0537dac79f90be36 --head 6a07f37de16e9d5da49cb0b36400e6fe2fb195e0",
+                ".venv/Scripts/python.exe -m ruff check tools/ui_change_gate.py tests/foundation/test_ui_change_gate.py",
+                ".venv/Scripts/python.exe -m ruff format --check tools/ui_change_gate.py tests/foundation/test_ui_change_gate.py",
+                ".venv/Scripts/python.exe -m mypy tools/ui_change_gate.py tests/foundation/test_ui_change_gate.py",
+                "git -c core.safecrlf=false diff --check 223f48a0cfac0612049fc6bf0537dac79f90be36 6a07f37de16e9d5da49cb0b36400e6fe2fb195e0",
+                ".venv/Scripts/python.exe tools/taskctl.py --file planning/backlog.yaml validate",
+                ".venv/Scripts/python.exe tools/backlog_views.py --repo . --check",
+                ".venv/Scripts/python.exe tools/plan_review_check.py --repo . --report artifacts/tmp/W2.A04.T01.site-6a07f37d.json"
+              ],
+              "deferred_checks": [
+                "Unchanged legacy uncorrected full-base and site-asset cases passed at 9c83bd49 and are deferred from this remediation selection because the new checkpoint helper and fixture branch apply only to A04. They are historical context, not reused fresh qualification.",
+                "Actual A03.T02 retained-base protected activation and 66-image desktop capture remain due after reviewed A04 adoption/return and legal activation/reopen.",
+                "Actual original CAP-05.S01.T01 native/Core/D3D proof, joined CAP-04.S05, remaining CAP-05 slices, fresh full W2 matrix and independent Wave/human release gates remain due.",
+                "Full repository/deployment/runtime/packaging profiles are deferred to their required later stages; this task changes no product, native, dependency or toolchain input."
+              ],
+              "selection_rationale": "Exact approved five-source protected-control correction. Fresh real-Git persisted snapshot, source-history, return/reopen, append-only remediation, separate security review and original-base authority checks replay all three material advisory findings and explicit task denials. The shared fixture task/exit helper changes justify selected fresh legacy positive/denial coverage. Actual task-range ADR/UI, Python quality and canonical planning checks are directly affected. No prior result is reused as current-candidate qualification; no product/runtime/dependency change justifies an early full repository or desktop/native profile.",
+              "selection_sha256": "fcf37e88a349e96345de8f482ca2bde50d31d733d5e348c4e2b5b0c4f96e2dda",
+              "prior_attempt_id": null,
+              "open_finding_ids": [],
+              "root_cause_analysis": null,
+              "selected_command_ids": [
+                "foundation:unit",
+                "foundation:adr",
+                "foundation:ui-change",
+                "foundation:quality",
+                "foundation:backlog",
+                "foundation:backlog-views"
+              ],
+              "packet_sha256": "a0a0da4b619123d139d47b9076e32c68ae39659397e7c59be2c0d284c97c22e7"
+            }
+          }
         }
       ],
       "exit_review": {
