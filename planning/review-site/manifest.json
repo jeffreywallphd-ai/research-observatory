@@ -40492,7 +40492,7 @@
       "review_path": "planning/enabler-change-requests/ECR-0012-review.html",
       "review_sha256": "680fe0ff9b6b4d7868c2c3535b97727f8b93d19407ca80310f94194537407144",
       "approval_path": "planning/wave-amendment-approvals/W2.A04.json",
-      "approval_sha256": "f12e21b7544c1abdd0c58bce8682dcaa17e88848ec09a3d3c0d99f7eb93dd4e1",
+      "approval_sha256": "e769cb71efbf8725c0fadeac079713f4484f57f7cf871cdfb037ef9a4df27807",
       "approval_status": "APPROVED",
       "lifecycle_status": "NOT_MATERIALIZED",
       "bootstrap_status": "NOT_SUBMITTED",
