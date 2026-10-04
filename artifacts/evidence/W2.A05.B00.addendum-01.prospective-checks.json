@@ -1,0 +1,141 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "wave-amendment-bootstrap-prospective-patch-checks",
+  "bootstrapUnit": "W2.A05.B00",
+  "contextCommit": "f747708fbf03a099534a4d6c930af339040dcfbc",
+  "qualifyingTaskEvidence": false,
+  "sourceState": "uncommitted prospective owner-decision draft",
+  "sourceBlobs": {
+    "tools/taskctl.py": "9337fe41e90fd4b4d9bf39c32ca299ccca1c26f6f6b6a1d0b426a8ac062bc7e3",
+    "tests/foundation/test_taskctl_workflow.py": "3ae9593dab6df27366160f68fee0c2957452d3f72bdd6d8f1a41d9c2a3f14b01"
+  },
+  "patchSha256": "dcd0de9e22a89d6b8cc33256cd9327f4e4f15c16cc4c12de530aaa02244a9c75",
+  "producerSha256": "f58e19b34c8cbbadbeabec55cb650d9cd48841c764409874ea1634211b371b49",
+  "inputsStable": true,
+  "trackedInputsCount": 4708,
+  "trackedInputsSha256": "5b872e68da9f868953464b295de306f2a7fe2907d3f116bed85e9c8201f38344",
+  "checks": [
+    {
+      "id": "workflow",
+      "commandArgs": [
+        "../../.venv/Scripts/python.exe",
+        "-B",
+        "-m",
+        "unittest",
+        "-v",
+        "test_taskctl_workflow.TaskctlWorkflowTests.test_sequential_bootstrap_composes_paused_parent_without_sorting_declared_adoptions",
+        "test_taskctl_workflow.TaskctlWorkflowTests.test_sequential_bootstrap_real_persistence_preserves_returned_sibling_and_cas",
+        "test_taskctl_workflow.TaskctlWorkflowTests.test_paused_correction_bootstrap_append_preserves_exact_parent_and_schema_dispatch",
+        "test_taskctl_workflow.TaskctlWorkflowTests.test_paused_correction_materialization_uses_real_cas_without_half_entry",
+        "test_taskctl_workflow.TaskctlWorkflowTests.test_sequential_runtime_rejects_preload_edits_to_completed_sibling_history",
+        "test_taskctl_workflow.TaskctlWorkflowTests.test_bootstrap_scope_addendum_is_hash_bound_and_history_bound",
+        "test_taskctl_workflow.TaskctlWorkflowTests.test_bootstrap_resubmission_discovers_and_freezes_new_scope_addenda_fail_closed",
+        "test_taskctl_workflow.TaskctlWorkflowTests.test_bootstrap_candidate_authorization_binds_latest_reauthorization_blob"
+      ],
+      "cwd": "tests/foundation",
+      "exitCode": 0,
+      "durationSeconds": 144.666,
+      "log": "artifacts/tmp/W2.A05.B00.f747708f.draft-01.workflow.log",
+      "logSha256": "a9ab49f5bd4946af9f680358e51c23b68b10459bc423c998767e5f2dd75a2499"
+    },
+    {
+      "id": "planctl",
+      "commandArgs": [
+        "../../.venv/Scripts/python.exe",
+        "-B",
+        "-m",
+        "unittest",
+        "-v",
+        "test_planctl_amendments.PlanctlAmendmentTests.test_sequential_correction_authenticates_actual_completed_return_in_git",
+        "test_planctl_amendments.PlanctlAmendmentTests.test_returned_sibling_denies_adopted_flags_and_changed_completed_records",
+        "test_planctl_amendments.PlanctlAmendmentTests.test_sequential_chain_composes_paused_authority_without_reordering_declared_adoptions"
+      ],
+      "cwd": "tests/foundation",
+      "exitCode": 0,
+      "durationSeconds": 193.652,
+      "log": "artifacts/tmp/W2.A05.B00.f747708f.draft-01.planctl.log",
+      "logSha256": "46da7bf31e67abd4431e64b13a07596fd6760ae61d1f8ef7066e3680ba074188"
+    },
+    {
+      "id": "backlog",
+      "commandArgs": [
+        ".venv/Scripts/python.exe",
+        "-B",
+        "tools/taskctl.py",
+        "validate"
+      ],
+      "cwd": ".",
+      "exitCode": 0,
+      "durationSeconds": 213.582,
+      "log": "artifacts/tmp/W2.A05.B00.f747708f.draft-01.backlog.log",
+      "logSha256": "d97d5b8d4d0a12904cada3ff677b3c739845ef523cf4f2fe70c0674e7afb2ea1"
+    },
+    {
+      "id": "ruff",
+      "commandArgs": [
+        ".venv/Scripts/ruff.exe",
+        "check",
+        "tools/taskctl.py",
+        "tests/foundation/test_taskctl_workflow.py"
+      ],
+      "cwd": ".",
+      "exitCode": 0,
+      "durationSeconds": 0.026,
+      "log": "artifacts/tmp/W2.A05.B00.f747708f.draft-01.ruff.log",
+      "logSha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18"
+    },
+    {
+      "id": "format",
+      "commandArgs": [
+        ".venv/Scripts/ruff.exe",
+        "format",
+        "--check",
+        "tools/taskctl.py",
+        "tests/foundation/test_taskctl_workflow.py"
+      ],
+      "cwd": ".",
+      "exitCode": 0,
+      "durationSeconds": 0.023,
+      "log": "artifacts/tmp/W2.A05.B00.f747708f.draft-01.format.log",
+      "logSha256": "3bc53bf3e981a98a34a852e175bf9b77af841edea74fca595d9aedcbaf9a4938"
+    },
+    {
+      "id": "mypy",
+      "commandArgs": [
+        ".venv/Scripts/mypy.exe",
+        "--no-namespace-packages",
+        "tools/taskctl.py",
+        "tests/foundation/test_taskctl_workflow.py"
+      ],
+      "cwd": ".",
+      "exitCode": 0,
+      "durationSeconds": 0.288,
+      "log": "artifacts/tmp/W2.A05.B00.f747708f.draft-01.mypy.log",
+      "logSha256": "0c37c4158c91ef55c724ba017bf6465f26018199badb08e3ff13f98acdf056c2"
+    },
+    {
+      "id": "diff",
+      "commandArgs": [
+        "git",
+        "-c",
+        "core.safecrlf=false",
+        "diff",
+        "--check",
+        "HEAD"
+      ],
+      "cwd": ".",
+      "exitCode": 0,
+      "durationSeconds": 0.049,
+      "log": "artifacts/tmp/W2.A05.B00.f747708f.draft-01.diff.log",
+      "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "fresh": true,
+  "reuse": false,
+  "limit": "Prospective two-file patch preparation only; source is uncommitted and these are not qualifying commit-bound task evidence. Fixture authority/evidence prerequisites are synthetic; real CAS/Git snapshots prove fixture persistence, not an actual A05 append, B00 approval, task completion, adoption or W2 release.",
+  "rawReceipt": {
+    "path": "artifacts/tmp/W2.A05.B00.f747708f.draft-01.checks.json",
+    "sha256": "4bb0d1002c869748648a35bb4d8a7b1d0e867dbb91908f43193c0a7a18282685"
+  },
+  "displayNormalization": "Concrete executable paths are replaced only in durable display argv; exact invocation bytes remain in the hash-bound ignored raw receipt."
+}
