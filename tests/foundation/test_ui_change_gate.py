@@ -899,7 +899,12 @@ class UiChangeGateTests(unittest.TestCase):
             if correction_attack == "missing-return":
                 t02["status"] = "READY"
             self.complete_activation_fixture_amendment(
-                root, backlog, child, {child_task["id"]: child_candidate}, remediation=correction_remediation
+                root,
+                backlog,
+                child,
+                {child_task["id"]: child_candidate},
+                remediation=correction_remediation,
+                security_attack=correction_attack,
             )
             if correction_attack == "missing-return":
                 t02["status"] = "BLOCKED"
@@ -1031,6 +1036,55 @@ class UiChangeGateTests(unittest.TestCase):
         )
         return root, adoption, backlog, control_candidate, consumer_candidate, activation_commit
 
+    def write_activation_security_review(
+        self,
+        root: Path,
+        amendment: dict[str, Any],
+        manifest_commit: str,
+        *,
+        remediation: bool = False,
+        attack: str | None = None,
+    ) -> str:
+        """Separate disposable review of the already committed checkpoint manifest."""
+        path = "artifacts/evidence/W2.A04.adoption.json"
+        payload = ui_gate.blob(root, manifest_commit, path)
+        manifest = json.loads(payload)
+        latest = amendment["completion"]["exit_review_control"]["attempts"][-1]
+        for number in range(1, 3 if remediation else 2):
+            adverse = remediation and number == 1
+            record: dict[str, Any] = {
+                "schemaVersion": "1.0",
+                "documentType": "wave-amendment-adoption-security-independent-review",
+                "amendmentId": "W2.A04",
+                "targetWave": "W2",
+                "reviewer": "agent:/root/synthetic-independent-security-review",
+                "result": "changes-requested" if adverse else "approved",
+                "reviewedManifest": {
+                    "path": path,
+                    "introductionCommit": manifest_commit,
+                    "gitBlob": self.git(root, "rev-parse", f"{manifest_commit}:{path}"),
+                    "sha256": hashlib.sha256(payload).hexdigest(),
+                },
+                "approvedExit": {
+                    "attemptId": latest["submission"]["id"],
+                    "reviewedCompletionCommit": manifest["reviewedCompletionCommit"],
+                },
+                "findings": [self.activation_fixture_finding("SYN-SEC-F01")] if adverse else [],
+                "closures": [
+                    {"finding_id": "SYN-SEC-F01", "disposition": "fixed", "evidence": "synthetic checkpoint replay"}
+                ]
+                if number == 2
+                else [],
+                "transitionTruth": "Disposable pre-adoption security disposition only, not actual approval.",
+            }
+            if attack == "self-security-review":
+                record["reviewer"] = amendment["campaign"]["owner"]
+            if attack == "forged-security-review":
+                record["reviewedManifest"]["sha256"] = "0" * 64
+            self.write_json(root / f"artifacts/evidence/W2.A04.adoption.review-{number:02d}.json", record)
+            reviewed = self.commit(root, "synthetic independent pre-adoption security checkpoint review")
+        return reviewed
+
     def complete_activation_fixture_amendment(
         self,
         root: Path,
@@ -1039,6 +1093,7 @@ class UiChangeGateTests(unittest.TestCase):
         candidates: dict[str, str],
         *,
         remediation: bool = False,
+        security_attack: str | None = None,
     ) -> str:
         """Disposable integrated slice/exit/checkpoint/adoption, never actual approval."""
         identity = str(amendment["id"])
@@ -1215,6 +1270,10 @@ class UiChangeGateTests(unittest.TestCase):
             self.write_json(root / adoption_path, record)
         adoption_sha = hashlib.sha256((root / adoption_path).read_bytes()).hexdigest()
         adoption_evidence_commit = self.commit(root, "synthetic W2.A03 security checkpoint evidence")
+        if identity == "W2.A04" and security_attack not in {"missing-security-review", "late-security-review"}:
+            adoption_evidence_commit = self.write_activation_security_review(
+                root, amendment, adoption_evidence_commit, remediation=remediation, attack=security_attack
+            )
         wave.setdefault("checkpoints", []).append(
             {
                 "id": f"W2.CP{len(wave.get('checkpoints', [])) + 1:02d}",
@@ -1247,6 +1306,8 @@ class UiChangeGateTests(unittest.TestCase):
         wave["campaign"]["scope"] = "amendment-hold" if amendment.get("correction") else "wave"
         self.write_yaml(backlog_path, backlog)
         adoption = self.commit(root, "synthetic W2.A03 adoption with ordinary W2 still paused")
+        if identity == "W2.A04" and security_attack == "late-security-review":
+            adoption = self.write_activation_security_review(root, amendment, adoption_evidence_commit)
         return adoption
 
     def reactivate_adopted_continuation(
@@ -3770,6 +3831,27 @@ class UiChangeGateTests(unittest.TestCase):
                         ui_gate.reference_activation_correction_slice_history(
                             root, attacked, task, task["owner"], attacked
                         )
+
+    def test_reference_activation_correction_requires_separate_checkpoint_review(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root, head, backlog, _control, _consumer, _activation = self.reference_activation_git_fixture(
+                temporary, correction=True
+            )
+            ui_gate.reference_activation_reviewed_tasks(root, head, ui_gate.amendment_record(backlog, "W2.A03"))
+
+    def test_reference_activation_correction_denies_missing_forged_self_and_late_checkpoint_review(self) -> None:
+        for attack in (
+            "missing-security-review",
+            "forged-security-review",
+            "self-security-review",
+            "late-security-review",
+        ):
+            with self.subTest(attack=attack), tempfile.TemporaryDirectory() as temporary:
+                root, head, backlog, _control, _consumer, _activation = self.reference_activation_git_fixture(
+                    temporary, correction=True, correction_attack=attack
+                )
+                with self.assertRaisesRegex(ValueError, "checkpoint review"):
+                    ui_gate.reference_activation_reviewed_tasks(root, head, ui_gate.amendment_record(backlog, "W2.A03"))
 
     def test_reference_activation_corrected_v14_authenticates_full_original_base(self) -> None:
         # Real historical prefix plus synthetic future reviews and capture mocks;

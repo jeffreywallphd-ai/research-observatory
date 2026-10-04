@@ -3979,6 +3979,94 @@ def reference_activation_correction_slice_history(
     return set(paths)
 
 
+def reference_activation_correction_checkpoint_reviews(
+    repo: Path, head: str, child: dict[str, Any], adoption: str
+) -> set[str]:
+    """Bind the separate immutable security review to the actual checkpoint."""
+    from taskctl import evidence_sha256
+
+    manifest_path = "artifacts/evidence/W2.A04.adoption.json"
+    manifest, manifest_introduction = immutable_record(repo, head, manifest_path, evidence=True)
+    reviewed_manifest = {
+        "path": manifest_path,
+        "introductionCommit": manifest_introduction,
+        "gitBlob": git(repo, "rev-parse", f"{manifest_introduction}:{manifest_path}").decode().strip(),
+        "sha256": evidence_sha256(blob(repo, manifest_introduction, manifest_path)),
+    }
+    latest_exit = child["completion"]["exit_review_control"]["attempts"][-1]
+    prefix = "artifacts/evidence/W2.A04.adoption.review-"
+    paths = [
+        path
+        for path in git(repo, "ls-tree", "-r", "--name-only", head, "--", "artifacts/evidence").decode().splitlines()
+        if path.startswith(prefix)
+    ]
+    if any(re.fullmatch(re.escape(prefix) + r"[0-9]{2,}\.json", path) is None for path in paths):
+        raise ValueError("activation correction checkpoint review history is not canonical")
+    paths.sort(key=lambda path: int(path[len(prefix) : -5]))
+    if not paths or paths != [f"{prefix}{number:02d}.json" for number in range(1, len(paths) + 1)]:
+        raise ValueError("activation correction checkpoint review history is missing or noncontiguous")
+    schema = json_object(blob(repo, head, "planning/backlog.schema.json"), "checkpoint review finding schema")
+    finding_validator = Draft202012Validator(schema["$defs"]["reviewFinding"])
+    closure_validator = Draft202012Validator(schema["$defs"]["reviewFindingClosure"])
+    open_findings: dict[str, dict[str, Any]] = {}
+    seen: set[str] = set()
+    previous = manifest_introduction
+    for path in paths:
+        record, introduction = immutable_record(repo, head, path, evidence=True)
+        if (
+            record.get("schemaVersion") != "1.0"
+            or record.get("documentType") != "wave-amendment-adoption-security-independent-review"
+            or record.get("amendmentId") != child["id"]
+            or record.get("targetWave") != "W2"
+            or record.get("reviewedManifest") != reviewed_manifest
+            or not independent_identity(record.get("reviewer"), child["campaign"].get("owner"))
+            or not isinstance(record.get("approvedExit"), dict)
+            or record["approvedExit"].get("attemptId") != latest_exit["submission"]["id"]
+            or record["approvedExit"].get("reviewedCompletionCommit") != manifest.get("reviewedCompletionCommit")
+            or introduction in (previous, adoption)
+            or not is_ancestor(repo, previous, introduction)
+            or not is_ancestor(repo, introduction, adoption)
+        ):
+            raise ValueError("activation correction checkpoint review identity, manifest, exit or ordering is invalid")
+        findings, closures = record.get("findings"), record.get("closures", [])
+        if not isinstance(findings, list) or not isinstance(closures, list):
+            raise ValueError("activation correction checkpoint review findings/closures are malformed")
+        for closure in closures:
+            identity = closure.get("finding_id") if isinstance(closure, dict) else None
+            if (
+                list(closure_validator.iter_errors(closure))
+                or not isinstance(identity, str)
+                or identity not in open_findings
+            ):
+                raise ValueError("activation correction checkpoint review closure lacks an evidenced open finding")
+            open_findings.pop(identity)
+        for finding in findings:
+            identity = finding.get("id") if isinstance(finding, dict) else None
+            if (
+                list(finding_validator.iter_errors(finding))
+                or not isinstance(identity, str)
+                or not identity.strip()
+                or identity in seen
+            ):
+                raise ValueError("activation correction checkpoint review finding identity is missing or reused")
+            seen.add(identity)
+            open_findings[identity] = finding
+        if (
+            ("openFindingIds" in record and record["openFindingIds"] != sorted(open_findings))
+            or record.get("result") not in {"approved", "changes-requested", "blocked"}
+            or (record.get("result") == "approved" and open_findings)
+            or (
+                record.get("result") in {"changes-requested", "blocked"}
+                and not any(f["blocking"] for f in open_findings.values())
+            )
+        ):
+            raise ValueError("activation correction checkpoint review disposition differs from preserved findings")
+        previous = introduction
+    if record["result"] != "approved" or findings or open_findings:
+        raise ValueError("activation correction latest checkpoint review is not independently approved")
+    return set(paths)
+
+
 def reference_activation_correction_authority(
     repo: Path, head: str, backlog: dict[str, Any], parent: dict[str, Any]
 ) -> dict[str, Any]:
@@ -4166,9 +4254,11 @@ def reference_activation_correction_authority(
     slice_outputs = reference_activation_correction_slice_history(
         repo, head, task, owner, exit_attempts[-1]["submission"]["candidate_commit"]
     )
+    security_outputs = reference_activation_correction_checkpoint_reviews(repo, head, child, adoption)
     workflow_outputs = (
         task_outputs
         | slice_outputs
+        | security_outputs
         | {
             "artifacts/evidence/W2.A04.B00.json",
             "artifacts/evidence/W2.A04.B00.review-R01.json",

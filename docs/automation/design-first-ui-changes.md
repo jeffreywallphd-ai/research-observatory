@@ -225,6 +225,12 @@ grants no authority. Keep S01 contribution rounds at immutable contiguous
 `W2.A04.S01.review-NN.json` paths. Replay their existing finding/closure format,
 independent reviewed-task bindings and introduction order; the latest approval
 must close every earlier open finding and bind the current approved candidate.
+Keep the separate security checkpoint reviews at immutable contiguous
+`W2.A04.adoption.review-NN.json` paths. Bind the already committed adoption
+manifest's exact path, introducing commit, Git blob and canonical digest, its
+approved exit and an independent reviewer. Replay adverse findings and closures;
+the latest clean approval and every prior round must precede actual adoption.
+Only authenticated review paths are admitted as correction workflow outputs.
 Missing/forked/stale/forged authority, altered completed history, missing return,
 premature activation/reopen, extra ADR/index changes and redirected/dirty inputs
 deny. Preserve original-task base/two-contract inventory, current classification,
