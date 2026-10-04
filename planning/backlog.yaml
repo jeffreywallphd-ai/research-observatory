@@ -53761,7 +53761,7 @@ wave_amendments:
     sha256: e769cb71efbf8725c0fadeac079713f4484f57f7cf871cdfb037ef9a4df27807
     introduction_commit: ba95f68bd2747ebce99e67eeb4daec53ed3ba87b
   lifecycle:
-    status: APPROVED
+    status: MATERIALIZED
     history:
     - id: E01
       status: APPROVED
@@ -53775,6 +53775,11 @@ wave_amendments:
         after reviewed A04 adoption and exact return may A03 activate and T02 reopen. This is not ordinary W2 resumption,
         native/Core qualification or release approval. The timestamp records binding of this explicit answer to its exact
         reviewed packet.
+    - id: E02
+      status: MATERIALIZED
+      actor: codex-w2-implementation
+      at: '2026-10-04T13:40:52+00:00'
+      rationale: Materialized the exact human-approved task inventory.
   bootstrap:
     id: W2.A04.B00
     status: APPROVED
@@ -53797,7 +53802,74 @@ wave_amendments:
         zero findings; retained adverse EOL result and status/evidence limits. Separate materialization, task, slice, exit,
         security adoption and paused-parent return remain due.
   campaign: null
-  tasks: []
+  tasks:
+  - id: W2.A04.T01
+    amendment_id: W2.A04
+    title: Bind protected activation ADR correction and exact return lineage
+    objective: Deliver one companion Proposed ADR and narrow exact-correction attribution so the existing protected consumer
+      can qualify at its unchanged real claim base, preserving original approvals and security boundaries.
+    dependencies:
+    - W2.A04.B00
+    acceptance_criteria:
+    - Introduce only one indexed Proposed ADR-0040 linked to W2.A04.T01 and W2.A03.T02. Cover actual protected gate changes
+      and later extension/baseline changes under Accepted ADR-0001; supersede no accepted decision and leave ADR-0039 unchanged.
+      Its one new index entry and document are separate reviewed A04 delivery after the retained T02 base, not retroactive
+      T01 or T02-owned consumer source.
+    - Preserve the closed schemaVersion 1.4 contract and existing field shapes. Derive and authenticate only exact ECR-0012/W2.A04
+      packet, approval, B00, materialization, five-path source candidate and independent review, integrated slice, exit/security
+      checkpoint and adopted paused-predecessor return. No new asserted contract field, generic amendment exemption, scope-addendum
+      writer or controller.
+    - Authenticate frozen paused A03 complete record, unchanged DONE T01 and retained T02 hash/criteria/base ca8b1448e094b637bbd06c3129b69a78df792619.
+      Explicitly authenticate only exact combined claim/block/pause snapshot a211f24107f21f6b87221fd8b60c04b95a97fc8b, its
+      single ca8b1448 parent, base/owner/branch/worktree/timestamps/blocker/pause event and absence of consumer source edits.
+      Git contains no intermediate IN_PROGRESS claim; never fabricate one or grant a generic missing-claim exception. Bind
+      actual later A03 activation and supported T02 reopen while preserving owner, branch/worktree, exact base and current
+      lease. Partition reviewed A04 correction commits from A03 T01 and later T02 seven-file consumers without dropping any
+      source or hidden add/revert history from the actual range.
+    - Limit A04 source to exactly tools/ui_change_gate.py, tests/foundation/test_ui_change_gate.py, docs/automation/design-first-ui-changes.md,
+      docs/adr/ADR-0040-document-protected-desktop-activation-correction.md, docs/adr/index.json. Permit one appended ADR-0040
+      index entry only. Preserve frozen packets, existing ADRs, reference/witness, schemas, taskctl/kernel, original task
+      definitions, seven T02 consumer paths, original CAP-05 base/two-contract inventory, current classification/capture input
+      closure and all product/native/Core/migration/release authority.
+    - Focused real-Git cases prove the exact combined committed claim/block/pause snapshot without an intermediate committed
+      claim, followed by correction/return/activate/reopen and actual retained-base ADR association in a disposable future
+      consumer fixture. Deny stale/forked/forged packet or review, changed predecessor/T01/task hash, fabricated/missing/substituted
+      combined claim snapshot, shortened T02 base, missing return/adoption, premature or foreign activation/reopen, mixed
+      delivery, extra source or ADR/index changes, dirty/redirected blobs and hidden add/revert. Preserve old v1.0-v1.4 positive
+      and denial cases in their original authority; mocked capture fixtures are synthetic control proof only.
+    - Obtain expanded independent exact-candidate control/security/ADR task disposition, integrated S01 review, amendment
+      exit review and separate committed adoption checkpoint binding exact paused-predecessor return. Leave A03 paused and
+      T02 blocked until separate supported activation/reopen. Fresh T02 captures, original native/Core/D3D, joined CAP-04.S05
+      and W2/release gates remain due.
+    verification_commands:
+    - Run focused real-Git correction/return/source-attribution and retained task-base ADR-association positives and denials;
+      retain selected old v1.0-v1.4 cases. Preserve all adverse attempts and label synthetic future-state or mocked capture
+      evidence.
+    - At clean exact committed A04 task candidate run actual task-base ADR/UI control checks, affected Python lint/format/type,
+      canonical taskctl/backlog/views/site checks. Independently review changed protected controls and immutable predecessor/source
+      envelope.
+    - Integrated slice/exit/security review proves persistence and exact return without claiming T02 desktop baseline, original
+      CAP-05 native/Core or W2 completion. Future T02 runs its real ca8b1448-base ADR check and all original capture and consumer
+      obligations.
+    packet_task_sha256: 5fa9bc5e66e76694b933cb59aa4eac9bdb793107c8b3af618633ef168d66bf7b
+    status: NOT_STARTED
+    owner: null
+    branch: null
+    base_sha: null
+    worktree: null
+    lease: null
+    started_at: null
+    updated_at: null
+    completed_at: null
+    blocker: null
+    implementation_notes: ''
+    evidence: []
+    verification_state: null
+    review:
+      reviewer: null
+      result: null
+      reviewed_at: null
+      notes: null
   completion:
     status: PENDING
     reviewer: null
