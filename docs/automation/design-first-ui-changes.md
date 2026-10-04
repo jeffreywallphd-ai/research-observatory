@@ -219,6 +219,12 @@ lease. Every consumer source commit follows reopen under that active claim.
 Attribute every reviewed A04 correction commit separately from T01 and T02 while
 walking T02's entire retained range. Inert ECR-0012 authority and task-owned
 workflow output do not admit extra source, mixed delivery or hidden add/revert.
+Task and exit evidence paths come from authenticated frozen submission and
+review references, including superseding remediation manifests; a filename alone
+grants no authority. Keep S01 contribution rounds at immutable contiguous
+`W2.A04.S01.review-NN.json` paths. Replay their existing finding/closure format,
+independent reviewed-task bindings and introduction order; the latest approval
+must close every earlier open finding and bind the current approved candidate.
 Missing/forked/stale/forged authority, altered completed history, missing return,
 premature activation/reopen, extra ADR/index changes and redirected/dirty inputs
 deny. Preserve original-task base/two-contract inventory, current classification,

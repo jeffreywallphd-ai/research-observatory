@@ -646,15 +646,27 @@ class UiChangeGateTests(unittest.TestCase):
         return root, adoption, branch, backlog, amendment
 
     def approve_activation_fixture_task(
-        self, root: Path, backlog: dict[str, Any], task: dict[str, Any], candidate: str
+        self,
+        root: Path,
+        backlog: dict[str, Any],
+        task: dict[str, Any],
+        candidate: str,
+        *,
+        result: str = "approved",
+        findings: list[dict[str, Any]] | None = None,
+        closures: list[dict[str, Any]] | None = None,
     ) -> str:
         """Record a test-only, commit-bound independent task disposition."""
         identity = str(task["id"])
         owner = "codex-w2-implementation"
         branch = "codex/w2-implementation"
-        base = str(task["base_sha"])
+        attempts = (task.get("review_control") or {}).get("attempts") or []
+        findings, closures = findings or [], closures or []
+        round_id = f"R{len(attempts) + 1:02d}"
+        prior = attempts[-1]["submission"] if attempts else None
+        base = str(prior["candidate_commit"] if prior else task["base_sha"])
         changed = sorted(ui_gate.changed_paths(root, base, candidate))
-        evidence_path = f"artifacts/evidence/{identity}.json"
+        evidence_path = f"artifacts/evidence/{identity}{'-' + round_id if prior else ''}.json"
         selection = {
             "riskAnalysis": "Disposable real-Git activation authority fixture; no product qualification claim.",
             "deferred": ["real desktop capture and Wave qualification"],
@@ -663,6 +675,11 @@ class UiChangeGateTests(unittest.TestCase):
         self.write_json(
             root / evidence_path,
             {
+                **(
+                    {"supersedes": {key: prior["evidence_reference"][key] for key in ("path", "sha256", "commit")}}
+                    if prior
+                    else {}
+                ),
                 "taskId": identity,
                 "commit": candidate,
                 "baseCommit": base,
@@ -687,7 +704,7 @@ class UiChangeGateTests(unittest.TestCase):
         }
         self.commit(root, f"synthetic {identity} criterion evidence")
         submission = {
-            "id": "R01",
+            "id": round_id,
             "submitted_by": owner,
             "submitted_at": "2026-10-03T22:00:00Z",
             "candidate_commit": candidate,
@@ -701,57 +718,69 @@ class UiChangeGateTests(unittest.TestCase):
             "deferred_checks": selection["deferred"],
             "selection_rationale": selection["riskAnalysis"],
             "selection_sha256": taskctl.canonical_json_sha256(selection),
-            "prior_attempt_id": None,
-            "open_finding_ids": [],
+            "prior_attempt_id": prior["id"] if prior else None,
+            "open_finding_ids": sorted(str(item["id"]) for attempt in attempts for item in attempt["findings"]),
             "root_cause_analysis": None,
         }
         submission["packet_sha256"] = taskctl.task_submission_packet_sha256(submission)
         task.update(
             status="REVIEW",
             verification_state="passed",
-            evidence=[evidence_ref],
-            review_control={"version": 1, "attempts": [], "current_submission": submission},
+            evidence=[*task.get("evidence", []), evidence_ref],
+            review_control={"version": 1, "attempts": attempts, "current_submission": submission},
         )
         self.write_yaml(root / "planning/backlog.yaml", backlog)
         self.commit(root, f"synthetic {identity} frozen submission")
         reviewer = "agent:/root/synthetic-independent-activation-review"
         notes = "Test-only Git authority fixture; no actual task approval or desktop qualification."
-        ledger_path = f"artifacts/evidence/{identity}.review-R01.json"
+        ledger_path = f"artifacts/evidence/{identity}.review-{round_id}.json"
         self.write_json(
             root / ledger_path,
             {
                 "task_id": identity,
-                "attempt_id": "R01",
+                "attempt_id": round_id,
                 "candidate_commit": candidate,
                 "reviewer": reviewer,
-                "result": "approved",
+                "result": result,
                 "notes": notes,
-                "findings": [],
-                "closures": [],
+                "findings": findings,
+                "closures": closures,
             },
         )
-        review = {"reviewer": reviewer, "result": "approved", "reviewed_at": "2026-10-03T22:01:00Z", "notes": notes}
+        review = {"reviewer": reviewer, "result": result, "reviewed_at": "2026-10-03T22:01:00Z", "notes": notes}
         attempt = {
             "submission": submission,
             "review": review,
             "ledger": {"path": ledger_path, "sha256": hashlib.sha256((root / ledger_path).read_bytes()).hexdigest()},
-            "findings": [],
-            "closures": [],
+            "findings": findings,
+            "closures": closures,
         }
         attempt["telemetry"] = taskctl.build_task_review_telemetry_event(task, attempt)
         task.update(
-            status="DONE",
-            lease=None,
-            completed_at=review["reviewed_at"],
+            status="DONE" if result == "approved" else "IN_PROGRESS",
+            lease=None if result == "approved" else task["lease"],
+            completed_at=review["reviewed_at"] if result == "approved" else None,
             updated_at=review["reviewed_at"],
             review=review,
-            review_control={"version": 1, "attempts": [attempt], "current_submission": None},
+            review_control={"version": 1, "attempts": [*attempts, attempt], "current_submission": None},
         )
         if identity == "W2.A03.T01":
             next_task = next(item for item in backlog["wave_amendments"][-1]["tasks"] if item["id"] == "W2.A03.T02")
             next_task["status"] = "READY"
         self.write_yaml(root / "planning/backlog.yaml", backlog)
         return self.commit(root, f"synthetic {identity} independent disposition")
+
+    @staticmethod
+    def activation_fixture_finding(identity: str) -> dict[str, Any]:
+        return {
+            "id": identity,
+            "severity": "high",
+            "blocking": True,
+            "criterion_index": 4,
+            "title": "Synthetic append-only remediation",
+            "required_remediation": "Preserve and close in a descendant.",
+            "reproduction": "Disposable fixture only.",
+        }
 
     def reference_activation_git_fixture(
         self,
@@ -760,6 +789,7 @@ class UiChangeGateTests(unittest.TestCase):
         inject_unapproved_site_asset: bool = False,
         correction: bool = False,
         correction_attack: str | None = None,
+        correction_remediation: bool = False,
     ) -> tuple[Path, str, dict[str, Any], str, str, str]:
         """Extend actual GOV26/C10/A03 Git ancestry with test-only future adoption."""
         root = Path(temporary) / "reference-activation-fixture"
@@ -844,14 +874,39 @@ class UiChangeGateTests(unittest.TestCase):
                 self.commit(root, "test-only intermediate ordinary task tampering")
                 original["implementation_notes"] = frozen_notes
                 self.write_yaml(backlog_path, backlog)
+            if correction_attack == "unbound-task-evidence":
+                self.write_json(root / "artifacts/evidence/W2.A04.T01-R02.json", {"unbound": True})
             child_candidate = self.commit(root, "test-only A04 five-source correction candidate")
-            self.approve_activation_fixture_task(root, backlog, child_task, child_candidate)
+            if correction_remediation:
+                finding = self.activation_fixture_finding("SYN-T01-F01")
+                self.approve_activation_fixture_task(
+                    root, backlog, child_task, child_candidate, result="changes-requested", findings=[finding]
+                )
+                procedure = root / "docs/automation/design-first-ui-changes.md"
+                procedure.write_bytes(procedure.read_bytes() + b"\nTest-only append-only remediation evidence.\n")
+                child_candidate = self.commit(root, "synthetic reviewed-task remediation candidate")
+                self.approve_activation_fixture_task(
+                    root,
+                    backlog,
+                    child_task,
+                    child_candidate,
+                    closures=[
+                        {"finding_id": finding["id"], "disposition": "fixed", "evidence": "synthetic descendant"}
+                    ],
+                )
+            else:
+                self.approve_activation_fixture_task(root, backlog, child_task, child_candidate)
             if correction_attack == "missing-return":
                 t02["status"] = "READY"
-            self.complete_activation_fixture_amendment(root, backlog, child, {child_task["id"]: child_candidate})
+            self.complete_activation_fixture_amendment(
+                root, backlog, child, {child_task["id"]: child_candidate}, remediation=correction_remediation
+            )
             if correction_attack == "missing-return":
                 t02["status"] = "BLOCKED"
             self.assertEqual(frozen_parent, amendment)
+            if correction_attack == "unbound-exit-evidence":
+                self.write_json(root / "artifacts/evidence/W2.A04.exit-R02.json", {"unbound": True})
+                self.commit(root, "test-only unbound correction exit artifact")
             if correction_attack == "premature-consumer":
                 consumer_path = root / "apps/desktop/scripts/assemble-reference.mjs"
                 consumer_path.write_bytes(consumer_path.read_bytes() + b"\n// Consumer before A03 activation/reopen.\n")
@@ -977,7 +1032,13 @@ class UiChangeGateTests(unittest.TestCase):
         return root, adoption, backlog, control_candidate, consumer_candidate, activation_commit
 
     def complete_activation_fixture_amendment(
-        self, root: Path, backlog: dict[str, Any], amendment: dict[str, Any], candidates: dict[str, str]
+        self,
+        root: Path,
+        backlog: dict[str, Any],
+        amendment: dict[str, Any],
+        candidates: dict[str, str],
+        *,
+        remediation: bool = False,
     ) -> str:
         """Disposable integrated slice/exit/checkpoint/adoption, never actual approval."""
         identity = str(amendment["id"])
@@ -985,118 +1046,154 @@ class UiChangeGateTests(unittest.TestCase):
         backlog_path = root / "planning/backlog.yaml"
         owner = "codex-w2-implementation"
         branch = "codex/w2-implementation"
-        self.write_json(
-            root / f"artifacts/evidence/{identity}.S01.review-01.json",
-            {
-                "schemaVersion": "1.0",
-                "documentType": "amendment-contribution-independent-review",
-                "sliceId": f"{identity}.S01",
-                "amendmentId": identity,
-                "capabilityId": "CAP-05",
-                "reviewer": "agent:/root/synthetic-independent-slice-review",
-                "result": "approved",
-                "taskBindings": [
-                    {"taskId": task["id"], "candidateCommit": candidates[task["id"]]} for task in amendment["tasks"]
-                ],
-                "findings": [],
-                "openFindingIds": [],
-                "notes": "Disposable authority fixture; prior 1.7 image hashes are not 1.8 capture proof.",
-            },
-        )
-        contribution_commit = self.commit(root, "synthetic W2.A03.S01 independent contribution")
+        for number in range(1, 3 if remediation else 2):
+            adverse = remediation and number == 1
+            self.write_json(
+                root / f"artifacts/evidence/{identity}.S01.review-{number:02d}.json",
+                {
+                    "schemaVersion": "1.0",
+                    "documentType": "amendment-contribution-independent-review",
+                    "sliceId": f"{identity}.S01",
+                    "amendmentId": identity,
+                    "capabilityId": "CAP-05",
+                    "reviewer": "agent:/root/synthetic-independent-slice-review",
+                    "result": "changes-requested" if adverse else "approved",
+                    "taskBindings": [
+                        {"taskId": task["id"], "candidateCommit": candidates[task["id"]]} for task in amendment["tasks"]
+                    ],
+                    "findings": [self.activation_fixture_finding("SYN-S01-F01")] if adverse else [],
+                    "openFindingIds": ["SYN-S01-F01"] if adverse else [],
+                    **(
+                        {
+                            "closures": [
+                                {
+                                    "finding_id": "SYN-S01-F01",
+                                    "disposition": "fixed",
+                                    "evidence": "synthetic slice replay",
+                                }
+                            ]
+                        }
+                        if number == 2
+                        else {}
+                    ),
+                    "notes": "Disposable authority fixture; prior 1.7 image hashes are not 1.8 capture proof.",
+                },
+            )
+            contribution_commit = self.commit(root, "synthetic W2.A03.S01 independent contribution")
         packet = json.loads(
             (root / f"planning/enabler-change-requests/{change_request}.packet.json").read_text(encoding="utf-8")
         )
         wave = next(item for item in backlog["waves"] if item["id"] == "W2")
-        exit_path = f"artifacts/evidence/{identity}.exit.json"
-        self.write_json(
-            root / exit_path,
-            {
-                "schemaVersion": "1.0",
-                "documentType": "wave-amendment-exit-evidence",
-                "amendmentId": identity,
-                "changeRequestId": change_request,
-                "targetWave": "W2",
-                "branch": branch,
-                "candidateCommit": contribution_commit,
-                "outcome": "ready-for-independent-amendment-exit-review",
-                "waveCampaign": {
-                    "status": wave["campaign"]["status"],
-                    "scope": wave["campaign"]["scope"],
-                    "pauseReason": wave["campaign"]["pause_reason"],
+        exit_attempts: list[dict[str, Any]] = []
+        for number in range(1, 3 if remediation else 2):
+            adverse = remediation and number == 1
+            exit_path = f"artifacts/evidence/{identity}.exit{'-R02' if number == 2 else ''}.json"
+            self.write_json(
+                root / exit_path,
+                {
+                    "schemaVersion": "1.0",
+                    "documentType": "wave-amendment-exit-evidence",
+                    "amendmentId": identity,
+                    "changeRequestId": change_request,
+                    "targetWave": "W2",
+                    "branch": branch,
+                    "candidateCommit": contribution_commit,
+                    "outcome": "ready-for-independent-amendment-exit-review",
+                    "waveCampaign": {
+                        "status": wave["campaign"]["status"],
+                        "scope": wave["campaign"]["scope"],
+                        "pauseReason": wave["campaign"]["pause_reason"],
+                    },
+                    "amendmentCampaign": {"status": "ACTIVE", "scope": "wave-amendment", "pauseReason": None},
+                    "requiredNextTransition": "independent amendment exit review",
+                    "acceptanceClosure": [
+                        {
+                            "criterionIndex": index,
+                            "criterion": criterion,
+                            "status": "ready-for-independent-exit-disposition",
+                        }
+                        for index, criterion in enumerate(packet["acceptanceCriteria"], start=1)
+                    ],
+                    "checks": [{"command": "synthetic Git authority fixture", "result": "passed"}],
                 },
-                "amendmentCampaign": {"status": "ACTIVE", "scope": "wave-amendment", "pauseReason": None},
-                "requiredNextTransition": "independent amendment exit review",
-                "acceptanceClosure": [
-                    {
-                        "criterionIndex": index,
-                        "criterion": criterion,
-                        "status": "ready-for-independent-exit-disposition",
-                    }
-                    for index, criterion in enumerate(packet["acceptanceCriteria"], start=1)
-                ],
-                "checks": [{"command": "synthetic Git authority fixture", "result": "passed"}],
-            },
-        )
-        exit_evidence_commit = self.commit(root, "synthetic W2.A03 exit evidence")
-        exit_submission = taskctl.build_amendment_exit_submission(
-            Namespace(file=str(backlog_path), amendment=identity, agent=owner),
-            backlog,
-            amendment,
-            str(root / exit_path),
-        )
-        amendment["lifecycle"]["status"] = "REVIEW"
-        amendment["lifecycle"]["history"].append(
-            {
-                "id": f"E{len(amendment['lifecycle']['history']) + 1:02d}",
-                "status": "REVIEW",
-                "actor": owner,
-                "at": "2026-10-03T22:04:00Z",
-                "rationale": "Synthetic exit submission.",
+            )
+            exit_evidence_commit = self.commit(root, "synthetic W2.A03 exit evidence")
+            exit_submission = taskctl.build_amendment_exit_submission(
+                Namespace(file=str(backlog_path), amendment=identity, agent=owner),
+                backlog,
+                amendment,
+                str(root / exit_path),
+            )
+            amendment["lifecycle"]["status"] = "REVIEW"
+            amendment["lifecycle"]["history"].append(
+                {
+                    "id": f"E{len(amendment['lifecycle']['history']) + 1:02d}",
+                    "status": "REVIEW",
+                    "actor": owner,
+                    "at": "2026-10-03T22:04:00Z",
+                    "rationale": "Synthetic exit submission.",
+                }
+            )
+            amendment["campaign"].update(status="REVIEW", lease=None)
+            amendment["completion"].update(
+                status="REVIEW",
+                evidence=[exit_path],
+                exit_review_control={"version": 1, "attempts": exit_attempts, "current_submission": exit_submission},
+            )
+            self.write_yaml(backlog_path, backlog)
+            reviewed_state = self.commit(root, "synthetic W2.A03 exit submission")
+            exit_reviewer = "agent:/root/synthetic-independent-exit-review"
+            exit_ledger_path = f"artifacts/evidence/{identity}.exit-review-R{number:02d}.json"
+            exit_ledger = {
+                "amendment_id": identity,
+                "attempt_id": f"R{number:02d}",
+                "reviewed_state_commit": reviewed_state,
+                "candidate_commit": exit_evidence_commit,
+                "reviewer": exit_reviewer,
+                "result": "changes-requested" if adverse else "approved",
+                "notes": "Test-only independent exit disposition; no real capture qualification.",
+                "evidence": {"path": exit_path, "sha256": exit_submission["evidence_reference"]["sha256"]},
+                "findings": [self.activation_fixture_finding("SYN-EXIT-F01")] if adverse else [],
+                "closures": [
+                    {"finding_id": "SYN-EXIT-F01", "disposition": "fixed", "evidence": "synthetic exit replay"}
+                ]
+                if number == 2
+                else [],
             }
-        )
-        amendment["campaign"].update(status="REVIEW", lease=None)
-        amendment["completion"].update(
-            status="REVIEW",
-            evidence=[exit_path],
-            exit_review_control={"version": 1, "attempts": [], "current_submission": exit_submission},
-        )
-        self.write_yaml(backlog_path, backlog)
-        reviewed_state = self.commit(root, "synthetic W2.A03 exit submission")
-        exit_reviewer = "agent:/root/synthetic-independent-exit-review"
-        exit_ledger_path = f"artifacts/evidence/{identity}.exit-review-R01.json"
-        exit_ledger = {
-            "amendment_id": identity,
-            "attempt_id": "R01",
-            "reviewed_state_commit": reviewed_state,
-            "candidate_commit": exit_evidence_commit,
-            "reviewer": exit_reviewer,
-            "result": "approved",
-            "notes": "Test-only independent exit disposition; no real capture qualification.",
-            "evidence": {"path": exit_path, "sha256": exit_submission["evidence_reference"]["sha256"]},
-            "findings": [],
-            "closures": [],
-        }
-        self.write_json(root / exit_ledger_path, exit_ledger)
-        exit_attempt = taskctl.prepare_amendment_exit_attempt(
-            amendment,
-            exit_submission,
-            exit_ledger_path,
-            (root / exit_ledger_path).read_bytes(),
-            exit_ledger,
-            reviewer=exit_reviewer,
-            result="approved",
-        )
-        amendment["campaign"].update(status="COMPLETE", lease=None)
-        amendment["completion"].update(
-            status="APPROVED",
-            reviewer=exit_reviewer,
-            reviewed_at=exit_attempt["review"]["reviewed_at"],
-            notes="Synthetic fixture only.",
-            exit_review_control={"version": 1, "attempts": [exit_attempt], "current_submission": None},
-        )
-        self.write_yaml(backlog_path, backlog)
-        approved_completion = self.commit(root, "synthetic W2.A03 independent exit review")
+            self.write_json(root / exit_ledger_path, exit_ledger)
+            exit_attempt = taskctl.prepare_amendment_exit_attempt(
+                amendment,
+                exit_submission,
+                exit_ledger_path,
+                (root / exit_ledger_path).read_bytes(),
+                exit_ledger,
+                reviewer=exit_reviewer,
+                result="changes-requested" if adverse else "approved",
+            )
+            amendment["campaign"].update(
+                status="ACTIVE" if adverse else "COMPLETE",
+                lease={"claimed_by": owner, "claimed_at": "2026-10-03T22:00:00Z", "expires_at": "2099-01-01T00:00:00Z"}
+                if adverse
+                else None,
+            )
+            amendment["completion"].update(
+                status="CHANGES_REQUESTED" if adverse else "APPROVED",
+                reviewer=exit_reviewer,
+                reviewed_at=exit_attempt["review"]["reviewed_at"],
+                notes="Synthetic fixture only.",
+                exit_review_control={
+                    "version": 1,
+                    "attempts": [*exit_attempts, exit_attempt],
+                    "current_submission": None,
+                },
+            )
+            self.write_yaml(backlog_path, backlog)
+            approved_completion = self.commit(root, "synthetic W2.A03 independent exit review")
+            exit_attempts.append(exit_attempt)
+            if adverse:
+                amendment["lifecycle"]["status"] = "ACTIVE"
+                self.write_yaml(backlog_path, backlog)
+                self.commit(root, "synthetic supported amendment exit remediation activation")
         adoption_path = f"artifacts/evidence/{identity}.adoption.json"
         self.write_json(
             root / adoption_path,
@@ -1108,7 +1205,7 @@ class UiChangeGateTests(unittest.TestCase):
                 "branch": branch,
                 "candidateCommit": approved_completion,
                 "reviewedCompletionCommit": approved_completion,
-                "approvedExitAttempt": "R01",
+                "approvedExitAttempt": exit_attempts[-1]["submission"]["id"],
                 "notes": "Synthetic authority fixture, not a real amendment adoption.",
             },
         )
@@ -3584,6 +3681,95 @@ class UiChangeGateTests(unittest.TestCase):
                 parent = ui_gate.amendment_record(backlog, "W2.A03")
                 with self.assertRaisesRegex(ValueError, "changed adopted correction history"):
                     ui_gate.reference_activation_reviewed_tasks(root, adoption, parent)
+
+    def test_reference_activation_correction_authenticates_append_only_remediation(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root, head, backlog, _control, consumer, _activation = self.reference_activation_git_fixture(
+                temporary, correction=True, correction_remediation=True
+            )
+            child = ui_gate.amendment_record(backlog, "W2.A04")
+            self.assertEqual("R02", child["tasks"][0]["review_control"]["attempts"][-1]["submission"]["id"])
+            self.assertEqual("R02", child["completion"]["exit_review_control"]["attempts"][-1]["submission"]["id"])
+            ui_gate.reference_activation_reviewed_tasks(root, head, ui_gate.amendment_record(backlog, "W2.A03"))
+            parent = ui_gate.amendment_record(backlog, "W2.A03")
+            adr = subprocess.run(
+                [
+                    sys.executable,
+                    str(root / "tools/adr_check.py"),
+                    "--repo",
+                    str(root),
+                    "--base",
+                    parent["tasks"][1]["base_sha"],
+                    "--head",
+                    consumer,
+                ],
+                capture_output=True,
+                text=True,
+                check=False,
+            )
+            self.assertEqual(0, adr.returncode, adr.stdout + adr.stderr)
+            for substitution in ("foreign-path", "forged-digest"):
+                with self.subTest(substitution=substitution):
+                    forged = copy.deepcopy(child)
+                    reference = forged["tasks"][0]["review_control"]["attempts"][-1]["ledger"]
+                    if substitution == "foreign-path":
+                        reference["path"] = "artifacts/evidence/W2.A03.T02.review-R02.json"
+                    else:
+                        reference["sha256"] = "0" * 64
+                    with self.assertRaises(ValueError):
+                        ui_gate.correction_submission_ranges(root, head, forged)
+
+    def test_reference_activation_correction_rejects_unbound_remediation_outputs(self) -> None:
+        for attack, message in (
+            ("unbound-task-evidence", "exact five-path envelope"),
+            ("unbound-exit-evidence", "outside its ECR-0011 packet envelope"),
+        ):
+            with self.subTest(attack=attack), tempfile.TemporaryDirectory() as temporary:
+                root, head, backlog, _control, _consumer, _activation = self.reference_activation_git_fixture(
+                    temporary, correction=True, correction_attack=attack
+                )
+                with self.assertRaisesRegex(ValueError, message):
+                    ui_gate.reference_activation_reviewed_tasks(root, head, ui_gate.amendment_record(backlog, "W2.A03"))
+
+    def test_reference_activation_correction_replays_slice_findings_and_canonical_rounds(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root, head, backlog, _control, _consumer, _activation = self.reference_activation_git_fixture(
+                temporary, correction=True, correction_remediation=True
+            )
+            task = ui_gate.amendment_record(backlog, "W2.A04")["tasks"][0]
+            final = json.loads((root / "artifacts/evidence/W2.A04.S01.review-02.json").read_bytes())
+            for attack, message in (
+                ("unknown-closure", "evidenced open finding"),
+                ("reused-finding", "missing or reused"),
+                ("malformed-binding", "integrated independent"),
+                ("missing-round", "contiguous canonical"),
+                ("malformed-round", "contiguous canonical"),
+            ):
+                with self.subTest(attack=attack):
+                    # Only this disposable clone changes checkout; the shared
+                    # campaign and its verification inputs remain fixed.
+                    self.git(root, "checkout", "--quiet", "--detach", head)
+                    record = copy.deepcopy(final)
+                    record["closures"] = []
+                    relative = "artifacts/evidence/W2.A04.S01.review-03.json"
+                    if attack == "unknown-closure":
+                        record["closures"] = [
+                            {"finding_id": "SYN-UNKNOWN", "disposition": "fixed", "evidence": "forged"}
+                        ]
+                    elif attack == "reused-finding":
+                        record["findings"] = [self.activation_fixture_finding("SYN-S01-F01")]
+                    elif attack == "malformed-binding":
+                        record["taskBindings"] = [None]
+                    elif attack == "missing-round":
+                        relative = "artifacts/evidence/W2.A04.S01.review-04.json"
+                    else:
+                        relative = "artifacts/evidence/W2.A04.S01.review-03-extra.json"
+                    self.write_json(root / relative, record)
+                    attacked = self.commit(root, "test-only malformed appended contribution review")
+                    with self.assertRaisesRegex(ValueError, message):
+                        ui_gate.reference_activation_correction_slice_history(
+                            root, attacked, task, task["owner"], attacked
+                        )
 
     def test_reference_activation_corrected_v14_authenticates_full_original_base(self) -> None:
         # Real historical prefix plus synthetic future reviews and capture mocks;

@@ -3886,6 +3886,99 @@ def reference_activation_correction_active(
     )
 
 
+def reference_activation_correction_slice_history(
+    repo: Path, head: str, task: dict[str, Any], owner: str, exit_candidate: str
+) -> set[str]:
+    """Authenticate every immutable contribution round and its preserved findings."""
+    prefix = "artifacts/evidence/W2.A04.S01.review-"
+    paths = [
+        path
+        for path in git(repo, "ls-tree", "-r", "--name-only", head, "--", "artifacts/evidence").decode().splitlines()
+        if path.startswith(prefix)
+    ]
+    if any(re.fullmatch(re.escape(prefix) + r"[0-9]{2,}\.json", path) is None for path in paths):
+        raise ValueError("activation correction lacks contiguous canonical S01 review history")
+    paths.sort(key=lambda path: int(path[len(prefix) : -5]))
+    if not paths or paths != [f"{prefix}{number:02d}.json" for number in range(1, len(paths) + 1)]:
+        raise ValueError("activation correction lacks contiguous canonical S01 review history")
+    approved: dict[str, str] = {}
+    for attempt in task["review_control"]["attempts"]:
+        if attempt["review"]["result"] == "approved":
+            ledger = attempt["ledger"]
+            _, introduction = immutable_record(repo, head, ledger["path"], ledger["sha256"], evidence=True)
+            approved[attempt["submission"]["candidate_commit"]] = introduction
+    latest_candidate = task["review_control"]["attempts"][-1]["submission"]["candidate_commit"]
+    schema = json_object(blob(repo, head, "planning/backlog.schema.json"), "review finding schema")
+    finding_validator = Draft202012Validator(schema["$defs"]["reviewFinding"])
+    closure_validator = Draft202012Validator(schema["$defs"]["reviewFindingClosure"])
+    open_findings: dict[str, dict[str, Any]] = {}
+    seen: set[str] = set()
+    previous: str | None = None
+    for path in paths:
+        record, introduction = immutable_record(repo, head, path, evidence=True)
+        bindings = record.get("taskBindings")
+        candidate = (
+            bindings[0].get("candidateCommit")
+            if isinstance(bindings, list) and len(bindings) == 1 and isinstance(bindings[0], dict)
+            else None
+        )
+        if (
+            record.get("schemaVersion") != "1.0"
+            or record.get("documentType") != "amendment-contribution-independent-review"
+            or record.get("amendmentId") != REFERENCE_ACTIVATION_CORRECTION_ID
+            or record.get("sliceId") != "W2.A04.S01"
+            or record.get("capabilityId") != "CAP-05"
+            or bindings != [{"taskId": task["id"], "candidateCommit": candidate}]
+            or not isinstance(candidate, str)
+            or candidate not in approved
+            or not independent_identity(record.get("reviewer"), owner)
+            or approved[candidate] == introduction
+            or not is_ancestor(repo, approved[candidate], introduction)
+            or (previous is not None and (previous == introduction or not is_ancestor(repo, previous, introduction)))
+            or not is_ancestor(repo, introduction, exit_candidate)
+        ):
+            raise ValueError("activation correction lacks integrated independent S01 review before exit")
+        findings, closures = record.get("findings"), record.get("closures", [])
+        if not isinstance(findings, list) or not isinstance(closures, list):
+            raise ValueError("activation correction S01 findings/closures are malformed")
+        for closure in closures:
+            identity = closure.get("finding_id") if isinstance(closure, dict) else None
+            if (
+                list(closure_validator.iter_errors(closure))
+                or not isinstance(identity, str)
+                or identity not in open_findings
+            ):
+                raise ValueError("activation correction S01 closure does not name an evidenced open finding")
+            open_findings.pop(identity)
+        for finding in findings:
+            identity = finding.get("id") if isinstance(finding, dict) else None
+            if (
+                list(finding_validator.iter_errors(finding))
+                or not isinstance(identity, str)
+                or not identity.strip()
+                or identity in seen
+            ):
+                raise ValueError("activation correction S01 finding identity is missing or reused")
+            seen.add(identity)
+            open_findings[identity] = finding
+        if record.get("openFindingIds") != sorted(open_findings) or record.get("result") not in {
+            "approved",
+            "changes-requested",
+            "blocked",
+        }:
+            raise ValueError("activation correction S01 disposition differs from preserved findings")
+        if record["result"] == "approved" and open_findings:
+            raise ValueError("activation correction S01 approval retains open findings")
+        if record["result"] in {"changes-requested", "blocked"} and not any(
+            finding["blocking"] for finding in open_findings.values()
+        ):
+            raise ValueError("activation correction adverse S01 review lacks an open blocking finding")
+        previous = introduction
+    if record["result"] != "approved" or findings or open_findings or candidate != latest_candidate:
+        raise ValueError("activation correction latest S01 review is not independently approved for its current task")
+    return set(paths)
+
+
 def reference_activation_correction_authority(
     repo: Path, head: str, backlog: dict[str, Any], parent: dict[str, Any]
 ) -> dict[str, Any]:
@@ -3977,16 +4070,14 @@ def reference_activation_correction_authority(
         observed_at=int(git(repo, "show", "-s", "--format=%ct", anchors[-1]).decode()),
     ):
         raise ValueError("activation correction claim changed owner, lease, branch, worktree or base")
-    ranges, admitted = adopted_continuation_reviewed_task_commits(repo, head, task)
+    _ranges, admitted = adopted_continuation_reviewed_task_commits(repo, head, task)
+    task_outputs = {"artifacts/evidence/W2.A04.T01.task-start.md"}
+    for attempt in task["review_control"]["attempts"]:
+        task_outputs.update((attempt["submission"]["evidence_reference"]["path"], attempt["ledger"]["path"]))
     seen: set[str] = set()
     for commit, paths in admitted.items():
         if not paths.issubset(
-            REFERENCE_ACTIVATION_CORRECTION_SOURCE | REFERENCE_ACTIVATION_CORRECTION_WORKFLOW
-        ) and any(
-            path not in REFERENCE_ACTIVATION_CORRECTION_SOURCE | REFERENCE_ACTIVATION_CORRECTION_WORKFLOW
-            and re.fullmatch(r"artifacts/evidence/W2\.A04\.T01(?:\.task-start\.md|(?:\.review-R[0-9]{2})?\.json)", path)
-            is None
-            for path in paths
+            REFERENCE_ACTIVATION_CORRECTION_SOURCE | REFERENCE_ACTIVATION_CORRECTION_WORKFLOW | task_outputs
         ):
             raise ValueError("activation correction changed source outside its exact five-path envelope")
         overlap = paths & REFERENCE_ACTIVATION_CORRECTION_SOURCE
@@ -4070,29 +4161,22 @@ def reference_activation_correction_authority(
             or json_object(blob(repo, commit, index_path), "introduced registry") != expected_index
         ):
             raise ValueError("activation correction changed Proposed companion/registry authority")
-    candidate = ranges[-1]["candidate"]
-    slice_review, slice_introduction = immutable_record(
-        repo, head, "artifacts/evidence/W2.A04.S01.review-01.json", evidence=True
-    )
-    review_ledger = task["review_control"]["attempts"][-1]["ledger"]
-    _, review_introduction = immutable_record(repo, head, review_ledger["path"], review_ledger["sha256"], evidence=True)
-    exit_attempts = child.get("completion", {}).get("exit_review_control", {}).get("attempts", [])
-    if not exit_attempts:
-        raise ValueError("activation correction lacks independent exit qualification")
-    exit_candidate = exit_attempts[-1]["submission"]["candidate_commit"]
-    if (
-        slice_review.get("amendmentId") != child["id"]
-        or slice_review.get("sliceId") != "W2.A04.S01"
-        or slice_review.get("result") != "approved"
-        or slice_review.get("findings") != []
-        or slice_review.get("openFindingIds") != []
-        or slice_review.get("taskBindings") != [{"taskId": task["id"], "candidateCommit": candidate}]
-        or not independent_identity(slice_review.get("reviewer"), owner)
-        or not is_ancestor(repo, review_introduction, slice_introduction)
-        or not is_ancestor(repo, slice_introduction, exit_candidate)
-    ):
-        raise ValueError("activation correction lacks integrated independent S01 review before exit")
     adoption = adopted_continuation_adoption(repo, head, backlog, child, packet)
+    exit_attempts = child["completion"]["exit_review_control"]["attempts"]
+    slice_outputs = reference_activation_correction_slice_history(
+        repo, head, task, owner, exit_attempts[-1]["submission"]["candidate_commit"]
+    )
+    workflow_outputs = (
+        task_outputs
+        | slice_outputs
+        | {
+            "artifacts/evidence/W2.A04.B00.json",
+            "artifacts/evidence/W2.A04.B00.review-R01.json",
+            "artifacts/evidence/W2.A04.adoption.json",
+        }
+    )
+    for attempt in exit_attempts:
+        workflow_outputs.update((attempt["submission"]["evidence_reference"]["path"], attempt["ledger"]["path"]))
     if (
         amendment_record(state(adoption), parent["id"]) != frozen
         or amendment_record(state(adoption), child["id"]) != child
@@ -4225,6 +4309,7 @@ def reference_activation_correction_authority(
         raise ValueError("activation correction lacks exactly one separate A03 activation and T02 reopen")
     return {
         "commits": admitted,
+        "workflowPaths": workflow_outputs,
         "reopenCommit": reopens[0],
         "reactivationBase": resolve_commit(repo, f"{activations[0]}^"),
         "adoptionCommit": adoption,
@@ -4348,13 +4433,7 @@ def reference_activation_reviewed_tasks(
                             )
                             is not None
                             or path == "planning/wave-amendment-approvals/W2.A04.json"
-                            or re.fullmatch(
-                                r"artifacts/evidence/W2\.A04\.(?:B00(?:\.review-R01)?|T01(?:\.review-R[0-9]{2})?|"
-                                r"S01\.review-[0-9]{2}|exit(?:-review-R[0-9]{2})?|adoption)\.json",
-                                path,
-                            )
-                            is not None
-                            or path == "artifacts/evidence/W2.A04.T01.task-start.md"
+                            or path in correction["workflowPaths"]
                         )
                     )
                 if path not in source and not workflow_output:
