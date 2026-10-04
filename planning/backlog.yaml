@@ -43755,7 +43755,7 @@ verification_profiles:
 control_plane:
   revision: 12
   minimum_tool_revision: 12
-  active_amendment: null
+  active_amendment: W2.A03
   recovery_holds:
   - id: HOLD-W1-GRR-0001
     recovery_request_id: GRR-0001
@@ -53431,7 +53431,7 @@ wave_amendments:
     sha256: 8852d6631a6656e94cc75e4f9dc705c7095ecf111786748e5630fe13b8fa9087
     introduction_commit: c972e2116113afa7ad84f0e43bdad58660cc69bb
   lifecycle:
-    status: PAUSED
+    status: ACTIVE
     history:
     - id: E01
       status: APPROVED
@@ -53464,6 +53464,11 @@ wave_amendments:
       rationale: 'W2.A03.T02 blocked before consumer edits: Accepted ADR-0001 requires companion ADR/index in actual task
         range, excluded by frozen ECR-0011 consumer envelope. Prepare exact append-only ECR-0012/W2.A04 paused-predecessor
         correction and obtain independent packet review/owner approval; preserve completed T01 and retained T02 base.'
+    - id: E05
+      status: ACTIVE
+      actor: codex-w2-implementation
+      at: '2026-10-04T17:37:39+00:00'
+      rationale: Activated the bounded amendment campaign.
   bootstrap:
     id: W2.A03.B00
     status: APPROVED
@@ -53485,20 +53490,21 @@ wave_amendments:
         approves candidate 17da0a4fd81da38e7d4b1430f935dcd3f7028085 and submitted state e596806cf13179227b600f664df852591ee585e0
         with zero findings.
   campaign:
-    status: PAUSED
+    status: ACTIVE
     scope: wave-amendment
     owner: codex-w2-implementation
     branch: codex/w2-implementation
     worktree: .
-    base_sha: b3120e32f521b60bbd03ddca8f755ba9871947cc
+    base_sha: 512452182a483f82d4478420434841ff23b4668c
     profile: LOC
     platform: windows-x64
     started_at: '2026-10-03T21:52:27+00:00'
-    updated_at: '2026-10-04T12:31:02+00:00'
-    pause_reason: 'W2.A03.T02 blocked before consumer edits: Accepted ADR-0001 requires companion ADR/index in actual task
-      range, excluded by frozen ECR-0011 consumer envelope. Prepare exact append-only ECR-0012/W2.A04 paused-predecessor correction
-      and obtain independent packet review/owner approval; preserve completed T01 and retained T02 base.'
-    lease: null
+    updated_at: '2026-10-04T17:37:39+00:00'
+    pause_reason: null
+    lease:
+      claimed_by: codex-w2-implementation
+      claimed_at: '2026-10-04T17:37:39+00:00'
+      expires_at: '2026-10-05T17:37:39+00:00'
   tasks:
   - id: W2.A03.T01
     amendment_id: W2.A03
