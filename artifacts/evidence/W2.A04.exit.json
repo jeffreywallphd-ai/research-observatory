@@ -1,0 +1,90 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "wave-amendment-exit-evidence",
+  "amendmentId": "W2.A04",
+  "changeRequestId": "ECR-0012",
+  "targetWave": "W2",
+  "branch": "codex/w2-implementation",
+  "candidateCommit": "83266005c0a828033c2705a6105364435e02afcd",
+  "outcome": "ready-for-independent-amendment-exit-review",
+  "waveCampaign": {
+    "status": "PAUSED",
+    "scope": "amendment-hold",
+    "pauseReason": "CAP-05.S01.T01 is blocked by approved Academic Minimal 1.8 desktop activation/control authority; pause ordinary W2 execution at clean CAP-04.S05.T03 boundary for bounded GOV-MAINT-0026, linked CAP-04.S05.T02 correction, and decision-complete ECR-0011/W2.A03 before ordinary task resume."
+  },
+  "amendmentCampaign": {
+    "status": "ACTIVE",
+    "scope": "wave-amendment",
+    "pauseReason": null
+  },
+  "requiredNextTransition": "independent amendment exit review",
+  "taskBindings": [
+    {
+      "taskId": "W2.A04.T01",
+      "candidateCommit": "6a07f37de16e9d5da49cb0b36400e6fe2fb195e0",
+      "reviewLedger": {
+        "path": "artifacts/evidence/W2.A04.T01.review-R01.json",
+        "sha256": "fbe33e8621195d977cd336653fbf633d7e74506d6d1f2a72887b68bb074bb8d1"
+      },
+      "manifestReference": {
+        "type": "criterion-manifest",
+        "path": "artifacts/evidence/W2.A04.T01.json",
+        "sha256": "afd3a1fb76652d8ddb7d54072e2279a3cd02d38d3549f9a633456886a576187f",
+        "commit": "6a07f37de16e9d5da49cb0b36400e6fe2fb195e0",
+        "recorded_at": "2026-10-04T16:03:14+00:00"
+      }
+    }
+  ],
+  "acceptanceClosure": [
+    {
+      "criterionIndex": 1,
+      "criterion": "Bind the exact complete paused A03 predecessor record at a211f24107f21f6b87221fd8b60c04b95a97fc8b, canonical record SHA-256 f099fd8f6a15dcdcddea9ac6dca1ca5cac62d8692991e2d6e4366b1393c6ac6c, original ECR-0011 reviewed packet/approval, DONE T01 source aa096646/submission 206960d5/disposition c62adc85 and original T02 blocked claim base ca8b1448e094b637bbd06c3129b69a78df792619. Preserve all task definitions, hashes and immutable review history.",
+      "status": "ready-for-independent-exit-disposition",
+      "basis": "Exact independent task/S01 disposition plus current integrated persistence and frozen predecessor observation. Actual adoption/return and separate A03 activation/T02 reopen remain ordered subsequent transitions."
+    },
+    {
+      "criterionIndex": 2,
+      "criterion": "The retained planned-path ADR preflight output SHA-256 a63b91aec33c5f8bc0b6b9592521b5092f8ecd2ba10ee4eb2f8fec54770cb173 reports exit 1 for the protected extension/baseline. Resolve through one separate five-path A04 correction, never widened-base checking, bootstrap addendum misuse, pre-claim ADR substitution or silent envelope expansion.",
+      "status": "ready-for-independent-exit-disposition",
+      "basis": "Exact independent task/S01 disposition plus current integrated persistence and frozen predecessor observation. Actual adoption/return and separate A03 activation/T02 reopen remain ordered subsequent transitions."
+    },
+    {
+      "criterionIndex": 3,
+      "criterion": "Authenticate unchanged original W2/adopted A01/A02, GOV-MIG-0001, approved 55-file 1.8 package/publication, reviewed GOV26/C10 and exact A03 T01 approval before independent exact packet review and explicit owner approval. No reference or product redesign.",
+      "status": "ready-for-independent-exit-disposition",
+      "basis": "Exact independent task/S01 disposition plus current integrated persistence and frozen predecessor observation. Actual adoption/return and separate A03 activation/T02 reopen remain ordered subsequent transitions."
+    },
+    {
+      "criterionIndex": 4,
+      "criterion": "Independently review B00 before exact one-task materialization; deliver and review companion ADR/index plus narrow v1.4 correction and return attribution under exact source envelope. Preserve original consumer seven-file scope and real complete task range.",
+      "status": "ready-for-independent-exit-disposition",
+      "basis": "Exact independent task/S01 disposition plus current integrated persistence and frozen predecessor observation. Actual adoption/return and separate A03 activation/T02 reopen remain ordered subsequent transitions."
+    },
+    {
+      "criterionIndex": 5,
+      "criterion": "Independent task, integrated slice, exit and separate security checkpoint reviews precede A04 adoption. Return sole hold to paused A03 with T01 DONE and T02 blocked at retained base; only later legal A03 activation/T02 reopen permits consumer delivery. W2 qualification and release remain separate.",
+      "status": "ready-for-independent-exit-disposition",
+      "basis": "Exact independent task/S01 disposition plus current integrated persistence and frozen predecessor observation. Actual adoption/return and separate A03 activation/T02 reopen remain ordered subsequent transitions."
+    }
+  ],
+  "checks": [
+    {
+      "command": ".venv/Scripts/python.exe -B artifacts/tmp/W2.A04.inspect-integrated-state.py slice",
+      "result": "passed",
+      "exitCode": 0,
+      "commit": "83266005c0a828033c2705a6105364435e02afcd",
+      "rawOutput": "artifacts/tmp/W2.A04.slice-integrated-83266005.json",
+      "rawOutputSha256": "fad0a28b35757075b46ce5b4cc4aecab0a0f23e664fe6cf32ecf8f3084b581c2",
+      "observation": "Actual committed task and integrated S01 reviews authenticate; source unchanged from task candidate; exact paused predecessor preserved."
+    }
+  ],
+  "priorReviewedEvidence": [
+    "artifacts/evidence/W2.A04.T01.json",
+    "artifacts/evidence/W2.A04.T01.review-R01.json",
+    "artifacts/evidence/W2.A04.S01.review-01.json"
+  ],
+  "limitations": [
+    "No A04 adoption/return or A03 activation/reopen is claimed by this exit evidence.",
+    "Actual 66 T02 captures, native/Core/D3D attachment, joined CAP-04.S05, remaining W2 work and release remain due."
+  ]
+}
