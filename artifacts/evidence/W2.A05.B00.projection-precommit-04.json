@@ -1,0 +1,36 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "wave-amendment-bootstrap-generated-artifact-precommit-check",
+  "bootstrapUnit": "W2.A05.B00",
+  "contextCommit": "57f5c3f264611f59cd2778ff13b5082b2726e24b",
+  "qualifyingTaskEvidence": false,
+  "sourceState": "only two generated site projections differ from Git",
+  "changedPaths": [
+    "planning/review-site/enablers/ECR-0013.html",
+    "planning/review-site/manifest.json"
+  ],
+  "changedPathHashes": {
+    "planning/review-site/enablers/ECR-0013.html": "1b6f939411e9199cc2e90bce51b68bb1d53e459a5c17dc71c597a210cb28da02",
+    "planning/review-site/manifest.json": "381f9b826f4d0a8c3affbaab079273e8d5da87a905ff75591b6e4e866d6124a3"
+  },
+  "commandArgs": [
+    ".venv/Scripts/python.exe",
+    "-B",
+    "tools/plan_review_check.py",
+    "--repo",
+    ".",
+    "--report",
+    "artifacts/tmp/W2.A05.B00.projection-precommit-04.site-report.json"
+  ],
+  "exitCode": 0,
+  "durationSeconds": 344.85,
+  "inputsStable": true,
+  "log": "artifacts/tmp/W2.A05.B00.projection-precommit-04.site.log",
+  "logSha256": "d6b4aabfbf04f2e0e52f0737fc127f4236f25f394f67a0092fcd99e5d5de45e3",
+  "producer": {
+    "path": "artifacts/tmp/W2.A05.B00.projection-precommit-04.py",
+    "sha256": "e2e6b71611ddc8f89f7f9160c0b7132e66ac075d4ba41f4944afc0317bdd6412"
+  },
+  "result": "PASS",
+  "limit": "Required generated-HTML precommit validation only; these dirty projection bytes are not committed-candidate task qualification. Fresh committed checks and actual shell/control review remain due."
+}

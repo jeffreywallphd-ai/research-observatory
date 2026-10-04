@@ -41873,7 +41873,18 @@
         ],
         "referenceApprovalStatus": "approved"
       },
-      "scope_addenda": [],
+      "scope_addenda": [
+        {
+          "path": "planning/wave-amendment-approvals/W2.A05.B00.addendum-01.json",
+          "sha256": "c64eee49399600bb5630322ba7556be9309c331b48a0cb5e626667d5be39be1e",
+          "approved_by": "human:repository-owner",
+          "approved_at": "2026-10-04T21:29:13Z",
+          "authorized_additional_paths": [
+            "tools/taskctl.py",
+            "tests/foundation/test_taskctl_workflow.py"
+          ]
+        }
+      ],
       "task_reviews": [],
       "exit_review": {
         "amendment_id": "W2.A05",

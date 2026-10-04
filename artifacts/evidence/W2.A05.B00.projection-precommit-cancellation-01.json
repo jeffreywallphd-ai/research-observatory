@@ -1,0 +1,13 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "wave-amendment-bootstrap-cancelled-check-observation",
+  "bootstrapUnit": "W2.A05.B00",
+  "contextCommit": "57f5c3f264611f59cd2778ff13b5082b2726e24b",
+  "command": ".venv/Scripts/python.exe -B artifacts/tmp/W2.A05.B00.projection-precommit-03.py",
+  "disposition": "CANCELLED",
+  "exitCode": 1,
+  "reason": "Root interpreted the owner's no-further-framework direction as immediate and interrupted the running generated-site check. The owner then clarified that W2.A05 should finish and the framework stop applies after A05.",
+  "resultLimit": "The cancelled run produced no completed canonical receipt or PASS. Its tool transcript and ignored producer remain preserved; no partial result qualifies the projections.",
+  "subsequentRun": "artifacts/evidence/W2.A05.B00.projection-precommit-04.json",
+  "subsequentRunSha256": "4910d7303b07af78e6ec9411b6f080a7b3ecd8d308ea97b47ac343e8ceb48217"
+}

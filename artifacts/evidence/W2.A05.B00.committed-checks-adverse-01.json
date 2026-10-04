@@ -1,0 +1,181 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "wave-amendment-bootstrap-committed-candidate-checks",
+  "bootstrapUnit": "W2.A05.B00",
+  "candidateCommit": "57f5c3f264611f59cd2778ff13b5082b2726e24b",
+  "baseApprovalCommit": "b54f24c222f631700056574a08056f660696d305",
+  "producer": {
+    "path": "artifacts/tmp/W2.A05.B00.qualify-committed-01.py",
+    "sha256": "37c455976d73494e237a7c2d83a20844a8c08f9bb83885362f9c6266a411103a"
+  },
+  "inputsStable": true,
+  "trackedInputsCount": 4714,
+  "trackedInputsSha256": "67df7e196c5f6542fedeb30f5c95b041ef67620d243efbef340891cdf1e361b9",
+  "inputList": {
+    "path": "artifacts/tmp/W2.A05.B00.57f5c3f2.committed-01.inputs.json",
+    "sha256": "24eae2bc3ee4e8d92220fe10733944972f875cd0b113ad5eb913f1dac96a95e0"
+  },
+  "checks": [
+    {
+      "id": "workflow",
+      "commandArgs": [
+        "../../.venv/Scripts/python.exe",
+        "-B",
+        "-m",
+        "unittest",
+        "-v",
+        "test_taskctl_workflow.TaskctlWorkflowTests.test_sequential_bootstrap_composes_paused_parent_without_sorting_declared_adoptions",
+        "test_taskctl_workflow.TaskctlWorkflowTests.test_sequential_bootstrap_real_persistence_preserves_returned_sibling_and_cas",
+        "test_taskctl_workflow.TaskctlWorkflowTests.test_paused_correction_bootstrap_append_preserves_exact_parent_and_schema_dispatch",
+        "test_taskctl_workflow.TaskctlWorkflowTests.test_paused_correction_materialization_uses_real_cas_without_half_entry",
+        "test_taskctl_workflow.TaskctlWorkflowTests.test_sequential_runtime_rejects_preload_edits_to_completed_sibling_history",
+        "test_taskctl_workflow.TaskctlWorkflowTests.test_bootstrap_scope_addendum_is_hash_bound_and_history_bound",
+        "test_taskctl_workflow.TaskctlWorkflowTests.test_bootstrap_resubmission_discovers_and_freezes_new_scope_addenda_fail_closed",
+        "test_taskctl_workflow.TaskctlWorkflowTests.test_bootstrap_candidate_authorization_binds_latest_reauthorization_blob"
+      ],
+      "cwd": "tests/foundation",
+      "exitCode": 0,
+      "durationSeconds": 134.751,
+      "log": "artifacts/tmp/W2.A05.B00.57f5c3f2.committed-01.workflow.log",
+      "logSha256": "862d400078831d0c0cafe48de8765b6b94e3f5c3e16264dd79b13003f5d18327"
+    },
+    {
+      "id": "planctl",
+      "commandArgs": [
+        "../../.venv/Scripts/python.exe",
+        "-B",
+        "-m",
+        "unittest",
+        "-v",
+        "test_planctl_amendments.PlanctlAmendmentTests.test_sequential_correction_authenticates_actual_completed_return_in_git",
+        "test_planctl_amendments.PlanctlAmendmentTests.test_returned_sibling_denies_adopted_flags_and_changed_completed_records",
+        "test_planctl_amendments.PlanctlAmendmentTests.test_sequential_chain_composes_paused_authority_without_reordering_declared_adoptions"
+      ],
+      "cwd": "tests/foundation",
+      "exitCode": 0,
+      "durationSeconds": 183.532,
+      "log": "artifacts/tmp/W2.A05.B00.57f5c3f2.committed-01.planctl.log",
+      "logSha256": "7646818bb321d690dc402d06a4163bd7075884328fadde3f13045c3a1053a188"
+    },
+    {
+      "id": "backlog",
+      "commandArgs": [
+        ".venv/Scripts/python.exe",
+        "-B",
+        "tools/taskctl.py",
+        "validate"
+      ],
+      "cwd": ".",
+      "exitCode": 0,
+      "durationSeconds": 189.765,
+      "log": "artifacts/tmp/W2.A05.B00.57f5c3f2.committed-01.backlog.log",
+      "logSha256": "d97d5b8d4d0a12904cada3ff677b3c739845ef523cf4f2fe70c0674e7afb2ea1"
+    },
+    {
+      "id": "authority",
+      "commandArgs": [
+        ".venv/Scripts/python.exe",
+        "-B",
+        "tools/planctl.py",
+        "--repo",
+        ".",
+        "ecr",
+        "validate",
+        "ECR-0013",
+        "--require-approved"
+      ],
+      "cwd": ".",
+      "exitCode": 0,
+      "durationSeconds": 56.988,
+      "log": "artifacts/tmp/W2.A05.B00.57f5c3f2.committed-01.authority.log",
+      "logSha256": "31325dc87f97d406f716214f6c0441fa3cc462e13f2573afd924b5343baba449"
+    },
+    {
+      "id": "site",
+      "commandArgs": [
+        ".venv/Scripts/python.exe",
+        "-B",
+        "tools/plan_review_check.py",
+        "--repo",
+        ".",
+        "--report",
+        "artifacts/tmp/W2.A05.B00.57f5c3f2.committed-01.site-report.json"
+      ],
+      "cwd": ".",
+      "exitCode": 1,
+      "durationSeconds": 275.064,
+      "log": "artifacts/tmp/W2.A05.B00.57f5c3f2.committed-01.site.log",
+      "logSha256": "5886f57cd302194ed5920461d2961a395acfe32bbde17135ed5c347527d947d6"
+    },
+    {
+      "id": "ruff",
+      "commandArgs": [
+        ".venv/Scripts/ruff.exe",
+        "check",
+        "tools/taskctl.py",
+        "tests/foundation/test_taskctl_workflow.py"
+      ],
+      "cwd": ".",
+      "exitCode": 0,
+      "durationSeconds": 0.046,
+      "log": "artifacts/tmp/W2.A05.B00.57f5c3f2.committed-01.ruff.log",
+      "logSha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18"
+    },
+    {
+      "id": "format",
+      "commandArgs": [
+        ".venv/Scripts/ruff.exe",
+        "format",
+        "--check",
+        "tools/taskctl.py",
+        "tests/foundation/test_taskctl_workflow.py"
+      ],
+      "cwd": ".",
+      "exitCode": 0,
+      "durationSeconds": 0.145,
+      "log": "artifacts/tmp/W2.A05.B00.57f5c3f2.committed-01.format.log",
+      "logSha256": "3bc53bf3e981a98a34a852e175bf9b77af841edea74fca595d9aedcbaf9a4938"
+    },
+    {
+      "id": "mypy",
+      "commandArgs": [
+        ".venv/Scripts/mypy.exe",
+        "--no-namespace-packages",
+        "tools/taskctl.py",
+        "tests/foundation/test_taskctl_workflow.py"
+      ],
+      "cwd": ".",
+      "exitCode": 0,
+      "durationSeconds": 0.287,
+      "log": "artifacts/tmp/W2.A05.B00.57f5c3f2.committed-01.mypy.log",
+      "logSha256": "0c37c4158c91ef55c724ba017bf6465f26018199badb08e3ff13f98acdf056c2"
+    },
+    {
+      "id": "source-diff",
+      "commandArgs": [
+        "git",
+        "-c",
+        "core.safecrlf=false",
+        "diff",
+        "--check",
+        "57f5c3f264611f59cd2778ff13b5082b2726e24b^",
+        "57f5c3f264611f59cd2778ff13b5082b2726e24b"
+      ],
+      "cwd": ".",
+      "exitCode": 0,
+      "durationSeconds": 0.043,
+      "log": "artifacts/tmp/W2.A05.B00.57f5c3f2.committed-01.source-diff.log",
+      "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "fresh": true,
+  "reuse": false,
+  "limit": "Actual committed bootstrap controller patch and original approved authority/projections only. Real A05 append/shell review/materialization/tasks/adoption/native/Core/Wave qualification remain separate. Fixture authority/evidence prerequisites remain explicitly synthetic.",
+  "rawReceipt": {
+    "path": "artifacts/tmp/W2.A05.B00.57f5c3f2.committed-01.checks.json",
+    "sha256": "03e1cdd73a02b118b2320fffc1fa058f6175d832fd3ca654e74648917cadc7b4"
+  },
+  "privacyNormalization": "Only absolute producer/executable display paths are normalized to repository-relative. Exact raw argv, producer identity/hash, all outputs and measured outcomes remain in the ignored receipt and logs.",
+  "result": "ADVERSE-PRESERVED",
+  "diagnosis": "The eight other groups passed; site exit1 requires deterministic refresh of ECR-0013.html and manifest.json to project the newly introduced immutable scope addendum. No source correction or authority weakening is indicated."
+}

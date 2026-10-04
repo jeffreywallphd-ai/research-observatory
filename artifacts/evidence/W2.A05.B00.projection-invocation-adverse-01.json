@@ -1,0 +1,18 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "wave-amendment-bootstrap-invocation-observation",
+  "bootstrapUnit": "W2.A05.B00",
+  "contextCommit": "57f5c3f264611f59cd2778ff13b5082b2726e24b",
+  "result": "INVOCATION-ERROR-PRESERVED",
+  "observations": [
+    "tools/planctl.py ecr review validates and links the ECR but does not regenerate HTML; its successful result was not a regeneration pass. No tracked files changed.",
+    "A premature plan_review_check for projection-precommit-02 was started before regeneration. It was cancelled through its owned exec session interrupt with exit1. No completed check or passing result is claimed.",
+    "A read-only Win32_Process inventory was unavailable with Access denied; no process was found or terminated through that route.",
+    "The canonical tools/planctl.py wave review W2 regeneration is used next; fresh precommit and committed checks remain required."
+  ],
+  "cancelledLog": {
+    "path": "artifacts/tmp/W2.A05.B00.projection-precommit-02.site.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "limit": "Operational invocation/cancellation observation only; no product, test or control weakening and no qualifying evidence."
+}
