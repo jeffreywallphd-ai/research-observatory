@@ -41431,7 +41431,7 @@
       "approval_path": "planning/wave-amendment-approvals/W2.A05.json",
       "approval_sha256": "9ad5b3f5fca7d3fd9c7fd8a42200f570f46250d506765b30e2705e299c7e8101",
       "approval_status": "APPROVED",
-      "lifecycle_status": "APPROVED",
+      "lifecycle_status": "MATERIALIZED",
       "bootstrap_status": "APPROVED",
       "campaign_status": "NONE",
       "bootstrap_attempts": [
@@ -41908,7 +41908,34 @@
           ]
         }
       ],
-      "task_reviews": [],
+      "task_reviews": [
+        {
+          "task_id": "W2.A05.T01",
+          "title": "Authenticate reviewed inert projection history and exact repair delivery",
+          "status": "NOT_STARTED",
+          "mode": "latest-review-only",
+          "latest_review": {
+            "reviewer": null,
+            "result": null,
+            "reviewed_at": null,
+            "notes": null
+          },
+          "review_control": null
+        },
+        {
+          "task_id": "W2.A05.T02",
+          "title": "Recognize real associated labels in the static accessibility checker",
+          "status": "NOT_STARTED",
+          "mode": "latest-review-only",
+          "latest_review": {
+            "reviewer": null,
+            "result": null,
+            "reviewed_at": null,
+            "notes": null
+          },
+          "review_control": null
+        }
+      ],
       "exit_review": {
         "amendment_id": "W2.A05",
         "mode": "latest-completion-only",

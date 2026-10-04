@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: facb5646d77b9107f0e88d34a239a978e4081ac4b9b836d9ddbbad778ca19d34
+source_sha256: 6cec08a432c8a2bcf9a587e6b56c2a96c9dbec5409526fff3da672e3371d9aa3
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -27,7 +27,7 @@ This YAML file is the authoritative task, dependency, gate, and progress ledger.
 | Capabilities | 20 |
 | Slices | 117 |
 | Tasks | 356 |
-| Enabler tasks | 21 |
+| Enabler tasks | 23 |
 | Waves | 12 |
 | Wave approval bases | 2 |
 | Wave amendments | 14 |
@@ -54,7 +54,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 | `W2` | `W2.A02` | `ECR-0010` | `planning/wave-amendment-approvals/W2.A02.json` | `ADOPTED` |
 | `W2` | `W2.A03` | `ECR-0011` | `planning/wave-amendment-approvals/W2.A03.json` | `PAUSED` |
 | `W2` | `W2.A04` | `ECR-0012` | `planning/wave-amendment-approvals/W2.A04.json` | `ADOPTED` |
-| `W2` | `W2.A05` | `ECR-0013` | `planning/wave-amendment-approvals/W2.A05.json` | `APPROVED` |
+| `W2` | `W2.A05` | `ECR-0013` | `planning/wave-amendment-approvals/W2.A05.json` | `MATERIALIZED` |
 
 ## Waves
 
@@ -3063,11 +3063,12 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 **Approval record:** `planning/wave-amendment-approvals/W2.A05.json` (`9ad5b3f5fca7d3fd9c7fd8a42200f570f46250d506765b30e2705e299c7e8101`)
 
-**Lifecycle / bootstrap / campaign / completion:** `APPROVED` / `APPROVED` / `NONE` / `PENDING`
+**Lifecycle / bootstrap / campaign / completion:** `MATERIALIZED` / `APPROVED` / `NONE` / `PENDING`
 
 **Append-only lifecycle history:**
 
 - `E01` `APPROVED` at `2026-10-04T20:48:39Z` by human:repository-owner: The repository owner answered 'Approved' after the exact ECR-0013/W2.A05 request identifying candidate55c6389ce39a656f4da3851cae32ae12ac80e796 and packet SHA-25656f521d708266021121b2a3391506cc771c7d32e32442d29dc5e58ba356f20c1. This approves the two ordered checker-repair tasks within their five-path and four-path envelopes, exact preceding independently reviewed GOV-MAINT-0027 source/history recognition, bounded bootstrap and required independent task/slice/exit/security reviews. Preserve both DONE A03 task approvals, whole paused A03 and adopted A04, prior failures, original6506 base, accepted ADRs and unchanged approved1.8 reference/baseline. Actual reviewed adoption returns only to paused A03, whose separate activation/finding closure/exit/adoption precede ordinary W2 resume. No ordinary task/native/Core/Wave completion or release is approved. The user-requested7:25pm America/New_York October4 stop remains in force; this timestamp records binding of the explicit answer to its exact reviewed packet.
+- `E02` `MATERIALIZED` at `2026-10-04T22:49:28+00:00` by codex-w2-implementation: Materialized the exact human-approved task inventory.
 
 ### Amendment-exit review and adoption — W2.A05
 
@@ -3084,6 +3085,64 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - None
 
 **Bounded tasks:**
+
+### - [ ] W2.A05.T01 - Authenticate reviewed inert projection history and exact repair delivery
+
+**Status / owner / review:** `NOT_STARTED` / - / - (`-`)
+
+**Dependencies:** `W2.A05.B00`
+
+**Objective:** Restore actual integrated activation attribution without hiding historical source or changing approved task inventories.
+
+**Acceptance criteria:**
+
+- Introduce one indexed Proposed ADR-0041 linked to both W2.A05.T01 and W2.A05.T02 under Accepted ADR-0001/0003/0004. Authorize only the separate exact reviewed control-repair segment and same-reference label recognition; supersede no accepted decision and change no previous ADR or index entry.
+- Repair generic reviewed-task history attribution through a separately authenticated per-commit inert-output map, defaulting to empty, distinct from the immutable net changedFiles inventory. Admit the six exact regular W2.html history rows bound by ECR-0013.preflight-01.json only through their independently reviewed A04/A03 delivery and exact Git blobs; do not change any frozen manifest or hide any product/control add-revert. Preserve overlapping-range rejection. No filename-only, prefix-only, self-declared or arbitrary generated-output exemption.
+- Within existing closed v1.4, authenticate exact ECR-0013/W2.A05 packet/owner/B00, materialization, separate claims, exact source candidates and task reviews, integrated S01, exit, separate committed security review/adoption and exact paused-A03 return. Update only the exact ordered amendment/source inventory for this reviewed segment. Partition it from original A03/A04 ranges while preserving full original6506 base, two-contract inventory, current independent classification, producer/dependent inputs and all older denials. Authenticate A04 original ADR/index historical bytes plus only the new A05 single authorized index append and two reviewed Proposed ADR41 body versions; no general registry-prefix allowance. Directly authenticate the preceding GOV-MAINT-0027 four-commit sequence and imported-source/evidence bytes through ECR-0013.maintenance-binding.json / d550768944a0b142035270af47e2dcace88c7021edd0251d0a30e5ffc3e09be5, preserving its actual prepared-first note, R01 adverse round and approved R02. Do not weaken or misrepresent old pre-UI helper compatibility, admit another maintenance history or edit the imported tools. No new asserted contract field, schema, taskctl/kernel/controller or control revision.
+- Preserve the complete frozen paused A03 record at 771e54a3657cdc5ff308d3a53d7b71eb48bb9214 with canonical SHA-256 bdad5e81327e32ee322db436dc569898ce314d29058e53b0cfe67ed6192e0b03, both original task definitions/bases/approved R01 packets and findings, adopted A04 whole record and all existing approvals/reference/witness/baseline. Authenticate exact A05 adoption and later separate A03 activation; both A03 tasks remain DONE, with no invented reopen or claim. Subsequent A03 S01 review-02 must replay and explicitly close W2.A03.S01-R01-F01 using fresh actual integration proof.
+- Limit T01 source to exactly tools/ui_change_gate.py, tests/foundation/test_ui_change_gate.py, docs/automation/design-first-ui-changes.md, docs/adr/ADR-0041-authenticate-reviewed-activation-control-repairs.md, docs/adr/index.json. Index modification is one appended ADR-0041 entry only. Task-owned evidence/reviews and generated planning views are separate outputs; no renderer/Core/native/permission/runtime/reference/consumer/baseline/original-task source edits.
+- Prove actual retained ca8-to06 history attribution with its correct118-path net inventory, plus hostile real-Git missing/forged projection proof, same-filename unreviewed output, hidden product/control/source add-revert, changed predecessor/approved A04, stale/foreign/mixed segment, malformed or replayed review and premature return/activation denials. For the preceding maintenance binding also deny substituted imported tools or modes, omitted/extra commits, forged/missing R02, edited R01/adverse evidence and any unapproved history beyond the exact bound segment. Preserve the failing actual S01 result and historical adverse rounds; future fixture records are synthetic proof only.
+
+**Verification:**
+
+- Focused real-Git exact retained-range positive, frozen byte/approval/task/source partition, projection and hidden-source denials; incremental old v1.0-v1.4 regressions.
+- Exact candidate ADR/UI, affected Python quality, diff, backlog/views/site and independent expanded control/security review. Actual future adoption/return closure remains later actual integration proof.
+
+#### Review history — W2.A05.T01
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
+
+### - [ ] W2.A05.T02 - Recognize real associated labels in the static accessibility checker
+
+**Status / owner / review:** `NOT_STARTED` / - / - (`-`)
+
+**Dependencies:** `W2.A05.B00`, `W2.A05.T01`
+
+**Objective:** Restore accurate naming classification for the unchanged approved file input while retaining actual unnamed-control failures.
+
+**Acceptance criteria:**
+
+- After independently approved T01, correct the static accessible-name check only for parsed standard label for/id associations in the same document, including labels appearing after controls. Preserve existing wrapping-label support, name precedence and genuine unnamed-control failures. Do not add aria-label to approved markup, suppress the input, change its pixels, baseline or reference, or treat unrelated/empty/hidden/non-labelable/wrong-target text as a name. Retain duplicate-ID and reference-name drift denials; no general accessibility-name redesign.
+- Limit T02 source to exactly tools/ui_conformance.py, tests/desktop/test_ui_conformance.py, docs/automation/ui-conformance-verification.md, docs/adr/ADR-0041-authenticate-reviewed-activation-control-repairs.md. Make only a bounded implementation/verification body append to still-Proposed ADR-0041 within the real T02 claim range, preserving its metadata and index entry; authenticate both reviewed historical versions. This provides the changed indexed task-linked companion required by ADR-0001 without widening or substituting a base. Preserve semantic compatibility/witness, capture settings and baseline writer denial, all existing reference IDs/packages and immutable evidence.
+- At the exact committed candidate run focused positive and adverse naming regressions, actual pinned Chromium accessibility-tree positive and in-memory label-removal/wrong-target negatives, and the unmodified official accessibility command across all33 pages/66 responsive states. Require actual command exit0 with no hidden failures; preserve the prior official exit1. Current reference integrity and affected checker/quality/ADR/metadata checks must pass. This is checker qualification, not native/Core or complete product/profile/W2 qualification.
+- Obtain expanded independent task, integrated S01, exit and separate security checkpoint dispositions before supported A05 adoption and exact still-paused A03 return. Fresh actual A03 integrated finding replay/review-02 and its own exit/security/adoption remain later gates; ordinary W2 stays PAUSED and original CAP-05.S01.T01 BLOCKED until lawful separate resume.
+
+**Verification:**
+
+- Focused static label-name positives and adversarial missing/empty/hidden/duplicate/wrong-target/non-labelable cases, actual pinned browser AX positive and label-removal negative.
+- Fresh official33-page/66-responsive accessibility and unchanged reference/baseline history, affected quality/ADR/control checks; independent review preserving every prior adverse result.
+
+#### Review history — W2.A05.T02
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
 
 
 ## Linked corrective tasks
