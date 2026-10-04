@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "governance-control-maintenance-review",
+  "maintenanceId": "GOV-MAINT-0027",
+  "reviewId": "GOV-MAINT-0027.R02",
+  "reviewedCommit": "6295697db3dd16d185f77e055b84dfa54a1211bf",
+  "reviewer": "agent:maint27-independent-control-review",
+  "reviewedAt": "2026-10-04T20:16:31Z",
+  "disposition": "APPROVED",
+  "authorityPreserved": true,
+  "candidateChangedPaths": [
+    "planning/governance-migrations/GOV-MAINT-0027.json",
+    "tests/foundation/test_taskctl_workflow.py",
+    "tools/taskctl.py"
+  ],
+  "findings": []
+}

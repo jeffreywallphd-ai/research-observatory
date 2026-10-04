@@ -3,7 +3,7 @@
   "documentType": "governance-control-maintenance",
   "maintenanceId": "GOV-MAINT-0027",
   "title": "Recognize authenticated completed correction siblings without competing hold ownership",
-  "status": "candidate",
+  "status": "adopted",
   "riskTier": 2,
   "humanApprovalRequired": false,
   "implementationAgent": "agent:codex-w2-implementation",
@@ -60,7 +60,7 @@
     ]
   },
   "verification": {
-    "status": "R01 F01/F02 remediation candidate awaits fixed committed fresh checks and independent R02; first adverse qualification and R01 are retained.",
+    "status": "All eight fresh selected check groups passed at exact6295697d candidate; independent R02 approved and closed both preserved R01 findings. No product or original-task qualification is claimed.",
     "selected": [
       "Pure kernel single/sequential phases and denial cases",
       "Real Git paused predecessor/returned sibling approval, adoption, exact checkpoint and source substitution denials",
@@ -80,23 +80,26 @@
         "path": "planning/governance-migrations/GOV-MAINT-0027.checks-01.json",
         "sha256": "d4cee4d77397218599f4467abb45bc1ed956e7ea26b5632044eb3bce76f15837",
         "result": "changes-requested"
+      },
+      {
+        "candidateCommit": "6295697db3dd16d185f77e055b84dfa54a1211bf",
+        "path": "planning/governance-migrations/GOV-MAINT-0027.checks-02.json",
+        "sha256": "bada4526d8c7c89a182367c6de53bdbaeaca8c2c17f93425e81c228d6261f74b",
+        "result": "all-selected-checks-pass"
       }
     ]
   },
   "refactoring": "No structural cleanup or debt repayment; bounded restorative control correction only. Shared Wave budget is unchanged.",
   "rollback": "Do not integrate on failure or before independent approval. Preserve the exact clean predecessor and all adverse rounds. No remote action or destructive rollback.",
   "review": {
-    "reviewId": "GOV-MAINT-0027.R01",
-    "reviewedCommit": "29139a46b77ef2a1e73031b759067fbc2b0e7118",
+    "reviewId": "GOV-MAINT-0027.R02",
+    "reviewedCommit": "6295697db3dd16d185f77e055b84dfa54a1211bf",
     "reviewer": "agent:maint27-independent-control-review",
-    "reviewedAt": "2026-10-04T20:06:26Z",
-    "disposition": "CHANGES_REQUESTED",
-    "path": "planning/governance-migrations/GOV-MAINT-0027.review-R01.json",
-    "sha256": "bd702be6943bd5dbc6c0edc05f6c0fd9e11b83d9e016b6af5cfacd2a19bea2b1",
-    "findings": [
-      "GOV-MAINT-0027-R01-F01",
-      "GOV-MAINT-0027-R01-F02"
-    ]
+    "reviewedAt": "2026-10-04T20:16:31Z",
+    "disposition": "APPROVED",
+    "path": "planning/governance-migrations/GOV-MAINT-0027.review-R02.json",
+    "sha256": "f52b778b9b7dbfbec0b3c7f17680fc0e905021e9230b952d35762f42af30ce63",
+    "findings": []
   },
   "implementationNotes": [
     "The terminal-scope validator now recognizes older returned siblings by their parent relation, while only the latest projection exposes a current hold owner.",
@@ -117,6 +120,16 @@
         "GOV-MAINT-0027-R01-F01",
         "GOV-MAINT-0027-R01-F02"
       ]
+    },
+    {
+      "reviewId": "GOV-MAINT-0027.R02",
+      "reviewedCommit": "6295697db3dd16d185f77e055b84dfa54a1211bf",
+      "reviewer": "agent:maint27-independent-control-review",
+      "reviewedAt": "2026-10-04T20:16:31Z",
+      "disposition": "APPROVED",
+      "path": "planning/governance-migrations/GOV-MAINT-0027.review-R02.json",
+      "sha256": "f52b778b9b7dbfbec0b3c7f17680fc0e905021e9230b952d35762f42af30ce63",
+      "findings": []
     }
   ],
   "remediation": {
@@ -150,6 +163,20 @@
         "path": "artifacts/tmp/GOV-MAINT-0027.remediation-F02-development.log",
         "sha256": "85cb62c9777fade88825058f8bf2f516948c1050b7f5e07d3c2701c332273968",
         "exitCode": 0
+      }
+    ],
+    "closures": [
+      {
+        "findingId": "GOV-MAINT-0027-R01-F01",
+        "reviewId": "GOV-MAINT-0027.R02",
+        "disposition": "CLOSED",
+        "proof": "Actual live authority authenticates whole committed returned sibling; authentic A04 rationale substitution adds the exact denial while synthetic A05 remains unapproved in both baselines."
+      },
+      {
+        "findingId": "GOV-MAINT-0027-R01-F02",
+        "reviewId": "GOV-MAINT-0027.R02",
+        "disposition": "CLOSED",
+        "proof": "Test-owned campaign binding is frozen before relation hashing; foreign worktree denies without stored mutation, positive activation and retained CAS/return/failure checks pass."
       }
     ]
   }

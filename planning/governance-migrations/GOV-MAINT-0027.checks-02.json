@@ -1,0 +1,152 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "bounded-control-maintenance-fresh-checks",
+  "maintenanceId": "GOV-MAINT-0027",
+  "candidateCommit": "6295697db3dd16d185f77e055b84dfa54a1211bf",
+  "baseCommit": "7604e7ee94e930548d3078c691ade0f4934a76c9",
+  "producerSha256": "5f1446315bd95e0f50c66f09a5284ab65591e4fec81adf7c357071df467ebbd1",
+  "trackedInputsCount": 4697,
+  "trackedInputsSha256": "e7890e6d7e29671c9d2b279977ecaf82dca361fd29fc5fd20b28da224f5b099e",
+  "runtimeSha256": "20f9f153434a7cbadb44594b0796e85707f444bd21deda9d0bfb0be94cff290a",
+  "inputsStable": true,
+  "checks": [
+    {
+      "id": "kernel",
+      "commandArgs": [
+        ".venv\\Scripts\\python.exe",
+        "-B",
+        "-m",
+        "unittest",
+        "tests.foundation.test_governance_kernel",
+        "-v"
+      ],
+      "exitCode": 0,
+      "durationSeconds": 0.139,
+      "log": "artifacts/tmp/GOV-MAINT-0027.6295697d.kernel.log",
+      "logSha256": "d7495342143b6af6e5d0aa9b97a6604c7a3cd7a7f3b8d7a9ef2872aaf28c0aa6"
+    },
+    {
+      "id": "planctl",
+      "commandArgs": [
+        ".venv\\Scripts\\python.exe",
+        "-B",
+        "-c",
+        "import sys,unittest;sys.path.insert(0,'tests/foundation');unittest.main(module=None,argv=['unittest', 'tests.foundation.test_planctl_amendments.PlanctlAmendmentTests.test_paused_correction_authenticates_real_git_and_returned_history', 'tests.foundation.test_planctl_amendments.PlanctlAmendmentTests.test_paused_correction_snapshot_itself_must_be_quiescent', 'tests.foundation.test_planctl_amendments.PlanctlAmendmentTests.test_paused_correction_schema_is_explicit_and_keeps_v4_bytes', 'tests.foundation.test_planctl_amendments.PlanctlAmendmentTests.test_paused_correction_chain_accepts_exact_parent_not_injected_historical_shortcut', 'tests.foundation.test_planctl_amendments.PlanctlAmendmentTests.test_sequential_correction_authenticates_actual_completed_return_in_git', 'tests.foundation.test_planctl_amendments.PlanctlAmendmentTests.test_returned_sibling_denies_adopted_flags_and_changed_completed_records', 'tests.foundation.test_planctl_amendments.PlanctlAmendmentTests.test_sequential_chain_composes_paused_authority_without_reordering_declared_adoptions', '-v'])"
+      ],
+      "exitCode": 0,
+      "durationSeconds": 208.546,
+      "log": "artifacts/tmp/GOV-MAINT-0027.6295697d.planctl.log",
+      "logSha256": "17c99b470dae8a00803bf53e9b4918e8c9977bc47c92c49f4d3683cda8d9e7a6"
+    },
+    {
+      "id": "taskctl",
+      "commandArgs": [
+        ".venv\\Scripts\\python.exe",
+        "-B",
+        "-c",
+        "import sys,unittest;sys.path.insert(0,'tests/foundation');unittest.main(module=None,argv=['unittest', 'tests.foundation.test_taskctl_workflow.TaskctlWorkflowTests.test_paused_correction_roles_schema_and_frozen_parent_mutations', 'tests.foundation.test_taskctl_workflow.TaskctlWorkflowTests.test_paused_correction_materialization_uses_real_cas_without_half_entry', 'tests.foundation.test_taskctl_workflow.TaskctlWorkflowTests.test_paused_correction_binding_must_equal_approved_packet_on_every_replay', 'tests.foundation.test_taskctl_workflow.TaskctlWorkflowTests.test_paused_correction_older_adapter_fails_closed_at_every_hold_phase', 'tests.foundation.test_taskctl_workflow.TaskctlWorkflowTests.test_paused_correction_bootstrap_append_preserves_exact_parent_and_schema_dispatch', 'tests.foundation.test_taskctl_workflow.TaskctlWorkflowTests.test_paused_correction_adoption_returns_once_through_real_git_and_cas', 'tests.foundation.test_taskctl_workflow.TaskctlWorkflowTests.test_sequential_correction_materialization_and_adoption_keep_one_owner_with_real_cas', 'tests.foundation.test_taskctl_workflow.TaskctlWorkflowTests.test_sequential_runtime_rejects_preload_edits_to_completed_sibling_history', '-v'])"
+      ],
+      "exitCode": 0,
+      "durationSeconds": 146.88,
+      "log": "artifacts/tmp/GOV-MAINT-0027.6295697d.taskctl.log",
+      "logSha256": "0b0e0cad665e3d10a1175fb082e02e452a37f12d9e6ee40f6b60b57ff32b7c40"
+    },
+    {
+      "id": "ruff",
+      "commandArgs": [
+        ".venv\\Scripts\\ruff.exe",
+        "check",
+        "tools/governance_kernel.py",
+        "tools/planctl.py",
+        "tools/taskctl.py",
+        "tests/foundation/test_governance_kernel.py",
+        "tests/foundation/test_planctl_amendments.py",
+        "tests/foundation/test_taskctl_workflow.py"
+      ],
+      "exitCode": 0,
+      "durationSeconds": 0.024,
+      "log": "artifacts/tmp/GOV-MAINT-0027.6295697d.ruff.log",
+      "logSha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18"
+    },
+    {
+      "id": "format",
+      "commandArgs": [
+        ".venv\\Scripts\\ruff.exe",
+        "format",
+        "--check",
+        "tools/governance_kernel.py",
+        "tools/planctl.py",
+        "tools/taskctl.py",
+        "tests/foundation/test_governance_kernel.py",
+        "tests/foundation/test_planctl_amendments.py",
+        "tests/foundation/test_taskctl_workflow.py"
+      ],
+      "exitCode": 0,
+      "durationSeconds": 0.022,
+      "log": "artifacts/tmp/GOV-MAINT-0027.6295697d.format.log",
+      "logSha256": "ef7d13d02214e98ca902b05257cdbe6a8e84f3b4714508efdc19766460b54209"
+    },
+    {
+      "id": "mypy",
+      "commandArgs": [
+        ".venv\\Scripts\\mypy.exe",
+        "tools/governance_kernel.py",
+        "tools/planctl.py",
+        "tools/taskctl.py",
+        "tests/foundation/test_governance_kernel.py",
+        "tests/foundation/test_planctl_amendments.py",
+        "tests/foundation/test_taskctl_workflow.py"
+      ],
+      "exitCode": 0,
+      "durationSeconds": 0.575,
+      "log": "artifacts/tmp/GOV-MAINT-0027.6295697d.mypy.log",
+      "logSha256": "90377c8fd97127580c93ac5740d596c9ebc9db94dafa6560ee11fe16b4460c62"
+    },
+    {
+      "id": "ecr",
+      "commandArgs": [
+        ".venv\\Scripts\\python.exe",
+        "-B",
+        "tools/planctl.py",
+        "--repo",
+        ".",
+        "ecr",
+        "validate",
+        "ECR-0013"
+      ],
+      "exitCode": 0,
+      "durationSeconds": 51.382,
+      "log": "artifacts/tmp/GOV-MAINT-0027.6295697d.ecr.log",
+      "logSha256": "0a7c1e49ca626266555e860069093eea8a46f4e1d9d071bdeedd25cc9cc2a18d"
+    },
+    {
+      "id": "diff",
+      "commandArgs": [
+        "git",
+        "-c",
+        "core.safecrlf=false",
+        "diff",
+        "--check",
+        "7604e7ee94e930548d3078c691ade0f4934a76c9",
+        "6295697db3dd16d185f77e055b84dfa54a1211bf"
+      ],
+      "exitCode": 0,
+      "durationSeconds": 0.046,
+      "log": "artifacts/tmp/GOV-MAINT-0027.6295697d.diff.log",
+      "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "fresh": true,
+  "reuse": false,
+  "limits": [
+    "Synthetic second-transition test proves CAS/Git persistence, not owner approval; real retained A04 authority is tested separately.",
+    "No product/native/browser/profile/Wave qualification; planning HTML refresh follows exact reviewed packet preparation.",
+    "Installed dependency closure is not approved for reuse; these checks execute fresh."
+  ],
+  "commandArgsPresentation": "Repository-relative command presentation; the untouched ignored raw receipt binds exact executed machine arguments.",
+  "rawReceipt": {
+    "path": "artifacts/tmp/GOV-MAINT-0027.6295697d.checks.json",
+    "sha256": "1474ffbeed52fc7ccd4d45e68365185aa1230db78813f673ecc6ed1b5de3fd99"
+  },
+  "result": "all-selected-checks-pass"
+}
