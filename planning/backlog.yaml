@@ -43755,7 +43755,7 @@ verification_profiles:
 control_plane:
   revision: 12
   minimum_tool_revision: 12
-  active_amendment: W2.A03
+  active_amendment: null
   recovery_holds:
   - id: HOLD-W1-GRR-0001
     recovery_request_id: GRR-0001
@@ -53431,7 +53431,7 @@ wave_amendments:
     sha256: 8852d6631a6656e94cc75e4f9dc705c7095ecf111786748e5630fe13b8fa9087
     introduction_commit: c972e2116113afa7ad84f0e43bdad58660cc69bb
   lifecycle:
-    status: ACTIVE
+    status: PAUSED
     history:
     - id: E01
       status: APPROVED
@@ -53469,6 +53469,13 @@ wave_amendments:
       actor: codex-w2-implementation
       at: '2026-10-04T17:37:39+00:00'
       rationale: Activated the bounded amendment campaign.
+    - id: E06
+      status: PAUSED
+      actor: codex-w2-implementation
+      at: '2026-10-04T19:34:13+00:00'
+      rationale: 'Integrated S01 finding W2.A03.S01-R01-F01: exact retained consumer range rejects six authenticated generated
+        W2.html projections absent from final net diff. Preserve both DONE task approvals and adopted A04; pause for an append-only
+        exact source-attribution repair before fresh S01 replay, exit/security/adoption and ordinary W2 resume.'
   bootstrap:
     id: W2.A03.B00
     status: APPROVED
@@ -53490,7 +53497,7 @@ wave_amendments:
         approves candidate 17da0a4fd81da38e7d4b1430f935dcd3f7028085 and submitted state e596806cf13179227b600f664df852591ee585e0
         with zero findings.
   campaign:
-    status: ACTIVE
+    status: PAUSED
     scope: wave-amendment
     owner: codex-w2-implementation
     branch: codex/w2-implementation
@@ -53499,12 +53506,11 @@ wave_amendments:
     profile: LOC
     platform: windows-x64
     started_at: '2026-10-03T21:52:27+00:00'
-    updated_at: '2026-10-04T17:37:39+00:00'
-    pause_reason: null
-    lease:
-      claimed_by: codex-w2-implementation
-      claimed_at: '2026-10-04T17:37:39+00:00'
-      expires_at: '2026-10-05T17:37:39+00:00'
+    updated_at: '2026-10-04T19:34:13+00:00'
+    pause_reason: 'Integrated S01 finding W2.A03.S01-R01-F01: exact retained consumer range rejects six authenticated generated
+      W2.html projections absent from final net diff. Preserve both DONE task approvals and adopted A04; pause for an append-only
+      exact source-attribution repair before fresh S01 replay, exit/security/adoption and ordinary W2 resume.'
+    lease: null
   tasks:
   - id: W2.A03.T01
     amendment_id: W2.A03
