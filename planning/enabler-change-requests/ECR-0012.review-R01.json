@@ -1,0 +1,144 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "enabler-change-request-packet-review",
+  "changeRequestId": "ECR-0012",
+  "proposedAmendmentId": "W2.A04",
+  "targetWave": "W2",
+  "attemptId": "R01",
+  "candidateCommit": "7f35c7a8e49eb8415ffdffa5a2e04374161f0eae",
+  "packetSha256": "eb1cbf1b827bffdd5914f9255c6f0bba374621f916711b3e05815202d0312b8c",
+  "reviewer": "agent:/root/a03_t02_authority_review",
+  "reviewedAt": "2026-10-04T12:55:05Z",
+  "result": "approved",
+  "approvalAvailable": true,
+  "summary": "The exact pending ECR-0012 candidate is decision-complete for one five-path W2.A04 control/documentary correction under the supported paused-predecessor lane. It preserves the complete paused A03 record, independently approved DONE T01, blocked T02 at its real ca8b1448 claim base, original task definitions and hashes, and all 55 approved 1.8 reference inputs. The proposal explicitly authorizes only the exact combined committed claim/block/pause snapshot and authentic later reopen; it neither fabricates an intermediate claim nor grants a generic exception. The packet is eligible for an exact owner decision. This independent disposition is not owner approval, execution authority, task completion or W2 release.",
+  "independence": {
+    "proposalPacketOrSiteAuthoredByReviewer": false,
+    "priorParticipation": "Independent read-only authority and delivery-sequence assessment, followed by committed-blob packet preflight. I identified advisory PF01 at be305d1b and replayed its planning closure at 30fed2f8. The implementation owner authored the proposal, packet, static human page, generated site and retained advisory record. I authored none of those inputs and performed no taskctl transition, owner approval or source implementation. This formal review authenticates unchanged earlier inspected inputs and incrementally reviews the final generated-site candidate.",
+    "persistentWrites": [
+      "planning/enabler-change-requests/ECR-0012.review-R01.json"
+    ],
+    "workflowMutations": "None: no taskctl, approval, bootstrap, materialization, source edit, integration, push or release action."
+  },
+  "bindings": {
+    "packet": {
+      "path": "planning/enabler-change-requests/ECR-0012.packet.json",
+      "sha256": "eb1cbf1b827bffdd5914f9255c6f0bba374621f916711b3e05815202d0312b8c",
+      "introductionCommit": "be305d1b859499f5ca36b6f1ec63698d67ae9a81",
+      "lastRebindingCommit": "30fed2f8feff4deae799cd37ba1820781593efda"
+    },
+    "canonicalProposal": {
+      "path": "planning/enabler-change-requests/ECR-0012.md",
+      "sha256": "24b805f99d5cdac257bd922bfdc6ead5f21b1d799627e79c350beddbba6a53ac",
+      "introductionCommit": "a211f24107f21f6b87221fd8b60c04b95a97fc8b",
+      "lastRebindingCommit": "1e19c164e27a9a2a771fd3117e94de6f8f0ccb26"
+    },
+    "humanReview": {
+      "path": "planning/enabler-change-requests/ECR-0012-review.html",
+      "sha256": "680fe0ff9b6b4d7868c2c3535b97727f8b93d19407ca80310f94194537407144",
+      "introductionCommit": "a211f24107f21f6b87221fd8b60c04b95a97fc8b",
+      "lastRebindingCommit": "1e19c164e27a9a2a771fd3117e94de6f8f0ccb26"
+    },
+    "proposalSchema": {
+      "path": "planning/enabler-change-requests/enabler-change-request.v4.1.schema.json",
+      "sha256": "f51e2162aa45ca0a1c9b88adadaf4a5fe4536ec086cfcf7503054d9c0827786c"
+    },
+    "pausedPredecessor": {
+      "id": "W2.A03",
+      "effectiveStateCommit": "a211f24107f21f6b87221fd8b60c04b95a97fc8b",
+      "recordSha256": "f099fd8f6a15dcdcddea9ac6dca1ca5cac62d8692991e2d6e4366b1393c6ac6c",
+      "returnPolicy": "paused-predecessor",
+      "consumerTaskId": "W2.A03.T02",
+      "consumerBaseCommit": "ca8b1448e094b637bbd06c3129b69a78df792619",
+      "consumerPacketTaskSha256": "5dc2789685c520f534b336c05a8663f50e00e6bb1ea80f4a9bfd6da3a4f100c8"
+    },
+    "generatedReviewPage": {
+      "path": "planning/review-site/enablers/ECR-0012.html",
+      "sha256": "ff15983d8c4d5460b290fd62a03c0b53a601a37b87009b1105be4a66082942a4"
+    },
+    "retainedPacketValidation": {
+      "path": "artifacts/tmp/ECR-0012.validate-30fed2f8.log",
+      "sha256": "1c6d8424507fe1fb32ab60a7c4eba1da883d0cd5029b1dcb104408b52d605191",
+      "result": "pass",
+      "provenance": "Implementation-owner execution at the clean source packet candidate; retained output independently hashed and read. No fresh reviewer execution is claimed. Final candidate changes only generated site files, leaving packet, schema, proposal, reference and backlog inputs unchanged."
+    },
+    "siteCheck": {
+      "path": "artifacts/tmp/ECR-0012.site-check.json",
+      "sha256": "36d9ef07d75f96c66ace442e1e5fe6b0dac37d2ca367994da501ae1959e9714c",
+      "stdoutPath": "artifacts/tmp/ECR-0012.site-check-30fed2f8.log",
+      "stdoutSha256": "fbd6db5eec428ac0845fd1b6ce32ae93a2bd3c8bd19d1e4540d3737bbf8c5c9c",
+      "status": "pass",
+      "htmlPageCount": 496,
+      "errors": 0,
+      "warnings": 0,
+      "provenance": "Retained producer report and stdout authenticated independently. The checked generated output was then committed as the seven-file direct child of source candidate 30fed2f8. This is not a fresh reviewer-run full site validator; the reviewer independently inspected the committed site delta and checked local links and anchors."
+    },
+    "authentication": "All 58 unique packet input rows were independently authenticated as regular 100644 Git blobs with matching raw SHA-256 values at 30fed2f8 after advisory remediation. The 55 reference rows equal ECR-0011. The formal candidate is a direct child that changes only seven planning/review-site files; no inspected packet, authority, backlog, schema, proposal, advisory or reference input changed. The complete paused A03 canonical record hash matches the immutable binding and current record; DONE T01 equals its c62adc85 disposition snapshot exactly, and BLOCKED T02 preserves its criteria, task hash and base. Generated site content is a projection, not independent approval authority."
+  },
+  "checks": [
+    {
+      "id": "IR-R01-input-identity-and-predecessor",
+      "result": "PASS",
+      "observation": "Independently authenticated 58 input hashes and modes, unchanged reference inventory, paused A03 canonical record, original approval hashes and ancestry, unchanged GOV-MIG-0001 bytes, DONE T01 and preserved BLOCKED T02. At the final candidate, ordinary W2 is PAUSED with amendment-hold scope, CAP-05.S01.T01 is BLOCKED at original 6506 base without lease, active_amendment is null, and A04 is not materialized. Earlier reviewed GOV26/C10 and T01 history remains inherited through unchanged ECR-0011 and its approved predecessor; no new product qualification is inferred."
+    },
+    {
+      "id": "IR-R01-advisory-PF01-planning-replay",
+      "result": "PASS_WITH_LATER_IMPLEMENTATION_PROOF",
+      "observation": "Replayed advisory PF01 against the revised proposal, human page and slice/task criteria. Git confirms a211f241 has sole parent ca8b1448 and contains no intermediate committed IN_PROGRESS claim. The revised packet expressly authorizes only that exact combined READY-to-BLOCKED snapshot, preserved owner/branch/worktree/base/timestamps/blocker/pause event and absence of consumer edits, followed by actual later return, activation and reopen. Every other missing, substituted or fabricated claim remains denied. The advisory remains immutable; this closes its planning ambiguity, not its future implementation or adversarial proof."
+    },
+    {
+      "id": "IR-R01-lawful-delivery-and-five-path-envelope",
+      "result": "PASS_WITH_LATER_TASK_PROOF",
+      "observation": "The supported block/pause/paused-predecessor/bootstrap/materialize/activate/adopt/return/parent-activate/reopen transitions can retain T02's real claim base while placing the separate ADR/index segment inside its later actual base-to-candidate range. The sole A04 task is restricted to gate, gate tests, procedure, one Proposed ADR-0040 and one appended registry entry. Its ADR links A04.T01 and A03.T02 and covers actual protected control plus later extension/baseline association without superseding existing decisions. No T02-owned consumer path or original task definition is changed by A04; separately reviewed correction commits must remain fully visible and attributed in the complete range. Exact implementation remains subject to task checks and independent review."
+    },
+    {
+      "id": "IR-R01-controls-and-risk-selected-verification",
+      "result": "PASS_WITH_LATER_TASK_PROOF",
+      "observation": "The packet preserves closed schemaVersion 1.4 fields, exact two-contract inventory, original 6506 base, current classification/capture input closure and old authority-specific denials. It requires immutable A04 approval/bootstrap/materialization/source/review/exit/security/adoption authentication, exact return and later A03 activation/reopen, full commit/path closure, actual retained-base ADR association and hostile real-Git cases. No generic exemption, self-issued field, checker weakening, scope-addendum writer, schema/taskctl/kernel edit or synthetic product claim is authorized. Focused affected quality, actual task-range ADR/UI control and canonical planning checks are adequate for the proposed correction; native/desktop/full Wave obligations remain at their required later stages."
+    },
+    {
+      "id": "IR-R01-retained-validator-outcomes",
+      "result": "PASS_RETAINED_OUTPUT_AUTHENTICATED",
+      "observation": "Independently recomputed the retained packet-validation, site-report and site-stdout SHA-256 values; all match. Source packet validation reports structural/history validity. Site report records pass with 19 capabilities, 111 slices, 337 ordinary tasks, 496 HTML pages and empty errors/warnings. These are authenticated retained producer outcomes; no new reviewer-run full validator or runtime suite is claimed."
+    },
+    {
+      "id": "IR-R01-final-site-and-clean-boundary",
+      "result": "PASS",
+      "observation": "Final candidate 7f35c7a8 is a direct child of 30fed2f8 and changes precisely seven generated-site files, with no source or authority input delta. Git diff --check passes and the checkout was clean before ledger creation. Independently resolved all seven static human-page and ninety generated ECR-page local links/anchors against committed Git objects. The manifest and pages bind the exact updated packet/proposal/human hashes, display A03 PAUSED/T02 BLOCKED and A04 pending/non-executable, and preserve separate owner, bootstrap, task, exit/return and W2 release boundaries."
+    },
+    {
+      "id": "IR-R01-budget-rollback-and-decision-boundary",
+      "result": "PASS",
+      "observation": "One L/5 planned correction is proposed without structural cleanup, supplemental-refactor allocation or Wave budget reset. Original 33-task/143-point machine baseline, 530 engineering-hour estimate and one cumulative 79.5-hour supplemental-refactoring ceiling remain unchanged; unknown actual effort and unused capacity are not invented. Deferral and broader governed replanning are explicit alternatives. Failure preserves A03/W2 pause, blocked T02, adverse candidates and strict-descendant remediation. Reviewed A04 adoption returns only to paused A03; original 33-page/66-capture consumer proof, native/Core/fifth-D3D work, joined CAP-04.S05, W2 qualification and human release remain open."
+    }
+  ],
+  "findings": [],
+  "closures": [],
+  "priorFindingsReplayed": [
+    {
+      "findingId": "ECR-0012.PF01",
+      "kind": "advisory-preflight",
+      "path": "planning/enabler-change-requests/ECR-0012.preflight-01.json",
+      "sha256": "65c22b8279ab03f03e2056a6c08efcd649154e4a1085da7315f32306b3b62cdf",
+      "introductionCommit": "1e19c164e27a9a2a771fd3117e94de6f8f0ccb26",
+      "originalCandidateCommit": "be305d1b859499f5ca36b6f1ec63698d67ae9a81",
+      "planningClosureCommit": "30fed2f8feff4deae799cd37ba1820781593efda",
+      "disposition": "planning-clarification-closed",
+      "limit": "This was an advisory preflight, not a formal review attempt. No prior formal round or formal closure is invented. Future implementation and denial proof remain due."
+    }
+  ],
+  "readiness": {
+    "exactPacketReviewAccepted": true,
+    "humanApprovalRecorded": false,
+    "referenceApprovalRecorded": true,
+    "recordingCondition": "Commit this exact independent R01 ledger as the sole changed path after 7f35c7a8e49eb8415ffdffa5a2e04374161f0eae. A later owner approval must bind this exact candidate, packet SHA-256, reviewer and ledger SHA-256/introduction commit with empty formal finding closures. No source or site edit may be folded into the review-ledger commit.",
+    "executionCondition": "Only after explicit owner approval of this exact reviewed ECR-0012 packet and immutable approval record may supported W2.A04.B00 bootstrap, independent bootstrap review, exact materialization/activation and the five-path task begin. Independent task, integrated slice, exit and separate security adoption checkpoint must precede correction adoption and exact return to paused A03. Only then may A03 explicitly activate and T02 reopen at ca8b1448. Original consumer, native/Core, slice, Wave and human release obligations remain separate."
+  },
+  "authorityLimits": {
+    "humanProductOrControlApproval": false,
+    "newReferencePublished": false,
+    "amendmentMaterializedOrAdopted": false,
+    "ordinaryTaskOrWaveComplete": false,
+    "releaseAuthorized": false
+  }
+}
