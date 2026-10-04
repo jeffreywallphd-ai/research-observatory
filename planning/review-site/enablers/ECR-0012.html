@@ -1,0 +1,290 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title>ECR-0012 Correct protected desktop activation ADR delivery - Research Observatory Planning Review</title>
+  <link rel="stylesheet" href="../assets/review.css">
+</head>
+<body data-page-type="enabler-detail">
+  <a class="skip-link" href="#main-content">Skip to content</a>
+  <header class="site-header">
+    <a class="brand" href="../index.html" aria-label="Planning review home">
+      <span class="brand-mark" aria-hidden="true">RO</span>
+      <span><strong>Research Observatory</strong><small>Planning Review</small></span>
+    </a>
+    <div class="header-actions">
+      <button class="button button-quiet" type="button" data-theme-toggle aria-label="Toggle light and dark theme">Theme</button>
+    </div>
+  </header>
+
+  <div class="page-frame">
+    <aside class="side-panel" aria-label="Planning navigation">
+<div class="planning-nav" data-planning-nav data-default-tab="waves">
+  <div class="planning-nav-tabs" role="tablist" aria-label="Planning views">
+    <button id="planning-tab-capabilities" class="planning-nav-tab" type="button" role="tab" aria-selected="false" aria-controls="planning-panel-capabilities" data-nav-tab="capabilities">Capabilities</button>
+    <button id="planning-tab-waves" class="planning-nav-tab" type="button" role="tab" aria-selected="true" aria-controls="planning-panel-waves" data-nav-tab="waves">Waves</button>
+  </div>
+  <section id="planning-panel-capabilities" class="planning-nav-panel" role="tabpanel" aria-labelledby="planning-tab-capabilities" data-nav-panel="capabilities" hidden>
+    <nav class='cap-nav' aria-label='Capabilities'><a class="nav-item" href="../CAP-01/index.html"><span>CAP-windows-desktop-runtime</span><small>CAP-01 · Windows-first desktop shell and supervised local runtime</small></a><a class="nav-item" href="../CAP-02/index.html"><span>CAP-local-project-storage</span><small>CAP-02 · Local projects, durable storage, security, and recovery</small></a><a class="nav-item" href="../CAP-03/index.html"><span>CAP-research-domain-workflows</span><small>CAP-03 · Canonical domain, research intent, provenance, and durable workflows</small></a><a class="nav-item" href="../CAP-04/index.html"><span>CAP-scholarly-ingestion</span><small>CAP-04 · Scholarly ingestion, connectors, canonicalization, and corpus governance</small></a><a class="nav-item" href="../CAP-05/index.html"><span>CAP-document-inspection</span><small>CAP-05 · Document acquisition, parsing, source inspection, and page anchors</small></a><a class="nav-item" href="../CAP-06/index.html"><span>CAP-search-screening</span><small>CAP-06 · Local search, discovery, corpus diagnostics, and screening</small></a><a class="nav-item" href="../CAP-07/index.html"><span>CAP-model-gateway</span><small>CAP-07 · Provider-neutral model gateway and governed AI execution</small></a><a class="nav-item" href="../CAP-08/index.html"><span>CAP-evidence-verification</span><small>CAP-08 · Evidence schemas, extraction, verification, and adjudication</small></a><a class="nav-item" href="../CAP-09/index.html"><span>CAP-scholarly-graph-synthesis</span><small>CAP-09 · Scholarly graph, comparison sets, synthesis, and reproducibility</small></a><a class="nav-item" href="../CAP-10/index.html"><span>CAP-novelty-opportunities</span><small>CAP-10 · Novelty auditing, research opportunities, and plural research modes</small></a><a class="nav-item" href="../CAP-11/index.html"><span>CAP-windows-release</span><small>CAP-11 · Windows PC/lab product hardening, validation, packaging, and release</small></a><a class="nav-item" href="../CAP-12/index.html"><span>CAP-university-hosting</span><small>CAP-12 · University-hosted deployment, institutional identity, collaboration, and operations</small></a><a class="nav-item" href="../CAP-13/index.html"><span>CAP-cloud-platform</span><small>CAP-13 · Managed cloud control plane, tenant data planes, governance, and SaaS operations</small></a><a class="nav-item" href="../CAP-14/index.html"><span>CAP-cross-platform-desktop</span><small>CAP-14 · Cross-platform desktop qualification and release</small></a><a class="nav-item" href="../CAP-15/index.html"><span>CAP-study-design</span><small>CAP-15 · Empirical study design and protocol development</small></a><a class="nav-item" href="../CAP-16/index.html"><span>CAP-manuscript-blueprints</span><small>CAP-16 · Manuscript blueprint, venue profiles, and article architecture</small></a><a class="nav-item" href="../CAP-17/index.html"><span>CAP-results-integration</span><small>CAP-17 · Technical report and study-results integration</small></a><a class="nav-item" href="../CAP-18/index.html"><span>CAP-manuscript-drafting</span><small>CAP-18 · Source-grounded manuscript drafting and publication artifacts</small></a><a class="nav-item" href="../CAP-19/index.html"><span>CAP-review-revision</span><small>CAP-19 · Reviewer simulation, editorial synthesis, and revision</small></a></nav>
+  </section>
+  <section id="planning-panel-waves" class="planning-nav-panel" role="tabpanel" aria-labelledby="planning-tab-waves" data-nav-panel="waves">
+    <nav class='cap-nav' aria-label='Waves'><a class="nav-item" href="../waves/W0.html"><span>W0</span><small>Engineering foundation</small></a><a class="nav-item" href="../waves/W1.html"><span>W1</span><small>Windows local runtime and durable core</small></a><a class="nav-item active" href="../waves/W2.html"><span>W2</span><small>Windows local evidence foundation</small></a><a class="nav-item" href="../waves/W3.html"><span>W3</span><small>Windows local research workbench</small></a><a class="nav-item" href="../waves/W4.html"><span>W4</span><small>Windows scholarly reasoning and novelty MVP</small></a><a class="nav-item" href="../waves/W5.html"><span>W5</span><small>Windows PC/lab production release</small></a><a class="nav-item" href="../waves/W6.html"><span>W6</span><small>Cross-platform desktop qualification</small></a><a class="nav-item" href="../waves/W7.html"><span>W7</span><small>Study design and manuscript foundations</small></a><a class="nav-item" href="../waves/W8.html"><span>W8</span><small>Results integration, manuscript drafting, and reviewer simulation</small></a><a class="nav-item" href="../waves/W9.html"><span>W9</span><small>Advanced research-intelligence preview</small></a><a class="nav-item" href="../waves/W10.html"><span>W10</span><small>University-hosted pilot</small></a><a class="nav-item" href="../waves/W11.html"><span>W11</span><small>Managed cloud delivery</small></a></nav>
+  </section>
+</div>
+</aside>
+    <main id="main-content" class="main-panel">
+      <nav class="breadcrumbs" aria-label="Breadcrumb"><a href="../index.html">Planning review</a><span>/</span><a href="index.html">Enabler change requests</a><span>/</span><span aria-current="page">ECR-0012</span></nav>
+
+<section class="hero compact">
+  <div class="hero-top"><div><span class="eyebrow">W2.A04 · W2</span><h1>ECR-0012 — Correct protected desktop activation ADR delivery</h1></div><span class="status status-pending">Pending</span></div>
+  <p>product-scope-security-experience. This page preserves the distinction between authorized scope and executable state.</p>
+</section>
+<section class="review-toolbar">
+  <h2>Proposal, approval, materialization, and campaign state</h2>
+  <dl class="summary-grid"><div><dt>Proposal record</dt><dd>pending-approval / non-executable</dd></div><div><dt>Human approval</dt><dd>PENDING</dd></div><div><dt>Amendment lifecycle</dt><dd>NOT_MATERIALIZED</dd></div><div><dt>Bootstrap</dt><dd>NOT_SUBMITTED</dd></div><div><dt>Amendment campaign</dt><dd>NONE</dd></div></dl>
+  <p>No human approval is recorded. The proposal is non-executable and grants no bootstrap, task, amendment, Wave-resume, or release-gate authority.</p>
+</section>
+<section class="review-toolbar">
+  <h2>Hash-bound source records</h2>
+  <table><thead><tr><th>Record</th><th>Repository-relative path</th><th>SHA-256</th></tr></thead><tbody>
+  <tr><th>Proposal</th><td><code>planning/enabler-change-requests/ECR-0012.md</code></td><td><code>24b805f99d5cdac257bd922bfdc6ead5f21b1d799627e79c350beddbba6a53ac</code></td></tr>
+  <tr><th>Packet</th><td><code>planning/enabler-change-requests/ECR-0012.packet.json</code></td><td><code>eb1cbf1b827bffdd5914f9255c6f0bba374621f916711b3e05815202d0312b8c</code></td></tr>
+  <tr><th>Human review</th><td><code>planning/enabler-change-requests/ECR-0012-review.html</code></td><td><code>680fe0ff9b6b4d7868c2c3535b97727f8b93d19407ca80310f94194537407144</code></td></tr>
+  <tr><th>Approval</th><td><code>pending</code></td><td><code>pending</code></td></tr>
+
+  </tbody></table>
+</section>
+<section class="review-toolbar">
+  <h2>Append-only bootstrap scope addenda</h2>
+  <ul class="gate-criteria"><li>None</li></ul>
+</section>
+<section class="review-toolbar">
+  <h2>Append-only bootstrap review attempts</h2>
+  <table><thead><tr><th>Attempt</th><th>Frozen candidate</th><th>Disposition / state</th><th>Reviewer</th></tr></thead><tbody><tr><td colspan="4">Not submitted</td></tr></tbody></table>
+</section>
+<section class="review-toolbar">
+  <h2>Ordered Wave authority chain</h2>
+  <table><thead><tr><th>Authority</th><th>Packet commit / hash</th><th>Record commit / hash</th><th>Meaning</th></tr></thead><tbody><tr><th>W2 base approval</th><td><code>c85a59f3a293f8e3f2eaf6454682c9a14b1efa55</code></td><td><code>3bc1c1828efab50efc730bf3907c3036eff58a2f</code></td><td>Original complete Wave packet</td></tr><tr><th>W2.A01</th><td><code>3fb76d6cb6bce6eaf16774931704de68c6168500</code></td><td><code>f8a49a2ec7ff4daf6e1c5e14da369e06ddff5287</code></td><td>Adopted predecessor authority; preserved unchanged</td></tr><tr><th>W2.A02</th><td><code>60e8a2d3bbd3ba50cc4809a7ebe799764e6b00db</code></td><td><code>5fbeea66e84bac5ab24cf1bb8d2522838529a0ba</code></td><td>Adopted predecessor authority; preserved unchanged</td></tr><tr><th>GOV-MIG-0001</th><td><code>d8adf48e9c2e0319e4ece573a9381f6ec305310e</code></td><td><code>4851bcb71d47e5adc3541a6ca0c39b20241cf740e41f644c52ba210288fe105d</code></td><td>Post-migration governance authority; does not grant product execution</td></tr><tr><th>W2.A04</th><td><code>eb1cbf1b827bffdd5914f9255c6f0bba374621f916711b3e05815202d0312b8c</code></td><td><code>pending</code></td><td>Pending, non-executable proposal; no bootstrap/task authority</td></tr></tbody></table>
+  <p>Effective ordinary W2 authority remains the approved base plus adopted ordered amendments. W2.A04 is pending and non-executable. If separately approved, it would authorize only bootstrap unit <code>W2.A04.B00</code> and the exact bounded task inventory below.</p>
+</section>
+<section class="review-toolbar">
+  <h2>Proposed slice contributions</h2>
+  <p>These slices are packet data, not hard-coded review-page inventory. They remain non-executable until exact approval and independently approved bootstrap materialization.</p>
+  <details class="plan-details"><summary>W2.A04.S01 — Protected desktop activation ADR delivery correction</summary><p>Deliver one companion Proposed ADR and narrow exact-correction attribution so the existing protected consumer can qualify at its unchanged real claim base, preserving original approvals and security boundaries.</p><p><strong>Work type:</strong> new-product-work. <strong>Tasks:</strong> W2.A04.T01. <strong>Refactor tasks:</strong> none.</p><ul class="gate-criteria"><li>Introduce only one indexed Proposed ADR-0040 linked to W2.A04.T01 and W2.A03.T02. Cover actual protected gate changes and later extension/baseline changes under Accepted ADR-0001; supersede no accepted decision and leave ADR-0039 unchanged. Its one new index entry and document are separate reviewed A04 delivery after the retained T02 base, not retroactive T01 or T02-owned consumer source.</li><li>Authenticate frozen paused A03 complete record, unchanged DONE T01 and retained T02 hash/criteria/base ca8b1448e094b637bbd06c3129b69a78df792619. Explicitly authenticate only exact combined claim/block/pause snapshot a211f24107f21f6b87221fd8b60c04b95a97fc8b, its single ca8b1448 parent, base/owner/branch/worktree/timestamps/blocker/pause event and absence of consumer source edits. Git contains no intermediate IN_PROGRESS claim; never fabricate one or grant a generic missing-claim exception. Bind actual later A03 activation and supported T02 reopen while preserving owner, branch/worktree, exact base and current lease. Partition reviewed A04 correction commits from A03 T01 and later T02 seven-file consumers without dropping any source or hidden add/revert history from the actual range.</li><li>Obtain expanded independent exact-candidate control/security/ADR task disposition, integrated S01 review, amendment exit review and separate committed adoption checkpoint binding exact paused-predecessor return. Leave A03 paused and T02 blocked until separate supported activation/reopen. Fresh T02 captures, original native/Core/D3D, joined CAP-04.S05 and W2/release gates remain due.</li></ul></details>
+</section>
+<section class="review-toolbar">
+  <h2>Refactor allocation and planning exception</h2>
+  <dl class="summary-grid"><div><dt>Approved-Wave baseline</dt><dd>143 points at <code>c85a59f3a293f8e3f2eaf6454682c9a14b1efa55</code></dd></div><div><dt>Refactor allocation</dt><dd>0 points / 0%</dd></div><div><dt>Policy</dt><dd>standard-15-percent</dd></div><div><dt>Method</dt><dd>Preserve immutable W2 33-task, 143-point S=1/M=3/L=5 machine baseline and original 530 engineering-hours with one cumulative 15% supplemental-refactoring ceiling of 79.5 hours. A04 proposes one L/5 planned outcome-enabling control/documentary correction, no structural cleanup or supplemental refactoring. Empty allocations and zero share apply only to this proposal; they do not claim cumulative actual effort, unused capacity, cost or an estimate conversion. No Wave budget reset. Actual prior refactoring remains to be reconciled before any future supplemental refactoring.</dd></div></dl>
+  <table><thead><tr><th>Refactor task</th><th>Estimate</th><th>Points</th></tr></thead><tbody><tr><td colspan="3">No refactor task declared</td></tr></tbody></table>
+  <p>Standard refactor limit: 15%</p>
+</section>
+<section class="review-toolbar">
+  <h2>Governed experience proposal</h2>
+  <p>Reference <code>RO-UI-ACADEMIC-MINIMAL-1.8</code> is already human-approved. Human approval of this ECR reaffirms and binds that existing authority unchanged; it does not reserve a new reference or authorize bootstrap materialization of reference approval.</p>
+  <ul class="gate-criteria"><li><a href="../../../design/ui-reference/APPROVAL.yaml">design/ui-reference/APPROVAL.yaml</a> — <code>9e5628479727b45439bb6326e053ac3b026ad14cec79ffd1b9dfbfceceb38b1f</code></li><li><a href="../../../design/ui-reference/CAPABILITY_COVERAGE.json">design/ui-reference/CAPABILITY_COVERAGE.json</a> — <code>35bf4ea4cf9cbc5bbfc30e48ecdf9ab6e91b333ce016816a3fd5713f01e4f945</code></li><li><a href="../../../design/ui-reference/CAPABILITY_COVERAGE.md">design/ui-reference/CAPABILITY_COVERAGE.md</a> — <code>0d82db579cb7d4a2988ec623c0556ea47086c7fcb9245ec0f332f71c8e7efb16</code></li><li><a href="../../../design/ui-reference/PAGE_INVENTORY.md">design/ui-reference/PAGE_INVENTORY.md</a> — <code>42253f4ef65ef8e32fb66c57dcbf671bc3c65e32b8892349064ec8cdc6ab3e4c</code></li><li><a href="../../../design/ui-reference/PAGE_INVENTORY_SOURCE.md">design/ui-reference/PAGE_INVENTORY_SOURCE.md</a> — <code>42253f4ef65ef8e32fb66c57dcbf671bc3c65e32b8892349064ec8cdc6ab3e4c</code></li><li><a href="../../../design/ui-reference/README.md">design/ui-reference/README.md</a> — <code>ef9065dd2609b7af791bf3911325b42d83b9cb159bb638be37286ea2603e338f</code></li><li><a href="../../../design/ui-reference/SITE_MANIFEST.json">design/ui-reference/SITE_MANIFEST.json</a> — <code>56a8d6cb772fe3b787e51d38794d5d000a47cfa185b1c4885bff4bdbedcea3a2</code></li><li><a href="../../../design/ui-reference/STYLE_GUIDE.md">design/ui-reference/STYLE_GUIDE.md</a> — <code>4421afe6a1eb4f9fe05dc201503cc94cce1bdd92d72e30e11cae6b710bd221db</code></li><li><a href="../../../design/ui-reference/STYLE_GUIDE_SOURCE.md">design/ui-reference/STYLE_GUIDE_SOURCE.md</a> — <code>4421afe6a1eb4f9fe05dc201503cc94cce1bdd92d72e30e11cae6b710bd221db</code></li><li><a href="../../../design/ui-reference/WORKFLOW_CATALOG.json">design/ui-reference/WORKFLOW_CATALOG.json</a> — <code>a47ff01ec5d485fd2a87dffd5480576cadbc7af23986ed4d6b414323c2d3cb21</code></li><li><a href="../../../design/ui-reference/WORKFLOW_CATALOG.md">design/ui-reference/WORKFLOW_CATALOG.md</a> — <code>c2b98b103574156a60695639af5572ded2475ca00f745e700ded6a1d5a25f071</code></li><li><a href="../../../design/ui-reference/application-settings.html">design/ui-reference/application-settings.html</a> — <code>c13d1fd7eeecd372fe9a49839d5c8989ac04e72e7a67c7751a975517ac964a6a</code></li><li><a href="../../../design/ui-reference/assets/app.css">design/ui-reference/assets/app.css</a> — <code>0e085d1112322ff9277fbc10fd9244690e3e97e0638a1aa34848ca5e971f8f56</code></li><li><a href="../../../design/ui-reference/assets/app.js">design/ui-reference/assets/app.js</a> — <code>cfd064ffd003172dad6d2189705f4b25257e58aec916b3f2038085c926d50d8b</code></li><li><a href="../../../design/ui-reference/assets/print.css">design/ui-reference/assets/print.css</a> — <code>03b327a45c53aa2e1135c5de598c88524d5a1edc7f546f7aa4355e4b8d41618c</code></li><li><a href="../../../design/ui-reference/assets/tokens.css">design/ui-reference/assets/tokens.css</a> — <code>e6aa1ebf847e983f4f5c9d20ad0e753716737cdfbedf617df2292bf510bebfa5</code></li><li><a href="../../../design/ui-reference/audit-lineage.html">design/ui-reference/audit-lineage.html</a> — <code>4f08394bfcb370a86a002b59d276524da8f533013726022a4f02dd5e656f8a6f</code></li><li><a href="../../../design/ui-reference/claim-graph.html">design/ui-reference/claim-graph.html</a> — <code>cf8f265a664d3bc1f6a15fd8f4f4720e2d043334dc0f5e98ec660e2518e8bfd5</code></li><li><a href="../../../design/ui-reference/corpus-canvas.html">design/ui-reference/corpus-canvas.html</a> — <code>f23d2cc6c3eecb9e5f5be146f9f0f442e42cf1cd29e56199011fb491f28bf16f</code></li><li><a href="../../../design/ui-reference/critical-lens.html">design/ui-reference/critical-lens.html</a> — <code>4877a11d140de166e82f939eca7a1f19b0ac1cdff515217582f84dfe91284980</code></li><li><a href="../../../design/ui-reference/document-reader.html">design/ui-reference/document-reader.html</a> — <code>6527e09137d9ebe0d2f48c3c30bdc2a45eae5e2680e7f09f4deda4c81a8a32c0</code></li><li><a href="../../../design/ui-reference/evidence-matrix.html">design/ui-reference/evidence-matrix.html</a> — <code>82dc38d05ee7843be44849698c07a230618dbdbabc559ccc98d25c52cd6f4cf2</code></li><li><a href="../../../design/ui-reference/help-onboarding.html">design/ui-reference/help-onboarding.html</a> — <code>7fd6cf66441053dc403b43b843b5f73449caa69be4ea8c189cd3bb0546d8245d</code></li><li><a href="../../../design/ui-reference/index.html">design/ui-reference/index.html</a> — <code>23628190d9093db1d3d7cbebc5ca9af5cc2f081acd678b01fe1097906242473d</code></li><li><a href="../../../design/ui-reference/ingestion-reconciliation.html">design/ui-reference/ingestion-reconciliation.html</a> — <code>83df119e8e28ab69fcfd999855a29b896bed7928f17588c31944765ec593d0d8</code></li><li><a href="../../../design/ui-reference/intent-contract.html">design/ui-reference/intent-contract.html</a> — <code>a361cd8ce9381b24521f0e3e1218cd62c4dec253fec6338bdd8fcd1a31ba8dbf</code></li><li><a href="../../../design/ui-reference/living-monitor.html">design/ui-reference/living-monitor.html</a> — <code>bc2ee881037faae2540f23519a6c3abc49d59dd402d21ac17e6305164c0887dc</code></li><li><a href="../../../design/ui-reference/manuscript-blueprint.html">design/ui-reference/manuscript-blueprint.html</a> — <code>d63828eb45010e12f7225dbe9e8cf7aa503c171bce33b52c1ae4ce573635e308</code></li><li><a href="../../../design/ui-reference/manuscript-studio.html">design/ui-reference/manuscript-studio.html</a> — <code>9eb95f05404e4bb3ed07353633e4c6eab60339c294d855eb6946892f150aa867</code></li><li><a href="../../../design/ui-reference/model-center.html">design/ui-reference/model-center.html</a> — <code>a1ec25442e042126c99eac67b4943d79b6485fe4a888f68314468d7b66581005</code></li><li><a href="../../../design/ui-reference/new-project.html">design/ui-reference/new-project.html</a> — <code>e42091e46dfff96a15da5a9d733ca83e8009148fef1853099079fddb6d8bad94</code></li><li><a href="../../../design/ui-reference/novelty-audit.html">design/ui-reference/novelty-audit.html</a> — <code>9f7912c327ef5a0f5987f2925cf0e96d8e6547a23c1a4856a7d06c3b9a570853</code></li><li><a href="../../../design/ui-reference/opportunity-radar.html">design/ui-reference/opportunity-radar.html</a> — <code>52b61e184ffebbc6f70ead74e6fcd9a12da0976696fbee8165a80e9141c6866a</code></li><li><a href="../../../design/ui-reference/parsing-quality.html">design/ui-reference/parsing-quality.html</a> — <code>e61d819d284090a61ffbcf8d0ad7b383e2632ef74aa9cac5c11e362f79795ff6</code></li><li><a href="../../../design/ui-reference/project-settings.html">design/ui-reference/project-settings.html</a> — <code>170fb77689f5950a36530dbd1adf228ce1bdc874ab19f3c81199b2574986504c</code></li><li><a href="../../../design/ui-reference/projects.html">design/ui-reference/projects.html</a> — <code>ef1fc62b5465f8c9d98d5e004d8df0f5b397d79bd5f94a306a95a3f6f61e2e52</code></li><li><a href="../../../design/ui-reference/prototype-index.html">design/ui-reference/prototype-index.html</a> — <code>87f19ba1a6e7a392badd2a2e2aba35fd8ae4d3aa6fc06bd50be269a2f0a2f9d0</code></li><li><a href="../../../design/ui-reference/research-notebook.html">design/ui-reference/research-notebook.html</a> — <code>98f794165f3b60b20321d7d40f56b6573501491c60e909eb43092260d6f9c15d</code></li><li><a href="../../../design/ui-reference/reviewer-simulation.html">design/ui-reference/reviewer-simulation.html</a> — <code>a3976fcfb87eaa2738fc53e8d34d1d7fdc51bb1503b74ec8ac5f0f68669c30b4</code></li><li><a href="../../../design/ui-reference/revision-response.html">design/ui-reference/revision-response.html</a> — <code>30dbc69b1fc72ecc040d46b2b8f0d47cf52cc74ec2f97a723458106c23f0dcc2</code></li><li><a href="../../../design/ui-reference/schema-manager.html">design/ui-reference/schema-manager.html</a> — <code>69f8973f29f7d9651d5c72c171d919d93c9aa8afcf3dbfb9df18aefbf34223c8</code></li><li><a href="../../../design/ui-reference/screening.html">design/ui-reference/screening.html</a> — <code>52addf3853e395b1151b75c7cd6881ffaadf250538f366dba8318417abdf0464</code></li><li><a href="../../../design/ui-reference/scripts/build_mockups.py">design/ui-reference/scripts/build_mockups.py</a> — <code>da0caa083e75e382feffb6c6682a24100c23b8fb44af5d78cf7ef692ecc80cc4</code></li><li><a href="../../../design/ui-reference/scripts/render_previews.py">design/ui-reference/scripts/render_previews.py</a> — <code>f7b868716f56e70b11004a61aa85762a1bfc6ea06036260f3dd19746bf004959</code></li><li><a href="../../../design/ui-reference/scripts/smoke_interactions.py">design/ui-reference/scripts/smoke_interactions.py</a> — <code>ecd92ebca427b5edb5fe687ed14d838341e66277370b0ecf3cfc432f8bc347ac</code></li><li><a href="../../../design/ui-reference/scripts/verify_site.py">design/ui-reference/scripts/verify_site.py</a> — <code>891940c2a6d0906e211528b04b74fc6fe1351a3d4ded82eea650b051e18c9e0f</code></li><li><a href="../../../design/ui-reference/search-studio.html">design/ui-reference/search-studio.html</a> — <code>506a48064f570bbecbe6e802fdb9e09677614e1241665e5d9d88f6d0829fd26c</code></li><li><a href="../../../design/ui-reference/source-manager.html">design/ui-reference/source-manager.html</a> — <code>5bd6e40b7f59f2fe86dab243272c63af8cba4de14911b0e1adbbd4db9ba60d40</code></li><li><a href="../../../design/ui-reference/study-design.html">design/ui-reference/study-design.html</a> — <code>2f764a0f5a823551ac8b774466c215bbb5eb1e4897dd1b3da2e7c75193d012fa</code></li><li><a href="../../../design/ui-reference/style-guide.html">design/ui-reference/style-guide.html</a> — <code>1453b8b205534cbbf361cc52cb2ae19e9c0b84711401656af013d6a8c2a63311</code></li><li><a href="../../../design/ui-reference/synthesis-studio.html">design/ui-reference/synthesis-studio.html</a> — <code>a1742692ea189665511a2b455a1bcde673f06973258f941f445d11b5b94cea63</code></li><li><a href="../../../design/ui-reference/task-center.html">design/ui-reference/task-center.html</a> — <code>ee47f6dd88fa1564043192aae0d0f7030e4fe48ddfd673eeaea6b775c017e11e</code></li><li><a href="../../../design/ui-reference/technical-reports.html">design/ui-reference/technical-reports.html</a> — <code>5fb3754d65aa9ffb06c1b8008994bc4ab4c79ba26188fb0c193e8c45b8036ae6</code></li><li><a href="../../../design/ui-reference/theory-map.html">design/ui-reference/theory-map.html</a> — <code>729b32cf41942a900057721f4402d8fab48f005b4e31e9e6ac3abf88c93db44d</code></li><li><a href="../../../design/ui-reference/REFERENCE_MANIFEST.yaml">design/ui-reference/REFERENCE_MANIFEST.yaml</a> — <code>4da9bf6e94c9b2f16b1dbbaff6bd76b90b89ac396321689685ed24dc191c63a5</code></li></ul>
+</section>
+<section class="review-toolbar">
+  <h2>Proposed bounded inventory</h2><ul class="wave-slice-list"><li><span><strong>W2.A04.T01 — Bind protected activation ADR correction and exact return lineage</strong><small>Deliver one companion Proposed ADR and narrow exact-correction attribution so the existing protected consumer can qualify at its unchanged real claim base, preserving original approvals and security boundaries.</small><small>Estimate L · dependencies: W2.A04.B00</small></span><span class="status status-pending">Pending</span></li></ul>
+  <h3>Exit criteria</h3><ul class="gate-criteria"><li>Bind the exact complete paused A03 predecessor record at a211f24107f21f6b87221fd8b60c04b95a97fc8b, canonical record SHA-256 f099fd8f6a15dcdcddea9ac6dca1ca5cac62d8692991e2d6e4366b1393c6ac6c, original ECR-0011 reviewed packet/approval, DONE T01 source aa096646/submission 206960d5/disposition c62adc85 and original T02 blocked claim base ca8b1448e094b637bbd06c3129b69a78df792619. Preserve all task definitions, hashes and immutable review history.</li><li>The retained planned-path ADR preflight output SHA-256 a63b91aec33c5f8bc0b6b9592521b5092f8ecd2ba10ee4eb2f8fec54770cb173 reports exit 1 for the protected extension/baseline. Resolve through one separate five-path A04 correction, never widened-base checking, bootstrap addendum misuse, pre-claim ADR substitution or silent envelope expansion.</li><li>Authenticate unchanged original W2/adopted A01/A02, GOV-MIG-0001, approved 55-file 1.8 package/publication, reviewed GOV26/C10 and exact A03 T01 approval before independent exact packet review and explicit owner approval. No reference or product redesign.</li><li>Independently review B00 before exact one-task materialization; deliver and review companion ADR/index plus narrow v1.4 correction and return attribution under exact source envelope. Preserve original consumer seven-file scope and real complete task range.</li><li>Independent task, integrated slice, exit and separate security checkpoint reviews precede A04 adoption. Return sole hold to paused A03 with T01 DONE and T02 blocked at retained base; only later legal A03 activation/T02 reopen permits consumer delivery. W2 qualification and release remain separate.</li></ul>
+</section>
+<section class="section-heading"><span class="eyebrow">Executable projection</span><h2>Materialized task review packets and history</h2><p>The proposed packet inventory above remains distinct from current task state. Each task below shows either its complete append-only review control or an explicit legacy latest-review-only projection.</p></section>
+<p>No amendment task has been materialized.</p>
+
+<section data-amendment-exit-id="W2.A04" data-exit-review-mode="latest-completion-only">
+  <div class="section-heading"><span class="eyebrow">Amendment exit and adoption</span><h2>Independent amendment-exit review</h2></div>
+
+  <p><strong>Legacy latest-completion-only projection.</strong> No immutable amendment-exit rounds are recorded; this view does not fabricate exit-review history.</p>
+  <section class="review-toolbar" data-latest-completion-projection="W2.A04" data-latest-completion-status="PENDING" data-latest-completion-reviewer="none" data-latest-completion-reviewed-at="none" data-latest-completion-notes="none"><h3>Latest completion projection</h3><dl class="summary-grid"><div><dt>Status</dt><dd>PENDING</dd></div><div><dt>Reviewer</dt><dd>none</dd></div><div><dt>Reviewed at</dt><dd><code>none</code></dd></div><div><dt>Evidence</dt><dd>None</dd></div></dl><p><strong>Latest notes:</strong> None</p></section>
+  <div class="section-heading"><span class="eyebrow">Bound Wave checkpoint evidence</span><h3>Adoption checkpoints</h3><p>These typed references are retained separately from exit-review evidence and do not rewrite completion history.</p></div>
+<p>No bound amendment-adoption checkpoint is recorded.</p>
+</section>
+<section class="callout callout-warning">
+  <div><span class="eyebrow">Ordinary Wave execution remains stopped</span><h2>Safe resume boundary</h2><p>First obtain independent approval of this exact packet and explicit human approval. Only then may the amendment continue through independently approved bootstrap, materialization, completion and independent approval of the one task, amendment-exit control/security review, and the W2 adoption checkpoint. The alternatives are an append-only defer or withdraw disposition with an explicit safe resume condition; editing or reapproving W2 in place is prohibited.</p></div>
+</section>
+<details class="plan-details"><summary>Rollback and recovery duties</summary><ul class="gate-criteria"><li>Before exact owner approval revise or defer only inert proposal; do not execute correction source.</li><li>On bootstrap/task/review/return failure keep A03 and W2 paused and T02 blocked, preserve adverse committed candidates and append-only rounds, and remediate only through strict descendants.</li><li>After reviewed A04 adoption return hold only to paused A03; no silent revert, changed base/criteria, weakened ADR gate or baseline relabeling. Original product/native/Core and release failures remain open obligations.</li></ul></details>
+<details class="plan-details"><summary>Read the canonical proposal</summary><article class="plan-article"><pre class='markdown-fallback'>This inert, append-only proposal corrects one missing architectural delivery
+association in approved ECR-0011. It authorizes no implementation until the exact
+committed packet is independently reviewed and explicitly approved by the owner.
+The frozen W2/A01/A02/A03 packets and completed A03.T01 remain unchanged.
+
+## Problem and evidence
+
+Accepted ADR-0001 requires a changed, indexed, task-linked Proposed or Accepted
+ADR in the same protected-path change set. W2.A03.T02 must change the protected
+desktop activation and visual baseline, but its frozen seven-file source envelope
+contains no ADR or registry path. Proposed ADR-0039 covers T01&#x27;s controls only.
+The read-only planned-path preflight exited 1 for both protected paths before any
+consumer edit. Its retained raw output is
+`artifacts/tmp/W2.A03.T02.adr-preflight.log`, SHA-256
+`a63b91aec33c5f8bc0b6b9592521b5092f8ecd2ba10ee4eb2f8fec54770cb173`.
+This is a prospective path check, not product-candidate qualification.
+
+Independent read-only authority review confirmed the mismatch and the supported
+retained-base correction sequence. A pre-claim ADR would be unchanged in T02&#x27;s
+real task range; choosing a wider verification base would conceal the missing
+association. Bootstrap scope addenda govern B00 only. An unreviewed registry
+addition also violates the current v1.4 source-history control.
+
+## Decision and alternatives
+
+**Recommended:** one bounded W2.A04.S01/T01 control/documentary correction while
+W2.A03 is paused. Deliver a new Proposed ADR-0040 and its one registry entry in
+the retained T02 range, and authenticate only this exact reviewed correction
+segment and A03 return/reactivation/reopen chain. Then return to A03 and finish
+its already approved consumer task. This satisfies ADR-0001 without weakening
+the gate or revising a frozen approval.
+
+**Defer:** keep A03 and W2 paused and T02 blocked. This preserves authority but
+leaves the approved 1.8 desktop activation and W2 acquisition outcome incomplete.
+
+**Broader governed replanning:** replace the activation/control approach through
+a separately reviewed and approved proposal. This is justified only by new
+consequential evidence; the demonstrated issue needs an ADR association and
+exact correction attribution, not new product or reference behavior.
+
+## Frozen predecessor and authority
+
+The machine packet must bind the exact complete quiescent PAUSED W2.A03 record,
+its effective Git state, original ECR-0011 packet and approval reference, with
+`returnPolicy: paused-predecessor`. The exact state commit and canonical record
+hash are recorded in `ECR-0012.packet.json`; prose is not a replacement for them.
+
+W2.A03.T01 is DONE with independently approved source
+`aa09664678ca3ca8fa7a428cb60f3565d2c0e9bd`, frozen submission
+`206960d50ce5be77bd120de09d04d144afa8f7d1`, and disposition
+`c62adc8510a7bcbe49223909118428e434a9c665`. Preserve its complete record,
+criteria, evidence, review history, witness and source ancestry. Preserve
+ADR-0039 and every accepted ADR.
+
+W2.A03.T02 is claimed at `ca8b1448e094b637bbd06c3129b69a78df792619`, then blocked
+on this prerequisite before source edits. The supported claim, block and A03
+pause mutations were saved together in its single child
+`a211f24107f21f6b87221fd8b60c04b95a97fc8b`: Git records READY to BLOCKED,
+not an intermediate committed IN_PROGRESS claim. The packet explicitly
+authorizes the gate to authenticate only this exact combined frozen snapshot,
+its base/owner/branch/worktree/timestamps/blocker/pause event and absence of
+source edits, followed by the actual later supported reopen. Neither a test nor
+implementation may invent the missing intermediate Git state. Preserve that
+exact base, task hash,
+criteria, owner, branch and completed histories. W2 remains PAUSED; original
+CAP-05.S01.T01 remains BLOCKED at
+`6506c68461144747b0ee9be10853211717aa381d`. The approved Academic Minimal 1.8
+publication `acdc67b616f5ecdec448f57a7efe46e4f359aa9f`, package
+`cd8995fdcea2fe44452eaa1fdd258b6f9fab5714cbd443a81a8e5b4251220b94`, all 55
+reference file hashes, GOV-MIG-0001, adopted A01/A02 and reviewed GOV26/C10
+histories remain binding. Their exact machine bindings are inherited and
+revalidated, not assumed from names.
+
+## Ordered delivery and exact envelope
+
+1. Retain the exact combined claim/block/pause snapshot already committed at
+   `a211f24107f21f6b87221fd8b60c04b95a97fc8b`, whose sole parent is the retained
+   T02 base. Preserve its absence of consumer edits and intermediate claim commit.
+2. After independent packet review and explicit exact owner approval, append
+   W2.A04.B00 only. Independently approve B00 before materializing precisely one
+   W2.A04.S01/T01 and transferring the sole amendment hold from paused A03.
+3. W2.A04.T01 delivers the five paths below, under its own claim and review.
+   Its Proposed ADR-0040 links both W2.A04.T01 and W2.A03.T02, covering the actual
+   protected gate correction and later extension/baseline changes. It supersedes
+   no accepted decision. It is a separate correction segment, not T02-owned
+   consumer source or a retroactive T01 change.
+4. Complete independent task, integrated slice, amendment exit and separate
+   control/security adoption reviews. Adoption returns the hold to still-paused
+   A03 without changing its frozen packet, DONE T01 or retained T02 base.
+5. Explicitly activate A03 and reopen its BLOCKED T02 through supported taskctl.
+   Deliver only its original seven consumer source paths after that reopen.
+   ADR-0040/index are now in T02&#x27;s actual claim-base-to-candidate range. Run the
+   ADR checker on that exact range, not a substituted campaign base.
+6. Finish A03 task/slice/exit/security/adoption gates. Ordinary W2 resume,
+   original attachment/native/Core proof and release remain separate.
+
+The **closed W2.A04.T01 source envelope** is exactly:
+
+- `tools/ui_change_gate.py`
+- `tests/foundation/test_ui_change_gate.py`
+- `docs/automation/design-first-ui-changes.md`
+- new `docs/adr/ADR-0040-document-protected-desktop-activation-correction.md`
+- `docs/adr/index.json` — one appended ADR-0040 entry only
+
+Task-owned evidence/reviews, generated planning views and the exact amendment
+checkpoint are workflow outputs. No schema, taskctl/kernel, original task
+definition, reference, witness, assembler, activation, baseline, renderer,
+Core/native, permission, migration, dependency, runtime or release source edit is
+authorized by A04. T02&#x27;s seven consumer files remain its separately approved
+source envelope. The correction does not invent a generic scope-addendum writer.
+
+## Control invariants and acceptance
+
+Keep the schemaVersion 1.4 contract shape and all existing authority fields.
+Derive the correction from immutable Git and taskctl records rather than a new
+self-asserted contract field. Authenticate exactly ECR-0012/W2.A04 packet,
+approval, B00, materialization, five-path candidate and independent review,
+slice/exit/security checkpoint, adoption return, and later A03 activation/T02
+reopen. Bind the frozen paused A03 record and complete T01/T02 identities. Replace
+the old separate-claim-commit predicate only for this packet-bound combined
+snapshot; reject every other absent, substituted or fabricated claim. Later
+consumer delivery still requires the actual return, activation and reopen state.
+
+Partition the separately reviewed A04 commits from A03.T01 controls and T02
+consumer commits without dropping anything from the real range. Require exact
+regular blobs, one next ADR registry entry, ADR-0040 fields and links, all source
+commits, approval/review-before-dependent-delivery ordering, current owner/lease,
+branch/worktree and unchanged base. Deny hidden add/revert, extra source, extra
+ADR/index edits, changed completed T01, forged or missing correction history,
+missing return, premature A03 activation/reopen and shortened T02 base. Keep the
+original CAP-05 base, two-contract inventory, current independent classification,
+producer/dependent input closure, 1.8 33/66 identity, v1.0–v1.4 denials and old
+uncorrected-history fixtures within their original authority.
+
+## Selected proof and completion limits
+
+Use focused real-Git authority tests for the exact combined snapshot, correction and return,
+including missing/stale/forked approval or review, predecessor mutation, foreign
+owner, shortened base, mixed delivery, source addition, dirty inputs and registry
+substitution. Prove the actual retained-base ADR association in a disposable
+future consumer fixture, alongside old positive/denial cases. Label any mocked
+capture reader as synthetic control proof. Run actual correction task-range ADR,
+targeted quality and canonical backlog/views/site checks at a stable committed
+candidate; obtain expanded independent control/security/ADR task disposition.
+Slice/exit proof includes supported persistence and return binding. It does not
+claim a new desktop capture or original product/native boundary passed.
+
+W2.A04.T01 is one proposed L/5 planned correction-delivery task. No structural
+cleanup or supplemental refactoring is proposed. Preserve the original W2
+33-task, 143-point and 530-hour estimate and one cumulative 15% refactoring
+ceiling; no reset or claim of remaining budget. An estimate is not measured
+spend. Full repository/desktop profiles, fresh T02 66 captures, original
+CAP-05.S01.T01 native/Core/D3D and joined CAP-04.S05 proof, W2 qualification and
+human release decision remain due under their own stages.
+
+## Rollback and exact resume condition
+
+The independent advisory finding at candidate
+`be305d1b859499f5ca36b6f1ec63698d67ae9a81` is retained in
+`ECR-0012.preflight-01.json`. The preceding combined-snapshot authorization is
+its planning closure; implementation and adversarial proof remain unexecuted.
+
+Before approval, revise or defer this inert proposal only. On bootstrap,
+correction, review or return failure, keep A03/W2 paused and T02 blocked;
+retain adverse candidates and append-only rounds, then remediate through a
+strict descendant. Never rewrite old packets, move the T02 base, waive ADR
+association, silently revert controls or relabel a visual baseline.
+
+After exact reviewed owner approval, use supported B00/materialization/activation
+and task review commands. Only after reviewed A04 adoption and exact paused-
+predecessor return may `taskctl amendment activate W2.A03` and
+`taskctl reopen W2.A03.T02` resume consumer delivery at the retained base.
+Neither ECR approval nor A04 completion approves W2 release.</pre></article></details>
+
+    </main>
+  </div>
+
+  <footer class="site-footer">
+    <span>Static, local-first review surface</span>
+    <span>Capability decisions precede implementation</span>
+  </footer>
+  <script src="../assets/review.js"></script>
+</body>
+</html>
