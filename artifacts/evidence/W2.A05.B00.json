@@ -1,0 +1,63 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "W2.A05.B00",
+  "commit": "d630881307311334782947ddcde0959ad8c29603",
+  "baseCommit": "b54f24c222f631700056574a08056f660696d305",
+  "branch": "codex/w2-implementation",
+  "changedFiles": [
+    "planning/review-site/enablers/ECR-0013.html",
+    "planning/review-site/enablers/index.html",
+    "planning/review-site/manifest.json"
+  ],
+  "checks": [
+    {
+      "command": ".venv/Scripts/python.exe -B tools/planctl.py --repo . ecr validate ECR-0013 --require-approved",
+      "exitCode": 0,
+      "result": "Fresh authority check at this exact candidate; 63.88 seconds; raw log artifacts/tmp/W2.A05.B00.d6308813.qualification-01.authority.log, SHA-256 31325dc87f97d406f716214f6c0441fa3cc462e13f2573afd924b5343baba449."
+    },
+    {
+      "command": ".venv/Scripts/python.exe -B tools/plan_review_check.py --repo . --report artifacts/tmp/W2.A05.B00.d6308813.qualification-01.site-report.json",
+      "exitCode": 0,
+      "result": "Fresh site check at this exact candidate; 346.618 seconds; raw log artifacts/tmp/W2.A05.B00.d6308813.qualification-01.site.log, SHA-256 d6b4aabfbf04f2e0e52f0737fc127f4236f25f394f67a0092fcd99e5d5de45e3."
+    },
+    {
+      "command": "../../.venv/Scripts/python.exe -B -m unittest -v test_taskctl_workflow.TaskctlWorkflowTests.test_paused_correction_bootstrap_append_preserves_exact_parent_and_schema_dispatch test_taskctl_workflow.TaskctlWorkflowTests.test_paused_correction_materialization_uses_real_cas_without_half_entry",
+      "exitCode": 0,
+      "result": "Fresh bootstrap-fixtures check at this exact candidate; 22.404 seconds; raw log artifacts/tmp/W2.A05.B00.d6308813.qualification-01.bootstrap-fixtures.log, SHA-256 a754be80192e2d84401a442ee6d676f87baa22043d4395cb96f09d1489989499."
+    },
+    {
+      "command": "git diff --check b54f24c2 d630881307311334782947ddcde0959ad8c29603",
+      "exitCode": 0,
+      "result": "Fresh diff check at this exact candidate; 0.096 seconds; raw log artifacts/tmp/W2.A05.B00.d6308813.qualification-01.diff.log, SHA-256 e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855."
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "Fresh approved ECR-0013 authority validation authenticates the exact 55c packet/73b independent review/b54 owner approval, original W2 and adopted A01/A02/A04, whole paused A03 with both tasks DONE, unchanged approved reference and migration, and the exact immutable GOV-MAINT-0027 binding. No protected gate or imported tool source changes in this candidate."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "The candidate changes only the three approved generated approval projections. Existing immediate-parent bootstrap/persistence fixtures pass, but do not cover the interposed adopted A04 case. Actual supported A05 append, independent review of its committed empty shell, exact two-task materialization and hold transfer remain subsequent controller transitions; no shell, task lease or Wave completion is claimed."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "verificationSelection": {
+    "riskAnalysis": "Three approval projection changes with no source or dependency changes. Fresh exact-approved authority check, complete generated site check, original bootstrap/atomic materialization fixtures and bounded Git whitespace/scope checks; all tracked bytes and HEAD fixed around execution. The newly diagnosed bootstrap predecessor-order predicate is assessed separately by the actual command and additional regression, never inferred from these unchanged original fixtures.",
+    "deferred": "Actual interposed-parent bootstrap append and independent shell review, correction source implementation, two-task execution/review, slice/exit/security/adoption and later original native/Core/W2 qualification remain due."
+  },
+  "verificationReceipt": {
+    "path": "artifacts/tmp/W2.A05.B00.d6308813.qualification-01.checks.json",
+    "sha256": "9e870495cdf095a30e7250288481f3c6720af4338f41ea97c452e7604184d63f"
+  },
+  "reviewerDisposition": {
+    "status": "pending-review",
+    "requiredGate": "independent-control-review",
+    "note": "No B00 approval until the supported append succeeds and its actual committed shell is independently reviewed."
+  }
+}

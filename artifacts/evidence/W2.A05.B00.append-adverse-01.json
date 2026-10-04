@@ -1,0 +1,33 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "wave-amendment-bootstrap-adverse-diagnostic",
+  "bootstrapUnit": "W2.A05.B00",
+  "candidateCommit": "d630881307311334782947ddcde0959ad8c29603",
+  "approvalCommit": "b54f24c222f631700056574a08056f660696d305",
+  "commandArgs": [
+    ".venv/Scripts/python.exe",
+    "-B",
+    "tools/taskctl.py",
+    "amendment",
+    "bootstrap-submit",
+    "W2.A05",
+    "--agent",
+    "codex-w2-implementation",
+    "--approval-commit",
+    "b54f24c222f631700056574a08056f660696d305",
+    "--implementation-commit",
+    "d630881307311334782947ddcde0959ad8c29603",
+    "--evidence",
+    "artifacts/evidence/W2.A05.B00.json"
+  ],
+  "exitCode": 1,
+  "durationSeconds": 83.569,
+  "producerSha256": "c38f31e89270b3e144b2fc4b9a0b53d27a6ddf6a89d25740141a1c895bd58ab7",
+  "log": "artifacts/tmp/W2.A05.B00.append-adverse-01.log",
+  "logSha256": "16f70188a635bf5e8978f3976750db871136245460643f947e4f0902553b9d19",
+  "inputsStable": true,
+  "trackedInputsCount": 4703,
+  "trackedInputsSha256": "3337c0de295e8b693a4557bdd8f9622807d2dff62e7e11ed10f0eda6df88aa46",
+  "result": "ADVERSE-PRESERVED",
+  "limit": "Actual supported bootstrap attempt; no shell, review approval, task materialization, lease, task completion or Wave qualification inferred."
+}

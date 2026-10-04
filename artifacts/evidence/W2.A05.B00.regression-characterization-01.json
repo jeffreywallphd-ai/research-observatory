@@ -1,0 +1,18 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "wave-amendment-bootstrap-regression-characterization",
+  "bootstrapUnit": "W2.A05.B00",
+  "sourceCandidateCommit": "d630881307311334782947ddcde0959ad8c29603",
+  "command": ".venv/Scripts/python.exe -B artifacts/tmp/W2.A05.B00.characterize-bootstrap-01.py",
+  "exitCode": 1,
+  "reportedTestDurationSeconds": 7.888,
+  "testsRun": 2,
+  "failures": 1,
+  "errors": 2,
+  "producerSha256": "88562af55ee90c53c4f1cef355205b0eb09383b1373d19a39122d33e233183b6",
+  "draftSha256": "e5f1abfdf7b64620be87b755a83f565182a53988480ca44eafa844d3abe5b7d6",
+  "log": "artifacts/tmp/W2.A05.B00.bootstrap-regression-characterization-01.log",
+  "logSha256": "1be897cc7037faa651130f2d1c20e66c22bdc7ffe7f7a8c317433a1f264dda6b",
+  "result": "ADVERSE-PRESERVED",
+  "explanation": "Both valid sequential cases and the stale-CAS case hit the authentic predecessor-order rejection before their intended boundary. Negative malformed-order/identity cases continue to reject. Authority/evidence prerequisites in this fixture are explicitly synthetic; the separately retained actual CLI failure proves the real pre-append rejection. No tracked source or canonical backlog mutation occurred."
+}

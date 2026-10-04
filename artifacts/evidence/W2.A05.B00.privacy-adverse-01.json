@@ -1,0 +1,23 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "wave-amendment-bootstrap-prospective-privacy-adverse",
+  "bootstrapUnit": "W2.A05.B00",
+  "candidateCommit": "d630881307311334782947ddcde0959ad8c29603",
+  "command": "git commit -m Preserve actual W2.A05 bootstrap ordering rejection",
+  "exitCode": 1,
+  "result": "ADVERSE-PRESERVED",
+  "hookResult": {
+    "status": "FAIL",
+    "commitsChecked": 0,
+    "entriesChecked": 3,
+    "findings": [
+      {
+        "pathSha256": "3cfd8cac01ff6a8ae0a59454f049ae9bdaae3639fabc522d7a403d844f5c980e",
+        "reasons": [
+          "concrete-workspace-path"
+        ]
+      }
+    ]
+  },
+  "rootCause": "Draft criterion-manifest check command retained the concrete absolute Python executable path from the ignored raw receipt. No commit was created. Replace only that prospective display command with its repository-relative form; preserve the raw command/receipt, test result and blocked commit outcome. No scanner, hook, registry, policy, approval or private-field exception is changed."
+}
