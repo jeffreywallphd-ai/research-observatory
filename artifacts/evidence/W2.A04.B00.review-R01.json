@@ -1,0 +1,140 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "wave-amendment-bootstrap-review",
+  "amendmentId": "W2.A04",
+  "taskId": "W2.A04.B00",
+  "attemptId": "R01",
+  "reviewer": "agent:/root/a03_t02_authority_review",
+  "reviewedAt": "2026-10-04T13:33:59Z",
+  "result": "approved",
+  "candidateCommit": "202d4270273c746b3d1c67f1aee87cbde76768be",
+  "baseCommit": "ba95f68bd2747ebce99e67eeb4daec53ed3ba87b",
+  "submissionCommit": "17673b41e5453d41070ea4d1d9618cc1b2e6f28f",
+  "independence": {
+    "implementer": "codex-w2-implementation",
+    "statement": "The reviewer independently inspected immutable owner, packet, review and criterion-evidence Git blobs, the bounded source candidate, and the actual committed B00 REVIEW shell. The reviewer did not author the ECR-0012 proposal, packet, owner approval, B00 source candidate, criterion evidence or submitted shell, and performed no taskctl mutation. This reviewer authored the ECR-0012 advisory PF01 and independent packet R01 dispositions; those earlier reviews are disclosed and reauthenticated, not treated as self-approval of the distinct B00 implementation."
+  },
+  "artifactBindings": [
+    {
+      "path": "planning/wave-amendment-approvals/W2.A04.json",
+      "sha256": "e769cb71efbf8725c0fadeac079713f4484f57f7cf871cdfb037ef9a4df27807",
+      "gitBlob": "a17fb90c4bc89bf28629710310be2e086ab353cd",
+      "introductionCommit": "ba95f68bd2747ebce99e67eeb4daec53ed3ba87b"
+    },
+    {
+      "path": "planning/enabler-change-requests/ECR-0012.packet.json",
+      "sha256": "eb1cbf1b827bffdd5914f9255c6f0bba374621f916711b3e05815202d0312b8c",
+      "gitBlob": "58ca11ae9997cd5d38f506507d94d70c53ba0c43",
+      "approvedPacketCommit": "7f35c7a8e49eb8415ffdffa5a2e04374161f0eae"
+    },
+    {
+      "path": "planning/enabler-change-requests/ECR-0012.review-R01.json",
+      "sha256": "8f7090a3a7a2fa64389c6c5c76a20c87936876b475de70cdc1924547f826c396",
+      "gitBlob": "da198d226da9d55c31d99db88fa9c45c599d9c42",
+      "introductionCommit": "d66a144122d3b10cfedcef4ac843532923654041"
+    },
+    {
+      "path": "artifacts/evidence/W2.A04.B00.json",
+      "sha256": "3bad8334859874a69118b7702ff87db9f8ff8ce91a08a6c370cfe5a54b182117",
+      "gitBlob": "1bd9951b1b68758c4c99e2d4b1812a27105c575f",
+      "commit": "17673b41e5453d41070ea4d1d9618cc1b2e6f28f",
+      "declaredSourceCandidate": "202d4270273c746b3d1c67f1aee87cbde76768be"
+    }
+  ],
+  "scope": {
+    "candidateChangedFiles": [
+      "planning/review-site/enablers/ECR-0012.html",
+      "planning/review-site/enablers/index.html",
+      "planning/review-site/manifest.json"
+    ],
+    "deliveryChangedFiles": [
+      "artifacts/evidence/W2.A04.B00.json",
+      "planning/backlog.yaml",
+      "planning/review-site/enablers/ECR-0012.html",
+      "planning/review-site/enablers/index.html",
+      "planning/review-site/manifest.json"
+    ],
+    "boundary": "This disposition approves the exact owner-approved B00 source projections and supported append-only REVIEW shell. Packet-exact A04 task materialization, hold transfer and activation, the five-source companion ADR/control correction, task/slice/exit/security review, adoption return, A03 activation and T02 reopen, later consumer/native/Core evidence, W2 qualification and human release remain separate transitions and proof."
+  },
+  "criterionDispositions": [
+    {
+      "criterionIndex": 1,
+      "result": "satisfied",
+      "evidence": "Owner approval introduced at ba95f68b binds the exact reviewed ECR-0012 candidate 7f35c7a8, packet eb1cbf1b and independent R01 ledger introduced at d66a1441. All four authority/evidence SHA-256 and Git blob identities were independently recomputed. The working approval now equals the immutable LF introduction bytes e769cb71. ECR-0012 retains the exact paused A03 binding a211f241/f099fd8f, unchanged DONE T01, blocked T02 at ca8b1448, original W2/adopted A01/A02/GOV-MIG-0001 and the unchanged approved 55-file Academic Minimal 1.8 reference. B00 changes none of those authority inputs."
+    },
+    {
+      "criterionIndex": 2,
+      "result": "satisfied",
+      "evidence": "Approval-to-candidate net scope and every intervening source commit contain only the three authorized regular generated projection files, matching packet bootstrap scope and evidence changedFiles. The actual submitted commit 17673b41 adds precisely the criterion manifest and one append-only A04 record: lifecycle APPROVED, B00 REVIEW at candidate 202d4270, implementer codex-w2-implementation, empty review fields, tasks:[], campaign:null and completion PENDING. The manifest was first committed in this submission and declares the source candidate; it is not claimed to have existed at that candidate. The submitted pages remain the checked preappend source snapshot showing APPROVED owner, A04 NOT_MATERIALIZED and B00 NOT_SUBMITTED; actual REVIEW status is established by the committed backlog, and its generated status refresh remains due."
+    },
+    {
+      "criterionIndex": 3,
+      "result": "satisfied",
+      "evidence": "The complete previous backlog is a byte-identical prefix of the submitted Git blob. Parsed comparison also preserves all twelve old amendment records and every non-amendment field. The sole A04 correction equals the approved packet pausedPredecessor, including effectiveStateCommit a211f24107f21f6b87221fd8b60c04b95a97fc8b and recordSha256 f099fd8f6a15dcdcddea9ac6dca1ca5cac62d8692991e2d6e4366b1393c6ac6c. Read-only correction projection yields A03-to-A04 pending-entry, holdOwner A03 and parentFrozen true; no A04 hold transfer or materialization is claimed. A03 remains PAUSED, T01 DONE, T02 BLOCKED at its real ca8b1448 base with no lease; ordinary W2 and CAP-05.S01.T01 holds and the null active-amendment marker are unchanged. No product, reference, native, Core, consumer, baseline, schema, kernel, task-base, task-definition or release-source change occurred."
+    }
+  ],
+  "independentChecks": [
+    {
+      "check": "Exact committed authority, evidence, ancestry and source-path authentication",
+      "result": "passed",
+      "method": "Read immutable Git blobs and recomputed the four artifact bindings; inspected approval-to-source and source-to-submission histories, regular source modes and exact authorized path sets. Reused unchanged independently authenticated ECR-0012 packet inputs and PF01 planning closure; no full repeated packet audit was needed."
+    },
+    {
+      "check": "Actual submitted append and paused-predecessor state",
+      "result": "passed",
+      "method": "Compared the entire raw prior backlog prefix, parsed all twelve predecessor records and every non-amendment field, exact A04 shell and approved correction object. Evaluated governance_kernel.project_paused_corrections read-only over committed state and inspected real T01/T02/W2/original-task holds and leases. No controller mutation was performed."
+    },
+    {
+      "check": "Retained canonical approved ECR validation",
+      "result": "passed",
+      "observation": "Producer log artifacts/tmp/W2.A04.B00.canonical-approval-ecr-check.log SHA-256 23bd0da6f8fc7ae47414edb7e37ee3bf2adaaa5398971a646e257e58e64b8df1 reports ECR-0012 approved and history-bound. It ran at 37dbfc27 after restoration of the working approval to immutable LF bytes; the successor changes only two generated projections. This is authenticated producer evidence, not a fresh reviewer execution at the submitted state. The subsequent real backlog append was inspected separately."
+    },
+    {
+      "check": "Retained corrected site snapshot and incremental projection inspection",
+      "result": "passed",
+      "observation": "Authenticated artifacts/tmp/W2.A04.B00.canonical-approval-site-check.json SHA-256 36d9ef07d75f96c66ace442e1e5fe6b0dac37d2ca367994da501ae1959e9714c and stdout log SHA-256 fbd6db5eec428ac0845fd1b6ce32ae93a2bd3c8bd19d1e4540d3737bbf8c5c9c. The checked snapshot later committed at 202d4270 has 19 capabilities, 111 slices, 337 tasks and 496 HTML pages, with errors=[] and warnings=[]. Inspected its corrected immutable approval hash. Submission changes only backlog/evidence, so those generated pages do not yet project the submitted B00 REVIEW state. No fresh full-site reviewer run is claimed."
+    },
+    {
+      "check": "Retained focused paused-correction controller tests",
+      "result": "passed",
+      "observation": "Authenticated artifacts/tmp/W2.A04.B00.candidate-transition-tests.log SHA-256 6f5f8b25e013cd14883e48761de59dcfa604995d1dc63b9d5c64768601c8af71: test_paused_correction_bootstrap_append_preserves_exact_parent_and_schema_dispatch and test_paused_correction_materialization_uses_real_cas_without_half_entry both passed, two tests in 19.967 seconds. These producer executions at 37dbfc27 use real-controller fixtures; tool, test, schema and backlog inputs remained unchanged across the projection-only successor. They are not reviewer reruns or evidence that real A04 materialization has occurred."
+    },
+    {
+      "check": "git diff --check ba95f68bd2747ebce99e67eeb4daec53ed3ba87b..17673b41e5453d41070ea4d1d9618cc1b2e6f28f",
+      "result": "passed",
+      "observation": "Independently executed over the exact complete delivery range; bounded files pass whitespace hygiene. Shared HEAD was clean and fixed at the submitted commit before writing this sole review ledger."
+    }
+  ],
+  "adverseReplay": [
+    {
+      "stage": "pre-submit candidate validation",
+      "candidateCommit": "37dbfc27a65415a924de2bd58d2d92bc31b072e2",
+      "output": "artifacts/tmp/W2.A04.B00.ecr-approved-check.log",
+      "sha256": "c3a366cfdd2bf44370e37437b5c52309ec35c30dd5d00d047b04a4ab67e5978b",
+      "result": "exit 1; Wave amendment approval was changed after its introduction commit",
+      "rootCause": "The Windows working approval had CRLF bytes differing from the immutable LF Git blob; generated projections used that working-file hash. The independent reviewer detected the mismatch, and the producer retained the failed check and candidate.",
+      "closure": "Only the working approval was restored to its existing immutable ba95f68b LF bytes, cached Git stat state refreshed and affected projections regenerated. The owner introduction and adverse commit remain in history. Canonical authority/site evidence passes and final source 202d4270 projects the exact immutable e769cb71 hash. This was resolved before the first supported REVIEW submission; no rejected formal B00 round is invented."
+    }
+  ],
+  "verificationSelection": {
+    "rationale": "The material B00 risks are false owner authority, unauthorized source paths, predecessor mutation, premature hold transfer/materialization and inaccurate status claims. Immutable Git authentication, actual append and correction-state comparison, incremental changed-site inspection and retained canonical/controller evidence cover those risks. Unchanged packet input closure and projection-only successor scope support reuse. Reviewer executions and producer evidence are distinguished explicitly.",
+    "deferred": [
+      "Generated status refresh after B00 review and supported packet-exact A04 materialization/activation.",
+      "W2.A04.T01 five-source companion ADR/control correction, hostile-history proof, task/slice/exit/security review and adoption return.",
+      "A03 activation and actual supported T02 reopen preserving its real base, later consumer/native/Core work, original CAP-05.S01.T01 completion, W2 qualification and separate human release decision."
+    ]
+  },
+  "findings": [],
+  "closures": [],
+  "priorFindingsReplayed": [],
+  "disposition": "Approve exact W2.A04.B00 source candidate 202d4270273c746b3d1c67f1aee87cbde76768be and actual submitted REVIEW append 17673b41e5453d41070ea4d1d9618cc1b2e6f28f for the supported independent bootstrap-review transition. This ledger performs no transition, materialization, activation, integration, Wave resume or release approval.",
+  "authorityLimits": {
+    "newHumanApprovalRequested": false,
+    "productTaskApproval": false,
+    "governedReferenceChangeApproval": false,
+    "amendmentExitApproval": false,
+    "waveResumeApproval": false,
+    "waveExitOrReleaseApproval": false,
+    "localMainIntegrationApproval": false
+  }
+}
