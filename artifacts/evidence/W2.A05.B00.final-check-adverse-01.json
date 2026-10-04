@@ -1,0 +1,23 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "wave-amendment-bootstrap-final-check-adverse-observation",
+  "bootstrapUnit": "W2.A05.B00",
+  "candidateCommit": "b0d7a673b0d6b97b45e0e09f5ad21f06bfcf247f",
+  "disposition": "ADVERSE-PRESERVED",
+  "exitCode": 1,
+  "producer": {
+    "path": "artifacts/tmp/W2.A05.B00.final-verify-01.py",
+    "sha256": "5b9f87ddb4e62040622dc4f963e0accc52d5a4234e5cd270aea5b61ffb16969e"
+  },
+  "completedAuthorityCheck": {
+    "command": ".venv/Scripts/python.exe -B tools/planctl.py --repo . ecr validate ECR-0013 --require-approved",
+    "exitCode": 0,
+    "log": "artifacts/tmp/W2.A05.B00.b0d7a673.final-01.authority.log",
+    "sha256": "31325dc87f97d406f716214f6c0441fa3cc462e13f2573afd924b5343baba449"
+  },
+  "failedAssertion": "Raw working backlog hash was incorrectly compared to committed Git LF bytes. Existing CRLF-to-LF conversion differs in raw bytes; LF canonical and whole parsed records are equal.",
+  "observedWorkingSha256": "ab00f831e3ebc10b527949b83481fd124e616d2f81ad4d29fdfbf53cd3f0b87e",
+  "observedCommittedSha256": "4355f55e1b431b8ff40d99cf615536dccd9d84a8a4945544984ec81f7068d49d",
+  "qualifyingTaskEvidence": false,
+  "limit": "No full final PASS receipt was produced; exact command output and failure are preserved in the tool transcript. No source, configuration, authority or backlog change occurred."
+}

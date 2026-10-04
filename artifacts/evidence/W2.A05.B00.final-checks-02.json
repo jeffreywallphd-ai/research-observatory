@@ -1,0 +1,108 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "wave-amendment-bootstrap-final-candidate-checks",
+  "bootstrapUnit": "W2.A05.B00",
+  "candidateCommit": "b0d7a673b0d6b97b45e0e09f5ad21f06bfcf247f",
+  "checks": [
+    {
+      "id": "authority",
+      "commandArgs": [
+        ".venv/Scripts/python.exe",
+        "-B",
+        "tools/planctl.py",
+        "--repo",
+        ".",
+        "ecr",
+        "validate",
+        "ECR-0013",
+        "--require-approved"
+      ],
+      "exitCode": 0,
+      "durationSeconds": null,
+      "log": "artifacts/tmp/W2.A05.B00.b0d7a673.final-01.authority.log",
+      "logSha256": "31325dc87f97d406f716214f6c0441fa3cc462e13f2573afd924b5343baba449",
+      "executionProducer": {
+        "path": "artifacts/tmp/W2.A05.B00.final-verify-01.py",
+        "sha256": "5b9f87ddb4e62040622dc4f963e0accc52d5a4234e5cd270aea5b61ffb16969e"
+      },
+      "partialObservation": {
+        "path": "artifacts/tmp/W2.A05.B00.final-runner-adverse-01.json",
+        "sha256": "b40019d9081b0b4b047bce8ab5d22310c02839fa4bf400051e59da9c9e4bc366"
+      },
+      "result": "Already completed in run01 of this same fixed final candidate; retained actual command output, no rerun, no cross-candidate cache reuse. Duration was not recovered."
+    },
+    {
+      "id": "current-source-authority-projection",
+      "commandArgs": [
+        ".venv/Scripts/python.exe",
+        "-B",
+        "artifacts/tmp/W2.A05.B00.final-verify-02.py",
+        "b0d7a673b0d6b97b45e0e09f5ad21f06bfcf247f"
+      ],
+      "exitCode": 0,
+      "durationSeconds": 5.755,
+      "result": "Actual source, scope, immutable bytes, whole paused records, current addendum set/hash and two committed projections/local links authenticated; 57f workflow/planctl results remain historical."
+    },
+    {
+      "id": "bounded-diff",
+      "commandArgs": [
+        "git",
+        "-c",
+        "core.safecrlf=false",
+        "diff",
+        "--check",
+        "b0d7a673b0d6b97b45e0e09f5ad21f06bfcf247f^",
+        "b0d7a673b0d6b97b45e0e09f5ad21f06bfcf247f"
+      ],
+      "exitCode": 0,
+      "durationSeconds": 0.056,
+      "output": ""
+    }
+  ],
+  "inputsStable": true,
+  "trackedInputCount": 4718,
+  "trackedInputDigest": "89f1509b77b6bcc6cff3284271d8be1ed006bd3d777651ca937f2d9b4c812e14",
+  "fresh": true,
+  "reuse": false,
+  "durationSeconds": 6.244,
+  "producer": {
+    "path": "artifacts/tmp/W2.A05.B00.final-verify-02.py",
+    "sha256": "a9b9e44251728df609b0c349957e39363a8a91c5ad935b79f78b13ad1791395c"
+  },
+  "precommitArtifact": {
+    "path": "artifacts/evidence/W2.A05.B00.projection-precommit-04.json",
+    "sha256": "4910d7303b07af78e6ec9411b6f080a7b3ecd8d308ea97b47ac343e8ceb48217",
+    "qualifyingTaskEvidence": false
+  },
+  "projectionBindings": {
+    "planning/review-site/enablers/ECR-0013.html": {
+      "precommitWorkingSha256": "1b6f939411e9199cc2e90bce51b68bb1d53e459a5c17dc71c597a210cb28da02",
+      "committedGitBlobSha256": "c9ffd55d36f8e1ccb884d95475072d6e5542563c2e03c0a3ac34e72c84dbda1a",
+      "rawByteEqual": false,
+      "lfCanonicalEqual": true,
+      "limit": "Existing Git CRLF-to-LF conversion only; raw hashes retained separately."
+    },
+    "planning/review-site/manifest.json": {
+      "precommitWorkingSha256": "381f9b826f4d0a8c3affbaab079273e8d5da87a905ff75591b6e4e866d6124a3",
+      "committedGitBlobSha256": "18918299dd443cdbe2faa09cb5503ddf0d38f1ee7f36b33bbf60d4ef87f1f2da",
+      "rawByteEqual": false,
+      "lfCanonicalEqual": true,
+      "limit": "Existing Git CRLF-to-LF conversion only; raw hashes retained separately."
+    }
+  },
+  "backlogByteBinding": {
+    "workingSha256": "ab00f831e3ebc10b527949b83481fd124e616d2f81ad4d29fdfbf53cd3f0b87e",
+    "committedGitBlobSha256": "4355f55e1b431b8ff40d99cf615536dccd9d84a8a4945544984ec81f7068d49d",
+    "rawByteEqual": false,
+    "lfCanonicalEqual": true,
+    "wholeParsedRecordEqual": true,
+    "committedSource57fByteEqual": true
+  },
+  "historicalSourceChecks": {
+    "candidateCommit": "57f5c3f264611f59cd2778ff13b5082b2726e24b",
+    "path": "artifacts/evidence/W2.A05.B00.committed-checks-adverse-01.json",
+    "sha256": "dead0af147a9880721665043b10441db8eeaa56fb555894222ece488325f091b",
+    "classification": "Historical exact source checks; site failure preserved; not fresh at final candidate or task evidence reuse."
+  },
+  "limit": "Fresh selected final authority/source/projection checks only; actual shell append and independent B00 review precede materialization and two ordered tasks; no native/Core/product/Wave completion."
+}

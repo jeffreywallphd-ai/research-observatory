@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 4355f55e1b431b8ff40d99cf615536dccd9d84a8a4945544984ec81f7068d49d
+source_sha256: 34f0f3c85039a153a9a74bb3e409f222c7ac7bc686ee6ba48d5e2a03c558f7a7
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -30,7 +30,7 @@ This YAML file is the authoritative task, dependency, gate, and progress ledger.
 | Enabler tasks | 21 |
 | Waves | 12 |
 | Wave approval bases | 2 |
-| Wave amendments | 13 |
+| Wave amendments | 14 |
 | Release gates | 12 |
 
 See `planning/status-summary.md` for the generated status distributions and capability progress table.
@@ -54,6 +54,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 | `W2` | `W2.A02` | `ECR-0010` | `planning/wave-amendment-approvals/W2.A02.json` | `ADOPTED` |
 | `W2` | `W2.A03` | `ECR-0011` | `planning/wave-amendment-approvals/W2.A03.json` | `PAUSED` |
 | `W2` | `W2.A04` | `ECR-0012` | `planning/wave-amendment-approvals/W2.A04.json` | `ADOPTED` |
+| `W2` | `W2.A05` | `ECR-0013` | `planning/wave-amendment-approvals/W2.A05.json` | `APPROVED` |
 
 ## Waves
 
@@ -3055,6 +3056,34 @@ See `planning/status-summary.md` for the generated status distributions and capa
 **Latest notes:** Independent expanded control/security/ADR R01 review of source candidate 6a07f37d and actual supported frozen REVIEW submission 7d8992af. The exact 13-path claim-base diff contains precisely the five ECR-0012 source paths and eight task-owned or generated planning outputs. One jointly introduced regular Proposed ADR-0040/index entry links A04.T01 and A03.T02; all older registry records, metadata and ADRs, including ADR-0039, are preserved. The closed v1.4 gate derives only the exact approved ECR-0012 correction, authenticates the sole-parent combined a211f241/f099fd8f snapshot without fabricating an intermediate claim, preserves the complete DONE T01 and retained T02 definition/base, and partitions independently reviewed A04 source from every commit in the real later T02 range. Supported later return, separate A03 activation and retained-base T02 reopen with matching current authority remain enforced. Advisory PF01-F01/PF02-F01/PF03-F01 were raised before any controlled submission; their adverse evidence and missed acceptance rows are retained. Their narrow fixes freeze the complete adopted A04 record through consumer delivery and the post-candidate suffix, derive task/exit output paths from authenticated immutable attempt references, replay contiguous S01 findings and closures, and authenticate separate immutable pre-adoption security review rounds against the exact committed manifest. These advisories are not invented prior controlled review rounds and have no fabricated formal closures. All 16 exact-candidate retained output hashes were independently recomputed and match the committed manifest; producer outputs report passing selected real-Git positives/denials, compatibility, original-base control, ADR/UI, Python quality and planning checks. I independently inspected Git scope/state/history and reproduced the original PF01 bypass in a disposable real Git history and the original PF03 envelope denial using its exact isolated predicate; I did not rerun the producer suites during formal review. Future review/adoption records and capture readers in the fixtures are explicitly synthetic control proof. The task-base UI gate reports uiFiles:[] and does not prove later desktop conformance. I previously independently reviewed the ECR-0012 packet and A04.B00 and performed the disclosed read-only task preflights; I authored neither this task implementation nor its criterion manifest. This ledger approves only the task-stage correction implementation. Actual integrated S01, exit, separate security checkpoint/adoption, exact paused A03 return, legal activation/T02 reopen, fresh 66-image consumer proof, original CAP-05 native/Core/D3D and joined CAP-04.S05 evidence, W2 qualification and human release remain subsequent required gates.
 
 **Currently open findings:** -
+
+## W2.A05 - ECR-0013
+
+**Target Wave / class:** `W2` / `product-scope-security-experience`
+
+**Approval record:** `planning/wave-amendment-approvals/W2.A05.json` (`9ad5b3f5fca7d3fd9c7fd8a42200f570f46250d506765b30e2705e299c7e8101`)
+
+**Lifecycle / bootstrap / campaign / completion:** `APPROVED` / `REVIEW` / `NONE` / `PENDING`
+
+**Append-only lifecycle history:**
+
+- `E01` `APPROVED` at `2026-10-04T20:48:39Z` by human:repository-owner: The repository owner answered 'Approved' after the exact ECR-0013/W2.A05 request identifying candidate55c6389ce39a656f4da3851cae32ae12ac80e796 and packet SHA-25656f521d708266021121b2a3391506cc771c7d32e32442d29dc5e58ba356f20c1. This approves the two ordered checker-repair tasks within their five-path and four-path envelopes, exact preceding independently reviewed GOV-MAINT-0027 source/history recognition, bounded bootstrap and required independent task/slice/exit/security reviews. Preserve both DONE A03 task approvals, whole paused A03 and adopted A04, prior failures, original6506 base, accepted ADRs and unchanged approved1.8 reference/baseline. Actual reviewed adoption returns only to paused A03, whose separate activation/finding closure/exit/adoption precede ordinary W2 resume. No ordinary task/native/Core/Wave completion or release is approved. The user-requested7:25pm America/New_York October4 stop remains in force; this timestamp records binding of the explicit answer to its exact reviewed packet.
+
+### Amendment-exit review and adoption — W2.A05
+
+**Exit-review mode:** `legacy latest-completion-only projection` — no immutable exit rounds are recorded; this view does not fabricate history.
+
+**Latest completion projection:** `PENDING` by - at `-`
+
+**Latest completion evidence:** -
+
+**Latest completion notes:** -
+
+**Bound amendment-adoption checkpoints:**
+
+- None
+
+**Bounded tasks:**
 
 
 ## Linked corrective tasks

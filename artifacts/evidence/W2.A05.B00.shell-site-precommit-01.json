@@ -1,0 +1,45 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "wave-amendment-bootstrap-shell-generated-artifact-precommit-check",
+  "bootstrapUnit": "W2.A05.B00",
+  "contextCommit": "b0d7a673b0d6b97b45e0e09f5ad21f06bfcf247f",
+  "qualifyingTaskEvidence": false,
+  "commandArgs": [
+    ".venv/Scripts/python.exe",
+    "-B",
+    "tools/plan_review_check.py",
+    "--repo",
+    ".",
+    "--report",
+    "artifacts/tmp/W2.A05.B00.shell-site-precommit-01.site-report.json"
+  ],
+  "exitCode": 0,
+  "durationSeconds": 344.607,
+  "inputsStable": true,
+  "changedPaths": [
+    "docs/planning-implementation-plan.md",
+    "planning/backlog.yaml",
+    "planning/review-site/enablers/ECR-0013.html",
+    "planning/review-site/enablers/index.html",
+    "planning/review-site/manifest.json",
+    "planning/review-site/waves/W2.html",
+    "planning/status-summary.md"
+  ],
+  "changedPathHashes": {
+    "docs/planning-implementation-plan.md": "d1d834885f31daa2a8bc7a8c012bb35db437b9d7f83f59217664237336ac2050",
+    "planning/backlog.yaml": "38dbfd574e279abaaeb469d5896d2afe8497923145633dc88363fb55f9d7c23e",
+    "planning/review-site/enablers/ECR-0013.html": "62ab092900aed305be28a10829a495a6a4da6286d8e8c732bf90cfe38bca01bd",
+    "planning/review-site/enablers/index.html": "20c9beb2ee00b96ab724a63c6be289bb1fc00aac743a620ac8f1e7e0a14aa3fe",
+    "planning/review-site/manifest.json": "2f6d953110a6306b8c2640cd5bfc5afab1dadc0a5d6cb442d4fb5c045ef0ee26",
+    "planning/review-site/waves/W2.html": "7a8999e0818206caf3499cf7cf58322314054f99a28a565c0483e21dab19b937",
+    "planning/status-summary.md": "005776323a6a97871c1287e7f417258d90cc4a58e961ef1dbe12c4789b7bb4f3"
+  },
+  "log": "artifacts/tmp/W2.A05.B00.shell-site-precommit-01.log",
+  "logSha256": "d6b4aabfbf04f2e0e52f0737fc127f4236f25f394f67a0092fcd99e5d5de45e3",
+  "producer": {
+    "path": "artifacts/tmp/W2.A05.B00.shell-site-precommit-01.py",
+    "sha256": "e9ca98a8887300355ba5352dda3f8f7aaa929f993cc6098a337f971c5f0a07d2"
+  },
+  "result": "PASS",
+  "limit": "Generated projection validation for actual empty-shell submission only; no task implementation, B00 independent approval, materialization, lease, product or Wave completion claim."
+}

@@ -1,7 +1,7 @@
 ---
 document_type: generated-backlog-status-summary
 source: planning/backlog.yaml
-source_sha256: 4355f55e1b431b8ff40d99cf615536dccd9d84a8a4945544984ec81f7068d49d
+source_sha256: 34f0f3c85039a153a9a74bb3e409f222c7ac7bc686ee6ba48d5e2a03c558f7a7
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -20,7 +20,7 @@ manual_edit: prohibited
 | Enabler tasks | 21 |
 | Waves | 12 |
 | Wave approval bases | 2 |
-| Wave amendments | 13 |
+| Wave amendments | 14 |
 | Release gates | 12 |
 
 ## Status distributions
@@ -62,6 +62,7 @@ manual_edit: prohibited
 | Status | Count |
 |---|---:|
 | `ADOPTED` | 11 |
+| `APPROVED` | 1 |
 | `PAUSED` | 1 |
 | `SUPERSEDED` | 1 |
 
@@ -92,6 +93,7 @@ Proposal approval, materialization lifecycle, and campaign state remain distinct
 | `W2` | `W2.A02` | `ECR-0010` | `planning/wave-amendment-approvals/W2.A02.json` | `ADOPTED` | `APPROVED` | `COMPLETE` | 1 |
 | `W2` | `W2.A03` | `ECR-0011` | `planning/wave-amendment-approvals/W2.A03.json` | `PAUSED` | `APPROVED` | `PAUSED` | 2 |
 | `W2` | `W2.A04` | `ECR-0012` | `planning/wave-amendment-approvals/W2.A04.json` | `ADOPTED` | `APPROVED` | `COMPLETE` | 1 |
+| `W2` | `W2.A05` | `ECR-0013` | `planning/wave-amendment-approvals/W2.A05.json` | `APPROVED` | `REVIEW` | `NONE` | 0 |
 
 ## Amendment-exit review and adoption projections
 
@@ -702,6 +704,20 @@ Immutable exit rounds, the latest completion projection, and bound adoption chec
 
 - `W2.CP04` `security` by codex-w2-implementation at `2026-10-04T17:19:15+00:00` — Adopted W2.A04 control-plane amendment.
   - amendment `W2.A04` / `artifacts/evidence/W2.A04.adoption.json` / `ece0d58fc04b3b8ac6ff755088fdd9420dabf172fcbab8df3c8ea5a7983f9051` / `75d8d094d9833f30445f56bbb3c1fe39ff052221`
+
+### Amendment-exit review and adoption — W2.A05
+
+**Exit-review mode:** `legacy latest-completion-only projection` — no immutable exit rounds are recorded; this view does not fabricate history.
+
+**Latest completion projection:** `PENDING` by - at `-`
+
+**Latest completion evidence:** -
+
+**Latest completion notes:** -
+
+**Bound amendment-adoption checkpoints:**
+
+- None
 
 
 ## Task review history projections

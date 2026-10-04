@@ -1,0 +1,82 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "W2.A05.B00",
+  "commit": "b0d7a673b0d6b97b45e0e09f5ad21f06bfcf247f",
+  "baseCommit": "b54f24c222f631700056574a08056f660696d305",
+  "branch": "codex/w2-implementation",
+  "changedFiles": [
+    "artifacts/evidence/W2.A05.B00.addendum-01.proposal.json",
+    "artifacts/evidence/W2.A05.B00.addendum-01.prospective-checks.json",
+    "artifacts/evidence/W2.A05.B00.addendum-01.review-R01.json",
+    "artifacts/evidence/W2.A05.B00.addendum-01.review.html",
+    "artifacts/evidence/W2.A05.B00.addendum-01.source.patch",
+    "artifacts/evidence/W2.A05.B00.append-adverse-01.json",
+    "artifacts/evidence/W2.A05.B00.committed-checks-adverse-01.json",
+    "artifacts/evidence/W2.A05.B00.correction-exploratory-adverse-01.json",
+    "artifacts/evidence/W2.A05.B00.json",
+    "artifacts/evidence/W2.A05.B00.privacy-adverse-01.json",
+    "artifacts/evidence/W2.A05.B00.projection-invocation-adverse-01.json",
+    "artifacts/evidence/W2.A05.B00.projection-precommit-04.json",
+    "artifacts/evidence/W2.A05.B00.projection-precommit-cancellation-01.json",
+    "artifacts/evidence/W2.A05.B00.regression-characterization-01.json",
+    "planning/review-site/enablers/ECR-0013.html",
+    "planning/review-site/enablers/index.html",
+    "planning/review-site/manifest.json",
+    "planning/wave-amendment-approvals/W2.A05.B00.addendum-01.json",
+    "tests/foundation/test_taskctl_workflow.py",
+    "tools/taskctl.py"
+  ],
+  "checks": [
+    {
+      "command": ".venv/Scripts/python.exe -B tools/planctl.py --repo . ecr validate ECR-0013 --require-approved",
+      "exitCode": 0,
+      "result": "Final candidate authority: measured duration None; null means unavailable, not zero. Exact execution producer, same-candidate continuation and output facts are bound by verificationReceipt."
+    },
+    {
+      "command": ".venv/Scripts/python.exe -B artifacts/tmp/W2.A05.B00.final-verify-02.py b0d7a673b0d6b97b45e0e09f5ad21f06bfcf247f",
+      "exitCode": 0,
+      "result": "Final candidate current-source-authority-projection: measured duration 5.755; null means unavailable, not zero. Exact execution producer, same-candidate continuation and output facts are bound by verificationReceipt."
+    },
+    {
+      "command": "git -c core.safecrlf=false diff --check 'b0d7a673b0d6b97b45e0e09f5ad21f06bfcf247f^' b0d7a673b0d6b97b45e0e09f5ad21f06bfcf247f",
+      "exitCode": 0,
+      "result": "Final candidate bounded-diff: measured duration 0.056; null means unavailable, not zero. Exact execution producer, same-candidate continuation and output facts are bound by verificationReceipt."
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "Fresh approved ECR-0013 validation and exact current source/authority/projection authentication bind immutable original b54 owner approval, 55c packet, reviewed GOV-MAINT-0027 d550 segment, complete paused A03 bdad record with both original tasks DONE, adopted A04 c15 record and unchanged W2/migration/reference. The original seven-source maintenance hashes remain historical; only the separately approved df04/2222/dcd exact two-file B00 patch and c64 owner addendum introduced at 57f change taskctl and its workflow test. Kernel, planctl, UI/product/reference/baseline and all earlier approvals/failures remain unchanged.",
+        "The eight workflow and three planctl tests at 57f are explicitly historical source checks, not a fresh run or cache reuse at this final candidate. The site failure at 57f and cancelled runs remain preserved. Fresh final checks authenticate the two committed projection bytes against the completed precommit generated-artifact check, exact addendum set/hash and local links."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "This exact committed candidate is ready for the supported actual empty-shell bootstrap-submit command, which must preserve all prior records and leave B00 REVIEW, tasks empty and campaign null. The manifest does not preclaim that transition passed: its separately preserved actual command result and committed shell are required for independent B00 disposition before materialization.",
+        "Independent B00 review must precede exact S01/T01/T02 materialization and hold transfer; separate amendment activation, ordered claims/source checks/reviews, slice/exit/security/adoption and exact paused-A03 return remain due. No ordinary Wave resume, original task completion, native/Core or release claim is made."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "verificationReceipt": {
+    "path": "artifacts/tmp/W2.A05.B00.b0d7a673.final-02.checks.json",
+    "sha256": "5b003066136dddd3b9567a6b9e63f90c5ce57745d8d8a485ace180efdb960050"
+  },
+  "historicalSourceChecks": {
+    "candidateCommit": "57f5c3f264611f59cd2778ff13b5082b2726e24b",
+    "path": "artifacts/evidence/W2.A05.B00.committed-checks-adverse-01.json",
+    "sha256": "dead0af147a9880721665043b10441db8eeaa56fb555894222ece488325f091b",
+    "classification": "Historical exact source checks; site failure preserved; not fresh at final candidate or task evidence reuse."
+  },
+  "verificationSelection": {
+    "riskAnalysis": "Final increment changes only two deterministic projections and immutable B00-prefixed evidence. Fresh approved authority, exact approved source/patch/addendum and whole predecessor equality, changed projection/hash/link checks and bounded diff cover the incremental risk. Shared HEAD and all tracked bytes stayed fixed. No unchanged controller suite, full backlog or full site replay is asserted as fresh. The subsequent real supported CLI revalidates authority/backlog and performs actual CAS persistence before independent committed-shell review.",
+    "deferred": "Both ordered implementation tasks and all separate task/slice/exit/security/adoption/native/Core/Wave gates remain due."
+  },
+  "reviewerDisposition": {
+    "status": "pending-review",
+    "note": "Actual command and committed empty shell must be independently reviewed before materialization."
+  }
+}

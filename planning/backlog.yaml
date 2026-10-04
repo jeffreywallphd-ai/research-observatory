@@ -54434,3 +54434,68 @@ wave_amendments:
     effectiveStateCommit: a211f24107f21f6b87221fd8b60c04b95a97fc8b
     recordSha256: f099fd8f6a15dcdcddea9ac6dca1ca5cac62d8692991e2d6e4366b1393c6ac6c
     returnPolicy: paused-predecessor
+- id: W2.A05
+  change_request_id: ECR-0013
+  target_wave: W2
+  kind: product-scope-security-experience
+  approval_reference:
+    path: planning/wave-amendment-approvals/W2.A05.json
+    sha256: 9ad5b3f5fca7d3fd9c7fd8a42200f570f46250d506765b30e2705e299c7e8101
+    introduction_commit: b54f24c222f631700056574a08056f660696d305
+  lifecycle:
+    status: APPROVED
+    history:
+    - id: E01
+      status: APPROVED
+      actor: human:repository-owner
+      at: '2026-10-04T20:48:39Z'
+      rationale: The repository owner answered 'Approved' after the exact ECR-0013/W2.A05 request identifying candidate55c6389ce39a656f4da3851cae32ae12ac80e796
+        and packet SHA-25656f521d708266021121b2a3391506cc771c7d32e32442d29dc5e58ba356f20c1. This approves the two ordered
+        checker-repair tasks within their five-path and four-path envelopes, exact preceding independently reviewed GOV-MAINT-0027
+        source/history recognition, bounded bootstrap and required independent task/slice/exit/security reviews. Preserve
+        both DONE A03 task approvals, whole paused A03 and adopted A04, prior failures, original6506 base, accepted ADRs and
+        unchanged approved1.8 reference/baseline. Actual reviewed adoption returns only to paused A03, whose separate activation/finding
+        closure/exit/adoption precede ordinary W2 resume. No ordinary task/native/Core/Wave completion or release is approved.
+        The user-requested7:25pm America/New_York October4 stop remains in force; this timestamp records binding of the explicit
+        answer to its exact reviewed packet.
+  bootstrap:
+    id: W2.A05.B00
+    status: REVIEW
+    implementer: codex-w2-implementation
+    implementation_commit: b0d7a673b0d6b97b45e0e09f5ad21f06bfcf247f
+    submission_branch: codex/w2-implementation
+    scope_addenda:
+    - path: planning/wave-amendment-approvals/W2.A05.B00.addendum-01.json
+      sha256: c64eee49399600bb5630322ba7556be9309c331b48a0cb5e626667d5be39be1e
+      introduction_commit: 57f5c3f264611f59cd2778ff13b5082b2726e24b
+    evidence:
+    - type: criterion-manifest
+      path: artifacts/evidence/W2.A05.B00.final-01.json
+      sha256: d690cad367707d3dc963dab2b09f4a48eb473be101c21405d5f7eb917d35a792
+      commit: b0d7a673b0d6b97b45e0e09f5ad21f06bfcf247f
+      recorded_at: '2026-10-04T22:06:31+00:00'
+    review:
+      reviewer: null
+      result: null
+      reviewed_at: null
+      notes: null
+  campaign: null
+  tasks: []
+  completion:
+    status: PENDING
+    reviewer: null
+    reviewed_at: null
+    evidence: []
+    notes: null
+  correction:
+    id: W2.A03
+    changeRequestId: ECR-0011
+    status: PAUSED
+    packetCommit: 746c05dcd7dbabaa7f5eebee8e3fa56b8ac6b9b5
+    approvalReference:
+      path: planning/wave-amendment-approvals/W2.A03.json
+      sha256: 8852d6631a6656e94cc75e4f9dc705c7095ecf111786748e5630fe13b8fa9087
+      introductionCommit: c972e2116113afa7ad84f0e43bdad58660cc69bb
+    effectiveStateCommit: 771e54a3657cdc5ff308d3a53d7b71eb48bb9214
+    recordSha256: bdad5e81327e32ee322db436dc569898ce314d29058e53b0cfe67ed6192e0b03
+    returnPolicy: paused-predecessor

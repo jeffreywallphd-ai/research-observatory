@@ -1,0 +1,80 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "wave-amendment-bootstrap-transition-observation",
+  "bootstrapUnit": "W2.A05.B00",
+  "candidateCommit": "b0d7a673b0d6b97b45e0e09f5ad21f06bfcf247f",
+  "approvalCommit": "b54f24c222f631700056574a08056f660696d305",
+  "commandArgs": [
+    ".venv/Scripts/python.exe",
+    "-B",
+    "tools/taskctl.py",
+    "amendment",
+    "bootstrap-submit",
+    "W2.A05",
+    "--agent",
+    "codex-w2-implementation",
+    "--approval-commit",
+    "b54f24c222f631700056574a08056f660696d305",
+    "--implementation-commit",
+    "b0d7a673b0d6b97b45e0e09f5ad21f06bfcf247f",
+    "--evidence",
+    "artifacts/evidence/W2.A05.B00.final-01.json"
+  ],
+  "exitCode": 0,
+  "durationSeconds": 339.114,
+  "producer": {
+    "path": "artifacts/tmp/W2.A05.B00.attempt-append-04.py",
+    "sha256": "fb9248ddd9b01007716b0e5aff4c28d220b5d667165aae586e6d0e7dc5778e46"
+  },
+  "log": "artifacts/tmp/W2.A05.B00.append-observation-03.log",
+  "logSha256": "4447594a161a6969380090859eb7453c576462adcf45d3dd826856287ac42917",
+  "result": "PASS",
+  "changedTrackedInputs": [
+    "planning/backlog.yaml"
+  ],
+  "headPreserved": true,
+  "allPriorAmendmentsPreserved": true,
+  "wholeWavesPreserved": true,
+  "wholeWaveBasesPreserved": true,
+  "wholeControlPlanePreserved": true,
+  "beforeBacklogSha256": "ab00f831e3ebc10b527949b83481fd124e616d2f81ad4d29fdfbf53cd3f0b87e",
+  "afterBacklogSha256": "38dbfd574e279abaaeb469d5896d2afe8497923145633dc88363fb55f9d7c23e",
+  "priorRecordDigests": {
+    "W1.A01": "45386d841d1959ae5165df06bd81cb2b57e3828f94046c3064272435195c28ab",
+    "W1.A02": "5822a63f2ddfe0ecaa55b1f11986ca3a06b9ea80651670d6fc4290958d688f10",
+    "W1.A03": "08baf6d2c6838b0f07674df1503688ebf4b2fe328a533b4ae6d18262ae7626bc",
+    "W1.A04": "16e327091aaeb4de64ffc63d3b3ab3a810ae240a362ec53104a465f8cad8fc42",
+    "W1.A05": "a0d410a8e467189493cbebde1ba9cc758a181ee74e38a841e528a8113fce19fc",
+    "W1.A06": "d3a30cd130901d39fd0f3065894dfdc70d19bd1e231fa8c8ef2c22f3af4a2a64",
+    "W1.A07": "f53cae82e67197521bd279523bd5c2b86964f4f7f18128649c0706c86f6b6c9d",
+    "W1.A08": "2ba93ade5cc5629c6fe80edea0cf5a76346b6a806b7e7d29734c4cc94bd274fc",
+    "W1.A09": "b40017f43acd30569d5fc7dd7914b61e350f89cf20670400424717a9ba3759e4",
+    "W2.A01": "d232d8cb64e983cdcb0ba59e3cbe71609ed2d4d9a535512b479860441bf4390d",
+    "W2.A02": "e730adde405383b6728e9a082641c1947a0555b86bc122e094580315edc1f76e",
+    "W2.A03": "bdad5e81327e32ee322db436dc569898ce314d29058e53b0cfe67ed6192e0b03",
+    "W2.A04": "c15d980f77933ba92e926980d6bc57b0f918430a4d0272952b922889a97e9ffc"
+  },
+  "afterPriorRecordDigests": {
+    "W1.A01": "45386d841d1959ae5165df06bd81cb2b57e3828f94046c3064272435195c28ab",
+    "W1.A02": "5822a63f2ddfe0ecaa55b1f11986ca3a06b9ea80651670d6fc4290958d688f10",
+    "W1.A03": "08baf6d2c6838b0f07674df1503688ebf4b2fe328a533b4ae6d18262ae7626bc",
+    "W1.A04": "16e327091aaeb4de64ffc63d3b3ab3a810ae240a362ec53104a465f8cad8fc42",
+    "W1.A05": "a0d410a8e467189493cbebde1ba9cc758a181ee74e38a841e528a8113fce19fc",
+    "W1.A06": "d3a30cd130901d39fd0f3065894dfdc70d19bd1e231fa8c8ef2c22f3af4a2a64",
+    "W1.A07": "f53cae82e67197521bd279523bd5c2b86964f4f7f18128649c0706c86f6b6c9d",
+    "W1.A08": "2ba93ade5cc5629c6fe80edea0cf5a76346b6a806b7e7d29734c4cc94bd274fc",
+    "W1.A09": "b40017f43acd30569d5fc7dd7914b61e350f89cf20670400424717a9ba3759e4",
+    "W2.A01": "d232d8cb64e983cdcb0ba59e3cbe71609ed2d4d9a535512b479860441bf4390d",
+    "W2.A02": "e730adde405383b6728e9a082641c1947a0555b86bc122e094580315edc1f76e",
+    "W2.A03": "bdad5e81327e32ee322db436dc569898ce314d29058e53b0cfe67ed6192e0b03",
+    "W2.A04": "c15d980f77933ba92e926980d6bc57b0f918430a4d0272952b922889a97e9ffc"
+  },
+  "emptyShellValid": true,
+  "shellDigest": "96a2ea2ed64e1cd2329dcfe3371d363650a66211367103aa78eb6f2e790eea38",
+  "limit": "Actual supported empty A05 shell transition only. Bootstrap remains REVIEW with no tasks or campaign lease. Independent control/B00 approval, materialization, ordered task work, adoption, native/Core/Wave qualification and release remain due.",
+  "rawObservation": {
+    "path": "artifacts/tmp/W2.A05.B00.append-observation-03.raw.json",
+    "sha256": "78873d5d195de327cef44ce3401207eaf7fad1d373f8be18e7b9734f308db8fc"
+  },
+  "privacyNormalization": "Only the absolute producer display path is rendered repository-relative. All exact original output, hashes and transition facts remain preserved in the ignored raw observation."
+}
