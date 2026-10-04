@@ -4098,6 +4098,9 @@ def reference_activation_correction_authority(
         or amendment_record(state(adoption), child["id"]) != child
     ):
         raise ValueError("activation correction did not return the exact paused predecessor")
+    for commit in git(repo, "rev-list", f"{adoption}..{head}", "--", "planning/backlog.yaml").decode().splitlines():
+        if amendment_record(state(commit), child["id"]) != child:
+            raise ValueError("activation correction changed adopted correction history")
     for item in packet["files"]:
         path = item["path"]
         if git(repo, "log", "--format=%H", f"{packet_commit}..{head}", "--", path).strip():

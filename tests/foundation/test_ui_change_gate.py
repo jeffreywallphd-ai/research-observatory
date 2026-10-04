@@ -887,6 +887,13 @@ class UiChangeGateTests(unittest.TestCase):
             t02.update(status="IN_PROGRESS", blocker=None, lease=lease, updated_at="2026-10-04T14:11:00Z")
             self.write_yaml(backlog_path, backlog)
             self.commit(root, "test-only retained-base T02 reopen after separate activation")
+            if correction_attack == "adopted-correction-tamper":
+                child["campaign"]["status"] = "ACTIVE"
+                self.write_yaml(backlog_path, backlog)
+                self.commit(root, "test-only transient reactivation of adopted A04 during consumer delivery")
+                # Restore only the in-memory record: the attack stays committed
+                # through both consumer source commits, then submission saves it.
+                child["campaign"]["status"] = "COMPLETE"
             control_candidate = t01["review_control"]["attempts"][-1]["submission"]["candidate_commit"]
         else:
             self.assertEqual("IN_PROGRESS", t01["status"])
@@ -957,6 +964,11 @@ class UiChangeGateTests(unittest.TestCase):
         consumer_candidate = self.commit(
             root, "synthetic 66-entry baseline after committed inputs; PNG hashes unproven"
         )
+        if correction_attack == "adopted-correction-after-consumer":
+            child["campaign"]["status"] = "ACTIVE"
+            self.write_yaml(backlog_path, backlog)
+            self.commit(root, "test-only transient adopted A04 change after consumer candidate")
+            child["campaign"]["status"] = "COMPLETE"
         self.approve_activation_fixture_task(root, backlog, t02, consumer_candidate)
 
         adoption = self.complete_activation_fixture_amendment(
@@ -3562,6 +3574,16 @@ class UiChangeGateTests(unittest.TestCase):
             attack = self.commit(root, "test-only replaced S01 independent review")
             with self.assertRaisesRegex(ValueError, "immutable introduction"):
                 ui_gate.reference_activation_reviewed_tasks(root, attack, parent)
+
+    def test_reference_activation_correction_preserves_adopted_record_through_consumer_delivery(self) -> None:
+        for attack in ("adopted-correction-tamper", "adopted-correction-after-consumer"):
+            with self.subTest(attack=attack), tempfile.TemporaryDirectory() as temporary:
+                root, adoption, backlog, _control, _consumer, _activation = self.reference_activation_git_fixture(
+                    temporary, correction=True, correction_attack=attack
+                )
+                parent = ui_gate.amendment_record(backlog, "W2.A03")
+                with self.assertRaisesRegex(ValueError, "changed adopted correction history"):
+                    ui_gate.reference_activation_reviewed_tasks(root, adoption, parent)
 
     def test_reference_activation_corrected_v14_authenticates_full_original_base(self) -> None:
         # Real historical prefix plus synthetic future reviews and capture mocks;
