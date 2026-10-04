@@ -6009,9 +6009,9 @@ def validate(
             else:
                 owner = owners[0]
                 owner_position = ordered.index(owner)
-                if owner_position != len(ordered) - 1 and not (
-                    owner_position == len(ordered) - 2
-                    and (str(owner.get("id")), str(ordered[-1].get("id"))) in owner_exceptions
+                if any(
+                    (str(owner.get("id")), str(successor.get("id"))) not in owner_exceptions
+                    for successor in ordered[owner_position + 1 :]
                 ):
                     errors.append(f"{wave_id}: amendment-hold owner is not the latest consecutive amendment")
                 for predecessor in ordered[:owner_position]:
@@ -6093,7 +6093,8 @@ def validate(
                 returned_owner = any(
                     relation["correctionId"] == amendment_id
                     and relation["phase"] == "returned"
-                    and relation["holdOwner"] == (owners[0].get("id") if len(owners) == 1 else None)
+                    and len(owners) == 1
+                    and relation["parentId"] == owners[0].get("id")
                     for relation in relations
                 )
                 if wave_campaign.get("scope") != "wave" and not later_owner and not returned_owner:
@@ -8970,7 +8971,7 @@ def command_amendment_activate(args, data, capabilities, slices, tasks, gates) -
     wave_campaign = wave.get("campaign") or {}
     if wave_campaign.get("status") != "PAUSED" or wave_campaign.get("scope") != "amendment-hold":
         raise SystemExit("Target Wave is not at the validated amendment-hold boundary")
-    agent, branch, base_sha, worktree = git_execution_identity(
+    agent, branch, base_sha, _worktree = git_execution_identity(
         args.file, agent=args.agent, branch=args.branch, base_sha=args.base_sha, worktree=args.worktree
     )
     if wave_campaign.get("owner") != agent or wave_campaign.get("branch") != branch:

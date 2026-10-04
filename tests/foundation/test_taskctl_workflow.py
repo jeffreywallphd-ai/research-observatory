@@ -278,6 +278,165 @@ class TaskctlWorkflowTests(unittest.TestCase):
             )
         )
 
+    def test_sequential_correction_materialization_and_adoption_keep_one_owner_with_real_cas(self) -> None:
+        # A completed, authenticated first return is covered by the real-Git
+        # planctl test. This disposable synthetic second shell exercises the
+        # unchanged CAS and adoption commands; it is no owner approval evidence.
+        data = taskctl_module.historical_backlog_document(REPO, "771e54a3657cdc5ff308d3a53d7b71eb48bb9214")
+        assert data is not None
+        prior = next(item for item in data["wave_amendments"] if item["id"] == "W2.A04")
+        parent = next(item for item in data["wave_amendments"] if item["id"] == "W2.A03")
+        packet = json.loads(
+            subprocess.check_output(
+                [
+                    "git",
+                    "show",
+                    "7604e7ee94e930548d3078c691ade0f4934a76c9:planning/enabler-change-requests/ECR-0013.packet.json",
+                ],
+                cwd=REPO,
+            )
+        )
+        child = json.loads(json.dumps(prior).replace("W2.A04", "W2.A05").replace("ECR-0012", "ECR-0013"))
+        child.update(correction=copy.deepcopy(packet["authorityChain"]["pausedPredecessor"]), tasks=[], campaign=None)
+        child["lifecycle"] = {"status": "APPROVED", "history": [child["lifecycle"]["history"][0]]}
+        child["completion"] = {
+            "status": "PENDING",
+            "reviewer": None,
+            "reviewed_at": None,
+            "evidence": [],
+            "notes": None,
+        }
+        data["wave_amendments"].append(child)
+        self.assertEqual([], validate(*taskctl_module.index_backlog(data)))
+        self.assertEqual(
+            [None, "W2.A03"],
+            [role["holdOwner"] for role in taskctl_module.correction_roles(data) if role["parentId"] == "W2.A03"],
+        )
+        frozen = {
+            item["id"]: canonical_json_sha256(item)
+            for item in taskctl_module.serializable_backlog(data)["wave_amendments"]
+            if item["id"] in {parent["id"], prior["id"]}
+        }
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            path = root / "planning/backlog.yaml"
+            save_validated(str(path), data)
+            before = path.read_bytes()
+            approval = {"authorizedTaskIds": packet["authorizedTaskIds"]}
+            for stale in (True, False):
+                args = Namespace(
+                    amendment="W2.A05",
+                    agent="alice",
+                    file=str(path),
+                    source_sha256="f" * 64 if stale else hashlib.sha256(before).hexdigest(),
+                )
+                with (
+                    patch("taskctl.discover_repository", return_value=root),
+                    patch("taskctl.require_clean_repository"),
+                    patch(
+                        "taskctl.load_amendment_authority",
+                        return_value=(approval, packet, b"synthetic second approval"),
+                    ),
+                    patch("taskctl.require_amendment_packet_integrity"),
+                    patch(
+                        "taskctl.save_validated",
+                        side_effect=lambda *a, **kw: save_validated(*a, **{**kw, "repo": None}),
+                    ),
+                ):
+                    if stale:
+                        with self.assertRaisesRegex(SystemExit, "changed after taskctl loaded"):
+                            taskctl_module.command_amendment_materialize(args, *load(str(path)))
+                        self.assertEqual(before, path.read_bytes())
+                    else:
+                        taskctl_module.command_amendment_materialize(args, *load(str(path)))
+            context = load(str(path))
+            self.assertEqual(
+                [None, "W2.A05"],
+                [
+                    role["holdOwner"]
+                    for role in taskctl_module.correction_roles(context[0])
+                    if role["parentId"] == "W2.A03"
+                ],
+            )
+            self.assertEqual([], validate(*context))
+            second = context[0]["wave_amendments"][-1]
+            # Synthetic independent completion, with actual Git binding below.
+            branch = "codex/sequential-correction-fixture"
+            second["campaign"] = copy.deepcopy(prior["campaign"])
+            second["campaign"].update(status="COMPLETE", branch=branch, worktree=".", lease=None)
+            second["completion"] = copy.deepcopy(child["completion"])
+            second["completion"].update(
+                status="APPROVED",
+                reviewer="bob",
+                reviewed_at="2026-10-04T00:00:00Z",
+                evidence=copy.deepcopy(prior["completion"]["evidence"]),
+                exit_review_control=copy.deepcopy(prior["completion"]["exit_review_control"]),
+            )
+            attempt = second["completion"]["exit_review_control"]["attempts"][-1]
+            attempt["submission"]["branch"] = branch
+            for task in second["tasks"]:
+                for field in ("status", "completed_at", "evidence", "verification_state", "review"):
+                    task[field] = copy.deepcopy(prior["tasks"][0][field])
+            taskctl_module.append_amendment_event(second, "REVIEW", "alice", "Synthetic second exit fixture")
+            save_validated(str(path), context[0])
+            subprocess.run(["git", "init", "--quiet", "-b", branch], cwd=root, check=True)
+            subprocess.run(["git", "config", "user.name", "Correction Fixture"], cwd=root, check=True)
+            subprocess.run(["git", "config", "user.email", "fixture@example.invalid"], cwd=root, check=True)
+            reviewed = self.commit_all(root, "synthetic second approved completion")
+            evidence = root / "artifacts/evidence/second-return.json"
+            evidence.parent.mkdir(parents=True)
+            evidence.write_text(
+                json.dumps(
+                    {
+                        "documentType": "wave-amendment-adoption-evidence",
+                        "amendmentId": "W2.A05",
+                        "targetWave": "W2",
+                        "candidateCommit": reviewed,
+                        "reviewedCompletionCommit": reviewed,
+                        "branch": branch,
+                        "correctionReturn": second["correction"],
+                    }
+                )
+                + "\n",
+                encoding="utf-8",
+            )
+            self.commit_all(root, "bound second return")
+            args = Namespace(
+                amendment="W2.A05",
+                agent="alice",
+                file=str(path),
+                from_path=str(evidence),
+                note="Synthetic second return",
+                source_sha256=hashlib.sha256(path.read_bytes()).hexdigest(),
+            )
+            with (
+                patch("taskctl.require_runtime_amendment_integrity"),
+                patch(
+                    "taskctl.save_validated", side_effect=lambda *a, **kw: save_validated(*a, **{**kw, "repo": None})
+                ),
+            ):
+                taskctl_module.command_amendment_adopt(args, *load(str(path)))
+                with self.assertRaisesRegex(SystemExit, "Only an unadopted REVIEW"):
+                    taskctl_module.command_amendment_adopt(args, *load(str(path)))
+            after = load(str(path))
+            self.assertEqual([], validate(*after))
+            self.assertEqual(
+                [None, "W2.A03"],
+                [
+                    role["holdOwner"]
+                    for role in taskctl_module.correction_roles(after[0])
+                    if role["parentId"] == "W2.A03"
+                ],
+            )
+            self.assertEqual(
+                frozen,
+                {
+                    item["id"]: canonical_json_sha256(item)
+                    for item in taskctl_module.serializable_backlog(after[0])["wave_amendments"]
+                    if item["id"] in frozen
+                },
+            )
+
     def test_paused_correction_older_adapter_fails_closed_at_every_hold_phase(self) -> None:
         legacy = types.ModuleType("fixture_legacy_taskctl")
         legacy.__file__ = str(REPO / "tools/taskctl.py")

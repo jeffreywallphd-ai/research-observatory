@@ -179,6 +179,17 @@ review history remain immutable after return. Nested, competing and unsupported
 disposal paths fail closed. Correction approval does not authorize ordinary
 Wave execution or any release gate.
 
+After an authenticated completed correction returns its hold, a later numbered
+correction may name the same non-correction parent. Its complete ordered context
+must contain only contiguous ADOPTED corrections of that parent, with each
+immutable approval, bootstrap, task/exit review, actual adoption and exact paused
+return checkpoint authenticated by the adapter. Earlier returned siblings remain
+history and own no current hold; only the latest relation derives current roles.
+Missing context retains the immediate numeric parent+1 denial. Gaps, reordering,
+foreign/nested parents, unfinished siblings, rewritten completed records and
+competing work remain unsupported. This is parsing/projection maintenance under
+GOV-MIG-0001, not additional correction approval or execution authority.
+
 ## Invariants retained
 
 The prospective operating simplification in `workflow-efficiency.md` applies

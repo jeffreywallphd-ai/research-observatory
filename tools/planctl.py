@@ -25,6 +25,7 @@ from capability_plan_check import (
 )
 from governance_kernel import (
     KernelValidationError,
+    preceding_paused_corrections,
     validate_paused_predecessor_record,
     validate_returned_predecessor_history,
 )
@@ -1232,7 +1233,8 @@ def _paused_predecessor_errors(
         payload = _git_blob(root, commit, "planning/backlog.yaml")
         source = yaml.safe_load(payload.decode("utf-8")) if payload else {}
         parent = next(item for item in source.get("wave_amendments", []) if item.get("id") == parent_id)
-        validate_paused_predecessor_record(parent, binding, correction_id)
+        prior = preceding_paused_corrections(source.get("wave_amendments", []), parent_id, correction_id)
+        validate_paused_predecessor_record(parent, binding, correction_id, preceding_corrections=prior)
         if returned_parent is not None:
             validate_returned_predecessor_history(parent, returned_parent)
         wave = next(item for item in source.get("waves", []) if item.get("id") == parent.get("target_wave"))
@@ -1255,7 +1257,7 @@ def _paused_predecessor_errors(
         or campaign.get("lease") is not None
         or _json_object(source.get("control_plane")).get("active_amendment") is not None
         or not wave_amendments
-        or wave_amendments[-1] != parent
+        or wave_amendments[wave_amendments.index(parent) + 1 :] != prior
         or any(
             task.get("status") in {"IN_PROGRESS", "REVIEW"} or task.get("lease") is not None for task in ordinary_tasks
         )
@@ -1277,7 +1279,8 @@ def _paused_predecessor_errors(
                 and item.get("campaign") is None
                 and item.get("tasks") == []
             )
-            for item in wave_amendments[:-1]
+            for item in wave_amendments
+            if item != parent
         )
     ):
         return ["Paused correction source is not the quiescent single-owner amendment hold"]
@@ -1305,7 +1308,103 @@ def _paused_predecessor_errors(
         or not _git_is_ancestor(root, introduction, commit)
     ):
         return ["Paused correction predecessor approval is not authentic and ancestor-bound"]
-    return []
+    return [error for sibling in prior for error in _returned_correction_errors(root, dict(sibling), source, commit)]
+
+
+def _returned_correction_errors(
+    root: Path, sibling: dict[str, Any], source: dict[str, Any], source_commit: str
+) -> list[str]:
+    """Authenticate a completed sibling; an ADOPTED string is never authority.
+
+    Reuse the compatibility adapter's existing approval, bootstrap, immutable
+    task/exit review and checkpoint validators. Bind the first adoption and the
+    exact unchanged record and paused return in real Git. Recursive predecessor
+    checks only descend into earlier siblings, never the current proposal.
+    """
+    import taskctl
+
+    identity = str(sibling.get("id") or "")
+    binding = _json_object(sibling.get("correction"))
+    campaign = _json_object(sibling.get("campaign"))
+    completion = _json_object(sibling.get("completion"))
+    tasks = sibling.get("tasks") or []
+    if (
+        _json_object(sibling.get("lifecycle")).get("status") != "ADOPTED"
+        or _json_object(sibling.get("bootstrap")).get("status") != "APPROVED"
+        or campaign.get("status") != "COMPLETE"
+        or campaign.get("lease") is not None
+        or completion.get("status") != "APPROVED"
+        or not _json_object(completion.get("exit_review_control")).get("attempts")
+        or not tasks
+        or any(task.get("status") != "DONE" or task.get("lease") is not None for task in tasks)
+    ):
+        return [f"{identity}: correction sibling lacks completed authenticated return prerequisites"]
+    try:
+        approval, packet, _payload = taskctl.load_amendment_authority(root, identity)
+    except SystemExit as exc:
+        return [f"{identity}: returned correction authority is unavailable: {exc}"]
+    errors = [
+        *taskctl.amendment_approval_errors(root, sibling.get("approval_reference") or {}, sibling),
+        *_v4_packet_review_errors(root, packet, approval),
+        *taskctl.bootstrap_packet_errors(root, sibling, approval, packet),
+        *taskctl.immutable_amendment_task_errors(sibling, packet),
+        *taskctl.amendment_exit_review_control_errors(source, sibling, root),
+    ]
+    for task in tasks:
+        errors.extend(taskctl.task_review_control_errors(task, root))
+    if errors:
+        return errors
+    introduction = str(_json_object(sibling.get("approval_reference")).get("introduction_commit") or "")
+    history = subprocess.run(
+        ["git", "log", "--format=%H", f"{introduction}..{source_commit}", "--", "planning/backlog.yaml"],
+        cwd=root,
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    if history.returncode != 0:
+        return [f"{identity}: returned correction Git history is unavailable"]
+    adopted_commit: str | None = None
+    adopted_source: dict[str, Any] = {}
+    for commit in history.stdout.splitlines():
+        document = taskctl.historical_backlog_document(root, commit) or {}
+        record: dict[str, Any] = next(
+            (item for item in document.get("wave_amendments", []) if item.get("id") == identity), {}
+        )
+        if _json_object(record.get("lifecycle")).get("status") != "ADOPTED":
+            break
+        if record != sibling:
+            return [f"{identity}: completed correction record changed after return"]
+        adopted_commit, adopted_source = commit, document
+    if adopted_commit is None:
+        return [f"{identity}: correction sibling has no actual ADOPTED transition"]
+    errors.extend(_adoption_transition_errors(root, identity, adopted_commit))
+    parent_id = str(binding.get("id") or "")
+    parent: dict[str, Any] = next(
+        (item for item in adopted_source.get("wave_amendments", []) if item.get("id") == parent_id), {}
+    )
+    try:
+        prior = preceding_paused_corrections(adopted_source.get("wave_amendments", []), parent_id, identity)
+        validate_paused_predecessor_record(parent, binding, identity, preceding_corrections=prior)
+    except KernelValidationError as exc:
+        errors.append(f"{identity}: adoption did not return the exact paused predecessor: {exc}")
+    current_parent: dict[str, Any] = next(
+        (item for item in source.get("wave_amendments", []) if item.get("id") == parent_id), {}
+    )
+    errors.extend(_paused_predecessor_errors(root, binding, identity, returned_parent=current_parent))
+    wave_id = str(sibling.get("target_wave") or "")
+    adopted_wave: dict[str, Any] = next(
+        (item for item in adopted_source.get("waves", []) if item.get("id") == wave_id), {}
+    )
+    current_wave: dict[str, Any] = next((item for item in source.get("waves", []) if item.get("id") == wave_id), {})
+    checkpoints = taskctl.amendment_adoption_checkpoints(adopted_wave, identity)
+    if len(checkpoints) != 1 or taskctl.amendment_adoption_checkpoints(current_wave, identity) != checkpoints:
+        errors.append(f"{identity}: returned correction lacks its unique unchanged security checkpoint")
+    else:
+        for reference in checkpoints[0].get("evidence", []):
+            if isinstance(reference, dict) and reference.get("amendment_id") == identity:
+                errors.extend(taskctl.amendment_adoption_reference_errors(root, reference, sibling))
+    return errors
 
 
 def _next_global_ecr_id(root: Path, current_id: str) -> str:
@@ -1833,11 +1932,14 @@ def _authority_chain_v4_errors(root: Path, packet: dict[str, Any]) -> list[str]:
     if not isinstance(frozen, list) or not isinstance(reserved, list):
         return [*errors, "ECR v4 ordered or reserved amendment authority is missing"]
     paused = _json_object(chain.get("pausedPredecessor"))
+    declared_frozen_ids = [str(_json_object(item).get("id")) for item in frozen]
     if "pausedPredecessor" in chain:
         if packet.get("schemaVersion") != "4.1-proposal":
             errors.append("Paused predecessor authority requires the explicit 4.1 proposal schema")
         errors.extend(_paused_predecessor_errors(root, paused, proposed))
-        frozen = [*frozen, paused]
+        # Validate declared adopted order separately; compose the distinct paused
+        # binding by numeric identity without silently sorting a malformed list.
+        frozen = sorted([*frozen, paused], key=lambda item: str(_json_object(item).get("id")))
     actual_ids = [str(item.get("id")) for item in actual]
     actual_by_id = {str(item.get("id")): item for item in actual}
     proposed_record = _json_object(actual_by_id.get(proposed))
@@ -1871,7 +1973,7 @@ def _authority_chain_v4_errors(root: Path, packet: dict[str, Any]) -> list[str]:
     if (
         any(ordinal is None for ordinal in predecessor_ordinals)
         or len(predecessor_ids) != len(set(predecessor_ids))
-        or frozen_ids != sorted(frozen_ids, key=lambda item: amendment_ordinal(item) or math.inf)
+        or declared_frozen_ids != sorted(declared_frozen_ids, key=lambda item: amendment_ordinal(item) or math.inf)
         or reserved_ids != sorted(reserved_ids, key=lambda item: amendment_ordinal(item) or math.inf)
         or ordered_predecessors != expected_predecessors
         or actual_ids != expected_actual
@@ -1940,7 +2042,8 @@ def _authority_chain_v4_errors(root: Path, packet: dict[str, Any]) -> list[str]:
             errors.extend(_adoption_transition_errors(root, str(item.get("id") or ""), state_commit))
         elif not returned:
             try:
-                validate_paused_predecessor_record(backlog_item, paused, proposed)
+                prior = preceding_paused_corrections(actual, str(paused.get("id")), proposed)
+                validate_paused_predecessor_record(backlog_item, paused, proposed, preceding_corrections=prior)
             except KernelValidationError as exc:
                 errors.append(f"ECR v4 paused predecessor is stale or not quiescent: {exc}")
 

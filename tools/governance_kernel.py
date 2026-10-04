@@ -114,7 +114,12 @@ def paused_predecessor_record_hash(record: Mapping[str, Any]) -> str:
     return hashlib.sha256(json.dumps(record, sort_keys=True, separators=(",", ":")).encode("utf-8")).hexdigest()
 
 
-def _validate_correction_identity(record: Mapping[str, Any], binding: Mapping[str, Any], correction_id: str) -> None:
+def _validate_correction_binding(
+    record: Mapping[str, Any],
+    binding: Mapping[str, Any],
+    correction_id: str,
+    preceding_count: int,
+) -> None:
     """Validate immutable relation fields even after the live parent advances."""
     expected_fields = {
         "id",
@@ -132,7 +137,7 @@ def _validate_correction_identity(record: Mapping[str, Any], binding: Mapping[st
     match = re.fullmatch(r"(W(?:[0-9]|1[01]))\.A([0-9]{2})", parent_id)
     if (
         match is None
-        or correction_id != f"{match[1]}.A{int(match[2]) + 1:02d}"
+        or correction_id != f"{match[1]}.A{int(match[2]) + preceding_count + 1:02d}"
         or record.get("id") != parent_id
         or record.get("target_wave") != match[1]
         or record.get("change_request_id") != binding.get("changeRequestId")
@@ -153,11 +158,35 @@ def _validate_correction_identity(record: Mapping[str, Any], binding: Mapping[st
         raise KernelValidationError("Paused correction snapshot status/hash is invalid")
 
 
+def _validate_correction_identity(
+    record: Mapping[str, Any],
+    binding: Mapping[str, Any],
+    correction_id: str,
+    preceding_corrections: Iterable[Mapping[str, Any]] = (),
+) -> None:
+    prior = list(preceding_corrections)
+    _validate_correction_binding(record, binding, correction_id, len(prior))
+    for position, sibling in enumerate(prior):
+        sibling_binding = sibling.get("correction")
+        if (
+            sibling.get("target_wave") != record.get("target_wave")
+            or (sibling.get("lifecycle") or {}).get("status") != "ADOPTED"
+            or not isinstance(sibling_binding, dict)
+            or sibling_binding.get("id") != record.get("id")
+        ):
+            raise KernelValidationError("Correction history contains a foreign, nested or unfinished sibling")
+        _validate_correction_binding(record, sibling_binding, str(sibling.get("id") or ""), position)
+
+
 def validate_paused_predecessor_record(
-    record: Mapping[str, Any], binding: Mapping[str, Any], correction_id: str
+    record: Mapping[str, Any],
+    binding: Mapping[str, Any],
+    correction_id: str,
+    *,
+    preceding_corrections: Iterable[Mapping[str, Any]] = (),
 ) -> None:
     """Validate exact paused bytes; the adapter must also authenticate Git and approval."""
-    _validate_correction_identity(record, binding, correction_id)
+    _validate_correction_identity(record, binding, correction_id, preceding_corrections)
     if binding.get("status") != "PAUSED" or (record.get("lifecycle") or {}).get("status") != "PAUSED":
         raise KernelValidationError("Correction predecessor must be PAUSED, never assumed adopted")
     campaign = record.get("campaign") or {}
@@ -200,6 +229,27 @@ def validate_returned_predecessor_history(before: Mapping[str, Any], after: Mapp
             raise KernelValidationError("Returned predecessor task review history changed")
 
 
+def preceding_paused_corrections(
+    amendments: Iterable[Mapping[str, Any]], parent_id: str, correction_id: str
+) -> list[Mapping[str, Any]]:
+    """Select complete ordered context; callers validate it and authenticate Git.
+
+    For a proposal the child is absent and all later same-Wave records are
+    context. For historical/live children only records before that child count.
+    No sorting or omitted records are allowed to repair a malformed input.
+    """
+    wave_id = parent_id.split(".")[0]
+    records = [item for item in amendments if item.get("target_wave") == wave_id]
+    identities = [str(item.get("id")) for item in records]
+    if parent_id not in identities or len(identities) != len(set(identities)):
+        raise KernelValidationError("Missing or duplicate paused correction predecessor")
+    start = identities.index(parent_id) + 1
+    end = identities.index(correction_id) if correction_id in identities else len(records)
+    if end < start:
+        raise KernelValidationError("Reordered paused correction predecessor")
+    return records[start:end]
+
+
 def project_paused_corrections(amendments: Iterable[Mapping[str, Any]]) -> list[PausedCorrectionProjection]:
     """Derive single-owner correction roles without performing any mutation.
 
@@ -213,7 +263,7 @@ def project_paused_corrections(amendments: Iterable[Mapping[str, Any]]) -> list[
     if len(by_id) != len(records):
         raise KernelValidationError("Duplicate amendment identity in correction projection")
     projections: list[PausedCorrectionProjection] = []
-    seen_parents: set[str] = set()
+    latest_parent_projection: dict[str, PausedCorrectionProjection] = {}
     for child in records:
         if "correction" not in child:
             continue
@@ -224,22 +274,16 @@ def project_paused_corrections(amendments: Iterable[Mapping[str, Any]]) -> list[
         parent = by_id.get(parent_id)
         child_id = str(child.get("id") or "")
         wave_records = [item for item in records if item.get("target_wave") == child.get("target_wave")]
-        if (
-            parent is None
-            or parent_id in seen_parents
-            or parent not in wave_records
-            or wave_records.index(child) != wave_records.index(parent) + 1
-            or "correction" in parent
-        ):
+        if parent is None or parent not in wave_records or "correction" in parent:
             raise KernelValidationError("Missing, competing, nested or reordered paused correction predecessor")
-        seen_parents.add(parent_id)
-        _validate_correction_identity(parent, binding, child_id)
+        prior = preceding_paused_corrections(records, parent_id, child_id)
+        _validate_correction_identity(parent, binding, child_id, prior)
         state = (child.get("lifecycle") or {}).get("status")
         if state not in {"APPROVED", "MATERIALIZED", "ACTIVE", "PAUSED", "REVIEW", "BLOCKED", "ADOPTED"}:
             raise KernelValidationError("Correction disposal requires separately reviewed recovery; it is unsupported")
         frozen = state != "ADOPTED"
         if frozen:
-            validate_paused_predecessor_record(parent, binding, child_id)
+            validate_paused_predecessor_record(parent, binding, child_id, preceding_corrections=prior)
         else:
             # The immutable historical parent and binding are authenticated by
             # the adapter. Only after adoption may the live parent advance.
@@ -256,15 +300,19 @@ def project_paused_corrections(amendments: Iterable[Mapping[str, Any]]) -> list[
         owner: str | None = parent_id if state in {"APPROVED", "ADOPTED"} else child_id
         if state == "ADOPTED" and (parent.get("lifecycle") or {}).get("status") == "ADOPTED":
             owner = None
-        projections.append(
-            {
-                "parentId": parent_id,
-                "correctionId": child_id,
-                "phase": "returned" if state == "ADOPTED" else "pending-entry" if state == "APPROVED" else "executing",
-                "holdOwner": owner,
-                "parentFrozen": frozen,
-            }
-        )
+        # Completed siblings are history, not concurrent hold owners. The
+        # adapter still authenticates each one's exact approval/adoption/return.
+        if parent_id in latest_parent_projection:
+            latest_parent_projection[parent_id]["holdOwner"] = None
+        projection: PausedCorrectionProjection = {
+            "parentId": parent_id,
+            "correctionId": child_id,
+            "phase": "returned" if state == "ADOPTED" else "pending-entry" if state == "APPROVED" else "executing",
+            "holdOwner": owner,
+            "parentFrozen": frozen,
+        }
+        projections.append(projection)
+        latest_parent_projection[parent_id] = projection
     return projections
 
 

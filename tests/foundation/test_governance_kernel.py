@@ -103,6 +103,57 @@ class PausedAmendmentCorrectionTests(unittest.TestCase):
         parent, _ = self.pair()
         self.assertEqual([], governance_kernel.project_paused_corrections([parent]))
 
+    def test_sequential_returned_siblings_have_only_one_current_owner(self) -> None:
+        parent, prior = self.pair()
+        prior["lifecycle"]["status"] = "ADOPTED"
+        child = copy.deepcopy(prior)
+        child["id"] = "W2.A05"
+        for state in ("APPROVED", "MATERIALIZED", "ACTIVE", "PAUSED", "REVIEW", "BLOCKED", "ADOPTED"):
+            child["lifecycle"]["status"] = state
+            records = [parent, prior, child]
+            before = copy.deepcopy(records)
+            with self.subTest(state=state):
+                roles = governance_kernel.project_paused_corrections(records)
+                self.assertEqual(before, records)
+                self.assertIsNone(roles[0]["holdOwner"])
+                self.assertEqual("returned", roles[0]["phase"])
+                self.assertEqual("W2.A03" if state in {"APPROVED", "ADOPTED"} else "W2.A05", roles[1]["holdOwner"])
+        # A third completed-return sibling uses the complete ordered context.
+        third = copy.deepcopy(child)
+        third["id"] = "W2.A06"
+        third["lifecycle"]["status"] = "APPROVED"
+        roles = governance_kernel.project_paused_corrections([parent, prior, child, third])
+        self.assertEqual([None, None, "W2.A03"], [role["holdOwner"] for role in roles])
+
+    def test_sequential_context_denies_gaps_reordering_competition_and_substitution(self) -> None:
+        parent, prior = self.pair()
+        prior["lifecycle"]["status"] = "ADOPTED"
+        child = copy.deepcopy(prior)
+        child["id"] = "W2.A05"
+        child["lifecycle"]["status"] = "APPROVED"
+        for case in ("missing", "gap", "reordered", "unfinished", "foreign", "nested", "bad-approval", "disposed"):
+            records = copy.deepcopy([parent, prior, child])
+            if case == "missing":
+                records.pop(1)
+            elif case == "gap":
+                records[2]["id"] = "W2.A06"
+            elif case == "reordered":
+                records[1:3] = reversed(records[1:3])
+            elif case == "unfinished":
+                records[1]["lifecycle"]["status"] = "REVIEW"
+            elif case == "foreign":
+                records[1]["target_wave"] = "W1"
+            elif case == "nested":
+                records[2]["correction"]["id"] = "W2.A04"
+            elif case == "bad-approval":
+                records[1]["correction"]["approvalReference"]["sha256"] = "f" * 64
+            else:
+                records[1]["lifecycle"]["status"] = "WITHDRAWN"
+            with self.subTest(case=case), self.assertRaises(governance_kernel.KernelValidationError):
+                governance_kernel.project_paused_corrections(records)
+        with self.assertRaisesRegex(governance_kernel.KernelValidationError, "immediate"):
+            governance_kernel.validate_paused_predecessor_record(parent, child["correction"], child["id"])
+
 
 class GovernanceKernelTests(unittest.TestCase):
     def event(

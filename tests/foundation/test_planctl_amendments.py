@@ -351,6 +351,79 @@ class PlanctlAmendmentTests(unittest.TestCase):
                     errors = _paused_predecessor_errors(root, {**binding, "effectiveStateCommit": commit}, "W2.A02")
                     self.assertTrue(any("single-owner" in error for error in errors), errors)
 
+    def test_sequential_correction_authenticates_actual_completed_return_in_git(self) -> None:
+        # Exact historical quiescent bytes, never the evolving live backlog.
+        packet = json.loads(
+            subprocess.check_output(
+                [
+                    "git",
+                    "show",
+                    "7604e7ee94e930548d3078c691ade0f4934a76c9:planning/enabler-change-requests/ECR-0013.packet.json",
+                ],
+                cwd=REPO,
+            )
+        )
+        binding = packet["authorityChain"]["pausedPredecessor"]
+        self.assertEqual([], _paused_predecessor_errors(REPO, binding, "W2.A05"))
+        substituted = copy.deepcopy(binding)
+        substituted["recordSha256"] = "f" * 64
+        self.assertTrue(_paused_predecessor_errors(REPO, substituted, "W2.A05"))
+        self.assertTrue(_paused_predecessor_errors(REPO, binding, "W2.A06"))
+
+    def test_returned_sibling_denies_adopted_flags_and_changed_completed_records(self) -> None:
+        import taskctl
+        from planctl import _returned_correction_errors
+
+        commit = "771e54a3657cdc5ff308d3a53d7b71eb48bb9214"
+        source = taskctl.historical_backlog_document(REPO, commit)
+        assert source is not None
+        sibling = next(item for item in source["wave_amendments"] if item["id"] == "W2.A04")
+        for case in (
+            "missing-approval",
+            "unfinished-task",
+            "removed-exit",
+            "changed-review",
+            "changed-record",
+            "missing-checkpoint",
+        ):
+            changed = copy.deepcopy(sibling)
+            changed_source = copy.deepcopy(source)
+            if case == "missing-approval":
+                changed["id"] = "W2.A05"
+            elif case == "unfinished-task":
+                changed["tasks"][0]["status"] = "READY"
+            elif case == "removed-exit":
+                changed["completion"].pop("exit_review_control")
+            elif case == "changed-review":
+                changed["tasks"][0]["review_control"]["attempts"][-1]["review"]["result"] = "blocked"
+            elif case == "changed-record":
+                changed["completion"]["notes"] += " forged later edit"
+            else:
+                changed_source["waves"][2]["checkpoints"] = []
+            with self.subTest(case=case):
+                self.assertTrue(_returned_correction_errors(REPO, changed, changed_source, commit))
+
+    def test_sequential_chain_composes_paused_authority_without_reordering_declared_adoptions(self) -> None:
+        import taskctl
+
+        packet = json.loads(
+            subprocess.check_output(
+                [
+                    "git",
+                    "show",
+                    "7604e7ee94e930548d3078c691ade0f4934a76c9:planning/enabler-change-requests/ECR-0013.packet.json",
+                ],
+                cwd=REPO,
+            )
+        )
+        source = taskctl.historical_backlog_document(REPO, "771e54a3657cdc5ff308d3a53d7b71eb48bb9214")
+        assert source is not None
+        with patch("planctl.load_backlog", return_value=(source, {})):
+            self.assertEqual([], self._fixture_authority_chain_v4_errors(packet))
+            changed = copy.deepcopy(packet)
+            changed["authorityChain"]["orderedAmendments"].reverse()
+            self.assertTrue(any("reordered" in error for error in self._fixture_authority_chain_v4_errors(changed)))
+
     def test_paused_correction_schema_is_explicit_and_keeps_v4_bytes(self) -> None:
         relative = "planning/enabler-change-requests/enabler-change-request.v4.schema.json"
         original = subprocess.check_output(

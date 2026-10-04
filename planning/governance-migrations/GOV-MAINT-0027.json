@@ -1,0 +1,87 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "governance-control-maintenance",
+  "maintenanceId": "GOV-MAINT-0027",
+  "title": "Recognize authenticated completed correction siblings without competing hold ownership",
+  "status": "prepared",
+  "riskTier": 2,
+  "humanApprovalRequired": false,
+  "implementationAgent": "agent:codex-w2-implementation",
+  "authority": "GOV-MIG-0001 transition.futureControlRepair and AGENTS.md/workflow-efficiency bounded maintenance. This repairs parsing/projection of completed returned history and preserves the separately approved correction lane; it confers no product, source-envelope, experience, approval, task, Wave or release permission.",
+  "predecessor": {
+    "commit": "7604e7ee94e930548d3078c691ade0f4934a76c9",
+    "backlogGitBlobSha256": "4355f55e1b431b8ff40d99cf615536dccd9d84a8a4945544984ec81f7068d49d",
+    "wave": "W2",
+    "waveStatus": "PAUSED",
+    "waveScope": "amendment-hold",
+    "pausedAmendment": "W2.A03",
+    "pausedRecordSha256": "bdad5e81327e32ee322db436dc569898ce314d29058e53b0cfe67ed6192e0b03",
+    "adoptedCorrection": "W2.A04",
+    "adoptedCorrectionRecordSha256": "c15d980f77933ba92e926980d6bc57b0f918430a4d0272952b922889a97e9ffc",
+    "sourceGitBlobSha256": {
+      "tools/governance_kernel.py": "61920893d26b65a79937e1d3dbb3f8c21fafdc5fe805be9b803acc30c980c7c7",
+      "tools/planctl.py": "17718c70e4f38a836f7b142191224e699bf0aaa9f447dfdd1a8f7d31c1addd9f",
+      "tools/taskctl.py": "8dfb4045adc4050bc4ddf93936d42450bda97d79911ef14cd4871eb22553d173",
+      "tests/foundation/test_governance_kernel.py": "aa14da5719605f412dd28263138653fd81e7c996cb3f8c9e4bda8e80233f2170",
+      "tests/foundation/test_planctl_amendments.py": "b8e56115c7aa680b56866f085a333fbc7ca9cf44b7312b9bebe93c551ef7c998",
+      "tests/foundation/test_taskctl_workflow.py": "a074686cf2c37acd0e4095a4719210b70de704839c80bf7473d5fe574db0f8f3",
+      "docs/automation/governance-automation-simplification.md": "605f3b4765dfd71110f659af1e026dca66121891e6c67ce46abe76b5844413a5"
+    }
+  },
+  "trigger": {
+    "record": "planning/enabler-change-requests/ECR-0013.validation-adverse-01.json",
+    "finding": "W2.A03.S01-R01-F01",
+    "description": "The inert second correction packet is rejected by numeric parent+1, lifetime single-child projection, frozen-list concatenation and penultimate-owner assumptions although its previous correction is authenticated ADOPTED and returned.",
+    "freshRed": {
+      "path": "artifacts/tmp/GOV-MAINT-0027.red-01.log",
+      "sha256": "4a43cad9eb5367bc642422387f1bf0783bb2fa714614a06602bec70ef9bf6936",
+      "exitCode": 1,
+      "result": "Two new targeted tests reproduce the numeric/history rejection before implementation: seven sequential owner phases plus real Git paused predecessor."
+    }
+  },
+  "intendedDelta": {
+    "changedPaths": [
+      "planning/governance-migrations/GOV-MAINT-0027.json",
+      "tools/governance_kernel.py",
+      "tools/planctl.py",
+      "tools/taskctl.py",
+      "tests/foundation/test_governance_kernel.py",
+      "tests/foundation/test_planctl_amendments.py",
+      "tests/foundation/test_taskctl_workflow.py",
+      "docs/automation/governance-automation-simplification.md"
+    ],
+    "implementation": "Allow only complete contiguous ordered ADOPTED same-parent correction siblings as historical context, authenticate their exact Git/approval/review/adoption/return boundaries through the adapter, and derive only the latest live hold owner. Keep no-context parent+1 and all unsupported relation/lease/disposal denials. Preserve input order validation before canonical composition of adopted+paused authority.",
+    "preservedInvariants": [
+      "No changes to existing approval, packet, backlog, task, review, adverse evidence, reference, baseline, protected policy, control revision or schema.",
+      "Kernel is pure evidence-only; taskctl remains the live CAS adapter. No approval from an ADOPTED string alone.",
+      "No nested correction, foreign parent, numeric gap/reordering, unfinished sibling, competing execution, rewritten completed record/history, stale writer or unreviewed return.",
+      "All original bootstrap, task, slice, exit, security and owner approval gates remain required. A05 stays non-executable until its own reviewed exact packet is explicitly approved.",
+      "Three changed imported authority tools require exact independently reviewed GOV-MAINT-0027 source/ledger binding in the subsequent ECR-0013/A05; this maintenance alone does not authorize original CAP-05.S01.T01 execution."
+    ]
+  },
+  "verification": {
+    "status": "pending exact committed candidate checks and independent control review",
+    "selected": [
+      "Pure kernel single/sequential phases and denial cases",
+      "Real Git paused predecessor/returned sibling approval, adoption, exact checkpoint and source substitution denials",
+      "Sequential adapter hold semantics and real disposable CAS materialization/adoption including failure paths",
+      "Affected Ruff/format/mypy, diff hygiene, canonical backlog and planning outputs"
+    ],
+    "deferred": "No product/native/browser/profile suite is warranted by this parser/projection-only repair; A03/A05 integrated checks, original6506/native composition, checkpoints and fresh W2 qualification remain required.",
+    "reusedEvidence": [],
+    "developmentTypes": {
+      "path": "artifacts/tmp/GOV-MAINT-0027.development-types-02.log",
+      "exitCode": 0,
+      "scope": "Six affected tool/test modules with tools and tests/foundation on MYPYPATH. Fresh candidate check remains due."
+    }
+  },
+  "refactoring": "No structural cleanup or debt repayment; bounded restorative control correction only. Shared Wave budget is unchanged.",
+  "rollback": "Do not integrate on failure or before independent approval. Preserve the exact clean predecessor and all adverse rounds. No remote action or destructive rollback.",
+  "review": null,
+  "implementationNotes": [
+    "The terminal-scope validator now recognizes older returned siblings by their parent relation, while only the latest projection exposes a current hold owner.",
+    "One pre-existing Ruff RUF059 in affected activation code is repaired by naming the unused validated worktree tuple value _worktree; identity validation and persistence behavior are unchanged.",
+    "The synthetic second-transition test isolates CAS and real Git checkpoint persistence; immutable authority is independently exercised by the actual reviewed A04 return. It supplies no real owner approval.",
+    "Development setup failure (direct dotted unittest import omitted foundation discovery path) and initial new fixture/hash assertions are preserved in development-02 through development-05 logs. The sixth targeted CAS rehearsal passes; final committed-candidate proof is still due."
+  ]
+}
