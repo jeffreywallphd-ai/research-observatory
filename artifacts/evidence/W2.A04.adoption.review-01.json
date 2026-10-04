@@ -1,0 +1,82 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "wave-amendment-adoption-security-independent-review",
+  "amendmentId": "W2.A04",
+  "targetWave": "W2",
+  "reviewer": "agent:/root/a03_t02_authority_review",
+  "reviewedAt": "2026-10-04T17:04:33.572923+00:00",
+  "result": "approved",
+  "reviewedManifest": {
+    "path": "artifacts/evidence/W2.A04.adoption.json",
+    "introductionCommit": "e4fa9dec34412aa37a3e2381a05f1e2bf484dec7",
+    "gitBlob": "3ff2d594cba23af90a70c5d32c89d0eefe1b7257",
+    "sha256": "ece0d58fc04b3b8ac6ff755088fdd9420dabf172fcbab8df3c8ea5a7983f9051"
+  },
+  "approvedExit": {
+    "attemptId": "R01",
+    "reviewedCompletionCommit": "20b504fb43529689bb197d771ae086b1f7672e31",
+    "reviewedSubmissionCommit": "1733931c7cec344ed86a9cbf8507e3cfda17ab9a",
+    "exitEvidence": {
+      "type": "amendment-exit-evidence",
+      "amendment_id": "W2.A04",
+      "path": "artifacts/evidence/W2.A04.exit.json",
+      "sha256": "aa98cc71b49c6810b3b668ba550976bc723af8c7a95ff599c61ad5f36d162d73",
+      "commit": "10e555d2269a0333048622cd4e84803cb410c3a9"
+    },
+    "exitReview": {
+      "path": "artifacts/evidence/W2.A04.exit-review-R01.json",
+      "sha256": "ca7e7e84fd121029e70aa8a11e45fd861c40ed8fe4ff90f1fc1ce1fbb69df24a",
+      "introductionCommit": "20b504fb43529689bb197d771ae086b1f7672e31",
+      "result": "approved",
+      "openFindings": []
+    }
+  },
+  "independence": {
+    "campaignOwner": "codex-w2-implementation",
+    "statement": "The reviewer is independent of the campaign/task owner and did not author ECR-0012/owner approval, B00 or task implementation, task criterion evidence, exit manifest or proposed adoption manifest. Prior independent ECR-0012/B00/task/S01/exit reviews and read-only advisory examinations are disclosed; they are not presented as a different reviewer identity. This separate security review examines the actual later committed manifest and approved exit state. Only this canonical security ledger is authored during the examination; no source/backlog/site/controller/Git-ref mutation is made."
+  },
+  "securityControlDisposition": {
+    "scope": "Approve only the exact committed pre-adoption security checkpoint evidence for the independently reviewed five-source ECR-0012 correction and complete frozen paused A03 return. No consumer source, renderer/native/Core permission, current product qualification, research I/O, ordinary W2 resumption, release decision or changed accepted architecture is authorized.",
+    "authority": "The manifest binds exact ECR-0012 packet 7f35c7a8/eb1cbf1b and immutable owner approval ba95f68b/e769cb71. Independently approved B00 preceded one-task materialization/activation/claim; actual task DONE R01, integrated S01 and exit R01 have separately committed independent approvals and no open findings. The real exit approval at 20b504fb binds its immutable submission/criteria/checks/packet and ledger ca7e7e84. The separate manifest is the sole change in e4fa9dec, whose parent is that exact approved exit state.",
+    "sourceAndGrants": "Actual reviewed source is unchanged since 6a07f37d through every later source-history commit. Only the five approved gate/test/procedure/Proposed ADR-0040/index paths belong to the correction; one appended registry entry supersedes no accepted ADR and preserves ADR-0039. The closed v1.4 schema, taskctl/kernel, frozen approvals/definitions, original seven consumer source paths, full retained bases, original two-contract/current classification/capture closure and product/native/Core/migration/release boundaries remain unchanged. This checkpoint supplies no renderer path/byte channel, stock file-drop bypass, broad filesystem grant or native principal proof.",
+    "reference": "Approved Academic Minimal 1.8 and package cd8995fd remain unchanged. The design/ui-reference Git tree at current manifest commit equals approved publication acdc67b6. No governed reference change or product interaction redesign is introduced.",
+    "exactReturn": "At approved exit 20b504fb and manifest e4fa9dec, the full A03 record still equals immutable a211f241/f099fd8f. T01 remains DONE and T02 remains BLOCKED at ca8b1448 with unchanged criteria/hash/identity. Manifest correctionReturn exactly equals the approved paused-predecessor relation. Ordinary W2 is PAUSED/amendment-hold; A04 lifecycle is REVIEW, campaign COMPLETE and completion APPROVED. No actual A04 adoption/checkpoint/return exists yet. The proposed supported adoption must return the whole unchanged paused A03 record and retain blocked T02 before any later activation/reopen.",
+    "reviewOrder": "This canonical immutable separate ledger must be committed strictly after manifest introduction e4fa9dec and strictly before actual A04 ADOPTED transition. The new A04-only checkpoint authenticator binds its exact four-key reviewedManifest, independent reviewer, approved exit, canonical round history and preserved findings. Actual post-adoption ordering and exact-return persistence remain the root’s required fresh return check; they are not asserted as observed by this pre-adoption review."
+  },
+  "independentChecks": [
+    {
+      "check": "Exact immutable manifest and approved-exit binding",
+      "result": "passed",
+      "observation": "Independent Git SHA-256/blob/mode checks matched ece0d58f and blob 3ff2d594 at exact e4fa9dec. The manifest is regular LF UTF-8 and physical bytes equal its Git blob. The commit is the sole child of approved exit 20b504fb and changes only adoption.json; backlog bytes are identical. Manifest candidate/reviewedCompletion equal 20b504fb, approvedExitAttempt is R01, and its exact exit evidence/ledger references equal the actual approved attempt. Read-only amendment_adoption_reference_errors returned no errors."
+    },
+    {
+      "check": "Integrated task/S01/exit security authority",
+      "result": "passed",
+      "observation": "Read-only correction_exit_errors returned no errors, authenticating completed task/exit evidence and immutable review history. Actual canonical integrated S01 history authenticated against the approved exit candidate; its path equals the manifest contributionReviewPaths. The task candidate, manifest and review ledger match the actual DONE task attempt. No task, slice or exit open finding remains. The existing exact-candidate checks and their independent dispositions are authenticated prior proof, not fresh security-suite executions."
+    },
+    {
+      "check": "Source/reference equality and exact still-paused predecessor",
+      "result": "passed",
+      "observation": "Independent full historical source-path inspection found no tools/tests/ADR/procedure/reference/app/service/package/verification mutation since source 6a07f37d. Approved 1.8 reference tree equals publication. The actual A03 record equals reference_activation_correction_predecessor’s authenticated frozen a211f241 record, and correctionReturn matches the approved relation exactly. The original W2 remains PAUSED/amendment-hold with no active amendment marker; A04 is REVIEW/COMPLETE/APPROVED and no A04 adoption checkpoint is recorded. No future adoption, A03 activation or T02 reopen is claimed."
+    },
+    {
+      "check": "Producer preparation and adverse-history truth",
+      "result": "passed",
+      "producerScriptPath": "artifacts/tmp/W2.A04.prepare-adoption.py",
+      "producerScriptSha256": "6ed453213087d0e15eaee019965dfa59a64e028698c430e119fb0dc4e130495c",
+      "producerStdoutPath": "artifacts/tmp/W2.A04.prepare-adoption.log",
+      "producerStdoutSha256": "fad82835c83d42f4ebc2bae56c67ed19ae175086fce3a2c3643a2e2af388e367",
+      "observation": "The ignored preparation script and stdout were inspected and independently hashed. They describe constructing the manifest after authentic actual exit/S01/frozen-predecessor checks, and are distinguished from this reviewer’s independent read-only validation. PF01/PF02/PF03 and retained regression-first adverse/setup/interrupted evidence remain disclosed in committed task/exit/S01 records. Their corrected synthetic future controls do not substitute for actual later consumer/native/Wave evidence or erase historical adverse outcomes."
+    }
+  ],
+  "retainedObligations": [
+    "Commit this exact canonical independent ledger after its immutable reviewed manifest, then use supported taskctl amendment adopt W2.A04. Run the fresh actual return check to authenticate the new security checkpoint, strict review/adoption ordering, A04 ADOPTED persistence and exact still-paused A03/T02 return.",
+    "Only later separate supported A03 activation and retained-base T02 reopen permit original seven-source consumer delivery, actual ca8b1448-range ADR/UI checking and fresh 66-image captures. Finish A03 task/slice/exit/security/adoption before ordinary W2 resume.",
+    "Original CAP-05.S01.T01 current classification/full original-base/two-contract proof and real native/Core/D3D, rights/provenance/denial/cancellation/interruption/restart/recovery, joined CAP-04.S05, remaining W2 slices/checkpoints and full Windows x64 security/privacy/rights/accessibility/performance/packaging qualification remain required.",
+    "Independent Wave review and separate human release remain required. This checkpoint review grants no remote effect, destructive research I/O, changed permissions, reference redesign, substantial spend or release decision."
+  ],
+  "findings": [],
+  "closures": [],
+  "openFindingIds": [],
+  "transitionTruth": "This is the independent pre-adoption security/control approval of exact immutable manifest e4fa9dec. It does not assert that this ledger is already committed, that taskctl adoption ran, that a new checkpoint or exact paused return has been recorded, or that A03/T02/native/W2 release work completed. Supported adoption remains conditional on committing this unchanged canonical ledger strictly after the unchanged manifest and before the actual transition, with the later fresh return check and all retained consumer/Wave gates."
+}
