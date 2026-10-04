@@ -1,0 +1,349 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "W2.A04.T01",
+  "baseCommit": "223f48a0cfac0612049fc6bf0537dac79f90be36",
+  "commit": "6a07f37de16e9d5da49cb0b36400e6fe2fb195e0",
+  "branch": "codex/w2-implementation",
+  "changedFiles": [
+    "artifacts/evidence/W2.A04.T01.task-start.md",
+    "docs/adr/ADR-0040-document-protected-desktop-activation-correction.md",
+    "docs/adr/index.json",
+    "docs/automation/design-first-ui-changes.md",
+    "docs/planning-implementation-plan.md",
+    "planning/backlog.yaml",
+    "planning/review-site/enablers/ECR-0012.html",
+    "planning/review-site/enablers/index.html",
+    "planning/review-site/manifest.json",
+    "planning/review-site/waves/W2.html",
+    "planning/status-summary.md",
+    "tests/foundation/test_ui_change_gate.py",
+    "tools/ui_change_gate.py"
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "One Proposed ADR-0040 and one appended registry entry link the A04 correction and future protected T02 extension/baseline. All old registry entries/metadata and prior ADRs remain unchanged. Actual A04 claim-base ADR validation passes; the disposable future T02 case passes ADR association at unchanged ca8b1448."
+      ],
+      "checkIds": [
+        "adr",
+        "correction-positive",
+        "correction-denials"
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "The closed v1.4 schema and all existing field shapes are unchanged. The gate derives only exact ECR-0012 packet/owner/B00/materialization/activation/claim, reviewed five-source delivery, independent S01/exit/security/adoption and paused-predecessor return. The full original-base corrected fixture passes; no generic missing-claim or amendment exemption is introduced."
+      ],
+      "checkIds": [
+        "corrected-full-base",
+        "correction-positive",
+        "correction-denials",
+        "compatibility",
+        "checkpoint-positive",
+        "checkpoint-denials"
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "The actual combined a211f241 snapshot with sole ca8b1448 parent and f099fd8f whole-record hash is authenticated without inventing an intermediate claim. Full DONE T01 and T02 immutable definition/base/owner/branch/worktree persist across every historical state. Source ownership partitions the whole retained range; separate actual activation predecessor and reopen are required."
+      ],
+      "checkIds": [
+        "correction-positive",
+        "correction-denials",
+        "corrected-full-base"
+      ]
+    },
+    {
+      "criterion_index": 4,
+      "evidence": [
+        "The exact task-base Git inventory contains the five approved source paths plus task worksheet, separate claim backlog and generated planning outputs. ADR-0040 is regular and jointly introduced with its sole Proposed index entry. No prior approval/packet, reference/witness/schema/controller, consumer/product/native/Core/runtime/migration/release source changes. Canonical backlog/views/site, affected Python quality, actual task-base ADR/UI and diff checks pass."
+      ],
+      "checkIds": [
+        "adr",
+        "ui-gate",
+        "ruff",
+        "format",
+        "mypy",
+        "diff",
+        "backlog",
+        "views",
+        "site",
+        "correction-denials",
+        "adopted-correction-preservation"
+      ]
+    },
+    {
+      "criterion_index": 5,
+      "evidence": [
+        "Focused disposable real-Git cases pass the correction/return/activate/reopen and actual retained-base ADR positive, combined/predecessor/identity/lease substitutions, hidden add/revert, mixed or premature consumer delivery, extra registry entry, executable source, changed ordinary records, missing return, foreign activation, dirty input and replaced slice-review denials. PF01 replay denies temporary adopted A04 mutation through consumer source and after the candidate. PF02 replay admits preserved adverse R01 and approved R02 task/slice/exit history with exact authenticated evidence references; rejects unbound task/exit outputs, foreign ledger paths, forged digests, unknown or reused slice findings/closures, malformed bindings and missing/noncanonical rounds. PF03 replay authenticates the separately committed checkpoint review, including adverse-01/approved-02 security rounds, and denies missing, forged, self-authored or post-adoption review. Selected legacy v1.0-v1.4 cases pass with original authority. Capture mocks remain explicitly synthetic."
+      ],
+      "checkIds": [
+        "correction-positive",
+        "corrected-full-base",
+        "correction-denials",
+        "adopted-correction-preservation",
+        "compatibility",
+        "checkpoint-positive",
+        "checkpoint-denials"
+      ]
+    },
+    {
+      "criterion_index": 6,
+      "evidence": [
+        "This submission requests the required expanded independent exact-candidate control/security/ADR task disposition. The implemented control and synthetic future case enforce independent task, integrated S01, exit and separate security checkpoint before adoption and exact paused return, then separate A03 activation/T02 reopen. Actual S01/exit/checkpoint/adoption and later consumer/product/Wave gates are ordered subsequent transitions, not granted by this task submission or synthetic proof."
+      ],
+      "checkIds": [
+        "correction-positive",
+        "corrected-full-base",
+        "correction-denials",
+        "checkpoint-positive",
+        "checkpoint-denials",
+        "adr",
+        "backlog"
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "verificationSelection": {
+    "riskAnalysis": "Exact approved five-source protected-control correction. Fresh real-Git persisted snapshot, source-history, return/reopen, append-only remediation, separate security review and original-base authority checks replay all three material advisory findings and explicit task denials. The shared fixture task/exit helper changes justify selected fresh legacy positive/denial coverage. Actual task-range ADR/UI, Python quality and canonical planning checks are directly affected. No prior result is reused as current-candidate qualification; no product/runtime/dependency change justifies an early full repository or desktop/native profile.",
+    "selectedCommandIds": [
+      "foundation:unit",
+      "foundation:adr",
+      "foundation:ui-change",
+      "foundation:quality",
+      "foundation:backlog",
+      "foundation:backlog-views"
+    ],
+    "deferred": [
+      "Unchanged legacy uncorrected full-base and site-asset cases passed at 9c83bd49 and are deferred from this remediation selection because the new checkpoint helper and fixture branch apply only to A04. They are historical context, not reused fresh qualification.",
+      "Actual A03.T02 retained-base protected activation and 66-image desktop capture remain due after reviewed A04 adoption/return and legal activation/reopen.",
+      "Actual original CAP-05.S01.T01 native/Core/D3D proof, joined CAP-04.S05, remaining CAP-05 slices, fresh full W2 matrix and independent Wave/human release gates remain due.",
+      "Full repository/deployment/runtime/packaging profiles are deferred to their required later stages; this task changes no product, native, dependency or toolchain input."
+    ]
+  },
+  "checks": [
+    {
+      "id": "correction-positive",
+      "command": "../../.venv/Scripts/python.exe -B -m unittest -v test_ui_change_gate.UiChangeGateTests.test_reference_activation_correction_authenticates_append_only_remediation",
+      "workingDirectory": "tests/foundation",
+      "exitCode": 0,
+      "commit": "6a07f37de16e9d5da49cb0b36400e6fe2fb195e0",
+      "rawOutput": "artifacts/tmp/W2.A04.T01.correction-positive-6a07f37d.log",
+      "rawOutputSha256": "ce28c0e2859600bbfe02d32ccbac7a5eb6953f339770d8f0ed04515fc7a0a8c3",
+      "startedAt": "2026-10-04T15:45:47.039614+00:00",
+      "finishedAt": "2026-10-04T15:48:22.977009+00:00",
+      "durationSeconds": 155.937,
+      "provenance": "Fresh local execution on the clean committed candidate; shared HEAD and tracked inputs remained fixed. Disposable future-state reviews and capture mocks are synthetic control proof only."
+    },
+    {
+      "id": "corrected-full-base",
+      "command": "../../.venv/Scripts/python.exe -B -m unittest -v test_ui_change_gate.UiChangeGateTests.test_reference_activation_corrected_v14_authenticates_full_original_base",
+      "workingDirectory": "tests/foundation",
+      "exitCode": 0,
+      "commit": "6a07f37de16e9d5da49cb0b36400e6fe2fb195e0",
+      "rawOutput": "artifacts/tmp/W2.A04.T01.corrected-full-base-6a07f37d.log",
+      "rawOutputSha256": "f35cc46cfc2e33a9f35683037c2d52ff9cdf9a90c8e2d55e0a848af1b95cd0e2",
+      "startedAt": "2026-10-04T15:48:23.053442+00:00",
+      "finishedAt": "2026-10-04T15:58:35.535231+00:00",
+      "durationSeconds": 612.482,
+      "provenance": "Fresh local execution on the clean committed candidate; shared HEAD and tracked inputs remained fixed. Disposable future-state reviews and capture mocks are synthetic control proof only."
+    },
+    {
+      "id": "adopted-correction-preservation",
+      "command": "../../.venv/Scripts/python.exe -B -m unittest -v test_ui_change_gate.UiChangeGateTests.test_reference_activation_correction_preserves_adopted_record_through_consumer_delivery",
+      "workingDirectory": "tests/foundation",
+      "exitCode": 0,
+      "commit": "6a07f37de16e9d5da49cb0b36400e6fe2fb195e0",
+      "rawOutput": "artifacts/tmp/W2.A04.T01.adopted-correction-preservation-6a07f37d.log",
+      "rawOutputSha256": "897d102c0d33501cfddff4652770faa6e7187c01d2834e7eb2bbda46c0f608d2",
+      "startedAt": "2026-10-04T15:45:47.837425+00:00",
+      "finishedAt": "2026-10-04T15:48:41.124518+00:00",
+      "durationSeconds": 173.287,
+      "provenance": "Fresh local execution on the clean committed candidate; shared HEAD and tracked inputs remained fixed. Disposable future-state reviews and capture mocks are synthetic control proof only."
+    },
+    {
+      "id": "correction-denials",
+      "command": "../../.venv/Scripts/python.exe -B -m unittest -v test_ui_change_gate.UiChangeGateTests.test_reference_activation_correction_exact_predecessor_and_claim_denials test_ui_change_gate.UiChangeGateTests.test_reference_activation_correction_denies_hidden_mixed_and_premature_source test_ui_change_gate.UiChangeGateTests.test_reference_activation_correction_denies_registry_ordinary_and_foreign_activation test_ui_change_gate.UiChangeGateTests.test_reference_activation_correction_rejects_unbound_remediation_outputs test_ui_change_gate.UiChangeGateTests.test_reference_activation_correction_replays_slice_findings_and_canonical_rounds test_ui_change_gate.UiChangeGateTests.test_reference_activation_correction_requires_slice_and_clean_inputs",
+      "workingDirectory": "tests/foundation",
+      "exitCode": 0,
+      "commit": "6a07f37de16e9d5da49cb0b36400e6fe2fb195e0",
+      "rawOutput": "artifacts/tmp/W2.A04.T01.correction-denials-6a07f37d.log",
+      "rawOutputSha256": "25603c7ac7b9eabad09e7fe33a56bbaad59f8563ea3be4f6ffd73d969081b822",
+      "startedAt": "2026-10-04T15:48:41.290273+00:00",
+      "finishedAt": "2026-10-04T16:02:26.146384+00:00",
+      "durationSeconds": 824.856,
+      "provenance": "Fresh local execution on the clean committed candidate; shared HEAD and tracked inputs remained fixed. Disposable future-state reviews and capture mocks are synthetic control proof only."
+    },
+    {
+      "id": "compatibility",
+      "command": "../../.venv/Scripts/python.exe -B -m unittest -v test_ui_change_gate.UiChangeGateTests.test_linked_correction_authenticates_without_mutating_origin_metadata test_ui_change_gate.UiChangeGateTests.test_linked_rejects_authority_and_live_claim_substitutions test_ui_change_gate.UiChangeGateTests.test_resumed_amendment_schema_is_opt_in_and_cannot_authorize_ordinary_tasks test_ui_change_gate.UiChangeGateTests.test_intentional_amendment_schema_is_exact_and_cannot_extend_legacy_lanes test_ui_change_gate.UiChangeGateTests.test_adopted_continuation_schema_is_closed_and_exact_to_original_t01 test_ui_change_gate.UiChangeGateTests.test_reference_activation_v14_schema_requires_both_closed_authorities test_ui_change_gate.UiChangeGateTests.test_reference_activation_historical_t03_binds_reviewed_protected_source_commits test_ui_change_gate.UiChangeGateTests.test_reference_activation_actual_a02_adoption_accepts_stable_ancestor_evidence_only",
+      "workingDirectory": "tests/foundation",
+      "exitCode": 0,
+      "commit": "6a07f37de16e9d5da49cb0b36400e6fe2fb195e0",
+      "rawOutput": "artifacts/tmp/W2.A04.T01.compatibility-6a07f37d.log",
+      "rawOutputSha256": "2c23c54d51a85188e62c0bd914ea69b556cd9228b8a9c954e763eeab192da4e0",
+      "startedAt": "2026-10-04T15:45:49.659437+00:00",
+      "finishedAt": "2026-10-04T15:48:03.943499+00:00",
+      "durationSeconds": 134.284,
+      "provenance": "Fresh local execution on the clean committed candidate; shared HEAD and tracked inputs remained fixed. Disposable future-state reviews and capture mocks are synthetic control proof only."
+    },
+    {
+      "id": "checkpoint-positive",
+      "command": "../../.venv/Scripts/python.exe -B -m unittest -v test_ui_change_gate.UiChangeGateTests.test_reference_activation_correction_requires_separate_checkpoint_review",
+      "workingDirectory": "tests/foundation",
+      "exitCode": 0,
+      "commit": "6a07f37de16e9d5da49cb0b36400e6fe2fb195e0",
+      "rawOutput": "artifacts/tmp/W2.A04.T01.checkpoint-positive-6a07f37d.log",
+      "rawOutputSha256": "fb2a82d63b5b7d1c787a503e9bd977972f8f191db7aaaab3313d1b4d81547ca9",
+      "startedAt": "2026-10-04T15:45:48.981423+00:00",
+      "finishedAt": "2026-10-04T15:47:45.062958+00:00",
+      "durationSeconds": 116.082,
+      "provenance": "Fresh local execution on the clean committed candidate; shared HEAD and tracked inputs remained fixed. Disposable future-state reviews and capture mocks are synthetic control proof only."
+    },
+    {
+      "id": "checkpoint-denials",
+      "command": "../../.venv/Scripts/python.exe -B -m unittest -v test_ui_change_gate.UiChangeGateTests.test_reference_activation_correction_denies_missing_forged_self_and_late_checkpoint_review",
+      "workingDirectory": "tests/foundation",
+      "exitCode": 0,
+      "commit": "6a07f37de16e9d5da49cb0b36400e6fe2fb195e0",
+      "rawOutput": "artifacts/tmp/W2.A04.T01.checkpoint-denials-6a07f37d.log",
+      "rawOutputSha256": "49c8aa1488015403159b51c5cd4be1677bf27187aa2b039e7ad7420c7215c061",
+      "startedAt": "2026-10-04T15:47:45.244626+00:00",
+      "finishedAt": "2026-10-04T15:52:59.277319+00:00",
+      "durationSeconds": 314.033,
+      "provenance": "Fresh local execution on the clean committed candidate; shared HEAD and tracked inputs remained fixed. Disposable future-state reviews and capture mocks are synthetic control proof only."
+    },
+    {
+      "id": "adr",
+      "command": ".venv/Scripts/python.exe tools/adr_check.py --repo . --base 223f48a0cfac0612049fc6bf0537dac79f90be36 --head 6a07f37de16e9d5da49cb0b36400e6fe2fb195e0",
+      "workingDirectory": ".",
+      "exitCode": 0,
+      "commit": "6a07f37de16e9d5da49cb0b36400e6fe2fb195e0",
+      "rawOutput": "artifacts/tmp/W2.A04.T01.adr-6a07f37d.log",
+      "rawOutputSha256": "f0f8d977e1c80b51090b7fcc8dea0a289742c753e132fcde456c8bb4a55a19a6",
+      "startedAt": "2026-10-04T15:45:50.359757+00:00",
+      "finishedAt": "2026-10-04T15:45:52.517340+00:00",
+      "durationSeconds": 2.158,
+      "provenance": "Fresh local execution on the clean committed candidate; shared HEAD and tracked inputs remained fixed. Disposable future-state reviews and capture mocks are synthetic control proof only."
+    },
+    {
+      "id": "ui-gate",
+      "command": ".venv/Scripts/python.exe tools/ui_change_gate.py --repo . --base 223f48a0cfac0612049fc6bf0537dac79f90be36 --head 6a07f37de16e9d5da49cb0b36400e6fe2fb195e0",
+      "workingDirectory": ".",
+      "exitCode": 0,
+      "commit": "6a07f37de16e9d5da49cb0b36400e6fe2fb195e0",
+      "rawOutput": "artifacts/tmp/W2.A04.T01.ui-gate-6a07f37d.log",
+      "rawOutputSha256": "cbe7c1f9f54eacb829bdb563183c1943d64180da5d60bc31e410d9769c581590",
+      "startedAt": "2026-10-04T15:45:52.778812+00:00",
+      "finishedAt": "2026-10-04T15:45:56.038477+00:00",
+      "durationSeconds": 3.26,
+      "provenance": "Fresh local execution on the clean committed candidate; shared HEAD and tracked inputs remained fixed. Disposable future-state reviews and capture mocks are synthetic control proof only."
+    },
+    {
+      "id": "ruff",
+      "command": ".venv/Scripts/python.exe -m ruff check tools/ui_change_gate.py tests/foundation/test_ui_change_gate.py",
+      "workingDirectory": ".",
+      "exitCode": 0,
+      "commit": "6a07f37de16e9d5da49cb0b36400e6fe2fb195e0",
+      "rawOutput": "artifacts/tmp/W2.A04.T01.ruff-6a07f37d.log",
+      "rawOutputSha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18",
+      "startedAt": "2026-10-04T15:45:56.280762+00:00",
+      "finishedAt": "2026-10-04T15:45:56.393009+00:00",
+      "durationSeconds": 0.112,
+      "provenance": "Fresh local execution on the clean committed candidate; shared HEAD and tracked inputs remained fixed. Disposable future-state reviews and capture mocks are synthetic control proof only."
+    },
+    {
+      "id": "format",
+      "command": ".venv/Scripts/python.exe -m ruff format --check tools/ui_change_gate.py tests/foundation/test_ui_change_gate.py",
+      "workingDirectory": ".",
+      "exitCode": 0,
+      "commit": "6a07f37de16e9d5da49cb0b36400e6fe2fb195e0",
+      "rawOutput": "artifacts/tmp/W2.A04.T01.format-6a07f37d.log",
+      "rawOutputSha256": "3bc53bf3e981a98a34a852e175bf9b77af841edea74fca595d9aedcbaf9a4938",
+      "startedAt": "2026-10-04T15:45:56.550319+00:00",
+      "finishedAt": "2026-10-04T15:45:56.653764+00:00",
+      "durationSeconds": 0.103,
+      "provenance": "Fresh local execution on the clean committed candidate; shared HEAD and tracked inputs remained fixed. Disposable future-state reviews and capture mocks are synthetic control proof only."
+    },
+    {
+      "id": "mypy",
+      "command": ".venv/Scripts/python.exe -m mypy tools/ui_change_gate.py tests/foundation/test_ui_change_gate.py",
+      "workingDirectory": ".",
+      "exitCode": 0,
+      "commit": "6a07f37de16e9d5da49cb0b36400e6fe2fb195e0",
+      "rawOutput": "artifacts/tmp/W2.A04.T01.mypy-6a07f37d.log",
+      "rawOutputSha256": "0c37c4158c91ef55c724ba017bf6465f26018199badb08e3ff13f98acdf056c2",
+      "startedAt": "2026-10-04T15:45:56.817295+00:00",
+      "finishedAt": "2026-10-04T15:45:57.112928+00:00",
+      "durationSeconds": 0.296,
+      "provenance": "Fresh local execution on the clean committed candidate; shared HEAD and tracked inputs remained fixed. Disposable future-state reviews and capture mocks are synthetic control proof only."
+    },
+    {
+      "id": "diff",
+      "command": "git -c core.safecrlf=false diff --check 223f48a0cfac0612049fc6bf0537dac79f90be36 6a07f37de16e9d5da49cb0b36400e6fe2fb195e0",
+      "workingDirectory": ".",
+      "exitCode": 0,
+      "commit": "6a07f37de16e9d5da49cb0b36400e6fe2fb195e0",
+      "rawOutput": "artifacts/tmp/W2.A04.T01.diff-6a07f37d.log",
+      "rawOutputSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "startedAt": "2026-10-04T15:45:57.279920+00:00",
+      "finishedAt": "2026-10-04T15:45:57.399845+00:00",
+      "durationSeconds": 0.12,
+      "provenance": "Fresh local execution on the clean committed candidate; shared HEAD and tracked inputs remained fixed. Disposable future-state reviews and capture mocks are synthetic control proof only."
+    },
+    {
+      "id": "backlog",
+      "command": ".venv/Scripts/python.exe tools/taskctl.py --file planning/backlog.yaml validate",
+      "workingDirectory": ".",
+      "exitCode": 0,
+      "commit": "6a07f37de16e9d5da49cb0b36400e6fe2fb195e0",
+      "rawOutput": "artifacts/tmp/W2.A04.T01.backlog-6a07f37d.log",
+      "rawOutputSha256": "d97d5b8d4d0a12904cada3ff677b3c739845ef523cf4f2fe70c0674e7afb2ea1",
+      "startedAt": "2026-10-04T15:45:51.281680+00:00",
+      "finishedAt": "2026-10-04T15:49:11.810476+00:00",
+      "durationSeconds": 200.529,
+      "provenance": "Fresh local execution on the clean committed candidate; shared HEAD and tracked inputs remained fixed. Disposable future-state reviews and capture mocks are synthetic control proof only."
+    },
+    {
+      "id": "views",
+      "command": ".venv/Scripts/python.exe tools/backlog_views.py --repo . --check",
+      "workingDirectory": ".",
+      "exitCode": 0,
+      "commit": "6a07f37de16e9d5da49cb0b36400e6fe2fb195e0",
+      "rawOutput": "artifacts/tmp/W2.A04.T01.views-6a07f37d.log",
+      "rawOutputSha256": "36ebe8ba5eed16d416087f957ce901132e936a4ed14c97dbcb91651c3e2678aa",
+      "startedAt": "2026-10-04T15:49:11.973096+00:00",
+      "finishedAt": "2026-10-04T15:49:14.971044+00:00",
+      "durationSeconds": 2.998,
+      "provenance": "Fresh local execution on the clean committed candidate; shared HEAD and tracked inputs remained fixed. Disposable future-state reviews and capture mocks are synthetic control proof only."
+    },
+    {
+      "id": "site",
+      "command": ".venv/Scripts/python.exe tools/plan_review_check.py --repo . --report artifacts/tmp/W2.A04.T01.site-6a07f37d.json",
+      "workingDirectory": ".",
+      "exitCode": 0,
+      "commit": "6a07f37de16e9d5da49cb0b36400e6fe2fb195e0",
+      "rawOutput": "artifacts/tmp/W2.A04.T01.site-6a07f37d.log",
+      "rawOutputSha256": "fbd6db5eec428ac0845fd1b6ce32ae93a2bd3c8bd19d1e4540d3737bbf8c5c9c",
+      "startedAt": "2026-10-04T15:49:15.050359+00:00",
+      "finishedAt": "2026-10-04T15:54:14.829023+00:00",
+      "durationSeconds": 299.779,
+      "provenance": "Fresh local execution on the clean committed candidate; shared HEAD and tracked inputs remained fixed. Disposable future-state reviews and capture mocks are synthetic control proof only."
+    }
+  ],
+  "scopeDeviation": "None to the exact five-source envelope or approved security authority. Complete task-base paths include the separate claim and task-owned workflow outputs. Development adverse outputs, interrupted a8f864b8 runs, passing but incomplete bc701237/9c83bd49 source qualification, independent advisory PF01-F01/PF02-F01/PF03-F01 and their regression-first corrections are preserved in the committed task-start worksheet and ignored raw receipts; no assertion, original base or valid denial was weakened.",
+  "proofLimitations": [
+    "Disposable future reviews/adoptions and mocked capture readers prove control enforcement, not actual desktop/native/Core or W2 qualification.",
+    "A03 remains PAUSED with T01 DONE and T02 BLOCKED at ca8b1448; original W2 remains paused. Actual later reviews, adoption/return, activation/reopen and qualification are not claimed complete."
+  ],
+  "reviewerDisposition": {
+    "status": "pending-review",
+    "requiredGate": "expanded-independent-control-security-ADR-review",
+    "openFindingIds": [],
+    "note": "Review the exact source candidate and actual frozen submission, thirteen-path inventory, retained passing output hashes and adverse worksheet. Approve only the task-stage control implementation; later S01/exit/security/adoption/return and actual consumer/product/Wave qualification remain separately required."
+  }
+}

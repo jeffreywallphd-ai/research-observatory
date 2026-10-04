@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 94683c177de562772b978c73387e39a993b4c2d6aaf13d8e88c72bec88dc407f
+source_sha256: 4a2cb91f4b8c863e554bac4c9ae31026cff9cd1090e7590eba7fb27c56a691d8
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -2916,7 +2916,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 ### - [ ] W2.A04.T01 - Bind protected activation ADR correction and exact return lineage
 
-**Status / owner / review:** `IN_PROGRESS` / codex-w2-implementation / - (`-`)
+**Status / owner / review:** `REVIEW` / codex-w2-implementation / - (`-`)
 
 **Dependencies:** `W2.A04.B00`
 
@@ -2937,13 +2937,33 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - At clean exact committed A04 task candidate run actual task-base ADR/UI control checks, affected Python lint/format/type, canonical taskctl/backlog/views/site checks. Independently review changed protected controls and immutable predecessor/source envelope.
 - Integrated slice/exit/security review proves persistence and exact return without claiming T02 desktop baseline, original CAP-05 native/Core or W2 completion. Future T02 runs its real ca8b1448-base ADR check and all original capture and consumer obligations.
 
+**Evidence:**
+
+- `artifacts/evidence/W2.A04.T01.json` at `6a07f37de16e9d5da49cb0b36400e6fe2fb195e0`
+
 #### Review history — W2.A04.T01
 
-**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+**Review mode:** `append-only v1` / 0 completed round(s)
+
+**Current immutable submission awaiting review:** `R01` / packet SHA-256 `a0a0da4b619123d139d47b9076e32c68ae39659397e7c59be2c0d284c97c22e7`
+
+- Candidate / base / branch: `6a07f37de16e9d5da49cb0b36400e6fe2fb195e0` / `223f48a0cfac0612049fc6bf0537dac79f90be36` / `codex/w2-implementation`
+- Submitted by / at: codex-w2-implementation / `2026-10-04T16:03:14+00:00`
+- Evidence: `artifacts/evidence/W2.A04.T01.json` / `afd3a1fb76652d8ddb7d54072e2279a3cd02d38d3549f9a633456886a576187f` / `6a07f37de16e9d5da49cb0b36400e6fe2fb195e0`
+- Acceptance-criteria SHA-256: `91af3c7184a386e2467ba6fbcb19b9b856a67317c4a8d1472aab7181b93903d4`
+- Verification-selection SHA-256: `fcf37e88a349e96345de8f482ca2bde50d31d733d5e348c4e2b5b0c4f96e2dda`
+- Changed paths: `artifacts/evidence/W2.A04.T01.task-start.md`, `docs/adr/ADR-0040-document-protected-desktop-activation-correction.md`, `docs/adr/index.json`, `docs/automation/design-first-ui-changes.md`, `docs/planning-implementation-plan.md`, `planning/backlog.yaml`, `planning/review-site/enablers/ECR-0012.html`, `planning/review-site/enablers/index.html`, `planning/review-site/manifest.json`, `planning/review-site/waves/W2.html`, `planning/status-summary.md`, `tests/foundation/test_ui_change_gate.py`, `tools/ui_change_gate.py`
+- Selected checks: `../../.venv/Scripts/python.exe -B -m unittest -v test_ui_change_gate.UiChangeGateTests.test_reference_activation_correction_authenticates_append_only_remediation`, `../../.venv/Scripts/python.exe -B -m unittest -v test_ui_change_gate.UiChangeGateTests.test_reference_activation_corrected_v14_authenticates_full_original_base`, `../../.venv/Scripts/python.exe -B -m unittest -v test_ui_change_gate.UiChangeGateTests.test_reference_activation_correction_preserves_adopted_record_through_consumer_delivery`, `../../.venv/Scripts/python.exe -B -m unittest -v test_ui_change_gate.UiChangeGateTests.test_reference_activation_correction_exact_predecessor_and_claim_denials test_ui_change_gate.UiChangeGateTests.test_reference_activation_correction_denies_hidden_mixed_and_premature_source test_ui_change_gate.UiChangeGateTests.test_reference_activation_correction_denies_registry_ordinary_and_foreign_activation test_ui_change_gate.UiChangeGateTests.test_reference_activation_correction_rejects_unbound_remediation_outputs test_ui_change_gate.UiChangeGateTests.test_reference_activation_correction_replays_slice_findings_and_canonical_rounds test_ui_change_gate.UiChangeGateTests.test_reference_activation_correction_requires_slice_and_clean_inputs`, `../../.venv/Scripts/python.exe -B -m unittest -v test_ui_change_gate.UiChangeGateTests.test_linked_correction_authenticates_without_mutating_origin_metadata test_ui_change_gate.UiChangeGateTests.test_linked_rejects_authority_and_live_claim_substitutions test_ui_change_gate.UiChangeGateTests.test_resumed_amendment_schema_is_opt_in_and_cannot_authorize_ordinary_tasks test_ui_change_gate.UiChangeGateTests.test_intentional_amendment_schema_is_exact_and_cannot_extend_legacy_lanes test_ui_change_gate.UiChangeGateTests.test_adopted_continuation_schema_is_closed_and_exact_to_original_t01 test_ui_change_gate.UiChangeGateTests.test_reference_activation_v14_schema_requires_both_closed_authorities test_ui_change_gate.UiChangeGateTests.test_reference_activation_historical_t03_binds_reviewed_protected_source_commits test_ui_change_gate.UiChangeGateTests.test_reference_activation_actual_a02_adoption_accepts_stable_ancestor_evidence_only`, `../../.venv/Scripts/python.exe -B -m unittest -v test_ui_change_gate.UiChangeGateTests.test_reference_activation_correction_requires_separate_checkpoint_review`, `../../.venv/Scripts/python.exe -B -m unittest -v test_ui_change_gate.UiChangeGateTests.test_reference_activation_correction_denies_missing_forged_self_and_late_checkpoint_review`, `.venv/Scripts/python.exe tools/adr_check.py --repo . --base 223f48a0cfac0612049fc6bf0537dac79f90be36 --head 6a07f37de16e9d5da49cb0b36400e6fe2fb195e0`, `.venv/Scripts/python.exe tools/ui_change_gate.py --repo . --base 223f48a0cfac0612049fc6bf0537dac79f90be36 --head 6a07f37de16e9d5da49cb0b36400e6fe2fb195e0`, `.venv/Scripts/python.exe -m ruff check tools/ui_change_gate.py tests/foundation/test_ui_change_gate.py`, `.venv/Scripts/python.exe -m ruff format --check tools/ui_change_gate.py tests/foundation/test_ui_change_gate.py`, `.venv/Scripts/python.exe -m mypy tools/ui_change_gate.py tests/foundation/test_ui_change_gate.py`, `git -c core.safecrlf=false diff --check 223f48a0cfac0612049fc6bf0537dac79f90be36 6a07f37de16e9d5da49cb0b36400e6fe2fb195e0`, `.venv/Scripts/python.exe tools/taskctl.py --file planning/backlog.yaml validate`, `.venv/Scripts/python.exe tools/backlog_views.py --repo . --check`, `.venv/Scripts/python.exe tools/plan_review_check.py --repo . --report artifacts/tmp/W2.A04.T01.site-6a07f37d.json`
+- Deferred checks: `Unchanged legacy uncorrected full-base and site-asset cases passed at 9c83bd49 and are deferred from this remediation selection because the new checkpoint helper and fixture branch apply only to A04. They are historical context, not reused fresh qualification.`, `Actual A03.T02 retained-base protected activation and 66-image desktop capture remain due after reviewed A04 adoption/return and legal activation/reopen.`, `Actual original CAP-05.S01.T01 native/Core/D3D proof, joined CAP-04.S05, remaining CAP-05 slices, fresh full W2 matrix and independent Wave/human release gates remain due.`, `Full repository/deployment/runtime/packaging profiles are deferred to their required later stages; this task changes no product, native, dependency or toolchain input.`
+- Selection rationale: Exact approved five-source protected-control correction. Fresh real-Git persisted snapshot, source-history, return/reopen, append-only remediation, separate security review and original-base authority checks replay all three material advisory findings and explicit task denials. The shared fixture task/exit helper changes justify selected fresh legacy positive/denial coverage. Actual task-range ADR/UI, Python quality and canonical planning checks are directly affected. No prior result is reused as current-candidate qualification; no product/runtime/dependency change justifies an early full repository or desktop/native profile.
+- Prior round / replayed open findings: `-` / -
+- Root-cause escalation: -
 
 **Current latest-review projection:** `-` by - at `-`
 
 **Latest notes:** -
+
+**Currently open findings:** -
 
 
 ## Linked corrective tasks
