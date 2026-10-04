@@ -1,0 +1,32 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "wave-amendment-bootstrap-repair-exploratory-adverse",
+  "bootstrapUnit": "W2.A05.B00",
+  "contextCommit": "695de1ad",
+  "qualification": false,
+  "inputSnapshotComplete": false,
+  "sourceState": "uncommitted prospective correction; no actual A05 transition",
+  "observations": [
+    {
+      "id": "test-invocation-setup-01",
+      "exitCode": 1,
+      "kind": "shell-output-setup-error",
+      "result": "Wrong invocation working directory made output redirection fail before unittest executed. Use tests/foundation with its repository-relative executable and output path; no outside file was created."
+    },
+    {
+      "id": "fixture-git-bytes-02",
+      "exitCode": 1,
+      "kind": "fixture-setup-failure",
+      "log": "artifacts/tmp/W2.A05.B00.corrected-regression-exploration-02.log",
+      "logSha256": "2a8286af6e814db01d7c72c57edda3ba1107d18a36c0005447c9752ae7399b6a",
+      "result": "The ordering positive and real append/CAS ran; the exact predecessor-blob assertion failed because test-owned Git converted CRLF working bytes to LF. Configure core.autocrlf=false only inside the disposable fixture Git repository, preserving the unchanged full-byte assertion and production settings."
+    },
+    {
+      "id": "mypy-import-discovery-01",
+      "exitCode": 1,
+      "kind": "checker-invocation-setup-error",
+      "result": "The preliminary two-file mypy invocation could not resolve historical_witness_fixture. Use the existing governed quality-check --no-namespace-packages option; no ignored import, dependency, config or source authority is changed."
+    }
+  ],
+  "preservation": "These exploratory outcomes remain adverse and do not qualify any committed candidate. Fresh committed correction checks follow separately; no fixture pass is actual B00 approval or execution."
+}
