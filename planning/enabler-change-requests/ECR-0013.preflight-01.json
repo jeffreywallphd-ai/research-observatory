@@ -1,0 +1,86 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "inert-control-repair-planning-preflight",
+  "changeRequestId": "ECR-0013",
+  "proposedAmendmentId": "W2.A05",
+  "executionState": "non-executable",
+  "pausedPredecessorCommit": "771e54a3657cdc5ff308d3a53d7b71eb48bb9214",
+  "pausedA03RecordSha256": "bdad5e81327e32ee322db436dc569898ce314d29058e53b0cfe67ed6192e0b03",
+  "observedIntegratedCandidate": "b2fd64fdd9bc840cdb91eb667655e461e5736d7a",
+  "adverseObservation": {
+    "path": "artifacts/tmp/W2.A03.S01.integrated-adverse-b2fd64fd.json",
+    "sha256": "1d9b71a2c4c37dfab09502c6bfc2596061f607436bbdeaa618eafb4b2e8d3a89",
+    "exitCode": 1,
+    "error": "ValueError: adopted continuation task review has hidden or overlapping source paths"
+  },
+  "independentSliceReview": {
+    "path": "artifacts/evidence/W2.A03.S01.review-01.json",
+    "sha256": "75d03f4f1d72ee966e70bcbdf66a7afc9bcbdb9fa222533e02d7c52e3d9f76f3",
+    "result": "changes-requested",
+    "findingId": "W2.A03.S01-R01-F01"
+  },
+  "historicalProjectionRows": [
+    {
+      "commit": "7f35c7a8e49eb8415ffdffa5a2e04374161f0eae",
+      "path": "planning/review-site/waves/W2.html",
+      "mode": "100644",
+      "beforeBlobSha256": "08d32a5ee342952034de19efc437e0b1574a3b97b91df5c503bc2102c8f04be4",
+      "afterBlobSha256": "a4d260bdbb57f7beb505ddfc547728e55cd32d6f2bc7be19eb2308fe550c10aa"
+    },
+    {
+      "commit": "a8f864b847170c62b1e03422911eee862fa4a50d",
+      "path": "planning/review-site/waves/W2.html",
+      "mode": "100644",
+      "beforeBlobSha256": "a4d260bdbb57f7beb505ddfc547728e55cd32d6f2bc7be19eb2308fe550c10aa",
+      "afterBlobSha256": "c7dd9d81240dfbbbba383107e581a8976f8fc0aafbdac33223a62b184ef1ca15"
+    },
+    {
+      "commit": "53673ae2748af3e7c3c975e8381987d8b470dd42",
+      "path": "planning/review-site/waves/W2.html",
+      "mode": "100644",
+      "beforeBlobSha256": "c7dd9d81240dfbbbba383107e581a8976f8fc0aafbdac33223a62b184ef1ca15",
+      "afterBlobSha256": "4fabfb96bc2fef5863199acba66805743ca95f2e4778c95b70332670c40a4771"
+    },
+    {
+      "commit": "75d8d094d9833f30445f56bbb3c1fe39ff052221",
+      "path": "planning/review-site/waves/W2.html",
+      "mode": "100644",
+      "beforeBlobSha256": "4fabfb96bc2fef5863199acba66805743ca95f2e4778c95b70332670c40a4771",
+      "afterBlobSha256": "4b6d9259ff8575e2c384724c8ae4ad94a463d574eecb94e85282af7356ad7167"
+    },
+    {
+      "commit": "512452182a483f82d4478420434841ff23b4668c",
+      "path": "planning/review-site/waves/W2.html",
+      "mode": "100644",
+      "beforeBlobSha256": "4b6d9259ff8575e2c384724c8ae4ad94a463d574eecb94e85282af7356ad7167",
+      "afterBlobSha256": "a4d260bdbb57f7beb505ddfc547728e55cd32d6f2bc7be19eb2308fe550c10aa"
+    },
+    {
+      "commit": "f967f97123ad0286ad90cb8a335ce295f8c53d9d",
+      "path": "planning/review-site/waves/W2.html",
+      "mode": "100644",
+      "beforeBlobSha256": "a4d260bdbb57f7beb505ddfc547728e55cd32d6f2bc7be19eb2308fe550c10aa",
+      "afterBlobSha256": "08d32a5ee342952034de19efc437e0b1574a3b97b91df5c503bc2102c8f04be4"
+    }
+  ],
+  "netInventoryPreserved": true,
+  "sourcePredecessorGitBlobSha256": {
+    "tools/ui_change_gate.py": "19208ffbacd7b3d7b91594a068957ba1cf59a20b9382b89ede1eb3cb7cc6e1ef",
+    "tests/foundation/test_ui_change_gate.py": "8c40cd91615c27d4f4f7cefaa2fbf986413bef637a1ab262606c4cb252e1d611",
+    "docs/automation/design-first-ui-changes.md": "8d76a6aa3b5b7ef4891488245393264f600300401f201b595540f6b48be3ff5f",
+    "docs/adr/index.json": "cfeb6788e77205bde019007c9b9d8bfa1c597af03d4fe84df8ae00f9d597d314",
+    "tools/ui_conformance.py": "475b5fc570f16ddb58846956f28bb69d7b0a02bdb9ef29e4b3bfff6c822fa175",
+    "tests/desktop/test_ui_conformance.py": "a6c7ce8cb12331713d52d7b65532361a3f90250876c5fd75cf345d8cfebe77f4",
+    "docs/automation/ui-conformance-verification.md": "abc04e1d7c56d676d754b168bf425ab19374c669209bbe7c88c0890c1e446a01"
+  },
+  "namingAdverseEvidence": {
+    "official": "artifacts/evidence/W2.A03.T02.accessibility-official-failed-aab29ed2.json",
+    "browser": "artifacts/evidence/W2.A03.T02.accessibility-browser-aab29ed2.json",
+    "adjudication": "artifacts/evidence/W2.A03.T02.accessibility-adjudication-R01.json",
+    "freshCandidateReport": "artifacts/tmp/W2.A03.T02.final-06a69348.ui-accessibility.json"
+  },
+  "limits": [
+    "This preserves existing adverse observations and adds read-only Git byte diagnosis; it is not a fresh runtime/profile execution.",
+    "No correction implementation, owner approval, task/slice completion, adoption, ordinary Wave resume or release is inferred."
+  ]
+}
