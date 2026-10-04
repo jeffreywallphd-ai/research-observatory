@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 4222d973919ce454ffbfa9c95f1b52c4e861541819fd91353dfad5484e69fce1
+source_sha256: d8adb8479508242e67ac4b6f05998d79d95b6871e12f2bc56b7b2606d1d151ad
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -2859,7 +2859,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 ### - [ ] W2.A03.T02 - Activate approved 1.8 desktop consumers and pinned baseline
 
-**Status / owner / review:** `BLOCKED` / codex-w2-implementation / - (`-`)
+**Status / owner / review:** `IN_PROGRESS` / codex-w2-implementation / - (`-`)
 
 **Dependencies:** `W2.A03.B00`, `W2.A03.T01`
 
@@ -2883,7 +2883,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 **Current latest-review projection:** `-` by - at `-`
 
-**Latest notes:** -
+**Latest notes:** Reopened: ECR-0012 correction independently approved and adopted at 8f1a47f8; fresh exact paused-return check passed at 51245218; A03 separately reactivated at de50bff2. Resume approved seven-source activation task with retained ca8b1448 base and unchanged authority.
 
 ## W2.A04 - ECR-0012
 

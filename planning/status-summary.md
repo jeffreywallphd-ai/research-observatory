@@ -1,7 +1,7 @@
 ---
 document_type: generated-backlog-status-summary
 source: planning/backlog.yaml
-source_sha256: 4222d973919ce454ffbfa9c95f1b52c4e861541819fd91353dfad5484e69fce1
+source_sha256: d8adb8479508242e67ac4b6f05998d79d95b6871e12f2bc56b7b2606d1d151ad
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -69,7 +69,7 @@ manual_edit: prohibited
 
 | Status | Count |
 |---|---:|
-| `BLOCKED` | 1 |
+| `IN_PROGRESS` | 1 |
 | `DONE` | 20 |
 
 ## Wave authority and append-only amendments
@@ -892,7 +892,7 @@ Append-only rounds remain distinct from the current latest-review projection. Le
 | Task | Status | Owner | Branch |
 |---|---|---|---|
 | `CAP-05.S01.T01` Implement local document attachment and version association | `BLOCKED` | codex-w2-implementation | `codex/w2-implementation` |
-| `W2.A03.T02` Activate approved 1.8 desktop consumers and pinned baseline | `BLOCKED` | codex-w2-implementation | `codex/w2-implementation` |
+| `W2.A03.T02` Activate approved 1.8 desktop consumers and pinned baseline | `IN_PROGRESS` | codex-w2-implementation | `codex/w2-implementation` |
 
 ## Linked corrective tasks
 
