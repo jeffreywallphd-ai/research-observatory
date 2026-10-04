@@ -1,0 +1,83 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "wave-amendment-approval",
+  "amendmentId": "W2.A04",
+  "changeRequestId": "ECR-0012",
+  "targetWave": "W2",
+  "status": "APPROVED",
+  "approvedBy": "human:repository-owner",
+  "approvedAt": "2026-10-04T13:02:32Z",
+  "decision": "The repository owner answered 'Approved.' after the exact ECR-0012/W2.A04 approval request identifying candidate 7f35c7a8e49eb8415ffdffa5a2e04374161f0eae and packet SHA-256 eb1cbf1b827bffdd5914f9255c6f0bba374621f916711b3e05815202d0312b8c. This approves only the independently reviewed one-task five-source ADR and gate correction, its bounded bootstrap and required reviews, with the exact combined claim/block/pause snapshot and paused-predecessor return. Preserve A03's frozen approval, DONE T01, blocked T02 criteria and ca8b1448 base, accepted ADRs and approved 1.8 reference. Only after reviewed A04 adoption and exact return may A03 activate and T02 reopen. This is not ordinary W2 resumption, native/Core qualification or release approval. The timestamp records binding of this explicit answer to its exact reviewed packet.",
+  "packet": {
+    "commit": "7f35c7a8e49eb8415ffdffa5a2e04374161f0eae",
+    "path": "planning/enabler-change-requests/ECR-0012.packet.json",
+    "sha256": "eb1cbf1b827bffdd5914f9255c6f0bba374621f916711b3e05815202d0312b8c",
+    "proposalPath": "planning/enabler-change-requests/ECR-0012.md",
+    "proposalSha256": "24b805f99d5cdac257bd922bfdc6ead5f21b1d799627e79c350beddbba6a53ac"
+  },
+  "effectiveBase": {
+    "waveBase": {
+      "waveId": "W2",
+      "packetCommit": "c85a59f3a293f8e3f2eaf6454682c9a14b1efa55",
+      "approvalRecordCommit": "3bc1c1828efab50efc730bf3907c3036eff58a2f"
+    },
+    "orderedAmendments": [
+      {
+        "id": "W2.A01",
+        "changeRequestId": "ECR-0009",
+        "status": "ADOPTED",
+        "packetCommit": "3fb76d6cb6bce6eaf16774931704de68c6168500",
+        "approvalReference": {
+          "path": "planning/wave-amendment-approvals/W2.A01.json",
+          "sha256": "6fe58c9791d224a51367f42ced40e27a45a0d83ee07464e237fc2a302edc4096",
+          "introductionCommit": "f8a49a2ec7ff4daf6e1c5e14da369e06ddff5287"
+        },
+        "effectiveStateCommit": "56187d40ca5d38f72f7c9dfb132070b034032a57"
+      },
+      {
+        "id": "W2.A02",
+        "changeRequestId": "ECR-0010",
+        "status": "ADOPTED",
+        "packetCommit": "60e8a2d3bbd3ba50cc4809a7ebe799764e6b00db",
+        "approvalReference": {
+          "path": "planning/wave-amendment-approvals/W2.A02.json",
+          "sha256": "d99be15aa110248b0e10e7090210787fe5cfa8e929e759f91a7d84a8e57a8d79",
+          "introductionCommit": "5fbeea66e84bac5ab24cf1bb8d2522838529a0ba"
+        },
+        "effectiveStateCommit": "04d6ae3fb29a133e6e31c8191ba1d6b80fa0b0cf"
+      }
+    ],
+    "reservedAmendments": [],
+    "pausedPredecessor": {
+      "id": "W2.A03",
+      "changeRequestId": "ECR-0011",
+      "status": "PAUSED",
+      "packetCommit": "746c05dcd7dbabaa7f5eebee8e3fa56b8ac6b9b5",
+      "approvalReference": {
+        "path": "planning/wave-amendment-approvals/W2.A03.json",
+        "sha256": "8852d6631a6656e94cc75e4f9dc705c7095ecf111786748e5630fe13b8fa9087",
+        "introductionCommit": "c972e2116113afa7ad84f0e43bdad58660cc69bb"
+      },
+      "effectiveStateCommit": "a211f24107f21f6b87221fd8b60c04b95a97fc8b",
+      "recordSha256": "f099fd8f6a15dcdcddea9ac6dca1ca5cac62d8692991e2d6e4366b1393c6ac6c",
+      "returnPolicy": "paused-predecessor"
+    }
+  },
+  "bootstrapUnit": "W2.A04.B00",
+  "authorizedTaskIds": [
+    "W2.A04.T01"
+  ],
+  "independentPacketReview": {
+    "reviewer": "agent:/root/a03_t02_authority_review",
+    "candidateCommit": "7f35c7a8e49eb8415ffdffa5a2e04374161f0eae",
+    "reviewedStateCommit": "d66a144122d3b10cfedcef4ac843532923654041",
+    "result": "APPROVED",
+    "attemptId": "R01",
+    "findingIdsClosed": [],
+    "ledger": {
+      "path": "planning/enabler-change-requests/ECR-0012.review-R01.json",
+      "sha256": "8f7090a3a7a2fa64389c6c5c76a20c87936876b475de70cdc1924547f826c396",
+      "introductionCommit": "d66a144122d3b10cfedcef4ac843532923654041"
+    }
+  }
+}
