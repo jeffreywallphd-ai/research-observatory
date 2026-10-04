@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: fb2726df6e75c7933ab5da36d2ba136a39cf3eb91862c62d62143d7c57e62106
+source_sha256: cbe1aa1e80d287227ff16a18fae7e19808f159be49e3c16a321e0bd8399ab59e
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -52,7 +52,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 | `W1` | `W1.A09` | `ECR-0008` | `planning/wave-amendment-approvals/W1.A09.json` | `ADOPTED` |
 | `W2` | `W2.A01` | `ECR-0009` | `planning/wave-amendment-approvals/W2.A01.json` | `ADOPTED` |
 | `W2` | `W2.A02` | `ECR-0010` | `planning/wave-amendment-approvals/W2.A02.json` | `ADOPTED` |
-| `W2` | `W2.A03` | `ECR-0011` | `planning/wave-amendment-approvals/W2.A03.json` | `ACTIVE` |
+| `W2` | `W2.A03` | `ECR-0011` | `planning/wave-amendment-approvals/W2.A03.json` | `PAUSED` |
 
 ## Waves
 
@@ -2763,13 +2763,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 **Approval record:** `planning/wave-amendment-approvals/W2.A03.json` (`8852d6631a6656e94cc75e4f9dc705c7095ecf111786748e5630fe13b8fa9087`)
 
-**Lifecycle / bootstrap / campaign / completion:** `ACTIVE` / `APPROVED` / `ACTIVE` / `PENDING`
+**Lifecycle / bootstrap / campaign / completion:** `PAUSED` / `APPROVED` / `PAUSED` / `PENDING`
 
 **Append-only lifecycle history:**
 
 - `E01` `APPROVED` at `2026-10-03T21:08:57Z` by human:repository-owner: The repository owner answered 'Approve this exact reviewed packet' to the displayed ECR-0011/W2.A03 decision identifying exact reviewed candidate 746c05dcd7dbabaa7f5eebee8e3fa56b8ac6b9b5, packet SHA-256 31a31459b0895316972203e6b2b301ca9bc2fb83bdd566034ff61e1bc0a3b0e3, and independent R01 approval recorded at c29e582fd161bd4df740191e532e47e3c5e991a3. This approves only the bounded already-approved Academic Minimal 1.8 desktop witness/control and consumer activation amendment in that packet: W2.A03.B00, W2.A03.S01, ordered W2.A03.T01 then W2.A03.T02, exact source envelopes, checks and independent reviews. Approval is inert until supported B00 bootstrap, separate B00 review, materialization and activation. It does not change the approved 1.8 reference, original CAP-05.S01.T01 base or criteria, Core/native security or migration authority, or the unresolved fifth-D3D finding. W2 remains PAUSED and original CAP-05.S01.T01 remains BLOCKED; joined CAP-04.S05 integration, original T01 native/Core/current-UI proof, W2 qualification and separate human release decision remain due. This timestamp records binding of the owner's explicit answer to the exact reviewed packet, not a new release decision.
 - `E02` `MATERIALIZED` at `2026-10-03T21:48:31+00:00` by codex-w2-implementation: Materialized the exact human-approved task inventory.
 - `E03` `ACTIVE` at `2026-10-03T21:52:27+00:00` by codex-w2-implementation: Activated the bounded amendment campaign.
+- `E04` `PAUSED` at `2026-10-04T12:31:02+00:00` by codex-w2-implementation: W2.A03.T02 blocked before consumer edits: Accepted ADR-0001 requires companion ADR/index in actual task range, excluded by frozen ECR-0011 consumer envelope. Prepare exact append-only ECR-0012/W2.A04 paused-predecessor correction and obtain independent packet review/owner approval; preserve completed T01 and retained T02 base.
 
 ### Amendment-exit review and adoption — W2.A03
 
@@ -2856,7 +2857,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 ### - [ ] W2.A03.T02 - Activate approved 1.8 desktop consumers and pinned baseline
 
-**Status / owner / review:** `READY` / - / - (`-`)
+**Status / owner / review:** `BLOCKED` / codex-w2-implementation / - (`-`)
 
 **Dependencies:** `W2.A03.B00`, `W2.A03.T01`
 

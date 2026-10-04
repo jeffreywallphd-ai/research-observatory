@@ -1,7 +1,7 @@
 ---
 document_type: generated-backlog-status-summary
 source: planning/backlog.yaml
-source_sha256: fb2726df6e75c7933ab5da36d2ba136a39cf3eb91862c62d62143d7c57e62106
+source_sha256: cbe1aa1e80d287227ff16a18fae7e19808f159be49e3c16a321e0bd8399ab59e
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -61,15 +61,15 @@ manual_edit: prohibited
 
 | Status | Count |
 |---|---:|
-| `ACTIVE` | 1 |
 | `ADOPTED` | 10 |
+| `PAUSED` | 1 |
 | `SUPERSEDED` | 1 |
 
 ### Enabler task state
 
 | Status | Count |
 |---|---:|
-| `READY` | 1 |
+| `BLOCKED` | 1 |
 | `DONE` | 19 |
 
 ## Wave authority and append-only amendments
@@ -91,7 +91,7 @@ Proposal approval, materialization lifecycle, and campaign state remain distinct
 | `W1` | `W1.A09` | `ECR-0008` | `planning/wave-amendment-approvals/W1.A09.json` | `ADOPTED` | `APPROVED` | `COMPLETE` | 4 |
 | `W2` | `W2.A01` | `ECR-0009` | `planning/wave-amendment-approvals/W2.A01.json` | `ADOPTED` | `APPROVED` | `COMPLETE` | 2 |
 | `W2` | `W2.A02` | `ECR-0010` | `planning/wave-amendment-approvals/W2.A02.json` | `ADOPTED` | `APPROVED` | `COMPLETE` | 1 |
-| `W2` | `W2.A03` | `ECR-0011` | `planning/wave-amendment-approvals/W2.A03.json` | `ACTIVE` | `APPROVED` | `ACTIVE` | 2 |
+| `W2` | `W2.A03` | `ECR-0011` | `planning/wave-amendment-approvals/W2.A03.json` | `PAUSED` | `APPROVED` | `PAUSED` | 2 |
 
 ## Amendment-exit review and adoption projections
 
@@ -845,6 +845,7 @@ Append-only rounds remain distinct from the current latest-review projection. Le
 | Task | Status | Owner | Branch |
 |---|---|---|---|
 | `CAP-05.S01.T01` Implement local document attachment and version association | `BLOCKED` | codex-w2-implementation | `codex/w2-implementation` |
+| `W2.A03.T02` Activate approved 1.8 desktop consumers and pinned baseline | `BLOCKED` | codex-w2-implementation | `codex/w2-implementation` |
 
 ## Linked corrective tasks
 
