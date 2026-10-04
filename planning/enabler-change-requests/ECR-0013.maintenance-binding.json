@@ -1,0 +1,331 @@
+{
+  "documentType": "inert-reviewed-maintenance-source-history-binding",
+  "changeRequestId": "ECR-0013",
+  "proposedAmendmentId": "W2.A05",
+  "executionState": "non-executable",
+  "maintenanceId": "GOV-MAINT-0027",
+  "predecessorCommit": "7604e7ee94e930548d3078c691ade0f4934a76c9",
+  "finalDispositionCommit": "a6d2f0b522b691a36bc54b906aa777d50369e085",
+  "history": [
+    {
+      "commit": "29139a46b77ef2a1e73031b759067fbc2b0e7118",
+      "parent": "7604e7ee94e930548d3078c691ade0f4934a76c9",
+      "stage": "initial-prepared-source-candidate",
+      "changedFiles": [
+        {
+          "path": "docs/automation/governance-automation-simplification.md",
+          "before": {
+            "mode": "100644",
+            "sha256": "605f3b4765dfd71110f659af1e026dca66121891e6c67ce46abe76b5844413a5"
+          },
+          "after": {
+            "mode": "100644",
+            "sha256": "6bec1e72da1883df6ebdb94aea0ffda7778b2c64ea7b3d40b6f7127cbf6e99df"
+          }
+        },
+        {
+          "path": "planning/governance-migrations/GOV-MAINT-0027.json",
+          "before": null,
+          "after": {
+            "mode": "100644",
+            "sha256": "2442b5c03c7a5a7a46f294490dd3d77234da2238400e78bc26695fe9e66e2abf"
+          }
+        },
+        {
+          "path": "tests/foundation/test_governance_kernel.py",
+          "before": {
+            "mode": "100644",
+            "sha256": "aa14da5719605f412dd28263138653fd81e7c996cb3f8c9e4bda8e80233f2170"
+          },
+          "after": {
+            "mode": "100644",
+            "sha256": "0549605f773ef4c4fd46c0237625c7b668fca85c15c1024e86300c14d10b7d73"
+          }
+        },
+        {
+          "path": "tests/foundation/test_planctl_amendments.py",
+          "before": {
+            "mode": "100644",
+            "sha256": "b8e56115c7aa680b56866f085a333fbc7ca9cf44b7312b9bebe93c551ef7c998"
+          },
+          "after": {
+            "mode": "100644",
+            "sha256": "90dd055ea7c44cc6ca1f0a454aa9f6c2ad1d3b3fa17c9ed3184b4d0e574f3a78"
+          }
+        },
+        {
+          "path": "tests/foundation/test_taskctl_workflow.py",
+          "before": {
+            "mode": "100644",
+            "sha256": "a074686cf2c37acd0e4095a4719210b70de704839c80bf7473d5fe574db0f8f3"
+          },
+          "after": {
+            "mode": "100644",
+            "sha256": "9df0bf3d38f95edc88466e906ead4ccf70573c0ee04a21bebe1bce787982ba8c"
+          }
+        },
+        {
+          "path": "tools/governance_kernel.py",
+          "before": {
+            "mode": "100644",
+            "sha256": "61920893d26b65a79937e1d3dbb3f8c21fafdc5fe805be9b803acc30c980c7c7"
+          },
+          "after": {
+            "mode": "100644",
+            "sha256": "bec289b67db0a514393efffcb3fe124e19c3138414764f2752afab769f7a6038"
+          }
+        },
+        {
+          "path": "tools/planctl.py",
+          "before": {
+            "mode": "100644",
+            "sha256": "17718c70e4f38a836f7b142191224e699bf0aaa9f447dfdd1a8f7d31c1addd9f"
+          },
+          "after": {
+            "mode": "100644",
+            "sha256": "dad6228bc06e81bf84a654d46aeaa03021fd4e9a741d22b170f4a8dbf5e6ac15"
+          }
+        },
+        {
+          "path": "tools/taskctl.py",
+          "before": {
+            "mode": "100644",
+            "sha256": "8dfb4045adc4050bc4ddf93936d42450bda97d79911ef14cd4871eb22553d173"
+          },
+          "after": {
+            "mode": "100644",
+            "sha256": "ba80b8b7905ce5200bfd0fd076a9985ccb8afe564e982e77f44fdee3216bf0aa"
+          }
+        }
+      ]
+    },
+    {
+      "commit": "037959481142cdb64f873d66ff5166733a40935e",
+      "parent": "29139a46b77ef2a1e73031b759067fbc2b0e7118",
+      "stage": "adverse-R01-and-checks-projection",
+      "changedFiles": [
+        {
+          "path": "planning/governance-migrations/GOV-MAINT-0027.checks-01.json",
+          "before": null,
+          "after": {
+            "mode": "100644",
+            "sha256": "d4cee4d77397218599f4467abb45bc1ed956e7ea26b5632044eb3bce76f15837"
+          }
+        },
+        {
+          "path": "planning/governance-migrations/GOV-MAINT-0027.json",
+          "before": {
+            "mode": "100644",
+            "sha256": "2442b5c03c7a5a7a46f294490dd3d77234da2238400e78bc26695fe9e66e2abf"
+          },
+          "after": {
+            "mode": "100644",
+            "sha256": "a01e7811b61718e2f183e596f535fdeffb47d84433237512a1d63e3b6def58ad"
+          }
+        },
+        {
+          "path": "planning/governance-migrations/GOV-MAINT-0027.review-R01.json",
+          "before": null,
+          "after": {
+            "mode": "100644",
+            "sha256": "bd702be6943bd5dbc6c0edc05f6c0fd9e11b83d9e016b6af5cfacd2a19bea2b1"
+          }
+        }
+      ]
+    },
+    {
+      "commit": "6295697db3dd16d185f77e055b84dfa54a1211bf",
+      "parent": "037959481142cdb64f873d66ff5166733a40935e",
+      "stage": "R01-remediation-source-candidate",
+      "changedFiles": [
+        {
+          "path": "planning/governance-migrations/GOV-MAINT-0027.json",
+          "before": {
+            "mode": "100644",
+            "sha256": "a01e7811b61718e2f183e596f535fdeffb47d84433237512a1d63e3b6def58ad"
+          },
+          "after": {
+            "mode": "100644",
+            "sha256": "e1bb39334ec2068cb0eb45adffc994954eb63830db3e92c6eb940d268ec23078"
+          }
+        },
+        {
+          "path": "tests/foundation/test_taskctl_workflow.py",
+          "before": {
+            "mode": "100644",
+            "sha256": "9df0bf3d38f95edc88466e906ead4ccf70573c0ee04a21bebe1bce787982ba8c"
+          },
+          "after": {
+            "mode": "100644",
+            "sha256": "3554d04ce4982057e3190162313241627b5140a459af80a4a14ea18cb8ef63dd"
+          }
+        },
+        {
+          "path": "tools/taskctl.py",
+          "before": {
+            "mode": "100644",
+            "sha256": "ba80b8b7905ce5200bfd0fd076a9985ccb8afe564e982e77f44fdee3216bf0aa"
+          },
+          "after": {
+            "mode": "100644",
+            "sha256": "fa528b0b22858564ef04cb5a5e7ef84d4e28ddb8ddd73deaf52f0aa4034d44ea"
+          }
+        }
+      ]
+    },
+    {
+      "commit": "a6d2f0b522b691a36bc54b906aa777d50369e085",
+      "parent": "6295697db3dd16d185f77e055b84dfa54a1211bf",
+      "stage": "approved-R02-and-checks-projection",
+      "changedFiles": [
+        {
+          "path": "planning/governance-migrations/GOV-MAINT-0027.checks-02.json",
+          "before": null,
+          "after": {
+            "mode": "100644",
+            "sha256": "bada4526d8c7c89a182367c6de53bdbaeaca8c2c17f93425e81c228d6261f74b"
+          }
+        },
+        {
+          "path": "planning/governance-migrations/GOV-MAINT-0027.json",
+          "before": {
+            "mode": "100644",
+            "sha256": "e1bb39334ec2068cb0eb45adffc994954eb63830db3e92c6eb940d268ec23078"
+          },
+          "after": {
+            "mode": "100644",
+            "sha256": "ae57a2c5db6f1a79f76c2047040abf712c7e0bb98773575985222860a85b73f3"
+          }
+        },
+        {
+          "path": "planning/governance-migrations/GOV-MAINT-0027.review-R02.json",
+          "before": null,
+          "after": {
+            "mode": "100644",
+            "sha256": "f52b778b9b7dbfbec0b3c7f17680fc0e905021e9230b952d35762f42af30ce63"
+          }
+        }
+      ]
+    }
+  ],
+  "importedAuthorityPaths": [
+    "tools/governance_kernel.py",
+    "tools/planctl.py",
+    "tools/taskctl.py"
+  ],
+  "finalSourceFiles": [
+    {
+      "path": "docs/automation/governance-automation-simplification.md",
+      "mode": "100644",
+      "sha256": "6bec1e72da1883df6ebdb94aea0ffda7778b2c64ea7b3d40b6f7127cbf6e99df"
+    },
+    {
+      "path": "tests/foundation/test_governance_kernel.py",
+      "mode": "100644",
+      "sha256": "0549605f773ef4c4fd46c0237625c7b668fca85c15c1024e86300c14d10b7d73"
+    },
+    {
+      "path": "tests/foundation/test_planctl_amendments.py",
+      "mode": "100644",
+      "sha256": "90dd055ea7c44cc6ca1f0a454aa9f6c2ad1d3b3fa17c9ed3184b4d0e574f3a78"
+    },
+    {
+      "path": "tests/foundation/test_taskctl_workflow.py",
+      "mode": "100644",
+      "sha256": "3554d04ce4982057e3190162313241627b5140a459af80a4a14ea18cb8ef63dd"
+    },
+    {
+      "path": "tools/governance_kernel.py",
+      "mode": "100644",
+      "sha256": "bec289b67db0a514393efffcb3fe124e19c3138414764f2752afab769f7a6038"
+    },
+    {
+      "path": "tools/planctl.py",
+      "mode": "100644",
+      "sha256": "dad6228bc06e81bf84a654d46aeaa03021fd4e9a741d22b170f4a8dbf5e6ac15"
+    },
+    {
+      "path": "tools/taskctl.py",
+      "mode": "100644",
+      "sha256": "fa528b0b22858564ef04cb5a5e7ef84d4e28ddb8ddd73deaf52f0aa4034d44ea"
+    }
+  ],
+  "finalEvidenceFiles": [
+    {
+      "path": "planning/governance-migrations/GOV-MAINT-0027.checks-01.json",
+      "mode": "100644",
+      "sha256": "d4cee4d77397218599f4467abb45bc1ed956e7ea26b5632044eb3bce76f15837"
+    },
+    {
+      "path": "planning/governance-migrations/GOV-MAINT-0027.checks-02.json",
+      "mode": "100644",
+      "sha256": "bada4526d8c7c89a182367c6de53bdbaeaca8c2c17f93425e81c228d6261f74b"
+    },
+    {
+      "path": "planning/governance-migrations/GOV-MAINT-0027.json",
+      "mode": "100644",
+      "sha256": "ae57a2c5db6f1a79f76c2047040abf712c7e0bb98773575985222860a85b73f3"
+    },
+    {
+      "path": "planning/governance-migrations/GOV-MAINT-0027.review-R01.json",
+      "mode": "100644",
+      "sha256": "bd702be6943bd5dbc6c0edc05f6c0fd9e11b83d9e016b6af5cfacd2a19bea2b1"
+    },
+    {
+      "path": "planning/governance-migrations/GOV-MAINT-0027.review-R02.json",
+      "mode": "100644",
+      "sha256": "f52b778b9b7dbfbec0b3c7f17680fc0e905021e9230b952d35762f42af30ce63"
+    }
+  ],
+  "reviewSequence": [
+    {
+      "reviewId": "GOV-MAINT-0027.R01",
+      "reviewedCommit": "29139a46b77ef2a1e73031b759067fbc2b0e7118",
+      "reviewer": "agent:maint27-independent-control-review",
+      "reviewedAt": "2026-10-04T20:06:26Z",
+      "disposition": "CHANGES_REQUESTED",
+      "path": "planning/governance-migrations/GOV-MAINT-0027.review-R01.json",
+      "sha256": "bd702be6943bd5dbc6c0edc05f6c0fd9e11b83d9e016b6af5cfacd2a19bea2b1",
+      "findings": [
+        "GOV-MAINT-0027-R01-F01",
+        "GOV-MAINT-0027-R01-F02"
+      ]
+    },
+    {
+      "reviewId": "GOV-MAINT-0027.R02",
+      "reviewedCommit": "6295697db3dd16d185f77e055b84dfa54a1211bf",
+      "reviewer": "agent:maint27-independent-control-review",
+      "reviewedAt": "2026-10-04T20:16:31Z",
+      "disposition": "APPROVED",
+      "path": "planning/governance-migrations/GOV-MAINT-0027.review-R02.json",
+      "sha256": "f52b778b9b7dbfbec0b3c7f17680fc0e905021e9230b952d35762f42af30ce63",
+      "findings": []
+    }
+  ],
+  "freshCheckSequence": [
+    {
+      "candidateCommit": "29139a46b77ef2a1e73031b759067fbc2b0e7118",
+      "path": "planning/governance-migrations/GOV-MAINT-0027.checks-01.json",
+      "sha256": "d4cee4d77397218599f4467abb45bc1ed956e7ea26b5632044eb3bce76f15837",
+      "result": "changes-requested"
+    },
+    {
+      "candidateCommit": "6295697db3dd16d185f77e055b84dfa54a1211bf",
+      "path": "planning/governance-migrations/GOV-MAINT-0027.checks-02.json",
+      "sha256": "bada4526d8c7c89a182367c6de53bdbaeaca8c2c17f93425e81c228d6261f74b",
+      "result": "all-selected-checks-pass"
+    }
+  ],
+  "preservedBacklogGitBlobSha256": "4355f55e1b431b8ff40d99cf615536dccd9d84a8a4945544984ec81f7068d49d",
+  "pausedPredecessor": "W2.A03",
+  "pausedRecordSha256": "bdad5e81327e32ee322db436dc569898ce314d29058e53b0cfe67ed6192e0b03",
+  "adoptedSibling": "W2.A04",
+  "adoptedSiblingRecordSha256": "c15d980f77933ba92e926980d6bc57b0f918430a4d0272952b922889a97e9ffc",
+  "historicalCompatibility": "The first note is preserved exactly as prepared with no reviewAttempts and its actual unsorted declared envelope. Subsequent R01 evidence projection, direct-child remediation and final R02 evidence projection are authenticated as exact Git bytes. This is not asserted compatibility with reviewed_preimplementation_maintenance_errors; no old helper or schema is weakened.",
+  "requiredFutureAuthentication": "Only owner-approved ECR-0013 may recognize this exact preceding segment in the original6506 closed source history. Authenticate every commit, sole parent, regular blob mode, before/after hash, closed changed-path inventory, immutable adverse R01 and passing independent R02/checks. Deny substitution, omission, extra history, review rewriting and add-revert outside these rows. Current and later imported source must equal finalSourceFiles except a separately approved reviewed segment. This binding grants no task or product authority by itself.",
+  "limits": [
+    "Prior fresh checks prove bounded parser/projection/CAS controls, not future A05 implementation, actual adoption or native/product/Wave qualification.",
+    "A03 S01 review-01 and old official accessibility failure remain open.",
+    "The original task base, approved reference/baseline, owner approvals, task histories and prior maintenance are unchanged."
+  ]
+}

@@ -1,0 +1,305 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title>ECR-0013 Restore reviewed activation history and accurate label checking - Research Observatory Planning Review</title>
+  <link rel="stylesheet" href="../assets/review.css">
+</head>
+<body data-page-type="enabler-detail">
+  <a class="skip-link" href="#main-content">Skip to content</a>
+  <header class="site-header">
+    <a class="brand" href="../index.html" aria-label="Planning review home">
+      <span class="brand-mark" aria-hidden="true">RO</span>
+      <span><strong>Research Observatory</strong><small>Planning Review</small></span>
+    </a>
+    <div class="header-actions">
+      <button class="button button-quiet" type="button" data-theme-toggle aria-label="Toggle light and dark theme">Theme</button>
+    </div>
+  </header>
+
+  <div class="page-frame">
+    <aside class="side-panel" aria-label="Planning navigation">
+<div class="planning-nav" data-planning-nav data-default-tab="waves">
+  <div class="planning-nav-tabs" role="tablist" aria-label="Planning views">
+    <button id="planning-tab-capabilities" class="planning-nav-tab" type="button" role="tab" aria-selected="false" aria-controls="planning-panel-capabilities" data-nav-tab="capabilities">Capabilities</button>
+    <button id="planning-tab-waves" class="planning-nav-tab" type="button" role="tab" aria-selected="true" aria-controls="planning-panel-waves" data-nav-tab="waves">Waves</button>
+  </div>
+  <section id="planning-panel-capabilities" class="planning-nav-panel" role="tabpanel" aria-labelledby="planning-tab-capabilities" data-nav-panel="capabilities" hidden>
+    <nav class='cap-nav' aria-label='Capabilities'><a class="nav-item" href="../CAP-01/index.html"><span>CAP-windows-desktop-runtime</span><small>CAP-01 · Windows-first desktop shell and supervised local runtime</small></a><a class="nav-item" href="../CAP-02/index.html"><span>CAP-local-project-storage</span><small>CAP-02 · Local projects, durable storage, security, and recovery</small></a><a class="nav-item" href="../CAP-03/index.html"><span>CAP-research-domain-workflows</span><small>CAP-03 · Canonical domain, research intent, provenance, and durable workflows</small></a><a class="nav-item" href="../CAP-04/index.html"><span>CAP-scholarly-ingestion</span><small>CAP-04 · Scholarly ingestion, connectors, canonicalization, and corpus governance</small></a><a class="nav-item" href="../CAP-05/index.html"><span>CAP-document-inspection</span><small>CAP-05 · Document acquisition, parsing, source inspection, and page anchors</small></a><a class="nav-item" href="../CAP-06/index.html"><span>CAP-search-screening</span><small>CAP-06 · Local search, discovery, corpus diagnostics, and screening</small></a><a class="nav-item" href="../CAP-07/index.html"><span>CAP-model-gateway</span><small>CAP-07 · Provider-neutral model gateway and governed AI execution</small></a><a class="nav-item" href="../CAP-08/index.html"><span>CAP-evidence-verification</span><small>CAP-08 · Evidence schemas, extraction, verification, and adjudication</small></a><a class="nav-item" href="../CAP-09/index.html"><span>CAP-scholarly-graph-synthesis</span><small>CAP-09 · Scholarly graph, comparison sets, synthesis, and reproducibility</small></a><a class="nav-item" href="../CAP-10/index.html"><span>CAP-novelty-opportunities</span><small>CAP-10 · Novelty auditing, research opportunities, and plural research modes</small></a><a class="nav-item" href="../CAP-11/index.html"><span>CAP-windows-release</span><small>CAP-11 · Windows PC/lab product hardening, validation, packaging, and release</small></a><a class="nav-item" href="../CAP-12/index.html"><span>CAP-university-hosting</span><small>CAP-12 · University-hosted deployment, institutional identity, collaboration, and operations</small></a><a class="nav-item" href="../CAP-13/index.html"><span>CAP-cloud-platform</span><small>CAP-13 · Managed cloud control plane, tenant data planes, governance, and SaaS operations</small></a><a class="nav-item" href="../CAP-14/index.html"><span>CAP-cross-platform-desktop</span><small>CAP-14 · Cross-platform desktop qualification and release</small></a><a class="nav-item" href="../CAP-15/index.html"><span>CAP-study-design</span><small>CAP-15 · Empirical study design and protocol development</small></a><a class="nav-item" href="../CAP-16/index.html"><span>CAP-manuscript-blueprints</span><small>CAP-16 · Manuscript blueprint, venue profiles, and article architecture</small></a><a class="nav-item" href="../CAP-17/index.html"><span>CAP-results-integration</span><small>CAP-17 · Technical report and study-results integration</small></a><a class="nav-item" href="../CAP-18/index.html"><span>CAP-manuscript-drafting</span><small>CAP-18 · Source-grounded manuscript drafting and publication artifacts</small></a><a class="nav-item" href="../CAP-19/index.html"><span>CAP-review-revision</span><small>CAP-19 · Reviewer simulation, editorial synthesis, and revision</small></a></nav>
+  </section>
+  <section id="planning-panel-waves" class="planning-nav-panel" role="tabpanel" aria-labelledby="planning-tab-waves" data-nav-panel="waves">
+    <nav class='cap-nav' aria-label='Waves'><a class="nav-item" href="../waves/W0.html"><span>W0</span><small>Engineering foundation</small></a><a class="nav-item" href="../waves/W1.html"><span>W1</span><small>Windows local runtime and durable core</small></a><a class="nav-item active" href="../waves/W2.html"><span>W2</span><small>Windows local evidence foundation</small></a><a class="nav-item" href="../waves/W3.html"><span>W3</span><small>Windows local research workbench</small></a><a class="nav-item" href="../waves/W4.html"><span>W4</span><small>Windows scholarly reasoning and novelty MVP</small></a><a class="nav-item" href="../waves/W5.html"><span>W5</span><small>Windows PC/lab production release</small></a><a class="nav-item" href="../waves/W6.html"><span>W6</span><small>Cross-platform desktop qualification</small></a><a class="nav-item" href="../waves/W7.html"><span>W7</span><small>Study design and manuscript foundations</small></a><a class="nav-item" href="../waves/W8.html"><span>W8</span><small>Results integration, manuscript drafting, and reviewer simulation</small></a><a class="nav-item" href="../waves/W9.html"><span>W9</span><small>Advanced research-intelligence preview</small></a><a class="nav-item" href="../waves/W10.html"><span>W10</span><small>University-hosted pilot</small></a><a class="nav-item" href="../waves/W11.html"><span>W11</span><small>Managed cloud delivery</small></a></nav>
+  </section>
+</div>
+</aside>
+    <main id="main-content" class="main-panel">
+      <nav class="breadcrumbs" aria-label="Breadcrumb"><a href="../index.html">Planning review</a><span>/</span><a href="index.html">Enabler change requests</a><span>/</span><span aria-current="page">ECR-0013</span></nav>
+
+<section class="hero compact">
+  <div class="hero-top"><div><span class="eyebrow">W2.A05 · W2</span><h1>ECR-0013 — Restore reviewed activation history and accurate label checking</h1></div><span class="status status-pending">Pending</span></div>
+  <p>product-scope-security-experience. This page preserves the distinction between authorized scope and executable state.</p>
+</section>
+<section class="review-toolbar">
+  <h2>Proposal, approval, materialization, and campaign state</h2>
+  <dl class="summary-grid"><div><dt>Proposal record</dt><dd>pending-approval / non-executable</dd></div><div><dt>Human approval</dt><dd>PENDING</dd></div><div><dt>Amendment lifecycle</dt><dd>NOT_MATERIALIZED</dd></div><div><dt>Bootstrap</dt><dd>NOT_SUBMITTED</dd></div><div><dt>Amendment campaign</dt><dd>NONE</dd></div></dl>
+  <p>No human approval is recorded. The proposal is non-executable and grants no bootstrap, task, amendment, Wave-resume, or release-gate authority.</p>
+</section>
+<section class="review-toolbar">
+  <h2>Hash-bound source records</h2>
+  <table><thead><tr><th>Record</th><th>Repository-relative path</th><th>SHA-256</th></tr></thead><tbody>
+  <tr><th>Proposal</th><td><code>planning/enabler-change-requests/ECR-0013.md</code></td><td><code>1515e5f073bd19ed33d1c4552f9325d56ce84f1c61b8d18e3d8b1183691f4d14</code></td></tr>
+  <tr><th>Packet</th><td><code>planning/enabler-change-requests/ECR-0013.packet.json</code></td><td><code>56f521d708266021121b2a3391506cc771c7d32e32442d29dc5e58ba356f20c1</code></td></tr>
+  <tr><th>Human review</th><td><code>planning/enabler-change-requests/ECR-0013-review.html</code></td><td><code>18bbbd6ecc0dee72c46a2f5169021ba5c2294ce408c67f85f98663d5beaa9187</code></td></tr>
+  <tr><th>Approval</th><td><code>pending</code></td><td><code>pending</code></td></tr>
+
+  </tbody></table>
+</section>
+<section class="review-toolbar">
+  <h2>Append-only bootstrap scope addenda</h2>
+  <ul class="gate-criteria"><li>None</li></ul>
+</section>
+<section class="review-toolbar">
+  <h2>Append-only bootstrap review attempts</h2>
+  <table><thead><tr><th>Attempt</th><th>Frozen candidate</th><th>Disposition / state</th><th>Reviewer</th></tr></thead><tbody><tr><td colspan="4">Not submitted</td></tr></tbody></table>
+</section>
+<section class="review-toolbar">
+  <h2>Ordered Wave authority chain</h2>
+  <table><thead><tr><th>Authority</th><th>Packet commit / hash</th><th>Record commit / hash</th><th>Meaning</th></tr></thead><tbody><tr><th>W2 base approval</th><td><code>c85a59f3a293f8e3f2eaf6454682c9a14b1efa55</code></td><td><code>3bc1c1828efab50efc730bf3907c3036eff58a2f</code></td><td>Original complete Wave packet</td></tr><tr><th>W2.A01</th><td><code>3fb76d6cb6bce6eaf16774931704de68c6168500</code></td><td><code>f8a49a2ec7ff4daf6e1c5e14da369e06ddff5287</code></td><td>Adopted predecessor authority; preserved unchanged</td></tr><tr><th>W2.A02</th><td><code>60e8a2d3bbd3ba50cc4809a7ebe799764e6b00db</code></td><td><code>5fbeea66e84bac5ab24cf1bb8d2522838529a0ba</code></td><td>Adopted predecessor authority; preserved unchanged</td></tr><tr><th>W2.A04</th><td><code>7f35c7a8e49eb8415ffdffa5a2e04374161f0eae</code></td><td><code>ba95f68bd2747ebce99e67eeb4daec53ed3ba87b</code></td><td>Adopted predecessor authority; preserved unchanged</td></tr><tr><th>GOV-MIG-0001</th><td><code>d8adf48e9c2e0319e4ece573a9381f6ec305310e</code></td><td><code>4851bcb71d47e5adc3541a6ca0c39b20241cf740e41f644c52ba210288fe105d</code></td><td>Post-migration governance authority; does not grant product execution</td></tr><tr><th>W2.A05</th><td><code>56f521d708266021121b2a3391506cc771c7d32e32442d29dc5e58ba356f20c1</code></td><td><code>pending</code></td><td>Pending, non-executable proposal; no bootstrap/task authority</td></tr></tbody></table>
+  <p>Effective ordinary W2 authority remains the approved base plus adopted ordered amendments. W2.A05 is pending and non-executable. If separately approved, it would authorize only bootstrap unit <code>W2.A05.B00</code> and the exact bounded task inventory below.</p>
+</section>
+<section class="review-toolbar">
+  <h2>Proposed slice contributions</h2>
+  <p>These slices are packet data, not hard-coded review-page inventory. They remain non-executable until exact approval and independently approved bootstrap materialization.</p>
+  <details class="plan-details"><summary>W2.A05.S01 — Reviewed activation history and accurate label controls</summary><p>Restore two proven checker defects through one exact additional reviewed source segment while preserving approved product and security authority.</p><p><strong>Work type:</strong> new-product-work. <strong>Tasks:</strong> W2.A05.T01, W2.A05.T02. <strong>Refactor tasks:</strong> none.</p><ul class="gate-criteria"><li>Both ordered tasks pass focused actual/real-Git control and static/browser/accessibility proof with independent exact-candidate dispositions; original snapshots, net inventories, source denials and reference/baseline remain immutable.</li><li>Integrated source/history/label checks and independent S01/exit/separate security reviews precede supported adoption and exact paused-A03 return with both original tasks DONE.</li><li>Actual later A03 activation and fresh slice-finding replay/review-02, A03 own exit/adoption and ordinary W2 resume remain distinct; no native/Core/D3D/current original-task/full W2 release claims.</li></ul></details>
+</section>
+<section class="review-toolbar">
+  <h2>Refactor allocation and planning exception</h2>
+  <dl class="summary-grid"><div><dt>Approved-Wave baseline</dt><dd>143 points at <code>c85a59f3a293f8e3f2eaf6454682c9a14b1efa55</code></dd></div><div><dt>Refactor allocation</dt><dd>0 points / 0%</dd></div><div><dt>Policy</dt><dd>standard-15-percent</dd></div><div><dt>Method</dt><dd>Preserve original W2 33-task/143-point baseline and approved530engineering-hour P/79.5engineering-hour cumulative15% refactoring ceiling. A05 T01 L/5 and T02 M/3 are additional planned exact repair delivery, not measured effort, structural cleanup, points-to-hours conversion or a budget reset. Empty allocations apply to this proposal only, not cumulative spent/committed refactoring or remaining capacity.</dd></div></dl>
+  <table><thead><tr><th>Refactor task</th><th>Estimate</th><th>Points</th></tr></thead><tbody><tr><td colspan="3">No refactor task declared</td></tr></tbody></table>
+  <p>Standard refactor limit: 15%</p>
+</section>
+<section class="review-toolbar">
+  <h2>Governed experience proposal</h2>
+  <p>Reference <code>RO-UI-ACADEMIC-MINIMAL-1.8</code> is already human-approved. Human approval of this ECR reaffirms and binds that existing authority unchanged; it does not reserve a new reference or authorize bootstrap materialization of reference approval.</p>
+  <ul class="gate-criteria"><li><a href="../../../design/ui-reference/APPROVAL.yaml">design/ui-reference/APPROVAL.yaml</a> — <code>9e5628479727b45439bb6326e053ac3b026ad14cec79ffd1b9dfbfceceb38b1f</code></li><li><a href="../../../design/ui-reference/CAPABILITY_COVERAGE.json">design/ui-reference/CAPABILITY_COVERAGE.json</a> — <code>35bf4ea4cf9cbc5bbfc30e48ecdf9ab6e91b333ce016816a3fd5713f01e4f945</code></li><li><a href="../../../design/ui-reference/CAPABILITY_COVERAGE.md">design/ui-reference/CAPABILITY_COVERAGE.md</a> — <code>0d82db579cb7d4a2988ec623c0556ea47086c7fcb9245ec0f332f71c8e7efb16</code></li><li><a href="../../../design/ui-reference/PAGE_INVENTORY.md">design/ui-reference/PAGE_INVENTORY.md</a> — <code>42253f4ef65ef8e32fb66c57dcbf671bc3c65e32b8892349064ec8cdc6ab3e4c</code></li><li><a href="../../../design/ui-reference/PAGE_INVENTORY_SOURCE.md">design/ui-reference/PAGE_INVENTORY_SOURCE.md</a> — <code>42253f4ef65ef8e32fb66c57dcbf671bc3c65e32b8892349064ec8cdc6ab3e4c</code></li><li><a href="../../../design/ui-reference/README.md">design/ui-reference/README.md</a> — <code>ef9065dd2609b7af791bf3911325b42d83b9cb159bb638be37286ea2603e338f</code></li><li><a href="../../../design/ui-reference/SITE_MANIFEST.json">design/ui-reference/SITE_MANIFEST.json</a> — <code>56a8d6cb772fe3b787e51d38794d5d000a47cfa185b1c4885bff4bdbedcea3a2</code></li><li><a href="../../../design/ui-reference/STYLE_GUIDE.md">design/ui-reference/STYLE_GUIDE.md</a> — <code>4421afe6a1eb4f9fe05dc201503cc94cce1bdd92d72e30e11cae6b710bd221db</code></li><li><a href="../../../design/ui-reference/STYLE_GUIDE_SOURCE.md">design/ui-reference/STYLE_GUIDE_SOURCE.md</a> — <code>4421afe6a1eb4f9fe05dc201503cc94cce1bdd92d72e30e11cae6b710bd221db</code></li><li><a href="../../../design/ui-reference/WORKFLOW_CATALOG.json">design/ui-reference/WORKFLOW_CATALOG.json</a> — <code>a47ff01ec5d485fd2a87dffd5480576cadbc7af23986ed4d6b414323c2d3cb21</code></li><li><a href="../../../design/ui-reference/WORKFLOW_CATALOG.md">design/ui-reference/WORKFLOW_CATALOG.md</a> — <code>c2b98b103574156a60695639af5572ded2475ca00f745e700ded6a1d5a25f071</code></li><li><a href="../../../design/ui-reference/application-settings.html">design/ui-reference/application-settings.html</a> — <code>c13d1fd7eeecd372fe9a49839d5c8989ac04e72e7a67c7751a975517ac964a6a</code></li><li><a href="../../../design/ui-reference/assets/app.css">design/ui-reference/assets/app.css</a> — <code>0e085d1112322ff9277fbc10fd9244690e3e97e0638a1aa34848ca5e971f8f56</code></li><li><a href="../../../design/ui-reference/assets/app.js">design/ui-reference/assets/app.js</a> — <code>cfd064ffd003172dad6d2189705f4b25257e58aec916b3f2038085c926d50d8b</code></li><li><a href="../../../design/ui-reference/assets/print.css">design/ui-reference/assets/print.css</a> — <code>03b327a45c53aa2e1135c5de598c88524d5a1edc7f546f7aa4355e4b8d41618c</code></li><li><a href="../../../design/ui-reference/assets/tokens.css">design/ui-reference/assets/tokens.css</a> — <code>e6aa1ebf847e983f4f5c9d20ad0e753716737cdfbedf617df2292bf510bebfa5</code></li><li><a href="../../../design/ui-reference/audit-lineage.html">design/ui-reference/audit-lineage.html</a> — <code>4f08394bfcb370a86a002b59d276524da8f533013726022a4f02dd5e656f8a6f</code></li><li><a href="../../../design/ui-reference/claim-graph.html">design/ui-reference/claim-graph.html</a> — <code>cf8f265a664d3bc1f6a15fd8f4f4720e2d043334dc0f5e98ec660e2518e8bfd5</code></li><li><a href="../../../design/ui-reference/corpus-canvas.html">design/ui-reference/corpus-canvas.html</a> — <code>f23d2cc6c3eecb9e5f5be146f9f0f442e42cf1cd29e56199011fb491f28bf16f</code></li><li><a href="../../../design/ui-reference/critical-lens.html">design/ui-reference/critical-lens.html</a> — <code>4877a11d140de166e82f939eca7a1f19b0ac1cdff515217582f84dfe91284980</code></li><li><a href="../../../design/ui-reference/document-reader.html">design/ui-reference/document-reader.html</a> — <code>6527e09137d9ebe0d2f48c3c30bdc2a45eae5e2680e7f09f4deda4c81a8a32c0</code></li><li><a href="../../../design/ui-reference/evidence-matrix.html">design/ui-reference/evidence-matrix.html</a> — <code>82dc38d05ee7843be44849698c07a230618dbdbabc559ccc98d25c52cd6f4cf2</code></li><li><a href="../../../design/ui-reference/help-onboarding.html">design/ui-reference/help-onboarding.html</a> — <code>7fd6cf66441053dc403b43b843b5f73449caa69be4ea8c189cd3bb0546d8245d</code></li><li><a href="../../../design/ui-reference/index.html">design/ui-reference/index.html</a> — <code>23628190d9093db1d3d7cbebc5ca9af5cc2f081acd678b01fe1097906242473d</code></li><li><a href="../../../design/ui-reference/ingestion-reconciliation.html">design/ui-reference/ingestion-reconciliation.html</a> — <code>83df119e8e28ab69fcfd999855a29b896bed7928f17588c31944765ec593d0d8</code></li><li><a href="../../../design/ui-reference/intent-contract.html">design/ui-reference/intent-contract.html</a> — <code>a361cd8ce9381b24521f0e3e1218cd62c4dec253fec6338bdd8fcd1a31ba8dbf</code></li><li><a href="../../../design/ui-reference/living-monitor.html">design/ui-reference/living-monitor.html</a> — <code>bc2ee881037faae2540f23519a6c3abc49d59dd402d21ac17e6305164c0887dc</code></li><li><a href="../../../design/ui-reference/manuscript-blueprint.html">design/ui-reference/manuscript-blueprint.html</a> — <code>d63828eb45010e12f7225dbe9e8cf7aa503c171bce33b52c1ae4ce573635e308</code></li><li><a href="../../../design/ui-reference/manuscript-studio.html">design/ui-reference/manuscript-studio.html</a> — <code>9eb95f05404e4bb3ed07353633e4c6eab60339c294d855eb6946892f150aa867</code></li><li><a href="../../../design/ui-reference/model-center.html">design/ui-reference/model-center.html</a> — <code>a1ec25442e042126c99eac67b4943d79b6485fe4a888f68314468d7b66581005</code></li><li><a href="../../../design/ui-reference/new-project.html">design/ui-reference/new-project.html</a> — <code>e42091e46dfff96a15da5a9d733ca83e8009148fef1853099079fddb6d8bad94</code></li><li><a href="../../../design/ui-reference/novelty-audit.html">design/ui-reference/novelty-audit.html</a> — <code>9f7912c327ef5a0f5987f2925cf0e96d8e6547a23c1a4856a7d06c3b9a570853</code></li><li><a href="../../../design/ui-reference/opportunity-radar.html">design/ui-reference/opportunity-radar.html</a> — <code>52b61e184ffebbc6f70ead74e6fcd9a12da0976696fbee8165a80e9141c6866a</code></li><li><a href="../../../design/ui-reference/parsing-quality.html">design/ui-reference/parsing-quality.html</a> — <code>e61d819d284090a61ffbcf8d0ad7b383e2632ef74aa9cac5c11e362f79795ff6</code></li><li><a href="../../../design/ui-reference/project-settings.html">design/ui-reference/project-settings.html</a> — <code>170fb77689f5950a36530dbd1adf228ce1bdc874ab19f3c81199b2574986504c</code></li><li><a href="../../../design/ui-reference/projects.html">design/ui-reference/projects.html</a> — <code>ef1fc62b5465f8c9d98d5e004d8df0f5b397d79bd5f94a306a95a3f6f61e2e52</code></li><li><a href="../../../design/ui-reference/prototype-index.html">design/ui-reference/prototype-index.html</a> — <code>87f19ba1a6e7a392badd2a2e2aba35fd8ae4d3aa6fc06bd50be269a2f0a2f9d0</code></li><li><a href="../../../design/ui-reference/research-notebook.html">design/ui-reference/research-notebook.html</a> — <code>98f794165f3b60b20321d7d40f56b6573501491c60e909eb43092260d6f9c15d</code></li><li><a href="../../../design/ui-reference/reviewer-simulation.html">design/ui-reference/reviewer-simulation.html</a> — <code>a3976fcfb87eaa2738fc53e8d34d1d7fdc51bb1503b74ec8ac5f0f68669c30b4</code></li><li><a href="../../../design/ui-reference/revision-response.html">design/ui-reference/revision-response.html</a> — <code>30dbc69b1fc72ecc040d46b2b8f0d47cf52cc74ec2f97a723458106c23f0dcc2</code></li><li><a href="../../../design/ui-reference/schema-manager.html">design/ui-reference/schema-manager.html</a> — <code>69f8973f29f7d9651d5c72c171d919d93c9aa8afcf3dbfb9df18aefbf34223c8</code></li><li><a href="../../../design/ui-reference/screening.html">design/ui-reference/screening.html</a> — <code>52addf3853e395b1151b75c7cd6881ffaadf250538f366dba8318417abdf0464</code></li><li><a href="../../../design/ui-reference/scripts/build_mockups.py">design/ui-reference/scripts/build_mockups.py</a> — <code>da0caa083e75e382feffb6c6682a24100c23b8fb44af5d78cf7ef692ecc80cc4</code></li><li><a href="../../../design/ui-reference/scripts/render_previews.py">design/ui-reference/scripts/render_previews.py</a> — <code>f7b868716f56e70b11004a61aa85762a1bfc6ea06036260f3dd19746bf004959</code></li><li><a href="../../../design/ui-reference/scripts/smoke_interactions.py">design/ui-reference/scripts/smoke_interactions.py</a> — <code>ecd92ebca427b5edb5fe687ed14d838341e66277370b0ecf3cfc432f8bc347ac</code></li><li><a href="../../../design/ui-reference/scripts/verify_site.py">design/ui-reference/scripts/verify_site.py</a> — <code>891940c2a6d0906e211528b04b74fc6fe1351a3d4ded82eea650b051e18c9e0f</code></li><li><a href="../../../design/ui-reference/search-studio.html">design/ui-reference/search-studio.html</a> — <code>506a48064f570bbecbe6e802fdb9e09677614e1241665e5d9d88f6d0829fd26c</code></li><li><a href="../../../design/ui-reference/source-manager.html">design/ui-reference/source-manager.html</a> — <code>5bd6e40b7f59f2fe86dab243272c63af8cba4de14911b0e1adbbd4db9ba60d40</code></li><li><a href="../../../design/ui-reference/study-design.html">design/ui-reference/study-design.html</a> — <code>2f764a0f5a823551ac8b774466c215bbb5eb1e4897dd1b3da2e7c75193d012fa</code></li><li><a href="../../../design/ui-reference/style-guide.html">design/ui-reference/style-guide.html</a> — <code>1453b8b205534cbbf361cc52cb2ae19e9c0b84711401656af013d6a8c2a63311</code></li><li><a href="../../../design/ui-reference/synthesis-studio.html">design/ui-reference/synthesis-studio.html</a> — <code>a1742692ea189665511a2b455a1bcde673f06973258f941f445d11b5b94cea63</code></li><li><a href="../../../design/ui-reference/task-center.html">design/ui-reference/task-center.html</a> — <code>ee47f6dd88fa1564043192aae0d0f7030e4fe48ddfd673eeaea6b775c017e11e</code></li><li><a href="../../../design/ui-reference/technical-reports.html">design/ui-reference/technical-reports.html</a> — <code>5fb3754d65aa9ffb06c1b8008994bc4ab4c79ba26188fb0c193e8c45b8036ae6</code></li><li><a href="../../../design/ui-reference/theory-map.html">design/ui-reference/theory-map.html</a> — <code>729b32cf41942a900057721f4402d8fab48f005b4e31e9e6ac3abf88c93db44d</code></li><li><a href="../../../design/ui-reference/REFERENCE_MANIFEST.yaml">design/ui-reference/REFERENCE_MANIFEST.yaml</a> — <code>4da9bf6e94c9b2f16b1dbbaff6bd76b90b89ac396321689685ed24dc191c63a5</code></li></ul>
+</section>
+<section class="review-toolbar">
+  <h2>Proposed bounded inventory</h2><ul class="wave-slice-list"><li><span><strong>W2.A05.T01 — Authenticate reviewed inert projection history and exact repair delivery</strong><small>Restore actual integrated activation attribution without hiding historical source or changing approved task inventories.</small><small>Estimate L · dependencies: W2.A05.B00</small></span><span class="status status-pending">Pending</span></li><li><span><strong>W2.A05.T02 — Recognize real associated labels in the static accessibility checker</strong><small>Restore accurate naming classification for the unchanged approved file input while retaining actual unnamed-control failures.</small><small>Estimate M · dependencies: W2.A05.B00, W2.A05.T01</small></span><span class="status status-pending">Pending</span></li></ul>
+  <h3>Exit criteria</h3><ul class="gate-criteria"><li>Bind exact complete paused A03 at 771e54a3657cdc5ff308d3a53d7b71eb48bb9214 / bdad5e81327e32ee322db436dc569898ce314d29058e53b0cfe67ed6192e0b03, both DONE approved original task histories, adopted A04 and unchanged W2/A01/A02/GOV26/C10/reference authority before independent packet review and explicit owner approval.</li><li>Preserve actual S01 review-01 blocking W2.A03.S01-R01-F01, six exact Git projection rows, correct118-path T02 net inventory and original official accessibility exit1 plus separate browser naming predicate. Never fabricate or reclassify old failures.</li><li>Authenticate only the exact preceding GOV-MAINT-0027 sequence7604e7ee→29139a46→03795948→6295697d→a6d2f0b5 and all imported-source/review/check bytes through planning/enabler-change-requests/ECR-0013.maintenance-binding.json / SHA-256 d550768944a0b142035270af47e2dcace88c7021edd0251d0a30e5ffc3e09be5. Preserve actual prepared-first note and adverse R01; approved R02 closes both findings. No old-helper weakening, new maintenance ID/schema, arbitrary history recognition or imported-tool edit is authorized.</li><li>Deliver only the five-path T01 and four-path T02 envelopes (eight unique paths) with one indexed Proposed ADR-0041 introduced in T01 and only a bounded body append in T02, unchanged metadata/index entry, independent ordered task reviews and generic authenticated inert-output attribution. No hidden source, generic filename bypass, new schema/controller/contract field or changed original task source authority.</li><li>Authenticate this exact separately reviewed A05 source and immutable task/slice/exit/security/adoption/paused-parent return under existing1.4 while preserving original full6506/two-contract/classification/input closure and all v1.0-v1.4 denials.</li><li>Restore static associated-label recognition and require focused adverse/positive browser proof plus fresh official33-page/66-responsive accessibility exit0 at the exact candidate; unchanged reference and screenshot baseline, genuine unnamed controls still fail.</li><li>Independent B00, task, integrated slice, exit and separate security reviews precede adoption. Return only to paused A03 with both tasks DONE; separate activation, fresh S01 finding closure, own A03 exit/adoption and explicit ordinary W2 resume precede main task work. Native/Core/S05/D3D/full W2/human release remain due.</li></ul>
+</section>
+<section class="section-heading"><span class="eyebrow">Executable projection</span><h2>Materialized task review packets and history</h2><p>The proposed packet inventory above remains distinct from current task state. Each task below shows either its complete append-only review control or an explicit legacy latest-review-only projection.</p></section>
+<p>No amendment task has been materialized.</p>
+
+<section data-amendment-exit-id="W2.A05" data-exit-review-mode="latest-completion-only">
+  <div class="section-heading"><span class="eyebrow">Amendment exit and adoption</span><h2>Independent amendment-exit review</h2></div>
+
+  <p><strong>Legacy latest-completion-only projection.</strong> No immutable amendment-exit rounds are recorded; this view does not fabricate exit-review history.</p>
+  <section class="review-toolbar" data-latest-completion-projection="W2.A05" data-latest-completion-status="PENDING" data-latest-completion-reviewer="none" data-latest-completion-reviewed-at="none" data-latest-completion-notes="none"><h3>Latest completion projection</h3><dl class="summary-grid"><div><dt>Status</dt><dd>PENDING</dd></div><div><dt>Reviewer</dt><dd>none</dd></div><div><dt>Reviewed at</dt><dd><code>none</code></dd></div><div><dt>Evidence</dt><dd>None</dd></div></dl><p><strong>Latest notes:</strong> None</p></section>
+  <div class="section-heading"><span class="eyebrow">Bound Wave checkpoint evidence</span><h3>Adoption checkpoints</h3><p>These typed references are retained separately from exit-review evidence and do not rewrite completion history.</p></div>
+<p>No bound amendment-adoption checkpoint is recorded.</p>
+</section>
+<section class="callout callout-warning">
+  <div><span class="eyebrow">Ordinary Wave execution remains stopped</span><h2>Safe resume boundary</h2><p>First obtain independent approval of this exact packet and explicit human approval. Only then may the amendment continue through independently approved bootstrap, materialization, completion and independent approval of all 2 tasks, amendment-exit control/security review, and the W2 adoption checkpoint. The alternatives are an append-only defer or withdraw disposition with an explicit safe resume condition; editing or reapproving W2 in place is prohibited.</p></div>
+</section>
+<details class="plan-details"><summary>Rollback and recovery duties</summary><ul class="gate-criteria"><li>Before explicit exact-packet owner approval revise or defer only inert proposal; execute no repair source.</li><li>On failure retain paused A03/W2, both original DONE task approvals and original blocked CAP-05 T01; preserve adverse candidates/findings and strict-descendant remediation.</li><li>After reviewed A05 adoption return only to still-paused A03; no silent source/reference/baseline rollback, new original task base, false pass or waived current native/W2 obligation.</li></ul></details>
+<details class="plan-details"><summary>Read the canonical proposal</summary><article class="plan-article"><pre class='markdown-fallback'>This append-only proposal is inert. It requests one exact additional control-source
+segment to resolve two observed checker defects without changing approved product,
+reference, native/Core, permission, migration or release behavior. Independent packet
+review and explicit owner approval precede any implementation. Previous approvals
+do not authorize this segment; all original packets and task reviews remain immutable.
+
+## Decision and alternatives
+
+Recommended: authorize W2.A05.S01 with two ordered tasks. T01 repairs authenticated
+inert projection attribution and the exact repair/return history. T02 fixes static
+HTML label recognition. Separate task, slice, exit and security reviews precede
+adoption and return to still-paused A03. Resume A03 separately, replay its blocking
+slice finding, then finish its own exit/adoption before ordinary W2 resume.
+
+Alternative: defer and retain A03/W2 paused. Both activation tasks remain DONE but
+the combined slice cannot close, and the official accessibility result stays failed.
+Alternative: broader governed replanning if a narrow conforming remedy proves
+infeasible. No present evidence supports a product/security/reference redesign.
+
+## Actual failures and safe interim state
+
+At integrated local-main b2fd64fdd9bc840cdb91eb667655e461e5736d7a the fresh actual
+history helper exited1 in adopted_continuation_reviewed_task_commits. Independent
+[S01 review-01](../../artifacts/evidence/W2.A03.S01.review-01.json) records
+blocking W2.A03.S01-R01-F01. The correct ca8-to06 T02 net inventory has118 paths.
+Only planning/review-site/waves/W2.html is missing from that final net diff after
+six authorized historical changes returned it to identical base bytes. No omitted
+product/control source was found. Net inventory and per-commit history are distinct
+proofs; the official [Git diff documentation](https://git-scm.com/docs/git-diff)
+defines endpoint comparison. Both proofs must remain exact.
+
+The official accessibility checker separately reports an unnamed file input although
+actual pinned Chromium exposes its explicit visible label, Local full-text file.
+Removing that association in memory removes the name. The immutable official
+FAIL, real-browser predicate and independent adjudication remain in T02 evidence.
+The [HTML label specification](https://html.spec.whatwg.org/multipage/forms.html#the-label-element)
+defines same-tree for/id and wrapping-label association. This proposal corrects
+checker recognition, not approved HTML or pixels; genuine unnamed controls still fail.
+
+The [preflight record](ECR-0013.preflight-01.json), SHA-256 140350618878d3f73f921f092054c75c7cb7352fb3ed9a0ebc9bea646918a991, binds
+all six exact before/after Git blob hashes, source predecessors and adverse references.
+It labels read-only diagnosis and historical execution honestly; it is not new runtime
+qualification. The actual stderr lives in the tool transcript; the empty stdout log
+is not rewritten into an invented raw error report.
+
+## Frozen authority and delivery boundary
+
+Paused A03 snapshot: 771e54a3657cdc5ff308d3a53d7b71eb48bb9214; complete canonical record SHA-256 bdad5e81327e32ee322db436dc569898ce314d29058e53b0cfe67ed6192e0b03.
+Both A03 T01/T02 remain DONE with their original approved R01 histories and claim
+bases. Preserve adopted A04, approved W2/A01/A02/A03/A04 packets/approvals, GOV-MIG-0001,
+reviewed GOV26/C10, original CAP-05.S01.T01 base6506c68461144747b0ee9be10853211717aa381d,
+and all55 approved1.8 reference files/package cd8995fdcea2fe44452eaa1fdd258b6f9fab5714cbd443a81a8e5b4251220b94.
+
+The linked correction adapter requires an adopted origin and no unfinished amendment.
+Reopening T02 excludes gate source. A T01 follow-up range must begin at its prior
+candidate and would overlap already delivered A04/T02 source and violate ordering.
+Rewriting the approved net manifest or inventing an intermediate claim is forbidden.
+AGENTS and accepted ADR-0003 therefore require an append-only exact source segment
+before this protected-source delivery; a bounded-maintenance label grants no blanket
+exception to frozen source history. Ordinary restoration outside that freeze still
+needs no new product approval.
+
+B00 uses the existing paused-predecessor adapter: append only an empty A05 shell,
+independently review it, materialize exactly the two tasks, then activate a separate
+lease. Preserve the whole paused A03 record and all ordinary holds throughout.
+No new controller, GRR/GCR, schema, asserted v1.4 field or generic filename allowance.
+
+## Exact preceding maintenance history
+
+The generic sequential-correction adapter defect was repaired separately under
+GOV-MIG-0001 bounded maintenance as GOV-MAINT-0027. Its first candidate and R01
+adverse result are preserved. R01 identified unauthenticated live completed-history
+edits and a foreign-worktree synthetic fixture; direct-child remediation addresses
+both. All eight selected fresh check groups passed at
+6295697db3dd16d185f77e055b84dfa54a1211bf, and independent R02 approved that exact
+candidate. The disposition-only child is a6d2f0b522b691a36bc54b906aa777d50369e085.
+These are control checks, not A05 implementation or product/Wave qualification.
+
+[Exact maintenance binding](ECR-0013.maintenance-binding.json), SHA-256
+d550768944a0b142035270af47e2dcace88c7021edd0251d0a30e5ffc3e09be5,
+freezes all four direct-child commits from predecessor
+7604e7ee94e930548d3078c691ade0f4934a76c9 through that disposition: initial
+29139a46b77ef2a1e73031b759067fbc2b0e7118, R01 projection
+037959481142cdb64f873d66ff5166733a40935e, remediation 6295697d, and R02 projection
+a6d2f0b5. It binds every before/after regular Git blob, exact changed-path inventory,
+seven final source files, five evidence files, both immutable reviews and both check
+attempts. No extra history or source add-revert is permitted by this binding.
+
+Three repaired tools are imported authority inputs to the original UI gate:
+governance_kernel.py, planctl.py and taskctl.py. This ECR expressly requests
+recognition of only that exact reviewed preceding segment in the original6506
+history. T01 must authenticate its complete binding directly through this immutable
+owner-approved ECR. The initial note actually has status prepared, no reviewAttempts
+and its original unsorted declared envelope; preserve those bytes. Do not claim it
+matches the older pre-UI maintenance helper or weaken that helper to admit it.
+No new maintenance ID, execution schema or generic maintenance allowance is needed.
+The two A05 task envelopes below grant no further edit to those imported tools.
+
+Before approval, the reviewed repair makes the inert proposal structurally valid
+but confers no original CAP-05 task, A05 implementation or ordinary W2 authority.
+Unknown or altered imported-tool history still denies. After owner approval, B00
+and T01 must verify this exact committed maintenance segment, paused A03 and
+unchanged adopted A04 before recognizing it; subsequent gate tests must deny
+forged reviews, omitted/extra commits, substituted source and adverse-history edits.
+
+## Exact tasks, source and acceptance
+
+### W2.A05.T01 — Authenticate reviewed inert projection history and exact repair delivery
+
+Proposed estimate L (5 points). Dependency: W2.A05.B00.
+
+1. Introduce one indexed Proposed ADR-0041 linked to both W2.A05.T01 and W2.A05.T02 under Accepted ADR-0001/0003/0004. Authorize only the separate exact reviewed control-repair segment and same-reference label recognition; supersede no accepted decision and change no previous ADR or index entry.
+
+2. Repair generic reviewed-task history attribution through a separately authenticated per-commit inert-output map, defaulting to empty, distinct from the immutable net changedFiles inventory. Admit the six exact regular W2.html history rows bound by ECR-0013.preflight-01.json only through their independently reviewed A04/A03 delivery and exact Git blobs; do not change any frozen manifest or hide any product/control add-revert. Preserve overlapping-range rejection. No filename-only, prefix-only, self-declared or arbitrary generated-output exemption.
+
+3. Within existing closed v1.4, authenticate exact ECR-0013/W2.A05 packet/owner/B00, materialization, separate claims, exact source candidates and task reviews, integrated S01, exit, separate committed security review/adoption and exact paused-A03 return. Update only the exact ordered amendment/source inventory for this reviewed segment. Partition it from original A03/A04 ranges while preserving full original6506 base, two-contract inventory, current independent classification, producer/dependent inputs and all older denials. Authenticate A04 original ADR/index historical bytes plus only the new A05 single authorized index append and two reviewed Proposed ADR41 body versions; no general registry-prefix allowance. Directly authenticate the preceding GOV-MAINT-0027 four-commit sequence and imported-source/evidence bytes through ECR-0013.maintenance-binding.json / d550768944a0b142035270af47e2dcace88c7021edd0251d0a30e5ffc3e09be5, preserving its actual prepared-first note, R01 adverse round and approved R02. Do not weaken or misrepresent old pre-UI helper compatibility, admit another maintenance history or edit the imported tools. No new asserted contract field, schema, taskctl/kernel/controller or control revision.
+
+4. Preserve the complete frozen paused A03 record at 771e54a3657cdc5ff308d3a53d7b71eb48bb9214 with canonical SHA-256 bdad5e81327e32ee322db436dc569898ce314d29058e53b0cfe67ed6192e0b03, both original task definitions/bases/approved R01 packets and findings, adopted A04 whole record and all existing approvals/reference/witness/baseline. Authenticate exact A05 adoption and later separate A03 activation; both A03 tasks remain DONE, with no invented reopen or claim. Subsequent A03 S01 review-02 must replay and explicitly close W2.A03.S01-R01-F01 using fresh actual integration proof.
+
+5. Limit T01 source to exactly tools/ui_change_gate.py, tests/foundation/test_ui_change_gate.py, docs/automation/design-first-ui-changes.md, docs/adr/ADR-0041-authenticate-reviewed-activation-control-repairs.md, docs/adr/index.json. Index modification is one appended ADR-0041 entry only. Task-owned evidence/reviews and generated planning views are separate outputs; no renderer/Core/native/permission/runtime/reference/consumer/baseline/original-task source edits.
+
+6. Prove actual retained ca8-to06 history attribution with its correct118-path net inventory, plus hostile real-Git missing/forged projection proof, same-filename unreviewed output, hidden product/control/source add-revert, changed predecessor/approved A04, stale/foreign/mixed segment, malformed or replayed review and premature return/activation denials. For the preceding maintenance binding also deny substituted imported tools or modes, omitted/extra commits, forged/missing R02, edited R01/adverse evidence and any unapproved history beyond the exact bound segment. Preserve the failing actual S01 result and historical adverse rounds; future fixture records are synthetic proof only.
+
+Selected proof: Focused real-Git exact retained-range positive, frozen byte/approval/task/source partition, projection and hidden-source denials; incremental old v1.0-v1.4 regressions. Exact candidate ADR/UI, affected Python quality, diff, backlog/views/site and independent expanded control/security review. Actual future adoption/return closure remains later actual integration proof.
+
+### W2.A05.T02 — Recognize real associated labels in the static accessibility checker
+
+Proposed estimate M (3 points). Dependencies: W2.A05.B00, W2.A05.T01.
+
+1. After independently approved T01, correct the static accessible-name check only for parsed standard label for/id associations in the same document, including labels appearing after controls. Preserve existing wrapping-label support, name precedence and genuine unnamed-control failures. Do not add aria-label to approved markup, suppress the input, change its pixels, baseline or reference, or treat unrelated/empty/hidden/non-labelable/wrong-target text as a name. Retain duplicate-ID and reference-name drift denials; no general accessibility-name redesign.
+
+2. Limit T02 source to exactly tools/ui_conformance.py, tests/desktop/test_ui_conformance.py, docs/automation/ui-conformance-verification.md, docs/adr/ADR-0041-authenticate-reviewed-activation-control-repairs.md. Make only a bounded implementation/verification body append to still-Proposed ADR-0041 within the real T02 claim range, preserving its metadata and index entry; authenticate both reviewed historical versions. This provides the changed indexed task-linked companion required by ADR-0001 without widening or substituting a base. Preserve semantic compatibility/witness, capture settings and baseline writer denial, all existing reference IDs/packages and immutable evidence.
+
+3. At the exact committed candidate run focused positive and adverse naming regressions, actual pinned Chromium accessibility-tree positive and in-memory label-removal/wrong-target negatives, and the unmodified official accessibility command across all33 pages/66 responsive states. Require actual command exit0 with no hidden failures; preserve the prior official exit1. Current reference integrity and affected checker/quality/ADR/metadata checks must pass. This is checker qualification, not native/Core or complete product/profile/W2 qualification.
+
+4. Obtain expanded independent task, integrated S01, exit and separate security checkpoint dispositions before supported A05 adoption and exact still-paused A03 return. Fresh actual A03 integrated finding replay/review-02 and its own exit/security/adoption remain later gates; ordinary W2 stays PAUSED and original CAP-05.S01.T01 BLOCKED until lawful separate resume.
+
+Selected proof: Focused static label-name positives and adversarial missing/empty/hidden/duplicate/wrong-target/non-labelable cases, actual pinned browser AX positive and label-removal negative. Fresh official33-page/66-responsive accessibility and unchanged reference/baseline history, affected quality/ADR/control checks; independent review preserving every prior adverse result.
+
+## Source authentication and recovery
+
+Derive the new exact source segment from the immutable approved ECR, separate claims,
+reviewed task ranges, independent slice/exit/security ledgers and actual adoption.
+Keep complete source history, regular modes, owner/lease/base and closed source
+envelopes. Authenticate original and later correction segments independently; do
+not force legitimately reverted inert output into a frozen net inventory. A same
+filename without exact independently reviewed byte/history binding still denies.
+The six preflight rows are the initial real-history closure, not a license for future
+unreviewed projections. Preserve all older source add/revert and arbitrary path denials.
+
+Adoption returns only to paused A03 with both tasks DONE. A later legal activation
+does not reopen those approved tasks. A fresh combined check authenticates the
+new approved checker segment and unchanged original witness/consumer/baseline
+segments. Independent A03 review-02 explicitly closes the preserved review-01 finding;
+A03 exit and separate security/adoption remain subsequent transitions. No source
+edit may claim the repair passed before exact-candidate tests and review.
+
+## Verification selection and limits
+
+Focused real-Git source/projection/return and static naming boundaries plus fresh
+official accessibility cover the changed controls. Source-sensitive quality/ADR
+and supported planning checks remain required. Do not repeat unchanged product/native
+or full profile suites at each repair stage. Historical task/capture results retain
+their candidate/producer hashes and remain historical; receipts are not fresh proof.
+Actual post-adoption parent integration and finding replay remain mandatory.
+
+All native picker/drop, protected Core rights/provenance/receipt/restart, fifth D3D
+startup denial, joined CAP-04.S05 signed-worker/Core integration, remaining18 CAP-05
+tasks, fresh full W2/profile/security/privacy/accessibility/performance/packaging,
+independent Wave review and human release remain due. No release approval is requested.
+
+## Budget, rollback and resume condition
+
+The two proposed L/5 and M/3 tasks are additional planned repair delivery, not
+measured time, a points-to-hours conversion or supplemental structural refactoring.
+Preserve original W2 33tasks/143points,530engineering-hours and one79.5hour shared
+15% supplemental-refactoring ceiling. Empty packet refactoring allocations apply
+only to this proposal, not cumulative measured spend or spare capacity. No budget reset.
+
+On any bootstrap/task/review/return failure retain A03/W2 paused and original T01
+blocked, preserve adverse committed descendants and append-only findings. Correct
+within the approved repair envelope; no silent baseline/reference rollback or waived
+failure. Wider source/security/experience changes require their own authority.
+
+The next legal decision is explicit approval of the exact independently reviewed
+ECR-0013 packet candidate and digest. Only then execute B00 and the ordered tasks.
+After reviewed A05 adoption/return, separately activate A03, replay its slice finding,
+complete A03 exit/security/adoption, and explicitly resume W2 through taskctl.</pre></article></details>
+
+    </main>
+  </div>
+
+  <footer class="site-footer">
+    <span>Static, local-first review surface</span>
+    <span>Capability decisions precede implementation</span>
+  </footer>
+  <script src="../assets/review.js"></script>
+</body>
+</html>

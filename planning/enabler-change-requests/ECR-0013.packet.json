@@ -94,7 +94,7 @@
       "planning/review-site/manifest.json"
     ],
     "requiredOutcomes": [
-      "Authenticate exact W2/adopted A01/A02/A04, paused A03 whole record/task approvals, approved55-file1.8 reference and GOV-MIG-0001.",
+      "Authenticate exact W2/adopted A01/A02/A04, paused A03 whole record/task approvals, approved55-file1.8 reference and GOV-MIG-0001. Authenticate the exact independently reviewed GOV-MAINT-0027 four-commit source/evidence binding before recognizing its imported authority inputs; no protected gate source is edited in B00.",
       "Append only an empty A05 shell, independently review B00, then materialize exactly A05.S01/T01/T02 and transfer only the amendment hold."
     ],
     "prohibitedOutcomes": [
@@ -137,10 +137,10 @@
       "acceptanceCriteria": [
         "Introduce one indexed Proposed ADR-0041 linked to both W2.A05.T01 and W2.A05.T02 under Accepted ADR-0001/0003/0004. Authorize only the separate exact reviewed control-repair segment and same-reference label recognition; supersede no accepted decision and change no previous ADR or index entry.",
         "Repair generic reviewed-task history attribution through a separately authenticated per-commit inert-output map, defaulting to empty, distinct from the immutable net changedFiles inventory. Admit the six exact regular W2.html history rows bound by ECR-0013.preflight-01.json only through their independently reviewed A04/A03 delivery and exact Git blobs; do not change any frozen manifest or hide any product/control add-revert. Preserve overlapping-range rejection. No filename-only, prefix-only, self-declared or arbitrary generated-output exemption.",
-        "Within existing closed v1.4, authenticate exact ECR-0013/W2.A05 packet/owner/B00, materialization, separate claims, exact source candidates and task reviews, integrated S01, exit, separate committed security review/adoption and exact paused-A03 return. Update only the exact ordered amendment/source inventory for this reviewed segment. Partition it from original A03/A04 ranges while preserving full original6506 base, two-contract inventory, current independent classification, producer/dependent inputs and all older denials. Authenticate A04 original ADR/index historical bytes plus only the new A05 single authorized index append and two reviewed Proposed ADR41 body versions; no general registry-prefix allowance. No new asserted contract field, schema, taskctl/kernel/controller or control revision.",
+        "Within existing closed v1.4, authenticate exact ECR-0013/W2.A05 packet/owner/B00, materialization, separate claims, exact source candidates and task reviews, integrated S01, exit, separate committed security review/adoption and exact paused-A03 return. Update only the exact ordered amendment/source inventory for this reviewed segment. Partition it from original A03/A04 ranges while preserving full original6506 base, two-contract inventory, current independent classification, producer/dependent inputs and all older denials. Authenticate A04 original ADR/index historical bytes plus only the new A05 single authorized index append and two reviewed Proposed ADR41 body versions; no general registry-prefix allowance. Directly authenticate the preceding GOV-MAINT-0027 four-commit sequence and imported-source/evidence bytes through ECR-0013.maintenance-binding.json / d550768944a0b142035270af47e2dcace88c7021edd0251d0a30e5ffc3e09be5, preserving its actual prepared-first note, R01 adverse round and approved R02. Do not weaken or misrepresent old pre-UI helper compatibility, admit another maintenance history or edit the imported tools. No new asserted contract field, schema, taskctl/kernel/controller or control revision.",
         "Preserve the complete frozen paused A03 record at 771e54a3657cdc5ff308d3a53d7b71eb48bb9214 with canonical SHA-256 bdad5e81327e32ee322db436dc569898ce314d29058e53b0cfe67ed6192e0b03, both original task definitions/bases/approved R01 packets and findings, adopted A04 whole record and all existing approvals/reference/witness/baseline. Authenticate exact A05 adoption and later separate A03 activation; both A03 tasks remain DONE, with no invented reopen or claim. Subsequent A03 S01 review-02 must replay and explicitly close W2.A03.S01-R01-F01 using fresh actual integration proof.",
         "Limit T01 source to exactly tools/ui_change_gate.py, tests/foundation/test_ui_change_gate.py, docs/automation/design-first-ui-changes.md, docs/adr/ADR-0041-authenticate-reviewed-activation-control-repairs.md, docs/adr/index.json. Index modification is one appended ADR-0041 entry only. Task-owned evidence/reviews and generated planning views are separate outputs; no renderer/Core/native/permission/runtime/reference/consumer/baseline/original-task source edits.",
-        "Prove actual retained ca8-to06 history attribution with its correct118-path net inventory, plus hostile real-Git missing/forged projection proof, same-filename unreviewed output, hidden product/control/source add-revert, changed predecessor/approved A04, stale/foreign/mixed segment, malformed or replayed review and premature return/activation denials. Preserve the failing actual S01 result and historical adverse rounds; future fixture records are synthetic proof only."
+        "Prove actual retained ca8-to06 history attribution with its correct118-path net inventory, plus hostile real-Git missing/forged projection proof, same-filename unreviewed output, hidden product/control/source add-revert, changed predecessor/approved A04, stale/foreign/mixed segment, malformed or replayed review and premature return/activation denials. For the preceding maintenance binding also deny substituted imported tools or modes, omitted/extra commits, forged/missing R02, edited R01/adverse evidence and any unapproved history beyond the exact bound segment. Preserve the failing actual S01 result and historical adverse rounds; future fixture records are synthetic proof only."
       ],
       "verification": [
         "Focused real-Git exact retained-range positive, frozen byte/approval/task/source partition, projection and hidden-source denials; incremental old v1.0-v1.4 regressions.",
@@ -586,6 +586,7 @@
   "acceptanceCriteria": [
     "Bind exact complete paused A03 at 771e54a3657cdc5ff308d3a53d7b71eb48bb9214 / bdad5e81327e32ee322db436dc569898ce314d29058e53b0cfe67ed6192e0b03, both DONE approved original task histories, adopted A04 and unchanged W2/A01/A02/GOV26/C10/reference authority before independent packet review and explicit owner approval.",
     "Preserve actual S01 review-01 blocking W2.A03.S01-R01-F01, six exact Git projection rows, correct118-path T02 net inventory and original official accessibility exit1 plus separate browser naming predicate. Never fabricate or reclassify old failures.",
+    "Authenticate only the exact preceding GOV-MAINT-0027 sequence7604e7ee\u219229139a46\u219203795948\u21926295697d\u2192a6d2f0b5 and all imported-source/review/check bytes through planning/enabler-change-requests/ECR-0013.maintenance-binding.json / SHA-256 d550768944a0b142035270af47e2dcace88c7021edd0251d0a30e5ffc3e09be5. Preserve actual prepared-first note and adverse R01; approved R02 closes both findings. No old-helper weakening, new maintenance ID/schema, arbitrary history recognition or imported-tool edit is authorized.",
     "Deliver only the five-path T01 and four-path T02 envelopes (eight unique paths) with one indexed Proposed ADR-0041 introduced in T01 and only a bounded body append in T02, unchanged metadata/index entry, independent ordered task reviews and generic authenticated inert-output attribution. No hidden source, generic filename bypass, new schema/controller/contract field or changed original task source authority.",
     "Authenticate this exact separately reviewed A05 source and immutable task/slice/exit/security/adoption/paused-parent return under existing1.4 while preserving original full6506/two-contract/classification/input closure and all v1.0-v1.4 denials.",
     "Restore static associated-label recognition and require focused adverse/positive browser proof plus fresh official33-page/66-responsive accessibility exit0 at the exact candidate; unchanged reference and screenshot baseline, genuine unnamed controls still fail.",
@@ -593,7 +594,7 @@
   ],
   "verificationObligations": [
     "Validate unchanged v4.1 packet schema, raw proposal/review hashes, exact paused-parent record and ordered adopted authority/reference Git bytes.",
-    "Focused real-Git retained history positive and unauthenticated same-filename/mixed/hidden-source/add-revert/forged-review/predecessor/source/return/activation denials; selected legacy control regression.",
+    "Focused real-Git retained history positive and unauthenticated same-filename/mixed/hidden-source/add-revert/forged-review/predecessor/source/return/activation denials; selected legacy control regression. Bind actual maintenance history and deny imported-source/mode substitution, omitted/extra commits, forged/missing R02 and rewritten R01/adverse evidence.",
     "Focused static naming positives and wrong-target/empty/hidden/duplicate/non-labelable denials, actual pinned AX positive and in-memory association-removal negative; fresh unmodified official accessibility and unchanged reference/baseline.",
     "Exact candidate affected quality/ADR/UI/backlog/views/site checks and independent task/S01/exit/security review. Synthetic future records are control proof only.",
     "After actual adoption and paused-parent return, require separate A03 activation and fresh actual integrated gate replay/independent S01-02 finding closure before original A03 adoption. Later full W2 matrix stays fresh."
@@ -611,7 +612,7 @@
   "files": [
     {
       "path": "planning/enabler-change-requests/ECR-0013.md",
-      "sha256": "380fc0823b65b27c8cf31731df810843347132f2ec848e849bfb3ff0e097ba62",
+      "sha256": "1515e5f073bd19ed33d1c4552f9325d56ce84f1c61b8d18e3d8b1183691f4d14",
       "role": "canonical-proposal"
     },
     {
@@ -621,7 +622,7 @@
     },
     {
       "path": "planning/enabler-change-requests/ECR-0013-review.html",
-      "sha256": "f18e16f84b7ce32d4d9fe44b7e9a4214e333a4b866033aa75167adf1fad92d51",
+      "sha256": "18bbbd6ecc0dee72c46a2f5169021ba5c2294ce408c67f85f98663d5beaa9187",
       "role": "human-review"
     }
   ]
