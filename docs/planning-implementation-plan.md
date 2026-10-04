@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 14bf8fb00468ec4b581adf2a1251550ac1cf653eb98876601620beb325c5c182
+source_sha256: 4222d973919ce454ffbfa9c95f1b52c4e861541819fd91353dfad5484e69fce1
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -52,7 +52,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 | `W1` | `W1.A09` | `ECR-0008` | `planning/wave-amendment-approvals/W1.A09.json` | `ADOPTED` |
 | `W2` | `W2.A01` | `ECR-0009` | `planning/wave-amendment-approvals/W2.A01.json` | `ADOPTED` |
 | `W2` | `W2.A02` | `ECR-0010` | `planning/wave-amendment-approvals/W2.A02.json` | `ADOPTED` |
-| `W2` | `W2.A03` | `ECR-0011` | `planning/wave-amendment-approvals/W2.A03.json` | `PAUSED` |
+| `W2` | `W2.A03` | `ECR-0011` | `planning/wave-amendment-approvals/W2.A03.json` | `ACTIVE` |
 | `W2` | `W2.A04` | `ECR-0012` | `planning/wave-amendment-approvals/W2.A04.json` | `ADOPTED` |
 
 ## Waves
@@ -2764,7 +2764,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 **Approval record:** `planning/wave-amendment-approvals/W2.A03.json` (`8852d6631a6656e94cc75e4f9dc705c7095ecf111786748e5630fe13b8fa9087`)
 
-**Lifecycle / bootstrap / campaign / completion:** `PAUSED` / `APPROVED` / `PAUSED` / `PENDING`
+**Lifecycle / bootstrap / campaign / completion:** `ACTIVE` / `APPROVED` / `ACTIVE` / `PENDING`
 
 **Append-only lifecycle history:**
 
@@ -2772,6 +2772,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - `E02` `MATERIALIZED` at `2026-10-03T21:48:31+00:00` by codex-w2-implementation: Materialized the exact human-approved task inventory.
 - `E03` `ACTIVE` at `2026-10-03T21:52:27+00:00` by codex-w2-implementation: Activated the bounded amendment campaign.
 - `E04` `PAUSED` at `2026-10-04T12:31:02+00:00` by codex-w2-implementation: W2.A03.T02 blocked before consumer edits: Accepted ADR-0001 requires companion ADR/index in actual task range, excluded by frozen ECR-0011 consumer envelope. Prepare exact append-only ECR-0012/W2.A04 paused-predecessor correction and obtain independent packet review/owner approval; preserve completed T01 and retained T02 base.
+- `E05` `ACTIVE` at `2026-10-04T17:37:39+00:00` by codex-w2-implementation: Activated the bounded amendment campaign.
 
 ### Amendment-exit review and adoption — W2.A03
 
