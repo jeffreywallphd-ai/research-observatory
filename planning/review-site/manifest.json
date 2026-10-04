@@ -40495,9 +40495,9 @@
       "approval_path": "planning/wave-amendment-approvals/W2.A04.json",
       "approval_sha256": "e769cb71efbf8725c0fadeac079713f4484f57f7cf871cdfb037ef9a4df27807",
       "approval_status": "APPROVED",
-      "lifecycle_status": "ACTIVE",
+      "lifecycle_status": "REVIEW",
       "bootstrap_status": "APPROVED",
-      "campaign_status": "ACTIVE",
+      "campaign_status": "REVIEW",
       "bootstrap_attempts": [
         {
           "id": "R01",
@@ -41094,15 +41094,43 @@
       ],
       "exit_review": {
         "amendment_id": "W2.A04",
-        "mode": "latest-completion-only",
+        "mode": "append-only",
         "latest_completion": {
-          "status": "PENDING",
+          "status": "REVIEW",
           "reviewer": null,
           "reviewed_at": null,
-          "evidence": [],
-          "notes": null
+          "evidence": [
+            "artifacts/evidence/W2.A04.exit.json"
+          ],
+          "notes": ""
         },
-        "exit_review_control": null
+        "exit_review_control": {
+          "version": 1,
+          "attempts": [],
+          "current_submission": {
+            "id": "R01",
+            "submitted_by": "codex-w2-implementation",
+            "submitted_at": "2026-10-04T16:38:44+00:00",
+            "candidate_commit": "10e555d2269a0333048622cd4e84803cb410c3a9",
+            "declared_candidate_commit": "83266005c0a828033c2705a6105364435e02afcd",
+            "branch": "codex/w2-implementation",
+            "evidence_reference": {
+              "type": "amendment-exit-evidence",
+              "amendment_id": "W2.A04",
+              "path": "artifacts/evidence/W2.A04.exit.json",
+              "sha256": "aa98cc71b49c6810b3b668ba550976bc723af8c7a95ff599c61ad5f36d162d73",
+              "commit": "10e555d2269a0333048622cd4e84803cb410c3a9"
+            },
+            "acceptance_criteria_sha256": "7806a788f93745bc97f1e76f0771f883a092e5e0877759967d04cf67891236f7",
+            "selected_checks": [
+              ".venv/Scripts/python.exe -B artifacts/tmp/W2.A04.inspect-integrated-state.py slice"
+            ],
+            "selected_checks_sha256": "741620660f0682507adfa15b4d3bb6c07854d568bcedaf65486dc6237734927f",
+            "prior_attempt_id": null,
+            "open_finding_ids": [],
+            "packet_sha256": "f51ee18890332d47401220f09118b815e49dbab84587fd1ed47cde6d0f00a8ae"
+          }
+        }
       },
       "adoption_checkpoints": [],
       "page": "enablers/ECR-0012.html"
