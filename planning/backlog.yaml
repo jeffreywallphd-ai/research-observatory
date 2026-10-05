@@ -3849,6 +3849,99 @@ waves:
           worker and guardian authenticated as fixture inputs, then expanded independent correction/security review. Original
           CAP-04.S05.T02 remains DONE and immutable; original CAP-05.S01.T01 keeps its 6506 base and fifth-D3D finding. Slice
           integration and fresh W2/release gates remain separate.
+    - title: Implement plugin isolation, configuration, and secret access controls
+      objective: Restricted execution boundary, allowlisted network destinations, scoped credentials, timeouts, quotas, and
+        redacted logging.
+      dependencies:
+      - CAP-04.S05.T01
+      acceptance_criteria:
+      - A malicious test connector cannot read unrelated secrets or project files; network and export attempts outside manifest
+        permissions are blocked and audited.
+      - Automated tests cover the expected path and at least one material failure or boundary condition.
+      - Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.
+      verification_commands:
+      - python tools/verify.py --profile service
+      - python tools/verify.py --profile security-local
+      deployment_profiles:
+      - LOC
+      - LAB
+      - UNI
+      - CLD
+      platform_targets:
+      - windows-x64
+      verification_profiles:
+      - service
+      - security-local
+      id: W2.C12.T01
+      wave: W2
+      priority: P1
+      status: IN_PROGRESS
+      owner: codex-w2-implementation
+      branch: codex/w2-implementation
+      base_sha: fd806e2f5585d6bf6d0a60a260b04a48eb38b6d6
+      worktree: .
+      lease:
+        claimed_by: codex-w2-implementation
+        claimed_at: '2026-10-05T22:17:14+00:00'
+        expires_at: '2026-10-06T06:17:14+00:00'
+      started_at: '2026-10-05T22:17:14+00:00'
+      updated_at: '2026-10-05T22:17:14+00:00'
+      completed_at: null
+      blocker: null
+      implementation_notes: ''
+      evidence: []
+      verification_state: null
+      review:
+        reviewer: null
+        result: null
+        reviewed_at: null
+        notes: null
+      review_control:
+        version: 1
+        attempts: []
+        current_submission: null
+      correction:
+        origin_task_id: CAP-04.S05.T02
+        origin_commit: 6a2e7487e0508b4495d17e7fd0029eb4f8796df4
+        paused_state_sha256: 91bf8374389c9e03b2977c618bfd5921965b04808be0b03c4885f73c82c2c206
+        origin_sha256: a9faa34a543433fdfe1665e54ade2892554e6bf893a1824c6155d8114d3bd994
+        origin_contract_sha256: 4a867aa5a62b1d48a6f2465487d4a35c07471b761047991fbe02407923211142
+        origin_history_sha256: 2954c8a730902f5fdf78d205c3ad8166a9dbefd78f1ce4b654f4a8dab7505843
+        origin_amendment_id: null
+        authority_sha256: c92ce7e9bac1b8a49d13d649a5980fea61e56ee953d238c734d8ff5f04f4c9e5
+        spec:
+          path: artifacts/evidence/W2.C12.T01.spec.json
+          sha256: dd91fa2e5cf9512e985747b4d88bc5d48705ef00dcb336cdd8d81fb2b7db8d07
+          commit: fd806e2f5585d6bf6d0a60a260b04a48eb38b6d6
+        reproduction: At clean committed candidate 6a2e7487e0508b4495d17e7fd0029eb4f8796df4, an actual freshly frozen supervised
+          Core discovers its installed test-signed LPAC worker and accepts a new synthetic publisher trust decision. The authenticated
+          native HTTP grants/enable request then returns 409 RO-CORE-PLUGIN-PLUGIN-GRANT-CONFIRMATION-INVALID for the exact
+          visible package/destination/permission confirmation. The failed smoke report artifacts/tmp/CAP-04.S05.installed-smoke-12-6a2e7487.json
+          has SHA-256 6519018df8b69856b3a0bc3c72b3ab2c3b052e5c1f8ffcb66c6b11607e1955a8; owned failure body artifacts/tmp/s05-install-smoke-5j5by15m/failure-3.json
+          has SHA-256 504226276cecc63ae8696f9223be17ad7b45bef288c924d76a1017e1235a12bf. PluginEnableReview.confirmation recursively
+          dumps validated PluginDestination models into dictionaries and puts them in an unvalidated dataclass; the unchanged
+          grant digest calls destination.model_dump and denies the resulting AttributeError. Earlier direct-service tests
+          supplied destination models and missed this HTTP conversion. Independent source diagnosis artifacts/tmp/CAP-04.S05.installed-enable-diagnosis-c11_security_review-01.json
+          has SHA-256 7531ee43d832141b01d748d9c59d7951190371d65bfc71b62ec4a0dc801356f8. The actual broad quality failure at
+          the same candidate also identifies the public worker-page fixture missing a dictionary annotation; its log artifacts/tmp/CAP-04.S05.selected-06-6a2e7487.quality.log
+          has SHA-256 3c0dd6e03dc22d1995aed8fb56da1f62c08d9bfe19e60e68b6870805e02be83d.
+        changed_paths:
+        - services/core-api/src/research_observatory_core/plugin_api.py
+        - tests/connectors/test_plugin_admin_service.py
+        - tests/contracts/test_plugin_worker_contract.py
+        impact_analysis: Restore the approved T02 exact human permission-confirmation API without changing its contract. Preserve
+          the already validated destination objects while constructing the existing confirmation dataclass. Add a red-first
+          authenticated real HTTP regression into the real encrypted grant repository for valid human enable, identical action
+          replay, service recreation, and destination/permission mismatch with unchanged grant plus bounded durable denial
+          audit. Keep repository digest/exact comparisons, actor checks, runtime availability, native authentication, publisher/session/revision
+          fences, package persistence, rights, broker, LPAC, schema/migration and governed UX unchanged. Add only the explicit
+          dictionary type to the existing public page-schema fixture; no assertions or runtime values change. Run affected
+          quality/API/admin/grant/public-contract checks and one current actual frozen installed-worker dispatch smoke, then
+          independent expanded public-contract/security correction review. Preserve the failed source-adapter, quality, build/bootstrap
+          and installed runs. The unrelated review-site formatter and picker-probe typing failures are not repaired or counted
+          as passes here; no automation framework source work, amendment, scope expansion or release approval is authorized
+          by this correction. Original T02/T03 histories remain DONE and immutable; CAP-05.S01.T01 retains its original base
+          and fifth-D3D finding. S05 acceptance and W2 qualification remain separate.
     resume_records:
     - id: W2.R01
       wave_id: W2

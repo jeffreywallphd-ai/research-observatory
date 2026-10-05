@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 41aa251a2e02eb8b4f660ecaadd01dda3a7270266bf5f7b08738420a4a1420b7
+source_sha256: d115867fc43064a11862e71b164ae5182c672e6e085b04a5219408bbce1c2c4e
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -4269,6 +4269,35 @@ Original tasks and approvals remain unchanged.
 **Current latest-review projection:** `approved` by agent:/root/c11_security_review at `2026-10-05T20:38:22+00:00`
 
 **Latest notes:** Independent expanded correction/security review approves only the actual public R01 for the bounded publication correction at source candidate 9a80c0f6. The immutable public manifest, frozen packet and exact owner recovery authorization were authenticated from metadata commit cbe0b58f10eed77473e53dcea4a62d10537b0a08. The six-line worker change moves cancellation polling/heartbeat before the publication writer and passes a process/project stop predicate with no I/O inside the writer. Repository exact claim capability, live running lease, durable cancellation, current grant/consent and predecessor transaction fences remain unchanged. The committed red-first regression fails before the fix; the retained current execution passes all 65 focused cases, including due heartbeat, durable cancellation, global/project stop and expired lease. Its signed zero-capability LPAC/protected source-Core create child publishes both pages with provenance/rights/predecessor checks and exercises forged-cursor denial, malformed-output denial and active cancellation. The combined 66-case command remains exit 1: intentional crash leaves a project lock and the reopen child returns 409 before any restart/recovery assertions. This is expressly deferred to pending CAP-04.S05 integration, not reclassified as passing. The public manifest rejects the source report's incorrect reopen-success sentence. Original T02 R02 evidence supports only unchanged historical isolation boundaries, not fresh qualification. Owner authorization repaired only the rejected unpublished metadata representation; exact private bytes, original packet identities, hook rejection and partial recovery failure remain retained. No source/control change or approval of S05, W2 qualification or release is inferred. No criterion-bound blocking finding remains.
+
+**Currently open findings:** -
+
+### W2.C12.T01 — Implement plugin isolation, configuration, and secret access controls
+
+**Status:** `IN_PROGRESS`. **Original task:** `CAP-04.S05.T02`. **Latest review:** `-`.
+
+**Reproduction:** At clean committed candidate 6a2e7487e0508b4495d17e7fd0029eb4f8796df4, an actual freshly frozen supervised Core discovers its installed test-signed LPAC worker and accepts a new synthetic publisher trust decision. The authenticated native HTTP grants/enable request then returns 409 RO-CORE-PLUGIN-PLUGIN-GRANT-CONFIRMATION-INVALID for the exact visible package/destination/permission confirmation. The failed smoke report artifacts/tmp/CAP-04.S05.installed-smoke-12-6a2e7487.json has SHA-256 6519018df8b69856b3a0bc3c72b3ab2c3b052e5c1f8ffcb66c6b11607e1955a8; owned failure body artifacts/tmp/s05-install-smoke-5j5by15m/failure-3.json has SHA-256 504226276cecc63ae8696f9223be17ad7b45bef288c924d76a1017e1235a12bf. PluginEnableReview.confirmation recursively dumps validated PluginDestination models into dictionaries and puts them in an unvalidated dataclass; the unchanged grant digest calls destination.model_dump and denies the resulting AttributeError. Earlier direct-service tests supplied destination models and missed this HTTP conversion. Independent source diagnosis artifacts/tmp/CAP-04.S05.installed-enable-diagnosis-c11_security_review-01.json has SHA-256 7531ee43d832141b01d748d9c59d7951190371d65bfc71b62ec4a0dc801356f8. The actual broad quality failure at the same candidate also identifies the public worker-page fixture missing a dictionary annotation; its log artifacts/tmp/CAP-04.S05.selected-06-6a2e7487.quality.log has SHA-256 3c0dd6e03dc22d1995aed8fb56da1f62c08d9bfe19e60e68b6870805e02be83d.
+
+**Inherited criteria:**
+
+- A malicious test connector cannot read unrelated secrets or project files; network and export attempts outside manifest permissions are blocked and audited.
+- Automated tests cover the expected path and at least one material failure or boundary condition.
+- Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.
+
+**Bounded changed paths:**
+
+- services/core-api/src/research_observatory_core/plugin_api.py
+- tests/connectors/test_plugin_admin_service.py
+- tests/contracts/test_plugin_worker_contract.py
+#### Review history — W2.C12.T01
+
+**Review mode:** `append-only v1` / 0 completed round(s)
+
+**Current immutable submission awaiting review:** None
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
 
 **Currently open findings:** -
 

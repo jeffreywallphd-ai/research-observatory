@@ -700,6 +700,140 @@ class PluginAdminRealAuthorityTests(unittest.TestCase):
         with self.assertRaises(PluginGrantProblem):
             restarted.recheck_admitted_invocation(str(self.root), PROJECT, persisted, request, actor=self.actor)
 
+    def _native_authority_client(self):
+        app = FastAPI()
+        app.add_middleware(
+            LocalAuthenticationMiddleware, digest=capability_token_digest(api.TOKEN), authority=api.AUTHORITY
+        )
+        app.add_middleware(TraceCorrelationMiddleware)
+
+        @app.exception_handler(CoreProblem)
+        async def failed(_request: Request, error: CoreProblem):
+            return JSONResponse(
+                status_code=error.problem.status, content=error.problem.model_dump(mode="json", by_alias=True)
+            )
+
+        register_plugin_routes(app, lambda _request: self.service, _project_error)
+        return api.authenticated_client(app)
+
+    def _native_enable_selection(self, client):
+        prefix = "/native/connectors/plugins"
+        address = {"root": str(self.root), "projectId": PROJECT, "sessionId": self.session}
+        raw, key = archive()
+
+        def post(path, command):
+            response = client.post(prefix + path, json=command)
+            self.assertEqual(200, response.status_code, response.text)
+            return response.json()
+
+        intake = post("/packages/create", address)
+        transfer = address | {"intakeId": intake["intakeId"]}
+        post("/packages/chunk", transfer | {"ordinal": 1, "data": base64.b64encode(raw).decode("ascii")})
+        sealed = post(
+            "/packages/seal",
+            transfer
+            | {"archiveSha256": "sha256:" + hashlib.sha256(raw).hexdigest(), "byteLength": len(raw), "chunkCount": 1},
+        )
+        review = sealed["review"]
+        trusted = post(
+            "/trust/decide",
+            address
+            | {
+                "publisherKeyId": review["publisherKeyId"],
+                "actionId": new_uuid_v7(),
+                "publicKeyHex": key.hex(),
+                "publicKeySha256": "sha256:" + hashlib.sha256(key).hexdigest(),
+                "expectedRevision": None,
+                "operation": "trust",
+                "previousKeySha256": None,
+            },
+        )
+        self.assertEqual("active", trusted["status"])
+        review = post("/packages/review", address | {"packageToken": sealed["packageToken"]})["review"]
+        confirmation = {
+            field: review[field]
+            for field in (
+                "pluginId",
+                "pluginVersion",
+                "publisherKeyId",
+                "packageSha256",
+                "manifestSha256",
+                "permissions",
+                "destinations",
+                "operations",
+                "dataClasses",
+                "credentialScopes",
+            )
+        }
+        confirmation.update(
+            actionId=new_uuid_v7(),
+            projectId=PROJECT,
+            trustedKeySha256=trusted["publicKeySha256"],
+            trustedKeyRevision=trusted["revision"],
+            expectedRevision=None,
+        )
+        return address | {"packageToken": sealed["packageToken"], "confirmation": confirmation}
+
+    def test_http_human_enable_replays_exact_action_and_retains_grant_after_service_recreation(self):
+        with self._native_authority_client() as client:
+            command = self._native_enable_selection(client)
+            route = "/native/connectors/plugins/grants/enable"
+            enabled = client.post(route, json=command)
+            self.assertEqual(200, enabled.status_code, enabled.text)
+            self.assertEqual(("enabled", 1), (enabled.json()["status"], enabled.json()["revision"]))
+            replay = client.post(route, json=command)
+            self.assertEqual(200, replay.status_code, replay.text)
+            self.assertEqual(enabled.json(), replay.json())
+            plugin_id = command["confirmation"]["pluginId"]
+            repo = SqlitePluginGrantRepository(self.root / "state/project.sqlite3", PROJECT)
+            self.assertEqual(["enabled"], [event.event_kind for event in repo.audit_history(plugin_id)])
+            original = self.service.current_grant_persisted(str(self.root), PROJECT, plugin_id)
+            self.assertIsNotNone(original)
+            self.service.clear(str(self.root))
+            self.service = PluginAdminService(
+                cast(ProjectLifecycleService, FakeProjects(self.root)),
+                self.service._trust,
+                actor_id=ACTOR,
+                grant_repository_factory=lambda path, identity: SqlitePluginGrantRepository(
+                    path / "state/project.sqlite3", identity
+                ),
+                package_repository_factory=lambda path, identity: SqlitePluginPackageRepository(
+                    path / "state/project.sqlite3", identity
+                ),
+                runtime_available=lambda: True,
+                package_store_factory=self.package_store_factory,
+            )
+            self.assertEqual(original, self.service.current_grant_persisted(str(self.root), PROJECT, plugin_id))
+            session = self.service.context(str(self.root), PROJECT)
+            status = client.post(
+                "/native/connectors/plugins/grants/status",
+                json={"root": str(self.root), "projectId": PROJECT, "sessionId": session, "pluginId": plugin_id},
+            )
+            self.assertEqual(200, status.status_code, status.text)
+            self.assertEqual(enabled.json(), status.json())
+
+    def test_http_changed_destination_or_permission_denies_and_preserves_durable_audit(self):
+        with self._native_authority_client() as client:
+            command = self._native_enable_selection(client)
+            confirmation = command["confirmation"]
+            plugin_id = confirmation["pluginId"]
+            changed_destinations = [dict(value) for value in confirmation["destinations"]]
+            changed_destinations[0]["pathTemplate"] = "/forged-synthetic-scope"
+            for change in ({"destinations": changed_destinations}, {"permissions": []}):
+                with self.subTest(field=next(iter(change))):
+                    altered = confirmation | change | {"actionId": new_uuid_v7()}
+                    denied = client.post(
+                        "/native/connectors/plugins/grants/enable", json=command | {"confirmation": altered}
+                    )
+                    self.assertEqual(409, denied.status_code, denied.text)
+                    self.assertEqual("RO-CORE-PLUGIN-PLUGIN-GRANT-CONFIRMATION-MISMATCH", denied.json()["code"])
+                    self.assertIsNone(self.service.current_grant_persisted(str(self.root), PROJECT, plugin_id))
+            repo = SqlitePluginGrantRepository(self.root / "state/project.sqlite3", PROJECT)
+            history = repo.audit_history(plugin_id)
+            self.assertEqual(["denied", "denied"], [event.event_kind for event in history])
+            self.assertEqual(["plugin-grant-confirmation-mismatch"] * 2, [event.reason_code for event in history])
+            self.assertTrue(all(event.provenance_event_id for event in history))
+
 
 if __name__ == "__main__":
     unittest.main()
