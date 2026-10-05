@@ -127,7 +127,7 @@ class PluginEnableReview(ContractModel):
     expected_revision: int | None
 
     def confirmation(self) -> PluginEnableConfirmation:
-        return PluginEnableConfirmation(**self.model_dump())
+        return PluginEnableConfirmation(**self.model_dump(exclude={"destinations"}), destinations=self.destinations)
 
 
 class PluginEnableRequest(PluginReviewRequest):
