@@ -1,7 +1,7 @@
 ---
 document_type: generated-backlog-status-summary
 source: planning/backlog.yaml
-source_sha256: 39fa3d183ec2df65b3d01a56a358eba5f32f17bbbbe9b019b1699e25505a5720
+source_sha256: 11ca028d5f2e3c048147badefa491481ad2d30df33706baef8b0c0a306140f6c
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -93,7 +93,7 @@ Proposal approval, materialization lifecycle, and campaign state remain distinct
 | `W2` | `W2.A02` | `ECR-0010` | `planning/wave-amendment-approvals/W2.A02.json` | `ADOPTED` | `APPROVED` | `COMPLETE` | 1 |
 | `W2` | `W2.A03` | `ECR-0011` | `planning/wave-amendment-approvals/W2.A03.json` | `PAUSED` | `APPROVED` | `PAUSED` | 2 |
 | `W2` | `W2.A04` | `ECR-0012` | `planning/wave-amendment-approvals/W2.A04.json` | `ADOPTED` | `APPROVED` | `COMPLETE` | 1 |
-| `W2` | `W2.A05` | `ECR-0013` | `planning/wave-amendment-approvals/W2.A05.json` | `REVIEW` | `APPROVED` | `REVIEW` | 2 |
+| `W2` | `W2.A05` | `ECR-0013` | `planning/wave-amendment-approvals/W2.A05.json` | `REVIEW` | `APPROVED` | `COMPLETE` | 2 |
 
 ## Amendment-exit review and adoption projections
 
@@ -707,9 +707,11 @@ Immutable exit rounds, the latest completion projection, and bound adoption chec
 
 ### Amendment-exit review and adoption — W2.A05
 
-**Exit-review mode:** `append-only v1` / 0 completed round(s)
+**Exit-review mode:** `append-only v1` / 1 completed round(s)
 
-**Current immutable amendment-exit submission awaiting review:** `R01` / packet SHA-256 `344b8c3056ece57ace95ce359ccd543439b8cc1eaa1ebd0057f51d14af80e60d`
+#### Exit round R01
+
+**Immutable amendment-exit packet:** `R01` / packet SHA-256 `344b8c3056ece57ace95ce359ccd543439b8cc1eaa1ebd0057f51d14af80e60d`
 
 - Candidate / declared candidate / branch: `e2cceb676b5de16e25a2c3741de49ebd1d867238` / `d5f956c55e189d6f3a08c5c84263bd11f7cd3d4e` / `codex/w2-implementation`
 - Submitted by / at: codex-w2-implementation / `2026-10-05T10:39:12+00:00`
@@ -719,11 +721,29 @@ Immutable exit rounds, the latest completion projection, and bound adoption chec
 - Selected checks: `.venv/Scripts/python.exe -B artifacts/tmp/W2.A05.inspect-integrated-02.py slice`
 - Prior round / replayed open findings: `-` / -
 
-**Latest completion projection:** `REVIEW` by - at `-`
+**Disposition / reviewer / time:** `approved` / agent:/root/a05_completion_control_review / `2026-10-05T11:00:45+00:00`
+
+**Reviewed state commit:** `03be84c33758ebce2f5767cb283781dc7cccee92`
+
+**Immutable exit-review ledger:** `artifacts/evidence/W2.A05.exit-review-R01.json` / `282a13c1c5a02c236497622087db4c52e62516f421f173159835597e2d4fdfc3`
+
+**Review notes:** Distinct independent A05 exit R01 approval of exact frozen REVIEW state 03be84c3, committed manifest delivery e2cceb67 and declared integrated S01 candidate d5f956c5. The complete seven criterion strings equal the approved ECR-0013 packet; manifest, canonical criteria, selected-check and frozen packet hashes recompute to the recorded values, and read-only strict amendment_exit_submission_errors returns no errors. The source/control audit is reused explicitly from its separately committed approved ledger at 826be75d and is not repeated or replaced. The later actual source/range observer passes require_review=True. Separately committed S01 R02 at d5f956c5 explicitly closes only W2.A05.S01-R01-F01, preserves R01/adverse evidence and leaves the original A03 finding open. Fresh actual slice observation at d5f956c5 authenticates both canonical S01 rounds, both original reviewed task ranges, exact final source attribution, preceding maintenance and the retained 39-commit/118-net-path A03 history with six authenticated inert rows; observed main equals candidate and 4,743 recorded tracked inputs are stable. Original A05 task records are wholly unchanged from their approved DONE publication. The entire suffix after a1265a84 contains only immutable evidence, supported backlog transitions and generated tracking projections, with no added/reverted source. Exact paused A03, other amendment records and ordinary Wave state are preserved. This ledger supplies only the independent exit disposition. Separate committed adoption-security review, supported adoption and fresh exact paused-parent return remain due, followed by separate A03 activation, its original F01 replay/review-02 and exit/security/adoption before ordinary W2 resume. No product, full Wave or human release approval follows.
+
+**Findings opened:**
+
+- None
+
+**Prior finding closures:**
+
+- None
+
+**Current immutable amendment-exit submission awaiting review:** None
+
+**Latest completion projection:** `APPROVED` by agent:/root/a05_completion_control_review at `2026-10-05T11:00:45+00:00`
 
 **Latest completion evidence:** `artifacts/evidence/W2.A05.exit.json`
 
-**Latest completion notes:** Submit the independently approved integrated A05 repair and exact completion addendum for distinct exit review; separate security/adoption and paused A03 return remain due.
+**Latest completion notes:** Distinct independent A05 exit R01 approval of exact frozen REVIEW state 03be84c3, committed manifest delivery e2cceb67 and declared integrated S01 candidate d5f956c5. The complete seven criterion strings equal the approved ECR-0013 packet; manifest, canonical criteria, selected-check and frozen packet hashes recompute to the recorded values, and read-only strict amendment_exit_submission_errors returns no errors. The source/control audit is reused explicitly from its separately committed approved ledger at 826be75d and is not repeated or replaced. The later actual source/range observer passes require_review=True. Separately committed S01 R02 at d5f956c5 explicitly closes only W2.A05.S01-R01-F01, preserves R01/adverse evidence and leaves the original A03 finding open. Fresh actual slice observation at d5f956c5 authenticates both canonical S01 rounds, both original reviewed task ranges, exact final source attribution, preceding maintenance and the retained 39-commit/118-net-path A03 history with six authenticated inert rows; observed main equals candidate and 4,743 recorded tracked inputs are stable. Original A05 task records are wholly unchanged from their approved DONE publication. The entire suffix after a1265a84 contains only immutable evidence, supported backlog transitions and generated tracking projections, with no added/reverted source. Exact paused A03, other amendment records and ordinary Wave state are preserved. This ledger supplies only the independent exit disposition. Separate committed adoption-security review, supported adoption and fresh exact paused-parent return remain due, followed by separate A03 activation, its original F01 replay/review-02 and exit/security/adoption before ordinary W2 resume. No product, full Wave or human release approval follows.
 
 **Bound amendment-adoption checkpoints:**
 
