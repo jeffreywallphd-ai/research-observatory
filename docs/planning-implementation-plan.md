@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 8483eb876fd874260207b021abd02df0faf43dc823d97d82bae80e72017d582a
+source_sha256: 39fa3d183ec2df65b3d01a56a358eba5f32f17bbbbe9b019b1699e25505a5720
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -54,7 +54,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 | `W2` | `W2.A02` | `ECR-0010` | `planning/wave-amendment-approvals/W2.A02.json` | `ADOPTED` |
 | `W2` | `W2.A03` | `ECR-0011` | `planning/wave-amendment-approvals/W2.A03.json` | `PAUSED` |
 | `W2` | `W2.A04` | `ECR-0012` | `planning/wave-amendment-approvals/W2.A04.json` | `ADOPTED` |
-| `W2` | `W2.A05` | `ECR-0013` | `planning/wave-amendment-approvals/W2.A05.json` | `ACTIVE` |
+| `W2` | `W2.A05` | `ECR-0013` | `planning/wave-amendment-approvals/W2.A05.json` | `REVIEW` |
 
 ## Waves
 
@@ -3063,7 +3063,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 **Approval record:** `planning/wave-amendment-approvals/W2.A05.json` (`9ad5b3f5fca7d3fd9c7fd8a42200f570f46250d506765b30e2705e299c7e8101`)
 
-**Lifecycle / bootstrap / campaign / completion:** `ACTIVE` / `APPROVED` / `ACTIVE` / `PENDING`
+**Lifecycle / bootstrap / campaign / completion:** `REVIEW` / `APPROVED` / `REVIEW` / `REVIEW`
 
 **Append-only lifecycle history:**
 
@@ -3072,16 +3072,27 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - `E03` `ACTIVE` at `2026-10-04T23:07:30+00:00` by codex-w2-implementation: Activated the bounded amendment campaign.
 - `E04` `PAUSED` at `2026-10-05T08:34:12+00:00` by codex-w2-implementation: Actual integrated S01 finding W2.A05.S01-R01-F01: root committed immutable task R01 ledgers before supported DONE publications. Both approvals remain valid; integrated gate rejects their exact direct-child histories. Existing reopen/correction routes cannot preserve completed non-overlapping ranges. Inert exact four-path A05-only completion source addendum at 09f58b8a is under independent readiness review; explicit owner approval is required before additional source delivery. Preserve paused A03 and ordinary W2, all task/history/adverse evidence and no framework work after A05.
 - `E05` `ACTIVE` at `2026-10-05T10:09:03+00:00` by codex-w2-implementation: Activated the bounded amendment campaign.
+- `E06` `REVIEW` at `2026-10-05T10:39:12+00:00` by codex-w2-implementation: Submit the independently approved integrated A05 repair and exact completion addendum for distinct exit review; separate security/adoption and paused A03 return remain due.
 
 ### Amendment-exit review and adoption — W2.A05
 
-**Exit-review mode:** `legacy latest-completion-only projection` — no immutable exit rounds are recorded; this view does not fabricate history.
+**Exit-review mode:** `append-only v1` / 0 completed round(s)
 
-**Latest completion projection:** `PENDING` by - at `-`
+**Current immutable amendment-exit submission awaiting review:** `R01` / packet SHA-256 `344b8c3056ece57ace95ce359ccd543439b8cc1eaa1ebd0057f51d14af80e60d`
 
-**Latest completion evidence:** -
+- Candidate / declared candidate / branch: `e2cceb676b5de16e25a2c3741de49ebd1d867238` / `d5f956c55e189d6f3a08c5c84263bd11f7cd3d4e` / `codex/w2-implementation`
+- Submitted by / at: codex-w2-implementation / `2026-10-05T10:39:12+00:00`
+- Bound exit evidence: amendment `W2.A05` / `artifacts/evidence/W2.A05.exit.json` / `d289c94d8a84981c4daf261989a6de504004e817b21f0cb961204d6fd3ff0580` / `e2cceb676b5de16e25a2c3741de49ebd1d867238`
+- Acceptance-criteria SHA-256: `53c68b98c5bd04ddcc0cca42962faa67d6971f1e1b9600eefb49c09d5ed18ac0`
+- Selected-check SHA-256: `72c88e3d1f39e3237a35c224e5d4dd27efcb92556ef8eb13707a84c5be4c6f1e`
+- Selected checks: `.venv/Scripts/python.exe -B artifacts/tmp/W2.A05.inspect-integrated-02.py slice`
+- Prior round / replayed open findings: `-` / -
 
-**Latest completion notes:** -
+**Latest completion projection:** `REVIEW` by - at `-`
+
+**Latest completion evidence:** `artifacts/evidence/W2.A05.exit.json`
+
+**Latest completion notes:** Submit the independently approved integrated A05 repair and exact completion addendum for distinct exit review; separate security/adoption and paused A03 return remain due.
 
 **Bound amendment-adoption checkpoints:**
 
