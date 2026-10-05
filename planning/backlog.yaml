@@ -25947,7 +25947,7 @@ capabilities:
     depends_on:
     - CAP-04.S04.T02
     - CAP-02.S03.T03
-    status: NOT_STARTED
+    status: IN_PROGRESS
     tasks:
     - id: CAP-05.S01.T01
       capability_id: CAP-05
@@ -25977,33 +25977,28 @@ capabilities:
       verification_commands:
       - python tools/verify.py --profile documents
       - python tools/verify.py --profile desktop
-      status: BLOCKED
+      status: IN_PROGRESS
       owner: codex-w2-implementation
       branch: codex/w2-implementation
       started_at: '2026-10-02T03:11:13+00:00'
-      updated_at: '2026-10-03T15:45:31+00:00'
+      updated_at: '2026-10-05T14:05:07+00:00'
       completed_at: null
-      blocker:
-        reason: Approved Academic Minimal 1.8 current-product capture is denied by stale 1.7 desktop activation/baseline;
-          adopted v1.3 gate has no authority for new protected control edits. Authentic fifth D3D startup topology also remains
-          uncharacterized; unsandboxed four-node setup does not close it.
-        next_action: Prepare exact append-only ECR-0011/W2.A03 authority packet for 1.8 activation/baseline/build-manifest
-          alignment and narrowly reviewed v1.3 attribution; obtain owner approval before protected edits. Then reopen original
-          T01, complete capture/full 6506 UI gate and exact native/Core proof, including genuine fifth-window characterization
-          or separately approved redesign. CAP-04.S05.T03 can proceed independently.
-        recorded_at: '2026-10-03T15:45:31+00:00'
-        owner: codex-w2-implementation
+      blocker: null
       implementation_notes: ''
       evidence: []
       review:
         reviewer: null
         result: null
         reviewed_at: null
-        notes: 'Reopened: W2.A02 adopted at 04d6ae3fb29a133e6e31c8191ba1d6b80fa0b0cf with independent control, slice, exit
-          and security review; W2 resumed at 0394ed16. Preserve original 6506 base; finish fifth D3D characterization and
-          exact current-product UI and native/Core proof.'
+        notes: 'Reopened: All W2 amendments A01-A05 are authentically adopted; A03 security checkpoint and fresh actual adoption
+          observation passed; W2 separately resumed. Preserve original6506 base, all adverse native findings and scoped evidence.
+          Complete S05 integrated qualification and original current-product/native/full-base T01 proof without further framework
+          source development.'
       base_sha: 6506c68461144747b0ee9be10853211717aa381d
-      lease: null
+      lease:
+        claimed_by: codex-w2-implementation
+        claimed_at: '2026-10-05T14:05:07+00:00'
+        expires_at: '2026-10-05T22:05:07+00:00'
       verification_state: null
       worktree: .
       platform_targets:
