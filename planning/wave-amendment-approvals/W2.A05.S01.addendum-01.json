@@ -1,0 +1,31 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "wave-amendment-completion-scope-addendum",
+  "amendmentId": "W2.A05",
+  "contributionId": "W2.A05.S01",
+  "status": "APPROVED",
+  "approvedBy": "human:repository-owner",
+  "recordedAt": "2026-10-05T09:18:09Z",
+  "decision": "The repository owner answered 'Approved. Please complete the amendments and then proceed to finish W2.' after the exact reviewed W2.A05.S01.addendum-01 request and clarification. This authorizes only the inert four-file patch at candidate 09f58b8a6abcbe2159c08d5bc40ba089e5de050c, with proposal SHA-256 2181af5c09ae31b813e2db019cac880e5893b6879124e3faa72c08a2a91a14b1 and patch SHA-256 2259496d8b077de80574a555c6bb7a5747f4825037f0847c8ee6b8d90eadf62b. Independent readiness is recorded separately at ed3b6dd6ae9e08a6935e05ffc50fe3aba74f4007. Preserve both original DONE task histories and all adverse evidence; complete fresh exact-candidate checks, independent source/control review, actual S01 finding replay and the existing exit/security/adoption/paused-A03 return. Then finish A03's existing gates before ordinary W2 resumes. No new amendment or task, further framework development after A05, product qualification waiver or release approval is authorized.",
+  "baseApprovalCommit": "b54f24c222f631700056574a08056f660696d305",
+  "candidateAtDecision": "ed3b6dd6ae9e08a6935e05ffc50fe3aba74f4007",
+  "reviewedProposalCandidate": "09f58b8a6abcbe2159c08d5bc40ba089e5de050c",
+  "proposal": {
+    "path": "artifacts/evidence/W2.A05.S01.addendum-01.proposal.json",
+    "sha256": "2181af5c09ae31b813e2db019cac880e5893b6879124e3faa72c08a2a91a14b1"
+  },
+  "readinessReview": {
+    "path": "artifacts/evidence/W2.A05.S01.addendum-01.readiness-review-01.json",
+    "sha256": "55cb222cd1ca660038cb97f427f7bb9bfc5b822fcb49b7a48f3560d04f2fde47"
+  },
+  "sourcePatch": {
+    "path": "artifacts/evidence/W2.A05.S01.addendum-01.source.patch",
+    "sha256": "2259496d8b077de80574a555c6bb7a5747f4825037f0847c8ee6b8d90eadf62b"
+  },
+  "authorizedSourcePaths": [
+    "docs/adr/ADR-0041-authenticate-reviewed-activation-control-repairs.md",
+    "docs/automation/design-first-ui-changes.md",
+    "tests/foundation/test_ui_change_gate.py",
+    "tools/ui_change_gate.py"
+  ]
+}
