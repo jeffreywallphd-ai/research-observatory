@@ -1,0 +1,112 @@
+{
+  "schemaVersion": "1.0",
+  "amendmentId": "W2.A03",
+  "changeRequestId": "ECR-0011",
+  "targetWave": "W2",
+  "branch": "codex/w2-implementation",
+  "candidateCommit": "b1b88ec009018c4eea46e6d66890e6cb448bb485",
+  "taskBindings": [
+    {
+      "taskId": "W2.A03.T01",
+      "candidateCommit": "aa09664678ca3ca8fa7a428cb60f3565d2c0e9bd",
+      "manifestReference": {
+        "type": "criterion-manifest",
+        "path": "artifacts/evidence/W2.A03.T01.json",
+        "sha256": "3c16cfc101bfd9aea58197b44eab35c628180ae718b366da43eef8e1a89f883a",
+        "commit": "aa09664678ca3ca8fa7a428cb60f3565d2c0e9bd",
+        "recorded_at": "2026-10-03T23:31:58+00:00"
+      },
+      "reviewLedger": {
+        "path": "artifacts/evidence/W2.A03.T01.review-R01.json",
+        "sha256": "c0c9c10e3e6d271edd13db1c767ed8d4d07b5564b8a28f5b4c383173cf14d159"
+      }
+    },
+    {
+      "taskId": "W2.A03.T02",
+      "candidateCommit": "06a69348c5de5c60cccecde400ab2271200ec50d",
+      "manifestReference": {
+        "type": "criterion-manifest",
+        "path": "artifacts/evidence/W2.A03.T02.json",
+        "sha256": "6c7d9b8491f33e529001cde6bf9327c7412e9cdada9f8644b2d4af5f23d2855f",
+        "commit": "06a69348c5de5c60cccecde400ab2271200ec50d",
+        "recorded_at": "2026-10-04T18:51:12+00:00"
+      },
+      "reviewLedger": {
+        "path": "artifacts/evidence/W2.A03.T02.review-R01.json",
+        "sha256": "6dddd39b9a0303fa2febd78d00e3bc6d7106038c111b7181bf406b82af68ff15"
+      }
+    }
+  ],
+  "documentType": "wave-amendment-exit-evidence",
+  "outcome": "ready-for-independent-amendment-exit-review",
+  "waveCampaign": {
+    "status": "PAUSED",
+    "scope": "amendment-hold",
+    "pauseReason": "CAP-05.S01.T01 is blocked by approved Academic Minimal 1.8 desktop activation/control authority; pause ordinary W2 execution at clean CAP-04.S05.T03 boundary for bounded GOV-MAINT-0026, linked CAP-04.S05.T02 correction, and decision-complete ECR-0011/W2.A03 before ordinary task resume."
+  },
+  "amendmentCampaign": {
+    "status": "ACTIVE",
+    "scope": "wave-amendment",
+    "pauseReason": null
+  },
+  "requiredNextTransition": "independent amendment exit review",
+  "acceptanceClosure": [
+    {
+      "criterionIndex": 1,
+      "criterion": "At clean paused predecessor 015f0272d4eae0e34d2758b519ef5bc9df99ac5f, CAP-05.S01.T01 remains BLOCKED with original 6506c68461144747b0ee9be10853211717aa381d base. The exact W2 approval, ordered adopted W2.A01/ECR-0009 packet 3fb76d6cb6bce6eaf16774931704de68c6168500 (Git-blob SHA-256 9b86ac8c6db43785bc6f783adc5c287e405b3925f1d8fea9f2cc048cd4fb00d2) and W2.A02/ECR-0010 packet 60e8a2d3bbd3ba50cc4809a7ebe799764e6b00db (Git-blob SHA-256 f452dcd6f522bcaf2697d64751a1a55a8b747247bfb37000786bee4458f12c43), GOV-MIG-0001 and unchanged approved 55-row 1.8 reference inventory precede independent packet review and explicit owner approval.",
+      "status": "ready-for-independent-exit-disposition",
+      "basis": "Original W2 and adopted A01/A02 authority, original 6506 blocked task base, exact 55-row approved 1.8 publication and historical immutable task definitions remain authenticated. Independently reviewed A04/A05 repairs and separate actual A03 activation preserve the full original task and source history."
+    },
+    {
+      "criterionIndex": 2,
+      "criterion": "GOV-MAINT-0026 is prior, separate, independently reviewed control maintenance: direct-child candidate 6e396c5e18fefb255334e1ddeeea02eb4b6bdb2c after 0847aea4cf93bfc444373045ade4e17891b4afe5 (candidate record Git-blob SHA-256 4fc41992e622edbddf09cf08ad8181543e3295d05e581461d7ee7eecd5a4ae57), approved R01 review/projection b763fa8ccff87c2828e94459252f02e35e1f4ef1 (review Git-blob SHA-256 a5603eb1f4ee4dcb279f2f4f298fbb10aa802507ab970fa68bef15d9f6435c94); it changes only quality-scope.json and its own maintenance record, not task authority. W2.C10.T01 is prior linked correction with spec eee6f5df4ba2b940e69fc8d7b49c033139e01856 (Git-blob SHA-256 b2163a0d2053ef8aa47d4881aa2d08db3d7abb0349ab761940739f4e2f433a6f), claim 72fc01b12eeef121b625d4c5941294c8336499f0, candidate 3dde91238b0be11847f68845a52b9785048dc8cd, evidence 29110a0fa84622d20c48a94fbbfb622ccb67bcfd (Git-blob SHA-256 93f0eec82a82629b6035c64226906d5fc0382d365c30b273ff05b5e5c29c157a) and approved R01 projection 015f0272d4eae0e34d2758b519ef5bc9df99ac5f (review Git-blob SHA-256 38db2884e79a7f43462d33553c57147f371d61ce931a35672602550bdd3e0a47). Neither chain grants new 1.8 control/consumer authority.",
+      "status": "ready-for-independent-exit-disposition",
+      "basis": "The immutable prior GOV26 and linked C10 candidates, evidence/reviews and disposition remain distinct authenticated predecessor work. Actual combined source history is attributed through reviewed correction ranges and the separate exact A05 completion grant; no prior approval is extended or rewritten."
+    },
+    {
+      "criterionIndex": 3,
+      "criterion": "The exact ancestral record-path bindings are planning/governance-migrations/GOV-MAINT-0026.json at candidate 6e396c5e18fefb255334e1ddeeea02eb4b6bdb2c, Git-blob SHA-256 4fc41992e622edbddf09cf08ad8181543e3295d05e581461d7ee7eecd5a4ae57, and at adopted projection b763fa8ccff87c2828e94459252f02e35e1f4ef1, Git-blob SHA-256 f68067a46653f5362f4a180a80401cf4139b639b2e8b4059028709333c4c873a; planning/governance-migrations/GOV-MAINT-0026.review-R01.json at b763fa8ccff87c2828e94459252f02e35e1f4ef1, Git-blob SHA-256 a5603eb1f4ee4dcb279f2f4f298fbb10aa802507ab970fa68bef15d9f6435c94. W2.C10.T01 binds artifacts/evidence/W2.C10.T01.spec.json at eee6f5df4ba2b940e69fc8d7b49c033139e01856, Git-blob SHA-256 b2163a0d2053ef8aa47d4881aa2d08db3d7abb0349ab761940739f4e2f433a6f; artifacts/evidence/W2.C10.T01.json introduced at 29110a0fa84622d20c48a94fbbfb622ccb67bcfd, Git-blob SHA-256 93f0eec82a82629b6035c64226906d5fc0382d365c30b273ff05b5e5c29c157a; artifacts/evidence/W2.C10.T01.review-R01.json at 015f0272d4eae0e34d2758b519ef5bc9df99ac5f, Git-blob SHA-256 38db2884e79a7f43462d33553c57147f371d61ce931a35672602550bdd3e0a47.",
+      "status": "ready-for-independent-exit-disposition",
+      "basis": "The exact prior GOV26/C10 ancestral path/hash bindings remain unchanged. Fresh actual integrated replay authenticates 39 retained T02 commits, the original 118 net paths and only six independently bound inert planning rows. S01 review01/F01 and adverse logs remain preserved and review02 explicitly closes F01."
+    },
+    {
+      "criterionIndex": 4,
+      "criterion": "Reviewed T01 exact 1.8 witness and closed v1.4 gate authenticate approved semantic/authority history, original-base two-contract lineage and independently reviewed GOV26/A03 changes. Reviewed T02 then aligns both desktop assemblers, protected activation and pinned 33-page/66-capture baseline. Both task source envelopes, failure/denial checks and independent protected-control reviews are exact.",
+      "status": "ready-for-independent-exit-disposition",
+      "basis": "Original approved T01 witness and T02 consumer candidates retain their exact task approvals; current checker source is separately attributed to reviewed A05 and its exact completion segment. Actual combined v1.4 authority, consumer checks and 55-file presentation compatibility pass; original task bases and historical capture proof remain authenticated. Original CAP-05 native/Core and full-base product qualification remain due."
+    },
+    {
+      "criterionIndex": 5,
+      "criterion": "B00 shell, task, slice, exit and security checkpoint receive distinct independent reviews before amendment adoption. Adoption leaves ordinary W2 PAUSED and T01 BLOCKED until explicit legal resume/reopen; current T01 native/Core and full-base proof, later slice/Wave qualification and human release gate remain separate.",
+      "status": "ready-for-independent-exit-disposition",
+      "basis": "B00, both original tasks and actual integrated S01 have distinct immutable independent dispositions. This manifest requests the separate exit review; a separately committed security/control checkpoint and adoption remain subsequent requirements. Ordinary W2/native/Core/joined S05/full-Wave qualification and human release are not claimed."
+    }
+  ],
+  "checks": [
+    {
+      "command": ".venv/Scripts/python.exe -B artifacts/tmp/W2.A03.S01.inspect-integrated-04.py",
+      "result": "passed",
+      "exitCode": 0,
+      "commit": "b1b88ec009018c4eea46e6d66890e6cb448bb485",
+      "rawOutput": "artifacts/tmp/W2.A03.S01.integrated-02-b1b88ec0.json",
+      "rawOutputSha256": "4129f1591b8fd55ded708f76969a8453525ac6b24eba89d628a06de5ea9d1894",
+      "observation": "Fresh actual local-main combined A03/A05 control/witness/consumer/history replay with original F01 explicitly closed by committed review02."
+    }
+  ],
+  "contributionReviewPaths": [
+    "artifacts/evidence/W2.A03.S01.review-01.json",
+    "artifacts/evidence/W2.A03.S01.review-02.json"
+  ],
+  "priorReviewedEvidence": [
+    "artifacts/evidence/W2.A03.T01.json",
+    "artifacts/evidence/W2.A03.T02.json",
+    "artifacts/evidence/W2.A03.T01.review-R01.json",
+    "artifacts/evidence/W2.A03.T02.review-R01.json",
+    "artifacts/evidence/W2.A03.S01.review-01.json",
+    "artifacts/evidence/W2.A03.S01.review-02.json"
+  ],
+  "limitations": [
+    "Historical task runtime/capture/accessibility executions are authenticated as prior candidate-bound proof, not repeated exit suites.",
+    "This does not claim exit/security approval, A03 adoption, ordinary W2 resume or product/Wave/release qualification."
+  ]
+}
