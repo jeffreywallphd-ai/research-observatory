@@ -183,8 +183,6 @@ class SignedCoreFixtureRuntime:
 
 
 def protected_core_phase(directory: Path, phase: str) -> None:
-    import faulthandler
-
     import httpx2
     from fastapi.testclient import TestClient
     from research_observatory_core import main as core_main
@@ -211,7 +209,6 @@ def protected_core_phase(directory: Path, phase: str) -> None:
     from tests.connectors.test_plugin_broker import streamed
 
     check = unittest.TestCase()
-    faulthandler.dump_traceback_later(60)
 
     def stage(label: str) -> None:
         print("RO-S05-STAGE:" + label, flush=True)
@@ -293,7 +290,14 @@ def protected_core_phase(directory: Path, phase: str) -> None:
         check.assertIsNotNone(worker)
         assert admin is not None and consent is not None and worker is not None
         actor = admin.actor("a" * 32)
-        adapters = worker._adapters(Path(root), project_id)
+
+        def published_page(invocation_id):
+            # Production adapters run beneath the open-project guard. Reading
+            # encrypted input outside it reverses project/database lock order
+            # against the actual background pumps and is not a valid fixture.
+            return worker._action(
+                root, lambda binding: binding.adapters.jobs.result(binding.adapters.jobs.input(invocation_id))
+            )
 
         def wait(job_id, expected):
             deadline = time.monotonic() + 45
@@ -308,7 +312,7 @@ def protected_core_phase(directory: Path, phase: str) -> None:
         def persisted_pages():
             pages: list[PluginPublishedPage] = []
             for identity in state["pageInvocations"]:
-                page = adapters.jobs.result(adapters.jobs.input(identity))
+                page = published_page(identity)
                 check.assertIsInstance(page, PluginPublishedPage)
                 assert isinstance(page, PluginPublishedPage)
                 pages.append(page)
@@ -323,18 +327,24 @@ def protected_core_phase(directory: Path, phase: str) -> None:
             check.assertEqual("reported", second.records[0].terms.license.state)
             check.assertEqual("CC0-1.0", second.records[0].terms.license.value)
             check.assertEqual([False, False], [page.broker_responses[0].redacted for page in pages])
-            with open_canonical_database(
-                Path(root) / "state/project.sqlite3", expected_project_id=project_id
-            ) as database:
-                rights = database.execute(
-                    "SELECT rights_status FROM aggregate_revisions WHERE project_id=? AND revision_id IN (?,?)",
-                    (project_id, first.revision_id, second.revision_id),
-                ).fetchall()
-                lineage = database.execute(
-                    "SELECT related_revision_id FROM provenance_ledger_relations "
-                    "WHERE project_id=? AND relation_type='wasDerivedFrom' AND entity_revision_id=?",
-                    (project_id, second.revision_id),
-                ).fetchall()
+
+            def canonical_metadata(binding):
+                check.assertEqual(project_id, binding.project_id)
+                with open_canonical_database(
+                    Path(root) / "state/project.sqlite3", expected_project_id=project_id
+                ) as database:
+                    rights = database.execute(
+                        "SELECT rights_status FROM aggregate_revisions WHERE project_id=? AND revision_id IN (?,?)",
+                        (project_id, first.revision_id, second.revision_id),
+                    ).fetchall()
+                    lineage = database.execute(
+                        "SELECT related_revision_id FROM provenance_ledger_relations "
+                        "WHERE project_id=? AND relation_type='wasDerivedFrom' AND entity_revision_id=?",
+                        (project_id, second.revision_id),
+                    ).fetchall()
+                return rights, lineage
+
+            rights, lineage = worker._action(root, canonical_metadata)
             check.assertEqual(["unknown", "unknown"], [row[0] for row in rights])
             check.assertIn(first.revision_id, {row[0] for row in lineage})
             check.assertNotEqual(b"SQLite format 3\x00", (Path(root) / "state/project.sqlite3").read_bytes()[:16])
@@ -350,7 +360,7 @@ def protected_core_phase(directory: Path, phase: str) -> None:
             check.assertEqual("enabled", grant.status)
             persisted_pages()
             check.assertEqual("cancelled", wait(state["pendingJob"], "cancelled").state)
-            check.assertIsNone(adapters.jobs.result(adapters.jobs.input(state["pendingInvocation"])))
+            check.assertIsNone(published_page(state["pendingInvocation"]))
             for preview in state["oldPreviews"]:
                 with check.assertRaises(PluginConsentProblem):
                     consent.authority(root, preview)
@@ -364,7 +374,6 @@ def protected_core_phase(directory: Path, phase: str) -> None:
                 ),
                 flush=True,
             )
-            faulthandler.cancel_dump_traceback_later()
             return
 
         authority = ConnectorAuthorityFixture("runTest")
@@ -483,7 +492,7 @@ def protected_core_phase(directory: Path, phase: str) -> None:
             stage(f"page-{index + 1}-submitted")
             wait(job.job_id, "succeeded")
             stage(f"page-{index + 1}-published")
-            page = adapters.jobs.result(adapters.jobs.input(request.invocation_id))
+            page = published_page(request.invocation_id)
             check.assertIsInstance(page, PluginPublishedPage)
             assert isinstance(page, PluginPublishedPage)
             state["pageInvocations"].append(request.invocation_id)
@@ -501,14 +510,14 @@ def protected_core_phase(directory: Path, phase: str) -> None:
         with check.assertRaisesRegex(PluginWorkerProblem, "page-predecessor-denied"):
             worker.submit(root, preview.preview_id, request, wire)
         with check.assertRaises(PluginJobRepositoryProblem):
-            adapters.jobs.input(request.invocation_id)
+            worker._action(root, lambda binding: binding.adapters.jobs.input(request.invocation_id))
         check.assertEqual(2, len(calls))
         request, wire, preview = prepare({"query": "synthetic-error", "pageSize": 1})
         job = worker.submit(root, preview.preview_id, request, wire)
         failed = wait(job.job_id, "failed")
         stage("malformed-page-denied")
         check.assertIsNotNone(failed.diagnostic_code)
-        check.assertIsNone(adapters.jobs.result(adapters.jobs.input(request.invocation_id)))
+        check.assertIsNone(published_page(request.invocation_id))
         request, wire, preview = prepare({"query": "synthetic-cancel", "pageSize": 1})
         job = worker.submit(root, preview.preview_id, request, wire)
         try:
@@ -518,7 +527,7 @@ def protected_core_phase(directory: Path, phase: str) -> None:
             release.set()
         wait(job.job_id, "cancelled")
         stage("active-job-cancelled")
-        check.assertIsNone(adapters.jobs.result(adapters.jobs.input(request.invocation_id)))
+        check.assertIsNone(published_page(request.invocation_id))
         persisted_pages()
         physical = [path for path in (Path(root) / "objects").rglob("*") if path.is_file()]
         check.assertTrue(physical)
