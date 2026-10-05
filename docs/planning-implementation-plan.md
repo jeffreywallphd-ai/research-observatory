@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 930fcfc31f494ce48c09ef2d2ccd6fe71b5b442950e589b69e75f4effd74dbb6
+source_sha256: 55b271dcac7e095447c2c600198fd85d3891f6c8d5054dc30b871e2d464a7885
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -4216,7 +4216,7 @@ Original tasks and approvals remain unchanged.
 
 ### W2.C11.T01 — Implement plugin isolation, configuration, and secret access controls
 
-**Status:** `IN_PROGRESS`. **Original task:** `CAP-04.S05.T02`. **Latest review:** `-`.
+**Status:** `REVIEW`. **Original task:** `CAP-04.S05.T02`. **Latest review:** `-`.
 
 **Reproduction:** At committed candidate 4f8c2cf1534e18c7fccf8d3ae6da5170622d652f, the joined real Windows DPAPI/SQLCipher Core and signed zero-capability LPAC journey fails on its second valid page with plugin-execution-denied. A bounded exception-construction diagnostic identifies plugin-job-interrupted inside the publication writer. The unchanged successful worker-publication test fails deterministically in 6.324 seconds when a test-only monotonic clock advances three seconds per cancellation poll; seven polls occur, with one assertion failure and zero setup errors. Product inputs stay unchanged. _Cancellation performs a queue heartbeat through its own BEGIN IMMEDIATE connection while the publisher holds a separate writer; the resulting persistence failure is treated as interruption. Raw adverse evidence: artifacts/tmp/W2.C11.T01.heartbeat-characterization-01.log SHA-256 3160f553dcd5cbb18241b588585f7180c8945df2ac8d22dadd15ddc14a879da6; artifacts/tmp/CAP-04.S05.joined-03-4f8c2cf1.protected-journey.log SHA-256 2b04e6df2504e0072b94df991c2e93e3d737edd55df617e9e7864cd3f35e330f; artifacts/tmp/CAP-04.S05.observed-create-03.stderr.log SHA-256 8968b21c7772cfb2f2b03f43eebb46dc77710129f581ea4a24ac2c0f14cedaaf. The clock diagnostic uses a synthetic runtime and is nonqualifying; the joined failed run establishes no task or slice completion.
 
@@ -4234,7 +4234,19 @@ Original tasks and approvals remain unchanged.
 
 **Review mode:** `append-only v1` / 0 completed round(s)
 
-**Current immutable submission awaiting review:** None
+**Current immutable submission awaiting review:** `R01` / packet SHA-256 `13a12a07386bcf61bd2385fe47c8296282d86c2fd217c29536267cc976a5ae5a`
+
+- Candidate / base / branch: `9a80c0f6cd6f5d444e7676c0ff287b4bb58c158f` / `f192725de10b5752e0d9b143c3512ef36c665a56` / `codex/w2-implementation`
+- Submitted by / at: codex-w2-implementation / `2026-10-05T20:24:30+00:00`
+- Evidence: `artifacts/evidence/W2.C11.T01.R01.public.json` / `3da1e53dc3637e429e6d89bbc94aeb8752c780288acd08f208cbe23516795509` / `9a80c0f6cd6f5d444e7676c0ff287b4bb58c158f`
+- Acceptance-criteria SHA-256: `831c2a4cc6c6cf0bd8ca53f4c85cce254f359e6c80f198692babeaf6a7f96dd5`
+- Verification-selection SHA-256: `6269871dc51ad10e7a9ecb4e26160ef009808d3106f8c1c04e2c11f1838c34d0`
+- Changed paths: `docs/planning-implementation-plan.md`, `planning/backlog.yaml`, `planning/review-site/manifest.json`, `planning/review-site/waves/W2.html`, `planning/status-summary.md`, `services/core-api/src/research_observatory_core/plugin_worker.py`, `tests/connectors/test_plugin_worker_submission.py`
+- Selected checks: `.venv/Scripts/python.exe -m ruff format --check --config pyproject.toml -- services/core-api/src/research_observatory_core/plugin_worker.py tests/connectors/test_plugin_worker_submission.py tests/connectors/test_plugin_sample_native_lpac.py`, `.venv/Scripts/python.exe -m ruff check --config pyproject.toml -- services/core-api/src/research_observatory_core/plugin_worker.py tests/connectors/test_plugin_worker_submission.py tests/connectors/test_plugin_sample_native_lpac.py`, `$env:MYPYPATH='tools;services/core-api/src'; .venv/Scripts/python.exe -m mypy --config-file pyproject.toml --no-namespace-packages -- services/core-api/src/research_observatory_core/plugin_worker.py tests/connectors/test_plugin_worker_submission.py tests/connectors/test_plugin_sample_native_lpac.py`, `.venv/Scripts/python.exe -B artifacts/tmp/W2.C11.T01.authenticate-execution-03.py`, `.venv/Scripts/python.exe -B tools/taskctl.py --file planning/backlog.yaml validate`
+- Deferred checks: `CAP-04.S05 integration: correct the new fixture or provide the existing approved explicit recovery procedure, then prove fresh process restart/recovery and obtain independent slice review. No stale-lock break is authorized here.`, `Unchanged broad profiles, current full packaging, desktop/accessibility/performance and cross-capability qualification remain checkpoint or fresh W2 exit obligations.`, `CAP-05.S01.T01 retains its original 6506 base and open fifth IntermediateD3D native startup finding.`
+- Selection rationale: A six-line publication callback correction touches the cancellation/lease boundary. Red-first regression, actual current 65 focused case results and real signed-LPAC/protected-Core create/denial/cancellation evidence address the changed boundary; its full combined command is adverse because an unrelated new integration fixture assumes automatic crash-lock takeover. Evidence authentication verifies individual case dispositions without repeating unchanged passed suites or inventing a zero exit for the failed command. There is no passing full restart claim.
+- Prior round / replayed open findings: `-` / -
+- Root-cause escalation: -
 
 **Current latest-review projection:** `-` by - at `-`
 

@@ -1,7 +1,7 @@
 ---
 document_type: generated-backlog-status-summary
 source: planning/backlog.yaml
-source_sha256: 930fcfc31f494ce48c09ef2d2ccd6fe71b5b442950e589b69e75f4effd74dbb6
+source_sha256: 55b271dcac7e095447c2c600198fd85d3891f6c8d5054dc30b871e2d464a7885
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -906,7 +906,7 @@ Append-only rounds remain distinct from the current latest-review projection. Le
 | `W2.C08.T01` | `append-only v1` | 1 | `-` | approved / agent:/root/w2_c08_preflight | - |
 | `W2.C09.T01` | `append-only v1` | 1 | `-` | approved / agent:/root/s04_integration_test_review | - |
 | `W2.C10.T01` | `append-only v1` | 1 | `-` | approved / agent:/root/maint26_independent_review | - |
-| `W2.C11.T01` | `append-only v1` | 0 | `-` | - / - | - |
+| `W2.C11.T01` | `append-only v1` | 0 | `R01` | - / - | - |
 ## Wave progress
 
 | Wave | Pre-Wave approval | Campaign | Qualification | Approved slices | Done tasks | Exit gate |
@@ -971,7 +971,7 @@ Append-only rounds remain distinct from the current latest-review projection. Le
 | Task | Status | Owner | Branch |
 |---|---|---|---|
 | `CAP-05.S01.T01` Implement local document attachment and version association | `BLOCKED` | codex-w2-implementation | `codex/w2-implementation` |
-| `W2.C11.T01` Implement plugin isolation, configuration, and secret access controls | `IN_PROGRESS` | codex-w2-implementation | `codex/w2-implementation` |
+| `W2.C11.T01` Implement plugin isolation, configuration, and secret access controls | `REVIEW` | codex-w2-implementation | `codex/w2-implementation` |
 
 ## Linked corrective tasks
 
@@ -1039,5 +1039,5 @@ Original tasks and approvals remain unchanged.
 
 ### W2.C11.T01 — Implement plugin isolation, configuration, and secret access controls
 
-**Status:** `IN_PROGRESS`. **Original task:** `CAP-04.S05.T02`. **Latest review:** `-`.
+**Status:** `REVIEW`. **Original task:** `CAP-04.S05.T02`. **Latest review:** `-`.
 
