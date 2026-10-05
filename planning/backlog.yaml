@@ -25977,13 +25977,21 @@ capabilities:
       verification_commands:
       - python tools/verify.py --profile documents
       - python tools/verify.py --profile desktop
-      status: IN_PROGRESS
+      status: BLOCKED
       owner: codex-w2-implementation
       branch: codex/w2-implementation
       started_at: '2026-10-02T03:11:13+00:00'
-      updated_at: '2026-10-05T14:05:07+00:00'
+      updated_at: '2026-10-05T15:07:38+00:00'
       completed_at: null
-      blocker: null
+      blocker:
+        reason: 'Joined CAP-04.S05 product integration reproduces false publication interruption: a due queue heartbeat opens
+          a second writer inside the fenced publication transaction. Original task base 6506 and fifth-D3D adverse finding
+          remain unchanged; amendments A01-A05 are adopted.'
+        next_action: Use the linked authority-preserving correction route for CAP-04.S05.T02, prove heartbeat/cancellation
+          and real protected signed-LPAC integration, obtain independent review, then resume this original task at its preserved
+          base.
+        recorded_at: '2026-10-05T15:07:38+00:00'
+        owner: codex-w2-implementation
       implementation_notes: ''
       evidence: []
       review:
@@ -25995,10 +26003,7 @@ capabilities:
           Complete S05 integrated qualification and original current-product/native/full-base T01 proof without further framework
           source development.'
       base_sha: 6506c68461144747b0ee9be10853211717aa381d
-      lease:
-        claimed_by: codex-w2-implementation
-        claimed_at: '2026-10-05T14:05:07+00:00'
-        expires_at: '2026-10-05T22:05:07+00:00'
+      lease: null
       verification_state: null
       worktree: .
       platform_targets:
