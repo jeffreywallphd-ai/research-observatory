@@ -3649,7 +3649,29 @@ class UiChangeGateTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "inert projection"):
             ui_gate.adopted_continuation_reviewed_task_commits(REPO, head, task, inert_outputs=forged)
 
-    def activation_repair_clone(self, temporary: str, *, source: Path = REPO) -> Path:
+    def activation_repair_fixture_prefix(self) -> str:
+        """Keep synthetic delivery at the actual immutable claim-stage candidate."""
+        head = self.git(REPO, "rev-parse", "HEAD")
+        task = ui_gate.backlog_task(ui_gate.reference_activation_repair_state(REPO, head), "W2.A05.T01")
+        assert task is not None
+        if task["status"] == "IN_PROGRESS":
+            return head
+        control = task.get("review_control") or {}
+        submission = control.get("current_submission")
+        if submission is None:
+            approved = [a for a in control.get("attempts", []) if a["review"]["result"] == "approved"]
+            self.assertTrue(approved, "Completed fixture source needs an actual approved submission")
+            submission = approved[-1]["submission"]
+        self.assertIsInstance(submission, dict)
+        candidate = str(submission["candidate_commit"])
+        self.assertTrue(ui_gate.is_ancestor(REPO, candidate, head))
+        claimed = ui_gate.backlog_task(ui_gate.reference_activation_repair_state(REPO, candidate), "W2.A05.T01")
+        assert claimed is not None
+        self.assertEqual("IN_PROGRESS", claimed["status"])
+        self.assertEqual(task["base_sha"], claimed["base_sha"])
+        return candidate
+
+    def activation_repair_clone(self, temporary: str, *, source: Path = REPO, ref: str | None = None) -> Path:
         root = Path(temporary) / "activation-repair-fixture"
         protected_config = Path(temporary) / "fixture-gitconfig"
         protected_config.write_text(f"[safe]\n\tdirectory = {(source / '.git').as_posix()}\n", encoding="utf-8")
@@ -3664,7 +3686,7 @@ class UiChangeGateTests(unittest.TestCase):
         self.git(root, "config", "user.name", "UI Gate Test")
         self.git(root, "config", "user.email", "ui-gate@example.invalid")
         self.git(root, "config", "core.autocrlf", "false")
-        self.git(root, "switch", "-C", "codex/w2-implementation", self.git(source, "rev-parse", "HEAD"))
+        self.git(root, "switch", "-C", "codex/w2-implementation", ref or self.git(source, "rev-parse", "HEAD"))
         self.assertEqual("", self.git(root, "status", "--porcelain"), "Disposable checkout must preserve all blobs")
         return root
 
@@ -3702,7 +3724,7 @@ class UiChangeGateTests(unittest.TestCase):
             "planning/review-site/waves/W2.html",
         ):
             with self.subTest(path=path), tempfile.TemporaryDirectory() as temporary:
-                root = self.activation_repair_clone(temporary)
+                root = self.activation_repair_clone(temporary, ref=self.activation_repair_fixture_prefix())
                 backlog = yaml.safe_load((root / "planning/backlog.yaml").read_bytes())
                 task = ui_gate.backlog_task(backlog, "W2.A05.T01")
                 assert task is not None
@@ -3834,6 +3856,42 @@ class UiChangeGateTests(unittest.TestCase):
                     with self.assertRaises(ValueError):
                         ui_gate.reference_activation_repair_authority(root, head)
 
+    def test_reviewed_activation_repair_fixture_preserves_claim_prefix_after_task_approval(self) -> None:
+        with tempfile.TemporaryDirectory() as completed_temporary, tempfile.TemporaryDirectory() as future_temporary:
+            completed = self.activation_repair_clone(completed_temporary, ref=self.activation_repair_fixture_prefix())
+            candidate = self.git(completed, "rev-parse", "HEAD")
+            state = yaml.safe_load((completed / "planning/backlog.yaml").read_bytes())
+            task = ui_gate.backlog_task(state, "W2.A05.T01")
+            assert task is not None
+            self.approve_activation_fixture_task(completed, state, task, candidate)
+            self.assertEqual("DONE", task["status"])
+            companion_path = "docs/adr/ADR-0041-authenticate-reviewed-activation-control-repairs.md"
+            companion = completed / companion_path
+            companion.write_bytes(
+                companion.read_bytes()
+                + b"\n## T02 implementation and verification\n\nSynthetic later live T02 companion.\n"
+            )
+            self.commit(completed, "synthetic later companion after independent T01 approval")
+            clone = self.activation_repair_clone
+            checked_out: list[str] = []
+
+            def from_completed(temporary: str, **kwargs: Any) -> Path:
+                root = clone(temporary, **{**kwargs, "source": completed})
+                checked_out.append(self.git(root, "rev-parse", "HEAD"))
+                return root
+
+            with (
+                patch.dict(globals(), {"REPO": completed}),
+                patch.object(self, "activation_repair_clone", side_effect=from_completed),
+            ):
+                root, _head = self.activation_repair_future_fixture(future_temporary)
+            self.assertEqual([candidate], checked_out)
+            for path in ("tools/ui_change_gate.py", "docs/adr/index.json"):
+                self.assertEqual(ui_gate.blob(completed, candidate, path), (root / path).read_bytes())
+            future_companion = (root / companion_path).read_bytes()
+            self.assertTrue(future_companion.startswith(ui_gate.blob(completed, candidate, companion_path)))
+            self.assertEqual(1, future_companion.count(b"## T02 implementation and verification"))
+
     def test_reviewed_activation_repair_full_original_base_requires_current_classification(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
             root, base, head, contract, manifest, _scope = self.classified_adopted_continuation_fixture(
@@ -3869,7 +3927,9 @@ class UiChangeGateTests(unittest.TestCase):
         self, temporary: str, *, security_attack: str | None = None
     ) -> tuple[Path, str]:
         """Actual prefix plus explicitly synthetic future task/adoption/return records."""
-        root = self.activation_repair_clone(temporary)
+        source_candidate = self.activation_repair_fixture_prefix()
+        live_source = source_candidate == self.git(REPO, "rev-parse", "HEAD")
+        root = self.activation_repair_clone(temporary, source=REPO, ref=source_candidate)
         backlog = yaml.safe_load((root / "planning/backlog.yaml").read_bytes())
         child = next(a for a in backlog["wave_amendments"] if a["id"] == "W2.A05")
         t01, t02 = child["tasks"]
@@ -3879,7 +3939,9 @@ class UiChangeGateTests(unittest.TestCase):
         for relative in ui_gate.REFERENCE_ACTIVATION_REPAIR_SOURCE[0]:
             target = root / relative
             target.parent.mkdir(parents=True, exist_ok=True)
-            target.write_bytes((REPO / relative).read_bytes())
+            target.write_bytes(
+                (REPO / relative).read_bytes() if live_source else ui_gate.blob(REPO, source_candidate, relative)
+            )
         self.write_yaml(root / "planning/backlog.yaml", backlog)
         control_candidate = self.commit(root, "synthetic future T01 qualification lease")
         t02["status"] = "READY"
@@ -4013,7 +4075,7 @@ class UiChangeGateTests(unittest.TestCase):
 
     def test_reviewed_activation_repair_denies_incomplete_actual_delivery(self) -> None:
         with self.assertRaises(ValueError):
-            ui_gate.reference_activation_repair_authority(REPO, self.git(REPO, "rev-parse", "HEAD"))
+            ui_gate.reference_activation_repair_authority(REPO, self.activation_repair_fixture_prefix())
 
     def test_reviewed_activation_repair_future_security_review_is_required_before_adoption(self) -> None:
         for attack in (
