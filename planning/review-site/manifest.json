@@ -2878,7 +2878,7 @@
         {
           "task_id": "W2.C12.T01",
           "title": "Implement plugin isolation, configuration, and secret access controls",
-          "status": "REVIEW",
+          "status": "DONE",
           "acceptance_criteria": [
             "A malicious test connector cannot read unrelated secrets or project files; network and export attempts outside manifest permissions are blocked and audited.",
             "Automated tests cover the expected path and at least one material failure or boundary condition.",
@@ -2909,70 +2909,114 @@
           "task_review": {
             "task_id": "W2.C12.T01",
             "title": "Implement plugin isolation, configuration, and secret access controls",
-            "status": "REVIEW",
+            "status": "DONE",
             "mode": "append-only",
             "latest_review": {
-              "reviewer": null,
-              "result": null,
-              "reviewed_at": null,
-              "notes": null
+              "reviewer": "agent:/root/c11_security_review",
+              "result": "approved",
+              "reviewed_at": "2026-10-05T23:17:25+00:00",
+              "notes": "Independent expanded public-contract/security correction review approves only the actual frozen W2.C12.T01 R01 at source candidate 3cac985d. The one-line PluginEnableReview.confirmation repair retains its already validated destination models while preserving all other Python-mode fields; it restores the approved native HTTP confirmation without changing repository digest, exact permission/destination comparisons, native human actor, publisher trust, package, revision, grant, consent, broker, LPAC or publication fences. The committed red-first HTTP regressions actually fail before the product fix with four assertion failures and zero errors. Current affected quality, 20 HTTP/admin/grant/migration/public-contract cases without skip, and API drift checks pass. A freshly frozen, inventory-verified production supervised Core, with no InstalledPluginRuntime override, accepts actual authenticated HTTP trust/enable and exact Intent/privacy/invocation consent, then publishes one broker-backed public DOI/title response through installed LPAC execution and closes its owned project. The separate current source-Core signed LPAC joined fixture proves two-page provenance/rights/predecessor publication, forged-cursor and malformed-page denial, active cancellation, orderly fresh-process reopen, lost ephemeral consent cancellation with zero egress, and fail-closed crash-lock denial with unchanged project files. Its source runtime adapter, synthetic provider transport and test signing remain explicit. The earlier stale-Intent and zero-broker installed fixtures remain failed; no first hidden denial branch is inferred from the collapsed public diagnostic. The compiled minimum-one-broker-response guard remains unchanged. Historical malicious-worker isolation and task-native results remain historical support for unchanged controls, not current full qualification. All original task/finding history and adverse quality/native attempts remain preserved. No criterion-bound blocker remains for this correction; this disposition does not approve CAP-04.S05, W2 qualification or release."
             },
             "review_control": {
               "version": 1,
-              "attempts": [],
-              "current_submission": {
-                "id": "R01",
-                "submitted_by": "codex-w2-implementation",
-                "submitted_at": "2026-10-05T23:00:04+00:00",
-                "candidate_commit": "3cac985d89bfa610e292e1ff8d8f05e91c6c816c",
-                "base_commit": "fd806e2f5585d6bf6d0a60a260b04a48eb38b6d6",
-                "branch": "codex/w2-implementation",
-                "evidence_reference": {
-                  "type": "criterion-manifest",
-                  "path": "artifacts/evidence/W2.C12.T01.R01.json",
-                  "sha256": "5a6ec5b387e8f398e2253ddf4c7211a71ca5514ad81e6b26a132f9df710b1012",
-                  "commit": "3cac985d89bfa610e292e1ff8d8f05e91c6c816c",
-                  "recorded_at": "2026-10-05T23:00:04+00:00"
-                },
-                "acceptance_criteria_sha256": "831c2a4cc6c6cf0bd8ca53f4c85cce254f359e6c80f198692babeaf6a7f96dd5",
-                "changed_paths": [
-                  "docs/planning-implementation-plan.md",
-                  "planning/backlog.yaml",
-                  "planning/review-site/manifest.json",
-                  "planning/review-site/waves/W2.html",
-                  "planning/status-summary.md",
-                  "services/core-api/src/research_observatory_core/plugin_api.py",
-                  "tests/connectors/test_plugin_admin_service.py",
-                  "tests/contracts/test_plugin_worker_contract.py"
-                ],
-                "selected_checks": [
-                  ".venv/Scripts/python.exe -B -m ruff format --check --config pyproject.toml -- services/core-api/src/research_observatory_core/plugin_api.py tests/connectors/test_plugin_admin_service.py tests/contracts/test_plugin_worker_contract.py",
-                  ".venv/Scripts/python.exe -B -m ruff check --config pyproject.toml -- services/core-api/src/research_observatory_core/plugin_api.py tests/connectors/test_plugin_admin_service.py tests/contracts/test_plugin_worker_contract.py",
-                  "$env:MYPYPATH='tools;services/core-api/src'; .venv/Scripts/python.exe -B -m mypy --config-file pyproject.toml --no-namespace-packages -- services/core-api/src/research_observatory_core/plugin_api.py tests/connectors/test_plugin_admin_service.py tests/contracts/test_plugin_worker_contract.py",
-                  ".venv/Scripts/python.exe -B -m unittest -v tests.connectors.test_plugin_admin_service tests.connectors.test_plugin_grants tests.connectors.test_plugin_grant_migration tests.contracts.test_plugin_worker_contract",
-                  ".venv/Scripts/python.exe -B tools/core_api_contract.py --repo . --check",
-                  ".venv/Scripts/python.exe -B artifacts/tmp/W2.C12.T01.build-installed-02.py 3cac985d89bfa610e292e1ff8d8f05e91c6c816c",
-                  ".venv/Scripts/python.exe -B artifacts/tmp/W2.C12.T01.installed-smoke-03.py 3cac985d89bfa610e292e1ff8d8f05e91c6c816c",
-                  ".venv/Scripts/python.exe -B artifacts/tmp/W2.C12.T01.joined-restart-02.py 3cac985d89bfa610e292e1ff8d8f05e91c6c816c"
-                ],
-                "deferred_checks": [
-                  "Unchanged standalone malicious-worker suite remains prior task-bound support; fresh full security/profile and cross-capability packaging qualification belongs to W2 exit.",
-                  "Independent S05 integration review and remaining CAP-05 tasks remain required.",
-                  "Full Python quality remains adverse on unrelated formatter and picker typing findings until separately resolved within user authority."
-                ],
-                "selection_rationale": "The public HTTP conversion is the demonstrated impact boundary. Red-first HTTP success/replay/reopen/denial plus affected grant/migration/page checks, actual current frozen installed dispatch, protected source-Core joined native proof, and three-path quality cover it. Expanded independent public-contract/security review is required. Listed command IDs name the inventory domains; commands below record the exact bounded selections, not full profile execution.",
-                "selection_sha256": "1ef30379a28053cae5e4e572031dfb23e5d76cb7e687a19829f2767abb6fbb69",
-                "prior_attempt_id": null,
-                "open_finding_ids": [],
-                "root_cause_analysis": null,
-                "selected_command_ids": [
-                  "search:connectors",
-                  "contracts:unit",
-                  "foundation:quality",
-                  "foundation:packaging-smoke"
-                ],
-                "packet_sha256": "31b82961a04e7e26be434ddd1f106171bec959e8ecd0c1dcdedbc8a3a92acc00"
-              }
+              "attempts": [
+                {
+                  "submission": {
+                    "id": "R01",
+                    "submitted_by": "codex-w2-implementation",
+                    "submitted_at": "2026-10-05T23:00:04+00:00",
+                    "candidate_commit": "3cac985d89bfa610e292e1ff8d8f05e91c6c816c",
+                    "base_commit": "fd806e2f5585d6bf6d0a60a260b04a48eb38b6d6",
+                    "branch": "codex/w2-implementation",
+                    "evidence_reference": {
+                      "type": "criterion-manifest",
+                      "path": "artifacts/evidence/W2.C12.T01.R01.json",
+                      "sha256": "5a6ec5b387e8f398e2253ddf4c7211a71ca5514ad81e6b26a132f9df710b1012",
+                      "commit": "3cac985d89bfa610e292e1ff8d8f05e91c6c816c",
+                      "recorded_at": "2026-10-05T23:00:04+00:00"
+                    },
+                    "acceptance_criteria_sha256": "831c2a4cc6c6cf0bd8ca53f4c85cce254f359e6c80f198692babeaf6a7f96dd5",
+                    "changed_paths": [
+                      "docs/planning-implementation-plan.md",
+                      "planning/backlog.yaml",
+                      "planning/review-site/manifest.json",
+                      "planning/review-site/waves/W2.html",
+                      "planning/status-summary.md",
+                      "services/core-api/src/research_observatory_core/plugin_api.py",
+                      "tests/connectors/test_plugin_admin_service.py",
+                      "tests/contracts/test_plugin_worker_contract.py"
+                    ],
+                    "selected_checks": [
+                      ".venv/Scripts/python.exe -B -m ruff format --check --config pyproject.toml -- services/core-api/src/research_observatory_core/plugin_api.py tests/connectors/test_plugin_admin_service.py tests/contracts/test_plugin_worker_contract.py",
+                      ".venv/Scripts/python.exe -B -m ruff check --config pyproject.toml -- services/core-api/src/research_observatory_core/plugin_api.py tests/connectors/test_plugin_admin_service.py tests/contracts/test_plugin_worker_contract.py",
+                      "$env:MYPYPATH='tools;services/core-api/src'; .venv/Scripts/python.exe -B -m mypy --config-file pyproject.toml --no-namespace-packages -- services/core-api/src/research_observatory_core/plugin_api.py tests/connectors/test_plugin_admin_service.py tests/contracts/test_plugin_worker_contract.py",
+                      ".venv/Scripts/python.exe -B -m unittest -v tests.connectors.test_plugin_admin_service tests.connectors.test_plugin_grants tests.connectors.test_plugin_grant_migration tests.contracts.test_plugin_worker_contract",
+                      ".venv/Scripts/python.exe -B tools/core_api_contract.py --repo . --check",
+                      ".venv/Scripts/python.exe -B artifacts/tmp/W2.C12.T01.build-installed-02.py 3cac985d89bfa610e292e1ff8d8f05e91c6c816c",
+                      ".venv/Scripts/python.exe -B artifacts/tmp/W2.C12.T01.installed-smoke-03.py 3cac985d89bfa610e292e1ff8d8f05e91c6c816c",
+                      ".venv/Scripts/python.exe -B artifacts/tmp/W2.C12.T01.joined-restart-02.py 3cac985d89bfa610e292e1ff8d8f05e91c6c816c"
+                    ],
+                    "deferred_checks": [
+                      "Unchanged standalone malicious-worker suite remains prior task-bound support; fresh full security/profile and cross-capability packaging qualification belongs to W2 exit.",
+                      "Independent S05 integration review and remaining CAP-05 tasks remain required.",
+                      "Full Python quality remains adverse on unrelated formatter and picker typing findings until separately resolved within user authority."
+                    ],
+                    "selection_rationale": "The public HTTP conversion is the demonstrated impact boundary. Red-first HTTP success/replay/reopen/denial plus affected grant/migration/page checks, actual current frozen installed dispatch, protected source-Core joined native proof, and three-path quality cover it. Expanded independent public-contract/security review is required. Listed command IDs name the inventory domains; commands below record the exact bounded selections, not full profile execution.",
+                    "selection_sha256": "1ef30379a28053cae5e4e572031dfb23e5d76cb7e687a19829f2767abb6fbb69",
+                    "prior_attempt_id": null,
+                    "open_finding_ids": [],
+                    "root_cause_analysis": null,
+                    "selected_command_ids": [
+                      "search:connectors",
+                      "contracts:unit",
+                      "foundation:quality",
+                      "foundation:packaging-smoke"
+                    ],
+                    "packet_sha256": "31b82961a04e7e26be434ddd1f106171bec959e8ecd0c1dcdedbc8a3a92acc00"
+                  },
+                  "review": {
+                    "reviewer": "agent:/root/c11_security_review",
+                    "result": "approved",
+                    "reviewed_at": "2026-10-05T23:17:25+00:00",
+                    "notes": "Independent expanded public-contract/security correction review approves only the actual frozen W2.C12.T01 R01 at source candidate 3cac985d. The one-line PluginEnableReview.confirmation repair retains its already validated destination models while preserving all other Python-mode fields; it restores the approved native HTTP confirmation without changing repository digest, exact permission/destination comparisons, native human actor, publisher trust, package, revision, grant, consent, broker, LPAC or publication fences. The committed red-first HTTP regressions actually fail before the product fix with four assertion failures and zero errors. Current affected quality, 20 HTTP/admin/grant/migration/public-contract cases without skip, and API drift checks pass. A freshly frozen, inventory-verified production supervised Core, with no InstalledPluginRuntime override, accepts actual authenticated HTTP trust/enable and exact Intent/privacy/invocation consent, then publishes one broker-backed public DOI/title response through installed LPAC execution and closes its owned project. The separate current source-Core signed LPAC joined fixture proves two-page provenance/rights/predecessor publication, forged-cursor and malformed-page denial, active cancellation, orderly fresh-process reopen, lost ephemeral consent cancellation with zero egress, and fail-closed crash-lock denial with unchanged project files. Its source runtime adapter, synthetic provider transport and test signing remain explicit. The earlier stale-Intent and zero-broker installed fixtures remain failed; no first hidden denial branch is inferred from the collapsed public diagnostic. The compiled minimum-one-broker-response guard remains unchanged. Historical malicious-worker isolation and task-native results remain historical support for unchanged controls, not current full qualification. All original task/finding history and adverse quality/native attempts remain preserved. No criterion-bound blocker remains for this correction; this disposition does not approve CAP-04.S05, W2 qualification or release."
+                  },
+                  "ledger": {
+                    "path": "artifacts/evidence/W2.C12.T01.review-R01.json",
+                    "sha256": "df5b4e510b434bff3d7062409996e76cbdf061451a3c9c99349a3569b85f7694"
+                  },
+                  "findings": [],
+                  "closures": [],
+                  "telemetry": {
+                    "task_id": "W2.C12.T01",
+                    "amendment_id": null,
+                    "attempt_id": "R01",
+                    "submitted_at": "2026-10-05T23:00:04+00:00",
+                    "reviewed_at": "2026-10-05T23:17:25+00:00",
+                    "duration_seconds": 1041,
+                    "outcome": "approved",
+                    "finding_counts": {
+                      "critical": 0,
+                      "high": 0,
+                      "medium": 0,
+                      "low": 0,
+                      "blocking": 0,
+                      "total": 0
+                    },
+                    "command_ids": [
+                      "search:connectors",
+                      "contracts:unit",
+                      "foundation:quality",
+                      "foundation:packaging-smoke"
+                    ],
+                    "remediation": {
+                      "prior_attempt_id": null,
+                      "replayed_finding_ids": [],
+                      "closed_finding_ids": []
+                    }
+                  }
+                }
+              ],
+              "current_submission": null
             }
           }
         }

@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: aac5f3e88c8a3ffb478719ad3bd8a15c0a4736cb0d41b06af8fa4f0e2cf2ea75
+source_sha256: 0b897e3bcda8b8f12147985afb941d77043482fcffff8464cc8c2a572fb09eb8
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -4274,7 +4274,7 @@ Original tasks and approvals remain unchanged.
 
 ### W2.C12.T01 — Implement plugin isolation, configuration, and secret access controls
 
-**Status:** `REVIEW`. **Original task:** `CAP-04.S05.T02`. **Latest review:** `-`.
+**Status:** `DONE`. **Original task:** `CAP-04.S05.T02`. **Latest review:** `approved`.
 
 **Reproduction:** At clean committed candidate 6a2e7487e0508b4495d17e7fd0029eb4f8796df4, an actual freshly frozen supervised Core discovers its installed test-signed LPAC worker and accepts a new synthetic publisher trust decision. The authenticated native HTTP grants/enable request then returns 409 RO-CORE-PLUGIN-PLUGIN-GRANT-CONFIRMATION-INVALID for the exact visible package/destination/permission confirmation. The failed smoke report artifacts/tmp/CAP-04.S05.installed-smoke-12-6a2e7487.json has SHA-256 6519018df8b69856b3a0bc3c72b3ab2c3b052e5c1f8ffcb66c6b11607e1955a8; owned failure body artifacts/tmp/s05-install-smoke-5j5by15m/failure-3.json has SHA-256 504226276cecc63ae8696f9223be17ad7b45bef288c924d76a1017e1235a12bf. PluginEnableReview.confirmation recursively dumps validated PluginDestination models into dictionaries and puts them in an unvalidated dataclass; the unchanged grant digest calls destination.model_dump and denies the resulting AttributeError. Earlier direct-service tests supplied destination models and missed this HTTP conversion. Independent source diagnosis artifacts/tmp/CAP-04.S05.installed-enable-diagnosis-c11_security_review-01.json has SHA-256 7531ee43d832141b01d748d9c59d7951190371d65bfc71b62ec4a0dc801356f8. The actual broad quality failure at the same candidate also identifies the public worker-page fixture missing a dictionary annotation; its log artifacts/tmp/CAP-04.S05.selected-06-6a2e7487.quality.log has SHA-256 3c0dd6e03dc22d1995aed8fb56da1f62c08d9bfe19e60e68b6870805e02be83d.
 
@@ -4291,9 +4291,11 @@ Original tasks and approvals remain unchanged.
 - tests/contracts/test_plugin_worker_contract.py
 #### Review history — W2.C12.T01
 
-**Review mode:** `append-only v1` / 0 completed round(s)
+**Review mode:** `append-only v1` / 1 completed round(s)
 
-**Current immutable submission awaiting review:** `R01` / packet SHA-256 `31b82961a04e7e26be434ddd1f106171bec959e8ecd0c1dcdedbc8a3a92acc00`
+##### Round R01
+
+**Immutable submission packet:** `R01` / packet SHA-256 `31b82961a04e7e26be434ddd1f106171bec959e8ecd0c1dcdedbc8a3a92acc00`
 
 - Candidate / base / branch: `3cac985d89bfa610e292e1ff8d8f05e91c6c816c` / `fd806e2f5585d6bf6d0a60a260b04a48eb38b6d6` / `codex/w2-implementation`
 - Submitted by / at: codex-w2-implementation / `2026-10-05T23:00:04+00:00`
@@ -4307,9 +4309,25 @@ Original tasks and approvals remain unchanged.
 - Prior round / replayed open findings: `-` / -
 - Root-cause escalation: -
 
-**Current latest-review projection:** `-` by - at `-`
+**Disposition / reviewer / time:** `approved` / agent:/root/c11_security_review / `2026-10-05T23:17:25+00:00`
 
-**Latest notes:** -
+**Immutable review ledger:** `artifacts/evidence/W2.C12.T01.review-R01.json` / `df5b4e510b434bff3d7062409996e76cbdf061451a3c9c99349a3569b85f7694`
+
+**Review notes:** Independent expanded public-contract/security correction review approves only the actual frozen W2.C12.T01 R01 at source candidate 3cac985d. The one-line PluginEnableReview.confirmation repair retains its already validated destination models while preserving all other Python-mode fields; it restores the approved native HTTP confirmation without changing repository digest, exact permission/destination comparisons, native human actor, publisher trust, package, revision, grant, consent, broker, LPAC or publication fences. The committed red-first HTTP regressions actually fail before the product fix with four assertion failures and zero errors. Current affected quality, 20 HTTP/admin/grant/migration/public-contract cases without skip, and API drift checks pass. A freshly frozen, inventory-verified production supervised Core, with no InstalledPluginRuntime override, accepts actual authenticated HTTP trust/enable and exact Intent/privacy/invocation consent, then publishes one broker-backed public DOI/title response through installed LPAC execution and closes its owned project. The separate current source-Core signed LPAC joined fixture proves two-page provenance/rights/predecessor publication, forged-cursor and malformed-page denial, active cancellation, orderly fresh-process reopen, lost ephemeral consent cancellation with zero egress, and fail-closed crash-lock denial with unchanged project files. Its source runtime adapter, synthetic provider transport and test signing remain explicit. The earlier stale-Intent and zero-broker installed fixtures remain failed; no first hidden denial branch is inferred from the collapsed public diagnostic. The compiled minimum-one-broker-response guard remains unchanged. Historical malicious-worker isolation and task-native results remain historical support for unchanged controls, not current full qualification. All original task/finding history and adverse quality/native attempts remain preserved. No criterion-bound blocker remains for this correction; this disposition does not approve CAP-04.S05, W2 qualification or release.
+
+**Findings opened:**
+
+- None
+
+**Prior finding closures:**
+
+- None
+
+**Current immutable submission awaiting review:** None
+
+**Current latest-review projection:** `approved` by agent:/root/c11_security_review at `2026-10-05T23:17:25+00:00`
+
+**Latest notes:** Independent expanded public-contract/security correction review approves only the actual frozen W2.C12.T01 R01 at source candidate 3cac985d. The one-line PluginEnableReview.confirmation repair retains its already validated destination models while preserving all other Python-mode fields; it restores the approved native HTTP confirmation without changing repository digest, exact permission/destination comparisons, native human actor, publisher trust, package, revision, grant, consent, broker, LPAC or publication fences. The committed red-first HTTP regressions actually fail before the product fix with four assertion failures and zero errors. Current affected quality, 20 HTTP/admin/grant/migration/public-contract cases without skip, and API drift checks pass. A freshly frozen, inventory-verified production supervised Core, with no InstalledPluginRuntime override, accepts actual authenticated HTTP trust/enable and exact Intent/privacy/invocation consent, then publishes one broker-backed public DOI/title response through installed LPAC execution and closes its owned project. The separate current source-Core signed LPAC joined fixture proves two-page provenance/rights/predecessor publication, forged-cursor and malformed-page denial, active cancellation, orderly fresh-process reopen, lost ephemeral consent cancellation with zero egress, and fail-closed crash-lock denial with unchanged project files. Its source runtime adapter, synthetic provider transport and test signing remain explicit. The earlier stale-Intent and zero-broker installed fixtures remain failed; no first hidden denial branch is inferred from the collapsed public diagnostic. The compiled minimum-one-broker-response guard remains unchanged. Historical malicious-worker isolation and task-native results remain historical support for unchanged controls, not current full qualification. All original task/finding history and adverse quality/native attempts remain preserved. No criterion-bound blocker remains for this correction; this disposition does not approve CAP-04.S05, W2 qualification or release.
 
 **Currently open findings:** -
 

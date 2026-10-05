@@ -1,0 +1,127 @@
+{
+  "task_id": "W2.C12.T01",
+  "attempt_id": "R01",
+  "candidate_commit": "3cac985d89bfa610e292e1ff8d8f05e91c6c816c",
+  "base_commit": "fd806e2f5585d6bf6d0a60a260b04a48eb38b6d6",
+  "reviewer": "agent:/root/c11_security_review",
+  "result": "approved",
+  "reviewed_at": "2026-10-05T23:12:01Z",
+  "evidence_sha256": "5a6ec5b387e8f398e2253ddf4c7211a71ca5514ad81e6b26a132f9df710b1012",
+  "packet_sha256": "31b82961a04e7e26be434ddd1f106171bec959e8ecd0c1dcdedbc8a3a92acc00",
+  "acceptance_criteria_sha256": "831c2a4cc6c6cf0bd8ca53f4c85cce254f359e6c80f198692babeaf6a7f96dd5",
+  "selection_sha256": "1ef30379a28053cae5e4e572031dfb23e5d76cb7e687a19829f2767abb6fbb69",
+  "notes": "Independent expanded public-contract/security correction review approves only the actual frozen W2.C12.T01 R01 at source candidate 3cac985d. The one-line PluginEnableReview.confirmation repair retains its already validated destination models while preserving all other Python-mode fields; it restores the approved native HTTP confirmation without changing repository digest, exact permission/destination comparisons, native human actor, publisher trust, package, revision, grant, consent, broker, LPAC or publication fences. The committed red-first HTTP regressions actually fail before the product fix with four assertion failures and zero errors. Current affected quality, 20 HTTP/admin/grant/migration/public-contract cases without skip, and API drift checks pass. A freshly frozen, inventory-verified production supervised Core, with no InstalledPluginRuntime override, accepts actual authenticated HTTP trust/enable and exact Intent/privacy/invocation consent, then publishes one broker-backed public DOI/title response through installed LPAC execution and closes its owned project. The separate current source-Core signed LPAC joined fixture proves two-page provenance/rights/predecessor publication, forged-cursor and malformed-page denial, active cancellation, orderly fresh-process reopen, lost ephemeral consent cancellation with zero egress, and fail-closed crash-lock denial with unchanged project files. Its source runtime adapter, synthetic provider transport and test signing remain explicit. The earlier stale-Intent and zero-broker installed fixtures remain failed; no first hidden denial branch is inferred from the collapsed public diagnostic. The compiled minimum-one-broker-response guard remains unchanged. Historical malicious-worker isolation and task-native results remain historical support for unchanged controls, not current full qualification. All original task/finding history and adverse quality/native attempts remain preserved. No criterion-bound blocker remains for this correction; this disposition does not approve CAP-04.S05, W2 qualification or release.",
+  "corrective_integration": {
+    "evidence_sha256": "5a6ec5b387e8f398e2253ddf4c7211a71ca5514ad81e6b26a132f9df710b1012",
+    "authority_preserved": true,
+    "affected_integration_reviewed": true,
+    "notes": "The exact eight-path base diff contains only the three spec-admitted API/test paths plus five claim/generated planning paths. The original CAP-04.S05.T02 approved snapshot, immutable T02/T03 histories and original CAP-05.S01.T01 base/fifth-D3D finding are preserved. Exact repository confirmation, actor, publisher, manifest, revision, runtime, permission, consent, rights, broker, LPAC, migration, UX and release authority are unchanged. Fresh exact-candidate HTTP/encrypted-grant checks, the production frozen Core installed single-public-item dispatch, and the explicitly adapted source-Core protected pagination/cancellation/restart fixture cover affected integration. Unchanged historical isolation evidence is not relabeled fresh. Remaining slice, checkpoint, broad quality, full security/profile, cross-capability and Wave/release obligations remain separate; no framework source or amendment work is included."
+  },
+  "acceptance_reviews": [
+    {
+      "criterion_index": 1,
+      "result": "satisfied",
+      "assessment": "The correction only restores validated destination objects at the native HTTP conversion boundary; no worker, secret, file, network or export authority changes. Current authenticated altered-destination and altered-permission HTTP requests fail exact confirmation with no enabled grant and durable encrypted denial audit. Existing grant/actor/runtime denial cases pass. The actual current frozen Core production installed LPAC worker can publish only after human trust/enable and exact project permission/invocation consent, using one permitted broker response. The current protected source-Core fixture adds forged continuation pre-egress denial, malformed-output denial and active cancellation without publication. Original independently approved T02 malicious-worker isolation remains support for unchanged controls, with its historical native limits preserved; no fresh exhaustive malicious-worker claim is made."
+    },
+    {
+      "criterion_index": 2,
+      "result": "satisfied",
+      "assessment": "Two red-first HTTP regressions are committed before the product edit and fail with four expected assertions and zero setup errors. At exact candidate, 20 named HTTP/admin/grant/migration/public-contract cases pass without skip, including valid enable, identical action replay with one enabled audit event, recreated service reading the same persisted encrypted grant, and two mismatch denials read through a new repository. The freshly frozen production Core installed smoke additionally passes real HTTP trust/enable, Intent/privacy/consent, one actual public broker GET, result publication and orderly close. The separate signed LPAC/protected source-Core joined proof passes pagination/provenance/rights, denial, cancellation, orderly reopen, lost-consent cancellation and crash-open409 with all23 project files unchanged. Earlier installed attempts and failed native restart assumptions remain adverse."
+    },
+    {
+      "criterion_index": 3,
+      "result": "satisfied",
+      "assessment": "Only the approved API conversion and its real HTTP regression change product behavior. The public page fixture receives an explicit dictionary annotation with unchanged values/assertions. Exact diff and schema comparison show no contract/migration/permission/framework/UX change. Selected three-path Ruff format/lint/mypy and Core API drift checks pass. Original T02/T03 DONE records and the original blocked CAP-05 task object match immutable base and candidate. Published commands use repository-relative representation while expanded argv/runtime inventories remain ignored. Broad formatter/picker typing failures and S05/W2 qualification remain recorded obligations outside this correction."
+    }
+  ],
+  "evidence_reproduction": {
+    "frozen_submission": {
+      "manifest": "artifacts/evidence/W2.C12.T01.R01.json",
+      "manifest_canonical_sha256": "5a6ec5b387e8f398e2253ddf4c7211a71ca5514ad81e6b26a132f9df710b1012",
+      "packet_sha256": "31b82961a04e7e26be434ddd1f106171bec959e8ecd0c1dcdedbc8a3a92acc00",
+      "submit_receipt": "artifacts/tmp/W2.C12.T01.submit-R01.log",
+      "submit_receipt_raw_sha256": "4694df1fa6a4e923d86e7d5b5b762f7243f623c67267ce1cbe95304f520e0ea3",
+      "result": "PASS: actual REVIEW/R01 packet, candidate/base/branch, exact8 paths, selected commands/IDs, deferred coverage, rationale, manifest, criteria and selection hashes independently reproduce. All4 selected IDs exist in the candidate verification profile. No prior C12 review attempts/findings exist."
+    },
+    "prior_independent_assessments": [
+      {
+        "path": "artifacts/tmp/W2.C12.T01.source-assessment-c11_security_review-01.json",
+        "raw_sha256": "9541da9a41179ad730890bc2afc2da93a87b19b99f19fde06b5cd4629fabb5af"
+      },
+      {
+        "path": "artifacts/tmp/W2.C12.T01.installed-seam-assessment-c11_security_review-01.json",
+        "raw_sha256": "40d215e1a7244c54a74333c5acbf6161e75ce8a9009e58ba2c22120b377369ad"
+      }
+    ],
+    "red_first": {
+      "path": "artifacts/tmp/W2.C12.T01.red-01-0ea49b6a.json",
+      "raw_sha256": "5f77ec08790da316c4632324f8f8e8d628f20fc954aae0009279169679aa3a09",
+      "result": "Authenticated retained exit1:2 cases,4 assertion failures,zero errors;12160 stable inputs. It is not counted as a pass."
+    },
+    "green": {
+      "path": "artifacts/tmp/W2.C12.T01.green-01-3cac985d.json",
+      "raw_sha256": "f0b24ab206c202973cb901b3df44d1af5f36a717867bea48d3c7e29cdabbf760",
+      "result": "All5 commands exit0;20 named cases no skips;12160 before/after stable inputs. All selected raw and canonical logs plus producer hashes match. Prior read-only input reauthentication found10970 non-planning source/config/producer/runtime entries unchanged and none unreadable."
+    },
+    "current_frozen_package": {
+      "path": "artifacts/tmp/W2.C12.T01.installed-build-02-3cac985d.json",
+      "raw_sha256": "8569ad7ed886654e40f1c841d73703961adf4d867281861dba8da82c8974c26c",
+      "image_sha256": "f9a34dc3fc5d3b7c72460432fabfc978e4178ff0a935957c18da92346f36c38d",
+      "result": "Fresh current build PASS with12299 stable inputs. Independent read-only exact artifact inventory rehashes784 files and verifies immutable candidate schema/build contract with no errors. Default schema filesystem resolution encountered a reviewer sandbox PermissionError; supplying the identical immutable Git schema/build-contract blobs permits the read-only verifier. No runtime or fence alteration occurred. Archived required modules and unchanged compiled broker-count guard were inspected without execution."
+    },
+    "current_installed": {
+      "path": "artifacts/tmp/W2.C12.T01.installed-smoke-03-3cac985d.json",
+      "raw_sha256": "a45ccd38f8e020bb642e0cd9437ba18026105db8bdc12897e35ea06fdbb22695",
+      "duration_seconds": 17.439128499943763,
+      "result": "PASS: actual newly frozen supervised Core production InstalledPluginRuntime and native loopback authorization, synthetic owned project/publisher, DPAPI vault and SQLCipher persistence. Exact manifest/producer/build/input/worker bindings authenticate, package locked and verified before/after. One broker GET for public DOI10.1128/mbio.01735-25 yields validated actual DOI/title, unknown terms/license/access, one succeeded job and local encrypted publication; project closes and Core exits0. No private query/contact/key/remote write, GUI/release signing, provider coverage or latency claim."
+    },
+    "current_joined": {
+      "path": "artifacts/tmp/W2.C12.T01.joined-restart-02-3cac985d.json",
+      "raw_sha256": "fe6825d7442251516030506a11fa08eba244b588e538736dd4d7ec3f3cb1573c",
+      "protected_log_raw_sha256": "785e2f968dd7dabfbccb7f32510022e92b8d564f8801c6038b5ff90e25e04dcd",
+      "result": "PASS: current protected source-Core signed LPAC journey72.471 seconds,1 case without skip,12299 stable inputs. All4 nested logs and producer bytes match. Actual DPAPI/SQLCipher storage and LPAC execution are joined using explicit SignedCoreFixtureRuntime and synthetic HTTP. Orderly release/reopen and lost-consent cancellation pass; intentional crash retains lock and next real open409 leaves23 files unchanged. No automatic crash takeover or full installed GUI claim."
+    },
+    "preserved_adverse": {
+      "reports": [
+        {
+          "path": "artifacts/tmp/W2.C12.T01.green-01-68131d16.json",
+          "sha256": "75e1e776607f6634cb8eb0f0a37e612246aeecdb25d5d7c8461df35aa404a01f",
+          "status": "FAIL"
+        },
+        {
+          "path": "artifacts/tmp/W2.C12.T01.installed-smoke-01-68131d16.json",
+          "sha256": "3edd80d4e80f6d276228de5b788a302e555e97540b2340cf1f6524067bd74804",
+          "status": "FAIL"
+        },
+        {
+          "path": "artifacts/tmp/W2.C12.T01.installed-smoke-02-3cac985d.json",
+          "sha256": "4302103f6c7bdbbc1541ad6224fc2e417dc218b28efa7ae79ca1e6acd99609e3",
+          "status": "FAIL"
+        }
+      ],
+      "result": "All3 listed raw report digests match and remain FAIL. Initial typing failure, stale Intent revision and zero-call installed rejection are not changed to pass; original6a2 enable409, prior crash-lock/native and broad quality failures remain retained. Zero-call direct-source/guardian/DLL diagnostic successes do not prove installed publication or establish a separate loader/type/DLL defect."
+    },
+    "review_execution": "Read-only immutable Git/source/JSON/log comparisons and file digests, plus artifact verifier inspection; no product test/suite replay, process dispatch, network or UI actions. Only this unique ignored final ledger is written."
+  },
+  "checks": [
+    {
+      "command": "Authenticate actual persisted R01 and current public manifest; recompute packet, criteria, selection and evidence hashes against immutable source candidate/base",
+      "result": "PASS: all exact binding fields reproduce;8-path diff and exact selected/deferred coverage match."
+    },
+    {
+      "command": "Inspect exact source diff, repository/native/publication authority and original approved correction contract; replay prior independent source/seam assessments",
+      "result": "PASS: one-line validated-model repair and admitted regressions only; no scope/security/migration/UX/framework change or criterion-bound source blocker."
+    },
+    {
+      "command": "Authenticate retained red/green, frozen build, installed and joined reports, producers, raw/canonical logs, stable inputs and784-file artifact inventory",
+      "result": "PASS for C12 evidence authentication: current real installed positive plus affected failure/recovery proof meet bounded correction criteria; no passed suites repeated or adverse exit reclassified."
+    },
+    {
+      "command": "Compare immutable base/candidate original T02/T03/CAP-05 task objects and preserved adverse report hashes",
+      "result": "PASS: original history/finding authority remains unchanged; S05/W2/release obligations remain explicit."
+    }
+  ],
+  "findings": [],
+  "closures": [],
+  "prior_findings_replayed": []
+}
