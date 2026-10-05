@@ -541,6 +541,10 @@ class PluginWorkerService:
                         authority.plan,
                         parse_plugin_scientific_request(data, inputs.request.operation),
                     )
+                    # Poll and renew before the writer; the repository fences
+                    # durable cancellation and the lease on its own connection.
+                    if cancellation():
+                        raise PluginJobRepositoryProblem("plugin-job-interrupted")
                     return binding.adapters.jobs.publish(
                         inputs,
                         authority.plan,
@@ -549,7 +553,7 @@ class PluginWorkerService:
                         actor_id=self._actor_id,
                         now=self._now,
                         recheck_current=lambda: self._guard(authority, inputs, "publication"),
-                        interrupted=cancellation,
+                        interrupted=lambda: self._stopped.is_set() or binding.stopped.is_set(),
                     )
 
                 output = self._action(str(binding.path), publish)
