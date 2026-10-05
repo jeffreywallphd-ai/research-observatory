@@ -3801,7 +3801,8 @@ class UiChangeGateTests(unittest.TestCase):
                     target = root / "planning/backlog.yaml"
                     document = yaml.safe_load(target.read_bytes())
                     child = next(a for a in document["wave_amendments"] if a["id"] == "W2.A05")
-                    child["contributions"][0]["capability_id"] = "CAP-04"
+                    self.assertEqual("product-scope-security-experience", child["kind"])
+                    child["kind"] = "synthetic-unapproved-amendment-kind"
                     self.write_yaml(target, document)
                 else:
                     relative = (
