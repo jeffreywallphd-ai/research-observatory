@@ -1,0 +1,580 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "W2.A05.T01",
+  "baseCommit": "4e94add8319f72d040786a14f07372d15417be45",
+  "commit": "9106f485d32150943e8fbedd5299d5882021e183",
+  "branch": "codex/w2-implementation",
+  "changedFiles": [
+    "artifacts/evidence/W2.A05.T01.task-start.md",
+    "docs/adr/ADR-0041-authenticate-reviewed-activation-control-repairs.md",
+    "docs/adr/index.json",
+    "docs/automation/design-first-ui-changes.md",
+    "docs/planning-implementation-plan.md",
+    "planning/backlog.yaml",
+    "planning/review-site/enablers/ECR-0013.html",
+    "planning/review-site/manifest.json",
+    "planning/status-summary.md",
+    "tests/foundation/test_ui_change_gate.py",
+    "tools/ui_change_gate.py"
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "One jointly introduced Proposed ADR-0041 and one appended registry entry link both ordered A05 tasks under Accepted ADR-0001/0003/0004. Actual task-range ADR checks and registry/metadata denial tests pass; no previous ADR/index entry or accepted decision changes."
+      ],
+      "checkIds": [
+        "adr",
+        "repair-return",
+        "repair-denials",
+        "repaired-full-base"
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "Actual retained ca8b1448-to06a69348 Git history is attributed as 39 commits with its unchanged 118-path net inventory and six exact regular W2.html rows. The separate inert map requires immutable preflight bytes, exact parent/blob rows and original independent A04/A03 delivery, defaults empty and rejects a forged map. Real-Git missing/forged proof and net-excluded product/control/same-filename add-revert denials pass; overlapping range denial remains."
+      ],
+      "checkIds": [
+        "retained-history",
+        "projection-denials",
+        "legacy-authority"
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "Within unchanged closed v1.4 the checker derives exact packet/owner/B00/materialization, separate claims, five/four-source task ranges and independent task/S01/exit/security dispositions, adoption and paused return. The original6506 full-root synthetic control case passes and shortened-base/current-classification-blob substitutions deny. Actual GOV27 four-commit prepared-first/R01-adverse/R02-approved history and B00 exact source bytes/modes are authenticated directly; imported-tool, omission/extra-history, adverse/review/header/mode substitutions deny. Synthetic fixtures retain an actual claim-stage prefix after task approval, with immutable T01 source/ADR/index bytes. No controller, kernel, asserted field or schema changes."
+      ],
+      "checkIds": [
+        "fixture-prefix",
+        "preceding-authority",
+        "claim-denials",
+        "repair-return",
+        "repair-denials",
+        "repair-security",
+        "repaired-full-base",
+        "legacy-authority"
+      ]
+    },
+    {
+      "criterion_index": 4,
+      "evidence": [
+        "The complete frozen A03 predecessor and adopted A04 records, original DONE task definitions/bases/reviews, prior packets/reference/witness/baseline remain immutable. Both endpoints and progressive history prefixes reject post-activation E06 rewrite/restoration. Separately authenticated returned campaign identity and active lease ownership reject owner/lease-owner rewrite/restoration. Future lawful separate A03 activation preserves both DONE tasks; actual A03 S01 review-02/F01 closure remains a later real integration gate."
+      ],
+      "checkIds": [
+        "parent-history-denial",
+        "parent-campaign-denial",
+        "repair-return",
+        "repair-denials",
+        "repaired-full-base",
+        "reference-integrity"
+      ]
+    },
+    {
+      "criterion_index": 5,
+      "evidence": [
+        "Actual task-base Git inventory is restricted to the exact five T01 source paths and task-owned worksheet/claim/generated planning outputs. Affected quality, diff, ADR/UI, reference and canonical backlog/views/site checks pass. No T02 conformance source, product/native/Core/permission/runtime/reference/consumer/baseline source is changed; old indexed metadata remains exact."
+      ],
+      "checkIds": [
+        "adr",
+        "ui-authority",
+        "ruff",
+        "format",
+        "mypy",
+        "diff",
+        "reference-integrity",
+        "backlog",
+        "views",
+        "site",
+        "repair-denials"
+      ]
+    },
+    {
+      "criterion_index": 6,
+      "evidence": [
+        "Real-Git actual retained-history positive and hostile projection/net-excluded source/history, predecessor/adopted-A04, stale/foreign/mixed claim, review and premature/security-return denials pass. Extra criterion recipe uses actual committed active-endpoint substitutions plus explicitly synthetic invalid-claim dispositions; it is machine execution, not task approval. Preceding maintenance mode/source/omission/R02/adverse/header denials and selected legacy v1.0-v1.4 cases pass. Prior actual S01 failure and every developmental adverse/partial result remain preserved. Expanded independent exact-candidate task disposition is pending; synthetic future states grant no actual adoption/product/Wave completion."
+      ],
+      "checkIds": [
+        "retained-history",
+        "projection-denials",
+        "preceding-authority",
+        "parent-history-denial",
+        "parent-campaign-denial",
+        "claim-denials",
+        "repair-denials",
+        "repair-security",
+        "legacy-authority",
+        "repaired-full-base"
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "checks": [
+    {
+      "id": "projection-denials",
+      "command": ".venv/Scripts/python.exe -B -u -m unittest -v tests.foundation.test_ui_change_gate.UiChangeGateTests.test_reviewed_activation_inert_map_rejects_rewritten_bindings_and_predecessors tests.foundation.test_ui_change_gate.UiChangeGateTests.test_reviewed_activation_inert_map_does_not_hide_new_source_or_same_name_output",
+      "workingDirectory": ".",
+      "exitCode": 0,
+      "commit": "9106f485d32150943e8fbedd5299d5882021e183",
+      "rawOutput": "artifacts/tmp/W2.A05.T01.projection-denials-9106f485.log",
+      "rawOutputSha256": "5a8e8079691da4292d339211c0216ba9aadc4cf48464e99d7f3fdb9e82f728fa",
+      "startedAt": "2026-10-05T05:52:30.501747+00:00",
+      "finishedAt": "2026-10-05T05:58:41.852396+00:00",
+      "durationSeconds": 371.351,
+      "producer": "artifacts/tmp/W2.A05.T01.run-selected.py",
+      "producerSha256": "a5ed6e773abf0f9912f9c98c86bfb5a2baec552935c1b6e420495bac880343ce",
+      "inputCount": 4727,
+      "provenance": "Fresh local execution on this exact clean committed candidate with shared HEAD and tracked inputs fixed. Real Git is used; future task/review/adoption records and capture readers in fixtures are synthetic control proof only."
+    },
+    {
+      "id": "retained-history",
+      "command": ".venv/Scripts/python.exe -B -u -m unittest -v tests.foundation.test_ui_change_gate.UiChangeGateTests.test_reviewed_activation_inert_history_preserves_actual_net_inventory",
+      "workingDirectory": ".",
+      "exitCode": 0,
+      "commit": "9106f485d32150943e8fbedd5299d5882021e183",
+      "rawOutput": "artifacts/tmp/W2.A05.T01.retained-history-9106f485.log",
+      "rawOutputSha256": "9def2bc8c38f42ff4ac79ab5ce3607fc93793872270357a96be9ae7e79d92b4e",
+      "startedAt": "2026-10-05T05:58:41.906883+00:00",
+      "finishedAt": "2026-10-05T06:01:18.818709+00:00",
+      "durationSeconds": 156.912,
+      "producer": "artifacts/tmp/W2.A05.T01.run-selected.py",
+      "producerSha256": "a5ed6e773abf0f9912f9c98c86bfb5a2baec552935c1b6e420495bac880343ce",
+      "inputCount": 4727,
+      "provenance": "Fresh local execution on this exact clean committed candidate with shared HEAD and tracked inputs fixed. Real Git is used; future task/review/adoption records and capture readers in fixtures are synthetic control proof only."
+    },
+    {
+      "id": "preceding-authority",
+      "command": ".venv/Scripts/python.exe -B -u -m unittest -v tests.foundation.test_ui_change_gate.UiChangeGateTests.test_reviewed_activation_preceding_sources_preserve_adverse_history_and_deny_substitution tests.foundation.test_ui_change_gate.UiChangeGateTests.test_reviewed_activation_preceding_sources_deny_modes_omissions_and_extra_history",
+      "workingDirectory": ".",
+      "exitCode": 0,
+      "commit": "9106f485d32150943e8fbedd5299d5882021e183",
+      "rawOutput": "artifacts/tmp/W2.A05.T01.preceding-authority-9106f485.log",
+      "rawOutputSha256": "690de84532a14d56689f15684b51b4f9ee620302714a25aac6d340ae6fe7c893",
+      "startedAt": "2026-10-05T06:01:18.871843+00:00",
+      "finishedAt": "2026-10-05T06:04:18.017284+00:00",
+      "durationSeconds": 179.145,
+      "producer": "artifacts/tmp/W2.A05.T01.run-selected.py",
+      "producerSha256": "a5ed6e773abf0f9912f9c98c86bfb5a2baec552935c1b6e420495bac880343ce",
+      "inputCount": 4727,
+      "provenance": "Fresh local execution on this exact clean committed candidate with shared HEAD and tracked inputs fixed. Real Git is used; future task/review/adoption records and capture readers in fixtures are synthetic control proof only."
+    },
+    {
+      "id": "fixture-prefix",
+      "command": ".venv/Scripts/python.exe -B -u -m unittest -v tests.foundation.test_ui_change_gate.UiChangeGateTests.test_reviewed_activation_repair_fixture_preserves_claim_prefix_after_task_approval",
+      "workingDirectory": ".",
+      "exitCode": 0,
+      "commit": "9106f485d32150943e8fbedd5299d5882021e183",
+      "rawOutput": "artifacts/tmp/W2.A05.T01.fixture-prefix-9106f485.log",
+      "rawOutputSha256": "fae784e3356e2d94da188564b0400fed393aee54064ce79e66568f007073d7d1",
+      "startedAt": "2026-10-05T05:52:30.498898+00:00",
+      "finishedAt": "2026-10-05T05:53:04.801137+00:00",
+      "durationSeconds": 34.302,
+      "producer": "artifacts/tmp/W2.A05.T01.run-selected.py",
+      "producerSha256": "a5ed6e773abf0f9912f9c98c86bfb5a2baec552935c1b6e420495bac880343ce",
+      "inputCount": 4727,
+      "provenance": "Fresh local execution on this exact clean committed candidate with shared HEAD and tracked inputs fixed. Real Git is used; future task/review/adoption records and capture readers in fixtures are synthetic control proof only."
+    },
+    {
+      "id": "parent-campaign-denial",
+      "command": ".venv/Scripts/python.exe -B -u -m unittest -v tests.foundation.test_ui_change_gate.UiChangeGateTests.test_reviewed_activation_repair_denies_parent_campaign_rewrite_and_restoration",
+      "workingDirectory": ".",
+      "exitCode": 0,
+      "commit": "9106f485d32150943e8fbedd5299d5882021e183",
+      "rawOutput": "artifacts/tmp/W2.A05.T01.parent-campaign-denial-9106f485.log",
+      "rawOutputSha256": "850cb4d511cd40ed4f824df4e222abee82f7f9f6e662c3b5a8e1777307eab55a",
+      "startedAt": "2026-10-05T05:53:04.952693+00:00",
+      "finishedAt": "2026-10-05T05:55:50.576471+00:00",
+      "durationSeconds": 165.624,
+      "producer": "artifacts/tmp/W2.A05.T01.run-selected.py",
+      "producerSha256": "a5ed6e773abf0f9912f9c98c86bfb5a2baec552935c1b6e420495bac880343ce",
+      "inputCount": 4727,
+      "provenance": "Fresh local execution on this exact clean committed candidate with shared HEAD and tracked inputs fixed. Real Git is used; future task/review/adoption records and capture readers in fixtures are synthetic control proof only."
+    },
+    {
+      "id": "parent-history-denial",
+      "command": ".venv/Scripts/python.exe -B -u -m unittest -v tests.foundation.test_ui_change_gate.UiChangeGateTests.test_reviewed_activation_repair_denies_frozen_parent_history_rewrite_and_restoration",
+      "workingDirectory": ".",
+      "exitCode": 0,
+      "commit": "9106f485d32150943e8fbedd5299d5882021e183",
+      "rawOutput": "artifacts/tmp/W2.A05.T01.parent-history-denial-9106f485.log",
+      "rawOutputSha256": "e3ea32167f2d60eb35e3f4769ac21798c69e82ee046ac6c77b6a68216dbae86e",
+      "startedAt": "2026-10-05T05:55:50.631412+00:00",
+      "finishedAt": "2026-10-05T05:57:14.171797+00:00",
+      "durationSeconds": 83.54,
+      "producer": "artifacts/tmp/W2.A05.T01.run-selected.py",
+      "producerSha256": "a5ed6e773abf0f9912f9c98c86bfb5a2baec552935c1b6e420495bac880343ce",
+      "inputCount": 4727,
+      "provenance": "Fresh local execution on this exact clean committed candidate with shared HEAD and tracked inputs fixed. Real Git is used; future task/review/adoption records and capture readers in fixtures are synthetic control proof only."
+    },
+    {
+      "id": "repair-return",
+      "command": ".venv/Scripts/python.exe -B -u -m unittest -v tests.foundation.test_ui_change_gate.UiChangeGateTests.test_reviewed_activation_repair_future_return_keeps_original_tasks_and_source_partition",
+      "workingDirectory": ".",
+      "exitCode": 0,
+      "commit": "9106f485d32150943e8fbedd5299d5882021e183",
+      "rawOutput": "artifacts/tmp/W2.A05.T01.repair-return-9106f485.log",
+      "rawOutputSha256": "275249d658ec0420ccc2e8bc41efc3388d21b13b3bb51f83fb5d5d47e0067956",
+      "startedAt": "2026-10-05T05:57:14.226762+00:00",
+      "finishedAt": "2026-10-05T06:03:58.799367+00:00",
+      "durationSeconds": 404.573,
+      "producer": "artifacts/tmp/W2.A05.T01.run-selected.py",
+      "producerSha256": "a5ed6e773abf0f9912f9c98c86bfb5a2baec552935c1b6e420495bac880343ce",
+      "inputCount": 4727,
+      "provenance": "Fresh local execution on this exact clean committed candidate with shared HEAD and tracked inputs fixed. Real Git is used; future task/review/adoption records and capture readers in fixtures are synthetic control proof only."
+    },
+    {
+      "id": "repair-denials",
+      "command": ".venv/Scripts/python.exe -B -u -m unittest -v tests.foundation.test_ui_change_gate.UiChangeGateTests.test_reviewed_activation_repair_denies_incomplete_actual_delivery tests.foundation.test_ui_change_gate.UiChangeGateTests.test_reviewed_activation_repair_denies_reopened_original_task_and_registry_rewrite tests.foundation.test_ui_change_gate.UiChangeGateTests.test_reviewed_activation_repair_rejects_changed_task_and_slice_reviews",
+      "workingDirectory": ".",
+      "exitCode": 0,
+      "commit": "9106f485d32150943e8fbedd5299d5882021e183",
+      "rawOutput": "artifacts/tmp/W2.A05.T01.repair-denials-9106f485.log",
+      "rawOutputSha256": "17bf5d48b5040b21c3cb95c8b28ab3ee621b510e8b72163765f8247ee2c368ba",
+      "startedAt": "2026-10-05T06:03:58.854024+00:00",
+      "finishedAt": "2026-10-05T06:09:17.880582+00:00",
+      "durationSeconds": 319.027,
+      "producer": "artifacts/tmp/W2.A05.T01.run-selected.py",
+      "producerSha256": "a5ed6e773abf0f9912f9c98c86bfb5a2baec552935c1b6e420495bac880343ce",
+      "inputCount": 4727,
+      "provenance": "Fresh local execution on this exact clean committed candidate with shared HEAD and tracked inputs fixed. Real Git is used; future task/review/adoption records and capture readers in fixtures are synthetic control proof only."
+    },
+    {
+      "id": "repair-security",
+      "command": ".venv/Scripts/python.exe -B -u -m unittest -v tests.foundation.test_ui_change_gate.UiChangeGateTests.test_reviewed_activation_repair_future_security_review_is_required_before_adoption",
+      "workingDirectory": ".",
+      "exitCode": 0,
+      "commit": "9106f485d32150943e8fbedd5299d5882021e183",
+      "rawOutput": "artifacts/tmp/W2.A05.T01.repair-security-9106f485.log",
+      "rawOutputSha256": "36778fffc46c06cedecd8030df5b6b6999e027f1e63da3ff83b2ced62f8fa683",
+      "startedAt": "2026-10-05T06:09:17.935839+00:00",
+      "finishedAt": "2026-10-05T06:13:45.913694+00:00",
+      "durationSeconds": 267.978,
+      "producer": "artifacts/tmp/W2.A05.T01.run-selected.py",
+      "producerSha256": "a5ed6e773abf0f9912f9c98c86bfb5a2baec552935c1b6e420495bac880343ce",
+      "inputCount": 4727,
+      "provenance": "Fresh local execution on this exact clean committed candidate with shared HEAD and tracked inputs fixed. Real Git is used; future task/review/adoption records and capture readers in fixtures are synthetic control proof only."
+    },
+    {
+      "id": "repaired-full-base",
+      "command": ".venv/Scripts/python.exe -B -u -m unittest -v tests.foundation.test_ui_change_gate.UiChangeGateTests.test_reviewed_activation_repair_full_original_base_requires_current_classification",
+      "workingDirectory": ".",
+      "exitCode": 0,
+      "commit": "9106f485d32150943e8fbedd5299d5882021e183",
+      "rawOutput": "artifacts/tmp/W2.A05.T01.repaired-full-base-9106f485.log",
+      "rawOutputSha256": "26ea4be29ff066d2f2aa5396f71244a15d487a5c2c6038983b0dcd15c796d2a0",
+      "startedAt": "2026-10-05T05:52:30.499965+00:00",
+      "finishedAt": "2026-10-05T06:12:40.324082+00:00",
+      "durationSeconds": 1209.824,
+      "producer": "artifacts/tmp/W2.A05.T01.run-selected.py",
+      "producerSha256": "a5ed6e773abf0f9912f9c98c86bfb5a2baec552935c1b6e420495bac880343ce",
+      "inputCount": 4727,
+      "provenance": "Fresh local execution on this exact clean committed candidate with shared HEAD and tracked inputs fixed. Real Git is used; future task/review/adoption records and capture readers in fixtures are synthetic control proof only."
+    },
+    {
+      "id": "legacy-authority",
+      "command": ".venv/Scripts/python.exe -B -u -m unittest -v tests.foundation.test_ui_change_gate.UiChangeGateTests.test_linked_correction_authenticates_without_mutating_origin_metadata tests.foundation.test_ui_change_gate.UiChangeGateTests.test_linked_rejects_authority_and_live_claim_substitutions tests.foundation.test_ui_change_gate.UiChangeGateTests.test_resumed_amendment_schema_is_opt_in_and_cannot_authorize_ordinary_tasks tests.foundation.test_ui_change_gate.UiChangeGateTests.test_intentional_amendment_schema_is_exact_and_cannot_extend_legacy_lanes tests.foundation.test_ui_change_gate.UiChangeGateTests.test_adopted_continuation_schema_is_closed_and_exact_to_original_t01 tests.foundation.test_ui_change_gate.UiChangeGateTests.test_reference_activation_v14_schema_requires_both_closed_authorities tests.foundation.test_ui_change_gate.UiChangeGateTests.test_adopted_continuation_rejects_unreviewed_imported_authority_source tests.foundation.test_ui_change_gate.UiChangeGateTests.test_adopted_continuation_rejects_reviewed_a02_source_outside_six_files tests.foundation.test_ui_change_gate.UiChangeGateTests.test_reference_activation_correction_authenticates_append_only_remediation tests.foundation.test_ui_change_gate.UiChangeGateTests.test_reference_activation_correction_replays_slice_findings_and_canonical_rounds tests.foundation.test_ui_change_gate.UiChangeGateTests.test_reference_activation_correction_requires_separate_checkpoint_review",
+      "workingDirectory": ".",
+      "exitCode": 0,
+      "commit": "9106f485d32150943e8fbedd5299d5882021e183",
+      "rawOutput": "artifacts/tmp/W2.A05.T01.legacy-authority-9106f485.log",
+      "rawOutputSha256": "48f8a46bf61482adcdb8327d84bc01c71dcb94f288af880da401a33b650e1029",
+      "startedAt": "2026-10-05T06:00:40.970780+00:00",
+      "finishedAt": "2026-10-05T06:11:31.924800+00:00",
+      "durationSeconds": 650.954,
+      "producer": "artifacts/tmp/W2.A05.T01.run-selected.py",
+      "producerSha256": "a5ed6e773abf0f9912f9c98c86bfb5a2baec552935c1b6e420495bac880343ce",
+      "inputCount": 4727,
+      "provenance": "Fresh local execution on this exact clean committed candidate with shared HEAD and tracked inputs fixed. Real Git is used; future task/review/adoption records and capture readers in fixtures are synthetic control proof only."
+    },
+    {
+      "id": "adr",
+      "command": ".venv/Scripts/python.exe -B tools/adr_check.py --repo . --base 4e94add8319f72d040786a14f07372d15417be45 --head 9106f485d32150943e8fbedd5299d5882021e183",
+      "workingDirectory": ".",
+      "exitCode": 0,
+      "commit": "9106f485d32150943e8fbedd5299d5882021e183",
+      "rawOutput": "artifacts/tmp/W2.A05.T01.adr-9106f485.log",
+      "rawOutputSha256": "7fffb8f6a10590d9415bf1265334ecc24975d831ac1c6d246eaf40f143cf42fa",
+      "startedAt": "2026-10-05T05:52:30.501287+00:00",
+      "finishedAt": "2026-10-05T05:52:32.831819+00:00",
+      "durationSeconds": 2.331,
+      "producer": "artifacts/tmp/W2.A05.T01.run-selected.py",
+      "producerSha256": "a5ed6e773abf0f9912f9c98c86bfb5a2baec552935c1b6e420495bac880343ce",
+      "inputCount": 4727,
+      "provenance": "Fresh local execution on this exact clean committed candidate with shared HEAD and tracked inputs fixed. Real Git is used; future task/review/adoption records and capture readers in fixtures are synthetic control proof only."
+    },
+    {
+      "id": "ui-authority",
+      "command": ".venv/Scripts/python.exe -B tools/ui_change_gate.py --repo . --base 4e94add8319f72d040786a14f07372d15417be45 --head 9106f485d32150943e8fbedd5299d5882021e183",
+      "workingDirectory": ".",
+      "exitCode": 0,
+      "commit": "9106f485d32150943e8fbedd5299d5882021e183",
+      "rawOutput": "artifacts/tmp/W2.A05.T01.ui-authority-9106f485.log",
+      "rawOutputSha256": "51d44e4b44d31319f3297eb680927db67cba7036d18256b5189469f3e5592a81",
+      "startedAt": "2026-10-05T05:52:32.891316+00:00",
+      "finishedAt": "2026-10-05T05:52:36.285152+00:00",
+      "durationSeconds": 3.394,
+      "producer": "artifacts/tmp/W2.A05.T01.run-selected.py",
+      "producerSha256": "a5ed6e773abf0f9912f9c98c86bfb5a2baec552935c1b6e420495bac880343ce",
+      "inputCount": 4727,
+      "provenance": "Fresh local execution on this exact clean committed candidate with shared HEAD and tracked inputs fixed. Real Git is used; future task/review/adoption records and capture readers in fixtures are synthetic control proof only."
+    },
+    {
+      "id": "ruff",
+      "command": ".venv/Scripts/python.exe -B -m ruff check tools/ui_change_gate.py tests/foundation/test_ui_change_gate.py",
+      "workingDirectory": ".",
+      "exitCode": 0,
+      "commit": "9106f485d32150943e8fbedd5299d5882021e183",
+      "rawOutput": "artifacts/tmp/W2.A05.T01.ruff-9106f485.log",
+      "rawOutputSha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18",
+      "startedAt": "2026-10-05T05:52:36.352975+00:00",
+      "finishedAt": "2026-10-05T05:52:36.856162+00:00",
+      "durationSeconds": 0.503,
+      "producer": "artifacts/tmp/W2.A05.T01.run-selected.py",
+      "producerSha256": "a5ed6e773abf0f9912f9c98c86bfb5a2baec552935c1b6e420495bac880343ce",
+      "inputCount": 4727,
+      "provenance": "Fresh local execution on this exact clean committed candidate with shared HEAD and tracked inputs fixed. Real Git is used; future task/review/adoption records and capture readers in fixtures are synthetic control proof only."
+    },
+    {
+      "id": "format",
+      "command": ".venv/Scripts/python.exe -B -m ruff format --check tools/ui_change_gate.py tests/foundation/test_ui_change_gate.py",
+      "workingDirectory": ".",
+      "exitCode": 0,
+      "commit": "9106f485d32150943e8fbedd5299d5882021e183",
+      "rawOutput": "artifacts/tmp/W2.A05.T01.format-9106f485.log",
+      "rawOutputSha256": "3bc53bf3e981a98a34a852e175bf9b77af841edea74fca595d9aedcbaf9a4938",
+      "startedAt": "2026-10-05T05:52:36.910111+00:00",
+      "finishedAt": "2026-10-05T05:52:37.398766+00:00",
+      "durationSeconds": 0.489,
+      "producer": "artifacts/tmp/W2.A05.T01.run-selected.py",
+      "producerSha256": "a5ed6e773abf0f9912f9c98c86bfb5a2baec552935c1b6e420495bac880343ce",
+      "inputCount": 4727,
+      "provenance": "Fresh local execution on this exact clean committed candidate with shared HEAD and tracked inputs fixed. Real Git is used; future task/review/adoption records and capture readers in fixtures are synthetic control proof only."
+    },
+    {
+      "id": "mypy",
+      "command": ".venv/Scripts/python.exe -B -m mypy tools/ui_change_gate.py tests/foundation/test_ui_change_gate.py",
+      "workingDirectory": ".",
+      "exitCode": 0,
+      "commit": "9106f485d32150943e8fbedd5299d5882021e183",
+      "rawOutput": "artifacts/tmp/W2.A05.T01.mypy-9106f485.log",
+      "rawOutputSha256": "0c37c4158c91ef55c724ba017bf6465f26018199badb08e3ff13f98acdf056c2",
+      "startedAt": "2026-10-05T05:52:37.448884+00:00",
+      "finishedAt": "2026-10-05T05:52:38.438830+00:00",
+      "durationSeconds": 0.99,
+      "producer": "artifacts/tmp/W2.A05.T01.run-selected.py",
+      "producerSha256": "a5ed6e773abf0f9912f9c98c86bfb5a2baec552935c1b6e420495bac880343ce",
+      "inputCount": 4727,
+      "provenance": "Fresh local execution on this exact clean committed candidate with shared HEAD and tracked inputs fixed. Real Git is used; future task/review/adoption records and capture readers in fixtures are synthetic control proof only."
+    },
+    {
+      "id": "diff",
+      "command": "git -c core.safecrlf=false diff --check 4e94add8319f72d040786a14f07372d15417be45 9106f485d32150943e8fbedd5299d5882021e183",
+      "workingDirectory": ".",
+      "exitCode": 0,
+      "commit": "9106f485d32150943e8fbedd5299d5882021e183",
+      "rawOutput": "artifacts/tmp/W2.A05.T01.diff-9106f485.log",
+      "rawOutputSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "startedAt": "2026-10-05T05:52:38.498854+00:00",
+      "finishedAt": "2026-10-05T05:52:38.985805+00:00",
+      "durationSeconds": 0.487,
+      "producer": "artifacts/tmp/W2.A05.T01.run-selected.py",
+      "producerSha256": "a5ed6e773abf0f9912f9c98c86bfb5a2baec552935c1b6e420495bac880343ce",
+      "inputCount": 4727,
+      "provenance": "Fresh local execution on this exact clean committed candidate with shared HEAD and tracked inputs fixed. Real Git is used; future task/review/adoption records and capture readers in fixtures are synthetic control proof only."
+    },
+    {
+      "id": "reference-integrity",
+      "command": ".venv/Scripts/python.exe -B tools/ui_reference_check.py --repo . --reference design/ui-reference --report artifacts/tmp/W2.A05.T01.reference-9106f485.json",
+      "workingDirectory": ".",
+      "exitCode": 0,
+      "commit": "9106f485d32150943e8fbedd5299d5882021e183",
+      "rawOutput": "artifacts/tmp/W2.A05.T01.reference-integrity-9106f485.log",
+      "rawOutputSha256": "446e2d73fca4b010d9ed1ce0f0c848ebbe9456e4d5e77e8269554a6c2a380982",
+      "startedAt": "2026-10-05T05:52:39.036738+00:00",
+      "finishedAt": "2026-10-05T05:52:40.713301+00:00",
+      "durationSeconds": 1.677,
+      "producer": "artifacts/tmp/W2.A05.T01.run-selected.py",
+      "producerSha256": "a5ed6e773abf0f9912f9c98c86bfb5a2baec552935c1b6e420495bac880343ce",
+      "inputCount": 4727,
+      "provenance": "Fresh local execution on this exact clean committed candidate with shared HEAD and tracked inputs fixed. Real Git is used; future task/review/adoption records and capture readers in fixtures are synthetic control proof only."
+    },
+    {
+      "id": "backlog",
+      "command": ".venv/Scripts/python.exe -B tools/taskctl.py --file planning/backlog.yaml validate",
+      "workingDirectory": ".",
+      "exitCode": 0,
+      "commit": "9106f485d32150943e8fbedd5299d5882021e183",
+      "rawOutput": "artifacts/tmp/W2.A05.T01.backlog-9106f485.log",
+      "rawOutputSha256": "6101121f1a3dc921c6611ad107ee9daeb1e1b09311d9e4bf9f7436f000f81679",
+      "startedAt": "2026-10-05T05:52:41.285671+00:00",
+      "finishedAt": "2026-10-05T05:56:37.772883+00:00",
+      "durationSeconds": 236.487,
+      "producer": "artifacts/tmp/W2.A05.T01.run-selected.py",
+      "producerSha256": "a5ed6e773abf0f9912f9c98c86bfb5a2baec552935c1b6e420495bac880343ce",
+      "inputCount": 4727,
+      "provenance": "Fresh local execution on this exact clean committed candidate with shared HEAD and tracked inputs fixed. Real Git is used; future task/review/adoption records and capture readers in fixtures are synthetic control proof only."
+    },
+    {
+      "id": "views",
+      "command": ".venv/Scripts/python.exe -B tools/backlog_views.py --repo . --check",
+      "workingDirectory": ".",
+      "exitCode": 0,
+      "commit": "9106f485d32150943e8fbedd5299d5882021e183",
+      "rawOutput": "artifacts/tmp/W2.A05.T01.views-9106f485.log",
+      "rawOutputSha256": "36ebe8ba5eed16d416087f957ce901132e936a4ed14c97dbcb91651c3e2678aa",
+      "startedAt": "2026-10-05T05:56:37.934247+00:00",
+      "finishedAt": "2026-10-05T05:56:41.552434+00:00",
+      "durationSeconds": 3.618,
+      "producer": "artifacts/tmp/W2.A05.T01.run-selected.py",
+      "producerSha256": "a5ed6e773abf0f9912f9c98c86bfb5a2baec552935c1b6e420495bac880343ce",
+      "inputCount": 4727,
+      "provenance": "Fresh local execution on this exact clean committed candidate with shared HEAD and tracked inputs fixed. Real Git is used; future task/review/adoption records and capture readers in fixtures are synthetic control proof only."
+    },
+    {
+      "id": "site",
+      "command": ".venv/Scripts/python.exe -B tools/plan_review_check.py --repo . --report artifacts/tmp/W2.A05.T01.site-9106f485.json",
+      "workingDirectory": ".",
+      "exitCode": 0,
+      "commit": "9106f485d32150943e8fbedd5299d5882021e183",
+      "rawOutput": "artifacts/tmp/W2.A05.T01.site-9106f485.log",
+      "rawOutputSha256": "d6b4aabfbf04f2e0e52f0737fc127f4236f25f394f67a0092fcd99e5d5de45e3",
+      "startedAt": "2026-10-05T05:56:41.609449+00:00",
+      "finishedAt": "2026-10-05T06:00:40.364292+00:00",
+      "durationSeconds": 238.755,
+      "producer": "artifacts/tmp/W2.A05.T01.run-selected.py",
+      "producerSha256": "a5ed6e773abf0f9912f9c98c86bfb5a2baec552935c1b6e420495bac880343ce",
+      "inputCount": 4727,
+      "provenance": "Fresh local execution on this exact clean committed candidate with shared HEAD and tracked inputs fixed. Real Git is used; future task/review/adoption records and capture readers in fixtures are synthetic control proof only."
+    },
+    {
+      "id": "claim-denials",
+      "command": ".venv/Scripts/python.exe -B -u artifacts/tmp/W2.A05.T01.claim-denials.py 9106f485d32150943e8fbedd5299d5882021e183",
+      "workingDirectory": ".",
+      "exitCode": 0,
+      "commit": "9106f485d32150943e8fbedd5299d5882021e183",
+      "rawOutput": "artifacts/tmp/W2.A05.T01.claim-denials-9106f485.log",
+      "rawOutputSha256": "668222cab4a9dfc2e5c2332d7b2c52d1d5a7920064c0f4ab380db408f5663980",
+      "startedAt": "2026-10-05T06:04:19.491690+00:00",
+      "finishedAt": "2026-10-05T06:05:40.139753+00:00",
+      "durationSeconds": 80.648,
+      "producer": "artifacts/tmp/W2.A05.T01.claim-denials.py",
+      "producerSha256": "84dedf617437949eb1c4c9baf1dae7c76c7f7e0b19012ca88b71aca40fda484e",
+      "inputCount": 4727,
+      "provenance": "Fresh local execution on this exact clean committed candidate with shared HEAD and tracked inputs fixed. Real Git is used; future task/review/adoption records and capture readers in fixtures are synthetic control proof only."
+    }
+  ],
+  "verificationSelection": {
+    "riskAnalysis": "Approved exact five-source A05 control repair. Selected fresh real-Git retained/inert/imported-source history, separate claim/owner/lease, immutable review, security-before-adoption, return and full-original-base cases close the material criteria. E06 adverse-history and later campaign-identity omissions were reproduced and regressed before narrow corrections; unchanged checks on defective candidates were stopped, not counted as passes. Shared historical review-helper changes justify selected legacy v1.0-v1.4 regressions. Actual task-base ADR/UI, reference integrity, Python quality and canonical planning checks are directly affected. All qualifying checks are fresh; no installed-runtime closure or receipt reuse is asserted.",
+    "selectedCommandIds": [
+      "foundation:unit",
+      "foundation:adr",
+      "foundation:ui-change",
+      "foundation:quality",
+      "foundation:backlog",
+      "foundation:backlog-views",
+      "foundation:ui-reference"
+    ],
+    "deferred": [
+      "Actual T02 standard-label/browser naming and fresh official33/66 accessibility are next-task criteria; T01 edits no conformance checker or approved markup.",
+      "Actual A05 integrated S01/exit/security/adoption and separate A03 activation, fresh actual A03 F01 replay/S01-review02/exit/security/adoption are subsequent real gates.",
+      "Original CAP-05.S01.T01 native/Core/D3D and joined CAP-04.S05 proof, remaining product slices and fresh full W2 security/privacy/rights/accessibility/performance/packaging/profile/independent-Wave/human-release qualification remain due.",
+      "Full unrelated repository/product/native/dependency profiles are deferred to their required later stages; this approved task changes no product/runtime/dependency/toolchain."
+    ]
+  },
+  "adverseAttempts": [
+    {
+      "path": "artifacts/tmp/W2.A05.T01.history-da448530.results.json",
+      "sha256": "0b0357d14814a264b12a8002e3310618b4def46549c29602232783cef1b7da4a",
+      "disposition": "Prior candidate observations only: all other selected checks passed, including full-original-base; preceding-authority exited 1 because its approved-header fixture indexed a nonexistent contributions field before its denial assertion. Retain the actual failure; correct the fixture to challenge immutable kind. No prior PASS is presented as fresh final-candidate proof."
+    },
+    {
+      "path": "artifacts/tmp/W2.A05.T01.repair-da448530.results.json",
+      "sha256": "b5d7c23e85959f9c3d408c32c4803d7879a9c3a68f3e45bb4fb72a6e9f706fb8",
+      "disposition": "Prior candidate observations only: all other selected checks passed, including full-original-base; preceding-authority exited 1 because its approved-header fixture indexed a nonexistent contributions field before its denial assertion. Retain the actual failure; correct the fixture to challenge immutable kind. No prior PASS is presented as fresh final-candidate proof."
+    },
+    {
+      "path": "artifacts/tmp/W2.A05.T01.full-base-da448530.results.json",
+      "sha256": "bddd33ba915300f87ced85ae67712bd027858b72ad172d0d70d281bfc737dfbc",
+      "disposition": "Prior candidate observations only: all other selected checks passed, including full-original-base; preceding-authority exited 1 because its approved-header fixture indexed a nonexistent contributions field before its denial assertion. Retain the actual failure; correct the fixture to challenge immutable kind. No prior PASS is presented as fresh final-candidate proof."
+    },
+    {
+      "path": "artifacts/tmp/W2.A05.T01.compatibility-da448530.results.json",
+      "sha256": "187cebc8b44921ada2904f06c6741b066ea9207ab417c795206e2dd34e3288a3",
+      "disposition": "Prior candidate observations only: all other selected checks passed, including full-original-base; preceding-authority exited 1 because its approved-header fixture indexed a nonexistent contributions field before its denial assertion. Retain the actual failure; correct the fixture to challenge immutable kind. No prior PASS is presented as fresh final-candidate proof."
+    },
+    {
+      "path": "artifacts/tmp/W2.A05.T01.controls-da448530.results.json",
+      "sha256": "fb4f7e7daf0e4a5bec57c75f82e567bdb857a8a50e0971cb1c7f57a971c973dc",
+      "disposition": "Prior candidate observations only: all other selected checks passed, including full-original-base; preceding-authority exited 1 because its approved-header fixture indexed a nonexistent contributions field before its denial assertion. Retain the actual failure; correct the fixture to challenge immutable kind. No prior PASS is presented as fresh final-candidate proof."
+    },
+    {
+      "path": "artifacts/tmp/W2.A05.T01.planning-da448530.results.json",
+      "sha256": "c7ba864ae68bc374b53c1dc117675bf624325a764deefd62f8ddaa31da474a72",
+      "disposition": "Prior candidate observations only: all other selected checks passed, including full-original-base; preceding-authority exited 1 because its approved-header fixture indexed a nonexistent contributions field before its denial assertion. Retain the actual failure; correct the fixture to challenge immutable kind. No prior PASS is presented as fresh final-candidate proof."
+    },
+    {
+      "path": "artifacts/tmp/W2.A05.T01.claim-denials-da448530.results.json",
+      "sha256": "2246fb74258dab30bb050ede646eba4582fe6719726304149025bb7cb9ebf81c",
+      "disposition": "Prior candidate observations only: all other selected checks passed, including full-original-base; preceding-authority exited 1 because its approved-header fixture indexed a nonexistent contributions field before its denial assertion. Retain the actual failure; correct the fixture to challenge immutable kind. No prior PASS is presented as fresh final-candidate proof."
+    },
+    {
+      "path": "artifacts/tmp/W2.A05.T01.history-0d23b4b4.results.json",
+      "sha256": "db5d478abc8af9c1ce0e7a3701b0ffd202fbbdf863ed7e52f3dac82bbd223944",
+      "disposition": "Historical nonqualifying candidate: projection fixture mismatch and genuine post-activation owner denial failure. Full-base/compatibility terminated partial with actual nonzero receipts, never passes."
+    },
+    {
+      "path": "artifacts/tmp/W2.A05.T01.repair-0d23b4b4.results.json",
+      "sha256": "f1db876cf1aa60a27fb9c5ce0f1846d2c00d83764a57aabcc19fc1801202a1f5",
+      "disposition": "Historical nonqualifying candidate: projection fixture mismatch and genuine post-activation owner denial failure. Full-base/compatibility terminated partial with actual nonzero receipts, never passes."
+    },
+    {
+      "path": "artifacts/tmp/W2.A05.T01.full-base-0d23b4b4.results.json",
+      "sha256": "7059f2cf1a6754630134851448e2e678ac293bee609d92aad0d286457f90fb1e",
+      "disposition": "Historical nonqualifying candidate: projection fixture mismatch and genuine post-activation owner denial failure. Full-base/compatibility terminated partial with actual nonzero receipts, never passes."
+    },
+    {
+      "path": "artifacts/tmp/W2.A05.T01.compatibility-0d23b4b4.results.json",
+      "sha256": "1402da43f456a6edb70f5cf2bcc842c86f6a39fec98c72e3982976d4d13b7ee9",
+      "disposition": "Historical nonqualifying candidate: projection fixture mismatch and genuine post-activation owner denial failure. Full-base/compatibility terminated partial with actual nonzero receipts, never passes."
+    },
+    {
+      "path": "artifacts/tmp/W2.A05.T01.history-9633bb05.results.json",
+      "sha256": "d62b721be0a456e672fc835c3fcd5602870a96364f634c6e024c382e51692ed4",
+      "disposition": "Historical nonqualifying candidate: prior denial corrections passed; independent review identified live-state fixture incompatibility. Remaining owned checks stopped with partial nonzero receipts, not completed qualification."
+    },
+    {
+      "path": "artifacts/tmp/W2.A05.T01.repair-9633bb05.results.json",
+      "sha256": "8ec6c12b032f317a553086a8a05d33709bf967ec80675863d83b59edc6d5e8db",
+      "disposition": "Historical nonqualifying candidate: prior denial corrections passed; independent review identified live-state fixture incompatibility. Remaining owned checks stopped with partial nonzero receipts, not completed qualification."
+    },
+    {
+      "path": "artifacts/tmp/W2.A05.T01.planning-9633bb05.results.json",
+      "sha256": "4273f0b3154cecfda009726677573cf39b4a84606057c146b02b1d7df8cfbbc5",
+      "disposition": "Historical nonqualifying candidate: prior denial corrections passed; independent review identified live-state fixture incompatibility. Remaining owned checks stopped with partial nonzero receipts, not completed qualification."
+    },
+    {
+      "path": "artifacts/tmp/W2.A05.T01.campaign-characterization-01.json",
+      "sha256": "710be204e4ecf932b80796ce7aeb20d1faee015220a28162b374fd023516c94a",
+      "disposition": "Regression-first adverse characterization before the campaign identity or completed-state fixture correction, respectively; not current-candidate qualification."
+    },
+    {
+      "path": "artifacts/tmp/W2.A05.T01.fixture-characterization-01.json",
+      "sha256": "89c6898d69eccfa0b4d5bafc156a77b01450a3f90d99eb988504f24d7b260af0",
+      "disposition": "Regression-first adverse characterization before the campaign identity or completed-state fixture correction, respectively; not current-candidate qualification."
+    }
+  ],
+  "scopeDeviation": "None. The control attack fixture explicitly proves that its path is absent from the task net inventory; the approved-header attack now asserts and mutates actual immutable kind instead of indexing absent contributions. No valid denial was removed or weakened. f797 E06 advisory gap, original regression failure, exploratory fixture/setup failures and partial known-defective qualifications are retained in the task worksheet and ignored raw attempts. The owner boundary forbids further framework development after A05.",
+  "proofLimitations": [
+    "Future independent task/S01/exit/security reviews, adoption/activation and capture readers in disposable fixtures are synthetic control proof only. No actual later transition or product/native/Wave qualification is inferred.",
+    "The classification negative tests Git blob/hash substitution at the unchanged classification helper using the authenticated positive rangeAuthority. It does not assert a second full-root run or boolean semantic classification proof.",
+    "The current A03/W2 paused holds and original CAP-05.S01.T01 blocked base6506 remain. Expanded actual independent task disposition is required before T02."
+  ],
+  "reviewerDisposition": {
+    "status": "pending-review",
+    "requiredGate": "expanded-independent-control-security-ADR-review",
+    "openFindingIds": [],
+    "note": "Review exact candidate, actual frozen submitted state, criterion mapping, raw PASS receipts and both ignored producers. Preserve advisory/history/owner gaps and adverse attempts honestly; actual later integration and release gates remain separate."
+  }
+}

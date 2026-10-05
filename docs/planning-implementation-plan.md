@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: f96d8bbe439512411a97e0307d994580f9e270a400a09777b93c6f18434a0e54
+source_sha256: 3c14d05abca824b1056c366fbc4342aa938787f1611769318f6282155d6f02d9
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -3089,7 +3089,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 ### - [ ] W2.A05.T01 - Authenticate reviewed inert projection history and exact repair delivery
 
-**Status / owner / review:** `IN_PROGRESS` / codex-w2-implementation / - (`-`)
+**Status / owner / review:** `REVIEW` / codex-w2-implementation / - (`-`)
 
 **Dependencies:** `W2.A05.B00`
 
@@ -3109,13 +3109,33 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - Focused real-Git exact retained-range positive, frozen byte/approval/task/source partition, projection and hidden-source denials; incremental old v1.0-v1.4 regressions.
 - Exact candidate ADR/UI, affected Python quality, diff, backlog/views/site and independent expanded control/security review. Actual future adoption/return closure remains later actual integration proof.
 
+**Evidence:**
+
+- `artifacts/evidence/W2.A05.T01.json` at `9106f485d32150943e8fbedd5299d5882021e183`
+
 #### Review history — W2.A05.T01
 
-**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+**Review mode:** `append-only v1` / 0 completed round(s)
+
+**Current immutable submission awaiting review:** `R01` / packet SHA-256 `f3e47146ffbfc75b15f21959c3ae4a80a0c6614b76cc480ad7ab804ae4253a4f`
+
+- Candidate / base / branch: `9106f485d32150943e8fbedd5299d5882021e183` / `4e94add8319f72d040786a14f07372d15417be45` / `codex/w2-implementation`
+- Submitted by / at: codex-w2-implementation / `2026-10-05T06:15:46+00:00`
+- Evidence: `artifacts/evidence/W2.A05.T01.json` / `f10c3a49370f0d1c98e735506b28c3f7273350a4d9db76a2a944243120a84652` / `9106f485d32150943e8fbedd5299d5882021e183`
+- Acceptance-criteria SHA-256: `885665f30a2fe35a37fe8dc1031b383d51b82d6199d78927c395d98f71362e2e`
+- Verification-selection SHA-256: `62bbc70f3f4290dfb8248cefeeae312f6bc5f8b7f76c6275f3a060fb0f400819`
+- Changed paths: `artifacts/evidence/W2.A05.T01.task-start.md`, `docs/adr/ADR-0041-authenticate-reviewed-activation-control-repairs.md`, `docs/adr/index.json`, `docs/automation/design-first-ui-changes.md`, `docs/planning-implementation-plan.md`, `planning/backlog.yaml`, `planning/review-site/enablers/ECR-0013.html`, `planning/review-site/manifest.json`, `planning/status-summary.md`, `tests/foundation/test_ui_change_gate.py`, `tools/ui_change_gate.py`
+- Selected checks: `.venv/Scripts/python.exe -B -u -m unittest -v tests.foundation.test_ui_change_gate.UiChangeGateTests.test_reviewed_activation_inert_map_rejects_rewritten_bindings_and_predecessors tests.foundation.test_ui_change_gate.UiChangeGateTests.test_reviewed_activation_inert_map_does_not_hide_new_source_or_same_name_output`, `.venv/Scripts/python.exe -B -u -m unittest -v tests.foundation.test_ui_change_gate.UiChangeGateTests.test_reviewed_activation_inert_history_preserves_actual_net_inventory`, `.venv/Scripts/python.exe -B -u -m unittest -v tests.foundation.test_ui_change_gate.UiChangeGateTests.test_reviewed_activation_preceding_sources_preserve_adverse_history_and_deny_substitution tests.foundation.test_ui_change_gate.UiChangeGateTests.test_reviewed_activation_preceding_sources_deny_modes_omissions_and_extra_history`, `.venv/Scripts/python.exe -B -u -m unittest -v tests.foundation.test_ui_change_gate.UiChangeGateTests.test_reviewed_activation_repair_fixture_preserves_claim_prefix_after_task_approval`, `.venv/Scripts/python.exe -B -u -m unittest -v tests.foundation.test_ui_change_gate.UiChangeGateTests.test_reviewed_activation_repair_denies_parent_campaign_rewrite_and_restoration`, `.venv/Scripts/python.exe -B -u -m unittest -v tests.foundation.test_ui_change_gate.UiChangeGateTests.test_reviewed_activation_repair_denies_frozen_parent_history_rewrite_and_restoration`, `.venv/Scripts/python.exe -B -u -m unittest -v tests.foundation.test_ui_change_gate.UiChangeGateTests.test_reviewed_activation_repair_future_return_keeps_original_tasks_and_source_partition`, `.venv/Scripts/python.exe -B -u -m unittest -v tests.foundation.test_ui_change_gate.UiChangeGateTests.test_reviewed_activation_repair_denies_incomplete_actual_delivery tests.foundation.test_ui_change_gate.UiChangeGateTests.test_reviewed_activation_repair_denies_reopened_original_task_and_registry_rewrite tests.foundation.test_ui_change_gate.UiChangeGateTests.test_reviewed_activation_repair_rejects_changed_task_and_slice_reviews`, `.venv/Scripts/python.exe -B -u -m unittest -v tests.foundation.test_ui_change_gate.UiChangeGateTests.test_reviewed_activation_repair_future_security_review_is_required_before_adoption`, `.venv/Scripts/python.exe -B -u -m unittest -v tests.foundation.test_ui_change_gate.UiChangeGateTests.test_reviewed_activation_repair_full_original_base_requires_current_classification`, `.venv/Scripts/python.exe -B -u -m unittest -v tests.foundation.test_ui_change_gate.UiChangeGateTests.test_linked_correction_authenticates_without_mutating_origin_metadata tests.foundation.test_ui_change_gate.UiChangeGateTests.test_linked_rejects_authority_and_live_claim_substitutions tests.foundation.test_ui_change_gate.UiChangeGateTests.test_resumed_amendment_schema_is_opt_in_and_cannot_authorize_ordinary_tasks tests.foundation.test_ui_change_gate.UiChangeGateTests.test_intentional_amendment_schema_is_exact_and_cannot_extend_legacy_lanes tests.foundation.test_ui_change_gate.UiChangeGateTests.test_adopted_continuation_schema_is_closed_and_exact_to_original_t01 tests.foundation.test_ui_change_gate.UiChangeGateTests.test_reference_activation_v14_schema_requires_both_closed_authorities tests.foundation.test_ui_change_gate.UiChangeGateTests.test_adopted_continuation_rejects_unreviewed_imported_authority_source tests.foundation.test_ui_change_gate.UiChangeGateTests.test_adopted_continuation_rejects_reviewed_a02_source_outside_six_files tests.foundation.test_ui_change_gate.UiChangeGateTests.test_reference_activation_correction_authenticates_append_only_remediation tests.foundation.test_ui_change_gate.UiChangeGateTests.test_reference_activation_correction_replays_slice_findings_and_canonical_rounds tests.foundation.test_ui_change_gate.UiChangeGateTests.test_reference_activation_correction_requires_separate_checkpoint_review`, `.venv/Scripts/python.exe -B tools/adr_check.py --repo . --base 4e94add8319f72d040786a14f07372d15417be45 --head 9106f485d32150943e8fbedd5299d5882021e183`, `.venv/Scripts/python.exe -B tools/ui_change_gate.py --repo . --base 4e94add8319f72d040786a14f07372d15417be45 --head 9106f485d32150943e8fbedd5299d5882021e183`, `.venv/Scripts/python.exe -B -m ruff check tools/ui_change_gate.py tests/foundation/test_ui_change_gate.py`, `.venv/Scripts/python.exe -B -m ruff format --check tools/ui_change_gate.py tests/foundation/test_ui_change_gate.py`, `.venv/Scripts/python.exe -B -m mypy tools/ui_change_gate.py tests/foundation/test_ui_change_gate.py`, `git -c core.safecrlf=false diff --check 4e94add8319f72d040786a14f07372d15417be45 9106f485d32150943e8fbedd5299d5882021e183`, `.venv/Scripts/python.exe -B tools/ui_reference_check.py --repo . --reference design/ui-reference --report artifacts/tmp/W2.A05.T01.reference-9106f485.json`, `.venv/Scripts/python.exe -B tools/taskctl.py --file planning/backlog.yaml validate`, `.venv/Scripts/python.exe -B tools/backlog_views.py --repo . --check`, `.venv/Scripts/python.exe -B tools/plan_review_check.py --repo . --report artifacts/tmp/W2.A05.T01.site-9106f485.json`, `.venv/Scripts/python.exe -B -u artifacts/tmp/W2.A05.T01.claim-denials.py 9106f485d32150943e8fbedd5299d5882021e183`
+- Deferred checks: `Actual T02 standard-label/browser naming and fresh official33/66 accessibility are next-task criteria; T01 edits no conformance checker or approved markup.`, `Actual A05 integrated S01/exit/security/adoption and separate A03 activation, fresh actual A03 F01 replay/S01-review02/exit/security/adoption are subsequent real gates.`, `Original CAP-05.S01.T01 native/Core/D3D and joined CAP-04.S05 proof, remaining product slices and fresh full W2 security/privacy/rights/accessibility/performance/packaging/profile/independent-Wave/human-release qualification remain due.`, `Full unrelated repository/product/native/dependency profiles are deferred to their required later stages; this approved task changes no product/runtime/dependency/toolchain.`
+- Selection rationale: Approved exact five-source A05 control repair. Selected fresh real-Git retained/inert/imported-source history, separate claim/owner/lease, immutable review, security-before-adoption, return and full-original-base cases close the material criteria. E06 adverse-history and later campaign-identity omissions were reproduced and regressed before narrow corrections; unchanged checks on defective candidates were stopped, not counted as passes. Shared historical review-helper changes justify selected legacy v1.0-v1.4 regressions. Actual task-base ADR/UI, reference integrity, Python quality and canonical planning checks are directly affected. All qualifying checks are fresh; no installed-runtime closure or receipt reuse is asserted.
+- Prior round / replayed open findings: `-` / -
+- Root-cause escalation: -
 
 **Current latest-review projection:** `-` by - at `-`
 
 **Latest notes:** -
+
+**Currently open findings:** -
 
 ### - [ ] W2.A05.T02 - Recognize real associated labels in the static accessibility checker
 
