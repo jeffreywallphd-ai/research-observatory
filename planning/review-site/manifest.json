@@ -41912,7 +41912,7 @@
         {
           "task_id": "W2.A05.T01",
           "title": "Authenticate reviewed inert projection history and exact repair delivery",
-          "status": "READY",
+          "status": "IN_PROGRESS",
           "mode": "latest-review-only",
           "latest_review": {
             "reviewer": null,

@@ -54556,14 +54556,17 @@ wave_amendments:
     - Exact candidate ADR/UI, affected Python quality, diff, backlog/views/site and independent expanded control/security
       review. Actual future adoption/return closure remains later actual integration proof.
     packet_task_sha256: edbc5aa6378e46c74d985ebf722a51571114cf6418d23126e92058cf7cb7d780
-    status: READY
-    owner: null
-    branch: null
-    base_sha: null
-    worktree: null
-    lease: null
-    started_at: null
-    updated_at: '2026-10-04T23:07:30+00:00'
+    status: IN_PROGRESS
+    owner: codex-w2-implementation
+    branch: codex/w2-implementation
+    base_sha: 4e94add8319f72d040786a14f07372d15417be45
+    worktree: .
+    lease:
+      claimed_by: codex-w2-implementation
+      claimed_at: '2026-10-05T03:21:19+00:00'
+      expires_at: '2026-10-05T11:21:19+00:00'
+    started_at: '2026-10-05T03:21:19+00:00'
+    updated_at: '2026-10-05T03:21:19+00:00'
     completed_at: null
     blocker: null
     implementation_notes: ''

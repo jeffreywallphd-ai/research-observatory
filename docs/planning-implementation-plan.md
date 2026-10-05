@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: c049e2f3b00c3fc4a619de9db3a2ead9f4cffcdea17d42780411ce07243e5174
+source_sha256: f96d8bbe439512411a97e0307d994580f9e270a400a09777b93c6f18434a0e54
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -3089,7 +3089,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 ### - [ ] W2.A05.T01 - Authenticate reviewed inert projection history and exact repair delivery
 
-**Status / owner / review:** `READY` / - / - (`-`)
+**Status / owner / review:** `IN_PROGRESS` / codex-w2-implementation / - (`-`)
 
 **Dependencies:** `W2.A05.B00`
 
