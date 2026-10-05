@@ -1,0 +1,88 @@
+{
+  "task_id": "W2.A05.T02",
+  "attempt_id": "R01",
+  "candidate_commit": "03e501c4550c7aa61e1e60827d49f7174faab1ef",
+  "base_commit": "a1105c306178b6c5f10d0107f244d3e14e2d401d",
+  "submission_record_commit": "ba1e0d17bf2454eccd66152e5d987478546f5bab",
+  "reviewer": "agent:/root/a05_t02_review",
+  "result": "approved",
+  "approvalAvailable": true,
+  "evidence_path": "artifacts/evidence/W2.A05.T02.json",
+  "evidence_sha256": "cf0c65d9cd8f7cf70d9855d9d5016d01db35c3297eee876dba6854b8fcf44600",
+  "packet_sha256": "7d146fa976c5a8b5bf9a9304fac5e99edef7805c5c9d8c211e9d34993cb24618",
+  "acceptance_criteria_sha256": "3969c625a2b929618115633b4376150c6a26ce690179af8def029fceed90c609",
+  "selection_sha256": "942d2236c826d3ca8548b9e9eeca2696de6d235466208b4692f43800776f5cc8",
+  "notes": "Independent expanded accessibility/control/ADR/evidence review of exact W2.A05.T02 source candidate 03e501c4 and its committed supported REVIEW submission ba1e0d17. Frozen criteria equal the immutable owner-approved ECR-0013 task. The two-commit claim-base range has exactly four approved regular source paths and six task-owned or supported claim/planning outputs; no intermediate source add-revert or outside-source edit. Independently approved T01 is DONE and local main is its a1105c30 disposition before the separate T02 claim. The static helper changes only the existing label slot, retains the established ordered name sources, uses identity and first-ID/first-labelable-descendant association, and rejects the required adverse associations without weakening duplicate-ID, reference-drift or unnamed-control failures. The 1364-byte ADR41 body append preserves its entire prior prefix, Proposed metadata and index. All 15 qualifying raw output hashes, all three qualifying producer hashes, six execution receipt digests, both detailed reports and five listed adverse evidence digests independently match. Retained verbose logs contain six naming and four compatibility methods passing with no skips. Actual pinned Windows x64 Chromium records the unchanged and label-after-control positives plus label-removal/wrong-target negatives; negative names truthfully retain the UA Choose File fallback. The unmodified official accessibility command exits 0 over 33 pages and 66 responsive/visual states with empty errors. Selected quality, ADR, UI authority, reference, backlog, views and site proof pass. The actual five-method/25-failure test-first result, prior official failure and initial ignored invariant-script KeyError remain distinct adverse observations. Only this canonical ledger is authored; no source, manifest, producer, backlog or reference authorship, no suite reruns and no task-state mutation. Approval is limited to this task-stage implementation and evidence. Actual A05 integrated S01/exit/separate security/adoption and paused-A03 return, then separate A03 activation/fresh F01 replay/review-02/exit/security/adoption, ordinary W2 resume, product/native/Core and Wave qualification, and human release remain due. No additional framework development is authorized after A05.",
+  "acceptance_reviews": [
+    {
+      "criterion_index": 1,
+      "result": "satisfied",
+      "assessment": "The immutable diff replaces only the wrapping-label name slot with same-document native associations. Explicit labels use the first exact matching ID and object identity; absent for uses the first native labelable descendant. Document-order label text remains in the same aria/title/alt/value/placeholder/label/content order. Parsed hidden/inert/template markers, ancestors, direct inline hiding, comments, empty labels, wrong targets, hidden inputs and non-labelable associations deny. The six fresh naming methods include before/after positives, first-ID and wrapping identity, actual approved file input and a copied-fixture pipeline denial asserting duplicate IDs, reference-name drift and unnamed input together. The narrow association rules agree with the cited official HTML label specification; no general browser-name redesign or approved markup change is introduced."
+    },
+    {
+      "criterion_index": 2,
+      "result": "satisfied",
+      "assessment": "Direct Git history and endpoint comparisons authenticate the exact four source paths plus six worksheet/claim/generated outputs, all regular blobs. ADR41 adds only the 1364-byte T02 implementation/verification body, with the complete earlier reviewed prefix, Proposed metadata and index bytes unchanged. Every other ADR, reference/witness/baseline/capture setting, product/native/Core and controller input remains outside the diff. Four fresh compatibility methods retain malformed-history, exact-witness, reachable-baseline and same-reference writer denials. The actual reference checker authenticates approved 1.8 package cd8995fd; ADR checking passes over 41 indexed records and the exact ten-path range."
+    },
+    {
+      "criterion_index": 3,
+      "result": "satisfied",
+      "assessment": "All 15 manifest checks match six retained fresh execution receipts at candidate 03e501c4, with stableCandidate true and 4730 tracked inputs. All raw output and producer digests independently recompute. The real Windows x64 producer asserts installed Playwright 1.58.0 and Chromium 145.0.7632.6 against the unchanged configured pins and authenticates reference/built fixture bytes. Four actual AX cases expose the approved name for unchanged/after-control association and lose that human label on removal/wrong target. The unchanged official entry point independently exits 0 with ok true, empty errors, 33 pages and 66 responsive plus visual cases. Affected Python quality, diff, ADR/UI authority, reference integrity and planning checks pass. Historical actual official exit1, its raw/report bytes and the test-first five-method/25-failure observation are retained without relabeling them as qualification."
+    },
+    {
+      "criterion_index": 4,
+      "result": "satisfied",
+      "assessment": "Task-stage ordering and holds are preserved. Candidate and committed submission retain the independently approved DONE T01, genuine separate owned T02 claim and current R01 REVIEW packet, whole frozen PAUSED A03 with both original tasks DONE, adopted A04, ordinary paused W2 and the original blocked task. This ledger supplies the required expanded independent T02 disposition only. Integrated A05 S01, exit, separately committed security review and supported adoption/paused-parent return remain mandatory subsequent operations; separate A03 activation and actual fresh F01 replay/review-02/exit/security/adoption remain later. No future disposition, finding closure, product/Wave completion or release is inferred."
+    }
+  ],
+  "independent_checks": [
+    {
+      "check": "Immutable approved authority and exact submission bindings",
+      "result": "passed",
+      "observation": "Owner approval at b54f24c2 binds ECR-0013 packet at 55c6389c with raw digest 56f521d7; the owner record digest is 9ad5b3f5. Frozen task criteria exactly equal the approved packet. Submission ba1e0d17 is the direct child of source candidate and changes only the canonical evidence manifest, supported REVIEW backlog transition and two generated backlog views. Committed/physical evidence cf0c65d9, independently recomputed R01 packet 7d146fa9, criteria 3969c625 and selection 942d2236 all match. Read-only task_submission_packet_errors with an explicit repository returned no errors. There are no prior task review rounds or open task finding IDs."
+    },
+    {
+      "check": "Source history, predecessor preservation and authority boundaries",
+      "result": "passed",
+      "observation": "The range has exactly claim/worksheet commit 6910300c followed by the four-source candidate 03e501c4; no hidden intermediate source history exists. All source bytes equal the direct-child submission. Independent Git/YAML comparisons preserve the complete frozen A03 771e54 snapshot, all other amendments including adopted A04, every non-amendment field and T01. Candidate-to-submission equality permits only actual T02 submission fields. T01 is DONE/approved and local main points to a1105c30, the pre-T02 claim base. The accepted ADR-0001/0003/0004 contracts, ADR41 append/index and source envelopes remain intact."
+    },
+    {
+      "check": "Execution producers, receipts and selected coverage",
+      "result": "passed",
+      "observation": "Reviewed run-selected.py, browser-names.py and source-invariants.py. They execute the declared subprocesses, preserve unique outputs, report actual return codes/timing, check candidate/input stability and reject failure or drift. All 15 raw hashes and receipt fields equal the manifest; six receipt files and all three producers independently hash as recorded. Logs show six naming and four compatibility tests without skips, official accessibility with empty errors, affected quality and control passes, and the 497-page planning site with no errors/warnings. Official broad accessibility is explicitly required by criterion 3; unrelated full profiles and unchanged T01 suite reruns are correctly deferred. This review authenticates retained owner executions, without claiming reviewer reruns or installed-runtime closure for reuse."
+    },
+    {
+      "check": "Real browser observations and evidence limits",
+      "result": "passed",
+      "observation": "The actual pinned-browser producer uses the current load_context/new_page/set_page and authenticates unchanged fixture hashes. Both positive AX observations name the file input Local full-text file with native labelfor source; label removal and wrong-target cases return Choose File with zero approved-label locator matches. Assertions preserve that real fallback instead of inventing an empty AX name. The official command performs the full current page/responsive/visual comparison independently. Copied fixture denials and the exact-witness mock remain unit/component proof, distinct from real browser and native/Core qualification."
+    },
+    {
+      "check": "Adverse observations and review independence",
+      "result": "passed",
+      "observation": "All five manifest-listed adverse digests and the characterization raw log digest match. The characterization log records Ran 5 tests and FAILED with 25 failures. The prior A03 official exit1 remains immutable; the initial ignored source-invariants-01.py diagnostic and tool-transcript-only KeyError are disclosed without an invented raw report. One read-only reviewer diagnostic initially compared the whole A05 record to the pre-claim base too strictly; inspection showed only supported T02 claim fields changed, and the corrected preservation check passed. This is a reviewer assertion mistake, not a new product failure or qualifying execution. Reviewer agent:/root/a05_t02_review differs from the task owner and authored no implementation, qualifying producer or manifest. Only the canonical review ledger is written."
+    }
+  ],
+  "qualifying_producers": [
+    {"path": "artifacts/tmp/W2.A05.T02.run-selected.py", "sha256": "25d5866fcfdcaf9ee7633f0b7dc3589e6be940adcbf2a789f42ec518a1d7d307"},
+    {"path": "artifacts/tmp/W2.A05.T02.browser-names.py", "sha256": "d62650d3894e0ae4f2a83834b27d710cab7488feb99c8abf24073492c2fcb2f0"},
+    {"path": "artifacts/tmp/W2.A05.T02.source-invariants.py", "sha256": "01a9f370b4dc926b1c8d62ac7977fe44df8e29bfec45b10bbdbdfcb7d53f612d"}
+  ],
+  "qualifying_execution_receipts": [
+    {"path": "artifacts/tmp/W2.A05.T02.accessibility-03e501c4.results.json", "sha256": "dac95fba02b594482286f03200b1ef2b857da2cb8bfe2fcef94182f533e64625"},
+    {"path": "artifacts/tmp/W2.A05.T02.compatibility-03e501c4.results.json", "sha256": "f79c1bc43c28e841903d37f4f54eeb72f5b53d47e8c6901c2d2308c3757c9f01"},
+    {"path": "artifacts/tmp/W2.A05.T02.controls-03e501c4.results.json", "sha256": "bcd8718e64046fd9435fe67c584a64aa61a5b3efc1414d5d9b2f25a50dbcf98e"},
+    {"path": "artifacts/tmp/W2.A05.T02.invariants-03e501c4.results.json", "sha256": "6608b408b0338910786841c4ae12fe69ff91a6cbd938ec022261583281ae4828"},
+    {"path": "artifacts/tmp/W2.A05.T02.names-03e501c4.results.json", "sha256": "5eef831255bb97c8e32c90f5aa08ceda90970913b58d7bf4de09aaae9e096f8e"},
+    {"path": "artifacts/tmp/W2.A05.T02.planning-03e501c4.results.json", "sha256": "2329ae69e903517bd404c7737cd558007a34bab020194fa23662cd807956984e"}
+  ],
+  "primary_source": "https://html.spec.whatwg.org/multipage/forms.html#the-label-element",
+  "proof_limits": [
+    "Static visibility covers parsed hidden/aria-hidden/inert/template markers, ancestors and direct inline hiding. Arbitrary stylesheet visibility, custom labelable elements and a complete browser accessible-name algorithm are outside the native-label repair.",
+    "All task qualification is retained fresh owner execution at 03e501c4. Review inspected immutable source/submission and authenticated producers/raw receipts read-only; no unchanged broad suites were rerun and no runtime-input reuse authority is claimed.",
+    "Task-range UI authority reports uiFiles:[] and is an authority check. It is not complete desktop, native/Core, product or Wave conformance.",
+    "Actual A05 S01/exit/separate security/adoption and exact paused-A03 return, later separate A03 activation/fresh finding replay/review-02/exit/security/adoption, ordinary W2 resume and all remaining product/Wave/human release gates remain pending. A03 review-01 and its open finding remain immutable.",
+    "Owner authorization excludes further optional automation/framework development after A05. This task disposition grants no new scope or release authority."
+  ],
+  "findings": [],
+  "closures": []
+}
