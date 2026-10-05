@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 11ca028d5f2e3c048147badefa491481ad2d30df33706baef8b0c0a306140f6c
+source_sha256: fee2588651588647c75bd4cb33032caa8f9b4b913a0d5c34dc475afa9de65f41
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -54,7 +54,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 | `W2` | `W2.A02` | `ECR-0010` | `planning/wave-amendment-approvals/W2.A02.json` | `ADOPTED` |
 | `W2` | `W2.A03` | `ECR-0011` | `planning/wave-amendment-approvals/W2.A03.json` | `PAUSED` |
 | `W2` | `W2.A04` | `ECR-0012` | `planning/wave-amendment-approvals/W2.A04.json` | `ADOPTED` |
-| `W2` | `W2.A05` | `ECR-0013` | `planning/wave-amendment-approvals/W2.A05.json` | `REVIEW` |
+| `W2` | `W2.A05` | `ECR-0013` | `planning/wave-amendment-approvals/W2.A05.json` | `ADOPTED` |
 
 ## Waves
 
@@ -3063,7 +3063,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 **Approval record:** `planning/wave-amendment-approvals/W2.A05.json` (`9ad5b3f5fca7d3fd9c7fd8a42200f570f46250d506765b30e2705e299c7e8101`)
 
-**Lifecycle / bootstrap / campaign / completion:** `REVIEW` / `APPROVED` / `COMPLETE` / `APPROVED`
+**Lifecycle / bootstrap / campaign / completion:** `ADOPTED` / `APPROVED` / `COMPLETE` / `APPROVED`
 
 **Append-only lifecycle history:**
 
@@ -3073,6 +3073,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - `E04` `PAUSED` at `2026-10-05T08:34:12+00:00` by codex-w2-implementation: Actual integrated S01 finding W2.A05.S01-R01-F01: root committed immutable task R01 ledgers before supported DONE publications. Both approvals remain valid; integrated gate rejects their exact direct-child histories. Existing reopen/correction routes cannot preserve completed non-overlapping ranges. Inert exact four-path A05-only completion source addendum at 09f58b8a is under independent readiness review; explicit owner approval is required before additional source delivery. Preserve paused A03 and ordinary W2, all task/history/adverse evidence and no framework work after A05.
 - `E05` `ACTIVE` at `2026-10-05T10:09:03+00:00` by codex-w2-implementation: Activated the bounded amendment campaign.
 - `E06` `REVIEW` at `2026-10-05T10:39:12+00:00` by codex-w2-implementation: Submit the independently approved integrated A05 repair and exact completion addendum for distinct exit review; separate security/adoption and paused A03 return remain due.
+- `E07` `ADOPTED` at `2026-10-05T11:24:12+00:00` by codex-w2-implementation: Adopt independently approved A05 repair and completion segment; return the exact whole paused A03 record with both original tasks DONE. Separate A03 activation, original finding replay and own exit/security/adoption remain due before ordinary W2 resume. No further framework source development after A05.
 
 ### Amendment-exit review and adoption — W2.A05
 
@@ -3116,7 +3117,8 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 **Bound amendment-adoption checkpoints:**
 
-- None
+- `W2.CP05` `security` by codex-w2-implementation at `2026-10-05T11:24:12+00:00` — Adopt independently approved A05 repair and completion segment; return the exact whole paused A03 record with both original tasks DONE. Separate A03 activation, original finding replay and own exit/security/adoption remain due before ordinary W2 resume. No further framework source development after A05.
+  - amendment `W2.A05` / `artifacts/evidence/W2.A05.adoption.json` / `3ca9bde2358d0dde17582a39fa7b40ec6d518e0ec14b7afbdc6af7b20c7567d7` / `6599d2ffd43bdc5bf7234955f4c69cd3000ecdd0`
 
 **Bounded tasks:**
 

@@ -1,7 +1,7 @@
 ---
 document_type: generated-backlog-status-summary
 source: planning/backlog.yaml
-source_sha256: 11ca028d5f2e3c048147badefa491481ad2d30df33706baef8b0c0a306140f6c
+source_sha256: fee2588651588647c75bd4cb33032caa8f9b4b913a0d5c34dc475afa9de65f41
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -61,9 +61,8 @@ manual_edit: prohibited
 
 | Status | Count |
 |---|---:|
-| `ADOPTED` | 11 |
+| `ADOPTED` | 12 |
 | `PAUSED` | 1 |
-| `REVIEW` | 1 |
 | `SUPERSEDED` | 1 |
 
 ### Enabler task state
@@ -93,7 +92,7 @@ Proposal approval, materialization lifecycle, and campaign state remain distinct
 | `W2` | `W2.A02` | `ECR-0010` | `planning/wave-amendment-approvals/W2.A02.json` | `ADOPTED` | `APPROVED` | `COMPLETE` | 1 |
 | `W2` | `W2.A03` | `ECR-0011` | `planning/wave-amendment-approvals/W2.A03.json` | `PAUSED` | `APPROVED` | `PAUSED` | 2 |
 | `W2` | `W2.A04` | `ECR-0012` | `planning/wave-amendment-approvals/W2.A04.json` | `ADOPTED` | `APPROVED` | `COMPLETE` | 1 |
-| `W2` | `W2.A05` | `ECR-0013` | `planning/wave-amendment-approvals/W2.A05.json` | `REVIEW` | `APPROVED` | `COMPLETE` | 2 |
+| `W2` | `W2.A05` | `ECR-0013` | `planning/wave-amendment-approvals/W2.A05.json` | `ADOPTED` | `APPROVED` | `COMPLETE` | 2 |
 
 ## Amendment-exit review and adoption projections
 
@@ -747,7 +746,8 @@ Immutable exit rounds, the latest completion projection, and bound adoption chec
 
 **Bound amendment-adoption checkpoints:**
 
-- None
+- `W2.CP05` `security` by codex-w2-implementation at `2026-10-05T11:24:12+00:00` — Adopt independently approved A05 repair and completion segment; return the exact whole paused A03 record with both original tasks DONE. Separate A03 activation, original finding replay and own exit/security/adoption remain due before ordinary W2 resume. No further framework source development after A05.
+  - amendment `W2.A05` / `artifacts/evidence/W2.A05.adoption.json` / `3ca9bde2358d0dde17582a39fa7b40ec6d518e0ec14b7afbdc6af7b20c7567d7` / `6599d2ffd43bdc5bf7234955f4c69cd3000ecdd0`
 
 
 ## Task review history projections

@@ -1044,8 +1044,7 @@
         "W3"
       ],
       "interrupting_change_request_ids": [
-        "ECR-0011",
-        "ECR-0013"
+        "ECR-0011"
       ],
       "interrupting_recovery_request_ids": [],
       "corrective_tasks": [
@@ -41431,7 +41430,7 @@
       "approval_path": "planning/wave-amendment-approvals/W2.A05.json",
       "approval_sha256": "9ad5b3f5fca7d3fd9c7fd8a42200f570f46250d506765b30e2705e299c7e8101",
       "approval_status": "APPROVED",
-      "lifecycle_status": "REVIEW",
+      "lifecycle_status": "ADOPTED",
       "bootstrap_status": "APPROVED",
       "campaign_status": "COMPLETE",
       "bootstrap_attempts": [
@@ -42234,7 +42233,24 @@
           "current_submission": null
         }
       },
-      "adoption_checkpoints": [],
+      "adoption_checkpoints": [
+        {
+          "id": "W2.CP05",
+          "kind": "security",
+          "recorded_by": "codex-w2-implementation",
+          "recorded_at": "2026-10-05T11:24:12+00:00",
+          "notes": "Adopt independently approved A05 repair and completion segment; return the exact whole paused A03 record with both original tasks DONE. Separate A03 activation, original finding replay and own exit/security/adoption remain due before ordinary W2 resume. No further framework source development after A05.",
+          "evidence_references": [
+            {
+              "type": "amendment-adoption-evidence",
+              "amendment_id": "W2.A05",
+              "path": "artifacts/evidence/W2.A05.adoption.json",
+              "sha256": "3ca9bde2358d0dde17582a39fa7b40ec6d518e0ec14b7afbdc6af7b20c7567d7",
+              "commit": "6599d2ffd43bdc5bf7234955f4c69cd3000ecdd0"
+            }
+          ]
+        }
+      ],
       "page": "enablers/ECR-0013.html"
     }
   ],
