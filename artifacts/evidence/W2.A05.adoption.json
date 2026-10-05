@@ -1,0 +1,114 @@
+{
+  "schemaVersion": "1.0",
+  "amendmentId": "W2.A05",
+  "targetWave": "W2",
+  "branch": "codex/w2-implementation",
+  "candidateCommit": "a7817f26ec85530944f01ea17901f7ba7994862e",
+  "taskBindings": [
+    {
+      "taskId": "W2.A05.T01",
+      "candidateCommit": "9106f485d32150943e8fbedd5299d5882021e183",
+      "manifestReference": {
+        "type": "criterion-manifest",
+        "path": "artifacts/evidence/W2.A05.T01.json",
+        "sha256": "f10c3a49370f0d1c98e735506b28c3f7273350a4d9db76a2a944243120a84652",
+        "commit": "9106f485d32150943e8fbedd5299d5882021e183",
+        "recorded_at": "2026-10-05T06:15:46+00:00"
+      },
+      "reviewLedger": {
+        "path": "artifacts/evidence/W2.A05.T01.review-R01.json",
+        "sha256": "f33aa6d3bff44c440013a93e9acb80a2539d7e129db6993da6234a4cd16dec28"
+      }
+    },
+    {
+      "taskId": "W2.A05.T02",
+      "candidateCommit": "03e501c4550c7aa61e1e60827d49f7174faab1ef",
+      "manifestReference": {
+        "type": "criterion-manifest",
+        "path": "artifacts/evidence/W2.A05.T02.json",
+        "sha256": "cf0c65d9cd8f7cf70d9855d9d5016d01db35c3297eee876dba6854b8fcf44600",
+        "commit": "03e501c4550c7aa61e1e60827d49f7174faab1ef",
+        "recorded_at": "2026-10-05T07:22:02+00:00"
+      },
+      "reviewLedger": {
+        "path": "artifacts/evidence/W2.A05.T02.review-R01.json",
+        "sha256": "20b2ef49ce578e6cb605b2e61be373265db11e60938393eb1032aa394bb08721"
+      }
+    }
+  ],
+  "completionSourceAuthorityAndProof": [
+    {
+      "path": "artifacts/evidence/W2.A05.S01.addendum-01.execution.json",
+      "sha256": "dafc00e26ce8e4bcc790ed5c21f69fc15d4060b9bd970c8adc00b923efc886b4"
+    },
+    {
+      "path": "artifacts/evidence/W2.A05.S01.addendum-01.execution.review-01.json",
+      "sha256": "6c50e805d0cc3016ac705686637c6c1dc464d7b2edf1564a034d45d6e41d60d9"
+    },
+    {
+      "path": "planning/wave-amendment-approvals/W2.A05.S01.addendum-01.json",
+      "sha256": "ecfedc8cfc8115e8efd48c9d3f8bd3798d481cee164410b8943ed72748dc33af"
+    }
+  ],
+  "documentType": "wave-amendment-adoption-evidence",
+  "reviewedCompletionCommit": "a7817f26ec85530944f01ea17901f7ba7994862e",
+  "approvedExitAttempt": "R01",
+  "approvedExitEvidence": {
+    "type": "amendment-exit-evidence",
+    "amendment_id": "W2.A05",
+    "path": "artifacts/evidence/W2.A05.exit.json",
+    "sha256": "d289c94d8a84981c4daf261989a6de504004e817b21f0cb961204d6fd3ff0580",
+    "commit": "e2cceb676b5de16e25a2c3741de49ebd1d867238"
+  },
+  "approvedExitLedger": {
+    "path": "artifacts/evidence/W2.A05.exit-review-R01.json",
+    "sha256": "282a13c1c5a02c236497622087db4c52e62516f421f173159835597e2d4fdfc3"
+  },
+  "contributionReviewPaths": [
+    "artifacts/evidence/W2.A05.S01.review-01.json",
+    "artifacts/evidence/W2.A05.S01.review-02.json"
+  ],
+  "authority": {
+    "changeRequestId": "ECR-0013",
+    "approvedPacketCommit": "55c6389ce39a656f4da3851cae32ae12ac80e796",
+    "approvedPacketSha256": "56f521d708266021121b2a3391506cc771c7d32e32442d29dc5e58ba356f20c1",
+    "approvalReference": {
+      "path": "planning/wave-amendment-approvals/W2.A05.json",
+      "sha256": "9ad5b3f5fca7d3fd9c7fd8a42200f570f46250d506765b30e2705e299c7e8101",
+      "introduction_commit": "b54f24c222f631700056574a08056f660696d305"
+    },
+    "referenceId": "RO-UI-ACADEMIC-MINIMAL-1.8",
+    "referencePackageSha256": "cd8995fdcea2fe44452eaa1fdd258b6f9fab5714cbd443a81a8e5b4251220b94"
+  },
+  "correctionReturn": {
+    "id": "W2.A03",
+    "changeRequestId": "ECR-0011",
+    "status": "PAUSED",
+    "packetCommit": "746c05dcd7dbabaa7f5eebee8e3fa56b8ac6b9b5",
+    "approvalReference": {
+      "path": "planning/wave-amendment-approvals/W2.A03.json",
+      "sha256": "8852d6631a6656e94cc75e4f9dc705c7095ecf111786748e5630fe13b8fa9087",
+      "introductionCommit": "c972e2116113afa7ad84f0e43bdad58660cc69bb"
+    },
+    "effectiveStateCommit": "771e54a3657cdc5ff308d3a53d7b71eb48bb9214",
+    "recordSha256": "bdad5e81327e32ee322db436dc569898ce314d29058e53b0cfe67ed6192e0b03",
+    "returnPolicy": "paused-predecessor"
+  },
+  "checkpointScope": {
+    "kind": "security",
+    "actualScope": "Adopt the independently reviewed eight-source ECR-0013 repair including the separately approved exact four-path completion segment and exact frozen still-paused A03 return. Both original A03 tasks remain DONE.",
+    "statusAfterAdoption": "PAUSED",
+    "returnedAmendmentId": "W2.A03",
+    "returnedTaskStatuses": {
+      "W2.A03.T01": "DONE",
+      "W2.A03.T02": "DONE"
+    }
+  },
+  "requiredNextTransitions": [
+    "Independent separate security review of this committed manifest, committed strictly before taskctl adoption.",
+    "Supported A05 adoption and fresh actual frozen paused-parent return observation.",
+    "Separate backlog-only A03 activation, fresh actual integrated F01 replay and independent S01 review02, own exit/security/adoption before ordinary W2 resume.",
+    "No further automation framework source development after A05. Continue approved product tasks, joined CAP-04.S05 and remaining W2 qualification/release gates."
+  ],
+  "transitionTruth": "This is the proposed pre-adoption checkpoint bound to the actual approved exit history. It does not assert security review, adoption/return, A03 or ordinary W2 completion, product qualification or release."
+}
