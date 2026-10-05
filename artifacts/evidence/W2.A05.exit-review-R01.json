@@ -1,0 +1,137 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "wave-amendment-exit-independent-review",
+  "amendment_id": "W2.A05",
+  "attempt_id": "R01",
+  "reviewer": "agent:/root/a05_completion_control_review",
+  "reviewedAt": "2026-10-05T10:50:35Z",
+  "result": "approved",
+  "reviewed_state_commit": "03be84c33758ebce2f5767cb283781dc7cccee92",
+  "candidate_commit": "e2cceb676b5de16e25a2c3741de49ebd1d867238",
+  "declared_candidate_commit": "d5f956c55e189d6f3a08c5c84263bd11f7cd3d4e",
+  "evidence": {
+    "path": "artifacts/evidence/W2.A05.exit.json",
+    "sha256": "d289c94d8a84981c4daf261989a6de504004e817b21f0cb961204d6fd3ff0580"
+  },
+  "acceptance_criteria_sha256": "53c68b98c5bd04ddcc0cca42962faa67d6971f1e1b9600eefb49c09d5ed18ac0",
+  "selected_checks_sha256": "72c88e3d1f39e3237a35c224e5d4dd27efcb92556ef8eb13707a84c5be4c6f1e",
+  "packet_sha256": "344b8c3056ece57ace95ce359ccd543439b8cc1eaa1ebd0057f51d14af80e60d",
+  "notes": "Distinct independent A05 exit R01 approval of exact frozen REVIEW state 03be84c3, committed manifest delivery e2cceb67 and declared integrated S01 candidate d5f956c5. The complete seven criterion strings equal the approved ECR-0013 packet; manifest, canonical criteria, selected-check and frozen packet hashes recompute to the recorded values, and read-only strict amendment_exit_submission_errors returns no errors. The source/control audit is reused explicitly from its separately committed approved ledger at 826be75d and is not repeated or replaced. The later actual source/range observer passes require_review=True. Separately committed S01 R02 at d5f956c5 explicitly closes only W2.A05.S01-R01-F01, preserves R01/adverse evidence and leaves the original A03 finding open. Fresh actual slice observation at d5f956c5 authenticates both canonical S01 rounds, both original reviewed task ranges, exact final source attribution, preceding maintenance and the retained 39-commit/118-net-path A03 history with six authenticated inert rows; observed main equals candidate and 4,743 recorded tracked inputs are stable. Original A05 task records are wholly unchanged from their approved DONE publication. The entire suffix after a1265a84 contains only immutable evidence, supported backlog transitions and generated tracking projections, with no added/reverted source. Exact paused A03, other amendment records and ordinary Wave state are preserved. This ledger supplies only the independent exit disposition. Separate committed adoption-security review, supported adoption and fresh exact paused-parent return remain due, followed by separate A03 activation, its original F01 replay/review-02 and exit/security/adoption before ordinary W2 resume. No product, full Wave or human release approval follows.",
+  "independence": {
+    "campaignOwner": "codex-w2-implementation",
+    "sourceControlReviewer": "agent:/root/a05_completion_control_review",
+    "sliceReviewer": "agent:/root/a05_t01_review",
+    "statement": "The reviewer is independent of the campaign/task/source owner. My earlier expanded source/control audit and canonical ledger authorship are disclosed and reused. I authored no ECR-0013 proposal, approved source patch, owner grant, implementation, execution producer, receipt, criterion manifest, S01 R01/R02 ledger or exit manifest. This distinct exit review examines only the later actual S01 closure, actual slice evidence and exact frozen exit packet against the approved seven criteria. No suite or observer was rerun. Read-only Git/hash/state inspection and the existing strict semantic validator were used; only this exit review ledger is authored. Concurrent generated REVIEW tracking projections are outside these fixed committed Git/evidence inputs."
+  },
+  "criterion_dispositions": [
+    {
+      "criterionIndex": 1,
+      "result": "satisfied-at-exit-review-boundary",
+      "basis": "The approved packet/B00/task/source reviews retain their immutable original authority. Actual source and slice observers authenticate the full paused A03 at 771e54a3 with both original tasks DONE, adopted A04, predecessor and reference authority. Independent frozen-state comparison confirms A03 is exactly equal to its complete original record and all non-A05 amendment records and ordinary Wave state are unchanged by exit submission. Original approval b54f24c2 and the separately approved final completion grant remain distinct immutable authorizations."
+    },
+    {
+      "criterionIndex": 2,
+      "result": "satisfied",
+      "basis": "Original A03 S01-R01-F01 and official accessibility exit1 remain adverse and unresolved as originally recorded. Actual A05 integrated failure, A05 S01 R01 and its raw failure logs remain immutable. The fresh real slice observation preserves the complete original 39-commit A03 range, exact 118-path net inventory and six authenticated inert rows without a generic path exemption. A05 S01 R02 appends evidenced closure of its separate publication finding only; it does not rewrite an old failure or close the A03 finding."
+    },
+    {
+      "criterionIndex": 3,
+      "result": "satisfied",
+      "basis": "The completed source/control audit and original independently approved T01 proof authenticate only the exact preceding GOV-MAINT-0027 prepared-first sequence and B00 source addendum through the approved maintenance binding. The actual later observers authenticate the same five preceding source commits. Imported tools, bound modes/reviews and adverse R01 are unchanged; the source suffix adds no maintenance identity, schema, imported-source change or broader history exception. Relevant previously reviewed hostile denials are retained without unnecessary suite replay."
+    },
+    {
+      "criterionIndex": 4,
+      "result": "satisfied",
+      "basis": "Both original independent R01 task candidates, claim bases, five/four source envelopes and complete DONE task records remain unchanged and disjoint. One jointly indexed Proposed ADR-0041 and its historical body versions remain authentic. The additional four-path segment is separately bound to its exact owner-approved proposal/patch, fresh 23-check evidence and immutable independent source/control review. Actual source and slice observations authenticate that final segment with require_review=True. Separate committed S01 R02 explicitly fixes A05 F01 while retaining prior ledger/task history. No source change occurs after a1265a84."
+    },
+    {
+      "criterionIndex": 5,
+      "result": "satisfied-at-integrated-exit-boundary",
+      "basis": "Previously independently reviewed exact-candidate real-Git control proof retains original full6506 base, two-contract inventory, current classification/input closure and selected legacy v1.0-v1.4 denials. The actual slice observer authenticates task/source/S01 histories and original retained range. This exact frozen exit submission is separately validated with strict_state=True and this ledger provides its independent disposition. Separate actual security review, adoption and exact paused return remain later required stages; synthetic future histories do not substitute for those actual transitions."
+    },
+    {
+      "criterionIndex": 6,
+      "result": "satisfied-at-authenticated-task-and-slice-boundary",
+      "basis": "Original independent T02 approval binds the six static naming tests, four pinned Chromium positive/negative cases and unmodified official 33-page/66-state accessibility exit0 at 03e501c4. Those producer/report/raw hashes and relevant unchanged naming, accessibility, desktop, reference/baseline and workflow inputs were authenticated in the source/control audit. Actual later integration preserves those reviewed source bytes. Earlier official exit1 remains retained. No historical browser result is relabeled fresh at this exit, and no native/Core or product qualification is asserted."
+    },
+    {
+      "criterionIndex": 7,
+      "result": "satisfied-at-exit-review-boundary-later-gates-pending",
+      "basis": "B00, both task R01s, source/control disposition and integrated S01 R02 have actual committed independent approvals. This first exit attempt has no previous exit rounds or open exit findings and receives this distinct disposition. Frozen lifecycle/campaign/completion are REVIEW, the supported submit cleared the active-amendment marker and campaign lease, and ordinary W2 plus the full A03 remain paused. Separate committed security review, actual supported A05 adoption/exact return, separate A03 activation/F01 replay/review-02/exit/security/adoption and explicit ordinary W2 resume are still required. Native/Core/S05/D3D, the 18 unfinished product tasks, fresh full Wave qualification and human release remain due."
+    }
+  ],
+  "independent_exit_observations": [
+    {
+      "boundary": "Exact frozen packet and immutable evidence",
+      "result": "passed",
+      "observation": "03be84c3 is a backlog-only direct child of evidence-only e2cceb67, itself the direct child of integrated S01 d5f956c5. The manifest Git blob is b3dd98bae3a216653d4e771bee088434ac78ff70 and its SHA-256 is d289c94d. All seven strings exactly match approved acceptanceCriteria. Canonical ASCII-escaped compact JSON hashes for criteria, selected checks and the packet excluding packet_sha256 match their stored values. Existing strict read-only semantic validation returns an empty error list. The pending R01 has prior_attempt_id null, no prior attempts and no open findings."
+    },
+    {
+      "boundary": "Actual committed S01 closure and fresh slice proof",
+      "result": "passed",
+      "sliceReview": {
+        "path": "artifacts/evidence/W2.A05.S01.review-02.json",
+        "introductionCommit": "d5f956c55e189d6f3a08c5c84263bd11f7cd3d4e",
+        "sha256": "79dc525d962bbb27e7217f3a3b4539e981d04daf2923dbec2d23ca0d4b56e1f7"
+      },
+      "report": {
+        "path": "artifacts/tmp/W2.A05.slice-integrated-d5f956c5.json",
+        "sha256": "51c4d1dd24b242f4ab1f90b603633eebebbd01925bd39830f0ae0104af480fc4"
+      },
+      "rawOutput": {
+        "path": "artifacts/tmp/W2.A05.slice-integrated-d5f956c5.log",
+        "sha256": "bf9d7516f2632dafeb8908ed172afd5692ac8b26d4bbe6b78eba2744ffec6282"
+      },
+      "producer": {
+        "path": "artifacts/tmp/W2.A05.inspect-integrated-02.py",
+        "sha256": "bd7c3ea1c9c52ee92e115687140bcd484ea106da621e2d7bfca41b9cdd9f2bf2"
+      },
+      "observation": "The committed R02 result is approved, findings/openFindingIds are empty and its explicit fixed closure names only A05 S01-R01-F01. R01 and all declared adverse hashes remain authentic. Fresh actual slice mode reports both canonical S01 review paths, original task commit counts 6 and 2, preceding source count 5, final source a1265a84, retained range count 39/net count 118/inert count 6, main equal to d5f956c5 and stable 4,743 inputs. Actual task report/raw/producer referenced by R02 also authenticate. No observer was rerun by this reviewer."
+    },
+    {
+      "boundary": "Source suffix and preserved authority/state",
+      "result": "passed",
+      "observation": "All seven commits after source a1265a84 through frozen REVIEW 03be84c3 change only four immutable evidence files, supported reactivation/submission backlog states and the exact generated tracking paths. No control/product source was added, changed or reverted. Complete A05 task records equal actual approved DONE state a242167f. Complete A03 equals frozen771e54a3; non-A05 amendments remain unchanged. The only non-A05 submit delta is the supported active_amendment A05-to-null projection, preserving the ordinary Wave campaign and product/task holds."
+    }
+  ],
+  "reused_independent_source_control_review": {
+    "path": "artifacts/evidence/W2.A05.S01.addendum-01.execution.review-01.json",
+    "introductionCommit": "826be75db330e174a845926bfdedae1b765fdc94",
+    "sha256": "6c50e805d0cc3016ac705686637c6c1dc464d7b2edf1564a034d45d6e41d60d9",
+    "result": "approved",
+    "scope": "Already completed exact a1265a84 source/control audit and 23-check/seven-receipt evidence review; authenticated and reused without repeating that audit."
+  },
+  "proof_limits": [
+    "This review approves the first exact A05 exit packet only. It is distinct from source/control and S01 review and supplies no adoption/security, A03, ordinary W2, product, full Wave or release disposition.",
+    "Fresh slice observation establishes actual committed source/review/retained-history integration. Earlier task browser/accessibility and denial executions retain their original candidates; synthetic future histories and mocked capture inputs prove control behavior only.",
+    "The actual externally owner-approved Git chain is the qualified authority. Byte/history consistency and supported human/agent labels do not establish cryptographic identity or qualify a fabricated alternate first-introduction fork. No new authentication framework is authorized.",
+    "A05 S01-R01-F01 is explicitly closed by the separate committed S01 R02; original A03 S01-R01-F01 remains open. No prior exit finding or round is fabricated, so this R01 has empty finding and closure arrays.",
+    "Root must keep this ledger untracked during supported taskctl review, then co-publish it with the actual appended exit disposition so the existing immutable-introduction check observes that review projection. Later adoption evidence, separate committed security ledger and supported adoption remain strictly ordered.",
+    "Owner authority forbids further automation/framework source development, maintenance, new framework amendment or optional styling after A05. Original implementation baseline/refactoring ceiling and all product/Wave/human-release obligations remain unchanged."
+  ],
+  "retained_open_external_finding_ids": ["W2.A03.S01-R01-F01"],
+  "pending_adoption_contract": {
+    "approvedExitAttempt": "R01",
+    "requiresSeparateCommittedAdoptionEvidence": true,
+    "requiresSeparateCommittedIndependentSecurityReview": true,
+    "requiresTaskctlAdopt": true,
+    "expectedReturnedAmendmentId": "W2.A03",
+    "expectedPredecessorRecordSha256": "bdad5e81327e32ee322db436dc569898ce314d29058e53b0cfe67ed6192e0b03",
+    "expectedReturnedTaskStatuses": {"W2.A03.T01": "DONE", "W2.A03.T02": "DONE"},
+    "expectedPredecessorLifecycle": "PAUSED",
+    "expectedOrdinaryWaveCampaign": "PAUSED/amendment-hold",
+    "requiresFreshActualReturnObservation": true,
+    "requiresSeparateA03ActivationAndFindingClosure": true,
+    "releaseApprovalGranted": false
+  },
+  "findings": [],
+  "closures": [],
+  "reviewerSafety": {
+    "sourceMutation": false,
+    "backlogOrViewMutation": false,
+    "producerMutation": false,
+    "gitRefMutation": false,
+    "suiteOrObserverReruns": 0,
+    "canonicalFilesAuthored": ["artifacts/evidence/W2.A05.exit-review-R01.json"]
+  }
+}
