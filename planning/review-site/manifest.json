@@ -18498,13 +18498,13 @@
             {
               "task_id": "CAP-05.S01.T01",
               "title": "Implement local document attachment and version association",
-              "status": "BLOCKED",
+              "status": "IN_PROGRESS",
               "mode": "latest-review-only",
               "latest_review": {
                 "reviewer": null,
                 "result": null,
                 "reviewed_at": null,
-                "notes": "Reopened: W2.A02 adopted at 04d6ae3fb29a133e6e31c8191ba1d6b80fa0b0cf with independent control, slice, exit and security review; W2 resumed at 0394ed16. Preserve original 6506 base; finish fifth D3D characterization and exact current-product UI and native/Core proof."
+                "notes": "Reopened: All W2 amendments A01-A05 are authentically adopted; A03 security checkpoint and fresh actual adoption observation passed; W2 separately resumed. Preserve original6506 base, all adverse native findings and scoped evidence. Complete S05 integrated qualification and original current-product/native/full-base T01 proof without further framework source development."
               },
               "review_control": null
             },
@@ -18539,7 +18539,7 @@
             {
               "task_id": "CAP-05.S01.T01",
               "title": "Implement local document attachment and version association",
-              "status": "BLOCKED",
+              "status": "IN_PROGRESS",
               "page": "CAP-05/CAP-05.S01.T01.html",
               "dependencies": [
                 "CAP-04.S04.T02",

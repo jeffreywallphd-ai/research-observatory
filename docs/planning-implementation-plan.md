@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 91d53f3eb85120699aa45cba15388f3e82dac97887c05fa3a7b7219704fb1a6d
+source_sha256: a9d7eaedec995ccebe7d25dceadfd7de8148ad3e6b0712ab5dd2c51e98c8f620
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -10612,7 +10612,7 @@ Original tasks and approvals remain unchanged.
 
 **Outcome:** Full-text acquisition is explicit, resumable, checksum-verified, and governed by permitted use.
 
-**Wave / priority / status / review:** `W2` / `P0` / `NOT_STARTED` / `PENDING`
+**Wave / priority / status / review:** `W2` / `P0` / `IN_PROGRESS` / `PENDING`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
@@ -10620,7 +10620,7 @@ Original tasks and approvals remain unchanged.
 
 #### - [ ] CAP-05.S01.T01 - Implement local document attachment and version association
 
-**Status / priority / estimate / risk:** `BLOCKED` / `P0` / `M` / `medium`
+**Status / priority / estimate / risk:** `IN_PROGRESS` / `P0` / `M` / `medium`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
@@ -10651,7 +10651,7 @@ Original tasks and approvals remain unchanged.
 
 **Current latest-review projection:** `-` by - at `-`
 
-**Latest notes:** Reopened: W2.A02 adopted at 04d6ae3fb29a133e6e31c8191ba1d6b80fa0b0cf with independent control, slice, exit and security review; W2 resumed at 0394ed16. Preserve original 6506 base; finish fifth D3D characterization and exact current-product UI and native/Core proof.
+**Latest notes:** Reopened: All W2 amendments A01-A05 are authentically adopted; A03 security checkpoint and fresh actual adoption observation passed; W2 separately resumed. Preserve original6506 base, all adverse native findings and scoped evidence. Complete S05 integrated qualification and original current-product/native/full-base T01 proof without further framework source development.
 
 #### - [ ] CAP-05.S01.T02 - Implement open-access location selection and download
 
