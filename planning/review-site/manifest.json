@@ -2878,7 +2878,7 @@
         {
           "task_id": "W2.C12.T01",
           "title": "Implement plugin isolation, configuration, and secret access controls",
-          "status": "IN_PROGRESS",
+          "status": "REVIEW",
           "acceptance_criteria": [
             "A malicious test connector cannot read unrelated secrets or project files; network and export attempts outside manifest permissions are blocked and audited.",
             "Automated tests cover the expected path and at least one material failure or boundary condition.",
@@ -2909,7 +2909,7 @@
           "task_review": {
             "task_id": "W2.C12.T01",
             "title": "Implement plugin isolation, configuration, and secret access controls",
-            "status": "IN_PROGRESS",
+            "status": "REVIEW",
             "mode": "append-only",
             "latest_review": {
               "reviewer": null,
@@ -2920,7 +2920,59 @@
             "review_control": {
               "version": 1,
               "attempts": [],
-              "current_submission": null
+              "current_submission": {
+                "id": "R01",
+                "submitted_by": "codex-w2-implementation",
+                "submitted_at": "2026-10-05T23:00:04+00:00",
+                "candidate_commit": "3cac985d89bfa610e292e1ff8d8f05e91c6c816c",
+                "base_commit": "fd806e2f5585d6bf6d0a60a260b04a48eb38b6d6",
+                "branch": "codex/w2-implementation",
+                "evidence_reference": {
+                  "type": "criterion-manifest",
+                  "path": "artifacts/evidence/W2.C12.T01.R01.json",
+                  "sha256": "5a6ec5b387e8f398e2253ddf4c7211a71ca5514ad81e6b26a132f9df710b1012",
+                  "commit": "3cac985d89bfa610e292e1ff8d8f05e91c6c816c",
+                  "recorded_at": "2026-10-05T23:00:04+00:00"
+                },
+                "acceptance_criteria_sha256": "831c2a4cc6c6cf0bd8ca53f4c85cce254f359e6c80f198692babeaf6a7f96dd5",
+                "changed_paths": [
+                  "docs/planning-implementation-plan.md",
+                  "planning/backlog.yaml",
+                  "planning/review-site/manifest.json",
+                  "planning/review-site/waves/W2.html",
+                  "planning/status-summary.md",
+                  "services/core-api/src/research_observatory_core/plugin_api.py",
+                  "tests/connectors/test_plugin_admin_service.py",
+                  "tests/contracts/test_plugin_worker_contract.py"
+                ],
+                "selected_checks": [
+                  ".venv/Scripts/python.exe -B -m ruff format --check --config pyproject.toml -- services/core-api/src/research_observatory_core/plugin_api.py tests/connectors/test_plugin_admin_service.py tests/contracts/test_plugin_worker_contract.py",
+                  ".venv/Scripts/python.exe -B -m ruff check --config pyproject.toml -- services/core-api/src/research_observatory_core/plugin_api.py tests/connectors/test_plugin_admin_service.py tests/contracts/test_plugin_worker_contract.py",
+                  "$env:MYPYPATH='tools;services/core-api/src'; .venv/Scripts/python.exe -B -m mypy --config-file pyproject.toml --no-namespace-packages -- services/core-api/src/research_observatory_core/plugin_api.py tests/connectors/test_plugin_admin_service.py tests/contracts/test_plugin_worker_contract.py",
+                  ".venv/Scripts/python.exe -B -m unittest -v tests.connectors.test_plugin_admin_service tests.connectors.test_plugin_grants tests.connectors.test_plugin_grant_migration tests.contracts.test_plugin_worker_contract",
+                  ".venv/Scripts/python.exe -B tools/core_api_contract.py --repo . --check",
+                  ".venv/Scripts/python.exe -B artifacts/tmp/W2.C12.T01.build-installed-02.py 3cac985d89bfa610e292e1ff8d8f05e91c6c816c",
+                  ".venv/Scripts/python.exe -B artifacts/tmp/W2.C12.T01.installed-smoke-03.py 3cac985d89bfa610e292e1ff8d8f05e91c6c816c",
+                  ".venv/Scripts/python.exe -B artifacts/tmp/W2.C12.T01.joined-restart-02.py 3cac985d89bfa610e292e1ff8d8f05e91c6c816c"
+                ],
+                "deferred_checks": [
+                  "Unchanged standalone malicious-worker suite remains prior task-bound support; fresh full security/profile and cross-capability packaging qualification belongs to W2 exit.",
+                  "Independent S05 integration review and remaining CAP-05 tasks remain required.",
+                  "Full Python quality remains adverse on unrelated formatter and picker typing findings until separately resolved within user authority."
+                ],
+                "selection_rationale": "The public HTTP conversion is the demonstrated impact boundary. Red-first HTTP success/replay/reopen/denial plus affected grant/migration/page checks, actual current frozen installed dispatch, protected source-Core joined native proof, and three-path quality cover it. Expanded independent public-contract/security review is required. Listed command IDs name the inventory domains; commands below record the exact bounded selections, not full profile execution.",
+                "selection_sha256": "1ef30379a28053cae5e4e572031dfb23e5d76cb7e687a19829f2767abb6fbb69",
+                "prior_attempt_id": null,
+                "open_finding_ids": [],
+                "root_cause_analysis": null,
+                "selected_command_ids": [
+                  "search:connectors",
+                  "contracts:unit",
+                  "foundation:quality",
+                  "foundation:packaging-smoke"
+                ],
+                "packet_sha256": "31b82961a04e7e26be434ddd1f106171bec959e8ecd0c1dcdedbc8a3a92acc00"
+              }
             }
           }
         }

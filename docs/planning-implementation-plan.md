@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: d115867fc43064a11862e71b164ae5182c672e6e085b04a5219408bbce1c2c4e
+source_sha256: aac5f3e88c8a3ffb478719ad3bd8a15c0a4736cb0d41b06af8fa4f0e2cf2ea75
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -4274,7 +4274,7 @@ Original tasks and approvals remain unchanged.
 
 ### W2.C12.T01 — Implement plugin isolation, configuration, and secret access controls
 
-**Status:** `IN_PROGRESS`. **Original task:** `CAP-04.S05.T02`. **Latest review:** `-`.
+**Status:** `REVIEW`. **Original task:** `CAP-04.S05.T02`. **Latest review:** `-`.
 
 **Reproduction:** At clean committed candidate 6a2e7487e0508b4495d17e7fd0029eb4f8796df4, an actual freshly frozen supervised Core discovers its installed test-signed LPAC worker and accepts a new synthetic publisher trust decision. The authenticated native HTTP grants/enable request then returns 409 RO-CORE-PLUGIN-PLUGIN-GRANT-CONFIRMATION-INVALID for the exact visible package/destination/permission confirmation. The failed smoke report artifacts/tmp/CAP-04.S05.installed-smoke-12-6a2e7487.json has SHA-256 6519018df8b69856b3a0bc3c72b3ab2c3b052e5c1f8ffcb66c6b11607e1955a8; owned failure body artifacts/tmp/s05-install-smoke-5j5by15m/failure-3.json has SHA-256 504226276cecc63ae8696f9223be17ad7b45bef288c924d76a1017e1235a12bf. PluginEnableReview.confirmation recursively dumps validated PluginDestination models into dictionaries and puts them in an unvalidated dataclass; the unchanged grant digest calls destination.model_dump and denies the resulting AttributeError. Earlier direct-service tests supplied destination models and missed this HTTP conversion. Independent source diagnosis artifacts/tmp/CAP-04.S05.installed-enable-diagnosis-c11_security_review-01.json has SHA-256 7531ee43d832141b01d748d9c59d7951190371d65bfc71b62ec4a0dc801356f8. The actual broad quality failure at the same candidate also identifies the public worker-page fixture missing a dictionary annotation; its log artifacts/tmp/CAP-04.S05.selected-06-6a2e7487.quality.log has SHA-256 3c0dd6e03dc22d1995aed8fb56da1f62c08d9bfe19e60e68b6870805e02be83d.
 
@@ -4293,7 +4293,19 @@ Original tasks and approvals remain unchanged.
 
 **Review mode:** `append-only v1` / 0 completed round(s)
 
-**Current immutable submission awaiting review:** None
+**Current immutable submission awaiting review:** `R01` / packet SHA-256 `31b82961a04e7e26be434ddd1f106171bec959e8ecd0c1dcdedbc8a3a92acc00`
+
+- Candidate / base / branch: `3cac985d89bfa610e292e1ff8d8f05e91c6c816c` / `fd806e2f5585d6bf6d0a60a260b04a48eb38b6d6` / `codex/w2-implementation`
+- Submitted by / at: codex-w2-implementation / `2026-10-05T23:00:04+00:00`
+- Evidence: `artifacts/evidence/W2.C12.T01.R01.json` / `5a6ec5b387e8f398e2253ddf4c7211a71ca5514ad81e6b26a132f9df710b1012` / `3cac985d89bfa610e292e1ff8d8f05e91c6c816c`
+- Acceptance-criteria SHA-256: `831c2a4cc6c6cf0bd8ca53f4c85cce254f359e6c80f198692babeaf6a7f96dd5`
+- Verification-selection SHA-256: `1ef30379a28053cae5e4e572031dfb23e5d76cb7e687a19829f2767abb6fbb69`
+- Changed paths: `docs/planning-implementation-plan.md`, `planning/backlog.yaml`, `planning/review-site/manifest.json`, `planning/review-site/waves/W2.html`, `planning/status-summary.md`, `services/core-api/src/research_observatory_core/plugin_api.py`, `tests/connectors/test_plugin_admin_service.py`, `tests/contracts/test_plugin_worker_contract.py`
+- Selected checks: `.venv/Scripts/python.exe -B -m ruff format --check --config pyproject.toml -- services/core-api/src/research_observatory_core/plugin_api.py tests/connectors/test_plugin_admin_service.py tests/contracts/test_plugin_worker_contract.py`, `.venv/Scripts/python.exe -B -m ruff check --config pyproject.toml -- services/core-api/src/research_observatory_core/plugin_api.py tests/connectors/test_plugin_admin_service.py tests/contracts/test_plugin_worker_contract.py`, `$env:MYPYPATH='tools;services/core-api/src'; .venv/Scripts/python.exe -B -m mypy --config-file pyproject.toml --no-namespace-packages -- services/core-api/src/research_observatory_core/plugin_api.py tests/connectors/test_plugin_admin_service.py tests/contracts/test_plugin_worker_contract.py`, `.venv/Scripts/python.exe -B -m unittest -v tests.connectors.test_plugin_admin_service tests.connectors.test_plugin_grants tests.connectors.test_plugin_grant_migration tests.contracts.test_plugin_worker_contract`, `.venv/Scripts/python.exe -B tools/core_api_contract.py --repo . --check`, `.venv/Scripts/python.exe -B artifacts/tmp/W2.C12.T01.build-installed-02.py 3cac985d89bfa610e292e1ff8d8f05e91c6c816c`, `.venv/Scripts/python.exe -B artifacts/tmp/W2.C12.T01.installed-smoke-03.py 3cac985d89bfa610e292e1ff8d8f05e91c6c816c`, `.venv/Scripts/python.exe -B artifacts/tmp/W2.C12.T01.joined-restart-02.py 3cac985d89bfa610e292e1ff8d8f05e91c6c816c`
+- Deferred checks: `Unchanged standalone malicious-worker suite remains prior task-bound support; fresh full security/profile and cross-capability packaging qualification belongs to W2 exit.`, `Independent S05 integration review and remaining CAP-05 tasks remain required.`, `Full Python quality remains adverse on unrelated formatter and picker typing findings until separately resolved within user authority.`
+- Selection rationale: The public HTTP conversion is the demonstrated impact boundary. Red-first HTTP success/replay/reopen/denial plus affected grant/migration/page checks, actual current frozen installed dispatch, protected source-Core joined native proof, and three-path quality cover it. Expanded independent public-contract/security review is required. Listed command IDs name the inventory domains; commands below record the exact bounded selections, not full profile execution.
+- Prior round / replayed open findings: `-` / -
+- Root-cause escalation: -
 
 **Current latest-review projection:** `-` by - at `-`
 

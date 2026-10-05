@@ -1,0 +1,210 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "W2.C12.T01",
+  "baseCommit": "fd806e2f5585d6bf6d0a60a260b04a48eb38b6d6",
+  "commit": "3cac985d89bfa610e292e1ff8d8f05e91c6c816c",
+  "branch": "codex/w2-implementation",
+  "changedFiles": [
+    "docs/planning-implementation-plan.md",
+    "planning/backlog.yaml",
+    "planning/review-site/manifest.json",
+    "planning/review-site/waves/W2.html",
+    "planning/status-summary.md",
+    "services/core-api/src/research_observatory_core/plugin_api.py",
+    "tests/connectors/test_plugin_admin_service.py",
+    "tests/contracts/test_plugin_worker_contract.py"
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "Only the native API confirmation adapter preserves its already validated destination models. Repository exact confirmation digest/comparisons, actor/native authentication, publisher/session/revision, signed package, rights/broker, LPAC and resource authority are unchanged. Current HTTP altered-destination and altered-permission requests deny with durable encrypted grant audit and no enabled grant.",
+        "current-installed-api-dispatch proves actual freshly frozen supervised Core production runtime discovery, explicit synthetic human publisher trust/enable and installed LPAC result publication. protected-joined-restart supplies current real Windows DPAPI/SQLCipher source-Core, signed zero-capability LPAC, two pages with provenance/rights/predecessor, forged-cursor/malformed-output denial, active cancellation, orderly fresh-process reopen, lost-consent job cancellation and exact crash-lock denial. The source fixture uses a verified test runtime adapter and synthetic provider HTTP. Original independently approved T02 sandbox evidence remains historical support for unchanged controls, not a fresh malicious-worker qualification or release claim."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "The two actual HTTP regressions were committed and executed before the product repair; the stable retained red observation fails at the demonstrated invalid confirmation conversion. Current http-grants-and-contract passes valid human enable, exact action replay without duplicate enabled event, fresh service reconstruction with the same encrypted grant, destination/permission mismatch denial with durable provenance audit, and existing grant/migration/public-output tests.",
+        "The installed smoke uses authenticated actual loopback HTTP and production InstalledPluginRuntime without availability overrides. Only a new synthetic project and unique synthetic publisher are used with the default DPAPI profile vault; the newly signed fixture makes one actual broker HTTPS GET for a public DOI from official Crossref documentation, after configured synthetic project Intent/privacy/exact permission/invocation consent. It publishes only the actual returned DOI/title as source assertions; unknown license/terms/access are retained, and the response remains encrypted in the owned project. No private query, contact, credential, external write or general provider-availability claim is involved. Source joined native proof separately exercises the actual broker/rights/pagination/cancellation/restart path."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "Exact changedFiles covers the spec-admitted API and two test paths plus claim/generated planning records. The public page fixture receives only an explicit dictionary annotation; its values and assertions remain unchanged. Selected Ruff format/lint, mypy and generated Core API drift checks pass; no generated schema, migrations, permission policy, framework source or governed UX changes occur.",
+        "All prior failures and fixtures are retained, including the installed enable 409 at 6a2e7487, native crash-lock failure, broad quality failure and build/bootstrap attempts. The current smoke-02 reached installed execution but its zero-broker fixture violated the unchanged compiled minimum-one-response publication rule; smoke-03 corrects only this ignored fixture. The initial smoke-01 used an obsolete Intent expected revision and failed with the retained conflict. Neither adverse attempt is a pass. Unrelated review-site formatting and picker test typing findings remain W2 obligations outside this correction. Original T02/T03 DONE history, CAP-05.S01.T01 base6506/fifth-D3D finding, independent S05 review and full fresh W2/release gates are preserved."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "verificationSelection": {
+    "selectedCommandIds": [
+      "search:connectors",
+      "contracts:unit",
+      "foundation:quality",
+      "foundation:packaging-smoke"
+    ],
+    "riskAnalysis": "The public HTTP conversion is the demonstrated impact boundary. Red-first HTTP success/replay/reopen/denial plus affected grant/migration/page checks, actual current frozen installed dispatch, protected source-Core joined native proof, and three-path quality cover it. Expanded independent public-contract/security review is required. Listed command IDs name the inventory domains; commands below record the exact bounded selections, not full profile execution.",
+    "deferred": [
+      "Unchanged standalone malicious-worker suite remains prior task-bound support; fresh full security/profile and cross-capability packaging qualification belongs to W2 exit.",
+      "Independent S05 integration review and remaining CAP-05 tasks remain required.",
+      "Full Python quality remains adverse on unrelated formatter and picker typing findings until separately resolved within user authority."
+    ]
+  },
+  "checks": [
+    {
+      "id": "format",
+      "exitCode": 0,
+      "durationSeconds": 0.275,
+      "rawOutput": "artifacts/tmp/W2.C12.T01.green-01-3cac985d.format.log",
+      "rawOutputSha256": "06e6458a0ee0f097781e2690af2c79a5e0464a6af799f5f3544e75e4fbc06e6f",
+      "command": ".venv/Scripts/python.exe -B -m ruff format --check --config pyproject.toml -- services/core-api/src/research_observatory_core/plugin_api.py tests/connectors/test_plugin_admin_service.py tests/contracts/test_plugin_worker_contract.py",
+      "commit": "3cac985d89bfa610e292e1ff8d8f05e91c6c816c",
+      "provenance": "fresh execution at fixed clean committed Windows x64 candidate",
+      "rawOutputCanonicalSha256": "06e6458a0ee0f097781e2690af2c79a5e0464a6af799f5f3544e75e4fbc06e6f",
+      "result": "PASS"
+    },
+    {
+      "id": "lint",
+      "exitCode": 0,
+      "durationSeconds": 0.153,
+      "rawOutput": "artifacts/tmp/W2.C12.T01.green-01-3cac985d.lint.log",
+      "rawOutputSha256": "f78434f0f81a8fed2240a7879eda40bd74cab1d54c181ba11eef299ac4baee47",
+      "command": ".venv/Scripts/python.exe -B -m ruff check --config pyproject.toml -- services/core-api/src/research_observatory_core/plugin_api.py tests/connectors/test_plugin_admin_service.py tests/contracts/test_plugin_worker_contract.py",
+      "commit": "3cac985d89bfa610e292e1ff8d8f05e91c6c816c",
+      "provenance": "fresh execution at fixed clean committed Windows x64 candidate",
+      "rawOutputCanonicalSha256": "f78434f0f81a8fed2240a7879eda40bd74cab1d54c181ba11eef299ac4baee47",
+      "result": "PASS"
+    },
+    {
+      "id": "types",
+      "exitCode": 0,
+      "durationSeconds": 0.806,
+      "rawOutput": "artifacts/tmp/W2.C12.T01.green-01-3cac985d.types.log",
+      "rawOutputSha256": "f54b7bf002bcb9795b678d7c96c00fa7c25674f4f9bcb71c598cebf7a03c0de6",
+      "command": "$env:MYPYPATH='tools;services/core-api/src'; .venv/Scripts/python.exe -B -m mypy --config-file pyproject.toml --no-namespace-packages -- services/core-api/src/research_observatory_core/plugin_api.py tests/connectors/test_plugin_admin_service.py tests/contracts/test_plugin_worker_contract.py",
+      "commit": "3cac985d89bfa610e292e1ff8d8f05e91c6c816c",
+      "provenance": "fresh execution at fixed clean committed Windows x64 candidate",
+      "rawOutputCanonicalSha256": "08f6f924139c80e0c31e581449bc89211c962f8d677d9df0a98eba5faf12b958",
+      "result": "PASS"
+    },
+    {
+      "id": "http-grants-and-contract",
+      "exitCode": 0,
+      "durationSeconds": 11.195,
+      "rawOutput": "artifacts/tmp/W2.C12.T01.green-01-3cac985d.http-grants-and-contract.log",
+      "rawOutputSha256": "e40f67718d02f0d3b9523a3edf5c2b38d178bc8ca2e7137f65ca225947afd79f",
+      "command": ".venv/Scripts/python.exe -B -m unittest -v tests.connectors.test_plugin_admin_service tests.connectors.test_plugin_grants tests.connectors.test_plugin_grant_migration tests.contracts.test_plugin_worker_contract",
+      "commit": "3cac985d89bfa610e292e1ff8d8f05e91c6c816c",
+      "provenance": "fresh execution at fixed clean committed Windows x64 candidate",
+      "rawOutputCanonicalSha256": "c0852cd25832892a43ee4dcbbba596f32ec4e667dbebc5b8c9c3a84737c0cdd1",
+      "result": "PASS"
+    },
+    {
+      "id": "core-api-contract",
+      "exitCode": 0,
+      "durationSeconds": 3.73,
+      "rawOutput": "artifacts/tmp/W2.C12.T01.green-01-3cac985d.core-api-contract.log",
+      "rawOutputSha256": "26b8f0df7f888ee4d131d91fd3ffd23c1fdb9c2158067ce3b30bc7c4a2a2a2cb",
+      "command": ".venv/Scripts/python.exe -B tools/core_api_contract.py --repo . --check",
+      "commit": "3cac985d89bfa610e292e1ff8d8f05e91c6c816c",
+      "provenance": "fresh execution at fixed clean committed Windows x64 candidate",
+      "rawOutputCanonicalSha256": "534daa26d398254adaf9e826ddf9b188e603616f36d0f7d33f17986f1626beb5",
+      "result": "PASS"
+    },
+    {
+      "id": "current-frozen-core-build",
+      "command": ".venv/Scripts/python.exe -B artifacts/tmp/W2.C12.T01.build-installed-02.py 3cac985d89bfa610e292e1ff8d8f05e91c6c816c",
+      "exitCode": 0,
+      "commit": "3cac985d89bfa610e292e1ff8d8f05e91c6c816c",
+      "provenance": "fresh execution at fixed clean committed candidate",
+      "rawOutput": "artifacts/tmp/W2.C12.T01.build-installed-02.log",
+      "rawOutputSha256": "9b1151b9dc30c4cbfb721bdddb272eaa76243d2797ed4e38be4a237eb947b414",
+      "rawOutputCanonicalSha256": "080aea1e2e14c1d52d627c1d0e5e0473d37c330f958e24e8b79890c066fce5fb",
+      "inputReport": "artifacts/tmp/W2.C12.T01.installed-build-02-3cac985d.json",
+      "inputReportSha256": "8569ad7ed886654e40f1c841d73703961adf4d867281861dba8da82c8974c26c",
+      "producerSha256": "c6d525d3a710ceaca6ef372323c4d719969aec797bccdb78c63242b7a6712ee4",
+      "result": "PASS"
+    },
+    {
+      "id": "current-installed-api-dispatch",
+      "command": ".venv/Scripts/python.exe -B artifacts/tmp/W2.C12.T01.installed-smoke-03.py 3cac985d89bfa610e292e1ff8d8f05e91c6c816c",
+      "exitCode": 0,
+      "commit": "3cac985d89bfa610e292e1ff8d8f05e91c6c816c",
+      "provenance": "fresh execution at fixed clean committed candidate",
+      "rawOutput": "artifacts/tmp/W2.C12.T01.installed-smoke-03.log",
+      "rawOutputSha256": "6763663d9be2e80a160f461664b80b92383e82fa3d309d3d6463f0b6340b6420",
+      "rawOutputCanonicalSha256": "8610dddc3766972ba3d0c949a4b38d6b572d0a394478fdcd3a201ac7c33fd050",
+      "inputReport": "artifacts/tmp/W2.C12.T01.installed-smoke-03-3cac985d.json",
+      "inputReportSha256": "a45ccd38f8e020bb642e0cd9437ba18026105db8bdc12897e35ea06fdbb22695",
+      "producerSha256": "158c0c18057db963e47d439ac5e6d2e088d4cc128687aafd005f5294e7d5945d",
+      "result": "PASS"
+    },
+    {
+      "id": "protected-joined-restart",
+      "command": ".venv/Scripts/python.exe -B artifacts/tmp/W2.C12.T01.joined-restart-02.py 3cac985d89bfa610e292e1ff8d8f05e91c6c816c",
+      "exitCode": 0,
+      "commit": "3cac985d89bfa610e292e1ff8d8f05e91c6c816c",
+      "provenance": "fresh execution at fixed clean committed candidate",
+      "rawOutput": "artifacts/tmp/W2.C12.T01.joined-restart-02.log",
+      "rawOutputSha256": "84d49e8637b24230000886ff0cc2c75604a25d5e1c3efd561250c4055ca78552",
+      "rawOutputCanonicalSha256": "285813ed192658e4168a8c795c0019bd65f01b53d627c6ca302dd9375fe243fb",
+      "inputReport": "artifacts/tmp/W2.C12.T01.joined-restart-02-3cac985d.json",
+      "inputReportSha256": "fe6825d7442251516030506a11fa08eba244b588e538736dd4d7ec3f3cb1573c",
+      "producerSha256": "579f1f928a68ccee9b493eab8f6246e3f8bfb0f5b458e542440c5458ed423ff8",
+      "result": "PASS"
+    }
+  ],
+  "correctiveIntegration": {
+    "originSha256": "a9faa34a543433fdfe1665e54ade2892554e6bf893a1824c6155d8114d3bd994",
+    "authorityPreserved": true,
+    "affectedChecks": [
+      ".venv/Scripts/python.exe -B -m ruff format --check --config pyproject.toml -- services/core-api/src/research_observatory_core/plugin_api.py tests/connectors/test_plugin_admin_service.py tests/contracts/test_plugin_worker_contract.py",
+      ".venv/Scripts/python.exe -B -m ruff check --config pyproject.toml -- services/core-api/src/research_observatory_core/plugin_api.py tests/connectors/test_plugin_admin_service.py tests/contracts/test_plugin_worker_contract.py",
+      "$env:MYPYPATH='tools;services/core-api/src'; .venv/Scripts/python.exe -B -m mypy --config-file pyproject.toml --no-namespace-packages -- services/core-api/src/research_observatory_core/plugin_api.py tests/connectors/test_plugin_admin_service.py tests/contracts/test_plugin_worker_contract.py",
+      ".venv/Scripts/python.exe -B -m unittest -v tests.connectors.test_plugin_admin_service tests.connectors.test_plugin_grants tests.connectors.test_plugin_grant_migration tests.contracts.test_plugin_worker_contract",
+      ".venv/Scripts/python.exe -B tools/core_api_contract.py --repo . --check",
+      ".venv/Scripts/python.exe -B artifacts/tmp/W2.C12.T01.build-installed-02.py 3cac985d89bfa610e292e1ff8d8f05e91c6c816c",
+      ".venv/Scripts/python.exe -B artifacts/tmp/W2.C12.T01.installed-smoke-03.py 3cac985d89bfa610e292e1ff8d8f05e91c6c816c",
+      ".venv/Scripts/python.exe -B artifacts/tmp/W2.C12.T01.joined-restart-02.py 3cac985d89bfa610e292e1ff8d8f05e91c6c816c"
+    ],
+    "reusedEvidence": [],
+    "rationale": "Restore the exact approved human confirmation path, preserving validated destinations rather than weakening digest or grant fences. All selected correction observations are fresh on this candidate. Historical task/security approval remains immutable support; no cached native PASS is claimed. Other slice/Wave obligations are separate."
+  },
+  "redFirstRegression": {
+    "commit": "0ea49b6a8b7f4c883863f9c55f84a8021e7a52b7",
+    "report": "artifacts/tmp/W2.C12.T01.red-01-0ea49b6a.json",
+    "reportSha256": "5f77ec08790da316c4632324f8f8e8d628f20fc954aae0009279169679aa3a09",
+    "checks": [
+      {
+        "id": "http-red",
+        "exitCode": 1,
+        "durationSeconds": 5.078,
+        "rawOutput": "artifacts/tmp/W2.C12.T01.red-01-0ea49b6a.http-red.log",
+        "rawOutputSha256": "e9dcf335143a92e7e94ed9c4312eccd3b7e02e573df75eacc71a5f59929179a5"
+      }
+    ]
+  },
+  "preservedAttempts": [
+    {
+      "path": "artifacts/tmp/W2.C12.T01.green-01-68131d16.json",
+      "sha256": "75e1e776607f6634cb8eb0f0a37e612246aeecdb25d5d7c8461df35aa404a01f",
+      "status": "FAIL"
+    },
+    {
+      "path": "artifacts/tmp/W2.C12.T01.installed-smoke-01-68131d16.json",
+      "sha256": "3edd80d4e80f6d276228de5b788a302e555e97540b2340cf1f6524067bd74804",
+      "status": "FAIL"
+    },
+    {
+      "path": "artifacts/tmp/W2.C12.T01.installed-smoke-02-3cac985d.json",
+      "sha256": "4302103f6c7bdbbc1541ad6224fc2e417dc218b28efa7ae79ca1e6acd99609e3",
+      "status": "FAIL"
+    }
+  ],
+  "installedSmokeLimits": "Actual frozen supervised Core uses its production InstalledPluginRuntime and default DPAPI profile vault, with only a new test-owned synthetic project and unique synthetic publisher. No runtime availability override, mock HTTP, private research, contact, API key, or desktop GUI is used. The new signed fixture makes exactly one production-broker HTTPS GET to api.crossref.org/works/{identifier} for public DOI 10.1128/mbio.01735-25 from Crossref official REST documentation, after exact project Intent/privacy/native grant/invocation consent. Returned DOI/title are real source assertions; terms/license stay not-reported and access unknown. The bounded response remains encrypted in this owned fixture, with no remote write, publication or live coverage/latency claim. Full synthetic two-page broker/rights/provenance/restart proof is separate.",
+  "scopeDeviation": null,
+  "evidenceDisplaySemantics": "Commands use repository-relative spelling of the same local interpreter. Exact expanded local argv and runtime input inventories remain in ignored reports; no user path or new runtime setting is published."
+}
