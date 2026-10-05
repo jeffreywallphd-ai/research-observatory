@@ -1,0 +1,82 @@
+{
+  "schemaVersion": "1.0",
+  "amendmentId": "W2.A03",
+  "changeRequestId": "ECR-0011",
+  "targetWave": "W2",
+  "branch": "codex/w2-implementation",
+  "candidateCommit": "f4759f0060ae0a01c3efc053e0e49d8b074851d8",
+  "taskBindings": [
+    {
+      "taskId": "W2.A03.T01",
+      "candidateCommit": "aa09664678ca3ca8fa7a428cb60f3565d2c0e9bd",
+      "manifestReference": {
+        "type": "criterion-manifest",
+        "path": "artifacts/evidence/W2.A03.T01.json",
+        "sha256": "3c16cfc101bfd9aea58197b44eab35c628180ae718b366da43eef8e1a89f883a",
+        "commit": "aa09664678ca3ca8fa7a428cb60f3565d2c0e9bd",
+        "recorded_at": "2026-10-03T23:31:58+00:00"
+      },
+      "reviewLedger": {
+        "path": "artifacts/evidence/W2.A03.T01.review-R01.json",
+        "sha256": "c0c9c10e3e6d271edd13db1c767ed8d4d07b5564b8a28f5b4c383173cf14d159"
+      }
+    },
+    {
+      "taskId": "W2.A03.T02",
+      "candidateCommit": "06a69348c5de5c60cccecde400ab2271200ec50d",
+      "manifestReference": {
+        "type": "criterion-manifest",
+        "path": "artifacts/evidence/W2.A03.T02.json",
+        "sha256": "6c7d9b8491f33e529001cde6bf9327c7412e9cdada9f8644b2d4af5f23d2855f",
+        "commit": "06a69348c5de5c60cccecde400ab2271200ec50d",
+        "recorded_at": "2026-10-04T18:51:12+00:00"
+      },
+      "reviewLedger": {
+        "path": "artifacts/evidence/W2.A03.T02.review-R01.json",
+        "sha256": "6dddd39b9a0303fa2febd78d00e3bc6d7106038c111b7181bf406b82af68ff15"
+      }
+    }
+  ],
+  "documentType": "wave-amendment-adoption-evidence",
+  "reviewedCompletionCommit": "f4759f0060ae0a01c3efc053e0e49d8b074851d8",
+  "approvedExitAttempt": "R01",
+  "approvedExitEvidence": {
+    "type": "amendment-exit-evidence",
+    "amendment_id": "W2.A03",
+    "path": "artifacts/evidence/W2.A03.exit.json",
+    "sha256": "7eda25e4f286e090c38286a69f99a16dcd399280a184a9b0507aa3573c2bcb21",
+    "commit": "573c603e646cab41b1d011eac583d652f0f2c67a"
+  },
+  "approvedExitLedger": {
+    "path": "artifacts/evidence/W2.A03.exit-review-R01.json",
+    "sha256": "053be7c26fc30ae8c12c2fe75fa04284d9f96a8896dfe651e5fe4a8856bf9912"
+  },
+  "contributionReviewPaths": [
+    "artifacts/evidence/W2.A03.S01.review-01.json",
+    "artifacts/evidence/W2.A03.S01.review-02.json"
+  ],
+  "authority": {
+    "approvedPacketCommit": "746c05dcd7dbabaa7f5eebee8e3fa56b8ac6b9b5",
+    "approvedPacketSha256": "31a31459b0895316972203e6b2b301ca9bc2fb83bdd566034ff61e1bc0a3b0e3",
+    "approvalReference": {
+      "path": "planning/wave-amendment-approvals/W2.A03.json",
+      "sha256": "8852d6631a6656e94cc75e4f9dc705c7095ecf111786748e5630fe13b8fa9087",
+      "introduction_commit": "c972e2116113afa7ad84f0e43bdad58660cc69bb"
+    },
+    "referenceId": "RO-UI-ACADEMIC-MINIMAL-1.8",
+    "referencePackageSha256": "cd8995fdcea2fe44452eaa1fdd258b6f9fab5714cbd443a81a8e5b4251220b94"
+  },
+  "checkpointScope": {
+    "kind": "security",
+    "actualScope": "Adopt only the original independently reviewed A03 witness/consumer activation and its separately reviewed A04/A05 repair histories. Preserve all task bases, independent findings and completed amendment records.",
+    "statusAfterAdoption": "PAUSED",
+    "ordinaryBlockedTask": "CAP-05.S01.T01",
+    "ordinaryTaskBase": "6506c68461144747b0ee9be10853211717aa381d"
+  },
+  "requiredNextTransitions": [
+    "Separate independent security review of this committed checkpoint, committed before supported taskctl adoption.",
+    "Supported A03 adoption leaves original W2 PAUSED; explicit ordinary campaign resume and original blocked task reopen follow.",
+    "Finish joined CAP-04.S05 and remaining W2 product work, fresh full qualification, independent Wave review and separate human release."
+  ],
+  "transitionTruth": "Pre-adoption security checkpoint bound to the actual approved exit. No future security approval, adoption, Wave/task resumption, product qualification or release is asserted."
+}
