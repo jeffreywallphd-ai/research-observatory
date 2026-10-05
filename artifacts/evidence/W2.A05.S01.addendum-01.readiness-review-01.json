@@ -1,0 +1,104 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "wave-amendment-completion-addendum-readiness-review",
+  "amendmentId": "W2.A05",
+  "contributionId": "W2.A05.S01",
+  "reviewer": "agent:/root/a05_t02_review",
+  "reviewedCandidateCommit": "09f58b8a6abcbe2159c08d5bc40ba089e5de050c",
+  "contextCommit": "a242167fdb73f958181ee45d8e83a134daf94caa",
+  "proposal": {
+    "path": "artifacts/evidence/W2.A05.S01.addendum-01.proposal.json",
+    "sha256": "2181af5c09ae31b813e2db019cac880e5893b6879124e3faa72c08a2a91a14b1"
+  },
+  "sourcePatch": {
+    "path": "artifacts/evidence/W2.A05.S01.addendum-01.source.patch",
+    "sha256": "2259496d8b077de80574a555c6bb7a5747f4825037f0847c8ee6b8d90eadf62b"
+  },
+  "preparationEvidence": {
+    "path": "artifacts/evidence/W2.A05.S01.addendum-01.preparation.json",
+    "sha256": "3d80bb06a42325f4f99a3ba8545a849377be9ee258c4a0c45d87fa22e3806293",
+    "qualifyingEvidence": false
+  },
+  "result": "approved",
+  "ownerDecisionRequired": true,
+  "sourceImplementationAuthorized": false,
+  "qualifyingEvidence": false,
+  "notes": "Independent readiness review of the exact inert six-file packet at 09f58b8a, including all 312 lines of the four-file source patch. The active source, original task candidates/bases/reviews, backlog and protected product/reference/controller inputs remain identical to a242167f in this immutable candidate. The proposal and complete patch are sufficiently concrete for one explicit owner decision on this final A05-only source-delivery increment. This is readiness approval only: it grants no implementation authority, does not qualify source, does not close W2.A05.S01-R01-F01 and does not substitute for later control/S01/exit/security/adoption or A03/product/Wave/release gates. The additional source is limited to one separate direct-child four-path commit after the immutable readiness-bound owner grant; the original two task ranges remain unchanged and disjoint. The exact historical-pair helper retains immutable ledger authentication, recognizes only the two literal A05 R01 pairs and permits only the actual T01-derived T02 status/updated_at readiness delta. The external owner/proposal/patch/source binding avoids a self-hash cycle. Owner-only component checking still authenticates exact delivered source; final source attribution additionally requires separately introduced exact-candidate execution evidence and an independent control review. All four before/after source bindings, the complete reconstructed patch, nine retained preparation reference hashes and both actual integration failure logs were independently authenticated read-only. Preparation is correctly described as ignored-copy or disposable synthetic proof, with prior setup errors retained and no real future approval or committed qualification claimed. Only this readiness ledger is authored. After A05 closes, no further optional automation/framework source development is authorized.",
+  "independence": {
+    "implementationOwner": "codex-w2-implementation",
+    "statement": "Reviewer agent:/root/a05_t02_review differs from the source/task/campaign owner. My prior W2.A05.T02 R01 task review and canonical ledger authorship are disclosed. I also provided read-only advisory design comments identifying the exact T01-derived T02 readiness delta and avoiding a proposal/source hash cycle. I authored no addendum proposal, patch, active source, preparation producer, raw execution artifact or source evidence. This formal readiness review reads immutable Git and retained local artifacts without running suites or mutating source, backlog, site, producer, approvals or Git refs. Only the canonical readiness ledger is written; concurrent generated worktree metadata is outside the reviewed Git boundary."
+  },
+  "readinessAssessments": [
+    {
+      "boundary": "Demonstrated mismatch, minimum scope and unchanged prior authority",
+      "result": "satisfied",
+      "assessment": "The immutable actual adverse record and S01 review-01 agree on the concrete ledger-introduction versus direct-child review-publication incompatibility. Both original task approvals remain valid. Ordinary T01 continuation would overlap the separately completed T02 range, T02 excludes gate source, and the linked correction requires the adoption currently blocked by this finding. The inert addendum preserves ECR-0013 at 55c6389c and owner approval b54f24c2, B00, task definitions/bases/candidates/R01 ledgers, the original source envelopes and prior adverse findings. It adds no amendment ID, executable task, controller, schema, asserted contract field, reference change or product requirement. Owner approval is explicitly required before the additional source implementation."
+    },
+    {
+      "boundary": "Exact historical publications and legacy ordering",
+      "result": "satisfied",
+      "assessment": "The patch changes correction_submission_ranges only by selecting an authenticated publication commit before its existing frozen-transition checks. All other identities, introductions and attempts return their original introduction. The new branch is limited to literal T01 e058-to-a110 and T02 381f-to-a242 R01 pairs. It authenticates the exact pending REVIEW packet, empty prior attempt prefix, exact appended first attempt, DONE state, cleared lease/submission, stable identity/criteria and the whole remaining backlog. The T01 case removes only T02 status and updated_at after requiring NOT_STARTED-to-READY, retaining every other sibling field; T02 preserves its sibling completely. Existing immutable ledger ref/hash/reviewer/result/notes/findings/closures checks remain in the caller, and original net inventories, non-overlap and source-denial logic remain intact."
+    },
+    {
+      "boundary": "Concrete source and approval-before-delivery binding",
+      "result": "satisfied",
+      "assessment": "The full patch contains exactly the gate, its focused tests, design-first procedure append and metadata-preserving Proposed ADR41 body append. All four before blobs/modes match a242 and candidate 09f58; all four after-byte digests match the retained draft. Reconstructing the complete four-file unified diff from those authenticated before/after bytes yields exactly patch 2259496d. The new owner record binds the immutable proposal/readiness and requires a separate owner-only commit immediately following readiness. Exactly one four-path source commit must immediately follow the owner record and equal every proposal binding; repeated source touches, hidden add/revert, foreign paths/modes and mixed source/backlog delivery deny. The external finite binding scheme has no digest of its own containing proposal or patch embedded in source and requires no future constant substitution into already approved code."
+    },
+    {
+      "boundary": "Source review and ordered integration obligations",
+      "result": "satisfied",
+      "assessment": "The owner-only history component path still requires the exact authorized source delivery and is distinguished from final attribution. require_review=True additionally authenticates distinct immutable execution evidence naming that source candidate and its exact bindings, nonempty passing check entries, and a later independent approved source/control ledger bound to the manifest introduction/blob/digest. The final segment is admitted separately and overlap with original task source commits denies. The plan requires fresh exact-candidate focused real-Git adversarial, affected quality/ADR/UI/planning proof, then independent source/control disposition and fresh actual A05 integration. S01 review-02 must explicitly close preserved A05 F01 before distinct exit/security/adoption/paused-A03 return; A03 activation/fresh original F01 replay/review-02/exit/security/adoption and ordinary W2 resume remain subsequent gates. No product, native/Core, full Wave or release waiver is introduced."
+    },
+    {
+      "boundary": "Truthful preparation and retained failures",
+      "result": "satisfied",
+      "assessment": "The nine preparation references and both actual adverse raw logs match their declared hashes. Final component-02 reports two passing ignored-copy methods with zero failures/errors, and its raw log identifies four existing co-committed A02/A03/A04 task ranges. The disposable real-Git producer/report distinguish synthetic proposal/readiness/owner/source and source-evidence/control-review positives from real approval or qualification, retaining missing-review, rewritten-owner/packet, replayed-manifest and source add/revert denials. The earlier unformatted component artifact has older source digests and remains prior preparation. Initial lint/format/import-resolution and shell-construction problems are disclosed; the actual missing-script invocation log is retained. Preparation does not claim complete hostile coverage, actual owner authority or a passing current combined integration. Committed-candidate qualification and independent control review remain mandatory after owner approval."
+    }
+  ],
+  "observedImmutableRecords": [
+    {"path": "artifacts/evidence/W2.A05.S01.addendum-01.proposal.json", "sha256": "2181af5c09ae31b813e2db019cac880e5893b6879124e3faa72c08a2a91a14b1"},
+    {"path": "artifacts/evidence/W2.A05.S01.addendum-01.source.patch", "sha256": "2259496d8b077de80574a555c6bb7a5747f4825037f0847c8ee6b8d90eadf62b"},
+    {"path": "artifacts/evidence/W2.A05.S01.addendum-01.preparation.json", "sha256": "3d80bb06a42325f4f99a3ba8545a849377be9ee258c4a0c45d87fa22e3806293"},
+    {"path": "artifacts/evidence/W2.A05.S01.addendum-01.review.html", "sha256": "468818c3a62e06f919798a7632b286c722a806a64a36f5c2176db74b901086ff"},
+    {"path": "artifacts/evidence/W2.A05.S01.integrated-adverse-01.json", "sha256": "450bfc6e102a12e2121004ae858f2b2da8a21b16b3cb721d261a016d95f982b7"},
+    {"path": "artifacts/evidence/W2.A05.S01.review-01.json", "sha256": "8e8ac588b2c5c286acf919775452eb053890cc525300d9130dec707996e75bfd"}
+  ],
+  "observedSourceBindings": [
+    {"path": "docs/adr/ADR-0041-authenticate-reviewed-activation-control-repairs.md", "mode": "100644", "beforeGitBlob": "3688bfd3ef8d1674b14e260480494c1588d2eb2e", "beforeSha256": "b3246ec610b5a1ce188ecdf3c14f3b56c9b1f380c6c9c73c5cb6b8d1050223ea", "afterSha256": "f77d33dcf53f91174df3e5a39d0258aa7ebddd595215af711d641bd7d455334f"},
+    {"path": "docs/automation/design-first-ui-changes.md", "mode": "100644", "beforeGitBlob": "93a3591a9aed8473c7f766bc7491215b96890e9a", "beforeSha256": "f920b83fa0a64f6aa8084672e5aa4c2efbb9ea08f9c7123ef362dae0b1219ddb", "afterSha256": "161e0bf110b725da5213a59300c4b5d4c59c80ee18c35eba5b8c2940f70652c3"},
+    {"path": "tests/foundation/test_ui_change_gate.py", "mode": "100644", "beforeGitBlob": "d039ab490cb0bfaadc721390859fc628f55684fe", "beforeSha256": "64516f3cc5c1d1b34c4b6b275b0e61ed74ead817946fbd97832f63d889538efc", "afterSha256": "72cbbd156a213bb6f6b259acb9a51cf499c83cc22353dc09995d9a021305f527"},
+    {"path": "tools/ui_change_gate.py", "mode": "100644", "beforeGitBlob": "748eba14955ed49f1b2666ab422895a368d03915", "beforeSha256": "140d31bc7611f3cf48b9898e571e522442d6e9e9d37573fbca34b000772a187f", "afterSha256": "fa77fdf99c05b64954c4ce62956e137f2a97f09b96f42d4d75aeb68c05cde126"}
+  ],
+  "observedPreparationReferences": [
+    {"path": "artifacts/tmp/W2.A05.S01.draft-component-02.json", "sha256": "42de57a69b8ffebed173d7c5a091b1d7800e983b93c365000c2393ee18f054f4"},
+    {"path": "artifacts/tmp/W2.A05.S01.draft-component-02.log", "sha256": "53bff311436c64cce5d30dff0c4ed23d8dbdb184c44d74d90ddc35494fa4be06"},
+    {"path": "artifacts/tmp/W2.A05.S01.check-draft-02.py", "sha256": "8fe474b458398ba1187c177ffe2983ddd8ce84bf060196bfa013c2eec223fdf4"},
+    {"path": "artifacts/tmp/W2.A05.S01.draft-source-grant-01.json", "sha256": "61c81f94e0c188f1227cd3896dcd73cd8e95692263a917a78a1e6873b7ca3c71"},
+    {"path": "artifacts/tmp/W2.A05.S01.draft-source-grant-01.log", "sha256": "0249a167f03efadfd2e2b5832a5596286eed741cf2bdbefd6d9415852e9d783a"},
+    {"path": "artifacts/tmp/W2.A05.S01.check-source-grant-draft-01.py", "sha256": "fcffe1287374b528472c2300ef548028507588e5480ebae3e03d43831cf65fae"},
+    {"path": "artifacts/tmp/W2.A05.S01.draft-component-01.json", "sha256": "e3d4bf64b1ef8fb513043405a74abda102f6ec695e4066793b5dfb5893bfc7e4"},
+    {"path": "artifacts/tmp/W2.A05.S01.draft-component-01.log", "sha256": "fc920e7d53dcb038ad31a46a5edef91887b6468aef589e871120e2fce55bf3fc"},
+    {"path": "artifacts/tmp/W2.A05.S01.draft-component-02-invocation-adverse.log", "sha256": "4b9c821e8cb0c0e08267f7dcf39e38fc466d51c8a740871f35c29e1a9f0b339a"}
+  ],
+  "observedActualAdverseLogs": [
+    {"path": "artifacts/tmp/W2.A05.task-integrated-a242167f.log", "sha256": "53bfc0c683d8db86100f3750e13e7dbf592f92c46f0dd28954ebc7e4caab03f9", "exitCode": 1},
+    {"path": "artifacts/tmp/W2.A05.T02.history-diagnostic-a242167f.log", "sha256": "c9b1bfe882684c084a0a8f8077d67b81508b090e22a9ae19c612135d5da5c86e", "exitCode": 1}
+  ],
+  "proofLimits": [
+    "This is independent readiness for an inert source proposal. No owner decision, source application, fresh committed-candidate check, final control review or actual integration pass is represented by this ledger.",
+    "Preparation producers execute ignored prospective copies and disposable repositories with explicitly synthetic future owner/reviewer/evidence records. They do not authenticate real decisions, prove full hostile coverage or satisfy later qualification.",
+    "The full patch and source bytes were inspected and reconstructed read-only; Python draft syntax was parsed in memory. No suites were rerun and no active source, backlog, generated site, producer or Git ref was changed by this reviewer.",
+    "The actual A05 S01 blocking finding remains open. Exact source qualification/control review, fresh S01 replay/review-02, exit/security/adoption/paused-parent return and later separate A03 closure remain mandatory.",
+    "Original product/native/Core/D3D and joined CAP-04.S05 proof, remaining W2 product work, fresh full Wave qualification and human release remain due. Owner scope excludes further automation/framework development after A05."
+  ],
+  "findings": [],
+  "closures": [],
+  "openIntegratedFindingIds": ["W2.A05.S01-R01-F01"],
+  "reviewerSafety": {
+    "productOrControlMutation": false,
+    "backlogOrSiteMutation": false,
+    "gitRefMutation": false,
+    "remoteEffect": false,
+    "canonicalFilesAuthored": ["artifacts/evidence/W2.A05.S01.addendum-01.readiness-review-01.json"]
+  }
+}
