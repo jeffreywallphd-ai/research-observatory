@@ -1,0 +1,50 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "actual-integrated-amendment-adverse-observation",
+  "amendmentId": "W2.A05",
+  "candidateCommit": "a242167fdb73f958181ee45d8e83a134daf94caa",
+  "main": "a242167fdb73f958181ee45d8e83a134daf94caa",
+  "result": "failed",
+  "scope": "Actual two-task integrated history authentication; no positive integration or completion claim",
+  "error": "ValueError: correction task review is not its actual frozen-submission transition",
+  "location": "tools/ui_change_gate.py:3042",
+  "checks": [
+    {
+      "path": "artifacts/tmp/W2.A05.task-integrated-a242167f.log",
+      "sha256": "53bfc0c683d8db86100f3750e13e7dbf592f92c46f0dd28954ebc7e4caab03f9",
+      "result": "failed",
+      "exitCode": 1
+    },
+    {
+      "path": "artifacts/tmp/W2.A05.T02.history-diagnostic-a242167f.log",
+      "sha256": "c9b1bfe882684c084a0a8f8077d67b81508b090e22a9ae19c612135d5da5c86e",
+      "result": "failed",
+      "exitCode": 1
+    }
+  ],
+  "cause": "Immutable R01 ledgers were committed before supported taskctl review/DONE publication; this validator authenticates attempts at ledger introduction instead of the later review publication. Root selected this incompatible commit order. Both taskctl task approvals remain valid; no ledger, base or prior record was rewritten.",
+  "taskBindings": [
+    {
+      "taskId": "W2.A05.T01",
+      "status": "DONE",
+      "candidateCommit": "9106f485d32150943e8fbedd5299d5882021e183",
+      "ledger": {
+        "path": "artifacts/evidence/W2.A05.T01.review-R01.json",
+        "sha256": "f33aa6d3bff44c440013a93e9acb80a2539d7e129db6993da6234a4cd16dec28"
+      }
+    },
+    {
+      "taskId": "W2.A05.T02",
+      "status": "DONE",
+      "candidateCommit": "03e501c4550c7aa61e1e60827d49f7174faab1ef",
+      "ledger": {
+        "path": "artifacts/evidence/W2.A05.T02.review-R01.json",
+        "sha256": "20b2ef49ce578e6cb605b2e61be373265db11e60938393eb1032aa394bb08721"
+      }
+    }
+  ],
+  "retainedObligations": [
+    "Independent S01 remains pending; A05 exit/security/adoption, A03 activation/finding closure/adoption and ordinary W2/product qualification remain due.",
+    "No further framework source work after A05; no new framework amendment, source bypass, history rewrite or fabricated pass authorized."
+  ]
+}

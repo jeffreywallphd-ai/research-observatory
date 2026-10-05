@@ -1,0 +1,150 @@
+{
+  "schemaVersion": "1.0-proposal",
+  "documentType": "wave-amendment-completion-scope-addendum-proposal",
+  "amendmentId": "W2.A05",
+  "contributionId": "W2.A05.S01",
+  "status": "PENDING_OWNER_APPROVAL",
+  "executionState": "INERT",
+  "approvalKind": "exact-inert-source-and-bounded-delivery-addendum",
+  "contextCommit": "a242167fdb73f958181ee45d8e83a134daf94caa",
+  "baseApprovalCommit": "b54f24c222f631700056574a08056f660696d305",
+  "originalPacket": {
+    "commit": "55c6389ce39a656f4da3851cae32ae12ac80e796",
+    "path": "planning/enabler-change-requests/ECR-0013.packet.json",
+    "sha256": "56f521d708266021121b2a3391506cc771c7d32e32442d29dc5e58ba356f20c1"
+  },
+  "targetApprovalPath": "planning/wave-amendment-approvals/W2.A05.S01.addendum-01.json",
+  "authorizedSourcePaths": [
+    "docs/adr/ADR-0041-authenticate-reviewed-activation-control-repairs.md",
+    "docs/automation/design-first-ui-changes.md",
+    "tests/foundation/test_ui_change_gate.py",
+    "tools/ui_change_gate.py"
+  ],
+  "frozenSourceBeforeBindings": [
+    {
+      "path": "tools/ui_change_gate.py",
+      "mode": "100644",
+      "beforeGitBlob": "748eba14955ed49f1b2666ab422895a368d03915",
+      "beforeSha256": "140d31bc7611f3cf48b9898e571e522442d6e9e9d37573fbca34b000772a187f"
+    },
+    {
+      "path": "tests/foundation/test_ui_change_gate.py",
+      "mode": "100644",
+      "beforeGitBlob": "d039ab490cb0bfaadc721390859fc628f55684fe",
+      "beforeSha256": "64516f3cc5c1d1b34c4b6b275b0e61ed74ead817946fbd97832f63d889538efc"
+    },
+    {
+      "path": "docs/automation/design-first-ui-changes.md",
+      "mode": "100644",
+      "beforeGitBlob": "93a3591a9aed8473c7f766bc7491215b96890e9a",
+      "beforeSha256": "f920b83fa0a64f6aa8084672e5aa4c2efbb9ea08f9c7123ef362dae0b1219ddb"
+    },
+    {
+      "path": "docs/adr/ADR-0041-authenticate-reviewed-activation-control-repairs.md",
+      "mode": "100644",
+      "beforeGitBlob": "3688bfd3ef8d1674b14e260480494c1588d2eb2e",
+      "beforeSha256": "b3246ec610b5a1ce188ecdf3c14f3b56c9b1f380c6c9c73c5cb6b8d1050223ea"
+    }
+  ],
+  "authenticatedHistoricalReviewTransitions": [
+    {
+      "taskId": "W2.A05.T01",
+      "ledgerIntroductionCommit": "e0580f8e6b33be13c6ee515ea20ea4e7b6133535",
+      "reviewTransitionCommit": "a1105c306178b6c5f10d0107f244d3e14e2d401d",
+      "sourceCandidate": "9106f485d32150943e8fbedd5299d5882021e183",
+      "ledgerSha256": "f33aa6d3bff44c440013a93e9acb80a2539d7e129db6993da6234a4cd16dec28"
+    },
+    {
+      "taskId": "W2.A05.T02",
+      "ledgerIntroductionCommit": "381f1e992bfc60aebfe2f73f2470e6710ceba935",
+      "reviewTransitionCommit": "a242167fdb73f958181ee45d8e83a134daf94caa",
+      "sourceCandidate": "03e501c4550c7aa61e1e60827d49f7174faab1ef",
+      "ledgerSha256": "20b2ef49ce578e6cb605b2e61be373265db11e60938393eb1032aa394bb08721"
+    }
+  ],
+  "mismatch": {
+    "criterion": "W2.A05.S01 acceptance criterion 2: actual integrated ordered task/history review",
+    "observedError": "ValueError: correction task review is not its actual frozen-submission transition",
+    "location": "tools/ui_change_gate.py:3042",
+    "cause": "Root committed each independent ledger before taskctl review/DONE. Taskctl accepts both valid reviews; the integrated gate assumes the review projection occurs at ledger introduction.",
+    "adverseEvidence": {
+      "path": "artifacts/evidence/W2.A05.S01.integrated-adverse-01.json",
+      "sha256": "450bfc6e102a12e2121004ae858f2b2da8a21b16b3cb721d261a016d95f982b7"
+    },
+    "ordinaryRepairInfeasible": "T01 R02 would necessarily overlap T02's completed source range; T02 excludes gate source; immutable R01 introductions cannot be rewritten; linked correction requires adoption that the failure blocks."
+  },
+  "constraints": [
+    "This is one bounded completion addendum within existing W2.A05.S01. Preserve the immutable original ECR-0013 packet/owner approval, B00, both DONE task definitions/bases/source candidates/R01 reviews and all adverse evidence. Add no amendment ID, executable task, controller, schema, control revision or asserted closed-v1.4 contract field.",
+    "Authorize one additional final source segment only in the four paths listed. Keep docs/adr/index.json and every previous ADR unchanged. ADR-0041 remains Proposed with identical metadata; allow only one bounded appended body explaining this approved completion repair and verification. No product, renderer, native/Core, permission, reference, witness, baseline, dependency, runtime, migration or release input edit.",
+    "Distinguish immutable ledger introduction from the actual independently recorded review transition only for the two exact historical pairs listed. Authenticate unchanged immutable ledger bytes/ref/reviewer/result/notes/findings/closures, exact REVIEW frozen packet and previous attempt prefix at introduction, direct-child transition ancestry, exact appended attempt, task DONE/approved state, cleared submission/lease, unchanged identity/authority and preserved sibling/ordinary records, permitting only the exact T01-triggered T02 NOT_STARTED-to-READY status and updated_at delta. Do not accept an arbitrary later descendant or globally relax historical amendment review rules.",
+    "Retain all existing co-committed review positives and substitution/order/history/source denials. The original exact task ranges and net inventories remain unchanged, separate and non-overlapping. Do not reopen either completed A05 task or move a base to avoid overlap.",
+    "Authenticate the additional source segment separately through this immutable proposal, independent plan-readiness review and a later explicit human owner record descending from the original b54 approval. Owner approval must precede source delivery. Bind the later exact committed source candidate and complete changed-path/blob/mode inventory to fresh criterion-linked machine evidence and a separate independent control review. Final source attribution is available only after that authenticated review; no caller-supplied path exemption, filename bypass, extra source segment or unreviewed add/revert.",
+    "The additional owner record is append-only planning authority/evidence, not a new backlog state or asserted UI-contract field. Keep taskctl, governance kernel, planning schemas and frozen task inventory unchanged. The gate must directly authenticate the final source/review history under this exact A05 completion grant; it must not manufacture a task lease or classify the segment as one of the old source candidates.",
+    "Before source edits, add the smallest regression for both actual historical pairs. Qualify the exact committed candidate with focused real-Git separate-ledger positives and missing/foreign/replayed/changed ledger or packet, unrelated transition and hidden add/revert denials; select affected E06/prefix/owner/lease/overlap/retained-projection and legacy boundaries. Run affected Python quality, ADR/UI and planning checks. Authenticate existing unchanged static/browser/33-page accessibility proof; do not repeat those suites unless changed inputs or an explicit criterion requires it.",
+    "After independent control approval, run the fresh actual combined A05 integration check. Preserve S01 review01 and explicitly close its finding in immutable review02. Then finish distinct exit review, separate committed security review/adoption and fresh exact paused-A03 return. Separate A03 activation, fresh original F01 replay/review02 and A03 exit/security/adoption must precede ordinary W2 resume.",
+    "After A05 closes, perform no further automation framework source development, maintenance, new framework amendment or styling. This approval supplies no product completion, ordinary W2 resumption or release waiver. Resume approved product work only after the existing ordered gates pass.",
+    "Original W2 33-task/143-point/530-hour implementation baseline and shared 79.5-hour refactoring ceiling remain unchanged. This restorative source increment is part of the A05 completion scope, not a new budget or structural refactor. Preserve measured adverse runs and timing; no invented savings or promised completion time."
+  ],
+  "requiredDispositions": [
+    "Independent immutable proposal readiness",
+    "Explicit owner approval before source implementation",
+    "Fresh exact-candidate machine proof and independent final source/control review",
+    "Fresh A05 actual integration and S01 finding closure",
+    "Existing distinct exit/security/adoption/return",
+    "Existing A03 closure and ordinary W2 resume"
+  ],
+  "alternatives": [
+    {
+      "id": "approve-a05-completion-addendum",
+      "recommended": true,
+      "effect": "Authorize this one final bounded A05 source delivery; preserve all required review/qualification gates and return to approved product work afterward."
+    },
+    {
+      "id": "defer",
+      "recommended": false,
+      "effect": "Keep current source/history and A03/W2 paused. No safe ordinary W2 resume is available under current frozen authority."
+    }
+  ],
+  "resumeCondition": "Owner approval of this exact independently reviewed immutable scope packet. Implement only its bounded four-path final segment, qualify and independently review exact source, replay A05 integration/finding and complete existing ordered amendment gates. No release approval is requested.",
+  "proposalTruth": "This packet contains an exact inert code patch and a bounded source-delivery plan. Active source is unchanged. Prospective ignored-copy component/style/type checks are preparation only; they do not qualify a committed task, owner grant or actual integration. After explicit owner approval, fresh exact committed-candidate machine evidence, independent source/control review and all later ordered gates remain required.",
+  "sourceBindings": [
+    {
+      "path": "docs/adr/ADR-0041-authenticate-reviewed-activation-control-repairs.md",
+      "mode": "100644",
+      "beforeGitBlob": "3688bfd3ef8d1674b14e260480494c1588d2eb2e",
+      "beforeSha256": "b3246ec610b5a1ce188ecdf3c14f3b56c9b1f380c6c9c73c5cb6b8d1050223ea",
+      "afterSha256": "f77d33dcf53f91174df3e5a39d0258aa7ebddd595215af711d641bd7d455334f"
+    },
+    {
+      "path": "docs/automation/design-first-ui-changes.md",
+      "mode": "100644",
+      "beforeGitBlob": "93a3591a9aed8473c7f766bc7491215b96890e9a",
+      "beforeSha256": "f920b83fa0a64f6aa8084672e5aa4c2efbb9ea08f9c7123ef362dae0b1219ddb",
+      "afterSha256": "161e0bf110b725da5213a59300c4b5d4c59c80ee18c35eba5b8c2940f70652c3"
+    },
+    {
+      "path": "tests/foundation/test_ui_change_gate.py",
+      "mode": "100644",
+      "beforeGitBlob": "d039ab490cb0bfaadc721390859fc628f55684fe",
+      "beforeSha256": "64516f3cc5c1d1b34c4b6b275b0e61ed74ead817946fbd97832f63d889538efc",
+      "afterSha256": "72cbbd156a213bb6f6b259acb9a51cf499c83cc22353dc09995d9a021305f527"
+    },
+    {
+      "path": "tools/ui_change_gate.py",
+      "mode": "100644",
+      "beforeGitBlob": "748eba14955ed49f1b2666ab422895a368d03915",
+      "beforeSha256": "140d31bc7611f3cf48b9898e571e522442d6e9e9d37573fbca34b000772a187f",
+      "afterSha256": "fa77fdf99c05b64954c4ce62956e137f2a97f09b96f42d4d75aeb68c05cde126"
+    }
+  ],
+  "sourcePatch": {
+    "path": "artifacts/evidence/W2.A05.S01.addendum-01.source.patch",
+    "sha256": "2259496d8b077de80574a555c6bb7a5747f4825037f0847c8ee6b8d90eadf62b"
+  },
+  "finiteBindingScheme": "Gate source contains canonical addendum paths, original human-approval anchor b54 and the two immutable historical pairs, but no digest of its own containing proposal/source patch. A separate owner record binds the immutable proposal and readiness hashes. A separate direct-child four-path source commit must equal the proposal's before/after bindings. Later distinct immutable execution/control records bind that exact source candidate before final attribution. There is no hash cycle and no future commit constant substituted into already approved source.",
+  "preparationEvidence": {
+    "path": "artifacts/evidence/W2.A05.S01.addendum-01.preparation.json",
+    "sha256": "3d80bb06a42325f4f99a3ba8545a849377be9ee258c4a0c45d87fa22e3806293",
+    "qualifyingEvidence": false
+  }
+}

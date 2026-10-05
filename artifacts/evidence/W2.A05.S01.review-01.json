@@ -1,0 +1,130 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "amendment-contribution-independent-review",
+  "amendmentId": "W2.A05",
+  "sliceId": "W2.A05.S01",
+  "capabilityId": "CAP-05",
+  "title": "Reviewed activation history and accurate label controls",
+  "reviewer": "agent:/root/a05_t01_review",
+  "reviewedAt": "2026-10-05T08:05:52Z",
+  "result": "changes-requested",
+  "reviewedCompletionDeliveryCommit": "a242167fdb73f958181ee45d8e83a134daf94caa",
+  "taskBindings": [
+    {
+      "taskId": "W2.A05.T01",
+      "candidateCommit": "9106f485d32150943e8fbedd5299d5882021e183"
+    },
+    {
+      "taskId": "W2.A05.T02",
+      "candidateCommit": "03e501c4550c7aa61e1e60827d49f7174faab1ef"
+    }
+  ],
+  "notes": "Independent bounded integrated S01 R01 review at actual task-DONE/local-main delivery a242167f. Both A05 tasks remain authentically DONE/independently approved at their immutable source candidates, manifests, R01 ledgers and claim bases. The actual integrated observer and separate T02 history diagnostic fail with the same frozen-submission-transition ValueError at tools/ui_change_gate.py:3042. Independent committed-Git inspection corroborates both direct-child ledger-then-review histories: ledger introduction still has the exact pending REVIEW packet and no attempt; its later supported taskctl disposition appends the exact R01 and reaches DONE. Root selected this commit order, which is incompatible with the validator's assumption that immutable ledger introduction is also review publication. The approvals themselves are valid; no earlier source, task record, ledger or base is rewritten. This is a concrete integrated control compatibility blocker under slice criterion 2, rather than a retrospective task finding or invented prior review round. Retained task-stage proof is historical exact-candidate evidence and is not relabeled a passing actual integration check. The pending retained adverse record and both raw failure hashes are authenticated. This ledger requests changes and grants no source-repair authority: an inert concrete A05-only exact source-delivery proposal/patch and independent readiness review must precede any necessary owner decision. Actual S01 approval, exit, separate security/adoption, exact paused-A03 return, A03 finding replay and ordinary W2/product qualification remain pending.",
+  "independence": {
+    "implementationOwner": "codex-w2-implementation",
+    "statement": "This reviewer differs from the task/campaign owner. Earlier W2.A05.T01 expanded task R01 review, advisory source reviews, authorized bounded disposable-Git reproduction and evidence-selection advice are disclosed as the same reviewer identity. I authored ignored advisory diagnostic artifacts and the T01 review ledger, but no task implementation, qualifying producer or criterion manifest. T02 R01 remains its separate existing independent disposition. This S01 diagnosis uses committed Git records and retained actual failures; no suites or integration producer were rerun. Only this canonical S01 ledger is authored now, with no source/backlog/view/controller/Git-ref mutation."
+  },
+  "authority": {
+    "approvedPacketCommit": "55c6389ce39a656f4da3851cae32ae12ac80e796",
+    "packetPath": "planning/enabler-change-requests/ECR-0013.packet.json",
+    "packetRawSha256": "56f521d708266021121b2a3391506cc771c7d32e32442d29dc5e58ba356f20c1",
+    "amendmentApprovalPath": "planning/wave-amendment-approvals/W2.A05.json",
+    "amendmentApprovalRawSha256": "9ad5b3f5fca7d3fd9c7fd8a42200f570f46250d506765b30e2705e299c7e8101",
+    "amendmentApprovalIntroductionCommit": "b54f24c222f631700056574a08056f660696d305",
+    "frozenPredecessor": "771e54a3657cdc5ff308d3a53d7b71eb48bb9214",
+    "predecessorFindingStillOpen": "W2.A03.S01-R01-F01",
+    "sourceDeliveryAddendumStatus": "not-prepared-or-owner-authorized"
+  },
+  "taskReviewReferences": [
+    {
+      "taskId": "W2.A05.T01",
+      "status": "DONE",
+      "reviewResult": "approved",
+      "attemptId": "R01",
+      "candidateCommit": "9106f485d32150943e8fbedd5299d5882021e183",
+      "baseCommit": "4e94add8319f72d040786a14f07372d15417be45",
+      "packetSha256": "f3e47146ffbfc75b15f21959c3ae4a80a0c6614b76cc480ad7ab804ae4253a4f",
+      "manifest": {"path": "artifacts/evidence/W2.A05.T01.json", "sha256": "f10c3a49370f0d1c98e735506b28c3f7273350a4d9db76a2a944243120a84652"},
+      "ledger": {"path": "artifacts/evidence/W2.A05.T01.review-R01.json", "sha256": "f33aa6d3bff44c440013a93e9acb80a2539d7e129db6993da6234a4cd16dec28"},
+      "ledgerIntroductionCommit": "e0580f8e6b33be13c6ee515ea20ea4e7b6133535",
+      "reviewPublicationCommit": "a1105c306178b6c5f10d0107f244d3e14e2d401d"
+    },
+    {
+      "taskId": "W2.A05.T02",
+      "status": "DONE",
+      "reviewResult": "approved",
+      "attemptId": "R01",
+      "candidateCommit": "03e501c4550c7aa61e1e60827d49f7174faab1ef",
+      "baseCommit": "a1105c306178b6c5f10d0107f244d3e14e2d401d",
+      "packetSha256": "7d146fa976c5a8b5bf9a9304fac5e99edef7805c5c9d8c211e9d34993cb24618",
+      "manifest": {"path": "artifacts/evidence/W2.A05.T02.json", "sha256": "cf0c65d9cd8f7cf70d9855d9d5016d01db35c3297eee876dba6854b8fcf44600"},
+      "ledger": {"path": "artifacts/evidence/W2.A05.T02.review-R01.json", "sha256": "20b2ef49ce578e6cb605b2e61be373265db11e60938393eb1032aa394bb08721"},
+      "ledgerIntroductionCommit": "381f1e992bfc60aebfe2f73f2470e6710ceba935",
+      "reviewPublicationCommit": "a242167fdb73f958181ee45d8e83a134daf94caa"
+    }
+  ],
+  "criterionDispositions": [
+    {
+      "criterionIndex": 1,
+      "result": "retained-task-stage-proof",
+      "basis": "The two exact task candidates retain their authentic independent approved R01 dispositions and original five/four-source boundaries. Their task-stage checks and synthetic control limits remain historical candidate-bound proof; this bounded integrated review neither reruns those suites nor converts them into a passing current combined history check."
+    },
+    {
+      "criterionIndex": 2,
+      "result": "blocked",
+      "basis": "Both actual task histories fail the integrated review-history authentication before S01/exit/separate security/adoption and exact paused-parent return can qualify. W2.A05.S01-R01-F01 must be remediated through an explicitly authorized exact additional source segment and closed by a subsequent immutable S01 review-02 after fresh actual integration."
+    },
+    {
+      "criterionIndex": 3,
+      "result": "retained-later-gate-boundary",
+      "basis": "A03 remains the paused predecessor with its original S01-R01-F01 unresolved. Actual later A03 activation, fresh finding replay/review-02, its exit/security/adoption and ordinary W2 resume remain distinct; no product/native/Core/D3D/full-Wave or release completion follows from these task approvals or this adverse disposition."
+    }
+  ],
+  "evidenceReferences": [
+    {
+      "path": "artifacts/evidence/W2.A05.S01.integrated-adverse-01.json",
+      "sha256": "450bfc6e102a12e2121004ae858f2b2da8a21b16b3cb721d261a016d95f982b7",
+      "result": "failed",
+      "scope": "Pending retained actual adverse observation; no positive integration or completion claim"
+    },
+    {
+      "path": "artifacts/tmp/W2.A05.task-integrated-a242167f.log",
+      "sha256": "53bfc0c683d8db86100f3750e13e7dbf592f92c46f0dd28954ebc7e4caab03f9",
+      "result": "failed",
+      "exitCode": 1
+    },
+    {
+      "path": "artifacts/tmp/W2.A05.T02.history-diagnostic-a242167f.log",
+      "sha256": "c9b1bfe882684c084a0a8f8077d67b81508b090e22a9ae19c612135d5da5c86e",
+      "result": "failed",
+      "exitCode": 1
+    }
+  ],
+  "findings": [
+    {
+      "id": "W2.A05.S01-R01-F01",
+      "severity": "high",
+      "blocking": true,
+      "criterion_index": 2,
+      "title": "Integrated authentication rejects authentic separate ledger and review publication commits",
+      "reproduction": "At actual clean integrated HEAD/main a242167fdb73f958181ee45d8e83a134daf94caa, .venv/Scripts/python.exe -B artifacts/tmp/W2.A05.inspect-integrated.py task exits 1 through adopted_continuation_reviewed_task_commits -> correction_submission_ranges, raising ValueError: correction task review is not its actual frozen-submission transition at tools/ui_change_gate.py:3042. The separately retained direct T02 history diagnostic exits 1 at the same predicate while read-only taskctl.task_review_control_errors(T02,None) returns []. Committed Git corroborates T01 ledger introduction e0580f8e and T02 introduction381f1e99: each task is still REVIEW with its exact R01 packet and zero attempts. Direct children a1105c30 and a242167f respectively append the exact independent R01 attempt and reach DONE. The gate instead reads the ledger-introduction after-state and requires that attempt already be present. Both authentic approvals and immutable ledger bytes remain valid; the selected ledger-first commit order exposes a material actual integration incompatibility missed by synthetic co-publication fixtures.",
+      "required_remediation": "Preserve this adverse observation, both raw failures, all four authentic ledger/disposition commits, original R01 ledgers/approvals, claim bases/candidates, source envelopes, frozen packet, A03/A04 history and every prior adverse finding. Ordinary T01 reopening cannot provide a valid continuation: R02 starts at prior9106 and necessarily overlaps T02's independently reviewed source; T02 excludes gate source, evidence follow-up cannot rewrite ledger introduction, and the linked correction route requires adopted origin/no unfinished amendment while A05 adoption is blocked. Prepare the minimum inert concrete A05-only append-only exact source-delivery addendum and patch, with independent readiness review before any owner request; implementation of the additional segment is not authorized by this ledger. Obtain explicit owner approval of only that exact extra reviewed source segment, without a new amendment/task/controller/schema, changed criteria or product/security scope. Authenticate immutable ledger introduction separately from the distinct actual REVIEW-to-exact-attempt publication, retaining packet/prefix/ledger-hash/reviewer/result/findings/closures/ancestry/status checks and existing co-committed-history support. Admit only the approved extra source segment; do not shorten bases, merge overlapping task ranges, permit arbitrary later source, rewrite Git/history or waive a valid denial. Add regression/adverse proof for both actual histories and missing/foreign/replayed/changed ledger or submission/publication boundaries, independently review the exact repair, and run fresh actual integrated source/history proof. A subsequent immutable W2.A05.S01 review-02 must explicitly close this finding before S01/exit/separate security/adoption and exact paused-A03 return. Original A03F01 and later A03/product/Wave/release gates remain pending."
+    }
+  ],
+  "closures": [],
+  "openFindingIds": ["W2.A05.S01-R01-F01"],
+  "retainedObligations": [
+    "The exact source-delivery proposal and concrete patch are pending preparation and owner approval. This adverse review grants no implementation, controller, source bypass or historical task reopening authority.",
+    "A05 S01 review-02 finding closure, exit and separate committed security review must precede supported adoption and exact paused-A03 return; both original A03 tasks stay DONE.",
+    "Original W2.A03.S01-R01-F01 remains unresolved. Separate A03 activation, fresh actual combined finding replay/review-02, A03 exit/security/adoption and ordinary W2 resume remain required.",
+    "Prior task/browser/accessibility proof retains its original candidates and limits. Native/Core/D3D/joined CAP-04.S05, remaining product work, fresh full W2/profile/security/privacy/rights/accessibility/performance/packaging, independent Wave and human release gates remain due.",
+    "The owner forbids further automation-framework work after A05; no new framework amendment or optional development is authorized."
+  ],
+  "reviewerSafety": {
+    "productOrControlMutation": false,
+    "backlogOrSiteMutation": false,
+    "gitRefMutation": false,
+    "remoteEffect": false,
+    "canonicalFilesAuthored": ["artifacts/evidence/W2.A05.S01.review-01.json"]
+  }
+}

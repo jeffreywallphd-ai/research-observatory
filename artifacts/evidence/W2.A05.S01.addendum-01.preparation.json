@@ -1,0 +1,89 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "inert-source-addendum-preparation-evidence",
+  "amendmentId": "W2.A05",
+  "proposalPath": "artifacts/evidence/W2.A05.S01.addendum-01.proposal.json",
+  "contextCommit": "a242167fdb73f958181ee45d8e83a134daf94caa",
+  "sourceApplied": false,
+  "qualifyingEvidence": false,
+  "preparedSourceBindings": [
+    {
+      "path": "docs/adr/ADR-0041-authenticate-reviewed-activation-control-repairs.md",
+      "mode": "100644",
+      "beforeGitBlob": "3688bfd3ef8d1674b14e260480494c1588d2eb2e",
+      "beforeSha256": "b3246ec610b5a1ce188ecdf3c14f3b56c9b1f380c6c9c73c5cb6b8d1050223ea",
+      "afterSha256": "f77d33dcf53f91174df3e5a39d0258aa7ebddd595215af711d641bd7d455334f"
+    },
+    {
+      "path": "docs/automation/design-first-ui-changes.md",
+      "mode": "100644",
+      "beforeGitBlob": "93a3591a9aed8473c7f766bc7491215b96890e9a",
+      "beforeSha256": "f920b83fa0a64f6aa8084672e5aa4c2efbb9ea08f9c7123ef362dae0b1219ddb",
+      "afterSha256": "161e0bf110b725da5213a59300c4b5d4c59c80ee18c35eba5b8c2940f70652c3"
+    },
+    {
+      "path": "tests/foundation/test_ui_change_gate.py",
+      "mode": "100644",
+      "beforeGitBlob": "d039ab490cb0bfaadc721390859fc628f55684fe",
+      "beforeSha256": "64516f3cc5c1d1b34c4b6b275b0e61ed74ead817946fbd97832f63d889538efc",
+      "afterSha256": "72cbbd156a213bb6f6b259acb9a51cf499c83cc22353dc09995d9a021305f527"
+    },
+    {
+      "path": "tools/ui_change_gate.py",
+      "mode": "100644",
+      "beforeGitBlob": "748eba14955ed49f1b2666ab422895a368d03915",
+      "beforeSha256": "140d31bc7611f3cf48b9898e571e522442d6e9e9d37573fbca34b000772a187f",
+      "afterSha256": "fa77fdf99c05b64954c4ce62956e137f2a97f09b96f42d4d75aeb68c05cde126"
+    }
+  ],
+  "observations": [
+    "Final ignored-copy component invocation ran two methods successfully; it also authenticated existing co-committed A02.T01, A03.T01/T02 and A04.T01 review ranges.",
+    "Disposable ignored real-Git fixture admitted ordered synthetic proposal/readiness/owner/source and distinct source-evidence/control review. It denied absent review, rewritten owner, rewritten packet, replayed wrong manifest and source add/revert.",
+    "Ruff lint and final format checks passed for both ignored Python copies. Mypy passed both with the unchanged tools import path supplied only to that process.",
+    "The initial lint/format check rejected nine long lines; only ignored copies were formatted. The initial draft-location mypy invocation had seven unchanged module import-not-found errors; tools import resolution corrected the invocation without suppressing errors. Their real diagnostics are preserved in the tool transcript, not invented raw files.",
+    "The first command constructing component-02 failed shell quoting before running its producer, then the missing script invocation exited2. That real raw invocation error is retained separately; the corrected producer executed successfully.",
+    "The earlier unformatted two-method component report remains prior preparation proof with its actual older source digests; it is not reported as execution of the final formatted patch."
+  ],
+  "references": [
+    {
+      "path": "artifacts/tmp/W2.A05.S01.draft-component-02.json",
+      "sha256": "42de57a69b8ffebed173d7c5a091b1d7800e983b93c365000c2393ee18f054f4"
+    },
+    {
+      "path": "artifacts/tmp/W2.A05.S01.draft-component-02.log",
+      "sha256": "53bff311436c64cce5d30dff0c4ed23d8dbdb184c44d74d90ddc35494fa4be06"
+    },
+    {
+      "path": "artifacts/tmp/W2.A05.S01.check-draft-02.py",
+      "sha256": "8fe474b458398ba1187c177ffe2983ddd8ce84bf060196bfa013c2eec223fdf4"
+    },
+    {
+      "path": "artifacts/tmp/W2.A05.S01.draft-source-grant-01.json",
+      "sha256": "61c81f94e0c188f1227cd3896dcd73cd8e95692263a917a78a1e6873b7ca3c71"
+    },
+    {
+      "path": "artifacts/tmp/W2.A05.S01.draft-source-grant-01.log",
+      "sha256": "0249a167f03efadfd2e2b5832a5596286eed741cf2bdbefd6d9415852e9d783a"
+    },
+    {
+      "path": "artifacts/tmp/W2.A05.S01.check-source-grant-draft-01.py",
+      "sha256": "fcffe1287374b528472c2300ef548028507588e5480ebae3e03d43831cf65fae"
+    },
+    {
+      "path": "artifacts/tmp/W2.A05.S01.draft-component-01.json",
+      "sha256": "e3d4bf64b1ef8fb513043405a74abda102f6ec695e4066793b5dfb5893bfc7e4"
+    },
+    {
+      "path": "artifacts/tmp/W2.A05.S01.draft-component-01.log",
+      "sha256": "fc920e7d53dcb038ad31a46a5edef91887b6468aef589e871120e2fce55bf3fc"
+    },
+    {
+      "path": "artifacts/tmp/W2.A05.S01.draft-component-02-invocation-adverse.log",
+      "sha256": "4b9c821e8cb0c0e08267f7dcf39e38fc466d51c8a740871f35c29e1a9f0b339a"
+    }
+  ],
+  "limitations": [
+    "All preparation executes ignored prospective copies or a disposable fixture. No actual owner approval, committed source delivery, qualifying task check, final control review or combined A05 integration pass.",
+    "The real integration error and independent S01 blocking finding remain open. Exact committed source qualification and independent control/S01/exit/security/adoption remain required after owner approval."
+  ]
+}
