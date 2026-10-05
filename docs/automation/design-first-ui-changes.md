@@ -238,6 +238,47 @@ capture input closure and all prior v1.0-v1.4 denials. T02's actual retained-bas
 ADR check, actual captures, native/Core, slice/Wave qualification and human
 release remain separate obligations.
 
+### Reviewed activation control repair
+
+The exact owner-approved ECR-0013/W2.A05 and its separately approved B00
+source addendum permit only the two ordered repair tasks within existing
+closed v1.4. Authenticate the immutable packet, owner record, completed B00,
+separate materialization/activation/claims, exact source candidates and
+independent task/S01/exit/security dispositions. No controller, schema,
+revision or asserted contract field is added.
+
+Net `changedFiles` remains the exact endpoint inventory. The generic reviewed
+history function defaults to no intermediate-output allowance. Its separate
+inert map must equal the internally authenticated six regular W2.html rows
+bound by the immutable ECR-0013 preflight, their exact parents/blobs, reviewed
+A04/A03 delivery and frozen predecessor records. Missing or forged proof,
+same-filename unreviewed output, hidden product/control add-revert and
+overlapping ranges still deny. Do not rewrite the frozen 118-path manifest.
+
+Authenticate the preceding GOV27 four-commit history directly through the
+exact d5507689 maintenance binding, preserving prepared-first bytes, adverse
+R01 and approved R02. The old pre-UI maintenance helper keeps its original
+rules. The subsequent B00 source exception admits only the two reviewed
+blobs through the exact original b54 owner introduction, proposal, patch,
+addendum and actual independent B00 disposition. Unknown source or altered
+adverse evidence remains denied.
+
+T01's five source paths and T02's four paths are separate reviewed ranges.
+Introduce only one Proposed ADR-0041 and one appended registry entry; preserve
+all old ADR/index bytes. T02 may append only its implementation/verification
+body with unchanged metadata. Later unreviewed touches fail. Both source
+endpoints require the exact active owner, branch, worktree, base and leases.
+
+Adoption returns the complete still-paused A03 record at 771e54a3, with both
+original tasks DONE and adopted A04 unchanged. A separate later A03 activation
+must preserve those tasks; it does not invent a reopen or claim. Fresh A03
+S01 review-02 replays and explicitly closes its retained finding before its
+own exit/security/adoption. Only then resume ordinary W2 through the existing
+commands. The full original6506 base, two contracts, approved reference,
+witness/baseline, current independent classification and producer/dependent
+inputs remain required. Synthetic future fixtures prove control behavior only;
+they cannot stand in for actual adoption, native/Core or W2 qualification.
+
 ## Linked completed-task restoration (existing 1.0)
 
 An admitted `Wn.Cnn.T01` linked correction uses the existing v1.0

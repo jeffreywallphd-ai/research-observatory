@@ -3887,10 +3887,22 @@ def reference_activation_correction_active(
 
 
 def reference_activation_correction_slice_history(
-    repo: Path, head: str, task: dict[str, Any], owner: str, exit_candidate: str
+    repo: Path,
+    head: str,
+    task: dict[str, Any],
+    owner: str,
+    exit_candidate: str,
+    *,
+    amendment_id: str = REFERENCE_ACTIVATION_CORRECTION_ID,
+    tasks: list[dict[str, Any]] | None = None,
 ) -> set[str]:
     """Authenticate every immutable contribution round and its preserved findings."""
-    prefix = "artifacts/evidence/W2.A04.S01.review-"
+    tasks = tasks or [task]
+    if amendment_id not in {"W2.A03", "W2.A04", "W2.A05"} or [t["id"] for t in tasks] != (
+        [f"{amendment_id}.T01"] if amendment_id == "W2.A04" else [f"{amendment_id}.T01", f"{amendment_id}.T02"]
+    ):
+        raise ValueError("activation correction has a foreign slice/task inventory")
+    prefix = f"artifacts/evidence/{amendment_id}.S01.review-"
     paths = [
         path
         for path in git(repo, "ls-tree", "-r", "--name-only", head, "--", "artifacts/evidence").decode().splitlines()
@@ -3901,13 +3913,17 @@ def reference_activation_correction_slice_history(
     paths.sort(key=lambda path: int(path[len(prefix) : -5]))
     if not paths or paths != [f"{prefix}{number:02d}.json" for number in range(1, len(paths) + 1)]:
         raise ValueError("activation correction lacks contiguous canonical S01 review history")
-    approved: dict[str, str] = {}
-    for attempt in task["review_control"]["attempts"]:
-        if attempt["review"]["result"] == "approved":
-            ledger = attempt["ledger"]
-            _, introduction = immutable_record(repo, head, ledger["path"], ledger["sha256"], evidence=True)
-            approved[attempt["submission"]["candidate_commit"]] = introduction
-    latest_candidate = task["review_control"]["attempts"][-1]["submission"]["candidate_commit"]
+    approved: dict[tuple[str, str], str] = {}
+    for reviewed_task in tasks:
+        for attempt in reviewed_task["review_control"]["attempts"]:
+            if attempt["review"]["result"] == "approved":
+                ledger = attempt["ledger"]
+                _, introduction = immutable_record(repo, head, ledger["path"], ledger["sha256"], evidence=True)
+                approved[(reviewed_task["id"], attempt["submission"]["candidate_commit"])] = introduction
+    latest_bindings = [
+        {"taskId": t["id"], "candidateCommit": t["review_control"]["attempts"][-1]["submission"]["candidate_commit"]}
+        for t in tasks
+    ]
     schema = json_object(blob(repo, head, "planning/backlog.schema.json"), "review finding schema")
     finding_validator = Draft202012Validator(schema["$defs"]["reviewFinding"])
     closure_validator = Draft202012Validator(schema["$defs"]["reviewFindingClosure"])
@@ -3917,23 +3933,27 @@ def reference_activation_correction_slice_history(
     for path in paths:
         record, introduction = immutable_record(repo, head, path, evidence=True)
         bindings = record.get("taskBindings")
-        candidate = (
-            bindings[0].get("candidateCommit")
-            if isinstance(bindings, list) and len(bindings) == 1 and isinstance(bindings[0], dict)
-            else None
+        valid_bindings = (
+            isinstance(bindings, list)
+            and len(bindings) == len(tasks)
+            and all(
+                isinstance(b, dict)
+                and b == {"taskId": t["id"], "candidateCommit": b.get("candidateCommit")}
+                and isinstance(b.get("candidateCommit"), str)
+                and (t["id"], b.get("candidateCommit")) in approved
+                and approved[(t["id"], b["candidateCommit"])] != introduction
+                and is_ancestor(repo, approved[(t["id"], b["candidateCommit"])], introduction)
+                for b, t in zip(bindings, tasks, strict=True)
+            )
         )
         if (
             record.get("schemaVersion") != "1.0"
             or record.get("documentType") != "amendment-contribution-independent-review"
-            or record.get("amendmentId") != REFERENCE_ACTIVATION_CORRECTION_ID
-            or record.get("sliceId") != "W2.A04.S01"
+            or record.get("amendmentId") != amendment_id
+            or record.get("sliceId") != f"{amendment_id}.S01"
             or record.get("capabilityId") != "CAP-05"
-            or bindings != [{"taskId": task["id"], "candidateCommit": candidate}]
-            or not isinstance(candidate, str)
-            or candidate not in approved
+            or not valid_bindings
             or not independent_identity(record.get("reviewer"), owner)
-            or approved[candidate] == introduction
-            or not is_ancestor(repo, approved[candidate], introduction)
             or (previous is not None and (previous == introduction or not is_ancestor(repo, previous, introduction)))
             or not is_ancestor(repo, introduction, exit_candidate)
         ):
@@ -3974,7 +3994,7 @@ def reference_activation_correction_slice_history(
         ):
             raise ValueError("activation correction adverse S01 review lacks an open blocking finding")
         previous = introduction
-    if record["result"] != "approved" or findings or open_findings or candidate != latest_candidate:
+    if record["result"] != "approved" or findings or open_findings or bindings != latest_bindings:
         raise ValueError("activation correction latest S01 review is not independently approved for its current task")
     return set(paths)
 
@@ -3985,7 +4005,9 @@ def reference_activation_correction_checkpoint_reviews(
     """Bind the separate immutable security review to the actual checkpoint."""
     from taskctl import evidence_sha256
 
-    manifest_path = "artifacts/evidence/W2.A04.adoption.json"
+    if child.get("id") not in {"W2.A03", "W2.A04", "W2.A05"}:
+        raise ValueError("activation correction checkpoint has a foreign amendment")
+    manifest_path = f"artifacts/evidence/{child['id']}.adoption.json"
     manifest, manifest_introduction = immutable_record(repo, head, manifest_path, evidence=True)
     reviewed_manifest = {
         "path": manifest_path,
@@ -3994,7 +4016,7 @@ def reference_activation_correction_checkpoint_reviews(
         "sha256": evidence_sha256(blob(repo, manifest_introduction, manifest_path)),
     }
     latest_exit = child["completion"]["exit_review_control"]["attempts"][-1]
-    prefix = "artifacts/evidence/W2.A04.adoption.review-"
+    prefix = f"artifacts/evidence/{child['id']}.adoption.review-"
     paths = [
         path
         for path in git(repo, "ls-tree", "-r", "--name-only", head, "--", "artifacts/evidence").decode().splitlines()
@@ -4068,7 +4090,7 @@ def reference_activation_correction_checkpoint_reviews(
 
 
 def reference_activation_correction_authority(
-    repo: Path, head: str, backlog: dict[str, Any], parent: dict[str, Any]
+    repo: Path, head: str, backlog: dict[str, Any], parent: dict[str, Any], *, repair: dict[str, Any] | None = None
 ) -> dict[str, Any]:
     """Derive the exact reviewed A04 segment and separate return/activate/reopen."""
 
@@ -4214,7 +4236,8 @@ def reference_activation_correction_authority(
         or not adr_touches
         or index_touches[0] != adr_touches[0]
         or tree_entry(repo, f"{adr_touches[0]}^", REFERENCE_ACTIVATION_CORRECTION_ADR) is not None
-        or json_object(blob(repo, head, index_path), "correction registry") != expected_index
+        or json_object(blob(repo, head, index_path), "correction registry")
+        != (repair["index"] if repair else expected_index)
     ):
         raise ValueError("activation correction ADR is not one jointly introduced appended entry")
     for commit in adr_touches:
@@ -4412,8 +4435,14 @@ def reference_activation_reviewed_tasks(
     """Attribute A03 source only to its two exact independently reviewed tasks."""
 
     backlog = yaml_object(blob(repo, head, "planning/backlog.yaml"), "activation task history")
+    repair = (
+        reference_activation_repair_authority(repo, head)
+        if any(item.get("id") == "W2.A05" for item in backlog.get("wave_amendments", []))
+        else None
+    )
+    inert_outputs = reference_activation_inert_projection_map(repo, head) if repair else None
     correction = (
-        reference_activation_correction_authority(repo, head, backlog, amendment)
+        reference_activation_correction_authority(repo, head, backlog, amendment, repair=repair)
         if any(item.get("id") == REFERENCE_ACTIVATION_CORRECTION_ID for item in backlog.get("wave_amendments", []))
         else None
     )
@@ -4470,7 +4499,7 @@ def reference_activation_reviewed_tasks(
         tasks, (REFERENCE_ACTIVATION_CONTROL_SOURCE, REFERENCE_ACTIVATION_CONSUMER_SOURCE), strict=True
     ):
         identity = str(task["id"])
-        ranges, commits = adopted_continuation_reviewed_task_commits(repo, head, task)
+        ranges, commits = adopted_continuation_reviewed_task_commits(repo, head, task, inert_outputs=inert_outputs)
         if not ranges or set(commits) & set(admitted):
             raise ValueError("reference activation reviewed task ranges are absent or overlapping")
         allowed_delivery = {
@@ -4607,6 +4636,10 @@ def reference_activation_reviewed_tasks(
         or not is_ancestor(repo, introduction, consumer_base)
     ):
         raise ValueError("reference activation witness is not the unchanged reviewed T01 introduction")
+    if repair:
+        if set(admitted) & set(repair["commits"]):
+            raise ValueError("activation repair and original activation review ranges overlap")
+        admitted.update(repair["commits"])
     return admitted, consumer_commits, introduction
 
 
@@ -4624,7 +4657,7 @@ def reference_activation_source_history(
     source = (
         REFERENCE_ACTIVATION_CONTROL_SOURCE
         | REFERENCE_ACTIVATION_CONSUMER_SOURCE
-        | {REFERENCE_ACTIVATION_CORRECTION_ADR}
+        | {REFERENCE_ACTIVATION_CORRECTION_ADR, REFERENCE_ACTIVATION_REPAIR_ADR}
     )
     for commit in ordered[positions[REFERENCE_ACTIVATION_CAMPAIGN_START] :]:
         paths = commit_paths(repo, commit)
@@ -4759,11 +4792,581 @@ def adopted_continuation_historical_planning_inputs(
     return {*ADOPTED_CONTINUATION_SITE_REPAIR_SOURCE, followup}
 
 
+REFERENCE_ACTIVATION_REPAIR_ID = "W2.A05"
+REFERENCE_ACTIVATION_REPAIR_PACKET = "55c6389ce39a656f4da3851cae32ae12ac80e796"
+REFERENCE_ACTIVATION_REPAIR_PAUSE = "771e54a3657cdc5ff308d3a53d7b71eb48bb9214"
+REFERENCE_ACTIVATION_REPAIR_ADR = "docs/adr/ADR-0041-authenticate-reviewed-activation-control-repairs.md"
+REFERENCE_ACTIVATION_REPAIR_SOURCE = (
+    frozenset(
+        {
+            "tools/ui_change_gate.py",
+            "tests/foundation/test_ui_change_gate.py",
+            "docs/automation/design-first-ui-changes.md",
+            "docs/adr/index.json",
+            REFERENCE_ACTIVATION_REPAIR_ADR,
+        }
+    ),
+    frozenset(
+        {
+            "tools/ui_conformance.py",
+            "tests/desktop/test_ui_conformance.py",
+            "docs/automation/ui-conformance-verification.md",
+            REFERENCE_ACTIVATION_REPAIR_ADR,
+        }
+    ),
+)
+
+
+def reference_activation_repair_state(repo: Path, commit: str) -> dict[str, Any]:
+    document = yaml.load(blob(repo, commit, "planning/backlog.yaml"), Loader=yaml.CSafeLoader)
+    if not isinstance(document, dict):
+        raise ValueError("activation repair backlog is not an object")
+    return document
+
+
+def reference_activation_repair_packet(repo: Path, head: str) -> tuple[dict[str, Any], dict[str, Any]]:
+    """Authenticate the exact approved repair and immutable completed bootstrap."""
+    import taskctl
+
+    current = reference_activation_repair_state(repo, head)
+    child = amendment_record(current, REFERENCE_ACTIVATION_REPAIR_ID)
+    packet, packet_commit, owner_commit = approved_amendment_packet(repo, head, child)
+    frozen = reference_activation_repair_state(repo, REFERENCE_ACTIVATION_REPAIR_PAUSE)
+    parent = amendment_record(frozen, "W2.A03")
+    sibling = amendment_record(frozen, "W2.A04")
+    approved = amendment_record(
+        reference_activation_repair_state(repo, "cc2e61b55ebf0802845a217a78ccf49966e9bfd8"), child["id"]
+    )
+    ledger, introduction = immutable_record(
+        repo,
+        head,
+        "artifacts/evidence/W2.A05.B00.review-R01.json",
+        "b2afdd29ad541055438ec8c67d8fa014a41c8e1ae715fbb9b288c9d1d45a2c7c",
+        evidence=True,
+    )
+    if (
+        packet_commit != REFERENCE_ACTIVATION_REPAIR_PACKET
+        or hashlib.sha256(
+            blob(repo, packet_commit, "planning/enabler-change-requests/ECR-0013.packet.json")
+        ).hexdigest()
+        != "56f521d708266021121b2a3391506cc771c7d32e32442d29dc5e58ba356f20c1"
+        or owner_commit != "b54f24c222f631700056574a08056f660696d305"
+        or child.get("change_request_id") != "ECR-0013"
+        or packet.get("authorizedTaskIds") != ["W2.A05.T01", "W2.A05.T02"]
+        or child.get("correction") != packet["authorityChain"]["pausedPredecessor"]
+        or taskctl.canonical_json_sha256(parent) != "bdad5e81327e32ee322db436dc569898ce314d29058e53b0cfe67ed6192e0b03"
+        or taskctl.canonical_json_sha256(sibling) != "c15d980f77933ba92e926980d6bc57b0f918430a4d0272952b922889a97e9ffc"
+        or amendment_record(current, "W2.A03").get("tasks") != parent["tasks"]
+        or amendment_record(current, "W2.A04") != sibling
+        or child.get("bootstrap") != approved.get("bootstrap")
+        or any(
+            child.get(field) != approved.get(field)
+            for field in (
+                "id",
+                "kind",
+                "target_wave",
+                "change_request_id",
+                "approval_reference",
+                "correction",
+                "contributions",
+            )
+        )
+        or child["bootstrap"].get("status") != "APPROVED"
+        or ledger.get("result") != "approved"
+        or ledger.get("findings") != []
+        or ledger.get("candidateCommit") != child["bootstrap"].get("implementation_commit")
+        or ledger.get("submissionCommit") != "2a90fddc193ec93bf26f448f813d7ee0c4ca007a"
+        or ledger.get("reviewer") != child["bootstrap"].get("review", {}).get("reviewer")
+        or not independent_identity(ledger.get("reviewer"), child["bootstrap"].get("implementer"))
+        or introduction != "10f0d06e220b43272bfe2f54f791530b634f8b8b"
+        or not is_ancestor(repo, introduction, "cc2e61b55ebf0802845a217a78ccf49966e9bfd8")
+        or not is_ancestor(repo, "cc2e61b55ebf0802845a217a78ccf49966e9bfd8", head)
+    ):
+        raise ValueError("activation repair packet, frozen predecessor/A04 or independent B00 differs")
+    for path, digest in (
+        (
+            "planning/enabler-change-requests/ECR-0013.preflight-01.json",
+            "140350618878d3f73f921f092054c75c7cb7352fb3ed9a0ebc9bea646918a991",
+        ),
+        (
+            "planning/enabler-change-requests/ECR-0013.maintenance-binding.json",
+            "d550768944a0b142035270af47e2dcace88c7021edd0251d0a30e5ffc3e09be5",
+        ),
+    ):
+        _, introduced = immutable_record(repo, head, path, digest)
+        if not is_ancestor(repo, introduced, packet_commit):
+            raise ValueError("activation repair planning binding postdates its owner-approved packet")
+    return child, packet
+
+
+def reference_activation_inert_projection_map(repo: Path, head: str) -> dict[str, set[str]]:
+    """Return only exact independently delivered inert rows; never a caller declaration."""
+    reference_activation_repair_preceding_sources(repo, head)
+    frozen = reference_activation_repair_state(repo, REFERENCE_ACTIVATION_REPAIR_PAUSE)
+    parent, sibling = amendment_record(frozen, "W2.A03"), amendment_record(frozen, "W2.A04")
+    parent_ranges = correction_submission_ranges(repo, head, {"tasks": [parent["tasks"][1]]})
+    correction_submission_ranges(repo, head, sibling)
+    sibling_packet, _, _ = approved_amendment_packet(repo, head, sibling)
+    adoption = adopted_continuation_adoption(repo, REFERENCE_ACTIVATION_REPAIR_PAUSE, frozen, sibling, sibling_packet)
+    if adoption != "8f1a47f8a334fe32330e75f637f9b71b83669a03":
+        raise ValueError("activation repair inert projection has substituted A04 delivery")
+    reference_activation_correction_slice_history(
+        repo,
+        head,
+        sibling["tasks"][0],
+        str(sibling["campaign"]["owner"]),
+        sibling["completion"]["exit_review_control"]["attempts"][-1]["submission"]["candidate_commit"],
+    )
+    reference_activation_correction_checkpoint_reviews(repo, head, sibling, adoption)
+    for attempt in sibling["completion"]["exit_review_control"]["attempts"]:
+        for ref in (attempt["ledger"], attempt["submission"]["evidence_reference"]):
+            immutable_record(repo, head, ref["path"], ref["sha256"], evidence=True)
+    for checkpoint in frozen["waves"]:
+        if checkpoint["id"] == "W2":
+            for item in checkpoint["checkpoints"]:
+                for ref in item["evidence"]:
+                    if isinstance(ref, dict) and ref.get("amendment_id") == "W2.A04":
+                        immutable_record(repo, head, ref["path"], ref["sha256"], evidence=True)
+    record, _ = immutable_record(
+        repo,
+        head,
+        "planning/enabler-change-requests/ECR-0013.preflight-01.json",
+        "140350618878d3f73f921f092054c75c7cb7352fb3ed9a0ebc9bea646918a991",
+    )
+    rows = record.get("historicalProjectionRows")
+    if not isinstance(rows, list) or len(rows) != 6:
+        raise ValueError("activation repair inert projection inventory differs")
+    admitted: dict[str, set[str]] = {}
+    for row in rows:
+        commit, path = row["commit"], row["path"]
+        previous = resolve_commit(repo, f"{commit}^")
+        if (
+            commit in admitted
+            or path != "planning/review-site/waves/W2.html"
+            or row["mode"] != "100644"
+            or len(git(repo, "rev-list", "--parents", "-n", "1", commit).decode().split()) != 2
+            or any(tree_entry(repo, at, path) != ("100644", "blob") for at in (previous, commit))
+            or hashlib.sha256(blob(repo, previous, path)).hexdigest() != row["beforeBlobSha256"]
+            or hashlib.sha256(blob(repo, commit, path)).hexdigest() != row["afterBlobSha256"]
+            or not any(
+                r["base"] != commit
+                and is_ancestor(repo, r["base"], previous)
+                and is_ancestor(repo, commit, r["candidate"])
+                for r in parent_ranges
+            )
+            or not is_ancestor(repo, commit, REFERENCE_ACTIVATION_REPAIR_PAUSE)
+        ):
+            raise ValueError("activation repair inert projection lacks exact regular blobs and reviewed delivery")
+        admitted[commit] = {path}
+    return admitted
+
+
+def reference_activation_repair_preceding_sources(repo: Path, head: str) -> dict[str, set[str]]:
+    """Verify GOV27 directly and the exact separately approved B00 source patch."""
+    child, _ = reference_activation_repair_packet(repo, head)
+    binding, _ = immutable_record(
+        repo,
+        head,
+        "planning/enabler-change-requests/ECR-0013.maintenance-binding.json",
+        "d550768944a0b142035270af47e2dcace88c7021edd0251d0a30e5ffc3e09be5",
+    )
+    proposal, _ = immutable_record(
+        repo,
+        head,
+        "artifacts/evidence/W2.A05.B00.addendum-01.proposal.json",
+        "2222d84429772151da87fd8fbadaa71d1aa01205db91083bb509f48bbec2620f",
+    )
+    addendum_path = "planning/wave-amendment-approvals/W2.A05.B00.addendum-01.json"
+    addendum, patch_commit = immutable_record(
+        repo, head, addendum_path, "c64eee49399600bb5630322ba7556be9309c331b48a0cb5e626667d5be39be1e"
+    )
+    readiness, readiness_intro = immutable_record(
+        repo,
+        head,
+        "artifacts/evidence/W2.A05.B00.addendum-01.review-R01.json",
+        "75c1de33033ebcbfa5a8ecc112fb344ecd60a2c51d1f26ef3aa9b90baa3e8239",
+        evidence=True,
+    )
+    patch_path = proposal["sourcePatch"]["path"]
+    if (
+        hashlib.sha256(blob(repo, head, patch_path)).hexdigest() != proposal["sourcePatch"]["sha256"]
+        or patch_commit != "57f5c3f264611f59cd2778ff13b5082b2726e24b"
+        or proposal.get("baseApprovalCommit") != "b54f24c222f631700056574a08056f660696d305"
+        or addendum.get("status") != "APPROVED"
+        or readiness.get("result") != "approved"
+        or readiness_intro != "d6c61300987f378c26b361e923e439b267923604"
+        or not is_ancestor(repo, readiness_intro, patch_commit)
+        or not is_ancestor(repo, patch_commit, child["bootstrap"]["implementation_commit"])
+    ):
+        raise ValueError("activation repair B00 source exception lacks exact proposal/patch/owner/review")
+    admitted: dict[str, set[str]] = {}
+    previous = binding["predecessorCommit"]
+    for row in binding["history"]:
+        commit = row["commit"]
+        paths = {item["path"] for item in row["changedFiles"]}
+        if (
+            row["parent"] != previous
+            or resolve_commit(repo, f"{commit}^") != previous
+            or len(git(repo, "rev-list", "--parents", "-n", "1", commit).decode().split()) != 2
+            or commit_paths(repo, commit) != paths
+        ):
+            raise ValueError("activation repair GOV27 has omitted, extra or substituted source history")
+        for item in row["changedFiles"]:
+            for at, expected in ((previous, item["before"]), (commit, item["after"])):
+                entry = tree_entry(repo, at, item["path"])
+                if (expected is None and entry is not None) or (
+                    expected is not None
+                    and (
+                        entry != (expected["mode"], "blob")
+                        or expected["mode"] != "100644"
+                        or hashlib.sha256(blob(repo, at, item["path"])).hexdigest() != expected["sha256"]
+                    )
+                ):
+                    raise ValueError("activation repair GOV27 source mode or bytes differ")
+        admitted[commit] = paths
+        previous = commit
+    if previous != binding["finalDispositionCommit"]:
+        raise ValueError("activation repair GOV27 final disposition differs")
+    patch_sources = {item["path"]: item for item in proposal["sourceBindings"]}
+    if (
+        set(patch_sources) != {"tools/taskctl.py", "tests/foundation/test_taskctl_workflow.py"}
+        or commit_paths(repo, patch_commit) != {*patch_sources, addendum_path}
+        or len(git(repo, "rev-list", "--parents", "-n", "1", patch_commit).decode().split()) != 2
+    ):
+        raise ValueError("activation repair B00 source patch has extra or mixed history")
+    for path, item in patch_sources.items():
+        parent = resolve_commit(repo, f"{patch_commit}^")
+        if (
+            item["mode"] != "100644"
+            or any(tree_entry(repo, at, path) != ("100644", "blob") for at in (parent, patch_commit, head))
+            or hashlib.sha256(blob(repo, parent, path)).hexdigest() != item["beforeSha256"]
+            or git(repo, "rev-parse", f"{parent}:{path}").decode().strip() != item["beforeGitBlob"]
+            or hashlib.sha256(blob(repo, patch_commit, path)).hexdigest() != item["afterSha256"]
+            or blob(repo, head, path) != blob(repo, patch_commit, path)
+        ):
+            raise ValueError("activation repair B00 source bytes/modes differ")
+    for item in [*binding["finalSourceFiles"], *binding["finalEvidenceFiles"]]:
+        path = item["path"]
+        if tree_entry(repo, head, path) != ("100644", "blob"):
+            raise ValueError("activation repair preceding source/evidence mode differs")
+        if path not in patch_sources and hashlib.sha256(blob(repo, head, path)).hexdigest() != item["sha256"]:
+            raise ValueError("activation repair preceding source or adverse evidence was rewritten")
+        touches = git(repo, "log", "--format=%H", f"{previous}..{head}", "--", path).decode().splitlines()
+        if touches != ([patch_commit] if path in patch_sources else []):
+            raise ValueError("activation repair preceding source/evidence has unapproved later history")
+    admitted[patch_commit] = commit_paths(repo, patch_commit)
+    return admitted
+
+
+def reference_activation_repair_active(repo: Path, commit: str, task: dict[str, Any]) -> bool:
+    """Require both real claim endpoints and contemporaneous campaign/task leases."""
+    state = reference_activation_repair_state(repo, commit)
+    child = amendment_record(state, REFERENCE_ACTIVATION_REPAIR_ID)
+    current = backlog_task(state, str(task["id"])) or {}
+    campaign = child.get("campaign") or {}
+    observed = int(git(repo, "show", "-s", "--format=%ct", commit).decode())
+    leases = [current.get("lease") or {}, campaign.get("lease") or {}]
+    try:
+        live = all(
+            lease.get("claimed_by") == task.get("owner")
+            and datetime.fromisoformat(lease["claimed_at"].replace("Z", "+00:00")).timestamp()
+            <= observed
+            < datetime.fromisoformat(lease["expires_at"].replace("Z", "+00:00")).timestamp()
+            for lease in leases
+        )
+    except KeyError, TypeError, ValueError:
+        live = False
+    return (
+        live
+        and child.get("lifecycle", {}).get("status") == "ACTIVE"
+        and state.get("control_plane", {}).get("active_amendment") == REFERENCE_ACTIVATION_REPAIR_ID
+        and next(x for x in state["waves"] if x["id"] == "W2")["campaign"]["status"] == "PAUSED"
+        and current.get("status") == "IN_PROGRESS"
+        and all(current.get(field) == task.get(field) for field in ("owner", "branch", "base_sha", "worktree"))
+        and current.get("worktree") == "."
+        and campaign.get("status") == "ACTIVE"
+        and campaign.get("scope") == "wave-amendment"
+        and campaign.get("base_sha") == "11b1dbceffd1434a02a9e967e2d54ed63b330535"
+        and all(campaign.get(field) == current.get(field) for field in ("owner", "branch", "worktree"))
+        and campaign.get("profile") == "LOC"
+        and campaign.get("platform") == "windows-x64"
+    )
+
+
+def reference_activation_repair_authority(repo: Path, head: str) -> dict[str, Any]:
+    """Authenticate only the two reviewed repair tasks and their actual paused-parent return."""
+    import taskctl
+
+    child, packet = reference_activation_repair_packet(repo, head)
+    frozen = reference_activation_repair_state(repo, REFERENCE_ACTIVATION_REPAIR_PAUSE)
+    parent = amendment_record(frozen, "W2.A03")
+    materialization = "11b1dbceffd1434a02a9e967e2d54ed63b330535"
+    activation = "911e4a0b2e4adcadbb0f5095d78bc9c184ba352b"
+    materialized = amendment_record(reference_activation_repair_state(repo, materialization), child["id"])
+    activated = amendment_record(reference_activation_repair_state(repo, activation), child["id"])
+    if (
+        resolve_commit(repo, f"{materialization}^") != "cc2e61b55ebf0802845a217a78ccf49966e9bfd8"
+        or resolve_commit(repo, f"{activation}^") != materialization
+        or materialized.get("lifecycle", {}).get("status") != "MATERIALIZED"
+        or materialized.get("campaign") is not None
+        or materialized.get("tasks")
+        != [taskctl.materialized_amendment_task(child["id"], t) for t in packet["taskInventory"]]
+        or activated.get("lifecycle", {}).get("status") != "ACTIVE"
+        or [t.get("status") for t in activated["tasks"]] != ["READY", "NOT_STARTED"]
+        or any(t.get("owner") is not None or t.get("base_sha") is not None for t in activated["tasks"])
+        or activated.get("campaign", {}).get("base_sha") != materialization
+        or not is_ancestor(repo, activation, head)
+    ):
+        raise ValueError("activation repair materialization/activation is not its exact separate supported history")
+    admitted: dict[str, set[str]] = {}
+    outputs = {
+        "planning/backlog.yaml",
+        "docs/planning-implementation-plan.md",
+        "planning/status-summary.md",
+        "planning/review-site/enablers/ECR-0013.html",
+        "planning/review-site/enablers/index.html",
+        "planning/review-site/manifest.json",
+        "planning/review-site/waves/W2.html",
+    }
+    candidates: list[str] = []
+    for task, source in zip(child["tasks"], REFERENCE_ACTIVATION_REPAIR_SOURCE, strict=True):
+        ranges, commits = adopted_continuation_reviewed_task_commits(repo, head, task)
+        if not ranges or set(commits) & set(admitted):
+            raise ValueError("activation repair task ranges are missing or overlapping")
+        base = task.get("base_sha")
+        if not isinstance(base, str) or not is_ancestor(repo, activation, base):
+            raise ValueError("activation repair has a stale or foreign task base")
+        claim = None
+        seen: set[str] = set()
+        ordered_rows = (
+            git(
+                repo,
+                "rev-list",
+                "--reverse",
+                "--topo-order",
+                "--parents",
+                f"{base}..{ranges[-1]['candidate']}",
+            )
+            .decode()
+            .splitlines()
+        )
+        predecessor = base
+        for row in ordered_rows:
+            values = row.split()
+            if len(values) != 2 or values[1] != predecessor:
+                raise ValueError("activation repair task range must remain linear")
+            commit = values[0]
+            predecessor = commit
+            paths = commit_paths(repo, commit)
+            previous = resolve_commit(repo, f"{commit}^")
+            if "planning/backlog.yaml" in paths:
+                before = backlog_task(reference_activation_repair_state(repo, previous), task["id"]) or {}
+                after = backlog_task(reference_activation_repair_state(repo, commit), task["id"]) or {}
+                if before.get("status") == "READY" and after.get("status") == "IN_PROGRESS":
+                    if (
+                        claim is not None
+                        or previous != base
+                        or after.get("base_sha") != base
+                        or paths & set().union(*REFERENCE_ACTIVATION_REPAIR_SOURCE)
+                        or not reference_activation_repair_active(repo, commit, task)
+                    ):
+                        raise ValueError("activation repair has a mixed, foreign or repeated task claim")
+                    claim = commit
+            if paths & source:
+                if (
+                    claim is None
+                    or not is_ancestor(repo, claim, previous)
+                    or any(not reference_activation_repair_active(repo, at, task) for at in (previous, commit))
+                ):
+                    raise ValueError("activation repair source lacks both active claim endpoints")
+                if any(tree_entry(repo, commit, path) != ("100644", "blob") for path in paths & source):
+                    raise ValueError("activation repair source has a missing or nonregular mode")
+                seen.update(paths & source)
+            if not paths.issubset(
+                source
+                | outputs
+                | {
+                    p
+                    for p in paths
+                    if p.startswith(f"artifacts/evidence/{task['id']}.")
+                    or p.startswith(f"artifacts/evidence/{task['id']}-")
+                }
+            ):
+                raise ValueError("activation repair task changed source outside its closed packet envelope")
+        if claim is None or seen != source:
+            raise ValueError("activation repair lacks a separate claim or all exact task sources")
+        admitted.update(commits)
+        candidates.append(ranges[-1]["candidate"])
+    t01, t02 = child["tasks"]
+    ledger = t01["review_control"]["attempts"][-1]["ledger"]
+    _, review_intro = immutable_record(repo, head, ledger["path"], ledger["sha256"], evidence=True)
+    at_t02_base = reference_activation_repair_state(repo, t02["base_sha"])
+    if (
+        not is_ancestor(repo, review_intro, t02["base_sha"])
+        or backlog_task(at_t02_base, t01["id"]) != t01
+        or (backlog_task(at_t02_base, t02["id"]) or {}).get("status") != "READY"
+    ):
+        raise ValueError("activation repair T02 began before independent T01 approval")
+    before_index = json_object(blob(repo, activation, "docs/adr/index.json"), "pre-repair registry")
+    expected_index = copy.deepcopy(before_index)
+    expected_index["records"].append(
+        {
+            "id": "ADR-0041",
+            "path": REFERENCE_ACTIVATION_REPAIR_ADR,
+            "title": "Authenticate reviewed activation control repairs",
+            "status": "Proposed",
+            "linkedTasks": ["W2.A05.T01", "W2.A05.T02"],
+        }
+    )
+    index_touches = [c for c, paths in admitted.items() if "docs/adr/index.json" in paths]
+    adr_touches = [c for c, paths in admitted.items() if REFERENCE_ACTIVATION_REPAIR_ADR in paths]
+    if (
+        len(index_touches) != 1
+        or not adr_touches
+        or index_touches[0] != adr_touches[0]
+        or tree_entry(repo, f"{adr_touches[0]}^", REFERENCE_ACTIVATION_REPAIR_ADR) is not None
+        or json_object(blob(repo, head, "docs/adr/index.json"), "repair registry") != expected_index
+    ):
+        raise ValueError("activation repair ADR/index is not one authorized appended Proposed entry")
+    parts = blob(repo, candidates[0], REFERENCE_ACTIVATION_REPAIR_ADR).decode().split("---", 2)
+    metadata = yaml.safe_load(parts[1]) if len(parts) == 3 and not parts[0].strip() else {}
+    if (
+        not isinstance(metadata, dict)
+        or metadata.get("id") != "ADR-0041"
+        or metadata.get("status") != "Proposed"
+        or metadata.get("deciders") != []
+        or metadata.get("supersedes") != []
+        or metadata.get("superseded_by") is not None
+        or metadata.get("linked_tasks") != [t01["id"], t02["id"]]
+        or metadata.get("affected_paths") != ["tools/ui_change_gate.py", "tools/ui_conformance.py"]
+        or any(
+            s not in parts[2]
+            for s in (
+                "## Context",
+                "## Candidates",
+                "## Decision",
+                "## Consequences",
+                "## Verification",
+                "## Task links",
+            )
+        )
+    ):
+        raise ValueError("activation repair companion changed accepted architecture authority")
+    t02_parts = blob(repo, candidates[1], REFERENCE_ACTIVATION_REPAIR_ADR).decode().split("---", 2)
+    if (
+        len(t02_parts) != 3
+        or yaml.safe_load(t02_parts[1]) != metadata
+        or not t02_parts[2].startswith(parts[2])
+        or t02_parts[2] == parts[2]
+        or not t02_parts[2][len(parts[2]) :].lstrip().startswith("## T02 implementation and verification")
+        or len(t02_parts[2]) - len(parts[2]) > 10000
+    ):
+        raise ValueError("activation repair T02 ADR is not its bounded metadata-preserving body append")
+    for commit in adr_touches:
+        version = blob(repo, commit, REFERENCE_ACTIVATION_REPAIR_ADR).decode().split("---", 2)
+        if (
+            len(version) != 3
+            or yaml.safe_load(version[1]) != metadata
+            or json_object(blob(repo, commit, "docs/adr/index.json"), "historical repair registry") != expected_index
+        ):
+            raise ValueError("activation repair historical ADR/index authority differs")
+    for commit in git(repo, "rev-list", f"b54f24c222f631700056574a08056f660696d305..{head}").decode().splitlines():
+        if commit_paths(repo, commit) & set().union(*REFERENCE_ACTIVATION_REPAIR_SOURCE) and commit not in admitted:
+            raise ValueError("activation repair source was touched outside its reviewed tasks")
+    adoption = adopted_continuation_adoption(repo, head, reference_activation_repair_state(repo, head), child, packet)
+    exit_candidate = child["completion"]["exit_review_control"]["attempts"][-1]["submission"]["candidate_commit"]
+    reference_activation_correction_slice_history(
+        repo, head, t01, str(child["campaign"]["owner"]), exit_candidate, amendment_id=child["id"], tasks=child["tasks"]
+    )
+    reference_activation_correction_checkpoint_reviews(repo, head, child, adoption)
+    returned = reference_activation_repair_state(repo, adoption)
+    if amendment_record(returned, "W2.A03") != parent or amendment_record(returned, child["id"]) != child:
+        raise ValueError("activation repair did not return its exact still-paused A03 predecessor")
+    baseline = copy.deepcopy(frozen)
+    baseline.pop("wave_amendments")
+    baseline["control_plane"].pop("active_amendment", None)
+    for wave in baseline["waves"]:
+        if wave["id"] == "W2":
+            wave.pop("checkpoints", None)
+    original_wave = next(w for w in frozen["waves"] if w["id"] == "W2")
+    expected_checkpoints = [
+        *original_wave["checkpoints"],
+        *taskctl.amendment_adoption_checkpoints(next(w for w in returned["waves"] if w["id"] == "W2"), child["id"]),
+    ]
+    for commit in (
+        git(repo, "rev-list", f"{REFERENCE_ACTIVATION_REPAIR_PAUSE}..{adoption}", "--", "planning/backlog.yaml")
+        .decode()
+        .splitlines()
+    ):
+        state = reference_activation_repair_state(repo, commit)
+        if [a for a in state["wave_amendments"] if a["id"] != child["id"]] != frozen["wave_amendments"]:
+            raise ValueError("activation repair changed a frozen predecessor or completed sibling")
+        ordinary = copy.deepcopy(state)
+        ordinary.pop("wave_amendments")
+        ordinary["control_plane"].pop("active_amendment", None)
+        for wave in ordinary["waves"]:
+            if wave["id"] == "W2":
+                checkpoints = wave.pop("checkpoints", None)
+        if ordinary != baseline or checkpoints != (
+            expected_checkpoints if commit == adoption else original_wave["checkpoints"]
+        ):
+            raise ValueError("activation repair changed ordinary scope, hold or unrelated checkpoint history")
+    activations: list[str] = []
+    for commit in (
+        git(repo, "rev-list", "--reverse", f"{adoption}..{head}", "--", "planning/backlog.yaml").decode().splitlines()
+    ):
+        previous = resolve_commit(repo, f"{commit}^")
+        before, after = (
+            reference_activation_repair_state(repo, previous),
+            reference_activation_repair_state(repo, commit),
+        )
+        prior_parent, next_parent = amendment_record(before, "W2.A03"), amendment_record(after, "W2.A03")
+        if amendment_record(after, child["id"]) != child or next_parent["tasks"] != parent["tasks"]:
+            raise ValueError("activation repair return rewrote adopted history or reopened a DONE A03 task")
+        if not activations and prior_parent != parent:
+            raise ValueError("activation repair parent was mutated before its separate activation")
+        if prior_parent["lifecycle"]["status"] == "PAUSED" and next_parent["lifecycle"]["status"] == "ACTIVE":
+            campaign = next_parent["campaign"]
+            if (
+                activations
+                or commit_paths(repo, commit) != {"planning/backlog.yaml"}
+                or next_parent["tasks"] != prior_parent["tasks"]
+                or campaign.get("status") != "ACTIVE"
+                or campaign.get("base_sha") != previous
+                or campaign.get("scope") != "wave-amendment"
+                or campaign.get("owner") != child["campaign"]["owner"]
+                or campaign.get("branch") != child["campaign"]["branch"]
+                or campaign.get("worktree") != "."
+                or campaign.get("profile") != "LOC"
+                or campaign.get("platform") != "windows-x64"
+                or (campaign.get("lease") or {}).get("claimed_by") != campaign.get("owner")
+                or after["control_plane"].get("active_amendment") != "W2.A03"
+                or next(w for w in after["waves"] if w["id"] == "W2")["campaign"]["status"] != "PAUSED"
+            ):
+                raise ValueError("activation repair has a premature, foreign or mixed parent activation")
+            activations.append(commit)
+    if len(activations) != 1:
+        raise ValueError("activation repair lacks exactly one separate post-adoption A03 activation")
+    preceding = reference_activation_repair_preceding_sources(repo, head)
+    if set(preceding) & set(admitted):
+        raise ValueError("activation repair preceding and task source ranges overlap")
+    return {
+        "commits": admitted,
+        "precedingCommits": preceding,
+        "adoptionCommit": adoption,
+        "activationCommit": activations[0],
+        "index": expected_index,
+    }
+
+
 def adopted_continuation_reviewed_task_commits(
-    repo: Path, head: str, task: dict[str, Any]
+    repo: Path, head: str, task: dict[str, Any], *, inert_outputs: dict[str, set[str]] | None = None
 ) -> tuple[list[dict[str, Any]], dict[str, set[str]]]:
     """Attribute every source commit to an immutable independent task submission."""
 
+    inert_outputs = inert_outputs or {}
+    if inert_outputs and inert_outputs != reference_activation_inert_projection_map(repo, head):
+        raise ValueError("adopted continuation inert projection map is not independently authenticated")
     ranges = correction_submission_ranges(repo, head, {"tasks": [task]})
     a02_control = task.get("id") == "W2.A02.T01"
     allowed_a02_paths = set(ADOPTED_CONTINUATION_A02_CONTROL_SOURCE | ADOPTED_CONTINUATION_A02_TRACKING_OUTPUTS)
@@ -4794,7 +5397,7 @@ def adopted_continuation_reviewed_task_commits(
         rows = git(repo, "rev-list", "--reverse", f"{reviewed['base']}..{reviewed['candidate']}").decode().splitlines()
         for commit in rows:
             paths = commit_paths(repo, commit)
-            if not paths.issubset(set(reviewed["paths"])) or commit in admitted:
+            if not paths.issubset(set(reviewed["paths"]) | inert_outputs.get(commit, set())) or commit in admitted:
                 raise ValueError("adopted continuation task review has hidden or overlapping source paths")
             admitted[commit] = paths
     if a02_control and a02_source_seen != ADOPTED_CONTINUATION_A02_CONTROL_SOURCE:
@@ -4813,8 +5416,14 @@ def adopted_continuation_adoption(
     identity = str(amendment["id"])
     if amendment.get("lifecycle", {}).get("status") != "ADOPTED":
         raise ValueError(f"{identity} is not adopted")
+    inert_outputs = (
+        reference_activation_inert_projection_map(repo, head)
+        if identity == "W2.A03"
+        and any(a.get("id") == REFERENCE_ACTIVATION_REPAIR_ID for a in backlog.get("wave_amendments", []))
+        else None
+    )
     for task in amendment.get("tasks", []):
-        adopted_continuation_reviewed_task_commits(repo, head, task)
+        adopted_continuation_reviewed_task_commits(repo, head, task, inert_outputs=inert_outputs)
     errors = correction_exit_errors(repo, head, amendment, packet)
     wave = next(item for item in backlog["waves"] if item["id"] == "W2")
     checkpoints = amendment_adoption_checkpoints(wave, identity)
@@ -5081,6 +5690,11 @@ def adopted_continuation_authority(
     expected_amendments = ["W2.A01", "W2.A02", "W2.A03"] if activated else ["W2.A01", "W2.A02"]
     if activated and any(item.get("id") == REFERENCE_ACTIVATION_CORRECTION_ID for item in amendments):
         expected_amendments.append(REFERENCE_ACTIVATION_CORRECTION_ID)
+    repaired = activated and any(item.get("id") == REFERENCE_ACTIVATION_REPAIR_ID for item in amendments)
+    if repaired:
+        if REFERENCE_ACTIVATION_CORRECTION_ID not in expected_amendments:
+            raise ValueError("activation repair lacks its exact adopted A04 predecessor")
+        expected_amendments.append(REFERENCE_ACTIVATION_REPAIR_ID)
     if [item.get("id") for item in amendments if item.get("target_wave") == "W2"][
         -len(expected_amendments) :
     ] != expected_amendments:
@@ -5252,15 +5866,54 @@ def adopted_continuation_authority(
     reviewed_controls.update(adopted_continuation_reviewed_maintenance(repo, head))
     reviewed_activation: dict[str, set[str]] = {}
     reviewed_activation_consumer: set[str] = set()
+    reviewed_repair_predecessors: dict[str, set[str]] = {}
     witness_introduction = ""
     if activation is not None:
         reviewed_controls.update(reference_activation_historical_authority(repo, head, backlog))
+        if repaired:
+            reviewed_repair_predecessors = reference_activation_repair_preceding_sources(repo, head)
+            if set(reviewed_controls) & set(reviewed_repair_predecessors):
+                raise ValueError("activation repair predecessor control ranges overlap")
+            reviewed_controls.update(reviewed_repair_predecessors)
         reviewed_activation, reviewed_activation_consumer, witness_introduction = reference_activation_reviewed_tasks(
             repo, head, activation
         )
         if set(reviewed_controls) & set(reviewed_activation):
             raise ValueError("reference activation reviewed control ranges overlap")
         reviewed_controls.update(reviewed_activation)
+        if repaired:
+            latest_exit = activation["completion"]["exit_review_control"]["attempts"][-1]["submission"][
+                "candidate_commit"
+            ]
+            reference_activation_correction_slice_history(
+                repo,
+                head,
+                activation["tasks"][0],
+                str(activation["campaign"]["owner"]),
+                latest_exit,
+                amendment_id="W2.A03",
+                tasks=activation["tasks"],
+            )
+            immutable_record(
+                repo,
+                head,
+                "artifacts/evidence/W2.A03.S01.review-01.json",
+                "75d03f4f1d72ee966e70bcbdf66a7afc9bcbdb9fa222533e02d7c52e3d9f76f3",
+                evidence=True,
+            )
+            slice_rounds = [
+                p
+                for p in git(repo, "ls-tree", "-r", "--name-only", head, "--", "artifacts/evidence")
+                .decode()
+                .splitlines()
+                if re.fullmatch(r"artifacts/evidence/W2\.A03\.S01\.review-[0-9]{2,}\.json", p)
+            ]
+            if len(slice_rounds) < 2:
+                raise ValueError("activation repair parent lacks fresh review-02 finding replay")
+            replay, _ = immutable_record(repo, head, sorted(slice_rounds)[-1], evidence=True)
+            if not any(c.get("finding_id") == "W2.A03.S01-R01-F01" for c in replay.get("closures", [])):
+                raise ValueError("activation repair parent did not explicitly close its retained S01 finding")
+            reference_activation_correction_checkpoint_reviews(repo, head, activation, str(activation_adoption))
         from ui_conformance import presentation_compatibility_errors
 
         witness_errors = presentation_compatibility_errors(
@@ -5394,6 +6047,7 @@ def adopted_continuation_authority(
                 "docs/adr/ADR-0037-authenticate-adopted-attachment-ui-continuation.md",
                 "docs/adr/ADR-0039-bind-approved-desktop-reference-activation.md",
                 REFERENCE_ACTIVATION_CORRECTION_ADR,
+                REFERENCE_ACTIVATION_REPAIR_ADR,
             }
         )
     )
@@ -5449,7 +6103,14 @@ def adopted_continuation_authority(
             raise ValueError("adopted continuation backlog transition mixed with governed renderer")
         imported_delta = paths & ADOPTED_CONTINUATION_AUTHORITY_INPUTS
         if imported_delta:
-            if commit == ADOPTED_CONTINUATION_TASKCTL_PREDECESSOR:
+            if (
+                commit in reviewed_repair_predecessors
+                and paths == reviewed_repair_predecessors[commit]
+                and not ui_paths
+                and not reference_delta
+            ):
+                pass  # Exact owner-approved GOV27/B00 imported-source segment, authenticated above.
+            elif commit == ADOPTED_CONTINUATION_TASKCTL_PREDECESSOR:
                 if (
                     paths != {"tools/taskctl.py", "tests/foundation/test_taskctl_workflow.py"}
                     or len(git(repo, "rev-list", "--parents", "-n", "1", commit).decode().split()) != 2

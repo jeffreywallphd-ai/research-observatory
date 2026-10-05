@@ -842,6 +842,8 @@ class UiChangeGateTests(unittest.TestCase):
                 target = root / relative
                 target.parent.mkdir(parents=True, exist_ok=True)
                 target.write_bytes((REPO / relative).read_bytes())
+                if relative == "docs/adr/index.json":
+                    target.write_bytes(ui_gate.blob(REPO, "a8f864b847170c62b1e03422911eee862fa4a50d", relative))
                 # Touch an unchanged Python input during the test-first pass.
                 if (
                     relative.endswith(".py")
@@ -1046,7 +1048,8 @@ class UiChangeGateTests(unittest.TestCase):
         attack: str | None = None,
     ) -> str:
         """Separate disposable review of the already committed checkpoint manifest."""
-        path = "artifacts/evidence/W2.A04.adoption.json"
+        identity = str(amendment["id"])
+        path = f"artifacts/evidence/{identity}.adoption.json"
         payload = ui_gate.blob(root, manifest_commit, path)
         manifest = json.loads(payload)
         latest = amendment["completion"]["exit_review_control"]["attempts"][-1]
@@ -1055,7 +1058,7 @@ class UiChangeGateTests(unittest.TestCase):
             record: dict[str, Any] = {
                 "schemaVersion": "1.0",
                 "documentType": "wave-amendment-adoption-security-independent-review",
-                "amendmentId": "W2.A04",
+                "amendmentId": identity,
                 "targetWave": "W2",
                 "reviewer": "agent:/root/synthetic-independent-security-review",
                 "result": "changes-requested" if adverse else "approved",
@@ -1081,7 +1084,7 @@ class UiChangeGateTests(unittest.TestCase):
                 record["reviewer"] = amendment["campaign"]["owner"]
             if attack == "forged-security-review":
                 record["reviewedManifest"]["sha256"] = "0" * 64
-            self.write_json(root / f"artifacts/evidence/W2.A04.adoption.review-{number:02d}.json", record)
+            self.write_json(root / f"artifacts/evidence/{identity}.adoption.review-{number:02d}.json", record)
             reviewed = self.commit(root, "synthetic independent pre-adoption security checkpoint review")
         return reviewed
 
@@ -1094,6 +1097,8 @@ class UiChangeGateTests(unittest.TestCase):
         *,
         remediation: bool = False,
         security_attack: str | None = None,
+        preserve_slice_review: bool = False,
+        security_required: bool = False,
     ) -> str:
         """Disposable integrated slice/exit/checkpoint/adoption, never actual approval."""
         identity = str(amendment["id"])
@@ -1101,7 +1106,8 @@ class UiChangeGateTests(unittest.TestCase):
         backlog_path = root / "planning/backlog.yaml"
         owner = "codex-w2-implementation"
         branch = "codex/w2-implementation"
-        for number in range(1, 3 if remediation else 2):
+        contribution_commit = self.git(root, "rev-parse", "HEAD")
+        for number in () if preserve_slice_review else range(1, 3 if remediation else 2):
             adverse = remediation and number == 1
             self.write_json(
                 root / f"artifacts/evidence/{identity}.S01.review-{number:02d}.json",
@@ -1270,7 +1276,10 @@ class UiChangeGateTests(unittest.TestCase):
             self.write_json(root / adoption_path, record)
         adoption_sha = hashlib.sha256((root / adoption_path).read_bytes()).hexdigest()
         adoption_evidence_commit = self.commit(root, "synthetic W2.A03 security checkpoint evidence")
-        if identity == "W2.A04" and security_attack not in {"missing-security-review", "late-security-review"}:
+        if (identity in {"W2.A04", "W2.A05"} or security_required) and security_attack not in {
+            "missing-security-review",
+            "late-security-review",
+        }:
             adoption_evidence_commit = self.write_activation_security_review(
                 root, amendment, adoption_evidence_commit, remediation=remediation, attack=security_attack
             )
@@ -1306,7 +1315,7 @@ class UiChangeGateTests(unittest.TestCase):
         wave["campaign"]["scope"] = "amendment-hold" if amendment.get("correction") else "wave"
         self.write_yaml(backlog_path, backlog)
         adoption = self.commit(root, "synthetic W2.A03 adoption with ordinary W2 still paused")
-        if identity == "W2.A04" and security_attack == "late-security-review":
+        if (identity in {"W2.A04", "W2.A05"} or security_required) and security_attack == "late-security-review":
             adoption = self.write_activation_security_review(root, amendment, adoption_evidence_commit)
         return adoption
 
@@ -1378,13 +1387,60 @@ class UiChangeGateTests(unittest.TestCase):
         inject_unapproved_control_source: bool = False,
         activation: bool = False,
         correction: bool = False,
+        repair: bool = False,
     ) -> tuple[Path, str, str, dict[str, Any], dict[str, Any], dict[str, Any]]:
         """Build a test-only current classification atop authenticated historical Git."""
         if activation:
             self.assertFalse(inject_unapproved_control_source)
-            root, adoption, backlog, _control_candidate, consumer_candidate, activation_commit = (
-                self.reference_activation_git_fixture(temporary, correction=correction)
-            )
+            if repair:
+                root, _head = self.activation_repair_future_fixture(temporary)
+                backlog = yaml.safe_load((root / "planning/backlog.yaml").read_bytes())
+                parent = next(a for a in backlog["wave_amendments"] if a["id"] == "W2.A03")
+                candidates = {
+                    t["id"]: t["review_control"]["attempts"][-1]["submission"]["candidate_commit"]
+                    for t in parent["tasks"]
+                }
+                previous = json.loads((root / "artifacts/evidence/W2.A03.S01.review-01.json").read_bytes())
+                self.write_json(
+                    root / "artifacts/evidence/W2.A03.S01.review-02.json",
+                    {
+                        "schemaVersion": "1.0",
+                        "documentType": "amendment-contribution-independent-review",
+                        "amendmentId": "W2.A03",
+                        "sliceId": "W2.A03.S01",
+                        "capabilityId": "CAP-05",
+                        "reviewer": "agent:/root/synthetic-independent-parent-replay",
+                        "result": "approved",
+                        "taskBindings": previous["taskBindings"],
+                        "findings": [],
+                        "openFindingIds": [],
+                        "closures": [
+                            {
+                                "finding_id": "W2.A03.S01-R01-F01",
+                                "disposition": "fixed",
+                                "evidence": "Synthetic exact-history replay; no actual closure approval.",
+                            }
+                        ],
+                        "notes": "Synthetic future parent replay only; retained adverse round is unchanged.",
+                    },
+                )
+                self.commit(root, "synthetic parent S01 review-02 preserving actual adverse review-01")
+                adoption = self.complete_activation_fixture_amendment(
+                    root, backlog, parent, candidates, preserve_slice_review=True, security_required=True
+                )
+                consumer_candidate = candidates["W2.A03.T02"]
+                activation_commits = [
+                    c
+                    for c in self.git(
+                        root, "rev-list", "--reverse", f"{parent['tasks'][1]['base_sha']}..{consumer_candidate}"
+                    ).splitlines()
+                    if ui_gate.commit_paths(root, c) & ui_gate.REFERENCE_ACTIVATION_CONSUMER_SOURCE
+                ]
+            else:
+                root, adoption, backlog, _control_candidate, consumer_candidate, activation_commit = (
+                    self.reference_activation_git_fixture(temporary, correction=correction)
+                )
+                activation_commits = [activation_commit, consumer_candidate]
             prior_adoption = "04d6ae3fb29a133e6e31c8191ba1d6b80fa0b0cf"
             prior_reactivation = "f18a037b96d43392599f7779a668fb1928f74475"
         else:
@@ -1459,7 +1515,7 @@ class UiChangeGateTests(unittest.TestCase):
                 "adoptionCommit": adoption,
                 "reactivationCommit": reactivation,
                 "activationUiFiles": sorted(ui_gate.REFERENCE_ACTIVATION_CONSUMER_FILES),
-                "activationUiCommits": [activation_commit, consumer_candidate],
+                "activationUiCommits": activation_commits,
             }
         # Construct expected input closure from committed task state and paths,
         # before invoking the gate under test. Only product edits made while
@@ -3568,6 +3624,379 @@ class UiChangeGateTests(unittest.TestCase):
             rewritten = self.commit(root, "synthetic adverse rewrite of A02 adoption evidence")
             with self.assertRaisesRegex(ValueError, "hash mismatch|immutable introduction"):
                 immutable_record(root, rewritten, reference["path"], reference["sha256"], evidence=True)
+
+    def test_reviewed_activation_inert_history_preserves_actual_net_inventory(self) -> None:
+        head = self.git(REPO, "rev-parse", "HEAD")
+        frozen = yaml.safe_load(ui_gate.blob(REPO, "771e54a3657cdc5ff308d3a53d7b71eb48bb9214", "planning/backlog.yaml"))
+        task = ui_gate.backlog_task(frozen, "W2.A03.T02")
+        assert task is not None
+        with self.assertRaisesRegex(ValueError, "hidden or overlapping"):
+            ui_gate.adopted_continuation_reviewed_task_commits(REPO, head, task)
+        projections = ui_gate.reference_activation_inert_projection_map(REPO, head)
+        self.assertEqual(6, len(projections))
+        self.assertEqual({"planning/review-site/waves/W2.html"}, set().union(*projections.values()))
+        ranges, commits = ui_gate.adopted_continuation_reviewed_task_commits(
+            REPO, head, task, inert_outputs=projections
+        )
+        self.assertEqual("ca8b1448e094b637bbd06c3129b69a78df792619", ranges[0]["base"])
+        self.assertEqual("06a69348c5de5c60cccecde400ab2271200ec50d", ranges[-1]["candidate"])
+        self.assertEqual(118, len(ranges[0]["paths"]))
+        self.assertNotIn("planning/review-site/waves/W2.html", ranges[0]["paths"])
+        self.assertTrue(set(projections).issubset(commits))
+        self.assertEqual(39, len(commits))
+        forged = copy.deepcopy(projections)
+        forged[next(iter(forged))].add("tools/ui_change_gate.py")
+        with self.assertRaisesRegex(ValueError, "inert projection"):
+            ui_gate.adopted_continuation_reviewed_task_commits(REPO, head, task, inert_outputs=forged)
+
+    def activation_repair_clone(self, temporary: str, *, source: Path = REPO) -> Path:
+        root = Path(temporary) / "activation-repair-fixture"
+        protected_config = Path(temporary) / "fixture-gitconfig"
+        protected_config.write_text(f"[safe]\n\tdirectory = {(source / '.git').as_posix()}\n", encoding="utf-8")
+        result = subprocess.run(
+            ["git", "clone", "--quiet", "--shared", "--no-checkout", str(source), str(root)],
+            capture_output=True,
+            text=True,
+            check=False,
+            env={**os.environ, "GIT_CONFIG_GLOBAL": str(protected_config)},
+        )
+        self.assertEqual(0, result.returncode, result.stderr)
+        self.git(root, "config", "user.name", "UI Gate Test")
+        self.git(root, "config", "user.email", "ui-gate@example.invalid")
+        self.git(root, "config", "core.autocrlf", "false")
+        self.git(root, "switch", "-C", "codex/w2-implementation", self.git(source, "rev-parse", "HEAD"))
+        return root
+
+    def test_reviewed_activation_inert_map_rejects_rewritten_bindings_and_predecessors(self) -> None:
+        for attack in ("missing-preflight", "forged-preflight", "changed-a03", "changed-a04", "missing-b00-review"):
+            with self.subTest(attack=attack), tempfile.TemporaryDirectory() as temporary:
+                root = self.activation_repair_clone(temporary)
+                if attack in {"missing-preflight", "forged-preflight"}:
+                    target = root / "planning/enabler-change-requests/ECR-0013.preflight-01.json"
+                    if attack == "missing-preflight":
+                        target.unlink()
+                    else:
+                        value = json.loads(target.read_bytes())
+                        value["historicalProjectionRows"][0]["afterBlobSha256"] = "0" * 64
+                        self.write_json(target, value)
+                else:
+                    backlog = yaml.safe_load((root / "planning/backlog.yaml").read_bytes())
+                    identity = (
+                        "W2.A03" if attack == "changed-a03" else "W2.A04" if attack == "changed-a04" else "W2.A05"
+                    )
+                    record = next(a for a in backlog["wave_amendments"] if a["id"] == identity)
+                    if attack == "missing-b00-review":
+                        record["bootstrap"]["review"] = None
+                    else:
+                        record["tasks"][0]["implementation_notes"] += "synthetic unauthenticated rewrite"
+                    self.write_yaml(root / "planning/backlog.yaml", backlog)
+                head = self.commit(root, f"synthetic {attack}")
+                with self.assertRaises(ValueError):
+                    ui_gate.reference_activation_inert_projection_map(root, head)
+
+    def test_reviewed_activation_inert_map_does_not_hide_new_source_or_same_name_output(self) -> None:
+        for path in (
+            "workers/document/inert_projection_attack.py",
+            "tools/ui_change_gate.py",
+            "planning/review-site/waves/W2.html",
+        ):
+            with self.subTest(path=path), tempfile.TemporaryDirectory() as temporary:
+                root = self.activation_repair_clone(temporary)
+                backlog = yaml.safe_load((root / "planning/backlog.yaml").read_bytes())
+                task = ui_gate.backlog_task(backlog, "W2.A05.T01")
+                assert task is not None
+                target = root / path
+                before = target.read_bytes() if target.exists() else None
+                target.parent.mkdir(parents=True, exist_ok=True)
+                target.write_bytes((before or b"") + b"\n# Synthetic unreviewed intermediate source.\n")
+                self.commit(root, "synthetic hidden add/revert first half")
+                if before is None:
+                    target.unlink()
+                else:
+                    target.write_bytes(before)
+                document = root / "docs/automation/design-first-ui-changes.md"
+                document.write_bytes(document.read_bytes() + b"\nSynthetic task fixture only.\n")
+                candidate = self.commit(root, "synthetic net candidate retaining hidden history")
+                head = self.approve_activation_fixture_task(root, backlog, task, candidate)
+                projections = ui_gate.reference_activation_inert_projection_map(root, head)
+                with self.assertRaisesRegex(ValueError, "hidden or overlapping"):
+                    ui_gate.adopted_continuation_reviewed_task_commits(root, head, task, inert_outputs=projections)
+
+    def test_reviewed_activation_preceding_sources_preserve_adverse_history_and_deny_substitution(self) -> None:
+        head = self.git(REPO, "rev-parse", "HEAD")
+        admitted = ui_gate.reference_activation_repair_preceding_sources(REPO, head)
+        self.assertEqual(5, len(admitted))
+        self.assertIn("57f5c3f264611f59cd2778ff13b5082b2726e24b", admitted)
+        for path in (
+            "tools/governance_kernel.py",
+            "tools/taskctl.py",
+            "planning/governance-migrations/GOV-MAINT-0027.review-R01.json",
+            "planning/governance-migrations/GOV-MAINT-0027.review-R02.json",
+            "planning/enabler-change-requests/ECR-0013.maintenance-binding.json",
+            "planning/wave-amendment-approvals/W2.A05.B00.addendum-01.json",
+        ):
+            with self.subTest(path=path), tempfile.TemporaryDirectory() as temporary:
+                root = self.activation_repair_clone(temporary)
+                target = root / path
+                target.write_bytes(target.read_bytes() + b"\n")
+                attack = self.commit(root, "synthetic preceding authority byte substitution")
+                with self.assertRaises(ValueError):
+                    ui_gate.reference_activation_repair_preceding_sources(root, attack)
+
+    def test_reviewed_activation_preceding_sources_deny_modes_omissions_and_extra_history(self) -> None:
+        attacks = (
+            "executable-import",
+            "source-add-revert",
+            "omitted-binding-row",
+            "extra-binding-row",
+            "missing-r02",
+            "forged-r02",
+            "edited-adverse-check",
+            "changed-approved-header",
+        )
+        for attack in attacks:
+            with self.subTest(attack=attack), tempfile.TemporaryDirectory() as temporary:
+                root = self.activation_repair_clone(temporary)
+                source = root / "tools/governance_kernel.py"
+                if attack == "executable-import":
+                    self.git(root, "update-index", "--chmod=+x", "tools/governance_kernel.py")
+                elif attack == "source-add-revert":
+                    original = source.read_bytes()
+                    source.write_bytes(original + b"\n# Synthetic unapproved imported authority.\n")
+                    self.commit(root, "synthetic imported-source add/revert first half")
+                    source.write_bytes(original)
+                elif attack in {"omitted-binding-row", "extra-binding-row"}:
+                    target = root / "planning/enabler-change-requests/ECR-0013.maintenance-binding.json"
+                    binding = json.loads(target.read_bytes())
+                    if attack == "omitted-binding-row":
+                        binding["history"].pop(1)
+                    else:
+                        binding["history"].append(copy.deepcopy(binding["history"][-1]))
+                    self.write_json(target, binding)
+                elif attack == "changed-approved-header":
+                    target = root / "planning/backlog.yaml"
+                    document = yaml.safe_load(target.read_bytes())
+                    child = next(a for a in document["wave_amendments"] if a["id"] == "W2.A05")
+                    child["contributions"][0]["capability_id"] = "CAP-04"
+                    self.write_yaml(target, document)
+                else:
+                    relative = (
+                        "planning/governance-migrations/GOV-MAINT-0027.checks-01.json"
+                        if attack == "edited-adverse-check"
+                        else "planning/governance-migrations/GOV-MAINT-0027.review-R02.json"
+                    )
+                    target = root / relative
+                    if attack == "missing-r02":
+                        target.unlink()
+                    else:
+                        value = json.loads(target.read_bytes())
+                        value["disposition"] = "synthetic-forged-approval"
+                        self.write_json(target, value)
+                if attack == "executable-import":
+                    self.git(root, "commit", "-m", "synthetic executable imported authority")
+                    head = self.git(root, "rev-parse", "HEAD")
+                else:
+                    head = self.commit(root, f"synthetic preceding-history {attack}")
+                with self.assertRaises(ValueError):
+                    ui_gate.reference_activation_repair_preceding_sources(root, head)
+
+    def test_reviewed_activation_repair_rejects_changed_task_and_slice_reviews(self) -> None:
+        with tempfile.TemporaryDirectory() as prefix_directory:
+            prefix, _head = self.activation_repair_future_fixture(prefix_directory)
+            for attack in (
+                "missing-task-review",
+                "forged-task-review",
+                "malformed-slice-binding",
+                "replayed-slice-review",
+            ):
+                with self.subTest(attack=attack), tempfile.TemporaryDirectory() as temporary:
+                    root = self.activation_repair_clone(temporary, source=prefix)
+                    relative = (
+                        "artifacts/evidence/W2.A05.T01.review-R01.json"
+                        if "task-review" in attack
+                        else "artifacts/evidence/W2.A05.S01.review-01.json"
+                    )
+                    target = root / relative
+                    if attack == "missing-task-review":
+                        target.unlink()
+                    else:
+                        value = json.loads(target.read_bytes())
+                        if attack == "forged-task-review":
+                            value["candidate_commit"] = "0" * 40
+                        elif attack == "malformed-slice-binding":
+                            value["taskBindings"][0]["candidateCommit"] = {"unhashable": True}
+                        else:
+                            value["amendmentId"] = "W2.A04"
+                        self.write_json(target, value)
+                    head = self.commit(root, f"synthetic {attack}")
+                    with self.assertRaises(ValueError):
+                        ui_gate.reference_activation_repair_authority(root, head)
+
+    def test_reviewed_activation_repair_full_original_base_requires_current_classification(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root, base, head, contract, manifest, _scope = self.classified_adopted_continuation_fixture(
+                temporary, activation=True, repair=True
+            )
+            self.assertEqual("6506c68461144747b0ee9be10853211717aa381d", base)
+            with (
+                patch("product_style_check.read_capture_bundle", return_value=manifest),
+                patch("desktop_app_check.qualification_capture_contract", return_value=[]),
+                patch("desktop_app_check.qualification_report_errors", return_value=[]),
+                patch("product_style_check.capture_producer_snapshot", return_value=manifest["producer"]),
+            ):
+                report = validate(root, base, head)
+                self.assertTrue(report["ok"], report["errors"])
+                self.assertFalse(validate(root, "771e54a3657cdc5ff308d3a53d7b71eb48bb9214", head)["ok"])
+                reference = contract["adoptedContinuationAuthority"]["classification"]
+                target = root / reference["path"]
+                value = json.loads(target.read_bytes())
+                value["authorityPreserved"] = False
+                self.write_json(target, value)
+                changed = self.commit(root, "synthetic current classification substitution")
+                self.assertFalse(validate(root, base, changed)["ok"])
+
+    def activation_repair_future_fixture(
+        self, temporary: str, *, security_attack: str | None = None
+    ) -> tuple[Path, str]:
+        """Actual prefix plus explicitly synthetic future task/adoption/return records."""
+        root = self.activation_repair_clone(temporary)
+        backlog = yaml.safe_load((root / "planning/backlog.yaml").read_bytes())
+        child = next(a for a in backlog["wave_amendments"] if a["id"] == "W2.A05")
+        t01, t02 = child["tasks"]
+        self.assertEqual("IN_PROGRESS", t01["status"])
+        child["campaign"]["lease"]["expires_at"] = "2099-01-01T00:00:00Z"
+        t01["lease"]["expires_at"] = "2099-01-01T00:00:00Z"
+        for relative in ui_gate.REFERENCE_ACTIVATION_REPAIR_SOURCE[0]:
+            target = root / relative
+            target.parent.mkdir(parents=True, exist_ok=True)
+            target.write_bytes((REPO / relative).read_bytes())
+        self.write_yaml(root / "planning/backlog.yaml", backlog)
+        control_candidate = self.commit(root, "synthetic future T01 qualification lease")
+        t02["status"] = "READY"
+        self.approve_activation_fixture_task(root, backlog, t01, control_candidate)
+        consumer_base = self.git(root, "rev-parse", "HEAD")
+        t02.update(
+            status="IN_PROGRESS",
+            owner=t01["owner"],
+            branch=t01["branch"],
+            worktree=".",
+            base_sha=consumer_base,
+            started_at="2026-10-05T03:45:00Z",
+            updated_at="2026-10-05T03:45:00Z",
+            lease={
+                "claimed_by": t01["owner"],
+                "claimed_at": "2026-10-05T03:21:19Z",
+                "expires_at": "2099-01-01T00:00:00Z",
+            },
+        )
+        self.write_yaml(root / "planning/backlog.yaml", backlog)
+        self.commit(root, "synthetic separate T02 claim after independent T01 approval")
+        for path in (
+            "tools/ui_conformance.py",
+            "tests/desktop/test_ui_conformance.py",
+            "docs/automation/ui-conformance-verification.md",
+        ):
+            target = root / path
+            target.write_bytes(
+                target.read_bytes() + b"\n# Synthetic future checker source touch; no accessibility qualification.\n"
+            )
+        companion = root / "docs/adr/ADR-0041-authenticate-reviewed-activation-control-repairs.md"
+        companion.write_bytes(
+            companion.read_bytes()
+            + b"\n## T02 implementation and verification\n\nSynthetic bounded body append only.\n"
+        )
+        consumer_candidate = self.commit(root, "synthetic future exact T02 source and ADR body append")
+        self.approve_activation_fixture_task(root, backlog, t02, consumer_candidate)
+        adoption = self.complete_activation_fixture_amendment(
+            root,
+            backlog,
+            child,
+            {t01["id"]: control_candidate, t02["id"]: consumer_candidate},
+            security_attack=security_attack,
+        )
+        parent = next(a for a in backlog["wave_amendments"] if a["id"] == "W2.A03")
+        self.assertEqual(["DONE", "DONE"], [t["status"] for t in parent["tasks"]])
+        parent["lifecycle"]["status"] = "ACTIVE"
+        parent["lifecycle"]["history"].append(
+            {
+                "id": f"E{len(parent['lifecycle']['history']) + 1:02d}",
+                "status": "ACTIVE",
+                "actor": t01["owner"],
+                "at": "2026-10-05T03:46:00Z",
+                "rationale": "Synthetic separate activation; no original task reopen.",
+            }
+        )
+        parent["campaign"].update(
+            status="ACTIVE",
+            owner=t01["owner"],
+            branch=t01["branch"],
+            worktree=".",
+            base_sha=adoption,
+            profile="LOC",
+            platform="windows-x64",
+            pause_reason=None,
+            lease={
+                "claimed_by": t01["owner"],
+                "claimed_at": "2026-10-05T03:21:19Z",
+                "expires_at": "2099-01-01T00:00:00Z",
+            },
+        )
+        backlog["control_plane"]["active_amendment"] = "W2.A03"
+        self.write_yaml(root / "planning/backlog.yaml", backlog)
+        return root, self.commit(root, "synthetic separate A03 activation retaining both DONE tasks")
+
+    def test_reviewed_activation_repair_future_return_keeps_original_tasks_and_source_partition(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root, head = self.activation_repair_future_fixture(temporary)
+            authority = ui_gate.reference_activation_repair_authority(root, head)
+            backlog = yaml.safe_load(ui_gate.blob(root, head, "planning/backlog.yaml"))
+            parent = next(a for a in backlog["wave_amendments"] if a["id"] == "W2.A03")
+            admitted, consumers, _witness = ui_gate.reference_activation_reviewed_tasks(root, head, parent)
+            self.assertTrue(set(authority["commits"]).issubset(admitted))
+            self.assertFalse(set(authority["commits"]) & consumers)
+            self.assertEqual(["DONE", "DONE"], [t["status"] for t in parent["tasks"]])
+            self.assertEqual("ca8b1448e094b637bbd06c3129b69a78df792619", parent["tasks"][1]["base_sha"])
+            self.assertEqual("ADR-0041", authority["index"]["records"][-1]["id"])
+
+    def test_reviewed_activation_repair_denies_incomplete_actual_delivery(self) -> None:
+        with self.assertRaises(ValueError):
+            ui_gate.reference_activation_repair_authority(REPO, self.git(REPO, "rev-parse", "HEAD"))
+
+    def test_reviewed_activation_repair_future_security_review_is_required_before_adoption(self) -> None:
+        for attack in (
+            "missing-security-review",
+            "late-security-review",
+            "self-security-review",
+            "forged-security-review",
+        ):
+            with self.subTest(attack=attack), tempfile.TemporaryDirectory() as temporary:
+                root, head = self.activation_repair_future_fixture(temporary, security_attack=attack)
+                with self.assertRaises(ValueError):
+                    ui_gate.reference_activation_repair_authority(root, head)
+
+    def test_reviewed_activation_repair_denies_reopened_original_task_and_registry_rewrite(self) -> None:
+        for attack in ("reopen-original", "registry-rewrite", "alter-adopted-a04", "foreign-return"):
+            with self.subTest(attack=attack), tempfile.TemporaryDirectory() as temporary:
+                root, head = self.activation_repair_future_fixture(temporary)
+                if attack == "registry-rewrite":
+                    path = root / "docs/adr/index.json"
+                    registry = json.loads(path.read_bytes())
+                    registry["records"][0]["title"] += " synthetic rewrite"
+                    self.write_json(path, registry)
+                else:
+                    backlog = yaml.safe_load((root / "planning/backlog.yaml").read_bytes())
+                    parent = next(a for a in backlog["wave_amendments"] if a["id"] == "W2.A03")
+                    if attack == "reopen-original":
+                        parent["tasks"][1]["status"] = "IN_PROGRESS"
+                    elif attack == "foreign-return":
+                        parent["campaign"]["owner"] = "foreign-owner"
+                    else:
+                        sibling = next(a for a in backlog["wave_amendments"] if a["id"] == "W2.A04")
+                        sibling["completion"]["notes"] += " synthetic rewrite"
+                    self.write_yaml(root / "planning/backlog.yaml", backlog)
+                head = self.commit(root, f"synthetic {attack}")
+                with self.assertRaises(ValueError):
+                    ui_gate.reference_activation_repair_authority(root, head)
 
     def test_reference_activation_reviewed_task_cannot_launder_site_asset(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:

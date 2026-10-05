@@ -396,6 +396,16 @@
         "W2.A04.T01",
         "W2.A03.T02"
       ]
+    },
+    {
+      "id": "ADR-0041",
+      "path": "docs/adr/ADR-0041-authenticate-reviewed-activation-control-repairs.md",
+      "title": "Authenticate reviewed activation control repairs",
+      "status": "Proposed",
+      "linkedTasks": [
+        "W2.A05.T01",
+        "W2.A05.T02"
+      ]
     }
   ]
 }
