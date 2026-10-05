@@ -259,6 +259,41 @@ def protected_core_phase(directory: Path, phase: str) -> None:
         client=("127.0.0.1", 50000),
     )
     state_file = directory / "synthetic-state.json"
+    if phase == "crash-denied":
+        crash_state = json.loads(state_file.read_bytes())
+        crash_root = Path(crash_state["root"]).resolve(strict=True)
+        check.assertEqual(directory, crash_root.parent)
+
+        def project_bytes() -> dict[str, str]:
+            return {
+                path.relative_to(crash_root).as_posix(): hashlib.sha256(path.read_bytes()).hexdigest()
+                for path in crash_root.rglob("*")
+                if path.is_file()
+            }
+
+        before = project_bytes()
+        check.assertIn(".locks/session.lock", before)
+        with client as http:
+            denied = http.post("/projects/open", json={"root": str(crash_root)})
+            check.assertEqual(409, denied.status_code)
+            check.assertEqual("RO-CORE-PROJECT-ALREADY-OPEN", denied.json()["code"])
+        check.assertEqual(before, project_bytes())
+        check.assertEqual(2, len(crash_state["pageInvocations"]))
+        print(
+            "RO-S05-PROTECTED-JOURNEY:"
+            + json.dumps(
+                {
+                    "phase": phase,
+                    "ok": True,
+                    "foreignLockDenied": True,
+                    "projectBytesUnchanged": True,
+                    "preservedProjectFiles": len(before),
+                    "retainedPageReferences": 2,
+                }
+            ),
+            flush=True,
+        )
+        return
     with (
         patch("research_observatory_core.connectors.plugin_dispatch.PluginNetworkBroker", side_effect=broker),
         client as http,
@@ -353,7 +388,7 @@ def protected_core_phase(directory: Path, phase: str) -> None:
                 check.assertEqual("succeeded", worker.status(root, project_id, state["pageJobs"][identity]).state)
             return pages
 
-        if phase == "reopen":
+        if phase in {"reopen", "crash"}:
             check.assertEqual(state["actorId"], actor.actor_id)
             grant = admin.current_grant_persisted(root, project_id, "sample.repository")
             assert grant is not None
@@ -366,6 +401,15 @@ def protected_core_phase(directory: Path, phase: str) -> None:
                     consent.authority(root, preview)
             check.assertEqual([], calls)
             check.assertEqual([], selected.actual_results)
+            if phase == "crash":
+                print(
+                    "RO-S05-PROTECTED-JOURNEY:"
+                    + json.dumps(
+                        {"phase": phase, "ok": True, "durablePages": 2, "ownedSessionCrash": True, "egressCalls": 0}
+                    ),
+                    flush=True,
+                )
+                os._exit(0)  # Retain this owned lock; the next process must deny takeover.
             check.assertEqual(200, http.post("/projects/close", json={"root": root}).status_code)
             print(
                 "RO-S05-PROTECTED-JOURNEY:"
@@ -541,28 +585,33 @@ def protected_core_phase(directory: Path, phase: str) -> None:
             check.assertEqual("runnable", worker.status(root, project_id, job.job_id).state)
             state.update(pendingInvocation=request.invocation_id, pendingJob=job.job_id)
             state_file.write_bytes((json.dumps(state, indent=2) + "\n").encode())
-            print(
-                "RO-S05-PROTECTED-JOURNEY:"
-                + json.dumps(
-                    {
-                        "phase": phase,
-                        "ok": True,
-                        "durablePages": 2,
-                        "egressCalls": len(calls),
-                        "forgedCursorDenied": True,
-                        "malformedPageDenied": True,
-                        "activeCancellation": True,
-                        "crashWithDurableUnstartedJob": True,
-                    }
-                ),
-                flush=True,
-            )
-            os._exit(0)  # Crash boundary: no lifespan shutdown or restored ephemeral consent.
+            # Hold only the test runner gate so the durable job stays unstarted
+            # until the real close route signals/drains workers and releases its
+            # own session. No stale-lock recovery or lock-file removal is used.
+            check.assertEqual(200, http.post("/projects/close", json={"root": root}).status_code)
+        check.assertFalse((Path(root) / ".locks/session.lock").exists())
+        print(
+            "RO-S05-PROTECTED-JOURNEY:"
+            + json.dumps(
+                {
+                    "phase": phase,
+                    "ok": True,
+                    "durablePages": 2,
+                    "egressCalls": len(calls),
+                    "forgedCursorDenied": True,
+                    "malformedPageDenied": True,
+                    "activeCancellation": True,
+                    "orderlyCloseWithDurableUnstartedJob": True,
+                    "ownedLockReleased": True,
+                }
+            ),
+            flush=True,
+        )
 
 
 @unittest.skipUnless(os.name == "nt", "Windows DPAPI/SQLCipher and signed LPAC integration")
 class ProtectedSampleCoreJourneyTests(unittest.TestCase):
-    def test_signed_sample_protected_core_and_full_process_restart(self) -> None:
+    def test_signed_sample_protected_core_orderly_restart_and_crash_open_denial(self) -> None:
         required = ("RO_W2_SIGNED_WORKER_BUILD", "RO_W2_CORE_SIDECAR_GUARDIAN", "RO_W2_CORE_SIDECAR_GUARDIAN_SHA256")
         if not all(os.environ.get(name) for name in required):
             self.skipTest("explicit signed worker and hash-bound frozen guardian are required")
@@ -570,7 +619,7 @@ class ProtectedSampleCoreJourneyTests(unittest.TestCase):
         directory = Path(tempfile.mkdtemp(prefix="s05-protected-journey-", dir=scratch)).resolve(strict=True)
         # Retain the owned protected fixture and all child output for review,
         # including failures. No automatic teardown erases adverse evidence.
-        for phase in ("create", "reopen"):
+        for phase in ("create", "reopen", "crash", "crash-denied"):
             command = [sys.executable, "-B", __file__, "--protected-core-phase", phase, "--scratch", str(directory)]
             try:
                 started = time.monotonic()
@@ -592,7 +641,12 @@ class ProtectedSampleCoreJourneyTests(unittest.TestCase):
             report = json.loads(markers[0])
             self.assertEqual(phase, report["phase"])
             self.assertIs(report["ok"], True)
-            self.assertEqual(2, report["durablePages"])
+            if phase == "crash-denied":
+                self.assertIs(report["foreignLockDenied"], True)
+                self.assertIs(report["projectBytesUnchanged"], True)
+                self.assertEqual(2, report["retainedPageReferences"])
+            else:
+                self.assertEqual(2, report["durablePages"])
             report["durationSeconds"] = round(time.monotonic() - started, 3)
             print("RO-S05-PROTECTED-JOURNEY:" + json.dumps(report, sort_keys=True), flush=True)
 
@@ -600,7 +654,9 @@ class ProtectedSampleCoreJourneyTests(unittest.TestCase):
 if __name__ == "__main__":
     if "--protected-core-phase" in sys.argv:
         parser = argparse.ArgumentParser()
-        parser.add_argument("--protected-core-phase", choices=("create", "reopen"), required=True)
+        parser.add_argument(
+            "--protected-core-phase", choices=("create", "reopen", "crash", "crash-denied"), required=True
+        )
         parser.add_argument("--scratch", type=Path, required=True)
         arguments = parser.parse_args()
         protected_core_phase(arguments.scratch, arguments.protected_core_phase)
