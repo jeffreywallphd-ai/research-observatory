@@ -1,0 +1,15 @@
+{
+  "schemaVersion": "1.0",
+  "kind": "authority-preserving-correction",
+  "origin": {
+    "taskId": "CAP-04.S05.T02",
+    "commit": "4f8c2cf1534e18c7fccf8d3ae6da5170622d652f",
+    "sha256": "a9faa34a543433fdfe1665e54ade2892554e6bf893a1824c6155d8114d3bd994"
+  },
+  "reproduction": "At committed candidate 4f8c2cf1534e18c7fccf8d3ae6da5170622d652f, the joined real Windows DPAPI/SQLCipher Core and signed zero-capability LPAC journey fails on its second valid page with plugin-execution-denied. A bounded exception-construction diagnostic identifies plugin-job-interrupted inside the publication writer. The unchanged successful worker-publication test fails deterministically in 6.324 seconds when a test-only monotonic clock advances three seconds per cancellation poll; seven polls occur, with one assertion failure and zero setup errors. Product inputs stay unchanged. _Cancellation performs a queue heartbeat through its own BEGIN IMMEDIATE connection while the publisher holds a separate writer; the resulting persistence failure is treated as interruption. Raw adverse evidence: artifacts/tmp/W2.C11.T01.heartbeat-characterization-01.log SHA-256 3160f553dcd5cbb18241b588585f7180c8945df2ac8d22dadd15ddc14a879da6; artifacts/tmp/CAP-04.S05.joined-03-4f8c2cf1.protected-journey.log SHA-256 2b04e6df2504e0072b94df991c2e93e3d737edd55df617e9e7864cd3f35e330f; artifacts/tmp/CAP-04.S05.observed-create-03.stderr.log SHA-256 8968b21c7772cfb2f2b03f43eebb46dc77710129f581ea4a24ac2c0f14cedaaf. The clock diagnostic uses a synthetic runtime and is nonqualifying; the joined failed run establishes no task or slice completion.",
+  "changedPaths": [
+    "services/core-api/src/research_observatory_core/plugin_worker.py",
+    "tests/connectors/test_plugin_worker_submission.py"
+  ],
+  "impactAnalysis": "Restore the original approved T02 cancellation-safe, lease-fenced durable publication. Add a deterministic due-heartbeat regression before the product fix and characterize actual durable cancellation plus process-stop fences at publication. Move queue polling/heartbeat outside the publication writer, while retaining an in-transaction non-I/O stop callback and the repository existing exact attempt capability, running lease, durable cancellation, current grant/consent and predecessor checks. Do not change repository/schema/migration code, actors, human trust/enable, rights, broker, LPAC, no-plaintext-write authority, governed UX or release criteria. No automation/harness framework source changes are authorized or needed. Run focused worker/repository/dispatch/consent tests, changed-path quality checks and fresh joined protected two-page/denial/cancellation/new-process recovery evidence with the existing signed worker and guardian authenticated as fixture inputs, then expanded independent correction/security review. Original CAP-04.S05.T02 remains DONE and immutable; original CAP-05.S01.T01 keeps its 6506 base and fifth-D3D finding. Slice integration and fresh W2/release gates remain separate."
+}
