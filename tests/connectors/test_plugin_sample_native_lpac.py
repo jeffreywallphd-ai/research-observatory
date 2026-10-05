@@ -392,7 +392,7 @@ def protected_core_phase(directory: Path, phase: str) -> None:
             check.assertEqual(state["actorId"], actor.actor_id)
             grant = admin.current_grant_persisted(root, project_id, "sample.repository")
             assert grant is not None
-            check.assertEqual("enabled", grant.status)
+            check.assertEqual(state["enabledGrant"], grant.model_dump(mode="json"))
             persisted_pages()
             check.assertEqual("cancelled", wait(state["pendingJob"], "cancelled").state)
             check.assertIsNone(published_page(state["pendingInvocation"]))
@@ -488,6 +488,8 @@ def protected_core_phase(directory: Path, phase: str) -> None:
         check.assertEqual(
             "enabled", admin.enable(root, project_id, session, sealed.package_token, confirmation, actor=actor).status
         )
+        enabled_grant = admin.current_grant_persisted(root, project_id, reviewed.plugin_id)
+        assert enabled_grant is not None
         retention = ConnectorRetention.model_validate(
             {
                 "rights": {
@@ -496,7 +498,14 @@ def protected_core_phase(directory: Path, phase: str) -> None:
                 "retainBody": True,
             }
         )
-        state.update(actorId=actor.actor_id, pageInvocations=[], pageRevisions={}, pageJobs={}, oldPreviews=[])
+        state.update(
+            actorId=actor.actor_id,
+            enabledGrant=enabled_grant.model_dump(mode="json"),
+            pageInvocations=[],
+            pageRevisions={},
+            pageJobs={},
+            oldPreviews=[],
+        )
         stage("human-grant-enabled")
 
         def prepare(document, *, confirm=True):
