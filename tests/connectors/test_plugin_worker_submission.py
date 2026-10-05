@@ -449,6 +449,19 @@ class PluginWorkerSubmissionTests(PluginJobFixture):
         self.assertEqual("cancelled", self.queue.get(queued.job_id).state)
         self.assertIsNone(self.repository.result(self.repository.input(self.inputs.invocation_id)))
 
+    def test_project_stop_after_last_poll_cannot_publish(self):
+        publish = self.repository.publish
+
+        def stop_project_before_writer(*args, **kwargs):
+            self.worker.signal_stop(str(self.root))
+            self.assertFalse(self.worker._stopped.is_set())
+            return publish(*args, **kwargs)
+
+        with patch.object(self.repository, "publish", stop_project_before_writer):
+            queued, _calls = self._run_confirmed_job()
+        self.assertEqual("failed", self.queue.get(queued.job_id).state)
+        self.assertIsNone(self.repository.result(self.repository.input(self.inputs.invocation_id)))
+
     def test_expired_lease_cannot_publish(self):
         publish = self.repository.publish
 

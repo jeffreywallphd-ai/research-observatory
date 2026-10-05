@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: ed3ab66c8432824e0c303d95877779cfe8d7b74896fccd89b6097bd76ea10aaf
+source_sha256: 930fcfc31f494ce48c09ef2d2ccd6fe71b5b442950e589b69e75f4effd74dbb6
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -4211,6 +4211,34 @@ Original tasks and approvals remain unchanged.
 **Current latest-review projection:** `approved` by agent:/root/maint26_independent_review at `2026-10-03T20:19:54+00:00`
 
 **Latest notes:** Independent expanded R01 security and migration review authenticates the frozen packet, committed correction spec and approved CAP-04.S05.T02 origin. The exact base-to-candidate diff has one product-line change, two test modules and five taskctl/generated planning paths. Persisted Core dispatch uses the existing system runtime-check role with the same authenticated local actor and job trace; trust, enable, revoke and storage validators remain human-only. The new real Core-admin regression denies system trust/enable, records human grant and reaches one synthetic broker call and durable publication. The frozen v20 schema fingerprint, ordered v21-v23 history, backup hash, encrypted reopen and injected v21 rollback/retry are verified. Fresh focused 20 Core, 9 authority and 49 dispatch/denial tests and three-path Ruff/mypy pass. Original signed LPAC evidence is historical support only for unchanged worker, guardian and broker boundaries. The one-page protected signed LPAC/Core preflight passed, but uses test signing, synthetic HTTP, an overridden runtime-availability gate and an ignored helper without full frozen input closure; it does not qualify joined S05 denial/cancellation/restart or W2 exit. The separate development plaintext package-pointer trace remains adverse evidence outside this fixed correction scope. No criterion-bound blocker remains.
+
+**Currently open findings:** -
+
+### W2.C11.T01 — Implement plugin isolation, configuration, and secret access controls
+
+**Status:** `IN_PROGRESS`. **Original task:** `CAP-04.S05.T02`. **Latest review:** `-`.
+
+**Reproduction:** At committed candidate 4f8c2cf1534e18c7fccf8d3ae6da5170622d652f, the joined real Windows DPAPI/SQLCipher Core and signed zero-capability LPAC journey fails on its second valid page with plugin-execution-denied. A bounded exception-construction diagnostic identifies plugin-job-interrupted inside the publication writer. The unchanged successful worker-publication test fails deterministically in 6.324 seconds when a test-only monotonic clock advances three seconds per cancellation poll; seven polls occur, with one assertion failure and zero setup errors. Product inputs stay unchanged. _Cancellation performs a queue heartbeat through its own BEGIN IMMEDIATE connection while the publisher holds a separate writer; the resulting persistence failure is treated as interruption. Raw adverse evidence: artifacts/tmp/W2.C11.T01.heartbeat-characterization-01.log SHA-256 3160f553dcd5cbb18241b588585f7180c8945df2ac8d22dadd15ddc14a879da6; artifacts/tmp/CAP-04.S05.joined-03-4f8c2cf1.protected-journey.log SHA-256 2b04e6df2504e0072b94df991c2e93e3d737edd55df617e9e7864cd3f35e330f; artifacts/tmp/CAP-04.S05.observed-create-03.stderr.log SHA-256 8968b21c7772cfb2f2b03f43eebb46dc77710129f581ea4a24ac2c0f14cedaaf. The clock diagnostic uses a synthetic runtime and is nonqualifying; the joined failed run establishes no task or slice completion.
+
+**Inherited criteria:**
+
+- A malicious test connector cannot read unrelated secrets or project files; network and export attempts outside manifest permissions are blocked and audited.
+- Automated tests cover the expected path and at least one material failure or boundary condition.
+- Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.
+
+**Bounded changed paths:**
+
+- services/core-api/src/research_observatory_core/plugin_worker.py
+- tests/connectors/test_plugin_worker_submission.py
+#### Review history — W2.C11.T01
+
+**Review mode:** `append-only v1` / 0 completed round(s)
+
+**Current immutable submission awaiting review:** None
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
 
 **Currently open findings:** -
 

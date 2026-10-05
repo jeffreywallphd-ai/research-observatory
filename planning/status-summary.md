@@ -1,7 +1,7 @@
 ---
 document_type: generated-backlog-status-summary
 source: planning/backlog.yaml
-source_sha256: ed3ab66c8432824e0c303d95877779cfe8d7b74896fccd89b6097bd76ea10aaf
+source_sha256: 930fcfc31f494ce48c09ef2d2ccd6fe71b5b442950e589b69e75f4effd74dbb6
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -906,13 +906,14 @@ Append-only rounds remain distinct from the current latest-review projection. Le
 | `W2.C08.T01` | `append-only v1` | 1 | `-` | approved / agent:/root/w2_c08_preflight | - |
 | `W2.C09.T01` | `append-only v1` | 1 | `-` | approved / agent:/root/s04_integration_test_review | - |
 | `W2.C10.T01` | `append-only v1` | 1 | `-` | approved / agent:/root/maint26_independent_review | - |
+| `W2.C11.T01` | `append-only v1` | 0 | `-` | - / - | - |
 ## Wave progress
 
 | Wave | Pre-Wave approval | Campaign | Qualification | Approved slices | Done tasks | Exit gate |
 |---|---|---|---|---:|---:|---|
 | `W0` - Engineering foundation | `APPROVED` | `NONE` | `APPROVED` — Historical W0 qualification predates the Wave-campaign controller. | 6/6 | 19/19 | `G0` / `APPROVED` |
 | `W1` - Windows local runtime and durable core | `APPROVED` | `COMPLETE` | `APPROVED` — OWNER-ACCEPTED CORE COMPLETE: explicit 2026-09-13 owner approval closes W1 prototype core with retained qualification gaps, not a full-suite PASS. Reasonable test and UX-control repairs continue between Waves. G1 and W2 activation remain separate; see artifacts/evidence/W1.owner-core-acceptance-01.md. | 15/15 | 53/53 | `G1` / `APPROVED` |
-| `W2` - Windows local evidence foundation | `APPROVED` | `PAUSED` | `PAUSED` | 4/11 | 25/43 | `G2` / `PENDING` |
+| `W2` - Windows local evidence foundation | `APPROVED` | `PAUSED` | `PAUSED` | 4/11 | 25/44 | `G2` / `PENDING` |
 | `W3` - Windows local research workbench | `PENDING` | `NONE` | `PENDING` | 0/16 | 0/48 | `G3` / `PENDING` |
 | `W4` - Windows scholarly reasoning and novelty MVP | `PENDING` | `NONE` | `PENDING` | 0/9 | 0/27 | `G4` / `PENDING` |
 | `W5` - Windows PC/lab production release | `PENDING` | `NONE` | `PENDING` | 0/8 | 0/25 | `G5` / `PENDING` |
@@ -970,6 +971,7 @@ Append-only rounds remain distinct from the current latest-review projection. Le
 | Task | Status | Owner | Branch |
 |---|---|---|---|
 | `CAP-05.S01.T01` Implement local document attachment and version association | `BLOCKED` | codex-w2-implementation | `codex/w2-implementation` |
+| `W2.C11.T01` Implement plugin isolation, configuration, and secret access controls | `IN_PROGRESS` | codex-w2-implementation | `codex/w2-implementation` |
 
 ## Linked corrective tasks
 
@@ -1034,4 +1036,8 @@ Original tasks and approvals remain unchanged.
 ### W2.C10.T01 — Implement plugin isolation, configuration, and secret access controls
 
 **Status:** `DONE`. **Original task:** `CAP-04.S05.T02`. **Latest review:** `approved`.
+
+### W2.C11.T01 — Implement plugin isolation, configuration, and secret access controls
+
+**Status:** `IN_PROGRESS`. **Original task:** `CAP-04.S05.T02`. **Latest review:** `-`.
 
