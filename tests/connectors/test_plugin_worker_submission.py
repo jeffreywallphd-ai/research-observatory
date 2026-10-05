@@ -408,7 +408,7 @@ class PluginWorkerSubmissionTests(PluginJobFixture):
         self.assertFalse(any(self.input_data in path.read_bytes() for path in physical))
 
     def test_due_heartbeat_does_not_interrupt_fenced_publication(self):
-        polls = []
+        polls: list[float] = []
 
         def advancing_clock():
             instant = float(len(polls) * 3)
