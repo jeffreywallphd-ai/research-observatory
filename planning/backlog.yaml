@@ -3800,6 +3800,19 @@ waves:
       sha256: ece0d58fc04b3b8ac6ff755088fdd9420dabf172fcbab8df3c8ea5a7983f9051
       commit: 75d8d094d9833f30445f56bbb3c1fe39ff052221
     notes: Adopted W2.A04 control-plane amendment.
+  - id: W2.CP05
+    kind: security
+    recorded_by: codex-w2-implementation
+    recorded_at: '2026-10-05T11:24:12+00:00'
+    evidence:
+    - type: amendment-adoption-evidence
+      amendment_id: W2.A05
+      path: artifacts/evidence/W2.A05.adoption.json
+      sha256: 3ca9bde2358d0dde17582a39fa7b40ec6d518e0ec14b7afbdc6af7b20c7567d7
+      commit: 6599d2ffd43bdc5bf7234955f4c69cd3000ecdd0
+    notes: Adopt independently approved A05 repair and completion segment; return the exact whole paused A03 record with both
+      original tasks DONE. Separate A03 activation, original finding replay and own exit/security/adoption remain due before
+      ordinary W2 resume. No further framework source development after A05.
   completion:
     status: PAUSED
     reviewer: null
@@ -54443,7 +54456,7 @@ wave_amendments:
     sha256: 9ad5b3f5fca7d3fd9c7fd8a42200f570f46250d506765b30e2705e299c7e8101
     introduction_commit: b54f24c222f631700056574a08056f660696d305
   lifecycle:
-    status: REVIEW
+    status: ADOPTED
     history:
     - id: E01
       status: APPROVED
@@ -54489,6 +54502,13 @@ wave_amendments:
       at: '2026-10-05T10:39:12+00:00'
       rationale: Submit the independently approved integrated A05 repair and exact completion addendum for distinct exit review;
         separate security/adoption and paused A03 return remain due.
+    - id: E07
+      status: ADOPTED
+      actor: codex-w2-implementation
+      at: '2026-10-05T11:24:12+00:00'
+      rationale: Adopt independently approved A05 repair and completion segment; return the exact whole paused A03 record
+        with both original tasks DONE. Separate A03 activation, original finding replay and own exit/security/adoption remain
+        due before ordinary W2 resume. No further framework source development after A05.
   bootstrap:
     id: W2.A05.B00
     status: APPROVED
