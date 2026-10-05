@@ -1,0 +1,395 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "W2.A05.T02",
+  "baseCommit": "a1105c306178b6c5f10d0107f244d3e14e2d401d",
+  "commit": "03e501c4550c7aa61e1e60827d49f7174faab1ef",
+  "branch": "codex/w2-implementation",
+  "changedFiles": [
+    "artifacts/evidence/W2.A05.T02.task-start.md",
+    "docs/adr/ADR-0041-authenticate-reviewed-activation-control-repairs.md",
+    "docs/automation/ui-conformance-verification.md",
+    "docs/planning-implementation-plan.md",
+    "planning/backlog.yaml",
+    "planning/review-site/enablers/ECR-0013.html",
+    "planning/review-site/manifest.json",
+    "planning/status-summary.md",
+    "tests/desktop/test_ui_conformance.py",
+    "tools/ui_conformance.py"
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "Same-document explicit labels before/after controls and valid wrapping labels occupy only the existing label slot. Fresh tests preserve ordered name sources and reject unrelated, empty, hidden/inert, wrong-target, hidden-input and non-labelable associations. First matching ID and first wrapping control use actual identity; duplicate-ID, reference-name drift and unnamed-input pipeline denials pass. The actual unchanged approved file input is statically named, with real pinned Chromium positive and in-memory association-loss proof."
+      ],
+      "checkIds": [
+        "static-names",
+        "browser-names",
+        "official-accessibility"
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "The actual claim-base inventory has exactly the four approved source paths plus the worksheet and supported claim/planning outputs. ADR-0041 is still Proposed with an exact preserved metadata/body prefix and a single 1364-byte T02 append; the index and every other ADR are unchanged. Actual source assertions preserve reference/witness/baseline/settings/product/native/Core/controller bytes, whole frozen paused A03 and adopted A04. Selected baseline/witness/schema and same-reference writer denials pass."
+      ],
+      "checkIds": [
+        "source-invariants",
+        "baseline-witness",
+        "reference-integrity",
+        "adr",
+        "ui-authority",
+        "diff"
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "All selected checks are fresh at this exact candidate. Six naming unit methods, four selected compatibility methods and four actual Chromium AX observations pass. The unmodified official accessibility entry point exits 0 with empty errors on all 33 pages and 66 responsive/visual states at approved 1.8. Reference integrity and affected quality/ADR/UI/planning checks pass. Prior official exit 1 and the actual test-first failures remain adverse; no native/Core/full profile/Wave qualification is inferred."
+      ],
+      "checkIds": [
+        "static-names",
+        "browser-names",
+        "official-accessibility",
+        "baseline-witness",
+        "reference-integrity",
+        "adr",
+        "ui-authority",
+        "ruff",
+        "format",
+        "mypy",
+        "diff",
+        "backlog",
+        "views",
+        "site"
+      ]
+    },
+    {
+      "criterion_index": 4,
+      "evidence": [
+        "The current committed state retains independently approved DONE T01, this genuine separate owned T02 claim, unchanged whole paused A03/two DONE tasks, adopted A04 and all ordinary W2 holds/original blocked task. The source range does not alter ordering controls. Expanded independent T02 disposition is the immediate required gate; actual A05 integrated S01/exit/separate-security/adoption and later separate A03 activation/fresh F01 replay/review-02/exit/security/adoption remain ordered subsequent gates. No future transition or release approval is claimed by task-stage evidence."
+      ],
+      "checkIds": [
+        "source-invariants",
+        "backlog",
+        "views",
+        "site"
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "checks": [
+    {
+      "id": "static-names",
+      "command": ".venv/Scripts/python.exe -B -u -m unittest -v tests.desktop.test_ui_conformance.UiConformanceTests.test_explicit_labels_name_controls_before_and_after tests.desktop.test_ui_conformance.UiConformanceTests.test_wrapping_labels_and_existing_name_order_are_preserved tests.desktop.test_ui_conformance.UiConformanceTests.test_label_associations_reject_unrelated_empty_hidden_and_wrong_targets tests.desktop.test_ui_conformance.UiConformanceTests.test_label_associations_preserve_first_id_and_wrapping_control_identity tests.desktop.test_ui_conformance.UiConformanceTests.test_associated_label_duplicates_and_reference_name_drift_fail tests.desktop.test_ui_conformance.UiConformanceTests.test_actual_reference_file_input_has_its_associated_name",
+      "workingDirectory": ".",
+      "exitCode": 0,
+      "commit": "03e501c4550c7aa61e1e60827d49f7174faab1ef",
+      "rawOutput": "artifacts/tmp/W2.A05.T02.static-names-03e501c4.log",
+      "rawOutputSha256": "37b60f8705cfc8c5d2f5f5f54114b0aad5f628274e214534496e52ce0034338b",
+      "startedAt": "2026-10-05T07:12:40.504744+00:00",
+      "finishedAt": "2026-10-05T07:12:50.218496+00:00",
+      "durationSeconds": 9.714,
+      "producer": "artifacts/tmp/W2.A05.T02.run-selected.py",
+      "producerSha256": "25d5866fcfdcaf9ee7633f0b7dc3589e6be940adcbf2a789f42ec518a1d7d307",
+      "inputCount": 4730,
+      "provenance": "Fresh local execution at the clean exact committed candidate with HEAD and tracked inputs fixed; no cached/runtime-closure reuse is asserted."
+    },
+    {
+      "id": "browser-names",
+      "command": ".venv/Scripts/python.exe -B -u artifacts/tmp/W2.A05.T02.browser-names.py 03e501c4550c7aa61e1e60827d49f7174faab1ef",
+      "workingDirectory": ".",
+      "exitCode": 0,
+      "commit": "03e501c4550c7aa61e1e60827d49f7174faab1ef",
+      "rawOutput": "artifacts/tmp/W2.A05.T02.browser-names-03e501c4.log",
+      "rawOutputSha256": "969e52e5ba8645e6ba82297f4fb8b721bf914e9b917bbcccab76b828dff96b30",
+      "startedAt": "2026-10-05T07:12:50.287747+00:00",
+      "finishedAt": "2026-10-05T07:13:14.182498+00:00",
+      "durationSeconds": 23.895,
+      "producer": "artifacts/tmp/W2.A05.T02.run-selected.py",
+      "producerSha256": "25d5866fcfdcaf9ee7633f0b7dc3589e6be940adcbf2a789f42ec518a1d7d307",
+      "inputCount": 4730,
+      "provenance": "Fresh local execution at the clean exact committed candidate with HEAD and tracked inputs fixed; no cached/runtime-closure reuse is asserted."
+    },
+    {
+      "id": "official-accessibility",
+      "command": ".venv/Scripts/python.exe -B tools/ui_accessibility_check.py --repo . --report artifacts/tmp/W2.A05.T02.accessibility-03e501c4.json",
+      "workingDirectory": ".",
+      "exitCode": 0,
+      "commit": "03e501c4550c7aa61e1e60827d49f7174faab1ef",
+      "rawOutput": "artifacts/tmp/W2.A05.T02.official-accessibility-03e501c4.log",
+      "rawOutputSha256": "00622329cfd4a9640a12b9b4e378c05f6db0dff3e377cc9a08b88642b7b6d27e",
+      "startedAt": "2026-10-05T07:12:40.883035+00:00",
+      "finishedAt": "2026-10-05T07:13:15.638872+00:00",
+      "durationSeconds": 34.756,
+      "producer": "artifacts/tmp/W2.A05.T02.run-selected.py",
+      "producerSha256": "25d5866fcfdcaf9ee7633f0b7dc3589e6be940adcbf2a789f42ec518a1d7d307",
+      "inputCount": 4730,
+      "provenance": "Fresh local execution at the clean exact committed candidate with HEAD and tracked inputs fixed; no cached/runtime-closure reuse is asserted."
+    },
+    {
+      "id": "baseline-witness",
+      "command": ".venv/Scripts/python.exe -B -u -m unittest -v tests.desktop.test_ui_conformance.UiConformanceTests.test_strict_baseline_and_approval_records_reject_malformed_history_shapes tests.desktop.test_ui_conformance.UiConformanceTests.test_active_presentation_requires_its_exact_compatibility_witness tests.desktop.test_ui_conformance.UiConformanceTests.test_reachable_repository_baseline_history_is_valid tests.desktop.test_ui_conformance.UiConformanceTests.test_same_reference_baseline_rewrite_requires_new_approval",
+      "workingDirectory": ".",
+      "exitCode": 0,
+      "commit": "03e501c4550c7aa61e1e60827d49f7174faab1ef",
+      "rawOutput": "artifacts/tmp/W2.A05.T02.baseline-witness-03e501c4.log",
+      "rawOutputSha256": "b03d9957a8280af80f7231f1084f0537721a63936546a14e65bcb882035ccf5a",
+      "startedAt": "2026-10-05T07:12:39.589485+00:00",
+      "finishedAt": "2026-10-05T07:16:07.478617+00:00",
+      "durationSeconds": 207.889,
+      "producer": "artifacts/tmp/W2.A05.T02.run-selected.py",
+      "producerSha256": "25d5866fcfdcaf9ee7633f0b7dc3589e6be940adcbf2a789f42ec518a1d7d307",
+      "inputCount": 4730,
+      "provenance": "Fresh local execution at the clean exact committed candidate with HEAD and tracked inputs fixed; no cached/runtime-closure reuse is asserted."
+    },
+    {
+      "id": "adr",
+      "command": ".venv/Scripts/python.exe -B tools/adr_check.py --repo . --base a1105c306178b6c5f10d0107f244d3e14e2d401d --head 03e501c4550c7aa61e1e60827d49f7174faab1ef",
+      "workingDirectory": ".",
+      "exitCode": 0,
+      "commit": "03e501c4550c7aa61e1e60827d49f7174faab1ef",
+      "rawOutput": "artifacts/tmp/W2.A05.T02.adr-03e501c4.log",
+      "rawOutputSha256": "210cdab21514d3b84a00b541cff8c471150250a239273b7e0b97ee8975568a35",
+      "startedAt": "2026-10-05T07:12:39.708639+00:00",
+      "finishedAt": "2026-10-05T07:12:42.127478+00:00",
+      "durationSeconds": 2.419,
+      "producer": "artifacts/tmp/W2.A05.T02.run-selected.py",
+      "producerSha256": "25d5866fcfdcaf9ee7633f0b7dc3589e6be940adcbf2a789f42ec518a1d7d307",
+      "inputCount": 4730,
+      "provenance": "Fresh local execution at the clean exact committed candidate with HEAD and tracked inputs fixed; no cached/runtime-closure reuse is asserted."
+    },
+    {
+      "id": "ui-authority",
+      "command": ".venv/Scripts/python.exe -B tools/ui_change_gate.py --repo . --base a1105c306178b6c5f10d0107f244d3e14e2d401d --head 03e501c4550c7aa61e1e60827d49f7174faab1ef",
+      "workingDirectory": ".",
+      "exitCode": 0,
+      "commit": "03e501c4550c7aa61e1e60827d49f7174faab1ef",
+      "rawOutput": "artifacts/tmp/W2.A05.T02.ui-authority-03e501c4.log",
+      "rawOutputSha256": "811b5f51cbce937eaa483f0cca54c90e87ce17196c502c9c5690769c08eeaf1d",
+      "startedAt": "2026-10-05T07:12:42.183289+00:00",
+      "finishedAt": "2026-10-05T07:12:45.596971+00:00",
+      "durationSeconds": 3.414,
+      "producer": "artifacts/tmp/W2.A05.T02.run-selected.py",
+      "producerSha256": "25d5866fcfdcaf9ee7633f0b7dc3589e6be940adcbf2a789f42ec518a1d7d307",
+      "inputCount": 4730,
+      "provenance": "Fresh local execution at the clean exact committed candidate with HEAD and tracked inputs fixed; no cached/runtime-closure reuse is asserted."
+    },
+    {
+      "id": "ruff",
+      "command": ".venv/Scripts/python.exe -B -m ruff check tools/ui_conformance.py tests/desktop/test_ui_conformance.py",
+      "workingDirectory": ".",
+      "exitCode": 0,
+      "commit": "03e501c4550c7aa61e1e60827d49f7174faab1ef",
+      "rawOutput": "artifacts/tmp/W2.A05.T02.ruff-03e501c4.log",
+      "rawOutputSha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18",
+      "startedAt": "2026-10-05T07:12:45.654999+00:00",
+      "finishedAt": "2026-10-05T07:12:46.230138+00:00",
+      "durationSeconds": 0.575,
+      "producer": "artifacts/tmp/W2.A05.T02.run-selected.py",
+      "producerSha256": "25d5866fcfdcaf9ee7633f0b7dc3589e6be940adcbf2a789f42ec518a1d7d307",
+      "inputCount": 4730,
+      "provenance": "Fresh local execution at the clean exact committed candidate with HEAD and tracked inputs fixed; no cached/runtime-closure reuse is asserted."
+    },
+    {
+      "id": "format",
+      "command": ".venv/Scripts/python.exe -B -m ruff format --check tools/ui_conformance.py tests/desktop/test_ui_conformance.py",
+      "workingDirectory": ".",
+      "exitCode": 0,
+      "commit": "03e501c4550c7aa61e1e60827d49f7174faab1ef",
+      "rawOutput": "artifacts/tmp/W2.A05.T02.format-03e501c4.log",
+      "rawOutputSha256": "3bc53bf3e981a98a34a852e175bf9b77af841edea74fca595d9aedcbaf9a4938",
+      "startedAt": "2026-10-05T07:12:46.295104+00:00",
+      "finishedAt": "2026-10-05T07:12:46.924595+00:00",
+      "durationSeconds": 0.629,
+      "producer": "artifacts/tmp/W2.A05.T02.run-selected.py",
+      "producerSha256": "25d5866fcfdcaf9ee7633f0b7dc3589e6be940adcbf2a789f42ec518a1d7d307",
+      "inputCount": 4730,
+      "provenance": "Fresh local execution at the clean exact committed candidate with HEAD and tracked inputs fixed; no cached/runtime-closure reuse is asserted."
+    },
+    {
+      "id": "mypy",
+      "command": ".venv/Scripts/python.exe -B -m mypy tools/ui_conformance.py tests/desktop/test_ui_conformance.py",
+      "workingDirectory": ".",
+      "exitCode": 0,
+      "commit": "03e501c4550c7aa61e1e60827d49f7174faab1ef",
+      "rawOutput": "artifacts/tmp/W2.A05.T02.mypy-03e501c4.log",
+      "rawOutputSha256": "0c37c4158c91ef55c724ba017bf6465f26018199badb08e3ff13f98acdf056c2",
+      "startedAt": "2026-10-05T07:12:47.084002+00:00",
+      "finishedAt": "2026-10-05T07:12:47.764592+00:00",
+      "durationSeconds": 0.681,
+      "producer": "artifacts/tmp/W2.A05.T02.run-selected.py",
+      "producerSha256": "25d5866fcfdcaf9ee7633f0b7dc3589e6be940adcbf2a789f42ec518a1d7d307",
+      "inputCount": 4730,
+      "provenance": "Fresh local execution at the clean exact committed candidate with HEAD and tracked inputs fixed; no cached/runtime-closure reuse is asserted."
+    },
+    {
+      "id": "diff",
+      "command": "git -c core.safecrlf=false diff --check a1105c306178b6c5f10d0107f244d3e14e2d401d 03e501c4550c7aa61e1e60827d49f7174faab1ef",
+      "workingDirectory": ".",
+      "exitCode": 0,
+      "commit": "03e501c4550c7aa61e1e60827d49f7174faab1ef",
+      "rawOutput": "artifacts/tmp/W2.A05.T02.diff-03e501c4.log",
+      "rawOutputSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "startedAt": "2026-10-05T07:12:47.828196+00:00",
+      "finishedAt": "2026-10-05T07:12:48.466038+00:00",
+      "durationSeconds": 0.638,
+      "producer": "artifacts/tmp/W2.A05.T02.run-selected.py",
+      "producerSha256": "25d5866fcfdcaf9ee7633f0b7dc3589e6be940adcbf2a789f42ec518a1d7d307",
+      "inputCount": 4730,
+      "provenance": "Fresh local execution at the clean exact committed candidate with HEAD and tracked inputs fixed; no cached/runtime-closure reuse is asserted."
+    },
+    {
+      "id": "reference-integrity",
+      "command": ".venv/Scripts/python.exe -B tools/ui_reference_check.py --repo . --reference design/ui-reference --report artifacts/tmp/W2.A05.T02.reference-03e501c4.json",
+      "workingDirectory": ".",
+      "exitCode": 0,
+      "commit": "03e501c4550c7aa61e1e60827d49f7174faab1ef",
+      "rawOutput": "artifacts/tmp/W2.A05.T02.reference-integrity-03e501c4.log",
+      "rawOutputSha256": "446e2d73fca4b010d9ed1ce0f0c848ebbe9456e4d5e77e8269554a6c2a380982",
+      "startedAt": "2026-10-05T07:12:48.554423+00:00",
+      "finishedAt": "2026-10-05T07:12:50.408490+00:00",
+      "durationSeconds": 1.854,
+      "producer": "artifacts/tmp/W2.A05.T02.run-selected.py",
+      "producerSha256": "25d5866fcfdcaf9ee7633f0b7dc3589e6be940adcbf2a789f42ec518a1d7d307",
+      "inputCount": 4730,
+      "provenance": "Fresh local execution at the clean exact committed candidate with HEAD and tracked inputs fixed; no cached/runtime-closure reuse is asserted."
+    },
+    {
+      "id": "backlog",
+      "command": ".venv/Scripts/python.exe -B tools/taskctl.py --file planning/backlog.yaml validate",
+      "workingDirectory": ".",
+      "exitCode": 0,
+      "commit": "03e501c4550c7aa61e1e60827d49f7174faab1ef",
+      "rawOutput": "artifacts/tmp/W2.A05.T02.backlog-03e501c4.log",
+      "rawOutputSha256": "6101121f1a3dc921c6611ad107ee9daeb1e1b09311d9e4bf9f7436f000f81679",
+      "startedAt": "2026-10-05T07:12:44.146396+00:00",
+      "finishedAt": "2026-10-05T07:16:51.844145+00:00",
+      "durationSeconds": 247.698,
+      "producer": "artifacts/tmp/W2.A05.T02.run-selected.py",
+      "producerSha256": "25d5866fcfdcaf9ee7633f0b7dc3589e6be940adcbf2a789f42ec518a1d7d307",
+      "inputCount": 4730,
+      "provenance": "Fresh local execution at the clean exact committed candidate with HEAD and tracked inputs fixed; no cached/runtime-closure reuse is asserted."
+    },
+    {
+      "id": "views",
+      "command": ".venv/Scripts/python.exe -B tools/backlog_views.py --repo . --check",
+      "workingDirectory": ".",
+      "exitCode": 0,
+      "commit": "03e501c4550c7aa61e1e60827d49f7174faab1ef",
+      "rawOutput": "artifacts/tmp/W2.A05.T02.views-03e501c4.log",
+      "rawOutputSha256": "36ebe8ba5eed16d416087f957ce901132e936a4ed14c97dbcb91651c3e2678aa",
+      "startedAt": "2026-10-05T07:16:51.896544+00:00",
+      "finishedAt": "2026-10-05T07:16:55.281462+00:00",
+      "durationSeconds": 3.385,
+      "producer": "artifacts/tmp/W2.A05.T02.run-selected.py",
+      "producerSha256": "25d5866fcfdcaf9ee7633f0b7dc3589e6be940adcbf2a789f42ec518a1d7d307",
+      "inputCount": 4730,
+      "provenance": "Fresh local execution at the clean exact committed candidate with HEAD and tracked inputs fixed; no cached/runtime-closure reuse is asserted."
+    },
+    {
+      "id": "site",
+      "command": ".venv/Scripts/python.exe -B tools/plan_review_check.py --repo . --report artifacts/tmp/W2.A05.T02.site-03e501c4.json",
+      "workingDirectory": ".",
+      "exitCode": 0,
+      "commit": "03e501c4550c7aa61e1e60827d49f7174faab1ef",
+      "rawOutput": "artifacts/tmp/W2.A05.T02.site-03e501c4.log",
+      "rawOutputSha256": "d6b4aabfbf04f2e0e52f0737fc127f4236f25f394f67a0092fcd99e5d5de45e3",
+      "startedAt": "2026-10-05T07:16:55.332485+00:00",
+      "finishedAt": "2026-10-05T07:20:32.868639+00:00",
+      "durationSeconds": 217.536,
+      "producer": "artifacts/tmp/W2.A05.T02.run-selected.py",
+      "producerSha256": "25d5866fcfdcaf9ee7633f0b7dc3589e6be940adcbf2a789f42ec518a1d7d307",
+      "inputCount": 4730,
+      "provenance": "Fresh local execution at the clean exact committed candidate with HEAD and tracked inputs fixed; no cached/runtime-closure reuse is asserted."
+    },
+    {
+      "id": "source-invariants",
+      "command": ".venv/Scripts/python.exe -B -u artifacts/tmp/W2.A05.T02.source-invariants.py 03e501c4550c7aa61e1e60827d49f7174faab1ef",
+      "workingDirectory": ".",
+      "exitCode": 0,
+      "commit": "03e501c4550c7aa61e1e60827d49f7174faab1ef",
+      "rawOutput": "artifacts/tmp/W2.A05.T02.source-invariants-03e501c4.log",
+      "rawOutputSha256": "07daeca19ab0def42aebc3ef2f49c0dc4976a4c76b8e7d98513c223e2e9ebada",
+      "startedAt": "2026-10-05T07:18:16.607905+00:00",
+      "finishedAt": "2026-10-05T07:18:22.855078+00:00",
+      "durationSeconds": 6.247,
+      "producer": "artifacts/tmp/W2.A05.T02.source-invariants.py",
+      "producerSha256": "01a9f370b4dc926b1c8d62ac7977fe44df8e29bfec45b10bbdbdfcb7d53f612d",
+      "inputCount": 4730,
+      "provenance": "Fresh local execution at the clean exact committed candidate with HEAD and tracked inputs fixed; no cached/runtime-closure reuse is asserted."
+    }
+  ],
+  "verificationSelection": {
+    "riskAnalysis": "Narrow four-source standard-label repair. Select focused static/actual-browser naming, exact source and persisted authority, complete official accessibility explicitly required by ECR-0013, selected baseline/witness denials and affected quality/ADR/UI/reference/planning checks. No renderer/reference/product/native/Core/runtime/dependency change justifies unrelated full profiles or repeated unchanged T01 suites. Every qualifying check is fresh at this candidate; no installed-runtime closure/cache claim.",
+    "selectedCommandIds": [
+      "desktop:unit",
+      "desktop:ui-accessibility",
+      "desktop:ui-reference-integrity",
+      "foundation:adr",
+      "foundation:ui-change",
+      "foundation:quality",
+      "foundation:backlog",
+      "foundation:backlog-views"
+    ],
+    "deferred": [
+      "Actual A05 integrated S01/exit/separate security review/adoption and later separate A03 activation/fresh F01 replay/review-02/exit/security/adoption are next ordered gates.",
+      "Original CAP-05.S01.T01 native/Core/fifth-D3D/current classification/two-contract/full-base proof, joined CAP-04.S05 and remaining W2 product slices remain due.",
+      "Fresh full W2 Windows x64 repository/profile/security/privacy/rights/accessibility/performance/packaging/cross-capability qualification, independent Wave review and human release remain due."
+    ]
+  },
+  "reports": {
+    "officialAccessibility": {
+      "path": "artifacts/tmp/W2.A05.T02.accessibility-03e501c4.json",
+      "sha256": "eac0fe7e0bcf14bd9e509d19f322a0ada77705e2626b058ba28155f305bc5dfc"
+    },
+    "browserNames": {
+      "path": "artifacts/tmp/W2.A05.T02.browser-names-03e501c4.json",
+      "sha256": "d4a1d258a4b22f963f755f8ca0cb666a416d34d9215fb7081ef5d075b169cc23"
+    }
+  },
+  "additionalProducer": {
+    "path": "artifacts/tmp/W2.A05.T02.browser-names.py",
+    "sha256": "d62650d3894e0ae4f2a83834b27d710cab7488feb99c8abf24073492c2fcb2f0"
+  },
+  "adverseEvidence": [
+    {
+      "path": "artifacts/tmp/W2.A05.T02.characterization-01.json",
+      "sha256": "83e6b9e14e6a8f0c3cd50018f97553985a491d2149e7bd765bb93b648351afe4",
+      "disposition": "Actual new-tests/unchanged-helper run: exit1, five methods, 25 failures; not committed-candidate qualification."
+    },
+    {
+      "path": "artifacts/evidence/W2.A03.T02.json",
+      "sha256": "6c7d9b8491f33e529001cde6bf9327c7412e9cdada9f8644b2d4af5f23d2855f",
+      "disposition": "Immutable prior task manifest retains actual official exit1 and original adjudication; no failure is rewritten."
+    },
+    {
+      "path": "artifacts/tmp/W2.A03.T02.final-06a69348.ui-accessibility.json",
+      "sha256": "87daa692dd752159a0c4961e231bb53359e5bde4928cb410acac7b61c7b9b74d",
+      "disposition": "Historical official accessibility FAIL remains adverse."
+    },
+    {
+      "path": "artifacts/tmp/W2.A03.T02.final-06a69348.ui-accessibility.log",
+      "sha256": "87e4b9043c4c717100de2364f39f270a19853cb6edc3d9fd2b638459c603ac00",
+      "disposition": "Original official exit1 raw output remains preserved."
+    },
+    {
+      "path": "artifacts/tmp/W2.A05.T02.source-invariants-01.py",
+      "sha256": "2f3ef49490f53e24b6bde5f84a69bbf3ea80e1d165a5a6a209b68c7db867b958",
+      "disposition": "Initial ignored diagnostic used absent root status instead of lifecycle.status and exited1 with KeyError before publishing a result. Actual traceback remains in tool transcript; no raw log or pass is invented. Corrected producer asserts the actual fields."
+    }
+  ],
+  "scopeDeviation": "None. No further framework development is authorized after A05.",
+  "proofLimitations": [
+    "Parsed label visibility recognizes HTML markers/ancestors/direct inline hiding; arbitrary stylesheet resolution and a complete browser accessible-name algorithm are outside this static repair.",
+    "The pipeline denial uses temporary copied fixture markup; AX positives/negatives use actual pinned Chromium and unchanged fixture bytes with in-memory mutations only. Browser negatives lose the approved human label but retain the UA Choose File fallback, not an invented empty AX name.",
+    "The exact-witness mock is a component fail-closed regression, not independent browser or native/Core proof. Current witness is additionally loaded by the actual official and AX commands.",
+    "Expanded independent task review and actual later amendment/product/Wave/release gates are pending; immutable prior evidence is historical only."
+  ],
+  "reviewerDisposition": {
+    "status": "pending-review",
+    "requiredGate": "expanded-independent-control-accessibility-ADR-evidence-review",
+    "openFindingIds": []
+  }
+}

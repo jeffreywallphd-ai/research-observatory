@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: b5918d3a61a1513731f35ecbfb3a5fa1e648b8880bfcf457dfd5bf90eeae3288
+source_sha256: 97fbeba82112594b075df73faac83e9376430bac29a7a2a0a2925c51fbb12d68
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -3157,7 +3157,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 ### - [ ] W2.A05.T02 - Recognize real associated labels in the static accessibility checker
 
-**Status / owner / review:** `IN_PROGRESS` / codex-w2-implementation / - (`-`)
+**Status / owner / review:** `REVIEW` / codex-w2-implementation / - (`-`)
 
 **Dependencies:** `W2.A05.B00`, `W2.A05.T01`
 
@@ -3175,13 +3175,33 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - Focused static label-name positives and adversarial missing/empty/hidden/duplicate/wrong-target/non-labelable cases, actual pinned browser AX positive and label-removal negative.
 - Fresh official33-page/66-responsive accessibility and unchanged reference/baseline history, affected quality/ADR/control checks; independent review preserving every prior adverse result.
 
+**Evidence:**
+
+- `artifacts/evidence/W2.A05.T02.json` at `03e501c4550c7aa61e1e60827d49f7174faab1ef`
+
 #### Review history — W2.A05.T02
 
-**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+**Review mode:** `append-only v1` / 0 completed round(s)
+
+**Current immutable submission awaiting review:** `R01` / packet SHA-256 `7d146fa976c5a8b5bf9a9304fac5e99edef7805c5c9d8c211e9d34993cb24618`
+
+- Candidate / base / branch: `03e501c4550c7aa61e1e60827d49f7174faab1ef` / `a1105c306178b6c5f10d0107f244d3e14e2d401d` / `codex/w2-implementation`
+- Submitted by / at: codex-w2-implementation / `2026-10-05T07:22:02+00:00`
+- Evidence: `artifacts/evidence/W2.A05.T02.json` / `cf0c65d9cd8f7cf70d9855d9d5016d01db35c3297eee876dba6854b8fcf44600` / `03e501c4550c7aa61e1e60827d49f7174faab1ef`
+- Acceptance-criteria SHA-256: `3969c625a2b929618115633b4376150c6a26ce690179af8def029fceed90c609`
+- Verification-selection SHA-256: `942d2236c826d3ca8548b9e9eeca2696de6d235466208b4692f43800776f5cc8`
+- Changed paths: `artifacts/evidence/W2.A05.T02.task-start.md`, `docs/adr/ADR-0041-authenticate-reviewed-activation-control-repairs.md`, `docs/automation/ui-conformance-verification.md`, `docs/planning-implementation-plan.md`, `planning/backlog.yaml`, `planning/review-site/enablers/ECR-0013.html`, `planning/review-site/manifest.json`, `planning/status-summary.md`, `tests/desktop/test_ui_conformance.py`, `tools/ui_conformance.py`
+- Selected checks: `.venv/Scripts/python.exe -B -u -m unittest -v tests.desktop.test_ui_conformance.UiConformanceTests.test_explicit_labels_name_controls_before_and_after tests.desktop.test_ui_conformance.UiConformanceTests.test_wrapping_labels_and_existing_name_order_are_preserved tests.desktop.test_ui_conformance.UiConformanceTests.test_label_associations_reject_unrelated_empty_hidden_and_wrong_targets tests.desktop.test_ui_conformance.UiConformanceTests.test_label_associations_preserve_first_id_and_wrapping_control_identity tests.desktop.test_ui_conformance.UiConformanceTests.test_associated_label_duplicates_and_reference_name_drift_fail tests.desktop.test_ui_conformance.UiConformanceTests.test_actual_reference_file_input_has_its_associated_name`, `.venv/Scripts/python.exe -B -u artifacts/tmp/W2.A05.T02.browser-names.py 03e501c4550c7aa61e1e60827d49f7174faab1ef`, `.venv/Scripts/python.exe -B tools/ui_accessibility_check.py --repo . --report artifacts/tmp/W2.A05.T02.accessibility-03e501c4.json`, `.venv/Scripts/python.exe -B -u -m unittest -v tests.desktop.test_ui_conformance.UiConformanceTests.test_strict_baseline_and_approval_records_reject_malformed_history_shapes tests.desktop.test_ui_conformance.UiConformanceTests.test_active_presentation_requires_its_exact_compatibility_witness tests.desktop.test_ui_conformance.UiConformanceTests.test_reachable_repository_baseline_history_is_valid tests.desktop.test_ui_conformance.UiConformanceTests.test_same_reference_baseline_rewrite_requires_new_approval`, `.venv/Scripts/python.exe -B tools/adr_check.py --repo . --base a1105c306178b6c5f10d0107f244d3e14e2d401d --head 03e501c4550c7aa61e1e60827d49f7174faab1ef`, `.venv/Scripts/python.exe -B tools/ui_change_gate.py --repo . --base a1105c306178b6c5f10d0107f244d3e14e2d401d --head 03e501c4550c7aa61e1e60827d49f7174faab1ef`, `.venv/Scripts/python.exe -B -m ruff check tools/ui_conformance.py tests/desktop/test_ui_conformance.py`, `.venv/Scripts/python.exe -B -m ruff format --check tools/ui_conformance.py tests/desktop/test_ui_conformance.py`, `.venv/Scripts/python.exe -B -m mypy tools/ui_conformance.py tests/desktop/test_ui_conformance.py`, `git -c core.safecrlf=false diff --check a1105c306178b6c5f10d0107f244d3e14e2d401d 03e501c4550c7aa61e1e60827d49f7174faab1ef`, `.venv/Scripts/python.exe -B tools/ui_reference_check.py --repo . --reference design/ui-reference --report artifacts/tmp/W2.A05.T02.reference-03e501c4.json`, `.venv/Scripts/python.exe -B tools/taskctl.py --file planning/backlog.yaml validate`, `.venv/Scripts/python.exe -B tools/backlog_views.py --repo . --check`, `.venv/Scripts/python.exe -B tools/plan_review_check.py --repo . --report artifacts/tmp/W2.A05.T02.site-03e501c4.json`, `.venv/Scripts/python.exe -B -u artifacts/tmp/W2.A05.T02.source-invariants.py 03e501c4550c7aa61e1e60827d49f7174faab1ef`
+- Deferred checks: `Actual A05 integrated S01/exit/separate security review/adoption and later separate A03 activation/fresh F01 replay/review-02/exit/security/adoption are next ordered gates.`, `Original CAP-05.S01.T01 native/Core/fifth-D3D/current classification/two-contract/full-base proof, joined CAP-04.S05 and remaining W2 product slices remain due.`, `Fresh full W2 Windows x64 repository/profile/security/privacy/rights/accessibility/performance/packaging/cross-capability qualification, independent Wave review and human release remain due.`
+- Selection rationale: Narrow four-source standard-label repair. Select focused static/actual-browser naming, exact source and persisted authority, complete official accessibility explicitly required by ECR-0013, selected baseline/witness denials and affected quality/ADR/UI/reference/planning checks. No renderer/reference/product/native/Core/runtime/dependency change justifies unrelated full profiles or repeated unchanged T01 suites. Every qualifying check is fresh at this candidate; no installed-runtime closure/cache claim.
+- Prior round / replayed open findings: `-` / -
+- Root-cause escalation: -
 
 **Current latest-review projection:** `-` by - at `-`
 
 **Latest notes:** -
+
+**Currently open findings:** -
 
 
 ## Linked corrective tasks

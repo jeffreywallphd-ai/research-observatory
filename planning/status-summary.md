@@ -1,7 +1,7 @@
 ---
 document_type: generated-backlog-status-summary
 source: planning/backlog.yaml
-source_sha256: b5918d3a61a1513731f35ecbfb3a5fa1e648b8880bfcf457dfd5bf90eeae3288
+source_sha256: 97fbeba82112594b075df73faac83e9376430bac29a7a2a0a2925c51fbb12d68
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -70,7 +70,7 @@ manual_edit: prohibited
 
 | Status | Count |
 |---|---:|
-| `IN_PROGRESS` | 1 |
+| `REVIEW` | 1 |
 | `DONE` | 22 |
 
 ## Wave authority and append-only amendments
@@ -831,6 +831,7 @@ Append-only rounds remain distinct from the current latest-review projection. Le
 | `W2.A03.T02` | `append-only v1` | 1 | `-` | approved / agent:/root/a03_t02_authority_review | - |
 | `W2.A04.T01` | `append-only v1` | 1 | `-` | approved / agent:/root/a03_t02_authority_review | - |
 | `W2.A05.T01` | `append-only v1` | 1 | `-` | approved / agent:/root/a05_t01_review | - |
+| `W2.A05.T02` | `append-only v1` | 0 | `R01` | - / - | - |
 | `W1.C01.T01` | `append-only v1` | 1 | `-` | approved / agent:/root/ui_guard_planning | - |
 | `W1.C02.T01` | `append-only v1` | 1 | `-` | approved / agent:/root/cap07_slice_review | - |
 | `W1.C03.T01` | `append-only v1` | 1 | `-` | approved / agent:/root/cap07_slice_review | - |
@@ -910,7 +911,7 @@ Append-only rounds remain distinct from the current latest-review projection. Le
 | Task | Status | Owner | Branch |
 |---|---|---|---|
 | `CAP-05.S01.T01` Implement local document attachment and version association | `BLOCKED` | codex-w2-implementation | `codex/w2-implementation` |
-| `W2.A05.T02` Recognize real associated labels in the static accessibility checker | `IN_PROGRESS` | codex-w2-implementation | `codex/w2-implementation` |
+| `W2.A05.T02` Recognize real associated labels in the static accessibility checker | `REVIEW` | codex-w2-implementation | `codex/w2-implementation` |
 
 ## Linked corrective tasks
 
