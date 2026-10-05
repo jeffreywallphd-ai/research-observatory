@@ -333,7 +333,7 @@ class PluginWorkerSubmissionTests(PluginJobFixture):
         self.assertNotEqual(b"SQLite format 3\0", self.database.read_bytes()[:16])
         self.assertEqual(["enabled"], [event.event_kind for event in grants.audit_history(reviewed.plugin_id)])
 
-    def test_confirmed_job_runs_through_claim_and_fenced_encrypted_publication(self):
+    def _run_confirmed_job(self):
         raw, key = archive()
         inspected = inspect_plugin_archive(raw)
         package = verify_plugin_package(
@@ -389,6 +389,10 @@ class PluginWorkerSubmissionTests(PluginJobFixture):
         with patch("research_observatory_core.connectors.plugin_dispatch.PluginNetworkBroker.fetch", synthetic_fetch):
             queued = self.worker.submit(str(self.root), self.preview_id, self.inputs.request, self.input_data)
             self.worker.run_pending()
+        return queued, calls
+
+    def test_confirmed_job_runs_through_claim_and_fenced_encrypted_publication(self):
+        queued, calls = self._run_confirmed_job()
         result = self.queue.get(queued.job_id)
         self.assertEqual("succeeded", result.state)
         self.assertEqual([self.input_data], calls)
@@ -402,6 +406,60 @@ class PluginWorkerSubmissionTests(PluginJobFixture):
         physical = tuple(path for path in (self.root / "objects").rglob("*") if path.is_file())
         self.assertTrue(physical)
         self.assertFalse(any(self.input_data in path.read_bytes() for path in physical))
+
+    def test_due_heartbeat_does_not_interrupt_fenced_publication(self):
+        polls = []
+
+        def advancing_clock():
+            instant = float(len(polls) * 3)
+            polls.append(instant)
+            return instant
+
+        with patch("research_observatory_core.plugin_worker.time", SimpleNamespace(monotonic=advancing_clock)):
+            self.test_confirmed_job_runs_through_claim_and_fenced_encrypted_publication()
+        self.assertGreater(len(polls), 1)
+
+    def test_stop_after_last_poll_cannot_publish(self):
+        publish = self.repository.publish
+
+        def stop_before_writer(*args, **kwargs):
+            self.worker._stopped.set()
+            return publish(*args, **kwargs)
+
+        with patch.object(self.repository, "publish", stop_before_writer):
+            queued, _calls = self._run_confirmed_job()
+        self.assertEqual("failed", self.queue.get(queued.job_id).state)
+        self.assertIsNone(self.repository.result(self.repository.input(self.inputs.invocation_id)))
+
+    def test_durable_cancel_after_last_poll_cannot_publish(self):
+        publish = self.repository.publish
+
+        def cancel_before_writer(*args, **kwargs):
+            self.queue.request_cancellation(
+                args[3].job_id,
+                actor=self.actor,
+                now=self.worker._now(),
+                reason_code="plugin-user-cancelled",
+                interruption_kind="user-cancel",
+            )
+            return publish(*args, **kwargs)
+
+        with patch.object(self.repository, "publish", cancel_before_writer):
+            queued, _calls = self._run_confirmed_job()
+        self.assertEqual("cancelled", self.queue.get(queued.job_id).state)
+        self.assertIsNone(self.repository.result(self.repository.input(self.inputs.invocation_id)))
+
+    def test_expired_lease_cannot_publish(self):
+        publish = self.repository.publish
+
+        def expire_at_writer(*args, **kwargs):
+            kwargs["now"] = lambda: "2099-10-01T12:00:00.000Z"
+            return publish(*args, **kwargs)
+
+        with patch.object(self.repository, "publish", expire_at_writer):
+            queued, _calls = self._run_confirmed_job()
+        self.assertEqual("failed", self.queue.get(queued.job_id).state)
+        self.assertIsNone(self.repository.result(self.repository.input(self.inputs.invocation_id)))
 
     def test_live_worker_broker_denies_changed_scientific_identifier_before_egress(self):
         raw, key = archive()
