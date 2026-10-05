@@ -39853,9 +39853,9 @@
       "approval_path": "planning/wave-amendment-approvals/W2.A03.json",
       "approval_sha256": "8852d6631a6656e94cc75e4f9dc705c7095ecf111786748e5630fe13b8fa9087",
       "approval_status": "APPROVED",
-      "lifecycle_status": "ACTIVE",
+      "lifecycle_status": "REVIEW",
       "bootstrap_status": "APPROVED",
-      "campaign_status": "ACTIVE",
+      "campaign_status": "REVIEW",
       "bootstrap_attempts": [
         {
           "id": "R01",
@@ -40711,15 +40711,43 @@
       ],
       "exit_review": {
         "amendment_id": "W2.A03",
-        "mode": "latest-completion-only",
+        "mode": "append-only",
         "latest_completion": {
-          "status": "PENDING",
+          "status": "REVIEW",
           "reviewer": null,
           "reviewed_at": null,
-          "evidence": [],
-          "notes": null
+          "evidence": [
+            "artifacts/evidence/W2.A03.exit.json"
+          ],
+          "notes": "Submit exact approved A03 contribution after independent S01 R02 fixed F01; retain original tasks and A04/A05 history. Distinct exit and security reviews and adoption precede ordinary W2 product resume."
         },
-        "exit_review_control": null
+        "exit_review_control": {
+          "version": 1,
+          "attempts": [],
+          "current_submission": {
+            "id": "R01",
+            "submitted_by": "codex-w2-implementation",
+            "submitted_at": "2026-10-05T12:32:11+00:00",
+            "candidate_commit": "573c603e646cab41b1d011eac583d652f0f2c67a",
+            "declared_candidate_commit": "b1b88ec009018c4eea46e6d66890e6cb448bb485",
+            "branch": "codex/w2-implementation",
+            "evidence_reference": {
+              "type": "amendment-exit-evidence",
+              "amendment_id": "W2.A03",
+              "path": "artifacts/evidence/W2.A03.exit.json",
+              "sha256": "7eda25e4f286e090c38286a69f99a16dcd399280a184a9b0507aa3573c2bcb21",
+              "commit": "573c603e646cab41b1d011eac583d652f0f2c67a"
+            },
+            "acceptance_criteria_sha256": "3923c8b3f89c0bc774543e002a3942e56d1f45c77a6d3a87ecd6e8da3a0c9886",
+            "selected_checks": [
+              ".venv/Scripts/python.exe -B artifacts/tmp/W2.A03.S01.inspect-integrated-04.py"
+            ],
+            "selected_checks_sha256": "5879f6643030d387b43feb6a3ca9c7f2b947e1d0c813d026d79c187a1cbecec7",
+            "prior_attempt_id": null,
+            "open_finding_ids": [],
+            "packet_sha256": "7071066ff3b8d95783f5e1dc950917960476e0c459ba1e0f3f1485d89668380a"
+          }
+        }
       },
       "adoption_checkpoints": [],
       "page": "enablers/ECR-0011.html"
