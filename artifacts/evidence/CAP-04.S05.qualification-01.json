@@ -1,0 +1,467 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "slice-qualification-evidence",
+  "sliceId": "CAP-04.S05",
+  "approvalCommit": "c85a59f3a293f8e3f2eaf6454682c9a14b1efa55",
+  "candidateCommit": "3cac985d89bfa610e292e1ff8d8f05e91c6c816c",
+  "submissionMetadataCommit": "5309c12520760d405ca99da45b427b47c7e6b012",
+  "metadataOnlyDelta": [
+    "artifacts/evidence/W2.C12.T01.R01.json",
+    "artifacts/evidence/W2.C12.T01.review-R01.json",
+    "docs/planning-implementation-plan.md",
+    "planning/backlog.yaml",
+    "planning/review-site/manifest.json",
+    "planning/review-site/waves/W2.html",
+    "planning/status-summary.md"
+  ],
+  "qualificationStatus": "PASS",
+  "independentSliceDisposition": "pending",
+  "outcome": "New data sources can be added without bypassing provenance, rights, security, or canonicalization.",
+  "currentAuthority": {
+    "uiReference": "RO-UI-ACADEMIC-MINIMAL-1.8",
+    "uiReferencePackageSha256": "cd8995fdcea2fe44452eaa1fdd258b6f9fab5714cbd443a81a8e5b4251220b94",
+    "adoptedAmendments": "A01-A05 remain historical authority; no further framework implementation",
+    "acceptedADRs": [
+      "ADR-0027",
+      "ADR-0028"
+    ]
+  },
+  "verificationSelection": {
+    "stage": "slice-integration",
+    "selectedDomains": [
+      "foundation",
+      "service",
+      "security-local",
+      "desktop"
+    ],
+    "riskAnalysis": "SDK/package/grant/public-page and current HTTP conversion, actual signed Windows LPAC and production-installed broker publication, protected rights/provenance/pagination/denial/cancellation/orderly restart/crashlock, approved UI and bounded resource distribution are selected credible integration risks. The named commands below are bounded selections, not full-profile execution. No unchanged full suite is replayed for metadata recording.",
+    "deferredBreadth": "Full affected-profile union/clean build-smoke checkpoints and fresh complete W2 qualification remain required; historical task approvals are authenticated, not cached current-native passes."
+  },
+  "taskEvidence": [
+    {
+      "taskId": "CAP-04.S05.T01",
+      "kind": "immutable task evidence/approval, authenticates its actual historical candidate; no cached native pass is claimed",
+      "candidateCommit": "0f94ec694d5e87dfa370bad4110b1d37d364d680",
+      "evidence": {
+        "path": "artifacts/evidence/CAP-04.S05.T01.json",
+        "rawSha256": "bb235594be3baa215923f6a2665aace0d593022f1c6cfab46f62cee6f059d4cd",
+        "canonicalSha256": "bb235594be3baa215923f6a2665aace0d593022f1c6cfab46f62cee6f059d4cd"
+      },
+      "independentResult": "approved",
+      "reviewedAt": "2026-10-01T12:10:06+00:00"
+    },
+    {
+      "taskId": "CAP-04.S05.T02",
+      "kind": "immutable task evidence/approval, authenticates its actual historical candidate; no cached native pass is claimed",
+      "candidateCommit": "e1d55299a132597b572bfb26e1ea09a7c45c760e",
+      "evidence": {
+        "path": "artifacts/evidence/CAP-04.S05.T02.json",
+        "rawSha256": "cc602031dc4d260c5034a38cb90f46431916a39a5dda534ffb206296d343db1f",
+        "canonicalSha256": "98fcbe87db7dd08586adc375ed55ed0bb9a1633e18e291dbc8b481650721360d"
+      },
+      "independentResult": "approved",
+      "reviewedAt": "2026-10-02T03:00:21+00:00"
+    },
+    {
+      "taskId": "CAP-04.S05.T02",
+      "kind": "immutable task evidence/approval, authenticates its actual historical candidate; no cached native pass is claimed",
+      "candidateCommit": "5a76725cfb521448a3da7a20b993c370ca854ba6",
+      "evidence": {
+        "path": "artifacts/evidence/CAP-04.S05.T02.R02.json",
+        "rawSha256": "90c8ca95c59021dbcb2d76cd1230e21105e483ec5d76a38626a197da61dfbfbe",
+        "canonicalSha256": "a68ef1f82ea3716e94a76c57c75dff0b2ab2860a27fba0becf66bdabeba2a994"
+      },
+      "independentResult": "approved",
+      "reviewedAt": "2026-10-02T03:00:21+00:00"
+    },
+    {
+      "taskId": "CAP-04.S05.T03",
+      "kind": "immutable task evidence/approval, authenticates its actual historical candidate; no cached native pass is claimed",
+      "candidateCommit": "9a22c5fe122358b854ceae6c7cb47cdfd68c8f12",
+      "evidence": {
+        "path": "artifacts/evidence/CAP-04.S05.T03.json",
+        "rawSha256": "da64b928f95b325fe86221a01911ee0fbbf377a9cb57d7866bdc3a531ce74676",
+        "canonicalSha256": "54f2aa1da249a366cabf93787bc19fafe627dc01cf8f7f4714f2533a52d54417"
+      },
+      "independentResult": "approved",
+      "reviewedAt": "2026-10-03T18:36:35+00:00"
+    },
+    {
+      "taskId": "CAP-04.S05.T03",
+      "kind": "immutable task evidence/approval, authenticates its actual historical candidate; no cached native pass is claimed",
+      "candidateCommit": "42379f73cf6853be3618a8bb554ffa50a3fdf5c0",
+      "evidence": {
+        "path": "artifacts/evidence/CAP-04.S05.T03.R02.json",
+        "rawSha256": "aeb33b7187416d5b32f79641ba920e2978dea52d0e8c989d48c89d4b5b91766d",
+        "canonicalSha256": "0497627f354903da8e9d3ee83f2ca413dca1d59f3fabc0b2bfdd8110ef6a801b"
+      },
+      "independentResult": "approved",
+      "reviewedAt": "2026-10-03T18:36:35+00:00"
+    },
+    {
+      "taskId": "CAP-04.S05.T03",
+      "kind": "immutable task evidence/approval, authenticates its actual historical candidate; no cached native pass is claimed",
+      "candidateCommit": "c879f5d68aea48622b719e105b7915821ddbb6a5",
+      "evidence": {
+        "path": "artifacts/evidence/CAP-04.S05.T03.R03.json",
+        "rawSha256": "4b06a9ff115a4daf01c545e620b51811b7a60166e5c3d7352a191f3095b92c91",
+        "canonicalSha256": "2d5c073b78a78c1eab43a63a30faaecd58b591acb5aea8e3278e3d3c30050066"
+      },
+      "independentResult": "approved",
+      "reviewedAt": "2026-10-03T18:36:35+00:00"
+    },
+    {
+      "taskId": "W2.C10.T01",
+      "kind": "immutable task evidence/approval, authenticates its actual historical candidate; no cached native pass is claimed",
+      "candidateCommit": "3dde91238b0be11847f68845a52b9785048dc8cd",
+      "evidence": {
+        "path": "artifacts/evidence/W2.C10.T01.json",
+        "rawSha256": "816d87c66e0ae1e9e9180ad8ac851c14de424ed202319827c2e046bcd4f8bb5a",
+        "canonicalSha256": "93f0eec82a82629b6035c64226906d5fc0382d365c30b273ff05b5e5c29c157a"
+      },
+      "independentResult": "approved",
+      "reviewedAt": "2026-10-03T20:19:54+00:00"
+    },
+    {
+      "taskId": "W2.C11.T01",
+      "kind": "immutable task evidence/approval, authenticates its actual historical candidate; no cached native pass is claimed",
+      "candidateCommit": "9a80c0f6cd6f5d444e7676c0ff287b4bb58c158f",
+      "evidence": {
+        "path": "artifacts/evidence/W2.C11.T01.R01.public.json",
+        "rawSha256": "3da1e53dc3637e429e6d89bbc94aeb8752c780288acd08f208cbe23516795509",
+        "canonicalSha256": "3da1e53dc3637e429e6d89bbc94aeb8752c780288acd08f208cbe23516795509"
+      },
+      "independentResult": "approved",
+      "reviewedAt": "2026-10-05T20:38:22+00:00"
+    },
+    {
+      "taskId": "W2.C12.T01",
+      "kind": "immutable task evidence/approval, authenticates its actual historical candidate; no cached native pass is claimed",
+      "candidateCommit": "3cac985d89bfa610e292e1ff8d8f05e91c6c816c",
+      "evidence": {
+        "path": "artifacts/evidence/W2.C12.T01.R01.json",
+        "rawSha256": "5a6ec5b387e8f398e2253ddf4c7211a71ca5514ad81e6b26a132f9df710b1012",
+        "canonicalSha256": "5a6ec5b387e8f398e2253ddf4c7211a71ca5514ad81e6b26a132f9df710b1012"
+      },
+      "independentResult": "approved",
+      "reviewedAt": "2026-10-05T23:17:25+00:00"
+    }
+  ],
+  "checks": [
+    {
+      "id": "http-grants-contract:format",
+      "command": ".venv/Scripts/python.exe -B -m ruff format --check --config pyproject.toml -- services/core-api/src/research_observatory_core/plugin_api.py tests/connectors/test_plugin_admin_service.py tests/contracts/test_plugin_worker_contract.py",
+      "exitCode": 0,
+      "result": "PASS",
+      "candidateCommit": "3cac985d89bfa610e292e1ff8d8f05e91c6c816c",
+      "durationSeconds": 0.275,
+      "rawOutput": "artifacts/tmp/W2.C12.T01.green-01-3cac985d.format.log",
+      "rawOutputSha256": "06e6458a0ee0f097781e2690af2c79a5e0464a6af799f5f3544e75e4fbc06e6f",
+      "rawOutputCanonicalSha256": "06e6458a0ee0f097781e2690af2c79a5e0464a6af799f5f3544e75e4fbc06e6f",
+      "provenance": "Actual fresh execution at clean fixed committed source candidate; independently authenticate rather than replay unchanged suites."
+    },
+    {
+      "id": "http-grants-contract:lint",
+      "command": ".venv/Scripts/python.exe -B -m ruff check --config pyproject.toml -- services/core-api/src/research_observatory_core/plugin_api.py tests/connectors/test_plugin_admin_service.py tests/contracts/test_plugin_worker_contract.py",
+      "exitCode": 0,
+      "result": "PASS",
+      "candidateCommit": "3cac985d89bfa610e292e1ff8d8f05e91c6c816c",
+      "durationSeconds": 0.153,
+      "rawOutput": "artifacts/tmp/W2.C12.T01.green-01-3cac985d.lint.log",
+      "rawOutputSha256": "f78434f0f81a8fed2240a7879eda40bd74cab1d54c181ba11eef299ac4baee47",
+      "rawOutputCanonicalSha256": "f78434f0f81a8fed2240a7879eda40bd74cab1d54c181ba11eef299ac4baee47",
+      "provenance": "Actual fresh execution at clean fixed committed source candidate; independently authenticate rather than replay unchanged suites."
+    },
+    {
+      "id": "http-grants-contract:types",
+      "command": ".venv/Scripts/python.exe -B -m mypy --config-file pyproject.toml --no-namespace-packages -- services/core-api/src/research_observatory_core/plugin_api.py tests/connectors/test_plugin_admin_service.py tests/contracts/test_plugin_worker_contract.py",
+      "exitCode": 0,
+      "result": "PASS",
+      "candidateCommit": "3cac985d89bfa610e292e1ff8d8f05e91c6c816c",
+      "durationSeconds": 0.806,
+      "rawOutput": "artifacts/tmp/W2.C12.T01.green-01-3cac985d.types.log",
+      "rawOutputSha256": "f54b7bf002bcb9795b678d7c96c00fa7c25674f4f9bcb71c598cebf7a03c0de6",
+      "rawOutputCanonicalSha256": "08f6f924139c80e0c31e581449bc89211c962f8d677d9df0a98eba5faf12b958",
+      "provenance": "Actual fresh execution at clean fixed committed source candidate; independently authenticate rather than replay unchanged suites."
+    },
+    {
+      "id": "http-grants-contract:http-grants-and-contract",
+      "command": ".venv/Scripts/python.exe -B -m unittest -v tests.connectors.test_plugin_admin_service tests.connectors.test_plugin_grants tests.connectors.test_plugin_grant_migration tests.contracts.test_plugin_worker_contract",
+      "exitCode": 0,
+      "result": "PASS",
+      "candidateCommit": "3cac985d89bfa610e292e1ff8d8f05e91c6c816c",
+      "durationSeconds": 11.195,
+      "rawOutput": "artifacts/tmp/W2.C12.T01.green-01-3cac985d.http-grants-and-contract.log",
+      "rawOutputSha256": "e40f67718d02f0d3b9523a3edf5c2b38d178bc8ca2e7137f65ca225947afd79f",
+      "rawOutputCanonicalSha256": "c0852cd25832892a43ee4dcbbba596f32ec4e667dbebc5b8c9c3a84737c0cdd1",
+      "provenance": "Actual fresh execution at clean fixed committed source candidate; independently authenticate rather than replay unchanged suites."
+    },
+    {
+      "id": "http-grants-contract:core-api-contract",
+      "command": ".venv/Scripts/python.exe -B tools/core_api_contract.py --repo . --check",
+      "exitCode": 0,
+      "result": "PASS",
+      "candidateCommit": "3cac985d89bfa610e292e1ff8d8f05e91c6c816c",
+      "durationSeconds": 3.73,
+      "rawOutput": "artifacts/tmp/W2.C12.T01.green-01-3cac985d.core-api-contract.log",
+      "rawOutputSha256": "26b8f0df7f888ee4d131d91fd3ffd23c1fdb9c2158067ce3b30bc7c4a2a2a2cb",
+      "rawOutputCanonicalSha256": "534daa26d398254adaf9e826ddf9b188e603616f36d0f7d33f17986f1626beb5",
+      "provenance": "Actual fresh execution at clean fixed committed source candidate; independently authenticate rather than replay unchanged suites."
+    },
+    {
+      "id": "joined-native:format",
+      "command": ".venv/Scripts/python.exe -B -m ruff format --check --config pyproject.toml -- tests/connectors/test_plugin_sample_native_lpac.py",
+      "exitCode": 0,
+      "result": "PASS",
+      "candidateCommit": "3cac985d89bfa610e292e1ff8d8f05e91c6c816c",
+      "durationSeconds": 0.153,
+      "rawOutput": "artifacts/tmp/W2.C12.T01.joined-restart-02-3cac985d.format.log",
+      "rawOutputSha256": "37cfad428ea855b97d6dd45768e113bea3dd606428c84b340103c96b6f630948",
+      "rawOutputCanonicalSha256": "37cfad428ea855b97d6dd45768e113bea3dd606428c84b340103c96b6f630948",
+      "provenance": "Actual fresh execution at clean fixed committed source candidate; independently authenticate rather than replay unchanged suites."
+    },
+    {
+      "id": "joined-native:lint",
+      "command": ".venv/Scripts/python.exe -B -m ruff check --config pyproject.toml -- tests/connectors/test_plugin_sample_native_lpac.py",
+      "exitCode": 0,
+      "result": "PASS",
+      "candidateCommit": "3cac985d89bfa610e292e1ff8d8f05e91c6c816c",
+      "durationSeconds": 0.146,
+      "rawOutput": "artifacts/tmp/W2.C12.T01.joined-restart-02-3cac985d.lint.log",
+      "rawOutputSha256": "f78434f0f81a8fed2240a7879eda40bd74cab1d54c181ba11eef299ac4baee47",
+      "rawOutputCanonicalSha256": "f78434f0f81a8fed2240a7879eda40bd74cab1d54c181ba11eef299ac4baee47",
+      "provenance": "Actual fresh execution at clean fixed committed source candidate; independently authenticate rather than replay unchanged suites."
+    },
+    {
+      "id": "joined-native:types",
+      "command": ".venv/Scripts/python.exe -B -m mypy --config-file pyproject.toml --no-namespace-packages -- tests/connectors/test_plugin_sample_native_lpac.py",
+      "exitCode": 0,
+      "result": "PASS",
+      "candidateCommit": "3cac985d89bfa610e292e1ff8d8f05e91c6c816c",
+      "durationSeconds": 0.674,
+      "rawOutput": "artifacts/tmp/W2.C12.T01.joined-restart-02-3cac985d.types.log",
+      "rawOutputSha256": "ba6bb1aa663234b725d988697ba73f80a021df0702585bc51c0f7007133fe940",
+      "rawOutputCanonicalSha256": "6dc76c3e4928d19729e4a698fe42cb2d7cbeba3d04ed12ccce465936ccd2ab8c",
+      "provenance": "Actual fresh execution at clean fixed committed source candidate; independently authenticate rather than replay unchanged suites."
+    },
+    {
+      "id": "joined-native:protected-restart",
+      "command": ".venv/Scripts/python.exe -B -m unittest -v tests.connectors.test_plugin_sample_native_lpac.ProtectedSampleCoreJourneyTests",
+      "exitCode": 0,
+      "result": "PASS",
+      "candidateCommit": "3cac985d89bfa610e292e1ff8d8f05e91c6c816c",
+      "durationSeconds": 72.471,
+      "rawOutput": "artifacts/tmp/W2.C12.T01.joined-restart-02-3cac985d.protected-restart.log",
+      "rawOutputSha256": "785e2f968dd7dabfbccb7f32510022e92b8d564f8801c6038b5ff90e25e04dcd",
+      "rawOutputCanonicalSha256": "ab5ac8930070038091a04de698d4e6dde5c5fff673ece0bf2530f714a28f7259",
+      "provenance": "Actual fresh execution at clean fixed committed source candidate; independently authenticate rather than replay unchanged suites."
+    },
+    {
+      "id": "remaining-sdk-ui-resource:architecture",
+      "command": ".venv/Scripts/python.exe -B tools/architecture_check.py --repo .",
+      "exitCode": 0,
+      "result": "PASS",
+      "candidateCommit": "3cac985d89bfa610e292e1ff8d8f05e91c6c816c",
+      "durationSeconds": 3.792,
+      "rawOutput": "artifacts/tmp/CAP-04.S05.final-selected-02-3cac985d.architecture.log",
+      "rawOutputSha256": "6ba1086ea0153dfaef19445a2924d1f62007c61d8cea9149c93d70589280e1ee",
+      "rawOutputCanonicalSha256": "d7a8128bfcd1211a95ce2699881a78fffc3628f026bced9a5f70934530012d45",
+      "provenance": "Actual fresh execution at clean fixed committed source candidate; independently authenticate rather than replay unchanged suites."
+    },
+    {
+      "id": "remaining-sdk-ui-resource:remaining-sdk",
+      "command": ".venv/Scripts/python.exe -B -m unittest -v tests.connectors.test_plugin_package_repository tests.connectors.test_plugin_runtime tests.connectors.test_plugin_manifest_contract tests.connectors.test_plugin_sample_conformance",
+      "exitCode": 0,
+      "result": "PASS",
+      "candidateCommit": "3cac985d89bfa610e292e1ff8d8f05e91c6c816c",
+      "durationSeconds": 51.08,
+      "rawOutput": "artifacts/tmp/CAP-04.S05.final-selected-02-3cac985d.remaining-sdk.log",
+      "rawOutputSha256": "1ccd220f11536f1374bebc99e63c2062ab79b10e171493f3b0655240e0df0e5e",
+      "rawOutputCanonicalSha256": "2e316b02618119260f2ae6b0a3d23bf7b127ca0dfcce6e9f19fb380e9137a4b2",
+      "provenance": "Actual fresh execution at clean fixed committed source candidate; independently authenticate rather than replay unchanged suites."
+    },
+    {
+      "id": "remaining-sdk-ui-resource:ui-token",
+      "command": ".venv/Scripts/python.exe -B tools/ui_token_check.py --repo . --report artifacts/tmp/CAP-04.S05.final-selected-02-3cac985d.ui-token.json",
+      "exitCode": 0,
+      "result": "PASS",
+      "candidateCommit": "3cac985d89bfa610e292e1ff8d8f05e91c6c816c",
+      "durationSeconds": 20.215,
+      "rawOutput": "artifacts/tmp/CAP-04.S05.final-selected-02-3cac985d.ui-token.log",
+      "rawOutputSha256": "c8fee75d2b2b8eb1a12a6613c1040a5794cf3c0b048b8690bb86c1c9c7873bf7",
+      "rawOutputCanonicalSha256": "c5bbdf1bbf8507eec596edbd109c8827fea7a95a783276be3a0bff16930497b8",
+      "provenance": "Actual fresh execution at clean fixed committed source candidate; independently authenticate rather than replay unchanged suites."
+    },
+    {
+      "id": "remaining-sdk-ui-resource:ui-route",
+      "command": ".venv/Scripts/python.exe -B tools/ui_route_check.py --repo . --report artifacts/tmp/CAP-04.S05.final-selected-02-3cac985d.ui-route.json",
+      "exitCode": 0,
+      "result": "PASS",
+      "candidateCommit": "3cac985d89bfa610e292e1ff8d8f05e91c6c816c",
+      "durationSeconds": 22.122,
+      "rawOutput": "artifacts/tmp/CAP-04.S05.final-selected-02-3cac985d.ui-route.log",
+      "rawOutputSha256": "93fabb5f78e57ab6a13f9864bd1cf5fbbc509e0150314d7aa8f175307167f046",
+      "rawOutputCanonicalSha256": "97b3774082a1cc77b7035c4431c13b6e8189986ecd21307a20676862a16d632f",
+      "provenance": "Actual fresh execution at clean fixed committed source candidate; independently authenticate rather than replay unchanged suites."
+    },
+    {
+      "id": "remaining-sdk-ui-resource:ui-workflow",
+      "command": ".venv/Scripts/python.exe -B tools/ui_workflow_check.py --repo . --report artifacts/tmp/CAP-04.S05.final-selected-02-3cac985d.ui-workflow.json",
+      "exitCode": 0,
+      "result": "PASS",
+      "candidateCommit": "3cac985d89bfa610e292e1ff8d8f05e91c6c816c",
+      "durationSeconds": 34.564,
+      "rawOutput": "artifacts/tmp/CAP-04.S05.final-selected-02-3cac985d.ui-workflow.log",
+      "rawOutputSha256": "be689e9ae3cb8b196bcf1172a4f5cae8d2226585bdd3a2c41144d60d25fdece3",
+      "rawOutputCanonicalSha256": "18a67acb5a7ee888abca2fe1de7702615b3e17f45bc11e92c415a369adbb29f5",
+      "provenance": "Actual fresh execution at clean fixed committed source candidate; independently authenticate rather than replay unchanged suites."
+    },
+    {
+      "id": "remaining-sdk-ui-resource:ui-accessibility",
+      "command": ".venv/Scripts/python.exe -B tools/ui_accessibility_check.py --repo . --report artifacts/tmp/CAP-04.S05.final-selected-02-3cac985d.ui-accessibility.json",
+      "exitCode": 0,
+      "result": "PASS",
+      "candidateCommit": "3cac985d89bfa610e292e1ff8d8f05e91c6c816c",
+      "durationSeconds": 31.495,
+      "rawOutput": "artifacts/tmp/CAP-04.S05.final-selected-02-3cac985d.ui-accessibility.log",
+      "rawOutputSha256": "392b70493695ffa4aa44a161a5db5c90503a500d677250f7d6ca34bce8ce0864",
+      "rawOutputCanonicalSha256": "cda2616ba286c72c54d3bbb2c045dc88663217e5b4401f146babd04a8980849c",
+      "provenance": "Actual fresh execution at clean fixed committed source candidate; independently authenticate rather than replay unchanged suites."
+    },
+    {
+      "id": "remaining-sdk-ui-resource:ui-visual",
+      "command": ".venv/Scripts/python.exe -B tools/ui_visual_regression_check.py --repo . --report artifacts/tmp/CAP-04.S05.final-selected-02-3cac985d.ui-visual.json",
+      "exitCode": 0,
+      "result": "PASS",
+      "candidateCommit": "3cac985d89bfa610e292e1ff8d8f05e91c6c816c",
+      "durationSeconds": 261.755,
+      "rawOutput": "artifacts/tmp/CAP-04.S05.final-selected-02-3cac985d.ui-visual.log",
+      "rawOutputSha256": "88830fa3bd0a64f15c65521ef8744d1f8a912c7fc15702a15e265f4169906cf9",
+      "rawOutputCanonicalSha256": "867e501f1b3fbee469dbff8dcb11109113f9e934de8fef9cf85a0b482eec67c0",
+      "provenance": "Actual fresh execution at clean fixed committed source candidate; independently authenticate rather than replay unchanged suites."
+    },
+    {
+      "id": "remaining-sdk-ui-resource:sample-resource-timing",
+      "command": ".venv/Scripts/python.exe -B artifacts/tmp/CAP-04.S05.measure-sample-13.py 3cac985d89bfa610e292e1ff8d8f05e91c6c816c",
+      "exitCode": 0,
+      "result": "PASS",
+      "candidateCommit": "3cac985d89bfa610e292e1ff8d8f05e91c6c816c",
+      "durationSeconds": 22.873,
+      "rawOutput": "artifacts/tmp/CAP-04.S05.final-selected-02-3cac985d.sample-resource-timing.log",
+      "rawOutputSha256": "355605b678398b84f09cc4f1ea302af2c352d8ef81350b2b445b7fb138ac6dbb",
+      "rawOutputCanonicalSha256": "93c3727a88132f326fa98635f7be2fa0959ee6992d2361378bcaa8ef2b0d2e52",
+      "provenance": "Actual fresh execution at clean fixed committed source candidate; independently authenticate rather than replay unchanged suites."
+    },
+    {
+      "id": "installed-build",
+      "command": ".venv/Scripts/python.exe -B artifacts/tmp/W2.C12.T01.build-installed-02.py 3cac985d89bfa610e292e1ff8d8f05e91c6c816c",
+      "exitCode": 0,
+      "result": "PASS",
+      "candidateCommit": "3cac985d89bfa610e292e1ff8d8f05e91c6c816c",
+      "durationSeconds": 28.114606000017375,
+      "report": {
+        "path": "artifacts/tmp/W2.C12.T01.installed-build-02-3cac985d.json",
+        "rawSha256": "8569ad7ed886654e40f1c841d73703961adf4d867281861dba8da82c8974c26c",
+        "canonicalSha256": "8569ad7ed886654e40f1c841d73703961adf4d867281861dba8da82c8974c26c"
+      },
+      "producerSha256": "c6d525d3a710ceaca6ef372323c4d719969aec797bccdb78c63242b7a6712ee4",
+      "rawOutput": "artifacts/tmp/W2.C12.T01.build-installed-02.log",
+      "rawOutputSha256": "9b1151b9dc30c4cbfb721bdddb272eaa76243d2797ed4e38be4a237eb947b414",
+      "rawOutputCanonicalSha256": "080aea1e2e14c1d52d627c1d0e5e0473d37c330f958e24e8b79890c066fce5fb"
+    },
+    {
+      "id": "installed-production-dispatch",
+      "command": ".venv/Scripts/python.exe -B artifacts/tmp/W2.C12.T01.installed-smoke-03.py 3cac985d89bfa610e292e1ff8d8f05e91c6c816c",
+      "exitCode": 0,
+      "result": "PASS",
+      "candidateCommit": "3cac985d89bfa610e292e1ff8d8f05e91c6c816c",
+      "durationSeconds": 17.439128499943763,
+      "report": {
+        "path": "artifacts/tmp/W2.C12.T01.installed-smoke-03-3cac985d.json",
+        "rawSha256": "a45ccd38f8e020bb642e0cd9437ba18026105db8bdc12897e35ea06fdbb22695",
+        "canonicalSha256": "19314c36472400907ac283642fd0e8b6ed6c931492aee10be4a88d5a188f8d1b"
+      },
+      "producerSha256": "158c0c18057db963e47d439ac5e6d2e088d4cc128687aafd005f5294e7d5945d",
+      "rawOutput": "artifacts/tmp/W2.C12.T01.installed-smoke-03.log",
+      "rawOutputSha256": "6763663d9be2e80a160f461664b80b92383e82fa3d309d3d6463f0b6340b6420",
+      "rawOutputCanonicalSha256": "8610dddc3766972ba3d0c949a4b38d6b572d0a394478fdcd3a201ac7c33fd050"
+    }
+  ],
+  "inputReports": [
+    {
+      "path": "artifacts/tmp/W2.C12.T01.green-01-3cac985d.json",
+      "rawSha256": "f0b24ab206c202973cb901b3df44d1af5f36a717867bea48d3c7e29cdabbf760",
+      "canonicalSha256": "f0b24ab206c202973cb901b3df44d1af5f36a717867bea48d3c7e29cdabbf760"
+    },
+    {
+      "path": "artifacts/tmp/W2.C12.T01.joined-restart-02-3cac985d.json",
+      "rawSha256": "fe6825d7442251516030506a11fa08eba244b588e538736dd4d7ec3f3cb1573c",
+      "canonicalSha256": "fe6825d7442251516030506a11fa08eba244b588e538736dd4d7ec3f3cb1573c"
+    },
+    {
+      "path": "artifacts/tmp/CAP-04.S05.final-selected-02-3cac985d.json",
+      "rawSha256": "b7fd4372900ee5f74707b0e5648539bf42dbfcc2cd48ade68a513cc14a8d7ab0",
+      "canonicalSha256": "b7fd4372900ee5f74707b0e5648539bf42dbfcc2cd48ade68a513cc14a8d7ab0"
+    },
+    {
+      "path": "artifacts/tmp/W2.C12.T01.installed-build-02-3cac985d.json",
+      "rawSha256": "8569ad7ed886654e40f1c841d73703961adf4d867281861dba8da82c8974c26c",
+      "canonicalSha256": "8569ad7ed886654e40f1c841d73703961adf4d867281861dba8da82c8974c26c"
+    },
+    {
+      "path": "artifacts/tmp/W2.C12.T01.installed-smoke-03-3cac985d.json",
+      "rawSha256": "a45ccd38f8e020bb642e0cd9437ba18026105db8bdc12897e35ea06fdbb22695",
+      "canonicalSha256": "19314c36472400907ac283642fd0e8b6ed6c931492aee10be4a88d5a188f8d1b"
+    }
+  ],
+  "criterionCoverage": {
+    "sdk-and-compatibility": "Real signed packages and public manifest/worker-page conformance; invalid schema, unsupported capability/version/feature, trust, package and exact project/destination/permission substitutions remain denied. All three original tasks are independently DONE; changed HTTP adapter red/green correction is separately independently approved.",
+    "principal-integration": "Fresh actual frozen production InstalledPluginRuntime, native human trust/enable, accepted current Intent/privacy/exact invocation consent, real zero-capability LPAC and production broker publish a page for one public known DOI. Source Core joined test separately publishes two synthetic broker pages into real DPAPI/SQLCipher storage with exact rights/provenance/predecessor, current-grant and cursor validation. These two proof boundaries are explicit, not interchangeable.",
+    "failure-cancellation-restart": "Current joined protected source-Core run denies forged cursor before egress and malformed output, cancels active work without publication, preserves two committed pages after orderly close and fresh-process reopen, cancels an unstarted job after ephemeral consent loss, and denies hard-crash foreign-lock takeover with unchanged exact project bytes. Original task native malicious/file/network/resource boundaries and audit dispositions retain their exact historical scope; no old execution is relabeled fresh.",
+    "experience": "Current approved-1.8 token, route, workflow, accessibility and visual checks pass, including native trust/permission fixture contracts. No reference/baseline is rewritten; no production GUI installation is inferred from browser or API checks.",
+    "resources": "Six fresh locally signed LPAC page invocations in three repetitions remain below the unchanged 60-second deadline while the 256-MiB/one-job profile remains enforced; setup/guardian/cleanup included. Peak memory and live rate/throughput were not measured. Full raw samples and measured host retained. This tiny local distribution is not a percentile, minimum-hardware or live throughput baseline.",
+    "architecture-and-contracts": "Fresh architecture/generated Core API/public worker schema and affected quality checks pass. No schema/migration/rights/broker/LPAC/security-authority change accompanies C12; existing encrypted migration and restart proofs are named rather than reduced."
+  },
+  "installedSmokeLimits": "Actual frozen supervised Core uses its production InstalledPluginRuntime and default DPAPI profile vault, with only a new test-owned synthetic project and unique synthetic publisher. No runtime availability override, mock HTTP, private research, contact, API key, or desktop GUI is used. The new signed fixture makes exactly one production-broker HTTPS GET to api.crossref.org/works/{identifier} for public DOI 10.1128/mbio.01735-25 from Crossref official REST documentation, after exact project Intent/privacy/native grant/invocation consent. Returned DOI/title are real source assertions; terms/license stay not-reported and access unknown. The bounded response remains encrypted in this owned fixture, with no remote write, publication or live coverage/latency claim. Full synthetic two-page broker/rights/provenance/restart proof is separate.",
+  "preservedAdverseAttempts": [
+    {
+      "path": "artifacts/tmp/CAP-04.S05.selected-06-6a2e7487.json",
+      "rawSha256": "fa067758e9ef315782b2212521e03e637ca01b7f95fb220e94abef083c1d9d71",
+      "canonicalSha256": "fa067758e9ef315782b2212521e03e637ca01b7f95fb220e94abef083c1d9d71",
+      "status": "FAIL"
+    },
+    {
+      "path": "artifacts/tmp/CAP-04.S05.installed-smoke-12-6a2e7487.json",
+      "rawSha256": "6519018df8b69856b3a0bc3c72b3ab2c3b052e5c1f8ffcb66c6b11607e1955a8",
+      "canonicalSha256": "20ecc7b8cd908e20ddc859f0ea964d061f725372dc52d80e13f49f7fe2a208c3",
+      "status": "FAIL"
+    },
+    {
+      "path": "artifacts/tmp/W2.C12.T01.green-01-68131d16.json",
+      "rawSha256": "75e1e776607f6634cb8eb0f0a37e612246aeecdb25d5d7c8461df35aa404a01f",
+      "canonicalSha256": "75e1e776607f6634cb8eb0f0a37e612246aeecdb25d5d7c8461df35aa404a01f",
+      "status": "FAIL"
+    },
+    {
+      "path": "artifacts/tmp/W2.C12.T01.installed-smoke-01-68131d16.json",
+      "rawSha256": "3edd80d4e80f6d276228de5b788a302e555e97540b2340cf1f6524067bd74804",
+      "canonicalSha256": "253d9de9f7e00d291744d129fc8020c403ea5d1e2f3c8d1aaae45a14ecfa03ed",
+      "status": "FAIL"
+    },
+    {
+      "path": "artifacts/tmp/W2.C12.T01.installed-smoke-02-3cac985d.json",
+      "rawSha256": "4302103f6c7bdbbc1541ad6224fc2e417dc218b28efa7ae79ca1e6acd99609e3",
+      "canonicalSha256": "d8fe8e3a50cc5b5741950adee8dbcbf034d61783a9caf241cb99aaf0743f2aac",
+      "status": "FAIL"
+    }
+  ],
+  "deferredWaveObligations": [
+    "Fresh complete affected/repository/profile union, broader security/privacy/rights/migration/packaging/accessibility/performance and cross-capability failure/recovery qualification remains required at checkpoint/W2 exit.",
+    "The source joined runtime is a verified test adapter with synthetic provider HTTP; it does not qualify production installed startup by itself. The separate current installed smoke proves that production boundary for one real public item only.",
+    "Broad quality remains adverse on an unrelated review-site formatter and CAP-05 picker fixture typing; C12 fixes only its admitted worker-page/admin fixtures. No failed suite is reported as passing; no framework changes or test waivers are granted.",
+    "No production signing, remote upload, non-Windows platform, minimum hardware, general live-provider availability, hard-crash lock recovery or release approval is claimed.",
+    "CAP-05.S01.T01 retains original base and real fifth-D3D finding; its task and remaining W2 contribution still require completion."
+  ],
+  "scopeDeviation": null,
+  "unverifiedItems": []
+}
