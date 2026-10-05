@@ -1,0 +1,103 @@
+{
+  "task_id": "W2.A05.T01",
+  "attempt_id": "R01",
+  "candidate_commit": "9106f485d32150943e8fbedd5299d5882021e183",
+  "base_commit": "4e94add8319f72d040786a14f07372d15417be45",
+  "submission_record_commit": "f656b6b4196db2e757dd58c0b18f7e2ea7921a8c",
+  "reviewer": "agent:/root/a05_t01_review",
+  "result": "approved",
+  "approvalAvailable": true,
+  "evidence_path": "artifacts/evidence/W2.A05.T01.json",
+  "evidence_sha256": "f10c3a49370f0d1c98e735506b28c3f7273350a4d9db76a2a944243120a84652",
+  "packet_sha256": "f3e47146ffbfc75b15f21959c3ae4a80a0c6614b76cc480ad7ab804ae4253a4f",
+  "acceptance_criteria_sha256": "885665f30a2fe35a37fe8dc1031b383d51b82d6199d78927c395d98f71362e2e",
+  "selection_sha256": "62bbc70f3f4290dfb8248cefeeae312f6bc5f8b7f76c6275f3a060fb0f400819",
+  "notes": "Independent expanded control/security/ADR/evidence R01 disposition of W2.A05.T01 source candidate 9106f485 and its actual supported frozen REVIEW submission f656b6b4. The exact 11-path claim-base diff contains precisely the five ECR-0013 source paths plus the task worksheet and supported claim/generated planning outputs. The six frozen criteria equal the immutable owner-approved packet. One regular Proposed ADR-0041 and one appended index record link both A05 tasks under unchanged Accepted ADR-0001/0003/0004; all prior ADRs and registry metadata remain unchanged. The gate retains the immutable endpoint inventory and default-empty generic inert allowance, authenticates only the six byte/parent/mode-bound reviewed historical projections, directly recognizes only the exact preceding GOV27/B00 authority, and preserves the closed v1.4 original-base, independent classification and producer-input boundaries. Source review and the fresh retained real-Git positive/denial evidence resolve the advisory E06 history, returned campaign identity and completed-state fixture defects. The net-excluded control attack and immutable-kind setup correction preserve the actual denial assertions. All 22 qualifying raw output hashes and both producer hashes were independently recomputed; all 27 selected unit cases and affected quality/ADR/UI/reference/planning checks report PASS at the exact source candidate. The seven execution receipts match the manifest and report fixed HEAD plus 4727 stable tracked inputs. The 16 manifest-referenced prior attempt digests and their raw log digests match; original E06 characterization, diagnostic and partial qualification history remain preserved separately. No prior receipt is treated as fresh final-candidate proof and no installed-runtime cache authority is asserted. I previously performed advisory source reviews, an authorized bounded disposable real-Git reproduction and evidence-selection advice; I authored ignored advisory diagnostic scripts/logs/reports, but neither implementation, qualifying producers nor the criterion manifest. Formal review authenticated committed Git blobs and retained execution records without rerunning suites. Only this canonical ledger is authored. Approval applies only to this task-stage implementation and evidence. Synthetic future task/S01/exit/security/adoption/activation records and capture readers prove control behavior; they do not establish actual later delivery, A03 finding closure, product/native/Core qualification, Wave completion or release authority.",
+  "acceptance_reviews": [
+    {
+      "criterion_index": 1,
+      "result": "satisfied",
+      "assessment": "The exact source range introduces one regular indexed Proposed ADR-0041 jointly with one appended registry entry linking W2.A05.T01/T02. Old registry metadata and every prior ADR blob are identical to the claim base; Accepted ADR-0001/0003/0004 are not superseded. The retained task-range ADR check passes over 41 indexed records and 11 changed paths; reviewed registry/body metadata restrictions and hostile rewrite denials cover the later bounded T02 append."
+    },
+    {
+      "criterion_index": 2,
+      "result": "satisfied",
+      "assessment": "The actual retained ca8b1448-to06a69348 range passes attribution as 39 commits with its unchanged 118-path net inventory and six regular W2.html projection rows. The default generic path rejects that intermediate history; only the internally authenticated exact preflight/A04/A03 map admits it. Missing/forged binding and map, net-excluded product/control add-revert and same-filename unreviewed output tests pass with overlap rejection retained. The corrected control fixture explicitly asserts net exclusion rather than changing the frozen inventory or weakening its denial."
+    },
+    {
+      "criterion_index": 3,
+      "result": "satisfied",
+      "assessment": "Within unchanged closed v1.4, source derives exact ECR-0013/owner/B00, materialization, separate claims, regular five/four-source reviewed ranges, independent task/S01/exit and separate pre-adoption security dispositions. Exact original GOV27 prepared-first/adverse-R01/approved-R02 source/evidence binding and the separately approved B00 exception remain distinct from the old maintenance helper; source/mode/omission/extra-history/review/adverse/header substitutions deny. Fresh real-Git original6506 full-root control proof passes; shortened base denies and the unchanged classification helper rejects the substituted current Git classification blob with its exact hash-mismatch error using the positive authenticated rangeAuthority. The classification negative is a component boundary check, not a claimed second full-root run. Future records and capture readers remain synthetic."
+    },
+    {
+      "criterion_index": 4,
+      "result": "satisfied",
+      "assessment": "Source and submitted A03 records equal the complete paused 771e54 snapshot with canonical SHA-256 bdad5e81327e32ee322db436dc569898ce314d29058e53b0cfe67ed6192e0b03; submitted adopted A04 equals its frozen whole record. Original A03 tasks remain DONE. Frozen-to-both-endpoint and successive-prefix validation reject E06 rewrite/restoration; the separate activation campaign identity and active lease-owner checks reject owner/lease-owner rewrite/restoration while allowing ordinary renewal/review/pause/completion. Fresh return and full-root cases retain source partition and later separate A03 activation without reopening tasks. Actual A03 S01-R01-F01 remains preserved and open until later fresh actual integration and independent review-02 explicitly close it; this disposition does not perform that closure."
+    },
+    {
+      "criterion_index": 5,
+      "result": "satisfied",
+      "assessment": "The claim-base inventory is exactly the five authorized T01 source paths plus six task-owned or supported claim/generated planning outputs. All five source objects are regular 100644 blobs. The source is unchanged by the direct-child submission. There is one ADR41 index append and no old ADR, schema, imported controller/kernel/taskctl, T02 checker, renderer/Core/native/runtime/reference/consumer/baseline source change. Fresh affected Python quality, diff, task-range ADR/UI, reference integrity and canonical backlog/views/site checks pass. Task-range UI authority reports uiFiles:[] and does not establish desktop conformance."
+    },
+    {
+      "criterion_index": 6,
+      "result": "satisfied",
+      "assessment": "The final candidate has fresh passing retained-history, projection, source-mode/preceding-authority, active endpoint/invalid claim, parent history/campaign, review/registry/task return, separate security and selected v1.0-v1.4 denial evidence. The completed-state fixture regression selects the actual claim-stage candidate and its immutable source/index/ADR bytes, excluding a synthetic later T02 body before exactly one future append. The approved-kind attack now reaches its retained authority-denial assertion. All 22 selected command outputs and 27 unit cases pass with independently matched raw/producer digests. The 16 referenced prior attempt receipts, advisory characterization/setup errors, terminated runs and original actual S01 adverse finding remain distinguishable from qualification. This ledger supplies the required independent task disposition only; actual subsequent integration and release gates remain due."
+    }
+  ],
+  "independent_checks": [
+    {
+      "check": "Actual frozen submission and committed evidence binding",
+      "result": "passed",
+      "observation": "f656b6b4 is the direct child of candidate 9106f485 and changes only the canonical manifest, supported REVIEW backlog transition and two generated backlog views. Current submission is R01 with empty prior attempts and open task finding IDs. Committed and physical manifest bytes match f10c3a49. Independently recomputed criteria 885665f3, selection 62bbc70f and packet f3e47146 hashes match; exact base/branch/11 paths, raw commands, seven canonical IDs, deferred coverage and rationale agree. Read-only packet semantic validation using the explicit repository path returned no errors. Live planning HTML regeneration is outside this committed review boundary."
+    },
+    {
+      "check": "Immutable authority, approved scope and predecessor preservation",
+      "result": "passed",
+      "observation": "Committed ECR packet 56f521d7, owner record 9ad5b3f5, preflight 14035061, maintenance binding d5507689 and B00 review b2afdd29 digests match their pinned authority. Approved packet task criteria match the frozen task. Direct Git scope/mode/index/old-ADR comparisons and complete frozen A03/A04 comparisons agree. The prior actual A03 S01 review-01 blob remains preserved with digest 75d03f4f. Gate bytes equal the previously reviewed 9633 candidate; subsequent changes are the bounded fixture repairs and truthful worksheet."
+    },
+    {
+      "check": "Fresh execution provenance and truthful selected proof",
+      "result": "passed",
+      "observation": "Inspected both ignored producers: they execute the declared subprocess/unittest cases, preserve unique logs, capture actual exit/timing/digests and reject drift or failed groups. All 22 raw logs independently match the committed manifest; both producers match their declared hashes. The seven retained execution group receipts agree with manifest fields and report stableCandidate true/inputCount 4727. Verbose logs show 27 passing unit methods with no skipped or hidden failure, 41-record ADR pass, control-only UI pass, Python quality pass, approved reference package cd8995fd and a 497-page planning site with no errors/warnings. These are retained owner-produced executions, not reviewer reruns, installed-runtime closure or reusable cache proof."
+    },
+    {
+      "check": "Advisory defects, fixture errors and adverse-history replay",
+      "result": "passed",
+      "observation": "The f797 bounded diagnostic accepted an E06 rewrite/restoration and its regression failed before correction in 81.080 seconds; the partial original-base run retained actual nonzero exit and 682.354 seconds. The 0d23 owner/lease-owner regression failed before correction in 166.954 seconds. The 9633 completed-state regression failed in 14.068 seconds. The da448530 approved-header case failed with KeyError before its assertion. Narrow source/fixture corrections and fresh final-candidate denial/compatibility evidence resolve these boundaries; the projection case retains an explicit net-exclusion assertion. Independently verified all 16 manifest-referenced prior receipt digests and their raw log digests, plus the retained f797 diagnostic and partial-run history. Advisories preceded controlled submission and are not invented formal RNN rounds or formal finding closures."
+    },
+    {
+      "check": "Review independence and task-stage authority",
+      "result": "passed",
+      "observation": "Reviewer agent:/root/a05_t01_review differs from task/campaign owner. Prior advisory source review, bounded reproducer artifact authorship and evidence-selection advice are disclosed; no implementation, qualifying producer or criterion manifest authorship. During formal review only this ledger is written, with source/backlog/evidence read from committed candidate/submission and raw producer records authenticated read-only. Actual submitted T01 is REVIEW, T02 NOT_STARTED, A05 campaign ACTIVE, A03 tasks DONE and W2 PAUSED. Task disposition does not mutate any task state, approve ADR acceptance, adopt an amendment, close the A03 slice finding, authorize optional framework development, complete a Wave or approve release."
+    }
+  ],
+  "qualifying_producers": [
+    {
+      "path": "artifacts/tmp/W2.A05.T01.run-selected.py",
+      "sha256": "a5ed6e773abf0f9912f9c98c86bfb5a2baec552935c1b6e420495bac880343ce"
+    },
+    {
+      "path": "artifacts/tmp/W2.A05.T01.claim-denials.py",
+      "sha256": "84dedf617437949eb1c4c9baf1dae7c76c7f7e0b19012ca88b71aca40fda484e"
+    }
+  ],
+  "qualifying_execution_receipts": [
+    {"path": "artifacts/tmp/W2.A05.T01.history-9106f485.results.json", "sha256": "c630b76f1cdd41e99ad8ac00bc5167941e9f3a9d7c6f050e7da48c4e5907a6b1"},
+    {"path": "artifacts/tmp/W2.A05.T01.repair-9106f485.results.json", "sha256": "d40200f6bc8438f0d868888ec5f8a852f0c1b372b2ee5b800a5ac08e3bb94d4d"},
+    {"path": "artifacts/tmp/W2.A05.T01.full-base-9106f485.results.json", "sha256": "b9dc4a751695bf694e5c2ec9022e90f18835b824e1b974e31f39dd94ed161292"},
+    {"path": "artifacts/tmp/W2.A05.T01.compatibility-9106f485.results.json", "sha256": "feea7202f4561264b920a3a013a86414a3a69c27922bda892ba50ff3f6bd02d6"},
+    {"path": "artifacts/tmp/W2.A05.T01.controls-9106f485.results.json", "sha256": "d785f3e351174cba25c2509a4f82ef05e5ded88a4f4377fa9636e23a5b641fc3"},
+    {"path": "artifacts/tmp/W2.A05.T01.planning-9106f485.results.json", "sha256": "bd0b679d55fa5f23eed99f7c2c289c84fc0e481ccec88b242f16298f1e185821"},
+    {"path": "artifacts/tmp/W2.A05.T01.claim-denials-9106f485.results.json", "sha256": "ae13964299bb6a2b967e29793c2b68ffe13b1046afb1eccfb60ad6bdd1beb4b5"}
+  ],
+  "proof_limits": [
+    "Future task, S01, exit, security review, adoption and activation ledgers in disposable Git repositories are explicitly synthetic. Mocked capture readers do not prove real capture/product/native/Core boundaries.",
+    "The classification substitution negative exercises the unchanged hash-authentication helper with the real positive rangeAuthority; it is not a second complete root validation or proof of boolean classification semantics.",
+    "Actual T02 label/browser/official 33-page/66-state accessibility qualification, A05 integrated S01/exit/separate security/adoption and exact paused-A03 return are subsequent required gates.",
+    "Actual later A03 activation, fresh integrated S01 finding replay/review-02/exit/security/adoption and ordinary W2 resume remain due. Original product/native/Core/D3D and joined CAP-04.S05 proof, fresh full Wave qualification and human release remain separate.",
+    "All qualifying observations are fresh at 9106f485. Historical candidate receipts are not reused as final-candidate proof; installed-runtime dependency closure has not been authenticated for reuse. Owner authorization ends further optional framework development after A05."
+  ],
+  "findings": [],
+  "closures": []
+}
