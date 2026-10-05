@@ -1,0 +1,80 @@
+{
+  "task_id": "W2.C11.T01",
+  "attempt_id": "R01",
+  "candidate_commit": "9a80c0f6cd6f5d444e7676c0ff287b4bb58c158f",
+  "base_commit": "f192725de10b5752e0d9b143c3512ef36c665a56",
+  "reviewer": "agent:/root/c11_security_review",
+  "result": "approved",
+  "reviewed_at": "2026-10-05T20:34:15Z",
+  "evidence_sha256": "3da1e53dc3637e429e6d89bbc94aeb8752c780288acd08f208cbe23516795509",
+  "packet_sha256": "13a12a07386bcf61bd2385fe47c8296282d86c2fd217c29536267cc976a5ae5a",
+  "acceptance_criteria_sha256": "831c2a4cc6c6cf0bd8ca53f4c85cce254f359e6c80f198692babeaf6a7f96dd5",
+  "selection_sha256": "6269871dc51ad10e7a9ecb4e26160ef009808d3106f8c1c04e2c11f1838c34d0",
+  "notes": "Independent expanded correction/security review approves only the actual public R01 for the bounded publication correction at source candidate 9a80c0f6. The immutable public manifest, frozen packet and exact owner recovery authorization were authenticated from metadata commit cbe0b58f10eed77473e53dcea4a62d10537b0a08. The six-line worker change moves cancellation polling/heartbeat before the publication writer and passes a process/project stop predicate with no I/O inside the writer. Repository exact claim capability, live running lease, durable cancellation, current grant/consent and predecessor transaction fences remain unchanged. The committed red-first regression fails before the fix; the retained current execution passes all 65 focused cases, including due heartbeat, durable cancellation, global/project stop and expired lease. Its signed zero-capability LPAC/protected source-Core create child publishes both pages with provenance/rights/predecessor checks and exercises forged-cursor denial, malformed-output denial and active cancellation. The combined 66-case command remains exit 1: intentional crash leaves a project lock and the reopen child returns 409 before any restart/recovery assertions. This is expressly deferred to pending CAP-04.S05 integration, not reclassified as passing. The public manifest rejects the source report's incorrect reopen-success sentence. Original T02 R02 evidence supports only unchanged historical isolation boundaries, not fresh qualification. Owner authorization repaired only the rejected unpublished metadata representation; exact private bytes, original packet identities, hook rejection and partial recovery failure remain retained. No source/control change or approval of S05, W2 qualification or release is inferred. No criterion-bound blocking finding remains.",
+  "corrective_integration": {
+    "evidence_sha256": "3da1e53dc3637e429e6d89bbc94aeb8752c780288acd08f208cbe23516795509",
+    "authority_preserved": true,
+    "affected_integration_reviewed": true,
+    "notes": "The spec-admitted product/test paths alone implement the repair; five claim/generated planning paths complete the exact seven-path base-to-source-candidate inventory. The original approved CAP-04.S05.T02 snapshot, contract, history, actors, permissions, trust/enable, rights, broker, LPAC, no-plaintext-write policy, schema/migrations, governed experience and release criteria are preserved. Affected worker/repository/dispatch/broker/consent passes and authenticated real protected Core plus signed LPAC create/denial/cancellation evidence cover the correction. Synthetic provider HTTP, test signing and a verified fixture runtime adapter are explicit limits. Native full restart and broad slice/checkpoint/Wave qualification remain separately required. Metadata-only recovery is bound to the exact owner-authorized proposal and preserved rejected packet; it does not expand correction authority."
+  },
+  "acceptance_reviews": [
+    {
+      "criterion_index": 1,
+      "result": "satisfied",
+      "assessment": "The correction introduces no new worker, secret, file, network or export authority. Inspection confirms the permission/publication fences remain in the repository transaction and the callback only reads stop flags. Current broker/dispatch/consent denial cases pass; actual signed zero-capability LPAC execution with real DPAPI/SQLCipher Core storage publishes two bounded pages, denies forged continuation before egress, refuses malformed output and cancels active broker work without publication. Original independently approved T02 R02 remains historical support for unchanged malicious-worker isolation and audited permission denial, with no old native result represented as fresh."
+    },
+    {
+      "criterion_index": 2,
+      "result": "satisfied",
+      "assessment": "The due-heartbeat publication regression was committed before the product fix and failed with one expected assertion failure and zero setup errors. At exact source candidate 9a80c0f6, all 16 worker submission cases and 49 repository/dispatch/broker/consent cases pass in the retained execution. Tests cover the expected publication path plus durable cancel, process stop, project stop and lease expiry at publication. The report and individual case IDs are authenticated without a repeated suite or invented zero exit; the native full restart case remains failed and is excluded from the passing claim."
+    },
+    {
+      "criterion_index": 3,
+      "result": "satisfied",
+      "assessment": "The exact source diff contains only the two admitted product/test files and five claim/generated planning files. Changed-path Ruff format/lint, mypy and candidate ledger validation pass. Metadata commit cbe0b58f changes only the public manifest, owner record and C11 submission state; all original capability/task records and product/framework blobs are unchanged. The exact owner exception authorizes preservation and replacement of the unpublished privacy-rejected R01 representation. Public commands explicitly represent the same actual local argv using repository-relative spelling; original raw argv and rejected packet remain in ignored storage. No hook suppression, framework development or scope/security/migration/UX/release change is included."
+    }
+  ],
+  "evidence_reproduction": {
+    "review_metadata_commit": "cbe0b58f10eed77473e53dcea4a62d10537b0a08",
+    "public_manifest": {
+      "path": "artifacts/evidence/W2.C11.T01.R01.public.json",
+      "canonical_sha256": "3da1e53dc3637e429e6d89bbc94aeb8752c780288acd08f208cbe23516795509",
+      "result": "PASS: exact owner-approved public draft bytes match the committed manifest; packet candidate/base/branch, seven changed paths, all selected checks/IDs, criteria and selection hashes reproduce."
+    },
+    "owner_recovery": {
+      "path": "artifacts/evidence/W2.C11.T01.publication-repair-01.owner.json",
+      "canonical_sha256": "81daefbf9b54b2679221a098f30bf54d3280d254ab02ebe61e74131f2fb865b9",
+      "proposal_sha256": "f6ab48fcf983cdfd8152afc10701028221d9d404c50fc3ac1bd6127ddf6ab8d0",
+      "preservation_inventory_sha256": "5366d6b41c7c90e396d6ad8f735712788ae7658d7825725879c880cd31002435",
+      "prior_independent_assessment_sha256": "0368565c698b39af176f2d542bd4886d0fa55cf21cf166ad7b0f345d865131ef",
+      "result": "PASS: committed direct-human authorization binds the exact proposal, public representation, preservation inventory and earlier readiness assessment. All eleven preservation digests still match. Original private manifest remains exact, ignored and untracked; local Git exclude delta is only that exact rejected path."
+    },
+    "preserved_rejected_submission": {
+      "manifest_sha256": "d680f9c4064315a4ffc4c43088fb74f4a08a6d9ca7ed7a080fac34a763855641",
+      "packet_sha256": "55e2c8ff76834842271f87ca89d819edcbdbe582d9310d75d759bf0971a0320c",
+      "result": "PASS: original packet hash independently recomputes from preserved indexed backlog. Exact working/index ledger and manifest snapshots, predecessor, staged binary diff, submit receipt and actual privacy-hook rejection are retained. The partial recovery assertion failure is separately preserved and not presented as success."
+    },
+    "retained_product_execution": {
+      "path": "artifacts/tmp/W2.C11.T01.selected02-9a80c0f6.json",
+      "raw_sha256": "abc471d7248b295f640e38b89bf040e481141327190488f13a405339e3efbdf3",
+      "result": "PASS for evidence authentication only: all five public check-log digest bindings, the stable 4893-entry before/after snapshot, 65 authenticated passing IDs and one failed native ID reproduce. Earlier independent expanded product inspection is retained. All 140 selected runtime/guardian/producer inputs reauthenticate unchanged. Full combined command remains FAIL/exit 1."
+    }
+  },
+  "checks": [
+    {
+      "command": "Authenticate immutable Git blobs for the actual public R01, owner record and frozen backlog at cbe0b58f, recomputing canonical manifest, packet, criterion and selection hashes",
+      "result": "PASS: all advertised identities match; candidate/base/branch, selected/deferred coverage and exact source diff agree."
+    },
+    {
+      "command": "Reauthenticate owner-authorized preservation inventory, original private manifest, rejected frozen packet, exact local exclude delta and metadata-only Git delta",
+      "result": "PASS: eleven preserved files match; original capability/task records and product/framework source remain unchanged; no owner recovery approval is treated as product/task/slice/Wave approval."
+    },
+    {
+      "command": "Authenticate retained product reports/logs/case dispositions and selected runtime bytes; retain the prior expanded exact-source cancellation/publication review without repeating passed suites",
+      "result": "PASS for the bounded correction: 65 cases and native create/publication/denial/cancellation facts remain supported; failed full restart/409, synthetic transport/signing and fixture-runtime limits remain explicit."
+    }
+  ],
+  "findings": [],
+  "closures": [],
+  "prior_findings_replayed": []
+}
