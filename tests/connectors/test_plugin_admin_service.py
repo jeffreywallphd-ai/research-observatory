@@ -819,7 +819,8 @@ class PluginAdminRealAuthorityTests(unittest.TestCase):
             plugin_id = confirmation["pluginId"]
             changed_destinations = [dict(value) for value in confirmation["destinations"]]
             changed_destinations[0]["pathTemplate"] = "/forged-synthetic-scope"
-            for change in ({"destinations": changed_destinations}, {"permissions": []}):
+            changes: tuple[dict[str, object], ...] = ({"destinations": changed_destinations}, {"permissions": []})
+            for change in changes:
                 with self.subTest(field=next(iter(change))):
                     altered = confirmation | change | {"actionId": new_uuid_v7()}
                     denied = client.post(
