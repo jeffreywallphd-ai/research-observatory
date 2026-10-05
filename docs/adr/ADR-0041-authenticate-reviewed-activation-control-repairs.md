@@ -97,3 +97,24 @@ checks and fresh full W2 qualification remain separate later evidence.
 
 - W2.A05.T01 owns the history/source authentication and this single registry append.
 - W2.A05.T02 owns subsequent explicit-label checking and its bounded body append.
+
+## T02 implementation and verification
+
+T02 replaces only the existing label-name slot with parsed same-document native
+label associations. Explicit `for` uses the first matching labelable ID; implicit
+wrapping uses the first labelable descendant. Compare object identity, retain
+document order and every existing surrounding name-source slot. Reject unrelated,
+empty, wrong-target, non-labelable and parsed hidden/inert label text. Hidden
+markers, ancestors and direct inline hiding are bounded static checks; arbitrary
+stylesheet visibility and a general browser name algorithm are outside this
+repair. Duplicate-ID, reference-name drift and actual unnamed-control denials stay.
+
+Qualification requires test-first static positives/denials, actual unchanged
+file-input naming in pinned Windows x64 Chromium, in-memory label removal and
+wrong-target negatives, and the fresh unmodified official 33-page/66-state
+accessibility command with actual exit 0. Current reference/baseline/witness,
+affected quality/ADR/UI and metadata checks plus independent expanded review
+remain mandatory. No metadata/index, markup/pixels/reference/baseline,
+product/native/Core, security authority or release change is authorized. Actual
+A05 S01/exit/separate security/adoption and later A03 finding replay/adoption
+remain separate gates; this body does not assert their completion.

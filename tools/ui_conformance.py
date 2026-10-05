@@ -24,7 +24,7 @@ from pathlib import Path
 from typing import Any, Literal, cast
 
 import yaml
-from bs4 import BeautifulSoup, Tag
+from bs4 import BeautifulSoup, Comment, Tag
 from build_manifest import windows_path_locks
 from jsonschema import Draft202012Validator
 from playwright.sync_api import Browser, Page, ViewportSize, sync_playwright
@@ -1206,8 +1206,68 @@ def check_workflows(context: Context) -> dict[str, Any]:
     )
 
 
+def _native_labelable(element: Tag) -> bool:
+    return element.name in {"button", "meter", "output", "progress", "select", "textarea"} or (
+        element.name == "input" and str(element.get("type", "")).casefold() != "hidden"
+    )
+
+
+def _label_content_hidden(element: Tag) -> bool:
+    # Parsed markers only: this static check does not resolve arbitrary stylesheets.
+    for current in (element, *element.parents):
+        if not isinstance(current, Tag):
+            continue
+        if (
+            current.name in {"script", "style", "template"}
+            or current.has_attr("hidden")
+            or current.has_attr("inert")
+            or str(current.get("aria-hidden", "")).strip().casefold() == "true"
+        ):
+            return True
+        for declaration in str(current.get("style", "")).split(";"):
+            property_name, separator, value = declaration.partition(":")
+            value = re.sub(r"\s*!important\s*$", "", value.strip().casefold()).strip()
+            if separator and (
+                (property_name.strip().casefold() == "display" and value == "none")
+                or (property_name.strip().casefold() == "visibility" and value in {"hidden", "collapse"})
+            ):
+                return True
+    return False
+
+
+def _associated_label_text(element: Tag) -> str:
+    if not _native_labelable(element):
+        return ""
+    document = element
+    while isinstance(document.parent, Tag):
+        document = document.parent
+    names: list[str] = []
+    for label in document.find_all("label"):
+        if label.has_attr("for"):
+            target_id = label.get("for")
+            target = document.find(id=target_id) if isinstance(target_id, str) and target_id else None
+        else:
+            target = next(
+                (child for child in label.descendants if isinstance(child, Tag) and _native_labelable(child)),
+                None,
+            )
+        # BeautifulSoup structural equality cannot establish control identity.
+        if target is not element or _label_content_hidden(label):
+            continue
+        text = " ".join(
+            str(content).strip()
+            for content in label.find_all(string=True)
+            if not isinstance(content, Comment)
+            and isinstance(content.parent, Tag)
+            and not _label_content_hidden(content.parent)
+            and str(content).strip()
+        )
+        if text:
+            names.append(text)
+    return " ".join(names)
+
+
 def accessible_name(element: Tag) -> str:
-    label = element.find_parent("label")
     return " ".join(
         str(value).strip()
         for value in (
@@ -1216,7 +1276,7 @@ def accessible_name(element: Tag) -> str:
             element.get("alt"),
             element.get("value") if element.name in {"button", "input"} else None,
             element.get("placeholder"),
-            label.get_text(" ", strip=True) if label else None,
+            _associated_label_text(element),
             element.get_text(" ", strip=True),
         )
         if value

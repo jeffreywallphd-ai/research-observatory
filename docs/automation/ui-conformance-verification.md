@@ -103,6 +103,28 @@ semantic, interaction, or accessibility failure.
 
 ## Checks
 
+The static name comparison recognizes native same-document HTML labels by
+standard `for`/`id` association, including labels after a control, and valid
+wrapping labels. An explicit association uses the first matching ID only when
+that element is labelable; without `for`, the first labelable descendant is the
+wrapped control. Hidden-type inputs and non-labelable elements cannot acquire a
+label name. Multiple associated labels contribute in document order in the
+existing label slot; the established aria/title/alt/value/placeholder/label/content
+order remains unchanged. This ordered static comparison is not a complete
+browser accessibility-name algorithm.
+
+Unrelated, empty, wrong-target and parsed hidden/inert label content cannot
+supply a name. HTML hidden/aria-hidden/inert/template markers and directly
+declared inline hiding are checked, including ancestors and hidden child text;
+arbitrary stylesheet visibility is not resolved by this static helper. Duplicate
+IDs, names differing from the reference and genuinely unnamed interactive
+controls remain failures. The real pinned Chromium AX positive and in-memory
+association-removal/wrong-target negatives supplement static tests. The unchanged
+official accessibility command must independently pass the current complete
+reference fixture; no markup, baseline or reference waiver follows from this
+repair. Standard label association is defined by the
+[HTML specification](https://html.spec.whatwg.org/multipage/forms.html#the-label-element).
+
 The reference-fixture portion validates exact light/dark semantic-token
 declarations, all 32 reference route identities and all 521 exact required-region contracts, approved
 primary and supporting-tool navigation, all 14 ordered workflows,

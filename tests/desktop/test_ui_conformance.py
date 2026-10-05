@@ -12,6 +12,7 @@ from typing import Any
 from unittest import mock
 
 import yaml
+from bs4 import BeautifulSoup, Tag
 
 REPO = Path(__file__).resolve().parents[2]
 REFERENCE = REPO / "design" / "ui-reference"
@@ -20,6 +21,7 @@ sys.path.insert(0, str(REPO / "tools"))
 from ui_conformance import (  # noqa: E402
     APPLICATION_EXCLUDED_DIRECTORIES,
     Context,
+    accessible_name,
     application_inventory_guard,
     application_inventory_shape,
     approval_lineage_errors,
@@ -41,6 +43,7 @@ from ui_conformance import (  # noqa: E402
     provenance_only_reference_ratification,
     reference_package_at,
     set_page,
+    soup,
     wave_slice_authority_bound_approval_errors,
     wave_slice_proposal_consumption_errors,
 )
@@ -642,6 +645,157 @@ class UiConformanceTests(unittest.TestCase):
 
         self.assertFalse(result["ok"])
         self.assertTrue(any("keyboard focus order differs" in error for error in result["errors"]))
+
+    def test_explicit_labels_name_controls_before_and_after(self) -> None:
+        for control in (
+            '<input id="control">',
+            '<input type="file" id="control">',
+            '<input type="checkbox" id="control">',
+            '<select id="control"></select>',
+            '<textarea id="control"></textarea>',
+            '<button id="control"></button>',
+            '<meter id="control"></meter>',
+            '<output id="control"></output>',
+            '<progress id="control"></progress>',
+        ):
+            for after in (False, True):
+                label = '<label for="control">Visible label</label>'
+                markup = control + label if after else label + control
+                with self.subTest(control=control, after=after):
+                    document = BeautifulSoup(markup, "html.parser")
+                    element = document.find(id="control")
+                    self.assertIsInstance(element, Tag)
+                    assert isinstance(element, Tag)
+                    self.assertEqual("Visible label", accessible_name(element))
+        document = BeautifulSoup(
+            '<label for="control">First</label><input id="control"><label for="control">Second</label>',
+            "html.parser",
+        )
+        element = document.find(id="control")
+        assert isinstance(element, Tag)
+        self.assertEqual("First Second", accessible_name(element))
+
+    def test_wrapping_labels_and_existing_name_order_are_preserved(self) -> None:
+        document = BeautifulSoup(
+            '<label>Label<input id="control" aria-label="ARIA" title="Title" alt="Alt" '
+            'value="Value" placeholder="Placeholder"></label>',
+            "html.parser",
+        )
+        element = document.find(id="control")
+        assert isinstance(element, Tag)
+        self.assertEqual("ARIA Title Alt Value Placeholder Label", accessible_name(element))
+        document = BeautifulSoup('<button aria-label="ARIA" title="Title">Content</button>', "html.parser")
+        button = document.button
+        assert isinstance(button, Tag)
+        self.assertEqual("ARIA Title Content", accessible_name(button))
+        document = BeautifulSoup('<label for="control">Label<input id="control"></label>', "html.parser")
+        element = document.find(id="control")
+        assert isinstance(element, Tag)
+        self.assertEqual("Label", accessible_name(element))
+
+    def test_label_associations_reject_unrelated_empty_hidden_and_wrong_targets(self) -> None:
+        cases = (
+            '<input id="control">',
+            '<div>Unrelated text</div><input id="control">',
+            '<label for="other">Wrong target</label><input id="control">',
+            '<label for="CONTROL">Wrong case</label><input id="control">',
+            '<label for="control"> </label><input id="control">',
+            '<label for="control"><!-- Not label text --></label><input id="control">',
+            '<label hidden for="control">Hidden</label><input id="control">',
+            '<label aria-hidden="true" for="control">Hidden</label><input id="control">',
+            '<div hidden><label for="control">Hidden</label></div><input id="control">',
+            '<label for="control"><span hidden>Hidden text</span></label><input id="control">',
+            '<label style="display:none" for="control">Hidden</label><input id="control">',
+            '<label style="VISIBILITY: hidden !important" for="control">Hidden</label><input id="control">',
+            '<label style="visibility:collapse" for="control">Hidden</label><input id="control">',
+            '<label inert for="control">Inert</label><input id="control">',
+            '<template><label for="control">Inert</label></template><input id="control">',
+            '<label hidden>Hidden<input id="control"></label>',
+            '<label for="other">Wrong wrapping target<input id="control"></label>',
+            '<label for="">Empty target<input id="control"></label>',
+            '<label for="control">Not labelable</label><div id="control"></div>',
+            '<label for="control">Hidden input</label><input type="HIDDEN" id="control">',
+        )
+        for markup in cases:
+            with self.subTest(markup=markup):
+                document = BeautifulSoup(markup, "html.parser")
+                element = document.find(id="control")
+                assert isinstance(element, Tag)
+                self.assertEqual("", accessible_name(element))
+        document = BeautifulSoup(
+            '<label for="control"><span hidden>Hidden</span>Visible</label><input id="control">',
+            "html.parser",
+        )
+        element = document.find(id="control")
+        assert isinstance(element, Tag)
+        self.assertEqual("Visible", accessible_name(element))
+
+    def test_label_associations_preserve_first_id_and_wrapping_control_identity(self) -> None:
+        document = BeautifulSoup(
+            '<label for="control">Name</label><div id="control"></div><input id="control">',
+            "html.parser",
+        )
+        control = document.input
+        assert isinstance(control, Tag)
+        self.assertEqual("", accessible_name(control))
+        document = BeautifulSoup(
+            '<label for="control">Name</label><input id="control"><input id="control">', "html.parser"
+        )
+        controls = document.find_all("input")
+        self.assertEqual("Name", accessible_name(controls[0]))
+        self.assertEqual("", accessible_name(controls[1]))
+        document = BeautifulSoup('<label>Name<input id="first"><input id="second"></label>', "html.parser")
+        controls = document.find_all("input")
+        self.assertEqual("Name", accessible_name(controls[0]))
+        self.assertEqual("", accessible_name(controls[1]))
+        document = BeautifulSoup('<label>Name<input type="hidden"><input id="control"></label>', "html.parser")
+        control = document.find(id="control")
+        assert isinstance(control, Tag)
+        self.assertEqual("Name", accessible_name(control))
+
+    def test_associated_label_duplicates_and_reference_name_drift_fail(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            context = self.context_copy(temporary)
+            reference = context.reference / "index.html"
+            target = context.target / "index.html"
+            fixture = '<label for="label-probe">New field</label><input id="label-probe">'
+            reference.write_text(
+                reference.read_text(encoding="utf-8").replace("</body>", fixture + "</body>"),
+                encoding="utf-8",
+                newline="\n",
+            )
+            target.write_text(
+                reference.read_text(encoding="utf-8").replace(
+                    '<input id="label-probe">', '<div id="label-probe"></div><input id="label-probe">'
+                ),
+                encoding="utf-8",
+                newline="\n",
+            )
+            reduced = Context(
+                context.repo,
+                context.config,
+                context.reference,
+                context.target,
+                context.site,
+                context.workflows,
+                context.page_contracts,
+                ["index.html"],
+            )
+            checked = check_accessibility(reduced)
+        self.assertFalse(checked["ok"])
+        self.assertTrue(any("duplicate IDs" in error for error in checked["errors"]), checked["errors"])
+        self.assertTrue(
+            any("interactive accessible names differ" in error for error in checked["errors"]), checked["errors"]
+        )
+        self.assertTrue(any("unnamed interactive <input>" in error for error in checked["errors"]), checked["errors"])
+
+    def test_actual_reference_file_input_has_its_associated_name(self) -> None:
+        document = soup(REFERENCE / "ingestion-reconciliation.html")
+        control = document.find(id="attachment-file")
+        assert isinstance(control, Tag)
+        self.assertEqual("file", control.get("type"))
+        self.assertIsNone(control.get("aria-label"))
+        self.assertEqual("Local full-text file", accessible_name(control))
 
     def test_accessibility_and_responsive_contract_drift_fails(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
