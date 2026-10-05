@@ -2740,7 +2740,7 @@
         {
           "task_id": "W2.C11.T01",
           "title": "Implement plugin isolation, configuration, and secret access controls",
-          "status": "REVIEW",
+          "status": "DONE",
           "acceptance_criteria": [
             "A malicious test connector cannot read unrelated secrets or project files; network and export attempts outside manifest permissions are blocked and audited.",
             "Automated tests cover the expected path and at least one material failure or boundary condition.",
@@ -2770,65 +2770,108 @@
           "task_review": {
             "task_id": "W2.C11.T01",
             "title": "Implement plugin isolation, configuration, and secret access controls",
-            "status": "REVIEW",
+            "status": "DONE",
             "mode": "append-only",
             "latest_review": {
-              "reviewer": null,
-              "result": null,
-              "reviewed_at": null,
-              "notes": null
+              "reviewer": "agent:/root/c11_security_review",
+              "result": "approved",
+              "reviewed_at": "2026-10-05T20:38:22+00:00",
+              "notes": "Independent expanded correction/security review approves only the actual public R01 for the bounded publication correction at source candidate 9a80c0f6. The immutable public manifest, frozen packet and exact owner recovery authorization were authenticated from metadata commit cbe0b58f10eed77473e53dcea4a62d10537b0a08. The six-line worker change moves cancellation polling/heartbeat before the publication writer and passes a process/project stop predicate with no I/O inside the writer. Repository exact claim capability, live running lease, durable cancellation, current grant/consent and predecessor transaction fences remain unchanged. The committed red-first regression fails before the fix; the retained current execution passes all 65 focused cases, including due heartbeat, durable cancellation, global/project stop and expired lease. Its signed zero-capability LPAC/protected source-Core create child publishes both pages with provenance/rights/predecessor checks and exercises forged-cursor denial, malformed-output denial and active cancellation. The combined 66-case command remains exit 1: intentional crash leaves a project lock and the reopen child returns 409 before any restart/recovery assertions. This is expressly deferred to pending CAP-04.S05 integration, not reclassified as passing. The public manifest rejects the source report's incorrect reopen-success sentence. Original T02 R02 evidence supports only unchanged historical isolation boundaries, not fresh qualification. Owner authorization repaired only the rejected unpublished metadata representation; exact private bytes, original packet identities, hook rejection and partial recovery failure remain retained. No source/control change or approval of S05, W2 qualification or release is inferred. No criterion-bound blocking finding remains."
             },
             "review_control": {
               "version": 1,
-              "attempts": [],
-              "current_submission": {
-                "id": "R01",
-                "submitted_by": "codex-w2-implementation",
-                "submitted_at": "2026-10-05T20:24:30+00:00",
-                "candidate_commit": "9a80c0f6cd6f5d444e7676c0ff287b4bb58c158f",
-                "base_commit": "f192725de10b5752e0d9b143c3512ef36c665a56",
-                "branch": "codex/w2-implementation",
-                "evidence_reference": {
-                  "type": "criterion-manifest",
-                  "path": "artifacts/evidence/W2.C11.T01.R01.public.json",
-                  "sha256": "3da1e53dc3637e429e6d89bbc94aeb8752c780288acd08f208cbe23516795509",
-                  "commit": "9a80c0f6cd6f5d444e7676c0ff287b4bb58c158f",
-                  "recorded_at": "2026-10-05T20:24:30+00:00"
-                },
-                "acceptance_criteria_sha256": "831c2a4cc6c6cf0bd8ca53f4c85cce254f359e6c80f198692babeaf6a7f96dd5",
-                "changed_paths": [
-                  "docs/planning-implementation-plan.md",
-                  "planning/backlog.yaml",
-                  "planning/review-site/manifest.json",
-                  "planning/review-site/waves/W2.html",
-                  "planning/status-summary.md",
-                  "services/core-api/src/research_observatory_core/plugin_worker.py",
-                  "tests/connectors/test_plugin_worker_submission.py"
-                ],
-                "selected_checks": [
-                  ".venv/Scripts/python.exe -m ruff format --check --config pyproject.toml -- services/core-api/src/research_observatory_core/plugin_worker.py tests/connectors/test_plugin_worker_submission.py tests/connectors/test_plugin_sample_native_lpac.py",
-                  ".venv/Scripts/python.exe -m ruff check --config pyproject.toml -- services/core-api/src/research_observatory_core/plugin_worker.py tests/connectors/test_plugin_worker_submission.py tests/connectors/test_plugin_sample_native_lpac.py",
-                  "$env:MYPYPATH='tools;services/core-api/src'; .venv/Scripts/python.exe -m mypy --config-file pyproject.toml --no-namespace-packages -- services/core-api/src/research_observatory_core/plugin_worker.py tests/connectors/test_plugin_worker_submission.py tests/connectors/test_plugin_sample_native_lpac.py",
-                  ".venv/Scripts/python.exe -B artifacts/tmp/W2.C11.T01.authenticate-execution-03.py",
-                  ".venv/Scripts/python.exe -B tools/taskctl.py --file planning/backlog.yaml validate"
-                ],
-                "deferred_checks": [
-                  "CAP-04.S05 integration: correct the new fixture or provide the existing approved explicit recovery procedure, then prove fresh process restart/recovery and obtain independent slice review. No stale-lock break is authorized here.",
-                  "Unchanged broad profiles, current full packaging, desktop/accessibility/performance and cross-capability qualification remain checkpoint or fresh W2 exit obligations.",
-                  "CAP-05.S01.T01 retains its original 6506 base and open fifth IntermediateD3D native startup finding."
-                ],
-                "selection_rationale": "A six-line publication callback correction touches the cancellation/lease boundary. Red-first regression, actual current 65 focused case results and real signed-LPAC/protected-Core create/denial/cancellation evidence address the changed boundary; its full combined command is adverse because an unrelated new integration fixture assumes automatic crash-lock takeover. Evidence authentication verifies individual case dispositions without repeating unchanged passed suites or inventing a zero exit for the failed command. There is no passing full restart claim.",
-                "selection_sha256": "6269871dc51ad10e7a9ecb4e26160ef009808d3106f8c1c04e2c11f1838c34d0",
-                "prior_attempt_id": null,
-                "open_finding_ids": [],
-                "root_cause_analysis": null,
-                "selected_command_ids": [
-                  "search:connectors",
-                  "foundation:quality",
-                  "foundation:backlog"
-                ],
-                "packet_sha256": "13a12a07386bcf61bd2385fe47c8296282d86c2fd217c29536267cc976a5ae5a"
-              }
+              "attempts": [
+                {
+                  "submission": {
+                    "id": "R01",
+                    "submitted_by": "codex-w2-implementation",
+                    "submitted_at": "2026-10-05T20:24:30+00:00",
+                    "candidate_commit": "9a80c0f6cd6f5d444e7676c0ff287b4bb58c158f",
+                    "base_commit": "f192725de10b5752e0d9b143c3512ef36c665a56",
+                    "branch": "codex/w2-implementation",
+                    "evidence_reference": {
+                      "type": "criterion-manifest",
+                      "path": "artifacts/evidence/W2.C11.T01.R01.public.json",
+                      "sha256": "3da1e53dc3637e429e6d89bbc94aeb8752c780288acd08f208cbe23516795509",
+                      "commit": "9a80c0f6cd6f5d444e7676c0ff287b4bb58c158f",
+                      "recorded_at": "2026-10-05T20:24:30+00:00"
+                    },
+                    "acceptance_criteria_sha256": "831c2a4cc6c6cf0bd8ca53f4c85cce254f359e6c80f198692babeaf6a7f96dd5",
+                    "changed_paths": [
+                      "docs/planning-implementation-plan.md",
+                      "planning/backlog.yaml",
+                      "planning/review-site/manifest.json",
+                      "planning/review-site/waves/W2.html",
+                      "planning/status-summary.md",
+                      "services/core-api/src/research_observatory_core/plugin_worker.py",
+                      "tests/connectors/test_plugin_worker_submission.py"
+                    ],
+                    "selected_checks": [
+                      ".venv/Scripts/python.exe -m ruff format --check --config pyproject.toml -- services/core-api/src/research_observatory_core/plugin_worker.py tests/connectors/test_plugin_worker_submission.py tests/connectors/test_plugin_sample_native_lpac.py",
+                      ".venv/Scripts/python.exe -m ruff check --config pyproject.toml -- services/core-api/src/research_observatory_core/plugin_worker.py tests/connectors/test_plugin_worker_submission.py tests/connectors/test_plugin_sample_native_lpac.py",
+                      "$env:MYPYPATH='tools;services/core-api/src'; .venv/Scripts/python.exe -m mypy --config-file pyproject.toml --no-namespace-packages -- services/core-api/src/research_observatory_core/plugin_worker.py tests/connectors/test_plugin_worker_submission.py tests/connectors/test_plugin_sample_native_lpac.py",
+                      ".venv/Scripts/python.exe -B artifacts/tmp/W2.C11.T01.authenticate-execution-03.py",
+                      ".venv/Scripts/python.exe -B tools/taskctl.py --file planning/backlog.yaml validate"
+                    ],
+                    "deferred_checks": [
+                      "CAP-04.S05 integration: correct the new fixture or provide the existing approved explicit recovery procedure, then prove fresh process restart/recovery and obtain independent slice review. No stale-lock break is authorized here.",
+                      "Unchanged broad profiles, current full packaging, desktop/accessibility/performance and cross-capability qualification remain checkpoint or fresh W2 exit obligations.",
+                      "CAP-05.S01.T01 retains its original 6506 base and open fifth IntermediateD3D native startup finding."
+                    ],
+                    "selection_rationale": "A six-line publication callback correction touches the cancellation/lease boundary. Red-first regression, actual current 65 focused case results and real signed-LPAC/protected-Core create/denial/cancellation evidence address the changed boundary; its full combined command is adverse because an unrelated new integration fixture assumes automatic crash-lock takeover. Evidence authentication verifies individual case dispositions without repeating unchanged passed suites or inventing a zero exit for the failed command. There is no passing full restart claim.",
+                    "selection_sha256": "6269871dc51ad10e7a9ecb4e26160ef009808d3106f8c1c04e2c11f1838c34d0",
+                    "prior_attempt_id": null,
+                    "open_finding_ids": [],
+                    "root_cause_analysis": null,
+                    "selected_command_ids": [
+                      "search:connectors",
+                      "foundation:quality",
+                      "foundation:backlog"
+                    ],
+                    "packet_sha256": "13a12a07386bcf61bd2385fe47c8296282d86c2fd217c29536267cc976a5ae5a"
+                  },
+                  "review": {
+                    "reviewer": "agent:/root/c11_security_review",
+                    "result": "approved",
+                    "reviewed_at": "2026-10-05T20:38:22+00:00",
+                    "notes": "Independent expanded correction/security review approves only the actual public R01 for the bounded publication correction at source candidate 9a80c0f6. The immutable public manifest, frozen packet and exact owner recovery authorization were authenticated from metadata commit cbe0b58f10eed77473e53dcea4a62d10537b0a08. The six-line worker change moves cancellation polling/heartbeat before the publication writer and passes a process/project stop predicate with no I/O inside the writer. Repository exact claim capability, live running lease, durable cancellation, current grant/consent and predecessor transaction fences remain unchanged. The committed red-first regression fails before the fix; the retained current execution passes all 65 focused cases, including due heartbeat, durable cancellation, global/project stop and expired lease. Its signed zero-capability LPAC/protected source-Core create child publishes both pages with provenance/rights/predecessor checks and exercises forged-cursor denial, malformed-output denial and active cancellation. The combined 66-case command remains exit 1: intentional crash leaves a project lock and the reopen child returns 409 before any restart/recovery assertions. This is expressly deferred to pending CAP-04.S05 integration, not reclassified as passing. The public manifest rejects the source report's incorrect reopen-success sentence. Original T02 R02 evidence supports only unchanged historical isolation boundaries, not fresh qualification. Owner authorization repaired only the rejected unpublished metadata representation; exact private bytes, original packet identities, hook rejection and partial recovery failure remain retained. No source/control change or approval of S05, W2 qualification or release is inferred. No criterion-bound blocking finding remains."
+                  },
+                  "ledger": {
+                    "path": "artifacts/evidence/W2.C11.T01.review-R01.json",
+                    "sha256": "f519ffe55bc8ac3e13d280533a4f6b198ab6294b5bab3f5fa75ae75d5a4286d7"
+                  },
+                  "findings": [],
+                  "closures": [],
+                  "telemetry": {
+                    "task_id": "W2.C11.T01",
+                    "amendment_id": null,
+                    "attempt_id": "R01",
+                    "submitted_at": "2026-10-05T20:24:30+00:00",
+                    "reviewed_at": "2026-10-05T20:38:22+00:00",
+                    "duration_seconds": 832,
+                    "outcome": "approved",
+                    "finding_counts": {
+                      "critical": 0,
+                      "high": 0,
+                      "medium": 0,
+                      "low": 0,
+                      "blocking": 0,
+                      "total": 0
+                    },
+                    "command_ids": [
+                      "search:connectors",
+                      "foundation:quality",
+                      "foundation:backlog"
+                    ],
+                    "remediation": {
+                      "prior_attempt_id": null,
+                      "replayed_finding_ids": [],
+                      "closed_finding_ids": []
+                    }
+                  }
+                }
+              ],
+              "current_submission": null
             }
           }
         }

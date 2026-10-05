@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 55b271dcac7e095447c2c600198fd85d3891f6c8d5054dc30b871e2d464a7885
+source_sha256: 2523bce15955653ff4acba3d65c80c5f86c77dc06f8e46514ff6ddc003914aec
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -4216,7 +4216,7 @@ Original tasks and approvals remain unchanged.
 
 ### W2.C11.T01 — Implement plugin isolation, configuration, and secret access controls
 
-**Status:** `REVIEW`. **Original task:** `CAP-04.S05.T02`. **Latest review:** `-`.
+**Status:** `DONE`. **Original task:** `CAP-04.S05.T02`. **Latest review:** `approved`.
 
 **Reproduction:** At committed candidate 4f8c2cf1534e18c7fccf8d3ae6da5170622d652f, the joined real Windows DPAPI/SQLCipher Core and signed zero-capability LPAC journey fails on its second valid page with plugin-execution-denied. A bounded exception-construction diagnostic identifies plugin-job-interrupted inside the publication writer. The unchanged successful worker-publication test fails deterministically in 6.324 seconds when a test-only monotonic clock advances three seconds per cancellation poll; seven polls occur, with one assertion failure and zero setup errors. Product inputs stay unchanged. _Cancellation performs a queue heartbeat through its own BEGIN IMMEDIATE connection while the publisher holds a separate writer; the resulting persistence failure is treated as interruption. Raw adverse evidence: artifacts/tmp/W2.C11.T01.heartbeat-characterization-01.log SHA-256 3160f553dcd5cbb18241b588585f7180c8945df2ac8d22dadd15ddc14a879da6; artifacts/tmp/CAP-04.S05.joined-03-4f8c2cf1.protected-journey.log SHA-256 2b04e6df2504e0072b94df991c2e93e3d737edd55df617e9e7864cd3f35e330f; artifacts/tmp/CAP-04.S05.observed-create-03.stderr.log SHA-256 8968b21c7772cfb2f2b03f43eebb46dc77710129f581ea4a24ac2c0f14cedaaf. The clock diagnostic uses a synthetic runtime and is nonqualifying; the joined failed run establishes no task or slice completion.
 
@@ -4232,9 +4232,11 @@ Original tasks and approvals remain unchanged.
 - tests/connectors/test_plugin_worker_submission.py
 #### Review history — W2.C11.T01
 
-**Review mode:** `append-only v1` / 0 completed round(s)
+**Review mode:** `append-only v1` / 1 completed round(s)
 
-**Current immutable submission awaiting review:** `R01` / packet SHA-256 `13a12a07386bcf61bd2385fe47c8296282d86c2fd217c29536267cc976a5ae5a`
+##### Round R01
+
+**Immutable submission packet:** `R01` / packet SHA-256 `13a12a07386bcf61bd2385fe47c8296282d86c2fd217c29536267cc976a5ae5a`
 
 - Candidate / base / branch: `9a80c0f6cd6f5d444e7676c0ff287b4bb58c158f` / `f192725de10b5752e0d9b143c3512ef36c665a56` / `codex/w2-implementation`
 - Submitted by / at: codex-w2-implementation / `2026-10-05T20:24:30+00:00`
@@ -4248,9 +4250,25 @@ Original tasks and approvals remain unchanged.
 - Prior round / replayed open findings: `-` / -
 - Root-cause escalation: -
 
-**Current latest-review projection:** `-` by - at `-`
+**Disposition / reviewer / time:** `approved` / agent:/root/c11_security_review / `2026-10-05T20:38:22+00:00`
 
-**Latest notes:** -
+**Immutable review ledger:** `artifacts/evidence/W2.C11.T01.review-R01.json` / `f519ffe55bc8ac3e13d280533a4f6b198ab6294b5bab3f5fa75ae75d5a4286d7`
+
+**Review notes:** Independent expanded correction/security review approves only the actual public R01 for the bounded publication correction at source candidate 9a80c0f6. The immutable public manifest, frozen packet and exact owner recovery authorization were authenticated from metadata commit cbe0b58f10eed77473e53dcea4a62d10537b0a08. The six-line worker change moves cancellation polling/heartbeat before the publication writer and passes a process/project stop predicate with no I/O inside the writer. Repository exact claim capability, live running lease, durable cancellation, current grant/consent and predecessor transaction fences remain unchanged. The committed red-first regression fails before the fix; the retained current execution passes all 65 focused cases, including due heartbeat, durable cancellation, global/project stop and expired lease. Its signed zero-capability LPAC/protected source-Core create child publishes both pages with provenance/rights/predecessor checks and exercises forged-cursor denial, malformed-output denial and active cancellation. The combined 66-case command remains exit 1: intentional crash leaves a project lock and the reopen child returns 409 before any restart/recovery assertions. This is expressly deferred to pending CAP-04.S05 integration, not reclassified as passing. The public manifest rejects the source report's incorrect reopen-success sentence. Original T02 R02 evidence supports only unchanged historical isolation boundaries, not fresh qualification. Owner authorization repaired only the rejected unpublished metadata representation; exact private bytes, original packet identities, hook rejection and partial recovery failure remain retained. No source/control change or approval of S05, W2 qualification or release is inferred. No criterion-bound blocking finding remains.
+
+**Findings opened:**
+
+- None
+
+**Prior finding closures:**
+
+- None
+
+**Current immutable submission awaiting review:** None
+
+**Current latest-review projection:** `approved` by agent:/root/c11_security_review at `2026-10-05T20:38:22+00:00`
+
+**Latest notes:** Independent expanded correction/security review approves only the actual public R01 for the bounded publication correction at source candidate 9a80c0f6. The immutable public manifest, frozen packet and exact owner recovery authorization were authenticated from metadata commit cbe0b58f10eed77473e53dcea4a62d10537b0a08. The six-line worker change moves cancellation polling/heartbeat before the publication writer and passes a process/project stop predicate with no I/O inside the writer. Repository exact claim capability, live running lease, durable cancellation, current grant/consent and predecessor transaction fences remain unchanged. The committed red-first regression fails before the fix; the retained current execution passes all 65 focused cases, including due heartbeat, durable cancellation, global/project stop and expired lease. Its signed zero-capability LPAC/protected source-Core create child publishes both pages with provenance/rights/predecessor checks and exercises forged-cursor denial, malformed-output denial and active cancellation. The combined 66-case command remains exit 1: intentional crash leaves a project lock and the reopen child returns 409 before any restart/recovery assertions. This is expressly deferred to pending CAP-04.S05 integration, not reclassified as passing. The public manifest rejects the source report's incorrect reopen-success sentence. Original T02 R02 evidence supports only unchanged historical isolation boundaries, not fresh qualification. Owner authorization repaired only the rejected unpublished metadata representation; exact private bytes, original packet identities, hook rejection and partial recovery failure remain retained. No source/control change or approval of S05, W2 qualification or release is inferred. No criterion-bound blocking finding remains.
 
 **Currently open findings:** -
 
