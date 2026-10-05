@@ -1,0 +1,137 @@
+{
+  "schemaVersion": "1.0",
+  "amendmentId": "W2.A05",
+  "targetWave": "W2",
+  "branch": "codex/w2-implementation",
+  "candidateCommit": "d5f956c55e189d6f3a08c5c84263bd11f7cd3d4e",
+  "taskBindings": [
+    {
+      "taskId": "W2.A05.T01",
+      "candidateCommit": "9106f485d32150943e8fbedd5299d5882021e183",
+      "manifestReference": {
+        "type": "criterion-manifest",
+        "path": "artifacts/evidence/W2.A05.T01.json",
+        "sha256": "f10c3a49370f0d1c98e735506b28c3f7273350a4d9db76a2a944243120a84652",
+        "commit": "9106f485d32150943e8fbedd5299d5882021e183",
+        "recorded_at": "2026-10-05T06:15:46+00:00"
+      },
+      "reviewLedger": {
+        "path": "artifacts/evidence/W2.A05.T01.review-R01.json",
+        "sha256": "f33aa6d3bff44c440013a93e9acb80a2539d7e129db6993da6234a4cd16dec28"
+      }
+    },
+    {
+      "taskId": "W2.A05.T02",
+      "candidateCommit": "03e501c4550c7aa61e1e60827d49f7174faab1ef",
+      "manifestReference": {
+        "type": "criterion-manifest",
+        "path": "artifacts/evidence/W2.A05.T02.json",
+        "sha256": "cf0c65d9cd8f7cf70d9855d9d5016d01db35c3297eee876dba6854b8fcf44600",
+        "commit": "03e501c4550c7aa61e1e60827d49f7174faab1ef",
+        "recorded_at": "2026-10-05T07:22:02+00:00"
+      },
+      "reviewLedger": {
+        "path": "artifacts/evidence/W2.A05.T02.review-R01.json",
+        "sha256": "20b2ef49ce578e6cb605b2e61be373265db11e60938393eb1032aa394bb08721"
+      }
+    }
+  ],
+  "completionSourceAuthorityAndProof": [
+    {
+      "path": "artifacts/evidence/W2.A05.S01.addendum-01.execution.json",
+      "sha256": "dafc00e26ce8e4bcc790ed5c21f69fc15d4060b9bd970c8adc00b923efc886b4"
+    },
+    {
+      "path": "artifacts/evidence/W2.A05.S01.addendum-01.execution.review-01.json",
+      "sha256": "6c50e805d0cc3016ac705686637c6c1dc464d7b2edf1564a034d45d6e41d60d9"
+    },
+    {
+      "path": "planning/wave-amendment-approvals/W2.A05.S01.addendum-01.json",
+      "sha256": "ecfedc8cfc8115e8efd48c9d3f8bd3798d481cee164410b8943ed72748dc33af"
+    }
+  ],
+  "documentType": "wave-amendment-exit-evidence",
+  "changeRequestId": "ECR-0013",
+  "outcome": "ready-for-independent-amendment-exit-review",
+  "waveCampaign": {
+    "status": "PAUSED",
+    "scope": "amendment-hold",
+    "pauseReason": "CAP-05.S01.T01 is blocked by approved Academic Minimal 1.8 desktop activation/control authority; pause ordinary W2 execution at clean CAP-04.S05.T03 boundary for bounded GOV-MAINT-0026, linked CAP-04.S05.T02 correction, and decision-complete ECR-0011/W2.A03 before ordinary task resume."
+  },
+  "amendmentCampaign": {
+    "status": "ACTIVE",
+    "scope": "wave-amendment",
+    "pauseReason": null
+  },
+  "requiredNextTransition": "independent amendment exit review",
+  "acceptanceClosure": [
+    {
+      "criterionIndex": 1,
+      "criterion": "Bind exact complete paused A03 at 771e54a3657cdc5ff308d3a53d7b71eb48bb9214 / bdad5e81327e32ee322db436dc569898ce314d29058e53b0cfe67ed6192e0b03, both DONE approved original task histories, adopted A04 and unchanged W2/A01/A02/GOV26/C10/reference authority before independent packet review and explicit owner approval.",
+      "status": "ready-for-independent-exit-disposition",
+      "basis": "Immutable packet/B00 and completed task reviews authenticate the whole paused A03, adopted A04, predecessor authority and unchanged reference. Actual integration preserves the exact frozen A03 record."
+    },
+    {
+      "criterionIndex": 2,
+      "criterion": "Preserve actual S01 review-01 blocking W2.A03.S01-R01-F01, six exact Git projection rows, correct118-path T02 net inventory and original official accessibility exit1 plus separate browser naming predicate. Never fabricate or reclassify old failures.",
+      "status": "ready-for-independent-exit-disposition",
+      "basis": "The original review01/F01 and official accessibility failure remain adverse. Fresh actual integrated retained-range attribution admits only the six authenticated inert rows while preserving all 39 commits and the exact 118-path net inventory."
+    },
+    {
+      "criterionIndex": 3,
+      "criterion": "Authenticate only the exact preceding GOV-MAINT-0027 sequence7604e7ee\u219229139a46\u219203795948\u21926295697d\u2192a6d2f0b5 and all imported-source/review/check bytes through planning/enabler-change-requests/ECR-0013.maintenance-binding.json / SHA-256 d550768944a0b142035270af47e2dcace88c7021edd0251d0a30e5ffc3e09be5. Preserve actual prepared-first note and adverse R01; approved R02 closes both findings. No old-helper weakening, new maintenance ID/schema, arbitrary history recognition or imported-tool edit is authorized.",
+      "status": "ready-for-independent-exit-disposition",
+      "basis": "T01 independently authenticates the exact preceding GOV27 four-commit sequence and B00 addendum without editing imported source or erasing adverse R01. Actual integration authenticates the same preceding source and review bytes."
+    },
+    {
+      "criterionIndex": 4,
+      "criterion": "Deliver only the five-path T01 and four-path T02 envelopes (eight unique paths) with one indexed Proposed ADR-0041 introduced in T01 and only a bounded body append in T02, unchanged metadata/index entry, independent ordered task reviews and generic authenticated inert-output attribution. No hidden source, generic filename bypass, new schema/controller/contract field or changed original task source authority.",
+      "status": "ready-for-independent-exit-disposition",
+      "basis": "The two original independent task reviews bind the unchanged five- and four-source ranges, ordered claims and Proposed ADR41/index. The separately owner-approved completion addendum, fresh exact source proof and independent control review authenticate the one final four-path segment. Actual integrated S01 review02 explicitly closes retained A05 F01 without rewriting task or adverse history."
+    },
+    {
+      "criterionIndex": 5,
+      "criterion": "Authenticate this exact separately reviewed A05 source and immutable task/slice/exit/security/adoption/paused-parent return under existing1.4 while preserving original full6506/two-contract/classification/input closure and all v1.0-v1.4 denials.",
+      "status": "ready-for-independent-exit-disposition",
+      "basis": "Reviewed T01 real-Git authority/identity/history/return denials and the actual integrated source records pass within unchanged v1.4. This is readiness for exit disposition; later separate security review, adoption and actual paused-parent return remain ordered prerequisites."
+    },
+    {
+      "criterionIndex": 6,
+      "criterion": "Restore static associated-label recognition and require focused adverse/positive browser proof plus fresh official33-page/66-responsive accessibility exit0 at the exact candidate; unchanged reference and screenshot baseline, genuine unnamed controls still fail.",
+      "status": "ready-for-independent-exit-disposition",
+      "basis": "Fresh exact T02 candidate checks pass six static methods, four pinned browser cases and unmodified official 33-page/66-state accessibility with no errors. Actual integration preserves the reviewed source bytes and frozen reference/baseline; those are authenticated task executions, not repeated slice suites."
+    },
+    {
+      "criterionIndex": 7,
+      "criterion": "Independent B00, task, integrated slice, exit and separate security reviews precede adoption. Return only to paused A03 with both tasks DONE; separate activation, fresh S01 finding closure, own A03 exit/adoption and explicit ordinary W2 resume precede main task work. Native/Core/S05/D3D/full W2/human release remain due.",
+      "status": "ready-for-independent-exit-disposition",
+      "basis": "B00, both tasks and integrated S01 have separately committed independent approvals. This manifest requests the distinct exit disposition; separate committed security review/adoption and exact still-paused A03 return, later separate activation/F01 closure/A03 adoption and W2 resume remain required."
+    }
+  ],
+  "checks": [
+    {
+      "command": ".venv/Scripts/python.exe -B artifacts/tmp/W2.A05.inspect-integrated-02.py slice",
+      "result": "passed",
+      "exitCode": 0,
+      "commit": "d5f956c55e189d6f3a08c5c84263bd11f7cd3d4e",
+      "rawOutput": "artifacts/tmp/W2.A05.slice-integrated-d5f956c5.json",
+      "rawOutputSha256": "51c4d1dd24b242f4ab1f90b603633eebebbd01925bd39830f0ae0104af480fc4",
+      "observation": "Actual local-main integrated tasks and committed S01 review authenticate; exact reviewed source bytes, frozen paused parent and full retained Git/net/projection attribution pass."
+    }
+  ],
+  "priorReviewedEvidence": [
+    "artifacts/evidence/W2.A05.T01.json",
+    "artifacts/evidence/W2.A05.T02.json",
+    "artifacts/evidence/W2.A05.T01.review-R01.json",
+    "artifacts/evidence/W2.A05.T02.review-R01.json",
+    "artifacts/evidence/W2.A05.S01.review-01.json",
+    "artifacts/evidence/W2.A05.S01.review-02.json",
+    "artifacts/evidence/W2.A05.S01.addendum-01.execution.json",
+    "artifacts/evidence/W2.A05.S01.addendum-01.execution.review-01.json",
+    "planning/wave-amendment-approvals/W2.A05.S01.addendum-01.json"
+  ],
+  "limitations": [
+    "This manifest does not assert exit/security approval, A05 adoption/paused return, A03 activation/finding closure/adoption or ordinary W2 resume.",
+    "Prior exact-candidate executions remain authenticated task proof. Synthetic future histories prove controls only. Native/Core/S05/D3D, remaining W2 tasks/full qualification and human release remain due."
+  ]
+}
