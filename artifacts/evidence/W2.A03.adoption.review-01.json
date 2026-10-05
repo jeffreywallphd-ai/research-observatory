@@ -1,0 +1,165 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "wave-amendment-adoption-security-independent-review",
+  "amendmentId": "W2.A03",
+  "targetWave": "W2",
+  "reviewer": "agent:/root/a05_completion_control_review",
+  "reviewedAt": "2026-10-05T13:09:50Z",
+  "result": "approved",
+  "reviewedCompletionCommit": "f4759f0060ae0a01c3efc053e0e49d8b074851d8",
+  "reviewedManifest": {
+    "path": "artifacts/evidence/W2.A03.adoption.json",
+    "introductionCommit": "9b3599df1280f5b8f5dc68716e7475c29f09b60f",
+    "gitBlob": "5baa907d933badb7d4677fc1cfc142282f7bc04d",
+    "sha256": "62867a0f957152225a2295e8d7fbf37b1d91ae1ff9f3971fb3655bdb2540fe20"
+  },
+  "approvedExit": {
+    "attemptId": "R01",
+    "reviewedCompletionCommit": "f4759f0060ae0a01c3efc053e0e49d8b074851d8",
+    "actualApprovalPublicationCommit": "693626a7358e5f7c4f8bbce556bc15e2dbd69740",
+    "reviewedStateCommit": "ba2ee157753ba179c3d640be0dbdfc8748e85437",
+    "evidence": {
+      "path": "artifacts/evidence/W2.A03.exit.json",
+      "introductionCommit": "573c603e646cab41b1d011eac583d652f0f2c67a",
+      "sha256": "7eda25e4f286e090c38286a69f99a16dcd399280a184a9b0507aa3573c2bcb21"
+    },
+    "ledger": {
+      "path": "artifacts/evidence/W2.A03.exit-review-R01.json",
+      "introductionCommit": "693626a7358e5f7c4f8bbce556bc15e2dbd69740",
+      "sha256": "053be7c26fc30ae8c12c2fe75fa04284d9f96a8896dfe651e5fe4a8856bf9912"
+    }
+  },
+  "notes": "Distinct independent pre-adoption security approval of the exact committed W2.A03 checkpoint manifest at 9b3599df. Actual approved exit R01 and its immutable ledger are jointly published at 693626a7, preserving the exact frozen submission and reviewed state ba2ee157. The checked six-view child f4759f00 is the exact reviewedCompletionCommit and current local main; evidence-only 9b3599df is its direct child and fixed review HEAD. Existing read-only actual exit-ledger and adoption-reference validators return no errors. Both original complete DONE task records, original source/task/slice authority, explicit committed S01 R02 F01 closure, other amendment records and all other backlog values remain preserved. A04 and A05 remain authentically ADOPTED; actual A05 return and separate A03 activation remain supported history. There is no source change or existing A03 adoption checkpoint in this incremental suffix. This ledger is a separate security disposition after the manifest, to be committed strictly before supported adoption. A03 is an ordinary amendment with no correction relation: its supported adoption appends one security checkpoint and ADOPTED lifecycle event, keeps active_amendment null and W2 PAUSED, and restores campaign scope from amendment-hold to wave. Original CAP-05.S01.T01 stays BLOCKED at its original 6506 base until separate legal ordinary resume/reopen. Actual A03 adoption and post-adoption observation remain pending; no future resumption, product/native/Core/joined S05/D3D/full Wave or human release approval is asserted.",
+  "independence": {
+    "campaignOwner": "codex-w2-implementation",
+    "sliceReviewer": "agent:/root/a03_closeout_review",
+    "originalTaskReviewers": ["agent:/root/maint26_independent_review", "agent:/root/a03_t02_authority_review"],
+    "statement": "I am independent of the campaign/task/source owner and authored no A03/A04/A05 implementation, owner approval, original task criterion manifest, baseline, capture, execution producer, receipt, S01 ledger, exit manifest or adoption manifest. My earlier A05 source/control, exit and adoption-security reviews and A03 exit review are disclosed and reused below. Original A03/A04 task/control/slice reviews retain their actual independent authors and are not presented as my authorship. This separate checkpoint review examines only the later actual approved exit publication, exact manifest and immutable authority, security/hold boundaries and supported adoption contract. Read-only Git, hash/state and current transition-contract inspection plus existing read-only validators were used. No suite, observer, source audit, transition or ref mutation was repeated. Only this canonical security review is authored."
+  },
+  "security_dispositions": [
+    {
+      "boundary": "Exact immutable manifest and actual approved exit",
+      "result": "approved",
+      "basis": "The manifest has one Git introduction at 9b3599df, exact blob 5baa907d and SHA-256 62867a0f; physical bytes equal the committed blob. It is the only change from direct parent f4759f00. Actual A03 lifecycle is REVIEW, completion APPROVED, campaign COMPLETE and lease null. The sole approved R01 attempt retains the exact frozen submission from ba2ee157, has empty findings/closures and no pending exit submission. Manifest approved-exit evidence/ledger references equal the actual stored references; candidateCommit equals reviewedCompletionCommit f4759f00. Actual exit ledger has one immutable introduction at 693626a7 jointly with supported approval backlog. Existing amendment_exit_ledger_errors and amendment_adoption_reference_errors return empty lists."
+    },
+    {
+      "boundary": "Separate review ordering and source scope",
+      "result": "approved-for-pre-adoption-publication",
+      "basis": "The actual direct-child sequence is frozen REVIEW ba2ee157 -> six checked REVIEW views ae216ca7 -> joint exit ledger/approved backlog 693626a7 -> six checked approval views f4759f00 -> adoption manifest 9b3599df. No implementation, source specification, approved UI reference, security authority, budget, original task record or prior immutable evidence changes in this incremental suffix. No canonical A03 adoption-review history or actual A03 checkpoint already exists. This first canonical security ledger must be introduced separately after the manifest and strictly before the distinct supported adoption commit. Actual future commit ordering cannot be authenticated until those commits exist; no fixture or untracked record is treated as an actual checkpoint."
+    },
+    {
+      "boundary": "Original task and slice authority with actual repair history",
+      "result": "approved-with-preserved-proof-limits",
+      "basis": "Manifest taskBindings equal the approved exit bindings. Complete original A03 task records equal frozen paused predecessor 771e54a3 and retain DONE/approved, exact original candidates/bases, no lease and no current submission. Original packet/owner/task manifest/R01 ledger hashes authenticate. Both canonical S01 rounds remain committed; R02 at b1b88ec0, SHA f0dcf32b, approves the integrated boundary and explicitly fixes only W2.A03.S01-R01-F01. Original adverse R01 is retained. Completed A05 source/control review and actual integrated evidence attribute current shared gate/checker bytes only to their separately approved A05 candidates. A04/A05 actual adoptions, exact A05 paused return and separate A03 activation are real authenticated history. No old approval is extended, source envelope reset or generic history exemption inferred."
+    },
+    {
+      "boundary": "Ordinary amendment adoption, Wave hold and original task protection",
+      "result": "approved-contract-actual-adoption-pending",
+      "basis": "A03 has no correction relation and the manifest acquires none. All non-A03 amendments, ordinary Wave records and other backlog values equal the pre-exit-approval state; A04/A05 remain ADOPTED. Current W2 is PAUSED/amendment-hold, active_amendment is null and A03 checkpoint count is zero. The current supported command appends one security checkpoint and one A03 ADOPTED event, leaves W2 status PAUSED and restores campaign.scope to wave for this ordinary amendment. Other Wave fields are retained except that exact scope/checkpoint change. Original CAP-05.S01.T01 remains BLOCKED at base6506c684 and both whole A03 task records and other amendments must remain unchanged. This restores eligibility for a separate lawful campaign resume; it does not itself resume the Wave, reopen or complete the original task. Fresh actual post-adoption state observation remains required."
+    },
+    {
+      "boundary": "Security, privacy, rights, adverse evidence and bounded claims",
+      "result": "approved-for-this-checkpoint-scope",
+      "basis": "The incremental manifest/approval suffix adds no product source, private-research data operation, imported-model trust, external service, account permission, native/Core authority, governed reference change, migration guarantee or release decision. Original captured-baseline privacy admission and historical runtime/denial proof retain their original reviewers/candidates; current source/control integration and exact prior selected checks are reused within their recorded limits. Original official accessibility failure, S01 adverse R01 and ignored producer03 failure remain preserved alongside explicit R02 remediation and separately reviewed later A05 accessibility evidence. No historical execution is relabeled fresh native, product or full profile proof. The original W2 budget, 18 unfinished ordinary product tasks and all later qualification/release gates remain unchanged."
+    }
+  ],
+  "incremental_actual_observations": {
+    "actualApprovalReceipt": {
+      "path": "artifacts/tmp/W2.A03.exit-approve-ae216ca7.log",
+      "predecessorSha256": "5444156509e61563416b0e16050fa4cb254d9364406222a39bf26c8537891212",
+      "successorSha256": "65f87f51f8c1abadc7288cede2d5acbc08b5313c7040d8aad836d90116dc10e6",
+      "casOutcome": "matched-and-replaced",
+      "observation": "CAS digests authenticate the physical CRLF representations of the committed predecessor ae216ca7 and successor 693626a7 backlog. changedFields contains only wave_amendments. Receipt authority is evidence-only and entry-HEAD producerCommit semantics do not authenticate the runner. Independent immutable Git/state comparison establishes the actual supported disposition and preservation."
+    },
+    "actualExitLedgerErrors": [],
+    "adoptionReferenceErrors": [],
+    "wholeOriginalTaskRecordsPreserved": true,
+    "allOtherAmendmentsPreserved": true,
+    "allOtherBacklogValuesPreserved": true,
+    "incrementalImplementationSourceChanges": []
+  },
+  "reused_completed_reviews": [
+    {
+      "path": "artifacts/evidence/W2.A03.exit-review-R01.json",
+      "introductionCommit": "693626a7358e5f7c4f8bbce556bc15e2dbd69740",
+      "sha256": "053be7c26fc30ae8c12c2fe75fa04284d9f96a8896dfe651e5fe4a8856bf9912",
+      "role": "My completed distinct five-criterion A03 exit review at frozen ba2ee157, explicitly bound to committed S01 R02 and fresh actual b1b88ec0 integration with 4,748 stable inputs. Only later actual publication/checkpoint bindings are inspected now."
+    },
+    {
+      "path": "artifacts/evidence/W2.A05.S01.addendum-01.execution.review-01.json",
+      "introductionCommit": "826be75db330e174a845926bfdedae1b765fdc94",
+      "sha256": "6c50e805d0cc3016ac705686637c6c1dc464d7b2edf1564a034d45d6e41d60d9",
+      "role": "My completed exact a1265a84 source/control and 23-check/seven-receipt audit; actual A03 integration authenticates the same immutable source attribution with require_review=True. No closed source audit or suite repeated."
+    },
+    {
+      "path": "artifacts/evidence/W2.A05.exit-review-R01.json",
+      "introductionCommit": "f2221fdfd60061d4d5782c490500bc74c314f8a2",
+      "sha256": "282a13c1c5a02c236497622087db4c52e62516f421f173159835597e2d4fdfc3",
+      "role": "My prior distinct actual A05 exit disposition; its immutable co-publication and later actual adoption are retained in the integrated repair chain."
+    },
+    {
+      "path": "artifacts/evidence/W2.A05.adoption.review-01.json",
+      "introductionCommit": "6599d2ffd43bdc5bf7234955f4c69cd3000ecdd0",
+      "sha256": "c2d73a5a77dc5f3ba09b2917fd51089721ea0ef6c5758201f30cf61e31780902",
+      "role": "My prior separate A05 security review after its manifest and before actual adoption79556040; exact paused return and separate A03 activation were later independently authenticated, not inferred from synthetic future histories."
+    }
+  ],
+  "proof_limits": [
+    "This approval binds only the exact four-key reviewedManifest and actual approved A03 exit history. The separate security review commit must strictly follow manifest introduction and strictly precede actual adoption. No future ordering, checkpoint, adoption or resumption is presented as observed.",
+    "Current pre-adoption campaign scope is amendment-hold. Supported ordinary A03 adoption changes that scope to wave while retaining W2 status PAUSED, as the approved ECR-0011 requires. This expected scope change is not ordinary resume authority or a correction-return relation.",
+    "Historical task captures/runtime/accessibility/privacy and denial executions retain original candidates, dispositions and reviewers. Fresh integrated Git/control/witness/consumer proof does not establish new native/Core, joined CAP-04.S05, fifth-D3D, original full6506 product, full profile or Wave qualification.",
+    "Original S01 R01, official accessibility failure and producer03 failure remain adverse evidence. Separate committed S01 R02 fixes F01. This first security checkpoint has no previous findings to close, so findings, closures and openFindingIds are empty.",
+    "Immutable records and human/agent role labels establish byte/history consistency of the actual externally owner-approved chain, not cryptographic identity or qualification of a fabricated alternate first-introduction fork. No new framework hardening or source work is authorized.",
+    "Owner authority forbids further automation/framework source development, maintenance, new framework amendment or optional styling after A05. Required workflow operations and ignored evidence producers remain permitted; product execution, full W2 qualification and separate human release remain due."
+  ],
+  "actual_pre_adoption_state": {
+    "head": "9b3599df1280f5b8f5dc68716e7475c29f09b60f",
+    "localMain": "f4759f0060ae0a01c3efc053e0e49d8b074851d8",
+    "branch": "codex/w2-implementation",
+    "amendmentLifecycle": "REVIEW",
+    "completionStatus": "APPROVED",
+    "campaignStatus": "COMPLETE",
+    "activeAmendment": null,
+    "recordedA03SecurityCheckpointCount": 0,
+    "correctionRelation": null,
+    "ordinaryWaveStatus": "PAUSED",
+    "ordinaryWaveScope": "amendment-hold",
+    "originalTaskId": "CAP-05.S01.T01",
+    "originalTaskStatus": "BLOCKED",
+    "originalTaskBase": "6506c68461144747b0ee9be10853211717aa381d",
+    "actualAdoptionObserved": false,
+    "releaseApprovalGranted": false
+  },
+  "expected_supported_adoption_contract": {
+    "amendmentLifecycle": "ADOPTED",
+    "appendedSecurityCheckpointCount": 1,
+    "appendedAdoptedLifecycleEventCount": 1,
+    "activeAmendment": null,
+    "ordinaryWaveStatus": "PAUSED",
+    "ordinaryWaveScope": "wave",
+    "preserveWholeOriginalTaskRecords": true,
+    "preserveOtherAmendmentRecords": true,
+    "preserveOtherWaveFieldsExceptScopeAndCheckpointAppend": true,
+    "originalTaskStatus": "BLOCKED",
+    "originalTaskBase": "6506c68461144747b0ee9be10853211717aa381d",
+    "requiresFreshActualPostAdoptionObservation": true,
+    "requiresSeparateLegalOrdinaryResumeAndReopen": true
+  },
+  "required_next_transitions": [
+    "Commit this canonical security ledger separately after the reviewed manifest and strictly before supported taskctl adoption.",
+    "Perform and publish supported A03 adoption, then obtain fresh actual observation of its complete review/checkpoint history and preserved ordinary Wave/task boundaries.",
+    "Separately resume the ordinary campaign and legally reopen the original blocked task only through the supported approved route; complete joined S05, remaining product work and exact candidate reviews.",
+    "Complete fresh full W2 qualification, independent Wave review and the separate human release gate without further automation framework source development."
+  ],
+  "findings": [],
+  "closures": [],
+  "openFindingIds": [],
+  "reviewerSafety": {
+    "sourceMutation": false,
+    "backlogOrViewMutation": false,
+    "producerMutation": false,
+    "gitRefMutation": false,
+    "suiteOrObserverReruns": 0,
+    "canonicalFilesAuthored": ["artifacts/evidence/W2.A03.adoption.review-01.json"]
+  }
+}
