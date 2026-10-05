@@ -42049,7 +42049,7 @@
         {
           "task_id": "W2.A05.T02",
           "title": "Recognize real associated labels in the static accessibility checker",
-          "status": "READY",
+          "status": "IN_PROGRESS",
           "mode": "latest-review-only",
           "latest_review": {
             "reviewer": null,

@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 8607cc92b5ead6572d0fc2456ac3d79370febd1d058abe69506e4c4857acef59
+source_sha256: b5918d3a61a1513731f35ecbfb3a5fa1e648b8880bfcf457dfd5bf90eeae3288
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -3157,7 +3157,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 ### - [ ] W2.A05.T02 - Recognize real associated labels in the static accessibility checker
 
-**Status / owner / review:** `READY` / - / - (`-`)
+**Status / owner / review:** `IN_PROGRESS` / codex-w2-implementation / - (`-`)
 
 **Dependencies:** `W2.A05.B00`, `W2.A05.T01`
 
