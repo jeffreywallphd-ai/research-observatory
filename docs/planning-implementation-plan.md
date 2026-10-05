@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 875766aab90625c9649f7e59cea2ebc818b759cb1850333b30a05dd5be55042a
+source_sha256: e850ce07abced3f8ed26b5824b0702e61cd21baaf67c180002bbd872c214b25b
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -52,7 +52,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 | `W1` | `W1.A09` | `ECR-0008` | `planning/wave-amendment-approvals/W1.A09.json` | `ADOPTED` |
 | `W2` | `W2.A01` | `ECR-0009` | `planning/wave-amendment-approvals/W2.A01.json` | `ADOPTED` |
 | `W2` | `W2.A02` | `ECR-0010` | `planning/wave-amendment-approvals/W2.A02.json` | `ADOPTED` |
-| `W2` | `W2.A03` | `ECR-0011` | `planning/wave-amendment-approvals/W2.A03.json` | `REVIEW` |
+| `W2` | `W2.A03` | `ECR-0011` | `planning/wave-amendment-approvals/W2.A03.json` | `ADOPTED` |
 | `W2` | `W2.A04` | `ECR-0012` | `planning/wave-amendment-approvals/W2.A04.json` | `ADOPTED` |
 | `W2` | `W2.A05` | `ECR-0013` | `planning/wave-amendment-approvals/W2.A05.json` | `ADOPTED` |
 
@@ -2765,7 +2765,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 **Approval record:** `planning/wave-amendment-approvals/W2.A03.json` (`8852d6631a6656e94cc75e4f9dc705c7095ecf111786748e5630fe13b8fa9087`)
 
-**Lifecycle / bootstrap / campaign / completion:** `REVIEW` / `APPROVED` / `COMPLETE` / `APPROVED`
+**Lifecycle / bootstrap / campaign / completion:** `ADOPTED` / `APPROVED` / `COMPLETE` / `APPROVED`
 
 **Append-only lifecycle history:**
 
@@ -2777,6 +2777,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - `E06` `PAUSED` at `2026-10-04T19:34:13+00:00` by codex-w2-implementation: Integrated S01 finding W2.A03.S01-R01-F01: exact retained consumer range rejects six authenticated generated W2.html projections absent from final net diff. Preserve both DONE task approvals and adopted A04; pause for an append-only exact source-attribution repair before fresh S01 replay, exit/security/adoption and ordinary W2 resume.
 - `E07` `ACTIVE` at `2026-10-05T11:45:05+00:00` by codex-w2-implementation: Activated the bounded amendment campaign.
 - `E08` `REVIEW` at `2026-10-05T12:32:11+00:00` by codex-w2-implementation: Submit exact approved A03 contribution after independent S01 R02 fixed F01; retain original tasks and A04/A05 history. Distinct exit and security reviews and adoption precede ordinary W2 product resume.
+- `E09` `ADOPTED` at `2026-10-05T13:20:12+00:00` by codex-w2-implementation: Adopt exact independently approved A03 checkpoint; ordinary W2 remains PAUSED; original CAP-05.S01.T01 base6506 and all task history retained; no further framework development after closed A05.
 
 ### Amendment-exit review and adoption — W2.A03
 
@@ -2820,7 +2821,8 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 **Bound amendment-adoption checkpoints:**
 
-- None
+- `W2.CP06` `security` by codex-w2-implementation at `2026-10-05T13:20:12+00:00` — Adopt exact independently approved A03 checkpoint; ordinary W2 remains PAUSED; original CAP-05.S01.T01 base6506 and all task history retained; no further framework development after closed A05.
+  - amendment `W2.A03` / `artifacts/evidence/W2.A03.adoption.json` / `62867a0f957152225a2295e8d7fbf37b1d91ae1ff9f3971fb3655bdb2540fe20` / `7ccaf1d7155c280aa39a3cc1494dd6d4368b5d77`
 
 **Bounded tasks:**
 

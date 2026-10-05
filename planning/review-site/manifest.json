@@ -1043,9 +1043,7 @@
       "unlocks_waves": [
         "W3"
       ],
-      "interrupting_change_request_ids": [
-        "ECR-0011"
-      ],
+      "interrupting_change_request_ids": [],
       "interrupting_recovery_request_ids": [],
       "corrective_tasks": [
         {
@@ -39853,7 +39851,7 @@
       "approval_path": "planning/wave-amendment-approvals/W2.A03.json",
       "approval_sha256": "8852d6631a6656e94cc75e4f9dc705c7095ecf111786748e5630fe13b8fa9087",
       "approval_status": "APPROVED",
-      "lifecycle_status": "REVIEW",
+      "lifecycle_status": "ADOPTED",
       "bootstrap_status": "APPROVED",
       "campaign_status": "COMPLETE",
       "bootstrap_attempts": [
@@ -40766,7 +40764,24 @@
           "current_submission": null
         }
       },
-      "adoption_checkpoints": [],
+      "adoption_checkpoints": [
+        {
+          "id": "W2.CP06",
+          "kind": "security",
+          "recorded_by": "codex-w2-implementation",
+          "recorded_at": "2026-10-05T13:20:12+00:00",
+          "notes": "Adopt exact independently approved A03 checkpoint; ordinary W2 remains PAUSED; original CAP-05.S01.T01 base6506 and all task history retained; no further framework development after closed A05.",
+          "evidence_references": [
+            {
+              "type": "amendment-adoption-evidence",
+              "amendment_id": "W2.A03",
+              "path": "artifacts/evidence/W2.A03.adoption.json",
+              "sha256": "62867a0f957152225a2295e8d7fbf37b1d91ae1ff9f3971fb3655bdb2540fe20",
+              "commit": "7ccaf1d7155c280aa39a3cc1494dd6d4368b5d77"
+            }
+          ]
+        }
+      ],
       "page": "enablers/ECR-0011.html"
     },
     {

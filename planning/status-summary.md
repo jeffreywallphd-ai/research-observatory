@@ -1,7 +1,7 @@
 ---
 document_type: generated-backlog-status-summary
 source: planning/backlog.yaml
-source_sha256: 875766aab90625c9649f7e59cea2ebc818b759cb1850333b30a05dd5be55042a
+source_sha256: e850ce07abced3f8ed26b5824b0702e61cd21baaf67c180002bbd872c214b25b
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -61,8 +61,7 @@ manual_edit: prohibited
 
 | Status | Count |
 |---|---:|
-| `ADOPTED` | 12 |
-| `REVIEW` | 1 |
+| `ADOPTED` | 13 |
 | `SUPERSEDED` | 1 |
 
 ### Enabler task state
@@ -90,7 +89,7 @@ Proposal approval, materialization lifecycle, and campaign state remain distinct
 | `W1` | `W1.A09` | `ECR-0008` | `planning/wave-amendment-approvals/W1.A09.json` | `ADOPTED` | `APPROVED` | `COMPLETE` | 4 |
 | `W2` | `W2.A01` | `ECR-0009` | `planning/wave-amendment-approvals/W2.A01.json` | `ADOPTED` | `APPROVED` | `COMPLETE` | 2 |
 | `W2` | `W2.A02` | `ECR-0010` | `planning/wave-amendment-approvals/W2.A02.json` | `ADOPTED` | `APPROVED` | `COMPLETE` | 1 |
-| `W2` | `W2.A03` | `ECR-0011` | `planning/wave-amendment-approvals/W2.A03.json` | `REVIEW` | `APPROVED` | `COMPLETE` | 2 |
+| `W2` | `W2.A03` | `ECR-0011` | `planning/wave-amendment-approvals/W2.A03.json` | `ADOPTED` | `APPROVED` | `COMPLETE` | 2 |
 | `W2` | `W2.A04` | `ECR-0012` | `planning/wave-amendment-approvals/W2.A04.json` | `ADOPTED` | `APPROVED` | `COMPLETE` | 1 |
 | `W2` | `W2.A05` | `ECR-0013` | `planning/wave-amendment-approvals/W2.A05.json` | `ADOPTED` | `APPROVED` | `COMPLETE` | 2 |
 
@@ -687,7 +686,8 @@ Immutable exit rounds, the latest completion projection, and bound adoption chec
 
 **Bound amendment-adoption checkpoints:**
 
-- None
+- `W2.CP06` `security` by codex-w2-implementation at `2026-10-05T13:20:12+00:00` — Adopt exact independently approved A03 checkpoint; ordinary W2 remains PAUSED; original CAP-05.S01.T01 base6506 and all task history retained; no further framework development after closed A05.
+  - amendment `W2.A03` / `artifacts/evidence/W2.A03.adoption.json` / `62867a0f957152225a2295e8d7fbf37b1d91ae1ff9f3971fb3655bdb2540fe20` / `7ccaf1d7155c280aa39a3cc1494dd6d4368b5d77`
 
 ### Amendment-exit review and adoption — W2.A04
 
