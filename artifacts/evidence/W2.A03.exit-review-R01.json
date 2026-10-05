@@ -1,0 +1,138 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "wave-amendment-exit-independent-review",
+  "amendment_id": "W2.A03",
+  "attempt_id": "R01",
+  "reviewer": "agent:/root/a05_completion_control_review",
+  "reviewedAt": "2026-10-05T12:46:05Z",
+  "result": "approved",
+  "reviewed_state_commit": "ba2ee157753ba179c3d640be0dbdfc8748e85437",
+  "candidate_commit": "573c603e646cab41b1d011eac583d652f0f2c67a",
+  "declared_candidate_commit": "b1b88ec009018c4eea46e6d66890e6cb448bb485",
+  "evidence": {
+    "path": "artifacts/evidence/W2.A03.exit.json",
+    "sha256": "7eda25e4f286e090c38286a69f99a16dcd399280a184a9b0507aa3573c2bcb21"
+  },
+  "acceptance_criteria_sha256": "3923c8b3f89c0bc774543e002a3942e56d1f45c77a6d3a87ecd6e8da3a0c9886",
+  "selected_checks_sha256": "5879f6643030d387b43feb6a3ca9c7f2b947e1d0c813d026d79c187a1cbecec7",
+  "packet_sha256": "7071066ff3b8d95783f5e1dc950917960476e0c459ba1e0f3f1485d89668380a",
+  "notes": "Distinct independent W2.A03 exit R01 approval of the exact frozen supported REVIEW submission ba2ee157, committed exit evidence delivery 573c603e and declared checked local-main integrated candidate b1b88ec0. All five criterion strings equal the immutable owner-approved ECR-0011 packet; manifest and frozen criteria/check/packet hashes authenticate, and existing strict read-only amendment_exit_submission_errors returns no errors. Separately committed independent S01 R02 at b1b88ec0 explicitly fixes only W2.A03.S01-R01-F01 while retaining original R01, task approvals, actual failures and adverse history. Fresh actual unmocked integration at b1b88ec0 authenticates 52 admitted commits, the full original 39-commit/118-net-path T02 range, only six exact authenticated inert rows, the proper witness introduction, unchanged approved consumers and exact separately approved current A05 source attribution, with 4,748 stable tracked inputs and main equal to candidate at observation. The reporter's generic pending-closure text describes its observer scope; actual finding disposition is the separately committed canonical R02 bound by this manifest. Actual A05 adoption/exact paused return and the later separate A03 activation are authenticated. Both whole original A03 task records, all non-A03 amendments and ordinary Wave state remain unchanged through supported exit submission; no source is changed in this incremental review/evidence/submission suffix. This ledger supplies only the independent exit disposition. Separate committed A03 adoption evidence/security review and supported adoption remain due; ordinary W2 stays PAUSED and original CAP-05.S01.T01 BLOCKED at its original 6506 base until legal resume/reopen. No native/Core/joined S05/D3D/product/full Wave or human release approval follows.",
+  "independence": {
+    "campaignOwner": "codex-w2-implementation",
+    "sliceReviewer": "agent:/root/a03_closeout_review",
+    "originalTaskReviewers": ["agent:/root/maint26_independent_review", "agent:/root/a03_t02_authority_review"],
+    "statement": "I am independent of the task/campaign/source owner and authored no A03/A04/A05 source, owner approval, original task criterion manifest, baseline, capture, execution producer, receipt, S01 ledger or exit manifest. My prior A05 source/control, exit and adoption-security ledger authorship is disclosed below and reused with its exact immutable source/history bindings. Original A03/A04 packet/task/slice/control/security reviews retain their actual other reviewers and are not presented as my authorship. This distinct A03 exit review authenticates the approved five criteria, original immutable authority, later actual correction/activation, committed F01 closure and exact frozen submission. Read-only Git, hash/state/producer inspection and the existing strict semantic validator were used; no suite or observer was repeated. Only this exit ledger is authored, after the selected site pipeline completed; concurrent generated tracking projections are outside the fixed committed review inputs."
+  },
+  "criterion_dispositions": [
+    {
+      "criterionIndex": 1,
+      "result": "satisfied",
+      "basis": "Exact ECR-0011 packet commit746c05dc/SHA31a31459 and immutable owner approval c972e211/SHA8852d663 authenticate the approved original boundary and preserve distinct prior W2/A01/A02/GOV-MIG authority. Preparation independently authenticated all 55 approved reference rows and inert packet-file hashes, original task authority and packet review. The approved reference remains unchanged; the actual integrated witness/consumer checks pass. Original CAP-05.S01.T01 is still BLOCKED and retains original6506 base; no ordinary Wave state is changed by this exit submission."
+    },
+    {
+      "criterionIndex": 2,
+      "result": "satisfied",
+      "basis": "Independently authenticated the exact prior GOV-MAINT-0026 candidate/review/projection and linked W2.C10 specification/evidence/review path hashes at their recorded commits, all ancestral to the approved ECR-0011 packet. GOV26 candidate6e396c5e is the direct child of0847aea4 and changes only its own record and root quality-scope.json. Original maintenance and linked correction remain separate preceding authorities. Current shared source is attributed through the separately owner-approved and independently reviewed A04/A05 repair chains, including the exact A05 completion grant; no preceding approval is rewritten or extended."
+    },
+    {
+      "criterionIndex": 3,
+      "result": "satisfied",
+      "basis": "All six exact ancestral GOV26/C10 record-path/hash bindings in this criterion authenticate at their recorded Git commits. The fresh actual integration preserves the complete original T02 39-commit/118-path range and applies only the six independently authenticated historical W2.html rows separately from its correct endpoint inventory. Original S01 R01 remains immutable. The separate committed S01 R02 explicitly closes F01 using actual replay and reviewed A05 remediation; original failed observation, official accessibility failure and ignored producer03 assertion failure remain preserved. No source history, net inventory or old task approval is shortened or rewritten."
+    },
+    {
+      "criterionIndex": 4,
+      "result": "satisfied-at-authenticated-task-and-integrated-boundary",
+      "basis": "Both complete original A03 DONE task records, original claim bases, reviewed candidates, manifests and independent R01 ledgers remain equal to their authentic frozen records. T01 witness and T02 original consumer/baseline source bytes remain at their approved candidates; the current shared gate and label checker are separately attributed to approved A05 candidates, not silently attributed to old A03 source. All ten current report source bindings authenticate against Git and their named candidates. Inspected producer04 performs actual source/control/witness/consumer/presentation checks and passes at b1b88ec0 with stable inputs. Original ordered pinned 33-page/66-capture baseline, lineage, privacy admission and runtime/denial proof remain authenticated prior task evidence through their independent reviews; they are not relabeled fresh product/profile execution. Original two-contract/full6506/native/Core/S05/D3D product qualification remains due."
+    },
+    {
+      "criterionIndex": 5,
+      "result": "satisfied-at-exit-review-boundary-later-gates-pending",
+      "basis": "B00, both original task R01s and the actual contiguous S01 R01/R02 history have distinct immutable independent dispositions; R02 fixes the sole original integration finding. This first exit packet has no prior exit rounds or open exit findings and receives this distinct review. Actual frozen lifecycle/campaign/completion are REVIEW, leases are cleared, active_amendment is null and ordinary W2 remains PAUSED/amendment-hold. Separate committed adoption manifest and security ledger must precede supported A03 adoption. Adoption must leave W2 PAUSED and original CAP-05.S01.T01 BLOCKED until explicit legal resume/reopen; remaining product and full Wave qualification and human release remain separate."
+    }
+  ],
+  "independent_exit_observations": [
+    {
+      "boundary": "Exact frozen submission and supported state change",
+      "result": "passed",
+      "manifestIntroductionCommit": "573c603e646cab41b1d011eac583d652f0f2c67a",
+      "manifestGitBlob": "a238eaf7b29c9aada5030dfcd67ae358e01bc17e",
+      "strictSubmissionErrors": [],
+      "observation": "b1b88ec0 introduces only canonical S01 R02; its direct child573c603e introduces only the exit manifest; direct childba2ee157 changes only backlog through supported exit submission. All manifest criterion strings, candidate/branch/task/evidence references and canonical criteria/check/packet digests match the exact frozen R01. Prior attempt is null, exit attempts are empty and open exit findings are empty. Both original tasks remain wholly unchanged DONE/approved, without task leases/current submissions. All non-A03 amendments and all other backlog values are preserved except the supported active_amendment A03-to-null projection. A05 and A04 remain ADOPTED."
+    },
+    {
+      "boundary": "Committed independent S01 finding disposition",
+      "result": "passed",
+      "review": {
+        "path": "artifacts/evidence/W2.A03.S01.review-02.json",
+        "introductionCommit": "b1b88ec009018c4eea46e6d66890e6cb448bb485",
+        "sha256": "f0dcf32b030fa2a40eb302770008f99542c594efb8ae6372490a2fcfefdb0b5f"
+      },
+      "observation": "R02 has one immutable introduction, result approved, empty findings/openFindingIds and exactly one explicit fixed closure of W2.A03.S01-R01-F01. It binds actual reviewed delivery f41245a3 and original task candidates. Its prior R01, actual integrated report/raw/producer and declared adverse evidence hashes authenticate. The exit manifest names both canonical rounds and their original task bindings. This first exit R01 does not close the already separately closed slice finding again or invent a prior exit round."
+    },
+    {
+      "boundary": "Fresh exact committed integrated candidate and source/input proof",
+      "result": "passed",
+      "report": {"path": "artifacts/tmp/W2.A03.S01.integrated-02-b1b88ec0.json", "sha256": "4129f1591b8fd55ded708f76969a8453525ac6b24eba89d628a06de5ea9d1894"},
+      "rawOutput": {"path": "artifacts/tmp/W2.A03.S01.integrated-02-b1b88ec0.log", "sha256": "ec96027a524283616ac0f4fe51b0d2c59f4305a2125c0787eb855d7a4f3cb70b"},
+      "producer": {"path": "artifacts/tmp/W2.A03.S01.inspect-integrated-04.py", "sha256": "ea34e445019fc806c1a115d7ba18ac62b0ee7c681c5399e54139fa45958cdea4"},
+      "observedAt": "2026-10-05T12:30:57.636458+00:00",
+      "observation": "Report and retained raw JSON are equivalent; all hashes authenticate and producer04 is unchanged from inspected F01 replay. Actual candidate/main are b1b88ec0, ok/stable are true and 4,748 tracked inputs are recorded. Counts are52 admitted,39 retained,118 net paths and6 authenticated inert rows. Proper witness introduction9824e2ba and exact consumer commitsda0f1328/aab29ed2 are retained. All ten source bindings match committed bytes at current and named reviewed candidates. The actual owner-observed execution exits0; no execution is repeated by this reviewer. Old generic pending-closure wording is preserved as an observer-scope limit and does not supersede committed reviewer R02."
+    },
+    {
+      "boundary": "Actual adoption/return/activation and CAS evidence truth",
+      "result": "passed",
+      "observation": "The authenticated actual A05 return report at c7728020 binds adoption79556040 and stable original paused A03; separate backlog-only activation731f1389 precedes checked viewsf41245a3. The current integrated report authenticates that real chain and final a1265a84 source with require_review=True. The supported A03 exit-submit receipt records matched-and-replaced CAS from producer commit573c603e. Its predecessor b5a3cd62 and successor54441565 digests match the physical CRLF representations of the committed predecessor/successor backlog bytes; Git stores the LF representation. Receipt authority remains evidence-only and does not substitute for immutable Git/state review or prove runner identity."
+    }
+  ],
+  "reused_prior_review_roles": [
+    {
+      "path": "artifacts/evidence/W2.A05.S01.addendum-01.execution.review-01.json",
+      "introductionCommit": "826be75db330e174a845926bfdedae1b765fdc94",
+      "sha256": "6c50e805d0cc3016ac705686637c6c1dc464d7b2edf1564a034d45d6e41d60d9",
+      "role": "My prior independent exact a1265a84 source/control review and23-check/seven-receipt audit; actual later source/helper attribution authenticates the same approved segment. No source audit or suite repeated."
+    },
+    {
+      "path": "artifacts/evidence/W2.A05.exit-review-R01.json",
+      "introductionCommit": "f2221fdfd60061d4d5782c490500bc74c314f8a2",
+      "sha256": "282a13c1c5a02c236497622087db4c52e62516f421f173159835597e2d4fdfc3",
+      "role": "My prior distinct A05 exit review, co-published with its actual approved backlog; actual A05 adoption/return and A03 R02 retain this authority."
+    },
+    {
+      "path": "artifacts/evidence/W2.A05.adoption.review-01.json",
+      "introductionCommit": "6599d2ffd43bdc5bf7234955f4c69cd3000ecdd0",
+      "sha256": "c2d73a5a77dc5f3ba09b2917fd51089721ea0ef6c5758201f30cf61e31780902",
+      "role": "My prior separate A05 security review after manifest3ef71fca and before actual adoption79556040; its exact paused-return contract is now supported by actual return observation, not inferred from fixtures."
+    }
+  ],
+  "proof_limits": [
+    "This approval is only W2.A03 exit R01 at exact frozen stateba2ee157 and bound manifest7eda25e4. Separate A03 security review, adoption and actual post-adoption state observation remain pending; no ordinary W2 resume or release approval follows.",
+    "Historical original task runtime/capture/accessibility, privacy admission and denial executions retain their original candidates and independent reviewers. Fresh current Git/control/witness/consumer integration does not assert new product/native/Core or full profile execution. Synthetic future histories and mocked capture readers remain control proof only.",
+    "Original official accessibility failure and S01 adverse R01 remain immutable. Separate A03 S01 R02 evidences closure of F01. Ignored producer03 assertion failure and corrected04 remain distinct retained records; no governed product/control assertion was weakened.",
+    "Actual owner-authorized history and immutable human/agent role labels establish byte/history consistency, not cryptographic identity or qualification of a fabricated alternate first-introduction fork. No new framework hardening is inferred or authorized.",
+    "Keep this exit ledger untracked during supported taskctl review, then co-publish it with the actual approved backlog disposition. A later separate adoption manifest and independent security ledger must be committed before actual adoption.",
+    "The owner forbids further automation/framework source development, maintenance, new framework amendment or optional styling after A05. Original W2 implementation/refactor baseline, 18 unfinished ordinary product tasks, joined S05, original native/Core/full6506/fifth-D3D proof, remaining full Wave checks and human release remain unchanged."
+  ],
+  "pending_adoption_contract": {
+    "approvedExitAttempt": "R01",
+    "requiresSeparateCommittedAdoptionEvidence": true,
+    "requiresSeparateCommittedIndependentSecurityReview": true,
+    "requiresTaskctlAdopt": true,
+    "requiresActualPostAdoptionObservation": true,
+    "expectedOrdinaryWaveStatus": "PAUSED",
+    "expectedOriginalTaskId": "CAP-05.S01.T01",
+    "expectedOriginalTaskStatus": "BLOCKED",
+    "expectedOriginalTaskBase": "6506c68461144747b0ee9be10853211717aa381d",
+    "requiresSeparateLegalOrdinaryResumeAndReopen": true,
+    "releaseApprovalGranted": false
+  },
+  "findings": [],
+  "closures": [],
+  "reviewerSafety": {
+    "sourceMutation": false,
+    "backlogOrViewMutation": false,
+    "producerMutation": false,
+    "gitRefMutation": false,
+    "suiteOrObserverReruns": 0,
+    "canonicalFilesAuthored": ["artifacts/evidence/W2.A03.exit-review-R01.json"]
+  }
+}
