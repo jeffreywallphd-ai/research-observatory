@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 462362adceacccd2f43121ef775562544965f0ffe152c95d537eeb239e5b5614
+source_sha256: eea2e6bfcb4a5161e0684923b425ef95200817e70cb92a4498d948d407371276
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -54,7 +54,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 | `W2` | `W2.A02` | `ECR-0010` | `planning/wave-amendment-approvals/W2.A02.json` | `ADOPTED` |
 | `W2` | `W2.A03` | `ECR-0011` | `planning/wave-amendment-approvals/W2.A03.json` | `PAUSED` |
 | `W2` | `W2.A04` | `ECR-0012` | `planning/wave-amendment-approvals/W2.A04.json` | `ADOPTED` |
-| `W2` | `W2.A05` | `ECR-0013` | `planning/wave-amendment-approvals/W2.A05.json` | `ACTIVE` |
+| `W2` | `W2.A05` | `ECR-0013` | `planning/wave-amendment-approvals/W2.A05.json` | `PAUSED` |
 
 ## Waves
 
@@ -3063,13 +3063,14 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 **Approval record:** `planning/wave-amendment-approvals/W2.A05.json` (`9ad5b3f5fca7d3fd9c7fd8a42200f570f46250d506765b30e2705e299c7e8101`)
 
-**Lifecycle / bootstrap / campaign / completion:** `ACTIVE` / `APPROVED` / `ACTIVE` / `PENDING`
+**Lifecycle / bootstrap / campaign / completion:** `PAUSED` / `APPROVED` / `PAUSED` / `PENDING`
 
 **Append-only lifecycle history:**
 
 - `E01` `APPROVED` at `2026-10-04T20:48:39Z` by human:repository-owner: The repository owner answered 'Approved' after the exact ECR-0013/W2.A05 request identifying candidate55c6389ce39a656f4da3851cae32ae12ac80e796 and packet SHA-25656f521d708266021121b2a3391506cc771c7d32e32442d29dc5e58ba356f20c1. This approves the two ordered checker-repair tasks within their five-path and four-path envelopes, exact preceding independently reviewed GOV-MAINT-0027 source/history recognition, bounded bootstrap and required independent task/slice/exit/security reviews. Preserve both DONE A03 task approvals, whole paused A03 and adopted A04, prior failures, original6506 base, accepted ADRs and unchanged approved1.8 reference/baseline. Actual reviewed adoption returns only to paused A03, whose separate activation/finding closure/exit/adoption precede ordinary W2 resume. No ordinary task/native/Core/Wave completion or release is approved. The user-requested7:25pm America/New_York October4 stop remains in force; this timestamp records binding of the explicit answer to its exact reviewed packet.
 - `E02` `MATERIALIZED` at `2026-10-04T22:49:28+00:00` by codex-w2-implementation: Materialized the exact human-approved task inventory.
 - `E03` `ACTIVE` at `2026-10-04T23:07:30+00:00` by codex-w2-implementation: Activated the bounded amendment campaign.
+- `E04` `PAUSED` at `2026-10-05T08:34:12+00:00` by codex-w2-implementation: Actual integrated S01 finding W2.A05.S01-R01-F01: root committed immutable task R01 ledgers before supported DONE publications. Both approvals remain valid; integrated gate rejects their exact direct-child histories. Existing reopen/correction routes cannot preserve completed non-overlapping ranges. Inert exact four-path A05-only completion source addendum at 09f58b8a is under independent readiness review; explicit owner approval is required before additional source delivery. Preserve paused A03 and ordinary W2, all task/history/adverse evidence and no framework work after A05.
 
 ### Amendment-exit review and adoption — W2.A05
 

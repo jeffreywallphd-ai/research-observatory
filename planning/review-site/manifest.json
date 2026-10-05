@@ -41431,9 +41431,9 @@
       "approval_path": "planning/wave-amendment-approvals/W2.A05.json",
       "approval_sha256": "9ad5b3f5fca7d3fd9c7fd8a42200f570f46250d506765b30e2705e299c7e8101",
       "approval_status": "APPROVED",
-      "lifecycle_status": "ACTIVE",
+      "lifecycle_status": "PAUSED",
       "bootstrap_status": "APPROVED",
-      "campaign_status": "ACTIVE",
+      "campaign_status": "PAUSED",
       "bootstrap_attempts": [
         {
           "id": "R01",
