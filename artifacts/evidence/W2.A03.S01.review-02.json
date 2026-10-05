@@ -1,0 +1,168 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "amendment-contribution-independent-review",
+  "amendmentId": "W2.A03",
+  "sliceId": "W2.A03.S01",
+  "capabilityId": "CAP-05",
+  "title": "Approved 1.8 desktop verification and consumer activation",
+  "reviewer": "agent:/root/a03_closeout_review",
+  "reviewedAt": "2026-10-05T12:17:25Z",
+  "result": "approved",
+  "reviewedCompletionDeliveryCommit": "f41245a3e8a2896d495028909d2481526686af4d",
+  "taskBindings": [
+    {"taskId": "W2.A03.T01", "candidateCommit": "aa09664678ca3ca8fa7a428cb60f3565d2c0e9bd"},
+    {"taskId": "W2.A03.T02", "candidateCommit": "06a69348c5de5c60cccecde400ab2271200ec50d"}
+  ],
+  "reviewScope": "Independent incremental replay of W2.A03.S01-R01-F01 at the actual integrated candidate after independently reviewed A05 adoption, exact paused-parent return and separate A03 activation.",
+  "notes": "The retained integration finding is fixed. Fresh actual unmocked control, witness and consumer history authentication passes at clean HEAD/main f41245a3 with 4,747 stable tracked inputs. The exact original T02 range remains 39 commits and its correct immutable net inventory remains 118 paths. Only the six independently authenticated historical regular W2.html rows are attributed separately; no source range or original manifest is shortened or rewritten. A05 was actually adopted after its separate S01, exit and committed security dispositions; its actual return preserved the whole frozen paused A03 record. A03 then activated through a separate backlog-only commit, with both original tasks still DONE. Current witness and consumers match the original approved candidates, while shared gate and label-checker sources match the separately approved reviewed A05 candidates. Original task approvals, S01 adverse R01, official accessibility failure and all other adverse history remain intact. This disposition approves only the integrated A03.S01 boundary and explicitly closes its original F01. A03 exit, separate security review and supported adoption remain due before ordinary W2 resume; product, native/Core, joined CAP-04.S05, D3D, full Wave and human release obligations remain separate.",
+  "independence": {
+    "implementationOwner": "codex-w2-implementation",
+    "statement": "This reviewer is independent of the task/campaign owner and authored no A03/A04/A05 source, owner approval, task criterion manifest, baseline, capture, execution producer, receipt, backlog or planning view. I read and authenticated the earlier independent task, repair, slice, exit and security dispositions; those authors retain their actual identities and are not presented as my reviews. Preparation and this incremental review used read-only committed Git, source/state comparisons, producer inspection and retained artifact hashes. No suite or observer was repeated. Only this canonical S01 review-02 is authored during this review; no source, tracker, view or Git ref is mutated."
+  },
+  "priorReview": {
+    "path": "artifacts/evidence/W2.A03.S01.review-01.json",
+    "introductionCommit": "8df89ca1ff4b571f65af6a1b415e60d254944d50",
+    "sha256": "75d03f4f1d72ee966e70bcbdf66a7afc9bcbdb9fa222533e02d7c52e3d9f76f3",
+    "result": "changes-requested",
+    "openFindingIds": ["W2.A03.S01-R01-F01"]
+  },
+  "authorityBindings": {
+    "approvedPacketCommit": "746c05dcd7dbabaa7f5eebee8e3fa56b8ac6b9b5",
+    "packetPath": "planning/enabler-change-requests/ECR-0011.packet.json",
+    "packetSha256": "31a31459b0895316972203e6b2b301ca9bc2fb83bdd566034ff61e1bc0a3b0e3",
+    "approvalPath": "planning/wave-amendment-approvals/W2.A03.json",
+    "approvalSha256": "8852d6631a6656e94cc75e4f9dc705c7095ecf111786748e5630fe13b8fa9087",
+    "approvalIntroductionCommit": "c972e2116113afa7ad84f0e43bdad58660cc69bb",
+    "referenceId": "RO-UI-ACADEMIC-MINIMAL-1.8",
+    "referencePackageSha256": "cd8995fdcea2fe44452eaa1fdd258b6f9fab5714cbd443a81a8e5b4251220b94",
+    "frozenPausedA03Commit": "771e54a3657cdc5ff308d3a53d7b71eb48bb9214",
+    "frozenPausedA03CanonicalSha256": "bdad5e81327e32ee322db436dc569898ce314d29058e53b0cfe67ed6192e0b03",
+    "correctionAmendments": ["W2.A04", "W2.A05"],
+    "a05CompletionSourceCommit": "a1265a84cedf68d04093f4d62edc82743752175c",
+    "a05CompletionOwnerCommit": "25ba8eee0bc96704a9fc42a752b766ca1b936d32",
+    "a05CompletionSourceReview": {
+      "path": "artifacts/evidence/W2.A05.S01.addendum-01.execution.review-01.json",
+      "introductionCommit": "826be75db330e174a845926bfdedae1b765fdc94",
+      "sha256": "6c50e805d0cc3016ac705686637c6c1dc464d7b2edf1564a034d45d6e41d60d9"
+    },
+    "actualA05AdoptionCommit": "79556040fff511246a6a4cc6d9858254f8713911",
+    "checkedA05PausedReturnCommit": "c7728020724b474450a64b4b29ce7104bb4011ce",
+    "separateA03ActivationCommit": "731f1389ba97691ed5fa8cbf2cedad3c0c401687",
+    "checkedA03ActivationViewsCommit": "f41245a3e8a2896d495028909d2481526686af4d"
+  },
+  "taskReviewReferences": [
+    {
+      "taskId": "W2.A03.T01",
+      "status": "DONE",
+      "reviewResult": "approved",
+      "attemptId": "R01",
+      "candidateCommit": "aa09664678ca3ca8fa7a428cb60f3565d2c0e9bd",
+      "baseCommit": "cd61bae9681690f92b754e443cd61f2c62026288",
+      "manifest": {"path": "artifacts/evidence/W2.A03.T01.json", "sha256": "3c16cfc101bfd9aea58197b44eab35c628180ae718b366da43eef8e1a89f883a"},
+      "ledger": {"path": "artifacts/evidence/W2.A03.T01.review-R01.json", "sha256": "c0c9c10e3e6d271edd13db1c767ed8d4d07b5564b8a28f5b4c383173cf14d159"}
+    },
+    {
+      "taskId": "W2.A03.T02",
+      "status": "DONE",
+      "reviewResult": "approved",
+      "attemptId": "R01",
+      "candidateCommit": "06a69348c5de5c60cccecde400ab2271200ec50d",
+      "baseCommit": "ca8b1448e094b637bbd06c3129b69a78df792619",
+      "manifest": {"path": "artifacts/evidence/W2.A03.T02.json", "sha256": "6c7d9b8491f33e529001cde6bf9327c7412e9cdada9f8644b2d4af5f23d2855f"},
+      "ledger": {"path": "artifacts/evidence/W2.A03.T02.review-R01.json", "sha256": "6dddd39b9a0303fa2febd78d00e3bc6d7106038c111b7181bf406b82af68ff15"}
+    }
+  ],
+  "criterionDispositions": [
+    {
+      "criterionIndex": 1,
+      "result": "satisfied-at-reviewed-control-boundary",
+      "basis": "The authentic independent T01 R01 and unchanged committed witness bind the exact approved 1.8 package, frozen 1.5 semantic root, closed v1.4 control and retained old denials. Fresh actual integrated presentation compatibility passes. The witness was first introduced at 9824e2ba within the reviewed T01 range; aa096646 is the later reviewed candidate. Separately reviewed A04/A05 source attribution preserves the original controls and authority boundaries. Historical task executions are authenticated prior proof, not a newly executed full original-task lane."
+    },
+    {
+      "criterionIndex": 2,
+      "result": "satisfied-at-reviewed-consumer-boundary",
+      "basis": "The original independent T02 R01 authenticates ordered T01-before-consumer delivery, both 1.8 assemblers and extension, guarded 33-page/66-capture baseline, prior 1.7 lineage, input/settings preservation and reference-only exclusion. Current consumer and baseline bytes match their exact approved candidate. Fresh actual consumer identity and reviewed-history checks pass. The approved reference Git tree remains identical to publication acdc67b6. Historical capture/runtime proof remains bound to its original candidates; original official accessibility failure is preserved alongside the later separately reviewed A05 exact-candidate official accessibility PASS. No fresh product or native qualification is inferred."
+    },
+    {
+      "criterionIndex": 3,
+      "result": "satisfied-at-integrated-slice-boundary-later-gates-pending",
+      "basis": "Fresh actual unmocked combined authentication at f41245a3 passes reviewed A05 authority and final source attribution, exact A04/A03 control-to-consumer history, witness and consumer identities, full retained 39-commit/118-net-path inventory and only six exact authenticated inert rows. The original high blocking F01 is explicitly fixed below. Reviewed A05 hostile source/projection/overlap/history/return denials and its 23-check completion-source disposition remain authentic prior proof. Failure recovery preserves immutable approvals, adverse descendants and the ordinary W2 hold. This independent S01 disposition precedes A03's separate exit and security/adoption reviews; it supplies none of those later approvals."
+    }
+  ],
+  "actualIntegratedEvidence": {
+    "report": {"path": "artifacts/tmp/W2.A03.S01.integrated-02-f41245a3.json", "sha256": "bee9f594fb8d7543df9ceb9099adf3292efcc9f2de45adbf1fbdc508a739d4b1"},
+    "rawOutput": {"path": "artifacts/tmp/W2.A03.S01.integrated-02-f41245a3-corrected.log", "sha256": "7fb1f8d3523a8d925f78914e47332c0c774dd7d4c39a0837d70ede0513bcda44"},
+    "producer": {"path": "artifacts/tmp/W2.A03.S01.inspect-integrated-04.py", "sha256": "ea34e445019fc806c1a115d7ba18ac62b0ee7c681c5399e54139fa45958cdea4"},
+    "command": ".venv/Scripts/python.exe -B artifacts/tmp/W2.A03.S01.inspect-integrated-04.py",
+    "candidateCommit": "f41245a3e8a2896d495028909d2481526686af4d",
+    "main": "f41245a3e8a2896d495028909d2481526686af4d",
+    "observedAt": "2026-10-05T12:15:45.078055+00:00",
+    "result": "passed",
+    "exitCode": 0,
+    "stableCandidate": true,
+    "trackedInputCount": 4747,
+    "reviewedCommitCount": 52,
+    "retainedActualA03CommitCount": 39,
+    "retainedActualA03NetPathCount": 118,
+    "authenticatedInertProjectionCount": 6,
+    "reviewerReruns": 0
+  },
+  "independentChecks": [
+    {
+      "check": "Exact original approvals, source bindings and stable integrated candidate",
+      "result": "passed",
+      "observation": "Independently recomputed immutable ECR-0011/owner, original task manifests/R01 ledger and S01 R01 hashes. Complete current original A03 task records equal the frozen paused predecessor, retaining DONE/approved, original bases and no pending submission or task lease. Independently compared all ten report source bindings against both current committed bytes and their exact original or approved A05 candidates. No source changed in the completion-review-to-current suffix; only evidence, supported backlog transitions and generated projections changed. HEAD and local main equal f41245a3 and the worktree was clean before this ledger."
+    },
+    {
+      "check": "Original finding's exact retained Git history",
+      "result": "passed",
+      "observation": "Independent Git derivation corroborates 39 ca8b1448-to-06a69348 commits and 118 endpoint paths. The only paths absent from that net inventory are planning/review-site/waves/W2.html at 7f35c7a8, a8f864b8, 53673ae2, 75d8d094, 51245218 and f967f971; base and final page bytes are equal. Fresh actual producer successfully applies only the authenticated six-row map before generic subset rejection and passes final attribution. Original immutable net inventory and all 39 historical commits remain intact."
+    },
+    {
+      "check": "Actual correction reviews, adoption, exact return and separate activation",
+      "result": "passed",
+      "observation": "Authenticated A05 S01 R02 introduction d5f956c5/SHA 79dc525d, actual exit-ledger/disposition publication f2221fdf/SHA 282a13c1, manifest 3ef71fca/SHA 3ca9bde2 and separate security ledger 6599d2ff/SHA c2d73a5a before actual adoption 79556040. The actual c7728020 return report independently hashes to a926d04952a4213c6a25d20cff5b74ccd87c24ad66d68807d7818ea1ea1712da and the whole returned A03 record equals frozen 771e54. Separate 731f1389 changes only backlog activation/campaign fields; checked f412 changes only six projections. All non-A03 amendments and ordinary Wave records equal the return state. The fresh actual A03 report authenticates this real ordering, not future fixture adoption."
+    },
+    {
+      "check": "Actual execution provenance and preserved observer error",
+      "result": "passed",
+      "observation": "Inspected original 03 and corrected 04 producer code. Independently matched report, corrected raw output and producer hashes; corrected raw JSON equals the report. The actual producer exit 0 was observed by the execution owner; its real Git/helper calls, current consumer/presentation checks and stability of 4,747 inputs are supported by the inspected code and retained output. Original 03 exit 1 log and producer hashes match their immutable adverse pins. Independent Git introduction/ancestry confirms witness 9824e2ba, so the corrected assertion names the proper historical introduction instead of later candidate aa096646. This was an ignored evidence-producer assertion error; no governed implementation, criterion or product assertion was changed."
+    }
+  ],
+  "adverseEvidencePreserved": [
+    {"path": "artifacts/evidence/W2.A03.S01.review-01.json", "sha256": "75d03f4f1d72ee966e70bcbdf66a7afc9bcbdb9fa222533e02d7c52e3d9f76f3", "disposition": "Original changes-requested review remains immutable; only its F01 receives the explicit subsequent closure."},
+    {"path": "artifacts/tmp/W2.A03.S01.integrated-02-f41245a3.log", "sha256": "a841843f3ac72031e108883239f6099a5063e70de3170157c471dafb656c3bea", "exitCode": 1, "disposition": "Original03 witness-introduction assertion error retained as failed producer observation."},
+    {"path": "artifacts/tmp/W2.A03.S01.inspect-integrated-03.py", "sha256": "03a83df433edae6b94ad4ce3d5050ea7b6fd1383acd3167eb4125c0266064ddc", "disposition": "Original failed producer preserved separately from corrected04."}
+  ],
+  "proofLimits": [
+    "The fresh actual integration proves current control/Git/witness/consumer history. Historical exact-task captures, browser/runtime/accessibility and denial checks retain their original candidates and dispositions; this review repeats no suite and claims no fresh native or full profile execution.",
+    "A05 fixture future reviews, adoption/return and mocked capture readers remain synthetic control proof. Actual A05 adoption and separate A03 activation are now observed through the committed real chain and fresh integrated report; they are not inferred from those fixtures.",
+    "Immutable records and human/agent role labels establish consistency of the actual owner-authorized history, not cryptographic identity or approval of an alternate fabricated first-introduction fork. No new framework hardening or source work is authorized.",
+    "This review closes only W2.A03.S01-R01-F01 and approves S01. It does not approve A03 exit/security/adoption, ordinary W2 resume, original CAP-05.S01.T01 completion, native/Core/joined CAP-04.S05/D3D, full W2 qualification or human release."
+  ],
+  "findings": [],
+  "closures": [
+    {
+      "finding_id": "W2.A03.S01-R01-F01",
+      "disposition": "fixed",
+      "evidence": "Owner-approved ECR-0013/W2.A05 repair and its exact completion source a1265a84, execution evidence 63ef71c2 and independent control approval 826be75d authenticate only the six byte/mode/parent-bound reviewed historical W2.html rows separately from the correct immutable net source inventory. Original task candidates/bases/R01 approvals and the full 39-commit/118-path T02 history remain unchanged; unreviewed output, hidden source and overlap denials retain independently reviewed proof. Actual A05 S01/exit/separate security reviews preceded adoption 79556040 and exact still-paused A03 return c7728020; separate backlog-only A03 activation 731f1389 preceded checked integrated candidate f41245a3e8a2896d495028909d2481526686af4d. Fresh actual unmocked producer 04 exits 0 and passes repaired history/source, exact witness and consumer authentication with 4,747 stable tracked inputs. Report artifacts/tmp/W2.A03.S01.integrated-02-f41245a3.json SHA256 bee9f594fb8d7543df9ceb9099adf3292efcc9f2de45adbf1fbdc508a739d4b1; corrected raw log SHA256 7fb1f8d3523a8d925f78914e47332c0c774dd7d4c39a0837d70ede0513bcda44; inspected producer SHA256 ea34e445019fc806c1a115d7ba18ac62b0ee7c681c5399e54139fa45958cdea4. Independent Git and artifact checks corroborate the exact original six-row mismatch and approved source/current state. Original S01 R01, failed integrated observation, original official accessibility failure and producer 03 assertion failure remain adverse and preserved. This is evidenced remediation, not an accepted-risk waiver, rewritten inventory, shortened base or retrospective task finding."
+    }
+  ],
+  "openFindingIds": [],
+  "requiredNextGate": "Commit this independent S01 review-02, then authenticate its immutable contiguous finding history and complete distinct A03 exit, separate committed security review and supported adoption before ordinary W2 resume.",
+  "retainedObligations": [
+    "A03 exit and separate committed security checkpoint review precede supported adoption; generic exit review publication must co-publish its immutable ledger with the actual supported disposition. Security manifest and distinct security ledger must be committed before adoption.",
+    "Ordinary W2 remains paused and original CAP-05.S01.T01 remains blocked at its original 6506 base until the lawful separate ordinary resume/reopen. Its current classification, two-contract/full-base, product/native/Core, authentic fifth-D3D and joined CAP-04.S05 proof remain due.",
+    "Remaining original W2 product work, fresh full repository/profile/security/privacy/rights/accessibility/performance/packaging/cross-capability qualification, independent Wave review and separate human release remain due.",
+    "The owner forbids further automation/framework source development, maintenance, a new framework amendment or optional styling after A05. Required workflow operations and ignored evidence producers remain permitted."
+  ],
+  "reviewerSafety": {
+    "sourceMutation": false,
+    "backlogOrViewMutation": false,
+    "producerMutation": false,
+    "gitRefMutation": false,
+    "remoteEffect": false,
+    "suiteOrObserverReruns": 0,
+    "canonicalFilesAuthored": ["artifacts/evidence/W2.A03.S01.review-02.json"]
+  }
+}
