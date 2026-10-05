@@ -1490,7 +1490,7 @@ waves:
     notes: Owner explicitly approved the complete W2 execution packet and requested implementation; G1 prototype limitations
       remain recorded, not waived.
   campaign:
-    status: ACTIVE
+    status: PAUSED
     scope: wave
     owner: codex-w2-implementation
     branch: codex/w2-implementation
@@ -1499,13 +1499,13 @@ waves:
     profile: LOC
     platform: windows-x64
     started_at: '2026-09-19T17:21:58+00:00'
-    updated_at: '2026-10-05T13:45:23+00:00'
-    pause_reason: null
-    pause_category: null
-    lease:
-      claimed_by: codex-w2-implementation
-      claimed_at: '2026-10-05T13:45:23+00:00'
-      expires_at: '2026-10-06T13:45:23+00:00'
+    updated_at: '2026-10-05T15:21:54+00:00'
+    pause_reason: 'Temporary linked product correction boundary: joined CAP-04.S05 cannot publish a valid page when the due
+      heartbeat contends with its active publication writer. All amendments are ADOPTED and CAP-05.S01.T01 is explicitly blocked
+      with original 6506 base preserved. Restore approved T02 publication behavior through the existing correction route;
+      no security redesign or owner decision is required.'
+    pause_category: infeasible
+    lease: null
     corrective_tasks:
     - title: Implement idempotent import commits and import manifests
       objective: Batch transaction and manifest linking source file hash, parser version, record decisions, errors, and resulting
@@ -3839,7 +3839,7 @@ waves:
     notes: Adopt exact independently approved A03 checkpoint; ordinary W2 remains PAUSED; original CAP-05.S01.T01 base6506
       and all task history retained; no further framework development after closed A05.
   completion:
-    status: IN_PROGRESS
+    status: PAUSED
     reviewer: null
     reviewed_at: null
     evidence: []
