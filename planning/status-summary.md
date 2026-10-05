@@ -1,7 +1,7 @@
 ---
 document_type: generated-backlog-status-summary
 source: planning/backlog.yaml
-source_sha256: 5df35ff4805cc39f409e65ae66010956098af4d658d0d983661e86b0a3d2a619
+source_sha256: 875766aab90625c9649f7e59cea2ebc818b759cb1850333b30a05dd5be55042a
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -90,7 +90,7 @@ Proposal approval, materialization lifecycle, and campaign state remain distinct
 | `W1` | `W1.A09` | `ECR-0008` | `planning/wave-amendment-approvals/W1.A09.json` | `ADOPTED` | `APPROVED` | `COMPLETE` | 4 |
 | `W2` | `W2.A01` | `ECR-0009` | `planning/wave-amendment-approvals/W2.A01.json` | `ADOPTED` | `APPROVED` | `COMPLETE` | 2 |
 | `W2` | `W2.A02` | `ECR-0010` | `planning/wave-amendment-approvals/W2.A02.json` | `ADOPTED` | `APPROVED` | `COMPLETE` | 1 |
-| `W2` | `W2.A03` | `ECR-0011` | `planning/wave-amendment-approvals/W2.A03.json` | `REVIEW` | `APPROVED` | `REVIEW` | 2 |
+| `W2` | `W2.A03` | `ECR-0011` | `planning/wave-amendment-approvals/W2.A03.json` | `REVIEW` | `APPROVED` | `COMPLETE` | 2 |
 | `W2` | `W2.A04` | `ECR-0012` | `planning/wave-amendment-approvals/W2.A04.json` | `ADOPTED` | `APPROVED` | `COMPLETE` | 1 |
 | `W2` | `W2.A05` | `ECR-0013` | `planning/wave-amendment-approvals/W2.A05.json` | `ADOPTED` | `APPROVED` | `COMPLETE` | 2 |
 
@@ -647,9 +647,11 @@ Immutable exit rounds, the latest completion projection, and bound adoption chec
 
 ### Amendment-exit review and adoption — W2.A03
 
-**Exit-review mode:** `append-only v1` / 0 completed round(s)
+**Exit-review mode:** `append-only v1` / 1 completed round(s)
 
-**Current immutable amendment-exit submission awaiting review:** `R01` / packet SHA-256 `7071066ff3b8d95783f5e1dc950917960476e0c459ba1e0f3f1485d89668380a`
+#### Exit round R01
+
+**Immutable amendment-exit packet:** `R01` / packet SHA-256 `7071066ff3b8d95783f5e1dc950917960476e0c459ba1e0f3f1485d89668380a`
 
 - Candidate / declared candidate / branch: `573c603e646cab41b1d011eac583d652f0f2c67a` / `b1b88ec009018c4eea46e6d66890e6cb448bb485` / `codex/w2-implementation`
 - Submitted by / at: codex-w2-implementation / `2026-10-05T12:32:11+00:00`
@@ -659,11 +661,29 @@ Immutable exit rounds, the latest completion projection, and bound adoption chec
 - Selected checks: `.venv/Scripts/python.exe -B artifacts/tmp/W2.A03.S01.inspect-integrated-04.py`
 - Prior round / replayed open findings: `-` / -
 
-**Latest completion projection:** `REVIEW` by - at `-`
+**Disposition / reviewer / time:** `approved` / agent:/root/a05_completion_control_review / `2026-10-05T12:51:29+00:00`
+
+**Reviewed state commit:** `ba2ee157753ba179c3d640be0dbdfc8748e85437`
+
+**Immutable exit-review ledger:** `artifacts/evidence/W2.A03.exit-review-R01.json` / `053be7c26fc30ae8c12c2fe75fa04284d9f96a8896dfe651e5fe4a8856bf9912`
+
+**Review notes:** Distinct independent W2.A03 exit R01 approval of the exact frozen supported REVIEW submission ba2ee157, committed exit evidence delivery 573c603e and declared checked local-main integrated candidate b1b88ec0. All five criterion strings equal the immutable owner-approved ECR-0011 packet; manifest and frozen criteria/check/packet hashes authenticate, and existing strict read-only amendment_exit_submission_errors returns no errors. Separately committed independent S01 R02 at b1b88ec0 explicitly fixes only W2.A03.S01-R01-F01 while retaining original R01, task approvals, actual failures and adverse history. Fresh actual unmocked integration at b1b88ec0 authenticates 52 admitted commits, the full original 39-commit/118-net-path T02 range, only six exact authenticated inert rows, the proper witness introduction, unchanged approved consumers and exact separately approved current A05 source attribution, with 4,748 stable tracked inputs and main equal to candidate at observation. The reporter's generic pending-closure text describes its observer scope; actual finding disposition is the separately committed canonical R02 bound by this manifest. Actual A05 adoption/exact paused return and the later separate A03 activation are authenticated. Both whole original A03 task records, all non-A03 amendments and ordinary Wave state remain unchanged through supported exit submission; no source is changed in this incremental review/evidence/submission suffix. This ledger supplies only the independent exit disposition. Separate committed A03 adoption evidence/security review and supported adoption remain due; ordinary W2 stays PAUSED and original CAP-05.S01.T01 BLOCKED at its original 6506 base until legal resume/reopen. No native/Core/joined S05/D3D/product/full Wave or human release approval follows.
+
+**Findings opened:**
+
+- None
+
+**Prior finding closures:**
+
+- None
+
+**Current immutable amendment-exit submission awaiting review:** None
+
+**Latest completion projection:** `APPROVED` by agent:/root/a05_completion_control_review at `2026-10-05T12:51:29+00:00`
 
 **Latest completion evidence:** `artifacts/evidence/W2.A03.exit.json`
 
-**Latest completion notes:** Submit exact approved A03 contribution after independent S01 R02 fixed F01; retain original tasks and A04/A05 history. Distinct exit and security reviews and adoption precede ordinary W2 product resume.
+**Latest completion notes:** Distinct independent W2.A03 exit R01 approval of the exact frozen supported REVIEW submission ba2ee157, committed exit evidence delivery 573c603e and declared checked local-main integrated candidate b1b88ec0. All five criterion strings equal the immutable owner-approved ECR-0011 packet; manifest and frozen criteria/check/packet hashes authenticate, and existing strict read-only amendment_exit_submission_errors returns no errors. Separately committed independent S01 R02 at b1b88ec0 explicitly fixes only W2.A03.S01-R01-F01 while retaining original R01, task approvals, actual failures and adverse history. Fresh actual unmocked integration at b1b88ec0 authenticates 52 admitted commits, the full original 39-commit/118-net-path T02 range, only six exact authenticated inert rows, the proper witness introduction, unchanged approved consumers and exact separately approved current A05 source attribution, with 4,748 stable tracked inputs and main equal to candidate at observation. The reporter's generic pending-closure text describes its observer scope; actual finding disposition is the separately committed canonical R02 bound by this manifest. Actual A05 adoption/exact paused return and the later separate A03 activation are authenticated. Both whole original A03 task records, all non-A03 amendments and ordinary Wave state remain unchanged through supported exit submission; no source is changed in this incremental review/evidence/submission suffix. This ledger supplies only the independent exit disposition. Separate committed A03 adoption evidence/security review and supported adoption remain due; ordinary W2 stays PAUSED and original CAP-05.S01.T01 BLOCKED at its original 6506 base until legal resume/reopen. No native/Core/joined S05/D3D/product/full Wave or human release approval follows.
 
 **Bound amendment-adoption checkpoints:**
 
