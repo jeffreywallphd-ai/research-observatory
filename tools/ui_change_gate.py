@@ -2957,6 +2957,194 @@ def canonical_correction_evidence_path(identity: str, path: str) -> bool:
     return re.fullmatch(prefix + suffix, path) is not None
 
 
+def reference_activation_completion_segment(repo: Path, head: str, *, require_review: bool) -> dict[str, Any]:
+    """Authenticate the one separately owner-approved final A05 source delivery."""
+    prefix = "artifacts/evidence/W2.A05.S01.addendum-01"
+    owner_path = "planning/wave-amendment-approvals/W2.A05.S01.addendum-01.json"
+    paths = {
+        "tools/ui_change_gate.py",
+        "tests/foundation/test_ui_change_gate.py",
+        "docs/automation/design-first-ui-changes.md",
+        REFERENCE_ACTIVATION_REPAIR_ADR,
+    }
+    owner, owner_intro = immutable_record(repo, head, owner_path)
+    if (
+        owner.get("schemaVersion") != "1.0"
+        or owner.get("documentType") != "wave-amendment-completion-scope-addendum"
+        or owner.get("amendmentId") != "W2.A05"
+        or owner.get("contributionId") != "W2.A05.S01"
+        or owner.get("status") != "APPROVED"
+        or HUMAN_ID.fullmatch(str(owner.get("approvedBy"))) is None
+        or owner.get("baseApprovalCommit") != "b54f24c222f631700056574a08056f660696d305"
+        or owner.get("authorizedSourcePaths") != sorted(paths)
+        or commit_paths(repo, owner_intro) != {owner_path}
+    ):
+        raise ValueError("A05 completion has no exact independent owner source-delivery grant")
+    proposal_ref, readiness_ref = owner.get("proposal"), owner.get("readinessReview")
+    if (
+        not isinstance(proposal_ref, dict)
+        or proposal_ref.get("path") != prefix + ".proposal.json"
+        or not isinstance(readiness_ref, dict)
+        or readiness_ref.get("path") != prefix + ".readiness-review-01.json"
+    ):
+        raise ValueError("A05 completion owner grant has foreign proposal/readiness references")
+    proposal, proposal_intro = immutable_record(
+        repo, head, proposal_ref["path"], proposal_ref.get("sha256"), evidence=True
+    )
+    readiness, readiness_intro = immutable_record(
+        repo, head, readiness_ref["path"], readiness_ref.get("sha256"), evidence=True
+    )
+    if (
+        proposal.get("documentType") != "wave-amendment-completion-scope-addendum-proposal"
+        or proposal.get("amendmentId") != "W2.A05"
+        or proposal.get("contextCommit") != "a242167fdb73f958181ee45d8e83a134daf94caa"
+        or set(proposal.get("authorizedSourcePaths", [])) != paths
+        or readiness.get("documentType") != "wave-amendment-completion-addendum-readiness-review"
+        or readiness.get("result") != "approved"
+        or readiness.get("findings") != []
+        or readiness.get("proposal") != proposal_ref
+        or readiness.get("reviewedCandidateCommit") != proposal_intro
+        or not independent_identity(readiness.get("reviewer"), "codex-w2-implementation")
+        or proposal_intro == readiness_intro
+        or not is_ancestor(repo, proposal_intro, readiness_intro)
+        or owner.get("candidateAtDecision") != readiness_intro
+        or resolve_commit(repo, f"{owner_intro}^") != readiness_intro
+    ):
+        raise ValueError("A05 completion proposal/readiness/owner order or binding differs")
+    patch_ref = proposal.get("sourcePatch")
+    if not isinstance(patch_ref, dict) or patch_ref.get("path") != prefix + ".source.patch":
+        raise ValueError("A05 completion lacks its exact inert reviewed patch")
+    patch_changes = git(repo, "log", "--format=%H", head, "--", patch_ref["path"]).decode().splitlines()
+    if (
+        patch_changes != [proposal_intro]
+        or tree_entry(repo, head, patch_ref["path"]) != ("100644", "blob")
+        or tree_entry(repo, f"{proposal_intro}^", patch_ref["path"]) is not None
+        or hashlib.sha256(blob(repo, head, patch_ref["path"])).hexdigest() != patch_ref.get("sha256")
+    ):
+        raise ValueError("A05 completion patch was not frozen with its proposal")
+    touches = (
+        git(repo, "rev-list", "--reverse", f"{proposal['contextCommit']}..{head}", "--", *sorted(paths))
+        .decode()
+        .splitlines()
+    )
+    if len(touches) != 1:
+        raise ValueError("A05 completion requires one source delivery and denies hidden add/revert")
+    source = touches[0]
+    if resolve_commit(repo, f"{source}^") != owner_intro or commit_paths(repo, source) != paths:
+        raise ValueError("A05 completion source must separately follow its owner grant with the exact four paths")
+    bindings = proposal.get("sourceBindings")
+    if not isinstance(bindings, list) or [b.get("path") for b in bindings] != sorted(paths):
+        raise ValueError("A05 completion source inventory differs")
+    for binding in bindings:
+        path = binding["path"]
+        before, after = blob(repo, owner_intro, path), blob(repo, source, path)
+        if (
+            binding.get("mode") != "100644"
+            or tree_entry(repo, source, path) != ("100644", "blob")
+            or git(repo, "rev-parse", f"{owner_intro}:{path}").decode().strip() != binding.get("beforeGitBlob")
+            or hashlib.sha256(before).hexdigest() != binding.get("beforeSha256")
+            or hashlib.sha256(after).hexdigest() != binding.get("afterSha256")
+            or before != blob(repo, proposal["contextCommit"], path)
+            or blob(repo, head, path) != after
+        ):
+            raise ValueError("A05 completion substituted a reviewed source blob or mode")
+    if blob(repo, source, "planning/backlog.yaml") != blob(repo, owner_intro, "planning/backlog.yaml"):
+        raise ValueError("A05 completion source mixed a task or campaign mutation")
+    if not blob(repo, source, REFERENCE_ACTIVATION_REPAIR_ADR).startswith(
+        blob(repo, owner_intro, REFERENCE_ACTIVATION_REPAIR_ADR)
+    ):
+        raise ValueError("A05 completion rewrote its Proposed ADR history")
+    if require_review:
+        manifest_path, ledger_path = prefix + ".execution.json", prefix + ".execution.review-01.json"
+        manifest, delivery = immutable_record(repo, head, manifest_path, evidence=True)
+        ledger, review_intro = immutable_record(repo, head, ledger_path, evidence=True)
+        expected = {
+            "path": manifest_path,
+            "introductionCommit": delivery,
+            "gitBlob": git(repo, "rev-parse", f"{delivery}:{manifest_path}").decode().strip(),
+            "sha256": hashlib.sha256(blob(repo, delivery, manifest_path).replace(b"\r\n", b"\n")).hexdigest(),
+        }
+        if (
+            manifest.get("documentType") != "wave-amendment-completion-source-evidence"
+            or manifest.get("amendmentId") != "W2.A05"
+            or manifest.get("candidateCommit") != source
+            or manifest.get("sourceBindings") != bindings
+            or not isinstance(manifest.get("checks"), list)
+            or not manifest["checks"]
+            or any(c.get("result") != "passed" or c.get("exitCode") != 0 for c in manifest["checks"])
+            or ledger.get("documentType") != "wave-amendment-completion-source-independent-review"
+            or ledger.get("amendmentId") != "W2.A05"
+            or ledger.get("reviewedManifest") != expected
+            or ledger.get("result") != "approved"
+            or ledger.get("findings") != []
+            or not independent_identity(ledger.get("reviewer"), "codex-w2-implementation")
+            or source == delivery
+            or delivery == review_intro
+            or not is_ancestor(repo, source, delivery)
+            or not is_ancestor(repo, delivery, review_intro)
+        ):
+            raise ValueError("A05 completion source lacks separate exact-candidate evidence and independent review")
+    return {"commits": {source: paths}, "sourceCommit": source, "ownerCommit": owner_intro}
+
+
+def reference_activation_completion_review_commit(
+    repo: Path, head: str, task: dict[str, Any], packet: dict[str, Any], introduction: str, index: int
+) -> str:
+    """Recognize only the two exact authentic ledger-first A05 R01 histories."""
+    pairs = {
+        "W2.A05.T01": ("e0580f8e6b33be13c6ee515ea20ea4e7b6133535", "a1105c306178b6c5f10d0107f244d3e14e2d401d"),
+        "W2.A05.T02": ("381f1e992bfc60aebfe2f73f2470e6710ceba935", "a242167fdb73f958181ee45d8e83a134daf94caa"),
+    }
+    pair = pairs.get(str(task["id"]))
+    if pair is None or index != 1 or introduction != pair[0]:
+        return introduction
+    reference_activation_completion_segment(repo, head, require_review=False)
+    if resolve_commit(repo, f"{pair[1]}^") != introduction or not is_ancestor(repo, pair[1], head):
+        raise ValueError("A05 completion review is not its exact direct-child publication")
+    before = reference_activation_repair_state(repo, introduction)
+    after = reference_activation_repair_state(repo, pair[1])
+    introduced = backlog_task(before, task["id"]) or {}
+    published = backlog_task(after, task["id"]) or {}
+    if (
+        introduced.get("status") != "REVIEW"
+        or introduced.get("review_control", {}).get("current_submission") != packet
+        or introduced.get("review_control", {}).get("attempts") != []
+        or published.get("status") != "DONE"
+        or published.get("lease") is not None
+        or published.get("review_control", {}).get("current_submission") is not None
+        or published.get("review_control", {}).get("attempts") != task["review_control"]["attempts"][:1]
+        or any(
+            introduced.get(k) != published.get(k) or published.get(k) != task.get(k)
+            for k in (
+                "id",
+                "amendment_id",
+                "owner",
+                "branch",
+                "worktree",
+                "base_sha",
+                "packet_task_sha256",
+                "acceptance_criteria",
+            )
+        )
+    ):
+        raise ValueError("A05 completion review changed its frozen packet, prefix, identity or exact disposition")
+    frozen_before, frozen_after = copy.deepcopy(before), copy.deepcopy(after)
+    if task["id"] == "W2.A05.T01":
+        before_sibling = backlog_task(frozen_before, "W2.A05.T02") or {}
+        after_sibling = backlog_task(frozen_after, "W2.A05.T02") or {}
+        if before_sibling.get("status") != "NOT_STARTED" or after_sibling.get("status") != "READY":
+            raise ValueError("A05 completion changed the exact derived T02 readiness transition")
+        for sibling in (before_sibling, after_sibling):
+            sibling.pop("status")
+            sibling.pop("updated_at")
+    for state in (frozen_before, frozen_after):
+        child = amendment_record(state, "W2.A05")
+        child["tasks"] = [t for t in child["tasks"] if t["id"] != task["id"]]
+    if frozen_before != frozen_after:
+        raise ValueError("A05 completion review changed unrelated authority or sibling records")
+    return pair[1]
+
+
 def correction_submission_ranges(
     repo: Path, head: str, correction: dict[str, Any], *, ordinary_origin: bool = False
 ) -> list[dict[str, Any]]:
@@ -2994,10 +3182,11 @@ def correction_submission_ranges(
             }
             if any(ledger.get(key) != value for key, value in expected.items()):
                 raise ValueError("correction task ledger differs from its frozen review")
+            publication = reference_activation_completion_review_commit(repo, head, task, packet, introduction, index)
             before = yaml_object(
-                blob(repo, resolve_commit(repo, f"{introduction}^"), "planning/backlog.yaml"), "review predecessor"
+                blob(repo, resolve_commit(repo, f"{publication}^"), "planning/backlog.yaml"), "review predecessor"
             )
-            after = yaml_object(blob(repo, introduction, "planning/backlog.yaml"), "review projection")
+            after = yaml_object(blob(repo, publication, "planning/backlog.yaml"), "review projection")
             prior_task = backlog_task(before, identity) or {}
             reviewed_task = backlog_task(after, identity) or {}
             separately_submitted = (
@@ -5271,6 +5460,12 @@ def reference_activation_repair_authority(repo: Path, head: str) -> dict[str, An
             or json_object(blob(repo, commit, "docs/adr/index.json"), "historical repair registry") != expected_index
         ):
             raise ValueError("activation repair historical ADR/index authority differs")
+    completion_owner = "planning/wave-amendment-approvals/W2.A05.S01.addendum-01.json"
+    if tree_entry(repo, head, completion_owner) is not None:
+        completion_segment = reference_activation_completion_segment(repo, head, require_review=True)
+        if set(completion_segment["commits"]) & set(admitted):
+            raise ValueError("A05 completion source overlaps its completed task ranges")
+        admitted.update(completion_segment["commits"])
     for commit in git(repo, "rev-list", f"b54f24c222f631700056574a08056f660696d305..{head}").decode().splitlines():
         if commit_paths(repo, commit) & set().union(*REFERENCE_ACTIVATION_REPAIR_SOURCE) and commit not in admitted:
             raise ValueError("activation repair source was touched outside its reviewed tasks")

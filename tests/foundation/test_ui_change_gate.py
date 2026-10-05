@@ -4074,6 +4074,48 @@ class UiChangeGateTests(unittest.TestCase):
             self.assertEqual("ca8b1448e094b637bbd06c3129b69a78df792619", parent["tasks"][1]["base_sha"])
             self.assertEqual("ADR-0041", authority["index"]["records"][-1]["id"])
 
+    def test_a05_completion_review_pairs_preserve_exact_actual_publications(self) -> None:
+        head = "a242167fdb73f958181ee45d8e83a134daf94caa"
+        amendment = ui_gate.amendment_record(ui_gate.reference_activation_repair_state(REPO, head), "W2.A05")
+        for task, introduction, publication in zip(
+            amendment["tasks"],
+            ("e0580f8e6b33be13c6ee515ea20ea4e7b6133535", "381f1e992bfc60aebfe2f73f2470e6710ceba935"),
+            ("a1105c306178b6c5f10d0107f244d3e14e2d401d", head),
+            strict=True,
+        ):
+            packet = task["review_control"]["attempts"][0]["submission"]
+            # Component proof of actual recorded pairs. The owner/source segment is
+            # separately qualified by real Git and is not established by this mock.
+            with patch.object(ui_gate, "reference_activation_completion_segment", return_value={}):
+                self.assertEqual(
+                    publication,
+                    ui_gate.reference_activation_completion_review_commit(REPO, head, task, packet, introduction, 1),
+                )
+                forged = copy.deepcopy(packet)
+                forged["candidate_commit"] = "0" * 40
+                with self.assertRaisesRegex(ValueError, "frozen packet"):
+                    ui_gate.reference_activation_completion_review_commit(REPO, head, task, forged, introduction, 1)
+                changed = copy.deepcopy(task)
+                changed["owner"] = "agent:/root/foreign"
+                with self.assertRaisesRegex(ValueError, "identity"):
+                    ui_gate.reference_activation_completion_review_commit(REPO, head, changed, packet, introduction, 1)
+            self.assertEqual(
+                introduction,
+                ui_gate.reference_activation_completion_review_commit(REPO, head, task, packet, introduction, 2),
+            )
+            self.assertEqual(
+                head, ui_gate.reference_activation_completion_review_commit(REPO, head, task, packet, head, 1)
+            )
+
+    def test_a05_completion_review_pair_requires_prior_owner_source_grant(self) -> None:
+        head = "a242167fdb73f958181ee45d8e83a134daf94caa"
+        task = ui_gate.amendment_record(ui_gate.reference_activation_repair_state(REPO, head), "W2.A05")["tasks"][0]
+        packet = task["review_control"]["attempts"][0]["submission"]
+        with self.assertRaises(ValueError):
+            ui_gate.reference_activation_completion_review_commit(
+                REPO, head, task, packet, "e0580f8e6b33be13c6ee515ea20ea4e7b6133535", 1
+            )
+
     def test_reviewed_activation_repair_denies_incomplete_actual_delivery(self) -> None:
         with self.assertRaises(ValueError):
             ui_gate.reference_activation_repair_authority(REPO, self.activation_repair_fixture_prefix())

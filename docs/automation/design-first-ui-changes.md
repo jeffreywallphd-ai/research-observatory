@@ -450,3 +450,15 @@ the authenticated correction task start. It does not create a retrospective
 approval or authorize product/launcher changes. Subsequent control modifications
 still need their own exact review. The complete public UI gate must pass; these
 individual provenance checks are not task completion evidence on their own.
+
+### A05 completion review publication addendum
+
+Only a separately owner-approved W2.A05.S01 addendum may admit its one final
+four-path source segment. The immutable proposal/patch, independent readiness,
+separate owner record and subsequent source commit bind every regular blob.
+Distinct exact-candidate execution evidence and independent control review
+precede final source attribution. No old task range, base or review is rewritten.
+Only the two named actual A05 R01 direct-child ledger/review pairs receive this
+correction; other historical review ordering and source denials remain strict.
+Actual S01 review02 closure, exit/security/adoption and paused-parent return
+remain required. No automation-framework work follows completed A05.

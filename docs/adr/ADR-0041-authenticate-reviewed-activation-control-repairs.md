@@ -118,3 +118,16 @@ remain mandatory. No metadata/index, markup/pixels/reference/baseline,
 product/native/Core, security authority or release change is authorized. Actual
 A05 S01/exit/separate security/adoption and later A03 finding replay/adoption
 remain separate gates; this body does not assert their completion.
+
+## S01 completion publication verification
+
+The separately owner-approved A05.S01 completion addendum authenticates only
+the two actual R01 ledger-first histories and one separately reviewed final
+source segment. Preserve immutable ledger introductions and exact direct-child
+taskctl review publications, their packets, prefixes, identities and findings.
+The original task candidates and non-overlapping source ranges remain intact.
+Authenticate the inert proposal/patch, independent readiness and prior owner
+grant, every source blob/mode and distinct exact-candidate execution/control
+review. Keep all metadata/index entries and every preceding body byte unchanged.
+Actual integrated S01 finding replay/review02 and later exit/security/adoption
+remain separate. This body asserts no qualification or product/release approval.
