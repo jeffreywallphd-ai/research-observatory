@@ -183,6 +183,8 @@ class SignedCoreFixtureRuntime:
 
 
 def protected_core_phase(directory: Path, phase: str) -> None:
+    import faulthandler
+
     import httpx2
     from fastapi.testclient import TestClient
     from research_observatory_core import main as core_main
@@ -209,6 +211,12 @@ def protected_core_phase(directory: Path, phase: str) -> None:
     from tests.connectors.test_plugin_broker import streamed
 
     check = unittest.TestCase()
+    faulthandler.dump_traceback_later(60)
+
+    def stage(label: str) -> None:
+        print("RO-S05-STAGE:" + label, flush=True)
+
+    stage("select-real-runtime")
     check.assertFalse(InstalledPluginRuntime().available())
     selected = SignedCoreFixtureRuntime()
     calls: list[tuple[str | None, str | None]] = []
@@ -277,6 +285,7 @@ def protected_core_phase(directory: Path, phase: str) -> None:
             root, project_id = state["root"], state["projectId"]
         check.assertEqual(directory, Path(root).resolve(strict=True).parent)
         check.assertEqual(200, http.post("/projects/open", json={"root": root}).status_code)
+        stage("project-opened")
         runtime = app.state.runtime
         admin, consent, worker = runtime.plugin_admin, runtime.plugin_consent, runtime.plugin_worker
         check.assertIsNotNone(admin)
@@ -355,6 +364,7 @@ def protected_core_phase(directory: Path, phase: str) -> None:
                 ),
                 flush=True,
             )
+            faulthandler.cancel_dump_traceback_later()
             return
 
         authority = ConnectorAuthorityFixture("runTest")
@@ -362,6 +372,7 @@ def protected_core_phase(directory: Path, phase: str) -> None:
         authority.root, authority.service, authority.privacy = root, runtime.intents, runtime.privacy
         authority.intent(providers=("plugin.sample.repository",))
         authority.policy()
+        stage("intent-and-policy-accepted")
         key = SigningKey(b"\x5d" * 32)
         raw_manifest = (sample / "manifest.json").read_bytes()
         container = io.BytesIO()
@@ -386,6 +397,7 @@ def protected_core_phase(directory: Path, phase: str) -> None:
         check.assertIsNotNone(sealed.review)
         check.assertIsNotNone(sealed.package_token)
         assert sealed.review is not None and sealed.package_token is not None
+        stage("package-sealed")
         public_key = bytes(key.verify_key)
         trust_decision = PluginTrustDecision(
             new_uuid_v7(),
@@ -432,6 +444,7 @@ def protected_core_phase(directory: Path, phase: str) -> None:
             }
         )
         state.update(actorId=actor.actor_id, pageInvocations=[], pageRevisions={}, pageJobs={}, oldPreviews=[])
+        stage("human-grant-enabled")
 
         def prepare(document, *, confirm=True):
             wire = json.dumps(document, separators=(",", ":")).encode()
@@ -467,7 +480,9 @@ def protected_core_phase(directory: Path, phase: str) -> None:
                 worker.submit(root, preview.preview_id, request, wire)
             consent.confirm(root, project_id, preview.preview_id, confirmation=preview.confirmation)
             job = worker.submit(root, preview.preview_id, request, wire)
+            stage(f"page-{index + 1}-submitted")
             wait(job.job_id, "succeeded")
+            stage(f"page-{index + 1}-published")
             page = adapters.jobs.result(adapters.jobs.input(request.invocation_id))
             check.assertIsInstance(page, PluginPublishedPage)
             assert isinstance(page, PluginPublishedPage)
@@ -479,6 +494,7 @@ def protected_core_phase(directory: Path, phase: str) -> None:
         check.assertEqual([None, "page-2"], [cursor for _, cursor in calls])
         check.assertEqual(2, len(selected.actual_results))
         persisted_pages()
+        stage("two-pages-verified")
         request, wire, preview = prepare(
             dict(cases[1]["input"], cursor="forged-cursor", previousInvocationId=state["pageInvocations"][0])
         )
@@ -490,6 +506,7 @@ def protected_core_phase(directory: Path, phase: str) -> None:
         request, wire, preview = prepare({"query": "synthetic-error", "pageSize": 1})
         job = worker.submit(root, preview.preview_id, request, wire)
         failed = wait(job.job_id, "failed")
+        stage("malformed-page-denied")
         check.assertIsNotNone(failed.diagnostic_code)
         check.assertIsNone(adapters.jobs.result(adapters.jobs.input(request.invocation_id)))
         request, wire, preview = prepare({"query": "synthetic-cancel", "pageSize": 1})
@@ -500,6 +517,7 @@ def protected_core_phase(directory: Path, phase: str) -> None:
         finally:
             release.set()
         wait(job.job_id, "cancelled")
+        stage("active-job-cancelled")
         check.assertIsNone(adapters.jobs.result(adapters.jobs.input(request.invocation_id)))
         persisted_pages()
         physical = [path for path in (Path(root) / "objects").rglob("*") if path.is_file()]
