@@ -5313,6 +5313,7 @@ def reference_activation_repair_authority(repo: Path, head: str) -> dict[str, An
         ):
             raise ValueError("activation repair changed ordinary scope, hold or unrelated checkpoint history")
     activations: list[str] = []
+    activation_campaign: dict[str, Any] | None = None
     for commit in (
         git(repo, "rev-list", "--reverse", f"{adoption}..{head}", "--", "planning/backlog.yaml").decode().splitlines()
     ):
@@ -5364,6 +5365,23 @@ def reference_activation_repair_authority(repo: Path, head: str) -> dict[str, An
             ):
                 raise ValueError("activation repair has a premature, foreign or mixed parent activation")
             activations.append(commit)
+            activation_campaign = campaign
+        if activation_campaign is not None:
+            for historical_parent in (prior_parent, next_parent):
+                if historical_parent == parent:
+                    continue
+                campaign = historical_parent.get("campaign") or {}
+                if any(
+                    campaign.get(field) != activation_campaign.get(field)
+                    for field in ("owner", "branch", "worktree", "scope", "profile", "platform", "base_sha")
+                ):
+                    raise ValueError("activation repair returned campaign identity was rewritten")
+                lease = campaign.get("lease")
+                if (campaign.get("status") == "ACTIVE" and not lease) or (
+                    lease is not None
+                    and (not isinstance(lease, dict) or lease.get("claimed_by") != campaign.get("owner"))
+                ):
+                    raise ValueError("activation repair returned campaign lease owner differs")
     if len(activations) != 1:
         raise ValueError("activation repair lacks exactly one separate post-adoption A03 activation")
     preceding = reference_activation_repair_preceding_sources(repo, head)

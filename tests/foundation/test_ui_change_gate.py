@@ -3698,7 +3698,7 @@ class UiChangeGateTests(unittest.TestCase):
     def test_reviewed_activation_inert_map_does_not_hide_new_source_or_same_name_output(self) -> None:
         for path in (
             "workers/document/inert_projection_attack.py",
-            "tools/ui_change_gate.py",
+            "tools/ui_accessibility_check.py",
             "planning/review-site/waves/W2.html",
         ):
             with self.subTest(path=path), tempfile.TemporaryDirectory() as temporary:
@@ -3718,6 +3718,7 @@ class UiChangeGateTests(unittest.TestCase):
                 document = root / "docs/automation/design-first-ui-changes.md"
                 document.write_bytes(document.read_bytes() + b"\nSynthetic task fixture only.\n")
                 candidate = self.commit(root, "synthetic net candidate retaining hidden history")
+                self.assertNotIn(path, ui_gate.changed_paths(root, task["base_sha"], candidate))
                 head = self.approve_activation_fixture_task(root, backlog, task, candidate)
                 projections = ui_gate.reference_activation_inert_projection_map(root, head)
                 with self.assertRaisesRegex(ValueError, "hidden or overlapping"):
@@ -3973,6 +3974,29 @@ class UiChangeGateTests(unittest.TestCase):
             )
             with self.assertRaisesRegex(ValueError, "history"):
                 ui_gate.reference_activation_repair_authority(root, restored)
+
+    def test_reviewed_activation_repair_denies_parent_campaign_rewrite_and_restoration(self) -> None:
+        for attack in ("owner", "lease-owner"):
+            with self.subTest(attack=attack), tempfile.TemporaryDirectory() as temporary:
+                root, activation = self.activation_repair_future_fixture(temporary)
+                target = root / "planning/backlog.yaml"
+                original = target.read_bytes()
+                state = yaml.safe_load(original)
+                campaign = next(a for a in state["wave_amendments"] if a["id"] == "W2.A03")["campaign"]
+                if attack == "owner":
+                    campaign["owner"] = "foreign-owner"
+                else:
+                    campaign["lease"]["claimed_by"] = "foreign-owner"
+                self.write_yaml(target, state)
+                self.commit(root, f"synthetic returned A03 campaign {attack} substitution")
+                target.write_bytes(original)
+                restored = self.commit(root, f"synthetic returned A03 campaign {attack} restoration")
+                self.assertEqual(
+                    ui_gate.blob(root, activation, "planning/backlog.yaml"),
+                    ui_gate.blob(root, restored, "planning/backlog.yaml"),
+                )
+                with self.assertRaisesRegex(ValueError, "campaign identity|lease owner"):
+                    ui_gate.reference_activation_repair_authority(root, restored)
 
     def test_reviewed_activation_repair_future_return_keeps_original_tasks_and_source_partition(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
