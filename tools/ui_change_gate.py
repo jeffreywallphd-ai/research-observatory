@@ -5096,6 +5096,7 @@ def reference_activation_repair_active(repo: Path, commit: str, task: dict[str, 
 def reference_activation_repair_authority(repo: Path, head: str) -> dict[str, Any]:
     """Authenticate only the two reviewed repair tasks and their actual paused-parent return."""
     import taskctl
+    from governance_kernel import validate_returned_predecessor_history
 
     child, packet = reference_activation_repair_packet(repo, head)
     frozen = reference_activation_repair_state(repo, REFERENCE_ACTIVATION_REPAIR_PAUSE)
@@ -5321,6 +5322,24 @@ def reference_activation_repair_authority(repo: Path, head: str) -> dict[str, An
             reference_activation_repair_state(repo, commit),
         )
         prior_parent, next_parent = amendment_record(before, "W2.A03"), amendment_record(after, "W2.A03")
+        for historical, historical_parent in ((before, prior_parent), (after, next_parent)):
+            validate_returned_predecessor_history(parent, historical_parent)
+            if any(
+                historical_parent.get(field) != parent.get(field)
+                for field in (
+                    "id",
+                    "kind",
+                    "target_wave",
+                    "change_request_id",
+                    "approval_reference",
+                    "contributions",
+                    "correction",
+                )
+            ) or [a for a in historical["wave_amendments"] if a["id"] != "W2.A03"] != [
+                a for a in returned["wave_amendments"] if a["id"] != "W2.A03"
+            ]:
+                raise ValueError("activation repair return changed frozen parent authority or completed siblings")
+        validate_returned_predecessor_history(prior_parent, next_parent)
         if amendment_record(after, child["id"]) != child or next_parent["tasks"] != parent["tasks"]:
             raise ValueError("activation repair return rewrote adopted history or reopened a DONE A03 task")
         if not activations and prior_parent != parent:

@@ -3665,6 +3665,7 @@ class UiChangeGateTests(unittest.TestCase):
         self.git(root, "config", "user.email", "ui-gate@example.invalid")
         self.git(root, "config", "core.autocrlf", "false")
         self.git(root, "switch", "-C", "codex/w2-implementation", self.git(source, "rev-parse", "HEAD"))
+        self.assertEqual("", self.git(root, "status", "--porcelain"), "Disposable checkout must preserve all blobs")
         return root
 
     def test_reviewed_activation_inert_map_rejects_rewritten_bindings_and_predecessors(self) -> None:
@@ -3853,7 +3854,15 @@ class UiChangeGateTests(unittest.TestCase):
                 value["authorityPreserved"] = False
                 self.write_json(target, value)
                 changed = self.commit(root, "synthetic current classification substitution")
-                self.assertFalse(validate(root, base, changed)["ok"])
+                # The real full-root positive above supplies the authenticated
+                # scope. Only this Git classification blob changed; challenge
+                # the unchanged classification boundary without rescanning it.
+                policy = json.loads((root / "ui-change-policy.json").read_bytes())
+                with self.assertRaises(ValueError) as denial:
+                    ui_gate.adopted_continuation_classification_errors(
+                        root, base, changed, contract, report["rangeAuthority"], policy
+                    )
+                self.assertEqual(f"authority record hash mismatch: {reference['path']}", str(denial.exception))
 
     def activation_repair_future_fixture(
         self, temporary: str, *, security_attack: str | None = None
@@ -3944,6 +3953,26 @@ class UiChangeGateTests(unittest.TestCase):
         backlog["control_plane"]["active_amendment"] = "W2.A03"
         self.write_yaml(root / "planning/backlog.yaml", backlog)
         return root, self.commit(root, "synthetic separate A03 activation retaining both DONE tasks")
+
+    def test_reviewed_activation_repair_denies_frozen_parent_history_rewrite_and_restoration(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root, activation = self.activation_repair_future_fixture(temporary)
+            target = root / "planning/backlog.yaml"
+            original = target.read_bytes()
+            state = yaml.safe_load(original)
+            parent = next(a for a in state["wave_amendments"] if a["id"] == "W2.A03")
+            event = next(e for e in parent["lifecycle"]["history"] if e["id"] == "E06")
+            event["rationale"] = "Synthetic unauthorized replacement of preserved adverse history."
+            self.write_yaml(target, state)
+            self.commit(root, "synthetic frozen A03 pause-history rewrite after lawful activation")
+            target.write_bytes(original)
+            restored = self.commit(root, "synthetic frozen A03 pause-history restoration")
+            self.assertEqual(
+                ui_gate.blob(root, activation, "planning/backlog.yaml"),
+                ui_gate.blob(root, restored, "planning/backlog.yaml"),
+            )
+            with self.assertRaisesRegex(ValueError, "history"):
+                ui_gate.reference_activation_repair_authority(root, restored)
 
     def test_reviewed_activation_repair_future_return_keeps_original_tasks_and_source_partition(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
