@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 97fbeba82112594b075df73faac83e9376430bac29a7a2a0a2925c51fbb12d68
+source_sha256: 462362adceacccd2f43121ef775562544965f0ffe152c95d537eeb239e5b5614
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -3155,9 +3155,9 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 **Currently open findings:** -
 
-### - [ ] W2.A05.T02 - Recognize real associated labels in the static accessibility checker
+### - [x] W2.A05.T02 - Recognize real associated labels in the static accessibility checker
 
-**Status / owner / review:** `REVIEW` / codex-w2-implementation / - (`-`)
+**Status / owner / review:** `DONE` / codex-w2-implementation / agent:/root/a05_t02_review (`approved`)
 
 **Dependencies:** `W2.A05.B00`, `W2.A05.T01`
 
@@ -3181,9 +3181,11 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 #### Review history — W2.A05.T02
 
-**Review mode:** `append-only v1` / 0 completed round(s)
+**Review mode:** `append-only v1` / 1 completed round(s)
 
-**Current immutable submission awaiting review:** `R01` / packet SHA-256 `7d146fa976c5a8b5bf9a9304fac5e99edef7805c5c9d8c211e9d34993cb24618`
+##### Round R01
+
+**Immutable submission packet:** `R01` / packet SHA-256 `7d146fa976c5a8b5bf9a9304fac5e99edef7805c5c9d8c211e9d34993cb24618`
 
 - Candidate / base / branch: `03e501c4550c7aa61e1e60827d49f7174faab1ef` / `a1105c306178b6c5f10d0107f244d3e14e2d401d` / `codex/w2-implementation`
 - Submitted by / at: codex-w2-implementation / `2026-10-05T07:22:02+00:00`
@@ -3197,9 +3199,25 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - Prior round / replayed open findings: `-` / -
 - Root-cause escalation: -
 
-**Current latest-review projection:** `-` by - at `-`
+**Disposition / reviewer / time:** `approved` / agent:/root/a05_t02_review / `2026-10-05T07:39:40+00:00`
 
-**Latest notes:** -
+**Immutable review ledger:** `artifacts/evidence/W2.A05.T02.review-R01.json` / `20b2ef49ce578e6cb605b2e61be373265db11e60938393eb1032aa394bb08721`
+
+**Review notes:** Independent expanded accessibility/control/ADR/evidence review of exact W2.A05.T02 source candidate 03e501c4 and its committed supported REVIEW submission ba1e0d17. Frozen criteria equal the immutable owner-approved ECR-0013 task. The two-commit claim-base range has exactly four approved regular source paths and six task-owned or supported claim/planning outputs; no intermediate source add-revert or outside-source edit. Independently approved T01 is DONE and local main is its a1105c30 disposition before the separate T02 claim. The static helper changes only the existing label slot, retains the established ordered name sources, uses identity and first-ID/first-labelable-descendant association, and rejects the required adverse associations without weakening duplicate-ID, reference-drift or unnamed-control failures. The 1364-byte ADR41 body append preserves its entire prior prefix, Proposed metadata and index. All 15 qualifying raw output hashes, all three qualifying producer hashes, six execution receipt digests, both detailed reports and five listed adverse evidence digests independently match. Retained verbose logs contain six naming and four compatibility methods passing with no skips. Actual pinned Windows x64 Chromium records the unchanged and label-after-control positives plus label-removal/wrong-target negatives; negative names truthfully retain the UA Choose File fallback. The unmodified official accessibility command exits 0 over 33 pages and 66 responsive/visual states with empty errors. Selected quality, ADR, UI authority, reference, backlog, views and site proof pass. The actual five-method/25-failure test-first result, prior official failure and initial ignored invariant-script KeyError remain distinct adverse observations. Only this canonical ledger is authored; no source, manifest, producer, backlog or reference authorship, no suite reruns and no task-state mutation. Approval is limited to this task-stage implementation and evidence. Actual A05 integrated S01/exit/separate security/adoption and paused-A03 return, then separate A03 activation/fresh F01 replay/review-02/exit/security/adoption, ordinary W2 resume, product/native/Core and Wave qualification, and human release remain due. No additional framework development is authorized after A05.
+
+**Findings opened:**
+
+- None
+
+**Prior finding closures:**
+
+- None
+
+**Current immutable submission awaiting review:** None
+
+**Current latest-review projection:** `approved` by agent:/root/a05_t02_review at `2026-10-05T07:39:40+00:00`
+
+**Latest notes:** Independent expanded accessibility/control/ADR/evidence review of exact W2.A05.T02 source candidate 03e501c4 and its committed supported REVIEW submission ba1e0d17. Frozen criteria equal the immutable owner-approved ECR-0013 task. The two-commit claim-base range has exactly four approved regular source paths and six task-owned or supported claim/planning outputs; no intermediate source add-revert or outside-source edit. Independently approved T01 is DONE and local main is its a1105c30 disposition before the separate T02 claim. The static helper changes only the existing label slot, retains the established ordered name sources, uses identity and first-ID/first-labelable-descendant association, and rejects the required adverse associations without weakening duplicate-ID, reference-drift or unnamed-control failures. The 1364-byte ADR41 body append preserves its entire prior prefix, Proposed metadata and index. All 15 qualifying raw output hashes, all three qualifying producer hashes, six execution receipt digests, both detailed reports and five listed adverse evidence digests independently match. Retained verbose logs contain six naming and four compatibility methods passing with no skips. Actual pinned Windows x64 Chromium records the unchanged and label-after-control positives plus label-removal/wrong-target negatives; negative names truthfully retain the UA Choose File fallback. The unmodified official accessibility command exits 0 over 33 pages and 66 responsive/visual states with empty errors. Selected quality, ADR, UI authority, reference, backlog, views and site proof pass. The actual five-method/25-failure test-first result, prior official failure and initial ignored invariant-script KeyError remain distinct adverse observations. Only this canonical ledger is authored; no source, manifest, producer, backlog or reference authorship, no suite reruns and no task-state mutation. Approval is limited to this task-stage implementation and evidence. Actual A05 integrated S01/exit/separate security/adoption and paused-A03 return, then separate A03 activation/fresh F01 replay/review-02/exit/security/adoption, ordinary W2 resume, product/native/Core and Wave qualification, and human release remain due. No additional framework development is authorized after A05.
 
 **Currently open findings:** -
 
