@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 3c14d05abca824b1056c366fbc4342aa938787f1611769318f6282155d6f02d9
+source_sha256: 8607cc92b5ead6572d0fc2456ac3d79370febd1d058abe69506e4c4857acef59
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -3087,9 +3087,9 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 **Bounded tasks:**
 
-### - [ ] W2.A05.T01 - Authenticate reviewed inert projection history and exact repair delivery
+### - [x] W2.A05.T01 - Authenticate reviewed inert projection history and exact repair delivery
 
-**Status / owner / review:** `REVIEW` / codex-w2-implementation / - (`-`)
+**Status / owner / review:** `DONE` / codex-w2-implementation / agent:/root/a05_t01_review (`approved`)
 
 **Dependencies:** `W2.A05.B00`
 
@@ -3115,9 +3115,11 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 #### Review history — W2.A05.T01
 
-**Review mode:** `append-only v1` / 0 completed round(s)
+**Review mode:** `append-only v1` / 1 completed round(s)
 
-**Current immutable submission awaiting review:** `R01` / packet SHA-256 `f3e47146ffbfc75b15f21959c3ae4a80a0c6614b76cc480ad7ab804ae4253a4f`
+##### Round R01
+
+**Immutable submission packet:** `R01` / packet SHA-256 `f3e47146ffbfc75b15f21959c3ae4a80a0c6614b76cc480ad7ab804ae4253a4f`
 
 - Candidate / base / branch: `9106f485d32150943e8fbedd5299d5882021e183` / `4e94add8319f72d040786a14f07372d15417be45` / `codex/w2-implementation`
 - Submitted by / at: codex-w2-implementation / `2026-10-05T06:15:46+00:00`
@@ -3131,15 +3133,31 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - Prior round / replayed open findings: `-` / -
 - Root-cause escalation: -
 
-**Current latest-review projection:** `-` by - at `-`
+**Disposition / reviewer / time:** `approved` / agent:/root/a05_t01_review / `2026-10-05T06:38:54+00:00`
 
-**Latest notes:** -
+**Immutable review ledger:** `artifacts/evidence/W2.A05.T01.review-R01.json` / `f33aa6d3bff44c440013a93e9acb80a2539d7e129db6993da6234a4cd16dec28`
+
+**Review notes:** Independent expanded control/security/ADR/evidence R01 disposition of W2.A05.T01 source candidate 9106f485 and its actual supported frozen REVIEW submission f656b6b4. The exact 11-path claim-base diff contains precisely the five ECR-0013 source paths plus the task worksheet and supported claim/generated planning outputs. The six frozen criteria equal the immutable owner-approved packet. One regular Proposed ADR-0041 and one appended index record link both A05 tasks under unchanged Accepted ADR-0001/0003/0004; all prior ADRs and registry metadata remain unchanged. The gate retains the immutable endpoint inventory and default-empty generic inert allowance, authenticates only the six byte/parent/mode-bound reviewed historical projections, directly recognizes only the exact preceding GOV27/B00 authority, and preserves the closed v1.4 original-base, independent classification and producer-input boundaries. Source review and the fresh retained real-Git positive/denial evidence resolve the advisory E06 history, returned campaign identity and completed-state fixture defects. The net-excluded control attack and immutable-kind setup correction preserve the actual denial assertions. All 22 qualifying raw output hashes and both producer hashes were independently recomputed; all 27 selected unit cases and affected quality/ADR/UI/reference/planning checks report PASS at the exact source candidate. The seven execution receipts match the manifest and report fixed HEAD plus 4727 stable tracked inputs. The 16 manifest-referenced prior attempt digests and their raw log digests match; original E06 characterization, diagnostic and partial qualification history remain preserved separately. No prior receipt is treated as fresh final-candidate proof and no installed-runtime cache authority is asserted. I previously performed advisory source reviews, an authorized bounded disposable real-Git reproduction and evidence-selection advice; I authored ignored advisory diagnostic scripts/logs/reports, but neither implementation, qualifying producers nor the criterion manifest. Formal review authenticated committed Git blobs and retained execution records without rerunning suites. Only this canonical ledger is authored. Approval applies only to this task-stage implementation and evidence. Synthetic future task/S01/exit/security/adoption/activation records and capture readers prove control behavior; they do not establish actual later delivery, A03 finding closure, product/native/Core qualification, Wave completion or release authority.
+
+**Findings opened:**
+
+- None
+
+**Prior finding closures:**
+
+- None
+
+**Current immutable submission awaiting review:** None
+
+**Current latest-review projection:** `approved` by agent:/root/a05_t01_review at `2026-10-05T06:38:54+00:00`
+
+**Latest notes:** Independent expanded control/security/ADR/evidence R01 disposition of W2.A05.T01 source candidate 9106f485 and its actual supported frozen REVIEW submission f656b6b4. The exact 11-path claim-base diff contains precisely the five ECR-0013 source paths plus the task worksheet and supported claim/generated planning outputs. The six frozen criteria equal the immutable owner-approved packet. One regular Proposed ADR-0041 and one appended index record link both A05 tasks under unchanged Accepted ADR-0001/0003/0004; all prior ADRs and registry metadata remain unchanged. The gate retains the immutable endpoint inventory and default-empty generic inert allowance, authenticates only the six byte/parent/mode-bound reviewed historical projections, directly recognizes only the exact preceding GOV27/B00 authority, and preserves the closed v1.4 original-base, independent classification and producer-input boundaries. Source review and the fresh retained real-Git positive/denial evidence resolve the advisory E06 history, returned campaign identity and completed-state fixture defects. The net-excluded control attack and immutable-kind setup correction preserve the actual denial assertions. All 22 qualifying raw output hashes and both producer hashes were independently recomputed; all 27 selected unit cases and affected quality/ADR/UI/reference/planning checks report PASS at the exact source candidate. The seven execution receipts match the manifest and report fixed HEAD plus 4727 stable tracked inputs. The 16 manifest-referenced prior attempt digests and their raw log digests match; original E06 characterization, diagnostic and partial qualification history remain preserved separately. No prior receipt is treated as fresh final-candidate proof and no installed-runtime cache authority is asserted. I previously performed advisory source reviews, an authorized bounded disposable real-Git reproduction and evidence-selection advice; I authored ignored advisory diagnostic scripts/logs/reports, but neither implementation, qualifying producers nor the criterion manifest. Formal review authenticated committed Git blobs and retained execution records without rerunning suites. Only this canonical ledger is authored. Approval applies only to this task-stage implementation and evidence. Synthetic future task/S01/exit/security/adoption/activation records and capture readers prove control behavior; they do not establish actual later delivery, A03 finding closure, product/native/Core qualification, Wave completion or release authority.
 
 **Currently open findings:** -
 
 ### - [ ] W2.A05.T02 - Recognize real associated labels in the static accessibility checker
 
-**Status / owner / review:** `NOT_STARTED` / - / - (`-`)
+**Status / owner / review:** `READY` / - / - (`-`)
 
 **Dependencies:** `W2.A05.B00`, `W2.A05.T01`
 
