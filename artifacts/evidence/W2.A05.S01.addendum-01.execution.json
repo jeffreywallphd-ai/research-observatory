@@ -1,0 +1,871 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "wave-amendment-completion-source-evidence",
+  "amendmentId": "W2.A05",
+  "contributionId": "W2.A05.S01",
+  "candidateCommit": "a1265a84cedf68d04093f4d62edc82743752175c",
+  "baseCommit": "25ba8eee0bc96704a9fc42a752b766ca1b936d32",
+  "branch": "codex/w2-implementation",
+  "sourceBindings": [
+    {
+      "path": "docs/adr/ADR-0041-authenticate-reviewed-activation-control-repairs.md",
+      "mode": "100644",
+      "beforeGitBlob": "3688bfd3ef8d1674b14e260480494c1588d2eb2e",
+      "beforeSha256": "b3246ec610b5a1ce188ecdf3c14f3b56c9b1f380c6c9c73c5cb6b8d1050223ea",
+      "afterSha256": "f77d33dcf53f91174df3e5a39d0258aa7ebddd595215af711d641bd7d455334f"
+    },
+    {
+      "path": "docs/automation/design-first-ui-changes.md",
+      "mode": "100644",
+      "beforeGitBlob": "93a3591a9aed8473c7f766bc7491215b96890e9a",
+      "beforeSha256": "f920b83fa0a64f6aa8084672e5aa4c2efbb9ea08f9c7123ef362dae0b1219ddb",
+      "afterSha256": "161e0bf110b725da5213a59300c4b5d4c59c80ee18c35eba5b8c2940f70652c3"
+    },
+    {
+      "path": "tests/foundation/test_ui_change_gate.py",
+      "mode": "100644",
+      "beforeGitBlob": "d039ab490cb0bfaadc721390859fc628f55684fe",
+      "beforeSha256": "64516f3cc5c1d1b34c4b6b275b0e61ed74ead817946fbd97832f63d889538efc",
+      "afterSha256": "72cbbd156a213bb6f6b259acb9a51cf499c83cc22353dc09995d9a021305f527"
+    },
+    {
+      "path": "tools/ui_change_gate.py",
+      "mode": "100644",
+      "beforeGitBlob": "748eba14955ed49f1b2666ab422895a368d03915",
+      "beforeSha256": "140d31bc7611f3cf48b9898e571e522442d6e9e9d37573fbca34b000772a187f",
+      "afterSha256": "fa77fdf99c05b64954c4ce62956e137f2a97f09b96f42d4d75aeb68c05cde126"
+    }
+  ],
+  "proposal": {
+    "path": "artifacts/evidence/W2.A05.S01.addendum-01.proposal.json",
+    "sha256": "2181af5c09ae31b813e2db019cac880e5893b6879124e3faa72c08a2a91a14b1"
+  },
+  "checks": [
+    {
+      "id": "actual-pairs",
+      "commit": "a1265a84cedf68d04093f4d62edc82743752175c",
+      "argv": [
+        ".venv/Scripts/python.exe",
+        "-B",
+        "-u",
+        "-m",
+        "unittest",
+        "-v",
+        "tests.foundation.test_ui_change_gate.UiChangeGateTests.test_a05_completion_review_pairs_preserve_exact_actual_publications",
+        "tests.foundation.test_ui_change_gate.UiChangeGateTests.test_a05_completion_review_pair_requires_prior_owner_source_grant"
+      ],
+      "cwd": ".",
+      "startedAt": "2026-10-05T09:25:33.419346+00:00",
+      "finishedAt": "2026-10-05T09:25:38.896235+00:00",
+      "durationSeconds": 5.477,
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/W2.A05.S01.addendum-01.actual-pairs-a1265a84.log",
+      "rawOutputSha256": "75836ced84d8fbec2e2ec90b7e584b76c1fd7ca89bc5a6e76becf935c1e71e50",
+      "stableCandidate": true,
+      "inputCount": 4740,
+      "producerSha256": "10c0eb0cea0397cf7861a4c086ab46616f81b0b48b544f2a6850fb4ecc328d95",
+      "producerDependencySha256": "e68cbc97aa8856d40bc853fee1aa83cd9b144a58cfb5e427db8129d63ccca393",
+      "result": "passed",
+      "producer": "artifacts/tmp/W2.A05.S01.addendum-01.run-selected.py",
+      "command": ".venv/Scripts/python.exe -B -u -m unittest -v tests.foundation.test_ui_change_gate.UiChangeGateTests.test_a05_completion_review_pairs_preserve_exact_actual_publications tests.foundation.test_ui_change_gate.UiChangeGateTests.test_a05_completion_review_pair_requires_prior_owner_source_grant",
+      "provenance": "fresh exact committed-candidate execution with fixed shared HEAD, tracked inputs and producers"
+    },
+    {
+      "id": "real-history",
+      "commit": "a1265a84cedf68d04093f4d62edc82743752175c",
+      "argv": [
+        ".venv/Scripts/python.exe",
+        "-B",
+        "-u",
+        "artifacts/tmp/W2.A05.S01.addendum-01.real-history-check.py",
+        "a1265a84cedf68d04093f4d62edc82743752175c"
+      ],
+      "cwd": ".",
+      "startedAt": "2026-10-05T09:25:38.949918+00:00",
+      "finishedAt": "2026-10-05T09:26:22.977676+00:00",
+      "durationSeconds": 44.028,
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/W2.A05.S01.addendum-01.real-history-a1265a84.log",
+      "rawOutputSha256": "f83057c0f12272f3e7b178062631561c60a5da99774c5bd9c68751dc8c8350b3",
+      "stableCandidate": true,
+      "inputCount": 4740,
+      "producerSha256": "10c0eb0cea0397cf7861a4c086ab46616f81b0b48b544f2a6850fb4ecc328d95",
+      "producerDependencySha256": "e68cbc97aa8856d40bc853fee1aa83cd9b144a58cfb5e427db8129d63ccca393",
+      "result": "passed",
+      "producer": "artifacts/tmp/W2.A05.S01.addendum-01.run-selected.py",
+      "command": ".venv/Scripts/python.exe -B -u artifacts/tmp/W2.A05.S01.addendum-01.real-history-check.py a1265a84cedf68d04093f4d62edc82743752175c",
+      "provenance": "fresh exact committed-candidate execution with fixed shared HEAD, tracked inputs and producers"
+    },
+    {
+      "id": "projection-denials",
+      "commit": "a1265a84cedf68d04093f4d62edc82743752175c",
+      "argv": [
+        ".venv/Scripts/python.exe",
+        "-B",
+        "-u",
+        "-m",
+        "unittest",
+        "-v",
+        "tests.foundation.test_ui_change_gate.UiChangeGateTests.test_reviewed_activation_inert_map_rejects_rewritten_bindings_and_predecessors",
+        "tests.foundation.test_ui_change_gate.UiChangeGateTests.test_reviewed_activation_inert_map_does_not_hide_new_source_or_same_name_output"
+      ],
+      "cwd": ".",
+      "startedAt": "2026-10-05T09:25:37.762456+00:00",
+      "finishedAt": "2026-10-05T09:33:29.345740+00:00",
+      "durationSeconds": 471.583,
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/W2.A05.S01.addendum-01.projection-denials-a1265a84.log",
+      "rawOutputSha256": "36236f2d0dfcda14c629ef2b3603a3fe75992d2e53ef5dcbae357c10b0c5dc4c",
+      "stableCandidate": true,
+      "inputCount": 4740,
+      "producerSha256": "10c0eb0cea0397cf7861a4c086ab46616f81b0b48b544f2a6850fb4ecc328d95",
+      "producerDependencySha256": "e68cbc97aa8856d40bc853fee1aa83cd9b144a58cfb5e427db8129d63ccca393",
+      "result": "passed",
+      "producer": "artifacts/tmp/W2.A05.S01.addendum-01.run-selected.py",
+      "command": ".venv/Scripts/python.exe -B -u -m unittest -v tests.foundation.test_ui_change_gate.UiChangeGateTests.test_reviewed_activation_inert_map_rejects_rewritten_bindings_and_predecessors tests.foundation.test_ui_change_gate.UiChangeGateTests.test_reviewed_activation_inert_map_does_not_hide_new_source_or_same_name_output",
+      "provenance": "fresh exact committed-candidate execution with fixed shared HEAD, tracked inputs and producers"
+    },
+    {
+      "id": "retained-history",
+      "commit": "a1265a84cedf68d04093f4d62edc82743752175c",
+      "argv": [
+        ".venv/Scripts/python.exe",
+        "-B",
+        "-u",
+        "-m",
+        "unittest",
+        "-v",
+        "tests.foundation.test_ui_change_gate.UiChangeGateTests.test_reviewed_activation_inert_history_preserves_actual_net_inventory"
+      ],
+      "cwd": ".",
+      "startedAt": "2026-10-05T09:33:29.715106+00:00",
+      "finishedAt": "2026-10-05T09:36:59.721598+00:00",
+      "durationSeconds": 210.006,
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/W2.A05.S01.addendum-01.retained-history-a1265a84.log",
+      "rawOutputSha256": "3582aabecc705091e402d08520d34adf002689491b7c434fb32c7faf0a8c50c8",
+      "stableCandidate": true,
+      "inputCount": 4740,
+      "producerSha256": "10c0eb0cea0397cf7861a4c086ab46616f81b0b48b544f2a6850fb4ecc328d95",
+      "producerDependencySha256": "e68cbc97aa8856d40bc853fee1aa83cd9b144a58cfb5e427db8129d63ccca393",
+      "result": "passed",
+      "producer": "artifacts/tmp/W2.A05.S01.addendum-01.run-selected.py",
+      "command": ".venv/Scripts/python.exe -B -u -m unittest -v tests.foundation.test_ui_change_gate.UiChangeGateTests.test_reviewed_activation_inert_history_preserves_actual_net_inventory",
+      "provenance": "fresh exact committed-candidate execution with fixed shared HEAD, tracked inputs and producers"
+    },
+    {
+      "id": "preceding-authority",
+      "commit": "a1265a84cedf68d04093f4d62edc82743752175c",
+      "argv": [
+        ".venv/Scripts/python.exe",
+        "-B",
+        "-u",
+        "-m",
+        "unittest",
+        "-v",
+        "tests.foundation.test_ui_change_gate.UiChangeGateTests.test_reviewed_activation_preceding_sources_preserve_adverse_history_and_deny_substitution",
+        "tests.foundation.test_ui_change_gate.UiChangeGateTests.test_reviewed_activation_preceding_sources_deny_modes_omissions_and_extra_history"
+      ],
+      "cwd": ".",
+      "startedAt": "2026-10-05T09:36:59.997526+00:00",
+      "finishedAt": "2026-10-05T09:40:36.530903+00:00",
+      "durationSeconds": 216.533,
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/W2.A05.S01.addendum-01.preceding-authority-a1265a84.log",
+      "rawOutputSha256": "3cba50bed69b1a43141ee056114b31ce7ed238f3d36e4ec3ca5cb257923a1655",
+      "stableCandidate": true,
+      "inputCount": 4740,
+      "producerSha256": "10c0eb0cea0397cf7861a4c086ab46616f81b0b48b544f2a6850fb4ecc328d95",
+      "producerDependencySha256": "e68cbc97aa8856d40bc853fee1aa83cd9b144a58cfb5e427db8129d63ccca393",
+      "result": "passed",
+      "producer": "artifacts/tmp/W2.A05.S01.addendum-01.run-selected.py",
+      "command": ".venv/Scripts/python.exe -B -u -m unittest -v tests.foundation.test_ui_change_gate.UiChangeGateTests.test_reviewed_activation_preceding_sources_preserve_adverse_history_and_deny_substitution tests.foundation.test_ui_change_gate.UiChangeGateTests.test_reviewed_activation_preceding_sources_deny_modes_omissions_and_extra_history",
+      "provenance": "fresh exact committed-candidate execution with fixed shared HEAD, tracked inputs and producers"
+    },
+    {
+      "id": "fixture-prefix",
+      "commit": "a1265a84cedf68d04093f4d62edc82743752175c",
+      "argv": [
+        ".venv/Scripts/python.exe",
+        "-B",
+        "-u",
+        "-m",
+        "unittest",
+        "-v",
+        "tests.foundation.test_ui_change_gate.UiChangeGateTests.test_reviewed_activation_repair_fixture_preserves_claim_prefix_after_task_approval"
+      ],
+      "cwd": ".",
+      "startedAt": "2026-10-05T09:27:09.674594+00:00",
+      "finishedAt": "2026-10-05T09:27:52.800365+00:00",
+      "durationSeconds": 43.126,
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/W2.A05.S01.addendum-01.fixture-prefix-a1265a84.log",
+      "rawOutputSha256": "a78cda78571fce382535e4e06c9a0c539368ea298900911d340ab1d4e3916609",
+      "stableCandidate": true,
+      "inputCount": 4740,
+      "producerSha256": "10c0eb0cea0397cf7861a4c086ab46616f81b0b48b544f2a6850fb4ecc328d95",
+      "producerDependencySha256": "e68cbc97aa8856d40bc853fee1aa83cd9b144a58cfb5e427db8129d63ccca393",
+      "result": "passed",
+      "producer": "artifacts/tmp/W2.A05.S01.addendum-01.run-selected.py",
+      "command": ".venv/Scripts/python.exe -B -u -m unittest -v tests.foundation.test_ui_change_gate.UiChangeGateTests.test_reviewed_activation_repair_fixture_preserves_claim_prefix_after_task_approval",
+      "provenance": "fresh exact committed-candidate execution with fixed shared HEAD, tracked inputs and producers"
+    },
+    {
+      "id": "parent-campaign-denial",
+      "commit": "a1265a84cedf68d04093f4d62edc82743752175c",
+      "argv": [
+        ".venv/Scripts/python.exe",
+        "-B",
+        "-u",
+        "-m",
+        "unittest",
+        "-v",
+        "tests.foundation.test_ui_change_gate.UiChangeGateTests.test_reviewed_activation_repair_denies_parent_campaign_rewrite_and_restoration"
+      ],
+      "cwd": ".",
+      "startedAt": "2026-10-05T09:27:52.891309+00:00",
+      "finishedAt": "2026-10-05T09:31:27.457510+00:00",
+      "durationSeconds": 214.566,
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/W2.A05.S01.addendum-01.parent-campaign-denial-a1265a84.log",
+      "rawOutputSha256": "f36ea296f8456d6ab13b426307437d75f8e96fc875db367b06b3dce04583bd03",
+      "stableCandidate": true,
+      "inputCount": 4740,
+      "producerSha256": "10c0eb0cea0397cf7861a4c086ab46616f81b0b48b544f2a6850fb4ecc328d95",
+      "producerDependencySha256": "e68cbc97aa8856d40bc853fee1aa83cd9b144a58cfb5e427db8129d63ccca393",
+      "result": "passed",
+      "producer": "artifacts/tmp/W2.A05.S01.addendum-01.run-selected.py",
+      "command": ".venv/Scripts/python.exe -B -u -m unittest -v tests.foundation.test_ui_change_gate.UiChangeGateTests.test_reviewed_activation_repair_denies_parent_campaign_rewrite_and_restoration",
+      "provenance": "fresh exact committed-candidate execution with fixed shared HEAD, tracked inputs and producers"
+    },
+    {
+      "id": "parent-history-denial",
+      "commit": "a1265a84cedf68d04093f4d62edc82743752175c",
+      "argv": [
+        ".venv/Scripts/python.exe",
+        "-B",
+        "-u",
+        "-m",
+        "unittest",
+        "-v",
+        "tests.foundation.test_ui_change_gate.UiChangeGateTests.test_reviewed_activation_repair_denies_frozen_parent_history_rewrite_and_restoration"
+      ],
+      "cwd": ".",
+      "startedAt": "2026-10-05T09:31:27.926396+00:00",
+      "finishedAt": "2026-10-05T09:33:13.738492+00:00",
+      "durationSeconds": 105.812,
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/W2.A05.S01.addendum-01.parent-history-denial-a1265a84.log",
+      "rawOutputSha256": "4dfaa38c2e782774c3d166cfc0b54a962d7924a753e08e5b715c238eeedd9fe4",
+      "stableCandidate": true,
+      "inputCount": 4740,
+      "producerSha256": "10c0eb0cea0397cf7861a4c086ab46616f81b0b48b544f2a6850fb4ecc328d95",
+      "producerDependencySha256": "e68cbc97aa8856d40bc853fee1aa83cd9b144a58cfb5e427db8129d63ccca393",
+      "result": "passed",
+      "producer": "artifacts/tmp/W2.A05.S01.addendum-01.run-selected.py",
+      "command": ".venv/Scripts/python.exe -B -u -m unittest -v tests.foundation.test_ui_change_gate.UiChangeGateTests.test_reviewed_activation_repair_denies_frozen_parent_history_rewrite_and_restoration",
+      "provenance": "fresh exact committed-candidate execution with fixed shared HEAD, tracked inputs and producers"
+    },
+    {
+      "id": "repair-return",
+      "commit": "a1265a84cedf68d04093f4d62edc82743752175c",
+      "argv": [
+        ".venv/Scripts/python.exe",
+        "-B",
+        "-u",
+        "-m",
+        "unittest",
+        "-v",
+        "tests.foundation.test_ui_change_gate.UiChangeGateTests.test_reviewed_activation_repair_future_return_keeps_original_tasks_and_source_partition"
+      ],
+      "cwd": ".",
+      "startedAt": "2026-10-05T09:33:13.976261+00:00",
+      "finishedAt": "2026-10-05T09:41:52.890243+00:00",
+      "durationSeconds": 518.914,
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/W2.A05.S01.addendum-01.repair-return-a1265a84.log",
+      "rawOutputSha256": "833bd2512a18c72d9dacf2fb7418e5f916f03d75dd7ad1dce63226d954c278d3",
+      "stableCandidate": true,
+      "inputCount": 4740,
+      "producerSha256": "10c0eb0cea0397cf7861a4c086ab46616f81b0b48b544f2a6850fb4ecc328d95",
+      "producerDependencySha256": "e68cbc97aa8856d40bc853fee1aa83cd9b144a58cfb5e427db8129d63ccca393",
+      "result": "passed",
+      "producer": "artifacts/tmp/W2.A05.S01.addendum-01.run-selected.py",
+      "command": ".venv/Scripts/python.exe -B -u -m unittest -v tests.foundation.test_ui_change_gate.UiChangeGateTests.test_reviewed_activation_repair_future_return_keeps_original_tasks_and_source_partition",
+      "provenance": "fresh exact committed-candidate execution with fixed shared HEAD, tracked inputs and producers"
+    },
+    {
+      "id": "repair-denials",
+      "commit": "a1265a84cedf68d04093f4d62edc82743752175c",
+      "argv": [
+        ".venv/Scripts/python.exe",
+        "-B",
+        "-u",
+        "-m",
+        "unittest",
+        "-v",
+        "tests.foundation.test_ui_change_gate.UiChangeGateTests.test_reviewed_activation_repair_denies_incomplete_actual_delivery",
+        "tests.foundation.test_ui_change_gate.UiChangeGateTests.test_reviewed_activation_repair_denies_reopened_original_task_and_registry_rewrite",
+        "tests.foundation.test_ui_change_gate.UiChangeGateTests.test_reviewed_activation_repair_rejects_changed_task_and_slice_reviews"
+      ],
+      "cwd": ".",
+      "startedAt": "2026-10-05T09:41:53.154488+00:00",
+      "finishedAt": "2026-10-05T09:47:31.715877+00:00",
+      "durationSeconds": 338.561,
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/W2.A05.S01.addendum-01.repair-denials-a1265a84.log",
+      "rawOutputSha256": "46188e604c7eb8aeb8300bea5a188bd72a9ba1acfd1e2af3820275289736daec",
+      "stableCandidate": true,
+      "inputCount": 4740,
+      "producerSha256": "10c0eb0cea0397cf7861a4c086ab46616f81b0b48b544f2a6850fb4ecc328d95",
+      "producerDependencySha256": "e68cbc97aa8856d40bc853fee1aa83cd9b144a58cfb5e427db8129d63ccca393",
+      "result": "passed",
+      "producer": "artifacts/tmp/W2.A05.S01.addendum-01.run-selected.py",
+      "command": ".venv/Scripts/python.exe -B -u -m unittest -v tests.foundation.test_ui_change_gate.UiChangeGateTests.test_reviewed_activation_repair_denies_incomplete_actual_delivery tests.foundation.test_ui_change_gate.UiChangeGateTests.test_reviewed_activation_repair_denies_reopened_original_task_and_registry_rewrite tests.foundation.test_ui_change_gate.UiChangeGateTests.test_reviewed_activation_repair_rejects_changed_task_and_slice_reviews",
+      "provenance": "fresh exact committed-candidate execution with fixed shared HEAD, tracked inputs and producers"
+    },
+    {
+      "id": "repair-security",
+      "commit": "a1265a84cedf68d04093f4d62edc82743752175c",
+      "argv": [
+        ".venv/Scripts/python.exe",
+        "-B",
+        "-u",
+        "-m",
+        "unittest",
+        "-v",
+        "tests.foundation.test_ui_change_gate.UiChangeGateTests.test_reviewed_activation_repair_future_security_review_is_required_before_adoption"
+      ],
+      "cwd": ".",
+      "startedAt": "2026-10-05T09:47:31.772539+00:00",
+      "finishedAt": "2026-10-05T09:52:17.402887+00:00",
+      "durationSeconds": 285.63,
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/W2.A05.S01.addendum-01.repair-security-a1265a84.log",
+      "rawOutputSha256": "54c0a4459104fa8178ff907774ac01235368e88a52103e3338e7e2d4de75fb67",
+      "stableCandidate": true,
+      "inputCount": 4740,
+      "producerSha256": "10c0eb0cea0397cf7861a4c086ab46616f81b0b48b544f2a6850fb4ecc328d95",
+      "producerDependencySha256": "e68cbc97aa8856d40bc853fee1aa83cd9b144a58cfb5e427db8129d63ccca393",
+      "result": "passed",
+      "producer": "artifacts/tmp/W2.A05.S01.addendum-01.run-selected.py",
+      "command": ".venv/Scripts/python.exe -B -u -m unittest -v tests.foundation.test_ui_change_gate.UiChangeGateTests.test_reviewed_activation_repair_future_security_review_is_required_before_adoption",
+      "provenance": "fresh exact committed-candidate execution with fixed shared HEAD, tracked inputs and producers"
+    },
+    {
+      "id": "repaired-full-base",
+      "commit": "a1265a84cedf68d04093f4d62edc82743752175c",
+      "argv": [
+        ".venv/Scripts/python.exe",
+        "-B",
+        "-u",
+        "-m",
+        "unittest",
+        "-v",
+        "tests.foundation.test_ui_change_gate.UiChangeGateTests.test_reviewed_activation_repair_full_original_base_requires_current_classification"
+      ],
+      "cwd": ".",
+      "startedAt": "2026-10-05T09:27:03.012589+00:00",
+      "finishedAt": "2026-10-05T09:50:55.747936+00:00",
+      "durationSeconds": 1432.735,
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/W2.A05.S01.addendum-01.repaired-full-base-a1265a84.log",
+      "rawOutputSha256": "80666a872d137a2873bbd98d28f811a4c25ab50d2d668de89c5f23c1d8b1509d",
+      "stableCandidate": true,
+      "inputCount": 4740,
+      "producerSha256": "10c0eb0cea0397cf7861a4c086ab46616f81b0b48b544f2a6850fb4ecc328d95",
+      "producerDependencySha256": "e68cbc97aa8856d40bc853fee1aa83cd9b144a58cfb5e427db8129d63ccca393",
+      "result": "passed",
+      "producer": "artifacts/tmp/W2.A05.S01.addendum-01.run-selected.py",
+      "command": ".venv/Scripts/python.exe -B -u -m unittest -v tests.foundation.test_ui_change_gate.UiChangeGateTests.test_reviewed_activation_repair_full_original_base_requires_current_classification",
+      "provenance": "fresh exact committed-candidate execution with fixed shared HEAD, tracked inputs and producers"
+    },
+    {
+      "id": "legacy-authority",
+      "commit": "a1265a84cedf68d04093f4d62edc82743752175c",
+      "argv": [
+        ".venv/Scripts/python.exe",
+        "-B",
+        "-u",
+        "-m",
+        "unittest",
+        "-v",
+        "tests.foundation.test_ui_change_gate.UiChangeGateTests.test_linked_correction_authenticates_without_mutating_origin_metadata",
+        "tests.foundation.test_ui_change_gate.UiChangeGateTests.test_linked_rejects_authority_and_live_claim_substitutions",
+        "tests.foundation.test_ui_change_gate.UiChangeGateTests.test_resumed_amendment_schema_is_opt_in_and_cannot_authorize_ordinary_tasks",
+        "tests.foundation.test_ui_change_gate.UiChangeGateTests.test_intentional_amendment_schema_is_exact_and_cannot_extend_legacy_lanes",
+        "tests.foundation.test_ui_change_gate.UiChangeGateTests.test_adopted_continuation_schema_is_closed_and_exact_to_original_t01",
+        "tests.foundation.test_ui_change_gate.UiChangeGateTests.test_reference_activation_v14_schema_requires_both_closed_authorities",
+        "tests.foundation.test_ui_change_gate.UiChangeGateTests.test_adopted_continuation_rejects_unreviewed_imported_authority_source",
+        "tests.foundation.test_ui_change_gate.UiChangeGateTests.test_adopted_continuation_rejects_reviewed_a02_source_outside_six_files",
+        "tests.foundation.test_ui_change_gate.UiChangeGateTests.test_reference_activation_correction_authenticates_append_only_remediation",
+        "tests.foundation.test_ui_change_gate.UiChangeGateTests.test_reference_activation_correction_replays_slice_findings_and_canonical_rounds",
+        "tests.foundation.test_ui_change_gate.UiChangeGateTests.test_reference_activation_correction_requires_separate_checkpoint_review"
+      ],
+      "cwd": ".",
+      "startedAt": "2026-10-05T09:27:03.563979+00:00",
+      "finishedAt": "2026-10-05T09:41:22.032459+00:00",
+      "durationSeconds": 858.468,
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/W2.A05.S01.addendum-01.legacy-authority-a1265a84.log",
+      "rawOutputSha256": "fabc7b8251641b2ed3158c6a769c72502924e0d2648ecd8c42cb56cf3399b8fd",
+      "stableCandidate": true,
+      "inputCount": 4740,
+      "producerSha256": "10c0eb0cea0397cf7861a4c086ab46616f81b0b48b544f2a6850fb4ecc328d95",
+      "producerDependencySha256": "e68cbc97aa8856d40bc853fee1aa83cd9b144a58cfb5e427db8129d63ccca393",
+      "result": "passed",
+      "producer": "artifacts/tmp/W2.A05.S01.addendum-01.run-selected.py",
+      "command": ".venv/Scripts/python.exe -B -u -m unittest -v tests.foundation.test_ui_change_gate.UiChangeGateTests.test_linked_correction_authenticates_without_mutating_origin_metadata tests.foundation.test_ui_change_gate.UiChangeGateTests.test_linked_rejects_authority_and_live_claim_substitutions tests.foundation.test_ui_change_gate.UiChangeGateTests.test_resumed_amendment_schema_is_opt_in_and_cannot_authorize_ordinary_tasks tests.foundation.test_ui_change_gate.UiChangeGateTests.test_intentional_amendment_schema_is_exact_and_cannot_extend_legacy_lanes tests.foundation.test_ui_change_gate.UiChangeGateTests.test_adopted_continuation_schema_is_closed_and_exact_to_original_t01 tests.foundation.test_ui_change_gate.UiChangeGateTests.test_reference_activation_v14_schema_requires_both_closed_authorities tests.foundation.test_ui_change_gate.UiChangeGateTests.test_adopted_continuation_rejects_unreviewed_imported_authority_source tests.foundation.test_ui_change_gate.UiChangeGateTests.test_adopted_continuation_rejects_reviewed_a02_source_outside_six_files tests.foundation.test_ui_change_gate.UiChangeGateTests.test_reference_activation_correction_authenticates_append_only_remediation tests.foundation.test_ui_change_gate.UiChangeGateTests.test_reference_activation_correction_replays_slice_findings_and_canonical_rounds tests.foundation.test_ui_change_gate.UiChangeGateTests.test_reference_activation_correction_requires_separate_checkpoint_review",
+      "provenance": "fresh exact committed-candidate execution with fixed shared HEAD, tracked inputs and producers"
+    },
+    {
+      "id": "adr",
+      "commit": "a1265a84cedf68d04093f4d62edc82743752175c",
+      "argv": [
+        ".venv/Scripts/python.exe",
+        "-B",
+        "tools/adr_check.py",
+        "--repo",
+        ".",
+        "--base",
+        "25ba8eee0bc96704a9fc42a752b766ca1b936d32",
+        "--head",
+        "a1265a84cedf68d04093f4d62edc82743752175c"
+      ],
+      "cwd": ".",
+      "startedAt": "2026-10-05T09:25:33.980211+00:00",
+      "finishedAt": "2026-10-05T09:25:36.252289+00:00",
+      "durationSeconds": 2.272,
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/W2.A05.S01.addendum-01.adr-a1265a84.log",
+      "rawOutputSha256": "2078f26461ebcf91e6089474d9c652cc1e619050aa493bb625a39a216122a02f",
+      "stableCandidate": true,
+      "inputCount": 4740,
+      "producerSha256": "10c0eb0cea0397cf7861a4c086ab46616f81b0b48b544f2a6850fb4ecc328d95",
+      "producerDependencySha256": "e68cbc97aa8856d40bc853fee1aa83cd9b144a58cfb5e427db8129d63ccca393",
+      "result": "passed",
+      "producer": "artifacts/tmp/W2.A05.S01.addendum-01.run-selected.py",
+      "command": ".venv/Scripts/python.exe -B tools/adr_check.py --repo . --base 25ba8eee0bc96704a9fc42a752b766ca1b936d32 --head a1265a84cedf68d04093f4d62edc82743752175c",
+      "provenance": "fresh exact committed-candidate execution with fixed shared HEAD, tracked inputs and producers"
+    },
+    {
+      "id": "ui-authority",
+      "commit": "a1265a84cedf68d04093f4d62edc82743752175c",
+      "argv": [
+        ".venv/Scripts/python.exe",
+        "-B",
+        "tools/ui_change_gate.py",
+        "--repo",
+        ".",
+        "--base",
+        "25ba8eee0bc96704a9fc42a752b766ca1b936d32",
+        "--head",
+        "a1265a84cedf68d04093f4d62edc82743752175c"
+      ],
+      "cwd": ".",
+      "startedAt": "2026-10-05T09:25:36.307328+00:00",
+      "finishedAt": "2026-10-05T09:25:40.048042+00:00",
+      "durationSeconds": 3.741,
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/W2.A05.S01.addendum-01.ui-authority-a1265a84.log",
+      "rawOutputSha256": "7e528485e6b98015d8360a09e2c703bcba0b1dc69e1dbb0a44b7dff1a873ab9a",
+      "stableCandidate": true,
+      "inputCount": 4740,
+      "producerSha256": "10c0eb0cea0397cf7861a4c086ab46616f81b0b48b544f2a6850fb4ecc328d95",
+      "producerDependencySha256": "e68cbc97aa8856d40bc853fee1aa83cd9b144a58cfb5e427db8129d63ccca393",
+      "result": "passed",
+      "producer": "artifacts/tmp/W2.A05.S01.addendum-01.run-selected.py",
+      "command": ".venv/Scripts/python.exe -B tools/ui_change_gate.py --repo . --base 25ba8eee0bc96704a9fc42a752b766ca1b936d32 --head a1265a84cedf68d04093f4d62edc82743752175c",
+      "provenance": "fresh exact committed-candidate execution with fixed shared HEAD, tracked inputs and producers"
+    },
+    {
+      "id": "ruff",
+      "commit": "a1265a84cedf68d04093f4d62edc82743752175c",
+      "argv": [
+        ".venv/Scripts/python.exe",
+        "-B",
+        "-m",
+        "ruff",
+        "check",
+        "tools/ui_change_gate.py",
+        "tests/foundation/test_ui_change_gate.py"
+      ],
+      "cwd": ".",
+      "startedAt": "2026-10-05T09:25:40.104398+00:00",
+      "finishedAt": "2026-10-05T09:25:40.772458+00:00",
+      "durationSeconds": 0.668,
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/W2.A05.S01.addendum-01.ruff-a1265a84.log",
+      "rawOutputSha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18",
+      "stableCandidate": true,
+      "inputCount": 4740,
+      "producerSha256": "10c0eb0cea0397cf7861a4c086ab46616f81b0b48b544f2a6850fb4ecc328d95",
+      "producerDependencySha256": "e68cbc97aa8856d40bc853fee1aa83cd9b144a58cfb5e427db8129d63ccca393",
+      "result": "passed",
+      "producer": "artifacts/tmp/W2.A05.S01.addendum-01.run-selected.py",
+      "command": ".venv/Scripts/python.exe -B -m ruff check tools/ui_change_gate.py tests/foundation/test_ui_change_gate.py",
+      "provenance": "fresh exact committed-candidate execution with fixed shared HEAD, tracked inputs and producers"
+    },
+    {
+      "id": "format",
+      "commit": "a1265a84cedf68d04093f4d62edc82743752175c",
+      "argv": [
+        ".venv/Scripts/python.exe",
+        "-B",
+        "-m",
+        "ruff",
+        "format",
+        "--check",
+        "tools/ui_change_gate.py",
+        "tests/foundation/test_ui_change_gate.py"
+      ],
+      "cwd": ".",
+      "startedAt": "2026-10-05T09:25:40.939403+00:00",
+      "finishedAt": "2026-10-05T09:25:41.610160+00:00",
+      "durationSeconds": 0.671,
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/W2.A05.S01.addendum-01.format-a1265a84.log",
+      "rawOutputSha256": "3bc53bf3e981a98a34a852e175bf9b77af841edea74fca595d9aedcbaf9a4938",
+      "stableCandidate": true,
+      "inputCount": 4740,
+      "producerSha256": "10c0eb0cea0397cf7861a4c086ab46616f81b0b48b544f2a6850fb4ecc328d95",
+      "producerDependencySha256": "e68cbc97aa8856d40bc853fee1aa83cd9b144a58cfb5e427db8129d63ccca393",
+      "result": "passed",
+      "producer": "artifacts/tmp/W2.A05.S01.addendum-01.run-selected.py",
+      "command": ".venv/Scripts/python.exe -B -m ruff format --check tools/ui_change_gate.py tests/foundation/test_ui_change_gate.py",
+      "provenance": "fresh exact committed-candidate execution with fixed shared HEAD, tracked inputs and producers"
+    },
+    {
+      "id": "mypy",
+      "commit": "a1265a84cedf68d04093f4d62edc82743752175c",
+      "argv": [
+        ".venv/Scripts/python.exe",
+        "-B",
+        "-m",
+        "mypy",
+        "tools/ui_change_gate.py",
+        "tests/foundation/test_ui_change_gate.py"
+      ],
+      "cwd": ".",
+      "startedAt": "2026-10-05T09:25:42.000343+00:00",
+      "finishedAt": "2026-10-05T09:25:43.094050+00:00",
+      "durationSeconds": 1.094,
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/W2.A05.S01.addendum-01.mypy-a1265a84.log",
+      "rawOutputSha256": "0c37c4158c91ef55c724ba017bf6465f26018199badb08e3ff13f98acdf056c2",
+      "stableCandidate": true,
+      "inputCount": 4740,
+      "producerSha256": "10c0eb0cea0397cf7861a4c086ab46616f81b0b48b544f2a6850fb4ecc328d95",
+      "producerDependencySha256": "e68cbc97aa8856d40bc853fee1aa83cd9b144a58cfb5e427db8129d63ccca393",
+      "result": "passed",
+      "producer": "artifacts/tmp/W2.A05.S01.addendum-01.run-selected.py",
+      "command": ".venv/Scripts/python.exe -B -m mypy tools/ui_change_gate.py tests/foundation/test_ui_change_gate.py",
+      "provenance": "fresh exact committed-candidate execution with fixed shared HEAD, tracked inputs and producers"
+    },
+    {
+      "id": "diff",
+      "commit": "a1265a84cedf68d04093f4d62edc82743752175c",
+      "argv": [
+        "git",
+        "-c",
+        "core.safecrlf=false",
+        "diff",
+        "--check",
+        "25ba8eee0bc96704a9fc42a752b766ca1b936d32",
+        "a1265a84cedf68d04093f4d62edc82743752175c"
+      ],
+      "cwd": ".",
+      "startedAt": "2026-10-05T09:25:43.256384+00:00",
+      "finishedAt": "2026-10-05T09:25:44.230369+00:00",
+      "durationSeconds": 0.974,
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/W2.A05.S01.addendum-01.diff-a1265a84.log",
+      "rawOutputSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stableCandidate": true,
+      "inputCount": 4740,
+      "producerSha256": "10c0eb0cea0397cf7861a4c086ab46616f81b0b48b544f2a6850fb4ecc328d95",
+      "producerDependencySha256": "e68cbc97aa8856d40bc853fee1aa83cd9b144a58cfb5e427db8129d63ccca393",
+      "result": "passed",
+      "producer": "artifacts/tmp/W2.A05.S01.addendum-01.run-selected.py",
+      "command": "git -c core.safecrlf=false diff --check 25ba8eee0bc96704a9fc42a752b766ca1b936d32 a1265a84cedf68d04093f4d62edc82743752175c",
+      "provenance": "fresh exact committed-candidate execution with fixed shared HEAD, tracked inputs and producers"
+    },
+    {
+      "id": "reference-integrity",
+      "commit": "a1265a84cedf68d04093f4d62edc82743752175c",
+      "argv": [
+        ".venv/Scripts/python.exe",
+        "-B",
+        "tools/ui_reference_check.py",
+        "--repo",
+        ".",
+        "--reference",
+        "design/ui-reference",
+        "--report",
+        "artifacts/tmp/W2.A05.T01.reference-a1265a84.json"
+      ],
+      "cwd": ".",
+      "startedAt": "2026-10-05T09:25:44.281582+00:00",
+      "finishedAt": "2026-10-05T09:25:46.004900+00:00",
+      "durationSeconds": 1.723,
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/W2.A05.S01.addendum-01.reference-integrity-a1265a84.log",
+      "rawOutputSha256": "446e2d73fca4b010d9ed1ce0f0c848ebbe9456e4d5e77e8269554a6c2a380982",
+      "stableCandidate": true,
+      "inputCount": 4740,
+      "producerSha256": "10c0eb0cea0397cf7861a4c086ab46616f81b0b48b544f2a6850fb4ecc328d95",
+      "producerDependencySha256": "e68cbc97aa8856d40bc853fee1aa83cd9b144a58cfb5e427db8129d63ccca393",
+      "result": "passed",
+      "producer": "artifacts/tmp/W2.A05.S01.addendum-01.run-selected.py",
+      "command": ".venv/Scripts/python.exe -B tools/ui_reference_check.py --repo . --reference design/ui-reference --report artifacts/tmp/W2.A05.T01.reference-a1265a84.json",
+      "provenance": "fresh exact committed-candidate execution with fixed shared HEAD, tracked inputs and producers"
+    },
+    {
+      "id": "backlog",
+      "commit": "a1265a84cedf68d04093f4d62edc82743752175c",
+      "argv": [
+        ".venv/Scripts/python.exe",
+        "-B",
+        "tools/taskctl.py",
+        "--file",
+        "planning/backlog.yaml",
+        "validate"
+      ],
+      "cwd": ".",
+      "startedAt": "2026-10-05T09:27:10.389794+00:00",
+      "finishedAt": "2026-10-05T09:32:49.078765+00:00",
+      "durationSeconds": 338.689,
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/W2.A05.S01.addendum-01.backlog-a1265a84.log",
+      "rawOutputSha256": "6101121f1a3dc921c6611ad107ee9daeb1e1b09311d9e4bf9f7436f000f81679",
+      "stableCandidate": true,
+      "inputCount": 4740,
+      "producerSha256": "10c0eb0cea0397cf7861a4c086ab46616f81b0b48b544f2a6850fb4ecc328d95",
+      "producerDependencySha256": "e68cbc97aa8856d40bc853fee1aa83cd9b144a58cfb5e427db8129d63ccca393",
+      "result": "passed",
+      "producer": "artifacts/tmp/W2.A05.S01.addendum-01.run-selected.py",
+      "command": ".venv/Scripts/python.exe -B tools/taskctl.py --file planning/backlog.yaml validate",
+      "provenance": "fresh exact committed-candidate execution with fixed shared HEAD, tracked inputs and producers"
+    },
+    {
+      "id": "views",
+      "commit": "a1265a84cedf68d04093f4d62edc82743752175c",
+      "argv": [
+        ".venv/Scripts/python.exe",
+        "-B",
+        "tools/backlog_views.py",
+        "--repo",
+        ".",
+        "--check"
+      ],
+      "cwd": ".",
+      "startedAt": "2026-10-05T09:32:49.133977+00:00",
+      "finishedAt": "2026-10-05T09:32:52.772400+00:00",
+      "durationSeconds": 3.638,
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/W2.A05.S01.addendum-01.views-a1265a84.log",
+      "rawOutputSha256": "36ebe8ba5eed16d416087f957ce901132e936a4ed14c97dbcb91651c3e2678aa",
+      "stableCandidate": true,
+      "inputCount": 4740,
+      "producerSha256": "10c0eb0cea0397cf7861a4c086ab46616f81b0b48b544f2a6850fb4ecc328d95",
+      "producerDependencySha256": "e68cbc97aa8856d40bc853fee1aa83cd9b144a58cfb5e427db8129d63ccca393",
+      "result": "passed",
+      "producer": "artifacts/tmp/W2.A05.S01.addendum-01.run-selected.py",
+      "command": ".venv/Scripts/python.exe -B tools/backlog_views.py --repo . --check",
+      "provenance": "fresh exact committed-candidate execution with fixed shared HEAD, tracked inputs and producers"
+    },
+    {
+      "id": "site",
+      "commit": "a1265a84cedf68d04093f4d62edc82743752175c",
+      "argv": [
+        ".venv/Scripts/python.exe",
+        "-B",
+        "tools/plan_review_check.py",
+        "--repo",
+        ".",
+        "--report",
+        "artifacts/tmp/W2.A05.T01.site-a1265a84.json"
+      ],
+      "cwd": ".",
+      "startedAt": "2026-10-05T09:32:52.825860+00:00",
+      "finishedAt": "2026-10-05T09:39:19.804442+00:00",
+      "durationSeconds": 386.979,
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/W2.A05.S01.addendum-01.site-a1265a84.log",
+      "rawOutputSha256": "d6b4aabfbf04f2e0e52f0737fc127f4236f25f394f67a0092fcd99e5d5de45e3",
+      "stableCandidate": true,
+      "inputCount": 4740,
+      "producerSha256": "10c0eb0cea0397cf7861a4c086ab46616f81b0b48b544f2a6850fb4ecc328d95",
+      "producerDependencySha256": "e68cbc97aa8856d40bc853fee1aa83cd9b144a58cfb5e427db8129d63ccca393",
+      "result": "passed",
+      "producer": "artifacts/tmp/W2.A05.S01.addendum-01.run-selected.py",
+      "command": ".venv/Scripts/python.exe -B tools/plan_review_check.py --repo . --report artifacts/tmp/W2.A05.T01.site-a1265a84.json",
+      "provenance": "fresh exact committed-candidate execution with fixed shared HEAD, tracked inputs and producers"
+    }
+  ],
+  "receipts": [
+    {
+      "path": "artifacts/tmp/W2.A05.S01.addendum-01.completion-a1265a84.results.json",
+      "sha256": "0f49d0cd3e133e2266c7f4760e2134e10088d09bdc009ef1b89baf948a3026f9"
+    },
+    {
+      "path": "artifacts/tmp/W2.A05.S01.addendum-01.history-a1265a84.results.json",
+      "sha256": "73ab9323f402fc3b8866639fbdd7ae5f48ff9687561dc4cbd17827bb25a76d92"
+    },
+    {
+      "path": "artifacts/tmp/W2.A05.S01.addendum-01.repair-a1265a84.results.json",
+      "sha256": "b10832198c46590412d447993b1a414cd224fb7555536b9fb5ee565d917b4ceb"
+    },
+    {
+      "path": "artifacts/tmp/W2.A05.S01.addendum-01.full-base-a1265a84.results.json",
+      "sha256": "ec5c654347c650ded1b602472f411bb92ab705bbfb999cf8fb6870259bc013f4"
+    },
+    {
+      "path": "artifacts/tmp/W2.A05.S01.addendum-01.compatibility-a1265a84.results.json",
+      "sha256": "1f85a95d7d371f677ba437dd38fb66f8475ecfd31571577fa0682a3cbff18b95"
+    },
+    {
+      "path": "artifacts/tmp/W2.A05.S01.addendum-01.controls-a1265a84.results.json",
+      "sha256": "8ce6f7ac1880d5525e836deff66e6bbcd32149d5758a64fa89308bffc5b589e5"
+    },
+    {
+      "path": "artifacts/tmp/W2.A05.S01.addendum-01.planning-a1265a84.results.json",
+      "sha256": "a2a2d0c034680dc1c20c7325c25a10f69b34a9e23f46ea759520a9e06b821c9c"
+    }
+  ],
+  "acceptanceClosure": [
+    {
+      "criterion": "Only the exact owner/readiness/proposal-bound four-path source segment is admitted separately after completed non-overlapping task ranges",
+      "checkIds": [
+        "real-history",
+        "actual-pairs",
+        "adr",
+        "ui-authority",
+        "diff"
+      ]
+    },
+    {
+      "criterion": "Both literal actual R01 ledger-first publications authenticate original packets, reviews, identity and whole sibling/backlog state; substitution and unrelated histories deny",
+      "checkIds": [
+        "actual-pairs",
+        "real-history",
+        "legacy-authority",
+        "fixture-prefix",
+        "parent-history-denial",
+        "parent-campaign-denial"
+      ]
+    },
+    {
+      "criterion": "Previous E06/owner/lease/retained-projection/net/source, ordered slice/security/return and full-original-base/current-classification boundaries remain enforced",
+      "checkIds": [
+        "projection-denials",
+        "retained-history",
+        "preceding-authority",
+        "repair-return",
+        "repair-denials",
+        "repair-security",
+        "repaired-full-base"
+      ]
+    },
+    {
+      "criterion": "Affected source quality, ADR/UI/reference and planning contracts pass; unchanged independently reviewed static/browser/accessibility proof remains authentic prior task evidence",
+      "checkIds": [
+        "ruff",
+        "format",
+        "mypy",
+        "adr",
+        "ui-authority",
+        "reference-integrity",
+        "backlog",
+        "views",
+        "site"
+      ],
+      "historicalCheckIds": [
+        "static-names",
+        "browser-names",
+        "official-accessibility"
+      ]
+    }
+  ],
+  "historicalTaskProof": {
+    "manifest": {
+      "path": "artifacts/evidence/W2.A05.T02.json",
+      "sha256": "cf0c65d9cd8f7cf70d9855d9d5016d01db35c3297eee876dba6854b8fcf44600"
+    },
+    "unchangedRelevantInputPaths": [
+      "tools/ui_conformance.py",
+      "tools/ui_accessibility_check.py",
+      "tools/ui_reference_check.py",
+      "tests/desktop/test_ui_conformance.py",
+      "verification/baselines/desktop-ui.json",
+      "verification/extensions/desktop-ui.json",
+      "design/ui-reference",
+      "apps/desktop",
+      "packages/contracts/workflow-profile"
+    ],
+    "checks": [
+      {
+        "id": "static-names",
+        "candidateCommit": "03e501c4550c7aa61e1e60827d49f7174faab1ef",
+        "rawOutput": "artifacts/tmp/W2.A05.T02.static-names-03e501c4.log",
+        "sha256": "37b60f8705cfc8c5d2f5f5f54114b0aad5f628274e214534496e52ce0034338b",
+        "provenance": "authenticated historical independently approved T02 execution; not rerun or represented as fresh completion-source execution"
+      },
+      {
+        "id": "browser-names",
+        "candidateCommit": "03e501c4550c7aa61e1e60827d49f7174faab1ef",
+        "rawOutput": "artifacts/tmp/W2.A05.T02.browser-names-03e501c4.log",
+        "sha256": "969e52e5ba8645e6ba82297f4fb8b721bf914e9b917bbcccab76b828dff96b30",
+        "provenance": "authenticated historical independently approved T02 execution; not rerun or represented as fresh completion-source execution"
+      },
+      {
+        "id": "official-accessibility",
+        "candidateCommit": "03e501c4550c7aa61e1e60827d49f7174faab1ef",
+        "rawOutput": "artifacts/tmp/W2.A05.T02.official-accessibility-03e501c4.log",
+        "sha256": "00622329cfd4a9640a12b9b4e378c05f6db0dff3e377cc9a08b88642b7b6d27e",
+        "provenance": "authenticated historical independently approved T02 execution; not rerun or represented as fresh completion-source execution"
+      }
+    ],
+    "rationale": "Completion source changes only the review/history validator, tests and two procedure/ADR appends. No naming checker, browser/reference fixture, accessibility command, baseline or workflow contract input changed. Prior independently approved naming/accessibility results are authenticated as historical task proof; no general cache/runtime closure or fresh browser result is asserted."
+  },
+  "adverseEvidence": [
+    {
+      "path": "artifacts/tmp/W2.A05.S01.addendum-01.characterization-25ba8eee.log",
+      "sha256": "b661c08dedca992017cf98f0548850fa6315fe540393d8366b6bbbe8dd782a0a",
+      "exitCode": 1,
+      "disposition": "Regression-first test hunk against unchanged validator at owner commit; two errors from absent new helpers, before the remaining reviewed source patch was applied. Preserved characterization only."
+    },
+    {
+      "path": "artifacts/evidence/W2.A05.S01.integrated-adverse-01.json",
+      "sha256": "450bfc6e102a12e2121004ae858f2b2da8a21b16b3cb721d261a016d95f982b7"
+    }
+  ],
+  "verificationSelection": {
+    "riskAnalysis": "Select only generic correction-publication and final source-attribution impact: exact real Git grants/pairs/denials, retained projection, E06 and returned owner/lease, original full-base and legacy correction controls, Python/ADR/UI/reference and required planning checks. No unrelated product or full profile rerun.",
+    "selectedCommandIds": [
+      "foundation:unit",
+      "foundation:adr",
+      "foundation:ui-change",
+      "foundation:quality",
+      "foundation:ui-reference",
+      "foundation:backlog",
+      "foundation:backlog-views"
+    ],
+    "deferred": [
+      "Actual final independent control review and A05 combined integration/F01 closure follow this source proof.",
+      "Distinct exit/security/adoption/paused-A03 return and A03's own finding replay and gates remain due.",
+      "Product/native/Core/joined CAP-04.S05 and 18 remaining W2 tasks, fresh full Wave qualification and human release remain due."
+    ]
+  },
+  "proofLimitations": [
+    "The tracked pair component positive explicitly mocks only source-grant authentication; real Git producer separately authenticates actual owner/source and complete actual task ranges unmocked.",
+    "Disposable future manifest/control-review records are explicitly synthetic fixture behavior, never real future approval. Some hostile rewrites deny at earlier immutable-record authentication rather than a narrower predicate. Actual final require_review=True authentication occurs only after the separately committed real independent control ledger.",
+    "This source manifest does not close W2.A05.S01-R01-F01, complete A05/A03, resume ordinary W2 or qualify product/release."
+  ],
+  "unverifiedItems": [],
+  "requiredNextGate": "independent exact-candidate source/control review",
+  "assemblyProducer": {
+    "path": "artifacts/tmp/W2.A05.S01.addendum-01.assemble-execution.py",
+    "sha256": "044a625c11bd987bc2b7e28f56764c420a09ec6be5bf7b9dcbe1e995c5f217c2"
+  }
+}
