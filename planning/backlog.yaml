@@ -1490,21 +1490,22 @@ waves:
     notes: Owner explicitly approved the complete W2 execution packet and requested implementation; G1 prototype limitations
       remain recorded, not waived.
   campaign:
-    status: PAUSED
+    status: ACTIVE
     scope: wave
     owner: codex-w2-implementation
     branch: codex/w2-implementation
     worktree: .
-    base_sha: 04d6ae3fb29a133e6e31c8191ba1d6b80fa0b0cf
+    base_sha: 7fcc25d0207a06fe4148cd75137d7386a4edda34
     profile: LOC
     platform: windows-x64
     started_at: '2026-09-19T17:21:58+00:00'
-    updated_at: '2026-10-03T18:53:03+00:00'
-    pause_reason: CAP-05.S01.T01 is blocked by approved Academic Minimal 1.8 desktop activation/control authority; pause ordinary
-      W2 execution at clean CAP-04.S05.T03 boundary for bounded GOV-MAINT-0026, linked CAP-04.S05.T02 correction, and decision-complete
-      ECR-0011/W2.A03 before ordinary task resume.
-    pause_category: approved-design-gate
-    lease: null
+    updated_at: '2026-10-05T13:45:23+00:00'
+    pause_reason: null
+    pause_category: null
+    lease:
+      claimed_by: codex-w2-implementation
+      claimed_at: '2026-10-05T13:45:23+00:00'
+      expires_at: '2026-10-06T13:45:23+00:00'
     corrective_tasks:
     - title: Implement idempotent import commits and import manifests
       objective: Batch transaction and manifest linking source file hash, parser version, record decisions, errors, and resulting
@@ -3757,6 +3758,18 @@ waves:
       platform: windows-x64
       actor: codex-w2-implementation
       resumed_at: '2026-10-03T15:00:24+00:00'
+    - id: W2.R09
+      wave_id: W2
+      control_revision: 12
+      prior_status: PAUSED
+      pre_resume_commit: 7fcc25d0207a06fe4148cd75137d7386a4edda34
+      prior_campaign_sha256: 578b160d2dee7160f97c3af7c4693bf88456992c2d9c544baa7b764636c2b638
+      branch: codex/w2-implementation
+      worktree: .
+      profile: LOC
+      platform: windows-x64
+      actor: codex-w2-implementation
+      resumed_at: '2026-10-05T13:45:23+00:00'
   checkpoints:
   - id: W2.CP01
     kind: risk-cluster
@@ -3826,7 +3839,7 @@ waves:
     notes: Adopt exact independently approved A03 checkpoint; ordinary W2 remains PAUSED; original CAP-05.S01.T01 base6506
       and all task history retained; no further framework development after closed A05.
   completion:
-    status: PAUSED
+    status: IN_PROGRESS
     reviewer: null
     reviewed_at: null
     evidence: []
