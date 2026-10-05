@@ -1,0 +1,262 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "W2.C11.T01",
+  "baseCommit": "f192725de10b5752e0d9b143c3512ef36c665a56",
+  "commit": "9a80c0f6cd6f5d444e7676c0ff287b4bb58c158f",
+  "branch": "codex/w2-implementation",
+  "changedFiles": [
+    "docs/planning-implementation-plan.md",
+    "planning/backlog.yaml",
+    "planning/review-site/manifest.json",
+    "planning/review-site/waves/W2.html",
+    "planning/status-summary.md",
+    "services/core-api/src/research_observatory_core/plugin_worker.py",
+    "tests/connectors/test_plugin_worker_submission.py"
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "Original independently approved T02 R02 evidence supplies historical support for unchanged LPAC isolation and audited permission denial. No worker image, guardian, broker, credentials, grant/trust authority or permissions changed. This packet does not reuse an old native result as fresh proof.",
+        "Fresh current execution contains 65 passing worker/repository/dispatch/broker/consent cases. The real source-Core create child executes the signed zero-capability LPAC sample twice, persists two protected pages with predecessor/provenance/rights checks, denies a forged cursor before egress, refuses malformed output and cancels active broker work without result publication. Current source uses real Windows DPAPI, SQLCipher and human trust/enable/consent with a test-only verified signed-worker adapter and synthetic publisher/provider HTTP. Named case and create-phase facts are authenticated by current-execution-evidence-authentication; all child logs and runtime input identities are retained below."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "The due-heartbeat publication regression was committed and failed before product edits at 2d65298f: 15 cases, exactly one expected publication assertion failure and no setup errors. Current execution passes all 16 worker submission cases, including that exact regression plus durable cancellation, global stop, project-only stop and expired lease immediately at publication. The additional 49 current repository/dispatch/broker/consent cases also pass.",
+        "Polling and queue heartbeat now run before acquiring the publication writer; the in-writer callback reads only process/project stop flags. The repository retains exact claim capability, live running lease, durable cancellation and current grant/consent/predecessor checks inside its atomic writer. No test assertion or security fence was weakened. Full post-crash project reopen is not proven by this correction; the preserved native failure belongs to pending S05 integration, which cannot be marked complete."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "The exact base-to-candidate diff has only the two spec-admitted product/test paths and the claim/generated planning records. Ruff format/lint and mypy pass. Canonical taskctl ledger validation passes. The product repair changes neither schema/migration, actors, audit/rights, LPAC, approved UX nor automation/harness source.",
+        "The joined restart attempt was executed as planned but failed on the foreign project session lock retained by intentional os._exit(0). Read-only observation confirms RO-CORE-PROJECT-ALREADY-OPEN and preserves its exact lock. Approved CAP-02.S01 explicitly requires reviewed stale-lock recovery; this packet does not approve breaking that lock or expanding lifecycle authority. C11 closes only the demonstrated nested-heartbeat publication defect; separate S05 restart/recovery, independent slice review and fresh W2/release gates remain required."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "verificationSelection": {
+    "selectedCommandIds": [
+      "search:connectors",
+      "foundation:quality",
+      "foundation:backlog"
+    ],
+    "riskAnalysis": "A six-line publication callback correction touches the cancellation/lease boundary. Red-first regression, actual current 65 focused case results and real signed-LPAC/protected-Core create/denial/cancellation evidence address the changed boundary; its full combined command is adverse because an unrelated new integration fixture assumes automatic crash-lock takeover. Evidence authentication verifies individual case dispositions without repeating unchanged passed suites or inventing a zero exit for the failed command. There is no passing full restart claim.",
+    "deferred": [
+      "CAP-04.S05 integration: correct the new fixture or provide the existing approved explicit recovery procedure, then prove fresh process restart/recovery and obtain independent slice review. No stale-lock break is authorized here.",
+      "Unchanged broad profiles, current full packaging, desktop/accessibility/performance and cross-capability qualification remain checkpoint or fresh W2 exit obligations.",
+      "CAP-05.S01.T01 retains its original 6506 base and open fifth IntermediateD3D native startup finding."
+    ]
+  },
+  "checks": [
+    {
+      "id": "format",
+      "command": ".venv/Scripts/python.exe -m ruff format --check --config pyproject.toml -- services/core-api/src/research_observatory_core/plugin_worker.py tests/connectors/test_plugin_worker_submission.py tests/connectors/test_plugin_sample_native_lpac.py",
+      "exitCode": 0,
+      "commit": "9a80c0f6cd6f5d444e7676c0ff287b4bb58c158f",
+      "provenance": "fresh execution at fixed clean committed Windows x64 candidate",
+      "durationSeconds": 0.084,
+      "rawOutput": "artifacts/tmp/W2.C11.T01.selected02-9a80c0f6.format.log",
+      "rawOutputSha256": "06e6458a0ee0f097781e2690af2c79a5e0464a6af799f5f3544e75e4fbc06e6f",
+      "rawOutputCanonicalSha256": "06e6458a0ee0f097781e2690af2c79a5e0464a6af799f5f3544e75e4fbc06e6f",
+      "result": "PASS on both admitted correction files and the unchanged pending slice integration fixture.",
+      "commandDisplaySemantics": "Repository-relative spelling of the same executed interpreter. Exact expanded local argv remains in the ignored source report."
+    },
+    {
+      "id": "lint",
+      "command": ".venv/Scripts/python.exe -m ruff check --config pyproject.toml -- services/core-api/src/research_observatory_core/plugin_worker.py tests/connectors/test_plugin_worker_submission.py tests/connectors/test_plugin_sample_native_lpac.py",
+      "exitCode": 0,
+      "commit": "9a80c0f6cd6f5d444e7676c0ff287b4bb58c158f",
+      "provenance": "fresh execution at fixed clean committed Windows x64 candidate",
+      "durationSeconds": 0.087,
+      "rawOutput": "artifacts/tmp/W2.C11.T01.selected02-9a80c0f6.lint.log",
+      "rawOutputSha256": "f78434f0f81a8fed2240a7879eda40bd74cab1d54c181ba11eef299ac4baee47",
+      "rawOutputCanonicalSha256": "f78434f0f81a8fed2240a7879eda40bd74cab1d54c181ba11eef299ac4baee47",
+      "result": "PASS on both admitted correction files and the unchanged pending slice integration fixture.",
+      "commandDisplaySemantics": "Repository-relative spelling of the same executed interpreter. Exact expanded local argv remains in the ignored source report."
+    },
+    {
+      "id": "types",
+      "command": "$env:MYPYPATH='tools;services/core-api/src'; .venv/Scripts/python.exe -m mypy --config-file pyproject.toml --no-namespace-packages -- services/core-api/src/research_observatory_core/plugin_worker.py tests/connectors/test_plugin_worker_submission.py tests/connectors/test_plugin_sample_native_lpac.py",
+      "exitCode": 0,
+      "commit": "9a80c0f6cd6f5d444e7676c0ff287b4bb58c158f",
+      "provenance": "fresh execution at fixed clean committed Windows x64 candidate",
+      "durationSeconds": 0.553,
+      "rawOutput": "artifacts/tmp/W2.C11.T01.selected02-9a80c0f6.types.log",
+      "rawOutputSha256": "f54b7bf002bcb9795b678d7c96c00fa7c25674f4f9bcb71c598cebf7a03c0de6",
+      "rawOutputCanonicalSha256": "08f6f924139c80e0c31e581449bc89211c962f8d677d9df0a98eba5faf12b958",
+      "result": "PASS on both admitted correction files and the unchanged pending slice integration fixture.",
+      "commandDisplaySemantics": "Repository-relative spelling of the same executed interpreter. Exact expanded local argv remains in the ignored source report."
+    },
+    {
+      "id": "current-execution-evidence-authentication",
+      "command": ".venv/Scripts/python.exe -B artifacts/tmp/W2.C11.T01.authenticate-execution-03.py",
+      "exitCode": 0,
+      "commit": "9a80c0f6cd6f5d444e7676c0ff287b4bb58c158f",
+      "provenance": "fresh authentication of retained current-candidate execution, not a second test execution",
+      "result": "Authenticates all 65 actual focused case passes, the successful real signed LPAC/protected Core create phase and unchanged selected inputs. The combined 66-case command retains exit 1; its reopen case remains failed.",
+      "rawOutput": "artifacts/tmp/W2.C11.T01.authenticate-execution-03.log",
+      "rawOutputSha256": "ef48650cef6e933d1bdeb6fd6d2f38424a5c59f6e5d49b2c0a75dddcf987bf37",
+      "rawOutputCanonicalSha256": "36ff63f23f039a0183b8bfd1a848384a92691e2dee277ee66d6ec60eaa1d4e69",
+      "inputReport": "artifacts/tmp/W2.C11.T01.authenticated-execution-03.json",
+      "inputReportSha256": "1c32fce1981a086d679bf1f6ad6457aca9ed434aec81976bf57049054effe2a8",
+      "producerSha256": "741411ae59693bfa15c43374cdb5a5bc0ed23ed72d1a2dc3623d0f146170937a"
+    },
+    {
+      "id": "taskctl-validate",
+      "command": ".venv/Scripts/python.exe -B tools/taskctl.py --file planning/backlog.yaml validate",
+      "exitCode": 0,
+      "commit": "9a80c0f6cd6f5d444e7676c0ff287b4bb58c158f",
+      "provenance": "fresh current-candidate ledger validation",
+      "result": "Valid backlog: 20 capabilities, 117 slices, 395 tasks, 12 release gates",
+      "rawOutput": "artifacts/tmp/W2.C11.T01.candidate-validate-9a80c0f6.log",
+      "rawOutputSha256": "1ac6f3efe7c0503caa999ace47aa372a51e455cd57349703e06b7c048846ffd5"
+    }
+  ],
+  "correctiveIntegration": {
+    "originSha256": "a9faa34a543433fdfe1665e54ade2892554e6bf893a1824c6155d8114d3bd994",
+    "authorityPreserved": true,
+    "affectedChecks": [
+      ".venv/Scripts/python.exe -m ruff format --check --config pyproject.toml -- services/core-api/src/research_observatory_core/plugin_worker.py tests/connectors/test_plugin_worker_submission.py tests/connectors/test_plugin_sample_native_lpac.py",
+      ".venv/Scripts/python.exe -m ruff check --config pyproject.toml -- services/core-api/src/research_observatory_core/plugin_worker.py tests/connectors/test_plugin_worker_submission.py tests/connectors/test_plugin_sample_native_lpac.py",
+      "$env:MYPYPATH='tools;services/core-api/src'; .venv/Scripts/python.exe -m mypy --config-file pyproject.toml --no-namespace-packages -- services/core-api/src/research_observatory_core/plugin_worker.py tests/connectors/test_plugin_worker_submission.py tests/connectors/test_plugin_sample_native_lpac.py",
+      ".venv/Scripts/python.exe -B artifacts/tmp/W2.C11.T01.authenticate-execution-03.py",
+      ".venv/Scripts/python.exe -B tools/taskctl.py --file planning/backlog.yaml validate"
+    ],
+    "reusedEvidence": [
+      {
+        "path": "artifacts/evidence/CAP-04.S05.T02.R02.json",
+        "sha256": "a68ef1f82ea3716e94a76c57c75dff0b2ab2860a27fba0becf66bdabeba2a994",
+        "commit": "6506c68461144747b0ee9be10853211717aa381d"
+      },
+      {
+        "path": "artifacts/evidence/CAP-04.S05.T02.review-R02.json",
+        "sha256": "d67b08296ed64b7bde214f9e284f57dbe4f8066384fd46dff6a741962c25cff8",
+        "commit": "6506c68461144747b0ee9be10853211717aa381d"
+      }
+    ],
+    "rationale": "Restores approved lease-fenced/cancellation-safe durable plugin publication by moving heartbeat I/O outside the writer. Fresh actual focused passes and signed LPAC/Core create evidence establish the repaired path, with partial native proof explicitly bounded. Original history and all adverse results stay preserved; S05 restart/recovery and Wave gates remain open. No scope or security authority is expanded."
+  },
+  "scopeDeviation": null,
+  "retainedExecution": {
+    "report": "artifacts/tmp/W2.C11.T01.selected02-9a80c0f6.json",
+    "reportSha256": "abc471d7248b295f640e38b89bf040e481141327190488f13a405339e3efbdf3",
+    "combinedCommandExitCode": 1,
+    "combinedRawOutput": "artifacts/tmp/W2.C11.T01.selected02-9a80c0f6.connector-integration.log",
+    "combinedRawOutputSha256": "8b622c80a749fd333b11b7556eb4939a86209e0c8bf7f3088cbc907649d56597",
+    "combinedRawOutputCanonicalSha256": "7aac1d28fdd7b153c836057884a0dc67cc8757235e6585086f4441f0a241d7cc",
+    "passedCaseIds": [
+      "tests.connectors.test_plugin_broker.PluginBrokerTests.test_all_resolved_addresses_public_and_tcp_uses_checked_numeric_ip",
+      "tests.connectors.test_plugin_broker.PluginBrokerTests.test_async_or_failed_audit_and_transport_construction_fail_closed",
+      "tests.connectors.test_plugin_broker.PluginBrokerTests.test_exact_signed_route_and_current_scientific_decision",
+      "tests.connectors.test_plugin_broker.PluginBrokerTests.test_operation_specific_shape_blocks_url_header_and_repository_escape",
+      "tests.connectors.test_plugin_broker.PluginBrokerTests.test_percent_encoded_target_limit_deny_precedes_transport",
+      "tests.connectors.test_plugin_broker.PluginBrokerTests.test_published_broker_call_and_repository_schema_match_runtime",
+      "tests.connectors.test_plugin_broker.PluginBrokerTests.test_rate_wait_rechecks_revoked_grant_before_retry",
+      "tests.connectors.test_plugin_broker.PluginBrokerTests.test_redirects_and_unbounded_or_non_json_results_never_publish_body",
+      "tests.connectors.test_plugin_broker.PluginBrokerTests.test_repository_metadata_requires_exact_public_assertion_shape",
+      "tests.connectors.test_plugin_broker.PluginBrokerTests.test_secret_scope_is_bound_to_one_core_owned_origin_even_when_two_are_signed",
+      "tests.connectors.test_plugin_broker.PluginBrokerTests.test_secret_stays_core_side_and_echo_is_redacted",
+      "tests.connectors.test_plugin_broker.PluginBrokerTests.test_stale_grant_forged_plan_missing_policy_and_operation_mismatch_deny_before_transport",
+      "tests.connectors.test_plugin_broker.PluginBrokerTests.test_transport_itself_rejects_changed_host_path_method_and_scheme",
+      "tests.connectors.test_plugin_broker.PluginBrokerTests.test_two_broker_instances_share_plugin_rate_budget",
+      "tests.connectors.test_plugin_consent.PluginConsentTests.test_accepted_plugin_destination_privacy_rights_and_confirmation_are_independent",
+      "tests.connectors.test_plugin_consent.PluginConsentTests.test_exact_plan_current_policy_grant_and_restart_fence",
+      "tests.connectors.test_plugin_consent.PluginConsentTests.test_expiry_revoke_and_changed_accepted_intent_fail_closed",
+      "tests.connectors.test_plugin_consent.PluginConsentTests.test_long_plugin_source_has_stable_bounded_intent_destination_id",
+      "tests.connectors.test_plugin_dispatch.PluginDispatchTests.test_bad_broker_frame_and_revocation_never_stage",
+      "tests.connectors.test_plugin_dispatch.PluginDispatchTests.test_broker_observation_has_separate_encrypted_stage_reference",
+      "tests.connectors.test_plugin_dispatch.PluginDispatchTests.test_broker_redaction_flag_stays_with_core_staged_response",
+      "tests.connectors.test_plugin_dispatch.PluginDispatchTests.test_cancel_during_broker_wait_cannot_stage_a_late_response",
+      "tests.connectors.test_plugin_dispatch.PluginDispatchTests.test_durable_claim_dispatch_uses_package_pair_without_candidate_token",
+      "tests.connectors.test_plugin_dispatch.PluginDispatchTests.test_failed_persisted_worker_records_content_free_durable_denial_without_staging",
+      "tests.connectors.test_plugin_dispatch.PluginDispatchTests.test_missing_lpac_deny_all_packages_witness_never_stages",
+      "tests.connectors.test_plugin_dispatch.PluginDispatchTests.test_non_search_changed_identifier_denied_before_broker_fetch",
+      "tests.connectors.test_plugin_dispatch.PluginDispatchTests.test_non_search_multiple_exact_calls_retain_ordered_sanitized_responses",
+      "tests.connectors.test_plugin_dispatch.PluginDispatchTests.test_post_stage_fence_does_not_return_cancelled_result",
+      "tests.connectors.test_plugin_dispatch.PluginDispatchTests.test_same_project_second_job_denied_while_first_worker_runs",
+      "tests.connectors.test_plugin_dispatch.PluginDispatchTests.test_search_failed_first_broker_attempt_cannot_retry_egress",
+      "tests.connectors.test_plugin_dispatch.PluginDispatchTests.test_search_next_cursor_must_equal_sanitized_broker_observation",
+      "tests.connectors.test_plugin_dispatch.PluginDispatchTests.test_search_second_broker_attempt_is_denied_before_egress",
+      "tests.connectors.test_plugin_dispatch.PluginDispatchTests.test_swallowed_broker_failure_cannot_stage_search_page",
+      "tests.connectors.test_plugin_dispatch.PluginDispatchTests.test_verified_worker_result_is_encrypted_stage_without_publication",
+      "tests.connectors.test_plugin_dispatch.PluginDispatchTests.test_zero_broker_call_result_cannot_stage_source_assertion",
+      "tests.connectors.test_plugin_job_repository.PluginJobRepositoryTests.test_changed_package_cannot_replay_committed_cursor",
+      "tests.connectors.test_plugin_job_repository.PluginJobRepositoryTests.test_changed_search_query_cannot_replay_prior_cursor_after_restart",
+      "tests.connectors.test_plugin_job_repository.PluginJobRepositoryTests.test_encrypted_input_reopens_after_repository_restart",
+      "tests.connectors.test_plugin_job_repository.PluginJobRepositoryTests.test_exhausted_page_cannot_be_used_as_predecessor",
+      "tests.connectors.test_plugin_job_repository.PluginJobRepositoryTests.test_fenced_publication_and_restart_replay",
+      "tests.connectors.test_plugin_job_repository.PluginJobRepositoryTests.test_interrupted_claim_never_publishes",
+      "tests.connectors.test_plugin_job_repository.PluginJobRepositoryTests.test_missing_or_changed_broker_response_object_denies_publication",
+      "tests.connectors.test_plugin_job_repository.PluginJobRepositoryTests.test_no_broker_response_reference_cannot_publish_result",
+      "tests.connectors.test_plugin_job_repository.PluginJobRepositoryTests.test_page_two_reopens_predecessor_and_records_exact_provenance",
+      "tests.connectors.test_plugin_job_repository.PluginJobRepositoryTests.test_redacted_broker_response_reopens_with_explicit_provenance",
+      "tests.connectors.test_plugin_job_repository.PluginJobRepositoryTests.test_search_page_cannot_publish_cursor_absent_from_stored_broker_response",
+      "tests.connectors.test_plugin_job_repository.PluginJobRepositoryTests.test_uncommitted_predecessor_cannot_publish_page_two",
+      "tests.connectors.test_plugin_job_repository.PluginJobRepositoryTests.test_unknown_historical_redaction_marker_cannot_publish_new_result",
+      "tests.connectors.test_plugin_job_repository.PluginJobRepositoryTests.test_wrong_cursor_cannot_publish_against_committed_page",
+      "tests.connectors.test_plugin_worker_submission.PluginWorkerSubmissionTests.test_authenticated_native_submit_status_cancel_reaches_durable_job",
+      "tests.connectors.test_plugin_worker_submission.PluginWorkerSubmissionTests.test_confirmed_job_runs_through_claim_and_fenced_encrypted_publication",
+      "tests.connectors.test_plugin_worker_submission.PluginWorkerSubmissionTests.test_credential_status_denies_scope_absent_from_signed_manifest",
+      "tests.connectors.test_plugin_worker_submission.PluginWorkerSubmissionTests.test_due_heartbeat_does_not_interrupt_fenced_publication",
+      "tests.connectors.test_plugin_worker_submission.PluginWorkerSubmissionTests.test_durable_cancel_after_last_poll_cannot_publish",
+      "tests.connectors.test_plugin_worker_submission.PluginWorkerSubmissionTests.test_exact_replay_succeeds_but_changed_consent_conflicts",
+      "tests.connectors.test_plugin_worker_submission.PluginWorkerSubmissionTests.test_expired_lease_cannot_publish",
+      "tests.connectors.test_plugin_worker_submission.PluginWorkerSubmissionTests.test_live_worker_broker_allows_exact_scientific_identifier_with_synthetic_transport",
+      "tests.connectors.test_plugin_worker_submission.PluginWorkerSubmissionTests.test_live_worker_broker_denies_changed_scientific_identifier_before_egress",
+      "tests.connectors.test_plugin_worker_submission.PluginWorkerSubmissionTests.test_persisted_dispatch_uses_real_core_grant_without_system_trust_or_enable",
+      "tests.connectors.test_plugin_worker_submission.PluginWorkerSubmissionTests.test_predecessor_must_be_published_same_package_and_exact_next_cursor",
+      "tests.connectors.test_plugin_worker_submission.PluginWorkerSubmissionTests.test_project_stop_after_last_poll_cannot_publish",
+      "tests.connectors.test_plugin_worker_submission.PluginWorkerSubmissionTests.test_restart_without_ephemeral_consent_cancels_durable_runnable_job",
+      "tests.connectors.test_plugin_worker_submission.PluginWorkerSubmissionTests.test_scientific_parameter_binding_rejects_cursor_and_ambiguous_input",
+      "tests.connectors.test_plugin_worker_submission.PluginWorkerSubmissionTests.test_search_continuation_requires_exact_consented_broker_cursor",
+      "tests.connectors.test_plugin_worker_submission.PluginWorkerSubmissionTests.test_stop_after_last_poll_cannot_publish"
+    ],
+    "failedCaseIds": [
+      "tests.connectors.test_plugin_sample_native_lpac.ProtectedSampleCoreJourneyTests.test_signed_sample_protected_core_and_full_process_restart"
+    ],
+    "childLogs": {
+      "artifacts/tmp/s05-protected-journey-mlgjkgtx/create.stdout.log": "4373489a02a89041b9f1b8e46f024673fa8df12eeefd273a5043119d7c6f8ea2",
+      "artifacts/tmp/s05-protected-journey-mlgjkgtx/create.stderr.log": "21582e0af639e56c4492e84a8ce3d4c907bc44053cbd6cbeb1991db1bfa250ac",
+      "artifacts/tmp/s05-protected-journey-mlgjkgtx/reopen.stdout.log": "e19defe9addc1fa49d430c532d71ffe572ad1ebc0f0180b5a30f5cb41e47ebd5",
+      "artifacts/tmp/s05-protected-journey-mlgjkgtx/reopen.stderr.log": "d7df5c9c9bc951d56f5b86fe04dfd76f9eb7fcbba872e6c6d4ec812de6bc1bf9"
+    },
+    "createFacts": {
+      "activeCancellation": true,
+      "crashWithDurableUnstartedJob": true,
+      "durablePages": 2,
+      "durationSeconds": 48.26,
+      "egressCalls": 4,
+      "forgedCursorDenied": true,
+      "malformedPageDenied": true,
+      "ok": true,
+      "phase": "create"
+    },
+    "workerInventorySha256": "9cf0102b22e7b3fa14fa773ad0ff3691d8e3485a3c51c43c85db5cfbb4e71886",
+    "workerSignatureSha256": "7ff40f95faa04b2da2bfa16f7f663db64730141175bac06917fc84aace414a46",
+    "guardianSha256": "eb87ab31e50370fd65872a183d569a246919d508d23a511a6ef5f49b1e29d2fb",
+    "correctionToProducerNarrative": "The source report proofLimits sentence claiming both process phases prove post-crash reopen is contradicted by its own failed result. Only create succeeded; that sentence is rejected and never used as evidence.",
+    "reopenObservation": "artifacts/tmp/W2.C11.T01.observe-reopen-01.log",
+    "reopenObservationSha256": "aa33d2f3496619aa33f0b058235f3585a86f53aaedc0c19f8ca38bb0b1533fdc",
+    "redReport": "artifacts/tmp/W2.C11.T01.red-2d65298f.json",
+    "redReportSha256": "98327d3a5a54a021bd7d1001b1b77b8ea3a837505dc612d8b36ab4c2d62db074",
+    "adverseSetupAndAuthenticationAttempts": [
+      "artifacts/tmp/W2.C11.T01.selected-e3f699a2.json",
+      "artifacts/tmp/W2.C11.T01.authenticate-execution-01.log",
+      "artifacts/tmp/W2.C11.T01.authenticate-execution-02.log"
+    ]
+  },
+  "unpublishedPublicationFailure": {
+    "unpublishedAttemptId": "R01",
+    "originalManifestPath": "artifacts/evidence/W2.C11.T01.R01.json",
+    "originalManifestCanonicalSha256": "d680f9c4064315a4ffc4c43088fb74f4a08a6d9ca7ed7a080fac34a763855641",
+    "originalPacketSha256": "55e2c8ff76834842271f87ca89d819edcbdbe582d9310d75d759bf0971a0320c",
+    "preservedLocalLedger": "artifacts/tmp/W2.C11.T01.publication-repair-01/unpublished-backlog.yaml",
+    "preservedLocalLedgerCanonicalSha256": "9464043c1cc8f1f0e9551637718103f5688b8c236c409e45cbc0f8266131990f",
+    "cause": "Packet builder copied three absolute local interpreter paths from the ignored execution report; the commit privacy hook rejected the unpublished ledger and manifest.",
+    "limits": "No Git commit, independent disposition, approval or integration occurred for the rejected representation. Recovery requires explicit owner exception to preserve it locally and replace this unpublished representation. No product/source/control or approved Wave authority change is included."
+  }
+}

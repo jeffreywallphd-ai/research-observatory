@@ -1,0 +1,18 @@
+{
+  "documentType": "exact-owner-unpublished-submission-recovery-authorization",
+  "actor": "human:repository-owner",
+  "decision": "APPROVED",
+  "userReply": "Approved.",
+  "authorizationBoundAt": "2026-10-05T20:17:49Z",
+  "authorizationSource": "Direct human reply to the prior exact bounded recovery request and linked review brief. The binding timestamp is the observed recording time, not an invented message arrival time.",
+  "taskId": "W2.C11.T01",
+  "candidate": "9a80c0f6cd6f5d444e7676c0ff287b4bb58c158f",
+  "proposalSha256": "f6ab48fcf983cdfd8152afc10701028221d9d404c50fc3ac1bd6127ddf6ab8d0",
+  "preservationInventorySha256": "5366d6b41c7c90e396d6ad8f735712788ae7658d7825725879c880cd31002435",
+  "independentReadinessAssessmentSha256": "0368565c698b39af176f2d542bd4886d0fa55cf21cf166ad7b0f345d865131ef",
+  "unpublishedManifestCanonicalSha256": "d680f9c4064315a4ffc4c43088fb74f4a08a6d9ca7ed7a080fac34a763855641",
+  "unpublishedPacketSha256": "55e2c8ff76834842271f87ca89d819edcbdbe582d9310d75d759bf0971a0320c",
+  "publicManifestCanonicalSha256": "3da1e53dc3637e429e6d89bbc94aeb8752c780288acd08f208cbe23516795509",
+  "scope": "Only the exact one-time recovery of the owned uncommitted privacy-rejected R01 representation: preserve all rejected raw bytes and identifiers locally, restore the unpublished ledger to its committed predecessor, and resubmit the same product evidence with repository-relative command displays. Explicitly permits the public R01 representation after preserving the rejected unpublished R01. Required independent task review and normal privacy hook remain in force.",
+  "limits": "No committed or approved history, source/control/security/release rule, original task or adopted amendment is changed. This is not C11, S05, Wave or release approval."
+}
