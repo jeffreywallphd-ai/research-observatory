@@ -1,0 +1,140 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "independent-capture-privacy-visual-assessment",
+  "taskId": "CAP-05.S01.T03",
+  "packetId": "CAP-05.S01.T03.EX01",
+  "round": 3,
+  "reviewer": "agent:/root/t03_product_review",
+  "implementer": "agent:/root",
+  "productProducerCommit": "41bceaea56b7317d1380942a03293bb9ee37cc20",
+  "priorImmutableCaptureDeliveryCommit": "59a8fec06851c3c80ab11d30d8a8028209284425",
+  "referenceId": "RO-UI-ACADEMIC-MINIMAL-1.9",
+  "referenceProducerCommit": "89da746a972d1faa6bd64739d8f9c86c6be21908",
+  "referenceApprovalCommit": "d4691f716f839f4aac5bb50563b56ac863b32685",
+  "disposition": "approved-for-exact-artifact-privacy-admission",
+  "taskDisposition": "pending-separate-fresh-candidate-evidence-and-actual-taskctl-R01",
+  "blockingFindings": [],
+  "priorAssessment": {
+    "path": "artifacts/evidence/CAP-05.S01.T03.capture-privacy-visual-review-02.json",
+    "sha256": "479890dca502cee6415cbe0d388e6b7481847df3a022132bb1a2d3cec781ad22",
+    "priorAssessmentAndOriginalsImmutable": true
+  },
+  "artifactInventory": {
+    "pngs": 172,
+    "fullProductBundlePngs": 156,
+    "focusedIntakePngs": 16,
+    "metadataFiles": 2,
+    "originalPhysicalFiles": 174,
+    "reusedExactPngReviews": 143,
+    "changedPngsIndependentlyReviewed": 29,
+    "newExactRegistryIdentities": 175,
+    "priorExactRegistryIdentities": 961,
+    "proposedExactRegistryIdentities": 1136,
+    "path": "artifacts/tmp/CAP-05.S01.T03.capture-review-03/inspection.json",
+    "sha256": "92d2684b657b3ef9f49f58229876f73a5ef1154702cdab26e1f0724274876bac"
+  },
+  "metadataBindings": [
+    {
+      "path": "artifacts/evidence/CAP-05.S01.T03.EX01.product-captures-03/manifest.json",
+      "mode": "100644",
+      "sha256": "c47f3d5e1ab36eaaebcc9933cdfff4f3ea143bdd309c683355e8b9bede484905",
+      "size": 1787322
+    },
+    {
+      "path": "artifacts/evidence/CAP-05.S01.T03.EX01.product-intake-captures-03/capture-index.json",
+      "mode": "100644",
+      "sha256": "337d77068d0fadc0aa543961ebeb0300d4fa752c44317ed0293e9e8f277c6867",
+      "size": 7826
+    }
+  ],
+  "producerProof": {
+    "productReportPath": "artifacts/tmp/CAP-05.S01.T03.EX01.product-production-03.json",
+    "productReportSha256": "795b8f2f56d74defab8220e42126840d9494061425aa167e30427b8abbb6965f",
+    "productSeconds": 83.018,
+    "focusedReportPath": "artifacts/tmp/CAP-05.S01.T03.intake-capture-production-03-41bceaea.json",
+    "focusedReportSha256": "9916cf041e429dcad08e6ddadfab1f567cc63e67df07a58a4fe7924634920e06",
+    "focusedSeconds": 48.359,
+    "productSourceBlobsAuthenticated": 782,
+    "sourceInputs": "All 782 source Git identities equal E and current filtered Git identities; all actual raw source digests match producer inputs. Both retained build manifests and output artifact inventories match. Owned producer bytes equal independently reviewed clone pins. Product producer code holds Windows write/delete-denying handles and checks unchanged producer snapshots, HEAD and tracked state before and after rendering.",
+    "focusedInputs": "All 35408 before/after input digests are equal. The receipt records Windows write/delete-denying handles held throughout the single mounted command. Actual producer, command, log, index and 16 capture identities are authenticated. This is not a full profile run.",
+    "priorEvidence": "All 415 prior physical capture/metadata files from rounds01/02 authenticate against immutable D, including only their already-admitted normal LF metadata bridges. Both prior published assessments remain exact. The 66 unchanged reference PNGs and original baseline retain the approved reference input closure.",
+    "baselineSha256": "df1de11119b2ea2599add49c27e6fd894bf31a1f7da5a8d56dff1885562f6abe"
+  },
+  "privacy": {
+    "scannerSha256": "17157e2ee8b76fc8b1d8bee607a250e34b8a8023c8bc81822d4b5ee4d78fcb7c",
+    "configSha256": "839fab7649bfe0d45a0e5b1dfba2b401d03b37169c32ebbc1f00313eddc9f7b1",
+    "reusedBytes": "143 PNG files are byte-identical to previously admitted Git blobs at D; prior raw scans, decoded pixels and OCR judgement apply only to those same bytes.",
+    "newBytes": "29 changed PNGs and both metadata files were individually scanned with the pinned credential scanner and privacy rules without masking. Changed PNG signatures, all chunk CRCs, dimensions and decoded pixels were verified; only IHDR/IDAT/IEND chunks occur, with no metadata or trailing payload.",
+    "pixelText": "Windows en-US OCR covered all 29 changed images; exact-hash prior OCR supplies the remaining 143. Text for all 172 images passed privacy and credential rules.",
+    "actualCredentialFindings": 0,
+    "actualNonPublicEmailFindings": 0,
+    "newProfileOrWorkspaceDisclosures": 0,
+    "manifestAdjudication": {
+      "provenanceDigestFingerprintCount": 37,
+      "nonEmailFilenameTokenCount": 19,
+      "detailReportPath": "artifacts/tmp/CAP-05.S01.T03.capture-review-03/authentication.json",
+      "detailReportSha256": "938a4241b5a9ba95b1eeba6a1f828484b817af6f51a02b70b9594706291c7123",
+      "scope": "Current committed source identities and actual source bytes authenticate all matched provenance digests. Exact committed regular icon filenames authenticate density suffix tokens. Only this exact manifest receives these adjudications; no broader exemption or pattern is granted."
+    },
+    "binaryExceptions": "All 172 PNG entries have empty credential and non-email exemptions. Focused metadata and its LF representation have no exemptions.",
+    "ocrRawOutputSha256": "db332e34e8c42c5102ee2f4623296ccab956f45c9147e128b3b174579d5906cb"
+  },
+  "visual": {
+    "evidenceClass": "Synthetic fixture UI proof. Focused metadata identifies synthetic opaque native replies with actual Core version context. Pixels do not establish real native acquisition, picker, cancellation, restart or rights authority.",
+    "inspection": "One full-bundle contact sheet covers all 13 changed full-bundle images; one focused contact sheet covers all 16 changed intake images. Four focused originals were inspected at full resolution, covering copy review, local access need, pending candidate and fresh retained recovery across both themes and widths. Prior exact-byte judgement supplies the other 143 images.",
+    "observations": [
+      "Same-filename retained candidates retain readable distinct candidate/origin-copy identity, provider/host, observed version and license.",
+      "Review/download, local annotation and explicit Attach remain visibly separate with the approved permission and availability disclosures.",
+      "Focused identity/disclosure text wraps at narrow widths; captured clientWidth equals scrollWidth. Screenshot pixels alone do not establish accessibility or all interaction behavior."
+    ],
+    "preservedCaptureLimitation": {
+      "priorFindingId": "CAP-05.S01.T03.CAPTURE-R01-O01",
+      "newPixelSha256": "a1a0e8beed83e3dcfb4672921ce1b3f6ebe16e2d3a2fd88703535bc6aa7bc554",
+      "observation": "Fresh retained recovery dark narrow tall-element pixels retain the small blue skip-link fragment over a source row. Element cropping and unchanged fixed/translated skip-link CSS remain the bounded explanation. No viewport/focus defect or clean viewport claim is inferred solely from this crop; exact pixels remain intact."
+    },
+    "disposition": "No blocking privacy or scoped visual-admission issue observed; final conformance and task disposition remain separate."
+  },
+  "normalGitDelivery": {
+    "authority": "Existing text/eol=lf attributes. Producer bytes remain untouched; both exact focused-index representations were reviewed, their parsed JSON is equal, and read-only Git hashing authenticates the prospective normal LF blob. PNGs remain exact.",
+    "metadataRepresentations": [
+      {
+        "path": "artifacts/evidence/CAP-05.S01.T03.EX01.product-captures-03/manifest.json",
+        "rawSha256": "c47f3d5e1ab36eaaebcc9933cdfff4f3ea143bdd309c683355e8b9bede484905",
+        "rawSize": 1787322,
+        "prospectiveLfSha256": "c47f3d5e1ab36eaaebcc9933cdfff4f3ea143bdd309c683355e8b9bede484905",
+        "prospectiveLfSize": 1787322,
+        "prospectiveGitBlobOid": "b28b6dfaf3cc9faea513f3e7b44cc4e8d384141c",
+        "representationChanges": false
+      },
+      {
+        "path": "artifacts/evidence/CAP-05.S01.T03.EX01.product-intake-captures-03/capture-index.json",
+        "rawSha256": "337d77068d0fadc0aa543961ebeb0300d4fa752c44317ed0293e9e8f277c6867",
+        "rawSize": 7826,
+        "prospectiveLfSha256": "8cf29c9ede8040798bcacce44d252d4671285cf84786551a882d5d098e7b20b7",
+        "prospectiveLfSize": 7575,
+        "prospectiveGitBlobOid": "d2edec849dc4880b76a394004fe7e21fea484099",
+        "representationChanges": true
+      }
+    ]
+  },
+  "proposedRegistry": {
+    "path": ".local/CAP-05.S01.T03.generated-artifact-privacy-review-c11-06.json",
+    "sha256": "8c87c2e599589738128c23c8552bd3be5c94487e2d8226d60f37bfde8072c064",
+    "size": 726815,
+    "priorPath": ".local/CAP-05.S01.T03.generated-artifact-privacy-review-c11-05.json",
+    "priorSha256": "bb793c887fddc2e0b497db3200c4dd6a516fbf9cfdcc74fa0b01dde362b1e2a1",
+    "priorArtifactsUnchanged": true,
+    "preservationAuthorityUnchanged": true,
+    "activatedByReviewer": false,
+    "stagedByReviewer": false
+  },
+  "preservedAdverseOutcomes": [
+    "Original blocked public admission commands, missing-adapter/ADR development failures, prior product findings and failed committed-B/D checks remain immutable adverse evidence; no pass is inferred for them.",
+    "D selected02 failed on operation-denial precedence and an obsolete final-version test expectation. The bounded committed-E correction has separate independent source replay; actual fresh final qualification remains required. Development-only signed-worker skip is not qualification."
+  ],
+  "limits": [
+    "Admission binds exact path/mode/hash/size only; changed bytes require fresh review.",
+    "No registry activation, staging, commit, existing tracked source/index/HEAD/hook/taskctl mutation or product check/build/capture generation by reviewer.",
+    "Reviewer authors this new admission assessment only. Immutable delivery authentication, fresh final qualifying receipts, named EX01 proofs and actual taskctl R01 disposition remain separate; no task/slice/Wave/release approval."
+  ]
+}
