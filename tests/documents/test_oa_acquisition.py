@@ -559,6 +559,99 @@ class AcquisitionIntegrationTests(unittest.TestCase):
         self.before_network = lambda: self.assertEqual(1, self.count("acquisition_attempts"))
         self.acquire()
 
+    def test_conflicting_retry_does_not_terminate_prior_unresolved_attempt(self):
+        from research_observatory_core.domain_contracts import new_uuid_v7
+        from research_observatory_core.ports.acquisition import AcquisitionProblem
+        from research_observatory_core.storage import open_canonical_database
+
+        self.permission()
+        original = self.service.preview(self.selection(), actor=self.actor)
+        operation = new_uuid_v7()
+        self.repository.begin_attempt(
+            original.selection,
+            operation_id=operation,
+            session_id=self.session,
+            confirmation_sha256=original.confirmation_sha256,
+            expected_policy_revision_id=original.provider_policy_revision_id,
+            actor=self.actor,
+            attachments=self.attachments,
+        )
+        with closing(open_canonical_database(self.database, expected_project_id=self.project)) as db:
+            before = db.execute(
+                "SELECT * FROM aggregate_revisions WHERE aggregate_id=? ORDER BY revision", (operation,)
+            ).fetchall()
+            original_attempt = db.execute(
+                "SELECT * FROM acquisition_attempts WHERE operation_id=?", (operation,)
+            ).fetchall()
+        renewed = self.service.preview(self.selection(), actor=self.actor)
+        with self.assertRaisesRegex(AcquisitionProblem, "operation-conflict"):
+            self.service.acquire(
+                renewed.preview_id,
+                confirmation=renewed.confirmation,
+                operation_id=operation,
+                cancellation_requested=lambda: False,
+            )
+        self.assertEqual([], self.calls)
+        self.assertEqual(0, self.count("acquisition_attempt_results"))
+        with closing(open_canonical_database(self.database, expected_project_id=self.project)) as db:
+            self.assertEqual(
+                before,
+                db.execute(
+                    "SELECT * FROM aggregate_revisions WHERE aggregate_id=? ORDER BY revision", (operation,)
+                ).fetchall(),
+            )
+            self.assertEqual(
+                original_attempt,
+                db.execute("SELECT * FROM acquisition_attempts WHERE operation_id=?", (operation,)).fetchall(),
+            )
+
+    def test_runtime_session_loss_cancels_owned_post_transfer_inspection(self):
+        from types import SimpleNamespace
+
+        from research_observatory_core.domain_contracts import new_uuid_v7
+        from research_observatory_core.main import DocumentAttachmentRuntime
+        from research_observatory_core.ports.object_store import ObjectStagingCancelled
+
+        self.permission()
+        preview = self.service.preview(self.selection(), actor=self.actor)
+        current_session = [self.session]
+        runtime = DocumentAttachmentRuntime(
+            SimpleNamespace(native_context=lambda *_args: current_session[0]),
+            None,
+            lambda *_args: self.objects,
+        )
+        original_inspect = self.attachments._inspector
+        inspected = []
+        before_objects = self.count("object_records")
+
+        def inspect(stream, *, filename, declared_media_type, cancel):
+            # Called only after transfer into authenticated encrypted staging.
+            inspected.append(True)
+            current_session[0] = None
+            if cancel():
+                raise ObjectStagingCancelled()
+            return original_inspect(stream, filename=filename, declared_media_type=declared_media_type, cancel=cancel)
+
+        with (
+            patch.object(runtime, "_acquisition", return_value=(self.service, self.actor)),
+            patch.object(self.attachments, "_inspector", side_effect=inspect),
+            self.assertRaises(ObjectStagingCancelled),
+        ):
+            runtime.acquisition_download(
+                self.fixture.root,
+                self.project,
+                self.session,
+                preview.preview_id,
+                confirmation=preview.confirmation,
+                operation_id=new_uuid_v7(),
+                trace_id="d" * 32,
+                cancellation_requested=lambda: False,
+            )
+        self.assertEqual([True], inspected)
+        self.assertEqual(0, self.count("document_attachment_candidates"))
+        self.assertEqual(0, self.count("document_acquisition_sources"))
+        self.assertEqual(before_objects, self.count("object_records"))
+
     def test_oa_observation_is_not_permission_and_sibling_substitution_denies(self):
         from research_observatory_core.ports.acquisition import AcquisitionProblem
 

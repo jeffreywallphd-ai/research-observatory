@@ -82,7 +82,7 @@ class AttachmentLifecycleRegressionTests(unittest.TestCase):
                     with closing(
                         open_canonical_database(fixture.database, expected_project_id=fixture.manifest["projectId"])
                     ) as current:
-                        self.assertEqual(23, current.execute("PRAGMA user_version").fetchone()[0])
+                        self.assertEqual(24, current.execute("PRAGMA user_version").fetchone()[0])
                         self.assertEqual(
                             0, current.execute("SELECT COUNT(*) FROM document_attachment_operations").fetchone()[0]
                         )

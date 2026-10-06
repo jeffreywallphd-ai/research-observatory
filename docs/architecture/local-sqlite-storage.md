@@ -92,6 +92,7 @@ database; T02/T03 must schedule them at startup/maintenance and surface recovery
 | `corpus_items`, `corpus_item_states`, `corpus_discovery_paths`, `corpus_item_discovery_paths`, `corpus_decisions`, `corpus_decision_evidence`, `corpus_commands` | first-class v2 CorpusItem revision binding, append-only membership and discovery history, actor/reason/protocol/evidence decisions, and exact command replay |
 | `corpus_report_snapshots`, `corpus_report_members`, `corpus_report_paths`, `corpus_report_sources` | immutable report summary, exact member/path stream, and retained source/policy witnesses |
 | `corpus_source_item_heads`, `corpus_source_totals`, `corpus_source_overlap_totals` | mutable, rebuildable current-head source/path and pair counts; no rights authority or sealed-report replacement |
+| `acquisition_locations`, `acquisition_attempts`, `acquisition_attempt_results`, `document_acquisition_sources` | immutable exact-copy observations, admitted and terminal canonical workflow bindings, and protected candidate source/license/receipt facts; no reusable dispatch permission |
 | `outbox_events` | transaction-outbox metadata/digest seam for the later unit of work |
 
 Object bytes, document content, indexes, models, caches, and other derived
@@ -119,8 +120,8 @@ replace immutable sealed report snapshots.
 ## Evolution and recovery boundary
 
 T01 established schema version 1 and its sealed ordinary connection factory.
-The backup-first migration authority now advances exact supported v1 through v19
-profiles to current schema v20. It owns forward migrations, backup-before-migrate,
+The backup-first migration authority now advances exact supported v1 through v23
+profiles to current schema v24. It owns forward migrations, backup-before-migrate,
 checkpointed snapshots, frozen source fixtures, and failure recovery. The migration
 runner validates and checkpoints the source, reserves SQLite's writer lock, creates and verifies an online backup
 through a second held connection, and only then runs the reviewed Alembic

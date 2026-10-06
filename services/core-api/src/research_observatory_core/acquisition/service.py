@@ -206,6 +206,7 @@ class OpenAccessAcquisitionService:
             if not self._slot.acquire(blocking=False):
                 raise AcquisitionProblem("acquisition-busy")
             pending.used = True
+        admitted = False
         try:
             self.guard(
                 pending.actor,
@@ -219,8 +220,13 @@ class OpenAccessAcquisitionService:
                     attachments=self.attachments,
                 ),
             )
+            admitted = True
             return self._download(pending, operation_id, cancellation_requested)
         except BaseException as error:
+            # A rejected duplicate has no authority to terminate an earlier
+            # admitted request, including one retained for restart recovery.
+            if not admitted:
+                raise
             code = (
                 "acquisition-cancelled"
                 if isinstance(error, ObjectStagingCancelled)

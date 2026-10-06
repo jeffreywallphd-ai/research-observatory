@@ -191,12 +191,21 @@ class DocumentAttachmentRuntime:
         cancellation_requested: Callable[[], bool],
     ) -> AttachmentCandidate:
         service, _actor = self._acquisition(root, project_id, session_id, trace_id)
+
+        def cancelled() -> bool:
+            if cancellation_requested():
+                return True
+            try:
+                return self._imports.native_context(root, project_id) != session_id
+            except PreviewProblem, ProjectLifecycleProblem:
+                return True
+
         # Remote waits and LPAC inspection run outside the lifecycle writer.
         return service.acquire(
             preview_id,
             confirmation=confirmation,
             operation_id=operation_id,
-            cancellation_requested=cancellation_requested,
+            cancellation_requested=cancelled,
         )
 
     def context(self, root: str, project_id: str) -> str:

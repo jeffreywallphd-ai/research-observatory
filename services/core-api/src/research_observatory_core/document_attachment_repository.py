@@ -572,9 +572,22 @@ class LocalDocumentAttachmentService:
             if any(value is not None for value in (session_id, match_confirmed, permitted_use, exact_selection)):
                 raise AttachmentProblem("attachment-command-invalid")
             command_sha256 = _sha({"candidateId": candidate_id, "confirmationSha256": confirmation_sha256})
-        connector_record = self._rights._resolve_connector_record(
-            self.load_candidate(candidate_id, actor=actor).rights_subject
-        )
+        # Preserve operation-denial precedence before resolving protected source
+        # bytes outside the writer. The writer rechecks the same exact binding.
+        with self._corpus._transaction(write=False) as (connection, _):
+            self._authority(connection, actor)
+            if (
+                project_only
+                and connection.execute(
+                    "SELECT 1 FROM document_attachment_operations WHERE project_id=? AND operation_id=? "
+                    "AND candidate_id=? AND session_id=? AND actor_id=?",
+                    (self._project, operation_id, candidate_id, session_id, actor.actor_id),
+                ).fetchone()
+                is None
+            ):
+                raise AttachmentProblem("attachment-operation-unavailable")
+            subject = self._candidate(connection, candidate_id).rights_subject
+        connector_record = self._rights._resolve_connector_record(subject)
         try:
             with self._corpus._transaction(write=True) as (connection, aggregates):
                 self._authority(connection, actor)
