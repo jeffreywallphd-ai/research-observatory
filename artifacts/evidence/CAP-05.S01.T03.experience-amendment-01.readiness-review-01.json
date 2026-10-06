@@ -1,0 +1,326 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "independent-task-experience-amendment-readiness-review",
+  "id": "CAP-05.S01.T03.EX01.readiness-review-01",
+  "packetId": "CAP-05.S01.T03.EX01",
+  "waveId": "W2",
+  "taskId": "CAP-05.S01.T03",
+  "candidateCommit": "081d0fa2dd9baa6e319eb1a17a56f5aeab3fd93d",
+  "proposalIntroductionCommit": "00fff94732874460edf4cb8ce77a09ad36d16d98",
+  "pausedPredecessorCommit": "ed5012226f903862960ce8b405b1299df96d7fb3",
+  "reviewer": "agent:/root/a03_closeout_review",
+  "implementationAgent": "agent:/root",
+  "reviewedAt": "2026-10-06T16:13:02.885813+00:00",
+  "independence": "Independent agent disposition. Reviewer did not author the proposed reference, proposal, mismatch, brief, structural producer, task implementation or owner records; earlier factual/read-only review context does not supply owner approval.",
+  "result": "approved",
+  "dispositionScope": "Exact committed owner-decision packet readiness only.",
+  "findings": [],
+  "openFindingIds": [],
+  "findingPolicy": "Severity-ranked, criterion-bound material findings would block approval. No such readiness finding remains; preserved adverse observations and future qualification obligations are not relabeled passes or invented controlled findings.",
+  "decision": "The exact inert 1.9 experience and explicitly bounded source-free method/procedure exception are complete, truthful and feasible enough to present for an owner decision. Explicit human approval of BOTH remains required before records/publication/resume/claim/product changes. This report grants none of those authorities.",
+  "proposal": {
+    "path": "artifacts/evidence/CAP-05.S01.T03.experience-amendment-01.proposal.json",
+    "sha256": "20dbdaf74f79fe51ff1643c19ec8336813a53a311a6504a10550fa6df04f7469",
+    "sizeBytes": 41708,
+    "commit": "00fff94732874460edf4cb8ce77a09ad36d16d98",
+    "gitBlobSHA256": "20dbdaf74f79fe51ff1643c19ec8336813a53a311a6504a10550fa6df04f7469",
+    "role": "Immutable exact EX01 request; identical at review candidate."
+  },
+  "proposedReference": {
+    "id": "RO-UI-ACADEMIC-MINIMAL-1.9",
+    "path": "planning/W2-reference-1.9",
+    "packageSHA256": "4addb04530e7b02eae7ad46dffecbf3d78e825502ea8db9b36400cb4c73f9de1",
+    "manifest": {
+      "path": "planning/W2-reference-1.9/REFERENCE_MANIFEST.yaml",
+      "sha256": "771d22db5abd0f256bdc11150beb3d3540599eafe7d24597dce80c354ef8b3a9",
+      "sizeBytes": 6422,
+      "commit": "081d0fa2dd9baa6e319eb1a17a56f5aeab3fd93d",
+      "gitBlobSHA256": "771d22db5abd0f256bdc11150beb3d3540599eafe7d24597dce80c354ef8b3a9"
+    },
+    "governedFiles": 54,
+    "completeRegularFilesIncludingManifest": 55,
+    "authentication": "Independent exact Git ls-tree/blob reads and canonical working bytes authenticated all 54 proposal and baseline file digests, exact proposed/current inventories, no redirected package paths, and immutable proposal-to-current package equality. Sorted compact UTF-8 JSON of the observed governed SHA map produces the cited package hash; the corresponding baseline map produces cd8995fdcea2fe44452eaa1fdd258b6f9fab5714cbd443a81a8e5b4251220b94. Manifest SHA and source bindings match. No shared verifier was rerun.",
+    "status": "proposed; inert; no owner authority or active reference publication.",
+    "regularFileInventorySHA256": "2da51f75a73337798ba90037d62f68e8fc69c90d0568b69abf4e966ee87b0866",
+    "inventoryHashMethod": "Sorted compact UTF-8 JSON of the independently observed ordered Git ls-tree rows: path/mode/gitBlob. Complete path set equals the proposal inventory plus REFERENCE_MANIFEST.yaml; each mode is100644 blob.",
+    "gitTree": "8f06ae281565447a627774b3d8afbc3baab07c23"
+  },
+  "evidence": [
+    {
+      "path": "artifacts/evidence/CAP-05.S01.T03.experience-amendment-01.mismatch.md",
+      "sha256": "afd2aa7d30fbc4c1816aec567b2322ece6f68c543c81793e0fb12008c5828789",
+      "sizeBytes": 4841,
+      "commit": "081d0fa2dd9baa6e319eb1a17a56f5aeab3fd93d",
+      "gitBlobSHA256": "afd2aa7d30fbc4c1816aec567b2322ece6f68c543c81793e0fb12008c5828789",
+      "role": "Authority conflict, safe interim state, bounded alternatives and requested exception."
+    },
+    {
+      "path": "artifacts/evidence/CAP-05.S01.T03.experience-amendment-01.review.html",
+      "sha256": "97f79e94895c789cb2b5e5f2a0553f2841b3720da84c4bee1e4ca507ab899386",
+      "sizeBytes": 7612,
+      "commit": "081d0fa2dd9baa6e319eb1a17a56f5aeab3fd93d",
+      "gitBlobSHA256": "97f79e94895c789cb2b5e5f2a0553f2841b3720da84c4bee1e4ca507ab899386",
+      "role": "Readable exact owner decision and resume handoff."
+    },
+    {
+      "path": "artifacts/evidence/CAP-05.S01.T03.experience-amendment-01.structure-01.json",
+      "sha256": "d76ba8d5aa59758dffd233c96e7ebc1c65c5b78e5cdbd2c01ee4afcd66825e83",
+      "sizeBytes": 2152,
+      "commit": "081d0fa2dd9baa6e319eb1a17a56f5aeab3fd93d",
+      "gitBlobSHA256": "d76ba8d5aa59758dffd233c96e7ebc1c65c5b78e5cdbd2c01ee4afcd66825e83",
+      "role": "Actual 00fff inert structure observation; 1.085 seconds; approved-reference status remains false."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S01.T03.verify-inert-packet-01.py",
+      "sha256": "f9842ee1858e269497094f9a079364cf478bfcc006baddfdc30ae97139cb6b61",
+      "sizeBytes": 4220,
+      "role": "Authenticated unchanged-source structure producer; reviewed, not rerun."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S01.T03.experience-previews-01/report.json",
+      "sha256": "71d02aad0fe2bfecb92716237d3742a16d55d1ab64432201b94c82ece2d41634",
+      "sizeBytes": 1787,
+      "role": "Retained initial inert prototype FAIL."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S01.T03.experience-previews-02/report.json",
+      "sha256": "7f734687e80a7e407d076fde22480a75d1e5d57d659c774abc38e4be0053fc53",
+      "sizeBytes": 2186,
+      "role": "Bounded baseline-relative prototype observation; not product qualification."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S01.T03.preview-experience-02.py",
+      "sha256": "671da6d82240629fad2834af02ab5f90256c1a15efef10668bdfbb08b1a2db17",
+      "sizeBytes": 3756,
+      "role": "Actual report predicates: focused review article, heading below fixed bar, new-region right edge, disabled download and aborted requests."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S01.T03.experience-previews-02/review-1440-light.png",
+      "sha256": "e39a6f09fc9652500399d9cd860d63b27edc9e0ca4fff83f2e0a580d2f66c880",
+      "sizeBytes": 125249,
+      "role": "Independently visually inspected retained prototype."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S01.T03.experience-previews-02/review-1280-dark.png",
+      "sha256": "ee63f955149d7c972aae2f100efcf590379beec5e5ceaa6e4ae513ba53f7e6b8",
+      "sizeBytes": 98044,
+      "role": "Independently visually inspected retained prototype."
+    },
+    {
+      "path": ".local/CAP-05.S01.T03.privacy-disposition-c11-01.json",
+      "sha256": "0e9a6d525ba3f5ab6eca1aa1aa531a3f2e2c28ff9c91e7fc18449796b11c6391",
+      "sizeBytes": 20855,
+      "role": "Separate independent exact-artifact privacy disposition; no readiness authority."
+    },
+    {
+      "path": ".local/CAP-05.S01.T03.artifact-privacy-review-c11-01.json",
+      "sha256": "138e831b432c73cb415e76c50705fde1a8c1a884ef44a09fcd53dee752a17f43",
+      "sizeBytes": 480660,
+      "role": "538 exact admissions; all 537 prior entries/order and preservation/scanner/config retained."
+    },
+    {
+      "path": ".local/CAP-05.S01.T03.privacy-checker-c11-01.receipt.json",
+      "sha256": "8bb4f9c272a122fc4bdccdab4c6577ca4b3a78691ca65ceab11deee5a277eb62",
+      "sizeBytes": 1274,
+      "role": "Actual unchanged staged privacy checker exit 0 for 57 entries; no product qualification."
+    }
+  ],
+  "governingSources": [
+    "AGENTS.md: governed experience/authority changes require explicit append-only human approval; immutable approvals and adverse history; no framework source development after A05 owner direction.",
+    "docs/governance/repository-governance.md: mismatch protocol.",
+    "docs/automation/project-automation-guide.md: sections 2.2, 3.1, 6, 8.1 and 8.2.",
+    "docs/automation/codex-tracking-guide.md: evidence and independent review.",
+    "docs/automation/workflow-efficiency.md: affected review, exact input reuse and stable snapshots; unchanged prior guidance reused.",
+    "planning/slice-plans/CAP-05/CAP-05.S01-rights-aware-document-acquisition.md: sections 4-8, 9.3, 10, 16-19.",
+    "design/ui-reference/STYLE_GUIDE.md: approved 1.8 local attachment section 1.4; affected workflow/page/HTML contracts.",
+    "docs/automation/ui-conformance-verification.md: affected runtime, capture, semantic witness, direct approval record and baseline contracts."
+  ],
+  "sourceBindings": [
+    {
+      "path": "planning/reference-approvals/RO-UI-ACADEMIC-MINIMAL-1.8.json",
+      "rawSHA256": "1f1d39020a770adf5fd3df1ba3717bfd31a4798b6e39d8e4eb5f76ce44315105",
+      "gitBlobSHA256": "1f1d39020a770adf5fd3df1ba3717bfd31a4798b6e39d8e4eb5f76ce44315105",
+      "commit": "ed5012226f903862960ce8b405b1299df96d7fb3"
+    },
+    {
+      "path": "planning/verification-method-approvals/CAP-05.S01.T01.VM01.json",
+      "rawSHA256": "27eae17f1f0d40e0e39f06b0151b8ccb6bae72361d927c9c5ab6da9e66b7deb8",
+      "gitBlobSHA256": "27eae17f1f0d40e0e39f06b0151b8ccb6bae72361d927c9c5ab6da9e66b7deb8",
+      "commit": "ed5012226f903862960ce8b405b1299df96d7fb3"
+    },
+    {
+      "path": "packages/contracts/workflow-profile/presentation-compatibility-1.8.json",
+      "rawSHA256": "ec48a491f9a1c5755ce78ceea8b2fee11fd3035c96bfb247606d27310806a8a1",
+      "gitBlobSHA256": "ec48a491f9a1c5755ce78ceea8b2fee11fd3035c96bfb247606d27310806a8a1",
+      "commit": "ed5012226f903862960ce8b405b1299df96d7fb3"
+    },
+    {
+      "path": "planning/slice-plans/CAP-05/CAP-05.S01-rights-aware-document-acquisition.md",
+      "rawSHA256": "60812af8e0d4ef6ecdd9a176eef6d696658c24db757f8a55cb066d9927c74e5f",
+      "gitBlobSHA256": "60812af8e0d4ef6ecdd9a176eef6d696658c24db757f8a55cb066d9927c74e5f",
+      "commit": "ed5012226f903862960ce8b405b1299df96d7fb3"
+    },
+    {
+      "path": "tools/ui_change_gate.py",
+      "rawSHA256": "fa77fdf99c05b64954c4ce62956e137f2a97f09b96f42d4d75aeb68c05cde126",
+      "gitBlobSHA256": "fa77fdf99c05b64954c4ce62956e137f2a97f09b96f42d4d75aeb68c05cde126",
+      "commit": "ed5012226f903862960ce8b405b1299df96d7fb3"
+    },
+    {
+      "path": "tools/ui_conformance.py",
+      "rawSHA256": "8be73d09a2b3ee81a1a5079593b8f1cf57539d067cebe99f2744de4fc975b8e2",
+      "gitBlobSHA256": "8be73d09a2b3ee81a1a5079593b8f1cf57539d067cebe99f2744de4fc975b8e2",
+      "commit": "ed5012226f903862960ce8b405b1299df96d7fb3"
+    },
+    {
+      "path": "tools/ui_reference_check.py",
+      "rawSHA256": "77cee156dc22574c53521a05b71a82d8da7db99cc9022e85ab712de963b8a1f6",
+      "gitBlobSHA256": "77cee156dc22574c53521a05b71a82d8da7db99cc9022e85ab712de963b8a1f6",
+      "commit": "ed5012226f903862960ce8b405b1299df96d7fb3"
+    },
+    {
+      "path": "tools/reference_design_approval.py",
+      "rawSHA256": "33fab79a0085dbbf281fa7a4e3e2f87dd47428fdc0b17324919ba18e381b8fd3",
+      "gitBlobSHA256": "33fab79a0085dbbf281fa7a4e3e2f87dd47428fdc0b17324919ba18e381b8fd3",
+      "commit": "ed5012226f903862960ce8b405b1299df96d7fb3"
+    },
+    {
+      "path": "tools/desktop_app_check.py",
+      "rawSHA256": "cb617d6448e8a358317ecf530266d5bd64ed6ff7212729c4cdf8895449e813c8",
+      "gitBlobSHA256": "cb617d6448e8a358317ecf530266d5bd64ed6ff7212729c4cdf8895449e813c8",
+      "commit": "ed5012226f903862960ce8b405b1299df96d7fb3"
+    },
+    {
+      "path": "tools/product_style_check.py",
+      "rawSHA256": "b682228ce0a1ae8ae7093490cfc3247c00843e3612a3476325ef46148ebc92c0",
+      "gitBlobSHA256": "b682228ce0a1ae8ae7093490cfc3247c00843e3612a3476325ef46148ebc92c0",
+      "commit": "ed5012226f903862960ce8b405b1299df96d7fb3"
+    },
+    {
+      "path": "tools/desktop_performance_check.py",
+      "rawSHA256": "78f04224057f4f3ae064691bc02206bb589740f2bcd179818c44d6c8d3c86980",
+      "gitBlobSHA256": "78f04224057f4f3ae064691bc02206bb589740f2bcd179818c44d6c8d3c86980",
+      "commit": "ed5012226f903862960ce8b405b1299df96d7fb3"
+    },
+    {
+      "path": "verification/extensions/desktop-ui.json",
+      "rawSHA256": "f7cab0dca35bbed27511e7bde3bf1824b83925c79955bdc0f6ec4daa9f09d708",
+      "gitBlobSHA256": "f7cab0dca35bbed27511e7bde3bf1824b83925c79955bdc0f6ec4daa9f09d708",
+      "commit": "ed5012226f903862960ce8b405b1299df96d7fb3"
+    },
+    {
+      "path": "apps/desktop/scripts/assemble-application.mjs",
+      "rawSHA256": "5a29875021250bf9dede6d95076ded4f2c43e3a507b06d114a7651abb7328ae5",
+      "gitBlobSHA256": "931bf104f401acdc3361d437aae0c04e46103700e083c6326c3309c71eb6c5d5",
+      "commit": "ed5012226f903862960ce8b405b1299df96d7fb3"
+    },
+    {
+      "path": "apps/desktop/scripts/assemble-reference.mjs",
+      "rawSHA256": "be83c7cdae6ea9198bf93b942e4c9e776f3bdaa42d7a270d5d12187d60ea3a2c",
+      "gitBlobSHA256": "ba0657afbc13adb4a41bf19c0a9ecb5b01b09698c4377452d5ee32de174102ad",
+      "commit": "ed5012226f903862960ce8b405b1299df96d7fb3"
+    }
+  ],
+  "independentObservations": [
+    {
+      "criterion": "Exact immutable packet and safe current state; section 2.2/mismatch protocol.",
+      "observation": "Proposal introduced once at 00fff94732874460edf4cb8ce77a09ad36d16d98 and unchanged at 081d0fa2. The paused-predecessor-to-candidate history consists only of the inert package/mismatch/proposal addition and its brief/structure addition; 59 added paths, no existing product/framework/backlog/source change. HEAD and tracked inputs were clean and fixed during review. The approval/method records for EX01 and 1.9 have not been granted by this review."
+    },
+    {
+      "criterion": "Frozen original T03 and prerequisite/campaign identity; approved S01 section 9.3.",
+      "observation": "All proposal taskContract fields match both current canonical T03 and the original W2 approval tree c85a59f3a293f8e3f2eaf6454682c9a14b1efa55; sorted compact JSON hashes to 22c24df1438c455859b07b1643f5adb66c5dc118df2e2b9c2f49cb30a3a7cc8c. T03 remains READY with no owner/base/branch/lease/experience_change and inherited agent-review. T02 is DONE with independent approved disposition and is integrated at actual local main deae00d0bb67a78ab17291edccbfb770c5d54884, an ancestor of the packet. W2 is PAUSED with no ordinary task IN_PROGRESS/REVIEW. All 33 original W2 tasks remain, 16 unfinished. Campaign identity is codex-w2-implementation, codex/w2-implementation, worktree dot, LOC and windows-x64."
+    },
+    {
+      "criterion": "Exact paused CAS/Git identity; no implicit resume/claim.",
+      "observation": "Working raw backlog SHA is 2c38d7e5e9aa5f7834b139e129b25b39958aa2b46d8748e1b834ebd4c8bface6; CRLF-to-LF canonical bytes equal both ed5012226f903862960ce8b405b1299df96d7fb3 and current Git blobs, whose SHA is 92a5eda6868dee9a9297abd73f3da3ab25268bbd39043c70cd6e4dd24b0023d7. Raw CAS and committed canonical bindings remain distinct. No task/Wave state mutation or invented claim base is used."
+    },
+    {
+      "criterion": "Governed UX semantic closure; section 6 and original 1.8/1.5 authority.",
+      "observation": "JSON equality proves all fourteen ordered workflow objects, selection and controlled-recalculation semantics unchanged after only reference_id/version replacement. Coverage equality permits only those identity fields, the exact Ingestion purpose suffix and the three exact added required regions; all other page contracts and capability mappings remain identical. Semantic tokens, app.js, print.css and reference validators remain byte-identical. The other 33 HTML files differ only in the inert version footer; Ingestion gains the bounded copy panel and style-guide HTML changes proposal identity. CSS adds only anchor scroll-margin for the new review region. Original 1.5 semantics and exact reviewed 1.8 witness are retained, not relabeled as 1.9 proof."
+    },
+    {
+      "criterion": "T03 product outcome, rights, confirmation, design usability and recovery.",
+      "observation": "Section 1.5 and the linked HTML provide distinct retained copies/unknown and entitlement states, host/version/license/type/size/checksum review, explicit one-use native-session download confirmation and a separate later attachment decision. Selection, review, generic Retry, reopening and local entitlement annotations cannot dispatch network retrieval. Current Intent/privacy/provider/per-copy permission is rechecked; denied/unsafe sources have no bypass. Lock/close/cancel rejects late work; interrupted transfer cleans only owned partials and requires fresh review, preserving attempts and metadata. Cleanup failure remains visible and blocks unsafe retry. Focus/keyboard/live-state, selected-work/version return and light/dark requirements are specified. These fit original partial-acquisition safe-cleanup and alternative-copy criteria; no new route, workflow stage, login, purchase, hosted service or external contact is authorized."
+    },
+    {
+      "criterion": "Truthful current readiness versus future qualification.",
+      "observation": "The actual structure report is bound to introduction 00fff and the exact proposal/package/checker/producer, reporting 35 HTML documents, 33 product pages, fourteen workflows, twenty capability records and generator reproducibility. Its only shared-validation errors are the two expected proposed-status errors; approved=false. Producer code checks exact regular inventory, current Git canonical equality, head and input stability. The prototype is explicitly inert and synthetic. Its initial 1280-wide FAIL and inherited four-pixel overflow remain adverse; later comparison establishes no new overflow only. Visual inspection of 1440-light and 1280-dark retained captures supports readable copy review, confirmation and nearby disabled-action help. The prototype focuses the review article and measures its heading, not a complete product heading-focus/AX/Escape/recovery/accessibility test."
+    },
+    {
+      "criterion": "Explicit human method/procedure authority; section 2.2 exception and section 3.1 decision handoff.",
+      "observation": "The request explicitly identifies its replacement of the ordinary ECR/bootstrap lifecycle for this exact T03/1.9 packet, requires both human design and method approval after independent readiness, and prescribes direct immutable owner plus reference records. It does not edit frozen W2/T03 contracts. The brief/mismatch expose the legal prerequisite sequence, exact packet commit/digest/package, relevant clickable reference/Wave/slice/task locations, alternatives, recommendation and actual taskctl resume/next/show/claim condition. G2 is correctly pending and illegal while remaining work is incomplete. Prior VM01 and A01-A05 supply history only, not T03 authority."
+    },
+    {
+      "criterion": "Direct reference-record shape and publication-before-claim-before-product ordering.",
+      "observation": "Unchanged tools/reference_design_approval.py accepts the exact eight record keys schemaVersion/kind/referenceId/approvedBy/approvedAt/scope/proposal/basis; proposal has exactly commit/path/packageSha256. The human/date/reference-publication-and-plan-binding-only identity, immutable introduction, strict proposal-before-record-before-publication ancestry, exact supersession, single consuming publication, complete regular inventories and metadata-only canonical equality remain necessary. EX01 specifies this shape; the separate method record must not be smuggled into extra design-record keys. Only APPROVAL metadata and corresponding manifest approval/status hashes may change at publication. Material plans/preliminary semantic mapping must bind that publication before actual ordinary claim; assembler activation, product build/implementation and qualifying capture occur inside the actual T03 claim. Both full paused-predecessor preparation and actual original claim-base implementation histories remain required."
+    },
+    {
+      "criterion": "Demonstrated finite admission incompatibilities and source-free feasible interfaces.",
+      "observation": "Read-only current source confirms ui_change_gate experience_change, review_gate and base-relative newer-reference/revision/approval predicates reject this different sequencing without the explicit exception. ui_conformance restricts semanticDeltas to exact 1.8 and load_context performs that admission; the shared extension and assemblers still name 1.8. These are static source facts, not an emitted T03 gate denial. Context is a public immutable data object; unchanged token/route/workflow/accessibility/render/baseline helpers accept it. Exact task-owned context/presentation proof can bind only approved 1.9 identity/package while preserving unchanged pinned settings. Repo-only ProductStyleQualification, frame wrappers, performance and capture_producer_snapshot cannot accept injected Context; the packet explicitly substitutes separately named, authenticated task-owned runtime/producer paths for their admission and requires all unaffected assertions. Product build/security/design-system and guarded capture reader/writer/source/PNG contracts are reusable where preconditions hold. No code, policy, extension selector, monkeypatch or command registry change is approved. Feasibility is a static assessment; actual equivalent assertion execution and independent proof review remain required, and an additional incompatibility outside the finite predicates must stop rather than inherit a waiver."
+    },
+    {
+      "criterion": "Complete equivalent proof and later gate consumption without waiver.",
+      "observation": "The four named authority-lineage, presentation-mapping, desktop-conformance and capture-authority obligations bind final committed candidate, all source inputs/outputs, original 1.5-to-approved1.8 lineage plus closed1.8-to1.9 delta, actual builds/renderer/fonts/settings, every ordered workflow/page/region/token, runtime/interaction/accessibility/theme/responsive/resource and fresh complete baseline/capture delivery identity. All real native/Core/security/rights/denial/cancellation/restart/recovery boundaries remain required. S01/checkpoint/fresh full W2 gates must authenticate this same exact owner/publication/package binding and independently reviewed equivalent proof, with fresh affected checks whenever closure changes or is unknown. No later task/future reference or release exemption is granted; selected canonical command IDs must identify unchanged checks actually executed, never fabricated public-wrapper PASS."
+    },
+    {
+      "criterion": "Artifact privacy, preserved controls and adverse publication history.",
+      "observation": "Authenticated c11 independent judgment/receipt/registry bind exact proposed bytes and the one stylesheet-digest false positive. Registry has 538 entries; direct equality confirms all 537 earlier entries in order, preservation, scanner and config remain exact. The retained first publication rejection is not rewritten as PASS. Artifact admission is separate from product/owner/readiness authority; this reviewer changed no registry, scanner, hooks or privacy policy."
+    }
+  ],
+  "requiredPostOwnerSequence": [
+    "Obtain explicit human approval of this exact proposal/package and BOTH design and source-free method/procedure exception; no approval is inferred from readiness.",
+    "Commit immutable separate EX01 and exact existing-shape 1.9 design records binding proposal/readiness; strictly later metadata-only reference publication, unchanged reviewed content and single-use authority.",
+    "Authenticate publication and preliminary semantic mapping; update affected material-plan bindings without rewriting frozen approvals/task definitions.",
+    "Resume same recorded W2 campaign and ordinary next/show/claim original CAP-05.S01.T03 through taskctl at actual current full HEAD, then task-start planning.",
+    "Implement bounded product path and exact product assembler/build-manifest selectors only within the claim; keep shared framework source/extension selector unchanged.",
+    "Execute actual named equivalents and all unaffected checks against stable committed final inputs; preserve public outcomes/adverse runs, new approved baseline/captures and all input/delivery/renderer identities.",
+    "Independent expanded task/security disposition, integrated S01 review/checkpoint, local integration and fresh full W2 qualification; separate human release gate remains required."
+  ],
+  "preservedAdverseHistory": [
+    {
+      "path": "artifacts/tmp/CAP-05.S01.T03.experience-previews-01/report.json",
+      "sha256": "71d02aad0fe2bfecb92716237d3742a16d55d1ab64432201b94c82ece2d41634",
+      "result": "FAIL",
+      "meaning": "Inert prototype has four-pixel horizontal document overflow at width1280 in both themes; unchanged 1.8 has same width. Remains an inherited limitation, no full-responsive PASS."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S01.T03.publication-attempt-01.json",
+      "sha256": "1ddf2dbfde92a2075ecba74e0a3719c7c00de4f696817f94c38424cd24356c11",
+      "result": "retained original privacy-hook rejection; not qualified PASS"
+    },
+    {
+      "path": "artifacts/evidence/CAP-05.S01.T03.experience-amendment-01.structure-01.json",
+      "sha256": "d76ba8d5aa59758dffd233c96e7ebc1c65c5b78e5cdbd2c01ee4afcd66825e83",
+      "result": "public approved-reference ok=false/approved=false; only inert structure PASS",
+      "meaning": "Proposed approval and manifest status failures remain expected; inherited Markdown hard-break diagnostics retained and no git diff-check PASS claimed."
+    },
+    {
+      "path": "artifacts/evidence/CAP-05.S01.T01.full-base-ui-gate-01.receipt.json",
+      "sha256": "9a684897691d229736911bed3a96160b1148fe0f03951f501ac6bf76beb57c3a",
+      "result": "original T01 public gate exit124 at600.011 seconds, no completed verdict",
+      "meaning": "Immutable earlier T01 VM01/adverse/approval history retained; no T03 authority or foundation:ui-change PASS inferred."
+    }
+  ],
+  "reviewExecutionNotes": [
+    "Only bounded source/record/Git/hash observations and two existing-image inspections were performed. No structure producer, public gate, full profile, runtime, capture, baseline or history suite was rerun.",
+    "A first inline read-only authentication script reached an erroneous reviewer-only assertion that local main equaled the packet candidate, after its package/source/task/semantic assertions. Explicit Git observation corrected this: local main remains approved T02 deae00d0; review HEAD is081d0fa2. That setup assertion produced no qualifying artifact or repository mutation and is not counted as an all-exit0 product check."
+  ],
+  "proofLimits": [
+    "Owner-decision readiness only. No human EX01/reference approval, approved1.9 publication, ordinary task claim or task/slice/checkpoint/Wave/release approval.",
+    "Static source-free feasibility and exact inert packet authentication do not prove the future equivalent producers, baseline/capture authenticity, public wrappers or product/runtime outcome.",
+    "No T03 public gate or1.9 product qualification was invoked; source incompatibilities are not emitted machine verdicts. No foundation:ui-change, foundation:ui-conformance, desktop wrapper or capture-reader PASS is invented.",
+    "Prototype screenshots/reports prove bounded synthetic offline layout observations only; not native/Core/LPAC, actual remote principal/consent/rights/egress/encrypted staging/association/recovery, complete responsiveness/accessibility/performance/packaging/platform qualification or human research.",
+    "Immutable Wave/task/ADR/native/Python/LPAC/no-plaintext/SQLCipher/rights authority and all A01-A05/T01/T02 reviews/findings remain intact. No new automation/framework source development or maintenance after A05 is authorized.",
+    "Future qualification must reproduce every unaffected assertion in noninjectable runtime/producer paths, bind the entire final regular input closure, use honest actual exits, preserve failures and receive independent disposition; unproved or unexpected predicates remain blocking.",
+    "The same exact approved1.9 binding may be consumed only as explicitly stated in required S01/checkpoint/W2 proof. Unrelated later-task authority, a future1.10+ reference or any human release gate is not waived."
+  ],
+  "mutations": {
+    "reviewLedgerOnly": true,
+    "sourceBacklogViewsApprovalRecordsHooksGitRefsChanged": false
+  },
+  "ownerApproval": false,
+  "taskApproval": false,
+  "sliceApproval": false,
+  "waveCompletion": false,
+  "releaseApproval": false
+}
