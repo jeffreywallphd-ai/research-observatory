@@ -1490,7 +1490,7 @@ waves:
     notes: Owner explicitly approved the complete W2 execution packet and requested implementation; G1 prototype limitations
       remain recorded, not waived.
   campaign:
-    status: ACTIVE
+    status: PAUSED
     scope: wave
     owner: codex-w2-implementation
     branch: codex/w2-implementation
@@ -1499,13 +1499,12 @@ waves:
     profile: LOC
     platform: windows-x64
     started_at: '2026-09-19T17:21:58+00:00'
-    updated_at: '2026-10-05T23:57:04+00:00'
-    pause_reason: null
-    pause_category: null
-    lease:
-      claimed_by: codex-w2-implementation
-      claimed_at: '2026-10-05T23:57:04+00:00'
-      expires_at: '2026-10-06T07:57:04+00:00'
+    updated_at: '2026-10-06T02:35:39+00:00'
+    pause_reason: CAP-05.S01.T01 mandatory full-original-base UI verification remains unmet after the stable600-second diagnostic
+      and independent exact-history mismatch audit. Await a reviewed exact source-free one-task verification-method owner
+      decision; preserve all approvals, adverse results and the prohibition on further framework source development.
+    pause_category: human-decision
+    lease: null
     corrective_tasks:
     - title: Implement idempotent import commits and import manifests
       objective: Batch transaction and manifest linking source file hash, parser version, record decisions, errors, and resulting
@@ -4253,7 +4252,7 @@ waves:
     notes: Adopt exact independently approved A03 checkpoint; ordinary W2 remains PAUSED; original CAP-05.S01.T01 base6506
       and all task history retained; no further framework development after closed A05.
   completion:
-    status: IN_PROGRESS
+    status: PAUSED
     reviewer: null
     reviewed_at: null
     evidence: []
@@ -26397,13 +26396,22 @@ capabilities:
       verification_commands:
       - python tools/verify.py --profile documents
       - python tools/verify.py --profile desktop
-      status: IN_PROGRESS
+      status: BLOCKED
       owner: codex-w2-implementation
       branch: codex/w2-implementation
       started_at: '2026-10-02T03:11:13+00:00'
-      updated_at: '2026-10-06T00:37:05+00:00'
+      updated_at: '2026-10-06T02:30:24+00:00'
       completed_at: null
-      blocker: null
+      blocker:
+        reason: Full-original-base UI gate at fccb73f3 exited124 after600.011s with stable inputs and no completed gate report.
+          Independent lineage audit authenticates nine later C11/S05/C12 product rows and R10/R11/reopen that the current
+          epoch predicate cannot attribute. Product/current1.8 native, Core, capture and independent semantic proof pass;
+          mandatory UI qualification remains unmet. No framework source development is authorized after A05.
+        next_action: Obtain exact owner approval of artifacts/evidence/CAP-05.S01.T01.verification-method-amendment-01.proposal.json
+          after independent readiness review, or retain this block. Proposed source-free task-only verification substitution
+          must preserve original6506 range and every unaffected gate; no task or release approval is implied.
+        recorded_at: '2026-10-06T02:30:24+00:00'
+        owner: codex-w2-implementation
       implementation_notes: ''
       evidence: []
       review:
@@ -26415,10 +26423,7 @@ capabilities:
           and adopted A01-A05. Resume the bounded actual D3D role restoration and original full-base current1.8/native/picker/commit/reopen
           proof without framework source development.'
       base_sha: 6506c68461144747b0ee9be10853211717aa381d
-      lease:
-        claimed_by: codex-w2-implementation
-        claimed_at: '2026-10-06T00:37:05+00:00'
-        expires_at: '2026-10-06T08:37:05+00:00'
+      lease: null
       verification_state: null
       worktree: .
       platform_targets:
