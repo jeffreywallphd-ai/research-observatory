@@ -133,8 +133,57 @@ class _StageExceptionProbe:
         self._temporary = temporary
 
     async def __call__(self, scope, receive, send) -> None:
+        exact_stage = scope.get("type") == "http" and scope.get("path") == "/native/document-attachments/stage"
+        status = None
+        body_seen = False
+
+        async def observed_send(message) -> None:
+            nonlocal status, body_seen
+            await send(message)
+            if not exact_stage:
+                return
+            if message.get("type") == "http.response.start":
+                value = message.get("status")
+                status = value if type(value) is int and 400 <= value <= 599 else None
+            elif message.get("type") == "http.response.body" and not body_seen:
+                body_seen = True
+                body = message.get("body")
+                if (
+                    status is None
+                    or message.get("more_body") is True
+                    or not isinstance(body, bytes)
+                    or len(body) > 2048
+                ):
+                    return
+                try:
+                    problem = json.loads(body)
+                except ValueError, UnicodeError:
+                    return
+                if not isinstance(problem, dict):
+                    return
+                # Only fixed known classifications, never a supplied code,
+                # exception message, source name, path or document content.
+                supplied_code = problem.get("code")
+                code = {
+                    "RO-CORE-DOCUMENT-UNAVAILABLE": "document-unavailable",
+                    "RO-CORE-DOCUMENT-INTAKE-INVALID": "intake-invalid",
+                    "RO-CORE-DOCUMENT-WORKER-UNAVAILABLE": "worker-unavailable",
+                    "RO-CORE-DOCUMENT-STORAGE-UNAVAILABLE": "storage-unavailable",
+                    "RO-CORE-INTERNAL-FAILED": "internal-failed",
+                }.get(supplied_code if isinstance(supplied_code, str) else "", "other")
+                try:
+                    if not self._temporary.is_dir() or self._temporary.is_symlink() or self._temporary.is_junction():
+                        return
+                    record = {"kind": "document-stage-rejection", "status": status, "code": code}
+                    with (self._temporary / "document-stage-rejection.json").open("xb") as stream:
+                        stream.write(json.dumps(record, sort_keys=True, separators=(",", ":")).encode("ascii"))
+                        stream.flush()
+                        os.fsync(stream.fileno())
+                except OSError:
+                    pass
+
         try:
-            await self._app(scope, receive, send)
+            await self._app(scope, receive, observed_send)
         except Exception as error:
             if scope.get("type") == "http" and scope.get("path") == "/native/document-attachments/stage":
                 _record_stage_exception(error, self._temporary)
