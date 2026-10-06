@@ -274,9 +274,9 @@ approval. Earlier proposals, publications, approvals and adverse evidence remain
 unchanged.</pre></article></section>
 <section class="section-heading"><span class="eyebrow">Task-start planning</span><h2>Assigned worksheet</h2><p>The worksheet is an optional planning aid and does not create a new approval or task state.</p></section>
 
-<details class="plan-details task-worksheet" open data-task-worksheet="CAP-05.S01.T03" data-worksheet-sha256="089f199ce46a0bb0e5e4310b19c16e6f3e771630af76b8893c937f7c62216aec">
+<details class="plan-details task-worksheet" open data-task-worksheet="CAP-05.S01.T03" data-worksheet-sha256="58073c38b1c59751484d63a18ef7b9b2304528fbb491e643e4daa28a40e6d321">
   <summary>Assigned task-start worksheet</summary>
-  <div class="worksheet-meta"><strong>Source:</strong> <code>artifacts/evidence/CAP-05.S01.T03.task-start.md</code> · <strong>SHA-256:</strong> <code>089f199ce46a0bb0e5e4310b19c16e6f3e771630af76b8893c937f7c62216aec</code></div>
+  <div class="worksheet-meta"><strong>Source:</strong> <code>artifacts/evidence/CAP-05.S01.T03.task-start.md</code> · <strong>SHA-256:</strong> <code>58073c38b1c59751484d63a18ef7b9b2304528fbb491e643e4daa28a40e6d321</code></div>
   <article class="plan-article"><pre class='markdown-fallback'># CAP-05.S01.T03 — acquisition queue, recovery and local access needs
 
 Actual ordinary taskctl claim base: `01bc453237a081392544929364696bac3422e9fb`.
@@ -396,7 +396,17 @@ original and recovered operations usable; their later authority rechecks remain.
 The same run found the older v23 recovery test still expected current schema 24.
 Its successful upgrade targets the declared current schema; retain literal v22
 predecessor, all eight injected v23 failures, backup, rows, ciphertext and foreign
-key assertions. Neither finding authorizes a weaker denial or migration test.</pre></article>
+key assertions. Neither finding authorizes a weaker denial or migration test.
+
+The next selected run exposed incomplete current-schema rollout: schema 25&#x27;s
+profile value had advanced, but the schema&#x27;s exact table inventories, the guide&#x27;s
+current authority section and generic successful migration expectations still
+ended at version 24. Synchronize those current product artifacts, append the exact
+v25 revision and source/target fingerprints to expected forward history, and
+preserve every literal predecessor, fixture, backup and prior migration row.
+The failed storage group is the characterization proof. Run all remaining
+affected storage/workflow/renderer groups before another capture refresh so a
+stop-on-first-failure qualification does not hide later rollout omissions.</pre></article>
 </details>
 <section class="section-heading"><span class="eyebrow">Execution evidence</span><h2>Review packets, rounds, and current projection</h2><p>Append-only controls retain every immutable round and finding closure. Pre-policy tasks remain explicitly latest-review-only.</p></section>
 

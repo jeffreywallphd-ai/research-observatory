@@ -118,3 +118,13 @@ The same run found the older v23 recovery test still expected current schema 24.
 Its successful upgrade targets the declared current schema; retain literal v22
 predecessor, all eight injected v23 failures, backup, rows, ciphertext and foreign
 key assertions. Neither finding authorizes a weaker denial or migration test.
+
+The next selected run exposed incomplete current-schema rollout: schema 25's
+profile value had advanced, but the schema's exact table inventories, the guide's
+current authority section and generic successful migration expectations still
+ended at version 24. Synchronize those current product artifacts, append the exact
+v25 revision and source/target fingerprints to expected forward history, and
+preserve every literal predecessor, fixture, backup and prior migration row.
+The failed storage group is the characterization proof. Run all remaining
+affected storage/workflow/renderer groups before another capture refresh so a
+stop-on-first-failure qualification does not hide later rollout omissions.
