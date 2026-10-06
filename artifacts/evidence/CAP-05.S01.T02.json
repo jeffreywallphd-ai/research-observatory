@@ -1,0 +1,399 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-manifest",
+  "taskId": "CAP-05.S01.T02",
+  "baseCommit": "7a51dc94734f8be6c4a64a0c29de458e96b347bc",
+  "commit": "4c22cd8d6998cf36062b0303abf9d3d76f025069",
+  "branch": "codex/w2-implementation",
+  "changedFiles": [
+    "artifacts/evidence/CAP-05.S01.T02.privacy-review-01.json",
+    "artifacts/evidence/CAP-05.S01.T02.task-start.md",
+    "docs/adr/ADR-0042-bind-acquisition-contracts-to-existing-rights-and-storage-authority.md",
+    "docs/adr/index.json",
+    "docs/architecture/local-sqlite-storage.md",
+    "docs/architecture/open-access-acquisition.md",
+    "docs/planning-implementation-plan.md",
+    "packages/contracts/README.md",
+    "packages/contracts/documents/acquisition-location.v1.schema.json",
+    "packages/contracts/documents/acquisition-receipt.v1.schema.json",
+    "packages/contracts/documents/acquisition-selection.v1.schema.json",
+    "packages/contracts/storage/sqlite-migration-recovery-v23.snapshot.json",
+    "packages/contracts/storage/sqlite-migration-recovery.schema.json",
+    "packages/contracts/storage/sqlite-profile.schema.json",
+    "packages/contracts/storage/sqlite-profile.v1.json",
+    "planning/backlog.yaml",
+    "planning/review-site/CAP-05/CAP-05.S01.T02.html",
+    "planning/review-site/CAP-05/CAP-05.S01.html",
+    "planning/review-site/manifest.json",
+    "planning/review-site/waves/W2.html",
+    "planning/status-summary.md",
+    "services/core-api/src/research_observatory_core/acquisition/__init__.py",
+    "services/core-api/src/research_observatory_core/acquisition/locations.py",
+    "services/core-api/src/research_observatory_core/acquisition/service.py",
+    "services/core-api/src/research_observatory_core/acquisition/transport.py",
+    "services/core-api/src/research_observatory_core/document_attachment_repository.py",
+    "services/core-api/src/research_observatory_core/main.py",
+    "services/core-api/src/research_observatory_core/migrations/runner.py",
+    "services/core-api/src/research_observatory_core/migrations/versions/v0024_open_access_acquisition.py",
+    "services/core-api/src/research_observatory_core/ports/acquisition.py",
+    "services/core-api/src/research_observatory_core/rights_repository.py",
+    "services/core-api/src/research_observatory_core/storage.py",
+    "tests/contracts/test_acquisition_contracts.py",
+    "tests/data/test_sqlite_migrations.py",
+    "tests/documents/test_acquisition_tls.py",
+    "tests/documents/test_attachment_lifecycle_regressions.py",
+    "tests/documents/test_local_attachment.py",
+    "tests/documents/test_oa_acquisition.py",
+    "tests/fixtures/documents/v23-predecessor.json",
+    "tests/fixtures/documents/v23-predecessor.zip",
+    "tests/rights/test_migration.py"
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "acquisition: exact retained location/license/version, current per-copy store/inspect permission, accepted Intent/privacy and session-bound confirmation; DNS/address/TLS/redirect/credential/cookie/proxy denial, bounded wire/retry/deadline, wrong checksum, spoofed/unsupported/truncated/oversized content and publication cancellation/rollback.",
+        "acquisition and attachment-rights-api: successful final document association retains exact source/license/receipt and provider-policy provenance through restart; changed provider-copy policy denies commit without erasing metadata.",
+        "acquisition: actual owned HTTPS through current Core session, SQLCipher canonical state, encrypted objects and signed LPAC inspection; test-only DNS/CA/runtime inventory routing is explicitly bounded and does not claim live provider or production installation qualification."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "acquisition: 29 fresh passing tests, including the real Windows signed-LPAC/TLS/SQLCipher principal boundary and all eight v24 migration interruption steps; no skips.",
+        "attachment-rights-api: 74 fresh passing existing format/attachment/lifecycle/rights/API tests; storage-migration-contracts: 47 fresh passing schema/recovery/migration/rights and portable acquisition contract tests.",
+        "Raw failed development captures, malformed setup and failed hook findings remain adverse; none is counted as qualifying PASS."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "storage-migration-contracts: exact schema/profile24, portable strict acquisition schemas and current recovery contract; immutable v23 recovery snapshot and all earlier migration authorities retained. Literal populated v23 ZIP counts/source rows/rights/ciphertext and verified predecessor restoration are checked.",
+        "acquisition: durable canonical admitted and terminal workflow revisions with atomic provenance/outbox/dependencies, exact operation/candidate/source/receipt bindings, failure/restart and immutable projection tests.",
+        "ruff, python-format, mypy, api-contract, architecture, adr and diff: passing affected quality and contract/architecture checks. Exact independent binary privacy admission preserves the scanner, baseline and all earlier admissions. No tools/framework source or governed experience changes; T03 owns queue/renderer/entitlement integration."
+      ]
+    }
+  ],
+  "checks": [
+    {
+      "id": "ruff",
+      "commandId": "foundation:quality",
+      "command": ".venv/Scripts/python.exe -B -m ruff check services/core-api/src/research_observatory_core/acquisition/__init__.py services/core-api/src/research_observatory_core/acquisition/locations.py services/core-api/src/research_observatory_core/acquisition/service.py services/core-api/src/research_observatory_core/acquisition/transport.py services/core-api/src/research_observatory_core/document_attachment_repository.py services/core-api/src/research_observatory_core/main.py services/core-api/src/research_observatory_core/migrations/runner.py services/core-api/src/research_observatory_core/migrations/versions/v0024_open_access_acquisition.py services/core-api/src/research_observatory_core/ports/acquisition.py services/core-api/src/research_observatory_core/rights_repository.py services/core-api/src/research_observatory_core/storage.py tests/contracts/test_acquisition_contracts.py tests/data/test_sqlite_migrations.py tests/documents/test_acquisition_tls.py tests/documents/test_attachment_lifecycle_regressions.py tests/documents/test_local_attachment.py tests/documents/test_oa_acquisition.py tests/rights/test_migration.py",
+      "exitCode": 0,
+      "durationSeconds": 0.088,
+      "candidateCommit": "4c22cd8d6998cf36062b0303abf9d3d76f025069",
+      "log": {
+        "path": "artifacts/tmp/CAP-05.S01.T02.selected-05-4c22cd8d.ruff.log",
+        "sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18"
+      },
+      "receipt": {
+        "path": "artifacts/tmp/CAP-05.S01.T02.selected-05-4c22cd8d.json",
+        "sha256": "1df36ab909295fc5cf51d7156c217163b810778f1fcce845dc0ab5dbb27362f8"
+      },
+      "producer": {
+        "path": "artifacts/tmp/CAP-05.S01.T02.run-selected-05.py",
+        "sha256": "43c96d88f070600997ec551d9fe3b6c15052e264d9e4c6d770bef79c043ad036"
+      },
+      "execution": "fresh",
+      "limits": "Exact narrow command; no complete canonical profile PASS is inferred."
+    },
+    {
+      "id": "python-format",
+      "commandId": "foundation:quality",
+      "command": ".venv/Scripts/python.exe -B -m ruff format --check services/core-api/src/research_observatory_core/acquisition/__init__.py services/core-api/src/research_observatory_core/acquisition/locations.py services/core-api/src/research_observatory_core/acquisition/service.py services/core-api/src/research_observatory_core/acquisition/transport.py services/core-api/src/research_observatory_core/document_attachment_repository.py services/core-api/src/research_observatory_core/main.py services/core-api/src/research_observatory_core/migrations/runner.py services/core-api/src/research_observatory_core/migrations/versions/v0024_open_access_acquisition.py services/core-api/src/research_observatory_core/ports/acquisition.py services/core-api/src/research_observatory_core/rights_repository.py services/core-api/src/research_observatory_core/storage.py tests/contracts/test_acquisition_contracts.py tests/data/test_sqlite_migrations.py tests/documents/test_acquisition_tls.py tests/documents/test_attachment_lifecycle_regressions.py tests/documents/test_local_attachment.py tests/documents/test_oa_acquisition.py tests/rights/test_migration.py",
+      "exitCode": 0,
+      "durationSeconds": 0.209,
+      "candidateCommit": "4c22cd8d6998cf36062b0303abf9d3d76f025069",
+      "log": {
+        "path": "artifacts/tmp/CAP-05.S01.T02.selected-05-4c22cd8d.python-format.log",
+        "sha256": "c4fd3f494556e5e7cf4355131a1080dbdcf0bbf09664638af9984db197ad88c0"
+      },
+      "receipt": {
+        "path": "artifacts/tmp/CAP-05.S01.T02.selected-05-4c22cd8d.json",
+        "sha256": "1df36ab909295fc5cf51d7156c217163b810778f1fcce845dc0ab5dbb27362f8"
+      },
+      "producer": {
+        "path": "artifacts/tmp/CAP-05.S01.T02.run-selected-05.py",
+        "sha256": "43c96d88f070600997ec551d9fe3b6c15052e264d9e4c6d770bef79c043ad036"
+      },
+      "execution": "fresh",
+      "limits": "Exact narrow command; no complete canonical profile PASS is inferred."
+    },
+    {
+      "id": "mypy",
+      "commandId": "foundation:quality",
+      "command": ".venv/Scripts/python.exe -B -m mypy --config-file pyproject.toml --no-namespace-packages -- services/core-api/src/research_observatory_core/acquisition/__init__.py services/core-api/src/research_observatory_core/acquisition/locations.py services/core-api/src/research_observatory_core/acquisition/service.py services/core-api/src/research_observatory_core/acquisition/transport.py services/core-api/src/research_observatory_core/document_attachment_repository.py services/core-api/src/research_observatory_core/main.py services/core-api/src/research_observatory_core/migrations/runner.py services/core-api/src/research_observatory_core/migrations/versions/v0024_open_access_acquisition.py services/core-api/src/research_observatory_core/ports/acquisition.py services/core-api/src/research_observatory_core/rights_repository.py services/core-api/src/research_observatory_core/storage.py",
+      "exitCode": 0,
+      "durationSeconds": 0.392,
+      "candidateCommit": "4c22cd8d6998cf36062b0303abf9d3d76f025069",
+      "log": {
+        "path": "artifacts/tmp/CAP-05.S01.T02.selected-05-4c22cd8d.mypy.log",
+        "sha256": "ce32e21ee307d2da61637151f2f239cf8568be270711ff04e8e3025805ab7f57"
+      },
+      "receipt": {
+        "path": "artifacts/tmp/CAP-05.S01.T02.selected-05-4c22cd8d.json",
+        "sha256": "1df36ab909295fc5cf51d7156c217163b810778f1fcce845dc0ab5dbb27362f8"
+      },
+      "producer": {
+        "path": "artifacts/tmp/CAP-05.S01.T02.run-selected-05.py",
+        "sha256": "43c96d88f070600997ec551d9fe3b6c15052e264d9e4c6d770bef79c043ad036"
+      },
+      "execution": "fresh",
+      "limits": "Exact narrow command; no complete canonical profile PASS is inferred."
+    },
+    {
+      "id": "api-contract",
+      "commandId": "contracts:unit",
+      "command": ".venv/Scripts/python.exe -B tools/core_api_contract.py --check",
+      "exitCode": 0,
+      "durationSeconds": 2.263,
+      "candidateCommit": "4c22cd8d6998cf36062b0303abf9d3d76f025069",
+      "log": {
+        "path": "artifacts/tmp/CAP-05.S01.T02.selected-05-4c22cd8d.api-contract.log",
+        "sha256": "d0de6df4695ae12810b382025f30caee94c9e9bc81887720850df6345026980f"
+      },
+      "receipt": {
+        "path": "artifacts/tmp/CAP-05.S01.T02.selected-05-4c22cd8d.json",
+        "sha256": "1df36ab909295fc5cf51d7156c217163b810778f1fcce845dc0ab5dbb27362f8"
+      },
+      "producer": {
+        "path": "artifacts/tmp/CAP-05.S01.T02.run-selected-05.py",
+        "sha256": "43c96d88f070600997ec551d9fe3b6c15052e264d9e4c6d770bef79c043ad036"
+      },
+      "execution": "fresh",
+      "limits": "Exact narrow command; no complete canonical profile PASS is inferred."
+    },
+    {
+      "id": "architecture",
+      "commandId": "foundation:architecture",
+      "command": ".venv/Scripts/python.exe -B tools/architecture_check.py --repo .",
+      "exitCode": 0,
+      "durationSeconds": 3.682,
+      "candidateCommit": "4c22cd8d6998cf36062b0303abf9d3d76f025069",
+      "log": {
+        "path": "artifacts/tmp/CAP-05.S01.T02.selected-05-4c22cd8d.architecture.log",
+        "sha256": "51a256bf6a7b2e89ab1d1b97aa19077aabf0e8858a450de1f5ceb155ed5c3e88"
+      },
+      "receipt": {
+        "path": "artifacts/tmp/CAP-05.S01.T02.selected-05-4c22cd8d.json",
+        "sha256": "1df36ab909295fc5cf51d7156c217163b810778f1fcce845dc0ab5dbb27362f8"
+      },
+      "producer": {
+        "path": "artifacts/tmp/CAP-05.S01.T02.run-selected-05.py",
+        "sha256": "43c96d88f070600997ec551d9fe3b6c15052e264d9e4c6d770bef79c043ad036"
+      },
+      "execution": "fresh",
+      "limits": "Exact narrow command; no complete canonical profile PASS is inferred."
+    },
+    {
+      "id": "adr",
+      "commandId": "foundation:adr",
+      "command": ".venv/Scripts/python.exe -B tools/adr_check.py --repo . --base 7a51dc94734f8be6c4a64a0c29de458e96b347bc --head 4c22cd8d6998cf36062b0303abf9d3d76f025069",
+      "exitCode": 0,
+      "durationSeconds": 1.838,
+      "candidateCommit": "4c22cd8d6998cf36062b0303abf9d3d76f025069",
+      "log": {
+        "path": "artifacts/tmp/CAP-05.S01.T02.selected-05-4c22cd8d.adr.log",
+        "sha256": "54620fa5afcbb64689020646fda3c8a89122fb3254531f8c5eb32cec0ef5ac4f"
+      },
+      "receipt": {
+        "path": "artifacts/tmp/CAP-05.S01.T02.selected-05-4c22cd8d.json",
+        "sha256": "1df36ab909295fc5cf51d7156c217163b810778f1fcce845dc0ab5dbb27362f8"
+      },
+      "producer": {
+        "path": "artifacts/tmp/CAP-05.S01.T02.run-selected-05.py",
+        "sha256": "43c96d88f070600997ec551d9fe3b6c15052e264d9e4c6d770bef79c043ad036"
+      },
+      "execution": "fresh",
+      "limits": "Exact narrow command; no complete canonical profile PASS is inferred."
+    },
+    {
+      "id": "diff",
+      "commandId": "foundation:quality",
+      "command": "git diff --check 7a51dc94734f8be6c4a64a0c29de458e96b347bc 4c22cd8d6998cf36062b0303abf9d3d76f025069",
+      "exitCode": 0,
+      "durationSeconds": 0.096,
+      "candidateCommit": "4c22cd8d6998cf36062b0303abf9d3d76f025069",
+      "log": {
+        "path": "artifacts/tmp/CAP-05.S01.T02.selected-05-4c22cd8d.diff.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "receipt": {
+        "path": "artifacts/tmp/CAP-05.S01.T02.selected-05-4c22cd8d.json",
+        "sha256": "1df36ab909295fc5cf51d7156c217163b810778f1fcce845dc0ab5dbb27362f8"
+      },
+      "producer": {
+        "path": "artifacts/tmp/CAP-05.S01.T02.run-selected-05.py",
+        "sha256": "43c96d88f070600997ec551d9fe3b6c15052e264d9e4c6d770bef79c043ad036"
+      },
+      "execution": "fresh",
+      "limits": "Exact narrow command; no complete canonical profile PASS is inferred."
+    },
+    {
+      "id": "acquisition",
+      "commandId": "documents:unit",
+      "command": ".venv/Scripts/python.exe -B -m unittest -v tests.documents.test_oa_acquisition tests.documents.test_acquisition_tls",
+      "exitCode": 0,
+      "durationSeconds": 65.587,
+      "candidateCommit": "4c22cd8d6998cf36062b0303abf9d3d76f025069",
+      "log": {
+        "path": "artifacts/tmp/CAP-05.S01.T02.selected-05-4c22cd8d.acquisition.log",
+        "sha256": "39b4d82f3c4670f37b53b939390dcda2251fe65f442c57631cc8058d16a1cec7"
+      },
+      "receipt": {
+        "path": "artifacts/tmp/CAP-05.S01.T02.selected-05-4c22cd8d.json",
+        "sha256": "1df36ab909295fc5cf51d7156c217163b810778f1fcce845dc0ab5dbb27362f8"
+      },
+      "producer": {
+        "path": "artifacts/tmp/CAP-05.S01.T02.run-selected-05.py",
+        "sha256": "43c96d88f070600997ec551d9fe3b6c15052e264d9e4c6d770bef79c043ad036"
+      },
+      "execution": "fresh",
+      "limits": "Exact narrow command; no complete canonical profile PASS is inferred."
+    },
+    {
+      "id": "attachment-rights-api",
+      "commandId": "service:unit",
+      "command": ".venv/Scripts/python.exe -B -m unittest -v tests.documents.test_local_attachment tests.documents.test_attachment_lifecycle_regressions tests.documents.test_format_inspection tests.rights.test_repository tests.service.test_document_attachment_api",
+      "exitCode": 0,
+      "durationSeconds": 115.559,
+      "candidateCommit": "4c22cd8d6998cf36062b0303abf9d3d76f025069",
+      "log": {
+        "path": "artifacts/tmp/CAP-05.S01.T02.selected-05-4c22cd8d.attachment-rights-api.log",
+        "sha256": "bb7f158ef61e3e79765de455ba134398d3bbc7b282e2bcf71ce37ba3e3636f73"
+      },
+      "receipt": {
+        "path": "artifacts/tmp/CAP-05.S01.T02.selected-05-4c22cd8d.json",
+        "sha256": "1df36ab909295fc5cf51d7156c217163b810778f1fcce845dc0ab5dbb27362f8"
+      },
+      "producer": {
+        "path": "artifacts/tmp/CAP-05.S01.T02.run-selected-05.py",
+        "sha256": "43c96d88f070600997ec551d9fe3b6c15052e264d9e4c6d770bef79c043ad036"
+      },
+      "execution": "fresh",
+      "limits": "Exact narrow command; no complete canonical profile PASS is inferred."
+    },
+    {
+      "id": "storage-migration-contracts",
+      "commandId": "data:unit",
+      "command": ".venv/Scripts/python.exe -B -m unittest -v tests.data.test_sqlite_schema tests.data.test_sqlite_migrations tests.data.test_sqlite_recovery_contract tests.rights.test_migration tests.contracts.test_acquisition_contracts",
+      "exitCode": 0,
+      "durationSeconds": 132.172,
+      "candidateCommit": "4c22cd8d6998cf36062b0303abf9d3d76f025069",
+      "log": {
+        "path": "artifacts/tmp/CAP-05.S01.T02.selected-05-4c22cd8d.storage-migration-contracts.log",
+        "sha256": "f33323d0ef6752a9c417339e04ace2ec5cd2b824d289687e6faf4a80abc54bb0"
+      },
+      "receipt": {
+        "path": "artifacts/tmp/CAP-05.S01.T02.selected-05-4c22cd8d.json",
+        "sha256": "1df36ab909295fc5cf51d7156c217163b810778f1fcce845dc0ab5dbb27362f8"
+      },
+      "producer": {
+        "path": "artifacts/tmp/CAP-05.S01.T02.run-selected-05.py",
+        "sha256": "43c96d88f070600997ec551d9fe3b6c15052e264d9e4c6d770bef79c043ad036"
+      },
+      "execution": "fresh",
+      "limits": "Exact narrow command; no complete canonical profile PASS is inferred."
+    }
+  ],
+  "unverifiedItems": [],
+  "observedPassingTestCounts": {
+    "acquisition": 29,
+    "attachment-rights-api": 74,
+    "storage-migration-contracts": 47
+  },
+  "verificationSelection": {
+    "riskAnalysis": "Core acquisition crosses untrusted HTTP/DNS/TLS bytes, current privacy/Intent/session and per-copy rights, encrypted staging/LPAC inspection, atomic canonical operation/source publication and additive storage migration. Focused fresh real-boundary and denial/recovery tests plus directly affected existing attachment/rights/API/storage/contracts close those risks. No runtime dependency, installed package, renderer/reference or framework source was changed.",
+    "selectedCommandIds": [
+      "contracts:unit",
+      "data:unit",
+      "documents:unit",
+      "foundation:adr",
+      "foundation:architecture",
+      "foundation:quality",
+      "service:unit"
+    ],
+    "commandIdCoverage": "Canonical IDs identify coverage domains only. Exact selected narrow argv, raw outputs, executable/dependency bytes and stable committed inputs are authenticated by the fresh producer receipt; full canonical profile execution is not claimed.",
+    "deferredCoverage": [
+      {
+        "scope": "T03 queue, alternative-copy, unavailable and entitlement renderer/native journeys",
+        "reason": "Separate next approved dependency task; T02 implements Core selection/download contracts only."
+      },
+      {
+        "scope": "Full documents/security-local/service/repository profiles, production packaging, broader platform and integrated performance/accessibility/security matrix",
+        "reason": "Required integrated slice/checkpoint and fresh Wave qualification; no shared verification/runtime dependency or intentional UI change justifies an early full-profile replay."
+      },
+      {
+        "scope": "Live provider availability, public network and real scholarly content",
+        "reason": "No live query, credential provisioning or private research dispatch is authorized; principal proof uses an owned synthetic HTTPS fixture."
+      }
+    ]
+  },
+  "privacyReview": {
+    "path": "artifacts/evidence/CAP-05.S01.T02.privacy-review-01.json",
+    "sha256": "09676fc340a8e47472b963295538b2fb8bb589503bd4830c0a0c037ace1e55c5",
+    "formalTaskApproval": false
+  },
+  "retainedAdverseEvidence": [
+    {
+      "path": "artifacts/tmp/CAP-05.S01.T02.selected-04-709b1cc0.json",
+      "classification": "Fresh acquisition29, attachment74 and storage47, quality, API and architecture passed but unchanged protected-path ADR check required an indexed task-linked companion for the new schemas/port. Overall FAIL with stable inputs. ADR0042 Proposed documents inherited accepted authority without a new decision or approval; no verifier/source behavior changed."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S01.T02.selected-03-b6f446a6.json",
+      "classification": "Committed adapter/cancellation candidate failed one 121-character protocol declaration format rule. No behavioral group ran. Declaration formatting fixed; final candidate checks are fresh."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S01.T02.selected-02-5917d909.json",
+      "classification": "Fresh acquisition28, attachment74 and storage-migration-contracts passed, but unchanged architecture validation found database adapter dependencies. Overall FAIL, stable inputs; source separation corrected without verifier edits and all selected groups run fresh."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S01.T02.preparation-c11-security-02.json",
+      "classification": "Independent preparatory review found typed worker inspection cancellation incorrectly recorded failed; prior preparatory findings source-addressed. Not a controlled task approval or invented formal round."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S01.T02.inspector-cancel-red-02.log",
+      "classification": "Adapter-faithful failing regression proved failed/cancelled instead of required cancelled/acquisition-cancelled before typed product remediation."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S01.T02.inspector-cancel-red-01.log",
+      "classification": "Initial regression assertion compared sqlite Row to tuple; preserved test setup defect, corrected without changing expected behavior before red02."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S01.T02.adapter-cancel-green-01.log",
+      "classification": "Development adapter relocation omitted a rights adapter import; missing-module failures retained, then corrected and focused regression/current association tests passed."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S01.T02.selected-01-e73ae1c7.json",
+      "classification": "Fresh original candidate failed existing attachment compatibility: eight obsolete current-version23 expectations and the exact operation-denial ordering regression. Acquisition26 and Python quality passed, but the overall run is FAIL and none of it is substituted for final fresh proof."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S01.T02.preparation-c11-security-01.json",
+      "classification": "Independent preliminary exact-candidate review found two blocking defects: a rejected duplicate invocation terminating a prior unresolved job and session-close cancellation absent during post-transfer inspection. Both were reproduced before product edits; formal review must disposition their evidenced remediation without fabricating historical controlled closures."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S01.T02.review-regressions-red-01.log",
+      "classification": "Two focused regressions failed before product remediation, with an unwanted terminal result and inspection cancellation not raised."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S01.T02.capture-v23-02.log",
+      "classification": "Superseded development capture claimed PASS but independently found a missing archived operation; exact adverse bytes are retained under capture03 and are not qualifying evidence."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S01.T02.integration-green-01.log",
+      "classification": "Development failures exposed createdAt identity mutation; canonical terminal revisions now preserve creation time and fresh tests cover the outcome."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S01.T02.storage-contracts-01.log",
+      "classification": "Development failures exposed stale current profile/docs/chain expectations; earlier immutable schema/fixtures remain preserved while current contracts track24."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S01.T02.principal-protected-02.log",
+      "classification": "Development protected fixture failed WAL setup; corrected protected principal test is executed fresh in acquisition."
+    }
+  ],
+  "limits": [
+    "Task evidence only; independent formal review, integrated S01, W2 qualification and human release remain pending.",
+    "Unit transports/development plaintext fixtures do not prove SQLCipher or LPAC; the separately named actual protected Windows principal case does."
+  ]
+}

@@ -1,7 +1,7 @@
 ---
 document_type: generated-backlog-status-summary
 source: planning/backlog.yaml
-source_sha256: dbbcedb2519c2b71519989130ace2c86ce6a451ffac90d559f1d0adb6092a5d6
+source_sha256: c4d3e6998428ce18750a9881191b3975921bb65ba86c8bdb5b293e9bfd16749d
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -53,7 +53,7 @@ manual_edit: prohibited
 | Status | Count |
 |---|---:|
 | `NOT_STARTED` | 236 |
-| `IN_PROGRESS` | 1 |
+| `REVIEW` | 1 |
 | `DONE` | 83 |
 | `DEFERRED` | 36 |
 
@@ -866,6 +866,7 @@ Append-only rounds remain distinct from the current latest-review projection. Le
 | `CAP-04.S05.T02` | `append-only v1` | 2 | `-` | approved / agent:/root/lpac_boundary_review | - |
 | `CAP-04.S05.T03` | `append-only v1` | 3 | `-` | approved / agent:/root/t03_independent_review | - |
 | `CAP-05.S01.T01` | `append-only v1` | 1 | `-` | approved / agent:/root/c11_security_review | - |
+| `CAP-05.S01.T02` | `append-only v1` | 0 | `R01` | - / - | - |
 | `CAP-07.S01.T01` | `append-only v1` | 2 | `-` | approved / codex-independent | - |
 | `CAP-07.S01.T02` | `append-only v1` | 1 | `-` | approved / agent:/root/model_registry_review | - |
 | `CAP-07.S01.T03` | `append-only v1` | 1 | `-` | approved / agent:/root/decoder_memo_review | - |
@@ -972,7 +973,7 @@ Append-only rounds remain distinct from the current latest-review projection. Le
 
 | Task | Status | Owner | Branch |
 |---|---|---|---|
-| `CAP-05.S01.T02` Implement open-access location selection and download | `IN_PROGRESS` | codex-w2-implementation | `codex/w2-implementation` |
+| `CAP-05.S01.T02` Implement open-access location selection and download | `REVIEW` | codex-w2-implementation | `codex/w2-implementation` |
 
 ## Linked corrective tasks
 

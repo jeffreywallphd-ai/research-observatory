@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: dbbcedb2519c2b71519989130ace2c86ce6a451ffac90d559f1d0adb6092a5d6
+source_sha256: c4d3e6998428ce18750a9881191b3975921bb65ba86c8bdb5b293e9bfd16749d
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -10810,7 +10810,7 @@ Original tasks and approvals remain unchanged.
 
 #### - [ ] CAP-05.S01.T02 - Implement open-access location selection and download
 
-**Status / priority / estimate / risk:** `IN_PROGRESS` / `P0` / `L` / `high`
+**Status / priority / estimate / risk:** `REVIEW` / `P0` / `L` / `high`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
@@ -10835,13 +10835,33 @@ Original tasks and approvals remain unchanged.
 - python tools/verify.py --profile documents
 - python tools/verify.py --profile security-local
 
+**Evidence:**
+
+- `artifacts/evidence/CAP-05.S01.T02.json` at `4c22cd8d6998cf36062b0303abf9d3d76f025069`
+
 ##### Review history — CAP-05.S01.T02
 
-**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+**Review mode:** `append-only v1` / 0 completed round(s)
+
+**Current immutable submission awaiting review:** `R01` / packet SHA-256 `3184f4f49aefb57b06d939ad53de830586ac35fac22ed6683c6ff081d2ff3823`
+
+- Candidate / base / branch: `4c22cd8d6998cf36062b0303abf9d3d76f025069` / `7a51dc94734f8be6c4a64a0c29de458e96b347bc` / `codex/w2-implementation`
+- Submitted by / at: codex-w2-implementation / `2026-10-06T14:42:48+00:00`
+- Evidence: `artifacts/evidence/CAP-05.S01.T02.json` / `aa336871a954808681793d779da3d1a299175786ec20333e10a9fc1f52f31403` / `4c22cd8d6998cf36062b0303abf9d3d76f025069`
+- Acceptance-criteria SHA-256: `9f556a1e187a0cbfa67e7e393a5eea2276fc7a6d6b22bdb473e8231bce1080f1`
+- Verification-selection SHA-256: `278193dd99f0b72ee99e324a05767ac0c8725826275fba6f14aa2cd6f28e20fd`
+- Changed paths: `artifacts/evidence/CAP-05.S01.T02.privacy-review-01.json`, `artifacts/evidence/CAP-05.S01.T02.task-start.md`, `docs/adr/ADR-0042-bind-acquisition-contracts-to-existing-rights-and-storage-authority.md`, `docs/adr/index.json`, `docs/architecture/local-sqlite-storage.md`, `docs/architecture/open-access-acquisition.md`, `docs/planning-implementation-plan.md`, `packages/contracts/README.md`, `packages/contracts/documents/acquisition-location.v1.schema.json`, `packages/contracts/documents/acquisition-receipt.v1.schema.json`, `packages/contracts/documents/acquisition-selection.v1.schema.json`, `packages/contracts/storage/sqlite-migration-recovery-v23.snapshot.json`, `packages/contracts/storage/sqlite-migration-recovery.schema.json`, `packages/contracts/storage/sqlite-profile.schema.json`, `packages/contracts/storage/sqlite-profile.v1.json`, `planning/backlog.yaml`, `planning/review-site/CAP-05/CAP-05.S01.T02.html`, `planning/review-site/CAP-05/CAP-05.S01.html`, `planning/review-site/manifest.json`, `planning/review-site/waves/W2.html`, `planning/status-summary.md`, `services/core-api/src/research_observatory_core/acquisition/__init__.py`, `services/core-api/src/research_observatory_core/acquisition/locations.py`, `services/core-api/src/research_observatory_core/acquisition/service.py`, `services/core-api/src/research_observatory_core/acquisition/transport.py`, `services/core-api/src/research_observatory_core/document_attachment_repository.py`, `services/core-api/src/research_observatory_core/main.py`, `services/core-api/src/research_observatory_core/migrations/runner.py`, `services/core-api/src/research_observatory_core/migrations/versions/v0024_open_access_acquisition.py`, `services/core-api/src/research_observatory_core/ports/acquisition.py`, `services/core-api/src/research_observatory_core/rights_repository.py`, `services/core-api/src/research_observatory_core/storage.py`, `tests/contracts/test_acquisition_contracts.py`, `tests/data/test_sqlite_migrations.py`, `tests/documents/test_acquisition_tls.py`, `tests/documents/test_attachment_lifecycle_regressions.py`, `tests/documents/test_local_attachment.py`, `tests/documents/test_oa_acquisition.py`, `tests/fixtures/documents/v23-predecessor.json`, `tests/fixtures/documents/v23-predecessor.zip`, `tests/rights/test_migration.py`
+- Selected checks: `.venv/Scripts/python.exe -B -m ruff check services/core-api/src/research_observatory_core/acquisition/__init__.py services/core-api/src/research_observatory_core/acquisition/locations.py services/core-api/src/research_observatory_core/acquisition/service.py services/core-api/src/research_observatory_core/acquisition/transport.py services/core-api/src/research_observatory_core/document_attachment_repository.py services/core-api/src/research_observatory_core/main.py services/core-api/src/research_observatory_core/migrations/runner.py services/core-api/src/research_observatory_core/migrations/versions/v0024_open_access_acquisition.py services/core-api/src/research_observatory_core/ports/acquisition.py services/core-api/src/research_observatory_core/rights_repository.py services/core-api/src/research_observatory_core/storage.py tests/contracts/test_acquisition_contracts.py tests/data/test_sqlite_migrations.py tests/documents/test_acquisition_tls.py tests/documents/test_attachment_lifecycle_regressions.py tests/documents/test_local_attachment.py tests/documents/test_oa_acquisition.py tests/rights/test_migration.py`, `.venv/Scripts/python.exe -B -m ruff format --check services/core-api/src/research_observatory_core/acquisition/__init__.py services/core-api/src/research_observatory_core/acquisition/locations.py services/core-api/src/research_observatory_core/acquisition/service.py services/core-api/src/research_observatory_core/acquisition/transport.py services/core-api/src/research_observatory_core/document_attachment_repository.py services/core-api/src/research_observatory_core/main.py services/core-api/src/research_observatory_core/migrations/runner.py services/core-api/src/research_observatory_core/migrations/versions/v0024_open_access_acquisition.py services/core-api/src/research_observatory_core/ports/acquisition.py services/core-api/src/research_observatory_core/rights_repository.py services/core-api/src/research_observatory_core/storage.py tests/contracts/test_acquisition_contracts.py tests/data/test_sqlite_migrations.py tests/documents/test_acquisition_tls.py tests/documents/test_attachment_lifecycle_regressions.py tests/documents/test_local_attachment.py tests/documents/test_oa_acquisition.py tests/rights/test_migration.py`, `.venv/Scripts/python.exe -B -m mypy --config-file pyproject.toml --no-namespace-packages -- services/core-api/src/research_observatory_core/acquisition/__init__.py services/core-api/src/research_observatory_core/acquisition/locations.py services/core-api/src/research_observatory_core/acquisition/service.py services/core-api/src/research_observatory_core/acquisition/transport.py services/core-api/src/research_observatory_core/document_attachment_repository.py services/core-api/src/research_observatory_core/main.py services/core-api/src/research_observatory_core/migrations/runner.py services/core-api/src/research_observatory_core/migrations/versions/v0024_open_access_acquisition.py services/core-api/src/research_observatory_core/ports/acquisition.py services/core-api/src/research_observatory_core/rights_repository.py services/core-api/src/research_observatory_core/storage.py`, `.venv/Scripts/python.exe -B tools/core_api_contract.py --check`, `.venv/Scripts/python.exe -B tools/architecture_check.py --repo .`, `.venv/Scripts/python.exe -B tools/adr_check.py --repo . --base 7a51dc94734f8be6c4a64a0c29de458e96b347bc --head 4c22cd8d6998cf36062b0303abf9d3d76f025069`, `git diff --check 7a51dc94734f8be6c4a64a0c29de458e96b347bc 4c22cd8d6998cf36062b0303abf9d3d76f025069`, `.venv/Scripts/python.exe -B -m unittest -v tests.documents.test_oa_acquisition tests.documents.test_acquisition_tls`, `.venv/Scripts/python.exe -B -m unittest -v tests.documents.test_local_attachment tests.documents.test_attachment_lifecycle_regressions tests.documents.test_format_inspection tests.rights.test_repository tests.service.test_document_attachment_api`, `.venv/Scripts/python.exe -B -m unittest -v tests.data.test_sqlite_schema tests.data.test_sqlite_migrations tests.data.test_sqlite_recovery_contract tests.rights.test_migration tests.contracts.test_acquisition_contracts`
+- Deferred checks: -
+- Selection rationale: Core acquisition crosses untrusted HTTP/DNS/TLS bytes, current privacy/Intent/session and per-copy rights, encrypted staging/LPAC inspection, atomic canonical operation/source publication and additive storage migration. Focused fresh real-boundary and denial/recovery tests plus directly affected existing attachment/rights/API/storage/contracts close those risks. No runtime dependency, installed package, renderer/reference or framework source was changed.
+- Prior round / replayed open findings: `-` / -
+- Root-cause escalation: -
 
 **Current latest-review projection:** `-` by - at `-`
 
 **Latest notes:** -
+
+**Currently open findings:** -
 
 #### - [ ] CAP-05.S01.T03 - Create acquisition queue, conflict, and entitlement placeholders
 
