@@ -1,0 +1,162 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-verification-method-owner-approval",
+  "id": "CAP-05.S01.T01.VM01",
+  "taskId": "CAP-05.S01.T01",
+  "waveId": "W2",
+  "status": "APPROVED",
+  "approvedBy": "human:repository-owner",
+  "recordedAt": "2026-10-06T10:36:06Z",
+  "decision": "The repository owner answered Approved with the exact reviewed VM01 brief open after clarification explicitly requesting both equivalent independently reviewed original-task history evidence and a direct append-only owner record without another framework implementation task. This approves the exact committed proposal and its one-task section2.2 procedure exception. It authorizes proof production/review and one supported campaign resume/original-task reopen only; no task, Wave or release completion is approved.",
+  "candidateAtDecision": "7673cd12de51528c6e6a534e00527f5e5d3859c2",
+  "proposal": {
+    "path": "artifacts/evidence/CAP-05.S01.T01.verification-method-amendment-01.proposal.json",
+    "sha256": "9f20e9b185207ae2d467379a058f87a48c44ca5c78e027a7ff1b13013d674e80",
+    "commit": "5fdac55a9d0c59fb82260bd3289517b95d025e1f"
+  },
+  "readinessReview": {
+    "path": "artifacts/evidence/CAP-05.S01.T01.verification-method-amendment-01.readiness-review-01.json",
+    "sha256": "49da4336b9b5643db654261ee51975b3da10feaab88a2da811c1db58ee8f9b21",
+    "commit": "7673cd12de51528c6e6a534e00527f5e5d3859c2"
+  },
+  "pausedPredecessorCommit": "4e7e11e6cb6fbd2a44fb9f2af49c7dcbf2b8a62b",
+  "pausedPredecessorBacklogSHA256": "b41a0b9dd8ea9c875ec26c6f59a6b6c6a236f333e54b240c658bf9ffd9e2dde0",
+  "originalBaseCommit": "6506c68461144747b0ee9be10853211717aa381d",
+  "approvedProductCandidate": "8297dcdc1528cb0cbe53ecd38b056231fbe9fd1d",
+  "approvedTaskContractSHA256": "46d171183a53019aec34afad10f92cf9af9704b8c742a366ac5686d1125644d4",
+  "methodSubstitutionApproved": true,
+  "directOwnerRecordProcedureExceptionApproved": true,
+  "requiredEquivalentProof": [
+    "Enumerate the complete original6506-to-final-candidate history, every intermediate source/control/UI addition or reversion, and exact regular Git blobs; retain the two immutable UI contracts and complete governed UI inventory. Never shorten a base or rewrite history.",
+    "Authenticate every inherited A01-A05/control segment using exact approved packets, source scopes, claims, independent reviews and adoption history. Receipt reuse requires explicit unchanged input closure and limitations; unknown closure requires fresh evidence.",
+    "Attribute exactly the nine listed C11/S05/C12 product rows to precommitted correction or approved integration scope and immutable independent completion evidence. Verify actual claims, origin identity, predecessor and review ancestry. A filename or an assertion of activeT1 is insufficient.",
+    "Authenticate actual R10/R11 and the listed original-task reopening through exact predecessor, paused campaign digest, actor, branch, base, platform, worktree and supported state transition. Preserve R09 and all intervening holds; never invent an active epoch.",
+    "Authenticate exactly one post-owner-record supported W2 resume and originalT1 reopen needed to enact VM01 against this committed paused predecessor, the exact owner approval, preserved campaign owner/branch/worktree/LOC/windows-x64 and originalT1 base6506. This permission admits no generic later resume or reopening.",
+    "Retain current Academic Minimal1.8 package/approval, approved-before-code order, activation witness/build/baseline and separate immutable current capture-reader PASS, independent visual/classification disposition, all766 capture inputs and42 dependent inputs. Any unapproved or missing history, changed reference, stale or redirected input, or source add/revert fails closed.",
+    "At the exact final committed task candidate, complete risk-selected current native/Core, encrypted commit/restart, acquisition/rights/duplicate/format/failure and UI conformance checks with stable inputs, including input closure for any reused proof. Preserve every adverse run and stated boundary limitation.",
+    "Obtain a separate independent, commit-bound equivalent-lineage disposition and the required expanded product/security task review. Submit and review through existing taskctl. Approval of this proposal alone cannot satisfy these proofs."
+  ],
+  "unchangedBoundaries": [
+    "No framework source, schema, policy, CI wiring, verifier, controller, dependency or installed runtime change; no ignored monkeypatch or purported original-gate PASS.",
+    "Use a separately named equivalent-evidence producer/command/result. Preserve the actual tools/ui_change_gate.py timeout separately; never report foundation:ui-change or the original command as passed. Existing canonical selected IDs must describe checks actually executed; the equivalent lineage proof is an explicit separately named check and approved disposition, with no new registry entry.",
+    "No product/security/migration/reference redesign, scope expansion or weak test; native-only acquisition, researcher rights confirmation and original task criteria remain unchanged.",
+    "This method substitution qualifies only original CAP-05.S01.T01. It waives no later task, slice, checkpoint or full Wave/platform/security/privacy/rights/accessibility/performance/packaging requirement or human G2 release gate. A later new blocker is not implicitly exempted.",
+    "Preserve every original Wave/amendment/reference/task approval and adverse ledger. Do not reopen completed amendments or create another executable framework task. Keep local main unchanged until normal task qualification/review permits integration."
+  ],
+  "finiteHistoricalAttribution": [
+    {
+      "commit": "2d65298fd29b524249b5bd65868307420fcd54da",
+      "parentCommit": "f192725de10b5752e0d9b143c3512ef36c665a56",
+      "authority": "W2.C11.T01",
+      "productPaths": [
+        "tests/connectors/test_plugin_worker_submission.py"
+      ]
+    },
+    {
+      "commit": "1bd25722e104c845b3bfc09bf60d2ca5e0cd96d4",
+      "parentCommit": "2d65298fd29b524249b5bd65868307420fcd54da",
+      "authority": "W2.C11.T01",
+      "productPaths": [
+        "services/core-api/src/research_observatory_core/plugin_worker.py"
+      ]
+    },
+    {
+      "commit": "e3f699a2c34189c926d4724873fdf9d32bcd7183",
+      "parentCommit": "1bd25722e104c845b3bfc09bf60d2ca5e0cd96d4",
+      "authority": "W2.C11.T01",
+      "productPaths": [
+        "tests/connectors/test_plugin_worker_submission.py"
+      ]
+    },
+    {
+      "commit": "9a80c0f6cd6f5d444e7676c0ff287b4bb58c158f",
+      "parentCommit": "e3f699a2c34189c926d4724873fdf9d32bcd7183",
+      "authority": "W2.C11.T01",
+      "productPaths": [
+        "tests/connectors/test_plugin_worker_submission.py"
+      ]
+    },
+    {
+      "commit": "f3a760102bb5c11407b58857d5482939a6478634",
+      "parentCommit": "4f93e7ee4c35c9a6275adce1439e68e1979b1ddf",
+      "authority": "CAP-04.S05 integration",
+      "productPaths": [
+        "tests/connectors/test_plugin_sample_native_lpac.py"
+      ]
+    },
+    {
+      "commit": "6a2e7487e0508b4495d17e7fd0029eb4f8796df4",
+      "parentCommit": "f3a760102bb5c11407b58857d5482939a6478634",
+      "authority": "CAP-04.S05 integration",
+      "productPaths": [
+        "tests/connectors/test_plugin_sample_native_lpac.py"
+      ]
+    },
+    {
+      "commit": "0ea49b6a8b7f4c883863f9c55f84a8021e7a52b7",
+      "parentCommit": "fd806e2f5585d6bf6d0a60a260b04a48eb38b6d6",
+      "authority": "W2.C12.T01",
+      "productPaths": [
+        "tests/connectors/test_plugin_admin_service.py"
+      ]
+    },
+    {
+      "commit": "68131d160c583770a36dfe0b6d789eb9ca3c2bf0",
+      "parentCommit": "0ea49b6a8b7f4c883863f9c55f84a8021e7a52b7",
+      "authority": "W2.C12.T01",
+      "productPaths": [
+        "services/core-api/src/research_observatory_core/plugin_api.py",
+        "tests/contracts/test_plugin_worker_contract.py"
+      ]
+    },
+    {
+      "commit": "3cac985d89bfa610e292e1ff8d8f05e91c6c816c",
+      "parentCommit": "68131d160c583770a36dfe0b6d789eb9ca3c2bf0",
+      "authority": "W2.C12.T01",
+      "productPaths": [
+        "tests/connectors/test_plugin_admin_service.py"
+      ]
+    }
+  ],
+  "finiteResumeAttribution": [
+    {
+      "commit": "f3a760102bb5c11407b58857d5482939a6478634",
+      "parentCommit": "4f93e7ee4c35c9a6275adce1439e68e1979b1ddf",
+      "recordId": "W2.R10",
+      "literalPredicate": "adopted continuation has an unbound W2 campaign resume"
+    },
+    {
+      "commit": "16a14ce1f02e5e5511113025964b082a5760b293",
+      "parentCommit": "650f3a4f1f3ed6063dfe287c8a03523c18023ab8",
+      "recordId": "W2.R11",
+      "literalPredicate": "adopted continuation has an unbound W2 campaign resume"
+    },
+    {
+      "commit": "ebf7379bc9f73c434b778d8756e56fcf3f67f6fd",
+      "parentCommit": "16a14ce1f02e5e5511113025964b082a5760b293",
+      "recordId": "W2.R11",
+      "literalPredicate": "adopted continuation has an unbound original T01 reactivation"
+    }
+  ],
+  "actualPublicGateOutcomePreserved": {
+    "receipt.json": {
+      "path": "artifacts/evidence/CAP-05.S01.T01.full-base-ui-gate-01.receipt.json",
+      "sha256": "9a684897691d229736911bed3a96160b1148fe0f03951f501ac6bf76beb57c3a"
+    },
+    "log": {
+      "path": "artifacts/evidence/CAP-05.S01.T01.full-base-ui-gate-01.log",
+      "sha256": "d4e115d97a747eda9d5e31a73805794b49234b97976ae08b138601233628805c"
+    },
+    "candidateCommit": "fccb73f3fbd72e4a1c0822ed195f76ae0b1d3e59",
+    "exitCode": 124,
+    "durationSeconds": 600.011,
+    "inputsStable": true,
+    "completedPublicVerdict": false,
+    "interpretation": "The unchanged public gate was invoked over the full original range and timed out at the diagnostic600-second bound. It emitted no completed report or historical denial. The separate immutable audit demonstrates incompatible predicates; do not describe those as an observed public verdict."
+  },
+  "frameworkSourceChangesAuthorized": false,
+  "equivalentQualificationComplete": false,
+  "taskApproval": false,
+  "waveCompletion": false,
+  "releaseApproval": false
+}
