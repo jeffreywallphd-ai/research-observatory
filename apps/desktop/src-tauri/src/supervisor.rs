@@ -3548,17 +3548,14 @@ fn authenticated_document_stage(
     crate::directory_integration_harness::observe_document_transport_phase("header-sent", None);
     let source_length = source.byte_length();
     let mut written_source_bytes = 0_u64;
-    let seal = source.transfer(
-        &authorized,
-        |_, bytes| {
-            write_document_bytes(&mut stream, bytes, deadline, &authorized)?;
-            written_source_bytes += bytes.len() as u64;
-            if written_source_bytes < source_length && document_response_available(&mut stream)? {
-                return Err("RO-DOCUMENT-STAGE-EARLY-RESPONSE");
-            }
-            Ok(())
-        },
-    );
+    let seal = source.transfer(&authorized, |_, bytes| {
+        write_document_bytes(&mut stream, bytes, deadline, &authorized)?;
+        written_source_bytes += bytes.len() as u64;
+        if written_source_bytes < source_length && document_response_available(&mut stream)? {
+            return Err("RO-DOCUMENT-STAGE-EARLY-RESPONSE");
+        }
+        Ok(())
+    });
     let seal = match seal {
         Ok(seal) => Some(seal),
         Err("RO-IMPORT-SOURCE-CANCELLED") => return Err("RO-CORE-API-CANCELLED"),
