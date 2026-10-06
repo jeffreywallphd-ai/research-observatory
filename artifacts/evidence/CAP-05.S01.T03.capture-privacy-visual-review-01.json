@@ -1,0 +1,415 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "independent-capture-privacy-visual-assessment",
+  "taskId": "CAP-05.S01.T03",
+  "packetId": "CAP-05.S01.T03.EX01",
+  "round": 1,
+  "reviewer": "agent:/root/t03_product_review",
+  "implementer": "agent:/root",
+  "productProducerCommit": "4ec868946655e55ae7816ddbe196103ebea625b9",
+  "referenceProducerCommit": "89da746a972d1faa6bd64739d8f9c86c6be21908",
+  "referenceId": "RO-UI-ACADEMIC-MINIMAL-1.9",
+  "referenceApprovalCommit": "d4691f716f839f4aac5bb50563b56ac863b32685",
+  "disposition": "approved-for-exact-artifact-privacy-admission",
+  "taskDisposition": "pending-separate-exact-candidate-evidence-review",
+  "blockingFindings": [],
+  "artifactInventory": {
+    "pngs": 238,
+    "referencePngs": 66,
+    "productPngs": 156,
+    "focusedIntakePngs": 16,
+    "metadataFiles": 3,
+    "originalPhysicalFiles": 241,
+    "newExactRegistryIdentities": 242,
+    "priorExactRegistryIdentities": 543,
+    "proposedExactRegistryIdentities": 785,
+    "inventoryPath": "artifacts/tmp/CAP-05.S01.T03.capture-review-01/inspection.json",
+    "inventorySha256": "162bfc415e93d70853722e5711b13f47884b49a410fc3fa6354b6c03f3d845f3"
+  },
+  "metadataBindings": [
+    {
+      "path": "artifacts/evidence/CAP-05.S01.T03.EX01.reference-captures-01/baseline.json",
+      "mode": "100644",
+      "sha256": "df1de11119b2ea2599add49c27e6fd894bf31a1f7da5a8d56dff1885562f6abe",
+      "size": 16328
+    },
+    {
+      "path": "artifacts/evidence/CAP-05.S01.T03.EX01.product-captures-01/manifest.json",
+      "mode": "100644",
+      "sha256": "4890cf44597b092db99c3092296ad2a6192c2b7827f4b0802b0edc9e0919576a",
+      "size": 1787898
+    },
+    {
+      "path": "artifacts/evidence/CAP-05.S01.T03.EX01.product-intake-captures-01/capture-index.json",
+      "mode": "100644",
+      "sha256": "8bd2f69884e888cc5fd06b0cff5166f6428c0be1e2370defe6904aa965ec8687",
+      "size": 7826
+    }
+  ],
+  "privacy": {
+    "allPngs": "Decoded by Pillow; valid signatures and all chunk CRCs; only IHDR/IDAT/IEND; no metadata, extra chunks or trailing payload. All exact raw files individually scanned with pinned gitleaks and privacy rules.",
+    "pixels": "All 238 PNGs authenticated by exact SHA256 and OCR processed with Windows en-US engine; extracted text passed privacy rules and pinned credential scan. Five reference, ten product and one intake contact sheets visually inspected; four focused raw PNGs inspected at original resolution.",
+    "actualCredentialFindings": 0,
+    "actualNonPublicEmailFindings": 0,
+    "newProfileOrWorkspaceDisclosures": 0,
+    "manifestFalsePositives": {
+      "path": "artifacts/evidence/CAP-05.S01.T03.EX01.product-captures-01/manifest.json",
+      "sha256": "4890cf44597b092db99c3092296ad2a6192c2b7827f4b0802b0edc9e0919576a",
+      "credentialFindingCount": 37,
+      "authenticatedFindingDigests": [
+        {
+          "path": "packages/contracts/core-api/openapi.json",
+          "digest": "1f9d0e4d4e44739a7f8a5fc2e9a1d1ac26c60ad3",
+          "kind": "git-blob",
+          "matchesCandidate": true
+        },
+        {
+          "path": "packages/ui-tokens/token-contract.json",
+          "digest": "5aaedc4a13296fd679688e4a76776afd055ea495",
+          "kind": "git-blob",
+          "matchesCandidate": true
+        },
+        {
+          "path": "services/core-api/src/research_observatory_core/authentication.py",
+          "digest": "f20b156937ffba4fe4d81c1b545902b4f8297c2d",
+          "kind": "git-blob",
+          "matchesCandidate": true
+        },
+        {
+          "path": "services/core-api/src/research_observatory_core/connector_api.py",
+          "digest": "418664a83edadaf4410ab29281b91b0931f1e817",
+          "kind": "git-blob",
+          "matchesCandidate": true
+        },
+        {
+          "path": "services/core-api/src/research_observatory_core/connectors/plugin_credentials.py",
+          "digest": "0368a65a23ecd3cdc11fb5b8ae1836c158889559",
+          "kind": "git-blob",
+          "matchesCandidate": true
+        },
+        {
+          "path": "services/core-api/src/research_observatory_core/corpus_api.py",
+          "digest": "66d84fc4b240b3bcfe0c1cba8ed36c2a8e926dc5",
+          "kind": "git-blob",
+          "matchesCandidate": true
+        },
+        {
+          "path": "services/core-api/src/research_observatory_core/document_attachment_api.py",
+          "digest": "9843f0d950190e45d12244c86b085a4b67eeba37",
+          "kind": "git-blob",
+          "matchesCandidate": true
+        },
+        {
+          "path": "services/core-api/src/research_observatory_core/import_api.py",
+          "digest": "7e8df0d0f2d461428670aef82134fa7ed6cf1e61",
+          "kind": "git-blob",
+          "matchesCandidate": true
+        },
+        {
+          "path": "services/core-api/src/research_observatory_core/import_intake_api.py",
+          "digest": "ce61ec329a0020cd3d7447efb58f21dcad5cccd8",
+          "kind": "git-blob",
+          "matchesCandidate": true
+        },
+        {
+          "path": "services/core-api/src/research_observatory_core/migrations/versions/v0024_open_access_acquisition.py",
+          "digest": "c11e2ff8b9eaf68683db99d128fb5b1942850c23",
+          "kind": "git-blob",
+          "matchesCandidate": true
+        },
+        {
+          "path": "services/core-api/src/research_observatory_core/plugin_api.py",
+          "digest": "59b01d393802299b254c00453d859bafd1b21c2b",
+          "kind": "git-blob",
+          "matchesCandidate": true
+        },
+        {
+          "path": "services/core-api/src/research_observatory_core/plugin_invocation_api.py",
+          "digest": "c93d89cffc94ff5e13ccf9acda05bfb8e6a07b6b",
+          "kind": "git-blob",
+          "matchesCandidate": true
+        },
+        {
+          "path": "services/core-api/src/research_observatory_core/ports/credential_store.py",
+          "digest": "245d19fa05924447ab0e1690f6ea7a8fda5fe2c9",
+          "kind": "git-blob",
+          "matchesCandidate": true
+        },
+        {
+          "path": "services/core-api/src/research_observatory_core/ports/database_keys.py",
+          "digest": "a954051018c3d4567593f35119cdb8c5efd1badc",
+          "kind": "git-blob",
+          "matchesCandidate": true
+        },
+        {
+          "path": "services/core-api/src/research_observatory_core/ports/object_store_keys.py",
+          "digest": "33e81fac0bec7c4a205751d0338dd4e3257e4c61",
+          "kind": "git-blob",
+          "matchesCandidate": true
+        },
+        {
+          "path": "services/core-api/src/research_observatory_core/reconciliation_api.py",
+          "digest": "55f079dc6e0fc0e479ae7fa127d3f27ea48d88f7",
+          "kind": "git-blob",
+          "matchesCandidate": true
+        },
+        {
+          "path": "services/core-api/src/research_observatory_core/windows_credentials.py",
+          "digest": "ec5ca1ffea0e384744d7f89ce8508df8c6beb353",
+          "kind": "git-blob",
+          "matchesCandidate": true
+        },
+        {
+          "path": "design/ui-reference/assets/tokens.css",
+          "digest": "e6aa1ebf847e983f4f5c9d20ad0e753716737cdfbedf617df2292bf510bebfa5",
+          "kind": "sha256",
+          "matchesCandidate": true
+        },
+        {
+          "path": "packages/contracts/core-api/openapi.json",
+          "digest": "62d8a9291b5c8512be23fa5ea38723e92825d34d69cfb71431bd5a0a921dc85f",
+          "kind": "sha256",
+          "matchesCandidate": true
+        },
+        {
+          "path": "packages/ui-tokens/token-contract.json",
+          "digest": "911f67c645cb59fffa7c0377cd53954d4f6d9083ed8f35d891cad5a1268eb2e3",
+          "kind": "sha256",
+          "matchesCandidate": true
+        },
+        {
+          "path": "services/core-api/src/research_observatory_core/authentication.py",
+          "digest": "97746d5eaa3f1002257203856efa8c067bfac4420a43e04d5fea183435c4fff8",
+          "kind": "sha256",
+          "matchesCandidate": true
+        },
+        {
+          "path": "services/core-api/src/research_observatory_core/connector_api.py",
+          "digest": "77f8d6549bcbb3afac52a44ab729e706392526f867a29839091b013f5883236d",
+          "kind": "sha256",
+          "matchesCandidate": true
+        },
+        {
+          "path": "services/core-api/src/research_observatory_core/connectors/plugin_credentials.py",
+          "digest": "4a081524706248e6b25fdca41767d5068cf1a8db128a6b39209a182ce5a97288",
+          "kind": "sha256",
+          "matchesCandidate": true
+        },
+        {
+          "path": "services/core-api/src/research_observatory_core/corpus_api.py",
+          "digest": "33b0e94745b04e6d7cf0df2f8b360a012ebfbe9f47709b7c8d62a217527c6ae5",
+          "kind": "sha256",
+          "matchesCandidate": true
+        },
+        {
+          "path": "services/core-api/src/research_observatory_core/document_attachment_api.py",
+          "digest": "dab847bfa771ec99e6f01e31b8a1f3ca6cdb757a6a823c4196c889dd1915a9eb",
+          "kind": "sha256",
+          "matchesCandidate": true
+        },
+        {
+          "path": "services/core-api/src/research_observatory_core/import_api.py",
+          "digest": "2e87b1843433bb367d58e319186908da624d611ed91b6dbd0c6d0b04af9997ca",
+          "kind": "sha256",
+          "matchesCandidate": true
+        },
+        {
+          "path": "services/core-api/src/research_observatory_core/import_intake_api.py",
+          "digest": "eebee26269a9f2ae20646707c20e7ec76d9a740df260bc1b0e245a2d3ead930b",
+          "kind": "sha256",
+          "matchesCandidate": true
+        },
+        {
+          "path": "services/core-api/src/research_observatory_core/migrations/versions/v0024_open_access_acquisition.py",
+          "digest": "add3cd6d2fe652643928ba30074cb8c555a7f8111cdb0188ba92420f5c68591f",
+          "kind": "sha256",
+          "matchesCandidate": true
+        },
+        {
+          "path": "services/core-api/src/research_observatory_core/plugin_api.py",
+          "digest": "4123af36a717dca01cf570cb797aa4824ec626a5a66fccc845eadd2833f3c880",
+          "kind": "sha256",
+          "matchesCandidate": true
+        },
+        {
+          "path": "services/core-api/src/research_observatory_core/plugin_invocation_api.py",
+          "digest": "631c3bd185a76961c0ca26c49fe548ce3f2d7d34f3b1d52da9dfa151e0a552e5",
+          "kind": "sha256",
+          "matchesCandidate": true
+        },
+        {
+          "path": "services/core-api/src/research_observatory_core/ports/credential_store.py",
+          "digest": "2fef7bda1d424833ba59e84849ee1190817a825c063ff805db2fb4ae8d83086d",
+          "kind": "sha256",
+          "matchesCandidate": true
+        },
+        {
+          "path": "services/core-api/src/research_observatory_core/ports/database_keys.py",
+          "digest": "9d2fc296d03ccacb3f7c9d66654d021d6070c4a8b3f0024987ebe4b308037adf",
+          "kind": "sha256",
+          "matchesCandidate": true
+        },
+        {
+          "path": "services/core-api/src/research_observatory_core/ports/object_store_keys.py",
+          "digest": "0e201809db0ee30efc5513a20260c67d0c5b418c1f9936832872ee5d0004bbb2",
+          "kind": "sha256",
+          "matchesCandidate": true
+        },
+        {
+          "path": "services/core-api/src/research_observatory_core/reconciliation_api.py",
+          "digest": "5371e2eda096bb49687e069a7e2541bfccb87086ef88feafd68cd82b2aeba08e",
+          "kind": "sha256",
+          "matchesCandidate": true
+        },
+        {
+          "path": "services/core-api/src/research_observatory_core/windows_credentials.py",
+          "digest": "e6f32f81e0b57981901e9415f30cce7601cd06d33d7315f47846e8eae9c922d7",
+          "kind": "sha256",
+          "matchesCandidate": true
+        },
+        {
+          "path": "packages/ui-tokens/token-contract.json",
+          "digest": "911f67c645cb59fffa7c0377cd53954d4f6d9083ed8f35d891cad5a1268eb2e3",
+          "kind": "sha256",
+          "matchesCandidate": true
+        },
+        {
+          "path": "design/ui-reference/assets/tokens.css",
+          "digest": "e6aa1ebf847e983f4f5c9d20ad0e753716737cdfbedf617df2292bf510bebfa5",
+          "kind": "sha256",
+          "matchesCandidate": true
+        }
+      ],
+      "nonEmailTokenCount": 19,
+      "nonEmailTokens": [
+        "apps/desktop/src-tauri/icons/128x128@2x.png",
+        "apps/desktop/src-tauri/icons/ios/AppIcon-20x20@1x.png",
+        "apps/desktop/src-tauri/icons/ios/AppIcon-20x20@2x-1.png",
+        "apps/desktop/src-tauri/icons/ios/AppIcon-20x20@2x.png",
+        "apps/desktop/src-tauri/icons/ios/AppIcon-20x20@3x.png",
+        "apps/desktop/src-tauri/icons/ios/AppIcon-29x29@1x.png",
+        "apps/desktop/src-tauri/icons/ios/AppIcon-29x29@2x-1.png",
+        "apps/desktop/src-tauri/icons/ios/AppIcon-29x29@2x.png",
+        "apps/desktop/src-tauri/icons/ios/AppIcon-29x29@3x.png",
+        "apps/desktop/src-tauri/icons/ios/AppIcon-40x40@1x.png",
+        "apps/desktop/src-tauri/icons/ios/AppIcon-40x40@2x-1.png",
+        "apps/desktop/src-tauri/icons/ios/AppIcon-40x40@2x.png",
+        "apps/desktop/src-tauri/icons/ios/AppIcon-40x40@3x.png",
+        "apps/desktop/src-tauri/icons/ios/AppIcon-512@2x.png",
+        "apps/desktop/src-tauri/icons/ios/AppIcon-60x60@2x.png",
+        "apps/desktop/src-tauri/icons/ios/AppIcon-60x60@3x.png",
+        "apps/desktop/src-tauri/icons/ios/AppIcon-76x76@1x.png",
+        "apps/desktop/src-tauri/icons/ios/AppIcon-76x76@2x.png",
+        "apps/desktop/src-tauri/icons/ios/AppIcon-83.5x83.5@2x.png"
+      ],
+      "credentialFindingFingerprints": [
+        "03e75cc525f1fb99361098b8f156d5d7a1acd103fd8befb015926c02796997b4",
+        "1eeef400dfe21330be38035fdfdbe37106a0ebd5e2b039b3d698d6c6fe3e45fa",
+        "247b22024ea81adaa2be3b625ef42f0ebb0222f7f15961f33a7593f15fd3689e",
+        "2c778f429b92dcf3d0fd9194cbdfb1ebed6bc328e61377e45941832215f5e521",
+        "2d1f7d5dc9445b747fd51ccbd32e066f9122849385f8ef48f38913f625bcc5f1",
+        "3a419c721a4d8dc07147aaf260f1c272689e8e9481ed07a8db649d627a63fb7e",
+        "3af6098492156dd1de28c8a495c9ba4b561d1ee2aaad94876f9b4ef35b97154d",
+        "40aaf8719ba95ff0c167d1ac6d94446e280e5f42dceeb325fdb1e431b3cbaf87",
+        "412728eb2c399640c4133edb7cb4fc9f3b84b4e922938a1a405b2e5014eaacb8",
+        "4378b2c223ebf2d8b9ad467a2477f6fa1aa76cb9d6aff6e5cdd9b913fa98a58c",
+        "439bc773ee72dd7fece911f111011283407cf23416cecff91d2d2418e1941d48",
+        "488cb820095c5a5ba3fe675dafe83abaccce096608d1c89c65eafa15a7683bdd",
+        "4f7990a0c0c6bd628b5547858219c4591a1b1035da15c3e73de29d41b5653ae4",
+        "50c379cbabeb68dcab19c0d65f1677b4e0cf04632bdbeb2bdd29b1edf3dd6833",
+        "5fc33558ee9e16dde2d0b9d8cc887b3915c2ba996767e87d286930877edf70f1",
+        "6109c9b6370367d2491e11ccd2fe9d0d513ba41b10ff17a95c7400c986e82c2f",
+        "7123abb23ad3dcdb2db8053bdbe2c7c365c52b87c62b066b4e20b0c482b68215",
+        "8d3606a3cdeaa8bcdfdb560dc961c82d8a4def2df26e08b1ac744a8814cb64cd",
+        "95f065775c916a08de1f11f348e2bb53696c479f9cee42787dd5573fb71e8981",
+        "97cdaf18b6d172f34a4def3c34ac50d97176970587a0b08d2a29efd0132e907a",
+        "9e17ba62e243eda4fbdd8d3128687d336b4d342940e01140637c22d42b190793",
+        "a81a0cf1beaf6693789039a7965ef60bec7893f0b5d5dc0ca81ab2e8eafcffac",
+        "a9a09014a86f18fc628743bebfccb90d219017bf71a4d55a29c78c1ba65184c1",
+        "aada346abf530424ab67f9521a42ffeaecbb30a1fc1c13fe69d1c815f31fb6e9",
+        "b102684a651a451724a5fbf4dfeac22f17e6fe277c8624d0ca55e07ea024f9f5",
+        "b570a8692563286496f72e8e0a43f423e7570586b1b14bfe9b7aa004ad2f3e53",
+        "b803cefd335752da868a99697b7d0fb668613c10fb5769490c09f3c1e5dfdff4",
+        "b8048baf147dcf1b1a31469f7dd0e049517502871667335831b736df33621e44",
+        "ba607bf896b8bbeba2b67b9075e7432ecbb9da5f2deb144ec2de37bfc522034c",
+        "c5de919625c8d816d05a247dcb1bef71454d839daa5fde5de3e2195fa3222f6d",
+        "c69e94bde23b0e81bb8bb3a659934155a0113b67f7f1f559bba5b809441afe49",
+        "cac85bbe7521f33400a87bbd79ba3ec7a6836f7f3b885542304ef256eebd886c",
+        "d2e533658c4c762497080f91ecc60c9cca27bfba2055b2d1c7900046a26bb739",
+        "d5681b6a87b2d493ce1a039175ad782cbbc99f1a1f5c78abc83bd3e2e182bc89",
+        "d841e03a083b33564b94c7227a511e0747f0782920b8c1511e044246a2554dae",
+        "eca5ba7289a77e4fbc684dc0321cb0946a297efefb2247bcbb432b9a7cbe5a43",
+        "fde3bc5eb3f8e5c6c5a3cd6917239a1970c3453c229ccd7e7b6e889276ad4519"
+      ],
+      "rationale": "Each credential finding is exactly a committed Git blob ID or SHA256 digest recorded in provenance input maps. Each non-email token is exactly a committed regular icon source path containing a density suffix; no address or secret is present."
+    },
+    "newBinaryExceptions": "All 238 PNG entries have empty credentialFindingFingerprints and nonEmailTokens. Only the exact product manifest has narrowly authenticated false-positive adjudications.",
+    "scannerSha256": "17157e2ee8b76fc8b1d8bee607a250e34b8a8023c8bc81822d4b5ee4d78fcb7c",
+    "configSha256": "839fab7649bfe0d45a0e5b1dfba2b401d03b37169c32ebbc1f00313eddc9f7b1",
+    "ocrRawOutputSha256": "def36917d45a37f94128449639808c0082b893ae3daf598ffff6eede403eb4c0"
+  },
+  "visual": {
+    "evidenceClass": "Synthetic fixture UI proof. Focused intake capture index explicitly identifies synthetic opaque native replies with actual Core version context. No claim of real native picker, download, cancellation, rights authority or restart behavior is made from pixels.",
+    "groupsReviewed": [
+      "66 logical Academic Minimal 1.9 reference PNGs: 33 pages in both themes.",
+      "156 paired reference/product PNGs: 78 each, across all fifteen declared surfaces and required viewport variants.",
+      "16 focused product intake PNGs: copy-review, local-access-need, pending-candidate and fresh-retained-recovery in both themes at 1440 and 720 viewport widths."
+    ],
+    "focusedObservations": [
+      "Same acquired.txt retained candidates remain distinguishable by candidate ID, origin copy ID, host/provider, observed version and license; association remains an explicit researcher decision.",
+      "Review/download and pending Attach remain visibly separate; source/license disclosures state that metadata or OA labels grant no permission.",
+      "Local entitlement/manual/institutional annotations explicitly send no message, fetch no content and grant no availability or permission.",
+      "Focused tall panels are legible in both themes; identity and disclosure text wraps at narrow width; capture geometry has clientWidth equal to scrollWidth. Screenshot pixels alone do not prove accessibility or all interactive paths."
+    ],
+    "captureObservation": {
+      "id": "CAP-05.S01.T03.CAPTURE-R01-O01",
+      "severity": "non-blocking-capture-limitation",
+      "path": "artifacts/evidence/CAP-05.S01.T03.EX01.product-intake-captures-01/fresh-retained-recovery-dark-720-f079ec616bd3bb33822d896fe1129c82cfb140ff8692485990ef0e734350310b.png",
+      "observation": "A fragment of the blue Skip to project home link appears over the second source row in the tall element capture. It remains in the exact admitted pixels.",
+      "boundedAnalysis": "The producer uses panel.screenshot on a tall element, rather than a viewport capture. Unchanged app.css lines 8-9 position the skip link fixed and translate it above the viewport unless focused. This cropped tall-image observation is consistent with capture geometry, and does not establish actual viewport/focus overlap. No product defect or clean viewport claim is inferred without corresponding viewport/DOM evidence.",
+      "sourcePaths": [
+        "tests/desktop/test_document_attachment_interactions.py:373",
+        "apps/desktop/src/app.css:8",
+        "apps/desktop/src/app.css:9"
+      ]
+    },
+    "disposition": "No blocking privacy or focused T03 visual-admission issue observed. Full desktop conformance remains a separate criterion-linked exact-candidate assessment; workspace content and reference fixtures differ, so these pairs are not asserted pixel-identical."
+  },
+  "normalGitDelivery": {
+    "path": "artifacts/evidence/CAP-05.S01.T03.EX01.product-intake-captures-01/capture-index.json",
+    "producerRepresentation": {
+      "sha256": "8bd2f69884e888cc5fd06b0cff5166f6428c0be1e2370defe6904aa965ec8687",
+      "size": 7826,
+      "lineEndings": "CRLF"
+    },
+    "prospectiveGitBlobRepresentation": {
+      "sha256": "f4b7f4529c0ac50bd387de7dd4f70007b880791b4fbf9347ca82aa8be1ee5212",
+      "size": 7575,
+      "gitBlobOid": "1571b01de811af20e5ca309d0cd10ddaf1b1b360",
+      "lineEndings": "LF"
+    },
+    "authority": "Existing .gitattributes text/eol=lf. Both exact representations reviewed and admitted; JSON content is equal. Producer source bytes remain untouched. All PNG bytes remain exact."
+  },
+  "proposedRegistry": {
+    "path": ".local/CAP-05.S01.T03.generated-artifact-privacy-review-c11-03.json",
+    "sha256": "56f5c0a42aa587215729fd06f730952a75097eeea342487ec0a025c7e5040d74",
+    "size": 580731,
+    "priorPath": ".local/CAP-05.S01.T03.generated-artifact-privacy-review-c11-02.json",
+    "priorSha256": "1d9a7fd71baec1ffaf2553a3f33eb4c50a7653f11273a128b9fcdc002f8cc6eb",
+    "priorArtifactsUnchanged": true,
+    "preservationAuthorityUnchanged": true,
+    "activated": false,
+    "staged": false
+  },
+  "preservedAdverseOutcomes": [
+    "Original public product/reference admission refusals remain unchanged; EX01 review does not infer those commands passed.",
+    "The first ignored review-helper pass completed scans but its final JSON serialization failed on a set; corrected inspection was rerun and authenticated. The first intake dimension assertion incorrectly treated element captures as viewport captures; the corrected inspector records actual decoded element geometry.",
+    "Initial optional OCR access attempts failed under script policy/unsupported projection/access-denied file broker. The final OCR pass used ordinary file bytes in memory streams and covered all 238 exact PNGs successfully."
+  ],
+  "limits": [
+    "Registry is proposed and ignored; no activation, staging or commit performed.",
+    "No product/framework/source/HEAD/hook/taskctl changes or product checks/capture generation executed by reviewer.",
+    "Admission is exact path/mode/hash/size only. Unknown or changed bytes require new review.",
+    "Formal candidate identity, immutable delivery, qualifying checks, conformance and task disposition remain separate."
+  ]
+}
