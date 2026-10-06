@@ -457,3 +457,43 @@ These sources constrain implementation choices but do not replace repository-spe
 **Generated for Research Observatory baseline 1.3, supplemental planning release 1.3.4.**  
 **Plan status:** PROPOSED - HUMAN APPROVAL REQUIRED.  
 **Authoritative work state remains:** `planning/backlog.yaml`.
+
+## 22. Approved T03 experience and verification binding — EX01
+
+The original W2 approval, task definitions, acceptance criteria and
+`agent-review` gate remain immutable. For `CAP-05.S01.T03`, the owner's exact
+[EX01 decision](../../verification-method-approvals/CAP-05.S01.T03.EX01.json)
+and [reference decision](../../reference-approvals/RO-UI-ACADEMIC-MINIMAL-1.9.json)
+approve Academic Minimal **RO-UI-ACADEMIC-MINIMAL-1.9**. The exact proposed
+package is `4addb04530e7b02eae7ad46dffecbf3d78e825502ea8db9b36400cb4c73f9de1`
+at `00fff94732874460edf4cb8ce77a09ad36d16d98`; metadata-only approved
+publication is `d4691f716f839f4aac5bb50563b56ac863b32685`.
+
+The approved addition is the Ingestion Review inline remote-copy review,
+explicit confirmed download, acquisition recovery and local access placeholders
+in STYLE_GUIDE section 1.5. All fourteen workflow sequences, existing local
+attachment behavior, tokens and other page contracts remain inherited. Review
+does not fetch; inspected content remains a pending candidate until explicit
+attachment. Interrupted acquisition discards only owned partials and requires
+fresh exact-copy confirmation. Local entitlement annotations neither contact
+an institution nor assert verified availability.
+
+[Publication and preliminary mapping proof](../../../artifacts/evidence/CAP-05.S01.T03.publication-mapping-02.json)
+binds the approved bytes and complete original 1.5 → approved 1.8 → exact 1.9
+mapping. The first task-owned proof's setup failure is retained separately;
+neither report proves product implementation. Publication and this material-plan
+binding precede ordinary taskctl resume/claim. Product consumer activation,
+desktop integration, actual qualification and independent disposition occur
+inside the claimed original T03, with its actual full claim base.
+
+EX01 substitutes only the finite incompatible authority/reference admission
+predicates named in its immutable packet. Separately named task-owned proof
+must establish authority lineage, presentation mapping, desktop conformance
+and capture authority without altering framework source or shared selectors.
+Original blocked public commands receive no inferred PASS. All real native,
+rights, privacy, security, accessibility, cancellation, restart and recovery
+obligations remain required. S01, its affected checkpoint and fresh W2
+qualification may consume only these same exact approved 1.9 bindings; there
+is no generic future-task/reference exception or task, slice, Wave or release
+approval. Earlier proposals, publications, approvals and adverse evidence remain
+unchanged.

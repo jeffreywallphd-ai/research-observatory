@@ -40,7 +40,7 @@
 <section class="hero compact">
   <div class="hero-top"><div><span class="eyebrow">CAP-05 · immutable evidence key</span><h1>CAP-document-inspection</h1><p>Document acquisition, parsing, source inspection, and page anchors</p></div><span class="status-stack" aria-label="Decision and completion status"><span class="status status-proposed">Proposed</span><span class="status status-in-progress">In Progress</span></span></div>
   <p>Review this capability's durable decisions as one part of each complete Wave packet. Execution is leased to the Wave, not to this capability.</p>
-  <dl class="summary-grid"><div><dt>Slices</dt><dd>6</dd></div><div><dt>Decisions</dt><dd>3</dd></div><div><dt>Open blockers</dt><dd>0</dd></div><div><dt>Plan hash</dt><dd><code>6564cec87db6</code></dd></div></dl>
+  <dl class="summary-grid"><div><dt>Slices</dt><dd>6</dd></div><div><dt>Decisions</dt><dd>3</dd></div><div><dt>Open blockers</dt><dd>0</dd></div><div><dt>Plan hash</dt><dd><code>ec717748e26a</code></dd></div></dl>
 </section>
 <section class="review-toolbar" data-review-toolbar>
   <div><h2>Capability decisions classified by Wave approval</h2><p>Best-in-class capability decisions are preselected and decision-complete. Their binding-Wave labels determine which exact pre-Wave packet authorizes them. Inherited and future decisions remain context only until their own Wave approval.</p></div>
@@ -59,7 +59,7 @@ python tools/planctl.py --repo . ready CAP-05 --wave &lt;active-wave&gt; --requi
 </section>
 <section id="decision-register" class="section-heading"><span class="eyebrow">Decision register</span><h2>Confirm resolved defaults or record overrides</h2><p>Each researched best-in-class recommendation is already selected and decision-complete. The decision's binding-Wave label controls when it is authorized. Any documented alternative requires rationale. Other additionally requires a brief description.</p></section>
 <div class="decision-list">
-<section class="decision-card" data-decision-id="CAP-05-D01" data-recommendation="Prefer native JATS/TEI/XML/HTML; use pinned Docling-style local PDF parsing and retain replaceable parser port" data-plan-hash="6564cec87db68cf02c468786cea552dbe329c61a53162f7e6ab4f8ef7d9d448a">
+<section class="decision-card" data-decision-id="CAP-05-D01" data-recommendation="Prefer native JATS/TEI/XML/HTML; use pinned Docling-style local PDF parsing and retain replaceable parser port" data-plan-hash="ec717748e26a3c263d8a6101222a1cfe3fd97020efca076dcb0a2d95ed88492f">
   <div class="decision-heading">
     <div><span class="eyebrow">CAP-05-D01</span><h3>Document preference</h3></div>
     <span class="status status-accepted">Accepted</span>
@@ -86,7 +86,7 @@ python tools/planctl.py --repo . ready CAP-05 --wave &lt;active-wave&gt; --requi
   <p class="decision-meta">Binding Wave approval(s): <code>W2</code> · Required ADR: <code>ADR-0029</code></p>
 </section>
 
-<section class="decision-card" data-decision-id="CAP-05-D02" data-recommendation="Immutable document revisions with structural, page-region, text-position and quote selectors" data-plan-hash="6564cec87db68cf02c468786cea552dbe329c61a53162f7e6ab4f8ef7d9d448a">
+<section class="decision-card" data-decision-id="CAP-05-D02" data-recommendation="Immutable document revisions with structural, page-region, text-position and quote selectors" data-plan-hash="ec717748e26a3c263d8a6101222a1cfe3fd97020efca076dcb0a2d95ed88492f">
   <div class="decision-heading">
     <div><span class="eyebrow">CAP-05-D02</span><h3>Revision/anchor model</h3></div>
     <span class="status status-accepted">Accepted</span>
@@ -113,7 +113,7 @@ python tools/planctl.py --repo . ready CAP-05 --wave &lt;active-wave&gt; --requi
   <p class="decision-meta">Binding Wave approval(s): <code>W2</code> · Required ADR: <code>None currently identified</code></p>
 </section>
 
-<section class="decision-card" data-decision-id="CAP-05-D03" data-recommendation="Researcher corrections are overlays/new revisions that trigger scoped staleness and reprocessing" data-plan-hash="6564cec87db68cf02c468786cea552dbe329c61a53162f7e6ab4f8ef7d9d448a">
+<section class="decision-card" data-decision-id="CAP-05-D03" data-recommendation="Researcher corrections are overlays/new revisions that trigger scoped staleness and reprocessing" data-plan-hash="ec717748e26a3c263d8a6101222a1cfe3fd97020efca076dcb0a2d95ed88492f">
   <div class="decision-heading">
     <div><span class="eyebrow">CAP-05-D03</span><h3>Correction</h3></div>
     <span class="status status-accepted">Accepted</span>
@@ -357,7 +357,28 @@ The contribution remains **proposed**, with all W2 planning selections recorded.
 Architecture/reference acceptance is [recorded separately](../../artifacts/evidence/W2.design-architecture-owner-approval-01.md);
 validate and independently review the final rebound W2 packet before requesting
 the owner&#x27;s one immutable pre-Wave approval. No capability-only approval or
-blanket inheritance of the G1 exception is authorized.</pre></article></details>
+blanket inheritance of the G1 exception is authorized.
+
+## 13. Approved S01.T03 experience binding — EX01
+
+The original immutable W2 packet and numeric task identities remain unchanged.
+For `CAP-05.S01.T03`, the owner approved
+[CAP-05.S01.T03.EX01](../verification-method-approvals/CAP-05.S01.T03.EX01.json)
+and the exact [Academic Minimal 1.9 reference](../reference-approvals/RO-UI-ACADEMIC-MINIMAL-1.9.json).
+Metadata-only publication is `d4691f716f839f4aac5bb50563b56ac863b32685`;
+the [S01 append-only binding](../slice-plans/CAP-05/CAP-05.S01-rights-aware-document-acquisition.md#22-approved-t03-experience-and-verification-binding--ex01)
+describes its bounded remote-copy review, explicit download, safe recovery and
+local entitlement-placeholder experience. Existing workflows, tokens and other
+page semantics remain inherited.
+
+Publication, preliminary mapping and material-plan binding precede ordinary
+T03 claim; product activation and qualification occur inside that actual claim.
+The finite source-free EX01 method preserves every substantive product and
+independent review obligation and the prohibition on further framework source
+work after A05. S01/checkpoint/W2 may consume only this same exact 1.9 binding.
+This is neither generic later-task/reference authority nor completion or G2
+release approval. Historical frontmatter and the original planning/approval
+record above are retained as history, not rewritten.</pre></article></details>
 
     </main>
   </div>

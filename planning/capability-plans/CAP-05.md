@@ -273,3 +273,24 @@ Architecture/reference acceptance is [recorded separately](../../artifacts/evide
 validate and independently review the final rebound W2 packet before requesting
 the owner's one immutable pre-Wave approval. No capability-only approval or
 blanket inheritance of the G1 exception is authorized.
+
+## 13. Approved S01.T03 experience binding — EX01
+
+The original immutable W2 packet and numeric task identities remain unchanged.
+For `CAP-05.S01.T03`, the owner approved
+[CAP-05.S01.T03.EX01](../verification-method-approvals/CAP-05.S01.T03.EX01.json)
+and the exact [Academic Minimal 1.9 reference](../reference-approvals/RO-UI-ACADEMIC-MINIMAL-1.9.json).
+Metadata-only publication is `d4691f716f839f4aac5bb50563b56ac863b32685`;
+the [S01 append-only binding](../slice-plans/CAP-05/CAP-05.S01-rights-aware-document-acquisition.md#22-approved-t03-experience-and-verification-binding--ex01)
+describes its bounded remote-copy review, explicit download, safe recovery and
+local entitlement-placeholder experience. Existing workflows, tokens and other
+page semantics remain inherited.
+
+Publication, preliminary mapping and material-plan binding precede ordinary
+T03 claim; product activation and qualification occur inside that actual claim.
+The finite source-free EX01 method preserves every substantive product and
+independent review obligation and the prohibition on further framework source
+work after A05. S01/checkpoint/W2 may consume only this same exact 1.9 binding.
+This is neither generic later-task/reference authority nor completion or G2
+release approval. Historical frontmatter and the original planning/approval
+record above are retained as history, not rewritten.
