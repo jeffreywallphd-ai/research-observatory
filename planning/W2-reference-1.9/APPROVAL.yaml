@@ -1,0 +1,15 @@
+reference_id: RO-UI-ACADEMIC-MINIMAL-1.9
+version: '1.9'
+status: proposed
+approval_kind: human
+approved_by: null
+approved_at: null
+supersedes: RO-UI-ACADEMIC-MINIMAL-1.8
+scope:
+  normative:
+  - Inherit approved 1.8 except the bounded CAP-05.S01.T03 remote-copy review, confirmation,
+    recovery and local access placeholder addition in STYLE_GUIDE section 1.5.
+  illustrative:
+  - Synthetic work/copy/provider/license and inactive network actions.
+implementation_rule: Inert proposal; exact human reference and source-free method
+  approval and separate publication must precede CAP-05.S01.T03 implementation.

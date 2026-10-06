@@ -1,0 +1,706 @@
+{
+  "schemaVersion": "1.0-proposal",
+  "documentType": "task-experience-and-verification-amendment-proposal",
+  "id": "CAP-05.S01.T03.EX01",
+  "waveId": "W2",
+  "taskId": "CAP-05.S01.T03",
+  "status": "PENDING_OWNER_APPROVAL",
+  "executionState": "INERT",
+  "contextCommit": "ed5012226f903862960ce8b405b1299df96d7fb3",
+  "pausedPredecessorCommit": "ed5012226f903862960ce8b405b1299df96d7fb3",
+  "pausedPredecessorBacklogSHA256": "2c38d7e5e9aa5f7834b139e129b25b39958aa2b46d8748e1b834ebd4c8bface6",
+  "pausedPredecessorBacklogGitBlobSHA256": "92a5eda6868dee9a9297abd73f3da3ab25268bbd39043c70cd6e4dd24b0023d7",
+  "backlogBindingSemantics": "Raw predecessor SHA authenticates the actual taskctl CAS snapshot; the Git-blob SHA authenticates its committed LF form. Parsed semantic state is identical; neither hash substitutes for the other.",
+  "taskContract": {
+    "id": "CAP-05.S01.T03",
+    "capability_id": "CAP-05",
+    "slice_id": "CAP-05.S01",
+    "title": "Create acquisition queue, conflict, and entitlement placeholders",
+    "objective": "Resumable download/import jobs, alternative copies, unavailable state, and manual/institutional entitlement request placeholders.",
+    "deliverables": [
+      "Resumable download/import jobs, alternative copies, unavailable state, and manual/institutional entitlement request placeholders."
+    ],
+    "acceptance_criteria": [
+      "Partial acquisitions resume or clean up safely; multiple copies remain distinguishable; lack of full text does not remove the metadata record or fabricate availability.",
+      "Automated tests cover the expected path and at least one material failure or boundary condition.",
+      "Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion."
+    ],
+    "dependencies": [
+      "CAP-05.S01.T02"
+    ],
+    "priority": "P0",
+    "wave": "W2",
+    "deployment_profiles": [
+      "LOC",
+      "LAB",
+      "ALL"
+    ],
+    "estimate": "M",
+    "risk": "medium",
+    "review_gate": "agent-review",
+    "verification_profiles": [
+      "documents",
+      "service"
+    ],
+    "verification_commands": [
+      "python tools/verify.py --profile documents",
+      "python tools/verify.py --profile service"
+    ],
+    "platform_targets": [
+      "windows-x64"
+    ]
+  },
+  "taskContractSHA256": "22c24df1438c455859b07b1643f5adb66c5dc118df2e2b9c2f49cb30a3a7cc8c",
+  "taskContractHashMethod": "SHA-256 of UTF-8 JSON of exactly taskContract; sort_keys=true, ensure_ascii=false, separators=(comma,colon). State/owner/lease/evidence fields are excluded; frozen definition remains unchanged.",
+  "previousReference": {
+    "id": "RO-UI-ACADEMIC-MINIMAL-1.8",
+    "publishedPackageSHA256": "cd8995fdcea2fe44452eaa1fdd258b6f9fab5714cbd443a81a8e5b4251220b94",
+    "approvalRecord": "planning/reference-approvals/RO-UI-ACADEMIC-MINIMAL-1.8.json"
+  },
+  "proposedReference": {
+    "id": "RO-UI-ACADEMIC-MINIMAL-1.9",
+    "path": "planning/W2-reference-1.9",
+    "packageSHA256": "4addb04530e7b02eae7ad46dffecbf3d78e825502ea8db9b36400cb4c73f9de1",
+    "manifestSHA256": "771d22db5abd0f256bdc11150beb3d3540599eafe7d24597dce80c354ef8b3a9",
+    "inventory": [
+      {
+        "path": "APPROVAL.yaml",
+        "baselineSHA256": "9e5628479727b45439bb6326e053ac3b026ad14cec79ffd1b9dfbfceceb38b1f",
+        "proposalSHA256": "39622670ab59f6b877545250daae98dbdb6866cfb976038ef6dbe9602f64c1a7",
+        "changed": true
+      },
+      {
+        "path": "CAPABILITY_COVERAGE.json",
+        "baselineSHA256": "35bf4ea4cf9cbc5bbfc30e48ecdf9ab6e91b333ce016816a3fd5713f01e4f945",
+        "proposalSHA256": "6b1102234a05633e40a1fb93141d332708f1ac75055609e40e23373bd7e39cd7",
+        "changed": true
+      },
+      {
+        "path": "CAPABILITY_COVERAGE.md",
+        "baselineSHA256": "0d82db579cb7d4a2988ec623c0556ea47086c7fcb9245ec0f332f71c8e7efb16",
+        "proposalSHA256": "b0c2e91da07dcc55af15121c2f906d4e97794048a4f18a0c27cc0ce4e9fb330f",
+        "changed": true
+      },
+      {
+        "path": "PAGE_INVENTORY.md",
+        "baselineSHA256": "42253f4ef65ef8e32fb66c57dcbf671bc3c65e32b8892349064ec8cdc6ab3e4c",
+        "proposalSHA256": "fb6b89b7088337b2c0f8c4646e0c8264544655ab6a8b49d4c1b7dead5a987b9b",
+        "changed": true
+      },
+      {
+        "path": "PAGE_INVENTORY_SOURCE.md",
+        "baselineSHA256": "42253f4ef65ef8e32fb66c57dcbf671bc3c65e32b8892349064ec8cdc6ab3e4c",
+        "proposalSHA256": "fb6b89b7088337b2c0f8c4646e0c8264544655ab6a8b49d4c1b7dead5a987b9b",
+        "changed": true
+      },
+      {
+        "path": "README.md",
+        "baselineSHA256": "ef9065dd2609b7af791bf3911325b42d83b9cb159bb638be37286ea2603e338f",
+        "proposalSHA256": "649f4867b944ef56e70cc2ad64771a894d51b23e37adb0147fa75eab80e317d8",
+        "changed": true
+      },
+      {
+        "path": "SITE_MANIFEST.json",
+        "baselineSHA256": "56a8d6cb772fe3b787e51d38794d5d000a47cfa185b1c4885bff4bdbedcea3a2",
+        "proposalSHA256": "0ba1d5dd9beda4509ab21af7b57439cbc58c415c0d502851ac81f2691abb1488",
+        "changed": true
+      },
+      {
+        "path": "STYLE_GUIDE.md",
+        "baselineSHA256": "4421afe6a1eb4f9fe05dc201503cc94cce1bdd92d72e30e11cae6b710bd221db",
+        "proposalSHA256": "d805d491ef4249129698148c2585cc4560748dfad5345caeb15e4b7d7e3e98b5",
+        "changed": true
+      },
+      {
+        "path": "STYLE_GUIDE_SOURCE.md",
+        "baselineSHA256": "4421afe6a1eb4f9fe05dc201503cc94cce1bdd92d72e30e11cae6b710bd221db",
+        "proposalSHA256": "d805d491ef4249129698148c2585cc4560748dfad5345caeb15e4b7d7e3e98b5",
+        "changed": true
+      },
+      {
+        "path": "WORKFLOW_CATALOG.json",
+        "baselineSHA256": "a47ff01ec5d485fd2a87dffd5480576cadbc7af23986ed4d6b414323c2d3cb21",
+        "proposalSHA256": "9d859b75772106f806928a91cb8300c297ed9f00257e22397882d17ebb6a142d",
+        "changed": true
+      },
+      {
+        "path": "WORKFLOW_CATALOG.md",
+        "baselineSHA256": "c2b98b103574156a60695639af5572ded2475ca00f745e700ded6a1d5a25f071",
+        "proposalSHA256": "08e9a50f7482f98d22cce474739d002188366f453e406c14ec3d902e2d0bf2ba",
+        "changed": true
+      },
+      {
+        "path": "application-settings.html",
+        "baselineSHA256": "c13d1fd7eeecd372fe9a49839d5c8989ac04e72e7a67c7751a975517ac964a6a",
+        "proposalSHA256": "f2d77ca4d95db9b9bb8f268ba3e3637805652a90525adf941cdf2712ab68e146",
+        "changed": true
+      },
+      {
+        "path": "assets/app.css",
+        "baselineSHA256": "0e085d1112322ff9277fbc10fd9244690e3e97e0638a1aa34848ca5e971f8f56",
+        "proposalSHA256": "db5b4ec869b0fa9beaecd293d814256773366fda17b3c83297bb8e09fc79fcbd",
+        "changed": true
+      },
+      {
+        "path": "assets/app.js",
+        "baselineSHA256": "cfd064ffd003172dad6d2189705f4b25257e58aec916b3f2038085c926d50d8b",
+        "proposalSHA256": "cfd064ffd003172dad6d2189705f4b25257e58aec916b3f2038085c926d50d8b",
+        "changed": false
+      },
+      {
+        "path": "assets/print.css",
+        "baselineSHA256": "03b327a45c53aa2e1135c5de598c88524d5a1edc7f546f7aa4355e4b8d41618c",
+        "proposalSHA256": "03b327a45c53aa2e1135c5de598c88524d5a1edc7f546f7aa4355e4b8d41618c",
+        "changed": false
+      },
+      {
+        "path": "assets/tokens.css",
+        "baselineSHA256": "e6aa1ebf847e983f4f5c9d20ad0e753716737cdfbedf617df2292bf510bebfa5",
+        "proposalSHA256": "e6aa1ebf847e983f4f5c9d20ad0e753716737cdfbedf617df2292bf510bebfa5",
+        "changed": false
+      },
+      {
+        "path": "audit-lineage.html",
+        "baselineSHA256": "4f08394bfcb370a86a002b59d276524da8f533013726022a4f02dd5e656f8a6f",
+        "proposalSHA256": "5b9c3b3c0298dcfeb5bc618c81dff2d8ce39c503bd54e50e272983f685439e43",
+        "changed": true
+      },
+      {
+        "path": "claim-graph.html",
+        "baselineSHA256": "cf8f265a664d3bc1f6a15fd8f4f4720e2d043334dc0f5e98ec660e2518e8bfd5",
+        "proposalSHA256": "bc16105c4c0747b1024e849110aa92f0e44986f3831a65024a67868025529482",
+        "changed": true
+      },
+      {
+        "path": "corpus-canvas.html",
+        "baselineSHA256": "f23d2cc6c3eecb9e5f5be146f9f0f442e42cf1cd29e56199011fb491f28bf16f",
+        "proposalSHA256": "ea92b728e14c635552636d88847ea5f2a2ded2087e99e2780845c96bb559885e",
+        "changed": true
+      },
+      {
+        "path": "critical-lens.html",
+        "baselineSHA256": "4877a11d140de166e82f939eca7a1f19b0ac1cdff515217582f84dfe91284980",
+        "proposalSHA256": "19d1d06d21c087cf7e7bce1c642660cccc78dfe16c241a898343dcb044c0b859",
+        "changed": true
+      },
+      {
+        "path": "document-reader.html",
+        "baselineSHA256": "6527e09137d9ebe0d2f48c3c30bdc2a45eae5e2680e7f09f4deda4c81a8a32c0",
+        "proposalSHA256": "c3cbb89c58aec3769e924efbc49046d40505d7a4052b0ba5458623cf15edb302",
+        "changed": true
+      },
+      {
+        "path": "evidence-matrix.html",
+        "baselineSHA256": "82dc38d05ee7843be44849698c07a230618dbdbabc559ccc98d25c52cd6f4cf2",
+        "proposalSHA256": "75da3b885c101e4959ef995e023a7d890807add4dca6a5b60523491d14c2cab5",
+        "changed": true
+      },
+      {
+        "path": "help-onboarding.html",
+        "baselineSHA256": "7fd6cf66441053dc403b43b843b5f73449caa69be4ea8c189cd3bb0546d8245d",
+        "proposalSHA256": "bcd6564be23dfdc8c760fa70b30ec0d734fd87d4ed67afa6bd7d0003e884a822",
+        "changed": true
+      },
+      {
+        "path": "index.html",
+        "baselineSHA256": "23628190d9093db1d3d7cbebc5ca9af5cc2f081acd678b01fe1097906242473d",
+        "proposalSHA256": "f8f7b0bff7b1061d1c3bfecc9a7b17fdd8534cab2e9fcd76c5f7a15059072488",
+        "changed": true
+      },
+      {
+        "path": "ingestion-reconciliation.html",
+        "baselineSHA256": "83df119e8e28ab69fcfd999855a29b896bed7928f17588c31944765ec593d0d8",
+        "proposalSHA256": "7057618a63d37e9b66268f06701b769b6ee0b833c63dec0b27d6120ef376137d",
+        "changed": true
+      },
+      {
+        "path": "intent-contract.html",
+        "baselineSHA256": "a361cd8ce9381b24521f0e3e1218cd62c4dec253fec6338bdd8fcd1a31ba8dbf",
+        "proposalSHA256": "d4dd07791a725122963b145c061d118ea80e10fa9d9d01b3154adfba926b8be7",
+        "changed": true
+      },
+      {
+        "path": "living-monitor.html",
+        "baselineSHA256": "bc2ee881037faae2540f23519a6c3abc49d59dd402d21ac17e6305164c0887dc",
+        "proposalSHA256": "55eb32e73698a1273365b13fb072bb9b7d3cb5e0c7b4bd96e844c3e66ec5f4ef",
+        "changed": true
+      },
+      {
+        "path": "manuscript-blueprint.html",
+        "baselineSHA256": "d63828eb45010e12f7225dbe9e8cf7aa503c171bce33b52c1ae4ce573635e308",
+        "proposalSHA256": "fbc8d44df99911247baa8647fd152a4d7e83c2ed02b0ca080ebd654f77206e28",
+        "changed": true
+      },
+      {
+        "path": "manuscript-studio.html",
+        "baselineSHA256": "9eb95f05404e4bb3ed07353633e4c6eab60339c294d855eb6946892f150aa867",
+        "proposalSHA256": "6f996f1f53783024dcc6bdd24053488ef46c4102e48791016c4976dbb4d37a3b",
+        "changed": true
+      },
+      {
+        "path": "model-center.html",
+        "baselineSHA256": "a1ec25442e042126c99eac67b4943d79b6485fe4a888f68314468d7b66581005",
+        "proposalSHA256": "9d6d0ac71987a7b09b15bd85684001c9f7bf71710efca3469608422bd8abd212",
+        "changed": true
+      },
+      {
+        "path": "new-project.html",
+        "baselineSHA256": "e42091e46dfff96a15da5a9d733ca83e8009148fef1853099079fddb6d8bad94",
+        "proposalSHA256": "f035e56d6529be7eba61af2719c0b8d70676cbe056e6730973d945407b046ea4",
+        "changed": true
+      },
+      {
+        "path": "novelty-audit.html",
+        "baselineSHA256": "9f7912c327ef5a0f5987f2925cf0e96d8e6547a23c1a4856a7d06c3b9a570853",
+        "proposalSHA256": "3331af9bad0c091fa5176c7320ae9e521990c6a6b24cb4de1cde3096d7fbbc03",
+        "changed": true
+      },
+      {
+        "path": "opportunity-radar.html",
+        "baselineSHA256": "52b61e184ffebbc6f70ead74e6fcd9a12da0976696fbee8165a80e9141c6866a",
+        "proposalSHA256": "97e6a93b19642962481e9b97798939665fcb0930a5757bde5d2ded76fbe7ea5b",
+        "changed": true
+      },
+      {
+        "path": "parsing-quality.html",
+        "baselineSHA256": "e61d819d284090a61ffbcf8d0ad7b383e2632ef74aa9cac5c11e362f79795ff6",
+        "proposalSHA256": "46dda260be4fca5124b47ee0a93000d84d2c1a1ed9465c3e861538553153d471",
+        "changed": true
+      },
+      {
+        "path": "project-settings.html",
+        "baselineSHA256": "170fb77689f5950a36530dbd1adf228ce1bdc874ab19f3c81199b2574986504c",
+        "proposalSHA256": "71f5c09c3f8ed78e46cff214ab7a5aacc4637b765efa0f31926f7cf3bc27dfd1",
+        "changed": true
+      },
+      {
+        "path": "projects.html",
+        "baselineSHA256": "ef1fc62b5465f8c9d98d5e004d8df0f5b397d79bd5f94a306a95a3f6f61e2e52",
+        "proposalSHA256": "854d920ebcf78b17c4b9bfc049c6f7d3a1541296de70a0c8d14bedf6980e6858",
+        "changed": true
+      },
+      {
+        "path": "prototype-index.html",
+        "baselineSHA256": "87f19ba1a6e7a392badd2a2e2aba35fd8ae4d3aa6fc06bd50be269a2f0a2f9d0",
+        "proposalSHA256": "a4becae52275dcb596cfc370e6dc02193c14bb8af6e41cc6e5d8eacc83aeccb3",
+        "changed": true
+      },
+      {
+        "path": "research-notebook.html",
+        "baselineSHA256": "98f794165f3b60b20321d7d40f56b6573501491c60e909eb43092260d6f9c15d",
+        "proposalSHA256": "b4a00f3f665f5168ccb68a2e366d4ece2d305d2b2e5cdcaf1c35fafd87fdf37a",
+        "changed": true
+      },
+      {
+        "path": "reviewer-simulation.html",
+        "baselineSHA256": "a3976fcfb87eaa2738fc53e8d34d1d7fdc51bb1503b74ec8ac5f0f68669c30b4",
+        "proposalSHA256": "a5089d240744627270393eb66882c8ff8ff606a1b02f3b227010847737a750d6",
+        "changed": true
+      },
+      {
+        "path": "revision-response.html",
+        "baselineSHA256": "30dbc69b1fc72ecc040d46b2b8f0d47cf52cc74ec2f97a723458106c23f0dcc2",
+        "proposalSHA256": "955e1a71177c3b4e6517244a29e02d66fcacf4461847ff99d30e02097c8e830a",
+        "changed": true
+      },
+      {
+        "path": "schema-manager.html",
+        "baselineSHA256": "69f8973f29f7d9651d5c72c171d919d93c9aa8afcf3dbfb9df18aefbf34223c8",
+        "proposalSHA256": "6ec1a8b982de01c734435947898c92253d598686ee9248b838d14cab80643358",
+        "changed": true
+      },
+      {
+        "path": "screening.html",
+        "baselineSHA256": "52addf3853e395b1151b75c7cd6881ffaadf250538f366dba8318417abdf0464",
+        "proposalSHA256": "cf4c500e74c97ad600bb2248273df6e538097d13639b994386526d177e68b47f",
+        "changed": true
+      },
+      {
+        "path": "scripts/build_mockups.py",
+        "baselineSHA256": "da0caa083e75e382feffb6c6682a24100c23b8fb44af5d78cf7ef692ecc80cc4",
+        "proposalSHA256": "79c48449e322782cb5e6908481b429a418482b027a3bd18fb5e820e975288332",
+        "changed": true
+      },
+      {
+        "path": "scripts/render_previews.py",
+        "baselineSHA256": "f7b868716f56e70b11004a61aa85762a1bfc6ea06036260f3dd19746bf004959",
+        "proposalSHA256": "f7b868716f56e70b11004a61aa85762a1bfc6ea06036260f3dd19746bf004959",
+        "changed": false
+      },
+      {
+        "path": "scripts/smoke_interactions.py",
+        "baselineSHA256": "ecd92ebca427b5edb5fe687ed14d838341e66277370b0ecf3cfc432f8bc347ac",
+        "proposalSHA256": "ecd92ebca427b5edb5fe687ed14d838341e66277370b0ecf3cfc432f8bc347ac",
+        "changed": false
+      },
+      {
+        "path": "scripts/verify_site.py",
+        "baselineSHA256": "891940c2a6d0906e211528b04b74fc6fe1351a3d4ded82eea650b051e18c9e0f",
+        "proposalSHA256": "891940c2a6d0906e211528b04b74fc6fe1351a3d4ded82eea650b051e18c9e0f",
+        "changed": false
+      },
+      {
+        "path": "search-studio.html",
+        "baselineSHA256": "506a48064f570bbecbe6e802fdb9e09677614e1241665e5d9d88f6d0829fd26c",
+        "proposalSHA256": "62f7b442d011470236a3b97d892e9d5d535e36eb3e742cab543b187cb0189bdb",
+        "changed": true
+      },
+      {
+        "path": "source-manager.html",
+        "baselineSHA256": "5bd6e40b7f59f2fe86dab243272c63af8cba4de14911b0e1adbbd4db9ba60d40",
+        "proposalSHA256": "084b9a9ae60d702b47310c6f7e9344de310f692272dd644d587f0075602618d1",
+        "changed": true
+      },
+      {
+        "path": "study-design.html",
+        "baselineSHA256": "2f764a0f5a823551ac8b774466c215bbb5eb1e4897dd1b3da2e7c75193d012fa",
+        "proposalSHA256": "a7c4ccc2ac6cc5801cabb42f6cb11335a57be64443f053c1483ad0bb0f803c1b",
+        "changed": true
+      },
+      {
+        "path": "style-guide.html",
+        "baselineSHA256": "1453b8b205534cbbf361cc52cb2ae19e9c0b84711401656af013d6a8c2a63311",
+        "proposalSHA256": "c564a33a5348d558dedf3ad613fd3e919f1f8c0fedf42f7b2d10eca8a1f1502e",
+        "changed": true
+      },
+      {
+        "path": "synthesis-studio.html",
+        "baselineSHA256": "a1742692ea189665511a2b455a1bcde673f06973258f941f445d11b5b94cea63",
+        "proposalSHA256": "12471b245c4eade5784fad6dfe09e1220bffe97aa012dc5b4df48b3447c8d694",
+        "changed": true
+      },
+      {
+        "path": "task-center.html",
+        "baselineSHA256": "ee47f6dd88fa1564043192aae0d0f7030e4fe48ddfd673eeaea6b775c017e11e",
+        "proposalSHA256": "9599ba3e547699937287af79d7d150cf6481321d51ffd9b60e975ef9f4ad91f4",
+        "changed": true
+      },
+      {
+        "path": "technical-reports.html",
+        "baselineSHA256": "5fb3754d65aa9ffb06c1b8008994bc4ab4c79ba26188fb0c193e8c45b8036ae6",
+        "proposalSHA256": "115eb33473bcdbc96d2f4ff0b2349dd4729096591a77adbfb79eecbbbbf6eedb",
+        "changed": true
+      },
+      {
+        "path": "theory-map.html",
+        "baselineSHA256": "729b32cf41942a900057721f4402d8fab48f005b4e31e9e6ac3abf88c93db44d",
+        "proposalSHA256": "4de46364b5fead10c423de0054adf0cea53b921c32b26126cfc3aeb82efd792b",
+        "changed": true
+      }
+    ]
+  },
+  "productDecision": [
+    "Approve STYLE_GUIDE section1.5 and the exact linked Ingestion Review inline available-copies/review/download-confirmation/recovery/access-placeholder experience. This implements the already approved T03 outcome; it adds no route, workflow stage, hosted service, login, credential entry, paywall bypass, purchase or external communication.",
+    "Keep all fourteen ordered workflows, semantic tokens, other page contracts and the existing local attachment interaction. Only exact Ingestion purpose/three required-region additions and the approved section1.5 are new normative semantics. Illustrative copies, providers, versions, licenses and inactive controls are never product data or completion proof.",
+    "Download requires current native session, accepted Intent, privacy/provider consent, exact source/version/rights and a fresh bounded one-use confirmation. Selecting or reviewing a copy does not fetch. Inspection produces a candidate; association remains a separate explicit Attach to selected version action.",
+    "Interrupted transfer safely discards only owned partials and requires fresh exact-copy consent; it does not concatenate uncertain content or reuse stale authority. Local manual/institutional annotations never fabricate availability or send requests."
+  ],
+  "sourceProvenIncompatibilities": [
+    {
+      "source": "tools/ui_change_gate.py",
+      "lines": [
+        6886,
+        6903
+      ],
+      "fact": "Ordinary gate demands exact task experience_change metadata; the frozen original T03 has none. This proposal does not silently alter that frozen definition."
+    },
+    {
+      "source": "tools/ui_change_gate.py",
+      "lines": [
+        6943,
+        6944
+      ],
+      "fact": "Ordinary intentional-change path demands human-and-agent-review; the frozen original T03 is agent-review. Exact prior amendment/continuation lanes name other tasks and cannot grant T03 authority."
+    },
+    {
+      "source": "tools/ui_change_gate.py",
+      "lines": [
+        6929,
+        6932,
+        6946,
+        6949
+      ],
+      "fact": "Ordinary intentional admission also assumes a newer reference than the single claimed change base, a reference revision within that range and approval after the base. EX01 instead requires metadata-only approved reference publication before claiming the original task, then product implementation inside its actual claim. Both preparation and implementation ranges require exact separate lineage proof; human identity, exact package and approval before product remain required. Neither an invented base nor an original public-gate PASS is allowed."
+    },
+    {
+      "source": "tools/ui_conformance.py",
+      "lines": [
+        423,
+        429,
+        453,
+        458,
+        662,
+        689,
+        695
+      ],
+      "fact": "Context admission requires original1.5 semantic authority and an exact1.8-only inherited semantic-delta witness. The data-only1.9 extension cannot honestly satisfy those predicates without a separately authorized mapping proof."
+    },
+    {
+      "source": "apps/desktop/scripts/assemble-application.mjs",
+      "lines": [
+        91
+      ],
+      "fact": "Product build output presently names reference1.8. A reviewed product consumer selector must bind the approved published1.9 bytes before claiming1.9 conformance."
+    },
+    {
+      "source": "apps/desktop/scripts/assemble-reference.mjs",
+      "lines": [
+        71
+      ],
+      "fact": "Reference fixture output presently names reference1.8. It must agree with the exact approved1.9 publication in separately reviewed task-scoped activation evidence."
+    },
+    {
+      "source": "tools/ui_conformance.py",
+      "lines": [
+        3151
+      ],
+      "fact": "Public baseline creation and UI wrappers use the same incompatible admission before useful checks."
+    },
+    {
+      "source": "tools/desktop_app_check.py",
+      "lines": [
+        2022,
+        5121,
+        5138
+      ],
+      "fact": "Product functional/style constructors and build validation force the same context loader; no public1.9 wrapper PASS is promised."
+    },
+    {
+      "source": "tools/product_style_check.py",
+      "lines": [
+        1193,
+        1267
+      ],
+      "fact": "Capture creation and reader producer authentication force the same context loader. Reading PNG delivery alone does not qualify producer identity or the public capture-reader command."
+    },
+    {
+      "source": "tools/desktop_performance_check.py",
+      "lines": [
+        485
+      ],
+      "fact": "Performance wrapper admits the same context before browser sampling; actual resource measurements remain required under a separately named equivalent path."
+    }
+  ],
+  "machineGateObservation": "No T03 public gate or 1.9 qualification was invoked. These are source-proven incompatibilities, not emitted machine verdicts. Earlier T01 public-gate timeout and every adverse run remain preserved; T01VM01 grants no T03 authority.",
+  "requestedProcedureException": {
+    "governingSection": "docs/automation/project-automation-guide.md#22-controlled-enabler-amendment-lane",
+    "scope": "This exact T03/1.9 packet only.",
+    "decision": "After independent readiness approval and explicit human approval, commit a direct append-only owner decision plus exact reference design-approval record, publish metadata-only approved1.9, authenticate publication/preliminary semantic mapping and update affected material-plan bindings, and resume/claim the original task through ordinary taskctl. Actual product assembler selector activation, product builds, conformance and capture qualification happen inside the claimed T03, after task-start planning. Do not create executable ECR/bootstrap/amendment framework tasks or alter frozen W2/T03 definitions.",
+    "ownerRecord": "planning/verification-method-approvals/CAP-05.S01.T03.EX01.json",
+    "referenceRecord": "planning/reference-approvals/RO-UI-ACADEMIC-MINIMAL-1.9.json",
+    "referenceRecordShape": "Existing ui-reference-design-approval, reference-publication-and-plan-binding-only shape; exact proposed package/commit and human decision; record introduced after proposal and before metadata-only reference publication.",
+    "activationScope": "Only exact product assembler selectors and product conformance/build manifests may adopt the approved1.9 identity/package. Shared verification/extensions/desktop-ui.json and verifiers remain unchanged; a separately named, task-owned activation/context proof binds their unchanged settings plus the approved1.9 identity/package instead of pretending the stale shared selector qualifies1.9."
+  },
+  "requestedVerificationSubstitution": {
+    "scope": "Original CAP-05.S01.T03 and consumption of this same exact approved1.9 authority/presentation binding by required CAP-05.S01 slice, affected checkpoint and W2 qualification. No generic later-task, future-reference or release exemption.",
+    "replacedPredicates": [
+      "Frozen originalT03 experience_change and human-and-agent-review admission predicates in tools/ui_change_gate.py, plus the ordinary intentional newer-reference/previous-reference/revision-in-range/approval-after-base predicates that assume publication occurs within the same claimed-base range (lines6929-6950). Replace only their authority/approved-before-code admission with the exact independently reviewed EX01 human decision and separately authenticated publication-before-claim-before-product lineage. Preserve both the full paused-predecessor-to-claim preparation history and actual original claim-base-to-final-candidate history; never invent or shorten the claim base. Human identity, exact package and approval-strictly-before-product requirements remain required.",
+      "The exact1.8 semantic-witness version/semanticDeltas and stale1.8 reference selector/context admission predicates, including downstream readers that rely on that same admission. Replace with complete original1.5-to-approved1.8 lineage plus closed exact1.8-to1.9 delta, exact publication/build/capture input and consumer bindings. No semantic, visual, interaction or platform check is removed."
+    ],
+    "requiredNamedProof": [
+      {
+        "name": "CAP-05.S01.T03.EX01.authority-lineage",
+        "obligation": "Authenticate exact proposal/package/inventory, independent readiness, immutable owner/reference records, paused predecessor, metadata-only publication and plan binding before product edits; unchanged frozen task, actual ordinary taskctl owner/branch/base/worktree/profile/platform/lease and original base-to-candidate history with no hidden source add/revert. Preserve A01-A05, T01/T02 and all findings. Qualifying evidence and independent disposition bind the final committed candidate."
+      },
+      {
+        "name": "CAP-05.S01.T03.EX01.presentation-mapping",
+        "obligation": "Authenticate accepted original1.5 runtime semantics and immutable reviewed1.8 presentation witness; compare every ordered workflow and page contract through exact1.8-to1.9 delta. Only proposed identity/version fields, exact Ingestion purpose and the three exact added regions may differ. Tokens and other page/workflow semantics remain exact. Reject undeclared, reordered, missing, stale or redirected input."
+      },
+      {
+        "name": "CAP-05.S01.T03.EX01.desktop-conformance",
+        "obligation": "Build actual product and isolated reference fixtures with exact approved1.9 bindings. Freeze complete regular build inputs/outputs, pinned Windows-x64 renderer/fonts/settings, target route/region inventories and reference package. Execute required token, route, region, workflow, accessibility, interaction, responsive, theme and controlled visual-regression checks. Invoke unchanged proof helpers where their preconditions hold; separately establish only incompatible admission. Do not patch/monkeypatch imported framework code or manufacture an original command PASS."
+      },
+      {
+        "name": "CAP-05.S01.T03.EX01.capture-authority",
+        "obligation": "After approval, capture the complete new1.9 reference baseline and real product comparisons from stable committed inputs into a new directory. Record exact baseline hashes, approval/publication commits, renderer identity, delivery commit and all build/input inventories; independently authenticate and visually review captures. No automatic baseline acceptance, overwritten historical capture, stale1.8 baseline, partial marker or screenshot-only product proof."
+      }
+    ],
+    "laterGateConsumption": "S01 integration, affected checkpoint and fresh full W2 qualification must explicitly authenticate and report the same EX01 owner/publication/package/semantic bindings and commit-bound named equivalent proof, rerunning affected actual conformance against current fixed candidate inputs when closure is changed or unknown. Reports must retain original public-command outcomes/limitations, name the approved substitution and obtain independent disposition. All other required profiles and real native/security/rights/recovery/platform checks execute normally. No unrelated later task authority predicate or new1.10+ reference is exempted.",
+    "machineReportTruth": "Use separately named commands/reports with actual exit codes and authenticated ignored task-owned producer hashes. Do not add a command-registry entry, edit policy/schema/CI/controller/verifier source, label original foundation:ui-change/foundation:ui-conformance or stale-selector commands PASS, or include an adverse run among all-exit0 qualifying checks. Selected canonical command IDs must identify existing checks actually executed.",
+    "blockedPublicConsumers": [
+      "desktop:ui-token",
+      "desktop:ui-route-page",
+      "desktop:ui-workflow",
+      "desktop:ui-accessibility",
+      "desktop:ui-visual-regression",
+      "desktop:application",
+      "desktop:performance",
+      "tools/ui_conformance.py --write-baseline",
+      "tools/product_style_check.py --capture",
+      "tools/product_style_check.py --verify-captures"
+    ],
+    "unchangedProofInterfaces": [
+      "ui_conformance.Context; check_tokens/check_routes/check_workflows/check_accessibility; render_visuals/write_baseline; baseline_document_errors/baseline_history_errors/check_visual",
+      "desktop_app_check.product_build_errors/security_errors/design_system_errors; qualification_capture_contract/qualification_report_errors",
+      "product_style_check.capture_source_identity/write_capture_bundle/read_capture_bundle/png_dimensions/stable_file_bytes and Windows guards"
+    ],
+    "nonInjectableRuntimePaths": "Repo-only functional/style/performance constructors and capture_producer_snapshot do not accept a replacement Context. Equivalent task-owned runtime/producer-binding paths are expressly substituted only for the1.9 admission; they must reproduce every unaffected build, security, design-system, actual DOM geometry/focus/accessibility/state, stable-input, delivery/PNG/renderer/font and resource assertion. Do not monkeypatch these constructors or omit assertions because their wrappers are blocked. Any additional incompatibility outside these finite predicates is not automatically exempted."
+  },
+  "inertDesignObservations": {
+    "structuralValidation": "Unchanged proposed verify_site.py PASS:35HTML,33product pages,14workflows,20capability records. Existing shared ui_reference_check.validate has only the two expected proposed-status failures, with generator reproducibility and exact inventory/hash checks otherwise satisfied; the proposed reference is NOT APPROVED.",
+    "prototype": "Four bounded offline cases:1440x900 and1280x720 in both themes; new region within viewport, review anchor focused below fixed header, download remains disabled and no external requests. These are inert prototype observations, not native/Core/product or full accessibility qualification.",
+    "retainedAdverse": "First prototype inspection FAIL at1280 due4px horizontal document overflow. Untouched approved1.8 has the same1284px document width; final baseline-relative observation shows no new overflow. Retain the failure and inherited limitation; no full-responsive PASS or weakened product criterion follows.",
+    "inputs": [
+      {
+        "path": "artifacts/tmp/CAP-05.S01.T03.reference-site-02.log",
+        "rawSHA256": "43626d269d66cf7e74ab25b5bd3ca48c220aaabdfcb4c2032dd31d6c584d7050"
+      },
+      {
+        "path": "artifacts/tmp/CAP-05.S01.T03.preview-experience-01.py",
+        "rawSHA256": "962da53079c9ac495778491521a2a3a3ec82c685636a51d325314d00616ad67a"
+      },
+      {
+        "path": "artifacts/tmp/CAP-05.S01.T03.experience-previews-01/report.json",
+        "rawSHA256": "71d02aad0fe2bfecb92716237d3742a16d55d1ab64432201b94c82ece2d41634"
+      },
+      {
+        "path": "artifacts/tmp/CAP-05.S01.T03.inspect-overflow-01.py",
+        "rawSHA256": "69a326b16de5836da0aa35ad0112a2d1973fba2b8fda88dc46390da422da7699"
+      },
+      {
+        "path": "artifacts/tmp/CAP-05.S01.T03.overflow-diagnostic-01.log",
+        "rawSHA256": "08c4a175e5207e3bc78f946f3f2185561d8dbe35e47a5f637937559473511666"
+      },
+      {
+        "path": "artifacts/tmp/CAP-05.S01.T03.preview-experience-02.py",
+        "rawSHA256": "671da6d82240629fad2834af02ab5f90256c1a15efef10668bdfbb08b1a2db17"
+      },
+      {
+        "path": "artifacts/tmp/CAP-05.S01.T03.experience-previews-02/report.json",
+        "rawSHA256": "7f734687e80a7e407d076fde22480a75d1e5d57d659c774abc38e4be0053fc53"
+      },
+      {
+        "path": "artifacts/tmp/CAP-05.S01.T03.inert-reference-check-01.json",
+        "rawSHA256": "ef2c5bfbbfe978fd2fd3f1d28e28cb460ad41972f72a4ec99386274fa2b5a4b1"
+      }
+    ]
+  },
+  "unchangedBoundaries": [
+    "No further automation framework source/schema/policy/CI/controller/verifier/shared-selector/dependency/runtime edits after A05. Normal taskctl operations, product implementation and separately named task-owned evidence producers are allowed only within this approved scope.",
+    "T03 acceptance criteria, original review_gate and Wave approval remain immutable; this explicit design decision is separate from required expanded independent task/security review. No task, slice, checkpoint, Wave or G2 completion is approved here.",
+    "ADR0025/0029 and inherited native-only/LPAC/Python/no-plaintext-write, encrypted SQLCipher/object-store, researcher-rights/egress and no external-effect boundaries are unchanged. Product integration must exercise real permitted download, denial, cancellation, cleanup failure, restart/fresh confirmation and metadata retention; mocks/screenshots cannot prove those boundaries.",
+    "Maintain original reference proposals, approved publications, approvals, adverse runs and review rounds. No shortened claim base, fabricated receipt, reapproved historical packet, hidden monkeypatch, generic future exemption or reset.",
+    "All six unfinished CAP05 slices and16 original tasks remain subject to normal evidence, independent reviews, local integration, fresh full W2 qualification and separate human G2 release approval."
+  ],
+  "prerequisites": {
+    "W2.A01-A05": "ADOPTED",
+    "CAP-04.S01-S05": "DONE/APPROVED",
+    "CAP-05.S01.T01": "DONE/APPROVED",
+    "CAP-05.S01.T02": "DONE/APPROVED; local main deae00d0bb67a78ab17291edccbfb770c5d54884",
+    "CAP-05.S01.T03": "READY/unclaimed",
+    "campaign": "PAUSED/quiescent at contextCommit",
+    "currentReference": "APPROVED1.8; unchanged",
+    "proposedReference": "INERT1.9",
+    "independentReadinessReview": "REQUIRED_BEFORE_OWNER_REQUEST",
+    "ownerApproval": "PENDING",
+    "G2": "PENDING; release approval presently illegal"
+  },
+  "alternatives": [
+    {
+      "id": "approve-exact-product-and-source-free-method",
+      "recommended": true,
+      "effect": "Approve the exact reference and bounded method, then implement originalT03 and continue product delivery with real qualification and independent reviews; no framework source work."
+    },
+    {
+      "id": "keep-current-reference-and-hold",
+      "recommended": false,
+      "effect": "Retain approved1.8 and stop only the affected T03/W2 campaign; planned remote confirmation cannot be implemented under the existing local-only attachment contract."
+    },
+    {
+      "id": "reconsider-framework-repair",
+      "recommended": false,
+      "effect": "Would require explicit reversal of the no-more-framework-source direction and a separately concrete approved source scope. This packet neither requests nor authorizes that work."
+    }
+  ],
+  "exactResumeCondition": "Independent readiness approves these exact committed bytes with no open blocking findings; owner explicitly approves both the exact1.9 product experience and this one-task/source-free method/procedure exception. Commit append-only EX01 and design records binding proposal commit/hash/package/readiness. Publish only allowed approval metadata and manifest hashes; prove exact reference publication/preliminary presentation mapping and update affected material plans before product edits. Resume the same W2 owner/branch/worktree/LOC/windows-x64 through taskctl wave resume at actual current HEAD; then ordinary next/show/claim CAP-05.S01.T03 with actual full claim base and task-start planning. Product consumer selector activation/builds/conformance occur inside claimed T03, with fresh final machine proof and independent task/slice review before local integration. No dependent product before approval/publication, no framework implementation task and no premature G2 request.",
+  "references": [
+    {
+      "path": "planning/reference-approvals/RO-UI-ACADEMIC-MINIMAL-1.8.json",
+      "rawSHA256": "1f1d39020a770adf5fd3df1ba3717bfd31a4798b6e39d8e4eb5f76ce44315105",
+      "gitBlobSHA256": "1f1d39020a770adf5fd3df1ba3717bfd31a4798b6e39d8e4eb5f76ce44315105",
+      "commit": "ed5012226f903862960ce8b405b1299df96d7fb3"
+    },
+    {
+      "path": "planning/verification-method-approvals/CAP-05.S01.T01.VM01.json",
+      "rawSHA256": "27eae17f1f0d40e0e39f06b0151b8ccb6bae72361d927c9c5ab6da9e66b7deb8",
+      "gitBlobSHA256": "27eae17f1f0d40e0e39f06b0151b8ccb6bae72361d927c9c5ab6da9e66b7deb8",
+      "commit": "ed5012226f903862960ce8b405b1299df96d7fb3"
+    },
+    {
+      "path": "packages/contracts/workflow-profile/presentation-compatibility-1.8.json",
+      "rawSHA256": "ec48a491f9a1c5755ce78ceea8b2fee11fd3035c96bfb247606d27310806a8a1",
+      "gitBlobSHA256": "ec48a491f9a1c5755ce78ceea8b2fee11fd3035c96bfb247606d27310806a8a1",
+      "commit": "ed5012226f903862960ce8b405b1299df96d7fb3"
+    },
+    {
+      "path": "planning/slice-plans/CAP-05/CAP-05.S01-rights-aware-document-acquisition.md",
+      "rawSHA256": "60812af8e0d4ef6ecdd9a176eef6d696658c24db757f8a55cb066d9927c74e5f",
+      "gitBlobSHA256": "60812af8e0d4ef6ecdd9a176eef6d696658c24db757f8a55cb066d9927c74e5f",
+      "commit": "ed5012226f903862960ce8b405b1299df96d7fb3"
+    },
+    {
+      "path": "tools/ui_change_gate.py",
+      "rawSHA256": "fa77fdf99c05b64954c4ce62956e137f2a97f09b96f42d4d75aeb68c05cde126",
+      "gitBlobSHA256": "fa77fdf99c05b64954c4ce62956e137f2a97f09b96f42d4d75aeb68c05cde126",
+      "commit": "ed5012226f903862960ce8b405b1299df96d7fb3"
+    },
+    {
+      "path": "tools/ui_conformance.py",
+      "rawSHA256": "8be73d09a2b3ee81a1a5079593b8f1cf57539d067cebe99f2744de4fc975b8e2",
+      "gitBlobSHA256": "8be73d09a2b3ee81a1a5079593b8f1cf57539d067cebe99f2744de4fc975b8e2",
+      "commit": "ed5012226f903862960ce8b405b1299df96d7fb3"
+    },
+    {
+      "path": "tools/ui_reference_check.py",
+      "rawSHA256": "77cee156dc22574c53521a05b71a82d8da7db99cc9022e85ab712de963b8a1f6",
+      "gitBlobSHA256": "77cee156dc22574c53521a05b71a82d8da7db99cc9022e85ab712de963b8a1f6",
+      "commit": "ed5012226f903862960ce8b405b1299df96d7fb3"
+    },
+    {
+      "path": "tools/reference_design_approval.py",
+      "rawSHA256": "33fab79a0085dbbf281fa7a4e3e2f87dd47428fdc0b17324919ba18e381b8fd3",
+      "gitBlobSHA256": "33fab79a0085dbbf281fa7a4e3e2f87dd47428fdc0b17324919ba18e381b8fd3",
+      "commit": "ed5012226f903862960ce8b405b1299df96d7fb3"
+    },
+    {
+      "path": "tools/desktop_app_check.py",
+      "rawSHA256": "cb617d6448e8a358317ecf530266d5bd64ed6ff7212729c4cdf8895449e813c8",
+      "gitBlobSHA256": "cb617d6448e8a358317ecf530266d5bd64ed6ff7212729c4cdf8895449e813c8",
+      "commit": "ed5012226f903862960ce8b405b1299df96d7fb3"
+    },
+    {
+      "path": "tools/product_style_check.py",
+      "rawSHA256": "b682228ce0a1ae8ae7093490cfc3247c00843e3612a3476325ef46148ebc92c0",
+      "gitBlobSHA256": "b682228ce0a1ae8ae7093490cfc3247c00843e3612a3476325ef46148ebc92c0",
+      "commit": "ed5012226f903862960ce8b405b1299df96d7fb3"
+    },
+    {
+      "path": "tools/desktop_performance_check.py",
+      "rawSHA256": "78f04224057f4f3ae064691bc02206bb589740f2bcd179818c44d6c8d3c86980",
+      "gitBlobSHA256": "78f04224057f4f3ae064691bc02206bb589740f2bcd179818c44d6c8d3c86980",
+      "commit": "ed5012226f903862960ce8b405b1299df96d7fb3"
+    },
+    {
+      "path": "verification/extensions/desktop-ui.json",
+      "rawSHA256": "f7cab0dca35bbed27511e7bde3bf1824b83925c79955bdc0f6ec4daa9f09d708",
+      "gitBlobSHA256": "f7cab0dca35bbed27511e7bde3bf1824b83925c79955bdc0f6ec4daa9f09d708",
+      "commit": "ed5012226f903862960ce8b405b1299df96d7fb3"
+    },
+    {
+      "path": "apps/desktop/scripts/assemble-application.mjs",
+      "rawSHA256": "5a29875021250bf9dede6d95076ded4f2c43e3a507b06d114a7651abb7328ae5",
+      "gitBlobSHA256": "931bf104f401acdc3361d437aae0c04e46103700e083c6326c3309c71eb6c5d5",
+      "commit": "ed5012226f903862960ce8b405b1299df96d7fb3"
+    },
+    {
+      "path": "apps/desktop/scripts/assemble-reference.mjs",
+      "rawSHA256": "be83c7cdae6ea9198bf93b942e4c9e776f3bdaa42d7a270d5d12187d60ea3a2c",
+      "gitBlobSHA256": "ba0657afbc13adb4a41bf19c0a9ecb5b01b09698c4377452d5ee32de174102ad",
+      "commit": "ed5012226f903862960ce8b405b1299df96d7fb3"
+    }
+  ],
+  "frameworkSourceChangesAuthorized": false,
+  "taskApproval": false,
+  "waveCompletion": false,
+  "releaseApproval": false
+}
