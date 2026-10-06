@@ -1039,7 +1039,7 @@
       "exit_gate_id": "G2",
       "gate_status": "PENDING",
       "approval_status": "APPROVED",
-      "completion_status": "PAUSED",
+      "completion_status": "IN_PROGRESS",
       "unlocks_waves": [
         "W3"
       ],
@@ -18781,13 +18781,13 @@
             {
               "task_id": "CAP-05.S01.T01",
               "title": "Implement local document attachment and version association",
-              "status": "BLOCKED",
+              "status": "IN_PROGRESS",
               "mode": "latest-review-only",
               "latest_review": {
                 "reviewer": null,
                 "result": null,
                 "reviewed_at": null,
-                "notes": "Reopened: CAP-04.S05 integrated qualification and independent slice approval close the protected signed-LPAC and C11 heartbeat/C12 HTTP-enable predecessor blockers. Preserve original6506 base, all adverse native/UI findings and adopted A01-A05. Resume the bounded actual D3D role restoration and original full-base current1.8/native/picker/commit/reopen proof without framework source development."
+                "notes": "Reopened: Owner-approved VM01 at8ba210db authorizes source-free equivalent original6506 history verification and one supported resume/reopen. Preserve original task scope/base, all adverse findings, approved1.8 and A01-A05, exact current product8297, actual public-gate timeout, final criterion proof and independent product/security review. No framework source changes or release approval."
               },
               "review_control": null
             },
@@ -18822,7 +18822,7 @@
             {
               "task_id": "CAP-05.S01.T01",
               "title": "Implement local document attachment and version association",
-              "status": "BLOCKED",
+              "status": "IN_PROGRESS",
               "page": "CAP-05/CAP-05.S01.T01.html",
               "dependencies": [
                 "CAP-04.S04.T02",

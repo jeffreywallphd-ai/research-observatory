@@ -1,0 +1,83 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "vm01-supported-sequential-return-checkpoint",
+  "taskId": "CAP-05.S01.T01",
+  "waveId": "W2",
+  "ownerApprovalCommit": "8ba210dbad9c7997f341ac1aec8c4f80eabed67c",
+  "ownerApprovalPath": "planning/verification-method-approvals/CAP-05.S01.T01.VM01.json",
+  "ownerApprovalSHA256": "27eae17f1f0d40e0e39f06b0151b8ccb6bae72361d927c9c5ab6da9e66b7deb8",
+  "originalTaskBaseCommit": "6506c68461144747b0ee9be10853211717aa381d",
+  "operations": [
+    {
+      "step": "wave-resume",
+      "receipt": {
+        "authority": "evidence-only",
+        "casOutcome": "matched-and-replaced",
+        "changedFields": [
+          "waves"
+        ],
+        "documentType": "taskctl-transition-receipt",
+        "operation": "wave",
+        "predecessorSha256": "01ad610be53eff7c0a483baa3a9513eebb766cd1e13b78f68f65fe8ec01513ad",
+        "producerCommit": "8ba210dbad9c7997f341ac1aec8c4f80eabed67c",
+        "producerCommitSemantics": "entry-HEAD observation; not runner authentication or a stable-HEAD assertion",
+        "status": "COMMITTED",
+        "successorSha256": "3e9395f6cdf8189408a79e1e3f8e34fd1c2557068c13797b172ebd5ae0bed56e"
+      },
+      "rawLog": "artifacts/tmp/CAP-05.S01.T01.VM01.wave-resume-01.log",
+      "rawLogSHA256": "c5c5c3ca0dcb42def08a5450af8413ab33ed99efbaa901070970b7623f63d634"
+    },
+    {
+      "step": "reopen",
+      "receipt": {
+        "authority": "evidence-only",
+        "casOutcome": "matched-and-replaced",
+        "changedFields": [
+          "capabilities"
+        ],
+        "documentType": "taskctl-transition-receipt",
+        "operation": "reopen",
+        "predecessorSha256": "3e9395f6cdf8189408a79e1e3f8e34fd1c2557068c13797b172ebd5ae0bed56e",
+        "producerCommit": "8ba210dbad9c7997f341ac1aec8c4f80eabed67c",
+        "producerCommitSemantics": "entry-HEAD observation; not runner authentication or a stable-HEAD assertion",
+        "status": "COMMITTED",
+        "successorSha256": "0d8d8886fd0a9abc20abdcf44ec3d1807b7dc4ec2296d1c9491e280cbff9d600"
+      },
+      "rawLog": "artifacts/tmp/CAP-05.S01.T01.VM01.reopen-01.log",
+      "rawLogSHA256": "bdde2771eac4c980df4ec18d726b8431675f3c54956d0acded7ecae2d41714d4"
+    }
+  ],
+  "resumeRecord": {
+    "id": "W2.R12",
+    "wave_id": "W2",
+    "control_revision": 12,
+    "prior_status": "PAUSED",
+    "pre_resume_commit": "8ba210dbad9c7997f341ac1aec8c4f80eabed67c",
+    "prior_campaign_sha256": "92caa5dbf5200d5f7a9c0b2a4357b67821be5f71aeb850af32c1be396829fe46",
+    "branch": "codex/w2-implementation",
+    "worktree": ".",
+    "profile": "LOC",
+    "platform": "windows-x64",
+    "actor": "codex-w2-implementation",
+    "resumed_at": "2026-10-06T10:45:33+00:00"
+  },
+  "pausedCommittedBacklogSHA256": "b41a0b9dd8ea9c875ec26c6f59a6b6c6a236f333e54b240c658bf9ffd9e2dde0",
+  "pausedWorkingBacklogSHA256": "01ad610be53eff7c0a483baa3a9513eebb766cd1e13b78f68f65fe8ec01513ad",
+  "resumedIntermediateSnapshot": {
+    "path": "artifacts/tmp/CAP-05.S01.T01.VM01.resumed-backlog-01.yaml",
+    "sha256": "3e9395f6cdf8189408a79e1e3f8e34fd1c2557068c13797b172ebd5ae0bed56e"
+  },
+  "reopenedWorkingBacklogSHA256": "0d8d8886fd0a9abc20abdcf44ec3d1807b7dc4ec2296d1c9491e280cbff9d600",
+  "taskStatus": "IN_PROGRESS",
+  "waveCampaignStatus": "ACTIVE",
+  "publicationSemantics": "Two actual supported, sequential compare-and-swap operations at fixed owner-record HEAD. The exact intermediate raw snapshot and matching receipts preserve the resume before reopen; the later checkpoint commit publishes both without inventing an extra commit or active epoch.",
+  "taskCompletion": false,
+  "taskApproval": false,
+  "waveCompletion": false,
+  "releaseApproval": false,
+  "limits": [
+    "Transition receipts are observations of persisted state, not command/source authentication or approval.",
+    "The exact original-history equivalent proof, current selected product checks, separate independent dispositions and normal taskctl submit/review remain required."
+  ],
+  "producerSHA256": "b116f05583fc66db0029b3547e830171cbb6510bb051da6345d519f00c5a6229"
+}
