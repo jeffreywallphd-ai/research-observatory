@@ -1,0 +1,322 @@
+{
+  "document_type": "independent-slice-review",
+  "slice_id": "CAP-04.S05",
+  "review_round": "01",
+  "reviewer": "agent:/root/c11_security_review",
+  "result": "approved",
+  "reviewed_at": "2026-10-05T23:40:23Z",
+  "candidate_commit": "3cac985d89bfa610e292e1ff8d8f05e91c6c816c",
+  "evidence_delivery_commit": "650f3a4f1f3ed6063dfe287c8a03523c18023ab8",
+  "submission_metadata_commit": "5309c12520760d405ca99da45b427b47c7e6b012",
+  "approval_commit": "c85a59f3a293f8e3f2eaf6454682c9a14b1efa55",
+  "evidence_reference": {
+    "path": "artifacts/evidence/CAP-04.S05.qualification-01.json",
+    "sha256": "e8eefc2f4daa03a2e2b85cce2b1f68ff469aac9795b369966e1faa0a9d5a1230",
+    "commit": "650f3a4f1f3ed6063dfe287c8a03523c18023ab8"
+  },
+  "qualification_markdown": {
+    "path": "artifacts/evidence/CAP-04.S05.qualification-01.md",
+    "sha256": "9f721384d8155918a9dd1c489a92472b67a646d918c4d272242b5c84f32759de"
+  },
+  "reviewed_backlog_sha256": "0b897e3bcda8b8f12147985afb941d77043482fcffff8464cc8c2a572fb09eb8",
+  "notes": "Independent deep integration review approves CAP-04.S05 slice completion for the exact committed qualification bundle at 650f3a4f and unchanged qualified source candidate 3cac985d. All three original tasks and linked C10-C12 corrections are independently DONE with no open blocking findings. The SDK admits exact trusted signed manifests and project permissions; actual current frozen supervised Core production InstalledPluginRuntime then composes native human trust/enable, current project Intent/privacy and exact invocation consent with zero-capability LPAC, the production broker and local encrypted publication for one public DOI. The separate current signed sample/source-Core DPAPI/SQLCipher journey publishes two pages with exact rights/provenance/predecessor lineage, rejects forged cursor before egress and malformed output, cancels active work without publication, retains pages/grants after orderly close and fresh-process reopen, cancels an unstarted job after ephemeral consent loss with zero egress, and denies crash-lock takeover with all 23 project files unchanged. Its verified source runtime adapter, synthetic provider and test signing remain explicit. Fresh affected grant/migration/API checks, 35 remaining SDK cases, architecture, approved 1.8 UI/browser conformance and six bounded resource timing observations complete the risk-selected matrix. Historical LPAC malicious/resource proof remains authenticated support for unchanged worker authority with its original startup-versus-connect,token-skip and per-caught-OS-denial audit limits. Prior adverse task rounds, failed fixtures, broad quality failures and C11 owner-authorized publication recovery remain preserved; the zero-call failed fixture is not assigned an unobserved exact internal denial branch. The nine-path source-to-delivery delta is metadata/evidence only. No criterion-bound blocker remains for this slice. This independent decision does not mutate taskctl or approve W2, CAP-05, full qualification or release.",
+  "integration_assessment": [
+    {
+      "criterion": "Approved plan sections4,5,9,13,14:SDK identity,compatibility and downstream handoff",
+      "result": "satisfied",
+      "assessment": "Original reviewed manifest/API and sample contracts plus 35 fresh SDK cases establish exact signed-byte/file trust, separate publisher authority, unsupported operation/version/feature denial, same-version package renewal, exact project/grant/destination/scientific-request binding, public camel-case output schema and bounded error pointers without private echoes. Documentation and sample fixtures remain language-neutral source assertion contracts; downstream consumers receive typed identities, provenance and rights and must obtain current Core authorization. No hosted service or marketplace is added."
+    },
+    {
+      "criterion": "Approved plan sections5,7,10,17:clean project/install principal integration and authority",
+      "result": "satisfied",
+      "assessment": "Current freshly frozen, inventory-verified production Core runs supervised with actual native loopback authentication and no installed-runtime override. A new owned synthetic project/publisher performs trust, exact HTTP enable, current Intent/privacy and invocation consent; the installed signed worker makes one permitted production-broker GET for public DOI 10.1128/mbio.01735-25 and publishes actual returned DOI/title only, with unknown terms/license/access, then closes. The separate protected signed sample/source-Core proof joins encrypted broker observations and worker pages with immutable lineage. Broker, LPAC, secret, grant/consent and transaction fences preserve reviewed authority; historical adversarial/native proof retains its original limits."
+    },
+    {
+      "criterion": "Approved plan sections8,10,14:failure,denial,cancellation,restart and recovery",
+      "result": "satisfied",
+      "assessment": "Current protected joined proof includes two-page predecessor and rights observations, forged continuation denial before egress, malformed-page denial without output, active cancellation without publication, orderly close releasing the owned lock, and new-process reopen retaining full grant/page identities. A pending durable job loses ephemeral consent and cancels before egress. Intentional hard crash preserves its lock; next real open returns 409 RO-CORE-PROJECT-ALREADY-OPEN and leaves all 23 project files unchanged. This proves fail-closed crash-open denial; no automatic stale-lock recovery is claimed. Current encrypted grant migration checks retain the v20 fingerprint, ordered v21-v23 history, backup/reopen and injected rollback/retry through the approved C10 restoration."
+    },
+    {
+      "criterion": "Approved plan sections6,10,17:governed Source Manager experience/accessibility",
+      "result": "satisfied",
+      "assessment": "Approved 1.8 publication and its exact presentation witness preserve 1.5 workflow semantics and inherited 1.7 Source Manager trust/permission contracts; all A01-A05 adoptions remain preserved. Current checks pass for 109 tokens, 33 routes, 139 browser and 390 keyboard workflow cases, 66 responsive accessibility cases and 66 light/dark visual captures against package cd8995fd, with no baseline/reference edit. Historical native/Rust decision/picker contracts remain task-bound proof. Browser/API evidence does not claim a current production desktop native dialog/session or release installer qualification."
+    },
+    {
+      "criterion": "Approved plan sections10,11,12:resources,privacy,observability and scientific assertions",
+      "result": "satisfied",
+      "assessment": "Six fresh signed LPAC invocations in three ordered two-page repetitions range from 3.5579629000 to 3.6797799000 seconds, including launcher/guardian/cleanup, below the unchanged 60-second deadline with enforced 256 MiB and one-job limits. Raw samples, the measured Windows 11 AMD64 host with 20 logical CPUs, exact fixture/producer/runtime bytes and warm-filesystem limits remain bound. This is a small observed distribution, not percentile, minimum-hardware, peak-memory or live-throughput qualification; prior real resource-exhaustion proof supports unchanged enforcement. No reusable secret/project path enters SDK worker IPC. The Core broker owns scoped secret injection, current rights/privacy, replay redaction and encrypted response references. Source fields remain attributable assertions; unknown rights are restrictive and license observations do not grant model/export authority."
+    },
+    {
+      "criterion": "Approved plan sections10,15,17 and workflow8.1:evidence,scope and completion",
+      "result": "satisfied",
+      "assessment": "The committed manifest hash, 19 selected check logs, five current input reports, nine original/corrective evidence references and five adverse reports authenticate as 38 named files with raw/canonical hashes. Source remains 3cac; metadata 5309 records C12 DONE, and delivery 650f only adds bundle JSON/Markdown. Exact review history preserves T02 R01 and T03 R01/R02 changes-requested rounds and their explicit closures. Bundle taskEvidence independentResult is interpreted as final task disposition, never approval of every historical packet. No framework source change or failed-report waiver is hidden; affected-profile checkpoints, full W2 qualification and human release gates remain separate."
+    }
+  ],
+  "evidence_reproduction": {
+    "prior_deep_assessment": {
+      "path": "artifacts/tmp/CAP-04.S05.assessment-c11_security_review-02.json",
+      "raw_sha256": "497ca51d60cbc6c498bdeb08b672ed2fb198381f8965a6c1300002161fae495b",
+      "result": "Earlier incremental deep source/matrix audit reused with current exact-bundle authentication; no unchanged suites repeated."
+    },
+    "bundle": {
+      "canonical_sha256": "e8eefc2f4daa03a2e2b85cce2b1f68ff469aac9795b369966e1faa0a9d5a1230",
+      "named_file_references": 38,
+      "selected_checks": 19,
+      "result": "PASS: immutable Git JSON/Markdown bytes and source/metadata identities match; all 38 named raw/canonical reference pairs reproduce. The smoke02 hidden-branch and enforced-versus-measured resource limitations are explicit in committed Markdown/matrix."
+    },
+    "source_input_closure": {
+      "qualified_source_commit": "3cac985d89bfa610e292e1ff8d8f05e91c6c816c",
+      "delivery_commit": "650f3a4f1f3ed6063dfe287c8a03523c18023ab8",
+      "metadata_only_delta": [
+        "artifacts/evidence/CAP-04.S05.qualification-01.json",
+        "artifacts/evidence/CAP-04.S05.qualification-01.md",
+        "artifacts/evidence/W2.C12.T01.R01.json",
+        "artifacts/evidence/W2.C12.T01.review-R01.json",
+        "docs/planning-implementation-plan.md",
+        "planning/backlog.yaml",
+        "planning/review-site/manifest.json",
+        "planning/review-site/waves/W2.html",
+        "planning/status-summary.md"
+      ],
+      "current_rehashed_input_count": 12295,
+      "excluded_changed_planning_paths": [
+        "docs/planning-implementation-plan.md",
+        "planning/backlog.yaml",
+        "planning/review-site/manifest.json",
+        "planning/review-site/waves/W2.html",
+        "planning/status-summary.md"
+      ],
+      "mismatches": [],
+      "unreadable_inputs": [],
+      "result": "PASS: captured source, tests, fixtures, producers, installed Python, worker and guardian inputs still match the final-selected observation, excluding only five changed planning files. Stable before/after maps retain 12,300 entries. Green/build/joined snapshots retain their original 12,160/12,299/12,299 stable inputs. No source/runtime change after observation or current native result relabeled from historical evidence."
+    },
+    "current_frozen_artifact": {
+      "image_sha256": "f9a34dc3fc5d3b7c72460432fabfc978e4178ff0a935957c18da92346f36c38d",
+      "files": 784,
+      "result": "PASS: all 784 current files match exact manifest byte counts and hashes, with zero extra or missing files. Prior independent immutable-Git schema/build-contract validation and installed snapshot locks authenticate the production package. No process execution during review."
+    },
+    "task_and_correction_history": [
+      {
+        "task_id": "CAP-04.S05.T01",
+        "status": "DONE",
+        "final_result": "approved",
+        "attempts": [
+          {
+            "attempt_id": "R01",
+            "result": "approved",
+            "candidate_commit": "0f94ec694d5e87dfa370bad4110b1d37d364d680",
+            "ledger": {
+              "path": "artifacts/evidence/CAP-04.S05.T01.review-R01.json",
+              "sha256": "cb6232f8b2d1af979e2b2ea1d047db674591687438e42dc53c7c9a8a8eb4bd5c"
+            },
+            "findings": [],
+            "closures": []
+          }
+        ],
+        "open_blocking_findings": []
+      },
+      {
+        "task_id": "CAP-04.S05.T02",
+        "status": "DONE",
+        "final_result": "approved",
+        "attempts": [
+          {
+            "attempt_id": "R01",
+            "result": "changes-requested",
+            "candidate_commit": "e1d55299a132597b572bfb26e1ea09a7c45c760e",
+            "ledger": {
+              "path": "artifacts/evidence/CAP-04.S05.T02.review-R01.json",
+              "sha256": "02db1b707f46aa63962acafa203ba75f478cf614bcc2838bd5f845d3ead90570"
+            },
+            "findings": [
+              "CAP-04.S05.T02-R01-F01"
+            ],
+            "closures": []
+          },
+          {
+            "attempt_id": "R02",
+            "result": "approved",
+            "candidate_commit": "5a76725cfb521448a3da7a20b993c370ca854ba6",
+            "ledger": {
+              "path": "artifacts/evidence/CAP-04.S05.T02.review-R02.json",
+              "sha256": "d67b08296ed64b7bde214f9e284f57dbe4f8066384fd46dff6a741962c25cff8"
+            },
+            "findings": [],
+            "closures": [
+              "CAP-04.S05.T02-R01-F01"
+            ]
+          }
+        ],
+        "open_blocking_findings": []
+      },
+      {
+        "task_id": "CAP-04.S05.T03",
+        "status": "DONE",
+        "final_result": "approved",
+        "attempts": [
+          {
+            "attempt_id": "R01",
+            "result": "changes-requested",
+            "candidate_commit": "9a22c5fe122358b854ceae6c7cb47cdfd68c8f12",
+            "ledger": {
+              "path": "artifacts/evidence/CAP-04.S05.T03.review-R01.json",
+              "sha256": "994719a14891128c490f6ce56b9ed85249304d4b22c4ce93da2548e66ce00e4f"
+            },
+            "findings": [
+              "CAP-04.S05.T03-R01-F01"
+            ],
+            "closures": []
+          },
+          {
+            "attempt_id": "R02",
+            "result": "changes-requested",
+            "candidate_commit": "42379f73cf6853be3618a8bb554ffa50a3fdf5c0",
+            "ledger": {
+              "path": "artifacts/evidence/CAP-04.S05.T03.review-R02.json",
+              "sha256": "f186b6f01b7f4461fde3e60dc530267090f54d96e7f2cd8303b160c68a6f4b15"
+            },
+            "findings": [
+              "CAP-04.S05.T03-R02-F01"
+            ],
+            "closures": [
+              "CAP-04.S05.T03-R01-F01"
+            ]
+          },
+          {
+            "attempt_id": "R03",
+            "result": "approved",
+            "candidate_commit": "c879f5d68aea48622b719e105b7915821ddbb6a5",
+            "ledger": {
+              "path": "artifacts/evidence/CAP-04.S05.T03.review-R03.json",
+              "sha256": "891d12759db54c6f51b1860951cbf90be7f56237d0ede468620ab8a6b6e13394"
+            },
+            "findings": [],
+            "closures": [
+              "CAP-04.S05.T03-R02-F01"
+            ]
+          }
+        ],
+        "open_blocking_findings": []
+      },
+      {
+        "task_id": "W2.C10.T01",
+        "status": "DONE",
+        "final_result": "approved",
+        "attempts": [
+          {
+            "attempt_id": "R01",
+            "result": "approved",
+            "candidate_commit": "3dde91238b0be11847f68845a52b9785048dc8cd",
+            "ledger": {
+              "path": "artifacts/evidence/W2.C10.T01.review-R01.json",
+              "sha256": "38db2884e79a7f43462d33553c57147f371d61ce931a35672602550bdd3e0a47"
+            },
+            "findings": [],
+            "closures": []
+          }
+        ],
+        "open_blocking_findings": []
+      },
+      {
+        "task_id": "W2.C11.T01",
+        "status": "DONE",
+        "final_result": "approved",
+        "attempts": [
+          {
+            "attempt_id": "R01",
+            "result": "approved",
+            "candidate_commit": "9a80c0f6cd6f5d444e7676c0ff287b4bb58c158f",
+            "ledger": {
+              "path": "artifacts/evidence/W2.C11.T01.review-R01.json",
+              "sha256": "f519ffe55bc8ac3e13d280533a4f6b198ab6294b5bab3f5fa75ae75d5a4286d7"
+            },
+            "findings": [],
+            "closures": []
+          }
+        ],
+        "open_blocking_findings": []
+      },
+      {
+        "task_id": "W2.C12.T01",
+        "status": "DONE",
+        "final_result": "approved",
+        "attempts": [
+          {
+            "attempt_id": "R01",
+            "result": "approved",
+            "candidate_commit": "3cac985d89bfa610e292e1ff8d8f05e91c6c816c",
+            "ledger": {
+              "path": "artifacts/evidence/W2.C12.T01.review-R01.json",
+              "sha256": "df5b4e510b434bff3d7062409996e76cbdf061451a3c9c99349a3569b85f7694"
+            },
+            "findings": [],
+            "closures": []
+          }
+        ],
+        "open_blocking_findings": []
+      }
+    ],
+    "preserved_adverse_reports": [
+      {
+        "path": "artifacts/tmp/CAP-04.S05.selected-06-6a2e7487.json",
+        "rawSha256": "fa067758e9ef315782b2212521e03e637ca01b7f95fb220e94abef083c1d9d71",
+        "canonicalSha256": "fa067758e9ef315782b2212521e03e637ca01b7f95fb220e94abef083c1d9d71",
+        "status": "FAIL"
+      },
+      {
+        "path": "artifacts/tmp/CAP-04.S05.installed-smoke-12-6a2e7487.json",
+        "rawSha256": "6519018df8b69856b3a0bc3c72b3ab2c3b052e5c1f8ffcb66c6b11607e1955a8",
+        "canonicalSha256": "20ecc7b8cd908e20ddc859f0ea964d061f725372dc52d80e13f49f7fe2a208c3",
+        "status": "FAIL"
+      },
+      {
+        "path": "artifacts/tmp/W2.C12.T01.green-01-68131d16.json",
+        "rawSha256": "75e1e776607f6634cb8eb0f0a37e612246aeecdb25d5d7c8461df35aa404a01f",
+        "canonicalSha256": "75e1e776607f6634cb8eb0f0a37e612246aeecdb25d5d7c8461df35aa404a01f",
+        "status": "FAIL"
+      },
+      {
+        "path": "artifacts/tmp/W2.C12.T01.installed-smoke-01-68131d16.json",
+        "rawSha256": "3edd80d4e80f6d276228de5b788a302e555e97540b2340cf1f6524067bd74804",
+        "canonicalSha256": "253d9de9f7e00d291744d129fc8020c403ea5d1e2f3c8d1aaae45a14ecfa03ed",
+        "status": "FAIL"
+      },
+      {
+        "path": "artifacts/tmp/W2.C12.T01.installed-smoke-02-3cac985d.json",
+        "rawSha256": "4302103f6c7bdbbc1541ad6224fc2e417dc218b28efa7ae79ca1e6acd99609e3",
+        "canonicalSha256": "d8fe8e3a50cc5b5741950adee8dbcbf034d61783a9caf241cb99aaf0743f2aac",
+        "status": "FAIL"
+      }
+    ],
+    "review_execution": "Read-only immutable Git, JSON, source, log and file-digest comparisons only; no product tests, network, native UI, HEAD change, tracked edits, commits or framework work. Only this unique ignored ledger is written."
+  },
+  "checks": [
+    {
+      "command": "Authenticate committed qualification JSON/Markdown, immutable task history and the exact source-to-metadata-only delta",
+      "result": "PASS: bundle hash, 19 checks, 38 file references, C12 DONE and all original/corrective independent approvals reproduce."
+    },
+    {
+      "command": "Continue the prior deep principal/SDK/privacy/rights/denial/cancellation/restart/resource/experience audit with captured-input and frozen-artifact rehash",
+      "result": "PASS: authenticated source/runtime inputs are unchanged; actual installed publication for one public item and the explicitly adapted protected source-Core journey compose within their stated limits."
+    },
+    {
+      "command": "Replay historical blocking-finding closures and preserve failed native, quality, installed and publication attempts without rerunning suites",
+      "result": "PASS: T02 resource and T03 input/correction-pointer findings remain closed with adverse rounds retained. No full-profile, Wave or release pass is inferred."
+    }
+  ],
+  "findings": [],
+  "closures": [],
+  "prior_findings_replayed": [
+    "CAP-04.S05.T02-R01-F01",
+    "CAP-04.S05.T03-R01-F01",
+    "CAP-04.S05.T03-R02-F01"
+  ],
+  "deferred_obligations": [
+    "Fresh complete affected/repository/profile union, broader security/privacy/rights/migration/packaging/accessibility/performance and cross-capability failure/recovery qualification remains required at checkpoint/W2 exit.",
+    "The source joined runtime is a verified test adapter with synthetic provider HTTP; it does not qualify production installed startup by itself. The separate current installed smoke proves that production boundary for one real public item only.",
+    "Broad quality remains adverse on an unrelated review-site formatter and CAP-05 picker fixture typing; C12 fixes only its admitted worker-page/admin fixtures. No failed suite is reported as passing; no framework changes or test waivers are granted.",
+    "No production signing, remote upload, non-Windows platform, minimum hardware, general live-provider availability, hard-crash lock recovery or release approval is claimed.",
+    "CAP-05.S01.T01 retains original base and real fifth-D3D finding; its task and remaining W2 contribution still require completion."
+  ],
+  "scope_limit": "CAP-04.S05 slice completion only. W2 checkpoints and full repository/profile/cross-capability qualification, the original blocked CAP-05 task and remaining contributions, minimum hardware, production signing, non-Windows platforms, live coverage and the separate human release gate are not approved."
+}

@@ -1490,20 +1490,22 @@ waves:
     notes: Owner explicitly approved the complete W2 execution packet and requested implementation; G1 prototype limitations
       remain recorded, not waived.
   campaign:
-    status: PAUSED
+    status: ACTIVE
     scope: wave
     owner: codex-w2-implementation
     branch: codex/w2-implementation
     worktree: .
-    base_sha: 4f93e7ee4c35c9a6275adce1439e68e1979b1ddf
+    base_sha: 650f3a4f1f3ed6063dfe287c8a03523c18023ab8
     profile: LOC
     platform: windows-x64
     started_at: '2026-09-19T17:21:58+00:00'
-    updated_at: '2026-10-05T21:59:35+00:00'
-    pause_reason: Observed valid installed HTTP plugin enable is rejected before durable grant; restore the approved T02 contract
-      through one linked product correction, preserving all adverse evidence.
-    pause_category: infeasible
-    lease: null
+    updated_at: '2026-10-05T23:57:04+00:00'
+    pause_reason: null
+    pause_category: null
+    lease:
+      claimed_by: codex-w2-implementation
+      claimed_at: '2026-10-05T23:57:04+00:00'
+      expires_at: '2026-10-06T07:57:04+00:00'
     corrective_tasks:
     - title: Implement idempotent import commits and import manifests
       objective: Batch transaction and manifest linking source file hash, parser version, record decisions, errors, and resulting
@@ -4170,6 +4172,18 @@ waves:
       platform: windows-x64
       actor: codex-w2-implementation
       resumed_at: '2026-10-05T21:09:34+00:00'
+    - id: W2.R11
+      wave_id: W2
+      control_revision: 12
+      prior_status: PAUSED
+      pre_resume_commit: 650f3a4f1f3ed6063dfe287c8a03523c18023ab8
+      prior_campaign_sha256: 05430c2ad869cf57d9074a534aabd11916d576610925f95a45dc3d257b20f61b
+      branch: codex/w2-implementation
+      worktree: .
+      profile: LOC
+      platform: windows-x64
+      actor: codex-w2-implementation
+      resumed_at: '2026-10-05T23:57:04+00:00'
   checkpoints:
   - id: W2.CP01
     kind: risk-cluster
@@ -4239,7 +4253,7 @@ waves:
     notes: Adopt exact independently approved A03 checkpoint; ordinary W2 remains PAUSED; original CAP-05.S01.T01 base6506
       and all task history retained; no further framework development after closed A05.
   completion:
-    status: PAUSED
+    status: IN_PROGRESS
     reviewer: null
     reviewed_at: null
     evidence: []
