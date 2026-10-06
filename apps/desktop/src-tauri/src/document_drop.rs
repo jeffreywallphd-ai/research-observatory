@@ -8,6 +8,7 @@ use std::{
     ffi::OsString,
     os::windows::ffi::OsStringExt,
     path::PathBuf,
+    rc::Rc,
     sync::{Arc, Mutex},
     thread,
     time::{Duration, Instant},
@@ -17,7 +18,6 @@ use webview2_com::Microsoft::Web::WebView2::Win32::{
 };
 #[cfg(feature = "integration-harness")]
 use windows::Win32::Graphics::Gdi::ClientToScreen;
-#[cfg(feature = "integration-harness")]
 use windows::Win32::UI::WindowsAndMessaging::IsWindow;
 use windows::{
     Win32::{
@@ -51,6 +51,8 @@ mod observation {
     pub(super) static DROP: AtomicU64 = AtomicU64::new(0);
     pub(super) static HELD: AtomicU64 = AtomicU64::new(0);
     pub(super) static CANDIDATE: AtomicU64 = AtomicU64::new(0);
+    pub(super) static REGISTER: AtomicU64 = AtomicU64::new(0);
+    pub(super) static GRAPHICS_REGISTER: AtomicU64 = AtomicU64::new(0);
     pub(super) fn increment(counter: &AtomicU64) {
         counter.fetch_add(1, Ordering::Relaxed);
     }
@@ -87,6 +89,7 @@ const HOVER_LIMIT: Duration = Duration::from_secs(30);
 
 struct InstalledTarget {
     hwnd: HWND,
+    identity: TargetNode,
     #[cfg(feature = "integration-harness")]
     parent: HWND,
     #[cfg(feature = "integration-harness")]
@@ -113,13 +116,20 @@ impl Drop for OleApartment {
 
 struct PendingTargets {
     entries: Vec<InstalledTarget>,
+    topology: Rc<RefCell<DropTopology>>,
     _ole: OleApartment,
 }
 
 impl Drop for PendingTargets {
     fn drop(&mut self) {
         for entry in self.entries.drain(..) {
-            let _ = unsafe { RevokeDragDrop(entry.hwnd) };
+            // Cleanup never revokes a HWND whose current identity/ancestry has
+            // changed since registration. The graphics leaf is never an entry.
+            if let Ok(topology) = self.topology.try_borrow()
+                && cleanup_target_is_owned(&topology, &entry.identity)
+            {
+                let _ = unsafe { RevokeDragDrop(entry.hwnd) };
+            }
         }
     }
 }
@@ -282,6 +292,7 @@ struct NativeDropTarget {
     window: tauri::WebviewWindow,
     manager: DocumentAttachmentManager,
     probe: Arc<Mutex<ProbeState>>,
+    topology: Rc<RefCell<DropTopology>>,
 }
 
 impl NativeDropTarget {
@@ -290,6 +301,7 @@ impl NativeDropTarget {
         controller: ICoreWebView2Controller,
         window: tauri::WebviewWindow,
         manager: DocumentAttachmentManager,
+        topology: Rc<RefCell<DropTopology>>,
     ) -> Self {
         Self {
             parent,
@@ -297,7 +309,16 @@ impl NativeDropTarget {
             window,
             manager,
             probe: Arc::default(),
+            topology,
         }
+    }
+
+    fn topology_valid(&self) -> bool {
+        self.window.hwnd().ok() == Some(self.parent)
+            && self
+                .topology
+                .try_borrow_mut()
+                .is_ok_and(|mut topology| revalidate_live(&mut topology).is_ok())
     }
 
     fn css_point(&self, point: &POINTL) -> Option<(i32, i32)> {
@@ -537,8 +558,9 @@ impl IDropTarget_Impl for NativeDropTarget_Impl {
         unsafe {
             *effect = DROPEFFECT_NONE;
         }
-        if let (Some(operation_id), Some(point)) =
-            (self.manager.armed_drop(), self.css_point(point))
+        if self.topology_valid()
+            && let (Some(operation_id), Some(point)) =
+                (self.manager.armed_drop(), self.css_point(point))
         {
             self.hover_probe(operation_id, point);
         } else {
@@ -558,8 +580,9 @@ impl IDropTarget_Impl for NativeDropTarget_Impl {
         unsafe {
             *effect = DROPEFFECT_NONE;
         }
-        if let (Some(operation_id), Some(point)) =
-            (self.manager.armed_drop(), self.css_point(point))
+        if self.topology_valid()
+            && let (Some(operation_id), Some(point)) =
+                (self.manager.armed_drop(), self.css_point(point))
         {
             if self.cached(&operation_id, point) {
                 unsafe {
@@ -592,6 +615,10 @@ impl IDropTarget_Impl for NativeDropTarget_Impl {
         observation::increment(&observation::DROP);
         unsafe {
             *effect = DROPEFFECT_NONE;
+        }
+        if !self.topology_valid() {
+            self.invalidate();
+            return Ok(());
         }
         let Some(operation_id) = self.manager.armed_drop() else {
             #[cfg(feature = "integration-harness")]
@@ -656,7 +683,7 @@ impl IDropTarget_Impl for NativeDropTarget_Impl {
             return Ok(());
         };
         self.invalidate();
-        if self.manager.armed_drop().as_deref() != Some(&operation_id) {
+        if self.manager.armed_drop().as_deref() != Some(&operation_id) || !self.topology_valid() {
             #[cfg(feature = "integration-harness")]
             crate::directory_integration_harness::observe_document_drop_decision(
                 "not-armed",
@@ -699,7 +726,7 @@ impl IDropTarget_Impl for NativeDropTarget_Impl {
 unsafe extern "system" fn collect_child(hwnd: HWND, state: LPARAM) -> BOOL {
     let children = unsafe { &mut *(state.0 as *mut Vec<HWND>) };
     children.push(hwnd);
-    true.into()
+    (children.len() <= 32).into()
 }
 
 fn window_class(hwnd: HWND) -> Option<String> {
@@ -789,6 +816,263 @@ fn diagnostic_same_nonzero(value: u32, reference: Option<u32>) -> &'static str {
     }
 }
 
+fn noninteractive_graphics_leaf(
+    host: HWND,
+    nodes: &[TargetNode],
+) -> Result<Option<&TargetNode>, &'static str> {
+    let subtree: Vec<&TargetNode> = nodes
+        .iter()
+        .filter(|node| in_host_subtree(node.hwnd, host, nodes))
+        .collect();
+    let mut graphics = subtree
+        .iter()
+        .copied()
+        .filter(|node| node.class == "Intermediate D3D Window");
+    let Some(leaf) = graphics.next() else {
+        return Ok(None);
+    };
+    let error = "RO-DOCUMENT-WEBVIEW-DROP-CLASS-UNEXPECTED";
+    if graphics.next().is_some() || subtree.len() != 5 {
+        return Err(error);
+    }
+    let sole = |class: &str| {
+        let mut candidates = subtree.iter().copied().filter(|node| node.class == class);
+        let first = candidates.next()?;
+        candidates.next().is_none().then_some(first)
+    };
+    let (Some(wry), Some(widget0), Some(widget1), Some(render)) = (
+        sole("WRY_WEBVIEW"),
+        sole("Chrome_WidgetWin_0"),
+        sole("Chrome_WidgetWin_1"),
+        sole("Chrome_RenderWidgetHostHWND"),
+    ) else {
+        return Err(error);
+    };
+    if wry.hwnd != host
+        || widget0.parent != wry.hwnd
+        || widget1.parent != widget0.hwnd
+        || render.parent != widget1.hwnd
+        || leaf.parent != widget1.hwnd
+        || !leaf.disabled
+        || !leaf.transparent
+        || nodes.iter().any(|node| node.parent == leaf.hwnd)
+        || subtree
+            .iter()
+            .any(|node| node.thread == 0 || node.process == 0)
+        || render.thread != widget1.thread
+        || render.process != widget1.process
+        || leaf.thread == render.thread
+        || leaf.process == render.process
+    {
+        return Err(error);
+    }
+    // This grants no OLE target to the disabled leaf. Its relationship to the
+    // UI root process is deliberately not inferred from renderer observations.
+    Ok(Some(leaf))
+}
+
+fn same_window_identity(first: &TargetNode, second: &TargetNode) -> bool {
+    first.hwnd == second.hwnd
+        && first.parent == second.parent
+        && first.class == second.class
+        && first.thread == second.thread
+        && first.process == second.process
+}
+
+#[derive(Clone)]
+struct DropTopology {
+    root: HWND,
+    root_class: String,
+    ui_thread: u32,
+    ui_process: u32,
+    interactive: Vec<TargetNode>,
+    graphics: Option<TargetNode>,
+}
+
+impl DropTopology {
+    fn capture(
+        root: HWND,
+        root_class: String,
+        nodes: &[TargetNode],
+        ui_thread: u32,
+        ui_process: u32,
+    ) -> Result<Self, &'static str> {
+        let selected = planned_webview_targets(root, nodes, ui_thread, ui_process)?;
+        let host = selected
+            .first()
+            .copied()
+            .ok_or("RO-DOCUMENT-WEBVIEW-DROP-TARGET-UNAVAILABLE")?;
+        let graphics = noninteractive_graphics_leaf(host, nodes)?.cloned();
+        let interactive = selected
+            .iter()
+            .map(|hwnd| {
+                nodes
+                    .iter()
+                    .find(|node| node.hwnd == *hwnd)
+                    .cloned()
+                    .ok_or("RO-DOCUMENT-WEBVIEW-DROP-TARGET-UNAVAILABLE")
+            })
+            .collect::<Result<Vec<_>, _>>()?;
+        Ok(Self {
+            root,
+            root_class,
+            ui_thread,
+            ui_process,
+            interactive,
+            graphics,
+        })
+    }
+
+    fn revalidate(&mut self, nodes: &[TargetNode]) -> Result<(), &'static str> {
+        let targets = planned_webview_targets(self.root, nodes, self.ui_thread, self.ui_process)?;
+        let error = "RO-DOCUMENT-WEBVIEW-DROP-TOPOLOGY-CHANGED";
+        if targets.len() != self.interactive.len()
+            || self.interactive.iter().any(|prior| {
+                !targets.contains(&prior.hwnd)
+                    || !nodes
+                        .iter()
+                        .any(|current| same_window_identity(prior, current))
+            })
+        {
+            return Err(error);
+        }
+        let host = self.interactive.first().ok_or(error)?.hwnd;
+        let current = noninteractive_graphics_leaf(host, nodes)?;
+        match (&self.graphics, current) {
+            (Some(prior), Some(current)) if same_window_identity(prior, current) => Ok(()),
+            (None, None) => Ok(()),
+            (None, Some(current)) => {
+                // Natural first appearance binds only the already verified
+                // noninteractive role. A later replacement never silently repins.
+                self.graphics = Some(current.clone());
+                Ok(())
+            }
+            _ => Err(error),
+        }
+    }
+}
+
+fn relevant_styles(hwnd: HWND) -> Result<(bool, bool), &'static str> {
+    use windows::Win32::Foundation::{GetLastError, SetLastError, WIN32_ERROR};
+    use windows::Win32::UI::WindowsAndMessaging::{
+        GWL_EXSTYLE, GWL_STYLE, GetWindowLongPtrW, WS_DISABLED, WS_EX_TRANSPARENT,
+    };
+    let read = |index| {
+        unsafe {
+            SetLastError(WIN32_ERROR(0));
+        }
+        let value = unsafe { GetWindowLongPtrW(hwnd, index) };
+        if value == 0 && unsafe { GetLastError() }.0 != 0 {
+            Err("RO-DOCUMENT-WEBVIEW-DROP-TARGET-UNAVAILABLE")
+        } else {
+            Ok(value as u32)
+        }
+    };
+    Ok((
+        read(GWL_STYLE)? & WS_DISABLED.0 != 0,
+        read(GWL_EXSTYLE)? & WS_EX_TRANSPARENT.0 != 0,
+    ))
+}
+
+fn live_node(hwnd: HWND) -> Result<TargetNode, &'static str> {
+    let error = "RO-DOCUMENT-WEBVIEW-DROP-TARGET-UNAVAILABLE";
+    if !unsafe { IsWindow(Some(hwnd)) }.as_bool() {
+        return Err(error);
+    }
+    let parent = unsafe { GetParent(hwnd) }.map_err(|_| error)?;
+    let class = window_class(hwnd).ok_or(error)?;
+    let mut process = 0;
+    let thread = unsafe { GetWindowThreadProcessId(hwnd, Some(&mut process)) };
+    let (disabled, transparent) = relevant_styles(hwnd)?;
+    if thread == 0 || process == 0 {
+        return Err(error);
+    }
+    Ok(TargetNode {
+        hwnd,
+        parent,
+        class,
+        thread,
+        process,
+        disabled,
+        transparent,
+    })
+}
+
+fn live_nodes(root: HWND) -> Result<Vec<TargetNode>, &'static str> {
+    let mut children: Vec<HWND> = Vec::new();
+    // The documented EnumChildWindows return value is unused. The callback
+    // bounds collection to 33, and the over-limit sentinel fails closed.
+    let _ = unsafe {
+        EnumChildWindows(
+            Some(root),
+            Some(collect_child),
+            LPARAM((&mut children as *mut Vec<HWND>) as isize),
+        )
+    };
+    if children.is_empty() || children.len() > 32 {
+        return Err("RO-DOCUMENT-WEBVIEW-DROP-TARGET-UNAVAILABLE");
+    }
+    children.into_iter().map(live_node).collect()
+}
+
+fn root_is_owned(root: HWND, class: &str, thread: u32, process: u32) -> bool {
+    let mut actual_process = 0;
+    unsafe { IsWindow(Some(root)) }.as_bool()
+        && window_class(root).as_deref() == Some(class)
+        && thread != 0
+        && process != 0
+        && unsafe { windows_sys::Win32::System::Threading::GetCurrentThreadId() } == thread
+        && unsafe { windows_sys::Win32::System::Threading::GetCurrentProcessId() } == process
+        && unsafe { GetWindowThreadProcessId(root, Some(&mut actual_process)) } == thread
+        && actual_process == process
+}
+
+fn revalidate_live(topology: &mut DropTopology) -> Result<Vec<TargetNode>, &'static str> {
+    if !root_is_owned(
+        topology.root,
+        &topology.root_class,
+        topology.ui_thread,
+        topology.ui_process,
+    ) {
+        return Err("RO-DOCUMENT-WEBVIEW-DROP-TOPOLOGY-CHANGED");
+    }
+    let nodes = live_nodes(topology.root)?;
+    topology.revalidate(&nodes)?;
+    Ok(nodes)
+}
+
+fn cleanup_target_is_owned(topology: &DropTopology, target: &TargetNode) -> bool {
+    if !root_is_owned(
+        topology.root,
+        &topology.root_class,
+        topology.ui_thread,
+        topology.ui_process,
+    ) {
+        return false;
+    }
+    let mut current = target.hwnd;
+    for _ in 0..=topology.interactive.len() {
+        if current == topology.root {
+            return true;
+        }
+        let Some(expected) = topology
+            .interactive
+            .iter()
+            .find(|node| node.hwnd == current)
+        else {
+            return false;
+        };
+        let Ok(observed) = live_node(current) else {
+            return false;
+        };
+        if !same_window_identity(expected, &observed) {
+            return false;
+        }
+        current = observed.parent;
+    }
+    false
+}
+
 fn planned_webview_targets(
     root: HWND,
     nodes: &[TargetNode],
@@ -805,10 +1089,14 @@ fn planned_webview_targets(
     if hosts.next().is_some() || host.parent != root {
         return Err("RO-DOCUMENT-WEBVIEW-DROP-TARGET-AMBIGUOUS");
     }
+    let graphics = noninteractive_graphics_leaf(host.hwnd, nodes)?;
     let mut selected = vec![host.hwnd];
     let mut render_host = false;
     for node in nodes {
-        if node.hwnd == host.hwnd || !in_host_subtree(node.hwnd, host.hwnd, nodes) {
+        if node.hwnd == host.hwnd
+            || graphics.is_some_and(|leaf| leaf.hwnd == node.hwnd)
+            || !in_host_subtree(node.hwnd, host.hwnd, nodes)
+        {
             continue;
         }
         if !matches!(
@@ -850,6 +1138,23 @@ pub(crate) fn install(
     window: &tauri::WebviewWindow,
     manager: &DocumentAttachmentManager,
 ) -> Result<(), &'static str> {
+    install_internal(window, manager, InstallMode::Normal).map(|_| ())
+}
+
+#[derive(Clone, Copy)]
+enum InstallMode {
+    Normal,
+    #[cfg(feature = "integration-harness")]
+    Five,
+    #[cfg(feature = "integration-harness")]
+    FiveExpectedMismatch,
+}
+
+fn install_internal(
+    window: &tauri::WebviewWindow,
+    manager: &DocumentAttachmentManager,
+    _mode: InstallMode,
+) -> Result<serde_json::Value, &'static str> {
     let parent = window
         .hwnd()
         .map_err(|_| "RO-DOCUMENT-DROP-WINDOW-UNAVAILABLE")?;
@@ -861,11 +1166,19 @@ pub(crate) fn install(
         .with_webview(move |platform| {
             let parent = HWND(parent_id as *mut _);
             let result = (|| {
+                if TARGETS.with(|slot| slot.borrow().is_some()) {
+                    return Err("RO-DOCUMENT-WEBVIEW-DROP-ALREADY-INSTALLED");
+                }
+                let ui_thread = unsafe { windows_sys::Win32::System::Threading::GetCurrentThreadId() };
+                let ui_process = unsafe { windows_sys::Win32::System::Threading::GetCurrentProcessId() };
+                let root_class = window_class(parent).ok_or("RO-DOCUMENT-DROP-WINDOW-UNAVAILABLE")?;
+                if callback_window.hwnd().ok() != Some(parent)
+                    || !root_is_owned(parent, &root_class, ui_thread, ui_process)
+                    || unsafe { IsWindowVisible(parent) }.as_bool()
+                {
+                    return Err("RO-DOCUMENT-DROP-WINDOW-UNAVAILABLE");
+                }
                 let ole = OleApartment::initialize()?;
-                let mut installed = PendingTargets {
-                    entries: Vec::new(),
-                    _ole: ole,
-                };
                 // Tao must not own the parent HWND target. The controlled
                 // builder disables it; detect a changed default before show.
                 match unsafe { RevokeDragDrop(parent) } {
@@ -878,23 +1191,7 @@ pub(crate) fn install(
                     .map_err(|_| "RO-DOCUMENT-EXTERNAL-DROP-CONTROL-UNAVAILABLE")?;
                 unsafe { controller4.SetAllowExternalDrop(false) }
                     .map_err(|_| "RO-DOCUMENT-EXTERNAL-DROP-CONTROL-UNAVAILABLE")?;
-                let mut children: Vec<HWND> = Vec::new();
-                let _ = unsafe {
-                    EnumChildWindows(
-                        Some(parent),
-                        Some(collect_child),
-                        LPARAM((&mut children as *mut Vec<HWND>) as isize),
-                    )
-                };
-                let nodes: Vec<TargetNode> = children.into_iter().map(|hwnd| {
-                    let parent = unsafe { GetParent(hwnd) }
-                        .map_err(|_| "RO-DOCUMENT-WEBVIEW-DROP-TARGET-UNAVAILABLE")?;
-                    let class = window_class(hwnd)
-                        .ok_or("RO-DOCUMENT-WEBVIEW-DROP-TARGET-UNAVAILABLE")?;
-                    let mut process = 0;
-                    let thread = unsafe { GetWindowThreadProcessId(hwnd, Some(&mut process)) };
-                    Ok(TargetNode { hwnd, parent, class, thread, process, disabled: false, transparent: false })
-                }).collect::<Result<_, &'static str>>()?;
+                let nodes = live_nodes(parent)?;
                 #[cfg(feature = "integration-harness")]
                 {
                     let ui_thread = unsafe { windows_sys::Win32::System::Threading::GetCurrentThreadId() };
@@ -935,13 +1232,28 @@ pub(crate) fn install(
                         );
                     }
                 }
-                let targets = planned_webview_targets(
-                    parent,
-                    &nodes,
-                    unsafe { windows_sys::Win32::System::Threading::GetCurrentThreadId() },
-                    unsafe { windows_sys::Win32::System::Threading::GetCurrentProcessId() },
-                )?;
+                let captured = DropTopology::capture(parent, root_class, &nodes, ui_thread, ui_process)?;
+                #[cfg(feature = "integration-harness")]
+                if matches!(_mode, InstallMode::Five | InstallMode::FiveExpectedMismatch)
+                    && (nodes.len() != 5 || captured.graphics.is_none() || captured.interactive.len() != 4)
+                {
+                    return Err("RO-DOCUMENT-FIVE-NODE-INSTALL-UNAVAILABLE");
+                }
+                let targets: Vec<HWND> = captured.interactive.iter().map(|node| node.hwnd).collect();
+                let topology = Rc::new(RefCell::new(captured));
+                let mut installed = PendingTargets {
+                    entries: Vec::new(), topology: Rc::clone(&topology), _ole: ole,
+                };
                 for hwnd in targets {
+                    let identity = {
+                        let topology = topology.try_borrow_mut().map_err(|_| "RO-DOCUMENT-WEBVIEW-DROP-TOPOLOGY-CHANGED")?;
+                        let identity = topology.interactive.iter().find(|node| node.hwnd == hwnd)
+                            .ok_or("RO-DOCUMENT-WEBVIEW-DROP-TOPOLOGY-CHANGED")?.clone();
+                        if !cleanup_target_is_owned(&topology, &identity) {
+                            return Err("RO-DOCUMENT-WEBVIEW-DROP-TOPOLOGY-CHANGED");
+                        }
+                        identity
+                    };
                     match unsafe { RevokeDragDrop(hwnd) } {
                         Ok(()) => {
                             #[cfg(feature = "integration-harness")]
@@ -951,7 +1263,7 @@ pub(crate) fn install(
                         _ => return Err("RO-DOCUMENT-WEBVIEW-DROP-REVOKE-FAILED"),
                     }
                     let target: IDropTarget = NativeDropTarget::new(
-                        parent, controller.clone(), callback_window.clone(), manager.clone(),
+                        parent, controller.clone(), callback_window.clone(), manager.clone(), Rc::clone(&topology),
                     ).into();
                     if let Err(_error) = unsafe { RegisterDragDrop(hwnd, &target) } {
                         #[cfg(feature = "integration-harness")]
@@ -961,8 +1273,14 @@ pub(crate) fn install(
                         );
                         return Err("RO-DOCUMENT-WEBVIEW-DROP-REGISTER-FAILED");
                     }
+                    #[cfg(feature = "integration-harness")]
+                    observation::increment(&observation::REGISTER);
+                    #[cfg(feature = "integration-harness")]
+                    if identity.class == "Intermediate D3D Window" {
+                        observation::increment(&observation::GRAPHICS_REGISTER);
+                    }
                     installed.entries.push(InstalledTarget {
-                        hwnd,
+                        hwnd, identity,
                         #[cfg(feature = "integration-harness")]
                         parent,
                         #[cfg(feature = "integration-harness")]
@@ -970,6 +1288,31 @@ pub(crate) fn install(
                         _target: target,
                     });
                 }
+                let final_nodes = {
+                    let mut topology = topology.try_borrow_mut().map_err(|_| "RO-DOCUMENT-WEBVIEW-DROP-TOPOLOGY-CHANGED")?;
+                    #[cfg(feature = "integration-harness")]
+                    if matches!(_mode, InstallMode::FiveExpectedMismatch) {
+                        let graphics = topology.graphics.as_mut().ok_or("RO-DOCUMENT-FIVE-NODE-INSTALL-UNAVAILABLE")?;
+                        // Fixture-only expected-identity substitution after the four
+                        // actual registrations; no OS window identity is changed.
+                        graphics.thread = if graphics.thread == 1 { 2 } else { 1 };
+                    }
+                    revalidate_live(&mut topology)?
+                };
+                if unsafe { IsWindowVisible(parent) }.as_bool() {
+                    return Err("RO-DOCUMENT-DROP-WINDOW-UNAVAILABLE");
+                }
+                #[cfg(feature = "integration-harness")]
+                if matches!(_mode, InstallMode::Five) && final_nodes.len() != 5 {
+                    return Err("RO-DOCUMENT-FIVE-NODE-INSTALL-UNAVAILABLE");
+                }
+                let observed = serde_json::json!({
+                    "initialNodeCount":nodes.len(), "finalNodeCount":final_nodes.len(),
+                    "interactiveCount":installed.entries.len(),
+                    "graphicsRegisteredCount":installed.entries.iter().filter(|entry| entry.identity.class == "Intermediate D3D Window").count(),
+                    "excludedGraphicsCount":topology.try_borrow_mut().map_err(|_| "RO-DOCUMENT-WEBVIEW-DROP-TOPOLOGY-CHANGED")?.graphics.iter().count(),
+                    "hidden":!unsafe { IsWindowVisible(parent) }.as_bool(),
+                });
                 TARGETS.with(|targets| {
                     let mut slot = targets.borrow_mut();
                     if slot.is_some() {
@@ -978,7 +1321,7 @@ pub(crate) fn install(
                     *slot = Some(installed);
                     Ok(())
                 })?;
-                Ok(())
+                Ok(observed)
             })();
             if let Ok(mut slot) = completion.lock() {
                 *slot = Some(result);
@@ -993,6 +1336,143 @@ pub(crate) fn install(
         .map_err(|_| "RO-DOCUMENT-WEBVIEW-DROP-UNAVAILABLE")?
         .take()
         .ok_or("RO-DOCUMENT-WEBVIEW-DROP-DEFERRED")?
+}
+
+#[cfg(feature = "integration-harness")]
+pub(crate) fn five_node_ready(window: &tauri::WebviewWindow) -> Result<bool, &'static str> {
+    let root = window
+        .hwnd()
+        .map_err(|_| "RO-DOCUMENT-DROP-WINDOW-UNAVAILABLE")?;
+    TARGETS.with(|slot| {
+        let slot = slot.borrow();
+        let installed = slot
+            .as_ref()
+            .ok_or("RO-DOCUMENT-WEBVIEW-DROP-TARGET-UNAVAILABLE")?;
+        let mut topology = installed
+            .topology
+            .try_borrow_mut()
+            .map_err(|_| "RO-DOCUMENT-WEBVIEW-DROP-TOPOLOGY-CHANGED")?;
+        if root != topology.root {
+            return Err("RO-DOCUMENT-WEBVIEW-DROP-TOPOLOGY-CHANGED");
+        }
+        let nodes = revalidate_live(&mut topology)?;
+        Ok(nodes.len() == 5 && topology.graphics.is_some() && topology.interactive.len() == 4)
+    })
+}
+
+#[cfg(feature = "integration-harness")]
+pub(crate) fn exercise_five_node_install(
+    window: &tauri::WebviewWindow,
+    manager: &DocumentAttachmentManager,
+) -> Result<serde_json::Value, &'static str> {
+    let error = "RO-DOCUMENT-FIVE-NODE-FIXTURE-UNVERIFIED";
+    if manager.installed()
+        || !manager.fixture_is_idle()
+        || [
+            &observation::ENTER,
+            &observation::OVER,
+            &observation::DROP,
+            &observation::HELD,
+            &observation::CANDIDATE,
+        ]
+        .iter()
+        .any(|counter| observation::load(counter) != 0)
+    {
+        return Err(error);
+    }
+    let warmup = counts();
+    let mut unfaulted = TARGETS.with(|slot| {
+        let slot = slot.borrow();
+        let installed = slot.as_ref().ok_or(error)?;
+        let mut topology = installed.topology.try_borrow_mut().map_err(|_| error)?;
+        revalidate_live(&mut topology)?;
+        if topology.graphics.is_none() || topology.interactive.len() != 4 {
+            return Err(error);
+        }
+        Ok(topology.clone())
+    })?;
+    if window.hwnd().ok() != Some(unfaulted.root) {
+        return Err(error);
+    }
+    window.hide().map_err(|_| error)?;
+    if unsafe { IsWindowVisible(unfaulted.root) }.as_bool() {
+        return Err(error);
+    }
+    // Keep this UI-thread OLE apartment alive across failed-install cleanup and
+    // the four independent not-registered probes; initialization stays balanced.
+    let _proof_apartment = OleApartment::initialize()?;
+    manager.set_installed(false);
+    uninstall();
+    let registrations_before = observation::load(&observation::REGISTER);
+    let graphics_before = observation::load(&observation::GRAPHICS_REGISTER);
+    let fault = install_internal(window, manager, InstallMode::FiveExpectedMismatch);
+    let fault_registrations =
+        observation::load(&observation::REGISTER).saturating_sub(registrations_before);
+    let fault_graphics_registrations =
+        observation::load(&observation::GRAPHICS_REGISTER).saturating_sub(graphics_before);
+    eprintln!(
+        "RO-FIVE-FAULT final-recheck={} registrations={fault_registrations} graphics-registrations={fault_graphics_registrations}",
+        fault
+            .as_ref()
+            .err()
+            .copied()
+            .unwrap_or("unexpected-success")
+    );
+    if !matches!(fault, Err("RO-DOCUMENT-WEBVIEW-DROP-TOPOLOGY-CHANGED"))
+        || fault_registrations != 4
+    {
+        return Err(error);
+    }
+    let targets_empty = TARGETS.with(|slot| slot.borrow().is_none());
+    let manager_unavailable = !manager.installed() && manager.fixture_is_idle();
+    let hidden = !unsafe { IsWindowVisible(unfaulted.root) }.as_bool();
+    if !targets_empty || !manager_unavailable || !hidden {
+        return Err(error);
+    }
+    // Retain the actual original identity. The expected-identity fault changes
+    // no live window, and the unfaulted graph must still match before probing.
+    let final_unfaulted = revalidate_live(&mut unfaulted)?;
+    if final_unfaulted.len() != 5 {
+        return Err(error);
+    }
+    let mut verified_revokes = 0;
+    let mut graphics_probed = false;
+    for node in &unfaulted.interactive {
+        if window.hwnd().ok() != Some(unfaulted.root)
+            || !cleanup_target_is_owned(&unfaulted, node)
+            || unsafe { IsWindowVisible(unfaulted.root) }.as_bool()
+            || manager.installed()
+            || !manager.fixture_is_idle()
+        {
+            return Err(error);
+        }
+        graphics_probed |= unfaulted
+            .graphics
+            .as_ref()
+            .is_some_and(|leaf| leaf.hwnd == node.hwnd);
+        match unsafe { RevokeDragDrop(node.hwnd) } {
+            Err(result) if result.code() == DRAGDROP_E_NOTREGISTERED => verified_revokes += 1,
+            _ => return Err(error),
+        }
+    }
+    let observed = install_internal(window, manager, InstallMode::Five)?;
+    // A successful install publishes only the four interactive identities.
+    if target_classes().len() != 4 || manager.installed() || !manager.fixture_is_idle() {
+        return Err(error);
+    }
+    Ok(serde_json::json!({
+        "kind":"document-drop-probe-five-install", "status":"passed",
+        "scope":"actual-five-node-hidden-reinstallation-after-graphics-warmup",
+        "installation":observed, "warmupNative":warmup,
+        "rollback":{"fault":"one-captured-graphics-thread-identity-substitution",
+            "finalRecheckCode":fault.as_ref().err().copied(),
+            "ordinaryFinalRecheckDenied":fault.is_err(), "actualRegistrations":fault_registrations,
+            "targetsEmpty":targets_empty, "managerUnavailable":manager_unavailable,
+            "hidden":hidden, "unfaultedLiveGraphStillMatches":final_unfaulted.len() == 5,
+            "interactiveNotRegisteredProbes":verified_revokes,
+            "graphicsRegisteredOrProbed":graphics_probed || fault_graphics_registrations != 0
+                || observed["graphicsRegisteredCount"].as_u64() != Some(0)},
+    }))
 }
 
 pub(crate) fn uninstall() {
@@ -1190,6 +1670,73 @@ mod tests {
                     .to_string(),
                 true
             )
+        );
+    }
+
+    #[test]
+    fn first_graphics_appearance_binds_once_without_granting_a_drop_target() {
+        let five = observed_five_node_fixture();
+        let four = &five[..4];
+        let mut topology = DropTopology::capture(hwnd(10), "root".into(), four, 7, 9).unwrap();
+        assert!(topology.graphics.is_none());
+        topology.revalidate(four).unwrap();
+        topology.revalidate(&five).unwrap();
+        assert_eq!(topology.interactive.len(), 4);
+        assert_eq!(topology.graphics.as_ref().unwrap().hwnd, hwnd(15));
+        let mut replaced = five.clone();
+        replaced[4].hwnd = hwnd(16);
+        assert!(topology.revalidate(&replaced).is_err());
+        assert_eq!(topology.graphics.as_ref().unwrap().hwnd, hwnd(15));
+        assert!(topology.revalidate(four).is_err());
+    }
+
+    #[test]
+    fn live_graphics_identity_or_role_substitution_revokes_admission() {
+        let reference = observed_five_node_fixture();
+        let topology = DropTopology::capture(hwnd(10), "root".into(), &reference, 7, 9).unwrap();
+        for change in 0..7 {
+            let mut current = reference.clone();
+            match change {
+                0 => current[4].hwnd = hwnd(16),
+                1 => current[4].parent = hwnd(14),
+                2 => current[4].class = "Chrome_WidgetWin_1".into(),
+                3 => current[4].thread = 13,
+                4 => current[4].process = 14,
+                5 => current[4].disabled = false,
+                _ => current[4].transparent = false,
+            }
+            assert!(topology.clone().revalidate(&current).is_err());
+        }
+        let mut unknown = reference.clone();
+        unknown.push(node(16, 13, "unknown-interactive", 8, 10));
+        assert!(topology.clone().revalidate(&unknown).is_err());
+    }
+
+    #[test]
+    fn interactive_identity_changes_deny_and_outside_subtree_retains_no_authority() {
+        let reference = observed_five_node_fixture();
+        let topology = DropTopology::capture(hwnd(10), "root".into(), &reference, 7, 9).unwrap();
+        for index in 0..4 {
+            for change in 0..5 {
+                let mut current = reference.clone();
+                match change {
+                    0 => current[index].hwnd = hwnd(100 + index),
+                    1 => current[index].parent = hwnd(99),
+                    2 => current[index].class = "unknown-interactive".into(),
+                    3 => current[index].thread += 20,
+                    _ => current[index].process += 20,
+                }
+                assert!(topology.clone().revalidate(&current).is_err());
+            }
+        }
+        let mut outside = reference.clone();
+        outside.push(node(30, 10, "unrelated-root-child", 80, 90));
+        topology.clone().revalidate(&outside).unwrap();
+        assert_eq!(
+            planned_webview_targets(hwnd(10), &outside, 7, 9)
+                .unwrap()
+                .len(),
+            4
         );
     }
 

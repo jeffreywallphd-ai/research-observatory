@@ -12,6 +12,7 @@ import tempfile
 import unittest
 from pathlib import Path
 from types import SimpleNamespace
+from typing import cast
 from unittest.mock import patch
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -37,7 +38,7 @@ class PickerSourceFixtureTests(unittest.TestCase):
             def resolve(self, *, strict: bool) -> Path:
                 raise AssertionError("reparse target must not be followed")
 
-        self.assertFalse(picker._exact_fixture_entry(ReparseEntry(), Path("synthetic"), directory=False))
+        self.assertFalse(picker._exact_fixture_entry(cast(Path, ReparseEntry()), Path("synthetic"), directory=False))
 
     def test_copy_is_exactly_under_admitted_projects_root_and_preserves_seed(self) -> None:
         with tempfile.TemporaryDirectory(prefix="directory-dialog-drop-") as location:

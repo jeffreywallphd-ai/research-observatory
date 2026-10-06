@@ -1537,6 +1537,7 @@ pub mod directory_integration_harness {
         Lifecycle,
         LifecycleResume,
         DocumentDrop,
+        DocumentDropFive,
         DocumentDropResume,
     }
 
@@ -1716,6 +1717,7 @@ pub mod directory_integration_harness {
                 "lifecycle" => Some(Self::Lifecycle),
                 "lifecycle-resume" => Some(Self::LifecycleResume),
                 "document-drop" => Some(Self::DocumentDrop),
+                "document-drop-five" => Some(Self::DocumentDropFive),
                 "document-drop-resume" => Some(Self::DocumentDropResume),
                 _ => None,
             }
@@ -1728,6 +1730,7 @@ pub mod directory_integration_harness {
                 Self::Lifecycle => "lifecycle",
                 Self::LifecycleResume => "lifecycle-resume",
                 Self::DocumentDrop => "document-drop",
+                Self::DocumentDropFive => "document-drop-five",
                 Self::DocumentDropResume => "document-drop-resume",
             }
         }
@@ -1737,7 +1740,10 @@ pub mod directory_integration_harness {
         }
 
         fn is_document_attachment(self) -> bool {
-            matches!(self, Self::DocumentDrop | Self::DocumentDropResume)
+            matches!(
+                self,
+                Self::DocumentDrop | Self::DocumentDropFive | Self::DocumentDropResume
+            )
         }
     }
 
@@ -1817,7 +1823,8 @@ pub mod directory_integration_harness {
 })();
 "#;
 
-    fn document_drop_ui_script(seed: &DocumentDropSeed) -> String {
+    fn document_drop_ui_script(seed: &DocumentDropSeed, require_five: bool) -> String {
+        let five_ready = !require_five;
         let project = serde_json::to_string(&seed.project_id).expect("fixture project ID");
         let work = serde_json::to_string(&seed.work_id).expect("fixture Work ID");
         let source =
@@ -1826,7 +1833,7 @@ pub mod directory_integration_harness {
             r#"
 (() => {{
   const projectId = {project}, workId = {work}, sourceId = {source};
-  const data = {{ phase: 0, ready: false, error: null, sourceId, html5: {{ dragEnter: 0, dragOver: 0, drop: 0,
+  const data = {{ fiveInstallReady: {five_ready}, phase: 0, ready: false, error: null, sourceId, html5: {{ dragEnter: 0, dragOver: 0, drop: 0,
     exposedFiles: 0, exposedFileItems: 0 }} }};
   Object.defineProperty(window, '__RO_DROP_PROBE', {{ value: data, configurable: false }});
   for (const [name, field] of [['dragenter', 'dragEnter'], ['dragover', 'dragOver'], ['drop', 'drop']]) {{
@@ -1843,6 +1850,7 @@ pub mod directory_integration_harness {
   const timer = setInterval(() => {{
     try {{
       if (data.ready || data.error) {{ clearInterval(timer); return; }}
+      if (!data.fiveInstallReady) return;
       if (performance.now() - begin > 90000) {{ data.error = 'ui-sequence-timeout'; clearInterval(timer); return; }}
       if (data.phase === 0) {{
         const tools = document.querySelector('details[data-all-tools]'); if (tools) tools.open = true;
@@ -2428,6 +2436,133 @@ pub mod directory_integration_harness {
             json!({"x":inside.0,"y":inside.1}),
             json!({"x":outside.0,"y":outside.1}),
         ))
+    }
+
+    // Explicit fixture mode only. No arm/picker/stdin dispatcher is created until
+    // the hidden actual-five installation and expected-identity rollback pass.
+    fn observe_five_node_install(
+        app: AppHandle,
+        fixture: Fixture,
+        seed: DocumentDropSeed,
+        tauri_drag: std::sync::Arc<TauriDragCounts>,
+        picker_pending: std::sync::Arc<std::sync::atomic::AtomicBool>,
+    ) {
+        use std::sync::{
+            Arc,
+            atomic::{AtomicBool, Ordering},
+        };
+        let finished = Arc::new(AtomicBool::new(false));
+        let inflight = Arc::new(AtomicBool::new(false));
+        std::thread::spawn(move || {
+            let deadline = Instant::now() + Duration::from_secs(15);
+            while Instant::now() < deadline && !finished.load(Ordering::Acquire) {
+                if inflight
+                    .compare_exchange(false, true, Ordering::AcqRel, Ordering::Acquire)
+                    .is_ok()
+                {
+                    let (
+                        callback_app,
+                        callback_fixture,
+                        callback_seed,
+                        callback_drag,
+                        callback_picker,
+                        callback_finished,
+                        callback_inflight,
+                    ) = (
+                        app.clone(),
+                        fixture.clone(),
+                        seed.clone(),
+                        Arc::clone(&tauri_drag),
+                        Arc::clone(&picker_pending),
+                        Arc::clone(&finished),
+                        Arc::clone(&inflight),
+                    );
+                    if app
+                        .run_on_main_thread(move || {
+                            if callback_finished.load(Ordering::Acquire) {
+                                callback_inflight.store(false, Ordering::Release);
+                                return;
+                            }
+                            let result = (|| {
+                                callback_fixture.revalidate()?;
+                                let window = callback_app
+                                    .get_webview_window("main")
+                                    .ok_or("probe-five-window-unavailable")?;
+                                if !crate::document_drop::five_node_ready(&window)? {
+                                    return Ok(None);
+                                }
+                                let manager = callback_app
+                                    .state::<document_attachment::DocumentAttachmentManager>(
+                                );
+                                if callback_picker.load(Ordering::Acquire)
+                                    || callback_drag.snapshot().as_object().is_none_or(|values| {
+                                        values.values().any(|value| value.as_u64() != Some(0))
+                                    })
+                                {
+                                    return Err("probe-five-warmup-admission-observed");
+                                }
+                                let observed = crate::document_drop::exercise_five_node_install(
+                                    &window, &manager,
+                                )?;
+                                // Only these exact guarded fixture calls restore availability.
+                                manager.set_installed(true);
+                                window.show().map_err(|_| "probe-five-window-show-failed")?;
+                                window
+                                    .eval("window.__RO_DROP_PROBE.fiveInstallReady = true;")
+                                    .map_err(|_| "probe-five-ui-dispatch-unavailable")?;
+                                Ok(Some(observed))
+                            })();
+                            match result {
+                                Ok(Some(observed)) => {
+                                    callback_finished.store(true, Ordering::Release);
+                                    emit(observed);
+                                    observe_document_drop(
+                                        callback_app,
+                                        callback_seed,
+                                        callback_drag,
+                                        callback_picker,
+                                    );
+                                }
+                                Ok(None) => {}
+                                Err(error) => {
+                                    callback_finished.store(true, Ordering::Release);
+                                    callback_app
+                                        .state::<document_attachment::DocumentAttachmentManager>()
+                                        .set_installed(false);
+                                    if let Some(window) = callback_app.get_webview_window("main") {
+                                        let _ = window.hide();
+                                    }
+                                    crate::document_drop::uninstall();
+                                    emit(json!({"kind":"document-drop-probe-failure","code":error,
+                                    "phase":"actual-five-node-hidden-reinstallation"}));
+                                    callback_app.exit(1);
+                                }
+                            }
+                            callback_inflight.store(false, Ordering::Release);
+                        })
+                        .is_err()
+                    {
+                        finished.store(true, Ordering::Release);
+                        emit(
+                            json!({"kind":"document-drop-probe-failure","code":"probe-five-dispatch-unavailable"}),
+                        );
+                        app.exit(1);
+                    }
+                }
+                std::thread::sleep(Duration::from_millis(50));
+            }
+            if !finished.load(Ordering::Acquire) {
+                let callback_app = app.clone();
+                let _ = app.run_on_main_thread(move || {
+                    if finished.swap(true, Ordering::AcqRel) { return; }
+                    callback_app.state::<document_attachment::DocumentAttachmentManager>().set_installed(false);
+                    if let Some(window) = callback_app.get_webview_window("main") { let _ = window.hide(); }
+                    crate::document_drop::uninstall();
+                    emit(json!({"kind":"document-drop-probe-failure","code":"probe-five-natural-leaf-timeout"}));
+                    callback_app.exit(1);
+                });
+            }
+        });
     }
 
     fn observe_document_drop(
@@ -3506,6 +3641,7 @@ pub mod directory_integration_harness {
                     | Mode::Lifecycle
                     | Mode::LifecycleResume
                     | Mode::DocumentDrop
+                    | Mode::DocumentDropFive
                     | Mode::DocumentDropResume => {}
                 }
             }
@@ -3560,12 +3696,12 @@ pub mod directory_integration_harness {
         let fixture = match mode {
             Mode::Lifecycle => Fixture::create_lifecycle(nonce)?,
             Mode::LifecycleResume => Fixture::resume_lifecycle(nonce)?,
-            Mode::DocumentDrop => Fixture::create_document_drop(nonce)?,
+            Mode::DocumentDrop | Mode::DocumentDropFive => Fixture::create_document_drop(nonce)?,
             Mode::DocumentDropResume => Fixture::resume_document_drop(nonce)?,
             _ => Fixture::create(nonce)?,
         };
         let drop_seed = match mode {
-            Mode::DocumentDrop => {
+            Mode::DocumentDrop | Mode::DocumentDropFive => {
                 let seed = seed_document_drop(&fixture)?;
                 write_document_receipt(&fixture, DOCUMENT_DROP_SEED_RECEIPT, &seed)?;
                 Some(seed)
@@ -3616,11 +3752,11 @@ pub mod directory_integration_harness {
                         .initialization_script(LOCK_STATUS_DIAGNOSTIC_SCRIPT)
                         .visible(false).drag_and_drop(false).disable_drag_drop_handler();
                     let builder = if let Some(seed) = &drop_seed {
-                        builder.initialization_script(document_drop_ui_script(seed))
+                        builder.initialization_script(document_drop_ui_script(seed, mode == Mode::DocumentDropFive))
                     } else { builder };
                     builder.title(format!("Research Observatory — SYNTHETIC {} {}",
                         if mode.is_lifecycle() { "T04" } else if mode.is_document_attachment() { "T01" } else { "T03" },
-                        mode.name())).build()
+                        if mode == Mode::DocumentDropFive { "document-drop" } else { mode.name() })).build()
                 })
                 .inspect_err(|_| { app.state::<RuntimeSupervisor>().stop(); })?;
             eprintln!("RO-DOCUMENT-SETUP phase=webview-ready");
@@ -3632,7 +3768,9 @@ pub mod directory_integration_harness {
             let attachments = app.state::<document_attachment::DocumentAttachmentManager>().inner().clone();
             document_drop::install(&main, &attachments).map_err(std::io::Error::other)?;
             eprintln!("RO-DOCUMENT-SETUP phase=drop-install-ready");
-            attachments.set_installed(true);
+            // Explicit warm-up fixture exposes no attachment admission before
+            // its guarded hidden five-node reinstallation.
+            attachments.set_installed(mode != Mode::DocumentDropFive);
             let drop_event_counts = mode.is_document_attachment().then(|| listen_for_tauri_drag(&main));
             let picker_pending = std::sync::Arc::new(std::sync::atomic::AtomicBool::new(false));
             if mode.is_document_attachment() {
@@ -3645,7 +3783,10 @@ pub mod directory_integration_harness {
                 "scope":"actual-renderer-tauri-ipc-lock-and-close-with-fixture-storage",
                 "credentialsInvoked":false, "productionPackagedQualification":false,
                 "projects":format!("{}/projects", fixture.relative_root()), "fixturesRetained":true}));
-            if mode == Mode::DocumentDrop {
+            if mode == Mode::DocumentDropFive {
+                observe_five_node_install(app.handle().clone(), fixture.clone(), drop_seed.clone().expect("drop seed"),
+                    drop_event_counts.expect("drop event counters"), picker_pending);
+            } else if mode == Mode::DocumentDrop {
                 observe_document_drop(app.handle().clone(), drop_seed.clone().expect("drop seed"),
                     drop_event_counts.expect("drop event counters"), picker_pending);
             } else if mode == Mode::DocumentDropResume {

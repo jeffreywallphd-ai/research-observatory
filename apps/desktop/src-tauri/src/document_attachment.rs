@@ -268,6 +268,11 @@ pub(crate) struct DocumentAttachmentManager {
 }
 
 impl DocumentAttachmentManager {
+    #[cfg(feature = "integration-harness")]
+    pub(crate) fn fixture_is_idle(&self) -> bool {
+        self.shared.lock().is_ok_and(|state| state.active.is_none())
+    }
+
     pub(crate) fn set_installed(&self, installed: bool) {
         if let Ok(mut state) = self.shared.lock() {
             state.installed = installed;

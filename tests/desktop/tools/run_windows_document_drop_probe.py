@@ -171,6 +171,56 @@ def await_event(
     raise ProbeFailure(f"fixture-timeout-before-{kind}")
 
 
+def safe_five_install(event: dict[str, Any]) -> dict[str, Any]:
+    """Require actual five-node installation and independently observed rollback."""
+    if (
+        event.get("kind") != "document-drop-probe-five-install"
+        or event.get("status") != "passed"
+        or event.get("scope") != "actual-five-node-hidden-reinstallation-after-graphics-warmup"
+    ):
+        raise ProbeFailure("five-install-record-invalid")
+    installation = event.get("installation")
+    expected = {
+        "initialNodeCount": 5,
+        "finalNodeCount": 5,
+        "interactiveCount": 4,
+        "graphicsRegisteredCount": 0,
+        "excludedGraphicsCount": 1,
+    }
+    if (
+        not isinstance(installation, dict)
+        or installation.get("hidden") is not True
+        or any(type(installation.get(key)) is not int or installation[key] != value for key, value in expected.items())
+    ):
+        raise ProbeFailure("five-install-native-boundary-unverified")
+    rollback = event.get("rollback")
+    if not isinstance(rollback, dict) or rollback.get("fault") != "one-captured-graphics-thread-identity-substitution":
+        raise ProbeFailure("five-install-rollback-record-invalid")
+    for key in (
+        "ordinaryFinalRecheckDenied",
+        "targetsEmpty",
+        "managerUnavailable",
+        "hidden",
+        "unfaultedLiveGraphStillMatches",
+    ):
+        if rollback.get(key) is not True:
+            raise ProbeFailure("five-install-rollback-unverified")
+    for key in ("actualRegistrations", "interactiveNotRegisteredProbes"):
+        if type(rollback.get(key)) is not int or rollback[key] != 4:
+            raise ProbeFailure("five-install-rollback-unverified")
+    if rollback.get("graphicsRegisteredOrProbed") is not False:
+        raise ProbeFailure("five-install-graphics-authority-observed")
+    if rollback.get("finalRecheckCode") != "RO-DOCUMENT-WEBVIEW-DROP-TOPOLOGY-CHANGED":
+        raise ProbeFailure("five-install-rollback-denial-code-unverified")
+    warmup = event.get("warmupNative")
+    if not isinstance(warmup, dict) or any(
+        type(warmup.get(key)) is not int or warmup[key] != 0
+        for key in ("oleEnter", "oleOver", "oleDrop", "heldStage", "candidate")
+    ):
+        raise ProbeFailure("five-install-warmup-admission-observed")
+    return event
+
+
 def safe_stage_event(event: dict[str, Any]) -> dict[str, Any]:
     kind = event.get("kind")
     common = {"kind", "operationId", "status", "code", "candidateId"}
@@ -535,6 +585,7 @@ def main() -> int:
     parser.add_argument("--guardian-sha256", required=True)
     parser.add_argument("--candidate-wait-seconds", type=int, default=60)
     parser.add_argument("--nonce", default=f"drop-{secrets.token_hex(6)}")
+    parser.add_argument("--require-five-target-install", action="store_true")
     args = parser.parse_args()
     if not re.fullmatch(r"[A-Za-z0-9-]{1,64}", args.nonce):
         raise SystemExit("probe-nonce-invalid")
@@ -579,7 +630,12 @@ def main() -> int:
     with stderr_file.open("w", encoding="utf-8") as stderr:
         try:
             process = subprocess.Popen(
-                [str(app_binary), "--tauri-directory", "document-drop", args.nonce],
+                [
+                    str(app_binary),
+                    "--tauri-directory",
+                    "document-drop-five" if args.require_five_target_install else "document-drop",
+                    args.nonce,
+                ],
                 cwd=ROOT,
                 stdin=subprocess.PIPE,
                 stdout=subprocess.PIPE,
@@ -591,6 +647,10 @@ def main() -> int:
             )
             reader = threading.Thread(target=read_events, args=(process, stdout_file, events), daemon=True)
             reader.start()
+            if args.require_five_target_install:
+                summary["fiveTargetInstallation"] = safe_five_install(
+                    await_event(events, process, "document-drop-probe-five-install", 125, stage_events)
+                )
             ready = await_event(events, process, "document-drop-probe-ready", 125, stage_events)
             if ready.get("observationInstalled") is not True:
                 raise ProbeFailure("fixture-observation-not-installed")

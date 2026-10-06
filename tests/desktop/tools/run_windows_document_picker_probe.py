@@ -875,6 +875,7 @@ def main() -> int:
     parser.add_argument("--guardian-sha256", required=True)
     parser.add_argument("--candidate-wait-seconds", type=int, default=190)
     parser.add_argument("--nonce", default=f"drop-picker-{secrets.token_hex(6)}")
+    parser.add_argument("--require-five-target-install", action="store_true")
     args = parser.parse_args()
     if not re.fullmatch(r"drop-[A-Za-z0-9-]{1,60}", args.nonce):
         raise SystemExit("picker-nonce-invalid")
@@ -929,7 +930,12 @@ def main() -> int:
     with stderr_file.open("w", encoding="utf-8") as stderr:
         try:
             process = subprocess.Popen(
-                [str(app_binary), "--tauri-directory", "document-drop", args.nonce],
+                [
+                    str(app_binary),
+                    "--tauri-directory",
+                    "document-drop-five" if args.require_five_target_install else "document-drop",
+                    args.nonce,
+                ],
                 cwd=drop.ROOT,
                 stdin=subprocess.PIPE,
                 stdout=subprocess.PIPE,
@@ -941,6 +947,10 @@ def main() -> int:
             )
             reader = threading.Thread(target=drop.read_events, args=(process, stdout_file, events), daemon=True)
             reader.start()
+            if args.require_five_target_install:
+                result["fiveTargetInstallation"] = drop.safe_five_install(
+                    drop.await_event(events, process, "document-drop-probe-five-install", 125, stage_events)
+                )
             ready = drop.await_event(events, process, "document-drop-probe-ready", 125, stage_events)
             if ready.get("armed") is not False or ready.get("observationInstalled") is not True:
                 raise drop.ProbeFailure("picker-fixture-not-ready")
