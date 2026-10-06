@@ -406,6 +406,15 @@
         "W2.A05.T01",
         "W2.A05.T02"
       ]
+    },
+    {
+      "id": "ADR-0042",
+      "path": "docs/adr/ADR-0042-bind-acquisition-contracts-to-existing-rights-and-storage-authority.md",
+      "title": "Bind acquisition contracts to existing rights and storage authority",
+      "status": "Proposed",
+      "linkedTasks": [
+        "CAP-05.S01.T02"
+      ]
     }
   ]
 }
