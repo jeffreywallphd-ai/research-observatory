@@ -25219,7 +25219,7 @@ capabilities:
     depends_on:
     - CAP-04.S04.T03
     - CAP-00.S03.T03
-    status: IN_PROGRESS
+    status: DONE
     tasks:
     - id: CAP-04.S05.T01
       capability_id: CAP-04
@@ -26325,11 +26325,17 @@ capabilities:
     platform_targets:
     - windows-x64
     completion:
-      status: PENDING
-      reviewer: null
-      reviewed_at: null
-      evidence: []
-      notes: null
+      status: APPROVED
+      reviewer: agent:/root/c11_security_review
+      reviewed_at: '2026-10-06T00:26:36+00:00'
+      evidence:
+      - artifacts/evidence/CAP-04.S05.qualification-01.json
+      - artifacts/evidence/CAP-04.S05.qualification-01.md
+      - artifacts/evidence/CAP-04.S05.review-01.json
+      notes: Independent deep exact-bundle review artifacts/evidence/CAP-04.S05.review-01.json SHA256 fcb69afb688d554e2b914e4e1f8f0c86756a0b4700a27426d98d265aeb00f91c
+        introduced at16a14ce1; source3cac985d and qualification delivery650f3a4f authenticated. All original tasks and C10-C12
+        corrections are DONE; current real frozen installed Core, signed LPAC, protected joined restart/denial and affected
+        SDK/UI proof satisfy slice criteria. Historical failures and limits preserved. W2 qualification/release remain separate.
   execution_mode: wave_contribution
   campaign: null
   completion:
@@ -26391,33 +26397,28 @@ capabilities:
       verification_commands:
       - python tools/verify.py --profile documents
       - python tools/verify.py --profile desktop
-      status: BLOCKED
+      status: IN_PROGRESS
       owner: codex-w2-implementation
       branch: codex/w2-implementation
       started_at: '2026-10-02T03:11:13+00:00'
-      updated_at: '2026-10-05T15:07:38+00:00'
+      updated_at: '2026-10-06T00:37:05+00:00'
       completed_at: null
-      blocker:
-        reason: 'Joined CAP-04.S05 product integration reproduces false publication interruption: a due queue heartbeat opens
-          a second writer inside the fenced publication transaction. Original task base 6506 and fifth-D3D adverse finding
-          remain unchanged; amendments A01-A05 are adopted.'
-        next_action: Use the linked authority-preserving correction route for CAP-04.S05.T02, prove heartbeat/cancellation
-          and real protected signed-LPAC integration, obtain independent review, then resume this original task at its preserved
-          base.
-        recorded_at: '2026-10-05T15:07:38+00:00'
-        owner: codex-w2-implementation
+      blocker: null
       implementation_notes: ''
       evidence: []
       review:
         reviewer: null
         result: null
         reviewed_at: null
-        notes: 'Reopened: All W2 amendments A01-A05 are authentically adopted; A03 security checkpoint and fresh actual adoption
-          observation passed; W2 separately resumed. Preserve original6506 base, all adverse native findings and scoped evidence.
-          Complete S05 integrated qualification and original current-product/native/full-base T01 proof without further framework
-          source development.'
+        notes: 'Reopened: CAP-04.S05 integrated qualification and independent slice approval close the protected signed-LPAC
+          and C11 heartbeat/C12 HTTP-enable predecessor blockers. Preserve original6506 base, all adverse native/UI findings
+          and adopted A01-A05. Resume the bounded actual D3D role restoration and original full-base current1.8/native/picker/commit/reopen
+          proof without framework source development.'
       base_sha: 6506c68461144747b0ee9be10853211717aa381d
-      lease: null
+      lease:
+        claimed_by: codex-w2-implementation
+        claimed_at: '2026-10-06T00:37:05+00:00'
+        expires_at: '2026-10-06T08:37:05+00:00'
       verification_state: null
       worktree: .
       platform_targets:

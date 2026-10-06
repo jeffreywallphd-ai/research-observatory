@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 0f7bf2b939f9d63482236dcff1fda1a558ca86979fb884ffbec74fb8e581a20e
+source_sha256: 78f2180dcab5999ab108d0ce7376a73e4150d89bde83c09ecdf1b5f2be705aa6
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -10393,7 +10393,7 @@ Original tasks and approvals remain unchanged.
 
 **Outcome:** New data sources can be added without bypassing provenance, rights, security, or canonicalization.
 
-**Wave / priority / status / review:** `W2` / `P1` / `IN_PROGRESS` / `PENDING`
+**Wave / priority / status / review:** `W2` / `P1` / `DONE` / `APPROVED`
 
 **Profiles / platforms:** `LOC`, `LAB`, `UNI`, `CLD` / `windows-x64`
 
@@ -10737,7 +10737,7 @@ Original tasks and approvals remain unchanged.
 
 #### - [ ] CAP-05.S01.T01 - Implement local document attachment and version association
 
-**Status / priority / estimate / risk:** `BLOCKED` / `P0` / `M` / `medium`
+**Status / priority / estimate / risk:** `IN_PROGRESS` / `P0` / `M` / `medium`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
@@ -10768,7 +10768,7 @@ Original tasks and approvals remain unchanged.
 
 **Current latest-review projection:** `-` by - at `-`
 
-**Latest notes:** Reopened: All W2 amendments A01-A05 are authentically adopted; A03 security checkpoint and fresh actual adoption observation passed; W2 separately resumed. Preserve original6506 base, all adverse native findings and scoped evidence. Complete S05 integrated qualification and original current-product/native/full-base T01 proof without further framework source development.
+**Latest notes:** Reopened: CAP-04.S05 integrated qualification and independent slice approval close the protected signed-LPAC and C11 heartbeat/C12 HTTP-enable predecessor blockers. Preserve original6506 base, all adverse native/UI findings and adopted A01-A05. Resume the bounded actual D3D role restoration and original full-base current1.8/native/picker/commit/reopen proof without framework source development.
 
 #### - [ ] CAP-05.S01.T02 - Implement open-access location selection and download
 
