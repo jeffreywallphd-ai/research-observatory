@@ -1,0 +1,29 @@
+{
+  "documentType": "original-base-ui-gate-execution-receipt",
+  "taskId": "CAP-05.S01.T01",
+  "baseCommit": "6506c68461144747b0ee9be10853211717aa381d",
+  "candidateCommit": "fccb73f3fbd72e4a1c0822ed195f76ae0b1d3e59",
+  "command": ".venv/Scripts/python.exe -B tools/ui_change_gate.py --repo . --base 6506c68461144747b0ee9be10853211717aa381d --head fccb73f3fbd72e4a1c0822ed195f76ae0b1d3e59",
+  "exitCode": 124,
+  "durationSeconds": 600.011,
+  "inputsStable": true,
+  "selectedInputSha256": {
+    "tools/ui_change_gate.py": "fa77fdf99c05b64954c4ce62956e137f2a97f09b96f42d4d75aeb68c05cde126",
+    "design/ui-change.schema.json": "a425c7419340724f39ae2df07f89028d29844762b1c8739db5013b4e05c11859",
+    "ui-change-policy.json": "80439531150c17a7109a9bea7ccf8d1cbf9eafbaee5219550a3a5f31a8de7816",
+    "planning/backlog.yaml": "ad45216e9783d6a2b475f190f8431cf9ec0b69bde82f2c70efca49b41759e64f",
+    "artifacts/evidence/ui-change/W2.A01.T02.json": "09de1447e0b10b5a51d240c003495827f9726e6f432324abc168bdd88426774a",
+    "artifacts/evidence/ui-change/CAP-05.S01.T01.json": "9d6f9044c6b5335efa24e4aaef35bd0c97da302e47aac7490374a26c3c47d90a",
+    "artifacts/evidence/CAP-05.S01.T01.ui-classification-R01.json": "88abac0df5ae9f0a1561d33fa067eaf5b562b4c5ecd461ef7b9b8dcbd5ececc5",
+    "artifacts/evidence/CAP-05.S01.T01.visual-review-01.json": "f168a828504ab30f5457aca1aaaa457e8412ca873e045fd938d466dc5ddecd45",
+    "artifacts/evidence/CAP-05.S01.T01.captures-02/manifest.json": "a53d99456c8b5ec806d128b8f04d70f5e00b4bb211899fa96f099b836037e145"
+  },
+  "producerPath": "artifacts/tmp/CAP-05.S01.T01.run-full-base-ui-gate-01.py",
+  "producerSha256": "710f75f055a04f90f3673282ca2adf494965caf06e1ba3944988e78f1fcb023f",
+  "log": "artifacts/tmp/CAP-05.S01.T01.full-base-ui-gate-01.log",
+  "logSha256": "d4e115d97a747eda9d5e31a73805794b49234b97976ae08b138601233628805c",
+  "status": "FAIL",
+  "gateResult": null,
+  "taskApproval": false,
+  "waveCompletion": false
+}
