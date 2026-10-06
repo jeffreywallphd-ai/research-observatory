@@ -1,0 +1,297 @@
+{
+  "authority": {
+    "approvalScope": "Exact approved1.9 reference and finite EX01 source-free method/procedure exception; human records remain immutable. Product activation/implementation and qualification must occur inside ordinary claimed original T03.",
+    "approvedTaskContractSHA256": "22c24df1438c455859b07b1643f5adb66c5dc118df2e2b9c2f49cb30a3a7cc8c",
+    "campaignState": "PAUSED",
+    "frozenTaskDefinitionAndPausedBacklogUnchanged": true,
+    "ownerAndReferenceIntroduction": "556369f77186324194789ee26eb0baf00fd936a8",
+    "pausedPredecessor": "ed5012226f903862960ce8b405b1299df96d7fb3",
+    "planAndProofPublication": "48426f25857179a084bb448910ac309f97a14185",
+    "proposalIntroduction": "00fff94732874460edf4cb8ce77a09ad36d16d98",
+    "readinessIntroduction": "5119b4431c5c6da00637afa6b3adb9bbb7004f20",
+    "referencePublication": "d4691f716f839f4aac5bb50563b56ac863b32685",
+    "taskState": "READY/unclaimed"
+  },
+  "blockingFindings": [],
+  "commitBinding": {
+    "canonicalPaths": [
+      {
+        "path": "artifacts/evidence/CAP-05.S01.T03.publication-mapping-01.json",
+        "sha256": "d8ee517ba8df78db5fc78bcf3c1bcd321628610cddfff281efe62e6d406ac554",
+        "size": 8065
+      },
+      {
+        "path": "artifacts/evidence/CAP-05.S01.T03.publication-mapping-02.json",
+        "sha256": "35496ee01c80a9788b857abba93cf172e2005648656a2f96b871ce2adc737ad0",
+        "size": 18825
+      },
+      {
+        "path": "planning/capability-plans/CAP-05.md",
+        "sha256": "ec717748e26a3c263d8a6101222a1cfe3fd97020efca076dcb0a2d95ed88492f",
+        "size": 21336
+      },
+      {
+        "path": "planning/slice-plans/CAP-05/CAP-05.S01-rights-aware-document-acquisition.md",
+        "sha256": "374350eacb70bd6fff824b6964ba68570c4ef05a2f358a24bc780eea0553876c",
+        "size": 39984
+      }
+    ],
+    "elevenGeneratedReviewedInputsExact": true,
+    "fourCanonicalReviewedInputsExact": true,
+    "generatedPaths": [
+      {
+        "path": "planning/review-site/CAP-05/CAP-05.S01.T03.html",
+        "sha256": "a3602795a3054ccb90cbf3c5e945e059fe3b186156c381440d1cebaa1e580db4",
+        "size": 32427
+      },
+      {
+        "path": "planning/review-site/CAP-05/CAP-05.S01.html",
+        "sha256": "a2e57bde328364c4e9b3867a26824c2801cddd0d86ae1290df58dc37abba868c",
+        "size": 63609
+      },
+      {
+        "path": "planning/review-site/CAP-05/index.html",
+        "sha256": "ebee2e6d34fa69ec97d2e6e2ffa9192096e58fc99f74a4794b7bf4320786b978",
+        "size": 38918
+      },
+      {
+        "path": "planning/review-site/enablers/ECR-0005.html",
+        "sha256": "742212351566b605d67420faeae83074e81a362e3e4b223c8e47303182c21544",
+        "size": 52870
+      },
+      {
+        "path": "planning/review-site/enablers/ECR-0006.html",
+        "sha256": "bf8e2b635de06b7112f3aafb8cc78ba42fdee8903c699dbbb2a6f0c121dff716",
+        "size": 51634
+      },
+      {
+        "path": "planning/review-site/enablers/ECR-0007.html",
+        "sha256": "728a7df9b312b237c768f2e2cf196c5126c8e074877ceedd2f4f8102fd3d33ab",
+        "size": 222238
+      },
+      {
+        "path": "planning/review-site/enablers/ECR-0010.html",
+        "sha256": "c13e793b4560e8c389aebb748700f6c363dbf25d211f8a808b1d1dee4b7b2aec",
+        "size": 73124
+      },
+      {
+        "path": "planning/review-site/enablers/ECR-0011.html",
+        "sha256": "37f389bb7a944cc5e35963da77ec1167324b2aa928e6e1a16bf36979adad259b",
+        "size": 113218
+      },
+      {
+        "path": "planning/review-site/enablers/ECR-0012.html",
+        "sha256": "e0281f949d2db2268d9ddde23048b1f6409e0729ded335253bf65b11111f938e",
+        "size": 66505
+      },
+      {
+        "path": "planning/review-site/enablers/ECR-0013.html",
+        "sha256": "e4a014e3342c433c3c2c26b9244a2a841d6acdad561fff351b8818371934c640",
+        "size": 87991
+      },
+      {
+        "path": "planning/review-site/manifest.json",
+        "sha256": "e96c8ad57e0b969205aaf7c5ce5ded8a37f7b21aea42b8cb224b67c36780c4c4",
+        "size": 3339054
+      }
+    ],
+    "noProductFrameworkSelectorBacklogOrStateChange": true,
+    "parent": "d4691f716f839f4aac5bb50563b56ac863b32685",
+    "pathsChanged": 15
+  },
+  "disposition": "approved-prerequisites-only",
+  "documentType": "independent-reference-publication-prerequisites-review",
+  "exactInputs": [
+    {
+      "commit": "48426f25857179a084bb448910ac309f97a14185",
+      "gitBlobSHA256": "20dbdaf74f79fe51ff1643c19ec8336813a53a311a6504a10550fa6df04f7469",
+      "path": "artifacts/evidence/CAP-05.S01.T03.experience-amendment-01.proposal.json"
+    },
+    {
+      "commit": "48426f25857179a084bb448910ac309f97a14185",
+      "gitBlobSHA256": "580835b3c89068af0ac479057ecc2a7fbd754499780174f6d6b03cca2f15c68c",
+      "path": "artifacts/evidence/CAP-05.S01.T03.experience-amendment-01.readiness-review-01.json"
+    },
+    {
+      "commit": "48426f25857179a084bb448910ac309f97a14185",
+      "gitBlobSHA256": "79a57a1e0cdbb7eb2e9fab36084edf9dcdd476444047b947d3eea9dceded87fb",
+      "path": "planning/verification-method-approvals/CAP-05.S01.T03.EX01.json"
+    },
+    {
+      "commit": "48426f25857179a084bb448910ac309f97a14185",
+      "gitBlobSHA256": "b7882588a15a7a178cb8ebac65fda174d26969dca5b08c6559feb3b0d258404e",
+      "path": "planning/reference-approvals/RO-UI-ACADEMIC-MINIMAL-1.9.json"
+    },
+    {
+      "commit": "48426f25857179a084bb448910ac309f97a14185",
+      "gitBlobSHA256": "2d7b07c508ebcae2ed7f65a1a4988c3a34323aaf61ce538672125012a0c5f8ce",
+      "path": "design/ui-reference/APPROVAL.yaml"
+    },
+    {
+      "commit": "48426f25857179a084bb448910ac309f97a14185",
+      "gitBlobSHA256": "19f4be307c9adc5ed24642c6ada8c57988f3eaca4e2f1903ebfd6b600d4d076b",
+      "path": "design/ui-reference/REFERENCE_MANIFEST.yaml"
+    },
+    {
+      "commit": "48426f25857179a084bb448910ac309f97a14185",
+      "gitBlobSHA256": "35496ee01c80a9788b857abba93cf172e2005648656a2f96b871ce2adc737ad0",
+      "path": "artifacts/evidence/CAP-05.S01.T03.publication-mapping-02.json"
+    },
+    {
+      "commit": "48426f25857179a084bb448910ac309f97a14185",
+      "gitBlobSHA256": "d8ee517ba8df78db5fc78bcf3c1bcd321628610cddfff281efe62e6d406ac554",
+      "path": "artifacts/evidence/CAP-05.S01.T03.publication-mapping-01.json"
+    },
+    {
+      "commit": "48426f25857179a084bb448910ac309f97a14185",
+      "gitBlobSHA256": "ec717748e26a3c263d8a6101222a1cfe3fd97020efca076dcb0a2d95ed88492f",
+      "path": "planning/capability-plans/CAP-05.md"
+    },
+    {
+      "commit": "48426f25857179a084bb448910ac309f97a14185",
+      "gitBlobSHA256": "374350eacb70bd6fff824b6964ba68570c4ef05a2f358a24bc780eea0553876c",
+      "path": "planning/slice-plans/CAP-05/CAP-05.S01-rights-aware-document-acquisition.md"
+    },
+    {
+      "commit": "48426f25857179a084bb448910ac309f97a14185",
+      "gitBlobSHA256": "92a5eda6868dee9a9297abd73f3da3ab25268bbd39043c70cd6e4dd24b0023d7",
+      "path": "planning/backlog.yaml"
+    },
+    {
+      "commit": "48426f25857179a084bb448910ac309f97a14185",
+      "gitBlobSHA256": "ec48a491f9a1c5755ce78ceea8b2fee11fd3035c96bfb247606d27310806a8a1",
+      "path": "packages/contracts/workflow-profile/presentation-compatibility-1.8.json"
+    },
+    {
+      "commit": "48426f25857179a084bb448910ac309f97a14185",
+      "gitBlobSHA256": "dad6228bc06e81bf84a654d46aeaa03021fd4e9a741d22b170f4a8dbf5e6ac15",
+      "path": "tools/planctl.py"
+    },
+    {
+      "commit": "48426f25857179a084bb448910ac309f97a14185",
+      "gitBlobSHA256": "fa26bc169a1b2d167d85a90ee70da06eab3bf378d36c940d754fa8d87e3e418d",
+      "path": "tools/plan_review_check.py"
+    },
+    {
+      "commit": "48426f25857179a084bb448910ac309f97a14185",
+      "gitBlobSHA256": "2a19af60c4e7bd0efb679fd291c4675de8d41f6716f40382214293a071657b12",
+      "path": "tools/plan_review_site.py"
+    }
+  ],
+  "findings": [],
+  "implementer": "agent:/root",
+  "independence": "Reviewer authored prior read-only authority preflight, independent prospective privacy admissions and prerequisite assessment. Reviewer did not author proposal/package, owner/reference decisions, publication/mapping producer or reports, material plans, generator, product implementation or qualification. This independent prerequisite judgment is not human authorization or task approval.",
+  "limitations": [
+    "Approved prerequisites only. This is not a CAP-05.S01.T03 task disposition, native/Core/desktop/security/accessibility/performance qualification, original public UI gate PASS, slice/checkpoint/W2 completion or G2 release approval.",
+    "Ordinary W2 resume/claim with actual full claim base and task-start planning, in-claim product assembler activation and final candidate-bound EX01 authority/presentation/desktop/capture proofs remain required.",
+    "The initial readiness invocation and initial mapping setup report remain failures. The current judgment combines previously completed structural/authority review with fresh focused site closure; it never fabricates an all-green original command or controlled task-review closure.",
+    "Previously preserved T01/T02 and other adverse/historical authorities remain immutable; no full historical/product/native check replay was needed for this unchanged bounded prerequisite boundary."
+  ],
+  "packetId": "CAP-05.S01.T03.EX01",
+  "priorAssessment": {
+    "path": "artifacts/tmp/CAP-05.S01.T03.publication-mapping-plan-assessment-c11-01.json",
+    "sha256": "7854383cd928302a9cc5b20b4eabdf79685316b6dc4576ec8a3c14316e0f02da"
+  },
+  "privacy": {
+    "allHistoricalEntriesOrderAndPreservationExact": true,
+    "checkerReceipt": ".local/CAP-05.S01.T03.generated-privacy-checker-c11-01.receipt.json",
+    "checkerReceiptSHA256": "c199d51abedcc01fff78de372b4e885dbd743210c011f6375e6fdb1e495988bc",
+    "checkerResult": "PASS15,exit0;11new generated blobs zero findings, previously reviewed4 exact.",
+    "finalRegistry": ".local/CAP-05.S01.T03.generated-artifact-privacy-review-c11-01.json",
+    "normalPublicationHook": "Root reported unchanged normal privacy hook PASS15 for this actual commit. No reviewer hook activation or exception expansion.",
+    "registryEntries": 541,
+    "registrySHA256": "e075bcf9b69448a4b18ba14ca080eb0fa8315d4599ced39815f2c168fac538d3"
+  },
+  "productQualification": false,
+  "proofDisposition": [
+    {
+      "criterion": "Exact approval-before-publication and unchanged task/campaign authority",
+      "evidence": "Bound exact proposal and independent readiness, immutable EX01/reference records, complete five-commit paused-to-reference-publication history, standard unchanged design-authority proof and unchanged backlog/frozen task.",
+      "result": "supported"
+    },
+    {
+      "criterion": "Complete metadata-only reference publication",
+      "evidence": "Exact reviewed1.9 package,54 governed files plus manifest; unchanged reference validator and generator reproducibility passed. Only allowed APPROVAL fields and manifest approval status/hash differ from proposal.",
+      "publishedReference": {
+        "generatorReproducible": true,
+        "governedFiles": 54,
+        "id": "RO-UI-ACADEMIC-MINIMAL-1.9",
+        "manifestSHA256": "19f4be307c9adc5ed24642c6ada8c57988f3eaca4e2f1903ebfd6b600d4d076b",
+        "metadataOnlyPublicationProven": true,
+        "packageSHA256": "24b8d62356863980ae9a13db7d6a06b04b76c60e2f1920d2e888cadecfb24c4b"
+      },
+      "result": "supported"
+    },
+    {
+      "criterion": "Preliminary original1.5-to-approved1.8-to-exact1.9 semantic mapping",
+      "evidence": "Previously reviewed68 exact source/authority/tool input Git blobs remain unchanged. Accepted original1.5 source, immutable1.8 witness and whole prior package authenticate; all14 ordered workflows, other page contracts and tokens remain exact except approved identity/version and exact Ingestion purpose/three appended regions.",
+      "result": "supported"
+    },
+    {
+      "criterion": "Append-only material-plan binding before claim",
+      "evidence": "Capability21-line and S0140-line additions preserve all earlier bytes, exact reference/EX01/publication/mapping links and all substantive rights/native/security/recovery obligations. Product selector activation and final candidate proof explicitly remain inside actual claim.",
+      "result": "supported"
+    },
+    {
+      "criterion": "Coherent current generated review site and focused closure of stale hashes",
+      "evidence": "Actual post-generation unchanged plan_review_check PASS497HTML, zero errors/warnings; current committed capability, slice and task-section manifest hashes independently equal current plan bytes. Original failed readiness invocation remains exit1.",
+      "result": "supported"
+    }
+  ],
+  "publicationMapping": {
+    "authentication": "Exact producer and68 bound input blobs were authenticated in prior independent assessment; current commit adds only reviewed proof/plan files and exact generated outputs, so publication/mapping inputs are unchanged. No producer or historical/native/product suite replay.",
+    "candidateCommit": "d4691f716f839f4aac5bb50563b56ac863b32685",
+    "durationSeconds": 20.577,
+    "producer": {
+      "path": "artifacts/tmp/CAP-05.S01.T03.publication-mapping-02.py",
+      "pythonExecutableSHA256": "20f9f153434a7cbadb44594b0796e85707f444bd21deda9d0bfb0be94cff290a",
+      "sha256": "64c2f7967dfd559b9b89b86162336e637fc5a70317c0ba9fd7a6e4c408622d01"
+    },
+    "report": "artifacts/evidence/CAP-05.S01.T03.publication-mapping-02.json",
+    "sha256": "35496ee01c80a9788b857abba93cf172e2005648656a2f96b871ce2adc737ad0",
+    "status": "PASS_PUBLICATION_AND_PRELIMINARY_MAPPING_ONLY"
+  },
+  "releaseApproval": false,
+  "retainedAdverse": [
+    {
+      "observation": "Task-owned setup KeyError 'state'; second producer corrects actual backlog status field and uses unique output/failure-log paths. No substantive assertion weakened.",
+      "path": "artifacts/evidence/CAP-05.S01.T03.publication-mapping-01.json",
+      "sha256": "d8ee517ba8df78db5fc78bcf3c1bcd321628610cddfff281efe62e6d406ac554",
+      "status": "FAIL"
+    },
+    {
+      "focusedClosure": "Fresh site report and exact committed three-hash equality close those stale-site findings; broader original readiness result is not relabeled PASS.",
+      "observation": "Retained failed readiness observation: duplicate generation timed out waiting for owned generation lock, validation continued, only CAP05 capability/S01 slice/T03 task-section stale manifest hashes reported. Full original command stays failed.",
+      "originalExitCode": 1,
+      "path": "artifacts/tmp/CAP-05.S01.T03.preclaim-readiness-adverse-01.txt",
+      "rawSHA256": "7ed728a96b0af54625e2fc687b5d9d06cb83d3762fa65abfcb768b5142fb2e11"
+    }
+  ],
+  "reviewSiteClosure": {
+    "actualStatus": "pass",
+    "closureMethod": "Same canonical plans/backlog/approved metadata, completed owned generation, fresh site validation and direct exact three-hash equality. No unchanged full readiness invocation replay required and no original readiness PASS inferred.",
+    "errors": [],
+    "exactCurrentHashes": {
+      "capabilityPlan": "ec717748e26a3c263d8a6101222a1cfe3fd97020efca076dcb0a2d95ed88492f",
+      "slicePlan": "374350eacb70bd6fff824b6964ba68570c4ef05a2f358a24bc780eea0553876c",
+      "taskPlanSection": "cb08f8a1eb929e594b85296ac82e0010beb4e980fd4a00b806f561b744aa9080"
+    },
+    "executionProvenance": "Root-owned actual post-generation command returned exit0; exact retained JSON report authenticated. This reviewer performed only commit/input/hash comparisons, not a new checker run.",
+    "exitCode": 0,
+    "htmlPageCount": 497,
+    "manifestPath": "planning/review-site/manifest.json",
+    "manifestSHA256": "e96c8ad57e0b969205aaf7c5ce5ded8a37f7b21aea42b8cb224b67c36780c4c4",
+    "rawSHA256": "8e26f455bb97bf76a441d6d734b6e7e04cb4f030f3eeacc2f09fcfb039af1916",
+    "report": "artifacts/tmp/CAP-05.S01.T03.plan-review-check-preclaim-01.json",
+    "sourceSupport": "Unchanged tools/planctl.py validate_wave539-622 accumulates all capability/slice, initiation, immutable approval/inventory/binding and site-validator outcomes before final return; there is no early return on the generation/site failure. Retained failed observation reports structural capability/slice checks valid and only these three stale hash errors. Unchanged plan_review_check753-812 compares these exact plan and task-section hashes.",
+    "warnings": []
+  },
+  "reviewedAt": "2026-10-06T16:57:56.588883+00:00",
+  "reviewedStateCommit": "48426f25857179a084bb448910ac309f97a14185",
+  "reviewer": "agent:/root/c11_security_review",
+  "schemaVersion": "1.0",
+  "scope": "approved-prerequisites-only",
+  "taskApproval": false,
+  "taskId": "CAP-05.S01.T03",
+  "waveCompletion": false
+}
