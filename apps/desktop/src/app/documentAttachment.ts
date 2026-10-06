@@ -290,7 +290,7 @@ export function attachmentProblemMessage(code: AttachmentProblemCode): string {
     "worker-unavailable": "Local document inspection is unavailable. Retry when the worker is ready.",
     "storage-pressure": "Local storage cannot admit this copy. Free space or choose a smaller file.",
     "candidate-unavailable": "The pending candidate is unavailable. Choose the file again.",
-    unavailable: "The native attachment bridge is unavailable. No file was selected or attached.",
+    unavailable: "Local attachment is unavailable. Check current attachment status and the local service before retrying.",
   };
   return messages[code];
 }
