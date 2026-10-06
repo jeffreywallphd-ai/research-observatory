@@ -97,3 +97,12 @@ and a prior per-copy rights-failure regression for annotation without egress and
 fresh alternative-copy review. Local-file attachment stays denied, and actual
 download/Attach still recheck current authority. These are corrections of the
 approved 1.9 journey, not new scope or verification-framework work.
+
+The first committed-candidate check exposed a missed architecture row: concrete
+intake/recovery SQL helpers were placed outside the established document data
+adapter. The existing architecture guard rejects those dependencies and calls.
+Preserve that failed check and relocate the exact helpers into the existing
+`document_attachment_repository.py` adapter; keep transactions, authority, IDs,
+SQL and recovery semantics unchanged. The guard is the characterization failure;
+replay it plus affected queue/recovery and integration checks. No verifier,
+architecture policy, migration, public contract or framework change is required.

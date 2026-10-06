@@ -13,18 +13,21 @@ import json
 import ntpath
 import re
 import sqlite3
-from collections.abc import Callable
+from collections.abc import Callable, Mapping
 from contextlib import suppress
 from datetime import UTC, datetime
 from pathlib import Path
-from typing import BinaryIO
+from typing import Annotated, BinaryIO, Literal
 
-from pydantic import ValidationError
+from pydantic import Field, ValidationError
 
+from .acquisition.intake import DocumentIntakeInput, build_document_intake
 from .acquisition.locations import retained_locations
 from .connectors.contracts import ConnectorRecord
 from .corpus_repository import SqliteCorpusRepository
 from .domain_contracts import is_uuid_v7, new_uuid_v7
+from .ingestion.import_drafts import Digest, DraftValue, Identity, ProjectIdentity
+from .ingestion.preview_workflow import PreviewIntentContext
 from .ports.acquisition import (
     AccessNeedChannel,
     AccessNeedKind,
@@ -51,7 +54,7 @@ from .ports.document_attachments import (
 from .ports.object_store import ObjectPutCommand, ObjectStagingCancelled, ObjectStagingCleanupRequired, ObjectStore
 from .ports.repositories import AggregateRevision, AggregateRevisionDraft, AtomicRepositoryEvent, MaterialDependency
 from .ports.rights import RightsPermissionDraft
-from .ports.workflow_executor import WorkflowJobClaim
+from .ports.workflow_executor import WorkflowJobClaim, WorkflowOutputReference, WorkflowQueueConflict
 from .reconciliation.contracts import SourceAssertion
 from .repositories import _projection_content_sha256, _SqliteAggregateRepository, _SqliteWorkflowQueueRepository
 from .rights_policy import (
@@ -270,7 +273,6 @@ class LocalDocumentAttachmentService:
             self.ensure_intake_ready()
 
             def admit() -> WorkflowJobClaim:
-                from .document_intake_repository import admit_intake
 
                 with self._corpus._transaction(write=True) as (connection, aggregates):
                     self._authority(connection, actor)
@@ -335,7 +337,6 @@ class LocalDocumentAttachmentService:
                 )
 
                 def fail() -> None:
-                    from .document_intake_repository import finish_intake
 
                     with self._corpus._transaction(write=True) as (connection, aggregates):
                         self._authority(connection, actor)
@@ -413,7 +414,6 @@ class LocalDocumentAttachmentService:
             if intake_claim is not None:
 
                 def validating() -> None:
-                    from .document_intake_repository import mark_intake_phase
 
                     with self._corpus._transaction(write=True) as (connection, _):
                         self._authority(connection, actor)
@@ -547,8 +547,6 @@ class LocalDocumentAttachmentService:
                         intake_claim=acquisition.intake_claim,
                     )
                 elif intake_claim is not None:
-                    from .document_intake_repository import finish_intake
-
                     assert operation_id is not None
                     finish_intake(
                         connection,
@@ -626,7 +624,6 @@ class LocalDocumentAttachmentService:
         actor: CorpusActor,
         remote_selection: AcquisitionSelection | None = None,
     ) -> AttachmentCandidate:
-        from .document_recovery_repository import current_recovery_basis
 
         if (
             any(not is_uuid_v7(x) for x in (candidate_id, original_operation_id, recovery_operation_id))
@@ -763,7 +760,6 @@ class LocalDocumentAttachmentService:
         *,
         recheck: bool = True,
     ):
-        from .document_recovery_repository import operation_recovery
 
         return operation_recovery(
             connection,
@@ -1529,7 +1525,6 @@ def publish_acquisition_source(
     )
     if intake_claim is None:
         raise AcquisitionProblem("acquisition-attempt-changed")
-    from .document_intake_repository import finish_intake
 
     finish_intake(
         connection,
@@ -1666,7 +1661,6 @@ class AcquisitionRepository:
                     revision.created_at,
                 ),
             )
-            from .document_intake_repository import admit_intake
 
             claim = admit_intake(
                 connection,
@@ -1688,7 +1682,6 @@ class AcquisitionRepository:
         return self._queue.cancellation_requested(claim, now=_now())
 
     def intake_downloading(self, claim: WorkflowJobClaim, *, actor: CorpusActor) -> None:
-        from .document_intake_repository import mark_intake_phase
 
         with self._corpus._transaction(write=True) as (connection, _):
             self._attachments._authority(connection, actor)
@@ -1846,8 +1839,6 @@ class AcquisitionRepository:
             )
             claim = self._claims.get(operation_id)
             if claim is not None:
-                from .document_intake_repository import finish_intake
-
                 finish_intake(
                     connection,
                     aggregates,
@@ -2000,3 +1991,350 @@ class AcquisitionRepository:
             if _sha(receipt.model_dump(mode="json", by_alias=True)) != row[1]:
                 raise AcquisitionProblem("acquisition-receipt-integrity-invalid")
             return load_location(connection, self._project, str(row[0])), receipt
+
+
+def admit_intake(
+    connection: CanonicalConnection,
+    aggregates: _SqliteAggregateRepository,
+    queue: _SqliteWorkflowQueueRepository,
+    *,
+    project: str,
+    operation_id: str,
+    session_id: str,
+    kind: Literal["local-import", "remote-download"],
+    selection: Mapping[str, object],
+    confirmation_sha256: str,
+    actor: CorpusActor,
+    initial: AggregateRevision | None = None,
+) -> WorkflowJobClaim:
+
+    if connection.execute("SELECT 1 FROM document_intake_jobs WHERE operation_id=?", (operation_id,)).fetchone():
+        raise AcquisitionProblem("acquisition-operation-conflict")
+    intent_value = json.loads(
+        connection.execute(
+            "SELECT text_value FROM settings WHERE project_id=? AND setting_key='research-intent.revision' "
+            "ORDER BY revision DESC LIMIT 1",
+            (project,),
+        ).fetchone()[0]
+    )
+    intent = PreviewIntentContext(
+        project_id=project,
+        domain_project_id=intent_value["projectId"],
+        intent_id=intent_value["intentId"],
+        revision_id=actor.intent_revision_id,
+        content_hash="sha256:" + actor.intent_sha256,
+        status=intent_value["status"],
+    )
+    inputs = DocumentIntakeInput(
+        kind=kind,
+        operation_id=operation_id,
+        session_id=session_id,
+        actor_id=actor.actor_id,
+        intent=intent,
+        privacy_sha256=actor.policy_sha256,
+        selection_sha256=_sha(selection),
+        confirmation_sha256=confirmation_sha256,
+    )
+    if initial is None:
+        source_inputs = tuple(
+            aggregates.get_revision(str(selection[key]))
+            for key in ("sourceAssertionRevisionId", "workRevisionId", "versionRevisionId")
+        )
+        initial = _append_attempt_revision(
+            aggregates,
+            operation_id,
+            actor,
+            code="intake-admitted",
+            inputs=source_inputs,
+            fingerprints=(("intake", inputs.configuration_hash.removeprefix("sha256:")),),
+            previous=None,
+        )
+    now = _now()
+    submission = build_document_intake(inputs, now=now)
+    # All existing definition, snapshot, actor, idempotency and digest guards
+    # execute in this same writer. No runnable job is exposed before its exact
+    # native-owned operation is claimed and started.
+    from .ports.workflow_executor import WorkflowActor
+
+    queue._enqueue_with_connection(connection, submission, actor=WorkflowActor(actor.actor_id, "human", "researcher"))
+    connection.execute(
+        "INSERT INTO document_intake_jobs VALUES (?,?,?,?,?,?,?,?,?,?)",
+        (
+            operation_id,
+            project,
+            initial.revision_id,
+            submission.job_id,
+            kind,
+            actor.actor_id,
+            session_id,
+            json.dumps(selection, sort_keys=True, separators=(",", ":")),
+            inputs.configuration_hash.removeprefix("sha256:"),
+            now,
+        ),
+    )
+    claim = queue._claim_next_with_connection(
+        connection,
+        worker_id=new_uuid_v7(),
+        concurrency_classes=("document",),
+        now=now,
+        lease_duration_ms=600_000,
+        activity_types=(submission.activity_type,),
+        job_id=submission.job_id,
+    )
+    if claim is None:
+        raise WorkflowQueueConflict("document intake admission could not claim its exact job")
+    queue._start_with_connection(connection, claim, now=now)
+    return claim
+
+
+def mark_intake_phase(
+    connection: CanonicalConnection,
+    queue: _SqliteWorkflowQueueRepository,
+    claim: WorkflowJobClaim,
+    phase: Literal["downloading", "validating"],
+) -> None:
+    from .ports.object_store import ObjectStagingCancelled
+    from .ports.workflow_executor import WorkflowActor
+
+    now = _now()
+    row = queue._lease_row(connection, claim, now, states=("running", "cancelling"))
+    if row[1] == "cancelling" or row[3] is not None:
+        raise ObjectStagingCancelled("document intake cancelled before phase")
+    code = "intake-" + phase
+    queue._append_history(
+        connection,
+        project_id=claim.project_id,
+        workflow_run_id=claim.workflow_run_id,
+        job_id=claim.job_id,
+        attempt_id=claim.attempt_id,
+        entity_type="job-attempt",
+        entity_id=claim.attempt_id,
+        from_state=str(row[4]),
+        to_state=str(row[4]),
+        occurred_at=now,
+        actor=WorkflowActor(claim.worker_id, "workload", "local-workflow-worker"),
+        reason_code=code,
+        extra={"progress": json.loads(str(row[5]))},
+    )
+    connection.execute(
+        "UPDATE workflow_queue_jobs SET diagnostic_code=?,updated_at=? WHERE project_id=? AND job_id=?",
+        (code, now, claim.project_id, claim.job_id),
+    )
+
+
+def finish_intake(
+    connection: CanonicalConnection,
+    aggregates: _SqliteAggregateRepository,
+    queue: _SqliteWorkflowQueueRepository,
+    claim: WorkflowJobClaim,
+    *,
+    project: str,
+    operation_id: str,
+    actor: CorpusActor,
+    outcome: Literal["candidate", "failed", "cancelled"],
+    code: str,
+    candidate_id: str | None = None,
+    revision: AggregateRevision | None = None,
+) -> None:
+
+    row = connection.execute(
+        "SELECT job_id,actor_id,revision_id FROM document_intake_jobs WHERE project_id=? AND operation_id=?",
+        (project, operation_id),
+    ).fetchone()
+    if row is None or row[0] != claim.job_id or row[1] != actor.actor_id or claim.project_id != project:
+        raise AcquisitionProblem("acquisition-attempt-changed")
+    now = _now()
+    # This also rejects expired/replaced capabilities before adding an outcome.
+    cleanup_failed = outcome == "failed" and code == "acquisition-cleanup-required"
+    queue._lease_row(
+        connection,
+        claim,
+        now,
+        states=("running", "cancelling") if outcome == "cancelled" or cleanup_failed else ("running",),
+    )
+    if revision is None:
+        initial = aggregates.get_revision(str(row[2]))
+        fingerprints = [("intake-outcome", _sha({"outcome": outcome, "code": code, "candidateId": candidate_id}))]
+        if candidate_id is not None:
+            candidate = connection.execute(
+                "SELECT object_sha256,candidate_sha256 FROM document_attachment_candidates "
+                "WHERE project_id=? AND candidate_id=?",
+                (project, candidate_id),
+            ).fetchone()
+            if candidate is None:
+                raise AcquisitionProblem("acquisition-attempt-changed")
+            fingerprints.extend((("copy-bytes", str(candidate[0])), ("candidate", str(candidate[1]))))
+        revision = _append_attempt_revision(
+            aggregates,
+            operation_id,
+            actor,
+            code=code,
+            inputs=(initial,),
+            fingerprints=tuple(fingerprints),
+            previous=initial.revision,
+        )
+    connection.execute(
+        "INSERT INTO document_intake_results VALUES (?,?,?,?,?,?)",
+        (operation_id, project, revision.revision_id, outcome, code, candidate_id),
+    )
+    if outcome == "candidate":
+        output = WorkflowOutputReference(
+            revision.aggregate_id, revision.revision_id, _projection_content_sha256(revision), "application/json", None
+        )
+        queue._stage_artifact_with_connection(connection, claim, artifact=output, role="output", now=now)
+        if queue._dependency_registration_gaps_with_connection(connection, claim, now=now, outputs=(output,)):
+            raise WorkflowQueueConflict("document intake output dependency registration is incomplete")
+        queue._complete_with_connection(connection, claim, now=now, outputs=(output,))
+    else:
+        queue._finish_attempt_with_connection(
+            connection, claim, now=now, error_code=code, cancel=outcome == "cancelled"
+        )
+
+
+class DocumentRecoveryBasis(DraftValue):
+    schema_version: Literal["1.0"] = "1.0"
+    project_id: ProjectIdentity
+    candidate_id: Identity
+    candidate_sha256: Digest
+    object_sha256: Digest
+    original_operation_id: Identity
+    actor_id: Identity
+    session_id: Annotated[str, Field(pattern=r"^[0-9a-f]{32}$")]
+    selection: tuple[Identity, Identity, Identity, Identity, Identity]
+    intent_revision_id: Identity
+    intent_sha256: Digest
+    privacy_sha256: Digest
+    candidate_policy_revision_id: Identity | None
+    location_id: Identity | None
+    location_sha256: Digest | None
+    original_provider_policy_revision_id: Identity | None
+    current_provider_policy_revision_id: Identity | None
+    receipt_sha256: Digest | None
+
+
+def current_recovery_basis(
+    connection: CanonicalConnection,
+    *,
+    project: str,
+    candidate: AttachmentCandidate,
+    original_operation_id: str,
+    session_id: str,
+    actor: CorpusActor,
+    rights: SqliteRightsRepository,
+    remote_selection: AcquisitionSelection | None = None,
+) -> DocumentRecoveryBasis:
+
+    original = connection.execute(
+        "SELECT actor_id FROM document_attachment_operations WHERE project_id=? AND operation_id=? AND candidate_id=?",
+        (project, original_operation_id, candidate.candidate_id),
+    ).fetchone()
+    owner = connection.execute(
+        "SELECT actor_id FROM document_attachment_candidates WHERE project_id=? AND candidate_id=?",
+        (project, candidate.candidate_id),
+    ).fetchone()
+    if original is None or owner is None or original[0] != actor.actor_id or owner[0] != actor.actor_id:
+        raise AttachmentProblem("attachment-operation-unavailable")
+    current_policy = rights.current_with_connection(connection, candidate.rights_subject)
+    acquired = connection.execute(
+        "SELECT location_id,provider_policy_revision_id,receipt_sha256,receipt_json "
+        "FROM document_acquisition_sources WHERE project_id=? AND candidate_id=?",
+        (project, candidate.candidate_id),
+    ).fetchone()
+    location = None
+    provider_policy = None
+    if acquired is not None:
+        receipt = AcquisitionReceipt.model_validate_json(str(acquired[3]))
+        location = load_location(connection, project, str(acquired[0]))
+        if (
+            receipt.location_id != location.location_id
+            or receipt.location_sha256 != location.location_sha256
+            or receipt.provider_policy_revision_id != acquired[1]
+            or _sha(receipt.model_dump(mode="json", by_alias=True)) != acquired[2]
+            or receipt.actual_sha256 != candidate.object_sha256
+            or receipt.expanded_bytes != candidate.byte_length
+        ):
+            raise AcquisitionProblem("acquisition-receipt-integrity-invalid")
+        if remote_selection is not None:
+            origin = connection.execute(
+                "SELECT selection_json FROM acquisition_attempts WHERE project_id=? AND operation_id=?",
+                (project, original_operation_id),
+            ).fetchone()
+            if origin is None or AcquisitionSelection.model_validate_json(str(origin[0])) != remote_selection:
+                raise AcquisitionProblem("acquisition-selection-invalid")
+        provider_policy = permitted_policy(connection, rights, location, actor)
+    elif remote_selection is not None:
+        raise AcquisitionProblem("acquisition-selection-invalid")
+    return DocumentRecoveryBasis(
+        project_id=project,
+        candidate_id=candidate.candidate_id,
+        candidate_sha256=candidate.candidate_sha256,
+        object_sha256=candidate.object_sha256,
+        original_operation_id=original_operation_id,
+        actor_id=actor.actor_id,
+        session_id=session_id,
+        selection=(
+            candidate.source_assertion_revision_id,
+            candidate.work_id,
+            candidate.work_revision_id,
+            candidate.version_id,
+            candidate.version_revision_id,
+        ),
+        intent_revision_id=actor.intent_revision_id,
+        intent_sha256=actor.intent_sha256,
+        privacy_sha256=actor.policy_sha256,
+        candidate_policy_revision_id=current_policy.revision_id if current_policy else None,
+        location_id=location.location_id if location else None,
+        location_sha256=location.location_sha256 if location else None,
+        original_provider_policy_revision_id=str(acquired[1]) if acquired else None,
+        current_provider_policy_revision_id=provider_policy.revision_id if provider_policy else None,
+        receipt_sha256=str(acquired[2]) if acquired else None,
+    )
+
+
+def operation_recovery(
+    connection: CanonicalConnection,
+    *,
+    project: str,
+    candidate: AttachmentCandidate,
+    operation_id: str,
+    session_id: str,
+    actor: CorpusActor,
+    rights: SqliteRightsRepository,
+    recheck: bool = True,
+) -> tuple[str, DocumentRecoveryBasis] | None:
+
+    original = connection.execute(
+        "SELECT 1 FROM document_attachment_operations WHERE project_id=? "
+        "AND operation_id=? AND candidate_id=? AND actor_id=? AND session_id=?",
+        (project, operation_id, candidate.candidate_id, actor.actor_id, session_id),
+    ).fetchone()
+    if original:
+        return None
+    row = connection.execute(
+        "SELECT revision_id,basis_sha256,basis_json FROM document_attachment_recoveries "
+        "WHERE project_id=? AND operation_id=? AND candidate_id=? AND actor_id=? AND session_id=?",
+        (project, operation_id, candidate.candidate_id, actor.actor_id, session_id),
+    ).fetchone()
+    if row is None:
+        raise AttachmentProblem("attachment-operation-unavailable")
+    try:
+        basis = DocumentRecoveryBasis.model_validate_json(str(row[2]))
+    except ValueError:
+        raise AttachmentProblem("attachment-recovery-integrity-invalid") from None
+    if (
+        _sha(basis.model_dump(mode="json", by_alias=True)) != row[1]
+        or basis.session_id != session_id
+        or basis.actor_id != actor.actor_id
+    ):
+        raise AttachmentProblem("attachment-recovery-integrity-invalid")
+    if recheck and basis != current_recovery_basis(
+        connection,
+        project=project,
+        candidate=candidate,
+        original_operation_id=basis.original_operation_id,
+        session_id=session_id,
+        actor=actor,
+        rights=rights,
+    ):
+        raise AttachmentProblem("attachment-recovery-stale")
+    return str(row[0]), basis
