@@ -1,0 +1,122 @@
+{
+  "schemaVersion": "1.4",
+  "documentType": "ui-change-evidence",
+  "taskId": "CAP-05.S01.T01",
+  "changeKind": "defect-restoration",
+  "contractPath": "artifacts/evidence/ui-change/CAP-05.S01.T01.json",
+  "implementationAgent": "agent:codex-w2-implementation",
+  "changedFiles": [
+    "apps/desktop/src/app/ApplicationRuntime.tsx",
+    "apps/desktop/src/app/DocumentAttachmentPane.tsx",
+    "apps/desktop/src/app/ImportWorkspace.tsx",
+    "apps/desktop/src/app/ReconciliationPane.tsx",
+    "apps/desktop/src/app/ReconciliationVersionsPane.tsx",
+    "apps/desktop/src/app/TaskCenterWorkspace.tsx",
+    "apps/desktop/src/app/documentAttachment.ts",
+    "apps/desktop/src/app/documentAttachmentNative.ts"
+  ],
+  "reference": {
+    "referenceId": "RO-UI-ACADEMIC-MINIMAL-1.8",
+    "version": "1.8",
+    "packageSha256": "cd8995fdcea2fe44452eaa1fdd258b6f9fab5714cbd443a81a8e5b4251220b94",
+    "approvalCommit": "acdc67b616f5ecdec448f57a7efe46e4f359aa9f",
+    "approvedBy": "human:repository-owner",
+    "previousReferenceId": "RO-UI-ACADEMIC-MINIMAL-1.7"
+  },
+  "restoration": {
+    "defect": "The approved 1.8 opaque selected-Work/version attachment interaction remained unavailable pending its native/Core implementation. The original task restores that approved behavior and corrects a fallback that inaccurately denied prior file selection after an unavailable result.",
+    "expectedBehavior": "Chosen or dropped local files remain native-only; the exact selected Work/version and researcher rights confirmation bind stage/commit/status and return context. Typed failure, cancellation and restart do not infer durable success. The unchanged approved 1.8 package remains the experience authority."
+  },
+  "focusedEvidence": [
+    {
+      "command": ".venv/Scripts/python.exe -B artifacts/tmp/CAP-05.S01.T01.run-attachment-ts-02.py green",
+      "result": "passed",
+      "scope": "13 focused renderer attachment/import tests at committed product 8297dcdc; stable input receipt and exact invoked test files are retained."
+    },
+    {
+      "command": ".venv/Scripts/python.exe -B artifacts/tmp/CAP-05.S01.T01.run-frontend-quality-01.py",
+      "result": "passed",
+      "scope": "Configured desktop lint and strict typing at the exact current product; stable installed dependency closure."
+    },
+    {
+      "command": ".venv/Scripts/python.exe -B artifacts/tmp/CAP-05.S01.T01.run-five-native-03.py drop",
+      "result": "passed",
+      "scope": "Actual Windows five-node hidden reinstallation, four interactive OLE targets, excluded graphics HWND, final-validation rollback and four NOTREGISTERED probes, disarmed/outside denial and armed held-source current Core/signed LPAC stage. Graphics-warmup timing and unsupported scope introspection limits remain explicit."
+    },
+    {
+      "command": ".venv/Scripts/python.exe -B artifacts/tmp/CAP-05.S01.T01.run-five-native-03.py picker",
+      "result": "passed",
+      "scope": "Actual Windows picker cancellation/selection, exact Work/version rights confirmation, encrypted SQLCipher/object commit, bound provenance and fresh native process status/reopen at committed 8297dcdc."
+    },
+    {
+      "command": ".venv/Scripts/python.exe -B artifacts/tmp/CAP-05.S01.T01.run-focused-python-04.py",
+      "result": "passed",
+      "scope": "79 attachment, format/unsafe/password/size, duplicate/rights/failure/migration/API/fixture tests with two actual signed LPAC cases, plus API and architecture drift and affected Python quality. Unit doubles remain distinguished from real-principal native evidence."
+    },
+    {
+      "command": ".venv/Scripts/python.exe -B tools/product_style_check.py --repo . --verify-captures artifacts/evidence/CAP-05.S01.T01.captures-02/manifest.json --delivery-commit fb437349cb65352c839cb298ec7e13890baf1845",
+      "result": "passed",
+      "scope": "Exact immutable producer/delivery authentication and measured conformance for 156 PNGs (78 product/reference pairs), unchanged approved 1.8 reference; separate independent visual disposition and restoration classification are bound below."
+    }
+  ],
+  "adoptedContinuationAuthority": {
+    "amendmentId": "W2.A02",
+    "changeRequestId": "ECR-0010",
+    "controlTaskId": "W2.A02.T01",
+    "inheritedAmendmentId": "W2.A01",
+    "inheritedTaskId": "W2.A01.T02",
+    "inheritedContractPath": "artifacts/evidence/ui-change/W2.A01.T02.json",
+    "adoptionCommit": "04d6ae3fb29a133e6e31c8191ba1d6b80fa0b0cf",
+    "reactivationCommit": "f18a037b96d43392599f7779a668fb1928f74475",
+    "inheritedUiFiles": [
+      "apps/desktop/src/app/ApplicationRuntime.tsx",
+      "apps/desktop/src/app/DocumentAttachmentPane.tsx",
+      "apps/desktop/src/app/ImportWorkspace.tsx",
+      "apps/desktop/src/app/ReconciliationPane.tsx",
+      "apps/desktop/src/app/ReconciliationVersionsPane.tsx",
+      "apps/desktop/src/app/TaskCenterWorkspace.tsx",
+      "apps/desktop/src/app/documentAttachment.ts",
+      "apps/desktop/src/app/documentAttachmentNative.ts"
+    ],
+    "inheritedUiCommits": [
+      "1d11c81891a6f6166f24cacaf7902b8078e61610",
+      "369cd71230ee8508f5b5f53d96219b9a62431370",
+      "988ee4789f2004cce83187f971760d5b5f3e02ca"
+    ],
+    "resumedUiFiles": [
+      "apps/desktop/src/app/DocumentAttachmentPane.tsx",
+      "apps/desktop/src/app/documentAttachment.ts"
+    ],
+    "resumedUiCommits": [
+      "9727f1b195e7dee300e7f3df3c289e7739fb0fdc",
+      "8297dcdc1528cb0cbe53ecd38b056231fbe9fd1d"
+    ],
+    "classification": {
+      "path": "artifacts/evidence/CAP-05.S01.T01.ui-classification-R01.json",
+      "sha256": "88abac0df5ae9f0a1561d33fa067eaf5b562b4c5ecd461ef7b9b8dcbd5ececc5",
+      "commit": "7a17cea98d537ba2a56562a3309df56beb22ba6f"
+    }
+  },
+  "referenceActivationAuthority": {
+    "amendmentId": "W2.A03",
+    "changeRequestId": "ECR-0011",
+    "controlTaskId": "W2.A03.T01",
+    "consumerTaskId": "W2.A03.T02",
+    "referenceApprovalPath": "planning/reference-approvals/RO-UI-ACADEMIC-MINIMAL-1.8.json",
+    "witnessPath": "packages/contracts/workflow-profile/presentation-compatibility-1.8.json",
+    "publicationCommit": "acdc67b616f5ecdec448f57a7efe46e4f359aa9f",
+    "witnessCommit": "9824e2baad59705bd985a33624fc3e27837e7bc1",
+    "adoptionCommit": "0b20d78426a053ea3818089d7126c123c0be7a65",
+    "reactivationCommit": "2d29db71a40dda5b0b37b19af3d7ecf84114ba6a",
+    "activationUiFiles": [
+      "apps/desktop/scripts/assemble-application.mjs",
+      "apps/desktop/scripts/assemble-reference.mjs",
+      "verification/baselines/desktop-ui.json",
+      "verification/extensions/desktop-ui.json"
+    ],
+    "activationUiCommits": [
+      "da0f1328537b4228c8e41a68d0c70ad7da6ac977",
+      "aab29ed2413027d720d9064abb68f085e77c5c69"
+    ]
+  }
+}

@@ -1,0 +1,250 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-product-verification-evidence",
+  "taskId": "CAP-05.S01.T01",
+  "baseCommit": "6506c68461144747b0ee9be10853211717aa381d",
+  "productCandidateCommit": "8297dcdc1528cb0cbe53ecd38b056231fbe9fd1d",
+  "productVerificationStatus": "PASS",
+  "formalTaskApproval": false,
+  "taskCompletion": false,
+  "approvalAuthority": "Approved W2 scope and adopted A01-A05; unchanged Academic Minimal 1.8. No automation/framework source change after A05.",
+  "criterionMap": [
+    {
+      "criterion_index": 1,
+      "proofIds": [
+        "focused-python-04",
+        "native-checks-02",
+        "five-native-picker-03",
+        "attachment-ts-green-02"
+      ],
+      "interpretation": "Supported document formats, malformed/unsafe/password/size denial, exact Work/version researcher confirmation, separate acquisition assertions and encrypted project-scoped deduplication. Two named signed-LPAC cases cover actual format inspection including a stream beyond 10 MiB. Ordinary unit fixtures retain their documented doubles."
+    },
+    {
+      "criterion_index": 2,
+      "proofIds": [
+        "native-checks-02",
+        "five-native-drop-03",
+        "five-native-picker-03",
+        "focused-python-04",
+        "attachment-ts-green-02"
+      ],
+      "interpretation": "222 native tests pass with two explicit ignored witnesses; 79 attachment/inspection/lifecycle/API/fixture tests and 13 renderer tests pass. Real Windows drop denial/admission and picker cancellation/selection/rights/commit/fresh-process restart are separate current executable proof."
+    },
+    {
+      "criterion_index": 3,
+      "proofIds": [
+        "frontend-quality-01",
+        "native-checks-02",
+        "focused-python-04",
+        "product-build-green-02"
+      ],
+      "interpretation": "Affected Python/Rust/TypeScript quality, exact generated Core API and architecture checks pass. Existing v21/v22/v23 migration preservation and typed failure/audit assertions are included. Full original-base UI authority, independent disposition and taskctl completion remain pending."
+    }
+  ],
+  "machineProof": [
+    {
+      "id": "native-checks-02",
+      "path": "artifacts/tmp/CAP-05.S01.T01.native-checks-02-8297dcdc.json",
+      "sha256": "e9be792f880f654bf69be994a47286a12bdda284cdc24b83d484b14193673687",
+      "status": "PASS",
+      "durationSeconds": null,
+      "checks": [
+        {
+          "name": "format",
+          "exitCode": 0,
+          "durationSeconds": 0.431,
+          "log": "artifacts/tmp/CAP-05.S01.T01.native-checks-02-8297dcdc.format.log",
+          "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "name": "clippy",
+          "exitCode": 0,
+          "durationSeconds": 3.087,
+          "log": "artifacts/tmp/CAP-05.S01.T01.native-checks-02-8297dcdc.clippy.log",
+          "logSha256": "1634e692d4d8694f779242754d73bc46a7a2d664ee5793f859334e3466aebcb1"
+        },
+        {
+          "name": "native-bridge-tests",
+          "exitCode": 0,
+          "durationSeconds": 7.853,
+          "log": "artifacts/tmp/CAP-05.S01.T01.native-checks-02-8297dcdc.native-bridge-tests.log",
+          "logSha256": "547f7682060084a3507bfd82bf9b4d203a6d7bed97c0423fd94d473aa867792c"
+        }
+      ],
+      "inputClosure": "Exact candidate and execution inputs are recorded in the immutable local receipt; no receipt is reused for another source candidate."
+    },
+    {
+      "id": "current-native-build",
+      "path": "artifacts/tmp/CAP-05.S01.T01.current-native-build-8297dcdc.json",
+      "sha256": "8239649e8c8ddb190ed45f6ed5f0b8051a65f81efa50811957e0b61fa0bf493c",
+      "status": "PASS",
+      "durationSeconds": 15.88,
+      "checks": [],
+      "inputClosure": "Exact candidate and execution inputs are recorded in the immutable local receipt; no receipt is reused for another source candidate."
+    },
+    {
+      "id": "five-native-drop-03",
+      "path": "artifacts/tmp/CAP-05.S01.T01.five-native-drop-03-8297dcdc.json",
+      "sha256": "e655dad58a9bf3d188ebf85f0c9f7faa53d1d33023c676006050a23d664592b4",
+      "status": "PASS",
+      "durationSeconds": 28.157,
+      "checks": [],
+      "inputClosure": "Exact candidate and execution inputs are recorded in the immutable local receipt; no receipt is reused for another source candidate."
+    },
+    {
+      "id": "five-native-picker-03",
+      "path": "artifacts/tmp/CAP-05.S01.T01.five-native-picker-03-8297dcdc.json",
+      "sha256": "dbaa96ea5791147b8d2953d55e5337388f278ca3148992066eb7fbc389da0f8d",
+      "status": "PASS",
+      "durationSeconds": 36.06,
+      "checks": [],
+      "inputClosure": "Exact candidate and execution inputs are recorded in the immutable local receipt; no receipt is reused for another source candidate."
+    },
+    {
+      "id": "attachment-ts-green-02",
+      "path": "artifacts/tmp/CAP-05.S01.T01.attachment-ts-green-02-8297dcdc.json",
+      "sha256": "a18a5be5d6848b1f32219c36d2704e7a1ba98b9703ecdd5154c688565d9a1a14",
+      "status": "PASS",
+      "durationSeconds": 3.22,
+      "checks": [],
+      "inputClosure": "Exact candidate and execution inputs are recorded in the immutable local receipt; no receipt is reused for another source candidate."
+    },
+    {
+      "id": "frontend-quality-01",
+      "path": "artifacts/tmp/CAP-05.S01.T01.frontend-quality-01-8297dcdc.json",
+      "sha256": "7a03065cb48735fc447b7d5faa3db70b41892077bc528b47e23b534d443e05c0",
+      "status": "PASS",
+      "durationSeconds": null,
+      "checks": [
+        {
+          "name": "lint",
+          "exitCode": 0,
+          "durationSeconds": 0.447,
+          "log": "artifacts/tmp/CAP-05.S01.T01.frontend-quality-01-8297dcdc.lint.log",
+          "logSha256": "f78ede1982f71d1f223b387397a8ac36d4e569cb5133d0d9e5e7c5292c13513d"
+        },
+        {
+          "name": "typecheck",
+          "exitCode": 0,
+          "durationSeconds": 0.854,
+          "log": "artifacts/tmp/CAP-05.S01.T01.frontend-quality-01-8297dcdc.typecheck.log",
+          "logSha256": "8366207267355d3e3d5bf3bf6e8c94c5f93f6078c34f08973fa2b38cdda6cc92"
+        }
+      ],
+      "inputClosure": "Exact candidate and execution inputs are recorded in the immutable local receipt; no receipt is reused for another source candidate."
+    },
+    {
+      "id": "focused-python-04",
+      "path": "artifacts/tmp/CAP-05.S01.T01.focused-python-04-8297dcdc.json",
+      "sha256": "63daaa3d4779e6c760b009030679c667bf6a3cca1e8e0b6095c2d11bc710ad8e",
+      "status": "PASS",
+      "durationSeconds": null,
+      "checks": [
+        {
+          "name": "ruff",
+          "exitCode": 0,
+          "durationSeconds": 0.109,
+          "log": "artifacts/tmp/CAP-05.S01.T01.focused-python-04-8297dcdc.ruff.log",
+          "logSha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18"
+        },
+        {
+          "name": "python-format",
+          "exitCode": 0,
+          "durationSeconds": 0.083,
+          "log": "artifacts/tmp/CAP-05.S01.T01.focused-python-04-8297dcdc.python-format.log",
+          "logSha256": "f114d83b30c5c657ee43a847a45bafccaea255d82673feb87c26d252c61e29c1"
+        },
+        {
+          "name": "mypy",
+          "exitCode": 0,
+          "durationSeconds": 0.614,
+          "log": "artifacts/tmp/CAP-05.S01.T01.focused-python-04-8297dcdc.mypy.log",
+          "logSha256": "718df785efbbd4b57e63b5f64aff2c5b5592e433447681f759b307f97a3ec96a"
+        },
+        {
+          "name": "attachment-and-inspection",
+          "exitCode": 0,
+          "durationSeconds": 77.882,
+          "log": "artifacts/tmp/CAP-05.S01.T01.focused-python-04-8297dcdc.attachment-and-inspection.log",
+          "logSha256": "f99ba64f6af99a09fc844474622454e8875a5e96b06d92baf56a3c4d60d28ec4"
+        },
+        {
+          "name": "api-contract",
+          "exitCode": 0,
+          "durationSeconds": 2.287,
+          "log": "artifacts/tmp/CAP-05.S01.T01.focused-python-04-8297dcdc.api-contract.log",
+          "logSha256": "d0de6df4695ae12810b382025f30caee94c9e9bc81887720850df6345026980f"
+        },
+        {
+          "name": "architecture",
+          "exitCode": 0,
+          "durationSeconds": 3.676,
+          "log": "artifacts/tmp/CAP-05.S01.T01.focused-python-04-8297dcdc.architecture.log",
+          "logSha256": "51a256bf6a7b2e89ab1d1b97aa19077aabf0e8858a450de1f5ceb155ed5c3e88"
+        }
+      ],
+      "inputClosure": "Exact candidate and execution inputs are recorded in the immutable local receipt; no receipt is reused for another source candidate."
+    },
+    {
+      "id": "product-build-green-02",
+      "path": "artifacts/tmp/CAP-05.S01.T01.product-build-green-02-8297dcdc.json",
+      "sha256": "58046409c9fcd5599d0d7b5c126324068d794a954a7e1df1efc37acf2c8a8e3b",
+      "status": "PASS",
+      "durationSeconds": 1.825,
+      "checks": [],
+      "inputClosure": "Exact candidate and execution inputs are recorded in the immutable local receipt; no receipt is reused for another source candidate."
+    }
+  ],
+  "captures": {
+    "path": "artifacts/evidence/CAP-05.S01.T01.captures-02/manifest.json",
+    "sha256": "a53d99456c8b5ec806d128b8f04d70f5e00b4bb211899fa96f099b836037e145",
+    "producerCommit": "8297dcdc1528cb0cbe53ecd38b056231fbe9fd1d",
+    "deliveryCommit": "fb437349cb65352c839cb298ec7e13890baf1845",
+    "pngCount": 156,
+    "status": "Delivered for separate immutable capture-reader verification and independent visual/classification review; not a visual baseline replacement."
+  },
+  "observedNativeBoundary": {
+    "fiveNodeGraph": "Actual graphics-warmed graph; hidden reinstallation binds four interactive OLE targets and excludes the sole disabled transparent childless graphics sibling. No synthetic child is substituted.",
+    "rollback": "After four actual RegisterDragDrop calls, the test substitutes only the captured expected graphics-thread identity; ordinary final validation denies, RAII cleanup runs, and four real registration probes return NOTREGISTERED. The excluded graphics HWND is never registered or probed. Ordinary hidden reinstallation then succeeds.",
+    "drop": "Disarmed and outside-zone drops deny without a held source; exact armed zone accepts one real held-source transfer through current Core and the signed LPAC inspector. No renderer file/path/bytes or stock Tauri drag event is observed.",
+    "picker": "Actual Windows dialog cancellation produces no candidate; selection, explicit exact Work/version and rights confirmation, encrypted SQLCipher/object commit and fresh native process status/reopen pass with authoritative database verification.",
+    "runtime": "Actual fixture imports current source Core. Frozen guardian is an ACL-cleanup input, not current installed Core evidence. Signed inventory, signature, guardian and native executable hashes are bound in the receipts."
+  },
+  "limits": [
+    "Actual five-node proof covers hidden reinstallation after graphics warmup, not first-process-start five-node timing or every possible OLE registration failure.",
+    "The expected-identity fault exercises cleanup; it is not an actual GPU mutation. HWND identities have no immutable generation guarantee.",
+    "Tauri filesystem-scope introspection is unsupported where reported; no introspection pass is claimed.",
+    "Synthetic task-owned local projects and sources are used; no ordinary private project, broad filesystem permission, external provider acquisition or release qualification is inferred.",
+    "Full affected profiles, cross-capability qualification, accessibility/performance/packaging/platform matrix, independent slice/Wave reviews and human release remain later required gates."
+  ],
+  "adverseEvidencePreserved": [
+    {
+      "candidate": "b7834a12b3066426e582dd7f741c1cad0c5a0e32",
+      "path": "artifacts/tmp/CAP-05.S01.T01.five-native-drop-01-b7834a12.json",
+      "interpretation": "Five-node installation/cleanup and exact drop transfer passed, but Core returned an unavailable rejection after the protected closure committed. The underlying Core cause is unlocalized; later passes do not retroactively qualify this run or establish its cause."
+    },
+    {
+      "candidate": "45075b050214ad033392cff6a49327e1e322c59e",
+      "path": "artifacts/tmp/CAP-05.S01.T01.capture-02-preservation-01.json",
+      "interpretation": "Owned capture was interrupted before completion because independent review found an inaccurate unavailable message. Partial output was preserved in ignored local state, with no manifest or acceptance claim."
+    },
+    {
+      "candidate": "9433550f1d065914a6897a320354bfddb29a0888",
+      "interpretation": "Stable red renderer regression rejects the inaccurate claim that no file was selected. Earlier red receipt with derived Vitest output drift remains adverse and is not qualifying evidence."
+    },
+    {
+      "interpretation": "Earlier D3D setup denials, sandbox-only startup/timeouts, quality/build/driver failures, original lineage mismatch and all historical task/amendment reviews remain retained; current proof does not overwrite them."
+    }
+  ],
+  "pendingCompletionGates": [
+    "Immutable capture-reader verification",
+    "Independent current visual and restoration classification",
+    "Full original-base v1.4 UI lineage gate",
+    "Formal independent task disposition and taskctl review",
+    "Reviewed local-main integration"
+  ],
+  "publicationProducer": {
+    "path": "artifacts/tmp/CAP-05.S01.T01.publish-product-proof-01.py",
+    "sha256": "d079c57a698f2589ee163162b73d5ac1f17303cf146f0fe1e090448e6be0f4dd"
+  }
+}
