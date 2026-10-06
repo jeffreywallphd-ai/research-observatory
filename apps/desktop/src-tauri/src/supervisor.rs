@@ -3549,7 +3549,7 @@ fn authenticated_document_stage(
     let source_length = source.byte_length();
     let mut written_source_bytes = 0_u64;
     let seal = source.transfer(
-        || authorized(),
+        &authorized,
         |_, bytes| {
             write_document_bytes(&mut stream, bytes, deadline, &authorized)?;
             written_source_bytes += bytes.len() as u64;

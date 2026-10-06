@@ -416,17 +416,16 @@ impl NativeDropTarget {
                 }
             })
             .is_err()
+            && let Ok(mut state) = probe.lock()
         {
-            if let Ok(mut state) = probe.lock() {
-                state.finish_probe(
-                    &operation_id,
-                    point,
-                    serial,
-                    dispatched_at,
-                    false,
-                    Instant::now(),
-                );
-            }
+            state.finish_probe(
+                &operation_id,
+                point,
+                serial,
+                dispatched_at,
+                false,
+                Instant::now(),
+            );
         }
     }
 

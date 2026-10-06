@@ -138,7 +138,10 @@ pub(crate) struct DocumentProblem {
     pub detail: String,
     pub code: String,
     pub trace_id: String,
-    pub retryable: bool,
+    // Retain strict wire validation. Safe retry actions derive from the typed
+    // problem code and current operation, rather than this advisory Core hint.
+    #[serde(rename = "retryable")]
+    pub _retryable: bool,
     pub remediation: String,
 }
 
@@ -261,7 +264,7 @@ pub(crate) fn stage_held_document(
     };
     #[cfg(feature = "integration-harness")]
     trace_stage_phase(StagePhase::CoreInvoked);
-    let staged = connection.document_stage(source, &selection, || authorized());
+    let staged = connection.document_stage(source, &selection, &authorized);
     #[cfg(feature = "integration-harness")]
     trace_stage_phase(if staged.is_ok() {
         StagePhase::CoreResponseReceived
@@ -327,6 +330,26 @@ pub(crate) fn stage_selected_document(
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn core_retry_hint_retains_required_boolean_wire_validation() {
+        let mut wire = serde_json::json!({
+            "type":"urn:research-observatory:problem:document-unsupported",
+            "title":"Synthetic unsupported file", "status":422,
+            "detail":"Choose a supported lawful copy.",
+            "code":"RO-CORE-DOCUMENT-UNSUPPORTED", "traceId":"a".repeat(32),
+            "retryable":false, "remediation":"Choose another file."
+        });
+        for hint in [false, true] {
+            wire["retryable"] = hint.into();
+            let decoded: DocumentProblem = serde_json::from_value(wire.clone()).unwrap();
+            assert_eq!(decoded._retryable, hint);
+        }
+        wire["retryable"] = "true".into();
+        assert!(serde_json::from_value::<DocumentProblem>(wire.clone()).is_err());
+        wire.as_object_mut().unwrap().remove("retryable");
+        assert!(serde_json::from_value::<DocumentProblem>(wire).is_err());
+    }
 
     #[cfg(feature = "integration-harness")]
     #[test]
