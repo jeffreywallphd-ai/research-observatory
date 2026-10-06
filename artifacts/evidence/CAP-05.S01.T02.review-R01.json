@@ -1,0 +1,431 @@
+{
+  "task_id": "CAP-05.S01.T02",
+  "attempt_id": "R01",
+  "candidate_commit": "4c22cd8d6998cf36062b0303abf9d3d76f025069",
+  "base_commit": "7a51dc94734f8be6c4a64a0c29de458e96b347bc",
+  "reviewed_state_commit": "d587edb7c0d9f498df380e5330409507fb141cc3",
+  "reviewer": "agent:/root/c11_security_review",
+  "result": "approved",
+  "reviewed_at": "2026-10-06T15:01:37+00:00",
+  "evidence_sha256": "aa336871a954808681793d779da3d1a299175786ec20333e10a9fc1f52f31403",
+  "packet_sha256": "3184f4f49aefb57b06d939ad53de830586ac35fac22ed6683c6ff081d2ff3823",
+  "acceptance_criteria_sha256": "9f556a1e187a0cbfa67e7e393a5eea2276fc7a6d6b22bdb473e8231bce1080f1",
+  "selection_sha256": "278193dd99f0b72ee99e324a05767ac0c8725826275fba6f14aa2cd6f28e20fd",
+  "notes": "Independent expanded product/security/public-contract/migration review approves only the actual frozen CAP-05.S01.T02 R01 at candidate4c22cd8d and original claim base7a51dc, as published atd587edb7. Exact retained provider-copy selection, explicit current store/inspect permission, accepted Intent/privacy, actor and native-session preview/confirmation govern acquisition and publication. HTTPS socket pinning retains the original TLS hostname, rejects nonpublic addresses and unsafe destinations, sends no credentials/cookies/referrer/proxy and bounds redirects, wire bytes, deadline and retries. Signed LPAC inspection and encrypted staging precede atomic canonical candidate/source/license/receipt publication; current provider-copy policy is rechecked during explicit attachment commit. Additive schema24 and populated literal schema23 recovery preserve earlier authority and ciphertext. All ten fresh selected checks and150 named tests pass without skips at12552 stable input bindings; no complete profile is inferred. The three preparatory defects were reproduced before remediation and are independently replayed as addressed, without inventing controlled review rounds or closures. Prior failed qualification and development evidence remains adverse. No remaining criterion-bound blocker was found. T03 UI/queue/entitlement integration, S01 deep integration, W2 qualification, production packaging and human release remain separate.",
+  "acceptance_reviews": [
+    {
+      "criterion_index": 1,
+      "result": "satisfied",
+      "assessment": "Exact retained source digest/provider/field ordinal/index/URL/license/version define immutable location witnesses. OA observations and license metadata do not confer permission: current explicit per-copy store(document-acquisition) and inspect(document-analysis), accepted Intent/privacy, exact actor/session and expiring one-use confirmation are required. Source and current policy are fenced at admission, each hop/retry and publication. Transport denies credentialed/non-HTTPS/IP-literal/unsafe-DNS destinations, pins a checked numeric address with original TLS identity, bounds5 redirects/128MiB total wire/120seconds/3 attempts and creates a fresh encrypted stage per retry. Inspection rejects spoofed, unsupported, active, truncated, mismatched or oversized content. Final association/restart retains source/license/receipt provenance and denies a changed provider-copy policy without erasing retained metadata."
+    },
+    {
+      "criterion_index": 2,
+      "result": "satisfied",
+      "assessment": "Fresh acquisition29, attachment/rights/API74 and storage/migration/contracts47 cases all pass with no skips. Actual owned TLS fixture exercises hostname/trust denial and content dispatch through current source Core session composition, real SQLCipher, encrypted objects and signed Windows LPAC inspection. Focused tests cover privacy/rights/session denial, duplicate admission preservation, typed inspector cancellation, retry/deadline/size/checksum, publication rollback, source identity restart and all eight v24 migration interruption steps. Existing real signed format and native HTTP attachment boundaries remain passing. Preparatory red and green evidence is retained and current final cases cover their remediations."
+    },
+    {
+      "criterion_index": 3,
+      "result": "satisfied",
+      "assessment": "The exact41-path candidate diff is within claimed T02 scope. Strict portable contracts, additive schema/profile24, canonical operation/provenance/outbox/dependency transactions, immutable location/source/receipt projections, literal populated v23 fixture and byte-exact v23 recovery snapshot are updated. Existing prior migration authorities and denial regressions remain unchanged. Current affected lint/format/type, API drift, architecture, ADR coverage and diff checks pass. Persistence is contained in the existing document adapter behind typed acquisition ports; ADR0042 remains Proposed documentary coverage of accepted authority, not a new decision. Exact independent binary privacy admission preserves the unchanged scanner/baseline/earlier registry. No product framework or governed UI change is introduced; T03 owns renderer/queue integration."
+    }
+  ],
+  "independence": {
+    "statement": "I authored the independent prospective-artifact binary privacy summary and prepared its append-only registry, plus the bounded design/preparatory/source assessments. I authored no product implementation, regression tests, qualifying producer or qualifying execution, owner approval, task mutation or campaign operation. These prior evidence roles are disclosed; this record adds the required independent exact-R01 expanded task disposition.",
+    "implementation_owner": "codex-w2-implementation",
+    "current_review_execution": "Read-only source/Git/backlog/manifest/producer/log/digest authentication and prior finding replay. No suites, native processes, network/UI actions, Git/taskctl/hook mutations or source edits. Only this authorized canonical review file is written."
+  },
+  "evidence_reproduction": {
+    "frozen_submission": {
+      "manifest": "artifacts/evidence/CAP-05.S01.T02.json",
+      "manifest_sha256": "aa336871a954808681793d779da3d1a299175786ec20333e10a9fc1f52f31403",
+      "manifest_digest_semantics": "Frozen evidence digest and retained LF manifest byte digest, not canonical-JSON digest.",
+      "publication_commit": "d587edb7c0d9f498df380e5330409507fb141cc3",
+      "publication_parent": "4c22cd8d6998cf36062b0303abf9d3d76f025069",
+      "packet_sha256": "3184f4f49aefb57b06d939ad53de830586ac35fac22ed6683c6ff081d2ff3823",
+      "acceptance_criteria_sha256": "9f556a1e187a0cbfa67e7e393a5eea2276fc7a6d6b22bdb473e8231bce1080f1",
+      "selection_sha256": "278193dd99f0b72ee99e324a05767ac0c8725826275fba6f14aa2cd6f28e20fd",
+      "status": "REVIEW",
+      "submitted_by": "codex-w2-implementation",
+      "submitted_at": "2026-10-06T14:42:48+00:00",
+      "branch": "codex/w2-implementation",
+      "changed_path_count": 41,
+      "selected_check_count": 10,
+      "selected_command_ids": [
+        "contracts:unit",
+        "data:unit",
+        "documents:unit",
+        "foundation:adr",
+        "foundation:architecture",
+        "foundation:quality",
+        "service:unit"
+      ],
+      "prior_attempt_count": 0,
+      "open_finding_ids": [],
+      "result": "Actual publication reproduces owner/lease/base/candidate/evidence, full exact41-path diff, ten selected commands/seven valid canonical IDs, selection rationale/hash and criteria hash. Structured deferredCoverage is authenticated by the selection hash; normalized deferred_checks is actually empty. No prior controlled findings or attempts exist."
+    },
+    "fresh_selected_receipt": {
+      "path": "artifacts/tmp/CAP-05.S01.T02.selected-05-4c22cd8d.json",
+      "raw_sha256": "1df36ab909295fc5cf51d7156c217163b810778f1fcce845dc0ab5dbb27362f8",
+      "producer": {
+        "path": "artifacts/tmp/CAP-05.S01.T02.run-selected-05.py",
+        "raw_sha256": "43c96d88f070600997ec551d9fe3b6c15052e264d9e4c6d770bef79c043ad036"
+      },
+      "status": "PASS",
+      "candidate_commit": "4c22cd8d6998cf36062b0303abf9d3d76f025069",
+      "base_commit": "7a51dc94734f8be6c4a64a0c29de458e96b347bc",
+      "inputs_stable": true,
+      "input_binding_count": 12552,
+      "before_after_bindings_exactly_equal": true,
+      "runtime_environment_sha256": "18425a4fd599f2a3f4c3bca20d33dd3888cec1e239e67e2bf6164ced4fe53124",
+      "measured_host": {
+        "system": "Windows",
+        "release": "11",
+        "machine": "AMD64",
+        "logicalCpuCount": 20
+      },
+      "elapsed_seconds": 323.593,
+      "checks": [
+        {
+          "id": "ruff",
+          "command_id": "foundation:quality",
+          "exit_code": 0,
+          "duration_seconds": 0.088,
+          "log": {
+            "path": "artifacts/tmp/CAP-05.S01.T02.selected-05-4c22cd8d.ruff.log",
+            "sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18"
+          }
+        },
+        {
+          "id": "python-format",
+          "command_id": "foundation:quality",
+          "exit_code": 0,
+          "duration_seconds": 0.209,
+          "log": {
+            "path": "artifacts/tmp/CAP-05.S01.T02.selected-05-4c22cd8d.python-format.log",
+            "sha256": "c4fd3f494556e5e7cf4355131a1080dbdcf0bbf09664638af9984db197ad88c0"
+          }
+        },
+        {
+          "id": "mypy",
+          "command_id": "foundation:quality",
+          "exit_code": 0,
+          "duration_seconds": 0.392,
+          "log": {
+            "path": "artifacts/tmp/CAP-05.S01.T02.selected-05-4c22cd8d.mypy.log",
+            "sha256": "ce32e21ee307d2da61637151f2f239cf8568be270711ff04e8e3025805ab7f57"
+          }
+        },
+        {
+          "id": "api-contract",
+          "command_id": "contracts:unit",
+          "exit_code": 0,
+          "duration_seconds": 2.263,
+          "log": {
+            "path": "artifacts/tmp/CAP-05.S01.T02.selected-05-4c22cd8d.api-contract.log",
+            "sha256": "d0de6df4695ae12810b382025f30caee94c9e9bc81887720850df6345026980f"
+          }
+        },
+        {
+          "id": "architecture",
+          "command_id": "foundation:architecture",
+          "exit_code": 0,
+          "duration_seconds": 3.682,
+          "log": {
+            "path": "artifacts/tmp/CAP-05.S01.T02.selected-05-4c22cd8d.architecture.log",
+            "sha256": "51a256bf6a7b2e89ab1d1b97aa19077aabf0e8858a450de1f5ceb155ed5c3e88"
+          }
+        },
+        {
+          "id": "adr",
+          "command_id": "foundation:adr",
+          "exit_code": 0,
+          "duration_seconds": 1.838,
+          "log": {
+            "path": "artifacts/tmp/CAP-05.S01.T02.selected-05-4c22cd8d.adr.log",
+            "sha256": "54620fa5afcbb64689020646fda3c8a89122fb3254531f8c5eb32cec0ef5ac4f"
+          }
+        },
+        {
+          "id": "diff",
+          "command_id": "foundation:quality",
+          "exit_code": 0,
+          "duration_seconds": 0.096,
+          "log": {
+            "path": "artifacts/tmp/CAP-05.S01.T02.selected-05-4c22cd8d.diff.log",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          }
+        },
+        {
+          "id": "acquisition",
+          "command_id": "documents:unit",
+          "exit_code": 0,
+          "duration_seconds": 65.587,
+          "log": {
+            "path": "artifacts/tmp/CAP-05.S01.T02.selected-05-4c22cd8d.acquisition.log",
+            "sha256": "39b4d82f3c4670f37b53b939390dcda2251fe65f442c57631cc8058d16a1cec7"
+          }
+        },
+        {
+          "id": "attachment-rights-api",
+          "command_id": "service:unit",
+          "exit_code": 0,
+          "duration_seconds": 115.559,
+          "log": {
+            "path": "artifacts/tmp/CAP-05.S01.T02.selected-05-4c22cd8d.attachment-rights-api.log",
+            "sha256": "bb7f158ef61e3e79765de455ba134398d3bbc7b282e2bcf71ce37ba3e3636f73"
+          }
+        },
+        {
+          "id": "storage-migration-contracts",
+          "command_id": "data:unit",
+          "exit_code": 0,
+          "duration_seconds": 132.172,
+          "log": {
+            "path": "artifacts/tmp/CAP-05.S01.T02.selected-05-4c22cd8d.storage-migration-contracts.log",
+            "sha256": "f33323d0ef6752a9c417339e04ace2ec5cd2b824d289687e6faf4a80abc54bb0"
+          }
+        }
+      ],
+      "passing_test_groups": [
+        {
+          "group": "acquisition",
+          "passing_cases": 29,
+          "skips": 0,
+          "case_ids_canonical_sha256": "108949989aae5f1d9fda5aaa3c321796c3ce28adec4aee082b7f6e6db38e9b2b",
+          "unit_runner_summary": "Ran 29 tests in 64.873s"
+        },
+        {
+          "group": "attachment-rights-api",
+          "passing_cases": 74,
+          "skips": 0,
+          "case_ids_canonical_sha256": "b980ee3f5210f26ebf9de30f677d9a2d6c13e2faad5776eee66c7b00b6bfde1c",
+          "unit_runner_summary": "Ran 74 tests in 113.227s"
+        },
+        {
+          "group": "storage-migration-contracts",
+          "passing_cases": 47,
+          "skips": 0,
+          "case_ids_canonical_sha256": "d9909c2eef7afea3c61d1e5601e0a32725843a4084272a6a0f0520d6825281b8",
+          "unit_runner_summary": "Ran 47 tests in 130.565s"
+        }
+      ],
+      "total_passing_cases": 150,
+      "skips": 0,
+      "producer_assessment": "Task-owned fresh subprocess producer executes the ten recorded narrow argv, captures raw logs/exit codes/timings, fails on any nonzero outcome and requires unchanged HEAD/clean tracked inputs and identical before/after inventories. Independent authentication reproduced actual logs and all150 named results. No test execution was repeated by this reviewer."
+    },
+    "source_input_closure": {
+      "publication_scope": "Eight evidence/planning/projection paths only; direct parent is the qualifying candidate.",
+      "changed_product_contract_fixture_paths": 28,
+      "all_product_blobs_equal_candidate_to_publication": true,
+      "all_changed_product_working_bytes_match_qualifying_inventory": true,
+      "runtime_inventory": {
+        "path": "artifacts/tmp/CAP-05.S01.T01.worker-build-07/inventory.json",
+        "raw_sha256": "e370441a4261a8fae86766070ea2757fdda707bd382f1f679524a0faa18b7c9a"
+      },
+      "runtime_signature": {
+        "path": "artifacts/tmp/CAP-05.S01.T01.worker-build-07/inventory.sig",
+        "raw_sha256": "76b370f5e0caf0a8e07fd6f203c3053e82d52a51a807252f55071b5da0e0f757"
+      },
+      "guardian": {
+        "path": "artifacts/tmp/c12i2/dist/research-observatory-core-x86_64-pc-windows-msvc/research-observatory-core-x86_64-pc-windows-msvc.exe",
+        "raw_sha256": "f9a34dc3fc5d3b7c72460432fabfc978e4178ff0a935957c18da92346f36c38d"
+      },
+      "closure_assessment": "Reported12552 bindings cover tracked files, task producer, signed worker build, frozen guardian, installed Python/stdlib/site-packages/OpenSSL execution dependencies. Current exact changed source/contract/fixture bytes and signed runtime/guardian pins match. Retained consistency does not provide an authenticated runner or reviewer identity service."
+    },
+    "migration_predecessor": {
+      "fixture": "tests/fixtures/documents/v23-predecessor.zip",
+      "raw_sha256": "d470258400cac2ff1445e91137b4f82cfb4bd29872692bba3d7e89074640b488",
+      "database_sha256": "a7fd2e201e9bfd5e17aa3d4b9551fb99e33d86984a05104f6cae732688043c33",
+      "literal_row_counts": {
+        "assertions": 1,
+        "candidates": 1,
+        "operations": 1,
+        "objects": 2,
+        "rights": 1
+      },
+      "current_recovery_snapshot": "packages/contracts/storage/sqlite-migration-recovery-v23.snapshot.json",
+      "snapshot_byte_identical_to_base_current_contract": true,
+      "result": "Corrected synthetic population is distinguished from base schema capture. SQLite backup/extracted counts, schema23 and old ciphertexts authenticate; current tests assert literal counts before migration and recover across all eight interruption steps. Superseded capture02 remains adverse."
+    },
+    "privacy_admission": {
+      "path": "artifacts/evidence/CAP-05.S01.T02.privacy-review-01.json",
+      "raw_sha256": "09676fc340a8e47472b963295538b2fb8bb589503bd4830c0a0c037ace1e55c5",
+      "authored_by_this_reviewer": true,
+      "scope": "Exact synthetic binary artifact and provenance/content/credential inspection only; no task or product approval."
+    }
+  },
+  "preparatory_findings_replayed": [
+    {
+      "preparatory_id": "F01",
+      "criterion_indexes": [
+        1,
+        2
+      ],
+      "observation": "Native-session loss was not composed with caller cancellation during acquisition/LPAC inspection after transfer EOF.",
+      "preparation": {
+        "path": "artifacts/tmp/CAP-05.S01.T02.preparation-c11-security-01.json",
+        "raw_sha256": "de7eea578d201b29aa93a08434bc846d155785c05c2cb50f0bd530bc5def6cae"
+      },
+      "red_evidence": {
+        "path": "artifacts/tmp/CAP-05.S01.T02.review-regressions-red-01.log",
+        "raw_sha256": "599f02496b7f9064ff5b0b10f9a5e6a177894953c1f63bc0c17c28dfc532b3f3"
+      },
+      "incremental_green_evidence": {
+        "path": "artifacts/tmp/CAP-05.S01.T02.review-regressions-green-01.log",
+        "raw_sha256": "c997c9de4cd5604d7ddc30dea736e59b3c6e649cc582ca05f9ca3ef2b2b77883"
+      },
+      "current_assessment": "Addressed: runtime acquisition composes caller cancellation with exact current native session, including the inspector callback. A meaningful lost-session regression failed before the change and passes in fresh acquisition coverage. Publication authority remains fenced; closed/revoked sessions retain admitted durable work for recovery.",
+      "formal_controlled_finding": false
+    },
+    {
+      "preparatory_id": "F02",
+      "criterion_indexes": [
+        1,
+        2
+      ],
+      "observation": "Rejected duplicate begin_attempt incorrectly terminated an earlier unresolved admitted request.",
+      "preparation": {
+        "path": "artifacts/tmp/CAP-05.S01.T02.preparation-c11-security-01.json",
+        "raw_sha256": "de7eea578d201b29aa93a08434bc846d155785c05c2cb50f0bd530bc5def6cae"
+      },
+      "red_evidence": {
+        "path": "artifacts/tmp/CAP-05.S01.T02.review-regressions-red-01.log",
+        "raw_sha256": "599f02496b7f9064ff5b0b10f9a5e6a177894953c1f63bc0c17c28dfc532b3f3"
+      },
+      "incremental_green_evidence": {
+        "path": "artifacts/tmp/CAP-05.S01.T02.review-regressions-green-01.log",
+        "raw_sha256": "c997c9de4cd5604d7ddc30dea736e59b3c6e649cc582ca05f9ca3ef2b2b77883"
+      },
+      "current_assessment": "Addressed: admitted becomes true only after successful guarded begin_attempt. Failure before admission cannot call fail_attempt on prior work. Red duplicate regression actually failed and current conflicting-retry and operation identity tests pass.",
+      "formal_controlled_finding": false
+    },
+    {
+      "preparatory_id": "F03",
+      "criterion_indexes": [
+        1,
+        2
+      ],
+      "observation": "Actual typed inspector cancellation DocumentInspectionProblem(cancelled) was classified as failed/cancelled rather than cancelled/acquisition-cancelled.",
+      "preparation": {
+        "path": "artifacts/tmp/CAP-05.S01.T02.preparation-c11-security-02.json",
+        "raw_sha256": "3b2666de99911040ae39d601ec66881e326d58276607f27cec53dfb2adea9bad"
+      },
+      "red_evidence": {
+        "path": "artifacts/tmp/CAP-05.S01.T02.inspector-cancel-red-02.log",
+        "raw_sha256": "3e4ada5d0c7171c8484659fca19fe506c737108ce5f11e3a6b0ce65491506bce"
+      },
+      "incremental_green_evidence": {
+        "path": "artifacts/tmp/CAP-05.S01.T02.adapter-cancel-green-02.log",
+        "raw_sha256": "40890f7434e76504d31ff2aac9a29cde6633097c7727945e10cba37204bb7249"
+      },
+      "current_assessment": "Addressed: only ObjectStagingCancelled or exact typed DocumentInspectionProblem code cancelled is normalized to acquisition-cancelled. Adapter-faithful red02 demonstrates the incorrect durable tuple; current test passes and verifies discard of the owned encrypted stage with no candidate. Arbitrary errors are not relabeled cancelled.",
+      "formal_controlled_finding": false
+    },
+    {
+      "observation": "Existing operation-denial ordering and successful-current schema assertions failed after the initial change.",
+      "current_assessment": "Addressed: exact operation/project/candidate/session/actor binding is verified before protected source resolution and repeated inside the writer, preserving the original denial test. Only successful current target assertions move23 to24; predecessor/fault-step assertions remain unchanged. Fresh74 attachment and47 storage cases pass.",
+      "formal_controlled_finding": false
+    }
+  ],
+  "retained_adverse_evidence": [
+    {
+      "path": "artifacts/tmp/CAP-05.S01.T02.selected-04-709b1cc0.json",
+      "raw_sha256": "f8f928ba72a4e332e538e8ea522a72bf95a1d3db9eebaeb17cef352ec209f9b1",
+      "classification": "Fresh acquisition29, attachment74 and storage47, quality, API and architecture passed but unchanged protected-path ADR check required an indexed task-linked companion for the new schemas/port. Overall FAIL with stable inputs. ADR0042 Proposed documents inherited accepted authority without a new decision or approval; no verifier/source behavior changed."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S01.T02.selected-03-b6f446a6.json",
+      "raw_sha256": "2e00c811c9c297b24f6c5183a4993f5a7c9d3a6478db946e14296cbd751aba25",
+      "classification": "Committed adapter/cancellation candidate failed one 121-character protocol declaration format rule. No behavioral group ran. Declaration formatting fixed; final candidate checks are fresh."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S01.T02.selected-02-5917d909.json",
+      "raw_sha256": "2c6e07b4d2f23493934bf83bb8c752124ef71b19b262ac48ec1e28f098ea9e3f",
+      "classification": "Fresh acquisition28, attachment74 and storage-migration-contracts passed, but unchanged architecture validation found database adapter dependencies. Overall FAIL, stable inputs; source separation corrected without verifier edits and all selected groups run fresh."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S01.T02.preparation-c11-security-02.json",
+      "raw_sha256": "3b2666de99911040ae39d601ec66881e326d58276607f27cec53dfb2adea9bad",
+      "classification": "Independent preparatory review found typed worker inspection cancellation incorrectly recorded failed; prior preparatory findings source-addressed. Not a controlled task approval or invented formal round."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S01.T02.inspector-cancel-red-02.log",
+      "raw_sha256": "3e4ada5d0c7171c8484659fca19fe506c737108ce5f11e3a6b0ce65491506bce",
+      "classification": "Adapter-faithful failing regression proved failed/cancelled instead of required cancelled/acquisition-cancelled before typed product remediation."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S01.T02.inspector-cancel-red-01.log",
+      "raw_sha256": "211b6bb6fda34664c678b1fcb7d94e5cfdeb62489d0338ad47de0e1d6d3a7ab2",
+      "classification": "Initial regression assertion compared sqlite Row to tuple; preserved test setup defect, corrected without changing expected behavior before red02."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S01.T02.adapter-cancel-green-01.log",
+      "raw_sha256": "13b19d675406056c2662656f9bcf3fba39cb1c6247d68976788390b7aa2bd1df",
+      "classification": "Development adapter relocation omitted a rights adapter import; missing-module failures retained, then corrected and focused regression/current association tests passed."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S01.T02.selected-01-e73ae1c7.json",
+      "raw_sha256": "b3c8bf6f7ccc51a3df926b17db5d5a7c662833fc2d7acb3afb89954fbf27b381",
+      "classification": "Fresh original candidate failed existing attachment compatibility: eight obsolete current-version23 expectations and the exact operation-denial ordering regression. Acquisition26 and Python quality passed, but the overall run is FAIL and none of it is substituted for final fresh proof."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S01.T02.preparation-c11-security-01.json",
+      "raw_sha256": "de7eea578d201b29aa93a08434bc846d155785c05c2cb50f0bd530bc5def6cae",
+      "classification": "Independent preliminary exact-candidate review found two blocking defects: a rejected duplicate invocation terminating a prior unresolved job and session-close cancellation absent during post-transfer inspection. Both were reproduced before product edits; formal review must disposition their evidenced remediation without fabricating historical controlled closures."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S01.T02.review-regressions-red-01.log",
+      "raw_sha256": "599f02496b7f9064ff5b0b10f9a5e6a177894953c1f63bc0c17c28dfc532b3f3",
+      "classification": "Two focused regressions failed before product remediation, with an unwanted terminal result and inspection cancellation not raised."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S01.T02.capture-v23-02.log",
+      "raw_sha256": "1cb9ad9240f6b26546a0cc7157d4816226709b348c6d0bc11acb2353be79766c",
+      "classification": "Superseded development capture claimed PASS but independently found a missing archived operation; exact adverse bytes are retained under capture03 and are not qualifying evidence."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S01.T02.integration-green-01.log",
+      "raw_sha256": "59c3f4197e41d7fd39634e206d28b7c81c011ca5324d6dd50bc6e881554efcad",
+      "classification": "Development failures exposed createdAt identity mutation; canonical terminal revisions now preserve creation time and fresh tests cover the outcome."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S01.T02.storage-contracts-01.log",
+      "raw_sha256": "5777fff39200a3fc3fc842158431f7e64f01bdc84a62efcbcecf97d29ef479d3",
+      "classification": "Development failures exposed stale current profile/docs/chain expectations; earlier immutable schema/fixtures remain preserved while current contracts track24."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S01.T02.principal-protected-02.log",
+      "raw_sha256": "e2e0c998dfd1fa16145a1ba21d87127abd71739b71d0a1243310caae998da898",
+      "classification": "Development protected fixture failed WAL setup; corrected protected principal test is executed fresh in acquisition."
+    }
+  ],
+  "proof_limits": [
+    "Approval applies only to actual CAP-05.S01.T02 R01 at its exact committed candidate/base/publication; it does not complete T03, CAP-05.S01, W2, packaging or release.",
+    "The actual principal uses an owned synthetic HTTPS listener and test CA/DNS socket-routing seam plus an explicit signed fixture runtime adapter and retained frozen guardian. It proves current source Core/native-session, TLS identity, SQLCipher/encrypted staging and LPAC boundaries within that fixture. It does not qualify a production-installed acquisition package, public Internet/provider availability, production signature or real scholarly/private content.",
+    "Unit transports, plaintext development fixtures and substituted unit inspectors do not establish SQLCipher/LPAC/TLS principal proof; the separately named actual protected principal case supplies that bounded evidence.",
+    "Full documents/security-local/service/repository profiles, integrated UI/queue/entitlement journeys, performance distributions, wider platforms and production packaging remain at their approved later gates. Canonical command IDs name affected coverage domains, not full-profile execution.",
+    "The recorded5redirect/128MiB/120second/3attempt bounds and adversarial tests do not become a throughput or latency baseline. Raw observed times describe only these selected synthetic cases.",
+    "All selected01-04 failures, initial setup/import/assertion failures, earlier protected WAL/schema/createdAt defects and false capture02 remain adverse and are not relabeled passing by final success.",
+    "Preparatory F01-F03 were findings before the first frozen submission. Their remediation assessment is recorded separately; findings/closures/prior_findings_replayed arrays below contain no invented controlled-round finding IDs."
+  ],
+  "checks": [
+    {
+      "command": "Read-only reproduce actual committed R01/criteria/selection/evidence and exact base-to-candidate scope",
+      "result": "PASS: packet3184f4f4, criteria9f556a1e, selection278193dd and manifestaa336871 reproduce;41 paths,10 commands,7 valid canonical IDs, no prior attempts/open findings."
+    },
+    {
+      "command": "Replay product/security/rights/migration/public-contract assessment and preparatory findings against fixed candidate bytes",
+      "result": "PASS: F01-F03 and compatibility observations are addressed; current immutable source/rights/session/publication/migration authority remains intact; no criterion-bound blocker."
+    },
+    {
+      "command": "Authenticate final receipt/producer/raw outputs/named results and selected source/runtime closure",
+      "result": "PASS:10 actual zero-exit checks,150 named passing tests/no skips,12552 equal input bindings and unchanged28 product/contract/fixture paths across publication; no suites rerun."
+    }
+  ],
+  "findings": [],
+  "closures": [],
+  "prior_findings_replayed": [],
+  "slice_approval": false,
+  "wave_completion": false,
+  "release_approval": false
+}

@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: c4d3e6998428ce18750a9881191b3975921bb65ba86c8bdb5b293e9bfd16749d
+source_sha256: 3617952620919fe44d0884aa2c2d0b0b01d2bd1f0108de670f62d68295c97556
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -10808,15 +10808,15 @@ Original tasks and approvals remain unchanged.
 
 **Currently open findings:** -
 
-#### - [ ] CAP-05.S01.T02 - Implement open-access location selection and download
+#### - [x] CAP-05.S01.T02 - Implement open-access location selection and download
 
-**Status / priority / estimate / risk:** `REVIEW` / `P0` / `L` / `high`
+**Status / priority / estimate / risk:** `DONE` / `P0` / `L` / `high`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
 **Dependencies:** `CAP-05.S01.T01`
 
-**Owner / review:** codex-w2-implementation / - (`-`)
+**Owner / review:** codex-w2-implementation / agent:/root/c11_security_review (`approved`)
 
 **Objective:** Acquisition from approved OA locations with redirect controls, MIME validation, license capture, checksum, and retry.
 
@@ -10841,9 +10841,11 @@ Original tasks and approvals remain unchanged.
 
 ##### Review history — CAP-05.S01.T02
 
-**Review mode:** `append-only v1` / 0 completed round(s)
+**Review mode:** `append-only v1` / 1 completed round(s)
 
-**Current immutable submission awaiting review:** `R01` / packet SHA-256 `3184f4f49aefb57b06d939ad53de830586ac35fac22ed6683c6ff081d2ff3823`
+###### Round R01
+
+**Immutable submission packet:** `R01` / packet SHA-256 `3184f4f49aefb57b06d939ad53de830586ac35fac22ed6683c6ff081d2ff3823`
 
 - Candidate / base / branch: `4c22cd8d6998cf36062b0303abf9d3d76f025069` / `7a51dc94734f8be6c4a64a0c29de458e96b347bc` / `codex/w2-implementation`
 - Submitted by / at: codex-w2-implementation / `2026-10-06T14:42:48+00:00`
@@ -10857,15 +10859,31 @@ Original tasks and approvals remain unchanged.
 - Prior round / replayed open findings: `-` / -
 - Root-cause escalation: -
 
-**Current latest-review projection:** `-` by - at `-`
+**Disposition / reviewer / time:** `approved` / agent:/root/c11_security_review / `2026-10-06T15:03:27+00:00`
 
-**Latest notes:** -
+**Immutable review ledger:** `artifacts/evidence/CAP-05.S01.T02.review-R01.json` / `aad06f8f5e15700d9c34c482390a4b99b9d282ee7a739df2939bbc91371e212b`
+
+**Review notes:** Independent expanded product/security/public-contract/migration review approves only the actual frozen CAP-05.S01.T02 R01 at candidate4c22cd8d and original claim base7a51dc, as published atd587edb7. Exact retained provider-copy selection, explicit current store/inspect permission, accepted Intent/privacy, actor and native-session preview/confirmation govern acquisition and publication. HTTPS socket pinning retains the original TLS hostname, rejects nonpublic addresses and unsafe destinations, sends no credentials/cookies/referrer/proxy and bounds redirects, wire bytes, deadline and retries. Signed LPAC inspection and encrypted staging precede atomic canonical candidate/source/license/receipt publication; current provider-copy policy is rechecked during explicit attachment commit. Additive schema24 and populated literal schema23 recovery preserve earlier authority and ciphertext. All ten fresh selected checks and150 named tests pass without skips at12552 stable input bindings; no complete profile is inferred. The three preparatory defects were reproduced before remediation and are independently replayed as addressed, without inventing controlled review rounds or closures. Prior failed qualification and development evidence remains adverse. No remaining criterion-bound blocker was found. T03 UI/queue/entitlement integration, S01 deep integration, W2 qualification, production packaging and human release remain separate.
+
+**Findings opened:**
+
+- None
+
+**Prior finding closures:**
+
+- None
+
+**Current immutable submission awaiting review:** None
+
+**Current latest-review projection:** `approved` by agent:/root/c11_security_review at `2026-10-06T15:03:27+00:00`
+
+**Latest notes:** Independent expanded product/security/public-contract/migration review approves only the actual frozen CAP-05.S01.T02 R01 at candidate4c22cd8d and original claim base7a51dc, as published atd587edb7. Exact retained provider-copy selection, explicit current store/inspect permission, accepted Intent/privacy, actor and native-session preview/confirmation govern acquisition and publication. HTTPS socket pinning retains the original TLS hostname, rejects nonpublic addresses and unsafe destinations, sends no credentials/cookies/referrer/proxy and bounds redirects, wire bytes, deadline and retries. Signed LPAC inspection and encrypted staging precede atomic canonical candidate/source/license/receipt publication; current provider-copy policy is rechecked during explicit attachment commit. Additive schema24 and populated literal schema23 recovery preserve earlier authority and ciphertext. All ten fresh selected checks and150 named tests pass without skips at12552 stable input bindings; no complete profile is inferred. The three preparatory defects were reproduced before remediation and are independently replayed as addressed, without inventing controlled review rounds or closures. Prior failed qualification and development evidence remains adverse. No remaining criterion-bound blocker was found. T03 UI/queue/entitlement integration, S01 deep integration, W2 qualification, production packaging and human release remain separate.
 
 **Currently open findings:** -
 
 #### - [ ] CAP-05.S01.T03 - Create acquisition queue, conflict, and entitlement placeholders
 
-**Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `M` / `medium`
+**Status / priority / estimate / risk:** `READY` / `P0` / `M` / `medium`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
