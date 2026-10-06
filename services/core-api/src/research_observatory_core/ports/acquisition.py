@@ -99,7 +99,9 @@ class AcquisitionStage:
 class AcquisitionRepositoryPort(Protocol):
     """Protected persistence and association authority owned by a Core adapter."""
 
-    def locations(self, source_assertion_revision_id: str, *, actor: CorpusActor) -> tuple[AcquisitionLocation, ...]: ...
+    def locations(
+        self, source_assertion_revision_id: str, *, actor: CorpusActor
+    ) -> tuple[AcquisitionLocation, ...]: ...
 
     def authorize(
         self, selection: AcquisitionSelection, *, actor: CorpusActor
