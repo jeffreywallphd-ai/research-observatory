@@ -1,24 +1,25 @@
-reference_id: RO-UI-ACADEMIC-MINIMAL-1.8
-version: '1.8'
+reference_id: RO-UI-ACADEMIC-MINIMAL-1.9
+version: '1.9'
 status: approved
 approval_kind: human
 approved_by: human:repository-owner
-approved_at: '2026-10-02T16:23:51Z'
-approval_basis: Owner approved the exact reviewed ECR-0009 packet and Academic Minimal 1.8 proposal for reference publication and plan binding only; no W2 release approval.
-supersedes: RO-UI-ACADEMIC-MINIMAL-1.7
+approved_at: '2026-10-06T16:20:50.362826Z'
+supersedes: RO-UI-ACADEMIC-MINIMAL-1.8
 scope:
   normative:
-  - Inherit approved 1.7 contracts except the inline CAP-05.S01.T01 local full-text
-    attachment interaction in Ingestion Review and its selected-version return context
-  - Native picker or drop, explicit uncertain-association confirmation and rights
-    state, cancellation, recovery and actionable denial/error states
+  - Inherit approved 1.8 except the bounded CAP-05.S01.T03 remote-copy review, confirmation,
+    recovery and local access placeholder addition in STYLE_GUIDE section 1.5.
   illustrative:
-  - Mock work/version, filename, rights example and inactive import actions
-implementation_rule: Inert proposal; exact human reference approval and a new
-  reference approval record precede CAP-05.S01.T01 product implementation.
+  - Synthetic work/copy/provider/license and inactive network actions.
+implementation_rule: Inert proposal; exact human reference and source-free method
+  approval and separate publication must precede CAP-05.S01.T03 implementation.
+approval_basis: The owner explicitly approved exact EX01 after independent readiness
+  review. This record authorizes only metadata-only publication of the exact1.9 reference
+  and affected material-plan binding. Locked-Wave use of this existing record/publication
+  interface is authorized by planning/verification-method-approvals/CAP-05.S01.T03.EX01.json;
+  product code, equivalent qualification, task completion and release are not approved
+  by this record.
 authority:
-  amendment_id: W2.A01
-  change_request_id: ECR-0009
-  approval_record: planning/wave-amendment-approvals/W2.A01.json
-  approval_record_sha256: 6fe58c9791d224a51367f42ced40e27a45a0d83ee07464e237fc2a302edc4096
-  approval_record_introduction_commit: f8a49a2ec7ff4daf6e1c5e14da369e06ddff5287
+  design_approval_record: planning/reference-approvals/RO-UI-ACADEMIC-MINIMAL-1.9.json
+  design_approval_record_sha256: b7882588a15a7a178cb8ebac65fda174d26969dca5b08c6559feb3b0d258404e
+  design_approval_record_introduction_commit: 556369f77186324194789ee26eb0baf00fd936a8

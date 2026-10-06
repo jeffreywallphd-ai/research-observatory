@@ -1,7 +1,7 @@
 # Research Observatory Capability-to-Page Coverage
 
-**Version:** 1.8
-**Reference:** `RO-UI-ACADEMIC-MINIMAL-1.8`
+**Version:** 1.9
+**Reference:** `RO-UI-ACADEMIC-MINIMAL-1.9`
 **Product pages:** 33
 **Capabilities:** 20
 
@@ -814,3 +814,7 @@ Triage simulated or uploaded review comments, govern author dispositions, revise
 - unresolved and declined issues
 - targeted re-review result
 - revised manuscript and response export
+
+### 1.9 bounded Ingestion addition
+
+The selected-copy review, confirmed remote download, distinguishable alternatives, unavailable/denied states and local manual/institutional access placeholders are CAP-05.S01.T03 regions within existing Ingestion Review. Task Center inherits its queue/status/cancellation/return regions. All other page contracts are inherited from 1.8.

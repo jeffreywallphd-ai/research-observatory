@@ -662,3 +662,6 @@ html[data-theme="dark"] .revision-item.active { background: color-mix(in srgb, v
 @media (max-width: 900px) {
   .mode-grid { grid-template-columns: 1fr; }
 }
+
+/* Only the new copy-review anchors account for the inherited fixed top bar. */
+.acquisition-copy-review, #review-remote-copy { scroll-margin-top: calc(var(--topbar-height) + var(--space-4)); }

@@ -1,6 +1,6 @@
 {
-  "reference_id": "RO-UI-ACADEMIC-MINIMAL-1.8",
-  "version": "1.8",
+  "reference_id": "RO-UI-ACADEMIC-MINIMAL-1.9",
+  "version": "1.9",
   "date": "2026-10-01",
   "product_page_count": 33,
   "capabilities": [
@@ -487,7 +487,7 @@
     },
     "ingestion-reconciliation.html": {
       "page": "Ingestion & Reconciliation",
-      "purpose": "Import provenance, canonicalization, duplicates, versions, corrections, retractions, rights review, and selected work/version local full-text attachment.",
+      "purpose": "Import provenance, canonicalization, duplicates, versions, corrections, retractions, rights review, and selected work/version local full-text attachment. Permitted remote-copy review, acquisition recovery and local access placeholders.",
       "capabilities": [
         "CAP-04",
         "CAP-05"
@@ -511,7 +511,10 @@
         "inline local full-text picker/drop and pending candidate",
         "uncertain-association confirmation and permitted-use decision",
         "attachment cancellation, retry, error remedies, exact-revision status/route handoff, and pending reader state",
-        "reversible merge decisions"
+        "reversible merge decisions",
+        "distinguishable retained copies and observed source/license/version metadata",
+        "inline exact-copy review and explicit confirmed remote download",
+        "unavailable, denied and local manual/institutional entitlement placeholders"
       ],
       "illustrative_values": true
     },

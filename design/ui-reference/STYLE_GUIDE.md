@@ -1,8 +1,8 @@
 # Research Observatory — Academic Minimal Style and Experience Guide
 
-**Version:** 1.8
-**Reference ID:** `RO-UI-ACADEMIC-MINIMAL-1.8`
-**Purpose:** Inert proposed implementation specification; not active authority until exact human approval. The approved 1.7 visual system and fourteen workflow sequences are inherited.
+**Version:** 1.9
+**Reference ID:** `RO-UI-ACADEMIC-MINIMAL-1.9`
+**Purpose:** Inert proposed implementation specification; not active authority until exact human approval. The approved 1.8 visual system, local attachment and fourteen workflow sequences are inherited.
 
 ## 1. Authority and design-first change order
 
@@ -102,6 +102,72 @@ return to the same work/version and current primary step. Keep a missing-full-te
 record useful for metadata inspection and later attach/retry. Reuse cards, fields,
 key-value lists, notices, buttons, focus tokens and responsive grids in both
 themes. The reference picker/drop demo reads no file bytes and commits nothing.
+
+### 1.5 Permitted remote copies, acquisition queue and access placeholders
+
+Ingestion Review adds one inline **Available copies** region beside the selected
+canonical work/version and existing local attachment panel. This is a supporting
+interaction, not a new route or research workflow stage. Keep project, exact
+work/version revisions, source assertion and primary-workflow return context.
+Show distinct retained copies with provider, host, observed version, OA/access
+state, license, known type/size/checksum and current policy outcome. Missing
+values say Unknown; source metadata never grants permission. Do not merge copies,
+substitute the selected version, hide earlier assertions or remove useful metadata
+because full text is missing. Identical bytes may share protected storage while
+retaining separate source, license and acquisition assertions.
+
+Selecting **Review this copy** performs only local review. Core/native authority
+provides an exact-copy preview; the renderer receives safe metadata and opaque
+identities, never a reusable URL fetch grant, filesystem path or document bytes.
+Show the initial host and explicitly allowed redirect hosts, source/version/license,
+known size/type, the selected work/version and current store/inspect and egress
+policy. Explain that **Download this copy** contacts those hosts and stores the
+inspected copy encrypted locally; it does not authorize export, redistribution,
+model egress, research-stage completion or canonical document association.
+Require explicit confirmed association and permitted use. Enable download only
+when current researcher, accepted Intent, project privacy/provider consent,
+per-copy rights and native session all permit the exact request. Unknown/denied
+policy, stale selection, offline state or unavailable prerequisites block dispatch
+with nearby safe help. A signature or OA label cannot override policy.
+
+Only the explicit download action consumes a fresh bounded, one-use confirmation.
+Never fetch on selection, opening the panel, an entitlement placeholder, refresh,
+project reopening, generic Task Center Retry or a changed source/policy. No arbitrary
+URL field, browser cookies, credential entry, institutional login, paywall bypass,
+purchase or external contact is added. After safe encrypted staging and inspection,
+show a candidate requiring explicit **Attach to selected version**; reuse the
+existing exact-version association/rights review and immutable commit semantics.
+Show downloading, validating, candidate, committed, unavailable, denied, unsafe,
+failed, interrupted and cancelled distinctly. A downloaded candidate is not an
+available canonical document or an enabled protected reader.
+
+Task Center shows the exact durable acquisition/import identity, honest progress,
+safe failure code and selected-copy return target within its existing queue and
+selected-workflow regions. Interrupted remote transfer discards only owned partial
+bytes and requires a new exact-copy review and confirmation to start again; never
+concatenate changed content or reuse old native-session consent. Earlier attempts,
+sources and terminal outcomes remain immutable. Recover a retained inspected
+candidate by current authority review, not by repeating network egress or inventing
+a successful commit. Cancellation/lock/project close stops active work and rejects
+late results. Locking clears protected context; fresh unlock does not restore consent.
+Failed cleanup stays visible and blocks unsafe retry rather than claiming success.
+
+Unavailable and manual/institutional entitlement placeholders are local annotations
+of access needs, never verified availability or permission. They explain that the
+researcher may later supply a lawful local file through the existing picker/drop
+flow. An explicit local request record does not send a message, start a login, fetch
+content or complete a workflow. Keep unknown, unavailable, rights-denied and
+entitlement-required states distinct and keep the metadata record inspectable.
+
+Move focus to the review heading on open. Cancel/Escape performs no download,
+preserves the selected work/version and returns focus to its invoking copy control.
+Preserve review input on recoverable failure, but invalidate confirmations on changed
+copy, work/version, policy, project or session. Announce safe pending/outcome states;
+disable duplicate submissions and discard stale responses. Return from Task Center
+to the same selected copy/work/version and primary step. Use existing cards, table,
+fields, notices, buttons and focus tokens with keyboard access, responsive layout
+and light/dark parity. The proposal contains synthetic examples and disabled network
+actions; it is not evidence that a download, rights decision or entitlement occurred.
 
 ## 2. Design character
 
