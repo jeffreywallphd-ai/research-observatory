@@ -85,3 +85,15 @@ permits the next bounded intake. Task Center return carries only safe exact IDs.
 Final committed-candidate checks, EX01 conformance/capture proof and expanded
 independent disposition remain required; these development results do not
 complete CAP-05.S01.T03, its slice or W2.
+
+Independent product assessment at `89da746a972d1faa6bd64739d8f9c86c6be21908`
+found three missed journey cases (PRODUCT-R01-F01/F02/F03). The immediate causes
+were a remote flag on the local begin path, a retained projection without its
+origin copy ID, and reuse of the local-attachment denial gate for local notes and
+alternative-copy review. Before remediation, add a delayed remote-result mounted
+regression for exact phase polling and in-flight Task Center return; a same-name
+retained-copy regression for distinct visible identities and exact return context;
+and a prior per-copy rights-failure regression for annotation without egress and
+fresh alternative-copy review. Local-file attachment stays denied, and actual
+download/Attach still recheck current authority. These are corrections of the
+approved 1.9 journey, not new scope or verification-framework work.

@@ -70,6 +70,7 @@ struct RetainedCandidate {
     candidate_id: String,
     source_name: String,
     original_operation_id: String,
+    copy_id: Option<String>,
 }
 
 #[derive(Deserialize)]
@@ -216,6 +217,10 @@ pub(crate) async fn document_acquisition_copies(
             !crate::supervisor::canonical_uuid_v7(&candidate.candidate_id)
                 || !crate::supervisor::canonical_uuid_v7(&candidate.original_operation_id)
                 || !safe_name(&candidate.source_name)
+                || candidate
+                    .copy_id
+                    .as_ref()
+                    .is_some_and(|id| !crate::supervisor::canonical_uuid_v7(id))
         })
     {
         return Ok(None);

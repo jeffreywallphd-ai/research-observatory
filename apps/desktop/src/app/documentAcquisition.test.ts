@@ -5,7 +5,7 @@ import type { AttachmentSelection } from "./documentAttachment";
 const id = (suffix: number): string => `01900000-0000-7000-8000-${suffix.toString().padStart(12, "0")}`;
 const selection: AttachmentSelection = { projectId: id(1), workId: id(2), workRevisionId: id(3), versionId: id(4), versionRevisionId: id(5), sourceAssertionRevisionId: id(6) };
 const copy = { copyId: id(7), copySha256: "a".repeat(64), provider: "Synthetic provider", host: "oa.example.invalid", license: null, version: null };
-const inventory = { schemaVersion: "1.0", selection, copies: [copy], retained: [{ candidateId: id(8), originalOperationId: id(9), sourceName: "synthetic.pdf" }] };
+const inventory = { schemaVersion: "1.0", selection, copies: [copy], retained: [{ candidateId: id(8), originalOperationId: id(9), sourceName: "synthetic.pdf", copyId: copy.copyId }] };
 const preview = { schemaVersion: "1.0", selection, reviewId: id(10), copy, redirectHosts: [], storeInspect: "allowed", egress: "confirmed-preview-required" };
 
 describe("exact native copy metadata", () => {
@@ -35,6 +35,14 @@ describe("exact native copy metadata", () => {
     Object.defineProperty(altered, "copies", { enumerable: true, get() { called = true; throw new Error("getter"); } });
     expect(decodeCopies(altered, selection)).toBeNull();
     expect(called).toBe(false);
+  });
+  it("preserves remote origin and nullable local origin while rejecting malformed retained copy identities", () => {
+    const local = { candidateId: id(20), originalOperationId: id(21), sourceName: "synthetic.pdf", copyId: null };
+    const decoded = decodeCopies({ ...inventory, retained: [...inventory.retained, local] }, selection);
+    expect(decoded?.retained).toEqual([...inventory.retained, local]);
+    for (const copyId of ["https://untrusted.invalid", "secret", selection.projectId.replace("7000", "4000"), undefined]) {
+      expect(decodeCopies({ ...inventory, retained: [{ ...inventory.retained[0], copyId }] }, selection)).toBeNull();
+    }
   });
   it("requires the native runtime and never uses browser fetch for download or notes", async () => {
     expect(await nativeDocumentAcquisitionPort.copies(selection)).toBeNull();

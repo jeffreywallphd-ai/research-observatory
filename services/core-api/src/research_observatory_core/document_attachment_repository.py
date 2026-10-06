@@ -590,8 +590,11 @@ class LocalDocumentAttachmentService:
                 version_revision_id=selection.version_revision_id,
             )
             rows = connection.execute(
-                "SELECT c.candidate_id,c.source_name,o.operation_id FROM document_attachment_candidates c "
+                "SELECT c.candidate_id,c.source_name,o.operation_id,s.location_id "
+                "FROM document_attachment_candidates c "
                 "JOIN document_attachment_operations o ON o.project_id=c.project_id AND o.candidate_id=c.candidate_id "
+                "LEFT JOIN document_acquisition_sources s "
+                "ON s.project_id=c.project_id AND s.candidate_id=c.candidate_id "
                 "WHERE c.project_id=? AND c.actor_id=? AND c.source_assertion_revision_id=? "
                 "AND c.work_id=? AND c.work_revision_id=? AND c.version_id=? AND c.version_revision_id=? "
                 "AND NOT EXISTS (SELECT 1 FROM document_attachment_cancellations x "
@@ -602,7 +605,12 @@ class LocalDocumentAttachmentService:
                 (self._project, actor.actor_id, *selection.association),
             ).fetchall()
             return tuple(
-                {"candidateId": str(row[0]), "sourceName": str(row[1]), "originalOperationId": str(row[2])}
+                {
+                    "candidateId": str(row[0]),
+                    "sourceName": str(row[1]),
+                    "originalOperationId": str(row[2]),
+                    "copyId": str(row[3]) if row[3] is not None else None,
+                }
                 for row in rows
             )
 

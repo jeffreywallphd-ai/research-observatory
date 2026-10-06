@@ -235,6 +235,11 @@ export function canStartAttachmentReview(result: AttachmentStatus | null): boole
   return result.status === "unavailable" && ["interrupted", "worker-unavailable", "storage-pressure",
     "candidate-unavailable", "unavailable"].includes(result.code ?? "");
 }
+export function canReviewAvailableCopies(result: AttachmentStatus | null): boolean {
+  // A prior failed copy does not grant download permission or deny other copies.
+  // The native preview and explicit download still recheck current authority.
+  return canStartAttachmentReview(result) || result?.status === "failed" && result.code === "rights-denied";
+}
 export function decodeAttachmentEvent(value: unknown): AttachmentEvent | null {
   const probe = object(value, ["schemaVersion", "status", "operationId", "sessionId", "selection", "candidate"])
     ?? object(value, ["schemaVersion", "status", "operationId", "sessionId", "selection", "code"])

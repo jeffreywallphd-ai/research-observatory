@@ -18,6 +18,7 @@ export interface RetainedCandidate {
   readonly candidateId: string;
   readonly sourceName: string;
   readonly originalOperationId: string;
+  readonly copyId: string | null;
 }
 export interface CopyInventory {
   readonly copies: readonly AvailableCopy[];
@@ -60,9 +61,10 @@ export function decodeCopies(value: unknown, selected: AttachmentSelection): Cop
   if (copies.some((copy) => copy === null) || new Set(copies.map((copy) => copy!.copyId)).size !== copies.length) return null;
   if (!Array.isArray(response.retained) || response.retained.length > 50) return null;
   const retained = response.retained.map((value) => {
-    const item = record(value, ["candidateId", "sourceName", "originalOperationId"]);
+    const item = record(value, ["candidateId", "sourceName", "originalOperationId", "copyId"]);
     return item && typeof item.candidateId === "string" && uuid.test(item.candidateId)
       && typeof item.originalOperationId === "string" && uuid.test(item.originalOperationId)
+      && (item.copyId === null || typeof item.copyId === "string" && uuid.test(item.copyId))
       && text(item.sourceName, 255) && item.sourceName.length > 0 && !/[\\/]/u.test(item.sourceName)
       ? item as unknown as RetainedCandidate : null;
   });

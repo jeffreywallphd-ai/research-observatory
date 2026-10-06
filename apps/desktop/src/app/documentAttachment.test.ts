@@ -10,6 +10,7 @@ import {
   attachmentStatusRequest,
   isInterruptedPriorSessionStatus,
   canStartAttachmentReview,
+  canReviewAvailableCopies,
   decodeAttachmentStatus,
   DOCUMENT_ATTACHMENT_COMMANDS,
   attachmentProblemMessage,
@@ -171,5 +172,18 @@ describe("opaque native attachment contract", () => {
     expect(canStartAttachmentReview({ ...baseline, status: "failed", code: "authority-changed" })).toBe(false);
     expect(canStartAttachmentReview({ ...baseline, status: "candidate" })).toBe(false);
     expect(canStartAttachmentReview({ ...baseline, status: "validating" })).toBe(false);
+  });
+  it("keeps local notes and fresh alternative-copy review usable after a prior per-copy denial", () => {
+    const failed = { schemaVersion: "1.0" as const, selection, operationId, commandId: null,
+      attachmentId: null, documentRevisionId: null, code: "rights-denied" as const,
+      retryRequest: null, status: "failed" as const };
+    expect(canReviewAvailableCopies(failed)).toBe(true);
+    expect(canStartAttachmentReview(failed)).toBe(false);
+    expect(canReviewAvailableCopies({ ...failed, status: "denied" })).toBe(false);
+    expect(canReviewAvailableCopies({ ...failed, code: "authority-changed" })).toBe(false);
+    expect(canReviewAvailableCopies({ ...failed, code: "association-stale" })).toBe(false);
+    expect(canReviewAvailableCopies({ ...failed, code: "cleanup-required" })).toBe(false);
+    expect(canReviewAvailableCopies({ ...failed, status: "downloading", code: null })).toBe(false);
+    expect(canReviewAvailableCopies(null)).toBe(false);
   });
 });

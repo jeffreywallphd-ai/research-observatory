@@ -63,6 +63,8 @@ ATTACHMENT_HOST = r""";
     ambiguous: false, staleVersion: false, statusOverride: null,
     copiesEnabled:false, reviews:[], downloads:[], recoveries:[], notes:[], clears:0,
     holdStatus: false, releaseStatus: null,
+    holdDownload: false, releaseDownload: null,
+    holdPicker: false, releasePicker: null,
   };
   const emit = payload => {
     state.lastEvent = payload;
@@ -137,8 +139,11 @@ ATTACHMENT_HOST = r""";
         copies:state.copiesEnabled ? [
           copy('01900000-0000-7000-8000-000000000093','papers.example','CC-BY-4.0','accepted'),
           copy('01900000-0000-7000-8000-000000000094','archive.example',null,null)] : [],
-        retained:state.copiesEnabled ? [{candidateId,sourceName:'retained.txt',
-          originalOperationId:'01900000-0000-7000-8000-000000000095'}] : []};
+        retained:state.copiesEnabled ? [{candidateId,sourceName:'acquired.txt',
+          originalOperationId:'01900000-0000-7000-8000-000000000095',copyId:'01900000-0000-7000-8000-000000000093'},
+          {candidateId:'01900000-0000-7000-8000-000000000097',sourceName:'acquired.txt',
+          originalOperationId:'01900000-0000-7000-8000-000000000098',
+          copyId:'01900000-0000-7000-8000-000000000094'}] : []};
     }
     if (command === 'document_acquisition_review') {
       state.reviews.push(args.request);
@@ -158,9 +163,11 @@ ATTACHMENT_HOST = r""";
     if (command === 'document_acquisition_download' || command === 'document_acquisition_recover') {
       const request=args.request;
       (command === 'document_acquisition_download' ? state.downloads : state.recoveries).push(request);
-      setTimeout(() => emit({schemaVersion:'1.0',status:'candidate',operationId:request.operationId,
+      const candidate = () => emit({schemaVersion:'1.0',status:'candidate',operationId:request.operationId,
         sessionId,selection:request.selection,candidate:{candidateId,sourceName:'remote.txt',byteLength:42,
-          format:'txt',confirmationSha256:'d'.repeat(64),confirmationRequired:true}}), 50);
+          format:'txt',confirmationSha256:'d'.repeat(64),confirmationRequired:true}});
+      if (state.holdDownload && command === 'document_acquisition_download') state.releaseDownload = candidate;
+      else setTimeout(candidate, 50);
       return {schemaVersion:'1.0',status:'armed',operationId:request.operationId,sessionId};
     }
     if (command === 'document_attachment_status') {
@@ -194,6 +201,7 @@ ATTACHMENT_HOST = r""";
       const request = args.request;
       state.begin.push(request);
       if (!state.ready) return {schemaVersion:'1.0', status:'unavailable', operationId:request.operationId};
+      if (state.holdPicker) await new Promise(resolve => { state.releasePicker = resolve; });
       const failure = state.failure;
       state.failure = null;
       setTimeout(() => emit(failure ? {
@@ -404,12 +412,17 @@ class DocumentAttachmentInteractionTests(unittest.TestCase):
             # Mounted product copy review: opaque synthetic native results are
             # UI proof only; real transfer/persistence is qualified separately.
             page.evaluate("window.__ATTACH_TEST__.copiesEnabled = true")
+            page.evaluate("window.__ATTACH_TEST__.statusOverride = {status:'failed', code:'rights-denied'}")
             source = panel.get_by_label("Source assertion for this version")
             source.select_option("")
             source.select_option(work["assertionRevisionIds"][0])
             copies = panel.get_by_role("region", name="Available copies", exact=True)
             first = copies.get_by_role("button", name="Review this copy · papers.example", exact=True)
             first.wait_for()
+            panel.get_by_text("Authoritative status: attachment failed", exact=False).wait_for()
+            self.assertTrue(panel.get_by_role("button", name="Choose local full-text file…").is_disabled())
+            self.assertTrue(copies.get_by_role("button", name="Record local access need").is_enabled())
+            self.assertTrue(first.is_enabled())
             self.assertEqual(2, copies.get_by_role("button", name="Review this copy", exact=False).count())
             self.assertIn("Unknown", copies.inner_text())
             first.click()
@@ -427,11 +440,57 @@ class DocumentAttachmentInteractionTests(unittest.TestCase):
             copies.get_by_text("Local access need recorded.", exact=False).wait_for()
             self.assertEqual([], page.evaluate("window.__ATTACH_TEST__.downloads"))
             self.assertEqual("institutional", page.evaluate("window.__ATTACH_TEST__.notes[0].channel"))
+            self.assertEqual([], page.evaluate("window.__ATTACH_TEST__.recoveries"))
             retain_intake_state("local-access-need")
             first.click()
             copies.get_by_label("I confirm this copy matches", exact=False).check()
             copies.get_by_label("I may store and inspect", exact=False).check()
+            page.evaluate(
+                "window.__ATTACH_TEST__.holdDownload = true; "
+                "window.__ATTACH_TEST__.statusOverride = {status:'downloading', code:null}"
+            )
             copies.get_by_role("button", name="Download this copy").click()
+            page.wait_for_function("window.__ATTACH_TEST__.downloads.length === 1")
+            remote_operation = page.evaluate("window.__ATTACH_TEST__.downloads[0].operationId")
+            page.wait_for_function(
+                "operation => window.__ATTACH_TEST__.status.some(item => item.operationId === operation)",
+                arg=remote_operation,
+                timeout=4000,
+            )
+            panel.get_by_text("Authoritative status: downloading", exact=False).wait_for()
+            page.evaluate("window.__ATTACH_TEST__.statusOverride = {status:'validating', code:null}")
+            panel.get_by_text("Authoritative status: native validation in progress", exact=False).wait_for(timeout=4000)
+            self.assertTrue(panel.get_by_role("button", name="View Task Center").is_enabled())
+            self.assertTrue(panel.get_by_role("button", name="Choose local full-text file…").is_disabled())
+            exact_poll = page.evaluate("window.__ATTACH_TEST__.status.at(-1)")
+            self.assertEqual(remote_operation, exact_poll["operationId"])
+            self.assertEqual(page.evaluate("window.__ATTACH_TEST__.downloads[0].selection"), exact_poll["selection"])
+            cancellations_before_handoff = len(page.evaluate("window.__ATTACH_TEST__.cancel"))
+            panel.get_by_role("button", name="View Task Center").click()
+            page.get_by_role("heading", name="Task Center", exact=True).wait_for()
+            page.get_by_text("Selected copy 01900000-0000-7000-8000-000000000093.", exact=False).wait_for()
+            self.assertEqual(cancellations_before_handoff, len(page.evaluate("window.__ATTACH_TEST__.cancel")))
+            page.evaluate("window.__ATTACH_TEST__.statusOverride = {status:'candidate', code:null}")
+            page.evaluate(
+                "() => { const state=window.__ATTACH_TEST__; state.holdDownload=false; state.releaseDownload(); }"
+            )
+            page.get_by_role("button", name="Return to selected Work/version").click()
+            panel.get_by_text("Returned selected copy", exact=False).wait_for()
+            self.assertEqual(0, panel.get_by_role("heading", name="Pending document candidate").count())
+            retained_first = copies.get_by_role(
+                "region", name="Retained inspected candidate 01900000-0000-7000-8000-000000000080", exact=True
+            )
+            retained_second = copies.get_by_role(
+                "region", name="Retained inspected candidate 01900000-0000-7000-8000-000000000097", exact=True
+            )
+            retained_first.wait_for()
+            self.assertIn("CC-BY-4.0", retained_first.inner_text())
+            self.assertIn("accepted", retained_first.inner_text())
+            self.assertIn("papers.example", retained_first.inner_text())
+            self.assertIn("archive.example", retained_second.inner_text())
+            self.assertIn("Unknown", retained_second.inner_text())
+            self.assertNotEqual(retained_first.inner_text(), retained_second.inner_text())
+            retained_first.get_by_role("button", name="Review retained candidate", exact=False).click()
             panel.get_by_role("heading", name="Pending document candidate").wait_for()
             self.assertEqual(1, len(page.evaluate("window.__ATTACH_TEST__.downloads")))
             self.assertTrue(panel.get_by_role("button", name="Attach to selected version").is_disabled())
@@ -446,13 +505,20 @@ class DocumentAttachmentInteractionTests(unittest.TestCase):
             self.assertTrue(
                 copies.get_by_role("button", name="Review this copy · papers.example", exact=True).is_disabled()
             )
-            self.assertTrue(copies.get_by_role("button", name="Review retained candidate · retained.txt").is_enabled())
-            copies.get_by_role("button", name="Review retained candidate · retained.txt").click()
+            self.assertTrue(
+                retained_second.get_by_role("button", name="Review retained candidate", exact=False).is_enabled()
+            )
+            retained_second.get_by_role("button", name="Review retained candidate", exact=False).click()
             panel.get_by_role("heading", name="Pending document candidate").wait_for()
             self.assertEqual(1, len(page.evaluate("window.__ATTACH_TEST__.downloads")))
-            self.assertEqual(1, len(page.evaluate("window.__ATTACH_TEST__.recoveries")))
+            self.assertEqual(2, len(page.evaluate("window.__ATTACH_TEST__.recoveries")))
             self.assertEqual(0, panel.get_by_text("Returned selected copy", exact=False).count())
             retain_intake_state("fresh-retained-recovery")
+            panel.get_by_role("button", name="View Task Center").click()
+            page.get_by_text("Selected copy 01900000-0000-7000-8000-000000000094.", exact=False).wait_for()
+            page.get_by_role("button", name="Return to selected Work/version").click()
+            panel.get_by_text("Returned selected copy: 01900000-0000-7000-8000-000000000094.", exact=False).wait_for()
+            self.assertEqual(1, len(page.evaluate("window.__ATTACH_TEST__.downloads")))
             if capture_root is not None:
                 (capture_root / "capture-index.json").write_text(
                     json.dumps(
@@ -477,7 +543,13 @@ class DocumentAttachmentInteractionTests(unittest.TestCase):
             source.select_option(work["assertionRevisionIds"][0])
             page.evaluate("window.__ATTACH_TEST__.statusOverride = null")
             page.evaluate("window.__ATTACH_TEST__.failure = 'password-protected'")
+            page.evaluate("window.__ATTACH_TEST__.holdPicker = true")
             panel.get_by_role("button", name="Choose local full-text file…").click()
+            page.wait_for_function("window.__ATTACH_TEST__.releasePicker !== null")
+            self.assertTrue(panel.get_by_role("button", name="View Task Center").is_disabled())
+            page.evaluate(
+                "() => { const state=window.__ATTACH_TEST__; state.holdPicker=false; state.releasePicker(); }"
+            )
             page.wait_for_timeout(500)
             self.assertIn(
                 "password protected",

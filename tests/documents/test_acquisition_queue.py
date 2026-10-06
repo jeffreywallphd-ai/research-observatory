@@ -477,7 +477,8 @@ class AcquisitionQueueTests(unittest.TestCase):
         )
         pending = c.attachments.retained_candidates(selection, actor=c.actor)
         self.assertEqual((candidate.candidate_id,), tuple(item["candidateId"] for item in pending))
-        self.assertEqual({"candidateId", "sourceName", "originalOperationId"}, set(pending[0]))
+        self.assertEqual({"candidateId", "sourceName", "originalOperationId", "copyId"}, set(pending[0]))
+        self.assertEqual(c.location.location_id, pending[0]["copyId"])
         self.assertEqual(0, c.count("document_attachment_assertions"))
         self.assertEqual(1, len(c.calls))
 

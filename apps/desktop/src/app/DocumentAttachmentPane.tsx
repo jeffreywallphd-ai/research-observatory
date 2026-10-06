@@ -3,7 +3,7 @@ import { createCoreApiClient, type VersionContext } from "@research-observatory/
 import { Button, Notification, Panel, StatusBadge } from "@research-observatory/ui-components";
 import {
   attachmentBeginRequest, attachmentCancelRequest, attachmentCommitRequest, attachmentProblemMessage,
-  attachmentSelection, attachmentStatusMessage, attachmentStatusRequest, canStartAttachmentReview,
+  attachmentSelection, attachmentStatusMessage, attachmentStatusRequest, canStartAttachmentReview, canReviewAvailableCopies,
   isInterruptedPriorSessionStatus, newAttachmentId, sameAttachmentSelection,
   type AttachmentCandidate, type AttachmentCommitRequest, type AttachmentEvent, type AttachmentOutcome,
   type AttachmentProblemCode, type AttachmentSelection, type AttachmentMode, type AttachmentStatus,
@@ -93,6 +93,7 @@ export function DocumentAttachmentPane({ root, context, versionId, client, annou
   const validVersion = Boolean(version && placement?.state === "assigned" && work?.disposition === "active");
   const cleanupRequired = problem === "cleanup-required" || attachmentStatus?.code === "cleanup-required";
   const canBegin = available && !cleanupRequired && selected !== null && canStartAttachmentReview(attachmentStatus);
+  const canReviewCopies = available && !cleanupRequired && selected !== null && canReviewAvailableCopies(attachmentStatus);
   const responseCommand = committed?.status === "attached" && lastCommit.current
     && sameAttachmentSelection(committed.selection, lastCommit.current.selection)
     && committed.operationId === lastCommit.current.operationId
@@ -318,7 +319,7 @@ export function DocumentAttachmentPane({ root, context, versionId, client, annou
     pending.current = null;
     if (previous) void port.cancel(attachmentCancelRequest(previous.operationId, previous.sessionId, previous.candidateId));
     const operationId = newAttachmentId();
-    pending.current = { operationId, selection: selected, sessionId: null, candidateId: null, phase: "stage", remote: true };
+    pending.current = { operationId, selection: selected, sessionId: null, candidateId: null, phase: "stage" };
     setStatus(mode === "choose" ? "Waiting for the native document picker…" : "Native file drop armed for this selected version…");
     const result = await port.begin(attachmentBeginRequest(mode, operationId, selected));
     const operation = pending.current;
@@ -398,7 +399,7 @@ export function DocumentAttachmentPane({ root, context, versionId, client, annou
     const ticket = ++generation.current;
     setBusy(true); setProblem(null); setMatchConfirmed(false); setPermittedUse("");
     if (!await exactCurrent(selected, ticket)) return;
-    pending.current = { operationId, selection: selected, sessionId: null, candidateId: null, phase: "stage" };
+    pending.current = { operationId, selection: selected, sessionId: null, candidateId: null, phase: "stage", remote: true };
     setStatus("Downloading confirmed copy into encrypted local staging. Explicit Attach remains required.");
     const result = await action();
     const operation = pending.current;
@@ -440,8 +441,8 @@ export function DocumentAttachmentPane({ root, context, versionId, client, annou
       }}><option value="">Select the retained source assertion</option>{sourceIds.map((id) => <option key={id} value={id}>{sourceTitle(context, id).slice(0, 120)} · {id}</option>)}</select>
     </div>
     <p>Source rights and acquisition status remain separate. Choose a lawful local copy; this selection does not grant export, redistribution or model use.</p>
-    {selected ? <AvailableCopiesPane selection={selected} downloadAllowed={canBegin}
-      disabled={!canBegin && attachmentStatus?.status !== "candidate" || busy || Boolean(unconfirmed) || committedBlocksNew || Boolean(candidate)}
+    {selected ? <AvailableCopiesPane selection={selected} downloadAllowed={canReviewCopies}
+      disabled={!canReviewCopies && attachmentStatus?.status !== "candidate" || busy || Boolean(unconfirmed) || committedBlocksNew || Boolean(candidate)}
       announce={announce} beginRemote={beginRemote} initialCopyId={initialHandoff?.copyId === copyId ? copyId : null} onCopySelect={setCopyId} /> : null}
     <div className="ro-action-row"><Button disabled={!canBegin || busy || Boolean(unconfirmed) || committedBlocksNew} onClick={() => void begin("choose")}>Choose local full-text file…</Button></div>
     <section className="ro-stack" aria-label="Native document drop target" data-document-native-drop-target="true">

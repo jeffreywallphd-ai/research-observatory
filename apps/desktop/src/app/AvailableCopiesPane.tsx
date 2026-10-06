@@ -80,7 +80,7 @@ export function AvailableCopiesPane({ selection, disabled, downloadAllowed, anno
     if (busy || disabled) return;
     const generation = ++ticket.current, operation = newAttachmentId();
     setReview(null); setConfirmed(false); setUse(false); setBusy(true);
-    onCopySelect(null);
+    onCopySelect(candidate.copyId);
     void port.clearReview();
     setMessage("Reviewing current authority for the retained inspected candidate. No download is being repeated; explicit Attach remains required.");
     await beginRemote(operation, () => port.recover(selection, candidate, operation));
@@ -99,8 +99,17 @@ export function AvailableCopiesPane({ selection, disabled, downloadAllowed, anno
     </section>)}
     {inventoryBinding === binding && retained.length ? <section className="ro-stack" aria-label="Retained inspected candidates"><h4>Retained inspected candidates</h4>
       <p>These pending copies are not canonical attachments or readable documents. Review current authority without downloading again, then explicitly confirm Attach.</p>
-      {retained.map((item) => <div key={item.candidateId} className="ro-action-row"><span>{item.sourceName}</span>
-        <Button disabled={disabled || busy} onClick={() => void recover(item)}>Review retained candidate · {item.sourceName}</Button></div>)}
+      {retained.map((item) => {
+        const origin = copies?.find((copy) => copy.copyId === item.copyId);
+        return <section key={item.candidateId} className="ro-stack ro-wrap-anywhere" aria-label={`Retained inspected candidate ${item.candidateId}`}>
+          <p>{item.sourceName} · candidate {item.candidateId}</p>
+          <dl className="import-rights"><div><dt>Origin copy</dt><dd>{item.copyId ?? "Local file"}</dd></div>
+            <div><dt>Provider and host</dt><dd>{origin ? `${origin.provider || "Unknown"} · ${origin.host}` : "Unknown"}</dd></div>
+            <div><dt>Observed version</dt><dd>{origin?.version ?? "Unknown"}</dd></div>
+            <div><dt>License</dt><dd>{origin?.license ?? "Unknown"}</dd></div></dl>
+          <Button disabled={disabled || busy} onClick={() => void recover(item)}>Review retained candidate · {item.sourceName} · {item.candidateId}</Button>
+        </section>;
+      })}
     </section> : null}
     {review ? <section className="ro-stack" aria-label="Review selected remote copy" onKeyDown={(event) => {
       if (event.key === "Escape") { event.preventDefault(); event.stopPropagation(); closeReview(); }
