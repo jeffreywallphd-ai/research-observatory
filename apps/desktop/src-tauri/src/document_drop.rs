@@ -708,12 +708,15 @@ fn window_class(hwnd: HWND) -> Option<String> {
     (length > 0).then(|| String::from_utf16_lossy(&buffer[..length]))
 }
 
+#[derive(Clone)]
 struct TargetNode {
     hwnd: HWND,
     parent: HWND,
     class: String,
     thread: u32,
     process: u32,
+    disabled: bool,
+    transparent: bool,
 }
 
 fn in_host_subtree(hwnd: HWND, host: HWND, nodes: &[TargetNode]) -> bool {
@@ -890,7 +893,7 @@ pub(crate) fn install(
                         .ok_or("RO-DOCUMENT-WEBVIEW-DROP-TARGET-UNAVAILABLE")?;
                     let mut process = 0;
                     let thread = unsafe { GetWindowThreadProcessId(hwnd, Some(&mut process)) };
-                    Ok(TargetNode { hwnd, parent, class, thread, process })
+                    Ok(TargetNode { hwnd, parent, class, thread, process, disabled: false, transparent: false })
                 }).collect::<Result<_, &'static str>>()?;
                 #[cfg(feature = "integration-harness")]
                 {
@@ -1064,7 +1067,77 @@ mod tests {
             class: class.into(),
             thread,
             process,
+            disabled: false,
+            transparent: false,
         }
+    }
+
+    fn observed_five_node_fixture() -> Vec<TargetNode> {
+        let mut nodes = vec![
+            node(11, 10, "WRY_WEBVIEW", 7, 9),
+            node(12, 11, "Chrome_WidgetWin_0", 7, 9),
+            node(13, 12, "Chrome_WidgetWin_1", 8, 10),
+            node(14, 13, "Chrome_RenderWidgetHostHWND", 8, 10),
+            node(15, 13, "Intermediate D3D Window", 11, 12),
+        ];
+        nodes[3].transparent = true;
+        nodes[4].disabled = true;
+        nodes[4].transparent = true;
+        nodes
+    }
+
+    #[test]
+    fn disabled_graphics_sibling_has_no_interactive_drop_authority() {
+        let nodes = observed_five_node_fixture();
+        let targets = planned_webview_targets(hwnd(10), &nodes, 7, 9).unwrap();
+        assert_eq!(targets, vec![hwnd(11), hwnd(12), hwnd(13), hwnd(14)]);
+        assert!(!targets.contains(&hwnd(15)));
+    }
+
+    #[test]
+    fn graphics_name_or_transparency_alone_cannot_exclude_an_interactive_target() {
+        let reference = observed_five_node_fixture();
+        for (disabled, transparent) in [(false, false), (false, true), (true, false)] {
+            let mut nodes = reference.clone();
+            nodes[4].disabled = disabled;
+            nodes[4].transparent = transparent;
+            assert!(planned_webview_targets(hwnd(10), &nodes, 7, 9).is_err());
+        }
+    }
+
+    #[test]
+    fn graphics_role_requires_unique_exact_chain_and_measured_owner_relationship() {
+        let reference = observed_five_node_fixture();
+        for replacement in [
+            node(15, 14, "Intermediate D3D Window", 11, 12),
+            node(15, 12, "Intermediate D3D Window", 11, 12),
+            node(15, 13, "Unknown graphics child", 11, 12),
+            node(15, 13, "Intermediate D3D Window", 0, 12),
+            node(15, 13, "Intermediate D3D Window", 11, 0),
+            node(15, 13, "Intermediate D3D Window", 8, 12),
+            node(15, 13, "Intermediate D3D Window", 11, 10),
+        ] {
+            let mut nodes = reference.clone();
+            nodes[4] = replacement;
+            nodes[4].disabled = true;
+            nodes[4].transparent = true;
+            assert!(planned_webview_targets(hwnd(10), &nodes, 7, 9).is_err());
+        }
+        for additional in [
+            node(16, 13, "Intermediate D3D Window", 11, 12),
+            node(16, 15, "Chrome_WidgetWin_1", 8, 10),
+            node(16, 13, "Chrome_RenderWidgetHostHWND", 8, 10),
+            node(16, 12, "Chrome_WidgetWin_1", 8, 10),
+            node(16, 11, "Chrome_WidgetWin_0", 7, 9),
+            node(16, 13, "Unknown interactive child", 8, 10),
+        ] {
+            let mut nodes = reference.clone();
+            nodes.push(additional);
+            assert!(planned_webview_targets(hwnd(10), &nodes, 7, 9).is_err());
+        }
+        let mut nodes = reference;
+        nodes[2].parent = hwnd(11);
+        assert!(planned_webview_targets(hwnd(10), &nodes, 7, 9).is_err());
     }
 
     #[test]
