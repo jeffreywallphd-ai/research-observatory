@@ -33,7 +33,7 @@ describe("attachment failure evidence", () => {
     // it. This fallback also serves failures before selection, so it cannot
     // infer either selection or durable attachment from the generic code.
     const message = attachmentProblemMessage("unavailable");
-    expect(message).not.toMatch(/no file was selected|no file was attached/u);
+    expect(message).not.toMatch(/no file was selected|no file was attached/iu);
     expect(message).toMatch(/current attachment status/u);
     expect(message).toMatch(/before retrying/u);
   });
