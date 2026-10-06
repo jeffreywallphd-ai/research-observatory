@@ -227,7 +227,7 @@ class SqliteRightsRepository:
             or subject.resource_class != "metadata"
         ):
             if subject.copy_location == "provider-hosted" and subject.resource_class == "full-text":
-                from .acquisition_repository import load_location
+                from .document_attachment_repository import load_location
                 from .ports.acquisition import AcquisitionProblem
 
                 try:

@@ -327,8 +327,10 @@ class AcquisitionIntegrationTests(unittest.TestCase):
 
     def setUp(self):
         from research_observatory_core.acquisition.service import OpenAccessAcquisitionService
-        from research_observatory_core.acquisition_repository import AcquisitionRepository
-        from research_observatory_core.document_attachment_repository import LocalDocumentAttachmentService
+        from research_observatory_core.document_attachment_repository import (
+            AcquisitionRepository,
+            LocalDocumentAttachmentService,
+        )
         from research_observatory_core.domain_contracts import new_uuid_v7
         from research_observatory_core.ingestion.preview_workflow import fingerprint
         from research_observatory_core.object_store import create_local_object_store
@@ -429,7 +431,9 @@ class AcquisitionIntegrationTests(unittest.TestCase):
                 raise DocumentInspectionProblem(error.code) from None
 
         self.attachments = LocalDocumentAttachmentService(self.database, self.project, self.objects, inspector=inspect)
-        self.repository = AcquisitionRepository(self.database, self.project, f.repository.source_record)
+        self.repository = AcquisitionRepository(
+            self.database, self.project, f.repository.source_record, self.attachments
+        )
         self.location = self.repository.locations(self.assertion_id, actor=self.actor)[0]
         self.calls = []
         self.responses = [(200, [(b"content-type", b"text/plain")], [b"Synthetic acquired full text.\n"])]
@@ -574,7 +578,6 @@ class AcquisitionIntegrationTests(unittest.TestCase):
             confirmation_sha256=original.confirmation_sha256,
             expected_policy_revision_id=original.provider_policy_revision_id,
             actor=self.actor,
-            attachments=self.attachments,
         )
         with closing(open_canonical_database(self.database, expected_project_id=self.project)) as db:
             before = db.execute(
@@ -604,6 +607,58 @@ class AcquisitionIntegrationTests(unittest.TestCase):
                 original_attempt,
                 db.execute("SELECT * FROM acquisition_attempts WHERE operation_id=?", (operation,)).fetchall(),
             )
+
+    def test_typed_inspector_cancellation_records_cancelled_and_discards_owned_stage(self):
+        from research_observatory_core.document_attachment_repository import _inspect_signed_worker
+        from research_observatory_core.domain_contracts import new_uuid_v7
+        from research_observatory_core.ports.document_attachments import DocumentInspectionProblem
+        from research_observatory_core.storage import open_canonical_database
+
+        from workers.document.inspection import DocumentInspectionError
+
+        self.permission()
+        preview = self.service.preview(self.selection(), actor=self.actor)
+        operation = new_uuid_v7()
+        before_objects = self.count("object_records")
+        cancel_requested = [False]
+
+        def worker_cancel(stream, *, filename, declared_media_type, cancel):
+            cancel_requested[0] = True
+            self.assertTrue(cancel())
+            raise DocumentInspectionError("cancelled")
+
+        with (
+            patch.object(self.attachments, "_inspector", side_effect=_inspect_signed_worker),
+            patch("workers.windows.document_launcher.inspect_document", side_effect=worker_cancel),
+            self.assertRaisesRegex(DocumentInspectionProblem, "cancelled"),
+        ):
+            self.service.acquire(
+                preview.preview_id,
+                confirmation=preview.confirmation,
+                operation_id=operation,
+                cancellation_requested=lambda: cancel_requested[0],
+            )
+        with closing(open_canonical_database(self.database, expected_project_id=self.project)) as db:
+            self.assertEqual(
+                [("cancelled", "acquisition-cancelled")],
+                [
+                    tuple(row)
+                    for row in db.execute(
+                        "SELECT outcome,code FROM acquisition_attempt_results WHERE operation_id=?", (operation,)
+                    ).fetchall()
+                ],
+            )
+            self.assertEqual(
+                "acquisition-cancelled",
+                db.execute(
+                    "SELECT display_label_observed FROM aggregate_revisions WHERE aggregate_id=? "
+                    "ORDER BY revision DESC LIMIT 1",
+                    (operation,),
+                ).fetchone()[0],
+            )
+        self.assertEqual(before_objects, self.count("object_records"))
+        self.assertEqual(0, self.count("document_attachment_candidates"))
+        self.assertEqual(0, self.count("document_acquisition_sources"))
 
     def test_runtime_session_loss_cancels_owned_post_transfer_inspection(self):
         from types import SimpleNamespace
@@ -665,7 +720,7 @@ class AcquisitionIntegrationTests(unittest.TestCase):
         self.assertEqual([], self.calls)
 
     def test_selected_source_license_checksum_survive_commit_and_restart(self):
-        from research_observatory_core.acquisition_repository import AcquisitionRepository
+        from research_observatory_core.document_attachment_repository import AcquisitionRepository
         from research_observatory_core.domain_contracts import new_uuid_v7
         from research_observatory_core.storage import open_canonical_database
 
@@ -683,7 +738,9 @@ class AcquisitionIntegrationTests(unittest.TestCase):
             permitted_use="project-only",
             exact_selection=self.selection().association,
         )
-        restarted = AcquisitionRepository(self.database, self.project, self.fixture.repository.source_record)
+        restarted = AcquisitionRepository(
+            self.database, self.project, self.fixture.repository.source_record, self.attachments
+        )
         location, receipt = restarted.source_for_revision(attachment.document_revision_id, actor=self.actor)
         self.assertEqual(self.location, location)
         self.assertEqual("cc-by-4.0", location.license)
@@ -736,7 +793,7 @@ class AcquisitionIntegrationTests(unittest.TestCase):
         self.responses = [(200, [(b"content-type", b"text/plain")], [b"Synthetic new complete copy\n"])]
         with (
             patch(
-                "research_observatory_core.acquisition_repository.publish_acquisition_source",
+                "research_observatory_core.document_attachment_repository.publish_acquisition_source",
                 side_effect=RuntimeError("synthetic publication interruption"),
             ),
             self.assertRaises(RuntimeError),

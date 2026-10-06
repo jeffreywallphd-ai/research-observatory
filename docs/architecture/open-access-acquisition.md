@@ -5,6 +5,10 @@ CAP-05.S01.T02 provides Core-owned selection and acquisition behind
 placeholders are the CAP-05.S01.T03 handoff. ADR-0019, ADR-0027, ADR-0028 and
 ADR-0029 govern privacy, source identity, isolation and content limits.
 
+Acquisition orchestration depends on portable persistence and inspected-staging
+ports. The document attachment data adapter owns acquisition projections and
+current association checks; main composes both with the existing encrypted store.
+
 Core resolves exact locations from the retained connector record and its source
 assertion/address/ordinal. OpenAlex, Unpaywall and Semantic Scholar observations
 retain their own URL, field key, license and version. Crossref metadata is not an
@@ -39,6 +43,8 @@ dependencies. Success appends a terminal workflow revision atomically with the
 candidate, operation binding and protected source receipt. Failure/cancellation
 records a bounded code when current authority permits; a revoked session retains
 the admitted request for T03 recovery rather than fabricating a terminal result.
+Typed staging or inspector cancellation records cancelled with the bounded
+acquisition-cancelled code, including cancellation after network transfer.
 These append-only facts are not reusable dispatch authority.
 
 Bytes stream into the existing encrypted object store. Response MIME is only a

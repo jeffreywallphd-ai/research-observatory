@@ -20,7 +20,6 @@ from pydantic import ValidationError
 
 from . import CORE_API_SCHEMA_VERSION, CORE_API_VERSION, CORE_SERVICE_ID
 from .acquisition.service import AcquisitionPreview, OpenAccessAcquisitionService
-from .acquisition_repository import AcquisitionRepository
 from .app import create_app
 from .authentication import WORKFLOW_STARTUP_RECORD_BYTES, NativeWorkflowContext, parse_startup_record
 from .config import CoreSettings
@@ -36,7 +35,7 @@ from .corpus_report_repository import SqliteCorpusReportRepository
 from .corpus_repository import SqliteCorpusRepository
 from .corpus_service import CorpusService
 from .document_attachment_api import DocumentCommit, DocumentStageCommand, DocumentStatusQuery
-from .document_attachment_repository import LocalDocumentAttachmentService
+from .document_attachment_repository import AcquisitionRepository, LocalDocumentAttachmentService
 from .import_preview_repository import sqlite_import_preview_repository
 from .import_preview_service import ImportPreviewService, ImportProjectAdapters
 from .logging import emit_log_record
@@ -152,7 +151,7 @@ class DocumentAttachmentRuntime:
 
                 pages = ConnectorRepository(attachments._database, project_id, attachments._objects)
                 service = OpenAccessAcquisitionService(
-                    AcquisitionRepository(attachments._database, project_id, pages.source_record),
+                    AcquisitionRepository(attachments._database, project_id, pages.source_record, attachments),
                     attachments,
                     session_id=session_id,
                     authority_guard=guard,

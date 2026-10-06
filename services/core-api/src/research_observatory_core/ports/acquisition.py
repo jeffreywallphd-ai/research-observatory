@@ -4,14 +4,16 @@ from __future__ import annotations
 
 from collections.abc import Callable
 from dataclasses import dataclass
-from typing import Annotated
+from typing import Annotated, BinaryIO, Protocol
 
 from pydantic import Field
 
 from ..connectors.contracts import UtcInstant
 from ..ingestion.import_drafts import Digest, DraftValue, Identity, ProjectIdentity
 from ..reconciliation.contracts import SourceAddress
-from ..rights_policy import RightsSubject
+from ..rights_policy import RightsPolicyRevision, RightsSubject
+from .corpus import CorpusActor
+from .document_attachments import AttachmentCandidate
 
 
 class AcquisitionProblem(RuntimeError):
@@ -92,3 +94,49 @@ class AcquisitionStage:
 
     expected_sha256: str | None
     receipt: Callable[[], AcquisitionReceipt]
+
+
+class AcquisitionRepositoryPort(Protocol):
+    """Protected persistence and association authority owned by a Core adapter."""
+
+    def locations(self, source_assertion_revision_id: str, *, actor: CorpusActor) -> tuple[AcquisitionLocation, ...]: ...
+
+    def authorize(
+        self, selection: AcquisitionSelection, *, actor: CorpusActor
+    ) -> tuple[AcquisitionLocation, RightsPolicyRevision]: ...
+
+    def begin_attempt(
+        self,
+        selection: AcquisitionSelection,
+        *,
+        operation_id: str,
+        session_id: str,
+        confirmation_sha256: str,
+        expected_policy_revision_id: str,
+        actor: CorpusActor,
+    ) -> None: ...
+
+    def fail_attempt(self, operation_id: str, *, actor: CorpusActor, cancelled: bool, code: str) -> None: ...
+
+
+class AcquisitionAttachmentPort(Protocol):
+    """Encrypted, inspected staging without exposing a database connection."""
+
+    def stage(
+        self,
+        source: BinaryIO,
+        *,
+        source_name: str,
+        declared_media_type: str | None,
+        source_assertion_revision_id: str,
+        work_id: str,
+        work_revision_id: str,
+        version_id: str,
+        version_revision_id: str,
+        actor: CorpusActor,
+        operation_id: str | None = None,
+        session_id: str | None = None,
+        cancellation_requested: Callable[[], bool] | None = None,
+        publication_guard: Callable[[Callable[[], AttachmentCandidate]], AttachmentCandidate] | None = None,
+        acquisition: AcquisitionStage | None = None,
+    ) -> AttachmentCandidate: ...

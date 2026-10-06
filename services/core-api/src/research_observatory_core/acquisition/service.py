@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import hashlib
 import hmac
+import json
 import re
 import secrets
 import threading
@@ -18,18 +19,18 @@ from urllib.parse import urljoin
 
 import httpcore2
 
-from ..acquisition_repository import AcquisitionRepository, _digest
-from ..document_attachment_repository import LocalDocumentAttachmentService
 from ..domain_contracts import is_uuid_v7, new_uuid_v7
 from ..ports.acquisition import (
+    AcquisitionAttachmentPort,
     AcquisitionLocation,
     AcquisitionProblem,
     AcquisitionReceipt,
+    AcquisitionRepositoryPort,
     AcquisitionSelection,
     AcquisitionStage,
 )
 from ..ports.corpus import CorpusActor
-from ..ports.document_attachments import MAX_DOCUMENT_BYTES, AttachmentCandidate
+from ..ports.document_attachments import MAX_DOCUMENT_BYTES, AttachmentCandidate, DocumentInspectionProblem
 from ..ports.object_store import ObjectStagingCancelled, ObjectStoreProblem
 from .transport import AcquisitionHTTPTransport, validated_url
 
@@ -128,8 +129,8 @@ class _Source:
 class OpenAccessAcquisitionService:
     def __init__(
         self,
-        repository: AcquisitionRepository,
-        attachments: LocalDocumentAttachmentService,
+        repository: AcquisitionRepositoryPort,
+        attachments: AcquisitionAttachmentPort,
         *,
         session_id: str,
         authority_guard: Callable[[CorpusActor, Callable[[], Any]], Any],
@@ -149,29 +150,32 @@ class OpenAccessAcquisitionService:
 
     def preview(self, selection: AcquisitionSelection, *, actor: CorpusActor) -> AcquisitionPreview:
         selection = AcquisitionSelection.model_validate(selection)
-        location, policy = self.guard(
-            actor, lambda: self.repository.authorize(selection, actor=actor, attachments=self.attachments)
-        )
+        location, policy = self.guard(actor, lambda: self.repository.authorize(selection, actor=actor))
         host = validated_url(location.url).host
         if len(set(selection.redirect_hosts)) != len(selection.redirect_hosts) or any(
             validated_url("https://" + name + "/").host != name for name in selection.redirect_hosts
         ):
             raise AcquisitionProblem("acquisition-redirect-policy-invalid")
         identity = new_uuid_v7()
-        fingerprint = _digest(
-            {
-                "selection": selection.model_dump(mode="json", by_alias=True),
-                "location": location.location_sha256,
-                "policy": policy.revision_id,
-                "actor": actor.actor_id,
-                "intent": actor.intent_revision_id,
-                "intentSha256": actor.intent_sha256,
-                "privacy": actor.policy_sha256,
-                "session": self.session,
-                "initialHost": host,
-                "preview": identity,
-            }
-        )
+        fingerprint = hashlib.sha256(
+            json.dumps(
+                {
+                    "selection": selection.model_dump(mode="json", by_alias=True),
+                    "location": location.location_sha256,
+                    "policy": policy.revision_id,
+                    "actor": actor.actor_id,
+                    "intent": actor.intent_revision_id,
+                    "intentSha256": actor.intent_sha256,
+                    "privacy": actor.policy_sha256,
+                    "session": self.session,
+                    "initialHost": host,
+                    "preview": identity,
+                },
+                sort_keys=True,
+                separators=(",", ":"),
+                ensure_ascii=True,
+            ).encode()
+        ).hexdigest()
         preview = AcquisitionPreview(
             identity,
             location,
@@ -217,7 +221,6 @@ class OpenAccessAcquisitionService:
                     confirmation_sha256=pending.preview.confirmation_sha256,
                     expected_policy_revision_id=pending.preview.provider_policy_revision_id,
                     actor=pending.actor,
-                    attachments=self.attachments,
                 ),
             )
             admitted = True
@@ -227,14 +230,12 @@ class OpenAccessAcquisitionService:
             # admitted request, including one retained for restart recovery.
             if not admitted:
                 raise
-            code = (
-                "acquisition-cancelled"
-                if isinstance(error, ObjectStagingCancelled)
-                else getattr(error, "code", "acquisition-failed")
+            was_cancelled = isinstance(error, ObjectStagingCancelled) or (
+                isinstance(error, DocumentInspectionProblem) and error.code == "cancelled"
             )
+            code = "acquisition-cancelled" if was_cancelled else getattr(error, "code", "acquisition-failed")
             if not isinstance(code, str) or re.fullmatch(r"[a-z][a-z0-9-]{0,63}", code) is None:
                 code = "acquisition-failed"
-            was_cancelled = isinstance(error, ObjectStagingCancelled)
             # Revoked/closed sessions retain the admitted request for recovery.
             with suppress(Exception):
                 self.guard(
@@ -265,7 +266,7 @@ class OpenAccessAcquisitionService:
                 raise AcquisitionProblem("acquisition-network-timeout")
 
             def current():
-                location, policy = self.repository.authorize(selection, actor=actor, attachments=self.attachments)
+                location, policy = self.repository.authorize(selection, actor=actor)
                 if location != preview.location or policy.revision_id != preview.provider_policy_revision_id:
                     raise AcquisitionProblem("acquisition-preview-stale")
 
