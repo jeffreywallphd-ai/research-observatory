@@ -1,0 +1,363 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "independent-product-visual-disposition",
+  "taskId": "CAP-05.S01.T01",
+  "reviewId": "CAP-05.S01.T01.visual-review-01",
+  "reviewer": "agent:/root/c11_security_review",
+  "implementationAgent": "agent:codex-w2-implementation",
+  "reviewedAt": "2026-10-06T02:02:40.071135+00:00",
+  "disposition": "approved",
+  "formalTaskApproval": false,
+  "scope": "Independent visual disposition of the exact current product/reference capture delivery under approved RO-UI-ACADEMIC-MINIMAL-1.8. All 156 PNGs, comprising 78 product/reference pairs, were decoded and visually inspected. This covers the delivered workspace and designated boundary composition, hierarchy, alignment, density, reflow, themes and visible focus. It is not formal task acceptance or full continuation-gate approval.",
+  "bindings": {
+    "originalTaskBase": "6506c68461144747b0ee9be10853211717aa381d",
+    "producerCommit": "8297dcdc1528cb0cbe53ecd38b056231fbe9fd1d",
+    "manifest": "artifacts/evidence/CAP-05.S01.T01.captures-02/manifest.json",
+    "manifestGitBlob": "89f615d6b1053bbee3910eac9b214b12043c057a",
+    "manifestSha256": "a53d99456c8b5ec806d128b8f04d70f5e00b4bb211899fa96f099b836037e145",
+    "manifestSerialization": "Exact committed raw JSON bytes; no reserialization before hashing.",
+    "captureDeliveryCommit": "fb437349cb65352c839cb298ec7e13890baf1845",
+    "referenceId": "RO-UI-ACADEMIC-MINIMAL-1.8",
+    "referencePackageSha256": "cd8995fdcea2fe44452eaa1fdd258b6f9fab5714cbd443a81a8e5b4251220b94",
+    "referenceApprovalPublicationCommit": "acdc67b616f5ecdec448f57a7efe46e4f359aa9f",
+    "producerInputCount": 766,
+    "sourceBindings": [
+      {
+        "path": "apps/desktop/src/app/ApplicationRuntime.tsx",
+        "gitBlob": "b9349819e50b60f0f99f0796d460b7d0d688a180",
+        "sha256": "a77c3b695fd1e3b2c38174bf1f2b0431a173d0cc3ed46fb8e308b714653ce40f",
+        "size": 62932
+      },
+      {
+        "path": "apps/desktop/src/app/DocumentAttachmentPane.tsx",
+        "gitBlob": "32eda7f840480772641ad92570d49053ba799fce",
+        "sha256": "50aa5cf04df18b47d99e7b59fe82228659d0f59a203fca6ed47aaa4f14320c8b",
+        "size": 30416
+      },
+      {
+        "path": "apps/desktop/src/app/ImportWorkspace.tsx",
+        "gitBlob": "df1825c27a8e997047b090a7617e7ce16aecfe29",
+        "sha256": "741ed15c8335eb2541a6074a2f24dd23f9b7cc05fd6e577366c9fc58a419124c",
+        "size": 12276
+      },
+      {
+        "path": "apps/desktop/src/app/ReconciliationPane.tsx",
+        "gitBlob": "f3df88f5f962b9bf1023a7e75d323bfbd4bd05e8",
+        "sha256": "e9ffc14c14b211468dfd10f31626200afca872c5ee3bcc1de8417bddced3f807",
+        "size": 14259
+      },
+      {
+        "path": "apps/desktop/src/app/ReconciliationVersionsPane.tsx",
+        "gitBlob": "3d3f53e8f72cb71083ca1dc98f0a4296fd3fcb33",
+        "sha256": "678d93f1dc36f765f9e409fd3e8bf20c50f5c436a6f836504d7b9c241f9137e2",
+        "size": 34162
+      },
+      {
+        "path": "apps/desktop/src/app/TaskCenterWorkspace.tsx",
+        "gitBlob": "f082ff1daaaee6beedef9cf9af944859a5952018",
+        "sha256": "c2cb9e13aefa9fa4776b0e0633ab05740622da330032bba27b3a09535dcbe3ac",
+        "size": 20637
+      },
+      {
+        "path": "apps/desktop/src/app/documentAttachment.ts",
+        "gitBlob": "eb4fcd49d94122feac8488a9bb5fb85e90c38c4d",
+        "sha256": "858944b61bbd876e66f952a0cfc80b4d815b570bacbdd9067d656479f751241b",
+        "size": 22144
+      },
+      {
+        "path": "apps/desktop/src/app/documentAttachmentNative.ts",
+        "gitBlob": "80180e8af2dbfd18004a247ce083b2bf84afda66",
+        "sha256": "53a0d3c861c454e0b7f28251231ebef926a5543d4ed0a706dafea1da164310a3",
+        "size": 3168
+      }
+    ]
+  },
+  "authentication": {
+    "deliverySoleParent": "8297dcdc1528cb0cbe53ecd38b056231fbe9fd1d",
+    "deliveryChangedFiles": 157,
+    "deliveryChangedPngs": 156,
+    "deliveryChangedJsonFiles": 1,
+    "exactPriorReviewedBytesMatch": true,
+    "allProducerInputBlobsMatchProducerAndDelivery": true,
+    "referenceUnchangedAfterProducer": true,
+    "method": "Read actual Git parent/tree/blob objects with replacement objects disabled. Independently authenticated all 157 delivered regular blobs against the exact reviewed privacy inventory by path, raw SHA-256, byte length and mode. The delivery contains only the 156 PNGs and manifest, with the declared producer as sole parent. All 766 declared producer Git inputs match producer and delivery; the eight governed source bindings above independently match those inputs. PNG pixels, dimensions, declared digests and metadata were reviewed before publication and the committed bytes are identical.",
+    "captureVerifier": {
+      "command": ".venv/Scripts/python.exe tools/product_style_check.py --repo . --verify-captures artifacts/evidence/CAP-05.S01.T01.captures-02/manifest.json --delivery-commit fb437349cb65352c839cb298ec7e13890baf1845",
+      "executedBy": "agent:codex-w2-implementation",
+      "receipt": "artifacts/tmp/CAP-05.S01.T01.capture-verification-01.receipt.json",
+      "receiptSha256": "b8fb5d26f1fb9293ecc375cd4bfd2e03a3de3f5a66688502dde6e3f6d98676cd",
+      "retainedOutput": "artifacts/tmp/CAP-05.S01.T01.capture-verification-01.log",
+      "retainedOutputSha256": "7e3088a3e3db2cc0b14c742a9d63f9be988c64d3f77d1bff30a7ddcb3182965f",
+      "exitCode": 0,
+      "durationSeconds": 27.695,
+      "observedResult": {
+        "captureCount": 156,
+        "deliveryCommit": "fb437349cb65352c839cb298ec7e13890baf1845",
+        "manifest": "artifacts/evidence/CAP-05.S01.T01.captures-02/manifest.json",
+        "manifestSha256": "a53d99456c8b5ec806d128b8f04d70f5e00b4bb211899fa96f099b836037e145",
+        "ok": true,
+        "producerCommit": "8297dcdc1528cb0cbe53ecd38b056231fbe9fd1d"
+      },
+      "reviewerMethod": "Independently authenticated the retained reader output and its exact bindings. Did not rerun browser production or the capture reader."
+    }
+  },
+  "normativeBasis": [
+    "Approved RO-UI-ACADEMIC-MINIMAL-1.8 STYLE_GUIDE and WORKFLOW_CATALOG preserve the Academic Minimal hierarchy, established workspace identity, primary-return context, explicit local-document rights and association decisions, truthful unavailable states and researcher authority. Illustrative reference data and names are not required product data.",
+    "The approved ingestion-reconciliation page and attachment interaction retain local attachment within the existing Ingestion and Reconciliation workspace. Attachment status and recovery preserve current decision context; they create no new workflow stage, route, privacy grant or scholarly claim.",
+    "ADR-0037 and the adopted A02/A03 continuation and activation decisions retain the original CAP-05.S01.T01 identity and base while allowing restoration of approved native attachment behavior. This visual judgment does not authorize control changes or waive history attribution.",
+    "docs/automation/ui-conformance-verification.md requires semantic measurements and independent product/reference comparison. Screenshot equality is not required, and visual acceptance does not waive functional, privacy or accessibility obligations."
+  ],
+  "reviewedMatrix": {
+    "primaryPngs": 156,
+    "productReferencePairs": 78,
+    "workspaceCases": 72,
+    "designatedCases": 6,
+    "workspaces": [
+      {
+        "id": "projects",
+        "label": "Local projects",
+        "pageContractIds": [
+          "projects.html",
+          "new-project.html"
+        ],
+        "referencePage": "projects.html",
+        "stateId": "populated-project-list"
+      },
+      {
+        "id": "home",
+        "label": "Project home",
+        "pageContractIds": [
+          "index.html"
+        ],
+        "referencePage": "index.html",
+        "stateId": "project-ready"
+      },
+      {
+        "id": "intent",
+        "label": "Research intent",
+        "pageContractIds": [
+          "intent-contract.html"
+        ],
+        "referencePage": "intent-contract.html",
+        "stateId": "accepted-intent"
+      },
+      {
+        "id": "imports",
+        "label": "Ingestion & Reconciliation",
+        "pageContractIds": [
+          "ingestion-reconciliation.html"
+        ],
+        "referencePage": "ingestion-reconciliation.html",
+        "stateId": "retained-draft-review"
+      },
+      {
+        "id": "corpus",
+        "label": "Corpus Canvas",
+        "pageContractIds": [
+          "corpus-canvas.html"
+        ],
+        "referencePage": "corpus-canvas.html",
+        "stateId": "populated-corpus-report"
+      },
+      {
+        "id": "sources",
+        "label": "Source Manager",
+        "pageContractIds": [
+          "source-manager.html"
+        ],
+        "referencePage": "source-manager.html",
+        "stateId": "loaded-source-configuration"
+      },
+      {
+        "id": "tasks",
+        "label": "Task Center",
+        "pageContractIds": [
+          "task-center.html"
+        ],
+        "referencePage": "task-center.html",
+        "stateId": "populated-task-center"
+      },
+      {
+        "id": "audit",
+        "label": "Audit & lineage",
+        "pageContractIds": [
+          "audit-lineage.html"
+        ],
+        "referencePage": "audit-lineage.html",
+        "stateId": "populated-lineage"
+      },
+      {
+        "id": "models",
+        "label": "Model & Privacy Center",
+        "pageContractIds": [
+          "model-center.html"
+        ],
+        "referencePage": "model-center.html",
+        "stateId": "empty-model-catalog"
+      },
+      {
+        "id": "settings",
+        "label": "Project settings",
+        "pageContractIds": [
+          "project-settings.html"
+        ],
+        "referencePage": "project-settings.html",
+        "stateId": "project-settings"
+      },
+      {
+        "id": "application-settings",
+        "label": "Application settings",
+        "pageContractIds": [
+          "application-settings.html"
+        ],
+        "referencePage": "application-settings.html",
+        "stateId": "application-settings"
+      },
+      {
+        "id": "diagnostics",
+        "label": "Diagnostics & support",
+        "pageContractIds": [
+          "help-onboarding.html"
+        ],
+        "referencePage": "help-onboarding.html",
+        "stateId": "populated-diagnostics"
+      }
+    ],
+    "themes": [
+      "light",
+      "dark"
+    ],
+    "viewports": [
+      {
+        "width": 1440,
+        "height": 900
+      },
+      {
+        "width": 1280,
+        "height": 720
+      },
+      {
+        "width": 720,
+        "height": 450
+      }
+    ],
+    "surfaces": [
+      {
+        "surface": "application-lock",
+        "pngCount": 4
+      },
+      {
+        "surface": "application-settings",
+        "pngCount": 12
+      },
+      {
+        "surface": "audit",
+        "pngCount": 12
+      },
+      {
+        "surface": "corpus",
+        "pngCount": 12
+      },
+      {
+        "surface": "diagnostics",
+        "pngCount": 12
+      },
+      {
+        "surface": "home",
+        "pngCount": 12
+      },
+      {
+        "surface": "imports",
+        "pngCount": 12
+      },
+      {
+        "surface": "intent",
+        "pngCount": 12
+      },
+      {
+        "surface": "local-service-boundary",
+        "pngCount": 4
+      },
+      {
+        "surface": "models",
+        "pngCount": 12
+      },
+      {
+        "surface": "projects",
+        "pngCount": 12
+      },
+      {
+        "surface": "settings",
+        "pngCount": 12
+      },
+      {
+        "surface": "shortcut-dialog",
+        "pngCount": 4
+      },
+      {
+        "surface": "sources",
+        "pngCount": 12
+      },
+      {
+        "surface": "tasks",
+        "pngCount": 12
+      }
+    ],
+    "renderer": {
+      "browserVersion": "145.0.7632.6",
+      "platform": "windows-x64",
+      "playwrightVersion": "1.58.0"
+    },
+    "method": "Inspected 39 labeled contact sheets, each retaining four complete decoded images covering two product/reference pairs. Every delivered PNG was represented once, including both themes and all three effective viewports. Source and measurement inspection distinguished approved illustrative differences from required composition. No new live exploratory session or usability study is claimed."
+  },
+  "observations": [
+    {
+      "dimension": "Hierarchy, alignment and density",
+      "disposition": "accepted",
+      "basis": "Workspace headings, cards, notices, labels, key-value rows and controls retain the quiet academic hierarchy and shared primitives. Product and reference examples differ in populated data and available capabilities, consistent with their illustrative status. No new route, workflow stage, style system or permission operation is introduced by the resumed attachment renderer changes."
+    },
+    {
+      "dimension": "Themes, reflow and visible focus",
+      "disposition": "accepted",
+      "basis": "Both themes retain readable labels, values and actions. Narrow captures wrap text and cards within the document width. Ordinary vertical scrolling and the recorded focused-control position explain viewport cropping of preceding content. Visible focus remains legible; the separately retained measurements and interactions complement still images."
+    },
+    {
+      "dimension": "Attachment failure-state truthfulness",
+      "disposition": "accepted",
+      "basis": "The resumed source now says Local attachment is unavailable and directs the researcher to current attachment status and the local service before retrying. It no longer infers that no file was selected or attached, or that a generic Core failure identifies a native bridge cause. The observed b783 rejection after a held stage made that distinction material. The red-first regression and current 13-pass renderer report support the correction; the primary captures do not exercise this fallback state."
+    },
+    {
+      "dimension": "Privacy of delivered evidence",
+      "disposition": "accepted",
+      "basis": "All PNG pixels and metadata were reviewed for private content. The shown project names, paths, counts, trace example and reference material are authenticated synthetic fixture or approved illustrative data. No private account, research document, credential or active user path was found. The unchanged installed privacy hook accepted the exact 157 artifact blobs after independent artifact-specific review; no hook bypass or scanner relaxation occurred."
+    }
+  ],
+  "measuredSupport": {
+    "observedProductStates": 78,
+    "documentHorizontalOverflowCases": 0,
+    "workspaceFocusedTargetCases": 72,
+    "workspaceFocusContainedCases": 72,
+    "workspaceTargetInViewportCases": 72,
+    "outboundRequestsObservedByCaptureProducer": 0,
+    "interpretation": "Counts are read from the exact delivered measurement report, not new executions or a claim of complete WCAG conformance. The capture producer reports 72 workspace and six designated product cases; those current counts take precedence over older explanatory prose."
+  },
+  "acceptedVariances": [
+    {
+      "variance": "Illustrative examples and page composition",
+      "basis": "Synthetic populated product state differs from static reference mock data and future capability examples. The approved reference makes those examples illustrative; no required interaction or authority boundary is waived."
+    },
+    {
+      "variance": "Vertical scrolling and focus position",
+      "basis": "Tall pages can exceed viewport height and captures retain actual recorded scroll positions. This acceptance does not permit horizontal document overflow, unreachable actions or dialog containment failure."
+    }
+  ],
+  "findings": [],
+  "limits": [
+    "The primary matrix depicts the retained-draft imports state, not every native attachment decision or failure state. Source review, inherited independently reviewed attachment behavior, the current renderer regression and separate native picker/drop evidence supply their respective boundaries; screenshots alone do not prove them.",
+    "Synthetic browser adapters and still images do not prove OS permissions, cross-process staging, actual Core authentication, SQLCipher persistence, real-principal enforcement or fresh-process recovery. Those remain separate task/integration evidence.",
+    "The actual current native five-window witness demonstrates a hidden reinstallation after bounded natural warmup, including four-registration failure rollback. It does not prove five-node availability at first-process startup or mutate a foreign GPU window.",
+    "The prior unavailable native stage at b783 remains adverse and unlocalized. The content-free observer and later successful journeys do not establish the earlier failure cause. Earlier fifth-window, foreground, observer/regression and aborted capture-01 evidence remains retained.",
+    "The complete original-base continuation gate has a separate source-supported history-attribution limitation concerning legitimate C11/S05/C12 product history. This disposition is semantic visual acceptance, not an executed gate pass, control exception, task approval, slice/Wave qualification or release approval.",
+    "Approval binds these exact producer and delivered bytes. Later product, reference or dependent input changes require the existing freshness rules and applicable independent review."
+  ]
+}
