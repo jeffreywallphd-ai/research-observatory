@@ -1,0 +1,52 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "commit-bound-inert-design-structure-observation",
+  "taskId": "CAP-05.S01.T03",
+  "packetId": "CAP-05.S01.T03.EX01",
+  "candidateCommit": "00fff94732874460edf4cb8ce77a09ad36d16d98",
+  "status": "PASS_INERT_STRUCTURE_ONLY",
+  "startedAt": "2026-10-06T15:58:55.162466+00:00",
+  "durationSeconds": 1.085,
+  "proposal": {
+    "path": "artifacts/evidence/CAP-05.S01.T03.experience-amendment-01.proposal.json",
+    "sha256": "20dbdaf74f79fe51ff1643c19ec8336813a53a311a6504a10550fa6df04f7469"
+  },
+  "proposedReference": {
+    "id": "RO-UI-ACADEMIC-MINIMAL-1.9",
+    "path": "planning/W2-reference-1.9",
+    "packageSHA256": "4addb04530e7b02eae7ad46dffecbf3d78e825502ea8db9b36400cb4c73f9de1",
+    "governedFiles": 54,
+    "completeCommittedRegularFileInventory": true,
+    "workingGitCanonicalEquality": true,
+    "inputsAndHeadStable": true
+  },
+  "publicApprovedReferenceResult": {
+    "ok": false,
+    "approved": false,
+    "errors": [
+      "reference is not approved: status='proposed'",
+      "manifest is not approved: status='proposed'"
+    ],
+    "interpretation": "Expected unapproved-status failures preserved. Not a foundation or desktop approved-reference PASS."
+  },
+  "structure": {
+    "htmlDocuments": 35,
+    "productPages": 33,
+    "workflowProfiles": 14,
+    "capabilityRecords": 20,
+    "generatorReproducible": true
+  },
+  "producer": {
+    "path": "artifacts/tmp/CAP-05.S01.T03.verify-inert-packet-01.py",
+    "sha256": "f9842ee1858e269497094f9a079364cf478bfcc006baddfdc30ae97139cb6b61"
+  },
+  "existingChecker": {
+    "path": "tools/ui_reference_check.py",
+    "gitBlobSHA256": "77cee156dc22574c53521a05b71a82d8da7db99cc9022e85ab712de963b8a1f6"
+  },
+  "limits": [
+    "Inert design structural checks only. No T03 implementation, approved reference, native/Core/product qualification, full accessibility, independent readiness, owner/task/Wave/release approval.",
+    "Earlier prototype observations/adverse runs remain separate; no recapture or full product/profile replay.",
+    "Inherited Markdown hard-break whitespace diagnostics are retained; no git diff-check PASS claimed."
+  ]
+}
