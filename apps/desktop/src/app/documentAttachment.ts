@@ -21,7 +21,8 @@ export interface AttachmentSelection {
 export type AttachmentMode = "choose" | "drop";
 export type AttachmentProblemCode = "unsupported-format" | "password-protected" | "oversize" | "unsafe-content"
   | "malformed-content" | "format-mismatch" | "rights-denied" | "interrupted" | "association-stale"
-  | "authority-changed" | "worker-unavailable" | "storage-pressure" | "candidate-unavailable" | "unavailable";
+  | "authority-changed" | "worker-unavailable" | "storage-pressure" | "candidate-unavailable" | "cleanup-required"
+  | "copy-unavailable" | "access-denied" | "destination-denied" | "network-unavailable" | "download-failed" | "unavailable";
 
 export interface AttachmentCandidate {
   readonly candidateId: string;
@@ -63,7 +64,7 @@ export interface AttachmentStatusRequest {
 }
 export interface AttachmentStatus {
   readonly schemaVersion: "1.0";
-  readonly status: "metadata-only" | "candidate" | "validating" | "processing" | "available" | "unavailable" | "denied" | "failed" | "cancelled" | "unconfirmed";
+  readonly status: "metadata-only" | "candidate" | "downloading" | "validating" | "processing" | "available" | "unavailable" | "denied" | "failed" | "cancelled" | "unconfirmed";
   readonly selection: AttachmentSelection;
   readonly operationId: string | null;
   readonly commandId: string | null;
@@ -96,7 +97,8 @@ const hex64 = /^[0-9a-f]{64}$/u;
 const formats: readonly AttachmentCandidate["format"][] = ["pdf", "jats", "tei", "xml", "html", "docx", "txt"];
 const problemCodes: readonly AttachmentProblemCode[] = ["unsupported-format", "password-protected", "oversize", "unsafe-content",
   "malformed-content", "format-mismatch", "rights-denied", "interrupted", "association-stale", "authority-changed",
-  "worker-unavailable", "storage-pressure", "candidate-unavailable", "unavailable"];
+  "worker-unavailable", "storage-pressure", "candidate-unavailable", "cleanup-required", "copy-unavailable",
+  "access-denied", "destination-denied", "network-unavailable", "download-failed", "unavailable"];
 
 function object(value: unknown, keys: readonly string[]): Record<string, unknown> | null {
   if (!value || typeof value !== "object" || Array.isArray(value)) return null;
@@ -187,17 +189,17 @@ export function decodeAttachmentStatus(value: unknown): AttachmentStatus | null 
   const selected = selection(item?.selection);
   const retryRequest = item?.retryRequest === null ? null : decodeAttachmentCommitRequest(item?.retryRequest);
   if (!item || !selected || item.schemaVersion !== "1.0"
-    || !["metadata-only", "candidate", "validating", "processing", "available", "unavailable", "denied", "failed", "cancelled", "unconfirmed"].includes(item.status as string)
+    || !["metadata-only", "candidate", "downloading", "validating", "processing", "available", "unavailable", "denied", "failed", "cancelled", "unconfirmed"].includes(item.status as string)
     || item.operationId !== null && !operation(item.operationId) || item.commandId !== null && !operation(item.commandId)
     || item.attachmentId !== null && !id(item.attachmentId) || item.documentRevisionId !== null && !id(item.documentRevisionId)
     || item.code !== null && !problemCodes.includes(item.code as AttachmentProblemCode)
     || item.retryRequest !== null && !retryRequest
     || (item.attachmentId === null) !== (item.documentRevisionId === null)
-    || (["candidate", "validating", "processing", "available", "cancelled", "unconfirmed"].includes(item.status as string) && item.operationId === null)
+    || (["candidate", "downloading", "validating", "processing", "available", "cancelled", "unconfirmed"].includes(item.status as string) && item.operationId === null)
     || (["processing", "available", "unconfirmed"].includes(item.status as string) && item.commandId === null)
     || (["processing", "available"].includes(item.status as string) && (item.attachmentId === null || item.code !== null))
-    || (["candidate", "validating", "unconfirmed", "cancelled"].includes(item.status as string) && item.attachmentId !== null)
-    || (["candidate", "validating", "processing", "available", "metadata-only", "unconfirmed"].includes(item.status as string) && item.code !== null)
+    || (["candidate", "downloading", "validating", "unconfirmed", "cancelled"].includes(item.status as string) && item.attachmentId !== null)
+    || (["candidate", "downloading", "validating", "processing", "available", "metadata-only", "unconfirmed"].includes(item.status as string) && item.code !== null)
     || (["denied", "failed", "unavailable"].includes(item.status as string) && item.code === null)
     || (item.status === "unconfirmed") !== (retryRequest !== null)
     || retryRequest && (retryRequest.operationId !== item.operationId || retryRequest.commandId !== item.commandId
@@ -213,6 +215,7 @@ export function attachmentStatusMessage(result: AttachmentStatus | null): string
   const states: Record<AttachmentStatus["status"], string> = {
     "metadata-only": "Authoritative status: metadata only; no local copy attached to this exact version revision.",
     candidate: "Authoritative status: candidate awaiting researcher review; no attachment recorded.",
+    downloading: "Authoritative status: downloading into encrypted staging; no attachment recorded.",
     validating: "Authoritative status: native validation in progress; no attachment result confirmed.",
     processing: "Authoritative status: attachment recorded; local processing is pending.",
     available: "Authoritative status: attachment available for permitted local inspection.",
@@ -226,7 +229,7 @@ export function attachmentStatusMessage(result: AttachmentStatus | null): string
 }
 export function canStartAttachmentReview(result: AttachmentStatus | null): boolean {
   if (!result) return false;
-  if (result.code === "rights-denied" || result.code === "association-stale" || result.code === "authority-changed") return false;
+  if (result.code === "rights-denied" || result.code === "association-stale" || result.code === "authority-changed" || result.code === "cleanup-required") return false;
   if (result.status === "metadata-only" || result.status === "cancelled") return true;
   if (result.status === "failed") return true;
   return result.status === "unavailable" && ["interrupted", "worker-unavailable", "storage-pressure",
@@ -290,6 +293,12 @@ export function attachmentProblemMessage(code: AttachmentProblemCode): string {
     "worker-unavailable": "Local document inspection is unavailable. Retry when the worker is ready.",
     "storage-pressure": "Local storage cannot admit this copy. Free space or choose a smaller file.",
     "candidate-unavailable": "The pending candidate is unavailable. Choose the file again.",
+    "cleanup-required": "An owned encrypted partial still requires cleanup. No safe retry is confirmed. Reopen the project to reconcile staging, then review the exact copy again.",
+    "copy-unavailable": "This remote copy is unavailable. Keep its metadata and record a local access need, or choose another lawful copy.",
+    "access-denied": "The provider denied access. Record a local access need or supply a lawful local copy; this action does not start a login or grant permission.",
+    "destination-denied": "This destination or redirect is not permitted. Review a lawful alternative without bypassing destination policy.",
+    "network-unavailable": "The transfer is unavailable. Check connectivity, then review the exact copy and confirm a fresh attempt.",
+    "download-failed": "The bounded download failed without an accepted candidate. Check status before reviewing and confirming a fresh attempt.",
     unavailable: "Local attachment is unavailable. Check current attachment status and the local service before retrying.",
   };
   return messages[code];

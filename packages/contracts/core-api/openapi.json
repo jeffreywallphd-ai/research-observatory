@@ -11732,6 +11732,69 @@
         "title": "WorkflowCancelRequest",
         "type": "object"
       },
+      "WorkflowDocumentIntake": {
+        "additionalProperties": false,
+        "properties": {
+          "copyId": {
+            "anyOf": [
+              {
+                "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Copyid"
+          },
+          "operationId": {
+            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+            "title": "Operationid",
+            "type": "string"
+          },
+          "projectId": {
+            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[47][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+            "title": "Projectid",
+            "type": "string"
+          },
+          "sourceAssertionRevisionId": {
+            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+            "title": "Sourceassertionrevisionid",
+            "type": "string"
+          },
+          "versionId": {
+            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+            "title": "Versionid",
+            "type": "string"
+          },
+          "versionRevisionId": {
+            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+            "title": "Versionrevisionid",
+            "type": "string"
+          },
+          "workId": {
+            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+            "title": "Workid",
+            "type": "string"
+          },
+          "workRevisionId": {
+            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+            "title": "Workrevisionid",
+            "type": "string"
+          }
+        },
+        "required": [
+          "operationId",
+          "projectId",
+          "sourceAssertionRevisionId",
+          "workId",
+          "workRevisionId",
+          "versionId",
+          "versionRevisionId"
+        ],
+        "title": "WorkflowDocumentIntake",
+        "type": "object"
+      },
       "WorkflowHumanDecisionRequest": {
         "additionalProperties": false,
         "properties": {
@@ -12881,6 +12944,16 @@
               }
             ],
             "title": "Diagnosticcode"
+          },
+          "documentIntake": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/WorkflowDocumentIntake"
+              },
+              {
+                "type": "null"
+              }
+            ]
           },
           "jobId": {
             "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",

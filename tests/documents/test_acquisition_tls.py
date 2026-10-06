@@ -169,7 +169,10 @@ class AcquisitionPrincipalTests(unittest.TestCase):
     @unittest.skipUnless(os.name == "nt", "Windows signed LPAC acquisition")
     def test_current_core_session_through_verified_tls_encrypted_stage_and_signed_lpac(self):
         import sqlcipher3.dbapi2 as sqlcipher
+        from fastapi.testclient import TestClient
         from research_observatory_core import storage
+        from research_observatory_core.app import create_app
+        from research_observatory_core.authentication import capability_token_digest
         from research_observatory_core.corpus_repository import SqliteCorpusRepository
         from research_observatory_core.corpus_service import CorpusService
         from research_observatory_core.domain_contracts import new_uuid_v7
@@ -180,6 +183,13 @@ class AcquisitionPrincipalTests(unittest.TestCase):
         from research_observatory_core.repositories import (
             create_sqlite_unit_of_work_factory,
             sqlite_intent_revision_repository,
+            sqlite_workflow_admission_binding,
+            sqlite_workflow_queue_repository,
+        )
+        from research_observatory_core.workflow_executor import (
+            LocalAdmissionController,
+            ProjectWorkerPolicy,
+            WorkerResources,
         )
 
         from tests.database_key_fixtures import InMemoryDatabaseKeyProvider
@@ -265,7 +275,18 @@ class AcquisitionPrincipalTests(unittest.TestCase):
             actor_id=selected.actor.actor_id,
             now=f.clock.now,
         )
-        runtime = DocumentAttachmentRuntime(imports, corpus, lambda _path, _project: selected.objects)
+        controller = LocalAdmissionController(interactive_reserve=WorkerResources(1, 256 * 1024**2, 0, 256 * 1024**2))
+        demand = WorkerResources(1, 256 * 1024**2, 0, 1024**3)
+        runtime = DocumentAttachmentRuntime(
+            imports,
+            corpus,
+            lambda _path, _project: selected.objects,
+            admission_factory=lambda path, project: sqlite_workflow_admission_binding(
+                sqlite_workflow_queue_repository(path, project),
+                controller=controller,
+                policy=ProjectWorkerPolicy(project, demand, {"document": demand}, {"document": 1}),
+            ),
+        )
         session = runtime.context(f.root, selected.project)
         preview = runtime.acquisition_preview(
             f.root, selected.project, session, selected.selection(), trace_id="d" * 32
@@ -290,6 +311,13 @@ class AcquisitionPrincipalTests(unittest.TestCase):
         self.assertEqual(hashlib.sha256(fixture.body).hexdigest(), candidate.object_sha256)
         self.assertEqual("plain-text", candidate.format)
         self.assertEqual(1, len(fixture.requests))
+        queue = sqlite_workflow_queue_repository(Path(f.root), selected.project)
+        with storage.open_canonical_database(selected.database, expected_project_id=selected.project) as database:
+            job_id = database.execute(
+                "SELECT job_id FROM document_intake_jobs WHERE operation_id=?", (operation,)
+            ).fetchone()[0]
+        self.assertEqual("succeeded", queue.get(job_id).state)
+        self.assertEqual(0, selected.count("document_attachment_assertions"))
         self.assertEqual(1, selected.count("document_acquisition_sources"))
         self.assertEqual(1, selected.count("acquisition_attempt_results"))
         imports.detach(f.root)
@@ -305,6 +333,65 @@ class AcquisitionPrincipalTests(unittest.TestCase):
                 cancellation_requested=lambda: False,
             )
         self.assertEqual(1, len(fixture.requests))
+        new_session = runtime.context(f.root, selected.project)
+        self.assertNotEqual(session, new_session)
+        app = create_app(
+            attachments=runtime,
+            capability_digest=capability_token_digest("a" * 64),
+            expected_authority="127.0.0.1:49152",
+        )
+        association = {
+            key: value
+            for key, value in selected.selection().model_dump(mode="json", by_alias=True).items()
+            if key in {"sourceAssertionRevisionId", "workId", "workRevisionId", "versionId", "versionRevisionId"}
+        }
+        with TestClient(
+            app,
+            base_url="http://127.0.0.1:49152",
+            headers={"Authorization": "Bearer " + "a" * 64},
+            client=("127.0.0.1", 50000),
+        ) as client:
+            base = {"root": f.root, "projectId": selected.project, "sessionId": new_session}
+            retained = client.post(
+                "/native/document-attachments/retained-candidates", json={**base, "selection": association}
+            )
+            self.assertEqual(200, retained.status_code, retained.text)
+            self.assertEqual(candidate.candidate_id, retained.json()["retained"][0]["candidateId"])
+            recovery = new_uuid_v7()
+            command = {
+                **base,
+                "selection": association,
+                "candidateId": candidate.candidate_id,
+                "originalOperationId": operation,
+                "recoveryOperationId": recovery,
+                "confirmationSha256": candidate.candidate_sha256,
+            }
+            denied = client.post(
+                "/native/document-attachments/candidate-recovery", json={**command, "sessionId": session}
+            )
+            self.assertEqual(403, denied.status_code, denied.text)
+            recovered = client.post("/native/document-attachments/candidate-recovery", json=command)
+            self.assertEqual(200, recovered.status_code, recovered.text)
+            self.assertEqual(candidate.candidate_id, recovered.json()["candidateId"])
+            self.assertEqual(0, selected.count("document_attachment_assertions"))
+            committed = client.post(
+                "/native/document-attachments/commit",
+                json={
+                    **base,
+                    **association,
+                    "candidateId": candidate.candidate_id,
+                    "confirmationSha256": candidate.candidate_sha256,
+                    "operationId": recovery,
+                    "commandId": new_uuid_v7(),
+                    "matchConfirmed": True,
+                    "permittedUse": "project-only",
+                },
+            )
+            self.assertEqual(200, committed.status_code, committed.text)
+        self.assertEqual(1, len(fixture.requests), "fresh recovery and explicit Attach repeat no HTTP")
+        self.assertEqual(1, selected.count("document_attachment_recoveries"))
+        self.assertEqual(1, selected.count("document_attachment_assertions"))
+        self.assertFalse(selected.database.read_bytes().startswith(b"SQLite format 3"))
 
 
 if __name__ == "__main__":

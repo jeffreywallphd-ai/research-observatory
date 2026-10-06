@@ -136,6 +136,69 @@ class AttachmentStagingTests(unittest.TestCase):
         self.assertEqual("application/pdf", stored.media_type)
         self.assertEqual(hashlib.sha256(content).hexdigest(), stored.object_sha256)
 
+    def test_new_adapter_preserves_another_adapters_active_encrypted_stage(self) -> None:
+        content = b"synthetic active transfer"
+
+        def inspector(source, digest, length):
+            staged = tuple((self.fixture.project / ".tmp/object-store").glob("*.partial"))
+            self.assertEqual(1, len(staged))
+            identity = staged[0].stat().st_ino
+            other = create_local_object_store(
+                self.fixture.project,
+                PROJECT_ID,
+                key_provider=MemoryKeyProvider({"object-key-v1": self.fixture.v1}, "object-key-v1"),
+            )
+            self.assertEqual(identity, staged[0].stat().st_ino)
+            self.assertEqual(content, source.read(1024))
+            from research_observatory_core.ports.object_store import ObjectNotFound
+
+            with self.assertRaises(ObjectNotFound):
+                other.metadata(hashlib.sha256(content).hexdigest())
+            return "text/plain"
+
+        result = self.store.put_inspected(io.BytesIO(content), self.command(), inspector, max_plaintext_bytes=128)
+        self.assertEqual(hashlib.sha256(content).hexdigest(), result.object_sha256)
+        self.assertEqual((), tuple((self.fixture.project / ".tmp/object-store").glob("*.partial")))
+
+    def test_project_open_upgrade_rejects_live_stage_without_deleting_it(self) -> None:
+        from research_observatory_core.object_store import upgrade_local_object_envelopes
+        from research_observatory_core.ports.object_store import ObjectBusy
+
+        content = b"synthetic active encrypted stage"
+
+        def inspector(source, digest, length):
+            staged = tuple((self.fixture.project / ".tmp/object-store").glob("*.partial"))
+            self.assertEqual(1, len(staged))
+            before = staged[0].read_bytes()
+            with self.assertRaises(ObjectBusy):
+                upgrade_local_object_envelopes(
+                    self.fixture.project,
+                    PROJECT_ID,
+                    key_provider=MemoryKeyProvider({"object-key-v1": self.fixture.v1}, "object-key-v1"),
+                )
+            self.assertEqual(before, staged[0].read_bytes())
+            self.assertEqual(content, source.read())
+            return "text/plain"
+
+        stored = self.store.put_inspected(
+            io.BytesIO(content), self.command(), inspector, max_plaintext_bytes=128 * 1024 * 1024
+        )
+        self.assertEqual(hashlib.sha256(content).hexdigest(), stored.object_sha256)
+
+    def test_reconciliation_never_deletes_a_foreign_partial_name(self) -> None:
+        from research_observatory_core.ports.object_store import ObjectStagingCleanupRequired
+
+        foreign = self.fixture.project / ".tmp/object-store/unrelated.partial"
+        foreign.parent.mkdir(exist_ok=True)
+        foreign.write_bytes(b"Synthetic unrelated retained bytes")
+        with self.assertRaises(ObjectStagingCleanupRequired):
+            create_local_object_store(
+                self.fixture.project,
+                PROJECT_ID,
+                key_provider=MemoryKeyProvider({"object-key-v1": self.fixture.v1}, "object-key-v1"),
+            )
+        self.assertEqual(b"Synthetic unrelated retained bytes", foreign.read_bytes())
+
     def test_rejected_inspection_leaves_no_canonical_object(self) -> None:
         content = b"synthetic unsupported content"
 
@@ -1077,7 +1140,12 @@ class AttachmentMigrationTests(unittest.TestCase):
             )
         plan = runner.plan_database_migration(self.database, expected_project_id=self.manifest["projectId"])
         self.assertEqual(
-            ("0022_document_attachments", "0023_attachment_operations", "0024_open_access_acquisition"),
+            (
+                "0022_document_attachments",
+                "0023_attachment_operations",
+                "0024_open_access_acquisition",
+                "0025_document_intake_recovery",
+            ),
             plan.migration_ids,
         )
         result = runner.migrate_database(self.database, expected_project_id=self.manifest["projectId"])
@@ -1101,7 +1169,7 @@ class AttachmentMigrationTests(unittest.TestCase):
                 ),
             )
         with open_canonical_database(self.database, expected_project_id=self.manifest["projectId"]) as db:
-            self.assertEqual(24, db.execute("PRAGMA user_version").fetchone()[0])
+            self.assertEqual(25, db.execute("PRAGMA user_version").fetchone()[0])
             self.assertEqual(
                 self.manifest["counts"]["reconciliation_versions"],
                 db.execute("SELECT COUNT(*) FROM reconciliation_versions").fetchone()[0],
@@ -1140,7 +1208,7 @@ class AttachmentMigrationTests(unittest.TestCase):
         result = runner.migrate_database(self.database, expected_project_id=self.manifest["projectId"])
         self.assertEqual("migrated", result.status)
         with open_canonical_database(self.database, expected_project_id=self.manifest["projectId"]) as canonical_db:
-            self.assertEqual(24, canonical_db.execute("PRAGMA user_version").fetchone()[0])
+            self.assertEqual(25, canonical_db.execute("PRAGMA user_version").fetchone()[0])
             self.assertEqual(1, canonical_db.execute("SELECT COUNT(*) FROM reconciliation_versions").fetchone()[0])
 
 
@@ -1223,7 +1291,10 @@ class AttachmentOperationMigrationTests(unittest.TestCase):
             before_ciphertext,
         )
         plan = runner.plan_database_migration(self.database, expected_project_id=self.manifest["projectId"])
-        self.assertEqual(("0023_attachment_operations", "0024_open_access_acquisition"), plan.migration_ids)
+        self.assertEqual(
+            ("0023_attachment_operations", "0024_open_access_acquisition", "0025_document_intake_recovery"),
+            plan.migration_ids,
+        )
         result = runner.migrate_database(self.database, expected_project_id=self.manifest["projectId"])
         self.assertEqual("migrated", result.status)
         assert result.backup_relative_path is not None
@@ -1244,7 +1315,7 @@ class AttachmentOperationMigrationTests(unittest.TestCase):
                 _schema_fingerprint(backup),
             )
         with open_canonical_database(self.database, expected_project_id=self.manifest["projectId"]) as db:
-            self.assertEqual(24, db.execute("PRAGMA user_version").fetchone()[0])
+            self.assertEqual(25, db.execute("PRAGMA user_version").fetchone()[0])
             self.assertEqual(0, db.execute("SELECT COUNT(*) FROM document_attachment_operations").fetchone()[0])
             self.assertEqual([], db.execute("PRAGMA foreign_key_check").fetchall())
         self.assertEqual(before_rows, self._source_rows())
@@ -1275,7 +1346,7 @@ class AttachmentOperationMigrationTests(unittest.TestCase):
         result = runner.migrate_database(self.database, expected_project_id=self.manifest["projectId"])
         self.assertEqual("migrated", result.status)
         with open_canonical_database(self.database, expected_project_id=self.manifest["projectId"]) as db:
-            self.assertEqual(24, db.execute("PRAGMA user_version").fetchone()[0])
+            self.assertEqual(25, db.execute("PRAGMA user_version").fetchone()[0])
             self.assertEqual(0, db.execute("SELECT COUNT(*) FROM document_attachment_operations").fetchone()[0])
         self.assertEqual(before_rows, self._source_rows())
 

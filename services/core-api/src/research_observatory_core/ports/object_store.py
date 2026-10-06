@@ -110,6 +110,12 @@ class ObjectStagingCancelled(ObjectStoreProblem):
     code = "RO-CORE-OBJECT-STAGING-CANCELLED"
 
 
+class ObjectStagingCleanupRequired(ObjectStoreProblem):
+    """An owned encrypted partial remains; intake cannot claim safe cleanup."""
+
+    code = "RO-CORE-OBJECT-STAGING-CLEANUP-REQUIRED"
+
+
 @dataclass(frozen=True, slots=True)
 class ObjectPutCommand:
     """Caller-owned metadata for one immutable plaintext content identity."""
@@ -243,6 +249,10 @@ class VerifiedObjectStream(Protocol):
 
 @runtime_checkable
 class ObjectStore(Protocol):
+    def ensure_intake_ready(self) -> None:
+        """Reject intake while earlier encrypted staging needs reconciliation."""
+        ...
+
     def put(self, source: BinaryIO, command: ObjectPutCommand) -> StoredObject: ...
 
     def put_inspected(
@@ -301,6 +311,7 @@ __all__ = [
     "ObjectReferenced",
     "ObjectSourceTooLarge",
     "ObjectStagingCancelled",
+    "ObjectStagingCleanupRequired",
     "ObjectStoragePressure",
     "ObjectStore",
     "ObjectStoreProblem",

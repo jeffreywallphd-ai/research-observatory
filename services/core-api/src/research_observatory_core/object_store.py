@@ -44,6 +44,7 @@ from .ports.object_store import (
     ObjectReferenced,
     ObjectSourceTooLarge,
     ObjectStagingCancelled,
+    ObjectStagingCleanupRequired,
     ObjectStoragePressure,
     ObjectStore,
     ObjectStoreProblem,
@@ -1034,6 +1035,12 @@ class _StoreRegistry:
         self._lock = threading.RLock()
         self._states: dict[str, _StoreState] = {}
         self._project_locks: dict[str, threading.RLock] = {}
+        self._active_intakes: dict[str, int] = {}
+        self._reconciling: set[str] = set()
+
+    def bind_lock(self, state: _StoreState) -> None:
+        with self._lock:
+            state.lock = self._project_locks.setdefault(os.path.normcase(str(state.root)), threading.RLock())
 
     def register(self, state: _StoreState) -> str:
         key = os.path.normcase(str(state.root))
@@ -1051,6 +1058,45 @@ class _StoreRegistry:
         if state is None:
             raise _bounded(ObjectStoreProblem, "object-store authority is unavailable")
         return state
+
+    @contextmanager
+    def intake(self, state: _StoreState) -> Iterator[None]:
+        # Ownership spans unlocked upload/inspection, including the closed-file
+        # gaps. Adapter creation must not mistake a live stage for crash debris.
+        key = os.path.normcase(str(state.root))
+        with self._lock:
+            if key in self._reconciling:
+                raise _bounded(ObjectBusy, "project-open reconciliation is active; object intake is unavailable")
+            self._active_intakes[key] = self._active_intakes.get(key, 0) + 1
+        try:
+            yield
+        finally:
+            with self._lock:
+                self._active_intakes[key] -= 1
+
+    def intake_active(self, state: _StoreState) -> bool:
+        with self._lock:
+            return self._active_intakes.get(os.path.normcase(str(state.root)), 0) > 0
+
+    @contextmanager
+    def reconciliation(self, state: _StoreState, *, skip_active: bool = False) -> Iterator[bool]:
+        self.bind_lock(state)
+        key = os.path.normcase(str(state.root))
+        with state.lock:
+            with self._lock:
+                active = self._active_intakes.get(key, 0) > 0 or key in self._reconciling
+                if not active:
+                    self._reconciling.add(key)
+            if active:
+                if not skip_active:
+                    raise _bounded(ObjectBusy, "object intake is active; project-open reconciliation is unavailable")
+                yield False
+                return
+            try:
+                yield True
+            finally:
+                with self._lock:
+                    self._reconciling.discard(key)
 
 
 _STORES = _StoreRegistry()
@@ -1569,6 +1615,31 @@ def _sqlite_busy(error: sqlite3.Error) -> bool:
     return isinstance(code, int) and (code & 0xFF) in (sqlite3.SQLITE_BUSY, sqlite3.SQLITE_LOCKED)
 
 
+class _StagingIdentityChanged(ObjectStagingCleanupRequired, ObjectCorrupt):
+    """Retain both corruption and unresolved-cleanup authority on substitution."""
+
+
+def _discard_owned_staging(path: Path, identity: tuple[int, int], *, linked: bool = False) -> None:
+    """Remove only the still-identical owned stage; cleanup failure dominates."""
+    try:
+        status = path.stat(follow_symlinks=False)
+    except FileNotFoundError:
+        return
+    except OSError:
+        raise ObjectStagingCleanupRequired("owned object staging requires cleanup") from None
+    if (
+        not stat.S_ISREG(status.st_mode)
+        or status.st_nlink != (2 if linked else 1)
+        or (status.st_dev, status.st_ino) != identity
+        or _redirect(path)
+    ):
+        raise _StagingIdentityChanged("owned object staging identity changed")
+    try:
+        path.unlink()
+    except OSError:
+        raise ObjectStagingCleanupRequired("owned object staging requires cleanup") from None
+
+
 def _stream_to_staging(
     source: BinaryIO,
     staging: Path,
@@ -1590,6 +1661,7 @@ def _stream_to_staging(
     data_key = sodium.crypto_secretstream_xchacha20poly1305_keygen() if encrypted else None
     destination = staging / f"{secrets.token_hex(24)}.partial"
     descriptor = -1
+    owned_identity: tuple[int, int] | None = None
     succeeded = False
     try:
         if cancellation_requested is not None and cancellation_requested():
@@ -1599,8 +1671,9 @@ def _stream_to_staging(
             os.O_RDWR | os.O_CREAT | os.O_EXCL | getattr(os, "O_BINARY", 0),
             0o600,
         )
-        identity = _identity(destination)
         opened = os.fstat(descriptor)
+        owned_identity = (opened.st_dev, opened.st_ino)
+        identity = _identity(destination)
         if (
             not stat.S_ISREG(opened.st_mode)
             or opened.st_nlink != 1
@@ -1704,16 +1777,16 @@ def _stream_to_staging(
     finally:
         if descriptor >= 0:
             os.close(descriptor)
-        if not succeeded:
+        # O_EXCL failure never grants ownership of a pre-existing entry.
+        if not succeeded and owned_identity is not None:
             if upgrade_boundary is not None:
                 upgrade_boundary("before-partial-cleanup")
-            with suppress(OSError):
-                destination.unlink()
+            _discard_owned_staging(destination, owned_identity)
             if upgrade_boundary is not None:
                 upgrade_boundary("after-partial-cleanup")
 
 
-def _publish(staging: Path, destination: Path) -> bool:
+def _publish(staging: Path, destination: Path, identity: tuple[int, int]) -> bool:
     if os.name == "nt":
         import ctypes
         from ctypes import wintypes
@@ -1727,21 +1800,19 @@ def _publish(staging: Path, destination: Path) -> bool:
             return True
         error = ctypes.get_last_error()
         if error in (80, 183):  # ERROR_FILE_EXISTS / ERROR_ALREADY_EXISTS
-            with suppress(OSError):
-                staging.unlink()
+            _discard_owned_staging(staging, identity)
             return False
-        with suppress(OSError):
-            staging.unlink()
+        _discard_owned_staging(staging, identity)
         raise ctypes.WinError(error)
 
+    created = False
     try:
         os.link(staging, destination, follow_symlinks=False)
         created = True
     except FileExistsError:
         created = False
     finally:
-        with suppress(OSError):
-            staging.unlink()
+        _discard_owned_staging(staging, identity, linked=created)
     _sync_directory(destination.parent)
     _sync_directory(staging.parent)
     return created
@@ -2430,6 +2501,8 @@ def _reconcile_staging(
                 raise OSError("unexpected object staging entry")
             match = _DELETE_STAGING.fullmatch(candidate.name)
             if match is None:
+                if re.fullmatch(r"[0-9a-f]{48}\.partial", candidate.name) is None:
+                    raise OSError("foreign staging entry is not owned recovery debris")
                 candidate.unlink()
                 continue
             row = delete_rows.get(match.group(1))
@@ -2460,7 +2533,7 @@ def _reconcile_staging(
                 else:
                     raise OSError("object recovery state is invalid")
         except OSError:
-            failure = _bounded(ObjectStoreProblem, "abandoned object staging cannot be reconciled")
+            failure = _bounded(ObjectStagingCleanupRequired, "abandoned object staging cannot be reconciled")
         finally:
             if record_connection is not None:
                 record_connection.close()
@@ -2571,6 +2644,18 @@ class _LocalObjectStore:
 
     def _state(self) -> _StoreState:
         return _STORES.state(self.__token)
+
+    def ensure_intake_ready(self) -> None:
+        state = self._state()
+        with state.lock, _stable_directories([state.root, state.temporary]):
+            directory = _staging_directory(state.temporary)
+            with _stable_directories([directory]):
+                try:
+                    pending = next(directory.iterdir(), None)
+                except OSError:
+                    raise ObjectStagingCleanupRequired("object staging inventory requires cleanup") from None
+                if pending is not None:
+                    raise ObjectStagingCleanupRequired("earlier object staging requires reconciliation")
 
     def usage(self) -> StorageUsage:
         state = self._state()
@@ -2733,7 +2818,11 @@ class _LocalObjectStore:
         publication_identity: tuple[int, int] | None = None
         remove_after_close = False
         quarantine_after_close = False
-        with state.lock, _stable_directories([state.root, state.state, state.objects, state.temporary]):
+        with (
+            _STORES.intake(state),
+            state.lock,
+            _stable_directories([state.root, state.state, state.objects, state.temporary]),
+        ):
             baseline_bytes = _inventory(state).usage.project_byte_count
             last_staged_bytes = 0
 
@@ -2797,8 +2886,7 @@ class _LocalObjectStore:
                 if staging_failure is not None or staging is None or envelope is None or staging_identity is None:
                     raise staging_failure or _bounded(ObjectStoreProblem, "object source could not be staged")
                 if command.expected_sha256 is not None and digest != command.expected_sha256:
-                    with suppress(OSError):
-                        staging.unlink()
+                    _discard_owned_staging(staging, staging_identity)
                     raise _bounded(ObjectIntegrityMismatch, "object content hash did not match")
                 if inspector is not None:
                     staged_reader: Any | None = None
@@ -2862,8 +2950,7 @@ class _LocalObjectStore:
                         if staged_reader is not None:
                             staged_reader.close()
                             staged_reader = None
-                        with suppress(OSError):
-                            staging.unlink()
+                        _discard_owned_staging(staging, staging_identity)
                         raise
                     finally:
                         if staged_reader is not None:
@@ -2874,7 +2961,7 @@ class _LocalObjectStore:
                     with _stable_directories(
                         [state.root, state.state, state.objects, state.temporary, staging_directory, *buckets]
                     ):
-                        created_file = _publish(staging, destination)
+                        created_file = _publish(staging, destination, staging_identity)
                         publication_guard = _open_read_locked(destination)
                         guard_status = os.fstat(publication_guard.fileno())
                         publication_identity = (guard_status.st_dev, guard_status.st_ino)
@@ -3467,7 +3554,8 @@ def upgrade_local_object_envelopes(
         storage_policy=None,
         shared_cache_root=None,
     )
-    _reconcile_store_state(state)
+    with _STORES.reconciliation(state):
+        _reconcile_store_state(state)
 
 
 def create_local_object_store(
@@ -3479,11 +3567,14 @@ def create_local_object_store(
     allow_plaintext_fixture: bool = False,
     storage_policy: StoragePolicy | None = None,
     shared_cache_root: Path | None = None,
+    reconcile_abandoned: bool = True,
 ) -> ObjectStore:
     """Create the project-local adapter behind the dependency-neutral port."""
 
     if not isinstance(allow_plaintext_fixture, bool):
         raise _bounded(ObjectStoreProblem, "plaintext fixture policy is invalid")
+    if not isinstance(reconcile_abandoned, bool):
+        raise _bounded(ObjectStoreProblem, "object reconciliation boundary is invalid")
     if key_provider is None and not allow_plaintext_fixture:
         raise _bounded(ObjectKeyUnavailable, "object encryption key is unavailable")
     if key_provider is not None and not isinstance(key_provider, ObjectMasterKeyProvider):
@@ -3500,8 +3591,12 @@ def create_local_object_store(
         storage_policy=storage_policy,
         shared_cache_root=shared_cache_root,
     )
-    _reconcile_store_state(store_state)
-    return _LocalObjectStore(store_state)
+    adapter = _LocalObjectStore(store_state)
+    if reconcile_abandoned:
+        with _STORES.reconciliation(store_state, skip_active=True) as admitted:
+            if admitted:
+                _reconcile_store_state(store_state)
+    return adapter
 
 
 __all__ = ["create_local_object_store", "upgrade_local_object_envelopes"]

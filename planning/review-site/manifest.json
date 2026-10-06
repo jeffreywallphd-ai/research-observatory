@@ -1039,7 +1039,7 @@
       "exit_gate_id": "G2",
       "gate_status": "PENDING",
       "approval_status": "APPROVED",
-      "completion_status": "PAUSED",
+      "completion_status": "IN_PROGRESS",
       "unlocks_waves": [
         "W3"
       ],
@@ -19735,7 +19735,7 @@
             {
               "task_id": "CAP-05.S01.T03",
               "title": "Create acquisition queue, conflict, and entitlement placeholders",
-              "status": "READY",
+              "status": "IN_PROGRESS",
               "mode": "latest-review-only",
               "latest_review": {
                 "reviewer": null,
@@ -19790,18 +19790,21 @@
             {
               "task_id": "CAP-05.S01.T03",
               "title": "Create acquisition queue, conflict, and entitlement placeholders",
-              "status": "READY",
+              "status": "IN_PROGRESS",
               "page": "CAP-05/CAP-05.S01.T03.html",
               "dependencies": [
                 "CAP-05.S01.T02"
               ],
               "claim": {
-                "owner": null,
-                "branch": null,
-                "base_sha": null
+                "owner": "codex-w2-implementation",
+                "branch": "codex/w2-implementation",
+                "base_sha": "01bc453237a081392544929364696bac3422e9fb"
               },
               "plan_section_sha256": "cb08f8a1eb929e594b85296ac82e0010beb4e980fd4a00b806f561b744aa9080",
-              "worksheet": null
+              "worksheet": {
+                "path": "artifacts/evidence/CAP-05.S01.T03.task-start.md",
+                "sha256": "265e60ab4fbe0b2ebbc57342c067b13cc5f7feca0dade8f70d6a86c6f1ee6197"
+              }
             }
           ]
         },

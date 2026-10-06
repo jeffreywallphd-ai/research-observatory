@@ -1,0 +1,140 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "independent-prospective-artifact-privacy-supplement",
+  "taskId": "CAP-05.S01.T03",
+  "sourceHead": "01bc453237a081392544929364696bac3422e9fb",
+  "scope": "Exact typed input inventory correction in the v24 predecessor manifest; unchanged prior binary privacy proof authenticated by exact staged archive bytes.",
+  "disposition": "privacy-approved",
+  "formalTaskApproval": false,
+  "reviewer": "agent:/root/t03_credential_diagnosis",
+  "implementer": "agent:/root",
+  "independence": "Reviewer diagnosed the fixed indexed finding and did not author the typed inventory correction, fixture captures, product, tests, hooks, registry, or task approvals.",
+  "observedAtUtc": "2026-10-06T21:27:58.817565+00:00",
+  "durationSeconds": 0.617,
+  "priorLedger": {
+    "path": "artifacts/evidence/CAP-05.S01.T03.privacy-review-01.json",
+    "sha256": "81a5a3a30492421e4d0b99c61cf0980ac68d0fea1151a3a19af3a3ce69bf56a2",
+    "preservedUnchanged": true
+  },
+  "manifest": {
+    "path": "tests/fixtures/documents/v24-predecessor.json",
+    "priorSha256": "5b268ea79fe31afc927de92d8040e34ac1df554133035c67cf920c4e351ecd3e",
+    "sha256": "f1b86c251c3fb2e1b56ff986f98c80728e1f4d7905c805d55295e8bb726339d4",
+    "sourceIndexStillOriginalDuringReview": true,
+    "typedInventoryEntries": 5,
+    "allOriginalPathsDigestsAndOrderPreserved": true,
+    "reversibleMetadataOnlyDelta": true,
+    "allOtherFieldsExactJsonEqual": true,
+    "unchangedMaterialProof": [
+      "archiveSha256",
+      "databaseSha256",
+      "schemaSha256",
+      "profileSha256",
+      "counts",
+      "rowSha256",
+      "ciphertext",
+      "predecessorFixtureSha256",
+      "predecessorManifestSha256",
+      "producerCommit"
+    ],
+    "fixtureConsumer": "tests/documents/test_acquisition_recovery_migration.py",
+    "consumerReadsPriorInputSha256": false,
+    "consumerArchiveDatabaseLiteralRowsAndCiphertextAssertionsUnchanged": true
+  },
+  "sourceInventory": {
+    "claimBase": "01bc453237a081392544929364696bac3422e9fb",
+    "entries": [
+      {
+        "path": "services/core-api/src/research_observatory_core/migrations/runner.py",
+        "capturedSha256": "b7a19cc2e1e222a746c237531be026cff44960c1eeeef7e3867c753ea26e107d",
+        "gitBlobSha256": "b7a19cc2e1e222a746c237531be026cff44960c1eeeef7e3867c753ea26e107d",
+        "binding": "raw bytes equal",
+        "capturedCrLfFromGitLfEqual": null
+      },
+      {
+        "path": "services/core-api/src/research_observatory_core/migrations/versions/v0024_open_access_acquisition.py",
+        "capturedSha256": "add3cd6d2fe652643928ba30074cb8c555a7f8111cdb0188ba92420f5c68591f",
+        "gitBlobSha256": "add3cd6d2fe652643928ba30074cb8c555a7f8111cdb0188ba92420f5c68591f",
+        "binding": "raw bytes equal",
+        "capturedCrLfFromGitLfEqual": null
+      },
+      {
+        "path": "services/core-api/src/research_observatory_core/storage.py",
+        "capturedSha256": "4e23d5de86711cb1ac1901f88f44448d39694b4287880a567da7237689dbbdb3",
+        "gitBlobSha256": "4e23d5de86711cb1ac1901f88f44448d39694b4287880a567da7237689dbbdb3",
+        "binding": "raw bytes equal",
+        "capturedCrLfFromGitLfEqual": null
+      },
+      {
+        "path": "tests/fixtures/documents/v23-predecessor.json",
+        "capturedSha256": "f8439a465ffcdf83323783090a8a8245afd691affeb5dd02d6e9fe253eece8b3",
+        "gitBlobSha256": "14e2e83db5c45a5dc33f6dd84a056ce41cbb867ca793b97b5d715ce4bcdbcf03",
+        "binding": "captured CRLF and Git LF text separately authenticated",
+        "capturedCrLfFromGitLfEqual": true
+      },
+      {
+        "path": "tests/fixtures/documents/v23-predecessor.zip",
+        "capturedSha256": "d470258400cac2ff1445e91137b4f82cfb4bd29872692bba3d7e89074640b488",
+        "gitBlobSha256": "d470258400cac2ff1445e91137b4f82cfb4bd29872692bba3d7e89074640b488",
+        "binding": "raw bytes equal",
+        "capturedCrLfFromGitLfEqual": null
+      }
+    ]
+  },
+  "archives": [
+    {
+      "path": "tests/fixtures/documents/v24-predecessor.zip",
+      "mode": "100644",
+      "blobSha1": "4eb7f2ec7d68daf1e933796b9c544114770b0552",
+      "sha256": "59d70334af1d18b4957290c6ee88ba823e383013c9a904b6cbfbd5b1ecff24c2",
+      "size": 157610,
+      "indexAndDiskUnchanged": true,
+      "privacyProof": "authenticated prior independent full unmasked archive/member review; no new binary scan"
+    },
+    {
+      "path": "tests/fixtures/documents/v24-populated-predecessor.zip",
+      "mode": "100644",
+      "blobSha1": "62c72acf31bd0376eb9366ef28785e960f6269f2",
+      "sha256": "d6d9b79d8861f6797942632e221378bcc98ab2cef165d330462f19ba83afa1d8",
+      "size": 182944,
+      "indexAndDiskUnchanged": true,
+      "privacyProof": "authenticated prior independent full unmasked archive/member review; no new binary scan"
+    }
+  ],
+  "adverseFinding": {
+    "path": "tests/fixtures/documents/v24-predecessor.json",
+    "line": 131,
+    "ruleId": "generic-api-key",
+    "preservedOriginalStatus": "Credential gate rejected the original staged manifest; not relabeled PASS.",
+    "classification": "Authenticated committed v24 migration source SHA-256 digest reflected under a path-shaped JSON key; no account credential, ciphertext, or secret key material.",
+    "repair": "inputSha256 path-keyed map represented as ordered inputFiles records with separate path and sha256 fields; every original value and material fixture proof preserved.",
+    "exactUnmaskedEvidence": "artifacts/tmp/CAP-05.S01.T03.credential-diagnostic-01/unmasked-finding.json",
+    "diagnosticEvidence": "artifacts/tmp/CAP-05.S01.T03.credential-diagnostic-01/findings.json"
+  },
+  "scan": {
+    "freshInput": "full exact unmasked new manifest bytes",
+    "freshCredentialFindings": 0,
+    "freshReadablePrivateTextFindings": 0,
+    "credentialFunction": "Unmodified installed guard.credential_report",
+    "guardSha256": "5f0a4cd0020c54342eaf06c1450c05a584e287af357d42efd05d7042bdbba227",
+    "configSha256": "839fab7649bfe0d45a0e5b1dfba2b401d03b37169c32ebbc1f00313eddc9f7b1",
+    "policySha256": "f9722b14ed631869954d297d9296168239bdf7a3b432d683a49bb14da6300a75",
+    "scannerSha256": "17157e2ee8b76fc8b1d8bee607a250e34b8a8023c8bc81822d4b5ee4d78fcb7c",
+    "registrySha256": "1d9a7fd71baec1ffaf2553a3f33eb4c50a7653f11273a128b9fcdc002f8cc6eb",
+    "suppressions": false,
+    "newCredentialExemptions": 0,
+    "newNonEmailExemptions": 0,
+    "scannerOutputRedacted": true,
+    "reportPath": "artifacts/tmp/CAP-05.S01.T03.credential-diagnostic-01/typed-manifest-credential-report.json",
+    "producerPath": "artifacts/tmp/CAP-05.S01.T03.privacy-supplement-02.py",
+    "producerSha256": "6649a91ef2e7d8d3fdf0669c8dd6b98e7cebf4b1af2e5086e9df192d5aacdc65"
+  },
+  "limits": [
+    "Supplement binds exact worktree artifact bytes before staging; it is not commit-bound task, slice, Wave, experience, or release approval.",
+    "Prior manifest canonical equality in ledger 01 describes its original bytes. This supplement records the explicit reversible metadata representation delta and new byte binding without rewriting that history.",
+    "Prior exact archive/member privacy review is authenticated reuse, not a fresh archive scan; all archive bytes, installed scanner/config/guard/policy and prior registry remained exact.",
+    "No source, fixture ZIP, registry, hook, policy, Git index, HEAD, task state, or approval mutation by reviewer. No full history or guard.inspect rerun.",
+    "Normal installed commit hook and later exact committed task checks and independent review remain required."
+  ],
+  "conclusion": "Typed inventory retains the original complete source provenance and literal predecessor proof; exact new manifest has zero credential or readable private-text findings and no exemptions."
+}

@@ -88,8 +88,8 @@ const manifest = {
   ],
   routes: ["index.html"],
   referenceUse: "design-contract-only",
-  referenceId: "RO-UI-ACADEMIC-MINIMAL-1.8",
-  referencePackageSha256: "cd8995fdcea2fe44452eaa1fdd258b6f9fab5714cbd443a81a8e5b4251220b94",
+  referenceId: "RO-UI-ACADEMIC-MINIMAL-1.9",
+  referencePackageSha256: "24b8d62356863980ae9a13db7d6a06b04b76c60e2f1920d2e888cadecfb24c4b",
   sourceFiles: Object.fromEntries(Object.entries(sourceFiles).sort()),
   artifacts: Object.fromEntries(Object.entries(artifacts).sort()),
 };

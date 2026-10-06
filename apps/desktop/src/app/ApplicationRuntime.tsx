@@ -867,10 +867,12 @@ export function ApplicationRuntime({ workflowTransport = packagedProjectTranspor
     setAttachmentHandoff((current) => handoff ?? (current && sameAttachmentSelection(current.selection, selection) ? null : current));
   }, []);
 
-  const returnToAttachment = useCallback(() => {
-    if (!attachmentHandoff || applicationLockRef.current.state !== "unlocked"
-      || currentProjectRef.current?.projectId !== attachmentHandoff.selection.projectId) return;
-    setAttachmentReturn(attachmentHandoff);
+  const returnToAttachment = useCallback((requested?: AttachmentHandoff) => {
+    const handoff = requested ?? attachmentHandoff;
+    if (!handoff || applicationLockRef.current.state !== "unlocked"
+      || currentProjectRef.current?.projectId !== handoff.selection.projectId) return;
+    setAttachmentHandoff(handoff);
+    setAttachmentReturn(handoff);
     navigateWorkspaceState("imports");
     announce("Returned to the selected Work/version; current revisions will be checked again.");
   }, [announce, attachmentHandoff, navigateWorkspaceState]);

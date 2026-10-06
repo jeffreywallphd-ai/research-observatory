@@ -958,6 +958,17 @@ class WorkflowTaskCenterStep(ContractModel):
     depends_on: tuple[str, ...]
 
 
+class WorkflowDocumentIntake(ContractModel):
+    operation_id: str = Field(pattern=_UUID_V7_PATTERN)
+    project_id: str = Field(pattern=r"^[0-9a-f]{8}-[0-9a-f]{4}-[47][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$")
+    source_assertion_revision_id: str = Field(pattern=_UUID_V7_PATTERN)
+    work_id: str = Field(pattern=_UUID_V7_PATTERN)
+    work_revision_id: str = Field(pattern=_UUID_V7_PATTERN)
+    version_id: str = Field(pattern=_UUID_V7_PATTERN)
+    version_revision_id: str = Field(pattern=_UUID_V7_PATTERN)
+    copy_id: str | None = Field(default=None, pattern=_UUID_V7_PATTERN)
+
+
 class WorkflowTaskCenterJob(ContractModel):
     job_id: str = Field(pattern=_UUID_V7_PATTERN)
     state: Literal[
@@ -975,6 +986,7 @@ class WorkflowTaskCenterJob(ContractModel):
     latest_checkpoint_at: datetime | None = None
     diagnostic_code: str | None = None
     updated_at: datetime
+    document_intake: WorkflowDocumentIntake | None = None
 
 
 class WorkflowTaskCenterHumanTask(ContractModel):

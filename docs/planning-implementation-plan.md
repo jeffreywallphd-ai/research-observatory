@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 92a5eda6868dee9a9297abd73f3da3ab25268bbd39043c70cd6e4dd24b0023d7
+source_sha256: 995561aa7ad8c0335fc4fc6af5e02cd66300328d1ec49af72c8b07b17b1292aa
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -291,7 +291,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 ## W2 - Windows local evidence foundation
 
-**Pre-Wave approval / campaign / qualification:** `APPROVED` / `PAUSED` / `PAUSED`
+**Pre-Wave approval / campaign / qualification:** `APPROVED` / `ACTIVE` / `IN_PROGRESS`
 
 **Capability contributions:** `CAP-04`, `CAP-05`
 
@@ -10883,13 +10883,13 @@ Original tasks and approvals remain unchanged.
 
 #### - [ ] CAP-05.S01.T03 - Create acquisition queue, conflict, and entitlement placeholders
 
-**Status / priority / estimate / risk:** `READY` / `P0` / `M` / `medium`
+**Status / priority / estimate / risk:** `IN_PROGRESS` / `P0` / `M` / `medium`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
 **Dependencies:** `CAP-05.S01.T02`
 
-**Owner / review:** - / - (`-`)
+**Owner / review:** codex-w2-implementation / - (`-`)
 
 **Objective:** Resumable download/import jobs, alternative copies, unavailable state, and manual/institutional entitlement request placeholders.
 

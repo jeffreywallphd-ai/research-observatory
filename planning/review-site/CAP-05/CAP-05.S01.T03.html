@@ -38,7 +38,7 @@
       <nav class="breadcrumbs" aria-label="Breadcrumb"><a href="../index.html">Planning review</a><span>/</span><a href="index.html">CAP-document-inspection</a><span>/</span><a href="CAP-05.S01.html">SLICE-rights-aware-document-acquisition</a><span>/</span><span aria-current="page">CAP-05.S01.T03</span></nav>
 
 <section class="hero compact" data-task-page="CAP-05.S01.T03">
-  <div class="hero-top"><div><span class="eyebrow">CAP-05.S01.T03 · task 3 of 3</span><h1>Create acquisition queue, conflict, and entitlement placeholders</h1><p>Resumable download/import jobs, alternative copies, unavailable state, and manual/institutional entitlement request placeholders.</p></div><span class="status status-ready">Ready</span></div>
+  <div class="hero-top"><div><span class="eyebrow">CAP-05.S01.T03 · task 3 of 3</span><h1>Create acquisition queue, conflict, and entitlement placeholders</h1><p>Resumable download/import jobs, alternative copies, unavailable state, and manual/institutional entitlement request placeholders.</p></div><span class="status status-in-progress">In_Progress</span></div>
   <dl class="summary-grid"><div><dt>Wave</dt><dd>W2</dd></div><div><dt>Slice</dt><dd><a href="CAP-05.S01.html">SLICE-rights-aware-document-acquisition</a></dd></div><div><dt>Risk / review</dt><dd>medium / agent-review</dd></div><div><dt>Latest review</dt><dd>not reviewed</dd></div></dl>
 </section>
 <section class="task-summary"><div class="section-heading"><span class="eyebrow">Authoritative task record</span><h2>Scope and acceptance</h2></div>
@@ -49,7 +49,7 @@
 <section class="task-summary"><div class="section-heading"><span class="eyebrow">Verification inventory</span><h2>Profiles and commands</h2></div>
   <h3>Verification profiles</h3><ul class="gate-criteria"><li>documents</li><li>service</li></ul>
   <h3>Commands</h3><ul class="gate-criteria"><li>python tools/verify.py --profile documents</li><li>python tools/verify.py --profile service</li></ul>
-  <p data-task-claim="CAP-05.S01.T03" data-task-owner="unclaimed" data-task-branch="none" data-task-base-sha="none"><strong>Claim projection:</strong> owner <code>unclaimed</code> · branch <code>none</code> · base <code>none</code></p>
+  <p data-task-claim="CAP-05.S01.T03" data-task-owner="codex-w2-implementation" data-task-branch="codex/w2-implementation" data-task-base-sha="01bc453237a081392544929364696bac3422e9fb"><strong>Claim projection:</strong> owner <code>codex-w2-implementation</code> · branch <code>codex/w2-implementation</code> · base <code>01bc453237a081392544929364696bac3422e9fb</code></p>
 </section>
 <section class="task-summary" data-task-plan="CAP-05.S01.T03" data-task-plan-sha256="cb08f8a1eb929e594b85296ac82e0010beb4e980fd4a00b806f561b744aa9080"><div class="section-heading"><span class="eyebrow">Approved implementation intent</span><h2>Task plan</h2></div><article class="plan-article compact-article"><pre class='markdown-fallback'>### 9.3 `CAP-05.S01.T03` - Create acquisition queue, conflict, and entitlement placeholders
 **Objective:** Resumable download/import jobs, alternative copies, unavailable state, and manual/institutional entitlement request placeholders.
@@ -273,13 +273,104 @@ is no generic future-task/reference exception or task, slice, Wave or release
 approval. Earlier proposals, publications, approvals and adverse evidence remain
 unchanged.</pre></article></section>
 <section class="section-heading"><span class="eyebrow">Task-start planning</span><h2>Assigned worksheet</h2><p>The worksheet is an optional planning aid and does not create a new approval or task state.</p></section>
-<p class="decision-meta" data-task-worksheet-absent="CAP-05.S01.T03">No optional task-start worksheet is assigned. This does not block execution.</p>
+
+<details class="plan-details task-worksheet" open data-task-worksheet="CAP-05.S01.T03" data-worksheet-sha256="265e60ab4fbe0b2ebbc57342c067b13cc5f7feca0dade8f70d6a86c6f1ee6197">
+  <summary>Assigned task-start worksheet</summary>
+  <div class="worksheet-meta"><strong>Source:</strong> <code>artifacts/evidence/CAP-05.S01.T03.task-start.md</code> · <strong>SHA-256:</strong> <code>265e60ab4fbe0b2ebbc57342c067b13cc5f7feca0dade8f70d6a86c6f1ee6197</code></div>
+  <article class="plan-article"><pre class='markdown-fallback'># CAP-05.S01.T03 — acquisition queue, recovery and local access needs
+
+Actual ordinary taskctl claim base: `01bc453237a081392544929364696bac3422e9fb`.
+Owner: `codex-w2-implementation`. CAP-05.S01.T02 is DONE and independently
+approved. Authority: immutable W2 approval, S01 §9.3 and append-only §22,
+ADR-0019/0025/0027/0028/0029, and approved Academic Minimal 1.9 §1.5.
+The exact EX01 owner/reference decisions and independent publication-prerequisite
+review precede this claim. They authorize neither task completion nor release.
+
+| Material boundary | Implementation and planned proof |
+|---|---|
+| Durable local/remote intake | Reuse the product workflow queue with distinct run/job/attempt/operation identities. Admit exact selected source/work/version, actor, accepted Intent, privacy, current native session and copy permission. Publish inspected candidate, intake outcome, provenance/dependencies/outbox and queue output atomically. A candidate is not a canonical attachment or reader availability. Test pre-transfer queue visibility, success, rollback and restart. |
+| Bounded dispatch and continuation | Preserve T02&#x27;s one-use exact-copy confirmation, HTTPS/DNS/TLS/redirect limits and sole three-attempt HTTP budget. Queue attempts do not multiply that budget. Generic Task Center Retry and reopening never dispatch acquisition; an interrupted transfer needs a fresh review/confirmation and new attempt identity. Test stale/duplicate/substituted commands, cancellation, security lock, current-rights denial and no implicit egress. |
+| Owned partial cleanup | Discard only the intake&#x27;s owned encrypted partial. Fault a real staging deletion; failed cleanup must override retry, remain visible and block unsafe dispatch. Preserve metadata, prior attempts and adverse outcome. Test no concatenation, no extra HTTP call after cleanup failure and recovery without deleting unrelated entries. |
+| Retained candidate recovery | Fresh native-session and current exact association/rights/Intent/privacy review recovers an already inspected candidate without network. Append a new recovery operation/basis; never rewrite its original session, source or download receipt. Commit rechecks that fresh basis, rejects cancellation/changed authority and retains explicit attachment confirmation. Test restart, alternate actor/selection, policy change and late results. |
+| Copies and local access annotations | Preserve distinguishable immutable source/license/version observations even for identical stored bytes. Missing full text leaves useful metadata. Unknown, unavailable, denied and entitlement-required remain distinct. Manual/institutional access-need records are local annotations, never permission, verified availability or external requests. Test separate identities, storage deduplication, no canonical availability and no transport calls. |
+| Exact predecessor | Captured two literal v24 fixtures before storage edits at the claim base: the inherited v23→v24 baseline and populated v24 with distinct identical-byte acquisitions, one attached and one retained candidate, plus a failed attempt. Preserve original fixtures/history/ciphertext and failed producer setup evidence. Test additive v25 migration, all eight material interruptions, verified backup, repeat/restart and retained row hashes. Synthetic database fixtures are explicitly labeled; production persistence remains protected. |
+| Native/Core/desktop journey | Fixed native-only routes and opaque identities; no renderer URL, path, secret, grant or file bytes. Review does not fetch; Download and Attach are separate explicit actions. Existing Ingestion/Task Center return preserves exact selected copy/work/version. Test real protected persistence, owned HTTPS plus signed LPAC inspection, current-session/lock/close races, safe errors, keyboard/focus/announcements and both themes. |
+| Evidence and reference admission | Activate only the approved 1.9 product assemblers inside this claim. Keep framework source/shared selectors unchanged. Separately named EX01 authority-lineage, presentation-mapping, desktop-conformance and capture-authority proofs bind paused predecessor→actual claim preparation and actual claim base→final candidate. Preserve every unaffected substantive assertion and all original adverse outcomes; blocked public commands receive no inferred PASS. |
+
+First tests: durable acquisition visibility and candidate outcome; interrupted
+transfer with denied owned cleanup; fresh-session retained-candidate recovery;
+local access annotation without egress or availability. Add characterization
+coverage for existing encrypted staging and explicit attachment semantics.
+
+Selected task coverage: affected documents/service/storage/workflow/contracts,
+native bridge and desktop interaction tests, format/type/architecture checks,
+and focused real-principal and approved-reference proofs. Full unaffected
+profiles remain deferred to slice/checkpoint/W2 qualification. Every qualifying
+run uses a fixed committed candidate and closed selected inputs. Expanded
+independent review is required for the migration, security and cross-process
+boundaries; slice integration remains a separate obligation.
+
+No supplemental refactoring, new parser/provider, institutional login, purchase,
+external request, automation-framework source change or generic verification
+waiver is planned. No new mandatory authority gate was found at task start.
+
+The independent advisory identified cleanup dominance, atomic queue publication,
+Core generic-Retry denial, fresh recovery authority, populated predecessor proof
+and the difference between local annotations and permission. Its follow-up found
+constructor reconciliation could remove an active encrypted stage. Added a
+failing adapter-creation regression; root-shared ownership spans unlocked upload
+and inspection. Production adapters use non-destructive construction; abandoned
+reconciliation stays at the existing exclusive project-open/upgrade boundary.
+Metadata-only recovery creates no read grant. Native-session/current-actor
+composition and separate explicit Attach remain required integration assertions.
+
+The next bounded advisory identified reversed native lock acquisition, a lost
+ownership fence during connection setup, collapsed acquisition error states and
+stale copy context on source change/recovery. Added actual socket zero-dispatch
+and cleanup-during-cancellation regressions before their fixes; the adverse runs
+remain in ignored development evidence. Native review consumption now follows
+the existing application-lock then attachment-state order. A real concurrent
+native completion/cancellation proof remains required; a source assertion alone
+cannot close that row. Error codes remain safe and distinct across Core/native/UI.
+Project-open reconciliation excludes active root-owned intake; ordinary adapters
+remain non-destructive. The transport deadline covers the existing bounded
+network and inspection phases without expanding either phase&#x27;s authority.
+
+Development regressions now exercise the real native application/attachment
+mutexes with a concurrent pending download and cancellation, and the actual
+owned socket rejects every request byte after authorization revocation. They
+are bounded native unit/transport proof, not a new native-window journey claim.
+The mounted product journey covers copy review focus/Escape, separate explicit
+Download/Attach, local annotations, Task Center return and retained recovery;
+its opaque native replies are labeled synthetic. Separately, owned HTTPS,
+SQLCipher, encrypted object storage and signed LPAC inspection exercise current
+Core session admission, queue success and fresh-session recovery without a
+second download. Failed development setups and stale-label findings remain.
+
+Download and validation append distinct durable phase events with unknown
+quantitative progress. Exact native status and Task Center project those facts,
+never canonical availability. Status reconciliation uses the existing queue&#x27;s
+expired-lease recovery for these max-attempts-one activities only. A controlled
+fixture advances time past the recorded lease and checks abandonment, unchanged
+origin/confirmation, no fabricated transfer result and zero HTTP until a new
+explicit confirmation. Cleanup failure is discoverable for the exact source
+after reopening; it remains immutable, and safe new intake stays blocked while
+the actual encrypted staging boundary requires cleanup.
+
+Production resource admission shares the existing local controller and project
+document lane. A real controller/SQLite fixture proves capacity denial admits
+no job, sends no HTTP and leaves confirmation unconsumed; terminal release
+permits the next bounded intake. Task Center return carries only safe exact IDs.
+Final committed-candidate checks, EX01 conformance/capture proof and expanded
+independent disposition remain required; these development results do not
+complete CAP-05.S01.T03, its slice or W2.</pre></article>
+</details>
 <section class="section-heading"><span class="eyebrow">Execution evidence</span><h2>Review packets, rounds, and current projection</h2><p>Append-only controls retain every immutable round and finding closure. Pre-policy tasks remain explicitly latest-review-only.</p></section>
 
 <section class="review-toolbar" data-task-review-id="CAP-05.S01.T03" data-review-mode="latest-review-only">
   <h3>CAP-05.S01.T03 — Create acquisition queue, conflict, and entitlement placeholders</h3>
   <p><strong>Legacy latest-review-only projection.</strong> No append-only review rounds are recorded; this view does not fabricate historical attempts.</p>
-  <dl class="summary-grid" data-current-review-projection="CAP-05.S01.T03" data-current-review-result="not-reviewed" data-current-reviewer="none" data-current-reviewed-at="none"><div><dt>Task status</dt><dd>READY</dd></div><div><dt>Latest result</dt><dd>not reviewed</dd></div><div><dt>Reviewer</dt><dd>none</dd></div><div><dt>Reviewed at</dt><dd><code>none</code></dd></div></dl>
+  <dl class="summary-grid" data-current-review-projection="CAP-05.S01.T03" data-current-review-result="not-reviewed" data-current-reviewer="none" data-current-reviewed-at="none"><div><dt>Task status</dt><dd>IN_PROGRESS</dd></div><div><dt>Latest result</dt><dd>not reviewed</dd></div><div><dt>Reviewer</dt><dd>none</dd></div><div><dt>Reviewed at</dt><dd><code>none</code></dd></div></dl>
   <p><strong>Latest notes:</strong> None</p>
 </section>
 <nav class="page-turn" aria-label="Task navigation"><a class="button button-quiet" href="CAP-05.S01.T02.html">Previous</a><a class="button button-primary" href="CAP-05.S01.html">Next</a></nav>

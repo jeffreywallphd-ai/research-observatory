@@ -1,0 +1,283 @@
+{
+  "artifacts": [
+    {
+      "binaryReviewed": true,
+      "blobSha1": "4eb7f2ec7d68daf1e933796b9c544114770b0552",
+      "database": {
+        "acquisitionCounts": {
+          "acquisition_attempt_results": 0,
+          "acquisition_attempts": 0,
+          "acquisition_locations": 0,
+          "document_acquisition_sources": 0
+        },
+        "allCountsAndRowHashesMatchManifest": true,
+        "foreignKeyViolations": 0,
+        "integrityCheck": "ok",
+        "literalRows": 342,
+        "schemaSha256": "8078a6f7132200e6cf9e729f116c7b8ad6cd7c2bcf61d56f337e594dc7552a97",
+        "schemaVersion": 24,
+        "sha256": "dbff7c147201d8e9c98c0173a8aabcc563e63955b777c7c344aab8dec19b7611",
+        "size": 2392064
+      },
+      "indexEqualsDisk": true,
+      "manifest": {
+        "canonicalTextEqual": true,
+        "diskSha256": "5b268ea79fe31afc927de92d8040e34ac1df554133035c67cf920c4e351ecd3e",
+        "indexSha256": "5b268ea79fe31afc927de92d8040e34ac1df554133035c67cf920c4e351ecd3e",
+        "path": "tests/fixtures/documents/v24-predecessor.json"
+      },
+      "members": [
+        {
+          "path": "state/project.sqlite3",
+          "sha256": "dbff7c147201d8e9c98c0173a8aabcc563e63955b777c7c344aab8dec19b7611",
+          "size": 2392064
+        },
+        {
+          "path": "objects/10/45/1045e37c17209722aa982beb22a5d2bd80603b6263c3f14382cf7bfd814a66fb.blob",
+          "sha256": "a2a8642e55ff8269ba08404eff7fdd8fab211eda8052f2278dd88c8a5a14d8e0",
+          "size": 86
+        },
+        {
+          "path": "objects/25/c0/25c07de19188a1c82867adac598e5027cea3a8fa53ffaa5a098bc82bb8e6656b.blob",
+          "sha256": "14507bb1b3372b4c2b33f5b33816d02b06df995358dad3b7cd860c35aec86378",
+          "size": 80
+        }
+      ],
+      "mode": "100644",
+      "path": "tests/fixtures/documents/v24-predecessor.zip",
+      "pathSha256": "74f6acfe3e44e8584aa16d2796f1e266840114c8073802c619c5601006ba1e6c",
+      "privacy": {
+        "privateTextDisclosure": false,
+        "rawArchiveAndEveryDecodedMemberCredentialFindings": 0,
+        "readableRowSupplementalFindings": 19,
+        "supplementalAdjudication": "Synthetic content digests, authenticated wrapped-key ciphertext, public event idempotency values and capability hashes; no account credential. No supplemental value or new exemption published."
+      },
+      "producer": {
+        "commit": "01bc453237a081392544929364696bac3422e9fb",
+        "inputs": [
+          {
+            "binding": "raw bytes equal",
+            "captureSha256": "b7a19cc2e1e222a746c237531be026cff44960c1eeeef7e3867c753ea26e107d",
+            "gitSha256": "b7a19cc2e1e222a746c237531be026cff44960c1eeeef7e3867c753ea26e107d",
+            "path": "services/core-api/src/research_observatory_core/migrations/runner.py"
+          },
+          {
+            "binding": "raw bytes equal",
+            "captureSha256": "add3cd6d2fe652643928ba30074cb8c555a7f8111cdb0188ba92420f5c68591f",
+            "gitSha256": "add3cd6d2fe652643928ba30074cb8c555a7f8111cdb0188ba92420f5c68591f",
+            "path": "services/core-api/src/research_observatory_core/migrations/versions/v0024_open_access_acquisition.py"
+          },
+          {
+            "binding": "raw bytes equal",
+            "captureSha256": "4e23d5de86711cb1ac1901f88f44448d39694b4287880a567da7237689dbbdb3",
+            "gitSha256": "4e23d5de86711cb1ac1901f88f44448d39694b4287880a567da7237689dbbdb3",
+            "path": "services/core-api/src/research_observatory_core/storage.py"
+          },
+          {
+            "binding": "captured CRLF and Git LF text separately authenticated",
+            "captureSha256": "f8439a465ffcdf83323783090a8a8245afd691affeb5dd02d6e9fe253eece8b3",
+            "gitSha256": "14e2e83db5c45a5dc33f6dd84a056ce41cbb867ca793b97b5d715ce4bcdbcf03",
+            "path": "tests/fixtures/documents/v23-predecessor.json"
+          },
+          {
+            "binding": "raw bytes equal",
+            "captureSha256": "d470258400cac2ff1445e91137b4f82cfb4bd29872692bba3d7e89074640b488",
+            "gitSha256": "d470258400cac2ff1445e91137b4f82cfb4bd29872692bba3d7e89074640b488",
+            "path": "tests/fixtures/documents/v23-predecessor.zip"
+          }
+        ],
+        "path": "artifacts/tmp/CAP-05.S01.T03.capture-v24-01.py",
+        "sha256": "fbc6d511f3aa479148907cb1ed5bf966e961b413ac5eab8ef269b72e771f0ac9"
+      },
+      "provenance": {
+        "authenticatedAndPrivacyScannedObjectPlaintexts": 0,
+        "ciphertextsAndInheritedRowsEqual": true,
+        "fixtureProtection": "explicit-development-plaintext-database; encrypted-object-ciphertext",
+        "inheritedAdmittedCiphertextAndHistory": true,
+        "noProductionDatabaseClaim": true,
+        "priorArchivePath": "tests/fixtures/documents/v23-predecessor.zip",
+        "priorArchiveSha256": "d470258400cac2ff1445e91137b4f82cfb4bd29872692bba3d7e89074640b488",
+        "syntheticPublicAcquisitionFixture": false
+      },
+      "sha256": "59d70334af1d18b4957290c6ee88ba823e383013c9a904b6cbfbd5b1ecff24c2",
+      "size": 157610
+    },
+    {
+      "binaryReviewed": true,
+      "blobSha1": "62c72acf31bd0376eb9366ef28785e960f6269f2",
+      "database": {
+        "acquisitionCounts": {
+          "acquisition_attempt_results": 3,
+          "acquisition_attempts": 3,
+          "acquisition_locations": 1,
+          "document_acquisition_sources": 2
+        },
+        "allCountsAndRowHashesMatchManifest": true,
+        "foreignKeyViolations": 0,
+        "integrityCheck": "ok",
+        "literalRows": 498,
+        "schemaSha256": "8078a6f7132200e6cf9e729f116c7b8ad6cd7c2bcf61d56f337e594dc7552a97",
+        "schemaVersion": 24,
+        "sha256": "622f5b86973e1129b0822888664d6f7c5c70f38f8d0000cdaa5d71426d020322",
+        "size": 2506752
+      },
+      "indexEqualsDisk": true,
+      "manifest": {
+        "canonicalTextEqual": true,
+        "diskSha256": "e79d57cd3139c90d058985cca04e5ab9267c6ef324e0dc1cfaef31b3221f48c9",
+        "indexSha256": "e79d57cd3139c90d058985cca04e5ab9267c6ef324e0dc1cfaef31b3221f48c9",
+        "path": "tests/fixtures/documents/v24-populated-predecessor.json"
+      },
+      "members": [
+        {
+          "path": "state/project.sqlite3",
+          "sha256": "622f5b86973e1129b0822888664d6f7c5c70f38f8d0000cdaa5d71426d020322",
+          "size": 2506752
+        },
+        {
+          "path": "objects/01/cd/01cdf8a69a5b26450e8d1132bb002b8154df5d488613ed7c54a92f7ffd0c6c0a.blob",
+          "sha256": "ef2c33c1614c88a2606a92a6c7cbd1988f52e9708565533b847d7cd09fea942d",
+          "size": 2268
+        },
+        {
+          "path": "objects/15/f9/15f960b4db070625277c79473ac6a685e79558571c730589821391da774376c5.blob",
+          "sha256": "0863c83bac9687019d7b784ae87e975713beee1fb56d6521187c0545620e042d",
+          "size": 937
+        },
+        {
+          "path": "objects/58/ba/58ba68ac73c5c455a1d6c2d74fe10d47b3415dd2fc5bc2a10d33ed6e1799bc57.blob",
+          "sha256": "eb38de2052e7c2339a94eb6cc104f4f285be30253a5a990e31635aebc3a8f8e0",
+          "size": 79
+        },
+        {
+          "path": "objects/8c/1d/8c1ddbf3f211b424e6f71a0f3b89bfb3c8457cf8599aa2e5cca68ecebff21aa7.blob",
+          "sha256": "4a9aba712fb872ab211a2dcf48a7b623ae45899074617648a0c59db5aaed9f9e",
+          "size": 5037
+        }
+      ],
+      "mode": "100644",
+      "path": "tests/fixtures/documents/v24-populated-predecessor.zip",
+      "pathSha256": "1678b06bdb21b8f2cdc5dd2469b6744d9ae9855fa36ccd4cc461eea84022caf7",
+      "privacy": {
+        "privateTextDisclosure": false,
+        "rawArchiveAndEveryDecodedMemberCredentialFindings": 0,
+        "readableRowSupplementalFindings": 17,
+        "supplementalAdjudication": "Synthetic content digests, authenticated wrapped-key ciphertext, public event idempotency values and capability hashes; no account credential. No supplemental value or new exemption published."
+      },
+      "producer": {
+        "commit": "01bc453237a081392544929364696bac3422e9fb",
+        "inputs": [
+          {
+            "binding": "raw bytes equal",
+            "captureSha256": "725570404742e4026d5be6ba6257ddddb785a6369ada8f079f5efc2e6a7a6586",
+            "gitSha256": "725570404742e4026d5be6ba6257ddddb785a6369ada8f079f5efc2e6a7a6586",
+            "path": "services/core-api/src/research_observatory_core/acquisition/service.py"
+          },
+          {
+            "binding": "raw bytes equal",
+            "captureSha256": "b876448a9f7a50f0d5c64707b3d736ce7f263eaa5630bdfd191d233be80aad5d",
+            "gitSha256": "b876448a9f7a50f0d5c64707b3d736ce7f263eaa5630bdfd191d233be80aad5d",
+            "path": "services/core-api/src/research_observatory_core/document_attachment_repository.py"
+          },
+          {
+            "binding": "raw bytes equal",
+            "captureSha256": "eed13cf9316c7617e3f4ba39e0c0cc7476c76d47038f55696a9e7a0eb6eaf583",
+            "gitSha256": "eed13cf9316c7617e3f4ba39e0c0cc7476c76d47038f55696a9e7a0eb6eaf583",
+            "path": "services/core-api/src/research_observatory_core/object_store.py"
+          },
+          {
+            "binding": "raw bytes equal",
+            "captureSha256": "4e23d5de86711cb1ac1901f88f44448d39694b4287880a567da7237689dbbdb3",
+            "gitSha256": "4e23d5de86711cb1ac1901f88f44448d39694b4287880a567da7237689dbbdb3",
+            "path": "services/core-api/src/research_observatory_core/storage.py"
+          },
+          {
+            "binding": "raw bytes equal",
+            "captureSha256": "fa19368539eb97081d1f05703c54d0e854eedde8522370cba119000b9ccb0deb",
+            "gitSha256": "fa19368539eb97081d1f05703c54d0e854eedde8522370cba119000b9ccb0deb",
+            "path": "tests/documents/test_oa_acquisition.py"
+          }
+        ],
+        "path": "artifacts/tmp/CAP-05.S01.T03.capture-v24-populated-05.py",
+        "sha256": "768e93067bf0264b1c286bda42569bf48b477c18c82778e57f0b86fcdd008cf5"
+      },
+      "provenance": {
+        "authenticatedAndPrivacyScannedObjectPlaintexts": 4,
+        "ciphertextsAndInheritedRowsEqual": null,
+        "fixtureProtection": "explicit-development-plaintext-database; encrypted-object-ciphertext",
+        "inheritedAdmittedCiphertextAndHistory": false,
+        "noProductionDatabaseClaim": true,
+        "priorArchivePath": null,
+        "priorArchiveSha256": null,
+        "syntheticPublicAcquisitionFixture": true
+      },
+      "sha256": "d6d9b79d8861f6797942632e221378bcc98ab2cef165d330462f19ba83afa1d8",
+      "size": 182944
+    }
+  ],
+  "conclusion": "No actual private research, account names, concrete user paths, private session values or credentials found. Persisted synthetic identifiers and histories are fixture data.",
+  "disposition": "privacy-approved",
+  "documentType": "independent-prospective-artifact-privacy-summary",
+  "formalTaskApproval": false,
+  "implementer": "agent:/root",
+  "independence": "Reviewer authored prior artifact privacy admissions and preparatory advisory findings; did not author these captures, product changes, tests, qualifier or owner approvals.",
+  "limits": [
+    "Original binary-review hook rejection remains adverse; not relabeled PASS.",
+    "Original ZIP bytes were hashed and scanned unchanged. A private in-memory database copy used normalized journal-header bytes solely for logical inspection after direct WAL deserialize refusal; no persisted file changed.",
+    "An incorrect generic inherited-fixture key trial failed. Inherited object privacy is authenticated by exact prior admitted ciphertext and literal history, not a claimed fresh decryption. Populated synthetic plaintext was independently authenticated and scanned.",
+    "Read-only helper setup failures occurred before output creation; final literal and predecessor bindings succeeded. No missing producer log or synthetic acceptance invented.",
+    "Normal unchanged installer sealing and staged hook checking remain required; neither performed by reviewer.",
+    "No product, migration, task, reference, S01, W2 or release approval. No tests, network, UI, source, hook, Git, state or approval mutation."
+  ],
+  "preservedAdverse": [
+    {
+      "path": "artifacts/tmp/CAP-05.S01.T03.v24-populated-capture-02/failure.json",
+      "sha256": "9cc0fe88068e705544b96071d3b9c723656380139866a0dbea99024ddd2afce3",
+      "status": "FAIL_FIXTURE_SETUP"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S01.T03.v24-populated-capture-03/failure.json",
+      "sha256": "ab4e8d2ecbe374d8937da1b27e17b7d3eaf03409c2b472fb1065fb7b796ed97a",
+      "status": "FAIL_FIXTURE_SETUP"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S01.T03.v24-populated-capture-04/failure.json",
+      "sha256": "42b997892cc07a38a97707c75610390e937cb787e5978ac046fa17fc900b0852",
+      "status": "FAIL_FIXTURE_SETUP"
+    }
+  ],
+  "registry": {
+    "addedEntries": 2,
+    "path": ".local/CAP-05.S01.T03.generated-artifact-privacy-review-c11-02.json",
+    "predecessorPath": ".local/CAP-05.S01.T03.generated-artifact-privacy-review-c11-01.json",
+    "predecessorSha256": "e075bcf9b69448a4b18ba14ca080eb0fa8315d4599ced39815f2c168fac538d3",
+    "preservationUnchanged": true,
+    "priorEntries": 541,
+    "priorEntriesAndOrderPreserved": true,
+    "sha256": "1d9a7fd71baec1ffaf2553a3f33eb4c50a7653f11273a128b9fcdc002f8cc6eb",
+    "totalEntries": 543,
+    "unchangedShapeValidator": "PASS"
+  },
+  "reviewer": "agent:/root/c11_security_review",
+  "scan": {
+    "additionalAuthenticatedSyntheticPlaintexts": 4,
+    "archives": 2,
+    "artifactCredentialFindings": 0,
+    "configSha256": "839fab7649bfe0d45a0e5b1dfba2b401d03b37169c32ebbc1f00313eddc9f7b1",
+    "decodedMembers": 8,
+    "fullUnmaskedInputs": true,
+    "guardSha256": "5f0a4cd0020c54342eaf06c1450c05a584e287af357d42efd05d7042bdbba227",
+    "newCredentialExemptions": 0,
+    "newNonEmailExemptions": 0,
+    "policySha256": "f9722b14ed631869954d297d9296168239bdf7a3b432d683a49bb14da6300a75",
+    "producer": "Inline read-only reviewer tool transcript; no new producer file.",
+    "redactedOutput": true,
+    "scannerPath": ".local/security-audit/gitleaks.exe",
+    "scannerSha256": "17157e2ee8b76fc8b1d8bee607a250e34b8a8023c8bc81822d4b5ee4d78fcb7c",
+    "suppressions": false
+  },
+  "schemaVersion": "1.0",
+  "scope": "Exact two staged synthetic v24 fixture ZIPs only. Both may receive binaryReviewed admission.",
+  "sourceHead": "01bc453237a081392544929364696bac3422e9fb",
+  "taskId": "CAP-05.S01.T03"
+}

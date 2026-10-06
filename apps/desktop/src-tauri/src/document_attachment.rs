@@ -12,6 +12,678 @@ use tauri::{Emitter, Manager, State};
 
 const RESULT_EVENT: &str = "document_attachment_result";
 
+#[derive(Clone, Deserialize)]
+#[serde(rename_all = "camelCase", deny_unknown_fields)]
+struct CoreCopyLocation {
+    location_id: String,
+    project_id: String,
+    source_assertion_revision_id: String,
+    source_revision_id: String,
+    address: Value,
+    source_sha256: String,
+    provider: String,
+    location_key: String,
+    url: String,
+    license: Option<String>,
+    version: Option<String>,
+    location_sha256: String,
+}
+
+impl CoreCopyLocation {
+    fn safe_metadata(&self, selection: &AttachmentSelection) -> Option<Value> {
+        let url = tauri::Url::parse(&self.url).ok()?;
+        let host = url.host_str()?;
+        (self.project_id == selection.project_id
+            && self.source_assertion_revision_id == selection.source_assertion_revision_id
+            && crate::supervisor::canonical_uuid_v7(&self.location_id)
+            && crate::supervisor::canonical_uuid_v7(&self.source_revision_id)
+            && lower_hex(&self.location_sha256, 64)
+            && lower_hex(&self.source_sha256, 64)
+            && self.address.is_object()
+            && !self.location_key.is_empty()
+            && self.location_key.len() <= 128
+            && url.scheme() == "https"
+            && url.username().is_empty()
+            && url.password().is_none()
+            && url.fragment().is_none()
+            && self.url.len() <= 8192
+            && host.len() <= 253
+            && self.provider.len() <= 64
+            && self.license.as_ref().is_none_or(|s| s.len() <= 4096)
+            && self.version.as_ref().is_none_or(|s| s.len() <= 256))
+        .then(|| {
+            json!({"copyId":self.location_id,"copySha256":self.location_sha256,
+            "provider":self.provider,"host":host,"license":self.license,"version":self.version})
+        })
+    }
+}
+
+#[derive(Deserialize)]
+#[serde(rename_all = "camelCase", deny_unknown_fields)]
+struct CoreCopies {
+    locations: Vec<CoreCopyLocation>,
+}
+
+#[derive(Deserialize, Serialize)]
+#[serde(rename_all = "camelCase", deny_unknown_fields)]
+struct RetainedCandidate {
+    candidate_id: String,
+    source_name: String,
+    original_operation_id: String,
+}
+
+#[derive(Deserialize)]
+#[serde(deny_unknown_fields)]
+struct CoreRetained {
+    retained: Vec<RetainedCandidate>,
+}
+
+#[derive(Deserialize)]
+#[serde(rename_all = "camelCase", deny_unknown_fields)]
+struct CoreCopyPreview {
+    preview_id: String,
+    location: CoreCopyLocation,
+    selection: Value,
+    provider_policy_revision_id: String,
+    confirmation_sha256: String,
+    confirmation: String,
+}
+
+struct NativeCopyReview {
+    preview: CoreCopyPreview,
+    selection: AttachmentSelection,
+    session_id: String,
+    connection: Arc<NativeImportConnection>,
+    owner: isize,
+    ticket: u64,
+}
+
+#[derive(Deserialize)]
+#[serde(rename_all = "camelCase", deny_unknown_fields)]
+pub(crate) struct CopiesRequest {
+    schema_version: String,
+    selection: AttachmentSelection,
+}
+
+#[derive(Deserialize)]
+#[serde(rename_all = "camelCase", deny_unknown_fields)]
+pub(crate) struct CopyReviewRequest {
+    schema_version: String,
+    selection: AttachmentSelection,
+    copy_id: String,
+    copy_sha256: String,
+}
+
+#[derive(Deserialize)]
+#[serde(rename_all = "camelCase", deny_unknown_fields)]
+pub(crate) struct CopyDownloadRequest {
+    schema_version: String,
+    selection: AttachmentSelection,
+    review_id: String,
+    operation_id: String,
+    match_confirmed: bool,
+    permitted_use: String,
+}
+
+#[derive(Deserialize)]
+#[serde(rename_all = "camelCase", deny_unknown_fields)]
+pub(crate) struct CandidateRecoveryRequest {
+    schema_version: String,
+    selection: AttachmentSelection,
+    operation_id: String,
+    candidate_id: String,
+    original_operation_id: String,
+}
+
+#[derive(Deserialize)]
+#[serde(rename_all = "camelCase", deny_unknown_fields)]
+pub(crate) struct AccessNeedRequest {
+    schema_version: String,
+    selection: AttachmentSelection,
+    copy_id: Option<String>,
+    copy_sha256: Option<String>,
+    command_id: String,
+    kind: String,
+    channel: String,
+}
+
+fn association_fields(selection: &AttachmentSelection) -> Value {
+    let mut fields = selection.core_fields();
+    fields.as_object_mut().unwrap().remove("projectId");
+    fields
+}
+
+fn copy_core_selection(selection: &AttachmentSelection, copy_id: &str, copy_sha256: &str) -> Value {
+    let mut result = selection.core_fields();
+    result.as_object_mut().unwrap().remove("projectId");
+    result["locationId"] = copy_id.into();
+    result["locationSha256"] = copy_sha256.into();
+    result["expectedSha256"] = Value::Null;
+    result["redirectHosts"] = json!([]);
+    result
+}
+
+fn json_core_response<T: serde::de::DeserializeOwned>(
+    response: crate::supervisor::CoreApiResponse,
+) -> Result<T, ()> {
+    if response.status != 200
+        || response.content_type != "application/json"
+        || response.body.len() > 262_144
+    {
+        return Err(());
+    }
+    serde_json::from_str(&response.body).map_err(|_| ())
+}
+
+#[tauri::command]
+pub(crate) async fn document_acquisition_copies(
+    window: tauri::WebviewWindow,
+    manager: State<'_, DocumentAttachmentManager>,
+    supervisor: State<'_, RuntimeSupervisor>,
+    lock: State<'_, ApplicationLockManager>,
+    request: CopiesRequest,
+) -> Result<Option<Value>, ()> {
+    if request.schema_version != "1.0" || !request.selection.valid() || !manager.installed() {
+        return Ok(None);
+    }
+    let owner = crate::directory_window_handle(&window).ok_or(())?;
+    let ticket = lock.begin_protected_action().map_err(|_| ())?;
+    let connection = Arc::new(
+        supervisor
+            .native_document_connection(&request.selection.project_id)
+            .map_err(|_| ())?,
+    );
+    let worker = Arc::clone(&connection);
+    let project = request.selection.project_id.clone();
+    let source = request.selection.source_assertion_revision_id.clone();
+    let association = association_fields(&request.selection);
+    let (copies, retained): (CoreCopies, CoreRetained) = tauri::async_runtime::spawn_blocking(move || {
+        let context = document_runtime::current_document_context(&worker, &project).map_err(|_| ())?;
+        let copies = json_core_response(worker.document_request(NativeDocumentAction::Copies,
+            json!({"root":worker.document_root(),"projectId":project,"sessionId":context.session_id,
+                "sourceAssertionRevisionId":source})).map_err(|_| ())?)?;
+        let retained = json_core_response(worker.document_request(NativeDocumentAction::Retained,
+            json!({"root":worker.document_root(),"projectId":project,"sessionId":context.session_id,
+                "selection":association})).map_err(|_| ())?)?;
+        Ok::<_, ()>((copies, retained))
+    }).await.map_err(|_| ())??;
+    if !connection.is_current()
+        || lock.finish_protected_action(ticket).is_err()
+        || crate::directory_window_handle(&window) != Some(owner)
+        || copies.locations.len() > 100
+        || retained.retained.len() > 50
+        || retained.retained.iter().any(|candidate| {
+            !crate::supervisor::canonical_uuid_v7(&candidate.candidate_id)
+                || !crate::supervisor::canonical_uuid_v7(&candidate.original_operation_id)
+                || !safe_name(&candidate.source_name)
+        })
+    {
+        return Ok(None);
+    }
+    let metadata: Option<Vec<Value>> = copies
+        .locations
+        .iter()
+        .map(|copy| copy.safe_metadata(&request.selection))
+        .collect();
+    Ok(metadata.map(|copies| json!({"schemaVersion":"1.0","selection":request.selection,"copies":copies,"retained":retained.retained})))
+}
+
+#[tauri::command]
+pub(crate) async fn document_acquisition_access_need(
+    window: tauri::WebviewWindow,
+    manager: State<'_, DocumentAttachmentManager>,
+    supervisor: State<'_, RuntimeSupervisor>,
+    lock: State<'_, ApplicationLockManager>,
+    request: AccessNeedRequest,
+) -> Result<Option<Value>, ()> {
+    if request.schema_version != "1.0"
+        || !request.selection.valid()
+        || !manager.installed()
+        || !crate::supervisor::canonical_uuid_v7(&request.command_id)
+        || request.copy_id.is_some() != request.copy_sha256.is_some()
+        || request
+            .copy_id
+            .as_ref()
+            .is_some_and(|id| !crate::supervisor::canonical_uuid_v7(id))
+        || request
+            .copy_sha256
+            .as_ref()
+            .is_some_and(|sha| !lower_hex(sha, 64))
+        || ![
+            "unknown",
+            "unavailable",
+            "rights-denied",
+            "entitlement-required",
+        ]
+        .contains(&request.kind.as_str())
+        || !["manual", "institutional"].contains(&request.channel.as_str())
+    {
+        return Ok(None);
+    }
+    let owner = crate::directory_window_handle(&window).ok_or(())?;
+    let ticket = lock.begin_protected_action().map_err(|_| ())?;
+    let connection = Arc::new(
+        supervisor
+            .native_document_connection(&request.selection.project_id)
+            .map_err(|_| ())?,
+    );
+    let worker = Arc::clone(&connection);
+    let project = request.selection.project_id.clone();
+    let mut selection = association_fields(&request.selection);
+    selection["locationId"] = json!(request.copy_id);
+    selection["locationSha256"] = json!(request.copy_sha256);
+    let command_id = request.command_id.clone();
+    let worker_lock = lock.inner().clone();
+    let worker_window = window.clone();
+    let result: Value = tauri::async_runtime::spawn_blocking(move || {
+        let context = document_runtime::current_document_context(&worker, &project).map_err(|_| ())?;
+        json_core_response(worker.document_request_owned(NativeDocumentAction::AccessNeed,
+            json!({"root":worker.document_root(),"projectId":project,"sessionId":context.session_id,
+                "selection":selection,"commandId":command_id,"kind":request.kind,"channel":request.channel}),
+            &|| worker.is_current() && worker_lock.finish_protected_action(ticket).is_ok()
+                && crate::directory_window_handle(&worker_window) == Some(owner)).map_err(|_| ())?)
+    }).await.map_err(|_| ())??;
+    if !connection.is_current()
+        || lock.finish_protected_action(ticket).is_err()
+        || crate::directory_window_handle(&window) != Some(owner)
+        || result.as_object().is_none_or(|value| value.len() != 5)
+        || !result["annotationId"]
+            .as_str()
+            .is_some_and(crate::supervisor::canonical_uuid_v7)
+        || !result["revisionId"]
+            .as_str()
+            .is_some_and(crate::supervisor::canonical_uuid_v7)
+    {
+        return Ok(None);
+    }
+    Ok(Some(
+        json!({"schemaVersion":"1.0","status":"recorded","commandId":request.command_id}),
+    ))
+}
+
+fn decode_remote_candidate(
+    response: crate::supervisor::CoreApiResponse,
+    active: &ActiveAttachment,
+) -> Result<DocumentStageOutcome, PickerFailure> {
+    if response.status != 200 {
+        return document_runtime::decode_stage_response(response, None, &active.document, "");
+    }
+    let candidate: document_runtime::DocumentCandidate =
+        json_core_response(response).map_err(|_| PickerFailure::Failed)?;
+    if candidate.project_id != active.selection.project_id
+        || candidate.source_assertion_revision_id != active.selection.source_assertion_revision_id
+        || candidate.work_id != active.selection.work_id
+        || candidate.work_revision_id != active.selection.work_revision_id
+        || candidate.version_id != active.selection.version_id
+        || candidate.version_revision_id != active.selection.version_revision_id
+        || !crate::supervisor::canonical_uuid_v7(&candidate.candidate_id)
+        || !lower_hex(&candidate.candidate_sha256, 64)
+        || !lower_hex(&candidate.object_sha256, 64)
+        || !candidate.confirmation_required
+        || !candidate.rights_subject.is_object()
+    {
+        return Err(PickerFailure::Failed);
+    }
+    Ok(DocumentStageOutcome::Candidate(candidate))
+}
+
+#[tauri::command]
+pub(crate) async fn document_acquisition_recover(
+    window: tauri::WebviewWindow,
+    manager: State<'_, DocumentAttachmentManager>,
+    supervisor: State<'_, RuntimeSupervisor>,
+    lock: State<'_, ApplicationLockManager>,
+    request: CandidateRecoveryRequest,
+) -> Result<Value, ()> {
+    let unavailable = || begin_outcome(&request.operation_id, "unavailable", None);
+    if request.schema_version != "1.0"
+        || !request.selection.valid()
+        || !manager.installed()
+        || [
+            &request.operation_id,
+            &request.candidate_id,
+            &request.original_operation_id,
+        ]
+        .iter()
+        .any(|id| !crate::supervisor::canonical_uuid_v7(id))
+        || request.operation_id == request.original_operation_id
+    {
+        return Ok(unavailable());
+    }
+    let owner = crate::directory_window_handle(&window).ok_or(())?;
+    let ticket = lock.begin_protected_action().map_err(|_| ())?;
+    let connection = Arc::new(
+        supervisor
+            .native_document_connection(&request.selection.project_id)
+            .map_err(|_| ())?,
+    );
+    let worker = Arc::clone(&connection);
+    let project = request.selection.project_id.clone();
+    let context = tauri::async_runtime::spawn_blocking(move || {
+        document_runtime::current_document_context(&worker, &project)
+    })
+    .await
+    .map_err(|_| ())?
+    .map_err(|_| ())?;
+    if !connection.is_current()
+        || lock.finish_protected_action(ticket).is_err()
+        || crate::directory_window_handle(&window) != Some(owner)
+    {
+        return Ok(unavailable());
+    }
+    {
+        let mut state = manager.shared.lock().map_err(|_| ())?;
+        if let Some(old) = state.active.as_ref() {
+            if old.selection != request.selection
+                || old
+                    .candidate
+                    .as_ref()
+                    .is_none_or(|candidate| candidate.0 != request.candidate_id)
+                || old.commit_request.is_some()
+                || old.staging
+                || old.cancelling
+            {
+                return Ok(unavailable());
+            }
+            // Task Center navigation retains the inspected copy. Re-review
+            // releases only this exact native binding, without cancelling the
+            // immutable candidate or reviving its earlier confirmation.
+            state.generation = state.generation.saturating_add(1);
+            state.active = None;
+        }
+    }
+    let active = ActiveAttachment {
+        operation_id: request.operation_id.clone(),
+        mode: AttachmentMode::Remote,
+        selection: request.selection.clone(),
+        document: request.selection.document(
+            connection.document_root().into(),
+            request.operation_id.clone(),
+        ),
+        session_id: context.session_id.clone(),
+        owner,
+        ticket,
+        connection,
+        candidate: None,
+        commit_request: None,
+        generation: 0,
+        staging: true,
+        cancelling: false,
+    };
+    if !manager.activate(active) {
+        return Ok(unavailable());
+    }
+    let active = manager.current(&request.operation_id).ok_or(())?;
+    let worker_manager = manager.inner().clone();
+    let worker_window = window.clone();
+    let worker_lock = lock.inner().clone();
+    tauri::async_runtime::spawn_blocking(move || {
+        let authorized = || {
+            worker_manager.current(&active.operation_id).is_some()
+                && active.connection.is_current()
+                && worker_lock.finish_protected_action(active.ticket).is_ok()
+                && crate::directory_window_handle(&worker_window) == Some(owner)
+        };
+        let outcome = (|| {
+            let original = active.connection.document_request_owned(NativeDocumentAction::Candidate,
+                json!({"root":active.connection.document_root(),"projectId":active.selection.project_id,
+                    "sessionId":active.session_id,"candidateId":request.candidate_id}), &authorized).map_err(|_| PickerFailure::Unavailable)?;
+            let DocumentStageOutcome::Candidate(candidate) =
+                decode_remote_candidate(original, &active)?
+            else {
+                return Err(PickerFailure::Failed);
+            };
+            if candidate.candidate_id != request.candidate_id {
+                return Err(PickerFailure::Failed);
+            }
+            let response = active.connection.document_request_owned(NativeDocumentAction::Recover,
+                json!({"root":active.connection.document_root(),"projectId":active.selection.project_id,
+                    "sessionId":active.session_id,"candidateId":request.candidate_id,"originalOperationId":request.original_operation_id,
+                    "recoveryOperationId":active.operation_id,"confirmationSha256":candidate.candidate_sha256,
+                    "selection":association_fields(&active.selection)}), &authorized).map_err(|_| PickerFailure::Unavailable)?;
+            let recovered = decode_remote_candidate(response, &active)?;
+            if let DocumentStageOutcome::Candidate(returned) = &recovered {
+                if returned.candidate_id != candidate.candidate_id
+                    || returned.candidate_sha256 != candidate.candidate_sha256
+                    || returned.object_sha256 != candidate.object_sha256
+                {
+                    return Err(PickerFailure::Failed);
+                }
+            }
+            Ok(recovered)
+        })();
+        finish_stage(&worker_manager, &worker_window, &active, outcome);
+    });
+    Ok(begin_outcome(
+        &request.operation_id,
+        "armed",
+        Some(&context.session_id),
+    ))
+}
+
+#[tauri::command]
+pub(crate) async fn document_acquisition_review(
+    window: tauri::WebviewWindow,
+    manager: State<'_, DocumentAttachmentManager>,
+    supervisor: State<'_, RuntimeSupervisor>,
+    lock: State<'_, ApplicationLockManager>,
+    request: CopyReviewRequest,
+) -> Result<Option<Value>, ()> {
+    if request.schema_version != "1.0"
+        || !request.selection.valid()
+        || !manager.installed()
+        || !crate::supervisor::canonical_uuid_v7(&request.copy_id)
+        || !lower_hex(&request.copy_sha256, 64)
+    {
+        return Ok(None);
+    }
+    let owner = crate::directory_window_handle(&window).ok_or(())?;
+    let ticket = lock.begin_protected_action().map_err(|_| ())?;
+    let generation = {
+        let mut state = manager.shared.lock().map_err(|_| ())?;
+        if state
+            .active
+            .as_ref()
+            .is_some_and(|active| active.connection.is_current())
+        {
+            return Ok(None);
+        }
+        state.generation = state.generation.saturating_add(1);
+        state.review = None;
+        state.generation
+    };
+    let connection = Arc::new(
+        supervisor
+            .native_document_connection(&request.selection.project_id)
+            .map_err(|_| ())?,
+    );
+    let worker = Arc::clone(&connection);
+    let project = request.selection.project_id.clone();
+    let selection = copy_core_selection(&request.selection, &request.copy_id, &request.copy_sha256);
+    let expected = selection.clone();
+    let (session_id, preview): (String, CoreCopyPreview) =
+        tauri::async_runtime::spawn_blocking(move || {
+            let context =
+                document_runtime::current_document_context(&worker, &project).map_err(|_| ())?;
+            let preview = json_core_response(worker.document_request(NativeDocumentAction::Preview,
+            json!({"root":worker.document_root(),"projectId":project,"sessionId":context.session_id,
+                "selection":selection})).map_err(|_| ())?)?;
+            Ok::<_, ()>((context.session_id, preview))
+        })
+        .await
+        .map_err(|_| ())??;
+    if !connection.is_current()
+        || lock.finish_protected_action(ticket).is_err()
+        || crate::directory_window_handle(&window) != Some(owner)
+        || preview.selection != expected
+        || !crate::supervisor::canonical_uuid_v7(&preview.preview_id)
+        || !crate::supervisor::canonical_uuid_v7(&preview.provider_policy_revision_id)
+        || !lower_hex(&preview.confirmation_sha256, 64)
+        || !preview
+            .confirmation
+            .starts_with(&format!("acquire-copy:{}:", preview.preview_id))
+        || !lower_hex(preview.confirmation.rsplit(':').next().unwrap_or(""), 32)
+        || preview.location.location_id != request.copy_id
+        || preview.location.location_sha256 != request.copy_sha256
+    {
+        return Ok(None);
+    }
+    let copy = preview
+        .location
+        .safe_metadata(&request.selection)
+        .ok_or(())?;
+    let output = json!({"schemaVersion":"1.0","selection":request.selection,"reviewId":preview.preview_id,
+        "copy":copy,"redirectHosts":[],"storeInspect":"allowed","egress":"confirmed-preview-required"});
+    lock.commit_protected_action(ticket, || {
+        let mut state = manager
+            .shared
+            .lock()
+            .map_err(|_| "RO-DOCUMENT-STATE-UNAVAILABLE")?;
+        if state.generation != generation
+            || !state.installed
+            || !connection.is_current()
+            || crate::directory_window_handle(&window) != Some(owner)
+        {
+            return Err("RO-DOCUMENT-SESSION-UNAVAILABLE");
+        }
+        state.review = Some(NativeCopyReview {
+            preview,
+            selection: request.selection,
+            session_id,
+            connection,
+            owner,
+            ticket,
+        });
+        Ok(())
+    })
+    .map_err(|_| ())?;
+    Ok(Some(output))
+}
+
+#[tauri::command]
+pub(crate) fn document_acquisition_clear_review(manager: State<'_, DocumentAttachmentManager>) {
+    if let Ok(mut state) = manager.shared.lock() {
+        if state.active.is_none() {
+            state.generation = state.generation.saturating_add(1);
+            state.review = None;
+        }
+    }
+}
+
+fn consume_copy_review(
+    manager: &DocumentAttachmentManager,
+    lock: &ApplicationLockManager,
+    request: &CopyDownloadRequest,
+    owner: Option<isize>,
+    snapshot: (u64, u64),
+) -> Result<NativeCopyReview, &'static str> {
+    let (ticket, generation) = snapshot;
+    // Match review publication and late stage completion: application lock
+    // first, then attachment state.
+    lock.commit_protected_action(ticket, || {
+        let mut state = manager
+            .shared
+            .lock()
+            .map_err(|_| "RO-DOCUMENT-STATE-UNAVAILABLE")?;
+        let Some(review) = state.review.as_ref() else {
+            return Err("RO-DOCUMENT-SESSION-UNAVAILABLE");
+        };
+        if review.preview.preview_id != request.review_id
+            || review.selection != request.selection
+            || review.ticket != ticket
+            || state.generation != generation
+            || !state.installed
+            || state.active.is_some()
+            || !review.connection.is_current()
+            || owner != Some(review.owner)
+        {
+            return Err("RO-DOCUMENT-SESSION-UNAVAILABLE");
+        }
+        Ok(state.review.take().unwrap())
+    })
+}
+
+#[tauri::command]
+pub(crate) async fn document_acquisition_download(
+    window: tauri::WebviewWindow,
+    manager: State<'_, DocumentAttachmentManager>,
+    lock: State<'_, ApplicationLockManager>,
+    request: CopyDownloadRequest,
+) -> Result<Value, ()> {
+    let unavailable = || begin_outcome(&request.operation_id, "unavailable", None);
+    if request.schema_version != "1.0"
+        || !request.selection.valid()
+        || !crate::supervisor::canonical_uuid_v7(&request.operation_id)
+        || !request.match_confirmed
+        || request.permitted_use != "project-only"
+    {
+        return Ok(unavailable());
+    }
+    let (ticket, generation) = {
+        let state = manager.shared.lock().map_err(|_| ())?;
+        let Some(review) = state.review.as_ref() else {
+            return Ok(unavailable());
+        };
+        (review.ticket, state.generation)
+    };
+    let review = consume_copy_review(
+        &manager,
+        &lock,
+        &request,
+        crate::directory_window_handle(&window),
+        (ticket, generation),
+    );
+    let Ok(review) = review else {
+        return Ok(unavailable());
+    };
+    let session_id = review.session_id.clone();
+    let active = ActiveAttachment {
+        operation_id: request.operation_id.clone(),
+        mode: AttachmentMode::Remote,
+        selection: request.selection.clone(),
+        document: request.selection.document(
+            review.connection.document_root().into(),
+            request.operation_id.clone(),
+        ),
+        session_id: session_id.clone(),
+        owner: review.owner,
+        ticket: review.ticket,
+        connection: review.connection,
+        candidate: None,
+        commit_request: None,
+        generation: 0,
+        staging: true,
+        cancelling: false,
+    };
+    if !manager.activate(active) {
+        return Ok(unavailable());
+    }
+    let active = manager.current(&request.operation_id).ok_or(())?;
+    let worker_manager = manager.inner().clone();
+    let worker_window = window.clone();
+    let worker_lock = lock.inner().clone();
+    tauri::async_runtime::spawn_blocking(move || {
+        let authorized = || {
+            worker_manager.current(&active.operation_id).is_some()
+                && worker_lock.finish_protected_action(active.ticket).is_ok()
+                && crate::directory_window_handle(&worker_window) == Some(active.owner)
+                && active.connection.is_current()
+        };
+        let outcome = active.connection.document_request_owned(NativeDocumentAction::Download,
+            json!({"root":active.connection.document_root(),"projectId":active.selection.project_id,
+                "sessionId":active.session_id,"previewId":review.preview.preview_id,
+                "confirmation":review.preview.confirmation,"operationId":active.operation_id}), &authorized)
+            .map_err(|_| PickerFailure::Unavailable)
+            .and_then(|response| decode_remote_candidate(response, &active));
+        finish_stage(&worker_manager, &worker_window, &active, outcome);
+    });
+    Ok(begin_outcome(
+        &request.operation_id,
+        "armed",
+        Some(&session_id),
+    ))
+}
+
 #[derive(Clone, Debug, Deserialize, Serialize, Eq, PartialEq)]
 #[serde(rename_all = "camelCase", deny_unknown_fields)]
 pub(crate) struct AttachmentSelection {
@@ -68,6 +740,7 @@ impl AttachmentSelection {
 pub(crate) enum AttachmentMode {
     Choose,
     Drop,
+    Remote,
 }
 
 #[derive(Clone, Debug, Deserialize)]
@@ -82,6 +755,7 @@ pub(crate) struct BeginRequest {
 impl BeginRequest {
     fn valid(&self) -> bool {
         self.schema_version == "1.0"
+            && matches!(self.mode, AttachmentMode::Choose | AttachmentMode::Drop)
             && crate::supervisor::canonical_uuid_v7(&self.operation_id)
             && self.selection.valid()
     }
@@ -196,6 +870,12 @@ fn problem_code(code: &str) -> &'static str {
         "RO-CORE-DOCUMENT-STORAGE-PRESSURE" => "storage-pressure",
         "RO-CORE-DOCUMENT-CANDIDATE-UNAVAILABLE" => "candidate-unavailable",
         "RO-CORE-DOCUMENT-CANCELLED" => "interrupted",
+        "RO-CORE-DOCUMENT-CLEANUP-REQUIRED" => "cleanup-required",
+        "RO-CORE-DOCUMENT-COPY-UNAVAILABLE" => "copy-unavailable",
+        "RO-CORE-DOCUMENT-ACCESS-DENIED" => "access-denied",
+        "RO-CORE-DOCUMENT-DESTINATION-DENIED" => "destination-denied",
+        "RO-CORE-DOCUMENT-NETWORK-UNAVAILABLE" => "network-unavailable",
+        "RO-CORE-DOCUMENT-DOWNLOAD-FAILED" => "download-failed",
         _ => "unavailable",
     }
 }
@@ -236,6 +916,7 @@ struct AttachmentState {
     installed: bool,
     generation: u64,
     active: Option<ActiveAttachment>,
+    review: Option<NativeCopyReview>,
 }
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
@@ -279,6 +960,7 @@ impl DocumentAttachmentManager {
             if !installed {
                 state.generation = state.generation.saturating_add(1);
                 state.active = None;
+                state.review = None;
             }
         }
     }
@@ -291,6 +973,7 @@ impl DocumentAttachmentManager {
         if let Ok(mut state) = self.shared.lock() {
             state.generation = state.generation.saturating_add(1);
             state.active = None;
+            state.review = None;
         }
     }
 
@@ -308,6 +991,7 @@ impl DocumentAttachmentManager {
         }
         state.generation = state.generation.saturating_add(1);
         active.generation = state.generation;
+        state.review = None;
         state.active = Some(active);
         true
     }
@@ -746,6 +1430,8 @@ struct CoreStatus {
     candidate_id: Option<String>,
     attachment_id: Option<String>,
     document_revision_id: Option<String>,
+    #[serde(default)]
+    intake_code: Option<String>,
 }
 
 fn decode_core_status(
@@ -784,6 +1470,19 @@ fn decode_core_status(
         && status.document_revision_id.is_none();
     if !same
         || !ids_valid
+        || (status.state.starts_with("intake-") != status.intake_code.is_some())
+        || status.intake_code.as_ref().is_some_and(|code| {
+            code.is_empty()
+                || code.len() > 64
+                || !code
+                    .bytes()
+                    .all(|byte| byte.is_ascii_lowercase() || byte.is_ascii_digit() || byte == b'-')
+                || status.operation_id.is_none()
+                || status.command_id.is_some()
+                || status.candidate_id.is_some()
+                || status.attachment_id.is_some()
+                || status.document_revision_id.is_some()
+        })
         || (request
             .operation_id
             .as_ref()
@@ -811,6 +1510,53 @@ fn renderer_status(
         "selection":request.selection,"operationId":status.operation_id,"commandId":status.command_id,
         "attachmentId":null,"documentRevisionId":null,"code":"candidate-unavailable","retryRequest":null});
     match status.state.as_str() {
+        "intake-running" => match status.intake_code.as_deref() {
+            Some("intake-downloading") => {
+                result["status"] = "downloading".into();
+                result["code"] = Value::Null;
+            }
+            Some("intake-validating") => {
+                result["status"] = "validating".into();
+                result["code"] = Value::Null;
+            }
+            _ => {
+                result["code"] = "interrupted".into();
+            }
+        },
+        "intake-failed" => {
+            result["status"] = "failed".into();
+            result["code"] = match status.intake_code.as_deref() {
+                Some("acquisition-cleanup-required") => "cleanup-required",
+                Some("acquisition-rights-denied") => "rights-denied",
+                Some("acquisition-unavailable") => "copy-unavailable",
+                Some("acquisition-access-denied") => "access-denied",
+                Some(
+                    "acquisition-redirect-denied"
+                    | "acquisition-destination-denied"
+                    | "acquisition-egress-denied",
+                ) => "destination-denied",
+                Some("acquisition-response-too-large") => "oversize",
+                Some("acquisition-content-type-denied") => "format-mismatch",
+                Some("acquisition-network-unavailable") => "network-unavailable",
+                Some(
+                    "acquisition-policy-changed"
+                    | "acquisition-preview-stale"
+                    | "acquisition-authority-changed",
+                ) => "authority-changed",
+                Some(
+                    "attempts-exhausted"
+                    | "lease-expired"
+                    | "acquisition-cancelled"
+                    | "acquisition-network-timeout",
+                ) => "interrupted",
+                _ => "download-failed",
+            }
+            .into();
+        }
+        "intake-cancelled" => {
+            result["status"] = "cancelled".into();
+            result["code"] = Value::Null;
+        }
         "metadata-only"
             if status.operation_id.is_none()
                 && status.command_id.is_none()
@@ -1203,6 +1949,209 @@ pub(crate) async fn document_attachment_commit(
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn pending_download_lock_wait_does_not_hold_attachment_state_or_block_cancellation() {
+        use std::{sync::mpsc, thread, time::Duration};
+        let fixture_parent = std::env::temp_dir().canonicalize().unwrap();
+        let fixture_name = format!(
+            "ro-document-lock-order-{}-{}",
+            std::process::id(),
+            std::time::SystemTime::now()
+                .duration_since(std::time::UNIX_EPOCH)
+                .unwrap()
+                .as_nanos()
+        );
+        let root = fixture_parent.join(&fixture_name);
+        std::fs::create_dir(&root).unwrap();
+        let lock = ApplicationLockManager::new(&root);
+        let ticket = lock.begin_protected_action().unwrap();
+        let manager = DocumentAttachmentManager::default();
+        manager.set_installed(true);
+        let generation = manager.shared.lock().unwrap().generation;
+        let (held_tx, held_rx) = mpsc::channel();
+        let (release_tx, release_rx) = mpsc::channel();
+        let held_lock = lock.clone();
+        let completion = thread::spawn(move || {
+            held_lock.commit_protected_action(ticket, || {
+                held_tx.send(()).unwrap();
+                release_rx.recv_timeout(Duration::from_secs(3)).unwrap();
+                Ok(())
+            })
+        });
+        held_rx.recv_timeout(Duration::from_secs(2)).unwrap();
+        let request: CopyDownloadRequest = serde_json::from_value(json!({"schemaVersion":"1.0","selection":selection(),
+            "reviewId":"01900000-0000-7000-8000-000000000008",
+            "operationId":"01900000-0000-7000-8000-000000000009","matchConfirmed":true,"permittedUse":"project-only"})).unwrap();
+        let worker_manager = manager.clone();
+        let worker_lock = lock.clone();
+        let (started_tx, started_rx) = mpsc::channel();
+        let download = thread::spawn(move || {
+            started_tx.send(()).unwrap();
+            consume_copy_review(
+                &worker_manager,
+                &worker_lock,
+                &request,
+                Some(1),
+                (ticket, generation),
+            )
+            .is_err()
+        });
+        started_rx.recv_timeout(Duration::from_secs(2)).unwrap();
+        thread::sleep(Duration::from_millis(50));
+        let cancel_manager = manager.clone();
+        let (cancel_tx, cancel_rx) = mpsc::channel();
+        let cancellation = thread::spawn(move || {
+            cancel_manager.cancel_all();
+            cancel_tx.send(()).unwrap();
+        });
+        let cancelled_without_application_lock =
+            cancel_rx.recv_timeout(Duration::from_millis(500)).is_ok();
+        release_tx.send(()).unwrap();
+        completion.join().unwrap().unwrap();
+        assert!(download.join().unwrap());
+        cancellation.join().unwrap();
+        assert!(
+            cancelled_without_application_lock,
+            "download held attachment state while waiting for application lock"
+        );
+        assert!(manager.shared.lock().unwrap().active.is_none());
+        assert!(lock.begin_protected_action().is_ok());
+        // Only the uniquely owned policy fixture directory is removed.
+        drop(lock);
+        assert_eq!(
+            root.canonicalize().unwrap(),
+            fixture_parent.join(fixture_name)
+        );
+        std::fs::remove_dir_all(root).unwrap();
+    }
+
+    #[test]
+    fn exact_intake_status_preserves_phase_and_cleanup_denial_without_availability() {
+        let request: StatusRequest =
+            serde_json::from_value(json!({"schemaVersion":"1.0","selection":selection(),
+            "operationId":"01900000-0000-7000-8000-000000000007","commandId":null}))
+            .unwrap();
+        let manager = DocumentAttachmentManager::default();
+        for (state, code, expected_status, expected_code) in [
+            (
+                "intake-running",
+                "intake-downloading",
+                "downloading",
+                Value::Null,
+            ),
+            (
+                "intake-running",
+                "intake-validating",
+                "validating",
+                Value::Null,
+            ),
+            (
+                "intake-failed",
+                "acquisition-cleanup-required",
+                "failed",
+                json!("cleanup-required"),
+            ),
+            (
+                "intake-failed",
+                "attempts-exhausted",
+                "failed",
+                json!("interrupted"),
+            ),
+        ] {
+            let mut body = selection();
+            body["state"] = state.into();
+            body["operationId"] = request.operation_id.clone().unwrap().into();
+            body["commandId"] = Value::Null;
+            body["candidateId"] = Value::Null;
+            body["attachmentId"] = Value::Null;
+            body["documentRevisionId"] = Value::Null;
+            body["intakeCode"] = code.into();
+            let response = crate::supervisor::CoreApiResponse {
+                status: 200,
+                content_type: "application/json".into(),
+                trace_id: String::new(),
+                etag: None,
+                body: body.to_string(),
+            };
+            let status = decode_core_status(response.clone(), &request).unwrap();
+            let projected = renderer_status(status, &request, &"a".repeat(32), &manager);
+            assert_eq!(projected["status"], expected_status);
+            assert_eq!(projected["code"], expected_code);
+            assert!(projected["attachmentId"].is_null() && projected["retryRequest"].is_null());
+            body["attachmentId"] = "01900000-0000-7000-8000-000000000009".into();
+            assert!(
+                decode_core_status(
+                    crate::supervisor::CoreApiResponse {
+                        body: body.to_string(),
+                        ..response
+                    },
+                    &request
+                )
+                .is_none()
+            );
+        }
+    }
+
+    #[test]
+    fn remote_mode_cannot_enter_the_picker_or_drop_begin_route() {
+        let request = json!({"schemaVersion":"1.0","mode":"remote",
+            "operationId":"01900000-0000-7000-8000-000000000007","selection":selection()});
+        assert!(
+            !serde_json::from_value::<BeginRequest>(request)
+                .unwrap()
+                .valid()
+        );
+    }
+
+    #[test]
+    fn copy_review_and_download_do_not_accept_renderer_urls_or_secrets() {
+        let review = json!({"schemaVersion":"1.0","selection":selection(),
+            "copyId":"01900000-0000-7000-8000-000000000007","copySha256":"a".repeat(64)});
+        let download = json!({"schemaVersion":"1.0","selection":selection(),
+            "reviewId":"01900000-0000-7000-8000-000000000008",
+            "operationId":"01900000-0000-7000-8000-000000000009","matchConfirmed":true,"permittedUse":"project-only"});
+        for field in [
+            "url",
+            "path",
+            "confirmation",
+            "actorId",
+            "cookies",
+            "redirectHosts",
+        ] {
+            let mut altered = review.clone();
+            altered[field] = json!("untrusted");
+            assert!(serde_json::from_value::<CopyReviewRequest>(altered).is_err());
+            let mut altered = download.clone();
+            altered[field] = json!("untrusted");
+            assert!(serde_json::from_value::<CopyDownloadRequest>(altered).is_err());
+        }
+    }
+
+    #[test]
+    fn safe_copy_projection_strips_url_and_keeps_unknown_license_and_version() {
+        let selected: AttachmentSelection = serde_json::from_value(selection()).unwrap();
+        let mut location = CoreCopyLocation {
+            location_id: "01900000-0000-7000-8000-000000000007".into(),
+            project_id: selected.project_id.clone(),
+            source_assertion_revision_id: selected.source_assertion_revision_id.clone(),
+            source_revision_id: "01900000-0000-7000-8000-000000000008".into(),
+            address: json!({"kind":"synthetic"}),
+            source_sha256: "a".repeat(64),
+            provider: "Synthetic provider".into(),
+            location_key: "copy-one".into(),
+            url: "https://oa.example.invalid/opaque-copy".into(),
+            license: None,
+            version: None,
+            location_sha256: "b".repeat(64),
+        };
+        let projection = location.safe_metadata(&selected).unwrap();
+        assert_eq!(projection["host"], "oa.example.invalid");
+        assert!(projection.get("url").is_none());
+        assert!(projection["license"].is_null() && projection["version"].is_null());
+        location.url = "https://user:secret@oa.example.invalid/copy".into();
+        assert!(location.safe_metadata(&selected).is_none());
+    }
 
     fn selection() -> Value {
         json!({"projectId":"01900000-0000-7000-8000-000000000001",

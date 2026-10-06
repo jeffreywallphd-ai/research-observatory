@@ -1001,7 +1001,13 @@ fn application_builder() -> tauri::Builder<tauri::Wry> {
         document_attachment::document_attachment_begin,
         document_attachment::document_attachment_cancel,
         document_attachment::document_attachment_commit,
-        document_attachment::document_attachment_status
+        document_attachment::document_attachment_status,
+        document_attachment::document_acquisition_copies,
+        document_attachment::document_acquisition_review,
+        document_attachment::document_acquisition_clear_review,
+        document_attachment::document_acquisition_download,
+        document_attachment::document_acquisition_access_need,
+        document_attachment::document_acquisition_recover
     ];
     #[cfg(not(windows))]
     let handler: fn(tauri::ipc::Invoke<tauri::Wry>) -> bool = tauri::generate_handler![

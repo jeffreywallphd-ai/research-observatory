@@ -2,12 +2,17 @@
 
 from __future__ import annotations
 
+from collections.abc import Callable
 from dataclasses import dataclass
 from typing import Literal, Protocol
 
 from ..rights_policy import RightsSubject
 
 MAX_DOCUMENT_BYTES = 128 * 1024 * 1024
+
+
+class DocumentPublicationGuard(Protocol):
+    def __call__[Result](self, action: Callable[[], Result]) -> Result: ...
 
 
 class DocumentInspectionProblem(ValueError):
@@ -85,6 +90,9 @@ type AttachmentStatusState = Literal[
     "stale-session",
     "legacy",
     "unavailable",
+    "intake-running",
+    "intake-failed",
+    "intake-cancelled",
 ]
 
 
@@ -104,3 +112,4 @@ class DocumentAttachmentStatus:
     candidate_id: str | None
     attachment_id: str | None
     document_revision_id: str | None
+    intake_code: str | None = None

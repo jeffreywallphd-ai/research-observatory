@@ -8,6 +8,9 @@ OS drop or Core attachment persistence.
 
 from __future__ import annotations
 
+import hashlib
+import json
+import os
 import sys
 import unittest
 from contextlib import ExitStack
@@ -58,6 +61,7 @@ ATTACHMENT_HOST = r""";
     ready: false, begin: [], commit: [], cancel: [], status: [], failure: null,
     commitFailure: null, listener: null, lastEvent: null, durable: null, retryRequest: null,
     ambiguous: false, staleVersion: false, statusOverride: null,
+    copiesEnabled:false, reviews:[], downloads:[], recoveries:[], notes:[], clears:0,
     holdStatus: false, releaseStatus: null,
   };
   const emit = payload => {
@@ -126,6 +130,39 @@ ATTACHMENT_HOST = r""";
     }
     if (command === 'document_attachment_capabilities')
       return {schemaVersion:'1.0', status:state.ready ? 'ready' : 'unavailable', projectId:args.projectId};
+    if (command === 'document_acquisition_copies') {
+      const copy = (id, host, license, version) => ({copyId:id, copySha256:'f'.repeat(64),
+        provider:'Synthetic provider', host, license, version});
+      return {schemaVersion:'1.0', selection:args.request.selection,
+        copies:state.copiesEnabled ? [
+          copy('01900000-0000-7000-8000-000000000093','papers.example','CC-BY-4.0','accepted'),
+          copy('01900000-0000-7000-8000-000000000094','archive.example',null,null)] : [],
+        retained:state.copiesEnabled ? [{candidateId,sourceName:'retained.txt',
+          originalOperationId:'01900000-0000-7000-8000-000000000095'}] : []};
+    }
+    if (command === 'document_acquisition_review') {
+      state.reviews.push(args.request);
+      return {schemaVersion:'1.0', selection:args.request.selection,
+        reviewId:'01900000-0000-7000-8000-000000000096',
+        copy:{copyId:args.request.copyId,copySha256:args.request.copySha256,provider:'Synthetic provider',
+          host:args.request.copyId.endsWith('93') ? 'papers.example' : 'archive.example',
+          license:args.request.copyId.endsWith('93') ? 'CC-BY-4.0' : null,
+          version:args.request.copyId.endsWith('93') ? 'accepted' : null},
+        redirectHosts:[],storeInspect:'allowed',egress:'confirmed-preview-required'};
+    }
+    if (command === 'document_acquisition_clear_review') { state.clears += 1; return; }
+    if (command === 'document_acquisition_access_need') {
+      state.notes.push(args.request);
+      return {schemaVersion:'1.0',status:'recorded',commandId:args.request.commandId};
+    }
+    if (command === 'document_acquisition_download' || command === 'document_acquisition_recover') {
+      const request=args.request;
+      (command === 'document_acquisition_download' ? state.downloads : state.recoveries).push(request);
+      setTimeout(() => emit({schemaVersion:'1.0',status:'candidate',operationId:request.operationId,
+        sessionId,selection:request.selection,candidate:{candidateId,sourceName:'remote.txt',byteLength:42,
+          format:'txt',confirmationSha256:'d'.repeat(64),confirmationRequired:true}}), 50);
+      return {schemaVersion:'1.0',status:'armed',operationId:request.operationId,sessionId};
+    }
     if (command === 'document_attachment_status') {
       const request = args.request;
       state.status.push(request);
@@ -263,7 +300,13 @@ class DocumentAttachmentInteractionTests(unittest.TestCase):
         with sync_playwright() as playwright, ExitStack() as cleanup:
             browser = playwright.chromium.launch(headless=True)
             cleanup.callback(browser.close)
-            context = browser.new_context(viewport={"width": 1440, "height": 1000}, reduced_motion="reduce")
+            context = browser.new_context(
+                viewport={"width": 1440, "height": 1000},
+                reduced_motion="reduce",
+                locale="en-US",
+                timezone_id="UTC",
+                device_scale_factor=1,
+            )
             cleanup.callback(context.close)
             document = inline_product_index(REPO)
             context.route(
@@ -296,6 +339,53 @@ class DocumentAttachmentInteractionTests(unittest.TestCase):
             page.get_by_role("button", name="Review selected Work versions", exact=True).click()
             page.get_by_role("button", name="Attach full text to this version", exact=True).click()
             panel = page.get_by_role("region", name="Selected-version attachment")
+            capture_value = os.environ.get("RO_T03_UI_CAPTURE_ROOT")
+            capture_root = Path(capture_value).resolve() if capture_value else None
+            captured = []
+            if capture_root is not None:
+                self.assertTrue(capture_root.is_relative_to(REPO / "artifacts/evidence"))
+                self.assertTrue(capture_root.name.startswith("CAP-05.S01.T03.EX01.product-intake-captures-"))
+                self.assertFalse(capture_root.exists(), "Do not overwrite earlier or adverse captures")
+                capture_root.mkdir()
+
+            def retain_intake_state(state: str) -> None:
+                if capture_root is None:
+                    return
+                viewport = page.viewport_size
+                old_theme = page.locator("html").get_attribute("data-theme") or "light"
+                for theme in ("light", "dark"):
+                    for width in (1440, 720):
+                        page.set_viewport_size({"width": width, "height": 1000})
+                        page.emulate_media(color_scheme=theme, reduced_motion="reduce")
+                        page.locator("html").evaluate("(node, theme) => node.dataset.theme=theme", theme)
+                        page.evaluate("document.fonts.ready")
+                        page.evaluate(
+                            "() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)))"
+                        )
+                        payload = panel.screenshot(animations="disabled", caret="hide", scale="device")
+                        digest = hashlib.sha256(payload).hexdigest()
+                        filename = f"{state}-{theme}-{width}-{digest}.png"
+                        self.assertFalse((capture_root / filename).exists())
+                        (capture_root / filename).write_bytes(payload)
+                        geometry = panel.evaluate(
+                            "node => ({width:node.getBoundingClientRect().width, "
+                            "clientWidth:node.clientWidth, scrollWidth:node.scrollWidth})"
+                        )
+                        self.assertLessEqual(geometry["scrollWidth"], geometry["clientWidth"] + 1)
+                        captured.append(
+                            {
+                                "state": state,
+                                "theme": theme,
+                                "viewport": {"width": width, "height": 1000},
+                                "filename": filename,
+                                "sha256": digest,
+                                "geometry": geometry,
+                            }
+                        )
+                page.set_viewport_size(viewport)
+                page.locator("html").evaluate("(node, theme) => node.dataset.theme=theme", old_theme)
+                page.emulate_media(color_scheme=old_theme, reduced_motion="reduce")
+
             panel.get_by_text("Native attachment unavailable", exact=True).wait_for()
             self.assertIn("Attachment status unavailable", panel.inner_text())
             self.assertNotIn("no local copy attached", panel.inner_text())
@@ -311,6 +401,80 @@ class DocumentAttachmentInteractionTests(unittest.TestCase):
             panel.get_by_text("Authoritative status: attachment failed", exact=False).wait_for()
             self.assertTrue(panel.get_by_role("button", name="Choose local full-text file…").is_enabled())
             self.assertTrue(panel.get_by_role("button", name="Arm native file drop").is_enabled())
+            # Mounted product copy review: opaque synthetic native results are
+            # UI proof only; real transfer/persistence is qualified separately.
+            page.evaluate("window.__ATTACH_TEST__.copiesEnabled = true")
+            source = panel.get_by_label("Source assertion for this version")
+            source.select_option("")
+            source.select_option(work["assertionRevisionIds"][0])
+            copies = panel.get_by_role("region", name="Available copies", exact=True)
+            first = copies.get_by_role("button", name="Review this copy · papers.example", exact=True)
+            first.wait_for()
+            self.assertEqual(2, copies.get_by_role("button", name="Review this copy", exact=False).count())
+            self.assertIn("Unknown", copies.inner_text())
+            first.click()
+            review_heading = copies.get_by_role("heading", name="Review this exact copy")
+            review_heading.wait_for()
+            self.assertTrue(review_heading.evaluate("element => element === document.activeElement"))
+            self.assertTrue(copies.get_by_role("button", name="Download this copy").is_disabled())
+            retain_intake_state("copy-review")
+            page.keyboard.press("Escape")
+            self.assertTrue(first.evaluate("element => element === document.activeElement"))
+            self.assertEqual([], page.evaluate("window.__ATTACH_TEST__.downloads"))
+            copies.get_by_label("Access state", exact=True).select_option("entitlement-required")
+            copies.get_by_label("Local request placeholder", exact=True).select_option("institutional")
+            copies.get_by_role("button", name="Record local access need").click()
+            copies.get_by_text("Local access need recorded.", exact=False).wait_for()
+            self.assertEqual([], page.evaluate("window.__ATTACH_TEST__.downloads"))
+            self.assertEqual("institutional", page.evaluate("window.__ATTACH_TEST__.notes[0].channel"))
+            retain_intake_state("local-access-need")
+            first.click()
+            copies.get_by_label("I confirm this copy matches", exact=False).check()
+            copies.get_by_label("I may store and inspect", exact=False).check()
+            copies.get_by_role("button", name="Download this copy").click()
+            panel.get_by_role("heading", name="Pending document candidate").wait_for()
+            self.assertEqual(1, len(page.evaluate("window.__ATTACH_TEST__.downloads")))
+            self.assertTrue(panel.get_by_role("button", name="Attach to selected version").is_disabled())
+            retain_intake_state("pending-candidate")
+            page.evaluate("window.__ATTACH_TEST__.statusOverride = {status:'candidate', code:null}")
+            panel.get_by_role("button", name="View Task Center").click()
+            page.get_by_role("heading", name="Task Center", exact=True).wait_for()
+            page.get_by_text("Selected copy 01900000-0000-7000-8000-000000000093.", exact=False).wait_for()
+            page.get_by_role("button", name="Return to selected Work/version").click()
+            panel.get_by_text("Returned selected copy", exact=False).wait_for()
+            copies.get_by_text("Retained inspected candidates", exact=True).wait_for()
+            self.assertTrue(
+                copies.get_by_role("button", name="Review this copy · papers.example", exact=True).is_disabled()
+            )
+            self.assertTrue(copies.get_by_role("button", name="Review retained candidate · retained.txt").is_enabled())
+            copies.get_by_role("button", name="Review retained candidate · retained.txt").click()
+            panel.get_by_role("heading", name="Pending document candidate").wait_for()
+            self.assertEqual(1, len(page.evaluate("window.__ATTACH_TEST__.downloads")))
+            self.assertEqual(1, len(page.evaluate("window.__ATTACH_TEST__.recoveries")))
+            self.assertEqual(0, panel.get_by_text("Returned selected copy", exact=False).count())
+            retain_intake_state("fresh-retained-recovery")
+            if capture_root is not None:
+                (capture_root / "capture-index.json").write_text(
+                    json.dumps(
+                        {
+                            "schemaVersion": "1.0",
+                            "documentType": "task-owned-mounted-intake-captures",
+                            "browserVersion": browser.version,
+                            "nativeReplies": "synthetic opaque replies; actual Core version context",
+                            "locale": "en-US",
+                            "timezoneId": "UTC",
+                            "deviceScaleFactor": 1,
+                            "captures": captured,
+                        },
+                        indent=2,
+                    )
+                    + "\n",
+                    encoding="utf-8",
+                )
+            page.evaluate("window.__ATTACH_TEST__.copiesEnabled = false; window.__ATTACH_TEST__.statusOverride = null")
+            panel.get_by_role("button", name="Cancel attachment").click()
+            page.get_by_role("button", name="Attach full text to this version", exact=True).click()
+            source.select_option(work["assertionRevisionIds"][0])
             page.evaluate("window.__ATTACH_TEST__.statusOverride = null")
             page.evaluate("window.__ATTACH_TEST__.failure = 'password-protected'")
             panel.get_by_role("button", name="Choose local full-text file…").click()

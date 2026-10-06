@@ -419,7 +419,7 @@ class LocalObjectStoreTests(unittest.TestCase):
         self.assertEqual("deleted", self.store.metadata(stored.object_sha256).storage_state)
         self.assertEqual((), self.object_files())
 
-        abandoned = self.project / ".tmp" / "object-store" / "abandoned.partial"
+        abandoned = self.project / ".tmp" / "object-store" / ("a" * 48 + ".partial")
         abandoned.parent.mkdir(parents=True, exist_ok=True)
         abandoned.write_bytes(b"not published")
         create_local_object_store(self.project, PROJECT_ID, allow_plaintext_fixture=True)

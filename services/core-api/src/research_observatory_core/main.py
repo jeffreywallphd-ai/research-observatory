@@ -9,7 +9,8 @@ import secrets
 import socket
 import sys
 import threading
-from collections.abc import Callable
+from collections.abc import Callable, Iterator
+from contextlib import contextmanager
 from functools import partial
 from pathlib import Path
 from typing import BinaryIO
@@ -34,7 +35,14 @@ from .corpus_query import ConnectorWorkerQueryResolver
 from .corpus_report_repository import SqliteCorpusReportRepository
 from .corpus_repository import SqliteCorpusRepository
 from .corpus_service import CorpusService
-from .document_attachment_api import DocumentCommit, DocumentStageCommand, DocumentStatusQuery
+from .document_attachment_api import (
+    DocumentAccessNeedCommand,
+    DocumentCandidateRecovery,
+    DocumentCommit,
+    DocumentRecoveryQuery,
+    DocumentStageCommand,
+    DocumentStatusQuery,
+)
 from .document_attachment_repository import AcquisitionRepository, LocalDocumentAttachmentService
 from .import_preview_repository import sqlite_import_preview_repository
 from .import_preview_service import ImportPreviewService, ImportProjectAdapters
@@ -96,7 +104,7 @@ from .windows_credentials import (
     create_windows_object_key_provider,
     default_windows_profile_vault_path,
 )
-from .workflow_executor import LocalAdmissionController, ProjectWorkerPolicy, WorkerResources
+from .workflow_executor import LocalAdmissionController, LocalWorkerAdmission, ProjectWorkerPolicy, WorkerResources
 from .workflow_progress import WorkflowProgressService
 
 EXIT_CONFIGURATION_ERROR = 2
@@ -116,12 +124,32 @@ class DocumentAttachmentRuntime:
         imports: ImportPreviewService,
         corpus: CorpusService,
         object_store_factory: Callable[[Path, str], ObjectStore],
+        *,
+        admission_factory: Callable[[Path, str], LocalWorkerAdmission] | None = None,
     ) -> None:
         self._imports = imports
         self._corpus = corpus
         self._object_store_factory = object_store_factory
+        self._admission_factory = admission_factory
         self._acquisitions: dict[tuple[str, str, str], OpenAccessAcquisitionService] = {}
         self._acquisition_slots: dict[str, threading.BoundedSemaphore] = {}
+
+    @contextmanager
+    def _document_reservation(self, root: str, project_id: str) -> Iterator[None]:
+        if self._admission_factory is None:
+            # Direct development fixtures may omit local OS composition.
+            # Production composition always supplies the shared controller.
+            yield
+            return
+        binding = self._admission_factory(Path(root).resolve(strict=True), project_id)
+        binding.validate(binding.repository)
+        token = binding.controller.reserve(binding, "document", local_limit=1)
+        if token is None:
+            raise AttachmentProblem("attachment-resource-unavailable")
+        try:
+            yield
+        finally:
+            binding.controller.release(token)
 
     def _acquisition(
         self, root: str, project_id: str, session_id: str, trace_id: str
@@ -200,15 +228,58 @@ class DocumentAttachmentRuntime:
                 return True
 
         # Remote waits and LPAC inspection run outside the lifecycle writer.
-        return service.acquire(
-            preview_id,
-            confirmation=confirmation,
-            operation_id=operation_id,
-            cancellation_requested=cancelled,
-        )
+        with self._document_reservation(root, project_id):
+            return service.acquire(
+                preview_id,
+                confirmation=confirmation,
+                operation_id=operation_id,
+                cancellation_requested=cancelled,
+            )
 
     def context(self, root: str, project_id: str) -> str:
         return self._imports.native_context(root, project_id)
+
+    def recover_candidate(self, command: DocumentCandidateRecovery, *, trace_id: str) -> AttachmentCandidate:
+        # A caller-provided session is meaningful only inside this native/Core
+        # lifecycle fence and current Corpus authority, as with explicit Attach.
+        return self._action(
+            command.root,
+            command.project_id,
+            command.session_id,
+            trace_id,
+            lambda selected, actor: selected.recover_candidate(
+                command.candidate_id,
+                original_operation_id=command.original_operation_id,
+                recovery_operation_id=command.recovery_operation_id,
+                session_id=command.session_id,
+                confirmation_sha256=command.confirmation_sha256,
+                exact_selection=command.selection.association,
+                actor=actor,
+            ),
+        )
+
+    def record_access_need(self, command: DocumentAccessNeedCommand, *, trace_id: str):
+        def record(selected, actor):
+            pages = ConnectorRepository(selected._database, command.project_id, selected._objects)
+            repository = AcquisitionRepository(selected._database, command.project_id, pages.source_record, selected)
+            return repository.record_access_need(
+                command.selection,
+                command_id=command.command_id,
+                kind=command.kind,
+                channel=command.channel,
+                actor=actor,
+            )
+
+        return self._action(command.root, command.project_id, command.session_id, trace_id, record)
+
+    def retained_candidates(self, command: DocumentRecoveryQuery, *, trace_id: str):
+        return self._action(
+            command.root,
+            command.project_id,
+            command.session_id,
+            trace_id,
+            lambda selected, actor: selected.retained_candidates(command.selection, actor=actor),
+        )
 
     def _action[Result](
         self,
@@ -258,8 +329,8 @@ class DocumentAttachmentRuntime:
             except PreviewProblem, ProjectLifecycleProblem:
                 return True
 
-        def publication_guard(publish: Callable[[], AttachmentCandidate]) -> AttachmentCandidate:
-            def current(_service: LocalDocumentAttachmentService, current_actor: CorpusActor) -> AttachmentCandidate:
+        def publication_guard[Result](action: Callable[[], Result]) -> Result:
+            def current(_service: LocalDocumentAttachmentService, current_actor: CorpusActor) -> Result:
                 if (
                     current_actor.actor_id,
                     current_actor.intent_revision_id,
@@ -267,28 +338,29 @@ class DocumentAttachmentRuntime:
                     current_actor.policy_sha256,
                 ) != (actor.actor_id, actor.intent_revision_id, actor.intent_sha256, actor.policy_sha256):
                     raise AttachmentProblem("attachment-authority-changed")
-                return publish()
+                return action()
 
             return self._action(command.root, command.project_id, command.session_id, trace_id, current)
 
         # The lifecycle mutex is released throughout encrypted upload and LPAC
         # inspection. Only the final candidate transaction is fenced by the
         # current project session again.
-        return service.stage(
-            source,
-            source_name=command.source_name,
-            declared_media_type=command.declared_media_type,
-            source_assertion_revision_id=command.source_assertion_revision_id,
-            work_id=command.work_id,
-            work_revision_id=command.work_revision_id,
-            version_id=command.version_id,
-            version_revision_id=command.version_revision_id,
-            actor=actor,
-            operation_id=command.operation_id,
-            session_id=command.session_id,
-            cancellation_requested=cancelled,
-            publication_guard=publication_guard,
-        )
+        with self._document_reservation(command.root, command.project_id):
+            return service.stage(
+                source,
+                source_name=command.source_name,
+                declared_media_type=command.declared_media_type,
+                source_assertion_revision_id=command.source_assertion_revision_id,
+                work_id=command.work_id,
+                work_revision_id=command.work_revision_id,
+                version_id=command.version_id,
+                version_revision_id=command.version_revision_id,
+                actor=actor,
+                operation_id=command.operation_id,
+                session_id=command.session_id,
+                cancellation_requested=cancelled,
+                publication_guard=publication_guard,
+            )
 
     def load_candidate(
         self, root: str, project_id: str, session_id: str, candidate_id: str, *, trace_id: str
@@ -447,6 +519,7 @@ def create_runtime_app(
                 identity,
                 key_provider=resolved_provider,
                 access_policy=privacy.object_access_policy(str(path)),
+                reconcile_abandoned=False,
             ),
             units=create_sqlite_unit_of_work_factory(path / "state/project.sqlite3", identity),
             admission=sqlite_workflow_admission_binding(
@@ -486,6 +559,7 @@ def create_runtime_app(
                     identity,
                     key_provider=resolved_provider,
                     access_policy=privacy.object_access_policy(str(path)),
+                    reconcile_abandoned=False,
                 ),
             )
 
@@ -551,6 +625,7 @@ def create_runtime_app(
                         identity,
                         key_provider=resolved_provider,
                         access_policy=privacy.object_access_policy(str(path)),
+                        reconcile_abandoned=False,
                     )
                 ),
             )
@@ -563,6 +638,7 @@ def create_runtime_app(
                     identity,
                     key_provider=resolved_provider,
                     access_policy=privacy.object_access_policy(str(path)),
+                    reconcile_abandoned=False,
                 )
                 demand = document_demand
                 return PluginWorkerAdapters(
@@ -642,6 +718,12 @@ def create_runtime_app(
                 identity,
                 key_provider=resolved_provider,
                 access_policy=privacy.object_access_policy(str(path)),
+                reconcile_abandoned=False,
+            ),
+            admission_factory=lambda path, identity: sqlite_workflow_admission_binding(
+                sqlite_workflow_queue_repository(path, identity),
+                controller=controller,
+                policy=ProjectWorkerPolicy(identity, document_demand, {"document": document_demand}, {"document": 1}),
             ),
         )
     return create_app(

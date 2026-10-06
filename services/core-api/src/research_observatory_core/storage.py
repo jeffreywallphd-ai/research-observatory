@@ -47,7 +47,8 @@ from research_observatory_core.ports.database_keys import (
 
 APPLICATION_ID = 0x524F4253  # ASCII "ROBS"
 DATABASE_PROFILE = "sqlite-wal-v1"
-DATABASE_SCHEMA_VERSION = 24
+DATABASE_SCHEMA_VERSION = 25
+DOCUMENT_INTAKE_PREDECESSOR_DATABASE_SCHEMA_VERSION = 24
 ACQUISITION_PREDECESSOR_DATABASE_SCHEMA_VERSION = 23
 ATTACHMENT_OPERATION_PREDECESSOR_DATABASE_SCHEMA_VERSION = 22
 DOCUMENT_ATTACHMENT_PREDECESSOR_DATABASE_SCHEMA_VERSION = 21
@@ -156,6 +157,12 @@ ACQUISITION_TABLES = (
     "acquisition_attempt_results",
     "document_acquisition_sources",
 )
+DOCUMENT_INTAKE_TABLES = (
+    "document_intake_jobs",
+    "document_intake_results",
+    "document_attachment_recoveries",
+    "document_access_needs",
+)
 
 EXPECTED_TABLES = (
     "schema_metadata",
@@ -222,6 +229,7 @@ EXPECTED_TABLES = (
     *DOCUMENT_ATTACHMENT_TABLES,
     *ATTACHMENT_OPERATION_TABLES,
     *ACQUISITION_TABLES,
+    *DOCUMENT_INTAKE_TABLES,
 )
 IMMUTABLE_ROW_TABLES = (
     "schema_metadata",
@@ -281,6 +289,7 @@ IMMUTABLE_ROW_TABLES = (
     *DOCUMENT_ATTACHMENT_TABLES,
     *ATTACHMENT_OPERATION_TABLES,
     *ACQUISITION_TABLES,
+    *DOCUMENT_INTAKE_TABLES,
 )
 MUTABLE_STATE_TABLES = (
     "object_records",
@@ -295,6 +304,8 @@ EXPECTED_TRIGGERS = tuple(
     sorted(
         [f"{table}_no_{operation}" for table in IMMUTABLE_ROW_TABLES for operation in ("delete", "update")]
         + [
+            "document_intake_job_binding",
+            "document_attachment_recovery_binding",
             "object_records_envelope_insert",
             "object_records_envelope_update",
             "provenance_events_bridge_legacy_after_insert",
@@ -453,7 +464,8 @@ PLUGIN_GRANT_PREDECESSOR_SCHEMA_SHA256 = "c6bdef5f65d5f688747a1effed96f3cd79556e
 DOCUMENT_ATTACHMENT_PREDECESSOR_SCHEMA_SHA256 = "c0aa9be9916fbe517f1ae94a86aeac13f19a92ec366b1a4d4d816bff614da034"
 ATTACHMENT_OPERATION_PREDECESSOR_SCHEMA_SHA256 = "32dc9a2b87efdd8b69b92271b8b1841e40da07bbc86e9943f59dbe5784f2617e"
 ACQUISITION_PREDECESSOR_SCHEMA_SHA256 = "0d5eb89a3975aa1d95fa4d190ce8debfee2ae43d390669ce8b3acb5f10a1a41e"
-EXPECTED_SCHEMA_SHA256 = "8078a6f7132200e6cf9e729f116c7b8ad6cd7c2bcf61d56f337e594dc7552a97"
+DOCUMENT_INTAKE_PREDECESSOR_SCHEMA_SHA256 = "8078a6f7132200e6cf9e729f116c7b8ad6cd7c2bcf61d56f337e594dc7552a97"
+EXPECTED_SCHEMA_SHA256 = "5c2090bb9586117f8f0e521efcb74ab10bd64a855fdcdc943035385cd1742951"
 
 _PROFILE_DOCUMENT: dict[str, Any] = {
     "schemaVersion": "1.0",
@@ -525,7 +537,8 @@ PLUGIN_GRANT_PREDECESSOR_PROFILE_SHA256 = "1e5b92e8e82cc64a191b4e3d5c1935d1931c4
 DOCUMENT_ATTACHMENT_PREDECESSOR_PROFILE_SHA256 = "74ed7818d261958b0039aef90c00b42ed5f97b3558cc61818fcca93a862a9822"
 ATTACHMENT_OPERATION_PREDECESSOR_PROFILE_SHA256 = "67361cdaa6b082a552f89a40c5a83036526da3a1230c8f6d3bef4cb57cc43997"
 ACQUISITION_PREDECESSOR_PROFILE_SHA256 = "bc4f7aa4029ed660329b407362c017a42de2966f1d18bbbcbe7c75f1afa837f5"
-EXPECTED_PROFILE_SHA256 = "b8f925467533ee5810343ce3a83a0035b8bf5e1f1989d421279994e0f73b9e1e"
+DOCUMENT_INTAKE_PREDECESSOR_PROFILE_SHA256 = "b8f925467533ee5810343ce3a83a0035b8bf5e1f1989d421279994e0f73b9e1e"
+EXPECTED_PROFILE_SHA256 = "50c8583b7958c4e035690fdcf305c8d968b3a4c26a21f18e8744436eabf45721"
 if _PROFILE_SHA256 != EXPECTED_PROFILE_SHA256:
     raise RuntimeError("compiled SQLite profile differs from its reviewed fingerprint")
 
@@ -3596,6 +3609,7 @@ SCHEMA_METADATA_V21_DDL = SCHEMA_METADATA_V20_DDL.replace("schema_version = 20",
 SCHEMA_METADATA_V22_DDL = SCHEMA_METADATA_V21_DDL.replace("schema_version = 21", "schema_version = 22")
 SCHEMA_METADATA_V23_DDL = SCHEMA_METADATA_V22_DDL.replace("schema_version = 22", "schema_version = 23")
 SCHEMA_METADATA_V24_DDL = SCHEMA_METADATA_V23_DDL.replace("schema_version = 23", "schema_version = 24")
+SCHEMA_METADATA_V25_DDL = SCHEMA_METADATA_V24_DDL.replace("schema_version = 24", "schema_version = 25")
 
 _V16_AGGREGATE_IDENTITY_DDL = next(
     statement for statement in _V1_DDL_STATEMENTS if "CREATE TABLE aggregate_identities" in statement
@@ -5295,8 +5309,122 @@ ACQUISITION_DDL = (
 )
 
 
+_ATTACHMENT_OPS = "document_attachment_operations"
+DOCUMENT_INTAKE_DDL = (
+    f"""
+        CREATE TABLE document_intake_jobs (
+            operation_id TEXT PRIMARY KEY CHECK ({_uuid_check("operation_id", "7")}),
+            project_id TEXT NOT NULL,
+            revision_id TEXT NOT NULL,
+            job_id TEXT NOT NULL UNIQUE,
+            kind TEXT NOT NULL CHECK (kind IN ('local-import','remote-download')),
+            actor_id TEXT NOT NULL CHECK ({_uuid_check("actor_id", "7")}),
+            session_id TEXT NOT NULL CHECK (length(session_id)=32 AND session_id=lower(session_id)
+                AND session_id NOT GLOB '*[^0-9a-f]*'),
+            selection_json TEXT NOT NULL CHECK (json_valid(selection_json)),
+            input_sha256 TEXT NOT NULL CHECK ({_sha256_check("input_sha256")}),
+            created_at TEXT NOT NULL CHECK ({_timestamp_check("created_at")}),
+            FOREIGN KEY (revision_id,project_id) REFERENCES aggregate_revisions(revision_id,project_id)
+                ON UPDATE RESTRICT ON DELETE RESTRICT,
+            FOREIGN KEY (job_id) REFERENCES workflow_queue_jobs(job_id)
+                ON UPDATE RESTRICT ON DELETE RESTRICT,
+            UNIQUE (operation_id,project_id)
+        ) STRICT
+    """,
+    f"""
+        CREATE TABLE document_intake_results (
+            operation_id TEXT PRIMARY KEY,
+            project_id TEXT NOT NULL,
+            revision_id TEXT NOT NULL,
+            outcome TEXT NOT NULL CHECK (outcome IN ('candidate','failed','cancelled')),
+            code TEXT NOT NULL CHECK ({_identifier_check("code", 64)}),
+            candidate_id TEXT,
+            FOREIGN KEY (operation_id,project_id) REFERENCES document_intake_jobs(operation_id,project_id)
+                ON UPDATE RESTRICT ON DELETE RESTRICT,
+            FOREIGN KEY (revision_id,project_id) REFERENCES aggregate_revisions(revision_id,project_id)
+                ON UPDATE RESTRICT ON DELETE RESTRICT,
+            FOREIGN KEY (candidate_id,project_id) REFERENCES document_attachment_candidates(candidate_id,project_id)
+                ON UPDATE RESTRICT ON DELETE RESTRICT,
+            CHECK ((outcome='candidate')=(candidate_id IS NOT NULL))
+        ) STRICT
+    """,
+    f"""
+        CREATE TABLE document_attachment_recoveries (
+            operation_id TEXT PRIMARY KEY CHECK ({_uuid_check("operation_id", "7")}),
+            project_id TEXT NOT NULL,
+            original_operation_id TEXT NOT NULL,
+            candidate_id TEXT NOT NULL,
+            revision_id TEXT NOT NULL,
+            actor_id TEXT NOT NULL CHECK ({_uuid_check("actor_id", "7")}),
+            session_id TEXT NOT NULL CHECK (length(session_id)=32 AND session_id=lower(session_id)
+                AND session_id NOT GLOB '*[^0-9a-f]*'),
+            basis_sha256 TEXT NOT NULL CHECK ({_sha256_check("basis_sha256")}),
+            basis_json TEXT NOT NULL CHECK (json_valid(basis_json)),
+            created_at TEXT NOT NULL CHECK ({_timestamp_check("created_at")}),
+            FOREIGN KEY (original_operation_id,project_id) REFERENCES {_ATTACHMENT_OPS}(operation_id,project_id)
+                ON UPDATE RESTRICT ON DELETE RESTRICT,
+            FOREIGN KEY (candidate_id,project_id) REFERENCES document_attachment_candidates(candidate_id,project_id)
+                ON UPDATE RESTRICT ON DELETE RESTRICT,
+            FOREIGN KEY (revision_id,project_id) REFERENCES aggregate_revisions(revision_id,project_id)
+                ON UPDATE RESTRICT ON DELETE RESTRICT,
+            UNIQUE (operation_id,project_id)
+        ) STRICT
+    """,
+    f"""
+        CREATE TABLE document_access_needs (
+            annotation_id TEXT PRIMARY KEY CHECK ({_uuid_check("annotation_id", "7")}),
+            project_id TEXT NOT NULL,
+            revision_id TEXT NOT NULL UNIQUE,
+            location_id TEXT,
+            selection_json TEXT NOT NULL CHECK (json_valid(selection_json)),
+            kind TEXT NOT NULL CHECK (kind IN ('unknown','unavailable','rights-denied','entitlement-required')),
+            channel TEXT NOT NULL CHECK (channel IN ('manual','institutional')),
+            actor_id TEXT NOT NULL CHECK ({_uuid_check("actor_id", "7")}),
+            command_sha256 TEXT NOT NULL CHECK ({_sha256_check("command_sha256")}),
+            created_at TEXT NOT NULL CHECK ({_timestamp_check("created_at")}),
+            FOREIGN KEY (revision_id,project_id) REFERENCES aggregate_revisions(revision_id,project_id)
+                ON UPDATE RESTRICT ON DELETE RESTRICT,
+            FOREIGN KEY (location_id,project_id) REFERENCES acquisition_locations(location_id,project_id)
+                ON UPDATE RESTRICT ON DELETE RESTRICT,
+            UNIQUE (annotation_id,project_id)
+        ) STRICT
+    """,
+    """
+        CREATE TRIGGER document_intake_job_binding BEFORE INSERT ON document_intake_jobs
+        WHEN NOT EXISTS (SELECT 1 FROM workflow_queue_jobs j JOIN aggregate_revisions r
+            ON r.project_id=j.project_id WHERE j.job_id=NEW.job_id AND j.project_id=NEW.project_id
+                AND j.max_attempts=1 AND j.command_fingerprint='sha256:'||NEW.input_sha256
+                AND j.activity_type=CASE NEW.kind WHEN 'remote-download' THEN 'document-intake-remote'
+                    ELSE 'document-intake-local' END
+                AND r.revision_id=NEW.revision_id AND r.aggregate_id=NEW.operation_id AND r.aggregate_kind='workflow')
+        BEGIN SELECT RAISE(ABORT,'document intake job binding denied'); END
+    """,
+    """
+        CREATE TRIGGER document_attachment_recovery_binding BEFORE INSERT ON document_attachment_recoveries
+        WHEN NOT EXISTS (SELECT 1 FROM document_attachment_operations o JOIN document_attachment_candidates c
+            ON c.project_id=o.project_id AND c.candidate_id=o.candidate_id
+            JOIN aggregate_revisions r ON r.project_id=c.project_id
+            WHERE o.project_id=NEW.project_id AND o.operation_id=NEW.original_operation_id
+                AND o.candidate_id=NEW.candidate_id AND o.actor_id=NEW.actor_id AND c.actor_id=NEW.actor_id
+                AND r.revision_id=NEW.revision_id AND r.aggregate_id=NEW.operation_id AND r.aggregate_kind='workflow'
+                AND json_extract(NEW.basis_json,'$.candidateId')=c.candidate_id
+                AND json_extract(NEW.basis_json,'$.candidateSha256')=c.candidate_sha256
+                AND json_extract(NEW.basis_json,'$.objectSha256')=c.object_sha256
+                AND json_extract(NEW.basis_json,'$.originalOperationId')=o.operation_id
+                AND json_extract(NEW.basis_json,'$.sessionId')=NEW.session_id
+                AND json_extract(NEW.basis_json,'$.actorId')=NEW.actor_id)
+        BEGIN SELECT RAISE(ABORT,'document recovery binding denied'); END
+    """,
+    *(
+        statement
+        for table in DOCUMENT_INTAKE_TABLES
+        for statement in _immutable_triggers(table, "document intake and recovery history is append-only")
+    ),
+)
+
+
 _DDL_STATEMENTS = (
-    SCHEMA_METADATA_V24_DDL,
+    SCHEMA_METADATA_V25_DDL,
     *_V17_BASE_DDL_STATEMENTS,
     SCHEMA_MIGRATIONS_DDL,
     *SCHEMA_MIGRATIONS_TRIGGERS,
@@ -5323,6 +5451,7 @@ _DDL_STATEMENTS = (
     *DOCUMENT_ATTACHMENT_DDL,
     *ATTACHMENT_OPERATION_DDL,
     *ACQUISITION_DDL,
+    *DOCUMENT_INTAKE_DDL,
 )
 
 

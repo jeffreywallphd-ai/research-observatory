@@ -277,14 +277,14 @@ class AcquisitionMigrationTests(unittest.TestCase):
         before = self.rows()
         self.assertEqual({table: len(rows) for table, rows in before.items()}, self.manifest["counts"])
         plan = runner.plan_database_migration(self.database, expected_project_id=self.manifest["projectId"])
-        self.assertEqual(("0024_open_access_acquisition",), plan.migration_ids)
+        self.assertEqual(("0024_open_access_acquisition", "0025_document_intake_recovery"), plan.migration_ids)
         result = runner.migrate_database(self.database, expected_project_id=self.manifest["projectId"])
         self.assertEqual(before, self.rows())
         with closing(sqlite3.connect(self.project / result.backup_relative_path)) as db:
             self.assertEqual(23, db.execute("PRAGMA user_version").fetchone()[0])
             self.assertEqual(self.manifest["schemaSha256"], _schema_fingerprint(db))
         with closing(sqlite3.connect(self.database)) as db:
-            self.assertEqual(24, db.execute("PRAGMA user_version").fetchone()[0])
+            self.assertEqual(25, db.execute("PRAGMA user_version").fetchone()[0])
             self.assertEqual([], db.execute("PRAGMA foreign_key_check").fetchall())
             self.assertEqual(0, db.execute("SELECT count(*) FROM acquisition_locations").fetchone()[0])
         for item in self.manifest["ciphertext"]:
@@ -996,16 +996,23 @@ class AcquisitionIntegrationTests(unittest.TestCase):
             ):
                 with self.subTest(table=table), self.assertRaisesRegex(sqlite3.IntegrityError, "append-only"):
                     db.execute(f"DELETE FROM {table}")
-            for row in db.execute(
-                "SELECT revision_id FROM acquisition_attempts UNION ALL "
-                "SELECT revision_id FROM acquisition_attempt_results"
-            ):
-                self.assertEqual(
-                    1, db.execute("SELECT count(*) FROM provenance_events WHERE revision_id=?", (row[0],)).fetchone()[0]
-                )
-                self.assertEqual(
-                    1, db.execute("SELECT count(*) FROM outbox_events WHERE revision_id=?", (row[0],)).fetchone()[0]
-                )
+            for table, has_queue_output in (("acquisition_attempts", False), ("acquisition_attempt_results", True)):
+                for row in db.execute(f"SELECT revision_id FROM {table}"):
+                    for events in ("provenance_events", "outbox_events"):
+                        kinds = [
+                            value[0]
+                            for value in db.execute(f"SELECT event_type FROM {events} WHERE revision_id=?", (row[0],))
+                        ]
+                        self.assertEqual(2 if has_queue_output else 1, len(kinds))
+                        self.assertEqual(
+                            int(has_queue_output), kinds.count("org.research-observatory.workflow.job-succeeded.v1")
+                        )
+                        self.assertEqual(
+                            1,
+                            len(
+                                [kind for kind in kinds if kind != "org.research-observatory.workflow.job-succeeded.v1"]
+                            ),
+                        )
 
 
 if __name__ == "__main__":

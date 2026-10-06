@@ -175,6 +175,88 @@ class _AttachmentRuntime:
 
 
 class DocumentAttachmentApiTests(unittest.TestCase):
+    def test_acquisition_failures_preserve_safe_distinct_native_states(self) -> None:
+        from research_observatory_core.ports.acquisition import AcquisitionProblem
+
+        command = {
+            "root": "C:/synthetic-project",
+            "projectId": self.runtime.project_id,
+            "sessionId": self.runtime.session_id,
+            "previewId": new_uuid_v7(),
+            "operationId": new_uuid_v7(),
+            "confirmation": "acquire-copy:" + new_uuid_v7() + ":" + "a" * 32,
+        }
+        for source, status, code in (
+            ("acquisition-rights-denied", 403, "RO-CORE-DOCUMENT-RIGHTS-DENIED"),
+            ("acquisition-unavailable", 404, "RO-CORE-DOCUMENT-COPY-UNAVAILABLE"),
+            ("acquisition-access-denied", 403, "RO-CORE-DOCUMENT-ACCESS-DENIED"),
+            ("acquisition-preview-stale", 409, "RO-CORE-DOCUMENT-AUTHORITY-CHANGED"),
+            ("acquisition-confirmation-required", 409, "RO-CORE-DOCUMENT-AUTHORITY-CHANGED"),
+            ("acquisition-redirect-denied", 422, "RO-CORE-DOCUMENT-DESTINATION-DENIED"),
+            ("acquisition-network-timeout", 408, "RO-CORE-DOCUMENT-CANCELLED"),
+            ("acquisition-response-invalid", 422, "RO-CORE-DOCUMENT-DOWNLOAD-FAILED"),
+        ):
+
+            def rejected(*args, source=source, **kwargs):
+                raise AcquisitionProblem(source)
+
+            with (
+                self.subTest(source=source),
+                patch.object(self.runtime, "acquisition_download", new=rejected, create=True),
+            ):
+                response = self.client.post("/native/document-attachments/copy-download", json=command)
+                self.assertEqual(status, response.status_code, response.text)
+                self.assertEqual(code, response.json()["code"])
+                self.assertFalse(response.json()["retryable"])
+                self.assertNotIn(command["confirmation"], response.text)
+
+    def test_copy_actions_reject_unknown_authority_duplicate_json_and_oversized_commands(self) -> None:
+        header = self._header(1)
+        selection = {
+            key: header[key]
+            for key in ("sourceAssertionRevisionId", "workId", "workRevisionId", "versionId", "versionRevisionId")
+        }
+        command = {
+            "root": header["root"],
+            "projectId": header["projectId"],
+            "sessionId": header["sessionId"],
+            "selection": selection,
+            "commandId": new_uuid_v7(),
+            "kind": "unknown",
+            "channel": "manual",
+        }
+        for field in ("actorId", "url", "permission", "cookies"):
+            response = self.client.post(
+                "/native/document-attachments/access-needs", json={**command, field: "untrusted"}
+            )
+            self.assertEqual(422, response.status_code)
+            self.assertNotIn("untrusted", response.text)
+        duplicate = json.dumps(command)[:-1] + ',"kind":"unavailable"}'
+        self.assertEqual(
+            422,
+            self.client.post(
+                "/native/document-attachments/access-needs",
+                content=duplicate,
+                headers={"Content-Type": "application/json"},
+            ).status_code,
+        )
+        self.assertEqual(
+            413,
+            self.client.post(
+                "/native/document-attachments/access-needs",
+                content=b" " * 8193,
+                headers={"Content-Type": "application/json"},
+            ).status_code,
+        )
+        self.assertEqual(
+            403,
+            self.client.post(
+                "/native/document-attachments/access-needs", json=command, headers={"Origin": "tauri://localhost"}
+            ).status_code,
+        )
+        paths = self.client.get("/openapi.json").json()["paths"]
+        self.assertFalse(any(path.startswith("/native/document-attachments") for path in paths))
+
     def setUp(self) -> None:
         self.runtime = _AttachmentRuntime()
         app = create_app(

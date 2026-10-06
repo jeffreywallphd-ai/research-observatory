@@ -503,6 +503,13 @@ pub(crate) enum NativeDocumentAction {
     Status,
     Cancel,
     Commit,
+    Copies,
+    Preview,
+    Download,
+    Recover,
+    AccessNeed,
+    Retained,
+    Candidate,
 }
 
 #[cfg(windows)]
@@ -512,6 +519,13 @@ impl NativeDocumentAction {
             Self::Status => "/native/document-attachments/status",
             Self::Cancel => "/native/document-attachments/cancel",
             Self::Commit => "/native/document-attachments/commit",
+            Self::Copies => "/native/document-attachments/copies",
+            Self::Preview => "/native/document-attachments/copy-preview",
+            Self::Download => "/native/document-attachments/copy-download",
+            Self::Recover => "/native/document-attachments/candidate-recovery",
+            Self::AccessNeed => "/native/document-attachments/access-needs",
+            Self::Retained => "/native/document-attachments/retained-candidates",
+            Self::Candidate => "/native/document-attachments/candidate",
         }
     }
 }
@@ -544,6 +558,16 @@ impl NativeImportConnection {
         action: NativeDocumentAction,
         body: serde_json::Value,
     ) -> Result<CoreApiResponse, &'static str> {
+        self.document_request_owned(action, body, &|| self.is_current())
+    }
+
+    #[cfg(windows)]
+    pub(crate) fn document_request_owned(
+        &self,
+        action: NativeDocumentAction,
+        body: serde_json::Value,
+        authorized: &dyn Fn() -> bool,
+    ) -> Result<CoreApiResponse, &'static str> {
         if body["root"].as_str() != Some(self.root.as_str())
             || body["projectId"].as_str() != Some(self.project_id.as_str())
             || !self.is_current()
@@ -554,17 +578,25 @@ impl NativeImportConnection {
         if body.len() > 8192 {
             return Err("RO-DOCUMENT-REQUEST-INVALID");
         }
-        let response = authenticated_api_request_with_cancellation(
+        let request = CoreApiRequest {
+            method: "POST".into(),
+            path: action.path().into(),
+            body: Some(body),
+            if_match: None,
+            idempotency_key: None,
+        };
+        let response = authenticated_api_request_bytes_owned(
             self.port,
             &self.token,
-            &CoreApiRequest {
-                method: "POST".into(),
-                path: action.path().into(),
-                body: Some(body),
-                if_match: None,
-                idempotency_key: None,
-            },
+            &request,
+            request.body.as_ref().map(|value| value.as_bytes()),
             Some(self.cancellation.as_ref()),
+            if matches!(action, NativeDocumentAction::Download) {
+                Duration::from_secs(325)
+            } else {
+                Duration::from_secs(2)
+            },
+            Some(authorized),
         );
         if !self.is_current() {
             return Err("RO-DOCUMENT-PROJECT-UNAVAILABLE");
@@ -3334,6 +3366,29 @@ fn authenticated_api_request_bytes(
     body: Option<&[u8]>,
     cancellation: Option<&AtomicBool>,
 ) -> Result<CoreApiResponse, &'static str> {
+    authenticated_api_request_bytes_owned(
+        port,
+        capability_token,
+        api_request,
+        body,
+        cancellation,
+        Duration::from_secs(2),
+        None,
+    )
+}
+
+fn authenticated_api_request_bytes_owned(
+    port: u16,
+    capability_token: &CapabilityToken,
+    api_request: &CoreApiRequest,
+    body: Option<&[u8]>,
+    cancellation: Option<&AtomicBool>,
+    duration: Duration,
+    authorized: Option<&dyn Fn() -> bool>,
+) -> Result<CoreApiResponse, &'static str> {
+    if authorized.is_some_and(|current| !current()) {
+        return Err("RO-CORE-API-CANCELLED");
+    }
     if cancellation.is_some_and(|flag| flag.load(Ordering::Acquire)) {
         return Err("RO-CORE-API-CANCELLED");
     }
@@ -3351,7 +3406,7 @@ fn authenticated_api_request_bytes(
         .set_read_timeout(Some(Duration::from_millis(50)))
         .map_err(|_| "RO-CORE-API-UNAVAILABLE")?;
     stream
-        .set_write_timeout(Some(Duration::from_secs(1)))
+        .set_write_timeout(Some(Duration::from_millis(50)))
         .map_err(|_| "RO-CORE-API-UNAVAILABLE")?;
     let mut wire = Vec::with_capacity(512);
     wire.extend_from_slice(api_request.method.as_bytes());
@@ -3381,12 +3436,21 @@ fn authenticated_api_request_bytes(
     if let Some(body) = body {
         wire.extend_from_slice(body);
     }
-    let written = stream.write_all(&wire).and_then(|_| stream.flush()).is_ok();
+    let current = || {
+        !authorized.is_some_and(|check| !check())
+            && !cancellation.is_some_and(|flag| flag.load(Ordering::Acquire))
+    };
+    let deadline = Instant::now() + duration;
+    let written = write_document_bytes(&mut stream, &wire, deadline, &current);
     zeroize_bytes(&mut wire);
     zeroize_bytes(&mut trace);
-    if !written {
-        return Err("RO-CORE-API-UNAVAILABLE");
-    }
+    written.map_err(|code| {
+        if code == "RO-CORE-API-CANCELLED" {
+            code
+        } else {
+            "RO-CORE-API-UNAVAILABLE"
+        }
+    })?;
     if cancellation.is_some_and(|flag| flag.load(Ordering::Acquire)) {
         return Err("RO-CORE-API-CANCELLED");
     }
@@ -3406,9 +3470,11 @@ fn authenticated_api_request_bytes(
         response_limit
     };
     let mut response = Vec::new();
-    let deadline = Instant::now() + Duration::from_secs(2);
     let mut chunk = [0_u8; 8192];
     loop {
+        if authorized.is_some_and(|current| !current()) {
+            return Err("RO-CORE-API-CANCELLED");
+        }
         if cancellation.is_some_and(|flag| flag.load(Ordering::Acquire)) {
             return Err("RO-CORE-API-CANCELLED");
         }
@@ -3434,7 +3500,6 @@ fn authenticated_api_request_bytes(
     parse_api_response_with_limit(&response, &trace_id, response_limit)
 }
 
-#[cfg(windows)]
 fn write_document_bytes(
     stream: &mut TcpStream,
     mut bytes: &[u8],
@@ -4488,6 +4553,12 @@ mod tests {
             "/native/document-attachments/cancel",
             "/native/document-attachments/commit",
             "/native/document-attachments/status",
+            "/native/document-attachments/copies",
+            "/native/document-attachments/copy-preview",
+            "/native/document-attachments/copy-download",
+            "/native/document-attachments/candidate-recovery",
+            "/native/document-attachments/access-needs",
+            "/native/document-attachments/retained-candidates",
         ] {
             assert!(
                 super::validate_api_request(&super::CoreApiRequest {
@@ -6847,6 +6918,48 @@ mod tests {
                 && candidate.byte_length == seal.byte_length
                 && candidate.version_revision_id == original["versionRevisionId"].as_str().unwrap()
                 && candidate.format == "plain-text")
+        );
+    }
+
+    #[test]
+    fn native_owned_request_revoked_after_connect_sends_zero_request_bytes() {
+        let listener = TcpListener::bind((std::net::Ipv4Addr::LOCALHOST, 0)).unwrap();
+        let port = listener.local_addr().unwrap().port();
+        let server = std::thread::spawn(move || {
+            let (mut stream, _) = listener.accept().unwrap();
+            stream
+                .set_read_timeout(Some(Duration::from_secs(2)))
+                .unwrap();
+            let mut bytes = Vec::new();
+            stream.read_to_end(&mut bytes).unwrap();
+            bytes.len()
+        });
+        let checks = std::cell::Cell::new(0);
+        let current = || {
+            let check = checks.get();
+            checks.set(check + 1);
+            check == 0
+        };
+        let result = super::authenticated_api_request_bytes_owned(
+            port,
+            &CapabilityToken::generate().unwrap(),
+            &CoreApiRequest {
+                method: "POST".into(),
+                path: "/native/document-attachments/copy-download".into(),
+                body: None,
+                if_match: None,
+                idempotency_key: None,
+            },
+            Some(b"{\"synthetic\":true}"),
+            None,
+            Duration::from_secs(2),
+            Some(&current),
+        );
+        assert_eq!(result, Err("RO-CORE-API-CANCELLED"));
+        assert_eq!(
+            server.join().unwrap(),
+            0,
+            "revoked ownership must stop dispatch, not only hide the result"
         );
     }
 

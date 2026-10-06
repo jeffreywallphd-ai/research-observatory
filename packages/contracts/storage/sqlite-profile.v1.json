@@ -2,9 +2,9 @@
   "schemaVersion": "1.0",
   "documentType": "research-observatory-sqlite-profile",
   "profileId": "sqlite-wal-v1",
-  "databaseSchemaVersion": 24,
+  "databaseSchemaVersion": 25,
   "applicationId": 1380926035,
-  "schemaFingerprintSha256": "8078a6f7132200e6cf9e729f116c7b8ad6cd7c2bcf61d56f337e594dc7552a97",
+  "schemaFingerprintSha256": "5c2090bb9586117f8f0e521efcb74ab10bd64a855fdcdc943035385cd1742951",
   "minimumSqliteVersion": "3.37.0",
   "identifierStorage": {
     "project": "uuid4-bridge-or-uuid7-lowercase-text",
@@ -127,7 +127,11 @@
     "acquisition_locations",
     "acquisition_attempts",
     "acquisition_attempt_results",
-    "document_acquisition_sources"
+    "document_acquisition_sources",
+    "document_intake_jobs",
+    "document_intake_results",
+    "document_attachment_recoveries",
+    "document_access_needs"
   ],
   "mutableStateTables": [
     "object_records",
@@ -272,6 +276,10 @@
     "acquisition_locations",
     "acquisition_attempts",
     "acquisition_attempt_results",
-    "document_acquisition_sources"
+    "document_acquisition_sources",
+    "document_intake_jobs",
+    "document_intake_results",
+    "document_attachment_recoveries",
+    "document_access_needs"
   ]
 }

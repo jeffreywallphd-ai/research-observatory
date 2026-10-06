@@ -361,3 +361,13 @@ revisions retain admitted/result identity with atomic provenance and outbox; the
 projections bind exact source copies, consent, selected policy and download receipt.
 See [open-access acquisition](open-access-acquisition.md). The literal populated
 v23 predecessor and its recovery contract preserve prior rows and ciphertext.
+
+Version 25 adds immutable `document_intake_jobs`, `document_intake_results`,
+`document_attachment_recoveries` and `document_access_needs`. Existing workflow
+queue/history, aggregate revisions, provenance and outbox retain authority.
+Intake/result publication shares their writer transaction; recovery binds a new
+operation/session to the unchanged inspected candidate and source receipt.
+Local access needs grant no rights or availability. Exact baseline and populated
+v24 predecessor fixtures preserve prior rows, history and ciphertext; the v24
+recovery contract is retained as an immutable snapshot. Forward migration uses
+the existing verified backup and interruption recovery procedure.

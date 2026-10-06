@@ -112,6 +112,7 @@ describe("Task Center workspace", () => {
         jobId: "018f47a2-4d6b-7f78-9f2e-7fb76c86d006",
         state: "cancelled",
         activityType: "extract-source",
+        documentIntake: null,
         resourcePool: "document",
         priority: 4,
         attemptCount: 1,

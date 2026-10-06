@@ -20,7 +20,7 @@ export interface TaskCenterWorkspaceProps {
   readonly transport?: CoreApiTransport;
   readonly initialRuns?: readonly WorkflowTaskCenterRun[];
   readonly attachmentReturn?: AttachmentHandoff | null;
-  readonly onReturnToAttachment?: () => void;
+  readonly onReturnToAttachment?: (handoff?: AttachmentHandoff) => void;
 }
 
 type Confirmation =
@@ -259,6 +259,7 @@ export function TaskCenterWorkspace({
         Version {attachmentReturn.selection.versionId} · revision {attachmentReturn.selection.versionRevisionId}.
         Source assertion {attachmentReturn.selection.sourceAssertionRevisionId}.</p>
       {attachmentReturn.operationId ? <p className="ro-wrap-anywhere">Attachment operation {attachmentReturn.operationId}.</p> : null}
+      {attachmentReturn.copyId ? <p className="ro-wrap-anywhere">Selected copy {attachmentReturn.copyId}. Return requires a fresh current-authority review.</p> : null}
       <p>{attachmentReturn.attachmentId && attachmentReturn.documentRevisionId
         ? `${attachmentReturn.commitRequest ? "Earlier native response reported" : "Last checked attachment status identified"} attachment ${attachmentReturn.attachmentId} and document revision ${attachmentReturn.documentRevisionId}. Inspect the current durable status before relying on processing.`
         : "This is a return context, not evidence of a completed or running attachment. Current durable work appears below."}</p>
@@ -268,7 +269,7 @@ export function TaskCenterWorkspace({
           : " An earlier native response reported this attachment; current authoritative status is shown below."}</p> : null}
       <p role="status">{documentStatusLoading ? "Checking exact attachment status…" : attachmentStatusMessage(documentStatus)}</p>
       <Button disabled={documentStatusLoading} onClick={() => void loadDocumentStatus()}>Refresh attachment status</Button>
-      <Button disabled={!onReturnToAttachment} onClick={onReturnToAttachment}>Return to selected Work/version</Button>
+      <Button disabled={!onReturnToAttachment} onClick={() => onReturnToAttachment?.()}>Return to selected Work/version</Button>
     </Panel> : null}
     {!writable ? <Notification tone="warning" title="Read-only workflow view">You can inspect durable work, but commands are disabled until the project is opened read-write.</Notification> : null}
     {failure ? <Notification tone="danger" title="Task Center unavailable">{failure}</Notification> : null}
@@ -306,14 +307,26 @@ export function TaskCenterWorkspace({
           <p>Depends on: {step.dependsOn.length ? step.dependsOn.join(", ") : "workflow start"}.</p>
         </Panel>)}
         {selected.jobs.map((job) => <Panel key={job.jobId} title={job.activityType} tone={job.state === "failed" ? "danger" : "neutral"}>
+          <p className="ro-wrap-anywhere">Durable intake/job {job.jobId} · attempt {job.currentAttemptId ?? "not started"}.</p>
           <p><strong>Status:</strong> {job.state.replace("-", " ")} · attempt {job.attemptCount} of {job.maxAttempts}</p>
           <p><strong>Resource pool:</strong> {job.resourcePool} · measured use not reported</p>
           <p><strong>Progress:</strong> {job.progress.kind === "quantified" ? `${job.progress.completedUnits} of ${job.progress.totalUnits} ${job.progress.unit}` : `${job.progress.kind} ${job.progress.unit}`}</p>
           {job.latestCheckpointId ? <p>Safe checkpoint recorded at {job.latestCheckpointAt ?? "an unknown time"}.</p> : <p>No checkpoint reported.</p>}
           {job.diagnosticCode ? <p role="status">Diagnostic: {job.diagnosticCode}</p> : null}
+          {job.diagnosticCode === "intake-downloading" ? <p role="status">Downloading into encrypted local staging. No attachment recorded.</p>
+            : job.diagnosticCode === "intake-validating" ? <p role="status">Validating the encrypted copy. Researcher Attach remains required.</p> : null}
+          {job.documentIntake ? <section className="ro-stack" aria-label="Exact intake return context">
+            <p className="ro-wrap-anywhere">Operation {job.documentIntake.operationId}. Work {job.documentIntake.workId}, version {job.documentIntake.versionId}.</p>
+            <p className="ro-wrap-anywhere">{job.documentIntake.copyId ? `Selected copy ${job.documentIntake.copyId}.` : "Lawful local file intake."} Earlier consent is not restored.</p>
+            <Button disabled={!onReturnToAttachment || job.documentIntake.projectId !== project.projectId} onClick={() => {
+              const { operationId, copyId, ...selection } = job.documentIntake!;
+              onReturnToAttachment?.({ selection, operationId, copyId, commitRequest: null, attachmentId: null, documentRevisionId: null });
+            }}>Review this intake in selected Work/version</Button>
+          </section> : null}
           <div className="task-center-actions ro-action-row">
             <Button disabled={!writable || busy || !["claimed", "running", "runnable", "retry-scheduled"].includes(job.state)} onClick={(event) => { restoreFocusRef.current = event.currentTarget; setConfirmation({ kind: "cancel", workflow: selected, jobId: job.jobId }); }}>Cancel safely</Button>
-            <Button disabled={!writable || busy || !["failed", "cancelled"].includes(job.state)} onClick={(event) => { restoreFocusRef.current = event.currentTarget; setConfirmation({ kind: "retry", workflow: selected, jobId: job.jobId }); }}>Retry as continuation</Button>
+            <Button disabled={!writable || busy || ["document-intake-local", "document-intake-remote"].includes(job.activityType) || !["failed", "cancelled"].includes(job.state)} onClick={(event) => { restoreFocusRef.current = event.currentTarget; setConfirmation({ kind: "retry", workflow: selected, jobId: job.jobId }); }}>Retry as continuation</Button>
+            {["document-intake-local", "document-intake-remote"].includes(job.activityType) ? <p>A fresh copy review is required before restarting intake. Generic Retry does not authorize a download. Retained candidates can be reviewed without downloading again.</p> : null}
           </div>
         </Panel>)}
         {selected.humanTasks.filter((task) => task.state === "requested" || task.state === "claimed").map((task) => <Panel key={task.humanTaskId} title="Decision required" tone="warning">

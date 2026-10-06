@@ -243,6 +243,18 @@ class WorkflowTaskCenterStepRecord:
 
 
 @dataclass(frozen=True, slots=True)
+class WorkflowDocumentIntakeRecord:
+    operation_id: str
+    project_id: str
+    source_assertion_revision_id: str
+    work_id: str
+    work_revision_id: str
+    version_id: str
+    version_revision_id: str
+    copy_id: str | None
+
+
+@dataclass(frozen=True, slots=True)
 class WorkflowTaskCenterJobRecord:
     job_id: str
     state: WorkflowJobState
@@ -258,6 +270,7 @@ class WorkflowTaskCenterJobRecord:
     latest_checkpoint_at: str | None
     diagnostic_code: str | None
     updated_at: str
+    document_intake: WorkflowDocumentIntakeRecord | None = None
 
 
 @dataclass(frozen=True, slots=True)
@@ -459,6 +472,7 @@ __all__ = [
     "WorkflowArtifactRole",
     "WorkflowCheckpointRecord",
     "WorkflowCompletionReceipt",
+    "WorkflowDocumentIntakeRecord",
     "WorkflowInterruptionKind",
     "WorkflowJobAuthority",
     "WorkflowJobClaim",

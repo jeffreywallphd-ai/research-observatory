@@ -31,7 +31,7 @@ from ..ports.acquisition import (
 )
 from ..ports.corpus import CorpusActor
 from ..ports.document_attachments import MAX_DOCUMENT_BYTES, AttachmentCandidate, DocumentInspectionProblem
-from ..ports.object_store import ObjectStagingCancelled, ObjectStoreProblem
+from ..ports.object_store import ObjectStagingCancelled, ObjectStagingCleanupRequired, ObjectStoreProblem
 from .transport import AcquisitionHTTPTransport, validated_url
 
 _MEDIA = {
@@ -212,7 +212,7 @@ class OpenAccessAcquisitionService:
             pending.used = True
         admitted = False
         try:
-            self.guard(
+            claim = self.guard(
                 pending.actor,
                 lambda: self.repository.begin_attempt(
                     pending.preview.selection,
@@ -224,7 +224,14 @@ class OpenAccessAcquisitionService:
                 ),
             )
             admitted = True
-            return self._download(pending, operation_id, cancellation_requested)
+            self.attachments.ensure_intake_ready()
+            self.guard(pending.actor, lambda: self.repository.intake_downloading(claim, actor=pending.actor))
+            return self._download(
+                pending,
+                operation_id,
+                lambda: cancellation_requested() or self.repository.intake_cancelled(claim),
+                claim,
+            )
         except BaseException as error:
             # A rejected duplicate has no authority to terminate an earlier
             # admitted request, including one retained for restart recovery.
@@ -233,7 +240,13 @@ class OpenAccessAcquisitionService:
             was_cancelled = isinstance(error, ObjectStagingCancelled) or (
                 isinstance(error, DocumentInspectionProblem) and error.code == "cancelled"
             )
-            code = "acquisition-cancelled" if was_cancelled else getattr(error, "code", "acquisition-failed")
+            code = (
+                "acquisition-cleanup-required"
+                if isinstance(error, ObjectStagingCleanupRequired)
+                else "acquisition-cancelled"
+                if was_cancelled
+                else getattr(error, "code", "acquisition-failed")
+            )
             if not isinstance(code, str) or re.fullmatch(r"[a-z][a-z0-9-]{0,63}", code) is None:
                 code = "acquisition-failed"
             # Revoked/closed sessions retain the admitted request for recovery.
@@ -249,9 +262,13 @@ class OpenAccessAcquisitionService:
                 )
             raise
         finally:
+            if admitted:
+                self.repository.release_intake(operation_id)
             self._slot.release()
 
-    def _download(self, pending: _Pending, operation_id: str, cancelled: Callable[[], bool]) -> AttachmentCandidate:
+    def _download(
+        self, pending: _Pending, operation_id: str, cancelled: Callable[[], bool], claim
+    ) -> AttachmentCandidate:
         preview, actor = pending.preview, pending.actor
         selection = preview.selection
         started = self.clock()
@@ -399,13 +416,13 @@ class OpenAccessAcquisitionService:
                                 session_id=self.session,
                                 cancellation_requested=cancelled,
                                 publication_guard=publish,
-                                acquisition=AcquisitionStage(selection.expected_sha256, receipt),
+                                acquisition=AcquisitionStage(selection.expected_sha256, receipt, claim),
                             )
-                        except ObjectStoreProblem:
+                        except ObjectStoreProblem as error:
                             # Storage intentionally redacts arbitrary reader
                             # exceptions. Recover only this owned reader's typed
                             # denial/network result after its encrypted cleanup.
-                            if isinstance(
+                            if not isinstance(error, ObjectStagingCleanupRequired) and isinstance(
                                 source.failure, (*_NETWORK_ERRORS, AcquisitionProblem, ObjectStagingCancelled)
                             ):
                                 raise source.failure from None

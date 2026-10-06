@@ -1,8 +1,50 @@
 # Open-access acquisition
 
+## Durable intake and retained-candidate recovery
+
+Schema v25 binds every native local import and confirmed remote acquisition to
+one existing durable product workflow job before intake. Job admission, claim
+and start share the current writer; candidate, immutable source receipt, queue
+output and successful terminal state commit atomically. Queue attempts have no
+automatic retry or stream checkpoint. The existing three-attempt HTTP budget
+remains bounded within one confirmed acquisition. Generic Task Center Retry is
+denied in Core and the desktop. Production intake reserves the same project
+document resources as imports/connectors/reconciliation until its safe terminal
+point; unavailable capacity admits no job and consumes no confirmation.
+
+Task Center receives only exact operation/project/Work/version/source/copy IDs
+for its return context. URLs, native session material and confirmation secrets
+remain outside that projection. Return performs a current-authority review;
+queue history never grants dispatch or attachment authority.
+
+Downloading and validation append separate phase events while quantitative
+progress remains unknown. Exact status reconciliation applies the existing
+expired-lease recovery only to these single-attempt intake jobs. Abandonment
+preserves the origin and confirmation, records no invented transfer outcome
+and performs no HTTP. A later remote attempt requires fresh review and explicit
+confirmation. Pending, failed and cleanup-required intake remain inspectable
+for the exact selected source without claiming a canonical attachment.
+
+Fresh sessions may review an already inspected pending candidate without HTTP
+or plaintext object access. An append-only recovery basis binds its immutable
+origin receipt, exact candidate and association, current actor/Intent/privacy,
+current provider policy and new operation/session. Explicit Attach rechecks that
+basis and retains both original and current policy provenance. A later denial
+or changed basis prevents commit. Recovery does not make a canonical attachment
+or a protected-reader grant. Manual/institutional access-need records are local
+annotations only; they send nothing and create no permission or availability.
+
+Root-owned staging identity spans upload and inspection. Ordinary production
+adapter construction performs no abandoned-stage cleanup; exclusive project-open
+reconciliation rejects active intake and preserves foreign names. Failed owned
+cleanup stops HTTP retries, remains a failed queue outcome even during
+cancellation, and blocks new intake until reconciliation succeeds. The literal
+v24 predecessor fixtures preserve original rows, history and ciphertext through
+the additive v25 migration and all interruption points.
+
 CAP-05.S01.T02 provides Core-owned selection and acquisition behind
-`DocumentAttachmentRuntime`. The queue, alternative-copy journey and entitlement
-placeholders are the CAP-05.S01.T03 handoff. ADR-0019, ADR-0027, ADR-0028 and
+`DocumentAttachmentRuntime`. CAP-05.S01.T03 adds durable queue composition,
+the alternative-copy journey and local access-need placeholders. ADR-0019, ADR-0027, ADR-0028 and
 ADR-0029 govern privacy, source identity, isolation and content limits.
 
 Acquisition orchestration depends on portable persistence and inspected-staging
@@ -57,10 +99,10 @@ has no canonical document association, and its metadata remains usable.
 Final document commit still requires exact Work/version confirmation and explicit
 local permitted use. It rechecks the provider-copy policy and includes its revision
 and the receipt digest in canonical provenance/dependencies. A changed provider
-policy requires renewed acquisition; it never silently relabels old permission.
+policy requires a fresh authority review; it never silently relabels old permission.
 `AcquisitionRepository.source_for_revision` returns the retained location and
-receipt after restart. T03 should map bounded acquisition errors to its approved
-unavailable, denied, failed, cancelled and retry states.
+receipt after restart. Bounded acquisition errors retain distinct unavailable,
+rights/access/destination denial, failed, interrupted and cleanup-required states.
 
 Portable selection/location/receipt schemas live under
 `packages/contracts/documents/`. URLs and source observations are protected

@@ -24,6 +24,7 @@ from starlette.requests import ClientDisconnect
 from .corpus.membership import CorpusProblem
 from .import_api import BoundedImportRoute
 from .ingestion.import_drafts import DraftValue, Identity, ProjectIdentity
+from .ports.acquisition import AccessNeedSelection, AcquisitionProblem, AcquisitionSelection
 from .ports.document_attachments import (
     MAX_DOCUMENT_BYTES,
     AttachmentCandidate,
@@ -36,6 +37,7 @@ from .ports.import_previews import PreviewProblem
 from .ports.object_store import (
     ObjectSourceTooLarge,
     ObjectStagingCancelled,
+    ObjectStagingCleanupRequired,
     ObjectStoragePressure,
     ObjectStoreProblem,
 )
@@ -83,6 +85,39 @@ class DocumentAddress(DocumentSession):
     candidate_id: Identity
 
 
+class DocumentCopiesQuery(DocumentSession):
+    source_assertion_revision_id: Identity
+
+
+class DocumentCopyReview(DocumentSession):
+    selection: AcquisitionSelection
+
+
+class DocumentRecoveryQuery(DocumentSession):
+    selection: AccessNeedSelection
+
+
+class DocumentCopyDownload(DocumentSession):
+    preview_id: Identity
+    confirmation: Annotated[str, Field(pattern=r"^acquire-copy:[0-9a-f-]{36}:[0-9a-f]{32}$", repr=False)]
+    operation_id: Identity
+
+
+class DocumentCandidateRecovery(DocumentSession):
+    candidate_id: Identity
+    original_operation_id: Identity
+    recovery_operation_id: Identity
+    confirmation_sha256: Annotated[str, Field(pattern=r"^[0-9a-f]{64}$")]
+    selection: AccessNeedSelection
+
+
+class DocumentAccessNeedCommand(DocumentSession):
+    selection: AccessNeedSelection
+    command_id: Identity
+    kind: Literal["unknown", "unavailable", "rights-denied", "entitlement-required"]
+    channel: Literal["manual", "institutional"]
+
+
 class DocumentCancel(DocumentAddress):
     operation_id: Identity
 
@@ -119,6 +154,9 @@ class DocumentStatusView(DraftValue):
         "stale-session",
         "legacy",
         "unavailable",
+        "intake-running",
+        "intake-failed",
+        "intake-cancelled",
     ]
     project_id: ProjectIdentity
     source_assertion_revision_id: Identity
@@ -131,6 +169,7 @@ class DocumentStatusView(DraftValue):
     candidate_id: Identity | None
     attachment_id: Identity | None
     document_revision_id: Identity | None
+    intake_code: Annotated[str, Field(pattern=r"^[a-z][a-z0-9-]{0,63}$")] | None = None
 
 
 class DocumentContext(DraftValue):
@@ -203,6 +242,28 @@ class DocumentRuntimePort(Protocol):
 
     def commit(self, command: DocumentCommit, *, trace_id: str) -> DocumentAttachment: ...
 
+    def acquisition_locations(
+        self, root: str, project_id: str, session_id: str, source_assertion_revision_id: str, *, trace_id: str
+    ): ...
+    def acquisition_preview(
+        self, root: str, project_id: str, session_id: str, selection: AcquisitionSelection, *, trace_id: str
+    ): ...
+    def acquisition_download(
+        self,
+        root: str,
+        project_id: str,
+        session_id: str,
+        preview_id: str,
+        *,
+        confirmation: str,
+        operation_id: str,
+        trace_id: str,
+        cancellation_requested: Callable[[], bool],
+    ) -> AttachmentCandidate: ...
+    def recover_candidate(self, command: DocumentCandidateRecovery, *, trace_id: str) -> AttachmentCandidate: ...
+    def record_access_need(self, command: DocumentAccessNeedCommand, *, trace_id: str): ...
+    def retained_candidates(self, command: DocumentRecoveryQuery, *, trace_id: str): ...
+
 
 class _QueuedSource:
     """Sync BinaryIO reader over at most two 128 KiB in-memory IPC chunks."""
@@ -259,6 +320,114 @@ def _problem(request: Request, status: int, code: str, detail: str, remediation:
 
 
 def _mapped_error(request: Request, error: BaseException) -> CoreProblem:
+    if isinstance(error, ObjectStagingCleanupRequired):
+        return _problem(
+            request,
+            409,
+            "RO-CORE-DOCUMENT-CLEANUP-REQUIRED",
+            "An owned encrypted partial requires cleanup. No safe retry is confirmed.",
+            "Reopen the project to reconcile owned staging, then review the exact copy again.",
+        )
+    if isinstance(error, AcquisitionProblem):
+        status, code, detail, remedy = {
+            "acquisition-rights-denied": (
+                403,
+                "RIGHTS-DENIED",
+                "Current copy rights deny storage or inspection.",
+                "Keep metadata only; review permission or supply a lawful local copy.",
+            ),
+            "acquisition-unavailable": (
+                404,
+                "COPY-UNAVAILABLE",
+                "The selected remote copy is unavailable.",
+                "Keep metadata and record a local access need, or choose another lawful copy.",
+            ),
+            "acquisition-access-denied": (
+                403,
+                "ACCESS-DENIED",
+                "The provider denied access to this copy.",
+                "Record a local access need or supply a lawful local copy; no credentials or login are available here.",
+            ),
+            "acquisition-redirect-denied": (
+                422,
+                "DESTINATION-DENIED",
+                "This copy redirected outside the confirmed hosts.",
+                "Review a lawful alternative; do not bypass destination policy.",
+            ),
+            "acquisition-destination-denied": (
+                422,
+                "DESTINATION-DENIED",
+                "This destination is not permitted.",
+                "Review a lawful alternative; do not bypass destination policy.",
+            ),
+            "acquisition-content-type-denied": (
+                422,
+                "FORMAT-MISMATCH",
+                "This response is not a permitted document type.",
+                "Choose a supported lawful copy.",
+            ),
+            "acquisition-response-too-large": (
+                413,
+                "OVERSIZE",
+                "This copy exceeds the bounded intake limit.",
+                "Choose a smaller supported copy; no truncated copy was accepted.",
+            ),
+            "acquisition-network-timeout": (
+                408,
+                "CANCELLED",
+                "The bounded transfer timed out.",
+                "Review this exact copy again and confirm a new attempt.",
+            ),
+            "acquisition-network-unavailable": (
+                409,
+                "NETWORK-UNAVAILABLE",
+                "The network transfer is unavailable.",
+                "Check connectivity, then review this exact copy and confirm a new attempt.",
+            ),
+            "acquisition-cancelled": (
+                409,
+                "CANCELLED",
+                "This download was interrupted or cancelled.",
+                "Review this exact copy again and confirm a new attempt.",
+            ),
+            "acquisition-confirmation-required": (
+                409,
+                "AUTHORITY-CHANGED",
+                "A fresh exact-copy confirmation is required.",
+                "Review current copy authority again; earlier confirmation cannot be reused.",
+            ),
+            "acquisition-preview-stale": (
+                409,
+                "AUTHORITY-CHANGED",
+                "The reviewed copy authority has changed.",
+                "Review current copy authority again; earlier confirmation cannot be reused.",
+            ),
+            "acquisition-authority-changed": (
+                409,
+                "AUTHORITY-CHANGED",
+                "Current project authority has changed.",
+                "Reopen the project and review current copy authority.",
+            ),
+        }.get(
+            {
+                "acquisition-egress-denied": "acquisition-destination-denied",
+                "acquisition-policy-changed": "acquisition-authority-changed",
+                "acquisition-selection-stale": "acquisition-preview-stale",
+            }.get(error.code, error.code),
+            (
+                422,
+                "DOWNLOAD-FAILED",
+                "The bounded download failed without an accepted candidate.",
+                "Check current copy status, then review and confirm a fresh attempt if appropriate.",
+            ),
+        )
+        return _problem(
+            request,
+            status,
+            "RO-CORE-DOCUMENT-" + code,
+            detail,
+            remedy,
+        )
     if isinstance(error, DocumentInspectionProblem):
         code = error.code
         if code == "oversize":
@@ -337,6 +506,14 @@ def _mapped_error(request: Request, error: BaseException) -> CoreProblem:
             status, public = 409, "RO-CORE-DOCUMENT-CONFIRMATION-REQUIRED"
         elif code == "attachment-candidate-unavailable":
             status, public = 404, "RO-CORE-DOCUMENT-CANDIDATE-UNAVAILABLE"
+        elif code == "attachment-resource-unavailable":
+            return _problem(
+                request,
+                409,
+                "RO-CORE-DOCUMENT-WORKER-UNAVAILABLE",
+                "Local document capacity is unavailable; no intake was admitted.",
+                "Wait for active document work or local capacity, then review this copy again.",
+            )
         elif "cancelled" in code:
             status, public = 409, "RO-CORE-DOCUMENT-CANCELLED"
         elif "invalid" in code:
@@ -567,9 +744,41 @@ async def _stage_stream(request: Request, runtime: DocumentRuntimePort) -> Attac
         raise
 
 
+class BoundedDocumentJsonRoute(BoundedImportRoute):
+    def get_route_handler(self) -> Callable:
+        handler = super().get_route_handler()
+
+        async def bounded(request: Request) -> Response:
+            body = bytearray()
+            async for chunk in request.stream():
+                if len(body) + len(chunk) > _HEADER_BYTES:
+                    raise _problem(
+                        request,
+                        413,
+                        "RO-CORE-DOCUMENT-INTAKE-INVALID",
+                        "The document command exceeds its bound.",
+                        "Review the selected copy again.",
+                    )
+                body.extend(chunk)
+            try:
+                json.loads(body, object_pairs_hook=_unique_object)
+            except ValueError, UnicodeError:
+                raise _problem(
+                    request,
+                    422,
+                    "RO-CORE-DOCUMENT-INTAKE-INVALID",
+                    "The document command is invalid.",
+                    "Review the selected copy again.",
+                ) from None
+            request._body = bytes(body)
+            return await handler(request)
+
+        return bounded
+
+
 def register_document_attachment_routes(app: FastAPI, service: Callable[[Request], DocumentRuntimePort | None]) -> None:
     json_router = APIRouter(
-        prefix="/native/document-attachments", route_class=BoundedImportRoute, include_in_schema=False
+        prefix="/native/document-attachments", route_class=BoundedDocumentJsonRoute, include_in_schema=False
     )
     stream_router = APIRouter(prefix="/native/document-attachments", include_in_schema=False)
 
@@ -595,6 +804,7 @@ def register_document_attachment_routes(app: FastAPI, service: Callable[[Request
             PreviewProblem,
             CorpusProblem,
             ProjectLifecycleProblem,
+            AcquisitionProblem,
         ) as error:
             raise _mapped_error(request, error) from None
 
@@ -606,6 +816,103 @@ def register_document_attachment_routes(app: FastAPI, service: Callable[[Request
                 project_id=command.project_id, session_id=selected.context(command.root, command.project_id)
             ),
         )
+
+    @json_router.post("/copies")
+    def copies(request: Request, command: DocumentCopiesQuery):
+        result = run(
+            request,
+            lambda selected: selected.acquisition_locations(
+                command.root,
+                command.project_id,
+                command.session_id,
+                command.source_assertion_revision_id,
+                trace_id=request.state.trace_id,
+            ),
+        )
+        return {"locations": [item.model_dump(mode="json", by_alias=True) for item in result]}
+
+    @json_router.post("/copy-preview")
+    def copy_preview(request: Request, command: DocumentCopyReview):
+        preview = run(
+            request,
+            lambda selected: selected.acquisition_preview(
+                command.root, command.project_id, command.session_id, command.selection, trace_id=request.state.trace_id
+            ),
+        )
+        # This route is private native IPC. Native retains the one-use secret
+        # and strips URLs before producing renderer metadata.
+        return {
+            "previewId": preview.preview_id,
+            "location": preview.location.model_dump(mode="json", by_alias=True),
+            "selection": preview.selection.model_dump(mode="json", by_alias=True),
+            "providerPolicyRevisionId": preview.provider_policy_revision_id,
+            "confirmationSha256": preview.confirmation_sha256,
+            "confirmation": preview.confirmation,
+        }
+
+    @json_router.post("/copy-download", response_model=DocumentCandidateView)
+    async def copy_download(request: Request, command: DocumentCopyDownload):
+        cancelled = threading.Event()
+        work = asyncio.create_task(
+            asyncio.to_thread(
+                run,
+                request,
+                lambda selected: selected.acquisition_download(
+                    command.root,
+                    command.project_id,
+                    command.session_id,
+                    command.preview_id,
+                    confirmation=command.confirmation,
+                    operation_id=command.operation_id,
+                    trace_id=request.state.trace_id,
+                    cancellation_requested=cancelled.is_set,
+                ),
+            )
+        )
+
+        async def watch():
+            while not work.done():
+                if await request.is_disconnected():
+                    cancelled.set()
+                    return
+                await asyncio.sleep(0.05)
+
+        watcher = asyncio.create_task(watch())
+        try:
+            # Preserve the existing 120s network and 180s inspection bounds,
+            # plus bounded publication/cleanup. This is not a network extension.
+            result = await asyncio.wait_for(asyncio.shield(work), timeout=320)
+            return DocumentCandidateView.model_validate(asdict(result))
+        finally:
+            cancelled.set()
+            watcher.cancel()
+            with suppress(asyncio.CancelledError):
+                await watcher
+            if not work.done():
+                with suppress(TimeoutError, Exception):
+                    await asyncio.wait_for(asyncio.shield(work), timeout=10)
+
+    @json_router.post("/candidate-recovery", response_model=DocumentCandidateView)
+    def candidate_recovery(request: Request, command: DocumentCandidateRecovery):
+        return DocumentCandidateView.model_validate(
+            asdict(run(request, lambda selected: selected.recover_candidate(command, trace_id=request.state.trace_id)))
+        )
+
+    @json_router.post("/retained-candidates")
+    def retained_candidates(request: Request, command: DocumentRecoveryQuery):
+        result = run(request, lambda selected: selected.retained_candidates(command, trace_id=request.state.trace_id))
+        return {"retained": list(result)}
+
+    @json_router.post("/access-needs")
+    def access_needs(request: Request, command: DocumentAccessNeedCommand):
+        result = run(request, lambda selected: selected.record_access_need(command, trace_id=request.state.trace_id))
+        return {
+            "annotationId": result.annotation_id,
+            "revisionId": result.revision_id,
+            "kind": result.kind,
+            "channel": result.channel,
+            "createdAt": result.created_at,
+        }
 
     @stream_router.post("/stage", response_model=DocumentCandidateView)
     async def stage(request: Request, response: Response) -> DocumentCandidateView:
