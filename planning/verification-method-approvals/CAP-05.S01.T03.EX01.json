@@ -1,0 +1,102 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-experience-and-verification-owner-approval",
+  "id": "CAP-05.S01.T03.EX01",
+  "taskId": "CAP-05.S01.T03",
+  "waveId": "W2",
+  "status": "APPROVED",
+  "approvedBy": "human:repository-owner",
+  "recordedAt": "2026-10-06T16:20:50.362826Z",
+  "decision": "The owner replied Approved. Please continue with W2 work to the exact EX01 decision request. This approves both the exact Academic Minimal1.9 product experience and its bounded source-free verification/procedure exception, including direct append-only records without a new executable framework/bootstrap campaign. Publication precedes ordinary claim; product consumer activation and implementation occur inside claimed originalT03. Required equivalent proof, actual task/slice/Wave qualification and independent dispositions remain mandatory.",
+  "approvalEvidence": "Direct human reply to the immediately preceding exact packet request; not inferred from ambient browser state.",
+  "candidateAtDecision": "5119b4431c5c6da00637afa6b3adb9bbb7004f20",
+  "proposal": {
+    "path": "artifacts/evidence/CAP-05.S01.T03.experience-amendment-01.proposal.json",
+    "sha256": "20dbdaf74f79fe51ff1643c19ec8336813a53a311a6504a10550fa6df04f7469",
+    "commit": "00fff94732874460edf4cb8ce77a09ad36d16d98"
+  },
+  "readinessReview": {
+    "path": "artifacts/evidence/CAP-05.S01.T03.experience-amendment-01.readiness-review-01.json",
+    "sha256": "580835b3c89068af0ac479057ecc2a7fbd754499780174f6d6b03cca2f15c68c",
+    "commit": "5119b4431c5c6da00637afa6b3adb9bbb7004f20"
+  },
+  "pausedPredecessorCommit": "ed5012226f903862960ce8b405b1299df96d7fb3",
+  "pausedPredecessorBacklogSHA256": "2c38d7e5e9aa5f7834b139e129b25b39958aa2b46d8748e1b834ebd4c8bface6",
+  "pausedPredecessorBacklogGitBlobSHA256": "92a5eda6868dee9a9297abd73f3da3ab25268bbd39043c70cd6e4dd24b0023d7",
+  "approvedTaskContractSHA256": "22c24df1438c455859b07b1643f5adb66c5dc118df2e2b9c2f49cb30a3a7cc8c",
+  "approvedReference": {
+    "id": "RO-UI-ACADEMIC-MINIMAL-1.9",
+    "proposalPath": "planning/W2-reference-1.9",
+    "proposalPackageSHA256": "4addb04530e7b02eae7ad46dffecbf3d78e825502ea8db9b36400cb4c73f9de1"
+  },
+  "designApprovalGranted": true,
+  "methodSubstitutionApproved": true,
+  "directOwnerRecordProcedureExceptionApproved": true,
+  "approvedProcedure": {
+    "governingSection": "docs/automation/project-automation-guide.md#22-controlled-enabler-amendment-lane",
+    "scope": "This exact T03/1.9 packet only.",
+    "decision": "After independent readiness approval and explicit human approval, commit a direct append-only owner decision plus exact reference design-approval record, publish metadata-only approved1.9, authenticate publication/preliminary semantic mapping and update affected material-plan bindings, and resume/claim the original task through ordinary taskctl. Actual product assembler selector activation, product builds, conformance and capture qualification happen inside the claimed T03, after task-start planning. Do not create executable ECR/bootstrap/amendment framework tasks or alter frozen W2/T03 definitions.",
+    "ownerRecord": "planning/verification-method-approvals/CAP-05.S01.T03.EX01.json",
+    "referenceRecord": "planning/reference-approvals/RO-UI-ACADEMIC-MINIMAL-1.9.json",
+    "referenceRecordShape": "Existing ui-reference-design-approval, reference-publication-and-plan-binding-only shape; exact proposed package/commit and human decision; record introduced after proposal and before metadata-only reference publication.",
+    "activationScope": "Only exact product assembler selectors and product conformance/build manifests may adopt the approved1.9 identity/package. Shared verification/extensions/desktop-ui.json and verifiers remain unchanged; a separately named, task-owned activation/context proof binds their unchanged settings plus the approved1.9 identity/package instead of pretending the stale shared selector qualifies1.9."
+  },
+  "approvedVerificationSubstitution": {
+    "scope": "Original CAP-05.S01.T03 and consumption of this same exact approved1.9 authority/presentation binding by required CAP-05.S01 slice, affected checkpoint and W2 qualification. No generic later-task, future-reference or release exemption.",
+    "replacedPredicates": [
+      "Frozen originalT03 experience_change and human-and-agent-review admission predicates in tools/ui_change_gate.py, plus the ordinary intentional newer-reference/previous-reference/revision-in-range/approval-after-base predicates that assume publication occurs within the same claimed-base range (lines6929-6950). Replace only their authority/approved-before-code admission with the exact independently reviewed EX01 human decision and separately authenticated publication-before-claim-before-product lineage. Preserve both the full paused-predecessor-to-claim preparation history and actual original claim-base-to-final-candidate history; never invent or shorten the claim base. Human identity, exact package and approval-strictly-before-product requirements remain required.",
+      "The exact1.8 semantic-witness version/semanticDeltas and stale1.8 reference selector/context admission predicates, including downstream readers that rely on that same admission. Replace with complete original1.5-to-approved1.8 lineage plus closed exact1.8-to1.9 delta, exact publication/build/capture input and consumer bindings. No semantic, visual, interaction or platform check is removed."
+    ],
+    "requiredNamedProof": [
+      {
+        "name": "CAP-05.S01.T03.EX01.authority-lineage",
+        "obligation": "Authenticate exact proposal/package/inventory, independent readiness, immutable owner/reference records, paused predecessor, metadata-only publication and plan binding before product edits; unchanged frozen task, actual ordinary taskctl owner/branch/base/worktree/profile/platform/lease and original base-to-candidate history with no hidden source add/revert. Preserve A01-A05, T01/T02 and all findings. Qualifying evidence and independent disposition bind the final committed candidate."
+      },
+      {
+        "name": "CAP-05.S01.T03.EX01.presentation-mapping",
+        "obligation": "Authenticate accepted original1.5 runtime semantics and immutable reviewed1.8 presentation witness; compare every ordered workflow and page contract through exact1.8-to1.9 delta. Only proposed identity/version fields, exact Ingestion purpose and the three exact added regions may differ. Tokens and other page/workflow semantics remain exact. Reject undeclared, reordered, missing, stale or redirected input."
+      },
+      {
+        "name": "CAP-05.S01.T03.EX01.desktop-conformance",
+        "obligation": "Build actual product and isolated reference fixtures with exact approved1.9 bindings. Freeze complete regular build inputs/outputs, pinned Windows-x64 renderer/fonts/settings, target route/region inventories and reference package. Execute required token, route, region, workflow, accessibility, interaction, responsive, theme and controlled visual-regression checks. Invoke unchanged proof helpers where their preconditions hold; separately establish only incompatible admission. Do not patch/monkeypatch imported framework code or manufacture an original command PASS."
+      },
+      {
+        "name": "CAP-05.S01.T03.EX01.capture-authority",
+        "obligation": "After approval, capture the complete new1.9 reference baseline and real product comparisons from stable committed inputs into a new directory. Record exact baseline hashes, approval/publication commits, renderer identity, delivery commit and all build/input inventories; independently authenticate and visually review captures. No automatic baseline acceptance, overwritten historical capture, stale1.8 baseline, partial marker or screenshot-only product proof."
+      }
+    ],
+    "laterGateConsumption": "S01 integration, affected checkpoint and fresh full W2 qualification must explicitly authenticate and report the same EX01 owner/publication/package/semantic bindings and commit-bound named equivalent proof, rerunning affected actual conformance against current fixed candidate inputs when closure is changed or unknown. Reports must retain original public-command outcomes/limitations, name the approved substitution and obtain independent disposition. All other required profiles and real native/security/rights/recovery/platform checks execute normally. No unrelated later task authority predicate or new1.10+ reference is exempted.",
+    "machineReportTruth": "Use separately named commands/reports with actual exit codes and authenticated ignored task-owned producer hashes. Do not add a command-registry entry, edit policy/schema/CI/controller/verifier source, label original foundation:ui-change/foundation:ui-conformance or stale-selector commands PASS, or include an adverse run among all-exit0 qualifying checks. Selected canonical command IDs must identify existing checks actually executed.",
+    "blockedPublicConsumers": [
+      "desktop:ui-token",
+      "desktop:ui-route-page",
+      "desktop:ui-workflow",
+      "desktop:ui-accessibility",
+      "desktop:ui-visual-regression",
+      "desktop:application",
+      "desktop:performance",
+      "tools/ui_conformance.py --write-baseline",
+      "tools/product_style_check.py --capture",
+      "tools/product_style_check.py --verify-captures"
+    ],
+    "unchangedProofInterfaces": [
+      "ui_conformance.Context; check_tokens/check_routes/check_workflows/check_accessibility; render_visuals/write_baseline; baseline_document_errors/baseline_history_errors/check_visual",
+      "desktop_app_check.product_build_errors/security_errors/design_system_errors; qualification_capture_contract/qualification_report_errors",
+      "product_style_check.capture_source_identity/write_capture_bundle/read_capture_bundle/png_dimensions/stable_file_bytes and Windows guards"
+    ],
+    "nonInjectableRuntimePaths": "Repo-only functional/style/performance constructors and capture_producer_snapshot do not accept a replacement Context. Equivalent task-owned runtime/producer-binding paths are expressly substituted only for the1.9 admission; they must reproduce every unaffected build, security, design-system, actual DOM geometry/focus/accessibility/state, stable-input, delivery/PNG/renderer/font and resource assertion. Do not monkeypatch these constructors or omit assertions because their wrappers are blocked. Any additional incompatibility outside these finite predicates is not automatically exempted."
+  },
+  "unchangedBoundaries": [
+    "No further automation framework source/schema/policy/CI/controller/verifier/shared-selector/dependency/runtime edits after A05. Normal taskctl operations, product implementation and separately named task-owned evidence producers are allowed only within this approved scope.",
+    "T03 acceptance criteria, original review_gate and Wave approval remain immutable; this explicit design decision is separate from required expanded independent task/security review. No task, slice, checkpoint, Wave or G2 completion is approved here.",
+    "ADR0025/0029 and inherited native-only/LPAC/Python/no-plaintext-write, encrypted SQLCipher/object-store, researcher-rights/egress and no external-effect boundaries are unchanged. Product integration must exercise real permitted download, denial, cancellation, cleanup failure, restart/fresh confirmation and metadata retention; mocks/screenshots cannot prove those boundaries.",
+    "Maintain original reference proposals, approved publications, approvals, adverse runs and review rounds. No shortened claim base, fabricated receipt, reapproved historical packet, hidden monkeypatch, generic future exemption or reset.",
+    "All six unfinished CAP05 slices and16 original tasks remain subject to normal evidence, independent reviews, local integration, fresh full W2 qualification and separate human G2 release approval."
+  ],
+  "exactResumeCondition": "Independent readiness approves these exact committed bytes with no open blocking findings; owner explicitly approves both the exact1.9 product experience and this one-task/source-free method/procedure exception. Commit append-only EX01 and design records binding proposal commit/hash/package/readiness. Publish only allowed approval metadata and manifest hashes; prove exact reference publication/preliminary presentation mapping and update affected material plans before product edits. Resume the same W2 owner/branch/worktree/LOC/windows-x64 through taskctl wave resume at actual current HEAD; then ordinary next/show/claim CAP-05.S01.T03 with actual full claim base and task-start planning. Product consumer selector activation/builds/conformance occur inside claimed T03, with fresh final machine proof and independent task/slice review before local integration. No dependent product before approval/publication, no framework implementation task and no premature G2 request.",
+  "frameworkSourceChangesAuthorized": false,
+  "equivalentQualificationComplete": false,
+  "taskApproval": false,
+  "waveCompletion": false,
+  "releaseApproval": false
+}

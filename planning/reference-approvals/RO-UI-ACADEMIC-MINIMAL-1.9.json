@@ -1,0 +1,14 @@
+{
+  "schemaVersion": "1.0",
+  "kind": "ui-reference-design-approval",
+  "referenceId": "RO-UI-ACADEMIC-MINIMAL-1.9",
+  "approvedBy": "human:repository-owner",
+  "approvedAt": "2026-10-06T16:20:50.362826Z",
+  "scope": "reference-publication-and-plan-binding-only",
+  "proposal": {
+    "commit": "00fff94732874460edf4cb8ce77a09ad36d16d98",
+    "path": "planning/W2-reference-1.9",
+    "packageSha256": "4addb04530e7b02eae7ad46dffecbf3d78e825502ea8db9b36400cb4c73f9de1"
+  },
+  "basis": "The owner explicitly approved exact EX01 after independent readiness review. This record authorizes only metadata-only publication of the exact1.9 reference and affected material-plan binding. Locked-Wave use of this existing record/publication interface is authorized by planning/verification-method-approvals/CAP-05.S01.T03.EX01.json; product code, equivalent qualification, task completion and release are not approved by this record."
+}
