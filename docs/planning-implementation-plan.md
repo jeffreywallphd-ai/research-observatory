@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: fe0703ead26e55f0cc89108eed0d0bf806c45f97b280e031318d04eeab9c26aa
+source_sha256: e803b5a52083ef24b1e45f54b1fa839bc1185b0713f599a24ef421121c2accd2
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -10735,15 +10735,15 @@ Original tasks and approvals remain unchanged.
 
 **Dependencies:** `CAP-04.S04.T02`, `CAP-02.S03.T03`
 
-#### - [ ] CAP-05.S01.T01 - Implement local document attachment and version association
+#### - [x] CAP-05.S01.T01 - Implement local document attachment and version association
 
-**Status / priority / estimate / risk:** `REVIEW` / `P0` / `M` / `medium`
+**Status / priority / estimate / risk:** `DONE` / `P0` / `M` / `medium`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
 **Dependencies:** `CAP-04.S04.T02`, `CAP-02.S03.T03`, `CAP-04.S05.T02`
 
-**Owner / review:** codex-w2-implementation / - (`-`)
+**Owner / review:** codex-w2-implementation / agent:/root/c11_security_review (`approved`)
 
 **Objective:** Drag/drop and file-picker flows for PDF, JATS, TEI, XML, HTML, DOCX, and plain text with work/version selection.
 
@@ -10768,9 +10768,11 @@ Original tasks and approvals remain unchanged.
 
 ##### Review history — CAP-05.S01.T01
 
-**Review mode:** `append-only v1` / 0 completed round(s)
+**Review mode:** `append-only v1` / 1 completed round(s)
 
-**Current immutable submission awaiting review:** `R01` / packet SHA-256 `331bab704f4aa07c46f4f75bb06c9e86fb5bef8ff7e25a6dc631d2a3baad227a`
+###### Round R01
+
+**Immutable submission packet:** `R01` / packet SHA-256 `331bab704f4aa07c46f4f75bb06c9e86fb5bef8ff7e25a6dc631d2a3baad227a`
 
 - Candidate / base / branch: `fe9313bcbf2580a0baabafed57a244a831ae29f7` / `6506c68461144747b0ee9be10853211717aa381d` / `codex/w2-implementation`
 - Submitted by / at: codex-w2-implementation / `2026-10-06T11:44:49+00:00`
@@ -10784,15 +10786,31 @@ Original tasks and approvals remain unchanged.
 - Prior round / replayed open findings: `-` / -
 - Root-cause escalation: -
 
-**Current latest-review projection:** `-` by - at `-`
+**Disposition / reviewer / time:** `approved` / agent:/root/c11_security_review / `2026-10-06T12:07:33+00:00`
 
-**Latest notes:** Reopened: Owner-approved VM01 at8ba210db authorizes source-free equivalent original6506 history verification and one supported resume/reopen. Preserve original task scope/base, all adverse findings, approved1.8 and A01-A05, exact current product8297, actual public-gate timeout, final criterion proof and independent product/security review. No framework source changes or release approval.
+**Immutable review ledger:** `artifacts/evidence/CAP-05.S01.T01.review-R01.json` / `ff1f61c834c2354bd80ed8c84dabb4c261a4d7fdab67375af3fe2d0effc5258d`
+
+**Review notes:** Independent expanded product/security review approves only the actual frozen CAP-05.S01.T01 R01 at candidate fe9313bc, with original6506 base and submission publication0985c56c. Current product bytes remain8297 and preserve approved1.8 native-only acquisition, exact selected Work/version and native-session authority, explicit project-local rights and human association, encrypted storage/provenance, bounded untrusted inspection, truthful failure recovery and restart identity. The exact disabled and transparent noninteractive graphics leaf is excluded only after owned-root/live ancestry/class/process/thread checks; unknown, enabled, malformed or substituted nodes retain denial. Fresh candidate-bound execution proves a natural five-node hidden reinstallation, four actual interactive registrations, ordinary final-recheck denial under a test-only expected-identity substitution, four NOTREGISTERED rollback probes and empty target state; it then proves disarmed/outside None and exact-zone Copy with one actual Core/signed LPAC candidate. The separate actual Windows picker journey cancels without candidate, selects through the native dialog, invokes explicit renderer rights/association actions, commits the exact encrypted/provenance identities and resumes them through a fresh process with unchanged receipts and no new stage. Actual current checks report222 Rust passes with2 explicitly ignored witnesses,79 Python passes with no skips,13 renderer passes, affected quality/API/architecture/build passes, and fresh reading of all156 retained captures. All808 current source/reference/dependent bindings match. The separately approved VM01 equivalent-lineage disposition authenticates the full original306-commit history and supplies21 exact supplemental T03 source deltas, including six byte-exact regular relocations; I rely on that distinct independent boundary without relabeling the original gate. The original public UI gate remains exit124 timeout without completed verdict. The b783 native Core rejection remains adverse and unlocalized, and the observer/later successes do not establish its cause. No criterion-bound blocker remains for this task under the exact owner-approved verification method. Full slice, Wave, broader profiles, production packaging, later platforms and human release gates remain separate.
+
+**Findings opened:**
+
+- None
+
+**Prior finding closures:**
+
+- None
+
+**Current immutable submission awaiting review:** None
+
+**Current latest-review projection:** `approved` by agent:/root/c11_security_review at `2026-10-06T12:07:33+00:00`
+
+**Latest notes:** Independent expanded product/security review approves only the actual frozen CAP-05.S01.T01 R01 at candidate fe9313bc, with original6506 base and submission publication0985c56c. Current product bytes remain8297 and preserve approved1.8 native-only acquisition, exact selected Work/version and native-session authority, explicit project-local rights and human association, encrypted storage/provenance, bounded untrusted inspection, truthful failure recovery and restart identity. The exact disabled and transparent noninteractive graphics leaf is excluded only after owned-root/live ancestry/class/process/thread checks; unknown, enabled, malformed or substituted nodes retain denial. Fresh candidate-bound execution proves a natural five-node hidden reinstallation, four actual interactive registrations, ordinary final-recheck denial under a test-only expected-identity substitution, four NOTREGISTERED rollback probes and empty target state; it then proves disarmed/outside None and exact-zone Copy with one actual Core/signed LPAC candidate. The separate actual Windows picker journey cancels without candidate, selects through the native dialog, invokes explicit renderer rights/association actions, commits the exact encrypted/provenance identities and resumes them through a fresh process with unchanged receipts and no new stage. Actual current checks report222 Rust passes with2 explicitly ignored witnesses,79 Python passes with no skips,13 renderer passes, affected quality/API/architecture/build passes, and fresh reading of all156 retained captures. All808 current source/reference/dependent bindings match. The separately approved VM01 equivalent-lineage disposition authenticates the full original306-commit history and supplies21 exact supplemental T03 source deltas, including six byte-exact regular relocations; I rely on that distinct independent boundary without relabeling the original gate. The original public UI gate remains exit124 timeout without completed verdict. The b783 native Core rejection remains adverse and unlocalized, and the observer/later successes do not establish its cause. No criterion-bound blocker remains for this task under the exact owner-approved verification method. Full slice, Wave, broader profiles, production packaging, later platforms and human release gates remain separate.
 
 **Currently open findings:** -
 
 #### - [ ] CAP-05.S01.T02 - Implement open-access location selection and download
 
-**Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `L` / `high`
+**Status / priority / estimate / risk:** `READY` / `P0` / `L` / `high`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 

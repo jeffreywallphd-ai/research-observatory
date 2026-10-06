@@ -1,0 +1,370 @@
+{
+  "task_id": "CAP-05.S01.T01",
+  "attempt_id": "R01",
+  "candidate_commit": "fe9313bcbf2580a0baabafed57a244a831ae29f7",
+  "base_commit": "6506c68461144747b0ee9be10853211717aa381d",
+  "reviewed_state_commit": "0985c56cd10f7e9aaadf66f398a6c9277409c04c",
+  "reviewer": "agent:/root/c11_security_review",
+  "result": "approved",
+  "reviewed_at": "2026-10-06T12:06:00Z",
+  "evidence_sha256": "0a4c35e7883647f24ecc76be82cc9067536a0f25bf7b70f7c070954006d8aac8",
+  "packet_sha256": "331bab704f4aa07c46f4f75bb06c9e86fb5bef8ff7e25a6dc631d2a3baad227a",
+  "acceptance_criteria_sha256": "3339b9f2e672a9ec2d38a6967ca5533a70cd71a9b7f2e98952fef48b05d88a53",
+  "selection_sha256": "373ff897bd8157c3e7d736fa72d0289167f6ca5456764f76fd0df30caab49c1f",
+  "notes": "Independent expanded product/security review approves only the actual frozen CAP-05.S01.T01 R01 at candidate fe9313bc, with original6506 base and submission publication0985c56c. Current product bytes remain8297 and preserve approved1.8 native-only acquisition, exact selected Work/version and native-session authority, explicit project-local rights and human association, encrypted storage/provenance, bounded untrusted inspection, truthful failure recovery and restart identity. The exact disabled and transparent noninteractive graphics leaf is excluded only after owned-root/live ancestry/class/process/thread checks; unknown, enabled, malformed or substituted nodes retain denial. Fresh candidate-bound execution proves a natural five-node hidden reinstallation, four actual interactive registrations, ordinary final-recheck denial under a test-only expected-identity substitution, four NOTREGISTERED rollback probes and empty target state; it then proves disarmed/outside None and exact-zone Copy with one actual Core/signed LPAC candidate. The separate actual Windows picker journey cancels without candidate, selects through the native dialog, invokes explicit renderer rights/association actions, commits the exact encrypted/provenance identities and resumes them through a fresh process with unchanged receipts and no new stage. Actual current checks report222 Rust passes with2 explicitly ignored witnesses,79 Python passes with no skips,13 renderer passes, affected quality/API/architecture/build passes, and fresh reading of all156 retained captures. All808 current source/reference/dependent bindings match. The separately approved VM01 equivalent-lineage disposition authenticates the full original306-commit history and supplies21 exact supplemental T03 source deltas, including six byte-exact regular relocations; I rely on that distinct independent boundary without relabeling the original gate. The original public UI gate remains exit124 timeout without completed verdict. The b783 native Core rejection remains adverse and unlocalized, and the observer/later successes do not establish its cause. No criterion-bound blocker remains for this task under the exact owner-approved verification method. Full slice, Wave, broader profiles, production packaging, later platforms and human release gates remain separate.",
+  "acceptance_reviews": [
+    {
+      "criterion_index": 1,
+      "result": "satisfied",
+      "assessment": "Fresh exact-candidate format/attachment/API tests cover supported PDF/JATS/TEI/XML/HTML/DOCX/plain-text inspection, unsupported/malformed/active/password/size errors, digest tampering, project-scoped encrypted hashing and deduplication without inheriting rights. The actual signed LPAC format/password/size and over-ten-MiB cases pass. Current native picker and renderer handlers require exact current Work/version confirmation and explicit project-local human rights before attachment commit; unknown/denied rights and prior-session/operation substitutions fail closed. Actual SQLCipher/provenance verification and fresh-process resume retain the selected lineage, exact operation/command/candidate/attachment/document identities and ciphertext. The generic unavailable message now avoids an unsupported assertion that no file was selected or attached and avoids inferring a bridge cause."
+    },
+    {
+      "criterion_index": 2,
+      "result": "satisfied",
+      "assessment": "Current affected Rust tests pass222/0failed, with the two interactive witnesses explicitly ignored and principal proof supplied separately. Real Windows OLE source targets the owned WebView: disarmed and outside zones return None with zero candidates/held stages/drops; exact zone returns Copy with exactly one held stage, one drop and one Core candidate. Actual natural graphics warmup is followed by hidden five-node installation with four interactive registrations and one excluded graphics leaf. A test-only captured expected-thread substitution triggers the ordinary final live recheck after all four registrations; RAII rollback leaves target state empty and all four owned interactive HWNDs produce NOTREGISTERED, with the graphics HWND neither registered nor probed. Fresh native picker cancellation/selection/explicit renderer commit and fresh-process resume pass. Current79 Python tests and13 renderer tests additionally exercise cancellation, delayed inspection, identity substitution, encrypted publication interruption/retry, migration, native-session authorization, invalid stream/worker verdicts and truthful recovery. Retained red tests and all adverse native evidence are preserved."
+    },
+    {
+      "criterion_index": 3,
+      "result": "satisfied",
+      "assessment": "Affected Rust format/clippy, Python lint/format/type checks, frontend lint/type checks, generated Core API drift, architecture and current renderer/native builds pass. The populated migration regression preserves prior rights and ciphertext. Task-owned fixtures and content-free response observation do not expand filesystem/network/native-selection or researcher authority. The exact original claim/base remains6506 and the approved task/reference contract is unchanged. The owner-approved VM01 method is separately named: the actual306-commit full-history report plus independently authenticated21 supplemental T03 before/after mode/blob/raw-digest deltas close its known classifier gap, including six regular byte-exact relocations. Its separate independent disposition preserves A01-A05/correction/control authority, actual sequential R12 return and all adverse history. All766 capture inputs and42 additional dependent Git bindings still match the publication; original visual and semantic restoration judgments remain valid at those unchanged bytes, with fresh reading of156 captures. The detailed report remains its exact retained ignored artifact after the optional byte-identical public-copy hook rejection; no frozen reference or digest was changed. No unrelated product/framework scope or original-gate PASS is inferred."
+    }
+  ],
+  "independence": {
+    "statement": "I authored the earlier independent native/failure-state assessments, visual/restoration classifications, finite dependent-input inventory and evidence preparation. I authored no product/framework implementation, owner approval, task mutation, qualifying producer or current qualifying execution. The separate equivalent-lineage disposition is authored by agent:/root/a03_closeout_review and is consumed within its stated scope. This ledger adds only the required exact R01 expanded product/security disposition.",
+    "implementation_owner": "codex-w2-implementation",
+    "current_review_execution": "Read-only Git/source/JSON/log/digest authentication; no suites, process dispatch, network or UI actions. Only this unique ignored ledger is written."
+  },
+  "evidence_reproduction": {
+    "frozen_submission": {
+      "manifest": "artifacts/evidence/CAP-05.S01.T01.json",
+      "manifest_canonical_sha256": "0a4c35e7883647f24ecc76be82cc9067536a0f25bf7b70f7c070954006d8aac8",
+      "publication_commit": "0985c56cd10f7e9aaadf66f398a6c9277409c04c",
+      "packet_sha256": "331bab704f4aa07c46f4f75bb06c9e86fb5bef8ff7e25a6dc631d2a3baad227a",
+      "criteria_sha256": "3339b9f2e672a9ec2d38a6967ca5533a70cd71a9b7f2e98952fef48b05d88a53",
+      "selection_sha256": "373ff897bd8157c3e7d736fa72d0289167f6ca5456764f76fd0df30caab49c1f",
+      "status": "REVIEW",
+      "submitted_by": "codex-w2-implementation",
+      "changed_path_count": 693,
+      "selected_check_count": 10,
+      "canonical_command_id_count": 8,
+      "prior_attempt_count": 0,
+      "open_finding_ids": [],
+      "result": "Actual immutable publication reproduces candidate/base/branch/owner/evidence, full original-base693-path diff, ten exact selected commands/eight valid canonical IDs, selection rationale/hash and criteria hash. Structured deferredCoverage is retained under the exact selection hash; the legacy normalized deferred_checks array is empty, not invented. No canonical profile PASS is inferred from the selected affected families."
+    },
+    "submit_receipt": {
+      "path": "artifacts/tmp/CAP-05.S01.T01.task-submit-01-fe9313bc.log",
+      "raw_sha256": "cea9b327bcac97830efe26563592684341b5f1bc7dd131b442654ccefce16682",
+      "predecessor_sha256": "0d8d8886fd0a9abc20abdcf44ec3d1807b7dc4ec2296d1c9491e280cbff9d600",
+      "successor_sha256": "bb1762c2ff8bdb55b437c43ed89fdf21b3c7a8712e809c4f62b955ff0bdf6cf3",
+      "observed_status": "COMMITTED",
+      "producer_commit_semantics": "Entry-HEAD observation, not runner/source authentication."
+    },
+    "current_preparation": {
+      "path": "artifacts/tmp/CAP-05.S01.T01.product-security-preparation-c11_security_review-02.json",
+      "raw_sha256": "ac5725e269e53a13f1fcb7ebff1082216aff6e64d7ffe82daf77053ab676b287",
+      "result": "All nine fresh product/capture reports, eight producer sources, every reported raw check log, raw native result and referenced OLE/UIA/fixture/database/resume logs authenticate. Selected before/after inventories are exactly equal. Producer comparisons and companion inventories establish their actual recorded closure; no complete compiler/toolchain or production-installed Core inventory is fabricated."
+    },
+    "fresh_product_reports": [
+      {
+        "path": "artifacts/tmp/CAP-05.S01.T01.native-checks-02-fe9313bc.json",
+        "sha256": "8a8b848af25f29cccfd2c3ccc0cf88c1b80494c2a77445efcdd89203d391b583",
+        "status": "PASS",
+        "producerSha256": "3586ad398f30a08b7677635d2e91a30c72bc815e0f49969021b86148e4e08f68",
+        "rawLogs": [
+          {
+            "path": "artifacts/tmp/CAP-05.S01.T01.native-checks-02-fe9313bc.format.log",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "verified": true
+          },
+          {
+            "path": "artifacts/tmp/CAP-05.S01.T01.native-checks-02-fe9313bc.clippy.log",
+            "sha256": "c7fa9046837702c1623ddb29765c49602a07659da4fc53d00cd839f12a80f8c7",
+            "verified": true
+          },
+          {
+            "path": "artifacts/tmp/CAP-05.S01.T01.native-checks-02-fe9313bc.native-bridge-tests.log",
+            "sha256": "2d5c5098e9ad349faaccd881a81e714a6f034f763672c5c45ea23dd3c28c38b6",
+            "verified": true
+          }
+        ],
+        "durationSeconds": null,
+        "inputCount": 206
+      },
+      {
+        "path": "artifacts/tmp/CAP-05.S01.T01.current-native-build-fe9313bc.json",
+        "sha256": "25eeda9576c852f33710d0ec491fccdb570fe9f94e0bbaa6262aaf7710eaebf1",
+        "status": "PASS",
+        "producerSha256": "c73e9eb6a1aced6a9c9dbf7caac1879dd87431cccbc86b58dad6845c1d08b305",
+        "rawLogs": [],
+        "durationSeconds": 4.791,
+        "inputCount": null
+      },
+      {
+        "path": "artifacts/tmp/CAP-05.S01.T01.five-native-drop-04-fe9313bc.json",
+        "sha256": "b6744c1f60ad9509224224dd583ff67d33acca3f7df4bc9fefedaef4efd15de6",
+        "status": "PASS",
+        "producerSha256": "d5d96aa0e03e742d73d5116bc7926e82dcc370b4f0b3df851c88e30abbad67f5",
+        "rawLogs": [
+          {
+            "path": "artifacts/tmp/CAP-05.S01.T01.five-native-drop-04-fe9313bc.log",
+            "sha256": "4387c5d346ee8bdfd3c8521d78761be5eb46d4bb845c98893bcf979a2b28356f",
+            "verified": true
+          }
+        ],
+        "durationSeconds": 29.434,
+        "inputCount": 12483
+      },
+      {
+        "path": "artifacts/tmp/CAP-05.S01.T01.five-native-picker-04-fe9313bc.json",
+        "sha256": "4f0b1033ff413b0a5dcd189fbd7e54ab2c4fb54554235a9b50cf3d84d26813ee",
+        "status": "PASS",
+        "producerSha256": "d5d96aa0e03e742d73d5116bc7926e82dcc370b4f0b3df851c88e30abbad67f5",
+        "rawLogs": [
+          {
+            "path": "artifacts/tmp/CAP-05.S01.T01.five-native-picker-04-fe9313bc.log",
+            "sha256": "f58a5951c5e090b15b0689bd39b320e651ed996f92feb87584eb891638de0af2",
+            "verified": true
+          }
+        ],
+        "durationSeconds": 35.297,
+        "inputCount": 12483
+      },
+      {
+        "path": "artifacts/tmp/CAP-05.S01.T01.focused-python-04-fe9313bc.json",
+        "sha256": "0b0d3113ed807bc9579e3ad7f4004b62812cd08b6f3d1538f1eeccb262d0035d",
+        "status": "PASS",
+        "producerSha256": "22bc88c14d07c2af0e4d1209130586532072f1a9d15ccd37e57190e6161721e3",
+        "rawLogs": [
+          {
+            "path": "artifacts/tmp/CAP-05.S01.T01.focused-python-04-fe9313bc.ruff.log",
+            "sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18",
+            "verified": true
+          },
+          {
+            "path": "artifacts/tmp/CAP-05.S01.T01.focused-python-04-fe9313bc.python-format.log",
+            "sha256": "f114d83b30c5c657ee43a847a45bafccaea255d82673feb87c26d252c61e29c1",
+            "verified": true
+          },
+          {
+            "path": "artifacts/tmp/CAP-05.S01.T01.focused-python-04-fe9313bc.mypy.log",
+            "sha256": "718df785efbbd4b57e63b5f64aff2c5b5592e433447681f759b307f97a3ec96a",
+            "verified": true
+          },
+          {
+            "path": "artifacts/tmp/CAP-05.S01.T01.focused-python-04-fe9313bc.attachment-and-inspection.log",
+            "sha256": "58d0718a77e7575ff260e3aad840a3e9a690445aba2e8aa3af6c6f99cda55d13",
+            "verified": true
+          },
+          {
+            "path": "artifacts/tmp/CAP-05.S01.T01.focused-python-04-fe9313bc.api-contract.log",
+            "sha256": "d0de6df4695ae12810b382025f30caee94c9e9bc81887720850df6345026980f",
+            "verified": true
+          },
+          {
+            "path": "artifacts/tmp/CAP-05.S01.T01.focused-python-04-fe9313bc.architecture.log",
+            "sha256": "51a256bf6a7b2e89ab1d1b97aa19077aabf0e8858a450de1f5ceb155ed5c3e88",
+            "verified": true
+          }
+        ],
+        "durationSeconds": null,
+        "inputCount": 12475
+      },
+      {
+        "path": "artifacts/tmp/CAP-05.S01.T01.attachment-ts-green-02-fe9313bc.json",
+        "sha256": "a49911cc6776cc434624aad656ec56c54e374a1acd500cb9d03fbf675d33ec34",
+        "status": "PASS",
+        "producerSha256": "09d3933aefccb04322dd11c4f2fb42813ac4189e1df42c5e737a138e87ae1635",
+        "rawLogs": [
+          {
+            "path": "artifacts/tmp/CAP-05.S01.T01.attachment-ts-green-02-fe9313bc.log",
+            "sha256": "41abd149604daadf0b40cc9a8022e66b438f59df0ae3c26d09a8c0a250dd4a19",
+            "verified": true
+          }
+        ],
+        "durationSeconds": 5.461,
+        "inputCount": 13647
+      },
+      {
+        "path": "artifacts/tmp/CAP-05.S01.T01.frontend-quality-01-fe9313bc.json",
+        "sha256": "0e967c98ca4df854d57ac4be1fb7710112584c062471b079b92a89c68ba7598b",
+        "status": "PASS",
+        "producerSha256": "556a969aa77a118b5aa8a58fbdce7013a8f9387a51ff7e3a0d81407cf58a916d",
+        "rawLogs": [
+          {
+            "path": "artifacts/tmp/CAP-05.S01.T01.frontend-quality-01-fe9313bc.lint.log",
+            "sha256": "f78ede1982f71d1f223b387397a8ac36d4e569cb5133d0d9e5e7c5292c13513d",
+            "verified": true
+          },
+          {
+            "path": "artifacts/tmp/CAP-05.S01.T01.frontend-quality-01-fe9313bc.typecheck.log",
+            "sha256": "8366207267355d3e3d5bf3bf6e8c94c5f93f6078c34f08973fa2b38cdda6cc92",
+            "verified": true
+          }
+        ],
+        "durationSeconds": null,
+        "inputCount": 13647
+      },
+      {
+        "path": "artifacts/tmp/CAP-05.S01.T01.product-build-green-02-fe9313bc.json",
+        "sha256": "4e0e954a13f369193fbd178b576f68aed4758adb1b41b9cf90f7fe3a52e4809b",
+        "status": "PASS",
+        "producerSha256": "c29baed4031c7773881603b1d493322ba0ed7174a58ac2ff7e23f527d60937c7",
+        "rawLogs": [
+          {
+            "path": "artifacts/tmp/CAP-05.S01.T01.product-build-green-02-fe9313bc.log",
+            "sha256": "80fc1a761b965b0d6f7f4fc6a5c91e5979b2f6fd060f56511967705c0199b2e0",
+            "verified": true
+          }
+        ],
+        "durationSeconds": 1.889,
+        "inputCount": null
+      },
+      {
+        "path": "artifacts/tmp/CAP-05.S01.T01.capture-verification-02-fe9313bc.json",
+        "sha256": "506c89e46280c847f31f1f6df98a08cea815e1d7388597692aec214745b7158c",
+        "status": "PASS",
+        "producerSha256": "3941aecd25c6a0350d2c59406e982016ec462804cf952a6747f5a15d63fe8c14",
+        "rawLogs": [
+          {
+            "path": "artifacts/tmp/CAP-05.S01.T01.capture-verification-02-fe9313bc.log",
+            "sha256": "7e3088a3e3db2cc0b14c742a9d63f9be988c64d3f77d1bff30a7ddcb3182965f",
+            "verified": true
+          }
+        ],
+        "durationSeconds": 27.241,
+        "inputCount": 12335
+      }
+    ],
+    "source_closure": {
+      "product_producer_commit": "8297dcdc1528cb0cbe53ecd38b056231fbe9fd1d",
+      "capture_inputs": 766,
+      "additional_dependent_inputs": 42,
+      "total_bindings": 808,
+      "all_match_publication_tree": true,
+      "post_product_bound_input_touches": [],
+      "named_authority_controls_unchanged": true,
+      "publication_diff_scope": "Nine evidence/planning/projection paths only; parent is the exact qualifying candidate."
+    },
+    "separate_equivalent_lineage": {
+      "report": {
+        "path": "artifacts/tmp/CAP-05.S01.T01.equivalent-lineage-04-fe9313bc.json",
+        "raw_sha256": "4913f16f048a9e34f4725ab5faf0b8eba50adc378d7fc9077891c791e2c0bac9"
+      },
+      "independent_disposition": {
+        "path": "artifacts/evidence/CAP-05.S01.T01.VM01.equivalent-lineage-review-01.json",
+        "canonical_sha256": "c907cd3929618cd77f4aefda1b814f4222ff8056a0ed6388e3a22bc6f6eead59",
+        "result": "approved",
+        "reviewer": "agent:/root/a03_closeout_review"
+      },
+      "whole_history_commit_count": 306,
+      "supplemental_t03_regular_source_deltas": 21,
+      "byte_exact_regular_relocations": 6,
+      "combined_closure": "Report04 alone omits those21 known classifier deltas; the distinct independent disposition records and authenticates their complete before/after regular mode/blob/raw-SHA identities, actual claimed source frames and immutable R01/R02 adverse/R03 approved task history. This combined closure is consumed exactly as disclosed; I do not attribute the supplemental observations to the report producer."
+    },
+    "owner_method": {
+      "path": "planning/verification-method-approvals/CAP-05.S01.T01.VM01.json",
+      "canonical_sha256": "27eae17f1f0d40e0e39f06b0151b8ccb6bae72361d927c9c5ab6da9e66b7deb8",
+      "introduction_commit": "8ba210dbad9c7997f341ac1aec8c4f80eabed67c",
+      "result": "Exact single task-only method substitution and supported return authorized; no framework/authority/policy/source change or future exception."
+    },
+    "visual_and_restoration": {
+      "capture_manifest": "artifacts/evidence/CAP-05.S01.T01.captures-02/manifest.json",
+      "capture_manifest_sha256": "a53d99456c8b5ec806d128b8f04d70f5e00b4bb211899fa96f099b836037e145",
+      "producer_commit": "8297dcdc1528cb0cbe53ecd38b056231fbe9fd1d",
+      "delivery_commit": "fb437349cb65352c839cb298ec7e13890baf1845",
+      "visual_review": {
+        "path": "artifacts/evidence/CAP-05.S01.T01.visual-review-01.json",
+        "sha256": "f168a828504ab30f5457aca1aaaa457e8412ca873e045fd938d466dc5ddecd45",
+        "introduction_commit": "5ade6b041a38b480b3ff11be3f4da6fc83f4c074"
+      },
+      "semantic_classification": {
+        "path": "artifacts/evidence/CAP-05.S01.T01.ui-classification-R01.json",
+        "sha256": "88abac0df5ae9f0a1561d33fa067eaf5b562b4c5ecd461ef7b9b8dcbd5ececc5",
+        "introduction_commit": "7a17cea98d537ba2a56562a3309df56beb22ba6f"
+      },
+      "result": "Original independent review of all156 paired PNGs and semantic classification retained; fresh reader verifies all156 unchanged delivery blobs at current candidate. Static captures do not prove principal behavior or every dynamic attachment state."
+    },
+    "optional_report_publication_rejection": {
+      "preserved_draft": "artifacts/tmp/CAP-05.S01.T01.VM01.publication-rejected-01.json",
+      "raw_sha256": "4913f16f048a9e34f4725ab5faf0b8eba50adc378d7fc9077891c791e2c0bac9",
+      "byte_identical_to_original_qualifying_report": true,
+      "independent_privacy_observation": "All19 at-sign tokens are exact existing tracked public icon scale filenames; no email value occurs among those tokens. The normal hook rejection is retained; this ledger supplies no exemption or hook change. Omitting only the optional public duplicate preserves the actual frozen ignored report reference and exact bytes."
+    }
+  },
+  "prior_material_observations_replayed": [
+    {
+      "observation": "Exact disabled/transparent foreign graphics leaf rejected by the earlier planner",
+      "current_closure": "Approved native-only role restoration, live identity/ancestry checks, deterministic substitution denial and actual four-registration rollback/five-node hidden reinstall are reviewed and freshly proven. The earlier startup failure remains adverse."
+    },
+    {
+      "observation": "Generic unavailable message asserted that no file was selected or attached after a held-stage/Core rejection",
+      "current_closure": "Current truthful fallback and red-first regression cover the unsupported assertion. No causal localization of the b783 failure is claimed."
+    }
+  ],
+  "retained_adverse_evidence": [
+    {
+      "path": "artifacts/tmp/CAP-05.S01.T01.native-regressions-red-01-97846890.json",
+      "raw_sha256": "6f5175ac08c224d6ab89ca34f87d0131f227e0850b304b2457e472dfbfbc7877",
+      "observed_exit_code": 101,
+      "observed_result": "12 passed;1 failed;0 ignored; no red PASS."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S01.T01.attachment-ts-red-02-9433550f.json",
+      "raw_sha256": "a2ee431e02b49cd798cda2cfe4582bdefdf5d09214a55105bacd076e8c35b1cb",
+      "observed_exit_code": 1,
+      "observed_result": "12 passed;1 failed; truthful-fallback red assertion actually fails."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S01.T01.five-native-drop-01-b7834a12.json",
+      "raw_sha256": "42fb05bb8fff2ff8932e27bbce44d1a25179911e7f51374cbd4cce39c11a25e9",
+      "observed_exit_code": 1,
+      "observed_result": "Held stage followed by Core Rejected/unavailable remains FAIL and unlocalized."
+    },
+    {
+      "path": "artifacts/evidence/CAP-05.S01.T01.full-base-ui-gate-01.receipt.json",
+      "canonical_sha256": "9a684897691d229736911bed3a96160b1148fe0f03951f501ac6bf76beb57c3a",
+      "observed_exit_code": 124,
+      "observed_duration_seconds": 600.011,
+      "completed_verdict": false,
+      "observed_result": "Actual timeout, not original-gate PASS or emitted historical denial."
+    }
+  ],
+  "proof_limits": [
+    "Approval is limited to this exact R01 under the owner-authorized VM01 method. It is not the original whole-base UI gate or foundation:ui-change PASS.",
+    "Natural graphics warmup and hidden reinstallation prove an actual five-node graph with four interactive OLE targets, not first-start five-node timing or five registered targets. Manager remains unavailable until fixture readiness; production retains hidden-before-install denial.",
+    "Final-check failure changes only one captured expected graphics thread identity. The foreign graphics window is never mutated, registered or probed; no fabricated HWND or startup restart hunting is used.",
+    "OS scope introspection is unsupported. The observed disarmed/outside denial and exact-zone acceptance do not become an introspection assertion.",
+    "Actual source Core/native HTTP/encrypted storage/signed LPAC proof uses an explicit test-only runtime adapter and test signing with the exact retained frozen guardian. This is not a new production-installed Core package, production signature or full GUI packaging qualification.",
+    "The one owned-caption focus gesture retains the original ownership, hit-test and foreground checks and does not prove unattended foreground availability.",
+    "The b783 native rejection, earlier first-start/foreground failures, observer/message setup failures, aborted partial capture01, inventory-helper refusals and historical C11/S05/C12/lineage failures remain adverse. Later passes neither identify their causes nor relabel them passed.",
+    "The retained captures are unchanged producer8297/deliveryfb437 images; only their reader execution is fresh. Prior visual and semantic decisions retain their exact independent scope.",
+    "Raw elapsed native timings29.434/35.297 seconds are these bounded synthetic journeys, not a latency percentile or broader performance qualification.",
+    "Selected affected checks do not claim complete documents/desktop/service/security or repository profiles. Slice/checkpoint/Wave integration, later tasks, protected reader, other platforms, production packaging and human release remain separate.",
+    "Recorded identities/hashes/Git ancestry and receipts establish retained consistency; they do not provide a cryptographic human/agent or runner/source authentication service."
+  ],
+  "checks": [
+    {
+      "command": "Read-only authenticate immutable0985 submission publication and recompute actual frozen R01/criteria/selection/evidence bindings",
+      "result": "PASS: candidatefe931, original6506, owner/branch/lease,693 paths,ten checks/eight canonical IDs, exact selection and no prior attempts/open findings reproduce."
+    },
+    {
+      "command": "Replay prior independent product/native/failure-state findings against unchanged current source and governing task/reference contract",
+      "result": "PASS: material planner and truthful-fallback observations close at current bytes; authority and exact identity/rights/publication/recovery fences remain intact."
+    },
+    {
+      "command": "Read-only authenticate current product reports/producers/raw native/check outputs and source/dependent input closure",
+      "result": "PASS: actual222 Rust/79 Python/13 renderer outcomes and principal picker/drop/rollback/resume witnesses match retained bytes; all808 Git bindings remain unchanged. No suites rerun."
+    },
+    {
+      "command": "Consume separately approved exact VM01 equivalent-lineage and explicit21-delta T03 source supplement, preserving actual gate/adverse limits",
+      "result": "PASS within disclosed independent scope: full original306-commit history plus supplement and exact single return are approved separately; original public gate remains timeout."
+    }
+  ],
+  "findings": [],
+  "closures": [],
+  "prior_findings_replayed": [],
+  "slice_approval": false,
+  "wave_completion": false,
+  "release_approval": false,
+  "original_public_gate_pass_claim": false
+}
