@@ -118,3 +118,13 @@ Focused tests distinguish pure behavior and unit transports from the owned real
 HTTPS, SQLCipher, encrypted-object and signed-LPAC boundary. Test DNS/socket routing,
 CA trust and signing inventory are synthetic test authority; they do not establish
 public provider availability or production installation/package qualification.
+
+The downstream parser handoff uses portable `DocumentAttachment` identities,
+`AcquisitionRepositoryPort.source_for_revision` for the retained typed location
+and receipt, and `ObjectStore.open_document_attachment` for the exact attached
+revision. Core composes these adapters; consumers need no database connection,
+SQL, private table or decrypted path. Source metadata is not read authority:
+the protected stream rechecks the current actor and per-copy inspect permission,
+rejects substituted revisions and generic object-hash reads, and retains original
+source/license/checksum observations even after access is revoked. Recovery and
+this local handoff never initiate another acquisition request.

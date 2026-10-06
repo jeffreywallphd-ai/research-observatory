@@ -415,6 +415,15 @@
       "linkedTasks": [
         "CAP-05.S01.T02"
       ]
+    },
+    {
+      "id": "ADR-0043",
+      "path": "docs/adr/ADR-0043-bind-intake-recovery-contracts-to-existing-authority.md",
+      "title": "Bind intake recovery contracts to existing authority",
+      "status": "Proposed",
+      "linkedTasks": [
+        "CAP-05.S01.T03"
+      ]
     }
   ]
 }

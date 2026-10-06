@@ -274,9 +274,9 @@ approval. Earlier proposals, publications, approvals and adverse evidence remain
 unchanged.</pre></article></section>
 <section class="section-heading"><span class="eyebrow">Task-start planning</span><h2>Assigned worksheet</h2><p>The worksheet is an optional planning aid and does not create a new approval or task state.</p></section>
 
-<details class="plan-details task-worksheet" open data-task-worksheet="CAP-05.S01.T03" data-worksheet-sha256="6c34b371ed4df6475123fff074b2983bb753666b1b6d7305c2b15ae53ab8ae0e">
+<details class="plan-details task-worksheet" open data-task-worksheet="CAP-05.S01.T03" data-worksheet-sha256="61311888463f84a44715efc82173ed542494eabfd08b5ac9a103d8a15bb5d73f">
   <summary>Assigned task-start worksheet</summary>
-  <div class="worksheet-meta"><strong>Source:</strong> <code>artifacts/evidence/CAP-05.S01.T03.task-start.md</code> · <strong>SHA-256:</strong> <code>6c34b371ed4df6475123fff074b2983bb753666b1b6d7305c2b15ae53ab8ae0e</code></div>
+  <div class="worksheet-meta"><strong>Source:</strong> <code>artifacts/evidence/CAP-05.S01.T03.task-start.md</code> · <strong>SHA-256:</strong> <code>61311888463f84a44715efc82173ed542494eabfd08b5ac9a103d8a15bb5d73f</code></div>
   <article class="plan-article"><pre class='markdown-fallback'># CAP-05.S01.T03 — acquisition queue, recovery and local access needs
 
 Actual ordinary taskctl claim base: `01bc453237a081392544929364696bac3422e9fb`.
@@ -375,7 +375,16 @@ retained-copy regression for distinct visible identities and exact return contex
 and a prior per-copy rights-failure regression for annotation without egress and
 fresh alternative-copy review. Local-file attachment stays denied, and actual
 download/Attach still recheck current authority. These are corrections of the
-approved 1.9 journey, not new scope or verification-framework work.</pre></article>
+approved 1.9 journey, not new scope or verification-framework work.
+
+The first committed-candidate check exposed a missed architecture row: concrete
+intake/recovery SQL helpers were placed outside the established document data
+adapter. The existing architecture guard rejects those dependencies and calls.
+Preserve that failed check and relocate the exact helpers into the existing
+`document_attachment_repository.py` adapter; keep transactions, authority, IDs,
+SQL and recovery semantics unchanged. The guard is the characterization failure;
+replay it plus affected queue/recovery and integration checks. No verifier,
+architecture policy, migration, public contract or framework change is required.</pre></article>
 </details>
 <section class="section-heading"><span class="eyebrow">Execution evidence</span><h2>Review packets, rounds, and current projection</h2><p>Append-only controls retain every immutable round and finding closure. Pre-policy tasks remain explicitly latest-review-only.</p></section>
 

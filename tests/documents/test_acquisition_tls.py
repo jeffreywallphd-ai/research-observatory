@@ -393,6 +393,65 @@ class AcquisitionPrincipalTests(unittest.TestCase):
         self.assertEqual(1, selected.count("document_attachment_assertions"))
         self.assertFalse(selected.database.read_bytes().startswith(b"SQLite format 3"))
 
+        # A downstream consumer receives only portable immutable identities and
+        # metadata. Exact protected reads still recheck the current local copy.
+        from research_observatory_core.document_attachment_api import DocumentAttachmentView
+        from research_observatory_core.document_attachment_repository import AcquisitionRepository
+        from research_observatory_core.ports.acquisition import AcquisitionRepositoryPort
+        from research_observatory_core.ports.document_attachments import DocumentAttachment
+        from research_observatory_core.ports.object_store import ObjectAccessDenied
+        from research_observatory_core.ports.rights import RightsPermissionDraft
+        from research_observatory_core.rights_policy import RightsUse
+
+        from tests.documents.acquisition_handoff_consumer import consume_attached_source
+
+        view = DocumentAttachmentView.model_validate(committed.json())
+        attachment = DocumentAttachment(**view.model_dump())
+        restarted: AcquisitionRepositoryPort = AcquisitionRepository(
+            selected.database, selected.project, f.repository.source_record, selected.attachments
+        )
+        retained_source = restarted.source_for_revision(attachment.document_revision_id, actor=selected.actor)
+        self.assertIsNotNone(retained_source)
+        location, receipt = retained_source
+        self.assertEqual(selected.location, location)
+        self.assertEqual("cc-by-4.0", location.license)
+        self.assertEqual("acceptedVersion", location.version)
+        self.assertEqual(candidate.object_sha256, receipt.actual_sha256)
+        self.assertEqual(selected.location.location_sha256, receipt.location_sha256)
+        self.assertEqual(fixture.body, consume_attached_source(restarted, selected.objects, attachment, selected.actor))
+        with self.assertRaises(ObjectAccessDenied):
+            selected.objects.open(attachment.object_sha256, purpose="document-analysis")
+        with self.assertRaises(ObjectAccessDenied):
+            selected.objects.open_document_attachment(attachment.attachment_id, new_uuid_v7(), actor=selected.actor)
+        prior_policy = selected.repository.rights.current(candidate.rights_subject, actor=selected.actor)
+        self.assertIsNotNone(prior_policy)
+        selected.repository.rights.publish_draft(
+            candidate.rights_subject,
+            (
+                RightsPermissionDraft(
+                    use=RightsUse(action="inspect", purpose="document-analysis", destination_kind="local-project"),
+                    value="denied",
+                    basis="researcher-confirmed",
+                    confidence="confirmed",
+                    evidence_revision_ids=(candidate.source_assertion_revision_id,),
+                    license_observation_revision_id=None,
+                    entitlement_revision_id=None,
+                ),
+            ),
+            prior_policy.revision_id,
+            command_id=new_uuid_v7(),
+            command_sha256="6" * 64,
+            actor=selected.actor,
+        )
+        with self.assertRaises(ObjectAccessDenied):
+            consume_attached_source(restarted, selected.objects, attachment, selected.actor)
+        self.assertEqual(
+            retained_source, restarted.source_for_revision(attachment.document_revision_id, actor=selected.actor)
+        )
+        self.assertEqual(1, len(fixture.requests), "portable handoff and denied reads send no further HTTP")
+        self.assertEqual(1, selected.count("document_attachment_recoveries"))
+        self.assertEqual(1, selected.count("document_attachment_assertions"))
+
 
 if __name__ == "__main__":
     unittest.main()

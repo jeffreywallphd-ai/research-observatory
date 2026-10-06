@@ -168,6 +168,12 @@ class AcquisitionRepositoryPort(Protocol):
 
     def fail_attempt(self, operation_id: str, *, actor: CorpusActor, cancelled: bool, code: str) -> None: ...
 
+    def source_for_revision(
+        self, revision_id: str, *, actor: CorpusActor
+    ) -> tuple[AcquisitionLocation, AcquisitionReceipt] | None:
+        """Retain exact source provenance without granting a content read."""
+        ...
+
 
 class AcquisitionAttachmentPort(Protocol):
     """Encrypted, inspected staging without exposing a database connection."""
