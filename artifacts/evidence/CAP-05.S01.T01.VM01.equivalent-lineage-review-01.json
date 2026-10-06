@@ -1,0 +1,803 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-verification-method-equivalent-lineage-independent-review",
+  "taskId": "CAP-05.S01.T01",
+  "reviewId": "CAP-05.S01.T01.VM01.equivalent-lineage-review-01",
+  "candidateCommit": "fe9313bcbf2580a0baabafed57a244a831ae29f7",
+  "baseCommit": "6506c68461144747b0ee9be10853211717aa381d",
+  "productCandidateCommit": "8297dcdc1528cb0cbe53ecd38b056231fbe9fd1d",
+  "reviewer": "agent:/root/a03_closeout_review",
+  "implementationAgent": "codex-w2-implementation",
+  "reviewedAt": "2026-10-06T11:36:49Z",
+  "result": "approved",
+  "dispositionScope": "Only the exact VM01 equivalent original-history/authority proof, including the explicitly recorded independent supplemental T03 source bindings. This is not formal task, slice, Wave or release approval.",
+  "evidence": {
+    "path": "artifacts/tmp/CAP-05.S01.T01.equivalent-lineage-04-fe9313bc.json",
+    "sha256": "4913f16f048a9e34f4725ab5faf0b8eba50adc378d7fc9077891c791e2c0bac9"
+  },
+  "producer": {
+    "path": "artifacts/tmp/CAP-05.S01.T01.qualify-equivalent-lineage-04.py",
+    "sha256": "f5cc495ac90f6dd69c45f152d6a1dd9fea5eb932c3b7d6f01449fed2f75b9c03"
+  },
+  "rawLog": {
+    "path": "artifacts/tmp/CAP-05.S01.T01.equivalent-lineage-04-fe9313bc.log",
+    "sha256": "e91398e35a5257df3a9d3057009262756f048a6a83a89ddd62bc4eaebc8a896b"
+  },
+  "observedExecution": {
+    "status": "PASS",
+    "exitCode": 0,
+    "durationSeconds": 161.338,
+    "candidateStable": true,
+    "reviewerProducerReruns": 0,
+    "reviewerSuiteReruns": 0
+  },
+  "ownerAuthority": {
+    "path": "planning/verification-method-approvals/CAP-05.S01.T01.VM01.json",
+    "introductionCommit": "8ba210dbad9c7997f341ac1aec8c4f80eabed67c",
+    "sha256": "27eae17f1f0d40e0e39f06b0151b8ccb6bae72361d927c9c5ab6da9e66b7deb8",
+    "proposalCommit": "5fdac55a9d0c59fb82260bd3289517b95d025e1f",
+    "proposalSHA256": "9f20e9b185207ae2d467379a058f87a48c44ca5c78e027a7ff1b13013d674e80",
+    "readinessCommit": "7673cd12de51528c6e6a534e00527f5e5d3859c2",
+    "readinessSHA256": "49da4336b9b5643db654261ee51975b3da10feaab88a2da811c1db58ee8f9b21",
+    "methodSubstitutionApproved": true,
+    "directOwnerRecordProcedureExceptionApproved": true,
+    "frameworkSourceChangesAuthorized": false
+  },
+  "independence": {
+    "statement": "I authored the earlier bounded read-only lineage audit, separate privacy adjudication, VM01 readiness review and A03 S01 review-02, and supplied read-only draft observations. I authored no product/framework source, owner approval, qualifying producer, qualifying report, execution log, resume/reopen mutation or checkpoint manifest. Those prior contributions are disclosed and retained; they are not attributed to another reviewer. This review independently reads the fixed producer/report and exact authority, authenticates retained Git/reference bytes and raw evidence, and adds only the requested finite T03 Git corroboration. The sole file authored in this disposition is this ignored ledger.",
+    "reusedOwnPriorEvidence": [
+      {
+        "path": "artifacts/evidence/CAP-05.S01.T01.lineage-audit-01.json",
+        "sha256": "2732bc9beec5ee89c10545962008da15c4773578c2d2ee6ecacca21a5600c995"
+      },
+      {
+        "path": "artifacts/evidence/CAP-05.S01.T01.verification-method-amendment-01.readiness-review-01.json",
+        "sha256": "49da4336b9b5643db654261ee51975b3da10feaab88a2da811c1db58ee8f9b21"
+      },
+      {
+        "path": "artifacts/evidence/W2.A03.S01.review-02.json",
+        "sha256": "f0dcf32b030fa2a40eb302770008f99542c594efb8ae6372490a2fcfefdb0b5f"
+      }
+    ]
+  },
+  "independentCriterionObservations": [
+    {
+      "criterion": "VM01 exact owner authority and unchanged original task contract",
+      "result": "satisfied-at-equivalent-proof-boundary",
+      "observation": "The owner record is a single immutable approved introduction at 8ba210db and explicitly grants the task-only method substitution plus direct append-only owner-record procedure exception. It binds the exact proposal/readiness packet and paused predecessor, original6506 base, product8297 and original task contract digest46d17118. Source inspection and the authenticated execution show those exact bindings asserted; no future generic exemption, new framework task or false original-gate PASS is introduced.",
+      "taskContractSHA256": "46d171183a53019aec34afad10f92cf9af9704b8c742a366ac5686d1125644d4"
+    },
+    {
+      "criterion": "Complete original-base per-commit source/control/UI history including additions and reversions",
+      "result": "satisfied-with-explicit-supplemental-source-closure",
+      "observation": "Independent git rev-list inspection reproduces all306 ordered original6506-to-fe931 commits and their exact linear parents, without a shortened base. Report04 records81 governed rows,471 intermediate blob bindings,136 source admissions and16 retained review ranges. It retains all T03 path/commit/range admissions, but the81 governed rows omit the known sample repository source/fixture relocation and connector_conformance/core_api_contract paths because those are outside the producer classifier's configured roots/tools. The21 exact regular before/after mode/blob/raw-SHA deltas below independently close those two known historical commit frames, including six byte-exact regular relocations. No missing bytes are inferred from filenames, narrative or a net diff. Git replacement refs, shallow history and grafts are absent.",
+      "completeHistoryCount": 306,
+      "governedRowsInReport": 81,
+      "intermediateBlobsInReport": 471,
+      "independentlyObservedSupplementalT03DeltaCount": 21,
+      "noGitReplacementShallowOrGraftHistory": true
+    },
+    {
+      "criterion": "Every inherited A01-A05 and control segment retains exact approved scope, claim, review and adoption authority",
+      "result": "satisfied-at-historical-attribution-boundary",
+      "observation": "The fixed producer authenticates all five owner-bound approved packet freezes, preserving legitimate preapproval draft touches and denying any packet touch after the exact owner grant. Original claim bases remain fixed while R02/R03 incremental submission bases follow the immediately preceding candidates. Exact submission/manifest/ledger/criteria identities, actual historical claimed candidates, independent latest approvals, slice/exit bindings and one actual security checkpoint per amendment are asserted. A02/A03/A04/A05 separate security review manifests and strict pre-adoption ordering are checked. A01's authentic CP02/approved-exit historical route is preserved without inventing a later security ledger. Named maintenance, GOV25/26/27, B00 and source-only completion segments remain distinct from ordinary original-task source authority. The corrected exact9b72 tree is bound before the A01 control claim and A02 packet, following its original grant; the earlier false pre-grant observer assertion is not retained as a governing predicate.",
+      "actualAdoptions": [
+        {
+          "id": "W2.A01",
+          "adoptionCommit": "56187d40ca5d38f72f7c9dfb132070b034032a57",
+          "approval": {
+            "path": "planning/wave-amendment-approvals/W2.A01.json",
+            "sha256": "6fe58c9791d224a51367f42ced40e27a45a0d83ee07464e237fc2a302edc4096",
+            "introduction_commit": "f8a49a2ec7ff4daf6e1c5e14da369e06ddff5287"
+          },
+          "packet": {
+            "commit": "3fb76d6cb6bce6eaf16774931704de68c6168500",
+            "path": "planning/enabler-change-requests/ECR-0009.packet.json",
+            "sha256": "9b86ac8c6db43785bc6f783adc5c287e405b3925f1d8fea9f2cc048cd4fb00d2",
+            "proposalPath": "planning/enabler-change-requests/ECR-0009.md",
+            "proposalSha256": "19b25c2170a6401ce0ca4567835817c14a53dfdb3f65e7d95a7886aa484210c2"
+          }
+        },
+        {
+          "id": "W2.A02",
+          "adoptionCommit": "04d6ae3fb29a133e6e31c8191ba1d6b80fa0b0cf",
+          "approval": {
+            "path": "planning/wave-amendment-approvals/W2.A02.json",
+            "sha256": "d99be15aa110248b0e10e7090210787fe5cfa8e929e759f91a7d84a8e57a8d79",
+            "introduction_commit": "5fbeea66e84bac5ab24cf1bb8d2522838529a0ba"
+          },
+          "packet": {
+            "commit": "60e8a2d3bbd3ba50cc4809a7ebe799764e6b00db",
+            "path": "planning/enabler-change-requests/ECR-0010.packet.json",
+            "sha256": "f452dcd6f522bcaf2697d64751a1a55a8b747247bfb37000786bee4458f12c43",
+            "proposalPath": "planning/enabler-change-requests/ECR-0010.md",
+            "proposalSha256": "f688916e42852828da7d313106ffcffd1acd697872f6bf568dfa73aefee2fb2c"
+          }
+        },
+        {
+          "id": "W2.A03",
+          "adoptionCommit": "0b20d78426a053ea3818089d7126c123c0be7a65",
+          "approval": {
+            "path": "planning/wave-amendment-approvals/W2.A03.json",
+            "sha256": "8852d6631a6656e94cc75e4f9dc705c7095ecf111786748e5630fe13b8fa9087",
+            "introduction_commit": "c972e2116113afa7ad84f0e43bdad58660cc69bb"
+          },
+          "packet": {
+            "commit": "746c05dcd7dbabaa7f5eebee8e3fa56b8ac6b9b5",
+            "path": "planning/enabler-change-requests/ECR-0011.packet.json",
+            "sha256": "31a31459b0895316972203e6b2b301ca9bc2fb83bdd566034ff61e1bc0a3b0e3",
+            "proposalPath": "planning/enabler-change-requests/ECR-0011.md",
+            "proposalSha256": "eaaa396784de05993b68b505d86dd27f7bcc4a69fb78f1872345300df172fe37"
+          }
+        },
+        {
+          "id": "W2.A04",
+          "adoptionCommit": "8f1a47f8a334fe32330e75f637f9b71b83669a03",
+          "approval": {
+            "path": "planning/wave-amendment-approvals/W2.A04.json",
+            "sha256": "e769cb71efbf8725c0fadeac079713f4484f57f7cf871cdfb037ef9a4df27807",
+            "introduction_commit": "ba95f68bd2747ebce99e67eeb4daec53ed3ba87b"
+          },
+          "packet": {
+            "commit": "7f35c7a8e49eb8415ffdffa5a2e04374161f0eae",
+            "path": "planning/enabler-change-requests/ECR-0012.packet.json",
+            "sha256": "eb1cbf1b827bffdd5914f9255c6f0bba374621f916711b3e05815202d0312b8c",
+            "proposalPath": "planning/enabler-change-requests/ECR-0012.md",
+            "proposalSha256": "24b805f99d5cdac257bd922bfdc6ead5f21b1d799627e79c350beddbba6a53ac"
+          }
+        },
+        {
+          "id": "W2.A05",
+          "adoptionCommit": "79556040fff511246a6a4cc6d9858254f8713911",
+          "approval": {
+            "path": "planning/wave-amendment-approvals/W2.A05.json",
+            "sha256": "9ad5b3f5fca7d3fd9c7fd8a42200f570f46250d506765b30e2705e299c7e8101",
+            "introduction_commit": "b54f24c222f631700056574a08056f660696d305"
+          },
+          "packet": {
+            "commit": "55c6389ce39a656f4da3851cae32ae12ac80e796",
+            "path": "planning/enabler-change-requests/ECR-0013.packet.json",
+            "sha256": "56f521d708266021121b2a3391506cc771c7d32e32442d29dc5e58ba356f20c1",
+            "proposalPath": "planning/enabler-change-requests/ECR-0013.md",
+            "proposalSha256": "1515e5f073bd19ed33d1c4552f9325d56ce84f1c61b8d18e3d8b1183691f4d14"
+          }
+        }
+      ]
+    },
+    {
+      "criterion": "Exact nine C11/S05/C12 history exceptions with authenticated correction and integration scope",
+      "result": "satisfied-with-unchanged-prior-audit-closure",
+      "observation": "The producer compares the exact nine owner-record commit/parent/product-path rows with the retained audit, authenticates C11/C12 whole corrective task records unchanged from8297, all ten prior origin/contract/history/authority/ancestry/packet comparisons, current recomputed origin projections, exact immutable specification/review/manifest blobs and specification-before-source scope. S05 is actually DONE/APPROVED and its completion evidence/review is retained. These finite owner-authorized rows supplement actual reviewed authority; they do not grant other inactive-task product commits. The separate T03 R01-R03 envelope, actual claimed source frames and regular source relocation are independently preserved below.",
+      "finiteHistoryExceptionCount": 9,
+      "reusedCorrectionAudit": {
+        "path": "artifacts/evidence/CAP-05.S01.T01.lineage-audit-01.json",
+        "sha256": "2732bc9beec5ee89c10545962008da15c4773578c2d2ee6ecacca21a5600c995"
+      }
+    },
+    {
+      "criterion": "Historical R09/R10/R11/reopen and exact single supported post-owner return",
+      "result": "satisfied-at-actual-transition-boundary",
+      "observation": "The complete history preserves the earlier holds and R09/R10/R11/reopen records. Historical predicate incompatibilities remain observations of the old selector, not an emitted public denial. Exactly one post-owner Wave resume and original task reopen occur in fe931, whose parent is8ba. Their two actual sequential COMMITTED compare-and-swap receipts and exact intermediate raw YAML snapshot authenticate paused working SHA01ad610b -> resumed3e9395f6 -> reopened0d8d8886. The intermediate state remains T01 BLOCKED/W2 ACTIVE, then the committed state is T01 IN_PROGRESS/W2 ACTIVE. R12 retains exact prior paused campaign digest, actor, branch, worktree, LOC/windows-x64, original6506 base and owner-record identity. Receipt producerCommit remains entry-HEAD observation rather than command authentication; no intermediate Git commit or extra active epoch is fabricated.",
+      "supportedCheckpoint": {
+        "path": "artifacts/evidence/CAP-05.S01.T01.VM01.resume-checkpoint-01.json",
+        "sha256": "71f4373dc8ae318891b031fc07e70cb6fdafd0718a23a56d08832a52e55c93cb"
+      },
+      "postOwnerReturn": [
+        {
+          "commit": "fe9313bcbf2580a0baabafed57a244a831ae29f7",
+          "parentCommit": "8ba210dbad9c7997f341ac1aec8c4f80eabed67c",
+          "kind": "wave-resume",
+          "record": {
+            "id": "W2.R12",
+            "wave_id": "W2",
+            "control_revision": 12,
+            "prior_status": "PAUSED",
+            "pre_resume_commit": "8ba210dbad9c7997f341ac1aec8c4f80eabed67c",
+            "prior_campaign_sha256": "92caa5dbf5200d5f7a9c0b2a4357b67821be5f71aeb850af32c1be396829fe46",
+            "branch": "codex/w2-implementation",
+            "worktree": ".",
+            "profile": "LOC",
+            "platform": "windows-x64",
+            "actor": "codex-w2-implementation",
+            "resumed_at": "2026-10-06T10:45:33+00:00"
+          }
+        },
+        {
+          "commit": "fe9313bcbf2580a0baabafed57a244a831ae29f7",
+          "parentCommit": "8ba210dbad9c7997f341ac1aec8c4f80eabed67c",
+          "kind": "original-task-reopen",
+          "resumeId": "W2.R12"
+        }
+      ],
+      "rawReceiptAndSnapshotChainIndependentlyAuthenticated": true
+    },
+    {
+      "criterion": "Approved1.8 authority, witness/consumer/baseline and current producer/dependent input closure",
+      "result": "satisfied-at-static-history-and-input-authority-boundary",
+      "observation": "The two immutable1.2/1.4 UI contracts and approved1.8 record remain authentic. Current reference Git tree equals publicationacdc; independent A01 control approval precedes that publication and every renderer UI commit follows it. Reused independently reviewed A03 actual evidence binds witness9824, consumersda0f/aab, retained39 commits/118 net paths/six inert rows and final source/assembler/extension/baseline identities; the producer asserts all selected current source blobs equal their exact reviewed candidates with no later source touches and executes existing consumer/presentation compatibility predicates unchanged. It authenticates the classification, visual/capture record and156 capture blobs, plus the766 capture and42 additional disjoint current Git inputs, rejecting any post8297 intermediate touch. Current framework-source history ends in the independently reviewed A05 completion segment. This establishes static authority and closure, while fresh runtime/build/capture-reader execution remains separate.",
+      "reusedIntegratedActivationClosure": {
+        "report": {
+          "path": "artifacts/tmp/W2.A03.S01.integrated-02-f41245a3.json",
+          "sha256": "bee9f594fb8d7543df9ceb9099adf3292efcc9f2de45adbf1fbdc508a739d4b1"
+        },
+        "rawOutput": {
+          "path": "artifacts/tmp/W2.A03.S01.integrated-02-f41245a3-corrected.log",
+          "sha256": "7fb1f8d3523a8d925f78914e47332c0c774dd7d4c39a0837d70ede0513bcda44"
+        },
+        "producer": {
+          "path": "artifacts/tmp/W2.A03.S01.inspect-integrated-04.py",
+          "sha256": "ea34e445019fc806c1a115d7ba18ac62b0ee7c681c5399e54139fa45958cdea4"
+        },
+        "command": ".venv/Scripts/python.exe -B artifacts/tmp/W2.A03.S01.inspect-integrated-04.py",
+        "candidateCommit": "f41245a3e8a2896d495028909d2481526686af4d",
+        "main": "f41245a3e8a2896d495028909d2481526686af4d",
+        "observedAt": "2026-10-05T12:15:45.078055+00:00",
+        "result": "passed",
+        "exitCode": 0,
+        "stableCandidate": true,
+        "trackedInputCount": 4747,
+        "reviewedCommitCount": 52,
+        "retainedActualA03CommitCount": 39,
+        "retainedActualA03NetPathCount": 118,
+        "authenticatedInertProjectionCount": 6,
+        "reviewerReruns": 0
+      },
+      "currentInputCount": 808,
+      "captureProducerInputCount": 766,
+      "additionalDependentInputCount": 42
+    },
+    {
+      "criterion": "Independent disposition, retained adverse results and truthful proof limits",
+      "result": "satisfied-only-for-this-equivalent-disposition",
+      "observation": "I inspected the complete changed predicate regions and actual machine output, independently authenticated95 regular retained reference blobs and their reported raw/canonical hashes, matched the final log/report/producer digests, corroborated the graph and concrete supplemental T03 frames, and authenticated all three prior failed producers/reports/logs. The earlier packet-drafting, incremental-base and controller-order failures are preserved with their concrete observer root causes. No valid framework predicate, assertion, source or policy was weakened. This ledger supplies the separate VM01 equivalent-lineage disposition only; existing taskctl submission, expanded product/security disposition and all later gates remain separate."
+    }
+  ],
+  "independentReadOnlyAuthentication": {
+    "retainedReferenceCount": 95,
+    "uniqueRegularReferenceBlobs": 95,
+    "allRetainedReferenceModesOidsAndRawCanonicalHashesAuthenticated": true,
+    "graphReproducedAgainstGit": true,
+    "completeHistoryCount": 306,
+    "candidateObserved": "fe9313bcbf2580a0baabafed57a244a831ae29f7",
+    "cleanObserved": true,
+    "noGitReplacementShallowOrGraftHistory": true,
+    "suitesExecuted": 0,
+    "qualifyingProducersExecuted": 0
+  },
+  "supplementalT03SourceClosure": {
+    "scope": "Only the two known immutable T03 historical source commit frames omitted from report04's governed-row classifier; all paths remain in its complete history/range/source-admission records. These are finite independent Git observations, not an added executable framework rule or general exemption.",
+    "sourceCommits": [
+      "33333d0f990ba6a01b7cec2fab1e9af7b2f7aee9",
+      "63cd40222c110fbe748137190df15cf14f958b94"
+    ],
+    "sourceDeltaCount": 21,
+    "sourceDeltas": [
+      {
+        "commit": "33333d0f990ba6a01b7cec2fab1e9af7b2f7aee9",
+        "parentCommit": "2cff1822199fc7960124be6f49e6b140a4da785d",
+        "path": "plugins/connectors/sample_repository/fixtures/repository-metadata.case.json",
+        "status": "A",
+        "beforeMode": "000000",
+        "afterMode": "100644",
+        "beforeBlobOid": "0000000000000000000000000000000000000000",
+        "afterBlobOid": "c9a04a337bc6eeb0ef5206c96ff497b7690ab717",
+        "afterSHA256": "78db67e36e61530ee4096e798df8557fdcae8ab661a06cb0e97f230d71d7d42e"
+      },
+      {
+        "commit": "33333d0f990ba6a01b7cec2fab1e9af7b2f7aee9",
+        "parentCommit": "2cff1822199fc7960124be6f49e6b140a4da785d",
+        "path": "plugins/connectors/sample_repository/fixtures/search-page-1.case.json",
+        "status": "A",
+        "beforeMode": "000000",
+        "afterMode": "100644",
+        "beforeBlobOid": "0000000000000000000000000000000000000000",
+        "afterBlobOid": "d0470cda8008b74ed12c19a0dd9375f444783b26",
+        "afterSHA256": "fdd35c1820e7b74c1154ab669e532c73776a49df046f820a405c58b416494e28"
+      },
+      {
+        "commit": "33333d0f990ba6a01b7cec2fab1e9af7b2f7aee9",
+        "parentCommit": "2cff1822199fc7960124be6f49e6b140a4da785d",
+        "path": "plugins/connectors/sample_repository/fixtures/search-page-2.case.json",
+        "status": "A",
+        "beforeMode": "000000",
+        "afterMode": "100644",
+        "beforeBlobOid": "0000000000000000000000000000000000000000",
+        "afterBlobOid": "74933be07ff6a8afd4bf4e4002016c1605c27404",
+        "afterSHA256": "99686991e1a7faa4a2dbacef8a04be2bde9d131ac2f1dc2f562d2f048a8ddcc9"
+      },
+      {
+        "commit": "33333d0f990ba6a01b7cec2fab1e9af7b2f7aee9",
+        "parentCommit": "2cff1822199fc7960124be6f49e6b140a4da785d",
+        "path": "plugins/connectors/sample_repository/manifest.json",
+        "status": "A",
+        "beforeMode": "000000",
+        "afterMode": "100644",
+        "beforeBlobOid": "0000000000000000000000000000000000000000",
+        "afterBlobOid": "512734bbd61af27936544436bc625a96fb16ecdd",
+        "afterSHA256": "2f93fe80fe22da47bdea127ed1d4e570c0e57600841131c2a137806e4f229152"
+      },
+      {
+        "commit": "33333d0f990ba6a01b7cec2fab1e9af7b2f7aee9",
+        "parentCommit": "2cff1822199fc7960124be6f49e6b140a4da785d",
+        "path": "plugins/connectors/sample_repository/plugin/__init__.py",
+        "status": "A",
+        "beforeMode": "000000",
+        "afterMode": "100644",
+        "beforeBlobOid": "0000000000000000000000000000000000000000",
+        "afterBlobOid": "e5a4b8ad9cda55537f65eedb4512a7316f86eb4f",
+        "afterSHA256": "01c82dfb8666e4663d8670cd770fba97946c34bb01f92320ffba0d2ef424970b"
+      },
+      {
+        "commit": "33333d0f990ba6a01b7cec2fab1e9af7b2f7aee9",
+        "parentCommit": "2cff1822199fc7960124be6f49e6b140a4da785d",
+        "path": "plugins/connectors/sample_repository/plugin/connector.py",
+        "status": "A",
+        "beforeMode": "000000",
+        "afterMode": "100644",
+        "beforeBlobOid": "0000000000000000000000000000000000000000",
+        "afterBlobOid": "68be4429e2cc6bd684ab489f91717b5c6216b8a9",
+        "afterSHA256": "4bc50f376d9ff083cd3f6c493533c61e09cb865b5877bcabd9c52e3f7bdf776a"
+      },
+      {
+        "commit": "33333d0f990ba6a01b7cec2fab1e9af7b2f7aee9",
+        "parentCommit": "2cff1822199fc7960124be6f49e6b140a4da785d",
+        "path": "tools/connector_conformance.py",
+        "status": "A",
+        "beforeMode": "000000",
+        "afterMode": "100644",
+        "beforeBlobOid": "0000000000000000000000000000000000000000",
+        "afterBlobOid": "2af859194ebd79aedf155800ebda3c822edbd7e2",
+        "afterSHA256": "277ecf0c60ccb0c52a801ebf4a4af3d0690bb189ec8a644ca2de2fe97a0607f5"
+      },
+      {
+        "commit": "33333d0f990ba6a01b7cec2fab1e9af7b2f7aee9",
+        "parentCommit": "2cff1822199fc7960124be6f49e6b140a4da785d",
+        "path": "tools/core_api_contract.py",
+        "status": "M",
+        "beforeMode": "100644",
+        "afterMode": "100644",
+        "beforeBlobOid": "51e7b266ff3a54e5625361f09b1ae2c3a071260f",
+        "afterBlobOid": "a5a11b191d27594839e0ceec175e304f88e0ba87",
+        "beforeSHA256": "e5fc7f74428623361c03d670fc5da393df07fcde7228b158fff500584ff703e5",
+        "afterSHA256": "5f4a3f33b83a6c10de00ed1742ef4279adf7c2166ea19e1488fba50f31aff87e"
+      },
+      {
+        "commit": "63cd40222c110fbe748137190df15cf14f958b94",
+        "parentCommit": "33333d0f990ba6a01b7cec2fab1e9af7b2f7aee9",
+        "path": "docs/developer/sample_repository/fixtures/repository-metadata.case.json",
+        "status": "A",
+        "beforeMode": "000000",
+        "afterMode": "100644",
+        "beforeBlobOid": "0000000000000000000000000000000000000000",
+        "afterBlobOid": "c9a04a337bc6eeb0ef5206c96ff497b7690ab717",
+        "afterSHA256": "78db67e36e61530ee4096e798df8557fdcae8ab661a06cb0e97f230d71d7d42e"
+      },
+      {
+        "commit": "63cd40222c110fbe748137190df15cf14f958b94",
+        "parentCommit": "33333d0f990ba6a01b7cec2fab1e9af7b2f7aee9",
+        "path": "docs/developer/sample_repository/fixtures/search-page-1.case.json",
+        "status": "A",
+        "beforeMode": "000000",
+        "afterMode": "100644",
+        "beforeBlobOid": "0000000000000000000000000000000000000000",
+        "afterBlobOid": "d0470cda8008b74ed12c19a0dd9375f444783b26",
+        "afterSHA256": "fdd35c1820e7b74c1154ab669e532c73776a49df046f820a405c58b416494e28"
+      },
+      {
+        "commit": "63cd40222c110fbe748137190df15cf14f958b94",
+        "parentCommit": "33333d0f990ba6a01b7cec2fab1e9af7b2f7aee9",
+        "path": "docs/developer/sample_repository/fixtures/search-page-2.case.json",
+        "status": "A",
+        "beforeMode": "000000",
+        "afterMode": "100644",
+        "beforeBlobOid": "0000000000000000000000000000000000000000",
+        "afterBlobOid": "74933be07ff6a8afd4bf4e4002016c1605c27404",
+        "afterSHA256": "99686991e1a7faa4a2dbacef8a04be2bde9d131ac2f1dc2f562d2f048a8ddcc9"
+      },
+      {
+        "commit": "63cd40222c110fbe748137190df15cf14f958b94",
+        "parentCommit": "33333d0f990ba6a01b7cec2fab1e9af7b2f7aee9",
+        "path": "docs/developer/sample_repository/manifest.json",
+        "status": "A",
+        "beforeMode": "000000",
+        "afterMode": "100644",
+        "beforeBlobOid": "0000000000000000000000000000000000000000",
+        "afterBlobOid": "512734bbd61af27936544436bc625a96fb16ecdd",
+        "afterSHA256": "2f93fe80fe22da47bdea127ed1d4e570c0e57600841131c2a137806e4f229152"
+      },
+      {
+        "commit": "63cd40222c110fbe748137190df15cf14f958b94",
+        "parentCommit": "33333d0f990ba6a01b7cec2fab1e9af7b2f7aee9",
+        "path": "docs/developer/sample_repository/plugin/__init__.py",
+        "status": "A",
+        "beforeMode": "000000",
+        "afterMode": "100644",
+        "beforeBlobOid": "0000000000000000000000000000000000000000",
+        "afterBlobOid": "e5a4b8ad9cda55537f65eedb4512a7316f86eb4f",
+        "afterSHA256": "01c82dfb8666e4663d8670cd770fba97946c34bb01f92320ffba0d2ef424970b"
+      },
+      {
+        "commit": "63cd40222c110fbe748137190df15cf14f958b94",
+        "parentCommit": "33333d0f990ba6a01b7cec2fab1e9af7b2f7aee9",
+        "path": "docs/developer/sample_repository/plugin/connector.py",
+        "status": "A",
+        "beforeMode": "000000",
+        "afterMode": "100644",
+        "beforeBlobOid": "0000000000000000000000000000000000000000",
+        "afterBlobOid": "68be4429e2cc6bd684ab489f91717b5c6216b8a9",
+        "afterSHA256": "4bc50f376d9ff083cd3f6c493533c61e09cb865b5877bcabd9c52e3f7bdf776a"
+      },
+      {
+        "commit": "63cd40222c110fbe748137190df15cf14f958b94",
+        "parentCommit": "33333d0f990ba6a01b7cec2fab1e9af7b2f7aee9",
+        "path": "plugins/connectors/sample_repository/fixtures/repository-metadata.case.json",
+        "status": "D",
+        "beforeMode": "100644",
+        "afterMode": "000000",
+        "beforeBlobOid": "c9a04a337bc6eeb0ef5206c96ff497b7690ab717",
+        "afterBlobOid": "0000000000000000000000000000000000000000",
+        "beforeSHA256": "78db67e36e61530ee4096e798df8557fdcae8ab661a06cb0e97f230d71d7d42e",
+        "exactRegularRelocation": {
+          "path": "docs/developer/sample_repository/fixtures/repository-metadata.case.json",
+          "mode": "100644",
+          "blobOid": "c9a04a337bc6eeb0ef5206c96ff497b7690ab717",
+          "sha256": "78db67e36e61530ee4096e798df8557fdcae8ab661a06cb0e97f230d71d7d42e"
+        }
+      },
+      {
+        "commit": "63cd40222c110fbe748137190df15cf14f958b94",
+        "parentCommit": "33333d0f990ba6a01b7cec2fab1e9af7b2f7aee9",
+        "path": "plugins/connectors/sample_repository/fixtures/search-page-1.case.json",
+        "status": "D",
+        "beforeMode": "100644",
+        "afterMode": "000000",
+        "beforeBlobOid": "d0470cda8008b74ed12c19a0dd9375f444783b26",
+        "afterBlobOid": "0000000000000000000000000000000000000000",
+        "beforeSHA256": "fdd35c1820e7b74c1154ab669e532c73776a49df046f820a405c58b416494e28",
+        "exactRegularRelocation": {
+          "path": "docs/developer/sample_repository/fixtures/search-page-1.case.json",
+          "mode": "100644",
+          "blobOid": "d0470cda8008b74ed12c19a0dd9375f444783b26",
+          "sha256": "fdd35c1820e7b74c1154ab669e532c73776a49df046f820a405c58b416494e28"
+        }
+      },
+      {
+        "commit": "63cd40222c110fbe748137190df15cf14f958b94",
+        "parentCommit": "33333d0f990ba6a01b7cec2fab1e9af7b2f7aee9",
+        "path": "plugins/connectors/sample_repository/fixtures/search-page-2.case.json",
+        "status": "D",
+        "beforeMode": "100644",
+        "afterMode": "000000",
+        "beforeBlobOid": "74933be07ff6a8afd4bf4e4002016c1605c27404",
+        "afterBlobOid": "0000000000000000000000000000000000000000",
+        "beforeSHA256": "99686991e1a7faa4a2dbacef8a04be2bde9d131ac2f1dc2f562d2f048a8ddcc9",
+        "exactRegularRelocation": {
+          "path": "docs/developer/sample_repository/fixtures/search-page-2.case.json",
+          "mode": "100644",
+          "blobOid": "74933be07ff6a8afd4bf4e4002016c1605c27404",
+          "sha256": "99686991e1a7faa4a2dbacef8a04be2bde9d131ac2f1dc2f562d2f048a8ddcc9"
+        }
+      },
+      {
+        "commit": "63cd40222c110fbe748137190df15cf14f958b94",
+        "parentCommit": "33333d0f990ba6a01b7cec2fab1e9af7b2f7aee9",
+        "path": "plugins/connectors/sample_repository/manifest.json",
+        "status": "D",
+        "beforeMode": "100644",
+        "afterMode": "000000",
+        "beforeBlobOid": "512734bbd61af27936544436bc625a96fb16ecdd",
+        "afterBlobOid": "0000000000000000000000000000000000000000",
+        "beforeSHA256": "2f93fe80fe22da47bdea127ed1d4e570c0e57600841131c2a137806e4f229152",
+        "exactRegularRelocation": {
+          "path": "docs/developer/sample_repository/manifest.json",
+          "mode": "100644",
+          "blobOid": "512734bbd61af27936544436bc625a96fb16ecdd",
+          "sha256": "2f93fe80fe22da47bdea127ed1d4e570c0e57600841131c2a137806e4f229152"
+        }
+      },
+      {
+        "commit": "63cd40222c110fbe748137190df15cf14f958b94",
+        "parentCommit": "33333d0f990ba6a01b7cec2fab1e9af7b2f7aee9",
+        "path": "plugins/connectors/sample_repository/plugin/__init__.py",
+        "status": "D",
+        "beforeMode": "100644",
+        "afterMode": "000000",
+        "beforeBlobOid": "e5a4b8ad9cda55537f65eedb4512a7316f86eb4f",
+        "afterBlobOid": "0000000000000000000000000000000000000000",
+        "beforeSHA256": "01c82dfb8666e4663d8670cd770fba97946c34bb01f92320ffba0d2ef424970b",
+        "exactRegularRelocation": {
+          "path": "docs/developer/sample_repository/plugin/__init__.py",
+          "mode": "100644",
+          "blobOid": "e5a4b8ad9cda55537f65eedb4512a7316f86eb4f",
+          "sha256": "01c82dfb8666e4663d8670cd770fba97946c34bb01f92320ffba0d2ef424970b"
+        }
+      },
+      {
+        "commit": "63cd40222c110fbe748137190df15cf14f958b94",
+        "parentCommit": "33333d0f990ba6a01b7cec2fab1e9af7b2f7aee9",
+        "path": "plugins/connectors/sample_repository/plugin/connector.py",
+        "status": "D",
+        "beforeMode": "100644",
+        "afterMode": "000000",
+        "beforeBlobOid": "68be4429e2cc6bd684ab489f91717b5c6216b8a9",
+        "afterBlobOid": "0000000000000000000000000000000000000000",
+        "beforeSHA256": "4bc50f376d9ff083cd3f6c493533c61e09cb865b5877bcabd9c52e3f7bdf776a",
+        "exactRegularRelocation": {
+          "path": "docs/developer/sample_repository/plugin/connector.py",
+          "mode": "100644",
+          "blobOid": "68be4429e2cc6bd684ab489f91717b5c6216b8a9",
+          "sha256": "4bc50f376d9ff083cd3f6c493533c61e09cb865b5877bcabd9c52e3f7bdf776a"
+        }
+      },
+      {
+        "commit": "63cd40222c110fbe748137190df15cf14f958b94",
+        "parentCommit": "33333d0f990ba6a01b7cec2fab1e9af7b2f7aee9",
+        "path": "tools/connector_conformance.py",
+        "status": "M",
+        "beforeMode": "100644",
+        "afterMode": "100644",
+        "beforeBlobOid": "2af859194ebd79aedf155800ebda3c822edbd7e2",
+        "afterBlobOid": "e30829b9b95fc9882a12795e9b6318b8bc18cac7",
+        "beforeSHA256": "277ecf0c60ccb0c52a801ebf4a4af3d0690bb189ec8a644ca2de2fe97a0607f5",
+        "afterSHA256": "ef8b0fbedbae7c4130b75947b9ac1859d93997cb977470d8ca1f43968c6c9b4c"
+      }
+    ],
+    "frozenRecordCommit": "746c05dcd7dbabaa7f5eebee8e3fa56b8ac6b9b5",
+    "frozenRecordUnchanged": true,
+    "frozenRecordDigest": {
+      "sha256": "3eb14867b9c88fc0f9d8ed3af3e587e25e4da9d52c555a8ac77ce10220582eda",
+      "serialization": "UTF-8 sorted compact JSON with ensure_ascii=False; this is an independent observation digest, not a substituted taskctl packet digest."
+    },
+    "claimedSourceFrames": [
+      {
+        "commit": "2cff1822199fc7960124be6f49e6b140a4da785d",
+        "status": "IN_PROGRESS",
+        "owner": "codex-w2-implementation",
+        "baseCommit": "2283e37e43cb56f8330b060b4c7d4b4f0f19489b",
+        "branch": "codex/w2-implementation",
+        "worktree": ".",
+        "leaseOwner": "codex-w2-implementation"
+      },
+      {
+        "commit": "33333d0f990ba6a01b7cec2fab1e9af7b2f7aee9",
+        "status": "IN_PROGRESS",
+        "owner": "codex-w2-implementation",
+        "baseCommit": "2283e37e43cb56f8330b060b4c7d4b4f0f19489b",
+        "branch": "codex/w2-implementation",
+        "worktree": ".",
+        "leaseOwner": "codex-w2-implementation"
+      },
+      {
+        "commit": "33333d0f990ba6a01b7cec2fab1e9af7b2f7aee9",
+        "status": "IN_PROGRESS",
+        "owner": "codex-w2-implementation",
+        "baseCommit": "2283e37e43cb56f8330b060b4c7d4b4f0f19489b",
+        "branch": "codex/w2-implementation",
+        "worktree": ".",
+        "leaseOwner": "codex-w2-implementation"
+      },
+      {
+        "commit": "63cd40222c110fbe748137190df15cf14f958b94",
+        "status": "IN_PROGRESS",
+        "owner": "codex-w2-implementation",
+        "baseCommit": "2283e37e43cb56f8330b060b4c7d4b4f0f19489b",
+        "branch": "codex/w2-implementation",
+        "worktree": ".",
+        "leaseOwner": "codex-w2-implementation"
+      }
+    ],
+    "immutableReviewRounds": [
+      {
+        "attemptId": "R01",
+        "baseCommit": "2283e37e43cb56f8330b060b4c7d4b4f0f19489b",
+        "candidateCommit": "9a22c5fe122358b854ceae6c7cb47cdfd68c8f12",
+        "packetSHA256": "35831e0d076cc5734b79ad2ac93322a6e4824ba59e1fd028b0c6e2c77679579e",
+        "evidence": {
+          "type": "criterion-manifest",
+          "path": "artifacts/evidence/CAP-04.S05.T03.json",
+          "sha256": "54f2aa1da249a366cabf93787bc19fafe627dc01cf8f7f4714f2533a52d54417",
+          "commit": "9a22c5fe122358b854ceae6c7cb47cdfd68c8f12",
+          "recorded_at": "2026-10-03T17:01:15+00:00"
+        },
+        "ledger": {
+          "path": "artifacts/evidence/CAP-04.S05.T03.review-R01.json",
+          "sha256": "994719a14891128c490f6ce56b9ed85249304d4b22c4ce93da2548e66ce00e4f"
+        },
+        "result": "changes-requested",
+        "reviewer": "agent:/root/t03_independent_review",
+        "findings": [
+          {
+            "id": "CAP-04.S05.T03-R01-F01",
+            "severity": "medium",
+            "blocking": true,
+            "criterion_index": 2,
+            "title": "Signed LPAC sample proof omits the identity of its selected worker and guardian inputs",
+            "reproduction": "At exact candidate 9a22c5fe122358b854ceae6c7cb47cdfd68c8f12, tests/connectors/test_plugin_sample_native_lpac.py:35-49 obtains its worker build and Core guardian from RO_W2_SIGNED_WORKER_BUILD and RO_W2_CORE_SIDECAR_GUARDIAN. The submitted native-sample command omits those environment assignments. artifacts/tmp/CAP-04.S05.T03.native-sample-9a22c5fe.log contains two passing names and a summary but no selected binary/inventory path or hash. artifacts/evidence/CAP-04.S05.T03.json describes an ignored signed bundle and frozen Core generically, without their inventory, signature, guardian digest or source relation to the 9a22c5fe candidate. The bundle may be locally present and the test verifies its signature at use, but this immutable packet does not establish which selected inputs produced the two passing real-boundary results. The task-start map and AGENTS.md require criterion-linked exact-commit evidence with fixed selected inputs; this gap prevents independent reproduction of the real cross-process proof mapped to criterion 2.",
+            "required_remediation": "Keep R01 immutable. In a strict-descendant R02 candidate, add an explicit task-start acceptance row or proof note for selected-input identity. Record the exact ignored worker build and guardian paths, SHA-256 of signed worker inventory and signature and guardian executable, and verify the worker source was byte-identical between its build commit and the R02 candidate (or rebuild from R02). Run the two native sample cases afresh on the clean R02 commit with those fixed environment inputs; capture an input-identity report and native log with hashes. Bind that report and the raw log in the new criterion manifest, preserve the four pre-review closures and all other adverse results, then request independent R02 replay of F01. Do not describe test signing as a production signature or claim live network behavior."
+          }
+        ],
+        "closures": []
+      },
+      {
+        "attemptId": "R02",
+        "baseCommit": "9a22c5fe122358b854ceae6c7cb47cdfd68c8f12",
+        "candidateCommit": "42379f73cf6853be3618a8bb554ffa50a3fdf5c0",
+        "packetSHA256": "1c336168bb60def992357ab6cd003cbe801abe55888ac8133b95d0b273b571d6",
+        "evidence": {
+          "type": "criterion-manifest",
+          "path": "artifacts/evidence/CAP-04.S05.T03.R02.json",
+          "sha256": "0497627f354903da8e9d3ee83f2ca413dca1d59f3fabc0b2bfdd8110ef6a801b",
+          "commit": "42379f73cf6853be3618a8bb554ffa50a3fdf5c0",
+          "recorded_at": "2026-10-03T17:37:18+00:00"
+        },
+        "ledger": {
+          "path": "artifacts/evidence/CAP-04.S05.T03.review-R02.json",
+          "sha256": "f186b6f01b7f4461fde3e60dc530267090f54d96e7f2cd8303b160c68a6f4b15"
+        },
+        "result": "changes-requested",
+        "reviewer": "agent:/root/t03_independent_review",
+        "findings": [
+          {
+            "id": "CAP-04.S05.T03-R02-F01",
+            "severity": "medium",
+            "blocking": true,
+            "criterion_index": 3,
+            "title": "Frozen R02 migration-fixture deferral points to a completed unrelated corrective task",
+            "reproduction": "At exact committed submission state f5f0a30a23478690c32ab3522a49b33f905adc0f for candidate 42379f73cf6853be3618a8bb554ffa50a3fdf5c0, artifacts/evidence/CAP-04.S05.T03.R02.json:66 and planning/backlog.yaml's frozen R02 current_submission.deferred_checks say the earlier CAP-04.S05.T02 v20 grant-migration test fixture will be restored through linked correction W2.C05.T01 before S05/W2 migration proof. The canonical backlog already records W2.C05.T01 DONE, and artifacts/evidence/W2.C05.T01.spec.json identifies its origin as CAP-04.S01.T03 and its scope as typing six import-commit test files, not the T02 grant-migration fixture. W2.C01.T01 through W2.C09.T01 are all DONE; W2.C10.T01 is not yet allocated. Therefore R02's criterion-linked verification deferral names an immutable ID that cannot perform the promised pending repair. A later S05/W2 gate could wrongly count unrelated completed work as satisfying the migration prerequisite.",
+            "required_remediation": "Preserve frozen R02 and its positive R01-F01 closure. In a strict-descendant append-only R03, update the missed evidence/proof note and replace the false W2.C05.T01 future-work pointer in the new criterion manifest with a correct pending linked-correction dependency. Verify the canonical corrective ledger and allocate the next valid ID through the governed task route before naming it; do not assert W2.C10.T01 exists until it is actually recorded. Add a bounded referential check of the cited corrective task's origin, scope and status, retain the stale T02 fixture failure as an open S05/W2 obligation, rerun affected evidence checks, and obtain independent replay. Do not alter the completed W2.C05.T01 record or frozen R02 packet."
+          }
+        ],
+        "closures": [
+          {
+            "finding_id": "CAP-04.S05.T03-R01-F01",
+            "disposition": "fixed",
+            "evidence": "artifacts/evidence/CAP-04.S05.T03.R02.json"
+          }
+        ]
+      },
+      {
+        "attemptId": "R03",
+        "baseCommit": "42379f73cf6853be3618a8bb554ffa50a3fdf5c0",
+        "candidateCommit": "c879f5d68aea48622b719e105b7915821ddbb6a5",
+        "packetSHA256": "cd93be95b0dfb27ca2355b04606080152e4d8c7122aa9e0d8e40f9c384cb2112",
+        "evidence": {
+          "type": "criterion-manifest",
+          "path": "artifacts/evidence/CAP-04.S05.T03.R03.json",
+          "sha256": "2d5c073b78a78c1eab43a63a30faaecd58b591acb5aea8e3278e3d3c30050066",
+          "commit": "c879f5d68aea48622b719e105b7915821ddbb6a5",
+          "recorded_at": "2026-10-03T18:14:49+00:00"
+        },
+        "ledger": {
+          "path": "artifacts/evidence/CAP-04.S05.T03.review-R03.json",
+          "sha256": "891d12759db54c6f51b1860951cbf90be7f56237d0ede468620ab8a6b6e13394"
+        },
+        "result": "approved",
+        "reviewer": "agent:/root/t03_independent_review",
+        "findings": [],
+        "closures": [
+          {
+            "finding_id": "CAP-04.S05.T03-R02-F01",
+            "disposition": "fixed",
+            "evidence": "artifacts/evidence/CAP-04.S05.T03.R03.json"
+          }
+        ]
+      }
+    ],
+    "retainedResults": [
+      "R01 changes-requested",
+      "R02 changes-requested",
+      "R03 approved"
+    ],
+    "reviewBoundary": "The final independently approved R03 and unchanged DONE record authenticate the retained task envelope; R01 and R02 remain adverse, not passed executions."
+  },
+  "preservedAdverseHistory": {
+    "publicOriginalGate": {
+      "receipt": {
+        "path": "artifacts/evidence/CAP-05.S01.T01.full-base-ui-gate-01.receipt.json",
+        "sha256": "9a684897691d229736911bed3a96160b1148fe0f03951f501ac6bf76beb57c3a"
+      },
+      "rawLog": {
+        "path": "artifacts/evidence/CAP-05.S01.T01.full-base-ui-gate-01.log",
+        "sha256": "d4e115d97a747eda9d5e31a73805794b49234b97976ae08b138601233628805c"
+      },
+      "candidateCommit": "fccb73f3fbd72e4a1c0822ed195f76ae0b1d3e59",
+      "baseCommit": "6506c68461144747b0ee9be10853211717aa381d",
+      "exitCode": 124,
+      "durationSeconds": 600.011,
+      "inputsStable": true,
+      "gateResult": null,
+      "completedVerdict": false,
+      "statement": "The actual public command timed out. The prior independent predicate audit is not an emitted public denial; this equivalent approval is not foundation:ui-change or tools/ui_change_gate.py PASS."
+    },
+    "producerFailures": [
+      {
+        "producer": {
+          "path": "artifacts/tmp/CAP-05.S01.T01.qualify-equivalent-lineage-01.py",
+          "sha256": "006213054185097edf2d77d08ac8c620176413f2ce04f7ff6590458ed8eb697e"
+        },
+        "report": {
+          "path": "artifacts/tmp/CAP-05.S01.T01.equivalent-lineage-01-fe9313bc.json",
+          "sha256": "afdff31f650683e07b260eda4ef01ee005d94946a7d0814af9ce3f71647a361b"
+        },
+        "rawLog": {
+          "path": "artifacts/tmp/CAP-05.S01.T01.equivalent-lineage-01-fe9313bc.log",
+          "sha256": "acacce93b535b9fde9368421206d49401653784d9e3fc1e2e276e3cd3983e1c5"
+        },
+        "status": "FAIL",
+        "exitCode": 1,
+        "durationSeconds": 108.88,
+        "rootCause": "The unexecuted draft incorrectly required one introduction across preapproval packet drafting. Exact owner-bound approved packet bytes and no later packet touch are now asserted; all draft history and the original failed producer/report are preserved. No implementation or approved assertion changed."
+      },
+      {
+        "producer": {
+          "path": "artifacts/tmp/CAP-05.S01.T01.qualify-equivalent-lineage-02.py",
+          "sha256": "a2cb08ee9f8fd2d85fe8da27ed9adfe92495a9f8de14de30c3eb6e9fb5d289ad"
+        },
+        "report": {
+          "path": "artifacts/tmp/CAP-05.S01.T01.equivalent-lineage-02-fe9313bc.json",
+          "sha256": "b45d869be1b80c16b678b82217fa2164d550dca69154daff216d14ffd59a708d"
+        },
+        "rawLog": {
+          "path": "artifacts/tmp/CAP-05.S01.T01.equivalent-lineage-02-fe9313bc.log",
+          "sha256": "a9580668181af0c6a14493a6de0901090162cd28ad44dd3dd7544b5a358a3edb"
+        },
+        "status": "FAIL",
+        "exitCode": 1,
+        "durationSeconds": 109.923,
+        "rootCause": "Producer02 conflated immutable original claim base with the incremental submission base of remediation rounds. Taskctl retains the original claim but binds every later round to its immediately preceding candidate. Producer03 directly asserts both identities and their exact ordered chain. The full traversal, source deltas and original assertions remain covered; batching Git blob reads changes no predicate. No formal task submission has occurred."
+      },
+      {
+        "producer": {
+          "path": "artifacts/tmp/CAP-05.S01.T01.qualify-equivalent-lineage-03.py",
+          "sha256": "4c8414113c50f65fc9a8aa6942da59a424354175735a6971039707ace51bff37"
+        },
+        "report": {
+          "path": "artifacts/tmp/CAP-05.S01.T01.equivalent-lineage-03-fe9313bc.json",
+          "sha256": "239b5f60747a79ce3413ad76cd47c5727bd0d4ea25c87a6ea04de9a784aa7a3c"
+        },
+        "rawLog": {
+          "path": "artifacts/tmp/CAP-05.S01.T01.equivalent-lineage-03-fe9313bc.log",
+          "sha256": "b78cd57e478ae27d80e75295a9e95e7865fe2d576bf12213b9a04584f4abb1d9"
+        },
+        "status": "FAIL",
+        "exitCode": 1,
+        "durationSeconds": 109.952,
+        "rootCause": "Producer03 incorrectly required the exact 9b72 controller predecessor before the A01 owner grant. The unchanged governing narrow predicate and A02.T01 independent review bind its exact tree before the A01 control claim and A02 continuation packet. Producer04 asserts that actual reviewed ordering, with both immutable source paths and the exact tree retained. This is an observer chronology error, not an assertion or authority change."
+      }
+    ],
+    "retainedHistoricalAdverseEvidence": [
+      "A01 task R01 findings and exact later R02 closures remain unchanged.",
+      "A03/A05 S01 review-01 adverse findings and distinct later review-02 closures remain unchanged.",
+      "Original A03 official accessibility failure remains alongside its bounded adjudication and separately reviewed later A05 proof, without conversion into an earlier PASS.",
+      "C11 combined execution exit1 and failed crash-lock reopen remain adverse; its optimistic source narrative is not accepted as a pass.",
+      "CAP-04.S05.T03 R01/R02 changes-requested rounds and their actual R03 closure remain unchanged.",
+      "GOV-MAINT-0027 adverse R01/approved R02 and the A05 preparation/characterization/setup/observer failures remain retained within their original exact scopes."
+    ]
+  },
+  "findings": [],
+  "openFindingIds": [],
+  "proofLimits": [
+    "This disposition approves only the exact owner-authorized equivalent original-history/source/authority proof and the concrete supplemental T03 Git closure at fe931.",
+    "Original ui_change_gate execution remains exit124 timeout with no completed verdict. No foundation:ui-change PASS or completed public denial is claimed.",
+    "Historical runtime/native/accessibility/security results remain candidate-bound prior proof. This reviewer ran no suite or qualifying producer, and does not assert fresh runtime/cache authority from old receipts.",
+    "Fresh current runtime/build/capture-reader results and expanded independent product/security review are separate task evidence. Their formal task-level sufficiency is not granted by this ledger.",
+    "Immutable labels, hashes, Git ancestry and actual receipts prove recorded consistency; they do not supply a cryptographic human/agent identity or runner/source authentication service.",
+    "No taskctl task approval, slice completion, Wave qualification, protected-reader/CAP-05.S04 completion, later-platform gate, security/privacy/rights/accessibility/performance/packaging waiver or human release approval is supplied.",
+    "Only the finite VM01 owner exceptions and exact single supported return apply. Any later material input or history change requires appropriate fresh closure/evidence; no future resume or source exception is granted."
+  ],
+  "formalTaskApproval": false,
+  "sliceApproval": false,
+  "waveCompletion": false,
+  "releaseApproval": false,
+  "originalPublicGatePassClaim": false,
+  "reviewerSafety": {
+    "authoredFiles": [
+      "artifacts/tmp/CAP-05.S01.T01.equivalent-lineage-review-01.json"
+    ],
+    "ignoredPublicationPending": true,
+    "trackedSourceBacklogViewsOrGitRefsChanged": false,
+    "hooksActivated": false,
+    "commitsCreated": false,
+    "broaderSuitesOrPublicGateReplayed": false
+  }
+}
