@@ -1,0 +1,112 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "independent-task-verification-method-readiness-review",
+  "reviewId": "CAP-05.S01.T01.VM01.readiness-R01",
+  "proposalId": "CAP-05.S01.T01.VM01",
+  "taskId": "CAP-05.S01.T01",
+  "waveId": "W2",
+  "reviewer": "agent:/root/a03_closeout_review",
+  "proposalAuthor": "agent:codex-w2-implementation",
+  "reviewedAt": "2026-10-06T02:55:57.590535+00:00",
+  "candidateCommit": "5fdac55a9d0c59fb82260bd3289517b95d025e1f",
+  "proposal": {
+    "path": "artifacts/evidence/CAP-05.S01.T01.verification-method-amendment-01.proposal.json",
+    "sha256": "9f20e9b185207ae2d467379a058f87a48c44ca5c78e027a7ff1b13013d674e80"
+  },
+  "brief": {
+    "path": "artifacts/evidence/CAP-05.S01.T01.verification-method-amendment-01.review.html",
+    "sha256": "86adbc78212e4f1b3cabb5c2cebc3bccbb037ad7509c56748c15d53ac30a2943"
+  },
+  "contextCommit": "4e7e11e6cb6fbd2a44fb9f2af49c7dcbf2b8a62b",
+  "contextBacklogGitBlobSHA256": "b41a0b9dd8ea9c875ec26c6f59a6b6c6a236f333e54b240c658bf9ffd9e2dde0",
+  "originalBaseCommit": "6506c68461144747b0ee9be10853211717aa381d",
+  "productCandidateCommit": "8297dcdc1528cb0cbe53ecd38b056231fbe9fd1d",
+  "immutableApprovedTaskContractSHA256": "46d171183a53019aec34afad10f92cf9af9704b8c742a366ac5686d1125644d4",
+  "result": "approved",
+  "dispositionScope": "Ready for the exact owner decision only: one-task equivalent verification method and explicitly requested direct append-only owner-record exception to project-automation-guide section2.2. This readiness review grants neither exception nor qualifying execution.",
+  "readinessApproved": true,
+  "ownerApprovalStillRequired": true,
+  "executionAuthorized": false,
+  "equivalentQualificationComplete": false,
+  "taskApproval": false,
+  "waveCompletion": false,
+  "releaseApproval": false,
+  "findings": [],
+  "openFindingIds": [],
+  "assessment": {
+    "boundedScope": "Only original CAP-05.S01.T01 at retained base6506. The exact nine C11/S05/C12 product-history rows and three R10/R11/original-reopen transitions equal the immutable independent audit inventory. Exactly one subsequent supported W2 resume and original-task reopening is conditional on the exact owner record and paused predecessor. No generic attribution, future task or later blocker exception is created.",
+    "authorityAndProcedure": "The proposal explicitly asks the owner to approve both replacement of the otherwise mandatory public full-original-base PASS and a one-task direct append-only owner-record exception to section2.2 ECR/bootstrap/controller/amendment-lease procedure. General permission to finish W2, prior product/correction approvals, this review and the timeout do not authorize that replacement. The original Wave/task/reference/amendment packets remain immutable. The proposed exception is inert until the owner approves this exact committed proposal/hash and a separate record binds that approval and this readiness disposition.",
+    "truthfulPublicOutcome": "The actual unchanged public original-base command over6506-to-fccb73f3 timed out after600.011seconds, exit124, with recorded stable selected inputs and gateResult null. Committed receipt/log equal their original ignored bytes. There is no completed public verdict or emitted historical denial. The separate audit machine-evaluates predicate incompatibilities; those observations are not recast as a public-gate result. No tools/ui_change_gate.py or foundation:ui-change PASS is asserted.",
+    "equivalentProof": "The required proof retains complete original-base traversal, intermediate source/control/UI history and regular blobs; exact A01-A05 packets, claims, reviewed source scopes and actual adoption; finite correction/integration and resume attribution; unchanged1.8 approval/package, two contracts, witness/build/baseline, capture-reader evidence and independent visual/classification judgment;766 capture and42 dependent inputs; stable-input current native/Core/rights/acquisition/format/failure/commit/restart proof or explicit unchanged-input reuse closure; and separate commit-bound equivalent-lineage plus expanded product/security review. Unknown closure or unapproved/missing/stale/redirected/unattributed history remains a denial. Prior exact reviewed history is not erased by an endpoint-only inventory.",
+    "sourceFreeFeasibility": "Current ordinary taskctl evidence/submission/review machinery accepts actual exact-commit checks, criterion mappings, known selected command IDs and independent disposition without requiring new source or a new command-registry entry. A separately named ignored evidence producer can authenticate the finite Git facts and issue its own result after owner authority. The timeout stays preserved outside the all-exit0 qualifying check list; neither a monkeypatch nor a fictitious original command result is permitted. No product/framework/schema/policy/CI/controller/dependency/runtime changes are needed or authorized by this packet.",
+    "remainingGates": "The packet does not complete the equivalent proof or final task review. All18 unfinished original W2 tasks across six CAP-05 slices, including this task, remain. Slice/checkpoint qualification, full Wave/platform/security/privacy/rights/accessibility/performance/packaging obligations, independent Wave review and human G2 release remain unchanged. G2 approval is not presently legal. Local main advances only through ordinary qualified-task integration.",
+    "recoveryAndAlternatives": "Until exact owner approval and append-only owner recording, keep originalT01 BLOCKED and W2 PAUSED. Approval permits the bounded proof/review sequence, then existing taskctl submission/review/integration; any new material blocker still stops. Retaining the block preserves all work. Framework repair would require separately explicit reversal of the owner restriction and is neither prepared nor authorized here."
+  },
+  "authenticatedChecks": [
+    {
+      "id": "exact-proposal-and-brief",
+      "result": "PASS",
+      "evidence": "Read both committed documents completely; proposal raw SHA256 equals the supplied digest; brief binds the same hash/context, and every local evidence/tracking hyperlink resolves."
+    },
+    {
+      "id": "quiescent-committed-predecessor",
+      "result": "PASS",
+      "evidence": "Proposal candidate directly follows4e7e11e6; committed predecessor backlog raw hash matches the proposal and remains byte-identical at the proposal candidate. OriginalT01 is BLOCKED with no task lease, W2 is PAUSED, and active_amendment is null. The frozen approved task contract independently recomputes unchanged46d17118."
+    },
+    {
+      "id": "metadata-only-checkpoint-and-proposal",
+      "result": "PASS",
+      "evidence": "The fccb-to4e7e11 checkpoint changes exactly seven backlog/generated planning paths. The proposal commit adds exactly the proposal, brief, timeout receipt and timeout log. No source/runtime/reference change occurs."
+    },
+    {
+      "id": "exact-supporting-references",
+      "result": "PASS",
+      "evidence": "All nine referenced regular Git blobs match their proposal hashes and sole introduction commits. Actual adopted A01-A05 state and DONE/APPROVED S05 completion are present in the committed predecessor."
+    },
+    {
+      "id": "finite-attribution-identity",
+      "result": "PASS",
+      "evidence": "All nine historical product rows and all three late transition rows equal the preserved independent audit exactly, including full commits, parents, authority/path/record identities. Reused prior audit authenticates actual completed C11/C12 and S05 records; no suite or historic predicate audit is repeated."
+    },
+    {
+      "id": "actual-timeout-and-source-identity",
+      "result": "PASS",
+      "evidence": "Committed receipt and64-byte log are byte-identical to retained originals. Receipt binds6506/fccb, exit124,600.011seconds, stable-input observation and null completed verdict. Pinned unchanged gate source hash matches the receipt, and the retained actual producer hash independently matches."
+    },
+    {
+      "id": "future-return-and-command-truth",
+      "result": "PASS",
+      "evidence": "Packet explicitly authenticates only one post-owner-record supported resume/reopen against paused predecessor, exact owner record, owner/branch/worktree/LOC/windows-x64 and6506. It requires a separate equivalent command/result and forbids an original-gate/foundation:ui-change PASS or new command-registry entry."
+    },
+    {
+      "id": "unfinished-work-and-release-boundaries",
+      "result": "PASS",
+      "evidence": "Committed ordinary W2 backlog independently contains18 unfinished tasks and six unfinished CAP-05 slices. Proposal flags and limits preserve incomplete qualification/review and human G2 prerequisites."
+    }
+  ],
+  "provenance": {
+    "independentAuthorship": "Reviewer did not author the proposal/brief, paused checkpoint, product/classification/visual proof or actual timeout. Reviewer previously authored the disclosed bounded lineage audit and exact privacy registry; their prior findings/limits remain immutable and are used only within this readiness scope.",
+    "method": "Complete packet/brief and selected governing sections reviewed; fixed-commit Git blob/hash/mode/ancestry/path inventory, immutable task-contract comparison and proposal/audit equality authenticated. No broad suite, duplicate public gate or equivalent qualification executed.",
+    "preparationCorrections": "The initial draft conflated active gate candidate with paused context and omitted the unique future return/command-result distinction; corrected before the committed packet. Root disclosed retained producer01 refusing before any output because its permitted checkpoint prefix omitted generated docs; producer02 binds exactly seven actual checkpoint paths and newline-canonical working/Git equality. No preparation failure is called a product or qualifying PASS."
+  },
+  "normativeBasis": [
+    "AGENTS.md approval/stop/evidence safeguards: changed approved criteria need explicit authority; preserve immutable approvals, failures, original base and bounded claims.",
+    "docs/automation/project-automation-guide.md section2.2: independent packet review and exact human approval at a quiescent boundary; the direct owner-record departure from ECR/bootstrap is explicitly requested rather than inferred.",
+    "docs/automation/project-automation-guide.md section3.1 and planning/README.md Authority changes: decision-complete alternatives, recommendation, prerequisites and exact resume condition.",
+    "docs/automation/codex-tracking-guide.md Independent review and tools/taskctl.py validate_task_evidence/build_task_submission_packet: exact committed evidence, honest check outcomes, known command IDs and separate independent task disposition.",
+    "docs/automation/design-first-ui-changes.md adopted1.4 and A05 completion restrictions: preserve approved reference, immutable6506 history/contracts, qualification duties and no further framework source work."
+  ],
+  "exactOwnerDecisionRequired": {
+    "proposalCommit": "5fdac55a9d0c59fb82260bd3289517b95d025e1f",
+    "proposalSHA256": "9f20e9b185207ae2d467379a058f87a48c44ca5c78e027a7ff1b13013d674e80",
+    "targetOwnerRecordPath": "planning/verification-method-approvals/CAP-05.S01.T01.VM01.json",
+    "requiredScope": "Explicitly approve both the exact one-task equivalent verification method and its section2.2 direct append-only owner-record procedure exception. Record the actual human decision, exact proposal commit/hash and independently committed readiness reference before any qualifying substitute execution or task/Wave resume.",
+    "approvalRecordExists": false
+  },
+  "limits": [
+    "Readiness of the owner-decision packet only; this is not owner approval, authority enactment, successful equivalent-lineage qualification, task/slice/Wave acceptance or release approval.",
+    "The public gate timeout has no completed verdict. Literal predicate incompatibilities in the prior audit are independently authenticated observations, not emitted public denials.",
+    "Historic/native/Core/visual execution has only its separately disclosed boundaries; no repeated tests or stronger production/principal claim is introduced here.",
+    "Only this readiness report is authored and committed. No other tracked file, source, backlog/state, reference, hook, runtime, Git main ref or owner record is changed."
+  ]
+}
