@@ -34,11 +34,11 @@ retains an encrypted rollback copy, verifies the staged key after restart, and
 only then activates it with compare-and-swap. Schema migrations use the same
 protected connection and create encrypted migration backups.
 
-## Current version-20 authority
+## Current version-24 authority
 
 | Concern | Current rule |
 |---|---|
-| Database identity | application ID `0x524f4253`, `user_version=20`, profile `sqlite-wal-v1` |
+| Database identity | application ID `0x524f4253`, `user_version=24`, profile `sqlite-wal-v1` |
 | Durable identities | lowercase UUIDv7 text; project UUIDv4 bridge and prior canonical actor identifiers are explicitly retained |
 | Time | UTC RFC 3339 text at fixed millisecond precision |
 | Types | STRICT `INTEGER`, `REAL`, and `TEXT`; no `ANY` or `BLOB` columns |
@@ -126,9 +126,9 @@ runner validates and checkpoints the source, reserves SQLite's writer lock, crea
 through a second held connection, and only then runs the reviewed Alembic
 revision in one transaction. The immutable recovery manifest binds the backup
 bytes and both schema fingerprints; a failed transaction rolls back while the
-verified backup remains available. A current version-20 database is detected
+verified backup remains available. A current version-24 database is detected
 idempotently and is never backed up or rewritten.
-A version-19 source receives a verified backup before migration to v20.
+A version-23 source receives a verified backup before migration to v24.
 Committed v3 history is never
 rewritten; v4 adds only the post-schema object-envelope upgrade journal and v5
 adds the truthful `legacy-unreported` backfill for missing technical object
@@ -351,3 +351,12 @@ ADR-0020 threat boundary. Same-user malware, unlocked-process memory, OS or
 kernel compromise, and loss of all vault/recovery material remain explicit
 residual risks; OS sign-in, full-disk encryption, endpoint protection, and
 physical security remain required.
+
+## Open-access acquisition projections
+
+Version 24 adds immutable `acquisition_locations`, `acquisition_attempts`,
+`acquisition_attempt_results` and `document_acquisition_sources`. Canonical workflow
+revisions retain admitted/result identity with atomic provenance and outbox; these
+projections bind exact source copies, consent, selected policy and download receipt.
+See [open-access acquisition](open-access-acquisition.md). The literal populated
+v23 predecessor and its recovery contract preserve prior rows and ciphertext.

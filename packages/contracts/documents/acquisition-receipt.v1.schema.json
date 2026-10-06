@@ -1,0 +1,104 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://research-observatory.local/contracts/documents/acquisition-receipt.v1.schema.json",
+  "$defs": {
+    "Digest": {
+      "pattern": "^[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "Identity": {
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+      "type": "string"
+    },
+    "UtcInstant": {
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.[0-9]{3}Z$",
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "locationId": {
+      "$ref": "#/$defs/Identity"
+    },
+    "locationSha256": {
+      "$ref": "#/$defs/Digest"
+    },
+    "providerPolicyRevisionId": {
+      "$ref": "#/$defs/Identity"
+    },
+    "retrievedAt": {
+      "$ref": "#/$defs/UtcInstant"
+    },
+    "expectedSha256": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Digest"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "actualSha256": {
+      "$ref": "#/$defs/Digest"
+    },
+    "mediaType": {
+      "maxLength": 200,
+      "title": "Mediatype",
+      "type": "string"
+    },
+    "wireBytes": {
+      "maximum": 134217728,
+      "minimum": 0,
+      "title": "Wirebytes",
+      "type": "integer"
+    },
+    "expandedBytes": {
+      "maximum": 134217728,
+      "minimum": 0,
+      "title": "Expandedbytes",
+      "type": "integer"
+    },
+    "attempts": {
+      "maximum": 3,
+      "minimum": 1,
+      "title": "Attempts",
+      "type": "integer"
+    },
+    "redirectHosts": {
+      "items": {
+        "maxLength": 253,
+        "type": "string"
+      },
+      "maxItems": 5,
+      "title": "Redirecthosts",
+      "type": "array"
+    },
+    "elapsedMs": {
+      "maximum": 120000,
+      "minimum": 0,
+      "title": "Elapsedms",
+      "type": "integer"
+    },
+    "confirmationSha256": {
+      "$ref": "#/$defs/Digest"
+    }
+  },
+  "required": [
+    "locationId",
+    "locationSha256",
+    "providerPolicyRevisionId",
+    "retrievedAt",
+    "expectedSha256",
+    "actualSha256",
+    "mediaType",
+    "wireBytes",
+    "expandedBytes",
+    "attempts",
+    "redirectHosts",
+    "elapsedMs",
+    "confirmationSha256"
+  ],
+  "title": "AcquisitionReceipt",
+  "type": "object"
+}

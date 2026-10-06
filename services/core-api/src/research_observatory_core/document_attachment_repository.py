@@ -21,6 +21,7 @@ from pydantic import ValidationError
 
 from .corpus_repository import SqliteCorpusRepository
 from .domain_contracts import is_uuid_v7, new_uuid_v7
+from .ports.acquisition import AcquisitionStage
 from .ports.corpus import CorpusActor
 from .ports.document_attachments import (
     MAX_DOCUMENT_BYTES,
@@ -92,7 +93,13 @@ class LocalDocumentAttachmentService:
         self._objects = objects
         self._inspector = inspector
         self._corpus = SqliteCorpusRepository(database, project_id)
-        self._rights = SqliteRightsRepository(database, project_id)
+        from .connector_repository import ConnectorRepository
+
+        self._rights = SqliteRightsRepository(
+            database,
+            project_id,
+            connector_record_resolver=ConnectorRepository(database, project_id, objects).source_record,
+        )
 
     def _authority(self, connection: CanonicalConnection, actor: CorpusActor) -> None:
         try:
@@ -210,6 +217,7 @@ class LocalDocumentAttachmentService:
         session_id: str | None = None,
         cancellation_requested: Callable[[], bool] | None = None,
         publication_guard: Callable[[Callable[[], AttachmentCandidate]], AttachmentCandidate] | None = None,
+        acquisition: AcquisitionStage | None = None,
     ) -> AttachmentCandidate:
         name = ntpath.basename(source_name)
         if not name or len(name) > 255 or "\x00" in name or name in {".", ".."}:
@@ -264,8 +272,9 @@ class LocalDocumentAttachmentService:
                 rights_status="unknown",
                 protection_profile="project-encrypted-v1",
                 retention_class="project-lifetime",
-                creation_source="local-import",
+                creation_source="connector-acquisition" if acquisition is not None else "local-import",
                 created_at=_now(),
+                expected_sha256=acquisition.expected_sha256 if acquisition is not None else None,
             ),
             inspect,
             max_plaintext_bytes=MAX_DOCUMENT_BYTES,
@@ -297,7 +306,7 @@ class LocalDocumentAttachmentService:
         def publish() -> AttachmentCandidate:
             if cancellation_requested is not None and cancellation_requested():
                 raise ObjectStagingCancelled()
-            with self._corpus._transaction(write=True) as (connection, _):
+            with self._corpus._transaction(write=True) as (connection, aggregates):
                 if cancellation_requested is not None and cancellation_requested():
                     raise ObjectStagingCancelled()
                 self._authority(connection, actor)
@@ -351,6 +360,23 @@ class LocalDocumentAttachmentService:
                         )
                     except sqlite3.IntegrityError:
                         raise AttachmentProblem("attachment-operation-conflict") from None
+                if acquisition is not None:
+                    from .acquisition_repository import publish_acquisition_source
+
+                    if operation_id is None:
+                        raise AttachmentProblem("attachment-operation-invalid")
+                    publish_acquisition_source(
+                        connection,
+                        aggregates,
+                        self._rights,
+                        project=self._project,
+                        operation_id=operation_id,
+                        candidate_id=candidate_id,
+                        object_sha256=stored.object_sha256,
+                        byte_length=stored.byte_length,
+                        receipt=acquisition.receipt(),
+                        actor=actor,
+                    )
                 return self._candidate(connection, candidate_id)
 
         return publication_guard(publish) if publication_guard is not None else publish()
@@ -546,6 +572,9 @@ class LocalDocumentAttachmentService:
             if any(value is not None for value in (session_id, match_confirmed, permitted_use, exact_selection)):
                 raise AttachmentProblem("attachment-command-invalid")
             command_sha256 = _sha({"candidateId": candidate_id, "confirmationSha256": confirmation_sha256})
+        connector_record = self._rights._resolve_connector_record(
+            self.load_candidate(candidate_id, actor=actor).rights_subject
+        )
         try:
             with self._corpus._transaction(write=True) as (connection, aggregates):
                 self._authority(connection, actor)
@@ -602,6 +631,15 @@ class LocalDocumentAttachmentService:
                     "available",
                 ):
                     raise AttachmentProblem("attachment-object-unavailable")
+                from .acquisition_repository import acquisition_policy_for_commit
+                from .ports.acquisition import AcquisitionProblem
+
+                try:
+                    acquired = acquisition_policy_for_commit(
+                        connection, self._rights, self._project, candidate_id, actor
+                    )
+                except AcquisitionProblem as error:
+                    raise AttachmentProblem(error.code) from None
                 if project_only and self._rights.current_with_connection(connection, candidate.rights_subject) is None:
                     permissions = tuple(
                         RightsPermissionDraft(
@@ -628,6 +666,7 @@ class LocalDocumentAttachmentService:
                         command_id=command_id,
                         command_sha256=command_sha256,
                         actor=actor,
+                        connector_record=connector_record,
                     )
                 decision = self._rights.evaluate_with_connection(
                     connection,
@@ -661,6 +700,7 @@ class LocalDocumentAttachmentService:
                         candidate.work_revision_id,
                         candidate.version_revision_id,
                         decision.policy_revision_id,
+                        *((acquired[0],) if acquired is not None else ()),
                     )
                 )
                 document_id, revision_id, attachment_id = new_uuid_v7(), new_uuid_v7(), new_uuid_v7()
@@ -678,7 +718,7 @@ class LocalDocumentAttachmentService:
                 dependencies = tuple(
                     MaterialDependency(
                         dependency_id=new_uuid_v7(),
-                        dependency_kind="human-decision" if index == 3 else "source-revision",
+                        dependency_kind="human-decision" if index >= 3 else "source-revision",
                         relation_type="direct",
                         revision_id=value.revision_id,
                         configuration_id=None,
@@ -689,6 +729,20 @@ class LocalDocumentAttachmentService:
                     )
                     for index, value in enumerate(sources)
                 )
+                if acquired is not None:
+                    dependencies += (
+                        MaterialDependency(
+                            new_uuid_v7(),
+                            "parameter-set",
+                            "direct",
+                            None,
+                            "document.acquisition-source",
+                            "1.0.0",
+                            "sha256:" + acquired[1],
+                            "dependency.material.v1",
+                            "1.0.0",
+                        ),
+                    )
                 revision = aggregates.append(
                     AggregateRevisionDraft(
                         revision_id=revision_id,

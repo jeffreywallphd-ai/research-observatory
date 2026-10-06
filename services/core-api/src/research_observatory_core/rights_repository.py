@@ -226,6 +226,16 @@ class SqliteRightsRepository:
             or subject.copy_location != "local-source"
             or subject.resource_class != "metadata"
         ):
+            if subject.copy_location == "provider-hosted" and subject.resource_class == "full-text":
+                from .acquisition_repository import load_location
+                from .ports.acquisition import AcquisitionProblem
+
+                try:
+                    location = load_location(connection, self._project, subject.copy_id)
+                except AcquisitionProblem, ValidationError:
+                    raise RightsProblem("rights-copy-unavailable") from None
+                if location.rights_subject == subject:
+                    return
             if subject.copy_location == "local-project-object" and subject.resource_class == "full-text":
                 row = connection.execute(
                     "SELECT 1 FROM document_attachment_candidates c WHERE c.project_id=? "
@@ -1542,6 +1552,7 @@ class SqliteRightsRepository:
     ) -> RightsPolicyRevision:
         """Check replay before minting revision, assertion IDs, or recorded time."""
 
+        connector_record = self._resolve_connector_record(subject)
         with self._transaction(write=True) as (connection, aggregates):
             return self.publish_draft_with_connection(
                 connection,
@@ -1552,6 +1563,7 @@ class SqliteRightsRepository:
                 command_id=command_id,
                 command_sha256=command_sha256,
                 actor=actor,
+                connector_record=connector_record,
             )
 
     def publish_draft_with_connection(
@@ -1565,6 +1577,7 @@ class SqliteRightsRepository:
         command_id: str,
         command_sha256: str,
         actor: RightsActor,
+        connector_record: ConnectorRecord | None = None,
     ) -> RightsPolicyRevision:
         """Publish within an existing canonical writer, including its rollback."""
 
@@ -1583,7 +1596,8 @@ class SqliteRightsRepository:
             raise RightsProblem("rights-policy-invalid") from None
         if subject.project_id != self._project:
             raise RightsProblem("rights-source-mismatch")
-        connector_record = self._resolve_connector_record(subject)
+        # Protected connector bytes are resolved before taking the writer.
+        # The exact retained source digest is still verified during publication.
         self._authority(connection, actor)
         source = self._retained_source(connection, subject)
         self._validate_subject_copy(connection, subject)

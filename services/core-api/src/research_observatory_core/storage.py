@@ -47,7 +47,8 @@ from research_observatory_core.ports.database_keys import (
 
 APPLICATION_ID = 0x524F4253  # ASCII "ROBS"
 DATABASE_PROFILE = "sqlite-wal-v1"
-DATABASE_SCHEMA_VERSION = 23
+DATABASE_SCHEMA_VERSION = 24
+ACQUISITION_PREDECESSOR_DATABASE_SCHEMA_VERSION = 23
 ATTACHMENT_OPERATION_PREDECESSOR_DATABASE_SCHEMA_VERSION = 22
 DOCUMENT_ATTACHMENT_PREDECESSOR_DATABASE_SCHEMA_VERSION = 21
 PLUGIN_GRANT_PREDECESSOR_DATABASE_SCHEMA_VERSION = 20
@@ -149,6 +150,12 @@ DOCUMENT_ATTACHMENT_TABLES = (
     "document_attachment_assertions",
 )
 ATTACHMENT_OPERATION_TABLES = ("document_attachment_operations",)
+ACQUISITION_TABLES = (
+    "acquisition_locations",
+    "acquisition_attempts",
+    "acquisition_attempt_results",
+    "document_acquisition_sources",
+)
 
 EXPECTED_TABLES = (
     "schema_metadata",
@@ -214,6 +221,7 @@ EXPECTED_TABLES = (
     *PLUGIN_GRANT_TABLES,
     *DOCUMENT_ATTACHMENT_TABLES,
     *ATTACHMENT_OPERATION_TABLES,
+    *ACQUISITION_TABLES,
 )
 IMMUTABLE_ROW_TABLES = (
     "schema_metadata",
@@ -272,6 +280,7 @@ IMMUTABLE_ROW_TABLES = (
     *PLUGIN_GRANT_TABLES,
     *DOCUMENT_ATTACHMENT_TABLES,
     *ATTACHMENT_OPERATION_TABLES,
+    *ACQUISITION_TABLES,
 )
 MUTABLE_STATE_TABLES = (
     "object_records",
@@ -338,6 +347,7 @@ EXPECTED_TRIGGERS = tuple(
             "rights_policy_generic_recheck_binding",
             "rights_legacy_output_recheck_binding",
             "rights_use_decision_binding",
+            "document_acquisition_source_binding",
             "corpus_report_snapshot_seal_binding",
             "corpus_report_member_binding",
             "corpus_report_path_binding",
@@ -442,7 +452,8 @@ CORPUS_REPORT_SCHEMA_SHA256 = "829684b8a5274b6666400c2719ea9302384a8bdd01024b8f9
 PLUGIN_GRANT_PREDECESSOR_SCHEMA_SHA256 = "c6bdef5f65d5f688747a1effed96f3cd79556e37891946e1985841bce4ae1cd6"
 DOCUMENT_ATTACHMENT_PREDECESSOR_SCHEMA_SHA256 = "c0aa9be9916fbe517f1ae94a86aeac13f19a92ec366b1a4d4d816bff614da034"
 ATTACHMENT_OPERATION_PREDECESSOR_SCHEMA_SHA256 = "32dc9a2b87efdd8b69b92271b8b1841e40da07bbc86e9943f59dbe5784f2617e"
-EXPECTED_SCHEMA_SHA256 = "0d5eb89a3975aa1d95fa4d190ce8debfee2ae43d390669ce8b3acb5f10a1a41e"
+ACQUISITION_PREDECESSOR_SCHEMA_SHA256 = "0d5eb89a3975aa1d95fa4d190ce8debfee2ae43d390669ce8b3acb5f10a1a41e"
+EXPECTED_SCHEMA_SHA256 = "8078a6f7132200e6cf9e729f116c7b8ad6cd7c2bcf61d56f337e594dc7552a97"
 
 _PROFILE_DOCUMENT: dict[str, Any] = {
     "schemaVersion": "1.0",
@@ -513,7 +524,8 @@ CORPUS_REPORT_PROFILE_SHA256 = "e22cb614472013b6ed3fac45c9778e7fb9c987018d20f416
 PLUGIN_GRANT_PREDECESSOR_PROFILE_SHA256 = "1e5b92e8e82cc64a191b4e3d5c1935d1931c4c3639678c26860fc317e1e11515"
 DOCUMENT_ATTACHMENT_PREDECESSOR_PROFILE_SHA256 = "74ed7818d261958b0039aef90c00b42ed5f97b3558cc61818fcca93a862a9822"
 ATTACHMENT_OPERATION_PREDECESSOR_PROFILE_SHA256 = "67361cdaa6b082a552f89a40c5a83036526da3a1230c8f6d3bef4cb57cc43997"
-EXPECTED_PROFILE_SHA256 = "bc4f7aa4029ed660329b407362c017a42de2966f1d18bbbcbe7c75f1afa837f5"
+ACQUISITION_PREDECESSOR_PROFILE_SHA256 = "bc4f7aa4029ed660329b407362c017a42de2966f1d18bbbcbe7c75f1afa837f5"
+EXPECTED_PROFILE_SHA256 = "b8f925467533ee5810343ce3a83a0035b8bf5e1f1989d421279994e0f73b9e1e"
 if _PROFILE_SHA256 != EXPECTED_PROFILE_SHA256:
     raise RuntimeError("compiled SQLite profile differs from its reviewed fingerprint")
 
@@ -3583,6 +3595,7 @@ SCHEMA_METADATA_V20_DDL = SCHEMA_METADATA_V19_DDL.replace("schema_version = 19",
 SCHEMA_METADATA_V21_DDL = SCHEMA_METADATA_V20_DDL.replace("schema_version = 20", "schema_version = 21")
 SCHEMA_METADATA_V22_DDL = SCHEMA_METADATA_V21_DDL.replace("schema_version = 21", "schema_version = 22")
 SCHEMA_METADATA_V23_DDL = SCHEMA_METADATA_V22_DDL.replace("schema_version = 22", "schema_version = 23")
+SCHEMA_METADATA_V24_DDL = SCHEMA_METADATA_V23_DDL.replace("schema_version = 23", "schema_version = 24")
 
 _V16_AGGREGATE_IDENTITY_DDL = next(
     statement for statement in _V1_DDL_STATEMENTS if "CREATE TABLE aggregate_identities" in statement
@@ -5180,8 +5193,110 @@ ATTACHMENT_OPERATION_DDL = (
 )
 
 
+ACQUISITION_DDL = (
+    f"""
+        CREATE TABLE acquisition_locations (
+            location_id TEXT PRIMARY KEY CHECK ({_uuid_check("location_id", "7")}),
+            project_id TEXT NOT NULL,
+            source_assertion_revision_id TEXT NOT NULL,
+            location_key TEXT NOT NULL CHECK (length(location_key) BETWEEN 1 AND 128),
+            location_sha256 TEXT NOT NULL CHECK ({_sha256_check("location_sha256")}),
+            location_json TEXT NOT NULL CHECK (json_valid(location_json)),
+            created_at TEXT NOT NULL CHECK ({_timestamp_check("created_at")}),
+            FOREIGN KEY (source_assertion_revision_id,project_id) REFERENCES reconciliation_assertions
+                (revision_id,project_id) ON UPDATE RESTRICT ON DELETE RESTRICT,
+            UNIQUE (location_id,project_id),
+            UNIQUE (project_id,source_assertion_revision_id,location_key)
+        ) STRICT
+    """,
+    f"""
+        CREATE TABLE acquisition_attempts (
+            operation_id TEXT PRIMARY KEY CHECK ({_uuid_check("operation_id", "7")}),
+            project_id TEXT NOT NULL,
+            revision_id TEXT NOT NULL,
+            location_id TEXT NOT NULL,
+            actor_id TEXT NOT NULL CHECK ({_uuid_check("actor_id", "7")}),
+            session_id TEXT NOT NULL CHECK (length(session_id)=32 AND session_id=lower(session_id)
+                AND session_id NOT GLOB '*[^0-9a-f]*'),
+            selection_json TEXT NOT NULL CHECK (json_valid(selection_json)),
+            confirmation_sha256 TEXT NOT NULL CHECK ({_sha256_check("confirmation_sha256")}),
+            created_at TEXT NOT NULL CHECK ({_timestamp_check("created_at")}),
+            FOREIGN KEY (revision_id,project_id) REFERENCES aggregate_revisions(revision_id,project_id)
+                ON UPDATE RESTRICT ON DELETE RESTRICT,
+            FOREIGN KEY (location_id,project_id) REFERENCES acquisition_locations(location_id,project_id)
+                ON UPDATE RESTRICT ON DELETE RESTRICT,
+            UNIQUE (operation_id,project_id)
+        ) STRICT
+    """,
+    f"""
+        CREATE TABLE acquisition_attempt_results (
+            operation_id TEXT PRIMARY KEY,
+            project_id TEXT NOT NULL,
+            revision_id TEXT NOT NULL,
+            outcome TEXT NOT NULL CHECK (outcome IN ('candidate','failed','cancelled')),
+            code TEXT NOT NULL CHECK ({_identifier_check("code", 64)}),
+            candidate_id TEXT,
+            FOREIGN KEY (operation_id,project_id) REFERENCES acquisition_attempts(operation_id,project_id)
+                ON UPDATE RESTRICT ON DELETE RESTRICT,
+            FOREIGN KEY (revision_id,project_id) REFERENCES aggregate_revisions(revision_id,project_id)
+                ON UPDATE RESTRICT ON DELETE RESTRICT,
+            FOREIGN KEY (candidate_id,project_id) REFERENCES document_attachment_candidates(candidate_id,project_id)
+                ON UPDATE RESTRICT ON DELETE RESTRICT,
+            CHECK ((outcome='candidate')=(candidate_id IS NOT NULL))
+        ) STRICT
+    """,
+    f"""
+        CREATE TABLE document_acquisition_sources (
+            candidate_id TEXT PRIMARY KEY,
+            project_id TEXT NOT NULL,
+            operation_id TEXT NOT NULL UNIQUE,
+            location_id TEXT NOT NULL,
+            provider_policy_revision_id TEXT NOT NULL,
+            receipt_sha256 TEXT NOT NULL CHECK ({_sha256_check("receipt_sha256")}),
+            receipt_json TEXT NOT NULL CHECK (json_valid(receipt_json)),
+            FOREIGN KEY (candidate_id,project_id) REFERENCES document_attachment_candidates
+                (candidate_id,project_id) ON UPDATE RESTRICT ON DELETE RESTRICT,
+            FOREIGN KEY (operation_id,project_id) REFERENCES acquisition_attempts
+                (operation_id,project_id) ON UPDATE RESTRICT ON DELETE RESTRICT,
+            FOREIGN KEY (location_id,project_id) REFERENCES acquisition_locations
+                (location_id,project_id) ON UPDATE RESTRICT ON DELETE RESTRICT,
+            FOREIGN KEY (provider_policy_revision_id,project_id) REFERENCES rights_policy_revisions
+                (revision_id,project_id) ON UPDATE RESTRICT ON DELETE RESTRICT
+        ) STRICT
+    """,
+    """
+        CREATE TRIGGER document_acquisition_source_binding BEFORE INSERT ON document_acquisition_sources
+        WHEN NOT EXISTS (SELECT 1 FROM document_attachment_candidates c
+            JOIN document_attachment_operations o ON o.project_id=c.project_id AND o.candidate_id=c.candidate_id
+            JOIN acquisition_attempts attempt ON attempt.project_id=o.project_id AND attempt.operation_id=o.operation_id
+            JOIN acquisition_locations l ON l.project_id=c.project_id
+                AND l.source_assertion_revision_id=c.source_assertion_revision_id
+            JOIN rights_policy_revisions r ON r.project_id=l.project_id
+            JOIN rights_policy_subjects s ON s.project_id=r.project_id AND s.subject_sha256=r.subject_sha256
+            WHERE c.candidate_id=NEW.candidate_id AND c.project_id=NEW.project_id AND l.location_id=NEW.location_id
+                AND attempt.location_id=l.location_id AND attempt.operation_id=NEW.operation_id
+                AND attempt.actor_id=o.actor_id AND attempt.session_id=o.session_id
+                AND attempt.confirmation_sha256=json_extract(NEW.receipt_json,'$.confirmationSha256')
+                AND r.revision_id=NEW.provider_policy_revision_id AND s.copy_id=l.location_id
+                AND s.copy_location='provider-hosted' AND s.resource_class='full-text'
+                AND s.source_assertion_revision_id=c.source_assertion_revision_id
+                AND json_extract(NEW.receipt_json,'$.locationId')=l.location_id
+                AND json_extract(NEW.receipt_json,'$.locationSha256')=l.location_sha256
+                AND json_extract(NEW.receipt_json,'$.providerPolicyRevisionId')=r.revision_id
+                AND json_extract(NEW.receipt_json,'$.actualSha256')=c.object_sha256
+                AND json_extract(NEW.receipt_json,'$.expandedBytes')=c.byte_length)
+        BEGIN SELECT RAISE(ABORT,'acquisition source binding denied'); END
+    """,
+    *(
+        statement
+        for table in ACQUISITION_TABLES
+        for statement in _immutable_triggers(table, "acquisition source history is append-only")
+    ),
+)
+
+
 _DDL_STATEMENTS = (
-    SCHEMA_METADATA_V23_DDL,
+    SCHEMA_METADATA_V24_DDL,
     *_V17_BASE_DDL_STATEMENTS,
     SCHEMA_MIGRATIONS_DDL,
     *SCHEMA_MIGRATIONS_TRIGGERS,
@@ -5207,6 +5322,7 @@ _DDL_STATEMENTS = (
     *PLUGIN_GRANT_DDL,
     *DOCUMENT_ATTACHMENT_DDL,
     *ATTACHMENT_OPERATION_DDL,
+    *ACQUISITION_DDL,
 )
 
 

@@ -19,6 +19,8 @@ from fastapi import FastAPI
 from pydantic import ValidationError
 
 from . import CORE_API_SCHEMA_VERSION, CORE_API_VERSION, CORE_SERVICE_ID
+from .acquisition.service import AcquisitionPreview, OpenAccessAcquisitionService
+from .acquisition_repository import AcquisitionRepository
 from .app import create_app
 from .authentication import WORKFLOW_STARTUP_RECORD_BYTES, NativeWorkflowContext, parse_startup_record
 from .config import CoreSettings
@@ -51,6 +53,7 @@ from .plugin_job_repository import PluginJobRepository
 from .plugin_package_repository import SqlitePluginPackageRepository
 from .plugin_runtime import InstalledPluginRuntime
 from .plugin_worker import PluginWorkerAdapters, PluginWorkerService
+from .ports.acquisition import AcquisitionLocation, AcquisitionProblem, AcquisitionSelection
 from .ports.corpus import CorpusActor
 from .ports.credential_store import CredentialStoreProblem
 from .ports.database_keys import DatabaseKeyProvider
@@ -118,6 +121,83 @@ class DocumentAttachmentRuntime:
         self._imports = imports
         self._corpus = corpus
         self._object_store_factory = object_store_factory
+        self._acquisitions: dict[tuple[str, str, str], OpenAccessAcquisitionService] = {}
+        self._acquisition_slots: dict[str, threading.BoundedSemaphore] = {}
+
+    def _acquisition(
+        self, root: str, project_id: str, session_id: str, trace_id: str
+    ) -> tuple[OpenAccessAcquisitionService, CorpusActor]:
+        def selected(attachments: LocalDocumentAttachmentService, actor: CorpusActor):
+            key = (root, project_id, session_id)
+            service = self._acquisitions.get(key)
+            if service is None:
+
+                def guard(expected_actor: CorpusActor, action):
+                    def current(_attachments, actual_actor):
+                        if (
+                            actual_actor.actor_id,
+                            actual_actor.intent_revision_id,
+                            actual_actor.intent_sha256,
+                            actual_actor.policy_sha256,
+                        ) != (
+                            expected_actor.actor_id,
+                            expected_actor.intent_revision_id,
+                            expected_actor.intent_sha256,
+                            expected_actor.policy_sha256,
+                        ):
+                            raise AcquisitionProblem("acquisition-authority-changed")
+                        return action()
+
+                    return self._action(root, project_id, session_id, trace_id, current)
+
+                pages = ConnectorRepository(attachments._database, project_id, attachments._objects)
+                service = OpenAccessAcquisitionService(
+                    AcquisitionRepository(attachments._database, project_id, pages.source_record),
+                    attachments,
+                    session_id=session_id,
+                    authority_guard=guard,
+                    slot=self._acquisition_slots.setdefault(project_id, threading.BoundedSemaphore(1)),
+                )
+                # A close/reopen gets new, empty consent state. An old running
+                # object still fences every socket/stage through native session.
+                self._acquisitions = {other: value for other, value in self._acquisitions.items() if other[0] != root}
+                self._acquisitions[key] = service
+            return service, actor
+
+        return self._action(root, project_id, session_id, trace_id, selected)
+
+    def acquisition_locations(
+        self, root: str, project_id: str, session_id: str, source_assertion_revision_id: str, *, trace_id: str
+    ) -> tuple[AcquisitionLocation, ...]:
+        service, actor = self._acquisition(root, project_id, session_id, trace_id)
+        return service.guard(actor, lambda: service.repository.locations(source_assertion_revision_id, actor=actor))
+
+    def acquisition_preview(
+        self, root: str, project_id: str, session_id: str, selection: AcquisitionSelection, *, trace_id: str
+    ) -> AcquisitionPreview:
+        service, actor = self._acquisition(root, project_id, session_id, trace_id)
+        return service.preview(selection, actor=actor)
+
+    def acquisition_download(
+        self,
+        root: str,
+        project_id: str,
+        session_id: str,
+        preview_id: str,
+        *,
+        confirmation: str,
+        operation_id: str,
+        trace_id: str,
+        cancellation_requested: Callable[[], bool],
+    ) -> AttachmentCandidate:
+        service, _actor = self._acquisition(root, project_id, session_id, trace_id)
+        # Remote waits and LPAC inspection run outside the lifecycle writer.
+        return service.acquire(
+            preview_id,
+            confirmation=confirmation,
+            operation_id=operation_id,
+            cancellation_requested=cancellation_requested,
+        )
 
     def context(self, root: str, project_id: str) -> str:
         return self._imports.native_context(root, project_id)

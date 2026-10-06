@@ -6,6 +6,11 @@ Boundary: Schemas, API definitions, events, and generated client sources shared 
 Contracts must not expose operating-system paths, database connection objects,
 framework components, provider SDK types, or other deployment-specific details.
 
+`documents/` publishes exact open-access location, selection and receipt schemas.
+Source/license observations and receipt hashes remain protected data; current
+Core session, accepted Intent/privacy, explicit confirmation and per-copy rights
+decide acquisition authority. See [open-access acquisition](../../docs/architecture/open-access-acquisition.md).
+
 `connectors/` publishes bounded scholarly-source request, page and capability
 schemas. Scientific queries/cursors and source assertions are protected data,
 not dispatch authority, canonical works or rights grants. Empty, partial and

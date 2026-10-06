@@ -44,6 +44,7 @@ from research_observatory_core.migrations.versions import (
     v0021_plugin_grants,
     v0022_document_attachments,
     v0023_attachment_operations,
+    v0024_open_access_acquisition,
 )
 
 _MANIFEST_DOCUMENT_TYPE = "research-observatory-sqlite-migration-recovery"
@@ -226,6 +227,7 @@ def migration_framework_projection() -> dict[str, Any]:
             storage.PLUGIN_GRANT_PREDECESSOR_DATABASE_SCHEMA_VERSION,
             storage.DOCUMENT_ATTACHMENT_PREDECESSOR_DATABASE_SCHEMA_VERSION,
             storage.ATTACHMENT_OPERATION_PREDECESSOR_DATABASE_SCHEMA_VERSION,
+            storage.ACQUISITION_PREDECESSOR_DATABASE_SCHEMA_VERSION,
         ],
         "revisions": [
             v0002_schema_history.revision,
@@ -250,6 +252,7 @@ def migration_framework_projection() -> dict[str, Any]:
             v0021_plugin_grants.revision,
             v0022_document_attachments.revision,
             v0023_attachment_operations.revision,
+            v0024_open_access_acquisition.revision,
         ],
         "backupRequired": True,
         "downgradeMode": "restore-verified-backup",
@@ -433,6 +436,10 @@ _SUPPORTED_PROFILES = {
     storage.ATTACHMENT_OPERATION_PREDECESSOR_DATABASE_SCHEMA_VERSION: (
         storage.ATTACHMENT_OPERATION_PREDECESSOR_PROFILE_SHA256,
         storage.ATTACHMENT_OPERATION_PREDECESSOR_SCHEMA_SHA256,
+    ),
+    storage.ACQUISITION_PREDECESSOR_DATABASE_SCHEMA_VERSION: (
+        storage.ACQUISITION_PREDECESSOR_PROFILE_SHA256,
+        storage.ACQUISITION_PREDECESSOR_SCHEMA_SHA256,
     ),
     storage.DATABASE_SCHEMA_VERSION: (
         storage.EXPECTED_PROFILE_SHA256,
@@ -717,6 +724,13 @@ def _valid_migration_history(schema_version: int, rows: tuple[tuple[Any, ...], .
             22,
             23,
             storage.ATTACHMENT_OPERATION_PREDECESSOR_SCHEMA_SHA256,
+            storage.ACQUISITION_PREDECESSOR_SCHEMA_SHA256,
+        ),
+        (
+            v0024_open_access_acquisition.revision,
+            23,
+            24,
+            storage.ACQUISITION_PREDECESSOR_SCHEMA_SHA256,
             storage.EXPECTED_SCHEMA_SHA256,
         ),
     )
@@ -864,9 +878,15 @@ def _migration_ids(source_version: int) -> tuple[str, ...]:
         and v0023_attachment_operations.down_revision == v0022_document_attachments.revision
         and v0023_attachment_operations.source_schema_version
         == storage.ATTACHMENT_OPERATION_PREDECESSOR_DATABASE_SCHEMA_VERSION
-        and v0023_attachment_operations.target_schema_version == storage.DATABASE_SCHEMA_VERSION
-        and v0023_attachment_operations.TARGET_SCHEMA_SHA256 == storage.EXPECTED_SCHEMA_SHA256
-        and v0023_attachment_operations.TARGET_PROFILE_SHA256 == storage.EXPECTED_PROFILE_SHA256
+        and v0023_attachment_operations.target_schema_version == storage.ACQUISITION_PREDECESSOR_DATABASE_SCHEMA_VERSION
+        and v0023_attachment_operations.TARGET_SCHEMA_SHA256 == storage.ACQUISITION_PREDECESSOR_SCHEMA_SHA256
+        and v0023_attachment_operations.TARGET_PROFILE_SHA256 == storage.ACQUISITION_PREDECESSOR_PROFILE_SHA256
+        and v0024_open_access_acquisition.down_revision == v0023_attachment_operations.revision
+        and v0024_open_access_acquisition.source_schema_version
+        == storage.ACQUISITION_PREDECESSOR_DATABASE_SCHEMA_VERSION
+        and v0024_open_access_acquisition.target_schema_version == storage.DATABASE_SCHEMA_VERSION
+        and v0024_open_access_acquisition.TARGET_SCHEMA_SHA256 == storage.EXPECTED_SCHEMA_SHA256
+        and v0024_open_access_acquisition.TARGET_PROFILE_SHA256 == storage.EXPECTED_PROFILE_SHA256
     )
     if not registry_valid:
         raise MigrationProblem("migration-registry-invalid")
@@ -893,6 +913,7 @@ def _migration_ids(source_version: int) -> tuple[str, ...]:
         v0021_plugin_grants,
         v0022_document_attachments,
         v0023_attachment_operations,
+        v0024_open_access_acquisition,
     )
     for index, migration in enumerate(chain):
         if source_version == migration.source_schema_version:
@@ -1912,11 +1933,27 @@ def _run_migrations(
                 "applied_at": applied_at,
                 "backup_manifest_sha256": backup_manifest_sha256,
                 "source_schema_sha256": storage.ATTACHMENT_OPERATION_PREDECESSOR_SCHEMA_SHA256,
+                "target_schema_sha256": storage.ACQUISITION_PREDECESSOR_SCHEMA_SHA256,
+                "targetSchemaSha256": storage.ACQUISITION_PREDECESSOR_SCHEMA_SHA256,
+                "targetProfileSha256": storage.ACQUISITION_PREDECESSOR_PROFILE_SHA256,
+                "attachmentOperationAuthority": storage.ATTACHMENT_OPERATION_DDL,
+                "schemaMetadataDdl": storage.SCHEMA_METADATA_V23_DDL,
+                "schemaMetadataTriggers": v0002_schema_history.SCHEMA_METADATA_TRIGGERS,
+            },
+        )
+    if source_schema_version <= storage.ACQUISITION_PREDECESSOR_DATABASE_SCHEMA_VERSION:
+        v0024_open_access_acquisition.apply(
+            operations,
+            {
+                "migration_id": v0024_open_access_acquisition.revision,
+                "applied_at": applied_at,
+                "backup_manifest_sha256": backup_manifest_sha256,
+                "source_schema_sha256": storage.ACQUISITION_PREDECESSOR_SCHEMA_SHA256,
                 "target_schema_sha256": storage.EXPECTED_SCHEMA_SHA256,
                 "targetSchemaSha256": storage.EXPECTED_SCHEMA_SHA256,
                 "targetProfileSha256": storage.EXPECTED_PROFILE_SHA256,
-                "attachmentOperationAuthority": storage.ATTACHMENT_OPERATION_DDL,
-                "schemaMetadataDdl": storage.SCHEMA_METADATA_V23_DDL,
+                "acquisitionAuthority": storage.ACQUISITION_DDL,
+                "schemaMetadataDdl": storage.SCHEMA_METADATA_V24_DDL,
                 "schemaMetadataTriggers": v0002_schema_history.SCHEMA_METADATA_TRIGGERS,
             },
         )

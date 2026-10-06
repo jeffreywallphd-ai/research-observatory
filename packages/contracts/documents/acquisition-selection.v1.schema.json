@@ -1,0 +1,71 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://research-observatory.local/contracts/documents/acquisition-selection.v1.schema.json",
+  "$defs": {
+    "Digest": {
+      "pattern": "^[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "Identity": {
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "locationId": {
+      "$ref": "#/$defs/Identity"
+    },
+    "locationSha256": {
+      "$ref": "#/$defs/Digest"
+    },
+    "sourceAssertionRevisionId": {
+      "$ref": "#/$defs/Identity"
+    },
+    "workId": {
+      "$ref": "#/$defs/Identity"
+    },
+    "workRevisionId": {
+      "$ref": "#/$defs/Identity"
+    },
+    "versionId": {
+      "$ref": "#/$defs/Identity"
+    },
+    "versionRevisionId": {
+      "$ref": "#/$defs/Identity"
+    },
+    "expectedSha256": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Digest"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "redirectHosts": {
+      "default": [],
+      "items": {
+        "maxLength": 253,
+        "minLength": 1,
+        "type": "string"
+      },
+      "maxItems": 5,
+      "title": "Redirecthosts",
+      "type": "array"
+    }
+  },
+  "required": [
+    "locationId",
+    "locationSha256",
+    "sourceAssertionRevisionId",
+    "workId",
+    "workRevisionId",
+    "versionId",
+    "versionRevisionId"
+  ],
+  "title": "AcquisitionSelection",
+  "type": "object"
+}

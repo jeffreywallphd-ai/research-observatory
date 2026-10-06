@@ -1,0 +1,108 @@
+{
+  "binaryInspection": {
+    "archiveAndMemberCommentsEmpty": true,
+    "memberExtraFieldsEmpty": true,
+    "metadataInspection": "Archive names, comments, flags, regular-file modes, timestamps and SQLite metadata were inspected; no new account or workspace disclosure was found.",
+    "noAbsoluteTraversalOrSymlinkMembers": true,
+    "regularRelativeMembers": 3,
+    "semanticContent": "Existing synthetic import, candidate, object, rights and provenance records only. Public synthetic title, example identifier and generic document basename were inspected. The added operation uses a fixed test session and retained synthetic actor. No private research, real account paths, runtime settings or credentials were found."
+  },
+  "correctedCapture": {
+    "addedOperationIsSyntheticAndUsesExactExistingCandidateActor": true,
+    "attempt": "03",
+    "ciphertextsUnchangedFromAdmittedV22": true,
+    "databaseIntegrityCheck": "ok",
+    "databaseSha256": "a7fd2e201e9bfd5e17aa3d4b9551fb99e33d86984a05104f6cae732688043c33",
+    "databaseSize": 2330624,
+    "foreignKeyViolations": 0,
+    "literalCounts": {
+      "document_attachment_assertions": 1,
+      "document_attachment_candidates": 1,
+      "document_attachment_operations": 1,
+      "object_records": 2,
+      "rights_policy_revisions": 1
+    },
+    "logPath": "artifacts/tmp/CAP-05.S01.T02.capture-v23-03.log",
+    "logRawSha256": "70d909f81300332776f40ba8dedd8b57ef38932e0da6cc1d7c0eaad96ee4f9a1",
+    "manifestCountsMatchExtractedDatabase": true,
+    "manifestPath": "tests/fixtures/documents/v23-predecessor.json",
+    "manifestRawGitBlobSha256": "14e2e83db5c45a5dc33f6dd84a056ce41cbb867ca793b97b5d715ce4bcdbcf03",
+    "onlyLogicalTableChange": "document_attachment_operations",
+    "predecessorFixtureSha256": "1230d9462cdf94dddfb9eb121f16472441ce71b6d917cb92ab1c3ab090349f17",
+    "producerPath": "artifacts/tmp/CAP-05.S01.T02.capture-v23-03.py",
+    "producerRawSha256": "0c29ea31a1e23e30c263221125701320eadb04de0e67aa32c55ff12727d797b8",
+    "schemaUnchangedFromAdverse23": true,
+    "schemaVersion": 23
+  },
+  "credentialScan": {
+    "additionalReadableRowAdjudication": "All eleven matches identify two authenticated synthetic import record digests unchanged from the admitted schema-22 fixture, confirmed from their table relationships and source-record semantics. They are not authentication credentials.",
+    "additionalReadableRowFindings": 11,
+    "credentialExceptionsRequested": 0,
+    "currentManifestFindings": 0,
+    "currentTestSourceFindings": 0,
+    "diagnosticsPath": ".local/CAP-05.S01.T02.privacy-scan-c11-02.json",
+    "diagnosticsRawSha256": "99c00dfaefe05b8e9049aceb9a746fbe6dde266b057b6fc6dd54311c6dafef4f",
+    "eachCompleteDecodedMemberFindings": 0,
+    "method": "Pinned unsuppressed default-rule scanner received full unmasked bytes; only findings are retained redacted.",
+    "rawArchiveFindings": 0
+  },
+  "disposition": "privacy-approved",
+  "documentType": "independent-prospective-artifact-privacy-summary",
+  "formalTaskApproval": false,
+  "implementer": "agent:/root",
+  "limits": [
+    "Artifact privacy admission only; exact bytes must be sealed by the unchanged installer before publication.",
+    "No product, predecessor migration, task or release disposition is implied.",
+    "No broad checks, product tests, network activity or native UI were performed for this artifact review."
+  ],
+  "newAdmission": {
+    "binaryReviewed": true,
+    "credentialFindingFingerprints": [],
+    "mode": "100644",
+    "nonEmailTokens": [],
+    "path": "tests/fixtures/documents/v23-predecessor.zip",
+    "sha256": "d470258400cac2ff1445e91137b4f82cfb4bd29872692bba3d7e89074640b488",
+    "size": 154778
+  },
+  "pinning": {
+    "baselineCommit": "dd8803c0526edfaca53d3a5b25faf4bb0cdf8854",
+    "checkerSha256": "5f0a4cd0020c54342eaf06c1450c05a584e287af357d42efd05d7042bdbba227",
+    "configSha256": "839fab7649bfe0d45a0e5b1dfba2b401d03b37169c32ebbc1f00313eddc9f7b1",
+    "scannerRelativePath": ".local/security-audit/gitleaks.exe",
+    "scannerSha256": "17157e2ee8b76fc8b1d8bee607a250e34b8a8023c8bc81822d4b5ee4d78fcb7c"
+  },
+  "preservedAdverseEvidence": {
+    "archivePath": "artifacts/tmp/CAP-05.S01.T02.v23-capture-03/adverse-capture02.zip",
+    "archiveRawSha256": "46f8b3bfc38f2e4febd1e072f666de2cc15a5f4b61299d7ec0b521a3d4c94b9e",
+    "capture02Finding": "The superseded manifest claimed one operation but its literal archived database contained zero. Capture03 preserves that archive and manifest and adds only the missing synthetic operation through a verified SQLite backup snapshot.",
+    "manifestPath": "artifacts/tmp/CAP-05.S01.T02.v23-capture-03/adverse-capture02.json",
+    "manifestRawSha256": "15dfa590a08e2e8556a326123f145cb629562dfd9285355bf5327f275d8672d8",
+    "originalHookFailure": "The initial test URL and unreviewed binary rejection remain adverse. The text URL was corrected, rather than admitted.",
+    "priorDiagnosticsPath": ".local/CAP-05.S01.T02.privacy-scan-c11-01.json",
+    "priorDiagnosticsRawSha256": "97d0aa90df986f09aefccd3d55f770a7af5a4d48c2be8998162c7b48524e0978"
+  },
+  "registry": {
+    "historicalPreservationAuthorityUnchanged": true,
+    "newAdmissionCount": 1,
+    "path": ".local/CAP-05.S01.T02.artifact-privacy-review-c11-01.json",
+    "predecessorPath": ".local/push-guard-57fb138bb38b46ac815fef2974cef8c0/reviewed-artifacts.json",
+    "predecessorSha256": "e55424ca4b68ed73e3d378d1427f252d4239feb634839e0df1fc293a13f71d40",
+    "previousAdmissionCount": 536,
+    "previousArtifactEntriesUnchanged": true,
+    "sha256": "d905a08f68eb880dd67293596b9f58b9be30f86e2af6d2b0d0b964a8402a57b9",
+    "size": 480524,
+    "totalAdmissionCount": 537
+  },
+  "reviewedAt": "2026-10-06T13:47:45.975363+00:00",
+  "reviewer": "agent:/root/c11_security_review",
+  "schemaVersion": "1.0",
+  "scope": "Only the exact corrected schema-23 synthetic predecessor archive receives a new binary admission. No hook activation, source change, Git mutation, migration qualification or task approval is performed by this review.",
+  "sourceHead": "7a51dc94734f8be6c4a64a0c29de458e96b347bc",
+  "taskId": "CAP-05.S01.T02",
+  "testSource": {
+    "change": "The negative userinfo URL uses a reserved invalid example domain and still exercises credential-bearing URL denial. No text token admission or policy exemption is requested.",
+    "nonPublicEmailFindings": 0,
+    "path": "tests/documents/test_oa_acquisition.py",
+    "rawGitBlobSha256": "b108ce6be09c985350d0139b9f493ee9b6886140c8591f1c83e3984d01eb69eb"
+  }
+}

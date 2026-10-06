@@ -68,22 +68,20 @@
         19,
         20,
         21,
-        22,
-        23
+        22
       ]
     },
     "targetSchemaVersion": {
       "enum": [
         21,
         22,
-        23,
-        24
+        23
       ]
     },
     "migrationIds": {
       "type": "array",
       "minItems": 1,
-      "maxItems": 23,
+      "maxItems": 22,
       "items": {
         "type": "string"
       }
@@ -111,16 +109,14 @@
         "829684b8a5274b6666400c2719ea9302384a8bdd01024b8f952b49a834ae52ba",
         "c6bdef5f65d5f688747a1effed96f3cd79556e37891946e1985841bce4ae1cd6",
         "c0aa9be9916fbe517f1ae94a86aeac13f19a92ec366b1a4d4d816bff614da034",
-        "32dc9a2b87efdd8b69b92271b8b1841e40da07bbc86e9943f59dbe5784f2617e",
-        "0d5eb89a3975aa1d95fa4d190ce8debfee2ae43d390669ce8b3acb5f10a1a41e"
+        "32dc9a2b87efdd8b69b92271b8b1841e40da07bbc86e9943f59dbe5784f2617e"
       ]
     },
     "targetSchemaSha256": {
       "enum": [
         "c0aa9be9916fbe517f1ae94a86aeac13f19a92ec366b1a4d4d816bff614da034",
         "32dc9a2b87efdd8b69b92271b8b1841e40da07bbc86e9943f59dbe5784f2617e",
-        "0d5eb89a3975aa1d95fa4d190ce8debfee2ae43d390669ce8b3acb5f10a1a41e",
-        "8078a6f7132200e6cf9e729f116c7b8ad6cd7c2bcf61d56f337e594dc7552a97"
+        "0d5eb89a3975aa1d95fa4d190ce8debfee2ae43d390669ce8b3acb5f10a1a41e"
       ]
     },
     "checkpoint": {
@@ -159,7 +155,7 @@
       "properties": {
         "relativePath": {
           "type": "string",
-          "pattern": "^state/migration-backups/v(?:[1-9]|1[0-9]|2[0-3])-to-v2[1-4]-[0-9a-f]{32}/project\\.sqlite3$"
+          "pattern": "^state/migration-backups/v(?:[1-9]|1[0-9]|2[0-2])-to-v2[1-3]-[0-9a-f]{32}/project\\.sqlite3$"
         },
         "sha256": {
           "type": "string",
@@ -257,9 +253,6 @@
               },
               {
                 "const": "0023_attachment_operations"
-              },
-              {
-                "const": "0024_open_access_acquisition"
               }
             ],
             "items": false
@@ -344,9 +337,6 @@
               },
               {
                 "const": "0023_attachment_operations"
-              },
-              {
-                "const": "0024_open_access_acquisition"
               }
             ],
             "items": false
@@ -428,9 +418,6 @@
               },
               {
                 "const": "0023_attachment_operations"
-              },
-              {
-                "const": "0024_open_access_acquisition"
               }
             ],
             "items": false
@@ -509,9 +496,6 @@
               },
               {
                 "const": "0023_attachment_operations"
-              },
-              {
-                "const": "0024_open_access_acquisition"
               }
             ],
             "items": false
@@ -587,9 +571,6 @@
               },
               {
                 "const": "0023_attachment_operations"
-              },
-              {
-                "const": "0024_open_access_acquisition"
               }
             ],
             "items": false
@@ -662,9 +643,6 @@
               },
               {
                 "const": "0023_attachment_operations"
-              },
-              {
-                "const": "0024_open_access_acquisition"
               }
             ],
             "items": false
@@ -734,9 +712,6 @@
               },
               {
                 "const": "0023_attachment_operations"
-              },
-              {
-                "const": "0024_open_access_acquisition"
               }
             ],
             "items": false
@@ -803,9 +778,6 @@
               },
               {
                 "const": "0023_attachment_operations"
-              },
-              {
-                "const": "0024_open_access_acquisition"
               }
             ],
             "items": false
@@ -869,9 +841,6 @@
               },
               {
                 "const": "0023_attachment_operations"
-              },
-              {
-                "const": "0024_open_access_acquisition"
               }
             ],
             "items": false
@@ -932,9 +901,6 @@
               },
               {
                 "const": "0023_attachment_operations"
-              },
-              {
-                "const": "0024_open_access_acquisition"
               }
             ],
             "items": false
@@ -992,9 +958,6 @@
               },
               {
                 "const": "0023_attachment_operations"
-              },
-              {
-                "const": "0024_open_access_acquisition"
               }
             ],
             "items": false
@@ -1049,9 +1012,6 @@
               },
               {
                 "const": "0023_attachment_operations"
-              },
-              {
-                "const": "0024_open_access_acquisition"
               }
             ],
             "items": false
@@ -1103,9 +1063,6 @@
               },
               {
                 "const": "0023_attachment_operations"
-              },
-              {
-                "const": "0024_open_access_acquisition"
               }
             ],
             "items": false
@@ -1154,9 +1111,6 @@
               },
               {
                 "const": "0023_attachment_operations"
-              },
-              {
-                "const": "0024_open_access_acquisition"
               }
             ],
             "items": false
@@ -1202,9 +1156,6 @@
               },
               {
                 "const": "0023_attachment_operations"
-              },
-              {
-                "const": "0024_open_access_acquisition"
               }
             ],
             "items": false
@@ -1247,9 +1198,6 @@
               },
               {
                 "const": "0023_attachment_operations"
-              },
-              {
-                "const": "0024_open_access_acquisition"
               }
             ],
             "items": false
@@ -1289,9 +1237,6 @@
               },
               {
                 "const": "0023_attachment_operations"
-              },
-              {
-                "const": "0024_open_access_acquisition"
               }
             ],
             "items": false
@@ -1328,9 +1273,6 @@
               },
               {
                 "const": "0023_attachment_operations"
-              },
-              {
-                "const": "0024_open_access_acquisition"
               }
             ],
             "items": false
@@ -1364,9 +1306,6 @@
               },
               {
                 "const": "0023_attachment_operations"
-              },
-              {
-                "const": "0024_open_access_acquisition"
               }
             ],
             "items": false
@@ -1397,9 +1336,6 @@
               },
               {
                 "const": "0023_attachment_operations"
-              },
-              {
-                "const": "0024_open_access_acquisition"
               }
             ],
             "items": false
@@ -1427,9 +1363,6 @@
               },
               {
                 "const": "0023_attachment_operations"
-              },
-              {
-                "const": "0024_open_access_acquisition"
               }
             ],
             "items": false
@@ -1454,9 +1387,6 @@
             "prefixItems": [
               {
                 "const": "0023_attachment_operations"
-              },
-              {
-                "const": "0024_open_access_acquisition"
               }
             ],
             "items": false
@@ -1532,58 +1462,6 @@
           "migrationIds": {
             "contains": {
               "const": "0023_attachment_operations"
-            },
-            "not": {
-              "contains": {
-                "const": "0024_open_access_acquisition"
-              }
-            }
-          }
-        }
-      }
-    },
-    {
-      "if": {
-        "properties": {
-          "sourceSchemaVersion": {
-            "const": 23
-          }
-        }
-      },
-      "then": {
-        "properties": {
-          "sourceSchemaSha256": {
-            "const": "0d5eb89a3975aa1d95fa4d190ce8debfee2ae43d390669ce8b3acb5f10a1a41e"
-          },
-          "migrationIds": {
-            "prefixItems": [
-              {
-                "const": "0024_open_access_acquisition"
-              }
-            ],
-            "minItems": 1,
-            "maxItems": 1,
-            "items": false
-          }
-        }
-      }
-    },
-    {
-      "if": {
-        "properties": {
-          "targetSchemaVersion": {
-            "const": 24
-          }
-        }
-      },
-      "then": {
-        "properties": {
-          "targetSchemaSha256": {
-            "const": "8078a6f7132200e6cf9e729f116c7b8ad6cd7c2bcf61d56f337e594dc7552a97"
-          },
-          "migrationIds": {
-            "contains": {
-              "const": "0024_open_access_acquisition"
             }
           }
         }

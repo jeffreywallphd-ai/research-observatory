@@ -1076,7 +1076,10 @@ class AttachmentMigrationTests(unittest.TestCase):
                 ),
             )
         plan = runner.plan_database_migration(self.database, expected_project_id=self.manifest["projectId"])
-        self.assertEqual(("0022_document_attachments", "0023_attachment_operations"), plan.migration_ids)
+        self.assertEqual(
+            ("0022_document_attachments", "0023_attachment_operations", "0024_open_access_acquisition"),
+            plan.migration_ids,
+        )
         result = runner.migrate_database(self.database, expected_project_id=self.manifest["projectId"])
         self.assertEqual("migrated", result.status)
         assert result.backup_relative_path is not None
@@ -1098,7 +1101,7 @@ class AttachmentMigrationTests(unittest.TestCase):
                 ),
             )
         with open_canonical_database(self.database, expected_project_id=self.manifest["projectId"]) as db:
-            self.assertEqual(23, db.execute("PRAGMA user_version").fetchone()[0])
+            self.assertEqual(24, db.execute("PRAGMA user_version").fetchone()[0])
             self.assertEqual(
                 self.manifest["counts"]["reconciliation_versions"],
                 db.execute("SELECT COUNT(*) FROM reconciliation_versions").fetchone()[0],
@@ -1137,7 +1140,7 @@ class AttachmentMigrationTests(unittest.TestCase):
         result = runner.migrate_database(self.database, expected_project_id=self.manifest["projectId"])
         self.assertEqual("migrated", result.status)
         with open_canonical_database(self.database, expected_project_id=self.manifest["projectId"]) as canonical_db:
-            self.assertEqual(23, canonical_db.execute("PRAGMA user_version").fetchone()[0])
+            self.assertEqual(24, canonical_db.execute("PRAGMA user_version").fetchone()[0])
             self.assertEqual(1, canonical_db.execute("SELECT COUNT(*) FROM reconciliation_versions").fetchone()[0])
 
 
@@ -1220,7 +1223,7 @@ class AttachmentOperationMigrationTests(unittest.TestCase):
             before_ciphertext,
         )
         plan = runner.plan_database_migration(self.database, expected_project_id=self.manifest["projectId"])
-        self.assertEqual(("0023_attachment_operations",), plan.migration_ids)
+        self.assertEqual(("0023_attachment_operations", "0024_open_access_acquisition"), plan.migration_ids)
         result = runner.migrate_database(self.database, expected_project_id=self.manifest["projectId"])
         self.assertEqual("migrated", result.status)
         assert result.backup_relative_path is not None
@@ -1241,7 +1244,7 @@ class AttachmentOperationMigrationTests(unittest.TestCase):
                 _schema_fingerprint(backup),
             )
         with open_canonical_database(self.database, expected_project_id=self.manifest["projectId"]) as db:
-            self.assertEqual(23, db.execute("PRAGMA user_version").fetchone()[0])
+            self.assertEqual(24, db.execute("PRAGMA user_version").fetchone()[0])
             self.assertEqual(0, db.execute("SELECT COUNT(*) FROM document_attachment_operations").fetchone()[0])
             self.assertEqual([], db.execute("PRAGMA foreign_key_check").fetchall())
         self.assertEqual(before_rows, self._source_rows())
@@ -1272,7 +1275,7 @@ class AttachmentOperationMigrationTests(unittest.TestCase):
         result = runner.migrate_database(self.database, expected_project_id=self.manifest["projectId"])
         self.assertEqual("migrated", result.status)
         with open_canonical_database(self.database, expected_project_id=self.manifest["projectId"]) as db:
-            self.assertEqual(23, db.execute("PRAGMA user_version").fetchone()[0])
+            self.assertEqual(24, db.execute("PRAGMA user_version").fetchone()[0])
             self.assertEqual(0, db.execute("SELECT COUNT(*) FROM document_attachment_operations").fetchone()[0])
         self.assertEqual(before_rows, self._source_rows())
 

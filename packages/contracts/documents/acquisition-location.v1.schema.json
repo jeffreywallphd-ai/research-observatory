@@ -1,0 +1,141 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://research-observatory.local/contracts/documents/acquisition-location.v1.schema.json",
+  "$defs": {
+    "Digest": {
+      "pattern": "^[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "Identity": {
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+      "type": "string"
+    },
+    "ProjectIdentity": {
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[47][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+      "type": "string"
+    },
+    "SourceAddress": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "enum": [
+            "import-member",
+            "connector-record"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "contextId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "revisionId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "ordinal": {
+          "maximum": 200000,
+          "minimum": 0,
+          "title": "Ordinal",
+          "type": "integer"
+        },
+        "recordKey": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Digest"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "kind",
+        "contextId",
+        "revisionId",
+        "ordinal",
+        "recordKey"
+      ],
+      "title": "SourceAddress",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "locationId": {
+      "$ref": "#/$defs/Identity"
+    },
+    "projectId": {
+      "$ref": "#/$defs/ProjectIdentity"
+    },
+    "sourceAssertionRevisionId": {
+      "$ref": "#/$defs/Identity"
+    },
+    "sourceRevisionId": {
+      "$ref": "#/$defs/Identity"
+    },
+    "address": {
+      "$ref": "#/$defs/SourceAddress"
+    },
+    "sourceSha256": {
+      "$ref": "#/$defs/Digest"
+    },
+    "provider": {
+      "maxLength": 64,
+      "title": "Provider",
+      "type": "string"
+    },
+    "locationKey": {
+      "maxLength": 128,
+      "title": "Locationkey",
+      "type": "string"
+    },
+    "url": {
+      "maxLength": 8192,
+      "title": "Url",
+      "type": "string"
+    },
+    "license": {
+      "anyOf": [
+        {
+          "maxLength": 4096,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "License"
+    },
+    "version": {
+      "anyOf": [
+        {
+          "maxLength": 256,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Version"
+    },
+    "locationSha256": {
+      "$ref": "#/$defs/Digest"
+    }
+  },
+  "required": [
+    "locationId",
+    "projectId",
+    "sourceAssertionRevisionId",
+    "sourceRevisionId",
+    "address",
+    "sourceSha256",
+    "provider",
+    "locationKey",
+    "url",
+    "license",
+    "version",
+    "locationSha256"
+  ],
+  "title": "AcquisitionLocation",
+  "type": "object"
+}

@@ -35,13 +35,13 @@
       "const": "sqlite-wal-v1"
     },
     "databaseSchemaVersion": {
-      "const": 21
+      "const": 24
     },
     "applicationId": {
       "const": 1380926035
     },
     "schemaFingerprintSha256": {
-      "const": "c0aa9be9916fbe517f1ae94a86aeac13f19a92ec366b1a4d4d816bff614da034"
+      "const": "8078a6f7132200e6cf9e729f116c7b8ad6cd7c2bcf61d56f337e594dc7552a97"
     },
     "minimumSqliteVersion": {
       "const": "3.37.0"
@@ -170,7 +170,15 @@
         "corpus_report_members",
         "corpus_report_paths",
         "corpus_report_sources",
-        "plugin_grant_events"
+        "plugin_grant_events",
+        "document_attachment_candidates",
+        "document_attachment_cancellations",
+        "document_attachment_assertions",
+        "document_attachment_operations",
+        "acquisition_locations",
+        "acquisition_attempts",
+        "acquisition_attempt_results",
+        "document_acquisition_sources"
       ]
     },
     "mutableStateTables": {
@@ -317,7 +325,15 @@
         "corpus_source_item_heads",
         "corpus_source_totals",
         "corpus_source_overlap_totals",
-        "plugin_grant_events"
+        "plugin_grant_events",
+        "document_attachment_candidates",
+        "document_attachment_cancellations",
+        "document_attachment_assertions",
+        "document_attachment_operations",
+        "acquisition_locations",
+        "acquisition_attempts",
+        "acquisition_attempt_results",
+        "document_acquisition_sources"
       ]
     }
   }

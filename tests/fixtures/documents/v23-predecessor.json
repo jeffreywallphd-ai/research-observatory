@@ -1,0 +1,39 @@
+{
+  "attachmentId": "01a0ffad-b1fa-7520-96f6-c869991fcb0c",
+  "candidateId": "01a0ffad-b1cb-74be-8ebf-d47544bf5060",
+  "ciphertext": [
+    {
+      "relativePath": "objects/10/45/1045e37c17209722aa982beb22a5d2bd80603b6263c3f14382cf7bfd814a66fb.blob",
+      "sha256": "a2a8642e55ff8269ba08404eff7fdd8fab211eda8052f2278dd88c8a5a14d8e0"
+    },
+    {
+      "relativePath": "objects/25/c0/25c07de19188a1c82867adac598e5027cea3a8fa53ffaa5a098bc82bb8e6656b.blob",
+      "sha256": "14507bb1b3372b4c2b33f5b33816d02b06df995358dad3b7cd860c35aec86378"
+    }
+  ],
+  "counts": {
+    "document_attachment_assertions": 1,
+    "document_attachment_candidates": 1,
+    "document_attachment_operations": 1,
+    "object_records": 2,
+    "rights_policy_revisions": 1
+  },
+  "databaseSha256": "a7fd2e201e9bfd5e17aa3d4b9551fb99e33d86984a05104f6cae732688043c33",
+  "documentRevisionId": "01a0ffad-b1fa-7e81-b28b-c6e785be5e3a",
+  "fixtureCaptureAttempt": "03",
+  "objectSha256": "d31a837bc6bd39d44152363e5cd4292039697627eb8c8b6bc33d780ef356eae4",
+  "operationId": "01a11137-7d7c-7d80-b8ea-3ada4fed1875",
+  "predecessorFixtureSha256": "1230d9462cdf94dddfb9eb121f16472441ce71b6d917cb92ab1c3ab090349f17",
+  "producerCommit": "7a51dc94734f8be6c4a64a0c29de458e96b347bc",
+  "profileSha256": "bc4f7aa4029ed660329b407362c017a42de2966f1d18bbbcbe7c75f1afa837f5",
+  "projectId": "db9b9946-0917-43c6-9139-987abfef8e86",
+  "rightsPolicyRevisionId": "01a0ffad-b1e3-7e84-a9a9-c0ce563fd372",
+  "schemaSha256": "0d5eb89a3975aa1d95fa4d190ce8debfee2ae43d390669ce8b3acb5f10a1a41e",
+  "schemaVersion": 23,
+  "sourceAssertionRevisionId": "01a0ffad-af84-7d03-9844-837d4cf77242",
+  "supersededUncommittedArchiveSha256": "46f8b3bfc38f2e4febd1e072f666de2cc15a5f4b61299d7ec0b521a3d4c94b9e",
+  "versionId": "01a0ffad-b158-77cc-8b06-bb3f3b7e73dd",
+  "versionRevisionId": "01a0ffad-b158-74d2-84d1-636d1a9d3274",
+  "workId": "01a0ffad-af88-73f7-bbb8-61bf27c4246e",
+  "workRevisionId": "01a0ffad-b15d-7709-a0f9-17794e0e18b4"
+}

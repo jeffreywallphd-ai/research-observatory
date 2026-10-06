@@ -19585,7 +19585,7 @@
             {
               "task_id": "CAP-05.S01.T02",
               "title": "Implement open-access location selection and download",
-              "status": "READY",
+              "status": "IN_PROGRESS",
               "mode": "latest-review-only",
               "latest_review": {
                 "reviewer": null,
@@ -19634,18 +19634,21 @@
             {
               "task_id": "CAP-05.S01.T02",
               "title": "Implement open-access location selection and download",
-              "status": "READY",
+              "status": "IN_PROGRESS",
               "page": "CAP-05/CAP-05.S01.T02.html",
               "dependencies": [
                 "CAP-05.S01.T01"
               ],
               "claim": {
-                "owner": null,
-                "branch": null,
-                "base_sha": null
+                "owner": "codex-w2-implementation",
+                "branch": "codex/w2-implementation",
+                "base_sha": "7a51dc94734f8be6c4a64a0c29de458e96b347bc"
               },
               "plan_section_sha256": "ea9aa25714069599e40ab40527d0c3af40a0232e8bcd33df631646973ab54d67",
-              "worksheet": null
+              "worksheet": {
+                "path": "artifacts/evidence/CAP-05.S01.T02.task-start.md",
+                "sha256": "0eb2045f79b50cb49feb46602759485e45f8ce71aaf53fb3b8676ca5834cae0d"
+              }
             },
             {
               "task_id": "CAP-05.S01.T03",
