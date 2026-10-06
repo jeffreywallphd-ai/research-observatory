@@ -760,7 +760,18 @@ class LocalDocumentAttachmentService:
         *,
         recheck: bool = True,
     ):
-
+        binding = (self._project, operation_id, candidate_id, actor.actor_id, session_id)
+        if (
+            connection.execute(
+                "SELECT 1 FROM document_attachment_operations WHERE project_id=? AND operation_id=? "
+                "AND candidate_id=? AND actor_id=? AND session_id=? UNION ALL "
+                "SELECT 1 FROM document_attachment_recoveries WHERE project_id=? AND operation_id=? "
+                "AND candidate_id=? AND actor_id=? AND session_id=? LIMIT 1",
+                (*binding, *binding),
+            ).fetchone()
+            is None
+        ):
+            raise AttachmentProblem("attachment-operation-unavailable")
         return operation_recovery(
             connection,
             project=self._project,

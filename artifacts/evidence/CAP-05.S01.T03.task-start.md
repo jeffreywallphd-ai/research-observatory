@@ -106,3 +106,15 @@ Preserve that failed check and relocate the exact helpers into the existing
 SQL and recovery semantics unchanged. The guard is the characterization failure;
 replay it plus affected queue/recovery and integration checks. No verifier,
 architecture policy, migration, public contract or framework change is required.
+
+Final attachment regressions exposed an omitted denial-precedence row: the new
+original-or-recovery helper resolved candidate metadata before proving the exact
+project/operation/candidate/actor/session binding. An alternate project therefore
+received a candidate error instead of the inherited operation-unavailable error.
+Restore that binding guard before candidate lookup, and add a regression that
+unauthorized commit and cancel cannot call the candidate resolver. Keep both
+original and recovered operations usable; their later authority rechecks remain.
+The same run found the older v23 recovery test still expected current schema 24.
+Its successful upgrade targets the declared current schema; retain literal v22
+predecessor, all eight injected v23 failures, backup, rows, ciphertext and foreign
+key assertions. Neither finding authorizes a weaker denial or migration test.

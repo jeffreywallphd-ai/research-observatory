@@ -30,7 +30,7 @@ from research_observatory_core.main import DocumentAttachmentRuntime
 from research_observatory_core.migrations import runner
 from research_observatory_core.migrations.versions import v0023_attachment_operations
 from research_observatory_core.ports.import_previews import PreviewProblem
-from research_observatory_core.storage import open_canonical_database
+from research_observatory_core.storage import DATABASE_SCHEMA_VERSION, open_canonical_database
 
 from tests.documents import test_local_attachment as attachment_fixtures  # type: ignore[import-not-found]
 
@@ -82,7 +82,7 @@ class AttachmentLifecycleRegressionTests(unittest.TestCase):
                     with closing(
                         open_canonical_database(fixture.database, expected_project_id=fixture.manifest["projectId"])
                     ) as current:
-                        self.assertEqual(24, current.execute("PRAGMA user_version").fetchone()[0])
+                        self.assertEqual(DATABASE_SCHEMA_VERSION, current.execute("PRAGMA user_version").fetchone()[0])
                         self.assertEqual(
                             0, current.execute("SELECT COUNT(*) FROM document_attachment_operations").fetchone()[0]
                         )
@@ -148,6 +148,43 @@ class AttachmentLifecycleRegressionTests(unittest.TestCase):
                 open_canonical_database(fixture.corpus.database, expected_project_id=fixture.corpus.project)
             ) as db:
                 self.assertEqual(0, db.execute("SELECT COUNT(*) FROM document_attachment_assertions").fetchone()[0])
+
+    def test_operation_denial_precedes_candidate_lookup_for_commit_and_cancel(self) -> None:
+        first = attachment_fixtures.LocalAttachmentServiceTests(methodName="runTest")
+        first.setUp()
+        self.addCleanup(first.doCleanups)
+        second = attachment_fixtures.LocalAttachmentServiceTests(methodName="runTest")
+        second.setUp()
+        self.addCleanup(second.doCleanups)
+        operation, session = new_uuid_v7(), "d" * 32
+        candidate = first.stage_operation(operation, session)
+        selection = (
+            candidate.source_assertion_revision_id,
+            candidate.work_id,
+            candidate.work_revision_id,
+            candidate.version_id,
+            candidate.version_revision_id,
+        )
+        alternate = replace(first.corpus.actor, actor_id=new_uuid_v7(), trace_id="a" * 32)
+        for service, actor in ((first.service, alternate), (second.service, second.corpus.actor)):
+            with patch.object(
+                service, "_candidate", side_effect=AssertionError("unauthorized candidate lookup")
+            ) as lookup:
+                with self.assertRaisesRegex(AttachmentProblem, "attachment-operation-unavailable"):
+                    service.commit(
+                        candidate.candidate_id,
+                        confirmation_sha256=candidate.candidate_sha256,
+                        command_id=new_uuid_v7(),
+                        actor=actor,
+                        operation_id=operation,
+                        session_id=session,
+                        match_confirmed=True,
+                        permitted_use="project-only",
+                        exact_selection=selection,
+                    )
+                with self.assertRaisesRegex(AttachmentProblem, "attachment-operation-unavailable"):
+                    service.cancel(candidate.candidate_id, actor=actor, operation_id=operation, session_id=session)
+                lookup.assert_not_called()
 
     def test_http_session_rotation_preserves_commit_and_closes_unresolved_candidate(self) -> None:
         fixture = attachment_fixtures.LocalAttachmentServiceTests(methodName="runTest")

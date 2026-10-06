@@ -274,9 +274,9 @@ approval. Earlier proposals, publications, approvals and adverse evidence remain
 unchanged.</pre></article></section>
 <section class="section-heading"><span class="eyebrow">Task-start planning</span><h2>Assigned worksheet</h2><p>The worksheet is an optional planning aid and does not create a new approval or task state.</p></section>
 
-<details class="plan-details task-worksheet" open data-task-worksheet="CAP-05.S01.T03" data-worksheet-sha256="61311888463f84a44715efc82173ed542494eabfd08b5ac9a103d8a15bb5d73f">
+<details class="plan-details task-worksheet" open data-task-worksheet="CAP-05.S01.T03" data-worksheet-sha256="089f199ce46a0bb0e5e4310b19c16e6f3e771630af76b8893c937f7c62216aec">
   <summary>Assigned task-start worksheet</summary>
-  <div class="worksheet-meta"><strong>Source:</strong> <code>artifacts/evidence/CAP-05.S01.T03.task-start.md</code> · <strong>SHA-256:</strong> <code>61311888463f84a44715efc82173ed542494eabfd08b5ac9a103d8a15bb5d73f</code></div>
+  <div class="worksheet-meta"><strong>Source:</strong> <code>artifacts/evidence/CAP-05.S01.T03.task-start.md</code> · <strong>SHA-256:</strong> <code>089f199ce46a0bb0e5e4310b19c16e6f3e771630af76b8893c937f7c62216aec</code></div>
   <article class="plan-article"><pre class='markdown-fallback'># CAP-05.S01.T03 — acquisition queue, recovery and local access needs
 
 Actual ordinary taskctl claim base: `01bc453237a081392544929364696bac3422e9fb`.
@@ -384,7 +384,19 @@ Preserve that failed check and relocate the exact helpers into the existing
 `document_attachment_repository.py` adapter; keep transactions, authority, IDs,
 SQL and recovery semantics unchanged. The guard is the characterization failure;
 replay it plus affected queue/recovery and integration checks. No verifier,
-architecture policy, migration, public contract or framework change is required.</pre></article>
+architecture policy, migration, public contract or framework change is required.
+
+Final attachment regressions exposed an omitted denial-precedence row: the new
+original-or-recovery helper resolved candidate metadata before proving the exact
+project/operation/candidate/actor/session binding. An alternate project therefore
+received a candidate error instead of the inherited operation-unavailable error.
+Restore that binding guard before candidate lookup, and add a regression that
+unauthorized commit and cancel cannot call the candidate resolver. Keep both
+original and recovered operations usable; their later authority rechecks remain.
+The same run found the older v23 recovery test still expected current schema 24.
+Its successful upgrade targets the declared current schema; retain literal v22
+predecessor, all eight injected v23 failures, backup, rows, ciphertext and foreign
+key assertions. Neither finding authorizes a weaker denial or migration test.</pre></article>
 </details>
 <section class="section-heading"><span class="eyebrow">Execution evidence</span><h2>Review packets, rounds, and current projection</h2><p>Append-only controls retain every immutable round and finding closure. Pre-policy tasks remain explicitly latest-review-only.</p></section>
 
