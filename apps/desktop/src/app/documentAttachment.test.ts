@@ -12,6 +12,7 @@ import {
   canStartAttachmentReview,
   decodeAttachmentStatus,
   DOCUMENT_ATTACHMENT_COMMANDS,
+  attachmentProblemMessage,
 } from "./documentAttachment";
 
 const projectId = "01900000-0000-7000-8000-000000000001";
@@ -25,6 +26,18 @@ const candidateId = "01900000-0000-7000-8000-000000000008";
 const operationId = "01900000-0000-7000-8000-000000000009";
 const commandId = "01900000-0000-7000-8000-000000000010";
 const sessionId = "a".repeat(32);
+
+describe("attachment failure evidence", () => {
+  it("keeps a generic post-selection rejection distinct from evidence that no file was selected", () => {
+    // The real Windows r01 transfer reached held staging before Core rejected
+    // it. This fallback also serves failures before selection, so it cannot
+    // infer either selection or durable attachment from the generic code.
+    const message = attachmentProblemMessage("unavailable");
+    expect(message).not.toMatch(/no file was selected|no file was attached/u);
+    expect(message).toMatch(/current attachment status/u);
+    expect(message).toMatch(/before retrying/u);
+  });
+});
 
 function context(overrides: Partial<VersionContext> = {}): VersionContext {
   return {
