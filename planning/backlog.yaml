@@ -1490,23 +1490,22 @@ waves:
     notes: Owner explicitly approved the complete W2 execution packet and requested implementation; G1 prototype limitations
       remain recorded, not waived.
   campaign:
-    status: PAUSED
+    status: ACTIVE
     scope: wave
     owner: codex-w2-implementation
     branch: codex/w2-implementation
     worktree: .
-    base_sha: d80994ce3b99613d1a13170be7723674dc3c3102
+    base_sha: aa9c620f933a47d174a7f27a044f58b04d8961ab
     profile: LOC
     platform: windows-x64
     started_at: '2026-09-19T17:21:58+00:00'
-    updated_at: '2026-10-07T06:01:29+00:00'
-    pause_reason: 'Existing approved linked-correction route for a reproduced SDK migration fixture defect at 81627fae: encrypted
-      v20 predecessor test still expects the current chain/target to end at23 instead of approved25. Preserve the actual bounded
-      FAIL and original DONE approvals; repair only current fixture expectations, verify the affected encrypted migration
-      class and obtain independent correction/integration review before ordinary W2 resume. No new product/security/migration/UX
-      scope or framework source change.'
-    pause_category: approved-design-gate
-    lease: null
+    updated_at: '2026-10-07T07:17:40+00:00'
+    pause_reason: null
+    pause_category: null
+    lease:
+      claimed_by: codex-w2-implementation
+      claimed_at: '2026-10-07T07:17:40+00:00'
+      expires_at: '2026-10-08T07:17:40+00:00'
     corrective_tasks:
     - title: Implement idempotent import commits and import manifests
       objective: Batch transaction and manifest linking source file hash, parser version, record decisions, errors, and resulting
@@ -4745,6 +4744,18 @@ waves:
       platform: windows-x64
       actor: codex-w2-implementation
       resumed_at: '2026-10-07T05:44:51+00:00'
+    - id: W2.R15
+      wave_id: W2
+      control_revision: 12
+      prior_status: PAUSED
+      pre_resume_commit: aa9c620f933a47d174a7f27a044f58b04d8961ab
+      prior_campaign_sha256: 311f99e34771f029770b9b3e7bec6c84ec0afdf75118b3cbf0384a51c664a0bf
+      branch: codex/w2-implementation
+      worktree: .
+      profile: LOC
+      platform: windows-x64
+      actor: codex-w2-implementation
+      resumed_at: '2026-10-07T07:17:40+00:00'
   checkpoints:
   - id: W2.CP01
     kind: risk-cluster
@@ -4814,7 +4825,7 @@ waves:
     notes: Adopt exact independently approved A03 checkpoint; ordinary W2 remains PAUSED; original CAP-05.S01.T01 base6506
       and all task history retained; no further framework development after closed A05.
   completion:
-    status: PAUSED
+    status: IN_PROGRESS
     reviewer: null
     reviewed_at: null
     evidence: []
