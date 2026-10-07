@@ -1,0 +1,907 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "slice-qualification-evidence",
+  "sliceId": "CAP-05.S02",
+  "approvalCommit": "c85a59f3a293f8e3f2eaf6454682c9a14b1efa55",
+  "candidateCommit": "c17511401808d003eaa2c74ff0b866e65a6955d9",
+  "submissionMetadataCommit": "3ee11e5964d4f4869bd2a653eaaca4b778009907",
+  "metadataOnlyDelta": [
+    "artifacts/evidence/CAP-05.S02.T03.R01.json",
+    "artifacts/evidence/CAP-05.S02.T03.performance-owner-acceptance-01.md",
+    "artifacts/evidence/CAP-05.S02.T03.review-R01.json",
+    "docs/planning-implementation-plan.md",
+    "planning/backlog.yaml",
+    "planning/review-site/CAP-05/CAP-05.S02.T03.html",
+    "planning/review-site/CAP-05/CAP-05.S02.html",
+    "planning/review-site/CAP-05/index.html",
+    "planning/review-site/manifest.json",
+    "planning/review-site/waves/W2.html",
+    "planning/status-summary.md"
+  ],
+  "qualificationStatus": "QUALIFIED_WITH_SPECIFIC_OWNER_ACCEPTANCE_PENDING_INDEPENDENT_SLICE_DISPOSITION",
+  "independentSliceDisposition": "pending",
+  "outcome": "Rights-authorized retained originals enter replaceable native structured/text or pinned offline Docling parsing. Authenticated isolated output produces encrypted raw artifacts and strictly validated, explicitly unverified portable IR; terminal failure exposes no partial canonical output.",
+  "approvedPlan": {
+    "path": "planning/slice-plans/CAP-05/CAP-05.S02-structured-and-pdf-parsing-pipeline.md",
+    "sha256": "404e2a064c6bb2eb2ee5e887d511bf2db078b8642f1689cce4c7debf3ffa7bdb"
+  },
+  "verificationSelection": {
+    "stage": "slice-integration",
+    "rationale": "The final frozen source candidate already executed the full affected parser regression set and actual integrated protected-source/SQLCipher/LPAC/raw-staging/public-wire lifecycles. Authenticate those exact reports and independent task findings once; metadata-only publication does not create a new product execution. No duplicate native matrix or timing investigation.",
+    "deferredBreadth": "S03 live parse admission/heartbeat, canonical normalized revisions and explicit human acceptance; S04 native viewer/renderer and OS interaction; later quality review; fresh affected checkpoint/full W2 qualification and independent Wave/human release gates."
+  },
+  "taskEvidence": [
+    {
+      "taskId": "CAP-05.S02.T01",
+      "status": "DONE",
+      "candidateCommit": "75bae16dca0be2dec5160a2e70e8682ba36b837c",
+      "manifest": {
+        "path": "artifacts/evidence/CAP-05.S02.T01.R02.json",
+        "sha256": "19e33351ddb524c989d05377c9ba2629d8faba1541b37625f2e77abe7ddd181f"
+      },
+      "review": {
+        "path": "artifacts/evidence/CAP-05.S02.T01.review-R02.json",
+        "sha256": "6397b93e710e870adeecd4827702e6f8f6bdc430cc53825899eb5ae8ef8eae0a"
+      },
+      "provenance": "Existing exact task evidence and independent disposition; final integrated parser execution remains at c1751140."
+    },
+    {
+      "taskId": "CAP-05.S02.T02",
+      "status": "DONE",
+      "candidateCommit": "6d9369d0d14388486db2c70ba9720fb7695b556e",
+      "manifest": {
+        "path": "artifacts/evidence/CAP-05.S02.T02.R02.json",
+        "sha256": "7371f519ddcd284068027ba55850beef7deff2c21c23500cbbac342255d0b76b"
+      },
+      "review": {
+        "path": "artifacts/evidence/CAP-05.S02.T02.review-R02.json",
+        "sha256": "d5c0b55a63ac4a8ec6bd0a4f7fd90d34829a05556e08e045de65e3d86585e2a5"
+      },
+      "provenance": "Existing exact task evidence and independent disposition; final integrated parser execution remains at c1751140."
+    },
+    {
+      "taskId": "CAP-05.S02.T03",
+      "status": "DONE",
+      "candidateCommit": "c17511401808d003eaa2c74ff0b866e65a6955d9",
+      "manifest": {
+        "path": "artifacts/evidence/CAP-05.S02.T03.R01.json",
+        "sha256": "5e629932746a0a97bae8933bb5038e65dab93c39727b8ac238b850e83bea2205"
+      },
+      "review": {
+        "path": "artifacts/evidence/CAP-05.S02.T03.review-R01.json",
+        "sha256": "4a1d1d3f1f52239a831673f79dd640cf332af617ead63190cce332cfd2711910"
+      },
+      "provenance": "Existing exact task evidence and independent disposition; final integrated parser execution remains at c1751140."
+    }
+  ],
+  "upstreamAcceptedSlice": {
+    "evidence": {
+      "path": "artifacts/evidence/CAP-05.S01.qualification-01.json",
+      "sha256": "7ceee8b56fc24ab76bb2536a058143a06f3ec549e292645fc8ca3ca6055d98ef"
+    },
+    "review": {
+      "path": "artifacts/evidence/CAP-05.S01.review-01.json",
+      "sha256": "0d0cb37286fc91906ec8b9fa1dd6c8daab401ba355dd5651a6313fd52a4c1d9f"
+    },
+    "scope": "Previously accepted acquisition, explicit attachment, provenance and protected source boundary; no new TLS or renderer execution is claimed."
+  },
+  "currentIntegrationReceipts": [
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T03.qualification-151.basic.json",
+      "sha256": "0f38b5b2aa455cd143acbd2297dc327a04c95349aa149e9b9c9bbc2a6c1936c7"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T03.qualification-141.native.json",
+      "sha256": "7064a7653811c9b130ca62f96696113239ea396dfb0b3cae4b9a694f0c829bf6"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T03.performance-124.benchmark.json",
+      "sha256": "6567b4e6389a23bfc15594eb4ae4196bd3a459e9b329275559a893b31ba40d07"
+    }
+  ],
+  "checks": [
+    {
+      "id": "lint",
+      "exitCode": 0,
+      "durationSeconds": 0.14857499999925494,
+      "rawOutput": "artifacts/tmp/CAP-05.S02.T03.qualification-151.basic.lint.log",
+      "rawOutputSha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18",
+      "rawOutputCanonicalSha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18",
+      "command": ".\\artifacts\\tmp\\CAP-05.S02.T03.check-runtime-122\\python\\python.exe -B -m ruff check services/core-api/src/research_observatory_core/document_attachment_repository.py services/core-api/src/research_observatory_core/document_parser_runtime.py services/core-api/src/research_observatory_core/object_store.py services/core-api/src/research_observatory_core/parsing/docling.py services/core-api/src/research_observatory_core/parsing/inspection.py services/core-api/src/research_observatory_core/parsing/normalization.py services/core-api/src/research_observatory_core/parsing/pages.py services/core-api/src/research_observatory_core/parsing/pdf_geometry.py services/core-api/src/research_observatory_core/parsing/pipeline.py services/core-api/src/research_observatory_core/parsing/requests.py services/core-api/src/research_observatory_core/parsing/text.py services/core-api/src/research_observatory_core/ports/docling_parsing.py services/core-api/src/research_observatory_core/ports/parsing.py services/core-api/src/research_observatory_core/ports/pdf_inspection.py services/core-api/src/research_observatory_core/ports/pdf_pages.py tests/parsing/pdf_fixtures.py tests/parsing/test_docling_parsing.py tests/parsing/test_normalization.py tests/parsing/test_parser_acl.py tests/parsing/test_parser_artifacts.py tests/parsing/test_parser_channels.py tests/parsing/test_parser_cpu_affinity.py tests/parsing/test_parser_native_build.py tests/parsing/test_parser_package_build.py tests/parsing/test_parser_pdf_native.py tests/parsing/test_parser_pe_variant.py tests/parsing/test_parser_protocol.py tests/parsing/test_parser_runtime.py tests/parsing/test_parser_socket_build.py tests/parsing/test_parser_source_bundle.py tests/parsing/test_parsing_launcher.py tests/parsing/test_pdf_geometry.py tests/parsing/test_pdf_inspection.py tests/parsing/test_pdf_pages.py tests/parsing/test_text_parsing.py tests/parsing/test_worker_stderr.py tools/document_parser_runtime_build.py tools/parser_native_build.py tools/parser_pe_variant.py tools/parser_python_variant.py tools/parser_socket_build.py workers/document/parser_package.py workers/document/pdf_geometry.py workers/document/source_bundle.py workers/windows/connector_launcher.py workers/windows/file_paths.py workers/windows/no_write_acl.py workers/windows/parser_cpu_affinity.py workers/windows/parser_worker.py workers/windows/parsing_launcher.py workers/windows/recovery_guardian.py workers/windows/runtime_inventory.py",
+      "commit": "c17511401808d003eaa2c74ff0b866e65a6955d9",
+      "result": "PASS",
+      "inputReport": "artifacts/tmp/CAP-05.S02.T03.qualification-151.basic.json",
+      "inputReportSha256": "b4b3bc9ce1687bf6d3b3c193c9d081d72d8dfd31b5a2d104cd6f11d462750785",
+      "provenance": "Fresh exact committed candidate. Tracked source, selected helper/build inputs and actual installed private CPython/Core libraries are held against mutation; shipped native package denies creation/write/delete throughout execution. Actual argv and local principal facts remain in ignored receipts. This is the narrowed selected boundary, not a full-profile claim."
+    },
+    {
+      "id": "format",
+      "exitCode": 0,
+      "durationSeconds": 0.13325289999193046,
+      "rawOutput": "artifacts/tmp/CAP-05.S02.T03.qualification-151.basic.format.log",
+      "rawOutputSha256": "aec51819fa2b338a1a7896d7f3fa3a16c30fdb3b01d724c485d984ae83b87a06",
+      "rawOutputCanonicalSha256": "aec51819fa2b338a1a7896d7f3fa3a16c30fdb3b01d724c485d984ae83b87a06",
+      "command": ".\\artifacts\\tmp\\CAP-05.S02.T03.check-runtime-122\\python\\python.exe -B -m ruff format --check services/core-api/src/research_observatory_core/document_attachment_repository.py services/core-api/src/research_observatory_core/document_parser_runtime.py services/core-api/src/research_observatory_core/object_store.py services/core-api/src/research_observatory_core/parsing/docling.py services/core-api/src/research_observatory_core/parsing/inspection.py services/core-api/src/research_observatory_core/parsing/normalization.py services/core-api/src/research_observatory_core/parsing/pages.py services/core-api/src/research_observatory_core/parsing/pdf_geometry.py services/core-api/src/research_observatory_core/parsing/pipeline.py services/core-api/src/research_observatory_core/parsing/requests.py services/core-api/src/research_observatory_core/parsing/text.py services/core-api/src/research_observatory_core/ports/docling_parsing.py services/core-api/src/research_observatory_core/ports/parsing.py services/core-api/src/research_observatory_core/ports/pdf_inspection.py services/core-api/src/research_observatory_core/ports/pdf_pages.py tests/parsing/pdf_fixtures.py tests/parsing/test_docling_parsing.py tests/parsing/test_normalization.py tests/parsing/test_parser_acl.py tests/parsing/test_parser_artifacts.py tests/parsing/test_parser_channels.py tests/parsing/test_parser_cpu_affinity.py tests/parsing/test_parser_native_build.py tests/parsing/test_parser_package_build.py tests/parsing/test_parser_pdf_native.py tests/parsing/test_parser_pe_variant.py tests/parsing/test_parser_protocol.py tests/parsing/test_parser_runtime.py tests/parsing/test_parser_socket_build.py tests/parsing/test_parser_source_bundle.py tests/parsing/test_parsing_launcher.py tests/parsing/test_pdf_geometry.py tests/parsing/test_pdf_inspection.py tests/parsing/test_pdf_pages.py tests/parsing/test_text_parsing.py tests/parsing/test_worker_stderr.py tools/document_parser_runtime_build.py tools/parser_native_build.py tools/parser_pe_variant.py tools/parser_python_variant.py tools/parser_socket_build.py workers/document/parser_package.py workers/document/pdf_geometry.py workers/document/source_bundle.py workers/windows/connector_launcher.py workers/windows/file_paths.py workers/windows/no_write_acl.py workers/windows/parser_cpu_affinity.py workers/windows/parser_worker.py workers/windows/parsing_launcher.py workers/windows/recovery_guardian.py workers/windows/runtime_inventory.py",
+      "commit": "c17511401808d003eaa2c74ff0b866e65a6955d9",
+      "result": "PASS",
+      "inputReport": "artifacts/tmp/CAP-05.S02.T03.qualification-151.basic.json",
+      "inputReportSha256": "b4b3bc9ce1687bf6d3b3c193c9d081d72d8dfd31b5a2d104cd6f11d462750785",
+      "provenance": "Fresh exact committed candidate. Tracked source, selected helper/build inputs and actual installed private CPython/Core libraries are held against mutation; shipped native package denies creation/write/delete throughout execution. Actual argv and local principal facts remain in ignored receipts. This is the narrowed selected boundary, not a full-profile claim."
+    },
+    {
+      "id": "types",
+      "exitCode": 0,
+      "durationSeconds": 6.802248299994972,
+      "rawOutput": "artifacts/tmp/CAP-05.S02.T03.qualification-151.basic.types.log",
+      "rawOutputSha256": "dda4c9b5d4afe91534d9c20ef74d9c9ce814b17a96dcddd45fc05d5dfadf304b",
+      "rawOutputCanonicalSha256": "4c4a1f687213d361065f9094b27b15c087d3754121b66f0e8580a9c699ab6426",
+      "command": ".\\artifacts\\tmp\\CAP-05.S02.T03.check-runtime-122\\python\\python.exe -B -m mypy --no-incremental services/core-api/src/research_observatory_core/document_attachment_repository.py services/core-api/src/research_observatory_core/document_parser_runtime.py services/core-api/src/research_observatory_core/object_store.py services/core-api/src/research_observatory_core/parsing/docling.py services/core-api/src/research_observatory_core/parsing/inspection.py services/core-api/src/research_observatory_core/parsing/normalization.py services/core-api/src/research_observatory_core/parsing/pages.py services/core-api/src/research_observatory_core/parsing/pdf_geometry.py services/core-api/src/research_observatory_core/parsing/pipeline.py services/core-api/src/research_observatory_core/parsing/requests.py services/core-api/src/research_observatory_core/parsing/text.py services/core-api/src/research_observatory_core/ports/docling_parsing.py services/core-api/src/research_observatory_core/ports/parsing.py services/core-api/src/research_observatory_core/ports/pdf_inspection.py services/core-api/src/research_observatory_core/ports/pdf_pages.py workers/document/parser_package.py workers/document/pdf_geometry.py workers/document/source_bundle.py workers/windows/connector_launcher.py workers/windows/file_paths.py workers/windows/no_write_acl.py workers/windows/parser_cpu_affinity.py workers/windows/parser_worker.py workers/windows/parsing_launcher.py workers/windows/recovery_guardian.py workers/windows/runtime_inventory.py tests/parsing/test_text_parsing.py tests/parsing/test_normalization.py tests/parsing/test_docling_parsing.py",
+      "commit": "c17511401808d003eaa2c74ff0b866e65a6955d9",
+      "result": "PASS",
+      "inputReport": "artifacts/tmp/CAP-05.S02.T03.qualification-151.basic.json",
+      "inputReportSha256": "b4b3bc9ce1687bf6d3b3c193c9d081d72d8dfd31b5a2d104cd6f11d462750785",
+      "provenance": "Fresh exact committed candidate. Tracked source, selected helper/build inputs and actual installed private CPython/Core libraries are held against mutation; shipped native package denies creation/write/delete throughout execution. Actual argv and local principal facts remain in ignored receipts. This is the narrowed selected boundary, not a full-profile claim."
+    },
+    {
+      "id": "architecture",
+      "exitCode": 0,
+      "durationSeconds": 4.120662900008028,
+      "rawOutput": "artifacts/tmp/CAP-05.S02.T03.qualification-151.basic.architecture.log",
+      "rawOutputSha256": "51a256bf6a7b2e89ab1d1b97aa19077aabf0e8858a450de1f5ceb155ed5c3e88",
+      "rawOutputCanonicalSha256": "1ba622fdbf569bf9ab13ee46e639b636ea005c560abcd4b168f782d8fbdc3f74",
+      "command": ".\\artifacts\\tmp\\CAP-05.S02.T03.check-runtime-122\\python\\python.exe -B tools/architecture_check.py --repo .",
+      "commit": "c17511401808d003eaa2c74ff0b866e65a6955d9",
+      "result": "PASS",
+      "inputReport": "artifacts/tmp/CAP-05.S02.T03.qualification-151.basic.json",
+      "inputReportSha256": "b4b3bc9ce1687bf6d3b3c193c9d081d72d8dfd31b5a2d104cd6f11d462750785",
+      "provenance": "Fresh exact committed candidate. Tracked source, selected helper/build inputs and actual installed private CPython/Core libraries are held against mutation; shipped native package denies creation/write/delete throughout execution. Actual argv and local principal facts remain in ignored receipts. This is the narrowed selected boundary, not a full-profile claim."
+    },
+    {
+      "id": "adr",
+      "exitCode": 0,
+      "durationSeconds": 2.0896492000028957,
+      "rawOutput": "artifacts/tmp/CAP-05.S02.T03.qualification-151.basic.adr.log",
+      "rawOutputSha256": "940d6aa9d9dd34b4056587e56281af4c80884653b0df1df9150f58b024d78220",
+      "rawOutputCanonicalSha256": "192a3adf262799d7308de9f7ac4fbd5f978b1b0c42de8a15286c1c7df47ab603",
+      "command": ".\\artifacts\\tmp\\CAP-05.S02.T03.check-runtime-122\\python\\python.exe -B tools/adr_check.py --repo . --base 446819465a63776d7f00696f0bfee8b14fa065a9 --head c17511401808d003eaa2c74ff0b866e65a6955d9",
+      "commit": "c17511401808d003eaa2c74ff0b866e65a6955d9",
+      "result": "PASS",
+      "inputReport": "artifacts/tmp/CAP-05.S02.T03.qualification-151.basic.json",
+      "inputReportSha256": "b4b3bc9ce1687bf6d3b3c193c9d081d72d8dfd31b5a2d104cd6f11d462750785",
+      "provenance": "Fresh exact committed candidate. Tracked source, selected helper/build inputs and actual installed private CPython/Core libraries are held against mutation; shipped native package denies creation/write/delete throughout execution. Actual argv and local principal facts remain in ignored receipts. This is the narrowed selected boundary, not a full-profile claim."
+    },
+    {
+      "id": "portable-worker-contracts",
+      "exitCode": 0,
+      "durationSeconds": 4.478163400010089,
+      "rawOutput": "artifacts/tmp/CAP-05.S02.T03.qualification-151.basic.portable-worker-contracts.log",
+      "rawOutputSha256": "f553b0ef3a427490e304e65486a2027ce9050ac27698244887d4bf40181acc30",
+      "rawOutputCanonicalSha256": "fc71c25f8975bf7ed47c8ad34384c6de1248f92eba525838bb7036a973a4243d",
+      "command": ".\\artifacts\\tmp\\CAP-05.S02.T03.check-runtime-122\\python\\python.exe -B -m unittest tests.contracts.test_plugin_worker_contract -v",
+      "commit": "c17511401808d003eaa2c74ff0b866e65a6955d9",
+      "result": "PASS",
+      "inputReport": "artifacts/tmp/CAP-05.S02.T03.qualification-151.basic.json",
+      "inputReportSha256": "b4b3bc9ce1687bf6d3b3c193c9d081d72d8dfd31b5a2d104cd6f11d462750785",
+      "provenance": "Fresh exact committed candidate. Tracked source, selected helper/build inputs and actual installed private CPython/Core libraries are held against mutation; shipped native package denies creation/write/delete throughout execution. Actual argv and local principal facts remain in ignored receipts. This is the narrowed selected boundary, not a full-profile claim.",
+      "executedUnittestCases": 1
+    },
+    {
+      "id": "normalization-bound",
+      "exitCode": 0,
+      "durationSeconds": 0.6123681000026409,
+      "rawOutput": "artifacts/tmp/CAP-05.S02.T03.qualification-151.basic.normalization-bound.log",
+      "rawOutputSha256": "58fdef3a7c9d12dcd27b71893b6599cec0135e693eba58a43be5d4d24ca27d2a",
+      "rawOutputCanonicalSha256": "14d054b208f5dfb11fb1a217c31c7e86563a56e24d5ce5d361459a88aeff8e50",
+      "command": ".\\artifacts\\tmp\\CAP-05.S02.T03.check-runtime-122\\python\\python.exe -B .\\artifacts\\tmp\\CAP-05.S02.T03.normalization-bound-150.py c17511401808d003eaa2c74ff0b866e65a6955d9",
+      "commit": "c17511401808d003eaa2c74ff0b866e65a6955d9",
+      "result": "PASS",
+      "inputReport": "artifacts/tmp/CAP-05.S02.T03.qualification-151.basic.json",
+      "inputReportSha256": "b4b3bc9ce1687bf6d3b3c193c9d081d72d8dfd31b5a2d104cd6f11d462750785",
+      "provenance": "Fresh exact committed candidate. Tracked source, selected helper/build inputs and actual installed private CPython/Core libraries are held against mutation; shipped native package denies creation/write/delete throughout execution. Actual argv and local principal facts remain in ignored receipts. This is the narrowed selected boundary, not a full-profile claim."
+    },
+    {
+      "id": "parser-regressions",
+      "exitCode": 0,
+      "durationSeconds": 81.22900700000173,
+      "rawOutput": "artifacts/tmp/CAP-05.S02.T03.qualification-151.basic.parser-regressions.log",
+      "rawOutputSha256": "34e9df7e40133c914d4dcdba32ab305806dfc6e7f4331f4ee753253af83ba604",
+      "rawOutputCanonicalSha256": "895a603c3c7f53b910f4d25f9633b73421afd4f1804e5185d72a24cefe27ae38",
+      "command": ".\\artifacts\\tmp\\CAP-05.S02.T03.check-runtime-122\\python\\python.exe -B -m unittest discover -v -s tests/parsing -p test_*.py",
+      "commit": "c17511401808d003eaa2c74ff0b866e65a6955d9",
+      "result": "PASS",
+      "inputReport": "artifacts/tmp/CAP-05.S02.T03.qualification-151.basic.json",
+      "inputReportSha256": "b4b3bc9ce1687bf6d3b3c193c9d081d72d8dfd31b5a2d104cd6f11d462750785",
+      "provenance": "Fresh exact committed candidate. Tracked source, selected helper/build inputs and actual installed private CPython/Core libraries are held against mutation; shipped native package denies creation/write/delete throughout execution. Actual argv and local principal facts remain in ignored receipts. This is the narrowed selected boundary, not a full-profile claim.",
+      "executedUnittestCases": 147
+    },
+    {
+      "id": "explicit-built-native-units",
+      "exitCode": 0,
+      "durationSeconds": 0.27240260000689887,
+      "rawOutput": "artifacts/tmp/CAP-05.S02.T03.qualification-141.native.explicit-built-native-units.log",
+      "rawOutputSha256": "6719091fb0b58d58732940c515a3598a01f61196acea640a80d7c664fa754ba3",
+      "rawOutputCanonicalSha256": "0a1a2ba833e7fb5ef63ba31053db7f1b388eca95307c908dd2707ab2628b4732",
+      "command": ".\\artifacts\\tmp\\CAP-05.S02.T03.check-runtime-122\\python\\python.exe -B -m unittest tests.parsing.test_parser_pdf_native -v",
+      "commit": "c17511401808d003eaa2c74ff0b866e65a6955d9",
+      "result": "PASS",
+      "inputReport": "artifacts/tmp/CAP-05.S02.T03.qualification-141.native.json",
+      "inputReportSha256": "d9c347c430fc8a74986da68c0a2c7897c84fe1f21807b8a2b969f8fc6febc9c7",
+      "provenance": "Fresh exact committed candidate. Tracked source, selected helper/build inputs and actual installed private CPython/Core libraries are held against mutation; shipped native package denies creation/write/delete throughout execution. Actual argv and local principal facts remain in ignored receipts. This is the narrowed selected boundary, not a full-profile claim.",
+      "executedUnittestCases": 11
+    },
+    {
+      "id": "lifecycle-cancel",
+      "exitCode": 0,
+      "durationSeconds": 76.78397829999449,
+      "rawOutput": "artifacts/tmp/CAP-05.S02.T03.qualification-141.native.lifecycle-cancel.log",
+      "rawOutputSha256": "2827dd91b4bd76a25b327700ff25492d477008b00ea4829ad7395d75ef2b56fd",
+      "rawOutputCanonicalSha256": "d0da8e13939c7641e13df2be5c72de2d4747ef5542ad081d3c89bfd54ec98807",
+      "command": ".\\artifacts\\tmp\\CAP-05.S02.T03.check-runtime-122\\python\\python.exe -B .\\artifacts\\tmp\\CAP-05.S02.T03.native-lifecycle-142.py c17511401808d003eaa2c74ff0b866e65a6955d9 cancel",
+      "commit": "c17511401808d003eaa2c74ff0b866e65a6955d9",
+      "result": "PASS",
+      "inputReport": "artifacts/tmp/CAP-05.S02.T03.qualification-141.native.json",
+      "inputReportSha256": "d9c347c430fc8a74986da68c0a2c7897c84fe1f21807b8a2b969f8fc6febc9c7",
+      "provenance": "Fresh exact committed candidate. Tracked source, selected helper/build inputs and actual installed private CPython/Core libraries are held against mutation; shipped native package denies creation/write/delete throughout execution. Actual argv and local principal facts remain in ignored receipts. This is the narrowed selected boundary, not a full-profile claim."
+    },
+    {
+      "id": "lifecycle-worker-crash",
+      "exitCode": 0,
+      "durationSeconds": 74.57651110000734,
+      "rawOutput": "artifacts/tmp/CAP-05.S02.T03.qualification-141.native.lifecycle-worker-crash.log",
+      "rawOutputSha256": "e0fd10f950b67a14c5b8f688cf27b466303bce51c1c8d270c8f1bffe58754c12",
+      "rawOutputCanonicalSha256": "b06419f51bf0ae8d8c4082469d7123a78065aff0e960e4b1e8525868bf901a6e",
+      "command": ".\\artifacts\\tmp\\CAP-05.S02.T03.check-runtime-122\\python\\python.exe -B .\\artifacts\\tmp\\CAP-05.S02.T03.native-lifecycle-142.py c17511401808d003eaa2c74ff0b866e65a6955d9 worker-crash",
+      "commit": "c17511401808d003eaa2c74ff0b866e65a6955d9",
+      "result": "PASS",
+      "inputReport": "artifacts/tmp/CAP-05.S02.T03.qualification-141.native.json",
+      "inputReportSha256": "d9c347c430fc8a74986da68c0a2c7897c84fe1f21807b8a2b969f8fc6febc9c7",
+      "provenance": "Fresh exact committed candidate. Tracked source, selected helper/build inputs and actual installed private CPython/Core libraries are held against mutation; shipped native package denies creation/write/delete throughout execution. Actual argv and local principal facts remain in ignored receipts. This is the narrowed selected boundary, not a full-profile claim."
+    },
+    {
+      "id": "parent-death",
+      "exitCode": 0,
+      "durationSeconds": 78.21257400000468,
+      "rawOutput": "artifacts/tmp/CAP-05.S02.T03.qualification-141.native.parent-death.log",
+      "rawOutputSha256": "cb1d0c48f300a71c74e6905ab6ca34b0fa73923490597e0d71004234b1f85b35",
+      "rawOutputCanonicalSha256": "ff998145a82aa03d1283be5a2bbe981e2defa42970ff748adcf367252d86ed85",
+      "command": ".\\artifacts\\tmp\\CAP-05.S02.T03.check-runtime-122\\python\\python.exe -B .\\artifacts\\tmp\\CAP-05.S02.T03.parent-death-143.py c17511401808d003eaa2c74ff0b866e65a6955d9",
+      "commit": "c17511401808d003eaa2c74ff0b866e65a6955d9",
+      "result": "PASS",
+      "inputReport": "artifacts/tmp/CAP-05.S02.T03.qualification-141.native.json",
+      "inputReportSha256": "d9c347c430fc8a74986da68c0a2c7897c84fe1f21807b8a2b969f8fc6febc9c7",
+      "provenance": "Fresh exact committed candidate. Tracked source, selected helper/build inputs and actual installed private CPython/Core libraries are held against mutation; shipped native package denies creation/write/delete throughout execution. Actual argv and local principal facts remain in ignored receipts. This is the narrowed selected boundary, not a full-profile claim."
+    },
+    {
+      "id": "resource-timeout",
+      "exitCode": 0,
+      "durationSeconds": 75.01856119999138,
+      "rawOutput": "artifacts/tmp/CAP-05.S02.T03.qualification-141.native.resource-timeout.log",
+      "rawOutputSha256": "3dc6b8c5b78f693c389f5b6246fa6078ea9750299f94c6bc3dc1046c63fd90e1",
+      "rawOutputCanonicalSha256": "86a89058e1f5b9731c95c474284732bff0cf41e1068b56af575371368fc85564",
+      "command": ".\\artifacts\\tmp\\CAP-05.S02.T03.check-runtime-122\\python\\python.exe -B .\\artifacts\\tmp\\CAP-05.S02.T03.resource-enforcement-144.py c17511401808d003eaa2c74ff0b866e65a6955d9 timeout",
+      "commit": "c17511401808d003eaa2c74ff0b866e65a6955d9",
+      "result": "PASS",
+      "inputReport": "artifacts/tmp/CAP-05.S02.T03.qualification-141.native.json",
+      "inputReportSha256": "d9c347c430fc8a74986da68c0a2c7897c84fe1f21807b8a2b969f8fc6febc9c7",
+      "provenance": "Fresh exact committed candidate. Tracked source, selected helper/build inputs and actual installed private CPython/Core libraries are held against mutation; shipped native package denies creation/write/delete throughout execution. Actual argv and local principal facts remain in ignored receipts. This is the narrowed selected boundary, not a full-profile claim."
+    },
+    {
+      "id": "resource-job-memory-denial",
+      "exitCode": 0,
+      "durationSeconds": 80.21530870000424,
+      "rawOutput": "artifacts/tmp/CAP-05.S02.T03.qualification-141.native.resource-job-memory-denial.log",
+      "rawOutputSha256": "3394e7d86bf9f66c1560ec7313c05af1d73869a2598db248abc7dccac06e59b0",
+      "rawOutputCanonicalSha256": "4341ac1b37d3d3d5bbe4b4c4697dc4dd38b13d4ca81261ee6eae031588e79925",
+      "command": ".\\artifacts\\tmp\\CAP-05.S02.T03.check-runtime-122\\python\\python.exe -B .\\artifacts\\tmp\\CAP-05.S02.T03.resource-enforcement-144.py c17511401808d003eaa2c74ff0b866e65a6955d9 job-memory-denial",
+      "commit": "c17511401808d003eaa2c74ff0b866e65a6955d9",
+      "result": "PASS",
+      "inputReport": "artifacts/tmp/CAP-05.S02.T03.qualification-141.native.json",
+      "inputReportSha256": "d9c347c430fc8a74986da68c0a2c7897c84fe1f21807b8a2b969f8fc6febc9c7",
+      "provenance": "Fresh exact committed candidate. Tracked source, selected helper/build inputs and actual installed private CPython/Core libraries are held against mutation; shipped native package denies creation/write/delete throughout execution. Actual argv and local principal facts remain in ignored receipts. This is the narrowed selected boundary, not a full-profile claim."
+    },
+    {
+      "id": "denial-malformed-pdf",
+      "exitCode": 0,
+      "durationSeconds": 36.224825400000555,
+      "rawOutput": "artifacts/tmp/CAP-05.S02.T03.qualification-141.native.denial-malformed-pdf.log",
+      "rawOutputSha256": "ecae99b8aff326d4bad9f8ae8058913727f068bd476add276b503409d52b1dfa",
+      "rawOutputCanonicalSha256": "b549ec27dc2d229b0e956fd2628b92cb05a63943e4420711f6db6346c4fd9660",
+      "command": ".\\artifacts\\tmp\\CAP-05.S02.T03.check-runtime-122\\python\\python.exe -B .\\artifacts\\tmp\\CAP-05.S02.T03.installed-denials-145.py c17511401808d003eaa2c74ff0b866e65a6955d9 malformed-pdf",
+      "commit": "c17511401808d003eaa2c74ff0b866e65a6955d9",
+      "result": "PASS",
+      "inputReport": "artifacts/tmp/CAP-05.S02.T03.qualification-141.native.json",
+      "inputReportSha256": "d9c347c430fc8a74986da68c0a2c7897c84fe1f21807b8a2b969f8fc6febc9c7",
+      "provenance": "Fresh exact committed candidate. Tracked source, selected helper/build inputs and actual installed private CPython/Core libraries are held against mutation; shipped native package denies creation/write/delete throughout execution. Actual argv and local principal facts remain in ignored receipts. This is the narrowed selected boundary, not a full-profile claim."
+    },
+    {
+      "id": "denial-encrypted-pdf",
+      "exitCode": 0,
+      "durationSeconds": 36.04098540000268,
+      "rawOutput": "artifacts/tmp/CAP-05.S02.T03.qualification-141.native.denial-encrypted-pdf.log",
+      "rawOutputSha256": "97248bfdadd86845dd17323a260e465769d810d5c7a0c6c274127e4d1ff98be5",
+      "rawOutputCanonicalSha256": "c68a10de6cf0504030c78a2ebb533b982a64cb8ace2320b9b7e4d54e172364a2",
+      "command": ".\\artifacts\\tmp\\CAP-05.S02.T03.check-runtime-122\\python\\python.exe -B .\\artifacts\\tmp\\CAP-05.S02.T03.installed-denials-145.py c17511401808d003eaa2c74ff0b866e65a6955d9 encrypted-pdf",
+      "commit": "c17511401808d003eaa2c74ff0b866e65a6955d9",
+      "result": "PASS",
+      "inputReport": "artifacts/tmp/CAP-05.S02.T03.qualification-141.native.json",
+      "inputReportSha256": "d9c347c430fc8a74986da68c0a2c7897c84fe1f21807b8a2b969f8fc6febc9c7",
+      "provenance": "Fresh exact committed candidate. Tracked source, selected helper/build inputs and actual installed private CPython/Core libraries are held against mutation; shipped native package denies creation/write/delete throughout execution. Actual argv and local principal facts remain in ignored receipts. This is the narrowed selected boundary, not a full-profile claim."
+    },
+    {
+      "id": "denial-huge-canvas",
+      "exitCode": 0,
+      "durationSeconds": 37.469893300003605,
+      "rawOutput": "artifacts/tmp/CAP-05.S02.T03.qualification-141.native.denial-huge-canvas.log",
+      "rawOutputSha256": "40ff8fe3a83c36ef7acd66cabe77b26e2e67ea69732e40e657377068ffcb59db",
+      "rawOutputCanonicalSha256": "fbf63e061db506605ab7157704ac5ed9344033e3d23591947594dd346f89d625",
+      "command": ".\\artifacts\\tmp\\CAP-05.S02.T03.check-runtime-122\\python\\python.exe -B .\\artifacts\\tmp\\CAP-05.S02.T03.installed-denials-145.py c17511401808d003eaa2c74ff0b866e65a6955d9 huge-canvas",
+      "commit": "c17511401808d003eaa2c74ff0b866e65a6955d9",
+      "result": "PASS",
+      "inputReport": "artifacts/tmp/CAP-05.S02.T03.qualification-141.native.json",
+      "inputReportSha256": "d9c347c430fc8a74986da68c0a2c7897c84fe1f21807b8a2b969f8fc6febc9c7",
+      "provenance": "Fresh exact committed candidate. Tracked source, selected helper/build inputs and actual installed private CPython/Core libraries are held against mutation; shipped native package denies creation/write/delete throughout execution. Actual argv and local principal facts remain in ignored receipts. This is the narrowed selected boundary, not a full-profile claim."
+    },
+    {
+      "id": "denial-over-page-limit",
+      "exitCode": 0,
+      "durationSeconds": 36.23469990000012,
+      "rawOutput": "artifacts/tmp/CAP-05.S02.T03.qualification-141.native.denial-over-page-limit.log",
+      "rawOutputSha256": "e18ae8424ef365aa716948fd41cd2c40be75036b5f8837ef7c79c7b09c8c7f86",
+      "rawOutputCanonicalSha256": "b05e85e89bef92fb1f464f7a9ca57d68725c58214b4f4fce5236aba2501991f4",
+      "command": ".\\artifacts\\tmp\\CAP-05.S02.T03.check-runtime-122\\python\\python.exe -B .\\artifacts\\tmp\\CAP-05.S02.T03.installed-denials-145.py c17511401808d003eaa2c74ff0b866e65a6955d9 over-page-limit",
+      "commit": "c17511401808d003eaa2c74ff0b866e65a6955d9",
+      "result": "PASS",
+      "inputReport": "artifacts/tmp/CAP-05.S02.T03.qualification-141.native.json",
+      "inputReportSha256": "d9c347c430fc8a74986da68c0a2c7897c84fe1f21807b8a2b969f8fc6febc9c7",
+      "provenance": "Fresh exact committed candidate. Tracked source, selected helper/build inputs and actual installed private CPython/Core libraries are held against mutation; shipped native package denies creation/write/delete throughout execution. Actual argv and local principal facts remain in ignored receipts. This is the narrowed selected boundary, not a full-profile claim."
+    },
+    {
+      "id": "denial-native-external-entity",
+      "exitCode": 0,
+      "durationSeconds": 36.998867800008156,
+      "rawOutput": "artifacts/tmp/CAP-05.S02.T03.qualification-141.native.denial-native-external-entity.log",
+      "rawOutputSha256": "db45d4fa4ffc158ef1768290f763c1f6032463a36bd166d5070fb257356995e9",
+      "rawOutputCanonicalSha256": "6d69538c054c602a97b487b766e6de34fda21999811c15071ec941d6a80bcfad",
+      "command": ".\\artifacts\\tmp\\CAP-05.S02.T03.check-runtime-122\\python\\python.exe -B .\\artifacts\\tmp\\CAP-05.S02.T03.installed-denials-145.py c17511401808d003eaa2c74ff0b866e65a6955d9 native-external-entity",
+      "commit": "c17511401808d003eaa2c74ff0b866e65a6955d9",
+      "result": "PASS",
+      "inputReport": "artifacts/tmp/CAP-05.S02.T03.qualification-141.native.json",
+      "inputReportSha256": "d9c347c430fc8a74986da68c0a2c7897c84fe1f21807b8a2b969f8fc6febc9c7",
+      "provenance": "Fresh exact committed candidate. Tracked source, selected helper/build inputs and actual installed private CPython/Core libraries are held against mutation; shipped native package denies creation/write/delete throughout execution. Actual argv and local principal facts remain in ignored receipts. This is the narrowed selected boundary, not a full-profile claim."
+    },
+    {
+      "id": "page",
+      "exitCode": 0,
+      "durationSeconds": 46.15774119998969,
+      "rawOutput": "artifacts/tmp/CAP-05.S02.T03.qualification-141.native.page.log",
+      "rawOutputSha256": "0ee0b857131f5ca13902eda42cdb93ee9870f245b2d56572a2710acb93d098ca",
+      "rawOutputCanonicalSha256": "3638544708906b54530de4590485608a0f8fb5dd262a751c5abe44039533db70",
+      "command": ".\\artifacts\\tmp\\CAP-05.S02.T03.check-runtime-122\\python\\python.exe -B .\\artifacts\\tmp\\CAP-05.S02.T03.production-page-146.py c17511401808d003eaa2c74ff0b866e65a6955d9",
+      "commit": "c17511401808d003eaa2c74ff0b866e65a6955d9",
+      "result": "PASS",
+      "inputReport": "artifacts/tmp/CAP-05.S02.T03.qualification-141.native.json",
+      "inputReportSha256": "d9c347c430fc8a74986da68c0a2c7897c84fe1f21807b8a2b969f8fc6febc9c7",
+      "provenance": "Fresh exact committed candidate. Tracked source, selected helper/build inputs and actual installed private CPython/Core libraries are held against mutation; shipped native package denies creation/write/delete throughout execution. Actual argv and local principal facts remain in ignored receipts. This is the narrowed selected boundary, not a full-profile claim."
+    },
+    {
+      "id": "scan",
+      "exitCode": 0,
+      "durationSeconds": 55.987215000001015,
+      "rawOutput": "artifacts/tmp/CAP-05.S02.T03.qualification-141.native.scan.log",
+      "rawOutputSha256": "adcf49138e2916f72fd4b6d30d5bf83e5f1d0a76c5c62ab2583cd5c82ca1cfd6",
+      "rawOutputCanonicalSha256": "58215fe21de0a2f9f2f6fd95c7f91316f9cda376806798566f50f4e3f62ed936",
+      "command": ".\\artifacts\\tmp\\CAP-05.S02.T03.check-runtime-122\\python\\python.exe -B .\\artifacts\\tmp\\CAP-05.S02.T03.production-scan-147.py c17511401808d003eaa2c74ff0b866e65a6955d9",
+      "commit": "c17511401808d003eaa2c74ff0b866e65a6955d9",
+      "result": "PASS",
+      "inputReport": "artifacts/tmp/CAP-05.S02.T03.qualification-141.native.json",
+      "inputReportSha256": "d9c347c430fc8a74986da68c0a2c7897c84fe1f21807b8a2b969f8fc6febc9c7",
+      "provenance": "Fresh exact committed candidate. Tracked source, selected helper/build inputs and actual installed private CPython/Core libraries are held against mutation; shipped native package denies creation/write/delete throughout execution. Actual argv and local principal facts remain in ignored receipts. This is the narrowed selected boundary, not a full-profile claim."
+    },
+    {
+      "id": "encrypted-fallback",
+      "exitCode": 0,
+      "durationSeconds": 87.19463990000077,
+      "rawOutput": "artifacts/tmp/CAP-05.S02.T03.qualification-141.native.encrypted-fallback.log",
+      "rawOutputSha256": "7e38a541163e2e6b73fd7e1200328e13d64afd4ba0d371ebc7debf347c2a18a9",
+      "rawOutputCanonicalSha256": "937cc157c459ad2771675af0dd401be1090425e8b461169dfae025e475c85695",
+      "command": ".\\artifacts\\tmp\\CAP-05.S02.T03.check-runtime-122\\python\\python.exe -B .\\artifacts\\tmp\\CAP-05.S02.T03.production-fallback-149.py c17511401808d003eaa2c74ff0b866e65a6955d9",
+      "commit": "c17511401808d003eaa2c74ff0b866e65a6955d9",
+      "result": "PASS",
+      "inputReport": "artifacts/tmp/CAP-05.S02.T03.qualification-141.native.json",
+      "inputReportSha256": "d9c347c430fc8a74986da68c0a2c7897c84fe1f21807b8a2b969f8fc6febc9c7",
+      "provenance": "Fresh exact committed candidate. Tracked source, selected helper/build inputs and actual installed private CPython/Core libraries are held against mutation; shipped native package denies creation/write/delete throughout execution. Actual argv and local principal facts remain in ignored receipts. This is the narrowed selected boundary, not a full-profile claim."
+    },
+    {
+      "id": "encrypted-plain-text",
+      "exitCode": 0,
+      "durationSeconds": 42.63051489999634,
+      "rawOutput": "artifacts/tmp/CAP-05.S02.T03.qualification-141.native.encrypted-plain-text.log",
+      "rawOutputSha256": "e16e6fbe875f63c03c4b661b1c1036ebff5e449f356469e26c304a754d0b3562",
+      "rawOutputCanonicalSha256": "ff3e7d03145fad474a5a6bb9b0d0ba93af0c3f64e936c2ec73e06289531dda97",
+      "command": ".\\artifacts\\tmp\\CAP-05.S02.T03.check-runtime-122\\python\\python.exe -B .\\artifacts\\tmp\\CAP-05.S02.T03.production-formats-148.py c17511401808d003eaa2c74ff0b866e65a6955d9 plain-text",
+      "commit": "c17511401808d003eaa2c74ff0b866e65a6955d9",
+      "result": "PASS",
+      "inputReport": "artifacts/tmp/CAP-05.S02.T03.qualification-141.native.json",
+      "inputReportSha256": "d9c347c430fc8a74986da68c0a2c7897c84fe1f21807b8a2b969f8fc6febc9c7",
+      "provenance": "Fresh exact committed candidate. Tracked source, selected helper/build inputs and actual installed private CPython/Core libraries are held against mutation; shipped native package denies creation/write/delete throughout execution. Actual argv and local principal facts remain in ignored receipts. This is the narrowed selected boundary, not a full-profile claim."
+    },
+    {
+      "id": "encrypted-jats",
+      "exitCode": 0,
+      "durationSeconds": 42.82771499999217,
+      "rawOutput": "artifacts/tmp/CAP-05.S02.T03.qualification-141.native.encrypted-jats.log",
+      "rawOutputSha256": "4f1597f9c9ef5be1690ed9ae1da8f5e6382ac65c1c4bdaf808a34cd911952c67",
+      "rawOutputCanonicalSha256": "e34ddab5cdac3c77c7b3462185849e1d7572b06771ba9a7a3e6a2eafdd7ac757",
+      "command": ".\\artifacts\\tmp\\CAP-05.S02.T03.check-runtime-122\\python\\python.exe -B .\\artifacts\\tmp\\CAP-05.S02.T03.production-formats-148.py c17511401808d003eaa2c74ff0b866e65a6955d9 jats",
+      "commit": "c17511401808d003eaa2c74ff0b866e65a6955d9",
+      "result": "PASS",
+      "inputReport": "artifacts/tmp/CAP-05.S02.T03.qualification-141.native.json",
+      "inputReportSha256": "d9c347c430fc8a74986da68c0a2c7897c84fe1f21807b8a2b969f8fc6febc9c7",
+      "provenance": "Fresh exact committed candidate. Tracked source, selected helper/build inputs and actual installed private CPython/Core libraries are held against mutation; shipped native package denies creation/write/delete throughout execution. Actual argv and local principal facts remain in ignored receipts. This is the narrowed selected boundary, not a full-profile claim."
+    },
+    {
+      "id": "encrypted-tei",
+      "exitCode": 0,
+      "durationSeconds": 43.18496879999293,
+      "rawOutput": "artifacts/tmp/CAP-05.S02.T03.qualification-141.native.encrypted-tei.log",
+      "rawOutputSha256": "2617ebae9e18b578ae438e4a4582966415cf75ebd0b5650990cad06c9e0cf624",
+      "rawOutputCanonicalSha256": "ff9b3aa993c4d67c0d1dc57c7f51facc214f326356ee330ce0945c134d706d48",
+      "command": ".\\artifacts\\tmp\\CAP-05.S02.T03.check-runtime-122\\python\\python.exe -B .\\artifacts\\tmp\\CAP-05.S02.T03.production-formats-148.py c17511401808d003eaa2c74ff0b866e65a6955d9 tei",
+      "commit": "c17511401808d003eaa2c74ff0b866e65a6955d9",
+      "result": "PASS",
+      "inputReport": "artifacts/tmp/CAP-05.S02.T03.qualification-141.native.json",
+      "inputReportSha256": "d9c347c430fc8a74986da68c0a2c7897c84fe1f21807b8a2b969f8fc6febc9c7",
+      "provenance": "Fresh exact committed candidate. Tracked source, selected helper/build inputs and actual installed private CPython/Core libraries are held against mutation; shipped native package denies creation/write/delete throughout execution. Actual argv and local principal facts remain in ignored receipts. This is the narrowed selected boundary, not a full-profile claim."
+    },
+    {
+      "id": "encrypted-xml",
+      "exitCode": 0,
+      "durationSeconds": 44.17417819998809,
+      "rawOutput": "artifacts/tmp/CAP-05.S02.T03.qualification-141.native.encrypted-xml.log",
+      "rawOutputSha256": "9c43cd56096607c9f81e28046ec4ba5384b034dc3e4aeab35ddd03c0f788bb16",
+      "rawOutputCanonicalSha256": "2363cb1c6a09743589cc02b86e2f20aa404f16f4395f79426719e0b91684f77a",
+      "command": ".\\artifacts\\tmp\\CAP-05.S02.T03.check-runtime-122\\python\\python.exe -B .\\artifacts\\tmp\\CAP-05.S02.T03.production-formats-148.py c17511401808d003eaa2c74ff0b866e65a6955d9 xml",
+      "commit": "c17511401808d003eaa2c74ff0b866e65a6955d9",
+      "result": "PASS",
+      "inputReport": "artifacts/tmp/CAP-05.S02.T03.qualification-141.native.json",
+      "inputReportSha256": "d9c347c430fc8a74986da68c0a2c7897c84fe1f21807b8a2b969f8fc6febc9c7",
+      "provenance": "Fresh exact committed candidate. Tracked source, selected helper/build inputs and actual installed private CPython/Core libraries are held against mutation; shipped native package denies creation/write/delete throughout execution. Actual argv and local principal facts remain in ignored receipts. This is the narrowed selected boundary, not a full-profile claim."
+    },
+    {
+      "id": "encrypted-html",
+      "exitCode": 0,
+      "durationSeconds": 44.0283153999917,
+      "rawOutput": "artifacts/tmp/CAP-05.S02.T03.qualification-141.native.encrypted-html.log",
+      "rawOutputSha256": "89daba383ddda2e67b32cfb76498589f1725fbb806a895e66e7a8dfc873595ad",
+      "rawOutputCanonicalSha256": "d619e6b82cf3983f930dc46c1940321a933f31f3e9d627ed3877c953ad736e38",
+      "command": ".\\artifacts\\tmp\\CAP-05.S02.T03.check-runtime-122\\python\\python.exe -B .\\artifacts\\tmp\\CAP-05.S02.T03.production-formats-148.py c17511401808d003eaa2c74ff0b866e65a6955d9 html",
+      "commit": "c17511401808d003eaa2c74ff0b866e65a6955d9",
+      "result": "PASS",
+      "inputReport": "artifacts/tmp/CAP-05.S02.T03.qualification-141.native.json",
+      "inputReportSha256": "d9c347c430fc8a74986da68c0a2c7897c84fe1f21807b8a2b969f8fc6febc9c7",
+      "provenance": "Fresh exact committed candidate. Tracked source, selected helper/build inputs and actual installed private CPython/Core libraries are held against mutation; shipped native package denies creation/write/delete throughout execution. Actual argv and local principal facts remain in ignored receipts. This is the narrowed selected boundary, not a full-profile claim."
+    },
+    {
+      "id": "encrypted-docx",
+      "exitCode": 0,
+      "durationSeconds": 50.17375339999853,
+      "rawOutput": "artifacts/tmp/CAP-05.S02.T03.qualification-141.native.encrypted-docx.log",
+      "rawOutputSha256": "1c37e49ad67323448b0fbc98fe7790f5d60d54c6e8e3dfd0c5894edad712c349",
+      "rawOutputCanonicalSha256": "cfeb4ae8d6da6d871345b551ce99b59f5d169f73f0b78fe4f68855afc603b5bc",
+      "command": ".\\artifacts\\tmp\\CAP-05.S02.T03.check-runtime-122\\python\\python.exe -B .\\artifacts\\tmp\\CAP-05.S02.T03.production-formats-148.py c17511401808d003eaa2c74ff0b866e65a6955d9 docx",
+      "commit": "c17511401808d003eaa2c74ff0b866e65a6955d9",
+      "result": "PASS",
+      "inputReport": "artifacts/tmp/CAP-05.S02.T03.qualification-141.native.json",
+      "inputReportSha256": "d9c347c430fc8a74986da68c0a2c7897c84fe1f21807b8a2b969f8fc6febc9c7",
+      "provenance": "Fresh exact committed candidate. Tracked source, selected helper/build inputs and actual installed private CPython/Core libraries are held against mutation; shipped native package denies creation/write/delete throughout execution. Actual argv and local principal facts remain in ignored receipts. This is the narrowed selected boundary, not a full-profile claim."
+    },
+    {
+      "id": "installed-parser-cold-0",
+      "exitCode": 0,
+      "durationSeconds": 63.02381640000385,
+      "rawOutput": "artifacts/tmp/CAP-05.S02.T03.performance-124.benchmark.cold-0.log",
+      "rawOutputSha256": "5a89b539c173aa4c7d2a45651330fd4e1af11dd66750607640befa4fac1f4572",
+      "rawOutputCanonicalSha256": "728684943e34abe949b112d08605c55bfff0461100fecbcb5744c7c3aa709c92",
+      "command": "artifacts/tmp/CAP-05.S02.T03.check-runtime-122/python/python.exe artifacts/tmp/CAP-05.S02.T03.production-quality-125.py c17511401808d003eaa2c74ff0b866e65a6955d9 CAP-05.S02.T03.performance-124.benchmark.cold-0.json",
+      "commit": "c17511401808d003eaa2c74ff0b866e65a6955d9",
+      "result": "PASS",
+      "inputReport": "artifacts/tmp/CAP-05.S02.T03.performance-124.benchmark.cold-0.json",
+      "inputReportSha256": "424b60a476436b0047981df1c18a7a7efa981124f1c1ce57a65830a7fe3eaae4",
+      "measurementBatch": "artifacts/tmp/CAP-05.S02.T03.performance-124.benchmark.json",
+      "measurementBatchSha256": "fc1b2ca099d8b400806e7e3340c9a0a2a25982f0f6716006a22947865eb51f77",
+      "measuredCoreStageSeconds": 59.73081330000423,
+      "provenance": "Actual exit-0 child execution within the held benchmark124 package/runtime/source/schema boundary. PASS covers native parsing, encrypted staging, fixture preservation, resource/principal and portable-handoff assertions only. The batch warm-budget check remains FAIL and is separately owner-accepted; no sample is discarded or relabeled as a performance pass."
+    },
+    {
+      "id": "installed-parser-cold-1",
+      "exitCode": 0,
+      "durationSeconds": 62.62831159999769,
+      "rawOutput": "artifacts/tmp/CAP-05.S02.T03.performance-124.benchmark.cold-1.log",
+      "rawOutputSha256": "afeb616f81bf4c7cd751808f27d2508a6fb3326d65fc67dd03d77cec688205ff",
+      "rawOutputCanonicalSha256": "53414cbe68e1ace68e359da42ff03956193ffe737312e589d205358b4fd2d070",
+      "command": "artifacts/tmp/CAP-05.S02.T03.check-runtime-122/python/python.exe artifacts/tmp/CAP-05.S02.T03.production-quality-125.py c17511401808d003eaa2c74ff0b866e65a6955d9 CAP-05.S02.T03.performance-124.benchmark.cold-1.json",
+      "commit": "c17511401808d003eaa2c74ff0b866e65a6955d9",
+      "result": "PASS",
+      "inputReport": "artifacts/tmp/CAP-05.S02.T03.performance-124.benchmark.cold-1.json",
+      "inputReportSha256": "905cb06a1e231328c08a43044448a19c60d5e698dde892e3446aec7415943477",
+      "measurementBatch": "artifacts/tmp/CAP-05.S02.T03.performance-124.benchmark.json",
+      "measurementBatchSha256": "fc1b2ca099d8b400806e7e3340c9a0a2a25982f0f6716006a22947865eb51f77",
+      "measuredCoreStageSeconds": 59.24316009999893,
+      "provenance": "Actual exit-0 child execution within the held benchmark124 package/runtime/source/schema boundary. PASS covers native parsing, encrypted staging, fixture preservation, resource/principal and portable-handoff assertions only. The batch warm-budget check remains FAIL and is separately owner-accepted; no sample is discarded or relabeled as a performance pass."
+    },
+    {
+      "id": "installed-parser-cold-2",
+      "exitCode": 0,
+      "durationSeconds": 62.21300499999779,
+      "rawOutput": "artifacts/tmp/CAP-05.S02.T03.performance-124.benchmark.cold-2.log",
+      "rawOutputSha256": "8c0d6bf85e22e10dba08d3e3f51238d192f4772c6c3fa8842f0d74e597b1fba2",
+      "rawOutputCanonicalSha256": "7282801f4c051f3485474d26e9c55a285044f6b1294bb70e5682c2b7f335acff",
+      "command": "artifacts/tmp/CAP-05.S02.T03.check-runtime-122/python/python.exe artifacts/tmp/CAP-05.S02.T03.production-quality-125.py c17511401808d003eaa2c74ff0b866e65a6955d9 CAP-05.S02.T03.performance-124.benchmark.cold-2.json",
+      "commit": "c17511401808d003eaa2c74ff0b866e65a6955d9",
+      "result": "PASS",
+      "inputReport": "artifacts/tmp/CAP-05.S02.T03.performance-124.benchmark.cold-2.json",
+      "inputReportSha256": "79cc120a2fbc1163c5b1ff0b469e4d2f2d866354e59a5c16c2c83692bddd18b1",
+      "measurementBatch": "artifacts/tmp/CAP-05.S02.T03.performance-124.benchmark.json",
+      "measurementBatchSha256": "fc1b2ca099d8b400806e7e3340c9a0a2a25982f0f6716006a22947865eb51f77",
+      "measuredCoreStageSeconds": 58.97480630000064,
+      "provenance": "Actual exit-0 child execution within the held benchmark124 package/runtime/source/schema boundary. PASS covers native parsing, encrypted staging, fixture preservation, resource/principal and portable-handoff assertions only. The batch warm-budget check remains FAIL and is separately owner-accepted; no sample is discarded or relabeled as a performance pass."
+    },
+    {
+      "id": "installed-parser-warmup-0",
+      "exitCode": 0,
+      "durationSeconds": 62.4152541999938,
+      "rawOutput": "artifacts/tmp/CAP-05.S02.T03.performance-124.benchmark.warmup-0.log",
+      "rawOutputSha256": "73d33bd91cc2a0a9459b2dc22fd780ced17ceba8de81f204f3208c154acdafb8",
+      "rawOutputCanonicalSha256": "4207eb050bb3e3c3013c566d80563167383bef34e3939355cec36a5b8009f903",
+      "command": "artifacts/tmp/CAP-05.S02.T03.check-runtime-122/python/python.exe artifacts/tmp/CAP-05.S02.T03.production-quality-125.py c17511401808d003eaa2c74ff0b866e65a6955d9 CAP-05.S02.T03.performance-124.benchmark.warmup-0.json",
+      "commit": "c17511401808d003eaa2c74ff0b866e65a6955d9",
+      "result": "PASS",
+      "inputReport": "artifacts/tmp/CAP-05.S02.T03.performance-124.benchmark.warmup-0.json",
+      "inputReportSha256": "601239de6424ae9cc21d7b97cbabe097c1f208c51b8baf71c38c3a6cb841ce8a",
+      "measurementBatch": "artifacts/tmp/CAP-05.S02.T03.performance-124.benchmark.json",
+      "measurementBatchSha256": "fc1b2ca099d8b400806e7e3340c9a0a2a25982f0f6716006a22947865eb51f77",
+      "measuredCoreStageSeconds": 59.14014760000282,
+      "provenance": "Actual exit-0 child execution within the held benchmark124 package/runtime/source/schema boundary. PASS covers native parsing, encrypted staging, fixture preservation, resource/principal and portable-handoff assertions only. The batch warm-budget check remains FAIL and is separately owner-accepted; no sample is discarded or relabeled as a performance pass."
+    },
+    {
+      "id": "installed-parser-warm-0",
+      "exitCode": 0,
+      "durationSeconds": 62.34595469999476,
+      "rawOutput": "artifacts/tmp/CAP-05.S02.T03.performance-124.benchmark.warm-0.log",
+      "rawOutputSha256": "c318df568a39a1582e3d71cf18d209831d89ee7c53ebf7364c02adc27d74a6db",
+      "rawOutputCanonicalSha256": "9df4fe657a38585728280c85e3b0d119b89227ae7f924bcdd824acbac1a38b7c",
+      "command": "artifacts/tmp/CAP-05.S02.T03.check-runtime-122/python/python.exe artifacts/tmp/CAP-05.S02.T03.production-quality-125.py c17511401808d003eaa2c74ff0b866e65a6955d9 CAP-05.S02.T03.performance-124.benchmark.warm-0.json",
+      "commit": "c17511401808d003eaa2c74ff0b866e65a6955d9",
+      "result": "PASS",
+      "inputReport": "artifacts/tmp/CAP-05.S02.T03.performance-124.benchmark.warm-0.json",
+      "inputReportSha256": "27b3b2accf950c93d8a65d0bba22578f1bcf22c3d569d5e64aba6e644f1b88a7",
+      "measurementBatch": "artifacts/tmp/CAP-05.S02.T03.performance-124.benchmark.json",
+      "measurementBatchSha256": "fc1b2ca099d8b400806e7e3340c9a0a2a25982f0f6716006a22947865eb51f77",
+      "measuredCoreStageSeconds": 59.003543400001945,
+      "provenance": "Actual exit-0 child execution within the held benchmark124 package/runtime/source/schema boundary. PASS covers native parsing, encrypted staging, fixture preservation, resource/principal and portable-handoff assertions only. The batch warm-budget check remains FAIL and is separately owner-accepted; no sample is discarded or relabeled as a performance pass."
+    },
+    {
+      "id": "installed-parser-warm-1",
+      "exitCode": 0,
+      "durationSeconds": 62.37972950001131,
+      "rawOutput": "artifacts/tmp/CAP-05.S02.T03.performance-124.benchmark.warm-1.log",
+      "rawOutputSha256": "f6e0965092ba97370a08a758d85a874a8284f953e067263d925fce6846274690",
+      "rawOutputCanonicalSha256": "3b73dc162712759fca5684b9d5341f2a43c3769326102f104af84d8146249e86",
+      "command": "artifacts/tmp/CAP-05.S02.T03.check-runtime-122/python/python.exe artifacts/tmp/CAP-05.S02.T03.production-quality-125.py c17511401808d003eaa2c74ff0b866e65a6955d9 CAP-05.S02.T03.performance-124.benchmark.warm-1.json",
+      "commit": "c17511401808d003eaa2c74ff0b866e65a6955d9",
+      "result": "PASS",
+      "inputReport": "artifacts/tmp/CAP-05.S02.T03.performance-124.benchmark.warm-1.json",
+      "inputReportSha256": "616911baf1afdfa8c4cd6e6b620f4b91c03be4202b0838e594d83831812d61f2",
+      "measurementBatch": "artifacts/tmp/CAP-05.S02.T03.performance-124.benchmark.json",
+      "measurementBatchSha256": "fc1b2ca099d8b400806e7e3340c9a0a2a25982f0f6716006a22947865eb51f77",
+      "measuredCoreStageSeconds": 59.14821600000141,
+      "provenance": "Actual exit-0 child execution within the held benchmark124 package/runtime/source/schema boundary. PASS covers native parsing, encrypted staging, fixture preservation, resource/principal and portable-handoff assertions only. The batch warm-budget check remains FAIL and is separately owner-accepted; no sample is discarded or relabeled as a performance pass."
+    },
+    {
+      "id": "installed-parser-warm-2",
+      "exitCode": 0,
+      "durationSeconds": 60.12968739999633,
+      "rawOutput": "artifacts/tmp/CAP-05.S02.T03.performance-124.benchmark.warm-2.log",
+      "rawOutputSha256": "0bcc69bf9a2b00a9a9e74425d8d747db6941c0c95e8c8a7be661cd380d9df82a",
+      "rawOutputCanonicalSha256": "e3e8e6aa6220144d1a71452a2aebf5e13bc83aa4dd2b5c57e212158bf5e8d135",
+      "command": "artifacts/tmp/CAP-05.S02.T03.check-runtime-122/python/python.exe artifacts/tmp/CAP-05.S02.T03.production-quality-125.py c17511401808d003eaa2c74ff0b866e65a6955d9 CAP-05.S02.T03.performance-124.benchmark.warm-2.json",
+      "commit": "c17511401808d003eaa2c74ff0b866e65a6955d9",
+      "result": "PASS",
+      "inputReport": "artifacts/tmp/CAP-05.S02.T03.performance-124.benchmark.warm-2.json",
+      "inputReportSha256": "305f7fce0f4a80dc9466077a1ae8b302aca489a477e87084888a85ac12e0e4e1",
+      "measurementBatch": "artifacts/tmp/CAP-05.S02.T03.performance-124.benchmark.json",
+      "measurementBatchSha256": "fc1b2ca099d8b400806e7e3340c9a0a2a25982f0f6716006a22947865eb51f77",
+      "measuredCoreStageSeconds": 56.87450200000603,
+      "provenance": "Actual exit-0 child execution within the held benchmark124 package/runtime/source/schema boundary. PASS covers native parsing, encrypted staging, fixture preservation, resource/principal and portable-handoff assertions only. The batch warm-budget check remains FAIL and is separately owner-accepted; no sample is discarded or relabeled as a performance pass."
+    },
+    {
+      "id": "installed-parser-warm-3",
+      "exitCode": 0,
+      "durationSeconds": 60.74072380000143,
+      "rawOutput": "artifacts/tmp/CAP-05.S02.T03.performance-124.benchmark.warm-3.log",
+      "rawOutputSha256": "ade7aad77bc98a374c58eef589924b3ac7c8ad7d04d6350a93d3a058b77351ec",
+      "rawOutputCanonicalSha256": "43f64b9d1c07188f66b8af7514d970a6c86d26d70a7c1f1fcd42832546f2a9f0",
+      "command": "artifacts/tmp/CAP-05.S02.T03.check-runtime-122/python/python.exe artifacts/tmp/CAP-05.S02.T03.production-quality-125.py c17511401808d003eaa2c74ff0b866e65a6955d9 CAP-05.S02.T03.performance-124.benchmark.warm-3.json",
+      "commit": "c17511401808d003eaa2c74ff0b866e65a6955d9",
+      "result": "PASS",
+      "inputReport": "artifacts/tmp/CAP-05.S02.T03.performance-124.benchmark.warm-3.json",
+      "inputReportSha256": "27e9f7363945c860e44a9a19ad6c9dbc4a54fa18adbbf487cbd58eea71ecbb3f",
+      "measurementBatch": "artifacts/tmp/CAP-05.S02.T03.performance-124.benchmark.json",
+      "measurementBatchSha256": "fc1b2ca099d8b400806e7e3340c9a0a2a25982f0f6716006a22947865eb51f77",
+      "measuredCoreStageSeconds": 57.48692110000411,
+      "provenance": "Actual exit-0 child execution within the held benchmark124 package/runtime/source/schema boundary. PASS covers native parsing, encrypted staging, fixture preservation, resource/principal and portable-handoff assertions only. The batch warm-budget check remains FAIL and is separately owner-accepted; no sample is discarded or relabeled as a performance pass."
+    },
+    {
+      "id": "installed-parser-warm-4",
+      "exitCode": 0,
+      "durationSeconds": 60.46467929999926,
+      "rawOutput": "artifacts/tmp/CAP-05.S02.T03.performance-124.benchmark.warm-4.log",
+      "rawOutputSha256": "02905923cf1596ba1a0c31533c68f3879e2b5be06b1823903bdb8489cdf56522",
+      "rawOutputCanonicalSha256": "d35fcb34321ec1282e42894c12408852c61e19eb8beb79486d4a6f65f147ca45",
+      "command": "artifacts/tmp/CAP-05.S02.T03.check-runtime-122/python/python.exe artifacts/tmp/CAP-05.S02.T03.production-quality-125.py c17511401808d003eaa2c74ff0b866e65a6955d9 CAP-05.S02.T03.performance-124.benchmark.warm-4.json",
+      "commit": "c17511401808d003eaa2c74ff0b866e65a6955d9",
+      "result": "PASS",
+      "inputReport": "artifacts/tmp/CAP-05.S02.T03.performance-124.benchmark.warm-4.json",
+      "inputReportSha256": "f246566b05a9ee3569466b18137639bcada424d112b722cc66f5554947a0aea8",
+      "measurementBatch": "artifacts/tmp/CAP-05.S02.T03.performance-124.benchmark.json",
+      "measurementBatchSha256": "fc1b2ca099d8b400806e7e3340c9a0a2a25982f0f6716006a22947865eb51f77",
+      "measuredCoreStageSeconds": 57.14214619999984,
+      "provenance": "Actual exit-0 child execution within the held benchmark124 package/runtime/source/schema boundary. PASS covers native parsing, encrypted staging, fixture preservation, resource/principal and portable-handoff assertions only. The batch warm-budget check remains FAIL and is separately owner-accepted; no sample is discarded or relabeled as a performance pass."
+    },
+    {
+      "id": "installed-parser-warm-5",
+      "exitCode": 0,
+      "durationSeconds": 65.32626519999758,
+      "rawOutput": "artifacts/tmp/CAP-05.S02.T03.performance-124.benchmark.warm-5.log",
+      "rawOutputSha256": "9e37fd334ab6e262d80be07c30b89e0b519da9967bd8687588adcc28b5bf5839",
+      "rawOutputCanonicalSha256": "48c22c9ff426c3f15d1c74f07c8cbe68b46a7fa581ca97dcaf8fc8b299618d4b",
+      "command": "artifacts/tmp/CAP-05.S02.T03.check-runtime-122/python/python.exe artifacts/tmp/CAP-05.S02.T03.production-quality-125.py c17511401808d003eaa2c74ff0b866e65a6955d9 CAP-05.S02.T03.performance-124.benchmark.warm-5.json",
+      "commit": "c17511401808d003eaa2c74ff0b866e65a6955d9",
+      "result": "PASS",
+      "inputReport": "artifacts/tmp/CAP-05.S02.T03.performance-124.benchmark.warm-5.json",
+      "inputReportSha256": "d6aad8bd8fae9b99a1ad914f0a9943d26f583e51b79596d407511d946ce4954a",
+      "measurementBatch": "artifacts/tmp/CAP-05.S02.T03.performance-124.benchmark.json",
+      "measurementBatchSha256": "fc1b2ca099d8b400806e7e3340c9a0a2a25982f0f6716006a22947865eb51f77",
+      "measuredCoreStageSeconds": 62.014159900005325,
+      "provenance": "Actual exit-0 child execution within the held benchmark124 package/runtime/source/schema boundary. PASS covers native parsing, encrypted staging, fixture preservation, resource/principal and portable-handoff assertions only. The batch warm-budget check remains FAIL and is separately owner-accepted; no sample is discarded or relabeled as a performance pass."
+    },
+    {
+      "id": "installed-parser-warm-6",
+      "exitCode": 0,
+      "durationSeconds": 65.83213749999413,
+      "rawOutput": "artifacts/tmp/CAP-05.S02.T03.performance-124.benchmark.warm-6.log",
+      "rawOutputSha256": "828012dadfd9038711b9c6b0065404e2d908e97510099eee46d52ecea271b89b",
+      "rawOutputCanonicalSha256": "c30f9547289f8ff7595f7c2bd6736744068cf2d5af681166ec12b0f2b746e371",
+      "command": "artifacts/tmp/CAP-05.S02.T03.check-runtime-122/python/python.exe artifacts/tmp/CAP-05.S02.T03.production-quality-125.py c17511401808d003eaa2c74ff0b866e65a6955d9 CAP-05.S02.T03.performance-124.benchmark.warm-6.json",
+      "commit": "c17511401808d003eaa2c74ff0b866e65a6955d9",
+      "result": "PASS",
+      "inputReport": "artifacts/tmp/CAP-05.S02.T03.performance-124.benchmark.warm-6.json",
+      "inputReportSha256": "545b206655ba735b2fadecbd6b4d431023941d776fa9aa9dc06adf33f5616635",
+      "measurementBatch": "artifacts/tmp/CAP-05.S02.T03.performance-124.benchmark.json",
+      "measurementBatchSha256": "fc1b2ca099d8b400806e7e3340c9a0a2a25982f0f6716006a22947865eb51f77",
+      "measuredCoreStageSeconds": 62.53335420000076,
+      "provenance": "Actual exit-0 child execution within the held benchmark124 package/runtime/source/schema boundary. PASS covers native parsing, encrypted staging, fixture preservation, resource/principal and portable-handoff assertions only. The batch warm-budget check remains FAIL and is separately owner-accepted; no sample is discarded or relabeled as a performance pass."
+    }
+  ],
+  "machineArtifacts": [
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T03.native-lifecycle-142.cancel.json",
+      "sha256": "d47b8595c09bf3b990c8916cc332dabb08c741d5e9d8b2bd70ebfa3679ea324f",
+      "reportedStatus": "PASS",
+      "candidate": "c17511401808d003eaa2c74ff0b866e65a6955d9"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T03.native-lifecycle-142.worker-crash.json",
+      "sha256": "775bde01df990533a7772a305390d16d05cbbcfc00a14fe51db38c3f28e11705",
+      "reportedStatus": "PASS",
+      "candidate": "c17511401808d003eaa2c74ff0b866e65a6955d9"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T03.parent-death-143.json",
+      "sha256": "bc1d1ba3399c21958d79f9f424ba5007d3cf7b4b1fa53826fa0a016c55d9c09a",
+      "reportedStatus": "PASS",
+      "candidate": "c17511401808d003eaa2c74ff0b866e65a6955d9"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T03.resource-enforcement-144.timeout.json",
+      "sha256": "f2f31360fc3bf1c594e83ace2280479bd31f306bf6c9aa14274f453a30553793",
+      "reportedStatus": "PASS",
+      "candidate": "c17511401808d003eaa2c74ff0b866e65a6955d9"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T03.resource-enforcement-144.job-memory-denial.json",
+      "sha256": "1ef2f0bd626ad108c076925265517b04965d74a8d42c8c2b66131b4e6d74b98f",
+      "reportedStatus": "PASS",
+      "candidate": "c17511401808d003eaa2c74ff0b866e65a6955d9"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T03.installed-denials-145.malformed-pdf.json",
+      "sha256": "93ce88f68fbc853f6c8382fb1cad538ed797c873ffedaa309acc87a6933694a4",
+      "reportedStatus": "PASS",
+      "candidate": "c17511401808d003eaa2c74ff0b866e65a6955d9"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T03.installed-denials-145.encrypted-pdf.json",
+      "sha256": "e649c904a7bde79d97c3be9c26400cb9e868265c142adb8e6c00f17e0a38ba95",
+      "reportedStatus": "PASS",
+      "candidate": "c17511401808d003eaa2c74ff0b866e65a6955d9"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T03.installed-denials-145.huge-canvas.json",
+      "sha256": "55de9e6a876a1ac990711785ad0cdea467aea2aea977298e9697d2875d1c5b0d",
+      "reportedStatus": "PASS",
+      "candidate": "c17511401808d003eaa2c74ff0b866e65a6955d9"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T03.installed-denials-145.over-page-limit.json",
+      "sha256": "fae3e6b421e61d4266a2d264b4c4881e0ef3496188afafa3141c45496a9719d4",
+      "reportedStatus": "PASS",
+      "candidate": "c17511401808d003eaa2c74ff0b866e65a6955d9"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T03.installed-denials-145.native-external-entity.json",
+      "sha256": "d5fb555a06d9f24ea2a57c24af8226faf7aafbe81865378a6582c926687948b3",
+      "reportedStatus": "PASS",
+      "candidate": "c17511401808d003eaa2c74ff0b866e65a6955d9"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T03.production-page-146.json",
+      "sha256": "cd3866cd285c6f486ca45f599e3a1fc9163d70246411a9fa1e4caf9050fd970e",
+      "reportedStatus": "PASS",
+      "candidate": "c17511401808d003eaa2c74ff0b866e65a6955d9"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T03.production-scan-147.json",
+      "sha256": "9cd2efe0b61b71a18c18cbfb0587fdbf3f37928950d7b57cbf257a17193fa0bc",
+      "reportedStatus": "PASS",
+      "candidate": "c17511401808d003eaa2c74ff0b866e65a6955d9"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T03.production-fallback-149.json",
+      "sha256": "cea430e5e0d5a6e06f3a87d21275506179d68b766c2302fe7161c51f88576801",
+      "reportedStatus": "PASS",
+      "candidate": "c17511401808d003eaa2c74ff0b866e65a6955d9"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T03.production-formats-148.plain-text.json",
+      "sha256": "6b9b40cd23f3588ea119e657296d5e1516a03b2d906b796eaa39c06637af3201",
+      "reportedStatus": "PASS",
+      "candidate": "c17511401808d003eaa2c74ff0b866e65a6955d9"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T03.production-formats-148.jats.json",
+      "sha256": "4457870df05388a8b60def24c3d70ec1e3073a9d82b7aa4d3217fceeb0ec32df",
+      "reportedStatus": "PASS",
+      "candidate": "c17511401808d003eaa2c74ff0b866e65a6955d9"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T03.production-formats-148.tei.json",
+      "sha256": "6d4900a36d3b4f936665f6533b7b544b98f0f65165d28644c3b17010e402c883",
+      "reportedStatus": "PASS",
+      "candidate": "c17511401808d003eaa2c74ff0b866e65a6955d9"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T03.production-formats-148.xml.json",
+      "sha256": "5f4b82618fe35e6decefd6ced1e8121c6d6f58f6043a146e9a04f5e54dd0208a",
+      "reportedStatus": "PASS",
+      "candidate": "c17511401808d003eaa2c74ff0b866e65a6955d9"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T03.production-formats-148.html.json",
+      "sha256": "e2068735c71d286b88b09198c2077005fca50c63dede710da56984820bf76ba5",
+      "reportedStatus": "PASS",
+      "candidate": "c17511401808d003eaa2c74ff0b866e65a6955d9"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T03.production-formats-148.docx.json",
+      "sha256": "ebd20e28195e13a1856559826259efa811e150410904849f8e7b7c22ca4de761",
+      "reportedStatus": "PASS",
+      "candidate": "c17511401808d003eaa2c74ff0b866e65a6955d9"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T03.normalization-bound-150.json",
+      "sha256": "bba17bf6e8bef576d34785b7711f841a5a5641cff306d02f8157e8ead2ca3acb",
+      "reportedStatus": "PASS",
+      "candidate": "c17511401808d003eaa2c74ff0b866e65a6955d9"
+    }
+  ],
+  "ownerAcceptedPerformanceDeviation": {
+    "kind": "append-only-exact-observation-owner-acceptance",
+    "owner": "human:repository-owner",
+    "recordedAtUtc": "2026-10-07T21:45:57Z",
+    "approvalSource": "Explicit human message in this W2 campaign chat on2026-10-07, responding to the just-reported62.5-second warm p95 and instruction to investigate the overage.",
+    "instruction": "I accept that slight overage. Please don't spend more time over the 2 second overage.",
+    "candidate": "c17511401808d003eaa2c74ff0b866e65a6955d9",
+    "packageInventorySha256": "ebb0197926694d00710b486093e5c8b417a0ec0faa702ba42f3538e08ccbc573",
+    "report": "artifacts/tmp/CAP-05.S02.T03.performance-124.benchmark.json",
+    "reportSha256": "fc1b2ca099d8b400806e7e3340c9a0a2a25982f0f6716006a22947865eb51f77",
+    "rawBudgetResult": "FAIL",
+    "rawBudgetExitCode": 1,
+    "coldP95Seconds": 59.73081330000423,
+    "coldTargetSeconds": 90,
+    "warmP95Seconds": 62.53335420000076,
+    "warmTargetSeconds": 60,
+    "acceptedOverageSeconds": 2.5333542000007583,
+    "disposition": "Exact measured deviation accepted as nonblocking; performance investigation stopped without diagnostic, source change, sample removal, rerun or changed baseline. Carry the result and owner decision into independent task/slice/Wave review. No cause established. No additional regression, changed security/resource/quality requirement, future blanket exemption or G2 release approval is authorized."
+  },
+  "adversePerformanceBudgetCheck": {
+    "command": "artifacts/tmp/CAP-05.S02.T03.check-runtime-122/python/python.exe -B artifacts/tmp/CAP-05.S02.T03.performance-124.py c17511401808d003eaa2c74ff0b866e65a6955d9 benchmark",
+    "exitCode": 1,
+    "result": "FAIL",
+    "durationSeconds": 826.0118275999994,
+    "rawOutput": "artifacts/tmp/CAP-05.S02.T03.performance-124.benchmark.log",
+    "rawOutputSha256": "7bfaf6fa99ee4ff2181fb47edc663fe83ed9d078f550363b8588bf65b53469f3",
+    "report": "artifacts/tmp/CAP-05.S02.T03.performance-124.benchmark.json",
+    "reportSha256": "fc1b2ca099d8b400806e7e3340c9a0a2a25982f0f6716006a22947865eb51f77",
+    "disposition": "Preserved unchanged; exact nonblocking owner acceptance is separate from machine disposition."
+  },
+  "ownerAcceptanceNote": {
+    "path": "artifacts/evidence/CAP-05.S02.T03.performance-owner-acceptance-01.md",
+    "sha256": "5dea8e7a2046f5ec229b10a143370c6048e62080da7c3f0f99d700f86219774a"
+  },
+  "integrationCoverage": [
+    {
+      "boundary": "Identity, current source rights and protected bytes through encrypted raw retention and staged IR delivery",
+      "proof": "Final native141 structured-format and fallback groups plus benchmark124 successful child reports",
+      "cases": "Actual LocalDocumentAttachmentService.stage, retained attachment/revision identity, protected SQLCipher source authorization, InstalledParserPipeline, signed LPAC, encrypted raw retention and staged-IR delivery. Admission and clock fixtures remain declared; durable normalized IR publication belongs to S03."
+    },
+    {
+      "boundary": "Neutral schema and deterministic selection",
+      "proof": "Basic151 parser-regressions and portable-worker-contracts; all eleven actual public-wire sample assertions",
+      "cases": "Native JATS/TEI/XML/HTML preference, plain text and DOCX; source equivalence denied without explicit authority; IR hierarchy/raw/NFC/code-point offsets, citation/reference/cell own-node consistency, schema versions and exact outer/IR request binding."
+    },
+    {
+      "boundary": "Isolation, malicious input and resource boundaries",
+      "proof": "Native141 twenty selected groups",
+      "cases": "Real LPAC/Job principal, offline CPU worker, one process/four cores/4GiB; configured commit denial with owned positive and unconfined controls; malformed/encrypted/oversize/page-limit/XXE denials; native pixel/image/codec guards and encrypted lazy page output."
+    },
+    {
+      "boundary": "Failure, cancellation, death and recovery",
+      "proof": "Native141 cancellation, crash, parent-death, timeout and encrypted-fallback",
+      "cases": "No usable terminal-failure IR, bounded owned worker termination, exact ACL restoration/cleanup, new inspection principal and new immutable retry attempt with retained failure. Parent-death target cleanup succeeds while the guardian exit120 reporting outcome remains preserved without an invented zero or cause."
+    },
+    {
+      "boundary": "Quality and performance truth",
+      "proof": "Scan and page reports; benchmark124 unchanged FAIL and exact owner acceptance",
+      "cases": "Scanned output incomplete/OCR-disabled, no invented text; all authored labels/tables retained but extra model classifications keep layoutGold FAIL, ambiguous order/grid and unknown confidence. Warm62.5333542 versus60 is specifically accepted; cold59.7308133 versus90 passes. No retuning/repeat or target rewrite."
+    }
+  ],
+  "handoff": {
+    "contract": {
+      "path": "packages/contracts/documents/parse-result.v1.schema.json",
+      "sha256": "4fd67127c7ede036613b637c8d7d7bbb7097054429043cfacc66c9aa46915031"
+    },
+    "semantics": "A successful wire shape is staged/unverified data with exact source, parser/config/assets, attempt/job, warnings and protected artifact receipts. Failure/cancellation expose no IR. Inspection-only fallback cannot be accepted as complete canonical structure. S03 mints canonical revision/node identities and advances accepted head only on explicit human acceptance.",
+    "portableConsumerProof": "Each of eleven actual final child results passed the held public JSON Schema and exact request/IR binding assertions; wire text was not logged.",
+    "consumerLimit": "Discovery/admission fixtures are disclosed; no live S03 scheduler or accepted-revision outcome is inferred."
+  },
+  "reviewedArtifacts": [
+    {
+      "path": "docs/architecture/document-parsing.md",
+      "sha256": "c54ec0ba7f556877557ddf67e60958506bf15923d9aa7b293f65e4492b51e58f"
+    },
+    {
+      "path": "docs/adr/ADR-0045-bind-the-isolated-offline-parser-package-to-existing-document-authority.md",
+      "sha256": "fb827a4af72eec43961572e514291acc22a779f2264f1579973203477e1bcd10"
+    },
+    {
+      "path": "workers/document/parser-config.json",
+      "sha256": "4a64b8632596984722fe9276d3929906110f6f7fb826e41841bff21067d8afc7"
+    },
+    {
+      "path": "workers/document/parser-assets.json",
+      "sha256": "79b5f725c6732daa2da9b1569dfecd3d8ac064ada487cef44bc4ccb840e9eec3"
+    },
+    {
+      "path": "workers/document/requirements-parser.lock",
+      "sha256": "0d53cf8990edab7e5d56e61fc4be43747442517b3cbbd961f7b82c255d707b91"
+    }
+  ],
+  "limits": [
+    "Actual execution belongs to c1751140; current successor changes are metadata only, not fresh native or benchmark observations.",
+    "Synthetic lawful fixtures do not prove all scholarly PDFs or document interpretation. Extra layout classifications remain adverse.",
+    "No renderer/UI/reference change or new database migration belongs to S02; prior acquisition UI is not requalified here.",
+    "The exact owner timing acceptance does not approve W2 release or a general exemption.",
+    "This assembler confers no task, slice, Wave or release authority; independent slice disposition remains required."
+  ]
+}
