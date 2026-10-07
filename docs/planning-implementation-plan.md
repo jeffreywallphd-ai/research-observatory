@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 41d4d634615b11b5e21c9cd542165830709add6a0c49630af740bf1835df4089
+source_sha256: 3223e5b5af8211535919fe048b1dd08859dea92030b484ed1d3a9d21de366a99
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -11129,7 +11129,7 @@ Original tasks and approvals remain unchanged.
 
 **Outcome:** A replaceable local parser pipeline produces normalized document structure with retained originals and quality signals.
 
-**Wave / priority / status / review:** `W2` / `P0` / `READY` / `PENDING`
+**Wave / priority / status / review:** `W2` / `P0` / `IN_PROGRESS` / `PENDING`
 
 **Profiles / platforms:** `LOC`, `LAB` / `windows-x64`
 
@@ -11143,7 +11143,7 @@ Original tasks and approvals remain unchanged.
 
 **Dependencies:** `CAP-05.S01.T03`, `CAP-03.S04.T02`
 
-**Owner / review:** codex-w2-implementation / - (`-`)
+**Owner / review:** codex-w2-implementation / agent:/root/s02_t01_review (`changes-requested`)
 
 **Objective:** Contracts for input formats, structural blocks, coordinates, references, tables, figures, warnings, confidence, and parser provenance.
 
@@ -11161,13 +11161,51 @@ Original tasks and approvals remain unchanged.
 
 - python tools/verify.py --profile documents
 
+**Evidence:**
+
+- `artifacts/evidence/CAP-05.S02.T01.R01.json` at `91889b628d81ab5ae7f16d43905a143d5a3c552a`
+
 ##### Review history — CAP-05.S02.T01
 
-**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+**Review mode:** `append-only v1` / 1 completed round(s)
 
-**Current latest-review projection:** `-` by - at `-`
+###### Round R01
 
-**Latest notes:** -
+**Immutable submission packet:** `R01` / packet SHA-256 `28b28ad9715989344f930749f640f74b835decd8cbaa6652ea9e6290176a08f5`
+
+- Candidate / base / branch: `91889b628d81ab5ae7f16d43905a143d5a3c552a` / `47a97a44b3da06abdd07a07d8cb410f8bb909b30` / `codex/w2-implementation`
+- Submitted by / at: codex-w2-implementation / `2026-10-07T09:19:28+00:00`
+- Evidence: `artifacts/evidence/CAP-05.S02.T01.R01.json` / `589138336bda4734eb1c4f017dd984acf98da0483333005419dcbe9116022af0` / `91889b628d81ab5ae7f16d43905a143d5a3c552a`
+- Acceptance-criteria SHA-256: `36b884bdb566d30495752be0770a5fd1116cc04c51efcff8bdf0a8608e5490c4`
+- Verification-selection SHA-256: `804cc1d2f6dd7f8dcd4648778c236f56a6178aa5c751a7248daab6363a81e289`
+- Changed paths: `.gitattributes`, `artifacts/evidence/CAP-05.S02.T01.task-start.md`, `docs/architecture/README.md`, `docs/architecture/document-parsing.md`, `docs/planning-implementation-plan.md`, `packages/contracts/README.md`, `packages/contracts/documents/README.md`, `packages/contracts/documents/document-ir.v1.schema.json`, `packages/contracts/documents/generate_parser_schema.py`, `packages/contracts/documents/parse-request.v1.schema.json`, `packages/contracts/documents/parse-result.v1.schema.json`, `packages/contracts/documents/parser-selection.v1.schema.json`, `planning/backlog.yaml`, `planning/review-site/CAP-05/CAP-05.S02.T01.html`, `planning/review-site/CAP-05/CAP-05.S02.html`, `planning/review-site/CAP-05/index.html`, `planning/review-site/manifest.json`, `planning/review-site/waves/W2.html`, `planning/status-summary.md`, `services/core-api/src/research_observatory_core/object_store.py`, `services/core-api/src/research_observatory_core/parsing/__init__.py`, `services/core-api/src/research_observatory_core/parsing/contracts.py`, `services/core-api/src/research_observatory_core/parsing/normalization.py`, `services/core-api/src/research_observatory_core/parsing/pipeline.py`, `services/core-api/src/research_observatory_core/parsing/requests.py`, `services/core-api/src/research_observatory_core/parsing/selection.py`, `services/core-api/src/research_observatory_core/parsing/source.py`, `services/core-api/src/research_observatory_core/ports/parsing.py`, `tests/fixtures/documents/normalization/NormalizationTest-16.0.0.txt`, `tests/fixtures/documents/normalization/README.md`, `tests/fixtures/documents/normalization/UNICODE-LICENSE.txt`, `tests/parsing/__init__.py`, `tests/parsing/contract_fixtures.py`, `tests/parsing/test_document_ir.py`, `tests/parsing/test_normalization.py`, `tests/parsing/test_parse_handoff.py`, `tests/parsing/test_portable_schema.py`, `tests/parsing/test_protected_parse_source.py`, `tests/parsing/test_selection.py`
+- Selected checks: `.venv/Scripts/python.exe -B -m unittest discover -v -s tests/parsing -p test_*.py`, `.venv/Scripts/python.exe -B -m unittest -v tests.documents.test_local_attachment.LocalAttachmentServiceTests`, `.venv/Scripts/python.exe -B packages/contracts/documents/generate_parser_schema.py --check`, `.venv/Scripts/python.exe -B -m ruff format --check --config pyproject.toml -- services/core-api/src/research_observatory_core/parsing services/core-api/src/research_observatory_core/ports/parsing.py services/core-api/src/research_observatory_core/object_store.py tests/parsing packages/contracts/documents/generate_parser_schema.py`, `.venv/Scripts/python.exe -B -m ruff check --config pyproject.toml -- services/core-api/src/research_observatory_core/parsing services/core-api/src/research_observatory_core/ports/parsing.py services/core-api/src/research_observatory_core/object_store.py tests/parsing packages/contracts/documents/generate_parser_schema.py`, `$env:MYPYPATH='tools;services/core-api/src'; .venv/Scripts/python.exe -B -m mypy --config-file pyproject.toml --no-namespace-packages --no-incremental -- services/core-api/src/research_observatory_core/parsing services/core-api/src/research_observatory_core/ports/parsing.py services/core-api/src/research_observatory_core/object_store.py tests/parsing/contract_fixtures.py tests/parsing/test_document_ir.py tests/parsing/test_normalization.py tests/parsing/test_parse_handoff.py tests/parsing/test_portable_schema.py tests/parsing/test_selection.py packages/contracts/documents/generate_parser_schema.py`, `.venv/Scripts/python.exe -B tools/architecture_check.py --repo .`
+- Deferred checks: `Native secure adapters and real isolated parser handoff, offline pinned Docling/assets/resources, raw-output persistence and integrated slice-wide restart/recovery remain S02.T02/T03 and slice qualification.`, `The expanded ordinary-import fixture type diagnostic has only the unchanged tests/documents/test_oa_acquisition.py baseline errors, independently reproduced on that file with ordinary configured imports. T01 product and nonfixture contract-test type proof does not claim that broader fixture audit passes. Broader repository quality remains a Wave exit obligation.`, `Human acceptance, immutable document heads/revisions and source viewer remain S03/S04. Full repository/profile, cross-capability, packaging, security/privacy/rights/accessibility/performance and G2 remain fresh W2 exit duties.`
+- Selection rationale: High-risk public staged-parser contract and protected-source read extension: all new semantic/wire/selection/normalization failures and actual current-right/session/encrypted-copy integrations are selected; the existing attachment service class covers the changed inspect-read entry. Product/nonfixture contract-test ordinary types, affected lint/format, schema snapshots and architecture cover the delta. No dependency, UI, migration, worker or accepted revision change exists. Expanded independent contract/security/rights review is required.
+- Prior round / replayed open findings: `-` / -
+- Root-cause escalation: -
+
+**Disposition / reviewer / time:** `changes-requested` / agent:/root/s02_t01_review / `2026-10-07T09:31:12+00:00`
+
+**Immutable review ledger:** `artifacts/evidence/CAP-05.S02.T01.review-R01.json` / `fd61e83770694ada975381da4ed6b227535144cabf30610507294427b910da0b`
+
+**Review notes:** Independent expanded CAP-05.S02.T01 review requests changes for one reproduced criterion-1 source-offset integrity defect: reference, citation-marker and table-cell semantic content can contradict the identified node text/location while DocumentIR accepts the IR. Exact frozen R01 candidate/base/criteria/selection/evidence packet authenticated through existing taskctl read-only functions with no packet errors. Seven fresh selected groups and 31 parser plus 9 existing attachment cases passed without skips as reported; logs, producer, 13476 stable-input report and retained adverse hashes authenticate. Closed registry/deterministic selection, failure/cancellation/output binding, exact retained copy provenance and current inspect+derive/Intent/privacy/native-session read and delivery fences were reviewed without a second material blocker. Scope and evidence limits are truthful: parser/transport doubles are synthetic; real native/LPAC/Docling/resource and durable revision/human acceptance work remains later tasks and slice/Wave qualification. Approval is denied until F01 closes; no new human decision or framework work is required.
+
+**Findings opened:**
+
+- `CAP-05.S02.T01.R01.F01` `high` blocking=`True` criterion=`1` — Semantic reference, citation and table-cell spans can contradict their linked node; reproduce: At candidate 91889b628d81ab5ae7f16d43905a143d5a3c552a, load tests.parsing.contract_fixtures.rich_ir_wire(). Replace citations[0].marker with references[0].rawText and call DocumentIR.model_validate(value). It succeeds although citation node marker retains text/location [11,14) containing [1], while citation.marker now identifies [15,22) containing Ref one. Independently replacing references[0].rawText with citations[0].marker and replacing tables[0].cells[0].rawText with references[0].rawText also succeed while each linked node retains its original unrelated span. contracts.py:529-569 validates each span against a projection but never binds these semantic spans to the nodeId text/location. This supplies conflicting source anchors through a validated public IR, violating criterion 1 source-offset preservation and ADR-0029 exact citation marker/source-range and table raw-text/anchor relationships.; remediate: Before product remediation, update the missed task-start acceptance row and add focused failing contradictory-span regressions for references, citation markers and table cells. Bind each semantic content span to its referenced node own decoded text/source location under an explicit compatible equality or containment rule, refusing contradictions and unsupported missing-node-text cases rather than choosing one field silently. Preserve legitimate parent/child nesting, NFC reorder/expansion/noncontiguous contributor mappings, explicit ambiguity and existing positive structure fixtures. Reverify the affected semantic/handoff and relevant contract checks at a new committed candidate and replay this finding in an append-only R02 submission.
+
+**Prior finding closures:**
+
+- None
+
+**Current immutable submission awaiting review:** None
+
+**Current latest-review projection:** `changes-requested` by agent:/root/s02_t01_review at `2026-10-07T09:31:12+00:00`
+
+**Latest notes:** Independent expanded CAP-05.S02.T01 review requests changes for one reproduced criterion-1 source-offset integrity defect: reference, citation-marker and table-cell semantic content can contradict the identified node text/location while DocumentIR accepts the IR. Exact frozen R01 candidate/base/criteria/selection/evidence packet authenticated through existing taskctl read-only functions with no packet errors. Seven fresh selected groups and 31 parser plus 9 existing attachment cases passed without skips as reported; logs, producer, 13476 stable-input report and retained adverse hashes authenticate. Closed registry/deterministic selection, failure/cancellation/output binding, exact retained copy provenance and current inspect+derive/Intent/privacy/native-session read and delivery fences were reviewed without a second material blocker. Scope and evidence limits are truthful: parser/transport doubles are synthetic; real native/LPAC/Docling/resource and durable revision/human acceptance work remains later tasks and slice/Wave qualification. Approval is denied until F01 closes; no new human decision or framework work is required.
+
+**Currently open findings:** `CAP-05.S02.T01.R01.F01`
 
 #### - [ ] CAP-05.S02.T02 - Implement native JATS/TEI/XML/HTML parsing
 

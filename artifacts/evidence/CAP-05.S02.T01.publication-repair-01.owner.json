@@ -1,0 +1,46 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "exact-unpublished-adverse-task-publication-owner-authorization",
+  "taskId": "CAP-05.S02.T01",
+  "currentProductCommit": "a472583df43b17b0e3eac996b4f2b0d976de354c",
+  "proposal": {
+    "path": "artifacts/tmp/CAP-05.S02.T01.publication-repair-01/proposal.json",
+    "sha256": "56ff3af15e98ec8f3e79848f879389c7da3dffde8d74b28f1ac9b88043e73ed1"
+  },
+  "readiness": {
+    "path": "artifacts/tmp/CAP-05.S02.T01.publication-repair-01/readiness-review-01.json",
+    "sha256": "cdc22bb41c77fe2b538f8956618fc413e55a4513ad00973b9c3de9e9af516700"
+  },
+  "ownerAuthority": "Direct human response in the current chat to this exact decision packet",
+  "ownerResponse": "Approved",
+  "ownerRespondedAt": "2026-10-07T11:01:13Z observed by agent; exact client response timestamp unavailable",
+  "recordedAt": "2026-10-07T11:01:44.371473+00:00",
+  "authorizedScope": [
+    "Permit only this exact unpublished adverse R01 public representation mapping. Preserve every original byte and hash in the ignored snapshot; no committed history or original local proof is removed or rewritten.",
+    "Replace the three named canonical metadata files with the exact reviewed public copies. One architecture command display label uses the equivalent repository-root argument dot; actual executed argv, results, producer, log/input proof, candidate/base/branch and all criteria remain unchanged.",
+    "Retain the original independent reviewer, changes-requested outcome, R01/F01 identities, complete finding text, timestamps, criterion assessments, telemetry and empty closures. Derived public evidence/packet/ledger hashes change solely to bind the reviewed display representation. Separately authenticated representation provenance does not pretend that the public packet was the originally reviewed packet.",
+    "Record this exact human authority append-only, regenerate and validate only the named derived views through existing tools, and pass unchanged normal privacy/credential hooks. No framework source, scanner/policy/admission, product scope/security/experience, task outcome or release rule is changed.",
+    "After publication, qualify the new committed T01 correction and submit an append-only R02 through unchanged taskctl with F01 replay. Required independent closure review, local integration, later product tasks and full Wave/release gates remain mandatory."
+  ],
+  "originalManifestSha256": "f72030ae12e190b5e2f4e9eb6c43fda73131880a82620ada69e519c4a5b39922",
+  "originalAdverseLedgerSha256": "04f83399864ed804ce2a56c323d85fe65515c37cb278d96c194b80593170c5ec",
+  "originalPacketSha256": "428485d00ae82410126c7f7f986022e4999aa0d83230c6d0e80f337e33f10978",
+  "publicManifest": {
+    "path": "artifacts/tmp/CAP-05.S02.T01.publication-repair-01/public-manifest.json",
+    "sha256": "589138336bda4734eb1c4f017dd984acf98da0483333005419dcbe9116022af0"
+  },
+  "publicAdverseLedger": {
+    "path": "artifacts/tmp/CAP-05.S02.T01.publication-repair-01/public-ledger.json",
+    "sha256": "fd61e83770694ada975381da4ed6b227535144cabf30610507294427b910da0b"
+  },
+  "publicPacketSha256": "28b28ad9715989344f930749f640f74b835decd8cbaa6652ea9e6290176a08f5",
+  "publicBacklog": {
+    "path": "artifacts/tmp/CAP-05.S02.T01.publication-repair-01/public-backlog.yaml",
+    "sha256": "634965d79d322b2d3e91b7790f7f360b63c882bf873ba930bf83424a527b7ced"
+  },
+  "adverseFindingAndOutcomePreserved": true,
+  "formalR02Approval": false,
+  "taskCompleted": false,
+  "waveCompleted": false,
+  "releaseApproved": false
+}

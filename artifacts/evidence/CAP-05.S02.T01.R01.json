@@ -1,0 +1,334 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "CAP-05.S02.T01",
+  "baseCommit": "47a97a44b3da06abdd07a07d8cb410f8bb909b30",
+  "commit": "91889b628d81ab5ae7f16d43905a143d5a3c552a",
+  "branch": "codex/w2-implementation",
+  "changedFiles": [
+    ".gitattributes",
+    "artifacts/evidence/CAP-05.S02.T01.task-start.md",
+    "docs/architecture/README.md",
+    "docs/architecture/document-parsing.md",
+    "docs/planning-implementation-plan.md",
+    "packages/contracts/README.md",
+    "packages/contracts/documents/README.md",
+    "packages/contracts/documents/document-ir.v1.schema.json",
+    "packages/contracts/documents/generate_parser_schema.py",
+    "packages/contracts/documents/parse-request.v1.schema.json",
+    "packages/contracts/documents/parse-result.v1.schema.json",
+    "packages/contracts/documents/parser-selection.v1.schema.json",
+    "planning/backlog.yaml",
+    "planning/review-site/CAP-05/CAP-05.S02.T01.html",
+    "planning/review-site/CAP-05/CAP-05.S02.html",
+    "planning/review-site/CAP-05/index.html",
+    "planning/review-site/manifest.json",
+    "planning/review-site/waves/W2.html",
+    "planning/status-summary.md",
+    "services/core-api/src/research_observatory_core/object_store.py",
+    "services/core-api/src/research_observatory_core/parsing/__init__.py",
+    "services/core-api/src/research_observatory_core/parsing/contracts.py",
+    "services/core-api/src/research_observatory_core/parsing/normalization.py",
+    "services/core-api/src/research_observatory_core/parsing/pipeline.py",
+    "services/core-api/src/research_observatory_core/parsing/requests.py",
+    "services/core-api/src/research_observatory_core/parsing/selection.py",
+    "services/core-api/src/research_observatory_core/parsing/source.py",
+    "services/core-api/src/research_observatory_core/ports/parsing.py",
+    "tests/fixtures/documents/normalization/NormalizationTest-16.0.0.txt",
+    "tests/fixtures/documents/normalization/README.md",
+    "tests/fixtures/documents/normalization/UNICODE-LICENSE.txt",
+    "tests/parsing/__init__.py",
+    "tests/parsing/contract_fixtures.py",
+    "tests/parsing/test_document_ir.py",
+    "tests/parsing/test_normalization.py",
+    "tests/parsing/test_parse_handoff.py",
+    "tests/parsing/test_portable_schema.py",
+    "tests/parsing/test_protected_parse_source.py",
+    "tests/parsing/test_selection.py"
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "The versioned neutral IR preserves raw decoded text and original object identity, deterministic Unicode16 NFC/newline-only projections with half-open code-point contributor mappings, ordered parented nodes, explicit source page frame/rotation, references/citation candidates, table spans, figures/raw artifact receipts and separate quality/unknown confidence. The complete official Unicode16 NFC gold and independent raw-origin expectations cover composition, expansion, reordering/noncontiguous contributors, blocking, Hangul/Indic, supplementary scalars and CRLF.",
+        "The closed Core registry records all candidates, runtime observations, deterministic native-first preference and stable ties. Exact explicit alternative-copy or proven same-object/source provenance is required; same Work/version/digest alone is non-granting. PDF degraded output is a separate inspection-only attempt after an exact Docling failure; denial and cancellation cannot trigger fallback.",
+        "Strict staged handoff checks exact source/job/attempt/config/asset selection binding against independent parent-owned producer/artifact receipts. Failure/cancellation types cannot contain IR; malformed/duplicate/nonfinite/oversized output, stale substitutions and copied models fail closed with content-free errors. The parser port has no canonical write/acceptance capability. Real protected-source tests leave canonical document rows unchanged after success, denial, crash, cancellation and current-right/session change."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "Fresh parser unit/portable schema/normalization/selection/handoff and protected-source cases pass without skips, alongside the existing complete attachment service regression class. Actual test-owned SQLCipher and encrypted-object reads check inspect plus derive, changed rights before execution/delivery, current Intent/privacy, exact source substitutions, deduplicated ciphertext without inherited copy authority, and the existing production native-session detach/close/reopen fence.",
+        "The acquired-copy case uses an actual retained receipt/current per-copy rights/encrypted source and existing declared synthetic transport, rejecting local-origin substitution and wrong receipt/location. It is not a production acquisition, DPAPI or LPAC claim. All parser deliveries are declared synthetic doubles in T01; actual native/CPU runtime qualification remains T02/T03.",
+        "Affected Ruff format/lint, normal-import nonincremental product and nonfixture contract-test types, exact generated schema checks and architecture boundary checks pass. Development errors and behavioral red failures remain distinct and preserved; they are not reclassified as qualification."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "Published four portable schema snapshots and deterministic product-contract generator, hostile-wire and scholarly-structure fixtures, unmodified pinned Unicode16 standards data with complete license notice/exact checkout bytes, product ports/contracts and architecture documentation. Added the exact protected parse-read object-store facet while preserving inspection-only consumers; current rights decisions reuse existing audit transactions.",
+        "No database migration, accepted-head repository/write, UI change, parser/runtime dependency, cryptography, approved-reference/scope/security change or automation-framework source edit is selected. Normal owned claim and checked generated planning views are included in the exact base-to-candidate inventory. Existing acquisition-fixture typing defects remain recorded and deferred to the full qualification boundary; the fixture is unchanged and passes runtime coverage selected here. No full-green repository or Wave claim follows."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "verificationSelection": {
+    "selectedCommandIds": [
+      "documents:unit",
+      "contracts:unit",
+      "foundation:quality",
+      "foundation:architecture"
+    ],
+    "riskAnalysis": "High-risk public staged-parser contract and protected-source read extension: all new semantic/wire/selection/normalization failures and actual current-right/session/encrypted-copy integrations are selected; the existing attachment service class covers the changed inspect-read entry. Product/nonfixture contract-test ordinary types, affected lint/format, schema snapshots and architecture cover the delta. No dependency, UI, migration, worker or accepted revision change exists. Expanded independent contract/security/rights review is required.",
+    "deferred": [
+      "Native secure adapters and real isolated parser handoff, offline pinned Docling/assets/resources, raw-output persistence and integrated slice-wide restart/recovery remain S02.T02/T03 and slice qualification.",
+      "The expanded ordinary-import fixture type diagnostic has only the unchanged tests/documents/test_oa_acquisition.py baseline errors, independently reproduced on that file with ordinary configured imports. T01 product and nonfixture contract-test type proof does not claim that broader fixture audit passes. Broader repository quality remains a Wave exit obligation.",
+      "Human acceptance, immutable document heads/revisions and source viewer remain S03/S04. Full repository/profile, cross-capability, packaging, security/privacy/rights/accessibility/performance and G2 remain fresh W2 exit duties."
+    ]
+  },
+  "checks": [
+    {
+      "id": "parser-contract-and-protected-source",
+      "exitCode": 0,
+      "durationSeconds": 29.312,
+      "rawOutput": "artifacts/tmp/CAP-05.S02.T01.selected-01-91889b62.parser-contract-and-protected-source.log",
+      "rawOutputSha256": "c8f0b510d91b985455d11ea0749f39c2aeec0fc06cb2b473e73ad470d25059ac",
+      "command": ".venv/Scripts/python.exe -B -m unittest discover -v -s tests/parsing -p test_*.py",
+      "commit": "91889b628d81ab5ae7f16d43905a143d5a3c552a",
+      "result": "PASS",
+      "rawOutputCanonicalSha256": "16a857f452c0927215c6279ff9d5f774826f817f14eb24f413e7a5836600bc4b",
+      "inputReport": "artifacts/tmp/CAP-05.S02.T01.selected-01-91889b62.json",
+      "inputReportSha256": "74c3bad433cc60f10319d28106ade10115763fd9a05b9ee210f89eda2557f32a",
+      "provenance": "Fresh exact committed Windows x64 candidate with tracked and installed Python inputs held against write/delete throughout execution; empty bytecode cache before imports.",
+      "executedUnittestCases": 31
+    },
+    {
+      "id": "existing-attachment-regression",
+      "exitCode": 0,
+      "durationSeconds": 26.933,
+      "rawOutput": "artifacts/tmp/CAP-05.S02.T01.selected-01-91889b62.existing-attachment-regression.log",
+      "rawOutputSha256": "d546dcdb60f8c5b0e3f7dc2ca5a2a9b3af38e9acd0ee4016115e622cd5f1ba94",
+      "command": ".venv/Scripts/python.exe -B -m unittest -v tests.documents.test_local_attachment.LocalAttachmentServiceTests",
+      "commit": "91889b628d81ab5ae7f16d43905a143d5a3c552a",
+      "result": "PASS",
+      "rawOutputCanonicalSha256": "92a8b8593338b948bec29ace5e46d7beef5fca53bd86686bcc7a55001f5bb6e6",
+      "inputReport": "artifacts/tmp/CAP-05.S02.T01.selected-01-91889b62.json",
+      "inputReportSha256": "74c3bad433cc60f10319d28106ade10115763fd9a05b9ee210f89eda2557f32a",
+      "provenance": "Fresh exact committed Windows x64 candidate with tracked and installed Python inputs held against write/delete throughout execution; empty bytecode cache before imports.",
+      "executedUnittestCases": 9
+    },
+    {
+      "id": "parser-schema",
+      "exitCode": 0,
+      "durationSeconds": 0.622,
+      "rawOutput": "artifacts/tmp/CAP-05.S02.T01.selected-01-91889b62.parser-schema.log",
+      "rawOutputSha256": "a55ee30fb47c9afacd282abc3e69cce6ee0e020d9d710eb2dc98eda54569bb56",
+      "command": ".venv/Scripts/python.exe -B packages/contracts/documents/generate_parser_schema.py --check",
+      "commit": "91889b628d81ab5ae7f16d43905a143d5a3c552a",
+      "result": "PASS",
+      "rawOutputCanonicalSha256": "cf42b66dd1df678fb7cf5ffaf80552a60597b0a2f2ef96323d1949800d8f6085",
+      "inputReport": "artifacts/tmp/CAP-05.S02.T01.selected-01-91889b62.json",
+      "inputReportSha256": "74c3bad433cc60f10319d28106ade10115763fd9a05b9ee210f89eda2557f32a",
+      "provenance": "Fresh exact committed Windows x64 candidate with tracked and installed Python inputs held against write/delete throughout execution; empty bytecode cache before imports."
+    },
+    {
+      "id": "format",
+      "exitCode": 0,
+      "durationSeconds": 0.148,
+      "rawOutput": "artifacts/tmp/CAP-05.S02.T01.selected-01-91889b62.format.log",
+      "rawOutputSha256": "c4fd3f494556e5e7cf4355131a1080dbdcf0bbf09664638af9984db197ad88c0",
+      "command": ".venv/Scripts/python.exe -B -m ruff format --check --config pyproject.toml -- services/core-api/src/research_observatory_core/parsing services/core-api/src/research_observatory_core/ports/parsing.py services/core-api/src/research_observatory_core/object_store.py tests/parsing packages/contracts/documents/generate_parser_schema.py",
+      "commit": "91889b628d81ab5ae7f16d43905a143d5a3c552a",
+      "result": "PASS",
+      "rawOutputCanonicalSha256": "c4fd3f494556e5e7cf4355131a1080dbdcf0bbf09664638af9984db197ad88c0",
+      "inputReport": "artifacts/tmp/CAP-05.S02.T01.selected-01-91889b62.json",
+      "inputReportSha256": "74c3bad433cc60f10319d28106ade10115763fd9a05b9ee210f89eda2557f32a",
+      "provenance": "Fresh exact committed Windows x64 candidate with tracked and installed Python inputs held against write/delete throughout execution; empty bytecode cache before imports."
+    },
+    {
+      "id": "lint",
+      "exitCode": 0,
+      "durationSeconds": 0.143,
+      "rawOutput": "artifacts/tmp/CAP-05.S02.T01.selected-01-91889b62.lint.log",
+      "rawOutputSha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18",
+      "command": ".venv/Scripts/python.exe -B -m ruff check --config pyproject.toml -- services/core-api/src/research_observatory_core/parsing services/core-api/src/research_observatory_core/ports/parsing.py services/core-api/src/research_observatory_core/object_store.py tests/parsing packages/contracts/documents/generate_parser_schema.py",
+      "commit": "91889b628d81ab5ae7f16d43905a143d5a3c552a",
+      "result": "PASS",
+      "rawOutputCanonicalSha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18",
+      "inputReport": "artifacts/tmp/CAP-05.S02.T01.selected-01-91889b62.json",
+      "inputReportSha256": "74c3bad433cc60f10319d28106ade10115763fd9a05b9ee210f89eda2557f32a",
+      "provenance": "Fresh exact committed Windows x64 candidate with tracked and installed Python inputs held against write/delete throughout execution; empty bytecode cache before imports."
+    },
+    {
+      "id": "types",
+      "exitCode": 0,
+      "durationSeconds": 6.101,
+      "rawOutput": "artifacts/tmp/CAP-05.S02.T01.selected-01-91889b62.types.log",
+      "rawOutputSha256": "2ea17864b2fae3692d354a40d996a3e5e904fbb9b766aa2ba1f83ab52a36747d",
+      "command": "$env:MYPYPATH='tools;services/core-api/src'; .venv/Scripts/python.exe -B -m mypy --config-file pyproject.toml --no-namespace-packages --no-incremental -- services/core-api/src/research_observatory_core/parsing services/core-api/src/research_observatory_core/ports/parsing.py services/core-api/src/research_observatory_core/object_store.py tests/parsing/contract_fixtures.py tests/parsing/test_document_ir.py tests/parsing/test_normalization.py tests/parsing/test_parse_handoff.py tests/parsing/test_portable_schema.py tests/parsing/test_selection.py packages/contracts/documents/generate_parser_schema.py",
+      "commit": "91889b628d81ab5ae7f16d43905a143d5a3c552a",
+      "result": "PASS",
+      "rawOutputCanonicalSha256": "ca16d6d1a06c6903f5407ba5268cb8b5eb5d8c7811b7532282916ec31807c328",
+      "inputReport": "artifacts/tmp/CAP-05.S02.T01.selected-01-91889b62.json",
+      "inputReportSha256": "74c3bad433cc60f10319d28106ade10115763fd9a05b9ee210f89eda2557f32a",
+      "provenance": "Fresh exact committed Windows x64 candidate with tracked and installed Python inputs held against write/delete throughout execution; empty bytecode cache before imports."
+    },
+    {
+      "id": "architecture",
+      "exitCode": 0,
+      "durationSeconds": 4.045,
+      "rawOutput": "artifacts/tmp/CAP-05.S02.T01.selected-01-91889b62.architecture.log",
+      "rawOutputSha256": "51a256bf6a7b2e89ab1d1b97aa19077aabf0e8858a450de1f5ceb155ed5c3e88",
+      "command": ".venv/Scripts/python.exe -B tools/architecture_check.py --repo .",
+      "commit": "91889b628d81ab5ae7f16d43905a143d5a3c552a",
+      "result": "PASS",
+      "rawOutputCanonicalSha256": "1ba622fdbf569bf9ab13ee46e639b636ea005c560abcd4b168f782d8fbdc3f74",
+      "inputReport": "artifacts/tmp/CAP-05.S02.T01.selected-01-91889b62.json",
+      "inputReportSha256": "74c3bad433cc60f10319d28106ade10115763fd9a05b9ee210f89eda2557f32a",
+      "provenance": "Fresh exact committed Windows x64 candidate with tracked and installed Python inputs held against write/delete throughout execution; empty bytecode cache before imports."
+    }
+  ],
+  "freshObservation": {
+    "path": "artifacts/tmp/CAP-05.S02.T01.selected-01-91889b62.json",
+    "sha256": "74c3bad433cc60f10319d28106ade10115763fd9a05b9ee210f89eda2557f32a"
+  },
+  "producer": {
+    "path": "artifacts/tmp/CAP-05.S02.T01.run-selected-01.py",
+    "sha256": "f03fc29bd333708450462b2204c0a440aaeef602c32d7010ca2b66584a565f1f"
+  },
+  "retainedDevelopmentObservations": [
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T01.acquired-source-development-01.txt",
+      "sha256": "2d933e709a7393855382d17174a99a262041c3ec1f7f25f0491f931e7775ffc6"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T01.acquired-source-development-02.txt",
+      "sha256": "1f0b66881bcb255608e7e2763f73edf0b867a8447b48eb5b4414ef267e5bc7ec"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T01.architecture-development-01.txt",
+      "sha256": "5bc8af95d2b9e8912e45ca9c6d01dd864b36895df2c98767b165158e31ff484f"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T01.architecture-development-02.txt",
+      "sha256": "6d8e38dbeb0f730b7f21755dfac3f753a3dde407639553db1a81ec1d58c4d551"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T01.architecture-development-03.txt",
+      "sha256": "dfc98f82fcb0836ad17c7683defe32b538d1500fa1e153a2b8f482a9320ccfe8"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T01.cancellation-red-01.txt",
+      "sha256": "a2ffe04c7323b2875370f4894f393a39a629de7c077c852816bbe0ca2db74b6e"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T01.copy-origin-red-01.txt",
+      "sha256": "036f60a89b02dd334f93d28659a6fb85fd1bd6ffc19445fa81442599c3fad8b5"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T01.copy-origin-red-02.txt",
+      "sha256": "aac62c1a19a186b41a804b552abaaff4c47b40d7a8220911cdb120ef1e975a80"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T01.ir-boundary-red-02.txt",
+      "sha256": "6442157b8607b02200737f089bcf7884e5e1beba2868dbf4fe382202cc0c781a"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T01.lint-development-01.txt",
+      "sha256": "5fac37a274edb5c28114be59d0fd345613c429c1cb02770cbe684cb156bc95dc"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T01.lint-development-02.txt",
+      "sha256": "d2647899a07e9777f98d655acc925e3fc93dc1d179070c3eddfeac38c0a4aed5"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T01.preexisting-acquisition-types-01.txt",
+      "sha256": "49c9ec863bc9391112d3ac2cf05e644e7758625ca39e961baa5f8a6d28e27452"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T01.protected-source-development-01.txt",
+      "sha256": "5e05e53ca5956b0c4392fb61438f0c52b0350dd801828ac57ec87105f1c0237a"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T01.protected-source-development-02.txt",
+      "sha256": "742e6598b82348fcafaef1f7ce9daf54cbee31f5a03ed2624f77f9285734832f"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T01.protected-source-development-03.txt",
+      "sha256": "eb8ad006d8acc712f810d89cc402e2124c4d4a5e01019d1c1ec4b427ee73d74c"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T01.protected-source-development-04.txt",
+      "sha256": "d6fcb7b67fc2668e7b56735a269aab1f0b06b39fc847c36095dfbf7a1ba48a3c"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T01.protected-source-development-05.txt",
+      "sha256": "ccd747091cecbea5c8250f61514255f6ab6bcd8752df1fa1c5bff243113e8dbc"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T01.protected-types-development-01.txt",
+      "sha256": "baa0d3b88eaf364e885ed03a71c71f04adc0660bd0a021faa3fd07ef362c37f5"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T01.protected-types-development-02.txt",
+      "sha256": "49c9ec863bc9391112d3ac2cf05e644e7758625ca39e961baa5f8a6d28e27452"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T01.red-handoff-01.txt",
+      "sha256": "b5442e5eaafcc31e07e4ae93f4b982ad3aa19699dfae1204dbde7e2b7e9a93e2"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T01.red-ir-01.txt",
+      "sha256": "2d7bcb06b537bc6d7a38db57861ed67bf3fb63bafd7b9ec2c08e5c305d6a3def"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T01.red-normalization-01.txt",
+      "sha256": "cf23b122ab05171137b8d4aec7d9c59b4cde434b49a4631f67552701f51b5f48"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T01.red-protected-source-01.txt",
+      "sha256": "5320a62deeafa8cbdfebedd59784b761afa949b594b8d54c604c467861985bdb"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T01.red-selection-01.txt",
+      "sha256": "8b1e6fae904481336c72176a9fc8d910f12a8ece2b0a2d04052389778af34124"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T01.rich-ir-red-01.txt",
+      "sha256": "a7efcc0b54d6c9b94ddeb0df5bb81f8f1a54437fd2673189240d213b83282841"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T01.types-development-01.txt",
+      "sha256": "139049c4886e2619acfa866b8eeabbaa25348b90f8801b7be59d3b71992c6265"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T01.types-development-02.txt",
+      "sha256": "32eda81a894a598bca85d404bd438bd2879232a623d42a06876d7294bbc75ec8"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T01.types-development-03.txt",
+      "sha256": "57343ae14f4d3ae5c3967e6658a498ff3d8c33c8422e730015d97dac11e5ea11"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T01.types-development-04.txt",
+      "sha256": "2226aaeedf08445ff31224c97bb4f6ab4294442c42a86fc4608a8dc83125e97c"
+    }
+  ],
+  "publicationRepresentation": {
+    "documentType": "public-display-representation-of-preserved-adverse-R01",
+    "originalManifest": {
+      "path": "artifacts/tmp/CAP-05.S02.T01.publication-repair-01/private-state/worktree/artifacts/evidence/CAP-05.S02.T01.R01.json",
+      "sha256": "f72030ae12e190b5e2f4e9eb6c43fda73131880a82620ada69e519c4a5b39922"
+    },
+    "originalFrozenPacketSha256": "428485d00ae82410126c7f7f986022e4999aa0d83230c6d0e80f337e33f10978",
+    "originalAdverseLedger": {
+      "path": "artifacts/tmp/CAP-05.S02.T01.publication-repair-01/private-state/worktree/artifacts/evidence/CAP-05.S02.T01.review-R01.json",
+      "sha256": "04f83399864ed804ce2a56c323d85fe65515c37cb278d96c194b80593170c5ec"
+    },
+    "snapshot": {
+      "path": "artifacts/tmp/CAP-05.S02.T01.publication-repair-01/snapshot-01.json",
+      "sha256": "793883e3d7b6aa952f438743d79f48bede21fa96728071895857703af27ef987"
+    },
+    "meaning": "Only the architecture command display uses the equivalent repository-root argument dot. The actual executed argv remains unchanged in the ignored fresh observation. No command is rerun or reclassified. Original candidate, criteria, results, input/log/producer bindings and adverse F01 remain unchanged. This representation requires an exact owner decision and independent authentication; it is not a new original R01 submission or an approval."
+  }
+}
