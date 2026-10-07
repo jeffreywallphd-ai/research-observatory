@@ -1,0 +1,14 @@
+{
+  "schemaVersion": "1.0",
+  "kind": "authority-preserving-correction",
+  "origin": {
+    "taskId": "CAP-05.S01.T03",
+    "commit": "9a860fc45fe67d9582f4a37c81c90436b1ec715e",
+    "sha256": "f74b32f21cdea4d6810e2651e892075295f377fba52d8cb924d1e74d9d76b16e"
+  },
+  "reproduction": "At clean committed81627fae5382e402ae5a3fc43ada941fcb33bebe, the existing exact encrypted v20 SDK migration fixture expects the current chain to end at0023 although the approved runner correctly adds0024 and0025. Its first actual case fails at the plan migration_ids assertion; later current23 fingerprint/history/manifest assertions are also stale. Fresh bounded1-case actualFAIL is retained in artifacts/tmp/W2.C15.T01.red-01-81627fae.json SHA256 750743baa137ae764aa52fd6174fd0e04942bbf7221ed7ff68e4b931949ccb6a; raw log artifacts/tmp/W2.C15.T01.red-01-81627fae.encrypted-v20-current-migration-fixture.log SHA256 114b8d1a3f31deffb86134950e8f059ca4bfb8376ebfe395804faa86061c8958. Guarded13444 inputs are stable. This is not a product migration failure or new qualification.",
+  "changedPaths": [
+    "tests/connectors/test_plugin_grant_migration.py"
+  ],
+  "impactAnalysis": "Restore current-schema qualification for the approved additive migrations through25 in the original T03 relevant fixture/integration obligation. Add explicit0024/0025 imports and expected current migration IDs/history rows, advance only current-target/schema-fingerprint/manifest expectations from23 to25, and name the current25 helper accurately. Retain the exact encrypted v20 DDL/profile/schema fingerprint and source20 metadata, every original v21 fault-injection step, rollback/classification/retry, immutable first three migration rows, encrypted-source and backup SHA assertions, empty grant events and actual reopen. Assert newly added acquisition/intake tables remain empty in the current database. No original predecessor/source20 assertion or schema/module/product/permission/security/rights/UX/framework source change, fixture regeneration, history rewrite, criterion or threshold change is admitted. Run the full affected two-method encrypted migration class with all original subtests and no skips, changed-file Ruff format/lint and nonincremental ordinary-import mypy without suppression. Obtain independent correction/integration disposition, then resume the same W2 campaign and fresh CP07 before remaining parser tasks. Historical S01/SDK/C13/C14 support stays historical; full W2 and G2 remain separate."
+}
