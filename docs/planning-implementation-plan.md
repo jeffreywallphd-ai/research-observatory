@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: b7efe70d8fb6ba572ef81d85bebea18942fcc2664fcda07d127d0beb490d7013
+source_sha256: aa5c44c81c4540afe6e4c63a52797bc66f12137a91490f71c516164b63d54139
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -10729,7 +10729,7 @@ Original tasks and approvals remain unchanged.
 
 **Outcome:** Full-text acquisition is explicit, resumable, checksum-verified, and governed by permitted use.
 
-**Wave / priority / status / review:** `W2` / `P0` / `IN_PROGRESS` / `PENDING`
+**Wave / priority / status / review:** `W2` / `P0` / `REVIEW` / `REVIEW`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 

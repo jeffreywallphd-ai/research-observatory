@@ -1,0 +1,436 @@
+{
+  "document_type": "independent-slice-review",
+  "slice_id": "CAP-05.S01",
+  "review_round": "01",
+  "reviewer": "agent:/root/s01_integration_review",
+  "result": "approved",
+  "reviewed_at": "2026-10-07T02:52:21Z",
+  "candidate_commit": "e53a5154ddf78522edd252645eafc71621acdc51",
+  "evidence_delivery_commit": "dea20267e1de8014f6ab6dd28bc363cf6864910f",
+  "submission_metadata_commit": "1bcf679205a80612701d2dcb02cfa6feb97949ce",
+  "approval_commit": "c85a59f3a293f8e3f2eaf6454682c9a14b1efa55",
+  "evidence_reference": {
+    "path": "artifacts/evidence/CAP-05.S01.qualification-01.json",
+    "sha256": "7ceee8b56fc24ab76bb2536a058143a06f3ec549e292645fc8ca3ca6055d98ef",
+    "commit": "dea20267e1de8014f6ab6dd28bc363cf6864910f"
+  },
+  "reviewed_backlog_sha256": "fabac3c5e3d70b3b291f960495808826b2bb7a365f9c6fb075892a154e4220a6",
+  "notes": "Independent integration review approves CAP-05.S01 slice completion for exact committed qualification bundle dea20267e1de8014f6ab6dd28bc363cf6864910f and unchanged qualified source J e53a5154ddf78522edd252645eafc71621acdc51. All three original tasks are DONE/independently approved. Current clean synthetic principal composes upstream scholarly identity/Intent/privacy/rights, owned verified TLS, encrypted staging, signed LPAC, durable recovery and explicit Attach through the portable exact protected source handoff. Criterion-linked denial/cancellation/failure/restart/migration and copy/queue/placeholder/UI proof support the integrated outcome. Earlier preflight handoff/resource gaps have actual current proof; ten acquisition samples have a separately approved initial baseline. Exact approved EX01 authority/conformance/capture methods, adverse outcomes and evidence-tier limits remain preserved. No criterion-bound blocker remains. This review does not mutate campaign state or approve checkpoint, W2/full qualification, production packaging or human release.",
+  "integration_assessment": [
+    {
+      "criterion": "Approved S01 sections4,5,10,13,17: integrated clean-project acquisition and portable downstream handoff",
+      "result": "satisfied",
+      "assessment": "The named current-Core owned-HTTPS principal starts from a fresh synthetic project and accepted upstream reconciled work/version/source identity, Intent/privacy and per-copy rights. It joins durable admission, verified TLS, actual SQLCipher/encrypted object staging and the signed Windows LPAC inspector. Fresh native-session recovery retains the exact inspected candidate and immutable source/license/receipt facts, performs no redownload, and requires explicit human Attach. The ports-only consumer obtains typed source_for_revision metadata and revision-bound ObjectStore.open_document_attachment, reads exact original body/digest and verifies source/license/receipt identity with one total HTTP request. Generic hash access, substituted revision and current LOCAL inspect revocation fail. Concrete adapter composition remains outside the downstream consumer; no hidden private-module import or source-state reconstruction is needed."
+    },
+    {
+      "criterion": "Approved S01 sections5,8,10,17: durable queue, denial, cancellation, failure and restart/recovery",
+      "result": "satisfied",
+      "assessment": "The current50-method acquisition group and44-method attachment/lifecycle group pass without skips, including queue-before-network, one-attempt/one-use exact confirmation, source/session/rights denial, current operation/actor/project/native-session ownership, expired-transfer abandonment and fresh retained-candidate recovery. Owned cancellation/partial cleanup, cleanup-failure dominance, no unsafe range concatenation, atomic publication rollback, immutable original provenance and missing-full-text metadata remain covered. Actual native mutex, zero-byte dispatch after revoked admission and owned socket cancellation supply their bounded real boundaries; opaque/mounted replies remain UI fixtures. Task Center cannot generically retry acquisition or silently attach a pending candidate. Later success does not relabel historical denial/deadline/cleanup observations."
+    },
+    {
+      "criterion": "Approved S01 sections5,9,10,14,17: migration and encrypted-source compatibility",
+      "result": "satisfied",
+      "assessment": "Current57-method storage/migration/schema/recovery proof and compatible attachment/API cases pass without skips. Literal populated v22/v23/v24 predecessors, additive schema25, backup/interruption/restart/rollback behavior, foreign-key integrity and retained rows/ciphertext remain criterion-linked. All eight historical migration interruption cases and exact five-field ownership/current-rights guards remain reviewed. Existing SQL helper relocation into the governed adapter was assessed as exact AST-equal persistence consolidation; public typed ports and current schema/guide/forward expectations agree. No migration guarantee, rights authority or source identity is relaxed."
+    },
+    {
+      "criterion": "Approved S01 sections6,10,17,22: copy/queue/placeholder experience, accessibility and approved reference",
+      "result": "satisfied",
+      "assessment": "Current21 opaque model cases,14 native intake cases, one mounted copy-return composite and six EX01 desktop checks pass. Same-name retained copies expose safe distinct copy/provider/host/version/license identity; review, confirmed Download and explicit Attach remain separate. Remote polling/Task Center return and recovery preserve exact copy context. Local manual/institutional annotations preserve metadata and do not assert verified availability, authorize egress or override rights denial. Exact token, route/page/region, all14 ordered workflow, keyboard/focus/semantics, responsive/theme and controlled visual checks consume approved1.9. Independent privacy/visual admission covers156 full-product plus16 focused synthetic PNGs; exact source/build closure and delivery bind those captures to J, with the unchanged66-reference baseline. Screenshots are not counted as actual native or rights proof."
+    },
+    {
+      "criterion": "Approved S01 sections10,11,12,17: measured resources, privacy and scholarly provenance",
+      "result": "satisfied",
+      "assessment": "Ten fresh J principal measurements, five each for deterministic1MiB/8MiB supported text, pass with complete35933-input write/delete guards, actual signed-worker image/PID-creation identity, successful five-phase observations, no skips/errors and unchanged source128MiB/transfer120s/worker120s/worker1GiB/one-project-intake bounds. Independent baseline review recomputes all raw sample/report/log/process arithmetic and the six selected metrics. Acquisition nearest-rank p95 is14.5186319s and80.8182195s; host/Core+TLS/harness interval private maxima are165445632B and176787456B; individual worker lifetime private peaks are16801792B and38883328B. The20percent future rule is prospective and keeps absolute caps. Separate fresh desktop12/20 measurements meet unchanged desktop budgets. Exact source/license/rights/receipt assertions remain provenance rather than model/export permission. Current capture privacy admission and protected source/native fences retain local research and credential boundaries."
+    },
+    {
+      "criterion": "Approved S01 sections10,15,17,22: source authority, task completion, exact bundle and independent review",
+      "result": "satisfied",
+      "assessment": "All three original tasks are DONE with independently approved latest commit-bound R01 submissions and matching manifest/evidence hashes. Original W2 approval c85a59f3 and exact EX01 owner/reference decisions remain intact. Proposal4addb045 and metadata-only published package24b8d623 are kept distinct through publicationd4691f71 and complete1.5-to1.8-to1.9 mapping; no new framework/security/reference authority is inferred. The one exact owner-authorized unpublished T03 representation repair preserves its rejected original and public command outcomes. Current selected17, authority06, six conformance results, source/capture independent reviews and resource baseline are the same authenticated proof as integration preparation. Every J-to-dea20267 commit changes only evidence or planning projections; dea20267 adds only this committed qualification bundle. No concealed slice blocker or additional source change was identified; formal slice completion is supported within the stated limits."
+    }
+  ],
+  "independence": {
+    "implementation_owner": "codex-w2-implementation",
+    "statement": "I authored independent S01 preflight and bounded measurement/assembler method reviews, exact actual resource baseline review and read/hash/arithmetic authentication notes. I advised criterion-bound handoff/resource closure, but authored no product implementation, product regression test, qualifying measurement/conformance/capture producer or execution, owner approval, task/campaign transition or Git commit. The independent read/hash arithmetic helper imports no product modules and runs no tests. Task source/security/capture dispositions were authored by separate named reviewers. This actual commit-bound slice disposition is distinct from those advisory and evidence-review roles.",
+    "current_review_execution": "Immutable Git, safe YAML/JSON, exact file/hash and already-authenticated receipt comparisons; no suite/native/build/capture/network execution, HEAD/index/taskctl mutation, source/framework edit or Git commit. Only this new authorized canonical review file is written."
+  },
+  "evidence_reproduction": {
+    "preparation": {
+      "path": "artifacts/tmp/CAP-05.S01.integration-review-authentication-02.json",
+      "sha256": "3c30a74a0bc2b80b48d3f19bb7631797ca89ca999efd67f0ea4eee9c8b4f84eb"
+    },
+    "preflight": {
+      "path": "artifacts/tmp/CAP-05.S01.integration-review-preflight-01.json",
+      "sha256": "74598cb2c882a90239d1b9e9789d652588d37d48e138d9812a6c5e4736ac7330"
+    },
+    "current_integration_receipts": {
+      "selectedChecks": {
+        "path": "artifacts/tmp/CAP-05.S01.T03.selected-04-e53a5154.json",
+        "sha256": "9f9b65d478e38ab58f88cc2fea86835209a125a28efdc18787eecdaaa3c15d3e"
+      },
+      "authorityAndPresentationMapping": {
+        "path": "artifacts/tmp/CAP-05.S01.T03.EX01.authority-mapping-final-06.json",
+        "sha256": "234455bc0a3ff54f4c5061185a677f1d56d240f2545869037769fe3169b143e3"
+      },
+      "desktopConformanceAndCaptureAuthority": {
+        "path": "artifacts/tmp/CAP-05.S01.T03.EX01.conformance-final-02.json",
+        "sha256": "ed638bc9d2717189e3701bcbe9925182c5e838e3bdbbae9cf1384b6174c6303c"
+      },
+      "acquisitionResources": {
+        "path": "artifacts/tmp/CAP-05.S01.acquisition-resources-04-e53a5154.json",
+        "sha256": "ad6adffd9ba0c2d5cb218aaa5823938620f26e58dc1be90ddfdbb9333fdda847"
+      }
+    },
+    "resource_baseline_review": {
+      "path": "artifacts/tmp/CAP-05.S01.acquisition-resources-baseline-review-01.json",
+      "sha256": "6cfd1118ab679ed5ab9be6c960d81df642aa005221564d8ff11cd1829b9f6bda"
+    },
+    "baseline_findings": [],
+    "all_three_latest_task_dispositions": [
+      {
+        "task_id": "CAP-05.S01.T01",
+        "status": "DONE",
+        "result": "approved",
+        "candidate_commit": "fe9313bcbf2580a0baabafed57a244a831ae29f7",
+        "reviewer": "agent:/root/c11_security_review",
+        "attempt_id": "R01",
+        "manifest": {
+          "path": "artifacts/evidence/CAP-05.S01.T01.json",
+          "sha256": "0a4c35e7883647f24ecc76be82cc9067536a0f25bf7b70f7c070954006d8aac8"
+        },
+        "review": {
+          "path": "artifacts/evidence/CAP-05.S01.T01.review-R01.json",
+          "sha256": "ff1f61c834c2354bd80ed8c84dabb4c261a4d7fdab67375af3fe2d0effc5258d"
+        },
+        "latest_submission_candidate_matches": true,
+        "open_blocking_findings": []
+      },
+      {
+        "task_id": "CAP-05.S01.T02",
+        "status": "DONE",
+        "result": "approved",
+        "candidate_commit": "4c22cd8d6998cf36062b0303abf9d3d76f025069",
+        "reviewer": "agent:/root/c11_security_review",
+        "attempt_id": "R01",
+        "manifest": {
+          "path": "artifacts/evidence/CAP-05.S01.T02.json",
+          "sha256": "aa336871a954808681793d779da3d1a299175786ec20333e10a9fc1f52f31403"
+        },
+        "review": {
+          "path": "artifacts/evidence/CAP-05.S01.T02.review-R01.json",
+          "sha256": "aad06f8f5e15700d9c34c482390a4b99b9d282ee7a739df2939bbc91371e212b"
+        },
+        "latest_submission_candidate_matches": true,
+        "open_blocking_findings": []
+      },
+      {
+        "task_id": "CAP-05.S01.T03",
+        "status": "DONE",
+        "result": "approved",
+        "candidate_commit": "e53a5154ddf78522edd252645eafc71621acdc51",
+        "reviewer": "agent:/root/t03_product_review",
+        "attempt_id": "R01",
+        "manifest": {
+          "path": "artifacts/evidence/CAP-05.S01.T03.json",
+          "sha256": "9b0be077a34763e6236df5c38b9266cd7d1813fb417d4515d8b5d5a5dfd6489a"
+        },
+        "review": {
+          "path": "artifacts/evidence/CAP-05.S01.T03.review-R01.json",
+          "sha256": "3a741cb98969ff32490d54ae9f24474d1eba5bf3c065afd5037c817e77ea56f3"
+        },
+        "latest_submission_candidate_matches": true,
+        "open_blocking_findings": []
+      }
+    ],
+    "source_to_delivery_commit_lineage": [
+      {
+        "commit": "938dc5848dab1ef831f4964d0ffc9677840a1487",
+        "parent": "e53a5154ddf78522edd252645eafc71621acdc51",
+        "paths": [
+          "artifacts/evidence/CAP-05.S01.T03.json",
+          "artifacts/evidence/CAP-05.S01.T03.publication-repair-01.owner-approval.json",
+          "docs/planning-implementation-plan.md",
+          "planning/backlog.yaml",
+          "planning/review-site/CAP-05/CAP-05.S01.T03.html",
+          "planning/review-site/CAP-05/CAP-05.S01.html",
+          "planning/review-site/manifest.json",
+          "planning/review-site/waves/W2.html",
+          "planning/status-summary.md"
+        ]
+      },
+      {
+        "commit": "1bcf679205a80612701d2dcb02cfa6feb97949ce",
+        "parent": "938dc5848dab1ef831f4964d0ffc9677840a1487",
+        "paths": [
+          "artifacts/evidence/CAP-05.S01.T03.review-R01.json",
+          "docs/planning-implementation-plan.md",
+          "planning/backlog.yaml",
+          "planning/review-site/CAP-05/CAP-05.S01.T03.html",
+          "planning/review-site/CAP-05/CAP-05.S01.html",
+          "planning/review-site/CAP-05/index.html",
+          "planning/review-site/manifest.json",
+          "planning/review-site/waves/W2.html",
+          "planning/status-summary.md"
+        ]
+      },
+      {
+        "commit": "dea20267e1de8014f6ab6dd28bc363cf6864910f",
+        "parent": "1bcf679205a80612701d2dcb02cfa6feb97949ce",
+        "paths": [
+          "artifacts/evidence/CAP-05.S01.qualification-01.json"
+        ]
+      }
+    ],
+    "source_to_submission_metadata_only_delta": [
+      "artifacts/evidence/CAP-05.S01.T03.json",
+      "artifacts/evidence/CAP-05.S01.T03.publication-repair-01.owner-approval.json",
+      "artifacts/evidence/CAP-05.S01.T03.review-R01.json",
+      "docs/planning-implementation-plan.md",
+      "planning/backlog.yaml",
+      "planning/review-site/CAP-05/CAP-05.S01.T03.html",
+      "planning/review-site/CAP-05/CAP-05.S01.html",
+      "planning/review-site/CAP-05/index.html",
+      "planning/review-site/manifest.json",
+      "planning/review-site/waves/W2.html",
+      "planning/status-summary.md"
+    ],
+    "sole_bundle_delivery_delta": [
+      "artifacts/evidence/CAP-05.S01.qualification-01.json"
+    ],
+    "same_prepared_proof_authenticated_once": true,
+    "no_unchanged_checks_rerun": true,
+    "selected_resource_common_inputs_exact": 35932,
+    "approved_plan": {
+      "path": "planning/slice-plans/CAP-05/CAP-05.S01-rights-aware-document-acquisition.md",
+      "sha256": "374350eacb70bd6fff824b6964ba68570c4ef05a2f358a24bc780eea0553876c"
+    },
+    "ex01_owner": {
+      "path": "planning/verification-method-approvals/CAP-05.S01.T03.EX01.json",
+      "sha256": "79a57a1e0cdbb7eb2e9fab36084edf9dcdd476444047b947d3eea9dceded87fb"
+    },
+    "reference_owner": {
+      "path": "planning/reference-approvals/RO-UI-ACADEMIC-MINIMAL-1.9.json",
+      "sha256": "b7882588a15a7a178cb8ebac65fda174d26969dca5b08c6559feb3b0d258404e"
+    },
+    "publication_mapping": {
+      "path": "artifacts/evidence/CAP-05.S01.T03.publication-mapping-02.json",
+      "sha256": "35496ee01c80a9788b857abba93cf172e2005648656a2f96b871ce2adc737ad0"
+    },
+    "exact_unpublished_representation_owner_authorization": {
+      "path": "artifacts/evidence/CAP-05.S01.T03.publication-repair-01.owner-approval.json",
+      "sha256": "2d4999b5bc2bc6065b88218cabeecf058dd11d6c6c3bbd1672acbcaecfa0e6d2"
+    },
+    "independent_receipt_review": {
+      "path": "artifacts/tmp/CAP-05.S01.T03.completed-receipts-review-05.json",
+      "sha256": "b7a367d16ebebac602f01592d8ab631cc2005122c49183ac57b8ec8c44d3d0c1"
+    },
+    "independent_conformance_review": {
+      "path": "artifacts/tmp/CAP-05.S01.T03.conformance-receipt-review-05.json",
+      "sha256": "28969f73187646d09b5a9f6dd52ce8ef1b911bd14937e7995b5ce68b370ee81a"
+    },
+    "independent_capture_delivery_review": {
+      "path": "artifacts/tmp/CAP-05.S01.T03.capture-delivery-authentication-05.json",
+      "sha256": "b5703e1e29820a28aa5a49910f221aa347f94d5720b3df1989a021133a2c1aa8"
+    },
+    "capture_privacy_visual_admission": {
+      "path": "artifacts/evidence/CAP-05.S01.T03.capture-privacy-visual-review-05.json",
+      "sha256": "f929c1b862bf7d494ff585fea6d4e25936a76b8b7d62acdc68dcba29a7fbe55a"
+    },
+    "retained_task_adverse_evidence": [
+      {
+        "path": "artifacts/tmp/CAP-05.S01.T03.product-review-01.json",
+        "raw_sha256": "06835b8672dbe4b995e7cdfc9a8e801752c6c960426c65fc55135f20f88e168d"
+      },
+      {
+        "path": "artifacts/tmp/CAP-05.S01.T03.product-review-02.json",
+        "raw_sha256": "4f950dd44dc0a88cf03ea4d9e332ded0241a7d67e33187032fd723ac92425ca4"
+      },
+      {
+        "path": "artifacts/tmp/CAP-05.S01.T03.relocation-source-review-01.json",
+        "raw_sha256": "33b2706b1f2a0dd8474944044d934d06bed935999ebde8a396a3c113a3265c20"
+      },
+      {
+        "path": "artifacts/tmp/CAP-05.S01.T03.handoff-increment-review-01.json",
+        "raw_sha256": "ee23236906598f451eec786c7b8f385c8103841cc717bc08a582d8cc5c3a0ea1"
+      },
+      {
+        "path": "artifacts/tmp/CAP-05.S01.T03.port-handoff-red-01.txt",
+        "raw_sha256": "7879b678679f9dc6d354021695e3f8618415d2ebf309fc228870d799b0109129"
+      },
+      {
+        "path": "artifacts/tmp/CAP-05.S01.T03.adr-dev-01.txt",
+        "raw_sha256": "00765b8fdabf449c67ae554b029bdf7e730f26d089579de27caeca78b550297b"
+      },
+      {
+        "path": "artifacts/tmp/CAP-05.S01.T03.adr-dev-02.txt",
+        "raw_sha256": "48be0c8a122350f54e0a4a2c3d23fa855f6aaec0d90d2ee409d945630f1c3410"
+      },
+      {
+        "path": "artifacts/tmp/CAP-05.S01.T03.selected-01-5e96951f.json",
+        "raw_sha256": "f59952ec96eaa85a568ad8bcb0c8282f623ecd5f6e725b7a1ac32ae237a93ef1"
+      },
+      {
+        "path": "artifacts/tmp/CAP-05.S01.T03.capture-delivery-commit-01.txt",
+        "raw_sha256": "c86ea25e98073829ec803df66222c670939e2e93ba774dabf6bb24beb1b21f39"
+      },
+      {
+        "path": "artifacts/tmp/CAP-05.S01.T03.retained-origin-red-01.txt",
+        "raw_sha256": "9072c85b4cd904ffe39705c0eea943bb16e352acf272c1420711c996e4fe1ad0"
+      },
+      {
+        "path": "artifacts/tmp/CAP-05.S01.T03.copy-denial-red-01.txt",
+        "raw_sha256": "6141d50082c0d5bece2860555c7ba6b8d9bf70d880753c7cf41799b7e9728c10"
+      },
+      {
+        "path": "artifacts/tmp/CAP-05.S01.T03.remote-poll-red-01.txt",
+        "raw_sha256": "46ce6af48cbed2e951d774938d73778bbbf28391124c9ff20fddebdcda857f67"
+      },
+      {
+        "path": "artifacts/tmp/CAP-05.S01.T03.mounted-ui-dev-05.txt",
+        "raw_sha256": "640cd2dc057f64abf3c0692879542639abaaae5c59efbd78e278a3fcb5edb9b0"
+      },
+      {
+        "path": "artifacts/tmp/CAP-05.S01.T03.EX01.authority-mapping-candidate-01.json",
+        "raw_sha256": "785c839c4b759d692e4ff36cb7ee1f9adf59dea3f2d6e494058c6471cc93e9bc"
+      },
+      {
+        "path": "artifacts/tmp/CAP-05.S01.T03.EX01.authority-mapping-final-02.json",
+        "raw_sha256": "a96ba7f3101273d409c9f8e2893de4292e4e1e487bbdf0f142b670c809228c75"
+      },
+      {
+        "path": "artifacts/tmp/CAP-05.S01.T03.selected-02-59a8fec0.json",
+        "raw_sha256": "b5f42dd92750b3c3a488e1c67644112c87395cd91d77bd6fa9638998b5ba0cb6"
+      },
+      {
+        "path": "artifacts/tmp/CAP-05.S01.T03.operation-precedence-red-01.txt",
+        "raw_sha256": "9945f02cc405c5dd4b02fbc16960cbb6a9034597b53e44b1a9dcfa528b0effd8"
+      },
+      {
+        "path": "artifacts/tmp/CAP-05.S01.T03.denial-migration-advisory-01.json",
+        "raw_sha256": "99ddefd1af36e3cdce463a19e641e97b5e36c1dba176ce5d008ec27d80318c86"
+      },
+      {
+        "path": "artifacts/tmp/CAP-05.S01.T03.selected-03-64a8f9f9.json",
+        "raw_sha256": "c0717721fd7b37798059663a651edb904983e35a2311b12f3784877d74a31ab0"
+      },
+      {
+        "path": "artifacts/tmp/CAP-05.S01.T03.storage-rollout-site-refresh-01.txt",
+        "raw_sha256": "ecdab23f80cd68b18fe1eebdc907ad51f2b2d32db22d73b45206b2c1c4397ccf"
+      },
+      {
+        "path": "artifacts/tmp/CAP-05.S01.acquisition-resources-03-b9ad3e15.json",
+        "raw_sha256": "1fffe06d25c09c2b225a006401138cca98400d5da694ee902f802032e9bf8bc0"
+      },
+      {
+        "path": "artifacts/tmp/CAP-05.S01.resource-unprofiled-8mib-diagnostic-01.txt",
+        "raw_sha256": "3b047b8edb7b70aff6da1bbb3849fcbb5aa047cd34d35c2a0a76e2942318a33d"
+      },
+      {
+        "path": "artifacts/tmp/CAP-05.S01.T03.stream-coalescing-red-01.txt",
+        "raw_sha256": "c37521e30c22a52cd39f257c0cad711fa292dadd48c51116f39adffadc2b943d"
+      },
+      {
+        "path": "artifacts/tmp/CAP-05.S01.T03.stream-coalescing-red-02.txt",
+        "raw_sha256": "29dff615476ba517b2c9ae3ff491c64f8f7fa018733ef520b8e5aa37b92f6b6d"
+      },
+      {
+        "path": "artifacts/tmp/CAP-05.S01.T03.submit-final-R01.txt",
+        "raw_sha256": "414b6d222cc40b05a1ab65fca3f0a4d5969ecca75bbc81ca0998637d1d34a947"
+      },
+      {
+        "path": "artifacts/tmp/CAP-05.S01.T03.R01-publication-commit-01.txt",
+        "raw_sha256": "04ec6489d2acbf412370dd070b7c43cd49e4b7fc55c2cf7badf08babb4588e21"
+      },
+      {
+        "path": "artifacts/tmp/CAP-05.S01.T03.R01-publication-privacy-diagnostic-01.json",
+        "raw_sha256": "753be0c99e3e6025dd0c332ab68bb9eb8bab404cc0c13c05041e29914035b97a"
+      }
+    ],
+    "retained_resource_adverse_evidence": [
+      {
+        "kind": "failed-measurement-attempt01",
+        "path": "artifacts/tmp/CAP-05.S01.acquisition-resources-01-b9ad3e15.json",
+        "sha256": "eca2b7279da1207cce624a50c4d140fb717bca2e78702d9e92c749490cd5673b"
+      },
+      {
+        "kind": "failed-measurement-attempt02",
+        "path": "artifacts/tmp/CAP-05.S01.acquisition-resources-02-b9ad3e15.json",
+        "sha256": "aec0f0fa49f652f7c6eea90e1519ee353208948adc9c8bb895432fa7823e4a49"
+      },
+      {
+        "kind": "failed-measurement-attempt03",
+        "path": "artifacts/tmp/CAP-05.S01.acquisition-resources-03-b9ad3e15.json",
+        "sha256": "1fffe06d25c09c2b225a006401138cca98400d5da694ee902f802032e9bf8bc0"
+      },
+      {
+        "kind": "failed-unprofiled-diagnostic01",
+        "path": "artifacts/tmp/CAP-05.S01.resource-unprofiled-8mib-diagnostic-01.txt",
+        "sha256": "3b047b8edb7b70aff6da1bbb3849fcbb5aa047cd34d35c2a0a76e2942318a33d"
+      },
+      {
+        "kind": "adverse-bindings-and-method-review-chain",
+        "path": "artifacts/tmp/CAP-05.S01.acquisition-resources-method-review-03.json",
+        "sha256": "65b84f2e644280a44cea53f4dc5b90415dc25ac7cd6161199329b008e672e9a0"
+      },
+      {
+        "kind": "deadline-failure-and-method04-approval",
+        "path": "artifacts/tmp/CAP-05.S01.acquisition-resources-method-review-04.json",
+        "sha256": "0897d1fdc5f063a1c19093872815becf0bcc40a0fb4d3973e8ce8c992e7e970c"
+      }
+    ]
+  },
+  "checks": [
+    {
+      "command": "Authenticate exact committed qualification bundle, all-three latest task manifests/dispositions and original approval/EX01",
+      "result": "PASS: bundle7ceee8b5, current J and exact independent task evidence/review hashes reproduce; all three tasks DONE/approved."
+    },
+    {
+      "command": "Authenticate every source-J-to-metadata/bundle commit and prepared current integration proof without suite replay",
+      "result": "PASS: three commits contain only named evidence/planning metadata; bundle delivery is one new JSON. Current selected17/authority06/conformance02/resource04 and independent capture/baseline refs remain exact."
+    },
+    {
+      "command": "Replay prior material preflight handoff/resource gaps and preserved adverse findings",
+      "result": "PASS: current real protected ports-only handoff and separately reviewed actual initial baseline close both preflight findings; historical failures and source/UI/native/sampling limits stay explicit."
+    }
+  ],
+  "findings": [],
+  "closures": [],
+  "prior_findings_replayed": [],
+  "preflight_findings_replayed": [
+    {
+      "id": "CAP-05.S01.PREFLIGHT-01-F01",
+      "status": "closed",
+      "kind": "preparatory-advisory-not-formal-controlled-round",
+      "proof": "Current J real protected principal and portable handoff test; exact typed port source interface and current local inspection/revision/hash denials."
+    },
+    {
+      "id": "CAP-05.S01.PREFLIGHT-01-F02",
+      "status": "closed",
+      "kind": "preparatory-advisory-not-formal-controlled-round",
+      "proof": "Ten actual J resource samples and independently approved initial-baseline review with exact guarded inputs/raw/hardware/fixture/cap bindings."
+    }
+  ],
+  "proof_limits": [
+    "Synthetic lawful fixtures and owned TLS are not live public-provider qualification.",
+    "Opaque renderer fixture replies establish renderer behavior; separate actual principal/native checks establish named real boundaries.",
+    "Tall dark narrow element crop retains the preserved skip-link fragment limitation; no false viewport claim is inferred.",
+    "Initial acquisition baseline has no prior comparison; reviewer-defined future metric/threshold is prospective, accepted absolute caps remain.",
+    "No task/slice/Wave/release approval is inferred from this assembler; formal independent slice disposition remains required.",
+    "The principal uses lawful synthetic fixture data, owned TLS/test CA/DNS routing seams and signed fixture worker with actual SQLCipher/encrypted objects. It does not establish general public-provider availability or production-installed signing/packaging.",
+    "Real mutex/zero-byte/owned-socket/protected handoff proofs establish their named boundaries; opaque renderer fixtures/mounted journeys/captures do not prove native picker or production installed-session behavior.",
+    "All59 exited-before-open helper observations are icacls.exe with unknown CPU/memory; raw sampled aggregates exclude them. Brief peaks may be missed; child CPU before first observation is absent; no full process-tree or standalone deployed Core resource claim.",
+    "OS-cache state is uncontrolled, sys.monitoring/sampler overhead remains, n=5 nearest-rank p95 is descriptive and overlapping phases are not summed. Two source sizes do not promise near128MiB throughput or a size-independent deadline.",
+    "Original blocked/stale-selector public commands are not reported PASS. Finite EX01 equivalents change only approved admission and preserve all unaffected assertions.",
+    "Prior task/source/migration/denial/storage/resource/unprofiled/coalescing/publication failures remain adverse. Current successes do not establish profiler overhead as the sole earlier cause or erase the rejected original R01.",
+    "CAP-05.S01.T03.CAPTURE-R01-O01 dark720 tall-element skip-link fragment remains preserved; the bounded crop does not establish a viewport/focus defect or clean viewport claim."
+  ],
+  "deferred_obligations": [
+    "Fresh affected checkpoint/shared-interface/build-smoke and complete repository/profile/cross-capability happy/failure/denial/cancel/migration/restart/recovery qualification at W2 exit remain required by their workflow stages.",
+    "Broader security/privacy/rights/accessibility/performance/packaging/platform obligations and original human G2 release decision remain separate; this slice disposition cannot replace them.",
+    "Future acquisition comparison uses the accepted same fixture/method/hardware/cache protocol and20percent rule plus absolute caps; changed comparability requires reviewed append-only baseline treatment.",
+    "Remaining CAP-05 slices consume the exact portable immutable source/rights/provenance handoff under current authorization and must obtain their own proof/dispositions."
+  ],
+  "scope_limit": "CAP-05.S01 slice completion only at the exact bound source and committed bundle. No taskctl transition, checkpoint/Wave/full-profile/install qualification, external effect or human release approval is authorized by this record.",
+  "slice_approval": true,
+  "wave_completion": false,
+  "release_approval": false
+}
