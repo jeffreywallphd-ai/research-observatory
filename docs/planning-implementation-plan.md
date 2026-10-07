@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 47b424470157371fdea584f5d289191bbc37945792b765ec19c50f6ea249932e
+source_sha256: a67eb232a1f014f3c0cb836b916f1e25bc52d0027b7d8dfca97e4a70665451df
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -4333,7 +4333,7 @@ Original tasks and approvals remain unchanged.
 
 ### W2.C13.T01 — Create acquisition queue, conflict, and entitlement placeholders
 
-**Status:** `IN_PROGRESS`. **Original task:** `CAP-05.S01.T03`. **Latest review:** `-`.
+**Status:** `REVIEW`. **Original task:** `CAP-05.S01.T03`. **Latest review:** `-`.
 
 **Reproduction:** The fresh W2 cluster-2 checkpoint at clean candidate 10110a835a0b2536a398c4709fa1e1c366b09972 runs 54 rights/public-handoff cases and preserves four assertion failures in tests.rights.test_migration.LiteralV17PredecessorTests. The approved CAP-05.S01.T03 additive document-intake migration advances current schema to25, but three existing test methods still expect current target24, a chain ending at0024, or a recovery-contract enum ending at24. Both populated import/connector v17 source paths, protected failure-backup-retry, and the frozen recovery witness are implicated. The raw log artifacts/tmp/W2.CP07.selected-01-10110a83.rights-and-portable-handoff.log has SHA-256 185f4528d3d35885445c1ecabae35c8923d0a5f51e360bd1c8959d1977d43a96; failed stable-input receipt artifacts/tmp/W2.CP07.selected-01-10110a83.json has SHA-256 f7dfae1e234d01c29ece9531df9cd46ae761f45b96da8aa0542c6c60a8c52366. No later group ran and no checkpoint approval or completion is claimed.
 
@@ -4350,7 +4350,19 @@ Original tasks and approvals remain unchanged.
 
 **Review mode:** `append-only v1` / 0 completed round(s)
 
-**Current immutable submission awaiting review:** None
+**Current immutable submission awaiting review:** `R01` / packet SHA-256 `e72708e7fcad354e8af035900558f0ab83a2175afbef1631b0016f56fc0cdfc9`
+
+- Candidate / base / branch: `9a860fc45fe67d9582f4a37c81c90436b1ec715e` / `dcea0fda1bde94e2567e46044c0eae538eac9f34` / `codex/w2-implementation`
+- Submitted by / at: codex-w2-implementation / `2026-10-07T04:11:47+00:00`
+- Evidence: `artifacts/evidence/W2.C13.T01.R01.json` / `e7253f250c2345a47c53f59ffd3d69c92463b9032f01de0db2bd816dada8253c` / `9a860fc45fe67d9582f4a37c81c90436b1ec715e`
+- Acceptance-criteria SHA-256: `b883d7d0c83c26edeafbf97cf02f0dde8e3e38b55b4629d221960d1acaa72e43`
+- Verification-selection SHA-256: `ce1cb1fc8bc572b6ae8660fa8878695a1856f12bc1552a6895d8852e3219b2a7`
+- Changed paths: `docs/planning-implementation-plan.md`, `planning/backlog.yaml`, `planning/review-site/manifest.json`, `planning/review-site/waves/W2.html`, `planning/status-summary.md`, `tests/rights/test_migration.py`
+- Selected checks: `.venv/Scripts/python.exe -B -m unittest -v tests.rights.test_migration.LiteralV17PredecessorTests`, `.venv/Scripts/python.exe -B -m unittest -v tests.documents.test_acquisition_recovery_migration.AcquisitionRecoveryMigrationTests`, `.venv/Scripts/python.exe -B -m ruff format --check --config pyproject.toml -- tests/rights/test_migration.py`, `.venv/Scripts/python.exe -B -m ruff check --config pyproject.toml -- tests/rights/test_migration.py`, `$env:MYPYPATH='tools;services/core-api/src'; .venv/Scripts/python.exe -B -m mypy --config-file pyproject.toml --no-namespace-packages --no-incremental --follow-imports=silent -- tests/rights/test_migration.py`
+- Deferred checks: `Fresh full affected cluster2 rights/SDK/LPAC/acquisition/native/installed checks remain W2.CP07 obligations after approved correction.`, `The actual imported encrypted-staging callback defect and broader-import mypy failure must be closed by the next separate linked product-test correction before ordinary W2 resumes. The current file-scoped type proof does not count this failure as PASS.`, `Fresh full repository/profile, complete cross-capability, security/privacy/rights/accessibility/performance/packaging and human G2 release remain W2 exit obligations.`
+- Selection rationale: The sole changed path contains stale current-schema assertions in literal historical compatibility tests. Fresh actual plain/SQLCipher predecessor and v24-to25 interruption/backup/retry/reopen checks plus changed-file quality address the impact. Nonincremental mypy with ordinary imports exposed a separate unchanged encrypted-staging fixture defect outside the admitted path and remains FAIL. Independently assessed follow-imports=silent retains analyzed import types and qualifies only the selected changed file; it does not qualify or suppress the separate defect. The passing migration/format/lint checks are reused only across exact equal committed tracked/Python input maps, excluding their distinct owned producer entries. Independent migration/correction integration review is required; no unchanged full suite is repeated for this bounded test-only repair.
+- Prior round / replayed open findings: `-` / -
+- Root-cause escalation: -
 
 **Current latest-review projection:** `-` by - at `-`
 

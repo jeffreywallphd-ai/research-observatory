@@ -4076,7 +4076,7 @@ waves:
       id: W2.C13.T01
       wave: W2
       priority: P0
-      status: IN_PROGRESS
+      status: REVIEW
       owner: codex-w2-implementation
       branch: codex/w2-implementation
       base_sha: dcea0fda1bde94e2567e46044c0eae538eac9f34
@@ -4086,12 +4086,17 @@ waves:
         claimed_at: '2026-10-07T03:50:44+00:00'
         expires_at: '2026-10-07T11:50:44+00:00'
       started_at: '2026-10-07T03:50:44+00:00'
-      updated_at: '2026-10-07T03:50:44+00:00'
+      updated_at: '2026-10-07T04:11:47+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
-      evidence: []
-      verification_state: null
+      evidence:
+      - type: criterion-manifest
+        path: artifacts/evidence/W2.C13.T01.R01.json
+        sha256: e7253f250c2345a47c53f59ffd3d69c92463b9032f01de0db2bd816dada8253c
+        commit: 9a860fc45fe67d9582f4a37c81c90436b1ec715e
+        recorded_at: '2026-10-07T04:11:47+00:00'
+      verification_state: passed
       review:
         reviewer: null
         result: null
@@ -4100,7 +4105,59 @@ waves:
       review_control:
         version: 1
         attempts: []
-        current_submission: null
+        current_submission:
+          id: R01
+          submitted_by: codex-w2-implementation
+          submitted_at: '2026-10-07T04:11:47+00:00'
+          candidate_commit: 9a860fc45fe67d9582f4a37c81c90436b1ec715e
+          base_commit: dcea0fda1bde94e2567e46044c0eae538eac9f34
+          branch: codex/w2-implementation
+          evidence_reference:
+            type: criterion-manifest
+            path: artifacts/evidence/W2.C13.T01.R01.json
+            sha256: e7253f250c2345a47c53f59ffd3d69c92463b9032f01de0db2bd816dada8253c
+            commit: 9a860fc45fe67d9582f4a37c81c90436b1ec715e
+            recorded_at: '2026-10-07T04:11:47+00:00'
+          acceptance_criteria_sha256: b883d7d0c83c26edeafbf97cf02f0dde8e3e38b55b4629d221960d1acaa72e43
+          changed_paths:
+          - docs/planning-implementation-plan.md
+          - planning/backlog.yaml
+          - planning/review-site/manifest.json
+          - planning/review-site/waves/W2.html
+          - planning/status-summary.md
+          - tests/rights/test_migration.py
+          selected_checks:
+          - .venv/Scripts/python.exe -B -m unittest -v tests.rights.test_migration.LiteralV17PredecessorTests
+          - .venv/Scripts/python.exe -B -m unittest -v tests.documents.test_acquisition_recovery_migration.AcquisitionRecoveryMigrationTests
+          - .venv/Scripts/python.exe -B -m ruff format --check --config pyproject.toml -- tests/rights/test_migration.py
+          - .venv/Scripts/python.exe -B -m ruff check --config pyproject.toml -- tests/rights/test_migration.py
+          - $env:MYPYPATH='tools;services/core-api/src'; .venv/Scripts/python.exe -B -m mypy --config-file pyproject.toml
+            --no-namespace-packages --no-incremental --follow-imports=silent -- tests/rights/test_migration.py
+          deferred_checks:
+          - Fresh full affected cluster2 rights/SDK/LPAC/acquisition/native/installed checks remain W2.CP07 obligations after
+            approved correction.
+          - The actual imported encrypted-staging callback defect and broader-import mypy failure must be closed by the next
+            separate linked product-test correction before ordinary W2 resumes. The current file-scoped type proof does not
+            count this failure as PASS.
+          - Fresh full repository/profile, complete cross-capability, security/privacy/rights/accessibility/performance/packaging
+            and human G2 release remain W2 exit obligations.
+          selection_rationale: The sole changed path contains stale current-schema assertions in literal historical compatibility
+            tests. Fresh actual plain/SQLCipher predecessor and v24-to25 interruption/backup/retry/reopen checks plus changed-file
+            quality address the impact. Nonincremental mypy with ordinary imports exposed a separate unchanged encrypted-staging
+            fixture defect outside the admitted path and remains FAIL. Independently assessed follow-imports=silent retains
+            analyzed import types and qualifies only the selected changed file; it does not qualify or suppress the separate
+            defect. The passing migration/format/lint checks are reused only across exact equal committed tracked/Python input
+            maps, excluding their distinct owned producer entries. Independent migration/correction integration review is
+            required; no unchanged full suite is repeated for this bounded test-only repair.
+          selection_sha256: ce1cb1fc8bc572b6ae8660fa8878695a1856f12bc1552a6895d8852e3219b2a7
+          prior_attempt_id: null
+          open_finding_ids: []
+          root_cause_analysis: null
+          selected_command_ids:
+          - service:rights
+          - documents:unit
+          - foundation:quality
+          packet_sha256: e72708e7fcad354e8af035900558f0ab83a2175afbef1631b0016f56fc0cdfc9
       correction:
         origin_task_id: CAP-05.S01.T03
         origin_commit: 10110a835a0b2536a398c4709fa1e1c366b09972

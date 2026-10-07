@@ -1,0 +1,180 @@
+{
+  "task_id": "W2.C13.T01",
+  "attempt_id": "R01",
+  "candidate_commit": "9a860fc45fe67d9582f4a37c81c90436b1ec715e",
+  "base_commit": "dcea0fda1bde94e2567e46044c0eae538eac9f34",
+  "reviewer": "agent:/root/s01_integration_review",
+  "result": "approved",
+  "reviewed_at": "2026-10-07T04:18:49Z",
+  "evidence_sha256": "e7253f250c2345a47c53f59ffd3d69c92463b9032f01de0db2bd816dada8253c",
+  "packet_sha256": "e72708e7fcad354e8af035900558f0ab83a2175afbef1631b0016f56fc0cdfc9",
+  "acceptance_criteria_sha256": "b883d7d0c83c26edeafbf97cf02f0dde8e3e38b55b4629d221960d1acaa72e43",
+  "selection_sha256": "ce1cb1fc8bc572b6ae8660fa8878695a1856f12bc1552a6895d8852e3219b2a7",
+  "notes": "Independent bounded correction review approves only actual frozen W2.C13.T01 R01 at9a860fc4/base dcea0fda. The spec-admitted literal-v17 migration test correction restores exact current schema25, explicit0025 migration chains and the current recovery enum; historical17 fixtures, row/schema/profile hashes and frozen backup witness remain exact. Both plain populated source histories and real SQLCipher protected backup/interruption/retry/reopen preserve rights unknown, legacy rechecks, all old rows and empty successor intake/recovery/access-need tables. All6 original v17 methods and2 v25 predecessor/fault methods pass without skips, as do changed-file format/lint and separately qualified nonincremental selected-file types. Complete13438 common tracked/Python input identities are equal across the two guarded runs and independently rehash with zero mismatch or unreadable input. The first broader-import run remains FAIL; the actual encrypted-staging callback still fails with a2-versus3-argument TypeError and must close in separate linked C14 before ordinary W2 resumes. Silent imported diagnostics supply only bounded changed-file proof and never broader/profile PASS. Original T03 DONE history, Wave approval and historical S01 reviews remain immutable. No source/framework/security/migration/UX authority changes or criterion-bound C13 blocker remain. Fresh CP07, remaining W2 qualification and separate human G2 release remain obligations.",
+  "acceptance_reviews": [
+    {
+      "criterion_index": 1,
+      "result": "satisfied",
+      "assessment": "The admitted test-only change preserves approved acquisition/publication/cleanup authority rather than changing it. Fresh actual migration composition retains both populated metadata source paths and unknown rights, legacy recheck identity, verified predecessor backups, rollback and repeated reopen. Four explicit successor intake/result/recovery/access-need tables stay empty for metadata-only plain and protected histories; current migration cannot invent availability or acquired copies. Exact unchanged product behavior is supported historically by authenticated original T03/S01 evidence; this bounded correction supplies no fresh full-acquisition or release claim."
+    },
+    {
+      "criterion_index": 2,
+      "result": "satisfied",
+      "assessment": "The original54-case checkpoint retains four stale target/chain/enum assertion failures and no later group execution. At the exact correction candidate, all6 LiteralV17PredecessorTests methods and2 AcquisitionRecoveryMigrationTests methods execute OK without skips. They exercise both plain historical source paths, actual SQLCipher encrypted backups and reopen, every material v18 interruption with exact-v17 preservation and retry, plus all8 v25 fault steps with populated-v24 row/ciphertext preservation and eventual migration. Raw logs, real producer bytes and stable complete inputs authenticate. The distinct broader-import and actual one-case staging runtime failures remain adverse and belong to required C14 closure."
+    },
+    {
+      "criterion_index": 3,
+      "result": "satisfied",
+      "assessment": "The exact base-to-candidate diff contains only spec-admitted tests/rights/test_migration.py and five normal claim/generated planning records. Changes add exact25/0025 expectations and empty-table checks; no historical fixture/hash, backup, old-row, frozen-witness, rights-unknown/legacy-recheck, failure, retry or idempotency assertion is weakened. Migration source, schemas/contracts, product/framework source, rights/security and governed UX remain unchanged. Changed-file Ruff format/lint and explicitly bounded silent-import mypy pass. Original task contract/history and Wave approval reproduce immutable correction hashes; independent affected integration is assessed without broadening scope."
+    }
+  ],
+  "corrective_integration": {
+    "evidence_sha256": "e7253f250c2345a47c53f59ffd3d69c92463b9032f01de0db2bd816dada8253c",
+    "authority_preserved": true,
+    "affected_integration_reviewed": true,
+    "notes": "Actual fresh literal-v17/plain/SQLCipher and v24-to25 migration/fault/backup/retry/reopen evidence at9a860fc4 is authenticated and reviewed against unchanged historical authority. Historical original T03/S01 evidence is authenticated once and supports unchanged product behavior only. Affected-file type proof retains analyzed imported types, while the broader-import failure and actual staging callback TypeError remain FAIL and require independent C14 closure before W2 resumes. No CP07/W2/G2 completion is inferred."
+  },
+  "independence": {
+    "statement": "I authored earlier read-only S01 integration preflight, source-handoff and resource-method/baseline assessments, S01 evidence authentication and formal slice disposition, plus C13 scope and selected-file type-method advisories. These roles are disclosed. I authored no C13 product/test implementation, spec, measurement/check producer or qualifying execution, owner approval, submission or campaign transition. This ledger supplies the distinct independent commit-bound C13 correction disposition.",
+    "implementation_owner": "codex-w2-implementation",
+    "current_review_execution": "Read/hash, immutable Git/source/JSON/YAML/log comparisons and arithmetic only. No suite, test, native/build/capture/resource execution, source/framework/spec edit, Git/index/HEAD or taskctl mutation. Only this unique ignored final ledger is written."
+  },
+  "evidence_reproduction": {
+    "frozen_submission": {
+      "manifest": "artifacts/evidence/W2.C13.T01.R01.json",
+      "manifest_sha256": "e7253f250c2345a47c53f59ffd3d69c92463b9032f01de0db2bd816dada8253c",
+      "packet_sha256": "e72708e7fcad354e8af035900558f0ab83a2175afbef1631b0016f56fc0cdfc9",
+      "acceptance_criteria_sha256": "b883d7d0c83c26edeafbf97cf02f0dde8e3e38b55b4629d221960d1acaa72e43",
+      "selection_sha256": "ce1cb1fc8bc572b6ae8660fa8878695a1856f12bc1552a6895d8852e3219b2a7",
+      "submitted_at": "2026-10-07T04:11:47+00:00",
+      "actual_status": "REVIEW",
+      "attempt": "R01",
+      "prior_attempt_count": 0,
+      "open_finding_ids": [],
+      "submit_receipt": "artifacts/tmp/W2.C13.T01.submit-R01.txt",
+      "submit_receipt_raw_sha256": "7d37e8d41cd3e0466d3742f937b30ce6be4d71a4c0c08cddb10ecd3d02fe3329",
+      "predecessor_sha256": "84b5f7ddf21e2f27fd1d343c9653d34dfc0fb3488616b0407d4412eb0e5ba3d0",
+      "successor_sha256": "2305801ed2bbda0180cc7c97de413901970b525c3792a3143b6d581b92008f6b",
+      "result": "Actual atomic COMMITTED submission and persisted current R01 are authenticated; candidate/base/branch, six changed paths, five selected commands, three canonical IDs, deferred coverage, rationale, manifest, criteria, selection and packet hashes independently reproduce."
+    },
+    "original_authority": {
+      "origin_commit": "10110a835a0b2536a398c4709fa1e1c366b09972",
+      "origin_task_id": "CAP-05.S01.T03",
+      "origin_sha256": "f74b32f21cdea4d6810e2651e892075295f377fba52d8cb924d1e74d9d76b16e",
+      "origin_history_sha256": "8d69b13955e098543a486bb9eb6af5ac45859ed841104f81f6057c9a276b88d2",
+      "authority_sha256": "c92ce7e9bac1b8a49d13d649a5980fea61e56ee953d238c734d8ff5f04f4c9e5",
+      "spec": {
+        "path": "artifacts/evidence/W2.C13.T01.spec.json",
+        "sha256": "d3cf19569d9b379d5c1acb96cf9ad459019a022a2880c8765a7b7b2e10b97d3c",
+        "commit": "dcea0fda1bde94e2567e46044c0eae538eac9f34"
+      },
+      "result": "Original task snapshot, DONE review history, inherited contract and Wave approval exactly preserved; all3 literal v17 fixture hashes and frozen recovery snapshot rawhash/Gitbytes match. No changed migration/contract/security/UX/framework authority."
+    },
+    "fresh_affected": {
+      "behavior_and_quality_report": {
+        "path": "artifacts/tmp/W2.C13.T01.selected-01-9a860fc4.json",
+        "sha256": "a1e55cc5c3e8ec953d835928dea06e74da3c73c10386fbbaa61ab874d52fc8da"
+      },
+      "changed_file_types_report": {
+        "path": "artifacts/tmp/W2.C13.T01.selected-types-02-9a860fc4.json",
+        "sha256": "79c411dde0cc2bf36399d9338ea5ae87fc90daa4382490441e30b48b3484a4f6"
+      },
+      "behavior_and_quality_producer": {
+        "path": "artifacts/tmp/W2.C13.T01.run-selected-01.py",
+        "sha256": "c74b62720b891a29ec393e78902303e7a58758c98e1b9180c47bdd0500cb133b"
+      },
+      "changed_file_types_producer": {
+        "path": "artifacts/tmp/W2.C13.T01.run-types-02.py",
+        "sha256": "3be2100d26399d65ac48b85bbb6ea01730551e4af363a42bb158fa8bbf346e47"
+      },
+      "first_report_status": "FAIL",
+      "first_report_passing_checks": [
+        "v17-predecessor",
+        "v25-recovery",
+        "format",
+        "lint"
+      ],
+      "second_report_status": "PASS",
+      "second_report_passing_check": "types-selected-file",
+      "stable_input_count_each": 13439,
+      "common_inputs_after_only_owned_producer_exclusions": 13438,
+      "complete_common_input_maps_equal": true,
+      "independent_physical_input_rehash_count": 13438,
+      "physical_mismatches": [],
+      "unreadable_inputs": [],
+      "qualifying_behavior_method_count": 8,
+      "behavior_skips": 0,
+      "result": "All5 qualifying check raw/canonical logs and report/producer hashes authenticate. Both before/after input maps are exact and Windows write/delete guards bind every inventoried file. Reused passing behavior/format/lint observations share the complete unchanged tracked/Python closure with the fresh selected-file type observation; no unknown domain or producer-wide PASS is inferred."
+    },
+    "selected_file_type_scope": {
+      "command": "$env:MYPYPATH='tools;services/core-api/src'; .venv/Scripts/python.exe -B -m mypy --config-file pyproject.toml --no-namespace-packages --no-incremental --follow-imports=silent -- tests/rights/test_migration.py",
+      "installed_mypy_version": "2.3.0",
+      "primary_semantics": "https://mypy.readthedocs.io/en/stable/running_mypy.html#following-imports",
+      "assessment": "Installed mypy build.py preserves root_source normal checking and analyzes imported modules with only their non-blocker diagnostics silent. Actual import chain reaches encrypted fixture through locally imported RightsRepositoryTests and connector workflow fixtures. Root file uses retained analyzed signatures, not substituted Any. This mode is labeled selected-file only; repository configuration and all test assertions remain unchanged."
+    },
+    "historical_support_authenticated": [
+      {
+        "path": "artifacts/evidence/CAP-05.S01.qualification-01.json",
+        "sha256": "7ceee8b56fc24ab76bb2536a058143a06f3ec549e292645fc8ca3ca6055d98ef"
+      },
+      {
+        "path": "artifacts/evidence/CAP-05.S01.review-01.json",
+        "sha256": "0d0cb37286fc91906ec8b9fa1dd6c8daab401ba355dd5651a6313fd52a4c1d9f"
+      },
+      {
+        "path": "artifacts/evidence/CAP-05.S01.T03.review-R01.json",
+        "sha256": "3a741cb98969ff32490d54ae9f24474d1eba5bf3c065afd5037c817e77ea56f3"
+      }
+    ],
+    "preserved_adverse": {
+      "original_checkpoint_report": {
+        "path": "artifacts/tmp/W2.CP07.selected-01-10110a83.json",
+        "sha256": "f7dfae1e234d01c29ece9531df9cd46ae761f45b96da8aa0542c6c60a8c52366"
+      },
+      "original_checkpoint_log": {
+        "path": "artifacts/tmp/W2.CP07.selected-01-10110a83.rights-and-portable-handoff.log",
+        "sha256": "185f4528d3d35885445c1ecabae35c8923d0a5f51e360bd1c8959d1977d43a96"
+      },
+      "broader_import_type_log": {
+        "path": "artifacts/tmp/W2.C13.T01.selected-01-9a860fc4.types.log",
+        "sha256": "780aa1d5bd70e28a3e02958cd1a6f11f90d58cc5c55e51b700f020792821cd87"
+      },
+      "staging_runtime_report": {
+        "path": "artifacts/tmp/W2.C14.T01.red-01-9a860fc4.json",
+        "sha256": "c238dcbb2a8dd3591b8eebc84fe1f17f278418d8f718d32b174f43aaf24e7b7c"
+      },
+      "staging_runtime_log": {
+        "path": "artifacts/tmp/W2.C14.T01.red-01-9a860fc4.encrypted-staging-fixture.log",
+        "sha256": "6ff1dc11f9b5bbdbb8ec6e5933e217677e6fc21b037176525ca86587110d30ed"
+      },
+      "staging_runtime_producer": {
+        "path": "artifacts/tmp/W2.C14.T01.reproduce-01.py",
+        "sha256": "b6c8cf910c7b92ffdaa822fa72bbd3625cd2888b2d91c44b3e7392ad140978d1"
+      },
+      "result": "All referenced adverse bytes authenticate. Original checkpoint54 cases/four assertion failures remains FAIL. First C13 producer remains FAIL on one imported call-arg diagnostic. Actual staging diagnostic executes1case and remains FAILED(errors=1) on callback accepting2arguments versus actual helper passing3. No suppressed/reclassified product PASS, runtime-failure closure or historical comparison is invented."
+    }
+  },
+  "checks": [
+    {
+      "command": "Authenticate actual atomic submit receipt and persisted frozen R01 against source candidate/base and public manifest",
+      "result": "PASS: packet/evidence/criteria/selection hashes and exact selected/deferred identities reproduce."
+    },
+    {
+      "command": "Inspect exact admitted test diff and verify original task/history/approval/fixtures/backup/rights/failure preservation",
+      "result": "PASS: exact25/0025 restoration and additive empty-table assertions preserve inherited authority; no criterion-bound C13 blocker."
+    },
+    {
+      "command": "Authenticate all actual producer/report/raw/canonical log bindings and complete guarded input equality; independently rehash13438commoninputs",
+      "result": "PASS for bounded C13 evidence authentication, with broader quality and staging runtime FAIL explicitly preserved."
+    }
+  ],
+  "remaining_obligations": [
+    "Independently qualify and approve separate linked C14 encrypted-staging fixture correction, preserving assertions and exact received staging identity, before ordinary W2 resumes.",
+    "Fresh affected W2.CP07 cluster2 integration checks and independent checkpoint disposition.",
+    "Remaining approved W2 tasks/slices/checkpoints and fresh complete Wave qualification/profile/security/privacy/rights/accessibility/performance/packaging obligations.",
+    "Separate human G2 release; this ledger approves no checkpoint, Wave or release."
+  ],
+  "findings": [],
+  "closures": [],
+  "prior_findings_replayed": []
+}
