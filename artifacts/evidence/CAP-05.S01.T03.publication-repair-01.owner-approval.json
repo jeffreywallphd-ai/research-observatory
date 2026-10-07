@@ -1,0 +1,91 @@
+{
+  "documentType": "exact-owner-unpublished-submission-repair-authorization",
+  "actor": "human:repository-owner",
+  "decision": "APPROVED",
+  "userReply": "Approved. Please make the fix quickly and move on to finish W2 work.",
+  "authorizationBoundAt": "2026-10-07T02:12:04.848622+00:00",
+  "authorizationSource": "Direct human reply approving the exact linked repair brief and preceding exact candidate/proposal/readiness question. Time records this binding, not an invented message arrival.",
+  "taskId": "CAP-05.S01.T03",
+  "candidateCommit": "e53a5154ddf78522edd252645eafc71621acdc51",
+  "proposalSha256": "28ec905c8282c364e2c1f8195d2fbfb052c10f1c0ef5688e41052a0175eca5e8",
+  "independentReadinessSha256": "a53e1aba5f367326a166f54a8807a875300702f76bf0030c3a49109b657b01da",
+  "reviewBriefSha256": "0a9a3167977e6920785b5f6acef99c480ba4acb510dbae03b397d94e1ade7917",
+  "originalManifestSha256": "c1ec1f8d6cc5f02d7155bf37784f4dce08cca194d097b3fd996c4db65743bce9",
+  "originalPacketSha256": "dd767b8f1395fe4dea83f56b066f5f2d3bcf8b4a3d070b265f08f37587998524",
+  "preservedIndexSha256": "8e2ffe86de9cbf0a4994a5727bdacd111fc183c8cb02d833f3a3325808046779",
+  "preservedFiles": [
+    {
+      "path": "artifacts/evidence/CAP-05.S01.T03.json",
+      "rawSHA256": "c1ec1f8d6cc5f02d7155bf37784f4dce08cca194d097b3fd996c4db65743bce9",
+      "indexBlobSHA256": "c1ec1f8d6cc5f02d7155bf37784f4dce08cca194d097b3fd996c4db65743bce9",
+      "mode": "100644",
+      "gitOID": "c39413aeb2de4603878b095a8b9e51e311c5a442",
+      "committedPredecessorSHA256": null
+    },
+    {
+      "path": "docs/planning-implementation-plan.md",
+      "rawSHA256": "321242fd83f0b80cb8431c6a490d0e1ccecb99bbf261598c540e809d6da16ba6",
+      "indexBlobSHA256": "321242fd83f0b80cb8431c6a490d0e1ccecb99bbf261598c540e809d6da16ba6",
+      "mode": "100644",
+      "gitOID": "8d158338878b354975a57ad0d23a9a27045b0cab",
+      "committedPredecessorSHA256": "4b3f085a1cf3099a5710788221c51670a6bd489c5cce370ad78655f2c78fb724"
+    },
+    {
+      "path": "planning/backlog.yaml",
+      "rawSHA256": "b731bae29b4f3b7103924dbc9c8821688fb6f0ca7a53c430db55f66d44c7b49b",
+      "indexBlobSHA256": "f6256ddcf86de1dd564b7526f25dd92a574be8f7d9cd90fa632fce41c45e68f5",
+      "mode": "100644",
+      "gitOID": "3614d1c33b8acc13181b67244e33f4836876c71d",
+      "committedPredecessorSHA256": "2d8b5cac9ea66b5bbd8fd8887af17dfe32b23cf017b4bde0d2aa63ad95130e25"
+    },
+    {
+      "path": "planning/review-site/CAP-05/CAP-05.S01.T03.html",
+      "rawSHA256": "b2af641a59563adacce5aa4480c47c6d2d5dbd5efbb00a90a32f52a2300e5911",
+      "indexBlobSHA256": "a17983ea6feb39b08cdf95a035c3c01de153fda959a5694d50d00d8a32164a24",
+      "mode": "100644",
+      "gitOID": "8601e7dfb6b48ec881e92d16eacfa42219b830ef",
+      "committedPredecessorSHA256": "307e9963e14868cfc0e192ba1499890d8a255c76926dd10a4397e8fe5d396f10"
+    },
+    {
+      "path": "planning/review-site/CAP-05/CAP-05.S01.html",
+      "rawSHA256": "0b84641d58378b0dc40869edef05979e2bff3023a0ddd9c5216f2a4471b6970d",
+      "indexBlobSHA256": "863d25a98b7ec259e36692cbbf8e80f21a01b7f0ca62f373a6273cbd3dffdeef",
+      "mode": "100644",
+      "gitOID": "77ab42658ea63f12e4821dabca8b0faaaaa38d3e",
+      "committedPredecessorSHA256": "c2c86b3382e3aa548b7b69e8b5b92c9e91dff182682a0cfc17ccf72a68b009a9"
+    },
+    {
+      "path": "planning/review-site/manifest.json",
+      "rawSHA256": "1596f1da5b2fe8a0b7e8c71a4ef41226faa985a9417a70c6d5bfa78d704fe836",
+      "indexBlobSHA256": "5a068ae36f3c49d91cec2e0f605baaa1cb3b68e5540b7a2fbcd99b299131c0fe",
+      "mode": "100644",
+      "gitOID": "f6769958632d8292255ee5e1920173cb99dfe62f",
+      "committedPredecessorSHA256": "fb7056e5872911e23a9837385b5ded3fedffe7469c7476bbad29df8fe3e431e0"
+    },
+    {
+      "path": "planning/review-site/waves/W2.html",
+      "rawSHA256": "0f712c8d0eb975b9c08d2f30b93aced16ab299041129071d1fa90f9cc2e97fe5",
+      "indexBlobSHA256": "1fdc4ec1c7b4400b45e2c06c25b9e843aa48ceb4323112fab4ecf0e065d26107",
+      "mode": "100644",
+      "gitOID": "4899ba2c1ba63d984a4b2697d183ddf2da7efc6a",
+      "committedPredecessorSHA256": "e6dbf82e40f17e4427b6492e9a2f06a83bdfaa5c0b6252b102865c5e659a7360"
+    },
+    {
+      "path": "planning/status-summary.md",
+      "rawSHA256": "04acacffbcb26be8f4b5c702fb360a7aeefa668f889a9f24857ccf2f1db99ef7",
+      "indexBlobSHA256": "04acacffbcb26be8f4b5c702fb360a7aeefa668f889a9f24857ccf2f1db99ef7",
+      "mode": "100644",
+      "gitOID": "77f4c953d3844d18678545abd729f38b0475240e",
+      "committedPredecessorSHA256": "443928c57fffc4052e6881c567dca1d6dde21737a3b8a501532b9449a21dae52"
+    }
+  ],
+  "publicManifestSha256": "9b0be077a34763e6236df5c38b9266cd7d1813fb417d4515d8b5d5a5dfd6489a",
+  "scope": [
+    "One-time exception for this exact frozen R01 that has never been Git-published or approved: retain every original raw ledger, manifest, indexed blob, index and generated-view byte in the ignored snapshot.",
+    "Restore only the seven named existing uncommitted metadata files/index entries to exact J; unstage only the named new manifest. Preserve all committed history and product evidence.",
+    "Replace only the named unpublished manifest with exact reviewed public-manifest bytes. Original private bytes and original R01 identity remain bound in the ignored snapshot and public repair provenance.",
+    "Explicitly permit the corrected representation to use R01 after restoration to committed J pre-submission state. Submit through unchanged taskctl, independently review the actual new frozen packet, refresh/check views, and commit through unchanged privacy hooks.",
+    "Record exact owner authorization append-only. No new framework source/control/policy work or product/test/security/reference/release-boundary changes."
+  ],
+  "limits": "Exact one-time unpublished R01 representation exception only. No product/test/framework/control/privacy-policy/scanner/reference/release changes, no history discard, no task/slice/Wave/release approval. Independent dispositions and unchanged normal privacy hooks remain required."
+}

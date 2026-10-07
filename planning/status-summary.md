@@ -1,7 +1,7 @@
 ---
 document_type: generated-backlog-status-summary
 source: planning/backlog.yaml
-source_sha256: 2d8b5cac9ea66b5bbd8fd8887af17dfe32b23cf017b4bde0d2aa63ad95130e25
+source_sha256: bef7ef20a3768fd65dc393ada6142ab7693d8a52fdd798b31f96c868469eb9a6
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -53,7 +53,7 @@ manual_edit: prohibited
 | Status | Count |
 |---|---:|
 | `NOT_STARTED` | 235 |
-| `IN_PROGRESS` | 1 |
+| `REVIEW` | 1 |
 | `DONE` | 84 |
 | `DEFERRED` | 36 |
 
@@ -867,6 +867,7 @@ Append-only rounds remain distinct from the current latest-review projection. Le
 | `CAP-04.S05.T03` | `append-only v1` | 3 | `-` | approved / agent:/root/t03_independent_review | - |
 | `CAP-05.S01.T01` | `append-only v1` | 1 | `-` | approved / agent:/root/c11_security_review | - |
 | `CAP-05.S01.T02` | `append-only v1` | 1 | `-` | approved / agent:/root/c11_security_review | - |
+| `CAP-05.S01.T03` | `append-only v1` | 0 | `R01` | - / - | - |
 | `CAP-07.S01.T01` | `append-only v1` | 2 | `-` | approved / codex-independent | - |
 | `CAP-07.S01.T02` | `append-only v1` | 1 | `-` | approved / agent:/root/model_registry_review | - |
 | `CAP-07.S01.T03` | `append-only v1` | 1 | `-` | approved / agent:/root/decoder_memo_review | - |
@@ -973,7 +974,7 @@ Append-only rounds remain distinct from the current latest-review projection. Le
 
 | Task | Status | Owner | Branch |
 |---|---|---|---|
-| `CAP-05.S01.T03` Create acquisition queue, conflict, and entitlement placeholders | `IN_PROGRESS` | codex-w2-implementation | `codex/w2-implementation` |
+| `CAP-05.S01.T03` Create acquisition queue, conflict, and entitlement placeholders | `REVIEW` | codex-w2-implementation | `codex/w2-implementation` |
 
 ## Linked corrective tasks
 
