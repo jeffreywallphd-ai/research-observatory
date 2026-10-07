@@ -25,6 +25,7 @@ from research_observatory_core.connectors.plugin_manifest import _VERIFIED_SEAL,
 from . import lpac_launcher as win
 from .file_paths import extended_path
 from .no_write_acl import AclRestoration, no_write_lpac_acl, verify_lpac_no_write
+from .parser_cpu_affinity import parser_cpu_affinity
 from .protocol import MAX_BINARY_FRAME, MAX_CONTROL_FRAME, decode_frame, encode_frame
 from .recovery_guardian import GuardianError, GuardianProcess, start_guardian
 from .runtime_inventory import APPLICATION_INVENTORY_PUBLIC_KEY, SignedWorkerRuntime, _safe_path, verify_worker_runtime
@@ -325,6 +326,10 @@ def _launch_signed_worker(
             bit = available & -available
             admitted_cpus |= bit
             available ^= bit
+        if cpu_limit == 4:
+            admitted_cpus = parser_cpu_affinity(kernel, parent_affinity.value)
+        if not admitted_cpus or admitted_cpus & ~parent_affinity.value or admitted_cpus.bit_count() > cpu_limit:
+            raise win.LPACError("lpac-worker-cpu-concurrency-unbounded")
         limits = win._ExtendedLimitInformation()
         limits.BasicLimitInformation.LimitFlags = (
             win._JOB_OBJECT_LIMIT_KILL_ON_JOB_CLOSE

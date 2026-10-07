@@ -161,6 +161,17 @@ The full signed runtime inventory digest is an explicit `parser-runtime` asset
 in every installed descriptor, including native and inspection-only adapters.
 The selected model digest alone does not identify the shipped native derivative.
 
+Within its four-logical-processor ceiling, the parser prefers one allowed
+processor on each distinct physical core, favoring the Windows-reported
+performance class. Every selected bit remains within the parent affinity.
+Unavailable, incomplete, overlapping or multi-group topology uses the previous
+first-four-bit allocation. The connector keeps its one-processor selection;
+the worker's actual post-assignment affinity must still equal the admitted mask.
+The preference uses the documented
+[processor relationship](https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-processor_relationship)
+and [process group affinity](https://learn.microsoft.com/en-us/windows/win32/api/processtopologyapi/nf-processtopologyapi-getprocessgroupaffinity)
+APIs; it does not change machine scheduling settings.
+
 The offline build verifies locally supplied upstream source archives and applies
 only the tracked native admission/geometry and QPDF buffer patches. Original
 MediaBox, CropBox, inherited rotation and UserUnit are admitted before page
