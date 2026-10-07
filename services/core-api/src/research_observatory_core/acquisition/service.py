@@ -71,7 +71,7 @@ class _Retry(Exception):
 
 
 class _Source:
-    """At most one network chunk retained; the object store owns encryption."""
+    """Fill a bounded read plus one chunk remainder; storage owns encryption."""
 
     def __init__(
         self,
@@ -102,28 +102,39 @@ class _Source:
         if size < 1 or size > 1024 * 1024:
             raise AcquisitionProblem("acquisition-stream-bound-invalid")
         self.checkpoint()
-        if not self.buffer and self.finished_at is None:
-            try:
-                chunk = next(self.chunks)
-            except StopIteration:
-                if self.length is not None and self.byte_length != self.length:
-                    raise AcquisitionProblem("acquisition-response-truncated") from None
-                self.finished_at = self.clock()
-                return b""
-            if not isinstance(chunk, bytes) or len(chunk) > 1024 * 1024:
-                raise AcquisitionProblem("acquisition-stream-bound-invalid")
-            self.total[0] += len(chunk)
-            self.byte_length += len(chunk)
-            if (
-                self.total[0] > self.maximum
-                or self.byte_length > self.maximum
-                or (self.length is not None and self.byte_length > self.length)
-            ):
-                raise AcquisitionProblem("acquisition-response-too-large")
-            self.digest.update(chunk)
-            self.buffer = chunk
-        result, self.buffer = self.buffer[:size], self.buffer[size:]
-        return result
+        result = bytearray()
+        while len(result) < size:
+            if not self.buffer:
+                if self.finished_at is not None:
+                    break
+                try:
+                    chunk = next(self.chunks)
+                except StopIteration:
+                    if self.length is not None and self.byte_length != self.length:
+                        raise AcquisitionProblem("acquisition-response-truncated") from None
+                    self.finished_at = self.clock()
+                    break
+                if not isinstance(chunk, bytes) or len(chunk) > 1024 * 1024:
+                    raise AcquisitionProblem("acquisition-stream-bound-invalid")
+                self.total[0] += len(chunk)
+                self.byte_length += len(chunk)
+                if (
+                    self.total[0] > self.maximum
+                    or self.byte_length > self.maximum
+                    or (self.length is not None and self.byte_length > self.length)
+                ):
+                    raise AcquisitionProblem("acquisition-response-too-large")
+                if not chunk:
+                    # An empty HTTP chunk is not EOF. Even an injected iterator
+                    # with no socket I/O cannot spin past deadline/cancellation.
+                    self.checkpoint()
+                    continue
+                self.digest.update(chunk)
+                self.buffer = chunk
+            count = min(size - len(result), len(self.buffer))
+            result.extend(self.buffer[:count])
+            self.buffer = self.buffer[count:]
+        return bytes(result)
 
 
 class OpenAccessAcquisitionService:

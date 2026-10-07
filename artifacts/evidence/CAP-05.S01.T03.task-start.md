@@ -128,3 +128,17 @@ preserve every literal predecessor, fixture, backup and prior migration row.
 The failed storage group is the characterization proof. Run all remaining
 affected storage/workflow/renderer groups before another capture refresh so a
 stop-on-first-failure qualification does not hide later rollout omissions.
+
+The representative resource run exposed a transfer-performance failure: the
+unchanged real 8 MiB TLS/SQLCipher/signed-LPAC principal case exceeded the existing
+120-second network deadline even without timing instrumentation. A focused
+diagnostic found that small TLS chunks became individual encrypted storage
+frames despite storage requesting a bounded 1 MiB read. Before product edits,
+add regressions for filling that existing read request across small chunks,
+bounded remainder and digest/length accounting, empty chunks, truncation, and
+denial at an actual checked-stream read without returning partial content.
+Coalescing must retain every real socket checkpoint and final current-authority
+publication guard; it grants no cache, new transfer budget or implicit retry.
+Preserve both adverse resource and unprofiled attempts. Close this row with the
+same actual 8 MiB principal case, then fresh representative resource samples at
+the committed correction; development timing alone is not a qualified baseline.

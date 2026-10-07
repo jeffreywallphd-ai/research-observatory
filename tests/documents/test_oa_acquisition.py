@@ -192,6 +192,138 @@ class AcquisitionDestinationTests(unittest.TestCase):
 
 
 class AcquisitionStreamTests(unittest.TestCase):
+    def source(self, chunks, *, length=None, maximum=1048576, checkpoint=lambda: None):
+        from research_observatory_core.acquisition.service import _Source
+
+        return _Source(
+            iter(chunks),
+            checkpoint,
+            total=[0],
+            expected_length=length,
+            maximum=maximum,
+            clock=lambda: 1.0,
+        )
+
+    def test_bounded_read_fills_across_small_chunks_without_changing_bytes(self):
+        chunks = [b"abc", b"defgh", b"ijk"]
+        source = self.source(chunks, length=11)
+        self.assertEqual(b"abcdef", source.read(6))
+        self.assertEqual(b"ghijk", source.read(6))
+        self.assertEqual(b"", source.read(6))
+        self.assertEqual(11, source.byte_length)
+        self.assertEqual([11], source.total)
+        self.assertEqual(hashlib.sha256(b"abcdefghijk").hexdigest(), source.digest.hexdigest())
+        self.assertEqual(1.0, source.finished_at)
+        self.assertIsNone(source.failure)
+
+    def test_empty_chunks_do_not_fabricate_end_of_stream(self):
+        source = self.source([b"", b"abc", b"", b"def", b""], length=6)
+        self.assertEqual(b"abcdef", source.read(8))
+        self.assertEqual(b"", source.read(8))
+        self.assertEqual(6, source.byte_length)
+        self.assertEqual(1.0, source.finished_at)
+
+    def test_empty_chunk_loop_still_checks_deadline_and_cancellation(self):
+        from research_observatory_core.ports.acquisition import AcquisitionProblem
+
+        checks = []
+
+        def checkpoint():
+            checks.append(None)
+            if len(checks) == 3:
+                raise AcquisitionProblem("acquisition-network-timeout")
+
+        def empty_chunks():
+            while True:
+                yield b""
+
+        source = self.source(empty_chunks(), checkpoint=checkpoint)
+        with self.assertRaisesRegex(AcquisitionProblem, "network-timeout") as caught:
+            source.read(8)
+        self.assertEqual(3, len(checks))
+        self.assertEqual([0], source.total)
+        self.assertIs(caught.exception, source.failure)
+        self.assertIsNone(source.finished_at)
+
+    def test_iterator_failure_does_not_return_an_accumulated_partial_read(self):
+        failure = OSError("synthetic transport interruption")
+
+        def chunks():
+            yield b"abc"
+            raise failure
+
+        source = self.source(chunks())
+        with self.assertRaises(OSError) as caught:
+            source.read(8)
+        self.assertIs(failure, caught.exception)
+        self.assertIs(failure, source.failure)
+        self.assertEqual([3], source.total)
+        self.assertIsNone(source.finished_at)
+
+    def test_truncation_and_oversize_fail_before_returning_partial_read(self):
+        from research_observatory_core.ports.acquisition import AcquisitionProblem
+
+        for chunks, length, maximum, expected in (
+            ([b"abc", b"d"], 5, 10, "truncated"),
+            ([b"abc", b"def"], None, 5, "too-large"),
+            ([b"abc", b"def"], 5, 10, "too-large"),
+            ([b"abc", b"x" * 1048577], None, 2097152, "stream-bound-invalid"),
+        ):
+            with self.subTest(expected=expected, length=length):
+                source = self.source(chunks, length=length, maximum=maximum)
+                with self.assertRaisesRegex(AcquisitionProblem, expected) as caught:
+                    source.read(8)
+                self.assertIs(caught.exception, source.failure)
+                self.assertIsNone(source.finished_at)
+
+    def test_coalescing_preserves_denial_before_each_actual_socket_read(self):
+        from research_observatory_core.acquisition.transport import _CheckedStream
+        from research_observatory_core.ports.acquisition import AcquisitionProblem
+
+        checkpoints = []
+        reads = []
+
+        def checkpoint():
+            checkpoints.append(None)
+            if len(checkpoints) == 3:
+                raise AcquisitionProblem("acquisition-rights-denied")
+
+        class SocketStream:
+            def read(self, max_bytes, timeout=None):
+                reads.append(max_bytes)
+                return b"abc"
+
+        checked = _CheckedStream(SocketStream(), checkpoint, None)
+
+        def chunks():
+            yield checked.read(16384)
+            yield checked.read(16384)
+
+        source = self.source(chunks(), checkpoint=checkpoint)
+        with self.assertRaisesRegex(AcquisitionProblem, "rights-denied") as caught:
+            source.read(8)
+        self.assertEqual([16384], reads)
+        self.assertEqual(3, len(checkpoints))
+        self.assertIs(caught.exception, source.failure)
+        self.assertIsNone(source.finished_at)
+
+    def test_existing_read_and_wire_bounds_remain_enforced(self):
+        from research_observatory_core.ports.acquisition import AcquisitionProblem
+
+        for size in (-1, 0, 1048577):
+            with self.subTest(size=size):
+                source = self.source([b"abc"])
+                with self.assertRaisesRegex(AcquisitionProblem, "stream-bound-invalid"):
+                    source.read(size)
+                self.assertEqual([0], source.total)
+        source = self.source([b"abcde", b"fghi"], length=9)
+        self.assertEqual(b"abc", source.read(3))
+        self.assertLessEqual(len(source.buffer), 1048576)
+        self.assertEqual(b"def", source.read(3))
+        self.assertLessEqual(len(source.buffer), 1048576)
+        self.assertEqual(b"ghi", source.read(3))
+        self.assertEqual(b"", source.read(3))
+
     def test_stream_without_length_rejects_actual_wire_cap_and_counts_retries(self):
         from research_observatory_core.acquisition.service import _Source
         from research_observatory_core.ports.acquisition import AcquisitionProblem
