@@ -238,9 +238,9 @@ These sources constrain implementation choices but do not replace repository-spe
 **Authoritative work state remains:** `planning/backlog.yaml`.</pre></article></section>
 <section class="section-heading"><span class="eyebrow">Task-start planning</span><h2>Assigned worksheet</h2><p>The worksheet is an optional planning aid and does not create a new approval or task state.</p></section>
 
-<details class="plan-details task-worksheet" open data-task-worksheet="CAP-05.S02.T03" data-worksheet-sha256="a2df5f9d8db7482d5c5c4e6a2ae50008ac52b086d34d809cd81b2ad8f8625def">
+<details class="plan-details task-worksheet" open data-task-worksheet="CAP-05.S02.T03" data-worksheet-sha256="4cd568b024c1c81327552c3c20d051bd1fd9180ee6522c5a4c5704bd25de85e8">
   <summary>Assigned task-start worksheet</summary>
-  <div class="worksheet-meta"><strong>Source:</strong> <code>artifacts/evidence/CAP-05.S02.T03.task-start.md</code> · <strong>SHA-256:</strong> <code>a2df5f9d8db7482d5c5c4e6a2ae50008ac52b086d34d809cd81b2ad8f8625def</code></div>
+  <div class="worksheet-meta"><strong>Source:</strong> <code>artifacts/evidence/CAP-05.S02.T03.task-start.md</code> · <strong>SHA-256:</strong> <code>4cd568b024c1c81327552c3c20d051bd1fd9180ee6522c5a4c5704bd25de85e8</code></div>
   <article class="plan-article"><pre class='markdown-fallback'># CAP-05.S02.T03 — isolated offline parsing
 
 Claim base: `446819465a63776d7f00696f0bfee8b14fa065a9`; owner
@@ -306,7 +306,17 @@ failing measured-storage regression reproduced that gap. Compact scalar/origin
 buffers replace the transient tuple graph without imposing a new format quota;
 Unicode gold and existing noncontiguous, blocked and class-zero composition
 cases remain required. Check the pinned decomposition expansion when qualifying
-the working-storage bound.</pre></article>
+the working-storage bound.
+
+The full normalization path also needs a compact independent-comparison buffer:
+joining a generator recreated individual scalar strings after the compact
+composition pass. A complete uncancelled CR/equal-class regression reproduced
+that gap, including exact normalized text and two mapping runs. Incremental
+comparison writes preserve the independent NFC check and Unicode authority.
+Actual installed plain-text execution also exposed the encrypted stager&#x27;s
+missing existing-family media entry. A real protected-source/encrypted-retention
+regression precedes that exact entry correction and retains unknown-media
+denial, original/assertion immutability, intent and raw-artifact binding.</pre></article>
 </details>
 <section class="section-heading"><span class="eyebrow">Execution evidence</span><h2>Review packets, rounds, and current projection</h2><p>Append-only controls retain every immutable round and finding closure. Pre-policy tasks remain explicitly latest-review-only.</p></section>
 
