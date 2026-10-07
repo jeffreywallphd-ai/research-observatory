@@ -169,6 +169,11 @@ predictor dimensions, image/mask geometry and actual JPEG/JPX headers are bounde
 Unverified JBIG2 decoding is denied before either parsing or rendering. This is
 an input-denial outcome, not a reason to relax isolation or select fallback.
 The package retains upstream notices, source/patch identities and build receipts.
+Duplicated Torch/Torchvision/Docling source bytes are compacted into a bounded
+read-only archive for introspection of already-frozen bytecode. A strict signed
+index binds each member; the worker neither executes archive source nor extracts
+it. Transformer discovery sources, native libraries and resources keep their
+fixed paths. Full package authentication still checks every shipped file.
 
 Core constructs a stager for one exact selected request and a live
 `document-parse`/`document` workflow claim. It checks the native session and lease

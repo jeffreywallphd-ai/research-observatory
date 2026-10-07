@@ -107,6 +107,17 @@ unknown nonzero anonymous resource bytes fail. Executable manifests and process
 capabilities are not changed. Application-derived DLLs are re-signed and the
 complete inventory is verified before execution.
 
+The duplicated public Python sources for Torch, Torchvision and the selected
+Docling packages are stored byte-for-byte in a bounded, signed read-only archive
+instead of thousands of loose files. The existing frozen loader receives a
+source-introspection fallback after its ordinary lookup; its bytecode execution
+and module discovery remain unchanged. A closed index binds archive and member
+digests, lengths and relative names, including empty upstream sources. Source
+text is decoded in bounded memory and is never extracted to disk. Transformer
+factory discovery sources, native libraries, resource files and notices retain
+their ordinary packaged paths. The complete archive and index remain covered
+by full signed-inventory authentication before launch.
+
 Library stderr is a private sink: drain with constant memory and no retained
 content, reject more than 1 MiB through a fixed failure code, and keep cancellation
 and owned-job termination live. Product diagnostics never retain a third-party

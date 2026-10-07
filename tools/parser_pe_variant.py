@@ -172,7 +172,7 @@ def _resources(pe: Any, *, allowed_padding_sha256: str | None = None) -> list[tu
             and max(start, directory.VirtualAddress) < min(end, directory.VirtualAddress + directory.Size)
         ):
             raise WorkerBuildError("parser-resource-loader-overlap")
-    ranges = []
+    ranges: list[tuple[int, int]] = []
     result = []
     for kind in root.entries:
         key = str(kind.name) if kind.name is not None else kind.struct.Id

@@ -13,6 +13,7 @@ import platform
 import shutil
 import subprocess
 import sys
+import zipfile
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parents[1]
@@ -32,6 +33,13 @@ from plugin_worker_runtime_build import (  # noqa: E402
 )
 
 from workers.document.parser_package import VERSIONS  # noqa: E402
+from workers.document.source_bundle import (  # noqa: E402
+    MAX_MEMBER_BYTES,
+    MAX_SOURCE_BYTES,
+    MAX_SOURCE_FILES,
+    SOURCE_PACKAGES,
+    source_path,
+)
 from workers.windows.runtime_inventory import (  # noqa: E402
     MAX_PARSER_INVENTORY_BYTES,
     MAX_PARSER_RUNTIME_BYTES,
@@ -311,6 +319,7 @@ def _assemble_package(
                 }
             )
     (internal / "notice-index.json").write_text(json.dumps(notice_index, indent=2) + "\n", encoding="utf-8")
+    _bundle_sources(internal)
     files = sorted(p for p in package.rglob("*") if p.is_file())
     if len(files) > MAX_PARSER_RUNTIME_FILES or sum(p.stat().st_size for p in files) > MAX_PARSER_RUNTIME_BYTES:
         raise WorkerBuildError("parser-package-oversize")
@@ -334,6 +343,45 @@ def _assemble_package(
         SignedWorkerRuntime(package, raw, (output / "inventory.sig").read_bytes(), application_public_key.read_bytes()),
         profile="parser",
     )
+
+
+def _bundle_sources(internal: Path) -> None:
+    """Preserve exact introspection sources alongside unchanged frozen bytecode."""
+    sources = sorted(path for name in SOURCE_PACKAGES for path in (internal / name).rglob("*.py"))
+    if not 0 < len(sources) <= MAX_SOURCE_FILES:
+        raise WorkerBuildError("parser-source-input-invalid")
+    entries = []
+    total = 0
+    archive_path = internal / "parser-sources.zip"
+    with zipfile.ZipFile(archive_path, "x", compression=zipfile.ZIP_DEFLATED, compresslevel=9) as archive:
+        for path in sources:
+            name = path.relative_to(internal).as_posix()
+            if not source_path(name) or path.is_symlink() or path.is_junction():
+                raise WorkerBuildError("parser-source-input-invalid")
+            content = path.read_bytes()
+            total += len(content)
+            if not 0 <= len(content) <= MAX_MEMBER_BYTES or total > MAX_SOURCE_BYTES:
+                raise WorkerBuildError("parser-source-input-invalid")
+            info = zipfile.ZipInfo(name, date_time=(1980, 1, 1, 0, 0, 0))
+            info.compress_type = zipfile.ZIP_DEFLATED
+            archive.writestr(info, content, compresslevel=9)
+            entries.append({"path": name, "sha256": _digest(path), "bytes": len(content)})
+    (internal / "parser-source-index.json").write_text(
+        json.dumps(
+            {
+                "schemaVersion": "1.0",
+                "documentType": "pinned-parser-python-sources",
+                "archiveSha256": _digest(archive_path),
+                "files": entries,
+            },
+            sort_keys=True,
+            separators=(",", ":"),
+        )
+        + "\n",
+        encoding="utf-8",
+    )
+    for path in sources:
+        path.unlink()
 
 
 def main() -> None:

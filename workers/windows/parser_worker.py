@@ -200,6 +200,13 @@ def parse_document(source: bytes, kind: str, assets: Path) -> bytes:
     )
     _builtin_mime_types()
     _package(assets)
+    if getattr(sys, "frozen", False):
+        from workers.document.source_bundle import SourceBundleError, install_frozen_sources
+
+        try:
+            install_frozen_sources(assets.parent)
+        except SourceBundleError:
+            raise ParserWorkerError("parser-assets-unavailable") from None
     source_pages = _pdf_admission(source) if kind == "pdf" else []
     import torch  # type: ignore[import-not-found]
     from docling.backend.docling_parse_backend import DoclingParseDocumentBackend  # type: ignore[import-not-found]
