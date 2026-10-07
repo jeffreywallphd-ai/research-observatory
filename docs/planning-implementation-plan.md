@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 75890392e40f191ecc6d2d631c5ece02bf52196c1cbec1b7aeae8f19d902742d
+source_sha256: 544136df9fa72058748a57b4f022177177b4f8369793925fb4c4bd19691fdd3a
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -11246,7 +11246,7 @@ Original tasks and approvals remain unchanged.
 
 **Dependencies:** `CAP-05.S02.T01`
 
-**Owner / review:** codex-w2-implementation / - (`-`)
+**Owner / review:** codex-w2-implementation / agent:/root/s02_t01_review (`changes-requested`)
 
 **Objective:** Namespace-aware parsers for titles, abstracts, sections, paragraphs, lists, footnotes, tables, figures, references, and in-text citations.
 
@@ -11264,13 +11264,51 @@ Original tasks and approvals remain unchanged.
 
 - python tools/verify.py --profile documents
 
+**Evidence:**
+
+- `artifacts/evidence/CAP-05.S02.T02.R01.corrected-01.json` at `bfae61bbbbca3f20d3a4089d6c9e33acebdfe00e`
+
 ##### Review history — CAP-05.S02.T02
 
-**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+**Review mode:** `append-only v1` / 1 completed round(s)
 
-**Current latest-review projection:** `-` by - at `-`
+###### Round R01
 
-**Latest notes:** -
+**Immutable submission packet:** `R01` / packet SHA-256 `f5a320ab03dbb6c849be0bdb796c5cc5d28e7ab6c5757cd387917e46113d0a1a`
+
+- Candidate / base / branch: `bfae61bbbbca3f20d3a4089d6c9e33acebdfe00e` / `ce14e0dcb0c8578f6514b900fa3baf24039a435d` / `codex/w2-implementation`
+- Submitted by / at: codex-w2-implementation / `2026-10-07T12:34:22+00:00`
+- Evidence: `artifacts/evidence/CAP-05.S02.T02.R01.corrected-01.json` / `bb15e32b00de58a073e18b2320e20b41d0f7783cfc2b10f1c9e6cc119a162b93` / `bfae61bbbbca3f20d3a4089d6c9e33acebdfe00e`
+- Acceptance-criteria SHA-256: `86ed95e53eb834fd4a67772d8aba4116698e3f74b184a13a0c91ec3f366695f7`
+- Verification-selection SHA-256: `7d5f63f029d02f4903cdcff28a60f5aa25323486956b3cc62765083e92cf34e5`
+- Changed paths: `artifacts/evidence/CAP-05.S02.T02.R01.json`, `artifacts/evidence/CAP-05.S02.T02.task-start.md`, `docs/architecture/document-parsing.md`, `docs/planning-implementation-plan.md`, `packages/contracts/documents/README.md`, `packages/contracts/documents/generate_parser_schema.py`, `packages/contracts/documents/native-structure.v1.schema.json`, `planning/backlog.yaml`, `planning/review-site/CAP-05/CAP-05.S02.T02.html`, `planning/review-site/CAP-05/CAP-05.S02.html`, `planning/review-site/manifest.json`, `planning/review-site/waves/W2.html`, `planning/status-summary.md`, `services/core-api/src/research_observatory_core/parsing/native.py`, `services/core-api/src/research_observatory_core/parsing/native_contracts.py`, `services/core-api/src/research_observatory_core/ports/native_parsing.py`, `tests/fixtures/documents/native/README.md`, `tests/fixtures/documents/native/synthetic-generic.xml`, `tests/fixtures/documents/native/synthetic-html.html`, `tests/fixtures/documents/native/synthetic-jats.xml`, `tests/fixtures/documents/native/synthetic-tei.xml`, `tests/parsing/test_native_parsing.py`, `tests/parsing/test_portable_schema.py`, `workers/document/native_parsing.py`
+- Selected checks: `.venv/Scripts/python.exe -B -m unittest discover -v -s tests/parsing -p test_*.py`, `.venv/Scripts/python.exe -B -m unittest -v tests.documents.test_format_inspection.FormatInspectionTests`, `.venv/Scripts/python.exe -B packages/contracts/documents/generate_parser_schema.py --check`, `.venv/Scripts/python.exe -B -m ruff format --check --config pyproject.toml -- services/core-api/src/research_observatory_core/parsing services/core-api/src/research_observatory_core/ports/native_parsing.py workers/document/native_parsing.py services/core-api/src/research_observatory_core/object_store.py tests/parsing packages/contracts/documents/generate_parser_schema.py`, `.venv/Scripts/python.exe -B -m ruff check --config pyproject.toml -- services/core-api/src/research_observatory_core/parsing services/core-api/src/research_observatory_core/ports/native_parsing.py workers/document/native_parsing.py services/core-api/src/research_observatory_core/object_store.py tests/parsing packages/contracts/documents/generate_parser_schema.py`, `$env:MYPYPATH='tools;services/core-api/src'; .venv/Scripts/python.exe -B -m mypy --config-file pyproject.toml --no-namespace-packages --no-incremental -- services/core-api/src/research_observatory_core/parsing services/core-api/src/research_observatory_core/ports/native_parsing.py workers/document/native_parsing.py services/core-api/src/research_observatory_core/object_store.py tests/parsing/contract_fixtures.py tests/parsing/test_document_ir.py tests/parsing/test_normalization.py tests/parsing/test_parse_handoff.py tests/parsing/test_portable_schema.py tests/parsing/test_selection.py tests/parsing/test_native_parsing.py packages/contracts/documents/generate_parser_schema.py`, `.venv/Scripts/python.exe -B tools/architecture_check.py --repo .`
+- Deferred checks: `Actual packaged native LPAC execution, encrypted raw-output persistence, pinned offline Docling/assets, resource limits, integrated failure/cancellation/restart/recovery and slice end-to-end evidence remain CAP-05.S02.T03 and S02 qualification.`, `Unchanged existing attachment service and acquisition integration are not replayed here because this task changes neither object storage nor attachment/runtime code; the complete parser suite includes protected-source delivery. Existing acquisition-fixture typing defects remain adverse and outside this bounded product type selection. Broader repository checks remain an exit obligation.`, `Immutable document revisions/human acceptance and reader experience remain S03/S04. Fresh full repository/profile, cross-capability, security/privacy/rights/accessibility/performance/packaging and separate human W2 release gate remain pending.`
+- Selection rationale: Native hostile-source extraction adds a worker-only algorithm and a public raw cross-process value/parent-authenticated Core adapter. Select complete parser/native/normalization/portable-schema/protected-source tests plus existing native intake regression and directly affected quality/architecture. Expanded independent task review covers content identity, source locations/hierarchy, namespace semantics, scholarly uncertainty and worker/Core authority; no unchanged whole-history or full-profile replay is selected.
+- Prior round / replayed open findings: `-` / -
+- Root-cause escalation: -
+
+**Disposition / reviewer / time:** `changes-requested` / agent:/root/s02_t01_review / `2026-10-07T12:53:39+00:00`
+
+**Immutable review ledger:** `artifacts/evidence/CAP-05.S02.T02.review-R01.json` / `f0e38cbb5571d5503c5caa01002a494d3a8686e018b9b1b9d1bbf1ffa1f07ea0`
+
+**Review notes:** Independent expanded CAP-05.S02.T02 first frozen R01 review requests changes solely for the missing changed, indexed architecture record covering the new portable native contract and Core port (criterion 3). The native implementation and fresh evidence satisfy criteria 1 and 2: all three genuine pre-submission defects were corrected with behavioral red regressions and the missed acceptance row, and independent replay preserves conservative unresolved partial-target uncertainty/raw fields, correct optional HTML hierarchy/text ownership and exact TEI parent namespace. Original observations and the unsubmitted historical R01.json remain immutable history; they are not invented formal rounds or closure IDs. Actual current_submission candidate/base/criteria/selection/evidence authenticate through read-only taskctl validators without errors. Seven fresh selected groups passed with 59 parser and 13 intake cases, zero skips, 13494 stable guarded inputs and authenticated producer/report/raw/canonical logs. The separate required adr_check over the exact claim-base-to-candidate delta exits 1 on four protected paths because no indexed Proposed/Accepted ADR changed in this change set. Accepted ADR-0028/0029 remain governing and immutable, but do not satisfy this additional documentation requirement. Add only a narrow indexed Proposed implementation record and focused coverage proof, preserving accepted architecture and frozen R01; no new human approval, policy/framework change or architectural redesign is inferred. Actual LPAC launch, encrypted raw persistence, Docling/offline assets, resource/restart/recovery, integrated slice and fresh Wave/release qualification remain pending.
+
+**Findings opened:**
+
+- `CAP-05.S02.T02.R01.F01` `medium` blocking=`True` criterion=`3` — Protected native schema and port changes lack a changed indexed ADR; reproduce: At candidate bfae61bbbbca3f20d3a4089d6c9e33acebdfe00e, run .venv/Scripts/python.exe -B tools/adr_check.py --repo . --base ce14e0dcb0c8578f6514b900fa3baf24039a435d --head bfae61bbbbca3f20d3a4089d6c9e33acebdfe00e. It exits 1 for packages/contracts/documents/README.md, packages/contracts/documents/generate_parser_schema.py, packages/contracts/documents/native-structure.v1.schema.json and services/core-api/src/research_observatory_core/ports/native_parsing.py. The exact base-to-candidate delta contains zero changed indexed ADR records. docs/architecture/README.md requires an indexed ADR in the same change set; docs/adr/README.md requires a changed Proposed/Accepted record with matching affected_paths for every protected path. Unchanged accepted ADR-0028/0029 continue to govern their architecture decisions but cannot satisfy this changed-record condition; neither declares the new Core ports path. The passing selected architecture_check checks dependency boundaries and does not perform this ADR gate. Exact failed output and hashes are preserved in artifacts/tmp/CAP-05.S02.T02.review-s02_t01_review-adr-coverage-01.json and its .txt diagnostic.; remediate: Preserve this frozen R01 and add/index the next stable Proposed implementation ADR linked to CAP-05.S02.T02, covering the native raw receipt/parent-authenticated port and all four protected paths. Complete the existing template with the implemented source/namespace/identity/uncertainty invariants, inherited ADR-0028/0029 security/profile authority, compatibility, rollback and verification limits. Do not rewrite accepted frozen decisions, fabricate an Accepted transition/decider or change framework/policy/scope. Run the required ADR check over original claim base ce14e0dcb0c8578f6514b900fa3baf24039a435d through the new committed candidate so that the original protected paths remain in the replay, then submit append-only R02 criterion evidence and obtain independent closure. Select fresh affected checks under existing rules; no unrelated full-profile replay or new human amendment is required for documenting unchanged approved behavior.
+
+**Prior finding closures:**
+
+- None
+
+**Current immutable submission awaiting review:** None
+
+**Current latest-review projection:** `changes-requested` by agent:/root/s02_t01_review at `2026-10-07T12:53:39+00:00`
+
+**Latest notes:** Independent expanded CAP-05.S02.T02 first frozen R01 review requests changes solely for the missing changed, indexed architecture record covering the new portable native contract and Core port (criterion 3). The native implementation and fresh evidence satisfy criteria 1 and 2: all three genuine pre-submission defects were corrected with behavioral red regressions and the missed acceptance row, and independent replay preserves conservative unresolved partial-target uncertainty/raw fields, correct optional HTML hierarchy/text ownership and exact TEI parent namespace. Original observations and the unsubmitted historical R01.json remain immutable history; they are not invented formal rounds or closure IDs. Actual current_submission candidate/base/criteria/selection/evidence authenticate through read-only taskctl validators without errors. Seven fresh selected groups passed with 59 parser and 13 intake cases, zero skips, 13494 stable guarded inputs and authenticated producer/report/raw/canonical logs. The separate required adr_check over the exact claim-base-to-candidate delta exits 1 on four protected paths because no indexed Proposed/Accepted ADR changed in this change set. Accepted ADR-0028/0029 remain governing and immutable, but do not satisfy this additional documentation requirement. Add only a narrow indexed Proposed implementation record and focused coverage proof, preserving accepted architecture and frozen R01; no new human approval, policy/framework change or architectural redesign is inferred. Actual LPAC launch, encrypted raw persistence, Docling/offline assets, resource/restart/recovery, integrated slice and fresh Wave/release qualification remain pending.
+
+**Currently open findings:** `CAP-05.S02.T02.R01.F01`
 
 #### - [ ] CAP-05.S02.T03 - Integrate the local Docling-based PDF parser with fallback
 

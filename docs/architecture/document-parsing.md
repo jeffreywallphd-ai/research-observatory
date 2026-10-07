@@ -5,6 +5,12 @@ Native adapters are implemented by S02.T02; isolated execution remains T03, and 
 revisions and human acceptance remain S03. This contract introduces no database
 migration, HTTP endpoint, UI change, accepted-head write or parser dependency.
 
+[Proposed ADR-0044](../adr/ADR-0044-bind-native-parsing-contracts-to-existing-document-authority.md)
+documents the additive native raw contract and parent-authenticated port under
+the unchanged accepted decisions, including compatibility, rollback and proof
+limits. It supplies the same-change-set protected-interface trace without
+granting new architecture or runtime authority.
+
 `parsing/contracts.py` owns strict, frozen version-1.0 values. Original object
 digest/length/format, project, attachment, document/revision, candidate, source
 assertion and Work/Version revisions travel together. Local imports carry local

@@ -25,6 +25,7 @@ selected.
 | Hostile input/resources | Deny DTD/entity resolution, processing instructions, active HTML and malformed content; enforce existing source/output/depth bounds and cancellation without usable partial output. | Small deterministic hostile/malformed/depth/cancellation fixtures and bounded size checks. Errors contain codes and retain no private validation exception. |
 | Principal and handoff | Hostile-byte parsing belongs only in worker modules. Core consumes a validated raw delivery and has no canonical write port. | Real native algorithm plus Core adapter on test-owned synthetic bytes, strict receipt validation and existing protected-source/rights/session tests. In-memory transport doubles are explicit; they do not qualify LPAC or encrypted output persistence. |
 | Compatibility/evidence | Preserve existing IR/request/result versions and consumers; publish the new versioned native raw contract and documentation within approved scope. | Existing parser regressions, generated schema checks and affected quality/architecture checks at a committed candidate. Broader fresh slice/Wave checks remain deferred. |
+| Protected interface documentation | Every changed protected contract/port path has a changed indexed Proposed or Accepted task-linked ADR in this change set, documenting inherited authority, compatibility, rollback and verification limits. | Existing ADR checker over original claim base through the corrected candidate; preserve the four-path R01 failure and obtain independent closure of R01.F01. |
 
 The read-only independent preflight by `agent:/root/s02_t01_review` confirmed
 that the existing IR supports named per-element projections and empty unknown
@@ -66,3 +67,15 @@ The same finite independent observation also identified native TEI `head` being
 promoted to a caption under a foreign-namespace `figure`. Native contextual
 semantics require the parent's namespace as well as its local name. A minimal
 foreign-parent/native-parent regression precedes that correction too.
+
+Formal R01 at `bfae61bbbbca3f20d3a4089d6c9e33acebdfe00e` found a separate
+criterion-3 documentation gap, `CAP-05.S02.T02.R01.F01`: the selected dependency
+architecture check did not run the protected-path ADR coverage check. Four
+new contract/port paths therefore lacked a changed indexed companion despite
+unchanged accepted ADR-0028/0029 governing their implementation. The exact
+failed checker output and independently authored adverse disposition remain
+preserved. Add only Proposed ADR-0044 within this task's approved scope, keeping
+accepted decisions unchanged. Its fresh check must use the original claim base
+so the incremental R02 diff cannot hide those original interfaces. This missed
+acceptance row is updated before documentary remediation; the existing checker
+and preserved failed run supply the regression, without adding a framework test.
