@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: bef7ef20a3768fd65dc393ada6142ab7693d8a52fdd798b31f96c868469eb9a6
+source_sha256: b7efe70d8fb6ba572ef81d85bebea18942fcc2664fcda07d127d0beb490d7013
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -10881,15 +10881,15 @@ Original tasks and approvals remain unchanged.
 
 **Currently open findings:** -
 
-#### - [ ] CAP-05.S01.T03 - Create acquisition queue, conflict, and entitlement placeholders
+#### - [x] CAP-05.S01.T03 - Create acquisition queue, conflict, and entitlement placeholders
 
-**Status / priority / estimate / risk:** `REVIEW` / `P0` / `M` / `medium`
+**Status / priority / estimate / risk:** `DONE` / `P0` / `M` / `medium`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
 **Dependencies:** `CAP-05.S01.T02`
 
-**Owner / review:** codex-w2-implementation / - (`-`)
+**Owner / review:** codex-w2-implementation / agent:/root/t03_product_review (`approved`)
 
 **Objective:** Resumable download/import jobs, alternative copies, unavailable state, and manual/institutional entitlement request placeholders.
 
@@ -10914,9 +10914,11 @@ Original tasks and approvals remain unchanged.
 
 ##### Review history — CAP-05.S01.T03
 
-**Review mode:** `append-only v1` / 0 completed round(s)
+**Review mode:** `append-only v1` / 1 completed round(s)
 
-**Current immutable submission awaiting review:** `R01` / packet SHA-256 `405266c7c0b71d51dfa24d12bf8dfc58354b8360ed8ba81c22793156ba7442c0`
+###### Round R01
+
+**Immutable submission packet:** `R01` / packet SHA-256 `405266c7c0b71d51dfa24d12bf8dfc58354b8360ed8ba81c22793156ba7442c0`
 
 - Candidate / base / branch: `e53a5154ddf78522edd252645eafc71621acdc51` / `01bc453237a081392544929364696bac3422e9fb` / `codex/w2-implementation`
 - Submitted by / at: codex-w2-implementation / `2026-10-07T02:12:16+00:00`
@@ -10930,9 +10932,25 @@ Original tasks and approvals remain unchanged.
 - Prior round / replayed open findings: `-` / -
 - Root-cause escalation: -
 
-**Current latest-review projection:** `-` by - at `-`
+**Disposition / reviewer / time:** `approved` / agent:/root/t03_product_review / `2026-10-07T02:33:28+00:00`
 
-**Latest notes:** -
+**Immutable review ledger:** `artifacts/evidence/CAP-05.S01.T03.review-R01.json` / `3a741cb98969ff32490d54ae9f24474d1eba5bf3c065afd5037c817e77ea56f3`
+
+**Review notes:** Independent expanded product/security/migration/public-contract review approves only the actual corrected CAP-05.S01.T03 R01 at candidate e53a5154/base01bc4532, published at938dc584. Durable one-attempt intake, exact fresh retained-candidate recovery and explicit current Attach preserve actor/project/native-session/Intent/privacy/per-copy rights, source/license/receipt identity and owned cleanup. Remote polling/Task Center return, same-name copy identity and local annotation/fresh-copy review are corrected without granting availability or weakening attachment denial. All17 fresh selected groups pass without skipped unittest methods; the two actual EX01 receipts supply all four named proofs at unchanged approved reference1.9. Ten fresh representative resource samples pass with a separately approved initial baseline. Original60-path source review,11-path remediation and bounded SQL relocation/handoff/operation-denial/schema/coalescing reviews are authenticated and replayed without repeated code audits or suites. Publication changes nine metadata paths only; all782 source/build identities remain exact. The specific owner exception preserves original unpublished privacy-rejected R01 and permits three portable command displays in one corrected public R01; it is not task approval. All earlier failures/refused public gates remain adverse. No criterion-bound blocker remains. S01 integration, broad/full profiles, installed packaging, W2 qualification and human release remain separate.
+
+**Findings opened:**
+
+- None
+
+**Prior finding closures:**
+
+- None
+
+**Current immutable submission awaiting review:** None
+
+**Current latest-review projection:** `approved` by agent:/root/t03_product_review at `2026-10-07T02:33:28+00:00`
+
+**Latest notes:** Independent expanded product/security/migration/public-contract review approves only the actual corrected CAP-05.S01.T03 R01 at candidate e53a5154/base01bc4532, published at938dc584. Durable one-attempt intake, exact fresh retained-candidate recovery and explicit current Attach preserve actor/project/native-session/Intent/privacy/per-copy rights, source/license/receipt identity and owned cleanup. Remote polling/Task Center return, same-name copy identity and local annotation/fresh-copy review are corrected without granting availability or weakening attachment denial. All17 fresh selected groups pass without skipped unittest methods; the two actual EX01 receipts supply all four named proofs at unchanged approved reference1.9. Ten fresh representative resource samples pass with a separately approved initial baseline. Original60-path source review,11-path remediation and bounded SQL relocation/handoff/operation-denial/schema/coalescing reviews are authenticated and replayed without repeated code audits or suites. Publication changes nine metadata paths only; all782 source/build identities remain exact. The specific owner exception preserves original unpublished privacy-rejected R01 and permits three portable command displays in one corrected public R01; it is not task approval. All earlier failures/refused public gates remain adverse. No criterion-bound blocker remains. S01 integration, broad/full profiles, installed packaging, W2 qualification and human release remain separate.
 
 **Currently open findings:** -
 

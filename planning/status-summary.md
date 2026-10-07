@@ -1,7 +1,7 @@
 ---
 document_type: generated-backlog-status-summary
 source: planning/backlog.yaml
-source_sha256: bef7ef20a3768fd65dc393ada6142ab7693d8a52fdd798b31f96c868469eb9a6
+source_sha256: b7efe70d8fb6ba572ef81d85bebea18942fcc2664fcda07d127d0beb490d7013
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -53,8 +53,7 @@ manual_edit: prohibited
 | Status | Count |
 |---|---:|
 | `NOT_STARTED` | 235 |
-| `REVIEW` | 1 |
-| `DONE` | 84 |
+| `DONE` | 85 |
 | `DEFERRED` | 36 |
 
 ### Wave amendment lifecycle
@@ -867,7 +866,7 @@ Append-only rounds remain distinct from the current latest-review projection. Le
 | `CAP-04.S05.T03` | `append-only v1` | 3 | `-` | approved / agent:/root/t03_independent_review | - |
 | `CAP-05.S01.T01` | `append-only v1` | 1 | `-` | approved / agent:/root/c11_security_review | - |
 | `CAP-05.S01.T02` | `append-only v1` | 1 | `-` | approved / agent:/root/c11_security_review | - |
-| `CAP-05.S01.T03` | `append-only v1` | 0 | `R01` | - / - | - |
+| `CAP-05.S01.T03` | `append-only v1` | 1 | `-` | approved / agent:/root/t03_product_review | - |
 | `CAP-07.S01.T01` | `append-only v1` | 2 | `-` | approved / codex-independent | - |
 | `CAP-07.S01.T02` | `append-only v1` | 1 | `-` | approved / agent:/root/model_registry_review | - |
 | `CAP-07.S01.T03` | `append-only v1` | 1 | `-` | approved / agent:/root/decoder_memo_review | - |
@@ -917,7 +916,7 @@ Append-only rounds remain distinct from the current latest-review projection. Le
 |---|---|---|---|---:|---:|---|
 | `W0` - Engineering foundation | `APPROVED` | `NONE` | `APPROVED` — Historical W0 qualification predates the Wave-campaign controller. | 6/6 | 19/19 | `G0` / `APPROVED` |
 | `W1` - Windows local runtime and durable core | `APPROVED` | `COMPLETE` | `APPROVED` — OWNER-ACCEPTED CORE COMPLETE: explicit 2026-09-13 owner approval closes W1 prototype core with retained qualification gaps, not a full-suite PASS. Reasonable test and UX-control repairs continue between Waves. G1 and W2 activation remain separate; see artifacts/evidence/W1.owner-core-acceptance-01.md. | 15/15 | 53/53 | `G1` / `APPROVED` |
-| `W2` - Windows local evidence foundation | `APPROVED` | `ACTIVE` | `IN_PROGRESS` | 5/11 | 29/45 | `G2` / `PENDING` |
+| `W2` - Windows local evidence foundation | `APPROVED` | `ACTIVE` | `IN_PROGRESS` | 5/11 | 30/45 | `G2` / `PENDING` |
 | `W3` - Windows local research workbench | `PENDING` | `NONE` | `PENDING` | 0/16 | 0/48 | `G3` / `PENDING` |
 | `W4` - Windows scholarly reasoning and novelty MVP | `PENDING` | `NONE` | `PENDING` | 0/9 | 0/27 | `G4` / `PENDING` |
 | `W5` - Windows PC/lab production release | `PENDING` | `NONE` | `PENDING` | 0/8 | 0/25 | `G5` / `PENDING` |
@@ -937,7 +936,7 @@ Append-only rounds remain distinct from the current latest-review projection. Le
 | CAP-local-project-storage (`CAP-02`) — Local projects, durable storage, security, and recovery | `NONE` | `PENDING` | 4/5 | 13/16 | - |
 | CAP-research-domain-workflows (`CAP-03`) — Canonical domain, research intent, provenance, and durable workflows | `NONE` | `PENDING` | 6/6 | 20/20 | - |
 | CAP-scholarly-ingestion (`CAP-04`) — Scholarly ingestion, connectors, canonicalization, and corpus governance | `NONE` | `PENDING` | 5/5 | 15/15 | - |
-| CAP-document-inspection (`CAP-05`) — Document acquisition, parsing, source inspection, and page anchors | `NONE` | `PENDING` | 0/6 | 2/18 | `CAP-05.S01.T03` |
+| CAP-document-inspection (`CAP-05`) — Document acquisition, parsing, source inspection, and page anchors | `NONE` | `PENDING` | 0/6 | 3/18 | - |
 | CAP-search-screening (`CAP-06`) — Local search, discovery, corpus diagnostics, and screening | `NONE` | `PENDING` | 0/6 | 0/18 | - |
 | CAP-model-gateway (`CAP-07`) — Provider-neutral model gateway and governed AI execution | `NONE` | `PENDING` | 1/5 | 3/15 | - |
 | CAP-evidence-verification (`CAP-08`) — Evidence schemas, extraction, verification, and adjudication | `NONE` | `PENDING` | 0/6 | 0/18 | - |
@@ -972,9 +971,7 @@ Append-only rounds remain distinct from the current latest-review projection. Le
 
 ## Active work
 
-| Task | Status | Owner | Branch |
-|---|---|---|---|
-| `CAP-05.S01.T03` Create acquisition queue, conflict, and entitlement placeholders | `REVIEW` | codex-w2-implementation | `codex/w2-implementation` |
+No task is currently active.
 
 ## Linked corrective tasks
 

@@ -1,0 +1,603 @@
+{
+  "task_id": "CAP-05.S01.T03",
+  "attempt_id": "R01",
+  "candidate_commit": "e53a5154ddf78522edd252645eafc71621acdc51",
+  "base_commit": "01bc453237a081392544929364696bac3422e9fb",
+  "reviewed_state_commit": "938dc5848dab1ef831f4964d0ffc9677840a1487",
+  "reviewer": "agent:/root/t03_product_review",
+  "result": "approved",
+  "reviewed_at": "2026-10-07T02:31:48Z",
+  "evidence_sha256": "9b0be077a34763e6236df5c38b9266cd7d1813fb417d4515d8b5d5a5dfd6489a",
+  "packet_sha256": "405266c7c0b71d51dfa24d12bf8dfc58354b8360ed8ba81c22793156ba7442c0",
+  "acceptance_criteria_sha256": "b883d7d0c83c26edeafbf97cf02f0dde8e3e38b55b4629d221960d1acaa72e43",
+  "selection_sha256": "a99a36fb2b13488290f18a89d92328039ec6141925a52d610a3cccd35115b99d",
+  "notes": "Independent expanded product/security/migration/public-contract review approves only the actual corrected CAP-05.S01.T03 R01 at candidate e53a5154/base01bc4532, published at938dc584. Durable one-attempt intake, exact fresh retained-candidate recovery and explicit current Attach preserve actor/project/native-session/Intent/privacy/per-copy rights, source/license/receipt identity and owned cleanup. Remote polling/Task Center return, same-name copy identity and local annotation/fresh-copy review are corrected without granting availability or weakening attachment denial. All17 fresh selected groups pass without skipped unittest methods; the two actual EX01 receipts supply all four named proofs at unchanged approved reference1.9. Ten fresh representative resource samples pass with a separately approved initial baseline. Original60-path source review,11-path remediation and bounded SQL relocation/handoff/operation-denial/schema/coalescing reviews are authenticated and replayed without repeated code audits or suites. Publication changes nine metadata paths only; all782 source/build identities remain exact. The specific owner exception preserves original unpublished privacy-rejected R01 and permits three portable command displays in one corrected public R01; it is not task approval. All earlier failures/refused public gates remain adverse. No criterion-bound blocker remains. S01 integration, broad/full profiles, installed packaging, W2 qualification and human release remain separate.",
+  "acceptance_reviews": [
+    {
+      "criterion_index": 1,
+      "result": "satisfied",
+      "assessment": "Durable max-attempts-one intake and fresh confirmation retain current actor/project/Intent/privacy/native-session/per-copy store/inspect authority. Expired transfer is abandoned without egress and owned partial cleanup dominates failure. Recovery uses a fresh authorized operation/session for the exact retained encrypted candidate/source/license/receipt without redownload or original provenance rewrite; generic Task Center Retry cannot redispatch it. Corrected remote polling handles delayed downloading/validating events and in-flight Task Center return without Cancel/redownload; local picker handoff stays disabled. Same-name candidates display safe distinct copy/provider/host/version/license and exact copy return. After a prior per-copy rights denial, local access notes and fresh alternative review remain usable while explicit attachment denial/current Core dispatch fences remain. Missing full text retains metadata and staged candidates stay pending Attach rather than fabricating availability."
+    },
+    {
+      "criterion_index": 2,
+      "result": "satisfied",
+      "assessment": "Fresh J17-group receipt has35933 stable Windows-guarded inputs and no unknown domains. All50 acquisition,44 attachment,57 storage/migration,20 workflow and1 mounted composite methods end OK without skips;21 opaque model and14 native intake cases plus separate actual zero-byte dispatch/owned-socket cancellation probes pass. Named owned HTTPS/current Core/SQLCipher/encrypted staging/signed fixture LPAC and protected handoff supply bounded real principal proof; fake stream chunks and opaque renderer replies remain unit/UI evidence. Eight stream methods cover bounded fill/remainder/hash/wire/EOF, empty progress checkpoints, no partial batch on iterator failure and denial before every actual socket read. Existing rights/session/deadline/retry/publication/owned cleanup tests remain green. Exact EX01 supplies all six conformance checks and fresh12/20 performance samples against unchanged budgets. Current172 synthetic PNGs/metadata and actual delivery are independently admitted. Ten fresh1MiB/8MiB resource samples have separately approved initial-baseline disposition with sampling/cache/fixture limits."
+    },
+    {
+      "criterion_index": 3,
+      "result": "satisfied",
+      "assessment": "Exact01bc\u2192J inventory has1006 paths and full pauseded501\u219201bc preparation/implementation history is authenticated under finite approved EX01. Additive schema25 queue/recovery, current inventories/docs/forward expectations and literal predecessor/fault/backup/history/ciphertext guarantees agree with57 storage methods. SQL bodies relocate into the existing governed adapter behind typed ports without semantic change. Portable source_for_revision/protected handoff and original-or-recovery denial ordering preserve accepted authority. Proposed ADR0043 documents ten affected paths without new decision or supersession. Affected lint/format/type/API/architecture/ADR/diff checks pass unchanged. Coalescing only fills the already accepted<=1MiB request, retaining actual socket/TLS/current publication fences, limits and cleanup. Approved1.9 authority/full semantic mapping preserves all14 ordered workflows and unaffected page contracts/tokens. Shared automation framework source/selectors/evidence schemas/CI/dependency definitions remain unchanged. Exact separately authorized metadata repair/publication preserves every rejected original and adverse observation; no scope/security/migration/UX/release expansion is inferred."
+    }
+  ],
+  "independence": {
+    "statement": "I authored independent source/advisory assessments, exact privacy/visual reviews and append-only admission registry proposals, delivery/receipt authentication and repair readiness. I authored no product implementation/regression tests, qualifying producer/execution, owner approval or task/campaign transition. Those prior evidence roles are disclosed; this record supplies the distinct actual commit-bound expanded task disposition.",
+    "implementation_owner": "codex-w2-implementation",
+    "current_review_execution": "Read/hash/Git/pinned safe parsing and privacy inspection with prior finding/increment replay. No suites/build/native/capture/network or source/index/HEAD/hook/taskctl mutation; only this new authorized canonical review file is written."
+  },
+  "evidence_reproduction": {
+    "frozen_submission": {
+      "manifest": "artifacts/evidence/CAP-05.S01.T03.json",
+      "manifest_sha256": "9b0be077a34763e6236df5c38b9266cd7d1813fb417d4515d8b5d5a5dfd6489a",
+      "digest_semantics": "Frozen canonical-LF file bytes, not canonical-JSON digest.",
+      "publication_commit": "938dc5848dab1ef831f4964d0ffc9677840a1487",
+      "publication_parent": "e53a5154ddf78522edd252645eafc71621acdc51",
+      "metadata_only_paths": [
+        {
+          "path": "artifacts/evidence/CAP-05.S01.T03.json",
+          "git_blob_sha256": "9b0be077a34763e6236df5c38b9266cd7d1813fb417d4515d8b5d5a5dfd6489a",
+          "raw_sha256": "9b0be077a34763e6236df5c38b9266cd7d1813fb417d4515d8b5d5a5dfd6489a",
+          "normal_lf_projection_exact": true
+        },
+        {
+          "path": "artifacts/evidence/CAP-05.S01.T03.publication-repair-01.owner-approval.json",
+          "git_blob_sha256": "2d4999b5bc2bc6065b88218cabeecf058dd11d6c6c3bbd1672acbcaecfa0e6d2",
+          "raw_sha256": "2d4999b5bc2bc6065b88218cabeecf058dd11d6c6c3bbd1672acbcaecfa0e6d2",
+          "normal_lf_projection_exact": true
+        },
+        {
+          "path": "docs/planning-implementation-plan.md",
+          "git_blob_sha256": "57ebee0682e15e75c412b8df1c08cf9d4334fca314df3ab6e53ef5e2b78c589d",
+          "raw_sha256": "57ebee0682e15e75c412b8df1c08cf9d4334fca314df3ab6e53ef5e2b78c589d",
+          "normal_lf_projection_exact": true
+        },
+        {
+          "path": "planning/backlog.yaml",
+          "git_blob_sha256": "bef7ef20a3768fd65dc393ada6142ab7693d8a52fdd798b31f96c868469eb9a6",
+          "raw_sha256": "7ad585106b677f14c7859ffff72dcd405ad3fd0dce9664c073b618f4fc64b8ee",
+          "normal_lf_projection_exact": true
+        },
+        {
+          "path": "planning/review-site/CAP-05/CAP-05.S01.T03.html",
+          "git_blob_sha256": "e61d5091926040b3b06fe471924b2a07a82d36c241397dabcb853d8068eae068",
+          "raw_sha256": "0b44e2ad8b0cdcc6a3fd4cb1a56e5b8a5a23473f6572a63840332141457d2f62",
+          "normal_lf_projection_exact": true
+        },
+        {
+          "path": "planning/review-site/CAP-05/CAP-05.S01.html",
+          "git_blob_sha256": "863d25a98b7ec259e36692cbbf8e80f21a01b7f0ca62f373a6273cbd3dffdeef",
+          "raw_sha256": "0b84641d58378b0dc40869edef05979e2bff3023a0ddd9c5216f2a4471b6970d",
+          "normal_lf_projection_exact": true
+        },
+        {
+          "path": "planning/review-site/manifest.json",
+          "git_blob_sha256": "9f8015d7934ae34a01a9ed83dcc027f91ad38ec6026b54d8198a82d9f0a78d13",
+          "raw_sha256": "b8d0604d175fb0fcd53e53be792fa9c2808ff31b001728b42c7c5fa9bf80eea2",
+          "normal_lf_projection_exact": true
+        },
+        {
+          "path": "planning/review-site/waves/W2.html",
+          "git_blob_sha256": "1fdc4ec1c7b4400b45e2c06c25b9e843aa48ceb4323112fab4ecf0e065d26107",
+          "raw_sha256": "0f712c8d0eb975b9c08d2f30b93aced16ab299041129071d1fa90f9cc2e97fe5",
+          "normal_lf_projection_exact": true
+        },
+        {
+          "path": "planning/status-summary.md",
+          "git_blob_sha256": "4b257b61e183a28496051d397ac7f543d5834fbf5e26c66c54712f7998c8d0db",
+          "raw_sha256": "4b257b61e183a28496051d397ac7f543d5834fbf5e26c66c54712f7998c8d0db",
+          "normal_lf_projection_exact": true
+        }
+      ],
+      "packet_sha256": "405266c7c0b71d51dfa24d12bf8dfc58354b8360ed8ba81c22793156ba7442c0",
+      "acceptance_criteria_sha256": "b883d7d0c83c26edeafbf97cf02f0dde8e3e38b55b4629d221960d1acaa72e43",
+      "selection_sha256": "a99a36fb2b13488290f18a89d92328039ec6141925a52d610a3cccd35115b99d",
+      "status": "REVIEW",
+      "submitted_by": "codex-w2-implementation",
+      "submitted_at": "2026-10-07T02:12:16+00:00",
+      "branch": "codex/w2-implementation",
+      "changed_path_count": 1006,
+      "selected_check_count": 19,
+      "selected_command_ids": [
+        "foundation:quality",
+        "contracts:unit",
+        "foundation:architecture",
+        "foundation:adr",
+        "desktop:unit",
+        "documents:unit",
+        "service:unit",
+        "data:unit"
+      ],
+      "deferred_checks": [
+        "Full repository/deployment-profile and installed packaging matrix: Required fresh at affected checkpoint/W2 qualification; no unchanged full profile replay is claimed at this task boundary.",
+        "Remaining parsing, source viewer and later CAP-05 outcomes: Separate ordered approved W2 tasks; the current protected reader is explicitly pending.",
+        "Live scholarly providers and external institutional contact: No external effect is needed or authorized for the local synthetic fixtures; placeholders are local only."
+      ],
+      "prior_attempt_count": 0,
+      "open_finding_ids": [],
+      "current_published_packet_equals_corrected_snapshot": true
+    },
+    "source_frontier": {
+      "prior_independent_assessments": [
+        {
+          "path": "artifacts/tmp/CAP-05.S01.T03.product-review-01.json",
+          "raw_sha256": "06835b8672dbe4b995e7cdfc9a8e801752c6c960426c65fc55135f20f88e168d"
+        },
+        {
+          "path": "artifacts/tmp/CAP-05.S01.T03.product-review-02.json",
+          "raw_sha256": "4f950dd44dc0a88cf03ea4d9e332ded0241a7d67e33187032fd723ac92425ca4"
+        },
+        {
+          "path": "artifacts/tmp/CAP-05.S01.T03.relocation-source-review-01.json",
+          "raw_sha256": "33b2706b1f2a0dd8474944044d934d06bed935999ebde8a396a3c113a3265c20"
+        },
+        {
+          "path": "artifacts/tmp/CAP-05.S01.T03.handoff-increment-review-01.json",
+          "raw_sha256": "ee23236906598f451eec786c7b8f385c8103841cc717bc08a582d8cc5c3a0ea1"
+        },
+        {
+          "path": "artifacts/tmp/CAP-05.S01.T03.denial-migration-advisory-01.json",
+          "raw_sha256": "99ddefd1af36e3cdce463a19e641e97b5e36c1dba176ce5d008ec27d80318c86"
+        },
+        {
+          "path": "artifacts/tmp/CAP-05.S01.T03.storage-rollout-advisory-01.json",
+          "raw_sha256": "9cbafb198f29ed59dc8f50d6fabbbfdf82a5fced918b96f1fc44fd8f652ace7a"
+        },
+        {
+          "path": "artifacts/tmp/CAP-05.S01.T03.source-coalescing-increment-review-01.json",
+          "raw_sha256": "5dad7b7a18d669ba73258cc3a0195d9f9e702853c8c627c07df2e59f9949f910"
+        }
+      ],
+      "committed_increment_authentication": {
+        "path": "artifacts/tmp/CAP-05.S01.T03.capture-delivery-authentication-05.json",
+        "raw_sha256": "b5703e1e29820a28aa5a49910f221aa347f94d5720b3df1989a021133a2c1aa8"
+      },
+      "all782_source_git_raw_identities_equal_J_at_publication": true,
+      "both_build_manifests_and45_outputs_match": true,
+      "unchanged_original_audit_not_repeated": true
+    },
+    "selected_and_authority": {
+      "independent_authentication": {
+        "path": "artifacts/tmp/CAP-05.S01.T03.completed-receipts-review-05.json",
+        "raw_sha256": "b7a367d16ebebac602f01592d8ab631cc2005122c49183ac57b8ec8c44d3d0c1"
+      },
+      "actual_selected": {
+        "path": "artifacts/tmp/CAP-05.S01.T03.selected-04-e53a5154.json",
+        "sha256": "9f9b65d478e38ab58f88cc2fea86835209a125a28efdc18787eecdaaa3c15d3e",
+        "producer_sha256": "b02bdf8fca6b2bc5be170bb089624d006080036d7becbdec80827a361fe40f12",
+        "status": "PASS",
+        "input_count": 35933,
+        "inputs_stable": true,
+        "windows_write_delete_guards": true,
+        "unknown_input_domains": [],
+        "check_groups": 17,
+        "unittest_methods": {
+          "acquisition-queue-principal": 50,
+          "attachment-api": 44,
+          "storage-migration-contracts": 57,
+          "workflow-regression": 20,
+          "mounted-copy-return": 1
+        },
+        "unittest_groups_no_skips": true,
+        "native_intake_cases": 14,
+        "opaque_cases": 21,
+        "actual_native_zero_byte_and_owned_socket_cancel_pass": true
+      },
+      "actual_authority": {
+        "path": "artifacts/tmp/CAP-05.S01.T03.EX01.authority-mapping-final-06.json",
+        "sha256": "234455bc0a3ff54f4c5061185a677f1d56d240f2545869037769fe3169b143e3",
+        "producer": {
+          "path": "artifacts/tmp/CAP-05.S01.T03.EX01.authority-mapping-04.py",
+          "sha256": "ef0f7e6120377ed1048ba3c7f71f715473577a7a6c47d5bd2280ae2e89f056c4"
+        },
+        "status": "PASS",
+        "named_proofs": [
+          "CAP-05.S01.T03.EX01.authority-lineage",
+          "CAP-05.S01.T03.EX01.presentation-mapping"
+        ],
+        "actual_history_ranges": [
+          {
+            "name": "pausedPreparation",
+            "base": "ed5012226f903862960ce8b405b1299df96d7fb3",
+            "candidate": "01bc453237a081392544929364696bac3422e9fb",
+            "commits": 7,
+            "revisionPathChanges": 127,
+            "actualGitHistoryExact": true
+          },
+          {
+            "name": "actualImplementation",
+            "base": "01bc453237a081392544929364696bac3422e9fb",
+            "candidate": "e53a5154ddf78522edd252645eafc71621acdc51",
+            "commits": 12,
+            "revisionPathChanges": 1046,
+            "actualGitHistoryExact": true
+          }
+        ],
+        "reference": {
+          "id": "RO-UI-ACADEMIC-MINIMAL-1.9",
+          "packageSHA256": "24b8d62356863980ae9a13db7d6a06b04b76c60e2f1920d2e888cadecfb24c4b",
+          "publicationCommit": "d4691f716f839f4aac5bb50563b56ac863b32685"
+        },
+        "all14_workflows_and_unaffected_contracts_tokens_exact": true,
+        "original_public_pass_inferred": false
+      }
+    },
+    "conformance": {
+      "independent_authentication": {
+        "path": "artifacts/tmp/CAP-05.S01.T03.conformance-receipt-review-05.json",
+        "raw_sha256": "28969f73187646d09b5a9f6dd52ce8ef1b911bd14937e7995b5ce68b370ee81a"
+      },
+      "actual_receipt": {
+        "path": "artifacts/tmp/CAP-05.S01.T03.EX01.conformance-final-02.json",
+        "sha256": "ed638bc9d2717189e3701bcbe9925182c5e838e3bdbbae9cf1384b6174c6303c",
+        "status": "PASS_PENDING_INDEPENDENT_DISPOSITION",
+        "durationSeconds": 96.26,
+        "wrapperPath": "artifacts/tmp/CAP-05.S01.T03.EX01.conformance-final-02.txt",
+        "wrapperSha256": "7a898ee032949eefe4a42ec6ce2a6d7e33a31e0ac2307e4e8fb5a536d1299715",
+        "wrapperCheckAndFinalResultsMatch": true
+      },
+      "all_six_checks_pass": true,
+      "named_proofs": [
+        "CAP-05.S01.T03.EX01.desktop-conformance",
+        "CAP-05.S01.T03.EX01.capture-authority"
+      ],
+      "finite_owned_producer_pins": [
+        {
+          "path": "artifacts/tmp/CAP-05.S01.T03.EX01.conformance-05.py",
+          "sha256": "cb2cd58c62fa56f7fb39e86a14238735fe26a954d13930b18442a807d74d8c2b"
+        },
+        {
+          "path": "artifacts/tmp/CAP-05.S01.T03.EX01.runtime-equivalent-01.py",
+          "sha256": "b89b5f7bdcb927a78f16b392df274d7c1f64caae5cd0f2a4265e37373ef4c25d"
+        },
+        {
+          "path": "artifacts/tmp/CAP-05.S01.T03.EX01.visual-equivalent-01.py",
+          "sha256": "bc66169cefedc77e8b95dd5618caf54a7676efa4dd7c7594f6f9aac8707a8b32"
+        },
+        {
+          "path": "artifacts/tmp/CAP-05.S01.T03.EX01.performance-equivalent-01.py",
+          "sha256": "9ede12ebaf26d9e1de628f0afa7c0a0d137660f8473b13e5b4fd8e48b81fcdc2"
+        }
+      ],
+      "finite_function_equivalence_authenticated": true,
+      "capture_authority": {
+        "deliveryCommit": "e53a5154ddf78522edd252645eafc71621acdc51",
+        "producerCommit": "958aa3c4fa6ffbcf658a66c32c1b83771469c47d",
+        "manifest": "artifacts/evidence/CAP-05.S01.T03.EX01.product-captures-05/manifest.json",
+        "manifestSHA256": "7af5438783d672ffc5e766f55123ffa0d3a84d61c576fc921cf8d12a7e280a8a",
+        "productCaptures": 156,
+        "referenceCaptures": 66,
+        "referenceApprovalCommit": "d4691f716f839f4aac5bb50563b56ac863b32685",
+        "renderer": {
+          "browserVersion": "145.0.7632.6",
+          "platform": "windows-x64",
+          "playwrightVersion": "1.58.0"
+        }
+      },
+      "fresh_performance": [
+        {
+          "name": "coldShellFirstContentfulPaint",
+          "samples": 12,
+          "p50Ms": 44.0,
+          "p95Ms": 60.0,
+          "absoluteBudgetMs": 2500.0,
+          "regressionMaximumP95Ms": 115.2,
+          "nearestRankPercentilesRecomputedExactly": true
+        },
+        {
+          "name": "warmRouteVisibleSkeleton",
+          "samples": 12,
+          "p50Ms": 14.228,
+          "p95Ms": 16.424,
+          "absoluteBudgetMs": 150.0,
+          "regressionMaximumP95Ms": 87.64,
+          "nearestRankPercentilesRecomputedExactly": true
+        },
+        {
+          "name": "warmRouteUsable",
+          "samples": 12,
+          "p50Ms": 15.934,
+          "p95Ms": 18.396,
+          "absoluteBudgetMs": 1000.0,
+          "regressionMaximumP95Ms": 93.146,
+          "nearestRankPercentilesRecomputedExactly": true
+        },
+        {
+          "name": "warmPaginatedRenderBatch",
+          "samples": 20,
+          "p50Ms": 38.111,
+          "p95Ms": 41.272,
+          "absoluteBudgetMs": 100.0,
+          "regressionMaximumP95Ms": 46.916,
+          "nearestRankPercentilesRecomputedExactly": true
+        }
+      ],
+      "unchanged_baselines": [
+        {
+          "path": "verification/baselines/desktop-performance.json",
+          "sha256": "e85f168b4385a640f73bb6d871424e32d29583282fc741e54cb765bda92bac1a",
+          "sourceCommit": "6d69c499c61e698a32281b667f2612884c6bc890"
+        },
+        {
+          "path": "verification/baselines/ui-components-data-table-performance.json",
+          "sha256": "ffe08c53f0bc0127b7de99c9d7d3c39a20c155ac50abb4a8ffec29c2964f211a",
+          "sourceCommit": "b09fb7f254763912b999e2e491cd89a083c97ba0"
+        }
+      ]
+    },
+    "capture_privacy_delivery": {
+      "assessment": {
+        "path": "artifacts/evidence/CAP-05.S01.T03.capture-privacy-visual-review-05.json",
+        "raw_sha256": "f929c1b862bf7d494ff585fea6d4e25936a76b8b7d62acdc68dcba29a7fbe55a"
+      },
+      "delivery_authentication": {
+        "path": "artifacts/tmp/CAP-05.S01.T03.capture-delivery-authentication-05.json",
+        "raw_sha256": "b5703e1e29820a28aa5a49910f221aa347f94d5720b3df1989a021133a2c1aa8"
+      },
+      "producer_commit": "958aa3c4fa6ffbcf658a66c32c1b83771469c47d",
+      "delivery_commit": "e53a5154ddf78522edd252645eafc71621acdc51",
+      "all175_delivered_blobs_and_focused_raw_to_LF_bridge_authenticated": true,
+      "all_prior_exact_admissions_preserved": true,
+      "synthetic_fixture_UI_only": true,
+      "retained_crop_observation": "CAP-05.S01.T03.CAPTURE-R01-O01"
+    },
+    "resource_initial_baseline": {
+      "independent_review": {
+        "path": "artifacts/tmp/CAP-05.S01.acquisition-resources-baseline-review-01.json",
+        "raw_sha256": "6cfd1118ab679ed5ab9be6c960d81df642aa005221564d8ff11cd1829b9f6bda"
+      },
+      "resource_report": {
+        "path": "artifacts/tmp/CAP-05.S01.acquisition-resources-04-e53a5154.json",
+        "sha256": "ad6adffd9ba0c2d5cb218aaa5823938620f26e58dc1be90ddfdbb9333fdda847"
+      },
+      "candidate_commit": "e53a5154ddf78522edd252645eafc71621acdc51",
+      "disposition": "approved-initial-baseline",
+      "ten_samples_five_per_fixture": true,
+      "stable_guarded_inputs": 35933,
+      "baseline_only": true,
+      "no_previous_regression_pass_inferred": true,
+      "formal_slice_approval": false
+    },
+    "owner_unpublished_representation_exception": {
+      "owner_record": {
+        "path": "artifacts/evidence/CAP-05.S01.T03.publication-repair-01.owner-approval.json",
+        "raw_sha256": "2d4999b5bc2bc6065b88218cabeecf058dd11d6c6c3bbd1672acbcaecfa0e6d2"
+      },
+      "proposal": {
+        "path": "artifacts/tmp/CAP-05.S01.T03.publication-repair-01/proposal.json",
+        "raw_sha256": "28ec905c8282c364e2c1f8195d2fbfb052c10f1c0ef5688e41052a0175eca5e8"
+      },
+      "readiness": {
+        "path": "artifacts/tmp/CAP-05.S01.T03.publication-repair-01/readiness-review-01.json",
+        "raw_sha256": "a53e1aba5f367326a166f54a8807a875300702f76bf0030c3a49109b657b01da"
+      },
+      "corrected_submission_authentication": {
+        "path": "artifacts/tmp/CAP-05.S01.T03.publication-repair-01/corrected-submission-authentication-01.json",
+        "raw_sha256": "6799f1603723f0fdd3cba2a18db22315c73be774dd8a41a0b2e3044efc29aaa0"
+      },
+      "original_private_manifest_sha256": "c1ec1f8d6cc5f02d7155bf37784f4dce08cca194d097b3fd996c4db65743bce9",
+      "original_private_packet_sha256": "dd767b8f1395fe4dea83f56b066f5f2d3bcf8b4a3d070b265f08f37587998524",
+      "original_index_sha256": "8e2ffe86de9cbf0a4994a5727bdacd111fc183c8cb02d833f3a3325808046779",
+      "all8_raw_files8_staged_blobs_original_packet_index_preserved": true,
+      "only_three_root_to_dot_labels_plus_adverse_provenance": true,
+      "actual_executed_argv_unchanged_and_ignored": true,
+      "original_rejected_representation_never_Git_published": true,
+      "owner_exception_not_task_slice_Wave_or_release_approval": true
+    },
+    "normal_publication": {
+      "privacy_hook": "PASS:0 historical commits checked,9 new entries checked,findings empty; message PASS",
+      "logs": [
+        {
+          "path": "artifacts/tmp/CAP-05.S01.T03.publication-repair-01/publication-commit-01.txt",
+          "raw_sha256": "88c2b4d44595684051b1c58090929750fcf068d6f72939e95d6552dd6938c52d"
+        },
+        {
+          "path": "artifacts/tmp/CAP-05.S01.T03.publication-repair-01/submit-corrected-R01-01.txt",
+          "raw_sha256": "9dc0f97262df5e3506172d8456167646cc62c3e727134776cc6675283f286715"
+        },
+        {
+          "path": "artifacts/tmp/CAP-05.S01.T03.publication-repair-01/after-submit-views-check-01.txt",
+          "raw_sha256": "36ebe8ba5eed16d416087f957ce901132e936a4ed14c97dbcb91651c3e2678aa"
+        },
+        {
+          "path": "artifacts/tmp/CAP-05.S01.T03.publication-repair-01/after-submit-site-check-01.json",
+          "raw_sha256": "8e26f455bb97bf76a441d6d734b6e7e04cb4f030f3eeacc2f09fcfb039af1916"
+        }
+      ],
+      "views_and_full_site_checks_pass": true
+    }
+  },
+  "preparatory_findings_replayed": [
+    {
+      "preparatory_id": "CAP-05.S01.T03.PRODUCT-R01-F01",
+      "criterion_indexes": [
+        1,
+        2
+      ],
+      "current_disposition": "addressed",
+      "assessment": "DocumentAttachmentPane now stores remote=true only in beginRemote; local choose/drop again omit it. Existing bounded phase polling and in-flight Task Center eligibility consequently target remote intake. The mounted regression delays the remote candidate event, checks exact operation/selection polling and downloading-to-validating, navigates while in flight, asserts no cancellation or extra download, and separately holds the local picker to assert Task Center remains disabled.",
+      "final_evidence": "Fresh J native/opaque/mounted/acquisition/attachment checks and independently admitted/delivered capture05 authenticate the formerly pending evidence closure.",
+      "formal_controlled_finding": false
+    },
+    {
+      "preparatory_id": "CAP-05.S01.T03.PRODUCT-R01-F02",
+      "criterion_indexes": [
+        1,
+        2
+      ],
+      "current_disposition": "addressed",
+      "assessment": "The exact retained-candidate query joins immutable acquisition source by project/candidate and returns only safe nullable origin copyId. Native validates the opaque ID, renderer strict decoding requires its field, and visible candidate identity plus mapped provider/host/version/license distinguish same-name candidates. Recovery preserves candidate.copyId in the direct return context. No URL, secret, file bytes or permission grant is introduced. Storage/decoder and mounted two-retained-copy regressions address the missed contract.",
+      "final_evidence": "Fresh J native/opaque/mounted/acquisition/attachment checks and independently admitted/delivered capture05 authenticate the formerly pending evidence closure.",
+      "formal_controlled_finding": false
+    },
+    {
+      "preparatory_id": "CAP-05.S01.T03.PRODUCT-R01-F03",
+      "criterion_indexes": [
+        1,
+        2
+      ],
+      "current_disposition": "addressed",
+      "assessment": "The separate canReviewAvailableCopies helper adds only prior failed/rights-denied to existing safe review eligibility. The inherited local attachment gate, direct denied status, changed authority/association, cleanup and active-intake gates remain closed. This restores local access notes and fresh alternative-copy previews after one failed per-copy denial; native preview and explicit Download/Attach still recheck current exact rights, Intent, privacy and session. Unit and mounted regressions assert the distinction and no annotation download/recovery calls.",
+      "final_evidence": "Fresh J native/opaque/mounted/acquisition/attachment checks and independently admitted/delivered capture05 authenticate the formerly pending evidence closure.",
+      "formal_controlled_finding": false
+    }
+  ],
+  "incremental_corrections_replayed": [
+    "SQL relocation retains normalized AST-equivalent helper bodies and existing architecture boundary; original22-violation failure preserved.",
+    "Portable handoff retains exact protected body/digest/provenance and current inspect/revision/hash denial without new HTTP or state counts.",
+    "Operation denial validates five-field original-or-recovery admission before candidate lookup for commit/cancel.",
+    "Current schema25 rollout synchronizes current inventories/docs/targets only; immutable literal predecessor/fault/backup/ciphertext guarantees remain.",
+    "Bounded coalescing retains read/empty/socket/TLS/publication checkpoints and cleanup; representative resources are now separately measured and initially baselined.",
+    "Original unpublished privacy-rejectedDD packet stays adverse; exact owner authorization permits only corrected405266 public R01, with normal controller/hook and independent disposition."
+  ],
+  "retained_adverse_evidence": [
+    {
+      "path": "artifacts/tmp/CAP-05.S01.T03.product-review-01.json",
+      "raw_sha256": "06835b8672dbe4b995e7cdfc9a8e801752c6c960426c65fc55135f20f88e168d"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S01.T03.product-review-02.json",
+      "raw_sha256": "4f950dd44dc0a88cf03ea4d9e332ded0241a7d67e33187032fd723ac92425ca4"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S01.T03.relocation-source-review-01.json",
+      "raw_sha256": "33b2706b1f2a0dd8474944044d934d06bed935999ebde8a396a3c113a3265c20"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S01.T03.handoff-increment-review-01.json",
+      "raw_sha256": "ee23236906598f451eec786c7b8f385c8103841cc717bc08a582d8cc5c3a0ea1"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S01.T03.port-handoff-red-01.txt",
+      "raw_sha256": "7879b678679f9dc6d354021695e3f8618415d2ebf309fc228870d799b0109129"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S01.T03.adr-dev-01.txt",
+      "raw_sha256": "00765b8fdabf449c67ae554b029bdf7e730f26d089579de27caeca78b550297b"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S01.T03.adr-dev-02.txt",
+      "raw_sha256": "48be0c8a122350f54e0a4a2c3d23fa855f6aaec0d90d2ee409d945630f1c3410"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S01.T03.selected-01-5e96951f.json",
+      "raw_sha256": "f59952ec96eaa85a568ad8bcb0c8282f623ecd5f6e725b7a1ac32ae237a93ef1"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S01.T03.capture-delivery-commit-01.txt",
+      "raw_sha256": "c86ea25e98073829ec803df66222c670939e2e93ba774dabf6bb24beb1b21f39"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S01.T03.retained-origin-red-01.txt",
+      "raw_sha256": "9072c85b4cd904ffe39705c0eea943bb16e352acf272c1420711c996e4fe1ad0"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S01.T03.copy-denial-red-01.txt",
+      "raw_sha256": "6141d50082c0d5bece2860555c7ba6b8d9bf70d880753c7cf41799b7e9728c10"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S01.T03.remote-poll-red-01.txt",
+      "raw_sha256": "46ce6af48cbed2e951d774938d73778bbbf28391124c9ff20fddebdcda857f67"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S01.T03.mounted-ui-dev-05.txt",
+      "raw_sha256": "640cd2dc057f64abf3c0692879542639abaaae5c59efbd78e278a3fcb5edb9b0"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S01.T03.EX01.authority-mapping-candidate-01.json",
+      "raw_sha256": "785c839c4b759d692e4ff36cb7ee1f9adf59dea3f2d6e494058c6471cc93e9bc"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S01.T03.EX01.authority-mapping-final-02.json",
+      "raw_sha256": "a96ba7f3101273d409c9f8e2893de4292e4e1e487bbdf0f142b670c809228c75"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S01.T03.selected-02-59a8fec0.json",
+      "raw_sha256": "b5f42dd92750b3c3a488e1c67644112c87395cd91d77bd6fa9638998b5ba0cb6"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S01.T03.operation-precedence-red-01.txt",
+      "raw_sha256": "9945f02cc405c5dd4b02fbc16960cbb6a9034597b53e44b1a9dcfa528b0effd8"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S01.T03.denial-migration-advisory-01.json",
+      "raw_sha256": "99ddefd1af36e3cdce463a19e641e97b5e36c1dba176ce5d008ec27d80318c86"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S01.T03.selected-03-64a8f9f9.json",
+      "raw_sha256": "c0717721fd7b37798059663a651edb904983e35a2311b12f3784877d74a31ab0"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S01.T03.storage-rollout-site-refresh-01.txt",
+      "raw_sha256": "ecdab23f80cd68b18fe1eebdc907ad51f2b2d32db22d73b45206b2c1c4397ccf"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S01.acquisition-resources-03-b9ad3e15.json",
+      "raw_sha256": "1fffe06d25c09c2b225a006401138cca98400d5da694ee902f802032e9bf8bc0"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S01.resource-unprofiled-8mib-diagnostic-01.txt",
+      "raw_sha256": "3b047b8edb7b70aff6da1bbb3849fcbb5aa047cd34d35c2a0a76e2942318a33d"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S01.T03.stream-coalescing-red-01.txt",
+      "raw_sha256": "c37521e30c22a52cd39f257c0cad711fa292dadd48c51116f39adffadc2b943d"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S01.T03.stream-coalescing-red-02.txt",
+      "raw_sha256": "29dff615476ba517b2c9ae3ff491c64f8f7fa018733ef520b8e5aa37b92f6b6d"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S01.T03.submit-final-R01.txt",
+      "raw_sha256": "414b6d222cc40b05a1ab65fca3f0a4d5969ecca75bbc81ca0998637d1d34a947"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S01.T03.R01-publication-commit-01.txt",
+      "raw_sha256": "04ec6489d2acbf412370dd070b7c43cd49e4b7fc55c2cf7badf08babb4588e21"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S01.T03.R01-publication-privacy-diagnostic-01.json",
+      "raw_sha256": "753be0c99e3e6025dd0c332ab68bb9eb8bab404cc0c13c05041e29914035b97a"
+    }
+  ],
+  "proof_limits": [
+    "Approval is confined to actual corrected T03 R01 at exactJ/base01bc/publication938dc. S01 deep integration/checkpoint, broad/full profiles, installed packaging, W2 qualification and human release remain separate.",
+    "Original stale-selector/public refusals receive no inferred PASS. Finite EX01 equivalents and full1.5\u21921.8\u21921.9 semantic/authority mapping are exact owner-approved evidence methods, not framework source fixes or original-command successes.",
+    "Actual principal uses owned synthetic HTTPS/test CA/DNS routing seams, source Core fixture adapter, real SQLCipher/encrypted objects and signed fixture LPAC. It does not establish public provider availability, production signature/installed package or real scholarly/private content.",
+    "Opaque replies, mounted journeys and screenshots are synthetic fixture UI proof and do not establish actual native picker/download/cancellation. Separate named real mutex/socket/zero-byte/protected principal cases prove only their bounded boundaries.",
+    "Dark720 tall-element skip-link crop fragment remains unchanged. It proves neither a viewport/focus defect nor a clean viewport/focus result. No styling iteration or future-task completion is inferred.",
+    "Desktop12-repetition/20-batch samples meet unchanged workstation budgets and are not acquisition throughput. Two acquisition sizes/five fresh children each retain uncontrolled OS cache, sampler/sys.monitoring overhead, overlapping unsummed phases and potentially missed brief peaks. Exited-before-open helpers have unknown CPU/memory; no full process-tree peak, standalone deployed Core,near128MiB latency or historical regression promise is made.",
+    "Prior architecture/ADR/denial/version/storage failures, resource setup and real H8MiB/unprofiled deadline failures, coalescing reds, first failed submit and original unpublished privacy rejection remain adverse. Later success neither proves an instrumentation-only cause nor relabels failures PASS.",
+    "Specific owner exception repairs one unpublished representation only. No private-workspace admission, hook bypass, control source change or inherited C11 authority is claimed; original local argv/packet/files stay ignored and exact.",
+    "Preparatory PRODUCT-R01-F01/F02/F03 preceded the actual public frozen submission. Their source/evidence closure is assessed above; empty formal finding/closure arrays do not fabricate prior controlled rounds.",
+    "Read-only reviewer parser assertions were corrected for canonical LF benchmark hashes versus raw CRLF and lowercase site status pass. Original receipts and outcomes are unchanged; no product check was rerun."
+  ],
+  "checks": [
+    {
+      "command": "Read-only authenticate actual published packet, manifest, owner record and exact source inventory",
+      "result": "PASS:405266 packet,9b0be manifest,a99a selection,b883 criteria,1006 paths/19 commands and9 metadata-only publication paths reproduce; originalDD/all rejected bytes remain preserved."
+    },
+    {
+      "command": "Replay authenticated prior expanded source review and bounded increments against final exact source closure",
+      "result": "PASS: preparatory findings and SQL/handoff/denial/schema/coalescing/representation observations addressed without authority or test weakening; no material blocker."
+    },
+    {
+      "command": "Authenticate actual fresh receipts, raw logs, source/build/capture/privacy delivery and independent initial resource baseline",
+      "result": "PASS:17 selected groups/all4 named EX01 proofs/six conformance checks,782 exact source bindings,172 synthetic PNG admission and10 separate initial-baseline resource samples; no repeated suites/captures."
+    }
+  ],
+  "findings": [],
+  "closures": [],
+  "prior_findings_replayed": [],
+  "slice_approval": false,
+  "wave_completion": false,
+  "release_approval": false
+}
