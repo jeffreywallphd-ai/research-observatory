@@ -2488,6 +2488,7 @@ class LocalParserArtifactStager:
             not in {
                 "application/vnd.research-observatory.docling-output+json",
                 "application/vnd.research-observatory.native-structure+json",
+                "application/vnd.research-observatory.text-parser-output+json",
                 "application/vnd.research-observatory.pdf-inspection+json",
                 "application/vnd.research-observatory.parser-attempt+json",
                 "image/png",

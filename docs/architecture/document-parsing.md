@@ -243,6 +243,13 @@ the wire-mapping budget runs. Stable class buckets preserve blocked composition,
 class-zero composition and noncontiguous raw origins. Both descending-class and
 all-equal-class uncancelled working-storage regressions cover this boundary.
 
+The independent NFC comparison writes canonical-order scalars incrementally,
+so its final pass does not recreate a source-sized list of scalar strings.
+The complete CR/equal-class normalization regression covers that later pass.
+The closed encrypted raw-artifact media list includes the existing plain-text
+receipt alongside structured, Docling and inspection output; unregistered media
+remain denied through the same live request/attempt/source authority checks.
+
 Engineering diagnostics and synthetic port tests do not qualify the installed
 product. Commit-bound package, native-principal, encrypted source-to-staged-IR,
 resource/cancellation/recovery and cold/warm performance proofs remain required

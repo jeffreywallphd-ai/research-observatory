@@ -150,6 +150,54 @@ class ParserArtifactTests(unittest.TestCase):
             if path.is_file():
                 self.assertNotIn(self.raw, path.read_bytes())
 
+    def test_plain_text_delivery_retains_its_typed_raw_receipt_encrypted(self):
+        from research_observatory_core.parsing.pipeline import decode_delivery
+        from research_observatory_core.parsing.requests import ParseSuccess
+        from research_observatory_core.parsing.text import TEXT_MEDIA_TYPE, decode_text
+        from research_observatory_core.ports.native_parsing import AuthenticatedNativeDelivery
+
+        before = self.rows("document_attachment_assertions")
+        original = self.f.canonical()
+        with self.f.sources.read_source(
+            self.request.binding.source, actor=self.f.actor, cancelled=lambda: False
+        ) as stream:
+            text = stream.read().decode("utf-8")
+        self.raw = json.dumps(
+            {"schemaVersion": "1.0", "documentType": "bounded-text-parser-output", "text": text}
+        ).encode()
+        self.media = TEXT_MEDIA_TYPE
+        receipt = self.stage()
+        self.assertEqual(TEXT_MEDIA_TYPE, receipt.media_type)
+        self.assertEqual("project-encrypted-v1", self.objects.metadata(receipt.object_sha256).protection_profile)
+        with self.objects.open(receipt.object_sha256, purpose="test-verification") as stream:
+            self.assertEqual(self.raw, stream.read())
+        delivered = decode_delivery(
+            self.request,
+            decode_text(
+                self.request,
+                AuthenticatedNativeDelivery(
+                    self.raw,
+                    self.request.binding.producer,
+                    self.claim.job_id,
+                    self.claim.attempt_id,
+                    receipt,
+                ),
+            ),
+        )
+        assert isinstance(delivered, ParseSuccess)
+        self.assertEqual(text, delivered.ir.text_projections[0].raw_text)
+        self.assertEqual((receipt,), delivered.ir.raw_artifacts)
+        self.assertEqual(before, self.rows("document_attachment_assertions"))
+        self.assertTrue(all(row in self.f.canonical() for row in original))
+        artifacts = self.rows("workflow_attempt_artifacts")
+        self.assertEqual(2, len(artifacts))
+        with self.assertRaises(ParseProblem):
+            self.stager(self.request, self.raw, media_type="application/x-unregistered-parser", cancelled=lambda: False)
+        self.assertEqual(artifacts, self.rows("workflow_attempt_artifacts"))
+        for path in Path(self.f.preview.root).rglob("*"):
+            if path.is_file():
+                self.assertNotIn(self.raw, path.read_bytes())
+
     def test_rights_and_session_denial_publish_no_receipt_or_canonical_artifact(self):
         original = self.f.canonical()
         self.f.permit(derive="denied")

@@ -17,6 +17,22 @@ from research_observatory_core.parsing.normalization import NormalizationProblem
 
 
 class NormalizationTests(unittest.TestCase):
+    def test_uncancelled_complete_normalization_uses_compact_working_storage(self):
+        raw = "\r" + "a" + "\u0315" * 24000
+        tracemalloc.start()
+        try:
+            result = normalize_text(raw)
+            _, peak = tracemalloc.get_traced_memory()
+        finally:
+            tracemalloc.stop()
+        self.assertEqual("\n" + raw[1:], result.normalized_text)
+        self.assertEqual(2, len(result.mappings))
+        self.assertEqual(((0, 1),), result.raw_ranges_for(0, 1))
+        self.assertEqual(((1, len(raw)),), result.raw_ranges_for(1, len(raw)))
+        # CR bypasses the NFC identity shortcut; include the final independent
+        # comparison, not only the compact composition generator's first yield.
+        self.assertLess(peak, len(raw.encode()) * 32)
+
     def test_uncancelled_combining_segment_uses_compact_working_storage(self):
         for raw, first in (("a" + "\u0315\u0300" * 12000, "à"), ("a" + "\u0315" * 24000, "a")):
             with self.subTest(first=first):

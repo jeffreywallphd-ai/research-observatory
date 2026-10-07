@@ -64,3 +64,13 @@ buffers replace the transient tuple graph without imposing a new format quota;
 Unicode gold and existing noncontiguous, blocked and class-zero composition
 cases remain required. Check the pinned decomposition expansion when qualifying
 the working-storage bound.
+
+The full normalization path also needs a compact independent-comparison buffer:
+joining a generator recreated individual scalar strings after the compact
+composition pass. A complete uncancelled CR/equal-class regression reproduced
+that gap, including exact normalized text and two mapping runs. Incremental
+comparison writes preserve the independent NFC check and Unicode authority.
+Actual installed plain-text execution also exposed the encrypted stager's
+missing existing-family media entry. A real protected-source/encrypted-retention
+regression precedes that exact entry correction and retains unknown-media
+denial, original/assertion immutability, intent and raw-artifact binding.

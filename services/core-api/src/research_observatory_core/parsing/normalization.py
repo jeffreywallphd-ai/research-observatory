@@ -205,7 +205,10 @@ def normalize_text(raw: str, *, cancelled: Callable[[], bool] | None = None) -> 
     # Preserve the independent built-in NFC comparison on canonical NFD order;
     # the ordering pass is cooperative and does not feed the C routine a
     # descending combining run. This is the same Unicode canonical equivalence.
-    expected = unicodedata.normalize("NFC", "".join(character for character, _ in _ordered(raw, checkpoint)))
+    with io.StringIO() as comparison_output:
+        for character, _ in _ordered(raw, checkpoint):
+            comparison_output.write(character)
+        expected = unicodedata.normalize("NFC", comparison_output.getvalue())
     checkpoint(force=True)
     if actual != expected:
         raise NormalizationProblem("text-normalization-inconsistent")
