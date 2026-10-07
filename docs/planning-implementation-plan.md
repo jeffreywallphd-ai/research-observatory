@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: f1f4c18b7863ca2f96466842c16b5ee2a4977ecc19c779f76a3318a7f9bcdf74
+source_sha256: 47b424470157371fdea584f5d289191bbc37945792b765ec19c50f6ea249932e
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -4328,6 +4328,33 @@ Original tasks and approvals remain unchanged.
 **Current latest-review projection:** `approved` by agent:/root/c11_security_review at `2026-10-05T23:17:25+00:00`
 
 **Latest notes:** Independent expanded public-contract/security correction review approves only the actual frozen W2.C12.T01 R01 at source candidate 3cac985d. The one-line PluginEnableReview.confirmation repair retains its already validated destination models while preserving all other Python-mode fields; it restores the approved native HTTP confirmation without changing repository digest, exact permission/destination comparisons, native human actor, publisher trust, package, revision, grant, consent, broker, LPAC or publication fences. The committed red-first HTTP regressions actually fail before the product fix with four assertion failures and zero errors. Current affected quality, 20 HTTP/admin/grant/migration/public-contract cases without skip, and API drift checks pass. A freshly frozen, inventory-verified production supervised Core, with no InstalledPluginRuntime override, accepts actual authenticated HTTP trust/enable and exact Intent/privacy/invocation consent, then publishes one broker-backed public DOI/title response through installed LPAC execution and closes its owned project. The separate current source-Core signed LPAC joined fixture proves two-page provenance/rights/predecessor publication, forged-cursor and malformed-page denial, active cancellation, orderly fresh-process reopen, lost ephemeral consent cancellation with zero egress, and fail-closed crash-lock denial with unchanged project files. Its source runtime adapter, synthetic provider transport and test signing remain explicit. The earlier stale-Intent and zero-broker installed fixtures remain failed; no first hidden denial branch is inferred from the collapsed public diagnostic. The compiled minimum-one-broker-response guard remains unchanged. Historical malicious-worker isolation and task-native results remain historical support for unchanged controls, not current full qualification. All original task/finding history and adverse quality/native attempts remain preserved. No criterion-bound blocker remains for this correction; this disposition does not approve CAP-04.S05, W2 qualification or release.
+
+**Currently open findings:** -
+
+### W2.C13.T01 — Create acquisition queue, conflict, and entitlement placeholders
+
+**Status:** `IN_PROGRESS`. **Original task:** `CAP-05.S01.T03`. **Latest review:** `-`.
+
+**Reproduction:** The fresh W2 cluster-2 checkpoint at clean candidate 10110a835a0b2536a398c4709fa1e1c366b09972 runs 54 rights/public-handoff cases and preserves four assertion failures in tests.rights.test_migration.LiteralV17PredecessorTests. The approved CAP-05.S01.T03 additive document-intake migration advances current schema to25, but three existing test methods still expect current target24, a chain ending at0024, or a recovery-contract enum ending at24. Both populated import/connector v17 source paths, protected failure-backup-retry, and the frozen recovery witness are implicated. The raw log artifacts/tmp/W2.CP07.selected-01-10110a83.rights-and-portable-handoff.log has SHA-256 185f4528d3d35885445c1ecabae35c8923d0a5f51e360bd1c8959d1977d43a96; failed stable-input receipt artifacts/tmp/W2.CP07.selected-01-10110a83.json has SHA-256 f7dfae1e234d01c29ece9531df9cd46ae761f45b96da8aa0542c6c60a8c52366. No later group ran and no checkpoint approval or completion is claimed.
+
+**Inherited criteria:**
+
+- Partial acquisitions resume or clean up safely; multiple copies remain distinguishable; lack of full text does not remove the metadata record or fabricate availability.
+- Automated tests cover the expected path and at least one material failure or boundary condition.
+- Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.
+
+**Bounded changed paths:**
+
+- tests/rights/test_migration.py
+#### Review history — W2.C13.T01
+
+**Review mode:** `append-only v1` / 0 completed round(s)
+
+**Current immutable submission awaiting review:** None
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
 
 **Currently open findings:** -
 

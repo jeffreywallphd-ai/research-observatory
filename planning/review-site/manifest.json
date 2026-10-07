@@ -3019,6 +3019,53 @@
               "current_submission": null
             }
           }
+        },
+        {
+          "task_id": "W2.C13.T01",
+          "title": "Create acquisition queue, conflict, and entitlement placeholders",
+          "status": "IN_PROGRESS",
+          "acceptance_criteria": [
+            "Partial acquisitions resume or clean up safely; multiple copies remain distinguishable; lack of full text does not remove the metadata record or fabricate availability.",
+            "Automated tests cover the expected path and at least one material failure or boundary condition.",
+            "Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion."
+          ],
+          "correction": {
+            "origin_task_id": "CAP-05.S01.T03",
+            "origin_commit": "10110a835a0b2536a398c4709fa1e1c366b09972",
+            "paused_state_sha256": "e19d563371dd994cf4b6aa61f7505b492175b44dde05864e73b700d44b95db03",
+            "origin_sha256": "f74b32f21cdea4d6810e2651e892075295f377fba52d8cb924d1e74d9d76b16e",
+            "origin_contract_sha256": "9888e05207eba4d5d6522ec99045921af07f9276eee574fde9678d8856ebd70f",
+            "origin_history_sha256": "8d69b13955e098543a486bb9eb6af5ac45859ed841104f81f6057c9a276b88d2",
+            "origin_amendment_id": null,
+            "authority_sha256": "c92ce7e9bac1b8a49d13d649a5980fea61e56ee953d238c734d8ff5f04f4c9e5",
+            "spec": {
+              "path": "artifacts/evidence/W2.C13.T01.spec.json",
+              "sha256": "d3cf19569d9b379d5c1acb96cf9ad459019a022a2880c8765a7b7b2e10b97d3c",
+              "commit": "dcea0fda1bde94e2567e46044c0eae538eac9f34"
+            },
+            "reproduction": "The fresh W2 cluster-2 checkpoint at clean candidate 10110a835a0b2536a398c4709fa1e1c366b09972 runs 54 rights/public-handoff cases and preserves four assertion failures in tests.rights.test_migration.LiteralV17PredecessorTests. The approved CAP-05.S01.T03 additive document-intake migration advances current schema to25, but three existing test methods still expect current target24, a chain ending at0024, or a recovery-contract enum ending at24. Both populated import/connector v17 source paths, protected failure-backup-retry, and the frozen recovery witness are implicated. The raw log artifacts/tmp/W2.CP07.selected-01-10110a83.rights-and-portable-handoff.log has SHA-256 185f4528d3d35885445c1ecabae35c8923d0a5f51e360bd1c8959d1977d43a96; failed stable-input receipt artifacts/tmp/W2.CP07.selected-01-10110a83.json has SHA-256 f7dfae1e234d01c29ece9531df9cd46ae761f45b96da8aa0542c6c60a8c52366. No later group ran and no checkpoint approval or completion is claimed.",
+            "changed_paths": [
+              "tests/rights/test_migration.py"
+            ],
+            "impact_analysis": "Restore the original T03 relevant-migration and recovery qualification obligation for the already-approved schema 25. Extend only current-target assertions to exact 25 and the explicit 0025_document_intake_recovery revision. Require the additive intake/recovery/access-need tables to remain empty when historical metadata-only v17 projects migrate. Keep the literal historical v17 schema/row fixture bytes and hashes, frozen recovery snapshot, all old-table history comparisons, verified encrypted/plain backups, injected failure rollback, retry/reopen/idempotency, rights-unknown and legacy-recheck assertions intact. Do not change migration/schema/recovery contracts, product code, security or rights authority, test thresholds, governed experience, workflow/framework source or original approvals. This is product compatibility test coverage, not automation development or a new amendment. The observed failures are the red-first reproduction. Run focused v17 migration, schema 25 recovery migration and affected test-file quality checks, obtain independent correction/integration disposition, then resume the existing W2 campaign and perform the fresh affected checkpoint. Earlier task/slice resource/visual results remain historical; W2 qualification and G2 human release remain separate."
+          },
+          "task_review": {
+            "task_id": "W2.C13.T01",
+            "title": "Create acquisition queue, conflict, and entitlement placeholders",
+            "status": "IN_PROGRESS",
+            "mode": "append-only",
+            "latest_review": {
+              "reviewer": null,
+              "result": null,
+              "reviewed_at": null,
+              "notes": null
+            },
+            "review_control": {
+              "version": 1,
+              "attempts": [],
+              "current_submission": null
+            }
+          }
         }
       ]
     },
