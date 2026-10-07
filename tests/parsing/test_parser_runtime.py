@@ -2,6 +2,7 @@
 
 import hashlib
 import json
+import subprocess
 import sys
 import tempfile
 import unittest
@@ -11,7 +12,7 @@ from unittest.mock import patch
 from nacl.signing import SigningKey
 
 REPO = Path(__file__).resolve().parents[2]
-sys.path.insert(0, str(REPO))
+sys.path[:0] = [str(REPO), str(REPO / "services/core-api/src")]
 
 from workers.windows.runtime_inventory import (  # noqa: E402
     RuntimeInventoryError,
@@ -79,6 +80,44 @@ class ParserRuntimeTests(unittest.TestCase):
         for name in ("../model", "model:secret", "a\\b", "a/CON.txt", "a/.", "a/trailing ", "a/*"):
             with self.subTest(name=name):
                 self.assertFalse(_safe_parser_path(name))
+
+    def test_nested_unlisted_payload_and_changed_bytes_are_not_hidden_by_enumeration(self):
+        with tempfile.TemporaryDirectory(dir=REPO / "artifacts/tmp") as temporary:
+            root = Path(temporary)
+            runtime = self.runtime(root)
+            injected = root / DIRECTORY / "_internal/unselected/deep/payload.dll"
+            injected.parent.mkdir(parents=True)
+            injected.write_bytes(b"unapproved payload")
+            with self.assertRaisesRegex(RuntimeInventoryError, "hash-mismatch"):
+                verify_worker_runtime(runtime, profile="parser")
+
+            injected.unlink()
+            self.assertEqual(runtime.package / IMAGE_PATH, verify_worker_runtime(runtime, profile="parser"))
+            original = root / DIRECTORY / "_internal/parser-config.json"
+            original.write_bytes(b"different bytes at the same length"[: original.stat().st_size])
+            with self.assertRaisesRegex(RuntimeInventoryError, "hash-mismatch"):
+                verify_worker_runtime(runtime, profile="parser")
+
+    def test_internal_directory_redirect_cannot_escape_signed_package(self):
+        with tempfile.TemporaryDirectory(dir=REPO / "artifacts/tmp") as temporary:
+            parent = Path(temporary)
+            root = parent / "package"
+            root.mkdir()
+            runtime = self.runtime(root)
+            outside = parent / "outside"
+            outside.mkdir()
+            (outside / "foreign.dll").write_bytes(b"unapproved outside payload")
+            alias = root / DIRECTORY / "_internal/redirect"
+            try:
+                alias.symlink_to(outside, target_is_directory=True)
+            except OSError:
+                result = subprocess.run(
+                    ["cmd", "/c", "mklink", "/J", str(alias), str(outside)], capture_output=True, check=False
+                )
+                if result.returncode:
+                    self.skipTest("directory redirect creation unavailable")
+            with self.assertRaisesRegex(RuntimeInventoryError, "redirect-denied"):
+                verify_worker_runtime(runtime, profile="parser")
 
     def test_installed_producer_binds_complete_authenticated_package(self):
         from research_observatory_core.document_parser_runtime import InstalledDocumentParserRuntime

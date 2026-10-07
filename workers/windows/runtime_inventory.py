@@ -8,7 +8,9 @@ from __future__ import annotations
 
 import hashlib
 import json
+import os
 import re
+import stat
 import sys
 from collections.abc import Callable
 from dataclasses import dataclass
@@ -150,6 +152,42 @@ def _canonical_package_root(path: Path) -> Path:
     return root
 
 
+def _parser_runtime_files(root: Path, checkpoint: Callable[[], None] | None):
+    """Inspect each directory entry once; Windows supplies cached file metadata.
+
+    This changes enumeration cost, not authentication: every regular file is
+    still hashed, and reparse points are refused before traversing or opening.
+    """
+    pending = [root]
+    while pending:
+        with os.scandir(pending.pop()) as entries:
+            for entry in entries:
+                if checkpoint is not None:
+                    checkpoint()
+                observed = entry.stat(follow_symlinks=False)
+                if stat.S_ISLNK(observed.st_mode) or getattr(observed, "st_file_attributes", 0) & 0x400:
+                    raise RuntimeInventoryError("worker-package-redirect-denied")
+                path = Path(entry.path)
+                if stat.S_ISDIR(observed.st_mode):
+                    pending.append(path)
+                elif stat.S_ISREG(observed.st_mode):
+                    yield path, observed.st_size
+                else:
+                    raise RuntimeInventoryError("worker-package-object-invalid")
+
+
+def _connector_runtime_files(root: Path, checkpoint: Callable[[], None] | None):
+    for path in root.rglob("*"):
+        if checkpoint is not None:
+            checkpoint()
+        if path.is_symlink() or path.is_junction():
+            raise RuntimeInventoryError("worker-package-redirect-denied")
+        if not path.is_file() and not path.is_dir():
+            raise RuntimeInventoryError("worker-package-object-invalid")
+        if path.is_file():
+            yield path, path.stat().st_size
+
+
 def verify_worker_runtime(
     runtime: SignedWorkerRuntime,
     *,
@@ -228,26 +266,22 @@ def verify_worker_runtime(
     actual: dict[str, str] = {}
     total = 0
     io_root = extended_path(root)
-    for path in io_root.rglob("*"):
+    files = _parser_runtime_files(io_root, checkpoint) if parsing else _connector_runtime_files(io_root, checkpoint)
+    for path, byte_length in files:
         if checkpoint is not None:
             checkpoint()
-        if path.is_symlink() or path.is_junction():
-            raise RuntimeInventoryError("worker-package-redirect-denied")
-        if not path.is_file() and not path.is_dir():
-            raise RuntimeInventoryError("worker-package-object-invalid")
-        if path.is_file():
-            total += path.stat().st_size
-            if total > (MAX_PARSER_RUNTIME_BYTES if parsing else MAX_RUNTIME_BYTES):
-                raise RuntimeInventoryError("worker-package-oversize")
-            with path.open("rb") as source:
-                digest = hashlib.sha256()
-                while chunk := source.read(1_048_576):
-                    if checkpoint is not None:
-                        checkpoint()
-                    digest.update(chunk)
-                actual[path.relative_to(io_root).as_posix()] = digest.hexdigest()
-            if len(actual) > (MAX_PARSER_RUNTIME_FILES if parsing else 256):
-                raise RuntimeInventoryError("worker-package-oversize")
+        total += byte_length
+        if total > (MAX_PARSER_RUNTIME_BYTES if parsing else MAX_RUNTIME_BYTES):
+            raise RuntimeInventoryError("worker-package-oversize")
+        with path.open("rb") as source:
+            digest = hashlib.sha256()
+            while chunk := source.read(1_048_576):
+                if checkpoint is not None:
+                    checkpoint()
+                digest.update(chunk)
+            actual[path.relative_to(io_root).as_posix()] = digest.hexdigest()
+        if len(actual) > (MAX_PARSER_RUNTIME_FILES if parsing else 256):
+            raise RuntimeInventoryError("worker-package-oversize")
     if actual != expected:
         raise RuntimeInventoryError("worker-package-hash-mismatch")
     if _canonical_package_root(runtime.package) != root:
