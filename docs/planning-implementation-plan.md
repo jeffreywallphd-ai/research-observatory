@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 742891ff43a4ff01f8ad84ab1204e75cbe4e5729a264acbf951c115d32d66ffd
+source_sha256: f595959bc542d59c97eadda5a0108481c5944893565c3810eebe118bfc18b053
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -11426,13 +11426,13 @@ Original tasks and approvals remain unchanged.
 
 #### - [ ] CAP-05.S03.T01 - Persist normalized sections, blocks, sentences, and references
 
-**Status / priority / estimate / risk:** `READY` / `P0` / `L` / `high`
+**Status / priority / estimate / risk:** `IN_PROGRESS` / `P0` / `L` / `high`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
 **Dependencies:** `CAP-05.S02.T03`, `CAP-02.S02.T03`
 
-**Owner / review:** - / - (`-`)
+**Owner / review:** codex-w2-implementation / - (`-`)
 
 **Objective:** Canonical document-revision schema and repositories for structural hierarchy, ordering, labels, text, and reference links.
 

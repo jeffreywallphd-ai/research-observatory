@@ -22154,7 +22154,7 @@
             {
               "task_id": "CAP-05.S03.T01",
               "title": "Persist normalized sections, blocks, sentences, and references",
-              "status": "READY",
+              "status": "IN_PROGRESS",
               "mode": "latest-review-only",
               "latest_review": {
                 "reviewer": null,
@@ -22195,19 +22195,22 @@
             {
               "task_id": "CAP-05.S03.T01",
               "title": "Persist normalized sections, blocks, sentences, and references",
-              "status": "READY",
+              "status": "IN_PROGRESS",
               "page": "CAP-05/CAP-05.S03.T01.html",
               "dependencies": [
                 "CAP-05.S02.T03",
                 "CAP-02.S02.T03"
               ],
               "claim": {
-                "owner": null,
-                "branch": null,
-                "base_sha": null
+                "owner": "codex-w2-implementation",
+                "branch": "codex/w2-implementation",
+                "base_sha": "d0752c3d0aac0162ada79effc41b88c9d2978bcf"
               },
               "plan_section_sha256": "d41d0da952781d706f27feb0f9961accff35fbc0452615860f439932c8bf3dd3",
-              "worksheet": null
+              "worksheet": {
+                "path": "artifacts/evidence/CAP-05.S03.T01.task-start.md",
+                "sha256": "950dac409dc13689c75cfd16e9100fac659cc87d9ba404041965f6417827c902"
+              }
             },
             {
               "task_id": "CAP-05.S03.T02",

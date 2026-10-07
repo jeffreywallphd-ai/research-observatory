@@ -1,0 +1,41 @@
+{
+  "authority": "Only these exact full registry bytes may be supplied to the unchanged installer with --review-sha256. This binds the already completed fixture privacy judgment; it does not waive scanner errors, changed content/findings or other hook restrictions.",
+  "createdAt": "2026-10-07T23:31:29.365578+00:00",
+  "disposition": "approved-for-exact-existing-installer-sealing",
+  "documentType": "independent-prospective-artifact-privacy-binding",
+  "formalTaskApproval": false,
+  "implementer": "agent:/root",
+  "independentContentReview": {
+    "path": "artifacts/evidence/CAP-05.S03.T01.privacy-review-01.json",
+    "sha256": "cf570478c65e93842b815a93b0288072251b16c638b2cdf14b48b4ed503e53ec"
+  },
+  "limits": [
+    "No new content/full-history scan or product qualification. Earlier hook rejection and findings remain adverse.",
+    "No registry, hooks, source, index, HEAD, state or approvals mutated. Reviewer authored only this new append-only binding record.",
+    "Existing installer preparation, snapshot verification, bounded activation and authoritative normal staged hook check remain parent actions; no hook PASS or task/slice/W2/release approval inferred."
+  ],
+  "reviewedRegistry": {
+    "entries": 1488,
+    "path": ".local/CAP-05.S03.T01.privacy-registry-01.json",
+    "sha256": "813882ae8126538f6655c6a65adc2e35e90fe9c4d85832286491f6a2e9fc4deb",
+    "size": 871805
+  },
+  "reviewer": "agent:/root/c11_security_review",
+  "schemaVersion": "1.0",
+  "sealedPredecessor": {
+    "entries": 1486,
+    "path": ".local/push-guard-8150ba673aa4459d94ed3dda63617e01/reviewed-artifacts.json",
+    "sha256": "b9069b5ba1066ed63fbb68feeef6724eb88dbc6a0f489698ba35e8584ccbc197"
+  },
+  "taskId": "CAP-05.S03.T01",
+  "verification": {
+    "all1486PredecessorEntriesAndOrderEqual": true,
+    "allOtherKeysAndValuesEqual": true,
+    "baselineScannerConfigAndPreservationEqual": true,
+    "exactTwoAddedAdmissionsEqualContentReview": true,
+    "onlyReviewerImplementerRationaleHeaderFieldsUpdated": true,
+    "stagedFixtureBytesStillEqualReviewedBytes": true,
+    "unchangedInstalledShapeValidator": "PASS",
+    "validatedEntries": 1488
+  }
+}

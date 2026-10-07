@@ -1,0 +1,321 @@
+{
+  "admissionEntries": [
+    {
+      "binaryReviewed": true,
+      "credentialFindingFingerprints": [],
+      "mode": "100644",
+      "nonEmailTokens": [],
+      "path": "tests/fixtures/documents/v25-populated-predecessor.zip",
+      "sha256": "55067e387074fd7583fa9d07a99906accba68997b9a392c469c2793651a9f94c",
+      "size": 215938
+    },
+    {
+      "binaryReviewed": false,
+      "credentialFindingFingerprints": [
+        "980e736c7ec75f6a6368a9e1c7925c0f0fc10a8574082ae8396f74684e4b0c16"
+      ],
+      "mode": "100644",
+      "nonEmailTokens": [],
+      "path": "tests/fixtures/documents/v25-populated-predecessor.json",
+      "sha256": "48d3d39861b7c68e6e3b0e38dd12baf0102c1614a4e39e5f0c3a037b7a92ad2e",
+      "size": 18553
+    }
+  ],
+  "archive": {
+    "confinedRegularMembers": true,
+    "memberCount": 5,
+    "members": [
+      {
+        "compressedSize": 206489,
+        "metadataSafe": true,
+        "path": "state/project.sqlite3",
+        "sha256": "89ecc52f035dd49880aa3be4341bef2fe76ffe477e3227077df164542c551378",
+        "size": 2723840,
+        "unixMode": "0o600",
+        "zipTimestamp": [
+          2026,
+          10,
+          7,
+          19,
+          6,
+          18
+        ]
+      },
+      {
+        "compressedSize": 942,
+        "metadataSafe": true,
+        "path": "objects/50/1f/501fd20a4ac5d2fa0194e045015ca12909fe35a02a7b7e9d312d9cd8f8c2a6df.blob",
+        "sha256": "057d307583f9b9e1b75ec517bc76a4d7a7cadc5b367e5125c44398daa1a3b506",
+        "size": 937,
+        "unixMode": "0o600",
+        "zipTimestamp": [
+          2026,
+          10,
+          7,
+          19,
+          6,
+          18
+        ]
+      },
+      {
+        "compressedSize": 2273,
+        "metadataSafe": true,
+        "path": "objects/61/46/6146c0f42dfeb80bb6849deb0b422e4ec51ed26a8ff85e133c57e0a5cb6a6ccf.blob",
+        "sha256": "312180bbd4a3699bd09b36eb18bd6708c5d219a6d8af174ba2c72374c69ed6fe",
+        "size": 2268,
+        "unixMode": "0o600",
+        "zipTimestamp": [
+          2026,
+          10,
+          7,
+          19,
+          6,
+          18
+        ]
+      },
+      {
+        "compressedSize": 84,
+        "metadataSafe": true,
+        "path": "objects/6e/87/6e871a76306f089a29a385eb9fd806994d28bcf47c938302ba96fa34272b0f70.blob",
+        "sha256": "94eca170fd9c15cbef1398f2c6afc7d4f8f2b592e53fea4d69728c1e45f88c41",
+        "size": 79,
+        "unixMode": "0o600",
+        "zipTimestamp": [
+          2026,
+          10,
+          7,
+          19,
+          6,
+          18
+        ]
+      },
+      {
+        "compressedSize": 5042,
+        "metadataSafe": true,
+        "path": "objects/9d/e0/9de0aa33f2fa31a14e9a8d748ddf6d9c81e7eaa6b5ba2fcd8529a476d1a84395.blob",
+        "sha256": "27c0017b1e75a0b783d0d402110135efd13aceaef4d49eec14f13706b74bdaae",
+        "size": 5037,
+        "unixMode": "0o600",
+        "zipTimestamp": [
+          2026,
+          10,
+          7,
+          19,
+          6,
+          18
+        ]
+      }
+    ],
+    "noPlaintextUserPathOrPrivateMetadata": true,
+    "uniqueNames": true,
+    "zipCommentsAndExtraFieldsEmpty": true,
+    "zipIntegrity": "PASS"
+  },
+  "artifacts": [
+    {
+      "blobSha1": "b486b7cd1804149c0862e61ba104f30a7d8b40dd",
+      "indexEqualsDisk": true,
+      "mode": "100644",
+      "path": "tests/fixtures/documents/v25-populated-predecessor.zip",
+      "pathSha256": "2bed2973249e480f5a6188d95d1861119c16bad9427ef9c605c707a1144ced2e",
+      "sha256": "55067e387074fd7583fa9d07a99906accba68997b9a392c469c2793651a9f94c",
+      "size": 215938
+    },
+    {
+      "blobSha1": "02c16f971c787a8c10c2172edbbcc23bdb076850",
+      "indexEqualsDisk": true,
+      "mode": "100644",
+      "path": "tests/fixtures/documents/v25-populated-predecessor.json",
+      "pathSha256": "2ae70a9e97ece7a2c1364bd1655d562e4692ede01a604d34df55400709e30529",
+      "sha256": "48d3d39861b7c68e6e3b0e38dd12baf0102c1614a4e39e5f0c3a037b7a92ad2e",
+      "size": 18553
+    }
+  ],
+  "conclusion": "These exact synthetic fixture bytes may receive the bounded binary review and exact manifest false-positive admission stated above. No private research, account paths or live credentials were found.",
+  "createdAt": "2026-10-07T23:29:09.517319+00:00",
+  "database": {
+    "allCountsAndRowHashesMatchManifest": true,
+    "foreignKeyViolations": 0,
+    "inspectionMethod": "Read-only immutable SQLite connection to an exact ignored archive-member copy; original archived database and fixture bytes never modified.",
+    "integrityCheck": "ok",
+    "literalRows": 636,
+    "literalTables": 112,
+    "profileSha256": "50c8583b7958c4e035690fdcf305c8d968b3a4c26a21f18e8744436eabf45721",
+    "schemaSha256": "5c2090bb9586117f8f0e521efcb74ab10bd64a855fdcdc943035385cd1742951",
+    "schemaVersion": 25,
+    "sha256": "89ecc52f035dd49880aa3be4341bef2fe76ffe477e3227077df164542c551378",
+    "size": 2723840
+  },
+  "disposition": "privacy-approved",
+  "documentType": "independent-prospective-artifact-privacy-summary",
+  "existingBoundedAdmission": {
+    "hookChangedByReviewer": false,
+    "installerCommandTemplate": ".\\.venv\\Scripts\\python.exe -B tools/install_privacy_hooks.py --repo . --scanner .local/security-audit/gitleaks.exe --review <new-ignored-append-only-registry> --review-sha256 <independently-verified-registry-sha256>",
+    "nextStep": "Prepare a distinct ignored append-only registry preserving every previous entry and order, all preservation/retained-metadata controls and scanner/config/baseline authority. Add exactly admissionEntries above. Independently authenticate its full digest before normal installer sealing and staged hook checking.",
+    "priorEntries": 1486,
+    "registryWrittenOrActivatedByReviewer": false,
+    "requiredRegistryShape": "schemaVersion 1.0; documentType independent-artifact-privacy-review; unchanged baselineCommit/scannerSha256/configSha256; independent reviewer and implementer; disposition approved; rationale; artifacts plus unchanged optional preservation.",
+    "sourceRegistrySha256": "b9069b5ba1066ed63fbb68feeef6724eb88dbc6a0f489698ba35e8584ccbc197",
+    "sourceSealedRegistry": ".local/push-guard-8150ba673aa4459d94ed3dda63617e01/reviewed-artifacts.json",
+    "stagedHookPassClaimed": false
+  },
+  "formalTaskApproval": false,
+  "implementer": "agent:/root",
+  "independence": "Reviewer authored earlier artifact privacy admissions and read-only preparatory advisories. Reviewer did not author this capture, product implementation, product tests, qualifier or owner approvals.",
+  "limits": [
+    "Privacy admission only; no product, migration, task, slice, W2, reference, design or release approval.",
+    "No product/tests/source/index/HEAD/hooks/registry/state/approval changes. Only this new append-only reviewer summary and ignored read-only diagnostics were written.",
+    "Original hook rejection and reviewer helper setup failures remain adverse. No tests, builds, network, UI, native checks or parser timing investigation.",
+    "Normal installer preparation, independent registry-digest verification, bounded activation and unchanged authoritative staged hook check remain necessary. No error or changed finding is waived."
+  ],
+  "observedHeadAtReview": "d0752c3d0aac0162ada79effc41b88c9d2978bcf",
+  "ownerOrDesignApproval": false,
+  "preservedAdverse": [
+    {
+      "commitsChecked": 0,
+      "entriesChecked": 11,
+      "execSession": 61194,
+      "exitCode": 1,
+      "findings": [
+        {
+          "pathSha256": "2bed2973249e480f5a6188d95d1861119c16bad9427ef9c605c707a1144ced2e",
+          "reasons": [
+            "binary-needs-privacy-review"
+          ]
+        }
+      ],
+      "provenance": "Parent supplied exact observed stdout values; no independent original log file existed. Observation retained here, never relabeled PASS.",
+      "status": "FAIL",
+      "type": "actual-hook-rejection-reported-from-retained-tool-stdout"
+    },
+    {
+      "outcome": "Initial summary named nonexistent capture-v25-populated-01.log; actual retained log is v25-populated-capture-01.log, authenticated above.",
+      "type": "capture-log-pointer-correction"
+    },
+    {
+      "chunkId": "0cb3e0",
+      "exitCode": 1,
+      "outcome": "KeyError: reviewer used sha256 instead of existing object_sha256 column. Literal checks completed; no decrypt/privacy scan completed."
+    },
+    {
+      "chunkId": "0ff4ae",
+      "exitCode": 1,
+      "outcome": "KeyError: reviewer incorrectly treated plaintext digest as storage basename. Corrected to documented project/digest HMAC opaque name. No fixture bytes changed."
+    },
+    {
+      "outcome": "Two key_sha256 supplemental findings are reconciliation_identifier_links digests, not workflow idempotency hashes. Corrected before publication; exact prior unpublished bytes preserved.",
+      "path": "artifacts/tmp/CAP-05.S03.T01.fixture-privacy-c11-01/summary-before-field-classification-correction.json",
+      "sha256": "9362b2d25aa5a392f8764b062342c71c29b1775bb303e0c2ec52e5ed0f175c82",
+      "type": "unpublished-reviewer-description-correction"
+    }
+  ],
+  "privacy": {
+    "authenticatedObjectPlaintextCredentialFindings": 0,
+    "liveCredentialDisclosure": false,
+    "manifestFinding": {
+      "adjudication": "Exact false positive: SHA-256 of literal synthetic table rows, independently recomputed and equal to manifest. No account secret or credential value. Admission applies only to this full staged JSON blob and complete pinned scanner finding fingerprint.",
+      "count": 1,
+      "fingerprints": [
+        "980e736c7ec75f6a6368a9e1c7925c0f0fc10a8574082ae8396f74684e4b0c16"
+      ],
+      "line": 186,
+      "logicalField": "rowSha256.document_access_needs",
+      "rule": "generic-api-key"
+    },
+    "newAccountOrUserPathDisclosure": false,
+    "newNonEmailExemptions": 0,
+    "privateResearchDisclosure": false,
+    "rawArchiveAndDecodedMembersCredentialFindings": 0,
+    "readableRowSupplementalFindings": {
+      "adjudication": "Four authenticated wrapped-key ciphertexts, nine synthetic event idempotency keys, two synthetic scholarly identifier lookup hashes and four synthetic lease capability hashes. No account credential. This decoded diagnostic receives no tracked-artifact credential exception.",
+      "count": 19
+    },
+    "textPathEmailReasons": []
+  },
+  "provenance": {
+    "actualCaptureLogPath": "artifacts/tmp/CAP-05.S03.T01.v25-populated-capture-01.log",
+    "actualCaptureLogSha256": "5f19e4146fdc9a3ceb58b8b8a4c5f36a6abca21fdee872012691c4a50f62a52a",
+    "allFourSyntheticPlaintextsAuthenticated": true,
+    "allObjectCiphertextHashesMatchManifest": true,
+    "captureLogStatus": "PASS_LITERAL_POPULATED_V25_CAPTURE_ONLY",
+    "captureSourceInputs": {
+      "allAuthenticateAgainstProducerCommit": true,
+      "count": 7,
+      "exactBindingsReceipt": "artifacts/tmp/CAP-05.S03.T01.fixture-privacy-c11-01/inspection-receipt.json",
+      "lineEndingBindingsPreserved": true
+    },
+    "construction": "Explicit development plaintext database; synthetic connector/acquisition transport and inspection; public tracked fixture master key. Original retained candidate, committed copy, failed attempt, recovery, access annotations and append-only histories are generated fixture records.",
+    "contentReview": "All literal rows and nested JSON were read locally, with a 355-value nonopaque semantic inventory. Text is declared synthetic Intent, source metadata, full text, rights, provenance and workflow history; fixture actor/session identifiers are synthetic and do not name or authorize an actual account.",
+    "encryptedObjects": [
+      {
+        "authenticated": true,
+        "ciphertextPath": "objects/9d/e0/9de0aa33f2fa31a14e9a8d748ddf6d9c81e7eaa6b5ba2fcd8529a476d1a84395.blob",
+        "frames": 1,
+        "sha256": "1125ba0b28287cd119e1f2aa677a9be9fab8ed074d737b56e29d4bd5d14771ac",
+        "size": 4988
+      },
+      {
+        "authenticated": true,
+        "ciphertextPath": "objects/6e/87/6e871a76306f089a29a385eb9fd806994d28bcf47c938302ba96fa34272b0f70.blob",
+        "frames": 1,
+        "sha256": "57ccba18d805449aede14a3e869c0e4abd23c95875841c719a7c24fd3c5d714c",
+        "size": 30
+      },
+      {
+        "authenticated": true,
+        "ciphertextPath": "objects/50/1f/501fd20a4ac5d2fa0194e045015ca12909fe35a02a7b7e9d312d9cd8f8c2a6df.blob",
+        "frames": 1,
+        "sha256": "6835d6aeb154fbb5603f51eaa35391ac8318d4db1c044d9f0748a8b70354dff9",
+        "size": 888
+      },
+      {
+        "authenticated": true,
+        "ciphertextPath": "objects/61/46/6146c0f42dfeb80bb6849deb0b422e4ec51ed26a8ff85e133c57e0a5cb6a6ccf.blob",
+        "frames": 1,
+        "sha256": "cfecf0ccd61e7d1957c1794f4c1d9e0e8a18b06de17eb6e99d5d9b87fb9cd969",
+        "size": 2219
+      }
+    ],
+    "fixtureProtection": "explicit-development-plaintext-database; encrypted-object-ciphertext",
+    "objectPathBinding": "Project/digest HMAC opaque names; authenticated wrapped-key and secretstream frames, final tag, length and plaintext digest all independently checked.",
+    "producerCommit": "d0752c3d0aac0162ada79effc41b88c9d2978bcf",
+    "producerPath": "artifacts/tmp/CAP-05.S03.T01.capture-v25-populated-01.py",
+    "producerSha256": "404af1eb62750adf3f628771875f5fea0d8e4e001713f19de0472a7e758d812b",
+    "productionSQLCipherQualification": false
+  },
+  "retainedDiagnostics": [
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T01.fixture-privacy-c11-01/inspection-receipt.json",
+      "sha256": "fc1c4679bde877f5ff5035a86fa0f2626d5997840c79ca43f1f5361298ff68b0"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T01.fixture-privacy-c11-01/credential-findings-raw.json",
+      "sha256": "910c7731f593118e3266f4833a11d2c6f2e6219380efb671ff6768962350c52d"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T01.fixture-privacy-c11-01/semantic-text-inventory.json",
+      "sha256": "7ac92c44285ba27ba1784e5ea5c2cc889758c61098453776e40f6718cfa94112"
+    }
+  ],
+  "reviewer": "agent:/root/c11_security_review",
+  "scan": {
+    "archives": 1,
+    "authenticatedPlaintexts": 4,
+    "configSha256": "839fab7649bfe0d45a0e5b1dfba2b401d03b37169c32ebbc1f00313eddc9f7b1",
+    "decodedMembers": 5,
+    "diagnosticOutput": "Content-free summaries and redacted findings only; full unmasked inputs remain ignored local diagnostics.",
+    "fullUnmaskedInputs": true,
+    "guardSha256": "5f0a4cd0020c54342eaf06c1450c05a584e287af357d42efd05d7042bdbba227",
+    "inputCount": 12,
+    "pinnedInstalledGuard": ".local/push-guard-8150ba673aa4459d94ed3dda63617e01/guard.py",
+    "policySha256": "f9722b14ed631869954d297d9296168239bdf7a3b432d683a49bb14da6300a75",
+    "readableDatabaseRows": true,
+    "scannerPath": ".local/security-audit/gitleaks.exe",
+    "scannerSha256": "17157e2ee8b76fc8b1d8bee607a250e34b8a8023c8bc81822d4b5ee4d78fcb7c",
+    "suppressions": false
+  },
+  "schemaVersion": "1.0",
+  "scope": "Exact staged literal synthetic v25 populated predecessor ZIP and JSON manifest only; independent binary/content/metadata/credential review, not product qualification.",
+  "sourceHead": "d0752c3d0aac0162ada79effc41b88c9d2978bcf",
+  "taskId": "CAP-05.S03.T01"
+}
