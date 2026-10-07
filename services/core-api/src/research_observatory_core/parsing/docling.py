@@ -40,6 +40,7 @@ from .requests import ParseRequest, ParseSuccess
 
 DOCLING_MEDIA_TYPE = "application/vnd.research-observatory.docling-output+json"
 UNKNOWN = ConfidenceObservation(state="unknown", value=None)
+MAX_DOCLING_ENTRIES = 100000
 _LOCATOR: TypeAdapter[SourceLocator] = TypeAdapter(SourceLocator)
 _REF = re.compile(r"#/(?:body|furniture|(?:groups|texts|pictures|tables|key_value_items|form_items)/[0-9]+)\Z")
 _LABELS: dict[str, NodeKind] = {
@@ -68,7 +69,7 @@ def _dict(value: object) -> dict[str, Any]:
 
 
 def _list(value: object) -> list[Any]:
-    if type(value) is not list or len(value) > 100000:
+    if type(value) is not list or len(value) > MAX_DOCLING_ENTRIES:
         raise ValueError("docling-array-invalid")
     return value
 
@@ -92,7 +93,40 @@ def _ref(value: object) -> str:
     return record["$ref"]
 
 
-def _build_ir(request: ParseRequest, raw: dict[str, Any], artifact: RawParserArtifact) -> DocumentIR:
+def _preflight_expansion(document: dict[str, Any], checkpoint: Callable[[], None]) -> None:
+    entries = relationships = 0
+    for group in ("body", "furniture", "groups", "texts", "pictures", "tables", "key_value_items", "form_items"):
+        items = [document[group]] if group in {"body", "furniture"} else _list(document[group])
+        entries += len(items)
+        if entries > MAX_DOCLING_ENTRIES:
+            raise ValueError("docling-expansion-oversize")
+        for record in items:
+            checkpoint()
+            item = _dict(record)
+            relationships += len(_list(item.get("children")))
+            if item.get("label") == "table":
+                entries += len(_list(_dict(item.get("data")).get("table_cells")))
+            if item.get("label") == "picture":
+                relationships += len(_list(item.get("captions", [])))
+            if entries > MAX_DOCLING_ENTRIES or relationships > MAX_DOCLING_ENTRIES:
+                raise ValueError("docling-expansion-oversize")
+
+
+def _build_ir(
+    request: ParseRequest,
+    raw: dict[str, Any],
+    artifact: RawParserArtifact,
+    cancelled: Callable[[], bool] | None = None,
+) -> DocumentIR:
+    steps = 0
+
+    def checkpoint(*, force: bool = False) -> None:
+        nonlocal steps
+        steps += 1
+        if (force or steps % 256 == 0) and cancelled is not None and cancelled():
+            raise ValueError("docling-decode-cancelled")
+
+    checkpoint(force=True)
     if set(raw) != {
         "schemaVersion",
         "documentType",
@@ -132,6 +166,8 @@ def _build_ir(request: ParseRequest, raw: dict[str, Any], artifact: RawParserArt
         "pages",
     }:
         raise ValueError("docling-document-invalid")
+    _preflight_expansion(document, checkpoint)
+    checkpoint(force=True)
     geometries = tuple(PdfPageGeometry.from_native(_dict(page)) for page in _list(raw["sourcePages"]))
     display_pages = _dict(document["pages"])
     if request.binding.source.format == "pdf":
@@ -161,6 +197,7 @@ def _build_ir(request: ParseRequest, raw: dict[str, Any], artifact: RawParserArt
     for group in ("body", "furniture", "groups", "texts", "pictures", "tables", "key_value_items", "form_items"):
         items = [document[group]] if group in {"body", "furniture"} else _list(document[group])
         for position, record in enumerate(items):
+            checkpoint()
             item = _dict(record)
             key = f"#/{group}" if group in {"body", "furniture"} else f"#/{group}/{position}"
             if item.get("self_ref") != key or key in index:
@@ -175,11 +212,12 @@ def _build_ir(request: ParseRequest, raw: dict[str, Any], artifact: RawParserArt
     active: set[str] = set()
     stack: list[tuple[str, str | None, bool]] = [("#/furniture", None, False), ("#/body", None, False)]
     while stack:
+        checkpoint()
         key, parent, end = stack.pop()
         if end:
             active.remove(key)
             continue
-        if key in visited or key in active or key not in index or len(ordered) >= 100000:
+        if key in visited or key in active or key not in index or len(ordered) >= MAX_DOCLING_ENTRIES:
             raise ValueError("docling-node-graph-invalid")
         item = index[key]
         if parent is not None and _ref(item["parent"]) != parent:
@@ -203,6 +241,7 @@ def _build_ir(request: ParseRequest, raw: dict[str, Any], artifact: RawParserArt
     text_pages: set[int] = set()
     total_text_bytes = 0
     used_locations: set[str] = set()
+    node_locations: dict[str, SourceLocator] = {}
 
     def content(key: str, text: str) -> TextSpan:
         nonlocal total_text_bytes
@@ -257,6 +296,7 @@ def _build_ir(request: ParseRequest, raw: dict[str, Any], artifact: RawParserArt
         return location
 
     for key, parent in ordered:
+        checkpoint()
         item = index[key]
         node_id = f"docling-node-{len(nodes)}"
         ids[key] = node_id
@@ -265,6 +305,7 @@ def _build_ir(request: ParseRequest, raw: dict[str, Any], artifact: RawParserArt
         text = _text(item.get("orig", item.get("text", "")))
         span = content(key, text)
         location = locator(key, item)
+        node_locations[key] = location
         item_warnings = []
         if kind == "unknown":
             item_warnings.append(
@@ -298,6 +339,7 @@ def _build_ir(request: ParseRequest, raw: dict[str, Any], artifact: RawParserArt
         rows, columns = _count(data.get("num_rows")), _count(data.get("num_cols"))
         cells = []
         for cell_index, raw_cell in enumerate(_list(data.get("table_cells"))):
+            checkpoint()
             cell = _dict(raw_cell)
             cell_key = f"{key}/cell/{cell_index}"
             cell_id = f"docling-node-{len(nodes)}"
@@ -342,12 +384,23 @@ def _build_ir(request: ParseRequest, raw: dict[str, Any], artifact: RawParserArt
         warnings.append(ParserWarning(code="table-layout-unverified", severity="warning", node_id=node_id, detail=None))
     if used_locations != set(locations) or not geometry_warnings <= index.keys():
         raise ValueError("docling-location-identity-invalid")
-    references = tuple(
-        IRReference(staged_id=f"docling-reference-{i}", node_id=ids[key], order=i, raw_text=spans[key], identifiers=())
-        for i, (key, _parent) in enumerate(pair for pair in ordered if index[pair[0]]["label"] == "reference")
-    )
+    references: list[IRReference] = []
+    for key, _parent in ordered:
+        checkpoint()
+        if index[key]["label"] == "reference":
+            order = len(references)
+            references.append(
+                IRReference(
+                    staged_id=f"docling-reference-{order}",
+                    node_id=ids[key],
+                    order=order,
+                    raw_text=spans[key],
+                    identifiers=(),
+                )
+            )
     figures = []
     for key, _parent in ordered:
+        checkpoint()
         item = index[key]
         if item["label"] != "picture":
             continue
@@ -358,13 +411,14 @@ def _build_ir(request: ParseRequest, raw: dict[str, Any], artifact: RawParserArt
             IRFigure(
                 node_id=ids[key],
                 caption=spans[captions[0]] if len(captions) == 1 else None,
-                locator=next(node.locator for node in nodes if node.staged_id == ids[key]),
+                locator=node_locations[key],
                 preview_stage_id=None,
             )
         )
     missing = tuple(i for i in range(len(pages)) if i not in text_pages)
     if missing:
         warnings.append(ParserWarning(code="missing-text-ocr-disabled", severity="warning", node_id=None, detail=None))
+    checkpoint(force=True)
     return DocumentIR(
         schema_version="1.0",
         disposition="staged",
@@ -374,7 +428,7 @@ def _build_ir(request: ParseRequest, raw: dict[str, Any], artifact: RawParserArt
         text_projections=tuple(projections),
         pages=pages,
         nodes=tuple(nodes),
-        references=references,
+        references=tuple(references),
         citations=(),
         tables=tuple(tables),
         figures=tuple(figures),
@@ -393,7 +447,12 @@ def _build_ir(request: ParseRequest, raw: dict[str, Any], artifact: RawParserArt
     )
 
 
-def decode_docling(request: ParseRequest, delivery: AuthenticatedDoclingDelivery) -> AuthenticatedParseDelivery:
+def decode_docling(
+    request: ParseRequest,
+    delivery: AuthenticatedDoclingDelivery,
+    *,
+    cancelled: Callable[[], bool] | None = None,
+) -> AuthenticatedParseDelivery:
     invalid_request = False
     try:
         request = ParseRequest.model_validate(request)
@@ -430,7 +489,9 @@ def decode_docling(request: ParseRequest, delivery: AuthenticatedDoclingDelivery
             value = json.loads(
                 delivery.wire.decode("utf-8"), object_pairs_hook=_unique_object, parse_constant=_nonfinite
             )
-            ir = _build_ir(request, _dict(value), artifact)
+            ir = _build_ir(request, _dict(value), artifact, cancelled)
+            if cancelled is not None and cancelled():
+                raise ValueError("docling-decode-cancelled")
             result = (
                 ParseSuccess(schema_version="1.0", kind="success", binding=request.binding, ir=ir)
                 .model_dump_json(by_alias=True)
@@ -458,4 +519,6 @@ class DoclingDocumentParser:
     def parse(
         self, request: ParseRequest, source: ReadOnlyDocumentSource, *, cancelled: Callable[[], bool]
     ) -> AuthenticatedParseDelivery:
-        return decode_docling(request, self.worker.parse_source(request, source, cancelled=cancelled))
+        return decode_docling(
+            request, self.worker.parse_source(request, source, cancelled=cancelled), cancelled=cancelled
+        )

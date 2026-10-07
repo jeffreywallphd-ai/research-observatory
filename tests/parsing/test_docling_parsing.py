@@ -9,6 +9,7 @@ import sys
 import unittest
 from dataclasses import replace
 from pathlib import Path
+from unittest.mock import patch
 
 REPO = Path(__file__).resolve().parents[2]
 sys.path[:0] = [str(REPO / "services/core-api/src"), str(REPO)]
@@ -135,6 +136,105 @@ class DoclingAdapterTests(unittest.TestCase):
         result = decode_delivery(req, decode_docling(req, delivery(req, value)))
         self.assertIsInstance(result, ParseSuccess)
         return result.ir
+
+    def test_total_table_expansion_is_rejected_before_node_allocation(self):
+        req, value = request(), fixture()
+        document = value["document"]
+        document["texts"], value["locations"] = [], {}
+        document["body"]["children"] = []
+        # Each list is within its individual limit. Combined cell expansion is
+        # above the graph envelope while the authenticated raw wire is bounded.
+        for index in range(2):
+            cells = [
+                {
+                    "text": "",
+                    "start_row_offset_idx": row,
+                    "end_row_offset_idx": row + 1,
+                    "start_col_offset_idx": 0,
+                    "end_col_offset_idx": 1,
+                    "row_span": 1,
+                    "col_span": 1,
+                }
+                for row in range(50000)
+            ]
+            key = f"#/tables/{index}"
+            document["tables"].append(
+                {
+                    "self_ref": key,
+                    "parent": {"$ref": "#/body"},
+                    "children": [],
+                    "label": "table",
+                    "data": {"num_rows": 50000, "num_cols": 1, "table_cells": cells},
+                }
+            )
+            document["body"]["children"].append({"$ref": key})
+        authenticated = delivery(req, value)
+        self.assertLess(len(authenticated.wire), 64 * 1_048_576)
+        with (
+            patch(
+                "research_observatory_core.parsing.docling.IRNode",
+                side_effect=AssertionError("oversize expansion reached model allocation"),
+            ),
+            self.assertRaisesRegex(ParseProblem, "^parse-output-invalid$"),
+        ):
+            decode_docling(req, authenticated)
+
+    def test_core_decode_cancellation_interrupts_preflight_before_model_allocation(self):
+        req, value = request(), fixture()
+        original = value["document"]["texts"][0]
+        value["locations"] = {}
+        value["document"]["texts"] = [dict(original, self_ref=f"#/texts/{i}") for i in range(1000)]
+        value["document"]["body"]["children"] = [{"$ref": f"#/texts/{i}"} for i in range(1000)]
+        checks = 0
+
+        def cancelled():
+            nonlocal checks
+            checks += 1
+            return checks >= 4
+
+        with (
+            patch(
+                "research_observatory_core.parsing.docling.IRNode",
+                side_effect=AssertionError("cancelled preflight reached model allocation"),
+            ),
+            self.assertRaisesRegex(ParseProblem, "^parse-output-invalid$"),
+        ):
+            decode_docling(req, delivery(req, value), cancelled=cancelled)
+        self.assertEqual(checks, 4)
+
+    def test_figure_locator_lookup_has_linear_node_access(self):
+        from research_observatory_core.parsing import docling
+
+        req, value = request(), fixture()
+        document = value["document"]
+        for index in range(400):
+            key = f"#/pictures/{index}"
+            document["pictures"].append(
+                {"self_ref": key, "parent": {"$ref": "#/body"}, "children": [], "label": "picture"}
+            )
+            document["body"]["children"].append({"$ref": key})
+        accesses = 0
+        original = docling.IRNode
+
+        class ObservedNode:
+            def __init__(self, **fields):
+                self.node = original(**fields)
+
+            @property
+            def staged_id(self):
+                nonlocal accesses
+                accesses += 1
+                return self.node.staged_id
+
+            @property
+            def locator(self):
+                return self.node.locator
+
+        # Isolate construction work; ordinary tests validate the complete IR.
+        with patch.object(docling, "IRNode", ObservedNode), patch.object(docling, "DocumentIR", lambda **parts: parts):
+            built = docling._build_ir(req, value, delivery(req, value).artifact_receipt)
+        self.assertEqual(len(built["figures"]), 400)
+        self.assertLessEqual(accesses, 2 * len(built["nodes"]))
 
     def test_authored_text_offsets_source_frame_and_unknown_quality(self):
         ir = self.parse(fixture())

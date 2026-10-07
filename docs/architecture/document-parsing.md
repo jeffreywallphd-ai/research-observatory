@@ -203,6 +203,11 @@ binds its original geometry as well as the image bytes. Source viewing must
 apply crop translation, rotation, media origin and UserUnit before mapping IR
 points to actual rounded pixel dimensions. No plaintext image cache is created.
 
+Core preflights one cumulative 100,000-entry budget for the raw node graph and
+all table-cell expansion before constructing IR models. Relationship fanout is
+bounded separately. Decoder loops check cancellation, and figure locators use
+direct source-key lookup rather than repeated scans of the completed node list.
+
 Engineering diagnostics and synthetic port tests do not qualify the installed
 product. Commit-bound package, native-principal, encrypted source-to-staged-IR,
 resource/cancellation/recovery and cold/warm performance proofs remain required
