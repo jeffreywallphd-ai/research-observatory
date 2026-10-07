@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: be378735f8ac28be2a33601f12b771fe1e23f1fc9ef95428708ed265de155453
+source_sha256: d54e45ed04afb94d0ab4659c678aeaae51b775538531457e88c0d77472c57fd9
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -11341,15 +11341,15 @@ Original tasks and approvals remain unchanged.
 
 **Currently open findings:** -
 
-#### - [ ] CAP-05.S02.T03 - Integrate the local Docling-based PDF parser with fallback
+#### - [x] CAP-05.S02.T03 - Integrate the local Docling-based PDF parser with fallback
 
-**Status / priority / estimate / risk:** `REVIEW` / `P0` / `L` / `high`
+**Status / priority / estimate / risk:** `DONE` / `P0` / `L` / `high`
 
 **Profiles / platforms:** `LOC`, `LAB` / `windows-x64`
 
 **Dependencies:** `CAP-05.S02.T02`, `CAP-04.S05.T02`
 
-**Owner / review:** codex-w2-implementation / - (`-`)
+**Owner / review:** codex-w2-implementation / agent:/root/s02_t01_review (`approved`)
 
 **Objective:** Packaged Docling-based local PDF parser adapter, resource limits, page rendering, OCR-disabled-by-default policy, fallback text extraction, and quality report.
 
@@ -11374,9 +11374,11 @@ Original tasks and approvals remain unchanged.
 
 ##### Review history — CAP-05.S02.T03
 
-**Review mode:** `append-only v1` / 0 completed round(s)
+**Review mode:** `append-only v1` / 1 completed round(s)
 
-**Current immutable submission awaiting review:** `R01` / packet SHA-256 `043d441ff5365a22085ee3bb1806557122ef4a4b2c7b231d530167a46238c2f5`
+###### Round R01
+
+**Immutable submission packet:** `R01` / packet SHA-256 `043d441ff5365a22085ee3bb1806557122ef4a4b2c7b231d530167a46238c2f5`
 
 - Candidate / base / branch: `c17511401808d003eaa2c74ff0b866e65a6955d9` / `446819465a63776d7f00696f0bfee8b14fa065a9` / `codex/w2-implementation`
 - Submitted by / at: codex-w2-implementation / `2026-10-07T21:47:41+00:00`
@@ -11390,9 +11392,25 @@ Original tasks and approvals remain unchanged.
 - Prior round / replayed open findings: `-` / -
 - Root-cause escalation: -
 
-**Current latest-review projection:** `-` by - at `-`
+**Disposition / reviewer / time:** `approved` / agent:/root/s02_t01_review / `2026-10-07T22:05:00+00:00`
 
-**Latest notes:** -
+**Immutable review ledger:** `artifacts/evidence/CAP-05.S02.T03.review-R01.json` / `4a1d1d3f1f52239a831673f79dd640cf332af617ead63190cce332cfd2711910`
+
+**Review notes:** Independent expanded CAP-05.S02.T03 R01 review approves the exact c17511401808d003eaa2c74ff0b866e65a6955d9 product candidate and authenticated frozen packet. The 39 selected passing checks cover affected parser contracts, real zero-capability LPAC execution, protected encrypted retention, every admitted installed family, pages/geometry, hostile input, resources, cancellation/crash/death and distinct-attempt inspection recovery. Preparatory resource, normalization and installed-family defects are addressed with preserved adverse proof and fresh committed regressions; they are not invented formal rounds. The benchmark aggregate remains FAIL: warm p95 62.5333542 seconds exceeds the unchanged 60-second target, while cold p95 59.7308133 meets 90 seconds. The exact repository-owner acceptance makes only this observation nonblocking; no further performance work or blanket exemption is inferred. Model layoutGold FAIL, staged uncertainty, guardian exit120 and all method limits remain explicit. No blocking finding remains. This is task approval only; integrated S02 review, S03 real operation/revision/human acceptance, fresh W2 qualification and the separate release decision remain required.
+
+**Findings opened:**
+
+- None
+
+**Prior finding closures:**
+
+- None
+
+**Current immutable submission awaiting review:** None
+
+**Current latest-review projection:** `approved` by agent:/root/s02_t01_review at `2026-10-07T22:05:00+00:00`
+
+**Latest notes:** Independent expanded CAP-05.S02.T03 R01 review approves the exact c17511401808d003eaa2c74ff0b866e65a6955d9 product candidate and authenticated frozen packet. The 39 selected passing checks cover affected parser contracts, real zero-capability LPAC execution, protected encrypted retention, every admitted installed family, pages/geometry, hostile input, resources, cancellation/crash/death and distinct-attempt inspection recovery. Preparatory resource, normalization and installed-family defects are addressed with preserved adverse proof and fresh committed regressions; they are not invented formal rounds. The benchmark aggregate remains FAIL: warm p95 62.5333542 seconds exceeds the unchanged 60-second target, while cold p95 59.7308133 meets 90 seconds. The exact repository-owner acceptance makes only this observation nonblocking; no further performance work or blanket exemption is inferred. Model layoutGold FAIL, staged uncertainty, guardian exit120 and all method limits remain explicit. No blocking finding remains. This is task approval only; integrated S02 review, S03 real operation/revision/human acceptance, fresh W2 qualification and the separate release decision remain required.
 
 **Currently open findings:** -
 
