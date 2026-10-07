@@ -20938,7 +20938,7 @@
             {
               "task_id": "CAP-05.S02.T01",
               "title": "Define parser interface, document IR, and parser-selection policy",
-              "status": "NOT_STARTED",
+              "status": "READY",
               "mode": "latest-review-only",
               "latest_review": {
                 "reviewer": null,
@@ -20979,7 +20979,7 @@
             {
               "task_id": "CAP-05.S02.T01",
               "title": "Define parser interface, document IR, and parser-selection policy",
-              "status": "NOT_STARTED",
+              "status": "READY",
               "page": "CAP-05/CAP-05.S02.T01.html",
               "dependencies": [
                 "CAP-05.S01.T03",

@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: aa5c44c81c4540afe6e4c63a52797bc66f12137a91490f71c516164b63d54139
+source_sha256: 63ed805a6a4ff2eff8ae0ea169b7274754c48f86146bc56b32113d874370c433
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -10729,7 +10729,7 @@ Original tasks and approvals remain unchanged.
 
 **Outcome:** Full-text acquisition is explicit, resumable, checksum-verified, and governed by permitted use.
 
-**Wave / priority / status / review:** `W2` / `P0` / `REVIEW` / `REVIEW`
+**Wave / priority / status / review:** `W2` / `P0` / `DONE` / `APPROVED`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
@@ -10958,7 +10958,7 @@ Original tasks and approvals remain unchanged.
 
 **Outcome:** A replaceable local parser pipeline produces normalized document structure with retained originals and quality signals.
 
-**Wave / priority / status / review:** `W2` / `P0` / `NOT_STARTED` / `PENDING`
+**Wave / priority / status / review:** `W2` / `P0` / `READY` / `PENDING`
 
 **Profiles / platforms:** `LOC`, `LAB` / `windows-x64`
 
@@ -10966,7 +10966,7 @@ Original tasks and approvals remain unchanged.
 
 #### - [ ] CAP-05.S02.T01 - Define parser interface, document IR, and parser-selection policy
 
-**Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `L` / `high`
+**Status / priority / estimate / risk:** `READY` / `P0` / `L` / `high`
 
 **Profiles / platforms:** `LOC`, `LAB` / `windows-x64`
 

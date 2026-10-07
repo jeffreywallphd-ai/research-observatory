@@ -26391,7 +26391,7 @@ capabilities:
     depends_on:
     - CAP-04.S04.T02
     - CAP-02.S03.T03
-    status: REVIEW
+    status: DONE
     tasks:
     - id: CAP-05.S01.T01
       capability_id: CAP-05
@@ -28671,13 +28671,14 @@ capabilities:
     platform_targets:
     - windows-x64
     completion:
-      status: REVIEW
-      reviewer: null
-      reviewed_at: null
+      status: APPROVED
+      reviewer: agent:/root/s01_integration_review
+      reviewed_at: '2026-10-07T03:05:15+00:00'
       evidence:
       - artifacts/evidence/CAP-05.S01.qualification-01.json
-      notes: Committed integration bundle binds source e53a5154ddf78522edd252645eafc71621acdc51; actual independent slice
-        disposition remains required.
+      notes: Independent approved disposition artifacts/evidence/CAP-05.S01.review-01.json SHA256 0d0cb37286fc91906ec8b9fa1dd6c8daab401ba355dd5651a6313fd52a4c1d9f;
+        source e53a5154ddf78522edd252645eafc71621acdc51; committed qualification dea20267e1de8014f6ab6dd28bc363cf6864910f.
+        W2 checkpoint, full qualification and human release remain separate.
   - id: CAP-05.S02
     title: Structured and PDF parsing pipeline
     outcome: A replaceable local parser pipeline produces normalized document structure with retained originals and quality
@@ -28690,7 +28691,7 @@ capabilities:
     depends_on:
     - CAP-05.S01.T03
     - CAP-03.S04.T02
-    status: NOT_STARTED
+    status: READY
     tasks:
     - id: CAP-05.S02.T01
       capability_id: CAP-05
@@ -28719,11 +28720,11 @@ capabilities:
       - documents
       verification_commands:
       - python tools/verify.py --profile documents
-      status: NOT_STARTED
+      status: READY
       owner: null
       branch: null
       started_at: null
-      updated_at: '2026-08-07T00:00:00+00:00'
+      updated_at: '2026-10-07T03:05:15+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
