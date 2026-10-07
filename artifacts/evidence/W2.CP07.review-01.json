@@ -1,0 +1,694 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "wave-risk-cluster-checkpoint-review",
+  "checkpointId": "W2.CP07",
+  "attemptId": "R01",
+  "reviewer": "agent:/root/t03_product_review",
+  "result": "approved",
+  "reviewedAt": "2026-10-07T08:11:45.608223+00:00",
+  "candidateCommit": "c7726035afd2620356cd4b84060a90dcb2861001",
+  "reviewedStateCommit": "c7726035afd2620356cd4b84060a90dcb2861001",
+  "evidencePath": "artifacts/evidence/W2.CP07.qualification-01.json",
+  "evidenceSha256": "0592f4615ab6ffc56156b56efae4e5925dc20f8483578cceb1fec136465d10dc",
+  "publicationState": "The qualification artifact is not committed at this review. This disposition binds its exact reviewed bytes and committed source candidate; normal publication and checkpoint recording remain owner operations.",
+  "notes": "Independent bounded checkpoint review approves approved W2 initiation cluster 2, CAP-04.S04/S05 plus CAP-05.S01, at exact c7726035. All four actual PASS receipts, 73 referenced artifacts and 87 shared contract identities authenticate. Complete normalized desktop inputs, Core build inputs and installed-smoke source inputs match the stable guarded selected inventory. Raw logs establish 19 checks and 322 unittest case executions without skips, actual Windows LPAC and protected SQLCipher/TLS acquisition, four protected SDK phases, exact renderer/native handoff and the production installed dispatch. Preparatory method findings, stale fixture corrections and worker07 failure remain preserved with bounded independent closures; no criterion-bound checkpoint blocker remains. This checkpoint is neither Wave completion nor release approval.",
+  "authority": {
+    "route": "AGENTS.md evidence/review route; project-automation-guide verification breadth; workflow-efficiency reading map, review boundaries and closed-input reuse; codex-tracking-guide evidence and independent-review requirements.",
+    "scope": "Approved planning/W2-initiation.md Execution checkpoints cluster 2: rights -> SDK/LPAC -> acquisition, union of affected checks plus clean build/smoke before parser tasks. Existing CP02-CP06 ledger identities are preserved; CP07 is the next execution checkpoint, not a human gate.",
+    "noNewAuthority": "No framework, controller, product, security, migration, rights, UX or verification acceptance change is authorized by this review."
+  },
+  "acceptanceReviews": [
+    {
+      "criterion": "current rights, protected copies and portable handoff",
+      "result": "satisfied",
+      "assessment": "Fresh rights54, SDK80, attachment44, storage57 and workflow20 groups exercise the combined current contracts and existing exact denial, predecessor, fault, backup, retry and reopen assertions. C13/C14/C15 fixture restorations are independently approved and DONE with exact evidence/candidate bindings. Historical S04/S05/S01 approvals are authenticated support for unchanged contracts, not promoted to fresh results."
+    },
+    {
+      "criterion": "exact trust/grant/package transitions and native LPAC boundary",
+      "result": "satisfied",
+      "assessment": "Actual Windows LPAC15 cases include signed-runtime pin/tamper/redirect/self-trust rejection, ambient file/vault/environment/child restrictions, memory and wall bounds, guardian crash recovery/delayed locks, framing and cancellation. The protected SDK journey supplies actual create/reopen/crash/crash-denied phases: two durable pages, active cancellation, forged/malformed-page denial, lost-consent cancellation and foreign-lock denial with 23 project files byte-unchanged. Worker08 interface and exact package identities authenticate; fresh selected and installed executions supply behavioral closure. Network claims retain startup-versus-connect distinctions."
+    },
+    {
+      "criterion": "quarantined inspection, encrypted acquisition and recovery",
+      "result": "satisfied",
+      "assessment": "All50 acquisition cases run without skips, with real owned TLS, protected SQLCipher and signed LPAC principal coverage plus bounded stream regressions. The attachment44, storage57, workflow20 and mounted journey integrate exact authority/ownership denial, encrypted staging, migration, cancellation, failure/cleanup, fresh-session recovery and return to the retained copy. No mock or screenshot is used alone to establish a real process or storage boundary."
+    },
+    {
+      "criterion": "fresh clean build and installed/native/renderer smoke",
+      "result": "satisfied",
+      "assessment": "Fresh Core03 freezes current source and worker08 into the production installed layout; all784 actual files authenticate. Desktop03 freshly runs the clean renderer build, locked Cargo build and exact approved EX01 reference1.9 runtime assertions at the same fixed candidate. Its complete36649 input map equals Selected03 after collision-free normalization and it does not consume the replaced worker bundle. New native/installed checks establish current worker behavior. Installed Core uses default DPAPI, protected SQLCipher, exact publisher trust/native grant, accepted Intent/privacy/explicit invocation consent, production LPAC and one lawful public Crossref GET, succeeds on attempt1, and closes orderly."
+    }
+  ],
+  "authentication": {
+    "headExactAndTrackedWorktreeClean": true,
+    "qualificationSha256": "0592f4615ab6ffc56156b56efae4e5925dc20f8483578cceb1fec136465d10dc",
+    "freshReports": [
+      {
+        "path": "artifacts/tmp/W2.CP07.installed-build-03-c7726035.json",
+        "sha256": "805d31c8af083c4d93c79483d3bf230c84855945b8bbf86bd37cf497ec6c91cd"
+      },
+      {
+        "path": "artifacts/tmp/W2.CP07.desktop-build-smoke-03-c7726035.json",
+        "sha256": "9358c4b036908260c77bf8afa15503d0c647210d89ad10e017d230434fc44014"
+      },
+      {
+        "path": "artifacts/tmp/W2.CP07.selected-03-c7726035.json",
+        "sha256": "604de9d628d7dcff0ad0f1a77dad2f0b140bd61d041f8417f5465d86e597a25b"
+      },
+      {
+        "path": "artifacts/tmp/W2.CP07.installed-smoke-03-c7726035.json",
+        "sha256": "0111ad46f1046ea220c9e1024a45e5f1182fd996061992f864793ad9d03e6397"
+      }
+    ],
+    "referencedArtifacts": {
+      "independentlyRehashedCount": 73,
+      "mismatches": [],
+      "method": "Deduplicated exact path/sha256 references in the qualification packet; each referenced raw file exists and hashes exactly. Canonical correction reviews and historical qualifications are authenticated, not re-audited."
+    },
+    "sharedContractInputs": {
+      "count": 87,
+      "candidateGitHashesExact": true,
+      "workingBytesEqualSelectedInputs": true,
+      "mismatches": [],
+      "exactCrLfToLfBridges": [
+        "packages/contracts/documents/acquisition-location.v1.schema.json",
+        "packages/contracts/documents/acquisition-receipt.v1.schema.json",
+        "packages/contracts/documents/acquisition-selection.v1.schema.json"
+      ]
+    },
+    "closedInputMaps": {
+      "selectedCount": 37628,
+      "selectedBeforeAfterEqual": true,
+      "desktopInitialCount": 36602,
+      "desktopFreshBuiltCount": 36649,
+      "desktopInitialBeforeAfterEqual": true,
+      "desktopBuildToSmokeBridgeEqual": true,
+      "desktopFreshBuiltBeforeAfterEqual": true,
+      "desktopNormalizedMapCompleteEqualSelected": true,
+      "desktopNormalization": "Leading installed-node/pnpm/ maps to installed-pnpm/; collision, missing and differing counts are all zero. No intersection-only omission is admitted.",
+      "coreCount": 13586,
+      "coreBeforeAfterEqual": true,
+      "coreCompleteMapEqualSelectedSubset": true,
+      "installedSmokeSourceCount": 5994,
+      "installedSmokeCompleteMapEqualSelectedSubset": true,
+      "inputGuards": "Actual producer receipts hold Windows write/delete-denying read handles for their complete inventories throughout qualifying execution.",
+      "limit": "This review reproduces full map equality and independently hashes the87 shared contracts and actual784-file installed build; it does not claim a new physical rehash of all37628 dependency/runtime input bodies."
+    },
+    "installedCore": {
+      "files": 784,
+      "totalBytes": 74695387,
+      "everyFileSizeAndHashExact": true,
+      "extras": [],
+      "missing": [],
+      "workerInventoryFiles": 59,
+      "allWorkerEntriesEqualInstalledCore": true,
+      "workerImageSha256": "b83babb96879cb10c96e7eaa0c636aedf89be4e5f67bbb3164cd858dc62d7cc0"
+    },
+    "assembler": {
+      "producer": {
+        "path": "artifacts/tmp/W2.CP07.assemble-03.py",
+        "sha256": "8bd6214e7ec622c6529aa402c9f5b2bd2208b88a158c49b24d7c617af3a5c3ee"
+      },
+      "derivation": {
+        "path": "artifacts/tmp/W2.CP07.prepare-assembly03-01.py",
+        "sha256": "83ffbb5ed26067add946da1ade07497e68dd9c736c86c72d4a9deedcf6be9786"
+      },
+      "predecessorSha256": "03ac2dc2a0f3887ca8e94d9aaf1b585be75e2978ee9dc402f840cfe1139c4dba",
+      "exactDerivativeReproduced": true,
+      "assessment": "Four exact attempt/output substitutions plus appended runtime restoration, adverse references and desktop receipt scope statements; all predecessor assertions remain. No assembler or qualifying producer was executed by this reviewer."
+    },
+    "corrections": [
+      {
+        "taskId": "W2.C13.T01",
+        "status": "DONE",
+        "independentReview": {
+          "path": "artifacts/evidence/W2.C13.T01.review-R01.json",
+          "sha256": "ca39f97f02a618767c484a73156902cf0beca4ac7e89bf931aacc898d5560287"
+        },
+        "evidence": {
+          "path": "artifacts/evidence/W2.C13.T01.R01.json",
+          "sha256": "e7253f250c2345a47c53f59ffd3d69c92463b9032f01de0db2bd816dada8253c"
+        },
+        "reviewResult": "approved",
+        "currentBacklogEvidenceAndCandidateEqualReview": true
+      },
+      {
+        "taskId": "W2.C14.T01",
+        "status": "DONE",
+        "independentReview": {
+          "path": "artifacts/evidence/W2.C14.T01.review-R01.json",
+          "sha256": "196154c2e58770041fc350744184ce3a629b94c9fd262fa5eee97b1d46d649fa"
+        },
+        "evidence": {
+          "path": "artifacts/evidence/W2.C14.T01.R01.json",
+          "sha256": "f10efc2d042d3212b2dbe2708352a5ba29e71c90a255e0d1feec943a69d142b4"
+        },
+        "reviewResult": "approved",
+        "currentBacklogEvidenceAndCandidateEqualReview": true
+      },
+      {
+        "taskId": "W2.C15.T01",
+        "status": "DONE",
+        "independentReview": {
+          "path": "artifacts/evidence/W2.C15.T01.review-R01.json",
+          "sha256": "3c2103b063bc8b1da0b2571beaadb822708b2309adabcb804903fd8582d9cc88"
+        },
+        "evidence": {
+          "path": "artifacts/evidence/W2.C15.T01.R01.json",
+          "sha256": "6e89b0a7755404c1e40262286591e8f7221a8581f903396e4c5be92a481f14e1"
+        },
+        "reviewResult": "approved",
+        "currentBacklogEvidenceAndCandidateEqualReview": true
+      }
+    ]
+  },
+  "rawExecutionResults": {
+    "checkCount": 19,
+    "unitTestExecutions": 322,
+    "unittestSkippedCases": [],
+    "unittestGroups": [
+      {
+        "name": "rights-and-portable-handoff",
+        "executedCases": 54,
+        "rawUnittestDurationSeconds": 98.647
+      },
+      {
+        "name": "sdk-trust-permissions-and-package",
+        "executedCases": 80,
+        "rawUnittestDurationSeconds": 54.986
+      },
+      {
+        "name": "native-lpac-boundary",
+        "executedCases": 15,
+        "rawUnittestDurationSeconds": 35.24
+      },
+      {
+        "name": "protected-signed-sdk-journey",
+        "executedCases": 1,
+        "rawUnittestDurationSeconds": 63.645
+      },
+      {
+        "name": "acquisition-queue-principal",
+        "executedCases": 50,
+        "rawUnittestDurationSeconds": 115.224
+      },
+      {
+        "name": "attachment-api",
+        "executedCases": 44,
+        "rawUnittestDurationSeconds": 53.825
+      },
+      {
+        "name": "storage-migration-contracts",
+        "executedCases": 57,
+        "rawUnittestDurationSeconds": 55.998
+      },
+      {
+        "name": "workflow-regression",
+        "executedCases": 20,
+        "rawUnittestDurationSeconds": 14.713
+      },
+      {
+        "name": "mounted-copy-return",
+        "executedCases": 1,
+        "rawUnittestDurationSeconds": 42.028
+      }
+    ],
+    "rendererUnitTests": {
+      "files": 3,
+      "cases": 21,
+      "failed": 0
+    },
+    "rustTests": {
+      "nativeIntakePassed": 14,
+      "nativeZeroDispatchPassed": 1,
+      "nativeTransportCancellationPassed": 1,
+      "failed": 0,
+      "ignored": 0,
+      "note": "Each selected Cargo command also runs a second empty target. Positive named counts above come from the main target, not those empty results."
+    },
+    "protectedPhases": [
+      "create",
+      "reopen",
+      "crash",
+      "crash-denied"
+    ],
+    "durationScope": "Protected outer check64.770s/raw unittest63.645s. Acquisition outer117.433s/raw unittest115.224s. Installed outer21.578s/actual smoke receipt16.332413s. Enclosing process durations are not represented as inner-method timings.",
+    "allExitCodesZero": true,
+    "allRawLogDigestsExact": true,
+    "checks": [
+      {
+        "name": "clean-renderer-build",
+        "commandId": "desktop:application",
+        "exitCode": 0,
+        "durationSeconds": 1.455,
+        "rawLog": {
+          "path": "artifacts/tmp/W2.CP07.desktop-build-smoke-03-c7726035.clean-renderer-build.log",
+          "sha256": "f197532b7464b0ca98ba7f65cbef1d6f3ed1e2fcdc5c2cd5d997009c05198c7a"
+        }
+      },
+      {
+        "name": "locked-native-build",
+        "commandId": "desktop:application",
+        "exitCode": 0,
+        "durationSeconds": 16.976,
+        "rawLog": {
+          "path": "artifacts/tmp/W2.CP07.desktop-build-smoke-03-c7726035.locked-native-build.log",
+          "sha256": "c6f0ebea5c6e961477d243246a3c11a46109a7bd2769bfcc674fe95db03ccdc2"
+        }
+      },
+      {
+        "name": "actual-desktop-runtime-smoke",
+        "commandId": "desktop:application",
+        "exitCode": 0,
+        "durationSeconds": 48.36,
+        "receipt": {
+          "path": "artifacts/tmp/W2.CP07.desktop-build-smoke-03-c7726035.json",
+          "sha256": "9358c4b036908260c77bf8afa15503d0c647210d89ad10e017d230434fc44014"
+        },
+        "errors": []
+      },
+      {
+        "name": "rights-and-portable-handoff",
+        "commandId": "service:rights",
+        "exitCode": 0,
+        "durationSeconds": 102.855,
+        "rawLog": {
+          "path": "artifacts/tmp/W2.CP07.selected-03-c7726035.rights-and-portable-handoff.log",
+          "sha256": "e23b9cef656dda7fb836be6dcea9f463494b8b5cfaf5ad953c0ecdf1cc071d05"
+        },
+        "executedUnittestCases": 54,
+        "skippedCaseIds": []
+      },
+      {
+        "name": "sdk-trust-permissions-and-package",
+        "commandId": "service:unit",
+        "exitCode": 0,
+        "durationSeconds": 59.173,
+        "rawLog": {
+          "path": "artifacts/tmp/W2.CP07.selected-03-c7726035.sdk-trust-permissions-and-package.log",
+          "sha256": "03d9839d0d5bd2d794c1a7f3e6a845347024484b733215438a2939c08a1445b4"
+        },
+        "executedUnittestCases": 80,
+        "skippedCaseIds": []
+      },
+      {
+        "name": "native-lpac-boundary",
+        "commandId": "security-local:unit",
+        "exitCode": 0,
+        "durationSeconds": 35.753,
+        "rawLog": {
+          "path": "artifacts/tmp/W2.CP07.selected-03-c7726035.native-lpac-boundary.log",
+          "sha256": "72f3382eee1ad3eff2b3d17a955a2428467fb56e4ddbf6fe05095e37b9811e83"
+        },
+        "executedUnittestCases": 15,
+        "skippedCaseIds": []
+      },
+      {
+        "name": "protected-signed-sdk-journey",
+        "commandId": "service:unit",
+        "exitCode": 0,
+        "durationSeconds": 64.77,
+        "rawLog": {
+          "path": "artifacts/tmp/W2.CP07.selected-03-c7726035.protected-signed-sdk-journey.log",
+          "sha256": "669fb7acd3f9887a81b65700ce40374400ed992858faf3b4a8367ab8725ee5f9"
+        },
+        "executedUnittestCases": 1,
+        "skippedCaseIds": []
+      },
+      {
+        "name": "acquisition-queue-principal",
+        "commandId": "documents:unit",
+        "exitCode": 0,
+        "durationSeconds": 117.433,
+        "rawLog": {
+          "path": "artifacts/tmp/W2.CP07.selected-03-c7726035.acquisition-queue-principal.log",
+          "sha256": "f55133e24de5dec3ccdf5fee4e857da3af4c280396d7a6e8965cb7d65a7aaf7e"
+        },
+        "executedUnittestCases": 50,
+        "skippedCaseIds": []
+      },
+      {
+        "name": "attachment-api",
+        "commandId": "service:unit",
+        "exitCode": 0,
+        "durationSeconds": 58.063,
+        "rawLog": {
+          "path": "artifacts/tmp/W2.CP07.selected-03-c7726035.attachment-api.log",
+          "sha256": "f22a45fb2d63d4ca8f798159751b0a58d1d19b82ae1edb0019c3e64d9031dce1"
+        },
+        "executedUnittestCases": 44,
+        "skippedCaseIds": []
+      },
+      {
+        "name": "storage-migration-contracts",
+        "commandId": "data:unit",
+        "exitCode": 0,
+        "durationSeconds": 58.766,
+        "rawLog": {
+          "path": "artifacts/tmp/W2.CP07.selected-03-c7726035.storage-migration-contracts.log",
+          "sha256": "45dd8cc3f6266a648712a6d1d5194e1257242f05c33af9c17fcf40334c82d65a"
+        },
+        "executedUnittestCases": 57,
+        "skippedCaseIds": []
+      },
+      {
+        "name": "workflow-regression",
+        "commandId": "service:unit",
+        "exitCode": 0,
+        "durationSeconds": 17.748,
+        "rawLog": {
+          "path": "artifacts/tmp/W2.CP07.selected-03-c7726035.workflow-regression.log",
+          "sha256": "f6245691ad55a92dbdfad5a14c9126c946c4f16421c2dbbcede91486a8a0c45d"
+        },
+        "executedUnittestCases": 20,
+        "skippedCaseIds": []
+      },
+      {
+        "name": "desktop-opaque-models",
+        "commandId": "desktop:unit",
+        "exitCode": 0,
+        "durationSeconds": 0.826,
+        "rawLog": {
+          "path": "artifacts/tmp/W2.CP07.selected-03-c7726035.desktop-opaque-models.log",
+          "sha256": "aa37ba843143f66f537d2ff66f0ecdc65465d21b2f7d0373afd4090572fb82d4"
+        }
+      },
+      {
+        "name": "native-intake",
+        "commandId": "desktop:unit",
+        "exitCode": 0,
+        "durationSeconds": 11.626,
+        "rawLog": {
+          "path": "artifacts/tmp/W2.CP07.selected-03-c7726035.native-intake.log",
+          "sha256": "07196565959b971d829ad1ff9105e107eb67e4c3ef61013e90104ce6d7357e04"
+        },
+        "nativeSuiteCounts": [
+          {
+            "passed": 14,
+            "failed": 0,
+            "ignored": 0
+          },
+          {
+            "passed": 0,
+            "failed": 0,
+            "ignored": 0
+          }
+        ]
+      },
+      {
+        "name": "native-zero-dispatch",
+        "commandId": "desktop:unit",
+        "exitCode": 0,
+        "durationSeconds": 0.371,
+        "rawLog": {
+          "path": "artifacts/tmp/W2.CP07.selected-03-c7726035.native-zero-dispatch.log",
+          "sha256": "192491df97cfe4aed447b67d048e59a77521e29fb100fe5056ea86bab6a2e7bc"
+        },
+        "nativeSuiteCounts": [
+          {
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0
+          },
+          {
+            "passed": 0,
+            "failed": 0,
+            "ignored": 0
+          }
+        ]
+      },
+      {
+        "name": "native-transport-cancellation",
+        "commandId": "desktop:unit",
+        "exitCode": 0,
+        "durationSeconds": 0.34,
+        "rawLog": {
+          "path": "artifacts/tmp/W2.CP07.selected-03-c7726035.native-transport-cancellation.log",
+          "sha256": "5808e7004a732800d33e4f5ba0616852e2f30e5190df732bacd45b94fd1b75f8"
+        },
+        "nativeSuiteCounts": [
+          {
+            "passed": 1,
+            "failed": 0,
+            "ignored": 0
+          },
+          {
+            "passed": 0,
+            "failed": 0,
+            "ignored": 0
+          }
+        ]
+      },
+      {
+        "name": "mounted-copy-return",
+        "commandId": "desktop:unit",
+        "exitCode": 0,
+        "durationSeconds": 46.486,
+        "rawLog": {
+          "path": "artifacts/tmp/W2.CP07.selected-03-c7726035.mounted-copy-return.log",
+          "sha256": "a8072302f27c9b174cf094ad8f213553933ae9e370a4746f0ef1c26d00c260e3"
+        },
+        "executedUnittestCases": 1,
+        "skippedCaseIds": []
+      },
+      {
+        "name": "api-contract",
+        "commandId": "contracts:unit",
+        "exitCode": 0,
+        "durationSeconds": 3.739,
+        "rawLog": {
+          "path": "artifacts/tmp/W2.CP07.selected-03-c7726035.api-contract.log",
+          "sha256": "d0de6df4695ae12810b382025f30caee94c9e9bc81887720850df6345026980f"
+        }
+      },
+      {
+        "name": "architecture",
+        "commandId": "foundation:architecture",
+        "exitCode": 0,
+        "durationSeconds": 3.903,
+        "rawLog": {
+          "path": "artifacts/tmp/W2.CP07.selected-03-c7726035.architecture.log",
+          "sha256": "51a256bf6a7b2e89ab1d1b97aa19077aabf0e8858a450de1f5ceb155ed5c3e88"
+        }
+      },
+      {
+        "name": "installed-production-dispatch",
+        "commandId": "service:unit",
+        "exitCode": 0,
+        "durationSeconds": 21.578,
+        "rawLog": {
+          "path": "artifacts/tmp/W2.CP07.selected-03-c7726035.installed-production-dispatch.log",
+          "sha256": "e32cdf7c57ab080540eb8a3a042f4423e7677c6c89a7d55a0b32b2bc9031463f"
+        }
+      }
+    ]
+  },
+  "findings": [],
+  "closures": [
+    {
+      "id": "CP07-PREEXEC-METHOD-01",
+      "origin": "Preparatory independent method review; not an earlier formal checkpoint round.",
+      "finding": "First desktop producer lacked build-to-smoke and final initial-input equality assertions before PASS.",
+      "closure": "Both exact assertions were added and independently confirmed before first execution. The observed Desktop03 before/after and build-to-smoke maps now satisfy both assertions. Original and resolved producer pins remain in the qualification packet.",
+      "status": "closed"
+    },
+    {
+      "id": "CP07-PREEXEC-OUTPUT-01",
+      "origin": "Preserved actual desktop attempt01 setup failure.",
+      "finding": "A workspace dependency junction caused compilation input handles to lock owned generated output; renderer cleanup failed EBUSY before build.",
+      "closure": "Only resolved exact owned dist/product-dist outputs are omitted from compilation handles and newly built canonical outputs re-enter the smoke inventory. Full phase equality remains. Actual Desktop03 clean build/smoke and complete selected-map equality authenticate the closure; initial failure stays FAIL.",
+      "status": "closed"
+    },
+    {
+      "id": "CP07-PREEXEC-MAP-01",
+      "origin": "Preparatory independent cross-receipt method review.",
+      "finding": "Complete desktop inventory comparison must normalize the pnpm prefix without collision or omission.",
+      "closure": "Full36649 normalized entries are collision-free, present and equal in Selected03; Core13586 and installed source5994 entries also equal selected. No missing input is hidden by set intersection.",
+      "status": "closed"
+    },
+    {
+      "id": "CP07-RUNTIME-INTERFACE-01",
+      "origin": "Preserved selected02 native protected create failure and bounded reviewer diagnosis.",
+      "finding": "Worker07 frozen host retained an older invoke call interface and omitted the published sample keyword-only context path despite unchanged approved current source. Typed LPAC pipe-truncation was observed; the swallowed child exception was not directly observed.",
+      "closure": "Current source is rebuilt through the unchanged builder and existing signing identity with fresh caches before import. Prior independent content-free CArchive comparison establishes whole host equality after location normalization, including context/inspection. Exact worker08 review/inventory/signature/image and59 installed entries authenticate. Fresh LPAC15, all protected phases and production installed dispatch succeed; targeted sample diagnostics are cause evidence only. No sample/API/source or grant/trust redesign occurred.",
+      "status": "closed",
+      "originalDiagnostic": {
+        "path": "artifacts/tmp/W2.CP07.worker07-interface-diagnostic-01.json",
+        "sha256": "d0ba7540c4ed71bf1551820f34896636ae4da35218f9390cd216d64219fa8351"
+      },
+      "interfaceReview": {
+        "path": "artifacts/tmp/W2.CP07.worker08-interface-review-01.json",
+        "sha256": "d47fc0eb3613d918c6e9aafe59a4d3c38cceeb4465739dc8b2fa2449e9d2e103"
+      }
+    }
+  ],
+  "preservedAdverse": {
+    "unchangedReferencesAuthenticated": true,
+    "attempts": [
+      {
+        "report": {
+          "path": "artifacts/tmp/W2.CP07.desktop-build-smoke-01-10110a83.json",
+          "sha256": "aa249a0ab4474f0ff816603b09b8dd834feffee35779357ec51bbc6a61e84b7d"
+        },
+        "rawLog": {
+          "path": "artifacts/tmp/W2.CP07.desktop-build-smoke-01-10110a83.clean-renderer-build.log",
+          "sha256": "4309545b6189309ce2b92453f5e549821f8415151d032e6821ff890d11fc135a"
+        },
+        "outcome": "Setup lock conflict before renderer build; dependency workspace junction aliased owned generated desktop output.",
+        "resolution": "Second finite operator excludes only exact canonical generated-output directories from compilation input handles and holds the newly built outputs through runtime smoke; all source/runtime phase-equality assertions remain."
+      },
+      {
+        "report": {
+          "path": "artifacts/tmp/W2.CP07.selected-01-10110a83.json",
+          "sha256": "f7dfae1e234d01c29ece9531df9cd46ae761f45b96da8aa0542c6c60a8c52366"
+        },
+        "rawLog": {
+          "path": "artifacts/tmp/W2.CP07.selected-01-10110a83.rights-and-portable-handoff.log",
+          "sha256": "185f4528d3d35885445c1ecabae35c8923d0a5f51e360bd1c8959d1977d43a96"
+        },
+        "outcome": "54-case fresh rights/public-handoff group retained four stale current-schema assertion failures; later groups did not run.",
+        "resolution": "Approved linked test-only W2.C13.T01 restores explicit schema25 expectations while retaining exact old fixtures and all backup/failure/rights/reopen assertions; the new complete checkpoint runs separately at this new candidate."
+      },
+      {
+        "report": {
+          "path": "artifacts/tmp/W2.CP07.selected-02-c7726035.json",
+          "sha256": "6bd13b1757a20c500f7a753c81fd09f5c16d9f21f7d6e419593d0e1e04f36cfc"
+        },
+        "rawLog": {
+          "path": "artifacts/tmp/W2.CP07.selected-02-c7726035.protected-signed-sdk-journey.log",
+          "sha256": "41115335c14e53bfd5d280a9cc468e453166d5d5b17c8dce1d95b459d3e2347c"
+        },
+        "outcome": "Rights, SDK trust/package and LPAC groups passed; the fourth protected SDK group failed in its first create phase. No later group or installed smoke ran in that attempt.",
+        "resolution": "Independent frozen-image inspection proved worker07 had an older embedded call interface despite unchanged approved source. Rebuilt and independently authenticated worker08 replaces only the runtime input; this distinct attempt03 supplies fresh full selected and installed proof."
+      }
+    ],
+    "additionalEvidence": [
+      {
+        "path": "artifacts/tmp/W2.C13.T01.selected-01-9a860fc4.json",
+        "sha256": "a1e55cc5c3e8ec953d835928dea06e74da3c73c10386fbbaa61ab874d52fc8da"
+      },
+      {
+        "path": "artifacts/tmp/W2.C13.T01.selected-01-9a860fc4.types.log",
+        "sha256": "780aa1d5bd70e28a3e02958cd1a6f11f90d58cc5c55e51b700f020792821cd87"
+      },
+      {
+        "path": "artifacts/tmp/W2.C14.T01.red-01-9a860fc4.json",
+        "sha256": "c238dcbb2a8dd3591b8eebc84fe1f17f278418d8f718d32b174f43aaf24e7b7c"
+      },
+      {
+        "path": "artifacts/tmp/W2.C14.T01.red-01-9a860fc4.encrypted-staging-fixture.log",
+        "sha256": "6ff1dc11f9b5bbdbb8ec6e5933e217677e6fc21b037176525ca86587110d30ed"
+      },
+      {
+        "path": "artifacts/tmp/W2.C15.T01.red-01-81627fae.json",
+        "sha256": "750743baa137ae764aa52fd6174fd0e04942bbf7221ed7ff68e4b931949ccb6a"
+      },
+      {
+        "path": "artifacts/tmp/W2.C15.T01.red-01-81627fae.encrypted-v20-current-migration-fixture.log",
+        "sha256": "114b8d1a3f31deffb86134950e8f059ca4bfb8376ebfe395804faa86061c8958"
+      },
+      {
+        "path": "artifacts/tmp/W2.CP07.protected-job-diagnostic-01.log",
+        "sha256": "cee22f1d36e125ee06c92e83719e2c7b24632efbf2871ea2febfc3c4d043ab5f"
+      },
+      {
+        "path": "artifacts/tmp/W2.CP07.protected-job-diagnostic-02.log",
+        "sha256": "92d7166df3360191f4b921570f1e2ae069180563c339197c5d021b448e89ac44"
+      },
+      {
+        "path": "artifacts/tmp/W2.CP07.protected-job-diagnostic-03.log",
+        "sha256": "0309bbf1b51a765fb93d9b760269e325b298b5555c321461ed7b8967074a4f58"
+      },
+      {
+        "path": "artifacts/tmp/W2.CP07.protected-create-diagnostic-01.log",
+        "sha256": "6b66c5348b8329216b7174e6227cdb41a580253a9112861f9c3a12e8d0478311"
+      },
+      {
+        "path": "artifacts/tmp/W2.CP07.protected-create-diagnostic-02.log",
+        "sha256": "e657d266276efa348cbae35c5a549a702c1c6830a7e46bf4d0c9c80c1b3faf7c"
+      }
+    ],
+    "runtimeDiagnostics": {
+      "originalWorkerDiagnostic": {
+        "path": "artifacts/tmp/W2.CP07.worker07-interface-diagnostic-01.json",
+        "sha256": "d0ba7540c4ed71bf1551820f34896636ae4da35218f9390cd216d64219fa8351"
+      },
+      "freshWorkerBuild": {
+        "path": "artifacts/tmp/W2.CP07.worker-build-08-c7726035.json",
+        "sha256": "938e9e5840bccff4a7bcb0edec62c54876eb10dd2212e428125fa05b247b99b1"
+      },
+      "independentBuildInterfaceReview": {
+        "path": "artifacts/tmp/W2.CP07.worker08-interface-review-01.json",
+        "sha256": "d47fc0eb3613d918c6e9aafe59a4d3c38cceeb4465739dc8b2fa2449e9d2e103"
+      },
+      "operatorDerivation": {
+        "path": "artifacts/tmp/W2.CP07.worker08-attempt-method-01.json",
+        "sha256": "fd34515ffaf1aa269fec7a3a521fa9f6db2c0806c1dab03c4ddb918fd33824d3"
+      },
+      "freshWorkerInventory": {
+        "path": "artifacts/tmp/W2.CP07.worker-build-08/inventory.json",
+        "sha256": "92a47541dabe0090851d1968d7a243a9c4a6fa4c40801b3869619f6e7f1af64f"
+      },
+      "freshWorkerSignature": {
+        "path": "artifacts/tmp/W2.CP07.worker-build-08/inventory.sig",
+        "sha256": "666f79292a341add0c9d8bd8925209bd51bf224ac3d1a6a20aa23a58ad2b250b"
+      },
+      "scope": "Rebuilt artifact only from unchanged current approved source using unchanged builder, qualified CPython and existing signing identity, with fresh caches before import. Entire embedded worker host matches current source after location normalization, including keyword-only context and inspection. No product/test/framework or trust/permission/source authority changed. Native, protected and installed executions above provide the fresh behavioral proof.",
+      "sampleFailure": {
+        "path": "artifacts/tmp/W2.CP07.sample-pages-diagnostic-01.log",
+        "sha256": "a86c82a1e4d6e3373183c22e03c91f55010fdd2674a351c2f7612f54e308cbca"
+      },
+      "sampleSuccess": {
+        "path": "artifacts/tmp/W2.CP07.sample-pages-diagnostic-02.log",
+        "sha256": "27b68a7a5004c1b5bf06635e57b8cee275e3aecd34e824f87e36f3ceb17a521d"
+      },
+      "diagnosticLimit": "Targeted sample run establishes the interface cause/closure only; full qualifying principal checks are separately retained above."
+    },
+    "interpretation": "Original setup, stale fixture/type/runtime assertions and worker07 selected failure remain their original adverse outcomes. Safe diagnostic missing-project/unsupported-PRAGMA refusals are helper denials, not inferred product failures. The old public selector remains exactly refused; no failed invocation is relabeled PASS and no failed attempt is assigned checks that never ran."
+  },
+  "approvedException": {
+    "ownerDecision": {
+      "path": "planning/verification-method-approvals/CAP-05.S01.T03.EX01.json",
+      "sha256": "79a57a1e0cdbb7eb2e9fab36084edf9dcdd476444047b947d3eea9dceded87fb"
+    },
+    "referenceId": "RO-UI-ACADEMIC-MINIMAL-1.9",
+    "referencePackageSha256": "24b8d62356863980ae9a13db7d6a06b04b76c60e2f1920d2e888cadecfb24c4b",
+    "functionEquivalence": {
+      "originalFunctionSHA256": "639802a77319583ee347227b24b4d87f51baa9f62c3993e4b9b4822fd5a5a85c",
+      "equivalentFunctionSHA256": "c58eee60b4a4b8943289ef19bb7f0e1d5185cb0ae4e513def16beec43add2df9",
+      "onlySubstitutions": [
+        "function name",
+        "exact stale product reference admission",
+        "exact approved context constructor"
+      ]
+    },
+    "originalPublicBuildErrors": [
+      "desktop product manifest does not bind the approved design reference identity"
+    ],
+    "boundary": "Same exact already-approved checkpoint binding only. No shared selector/framework changes or generic future-reference exception."
+  },
+  "independence": {
+    "disclosedPriorRoles": "This reviewer authored earlier T03 independent source/remediation, artifact privacy/visual and exact delivery/receipt assessments and formal task disposition; CP07 selection and finite method advisories; bounded worker07 frozen-interface diagnosis; and worker08 input/interface/namespace review. Those advisory and diagnostic roles are disclosed and preserved. They are not invented prior checkpoint disposition rounds.",
+    "implementationOwner": "codex-w2-implementation",
+    "independentOfImplementationAndExecution": "This reviewer authored no checkpoint product/test fixture correction, qualification/build/native/network/runtime producer, signing identity, owner approval, submission or campaign transition and ran no qualifying test/build/capture/native/network operation. Root owned qualifying executions; C13/C14/C15 have distinct independent task reviews.",
+    "currentReviewMethod": "Read/hash, immutable Git/source/AST/JSON/YAML/raw-log comparison and arithmetic only. Only this unique ignored review ledger is written. No product/tests/framework/producer/hook/index/HEAD/taskctl or canonical planning/evidence mutation is performed."
+  },
+  "limitations": [
+    "Actual Windows x64 LPAC restrictions and loopback observations are bounded to named fixture/probe results. Socket startup failure is not attempted-connect denial. No public-address packet or direct-connect denial is established.",
+    "Protected projects, TLS servers, fixture publishers, pages, private-file sentinels and broker responses are test-owned synthetic fixtures. Browser assertions are synthetic UI proof; actual installed/native/Core principals are separately identified.",
+    "Installed smoke makes exactly one public production-broker HTTPS GET with no private query or credential. Its success is not general provider availability, live latency or broad acquisition coverage; terms/license remain not-reported and access unknown.",
+    "Fresh Core freeze, clean renderer build and locked native Cargo build are proved. Clean Cargo rebuild, installer/release signing, real native OS dialogs and resource benchmark are not checkpoint results.",
+    "The owner-approved EX01 reference1.9 runtime equivalent is exact and finite. The original stale public build selector refusal remains. This is no general future-reference exception or framework/selector change.",
+    "Earlier S01 visual and resource baselines and completed S04/S05/S01 reviews support unchanged contracts only; they are not fresh checkpoint performance, screenshot, accessibility or full-profile results.",
+    "Fresh full affected/repository/profile Wave checks, complete cross-capability matrix, performance/resource/security/privacy/accessibility/packaging qualification and independent Wave review remain required, followed by the separate human G2 release decision.",
+    "Parser-specific packaged offline assets, isolation, measured budgets and immutable-anchor/viewer obligations remain the approved S02-S04 work; this checkpoint does not approve those future outcomes."
+  ],
+  "deferredToWaveExit": "Fresh full affected/repository/deployment profiles, complete cross-capability end-to-end, installer/release packaging and signing decision, full security/privacy/rights/accessibility/performance/resource matrix, and separate human G2 release. Parser-specific offline assets, isolation and numeric budgets remain S02 delivery obligations.",
+  "waveCompletion": false,
+  "releaseApproval": false,
+  "remainingOperations": [
+    "Normal exact-byte review/evidence publication and checkpoint recording by the implementation owner.",
+    "Continue the dependency-eligible approved W2 campaign through taskctl; no additional human checkpoint gate.",
+    "Complete remaining slice/checkpoint and fresh full Wave qualification plus independent review and human release gate."
+  ]
+}

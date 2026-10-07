@@ -1,0 +1,1070 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "wave-risk-cluster-checkpoint-qualification",
+  "checkpointId": "W2.CP07",
+  "wave": "W2",
+  "candidateCommit": "c7726035afd2620356cd4b84060a90dcb2861001",
+  "purpose": "Approved W2 initiation execution cluster 2: CAP-04.S04/S05 rights and SDK/LPAC plus CAP-05.S01 encrypted acquisition, before parser work consumes these interfaces. CP02 through CP06 already record amendment adoption and are not renumbered.",
+  "status": "PASS_PENDING_INDEPENDENT_REVIEW",
+  "freshReports": [
+    {
+      "path": "artifacts/tmp/W2.CP07.installed-build-03-c7726035.json",
+      "sha256": "805d31c8af083c4d93c79483d3bf230c84855945b8bbf86bd37cf497ec6c91cd"
+    },
+    {
+      "path": "artifacts/tmp/W2.CP07.desktop-build-smoke-03-c7726035.json",
+      "sha256": "9358c4b036908260c77bf8afa15503d0c647210d89ad10e017d230434fc44014"
+    },
+    {
+      "path": "artifacts/tmp/W2.CP07.selected-03-c7726035.json",
+      "sha256": "604de9d628d7dcff0ad0f1a77dad2f0b140bd61d041f8417f5465d86e597a25b"
+    },
+    {
+      "path": "artifacts/tmp/W2.CP07.installed-smoke-03-c7726035.json",
+      "sha256": "0111ad46f1046ea220c9e1024a45e5f1182fd996061992f864793ad9d03e6397"
+    }
+  ],
+  "inputClosure": {
+    "headAndTrackedInputsStable": true,
+    "runtimeInputsWriteDeleteGuardedDuringExecution": true,
+    "selectedInputCount": 37628,
+    "sharedContractInputs": [
+      {
+        "path": "docs/adr/ADR-0028-isolate-windows-connectors-and-parsers-behind-narrow-brokers.md",
+        "gitByteSha256": "d9232622652e1fddc814452cd9619ecae27f3cae3bae8db3ef66817800e3e48f",
+        "verifiedWorkingBytesSha256": "d9232622652e1fddc814452cd9619ecae27f3cae3bae8db3ef66817800e3e48f"
+      },
+      {
+        "path": "docs/adr/ADR-0029-preserve-document-revisions-and-mediate-source-viewing.md",
+        "gitByteSha256": "ffee796414cdde9155667c8c3a710e7c904197971b7714832c7c5bc950687e7b",
+        "verifiedWorkingBytesSha256": "ffee796414cdde9155667c8c3a710e7c904197971b7714832c7c5bc950687e7b"
+      },
+      {
+        "path": "packages/contracts/connectors/connector-capabilities.schema.json",
+        "gitByteSha256": "f783440f17d8987a7c90c3ae742e5946b86458e615c02c67805f1ce6fa17c597",
+        "verifiedWorkingBytesSha256": "f783440f17d8987a7c90c3ae742e5946b86458e615c02c67805f1ce6fa17c597"
+      },
+      {
+        "path": "packages/contracts/connectors/connector-page.schema.json",
+        "gitByteSha256": "886f2e4259b8bb8187f43a79379b306c27b77920ff1a5130a7be52dfb2c58d5f",
+        "verifiedWorkingBytesSha256": "886f2e4259b8bb8187f43a79379b306c27b77920ff1a5130a7be52dfb2c58d5f"
+      },
+      {
+        "path": "packages/contracts/connectors/connector-plugin-authorization-provenance.schema.json",
+        "gitByteSha256": "2ad7ec5d5682a4436971511257cfcb46737fa84cb86d2e84626d39e2b6b5e8a4",
+        "verifiedWorkingBytesSha256": "2ad7ec5d5682a4436971511257cfcb46737fa84cb86d2e84626d39e2b6b5e8a4"
+      },
+      {
+        "path": "packages/contracts/connectors/connector-plugin-broker-call.schema.json",
+        "gitByteSha256": "a46c8859fe89562a636da260ece4798be37657ae90298a373f4e208a7db5e059",
+        "verifiedWorkingBytesSha256": "a46c8859fe89562a636da260ece4798be37657ae90298a373f4e208a7db5e059"
+      },
+      {
+        "path": "packages/contracts/connectors/connector-plugin-grant.schema.json",
+        "gitByteSha256": "5f4f55ac8585b2f3ea43d78d21f9f19e835acf168ca6f67adbc0583a7551b8d8",
+        "verifiedWorkingBytesSha256": "5f4f55ac8585b2f3ea43d78d21f9f19e835acf168ca6f67adbc0583a7551b8d8"
+      },
+      {
+        "path": "packages/contracts/connectors/connector-plugin-invocation-plan.schema.json",
+        "gitByteSha256": "bd67cd8c307c39014c591c83f49ba603b5168806e6e52a072c2c5ebe28ef79bc",
+        "verifiedWorkingBytesSha256": "bd67cd8c307c39014c591c83f49ba603b5168806e6e52a072c2c5ebe28ef79bc"
+      },
+      {
+        "path": "packages/contracts/connectors/connector-plugin-invocation-request.schema.json",
+        "gitByteSha256": "c84552789e1043d79f7eae0da720363aadd2129b8d4dc11c98b59c0095650f46",
+        "verifiedWorkingBytesSha256": "c84552789e1043d79f7eae0da720363aadd2129b8d4dc11c98b59c0095650f46"
+      },
+      {
+        "path": "packages/contracts/connectors/connector-plugin-manifest.schema.json",
+        "gitByteSha256": "6b33fc5530ea10db87f32b34a0719db0e5c95bc197db10cf3862df6e04ec90f2",
+        "verifiedWorkingBytesSha256": "6b33fc5530ea10db87f32b34a0719db0e5c95bc197db10cf3862df6e04ec90f2"
+      },
+      {
+        "path": "packages/contracts/connectors/connector-plugin-repository-metadata.schema.json",
+        "gitByteSha256": "b01a709336d1accbe57b6c5b5804f8b36c2e02a94c855a53addd997a59f7aba9",
+        "verifiedWorkingBytesSha256": "b01a709336d1accbe57b6c5b5804f8b36c2e02a94c855a53addd997a59f7aba9"
+      },
+      {
+        "path": "packages/contracts/connectors/connector-plugin-worker-page.schema.json",
+        "gitByteSha256": "d4eb76828d8599063e2dfff18fee3163845eb883a84c1e41f8db0cd84331391a",
+        "verifiedWorkingBytesSha256": "d4eb76828d8599063e2dfff18fee3163845eb883a84c1e41f8db0cd84331391a"
+      },
+      {
+        "path": "packages/contracts/connectors/connector-request.schema.json",
+        "gitByteSha256": "5a6c21c0d138c23db1bfa80dccff2c145fe642f087b28eaf063e7d4374417ce2",
+        "verifiedWorkingBytesSha256": "5a6c21c0d138c23db1bfa80dccff2c145fe642f087b28eaf063e7d4374417ce2"
+      },
+      {
+        "path": "packages/contracts/corpus/README.md",
+        "gitByteSha256": "8ebc7cdc7558244adf86372e17936fceda1602fd2db0a2aaa23c34ab13278a16",
+        "verifiedWorkingBytesSha256": "8ebc7cdc7558244adf86372e17936fceda1602fd2db0a2aaa23c34ab13278a16"
+      },
+      {
+        "path": "packages/contracts/corpus/corpus-membership.schema.json",
+        "gitByteSha256": "921db7c4511dd5a1f9c361acb89e2841b6eb7e3fc9558e69ab0e1a2f5840ec45",
+        "verifiedWorkingBytesSha256": "921db7c4511dd5a1f9c361acb89e2841b6eb7e3fc9558e69ab0e1a2f5840ec45"
+      },
+      {
+        "path": "packages/contracts/corpus/corpus.template.py.txt",
+        "gitByteSha256": "c31c2e095bedbc035866fa90b064f954f0c0a7313246cacc0cd672e6577218bf",
+        "verifiedWorkingBytesSha256": "c31c2e095bedbc035866fa90b064f954f0c0a7313246cacc0cd672e6577218bf"
+      },
+      {
+        "path": "packages/contracts/corpus/corpus.template.ts.txt",
+        "gitByteSha256": "f0640fbe7939ff0f0e49e8e046da5c35f84ccc595b42172dac00f95bf74aef44",
+        "verifiedWorkingBytesSha256": "f0640fbe7939ff0f0e49e8e046da5c35f84ccc595b42172dac00f95bf74aef44"
+      },
+      {
+        "path": "packages/contracts/corpus/corpus.test.ts",
+        "gitByteSha256": "a322858d31fbb56474f5b785f08298d761d5f41710c0b2212b071f0fe4aa85d8",
+        "verifiedWorkingBytesSha256": "a322858d31fbb56474f5b785f08298d761d5f41710c0b2212b071f0fe4aa85d8"
+      },
+      {
+        "path": "packages/contracts/corpus/fixtures/invalid-corpus-decision-time.v1.json",
+        "gitByteSha256": "9ea8a18102b925c462f2d626e68efb628aa5deb46cc21526a23fbc82e6bb3b2f",
+        "verifiedWorkingBytesSha256": "9ea8a18102b925c462f2d626e68efb628aa5deb46cc21526a23fbc82e6bb3b2f"
+      },
+      {
+        "path": "packages/contracts/corpus/fixtures/invalid-corpus-item-unreasoned-availability.v1.json",
+        "gitByteSha256": "9dbc52e583c8bea040b2bc00d6b1e1deb339557d4d3304e481d8d850719ef998",
+        "verifiedWorkingBytesSha256": "9dbc52e583c8bea040b2bc00d6b1e1deb339557d4d3304e481d8d850719ef998"
+      },
+      {
+        "path": "packages/contracts/corpus/fixtures/invalid-discovery-path-mixed-source.v1.json",
+        "gitByteSha256": "86806c5ebaa9a7052de4d41b91d7a95839fd641f5f67646bdbf6193a0fe8fa2c",
+        "verifiedWorkingBytesSha256": "86806c5ebaa9a7052de4d41b91d7a95839fd641f5f67646bdbf6193a0fe8fa2c"
+      },
+      {
+        "path": "packages/contracts/corpus/fixtures/valid-appended-connector-discovery-path.v1.json",
+        "gitByteSha256": "804319300cd2e62d047a898bc33508c28ebcc286ba1c3c2c9fb9aa3b96d4cc59",
+        "verifiedWorkingBytesSha256": "804319300cd2e62d047a898bc33508c28ebcc286ba1c3c2c9fb9aa3b96d4cc59"
+      },
+      {
+        "path": "packages/contracts/corpus/fixtures/valid-corpus-decision.v1.json",
+        "gitByteSha256": "5b1e2a28f158fda0d55f2f017dfdb745f276adf58d69c729bea9ccb8c07f2f29",
+        "verifiedWorkingBytesSha256": "5b1e2a28f158fda0d55f2f017dfdb745f276adf58d69c729bea9ccb8c07f2f29"
+      },
+      {
+        "path": "packages/contracts/corpus/fixtures/valid-corpus-item-revision.v1.json",
+        "gitByteSha256": "2e1b3ce1610cb538114f16acff2d0352e4b3c982753ce021c0d94b627f749adb",
+        "verifiedWorkingBytesSha256": "2e1b3ce1610cb538114f16acff2d0352e4b3c982753ce021c0d94b627f749adb"
+      },
+      {
+        "path": "packages/contracts/corpus/fixtures/valid-discovery-path.v1.json",
+        "gitByteSha256": "5bbbd7091e403ad15c5ca2d1e9eddd9c32b36bedf9841030e7e0b9316d04269f",
+        "verifiedWorkingBytesSha256": "5bbbd7091e403ad15c5ca2d1e9eddd9c32b36bedf9841030e7e0b9316d04269f"
+      },
+      {
+        "path": "packages/contracts/corpus/generate.mjs",
+        "gitByteSha256": "e5738d754c37a7e37a7daaf3cea9e6661327bc338242ae6ad9f13b72ac876935",
+        "verifiedWorkingBytesSha256": "e5738d754c37a7e37a7daaf3cea9e6661327bc338242ae6ad9f13b72ac876935"
+      },
+      {
+        "path": "packages/contracts/corpus/generated.ts",
+        "gitByteSha256": "f53024d443f1dce9e85531e4d398a79d1f85791f9a020d36a69451df488f8bb3",
+        "verifiedWorkingBytesSha256": "f53024d443f1dce9e85531e4d398a79d1f85791f9a020d36a69451df488f8bb3"
+      },
+      {
+        "path": "packages/contracts/documents/acquisition-location.v1.schema.json",
+        "gitByteSha256": "7f911a72fb8ac62dbd211062d5a1e3dea9405779f7bf02341851bdab7567bfd3",
+        "verifiedWorkingBytesSha256": "7445e5e952c4f6a5636d03ec0cb2349913b3b4878c75507de5a6c976ae6a4805"
+      },
+      {
+        "path": "packages/contracts/documents/acquisition-receipt.v1.schema.json",
+        "gitByteSha256": "7a160a499c9eda49176b979f4a4bc41e82a816650b3925f25b786e1c22766948",
+        "verifiedWorkingBytesSha256": "021c0ee3ece04c70dae9e006c2c63bbd0012cb084d93068a85be1eb7e43f5f10"
+      },
+      {
+        "path": "packages/contracts/documents/acquisition-selection.v1.schema.json",
+        "gitByteSha256": "2f11d944b4ca2444987998565a06327cf18c3cb0db1baaf44498e19be1420c45",
+        "verifiedWorkingBytesSha256": "0df7528b6479b7a130c0fe70b6ec24534854ce754582ea739218d71c081f2bb4"
+      },
+      {
+        "path": "packages/contracts/rights/README.md",
+        "gitByteSha256": "01ae86c39ffef5c3ca729e40dbe5c921b802ad1441eb6738b4886dd71e6b4775",
+        "verifiedWorkingBytesSha256": "01ae86c39ffef5c3ca729e40dbe5c921b802ad1441eb6738b4886dd71e6b4775"
+      },
+      {
+        "path": "packages/contracts/rights/fixtures/valid-decision.v1.json",
+        "gitByteSha256": "8553cb939e2a75c57290c0dfacb251e454478b25d723d62797124133e6140328",
+        "verifiedWorkingBytesSha256": "8553cb939e2a75c57290c0dfacb251e454478b25d723d62797124133e6140328"
+      },
+      {
+        "path": "packages/contracts/rights/fixtures/valid-policy.v1.json",
+        "gitByteSha256": "b6cb0e4d962768fc91e2a6518dd5fc5eaef5655d7241af822b1f0cc2740f1858",
+        "verifiedWorkingBytesSha256": "b6cb0e4d962768fc91e2a6518dd5fc5eaef5655d7241af822b1f0cc2740f1858"
+      },
+      {
+        "path": "packages/contracts/rights/generate.mjs",
+        "gitByteSha256": "e2c450f5d8258b63a1c5b1e686e150be6835da5cbbb3bd67a03262e7046f0f59",
+        "verifiedWorkingBytesSha256": "e2c450f5d8258b63a1c5b1e686e150be6835da5cbbb3bd67a03262e7046f0f59"
+      },
+      {
+        "path": "packages/contracts/rights/generate_schema.py",
+        "gitByteSha256": "3949b54bcb4fed83ce47de7270964ce56fa51f299d4f64f5a096d5291f9ab5a9",
+        "verifiedWorkingBytesSha256": "3949b54bcb4fed83ce47de7270964ce56fa51f299d4f64f5a096d5291f9ab5a9"
+      },
+      {
+        "path": "packages/contracts/rights/generated.ts",
+        "gitByteSha256": "70a3813c96bc85fa5f343153db64cb1061989a538bea206989ccac85fd7aef95",
+        "verifiedWorkingBytesSha256": "70a3813c96bc85fa5f343153db64cb1061989a538bea206989ccac85fd7aef95"
+      },
+      {
+        "path": "packages/contracts/rights/rights-policy.schema.json",
+        "gitByteSha256": "00d5a013a85c52d01a3d6a513981c13345e95b366e6eab77f8efed1c4ce99dc3",
+        "verifiedWorkingBytesSha256": "00d5a013a85c52d01a3d6a513981c13345e95b366e6eab77f8efed1c4ce99dc3"
+      },
+      {
+        "path": "packages/contracts/rights/rights.template.ts.txt",
+        "gitByteSha256": "0492d27a8b5a80b5ccc5d1de66d00f220d8f24a656fa88c9686302ecd7fe530f",
+        "verifiedWorkingBytesSha256": "0492d27a8b5a80b5ccc5d1de66d00f220d8f24a656fa88c9686302ecd7fe530f"
+      },
+      {
+        "path": "packages/contracts/rights/rights.test.ts",
+        "gitByteSha256": "c831d5569e339e3fabd10603b05e74eab97d783bc99eb683dcbca0929cab4365",
+        "verifiedWorkingBytesSha256": "c831d5569e339e3fabd10603b05e74eab97d783bc99eb683dcbca0929cab4365"
+      },
+      {
+        "path": "planning/reference-approvals/RO-UI-ACADEMIC-MINIMAL-1.9.json",
+        "gitByteSha256": "b7882588a15a7a178cb8ebac65fda174d26969dca5b08c6559feb3b0d258404e",
+        "verifiedWorkingBytesSha256": "b7882588a15a7a178cb8ebac65fda174d26969dca5b08c6559feb3b0d258404e"
+      },
+      {
+        "path": "planning/verification-method-approvals/CAP-05.S01.T03.EX01.json",
+        "gitByteSha256": "79a57a1e0cdbb7eb2e9fab36084edf9dcdd476444047b947d3eea9dceded87fb",
+        "verifiedWorkingBytesSha256": "79a57a1e0cdbb7eb2e9fab36084edf9dcdd476444047b947d3eea9dceded87fb"
+      },
+      {
+        "path": "pyproject.toml",
+        "gitByteSha256": "93b58c4f4ebae3fed22286ed4b9426d3e1397ad94624b75aabbfe63ce089f4e7",
+        "verifiedWorkingBytesSha256": "93b58c4f4ebae3fed22286ed4b9426d3e1397ad94624b75aabbfe63ce089f4e7"
+      },
+      {
+        "path": "services/core-api/src/research_observatory_core/document_attachment_repository.py",
+        "gitByteSha256": "df27a8fdbde19f916ef63417d69f0d53eb6f697209bc7920ae347a14c6649c0d",
+        "verifiedWorkingBytesSha256": "df27a8fdbde19f916ef63417d69f0d53eb6f697209bc7920ae347a14c6649c0d"
+      },
+      {
+        "path": "services/core-api/src/research_observatory_core/migrations/versions/__init__.py",
+        "gitByteSha256": "b5c4cfbfda8c200d5020b4a313774ba25bb183420182fa59b366525088edcab0",
+        "verifiedWorkingBytesSha256": "b5c4cfbfda8c200d5020b4a313774ba25bb183420182fa59b366525088edcab0"
+      },
+      {
+        "path": "services/core-api/src/research_observatory_core/migrations/versions/v0002_schema_history.py",
+        "gitByteSha256": "22aa6e7f114ae8e418cb69e0f8457bddb3627570f6075e0de6d5f67ceb9ad59f",
+        "verifiedWorkingBytesSha256": "22aa6e7f114ae8e418cb69e0f8457bddb3627570f6075e0de6d5f67ceb9ad59f"
+      },
+      {
+        "path": "services/core-api/src/research_observatory_core/migrations/versions/v0003_object_envelopes.py",
+        "gitByteSha256": "b2db6c16b255aecc6f3e690de01e9594bf8c461eb48819880ce3d9761007d2ac",
+        "verifiedWorkingBytesSha256": "b2db6c16b255aecc6f3e690de01e9594bf8c461eb48819880ce3d9761007d2ac"
+      },
+      {
+        "path": "services/core-api/src/research_observatory_core/migrations/versions/v0004_object_envelope_upgrades.py",
+        "gitByteSha256": "fd7c570daebfb111811f5a2dcc27b1b230ef6f4ddafdaddb62b4fe34fbe29a56",
+        "verifiedWorkingBytesSha256": "fd7c570daebfb111811f5a2dcc27b1b230ef6f4ddafdaddb62b4fe34fbe29a56"
+      },
+      {
+        "path": "services/core-api/src/research_observatory_core/migrations/versions/v0005_object_creation_source.py",
+        "gitByteSha256": "652898761ebcc80fe52e145c44c59f48a3961feed1e982d395554851d903c357",
+        "verifiedWorkingBytesSha256": "652898761ebcc80fe52e145c44c59f48a3961feed1e982d395554851d903c357"
+      },
+      {
+        "path": "services/core-api/src/research_observatory_core/migrations/versions/v0007_provenance_ledger.py",
+        "gitByteSha256": "810b6f13cf63525b2a5cb743c65570f253742aa242db7aecae8efc1bbb5a4a69",
+        "verifiedWorkingBytesSha256": "810b6f13cf63525b2a5cb743c65570f253742aa242db7aecae8efc1bbb5a4a69"
+      },
+      {
+        "path": "services/core-api/src/research_observatory_core/migrations/versions/v0008_workflow_executor.py",
+        "gitByteSha256": "12da0fc9e74ddf06e2af1d7cd90b5f76cf8e419697f30ca77ec49c70fb8e9917",
+        "verifiedWorkingBytesSha256": "12da0fc9e74ddf06e2af1d7cd90b5f76cf8e419697f30ca77ec49c70fb8e9917"
+      },
+      {
+        "path": "services/core-api/src/research_observatory_core/migrations/versions/v0009_material_dependencies.py",
+        "gitByteSha256": "78e327519626ce86f7514f5ff597ae7875477354c363ba15ac446e82631f9723",
+        "verifiedWorkingBytesSha256": "78e327519626ce86f7514f5ff597ae7875477354c363ba15ac446e82631f9723"
+      },
+      {
+        "path": "services/core-api/src/research_observatory_core/migrations/versions/v0010_dependency_impacts.py",
+        "gitByteSha256": "ca6f21fab2d27b2de7aa175f472c60e49192f173d8363aba6c0c2577e69c758a",
+        "verifiedWorkingBytesSha256": "ca6f21fab2d27b2de7aa175f472c60e49192f173d8363aba6c0c2577e69c758a"
+      },
+      {
+        "path": "services/core-api/src/research_observatory_core/migrations/versions/v0011_import_previews.py",
+        "gitByteSha256": "d80b2334bab3d65b016fd8282eaff5784815cc5a3c56a7ec62dd8ebadc972982",
+        "verifiedWorkingBytesSha256": "d80b2334bab3d65b016fd8282eaff5784815cc5a3c56a7ec62dd8ebadc972982"
+      },
+      {
+        "path": "services/core-api/src/research_observatory_core/migrations/versions/v0012_import_summaries.py",
+        "gitByteSha256": "e538b0ee317f4a28312e8e8f80e739540441a4876f8434fab61b21d5ff057f02",
+        "verifiedWorkingBytesSha256": "e538b0ee317f4a28312e8e8f80e739540441a4876f8434fab61b21d5ff057f02"
+      },
+      {
+        "path": "services/core-api/src/research_observatory_core/migrations/versions/v0013_import_commits.py",
+        "gitByteSha256": "e52a0ccb23bae8265d492e997c338e16fdaea3e16c37d2b22cf30cf7684f186c",
+        "verifiedWorkingBytesSha256": "e52a0ccb23bae8265d492e997c338e16fdaea3e16c37d2b22cf30cf7684f186c"
+      },
+      {
+        "path": "services/core-api/src/research_observatory_core/migrations/versions/v0014_scholarly_reconciliation.py",
+        "gitByteSha256": "7a5229ec89021e671a191d33b5995d4b0dcd38384032d9f979ba305eb6dd4668",
+        "verifiedWorkingBytesSha256": "7a5229ec89021e671a191d33b5995d4b0dcd38384032d9f979ba305eb6dd4668"
+      },
+      {
+        "path": "services/core-api/src/research_observatory_core/migrations/versions/v0015_reconciliation_review.py",
+        "gitByteSha256": "983ecc03af4458eba2e11051998970322bb45c9bb5445bb88b9c9a5c70bb3ea7",
+        "verifiedWorkingBytesSha256": "983ecc03af4458eba2e11051998970322bb45c9bb5445bb88b9c9a5c70bb3ea7"
+      },
+      {
+        "path": "services/core-api/src/research_observatory_core/migrations/versions/v0016_work_versions.py",
+        "gitByteSha256": "2d4e186b3771acc311a41e92dd83a247eccc4d578809f865b5c66f5688b27b77",
+        "verifiedWorkingBytesSha256": "2d4e186b3771acc311a41e92dd83a247eccc4d578809f865b5c66f5688b27b77"
+      },
+      {
+        "path": "services/core-api/src/research_observatory_core/migrations/versions/v0017_corpus_items.py",
+        "gitByteSha256": "774a210ef51076c6e3a0e4ca1f84be25c9460d868bae2853add54b6fff02223b",
+        "verifiedWorkingBytesSha256": "774a210ef51076c6e3a0e4ca1f84be25c9460d868bae2853add54b6fff02223b"
+      },
+      {
+        "path": "services/core-api/src/research_observatory_core/migrations/versions/v0018_rights_policy.py",
+        "gitByteSha256": "05eabd58edac0ad1c56ecace92d17aa2077558cfaf4ea694b1123e4520b524f9",
+        "verifiedWorkingBytesSha256": "05eabd58edac0ad1c56ecace92d17aa2077558cfaf4ea694b1123e4520b524f9"
+      },
+      {
+        "path": "services/core-api/src/research_observatory_core/migrations/versions/v0019_corpus_reports.py",
+        "gitByteSha256": "e8c034c89d695d567927d8665d06a7f205e55952c7c79279bb2bfa9438216aa0",
+        "verifiedWorkingBytesSha256": "e8c034c89d695d567927d8665d06a7f205e55952c7c79279bb2bfa9438216aa0"
+      },
+      {
+        "path": "services/core-api/src/research_observatory_core/migrations/versions/v0020_corpus_source_projection.py",
+        "gitByteSha256": "d2a938e8dae13c06cf06d9eb6a7f9a7cbe7ccc78ca0dc8f982907d5dac4735be",
+        "verifiedWorkingBytesSha256": "d2a938e8dae13c06cf06d9eb6a7f9a7cbe7ccc78ca0dc8f982907d5dac4735be"
+      },
+      {
+        "path": "services/core-api/src/research_observatory_core/migrations/versions/v0021_plugin_grants.py",
+        "gitByteSha256": "69acf0891a28ef103144444feadc1b94a65b3a49b41d81ccc20731a4b397667a",
+        "verifiedWorkingBytesSha256": "69acf0891a28ef103144444feadc1b94a65b3a49b41d81ccc20731a4b397667a"
+      },
+      {
+        "path": "services/core-api/src/research_observatory_core/migrations/versions/v0022_document_attachments.py",
+        "gitByteSha256": "1907451992875a8233caa4994f0c8206acf0b9822271d778c3c912e79b31775a",
+        "verifiedWorkingBytesSha256": "1907451992875a8233caa4994f0c8206acf0b9822271d778c3c912e79b31775a"
+      },
+      {
+        "path": "services/core-api/src/research_observatory_core/migrations/versions/v0023_attachment_operations.py",
+        "gitByteSha256": "699a956f33633ee99b8e7f4b85b74d6ec39646b3eb74747fc93e863f0f93617d",
+        "verifiedWorkingBytesSha256": "699a956f33633ee99b8e7f4b85b74d6ec39646b3eb74747fc93e863f0f93617d"
+      },
+      {
+        "path": "services/core-api/src/research_observatory_core/migrations/versions/v0024_open_access_acquisition.py",
+        "gitByteSha256": "add3cd6d2fe652643928ba30074cb8c555a7f8111cdb0188ba92420f5c68591f",
+        "verifiedWorkingBytesSha256": "add3cd6d2fe652643928ba30074cb8c555a7f8111cdb0188ba92420f5c68591f"
+      },
+      {
+        "path": "services/core-api/src/research_observatory_core/migrations/versions/v0025_document_intake_recovery.py",
+        "gitByteSha256": "1dc43925fefbf8d62c13000addb14c9ceb6c26ed10182ecabc7aedfe2e2747e6",
+        "verifiedWorkingBytesSha256": "1dc43925fefbf8d62c13000addb14c9ceb6c26ed10182ecabc7aedfe2e2747e6"
+      },
+      {
+        "path": "services/core-api/src/research_observatory_core/object_store.py",
+        "gitByteSha256": "915e73a3b05e9bae69e7761ee9af02899bb3021a0994c2e4c419d49e2fc974d2",
+        "verifiedWorkingBytesSha256": "915e73a3b05e9bae69e7761ee9af02899bb3021a0994c2e4c419d49e2fc974d2"
+      },
+      {
+        "path": "services/core-api/src/research_observatory_core/ports/acquisition.py",
+        "gitByteSha256": "780f1ecc8d0a38e4795753a682f6cf88b9dc1886570981862d51bb2fb7ffc61f",
+        "verifiedWorkingBytesSha256": "780f1ecc8d0a38e4795753a682f6cf88b9dc1886570981862d51bb2fb7ffc61f"
+      },
+      {
+        "path": "services/core-api/src/research_observatory_core/ports/document_attachments.py",
+        "gitByteSha256": "a537144eea39bf75d49f29ddd44f20dde55da24aee3c298652d967d0c95b1ec7",
+        "verifiedWorkingBytesSha256": "a537144eea39bf75d49f29ddd44f20dde55da24aee3c298652d967d0c95b1ec7"
+      },
+      {
+        "path": "services/core-api/src/research_observatory_core/ports/object_store.py",
+        "gitByteSha256": "3244c428dcdff82c5856ae396aec23e6538a9cd2b55778ed2736dab7e7b7c910",
+        "verifiedWorkingBytesSha256": "3244c428dcdff82c5856ae396aec23e6538a9cd2b55778ed2736dab7e7b7c910"
+      },
+      {
+        "path": "services/core-api/src/research_observatory_core/ports/rights.py",
+        "gitByteSha256": "eecfacb8516adcf8cfcf480e6290fc275bf5960b7ec70b1ee285168d526c29d0",
+        "verifiedWorkingBytesSha256": "eecfacb8516adcf8cfcf480e6290fc275bf5960b7ec70b1ee285168d526c29d0"
+      },
+      {
+        "path": "services/core-api/src/research_observatory_core/rights_policy.py",
+        "gitByteSha256": "700e631bd29ca9ac9f76e72eef70aef21208352bb46cd05b3028a6e4067153d6",
+        "verifiedWorkingBytesSha256": "700e631bd29ca9ac9f76e72eef70aef21208352bb46cd05b3028a6e4067153d6"
+      },
+      {
+        "path": "services/core-api/src/research_observatory_core/rights_repository.py",
+        "gitByteSha256": "00a496bc006a4f9ca5cd1929a0f1ade90c0b5643b0511ae95bf70e6c0c4bac66",
+        "verifiedWorkingBytesSha256": "00a496bc006a4f9ca5cd1929a0f1ade90c0b5643b0511ae95bf70e6c0c4bac66"
+      },
+      {
+        "path": "uv.lock",
+        "gitByteSha256": "94a207c3cf03ca4cd723739e7e35fbed94d31c868fea36272e7d86043d2b76c6",
+        "verifiedWorkingBytesSha256": "94a207c3cf03ca4cd723739e7e35fbed94d31c868fea36272e7d86043d2b76c6"
+      },
+      {
+        "path": "verification-profiles.json",
+        "gitByteSha256": "48e9bd8e9539666fc0f492b0fdda53476cbb030e805f5f1f8615a62daf1815e6",
+        "verifiedWorkingBytesSha256": "48e9bd8e9539666fc0f492b0fdda53476cbb030e805f5f1f8615a62daf1815e6"
+      },
+      {
+        "path": "workers/windows/__init__.py",
+        "gitByteSha256": "92d732c305650f9de906a9befe7b04ec441644d3501433629dc5f829b337bcdf",
+        "verifiedWorkingBytesSha256": "92d732c305650f9de906a9befe7b04ec441644d3501433629dc5f829b337bcdf"
+      },
+      {
+        "path": "workers/windows/connector_launcher.py",
+        "gitByteSha256": "32ebaf30001df51198157eeeb7a943de3102be359a302c03deaa5b9e9cb8990a",
+        "verifiedWorkingBytesSha256": "32ebaf30001df51198157eeeb7a943de3102be359a302c03deaa5b9e9cb8990a"
+      },
+      {
+        "path": "workers/windows/document_launcher.py",
+        "gitByteSha256": "ee33f61c8e15c271bd618eb666f289071b6828dafac828f9545d826ae6862391",
+        "verifiedWorkingBytesSha256": "ee33f61c8e15c271bd618eb666f289071b6828dafac828f9545d826ae6862391"
+      },
+      {
+        "path": "workers/windows/lpac_launcher.py",
+        "gitByteSha256": "698e0127083cbc4d98385af7d900f674a6bc0a21c86bf617b9cd2344347a01d0",
+        "verifiedWorkingBytesSha256": "698e0127083cbc4d98385af7d900f674a6bc0a21c86bf617b9cd2344347a01d0"
+      },
+      {
+        "path": "workers/windows/no_write_acl.py",
+        "gitByteSha256": "80a24e1a6439d4bd00237feec91c8d09474208a0ee04cfa1f8d23606da892b68",
+        "verifiedWorkingBytesSha256": "80a24e1a6439d4bd00237feec91c8d09474208a0ee04cfa1f8d23606da892b68"
+      },
+      {
+        "path": "workers/windows/plugin_worker.py",
+        "gitByteSha256": "7edd8d6a276500748f4ca9affbc561047eeed97ab82e026b077815c7c70de8b0",
+        "verifiedWorkingBytesSha256": "7edd8d6a276500748f4ca9affbc561047eeed97ab82e026b077815c7c70de8b0"
+      },
+      {
+        "path": "workers/windows/probe/Cargo.toml",
+        "gitByteSha256": "cc0ee221767d5f9b1aedfecdf1f05508b76d65335560b8dafcc06824b4d1553f",
+        "verifiedWorkingBytesSha256": "cc0ee221767d5f9b1aedfecdf1f05508b76d65335560b8dafcc06824b4d1553f"
+      },
+      {
+        "path": "workers/windows/probe/src/main.rs",
+        "gitByteSha256": "d8c9f97b93f2d9b7f0dc488337888c5d48f142398e8893ffeea8454b9b69c928",
+        "verifiedWorkingBytesSha256": "d8c9f97b93f2d9b7f0dc488337888c5d48f142398e8893ffeea8454b9b69c928"
+      },
+      {
+        "path": "workers/windows/protocol.py",
+        "gitByteSha256": "2c4be8c33741fe7c8d4ec0ae3553fb8af96b02e8749a3347668e25621315d701",
+        "verifiedWorkingBytesSha256": "2c4be8c33741fe7c8d4ec0ae3553fb8af96b02e8749a3347668e25621315d701"
+      },
+      {
+        "path": "workers/windows/recovery_guardian.py",
+        "gitByteSha256": "bb6f9f640e6b345389c701f4a9cbbb66ed11a15d6b6225e9d9086ad209738b3f",
+        "verifiedWorkingBytesSha256": "bb6f9f640e6b345389c701f4a9cbbb66ed11a15d6b6225e9d9086ad209738b3f"
+      },
+      {
+        "path": "workers/windows/runtime_inventory.py",
+        "gitByteSha256": "bbc11c857eb2497cbd1c5fa1abcef3239cdf9063bc72718dfd9a9d3c4a49995e",
+        "verifiedWorkingBytesSha256": "bbc11c857eb2497cbd1c5fa1abcef3239cdf9063bc72718dfd9a9d3c4a49995e"
+      }
+    ],
+    "rawRuntimeInventory": {
+      "path": "artifacts/tmp/W2.CP07.selected-03-c7726035.json",
+      "sha256": "604de9d628d7dcff0ad0f1a77dad2f0b140bd61d041f8417f5465d86e597a25b"
+    },
+    "machineLocalSettingsPublished": false
+  },
+  "checks": [
+    {
+      "name": "clean-renderer-build",
+      "commandId": "desktop:application",
+      "exitCode": 0,
+      "durationSeconds": 1.455,
+      "rawLog": {
+        "path": "artifacts/tmp/W2.CP07.desktop-build-smoke-03-c7726035.clean-renderer-build.log",
+        "sha256": "f197532b7464b0ca98ba7f65cbef1d6f3ed1e2fcdc5c2cd5d997009c05198c7a"
+      }
+    },
+    {
+      "name": "locked-native-build",
+      "commandId": "desktop:application",
+      "exitCode": 0,
+      "durationSeconds": 16.976,
+      "rawLog": {
+        "path": "artifacts/tmp/W2.CP07.desktop-build-smoke-03-c7726035.locked-native-build.log",
+        "sha256": "c6f0ebea5c6e961477d243246a3c11a46109a7bd2769bfcc674fe95db03ccdc2"
+      }
+    },
+    {
+      "name": "actual-desktop-runtime-smoke",
+      "commandId": "desktop:application",
+      "exitCode": 0,
+      "durationSeconds": 48.36,
+      "receipt": {
+        "path": "artifacts/tmp/W2.CP07.desktop-build-smoke-03-c7726035.json",
+        "sha256": "9358c4b036908260c77bf8afa15503d0c647210d89ad10e017d230434fc44014"
+      },
+      "errors": []
+    },
+    {
+      "name": "rights-and-portable-handoff",
+      "commandId": "service:rights",
+      "exitCode": 0,
+      "durationSeconds": 102.855,
+      "rawLog": {
+        "path": "artifacts/tmp/W2.CP07.selected-03-c7726035.rights-and-portable-handoff.log",
+        "sha256": "e23b9cef656dda7fb836be6dcea9f463494b8b5cfaf5ad953c0ecdf1cc071d05"
+      },
+      "executedUnittestCases": 54,
+      "skippedCaseIds": []
+    },
+    {
+      "name": "sdk-trust-permissions-and-package",
+      "commandId": "service:unit",
+      "exitCode": 0,
+      "durationSeconds": 59.173,
+      "rawLog": {
+        "path": "artifacts/tmp/W2.CP07.selected-03-c7726035.sdk-trust-permissions-and-package.log",
+        "sha256": "03d9839d0d5bd2d794c1a7f3e6a845347024484b733215438a2939c08a1445b4"
+      },
+      "executedUnittestCases": 80,
+      "skippedCaseIds": []
+    },
+    {
+      "name": "native-lpac-boundary",
+      "commandId": "security-local:unit",
+      "exitCode": 0,
+      "durationSeconds": 35.753,
+      "rawLog": {
+        "path": "artifacts/tmp/W2.CP07.selected-03-c7726035.native-lpac-boundary.log",
+        "sha256": "72f3382eee1ad3eff2b3d17a955a2428467fb56e4ddbf6fe05095e37b9811e83"
+      },
+      "executedUnittestCases": 15,
+      "skippedCaseIds": []
+    },
+    {
+      "name": "protected-signed-sdk-journey",
+      "commandId": "service:unit",
+      "exitCode": 0,
+      "durationSeconds": 64.77,
+      "rawLog": {
+        "path": "artifacts/tmp/W2.CP07.selected-03-c7726035.protected-signed-sdk-journey.log",
+        "sha256": "669fb7acd3f9887a81b65700ce40374400ed992858faf3b4a8367ab8725ee5f9"
+      },
+      "executedUnittestCases": 1,
+      "skippedCaseIds": []
+    },
+    {
+      "name": "acquisition-queue-principal",
+      "commandId": "documents:unit",
+      "exitCode": 0,
+      "durationSeconds": 117.433,
+      "rawLog": {
+        "path": "artifacts/tmp/W2.CP07.selected-03-c7726035.acquisition-queue-principal.log",
+        "sha256": "f55133e24de5dec3ccdf5fee4e857da3af4c280396d7a6e8965cb7d65a7aaf7e"
+      },
+      "executedUnittestCases": 50,
+      "skippedCaseIds": []
+    },
+    {
+      "name": "attachment-api",
+      "commandId": "service:unit",
+      "exitCode": 0,
+      "durationSeconds": 58.063,
+      "rawLog": {
+        "path": "artifacts/tmp/W2.CP07.selected-03-c7726035.attachment-api.log",
+        "sha256": "f22a45fb2d63d4ca8f798159751b0a58d1d19b82ae1edb0019c3e64d9031dce1"
+      },
+      "executedUnittestCases": 44,
+      "skippedCaseIds": []
+    },
+    {
+      "name": "storage-migration-contracts",
+      "commandId": "data:unit",
+      "exitCode": 0,
+      "durationSeconds": 58.766,
+      "rawLog": {
+        "path": "artifacts/tmp/W2.CP07.selected-03-c7726035.storage-migration-contracts.log",
+        "sha256": "45dd8cc3f6266a648712a6d1d5194e1257242f05c33af9c17fcf40334c82d65a"
+      },
+      "executedUnittestCases": 57,
+      "skippedCaseIds": []
+    },
+    {
+      "name": "workflow-regression",
+      "commandId": "service:unit",
+      "exitCode": 0,
+      "durationSeconds": 17.748,
+      "rawLog": {
+        "path": "artifacts/tmp/W2.CP07.selected-03-c7726035.workflow-regression.log",
+        "sha256": "f6245691ad55a92dbdfad5a14c9126c946c4f16421c2dbbcede91486a8a0c45d"
+      },
+      "executedUnittestCases": 20,
+      "skippedCaseIds": []
+    },
+    {
+      "name": "desktop-opaque-models",
+      "commandId": "desktop:unit",
+      "exitCode": 0,
+      "durationSeconds": 0.826,
+      "rawLog": {
+        "path": "artifacts/tmp/W2.CP07.selected-03-c7726035.desktop-opaque-models.log",
+        "sha256": "aa37ba843143f66f537d2ff66f0ecdc65465d21b2f7d0373afd4090572fb82d4"
+      }
+    },
+    {
+      "name": "native-intake",
+      "commandId": "desktop:unit",
+      "exitCode": 0,
+      "durationSeconds": 11.626,
+      "rawLog": {
+        "path": "artifacts/tmp/W2.CP07.selected-03-c7726035.native-intake.log",
+        "sha256": "07196565959b971d829ad1ff9105e107eb67e4c3ef61013e90104ce6d7357e04"
+      },
+      "nativeSuiteCounts": [
+        {
+          "passed": 14,
+          "failed": 0,
+          "ignored": 0
+        },
+        {
+          "passed": 0,
+          "failed": 0,
+          "ignored": 0
+        }
+      ]
+    },
+    {
+      "name": "native-zero-dispatch",
+      "commandId": "desktop:unit",
+      "exitCode": 0,
+      "durationSeconds": 0.371,
+      "rawLog": {
+        "path": "artifacts/tmp/W2.CP07.selected-03-c7726035.native-zero-dispatch.log",
+        "sha256": "192491df97cfe4aed447b67d048e59a77521e29fb100fe5056ea86bab6a2e7bc"
+      },
+      "nativeSuiteCounts": [
+        {
+          "passed": 1,
+          "failed": 0,
+          "ignored": 0
+        },
+        {
+          "passed": 0,
+          "failed": 0,
+          "ignored": 0
+        }
+      ]
+    },
+    {
+      "name": "native-transport-cancellation",
+      "commandId": "desktop:unit",
+      "exitCode": 0,
+      "durationSeconds": 0.34,
+      "rawLog": {
+        "path": "artifacts/tmp/W2.CP07.selected-03-c7726035.native-transport-cancellation.log",
+        "sha256": "5808e7004a732800d33e4f5ba0616852e2f30e5190df732bacd45b94fd1b75f8"
+      },
+      "nativeSuiteCounts": [
+        {
+          "passed": 1,
+          "failed": 0,
+          "ignored": 0
+        },
+        {
+          "passed": 0,
+          "failed": 0,
+          "ignored": 0
+        }
+      ]
+    },
+    {
+      "name": "mounted-copy-return",
+      "commandId": "desktop:unit",
+      "exitCode": 0,
+      "durationSeconds": 46.486,
+      "rawLog": {
+        "path": "artifacts/tmp/W2.CP07.selected-03-c7726035.mounted-copy-return.log",
+        "sha256": "a8072302f27c9b174cf094ad8f213553933ae9e370a4746f0ef1c26d00c260e3"
+      },
+      "executedUnittestCases": 1,
+      "skippedCaseIds": []
+    },
+    {
+      "name": "api-contract",
+      "commandId": "contracts:unit",
+      "exitCode": 0,
+      "durationSeconds": 3.739,
+      "rawLog": {
+        "path": "artifacts/tmp/W2.CP07.selected-03-c7726035.api-contract.log",
+        "sha256": "d0de6df4695ae12810b382025f30caee94c9e9bc81887720850df6345026980f"
+      }
+    },
+    {
+      "name": "architecture",
+      "commandId": "foundation:architecture",
+      "exitCode": 0,
+      "durationSeconds": 3.903,
+      "rawLog": {
+        "path": "artifacts/tmp/W2.CP07.selected-03-c7726035.architecture.log",
+        "sha256": "51a256bf6a7b2e89ab1d1b97aa19077aabf0e8858a450de1f5ceb155ed5c3e88"
+      }
+    },
+    {
+      "name": "installed-production-dispatch",
+      "commandId": "service:unit",
+      "exitCode": 0,
+      "durationSeconds": 21.578,
+      "rawLog": {
+        "path": "artifacts/tmp/W2.CP07.selected-03-c7726035.installed-production-dispatch.log",
+        "sha256": "e32cdf7c57ab080540eb8a3a042f4423e7677c6c89a7d55a0b32b2bc9031463f"
+      }
+    }
+  ],
+  "freshInstalledCore": {
+    "artifactRoot": "artifacts/tmp/W2.CP07.core-build-03/dist/research-observatory-core-x86_64-pc-windows-msvc",
+    "manifestSha256": "1c0dac7b46dfa06888d30067c4f3dc910859c1449dd46b6fb6be8553b26cf6a4",
+    "files": 784,
+    "totalBytes": 74695387,
+    "configurationCheckPassed": true,
+    "guardianSha256": "ce8b56a1f84e680268ae878e7d69cc8e3c3f90af736d81d0e1a5e4be7d3c4745",
+    "durationSeconds": 39.397202500003914,
+    "productionInstalledSmoke": {
+      "path": "artifacts/tmp/W2.CP07.installed-smoke-03-c7726035.json",
+      "sha256": "0111ad46f1046ea220c9e1024a45e5f1182fd996061992f864793ad9d03e6397"
+    },
+    "smokeStages": [
+      "actual-frozen-core-ready",
+      "protected-project-open",
+      "production-installed-worker-discovered",
+      "actual-native-trust-and-enable",
+      "production-installed-lpac-dispatch-published",
+      "orderly-project-close"
+    ],
+    "liveSmoke": {
+      "method": "GET",
+      "host": "api.crossref.org",
+      "pathTemplate": "/works/{identifier}",
+      "publicIdentifier": "10.1128/mbio.01735-25",
+      "maximumProviderRequests": 1,
+      "privateQueryOrCredential": false,
+      "officialDocumentation": "https://www.crossref.org/documentation/retrieve-metadata/rest-api/"
+    }
+  },
+  "approvedEX01Binding": {
+    "ownerDecision": {
+      "path": "planning/verification-method-approvals/CAP-05.S01.T03.EX01.json",
+      "sha256": "79a57a1e0cdbb7eb2e9fab36084edf9dcdd476444047b947d3eea9dceded87fb"
+    },
+    "referenceId": "RO-UI-ACADEMIC-MINIMAL-1.9",
+    "referencePackageSha256": "24b8d62356863980ae9a13db7d6a06b04b76c60e2f1920d2e888cadecfb24c4b",
+    "functionEquivalence": {
+      "originalFunctionSHA256": "639802a77319583ee347227b24b4d87f51baa9f62c3993e4b9b4822fd5a5a85c",
+      "equivalentFunctionSHA256": "c58eee60b4a4b8943289ef19bb7f0e1d5185cb0ae4e513def16beec43add2df9",
+      "onlySubstitutions": [
+        "function name",
+        "exact stale product reference admission",
+        "exact approved context constructor"
+      ]
+    },
+    "originalPublicBuildErrors": [
+      "desktop product manifest does not bind the approved design reference identity"
+    ],
+    "boundary": "Same exact already-approved checkpoint binding only. No shared selector/framework changes or generic future-reference exception."
+  },
+  "criterionProof": [
+    {
+      "risk": "Current rights, protected copies and immutable portable handoff",
+      "checks": [
+        "rights-and-portable-handoff",
+        "storage-migration-contracts",
+        "attachment-api"
+      ]
+    },
+    {
+      "risk": "Exact publisher trust, grants, signature/package integrity, actual LPAC denial and guardian recovery",
+      "checks": [
+        "sdk-trust-permissions-and-package",
+        "native-lpac-boundary",
+        "protected-signed-sdk-journey",
+        "installed-production-dispatch"
+      ]
+    },
+    {
+      "risk": "Quarantined inspection, actual TLS encrypted acquisition, cancellation, failure and fresh-session recovery",
+      "checks": [
+        "acquisition-queue-principal",
+        "attachment-api",
+        "storage-migration-contracts",
+        "workflow-regression",
+        "native-intake",
+        "native-zero-dispatch",
+        "native-transport-cancellation"
+      ]
+    },
+    {
+      "risk": "Clean build and actual installed/native/renderer handoff",
+      "checks": [
+        "clean-renderer-build",
+        "locked-native-build",
+        "actual-desktop-runtime-smoke",
+        "mounted-copy-return",
+        "desktop-opaque-models",
+        "api-contract",
+        "architecture",
+        "installed-production-dispatch"
+      ]
+    }
+  ],
+  "priorIndependentEvidence": [
+    {
+      "path": "artifacts/evidence/CAP-04.S04.qualification-01.json",
+      "sha256": "327b92b61b536a355782d09d6db6b953c688120e5f0645cd16a2da0d1bef389f"
+    },
+    {
+      "path": "artifacts/evidence/CAP-04.S04.qualification-review-01.md",
+      "sha256": "ebe5b891e48190e7c15191b7ad50a73b3b7878585da01700e06a1c988f16c3ef"
+    },
+    {
+      "path": "artifacts/evidence/CAP-04.S05.qualification-01.json",
+      "sha256": "e8eefc2f4daa03a2e2b85cce2b1f68ff469aac9795b369966e1faa0a9d5a1230"
+    },
+    {
+      "path": "artifacts/evidence/CAP-04.S05.review-01.json",
+      "sha256": "fcb69afb688d554e2b914e4e1f8f0c86756a0b4700a27426d98d265aeb00f91c"
+    },
+    {
+      "path": "artifacts/evidence/CAP-05.S01.qualification-01.json",
+      "sha256": "7ceee8b56fc24ab76bb2536a058143a06f3ec549e292645fc8ca3ca6055d98ef"
+    },
+    {
+      "path": "artifacts/evidence/CAP-05.S01.review-01.json",
+      "sha256": "0d0cb37286fc91906ec8b9fa1dd6c8daab401ba355dd5651a6313fd52a4c1d9f"
+    }
+  ],
+  "historicalEvidenceUse": "Prior approved slice/resource/visual/adverse records remain their exact historical candidate observations; none is relabeled as a fresh run. The fresh checks above establish this checkpoint; full audits and benchmarks are not replayed merely to improve reporting.",
+  "methodFindingBeforeExecution": {
+    "finding": "First desktop producer did not compare the build and smoke source/runtime snapshots or assert final initial-input equality before PASS.",
+    "originalProducerSha256": "5ce417c01e05cf264a32af7d3beecbbbf2cf3f59c8415ce1aa240f889ae9aacc",
+    "resolvedProducerSha256": "2e8c4a174e80e865e69c89eb06eabb1257526dccaaee3cd4e117db5fb5f66011",
+    "closure": "Both exact equality assertions added and independently confirmed before first execution; no product, tests or framework changed."
+  },
+  "preservedAdverseAttempts": [
+    {
+      "report": {
+        "path": "artifacts/tmp/W2.CP07.desktop-build-smoke-01-10110a83.json",
+        "sha256": "aa249a0ab4474f0ff816603b09b8dd834feffee35779357ec51bbc6a61e84b7d"
+      },
+      "rawLog": {
+        "path": "artifacts/tmp/W2.CP07.desktop-build-smoke-01-10110a83.clean-renderer-build.log",
+        "sha256": "4309545b6189309ce2b92453f5e549821f8415151d032e6821ff890d11fc135a"
+      },
+      "outcome": "Setup lock conflict before renderer build; dependency workspace junction aliased owned generated desktop output.",
+      "resolution": "Second finite operator excludes only exact canonical generated-output directories from compilation input handles and holds the newly built outputs through runtime smoke; all source/runtime phase-equality assertions remain."
+    },
+    {
+      "report": {
+        "path": "artifacts/tmp/W2.CP07.selected-01-10110a83.json",
+        "sha256": "f7dfae1e234d01c29ece9531df9cd46ae761f45b96da8aa0542c6c60a8c52366"
+      },
+      "rawLog": {
+        "path": "artifacts/tmp/W2.CP07.selected-01-10110a83.rights-and-portable-handoff.log",
+        "sha256": "185f4528d3d35885445c1ecabae35c8923d0a5f51e360bd1c8959d1977d43a96"
+      },
+      "outcome": "54-case fresh rights/public-handoff group retained four stale current-schema assertion failures; later groups did not run.",
+      "resolution": "Approved linked test-only W2.C13.T01 restores explicit schema25 expectations while retaining exact old fixtures and all backup/failure/rights/reopen assertions; the new complete checkpoint runs separately at this new candidate."
+    },
+    {
+      "report": {
+        "path": "artifacts/tmp/W2.CP07.selected-02-c7726035.json",
+        "sha256": "6bd13b1757a20c500f7a753c81fd09f5c16d9f21f7d6e419593d0e1e04f36cfc"
+      },
+      "rawLog": {
+        "path": "artifacts/tmp/W2.CP07.selected-02-c7726035.protected-signed-sdk-journey.log",
+        "sha256": "41115335c14e53bfd5d280a9cc468e453166d5d5b17c8dce1d95b459d3e2347c"
+      },
+      "outcome": "Rights, SDK trust/package and LPAC groups passed; the fourth protected SDK group failed in its first create phase. No later group or installed smoke ran in that attempt.",
+      "resolution": "Independent frozen-image inspection proved worker07 had an older embedded call interface despite unchanged approved source. Rebuilt and independently authenticated worker08 replaces only the runtime input; this distinct attempt03 supplies fresh full selected and installed proof."
+    }
+  ],
+  "ownedProducers": [
+    {
+      "path": "artifacts/tmp/W2.CP07.build-installed-03.py",
+      "sha256": "fd22d98f7e6791f5c4ceb7982f3191c80c6cb3f240ccb2b8a664c0ff6016a102"
+    },
+    {
+      "path": "artifacts/tmp/W2.CP07.run-selected-03.py",
+      "sha256": "8ab981aa9952ccff55fb30682083f6dee3b1f8febe92a3384f14d6766d3a6c18"
+    },
+    {
+      "path": "artifacts/tmp/W2.CP07.installed-smoke-03.py",
+      "sha256": "96d9cf70c30d50a72937cee007cb5cc23d8b80d62998955443f0aa1d22d80e58"
+    },
+    {
+      "path": "artifacts/tmp/W2.CP07.assemble-03.py",
+      "sha256": "8bd6214e7ec622c6529aa402c9f5b2bd2208b88a158c49b24d7c617af3a5c3ee"
+    },
+    {
+      "path": "artifacts/tmp/W2.CP07.desktop-build-smoke-03.py",
+      "sha256": "cdfd7d7fcb4ad8fca40141cec84c27ecf9bfe9a003d11577d18ccc1a882a8b95"
+    },
+    {
+      "path": "artifacts/tmp/W2.CP07.next-attempt-method-01.json",
+      "sha256": "3d51c52fea46365f57dc8ba1f2e2e30ba869a64c9f6a47f042848dc0e5d5711d"
+    },
+    {
+      "path": "artifacts/tmp/W2.CP07.build-worker-08.py",
+      "sha256": "16f1a9a52b78916fec23280cb84fdb587cdd6a1af0ee9e3bb4e8d71e12149bcd"
+    },
+    {
+      "path": "artifacts/tmp/W2.CP07.prepare-worker08-attempt-01.py",
+      "sha256": "dc9557fda8e117a4e752570883427553f998b1b12b820034596e2262298e8f9d"
+    },
+    {
+      "path": "artifacts/tmp/W2.CP07.prepare-assembly03-01.py",
+      "sha256": "83ffbb5ed26067add946da1ade07497e68dd9c736c86c72d4a9deedcf6be9786"
+    }
+  ],
+  "independentNextAttemptMethodAssessment": {
+    "path": "artifacts/tmp/W2.CP07.next-attempt-method-review-01.json",
+    "sha256": "8b4d5d7fdc5e95c37341a5721341cb946605a22809cedff75d3fac3be3ed63f4"
+  },
+  "linkedProductTestCorrection": {
+    "spec": {
+      "path": "artifacts/evidence/W2.C13.T01.spec.json",
+      "sha256": "d3cf19569d9b379d5c1acb96cf9ad459019a022a2880c8765a7b7b2e10b97d3c"
+    },
+    "evidence": {
+      "path": "artifacts/evidence/W2.C13.T01.R01.json",
+      "sha256": "e7253f250c2345a47c53f59ffd3d69c92463b9032f01de0db2bd816dada8253c"
+    },
+    "independentReview": {
+      "path": "artifacts/evidence/W2.C13.T01.review-R01.json",
+      "sha256": "ca39f97f02a618767c484a73156902cf0beca4ac7e89bf931aacc898d5560287"
+    },
+    "effect": "Exact current25/0025 assertions and four empty additive tables; all original v17 fixtures, history, encrypted/plain backup, interruption, retry, rights and reopen retained. Original task/slice completion is unchanged."
+  },
+  "linkedEncryptedStagingFixtureCorrection": {
+    "spec": {
+      "path": "artifacts/evidence/W2.C14.T01.spec.json",
+      "sha256": "15f8d0791587b00d6bf5077b9bb30923c721b67056197343689e23c1a7f1802c"
+    },
+    "evidence": {
+      "path": "artifacts/evidence/W2.C14.T01.R01.json",
+      "sha256": "f10efc2d042d3212b2dbe2708352a5ba29e71c90a255e0d1feec943a69d142b4"
+    },
+    "independentReview": {
+      "path": "artifacts/evidence/W2.C14.T01.review-R01.json",
+      "sha256": "196154c2e58770041fc350744184ce3a629b94c9fd262fa5eee97b1d46d649fa"
+    },
+    "effect": "Only the old encrypted-staging test callback accepts and forwards the exact current publication identity; all encryption, interrupted-source and cleanup assertions remain unchanged. Fresh full affected class and ordinary-import type proof close the exact runtime/type failures. Original product source and task/slice completion are unchanged."
+  },
+  "linkedSdkMigrationFixtureCorrection": {
+    "spec": {
+      "path": "artifacts/evidence/W2.C15.T01.spec.json",
+      "sha256": "f7aa1a00caaa3c16ac5e4f07d745b3df975c8615efcaea1a77791d14cb1c7865"
+    },
+    "evidence": {
+      "path": "artifacts/evidence/W2.C15.T01.R01.json",
+      "sha256": "6e89b0a7755404c1e40262286591e8f7221a8581f903396e4c5be92a481f14e1"
+    },
+    "independentReview": {
+      "path": "artifacts/evidence/W2.C15.T01.review-R01.json",
+      "sha256": "3c2103b063bc8b1da0b2571beaadb822708b2309adabcb804903fd8582d9cc88"
+    },
+    "effect": "Restore only current25 SDK migration chain, fingerprint, manifest and appended history assertions, plus empty additive tables. Exact encrypted v20 constructor, historical first three rows, all original v21 faults, source20 fingerprints, backup bytes, rollback, retry and reopen remain intact. Product source and original task/slice completion are unchanged."
+  },
+  "retainedAdditionalAdverseEvidence": [
+    {
+      "path": "artifacts/tmp/W2.C13.T01.selected-01-9a860fc4.json",
+      "sha256": "a1e55cc5c3e8ec953d835928dea06e74da3c73c10386fbbaa61ab874d52fc8da"
+    },
+    {
+      "path": "artifacts/tmp/W2.C13.T01.selected-01-9a860fc4.types.log",
+      "sha256": "780aa1d5bd70e28a3e02958cd1a6f11f90d58cc5c55e51b700f020792821cd87"
+    },
+    {
+      "path": "artifacts/tmp/W2.C14.T01.red-01-9a860fc4.json",
+      "sha256": "c238dcbb2a8dd3591b8eebc84fe1f17f278418d8f718d32b174f43aaf24e7b7c"
+    },
+    {
+      "path": "artifacts/tmp/W2.C14.T01.red-01-9a860fc4.encrypted-staging-fixture.log",
+      "sha256": "6ff1dc11f9b5bbdbb8ec6e5933e217677e6fc21b037176525ca86587110d30ed"
+    },
+    {
+      "path": "artifacts/tmp/W2.C15.T01.red-01-81627fae.json",
+      "sha256": "750743baa137ae764aa52fd6174fd0e04942bbf7221ed7ff68e4b931949ccb6a"
+    },
+    {
+      "path": "artifacts/tmp/W2.C15.T01.red-01-81627fae.encrypted-v20-current-migration-fixture.log",
+      "sha256": "114b8d1a3f31deffb86134950e8f059ca4bfb8376ebfe395804faa86061c8958"
+    },
+    {
+      "path": "artifacts/tmp/W2.CP07.protected-job-diagnostic-01.log",
+      "sha256": "cee22f1d36e125ee06c92e83719e2c7b24632efbf2871ea2febfc3c4d043ab5f"
+    },
+    {
+      "path": "artifacts/tmp/W2.CP07.protected-job-diagnostic-02.log",
+      "sha256": "92d7166df3360191f4b921570f1e2ae069180563c339197c5d021b448e89ac44"
+    },
+    {
+      "path": "artifacts/tmp/W2.CP07.protected-job-diagnostic-03.log",
+      "sha256": "0309bbf1b51a765fb93d9b760269e325b298b5555c321461ed7b8967074a4f58"
+    },
+    {
+      "path": "artifacts/tmp/W2.CP07.protected-create-diagnostic-01.log",
+      "sha256": "6b66c5348b8329216b7174e6227cdb41a580253a9112861f9c3a12e8d0478311"
+    },
+    {
+      "path": "artifacts/tmp/W2.CP07.protected-create-diagnostic-02.log",
+      "sha256": "e657d266276efa348cbae35c5a549a702c1c6830a7e46bf4d0c9c80c1b3faf7c"
+    }
+  ],
+  "deferredToWaveExit": "Fresh full affected/repository/deployment profiles, complete cross-capability end-to-end, installer/release packaging and signing decision, full security/privacy/rights/accessibility/performance/resource matrix, and separate human G2 release. Parser-specific offline assets, isolation and numeric budgets remain S02 delivery obligations.",
+  "limitations": [
+    "Actual loopback startup and attempted-connect observations remain distinct; no public-address packet/connect denial is inferred.",
+    "Synthetic lawful fixtures, native signed worker, Core/SQLCipher and owned TLS prove only their named boundaries.",
+    "Production-installed smoke performs one explicit public Crossref read; it does not qualify general provider availability.",
+    "Unit skips and all failed invocations remain observable in verbose raw logs.",
+    "Complete W2/full repository/profile/installer and human release remain separate.",
+    "Fresh clean Vite build plus locked Cargo build and actual browser runtime smoke; no installer, signing, native OS dialog or fresh resource benchmark is inferred.",
+    "EX01 consumes only its same exact owner-approved 1.9 package; original stale public selectors receive no PASS.",
+    "Fresh runtime smoke uses synthetic desktop fixture replies; production installed Core, LPAC and retained-body principal are qualified separately.",
+    "Earlier approved visual/resource evidence remains historical; W2 fresh full qualification and human release remain required."
+  ],
+  "independentReview": "pending",
+  "runtimeInterfaceRestoration": {
+    "originalWorkerDiagnostic": {
+      "path": "artifacts/tmp/W2.CP07.worker07-interface-diagnostic-01.json",
+      "sha256": "d0ba7540c4ed71bf1551820f34896636ae4da35218f9390cd216d64219fa8351"
+    },
+    "freshWorkerBuild": {
+      "path": "artifacts/tmp/W2.CP07.worker-build-08-c7726035.json",
+      "sha256": "938e9e5840bccff4a7bcb0edec62c54876eb10dd2212e428125fa05b247b99b1"
+    },
+    "independentBuildInterfaceReview": {
+      "path": "artifacts/tmp/W2.CP07.worker08-interface-review-01.json",
+      "sha256": "d47fc0eb3613d918c6e9aafe59a4d3c38cceeb4465739dc8b2fa2449e9d2e103"
+    },
+    "operatorDerivation": {
+      "path": "artifacts/tmp/W2.CP07.worker08-attempt-method-01.json",
+      "sha256": "fd34515ffaf1aa269fec7a3a521fa9f6db2c0806c1dab03c4ddb918fd33824d3"
+    },
+    "freshWorkerInventory": {
+      "path": "artifacts/tmp/W2.CP07.worker-build-08/inventory.json",
+      "sha256": "92a47541dabe0090851d1968d7a243a9c4a6fa4c40801b3869619f6e7f1af64f"
+    },
+    "freshWorkerSignature": {
+      "path": "artifacts/tmp/W2.CP07.worker-build-08/inventory.sig",
+      "sha256": "666f79292a341add0c9d8bd8925209bd51bf224ac3d1a6a20aa23a58ad2b250b"
+    },
+    "scope": "Rebuilt artifact only from unchanged current approved source using unchanged builder, qualified CPython and existing signing identity, with fresh caches before import. Entire embedded worker host matches current source after location normalization, including keyword-only context and inspection. No product/test/framework or trust/permission/source authority changed. Native, protected and installed executions above provide the fresh behavioral proof.",
+    "sampleFailure": {
+      "path": "artifacts/tmp/W2.CP07.sample-pages-diagnostic-01.log",
+      "sha256": "a86c82a1e4d6e3373183c22e03c91f55010fdd2674a351c2f7612f54e308cbca"
+    },
+    "sampleSuccess": {
+      "path": "artifacts/tmp/W2.CP07.sample-pages-diagnostic-02.log",
+      "sha256": "27b68a7a5004c1b5bf06635e57b8cee275e3aecd34e824f87e36f3ceb17a521d"
+    },
+    "diagnosticLimit": "Targeted sample run establishes the interface cause/closure only; full qualifying principal checks are separately retained above."
+  },
+  "desktopReceiptDisposition": "Fresh build/native/browser fixture smoke executed at this same fixed candidate earlier in this checkpoint interval. It did not consume the replaced signed worker bundle. All original desktop source/runtime inputs and built outputs must match the complete current selected inventory; no omission or collision is accepted. Installed worker behavior is proved only by the new selected/installed checks, never by this browser fixture."
+}
