@@ -1,7 +1,7 @@
 ---
 document_type: generated-backlog-status-summary
 source: planning/backlog.yaml
-source_sha256: d73e4801e87ce39fda952ef4ac2d1e914dde060873e84a211976700c3a53b4c6
+source_sha256: 2769f0fb22c7a194b3b78640c563560290f268ecc2d59f546c5dd22677933713
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -912,13 +912,14 @@ Append-only rounds remain distinct from the current latest-review projection. Le
 | `W2.C11.T01` | `append-only v1` | 1 | `-` | approved / agent:/root/c11_security_review | - |
 | `W2.C12.T01` | `append-only v1` | 1 | `-` | approved / agent:/root/c11_security_review | - |
 | `W2.C13.T01` | `append-only v1` | 1 | `-` | approved / agent:/root/s01_integration_review | - |
+| `W2.C14.T01` | `append-only v1` | 0 | `-` | - / - | - |
 ## Wave progress
 
 | Wave | Pre-Wave approval | Campaign | Qualification | Approved slices | Done tasks | Exit gate |
 |---|---|---|---|---:|---:|---|
 | `W0` - Engineering foundation | `APPROVED` | `NONE` | `APPROVED` — Historical W0 qualification predates the Wave-campaign controller. | 6/6 | 19/19 | `G0` / `APPROVED` |
 | `W1` - Windows local runtime and durable core | `APPROVED` | `COMPLETE` | `APPROVED` — OWNER-ACCEPTED CORE COMPLETE: explicit 2026-09-13 owner approval closes W1 prototype core with retained qualification gaps, not a full-suite PASS. Reasonable test and UX-control repairs continue between Waves. G1 and W2 activation remain separate; see artifacts/evidence/W1.owner-core-acceptance-01.md. | 15/15 | 53/53 | `G1` / `APPROVED` |
-| `W2` - Windows local evidence foundation | `APPROVED` | `PAUSED` | `PAUSED` | 6/11 | 31/46 | `G2` / `PENDING` |
+| `W2` - Windows local evidence foundation | `APPROVED` | `PAUSED` | `PAUSED` | 6/11 | 31/47 | `G2` / `PENDING` |
 | `W3` - Windows local research workbench | `PENDING` | `NONE` | `PENDING` | 0/16 | 0/48 | `G3` / `PENDING` |
 | `W4` - Windows scholarly reasoning and novelty MVP | `PENDING` | `NONE` | `PENDING` | 0/9 | 0/27 | `G4` / `PENDING` |
 | `W5` - Windows PC/lab production release | `PENDING` | `NONE` | `PENDING` | 0/8 | 0/25 | `G5` / `PENDING` |
@@ -973,7 +974,9 @@ Append-only rounds remain distinct from the current latest-review projection. Le
 
 ## Active work
 
-No task is currently active.
+| Task | Status | Owner | Branch |
+|---|---|---|---|
+| `W2.C14.T01` Create acquisition queue, conflict, and entitlement placeholders | `IN_PROGRESS` | codex-w2-implementation | `codex/w2-implementation` |
 
 ## Linked corrective tasks
 
@@ -1050,4 +1053,8 @@ Original tasks and approvals remain unchanged.
 ### W2.C13.T01 — Create acquisition queue, conflict, and entitlement placeholders
 
 **Status:** `DONE`. **Original task:** `CAP-05.S01.T03`. **Latest review:** `approved`.
+
+### W2.C14.T01 — Create acquisition queue, conflict, and entitlement placeholders
+
+**Status:** `IN_PROGRESS`. **Original task:** `CAP-05.S01.T03`. **Latest review:** `-`.
 

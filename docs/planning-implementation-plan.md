@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: d73e4801e87ce39fda952ef4ac2d1e914dde060873e84a211976700c3a53b4c6
+source_sha256: 2769f0fb22c7a194b3b78640c563560290f268ecc2d59f546c5dd22677933713
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -4385,6 +4385,33 @@ Original tasks and approvals remain unchanged.
 **Current latest-review projection:** `approved` by agent:/root/s01_integration_review at `2026-10-07T04:28:59+00:00`
 
 **Latest notes:** Independent bounded correction review approves only actual frozen W2.C13.T01 R01 at9a860fc4/base dcea0fda. The spec-admitted literal-v17 migration test correction restores exact current schema25, explicit0025 migration chains and the current recovery enum; historical17 fixtures, row/schema/profile hashes and frozen backup witness remain exact. Both plain populated source histories and real SQLCipher protected backup/interruption/retry/reopen preserve rights unknown, legacy rechecks, all old rows and empty successor intake/recovery/access-need tables. All6 original v17 methods and2 v25 predecessor/fault methods pass without skips, as do changed-file format/lint and separately qualified nonincremental selected-file types. Complete13438 common tracked/Python input identities are equal across the two guarded runs and independently rehash with zero mismatch or unreadable input. The first broader-import run remains FAIL; the actual encrypted-staging callback still fails with a2-versus3-argument TypeError and must close in separate linked C14 before ordinary W2 resumes. Silent imported diagnostics supply only bounded changed-file proof and never broader/profile PASS. Original T03 DONE history, Wave approval and historical S01 reviews remain immutable. No source/framework/security/migration/UX authority changes or criterion-bound C13 blocker remain. Fresh CP07, remaining W2 qualification and separate human G2 release remain obligations.
+
+**Currently open findings:** -
+
+### W2.C14.T01 — Create acquisition queue, conflict, and entitlement placeholders
+
+**Status:** `IN_PROGRESS`. **Original task:** `CAP-05.S01.T03`. **Latest review:** `-`.
+
+**Reproduction:** At clean committed candidate9a860fc45fe67d9582f4a37c81c90436b1ec715e, the unchanged encrypted object-staging test fails with TypeError because inspect_encrypted_staging accepts2arguments while the current approved product _publish receives3: staging, destination and exact staging identity. The callback also forwards only2arguments to the real helper. The helper signature was introduced by original approved T03 product implementation89da746a972d1faa6bd64739d8f9c86c6be21908 and remains unchanged. Fresh bounded one-case diagnostic artifacts/tmp/W2.C14.T01.red-01-9a860fc4.json SHA256 c238dcbb2a8dd3591b8eebc84fe1f17f278418d8f718d32b174f43aaf24e7b7c records actual exit1 and stable guarded inputs; raw log artifacts/tmp/W2.C14.T01.red-01-9a860fc4.encrypted-staging-fixture.log SHA256 6ff1dc11f9b5bbdbb8ec6e5933e217677e6fc21b037176525ca86587110d30ed retains1case/1error. The separate C13 default-import mypy observation also reports tests/data/test_encrypted_object_store.py:136 too few arguments and remains FAIL. C13 affected-file silent-import typing does not classify this defect as PASS.
+
+**Inherited criteria:**
+
+- Partial acquisitions resume or clean up safely; multiple copies remain distinguishable; lack of full text does not remove the metadata record or fabricate availability.
+- Automated tests cover the expected path and at least one material failure or boundary condition.
+- Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.
+
+**Bounded changed paths:**
+
+- tests/data/test_encrypted_object_store.py
+#### Review history — W2.C14.T01
+
+**Review mode:** `append-only v1` / 0 completed round(s)
+
+**Current immutable submission awaiting review:** None
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
 
 **Currently open findings:** -
 

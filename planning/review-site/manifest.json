@@ -3155,6 +3155,53 @@
               "current_submission": null
             }
           }
+        },
+        {
+          "task_id": "W2.C14.T01",
+          "title": "Create acquisition queue, conflict, and entitlement placeholders",
+          "status": "IN_PROGRESS",
+          "acceptance_criteria": [
+            "Partial acquisitions resume or clean up safely; multiple copies remain distinguishable; lack of full text does not remove the metadata record or fabricate availability.",
+            "Automated tests cover the expected path and at least one material failure or boundary condition.",
+            "Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion."
+          ],
+          "correction": {
+            "origin_task_id": "CAP-05.S01.T03",
+            "origin_commit": "9a860fc45fe67d9582f4a37c81c90436b1ec715e",
+            "paused_state_sha256": "e19d563371dd994cf4b6aa61f7505b492175b44dde05864e73b700d44b95db03",
+            "origin_sha256": "f74b32f21cdea4d6810e2651e892075295f377fba52d8cb924d1e74d9d76b16e",
+            "origin_contract_sha256": "9888e05207eba4d5d6522ec99045921af07f9276eee574fde9678d8856ebd70f",
+            "origin_history_sha256": "8d69b13955e098543a486bb9eb6af5ac45859ed841104f81f6057c9a276b88d2",
+            "origin_amendment_id": null,
+            "authority_sha256": "c92ce7e9bac1b8a49d13d649a5980fea61e56ee953d238c734d8ff5f04f4c9e5",
+            "spec": {
+              "path": "artifacts/evidence/W2.C14.T01.spec.json",
+              "sha256": "15f8d0791587b00d6bf5077b9bb30923c721b67056197343689e23c1a7f1802c",
+              "commit": "efbfa1a708f3ee526e50084e1dba2c3e7e3d40d1"
+            },
+            "reproduction": "At clean committed candidate9a860fc45fe67d9582f4a37c81c90436b1ec715e, the unchanged encrypted object-staging test fails with TypeError because inspect_encrypted_staging accepts2arguments while the current approved product _publish receives3: staging, destination and exact staging identity. The callback also forwards only2arguments to the real helper. The helper signature was introduced by original approved T03 product implementation89da746a972d1faa6bd64739d8f9c86c6be21908 and remains unchanged. Fresh bounded one-case diagnostic artifacts/tmp/W2.C14.T01.red-01-9a860fc4.json SHA256 c238dcbb2a8dd3591b8eebc84fe1f17f278418d8f718d32b174f43aaf24e7b7c records actual exit1 and stable guarded inputs; raw log artifacts/tmp/W2.C14.T01.red-01-9a860fc4.encrypted-staging-fixture.log SHA256 6ff1dc11f9b5bbdbb8ec6e5933e217677e6fc21b037176525ca86587110d30ed retains1case/1error. The separate C13 default-import mypy observation also reports tests/data/test_encrypted_object_store.py:136 too few arguments and remains FAIL. C13 affected-file silent-import typing does not classify this defect as PASS.",
+            "changed_paths": [
+              "tests/data/test_encrypted_object_store.py"
+            ],
+            "impact_analysis": "Restore the original T03 relevant fixture and encrypted-staging qualification obligation for its already-approved staging-identity security check. Change only the existing inspect_encrypted_staging callback signature to accept the exact tuple[int,int] identity received from the product and forward that same identity unchanged to the real original_publish helper. Preserve every plaintext-exclusion/encrypted-envelope assertion, inspection flag, interruption exception, partial cleanup, reopen/decryption/tamper/key and plaintext-policy test. Do not synthesize a new identity, use variadic argument erasure, suppress type errors, change product _publish logic/guards, schema/migrations, security/rights/permission authority, governed UX, framework source, acceptance criteria, original task/slice completion or prior adverse evidence. Run the full affected encrypted-object-store test class, changed-file Ruff format/lint and nonincremental ordinary-import mypy on this file plus the original C13 rights migration root to close its actual broader-import failure. Obtain independent correction/integration disposition. Keep ordinary W2 paused until this correction is independently approved, then resume the same campaign and finish required fresh W2.CP07 qualification and remaining product tasks. This is a bounded product-test fixture restoration, not an amendment or automation development. Full Wave and G2 release remain separate."
+          },
+          "task_review": {
+            "task_id": "W2.C14.T01",
+            "title": "Create acquisition queue, conflict, and entitlement placeholders",
+            "status": "IN_PROGRESS",
+            "mode": "append-only",
+            "latest_review": {
+              "reviewer": null,
+              "result": null,
+              "reviewed_at": null,
+              "notes": null
+            },
+            "review_control": {
+              "version": 1,
+              "attempts": [],
+              "current_submission": null
+            }
+          }
         }
       ]
     },

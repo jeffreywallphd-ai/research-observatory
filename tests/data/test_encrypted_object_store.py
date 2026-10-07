@@ -127,13 +127,13 @@ class EncryptedObjectStoreTests(unittest.TestCase):
         original_publish = object_store_module._publish
         inspected = False
 
-        def inspect_encrypted_staging(staging: Path, destination: Path) -> bool:
+        def inspect_encrypted_staging(staging: Path, destination: Path, identity: tuple[int, int]) -> bool:
             nonlocal inspected
             inspected = True
             staged = staging.read_bytes()
             self.assertNotIn(b"never-persist-this-plaintext", staged)
             self.assertNotEqual(plaintext, staged)
-            return original_publish(staging, destination)
+            return original_publish(staging, destination, identity)
 
         with patch.object(object_store_module, "_publish", inspect_encrypted_staging):
             store.put(io.BytesIO(plaintext), command())
