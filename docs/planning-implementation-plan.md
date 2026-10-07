@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: a67eb232a1f014f3c0cb836b916f1e25bc52d0027b7d8dfca97e4a70665451df
+source_sha256: d73e4801e87ce39fda952ef4ac2d1e914dde060873e84a211976700c3a53b4c6
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -4333,7 +4333,7 @@ Original tasks and approvals remain unchanged.
 
 ### W2.C13.T01 — Create acquisition queue, conflict, and entitlement placeholders
 
-**Status:** `REVIEW`. **Original task:** `CAP-05.S01.T03`. **Latest review:** `-`.
+**Status:** `DONE`. **Original task:** `CAP-05.S01.T03`. **Latest review:** `approved`.
 
 **Reproduction:** The fresh W2 cluster-2 checkpoint at clean candidate 10110a835a0b2536a398c4709fa1e1c366b09972 runs 54 rights/public-handoff cases and preserves four assertion failures in tests.rights.test_migration.LiteralV17PredecessorTests. The approved CAP-05.S01.T03 additive document-intake migration advances current schema to25, but three existing test methods still expect current target24, a chain ending at0024, or a recovery-contract enum ending at24. Both populated import/connector v17 source paths, protected failure-backup-retry, and the frozen recovery witness are implicated. The raw log artifacts/tmp/W2.CP07.selected-01-10110a83.rights-and-portable-handoff.log has SHA-256 185f4528d3d35885445c1ecabae35c8923d0a5f51e360bd1c8959d1977d43a96; failed stable-input receipt artifacts/tmp/W2.CP07.selected-01-10110a83.json has SHA-256 f7dfae1e234d01c29ece9531df9cd46ae761f45b96da8aa0542c6c60a8c52366. No later group ran and no checkpoint approval or completion is claimed.
 
@@ -4348,9 +4348,11 @@ Original tasks and approvals remain unchanged.
 - tests/rights/test_migration.py
 #### Review history — W2.C13.T01
 
-**Review mode:** `append-only v1` / 0 completed round(s)
+**Review mode:** `append-only v1` / 1 completed round(s)
 
-**Current immutable submission awaiting review:** `R01` / packet SHA-256 `e72708e7fcad354e8af035900558f0ab83a2175afbef1631b0016f56fc0cdfc9`
+##### Round R01
+
+**Immutable submission packet:** `R01` / packet SHA-256 `e72708e7fcad354e8af035900558f0ab83a2175afbef1631b0016f56fc0cdfc9`
 
 - Candidate / base / branch: `9a860fc45fe67d9582f4a37c81c90436b1ec715e` / `dcea0fda1bde94e2567e46044c0eae538eac9f34` / `codex/w2-implementation`
 - Submitted by / at: codex-w2-implementation / `2026-10-07T04:11:47+00:00`
@@ -4364,9 +4366,25 @@ Original tasks and approvals remain unchanged.
 - Prior round / replayed open findings: `-` / -
 - Root-cause escalation: -
 
-**Current latest-review projection:** `-` by - at `-`
+**Disposition / reviewer / time:** `approved` / agent:/root/s01_integration_review / `2026-10-07T04:28:59+00:00`
 
-**Latest notes:** -
+**Immutable review ledger:** `artifacts/evidence/W2.C13.T01.review-R01.json` / `ca39f97f02a618767c484a73156902cf0beca4ac7e89bf931aacc898d5560287`
+
+**Review notes:** Independent bounded correction review approves only actual frozen W2.C13.T01 R01 at9a860fc4/base dcea0fda. The spec-admitted literal-v17 migration test correction restores exact current schema25, explicit0025 migration chains and the current recovery enum; historical17 fixtures, row/schema/profile hashes and frozen backup witness remain exact. Both plain populated source histories and real SQLCipher protected backup/interruption/retry/reopen preserve rights unknown, legacy rechecks, all old rows and empty successor intake/recovery/access-need tables. All6 original v17 methods and2 v25 predecessor/fault methods pass without skips, as do changed-file format/lint and separately qualified nonincremental selected-file types. Complete13438 common tracked/Python input identities are equal across the two guarded runs and independently rehash with zero mismatch or unreadable input. The first broader-import run remains FAIL; the actual encrypted-staging callback still fails with a2-versus3-argument TypeError and must close in separate linked C14 before ordinary W2 resumes. Silent imported diagnostics supply only bounded changed-file proof and never broader/profile PASS. Original T03 DONE history, Wave approval and historical S01 reviews remain immutable. No source/framework/security/migration/UX authority changes or criterion-bound C13 blocker remain. Fresh CP07, remaining W2 qualification and separate human G2 release remain obligations.
+
+**Findings opened:**
+
+- None
+
+**Prior finding closures:**
+
+- None
+
+**Current immutable submission awaiting review:** None
+
+**Current latest-review projection:** `approved` by agent:/root/s01_integration_review at `2026-10-07T04:28:59+00:00`
+
+**Latest notes:** Independent bounded correction review approves only actual frozen W2.C13.T01 R01 at9a860fc4/base dcea0fda. The spec-admitted literal-v17 migration test correction restores exact current schema25, explicit0025 migration chains and the current recovery enum; historical17 fixtures, row/schema/profile hashes and frozen backup witness remain exact. Both plain populated source histories and real SQLCipher protected backup/interruption/retry/reopen preserve rights unknown, legacy rechecks, all old rows and empty successor intake/recovery/access-need tables. All6 original v17 methods and2 v25 predecessor/fault methods pass without skips, as do changed-file format/lint and separately qualified nonincremental selected-file types. Complete13438 common tracked/Python input identities are equal across the two guarded runs and independently rehash with zero mismatch or unreadable input. The first broader-import run remains FAIL; the actual encrypted-staging callback still fails with a2-versus3-argument TypeError and must close in separate linked C14 before ordinary W2 resumes. Silent imported diagnostics supply only bounded changed-file proof and never broader/profile PASS. Original T03 DONE history, Wave approval and historical S01 reviews remain immutable. No source/framework/security/migration/UX authority changes or criterion-bound C13 blocker remain. Fresh CP07, remaining W2 qualification and separate human G2 release remain obligations.
 
 **Currently open findings:** -
 

@@ -1,0 +1,14 @@
+{
+  "schemaVersion": "1.0",
+  "kind": "authority-preserving-correction",
+  "origin": {
+    "taskId": "CAP-05.S01.T03",
+    "commit": "9a860fc45fe67d9582f4a37c81c90436b1ec715e",
+    "sha256": "f74b32f21cdea4d6810e2651e892075295f377fba52d8cb924d1e74d9d76b16e"
+  },
+  "reproduction": "At clean committed candidate9a860fc45fe67d9582f4a37c81c90436b1ec715e, the unchanged encrypted object-staging test fails with TypeError because inspect_encrypted_staging accepts2arguments while the current approved product _publish receives3: staging, destination and exact staging identity. The callback also forwards only2arguments to the real helper. The helper signature was introduced by original approved T03 product implementation89da746a972d1faa6bd64739d8f9c86c6be21908 and remains unchanged. Fresh bounded one-case diagnostic artifacts/tmp/W2.C14.T01.red-01-9a860fc4.json SHA256 c238dcbb2a8dd3591b8eebc84fe1f17f278418d8f718d32b174f43aaf24e7b7c records actual exit1 and stable guarded inputs; raw log artifacts/tmp/W2.C14.T01.red-01-9a860fc4.encrypted-staging-fixture.log SHA256 6ff1dc11f9b5bbdbb8ec6e5933e217677e6fc21b037176525ca86587110d30ed retains1case/1error. The separate C13 default-import mypy observation also reports tests/data/test_encrypted_object_store.py:136 too few arguments and remains FAIL. C13 affected-file silent-import typing does not classify this defect as PASS.",
+  "changedPaths": [
+    "tests/data/test_encrypted_object_store.py"
+  ],
+  "impactAnalysis": "Restore the original T03 relevant fixture and encrypted-staging qualification obligation for its already-approved staging-identity security check. Change only the existing inspect_encrypted_staging callback signature to accept the exact tuple[int,int] identity received from the product and forward that same identity unchanged to the real original_publish helper. Preserve every plaintext-exclusion/encrypted-envelope assertion, inspection flag, interruption exception, partial cleanup, reopen/decryption/tamper/key and plaintext-policy test. Do not synthesize a new identity, use variadic argument erasure, suppress type errors, change product _publish logic/guards, schema/migrations, security/rights/permission authority, governed UX, framework source, acceptance criteria, original task/slice completion or prior adverse evidence. Run the full affected encrypted-object-store test class, changed-file Ruff format/lint and nonincremental ordinary-import mypy on this file plus the original C13 rights migration root to close its actual broader-import failure. Obtain independent correction/integration disposition. Keep ordinary W2 paused until this correction is independently approved, then resume the same campaign and finish required fresh W2.CP07 qualification and remaining product tasks. This is a bounded product-test fixture restoration, not an amendment or automation development. Full Wave and G2 release remain separate."
+}
