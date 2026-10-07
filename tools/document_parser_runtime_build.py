@@ -174,7 +174,12 @@ def _assemble_package(
             # These pinned model factories discover classes by reading their
             # sealed Python files. Other modules remain in the frozen PYZ;
             # their unselected source trees are not parser inputs.
-            return [name for name in names if name not in {"auto", "rt_detr", "rt_detr_v2", "encoder_decoder"}]
+            return [
+                name
+                for name in names
+                if (Path(directory) / name).is_dir()
+                and name not in {"auto", "rt_detr", "rt_detr_v2", "encoder_decoder"}
+            ]
         return ["licenses"] if directory.endswith(".dist-info") and "licenses" in names else []
 
     # Keep the artifact filename, but shorten its package directory so native

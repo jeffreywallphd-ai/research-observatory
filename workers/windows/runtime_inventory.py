@@ -151,7 +151,9 @@ def _canonical_package_root(path: Path) -> Path:
 
 
 def verify_worker_runtime(
-    runtime: SignedWorkerRuntime, *, profile: Literal["connector", "parser"] = "connector",
+    runtime: SignedWorkerRuntime,
+    *,
+    profile: Literal["connector", "parser"] = "connector",
     checkpoint: Callable[[], None] | None = None,
 ) -> Path:
     """Return the exact executable only after signature and full-tree checks."""
