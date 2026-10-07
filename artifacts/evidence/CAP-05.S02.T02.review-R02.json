@@ -1,0 +1,336 @@
+{
+  "task_id": "CAP-05.S02.T02",
+  "attempt_id": "R02",
+  "candidate_commit": "6d9369d0d14388486db2c70ba9720fb7695b556e",
+  "base_commit": "bfae61bbbbca3f20d3a4089d6c9e33acebdfe00e",
+  "reviewed_state_commit": "6d9369d0d14388486db2c70ba9720fb7695b556e",
+  "reviewer": "agent:/root/s02_t01_review",
+  "result": "approved",
+  "reviewed_at": "2026-10-07T13:20:41.239027+00:00",
+  "evidence_sha256": "7371f519ddcd284068027ba55850beef7deff2c21c23500cbbac342255d0b76b",
+  "packet_sha256": "c8f33e9910877d4760d78be15f409db96d3308e549f284fb08cae60bfac374bb",
+  "acceptance_criteria_sha256": "86ed95e53eb834fd4a67772d8aba4116698e3f74b184a13a0c91ec3f366695f7",
+  "selection_sha256": "b5dac895b1ee1e9c0a21cb5c6de237ae96e075da43261694e0a696771dab5b1e",
+  "notes": "Independent focused CAP-05.S02.T02 R02 task review approves candidate 6d9369d0d14388486db2c70ba9720fb7695b556e and explicitly closes CAP-05.S02.T02.R01.F01. Indexed Proposed ADR-0044 is linked to this task and covers all four originally uncovered protected native contract/port paths. Its completed implementation record documents inherited ADR-0028/0029 authority, per-element raw source/projection and parent-authenticated receipt invariants, conservative scholarly uncertainty, compatibility, rollback and proof limits without any new Accepted decision, security grant, product scope or human amendment. The missed acceptance row and documentation link are updated; accepted decisions, product/tests and framework source remain unchanged from R01. The exact fresh foundation:adr check spans original claim base ce14e0dcb0c8578f6514b900fa3baf24039a435d through this candidate and passes, retaining the four original protected paths in the replay. Actual current_submission R02 candidate/base/criteria/selection/evidence/prior/open-finding bindings authenticate through existing read-only taskctl validators. Eight fresh selected groups pass with 59 parser and 13 intake cases, zero skips, 13497 stable guarded tracked/installed inputs and 45.434 seconds of reported execution. Producer/report/raw/canonical output hashes and retained observations authenticate. Prior adverse R01 and genuine pre-submission adverse observations remain immutable; the earlier behavioral corrections are already independently reviewed and unchanged. This task disposition does not qualify actual LPAC execution, encrypted raw-output persistence, Docling/offline assets, resource/restart/recovery, integrated slice/Wave evidence, researcher acceptance or release.",
+  "acceptance_reviews": [
+    {
+      "criterion_index": 1,
+      "result": "satisfied",
+      "assessment": "Prior expanded independent R01 source and finite six-probe assessment established expected native hierarchy/text, unknown source locations, per-element NFC projections, exact namespaces, conservative citation uncertainty and parent-owned receipt authentication. Product, tests and portable contract source are unchanged in R02; the authenticated fresh 59-case parser and 13-case native intake groups pass. No repeated speculative audit is required for the documentary correction."
+    },
+    {
+      "criterion_index": 2,
+      "result": "satisfied",
+      "assessment": "Eight fresh criterion-linked groups bind this exact committed candidate with zero skips, 13497 stable guarded tracked/installed inputs, authenticated producer and raw/canonical logs. Existing hostile/malformed/cancellation/receipt and protected-source rights/session boundaries remain covered; required original-claim-base ADR coverage is now included explicitly. Synthetic worker bytes and transport doubles retain their limits and do not qualify LPAC or raw encrypted persistence."
+    },
+    {
+      "criterion_index": 3,
+      "result": "satisfied",
+      "assessment": "R01.F01 is fixed by the changed indexed task-linked Proposed ADR-0044 covering all four original protected paths, completed implementation/compatibility/rollback/verification documentation and passing original-claim-base coverage. The missed acceptance row and documentation link are updated. Accepted governing decisions and product/framework source are unchanged; no migration, governed UX, security/scope expansion or new release authority is introduced."
+    }
+  ],
+  "independence": {
+    "statement": "I authored the independent adverse R01 review and this append-only closure assessment. I did not author the implementation/tests, qualifying producer/run, Proposed ADR/implementation documentation, owner decisions or task transitions. Advisory findings are distinct from implementation ownership.",
+    "implementation_owner": "codex-w2-implementation",
+    "current_review_execution": "Bounded read-only incremental ADR/index/worksheet/architecture-document review, preserved R01 and accepted-authority hash authentication, fresh report/producer/log authentication and actual frozen packet/taskctl review/schema validators. No duplicate suites, native runtime checks, full-history audit or canonical/source/tests/framework/Git/HEAD mutation; only new ignored observations and this ledger."
+  },
+  "evidence_reproduction": {
+    "frozen_submission": {
+      "id": "R02",
+      "submitted_by": "codex-w2-implementation",
+      "submitted_at": "2026-10-07T13:12:28+00:00",
+      "candidate_commit": "6d9369d0d14388486db2c70ba9720fb7695b556e",
+      "base_commit": "bfae61bbbbca3f20d3a4089d6c9e33acebdfe00e",
+      "branch": "codex/w2-implementation",
+      "evidence_reference": {
+        "type": "criterion-manifest",
+        "path": "artifacts/evidence/CAP-05.S02.T02.R02.json",
+        "sha256": "7371f519ddcd284068027ba55850beef7deff2c21c23500cbbac342255d0b76b",
+        "commit": "6d9369d0d14388486db2c70ba9720fb7695b556e",
+        "recorded_at": "2026-10-07T13:12:28+00:00"
+      },
+      "acceptance_criteria_sha256": "86ed95e53eb834fd4a67772d8aba4116698e3f74b184a13a0c91ec3f366695f7",
+      "changed_paths": [
+        "artifacts/evidence/CAP-05.S02.T02.R01.corrected-01.json",
+        "artifacts/evidence/CAP-05.S02.T02.review-R01.json",
+        "artifacts/evidence/CAP-05.S02.T02.task-start.md",
+        "docs/adr/ADR-0044-bind-native-parsing-contracts-to-existing-document-authority.md",
+        "docs/adr/index.json",
+        "docs/architecture/document-parsing.md",
+        "docs/planning-implementation-plan.md",
+        "planning/backlog.yaml",
+        "planning/review-site/CAP-05/CAP-05.S02.T02.html",
+        "planning/review-site/CAP-05/CAP-05.S02.html",
+        "planning/review-site/manifest.json",
+        "planning/status-summary.md"
+      ],
+      "selected_checks": [
+        ".venv/Scripts/python.exe -B -m unittest discover -v -s tests/parsing -p test_*.py",
+        ".venv/Scripts/python.exe -B -m unittest -v tests.documents.test_format_inspection.FormatInspectionTests",
+        ".venv/Scripts/python.exe -B packages/contracts/documents/generate_parser_schema.py --check",
+        ".venv/Scripts/python.exe -B -m ruff format --check --config pyproject.toml -- services/core-api/src/research_observatory_core/parsing services/core-api/src/research_observatory_core/ports/native_parsing.py workers/document/native_parsing.py services/core-api/src/research_observatory_core/object_store.py tests/parsing packages/contracts/documents/generate_parser_schema.py",
+        ".venv/Scripts/python.exe -B -m ruff check --config pyproject.toml -- services/core-api/src/research_observatory_core/parsing services/core-api/src/research_observatory_core/ports/native_parsing.py workers/document/native_parsing.py services/core-api/src/research_observatory_core/object_store.py tests/parsing packages/contracts/documents/generate_parser_schema.py",
+        "$env:MYPYPATH='tools;services/core-api/src'; .venv/Scripts/python.exe -B -m mypy --config-file pyproject.toml --no-namespace-packages --no-incremental -- services/core-api/src/research_observatory_core/parsing services/core-api/src/research_observatory_core/ports/native_parsing.py workers/document/native_parsing.py services/core-api/src/research_observatory_core/object_store.py tests/parsing/contract_fixtures.py tests/parsing/test_document_ir.py tests/parsing/test_normalization.py tests/parsing/test_parse_handoff.py tests/parsing/test_portable_schema.py tests/parsing/test_selection.py tests/parsing/test_native_parsing.py packages/contracts/documents/generate_parser_schema.py",
+        ".venv/Scripts/python.exe -B tools/architecture_check.py --repo .",
+        ".venv/Scripts/python.exe -B tools/adr_check.py --repo . --base ce14e0dcb0c8578f6514b900fa3baf24039a435d --head 6d9369d0d14388486db2c70ba9720fb7695b556e"
+      ],
+      "deferred_checks": [
+        "Actual packaged native LPAC execution, encrypted raw-output persistence, pinned offline Docling/assets, resource limits, integrated failure/cancellation/restart/recovery and slice end-to-end evidence remain CAP-05.S02.T03 and S02 qualification.",
+        "Unchanged existing attachment service and acquisition integration are not replayed here because this task changes neither object storage nor attachment/runtime code; the complete parser suite includes protected-source delivery. Existing acquisition-fixture typing defects remain adverse and outside this bounded product type selection. Broader repository checks remain an exit obligation.",
+        "Immutable document revisions/human acceptance and reader experience remain S03/S04. Fresh full repository/profile, cross-capability, security/privacy/rights/accessibility/performance/packaging and separate human W2 release gate remain pending."
+      ],
+      "selection_rationale": "Native hostile-source extraction adds a worker-only algorithm and a public raw cross-process value/parent-authenticated Core adapter. Select complete parser/native/normalization/portable-schema/protected-source tests plus existing native intake regression and directly affected quality/architecture. Expanded independent task review covers content identity, source locations/hierarchy, namespace semantics, scholarly uncertainty and worker/Core authority; no unchanged whole-history or full-profile replay is selected. R02 is a bounded documentation correction for R01.F01. Include the separate required foundation:adr original-base replay; repeat the seven small affected groups fresh at this committed candidate under the existing evidence rules, without adding unrelated full-profile or history qualification.",
+      "selection_sha256": "b5dac895b1ee1e9c0a21cb5c6de237ae96e075da43261694e0a696771dab5b1e",
+      "prior_attempt_id": "R01",
+      "open_finding_ids": [
+        "CAP-05.S02.T02.R01.F01"
+      ],
+      "root_cause_analysis": "R01 selected the dependency architecture check but missed the separate same-change-set ADR coverage requirement for protected portable contract and Core port paths. Existing accepted ADR-0028/0029 remain governing and unchanged. The missed acceptance row now requires the original claim-base ADR replay; its prior failure is preserved. Proposed indexed ADR-0044 documents the already approved native interface, identities, namespace/uncertainty invariants, compatibility, rollback and verification limits. This changes no product behavior, accepted decision, framework source or owner authority.",
+      "selected_command_ids": [
+        "documents:unit",
+        "contracts:unit",
+        "foundation:quality",
+        "foundation:architecture",
+        "foundation:adr"
+      ],
+      "packet_sha256": "c8f33e9910877d4760d78be15f409db96d3308e549f284fb08cae60bfac374bb"
+    },
+    "packet_validation_errors": [],
+    "review_control_validation_errors": [],
+    "manifest_sha256_semantics": "Existing taskctl canonical line-ending evidence hash.",
+    "fresh_report": {
+      "path": "artifacts/tmp/CAP-05.S02.T02.selected-03-6d9369d0.json",
+      "sha256": "363977099cf36cd1e30cb320af84309d964bbac9d3ed1e3710a23b1b98e6e1ed"
+    },
+    "producer": {
+      "path": "artifacts/tmp/CAP-05.S02.T02.run-selected-03.py",
+      "sha256": "7f7e9919d1c8ac6cb5cce8a1c6aec83bf412eb46210202dbbb4a167f5eea067f"
+    },
+    "selected_check_groups": 8,
+    "parser_cases": 59,
+    "native_intake_cases": 13,
+    "skipped_cases": 0,
+    "stable_input_count": 13497,
+    "reported_selected_execution_seconds": 45.434,
+    "raw_and_canonical_check_hashes_authenticated": true,
+    "retained_adverse_hashes_authenticated": true,
+    "actual_executed_argv": "Authenticated against the finite producer; exact execution argv remains only in ignored producer/report. All public command labels are repository-relative.",
+    "current_observations": [
+      {
+        "path": "artifacts/tmp/CAP-05.S02.T02.review-s02_t01_review-R02-preparation-01.json",
+        "sha256": "b7fec193043eb6324a15510b8c8d8c0b9930dc9f41033783e6694d3cdcd5ad31"
+      },
+      {
+        "path": "artifacts/tmp/CAP-05.S02.T02.review-s02_t01_review-R02-output-authentication-01.json",
+        "sha256": "aa7d66732d11b9d4f0ddb0a6d3e35e8d05c040e1f79481202f8e1cc4aa6ecfae"
+      }
+    ],
+    "prior_independent_formal_review": {
+      "path": "artifacts/evidence/CAP-05.S02.T02.review-R01.json",
+      "sha256": "f0e38cbb5571d5503c5caa01002a494d3a8686e018b9b1b9d1bbf1ffa1f07ea0",
+      "result": "changes-requested",
+      "unchanged": true
+    },
+    "prior_pre_submission_history_preserved": {
+      "original_adverse_observation": {
+        "path": "artifacts/tmp/CAP-05.S02.T02.review-s02_t01_review-observation-01.json",
+        "sha256": "b99db24d5c12c28d71217164fc265a6d45a6dc7b6b6df1ea2651bf8c16229daf"
+      },
+      "finite_adverse_assessment": {
+        "path": "artifacts/tmp/CAP-05.S02.T02.review-s02_t01_review-pre-submission-assessment-01.json",
+        "sha256": "61347aa628f3599c2923bbbaf699ff1ba2305408477638634623492f15877cc8"
+      },
+      "remediation_observation": {
+        "path": "artifacts/tmp/CAP-05.S02.T02.review-s02_t01_review-remediation-observation-01.json",
+        "sha256": "496e13f2be4af65bd11db09e6edae151710c5a2164e5f186cdeafe4059cd8f8c"
+      },
+      "behavioral_red_receipts": [
+        {
+          "path": "artifacts/tmp/CAP-05.S02.T02.review-red-01.txt",
+          "sha256": "33792dca1745e740a5ec641fc701d3c78fed66d667ee575cbbf4035fb62dfea1",
+          "reportedCases": 2,
+          "reportedStatus": "behavioral-red"
+        },
+        {
+          "path": "artifacts/tmp/CAP-05.S02.T02.namespace-red-01.txt",
+          "sha256": "e8965844616d6c21b89bd2151769c93fe68d42bf7c8e17c513094e200b49af41",
+          "reportedCases": 1,
+          "reportedStatus": "behavioral-red"
+        }
+      ],
+      "replayed_cases": [
+        {
+          "case": "jats-partly-missing-bibliography-target",
+          "sourceSha256": "5f88bfac23924ee0a8c48a6897d0c88765bdd7e3e405c44f5cda499e6a723181",
+          "result": "PASS",
+          "rawReceiptSha256": "59dca4c3c177a69a9d1f6325c48875c8da8297c3f1192d0a3a4641e3cbfd4ade",
+          "citationResolution": "unresolved",
+          "candidateCount": 0,
+          "referenceCount": 1,
+          "rawTargetsRetained": true,
+          "warning": "missing-citation-target"
+        },
+        {
+          "case": "html-optional-li-close-through-p",
+          "sourceSha256": "b33bc939f9aa6af9f066bb6694b2e8307a61670c990d736c1d45698d19f7b6a6",
+          "result": "PASS",
+          "rawReceiptSha256": "4a6194f9f89ef4be15a38c86080aba158e30963a06bf87e72c753e33350e216e",
+          "siblingItemText": [
+            "A",
+            "B"
+          ],
+          "sameListParent": true,
+          "paragraphText": "A"
+        },
+        {
+          "case": "html-optional-head-end",
+          "sourceSha256": "64e3de86e72cd36660a45720d8fec931bf65b1865ef5ee9cd3e513dc8006682b",
+          "result": "PASS",
+          "rawReceiptSha256": "9c52e58214a96a87281aa9dc5f10731642485265e734095dac5d171463fa98dd",
+          "headBodySiblingParent": true,
+          "headText": "T",
+          "bodyText": "A"
+        },
+        {
+          "case": "tei-head-under-foreign-figure",
+          "sourceSha256": "a90ad4bea451742f4f3fbedbef85cb4c7e682ea44060752422116322c2075070",
+          "result": "PASS",
+          "rawReceiptSha256": "29621a131966dcc9ea691b762e3b1c0ef8774459c21bbecc2b375118f4c575dc",
+          "headingKind": "title",
+          "foreignParentKind": "unknown",
+          "figureCount": 0
+        },
+        {
+          "case": "nested-html-list-scope",
+          "syntheticSource": "<html><body><ul><li>A<ul><li>B<li>C</ul><li>D</ul></body></html>",
+          "sourceSha256": "dcb05374c94ee96b516ed24e42d5c3e8001d94c93966b4374c2916e7ff53f322",
+          "result": "PASS",
+          "rawReceiptSha256": "ffe521da9c97cd893f223062fca181e63a57dac2be587da3f8ed93ae840902c8"
+        },
+        {
+          "case": "nested-html-table-scope",
+          "syntheticSource": "<html><body><table><tr><td>A<table><tr><td>B<td>C</table><td>D</table></body></html>",
+          "sourceSha256": "10ef41a3e5540dfe03b186a1a11c8e0ca5e00c91f6c13b57336241b2ec984184",
+          "result": "PASS",
+          "rawReceiptSha256": "df6c782d74566faf7ec8b3822da946d8a5fcdd559328d6fd00a0c2894f937f99"
+        }
+      ],
+      "historical_unsubmitted_manifest": {
+        "path": "artifacts/evidence/CAP-05.S02.T02.R01.json",
+        "sha256": "cf69f66d195d7a131a7a49d349e443ca3572a52838adde52ec446dc531dd31b0",
+        "attachedAsCanonicalEvidence": false,
+        "formalReviewRound": false
+      },
+      "round_semantics": "These adverse observations and their corrections precede the first frozen submission. They are preserved factual history, not prior formal R01 dispositions, new finding IDs or formal closures."
+    },
+    "check_receipts": [
+      {
+        "id": "parser-contract-and-protected-source",
+        "command_id": "documents:unit",
+        "exit_code": 0,
+        "duration_seconds": 31.146,
+        "raw_output": "artifacts/tmp/CAP-05.S02.T02.selected-03-6d9369d0.parser-contract-and-protected-source.log",
+        "raw_sha256": "2adb53a0cd19b11f4c322ba5f5c492eaa919201e7719fb2698e5301b999bbed3",
+        "canonical_sha256": "db14c6aff2b9724831dc4f8822bc583074e2c9274e960ced9e43ef64c43ba665",
+        "cases": 59
+      },
+      {
+        "id": "native-intake-regression",
+        "command_id": "documents:unit",
+        "exit_code": 0,
+        "duration_seconds": 0.866,
+        "raw_output": "artifacts/tmp/CAP-05.S02.T02.selected-03-6d9369d0.native-intake-regression.log",
+        "raw_sha256": "2498622c39b489e18a7ba3897ae755899e7f8af7b2901fa2467b9a62062ca046",
+        "canonical_sha256": "4809d96f4554fba4e09c6ddfcfb072d69102d1a3e299cc23237d7767dda1a326",
+        "cases": 13
+      },
+      {
+        "id": "parser-schema",
+        "command_id": "contracts:unit",
+        "exit_code": 0,
+        "duration_seconds": 0.634,
+        "raw_output": "artifacts/tmp/CAP-05.S02.T02.selected-03-6d9369d0.parser-schema.log",
+        "raw_sha256": "a55ee30fb47c9afacd282abc3e69cce6ee0e020d9d710eb2dc98eda54569bb56",
+        "canonical_sha256": "cf42b66dd1df678fb7cf5ffaf80552a60597b0a2f2ef96323d1949800d8f6085",
+        "cases": null
+      },
+      {
+        "id": "format",
+        "command_id": "foundation:quality",
+        "exit_code": 0,
+        "duration_seconds": 0.148,
+        "raw_output": "artifacts/tmp/CAP-05.S02.T02.selected-03-6d9369d0.format.log",
+        "raw_sha256": "7b4549ac2e9820f695aa60c4695796689a11c0dce1a49f0b01a6250eca9f55aa",
+        "canonical_sha256": "7b4549ac2e9820f695aa60c4695796689a11c0dce1a49f0b01a6250eca9f55aa",
+        "cases": null
+      },
+      {
+        "id": "lint",
+        "command_id": "foundation:quality",
+        "exit_code": 0,
+        "duration_seconds": 0.148,
+        "raw_output": "artifacts/tmp/CAP-05.S02.T02.selected-03-6d9369d0.lint.log",
+        "raw_sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18",
+        "canonical_sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18",
+        "cases": null
+      },
+      {
+        "id": "types",
+        "command_id": "foundation:quality",
+        "exit_code": 0,
+        "duration_seconds": 6.287,
+        "raw_output": "artifacts/tmp/CAP-05.S02.T02.selected-03-6d9369d0.types.log",
+        "raw_sha256": "049e111c33e0f38fa35a802bb1cdf4e711b08139923551dc7fc22691a37247cf",
+        "canonical_sha256": "2d6b2fd3da664bcd3c10a511fd2cb9bf5f7517722cb0753d911d03540bfa3cbf",
+        "cases": null
+      },
+      {
+        "id": "architecture",
+        "command_id": "foundation:architecture",
+        "exit_code": 0,
+        "duration_seconds": 4.086,
+        "raw_output": "artifacts/tmp/CAP-05.S02.T02.selected-03-6d9369d0.architecture.log",
+        "raw_sha256": "51a256bf6a7b2e89ab1d1b97aa19077aabf0e8858a450de1f5ceb155ed5c3e88",
+        "canonical_sha256": "1ba622fdbf569bf9ab13ee46e639b636ea005c560abcd4b168f782d8fbdc3f74",
+        "cases": null
+      },
+      {
+        "id": "adr-original-base-replay",
+        "command_id": "foundation:adr",
+        "exit_code": 0,
+        "duration_seconds": 2.119,
+        "raw_output": "artifacts/tmp/CAP-05.S02.T02.selected-03-6d9369d0.adr-original-base-replay.log",
+        "raw_sha256": "c2278b901d950a5afa456dd75b705d275fa9a8b14345c5b3e6ed88b0a87ae686",
+        "canonical_sha256": "06125f132f36c4e8c4dba68524ec691abcc062071dbe7b7c5136aa6da226f407",
+        "cases": null
+      }
+    ],
+    "source_and_accepted_authority_unchanged": true,
+    "required_ADR_replay": {
+      "original_claim_base": "ce14e0dcb0c8578f6514b900fa3baf24039a435d",
+      "candidate": "6d9369d0d14388486db2c70ba9720fb7695b556e",
+      "exit_code": 0,
+      "changed_indexed_record": "docs/adr/ADR-0044-bind-native-parsing-contracts-to-existing-document-authority.md",
+      "status": "Proposed",
+      "covered_original_paths": [
+        "packages/contracts/documents/README.md",
+        "packages/contracts/documents/generate_parser_schema.py",
+        "packages/contracts/documents/native-structure.v1.schema.json",
+        "services/core-api/src/research_observatory_core/ports/native_parsing.py"
+      ]
+    },
+    "deferred": [
+      "Actual packaged native LPAC execution, encrypted raw-output persistence, pinned offline Docling/assets, resource limits, integrated failure/cancellation/restart/recovery and slice end-to-end evidence remain CAP-05.S02.T03 and S02 qualification.",
+      "Unchanged existing attachment service and acquisition integration are not replayed here because this task changes neither object storage nor attachment/runtime code; the complete parser suite includes protected-source delivery. Existing acquisition-fixture typing defects remain adverse and outside this bounded product type selection. Broader repository checks remain an exit obligation.",
+      "Immutable document revisions/human acceptance and reader experience remain S03/S04. Fresh full repository/profile, cross-capability, security/privacy/rights/accessibility/performance/packaging and separate human W2 release gate remain pending."
+    ]
+  },
+  "findings": [],
+  "closures": [
+    {
+      "finding_id": "CAP-05.S02.T02.R01.F01",
+      "disposition": "fixed",
+      "evidence": "At exact candidate 6d9369d0d14388486db2c70ba9720fb7695b556e, changed indexed Proposed ADR-0044 at docs/adr/ADR-0044-bind-native-parsing-contracts-to-existing-document-authority.md declares linked_tasks CAP-05.S02.T02 and the exact four affected_paths packages/contracts/documents/README.md, packages/contracts/documents/generate_parser_schema.py, packages/contracts/documents/native-structure.v1.schema.json, services/core-api/src/research_observatory_core/ports/native_parsing.py. It completes required sections and preserves accepted ADR-0028/0029 byte-for-byte from original claim base. Fresh reproducible command: .venv/Scripts/python.exe -B tools/adr_check.py --repo . --base ce14e0dcb0c8578f6514b900fa3baf24039a435d --head 6d9369d0d14388486db2c70ba9720fb7695b556e. Authenticated selected-03 output exits 0 in 2.119 seconds; raw log artifacts/tmp/CAP-05.S02.T02.selected-03-6d9369d0.adr-original-base-replay.log SHA c2278b901d950a5afa456dd75b705d275fa9a8b14345c5b3e6ed88b0a87ae686, canonical SHA 06125f132f36c4e8c4dba68524ec691abcc062071dbe7b7c5136aa6da226f407. Original exit-1 four-path diagnostic and R01 adverse ledger are unchanged and referenced by the preserved R01 review. The original claim-base replay proves genuine coverage rather than checking only the incremental documentation delta. No product/framework/policy source is changed and Proposed supplies documentary coverage without architecture acceptance."
+    }
+  ]
+}

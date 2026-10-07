@@ -21608,13 +21608,13 @@
             {
               "task_id": "CAP-05.S02.T02",
               "title": "Implement native JATS/TEI/XML/HTML parsing",
-              "status": "IN_PROGRESS",
+              "status": "DONE",
               "mode": "append-only",
               "latest_review": {
                 "reviewer": "agent:/root/s02_t01_review",
-                "result": "changes-requested",
-                "reviewed_at": "2026-10-07T12:53:39+00:00",
-                "notes": "Independent expanded CAP-05.S02.T02 first frozen R01 review requests changes solely for the missing changed, indexed architecture record covering the new portable native contract and Core port (criterion 3). The native implementation and fresh evidence satisfy criteria 1 and 2: all three genuine pre-submission defects were corrected with behavioral red regressions and the missed acceptance row, and independent replay preserves conservative unresolved partial-target uncertainty/raw fields, correct optional HTML hierarchy/text ownership and exact TEI parent namespace. Original observations and the unsubmitted historical R01.json remain immutable history; they are not invented formal rounds or closure IDs. Actual current_submission candidate/base/criteria/selection/evidence authenticate through read-only taskctl validators without errors. Seven fresh selected groups passed with 59 parser and 13 intake cases, zero skips, 13494 stable guarded inputs and authenticated producer/report/raw/canonical logs. The separate required adr_check over the exact claim-base-to-candidate delta exits 1 on four protected paths because no indexed Proposed/Accepted ADR changed in this change set. Accepted ADR-0028/0029 remain governing and immutable, but do not satisfy this additional documentation requirement. Add only a narrow indexed Proposed implementation record and focused coverage proof, preserving accepted architecture and frozen R01; no new human approval, policy/framework change or architectural redesign is inferred. Actual LPAC launch, encrypted raw persistence, Docling/offline assets, resource/restart/recovery, integrated slice and fresh Wave/release qualification remain pending."
+                "result": "approved",
+                "reviewed_at": "2026-10-07T13:29:12+00:00",
+                "notes": "Independent focused CAP-05.S02.T02 R02 task review approves candidate 6d9369d0d14388486db2c70ba9720fb7695b556e and explicitly closes CAP-05.S02.T02.R01.F01. Indexed Proposed ADR-0044 is linked to this task and covers all four originally uncovered protected native contract/port paths. Its completed implementation record documents inherited ADR-0028/0029 authority, per-element raw source/projection and parent-authenticated receipt invariants, conservative scholarly uncertainty, compatibility, rollback and proof limits without any new Accepted decision, security grant, product scope or human amendment. The missed acceptance row and documentation link are updated; accepted decisions, product/tests and framework source remain unchanged from R01. The exact fresh foundation:adr check spans original claim base ce14e0dcb0c8578f6514b900fa3baf24039a435d through this candidate and passes, retaining the four original protected paths in the replay. Actual current_submission R02 candidate/base/criteria/selection/evidence/prior/open-finding bindings authenticate through existing read-only taskctl validators. Eight fresh selected groups pass with 59 parser and 13 intake cases, zero skips, 13497 stable guarded tracked/installed inputs and 45.434 seconds of reported execution. Producer/report/raw/canonical output hashes and retained observations authenticate. Prior adverse R01 and genuine pre-submission adverse observations remain immutable; the earlier behavioral corrections are already independently reviewed and unchanged. This task disposition does not qualify actual LPAC execution, encrypted raw-output persistence, Docling/offline assets, resource/restart/recovery, integrated slice/Wave evidence, researcher acceptance or release."
               },
               "review_control": {
                 "version": 1,
@@ -21738,6 +21738,119 @@
                         "closed_finding_ids": []
                       }
                     }
+                  },
+                  {
+                    "submission": {
+                      "id": "R02",
+                      "submitted_by": "codex-w2-implementation",
+                      "submitted_at": "2026-10-07T13:12:28+00:00",
+                      "candidate_commit": "6d9369d0d14388486db2c70ba9720fb7695b556e",
+                      "base_commit": "bfae61bbbbca3f20d3a4089d6c9e33acebdfe00e",
+                      "branch": "codex/w2-implementation",
+                      "evidence_reference": {
+                        "type": "criterion-manifest",
+                        "path": "artifacts/evidence/CAP-05.S02.T02.R02.json",
+                        "sha256": "7371f519ddcd284068027ba55850beef7deff2c21c23500cbbac342255d0b76b",
+                        "commit": "6d9369d0d14388486db2c70ba9720fb7695b556e",
+                        "recorded_at": "2026-10-07T13:12:28+00:00"
+                      },
+                      "acceptance_criteria_sha256": "86ed95e53eb834fd4a67772d8aba4116698e3f74b184a13a0c91ec3f366695f7",
+                      "changed_paths": [
+                        "artifacts/evidence/CAP-05.S02.T02.R01.corrected-01.json",
+                        "artifacts/evidence/CAP-05.S02.T02.review-R01.json",
+                        "artifacts/evidence/CAP-05.S02.T02.task-start.md",
+                        "docs/adr/ADR-0044-bind-native-parsing-contracts-to-existing-document-authority.md",
+                        "docs/adr/index.json",
+                        "docs/architecture/document-parsing.md",
+                        "docs/planning-implementation-plan.md",
+                        "planning/backlog.yaml",
+                        "planning/review-site/CAP-05/CAP-05.S02.T02.html",
+                        "planning/review-site/CAP-05/CAP-05.S02.html",
+                        "planning/review-site/manifest.json",
+                        "planning/status-summary.md"
+                      ],
+                      "selected_checks": [
+                        ".venv/Scripts/python.exe -B -m unittest discover -v -s tests/parsing -p test_*.py",
+                        ".venv/Scripts/python.exe -B -m unittest -v tests.documents.test_format_inspection.FormatInspectionTests",
+                        ".venv/Scripts/python.exe -B packages/contracts/documents/generate_parser_schema.py --check",
+                        ".venv/Scripts/python.exe -B -m ruff format --check --config pyproject.toml -- services/core-api/src/research_observatory_core/parsing services/core-api/src/research_observatory_core/ports/native_parsing.py workers/document/native_parsing.py services/core-api/src/research_observatory_core/object_store.py tests/parsing packages/contracts/documents/generate_parser_schema.py",
+                        ".venv/Scripts/python.exe -B -m ruff check --config pyproject.toml -- services/core-api/src/research_observatory_core/parsing services/core-api/src/research_observatory_core/ports/native_parsing.py workers/document/native_parsing.py services/core-api/src/research_observatory_core/object_store.py tests/parsing packages/contracts/documents/generate_parser_schema.py",
+                        "$env:MYPYPATH='tools;services/core-api/src'; .venv/Scripts/python.exe -B -m mypy --config-file pyproject.toml --no-namespace-packages --no-incremental -- services/core-api/src/research_observatory_core/parsing services/core-api/src/research_observatory_core/ports/native_parsing.py workers/document/native_parsing.py services/core-api/src/research_observatory_core/object_store.py tests/parsing/contract_fixtures.py tests/parsing/test_document_ir.py tests/parsing/test_normalization.py tests/parsing/test_parse_handoff.py tests/parsing/test_portable_schema.py tests/parsing/test_selection.py tests/parsing/test_native_parsing.py packages/contracts/documents/generate_parser_schema.py",
+                        ".venv/Scripts/python.exe -B tools/architecture_check.py --repo .",
+                        ".venv/Scripts/python.exe -B tools/adr_check.py --repo . --base ce14e0dcb0c8578f6514b900fa3baf24039a435d --head 6d9369d0d14388486db2c70ba9720fb7695b556e"
+                      ],
+                      "deferred_checks": [
+                        "Actual packaged native LPAC execution, encrypted raw-output persistence, pinned offline Docling/assets, resource limits, integrated failure/cancellation/restart/recovery and slice end-to-end evidence remain CAP-05.S02.T03 and S02 qualification.",
+                        "Unchanged existing attachment service and acquisition integration are not replayed here because this task changes neither object storage nor attachment/runtime code; the complete parser suite includes protected-source delivery. Existing acquisition-fixture typing defects remain adverse and outside this bounded product type selection. Broader repository checks remain an exit obligation.",
+                        "Immutable document revisions/human acceptance and reader experience remain S03/S04. Fresh full repository/profile, cross-capability, security/privacy/rights/accessibility/performance/packaging and separate human W2 release gate remain pending."
+                      ],
+                      "selection_rationale": "Native hostile-source extraction adds a worker-only algorithm and a public raw cross-process value/parent-authenticated Core adapter. Select complete parser/native/normalization/portable-schema/protected-source tests plus existing native intake regression and directly affected quality/architecture. Expanded independent task review covers content identity, source locations/hierarchy, namespace semantics, scholarly uncertainty and worker/Core authority; no unchanged whole-history or full-profile replay is selected. R02 is a bounded documentation correction for R01.F01. Include the separate required foundation:adr original-base replay; repeat the seven small affected groups fresh at this committed candidate under the existing evidence rules, without adding unrelated full-profile or history qualification.",
+                      "selection_sha256": "b5dac895b1ee1e9c0a21cb5c6de237ae96e075da43261694e0a696771dab5b1e",
+                      "prior_attempt_id": "R01",
+                      "open_finding_ids": [
+                        "CAP-05.S02.T02.R01.F01"
+                      ],
+                      "root_cause_analysis": "R01 selected the dependency architecture check but missed the separate same-change-set ADR coverage requirement for protected portable contract and Core port paths. Existing accepted ADR-0028/0029 remain governing and unchanged. The missed acceptance row now requires the original claim-base ADR replay; its prior failure is preserved. Proposed indexed ADR-0044 documents the already approved native interface, identities, namespace/uncertainty invariants, compatibility, rollback and verification limits. This changes no product behavior, accepted decision, framework source or owner authority.",
+                      "selected_command_ids": [
+                        "documents:unit",
+                        "contracts:unit",
+                        "foundation:quality",
+                        "foundation:architecture",
+                        "foundation:adr"
+                      ],
+                      "packet_sha256": "c8f33e9910877d4760d78be15f409db96d3308e549f284fb08cae60bfac374bb"
+                    },
+                    "review": {
+                      "reviewer": "agent:/root/s02_t01_review",
+                      "result": "approved",
+                      "reviewed_at": "2026-10-07T13:29:12+00:00",
+                      "notes": "Independent focused CAP-05.S02.T02 R02 task review approves candidate 6d9369d0d14388486db2c70ba9720fb7695b556e and explicitly closes CAP-05.S02.T02.R01.F01. Indexed Proposed ADR-0044 is linked to this task and covers all four originally uncovered protected native contract/port paths. Its completed implementation record documents inherited ADR-0028/0029 authority, per-element raw source/projection and parent-authenticated receipt invariants, conservative scholarly uncertainty, compatibility, rollback and proof limits without any new Accepted decision, security grant, product scope or human amendment. The missed acceptance row and documentation link are updated; accepted decisions, product/tests and framework source remain unchanged from R01. The exact fresh foundation:adr check spans original claim base ce14e0dcb0c8578f6514b900fa3baf24039a435d through this candidate and passes, retaining the four original protected paths in the replay. Actual current_submission R02 candidate/base/criteria/selection/evidence/prior/open-finding bindings authenticate through existing read-only taskctl validators. Eight fresh selected groups pass with 59 parser and 13 intake cases, zero skips, 13497 stable guarded tracked/installed inputs and 45.434 seconds of reported execution. Producer/report/raw/canonical output hashes and retained observations authenticate. Prior adverse R01 and genuine pre-submission adverse observations remain immutable; the earlier behavioral corrections are already independently reviewed and unchanged. This task disposition does not qualify actual LPAC execution, encrypted raw-output persistence, Docling/offline assets, resource/restart/recovery, integrated slice/Wave evidence, researcher acceptance or release."
+                    },
+                    "ledger": {
+                      "path": "artifacts/evidence/CAP-05.S02.T02.review-R02.json",
+                      "sha256": "d5c0b55a63ac4a8ec6bd0a4f7fd90d34829a05556e08e045de65e3d86585e2a5"
+                    },
+                    "findings": [],
+                    "closures": [
+                      {
+                        "finding_id": "CAP-05.S02.T02.R01.F01",
+                        "disposition": "fixed",
+                        "evidence": "At exact candidate 6d9369d0d14388486db2c70ba9720fb7695b556e, changed indexed Proposed ADR-0044 at docs/adr/ADR-0044-bind-native-parsing-contracts-to-existing-document-authority.md declares linked_tasks CAP-05.S02.T02 and the exact four affected_paths packages/contracts/documents/README.md, packages/contracts/documents/generate_parser_schema.py, packages/contracts/documents/native-structure.v1.schema.json, services/core-api/src/research_observatory_core/ports/native_parsing.py. It completes required sections and preserves accepted ADR-0028/0029 byte-for-byte from original claim base. Fresh reproducible command: .venv/Scripts/python.exe -B tools/adr_check.py --repo . --base ce14e0dcb0c8578f6514b900fa3baf24039a435d --head 6d9369d0d14388486db2c70ba9720fb7695b556e. Authenticated selected-03 output exits 0 in 2.119 seconds; raw log artifacts/tmp/CAP-05.S02.T02.selected-03-6d9369d0.adr-original-base-replay.log SHA c2278b901d950a5afa456dd75b705d275fa9a8b14345c5b3e6ed88b0a87ae686, canonical SHA 06125f132f36c4e8c4dba68524ec691abcc062071dbe7b7c5136aa6da226f407. Original exit-1 four-path diagnostic and R01 adverse ledger are unchanged and referenced by the preserved R01 review. The original claim-base replay proves genuine coverage rather than checking only the incremental documentation delta. No product/framework/policy source is changed and Proposed supplies documentary coverage without architecture acceptance."
+                      }
+                    ],
+                    "telemetry": {
+                      "task_id": "CAP-05.S02.T02",
+                      "amendment_id": null,
+                      "attempt_id": "R02",
+                      "submitted_at": "2026-10-07T13:12:28+00:00",
+                      "reviewed_at": "2026-10-07T13:29:12+00:00",
+                      "duration_seconds": 1004,
+                      "outcome": "approved",
+                      "finding_counts": {
+                        "critical": 0,
+                        "high": 0,
+                        "medium": 0,
+                        "low": 0,
+                        "blocking": 0,
+                        "total": 0
+                      },
+                      "command_ids": [
+                        "documents:unit",
+                        "contracts:unit",
+                        "foundation:quality",
+                        "foundation:architecture",
+                        "foundation:adr"
+                      ],
+                      "remediation": {
+                        "prior_attempt_id": "R01",
+                        "replayed_finding_ids": [
+                          "CAP-05.S02.T02.R01.F01"
+                        ],
+                        "closed_finding_ids": [
+                          "CAP-05.S02.T02.R01.F01"
+                        ]
+                      }
+                    }
                   }
                 ],
                 "current_submission": null
@@ -21746,7 +21859,7 @@
             {
               "task_id": "CAP-05.S02.T03",
               "title": "Integrate the local Docling-based PDF parser with fallback",
-              "status": "NOT_STARTED",
+              "status": "READY",
               "mode": "latest-review-only",
               "latest_review": {
                 "reviewer": null,
@@ -21781,7 +21894,7 @@
             {
               "task_id": "CAP-05.S02.T02",
               "title": "Implement native JATS/TEI/XML/HTML parsing",
-              "status": "IN_PROGRESS",
+              "status": "DONE",
               "page": "CAP-05/CAP-05.S02.T02.html",
               "dependencies": [
                 "CAP-05.S02.T01"
@@ -21800,7 +21913,7 @@
             {
               "task_id": "CAP-05.S02.T03",
               "title": "Integrate the local Docling-based PDF parser with fallback",
-              "status": "NOT_STARTED",
+              "status": "READY",
               "page": "CAP-05/CAP-05.S02.T03.html",
               "dependencies": [
                 "CAP-05.S02.T02",
