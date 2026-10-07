@@ -5,6 +5,7 @@ import sys
 import tracemalloc
 import unittest
 from pathlib import Path
+from types import GeneratorType
 from typing import cast
 from unittest.mock import patch
 
@@ -20,6 +21,7 @@ class NormalizationTests(unittest.TestCase):
         for raw, first in (("a" + "\u0315\u0300" * 12000, "à"), ("a" + "\u0315" * 24000, "a")):
             with self.subTest(first=first):
                 units = normalization._composed(raw, lambda: None)
+                assert isinstance(units, GeneratorType)
                 tracemalloc.start()
                 try:
                     self.assertEqual(first, next(units)[0])
