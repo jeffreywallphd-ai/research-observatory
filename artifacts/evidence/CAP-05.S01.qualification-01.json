@@ -1,0 +1,145 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "slice-qualification-evidence",
+  "sliceId": "CAP-05.S01",
+  "approvalCommit": "c85a59f3a293f8e3f2eaf6454682c9a14b1efa55",
+  "candidateCommit": "e53a5154ddf78522edd252645eafc71621acdc51",
+  "submissionMetadataCommit": "1bcf679205a80612701d2dcb02cfa6feb97949ce",
+  "metadataOnlyDelta": [
+    "artifacts/evidence/CAP-05.S01.T03.json",
+    "artifacts/evidence/CAP-05.S01.T03.publication-repair-01.owner-approval.json",
+    "artifacts/evidence/CAP-05.S01.T03.review-R01.json",
+    "docs/planning-implementation-plan.md",
+    "planning/backlog.yaml",
+    "planning/review-site/CAP-05/CAP-05.S01.T03.html",
+    "planning/review-site/CAP-05/CAP-05.S01.html",
+    "planning/review-site/CAP-05/index.html",
+    "planning/review-site/manifest.json",
+    "planning/review-site/waves/W2.html",
+    "planning/status-summary.md"
+  ],
+  "qualificationStatus": "PASS_PENDING_INDEPENDENT_SLICE_DISPOSITION",
+  "independentSliceDisposition": "pending",
+  "outcome": "Local and permitted remote intake preserve exact scholarly identity, source/license, encrypted bytes, explicit human attachment and durable recovery. Distinct copies and local access annotations remain honest and usable; downstream source consumers use portable metadata and protected revision-bound streams.",
+  "approvedPlan": {
+    "path": "planning/slice-plans/CAP-05/CAP-05.S01-rights-aware-document-acquisition.md",
+    "sha256": "374350eacb70bd6fff824b6964ba68570c4ef05a2f358a24bc780eea0553876c"
+  },
+  "currentAuthority": {
+    "referenceId": "RO-UI-ACADEMIC-MINIMAL-1.9",
+    "verificationMethod": {
+      "path": "planning/verification-method-approvals/CAP-05.S01.T03.EX01.json",
+      "sha256": "79a57a1e0cdbb7eb2e9fab36084edf9dcdd476444047b947d3eea9dceded87fb"
+    },
+    "originalTaskAndWaveAuthorityPreserved": true
+  },
+  "verificationSelection": {
+    "stage": "slice-integration",
+    "rationale": "Current T03 source-candidate integration selection covers changed acquisition/storage/rights/native/renderer/workflow interfaces plus all S01 material denial/failure/cancellation/restart/migration/handoff risks. Fresh desktop and actual acquisition resources run serially. Previously reviewed input-equal task boundaries are authenticated without manufacturing a fresh installed-native proof.",
+    "deferredBreadth": "Fresh affected checkpoint/full repository/profile, installer matrix and cross-capability W2 qualification remain required."
+  },
+  "taskEvidence": [
+    {
+      "taskId": "CAP-05.S01.T01",
+      "status": "DONE",
+      "candidateCommit": "fe9313bcbf2580a0baabafed57a244a831ae29f7",
+      "manifest": {
+        "path": "artifacts/evidence/CAP-05.S01.T01.json",
+        "sha256": "0a4c35e7883647f24ecc76be82cc9067536a0f25bf7b70f7c070954006d8aac8"
+      },
+      "review": {
+        "path": "artifacts/evidence/CAP-05.S01.T01.review-R01.json",
+        "sha256": "ff1f61c834c2354bd80ed8c84dabb4c261a4d7fdab67375af3fe2d0effc5258d"
+      },
+      "kind": "Exact historical task disposition authenticated; current integration comes from the fresh source candidate reports."
+    },
+    {
+      "taskId": "CAP-05.S01.T02",
+      "status": "DONE",
+      "candidateCommit": "4c22cd8d6998cf36062b0303abf9d3d76f025069",
+      "manifest": {
+        "path": "artifacts/evidence/CAP-05.S01.T02.json",
+        "sha256": "aa336871a954808681793d779da3d1a299175786ec20333e10a9fc1f52f31403"
+      },
+      "review": {
+        "path": "artifacts/evidence/CAP-05.S01.T02.review-R01.json",
+        "sha256": "aad06f8f5e15700d9c34c482390a4b99b9d282ee7a739df2939bbc91371e212b"
+      },
+      "kind": "Exact historical task disposition authenticated; current integration comes from the fresh source candidate reports."
+    },
+    {
+      "taskId": "CAP-05.S01.T03",
+      "status": "DONE",
+      "candidateCommit": "e53a5154ddf78522edd252645eafc71621acdc51",
+      "manifest": {
+        "path": "artifacts/evidence/CAP-05.S01.T03.json",
+        "sha256": "9b0be077a34763e6236df5c38b9266cd7d1813fb417d4515d8b5d5a5dfd6489a"
+      },
+      "review": {
+        "path": "artifacts/evidence/CAP-05.S01.T03.review-R01.json",
+        "sha256": "3a741cb98969ff32490d54ae9f24474d1eba5bf3c065afd5037c817e77ea56f3"
+      },
+      "kind": "Exact historical task disposition authenticated; current integration comes from the fresh source candidate reports."
+    }
+  ],
+  "currentIntegrationReceipts": {
+    "selectedChecks": {
+      "path": "artifacts/tmp/CAP-05.S01.T03.selected-04-e53a5154.json",
+      "sha256": "9f9b65d478e38ab58f88cc2fea86835209a125a28efdc18787eecdaaa3c15d3e"
+    },
+    "authorityAndPresentationMapping": {
+      "path": "artifacts/tmp/CAP-05.S01.T03.EX01.authority-mapping-final-06.json",
+      "sha256": "234455bc0a3ff54f4c5061185a677f1d56d240f2545869037769fe3169b143e3"
+    },
+    "desktopConformanceAndCaptureAuthority": {
+      "path": "artifacts/tmp/CAP-05.S01.T03.EX01.conformance-final-02.json",
+      "sha256": "ed638bc9d2717189e3701bcbe9925182c5e838e3bdbbae9cf1384b6174c6303c"
+    },
+    "acquisitionResources": {
+      "path": "artifacts/tmp/CAP-05.S01.acquisition-resources-04-e53a5154.json",
+      "sha256": "ad6adffd9ba0c2d5cb218aaa5823938620f26e58dc1be90ddfdbb9333fdda847"
+    }
+  },
+  "resourceBaselineReview": {
+    "path": "artifacts/tmp/CAP-05.S01.acquisition-resources-baseline-review-01.json",
+    "sha256": "6cfd1118ab679ed5ab9be6c960d81df642aa005221564d8ff11cd1829b9f6bda"
+  },
+  "integrationCoverage": [
+    {
+      "boundary": "Upstream identity/Intent/privacy/rights through real acquired protected bytes and downstream ports-only handoff",
+      "proof": "tests.documents.test_acquisition_tls.AcquisitionPrincipalTests.test_current_core_session_through_verified_tls_encrypted_stage_and_signed_lpac",
+      "cases": "Owned HTTPS, SQLCipher and signed LPAC, fresh native session recovery, explicit Attach, exact source/license/receipt/body, one HTTP request, original-history preservation, generic object hash/substituted revision/current inspect revocation denial."
+    },
+    {
+      "boundary": "Durable queue/failure/denial/cancellation/restart",
+      "proof": "acquisition-queue-principal, attachment-api, workflow-regression, native-zero-dispatch, native-transport-cancellation",
+      "cases": "One-attempt admission before egress, source substitution, no unsafe range concatenation, owned partial cleanup and failure dominance, recovered actor/project/operation/session binding, preserved unavailable metadata and local annotations."
+    },
+    {
+      "boundary": "Migration and protected object compatibility",
+      "proof": "storage-migration-contracts, attachment-api",
+      "cases": "Literal populated historical v22/v23/v24 fixtures, additive current schema, backup/interruption/restart/rollback rows and ciphertext, FK integrity and exact protected source read authority."
+    },
+    {
+      "boundary": "Renderer journey and governed experience",
+      "proof": "desktop-opaque-models, native-intake, mounted-copy-return, desktopConformanceAndCaptureAuthority",
+      "cases": "Distinct same-name copy return and metadata, honest remote phases/Task Center handoff, denial alternatives/local notes, reference tokens/routes/regions/workflows, keyboard/focus/semantics, theme/responsive and controlled visuals."
+    },
+    {
+      "boundary": "Measured intake and desktop resources",
+      "proof": "acquisitionResources, resourceBaselineReview, desktopConformanceAndCaptureAuthority",
+      "cases": "Five actual signed-worker cases per versioned1MiB/8MiB fixture with hardware/OS/cache limits/raw samples and accepted caps; separate unchanged desktop budget benchmark."
+    }
+  ],
+  "advisoryClosures": {
+    "CAP-05.S01.PREFLIGHT-01-F01": "Exact typed port declaration and current real protected source consumer proof; original metadata/current policy and generic-hash denial retained.",
+    "CAP-05.S01.PREFLIGHT-01-F02": "Measured actual resource report plus separately authenticated independent initial baseline review."
+  },
+  "limits": [
+    "Synthetic lawful fixtures and owned TLS are not live public-provider qualification.",
+    "Opaque renderer fixture replies establish renderer behavior; separate actual principal/native checks establish named real boundaries.",
+    "Tall dark narrow element crop retains the preserved skip-link fragment limitation; no false viewport claim is inferred.",
+    "Initial acquisition baseline has no prior comparison; reviewer-defined future metric/threshold is prospective, accepted absolute caps remain.",
+    "No task/slice/Wave/release approval is inferred from this assembler; formal independent slice disposition remains required."
+  ]
+}
