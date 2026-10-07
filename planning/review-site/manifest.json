@@ -21338,7 +21338,7 @@
             {
               "task_id": "CAP-05.S02.T01",
               "title": "Define parser interface, document IR, and parser-selection policy",
-              "status": "READY",
+              "status": "IN_PROGRESS",
               "mode": "latest-review-only",
               "latest_review": {
                 "reviewer": null,
@@ -21379,19 +21379,22 @@
             {
               "task_id": "CAP-05.S02.T01",
               "title": "Define parser interface, document IR, and parser-selection policy",
-              "status": "READY",
+              "status": "IN_PROGRESS",
               "page": "CAP-05/CAP-05.S02.T01.html",
               "dependencies": [
                 "CAP-05.S01.T03",
                 "CAP-03.S04.T02"
               ],
               "claim": {
-                "owner": null,
-                "branch": null,
-                "base_sha": null
+                "owner": "codex-w2-implementation",
+                "branch": "codex/w2-implementation",
+                "base_sha": "47a97a44b3da06abdd07a07d8cb410f8bb909b30"
               },
               "plan_section_sha256": "ac5eafcafc07248b88ba28ff8f7fb5bde1050f266a448f61462f824228a23268",
-              "worksheet": null
+              "worksheet": {
+                "path": "artifacts/evidence/CAP-05.S02.T01.task-start.md",
+                "sha256": "1f15f456cf416ccff7cdb137327d3403a233f352a0c7d47d165770b092b8c3b1"
+              }
             },
             {
               "task_id": "CAP-05.S02.T02",

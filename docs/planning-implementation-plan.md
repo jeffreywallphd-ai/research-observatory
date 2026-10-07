@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: e3839ce72be554aaf5b12dcc7a4ed980bf444a606e5966b830341af0cdb31f6a
+source_sha256: 41d4d634615b11b5e21c9cd542165830709add6a0c49630af740bf1835df4089
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -11137,13 +11137,13 @@ Original tasks and approvals remain unchanged.
 
 #### - [ ] CAP-05.S02.T01 - Define parser interface, document IR, and parser-selection policy
 
-**Status / priority / estimate / risk:** `READY` / `P0` / `L` / `high`
+**Status / priority / estimate / risk:** `IN_PROGRESS` / `P0` / `L` / `high`
 
 **Profiles / platforms:** `LOC`, `LAB` / `windows-x64`
 
 **Dependencies:** `CAP-05.S01.T03`, `CAP-03.S04.T02`
 
-**Owner / review:** - / - (`-`)
+**Owner / review:** codex-w2-implementation / - (`-`)
 
 **Objective:** Contracts for input formats, structural blocks, coordinates, references, tables, figures, warnings, confidence, and parser provenance.
 

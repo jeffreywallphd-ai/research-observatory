@@ -38,7 +38,7 @@
       <nav class="breadcrumbs" aria-label="Breadcrumb"><a href="../index.html">Planning review</a><span>/</span><a href="index.html">CAP-document-inspection</a><span>/</span><a href="CAP-05.S02.html">SLICE-structured-and-pdf-parsing-pipeline</a><span>/</span><span aria-current="page">CAP-05.S02.T01</span></nav>
 
 <section class="hero compact" data-task-page="CAP-05.S02.T01">
-  <div class="hero-top"><div><span class="eyebrow">CAP-05.S02.T01 · task 1 of 3</span><h1>Define parser interface, document IR, and parser-selection policy</h1><p>Contracts for input formats, structural blocks, coordinates, references, tables, figures, warnings, confidence, and parser provenance.</p></div><span class="status status-ready">Ready</span></div>
+  <div class="hero-top"><div><span class="eyebrow">CAP-05.S02.T01 · task 1 of 3</span><h1>Define parser interface, document IR, and parser-selection policy</h1><p>Contracts for input formats, structural blocks, coordinates, references, tables, figures, warnings, confidence, and parser provenance.</p></div><span class="status status-in-progress">In_Progress</span></div>
   <dl class="summary-grid"><div><dt>Wave</dt><dd>W2</dd></div><div><dt>Slice</dt><dd><a href="CAP-05.S02.html">SLICE-structured-and-pdf-parsing-pipeline</a></dd></div><div><dt>Risk / review</dt><dd>high / agent-review</dd></div><div><dt>Latest review</dt><dd>not reviewed</dd></div></dl>
 </section>
 <section class="task-summary"><div class="section-heading"><span class="eyebrow">Authoritative task record</span><h2>Scope and acceptance</h2></div>
@@ -49,7 +49,7 @@
 <section class="task-summary"><div class="section-heading"><span class="eyebrow">Verification inventory</span><h2>Profiles and commands</h2></div>
   <h3>Verification profiles</h3><ul class="gate-criteria"><li>documents</li></ul>
   <h3>Commands</h3><ul class="gate-criteria"><li>python tools/verify.py --profile documents</li></ul>
-  <p data-task-claim="CAP-05.S02.T01" data-task-owner="unclaimed" data-task-branch="none" data-task-base-sha="none"><strong>Claim projection:</strong> owner <code>unclaimed</code> · branch <code>none</code> · base <code>none</code></p>
+  <p data-task-claim="CAP-05.S02.T01" data-task-owner="codex-w2-implementation" data-task-branch="codex/w2-implementation" data-task-base-sha="47a97a44b3da06abdd07a07d8cb410f8bb909b30"><strong>Claim projection:</strong> owner <code>codex-w2-implementation</code> · branch <code>codex/w2-implementation</code> · base <code>47a97a44b3da06abdd07a07d8cb410f8bb909b30</code></p>
 </section>
 <section class="task-summary" data-task-plan="CAP-05.S02.T01" data-task-plan-sha256="ac5eafcafc07248b88ba28ff8f7fb5bde1050f266a448f61462f824228a23268"><div class="section-heading"><span class="eyebrow">Approved implementation intent</span><h2>Task plan</h2></div><article class="plan-article compact-article"><pre class='markdown-fallback'>### 9.1 `CAP-05.S02.T01` - Define parser interface, document IR, and parser-selection policy
 **Objective:** Contracts for input formats, structural blocks, coordinates, references, tables, figures, warnings, confidence, and parser provenance.
@@ -87,13 +87,45 @@
 python tools/verify.py --profile documents
 ```</pre></article></section>
 <section class="section-heading"><span class="eyebrow">Task-start planning</span><h2>Assigned worksheet</h2><p>The worksheet is an optional planning aid and does not create a new approval or task state.</p></section>
-<p class="decision-meta" data-task-worksheet-absent="CAP-05.S02.T01">No optional task-start worksheet is assigned. This does not block execution.</p>
+
+<details class="plan-details task-worksheet" open data-task-worksheet="CAP-05.S02.T01" data-worksheet-sha256="1f15f456cf416ccff7cdb137327d3403a233f352a0c7d47d165770b092b8c3b1">
+  <summary>Assigned task-start worksheet</summary>
+  <div class="worksheet-meta"><strong>Source:</strong> <code>artifacts/evidence/CAP-05.S02.T01.task-start.md</code> · <strong>SHA-256:</strong> <code>1f15f456cf416ccff7cdb137327d3403a233f352a0c7d47d165770b092b8c3b1</code></div>
+  <article class="plan-article"><pre class='markdown-fallback'># CAP-05.S02.T01 acceptance closure
+
+Claim base: `47a97a44b3da06abdd07a07d8cb410f8bb909b30`.
+Authority: approved W2 packet `c85a59f3a293f8e3f2eaf6454682c9a14b1efa55`,
+CAP-05.S02 section 9.1, accepted ADR-0028/0029 and the three current backlog criteria.
+CAP-05.S01.T03 and CAP-03.S04.T02 are DONE; W2.CP07 is independently approved.
+
+This task defines the portable parser/IR/selection and staged validation boundary.
+Native adapters and isolated Docling execution belong to T02/T03; durable revisions,
+accepted heads and human acceptance belong to S03. No UI, migration, dependency,
+cryptography or automation-framework development is selected.
+
+| Material boundary | Planned proof |
+|---|---|
+| Raw order, NFC/newline-only normalization and half-open code-point offsets | Unicode 16 text gold and independent origin expectations for CRLF, expansion, reordered/noncontiguous marks, blocking, Hangul/Indic, supplementary characters and empty text; invalid mapping/locator rejection. |
+| Versioned portable structure | Strict schema/wire round-trip for ordered nodes, parents, pages/rotation, locations, references/citations, tables/spans, figures and separate unknown quality/confidence; no paths or implementation objects; copied/forged model and nonfinite/surrogate rejection. |
+| Deterministic selection | Native-first selection under permutations, stable ties, duplicate conflicts, unavailable/excluded sources, unknown equivalence and separately recorded inspection-only fallback; same Work/version alone is not copy equivalence. |
+| Trusted attempt/source/producer | Bind job/attempt, project, attachment/document/candidate/source/Work/version revisions, original digest/length/format and trusted parser/config/assets; reject stale attempts and substituted fields. Local imports may legitimately lack remote receipts. |
+| Protected read and delivery | Public-only consumer over an actual protected database and encrypted source; current inspect plus derive in one writer transaction, prompt read closure, current actor/Intent/privacy and trusted session/cancellation delivery fence. Exercise denial before execution and authority change before delivery. |
+| Failed/cancelled parsing | Discriminated staged results cannot grant canonical write/acceptance; crash, malformed or partial success, cancellation and stale authority expose no usable IR and leave canonical document facts unchanged. |
+
+The first behavioral tests precede product edits. Existing independent preflight
+`artifacts/tmp/CAP-05.S02.T01.advisory-s01-01.json` identifies four finite details
+incorporated above; it is advisory, not task approval or qualifying evidence.
+No mandatory new gate was discovered. Relevant unit/schema/type/architecture and
+protected-read integration checks are selected. Native parsing, packaged/offline
+CPU conversion and numeric resource targets remain T02/T03 and slice qualification;
+full profiles remain checkpoint/Wave checks. No old runtime result is claimed fresh.</pre></article>
+</details>
 <section class="section-heading"><span class="eyebrow">Execution evidence</span><h2>Review packets, rounds, and current projection</h2><p>Append-only controls retain every immutable round and finding closure. Pre-policy tasks remain explicitly latest-review-only.</p></section>
 
 <section class="review-toolbar" data-task-review-id="CAP-05.S02.T01" data-review-mode="latest-review-only">
   <h3>CAP-05.S02.T01 — Define parser interface, document IR, and parser-selection policy</h3>
   <p><strong>Legacy latest-review-only projection.</strong> No append-only review rounds are recorded; this view does not fabricate historical attempts.</p>
-  <dl class="summary-grid" data-current-review-projection="CAP-05.S02.T01" data-current-review-result="not-reviewed" data-current-reviewer="none" data-current-reviewed-at="none"><div><dt>Task status</dt><dd>READY</dd></div><div><dt>Latest result</dt><dd>not reviewed</dd></div><div><dt>Reviewer</dt><dd>none</dd></div><div><dt>Reviewed at</dt><dd><code>none</code></dd></div></dl>
+  <dl class="summary-grid" data-current-review-projection="CAP-05.S02.T01" data-current-review-result="not-reviewed" data-current-reviewer="none" data-current-reviewed-at="none"><div><dt>Task status</dt><dd>IN_PROGRESS</dd></div><div><dt>Latest result</dt><dd>not reviewed</dd></div><div><dt>Reviewer</dt><dd>none</dd></div><div><dt>Reviewed at</dt><dd><code>none</code></dd></div></dl>
   <p><strong>Latest notes:</strong> None</p>
 </section>
 <nav class="page-turn" aria-label="Task navigation"><a class="button button-quiet" href="CAP-05.S02.html">Previous</a><a class="button button-primary" href="CAP-05.S02.T02.html">Next</a></nav>

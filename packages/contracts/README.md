@@ -6,7 +6,10 @@ Boundary: Schemas, API definitions, events, and generated client sources shared 
 Contracts must not expose operating-system paths, database connection objects,
 framework components, provider SDK types, or other deployment-specific details.
 
-`documents/` publishes exact open-access location, selection and receipt schemas.
+`documents/` publishes exact open-access location, selection and receipt schemas,
+plus versioned staged DocumentIR, parser selection, request and result schemas.
+See [document parsing](../../docs/architecture/document-parsing.md) for exact
+raw-origin offsets and the source/producer/attempt validation boundary.
 Source/license observations and receipt hashes remain protected data; current
 Core session, accepted Intent/privacy, explicit confirmation and per-copy rights
 decide acquisition authority. See [open-access acquisition](../../docs/architecture/open-access-acquisition.md).

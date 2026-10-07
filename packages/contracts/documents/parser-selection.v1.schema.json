@@ -1,0 +1,402 @@
+{
+  "$defs": {
+    "AcquisitionOrigin": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "remote-acquisition",
+          "title": "Kind",
+          "type": "string"
+        },
+        "locationId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "receiptSha256": {
+          "$ref": "#/$defs/Digest"
+        }
+      },
+      "required": [
+        "kind",
+        "locationId",
+        "receiptSha256"
+      ],
+      "title": "AcquisitionOrigin",
+      "type": "object"
+    },
+    "Digest": {
+      "pattern": "^[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "Disposition": {
+      "enum": [
+        "selected",
+        "eligible",
+        "unavailable",
+        "rights-denied",
+        "equivalence-unproven",
+        "source-mismatch",
+        "format-unsupported"
+      ],
+      "type": "string"
+    },
+    "Format": {
+      "enum": [
+        "jats",
+        "tei",
+        "xml",
+        "html",
+        "pdf",
+        "docx",
+        "plain-text"
+      ],
+      "type": "string"
+    },
+    "Identity": {
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+      "type": "string"
+    },
+    "LocalOrigin": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "local-import",
+          "title": "Kind",
+          "type": "string"
+        }
+      },
+      "required": [
+        "kind"
+      ],
+      "title": "LocalOrigin",
+      "type": "object"
+    },
+    "ParserAsset": {
+      "additionalProperties": false,
+      "properties": {
+        "component": {
+          "$ref": "#/$defs/Token"
+        },
+        "version": {
+          "$ref": "#/$defs/Token"
+        },
+        "sha256": {
+          "$ref": "#/$defs/Digest"
+        }
+      },
+      "required": [
+        "component",
+        "version",
+        "sha256"
+      ],
+      "title": "ParserAsset",
+      "type": "object"
+    },
+    "ParserDescriptor": {
+      "additionalProperties": false,
+      "properties": {
+        "parserId": {
+          "$ref": "#/$defs/Token"
+        },
+        "version": {
+          "$ref": "#/$defs/Token"
+        },
+        "kind": {
+          "enum": [
+            "native",
+            "docling-cpu",
+            "degraded-inspection"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "inputFormats": {
+          "items": {
+            "$ref": "#/$defs/Format"
+          },
+          "minItems": 1,
+          "title": "Inputformats",
+          "type": "array"
+        },
+        "configurationVersion": {
+          "$ref": "#/$defs/Token"
+        },
+        "configurationSha256": {
+          "$ref": "#/$defs/Digest"
+        },
+        "assets": {
+          "items": {
+            "$ref": "#/$defs/ParserAsset"
+          },
+          "title": "Assets",
+          "type": "array"
+        }
+      },
+      "required": [
+        "parserId",
+        "version",
+        "kind",
+        "inputFormats",
+        "configurationVersion",
+        "configurationSha256",
+        "assets"
+      ],
+      "title": "ParserDescriptor",
+      "type": "object"
+    },
+    "ProjectIdentity": {
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[47][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+      "type": "string"
+    },
+    "RegistryObservation": {
+      "additionalProperties": false,
+      "properties": {
+        "descriptor": {
+          "$ref": "#/$defs/ParserDescriptor"
+        },
+        "availability": {
+          "enum": [
+            "available",
+            "unavailable"
+          ],
+          "title": "Availability",
+          "type": "string"
+        }
+      },
+      "required": [
+        "descriptor",
+        "availability"
+      ],
+      "title": "RegistryObservation",
+      "type": "object"
+    },
+    "SelectionBasis": {
+      "enum": [
+        "primary",
+        "explicit-alternative",
+        "same-object",
+        "unproven"
+      ],
+      "type": "string"
+    },
+    "SourceIdentity": {
+      "additionalProperties": false,
+      "properties": {
+        "projectId": {
+          "$ref": "#/$defs/ProjectIdentity"
+        },
+        "attachmentId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "documentId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "documentRevisionId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "candidateId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "sourceAssertionRevisionId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "workId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "workRevisionId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "versionId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "versionRevisionId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "objectSha256": {
+          "$ref": "#/$defs/Digest"
+        },
+        "byteLength": {
+          "maximum": 134217728,
+          "minimum": 0,
+          "title": "Bytelength",
+          "type": "integer"
+        },
+        "format": {
+          "$ref": "#/$defs/Format"
+        },
+        "provenance": {
+          "discriminator": {
+            "mapping": {
+              "local-import": "#/$defs/LocalOrigin",
+              "remote-acquisition": "#/$defs/AcquisitionOrigin"
+            },
+            "propertyName": "kind"
+          },
+          "oneOf": [
+            {
+              "$ref": "#/$defs/LocalOrigin"
+            },
+            {
+              "$ref": "#/$defs/AcquisitionOrigin"
+            }
+          ],
+          "title": "Provenance"
+        }
+      },
+      "required": [
+        "projectId",
+        "attachmentId",
+        "documentId",
+        "documentRevisionId",
+        "candidateId",
+        "sourceAssertionRevisionId",
+        "workId",
+        "workRevisionId",
+        "versionId",
+        "versionRevisionId",
+        "objectSha256",
+        "byteLength",
+        "format",
+        "provenance"
+      ],
+      "title": "SourceIdentity",
+      "type": "object"
+    },
+    "SourceSelection": {
+      "additionalProperties": false,
+      "properties": {
+        "source": {
+          "$ref": "#/$defs/SourceIdentity"
+        },
+        "basis": {
+          "$ref": "#/$defs/SelectionBasis"
+        },
+        "disposition": {
+          "$ref": "#/$defs/Disposition"
+        }
+      },
+      "required": [
+        "source",
+        "basis",
+        "disposition"
+      ],
+      "title": "SourceSelection",
+      "type": "object"
+    },
+    "Token": {
+      "maxLength": 128,
+      "minLength": 1,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._+-]*$",
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schemaVersion": {
+      "const": "1.0",
+      "title": "Schemaversion",
+      "type": "string"
+    },
+    "policyVersion": {
+      "const": "ro-parser-policy-1",
+      "title": "Policyversion",
+      "type": "string"
+    },
+    "candidates": {
+      "items": {
+        "$ref": "#/$defs/SourceSelection"
+      },
+      "title": "Candidates",
+      "type": "array"
+    },
+    "parsers": {
+      "items": {
+        "$ref": "#/$defs/RegistryObservation"
+      },
+      "title": "Parsers",
+      "type": "array"
+    },
+    "selectedAttachmentId": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Identity"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "selectedParserId": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Token"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "outcome": {
+      "enum": [
+        "selected",
+        "inspection-only",
+        "unavailable"
+      ],
+      "title": "Outcome",
+      "type": "string"
+    },
+    "fallbackFromAttemptId": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Identity"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "fallbackReason": {
+      "anyOf": [
+        {
+          "enum": [
+            "parser-failed",
+            "parser-timeout",
+            "parser-memory-limit"
+          ],
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Fallbackreason"
+    }
+  },
+  "required": [
+    "schemaVersion",
+    "policyVersion",
+    "candidates",
+    "parsers",
+    "selectedAttachmentId",
+    "selectedParserId",
+    "outcome",
+    "fallbackFromAttemptId",
+    "fallbackReason"
+  ],
+  "title": "ParserSelection",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://research-observatory.local/contracts/documents/parser-selection.v1.schema.json",
+  "x-research-observatory-semanticRules": [
+    "ro-text-nfc-1-unicode-16-newline-fold-and-exact-raw-origin-mapping",
+    "half-open-unicode-codepoint-ranges-not-byte-or-utf16-offsets",
+    "ordered-unique-staged-identities-with-earlier-parent-and-valid-cross-references",
+    "finite-unrotated-source-page-point-geometry-and-explicit-unavailable-locations",
+    "reported-table-grid-has-no-overlap-ambiguous-grid-is-retained",
+    "unknown-confidence-is-not-zero-and-quality-is-not-human-acceptance",
+    "selection-is-a-record-not-source-or-runtime-authority",
+    "parent-authenticated-producer-job-attempt-and-artifact-receipts-match-exact-binding",
+    "current-protected-source-inspect-derive-intent-privacy-and-session-at-read-and-delivery",
+    "failure-cancellation-and-inspection-only-output-cannot-advance-canonical-state",
+    "strict-utf8-json-with-unique-fields-and-64-mib-wire-cap"
+  ]
+}

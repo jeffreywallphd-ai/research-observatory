@@ -6,6 +6,7 @@ import base64
 import hashlib
 import hmac
 import io
+import json
 import os
 import re
 import secrets
@@ -19,10 +20,13 @@ from contextlib import contextmanager, nullcontext, suppress
 from dataclasses import dataclass, replace
 from datetime import UTC, datetime
 from pathlib import Path
-from typing import Any, BinaryIO, cast
+from typing import TYPE_CHECKING, Any, BinaryIO, cast
 
 from nacl import bindings as sodium
 from nacl.exceptions import CryptoError
+
+if TYPE_CHECKING:
+    from .parsing.contracts import SourceIdentity
 
 from .ports.corpus import CorpusActor
 from .ports.object_store import (
@@ -3201,9 +3205,38 @@ class _LocalObjectStore:
     ) -> VerifiedObjectStream:
         """Read an exact attached revision after current per-copy inspect authority."""
 
+        return self._open_document_attachment(attachment_id, document_revision_id, actor=actor)
+
+    def open_parse_source(self, source: SourceIdentity, *, actor: CorpusActor) -> VerifiedObjectStream:
+        """Exact immutable source plus current inspect/derive in one writer."""
+
+        from .parsing.contracts import SourceIdentity
+
+        invalid = False
+        try:
+            source = SourceIdentity.model_validate(source)
+        except ValueError:
+            invalid = True
+        if invalid:
+            raise _bounded(ObjectAccessDenied, "parse source identity is invalid")
+        return self._open_document_attachment(
+            source.attachment_id, source.document_revision_id, actor=actor, expected_source=source
+        )
+
+    def _open_document_attachment(
+        self,
+        attachment_id: str,
+        document_revision_id: str,
+        *,
+        actor: CorpusActor,
+        expected_source: SourceIdentity | None = None,
+    ) -> VerifiedObjectStream:
+
         from pydantic import ValidationError
 
         from .domain_contracts import is_uuid_v7
+        from .parsing.contracts import AcquisitionOrigin
+        from .ports.acquisition import AcquisitionReceipt
         from .reconciliation.contracts import SourceAssertion
         from .rights_policy import RightsRequest, RightsSubject, RightsUse
         from .rights_repository import RightsProblem, SqliteRightsRepository
@@ -3238,6 +3271,67 @@ class _LocalObjectStore:
                 if row is None:
                     raise ObjectAccessDenied("document attachment is unavailable")
                 digest = str(row[0])
+                if expected_source is not None:
+                    exact = connection.execute(
+                        "SELECT a.document_id,a.work_id,a.work_revision_id,a.version_id,a.version_revision_id,"
+                        "c.byte_length,c.format_name FROM document_attachment_assertions a "
+                        "JOIN document_attachment_candidates c ON c.project_id=a.project_id "
+                        "AND c.candidate_id=a.candidate_id "
+                        "WHERE a.project_id=? AND a.attachment_id=? AND a.document_revision_id=? "
+                        "AND c.source_assertion_revision_id=a.source_assertion_revision_id "
+                        "AND c.work_id=a.work_id AND c.work_revision_id=a.work_revision_id "
+                        "AND c.version_id=a.version_id AND c.version_revision_id=a.version_revision_id",
+                        (state.project_id, attachment_id, document_revision_id),
+                    ).fetchone()
+                    if exact is None or (
+                        expected_source.project_id,
+                        expected_source.object_sha256,
+                        expected_source.candidate_id,
+                        expected_source.source_assertion_revision_id,
+                        expected_source.document_id,
+                        expected_source.work_id,
+                        expected_source.work_revision_id,
+                        expected_source.version_id,
+                        expected_source.version_revision_id,
+                        expected_source.byte_length,
+                        expected_source.format,
+                    ) != (state.project_id, digest, str(row[1]), str(row[2]), *tuple(exact)):
+                        raise ObjectAccessDenied("parse source binding is not current")
+                    acquired = connection.execute(
+                        "SELECT location_id,receipt_sha256,receipt_json FROM document_acquisition_sources "
+                        "WHERE project_id=? AND candidate_id=?",
+                        (state.project_id, expected_source.candidate_id),
+                    ).fetchone()
+                    if isinstance(expected_source.provenance, AcquisitionOrigin):
+                        if acquired is None:
+                            raise ObjectAccessDenied("parse acquisition provenance is unavailable")
+                        receipt = AcquisitionReceipt.model_validate_json(str(acquired[2]))
+                        receipt_sha = hashlib.sha256(
+                            json.dumps(
+                                receipt.model_dump(mode="json", by_alias=True),
+                                sort_keys=True,
+                                separators=(",", ":"),
+                                ensure_ascii=True,
+                            ).encode()
+                        ).hexdigest()
+                        if (
+                            str(acquired[0]),
+                            str(acquired[1]),
+                            receipt.location_id,
+                            receipt.actual_sha256,
+                            receipt.expanded_bytes,
+                            receipt_sha,
+                        ) != (
+                            expected_source.provenance.location_id,
+                            expected_source.provenance.receipt_sha256,
+                            expected_source.provenance.location_id,
+                            expected_source.object_sha256,
+                            expected_source.byte_length,
+                            expected_source.provenance.receipt_sha256,
+                        ):
+                            raise ObjectAccessDenied("parse acquisition provenance is inconsistent")
+                    elif acquired is not None:
+                        raise ObjectAccessDenied("parse local provenance is inconsistent")
                 source = SourceAssertion.model_validate_json(str(row[3]))
                 subject = RightsSubject(
                     project_id=state.project_id,
@@ -3248,18 +3342,24 @@ class _LocalObjectStore:
                     resource_class="full-text",
                 )
                 rights = SqliteRightsRepository(state.database, state.project_id)
-                decision = rights.evaluate_with_connection(
-                    connection,
-                    RightsRequest(
-                        actor_id=actor.actor_id,
-                        subject=subject,
-                        use=RightsUse(action="inspect", purpose="document-analysis", destination_kind="local-project"),
-                    ),
-                    actor=actor,
+                from .rights_policy import RightsAction
+
+                actions: tuple[RightsAction, ...] = (
+                    ("inspect", "derive") if expected_source is not None else ("inspect",)
                 )
-                if decision.code != "allow":
-                    connection.execute("COMMIT")
-                    raise ObjectAccessDenied("document inspection right is not current")
+                for action in actions:
+                    decision = rights.evaluate_with_connection(
+                        connection,
+                        RightsRequest(
+                            actor_id=actor.actor_id,
+                            subject=subject,
+                            use=RightsUse(action=action, purpose="document-analysis", destination_kind="local-project"),
+                        ),
+                        actor=actor,
+                    )
+                    if decision.code != "allow":
+                        connection.execute("COMMIT")
+                        raise ObjectAccessDenied("document action right is not current")
                 metadata = _metadata(connection, state.project_id, digest)
                 if (
                     metadata is None
@@ -3267,6 +3367,11 @@ class _LocalObjectStore:
                     or metadata.protection_profile != _ENCRYPTED_PROFILE
                 ):
                     raise ObjectNotFound("document object is unavailable")
+                # Object deduplication retains the first creator. Exact-copy
+                # origin is the committed candidate/acquisition relation above,
+                # never a grant or restriction inherited from shared ciphertext.
+                if expected_source is not None and metadata.byte_length != expected_source.byte_length:
+                    raise ObjectAccessDenied("parse object identity is inconsistent")
                 _authorize_access(
                     state,
                     _access_request(
