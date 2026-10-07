@@ -1,7 +1,7 @@
 ---
 document_type: generated-backlog-status-summary
 source: planning/backlog.yaml
-source_sha256: 7d8f62397e0ca902bb5a0dfc3b62362a7a5ab22fd1155bd9cc804dba26234dae
+source_sha256: be378735f8ac28be2a33601f12b771fe1e23f1fc9ef95428708ed265de155453
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -53,7 +53,7 @@ manual_edit: prohibited
 | Status | Count |
 |---|---:|
 | `NOT_STARTED` | 232 |
-| `IN_PROGRESS` | 1 |
+| `REVIEW` | 1 |
 | `DONE` | 87 |
 | `DEFERRED` | 36 |
 
@@ -870,6 +870,7 @@ Append-only rounds remain distinct from the current latest-review projection. Le
 | `CAP-05.S01.T03` | `append-only v1` | 1 | `-` | approved / agent:/root/t03_product_review | - |
 | `CAP-05.S02.T01` | `append-only v1` | 2 | `-` | approved / agent:/root/s02_t01_review | - |
 | `CAP-05.S02.T02` | `append-only v1` | 2 | `-` | approved / agent:/root/s02_t01_review | - |
+| `CAP-05.S02.T03` | `append-only v1` | 0 | `R01` | - / - | - |
 | `CAP-07.S01.T01` | `append-only v1` | 2 | `-` | approved / codex-independent | - |
 | `CAP-07.S01.T02` | `append-only v1` | 1 | `-` | approved / agent:/root/model_registry_review | - |
 | `CAP-07.S01.T03` | `append-only v1` | 1 | `-` | approved / agent:/root/decoder_memo_review | - |
@@ -979,7 +980,7 @@ Append-only rounds remain distinct from the current latest-review projection. Le
 
 | Task | Status | Owner | Branch |
 |---|---|---|---|
-| `CAP-05.S02.T03` Integrate the local Docling-based PDF parser with fallback | `IN_PROGRESS` | codex-w2-implementation | `codex/w2-implementation` |
+| `CAP-05.S02.T03` Integrate the local Docling-based PDF parser with fallback | `REVIEW` | codex-w2-implementation | `codex/w2-implementation` |
 
 ## Linked corrective tasks
 

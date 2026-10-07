@@ -1,0 +1,1087 @@
+{
+  "acceptance_criteria_sha256": "0350f9e24c0f48fba76d7c3279442897c24591c1c4e448a0a2aa8b9ac8e03760",
+  "acceptance_reviews": [
+    {
+      "assessment": "Actual signed offline Docling converts the encrypted representative scholarly PDF through protected-source Core composition and retains encrypted raw attempts plus staged version-1 IR. All authored two-column labels and ten real tables are retained; extra classifications remain layoutGold FAIL, ambiguous reading order/table grids, unknown confidence and machine-layout warnings. The textless scan remains incomplete with OCR-disabled missing-text warnings. Actual cancellation, crash, parent death, resource denial and timeout prove owned principal isolation/cleanup and fresh inspection. Real durable failure/retry scheduling produces a distinct inspection-only attempt on the unchanged original. Original physical MediaBox/CropBox/UserUnit/rotation and bounded PNG delivery are demonstrated. Exact pinned parser/package authority remains; no replacement parser is inferred. Warm budget FAIL is nonblocking solely through the exact human acceptance in this frozen manifest; cold meets its unchanged target.",
+      "criterion_index": 1,
+      "result": "satisfied"
+    },
+    {
+      "assessment": "Fresh basic151 has eight passing groups: affected lint/format/ordinary-import nonincremental types, architecture, original-claim-base ADR coverage, portable worker contract, Unicode calculation and parser regressions. The portable parser suite reports147 cases with11 explicitly native-only skips (136 executed); native141 executes those same11 against the actual built extension without skips and has20 passing real-boundary groups. Eleven fresh sample children pass functional/resource/public-schema handoff assertions; their aggregate timing invocation remains FAIL. Exact report/producer/log/sample and guarded tracked/installed/package/fixture/schema/Analysis inputs authenticate. Red resource/normalization/media regressions and native131 FAIL remain adverse. No old run, skip, synthetic fixture or calculated allocation bound is relabeled as fresh principal or aggregate memory proof.",
+      "criterion_index": 2,
+      "result": "satisfied"
+    },
+    {
+      "assessment": "Indexed Proposed ADR-0045, architecture/build/license inventories, public contracts, fixtures and acceptance worksheet document the implementation under accepted ADR-0028/0029 and approved S02 authority. Original-claim-base ADR coverage spans all changed protected paths. Parent-owned request/source/producer/receipt binding, inspect+derive rights, native session/current document-parse lease fencing and sole-transaction publication preserve immutable originals/raw attempts and rollback. Every existing family, including canonical plain-text and version-1 inspection wrapper, composes through actual LPAC/encrypted typed staging. Parser CPU preference stays inside parent affinity and four-logical-CPU cap; connector one-CPU/profile caps remain unchanged. Native byte variants and source introspection preserve closed pinned payload and notices. No migration, automation-framework expansion, accepted revision writer, governed UX change, new security authority or release approval is introduced.",
+      "criterion_index": 3,
+      "result": "satisfied"
+    }
+  ],
+  "attempt_id": "R01",
+  "base_commit": "446819465a63776d7f00696f0bfee8b14fa065a9",
+  "candidate_commit": "c17511401808d003eaa2c74ff0b866e65a6955d9",
+  "closures": [],
+  "evidence_reproduction": {
+    "authenticated_checks": [
+      {
+        "durationSeconds": 0.14857499999925494,
+        "exitCode": 0,
+        "id": "lint",
+        "inputReport": "artifacts/tmp/CAP-05.S02.T03.qualification-151.basic.json",
+        "inputReportSha256": "b4b3bc9ce1687bf6d3b3c193c9d081d72d8dfd31b5a2d104cd6f11d462750785",
+        "rawOutput": "artifacts/tmp/CAP-05.S02.T03.qualification-151.basic.lint.log",
+        "rawOutputCanonicalSha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18",
+        "rawOutputSha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18",
+        "result": "PASS"
+      },
+      {
+        "durationSeconds": 0.13325289999193046,
+        "exitCode": 0,
+        "id": "format",
+        "inputReport": "artifacts/tmp/CAP-05.S02.T03.qualification-151.basic.json",
+        "inputReportSha256": "b4b3bc9ce1687bf6d3b3c193c9d081d72d8dfd31b5a2d104cd6f11d462750785",
+        "rawOutput": "artifacts/tmp/CAP-05.S02.T03.qualification-151.basic.format.log",
+        "rawOutputCanonicalSha256": "aec51819fa2b338a1a7896d7f3fa3a16c30fdb3b01d724c485d984ae83b87a06",
+        "rawOutputSha256": "aec51819fa2b338a1a7896d7f3fa3a16c30fdb3b01d724c485d984ae83b87a06",
+        "result": "PASS"
+      },
+      {
+        "durationSeconds": 6.802248299994972,
+        "exitCode": 0,
+        "id": "types",
+        "inputReport": "artifacts/tmp/CAP-05.S02.T03.qualification-151.basic.json",
+        "inputReportSha256": "b4b3bc9ce1687bf6d3b3c193c9d081d72d8dfd31b5a2d104cd6f11d462750785",
+        "rawOutput": "artifacts/tmp/CAP-05.S02.T03.qualification-151.basic.types.log",
+        "rawOutputCanonicalSha256": "4c4a1f687213d361065f9094b27b15c087d3754121b66f0e8580a9c699ab6426",
+        "rawOutputSha256": "dda4c9b5d4afe91534d9c20ef74d9c9ce814b17a96dcddd45fc05d5dfadf304b",
+        "result": "PASS"
+      },
+      {
+        "durationSeconds": 4.120662900008028,
+        "exitCode": 0,
+        "id": "architecture",
+        "inputReport": "artifacts/tmp/CAP-05.S02.T03.qualification-151.basic.json",
+        "inputReportSha256": "b4b3bc9ce1687bf6d3b3c193c9d081d72d8dfd31b5a2d104cd6f11d462750785",
+        "rawOutput": "artifacts/tmp/CAP-05.S02.T03.qualification-151.basic.architecture.log",
+        "rawOutputCanonicalSha256": "1ba622fdbf569bf9ab13ee46e639b636ea005c560abcd4b168f782d8fbdc3f74",
+        "rawOutputSha256": "51a256bf6a7b2e89ab1d1b97aa19077aabf0e8858a450de1f5ceb155ed5c3e88",
+        "result": "PASS"
+      },
+      {
+        "durationSeconds": 2.0896492000028957,
+        "exitCode": 0,
+        "id": "adr",
+        "inputReport": "artifacts/tmp/CAP-05.S02.T03.qualification-151.basic.json",
+        "inputReportSha256": "b4b3bc9ce1687bf6d3b3c193c9d081d72d8dfd31b5a2d104cd6f11d462750785",
+        "rawOutput": "artifacts/tmp/CAP-05.S02.T03.qualification-151.basic.adr.log",
+        "rawOutputCanonicalSha256": "192a3adf262799d7308de9f7ac4fbd5f978b1b0c42de8a15286c1c7df47ab603",
+        "rawOutputSha256": "940d6aa9d9dd34b4056587e56281af4c80884653b0df1df9150f58b024d78220",
+        "result": "PASS"
+      },
+      {
+        "durationSeconds": 4.478163400010089,
+        "exitCode": 0,
+        "id": "portable-worker-contracts",
+        "inputReport": "artifacts/tmp/CAP-05.S02.T03.qualification-151.basic.json",
+        "inputReportSha256": "b4b3bc9ce1687bf6d3b3c193c9d081d72d8dfd31b5a2d104cd6f11d462750785",
+        "rawOutput": "artifacts/tmp/CAP-05.S02.T03.qualification-151.basic.portable-worker-contracts.log",
+        "rawOutputCanonicalSha256": "fc71c25f8975bf7ed47c8ad34384c6de1248f92eba525838bb7036a973a4243d",
+        "rawOutputSha256": "f553b0ef3a427490e304e65486a2027ce9050ac27698244887d4bf40181acc30",
+        "result": "PASS"
+      },
+      {
+        "durationSeconds": 0.6123681000026409,
+        "exitCode": 0,
+        "id": "normalization-bound",
+        "inputReport": "artifacts/tmp/CAP-05.S02.T03.qualification-151.basic.json",
+        "inputReportSha256": "b4b3bc9ce1687bf6d3b3c193c9d081d72d8dfd31b5a2d104cd6f11d462750785",
+        "rawOutput": "artifacts/tmp/CAP-05.S02.T03.qualification-151.basic.normalization-bound.log",
+        "rawOutputCanonicalSha256": "14d054b208f5dfb11fb1a217c31c7e86563a56e24d5ce5d361459a88aeff8e50",
+        "rawOutputSha256": "58fdef3a7c9d12dcd27b71893b6599cec0135e693eba58a43be5d4d24ca27d2a",
+        "result": "PASS"
+      },
+      {
+        "durationSeconds": 81.22900700000173,
+        "exitCode": 0,
+        "id": "parser-regressions",
+        "inputReport": "artifacts/tmp/CAP-05.S02.T03.qualification-151.basic.json",
+        "inputReportSha256": "b4b3bc9ce1687bf6d3b3c193c9d081d72d8dfd31b5a2d104cd6f11d462750785",
+        "rawOutput": "artifacts/tmp/CAP-05.S02.T03.qualification-151.basic.parser-regressions.log",
+        "rawOutputCanonicalSha256": "895a603c3c7f53b910f4d25f9633b73421afd4f1804e5185d72a24cefe27ae38",
+        "rawOutputSha256": "34e9df7e40133c914d4dcdba32ab305806dfc6e7f4331f4ee753253af83ba604",
+        "result": "PASS"
+      },
+      {
+        "durationSeconds": 0.27240260000689887,
+        "exitCode": 0,
+        "id": "explicit-built-native-units",
+        "inputReport": "artifacts/tmp/CAP-05.S02.T03.qualification-141.native.json",
+        "inputReportSha256": "d9c347c430fc8a74986da68c0a2c7897c84fe1f21807b8a2b969f8fc6febc9c7",
+        "rawOutput": "artifacts/tmp/CAP-05.S02.T03.qualification-141.native.explicit-built-native-units.log",
+        "rawOutputCanonicalSha256": "0a1a2ba833e7fb5ef63ba31053db7f1b388eca95307c908dd2707ab2628b4732",
+        "rawOutputSha256": "6719091fb0b58d58732940c515a3598a01f61196acea640a80d7c664fa754ba3",
+        "result": "PASS"
+      },
+      {
+        "durationSeconds": 76.78397829999449,
+        "exitCode": 0,
+        "id": "lifecycle-cancel",
+        "inputReport": "artifacts/tmp/CAP-05.S02.T03.qualification-141.native.json",
+        "inputReportSha256": "d9c347c430fc8a74986da68c0a2c7897c84fe1f21807b8a2b969f8fc6febc9c7",
+        "rawOutput": "artifacts/tmp/CAP-05.S02.T03.qualification-141.native.lifecycle-cancel.log",
+        "rawOutputCanonicalSha256": "d0da8e13939c7641e13df2be5c72de2d4747ef5542ad081d3c89bfd54ec98807",
+        "rawOutputSha256": "2827dd91b4bd76a25b327700ff25492d477008b00ea4829ad7395d75ef2b56fd",
+        "result": "PASS"
+      },
+      {
+        "durationSeconds": 74.57651110000734,
+        "exitCode": 0,
+        "id": "lifecycle-worker-crash",
+        "inputReport": "artifacts/tmp/CAP-05.S02.T03.qualification-141.native.json",
+        "inputReportSha256": "d9c347c430fc8a74986da68c0a2c7897c84fe1f21807b8a2b969f8fc6febc9c7",
+        "rawOutput": "artifacts/tmp/CAP-05.S02.T03.qualification-141.native.lifecycle-worker-crash.log",
+        "rawOutputCanonicalSha256": "b06419f51bf0ae8d8c4082469d7123a78065aff0e960e4b1e8525868bf901a6e",
+        "rawOutputSha256": "e0fd10f950b67a14c5b8f688cf27b466303bce51c1c8d270c8f1bffe58754c12",
+        "result": "PASS"
+      },
+      {
+        "durationSeconds": 78.21257400000468,
+        "exitCode": 0,
+        "id": "parent-death",
+        "inputReport": "artifacts/tmp/CAP-05.S02.T03.qualification-141.native.json",
+        "inputReportSha256": "d9c347c430fc8a74986da68c0a2c7897c84fe1f21807b8a2b969f8fc6febc9c7",
+        "rawOutput": "artifacts/tmp/CAP-05.S02.T03.qualification-141.native.parent-death.log",
+        "rawOutputCanonicalSha256": "ff998145a82aa03d1283be5a2bbe981e2defa42970ff748adcf367252d86ed85",
+        "rawOutputSha256": "cb1d0c48f300a71c74e6905ab6ca34b0fa73923490597e0d71004234b1f85b35",
+        "result": "PASS"
+      },
+      {
+        "durationSeconds": 75.01856119999138,
+        "exitCode": 0,
+        "id": "resource-timeout",
+        "inputReport": "artifacts/tmp/CAP-05.S02.T03.qualification-141.native.json",
+        "inputReportSha256": "d9c347c430fc8a74986da68c0a2c7897c84fe1f21807b8a2b969f8fc6febc9c7",
+        "rawOutput": "artifacts/tmp/CAP-05.S02.T03.qualification-141.native.resource-timeout.log",
+        "rawOutputCanonicalSha256": "86a89058e1f5b9731c95c474284732bff0cf41e1068b56af575371368fc85564",
+        "rawOutputSha256": "3dc6b8c5b78f693c389f5b6246fa6078ea9750299f94c6bc3dc1046c63fd90e1",
+        "result": "PASS"
+      },
+      {
+        "durationSeconds": 80.21530870000424,
+        "exitCode": 0,
+        "id": "resource-job-memory-denial",
+        "inputReport": "artifacts/tmp/CAP-05.S02.T03.qualification-141.native.json",
+        "inputReportSha256": "d9c347c430fc8a74986da68c0a2c7897c84fe1f21807b8a2b969f8fc6febc9c7",
+        "rawOutput": "artifacts/tmp/CAP-05.S02.T03.qualification-141.native.resource-job-memory-denial.log",
+        "rawOutputCanonicalSha256": "4341ac1b37d3d3d5bbe4b4c4697dc4dd38b13d4ca81261ee6eae031588e79925",
+        "rawOutputSha256": "3394e7d86bf9f66c1560ec7313c05af1d73869a2598db248abc7dccac06e59b0",
+        "result": "PASS"
+      },
+      {
+        "durationSeconds": 36.224825400000555,
+        "exitCode": 0,
+        "id": "denial-malformed-pdf",
+        "inputReport": "artifacts/tmp/CAP-05.S02.T03.qualification-141.native.json",
+        "inputReportSha256": "d9c347c430fc8a74986da68c0a2c7897c84fe1f21807b8a2b969f8fc6febc9c7",
+        "rawOutput": "artifacts/tmp/CAP-05.S02.T03.qualification-141.native.denial-malformed-pdf.log",
+        "rawOutputCanonicalSha256": "b549ec27dc2d229b0e956fd2628b92cb05a63943e4420711f6db6346c4fd9660",
+        "rawOutputSha256": "ecae99b8aff326d4bad9f8ae8058913727f068bd476add276b503409d52b1dfa",
+        "result": "PASS"
+      },
+      {
+        "durationSeconds": 36.04098540000268,
+        "exitCode": 0,
+        "id": "denial-encrypted-pdf",
+        "inputReport": "artifacts/tmp/CAP-05.S02.T03.qualification-141.native.json",
+        "inputReportSha256": "d9c347c430fc8a74986da68c0a2c7897c84fe1f21807b8a2b969f8fc6febc9c7",
+        "rawOutput": "artifacts/tmp/CAP-05.S02.T03.qualification-141.native.denial-encrypted-pdf.log",
+        "rawOutputCanonicalSha256": "c68a10de6cf0504030c78a2ebb533b982a64cb8ace2320b9b7e4d54e172364a2",
+        "rawOutputSha256": "97248bfdadd86845dd17323a260e465769d810d5c7a0c6c274127e4d1ff98be5",
+        "result": "PASS"
+      },
+      {
+        "durationSeconds": 37.469893300003605,
+        "exitCode": 0,
+        "id": "denial-huge-canvas",
+        "inputReport": "artifacts/tmp/CAP-05.S02.T03.qualification-141.native.json",
+        "inputReportSha256": "d9c347c430fc8a74986da68c0a2c7897c84fe1f21807b8a2b969f8fc6febc9c7",
+        "rawOutput": "artifacts/tmp/CAP-05.S02.T03.qualification-141.native.denial-huge-canvas.log",
+        "rawOutputCanonicalSha256": "fbf63e061db506605ab7157704ac5ed9344033e3d23591947594dd346f89d625",
+        "rawOutputSha256": "40ff8fe3a83c36ef7acd66cabe77b26e2e67ea69732e40e657377068ffcb59db",
+        "result": "PASS"
+      },
+      {
+        "durationSeconds": 36.23469990000012,
+        "exitCode": 0,
+        "id": "denial-over-page-limit",
+        "inputReport": "artifacts/tmp/CAP-05.S02.T03.qualification-141.native.json",
+        "inputReportSha256": "d9c347c430fc8a74986da68c0a2c7897c84fe1f21807b8a2b969f8fc6febc9c7",
+        "rawOutput": "artifacts/tmp/CAP-05.S02.T03.qualification-141.native.denial-over-page-limit.log",
+        "rawOutputCanonicalSha256": "b05e85e89bef92fb1f464f7a9ca57d68725c58214b4f4fce5236aba2501991f4",
+        "rawOutputSha256": "e18ae8424ef365aa716948fd41cd2c40be75036b5f8837ef7c79c7b09c8c7f86",
+        "result": "PASS"
+      },
+      {
+        "durationSeconds": 36.998867800008156,
+        "exitCode": 0,
+        "id": "denial-native-external-entity",
+        "inputReport": "artifacts/tmp/CAP-05.S02.T03.qualification-141.native.json",
+        "inputReportSha256": "d9c347c430fc8a74986da68c0a2c7897c84fe1f21807b8a2b969f8fc6febc9c7",
+        "rawOutput": "artifacts/tmp/CAP-05.S02.T03.qualification-141.native.denial-native-external-entity.log",
+        "rawOutputCanonicalSha256": "6d69538c054c602a97b487b766e6de34fda21999811c15071ec941d6a80bcfad",
+        "rawOutputSha256": "db45d4fa4ffc158ef1768290f763c1f6032463a36bd166d5070fb257356995e9",
+        "result": "PASS"
+      },
+      {
+        "durationSeconds": 46.15774119998969,
+        "exitCode": 0,
+        "id": "page",
+        "inputReport": "artifacts/tmp/CAP-05.S02.T03.qualification-141.native.json",
+        "inputReportSha256": "d9c347c430fc8a74986da68c0a2c7897c84fe1f21807b8a2b969f8fc6febc9c7",
+        "rawOutput": "artifacts/tmp/CAP-05.S02.T03.qualification-141.native.page.log",
+        "rawOutputCanonicalSha256": "3638544708906b54530de4590485608a0f8fb5dd262a751c5abe44039533db70",
+        "rawOutputSha256": "0ee0b857131f5ca13902eda42cdb93ee9870f245b2d56572a2710acb93d098ca",
+        "result": "PASS"
+      },
+      {
+        "durationSeconds": 55.987215000001015,
+        "exitCode": 0,
+        "id": "scan",
+        "inputReport": "artifacts/tmp/CAP-05.S02.T03.qualification-141.native.json",
+        "inputReportSha256": "d9c347c430fc8a74986da68c0a2c7897c84fe1f21807b8a2b969f8fc6febc9c7",
+        "rawOutput": "artifacts/tmp/CAP-05.S02.T03.qualification-141.native.scan.log",
+        "rawOutputCanonicalSha256": "58215fe21de0a2f9f2f6fd95c7f91316f9cda376806798566f50f4e3f62ed936",
+        "rawOutputSha256": "adcf49138e2916f72fd4b6d30d5bf83e5f1d0a76c5c62ab2583cd5c82ca1cfd6",
+        "result": "PASS"
+      },
+      {
+        "durationSeconds": 87.19463990000077,
+        "exitCode": 0,
+        "id": "encrypted-fallback",
+        "inputReport": "artifacts/tmp/CAP-05.S02.T03.qualification-141.native.json",
+        "inputReportSha256": "d9c347c430fc8a74986da68c0a2c7897c84fe1f21807b8a2b969f8fc6febc9c7",
+        "rawOutput": "artifacts/tmp/CAP-05.S02.T03.qualification-141.native.encrypted-fallback.log",
+        "rawOutputCanonicalSha256": "937cc157c459ad2771675af0dd401be1090425e8b461169dfae025e475c85695",
+        "rawOutputSha256": "7e38a541163e2e6b73fd7e1200328e13d64afd4ba0d371ebc7debf347c2a18a9",
+        "result": "PASS"
+      },
+      {
+        "durationSeconds": 42.63051489999634,
+        "exitCode": 0,
+        "id": "encrypted-plain-text",
+        "inputReport": "artifacts/tmp/CAP-05.S02.T03.qualification-141.native.json",
+        "inputReportSha256": "d9c347c430fc8a74986da68c0a2c7897c84fe1f21807b8a2b969f8fc6febc9c7",
+        "rawOutput": "artifacts/tmp/CAP-05.S02.T03.qualification-141.native.encrypted-plain-text.log",
+        "rawOutputCanonicalSha256": "ff3e7d03145fad474a5a6bb9b0d0ba93af0c3f64e936c2ec73e06289531dda97",
+        "rawOutputSha256": "e16e6fbe875f63c03c4b661b1c1036ebff5e449f356469e26c304a754d0b3562",
+        "result": "PASS"
+      },
+      {
+        "durationSeconds": 42.82771499999217,
+        "exitCode": 0,
+        "id": "encrypted-jats",
+        "inputReport": "artifacts/tmp/CAP-05.S02.T03.qualification-141.native.json",
+        "inputReportSha256": "d9c347c430fc8a74986da68c0a2c7897c84fe1f21807b8a2b969f8fc6febc9c7",
+        "rawOutput": "artifacts/tmp/CAP-05.S02.T03.qualification-141.native.encrypted-jats.log",
+        "rawOutputCanonicalSha256": "e34ddab5cdac3c77c7b3462185849e1d7572b06771ba9a7a3e6a2eafdd7ac757",
+        "rawOutputSha256": "4f1597f9c9ef5be1690ed9ae1da8f5e6382ac65c1c4bdaf808a34cd911952c67",
+        "result": "PASS"
+      },
+      {
+        "durationSeconds": 43.18496879999293,
+        "exitCode": 0,
+        "id": "encrypted-tei",
+        "inputReport": "artifacts/tmp/CAP-05.S02.T03.qualification-141.native.json",
+        "inputReportSha256": "d9c347c430fc8a74986da68c0a2c7897c84fe1f21807b8a2b969f8fc6febc9c7",
+        "rawOutput": "artifacts/tmp/CAP-05.S02.T03.qualification-141.native.encrypted-tei.log",
+        "rawOutputCanonicalSha256": "ff9b3aa993c4d67c0d1dc57c7f51facc214f326356ee330ce0945c134d706d48",
+        "rawOutputSha256": "2617ebae9e18b578ae438e4a4582966415cf75ebd0b5650990cad06c9e0cf624",
+        "result": "PASS"
+      },
+      {
+        "durationSeconds": 44.17417819998809,
+        "exitCode": 0,
+        "id": "encrypted-xml",
+        "inputReport": "artifacts/tmp/CAP-05.S02.T03.qualification-141.native.json",
+        "inputReportSha256": "d9c347c430fc8a74986da68c0a2c7897c84fe1f21807b8a2b969f8fc6febc9c7",
+        "rawOutput": "artifacts/tmp/CAP-05.S02.T03.qualification-141.native.encrypted-xml.log",
+        "rawOutputCanonicalSha256": "2363cb1c6a09743589cc02b86e2f20aa404f16f4395f79426719e0b91684f77a",
+        "rawOutputSha256": "9c43cd56096607c9f81e28046ec4ba5384b034dc3e4aeab35ddd03c0f788bb16",
+        "result": "PASS"
+      },
+      {
+        "durationSeconds": 44.0283153999917,
+        "exitCode": 0,
+        "id": "encrypted-html",
+        "inputReport": "artifacts/tmp/CAP-05.S02.T03.qualification-141.native.json",
+        "inputReportSha256": "d9c347c430fc8a74986da68c0a2c7897c84fe1f21807b8a2b969f8fc6febc9c7",
+        "rawOutput": "artifacts/tmp/CAP-05.S02.T03.qualification-141.native.encrypted-html.log",
+        "rawOutputCanonicalSha256": "d619e6b82cf3983f930dc46c1940321a933f31f3e9d627ed3877c953ad736e38",
+        "rawOutputSha256": "89daba383ddda2e67b32cfb76498589f1725fbb806a895e66e7a8dfc873595ad",
+        "result": "PASS"
+      },
+      {
+        "durationSeconds": 50.17375339999853,
+        "exitCode": 0,
+        "id": "encrypted-docx",
+        "inputReport": "artifacts/tmp/CAP-05.S02.T03.qualification-141.native.json",
+        "inputReportSha256": "d9c347c430fc8a74986da68c0a2c7897c84fe1f21807b8a2b969f8fc6febc9c7",
+        "rawOutput": "artifacts/tmp/CAP-05.S02.T03.qualification-141.native.encrypted-docx.log",
+        "rawOutputCanonicalSha256": "cfeb4ae8d6da6d871345b551ce99b59f5d169f73f0b78fe4f68855afc603b5bc",
+        "rawOutputSha256": "1c37e49ad67323448b0fbc98fe7790f5d60d54c6e8e3dfd0c5894edad712c349",
+        "result": "PASS"
+      },
+      {
+        "durationSeconds": 63.02381640000385,
+        "exitCode": 0,
+        "id": "installed-parser-cold-0",
+        "inputReport": "artifacts/tmp/CAP-05.S02.T03.performance-124.benchmark.cold-0.json",
+        "inputReportSha256": "424b60a476436b0047981df1c18a7a7efa981124f1c1ce57a65830a7fe3eaae4",
+        "rawOutput": "artifacts/tmp/CAP-05.S02.T03.performance-124.benchmark.cold-0.log",
+        "rawOutputCanonicalSha256": "728684943e34abe949b112d08605c55bfff0461100fecbcb5744c7c3aa709c92",
+        "rawOutputSha256": "5a89b539c173aa4c7d2a45651330fd4e1af11dd66750607640befa4fac1f4572",
+        "result": "PASS"
+      },
+      {
+        "durationSeconds": 62.62831159999769,
+        "exitCode": 0,
+        "id": "installed-parser-cold-1",
+        "inputReport": "artifacts/tmp/CAP-05.S02.T03.performance-124.benchmark.cold-1.json",
+        "inputReportSha256": "905cb06a1e231328c08a43044448a19c60d5e698dde892e3446aec7415943477",
+        "rawOutput": "artifacts/tmp/CAP-05.S02.T03.performance-124.benchmark.cold-1.log",
+        "rawOutputCanonicalSha256": "53414cbe68e1ace68e359da42ff03956193ffe737312e589d205358b4fd2d070",
+        "rawOutputSha256": "afeb616f81bf4c7cd751808f27d2508a6fb3326d65fc67dd03d77cec688205ff",
+        "result": "PASS"
+      },
+      {
+        "durationSeconds": 62.21300499999779,
+        "exitCode": 0,
+        "id": "installed-parser-cold-2",
+        "inputReport": "artifacts/tmp/CAP-05.S02.T03.performance-124.benchmark.cold-2.json",
+        "inputReportSha256": "79cc120a2fbc1163c5b1ff0b469e4d2f2d866354e59a5c16c2c83692bddd18b1",
+        "rawOutput": "artifacts/tmp/CAP-05.S02.T03.performance-124.benchmark.cold-2.log",
+        "rawOutputCanonicalSha256": "7282801f4c051f3485474d26e9c55a285044f6b1294bb70e5682c2b7f335acff",
+        "rawOutputSha256": "8c0d6bf85e22e10dba08d3e3f51238d192f4772c6c3fa8842f0d74e597b1fba2",
+        "result": "PASS"
+      },
+      {
+        "durationSeconds": 62.4152541999938,
+        "exitCode": 0,
+        "id": "installed-parser-warmup-0",
+        "inputReport": "artifacts/tmp/CAP-05.S02.T03.performance-124.benchmark.warmup-0.json",
+        "inputReportSha256": "601239de6424ae9cc21d7b97cbabe097c1f208c51b8baf71c38c3a6cb841ce8a",
+        "rawOutput": "artifacts/tmp/CAP-05.S02.T03.performance-124.benchmark.warmup-0.log",
+        "rawOutputCanonicalSha256": "4207eb050bb3e3c3013c566d80563167383bef34e3939355cec36a5b8009f903",
+        "rawOutputSha256": "73d33bd91cc2a0a9459b2dc22fd780ced17ceba8de81f204f3208c154acdafb8",
+        "result": "PASS"
+      },
+      {
+        "durationSeconds": 62.34595469999476,
+        "exitCode": 0,
+        "id": "installed-parser-warm-0",
+        "inputReport": "artifacts/tmp/CAP-05.S02.T03.performance-124.benchmark.warm-0.json",
+        "inputReportSha256": "27b3b2accf950c93d8a65d0bba22578f1bcf22c3d569d5e64aba6e644f1b88a7",
+        "rawOutput": "artifacts/tmp/CAP-05.S02.T03.performance-124.benchmark.warm-0.log",
+        "rawOutputCanonicalSha256": "9df4fe657a38585728280c85e3b0d119b89227ae7f924bcdd824acbac1a38b7c",
+        "rawOutputSha256": "c318df568a39a1582e3d71cf18d209831d89ee7c53ebf7364c02adc27d74a6db",
+        "result": "PASS"
+      },
+      {
+        "durationSeconds": 62.37972950001131,
+        "exitCode": 0,
+        "id": "installed-parser-warm-1",
+        "inputReport": "artifacts/tmp/CAP-05.S02.T03.performance-124.benchmark.warm-1.json",
+        "inputReportSha256": "616911baf1afdfa8c4cd6e6b620f4b91c03be4202b0838e594d83831812d61f2",
+        "rawOutput": "artifacts/tmp/CAP-05.S02.T03.performance-124.benchmark.warm-1.log",
+        "rawOutputCanonicalSha256": "3b73dc162712759fca5684b9d5341f2a43c3769326102f104af84d8146249e86",
+        "rawOutputSha256": "f6e0965092ba97370a08a758d85a874a8284f953e067263d925fce6846274690",
+        "result": "PASS"
+      },
+      {
+        "durationSeconds": 60.12968739999633,
+        "exitCode": 0,
+        "id": "installed-parser-warm-2",
+        "inputReport": "artifacts/tmp/CAP-05.S02.T03.performance-124.benchmark.warm-2.json",
+        "inputReportSha256": "305f7fce0f4a80dc9466077a1ae8b302aca489a477e87084888a85ac12e0e4e1",
+        "rawOutput": "artifacts/tmp/CAP-05.S02.T03.performance-124.benchmark.warm-2.log",
+        "rawOutputCanonicalSha256": "e3e8e6aa6220144d1a71452a2aebf5e13bc83aa4dd2b5c57e212158bf5e8d135",
+        "rawOutputSha256": "0bcc69bf9a2b00a9a9e74425d8d747db6941c0c95e8c8a7be661cd380d9df82a",
+        "result": "PASS"
+      },
+      {
+        "durationSeconds": 60.74072380000143,
+        "exitCode": 0,
+        "id": "installed-parser-warm-3",
+        "inputReport": "artifacts/tmp/CAP-05.S02.T03.performance-124.benchmark.warm-3.json",
+        "inputReportSha256": "27e9f7363945c860e44a9a19ad6c9dbc4a54fa18adbbf487cbd58eea71ecbb3f",
+        "rawOutput": "artifacts/tmp/CAP-05.S02.T03.performance-124.benchmark.warm-3.log",
+        "rawOutputCanonicalSha256": "43f64b9d1c07188f66b8af7514d970a6c86d26d70a7c1f1fcd42832546f2a9f0",
+        "rawOutputSha256": "ade7aad77bc98a374c58eef589924b3ac7c8ad7d04d6350a93d3a058b77351ec",
+        "result": "PASS"
+      },
+      {
+        "durationSeconds": 60.46467929999926,
+        "exitCode": 0,
+        "id": "installed-parser-warm-4",
+        "inputReport": "artifacts/tmp/CAP-05.S02.T03.performance-124.benchmark.warm-4.json",
+        "inputReportSha256": "f246566b05a9ee3569466b18137639bcada424d112b722cc66f5554947a0aea8",
+        "rawOutput": "artifacts/tmp/CAP-05.S02.T03.performance-124.benchmark.warm-4.log",
+        "rawOutputCanonicalSha256": "d35fcb34321ec1282e42894c12408852c61e19eb8beb79486d4a6f65f147ca45",
+        "rawOutputSha256": "02905923cf1596ba1a0c31533c68f3879e2b5be06b1823903bdb8489cdf56522",
+        "result": "PASS"
+      },
+      {
+        "durationSeconds": 65.32626519999758,
+        "exitCode": 0,
+        "id": "installed-parser-warm-5",
+        "inputReport": "artifacts/tmp/CAP-05.S02.T03.performance-124.benchmark.warm-5.json",
+        "inputReportSha256": "d6aad8bd8fae9b99a1ad914f0a9943d26f583e51b79596d407511d946ce4954a",
+        "rawOutput": "artifacts/tmp/CAP-05.S02.T03.performance-124.benchmark.warm-5.log",
+        "rawOutputCanonicalSha256": "48c22c9ff426c3f15d1c74f07c8cbe68b46a7fa581ca97dcaf8fc8b299618d4b",
+        "rawOutputSha256": "9e37fd334ab6e262d80be07c30b89e0b519da9967bd8687588adcc28b5bf5839",
+        "result": "PASS"
+      },
+      {
+        "durationSeconds": 65.83213749999413,
+        "exitCode": 0,
+        "id": "installed-parser-warm-6",
+        "inputReport": "artifacts/tmp/CAP-05.S02.T03.performance-124.benchmark.warm-6.json",
+        "inputReportSha256": "545b206655ba735b2fadecbd6b4d431023941d776fa9aa9dc06adf33f5616635",
+        "rawOutput": "artifacts/tmp/CAP-05.S02.T03.performance-124.benchmark.warm-6.log",
+        "rawOutputCanonicalSha256": "c30f9547289f8ff7595f7c2bd6736744068cf2d5af681166ec12b0f2b746e371",
+        "rawOutputSha256": "828012dadfd9038711b9c6b0065404e2d908e97510099eee46d52ecea271b89b",
+        "result": "PASS"
+      }
+    ],
+    "authenticated_machine_artifacts": [
+      {
+        "candidate": "c17511401808d003eaa2c74ff0b866e65a6955d9",
+        "path": "artifacts/tmp/CAP-05.S02.T03.native-lifecycle-142.cancel.json",
+        "reportedStatus": "PASS",
+        "sha256": "d47b8595c09bf3b990c8916cc332dabb08c741d5e9d8b2bd70ebfa3679ea324f"
+      },
+      {
+        "candidate": "c17511401808d003eaa2c74ff0b866e65a6955d9",
+        "path": "artifacts/tmp/CAP-05.S02.T03.native-lifecycle-142.worker-crash.json",
+        "reportedStatus": "PASS",
+        "sha256": "775bde01df990533a7772a305390d16d05cbbcfc00a14fe51db38c3f28e11705"
+      },
+      {
+        "candidate": "c17511401808d003eaa2c74ff0b866e65a6955d9",
+        "path": "artifacts/tmp/CAP-05.S02.T03.parent-death-143.json",
+        "reportedStatus": "PASS",
+        "sha256": "bc1d1ba3399c21958d79f9f424ba5007d3cf7b4b1fa53826fa0a016c55d9c09a"
+      },
+      {
+        "candidate": "c17511401808d003eaa2c74ff0b866e65a6955d9",
+        "path": "artifacts/tmp/CAP-05.S02.T03.resource-enforcement-144.timeout.json",
+        "reportedStatus": "PASS",
+        "sha256": "f2f31360fc3bf1c594e83ace2280479bd31f306bf6c9aa14274f453a30553793"
+      },
+      {
+        "candidate": "c17511401808d003eaa2c74ff0b866e65a6955d9",
+        "path": "artifacts/tmp/CAP-05.S02.T03.resource-enforcement-144.job-memory-denial.json",
+        "reportedStatus": "PASS",
+        "sha256": "1ef2f0bd626ad108c076925265517b04965d74a8d42c8c2b66131b4e6d74b98f"
+      },
+      {
+        "candidate": "c17511401808d003eaa2c74ff0b866e65a6955d9",
+        "path": "artifacts/tmp/CAP-05.S02.T03.installed-denials-145.malformed-pdf.json",
+        "reportedStatus": "PASS",
+        "sha256": "93ce88f68fbc853f6c8382fb1cad538ed797c873ffedaa309acc87a6933694a4"
+      },
+      {
+        "candidate": "c17511401808d003eaa2c74ff0b866e65a6955d9",
+        "path": "artifacts/tmp/CAP-05.S02.T03.installed-denials-145.encrypted-pdf.json",
+        "reportedStatus": "PASS",
+        "sha256": "e649c904a7bde79d97c3be9c26400cb9e868265c142adb8e6c00f17e0a38ba95"
+      },
+      {
+        "candidate": "c17511401808d003eaa2c74ff0b866e65a6955d9",
+        "path": "artifacts/tmp/CAP-05.S02.T03.installed-denials-145.huge-canvas.json",
+        "reportedStatus": "PASS",
+        "sha256": "55de9e6a876a1ac990711785ad0cdea467aea2aea977298e9697d2875d1c5b0d"
+      },
+      {
+        "candidate": "c17511401808d003eaa2c74ff0b866e65a6955d9",
+        "path": "artifacts/tmp/CAP-05.S02.T03.installed-denials-145.over-page-limit.json",
+        "reportedStatus": "PASS",
+        "sha256": "fae3e6b421e61d4266a2d264b4c4881e0ef3496188afafa3141c45496a9719d4"
+      },
+      {
+        "candidate": "c17511401808d003eaa2c74ff0b866e65a6955d9",
+        "path": "artifacts/tmp/CAP-05.S02.T03.installed-denials-145.native-external-entity.json",
+        "reportedStatus": "PASS",
+        "sha256": "d5fb555a06d9f24ea2a57c24af8226faf7aafbe81865378a6582c926687948b3"
+      },
+      {
+        "candidate": "c17511401808d003eaa2c74ff0b866e65a6955d9",
+        "path": "artifacts/tmp/CAP-05.S02.T03.production-page-146.json",
+        "reportedStatus": "PASS",
+        "sha256": "cd3866cd285c6f486ca45f599e3a1fc9163d70246411a9fa1e4caf9050fd970e"
+      },
+      {
+        "candidate": "c17511401808d003eaa2c74ff0b866e65a6955d9",
+        "path": "artifacts/tmp/CAP-05.S02.T03.production-scan-147.json",
+        "reportedStatus": "PASS",
+        "sha256": "9cd2efe0b61b71a18c18cbfb0587fdbf3f37928950d7b57cbf257a17193fa0bc"
+      },
+      {
+        "candidate": "c17511401808d003eaa2c74ff0b866e65a6955d9",
+        "path": "artifacts/tmp/CAP-05.S02.T03.production-fallback-149.json",
+        "reportedStatus": "PASS",
+        "sha256": "cea430e5e0d5a6e06f3a87d21275506179d68b766c2302fe7161c51f88576801"
+      },
+      {
+        "candidate": "c17511401808d003eaa2c74ff0b866e65a6955d9",
+        "path": "artifacts/tmp/CAP-05.S02.T03.production-formats-148.plain-text.json",
+        "reportedStatus": "PASS",
+        "sha256": "6b9b40cd23f3588ea119e657296d5e1516a03b2d906b796eaa39c06637af3201"
+      },
+      {
+        "candidate": "c17511401808d003eaa2c74ff0b866e65a6955d9",
+        "path": "artifacts/tmp/CAP-05.S02.T03.production-formats-148.jats.json",
+        "reportedStatus": "PASS",
+        "sha256": "4457870df05388a8b60def24c3d70ec1e3073a9d82b7aa4d3217fceeb0ec32df"
+      },
+      {
+        "candidate": "c17511401808d003eaa2c74ff0b866e65a6955d9",
+        "path": "artifacts/tmp/CAP-05.S02.T03.production-formats-148.tei.json",
+        "reportedStatus": "PASS",
+        "sha256": "6d4900a36d3b4f936665f6533b7b544b98f0f65165d28644c3b17010e402c883"
+      },
+      {
+        "candidate": "c17511401808d003eaa2c74ff0b866e65a6955d9",
+        "path": "artifacts/tmp/CAP-05.S02.T03.production-formats-148.xml.json",
+        "reportedStatus": "PASS",
+        "sha256": "5f4b82618fe35e6decefd6ced1e8121c6d6f58f6043a146e9a04f5e54dd0208a"
+      },
+      {
+        "candidate": "c17511401808d003eaa2c74ff0b866e65a6955d9",
+        "path": "artifacts/tmp/CAP-05.S02.T03.production-formats-148.html.json",
+        "reportedStatus": "PASS",
+        "sha256": "e2068735c71d286b88b09198c2077005fca50c63dede710da56984820bf76ba5"
+      },
+      {
+        "candidate": "c17511401808d003eaa2c74ff0b866e65a6955d9",
+        "path": "artifacts/tmp/CAP-05.S02.T03.production-formats-148.docx.json",
+        "reportedStatus": "PASS",
+        "sha256": "ebd20e28195e13a1856559826259efa811e150410904849f8e7b7c22ca4de761"
+      },
+      {
+        "candidate": "c17511401808d003eaa2c74ff0b866e65a6955d9",
+        "path": "artifacts/tmp/CAP-05.S02.T03.normalization-bound-150.json",
+        "reportedStatus": "PASS",
+        "sha256": "bba17bf6e8bef576d34785b7711f841a5a5641cff306d02f8157e8ead2ca3acb"
+      }
+    ],
+    "benchmark_samples": [
+      {
+        "coreStageSeconds": 59.73081330000423,
+        "exitCode": 0,
+        "index": 0,
+        "layoutGoldStatus": "FAIL",
+        "path": "artifacts/tmp/CAP-05.S02.T03.performance-124.benchmark.cold-0.json",
+        "phase": "cold",
+        "sha256": "424b60a476436b0047981df1c18a7a7efa981124f1c1ce57a65830a7fe3eaae4",
+        "status": "PASS"
+      },
+      {
+        "coreStageSeconds": 59.24316009999893,
+        "exitCode": 0,
+        "index": 1,
+        "layoutGoldStatus": "FAIL",
+        "path": "artifacts/tmp/CAP-05.S02.T03.performance-124.benchmark.cold-1.json",
+        "phase": "cold",
+        "sha256": "905cb06a1e231328c08a43044448a19c60d5e698dde892e3446aec7415943477",
+        "status": "PASS"
+      },
+      {
+        "coreStageSeconds": 58.97480630000064,
+        "exitCode": 0,
+        "index": 2,
+        "layoutGoldStatus": "FAIL",
+        "path": "artifacts/tmp/CAP-05.S02.T03.performance-124.benchmark.cold-2.json",
+        "phase": "cold",
+        "sha256": "79cc120a2fbc1163c5b1ff0b469e4d2f2d866354e59a5c16c2c83692bddd18b1",
+        "status": "PASS"
+      },
+      {
+        "coreStageSeconds": 59.14014760000282,
+        "exitCode": 0,
+        "index": 0,
+        "layoutGoldStatus": "FAIL",
+        "path": "artifacts/tmp/CAP-05.S02.T03.performance-124.benchmark.warmup-0.json",
+        "phase": "warmup",
+        "sha256": "601239de6424ae9cc21d7b97cbabe097c1f208c51b8baf71c38c3a6cb841ce8a",
+        "status": "PASS"
+      },
+      {
+        "coreStageSeconds": 59.003543400001945,
+        "exitCode": 0,
+        "index": 0,
+        "layoutGoldStatus": "FAIL",
+        "path": "artifacts/tmp/CAP-05.S02.T03.performance-124.benchmark.warm-0.json",
+        "phase": "warm",
+        "sha256": "27b3b2accf950c93d8a65d0bba22578f1bcf22c3d569d5e64aba6e644f1b88a7",
+        "status": "PASS"
+      },
+      {
+        "coreStageSeconds": 59.14821600000141,
+        "exitCode": 0,
+        "index": 1,
+        "layoutGoldStatus": "FAIL",
+        "path": "artifacts/tmp/CAP-05.S02.T03.performance-124.benchmark.warm-1.json",
+        "phase": "warm",
+        "sha256": "616911baf1afdfa8c4cd6e6b620f4b91c03be4202b0838e594d83831812d61f2",
+        "status": "PASS"
+      },
+      {
+        "coreStageSeconds": 56.87450200000603,
+        "exitCode": 0,
+        "index": 2,
+        "layoutGoldStatus": "FAIL",
+        "path": "artifacts/tmp/CAP-05.S02.T03.performance-124.benchmark.warm-2.json",
+        "phase": "warm",
+        "sha256": "305f7fce0f4a80dc9466077a1ae8b302aca489a477e87084888a85ac12e0e4e1",
+        "status": "PASS"
+      },
+      {
+        "coreStageSeconds": 57.48692110000411,
+        "exitCode": 0,
+        "index": 3,
+        "layoutGoldStatus": "FAIL",
+        "path": "artifacts/tmp/CAP-05.S02.T03.performance-124.benchmark.warm-3.json",
+        "phase": "warm",
+        "sha256": "27e9f7363945c860e44a9a19ad6c9dbc4a54fa18adbbf487cbd58eea71ecbb3f",
+        "status": "PASS"
+      },
+      {
+        "coreStageSeconds": 57.14214619999984,
+        "exitCode": 0,
+        "index": 4,
+        "layoutGoldStatus": "FAIL",
+        "path": "artifacts/tmp/CAP-05.S02.T03.performance-124.benchmark.warm-4.json",
+        "phase": "warm",
+        "sha256": "f246566b05a9ee3569466b18137639bcada424d112b722cc66f5554947a0aea8",
+        "status": "PASS"
+      },
+      {
+        "coreStageSeconds": 62.014159900005325,
+        "exitCode": 0,
+        "index": 5,
+        "layoutGoldStatus": "FAIL",
+        "path": "artifacts/tmp/CAP-05.S02.T03.performance-124.benchmark.warm-5.json",
+        "phase": "warm",
+        "sha256": "d6aad8bd8fae9b99a1ad914f0a9943d26f583e51b79596d407511d946ce4954a",
+        "status": "PASS"
+      },
+      {
+        "coreStageSeconds": 62.53335420000076,
+        "exitCode": 0,
+        "index": 6,
+        "layoutGoldStatus": "FAIL",
+        "path": "artifacts/tmp/CAP-05.S02.T03.performance-124.benchmark.warm-6.json",
+        "phase": "warm",
+        "sha256": "545b206655ba735b2fadecbd6b4d431023941d776fa9aa9dc06adf33f5616635",
+        "status": "PASS"
+      }
+    ],
+    "deferred": [
+      "Integrated S02 slice evidence/review and downstream handoff remain required after this task; S03 owns real parsing-operation admission/lease heartbeat, immutable revisions and explicit human acceptance. The declared fixture workflow clock does not qualify that runtime path.",
+      "Desktop UI/reader/OS dialogs/accessibility and subsequent CAP05 slices remain ordered product work; this worker/service task changes no governed UX.",
+      "Fresh full repository/profile, cross-capability happy/denial/cancellation/migration/restart/recovery, security/privacy/rights/accessibility/performance/packaging/platform and independent W2 review plus separate humanG2 release remain required at Wave exit.",
+      "Installation discovery, initial workflow admission and clock are synthetic fixtures. Actual parser/protected source/SQLCipher/encrypted staging execute product code. Live30s heartbeat/S03 operation admission, revisions and human acceptance remain downstream.",
+      "Parent death proves owned principal lifecycle, not fabricated durable restart/accepted revisions. Finite JSON/Pydantic/Unicode/serialization primitives are not per-byte interruptible; no aggregate trusted Core4GiB or measured5s Core decode guarantee.",
+      "No unchanged broad history/profile replay, slice/Wave/release approval or model/layoutGoldPASS inferred."
+    ],
+    "final_reports": {
+      "allMachineArtifactHashCandidateProducerBindingsVerified": true,
+      "allRawOutputsAndInputReportHashesVerified": true,
+      "basic151": {
+        "additionalPortableWorkerContractTests": 1,
+        "checks": 8,
+        "durationSeconds": 120.09482699999353,
+        "explicitNativeOnlySkips": 11,
+        "parserUnitReported": 147,
+        "parserUnitSeconds": 76.938,
+        "path": "artifacts/tmp/CAP-05.S02.T03.qualification-151.basic.json",
+        "portableExecuted": 136,
+        "sha256": "b4b3bc9ce1687bf6d3b3c193c9d081d72d8dfd31b5a2d104cd6f11d462750785",
+        "status": "PASS"
+      },
+      "breakdown": "8 basic checks +20 native groups +11 actual sample children; all selected children/checks exit0. Separate budget invocation remainsFAIL/exit1.",
+      "machineArtifacts": 20,
+      "manifestChecks": 39,
+      "native141": {
+        "durationSeconds": 1044.7791498000006,
+        "groups": 20,
+        "path": "artifacts/tmp/CAP-05.S02.T03.qualification-141.native.json",
+        "sha256": "d9c347c430fc8a74986da68c0a2c7897c84fe1f21807b8a2b969f8fc6febc9c7",
+        "skipClosure": "All11 same native test IDs execute without skips against actual built extension:11tests/0.041s.",
+        "status": "PASS"
+      },
+      "sampleChildren": {
+        "allExitZero": true,
+        "allHashCandidateProducerInventoryBindingsVerified": true,
+        "count": 11,
+        "nativeResources": "All11 actual LPAC/AppContainer token observations show zero caps, AllApplicationPackages denied,4GiB/mask85/one-process Job; measured peaks are observations.",
+        "publicHandoff": "All11 actual staged wires validate held parse-result.v1 public schema and exact request/outer/IR bindings; wire digests without protected wire text.",
+        "selection": "3 cold +1 warmup +7 warm; no discard"
+      }
+    },
+    "frozen_packet_authentication": "Actual atomically persisted review_control.current_submission R01, not attempts[-1] or an invented historical round. Packet/candidate/base/criteria/selection/evidence and exact changed-path/check bindings authenticate. Existing read-only task_submission_packet_errors and task_review_control_errors return no errors. Normal metadata publication and review recording remain the task owner's duties; no uncommitted submission metadata is called a separate source candidate.",
+    "frozen_submission": {
+      "acceptance_criteria_sha256": "0350f9e24c0f48fba76d7c3279442897c24591c1c4e448a0a2aa8b9ac8e03760",
+      "base_commit": "446819465a63776d7f00696f0bfee8b14fa065a9",
+      "branch": "codex/w2-implementation",
+      "candidate_commit": "c17511401808d003eaa2c74ff0b866e65a6955d9",
+      "evidence_reference": {
+        "commit": "c17511401808d003eaa2c74ff0b866e65a6955d9",
+        "path": "artifacts/evidence/CAP-05.S02.T03.R01.json",
+        "recorded_at": "2026-10-07T21:47:41+00:00",
+        "sha256": "5e629932746a0a97bae8933bb5038e65dab93c39727b8ac238b850e83bea2205",
+        "type": "criterion-manifest"
+      },
+      "id": "R01",
+      "open_finding_ids": [],
+      "packet_sha256": "043d441ff5365a22085ee3bb1806557122ef4a4b2c7b231d530167a46238c2f5",
+      "prior_attempt_id": null,
+      "selected_command_ids": [
+        "documents:unit",
+        "contracts:unit",
+        "foundation:quality",
+        "foundation:architecture",
+        "foundation:adr",
+        "security-local:unit",
+        "packaging:unit",
+        "e2e-local:system"
+      ],
+      "selection_sha256": "5954027fb115d44d13c33be5b49d724c4b6b72dedbef4cd9de29dcc92e3c3895",
+      "submitted_at": "2026-10-07T21:47:41+00:00",
+      "submitted_by": "codex-w2-implementation"
+    },
+    "input_closure": {
+      "basis": "Held deny-mutation Windows handles cover final tracked inputs, sealed actual installed dependencies, complete signed package, helpers/fixtures/gold/schema and exact frozen Analysis throughout execution. Product signatures/full inventory and current parent-only binding are checked; reports are producer-bound observations, not authority. c11 independently authenticates all78 immutable changed input blobs and execution equality. No repeated large-package/native check is performed by this review.",
+      "build_reuse_limit": "Package75 freezes at recorded build candidate2deb860b47027ffe96ea3977853b77a6f7f2cfde with expressly reused native compilation. All frozen repository module inputs remain equal to held Analysis/build blobs; final deltas are authenticated parent-only changes. No current compilation/freeze is fabricated.",
+      "package_identity": {
+        "buildCandidate": "2deb860b47027ffe96ea3977853b77a6f7f2cfde",
+        "buildReport": "artifacts/tmp/CAP-05.S02.T03.production-freeze-75.json",
+        "buildReportSha256": "98909bbc37719eebff765d8a3d9e3f16111505eb8442817e15bd78b256574b55",
+        "inventorySha256": "ebb0197926694d00710b486093e5c8b417a0ec0faa702ba42f3538e08ccbc573",
+        "scope": "Fresh freeze/sign assembly at recorded build candidate, explicitly reused unchanged native compilation. Current binding authenticates every unchanged frozen repository input and the bounded parent-only increment; no new compilation/freezing claim."
+      },
+      "producer_bindings": [
+        {
+          "path": "artifacts/tmp/CAP-05.S02.T03.qualification-151.py",
+          "sha256": "8130818ad5d5b5d003a38b1332f55f4775baa861576135997b0b07311c47413d"
+        },
+        {
+          "path": "artifacts/tmp/CAP-05.S02.T03.qualification-141.py",
+          "sha256": "9acdefed0c6a5b0c186e2adbe8d316714ef318fda7e1d64a4bb424ae4b0a5918"
+        },
+        {
+          "path": "artifacts/tmp/CAP-05.S02.T03.performance-124.py",
+          "sha256": "d28e46c14231866e81efa5e33aff09c9a9ce7dfa4ba132ce079b72faf2d3683a"
+        },
+        {
+          "path": "artifacts/tmp/CAP-05.S02.T03.production-quality-125.py",
+          "sha256": "192a35a19a3d8efe7a7dfc760aeca507dcb322f448edb15161fede1d7d32c49a"
+        },
+        {
+          "path": "artifacts/tmp/parser_binding_154.py",
+          "sha256": "f6091a8760999c4a8dd5eb5d235bb03e5a16b0a185b74d9fe193a44612a55906"
+        }
+      ],
+      "source_input_count": 6102
+    },
+    "performance_observation": {
+      "exit_code": 1,
+      "machine_result": "FAIL",
+      "measurements": {
+        "cold": {
+          "count": 3,
+          "maximumSeconds": 59.73081330000423,
+          "p95Seconds": 59.73081330000423,
+          "targetSeconds": 90
+        },
+        "warm": {
+          "count": 7,
+          "maximumSeconds": 62.53335420000076,
+          "p95Seconds": 62.53335420000076,
+          "targetSeconds": 60
+        }
+      },
+      "method": "Three cold fresh lifecycles, one unmeasured warmup and seven warm fresh lifecycles; OS cache is not flushed. Core interval includes source/runtime authentication, LPAC conversion, encrypted raw retention and staged IR. Setup/gold/schema/cleanup are outside the timer; nearest-rank p95 keeps every declared sample. No cause is established.",
+      "owner_acceptance": {
+        "acceptedOverageSeconds": 2.5333542000007583,
+        "approvalSource": "Explicit human message in this W2 campaign chat on2026-10-07, responding to the just-reported62.5-second warm p95 and instruction to investigate the overage.",
+        "candidate": "c17511401808d003eaa2c74ff0b866e65a6955d9",
+        "coldP95Seconds": 59.73081330000423,
+        "coldTargetSeconds": 90,
+        "disposition": "Exact measured deviation accepted as nonblocking; performance investigation stopped without diagnostic, source change, sample removal, rerun or changed baseline. Carry the result and owner decision into independent task/slice/Wave review. No cause established. No additional regression, changed security/resource/quality requirement, future blanket exemption or G2 release approval is authorized.",
+        "instruction": "I accept that slight overage. Please don't spend more time over the 2 second overage.",
+        "kind": "append-only-exact-observation-owner-acceptance",
+        "owner": "human:repository-owner",
+        "packageInventorySha256": "ebb0197926694d00710b486093e5c8b417a0ec0faa702ba42f3538e08ccbc573",
+        "rawBudgetExitCode": 1,
+        "rawBudgetResult": "FAIL",
+        "recordedAtUtc": "2026-10-07T21:45:57Z",
+        "report": "artifacts/tmp/CAP-05.S02.T03.performance-124.benchmark.json",
+        "reportSha256": "fc1b2ca099d8b400806e7e3340c9a0a2a25982f0f6716006a22947865eb51f77",
+        "warmP95Seconds": 62.53335420000076,
+        "warmTargetSeconds": 60
+      },
+      "owner_readable_record": {
+        "path": "artifacts/evidence/CAP-05.S02.T03.performance-owner-acceptance-01.md",
+        "sha256": "5dea8e7a2046f5ec229b10a143370c6048e62080da7c3f0f99d700f86219774a"
+      },
+      "report": {
+        "path": "artifacts/tmp/CAP-05.S02.T03.performance-124.benchmark.json",
+        "sha256": "fc1b2ca099d8b400806e7e3340c9a0a2a25982f0f6716006a22947865eb51f77"
+      },
+      "scope": "Exact human-accepted nonblocking task/slice observation carried to W2. Original90/60 targets, raw samples, budgetFAIL, quality/security/resource requirements and future fresh qualification remain unchanged; no general exemption or release approval."
+    },
+    "pre_submission_advisory_replay": {
+      "history_meaning": "Genuine immutable pre-submission source/behavioral observations, not formal controlled rounds. R01 has no prior formal finding, so formal findings/closures are empty. Corrected wrappers/text wire composition, compact CCC storage/final StringIO comparison, final stager text media and producer input closure are exercised by current basic/native evidence.",
+      "incremental_text_closure": {
+        "basis": "Exact existing text-output media added to encrypted stager closed set, with unknown-media denial unchanged. Native131 text-media FAIL retained; red155 has allocation failure and media rejection; green156 is development28PASS. Final141 separately executes actual encrypted plain-text LPAC output successfully. No rights/source/producer/format authority widened."
+      },
+      "primary_reviewer_records": [
+        {
+          "path": "artifacts/tmp/CAP-05.S02.T03.cpu-advisory-93.json",
+          "sha256": "9ade2220d195e4a61592e3897576452243049ff98e5780432ddbea41e3ad7f8e"
+        },
+        {
+          "path": "artifacts/tmp/CAP-05.S02.T03.contract-coverage-cd80-01.json",
+          "sha256": "5560ebf6ad97d476e9f3171ad2ecaae1de328c925e84496f628007671f695075"
+        },
+        {
+          "path": "artifacts/tmp/CAP-05.S02.T03.text-preflight-cd80-03.json",
+          "sha256": "7ecf8edf6ede371512aa1f176a77506fb4a253d324915cea9f0d083a64bf5433"
+        },
+        {
+          "path": "artifacts/tmp/CAP-05.S02.T03.native-proof-design-129.corrected-01.json",
+          "sha256": "109456af2661799cbd84ec2a418df8e32a1de8527ff6984fe3710897cc4c9f2e"
+        },
+        {
+          "path": "artifacts/tmp/CAP-05.S02.T03.committed-review-b8e9827e-01.json",
+          "sha256": "803c81f0ed241631e6914fa162ac177ac9de0cc936fcaac2cfaa03db1d724dd2"
+        },
+        {
+          "path": "artifacts/tmp/CAP-05.S02.T03.correction-review-21785fb9-01.json",
+          "sha256": "4216ff4a92ad146796d808fbe2d85ca9ae4d1dc3ffc4afbbb7afe5c49ecb9528"
+        }
+      ],
+      "security_findings": [
+        {
+          "closure": "Shared100000 graph-plus-cell entries and100000 relationships preflight before model creation; cooperative checkpoints and propagated cancellation.",
+          "criterionIndices": [
+            1,
+            2
+          ],
+          "defect": "Per-list table-cell bounds admitted cumulative graph expansion before trusted Core IR allocation.",
+          "developmentGreen": {
+            "path": "artifacts/tmp/CAP-05.S02.T03.decoder-resources-after-82.log",
+            "sha256": "d74cde9bf03f8b247c2235783c00c5de443e429ec2202aa947faf0abae014aea"
+          },
+          "finalProof": "Named cases PASS in151; static fanout finding was not a measured OOM.",
+          "freshTests": [
+            "test_docling_parsing.DoclingAdapterTests.test_total_table_expansion_is_rejected_before_node_allocation",
+            "test_docling_parsing.DoclingAdapterTests.test_core_decode_cancellation_interrupts_preflight_before_model_allocation"
+          ],
+          "id": "F01",
+          "red": {
+            "path": "artifacts/tmp/CAP-05.S02.T03.decoder-resources-before-81.log",
+            "sha256": "ecabf1f51ac27a3975a2183c4249909d21510242ff465615e1e6d1de4459155b"
+          },
+          "status": "addressed-before-first-controlled-submission"
+        },
+        {
+          "closure": "Constant-time exact-source-key locator dictionary; captions/relationships preflight-bounded and cooperative.",
+          "criterionIndices": [
+            1,
+            2
+          ],
+          "defect": "Figure locator search was quadratic in nodes and figures.",
+          "developmentGreen": {
+            "path": "artifacts/tmp/CAP-05.S02.T03.decoder-resources-after-82.log",
+            "sha256": "d74cde9bf03f8b247c2235783c00c5de443e429ec2202aa947faf0abae014aea"
+          },
+          "finalProof": "Named case PASS in151. Prior measured81000 node accesses remains adverse, not an executed large timeout.",
+          "freshTests": [
+            "test_docling_parsing.DoclingAdapterTests.test_figure_locator_lookup_has_linear_node_access"
+          ],
+          "id": "F02",
+          "red": {
+            "path": "artifacts/tmp/CAP-05.S02.T03.decoder-resources-before-81.log",
+            "sha256": "ecabf1f51ac27a3975a2183c4249909d21510242ff465615e1e6d1de4459155b"
+          },
+          "status": "addressed-before-first-controlled-submission"
+        },
+        {
+          "closure": "Incremental StringIO independent canonical-order NFC comparison preserves checkpoints, exact raw origins, two mapping runs and pinned Unicode16 semantics.",
+          "criterionIndices": [
+            1,
+            2
+          ],
+          "defect": "Full normalization final join comparison materialized scalar objects/ref sequence missed by first-yield test.",
+          "developmentGreen": {
+            "cases": 28,
+            "path": "artifacts/tmp/CAP-05.S02.T03.normalization-and-text-retention-green-156.log",
+            "result": "development-green",
+            "scope": "Complete affected normalization, encrypted-artifact and plain-text groups after correction; final committed qualification is separate.",
+            "sha256": "08a442553ebddddb0d6354ac88892543c67f2905c16d382351c796e18f0c68ac"
+          },
+          "developmentRed": {
+            "cases": 2,
+            "path": "artifacts/tmp/CAP-05.S02.T03.normalization-and-text-retention-red-155.log",
+            "result": "behavioral-red",
+            "scope": "Both new tracked regressions fail before product correction: one allocation assertion and one encrypted-media rejection.",
+            "sha256": "6d55369f55803e4e9c397f332d469cf0a213878270e08366070847b3abaead7f"
+          },
+          "finalProof": "Named cases PASS in151. Measured small48002-byte input peak2059198 exceeds1536064 bound before fix; no large-input OOM claim.",
+          "freshTests": [
+            "test_normalization.NormalizationTests.test_uncancelled_complete_normalization_uses_compact_working_storage",
+            "test_normalization.NormalizationTests.test_pinned_unicode_16_nfc_conformance_gold",
+            "test_normalization.NormalizationTests.test_cancellation_bounds_a_long_disordered_combining_run"
+          ],
+          "id": "F03",
+          "redMeasurement": {
+            "path": "artifacts/tmp/CAP-05.S02.T03.normalization-full-before-138.json",
+            "sha256": "8ca65647597dc9a9d889677a354e0c9b28c94f5b5d8641f2b233f4f6b577c120"
+          },
+          "status": "addressed-before-first-controlled-submission"
+        }
+      ]
+    },
+    "preparatory_authentication": {
+      "formal_disposition": false,
+      "path": "artifacts/tmp/CAP-05.S02.T03.formal-preparation-s02_t01_review-01.json",
+      "sha256": "ea6e1d14d5c0afc63c275b800b3b620eb40328150815643ef8f4f3d13307866e"
+    },
+    "retained_adverse": [
+      {
+        "path": "artifacts/tmp/CAP-05.S02.T03.decoder-resources-before-81.log",
+        "sha256": "ecabf1f51ac27a3975a2183c4249909d21510242ff465615e1e6d1de4459155b"
+      },
+      {
+        "path": "artifacts/tmp/CAP-05.S02.T03.normalization-full-before-138.json",
+        "sha256": "8ca65647597dc9a9d889677a354e0c9b28c94f5b5d8641f2b233f4f6b577c120"
+      },
+      {
+        "cases": 2,
+        "path": "artifacts/tmp/CAP-05.S02.T03.normalization-and-text-retention-red-155.log",
+        "result": "behavioral-red",
+        "scope": "Both new tracked regressions fail before product correction: one allocation assertion and one encrypted-media rejection.",
+        "sha256": "6d55369f55803e4e9c397f332d469cf0a213878270e08366070847b3abaead7f"
+      },
+      {
+        "candidate": "b8e9827e5b3c8fd739a3db0807590897c3031cf8",
+        "path": "artifacts/tmp/CAP-05.S02.T03.qualification-131.native.json",
+        "reportedStatus": "FAIL",
+        "scope": "Preserved observed machine/development/advisory result at its actual recorded candidate; no relabeling as current PASS qualification.",
+        "sha256": "7865298554e465354a1d8c6f3b5745eba07115984012ce978092e19f745777f7"
+      },
+      {
+        "disposition": "Preserved unchanged; exact nonblocking owner acceptance is separate from machine disposition.",
+        "durationSeconds": 826.0118275999994,
+        "exitCode": 1,
+        "rawOutput": "artifacts/tmp/CAP-05.S02.T03.performance-124.benchmark.log",
+        "rawOutputSha256": "7bfaf6fa99ee4ff2181fb47edc663fe83ed9d078f550363b8588bf65b53469f3",
+        "report": "artifacts/tmp/CAP-05.S02.T03.performance-124.benchmark.json",
+        "reportSha256": "fc1b2ca099d8b400806e7e3340c9a0a2a25982f0f6716006a22947865eb51f77",
+        "result": "FAIL"
+      },
+      {
+        "observation": "Guardian120 retained alongside separate exact cleanup/termination.",
+        "path": "artifacts/tmp/CAP-05.S02.T03.parent-death-143.json",
+        "sha256": "bc1d1ba3399c21958d79f9f424ba5007d3cf7b4b1fa53826fa0a016c55d9c09a"
+      }
+    ],
+    "reviewer_setup_observations": [
+      "Read-only packet diagnostic initially used relative Path.resolve and could not read the duplicate workspace path. Explicit known repository-root reading authenticated the same immutable packet without changing inputs or running a product check.",
+      "Initial ledger assembly asserted a guessed native-proof-design advisory separator and failed before creating any ledger. A bounded filename/digest match authenticated the exact native-proof-design-129.corrected-01 path; no qualifying proof was missing."
+    ],
+    "security_boundary_assessments": [
+      {
+        "basis": "Audited profile/substitution/copy identity, signed assets/config/introspection, strict inert DLL variants and bounded CPython/dateutil derivatives. Final real principal/hostile/resource proofs exercise changed boundary. Connector quota and one-CPU authority unchanged.",
+        "boundary": "Signed no-write isolated package",
+        "criterionIndices": [
+          1,
+          2,
+          3
+        ],
+        "result": "supported"
+      },
+      {
+        "basis": "Source-fed active worker cancellation/crash/deadline yields typed failure, no returned parser output, exact owned worker exit<=5s, cleanup and fresh inspection retry. No pipe-buffer byte count or durable revision invented.",
+        "boundary": "Cancellation/crash/parent death and owned cleanup",
+        "criterionIndices": [
+          1,
+          2
+        ],
+        "parentDeath": {
+          "freshInspectionSucceeded": true,
+          "guardianExitCode": 120,
+          "guardianTerminationObserved": true,
+          "meaning": "Retain120. Exact cleanup/termination do not imply exit0, known cause, or unavailable deceased-parent ACL restoration. Producer anticipated possible2 is not an explanation of actual120.",
+          "ownedTargetsRemoved": true,
+          "workerExitSeconds": 0.0902572000049986
+        },
+        "result": "supported-with-retained-adverse-reporting"
+      },
+      {
+        "basis": "Actual4CPU/4GiB/one-process Job. Memory denial has successful1-page exact-worker alloc/free and successful same4GiB unconfined parent commit/free, followed by extra4GiB worker denial/native1455 and real cancellation/cleanup/retry. Timeout verifies900s outer/remaining budget then accelerates only local test deadline. Neither natural DoclingOOM nor900 elapsed seconds claimed. F01-03 freshly exercised; scalar calculation excludes slack/strings/maps/interpreter/aggregate Core.",
+        "boundary": "Resource limits and hostile decode",
+        "criterionIndices": [
+          1,
+          2
+        ],
+        "result": "supported-with-explicit-method"
+      },
+      {
+        "basis": "Source authentication releases database read scope before worker. Current copy rights/session/attempt lease/capability/cancel and source/producer/manifest identity fence encrypted raw/IR publication. Protocol/substitution/chunk/size/private stderr/rollback cases pass. Actual six-family/fallback retain encrypted raw/intent on unchanged original; no accepted revision or plaintext storage claim.",
+        "boundary": "Protected original/raw output/transaction authority",
+        "criterionIndices": [
+          1,
+          2,
+          3
+        ],
+        "result": "supported"
+      },
+      {
+        "basis": "Actual native11 units plus denial145/page146/scan147 exercise original geometry/bounded raster and malformed/encrypted/XXE/resource denial/OCR-disabled incomplete scan. All two-column labels and10 authored tables retained;18 reported tables/extra classifications remain layoutGoldStatusFAIL, ambiguous/unknown/warned/staged. No model-quality acceptance.",
+        "boundary": "PDF geometry/denial/quality claims",
+        "criterionIndices": [
+          1,
+          2
+        ],
+        "result": "supported-with-adverse-model-quality"
+      }
+    ],
+    "security_contribution": {
+      "disposition": "no-open-blocking-security-findings",
+      "formal_task_approval": false,
+      "path": "artifacts/tmp/CAP-05.S02.T03.security-contribution-c11-R01-166.json",
+      "reviewer": "agent:c11_security_review",
+      "reviewer_agent_path": "/root/c11_security_review",
+      "sha256": "22173dbd8417b481f86c495a2b0984bb34ff9a72a5775a76e05bf5e2cba9095d"
+    }
+  },
+  "evidence_sha256": "5e629932746a0a97bae8933bb5038e65dab93c39727b8ac238b850e83bea2205",
+  "findings": [],
+  "independence": {
+    "current_review_execution": "Expanded source/contract/native-security and incremental corrective assessment; bounded authentication of frozen packet, manifest, fresh reports/producers/logs/artifacts and existing read-only binding functions. Prior substantive advisory reviews are reused with current source/evidence authentication. No tests/builds/native/network/performance runs, full-history replay, canonical state/source/framework/Git/HEAD mutation or owner decision performed by this reviewer.",
+    "implementation_owner": "codex-w2-implementation",
+    "statement": "I authored independent task-specific preparatory advisories/probes and this first controlled task disposition. I did not author product implementation, tracked tests, qualifying producers/runs, owner decisions, task transitions or accepted architecture. Advisory suggestions and security contributions are distinct from implementation ownership."
+  },
+  "notes": "Independent expanded CAP-05.S02.T03 R01 review approves the exact c17511401808d003eaa2c74ff0b866e65a6955d9 product candidate and authenticated frozen packet. The 39 selected passing checks cover affected parser contracts, real zero-capability LPAC execution, protected encrypted retention, every admitted installed family, pages/geometry, hostile input, resources, cancellation/crash/death and distinct-attempt inspection recovery. Preparatory resource, normalization and installed-family defects are addressed with preserved adverse proof and fresh committed regressions; they are not invented formal rounds. The benchmark aggregate remains FAIL: warm p95 62.5333542 seconds exceeds the unchanged 60-second target, while cold p95 59.7308133 meets 90 seconds. The exact repository-owner acceptance makes only this observation nonblocking; no further performance work or blanket exemption is inferred. Model layoutGold FAIL, staged uncertainty, guardian exit120 and all method limits remain explicit. No blocking finding remains. This is task approval only; integrated S02 review, S03 real operation/revision/human acceptance, fresh W2 qualification and the separate release decision remain required.",
+  "packet_sha256": "043d441ff5365a22085ee3bb1806557122ef4a4b2c7b231d530167a46238c2f5",
+  "result": "approved",
+  "reviewed_at": "2026-10-07T22:00:56.053523+00:00",
+  "reviewed_state_commit": "c17511401808d003eaa2c74ff0b866e65a6955d9",
+  "reviewer": "agent:/root/s02_t01_review",
+  "selection_sha256": "5954027fb115d44d13c33be5b49d724c4b6b72dedbef4cd9de29dcc92e3c3895",
+  "task_id": "CAP-05.S02.T03"
+}

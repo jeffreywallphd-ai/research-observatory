@@ -1,0 +1,1985 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "CAP-05.S02.T03",
+  "baseCommit": "446819465a63776d7f00696f0bfee8b14fa065a9",
+  "commit": "c17511401808d003eaa2c74ff0b866e65a6955d9",
+  "branch": "codex/w2-implementation",
+  "changedFiles": [
+    ".gitattributes",
+    "artifacts/evidence/CAP-05.S02.T03.task-start.md",
+    "docs/adr/ADR-0045-bind-the-isolated-offline-parser-package-to-existing-document-authority.md",
+    "docs/adr/index.json",
+    "docs/architecture/document-parsing.md",
+    "docs/planning-implementation-plan.md",
+    "packages/contracts/documents/parse-result.v1.schema.json",
+    "planning/backlog.yaml",
+    "planning/review-site/CAP-05/CAP-05.S02.T03.html",
+    "planning/review-site/CAP-05/CAP-05.S02.html",
+    "planning/review-site/manifest.json",
+    "planning/review-site/waves/W2.html",
+    "planning/status-summary.md",
+    "services/core-api/src/research_observatory_core/document_attachment_repository.py",
+    "services/core-api/src/research_observatory_core/document_parser_runtime.py",
+    "services/core-api/src/research_observatory_core/object_store.py",
+    "services/core-api/src/research_observatory_core/parsing/docling.py",
+    "services/core-api/src/research_observatory_core/parsing/inspection.py",
+    "services/core-api/src/research_observatory_core/parsing/normalization.py",
+    "services/core-api/src/research_observatory_core/parsing/pages.py",
+    "services/core-api/src/research_observatory_core/parsing/pdf_geometry.py",
+    "services/core-api/src/research_observatory_core/parsing/pipeline.py",
+    "services/core-api/src/research_observatory_core/parsing/requests.py",
+    "services/core-api/src/research_observatory_core/parsing/text.py",
+    "services/core-api/src/research_observatory_core/ports/docling_parsing.py",
+    "services/core-api/src/research_observatory_core/ports/parsing.py",
+    "services/core-api/src/research_observatory_core/ports/pdf_inspection.py",
+    "services/core-api/src/research_observatory_core/ports/pdf_pages.py",
+    "tests/parsing/pdf_fixtures.py",
+    "tests/parsing/test_docling_parsing.py",
+    "tests/parsing/test_normalization.py",
+    "tests/parsing/test_parser_acl.py",
+    "tests/parsing/test_parser_artifacts.py",
+    "tests/parsing/test_parser_channels.py",
+    "tests/parsing/test_parser_cpu_affinity.py",
+    "tests/parsing/test_parser_native_build.py",
+    "tests/parsing/test_parser_package_build.py",
+    "tests/parsing/test_parser_pdf_native.py",
+    "tests/parsing/test_parser_pe_variant.py",
+    "tests/parsing/test_parser_protocol.py",
+    "tests/parsing/test_parser_runtime.py",
+    "tests/parsing/test_parser_socket_build.py",
+    "tests/parsing/test_parser_source_bundle.py",
+    "tests/parsing/test_parsing_launcher.py",
+    "tests/parsing/test_pdf_geometry.py",
+    "tests/parsing/test_pdf_inspection.py",
+    "tests/parsing/test_pdf_pages.py",
+    "tests/parsing/test_text_parsing.py",
+    "tests/parsing/test_worker_stderr.py",
+    "tools/document_parser_runtime_build.py",
+    "tools/parser_native_build.py",
+    "tools/parser_pe_variant.py",
+    "tools/parser_python_variant.py",
+    "tools/parser_socket_build.py",
+    "workers/document/cpython-parser-overlapped.patch",
+    "workers/document/cpython-parser-socket.patch",
+    "workers/document/dateutil-parser-registry.patch",
+    "workers/document/docling-parser-native.patch",
+    "workers/document/notices/Apache-2.0.txt",
+    "workers/document/notices/CDLA-Permissive-2.0.txt",
+    "workers/document/parser-assets.json",
+    "workers/document/parser-config.json",
+    "workers/document/parser-manifests.json",
+    "workers/document/parser-native-inputs.json",
+    "workers/document/parser_package.py",
+    "workers/document/parser_pdf_admission.h",
+    "workers/document/pdf_geometry.py",
+    "workers/document/qpdf-parser-buffer.patch",
+    "workers/document/requirements-parser.lock",
+    "workers/document/source_bundle.py",
+    "workers/windows/connector_launcher.py",
+    "workers/windows/file_paths.py",
+    "workers/windows/no_write_acl.py",
+    "workers/windows/parser_cpu_affinity.py",
+    "workers/windows/parser_worker.py",
+    "workers/windows/parsing_launcher.py",
+    "workers/windows/recovery_guardian.py",
+    "workers/windows/runtime_inventory.py"
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "The eleven installed-parser sample checks enumerated in checks proves actual pinned offline Docling PDF conversion from encrypted protected source through the signed isolated worker to encrypted raw retention and staged version-1 IR. All authored two-column labels and ten real 2x2 tables are retained. Extra model table classifications remain explicitly adverse layoutGoldStatus FAIL, staged/unverified, ambiguous reading order and table grids, unknown confidence and machine-layout warnings; no scholarly correctness or acceptance is inferred. production-scan proof preserves missing-text-ocr-disabled, an incomplete staged scan and no invented text.",
+        "lifecycle cancel/worker-crash, parent-death and timeout/resource checks exercise actual owned Windows Job/principal boundaries, content-free typed failure without returned parser output, <=5s worker exit, owned cleanup and a fresh inspection principal. resource-job-memory-denial proves the configured Job commit denial with both a positive owned remote-page control and a same-size successful unconfined control; it does not claim a naturally occurring Docling OOM. Timeout accelerates only the observed test-owned deadline after an active source-fed parser, recording unchanged outer900s and actual remaining launch budget.",
+        "encrypted-fallback proves actual Docling timeout mapped by Core, real durable failed-attempt/retry scheduling and a distinct subsequent inspection-only attempt on the identical original source, with exact prior failure/new-attempt binding and encrypted artifact retention. Installation lookup and initial workflow admission/clock are declared fixtures; no live 30s workflow heartbeat or S03 revision/acceptance claim. Selection and protected-source tests deny fallback after cancellation, authority/admission failures, or altered source/attempt.",
+        "page proof verifies one bounded encrypted PNG with exact original MediaBox/CropBox/rotation/UserUnit and expected dimensions/source-IR transformation. Native denial and explicit-built-native-unit checks exercise malformed/encrypted/oversized pages, excessive page count, native XXE, original geometry, image/mask/predictor/JPEG/JPX resource bounds and denied JBIG2 before decoding. No replacement parser or baseline relaxation is introduced.",
+        "After the measured Core interval, every actual staged result validates against the held public portable parse-result schema with exact request/outer/IR binding and staged disposition. Schema and wire hashes are retained without logging protected wire text; this establishes portable downstream shape and binding, not scholarly correctness or human acceptance.",
+        "Performance batch124 remains FAIL: cold p95 59.73081330000423 seconds meets90; warm p95 62.53335420000076 seconds exceeds60 by2.53335420000076 seconds. The repository owner explicitly accepted this observed slight overage and directed no further time on it. The exact append-only owner decision below makes this measurement nonblocking for current task/slice closeout and carries it into W2 review; original targets, reports and future fresh qualification remain unchanged. No general exemption or release approval is inferred."
+      ],
+      "checkIds": [
+        "parser-regressions",
+        "explicit-built-native-units",
+        "lifecycle-cancel",
+        "lifecycle-worker-crash",
+        "parent-death",
+        "resource-timeout",
+        "resource-job-memory-denial",
+        "denial-malformed-pdf",
+        "denial-encrypted-pdf",
+        "denial-huge-canvas",
+        "denial-over-page-limit",
+        "denial-native-external-entity",
+        "page",
+        "scan",
+        "encrypted-fallback",
+        "encrypted-plain-text",
+        "encrypted-jats",
+        "encrypted-tei",
+        "encrypted-xml",
+        "encrypted-html",
+        "encrypted-docx",
+        "installed-parser-cold-0",
+        "installed-parser-cold-1",
+        "installed-parser-cold-2",
+        "installed-parser-warmup-0",
+        "installed-parser-warm-0",
+        "installed-parser-warm-1",
+        "installed-parser-warm-2",
+        "installed-parser-warm-3",
+        "installed-parser-warm-4",
+        "installed-parser-warm-5",
+        "installed-parser-warm-6"
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "parser-regressions, explicit-built-native-units and portable-worker-contracts cover protocol/source/output/attempt/profile substitution, missing/changed assets, chunking, malformed and oversize IPC, private stderr, cooperative cancellation, cumulative node/relationship allocation, figure locator complexity, native geometry, protected SQLCipher source, encrypted retention/transaction/rights/session/lease fencing and rollback without readable orphans. The eleven explicitly skipped native cases in the portable suite are executed separately against the actual built extension; no skip is counted as boundary proof.",
+        "The pre-fix full normalize_text CR/equal-combining-class regression reproduces the final-comparison allocation gap; the complete uncancelled regression then passes with preserved raw/NFC text and exact two mapping runs. The pinned Unicode16 conformance corpus, blocked/class-zero/noncontiguous contributors, long disordered cancellation and compact initial composition allocation regressions remain passing. normalization-bound is an exhaustive pinned scalar/decomposition array-payload calculation and explicitly excludes capacity slack, strings, mappings, interpreter and total Core memory; it makes no native4GiB claim.",
+        "Fresh lint, format, ordinary-import nonincremental types, architecture, original-claim-base ADR coverage and selected contract checks authenticate this exact candidate. Native integration checks and the full raw cold/warm sample distribution bind held installed dependencies, complete signed package, exact producers, source fixture/gold and fixed executing candidate. Prior failed and diagnostic invocations remain preserved."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "Product parser/package, worker/native admission/geometry/transport, parent installed composition, protected encrypted stager and cumulative Core decoder bounds, physical-core-aware parser-only CPU selection, private bounded stderr and offline read-only introspection assets implement the existing approved S02/ADR0028/0029 contract. Existing connector quotas/one-CPU policy, document/request/IR versions, cryptography authority and accepted originals/raw attempts/heads are preserved. No unrelated automation-framework source development or new UX/reference is introduced.",
+        "encrypted plain-text/JATS/TEI/XML/HTML/DOCX and fallback prove every existing admitted family composes through the real installed wrapper version/canonical source format, actual LPAC run, strict authenticated Core raw decoder and encrypted staged IR. Plain text retains raw/NFC mappings and unavailable structure/unknown confidence rather than invented pages/citations/tables. Dependency versions stay signed provenance; first-party native/inspection wrappers use registry version1.0.0.",
+        "Indexed Proposed ADR0045 and document-parsing architecture/contract/fixture/build/license inventory documentation cover the changed protected paths and inherited authority. Original claim-base ADR check spans all task changes. The task-start worksheet records missed acceptance and regressions. Slice/S03/downstream/Wave qualification and human release remain separate pending gates."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "verificationSelection": {
+    "selectedCommandIds": [
+      "documents:unit",
+      "contracts:unit",
+      "foundation:quality",
+      "foundation:architecture",
+      "foundation:adr",
+      "security-local:unit",
+      "packaging:unit",
+      "e2e-local:system"
+    ],
+    "riskAnalysis": "High-risk new isolated local parser/native package, cross-process receipt, protected storage and runtime profile require expanded task review and fresh actual native principal, encrypted Core staging, failure/recovery/resource and parser benchmark proofs. Select all affected parser tests and actual built native cases, portable worker contracts, product/contract-test quality/types/architecture/ADR, real installed family/fallback/render paths, and immutable input/package benchmark. These are narrowed command-domain checks, not execution of every full registry/profile suite. No unchanged full history replay. Retain every adverse observation and declare synthetic admission/clock and staged model-quality limits.",
+    "deferred": [
+      "Integrated S02 slice evidence/review and downstream handoff remain required after this task; S03 owns real parsing-operation admission/lease heartbeat, immutable revisions and explicit human acceptance. The declared fixture workflow clock does not qualify that runtime path.",
+      "Desktop UI/reader/OS dialogs/accessibility and subsequent CAP05 slices remain ordered product work; this worker/service task changes no governed UX.",
+      "Fresh full repository/profile, cross-capability happy/denial/cancellation/migration/restart/recovery, security/privacy/rights/accessibility/performance/packaging/platform and independent W2 review plus separate humanG2 release remain required at Wave exit."
+    ]
+  },
+  "checks": [
+    {
+      "id": "lint",
+      "exitCode": 0,
+      "durationSeconds": 0.14857499999925494,
+      "rawOutput": "artifacts/tmp/CAP-05.S02.T03.qualification-151.basic.lint.log",
+      "rawOutputSha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18",
+      "rawOutputCanonicalSha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18",
+      "command": ".\\artifacts\\tmp\\CAP-05.S02.T03.check-runtime-122\\python\\python.exe -B -m ruff check services/core-api/src/research_observatory_core/document_attachment_repository.py services/core-api/src/research_observatory_core/document_parser_runtime.py services/core-api/src/research_observatory_core/object_store.py services/core-api/src/research_observatory_core/parsing/docling.py services/core-api/src/research_observatory_core/parsing/inspection.py services/core-api/src/research_observatory_core/parsing/normalization.py services/core-api/src/research_observatory_core/parsing/pages.py services/core-api/src/research_observatory_core/parsing/pdf_geometry.py services/core-api/src/research_observatory_core/parsing/pipeline.py services/core-api/src/research_observatory_core/parsing/requests.py services/core-api/src/research_observatory_core/parsing/text.py services/core-api/src/research_observatory_core/ports/docling_parsing.py services/core-api/src/research_observatory_core/ports/parsing.py services/core-api/src/research_observatory_core/ports/pdf_inspection.py services/core-api/src/research_observatory_core/ports/pdf_pages.py tests/parsing/pdf_fixtures.py tests/parsing/test_docling_parsing.py tests/parsing/test_normalization.py tests/parsing/test_parser_acl.py tests/parsing/test_parser_artifacts.py tests/parsing/test_parser_channels.py tests/parsing/test_parser_cpu_affinity.py tests/parsing/test_parser_native_build.py tests/parsing/test_parser_package_build.py tests/parsing/test_parser_pdf_native.py tests/parsing/test_parser_pe_variant.py tests/parsing/test_parser_protocol.py tests/parsing/test_parser_runtime.py tests/parsing/test_parser_socket_build.py tests/parsing/test_parser_source_bundle.py tests/parsing/test_parsing_launcher.py tests/parsing/test_pdf_geometry.py tests/parsing/test_pdf_inspection.py tests/parsing/test_pdf_pages.py tests/parsing/test_text_parsing.py tests/parsing/test_worker_stderr.py tools/document_parser_runtime_build.py tools/parser_native_build.py tools/parser_pe_variant.py tools/parser_python_variant.py tools/parser_socket_build.py workers/document/parser_package.py workers/document/pdf_geometry.py workers/document/source_bundle.py workers/windows/connector_launcher.py workers/windows/file_paths.py workers/windows/no_write_acl.py workers/windows/parser_cpu_affinity.py workers/windows/parser_worker.py workers/windows/parsing_launcher.py workers/windows/recovery_guardian.py workers/windows/runtime_inventory.py",
+      "commit": "c17511401808d003eaa2c74ff0b866e65a6955d9",
+      "result": "PASS",
+      "inputReport": "artifacts/tmp/CAP-05.S02.T03.qualification-151.basic.json",
+      "inputReportSha256": "b4b3bc9ce1687bf6d3b3c193c9d081d72d8dfd31b5a2d104cd6f11d462750785",
+      "provenance": "Fresh exact committed candidate. Tracked source, selected helper/build inputs and actual installed private CPython/Core libraries are held against mutation; shipped native package denies creation/write/delete throughout execution. Actual argv and local principal facts remain in ignored receipts. This is the narrowed selected boundary, not a full-profile claim."
+    },
+    {
+      "id": "format",
+      "exitCode": 0,
+      "durationSeconds": 0.13325289999193046,
+      "rawOutput": "artifacts/tmp/CAP-05.S02.T03.qualification-151.basic.format.log",
+      "rawOutputSha256": "aec51819fa2b338a1a7896d7f3fa3a16c30fdb3b01d724c485d984ae83b87a06",
+      "rawOutputCanonicalSha256": "aec51819fa2b338a1a7896d7f3fa3a16c30fdb3b01d724c485d984ae83b87a06",
+      "command": ".\\artifacts\\tmp\\CAP-05.S02.T03.check-runtime-122\\python\\python.exe -B -m ruff format --check services/core-api/src/research_observatory_core/document_attachment_repository.py services/core-api/src/research_observatory_core/document_parser_runtime.py services/core-api/src/research_observatory_core/object_store.py services/core-api/src/research_observatory_core/parsing/docling.py services/core-api/src/research_observatory_core/parsing/inspection.py services/core-api/src/research_observatory_core/parsing/normalization.py services/core-api/src/research_observatory_core/parsing/pages.py services/core-api/src/research_observatory_core/parsing/pdf_geometry.py services/core-api/src/research_observatory_core/parsing/pipeline.py services/core-api/src/research_observatory_core/parsing/requests.py services/core-api/src/research_observatory_core/parsing/text.py services/core-api/src/research_observatory_core/ports/docling_parsing.py services/core-api/src/research_observatory_core/ports/parsing.py services/core-api/src/research_observatory_core/ports/pdf_inspection.py services/core-api/src/research_observatory_core/ports/pdf_pages.py tests/parsing/pdf_fixtures.py tests/parsing/test_docling_parsing.py tests/parsing/test_normalization.py tests/parsing/test_parser_acl.py tests/parsing/test_parser_artifacts.py tests/parsing/test_parser_channels.py tests/parsing/test_parser_cpu_affinity.py tests/parsing/test_parser_native_build.py tests/parsing/test_parser_package_build.py tests/parsing/test_parser_pdf_native.py tests/parsing/test_parser_pe_variant.py tests/parsing/test_parser_protocol.py tests/parsing/test_parser_runtime.py tests/parsing/test_parser_socket_build.py tests/parsing/test_parser_source_bundle.py tests/parsing/test_parsing_launcher.py tests/parsing/test_pdf_geometry.py tests/parsing/test_pdf_inspection.py tests/parsing/test_pdf_pages.py tests/parsing/test_text_parsing.py tests/parsing/test_worker_stderr.py tools/document_parser_runtime_build.py tools/parser_native_build.py tools/parser_pe_variant.py tools/parser_python_variant.py tools/parser_socket_build.py workers/document/parser_package.py workers/document/pdf_geometry.py workers/document/source_bundle.py workers/windows/connector_launcher.py workers/windows/file_paths.py workers/windows/no_write_acl.py workers/windows/parser_cpu_affinity.py workers/windows/parser_worker.py workers/windows/parsing_launcher.py workers/windows/recovery_guardian.py workers/windows/runtime_inventory.py",
+      "commit": "c17511401808d003eaa2c74ff0b866e65a6955d9",
+      "result": "PASS",
+      "inputReport": "artifacts/tmp/CAP-05.S02.T03.qualification-151.basic.json",
+      "inputReportSha256": "b4b3bc9ce1687bf6d3b3c193c9d081d72d8dfd31b5a2d104cd6f11d462750785",
+      "provenance": "Fresh exact committed candidate. Tracked source, selected helper/build inputs and actual installed private CPython/Core libraries are held against mutation; shipped native package denies creation/write/delete throughout execution. Actual argv and local principal facts remain in ignored receipts. This is the narrowed selected boundary, not a full-profile claim."
+    },
+    {
+      "id": "types",
+      "exitCode": 0,
+      "durationSeconds": 6.802248299994972,
+      "rawOutput": "artifacts/tmp/CAP-05.S02.T03.qualification-151.basic.types.log",
+      "rawOutputSha256": "dda4c9b5d4afe91534d9c20ef74d9c9ce814b17a96dcddd45fc05d5dfadf304b",
+      "rawOutputCanonicalSha256": "4c4a1f687213d361065f9094b27b15c087d3754121b66f0e8580a9c699ab6426",
+      "command": ".\\artifacts\\tmp\\CAP-05.S02.T03.check-runtime-122\\python\\python.exe -B -m mypy --no-incremental services/core-api/src/research_observatory_core/document_attachment_repository.py services/core-api/src/research_observatory_core/document_parser_runtime.py services/core-api/src/research_observatory_core/object_store.py services/core-api/src/research_observatory_core/parsing/docling.py services/core-api/src/research_observatory_core/parsing/inspection.py services/core-api/src/research_observatory_core/parsing/normalization.py services/core-api/src/research_observatory_core/parsing/pages.py services/core-api/src/research_observatory_core/parsing/pdf_geometry.py services/core-api/src/research_observatory_core/parsing/pipeline.py services/core-api/src/research_observatory_core/parsing/requests.py services/core-api/src/research_observatory_core/parsing/text.py services/core-api/src/research_observatory_core/ports/docling_parsing.py services/core-api/src/research_observatory_core/ports/parsing.py services/core-api/src/research_observatory_core/ports/pdf_inspection.py services/core-api/src/research_observatory_core/ports/pdf_pages.py workers/document/parser_package.py workers/document/pdf_geometry.py workers/document/source_bundle.py workers/windows/connector_launcher.py workers/windows/file_paths.py workers/windows/no_write_acl.py workers/windows/parser_cpu_affinity.py workers/windows/parser_worker.py workers/windows/parsing_launcher.py workers/windows/recovery_guardian.py workers/windows/runtime_inventory.py tests/parsing/test_text_parsing.py tests/parsing/test_normalization.py tests/parsing/test_docling_parsing.py",
+      "commit": "c17511401808d003eaa2c74ff0b866e65a6955d9",
+      "result": "PASS",
+      "inputReport": "artifacts/tmp/CAP-05.S02.T03.qualification-151.basic.json",
+      "inputReportSha256": "b4b3bc9ce1687bf6d3b3c193c9d081d72d8dfd31b5a2d104cd6f11d462750785",
+      "provenance": "Fresh exact committed candidate. Tracked source, selected helper/build inputs and actual installed private CPython/Core libraries are held against mutation; shipped native package denies creation/write/delete throughout execution. Actual argv and local principal facts remain in ignored receipts. This is the narrowed selected boundary, not a full-profile claim."
+    },
+    {
+      "id": "architecture",
+      "exitCode": 0,
+      "durationSeconds": 4.120662900008028,
+      "rawOutput": "artifacts/tmp/CAP-05.S02.T03.qualification-151.basic.architecture.log",
+      "rawOutputSha256": "51a256bf6a7b2e89ab1d1b97aa19077aabf0e8858a450de1f5ceb155ed5c3e88",
+      "rawOutputCanonicalSha256": "1ba622fdbf569bf9ab13ee46e639b636ea005c560abcd4b168f782d8fbdc3f74",
+      "command": ".\\artifacts\\tmp\\CAP-05.S02.T03.check-runtime-122\\python\\python.exe -B tools/architecture_check.py --repo .",
+      "commit": "c17511401808d003eaa2c74ff0b866e65a6955d9",
+      "result": "PASS",
+      "inputReport": "artifacts/tmp/CAP-05.S02.T03.qualification-151.basic.json",
+      "inputReportSha256": "b4b3bc9ce1687bf6d3b3c193c9d081d72d8dfd31b5a2d104cd6f11d462750785",
+      "provenance": "Fresh exact committed candidate. Tracked source, selected helper/build inputs and actual installed private CPython/Core libraries are held against mutation; shipped native package denies creation/write/delete throughout execution. Actual argv and local principal facts remain in ignored receipts. This is the narrowed selected boundary, not a full-profile claim."
+    },
+    {
+      "id": "adr",
+      "exitCode": 0,
+      "durationSeconds": 2.0896492000028957,
+      "rawOutput": "artifacts/tmp/CAP-05.S02.T03.qualification-151.basic.adr.log",
+      "rawOutputSha256": "940d6aa9d9dd34b4056587e56281af4c80884653b0df1df9150f58b024d78220",
+      "rawOutputCanonicalSha256": "192a3adf262799d7308de9f7ac4fbd5f978b1b0c42de8a15286c1c7df47ab603",
+      "command": ".\\artifacts\\tmp\\CAP-05.S02.T03.check-runtime-122\\python\\python.exe -B tools/adr_check.py --repo . --base 446819465a63776d7f00696f0bfee8b14fa065a9 --head c17511401808d003eaa2c74ff0b866e65a6955d9",
+      "commit": "c17511401808d003eaa2c74ff0b866e65a6955d9",
+      "result": "PASS",
+      "inputReport": "artifacts/tmp/CAP-05.S02.T03.qualification-151.basic.json",
+      "inputReportSha256": "b4b3bc9ce1687bf6d3b3c193c9d081d72d8dfd31b5a2d104cd6f11d462750785",
+      "provenance": "Fresh exact committed candidate. Tracked source, selected helper/build inputs and actual installed private CPython/Core libraries are held against mutation; shipped native package denies creation/write/delete throughout execution. Actual argv and local principal facts remain in ignored receipts. This is the narrowed selected boundary, not a full-profile claim."
+    },
+    {
+      "id": "portable-worker-contracts",
+      "exitCode": 0,
+      "durationSeconds": 4.478163400010089,
+      "rawOutput": "artifacts/tmp/CAP-05.S02.T03.qualification-151.basic.portable-worker-contracts.log",
+      "rawOutputSha256": "f553b0ef3a427490e304e65486a2027ce9050ac27698244887d4bf40181acc30",
+      "rawOutputCanonicalSha256": "fc71c25f8975bf7ed47c8ad34384c6de1248f92eba525838bb7036a973a4243d",
+      "command": ".\\artifacts\\tmp\\CAP-05.S02.T03.check-runtime-122\\python\\python.exe -B -m unittest tests.contracts.test_plugin_worker_contract -v",
+      "commit": "c17511401808d003eaa2c74ff0b866e65a6955d9",
+      "result": "PASS",
+      "inputReport": "artifacts/tmp/CAP-05.S02.T03.qualification-151.basic.json",
+      "inputReportSha256": "b4b3bc9ce1687bf6d3b3c193c9d081d72d8dfd31b5a2d104cd6f11d462750785",
+      "provenance": "Fresh exact committed candidate. Tracked source, selected helper/build inputs and actual installed private CPython/Core libraries are held against mutation; shipped native package denies creation/write/delete throughout execution. Actual argv and local principal facts remain in ignored receipts. This is the narrowed selected boundary, not a full-profile claim.",
+      "executedUnittestCases": 1
+    },
+    {
+      "id": "normalization-bound",
+      "exitCode": 0,
+      "durationSeconds": 0.6123681000026409,
+      "rawOutput": "artifacts/tmp/CAP-05.S02.T03.qualification-151.basic.normalization-bound.log",
+      "rawOutputSha256": "58fdef3a7c9d12dcd27b71893b6599cec0135e693eba58a43be5d4d24ca27d2a",
+      "rawOutputCanonicalSha256": "14d054b208f5dfb11fb1a217c31c7e86563a56e24d5ce5d361459a88aeff8e50",
+      "command": ".\\artifacts\\tmp\\CAP-05.S02.T03.check-runtime-122\\python\\python.exe -B .\\artifacts\\tmp\\CAP-05.S02.T03.normalization-bound-150.py c17511401808d003eaa2c74ff0b866e65a6955d9",
+      "commit": "c17511401808d003eaa2c74ff0b866e65a6955d9",
+      "result": "PASS",
+      "inputReport": "artifacts/tmp/CAP-05.S02.T03.qualification-151.basic.json",
+      "inputReportSha256": "b4b3bc9ce1687bf6d3b3c193c9d081d72d8dfd31b5a2d104cd6f11d462750785",
+      "provenance": "Fresh exact committed candidate. Tracked source, selected helper/build inputs and actual installed private CPython/Core libraries are held against mutation; shipped native package denies creation/write/delete throughout execution. Actual argv and local principal facts remain in ignored receipts. This is the narrowed selected boundary, not a full-profile claim."
+    },
+    {
+      "id": "parser-regressions",
+      "exitCode": 0,
+      "durationSeconds": 81.22900700000173,
+      "rawOutput": "artifacts/tmp/CAP-05.S02.T03.qualification-151.basic.parser-regressions.log",
+      "rawOutputSha256": "34e9df7e40133c914d4dcdba32ab305806dfc6e7f4331f4ee753253af83ba604",
+      "rawOutputCanonicalSha256": "895a603c3c7f53b910f4d25f9633b73421afd4f1804e5185d72a24cefe27ae38",
+      "command": ".\\artifacts\\tmp\\CAP-05.S02.T03.check-runtime-122\\python\\python.exe -B -m unittest discover -v -s tests/parsing -p test_*.py",
+      "commit": "c17511401808d003eaa2c74ff0b866e65a6955d9",
+      "result": "PASS",
+      "inputReport": "artifacts/tmp/CAP-05.S02.T03.qualification-151.basic.json",
+      "inputReportSha256": "b4b3bc9ce1687bf6d3b3c193c9d081d72d8dfd31b5a2d104cd6f11d462750785",
+      "provenance": "Fresh exact committed candidate. Tracked source, selected helper/build inputs and actual installed private CPython/Core libraries are held against mutation; shipped native package denies creation/write/delete throughout execution. Actual argv and local principal facts remain in ignored receipts. This is the narrowed selected boundary, not a full-profile claim.",
+      "executedUnittestCases": 147
+    },
+    {
+      "id": "explicit-built-native-units",
+      "exitCode": 0,
+      "durationSeconds": 0.27240260000689887,
+      "rawOutput": "artifacts/tmp/CAP-05.S02.T03.qualification-141.native.explicit-built-native-units.log",
+      "rawOutputSha256": "6719091fb0b58d58732940c515a3598a01f61196acea640a80d7c664fa754ba3",
+      "rawOutputCanonicalSha256": "0a1a2ba833e7fb5ef63ba31053db7f1b388eca95307c908dd2707ab2628b4732",
+      "command": ".\\artifacts\\tmp\\CAP-05.S02.T03.check-runtime-122\\python\\python.exe -B -m unittest tests.parsing.test_parser_pdf_native -v",
+      "commit": "c17511401808d003eaa2c74ff0b866e65a6955d9",
+      "result": "PASS",
+      "inputReport": "artifacts/tmp/CAP-05.S02.T03.qualification-141.native.json",
+      "inputReportSha256": "d9c347c430fc8a74986da68c0a2c7897c84fe1f21807b8a2b969f8fc6febc9c7",
+      "provenance": "Fresh exact committed candidate. Tracked source, selected helper/build inputs and actual installed private CPython/Core libraries are held against mutation; shipped native package denies creation/write/delete throughout execution. Actual argv and local principal facts remain in ignored receipts. This is the narrowed selected boundary, not a full-profile claim.",
+      "executedUnittestCases": 11
+    },
+    {
+      "id": "lifecycle-cancel",
+      "exitCode": 0,
+      "durationSeconds": 76.78397829999449,
+      "rawOutput": "artifacts/tmp/CAP-05.S02.T03.qualification-141.native.lifecycle-cancel.log",
+      "rawOutputSha256": "2827dd91b4bd76a25b327700ff25492d477008b00ea4829ad7395d75ef2b56fd",
+      "rawOutputCanonicalSha256": "d0da8e13939c7641e13df2be5c72de2d4747ef5542ad081d3c89bfd54ec98807",
+      "command": ".\\artifacts\\tmp\\CAP-05.S02.T03.check-runtime-122\\python\\python.exe -B .\\artifacts\\tmp\\CAP-05.S02.T03.native-lifecycle-142.py c17511401808d003eaa2c74ff0b866e65a6955d9 cancel",
+      "commit": "c17511401808d003eaa2c74ff0b866e65a6955d9",
+      "result": "PASS",
+      "inputReport": "artifacts/tmp/CAP-05.S02.T03.qualification-141.native.json",
+      "inputReportSha256": "d9c347c430fc8a74986da68c0a2c7897c84fe1f21807b8a2b969f8fc6febc9c7",
+      "provenance": "Fresh exact committed candidate. Tracked source, selected helper/build inputs and actual installed private CPython/Core libraries are held against mutation; shipped native package denies creation/write/delete throughout execution. Actual argv and local principal facts remain in ignored receipts. This is the narrowed selected boundary, not a full-profile claim."
+    },
+    {
+      "id": "lifecycle-worker-crash",
+      "exitCode": 0,
+      "durationSeconds": 74.57651110000734,
+      "rawOutput": "artifacts/tmp/CAP-05.S02.T03.qualification-141.native.lifecycle-worker-crash.log",
+      "rawOutputSha256": "e0fd10f950b67a14c5b8f688cf27b466303bce51c1c8d270c8f1bffe58754c12",
+      "rawOutputCanonicalSha256": "b06419f51bf0ae8d8c4082469d7123a78065aff0e960e4b1e8525868bf901a6e",
+      "command": ".\\artifacts\\tmp\\CAP-05.S02.T03.check-runtime-122\\python\\python.exe -B .\\artifacts\\tmp\\CAP-05.S02.T03.native-lifecycle-142.py c17511401808d003eaa2c74ff0b866e65a6955d9 worker-crash",
+      "commit": "c17511401808d003eaa2c74ff0b866e65a6955d9",
+      "result": "PASS",
+      "inputReport": "artifacts/tmp/CAP-05.S02.T03.qualification-141.native.json",
+      "inputReportSha256": "d9c347c430fc8a74986da68c0a2c7897c84fe1f21807b8a2b969f8fc6febc9c7",
+      "provenance": "Fresh exact committed candidate. Tracked source, selected helper/build inputs and actual installed private CPython/Core libraries are held against mutation; shipped native package denies creation/write/delete throughout execution. Actual argv and local principal facts remain in ignored receipts. This is the narrowed selected boundary, not a full-profile claim."
+    },
+    {
+      "id": "parent-death",
+      "exitCode": 0,
+      "durationSeconds": 78.21257400000468,
+      "rawOutput": "artifacts/tmp/CAP-05.S02.T03.qualification-141.native.parent-death.log",
+      "rawOutputSha256": "cb1d0c48f300a71c74e6905ab6ca34b0fa73923490597e0d71004234b1f85b35",
+      "rawOutputCanonicalSha256": "ff998145a82aa03d1283be5a2bbe981e2defa42970ff748adcf367252d86ed85",
+      "command": ".\\artifacts\\tmp\\CAP-05.S02.T03.check-runtime-122\\python\\python.exe -B .\\artifacts\\tmp\\CAP-05.S02.T03.parent-death-143.py c17511401808d003eaa2c74ff0b866e65a6955d9",
+      "commit": "c17511401808d003eaa2c74ff0b866e65a6955d9",
+      "result": "PASS",
+      "inputReport": "artifacts/tmp/CAP-05.S02.T03.qualification-141.native.json",
+      "inputReportSha256": "d9c347c430fc8a74986da68c0a2c7897c84fe1f21807b8a2b969f8fc6febc9c7",
+      "provenance": "Fresh exact committed candidate. Tracked source, selected helper/build inputs and actual installed private CPython/Core libraries are held against mutation; shipped native package denies creation/write/delete throughout execution. Actual argv and local principal facts remain in ignored receipts. This is the narrowed selected boundary, not a full-profile claim."
+    },
+    {
+      "id": "resource-timeout",
+      "exitCode": 0,
+      "durationSeconds": 75.01856119999138,
+      "rawOutput": "artifacts/tmp/CAP-05.S02.T03.qualification-141.native.resource-timeout.log",
+      "rawOutputSha256": "3dc6b8c5b78f693c389f5b6246fa6078ea9750299f94c6bc3dc1046c63fd90e1",
+      "rawOutputCanonicalSha256": "86a89058e1f5b9731c95c474284732bff0cf41e1068b56af575371368fc85564",
+      "command": ".\\artifacts\\tmp\\CAP-05.S02.T03.check-runtime-122\\python\\python.exe -B .\\artifacts\\tmp\\CAP-05.S02.T03.resource-enforcement-144.py c17511401808d003eaa2c74ff0b866e65a6955d9 timeout",
+      "commit": "c17511401808d003eaa2c74ff0b866e65a6955d9",
+      "result": "PASS",
+      "inputReport": "artifacts/tmp/CAP-05.S02.T03.qualification-141.native.json",
+      "inputReportSha256": "d9c347c430fc8a74986da68c0a2c7897c84fe1f21807b8a2b969f8fc6febc9c7",
+      "provenance": "Fresh exact committed candidate. Tracked source, selected helper/build inputs and actual installed private CPython/Core libraries are held against mutation; shipped native package denies creation/write/delete throughout execution. Actual argv and local principal facts remain in ignored receipts. This is the narrowed selected boundary, not a full-profile claim."
+    },
+    {
+      "id": "resource-job-memory-denial",
+      "exitCode": 0,
+      "durationSeconds": 80.21530870000424,
+      "rawOutput": "artifacts/tmp/CAP-05.S02.T03.qualification-141.native.resource-job-memory-denial.log",
+      "rawOutputSha256": "3394e7d86bf9f66c1560ec7313c05af1d73869a2598db248abc7dccac06e59b0",
+      "rawOutputCanonicalSha256": "4341ac1b37d3d3d5bbe4b4c4697dc4dd38b13d4ca81261ee6eae031588e79925",
+      "command": ".\\artifacts\\tmp\\CAP-05.S02.T03.check-runtime-122\\python\\python.exe -B .\\artifacts\\tmp\\CAP-05.S02.T03.resource-enforcement-144.py c17511401808d003eaa2c74ff0b866e65a6955d9 job-memory-denial",
+      "commit": "c17511401808d003eaa2c74ff0b866e65a6955d9",
+      "result": "PASS",
+      "inputReport": "artifacts/tmp/CAP-05.S02.T03.qualification-141.native.json",
+      "inputReportSha256": "d9c347c430fc8a74986da68c0a2c7897c84fe1f21807b8a2b969f8fc6febc9c7",
+      "provenance": "Fresh exact committed candidate. Tracked source, selected helper/build inputs and actual installed private CPython/Core libraries are held against mutation; shipped native package denies creation/write/delete throughout execution. Actual argv and local principal facts remain in ignored receipts. This is the narrowed selected boundary, not a full-profile claim."
+    },
+    {
+      "id": "denial-malformed-pdf",
+      "exitCode": 0,
+      "durationSeconds": 36.224825400000555,
+      "rawOutput": "artifacts/tmp/CAP-05.S02.T03.qualification-141.native.denial-malformed-pdf.log",
+      "rawOutputSha256": "ecae99b8aff326d4bad9f8ae8058913727f068bd476add276b503409d52b1dfa",
+      "rawOutputCanonicalSha256": "b549ec27dc2d229b0e956fd2628b92cb05a63943e4420711f6db6346c4fd9660",
+      "command": ".\\artifacts\\tmp\\CAP-05.S02.T03.check-runtime-122\\python\\python.exe -B .\\artifacts\\tmp\\CAP-05.S02.T03.installed-denials-145.py c17511401808d003eaa2c74ff0b866e65a6955d9 malformed-pdf",
+      "commit": "c17511401808d003eaa2c74ff0b866e65a6955d9",
+      "result": "PASS",
+      "inputReport": "artifacts/tmp/CAP-05.S02.T03.qualification-141.native.json",
+      "inputReportSha256": "d9c347c430fc8a74986da68c0a2c7897c84fe1f21807b8a2b969f8fc6febc9c7",
+      "provenance": "Fresh exact committed candidate. Tracked source, selected helper/build inputs and actual installed private CPython/Core libraries are held against mutation; shipped native package denies creation/write/delete throughout execution. Actual argv and local principal facts remain in ignored receipts. This is the narrowed selected boundary, not a full-profile claim."
+    },
+    {
+      "id": "denial-encrypted-pdf",
+      "exitCode": 0,
+      "durationSeconds": 36.04098540000268,
+      "rawOutput": "artifacts/tmp/CAP-05.S02.T03.qualification-141.native.denial-encrypted-pdf.log",
+      "rawOutputSha256": "97248bfdadd86845dd17323a260e465769d810d5c7a0c6c274127e4d1ff98be5",
+      "rawOutputCanonicalSha256": "c68a10de6cf0504030c78a2ebb533b982a64cb8ace2320b9b7e4d54e172364a2",
+      "command": ".\\artifacts\\tmp\\CAP-05.S02.T03.check-runtime-122\\python\\python.exe -B .\\artifacts\\tmp\\CAP-05.S02.T03.installed-denials-145.py c17511401808d003eaa2c74ff0b866e65a6955d9 encrypted-pdf",
+      "commit": "c17511401808d003eaa2c74ff0b866e65a6955d9",
+      "result": "PASS",
+      "inputReport": "artifacts/tmp/CAP-05.S02.T03.qualification-141.native.json",
+      "inputReportSha256": "d9c347c430fc8a74986da68c0a2c7897c84fe1f21807b8a2b969f8fc6febc9c7",
+      "provenance": "Fresh exact committed candidate. Tracked source, selected helper/build inputs and actual installed private CPython/Core libraries are held against mutation; shipped native package denies creation/write/delete throughout execution. Actual argv and local principal facts remain in ignored receipts. This is the narrowed selected boundary, not a full-profile claim."
+    },
+    {
+      "id": "denial-huge-canvas",
+      "exitCode": 0,
+      "durationSeconds": 37.469893300003605,
+      "rawOutput": "artifacts/tmp/CAP-05.S02.T03.qualification-141.native.denial-huge-canvas.log",
+      "rawOutputSha256": "40ff8fe3a83c36ef7acd66cabe77b26e2e67ea69732e40e657377068ffcb59db",
+      "rawOutputCanonicalSha256": "fbf63e061db506605ab7157704ac5ed9344033e3d23591947594dd346f89d625",
+      "command": ".\\artifacts\\tmp\\CAP-05.S02.T03.check-runtime-122\\python\\python.exe -B .\\artifacts\\tmp\\CAP-05.S02.T03.installed-denials-145.py c17511401808d003eaa2c74ff0b866e65a6955d9 huge-canvas",
+      "commit": "c17511401808d003eaa2c74ff0b866e65a6955d9",
+      "result": "PASS",
+      "inputReport": "artifacts/tmp/CAP-05.S02.T03.qualification-141.native.json",
+      "inputReportSha256": "d9c347c430fc8a74986da68c0a2c7897c84fe1f21807b8a2b969f8fc6febc9c7",
+      "provenance": "Fresh exact committed candidate. Tracked source, selected helper/build inputs and actual installed private CPython/Core libraries are held against mutation; shipped native package denies creation/write/delete throughout execution. Actual argv and local principal facts remain in ignored receipts. This is the narrowed selected boundary, not a full-profile claim."
+    },
+    {
+      "id": "denial-over-page-limit",
+      "exitCode": 0,
+      "durationSeconds": 36.23469990000012,
+      "rawOutput": "artifacts/tmp/CAP-05.S02.T03.qualification-141.native.denial-over-page-limit.log",
+      "rawOutputSha256": "e18ae8424ef365aa716948fd41cd2c40be75036b5f8837ef7c79c7b09c8c7f86",
+      "rawOutputCanonicalSha256": "b05e85e89bef92fb1f464f7a9ca57d68725c58214b4f4fce5236aba2501991f4",
+      "command": ".\\artifacts\\tmp\\CAP-05.S02.T03.check-runtime-122\\python\\python.exe -B .\\artifacts\\tmp\\CAP-05.S02.T03.installed-denials-145.py c17511401808d003eaa2c74ff0b866e65a6955d9 over-page-limit",
+      "commit": "c17511401808d003eaa2c74ff0b866e65a6955d9",
+      "result": "PASS",
+      "inputReport": "artifacts/tmp/CAP-05.S02.T03.qualification-141.native.json",
+      "inputReportSha256": "d9c347c430fc8a74986da68c0a2c7897c84fe1f21807b8a2b969f8fc6febc9c7",
+      "provenance": "Fresh exact committed candidate. Tracked source, selected helper/build inputs and actual installed private CPython/Core libraries are held against mutation; shipped native package denies creation/write/delete throughout execution. Actual argv and local principal facts remain in ignored receipts. This is the narrowed selected boundary, not a full-profile claim."
+    },
+    {
+      "id": "denial-native-external-entity",
+      "exitCode": 0,
+      "durationSeconds": 36.998867800008156,
+      "rawOutput": "artifacts/tmp/CAP-05.S02.T03.qualification-141.native.denial-native-external-entity.log",
+      "rawOutputSha256": "db45d4fa4ffc158ef1768290f763c1f6032463a36bd166d5070fb257356995e9",
+      "rawOutputCanonicalSha256": "6d69538c054c602a97b487b766e6de34fda21999811c15071ec941d6a80bcfad",
+      "command": ".\\artifacts\\tmp\\CAP-05.S02.T03.check-runtime-122\\python\\python.exe -B .\\artifacts\\tmp\\CAP-05.S02.T03.installed-denials-145.py c17511401808d003eaa2c74ff0b866e65a6955d9 native-external-entity",
+      "commit": "c17511401808d003eaa2c74ff0b866e65a6955d9",
+      "result": "PASS",
+      "inputReport": "artifacts/tmp/CAP-05.S02.T03.qualification-141.native.json",
+      "inputReportSha256": "d9c347c430fc8a74986da68c0a2c7897c84fe1f21807b8a2b969f8fc6febc9c7",
+      "provenance": "Fresh exact committed candidate. Tracked source, selected helper/build inputs and actual installed private CPython/Core libraries are held against mutation; shipped native package denies creation/write/delete throughout execution. Actual argv and local principal facts remain in ignored receipts. This is the narrowed selected boundary, not a full-profile claim."
+    },
+    {
+      "id": "page",
+      "exitCode": 0,
+      "durationSeconds": 46.15774119998969,
+      "rawOutput": "artifacts/tmp/CAP-05.S02.T03.qualification-141.native.page.log",
+      "rawOutputSha256": "0ee0b857131f5ca13902eda42cdb93ee9870f245b2d56572a2710acb93d098ca",
+      "rawOutputCanonicalSha256": "3638544708906b54530de4590485608a0f8fb5dd262a751c5abe44039533db70",
+      "command": ".\\artifacts\\tmp\\CAP-05.S02.T03.check-runtime-122\\python\\python.exe -B .\\artifacts\\tmp\\CAP-05.S02.T03.production-page-146.py c17511401808d003eaa2c74ff0b866e65a6955d9",
+      "commit": "c17511401808d003eaa2c74ff0b866e65a6955d9",
+      "result": "PASS",
+      "inputReport": "artifacts/tmp/CAP-05.S02.T03.qualification-141.native.json",
+      "inputReportSha256": "d9c347c430fc8a74986da68c0a2c7897c84fe1f21807b8a2b969f8fc6febc9c7",
+      "provenance": "Fresh exact committed candidate. Tracked source, selected helper/build inputs and actual installed private CPython/Core libraries are held against mutation; shipped native package denies creation/write/delete throughout execution. Actual argv and local principal facts remain in ignored receipts. This is the narrowed selected boundary, not a full-profile claim."
+    },
+    {
+      "id": "scan",
+      "exitCode": 0,
+      "durationSeconds": 55.987215000001015,
+      "rawOutput": "artifacts/tmp/CAP-05.S02.T03.qualification-141.native.scan.log",
+      "rawOutputSha256": "adcf49138e2916f72fd4b6d30d5bf83e5f1d0a76c5c62ab2583cd5c82ca1cfd6",
+      "rawOutputCanonicalSha256": "58215fe21de0a2f9f2f6fd95c7f91316f9cda376806798566f50f4e3f62ed936",
+      "command": ".\\artifacts\\tmp\\CAP-05.S02.T03.check-runtime-122\\python\\python.exe -B .\\artifacts\\tmp\\CAP-05.S02.T03.production-scan-147.py c17511401808d003eaa2c74ff0b866e65a6955d9",
+      "commit": "c17511401808d003eaa2c74ff0b866e65a6955d9",
+      "result": "PASS",
+      "inputReport": "artifacts/tmp/CAP-05.S02.T03.qualification-141.native.json",
+      "inputReportSha256": "d9c347c430fc8a74986da68c0a2c7897c84fe1f21807b8a2b969f8fc6febc9c7",
+      "provenance": "Fresh exact committed candidate. Tracked source, selected helper/build inputs and actual installed private CPython/Core libraries are held against mutation; shipped native package denies creation/write/delete throughout execution. Actual argv and local principal facts remain in ignored receipts. This is the narrowed selected boundary, not a full-profile claim."
+    },
+    {
+      "id": "encrypted-fallback",
+      "exitCode": 0,
+      "durationSeconds": 87.19463990000077,
+      "rawOutput": "artifacts/tmp/CAP-05.S02.T03.qualification-141.native.encrypted-fallback.log",
+      "rawOutputSha256": "7e38a541163e2e6b73fd7e1200328e13d64afd4ba0d371ebc7debf347c2a18a9",
+      "rawOutputCanonicalSha256": "937cc157c459ad2771675af0dd401be1090425e8b461169dfae025e475c85695",
+      "command": ".\\artifacts\\tmp\\CAP-05.S02.T03.check-runtime-122\\python\\python.exe -B .\\artifacts\\tmp\\CAP-05.S02.T03.production-fallback-149.py c17511401808d003eaa2c74ff0b866e65a6955d9",
+      "commit": "c17511401808d003eaa2c74ff0b866e65a6955d9",
+      "result": "PASS",
+      "inputReport": "artifacts/tmp/CAP-05.S02.T03.qualification-141.native.json",
+      "inputReportSha256": "d9c347c430fc8a74986da68c0a2c7897c84fe1f21807b8a2b969f8fc6febc9c7",
+      "provenance": "Fresh exact committed candidate. Tracked source, selected helper/build inputs and actual installed private CPython/Core libraries are held against mutation; shipped native package denies creation/write/delete throughout execution. Actual argv and local principal facts remain in ignored receipts. This is the narrowed selected boundary, not a full-profile claim."
+    },
+    {
+      "id": "encrypted-plain-text",
+      "exitCode": 0,
+      "durationSeconds": 42.63051489999634,
+      "rawOutput": "artifacts/tmp/CAP-05.S02.T03.qualification-141.native.encrypted-plain-text.log",
+      "rawOutputSha256": "e16e6fbe875f63c03c4b661b1c1036ebff5e449f356469e26c304a754d0b3562",
+      "rawOutputCanonicalSha256": "ff3e7d03145fad474a5a6bb9b0d0ba93af0c3f64e936c2ec73e06289531dda97",
+      "command": ".\\artifacts\\tmp\\CAP-05.S02.T03.check-runtime-122\\python\\python.exe -B .\\artifacts\\tmp\\CAP-05.S02.T03.production-formats-148.py c17511401808d003eaa2c74ff0b866e65a6955d9 plain-text",
+      "commit": "c17511401808d003eaa2c74ff0b866e65a6955d9",
+      "result": "PASS",
+      "inputReport": "artifacts/tmp/CAP-05.S02.T03.qualification-141.native.json",
+      "inputReportSha256": "d9c347c430fc8a74986da68c0a2c7897c84fe1f21807b8a2b969f8fc6febc9c7",
+      "provenance": "Fresh exact committed candidate. Tracked source, selected helper/build inputs and actual installed private CPython/Core libraries are held against mutation; shipped native package denies creation/write/delete throughout execution. Actual argv and local principal facts remain in ignored receipts. This is the narrowed selected boundary, not a full-profile claim."
+    },
+    {
+      "id": "encrypted-jats",
+      "exitCode": 0,
+      "durationSeconds": 42.82771499999217,
+      "rawOutput": "artifacts/tmp/CAP-05.S02.T03.qualification-141.native.encrypted-jats.log",
+      "rawOutputSha256": "4f1597f9c9ef5be1690ed9ae1da8f5e6382ac65c1c4bdaf808a34cd911952c67",
+      "rawOutputCanonicalSha256": "e34ddab5cdac3c77c7b3462185849e1d7572b06771ba9a7a3e6a2eafdd7ac757",
+      "command": ".\\artifacts\\tmp\\CAP-05.S02.T03.check-runtime-122\\python\\python.exe -B .\\artifacts\\tmp\\CAP-05.S02.T03.production-formats-148.py c17511401808d003eaa2c74ff0b866e65a6955d9 jats",
+      "commit": "c17511401808d003eaa2c74ff0b866e65a6955d9",
+      "result": "PASS",
+      "inputReport": "artifacts/tmp/CAP-05.S02.T03.qualification-141.native.json",
+      "inputReportSha256": "d9c347c430fc8a74986da68c0a2c7897c84fe1f21807b8a2b969f8fc6febc9c7",
+      "provenance": "Fresh exact committed candidate. Tracked source, selected helper/build inputs and actual installed private CPython/Core libraries are held against mutation; shipped native package denies creation/write/delete throughout execution. Actual argv and local principal facts remain in ignored receipts. This is the narrowed selected boundary, not a full-profile claim."
+    },
+    {
+      "id": "encrypted-tei",
+      "exitCode": 0,
+      "durationSeconds": 43.18496879999293,
+      "rawOutput": "artifacts/tmp/CAP-05.S02.T03.qualification-141.native.encrypted-tei.log",
+      "rawOutputSha256": "2617ebae9e18b578ae438e4a4582966415cf75ebd0b5650990cad06c9e0cf624",
+      "rawOutputCanonicalSha256": "ff9b3aa993c4d67c0d1dc57c7f51facc214f326356ee330ce0945c134d706d48",
+      "command": ".\\artifacts\\tmp\\CAP-05.S02.T03.check-runtime-122\\python\\python.exe -B .\\artifacts\\tmp\\CAP-05.S02.T03.production-formats-148.py c17511401808d003eaa2c74ff0b866e65a6955d9 tei",
+      "commit": "c17511401808d003eaa2c74ff0b866e65a6955d9",
+      "result": "PASS",
+      "inputReport": "artifacts/tmp/CAP-05.S02.T03.qualification-141.native.json",
+      "inputReportSha256": "d9c347c430fc8a74986da68c0a2c7897c84fe1f21807b8a2b969f8fc6febc9c7",
+      "provenance": "Fresh exact committed candidate. Tracked source, selected helper/build inputs and actual installed private CPython/Core libraries are held against mutation; shipped native package denies creation/write/delete throughout execution. Actual argv and local principal facts remain in ignored receipts. This is the narrowed selected boundary, not a full-profile claim."
+    },
+    {
+      "id": "encrypted-xml",
+      "exitCode": 0,
+      "durationSeconds": 44.17417819998809,
+      "rawOutput": "artifacts/tmp/CAP-05.S02.T03.qualification-141.native.encrypted-xml.log",
+      "rawOutputSha256": "9c43cd56096607c9f81e28046ec4ba5384b034dc3e4aeab35ddd03c0f788bb16",
+      "rawOutputCanonicalSha256": "2363cb1c6a09743589cc02b86e2f20aa404f16f4395f79426719e0b91684f77a",
+      "command": ".\\artifacts\\tmp\\CAP-05.S02.T03.check-runtime-122\\python\\python.exe -B .\\artifacts\\tmp\\CAP-05.S02.T03.production-formats-148.py c17511401808d003eaa2c74ff0b866e65a6955d9 xml",
+      "commit": "c17511401808d003eaa2c74ff0b866e65a6955d9",
+      "result": "PASS",
+      "inputReport": "artifacts/tmp/CAP-05.S02.T03.qualification-141.native.json",
+      "inputReportSha256": "d9c347c430fc8a74986da68c0a2c7897c84fe1f21807b8a2b969f8fc6febc9c7",
+      "provenance": "Fresh exact committed candidate. Tracked source, selected helper/build inputs and actual installed private CPython/Core libraries are held against mutation; shipped native package denies creation/write/delete throughout execution. Actual argv and local principal facts remain in ignored receipts. This is the narrowed selected boundary, not a full-profile claim."
+    },
+    {
+      "id": "encrypted-html",
+      "exitCode": 0,
+      "durationSeconds": 44.0283153999917,
+      "rawOutput": "artifacts/tmp/CAP-05.S02.T03.qualification-141.native.encrypted-html.log",
+      "rawOutputSha256": "89daba383ddda2e67b32cfb76498589f1725fbb806a895e66e7a8dfc873595ad",
+      "rawOutputCanonicalSha256": "d619e6b82cf3983f930dc46c1940321a933f31f3e9d627ed3877c953ad736e38",
+      "command": ".\\artifacts\\tmp\\CAP-05.S02.T03.check-runtime-122\\python\\python.exe -B .\\artifacts\\tmp\\CAP-05.S02.T03.production-formats-148.py c17511401808d003eaa2c74ff0b866e65a6955d9 html",
+      "commit": "c17511401808d003eaa2c74ff0b866e65a6955d9",
+      "result": "PASS",
+      "inputReport": "artifacts/tmp/CAP-05.S02.T03.qualification-141.native.json",
+      "inputReportSha256": "d9c347c430fc8a74986da68c0a2c7897c84fe1f21807b8a2b969f8fc6febc9c7",
+      "provenance": "Fresh exact committed candidate. Tracked source, selected helper/build inputs and actual installed private CPython/Core libraries are held against mutation; shipped native package denies creation/write/delete throughout execution. Actual argv and local principal facts remain in ignored receipts. This is the narrowed selected boundary, not a full-profile claim."
+    },
+    {
+      "id": "encrypted-docx",
+      "exitCode": 0,
+      "durationSeconds": 50.17375339999853,
+      "rawOutput": "artifacts/tmp/CAP-05.S02.T03.qualification-141.native.encrypted-docx.log",
+      "rawOutputSha256": "1c37e49ad67323448b0fbc98fe7790f5d60d54c6e8e3dfd0c5894edad712c349",
+      "rawOutputCanonicalSha256": "cfeb4ae8d6da6d871345b551ce99b59f5d169f73f0b78fe4f68855afc603b5bc",
+      "command": ".\\artifacts\\tmp\\CAP-05.S02.T03.check-runtime-122\\python\\python.exe -B .\\artifacts\\tmp\\CAP-05.S02.T03.production-formats-148.py c17511401808d003eaa2c74ff0b866e65a6955d9 docx",
+      "commit": "c17511401808d003eaa2c74ff0b866e65a6955d9",
+      "result": "PASS",
+      "inputReport": "artifacts/tmp/CAP-05.S02.T03.qualification-141.native.json",
+      "inputReportSha256": "d9c347c430fc8a74986da68c0a2c7897c84fe1f21807b8a2b969f8fc6febc9c7",
+      "provenance": "Fresh exact committed candidate. Tracked source, selected helper/build inputs and actual installed private CPython/Core libraries are held against mutation; shipped native package denies creation/write/delete throughout execution. Actual argv and local principal facts remain in ignored receipts. This is the narrowed selected boundary, not a full-profile claim."
+    },
+    {
+      "id": "installed-parser-cold-0",
+      "exitCode": 0,
+      "durationSeconds": 63.02381640000385,
+      "rawOutput": "artifacts/tmp/CAP-05.S02.T03.performance-124.benchmark.cold-0.log",
+      "rawOutputSha256": "5a89b539c173aa4c7d2a45651330fd4e1af11dd66750607640befa4fac1f4572",
+      "rawOutputCanonicalSha256": "728684943e34abe949b112d08605c55bfff0461100fecbcb5744c7c3aa709c92",
+      "command": "artifacts/tmp/CAP-05.S02.T03.check-runtime-122/python/python.exe artifacts/tmp/CAP-05.S02.T03.production-quality-125.py c17511401808d003eaa2c74ff0b866e65a6955d9 CAP-05.S02.T03.performance-124.benchmark.cold-0.json",
+      "commit": "c17511401808d003eaa2c74ff0b866e65a6955d9",
+      "result": "PASS",
+      "inputReport": "artifacts/tmp/CAP-05.S02.T03.performance-124.benchmark.cold-0.json",
+      "inputReportSha256": "424b60a476436b0047981df1c18a7a7efa981124f1c1ce57a65830a7fe3eaae4",
+      "measurementBatch": "artifacts/tmp/CAP-05.S02.T03.performance-124.benchmark.json",
+      "measurementBatchSha256": "fc1b2ca099d8b400806e7e3340c9a0a2a25982f0f6716006a22947865eb51f77",
+      "measuredCoreStageSeconds": 59.73081330000423,
+      "provenance": "Actual exit-0 child execution within the held benchmark124 package/runtime/source/schema boundary. PASS covers native parsing, encrypted staging, fixture preservation, resource/principal and portable-handoff assertions only. The batch warm-budget check remains FAIL and is separately owner-accepted; no sample is discarded or relabeled as a performance pass."
+    },
+    {
+      "id": "installed-parser-cold-1",
+      "exitCode": 0,
+      "durationSeconds": 62.62831159999769,
+      "rawOutput": "artifacts/tmp/CAP-05.S02.T03.performance-124.benchmark.cold-1.log",
+      "rawOutputSha256": "afeb616f81bf4c7cd751808f27d2508a6fb3326d65fc67dd03d77cec688205ff",
+      "rawOutputCanonicalSha256": "53414cbe68e1ace68e359da42ff03956193ffe737312e589d205358b4fd2d070",
+      "command": "artifacts/tmp/CAP-05.S02.T03.check-runtime-122/python/python.exe artifacts/tmp/CAP-05.S02.T03.production-quality-125.py c17511401808d003eaa2c74ff0b866e65a6955d9 CAP-05.S02.T03.performance-124.benchmark.cold-1.json",
+      "commit": "c17511401808d003eaa2c74ff0b866e65a6955d9",
+      "result": "PASS",
+      "inputReport": "artifacts/tmp/CAP-05.S02.T03.performance-124.benchmark.cold-1.json",
+      "inputReportSha256": "905cb06a1e231328c08a43044448a19c60d5e698dde892e3446aec7415943477",
+      "measurementBatch": "artifacts/tmp/CAP-05.S02.T03.performance-124.benchmark.json",
+      "measurementBatchSha256": "fc1b2ca099d8b400806e7e3340c9a0a2a25982f0f6716006a22947865eb51f77",
+      "measuredCoreStageSeconds": 59.24316009999893,
+      "provenance": "Actual exit-0 child execution within the held benchmark124 package/runtime/source/schema boundary. PASS covers native parsing, encrypted staging, fixture preservation, resource/principal and portable-handoff assertions only. The batch warm-budget check remains FAIL and is separately owner-accepted; no sample is discarded or relabeled as a performance pass."
+    },
+    {
+      "id": "installed-parser-cold-2",
+      "exitCode": 0,
+      "durationSeconds": 62.21300499999779,
+      "rawOutput": "artifacts/tmp/CAP-05.S02.T03.performance-124.benchmark.cold-2.log",
+      "rawOutputSha256": "8c0d6bf85e22e10dba08d3e3f51238d192f4772c6c3fa8842f0d74e597b1fba2",
+      "rawOutputCanonicalSha256": "7282801f4c051f3485474d26e9c55a285044f6b1294bb70e5682c2b7f335acff",
+      "command": "artifacts/tmp/CAP-05.S02.T03.check-runtime-122/python/python.exe artifacts/tmp/CAP-05.S02.T03.production-quality-125.py c17511401808d003eaa2c74ff0b866e65a6955d9 CAP-05.S02.T03.performance-124.benchmark.cold-2.json",
+      "commit": "c17511401808d003eaa2c74ff0b866e65a6955d9",
+      "result": "PASS",
+      "inputReport": "artifacts/tmp/CAP-05.S02.T03.performance-124.benchmark.cold-2.json",
+      "inputReportSha256": "79cc120a2fbc1163c5b1ff0b469e4d2f2d866354e59a5c16c2c83692bddd18b1",
+      "measurementBatch": "artifacts/tmp/CAP-05.S02.T03.performance-124.benchmark.json",
+      "measurementBatchSha256": "fc1b2ca099d8b400806e7e3340c9a0a2a25982f0f6716006a22947865eb51f77",
+      "measuredCoreStageSeconds": 58.97480630000064,
+      "provenance": "Actual exit-0 child execution within the held benchmark124 package/runtime/source/schema boundary. PASS covers native parsing, encrypted staging, fixture preservation, resource/principal and portable-handoff assertions only. The batch warm-budget check remains FAIL and is separately owner-accepted; no sample is discarded or relabeled as a performance pass."
+    },
+    {
+      "id": "installed-parser-warmup-0",
+      "exitCode": 0,
+      "durationSeconds": 62.4152541999938,
+      "rawOutput": "artifacts/tmp/CAP-05.S02.T03.performance-124.benchmark.warmup-0.log",
+      "rawOutputSha256": "73d33bd91cc2a0a9459b2dc22fd780ced17ceba8de81f204f3208c154acdafb8",
+      "rawOutputCanonicalSha256": "4207eb050bb3e3c3013c566d80563167383bef34e3939355cec36a5b8009f903",
+      "command": "artifacts/tmp/CAP-05.S02.T03.check-runtime-122/python/python.exe artifacts/tmp/CAP-05.S02.T03.production-quality-125.py c17511401808d003eaa2c74ff0b866e65a6955d9 CAP-05.S02.T03.performance-124.benchmark.warmup-0.json",
+      "commit": "c17511401808d003eaa2c74ff0b866e65a6955d9",
+      "result": "PASS",
+      "inputReport": "artifacts/tmp/CAP-05.S02.T03.performance-124.benchmark.warmup-0.json",
+      "inputReportSha256": "601239de6424ae9cc21d7b97cbabe097c1f208c51b8baf71c38c3a6cb841ce8a",
+      "measurementBatch": "artifacts/tmp/CAP-05.S02.T03.performance-124.benchmark.json",
+      "measurementBatchSha256": "fc1b2ca099d8b400806e7e3340c9a0a2a25982f0f6716006a22947865eb51f77",
+      "measuredCoreStageSeconds": 59.14014760000282,
+      "provenance": "Actual exit-0 child execution within the held benchmark124 package/runtime/source/schema boundary. PASS covers native parsing, encrypted staging, fixture preservation, resource/principal and portable-handoff assertions only. The batch warm-budget check remains FAIL and is separately owner-accepted; no sample is discarded or relabeled as a performance pass."
+    },
+    {
+      "id": "installed-parser-warm-0",
+      "exitCode": 0,
+      "durationSeconds": 62.34595469999476,
+      "rawOutput": "artifacts/tmp/CAP-05.S02.T03.performance-124.benchmark.warm-0.log",
+      "rawOutputSha256": "c318df568a39a1582e3d71cf18d209831d89ee7c53ebf7364c02adc27d74a6db",
+      "rawOutputCanonicalSha256": "9df4fe657a38585728280c85e3b0d119b89227ae7f924bcdd824acbac1a38b7c",
+      "command": "artifacts/tmp/CAP-05.S02.T03.check-runtime-122/python/python.exe artifacts/tmp/CAP-05.S02.T03.production-quality-125.py c17511401808d003eaa2c74ff0b866e65a6955d9 CAP-05.S02.T03.performance-124.benchmark.warm-0.json",
+      "commit": "c17511401808d003eaa2c74ff0b866e65a6955d9",
+      "result": "PASS",
+      "inputReport": "artifacts/tmp/CAP-05.S02.T03.performance-124.benchmark.warm-0.json",
+      "inputReportSha256": "27b3b2accf950c93d8a65d0bba22578f1bcf22c3d569d5e64aba6e644f1b88a7",
+      "measurementBatch": "artifacts/tmp/CAP-05.S02.T03.performance-124.benchmark.json",
+      "measurementBatchSha256": "fc1b2ca099d8b400806e7e3340c9a0a2a25982f0f6716006a22947865eb51f77",
+      "measuredCoreStageSeconds": 59.003543400001945,
+      "provenance": "Actual exit-0 child execution within the held benchmark124 package/runtime/source/schema boundary. PASS covers native parsing, encrypted staging, fixture preservation, resource/principal and portable-handoff assertions only. The batch warm-budget check remains FAIL and is separately owner-accepted; no sample is discarded or relabeled as a performance pass."
+    },
+    {
+      "id": "installed-parser-warm-1",
+      "exitCode": 0,
+      "durationSeconds": 62.37972950001131,
+      "rawOutput": "artifacts/tmp/CAP-05.S02.T03.performance-124.benchmark.warm-1.log",
+      "rawOutputSha256": "f6e0965092ba97370a08a758d85a874a8284f953e067263d925fce6846274690",
+      "rawOutputCanonicalSha256": "3b73dc162712759fca5684b9d5341f2a43c3769326102f104af84d8146249e86",
+      "command": "artifacts/tmp/CAP-05.S02.T03.check-runtime-122/python/python.exe artifacts/tmp/CAP-05.S02.T03.production-quality-125.py c17511401808d003eaa2c74ff0b866e65a6955d9 CAP-05.S02.T03.performance-124.benchmark.warm-1.json",
+      "commit": "c17511401808d003eaa2c74ff0b866e65a6955d9",
+      "result": "PASS",
+      "inputReport": "artifacts/tmp/CAP-05.S02.T03.performance-124.benchmark.warm-1.json",
+      "inputReportSha256": "616911baf1afdfa8c4cd6e6b620f4b91c03be4202b0838e594d83831812d61f2",
+      "measurementBatch": "artifacts/tmp/CAP-05.S02.T03.performance-124.benchmark.json",
+      "measurementBatchSha256": "fc1b2ca099d8b400806e7e3340c9a0a2a25982f0f6716006a22947865eb51f77",
+      "measuredCoreStageSeconds": 59.14821600000141,
+      "provenance": "Actual exit-0 child execution within the held benchmark124 package/runtime/source/schema boundary. PASS covers native parsing, encrypted staging, fixture preservation, resource/principal and portable-handoff assertions only. The batch warm-budget check remains FAIL and is separately owner-accepted; no sample is discarded or relabeled as a performance pass."
+    },
+    {
+      "id": "installed-parser-warm-2",
+      "exitCode": 0,
+      "durationSeconds": 60.12968739999633,
+      "rawOutput": "artifacts/tmp/CAP-05.S02.T03.performance-124.benchmark.warm-2.log",
+      "rawOutputSha256": "0bcc69bf9a2b00a9a9e74425d8d747db6941c0c95e8c8a7be661cd380d9df82a",
+      "rawOutputCanonicalSha256": "e3e8e6aa6220144d1a71452a2aebf5e13bc83aa4dd2b5c57e212158bf5e8d135",
+      "command": "artifacts/tmp/CAP-05.S02.T03.check-runtime-122/python/python.exe artifacts/tmp/CAP-05.S02.T03.production-quality-125.py c17511401808d003eaa2c74ff0b866e65a6955d9 CAP-05.S02.T03.performance-124.benchmark.warm-2.json",
+      "commit": "c17511401808d003eaa2c74ff0b866e65a6955d9",
+      "result": "PASS",
+      "inputReport": "artifacts/tmp/CAP-05.S02.T03.performance-124.benchmark.warm-2.json",
+      "inputReportSha256": "305f7fce0f4a80dc9466077a1ae8b302aca489a477e87084888a85ac12e0e4e1",
+      "measurementBatch": "artifacts/tmp/CAP-05.S02.T03.performance-124.benchmark.json",
+      "measurementBatchSha256": "fc1b2ca099d8b400806e7e3340c9a0a2a25982f0f6716006a22947865eb51f77",
+      "measuredCoreStageSeconds": 56.87450200000603,
+      "provenance": "Actual exit-0 child execution within the held benchmark124 package/runtime/source/schema boundary. PASS covers native parsing, encrypted staging, fixture preservation, resource/principal and portable-handoff assertions only. The batch warm-budget check remains FAIL and is separately owner-accepted; no sample is discarded or relabeled as a performance pass."
+    },
+    {
+      "id": "installed-parser-warm-3",
+      "exitCode": 0,
+      "durationSeconds": 60.74072380000143,
+      "rawOutput": "artifacts/tmp/CAP-05.S02.T03.performance-124.benchmark.warm-3.log",
+      "rawOutputSha256": "ade7aad77bc98a374c58eef589924b3ac7c8ad7d04d6350a93d3a058b77351ec",
+      "rawOutputCanonicalSha256": "43f64b9d1c07188f66b8af7514d970a6c86d26d70a7c1f1fcd42832546f2a9f0",
+      "command": "artifacts/tmp/CAP-05.S02.T03.check-runtime-122/python/python.exe artifacts/tmp/CAP-05.S02.T03.production-quality-125.py c17511401808d003eaa2c74ff0b866e65a6955d9 CAP-05.S02.T03.performance-124.benchmark.warm-3.json",
+      "commit": "c17511401808d003eaa2c74ff0b866e65a6955d9",
+      "result": "PASS",
+      "inputReport": "artifacts/tmp/CAP-05.S02.T03.performance-124.benchmark.warm-3.json",
+      "inputReportSha256": "27e9f7363945c860e44a9a19ad6c9dbc4a54fa18adbbf487cbd58eea71ecbb3f",
+      "measurementBatch": "artifacts/tmp/CAP-05.S02.T03.performance-124.benchmark.json",
+      "measurementBatchSha256": "fc1b2ca099d8b400806e7e3340c9a0a2a25982f0f6716006a22947865eb51f77",
+      "measuredCoreStageSeconds": 57.48692110000411,
+      "provenance": "Actual exit-0 child execution within the held benchmark124 package/runtime/source/schema boundary. PASS covers native parsing, encrypted staging, fixture preservation, resource/principal and portable-handoff assertions only. The batch warm-budget check remains FAIL and is separately owner-accepted; no sample is discarded or relabeled as a performance pass."
+    },
+    {
+      "id": "installed-parser-warm-4",
+      "exitCode": 0,
+      "durationSeconds": 60.46467929999926,
+      "rawOutput": "artifacts/tmp/CAP-05.S02.T03.performance-124.benchmark.warm-4.log",
+      "rawOutputSha256": "02905923cf1596ba1a0c31533c68f3879e2b5be06b1823903bdb8489cdf56522",
+      "rawOutputCanonicalSha256": "d35fcb34321ec1282e42894c12408852c61e19eb8beb79486d4a6f65f147ca45",
+      "command": "artifacts/tmp/CAP-05.S02.T03.check-runtime-122/python/python.exe artifacts/tmp/CAP-05.S02.T03.production-quality-125.py c17511401808d003eaa2c74ff0b866e65a6955d9 CAP-05.S02.T03.performance-124.benchmark.warm-4.json",
+      "commit": "c17511401808d003eaa2c74ff0b866e65a6955d9",
+      "result": "PASS",
+      "inputReport": "artifacts/tmp/CAP-05.S02.T03.performance-124.benchmark.warm-4.json",
+      "inputReportSha256": "f246566b05a9ee3569466b18137639bcada424d112b722cc66f5554947a0aea8",
+      "measurementBatch": "artifacts/tmp/CAP-05.S02.T03.performance-124.benchmark.json",
+      "measurementBatchSha256": "fc1b2ca099d8b400806e7e3340c9a0a2a25982f0f6716006a22947865eb51f77",
+      "measuredCoreStageSeconds": 57.14214619999984,
+      "provenance": "Actual exit-0 child execution within the held benchmark124 package/runtime/source/schema boundary. PASS covers native parsing, encrypted staging, fixture preservation, resource/principal and portable-handoff assertions only. The batch warm-budget check remains FAIL and is separately owner-accepted; no sample is discarded or relabeled as a performance pass."
+    },
+    {
+      "id": "installed-parser-warm-5",
+      "exitCode": 0,
+      "durationSeconds": 65.32626519999758,
+      "rawOutput": "artifacts/tmp/CAP-05.S02.T03.performance-124.benchmark.warm-5.log",
+      "rawOutputSha256": "9e37fd334ab6e262d80be07c30b89e0b519da9967bd8687588adcc28b5bf5839",
+      "rawOutputCanonicalSha256": "48c22c9ff426c3f15d1c74f07c8cbe68b46a7fa581ca97dcaf8fc8b299618d4b",
+      "command": "artifacts/tmp/CAP-05.S02.T03.check-runtime-122/python/python.exe artifacts/tmp/CAP-05.S02.T03.production-quality-125.py c17511401808d003eaa2c74ff0b866e65a6955d9 CAP-05.S02.T03.performance-124.benchmark.warm-5.json",
+      "commit": "c17511401808d003eaa2c74ff0b866e65a6955d9",
+      "result": "PASS",
+      "inputReport": "artifacts/tmp/CAP-05.S02.T03.performance-124.benchmark.warm-5.json",
+      "inputReportSha256": "d6aad8bd8fae9b99a1ad914f0a9943d26f583e51b79596d407511d946ce4954a",
+      "measurementBatch": "artifacts/tmp/CAP-05.S02.T03.performance-124.benchmark.json",
+      "measurementBatchSha256": "fc1b2ca099d8b400806e7e3340c9a0a2a25982f0f6716006a22947865eb51f77",
+      "measuredCoreStageSeconds": 62.014159900005325,
+      "provenance": "Actual exit-0 child execution within the held benchmark124 package/runtime/source/schema boundary. PASS covers native parsing, encrypted staging, fixture preservation, resource/principal and portable-handoff assertions only. The batch warm-budget check remains FAIL and is separately owner-accepted; no sample is discarded or relabeled as a performance pass."
+    },
+    {
+      "id": "installed-parser-warm-6",
+      "exitCode": 0,
+      "durationSeconds": 65.83213749999413,
+      "rawOutput": "artifacts/tmp/CAP-05.S02.T03.performance-124.benchmark.warm-6.log",
+      "rawOutputSha256": "828012dadfd9038711b9c6b0065404e2d908e97510099eee46d52ecea271b89b",
+      "rawOutputCanonicalSha256": "c30f9547289f8ff7595f7c2bd6736744068cf2d5af681166ec12b0f2b746e371",
+      "command": "artifacts/tmp/CAP-05.S02.T03.check-runtime-122/python/python.exe artifacts/tmp/CAP-05.S02.T03.production-quality-125.py c17511401808d003eaa2c74ff0b866e65a6955d9 CAP-05.S02.T03.performance-124.benchmark.warm-6.json",
+      "commit": "c17511401808d003eaa2c74ff0b866e65a6955d9",
+      "result": "PASS",
+      "inputReport": "artifacts/tmp/CAP-05.S02.T03.performance-124.benchmark.warm-6.json",
+      "inputReportSha256": "545b206655ba735b2fadecbd6b4d431023941d776fa9aa9dc06adf33f5616635",
+      "measurementBatch": "artifacts/tmp/CAP-05.S02.T03.performance-124.benchmark.json",
+      "measurementBatchSha256": "fc1b2ca099d8b400806e7e3340c9a0a2a25982f0f6716006a22947865eb51f77",
+      "measuredCoreStageSeconds": 62.53335420000076,
+      "provenance": "Actual exit-0 child execution within the held benchmark124 package/runtime/source/schema boundary. PASS covers native parsing, encrypted staging, fixture preservation, resource/principal and portable-handoff assertions only. The batch warm-budget check remains FAIL and is separately owner-accepted; no sample is discarded or relabeled as a performance pass."
+    }
+  ],
+  "machineArtifacts": [
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T03.native-lifecycle-142.cancel.json",
+      "sha256": "d47b8595c09bf3b990c8916cc332dabb08c741d5e9d8b2bd70ebfa3679ea324f",
+      "reportedStatus": "PASS",
+      "candidate": "c17511401808d003eaa2c74ff0b866e65a6955d9"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T03.native-lifecycle-142.worker-crash.json",
+      "sha256": "775bde01df990533a7772a305390d16d05cbbcfc00a14fe51db38c3f28e11705",
+      "reportedStatus": "PASS",
+      "candidate": "c17511401808d003eaa2c74ff0b866e65a6955d9"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T03.parent-death-143.json",
+      "sha256": "bc1d1ba3399c21958d79f9f424ba5007d3cf7b4b1fa53826fa0a016c55d9c09a",
+      "reportedStatus": "PASS",
+      "candidate": "c17511401808d003eaa2c74ff0b866e65a6955d9"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T03.resource-enforcement-144.timeout.json",
+      "sha256": "f2f31360fc3bf1c594e83ace2280479bd31f306bf6c9aa14274f453a30553793",
+      "reportedStatus": "PASS",
+      "candidate": "c17511401808d003eaa2c74ff0b866e65a6955d9"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T03.resource-enforcement-144.job-memory-denial.json",
+      "sha256": "1ef2f0bd626ad108c076925265517b04965d74a8d42c8c2b66131b4e6d74b98f",
+      "reportedStatus": "PASS",
+      "candidate": "c17511401808d003eaa2c74ff0b866e65a6955d9"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T03.installed-denials-145.malformed-pdf.json",
+      "sha256": "93ce88f68fbc853f6c8382fb1cad538ed797c873ffedaa309acc87a6933694a4",
+      "reportedStatus": "PASS",
+      "candidate": "c17511401808d003eaa2c74ff0b866e65a6955d9"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T03.installed-denials-145.encrypted-pdf.json",
+      "sha256": "e649c904a7bde79d97c3be9c26400cb9e868265c142adb8e6c00f17e0a38ba95",
+      "reportedStatus": "PASS",
+      "candidate": "c17511401808d003eaa2c74ff0b866e65a6955d9"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T03.installed-denials-145.huge-canvas.json",
+      "sha256": "55de9e6a876a1ac990711785ad0cdea467aea2aea977298e9697d2875d1c5b0d",
+      "reportedStatus": "PASS",
+      "candidate": "c17511401808d003eaa2c74ff0b866e65a6955d9"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T03.installed-denials-145.over-page-limit.json",
+      "sha256": "fae3e6b421e61d4266a2d264b4c4881e0ef3496188afafa3141c45496a9719d4",
+      "reportedStatus": "PASS",
+      "candidate": "c17511401808d003eaa2c74ff0b866e65a6955d9"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T03.installed-denials-145.native-external-entity.json",
+      "sha256": "d5fb555a06d9f24ea2a57c24af8226faf7aafbe81865378a6582c926687948b3",
+      "reportedStatus": "PASS",
+      "candidate": "c17511401808d003eaa2c74ff0b866e65a6955d9"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T03.production-page-146.json",
+      "sha256": "cd3866cd285c6f486ca45f599e3a1fc9163d70246411a9fa1e4caf9050fd970e",
+      "reportedStatus": "PASS",
+      "candidate": "c17511401808d003eaa2c74ff0b866e65a6955d9"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T03.production-scan-147.json",
+      "sha256": "9cd2efe0b61b71a18c18cbfb0587fdbf3f37928950d7b57cbf257a17193fa0bc",
+      "reportedStatus": "PASS",
+      "candidate": "c17511401808d003eaa2c74ff0b866e65a6955d9"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T03.production-fallback-149.json",
+      "sha256": "cea430e5e0d5a6e06f3a87d21275506179d68b766c2302fe7161c51f88576801",
+      "reportedStatus": "PASS",
+      "candidate": "c17511401808d003eaa2c74ff0b866e65a6955d9"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T03.production-formats-148.plain-text.json",
+      "sha256": "6b9b40cd23f3588ea119e657296d5e1516a03b2d906b796eaa39c06637af3201",
+      "reportedStatus": "PASS",
+      "candidate": "c17511401808d003eaa2c74ff0b866e65a6955d9"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T03.production-formats-148.jats.json",
+      "sha256": "4457870df05388a8b60def24c3d70ec1e3073a9d82b7aa4d3217fceeb0ec32df",
+      "reportedStatus": "PASS",
+      "candidate": "c17511401808d003eaa2c74ff0b866e65a6955d9"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T03.production-formats-148.tei.json",
+      "sha256": "6d4900a36d3b4f936665f6533b7b544b98f0f65165d28644c3b17010e402c883",
+      "reportedStatus": "PASS",
+      "candidate": "c17511401808d003eaa2c74ff0b866e65a6955d9"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T03.production-formats-148.xml.json",
+      "sha256": "5f4b82618fe35e6decefd6ced1e8121c6d6f58f6043a146e9a04f5e54dd0208a",
+      "reportedStatus": "PASS",
+      "candidate": "c17511401808d003eaa2c74ff0b866e65a6955d9"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T03.production-formats-148.html.json",
+      "sha256": "e2068735c71d286b88b09198c2077005fca50c63dede710da56984820bf76ba5",
+      "reportedStatus": "PASS",
+      "candidate": "c17511401808d003eaa2c74ff0b866e65a6955d9"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T03.production-formats-148.docx.json",
+      "sha256": "ebd20e28195e13a1856559826259efa811e150410904849f8e7b7c22ca4de761",
+      "reportedStatus": "PASS",
+      "candidate": "c17511401808d003eaa2c74ff0b866e65a6955d9"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T03.normalization-bound-150.json",
+      "sha256": "bba17bf6e8bef576d34785b7711f841a5a5641cff306d02f8157e8ead2ca3acb",
+      "reportedStatus": "PASS",
+      "candidate": "c17511401808d003eaa2c74ff0b866e65a6955d9"
+    }
+  ],
+  "historicalObservations": [
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T03.acl-profile-diagnostic-02.json",
+      "sha256": "17312c1f56c1431b4fab0dc268082d65d3682967519954b04fce8d3e26e0e3e2",
+      "reportedStatus": "FAIL",
+      "candidate": null,
+      "scope": "Preserved observed machine/development/advisory result at its actual recorded candidate; no relabeling as current PASS qualification."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T03.acl-profile-diagnostic-03.json",
+      "sha256": "d12d0c0bf1afc5deb790c32096a4da190850c904d75f3930b74f7d9ec91392b2",
+      "reportedStatus": "PASS",
+      "candidate": null,
+      "scope": "Preserved observed machine/development/advisory result at its actual recorded candidate; no relabeling as current PASS qualification."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T03.adapter-diagnostic-41.json",
+      "sha256": "1d216dff558dc6f195d6baa6b83c5fdc988867360e9f27e58c451ef238440894",
+      "reportedStatus": "PASS",
+      "candidate": null,
+      "scope": "Preserved observed machine/development/advisory result at its actual recorded candidate; no relabeling as current PASS qualification."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T03.asset-preparation-01.json",
+      "sha256": "7df24578314c3d09c119f5f556f0d1d5825b134b3f7af2e0d2bf1bcaabb6cd55",
+      "reportedStatus": "PASS",
+      "candidate": null,
+      "scope": "Preserved observed machine/development/advisory result at its actual recorded candidate; no relabeling as current PASS qualification."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T03.build-diagnostic-01.json",
+      "sha256": "23d8884e7b0e427f145bfcbb73edc20efeb0ba4a948b049d88ae719165acc650",
+      "reportedStatus": "FAIL",
+      "candidate": null,
+      "scope": "Preserved observed machine/development/advisory result at its actual recorded candidate; no relabeling as current PASS qualification."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T03.builder-preparation-02.json",
+      "sha256": "480558f6cc0ab2e79c2950f5d6799098dd1b363922bf8f750f5cb2fcded138d8",
+      "reportedStatus": "PASS",
+      "candidate": null,
+      "scope": "Preserved observed machine/development/advisory result at its actual recorded candidate; no relabeling as current PASS qualification."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T03.check-runtime-122.json",
+      "sha256": "5442543c778ecef3553fd6b292d281b7e13a5a95acae0d831aae46838a28ca9b",
+      "reportedStatus": "PASS",
+      "candidate": null,
+      "scope": "Preserved observed machine/development/advisory result at its actual recorded candidate; no relabeling as current PASS qualification."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T03.check-runtime-130.json",
+      "sha256": "765b653b9c074d820a6ff8821052a8ae78232610d0046f69ef57a61ac96448b0",
+      "reportedStatus": "PASS",
+      "candidate": null,
+      "scope": "Preserved observed machine/development/advisory result at its actual recorded candidate; no relabeling as current PASS qualification."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T03.cpu-topology-86.json",
+      "sha256": "4a7265434ba625f50827c6a8063d79bdfe9202abaf10d956363874ccd6a91688",
+      "reportedStatus": "PASS",
+      "candidate": null,
+      "scope": "Preserved observed machine/development/advisory result at its actual recorded candidate; no relabeling as current PASS qualification."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T03.dateutil-image-diagnostic-23.json",
+      "sha256": "3548406e4af4a8918d95a855a9d6234e401ec603e550aac788911c453c5cb4bb",
+      "reportedStatus": "FAIL",
+      "candidate": null,
+      "scope": "Preserved observed machine/development/advisory result at its actual recorded candidate; no relabeling as current PASS qualification."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T03.dateutil-image-diagnostic-24.json",
+      "sha256": "2e2191cf306c2cfb3c55afe3adf4f7537d03a9ab7da17a611b7d4d8e95af8516",
+      "reportedStatus": "PASS",
+      "candidate": null,
+      "scope": "Preserved observed machine/development/advisory result at its actual recorded candidate; no relabeling as current PASS qualification."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T03.direct-conversion-51.json",
+      "sha256": "8cdb343b9992130ef7f9d77797c219914fda0e7698f772eaa59555f90444676c",
+      "reportedStatus": "PASS",
+      "candidate": null,
+      "scope": "Preserved observed machine/development/advisory result at its actual recorded candidate; no relabeling as current PASS qualification."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T03.failure-image-diagnostic-07.json",
+      "sha256": "8c65f2eb0d664dc1c91fd7638f439f8002d5027c9766c22e8dba05d105d47179",
+      "reportedStatus": "FAIL",
+      "candidate": null,
+      "scope": "Preserved observed machine/development/advisory result at its actual recorded candidate; no relabeling as current PASS qualification."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T03.failure-image-diagnostic-08.json",
+      "sha256": "70344721d872b5ffd13535978e20c7db2c540eb896726058389df77d2aaf4024",
+      "reportedStatus": "PASS",
+      "candidate": null,
+      "scope": "Preserved observed machine/development/advisory result at its actual recorded candidate; no relabeling as current PASS qualification."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T03.failure-image-diagnostic-26.json",
+      "sha256": "ae8929c85201bd71bca032183d3c9b12d9c3d34cfe87de1854adc9373620cca3",
+      "reportedStatus": "PASS",
+      "candidate": null,
+      "scope": "Preserved observed machine/development/advisory result at its actual recorded candidate; no relabeling as current PASS qualification."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T03.failure-image-diagnostic-28.json",
+      "sha256": "26a6cbae2816dd11088ff0854cf47106b558a1eccd440f9f979115c139534f19",
+      "reportedStatus": "PASS",
+      "candidate": null,
+      "scope": "Preserved observed machine/development/advisory result at its actual recorded candidate; no relabeling as current PASS qualification."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T03.failure-image-diagnostic-30.json",
+      "sha256": "33268357a06d06f4b06a5ad11099cc6adfc63e1364b18f7b4a0b04ed5be75ffc",
+      "reportedStatus": "PASS",
+      "candidate": null,
+      "scope": "Preserved observed machine/development/advisory result at its actual recorded candidate; no relabeling as current PASS qualification."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T03.failure-image-diagnostic-32.json",
+      "sha256": "985e1ecd85036e44a20d707e9b15208587da9e191fb61352b00f25d292521023",
+      "reportedStatus": "PASS",
+      "candidate": null,
+      "scope": "Preserved observed machine/development/advisory result at its actual recorded candidate; no relabeling as current PASS qualification."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T03.failure-image-diagnostic-34.json",
+      "sha256": "c88d438b0f13cc99f1a11a6e7f48e0dce35ebb26a075694b5aeada2cf614f89a",
+      "reportedStatus": "PASS",
+      "candidate": null,
+      "scope": "Preserved observed machine/development/advisory result at its actual recorded candidate; no relabeling as current PASS qualification."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T03.failure-image-diagnostic-36.json",
+      "sha256": "4142e867d04deecbaf631773d4157940422fadba2c57d3174cef11da0a6bd686",
+      "reportedStatus": "FAIL",
+      "candidate": null,
+      "scope": "Preserved observed machine/development/advisory result at its actual recorded candidate; no relabeling as current PASS qualification."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T03.failure-image-diagnostic-37.json",
+      "sha256": "f164f71830098063aa554c493e701c9e75eb9a498c959873d3704fa25cc04c15",
+      "reportedStatus": "PASS",
+      "candidate": null,
+      "scope": "Preserved observed machine/development/advisory result at its actual recorded candidate; no relabeling as current PASS qualification."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T03.failure-image-diagnostic-39.json",
+      "sha256": "109eda7c882cec2c38ec338a5b017ff0444c4e98ac42e15511526c893438b1ff",
+      "reportedStatus": "PASS",
+      "candidate": null,
+      "scope": "Preserved observed machine/development/advisory result at its actual recorded candidate; no relabeling as current PASS qualification."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T03.fixture-guard-137.json",
+      "sha256": "c25c9c326332efb9348499b760b778de789fa6b77c332fb9cd33fac670082c15",
+      "reportedStatus": "PASS",
+      "candidate": "b8e9827e5b3c8fd739a3db0807590897c3031cf8",
+      "scope": "Preserved observed machine/development/advisory result at its actual recorded candidate; no relabeling as current PASS qualification."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T03.frozen-loader-76.json",
+      "sha256": "c2ea1811e66a317eeefbae698b099f2c9f224c791f7e0495ed1f19f98de68a6b",
+      "reportedStatus": "PASS",
+      "candidate": "2deb860b47027ffe96ea3977853b77a6f7f2cfde",
+      "scope": "Preserved observed machine/development/advisory result at its actual recorded candidate; no relabeling as current PASS qualification."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T03.host-diagnostic-01.json",
+      "sha256": "64f5680be0f04f492b4454f2a9389dfcb2c1163425f24500b6f889d572b68565",
+      "reportedStatus": "FAIL",
+      "candidate": null,
+      "scope": "Preserved observed machine/development/advisory result at its actual recorded candidate; no relabeling as current PASS qualification."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T03.host-diagnostic-02.json",
+      "sha256": "ac1f44373d6581e16a00a0e09b749bd484f460f2f20198c25292cc2b332949c6",
+      "reportedStatus": "PASS",
+      "candidate": null,
+      "scope": "Preserved observed machine/development/advisory result at its actual recorded candidate; no relabeling as current PASS qualification."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T03.inspection-render-diagnostic-42.json",
+      "sha256": "4510364a1ccad6fb02dbd8b47f1fa57fabbbedca60ac4c47787108eb9d7473fd",
+      "reportedStatus": "FAIL",
+      "candidate": null,
+      "scope": "Preserved observed machine/development/advisory result at its actual recorded candidate; no relabeling as current PASS qualification."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T03.inspection-render-diagnostic-43.json",
+      "sha256": "f11f6c39bdb43196fb61fdf77fbf73904a50f5db2e47dabe474a04356e8aa77b",
+      "reportedStatus": "PASS",
+      "candidate": null,
+      "scope": "Preserved observed machine/development/advisory result at its actual recorded candidate; no relabeling as current PASS qualification."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T03.installed-denials-110.encrypted-pdf.json",
+      "sha256": "7ba9733f9d7a445e2c5c93978032d0d9d48ca2576032e80ee4a8cbf37dba2d89",
+      "reportedStatus": "PASS",
+      "candidate": "b8e9827e5b3c8fd739a3db0807590897c3031cf8",
+      "scope": "Preserved observed machine/development/advisory result at its actual recorded candidate; no relabeling as current PASS qualification."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T03.installed-denials-110.huge-canvas.json",
+      "sha256": "90b32cf9a353f1b1f95681bdd2c23ba7598007f2a0d1c12ade1ad28e90d67266",
+      "reportedStatus": "PASS",
+      "candidate": "b8e9827e5b3c8fd739a3db0807590897c3031cf8",
+      "scope": "Preserved observed machine/development/advisory result at its actual recorded candidate; no relabeling as current PASS qualification."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T03.installed-denials-110.malformed-pdf.json",
+      "sha256": "954682e829250e0ece51c606854b5c5023f7f55d8c29204821a007e35c170fca",
+      "reportedStatus": "PASS",
+      "candidate": "b8e9827e5b3c8fd739a3db0807590897c3031cf8",
+      "scope": "Preserved observed machine/development/advisory result at its actual recorded candidate; no relabeling as current PASS qualification."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T03.installed-denials-110.native-external-entity.json",
+      "sha256": "445d6716f165d86691002d477d3d5a3fe702b8affed2be804c492faf7fa2bba7",
+      "reportedStatus": "PASS",
+      "candidate": "b8e9827e5b3c8fd739a3db0807590897c3031cf8",
+      "scope": "Preserved observed machine/development/advisory result at its actual recorded candidate; no relabeling as current PASS qualification."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T03.installed-denials-110.over-page-limit.json",
+      "sha256": "2fb2ce0c05d7427be42346c1a420388ba21b7eb94522de6e42329640fd1eb2a0",
+      "reportedStatus": "PASS",
+      "candidate": "b8e9827e5b3c8fd739a3db0807590897c3031cf8",
+      "scope": "Preserved observed machine/development/advisory result at its actual recorded candidate; no relabeling as current PASS qualification."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T03.lpac-diagnostic-03.json",
+      "sha256": "924abb81547ab1284c5e1c37ed10eaed3bf3e8b110fc9c53093b34a4e4e4ce4f",
+      "reportedStatus": "FAIL",
+      "candidate": null,
+      "scope": "Preserved observed machine/development/advisory result at its actual recorded candidate; no relabeling as current PASS qualification."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T03.lpac-diagnostic-04.json",
+      "sha256": "1dd6ac4ec12566c1c078ab5b0a1dbc73c2f042631a26efd797bbcaf42b36141d",
+      "reportedStatus": "FAIL",
+      "candidate": null,
+      "scope": "Preserved observed machine/development/advisory result at its actual recorded candidate; no relabeling as current PASS qualification."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T03.manifest-inventory-diagnostic-12.json",
+      "sha256": "1c19c49f72518fbde2270ed8ab23f08e6d28eb1833b536e4c6ad5a7f1ab04766",
+      "reportedStatus": "unclassified historical data",
+      "candidate": null,
+      "scope": "Preserved observed machine/development/advisory result at its actual recorded candidate; no relabeling as current PASS qualification."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T03.manifest-variant-diagnostic-10.json",
+      "sha256": "9cbd411ebfc55399319ffe87bad8a8c713204d4469ec8e41124e73b3a5037b96",
+      "reportedStatus": "FAIL",
+      "candidate": null,
+      "scope": "Preserved observed machine/development/advisory result at its actual recorded candidate; no relabeling as current PASS qualification."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T03.manifest-variant-diagnostic-11.json",
+      "sha256": "32cc7ae33aad7557d2a5187aa458a61896a3eeddecc703e431d4abf69711ffbe",
+      "reportedStatus": "FAIL",
+      "candidate": null,
+      "scope": "Preserved observed machine/development/advisory result at its actual recorded candidate; no relabeling as current PASS qualification."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T03.manifest-variant-diagnostic-13.json",
+      "sha256": "a526dde6411698dbcbe637c604d667cc76e481ebb3b5b2e447c1b0a525b6c873",
+      "reportedStatus": "PASS",
+      "candidate": null,
+      "scope": "Preserved observed machine/development/advisory result at its actual recorded candidate; no relabeling as current PASS qualification."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T03.native-build-08.json",
+      "sha256": "c6080e288d74e73f346d3d7de269bbc08b385888b637d5d7edfbb8f82c1ab3b0",
+      "reportedStatus": "FAIL",
+      "candidate": null,
+      "scope": "Preserved observed machine/development/advisory result at its actual recorded candidate; no relabeling as current PASS qualification."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T03.native-build-09.json",
+      "sha256": "9a7c90038f0c7a3c1135ebb5a2080a5fcf57435a081ba923863b0f6e27a840cf",
+      "reportedStatus": "PASS",
+      "candidate": null,
+      "scope": "Preserved observed machine/development/advisory result at its actual recorded candidate; no relabeling as current PASS qualification."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T03.native-copy-diagnostic-68.json",
+      "sha256": "47d61a57f89117fdca1680c0648f673115fdaac9542181065b8b5ae30aaa5ef8",
+      "reportedStatus": "PASS",
+      "candidate": "f3534a9fa9e35d5d7373530f1be967bc4e0f0b78",
+      "scope": "Preserved observed machine/development/advisory result at its actual recorded candidate; no relabeling as current PASS qualification."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T03.native-lifecycle-98.cancel.json",
+      "sha256": "b557eb96e717c9dd6079f581ca0862cd999e9921b9fc096ec131b824458998e2",
+      "reportedStatus": "PASS",
+      "candidate": "b8e9827e5b3c8fd739a3db0807590897c3031cf8",
+      "scope": "Preserved observed machine/development/advisory result at its actual recorded candidate; no relabeling as current PASS qualification."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T03.native-lifecycle-98.worker-crash.json",
+      "sha256": "2ac1b2108473c71ef3ed54d0da812c8a8e5ae6cbef4632b76ae371b111916462",
+      "reportedStatus": "PASS",
+      "candidate": "b8e9827e5b3c8fd739a3db0807590897c3031cf8",
+      "scope": "Preserved observed machine/development/advisory result at its actual recorded candidate; no relabeling as current PASS qualification."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T03.native-malformed-phases-67.json",
+      "sha256": "79ad6cf8fb303684fa5283d8565025b1d3dd22f7b9e6f0f452b6198afbeb3e66",
+      "reportedStatus": "PASS",
+      "candidate": "f3534a9fa9e35d5d7373530f1be967bc4e0f0b78",
+      "scope": "Preserved observed machine/development/advisory result at its actual recorded candidate; no relabeling as current PASS qualification."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T03.native-review-fixes-02.json",
+      "sha256": "a6644d8be3f878dabd5db63dc14dfeb83d8b58dcf399045bcc5c247b301f6f44",
+      "reportedStatus": "PASS",
+      "candidate": null,
+      "scope": "Preserved observed machine/development/advisory result at its actual recorded candidate; no relabeling as current PASS qualification."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T03.native-review-fixes-03.json",
+      "sha256": "cf2222fdd301a13b395a689e61d903fa5fbc276c75f5b90bd8a0853410c366f4",
+      "reportedStatus": "PASS",
+      "candidate": null,
+      "scope": "Preserved observed machine/development/advisory result at its actual recorded candidate; no relabeling as current PASS qualification."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T03.normalization-bound-127.json",
+      "sha256": "1b6688017f7286f1e48b7437454039b936aa9a01064526ea5697cba3735fb3eb",
+      "reportedStatus": "PASS",
+      "candidate": "b8e9827e5b3c8fd739a3db0807590897c3031cf8",
+      "scope": "Preserved observed machine/development/advisory result at its actual recorded candidate; no relabeling as current PASS qualification."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T03.normalization-full-before-138.json",
+      "sha256": "8ca65647597dc9a9d889677a354e0c9b28c94f5b5d8641f2b233f4f6b577c120",
+      "reportedStatus": "FAIL",
+      "candidate": "b8e9827e5b3c8fd739a3db0807590897c3031cf8",
+      "scope": "Preserved observed machine/development/advisory result at its actual recorded candidate; no relabeling as current PASS qualification."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T03.operation-image-diagnostic-44.json",
+      "sha256": "7478398d95dc5f930d2ef0a27cfad5aa6ff7b7f84c3b9920258053f37fbad78b",
+      "reportedStatus": "PASS",
+      "candidate": null,
+      "scope": "Preserved observed machine/development/advisory result at its actual recorded candidate; no relabeling as current PASS qualification."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T03.overlapped-build-diagnostic-17.json",
+      "sha256": "ae158a4eb4c530dacd05d1b1d031dc034212537059aa249394333b480a51b313",
+      "reportedStatus": "PASS",
+      "candidate": null,
+      "scope": "Preserved observed machine/development/advisory result at its actual recorded candidate; no relabeling as current PASS qualification."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T03.overlapped-package-diagnostic-18.json",
+      "sha256": "bc6845db5c5de8bd7f84ccf11aa8e50cdfe7a1bb488d1c0e5648d81ed7417769",
+      "reportedStatus": "FAIL",
+      "candidate": null,
+      "scope": "Preserved observed machine/development/advisory result at its actual recorded candidate; no relabeling as current PASS qualification."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T03.overlapped-package-diagnostic-20.json",
+      "sha256": "8a3e1854e4d5458313c55eccac744dd278eab459c3b43653a040dbc43ccf69e0",
+      "reportedStatus": "PASS",
+      "candidate": null,
+      "scope": "Preserved observed machine/development/advisory result at its actual recorded candidate; no relabeling as current PASS qualification."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T03.package-variant-diagnostic-05.json",
+      "sha256": "5c268a192fe6ecc702882afeb6b879d8489a30ff4baf528cecce9fa847b629c1",
+      "reportedStatus": "PASS",
+      "candidate": null,
+      "scope": "Preserved observed machine/development/advisory result at its actual recorded candidate; no relabeling as current PASS qualification."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T03.page-native-46.json",
+      "sha256": "bfb379b9341a5c79616b121da3e67f9e4f447d644f3f221eea70b1b0beea1e24",
+      "reportedStatus": "PASS",
+      "candidate": null,
+      "scope": "Preserved observed machine/development/advisory result at its actual recorded candidate; no relabeling as current PASS qualification."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T03.parent-death-99.json",
+      "sha256": "a2ebfae6e35fc5989bc58ae55145af10fa7d8fd2c62140b4634abfdf4422228d",
+      "reportedStatus": "PASS",
+      "candidate": "b8e9827e5b3c8fd739a3db0807590897c3031cf8",
+      "scope": "Preserved observed machine/development/advisory result at its actual recorded candidate; no relabeling as current PASS qualification."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T03.performance-124.benchmark.json",
+      "sha256": "fc1b2ca099d8b400806e7e3340c9a0a2a25982f0f6716006a22947865eb51f77",
+      "reportedStatus": "FAIL",
+      "candidate": "c17511401808d003eaa2c74ff0b866e65a6955d9",
+      "scope": "Preserved observed machine/development/advisory result at its actual recorded candidate; no relabeling as current PASS qualification."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T03.performance-78.single.json",
+      "sha256": "9c26e573206b739f7086286a4136ac7e07d5d4dca23e5e82ef9a41d8931458bf",
+      "reportedStatus": "FAIL",
+      "candidate": "2deb860b47027ffe96ea3977853b77a6f7f2cfde",
+      "scope": "Preserved observed machine/development/advisory result at its actual recorded candidate; no relabeling as current PASS qualification."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T03.performance-80.single.conversion-0.json",
+      "sha256": "96ede3e6d92f613a01f3120db8d45d2cd98dde3006c3da961d4b4324cca0bcfe",
+      "reportedStatus": "PASS",
+      "candidate": "2deb860b47027ffe96ea3977853b77a6f7f2cfde",
+      "scope": "Preserved observed machine/development/advisory result at its actual recorded candidate; no relabeling as current PASS qualification."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T03.performance-80.single.json",
+      "sha256": "d4cf9616807eb57f2129e5ac0ae862d95d6b77a9fdaf29ff28ce958f1a383512",
+      "reportedStatus": "FAIL",
+      "candidate": "2deb860b47027ffe96ea3977853b77a6f7f2cfde",
+      "scope": "Preserved observed machine/development/advisory result at its actual recorded candidate; no relabeling as current PASS qualification."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T03.performance-83.benchmark.cold-0.json",
+      "sha256": "1a1c31f55dc5018eec1b41964af9941fdd19e08dfb9303ec4e89e565caad54c8",
+      "reportedStatus": "PASS",
+      "candidate": "85683a047d2b714f7b9bcd4a9d706d4b6736d1c3",
+      "scope": "Preserved observed machine/development/advisory result at its actual recorded candidate; no relabeling as current PASS qualification."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T03.performance-83.benchmark.cold-1.json",
+      "sha256": "c7447f3e1c373a162126633b1584c8e72144e70f219cb2946a7a2b107ec1d368",
+      "reportedStatus": "PASS",
+      "candidate": "85683a047d2b714f7b9bcd4a9d706d4b6736d1c3",
+      "scope": "Preserved observed machine/development/advisory result at its actual recorded candidate; no relabeling as current PASS qualification."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T03.performance-83.benchmark.cold-2.json",
+      "sha256": "ca7dc92a3c3c242594a3a56477156e1e33b88519941f1deea785a99a88b771b6",
+      "reportedStatus": "PASS",
+      "candidate": "85683a047d2b714f7b9bcd4a9d706d4b6736d1c3",
+      "scope": "Preserved observed machine/development/advisory result at its actual recorded candidate; no relabeling as current PASS qualification."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T03.performance-83.benchmark.json",
+      "sha256": "35fb68c032178e1fc9253af0e499c60a31b68434a77124b3ffb83e77718587ee",
+      "reportedStatus": "FAIL",
+      "candidate": "85683a047d2b714f7b9bcd4a9d706d4b6736d1c3",
+      "scope": "Preserved observed machine/development/advisory result at its actual recorded candidate; no relabeling as current PASS qualification."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T03.performance-83.benchmark.warm-0.json",
+      "sha256": "5ca86068815eb408a86ffa9b370150463cefefa3311ac86fa1f4ab750af16e0f",
+      "reportedStatus": "PASS",
+      "candidate": "85683a047d2b714f7b9bcd4a9d706d4b6736d1c3",
+      "scope": "Preserved observed machine/development/advisory result at its actual recorded candidate; no relabeling as current PASS qualification."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T03.performance-83.benchmark.warm-1.json",
+      "sha256": "2521024a17d1e208c6f7d2054b521e3970340654044f2b9026d0afc7808fcbc4",
+      "reportedStatus": "PASS",
+      "candidate": "85683a047d2b714f7b9bcd4a9d706d4b6736d1c3",
+      "scope": "Preserved observed machine/development/advisory result at its actual recorded candidate; no relabeling as current PASS qualification."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T03.performance-83.benchmark.warm-2.json",
+      "sha256": "ac0f924bcb9bf743b83844d56582753463aa428a4e3d5d14be4e6247abd739a5",
+      "reportedStatus": "PASS",
+      "candidate": "85683a047d2b714f7b9bcd4a9d706d4b6736d1c3",
+      "scope": "Preserved observed machine/development/advisory result at its actual recorded candidate; no relabeling as current PASS qualification."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T03.performance-83.benchmark.warm-3.json",
+      "sha256": "56a2e049d311bfadc9a4826d15c97a07d8887f15fd72fa0925461b2ca81b03e8",
+      "reportedStatus": "PASS",
+      "candidate": "85683a047d2b714f7b9bcd4a9d706d4b6736d1c3",
+      "scope": "Preserved observed machine/development/advisory result at its actual recorded candidate; no relabeling as current PASS qualification."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T03.performance-83.benchmark.warm-4.json",
+      "sha256": "9e7fa8af0450c9954bf90dfa50615d52a3c0cb493bb5e25fae4258a02d13591d",
+      "reportedStatus": "PASS",
+      "candidate": "85683a047d2b714f7b9bcd4a9d706d4b6736d1c3",
+      "scope": "Preserved observed machine/development/advisory result at its actual recorded candidate; no relabeling as current PASS qualification."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T03.performance-83.benchmark.warm-5.json",
+      "sha256": "42736bc8464f8319d6278c908b8e9e3770be46890d94f53eb6fc2eb5666374c1",
+      "reportedStatus": "PASS",
+      "candidate": "85683a047d2b714f7b9bcd4a9d706d4b6736d1c3",
+      "scope": "Preserved observed machine/development/advisory result at its actual recorded candidate; no relabeling as current PASS qualification."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T03.performance-83.benchmark.warm-6.json",
+      "sha256": "93a4698f3137d80dcdc41de2c091cd8613859aac84ca7b8a330bcb01c37d2a4f",
+      "reportedStatus": "PASS",
+      "candidate": "85683a047d2b714f7b9bcd4a9d706d4b6736d1c3",
+      "scope": "Preserved observed machine/development/advisory result at its actual recorded candidate; no relabeling as current PASS qualification."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T03.performance-83.benchmark.warmup-0.json",
+      "sha256": "85674447133680d5c2db42626b1ff2999b4ea4700a876ca09bd888a603a6f5cb",
+      "reportedStatus": "PASS",
+      "candidate": "85683a047d2b714f7b9bcd4a9d706d4b6736d1c3",
+      "scope": "Preserved observed machine/development/advisory result at its actual recorded candidate; no relabeling as current PASS qualification."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T03.performance-96.benchmark.cold-0.json",
+      "sha256": "28662e826b6e89cb3e59975b9cd541067e9927a7bdbb459d1a26b8afc18a7aa5",
+      "reportedStatus": "PASS",
+      "candidate": "cd80ff6a297d053df4231529cea372e8fb8c0f2a",
+      "scope": "Preserved observed machine/development/advisory result at its actual recorded candidate; no relabeling as current PASS qualification."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T03.performance-96.benchmark.cold-1.json",
+      "sha256": "c10e5e3ca5e6e3a73b2fa92f4ebc0609b338606173b063e418ae613a8ceafe0c",
+      "reportedStatus": "PASS",
+      "candidate": "cd80ff6a297d053df4231529cea372e8fb8c0f2a",
+      "scope": "Preserved observed machine/development/advisory result at its actual recorded candidate; no relabeling as current PASS qualification."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T03.performance-96.benchmark.cold-2.json",
+      "sha256": "515c4c7b68ec9f33bfade269fa40f442146c8ff41fe7762f06c4c0c246aaa24b",
+      "reportedStatus": "PASS",
+      "candidate": "cd80ff6a297d053df4231529cea372e8fb8c0f2a",
+      "scope": "Preserved observed machine/development/advisory result at its actual recorded candidate; no relabeling as current PASS qualification."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T03.performance-96.benchmark.json",
+      "sha256": "d39cfe955455c3e0fa98e4265b09ee60aa580e985917d5aa3b1ef1aa2d57911d",
+      "reportedStatus": "PASS",
+      "candidate": "cd80ff6a297d053df4231529cea372e8fb8c0f2a",
+      "scope": "Preserved observed machine/development/advisory result at its actual recorded candidate; no relabeling as current PASS qualification."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T03.performance-96.benchmark.warm-0.json",
+      "sha256": "cfa3efa2c7e4a7283730d02d1b08374d707c6c13d2c0883e1df5c7c01502f3b0",
+      "reportedStatus": "PASS",
+      "candidate": "cd80ff6a297d053df4231529cea372e8fb8c0f2a",
+      "scope": "Preserved observed machine/development/advisory result at its actual recorded candidate; no relabeling as current PASS qualification."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T03.performance-96.benchmark.warm-1.json",
+      "sha256": "05b104f7f69b66617c985cab7f023ab776d023e706ff504f763cc343d5e2db12",
+      "reportedStatus": "PASS",
+      "candidate": "cd80ff6a297d053df4231529cea372e8fb8c0f2a",
+      "scope": "Preserved observed machine/development/advisory result at its actual recorded candidate; no relabeling as current PASS qualification."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T03.performance-96.benchmark.warm-2.json",
+      "sha256": "f59e6de95d030d97be71a4781ba02412ce25560587ae27ea482e4146a7ad1ab7",
+      "reportedStatus": "PASS",
+      "candidate": "cd80ff6a297d053df4231529cea372e8fb8c0f2a",
+      "scope": "Preserved observed machine/development/advisory result at its actual recorded candidate; no relabeling as current PASS qualification."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T03.performance-96.benchmark.warm-3.json",
+      "sha256": "94038f8aa25c03d360ec1346a19945ee56d10a597e48f155ba16c7c37b44c9b6",
+      "reportedStatus": "PASS",
+      "candidate": "cd80ff6a297d053df4231529cea372e8fb8c0f2a",
+      "scope": "Preserved observed machine/development/advisory result at its actual recorded candidate; no relabeling as current PASS qualification."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T03.performance-96.benchmark.warm-4.json",
+      "sha256": "d5d71969c33e73bc1bc687a80d3503164d3d1566af5b0e5bb1e6e9225b2b4ede",
+      "reportedStatus": "PASS",
+      "candidate": "cd80ff6a297d053df4231529cea372e8fb8c0f2a",
+      "scope": "Preserved observed machine/development/advisory result at its actual recorded candidate; no relabeling as current PASS qualification."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T03.performance-96.benchmark.warm-5.json",
+      "sha256": "edfb5711bcd38d148cb823b4134dab9d5aa20e6db637eaf0644ac4fc091b21da",
+      "reportedStatus": "PASS",
+      "candidate": "cd80ff6a297d053df4231529cea372e8fb8c0f2a",
+      "scope": "Preserved observed machine/development/advisory result at its actual recorded candidate; no relabeling as current PASS qualification."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T03.performance-96.benchmark.warm-6.json",
+      "sha256": "8c6648d5cd573af9d2e8f9ad591de56306cef764c3be265272664582bbbd8028",
+      "reportedStatus": "PASS",
+      "candidate": "cd80ff6a297d053df4231529cea372e8fb8c0f2a",
+      "scope": "Preserved observed machine/development/advisory result at its actual recorded candidate; no relabeling as current PASS qualification."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T03.performance-96.benchmark.warmup-0.json",
+      "sha256": "61fa421cbeee88b4e4f1fbd241c03cfd75cdc6bbe55570738b95ba99ca0a783c",
+      "reportedStatus": "PASS",
+      "candidate": "cd80ff6a297d053df4231529cea372e8fb8c0f2a",
+      "scope": "Preserved observed machine/development/advisory result at its actual recorded candidate; no relabeling as current PASS qualification."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T03.performance-96.single.conversion-0.json",
+      "sha256": "6253a72307c60de8d2b4c2894a48211196de262f14de3322206ea432d14c572a",
+      "reportedStatus": "PASS",
+      "candidate": "cd80ff6a297d053df4231529cea372e8fb8c0f2a",
+      "scope": "Preserved observed machine/development/advisory result at its actual recorded candidate; no relabeling as current PASS qualification."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T03.performance-96.single.json",
+      "sha256": "397736d31a78df3b7da516d64ad143fc7dfafa2abfa1b016177aaf56c48ad54d",
+      "reportedStatus": "PASS",
+      "candidate": "cd80ff6a297d053df4231529cea372e8fb8c0f2a",
+      "scope": "Preserved observed machine/development/advisory result at its actual recorded candidate; no relabeling as current PASS qualification."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T03.production-assembly-56.json",
+      "sha256": "42080741cc00eca1fb9b20e564b93c8c5326ecca3839909c8bd99192c38dccaf",
+      "reportedStatus": "PASS",
+      "candidate": "4ec345e360df88822eb8169abfac93ef9e5d3459",
+      "scope": "Preserved observed machine/development/advisory result at its actual recorded candidate; no relabeling as current PASS qualification."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T03.production-build-47.json",
+      "sha256": "b4be65371c01486545a243f8e88f7f003aee14c3f3507e265ed21accb00bf011",
+      "reportedStatus": "PASS",
+      "candidate": "2652a5775461d7be90f4d20ea5415d54b49aec93",
+      "scope": "Preserved observed machine/development/advisory result at its actual recorded candidate; no relabeling as current PASS qualification."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T03.production-fallback-128.json",
+      "sha256": "af902d17a09ebb14b4711659f2d75068a86c872fcf96095be0a2fe0a4902a528",
+      "reportedStatus": "PASS",
+      "candidate": "b8e9827e5b3c8fd739a3db0807590897c3031cf8",
+      "scope": "Preserved observed machine/development/advisory result at its actual recorded candidate; no relabeling as current PASS qualification."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T03.production-formats-103.plain-text.json",
+      "sha256": "825dd357a6fecc6f78d43728ea3926cccec1c7189d933cfce21a336f31873f18",
+      "reportedStatus": "FAIL",
+      "candidate": "b8e9827e5b3c8fd739a3db0807590897c3031cf8",
+      "scope": "Preserved observed machine/development/advisory result at its actual recorded candidate; no relabeling as current PASS qualification."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T03.production-freeze-75.json",
+      "sha256": "98909bbc37719eebff765d8a3d9e3f16111505eb8442817e15bd78b256574b55",
+      "reportedStatus": "PASS",
+      "candidate": "2deb860b47027ffe96ea3977853b77a6f7f2cfde",
+      "scope": "Preserved observed machine/development/advisory result at its actual recorded candidate; no relabeling as current PASS qualification."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T03.production-page-100.json",
+      "sha256": "8b52b0351f2ad9ec176278b9756bf59aca5f2992031f25f9366e9bc8ea5547bd",
+      "reportedStatus": "PASS",
+      "candidate": "b8e9827e5b3c8fd739a3db0807590897c3031cf8",
+      "scope": "Preserved observed machine/development/advisory result at its actual recorded candidate; no relabeling as current PASS qualification."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T03.production-page-64.json",
+      "sha256": "f7d9a6de164f5dccc463be1c175a3a193872cab0c46800dacc6c69b2678af000",
+      "reportedStatus": "PASS",
+      "candidate": "f3534a9fa9e35d5d7373530f1be967bc4e0f0b78",
+      "scope": "Preserved observed machine/development/advisory result at its actual recorded candidate; no relabeling as current PASS qualification."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T03.production-quality-63.json",
+      "sha256": "d9b18b16a23b6248decaf7546d4758d175f8558653b17219bc7e2493d14d33da",
+      "reportedStatus": "PASS",
+      "candidate": "f3534a9fa9e35d5d7373530f1be967bc4e0f0b78",
+      "scope": "Preserved observed machine/development/advisory result at its actual recorded candidate; no relabeling as current PASS qualification."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T03.production-quality-phases-58.json",
+      "sha256": "a989e3f2b50d6ebfc6abf0ef325aad2b5c0113264dc4dda9e9701ace563a10ef",
+      "reportedStatus": "FAIL",
+      "candidate": "4ec345e360df88822eb8169abfac93ef9e5d3459",
+      "scope": "Preserved observed machine/development/advisory result at its actual recorded candidate; no relabeling as current PASS qualification."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T03.production-scan-101.json",
+      "sha256": "26c36cd973391233b5d7aad44275b51450cf66cff8a801c1b5fc165ce8afb144",
+      "reportedStatus": "PASS",
+      "candidate": "b8e9827e5b3c8fd739a3db0807590897c3031cf8",
+      "scope": "Preserved observed machine/development/advisory result at its actual recorded candidate; no relabeling as current PASS qualification."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T03.production-scan-phases-65.json",
+      "sha256": "2fa3da24c033f1d33fc3305742ec8eadcc26b7c8cd04e9bfb1c518cf99e9f21a",
+      "reportedStatus": "PASS",
+      "candidate": "f3534a9fa9e35d5d7373530f1be967bc4e0f0b78",
+      "scope": "Preserved observed machine/development/advisory result at its actual recorded candidate; no relabeling as current PASS qualification."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T03.production-vertical-48.json",
+      "sha256": "7cfd2bdc146462775b53c1450d4b05350f6608e9e00e0b1307c970a7db32b4af",
+      "reportedStatus": "FAIL",
+      "candidate": "2652a5775461d7be90f4d20ea5415d54b49aec93",
+      "scope": "Preserved observed machine/development/advisory result at its actual recorded candidate; no relabeling as current PASS qualification."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T03.production-vertical-49.json",
+      "sha256": "185c499249b6320b332b6373f179810fa9a11b5247ae314cb1d91d696d7b139b",
+      "reportedStatus": "FAIL",
+      "candidate": "2652a5775461d7be90f4d20ea5415d54b49aec93",
+      "scope": "Preserved observed machine/development/advisory result at its actual recorded candidate; no relabeling as current PASS qualification."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T03.production-vertical-50.json",
+      "sha256": "9eb6f94d20987111ab1e96a25b938b61b01a98bac0a5de5ee64af63ba08d57a1",
+      "reportedStatus": "FAIL",
+      "candidate": "2652a5775461d7be90f4d20ea5415d54b49aec93",
+      "scope": "Preserved observed machine/development/advisory result at its actual recorded candidate; no relabeling as current PASS qualification."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T03.production-vertical-57.json",
+      "sha256": "7eec22cbd2d34b8d36c31b1acee760ab5ae33753fdf54f75abc1b1af419c654d",
+      "reportedStatus": "PASS",
+      "candidate": "4ec345e360df88822eb8169abfac93ef9e5d3459",
+      "scope": "Preserved observed machine/development/advisory result at its actual recorded candidate; no relabeling as current PASS qualification."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T03.publication-159.json",
+      "sha256": "40b7427c19fa64a38187a7d5f6aee23575f61d705348d9a16bcfc4c815a2a382",
+      "reportedStatus": "PASS",
+      "candidate": "21785fb9201860870183c11e28d77bd877d425af",
+      "scope": "Preserved observed machine/development/advisory result at its actual recorded candidate; no relabeling as current PASS qualification."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T03.qualification-123.basic.json",
+      "sha256": "937218dd11cd805243615fd302b98433838b81a3a78c38173f1b0a87d3760060",
+      "reportedStatus": "FAIL",
+      "candidate": "e824194cbc0e29912d1184c87556a96bf02c1e23",
+      "scope": "Preserved observed machine/development/advisory result at its actual recorded candidate; no relabeling as current PASS qualification."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T03.qualification-131.native.json",
+      "sha256": "7865298554e465354a1d8c6f3b5745eba07115984012ce978092e19f745777f7",
+      "reportedStatus": "FAIL",
+      "candidate": "b8e9827e5b3c8fd739a3db0807590897c3031cf8",
+      "scope": "Preserved observed machine/development/advisory result at its actual recorded candidate; no relabeling as current PASS qualification."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T03.qualification-131.quality.json",
+      "sha256": "9bba8f923dc19c3df804d26cee6dde8996c9f435cd2fdb5e13c7b8f80d20e2bc",
+      "reportedStatus": "FAIL",
+      "candidate": "e824194cbc0e29912d1184c87556a96bf02c1e23",
+      "scope": "Preserved observed machine/development/advisory result at its actual recorded candidate; no relabeling as current PASS qualification."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T03.qualification-134.basic.json",
+      "sha256": "4a5319fb27105552048fcd509c632c595ef933a08d4e421096b01936b8125841",
+      "reportedStatus": "FAIL",
+      "candidate": "4fae0adff9b3aa49ad5f247c85e8f1045bfe8edc",
+      "scope": "Preserved observed machine/development/advisory result at its actual recorded candidate; no relabeling as current PASS qualification."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T03.qualification-136.basic.json",
+      "sha256": "612cd0a136254646785023beda19e0647583afb44910f1fd737e83a7644760a9",
+      "reportedStatus": "PASS",
+      "candidate": "b8e9827e5b3c8fd739a3db0807590897c3031cf8",
+      "scope": "Preserved observed machine/development/advisory result at its actual recorded candidate; no relabeling as current PASS qualification."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T03.recover-empty-diagnostic-01.json",
+      "sha256": "fca649f12a5a98b5665bb5920de18b0ae852f6ca9a85c37a4a68fcb97b17051f",
+      "reportedStatus": "PASS",
+      "candidate": null,
+      "scope": "Preserved observed machine/development/advisory result at its actual recorded candidate; no relabeling as current PASS qualification."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T03.recover-package-diagnostic-02.json",
+      "sha256": "6edbdbbe25a78133d1fa4b2fe3c0a2cf603225669da41581398a43978f2e3dcc",
+      "reportedStatus": "FAIL",
+      "candidate": null,
+      "scope": "Preserved observed machine/development/advisory result at its actual recorded candidate; no relabeling as current PASS qualification."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T03.recover-package-diagnostic-03.json",
+      "sha256": "0f78d6a17ab1ffbb0acced3110973b4c2c5bb2add209ecf74bf8857c18236ae7",
+      "reportedStatus": "FAIL",
+      "candidate": null,
+      "scope": "Preserved observed machine/development/advisory result at its actual recorded candidate; no relabeling as current PASS qualification."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T03.recover-package-diagnostic-04.json",
+      "sha256": "14f225fa27b8d4999baea36f2607643e2c710bf5150f68961bd52cd560ab78d5",
+      "reportedStatus": "FAIL",
+      "candidate": null,
+      "scope": "Preserved observed machine/development/advisory result at its actual recorded candidate; no relabeling as current PASS qualification."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T03.recover-package-diagnostic-05.json",
+      "sha256": "d3bd5448b7f42072edc524d2fe108385a1bf70ad57c65bee26fa7d790425451f",
+      "reportedStatus": "FAIL",
+      "candidate": null,
+      "scope": "Preserved observed machine/development/advisory result at its actual recorded candidate; no relabeling as current PASS qualification."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T03.recover-package-diagnostic-06.json",
+      "sha256": "a4b9f9a4bd330455ea6e24749a036c76f8acb6f74ab2d11cdee37a293e9f15c8",
+      "reportedStatus": "FAIL",
+      "candidate": null,
+      "scope": "Preserved observed machine/development/advisory result at its actual recorded candidate; no relabeling as current PASS qualification."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T03.recover-package-diagnostic-07.json",
+      "sha256": "2ae177c9ad59cbf70870855716329936767dffbe3a4c58e929af9418a3bb1aa5",
+      "reportedStatus": "FAIL",
+      "candidate": null,
+      "scope": "Preserved observed machine/development/advisory result at its actual recorded candidate; no relabeling as current PASS qualification."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T03.recover-package-diagnostic-08.json",
+      "sha256": "38882543001885f2d29727da74b5d6e5f894efdc8413692971d088bb1938fd76",
+      "reportedStatus": "PASS",
+      "candidate": null,
+      "scope": "Preserved observed machine/development/advisory result at its actual recorded candidate; no relabeling as current PASS qualification."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T03.resource-enforcement-109.job-memory-denial.json",
+      "sha256": "36ca8440dd8eb7a6f4582686c0596c8a3caffec473d902c315652a3d802cb1e0",
+      "reportedStatus": "PASS",
+      "candidate": "b8e9827e5b3c8fd739a3db0807590897c3031cf8",
+      "scope": "Preserved observed machine/development/advisory result at its actual recorded candidate; no relabeling as current PASS qualification."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T03.resource-enforcement-109.timeout.json",
+      "sha256": "1c5149e448c70790c7c4e05c5f9b1fbf6be0809cb624caf50ad4efe5512253f2",
+      "reportedStatus": "PASS",
+      "candidate": "b8e9827e5b3c8fd739a3db0807590897c3031cf8",
+      "scope": "Preserved observed machine/development/advisory result at its actual recorded candidate; no relabeling as current PASS qualification."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T03.resource-layout-diagnostic-16.json",
+      "sha256": "cd8659a1fa417bcdca18465975a9a2d4dc2e7964f29601ef9cd5449c264defe7",
+      "reportedStatus": "FAIL",
+      "candidate": null,
+      "scope": "Preserved observed machine/development/advisory result at its actual recorded candidate; no relabeling as current PASS qualification."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T03.resource-layout-diagnostic-19.json",
+      "sha256": "8ff841b204a2cae23e09566f63042ffbf9807f22fa745f38c8f5aa50cba47c91",
+      "reportedStatus": "FAIL",
+      "candidate": null,
+      "scope": "Preserved observed machine/development/advisory result at its actual recorded candidate; no relabeling as current PASS qualification."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T03.runtime-preparation-01.json",
+      "sha256": "5bb05530ccb73edadfd3dd74e1d93d101eadb271e266017a27b4a9cc338809af",
+      "reportedStatus": "PASS",
+      "candidate": null,
+      "scope": "Preserved observed machine/development/advisory result at its actual recorded candidate; no relabeling as current PASS qualification."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T03.runtime-revalidation-04.json",
+      "sha256": "edea258cb4297825196a7eb018315fd66e1d97663e6a4bead1e8613e3b290f27",
+      "reportedStatus": "PASS",
+      "candidate": null,
+      "scope": "Preserved observed machine/development/advisory result at its actual recorded candidate; no relabeling as current PASS qualification."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T03.socket-api-diagnostic-05.json",
+      "sha256": "48248065154559413c83c82fde3dd16333aad90c5328b727ff5b973c2fcceac6",
+      "reportedStatus": "PASS",
+      "candidate": null,
+      "scope": "Preserved observed machine/development/advisory result at its actual recorded candidate; no relabeling as current PASS qualification."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T03.socket-build-diagnostic-01.json",
+      "sha256": "8a17ae022915da194105323a2d2b46914a7de53573a82434b5901937d0423dce",
+      "reportedStatus": "FAIL",
+      "candidate": null,
+      "scope": "Preserved observed machine/development/advisory result at its actual recorded candidate; no relabeling as current PASS qualification."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T03.socket-build-diagnostic-02.json",
+      "sha256": "272b2c7fdcca14a663aac59c8bceee86e565834787289e9dd304d57d705a822d",
+      "reportedStatus": "FAIL",
+      "candidate": null,
+      "scope": "Preserved observed machine/development/advisory result at its actual recorded candidate; no relabeling as current PASS qualification."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T03.socket-build-diagnostic-03.json",
+      "sha256": "78f34dd6b1220493b0a8a811830738adc15fb9260ad4d985920278c5a99d3795",
+      "reportedStatus": "FAIL",
+      "candidate": null,
+      "scope": "Preserved observed machine/development/advisory result at its actual recorded candidate; no relabeling as current PASS qualification."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T03.socket-build-diagnostic-04.json",
+      "sha256": "58dad80d92b4ddd81ad4b6f47a18c8e53e4e6af2fbc12181457471c05a6b18a3",
+      "reportedStatus": "PASS",
+      "candidate": null,
+      "scope": "Preserved observed machine/development/advisory result at its actual recorded candidate; no relabeling as current PASS qualification."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T03.startup-diagnostic-05.json",
+      "sha256": "85fba4619e6edb7b0b53ed0712e2437bd4a160e6aa4da23418a6ec517881d3c4",
+      "reportedStatus": "FAIL",
+      "candidate": null,
+      "scope": "Preserved observed machine/development/advisory result at its actual recorded candidate; no relabeling as current PASS qualification."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T03.startup-diagnostic-06.json",
+      "sha256": "63cc9ac9ff9b58c3c07951edaa535eb0085cbd823240b467e49ae19eaa692dc4",
+      "reportedStatus": "FAIL",
+      "candidate": null,
+      "scope": "Preserved observed machine/development/advisory result at its actual recorded candidate; no relabeling as current PASS qualification."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T03.startup-diagnostic-09.json",
+      "sha256": "c25e2930b67eec416902bf9421c32641f9063af80e2688a7dcfb5a9ab5414ad2",
+      "reportedStatus": "FAIL",
+      "candidate": null,
+      "scope": "Preserved observed machine/development/advisory result at its actual recorded candidate; no relabeling as current PASS qualification."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T03.startup-diagnostic-14.json",
+      "sha256": "34c74ae8f4163301deeba75fb32adeeffb3afd908107dba20277db8b19067677",
+      "reportedStatus": "FAIL",
+      "candidate": null,
+      "scope": "Preserved observed machine/development/advisory result at its actual recorded candidate; no relabeling as current PASS qualification."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T03.startup-diagnostic-15.json",
+      "sha256": "b4cb220fca58a3f55ff9766e71fde5a56600451050248918ee8227ddc52adb75",
+      "reportedStatus": "FAIL",
+      "candidate": null,
+      "scope": "Preserved observed machine/development/advisory result at its actual recorded candidate; no relabeling as current PASS qualification."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T03.startup-diagnostic-21.json",
+      "sha256": "1e990773d08b5673ffc56d955fd1a6c400d64ae5dcb11047782365960e695a2e",
+      "reportedStatus": "FAIL",
+      "candidate": null,
+      "scope": "Preserved observed machine/development/advisory result at its actual recorded candidate; no relabeling as current PASS qualification."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T03.startup-diagnostic-25.json",
+      "sha256": "44d96942254688f989015c914ac5116619635a36e0c8e27c87a94d00c497b34b",
+      "reportedStatus": "FAIL",
+      "candidate": null,
+      "scope": "Preserved observed machine/development/advisory result at its actual recorded candidate; no relabeling as current PASS qualification."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T03.startup-diagnostic-27.json",
+      "sha256": "fe15aabc27e9a492e96de1793e9ea798447ac8385a5ce3fa0676a93036d8b300",
+      "reportedStatus": "FAIL",
+      "candidate": null,
+      "scope": "Preserved observed machine/development/advisory result at its actual recorded candidate; no relabeling as current PASS qualification."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T03.startup-diagnostic-29.json",
+      "sha256": "9d2adbaf2d8193b0b199eed70152e6b8c3cae076383de1c50121a8765a13366b",
+      "reportedStatus": "FAIL",
+      "candidate": null,
+      "scope": "Preserved observed machine/development/advisory result at its actual recorded candidate; no relabeling as current PASS qualification."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T03.startup-diagnostic-31.json",
+      "sha256": "17df3b6aebd57732e0b61d5a8f911d5db62bc3fcc1cc8e10f3aba9aea8e8f6ea",
+      "reportedStatus": "FAIL",
+      "candidate": null,
+      "scope": "Preserved observed machine/development/advisory result at its actual recorded candidate; no relabeling as current PASS qualification."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T03.startup-diagnostic-33.json",
+      "sha256": "c82e697cddd1fae55d000ceda2d2bfcf6feb2b3c410b6283159dae2d123ca433",
+      "reportedStatus": "FAIL",
+      "candidate": null,
+      "scope": "Preserved observed machine/development/advisory result at its actual recorded candidate; no relabeling as current PASS qualification."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T03.startup-diagnostic-35.json",
+      "sha256": "73141b843c3ef5b58d0f0439c8f38f539c8ef047e3dccbd41a4e034ad8b3df08",
+      "reportedStatus": "PASS",
+      "candidate": null,
+      "scope": "Preserved observed machine/development/advisory result at its actual recorded candidate; no relabeling as current PASS qualification."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T03.startup-diagnostic-38.json",
+      "sha256": "b58d927f7414517ef61c2fcbb2bcb0ea25fae60fae4ba4eb1d1bb3c90c79ae56",
+      "reportedStatus": "FAIL",
+      "candidate": null,
+      "scope": "Preserved observed machine/development/advisory result at its actual recorded candidate; no relabeling as current PASS qualification."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T03.startup-diagnostic-40.json",
+      "sha256": "376c007669490f6eb2a9395f42afdb189fdce1797d1edad5065f0d304cadf29c",
+      "reportedStatus": "PASS",
+      "candidate": null,
+      "scope": "Preserved observed machine/development/advisory result at its actual recorded candidate; no relabeling as current PASS qualification."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T03.startup-diagnostic-45.json",
+      "sha256": "fc5321292dfa61026ba7c2f80242a71c60b20bfbba6ca48fa7aafa4fa5737be6",
+      "reportedStatus": "PASS",
+      "candidate": null,
+      "scope": "Preserved observed machine/development/advisory result at its actual recorded candidate; no relabeling as current PASS qualification."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T03.synthetic-image-52.json",
+      "sha256": "11c0c4184a64ace1182fb54bd517016b521e6c614f7123e42ac7e2b96fdcda7f",
+      "reportedStatus": "PASS",
+      "candidate": null,
+      "scope": "Preserved observed machine/development/advisory result at its actual recorded candidate; no relabeling as current PASS qualification."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T03.synthetic-lpac-53.json",
+      "sha256": "6544d7cc3f7509b4029d5bc9ae308fa8d8648c5601f895e02ab89c5e89a4cdfd",
+      "reportedStatus": "FAIL",
+      "candidate": null,
+      "scope": "Preserved observed machine/development/advisory result at its actual recorded candidate; no relabeling as current PASS qualification."
+    }
+  ],
+  "preservedAdvisory": {
+    "path": "artifacts/tmp/CAP-05.S02.T03.security-advisory-c11-139.json",
+    "sha256": "133d0f8370b26f43602f2423a098624e8845721d2d493a02dcde5b245bbb010f",
+    "scope": "Pre-submission independent F03 finding; retained as advisory history, not a fabricated formal review round."
+  },
+  "sourceCorrectiveReviews": [
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T03.security-corrective-c11-160.json",
+      "sha256": "25bfc5b3ee7af388565d4cffed9514e8efed9f9291503293fac70058d0972698",
+      "scope": "Independent pre-submission source and development-regression advisory at 21785fb9201860870183c11e28d77bd877d425af; not final-candidate qualification or formal task approval."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T03.correction-review-21785fb9-01.json",
+      "sha256": "4216ff4a92ad146796d808fbe2d85ca9ae4d1dc3ffc4afbbb7afe5c49ecb9528",
+      "scope": "Independent pre-submission source and development-regression advisory at 21785fb9201860870183c11e28d77bd877d425af; not final-candidate qualification or formal task approval."
+    }
+  ],
+  "developmentRegressions": [
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T03.normalization-and-text-retention-red-155.log",
+      "sha256": "6d55369f55803e4e9c397f332d469cf0a213878270e08366070847b3abaead7f",
+      "result": "behavioral-red",
+      "cases": 2,
+      "scope": "Both new tracked regressions fail before product correction: one allocation assertion and one encrypted-media rejection."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.T03.normalization-and-text-retention-green-156.log",
+      "sha256": "08a442553ebddddb0d6354ac88892543c67f2905c16d382351c796e18f0c68ac",
+      "result": "development-green",
+      "cases": 28,
+      "scope": "Complete affected normalization, encrypted-artifact and plain-text groups after correction; final committed qualification is separate."
+    }
+  ],
+  "performanceMeasurements": {
+    "cold": {
+      "count": 3,
+      "p95Seconds": 59.73081330000423,
+      "maximumSeconds": 59.73081330000423,
+      "targetSeconds": 90
+    },
+    "warm": {
+      "count": 7,
+      "p95Seconds": 62.53335420000076,
+      "maximumSeconds": 62.53335420000076,
+      "targetSeconds": 60
+    }
+  },
+  "packageIdentity": {
+    "buildCandidate": "2deb860b47027ffe96ea3977853b77a6f7f2cfde",
+    "buildReport": "artifacts/tmp/CAP-05.S02.T03.production-freeze-75.json",
+    "buildReportSha256": "98909bbc37719eebff765d8a3d9e3f16111505eb8442817e15bd78b256574b55",
+    "inventorySha256": "ebb0197926694d00710b486093e5c8b417a0ec0faa702ba42f3538e08ccbc573",
+    "scope": "Fresh freeze/sign assembly at recorded build candidate, explicitly reused unchanged native compilation. Current binding authenticates every unchanged frozen repository input and the bounded parent-only increment; no new compilation/freezing claim."
+  },
+  "ownerAcceptedPerformanceDeviation": {
+    "kind": "append-only-exact-observation-owner-acceptance",
+    "owner": "human:repository-owner",
+    "recordedAtUtc": "2026-10-07T21:45:57Z",
+    "approvalSource": "Explicit human message in this W2 campaign chat on2026-10-07, responding to the just-reported62.5-second warm p95 and instruction to investigate the overage.",
+    "instruction": "I accept that slight overage. Please don't spend more time over the 2 second overage.",
+    "candidate": "c17511401808d003eaa2c74ff0b866e65a6955d9",
+    "packageInventorySha256": "ebb0197926694d00710b486093e5c8b417a0ec0faa702ba42f3538e08ccbc573",
+    "report": "artifacts/tmp/CAP-05.S02.T03.performance-124.benchmark.json",
+    "reportSha256": "fc1b2ca099d8b400806e7e3340c9a0a2a25982f0f6716006a22947865eb51f77",
+    "rawBudgetResult": "FAIL",
+    "rawBudgetExitCode": 1,
+    "coldP95Seconds": 59.73081330000423,
+    "coldTargetSeconds": 90,
+    "warmP95Seconds": 62.53335420000076,
+    "warmTargetSeconds": 60,
+    "acceptedOverageSeconds": 2.5333542000007583,
+    "disposition": "Exact measured deviation accepted as nonblocking; performance investigation stopped without diagnostic, source change, sample removal, rerun or changed baseline. Carry the result and owner decision into independent task/slice/Wave review. No cause established. No additional regression, changed security/resource/quality requirement, future blanket exemption or G2 release approval is authorized."
+  },
+  "adversePerformanceBudgetCheck": {
+    "command": "artifacts/tmp/CAP-05.S02.T03.check-runtime-122/python/python.exe -B artifacts/tmp/CAP-05.S02.T03.performance-124.py c17511401808d003eaa2c74ff0b866e65a6955d9 benchmark",
+    "exitCode": 1,
+    "result": "FAIL",
+    "durationSeconds": 826.0118275999994,
+    "rawOutput": "artifacts/tmp/CAP-05.S02.T03.performance-124.benchmark.log",
+    "rawOutputSha256": "7bfaf6fa99ee4ff2181fb47edc663fe83ed9d078f550363b8588bf65b53469f3",
+    "report": "artifacts/tmp/CAP-05.S02.T03.performance-124.benchmark.json",
+    "reportSha256": "fc1b2ca099d8b400806e7e3340c9a0a2a25982f0f6716006a22947865eb51f77",
+    "disposition": "Preserved unchanged; exact nonblocking owner acceptance is separate from machine disposition."
+  },
+  "publicHandoffMethodAdvisories": [
+    {
+      "path": "artifacts/tmp/CAP-05.S02.slice-closeout-portable-wire-method-closure-t03_product_review-01.json",
+      "sha256": "049b06df4564adaf09e3c2f88bce2e36f82c2bd4e6482041d43d8b3f51875d6e",
+      "scope": "Independent bounded pre-execution slice/handoff method advisory, with read/hash timing distinction and content-free failure correction preserved. Not a formal task/slice disposition or proof of execution."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.slice-closeout-portable-wire-method-review-t03_product_review-01.json",
+      "sha256": "339383657dcbd7b0b850f06b500bee43636b2993597b1962e748060b99d4256f",
+      "scope": "Independent bounded pre-execution slice/handoff method advisory, with read/hash timing distinction and content-free failure correction preserved. Not a formal task/slice disposition or proof of execution."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.slice-closeout-portable-wire-preflight-t03_product_review-01.json",
+      "sha256": "a69a94b7f66f2f5410b9986a74438377b8d965e3a4c8be114f7f7f9ead463296",
+      "scope": "Independent bounded pre-execution slice/handoff method advisory, with read/hash timing distinction and content-free failure correction preserved. Not a formal task/slice disposition or proof of execution."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S02.slice-closeout-preflight-t03_product_review-01.json",
+      "sha256": "c73a93a28e9e2e201a80c94c2a9f320865bb9e7ff8708c0dfa3878b85f6f3535",
+      "scope": "Independent bounded pre-execution slice/handoff method advisory, with read/hash timing distinction and content-free failure correction preserved. Not a formal task/slice disposition or proof of execution."
+    }
+  ]
+}
