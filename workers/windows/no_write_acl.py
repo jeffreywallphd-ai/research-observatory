@@ -8,6 +8,7 @@ Restoration uses pre-opened handles, and verifies the original owner/DACL SDDL.
 from __future__ import annotations
 
 import ctypes
+import re
 from collections.abc import Iterator
 from contextlib import contextmanager
 from ctypes import wintypes
@@ -15,6 +16,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
+from .file_paths import extended_path
 from .lpac_launcher import LPACError, _close, _current_user_sid, _run_icacls
 
 _READ_CONTROL = 0x00020000
@@ -160,6 +162,7 @@ def _open_saved(kernel: Any, advapi: Any, path: Path, user_sid: str) -> _SavedAc
 
 
 def _tree(root: Path) -> list[Path]:
+    root = extended_path(root)
     if not root.is_dir() or root.is_symlink() or root.is_junction():
         raise LPACError("lpac-acl-root-invalid")
     paths = [root, *root.rglob("*")]
@@ -203,26 +206,34 @@ def verify_lpac_no_write(kernel: Any, advapi: Any, process: int, profile_root: P
         _close(kernel, token.value)
 
 
-def _restore(kernel: Any, advapi: Any, saved: list[_SavedAcl]) -> None:
-    errors: list[str] = []
-    for item in reversed(saved):
-        flags = item.sddl.split("D:", 1)[1].split("(", 1)[0]
-        protection = _PROTECTED_DACL if "P" in flags else _UNPROTECTED_DACL
-        code = advapi.SetSecurityInfo(
-            item.handle,
-            _SE_FILE_OBJECT,
-            _DACL_ONLY | protection,
-            None,
-            None,
-            item.dacl,
-            None,
-        )
-        if code:
-            errors.append("restore")
-        _close(kernel, item.handle)
-        kernel.LocalFree(item.descriptor)
-    if errors:
+def _restore_descriptor(kernel: Any, advapi: Any, item: _SavedAcl) -> None:
+    flags = item.sddl.split("D:", 1)[1].split("(", 1)[0]
+    protection = _PROTECTED_DACL if "P" in flags else _UNPROTECTED_DACL
+    if advapi.SetSecurityInfo(item.handle, _SE_FILE_OBJECT, _DACL_ONLY | protection, None, None, item.dacl, None):
         raise LPACError("lpac-acl-restore-failed")
+
+
+def _restore_exact_flags(kernel: Any, advapi: Any, item: _SavedAcl) -> None:
+    if _sddl(kernel, advapi, item.handle) != item.sddl:
+        # SetSecurityInfo converts legacy inherited DACLs to the automatic
+        # inheritance model. Restore the original self-relative descriptor on
+        # the same pre-opened object handle, including its original flags.
+        native = ctypes.WinDLL("ntdll", use_last_error=True)
+        native.NtSetSecurityObject.argtypes = [wintypes.HANDLE, wintypes.DWORD, ctypes.c_void_p]
+        native.NtSetSecurityObject.restype = wintypes.LONG
+        if native.NtSetSecurityObject(item.handle, _DACL_ONLY, item.descriptor) < 0:
+            raise LPACError("lpac-acl-restore-failed")
+        if _sddl(kernel, advapi, item.handle) != item.sddl:
+            raise LPACError("lpac-acl-restoration-mismatch")
+
+
+def _restore(kernel: Any, advapi: Any, saved: list[_SavedAcl]) -> None:
+    try:
+        restore_open_acl_handles(kernel, advapi, saved)
+    finally:
+        for item in saved:
+            _close(kernel, item.handle)
+            kernel.LocalFree(item.descriptor)
     for item in saved:
         handle = kernel.CreateFileW(
             str(item.path),
@@ -246,22 +257,64 @@ def restore_open_acl_handles(kernel: Any, advapi: Any, saved: list[_SavedAcl]) -
     """Restore exact DACLs while a crash guardian keeps its backup handles."""
 
     for item in reversed(saved):
-        flags = item.sddl.split("D:", 1)[1].split("(", 1)[0]
-        protection = _PROTECTED_DACL if "P" in flags else _UNPROTECTED_DACL
-        code = advapi.SetSecurityInfo(
-            item.handle,
-            _SE_FILE_OBJECT,
-            _DACL_ONLY | protection,
-            None,
-            None,
-            item.dacl,
-            None,
-        )
-        if code:
-            raise LPACError("lpac-acl-restore-failed")
+        _restore_descriptor(kernel, advapi, item)
+    # Restoring a parent can auto-propagate inheritance flags onto a child
+    # already restored above. Finish exact flag restoration only after every
+    # parent DACL is back, through the still-open object handles.
+    for item in sorted(saved, key=lambda entry: (len(entry.path.parts), str(entry.path).casefold())):
+        _restore_exact_flags(kernel, advapi, item)
     for item in saved:
         if _sddl(kernel, advapi, item.handle) != item.sddl:
             raise LPACError("lpac-acl-restoration-mismatch")
+
+
+def _set_parser_dacl(kernel: Any, advapi: Any, saved: _SavedAcl, sid: str, user: str, *, profile: bool) -> None:
+    """Apply an explicit protected read/execute DACL through a saved handle.
+
+    No inherited ACE or owner implicit WRITE_DAC can permit plaintext writes.
+    Owner and SACL are untouched. The guardian keeps independent pre-change
+    backup handles; normal restoration continues through the existing verifier.
+    """
+
+    if any(re.fullmatch(r"S-1-(?:[0-9]+-)*[0-9]+", value) is None for value in (sid, user)):
+        raise LPACError("lpac-acl-sid-invalid")
+    denied = "0x000d0156" if profile else "0x000c0000"
+    sddl = f"D:P(D;;{denied};;;{user})(D;;0x000c0000;;;OW)"
+    if profile:
+        sddl += f"(D;;0x000d0156;;;{sid})"
+    sddl += f"(A;;FRFX;;;{sid})(A;;FRFX;;;{user})(A;;FA;;;SY)(A;;FA;;;BA)"
+    advapi.ConvertStringSecurityDescriptorToSecurityDescriptorW.argtypes = [
+        wintypes.LPCWSTR,
+        wintypes.DWORD,
+        ctypes.POINTER(ctypes.c_void_p),
+        ctypes.c_void_p,
+    ]
+    advapi.ConvertStringSecurityDescriptorToSecurityDescriptorW.restype = wintypes.BOOL
+    advapi.GetSecurityDescriptorDacl.argtypes = [
+        ctypes.c_void_p,
+        ctypes.POINTER(wintypes.BOOL),
+        ctypes.POINTER(ctypes.c_void_p),
+        ctypes.POINTER(wintypes.BOOL),
+    ]
+    advapi.GetSecurityDescriptorDacl.restype = wintypes.BOOL
+    descriptor = ctypes.c_void_p()
+    if not advapi.ConvertStringSecurityDescriptorToSecurityDescriptorW(sddl, 1, ctypes.byref(descriptor), None):
+        raise LPACError("lpac-acl-parser-descriptor-invalid")
+    try:
+        present, defaulted = wintypes.BOOL(), wintypes.BOOL()
+        dacl = ctypes.c_void_p()
+        if (
+            not advapi.GetSecurityDescriptorDacl(
+                descriptor, ctypes.byref(present), ctypes.byref(dacl), ctypes.byref(defaulted)
+            )
+            or not present
+            or not dacl.value
+        ):
+            raise LPACError("lpac-acl-parser-descriptor-invalid")
+        if advapi.SetSecurityInfo(saved.handle, _SE_FILE_OBJECT, _DACL_ONLY | _PROTECTED_DACL, None, None, dacl, None):
+            raise LPACError("lpac-acl-parser-lockdown-failed")
+    finally:
+        kernel.LocalFree(descriptor)
 
 
 @contextmanager
@@ -274,6 +327,7 @@ def no_write_lpac_acl(
     advapi: Any,
     *,
     restoration: AclRestoration | None = None,
+    native: bool = False,
 ) -> Iterator[AclRestoration]:
     """Lock down only new job-owned objects, restoring exact descriptors after exit."""
 
@@ -294,6 +348,13 @@ def no_write_lpac_acl(
             runtime_saved.append(_open_saved(kernel, advapi, path, user_sid))
         for path in profile_paths:
             profile_saved.append(_open_saved(kernel, advapi, path, user_sid))
+        if native:
+            for item in reversed(runtime_saved):
+                _set_parser_dacl(kernel, advapi, item, sid_text, user_sid, profile=False)
+            for item in reversed(profile_saved):
+                _set_parser_dacl(kernel, advapi, item, sid_text, user_sid, profile=True)
+            yield restoration
+            return
         for path in sorted(runtime_paths, key=lambda item: (-len(item.parts), str(item).lower())):
             _run_icacls(path, "/inheritance:r")
             _run_icacls(

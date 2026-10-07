@@ -148,3 +148,57 @@ The vocabulary and geometry expectations were checked against the primary
 [DPUB-ARIA 1.1](https://www.w3.org/TR/dpub-aria-1.1/), and the documented
 [Expat](https://docs.python.org/3.14/library/pyexpat.html)/
 [HTMLParser](https://docs.python.org/3.14/library/html.parser.html) callback APIs.
+
+## Isolated offline runtime and raw attempts
+
+CAP-05.S02.T03 adds the fixed installed Windows parser and trusted Core
+`InstalledParserPipeline`. [Proposed ADR-0045](../adr/ADR-0045-bind-the-isolated-offline-parser-package-to-existing-document-authority.md)
+maps its packaging and protected delivery to unchanged ADR-0028/0029 authority.
+Docling slim 2.126.0, Docling Parse 7.16.0, CPU layout/table models and PDFium
+5.13.0 run in a separate signed, sealed, zero-capability LPAC job. OCR,
+enrichment, plugins, egress, compilation and plaintext scratch remain disabled.
+The full signed runtime inventory digest is an explicit `parser-runtime` asset
+in every installed descriptor, including native and inspection-only adapters.
+The selected model digest alone does not identify the shipped native derivative.
+
+The offline build verifies locally supplied upstream source archives and applies
+only the tracked native admission/geometry and QPDF buffer patches. Original
+MediaBox, CropBox, inherited rotation and UserUnit are admitted before page
+decoding or surface allocation. Resource traversal, encoded/decoded streams,
+predictor dimensions, image/mask geometry and actual JPEG/JPX headers are bounded.
+Unverified JBIG2 decoding is denied before either parsing or rendering. This is
+an input-denial outcome, not a reason to relax isolation or select fallback.
+The package retains upstream notices, source/patch identities and build receipts.
+
+Core constructs a stager for one exact selected request and a live
+`document-parse`/`document` workflow claim. It checks the native session and lease
+before running, closes the protected source transaction before inference, and
+rechecks current rights/session and the durable attempt before publication.
+An encrypted exact request/expected-output intent is retained first. A second
+atomic transaction authenticates that intent and the original, then retains
+the encrypted raw output, distinct document aggregate, dependencies, provenance
+and attempt diagnostic together. An incomplete intent makes no completion claim.
+Failure returns no rolled-back receipt or readable orphan; a pre-existing shared
+object and all earlier originals/raw attempts remain intact. No accepted head is
+advanced by this staging service. S03 owns parsing-operation context, immutable
+revision publication and human acceptance.
+
+Only an exact Docling failure, timeout or memory-limit result can select the
+separate inspection-only PDF text attempt. It records a new attempt, the prior
+failure and unchanged source identity. Missing text, replacement characters,
+reading order, anchors, references and table uncertainty remain separate. Current
+source/rights denial, cancellation, missing assets and admission failures cannot
+trigger fallback or produce canonical success.
+
+Page rendering decodes only the requested admitted page. Its PNG contains one
+bounded application geometry record from the same native admission result.
+Core checks the original frame, requested page, dimensions, CRCs and compressed
+scanline shape without allocating a decoded bitmap. The encrypted PNG receipt
+binds its original geometry as well as the image bytes. Source viewing must
+apply crop translation, rotation, media origin and UserUnit before mapping IR
+points to actual rounded pixel dimensions. No plaintext image cache is created.
+
+Engineering diagnostics and synthetic port tests do not qualify the installed
+product. Commit-bound package, native-principal, encrypted source-to-staged-IR,
+resource/cancellation/recovery and cold/warm performance proofs remain required
+before this task or its slice can complete.

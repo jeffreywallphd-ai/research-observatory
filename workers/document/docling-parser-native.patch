@@ -1,0 +1,152 @@
+--- a/src/parse/pdf_decoders/document.h
++++ b/src/parse/pdf_decoders/document.h
+@@ -3,6 +3,8 @@
+ #ifndef PDF_DOCUMENT_DECODER_H
+ #define PDF_DOCUMENT_DECODER_H
+ 
++#include <cmath>
++#include <stdexcept>
+ #include <filesystem>
+ #include <fstream>
+ #include <mutex>
+@@ -12,6 +14,7 @@
+ #include <qpdf/QPDFWriter.hh>
+ 
+ #include <parse/qpdf/logger.h>
++#include <parse/qpdf/ro_admission.h>
+ 
+ namespace pdflib
+ {
+@@ -28,6 +31,13 @@
+     ~pdf_decoder();
+ 
+     int get_number_of_pages() { return number_of_pages; }
++
++    nlohmann::json get_page_admission(int page_index)
++    {
++      if(page_index < 0 || static_cast<std::size_t>(page_index) >= qpdf_pages.size())
++        throw std::runtime_error("parser-page-index-invalid");
++      return ro_parser::page_admission(qpdf_pages.at(page_index));
++    }
+ 
+     std::string get_filename() { return filename; }
+ 
+--- a/src/pybind/docling_parser.h
++++ b/src/pybind/docling_parser.h
+@@ -52,6 +52,7 @@
+     void unload_documents();
+ 
+     int number_of_pages(std::string key);
++    nlohmann::json page_admission(std::string key, int page_index);
+ 
+     nlohmann::json get_annotations(std::string key);
+ 
+@@ -384,6 +385,13 @@
+     return -1;
+   }
+ 
++  nlohmann::json docling_parser::page_admission(std::string key, int page_index)
++  {
++    auto itr = doc_decoders.find(key);
++    if(itr == doc_decoders.end()) throw std::runtime_error("parser-document-unavailable");
++    return itr->second->get_page_admission(page_index);
++  }
++
+   nlohmann::json docling_parser::get_annotations(std::string key)
+   {
+     LOG_S(INFO) << __FUNCTION__;
+--- a/app/pybind_parse.cpp
++++ b/app/pybind_parse.cpp
+@@ -866,6 +866,9 @@
+     Returns:
+         bool: True if the document was successfully unloaded, False otherwise.)")
+     
++    .def("page_admission", &docling::docling_parser::page_admission,
++         pybind11::arg("key"), pybind11::arg("page_index"))
++
+     .def("number_of_pages",
+ 	 [](docling::docling_parser &self, const std::string &key) -> int {
+ 	   return self.number_of_pages(key);
+--- a/src/parse/page_items/page_dimension.h
++++ b/src/parse/page_items/page_dimension.h
+@@ -313,12 +313,14 @@
+   {
+     LOG_S(INFO) << __FUNCTION__;
+ 
+-    if(qpdf_page.hasKey("/Rotate"))
+-      {
+-        QPDFObjectHandle rotate_obj = qpdf_page.getKey("/Rotate");
++    QPDFPageObjectHelper original_geometry(qpdf_page);
++    auto inherited_rotate = original_geometry.getAttribute("/Rotate", false);
++    if(!inherited_rotate.isNull())
++      {
++        QPDFObjectHandle rotate_obj = inherited_rotate;
+ 	if(rotate_obj.isInteger())
+ 	  {
+-	    angle = static_cast<int>(rotate_obj.getIntValue());
++	    angle = static_cast<int>((rotate_obj.getIntValue() % 360 + 360) % 360);
+ 	    LOG_S(INFO) << "found a rotated page with angle: " << angle;
+ 	  }
+ 	else
+@@ -332,9 +334,9 @@
+         angle = 0;
+       }
+ 
+-    if(qpdf_page.hasKey("/MediaBox"))
+-      {
+-        media_bbox = qpdf_bbox_to_array(qpdf_page.getKey("/MediaBox"), "/MediaBox");
++    if(!original_geometry.getAttribute("/MediaBox", false).isNull())
++      {
++        media_bbox = qpdf_bbox_to_array(original_geometry.getAttribute("/MediaBox", false), "/MediaBox");
+       }
+     // it might inherit the media-bbox from an ancestor in the page tree (sec 7.7.3.4, p 80)
+     // PDF allows MediaBox to be inherited from any parent, not just the immediate parent
+@@ -368,14 +370,14 @@
+           }
+       }
+ 
+-    bool has_cropbox = qpdf_page.hasKey("/CropBox");
++    bool has_cropbox = !original_geometry.getAttribute("/CropBox", false).isNull();
+     bool has_bleedbox = qpdf_page.hasKey("/BleedBox");
+     bool has_trimbox = qpdf_page.hasKey("/TrimBox");
+     bool has_artbox = qpdf_page.hasKey("/ArtBox");
+ 
+     if(has_cropbox)
+       {
+-        crop_bbox = qpdf_bbox_to_array(qpdf_page.getKey("/CropBox"), "/CropBox");
++        crop_bbox = qpdf_bbox_to_array(original_geometry.getAttribute("/CropBox", false), "/CropBox");
+       }
+     else
+       {
+--- a/cmake/extlib_qpdf_v12.cmake
++++ b/cmake/extlib_qpdf_v12.cmake
+@@ -36,7 +36,7 @@
+       set(QPDF_EXTRA_C_FLAGS "-fPIC ")
+       set(BUILD_SHARED_LIBS ON)
+   elseif(WIN32)
+-      set(QPDF_EXTRA_CXX_FLAGS "")
++      set(QPDF_EXTRA_CXX_FLAGS "/EHsc")
+       set(QPDF_EXTRA_C_FLAGS "")
+       set(BUILD_SHARED_LIBS OFF)
+   else()
+@@ -65,6 +65,8 @@
+       -DBUILD_SHARED_LIBS=${BUILD_SHARED_LIBS} \\
+       -DCMAKE_BUILD_TYPE=Release \\
+       -DUSE_IMPLICIT_CRYPTO=OFF \\ 
++      -DZLIB_H_PATH=${RO_PARSER_ZLIB_INCLUDE}
++      -DZLIB_LIB_PATH=${RO_PARSER_ZLIB_LIBRARY}
+       -DREQUIRE_CRYPTO_NATIVE=ON \\ 
+       -DCMAKE_CXX_FLAGS=${QPDF_EXTRA_CXX_FLAGS} \\ 
+       -DCMAKE_C_FLAGS=${QPDF_EXTRA_C_FLAGS} \\ 
+--- a/cmake/extlib_jpeg.cmake
++++ b/cmake/extlib_jpeg.cmake
+@@ -47,7 +47,8 @@
+         -DCMAKE_POSITION_INDEPENDENT_CODE=ON \\
+         -DCMAKE_OSX_ARCHITECTURES=${CMAKE_OSX_ARCHITECTURES} \\
+         -DCMAKE_C_FLAGS=${ENV_ARCHFLAGS} \\
+-        -DARMV8_BUILD=ON \\
++        -DARMV8_BUILD=ON
++        -DWITH_CRT_DLL=ON \\
+         -DCMAKE_INSTALL_LIBDIR=${EXTERNALS_PREFIX_PATH}/lib \\
+         -DCMAKE_INSTALL_PREFIX=${EXTERNALS_PREFIX_PATH} \\
+         ${JPEG_EXTRA_CMAKE_ARGS}

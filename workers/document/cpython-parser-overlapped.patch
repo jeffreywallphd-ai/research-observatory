@@ -1,0 +1,61 @@
+--- Modules/overlapped.c
++++ Modules/overlapped.c
+@@ -1346,6 +1346,11 @@
+         return NULL;
+     }
+ 
++    /* Offline parser: initialize only when a network operation is requested. */
++    if (initialize_function_pointers() < 0) {
++        return NULL;
++    }
++
+     size = sizeof(struct sockaddr_in6) + 16;
+     buf = PyBytes_FromStringAndSize(NULL, size*2);
+     if (!buf)
+@@ -1463,6 +1468,11 @@
+         return NULL;
+     }
+ 
++    /* Offline parser: initialize only when a network operation is requested. */
++    if (initialize_function_pointers() < 0) {
++        return NULL;
++    }
++
+     Length = sizeof(AddressBuf);
+     Length = parse_address(AddressObj, Address, Length);
+     if (Length < 0)
+@@ -1509,6 +1519,11 @@
+         return NULL;
+     }
+ 
++    /* Offline parser: initialize only when a network operation is requested. */
++    if (initialize_function_pointers() < 0) {
++        return NULL;
++    }
++
+     self->type = TYPE_DISCONNECT;
+     self->handle = Socket;
+ 
+@@ -1555,6 +1570,11 @@
+ 
+     if (self->type != TYPE_NONE) {
+         PyErr_SetString(PyExc_ValueError, "operation already attempted");
++        return NULL;
++    }
++
++    /* Offline parser: initialize only when a network operation is requested. */
++    if (initialize_function_pointers() < 0) {
+         return NULL;
+     }
+ 
+@@ -2046,10 +2066,6 @@
+ 
+     Py_DECREF(socket_module);
+ 
+-    if (initialize_function_pointers() < 0) {
+-        return -1;
+-    }
+-
+     PyTypeObject *overlapped_type = (PyTypeObject *)PyType_FromModuleAndSpec(
+         module, &overlapped_type_spec, NULL);
+     if (overlapped_type == NULL) {

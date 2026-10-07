@@ -24,6 +24,7 @@ from pathlib import Path
 from typing import IO, Any
 
 from . import lpac_launcher as win
+from .file_paths import extended_path
 from .no_write_acl import _open_saved, _restore, _SavedAcl, _security_api, _tree, restore_open_acl_handles
 
 _PROFILE_NAME = re.compile(r"ResearchObservatory\.PluginProbe\.[0-9a-f]{24}\Z")
@@ -284,7 +285,7 @@ def _recover(
             if _present(profile_root) and userenv.DeleteAppContainerProfile(name) != 0:
                 raise GuardianError("lpac-guardian-profile-cleanup-pending")
             if _present(runtime):
-                shutil.rmtree(runtime)
+                shutil.rmtree(extended_path(runtime))
             if not _present(profile_root) and not _present(runtime):
                 return
         except OSError:
@@ -423,7 +424,7 @@ def guardian_main(stdin: IO[bytes] | None = None, stdout: IO[bytes] | None = Non
                         or runtime.resolve(strict=True).parent != runtime_parent
                     ):
                         raise GuardianError("lpac-guardian-runtime-target-changed")
-                    shutil.rmtree(runtime)
+                    shutil.rmtree(extended_path(runtime))
                 except BaseException:
                     cleanup_failed = True
             if userenv.DeleteAppContainerProfile(name) != 0:

@@ -24,3 +24,7 @@ tests/fixtures/scholarly-duplicates/*.csv -text
 tests/fixtures/documents/normalization/*.txt -text
 evaluation/** -text
 *.pdf binary
+# Parser derivative inputs and upstream notices are authenticated as exact bytes.
+workers/document/*.patch -text
+workers/document/parser_pdf_admission.h -text
+workers/document/notices/*.txt -text

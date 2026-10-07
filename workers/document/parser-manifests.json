@@ -1,0 +1,313 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "parser-only-dll-manifest-compatibility",
+  "files": [
+    {
+      "path": "_asyncio.pyd",
+      "manifestSha256": "7193b1d7f106dea927ec1687ff840302d88f6d352452c7207c68446454a22ba2",
+      "name": 2,
+      "language": 1033
+    },
+    {
+      "path": "_ctypes.pyd",
+      "manifestSha256": "7193b1d7f106dea927ec1687ff840302d88f6d352452c7207c68446454a22ba2",
+      "name": 2,
+      "language": 1033
+    },
+    {
+      "path": "_elementtree.pyd",
+      "manifestSha256": "7193b1d7f106dea927ec1687ff840302d88f6d352452c7207c68446454a22ba2",
+      "name": 2,
+      "language": 1033
+    },
+    {
+      "path": "_multiprocessing.pyd",
+      "manifestSha256": "7193b1d7f106dea927ec1687ff840302d88f6d352452c7207c68446454a22ba2",
+      "name": 2,
+      "language": 1033
+    },
+    {
+      "path": "_overlapped.pyd",
+      "manifestSha256": "7193b1d7f106dea927ec1687ff840302d88f6d352452c7207c68446454a22ba2",
+      "name": 2,
+      "language": 1033
+    },
+    {
+      "path": "_queue.pyd",
+      "manifestSha256": "7193b1d7f106dea927ec1687ff840302d88f6d352452c7207c68446454a22ba2",
+      "name": 2,
+      "language": 1033
+    },
+    {
+      "path": "_sqlite3.pyd",
+      "manifestSha256": "7193b1d7f106dea927ec1687ff840302d88f6d352452c7207c68446454a22ba2",
+      "name": 2,
+      "language": 1033
+    },
+    {
+      "path": "_uuid.pyd",
+      "manifestSha256": "7193b1d7f106dea927ec1687ff840302d88f6d352452c7207c68446454a22ba2",
+      "name": 2,
+      "language": 1033
+    },
+    {
+      "path": "_wmi.pyd",
+      "manifestSha256": "7193b1d7f106dea927ec1687ff840302d88f6d352452c7207c68446454a22ba2",
+      "name": 2,
+      "language": 1033
+    },
+    {
+      "path": "_zoneinfo.pyd",
+      "manifestSha256": "7193b1d7f106dea927ec1687ff840302d88f6d352452c7207c68446454a22ba2",
+      "name": 2,
+      "language": 1033
+    },
+    {
+      "path": "charset_normalizer/cd.cp314-win_amd64.pyd",
+      "manifestSha256": "d2952e57023848a37fb0f21f0dfb38c9000f610ac2b00c2f128511dfd68bde04",
+      "name": 2,
+      "language": 1033
+    },
+    {
+      "path": "charset_normalizer/md.cp314-win_amd64.pyd",
+      "manifestSha256": "d2952e57023848a37fb0f21f0dfb38c9000f610ac2b00c2f128511dfd68bde04",
+      "name": 2,
+      "language": 1033
+    },
+    {
+      "path": "cv2/cv2.pyd",
+      "manifestSha256": "4bb79dcea0a901f7d9eac5aa05728ae92acb42e0cb22e5dd14134f4421a3d8df",
+      "name": 2,
+      "language": 1033
+    },
+    {
+      "path": "lxml/_elementpath.cp314-win_amd64.pyd",
+      "manifestSha256": "d2952e57023848a37fb0f21f0dfb38c9000f610ac2b00c2f128511dfd68bde04",
+      "name": 2,
+      "language": 1033
+    },
+    {
+      "path": "lxml/builder.cp314-win_amd64.pyd",
+      "manifestSha256": "d2952e57023848a37fb0f21f0dfb38c9000f610ac2b00c2f128511dfd68bde04",
+      "name": 2,
+      "language": 1033
+    },
+    {
+      "path": "lxml/etree.cp314-win_amd64.pyd",
+      "manifestSha256": "d2952e57023848a37fb0f21f0dfb38c9000f610ac2b00c2f128511dfd68bde04",
+      "name": 2,
+      "language": 1033
+    },
+    {
+      "path": "lxml/html/_difflib.cp314-win_amd64.pyd",
+      "manifestSha256": "d2952e57023848a37fb0f21f0dfb38c9000f610ac2b00c2f128511dfd68bde04",
+      "name": 2,
+      "language": 1033
+    },
+    {
+      "path": "lxml/html/diff.cp314-win_amd64.pyd",
+      "manifestSha256": "d2952e57023848a37fb0f21f0dfb38c9000f610ac2b00c2f128511dfd68bde04",
+      "name": 2,
+      "language": 1033
+    },
+    {
+      "path": "lxml/objectify.cp314-win_amd64.pyd",
+      "manifestSha256": "d2952e57023848a37fb0f21f0dfb38c9000f610ac2b00c2f128511dfd68bde04",
+      "name": 2,
+      "language": 1033
+    },
+    {
+      "path": "lxml/sax.cp314-win_amd64.pyd",
+      "manifestSha256": "d2952e57023848a37fb0f21f0dfb38c9000f610ac2b00c2f128511dfd68bde04",
+      "name": 2,
+      "language": 1033
+    },
+    {
+      "path": "markupsafe/_speedups.cp314-win_amd64.pyd",
+      "manifestSha256": "d2952e57023848a37fb0f21f0dfb38c9000f610ac2b00c2f128511dfd68bde04",
+      "name": 2,
+      "language": 1033
+    },
+    {
+      "path": "PIL/_avif.cp314-win_amd64.pyd",
+      "manifestSha256": "d2952e57023848a37fb0f21f0dfb38c9000f610ac2b00c2f128511dfd68bde04",
+      "name": 2,
+      "language": 1033
+    },
+    {
+      "path": "PIL/_imaging.cp314-win_amd64.pyd",
+      "manifestSha256": "d2952e57023848a37fb0f21f0dfb38c9000f610ac2b00c2f128511dfd68bde04",
+      "name": 2,
+      "language": 1033
+    },
+    {
+      "path": "PIL/_imagingcms.cp314-win_amd64.pyd",
+      "manifestSha256": "d2952e57023848a37fb0f21f0dfb38c9000f610ac2b00c2f128511dfd68bde04",
+      "name": 2,
+      "language": 1033
+    },
+    {
+      "path": "PIL/_imagingft.cp314-win_amd64.pyd",
+      "manifestSha256": "d2952e57023848a37fb0f21f0dfb38c9000f610ac2b00c2f128511dfd68bde04",
+      "name": 2,
+      "language": 1033
+    },
+    {
+      "path": "PIL/_imagingmath.cp314-win_amd64.pyd",
+      "manifestSha256": "d2952e57023848a37fb0f21f0dfb38c9000f610ac2b00c2f128511dfd68bde04",
+      "name": 2,
+      "language": 1033
+    },
+    {
+      "path": "PIL/_imagingtk.cp314-win_amd64.pyd",
+      "manifestSha256": "d2952e57023848a37fb0f21f0dfb38c9000f610ac2b00c2f128511dfd68bde04",
+      "name": 2,
+      "language": 1033
+    },
+    {
+      "path": "PIL/_webp.cp314-win_amd64.pyd",
+      "manifestSha256": "d2952e57023848a37fb0f21f0dfb38c9000f610ac2b00c2f128511dfd68bde04",
+      "name": 2,
+      "language": 1033
+    },
+    {
+      "path": "psutil/_psutil_windows.pyd",
+      "manifestSha256": "d2952e57023848a37fb0f21f0dfb38c9000f610ac2b00c2f128511dfd68bde04",
+      "name": 2,
+      "language": 1033
+    },
+    {
+      "path": "python3.dll",
+      "manifestSha256": "7193b1d7f106dea927ec1687ff840302d88f6d352452c7207c68446454a22ba2",
+      "name": 2,
+      "language": 1033
+    },
+    {
+      "path": "regex/_regex.cp314-win_amd64.pyd",
+      "manifestSha256": "d2952e57023848a37fb0f21f0dfb38c9000f610ac2b00c2f128511dfd68bde04",
+      "name": 2,
+      "language": 1033
+    },
+    {
+      "path": "rtree/lib/spatialindex-64.dll",
+      "manifestSha256": "4bb79dcea0a901f7d9eac5aa05728ae92acb42e0cb22e5dd14134f4421a3d8df",
+      "name": 2,
+      "language": 1033
+    },
+    {
+      "path": "rtree/lib/spatialindex_c-64.dll",
+      "manifestSha256": "4bb79dcea0a901f7d9eac5aa05728ae92acb42e0cb22e5dd14134f4421a3d8df",
+      "name": 2,
+      "language": 1033
+    },
+    {
+      "path": "sqlite3.dll",
+      "manifestSha256": "7193b1d7f106dea927ec1687ff840302d88f6d352452c7207c68446454a22ba2",
+      "name": 2,
+      "language": 1033
+    },
+    {
+      "path": "torch/_C.cp314-win_amd64.pyd",
+      "manifestSha256": "4bb79dcea0a901f7d9eac5aa05728ae92acb42e0cb22e5dd14134f4421a3d8df",
+      "name": 2,
+      "language": 1033
+    },
+    {
+      "path": "torch/lib/c10.dll",
+      "manifestSha256": "4bb79dcea0a901f7d9eac5aa05728ae92acb42e0cb22e5dd14134f4421a3d8df",
+      "name": 2,
+      "language": 1033
+    },
+    {
+      "path": "torch/lib/shm.dll",
+      "manifestSha256": "4bb79dcea0a901f7d9eac5aa05728ae92acb42e0cb22e5dd14134f4421a3d8df",
+      "name": 2,
+      "language": 1033
+    },
+    {
+      "path": "torch/lib/torch.dll",
+      "manifestSha256": "4bb79dcea0a901f7d9eac5aa05728ae92acb42e0cb22e5dd14134f4421a3d8df",
+      "name": 2,
+      "language": 1033
+    },
+    {
+      "path": "torch/lib/torch_cpu.dll",
+      "manifestSha256": "4bb79dcea0a901f7d9eac5aa05728ae92acb42e0cb22e5dd14134f4421a3d8df",
+      "name": 2,
+      "language": 1033
+    },
+    {
+      "path": "torch/lib/torch_global_deps.dll",
+      "manifestSha256": "4bb79dcea0a901f7d9eac5aa05728ae92acb42e0cb22e5dd14134f4421a3d8df",
+      "name": 2,
+      "language": 1033
+    },
+    {
+      "path": "torch/lib/torch_python.dll",
+      "manifestSha256": "4bb79dcea0a901f7d9eac5aa05728ae92acb42e0cb22e5dd14134f4421a3d8df",
+      "name": 2,
+      "language": 1033
+    },
+    {
+      "path": "torch/lib/uv.dll",
+      "manifestSha256": "49a60be4b95b6d30da355a0c124af82b35000bce8f24f957d1c09ead47544a1e",
+      "name": 2,
+      "language": 1033,
+      "resourcePaddingSha256": "ad6ebef01b1254ece711ce076046c9a2c3d5e832c7f7167b39b22e2bc8215eb0"
+    },
+    {
+      "path": "yaml/_yaml.cp314-win_amd64.pyd",
+      "manifestSha256": "d2952e57023848a37fb0f21f0dfb38c9000f610ac2b00c2f128511dfd68bde04",
+      "name": 2,
+      "language": 1033
+    },
+    {
+      "path": "torchvision/_C_stable.pyd",
+      "manifestSha256": "d2952e57023848a37fb0f21f0dfb38c9000f610ac2b00c2f128511dfd68bde04",
+      "name": 2,
+      "language": 1033
+    },
+    {
+      "path": "torchvision/image_stable.pyd",
+      "manifestSha256": "d2952e57023848a37fb0f21f0dfb38c9000f610ac2b00c2f128511dfd68bde04",
+      "name": 2,
+      "language": 1033
+    },
+    {
+      "path": "torchvision/jpeg8.dll",
+      "manifestSha256": "4bb79dcea0a901f7d9eac5aa05728ae92acb42e0cb22e5dd14134f4421a3d8df",
+      "name": 2,
+      "language": 1033
+    },
+    {
+      "path": "torchvision/libpng16.dll",
+      "manifestSha256": "4bb79dcea0a901f7d9eac5aa05728ae92acb42e0cb22e5dd14134f4421a3d8df",
+      "name": 2,
+      "language": 1033
+    },
+    {
+      "path": "torchvision/libsharpyuv.dll",
+      "manifestSha256": "4bb79dcea0a901f7d9eac5aa05728ae92acb42e0cb22e5dd14134f4421a3d8df",
+      "name": 2,
+      "language": 1033
+    },
+    {
+      "path": "torchvision/libwebp.dll",
+      "manifestSha256": "4bb79dcea0a901f7d9eac5aa05728ae92acb42e0cb22e5dd14134f4421a3d8df",
+      "name": 2,
+      "language": 1033
+    },
+    {
+      "path": "torchvision/zlib.dll",
+      "manifestSha256": "4bb79dcea0a901f7d9eac5aa05728ae92acb42e0cb22e5dd14134f4421a3d8df",
+      "name": 2,
+      "language": 1033
+    },
+    {
+      "path": "docling_parse/pdf_parsers.cp314-win_amd64.pyd",
+      "manifestSha256": "4bb79dcea0a901f7d9eac5aa05728ae92acb42e0cb22e5dd14134f4421a3d8df",
+      "name": 2,
+      "language": 1033
+    }
+  ]
+}

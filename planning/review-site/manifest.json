@@ -21859,7 +21859,7 @@
             {
               "task_id": "CAP-05.S02.T03",
               "title": "Integrate the local Docling-based PDF parser with fallback",
-              "status": "READY",
+              "status": "IN_PROGRESS",
               "mode": "latest-review-only",
               "latest_review": {
                 "reviewer": null,
@@ -21913,19 +21913,22 @@
             {
               "task_id": "CAP-05.S02.T03",
               "title": "Integrate the local Docling-based PDF parser with fallback",
-              "status": "READY",
+              "status": "IN_PROGRESS",
               "page": "CAP-05/CAP-05.S02.T03.html",
               "dependencies": [
                 "CAP-05.S02.T02",
                 "CAP-04.S05.T02"
               ],
               "claim": {
-                "owner": null,
-                "branch": null,
-                "base_sha": null
+                "owner": "codex-w2-implementation",
+                "branch": "codex/w2-implementation",
+                "base_sha": "446819465a63776d7f00696f0bfee8b14fa065a9"
               },
               "plan_section_sha256": "9f0c139b060bfba81b00403ef16de0792d67a2d024844dd62d33c67049bf201e",
-              "worksheet": null
+              "worksheet": {
+                "path": "artifacts/evidence/CAP-05.S02.T03.task-start.md",
+                "sha256": "119930276eb8cfab45b19512091fd6b0fb8fd32aab5aa4b7c5213946278f614a"
+              }
             }
           ]
         },

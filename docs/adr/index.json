@@ -433,6 +433,15 @@
       "linkedTasks": [
         "CAP-05.S02.T02"
       ]
+    },
+    {
+      "id": "ADR-0045",
+      "path": "docs/adr/ADR-0045-bind-the-isolated-offline-parser-package-to-existing-document-authority.md",
+      "title": "Bind the isolated offline parser package to existing document authority",
+      "status": "Proposed",
+      "linkedTasks": [
+        "CAP-05.S02.T03"
+      ]
     }
   ]
 }

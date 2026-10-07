@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: f84610c4c082a955f75abf4e56177f32fa771d1cfc48b66f7da22834b059fa7c
+source_sha256: ee9e77c16db6711807246d63192b80b4f257ed10d329dd87408e590dbad842f6
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -11343,13 +11343,13 @@ Original tasks and approvals remain unchanged.
 
 #### - [ ] CAP-05.S02.T03 - Integrate the local Docling-based PDF parser with fallback
 
-**Status / priority / estimate / risk:** `READY` / `P0` / `L` / `high`
+**Status / priority / estimate / risk:** `IN_PROGRESS` / `P0` / `L` / `high`
 
 **Profiles / platforms:** `LOC`, `LAB` / `windows-x64`
 
 **Dependencies:** `CAP-05.S02.T02`, `CAP-04.S05.T02`
 
-**Owner / review:** - / - (`-`)
+**Owner / review:** codex-w2-implementation / - (`-`)
 
 **Objective:** Packaged Docling-based local PDF parser adapter, resource limits, page rendering, OCR-disabled-by-default policy, fallback text extraction, and quality report.
 

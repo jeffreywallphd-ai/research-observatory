@@ -1,0 +1,105 @@
+--- a/libqpdf/Pl_Buffer.cc
++++ b/libqpdf/Pl_Buffer.cc
+@@ -29,6 +29,10 @@
+ {
+     if (!len) {
+         return;
++    }
++    constexpr size_t ro_parser_stream_limit = 128 * 1024 * 1024;
++    if (len > ro_parser_stream_limit - m->data.size()) {
++        throw std::runtime_error("parser-resource-limit");
+     }
+     m->data.append(reinterpret_cast<char const*>(buf), len);
+     m->ready = false;
+--- a/libqpdf/Pl_PNGFilter.cc
++++ b/libqpdf/Pl_PNGFilter.cc
+@@ -9,7 +9,7 @@
+ 
+ namespace
+ {
+-    unsigned long long memory_limit{0};
++    unsigned long long memory_limit{128ULL * 1024 * 1024};
+ } // namespace
+ 
+ static int
+@@ -40,7 +40,10 @@
+             "PNGFilter created with invalid bits_per_sample not 1, 2, 4, 8, or 16");
+     }
+     this->bytes_per_pixel = ((bits_per_sample * samples_per_pixel) + 7) / 8;
+-    unsigned long long bpr = ((columns * bits_per_sample * samples_per_pixel) + 7) / 8;
++    if (samples_per_pixel > 4 || columns > 40000000U || bits_per_sample > 16) {
++        throw std::runtime_error("parser-resource-limit");
++    }
++    unsigned long long bpr = ((static_cast<unsigned long long>(columns) * bits_per_sample * samples_per_pixel) + 7) / 8;
+     if ((bpr == 0) || (bpr > (UINT_MAX - 1))) {
+         throw std::runtime_error("PNGFilter created with invalid columns value");
+     }
+--- a/libqpdf/Pl_TIFFPredictor.cc
++++ b/libqpdf/Pl_TIFFPredictor.cc
+@@ -9,7 +9,7 @@
+ 
+ namespace
+ {
+-    unsigned long long memory_limit{0};
++    unsigned long long memory_limit{128ULL * 1024 * 1024};
+ } // namespace
+ 
+ Pl_TIFFPredictor::Pl_TIFFPredictor(
+@@ -34,7 +34,10 @@
+     if ((bits_per_sample < 1) || (bits_per_sample > (8 * (sizeof(unsigned long long))))) {
+         throw std::runtime_error("TIFFPredictor created with invalid bits_per_sample");
+     }
+-    unsigned long long bpr = ((columns * bits_per_sample * samples_per_pixel) + 7) / 8;
++    if (samples_per_pixel > 4 || columns > 40000000U || bits_per_sample > 16) {
++        throw std::runtime_error("parser-resource-limit");
++    }
++    unsigned long long bpr = ((static_cast<unsigned long long>(columns) * bits_per_sample * samples_per_pixel) + 7) / 8;
+     if ((bpr == 0) || (bpr > (UINT_MAX - 1))) {
+         throw std::runtime_error("TIFFPredictor created with invalid columns value");
+     }
+--- a/libqpdf/Pl_RunLength.cc
++++ b/libqpdf/Pl_RunLength.cc
+@@ -5,7 +5,7 @@
+ 
+ namespace
+ {
+-    unsigned long long memory_limit{0};
++    unsigned long long memory_limit{128ULL * 1024 * 1024};
+ } // namespace
+ 
+ class Pl_RunLength::Members
+--- a/libqpdf/Pl_Flate.cc
++++ b/libqpdf/Pl_Flate.cc
+@@ -14,7 +14,7 @@
+ 
+ namespace
+ {
+-    unsigned long long memory_limit_{0};
++    unsigned long long memory_limit_{128ULL * 1024 * 1024};
+ } // namespace
+ 
+ int Pl_Flate::compression_level = Z_DEFAULT_COMPRESSION;
+--- a/libqpdf/Pl_DCT.cc
++++ b/libqpdf/Pl_DCT.cc
+@@ -37,7 +37,7 @@
+         std::string msg;
+     };
+ 
+-    long memory_limit{0};
++    long memory_limit{128L * 1024 * 1024};
+     int scan_limit{0};
+     bool throw_on_corrupt_data{true};
+ } // namespace
+--- a/libqpdf/QPDF_pages.cc
++++ b/libqpdf/QPDF_pages.cc
+@@ -133,9 +133,7 @@
+                 kid.warnIfPossible(
+                     "kid " + std::to_string(i) +
+                     " (from 0) MediaBox is undefined; setting to letter / ANSI A");
+-                kid.replaceKey(
+-                    "/MediaBox",
+-                    QPDFObjectHandle::newArray(QPDFObjectHandle::Rectangle(0, 0, 612, 792)));
++                throw std::runtime_error("parser-original-page-box-missing");
+             }
+             if (!kid.isIndirect()) {
+                 QTC::TC("qpdf", "QPDF handle direct page object");

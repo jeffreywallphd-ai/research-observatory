@@ -1,0 +1,23 @@
+{
+  "schemaVersion": "1.0",
+  "parser": "docling-slim",
+  "version": "2.126.0",
+  "doclingParseVersion": "7.16.0",
+  "doclingModelsVersion": "4.0.2",
+  "layoutRevision": "8f39ad3c0b4c58e9c2d2c84a38465abf757272d8",
+  "tableRevision": "fc0f2d45e2218ea24bce5045f58a389aed16dc23",
+  "tableMode": "accurate",
+  "cellMatching": true,
+  "ocr": false,
+  "enrichment": false,
+  "remoteServices": false,
+  "externalPlugins": false,
+  "torchCompile": false,
+  "cpuThreads": 4,
+  "inputBytes": 134217728,
+  "pages": 500,
+  "pagePixels": 40000000,
+  "outputBytes": 67108864,
+  "privateMemoryMiB": 4096,
+  "wallSeconds": 900
+}

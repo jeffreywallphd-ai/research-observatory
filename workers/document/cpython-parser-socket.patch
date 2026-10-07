@@ -1,0 +1,47 @@
+--- Modules/socketmodule.c
++++ Modules/socketmodule.c
+@@ -7479,39 +7479,14 @@
+ #ifdef MS_WINDOWS
+ #define OS_INIT_DEFINED
+ 
+-/* Additional initialization and cleanup for Windows */
+-
+-static void
+-os_cleanup(void)
+-{
+-    WSACleanup();
+-}
+-
++/* This signed parser-only build is offline. Keep the genuine socket types
++   and C API needed by dependency imports without initializing Winsock.
++   LPAC remains the security boundary, including against native callers that
++   might initialize Winsock themselves. No runtime switch enables networking. */
+ static int
+ os_init(void)
+ {
+-    WSADATA WSAData;
+-    int ret;
+-    ret = WSAStartup(0x0101, &WSAData);
+-    switch (ret) {
+-    case 0:     /* No error */
+-        Py_AtExit(os_cleanup);
+-        return 1; /* Success */
+-    case WSASYSNOTREADY:
+-        PyErr_SetString(PyExc_ImportError,
+-                        "WSAStartup failed: network not ready");
+-        break;
+-    case WSAVERNOTSUPPORTED:
+-    case WSAEINVAL:
+-        PyErr_SetString(
+-            PyExc_ImportError,
+-            "WSAStartup failed: requested version not supported");
+-        break;
+-    default:
+-        PyErr_Format(PyExc_ImportError, "WSAStartup failed: error code %d", ret);
+-        break;
+-    }
+-    return 0; /* Failure */
++    return 1;
+ }
+ 
+ #endif /* MS_WINDOWS */

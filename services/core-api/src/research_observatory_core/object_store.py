@@ -2809,6 +2809,7 @@ class _LocalObjectStore:
         inspector: Callable[[BinaryIO, str, int], str] | None = None,
         max_plaintext_bytes: int | None = None,
         cancellation_requested: Callable[[], bool] | None = None,
+        before_publish: Callable[[CanonicalConnection, StoredObject], None] | None = None,
     ) -> StoredObject:
         command = _validate_command(command)
         if not hasattr(source, "read"):
@@ -3075,6 +3076,14 @@ class _LocalObjectStore:
                             publication_identity,
                         ):
                             raise ObjectCorrupt("object identity changed before metadata publication")
+                        if before_publish is not None:
+                            failed = False
+                            try:
+                                before_publish(connection, result)
+                            except Exception:
+                                failed = True
+                            if failed:
+                                raise ObjectAccessDenied("parser artifact publication denied")
                         connection.execute("COMMIT")
                         if not _held_reader_matches(destination, reader) or not _file_matches(
                             destination,
@@ -3097,7 +3106,7 @@ class _LocalObjectStore:
                         with suppress(sqlite3.Error, StorageProblem):
                             connection.execute("ROLLBACK")
                     publication_state, reconciled = _publication_state(state, digest, length, command)
-                    if publication_state == "committed" and reconciled is not None:
+                    if before_publish is None and publication_state == "committed" and reconciled is not None:
                         if reader is not None and destination is not None and _held_reader_matches(destination, reader):
                             return reconciled
                         quarantine_after_close = True
@@ -3205,7 +3214,9 @@ class _LocalObjectStore:
     ) -> VerifiedObjectStream:
         """Read an exact attached revision after current per-copy inspect authority."""
 
-        return self._open_document_attachment(attachment_id, document_revision_id, actor=actor)
+        stream = self._open_document_attachment(attachment_id, document_revision_id, actor=actor)
+        assert stream is not None
+        return stream
 
     def open_parse_source(self, source: SourceIdentity, *, actor: CorpusActor) -> VerifiedObjectStream:
         """Exact immutable source plus current inspect/derive in one writer."""
@@ -3219,9 +3230,97 @@ class _LocalObjectStore:
             invalid = True
         if invalid:
             raise _bounded(ObjectAccessDenied, "parse source identity is invalid")
-        return self._open_document_attachment(
+        stream = self._open_document_attachment(
             source.attachment_id, source.document_revision_id, actor=actor, expected_source=source
         )
+        assert stream is not None
+        return stream
+
+    def _read_parser_manifest(self, connection: CanonicalConnection, receipt: Any) -> bytes:
+        """Trusted publication callback only; authenticate exact encrypted intent."""
+        state = self._state()
+        metadata = _metadata(connection, state.project_id, _validate_sha256(receipt.object_sha256))
+        if (
+            metadata is None
+            or (metadata.storage_state, metadata.protection_profile, metadata.byte_length, metadata.media_type)
+            != (
+                "available",
+                _ENCRYPTED_PROFILE,
+                receipt.byte_length,
+                "application/vnd.research-observatory.parser-attempt+json",
+            )
+            or not 0 < metadata.byte_length <= 64 * 1_048_576
+        ):
+            raise _bounded(ObjectAccessDenied, "parser intent unavailable")
+        path, buckets = _object_path(state.objects, state.project_id, metadata.object_sha256, create=False)
+        with _stable_directories([state.root, state.objects, *buckets]):
+            reader = _verified_stored_reader(state, connection, path, metadata)
+            try:
+                data = reader.read(metadata.byte_length + 1)
+                if len(data) != metadata.byte_length or hashlib.sha256(data).hexdigest() != receipt.object_sha256:
+                    raise ObjectAccessDenied("parser intent invalid")
+                return data
+            finally:
+                reader.close()
+
+    def put_parser_artifact[Result](
+        self,
+        raw: BinaryIO,
+        command: ObjectPutCommand,
+        inspector: Callable[[BinaryIO, str, int], str],
+        *,
+        source: SourceIdentity,
+        actor: CorpusActor,
+        action: Callable[[CanonicalConnection, StoredObject], Result],
+        max_plaintext_bytes: int,
+        cancellation_requested: Callable[[], bool],
+    ) -> Result:
+        """Trusted Core only: encrypted bytes and the attempt reference commit once.
+
+        Inference is finished. Encryption remains owned staging until source,
+        rights and the attempt pass in the same metadata transaction. Neither
+        a new readable orphan nor a receipt survives rollback. Pre-existing
+        shared objects are never deleted/quarantined by failed publication.
+        """
+        from .parsing.contracts import SourceIdentity
+
+        source = SourceIdentity.model_validate(source)
+        if (
+            command.protection_profile != _ENCRYPTED_PROFILE
+            or command.creation_source != "local-derivation"
+            or not callable(inspector)
+            or not callable(action)
+            or type(max_plaintext_bytes) is not int
+            or not 0 < max_plaintext_bytes <= 64 * 1_048_576
+            or not callable(cancellation_requested)
+        ):
+            raise _bounded(ObjectAccessDenied, "parser artifact configuration invalid")
+        results: list[Result] = []
+
+        def publish(connection: CanonicalConnection, stored: StoredObject) -> None:
+            def fenced(active: CanonicalConnection) -> None:
+                results.append(action(active, stored))
+
+            self._open_document_attachment(
+                source.attachment_id,
+                source.document_revision_id,
+                actor=actor,
+                expected_source=source,
+                before_stream=fenced,
+                publication_connection=connection,
+            )
+
+        self._put(
+            raw,
+            command,
+            inspector=inspector,
+            max_plaintext_bytes=max_plaintext_bytes,
+            cancellation_requested=cancellation_requested,
+            before_publish=publish,
+        )
+        if len(results) != 1:
+            raise _bounded(ObjectAccessDenied, "parser artifact publication invalid")
+        return results[0]
 
     def _open_document_attachment(
         self,
@@ -3230,7 +3329,9 @@ class _LocalObjectStore:
         *,
         actor: CorpusActor,
         expected_source: SourceIdentity | None = None,
-    ) -> VerifiedObjectStream:
+        before_stream: Callable[[CanonicalConnection], None] | None = None,
+        publication_connection: CanonicalConnection | None = None,
+    ) -> VerifiedObjectStream | None:
 
         from pydantic import ValidationError
 
@@ -3250,10 +3351,12 @@ class _LocalObjectStore:
         failure: ObjectStoreProblem | None = None
         with state.lock, _stable_directories([state.root, state.state, state.objects, state.temporary]):
             try:
-                connection = _open_thread_transferable_canonical_database(
-                    state.database, expected_project_id=state.project_id
-                )
-                connection.execute("BEGIN IMMEDIATE")
+                connection = publication_connection
+                if connection is None:
+                    connection = _open_thread_transferable_canonical_database(
+                        state.database, expected_project_id=state.project_id
+                    )
+                    connection.execute("BEGIN IMMEDIATE")
                 row = connection.execute(
                     "SELECT a.object_sha256,a.candidate_id,a.source_assertion_revision_id,s.assertion_json "
                     "FROM document_attachment_assertions a "
@@ -3358,7 +3461,8 @@ class _LocalObjectStore:
                         actor=actor,
                     )
                     if decision.code != "allow":
-                        connection.execute("COMMIT")
+                        if publication_connection is None:
+                            connection.execute("COMMIT")
                         raise ObjectAccessDenied("document action right is not current")
                 metadata = _metadata(connection, state.project_id, digest)
                 if (
@@ -3390,6 +3494,13 @@ class _LocalObjectStore:
                     "WHERE project_id=? AND object_sha256=? AND storage_state='available'",
                     (max(metadata.created_at, _now()), state.project_id, digest),
                 )
+                if before_stream is not None:
+                    before_stream(connection)
+                    # The enclosing object publication owns the sole commit.
+                    # Do not register this connection in reader cleanup.
+                    if publication_connection is not None:
+                        return None
+                    connection.execute("COMMIT")
                 stream = _VerifiedObjectStream(reader, connection, state.project_id, digest)
                 reader = None
                 connection = None
@@ -3406,11 +3517,12 @@ class _LocalObjectStore:
                 if reader is not None:
                     reader.close()
                 if connection is not None:
-                    if connection.in_transaction:
+                    if publication_connection is None and connection.in_transaction:
                         with suppress(sqlite3.Error, StorageProblem):
                             connection.execute("ROLLBACK")
-                    connection.close()
-            if isinstance(failure, ObjectCorrupt) and digest is not None:
+                    if publication_connection is None:
+                        connection.close()
+            if isinstance(failure, ObjectCorrupt) and digest is not None and publication_connection is None:
                 _mark_quarantined(state, digest)
             if failure is not None:
                 raise failure

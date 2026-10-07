@@ -51,6 +51,22 @@ class DocumentParserPort(Protocol):
     ) -> AuthenticatedParseDelivery: ...
 
 
+class RawParserStagerPort(Protocol):
+    """Trusted Core composition; this capability never enters the worker."""
+
+    def validate_request(self, request: ParseRequest) -> None: ...
+
+    def __call__(
+        self,
+        request: ParseRequest,
+        raw: bytes,
+        *,
+        media_type: str,
+        cancelled: Callable[[], bool],
+        page_index: int | None = None,
+    ) -> RawParserArtifact: ...
+
+
 class ProtectedParseSourcePort(Protocol):
     def read_source(
         self, source: SourceIdentity, *, actor: CorpusActor, cancelled: Callable[[], bool]

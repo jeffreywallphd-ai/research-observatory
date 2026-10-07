@@ -1,0 +1,16 @@
+--- dateutil/tz/win.py
++++ dateutil/tz/win.py
+@@ -32,7 +32,12 @@
+ 
+ 
+ def _settzkeyname():
+-    handle = winreg.ConnectRegistry(None, winreg.HKEY_LOCAL_MACHINE)
++    try:
++        handle = winreg.ConnectRegistry(None, winreg.HKEY_LOCAL_MACHINE)
++    except PermissionError:
++        # The isolated offline parser has no Windows registry capability.
++        # dateutil.tz already treats ImportError as optional tzwin unavailability.
++        raise ImportError("Windows registry time zones unavailable") from None
+     try:
+         winreg.OpenKey(handle, TZKEYNAMENT).Close()
+         TZKEYNAME = TZKEYNAMENT

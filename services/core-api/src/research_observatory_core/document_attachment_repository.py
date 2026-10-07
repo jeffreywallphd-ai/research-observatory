@@ -16,6 +16,7 @@ import sqlite3
 from collections.abc import Callable, Mapping
 from contextlib import suppress
 from datetime import UTC, datetime
+from io import BytesIO
 from pathlib import Path
 from typing import Annotated, BinaryIO, Literal
 
@@ -28,6 +29,10 @@ from .corpus_repository import SqliteCorpusRepository
 from .domain_contracts import is_uuid_v7, new_uuid_v7
 from .ingestion.import_drafts import Digest, DraftValue, Identity, ProjectIdentity
 from .ingestion.preview_workflow import PreviewIntentContext
+from .object_store import _LocalObjectStore
+from .parsing.contracts import RawParserArtifact
+from .parsing.normalization import MAX_IR_BYTES
+from .parsing.requests import ParseRequest
 from .ports.acquisition import (
     AccessNeedChannel,
     AccessNeedKind,
@@ -52,11 +57,17 @@ from .ports.document_attachments import (
     DocumentPublicationGuard,
 )
 from .ports.object_store import ObjectPutCommand, ObjectStagingCancelled, ObjectStagingCleanupRequired, ObjectStore
+from .ports.parsing import ParseProblem
 from .ports.repositories import AggregateRevision, AggregateRevisionDraft, AtomicRepositoryEvent, MaterialDependency
 from .ports.rights import RightsPermissionDraft
 from .ports.workflow_executor import WorkflowJobClaim, WorkflowOutputReference, WorkflowQueueConflict
 from .reconciliation.contracts import SourceAssertion
-from .repositories import _projection_content_sha256, _SqliteAggregateRepository, _SqliteWorkflowQueueRepository
+from .repositories import (
+    _UNIT_OF_WORKS,
+    _projection_content_sha256,
+    _SqliteAggregateRepository,
+    _SqliteWorkflowQueueRepository,
+)
 from .rights_policy import (
     RightsAction,
     RightsDecision,
@@ -2349,3 +2360,300 @@ def operation_recovery(
     ):
         raise AttachmentProblem("attachment-recovery-stale")
     return str(row[0]), basis
+
+
+# Protected parser-attempt retention shares the document attachment adapter.
+def _parser_attempt_intent(request, raw, media_type, page_index=None):
+    return json.dumps(
+        {
+            "schemaVersion": "1.0",
+            "documentType": "retained-parser-attempt-intent",
+            "request": request.model_dump(mode="json", by_alias=True),
+            "expectedRaw": {"sha256": hashlib.sha256(raw).hexdigest(), "length": len(raw), "mediaType": media_type},
+            "derivative": None if page_index is None else {"operation": "render-pdf-page", "pageIndex": page_index},
+        },
+        ensure_ascii=False,
+        allow_nan=False,
+        separators=(",", ":"),
+    ).encode()
+
+
+class LocalParserArtifactStager:
+    """The original accepted document/revision is never an output target.
+
+    Each raw output gets a distinct retained document-object aggregate and an
+    attempt diagnostic reference. A new attempt retains its predecessor. The
+    generic workflow supervisor owns quarantine/retry/cancel/restart disposition.
+    """
+
+    def __init__(
+        self,
+        database: Path,
+        objects: _LocalObjectStore,
+        *,
+        claim: WorkflowJobClaim,
+        request: ParseRequest,
+        actor: Callable[[], CorpusActor],
+        guard: DocumentPublicationGuard,
+        now: Callable[[], str],
+    ) -> None:
+        selected = None
+        with suppress(Exception):
+            selected = ParseRequest.model_validate(request)
+        if selected is None:
+            raise ParseProblem("parse-request-invalid")
+        self._request = selected
+        self._objects, self._claim, self._actor, self._guard, self._now = objects, claim, actor, guard, now
+        self._queue = _SqliteWorkflowQueueRepository(database, claim.project_id)
+
+    def __call__(
+        self,
+        request: ParseRequest,
+        raw: bytes,
+        *,
+        media_type: str,
+        cancelled: Callable[[], bool],
+        page_index: int | None = None,
+    ) -> RawParserArtifact:
+        if (media_type == "image/png") != (page_index is not None) or (
+            page_index is not None and (type(page_index) is not int or not 0 <= page_index < 500)
+        ):
+            raise ParseProblem("parse-producer-mismatch")
+        return self._retain(
+            request, raw, media_type=media_type, cancelled=cancelled, manifest=None, page_index=page_index
+        )
+
+    def validate_request(self, request: ParseRequest) -> None:
+        valid = False
+        try:
+            request = ParseRequest.model_validate(request)
+            if (
+                request != self._request
+                or self._claim.activity_type != "document-parse"
+                or self._claim.concurrency_class != "document"
+            ):
+                raise ValueError
+            if (
+                request.binding.source.project_id,
+                request.binding.attempt.job_id,
+                request.binding.attempt.attempt_id,
+            ) != (
+                self._claim.project_id,
+                self._claim.job_id,
+                self._claim.attempt_id,
+            ):
+                raise ValueError
+
+            def validate():
+                with self._queue._transaction() as connection:
+                    lease = self._queue._lease_row(connection, self._claim, self._now(), states=("running",))
+                    self._queue._verify_attempt_capability(connection, self._claim)
+                    if lease[3] is not None:
+                        raise ValueError
+                return True
+
+            valid = self._guard(validate)
+        except Exception:
+            pass
+        if valid is not True:
+            raise ParseProblem("parse-producer-mismatch")
+
+    def _retain(
+        self,
+        request: ParseRequest,
+        raw: bytes,
+        *,
+        media_type: str,
+        cancelled: Callable[[], bool],
+        manifest: RawParserArtifact | None,
+        page_index: int | None = None,
+    ) -> RawParserArtifact:
+        validated = None
+        with suppress(Exception):
+            validated = ParseRequest.model_validate(request)
+        if validated is None:
+            raise ParseProblem("parse-request-invalid")
+        request = validated
+        self.validate_request(request)
+        if (
+            (request.binding.source.project_id, request.binding.attempt.job_id, request.binding.attempt.attempt_id)
+            != (
+                self._claim.project_id,
+                self._claim.job_id,
+                self._claim.attempt_id,
+            )
+            or type(raw) is not bytes
+            or not 0 < len(raw) <= MAX_IR_BYTES
+            or media_type
+            not in {
+                "application/vnd.research-observatory.docling-output+json",
+                "application/vnd.research-observatory.native-structure+json",
+                "application/vnd.research-observatory.pdf-inspection+json",
+                "application/vnd.research-observatory.parser-attempt+json",
+                "image/png",
+            }
+        ):
+            raise ParseProblem("parse-producer-mismatch")
+        if manifest is None and media_type != "application/vnd.research-observatory.parser-attempt+json":
+            intent = _parser_attempt_intent(request, raw, media_type, page_index)
+            manifest = self._retain(
+                request,
+                intent,
+                media_type="application/vnd.research-observatory.parser-attempt+json",
+                cancelled=cancelled,
+                manifest=None,
+            )
+        result = None
+        try:
+
+            def retain() -> RawParserArtifact:
+                if cancelled():
+                    raise ParseProblem("parser-failed")
+                # Close this current source transaction before encryption.
+                with self._objects.open_parse_source(request.binding.source, actor=self._actor()):
+                    pass
+                actor = self._actor()
+                digest = hashlib.sha256(raw).hexdigest()
+
+                def inspect(_stream, observed, length):
+                    if (observed, length) != (digest, len(raw)):
+                        raise ParseProblem("parse-output-invalid")
+                    return media_type
+
+                def publish(connection: CanonicalConnection, stored) -> RawParserArtifact:
+                    if (stored.object_sha256, stored.byte_length, stored.media_type, stored.protection_profile) != (
+                        digest,
+                        len(raw),
+                        media_type,
+                        "project-encrypted-v1",
+                    ):
+                        raise ParseProblem("parse-output-invalid")
+                    if cancelled():
+                        raise ParseProblem("parser-failed")
+                    now = self._now()
+                    lease = self._queue._lease_row(connection, self._claim, now, states=("running",))
+                    self._queue._verify_attempt_capability(connection, self._claim)
+                    if lease[3] is not None:
+                        raise ParseProblem("parser-failed")
+                    token = _UNIT_OF_WORKS.register(connection, self._claim.project_id)
+                    try:
+                        aggregates = _SqliteAggregateRepository(token)
+                        original = aggregates.get_revision(request.binding.source.document_revision_id)
+                        inputs = [original]
+                        if manifest is not None:
+                            inputs.append(aggregates.get(manifest.stage_id))
+                        if any(item.object_sha256 is None for item in inputs):
+                            raise ParseProblem("parse-producer-mismatch")
+                        if manifest is not None and (
+                            inputs[1].object_sha256 != manifest.object_sha256
+                            or self._objects._read_parser_manifest(connection, manifest)
+                            != _parser_attempt_intent(request, raw, media_type, page_index)
+                        ):
+                            raise ParseProblem("parse-producer-mismatch")
+                        fingerprint = hashlib.sha256(request.model_dump_json(by_alias=True).encode()).hexdigest()
+                        revision = aggregates.append(
+                            AggregateRevisionDraft(
+                                revision_id=new_uuid_v7(),
+                                aggregate_id=new_uuid_v7(),
+                                aggregate_kind="document",
+                                created_at=now,
+                                modified_at=now,
+                                display_label_observed="Retained raw parser attempt",
+                                display_label_normalized=None,
+                                knowledge_status="observed",
+                                rights_status="allowed",
+                                object_sha256=digest,
+                                dependency_coverage="complete",
+                                provenance_inputs=tuple(inputs),
+                                material_dependencies=(
+                                    *(
+                                        MaterialDependency(
+                                            dependency_id=new_uuid_v7(),
+                                            dependency_kind="source-revision",
+                                            relation_type="direct",
+                                            revision_id=item.revision_id,
+                                            configuration_id=None,
+                                            configuration_version=None,
+                                            fingerprint="sha256:" + str(item.object_sha256),
+                                            governing_policy_id="dependency.material.v1",
+                                            governing_policy_version="1.0.0",
+                                        )
+                                        for item in inputs
+                                    ),
+                                    MaterialDependency(
+                                        dependency_id=new_uuid_v7(),
+                                        dependency_kind="parameter-set",
+                                        relation_type="direct",
+                                        revision_id=None,
+                                        configuration_id="document.parse-request",
+                                        configuration_version="1.0.0",
+                                        fingerprint="sha256:" + fingerprint,
+                                        governing_policy_id="dependency.material.v1",
+                                        governing_policy_version="1.0.0",
+                                    ),
+                                ),
+                            ),
+                            AtomicRepositoryEvent(
+                                event_id=new_uuid_v7(),
+                                outbox_id=new_uuid_v7(),
+                                event_type="document.created",
+                                occurred_at=now,
+                                available_at=now,
+                                trace_id=actor.trace_id,
+                                actor_type="worker",
+                                actor_id=self._claim.worker_id,
+                                idempotency_key="parser-raw-" + new_uuid_v7(),
+                            ),
+                            expected_revision=None,
+                        )
+                        # The generic ledger hash is the aggregate projection,
+                        # while the raw receipt hash is independently the bytes.
+                        ledger = connection.execute(
+                            "SELECT content_hash FROM provenance_ledger_entities WHERE project_id=? "
+                            "AND entity_id=? AND revision_id=? AND direction='output'",
+                            (self._claim.project_id, revision.aggregate_id, revision.revision_id),
+                        ).fetchone()
+                        if ledger is None:
+                            raise ParseProblem("parse-output-invalid")
+                        reference = WorkflowOutputReference(
+                            revision.aggregate_id, revision.revision_id, ledger[0], media_type, revision.aggregate_id
+                        )
+                        self._queue._stage_artifact_with_connection(
+                            connection, self._claim, artifact=reference, role="diagnostic", now=now
+                        )
+                        return RawParserArtifact(
+                            stage_id=revision.aggregate_id,
+                            object_sha256=digest,
+                            byte_length=len(raw),
+                            media_type=media_type,
+                        )
+                    finally:
+                        _UNIT_OF_WORKS.unregister(token)
+
+                # Source/rights/native session and the live attempt are checked
+                # together after encryption, before any usable receipt exists.
+                return self._objects.put_parser_artifact(
+                    BytesIO(raw),
+                    ObjectPutCommand(
+                        media_type=media_type,
+                        rights_status="allowed",
+                        protection_profile="project-encrypted-v1",
+                        retention_class="project-lifetime",
+                        creation_source="local-derivation",
+                        created_at=actor.occurred_at,
+                        expected_sha256=digest,
+                    ),
+                    inspect,
+                    source=request.binding.source,
+                    actor=self._actor(),
+                    action=publish,
+                    max_plaintext_bytes=MAX_IR_BYTES,
+                    cancellation_requested=cancelled,
+                )
+
+            result = self._guard(retain)
+        except Exception:
+            pass
+        if result is None:
+            raise ParseProblem("parse-delivery-denied")
+        return result

@@ -18,17 +18,19 @@ from collections.abc import Callable, Mapping
 from ctypes import wintypes
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any
+from typing import Any, Literal
 
 from research_observatory_core.connectors.plugin_manifest import _VERIFIED_SEAL, VerifiedPluginPackage
 
 from . import lpac_launcher as win
+from .file_paths import extended_path
 from .no_write_acl import AclRestoration, no_write_lpac_acl, verify_lpac_no_write
 from .protocol import MAX_BINARY_FRAME, MAX_CONTROL_FRAME, decode_frame, encode_frame
 from .recovery_guardian import GuardianError, GuardianProcess, start_guardian
 from .runtime_inventory import APPLICATION_INVENTORY_PUBLIC_KEY, SignedWorkerRuntime, _safe_path, verify_worker_runtime
 
 _MAX_BROKER_CALLS = 64
+_MAX_WORKER_STDERR_BYTES = 1_048_576
 _CALL_KEYS = frozenset({"operation", "identifier", "query", "repositoryId", "cursor", "pageSize", "credentialScope"})
 
 
@@ -37,6 +39,22 @@ class WorkerResult:
     output: bytes
     token: dict[str, Any]
     broker_calls: int
+
+
+def _discard_worker_stderr(kernel: Any, handle: int) -> str | None:
+    """Drain private library output with constant memory and no content receipt."""
+
+    observed = 0
+    buffer = ctypes.create_string_buffer(4096)
+    while True:
+        count = wintypes.DWORD()
+        if not kernel.ReadFile(handle, buffer, len(buffer), ctypes.byref(count), None):
+            return None if ctypes.get_last_error() in {109, 232} else "lpac-worker-stderr-read-failed"
+        if count.value == 0:
+            return None
+        observed += count.value
+        if observed > _MAX_WORKER_STDERR_BYTES:
+            return "lpac-worker-stderr-limit"
 
 
 def _read_exact(kernel: Any, handle: int, length: int) -> bytes:
@@ -199,13 +217,15 @@ def _launch_signed_worker(
     temp: Path,
     request: dict[str, Any],
     memory_mib: int,
-    wall_seconds: int,
+    wall_seconds: float,
     dialogue: Callable[[Any, int, int, dict[str, Any]], tuple[bytes, int]],
     cancelled: Callable[[], bool] | None,
+    cpu_limit: int = 1,
 ) -> WorkerResult:
     kernel, advapi, _, _ = win._api()
     attributes = win._SecurityAttributes(ctypes.sizeof(win._SecurityAttributes), None, True)
     child_stdin = parent_stdin = parent_stdout = child_stdout = parent_stderr = child_stderr = job = None
+    stderr_thread: threading.Thread | None = None
     process = win._ProcessInformation()
     attribute_list = None
     created = assigned = False
@@ -246,6 +266,7 @@ def _launch_signed_worker(
         startup.lpAttributeList = attribute_list
         environment = {
             "LOCALAPPDATA": str(profile),
+            "USERPROFILE": str(profile),
             "PYTHONDONTWRITEBYTECODE": "1",
             "PYTHONNOUSERSITE": "1",
             "SYSTEMROOT": os.environ.get("SYSTEMROOT", r"C:\Windows"),
@@ -294,7 +315,16 @@ def _launch_signed_worker(
         )
         if not parent_affinity.value:
             raise win.LPACError("lpac-parent-affinity-invalid")
-        one_cpu = parent_affinity.value & -parent_affinity.value
+        if cpu_limit not in {1, 4}:
+            raise win.LPACError("lpac-worker-profile-invalid")
+        available = parent_affinity.value
+        admitted_cpus = 0
+        for _ in range(cpu_limit):
+            if not available:
+                break
+            bit = available & -available
+            admitted_cpus |= bit
+            available ^= bit
         limits = win._ExtendedLimitInformation()
         limits.BasicLimitInformation.LimitFlags = (
             win._JOB_OBJECT_LIMIT_KILL_ON_JOB_CLOSE
@@ -303,7 +333,7 @@ def _launch_signed_worker(
             | win._JOB_OBJECT_LIMIT_AFFINITY
         )
         limits.BasicLimitInformation.ActiveProcessLimit = 1
-        limits.BasicLimitInformation.Affinity = one_cpu
+        limits.BasicLimitInformation.Affinity = admitted_cpus
         limits.JobMemoryLimit = memory_mib * 1_048_576
         win._must(
             kernel.SetInformationJobObject(job, 9, ctypes.byref(limits), ctypes.sizeof(limits)), "lpac-job-limit-failed"
@@ -316,7 +346,7 @@ def _launch_signed_worker(
             kernel.GetProcessAffinityMask(process.hProcess, ctypes.byref(worker_affinity), ctypes.byref(worker_system)),
             "lpac-worker-affinity-unavailable",
         )
-        if worker_affinity.value != one_cpu:
+        if worker_affinity.value != admitted_cpus:
             raise win.LPACError("lpac-worker-cpu-concurrency-unbounded")
         if kernel.ResumeThread(process.hThread) == 0xFFFFFFFF:
             raise win.LPACError("lpac-process-resume-failed")
@@ -329,9 +359,20 @@ def _launch_signed_worker(
                 completed.put(exc)
 
         thread = threading.Thread(target=exchange, name="lpac-plugin-pipes", daemon=True)
+        stderr_failures: queue.Queue[str] = queue.Queue(maxsize=1)
+
+        def discard_stderr() -> None:
+            failure = _discard_worker_stderr(kernel, parent_stderr)
+            if failure is not None:
+                stderr_failures.put(failure)
+
+        stderr_thread = threading.Thread(target=discard_stderr, name="lpac-private-stderr", daemon=True)
+        stderr_thread.start()
         thread.start()
         deadline = time.monotonic() + wall_seconds
         while True:
+            if not stderr_failures.empty():
+                raise win.LPACError(stderr_failures.get_nowait())
             if cancelled is not None and cancelled():
                 raise win.LPACError("lpac-worker-cancelled")
             if time.monotonic() >= deadline:
@@ -346,6 +387,11 @@ def _launch_signed_worker(
                 raise win.LPACError("lpac-worker-protocol-or-broker-failed") from None
             output, calls = result
             _wait_for_worker_exit(kernel, process.hProcess, deadline, cancelled)
+            stderr_thread.join(timeout=1)
+            if stderr_thread.is_alive():
+                raise win.LPACError("lpac-worker-stderr-not-closed")
+            if not stderr_failures.empty():
+                raise win.LPACError(stderr_failures.get_nowait())
             exit_code = wintypes.DWORD()
             win._must(
                 kernel.GetExitCodeProcess(process.hProcess, ctypes.byref(exit_code)), "lpac-worker-exit-unavailable"
@@ -361,6 +407,9 @@ def _launch_signed_worker(
                 kernel.TerminateJobObject(job, 1)
             else:
                 kernel.TerminateProcess(process.hProcess, 1)
+            kernel.WaitForSingleObject(process.hProcess, 1000)
+        if stderr_thread is not None:
+            stderr_thread.join(timeout=1)
         for owned_handle in (
             process.hThread,
             process.hProcess,
@@ -445,12 +494,35 @@ def _run_signed_worker(
     memory_mib: int,
     wall_seconds: int,
     cancelled: Callable[[], bool] | None,
+    profile: Literal["connector", "parser"] = "connector",
 ) -> WorkerResult:
     """Shared exact signed-runtime, LPAC, Job and guardian lifecycle."""
 
+    runtime_profile = profile
+    parsing = runtime_profile == "parser"
+    began = time.monotonic()
+
+    def checkpoint() -> None:
+        if cancelled is not None and cancelled():
+            raise win.LPACError("lpac-worker-cancelled")
+        if time.monotonic() - began >= wall_seconds:
+            raise win.LPACError("lpac-worker-timeout")
+
+    def copy_runtime_file(source: str, destination: str) -> str:
+        checkpoint()
+        path = Path(source)
+        if path.is_symlink() or path.is_junction():
+            raise win.LPACError("lpac-runtime-redirect-denied")
+        with path.open("rb") as reader, Path(destination).open("wb") as writer:
+            while chunk := reader.read(1_048_576):
+                checkpoint()
+                writer.write(chunk)
+        shutil.copystat(source, destination, follow_symlinks=False)
+        return destination
+
     if runtime.application_public_key != APPLICATION_INVENTORY_PUBLIC_KEY:
         raise win.LPACError("lpac-worker-application-pin-mismatch")
-    verify_worker_runtime(runtime)
+    verify_worker_runtime(runtime, profile=runtime_profile, checkpoint=checkpoint)
     if not 1 <= memory_mib <= 4096 or not 1 <= wall_seconds <= 900:
         raise win.LPACError("lpac-worker-profile-invalid")
     kernel, advapi, userenv, _ole = win._api()
@@ -464,7 +536,7 @@ def _run_signed_worker(
     acl_status = AclRestoration()
     try:
         guardian = start_guardian()
-        name, sid_text, profile, temp, runtime_root = (
+        name, sid_text, app_profile, temp, runtime_root = (
             guardian.name,
             guardian.sid_text,
             guardian.profile,
@@ -481,15 +553,20 @@ def _run_signed_worker(
             raise win.LPACError("lpac-runtime-parent-invalid")
         if any(runtime_root.iterdir()):
             raise win.LPACError("lpac-runtime-owned-root-invalid")
-        shutil.copytree(runtime.package, runtime_root, dirs_exist_ok=True)
+        shutil.copytree(
+            runtime.package, extended_path(runtime_root), dirs_exist_ok=True, copy_function=copy_runtime_file
+        )
         staged_runtime = SignedWorkerRuntime(
             runtime_root, runtime.inventory_bytes, runtime.signature, runtime.application_public_key
         )
-        image = verify_worker_runtime(staged_runtime)
+        image = verify_worker_runtime(staged_runtime, profile=runtime_profile, checkpoint=checkpoint)
         request = prepare_request(image)
         guardian.seal()
         acl_started = True
-        with no_write_lpac_acl(profile, temp, runtime_root, sid_text, kernel, advapi, restoration=acl_status):
+        with no_write_lpac_acl(
+            app_profile, temp, runtime_root, sid_text, kernel, advapi, restoration=acl_status, native=parsing
+        ):
+            checkpoint()
 
             def cancelled_or_guardian_lost() -> bool:
                 return not guardian.alive() or (cancelled is not None and cancelled())
@@ -499,13 +576,14 @@ def _run_signed_worker(
                     image,
                     sid,
                     sid_text,
-                    profile,
+                    app_profile,
                     temp,
                     request,
                     memory_mib,
-                    wall_seconds,
+                    max(0.001, wall_seconds - (time.monotonic() - began)),
                     dialogue,
                     cancelled_or_guardian_lost,
+                    cpu_limit=4 if parsing else 1,
                 )
             except win.LPACError:
                 if not guardian.alive():
@@ -526,7 +604,7 @@ def _run_signed_worker(
         # an OS file lock. Never race it or kill its remaining authority.
         if guardian and not guardian_recovered and not guardian.alive() and (not acl_started or acl_status.restored):
             try:
-                if name and profile.parent.exists() and userenv.DeleteAppContainerProfile(name) != 0:
+                if name and app_profile.parent.exists() and userenv.DeleteAppContainerProfile(name) != 0:
                     raise win.LPACError("lpac-profile-cleanup-failed")
             finally:
                 if runtime_root and runtime_root.exists():
@@ -539,6 +617,6 @@ def _run_signed_worker(
                         or runtime_root.is_junction()
                     ):
                         raise win.LPACError("lpac-runtime-cleanup-target-invalid")
-                    shutil.rmtree(resolved)
+                    shutil.rmtree(extended_path(resolved))
         if guardian_error:
             raise guardian_error
