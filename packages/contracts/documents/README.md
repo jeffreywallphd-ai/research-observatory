@@ -9,6 +9,7 @@ provenance. The parser schemas below add staged structure under ADR-0028/0029:
 | `parser-selection.v1.schema.json` | Deterministic recorded source/parser preference |
 | `parse-request.v1.schema.json` | Exact protected source, producer and job/attempt binding |
 | `parse-result.v1.schema.json` | Staged success, content-free failure or cancellation |
+| `native-structure.v1.schema.json` | Native source element/attribute hierarchy, original byte anchors and owned decoded-text runs |
 
 Generate with `python packages/contracts/documents/generate_parser_schema.py`;
 `--check` rejects drift. JSON Schema proves shape. The additional graph, mapping,

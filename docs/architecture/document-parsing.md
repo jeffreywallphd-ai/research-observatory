@@ -1,7 +1,7 @@
 # Protected staged document parsing
 
 CAP-05.S02.T01 defines values and ports under accepted ADR-0028 and ADR-0029.
-Native adapters and isolated Docling execution remain S02.T02/T03; persistent
+Native adapters are implemented by S02.T02; isolated execution remains T03, and persistent
 revisions and human acceptance remain S03. This contract introduces no database
 migration, HTTP endpoint, UI change, accepted-head write or parser dependency.
 
@@ -72,3 +72,71 @@ wire shape, with an explicit semantic-rule inventory. New incompatible versions
 must follow the existing compatibility/ADR route. No implicit offset migration
 or format repair is selected. Isolated execution, resource enforcement, offline
 assets, raw-output persistence and slice-wide recovery remain subsequent work.
+
+## Native structured extraction
+
+CAP-05.S02.T02 adds `workers/document/native_parsing.py` and the Core
+`NativeStructuredParser` adapter. Only the worker parses original JATS, TEI,
+generic XML or inert UTF-8 HTML. Core imports the value/port contracts and
+validates the delivery; it does not import the worker or open original paths.
+The new [native raw schema](../../packages/contracts/documents/native-structure.v1.schema.json)
+is additive. Existing IR, request and result wire versions remain 1.0.
+
+The raw receipt retains exact qualified element names, ordered decoded
+attributes, nearest source parents, distinct original byte anchors (including
+empty elements), close kind and owned decoded-text runs. Byte ranges are
+half-open positions in the original source encoding. Decoded text is a separate
+code-point stream: XML predefined/numeric entities are decoded; CDATA stays
+literal; physical CRLF/CR remains raw until the existing projection normalization.
+XML supports UTF-8, BOM-marked UTF-16 and explicitly declared ASCII/ISO-8859-1.
+Algorithm support does not expand intake admission: a format not admitted by the
+existing attachment boundary remains unavailable to production selection.
+
+Each element has one staged `native-node-{index}` and one
+`native-text-{index}` projection. Core checks unique preorder indexes, one root,
+nearest parent, nonoverlapping markup and text ownership, complete decoded-text
+coverage, and exact element-content intervals before mapping. Per-element NFC
+preserves truthful child contributors when a combining mark composes across an
+inline boundary in the parent's text. Original byte anchors remain in the raw
+artifact; the existing IR text locator identifies that element's decoded-text
+projection. Unknown elements retain type, text, source hierarchy and locations.
+
+Native vocabulary recognition uses exact namespaces: unnamespaced/standard
+JATS, unnamespaced/TEI P5, generic unnamespaced XML, and unnamespaced/XHTML HTML.
+Foreign elements with familiar local names remain unknown. Source bibliography
+entries and explicit bibliography links produce staged reference/citation
+observations, never scholarly authority. Duplicate or absent source IDs leave
+candidate links ambiguous/unresolved. Identifier values are observed fields,
+not inferred citations. HTML's historical `doc-biblioentry` role is retained for
+source compatibility; no accessibility conformance is inferred from that role.
+
+Native rows/cells retain explicit source spans without inventing missing rows,
+clamping geometry or expanding a source-controlled dense grid. The existing IR
+requires each semantic cell's direct parent to be its table; this is the sole
+parent transformation. The raw receipt retains original row/group ancestry.
+Nested tables remain separate. Unsupported/duplicate geometry yields an unknown
+cell with its text/attributes and an ambiguous table warning. HTML zero-rowspan
+uses the observed remainder of its source row group. Figures retain captions
+and locations; no image is fetched, OCRed or synthesized.
+
+Worker extraction denies DTD/entity loading, processing instructions and active
+or fetching HTML. Malformed content, depth over 256, more than one million
+elements, original bytes over 128 MiB, output over 64 MiB or cancellation returns
+no usable receipt. Failure messages are content-free and retain no private
+decoder exception. Source digest/length/format and independent parent-owned
+producer/job/attempt/raw-artifact hash/length/media receipts must all agree before
+Core exposes staged IR. A worker JSON echo is insufficient.
+
+The native tests use declared, repository-authored
+[synthetic fixtures](../../tests/fixtures/documents/native/README.md), exact-byte
+gold and an explicitly synthetic transport port. Existing protected-source tests
+exercise actual test-owned encryption/rights/session fences. These checks do
+not qualify packaged LPAC execution, encrypted raw persistence, offline Docling
+assets, runtime resource limits or slice-wide recovery; those remain T03.
+The vocabulary and geometry expectations were checked against the primary
+[JATS 1.4 tag library](https://jats.nlm.nih.gov/publishing/tag-library/1.4/),
+[TEI P5 reference](https://tei-c.org/release/doc/tei-p5-doc/en/html/REF-ELEMENTS.html),
+[HTML table specification](https://html.spec.whatwg.org/multipage/tables.html),
+[DPUB-ARIA 1.1](https://www.w3.org/TR/dpub-aria-1.1/), and the documented
+[Expat](https://docs.python.org/3.14/library/pyexpat.html)/
+[HTMLParser](https://docs.python.org/3.14/library/html.parser.html) callback APIs.

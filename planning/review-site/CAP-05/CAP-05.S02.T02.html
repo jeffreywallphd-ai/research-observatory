@@ -38,7 +38,7 @@
       <nav class="breadcrumbs" aria-label="Breadcrumb"><a href="../index.html">Planning review</a><span>/</span><a href="index.html">CAP-document-inspection</a><span>/</span><a href="CAP-05.S02.html">SLICE-structured-and-pdf-parsing-pipeline</a><span>/</span><span aria-current="page">CAP-05.S02.T02</span></nav>
 
 <section class="hero compact" data-task-page="CAP-05.S02.T02">
-  <div class="hero-top"><div><span class="eyebrow">CAP-05.S02.T02 · task 2 of 3</span><h1>Implement native JATS/TEI/XML/HTML parsing</h1><p>Namespace-aware parsers for titles, abstracts, sections, paragraphs, lists, footnotes, tables, figures, references, and in-text citations.</p></div><span class="status status-ready">Ready</span></div>
+  <div class="hero-top"><div><span class="eyebrow">CAP-05.S02.T02 · task 2 of 3</span><h1>Implement native JATS/TEI/XML/HTML parsing</h1><p>Namespace-aware parsers for titles, abstracts, sections, paragraphs, lists, footnotes, tables, figures, references, and in-text citations.</p></div><span class="status status-in-progress">In_Progress</span></div>
   <dl class="summary-grid"><div><dt>Wave</dt><dd>W2</dd></div><div><dt>Slice</dt><dd><a href="CAP-05.S02.html">SLICE-structured-and-pdf-parsing-pipeline</a></dd></div><div><dt>Risk / review</dt><dd>medium / agent-review</dd></div><div><dt>Latest review</dt><dd>not reviewed</dd></div></dl>
 </section>
 <section class="task-summary"><div class="section-heading"><span class="eyebrow">Authoritative task record</span><h2>Scope and acceptance</h2></div>
@@ -49,7 +49,7 @@
 <section class="task-summary"><div class="section-heading"><span class="eyebrow">Verification inventory</span><h2>Profiles and commands</h2></div>
   <h3>Verification profiles</h3><ul class="gate-criteria"><li>documents</li></ul>
   <h3>Commands</h3><ul class="gate-criteria"><li>python tools/verify.py --profile documents</li></ul>
-  <p data-task-claim="CAP-05.S02.T02" data-task-owner="unclaimed" data-task-branch="none" data-task-base-sha="none"><strong>Claim projection:</strong> owner <code>unclaimed</code> · branch <code>none</code> · base <code>none</code></p>
+  <p data-task-claim="CAP-05.S02.T02" data-task-owner="codex-w2-implementation" data-task-branch="codex/w2-implementation" data-task-base-sha="ce14e0dcb0c8578f6514b900fa3baf24039a435d"><strong>Claim projection:</strong> owner <code>codex-w2-implementation</code> · branch <code>codex/w2-implementation</code> · base <code>ce14e0dcb0c8578f6514b900fa3baf24039a435d</code></p>
 </section>
 <section class="task-summary" data-task-plan="CAP-05.S02.T02" data-task-plan-sha256="87484cd0d82e22f8c921e9602dc6a1115baaa1642fb8be6d0ea95d10e2d575f6"><div class="section-heading"><span class="eyebrow">Approved implementation intent</span><h2>Task plan</h2></div><article class="plan-article compact-article"><pre class='markdown-fallback'>### 9.2 `CAP-05.S02.T02` - Implement native JATS/TEI/XML/HTML parsing
 **Objective:** Namespace-aware parsers for titles, abstracts, sections, paragraphs, lists, footnotes, tables, figures, references, and in-text citations.
@@ -86,13 +86,56 @@
 python tools/verify.py --profile documents
 ```</pre></article></section>
 <section class="section-heading"><span class="eyebrow">Task-start planning</span><h2>Assigned worksheet</h2><p>The worksheet is an optional planning aid and does not create a new approval or task state.</p></section>
-<p class="decision-meta" data-task-worksheet-absent="CAP-05.S02.T02">No optional task-start worksheet is assigned. This does not block execution.</p>
+
+<details class="plan-details task-worksheet" open data-task-worksheet="CAP-05.S02.T02" data-worksheet-sha256="c453108f8016d5a9ce7826408b7d94b313d3fae6201a18f4c11fa7e2c4c9c247">
+  <summary>Assigned task-start worksheet</summary>
+  <div class="worksheet-meta"><strong>Source:</strong> <code>artifacts/evidence/CAP-05.S02.T02.task-start.md</code> · <strong>SHA-256:</strong> <code>c453108f8016d5a9ce7826408b7d94b313d3fae6201a18f4c11fa7e2c4c9c247</code></div>
+  <article class="plan-article"><pre class='markdown-fallback'># CAP-05.S02.T02 — native structured parsing acceptance closure
+
+Claim base: `ce14e0dcb0c8578f6514b900fa3baf24039a435d`. The owned W2
+claim is recorded by `artifacts/tmp/CAP-05.S02.T02.claim-01.txt`.
+CAP-05.S02.T01 is DONE, independently approved and locally integrated.
+
+Authority: approved CAP-05.S02 plan section 9.2, accepted ADR-0028/ADR-0029,
+and the version-1 staged parser contracts. This task implements secure native
+JATS/TEI/XML/HTML extraction and its validated IR adapter. Native execution,
+encrypted raw-output persistence, Docling, packaged resource qualification and
+integrated recovery remain CAP-05.S02.T03. Revisions/acceptance and the reader
+remain later slices. No UI, migration or automation-framework development is
+selected.
+
+## Material acceptance and proof
+
+| Boundary | Required behavior | Planned proof |
+|---|---|---|
+| Golden structure/text | Retain ordered titles, abstracts, sections, paragraphs, lists, footnotes, references, citation markers, tables/cells and figures/captions. Recognize only the appropriate namespace vocabulary; preserve other elements as typed unknowns. | Declared synthetic JATS, TEI, generic XML and inert HTML fixtures with independently authored hierarchy/text expectations; namespace and mixed-content cases. |
+| Unknown source locations | Retain qualified types, decoded text, original hierarchy and distinct source-byte anchors, including empty elements. Byte locations and normalized code-point positions are separate. | Adjacent empty foreign elements and a combining-mark child; exact fixture byte slices, raw-element identities and node/projection linkage. |
+| Normalization | Each named element projection uses existing Unicode16 NFC/newline-only rules. Composition across inline children must not fabricate child offsets. | Parent/child composition, supplementary scalars, physical CRLF/CR, numeric/predefined entities and CDATA expectations; existing normalization regressions. |
+| Raw-element identity | Each IR node/projection corresponds to one authenticated receipt element and its exact decoded-text interval. Preserve the nearest source parent except the documented direct-table-parent transformation. | Duplicate/aliased element indexes, contradictory parent/range mutations and the empty-element golden regression; source hierarchy remains in the raw receipt. |
+| Trust and authority | Require exact source digest/length/format, selected producer, job/attempt and independently supplied raw-artifact receipt. Worker fields cannot grant these identities. | Authenticated-port boundary substitutions and malformed/duplicate/nonfinite wire rejection; staged result validation. |
+| Scholarly uncertainty | Keep unresolved or ambiguous reference targets explicit, preserve observed identifiers and cell spans, and expose unsupported table geometry. Never infer a source, link, confidence or missing row. | Duplicate/missing targets, nested tables, explicit row/column spans and unrepresentable geometry fixtures; raw attributes remain retained. |
+| Hostile input/resources | Deny DTD/entity resolution, processing instructions, active HTML and malformed content; enforce existing source/output/depth bounds and cancellation without usable partial output. | Small deterministic hostile/malformed/depth/cancellation fixtures and bounded size checks. Errors contain codes and retain no private validation exception. |
+| Principal and handoff | Hostile-byte parsing belongs only in worker modules. Core consumes a validated raw delivery and has no canonical write port. | Real native algorithm plus Core adapter on test-owned synthetic bytes, strict receipt validation and existing protected-source/rights/session tests. In-memory transport doubles are explicit; they do not qualify LPAC or encrypted output persistence. |
+| Compatibility/evidence | Preserve existing IR/request/result versions and consumers; publish the new versioned native raw contract and documentation within approved scope. | Existing parser regressions, generated schema checks and affected quality/architecture checks at a committed candidate. Broader fresh slice/Wave checks remain deferred. |
+
+The read-only independent preflight by `agent:/root/s02_t01_review` confirmed
+that the existing IR supports named per-element projections and empty unknown
+blocks, with physical byte anchors retained in the raw artifact. It identified
+the raw-element-to-IR identity invariant above and the adjacent-empty-element
+fixture. This is advisory design input, not a task approval.
+
+First tests precede production edits. Selection is limited to native/parser
+contracts and directly affected schema, format, lint, types and architecture.
+No unchanged full profile, history audit or runtime build is selected at this
+task stage. Fresh independent task disposition and later slice/Wave gates
+remain required.</pre></article>
+</details>
 <section class="section-heading"><span class="eyebrow">Execution evidence</span><h2>Review packets, rounds, and current projection</h2><p>Append-only controls retain every immutable round and finding closure. Pre-policy tasks remain explicitly latest-review-only.</p></section>
 
 <section class="review-toolbar" data-task-review-id="CAP-05.S02.T02" data-review-mode="latest-review-only">
   <h3>CAP-05.S02.T02 — Implement native JATS/TEI/XML/HTML parsing</h3>
   <p><strong>Legacy latest-review-only projection.</strong> No append-only review rounds are recorded; this view does not fabricate historical attempts.</p>
-  <dl class="summary-grid" data-current-review-projection="CAP-05.S02.T02" data-current-review-result="not-reviewed" data-current-reviewer="none" data-current-reviewed-at="none"><div><dt>Task status</dt><dd>READY</dd></div><div><dt>Latest result</dt><dd>not reviewed</dd></div><div><dt>Reviewer</dt><dd>none</dd></div><div><dt>Reviewed at</dt><dd><code>none</code></dd></div></dl>
+  <dl class="summary-grid" data-current-review-projection="CAP-05.S02.T02" data-current-review-result="not-reviewed" data-current-reviewer="none" data-current-reviewed-at="none"><div><dt>Task status</dt><dd>IN_PROGRESS</dd></div><div><dt>Latest result</dt><dd>not reviewed</dd></div><div><dt>Reviewer</dt><dd>none</dd></div><div><dt>Reviewed at</dt><dd><code>none</code></dd></div></dl>
   <p><strong>Latest notes:</strong> None</p>
 </section>
 <nav class="page-turn" aria-label="Task navigation"><a class="button button-quiet" href="CAP-05.S02.T01.html">Previous</a><a class="button button-primary" href="CAP-05.S02.T03.html">Next</a></nav>

@@ -1,0 +1,206 @@
+{
+  "$defs": {
+    "Digest": {
+      "pattern": "^[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "NativeAttribute": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "$ref": "#/$defs/research_observatory_core__parsing__contracts__Text__2"
+        },
+        "value": {
+          "$ref": "#/$defs/research_observatory_core__parsing__contracts__Text__1"
+        }
+      },
+      "required": [
+        "name",
+        "value"
+      ],
+      "title": "NativeAttribute",
+      "type": "object"
+    },
+    "NativeElement": {
+      "additionalProperties": false,
+      "properties": {
+        "index": {
+          "$ref": "#/$defs/research_observatory_core__parsing__contracts__Count__1"
+        },
+        "parentIndex": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/research_observatory_core__parsing__contracts__Count__1"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "name": {
+          "$ref": "#/$defs/research_observatory_core__parsing__contracts__Text__2"
+        },
+        "attributes": {
+          "items": {
+            "$ref": "#/$defs/NativeAttribute"
+          },
+          "title": "Attributes",
+          "type": "array"
+        },
+        "byteStart": {
+          "$ref": "#/$defs/research_observatory_core__parsing__contracts__Count__1"
+        },
+        "byteEnd": {
+          "$ref": "#/$defs/research_observatory_core__parsing__contracts__Count__1"
+        },
+        "contentByteStart": {
+          "$ref": "#/$defs/research_observatory_core__parsing__contracts__Count__1"
+        },
+        "contentByteEnd": {
+          "$ref": "#/$defs/research_observatory_core__parsing__contracts__Count__1"
+        },
+        "textStart": {
+          "$ref": "#/$defs/research_observatory_core__parsing__contracts__Count__1"
+        },
+        "textEnd": {
+          "$ref": "#/$defs/research_observatory_core__parsing__contracts__Count__1"
+        },
+        "closeKind": {
+          "enum": [
+            "empty",
+            "explicit",
+            "implicit"
+          ],
+          "title": "Closekind",
+          "type": "string"
+        }
+      },
+      "required": [
+        "index",
+        "parentIndex",
+        "name",
+        "attributes",
+        "byteStart",
+        "byteEnd",
+        "contentByteStart",
+        "contentByteEnd",
+        "textStart",
+        "textEnd",
+        "closeKind"
+      ],
+      "title": "NativeElement",
+      "type": "object"
+    },
+    "NativeTextRun": {
+      "additionalProperties": false,
+      "properties": {
+        "ownerIndex": {
+          "$ref": "#/$defs/research_observatory_core__parsing__contracts__Count__1"
+        },
+        "byteStart": {
+          "$ref": "#/$defs/research_observatory_core__parsing__contracts__Count__1"
+        },
+        "byteEnd": {
+          "$ref": "#/$defs/research_observatory_core__parsing__contracts__Count__1"
+        },
+        "textStart": {
+          "$ref": "#/$defs/research_observatory_core__parsing__contracts__Count__1"
+        },
+        "textEnd": {
+          "$ref": "#/$defs/research_observatory_core__parsing__contracts__Count__1"
+        }
+      },
+      "required": [
+        "ownerIndex",
+        "byteStart",
+        "byteEnd",
+        "textStart",
+        "textEnd"
+      ],
+      "title": "NativeTextRun",
+      "type": "object"
+    },
+    "research_observatory_core__parsing__contracts__Count__1": {
+      "maximum": 9007199254740991,
+      "minimum": 0,
+      "type": "integer"
+    },
+    "research_observatory_core__parsing__contracts__Count__2": {
+      "maximum": 134217728,
+      "minimum": 0,
+      "type": "integer"
+    },
+    "research_observatory_core__parsing__contracts__Text__1": {
+      "type": "string"
+    },
+    "research_observatory_core__parsing__contracts__Text__2": {
+      "minLength": 1,
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schemaVersion": {
+      "const": "1.0",
+      "title": "Schemaversion",
+      "type": "string"
+    },
+    "format": {
+      "enum": [
+        "jats",
+        "tei",
+        "xml",
+        "html"
+      ],
+      "title": "Format",
+      "type": "string"
+    },
+    "sourceSha256": {
+      "$ref": "#/$defs/Digest"
+    },
+    "sourceByteLength": {
+      "$ref": "#/$defs/research_observatory_core__parsing__contracts__Count__2"
+    },
+    "text": {
+      "$ref": "#/$defs/research_observatory_core__parsing__contracts__Text__1"
+    },
+    "elements": {
+      "items": {
+        "$ref": "#/$defs/NativeElement"
+      },
+      "maxItems": 1000000,
+      "minItems": 1,
+      "title": "Elements",
+      "type": "array"
+    },
+    "textRuns": {
+      "items": {
+        "$ref": "#/$defs/NativeTextRun"
+      },
+      "title": "Textruns",
+      "type": "array"
+    }
+  },
+  "required": [
+    "schemaVersion",
+    "format",
+    "sourceSha256",
+    "sourceByteLength",
+    "text",
+    "elements",
+    "textRuns"
+  ],
+  "title": "NativeStructure",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://research-observatory.local/contracts/documents/native-structure.v1.schema.json",
+  "x-research-observatory-semanticRules": [
+    "original-source-byte-anchors-distinct-from-decoded-codepoints",
+    "unique-preorder-element-index-and-exact-nearest-source-parent",
+    "nonoverlapping-markup-and-owned-text-runs-cover-decoded-text",
+    "element-text-interval-equals-source-content-boundary-contributors",
+    "exact-selected-source-format-digest-length-and-parent-authenticated-artifact",
+    "no-worker-receipt-producer-attempt-storage-or-acceptance-authority",
+    "strict-utf8-json-unique-fields-no-nonfinite-and-64-mib-wire-cap"
+  ]
+}

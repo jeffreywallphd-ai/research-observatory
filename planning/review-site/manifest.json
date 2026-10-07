@@ -21608,7 +21608,7 @@
             {
               "task_id": "CAP-05.S02.T02",
               "title": "Implement native JATS/TEI/XML/HTML parsing",
-              "status": "READY",
+              "status": "IN_PROGRESS",
               "mode": "latest-review-only",
               "latest_review": {
                 "reviewer": null,
@@ -21656,18 +21656,21 @@
             {
               "task_id": "CAP-05.S02.T02",
               "title": "Implement native JATS/TEI/XML/HTML parsing",
-              "status": "READY",
+              "status": "IN_PROGRESS",
               "page": "CAP-05/CAP-05.S02.T02.html",
               "dependencies": [
                 "CAP-05.S02.T01"
               ],
               "claim": {
-                "owner": null,
-                "branch": null,
-                "base_sha": null
+                "owner": "codex-w2-implementation",
+                "branch": "codex/w2-implementation",
+                "base_sha": "ce14e0dcb0c8578f6514b900fa3baf24039a435d"
               },
               "plan_section_sha256": "87484cd0d82e22f8c921e9602dc6a1115baaa1642fb8be6d0ea95d10e2d575f6",
-              "worksheet": null
+              "worksheet": {
+                "path": "artifacts/evidence/CAP-05.S02.T02.task-start.md",
+                "sha256": "c453108f8016d5a9ce7826408b7d94b313d3fae6201a18f4c11fa7e2c4c9c247"
+              }
             },
             {
               "task_id": "CAP-05.S02.T03",

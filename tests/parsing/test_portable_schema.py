@@ -14,6 +14,7 @@ from pydantic import ValidationError  # noqa: E402
 from research_observatory_core.parsing.contracts import DocumentIR  # noqa: E402
 
 from tests.parsing.contract_fixtures import rich_ir_wire  # noqa: E402
+from tests.parsing.test_native_parsing import native_parse  # noqa: E402
 from tests.parsing.test_parse_handoff import delivery, request  # noqa: E402
 
 
@@ -57,6 +58,19 @@ class PortableParserSchemaTests(unittest.TestCase):
         self.validator("document-ir.v1.schema.json").validate(value)
         with self.assertRaises(ValidationError):
             DocumentIR.model_validate(value)
+
+    def test_native_raw_schema_keeps_byte_origins_and_semantic_authority_separate(self):
+        from research_observatory_core.parsing.native_contracts import NativeStructure
+
+        _, value, _, _ = native_parse(b"<p>A<em>B</em></p>", "xml")
+        validator = self.validator("native-structure.v1.schema.json")
+        validator.validate(value)
+        value["elements"][1]["textStart"] = 0
+        validator.validate(value)
+        with self.assertRaises(ValidationError):
+            NativeStructure.model_validate(value)
+        value["producer"] = "worker-echo-cannot-grant-authority"
+        self.assertTrue(list(validator.iter_errors(value)))
 
 
 if __name__ == "__main__":

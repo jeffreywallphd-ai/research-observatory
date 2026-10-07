@@ -14,6 +14,7 @@ ROOT = Path(__file__).resolve().parents[3]
 sys.path.insert(0, str(ROOT / "services/core-api/src"))
 
 from research_observatory_core.parsing.contracts import DocumentIR  # noqa: E402
+from research_observatory_core.parsing.native_contracts import NativeStructure  # noqa: E402
 from research_observatory_core.parsing.requests import ParseRequest, ParseResult  # noqa: E402
 from research_observatory_core.parsing.selection import ParserSelection  # noqa: E402
 
@@ -22,6 +23,7 @@ OUTPUTS: dict[str, TypeAdapter[Any]] = {
     "parser-selection.v1.schema.json": TypeAdapter(ParserSelection),
     "parse-request.v1.schema.json": TypeAdapter(ParseRequest),
     "parse-result.v1.schema.json": TypeAdapter(ParseResult),
+    "native-structure.v1.schema.json": TypeAdapter(NativeStructure),
 }
 SEMANTIC_RULES = [
     "ro-text-nfc-1-unicode-16-newline-fold-and-exact-raw-origin-mapping",
@@ -43,7 +45,19 @@ def schema(name: str) -> dict[str, object]:
     result = OUTPUTS[name].json_schema(by_alias=True)
     result["$schema"] = "https://json-schema.org/draft/2020-12/schema"
     result["$id"] = f"https://research-observatory.local/contracts/documents/{name}"
-    result["x-research-observatory-semanticRules"] = SEMANTIC_RULES
+    result["x-research-observatory-semanticRules"] = (
+        [
+            "original-source-byte-anchors-distinct-from-decoded-codepoints",
+            "unique-preorder-element-index-and-exact-nearest-source-parent",
+            "nonoverlapping-markup-and-owned-text-runs-cover-decoded-text",
+            "element-text-interval-equals-source-content-boundary-contributors",
+            "exact-selected-source-format-digest-length-and-parent-authenticated-artifact",
+            "no-worker-receipt-producer-attempt-storage-or-acceptance-authority",
+            "strict-utf8-json-unique-fields-no-nonfinite-and-64-mib-wire-cap",
+        ]
+        if name == "native-structure.v1.schema.json"
+        else SEMANTIC_RULES
+    )
     return result
 
 

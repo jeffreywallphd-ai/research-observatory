@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 6ce9c36890d48beb5ca540dcc96c857123a32ac30151a1178143730029c9aa05
+source_sha256: 75890392e40f191ecc6d2d631c5ece02bf52196c1cbec1b7aeae8f19d902742d
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -11240,13 +11240,13 @@ Original tasks and approvals remain unchanged.
 
 #### - [ ] CAP-05.S02.T02 - Implement native JATS/TEI/XML/HTML parsing
 
-**Status / priority / estimate / risk:** `READY` / `P0` / `L` / `medium`
+**Status / priority / estimate / risk:** `IN_PROGRESS` / `P0` / `L` / `medium`
 
 **Profiles / platforms:** `LOC`, `LAB` / `windows-x64`
 
 **Dependencies:** `CAP-05.S02.T01`
 
-**Owner / review:** - / - (`-`)
+**Owner / review:** codex-w2-implementation / - (`-`)
 
 **Objective:** Namespace-aware parsers for titles, abstracts, sections, paragraphs, lists, footnotes, tables, figures, references, and in-text citations.
 
