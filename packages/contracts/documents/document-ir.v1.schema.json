@@ -1196,6 +1196,7 @@
     "ro-text-nfc-1-unicode-16-newline-fold-and-exact-raw-origin-mapping",
     "half-open-unicode-codepoint-ranges-not-byte-or-utf16-offsets",
     "ordered-unique-staged-identities-with-earlier-parent-and-valid-cross-references",
+    "reference-citation-cell-text-contained-in-the-linked-node-projection-and-text",
     "finite-unrotated-source-page-point-geometry-and-explicit-unavailable-locations",
     "reported-table-grid-has-no-overlap-ambiguous-grid-is-retained",
     "unknown-confidence-is-not-zero-and-quality-is-not-human-acceptance",

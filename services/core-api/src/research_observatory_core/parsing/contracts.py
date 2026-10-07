@@ -500,6 +500,20 @@ class DocumentIR(IRValue):
                 if locator.x1 > page.width or locator.y1 > page.height:
                     raise ValueError("ir-page-region-outside-source")
 
+        def node_content_valid(node_id: str, content: TextSpan) -> None:
+            span_valid(content)
+            text = nodes[node_id].text
+            # Both spans have exact contributor mappings. Containment in this
+            # projection therefore includes every raw contributor without an
+            # additional quadratic scan or a monotone raw-offset assumption.
+            if (
+                text is None
+                or content.projection_id != text.projection_id
+                or content.normalized_range.start < text.normalized_range.start
+                or content.normalized_range.end > text.normalized_range.end
+            ):
+                raise ValueError("ir-semantic-node-content-mismatch")
+
         for order, node in enumerate(self.nodes):
             if (
                 node.staged_id in nodes
@@ -535,7 +549,7 @@ class DocumentIR(IRValue):
             ):
                 raise ValueError("ir-reference-invalid")
             references.add(reference.staged_id)
-            span_valid(reference.raw_text)
+            node_content_valid(reference.node_id, reference.raw_text)
         citation_ids: set[str] = set()
         for citation in self.citations:
             if (
@@ -553,7 +567,7 @@ class DocumentIR(IRValue):
             ):
                 raise ValueError("ir-citation-state-invalid")
             citation_ids.add(citation.staged_id)
-            span_valid(citation.marker)
+            node_content_valid(citation.node_id, citation.marker)
         table_ids: set[str] = set()
         for table in self.tables:
             if table.node_id in table_ids or table.node_id not in nodes or nodes[table.node_id].kind != "table":
@@ -566,7 +580,7 @@ class DocumentIR(IRValue):
                     or nodes[cell.node_id].parent_id != table.node_id
                 ):
                     raise ValueError("ir-table-cell-parent-invalid")
-                span_valid(cell.raw_text)
+                node_content_valid(cell.node_id, cell.raw_text)
         artifacts = {a.stage_id: a for a in self.raw_artifacts}
         if len(artifacts) != len(self.raw_artifacts):
             raise ValueError("ir-artifact-duplicate")

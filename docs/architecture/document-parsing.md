@@ -19,6 +19,11 @@ receipts. Unknown elements keep their type and raw text. Quality dimensions and
 warnings remain separate; missing confidence is unknown, and a reported numeric
 value is no probability of correctness or acceptance. Reported table grids reject
 overlap; explicit ambiguous grids retain competing geometry for review.
+Reference strings, citation markers and cell text use their identified node's
+projection and a contained span of its decoded text. Missing node text or a
+contradictory projection/range is refused. Containment uses the exact normalized
+range and raw contributors, including reordered and noncontiguous contributors;
+it does not impose a new monotone-offset rule on legitimate Unicode mappings.
 
 `ro-text-nfc-1` pins Unicode 16.0.0 NFC plus CRLF/CR to LF. It preserves case,
 whitespace, ligatures and hyphenation. Text offsets are half-open Unicode code

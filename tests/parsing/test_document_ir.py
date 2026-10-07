@@ -15,6 +15,74 @@ from tests.parsing.contract_fixtures import ir, rich_ir_wire  # noqa: E402
 
 
 class DocumentIRTests(unittest.TestCase):
+    def test_semantic_content_cannot_borrow_another_node_or_projection(self):
+        for semantic_kind in ("reference", "citation", "cell"):
+            for substitution in ("other-node", "other-projection", "missing-node-text"):
+                value = rich_ir_wire()
+                if semantic_kind == "reference":
+                    record, field = value["references"][0], "rawText"
+                elif semantic_kind == "citation":
+                    record, field = value["citations"][0], "marker"
+                else:
+                    record, field = value["tables"][0]["cells"][0], "rawText"
+                if substitution == "other-node":
+                    record[field] = (
+                        value["citations"][0]["marker"]
+                        if semantic_kind == "reference"
+                        else value["references"][0]["rawText"]
+                    )
+                elif substitution == "other-projection":
+                    duplicate = json.loads(json.dumps(value["textProjections"][0]))
+                    duplicate["projectionId"] = "text-2"
+                    value["textProjections"].append(duplicate)
+                    record[field]["projectionId"] = "text-2"
+                else:
+                    linked = next(node for node in value["nodes"] if node["stagedId"] == record["nodeId"])
+                    linked["text"] = None
+                with self.subTest(kind=semantic_kind, substitution=substitution), self.assertRaises(ValidationError):
+                    DocumentIR.model_validate(value)
+
+    def test_semantic_content_may_be_contained_within_its_own_node(self):
+        value = rich_ir_wire()
+        value["references"][0]["rawText"].update(
+            normalizedRange={"start": 19, "end": 22}, rawRanges=[{"start": 19, "end": 22}]
+        )
+        value["citations"][0]["marker"].update(
+            normalizedRange={"start": 12, "end": 13}, rawRanges=[{"start": 12, "end": 13}]
+        )
+        result = DocumentIR.model_validate(value)
+        self.assertEqual(19, result.references[0].raw_text.normalized_range.start)
+        self.assertEqual(12, result.citations[0].marker.normalized_range.start)
+        self.assertEqual(31, result.tables[0].cells[0].raw_text.normalized_range.start)
+
+    def test_semantic_containment_preserves_noncontiguous_and_reordered_contributors(self):
+        value = ir().model_dump(mode="json", by_alias=True)
+        value["textProjections"] = [
+            TextProjection.from_raw("text-1", "D\u0307\u0323").model_dump(mode="json", by_alias=True)
+        ]
+        node = value["nodes"][0]
+        node["kind"] = "reference"
+        node["text"].update(normalizedRange={"start": 0, "end": 2})
+        for bounds, origins in (((0, 1), ((0, 1), (2, 3))), ((1, 2), ((1, 2),))):
+            value["references"] = [
+                {
+                    "stagedId": "reference-1",
+                    "nodeId": "node-1",
+                    "order": 0,
+                    "identifiers": [],
+                    "rawText": {
+                        "projectionId": "text-1",
+                        "normalizedRange": {"start": bounds[0], "end": bounds[1]},
+                        "rawRanges": [{"start": start, "end": end} for start, end in origins],
+                    },
+                }
+            ]
+            with self.subTest(bounds=bounds):
+                result = DocumentIR.model_validate(value)
+                self.assertEqual(
+                    origins, tuple((part.start, part.end) for part in result.references[0].raw_text.raw_ranges)
+                )
+
     def test_scholarly_structure_retains_spans_candidates_figures_and_unknowns(self):
         value = rich_ir_wire()
         result = DocumentIR.model_validate(value)

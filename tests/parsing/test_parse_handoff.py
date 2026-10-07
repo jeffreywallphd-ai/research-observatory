@@ -28,7 +28,7 @@ from research_observatory_core.ports.parsing import (  # noqa: E402
     ReadOnlyDocumentSource,
 )
 
-from tests.parsing.contract_fixtures import binding, descriptor, identity, ir, source  # noqa: E402
+from tests.parsing.contract_fixtures import binding, descriptor, identity, ir, rich_ir_wire, source  # noqa: E402
 
 
 def request():
@@ -61,6 +61,20 @@ def delivery(req, wire=None, producer=None, job_id=None, attempt_id=None):
 
 
 class ParseHandoffTests(unittest.TestCase):
+    def test_authenticated_wire_still_refuses_contradictory_citation_text(self):
+        req = request()
+        value = rich_ir_wire()
+        value["binding"] = req.binding.model_dump(mode="json", by_alias=True)
+        value["rawArtifacts"] = []
+        value["figures"][0]["previewStageId"] = None
+        envelope = {"schemaVersion": "1.0", "kind": "success", "binding": value["binding"], "ir": value}
+        self.assertEqual("success", decode_delivery(req, delivery(req, json.dumps(envelope).encode())).kind)
+        value["citations"][0]["marker"] = value["references"][0]["rawText"]
+        with self.assertRaises(ParseProblem) as caught:
+            decode_delivery(req, delivery(req, json.dumps(envelope).encode()))
+        self.assertEqual("parse-output-invalid", caught.exception.code)
+        self.assertIsNone(caught.exception.__context__)
+
     def test_cancellation_is_monotonic_and_callback_errors_fail_closed(self):
         req = request()
         actor = CorpusActor(identity(500), "a" * 32, "2026-10-07T00:00:00.000Z", identity(501), "b" * 64, "c" * 64)
