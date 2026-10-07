@@ -1,0 +1,162 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "W2.C15.T01",
+  "baseCommit": "68003a03f884176e043f2e0bed94d0c50a57ebba",
+  "commit": "cdf802d9b0bde6aef35f41f38370a23c76e2180f",
+  "branch": "codex/w2-implementation",
+  "changedFiles": [
+    "docs/planning-implementation-plan.md",
+    "planning/backlog.yaml",
+    "planning/review-site/manifest.json",
+    "planning/review-site/waves/W2.html",
+    "planning/status-summary.md",
+    "tests/connectors/test_plugin_grant_migration.py"
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "The full affected SDK migration class executes real protected SQLCipher migration from its exact encrypted v20 predecessor through the approved additive current schema 25. It verifies exact migration IDs and all five history rows, current v0025/storage fingerprints, idempotent-current classification, actual reopen, encrypted predecessor header, verified backup bytes and source20/current25 recovery-manifest values. All acquisition and intake/recovery/access-need tables remain empty; grant events remain empty.",
+        "Only the stale current-target fixture assertions are restored. The immutable v20 constructor, original first three history rows, source20/profile/schema metadata and product migration implementation are unchanged. Original T03/S01 authority and historical evidence are preserved. Synthetic memory-key SQLCipher tests establish this encrypted fixture boundary, without a new production DPAPI, LPAC or installed-runtime claim."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "The retained actual one-case diagnostic at 81627fae fails on the stale current migration ID expectation before migration executes. At the corrected committed candidate both existing methods execute without skips, including every original v21 material-step failure subtest. Failure classification, exact source20 fingerprint and migration replan, rollback, final retry, verified encrypted backup and reopen checks are retained. Changed-file Ruff format/lint and nonincremental ordinary-import mypy pass without silent-import mode or suppression."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "The sole admitted test path adds explicit v0024/v0025 IDs and exact appended history rows, names its current-v25 helper accurately, advances only current target/fingerprint/manifest assertions and checks newly added tables are empty. No predecessor DDL regeneration, historical row replacement, criterion/threshold relaxation, schema/migration implementation, security/rights/UX/framework source edit or original approval/history mutation occurs. Normal task claim and checked generated planning views are included in the exact candidate delta.",
+        "Historical S01/C13/C14 support is authenticated for unchanged boundaries only; the actual stale-target FAIL remains unchanged. Independent correction/integration review, ordinary campaign resume, fresh CP07, remaining W2 product tasks, full Wave qualification and separate human G2 remain distinct."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "verificationSelection": {
+    "selectedCommandIds": [
+      "service:unit",
+      "foundation:quality"
+    ],
+    "riskAnalysis": "The single changed SDK fixture incorrectly stops current expectations at schema23. Full affected encrypted migration class covers the exact predecessor, historical chain, all original failure steps, rollback/retry/backup/reopen and new empty tables. Changed-file quality and default-import type proof cover the exact edit. Expanded independent migration fixture/corrective integration review is required; no unrelated passing suite is replayed.",
+    "deferred": [
+      "Fresh cluster2 rights/SDK/LPAC/acquisition/native/installed and build/smoke qualification remains W2.CP07 after independent correction approval and ordinary campaign resume.",
+      "Fresh full repository/profile, complete cross-capability, security/privacy/rights/accessibility/performance/packaging and separate human G2 release remain W2 exit obligations."
+    ]
+  },
+  "checks": [
+    {
+      "id": "encrypted-v20-migration",
+      "exitCode": 0,
+      "durationSeconds": 3.704,
+      "rawOutput": "artifacts/tmp/W2.C15.T01.selected-01-cdf802d9.encrypted-v20-migration.log",
+      "rawOutputSha256": "fee1ba7d2a6bcf966780880f6785a52b1abbbaeb53a58ce69c418598ecef56fd",
+      "command": ".venv/Scripts/python.exe -B -m unittest -v tests.connectors.test_plugin_grant_migration.PluginGrantMigrationTests",
+      "commit": "cdf802d9b0bde6aef35f41f38370a23c76e2180f",
+      "result": "PASS",
+      "rawOutputCanonicalSha256": "163be5c1930a1775e42a56402a51c6f8672fb9b99a10bdb615914d4913cf69a5",
+      "inputReport": "artifacts/tmp/W2.C15.T01.selected-01-cdf802d9.json",
+      "inputReportSha256": "88e7c307c1ded580f91a6c46fca579ae16fdd349e0be5be61429e4e6c09bafc9",
+      "provenance": "Fresh fixed committed Windows x64 candidate; all inventoried tracked/Python inputs held against write/delete and equal before/after.",
+      "executedUnittestCases": 2
+    },
+    {
+      "id": "format",
+      "exitCode": 0,
+      "durationSeconds": 0.155,
+      "rawOutput": "artifacts/tmp/W2.C15.T01.selected-01-cdf802d9.format.log",
+      "rawOutputSha256": "fd2299c9f1c6dc869070883e281051bfe93aacf66c1a3b0069f45b4aa410ca50",
+      "command": ".venv/Scripts/python.exe -B -m ruff format --check --config pyproject.toml -- tests/connectors/test_plugin_grant_migration.py",
+      "commit": "cdf802d9b0bde6aef35f41f38370a23c76e2180f",
+      "result": "PASS",
+      "rawOutputCanonicalSha256": "fd2299c9f1c6dc869070883e281051bfe93aacf66c1a3b0069f45b4aa410ca50",
+      "inputReport": "artifacts/tmp/W2.C15.T01.selected-01-cdf802d9.json",
+      "inputReportSha256": "88e7c307c1ded580f91a6c46fca579ae16fdd349e0be5be61429e4e6c09bafc9",
+      "provenance": "Fresh fixed committed Windows x64 candidate; all inventoried tracked/Python inputs held against write/delete and equal before/after."
+    },
+    {
+      "id": "lint",
+      "exitCode": 0,
+      "durationSeconds": 0.142,
+      "rawOutput": "artifacts/tmp/W2.C15.T01.selected-01-cdf802d9.lint.log",
+      "rawOutputSha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18",
+      "command": ".venv/Scripts/python.exe -B -m ruff check --config pyproject.toml -- tests/connectors/test_plugin_grant_migration.py",
+      "commit": "cdf802d9b0bde6aef35f41f38370a23c76e2180f",
+      "result": "PASS",
+      "rawOutputCanonicalSha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18",
+      "inputReport": "artifacts/tmp/W2.C15.T01.selected-01-cdf802d9.json",
+      "inputReportSha256": "88e7c307c1ded580f91a6c46fca579ae16fdd349e0be5be61429e4e6c09bafc9",
+      "provenance": "Fresh fixed committed Windows x64 candidate; all inventoried tracked/Python inputs held against write/delete and equal before/after."
+    },
+    {
+      "id": "types",
+      "exitCode": 0,
+      "durationSeconds": 4.851,
+      "rawOutput": "artifacts/tmp/W2.C15.T01.selected-01-cdf802d9.types.log",
+      "rawOutputSha256": "8e63ae22e8213e327a5e9cbd584067681681bd8ef7f25c869877887ccdcfc4ff",
+      "command": "$env:MYPYPATH='tools;services/core-api/src'; .venv/Scripts/python.exe -B -m mypy --config-file pyproject.toml --no-namespace-packages --no-incremental -- tests/connectors/test_plugin_grant_migration.py",
+      "commit": "cdf802d9b0bde6aef35f41f38370a23c76e2180f",
+      "result": "PASS",
+      "rawOutputCanonicalSha256": "5d4b6d285b77932e3d08212c3b4974d0a803f98ec60408ac6ccf6a063fa6c19e",
+      "inputReport": "artifacts/tmp/W2.C15.T01.selected-01-cdf802d9.json",
+      "inputReportSha256": "88e7c307c1ded580f91a6c46fca579ae16fdd349e0be5be61429e4e6c09bafc9",
+      "provenance": "Fresh fixed committed Windows x64 candidate; all inventoried tracked/Python inputs held against write/delete and equal before/after."
+    }
+  ],
+  "correctiveIntegration": {
+    "originSha256": "f74b32f21cdea4d6810e2651e892075295f377fba52d8cb924d1e74d9d76b16e",
+    "authorityPreserved": true,
+    "affectedChecks": [
+      ".venv/Scripts/python.exe -B -m unittest -v tests.connectors.test_plugin_grant_migration.PluginGrantMigrationTests",
+      ".venv/Scripts/python.exe -B -m ruff format --check --config pyproject.toml -- tests/connectors/test_plugin_grant_migration.py",
+      ".venv/Scripts/python.exe -B -m ruff check --config pyproject.toml -- tests/connectors/test_plugin_grant_migration.py",
+      "$env:MYPYPATH='tools;services/core-api/src'; .venv/Scripts/python.exe -B -m mypy --config-file pyproject.toml --no-namespace-packages --no-incremental -- tests/connectors/test_plugin_grant_migration.py"
+    ],
+    "reusedEvidence": [
+      {
+        "path": "artifacts/evidence/CAP-05.S01.qualification-01.json",
+        "sha256": "7ceee8b56fc24ab76bb2536a058143a06f3ec549e292645fc8ca3ca6055d98ef"
+      },
+      {
+        "path": "artifacts/evidence/CAP-05.S01.review-01.json",
+        "sha256": "0d0cb37286fc91906ec8b9fa1dd6c8daab401ba355dd5651a6313fd52a4c1d9f"
+      },
+      {
+        "path": "artifacts/evidence/W2.C13.T01.R01.json",
+        "sha256": "e7253f250c2345a47c53f59ffd3d69c92463b9032f01de0db2bd816dada8253c"
+      },
+      {
+        "path": "artifacts/evidence/W2.C13.T01.review-R01.json",
+        "sha256": "ca39f97f02a618767c484a73156902cf0beca4ac7e89bf931aacc898d5560287"
+      },
+      {
+        "path": "artifacts/evidence/W2.C14.T01.R01.json",
+        "sha256": "f10efc2d042d3212b2dbe2708352a5ba29e71c90a255e0d1feec943a69d142b4"
+      },
+      {
+        "path": "artifacts/evidence/W2.C14.T01.review-R01.json",
+        "sha256": "196154c2e58770041fc350744184ce3a629b94c9fd262fa5eee97b1d46d649fa"
+      }
+    ],
+    "rationale": "Restore current schema25 expectations for the original exact encrypted SDK predecessor fixture without changing the predecessor, historical rows, original faults or production behavior. Current full affected class and ordinary-import quality proof close the specifically demonstrated stale assertion. Historical S01/C13/C14 support stays historical; no broader qualification or release claim follows."
+  },
+  "retainedRedObservation": {
+    "path": "artifacts/tmp/W2.C15.T01.red-01-81627fae.json",
+    "sha256": "750743baa137ae764aa52fd6174fd0e04942bbf7221ed7ff68e4b931949ccb6a"
+  },
+  "retainedRedLog": {
+    "path": "artifacts/tmp/W2.C15.T01.red-01-81627fae.encrypted-v20-current-migration-fixture.log",
+    "sha256": "114b8d1a3f31deffb86134950e8f059ca4bfb8376ebfe395804faa86061c8958"
+  },
+  "freshObservation": {
+    "path": "artifacts/tmp/W2.C15.T01.selected-01-cdf802d9.json",
+    "sha256": "88e7c307c1ded580f91a6c46fca579ae16fdd349e0be5be61429e4e6c09bafc9"
+  },
+  "producer": {
+    "path": "artifacts/tmp/W2.C15.T01.run-selected-01.py",
+    "sha256": "2479dc85f5221929638b97bc40915fd9deb8e5b3356472d645c35f59a277d9c5"
+  }
+}

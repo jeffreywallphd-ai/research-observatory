@@ -3291,7 +3291,7 @@
         {
           "task_id": "W2.C15.T01",
           "title": "Create acquisition queue, conflict, and entitlement placeholders",
-          "status": "IN_PROGRESS",
+          "status": "REVIEW",
           "acceptance_criteria": [
             "Partial acquisitions resume or clean up safely; multiple copies remain distinguishable; lack of full text does not remove the metadata record or fabricate availability.",
             "Automated tests cover the expected path and at least one material failure or boundary condition.",
@@ -3320,7 +3320,7 @@
           "task_review": {
             "task_id": "W2.C15.T01",
             "title": "Create acquisition queue, conflict, and entitlement placeholders",
-            "status": "IN_PROGRESS",
+            "status": "REVIEW",
             "mode": "append-only",
             "latest_review": {
               "reviewer": null,
@@ -3331,7 +3331,50 @@
             "review_control": {
               "version": 1,
               "attempts": [],
-              "current_submission": null
+              "current_submission": {
+                "id": "R01",
+                "submitted_by": "codex-w2-implementation",
+                "submitted_at": "2026-10-07T06:35:17+00:00",
+                "candidate_commit": "cdf802d9b0bde6aef35f41f38370a23c76e2180f",
+                "base_commit": "68003a03f884176e043f2e0bed94d0c50a57ebba",
+                "branch": "codex/w2-implementation",
+                "evidence_reference": {
+                  "type": "criterion-manifest",
+                  "path": "artifacts/evidence/W2.C15.T01.R01.json",
+                  "sha256": "6e89b0a7755404c1e40262286591e8f7221a8581f903396e4c5be92a481f14e1",
+                  "commit": "cdf802d9b0bde6aef35f41f38370a23c76e2180f",
+                  "recorded_at": "2026-10-07T06:35:17+00:00"
+                },
+                "acceptance_criteria_sha256": "b883d7d0c83c26edeafbf97cf02f0dde8e3e38b55b4629d221960d1acaa72e43",
+                "changed_paths": [
+                  "docs/planning-implementation-plan.md",
+                  "planning/backlog.yaml",
+                  "planning/review-site/manifest.json",
+                  "planning/review-site/waves/W2.html",
+                  "planning/status-summary.md",
+                  "tests/connectors/test_plugin_grant_migration.py"
+                ],
+                "selected_checks": [
+                  ".venv/Scripts/python.exe -B -m unittest -v tests.connectors.test_plugin_grant_migration.PluginGrantMigrationTests",
+                  ".venv/Scripts/python.exe -B -m ruff format --check --config pyproject.toml -- tests/connectors/test_plugin_grant_migration.py",
+                  ".venv/Scripts/python.exe -B -m ruff check --config pyproject.toml -- tests/connectors/test_plugin_grant_migration.py",
+                  "$env:MYPYPATH='tools;services/core-api/src'; .venv/Scripts/python.exe -B -m mypy --config-file pyproject.toml --no-namespace-packages --no-incremental -- tests/connectors/test_plugin_grant_migration.py"
+                ],
+                "deferred_checks": [
+                  "Fresh cluster2 rights/SDK/LPAC/acquisition/native/installed and build/smoke qualification remains W2.CP07 after independent correction approval and ordinary campaign resume.",
+                  "Fresh full repository/profile, complete cross-capability, security/privacy/rights/accessibility/performance/packaging and separate human G2 release remain W2 exit obligations."
+                ],
+                "selection_rationale": "The single changed SDK fixture incorrectly stops current expectations at schema23. Full affected encrypted migration class covers the exact predecessor, historical chain, all original failure steps, rollback/retry/backup/reopen and new empty tables. Changed-file quality and default-import type proof cover the exact edit. Expanded independent migration fixture/corrective integration review is required; no unrelated passing suite is replayed.",
+                "selection_sha256": "f04b5f320eb6c4de9807a353635c98ce6c644297643f70febbc52bf3f4a24ef1",
+                "prior_attempt_id": null,
+                "open_finding_ids": [],
+                "root_cause_analysis": null,
+                "selected_command_ids": [
+                  "service:unit",
+                  "foundation:quality"
+                ],
+                "packet_sha256": "9bc0e259e9673caf77f58e168ea292f67e55c120f996302024df0fa95e70795d"
+              }
             }
           }
         }

@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 568b2e86d25792954a8c48de010429e6b20b0b003fe71532c99f9df9ea5771b1
+source_sha256: f0641143131b466e9aa68bd10449e8c500c5e26f58f50e46f26011c546eae223
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -4447,7 +4447,7 @@ Original tasks and approvals remain unchanged.
 
 ### W2.C15.T01 — Create acquisition queue, conflict, and entitlement placeholders
 
-**Status:** `IN_PROGRESS`. **Original task:** `CAP-05.S01.T03`. **Latest review:** `-`.
+**Status:** `REVIEW`. **Original task:** `CAP-05.S01.T03`. **Latest review:** `-`.
 
 **Reproduction:** At clean committed81627fae5382e402ae5a3fc43ada941fcb33bebe, the existing exact encrypted v20 SDK migration fixture expects the current chain to end at0023 although the approved runner correctly adds0024 and0025. Its first actual case fails at the plan migration_ids assertion; later current23 fingerprint/history/manifest assertions are also stale. Fresh bounded1-case actualFAIL is retained in artifacts/tmp/W2.C15.T01.red-01-81627fae.json SHA256 750743baa137ae764aa52fd6174fd0e04942bbf7221ed7ff68e4b931949ccb6a; raw log artifacts/tmp/W2.C15.T01.red-01-81627fae.encrypted-v20-current-migration-fixture.log SHA256 114b8d1a3f31deffb86134950e8f059ca4bfb8376ebfe395804faa86061c8958. Guarded13444 inputs are stable. This is not a product migration failure or new qualification.
 
@@ -4464,7 +4464,19 @@ Original tasks and approvals remain unchanged.
 
 **Review mode:** `append-only v1` / 0 completed round(s)
 
-**Current immutable submission awaiting review:** None
+**Current immutable submission awaiting review:** `R01` / packet SHA-256 `9bc0e259e9673caf77f58e168ea292f67e55c120f996302024df0fa95e70795d`
+
+- Candidate / base / branch: `cdf802d9b0bde6aef35f41f38370a23c76e2180f` / `68003a03f884176e043f2e0bed94d0c50a57ebba` / `codex/w2-implementation`
+- Submitted by / at: codex-w2-implementation / `2026-10-07T06:35:17+00:00`
+- Evidence: `artifacts/evidence/W2.C15.T01.R01.json` / `6e89b0a7755404c1e40262286591e8f7221a8581f903396e4c5be92a481f14e1` / `cdf802d9b0bde6aef35f41f38370a23c76e2180f`
+- Acceptance-criteria SHA-256: `b883d7d0c83c26edeafbf97cf02f0dde8e3e38b55b4629d221960d1acaa72e43`
+- Verification-selection SHA-256: `f04b5f320eb6c4de9807a353635c98ce6c644297643f70febbc52bf3f4a24ef1`
+- Changed paths: `docs/planning-implementation-plan.md`, `planning/backlog.yaml`, `planning/review-site/manifest.json`, `planning/review-site/waves/W2.html`, `planning/status-summary.md`, `tests/connectors/test_plugin_grant_migration.py`
+- Selected checks: `.venv/Scripts/python.exe -B -m unittest -v tests.connectors.test_plugin_grant_migration.PluginGrantMigrationTests`, `.venv/Scripts/python.exe -B -m ruff format --check --config pyproject.toml -- tests/connectors/test_plugin_grant_migration.py`, `.venv/Scripts/python.exe -B -m ruff check --config pyproject.toml -- tests/connectors/test_plugin_grant_migration.py`, `$env:MYPYPATH='tools;services/core-api/src'; .venv/Scripts/python.exe -B -m mypy --config-file pyproject.toml --no-namespace-packages --no-incremental -- tests/connectors/test_plugin_grant_migration.py`
+- Deferred checks: `Fresh cluster2 rights/SDK/LPAC/acquisition/native/installed and build/smoke qualification remains W2.CP07 after independent correction approval and ordinary campaign resume.`, `Fresh full repository/profile, complete cross-capability, security/privacy/rights/accessibility/performance/packaging and separate human G2 release remain W2 exit obligations.`
+- Selection rationale: The single changed SDK fixture incorrectly stops current expectations at schema23. Full affected encrypted migration class covers the exact predecessor, historical chain, all original failure steps, rollback/retry/backup/reopen and new empty tables. Changed-file quality and default-import type proof cover the exact edit. Expanded independent migration fixture/corrective integration review is required; no unrelated passing suite is replayed.
+- Prior round / replayed open findings: `-` / -
+- Root-cause escalation: -
 
 **Current latest-review projection:** `-` by - at `-`
 

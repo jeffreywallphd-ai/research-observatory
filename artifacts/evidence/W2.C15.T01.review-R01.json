@@ -1,0 +1,219 @@
+{
+  "task_id": "W2.C15.T01",
+  "attempt_id": "R01",
+  "candidate_commit": "cdf802d9b0bde6aef35f41f38370a23c76e2180f",
+  "base_commit": "68003a03f884176e043f2e0bed94d0c50a57ebba",
+  "reviewer": "agent:/root/s01_integration_review",
+  "result": "approved",
+  "reviewed_at": "2026-10-07T06:42:54Z",
+  "evidence_sha256": "6e89b0a7755404c1e40262286591e8f7221a8581f903396e4c5be92a481f14e1",
+  "packet_sha256": "9bc0e259e9673caf77f58e168ea292f67e55c120f996302024df0fa95e70795d",
+  "acceptance_criteria_sha256": "b883d7d0c83c26edeafbf97cf02f0dde8e3e38b55b4629d221960d1acaa72e43",
+  "selection_sha256": "f04b5f320eb6c4de9807a353635c98ce6c644297643f70febbc52bf3f4a24ef1",
+  "notes": "Independent expanded migration-fixture and corrective-integration review approves only actual frozen W2.C15.T01 R01 at cdf802d9/base 68003a03. The sole admitted SDK test fixture restores current schema25 IDs, explicit appended history rows, current fingerprint/helper/manifest expectations and empty additive tables. Immutable Git comparisons preserve the exact encrypted v20 constructor, first three historical rows and every original test assertion apart from admitted current-target/helper changes. Full affected protected SQLCipher class executes both original methods without skips, including all eight original v21 material-step fault subtests, rollback/replan/retry, exact predecessor fingerprints, verified backup bytes and actual reopen. Four guarded checks pass, including nonincremental ordinary-import mypy without suppression. Producer/report/raw/canonical log and inherited authority/history pins authenticate; the retained actual stale-target FAIL remains adverse. The complete 13445-input physical rehash was performed in the pre-submit IN_PROGRESS phase, with zero mismatch or unreadable input; before/after guarded execution maps remain equal. Later controller/view metadata changes are expected and are not represented as equal to that pre-submit physical inventory. No product/schema/migration/security/rights/UX/framework change or C15 criterion-bound blocker remains. This disposition does not approve CP07, W2 qualification or G2 release.",
+  "acceptance_reviews": [
+    {
+      "criterion_index": 1,
+      "result": "satisfied",
+      "assessment": "The inherited approved acquisition/copy/rights behavior remains unchanged. This correction restores real protected SQLCipher qualification for an exact metadata-only encrypted v20 predecessor through current25: explicit five-row history, current v0025/storage schema fingerprints, idempotent-current classification, verified encrypted predecessor/backup and actual reopen. All four acquisition and four intake/recovery/access-need tables plus grant events remain empty, so migration fabricates no sources, queued work or availability. The predecessor constructor, source20 metadata/profile/fingerprint and original recovery guarantees are preserved; no new production DPAPI/LPAC/installed-runtime qualification is inferred."
+    },
+    {
+      "criterion_index": 2,
+      "result": "satisfied",
+      "assessment": "The preserved red diagnostic at81627fae is one actual stale-chain assertion failure before migration executes. At the exact corrected candidate, both original PluginGrantMigrationTests methods pass without skips. The unchanged loop exercises every one of eight original v21 material-step failures, retains bounded migration-execution-failed classification, source20 rollback/fingerprint and replan, then retries to current25 with verified backup and reopen. Four actual guarded check logs authenticate; changed-file Ruff format/lint and nonincremental ordinary-import mypy pass with no silent imports or error suppression. No test or profile was rerun by this reviewer."
+    },
+    {
+      "criterion_index": 3,
+      "result": "satisfied",
+      "assessment": "The six-path immutable candidate delta contains one spec-admitted test and five normal claim/generated planning records. Only current-target23-to25 assertions/helper names, explicit0024/0025 imports/IDs/history rows and empty additive tables are changed. Exact encrypted v20 construction and first three historical rows are identical; both original method bodies preserve all assertions except allowed helper/current-target substitutions. No predecessor regeneration, product/schema/migration/security/rights/UX/framework edit, valid-test weakening, criterion/threshold change or original history rewrite occurs. Original T03/Wave authority and C13/C14 DONE dispositions authenticate unchanged. Historical S01/C13/C14 proof stays historical and remaining campaign/checkpoint/Wave/release duties remain distinct."
+    }
+  ],
+  "corrective_integration": {
+    "evidence_sha256": "6e89b0a7755404c1e40262286591e8f7221a8581f903396e4c5be92a481f14e1",
+    "authority_preserved": true,
+    "affected_integration_reviewed": true,
+    "notes": "Reviewed the exact encrypted-v20 SDK fixture through approved additive current25 against unchanged production migration constants and implementation, complete affected happy/fault/rollback/retry/backup/reopen methods and ordinary-import quality proof. Actual candidate/report/producer/raw logs and original contract/history/Wave authority authenticate. Original stale-target failure is retained; current proof closes its assertion defect only. No inherited security, rights, migration or recovery guarantee is reduced and no CP07/Wave/release PASS follows."
+  },
+  "independence": {
+    "statement": "I authored earlier read-only S01 integration/resource-method/baseline/evidence assessments and formal S01 disposition, C13 scope/type-method advisories and independent formal review, C14 independent formal review, and C15 read-only fixture-scope advisory. Those historical roles are disclosed. I authored no C15 test/product change, spec, producer or qualifying check execution, owner approval, submission, campaign transition or canonical publication. This is the independent commit-bound C15 disposition.",
+    "implementation_owner": "codex-w2-implementation",
+    "review_execution": "Read/hash, immutable Git/source/AST/JSON/YAML/log comparisons and arithmetic only. No product test/suite/native/build/capture/network/resource execution, source/test/spec/producer/framework/hook edit, Git/index/HEAD or taskctl mutation. Only this unique ignored ledger is written."
+  },
+  "evidence_reproduction": {
+    "frozen_submission": {
+      "manifest": "artifacts/evidence/W2.C15.T01.R01.json",
+      "manifest_sha256": "6e89b0a7755404c1e40262286591e8f7221a8581f903396e4c5be92a481f14e1",
+      "packet_sha256": "9bc0e259e9673caf77f58e168ea292f67e55c120f996302024df0fa95e70795d",
+      "acceptance_criteria_sha256": "b883d7d0c83c26edeafbf97cf02f0dde8e3e38b55b4629d221960d1acaa72e43",
+      "selection_sha256": "f04b5f320eb6c4de9807a353635c98ce6c644297643f70febbc52bf3f4a24ef1",
+      "submitted_at": "2026-10-07T06:35:17+00:00",
+      "actual_status": "REVIEW",
+      "attempt": "R01",
+      "prior_attempt_count": 0,
+      "open_finding_ids": [],
+      "submit_receipt": "artifacts/tmp/W2.C15.T01.submit-R01.txt",
+      "submit_receipt_raw_sha256": "6310da61faab759c31abaeb7494d57b2979abf793165b7c365988da4d7b163b8",
+      "predecessor_sha256": "17893db0af090819dff89fa020322d45fd580a4721ecbf7b8f3a08f2cbd837b6",
+      "successor_sha256": "83ea01ad490c2400d94b59bfe717943f1eb467c73177461c589f9f1120c8012b",
+      "result": "Actual COMMITTED receipt and persisted REVIEW/R01 authenticated after root notification. Exact candidate/base/branch, six paths, four commands, two command IDs, deferred coverage/rationale and evidence/criteria/selection/packet digests reproduce. Receipt entry-HEAD observation is not itself a guarded runner proof."
+    },
+    "scope": {
+      "spec": {
+        "path": "artifacts/evidence/W2.C15.T01.spec.json",
+        "sha256": "f7aa1a00caaa3c16ac5e4f07d745b3df975c8615efcaea1a77791d14cb1c7865",
+        "commit": "68003a03f884176e043f2e0bed94d0c50a57ebba"
+      },
+      "source_path": "tests/connectors/test_plugin_grant_migration.py",
+      "source_base_immutable_git_sha256": "9bc1133b9260c51989d62f19d759d501bd67b6faa3cfd70d50484b877765214d",
+      "source_candidate_immutable_git_sha256": "97e1378764e659ffdc1be1a3c7606a61d8539f68930d075411405ea4f1d888db",
+      "changed_paths": [
+        "docs/planning-implementation-plan.md",
+        "planning/backlog.yaml",
+        "planning/review-site/manifest.json",
+        "planning/review-site/waves/W2.html",
+        "planning/status-summary.md",
+        "tests/connectors/test_plugin_grant_migration.py"
+      ],
+      "encrypted_v20_constructor_exact_bytes_identical": true,
+      "original_first_three_history_rows_ast_identical": true,
+      "original_method_bodies_identical_except_allowed_helper_and_current_manifest_substitutions": true,
+      "appended_history_rows": 2,
+      "new_empty_tables_checked": 8,
+      "product_schema_migrations_unchanged": true,
+      "origin_task_id": "CAP-05.S01.T03",
+      "origin_commit": "9a860fc45fe67d9582f4a37c81c90436b1ec715e",
+      "origin_sha256": "f74b32f21cdea4d6810e2651e892075295f377fba52d8cb924d1e74d9d76b16e",
+      "origin_contract_sha256": "9888e05207eba4d5d6522ec99045921af07f9276eee574fde9678d8856ebd70f",
+      "origin_history_sha256": "8d69b13955e098543a486bb9eb6af5ac45859ed841104f81f6057c9a276b88d2",
+      "authority_sha256": "c92ce7e9bac1b8a49d13d649a5980fea61e56ee953d238c734d8ff5f04f4c9e5",
+      "result": "Immutable base/candidate Git source inspection establishes bounded fixture restoration. Original T03 DONE snapshot/history, inherited fields and Wave approval, and C13/C14 DONE objects authenticated unchanged during pre-submit inspection."
+    },
+    "fresh_affected": {
+      "report": {
+        "path": "artifacts/tmp/W2.C15.T01.selected-01-cdf802d9.json",
+        "sha256": "88e7c307c1ded580f91a6c46fca579ae16fdd349e0be5be61429e4e6c09bafc9"
+      },
+      "producer": {
+        "path": "artifacts/tmp/W2.C15.T01.run-selected-01.py",
+        "sha256": "2479dc85f5221929638b97bc40915fd9deb8e5b3356472d645c35f59a277d9c5"
+      },
+      "status": "PASS",
+      "guarded_stable_input_count": 13445,
+      "complete_before_after_maps_equal": true,
+      "guarded_inventory_canonical_sha256": "db5f8a8586a450333a4ce8aa82d4ab5f5e04d2acbc8caabd995ca3c42983499b",
+      "input_write_delete_guards": "Windows read handles held for every inventoried file throughout execution",
+      "execution_started_at_unix": 1791354871.1471283,
+      "execution_ended_at_unix": 1791354883.4591513,
+      "physical_authentication": {
+        "phase": "Pre-submit IN_PROGRESS; no persisted frozen R01 existed at that inspection",
+        "independent_rehash_count": 13445,
+        "physical_mismatches": [],
+        "unreadable_inputs": [],
+        "limits": "This records the completed pre-submit physical authentication only. Later current working-tree planning metadata is not asserted equal to the qualification snapshot. Immutable candidate Git bytes and guarded execution before/after equality establish their respective phases."
+      },
+      "executed_unittest_methods": 2,
+      "original_v21_fault_subtests": 8,
+      "skips": 0,
+      "checks": [
+        {
+          "id": "encrypted-v20-migration",
+          "exitCode": 0,
+          "durationSeconds": 3.704,
+          "rawOutput": "artifacts/tmp/W2.C15.T01.selected-01-cdf802d9.encrypted-v20-migration.log",
+          "rawOutputSha256": "fee1ba7d2a6bcf966780880f6785a52b1abbbaeb53a58ce69c418598ecef56fd",
+          "rawOutputCanonicalSha256": "163be5c1930a1775e42a56402a51c6f8672fb9b99a10bdb615914d4913cf69a5"
+        },
+        {
+          "id": "format",
+          "exitCode": 0,
+          "durationSeconds": 0.155,
+          "rawOutput": "artifacts/tmp/W2.C15.T01.selected-01-cdf802d9.format.log",
+          "rawOutputSha256": "fd2299c9f1c6dc869070883e281051bfe93aacf66c1a3b0069f45b4aa410ca50",
+          "rawOutputCanonicalSha256": "fd2299c9f1c6dc869070883e281051bfe93aacf66c1a3b0069f45b4aa410ca50"
+        },
+        {
+          "id": "lint",
+          "exitCode": 0,
+          "durationSeconds": 0.142,
+          "rawOutput": "artifacts/tmp/W2.C15.T01.selected-01-cdf802d9.lint.log",
+          "rawOutputSha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18",
+          "rawOutputCanonicalSha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18"
+        },
+        {
+          "id": "types",
+          "exitCode": 0,
+          "durationSeconds": 4.851,
+          "rawOutput": "artifacts/tmp/W2.C15.T01.selected-01-cdf802d9.types.log",
+          "rawOutputSha256": "8e63ae22e8213e327a5e9cbd584067681681bd8ef7f25c869877887ccdcfc4ff",
+          "rawOutputCanonicalSha256": "5d4b6d285b77932e3d08212c3b4974d0a803f98ec60408ac6ccf6a063fa6c19e"
+        }
+      ],
+      "result": "All four report/check/log/producer bindings authenticate. Full class uses real protected SQLCipher migration and encrypted filesystem predecessor/backup/reopen with synthetic memory keys. Nonincremental ordinary-import mypy succeeds in the one admitted source file without silent mode or suppression. Complete guarded execution interval inputs remain equal."
+    },
+    "historical_support_authenticated": [
+      {
+        "path": "artifacts/evidence/CAP-05.S01.qualification-01.json",
+        "sha256": "7ceee8b56fc24ab76bb2536a058143a06f3ec549e292645fc8ca3ca6055d98ef"
+      },
+      {
+        "path": "artifacts/evidence/CAP-05.S01.review-01.json",
+        "sha256": "0d0cb37286fc91906ec8b9fa1dd6c8daab401ba355dd5651a6313fd52a4c1d9f"
+      },
+      {
+        "path": "artifacts/evidence/W2.C13.T01.R01.json",
+        "sha256": "e7253f250c2345a47c53f59ffd3d69c92463b9032f01de0db2bd816dada8253c"
+      },
+      {
+        "path": "artifacts/evidence/W2.C13.T01.review-R01.json",
+        "sha256": "ca39f97f02a618767c484a73156902cf0beca4ac7e89bf931aacc898d5560287"
+      },
+      {
+        "path": "artifacts/evidence/W2.C14.T01.R01.json",
+        "sha256": "f10efc2d042d3212b2dbe2708352a5ba29e71c90a255e0d1feec943a69d142b4"
+      },
+      {
+        "path": "artifacts/evidence/W2.C14.T01.review-R01.json",
+        "sha256": "196154c2e58770041fc350744184ce3a629b94c9fd262fa5eee97b1d46d649fa"
+      }
+    ],
+    "preserved_adverse": {
+      "report": {
+        "path": "artifacts/tmp/W2.C15.T01.red-01-81627fae.json",
+        "sha256": "750743baa137ae764aa52fd6174fd0e04942bbf7221ed7ff68e4b931949ccb6a"
+      },
+      "raw_log": {
+        "path": "artifacts/tmp/W2.C15.T01.red-01-81627fae.encrypted-v20-current-migration-fixture.log",
+        "sha256": "114b8d1a3f31deffb86134950e8f059ca4bfb8376ebfe395804faa86061c8958"
+      },
+      "result": "Original actual one-case stale current-chain assertion FAIL at81627fae is preserved byte-for-byte and remains adverse. It occurred before migration execution, so it is not characterized as a product migration failure or a completed migration proof. Current affected PASS closes the stale fixture expectation prospectively."
+    }
+  },
+  "checks": [
+    {
+      "command": "Authenticate COMMITTED submit receipt and actual persisted R01 candidate/base/evidence/criteria/selection/packet/coverage bindings",
+      "result": "PASS: exact actual frozen identities and bounded selected/deferred coverage reproduce."
+    },
+    {
+      "command": "Inspect immutable base/candidate fixture bytes/AST and directly needed migration constants; authenticate original contract/history/authority and C13/C14 DONE support",
+      "result": "PASS: exact encrypted predecessor, historical rows, original eight faults and backup/reopen/rollback guarantees retained; only admitted current expectations restored."
+    },
+    {
+      "command": "Authenticate fresh guarded full affected class and Ruff/ordinary-import mypy report, producer and raw/canonical logs; retain phase-labeled pre-submit complete physical rehash",
+      "result": "PASS for bounded C15 evidence:13445 stable guarded inputs; pre-submit physical mismatches and unreadable inputs empty; actual original red preserved."
+    }
+  ],
+  "limits": [
+    "Actual protected SQLCipher and encrypted predecessor/backup/reopen tests use synthetic memory keys; no new production DPAPI, signed LPAC or installed-runtime proof is claimed.",
+    "This is test-fixture current-target correction, without source/schema/migration/security/rights/UX/framework changes. No full profile, native/build/smoke, capture/accessibility, performance/resource or whole Wave qualification is claimed.",
+    "Historical S01/C13/C14 evidence is authenticated for unchanged support only, not fresh broad qualification atcdf802d9.",
+    "The completed physical13445-input rehash belongs to the pre-submit phase. Post-submit controller/generated planning metadata may differ; no post-submit complete physical map equality is claimed."
+  ],
+  "remaining_obligations": [
+    "Canonical independent disposition publication and ordinary controlled resume of the same W2 campaign.",
+    "Fresh affected W2.CP07 cluster2 rights/SDK/LPAC/acquisition/native/installed and build/smoke qualification and independent checkpoint disposition.",
+    "Remaining approved W2 tasks/slices/checkpoints and fresh full Wave qualification, followed by the separate human G2 release gate."
+  ],
+  "findings": [],
+  "closures": [],
+  "prior_findings_replayed": []
+}
