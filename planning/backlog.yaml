@@ -1499,7 +1499,7 @@ waves:
     profile: LOC
     platform: windows-x64
     started_at: '2026-09-19T17:21:58+00:00'
-    updated_at: '2026-10-07T07:17:40+00:00'
+    updated_at: '2026-10-07T08:12:50+00:00'
     pause_reason: null
     pause_category: null
     lease:
@@ -4824,6 +4824,16 @@ waves:
       commit: 7ccaf1d7155c280aa39a3cc1494dd6d4368b5d77
     notes: Adopt exact independently approved A03 checkpoint; ordinary W2 remains PAUSED; original CAP-05.S01.T01 base6506
       and all task history retained; no further framework development after closed A05.
+  - id: W2.CP07
+    kind: risk-cluster
+    recorded_by: codex-w2-implementation
+    recorded_at: '2026-10-07T08:12:50+00:00'
+    evidence:
+    - artifacts/evidence/W2.CP07.qualification-01.json
+    - artifacts/evidence/W2.CP07.review-01.json
+    notes: 'CP07 independently approved at c7726035afd2620356cd4b84060a90dcb2861001: 19 fresh affected build and principal
+      checks, 322 unittest cases without skips; exact rebuilt worker08 installed and runtime closure; adverse attempts retained.
+      Parser tasks, fresh W2 qualification and human G2 release remain pending.'
   completion:
     status: IN_PROGRESS
     reviewer: null
