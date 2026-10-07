@@ -1,0 +1,158 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "W2.C14.T01",
+  "baseCommit": "efbfa1a708f3ee526e50084e1dba2c3e7e3d40d1",
+  "commit": "a8e87082b8150af47477e456b85438615dc7088d",
+  "branch": "codex/w2-implementation",
+  "changedFiles": [
+    "docs/planning-implementation-plan.md",
+    "planning/backlog.yaml",
+    "planning/review-site/manifest.json",
+    "planning/review-site/waves/W2.html",
+    "planning/status-summary.md",
+    "tests/data/test_encrypted_object_store.py"
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "The current full encrypted-object-store fixture class passes with real encrypted envelope I/O and synthetic memory keys. Its encrypted-staging inspection retains both plaintext exclusion assertions, executes the real current publication helper with the exact received staging identity, and still proves interrupted-source error and partial cleanup. Other original key, restart/decryption, tamper and plaintext-policy assertions remain unchanged and execute.",
+        "Only the test callback signature/forwarding is repaired. Product staging identity checks, acquisition/copy/privacy/rights/recovery behavior and all original task/slice approvals remain unchanged; original S01 proof remains historical support. This fixture supplies no new production DPAPI, LPAC, installed runtime, resource or Wave claim."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "The retained fixed-candidate9a860fc4 one-case diagnostic fails with actual TypeError before the old callback can inspect encrypted staging. The corrected exact candidate runs the full affected encrypted-object-store class without skips; the raw test count is machine-derived in encrypted-object-store. Current nonincremental ordinary-import mypy checks both this file and the original C13 rights migration root and closes the actual too-few-arguments error without silent-import mode or error suppression."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "Exact changedFiles contains only spec-admitted tests/data/test_encrypted_object_store.py plus normal claim/generated planning records. The callback accepts the explicit tuple[int,int] passed by the product and forwards that same value to original_publish. No identity recomputation, variadic erasure, assertion relaxation, product helper/schema/migration/security/rights/UX/framework edit or original history rewrite occurs. Changed-file Ruff format/lint and the two-root ordinary-import mypy check pass.",
+        "Prior C13 broader-import FAIL and one-case runtime FAIL remain adverse observations at their original candidate. C13 DONE evidence is authenticated as historical support only. Independent correction approval, ordinary campaign resume, fresh CP07, remaining product tasks, full W2 qualification and G2 release remain distinct obligations."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "verificationSelection": {
+    "selectedCommandIds": [
+      "data:unit",
+      "foundation:quality"
+    ],
+    "riskAnalysis": "The sole changed path is an old test callback incompatible with the approved product staging-identity argument. The full affected encrypted-store class exercises the restored encrypted inspection and interruption cleanup. File quality and two-root default-import type proof close the actual runtime/type defects. Expanded independent privacy/security fixture and corrective-integration review is required. No other passed suites are repeated for this two-line restoration.",
+    "deferred": [
+      "Fresh cluster2 rights/SDK/LPAC/acquisition/native/installed and build/smoke qualification remains W2.CP07 after independent correction approval and ordinary campaign resume.",
+      "Fresh full repository/profile, complete cross-capability, security/privacy/rights/accessibility/performance/packaging and separate human G2 release remain W2 exit obligations."
+    ]
+  },
+  "checks": [
+    {
+      "id": "encrypted-object-store",
+      "exitCode": 0,
+      "durationSeconds": 3.161,
+      "rawOutput": "artifacts/tmp/W2.C14.T01.selected-01-a8e87082.encrypted-object-store.log",
+      "rawOutputSha256": "2a15b9e5c9b1e9bd7de61feecdaad0c105300cf215560c06f231c4bf12c98eb9",
+      "command": ".venv/Scripts/python.exe -B -m unittest -v tests.data.test_encrypted_object_store.EncryptedObjectStoreTests",
+      "commit": "a8e87082b8150af47477e456b85438615dc7088d",
+      "result": "PASS",
+      "rawOutputCanonicalSha256": "9861aaf800fe5494bae343047f34a5045b03e360426404370f6b1fff5a4c75c4",
+      "inputReport": "artifacts/tmp/W2.C14.T01.selected-01-a8e87082.json",
+      "inputReportSha256": "47e0262ddf4930ff1fcbbeb3ca62376299d449048c09c5feda5a1237976ba465",
+      "provenance": "Fresh fixed committed Windows x64 candidate; tracked/Python inputs held against write/delete and equal before/after.",
+      "executedUnittestCases": 7
+    },
+    {
+      "id": "format",
+      "exitCode": 0,
+      "durationSeconds": 0.153,
+      "rawOutput": "artifacts/tmp/W2.C14.T01.selected-01-a8e87082.format.log",
+      "rawOutputSha256": "fd2299c9f1c6dc869070883e281051bfe93aacf66c1a3b0069f45b4aa410ca50",
+      "command": ".venv/Scripts/python.exe -B -m ruff format --check --config pyproject.toml -- tests/data/test_encrypted_object_store.py",
+      "commit": "a8e87082b8150af47477e456b85438615dc7088d",
+      "result": "PASS",
+      "rawOutputCanonicalSha256": "fd2299c9f1c6dc869070883e281051bfe93aacf66c1a3b0069f45b4aa410ca50",
+      "inputReport": "artifacts/tmp/W2.C14.T01.selected-01-a8e87082.json",
+      "inputReportSha256": "47e0262ddf4930ff1fcbbeb3ca62376299d449048c09c5feda5a1237976ba465",
+      "provenance": "Fresh fixed committed Windows x64 candidate; tracked/Python inputs held against write/delete and equal before/after."
+    },
+    {
+      "id": "lint",
+      "exitCode": 0,
+      "durationSeconds": 0.149,
+      "rawOutput": "artifacts/tmp/W2.C14.T01.selected-01-a8e87082.lint.log",
+      "rawOutputSha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18",
+      "command": ".venv/Scripts/python.exe -B -m ruff check --config pyproject.toml -- tests/data/test_encrypted_object_store.py",
+      "commit": "a8e87082b8150af47477e456b85438615dc7088d",
+      "result": "PASS",
+      "rawOutputCanonicalSha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18",
+      "inputReport": "artifacts/tmp/W2.C14.T01.selected-01-a8e87082.json",
+      "inputReportSha256": "47e0262ddf4930ff1fcbbeb3ca62376299d449048c09c5feda5a1237976ba465",
+      "provenance": "Fresh fixed committed Windows x64 candidate; tracked/Python inputs held against write/delete and equal before/after."
+    },
+    {
+      "id": "types-and-c13-broader-import-replay",
+      "exitCode": 0,
+      "durationSeconds": 7.593,
+      "rawOutput": "artifacts/tmp/W2.C14.T01.selected-01-a8e87082.types-and-c13-broader-import-replay.log",
+      "rawOutputSha256": "0c37c4158c91ef55c724ba017bf6465f26018199badb08e3ff13f98acdf056c2",
+      "command": "$env:MYPYPATH='tools;services/core-api/src'; .venv/Scripts/python.exe -B -m mypy --config-file pyproject.toml --no-namespace-packages --no-incremental -- tests/data/test_encrypted_object_store.py tests/rights/test_migration.py",
+      "commit": "a8e87082b8150af47477e456b85438615dc7088d",
+      "result": "PASS",
+      "rawOutputCanonicalSha256": "f9b031e5c45aa702cd4fef028d465551cb20a2c4698e0913c7b00766b20ac4d8",
+      "inputReport": "artifacts/tmp/W2.C14.T01.selected-01-a8e87082.json",
+      "inputReportSha256": "47e0262ddf4930ff1fcbbeb3ca62376299d449048c09c5feda5a1237976ba465",
+      "provenance": "Fresh fixed committed Windows x64 candidate; tracked/Python inputs held against write/delete and equal before/after."
+    }
+  ],
+  "correctiveIntegration": {
+    "originSha256": "f74b32f21cdea4d6810e2651e892075295f377fba52d8cb924d1e74d9d76b16e",
+    "authorityPreserved": true,
+    "affectedChecks": [
+      ".venv/Scripts/python.exe -B -m unittest -v tests.data.test_encrypted_object_store.EncryptedObjectStoreTests",
+      ".venv/Scripts/python.exe -B -m ruff format --check --config pyproject.toml -- tests/data/test_encrypted_object_store.py",
+      ".venv/Scripts/python.exe -B -m ruff check --config pyproject.toml -- tests/data/test_encrypted_object_store.py",
+      "$env:MYPYPATH='tools;services/core-api/src'; .venv/Scripts/python.exe -B -m mypy --config-file pyproject.toml --no-namespace-packages --no-incremental -- tests/data/test_encrypted_object_store.py tests/rights/test_migration.py"
+    ],
+    "reusedEvidence": [
+      {
+        "path": "artifacts/evidence/CAP-05.S01.qualification-01.json",
+        "sha256": "7ceee8b56fc24ab76bb2536a058143a06f3ec549e292645fc8ca3ca6055d98ef"
+      },
+      {
+        "path": "artifacts/evidence/CAP-05.S01.review-01.json",
+        "sha256": "0d0cb37286fc91906ec8b9fa1dd6c8daab401ba355dd5651a6313fd52a4c1d9f"
+      },
+      {
+        "path": "artifacts/evidence/W2.C13.T01.R01.json",
+        "sha256": "e7253f250c2345a47c53f59ffd3d69c92463b9032f01de0db2bd816dada8253c"
+      },
+      {
+        "path": "artifacts/evidence/W2.C13.T01.review-R01.json",
+        "sha256": "ca39f97f02a618767c484a73156902cf0beca4ac7e89bf931aacc898d5560287"
+      }
+    ],
+    "rationale": "Restore the original approved encrypted-staging test fixture for the already-approved exact identity guard, preserving every assertion and actual forwarded identity. Historical T03/S01/C13 proof supports unchanged behavior only. The current class and default-import type proof close the specifically reproduced failures; no broader profile or Wave completion is inferred."
+  },
+  "retainedRedObservation": {
+    "path": "artifacts/tmp/W2.C14.T01.red-01-9a860fc4.json",
+    "sha256": "c238dcbb2a8dd3591b8eebc84fe1f17f278418d8f718d32b174f43aaf24e7b7c"
+  },
+  "retainedRedLog": {
+    "path": "artifacts/tmp/W2.C14.T01.red-01-9a860fc4.encrypted-staging-fixture.log",
+    "sha256": "6ff1dc11f9b5bbdbb8ec6e5933e217677e6fc21b037176525ca86587110d30ed"
+  },
+  "retainedC13BroaderImportFailure": {
+    "path": "artifacts/tmp/W2.C13.T01.selected-01-9a860fc4.types.log",
+    "sha256": "780aa1d5bd70e28a3e02958cd1a6f11f90d58cc5c55e51b700f020792821cd87"
+  },
+  "freshObservation": {
+    "path": "artifacts/tmp/W2.C14.T01.selected-01-a8e87082.json",
+    "sha256": "47e0262ddf4930ff1fcbbeb3ca62376299d449048c09c5feda5a1237976ba465"
+  },
+  "producer": {
+    "path": "artifacts/tmp/W2.C14.T01.run-selected-01.py",
+    "sha256": "591f92601343fd57b1fed75f35b15823121b28fdebdbae319ce0ada15a48f6ce"
+  }
+}

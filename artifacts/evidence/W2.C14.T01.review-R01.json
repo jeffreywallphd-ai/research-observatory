@@ -1,0 +1,199 @@
+{
+  "task_id": "W2.C14.T01",
+  "attempt_id": "R01",
+  "candidate_commit": "a8e87082b8150af47477e456b85438615dc7088d",
+  "base_commit": "efbfa1a708f3ee526e50084e1dba2c3e7e3d40d1",
+  "reviewer": "agent:/root/s01_integration_review",
+  "result": "approved",
+  "reviewed_at": "2026-10-07T05:09:43Z",
+  "evidence_sha256": "f10efc2d042d3212b2dbe2708352a5ba29e71c90a255e0d1feec943a69d142b4",
+  "packet_sha256": "514aaaccffb92dac0844f732787804c7c49ce4073a3c6f0be47d3bdbda022002",
+  "acceptance_criteria_sha256": "b883d7d0c83c26edeafbf97cf02f0dde8e3e38b55b4629d221960d1acaa72e43",
+  "selection_sha256": "7bce7e3e82dc5577a6ae4de2bfb3d3a69eb438a7753a14de8fccaf83c32f60b9",
+  "notes": "Independent expanded encryption/privacy fixture and corrective-integration review approves only actual frozen W2.C14.T01 R01 at a8e87082/base efbfa1a7. The exact two-line spec-admitted callback repair accepts the typed staging identity received from the unchanged product and forwards that same value to the actual original publication helper. Every encrypted-staging/plaintext-exclusion, inspection, interrupted-source/bounded-error/partial-cleanup, restart/exact-decryption, empty-object authentication, tamper quarantine, missing-key classification, key rotation and explicit plaintext-fixture assertion remains unchanged. All seven affected encrypted-object-store methods pass without skips using actual encrypted envelope I/O and synthetic memory keys. Changed-file Ruff and nonincremental ordinary-import mypy on the encrypted fixture plus original C13 rights migration root pass without silent mode or error suppression, closing the specifically reproduced runtime and imported-call defects. All producer/report/raw/canonical log and inherited authority/history bindings authenticate; all 13442 guarded inputs independently rehash with zero mismatch or unreadable file. Earlier one-case TypeError and C13 ordinary-import type FAIL remain immutable at their original candidate. Original T03 and C13 DONE approvals stay unchanged; S01/C13 support is historical. No product/framework/security/rights/migration/UX change or criterion-bound C14 blocker remains. This approves neither CP07 nor W2 qualification nor G2 human release.",
+  "acceptance_reviews": [
+    {
+      "criterion_index": 1,
+      "result": "satisfied",
+      "assessment": "The restored callback now reaches real encrypted staging inspection and publication with the exact received tuple[int,int] identity. Both original plaintext-exclusion assertions and inspected flag remain; interrupted source still raises the bounded ObjectStoreProblem with no cause/context and no remaining partial envelope. The full unchanged class also executes restart/decryption exact bytes and digest, authenticated empty object, tamper quarantine before plaintext, unavailable-key distinction, rotation and explicit test-only plaintext policy. Product acquisition/copy/rights/cleanup authority and helper guards are unchanged. This is real encrypted object I/O with synthetic memory keys and the development plaintext database fixture, not new DPAPI/SQLCipher principal or installed LPAC qualification."
+    },
+    {
+      "criterion_index": 2,
+      "result": "satisfied",
+      "assessment": "The preserved actual one-case red diagnostic at 9a860fc4 fails with one TypeError before encryption inspection, and C13 ordinary-import typing retains the too-few-arguments error. At committed a8e87082, all seven affected EncryptedObjectStoreTests execute OK without skips; raw logs and four guarded check receipts authenticate. Nonincremental ordinary-import mypy on both encrypted-store and C13 rights-migration roots succeeds with no issues in two source files, without silent imports or added ignores. This closes the specifically demonstrated runtime/type defects while leaving the earlier FAIL bytes unchanged. No unchanged suites or profiles are replayed by this reviewer."
+    },
+    {
+      "criterion_index": 3,
+      "result": "satisfied",
+      "assessment": "Immutable file bytes reproduce exactly the two admitted signature/forwarding replacements; all other code and assertions are byte-identical. No identity synthesis or recomputation, variadic erasure, product helper edit, contract/schema/migration/security/rights/UX/framework change or original history rewrite occurs. The complete six-path candidate delta contains the one spec-admitted test path and five normal claim/generated planning records. Changed-file Ruff format/lint and ordinary-import two-root mypy pass. Inherited T03 contract/snapshot/history and Wave authority authenticate; C13 DONE disposition is retained as historical support only. Fresh CP07/W2 and G2 remain distinct."
+    }
+  ],
+  "corrective_integration": {
+    "evidence_sha256": "f10efc2d042d3212b2dbe2708352a5ba29e71c90a255e0d1feec943a69d142b4",
+    "authority_preserved": true,
+    "affected_integration_reviewed": true,
+    "notes": "Reviewed exact callback integration with unchanged real encrypted staging/publication helper, all seven affected envelope/security/failure/restart/key/policy methods and ordinary-import two-root type replay at a8e87082. Actual input/provenance/log bindings authenticate and original T03/C13 history and authority remain intact. Current proof closes the prior callback runtime/type boundary only; adverse original records are preserved and no broader principal, CP07, Wave or release PASS is inferred."
+  },
+  "independence": {
+    "statement": "I authored earlier read-only S01 integration/resource-method/baseline and evidence assessments, formal S01 disposition, and C13 scope/type-method advisories plus its independent formal review. During C13 I identified and required this separate callback-fixture correction. Those roles are disclosed. I authored no C14 implementation/test change, spec, producer or qualifying check execution, owner approval, submission, campaign transition or canonical publication. This ledger is the independent commit-bound C14 disposition.",
+    "implementation_owner": "codex-w2-implementation",
+    "review_execution": "Read/hash, immutable Git/source/JSON/YAML/log comparisons and arithmetic only; no product test/suite, native/build/capture/network/resource execution, source/test/spec/producer/framework/hook change, Git/index/HEAD or taskctl mutation. Only this unique ignored ledger is written."
+  },
+  "evidence_reproduction": {
+    "frozen_submission": {
+      "manifest": "artifacts/evidence/W2.C14.T01.R01.json",
+      "manifest_sha256": "f10efc2d042d3212b2dbe2708352a5ba29e71c90a255e0d1feec943a69d142b4",
+      "packet_sha256": "514aaaccffb92dac0844f732787804c7c49ce4073a3c6f0be47d3bdbda022002",
+      "acceptance_criteria_sha256": "b883d7d0c83c26edeafbf97cf02f0dde8e3e38b55b4629d221960d1acaa72e43",
+      "selection_sha256": "7bce7e3e82dc5577a6ae4de2bfb3d3a69eb438a7753a14de8fccaf83c32f60b9",
+      "submitted_at": "2026-10-07T05:02:12+00:00",
+      "actual_status": "REVIEW",
+      "attempt": "R01",
+      "prior_attempt_count": 0,
+      "open_finding_ids": [],
+      "submit_receipt": "artifacts/tmp/W2.C14.T01.submit-R01.txt",
+      "submit_receipt_raw_sha256": "08a7289d5a1602f356e9c4b555bb1d83631863cfe0c70331fed2153d6a719c69",
+      "predecessor_sha256": "14f5c2270365e31eee9f3d9abe3a229c1c1103a52fb438172f6b6fb8f1daae4c",
+      "successor_sha256": "1b207b37f75d6cedb102f73f4d2b15ee0d582d28fefbe523e020ac5bf7220f84",
+      "result": "Actual COMMITTED atomic submit and persisted REVIEW/R01 authenticated after root notification. Exact candidate/base/branch, six changed paths, four check commands, two canonical command IDs, deferred coverage, rationale, evidence/criteria/selection and packet hashes independently reproduce."
+    },
+    "scope": {
+      "spec": {
+        "path": "artifacts/evidence/W2.C14.T01.spec.json",
+        "sha256": "15f8d0791587b00d6bf5077b9bb30923c721b67056197343689e23c1a7f1802c",
+        "commit": "efbfa1a708f3ee526e50084e1dba2c3e7e3d40d1"
+      },
+      "source_base_sha256": "418a5cbfd70e5b62451009baa5c12a107a9f3eb1eda107124673077b61406c85",
+      "source_candidate_sha256": "46a87fe9fa32bd174d0110df76030a7fd008635eac5f1aeacb20a8f360a0f133",
+      "exact_two_line_substitution": true,
+      "all_remaining_file_bytes_identical": true,
+      "actual_product_helper_unchanged": true,
+      "origin_task_id": "CAP-05.S01.T03",
+      "origin_commit": "9a860fc45fe67d9582f4a37c81c90436b1ec715e",
+      "origin_sha256": "f74b32f21cdea4d6810e2651e892075295f377fba52d8cb924d1e74d9d76b16e",
+      "origin_history_sha256": "8d69b13955e098543a486bb9eb6af5ac45859ed841104f81f6057c9a276b88d2",
+      "authority_sha256": "c92ce7e9bac1b8a49d13d649a5980fea61e56ee953d238c734d8ff5f04f4c9e5",
+      "result": "Exact admitted product-test fixture restoration only. Original canonical T03 DONE snapshot/history, all inherited contract fields and Wave approval remain equal. Actual _publish accepts and uses staging identity for owned cleanup; this callback forwards the original received value unchanged."
+    },
+    "fresh_affected": {
+      "report": {
+        "path": "artifacts/tmp/W2.C14.T01.selected-01-a8e87082.json",
+        "sha256": "47e0262ddf4930ff1fcbbeb3ca62376299d449048c09c5feda5a1237976ba465"
+      },
+      "producer": {
+        "path": "artifacts/tmp/W2.C14.T01.run-selected-01.py",
+        "sha256": "591f92601343fd57b1fed75f35b15823121b28fdebdbae319ce0ada15a48f6ce"
+      },
+      "status": "PASS",
+      "guarded_stable_input_count": 13442,
+      "complete_before_after_maps_equal": true,
+      "independent_physical_rehash_count": 13442,
+      "physical_mismatches": [],
+      "unreadable_inputs": [],
+      "executed_unittest_methods": 7,
+      "skips": 0,
+      "checks": [
+        {
+          "id": "encrypted-object-store",
+          "exitCode": 0,
+          "rawOutput": "artifacts/tmp/W2.C14.T01.selected-01-a8e87082.encrypted-object-store.log",
+          "rawOutputSha256": "2a15b9e5c9b1e9bd7de61feecdaad0c105300cf215560c06f231c4bf12c98eb9",
+          "rawOutputCanonicalSha256": "9861aaf800fe5494bae343047f34a5045b03e360426404370f6b1fff5a4c75c4"
+        },
+        {
+          "id": "format",
+          "exitCode": 0,
+          "rawOutput": "artifacts/tmp/W2.C14.T01.selected-01-a8e87082.format.log",
+          "rawOutputSha256": "fd2299c9f1c6dc869070883e281051bfe93aacf66c1a3b0069f45b4aa410ca50",
+          "rawOutputCanonicalSha256": "fd2299c9f1c6dc869070883e281051bfe93aacf66c1a3b0069f45b4aa410ca50"
+        },
+        {
+          "id": "lint",
+          "exitCode": 0,
+          "rawOutput": "artifacts/tmp/W2.C14.T01.selected-01-a8e87082.lint.log",
+          "rawOutputSha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18",
+          "rawOutputCanonicalSha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18"
+        },
+        {
+          "id": "types-and-c13-broader-import-replay",
+          "exitCode": 0,
+          "rawOutput": "artifacts/tmp/W2.C14.T01.selected-01-a8e87082.types-and-c13-broader-import-replay.log",
+          "rawOutputSha256": "0c37c4158c91ef55c724ba017bf6465f26018199badb08e3ff13f98acdf056c2",
+          "rawOutputCanonicalSha256": "f9b031e5c45aa702cd4fef028d465551cb20a2c4698e0913c7b00766b20ac4d8"
+        }
+      ],
+      "result": "All four passing raw/canonical logs and exact producer/report bytes authenticate at fixed Windows x64 source candidate. Complete tracked and installed Python/runtime/stdlib/site-package inputs were held against write/delete, match before/after and independently rehash. Full class uses actual envelope encryption/decryption and filesystem I/O; no fixture guarantee is relaxed."
+    },
+    "type_failure_replay": {
+      "command": "$env:MYPYPATH='tools;services/core-api/src'; .venv/Scripts/python.exe -B -m mypy --config-file pyproject.toml --no-namespace-packages --no-incremental -- tests/data/test_encrypted_object_store.py tests/rights/test_migration.py",
+      "roots": [
+        "tests/data/test_encrypted_object_store.py",
+        "tests/rights/test_migration.py"
+      ],
+      "silent_import_mode": false,
+      "incremental_mode": false,
+      "configuration_changed": false,
+      "result": "Fresh ordinary-import mypy reports success in two source files and closes the exact earlier imported-call error; this is affected two-root quality proof, not a full repository/profile pass."
+    },
+    "historical_support_authenticated": [
+      {
+        "path": "artifacts/evidence/CAP-05.S01.qualification-01.json",
+        "sha256": "7ceee8b56fc24ab76bb2536a058143a06f3ec549e292645fc8ca3ca6055d98ef"
+      },
+      {
+        "path": "artifacts/evidence/CAP-05.S01.review-01.json",
+        "sha256": "0d0cb37286fc91906ec8b9fa1dd6c8daab401ba355dd5651a6313fd52a4c1d9f"
+      },
+      {
+        "path": "artifacts/evidence/W2.C13.T01.R01.json",
+        "sha256": "e7253f250c2345a47c53f59ffd3d69c92463b9032f01de0db2bd816dada8253c"
+      },
+      {
+        "path": "artifacts/evidence/W2.C13.T01.review-R01.json",
+        "sha256": "ca39f97f02a618767c484a73156902cf0beca4ac7e89bf931aacc898d5560287"
+      }
+    ],
+    "preserved_adverse": {
+      "runtime_report": {
+        "path": "artifacts/tmp/W2.C14.T01.red-01-9a860fc4.json",
+        "sha256": "c238dcbb2a8dd3591b8eebc84fe1f17f278418d8f718d32b174f43aaf24e7b7c"
+      },
+      "runtime_log": {
+        "path": "artifacts/tmp/W2.C14.T01.red-01-9a860fc4.encrypted-staging-fixture.log",
+        "sha256": "6ff1dc11f9b5bbdbb8ec6e5933e217677e6fc21b037176525ca86587110d30ed"
+      },
+      "broader_import_type_log": {
+        "path": "artifacts/tmp/W2.C13.T01.selected-01-9a860fc4.types.log",
+        "sha256": "780aa1d5bd70e28a3e02958cd1a6f11f90d58cc5c55e51b700f020792821cd87"
+      },
+      "result": "Actual prior one-case FAILED(errors=1) TypeError and C13 ordinary-import call-arg FAIL bytes are authenticated and remain unchanged at 9a860fc4. Current affected green evidence resolves their exact callback cause prospectively; no adverse result is overwritten or reclassified."
+    }
+  },
+  "checks": [
+    {
+      "command": "Authenticate actual atomic receipt and persisted R01 against exact manifest, candidate/base, criteria, selection and packet hashes",
+      "result": "PASS: all frozen identities and selected/deferred coverage reproduce."
+    },
+    {
+      "command": "Inspect exact two-line callback and unchanged encrypted-store assertions/helper; authenticate inherited task/history/approval bindings",
+      "result": "PASS: exact received identity forwarded with every prior guarantee preserved; no C14 criterion-bound blocker."
+    },
+    {
+      "command": "Authenticate fresh seven-method class, four check logs/producers, ordinary-import two-root replay and all 13442 guarded inputs",
+      "result": "PASS for bounded C14 evidence; prior runtime/type adverse observations preserved and their exact defect prospectively closed."
+    }
+  ],
+  "limits": [
+    "Synthetic MemoryKeyProvider and development plaintext database fixture supply actual encrypted object-envelope I/O; no new production DPAPI, protected SQLCipher principal, signed LPAC or installed-runtime qualification is claimed.",
+    "No resource/performance, UI/accessibility/capture or whole repository/profile checks are claimed at this two-line test-only correction.",
+    "Historical S01/C13 evidence is authenticated support for unchanged behavior, not fresh qualification at a8e87082."
+  ],
+  "remaining_obligations": [
+    "Ordinary campaign resume through the existing controlled route after independent C14 disposition publication.",
+    "Fresh affected W2.CP07 cluster2 rights/SDK/LPAC/acquisition/native/installed and build/smoke qualification with independent checkpoint disposition.",
+    "Remaining approved W2 tasks/slices/checkpoints and fresh full Wave qualification, followed by separate human G2 release."
+  ],
+  "findings": [],
+  "closures": [],
+  "prior_findings_replayed": []
+}

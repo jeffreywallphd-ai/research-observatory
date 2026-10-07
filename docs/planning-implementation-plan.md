@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 2769f0fb22c7a194b3b78640c563560290f268ecc2d59f546c5dd22677933713
+source_sha256: 6569689fe4e23a47da99b6fbed533eee8de0fb3f8a81530100bf563310ee2a50
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -4390,7 +4390,7 @@ Original tasks and approvals remain unchanged.
 
 ### W2.C14.T01 — Create acquisition queue, conflict, and entitlement placeholders
 
-**Status:** `IN_PROGRESS`. **Original task:** `CAP-05.S01.T03`. **Latest review:** `-`.
+**Status:** `REVIEW`. **Original task:** `CAP-05.S01.T03`. **Latest review:** `-`.
 
 **Reproduction:** At clean committed candidate9a860fc45fe67d9582f4a37c81c90436b1ec715e, the unchanged encrypted object-staging test fails with TypeError because inspect_encrypted_staging accepts2arguments while the current approved product _publish receives3: staging, destination and exact staging identity. The callback also forwards only2arguments to the real helper. The helper signature was introduced by original approved T03 product implementation89da746a972d1faa6bd64739d8f9c86c6be21908 and remains unchanged. Fresh bounded one-case diagnostic artifacts/tmp/W2.C14.T01.red-01-9a860fc4.json SHA256 c238dcbb2a8dd3591b8eebc84fe1f17f278418d8f718d32b174f43aaf24e7b7c records actual exit1 and stable guarded inputs; raw log artifacts/tmp/W2.C14.T01.red-01-9a860fc4.encrypted-staging-fixture.log SHA256 6ff1dc11f9b5bbdbb8ec6e5933e217677e6fc21b037176525ca86587110d30ed retains1case/1error. The separate C13 default-import mypy observation also reports tests/data/test_encrypted_object_store.py:136 too few arguments and remains FAIL. C13 affected-file silent-import typing does not classify this defect as PASS.
 
@@ -4407,7 +4407,19 @@ Original tasks and approvals remain unchanged.
 
 **Review mode:** `append-only v1` / 0 completed round(s)
 
-**Current immutable submission awaiting review:** None
+**Current immutable submission awaiting review:** `R01` / packet SHA-256 `514aaaccffb92dac0844f732787804c7c49ce4073a3c6f0be47d3bdbda022002`
+
+- Candidate / base / branch: `a8e87082b8150af47477e456b85438615dc7088d` / `efbfa1a708f3ee526e50084e1dba2c3e7e3d40d1` / `codex/w2-implementation`
+- Submitted by / at: codex-w2-implementation / `2026-10-07T05:02:12+00:00`
+- Evidence: `artifacts/evidence/W2.C14.T01.R01.json` / `f10efc2d042d3212b2dbe2708352a5ba29e71c90a255e0d1feec943a69d142b4` / `a8e87082b8150af47477e456b85438615dc7088d`
+- Acceptance-criteria SHA-256: `b883d7d0c83c26edeafbf97cf02f0dde8e3e38b55b4629d221960d1acaa72e43`
+- Verification-selection SHA-256: `7bce7e3e82dc5577a6ae4de2bfb3d3a69eb438a7753a14de8fccaf83c32f60b9`
+- Changed paths: `docs/planning-implementation-plan.md`, `planning/backlog.yaml`, `planning/review-site/manifest.json`, `planning/review-site/waves/W2.html`, `planning/status-summary.md`, `tests/data/test_encrypted_object_store.py`
+- Selected checks: `.venv/Scripts/python.exe -B -m unittest -v tests.data.test_encrypted_object_store.EncryptedObjectStoreTests`, `.venv/Scripts/python.exe -B -m ruff format --check --config pyproject.toml -- tests/data/test_encrypted_object_store.py`, `.venv/Scripts/python.exe -B -m ruff check --config pyproject.toml -- tests/data/test_encrypted_object_store.py`, `$env:MYPYPATH='tools;services/core-api/src'; .venv/Scripts/python.exe -B -m mypy --config-file pyproject.toml --no-namespace-packages --no-incremental -- tests/data/test_encrypted_object_store.py tests/rights/test_migration.py`
+- Deferred checks: `Fresh cluster2 rights/SDK/LPAC/acquisition/native/installed and build/smoke qualification remains W2.CP07 after independent correction approval and ordinary campaign resume.`, `Fresh full repository/profile, complete cross-capability, security/privacy/rights/accessibility/performance/packaging and separate human G2 release remain W2 exit obligations.`
+- Selection rationale: The sole changed path is an old test callback incompatible with the approved product staging-identity argument. The full affected encrypted-store class exercises the restored encrypted inspection and interruption cleanup. File quality and two-root default-import type proof close the actual runtime/type defects. Expanded independent privacy/security fixture and corrective-integration review is required. No other passed suites are repeated for this two-line restoration.
+- Prior round / replayed open findings: `-` / -
+- Root-cause escalation: -
 
 **Current latest-review projection:** `-` by - at `-`
 
