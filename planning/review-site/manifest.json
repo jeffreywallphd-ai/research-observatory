@@ -3287,6 +3287,53 @@
               "current_submission": null
             }
           }
+        },
+        {
+          "task_id": "W2.C15.T01",
+          "title": "Create acquisition queue, conflict, and entitlement placeholders",
+          "status": "IN_PROGRESS",
+          "acceptance_criteria": [
+            "Partial acquisitions resume or clean up safely; multiple copies remain distinguishable; lack of full text does not remove the metadata record or fabricate availability.",
+            "Automated tests cover the expected path and at least one material failure or boundary condition.",
+            "Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion."
+          ],
+          "correction": {
+            "origin_task_id": "CAP-05.S01.T03",
+            "origin_commit": "9a860fc45fe67d9582f4a37c81c90436b1ec715e",
+            "paused_state_sha256": "3e1095021753d80c4cd74972ae01bd020ffd045c0ee211094e403210b511e797",
+            "origin_sha256": "f74b32f21cdea4d6810e2651e892075295f377fba52d8cb924d1e74d9d76b16e",
+            "origin_contract_sha256": "9888e05207eba4d5d6522ec99045921af07f9276eee574fde9678d8856ebd70f",
+            "origin_history_sha256": "8d69b13955e098543a486bb9eb6af5ac45859ed841104f81f6057c9a276b88d2",
+            "origin_amendment_id": null,
+            "authority_sha256": "c92ce7e9bac1b8a49d13d649a5980fea61e56ee953d238c734d8ff5f04f4c9e5",
+            "spec": {
+              "path": "artifacts/evidence/W2.C15.T01.spec.json",
+              "sha256": "f7aa1a00caaa3c16ac5e4f07d745b3df975c8615efcaea1a77791d14cb1c7865",
+              "commit": "68003a03f884176e043f2e0bed94d0c50a57ebba"
+            },
+            "reproduction": "At clean committed81627fae5382e402ae5a3fc43ada941fcb33bebe, the existing exact encrypted v20 SDK migration fixture expects the current chain to end at0023 although the approved runner correctly adds0024 and0025. Its first actual case fails at the plan migration_ids assertion; later current23 fingerprint/history/manifest assertions are also stale. Fresh bounded1-case actualFAIL is retained in artifacts/tmp/W2.C15.T01.red-01-81627fae.json SHA256 750743baa137ae764aa52fd6174fd0e04942bbf7221ed7ff68e4b931949ccb6a; raw log artifacts/tmp/W2.C15.T01.red-01-81627fae.encrypted-v20-current-migration-fixture.log SHA256 114b8d1a3f31deffb86134950e8f059ca4bfb8376ebfe395804faa86061c8958. Guarded13444 inputs are stable. This is not a product migration failure or new qualification.",
+            "changed_paths": [
+              "tests/connectors/test_plugin_grant_migration.py"
+            ],
+            "impact_analysis": "Restore current-schema qualification for the approved additive migrations through25 in the original T03 relevant fixture/integration obligation. Add explicit0024/0025 imports and expected current migration IDs/history rows, advance only current-target/schema-fingerprint/manifest expectations from23 to25, and name the current25 helper accurately. Retain the exact encrypted v20 DDL/profile/schema fingerprint and source20 metadata, every original v21 fault-injection step, rollback/classification/retry, immutable first three migration rows, encrypted-source and backup SHA assertions, empty grant events and actual reopen. Assert newly added acquisition/intake tables remain empty in the current database. No original predecessor/source20 assertion or schema/module/product/permission/security/rights/UX/framework source change, fixture regeneration, history rewrite, criterion or threshold change is admitted. Run the full affected two-method encrypted migration class with all original subtests and no skips, changed-file Ruff format/lint and nonincremental ordinary-import mypy without suppression. Obtain independent correction/integration disposition, then resume the same W2 campaign and fresh CP07 before remaining parser tasks. Historical S01/SDK/C13/C14 support stays historical; full W2 and G2 remain separate."
+          },
+          "task_review": {
+            "task_id": "W2.C15.T01",
+            "title": "Create acquisition queue, conflict, and entitlement placeholders",
+            "status": "IN_PROGRESS",
+            "mode": "append-only",
+            "latest_review": {
+              "reviewer": null,
+              "result": null,
+              "reviewed_at": null,
+              "notes": null
+            },
+            "review_control": {
+              "version": 1,
+              "attempts": [],
+              "current_submission": null
+            }
+          }
         }
       ]
     },

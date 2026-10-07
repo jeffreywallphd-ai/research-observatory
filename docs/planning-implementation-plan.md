@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 34b082122a9436129c253617c1135bffd0610644dcea66405ee42d30b3021784
+source_sha256: 568b2e86d25792954a8c48de010429e6b20b0b003fe71532c99f9df9ea5771b1
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -4442,6 +4442,33 @@ Original tasks and approvals remain unchanged.
 **Current latest-review projection:** `approved` by agent:/root/s01_integration_review at `2026-10-07T05:19:16+00:00`
 
 **Latest notes:** Independent expanded encryption/privacy fixture and corrective-integration review approves only actual frozen W2.C14.T01 R01 at a8e87082/base efbfa1a7. The exact two-line spec-admitted callback repair accepts the typed staging identity received from the unchanged product and forwards that same value to the actual original publication helper. Every encrypted-staging/plaintext-exclusion, inspection, interrupted-source/bounded-error/partial-cleanup, restart/exact-decryption, empty-object authentication, tamper quarantine, missing-key classification, key rotation and explicit plaintext-fixture assertion remains unchanged. All seven affected encrypted-object-store methods pass without skips using actual encrypted envelope I/O and synthetic memory keys. Changed-file Ruff and nonincremental ordinary-import mypy on the encrypted fixture plus original C13 rights migration root pass without silent mode or error suppression, closing the specifically reproduced runtime and imported-call defects. All producer/report/raw/canonical log and inherited authority/history bindings authenticate; all 13442 guarded inputs independently rehash with zero mismatch or unreadable file. Earlier one-case TypeError and C13 ordinary-import type FAIL remain immutable at their original candidate. Original T03 and C13 DONE approvals stay unchanged; S01/C13 support is historical. No product/framework/security/rights/migration/UX change or criterion-bound C14 blocker remains. This approves neither CP07 nor W2 qualification nor G2 human release.
+
+**Currently open findings:** -
+
+### W2.C15.T01 — Create acquisition queue, conflict, and entitlement placeholders
+
+**Status:** `IN_PROGRESS`. **Original task:** `CAP-05.S01.T03`. **Latest review:** `-`.
+
+**Reproduction:** At clean committed81627fae5382e402ae5a3fc43ada941fcb33bebe, the existing exact encrypted v20 SDK migration fixture expects the current chain to end at0023 although the approved runner correctly adds0024 and0025. Its first actual case fails at the plan migration_ids assertion; later current23 fingerprint/history/manifest assertions are also stale. Fresh bounded1-case actualFAIL is retained in artifacts/tmp/W2.C15.T01.red-01-81627fae.json SHA256 750743baa137ae764aa52fd6174fd0e04942bbf7221ed7ff68e4b931949ccb6a; raw log artifacts/tmp/W2.C15.T01.red-01-81627fae.encrypted-v20-current-migration-fixture.log SHA256 114b8d1a3f31deffb86134950e8f059ca4bfb8376ebfe395804faa86061c8958. Guarded13444 inputs are stable. This is not a product migration failure or new qualification.
+
+**Inherited criteria:**
+
+- Partial acquisitions resume or clean up safely; multiple copies remain distinguishable; lack of full text does not remove the metadata record or fabricate availability.
+- Automated tests cover the expected path and at least one material failure or boundary condition.
+- Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.
+
+**Bounded changed paths:**
+
+- tests/connectors/test_plugin_grant_migration.py
+#### Review history — W2.C15.T01
+
+**Review mode:** `append-only v1` / 0 completed round(s)
+
+**Current immutable submission awaiting review:** None
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
 
 **Currently open findings:** -
 
