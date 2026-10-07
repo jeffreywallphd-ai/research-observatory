@@ -219,6 +219,30 @@ all table-cell expansion before constructing IR models. Relationship fanout is
 bounded separately. Decoder loops check cancellation, and figure locators use
 direct source-key lookup rather than repeated scans of the completed node list.
 
+The existing plain-text family uses the same installed package and protected
+stager, with its canonical `plain-text` identity translated only at the worker
+wire boundary to `txt`. Its strict authenticated raw receipt retains the text;
+the staged IR retains raw/NFC projections and code-point mappings without
+inventing pages, references, citations, tables or confidence. The native and
+inspection adapters report their first-party wrapper version `1.0.0`; PDFium's
+dependency version remains part of the signed package provenance.
+
+Before allocating plain-text projection models, Core charges the actual escaped
+raw and normalized strings plus their serialized mappings against the existing
+64 MiB IR limit. Normalization validates scalars in bounded chunks and supports
+cooperative cancellation. Canonical ordering precedes the independent built-in
+NFC comparison, preventing a descending combining sequence from entering the
+built-in quadratic ordering path. Unicode-16 conformance and exact contributor
+mappings remain unchanged.
+
+Canonical-class ordering and pending composition retain four-byte integer
+scalar/origin triples and yield rich units lazily. This bounds working storage
+by the admitted UTF-8 source and pinned canonical-decomposition expansion;
+it avoids retaining nested Python tuples for a whole nonstarter sequence before
+the wire-mapping budget runs. Stable class buckets preserve blocked composition,
+class-zero composition and noncontiguous raw origins. Both descending-class and
+all-equal-class uncancelled working-storage regressions cover this boundary.
+
 Engineering diagnostics and synthetic port tests do not qualify the installed
 product. Commit-bound package, native-principal, encrypted source-to-staged-IR,
 resource/cancellation/recovery and cold/warm performance proofs remain required

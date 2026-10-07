@@ -22,6 +22,7 @@ There is no new UI workflow or automation-framework source work in this task.
 | Persistence/recovery principal | Existing protected read closes its database transaction before inference. Recheck current session/rights and durable attempt fence before encrypted raw staging/delivery. Exercise actual native structured receipt and PDF output through encrypted storage, crash/cancel/restart, new-attempt retry and larger-tree guardian cleanup. Previous originals, raw attempts and accepted heads remain immutable. |
 | Fallback | Only an eligible exact Docling failure/timeout/memory failure can select a separate inspection-only text/page attempt. Cancellation or source/rights denial cannot trigger fallback; degraded output cannot qualify Docling or silently advance canonical state. |
 | Criterion 2/3 and compatibility | Behavioral regressions precede product edits where practical; version-1 historical IR/selection fixtures remain valid. Add only required portable raw/transport contracts, fixtures, documentation/notice inventory and a linked indexed implementation ADR for protected paths; accepted ADRs stay unchanged. |
+| Criterion 3: installed family composition | Every admitted existing family must compose with the actual installed descriptor, canonical source format and strict Core decoder. Test first-party fallback version admission and plain-text-to-worker `txt` mapping; qualify actual native/plain-text/inspection encrypted staging. No new parser family or selection policy. |
 | Performance evidence | Authenticate the exact committed package, complete immutable input closure, producer and frozen corpus labels. Measure actual hardware, cold/warm samples, resource peaks and raw samples against ADR-0029's 10-page p95 targets. Diagnostic measurements cannot substitute for qualified benchmarks. |
 
 First proofs: package/profile substitution and chunked-IPC boundary tests;
@@ -46,3 +47,20 @@ whole-history checks are not a routine task replay.
 Mandatory gate currently demonstrated: none. A proven failure of selected
 security/performance/licensing authority will be preserved and routed explicitly;
 ordinary debugging remains inside this task.
+
+Advisory learning: inspection used the dependency's PDFium version where the
+closed registry requires the first-party adapter's version; plain text had an
+admitted selection family but lacked the installed composition and wire-format
+bridge. Earlier decoder doubles did not exercise those composition boundaries.
+The tracked failing regressions precede both fixes. Plain-text expansion and
+normalization cancellation regressions cover the additional hostile-input risk;
+the complete pinned Unicode-16 conformance corpus preserves the mapping contract.
+Native execution remains separately required; these doubles do not qualify it.
+
+Further advisory learning: cooperative cancellation did not bound an uncancelled
+nonstarter segment's rich tuple allocation before wire-mapping admission. A
+failing measured-storage regression reproduced that gap. Compact scalar/origin
+buffers replace the transient tuple graph without imposing a new format quota;
+Unicode gold and existing noncontiguous, blocked and class-zero composition
+cases remain required. Check the pinned decomposition expansion when qualifying
+the working-storage bound.

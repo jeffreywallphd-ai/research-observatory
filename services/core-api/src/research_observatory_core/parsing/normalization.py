@@ -8,8 +8,9 @@ from __future__ import annotations
 
 import io
 import unicodedata
+from array import array
 from bisect import bisect_right
-from collections.abc import Iterator
+from collections.abc import Callable, Iterator
 from dataclasses import dataclass
 from typing import Literal
 
@@ -71,9 +72,10 @@ class NormalizedText:
         return _merge_ranges(iter(found))
 
 
-def _decomposed(raw: str) -> Iterator[_Unit]:
+def _decomposed(raw: str, checkpoint: Callable[[], None]) -> Iterator[_Unit]:
     index = 0
     while index < len(raw):
+        checkpoint()
         end = index + 1
         character = raw[index]
         if character == "\r":
@@ -86,54 +88,100 @@ def _decomposed(raw: str) -> Iterator[_Unit]:
         index = end
 
 
-def _ordered(raw: str) -> Iterator[_Unit]:
-    segment: list[_Unit] = []
-    for item in _decomposed(raw):
-        if unicodedata.combining(item[0]) == 0 and segment:
-            yield from sorted(segment, key=lambda unit: unicodedata.combining(unit[0]))
-            segment.clear()
-        segment.append(item)
-    yield from sorted(segment, key=lambda unit: unicodedata.combining(unit[0]))
+def _compact_units(values: array[int], checkpoint: Callable[[], None]) -> Iterator[_Unit]:
+    for offset in range(0, len(values), 3):
+        checkpoint()
+        yield chr(values[offset]), ((values[offset + 1], values[offset + 2]),)
 
 
-def _composed(raw: str) -> Iterator[_Unit]:
-    pending: list[_Unit] = []
-    starter: int | None = None
+def _ordered(raw: str, checkpoint: Callable[[], None]) -> Iterator[_Unit]:
+    # Stable canonical-class buckets hold 12-byte scalar/origin triples instead
+    # of a source-sized graph of nested Python tuples. Decomposition always
+    # gives one raw interval; only composition can merge contributors.
+    buckets: dict[int, array[int]] = {}
+
+    def emit() -> Iterator[_Unit]:
+        for combining_class in sorted(buckets):
+            yield from _compact_units(buckets[combining_class], checkpoint)
+        buckets.clear()
+
+    for character, origin in _decomposed(raw, checkpoint):
+        combining_class = unicodedata.combining(character)
+        if combining_class == 0 and buckets:
+            yield from emit()
+        values = buckets.setdefault(combining_class, array("I"))
+        values.extend((ord(character), origin[0][0], origin[0][1]))
+    yield from emit()
+
+
+def _composed(raw: str, checkpoint: Callable[[], None]) -> Iterator[_Unit]:
+    pending = array("I")
+    starter: _Unit | None = None
     last_class = 0
-    for character, origin in _ordered(raw):
+    for character, origin in _ordered(raw, checkpoint):
+        checkpoint()
         combining_class = unicodedata.combining(character)
         if starter is not None and (last_class < combining_class or last_class == 0):
-            composite = unicodedata.normalize("NFC", pending[starter][0] + character)
+            composite = unicodedata.normalize("NFC", starter[0] + character)
             if len(composite) == 1:
-                pending[starter] = (composite, _merge_ranges(pending[starter][1] + origin))
+                starter = (composite, _merge_ranges(starter[1] + origin))
                 continue
         if combining_class == 0:
-            yield from pending
-            pending = [(character, origin)]
-            starter = 0
+            if starter is not None:
+                yield starter
+            yield from _compact_units(pending, checkpoint)
+            pending = array("I")
+            starter = character, origin
         else:
-            pending.append((character, origin))
+            pending.extend((ord(character), origin[0][0], origin[0][1]))
         last_class = combining_class
-    yield from pending
+    if starter is not None:
+        yield starter
+    yield from _compact_units(pending, checkpoint)
 
 
-def normalize_text(raw: str) -> NormalizedText:
-    if type(raw) is not str or unicodedata.unidata_version != UNICODE_VERSION:
+def normalize_text(raw: str, *, cancelled: Callable[[], bool] | None = None) -> NormalizedText:
+    if type(raw) is not str or unicodedata.unidata_version != UNICODE_VERSION or array("I").itemsize != 4:
         raise NormalizationProblem("text-or-unicode-version-invalid")
+    steps = 0
+
+    def checkpoint(*, force: bool = False) -> None:
+        nonlocal steps
+        steps += 1
+        if cancelled is None or (not force and steps % 256 != 0):
+            return
+        stopped = True
+        try:
+            observation = cancelled()
+            stopped = type(observation) is not bool or observation
+        except Exception:
+            pass
+        if stopped:
+            raise NormalizationProblem("text-normalization-cancelled")
+
+    checkpoint(force=True)
     invalid = False
     try:
-        raw.encode("utf-8", errors="strict")
+        size = 0
+        for offset in range(0, len(raw), 4096):
+            checkpoint(force=True)
+            size += len(raw[offset : offset + 4096].encode("utf-8", errors="strict"))
+            if size > MAX_IR_BYTES:
+                raise NormalizationProblem("text-exceeds-ir-limit")
     except UnicodeError:
         invalid = True
     if invalid:
         raise NormalizationProblem("text-scalar-invalid")
-    expected = unicodedata.normalize("NFC", raw.replace("\r\n", "\n").replace("\r", "\n"))
-    if expected == raw:
+    # CPython's quick check refuses descending combining classes before full
+    # normalization. Avoid an uninterruptible quadratic sort on hostile runs.
+    if "\r" not in raw and unicodedata.is_normalized("NFC", raw):
+        checkpoint(force=True)
         mappings = (MappingRun("identity", 0, len(raw), ((0, len(raw)),)),) if raw else ()
         return NormalizedText(raw, raw, mappings)
     output = io.StringIO()
     mappings_list: list[MappingRun] = []
-    for position, (character, origin) in enumerate(_composed(raw)):
+    for position, (character, origin) in enumerate(_composed(raw, checkpoint)):
+        checkpoint()
         output.write(character)
         identity = len(origin) == 1 and origin[0][1] == origin[0][0] + 1 and raw[origin[0][0]] == character
         if (
@@ -154,6 +202,11 @@ def normalize_text(raw: str) -> NormalizedText:
             if len(mappings_list) * 64 > MAX_IR_BYTES:
                 raise NormalizationProblem("text-mapping-exceeds-ir-limit")
     actual = output.getvalue()
+    # Preserve the independent built-in NFC comparison on canonical NFD order;
+    # the ordering pass is cooperative and does not feed the C routine a
+    # descending combining run. This is the same Unicode canonical equivalence.
+    expected = unicodedata.normalize("NFC", "".join(character for character, _ in _ordered(raw, checkpoint)))
+    checkpoint(force=True)
     if actual != expected:
         raise NormalizationProblem("text-normalization-inconsistent")
     return NormalizedText(raw, actual, tuple(mappings_list))

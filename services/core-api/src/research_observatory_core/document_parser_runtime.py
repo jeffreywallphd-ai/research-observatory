@@ -64,10 +64,25 @@ class InstalledDocumentParserRuntime:
             base.runtime,
             ParserDescriptor(
                 parser_id="ro-page-text-fallback",
-                version="5.13.0",
+                version="1.0.0",
                 kind="degraded-inspection",
                 input_formats=("pdf",),
                 configuration_version="pdf-inspection-1",
+                configuration_sha256=base.descriptor.configuration_sha256,
+                assets=tuple(asset for asset in base.descriptor.assets if asset.component == "parser-runtime"),
+            ),
+        )
+
+    def load_text(self) -> InstalledParser:
+        base = self.load()
+        return InstalledParser(
+            base.runtime,
+            ParserDescriptor(
+                parser_id="ro-native-text",
+                version="1.0.0",
+                kind="native",
+                input_formats=("plain-text",),
+                configuration_version="native-text-1",
                 configuration_sha256=base.descriptor.configuration_sha256,
                 assets=tuple(asset for asset in base.descriptor.assets if asset.component == "parser-runtime"),
             ),
@@ -126,7 +141,7 @@ def _run_installed(installed, request, source, *, cancelled, page_index=None):
         result = parse_document(
             installed.runtime,
             source,
-            format=request.binding.source.format,
+            format="txt" if request.binding.source.format == "plain-text" else request.binding.source.format,
             length=request.binding.source.byte_length,
             sha256=request.binding.source.object_sha256,
             cancelled=cancelled,
@@ -205,6 +220,20 @@ class InstalledInspectionWorker(_InstalledWorker):
         )
 
 
+class InstalledTextWorker(_InstalledWorker):
+    def parse_source(self, request, source, *, cancelled) -> AuthenticatedNativeDelivery:
+        from .parsing.text import TEXT_MEDIA_TYPE
+
+        self._stage.validate_request(request)
+        raw = self._runtime.run(self._installed, request, source, cancelled=cancelled)
+        if cancelled():
+            raise ParseProblem("parser-failed")
+        receipt = self._stage(request, raw, media_type=TEXT_MEDIA_TYPE, cancelled=cancelled)
+        return AuthenticatedNativeDelivery(
+            raw, self._installed.descriptor, request.binding.attempt.job_id, request.binding.attempt.attempt_id, receipt
+        )
+
+
 class InstalledPageWorker(_InstalledWorker):
     def render_page(self, request, source, page_index, *, cancelled) -> AuthenticatedPageDelivery:
         from .parsing.pages import decode_png_page
@@ -248,6 +277,7 @@ class InstalledParserPipeline:
         from .parsing.docling import DoclingDocumentParser
         from .parsing.inspection import PdfInspectionAdapter
         from .parsing.native import NativeStructuredParser
+        from .parsing.text import BoundedTextParser
 
         choices = {
             "docling-cpu": (self._runtime.load, InstalledDoclingWorker, DoclingDocumentParser),
@@ -257,7 +287,11 @@ class InstalledParserPipeline:
         selected = None
         try:
             request = ParseRequest.model_validate(request)
-            load, worker, adapter = choices[request.binding.producer.kind]
+            load, worker, adapter = (
+                (self._runtime.load_text, InstalledTextWorker, BoundedTextParser)
+                if request.binding.producer.parser_id == "ro-native-text"
+                else choices[request.binding.producer.kind]
+            )
             installed = load()
             if installed.descriptor == request.binding.producer:
                 selected = installed, worker, adapter

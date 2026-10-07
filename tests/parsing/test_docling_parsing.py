@@ -9,6 +9,7 @@ import sys
 import unittest
 from dataclasses import replace
 from pathlib import Path
+from typing import Any, cast
 from unittest.mock import patch
 
 REPO = Path(__file__).resolve().parents[2]
@@ -135,6 +136,7 @@ class DoclingAdapterTests(unittest.TestCase):
         req = request()
         result = decode_delivery(req, decode_docling(req, delivery(req, value)))
         self.assertIsInstance(result, ParseSuccess)
+        assert isinstance(result, ParseSuccess)
         return result.ir
 
     def test_total_table_expansion_is_rejected_before_node_allocation(self):
@@ -232,7 +234,7 @@ class DoclingAdapterTests(unittest.TestCase):
 
         # Isolate construction work; ordinary tests validate the complete IR.
         with patch.object(docling, "IRNode", ObservedNode), patch.object(docling, "DocumentIR", lambda **parts: parts):
-            built = docling._build_ir(req, value, delivery(req, value).artifact_receipt)
+            built = cast(dict[str, Any], docling._build_ir(req, value, delivery(req, value).artifact_receipt))
         self.assertEqual(len(built["figures"]), 400)
         self.assertLessEqual(accesses, 2 * len(built["nodes"]))
 

@@ -2,17 +2,52 @@
 
 import hashlib
 import sys
+import tracemalloc
 import unittest
 from pathlib import Path
 from typing import cast
+from unittest.mock import patch
 
 REPO = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(REPO / "services/core-api/src"))
 
+from research_observatory_core.parsing import normalization  # noqa: E402
 from research_observatory_core.parsing.normalization import NormalizationProblem, normalize_text  # noqa: E402
 
 
 class NormalizationTests(unittest.TestCase):
+    def test_uncancelled_combining_segment_uses_compact_working_storage(self):
+        for raw, first in (("a" + "\u0315\u0300" * 12000, "à"), ("a" + "\u0315" * 24000, "a")):
+            with self.subTest(first=first):
+                units = normalization._composed(raw, lambda: None)
+                tracemalloc.start()
+                try:
+                    self.assertEqual(first, next(units)[0])
+                    _, peak = tracemalloc.get_traced_memory()
+                finally:
+                    units.close()
+                    tracemalloc.stop()
+                # No rich tuple graph for the entire source-controlled segment
+                # may precede the wire-mapping budget. No cancellation requested.
+                self.assertLess(peak, len(raw.encode()) * 32)
+
+    def test_cancellation_bounds_a_long_disordered_combining_run(self):
+        raw = "a" + "\u0315\u0300" * 100000
+        calls = 0
+
+        def cancelled():
+            nonlocal calls
+            calls += 1
+            return calls >= 54
+
+        with (
+            patch.object(normalization.unicodedata, "normalize", wraps=normalization.unicodedata.normalize) as nfc,
+            self.assertRaisesRegex(NormalizationProblem, "text-normalization-cancelled"),
+        ):
+            normalize_text(raw, cancelled=cancelled)
+        self.assertLess(nfc.call_count, 10000)
+        self.assertTrue(all(len(call.args[1]) < 10 for call in nfc.call_args_list))
+
     def test_pinned_unicode_16_nfc_conformance_gold(self):
         path = REPO / "tests/fixtures/documents/normalization/NormalizationTest-16.0.0.txt"
         data = path.read_bytes()
