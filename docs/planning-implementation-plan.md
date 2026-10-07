@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: f0641143131b466e9aa68bd10449e8c500c5e26f58f50e46f26011c546eae223
+source_sha256: f711cb2fadbbc7dd6d284855da162383bf7907c2dbf11504f4224129dc1162aa
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -4447,7 +4447,7 @@ Original tasks and approvals remain unchanged.
 
 ### W2.C15.T01 — Create acquisition queue, conflict, and entitlement placeholders
 
-**Status:** `REVIEW`. **Original task:** `CAP-05.S01.T03`. **Latest review:** `-`.
+**Status:** `DONE`. **Original task:** `CAP-05.S01.T03`. **Latest review:** `approved`.
 
 **Reproduction:** At clean committed81627fae5382e402ae5a3fc43ada941fcb33bebe, the existing exact encrypted v20 SDK migration fixture expects the current chain to end at0023 although the approved runner correctly adds0024 and0025. Its first actual case fails at the plan migration_ids assertion; later current23 fingerprint/history/manifest assertions are also stale. Fresh bounded1-case actualFAIL is retained in artifacts/tmp/W2.C15.T01.red-01-81627fae.json SHA256 750743baa137ae764aa52fd6174fd0e04942bbf7221ed7ff68e4b931949ccb6a; raw log artifacts/tmp/W2.C15.T01.red-01-81627fae.encrypted-v20-current-migration-fixture.log SHA256 114b8d1a3f31deffb86134950e8f059ca4bfb8376ebfe395804faa86061c8958. Guarded13444 inputs are stable. This is not a product migration failure or new qualification.
 
@@ -4462,9 +4462,11 @@ Original tasks and approvals remain unchanged.
 - tests/connectors/test_plugin_grant_migration.py
 #### Review history — W2.C15.T01
 
-**Review mode:** `append-only v1` / 0 completed round(s)
+**Review mode:** `append-only v1` / 1 completed round(s)
 
-**Current immutable submission awaiting review:** `R01` / packet SHA-256 `9bc0e259e9673caf77f58e168ea292f67e55c120f996302024df0fa95e70795d`
+##### Round R01
+
+**Immutable submission packet:** `R01` / packet SHA-256 `9bc0e259e9673caf77f58e168ea292f67e55c120f996302024df0fa95e70795d`
 
 - Candidate / base / branch: `cdf802d9b0bde6aef35f41f38370a23c76e2180f` / `68003a03f884176e043f2e0bed94d0c50a57ebba` / `codex/w2-implementation`
 - Submitted by / at: codex-w2-implementation / `2026-10-07T06:35:17+00:00`
@@ -4478,9 +4480,25 @@ Original tasks and approvals remain unchanged.
 - Prior round / replayed open findings: `-` / -
 - Root-cause escalation: -
 
-**Current latest-review projection:** `-` by - at `-`
+**Disposition / reviewer / time:** `approved` / agent:/root/s01_integration_review / `2026-10-07T06:51:42+00:00`
 
-**Latest notes:** -
+**Immutable review ledger:** `artifacts/evidence/W2.C15.T01.review-R01.json` / `3c2103b063bc8b1da0b2571beaadb822708b2309adabcb804903fd8582d9cc88`
+
+**Review notes:** Independent expanded migration-fixture and corrective-integration review approves only actual frozen W2.C15.T01 R01 at cdf802d9/base 68003a03. The sole admitted SDK test fixture restores current schema25 IDs, explicit appended history rows, current fingerprint/helper/manifest expectations and empty additive tables. Immutable Git comparisons preserve the exact encrypted v20 constructor, first three historical rows and every original test assertion apart from admitted current-target/helper changes. Full affected protected SQLCipher class executes both original methods without skips, including all eight original v21 material-step fault subtests, rollback/replan/retry, exact predecessor fingerprints, verified backup bytes and actual reopen. Four guarded checks pass, including nonincremental ordinary-import mypy without suppression. Producer/report/raw/canonical log and inherited authority/history pins authenticate; the retained actual stale-target FAIL remains adverse. The complete 13445-input physical rehash was performed in the pre-submit IN_PROGRESS phase, with zero mismatch or unreadable input; before/after guarded execution maps remain equal. Later controller/view metadata changes are expected and are not represented as equal to that pre-submit physical inventory. No product/schema/migration/security/rights/UX/framework change or C15 criterion-bound blocker remains. This disposition does not approve CP07, W2 qualification or G2 release.
+
+**Findings opened:**
+
+- None
+
+**Prior finding closures:**
+
+- None
+
+**Current immutable submission awaiting review:** None
+
+**Current latest-review projection:** `approved` by agent:/root/s01_integration_review at `2026-10-07T06:51:42+00:00`
+
+**Latest notes:** Independent expanded migration-fixture and corrective-integration review approves only actual frozen W2.C15.T01 R01 at cdf802d9/base 68003a03. The sole admitted SDK test fixture restores current schema25 IDs, explicit appended history rows, current fingerprint/helper/manifest expectations and empty additive tables. Immutable Git comparisons preserve the exact encrypted v20 constructor, first three historical rows and every original test assertion apart from admitted current-target/helper changes. Full affected protected SQLCipher class executes both original methods without skips, including all eight original v21 material-step fault subtests, rollback/replan/retry, exact predecessor fingerprints, verified backup bytes and actual reopen. Four guarded checks pass, including nonincremental ordinary-import mypy without suppression. Producer/report/raw/canonical log and inherited authority/history pins authenticate; the retained actual stale-target FAIL remains adverse. The complete 13445-input physical rehash was performed in the pre-submit IN_PROGRESS phase, with zero mismatch or unreadable input; before/after guarded execution maps remain equal. Later controller/view metadata changes are expected and are not represented as equal to that pre-submit physical inventory. No product/schema/migration/security/rights/UX/framework change or C15 criterion-bound blocker remains. This disposition does not approve CP07, W2 qualification or G2 release.
 
 **Currently open findings:** -
 
