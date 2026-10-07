@@ -1490,7 +1490,7 @@ waves:
     notes: Owner explicitly approved the complete W2 execution packet and requested implementation; G1 prototype limitations
       remain recorded, not waived.
   campaign:
-    status: ACTIVE
+    status: PAUSED
     scope: wave
     owner: codex-w2-implementation
     branch: codex/w2-implementation
@@ -1499,13 +1499,13 @@ waves:
     profile: LOC
     platform: windows-x64
     started_at: '2026-09-19T17:21:58+00:00'
-    updated_at: '2026-10-06T17:16:10+00:00'
-    pause_reason: null
-    pause_category: null
-    lease:
-      claimed_by: codex-w2-implementation
-      claimed_at: '2026-10-06T17:16:10+00:00'
-      expires_at: '2026-10-07T17:16:10+00:00'
+    updated_at: '2026-10-07T03:34:20+00:00'
+    pause_reason: 'Required cluster-2 migration qualification cannot pass unchanged schema-24 expectations against approved
+      schema25: fresh checkpoint54-case run retained four failures. Enter only the clean linked product-test correction boundary
+      for CAP-05.S01.T03; preserve original DONE approval, current migration guarantees and all fixtures. No owner decision
+      or framework source work is requested; resume automatically after independent correction approval.'
+    pause_category: infeasible
+    lease: null
     corrective_tasks:
     - title: Implement idempotent import commits and import manifests
       objective: Batch transaction and manifest linking source file hash, parser version, record decisions, errors, and resulting
@@ -4277,7 +4277,7 @@ waves:
     notes: Adopt exact independently approved A03 checkpoint; ordinary W2 remains PAUSED; original CAP-05.S01.T01 base6506
       and all task history retained; no further framework development after closed A05.
   completion:
-    status: IN_PROGRESS
+    status: PAUSED
     reviewer: null
     reviewed_at: null
     evidence: []

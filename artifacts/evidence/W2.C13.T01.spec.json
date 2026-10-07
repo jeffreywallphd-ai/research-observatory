@@ -1,0 +1,14 @@
+{
+  "schemaVersion": "1.0",
+  "kind": "authority-preserving-correction",
+  "origin": {
+    "taskId": "CAP-05.S01.T03",
+    "commit": "10110a835a0b2536a398c4709fa1e1c366b09972",
+    "sha256": "f74b32f21cdea4d6810e2651e892075295f377fba52d8cb924d1e74d9d76b16e"
+  },
+  "reproduction": "The fresh W2 cluster-2 checkpoint at clean candidate 10110a835a0b2536a398c4709fa1e1c366b09972 runs 54 rights/public-handoff cases and preserves four assertion failures in tests.rights.test_migration.LiteralV17PredecessorTests. The approved CAP-05.S01.T03 additive document-intake migration advances current schema to25, but three existing test methods still expect current target24, a chain ending at0024, or a recovery-contract enum ending at24. Both populated import/connector v17 source paths, protected failure-backup-retry, and the frozen recovery witness are implicated. The raw log artifacts/tmp/W2.CP07.selected-01-10110a83.rights-and-portable-handoff.log has SHA-256 185f4528d3d35885445c1ecabae35c8923d0a5f51e360bd1c8959d1977d43a96; failed stable-input receipt artifacts/tmp/W2.CP07.selected-01-10110a83.json has SHA-256 f7dfae1e234d01c29ece9531df9cd46ae761f45b96da8aa0542c6c60a8c52366. No later group ran and no checkpoint approval or completion is claimed.",
+  "changedPaths": [
+    "tests/rights/test_migration.py"
+  ],
+  "impactAnalysis": "Restore the original T03 relevant-migration and recovery qualification obligation for the already-approved schema 25. Extend only current-target assertions to exact 25 and the explicit 0025_document_intake_recovery revision. Require the additive intake/recovery/access-need tables to remain empty when historical metadata-only v17 projects migrate. Keep the literal historical v17 schema/row fixture bytes and hashes, frozen recovery snapshot, all old-table history comparisons, verified encrypted/plain backups, injected failure rollback, retry/reopen/idempotency, rights-unknown and legacy-recheck assertions intact. Do not change migration/schema/recovery contracts, product code, security or rights authority, test thresholds, governed experience, workflow/framework source or original approvals. This is product compatibility test coverage, not automation development or a new amendment. The observed failures are the red-first reproduction. Run focused v17 migration, schema 25 recovery migration and affected test-file quality checks, obtain independent correction/integration disposition, then resume the existing W2 campaign and perform the fresh affected checkpoint. Earlier task/slice resource/visual results remain historical; W2 qualification and G2 human release remain separate."
+}
