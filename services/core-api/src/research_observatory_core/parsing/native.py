@@ -154,7 +154,7 @@ def _kind(raw: NativeStructure, element: NativeElement) -> NodeKind:
         if (
             local == "head"
             and element.parent_index is not None
-            and _name(raw.elements[element.parent_index])[1] == "figure"
+            and _name(raw.elements[element.parent_index]) in {("", "figure"), ("http://www.tei-c.org/ns/1.0", "figure")}
         ):
             return "caption"
     if raw.format == "html":
@@ -445,8 +445,16 @@ def _build_ir(request: ParseRequest, raw: NativeStructure, artifact: RawParserAr
             found = source_ids.get(target, [])
             missing |= not found
             candidates.extend(item for item in found if item not in candidates)
+        if missing:
+            # Version-1 IR cannot represent a partial target set. Keep all
+            # source targets/IDs in the raw artifact and report conservative
+            # unresolved uncertainty without inventing a complete relation.
+            candidates = []
+            warnings.append(
+                ParserWarning(code="missing-citation-target", severity="warning", node_id=_node_id(index), detail=None)
+            )
         resolution: Literal["candidate", "ambiguous", "unresolved"] = (
-            "unresolved" if not candidates else "ambiguous" if missing or len(candidates) != 1 else "candidate"
+            "unresolved" if not candidates else "ambiguous" if len(candidates) != 1 else "candidate"
         )
         citations.append(
             IRCitation(

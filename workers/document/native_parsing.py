@@ -10,7 +10,7 @@ import hashlib
 import html
 import json
 import re
-from collections.abc import Callable
+from collections.abc import Callable, Collection
 from html.parser import HTMLParser
 from typing import Any
 from xml.parsers import expat
@@ -328,6 +328,18 @@ class _HTML(HTMLParser):
         self.tags.pop()
         self.namespaces.pop()
 
+    def close_in_scope(self, targets: Collection[str], boundaries: Collection[str], offset: int) -> None:
+        # Optional ends apply to the relevant ancestor, not merely the stack
+        # top. A nested list/table boundary must prevent closing an outer item.
+        for index in range(len(self.tags) - 1, -1, -1):
+            tag = self.tags[index]
+            if tag in targets:
+                while len(self.tags) > index:
+                    self.close_element(offset, offset, "implicit")
+                return
+            if tag in boundaries:
+                return
+
     def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
         _char, start = self.position()
         if tag in self.ACTIVE:
@@ -345,16 +357,22 @@ class _HTML(HTMLParser):
             ):
                 raise NativeParseError("unsafe-content")
         optional = {
-            "li": {"li"},
-            "dt": {"dt", "dd"},
-            "dd": {"dt", "dd"},
-            "tr": {"tr", "td", "th"},
-            "td": {"td", "th"},
-            "th": {"td", "th"},
-            "tbody": {"tbody", "thead", "tfoot", "tr", "td", "th"},
+            "li": ({"li"}, {"ul", "ol"}),
+            "dt": ({"dt", "dd"}, {"dl"}),
+            "dd": ({"dt", "dd"}, {"dl"}),
+            "tr": ({"tr"}, {"table", "tbody", "thead", "tfoot"}),
+            "td": ({"td", "th"}, {"tr", "table"}),
+            "th": ({"td", "th"}, {"tr", "table"}),
+            "tbody": ({"tbody", "thead", "tfoot"}, {"table"}),
+            "thead": ({"tbody", "thead", "tfoot"}, {"table"}),
+            "tfoot": ({"tbody", "thead", "tfoot"}, {"table"}),
+            "body": ({"head"}, {"html"}),
         }
-        while self.tags and (self.tags[-1] in optional.get(tag, set()) or (self.tags[-1] == "p" and tag in self.BLOCK)):
-            self.close_element(start, start, "implicit")
+        if tag in self.BLOCK or tag in {"li", "dt", "dd"}:
+            self.close_in_scope({"p"}, self.BLOCK - {"p"} | {"li", "dt", "dd"}, start)
+        if tag in optional:
+            targets, boundaries = optional[tag]
+            self.close_in_scope(targets, boundaries, start)
         scope = dict(self.namespaces[-1]) if self.namespaces else {}
         for name, value in attrs:
             if name == "xmlns":
@@ -384,7 +402,20 @@ class _HTML(HTMLParser):
         if tag not in self.tags:
             raise NativeParseError("malformed-content")
         while self.tags[-1] != tag:
-            if self.tags[-1] not in {"li", "p", "dt", "dd", "td", "th", "tr", "tbody", "thead", "tfoot"}:
+            if self.tags[-1] not in {
+                "li",
+                "p",
+                "dt",
+                "dd",
+                "td",
+                "th",
+                "tr",
+                "tbody",
+                "thead",
+                "tfoot",
+                "head",
+                "body",
+            }:
                 raise NativeParseError("malformed-content")
             self.close_element(start, start, "implicit")
         end_char = self.decoded.find(">", char)

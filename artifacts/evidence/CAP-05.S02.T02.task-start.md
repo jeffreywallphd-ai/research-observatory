@@ -47,3 +47,22 @@ per-format expectations independently name the section/paragraph/inline,
 list/item, footnote and figure/caption relationships. Native 20-case and portable
 3-case development observations pass, along with affected normal-import types.
 Fresh committed-candidate checks and independent disposition are still required.
+
+Independent pre-submission review at `60f8a6fab3bf9d59a7b2267bea6e0c288f8df4d2`
+found two missed acceptance cases: a bibliography marker with both a retained
+and missing target must retain unresolved uncertainty instead of rejecting the
+document; valid optional HTML list/paragraph/head endings must preserve source
+hierarchy and text ownership through the relevant ancestor. The exact adverse
+observation is `artifacts/tmp/CAP-05.S02.T02.review-s02_t01_review-observation-01.json`,
+SHA-256 `b99db24d5c12c28d71217164fc265a6d45a6dc7b6b6df1ea2651bf8c16229daf`.
+The original passing selected run and unsubmitted R01 manifest remain unchanged
+as historical observations; they do not qualify the newly demonstrated cases.
+Minimal behavioral regressions precede the correction. Existing IR citation
+states remain unchanged: incomplete target sets are conservatively unresolved,
+with original targets/known reference identities retained in the raw receipt
+and a quality warning, rather than inventing a complete link or a new wire state.
+
+The same finite independent observation also identified native TEI `head` being
+promoted to a caption under a foreign-namespace `figure`. Native contextual
+semantics require the parent's namespace as well as its local name. A minimal
+foreign-parent/native-parent regression precedes that correction too.

@@ -106,7 +106,9 @@ JATS, unnamespaced/TEI P5, generic unnamespaced XML, and unnamespaced/XHTML HTML
 Foreign elements with familiar local names remain unknown. Source bibliography
 entries and explicit bibliography links produce staged reference/citation
 observations, never scholarly authority. Duplicate or absent source IDs leave
-candidate links ambiguous/unresolved. Identifier values are observed fields,
+candidate links ambiguous/unresolved. A partially missing target set is
+conservatively unresolved with a quality warning; all original targets and known
+entry identities stay in the raw receipt. Identifier values are observed fields,
 not inferred citations. HTML's historical `doc-biblioentry` role is retained for
 source compatibility; no accessibility conformance is inferred from that role.
 

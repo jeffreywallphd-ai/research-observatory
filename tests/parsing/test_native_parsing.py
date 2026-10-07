@@ -381,6 +381,64 @@ class NativeParsingTests(unittest.TestCase):
             ],
         )
 
+    def test_partly_missing_targets_retain_document_and_explicit_uncertainty(self):
+        data = (
+            b'<article><body><p><xref ref-type="bibr" rid="R missing">[1,2]</xref></p></body>'
+            b'<back><ref-list><ref id="R">SYNTHETIC</ref></ref-list></back></article>'
+        )
+        ir, raw, _, _ = native_parse(data, "jats")
+        self.assertEqual("unresolved", ir.citations[0].resolution)
+        self.assertEqual((), ir.citations[0].reference_candidates)
+        self.assertEqual(1, len(ir.references))
+        self.assertEqual(1, ir.quality.unresolved_references)
+        self.assertTrue(any(w.code == "missing-citation-target" for w in ir.quality.warnings))
+        self.assertTrue(
+            any(a == {"name": "rid", "value": "R missing"} for e in raw["elements"] for a in e["attributes"])
+        )
+
+    def test_html_optional_endings_close_the_relevant_ancestor(self):
+        for data in (
+            b"<html><body><ul><li><p>A<li>B</ul></body></html>",
+            b"<html><head><title>SYNTHETIC</title><body><ul><li><p>A<li>B</ul></body></html>",
+        ):
+            ir, raw, _, _ = native_parse(data, "html")
+            nodes = {n.staged_id: n for n in ir.nodes}
+            items = [n for n in ir.nodes if n.kind == "list-item"]
+            self.assertEqual(["A", "B"], [node_text(ir, n) for n in items])
+            self.assertEqual(items[0].parent_id, items[1].parent_id)
+            self.assertEqual("list", nodes[items[1].parent_id].kind)
+            paragraph = next(n for n in ir.nodes if n.kind == "paragraph")
+            self.assertEqual("A", node_text(ir, paragraph))
+            self.assertEqual(items[0].staged_id, paragraph.parent_id)
+            body = next(n for n in ir.nodes if n.source_element_type == "body")
+            self.assertEqual("html", nodes[body.parent_id].source_element_type)
+            self.assertTrue(any(e["closeKind"] == "implicit" for e in raw["elements"]))
+
+    def test_tei_foreign_parent_cannot_supply_native_figure_context(self):
+        data = (
+            b'<TEI xmlns="http://www.tei-c.org/ns/1.0" xmlns:x="urn:foreign"><text><body>'
+            b"<x:figure><head>FOREIGN PARENT</head></x:figure><figure><head>NATIVE PARENT</head></figure>"
+            b"</body></text></TEI>"
+        )
+        ir, _, _, _ = native_parse(data, "tei")
+        self.assertEqual(
+            "title",
+            next(
+                n.kind
+                for n in ir.nodes
+                if node_text(ir, n) == "FOREIGN PARENT" and n.source_element_type == "{http://www.tei-c.org/ns/1.0}head"
+            ),
+        )
+        self.assertEqual(
+            "caption",
+            next(
+                n.kind
+                for n in ir.nodes
+                if node_text(ir, n) == "NATIVE PARENT" and n.source_element_type == "{http://www.tei-c.org/ns/1.0}head"
+            ),
+        )
+        self.assertEqual(1, len(ir.figures))
+
     def test_worker_output_cap_returns_no_partial(self):
         worker = importlib.import_module("workers.document.native_parsing")
         # Exercise the unchanged output-cap mechanism with a small cap. The
