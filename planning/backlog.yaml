@@ -29249,7 +29249,7 @@ capabilities:
     depends_on:
     - CAP-05.S01.T03
     - CAP-03.S04.T02
-    status: IN_PROGRESS
+    status: REVIEW
     tasks:
     - id: CAP-05.S02.T01
       capability_id: CAP-05
@@ -30317,11 +30317,14 @@ capabilities:
     platform_targets:
     - windows-x64
     completion:
-      status: PENDING
+      status: REVIEW
       reviewer: null
       reviewed_at: null
-      evidence: []
-      notes: null
+      evidence:
+      - artifacts/evidence/CAP-05.S02.qualification-01.json
+      notes: Committed integration packet fa5d5c4d56cc1d1eca28b7fb593f588bad1e1787 SHA197c55a378341fa7282d1ea32a14ade5932b224c7b03205df6ede178346c2431
+        authenticates c1751140 source, all three DONE approved tasks and actual protected parser handoff. Exact owner warm
+        timing acceptance retained with unchanged benchmark FAIL; independent slice disposition pending; no W2 release claim.
   - id: CAP-05.S03
     title: Immutable document revisions and source anchors
     outcome: Every extracted passage and downstream assertion points to a specific immutable revision and stable location.

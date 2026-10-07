@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: d54e45ed04afb94d0ab4659c678aeaae51b775538531457e88c0d77472c57fd9
+source_sha256: aeaee4a91bb13b8e4abbbd1c5a755f55a12ba3710c66c8ea902fcddcb08ec6f9
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -11129,7 +11129,7 @@ Original tasks and approvals remain unchanged.
 
 **Outcome:** A replaceable local parser pipeline produces normalized document structure with retained originals and quality signals.
 
-**Wave / priority / status / review:** `W2` / `P0` / `IN_PROGRESS` / `PENDING`
+**Wave / priority / status / review:** `W2` / `P0` / `REVIEW` / `REVIEW`
 
 **Profiles / platforms:** `LOC`, `LAB` / `windows-x64`
 

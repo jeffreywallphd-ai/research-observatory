@@ -1,0 +1,461 @@
+{
+  "document_type": "independent-slice-review",
+  "slice_id": "CAP-05.S02",
+  "review_round": "01",
+  "reviewer": "agent:/root/t03_product_review",
+  "result": "approved",
+  "reviewed_at": "2026-10-07T22:26:47.971433Z",
+  "candidate_commit": "c17511401808d003eaa2c74ff0b866e65a6955d9",
+  "reviewed_state_commit": "fa5d5c4d56cc1d1eca28b7fb593f588bad1e1787",
+  "evidence_delivery_commit": "fa5d5c4d56cc1d1eca28b7fb593f588bad1e1787",
+  "submission_metadata_commit": "3ee11e5964d4f4869bd2a653eaaca4b778009907",
+  "approval_commit": "c85a59f3a293f8e3f2eaf6454682c9a14b1efa55",
+  "evidence_reference": {
+    "path": "artifacts/evidence/CAP-05.S02.qualification-01.json",
+    "sha256": "197c55a378341fa7282d1ea32a14ade5932b224c7b03205df6ede178346c2431",
+    "commit": "fa5d5c4d56cc1d1eca28b7fb593f588bad1e1787"
+  },
+  "reviewed_backlog_sha256": "d54e45ed04afb94d0ab4659c678aeaae51b775538531457e88c0d77472c57fd9",
+  "notes": "Independent CAP-05.S02 integration review approves the exact staged parser outcome at c17511401808d003eaa2c74ff0b866e65a6955d9 and its committed qualification packet. All three tasks are DONE with authenticated independent approvals. The source-to-publication delta is evidence/backlog/generated metadata only. Existing expanded task/security review and current 78-reference preparation establish affected contracts, actual protected SQLCipher/encrypted source, signed LPAC, raw retention, installed native families, offline Docling, failure/recovery and portable handoff without repeating unchanged audits or executions. The benchmark aggregate remains FAIL: warm p95 62.5333542 exceeds the unchanged 60-second target; cold p95 59.7308133 meets 90 seconds. Exact human acceptance makes only that observation nonblocking for this slice. LayoutGold FAIL, guardian exit120 and other adverse outcomes remain explicit. No material integration finding remains.",
+  "acceptance_reviews": [
+    {
+      "criterion": "Approved S02 plan sections 4/5/10/17: replaceable deterministic pipeline with retained originals, normalized staged structure and quality signals; T01 criteria 1-3.",
+      "result": "satisfied",
+      "checks": [
+        "parser-regressions",
+        "portable-worker-contracts",
+        "normalization-bound",
+        "encrypted-plain-text",
+        "encrypted-jats",
+        "encrypted-tei",
+        "encrypted-xml",
+        "encrypted-html",
+        "encrypted-docx"
+      ],
+      "assessment": "Accepted T01 source-offset/own-node semantic closure and T02 hierarchy/typed-unknown contracts compose with deterministic native preference and exact source/parser/config/assets binding. Basic151 reports 147 parser cases with 11 native-only skips: 136 execute there, and native141 separately executes those same 11 against the actual built extension with zero skips. No accepted document head is mutated."
+    },
+    {
+      "criterion": "Approved S02 plan sections 7/10/17: real local adapter/principal integration with S01 protected source and no hidden authority; T02/T03 protected production boundaries.",
+      "result": "satisfied",
+      "checks": [
+        "encrypted-fallback",
+        "encrypted-plain-text",
+        "encrypted-jats",
+        "encrypted-tei",
+        "encrypted-xml",
+        "encrypted-html",
+        "encrypted-docx",
+        "installed-parser-cold-0",
+        "installed-parser-warm-0"
+      ],
+      "assessment": "Fresh miniature projects use actual LocalDocumentAttachmentService.stage, retained attachment/revision identity, current protected SQLCipher source authorization, InstalledParserPipeline, the authenticated signed LPAC package and encrypted raw-artifact stager. Actual current source/session/rights and retained acquisition provenance are supported by accepted S01 and current parser regressions. Discovery, pre-admitted workflow and clock fixtures remain disclosed. No new TLS, live scheduler or production-installed Core application observation is inferred."
+    },
+    {
+      "criterion": "Approved S02 plan sections 8/10: failure, denial, cancellation, restart and recovery without partial canonical output; T03 crash isolation/resumability.",
+      "result": "satisfied",
+      "checks": [
+        "lifecycle-cancel",
+        "lifecycle-worker-crash",
+        "parent-death",
+        "resource-timeout",
+        "resource-job-memory-denial",
+        "denial-malformed-pdf",
+        "denial-encrypted-pdf",
+        "denial-huge-canvas",
+        "denial-over-page-limit",
+        "denial-native-external-entity",
+        "encrypted-fallback",
+        "parser-regressions"
+      ],
+      "assessment": "Actual owned worker cancellation/crash/death/resource and hostile-input executions, with protected artifact/current-right/session/attempt regressions, establish bounded termination, owned cleanup, encrypted immutable raw attempts and distinct retry/inspection recovery. Failure/cancellation expose no usable IR. The parent-death guardian exit120 is preserved; separately observed worker termination, owned target removal and fresh inspection establish their named outcomes without inventing guardian exit0, cause or deceased-parent ACL restoration."
+    },
+    {
+      "criterion": "Approved S02 plan sections 11/12/17 and accepted ADR-0029: offline bounded package, truthful quality and representative benchmark; T03 criterion 1.",
+      "result": "satisfied-with-exact-owner-acceptance",
+      "checks": [
+        "page",
+        "scan",
+        "resource-job-memory-denial",
+        "resource-timeout",
+        "installed-parser-cold-0",
+        "installed-parser-cold-1",
+        "installed-parser-cold-2",
+        "installed-parser-warmup-0",
+        "installed-parser-warm-0",
+        "installed-parser-warm-1",
+        "installed-parser-warm-2",
+        "installed-parser-warm-3",
+        "installed-parser-warm-4",
+        "installed-parser-warm-5",
+        "installed-parser-warm-6"
+      ],
+      "assessment": "All eleven actual children pass functional/resource/public-wire assertions using the pinned offline package. Authored labels/tables are retained while extra model table classifications, ambiguous reading order/grid, unknown confidence and scan incompleteness remain unverified warnings. Aggregate warm budget FAIL and unchanged raw samples/thresholds are retained; exact owner acceptance applies only to this 62.5333542-second warm p95. No further performance investigation, tuning, retest, cause claim, baseline rewrite or general exemption is undertaken."
+    },
+    {
+      "criterion": "Approved S02 plan sections 13/15/17: portable downstream handoff usable without private implementation state; complete criterion/evidence/documentation bundle.",
+      "result": "satisfied",
+      "checks": [
+        "portable-worker-contracts",
+        "parser-regressions",
+        "lint",
+        "format",
+        "types",
+        "architecture",
+        "adr",
+        "installed-parser-cold-0",
+        "installed-parser-cold-1",
+        "installed-parser-cold-2",
+        "installed-parser-warmup-0",
+        "installed-parser-warm-0",
+        "installed-parser-warm-1",
+        "installed-parser-warm-2",
+        "installed-parser-warm-3",
+        "installed-parser-warm-4",
+        "installed-parser-warm-5",
+        "installed-parser-warm-6"
+      ],
+      "assessment": "Every actual final child staged.model_dump passes the held public parse-result.v1 schema and exact outer/IR/request binding with staged disposition after the measured Core timer. Schema and wire hashes are retained without research-bearing wire text. This closes the bounded extra public-consumer assertion from preflight. Accepted task contracts/ADRs and exact bundle bind source, versions, warnings and protected artifact receipts. S03 owns live admission/heartbeat, canonical immutable normalized revisions/anchors and explicit researcher acceptance; S04 owns viewer/renderer/OS UI."
+    }
+  ],
+  "integration_assessment": [
+    {
+      "requirement": "Protected S01 source through installed parser and staged public handoff",
+      "assessment": "Existing current production fixture calls real S01 LocalDocumentAttachmentService.stage, then actual protected SQLCipher/encrypted source, current inspect+derive/session fences, deterministic selection and InstalledParserPipeline.stage. Runtime discovery/pre-admission/clock remain declared fixtures while actual signed LPAC, strict raw decoder and encrypted stager execute production code. Accepted S01 ports-only acquired-copy evidence and current acquired-source provenance/read tests support the remote seam without a new TLS/native matrix. Fresh PDF benchmark output now passes the independent neutral public parse-result schema with exact outer/IR/request binding and staged disposition. This closes the bounded additional handoff assertion identified in preflight; no new canonical writer is needed."
+    },
+    {
+      "requirement": "T01/T02 contracts and every admitted family compose",
+      "assessment": "Accepted T01 semantic node/span F01 and T02 indexed-ADR F01 closures remain intact. Final basic parser/contract coverage, explicit built native11 and actual encrypted plain-text/JATS/TEI/XML/HTML/DOCX/fallback confirm current installed composition. Exact source/producer/config/assets, workflow job/attempt, raw receipt and parser selection remain parent-owned authority. Downstream consumes version1 staged values, not private SQL or hidden adapter state."
+    },
+    {
+      "requirement": "Failure/cancellation/restart/recovery and privacy",
+      "assessment": "Actual lifecycle, parent-death, resource and hostile-input groups plus real protected artifact/rights/session/attempt tests support no returned partial IR, sole owned cleanup, immutable originals/prior raw attempts, encrypted retention and distinct retry/inspection-only result. Guardian exit120 remains adverse; separately observed worker termination0.0902572s, removal of owned targets and fresh inspection do not imply guardian exit0, known cause or deceased-parent ACL restoration. Initial discovery/admission fixtures do not qualify S03 live heartbeat or accepted normalized revision persistence."
+    },
+    {
+      "requirement": "Quality honesty and numeric resources",
+      "assessment": "Current output retains all authored two-column labels and ten authored tables but reports eighteen model tables; layoutGoldStatusFAIL, ambiguous reading order/grids, unknown confidence and warnings remain adverse staged quality. Scan remains incomplete/OCR-disabled. Native resource proof keeps4CPU/4GiB/one-process limits, accelerated timeout only and actual Job memory denial with positive controls; no natural DoclingOOM,900s elapsed observation, aggregate Core4GiB or measured5s Core-decode claim is inferred."
+    }
+  ],
+  "independence": "This reviewer authored S02 closeout preflight and the finite public-wire method recommendation/diagnostic closure, and earlier independent S01/T03 and CP07 reviews. It authored no S02 product/test implementation, native or benchmark producer implementation, owner decision, qualifying execution, submission or campaign transition. Those advisory roles are disclosed; final task/security dispositions belong to distinct independent reviewers. The reviewer is not the campaign owner. This final work reads/hashes immutable source/data/logs and authenticates the committed packet and latest task-review records; it writes only this authorized independent slice ledger and a unique ignored authentication note. No product execution, source audit repetition or canonical state/Git mutation is performed.",
+  "evidence_reproduction": {
+    "final_authentication": {
+      "path": "artifacts/tmp/CAP-05.S02.final-packet-authentication-t03_product_review-01.json",
+      "sha256": "d73197d8f89945dd01a6217b73ed1ce344e4036c9afcf2adc3ee9c7e11c20c3a"
+    },
+    "prepared_integration_review": {
+      "path": "artifacts/tmp/CAP-05.S02.integration-preparation-t03_product_review-01.json",
+      "sha256": "6433c734331d4e24656cb51aa4af401ce5d8908222c27d5d61a753aa57eafeba"
+    },
+    "prior_preflight_and_method_records": [
+      {
+        "path": "artifacts/tmp/CAP-05.S02.slice-closeout-preflight-t03_product_review-01.json",
+        "sha256": "c73a93a28e9e2e201a80c94c2a9f320865bb9e7ff8708c0dfa3878b85f6f3535"
+      },
+      {
+        "path": "artifacts/tmp/CAP-05.S02.slice-closeout-portable-wire-preflight-t03_product_review-01.json",
+        "sha256": "a69a94b7f66f2f5410b9986a74438377b8d965e3a4c8be114f7f7f9ead463296"
+      },
+      {
+        "path": "artifacts/tmp/CAP-05.S02.slice-closeout-portable-wire-method-review-t03_product_review-01.json",
+        "sha256": "339383657dcbd7b0b850f06b500bee43636b2993597b1962e748060b99d4256f"
+      },
+      {
+        "path": "artifacts/tmp/CAP-05.S02.slice-closeout-portable-wire-method-closure-t03_product_review-01.json",
+        "sha256": "049b06df4564adaf09e3c2f88bce2e36f82c2bd4e6482041d43d8b3f51875d6e"
+      }
+    ],
+    "task_authentication": [
+      {
+        "task_id": "CAP-05.S02.T01",
+        "status": "DONE",
+        "result": "approved",
+        "round": "R02",
+        "candidate_commit": "75bae16dca0be2dec5160a2e70e8682ba36b837c",
+        "packet_sha256": "23d74fad5afdef6f07038c889a63a619637668c73e0b73a43eebd4e6fe251792",
+        "evidence": {
+          "path": "artifacts/evidence/CAP-05.S02.T01.R02.json",
+          "sha256": "19e33351ddb524c989d05377c9ba2629d8faba1541b37625f2e77abe7ddd181f"
+        },
+        "ledger": {
+          "path": "artifacts/evidence/CAP-05.S02.T01.review-R02.json",
+          "sha256": "6397b93e710e870adeecd4827702e6f8f6bdc430cc53825899eb5ae8ef8eae0a"
+        },
+        "open_findings": [],
+        "prior_rounds_preserved": 1
+      },
+      {
+        "task_id": "CAP-05.S02.T02",
+        "status": "DONE",
+        "result": "approved",
+        "round": "R02",
+        "candidate_commit": "6d9369d0d14388486db2c70ba9720fb7695b556e",
+        "packet_sha256": "c8f33e9910877d4760d78be15f409db96d3308e549f284fb08cae60bfac374bb",
+        "evidence": {
+          "path": "artifacts/evidence/CAP-05.S02.T02.R02.json",
+          "sha256": "7371f519ddcd284068027ba55850beef7deff2c21c23500cbbac342255d0b76b"
+        },
+        "ledger": {
+          "path": "artifacts/evidence/CAP-05.S02.T02.review-R02.json",
+          "sha256": "d5c0b55a63ac4a8ec6bd0a4f7fd90d34829a05556e08e045de65e3d86585e2a5"
+        },
+        "open_findings": [],
+        "prior_rounds_preserved": 1
+      },
+      {
+        "task_id": "CAP-05.S02.T03",
+        "status": "DONE",
+        "result": "approved",
+        "round": "R01",
+        "candidate_commit": "c17511401808d003eaa2c74ff0b866e65a6955d9",
+        "packet_sha256": "043d441ff5365a22085ee3bb1806557122ef4a4b2c7b231d530167a46238c2f5",
+        "evidence": {
+          "path": "artifacts/evidence/CAP-05.S02.T03.R01.json",
+          "sha256": "5e629932746a0a97bae8933bb5038e65dab93c39727b8ac238b850e83bea2205"
+        },
+        "ledger": {
+          "path": "artifacts/evidence/CAP-05.S02.T03.review-R01.json",
+          "sha256": "4a1d1d3f1f52239a831673f79dd640cf332af617ead63190cce332cfd2711910"
+        },
+        "open_findings": [],
+        "prior_rounds_preserved": 0
+      }
+    ],
+    "upstream_accepted_slice": {
+      "evidence": {
+        "path": "artifacts/evidence/CAP-05.S01.qualification-01.json",
+        "sha256": "7ceee8b56fc24ab76bb2536a058143a06f3ec549e292645fc8ca3ca6055d98ef"
+      },
+      "review": {
+        "path": "artifacts/evidence/CAP-05.S01.review-01.json",
+        "sha256": "0d0cb37286fc91906ec8b9fa1dd6c8daab401ba355dd5651a6313fd52a4c1d9f"
+      },
+      "scope": "Previously accepted acquisition, explicit attachment, provenance and protected source boundary; no new TLS or renderer execution is claimed."
+    },
+    "security_contribution": {
+      "path": "artifacts/tmp/CAP-05.S02.T03.security-contribution-c11-R01-166.json",
+      "sha256": "22173dbd8417b481f86c495a2b0984bb34ff9a72a5775a76e05bf5e2cba9095d"
+    },
+    "current_receipt_authentication": {
+      "currentCheckLogReportArtifactAndMethodReferenceCount": 78,
+      "rawSha256Mismatches": [],
+      "passingCheckCount": 39,
+      "basicPassingGroups": 8,
+      "nativePassingGroups": 20,
+      "parserSuiteReported": 147,
+      "parserSuiteNativeOnlySkips": 11,
+      "parserSuiteExecuted": 136,
+      "sameNativeCasesSeparatelyExecuted": 11,
+      "nativeCaseSkips": 0,
+      "portableWorkerCases": 1,
+      "benchmarkFunctionalResourcePublicWireChildren": 11,
+      "benchmarkAggregateResult": "FAIL",
+      "benchmarkAggregateExitCode": 1,
+      "schemaSha256": "4fd67127c7ede036613b637c8d7d7bbb7097054429043cfacc66c9aa46915031",
+      "allActualChildSchemaDigestsExact": true,
+      "allActualChildPublicWireChecksPass": true,
+      "scope": "Independent current receipt/log/hash and arithmetic authentication, with reviewed execution/input provenance from final task/security disposition. No qualifying execution, repeated source audit or large package rehash. Child wire digests are authenticated observations of the reviewed producer; the research-bearing wire was deliberately not logged."
+    },
+    "receipt_line_ending_bridges": [
+      {
+        "path": "artifacts/tmp/CAP-05.S02.T03.qualification-151.basic.json",
+        "raw_sha256": "b4b3bc9ce1687bf6d3b3c193c9d081d72d8dfd31b5a2d104cd6f11d462750785",
+        "canonical_lf_sha256": "0f38b5b2aa455cd143acbd2297dc327a04c95349aa149e9b9c9bbc2a6c1936c7",
+        "status": "PASS",
+        "candidate_commit": "c17511401808d003eaa2c74ff0b866e65a6955d9"
+      },
+      {
+        "path": "artifacts/tmp/CAP-05.S02.T03.qualification-141.native.json",
+        "raw_sha256": "d9c347c430fc8a74986da68c0a2c7897c84fe1f21807b8a2b969f8fc6febc9c7",
+        "canonical_lf_sha256": "7064a7653811c9b130ca62f96696113239ea396dfb0b3cae4b9a694f0c829bf6",
+        "status": "PASS",
+        "candidate_commit": "c17511401808d003eaa2c74ff0b866e65a6955d9"
+      },
+      {
+        "path": "artifacts/tmp/CAP-05.S02.T03.performance-124.benchmark.json",
+        "raw_sha256": "fc1b2ca099d8b400806e7e3340c9a0a2a25982f0f6716006a22947865eb51f77",
+        "canonical_lf_sha256": "6567b4e6389a23bfc15594eb4ae4196bd3a459e9b329275559a893b31ba40d07",
+        "status": "FAIL",
+        "candidate_commit": "c17511401808d003eaa2c74ff0b866e65a6955d9"
+      }
+    ],
+    "source_closure": "The exact source remains c1751140. c1751140 through cc8ef81d and 3ee11e59 changes only the eleven named evidence/planning projections; fa5d5c4d adds only the qualification JSON. Authenticated final input/package/producer provenance and current proof limits come from the existing independent task/security disposition and completed preparation. No evidence duration is presented as a fresh run at a metadata successor.",
+    "packet_identity": {
+      "git_sha256": "197c55a378341fa7282d1ea32a14ade5932b224c7b03205df6ede178346c2431",
+      "worktree_raw_sha256": "0312deec9ed189d89c312dca972a967099db453273651a7a8c83775b8e523365",
+      "exact_crlf_to_git_lf": true
+    },
+    "artifact_identity_bridges": [
+      {
+        "path": "planning/slice-plans/CAP-05/CAP-05.S02-structured-and-pdf-parsing-pipeline.md",
+        "packet_sha256": "404e2a064c6bb2eb2ee5e887d511bf2db078b8642f1689cce4c7debf3ffa7bdb",
+        "raw_sha256": "404e2a064c6bb2eb2ee5e887d511bf2db078b8642f1689cce4c7debf3ffa7bdb",
+        "git_sha256": "404e2a064c6bb2eb2ee5e887d511bf2db078b8642f1689cce4c7debf3ffa7bdb",
+        "exact_crlf_to_lf_bridge": true
+      },
+      {
+        "path": "packages/contracts/documents/parse-result.v1.schema.json",
+        "packet_sha256": "4fd67127c7ede036613b637c8d7d7bbb7097054429043cfacc66c9aa46915031",
+        "raw_sha256": "4fd67127c7ede036613b637c8d7d7bbb7097054429043cfacc66c9aa46915031",
+        "git_sha256": "4fd67127c7ede036613b637c8d7d7bbb7097054429043cfacc66c9aa46915031",
+        "exact_crlf_to_lf_bridge": true
+      },
+      {
+        "path": "artifacts/evidence/CAP-05.S02.T03.performance-owner-acceptance-01.md",
+        "packet_sha256": "5dea8e7a2046f5ec229b10a143370c6048e62080da7c3f0f99d700f86219774a",
+        "raw_sha256": "5dea8e7a2046f5ec229b10a143370c6048e62080da7c3f0f99d700f86219774a",
+        "git_sha256": "5dea8e7a2046f5ec229b10a143370c6048e62080da7c3f0f99d700f86219774a",
+        "exact_crlf_to_lf_bridge": true
+      },
+      {
+        "path": "docs/architecture/document-parsing.md",
+        "packet_sha256": "c54ec0ba7f556877557ddf67e60958506bf15923d9aa7b293f65e4492b51e58f",
+        "raw_sha256": "c54ec0ba7f556877557ddf67e60958506bf15923d9aa7b293f65e4492b51e58f",
+        "git_sha256": "c54ec0ba7f556877557ddf67e60958506bf15923d9aa7b293f65e4492b51e58f",
+        "exact_crlf_to_lf_bridge": true
+      },
+      {
+        "path": "docs/adr/ADR-0045-bind-the-isolated-offline-parser-package-to-existing-document-authority.md",
+        "packet_sha256": "fb827a4af72eec43961572e514291acc22a779f2264f1579973203477e1bcd10",
+        "raw_sha256": "fb827a4af72eec43961572e514291acc22a779f2264f1579973203477e1bcd10",
+        "git_sha256": "fb827a4af72eec43961572e514291acc22a779f2264f1579973203477e1bcd10",
+        "exact_crlf_to_lf_bridge": true
+      },
+      {
+        "path": "workers/document/parser-config.json",
+        "packet_sha256": "4a64b8632596984722fe9276d3929906110f6f7fb826e41841bff21067d8afc7",
+        "raw_sha256": "4a64b8632596984722fe9276d3929906110f6f7fb826e41841bff21067d8afc7",
+        "git_sha256": "4a64b8632596984722fe9276d3929906110f6f7fb826e41841bff21067d8afc7",
+        "exact_crlf_to_lf_bridge": true
+      },
+      {
+        "path": "workers/document/parser-assets.json",
+        "packet_sha256": "79b5f725c6732daa2da9b1569dfecd3d8ac064ada487cef44bc4ccb840e9eec3",
+        "raw_sha256": "79b5f725c6732daa2da9b1569dfecd3d8ac064ada487cef44bc4ccb840e9eec3",
+        "git_sha256": "79b5f725c6732daa2da9b1569dfecd3d8ac064ada487cef44bc4ccb840e9eec3",
+        "exact_crlf_to_lf_bridge": true
+      },
+      {
+        "path": "workers/document/requirements-parser.lock",
+        "packet_sha256": "0d53cf8990edab7e5d56e61fc4be43747442517b3cbbd961f7b82c255d707b91",
+        "raw_sha256": "0d53cf8990edab7e5d56e61fc4be43747442517b3cbbd961f7b82c255d707b91",
+        "git_sha256": "79a56efd2f5843605b709cc679cccf77c4e2fc875337ce7d0a86622fd342bdf9",
+        "exact_crlf_to_lf_bridge": true
+      },
+      {
+        "path": "artifacts/evidence/CAP-05.S01.qualification-01.json",
+        "packet_sha256": "7ceee8b56fc24ab76bb2536a058143a06f3ec549e292645fc8ca3ca6055d98ef",
+        "raw_sha256": "7ceee8b56fc24ab76bb2536a058143a06f3ec549e292645fc8ca3ca6055d98ef",
+        "git_sha256": "7ceee8b56fc24ab76bb2536a058143a06f3ec549e292645fc8ca3ca6055d98ef",
+        "exact_crlf_to_lf_bridge": true
+      },
+      {
+        "path": "artifacts/evidence/CAP-05.S01.review-01.json",
+        "packet_sha256": "0d0cb37286fc91906ec8b9fa1dd6c8daab401ba355dd5651a6313fd52a4c1d9f",
+        "raw_sha256": "0d0cb37286fc91906ec8b9fa1dd6c8daab401ba355dd5651a6313fd52a4c1d9f",
+        "git_sha256": "0d0cb37286fc91906ec8b9fa1dd6c8daab401ba355dd5651a6313fd52a4c1d9f",
+        "exact_crlf_to_lf_bridge": true
+      }
+    ],
+    "method": "Read/hash/Git/log/contract authentication and prepared integrated judgment; no suites, builds, native/network execution, broad history/source re-audit or performance investigation."
+  },
+  "checks": [
+    {
+      "command": "Authenticate committed packet and all-three latest DONE/approved task records",
+      "result": "PASS: Git packet197c55a3, raw-to-LF bridge, exact manifests/review ledgers/frozen candidate references and no open task findings authenticate."
+    },
+    {
+      "command": "Authenticate complete qualified-source-to-metadata/bundle delta and prepared integration proof",
+      "result": "PASS: only eleven declared evidence/planning metadata paths change through3ee11e59; fa5d5c4d adds the qualification JSON alone. All39 checks,20 machine artifacts, owner acceptance and failed aggregate are exactly equal to reviewed T03 evidence."
+    },
+    {
+      "command": "Assess integrated protected-source/installed-parser/raw-retention/public-wire handoff and preserved adverse limits",
+      "result": "PASS: existing current native/basic/functional proofs and all11 actual public-wire assertions cover material S02 integration; declared downstream ownership and exact owner exception do not conceal a required slice blocker."
+    }
+  ],
+  "findings": [],
+  "closures": [],
+  "prior_findings_replayed": [
+    {
+      "finding_id": "CAP-05.S02.T01.R01.F01",
+      "disposition": "prior independent fixed closure authenticated",
+      "evidence": "Exact T01 R02 review and current parser/semantic/handoff regressions preserve own-node projection/span containment; original R01 is retained. No repeated source audit."
+    },
+    {
+      "finding_id": "CAP-05.S02.T02.R01.F01",
+      "disposition": "prior independent fixed closure authenticated",
+      "evidence": "Exact T02 R02 review authenticates indexed Proposed ADR-0044 coverage of the original protected paths under inherited authority; original adverse R01 remains retained."
+    },
+    {
+      "finding_ids": [
+        "F01",
+        "F02",
+        "F03"
+      ],
+      "namespace": "CAP-05.S02.T03 preparatory C11 security contribution",
+      "disposition": "addressed preparatory findings authenticated",
+      "evidence": "Security contribution166 and final task review authenticate cumulative fanout, source-key figure lookup and bounded raw-preserving NFC corrections with fresh final regressions and retained original adverses; these are not invented formal task rounds."
+    }
+  ],
+  "preflight_findings_replayed": [
+    {
+      "finding_id": "S02-HANDOFF-PROOF-F01",
+      "disposition": "fixed before qualifying execution",
+      "evidence": "The final public-wire producer uses a content-free public-handoff-schema-invalid error instead of retaining/stringifying jsonschema ValidationError. All11 actual children pass the neutral schema and exact request/IR binding. Prior advisory/closure byte-timing limitation remains preserved; no actual disclosure is invented."
+    }
+  ],
+  "owner_accepted_performance_deviation": {
+    "kind": "append-only-exact-observation-owner-acceptance",
+    "owner": "human:repository-owner",
+    "recordedAtUtc": "2026-10-07T21:45:57Z",
+    "approvalSource": "Explicit human message in this W2 campaign chat on2026-10-07, responding to the just-reported62.5-second warm p95 and instruction to investigate the overage.",
+    "instruction": "I accept that slight overage. Please don't spend more time over the 2 second overage.",
+    "candidate": "c17511401808d003eaa2c74ff0b866e65a6955d9",
+    "packageInventorySha256": "ebb0197926694d00710b486093e5c8b417a0ec0faa702ba42f3538e08ccbc573",
+    "report": "artifacts/tmp/CAP-05.S02.T03.performance-124.benchmark.json",
+    "reportSha256": "fc1b2ca099d8b400806e7e3340c9a0a2a25982f0f6716006a22947865eb51f77",
+    "rawBudgetResult": "FAIL",
+    "rawBudgetExitCode": 1,
+    "coldP95Seconds": 59.73081330000423,
+    "coldTargetSeconds": 90,
+    "warmP95Seconds": 62.53335420000076,
+    "warmTargetSeconds": 60,
+    "acceptedOverageSeconds": 2.5333542000007583,
+    "disposition": "Exact measured deviation accepted as nonblocking; performance investigation stopped without diagnostic, source change, sample removal, rerun or changed baseline. Carry the result and owner decision into independent task/slice/Wave review. No cause established. No additional regression, changed security/resource/quality requirement, future blanket exemption or G2 release approval is authorized."
+  },
+  "adverse_performance_budget_check": {
+    "command": "artifacts/tmp/CAP-05.S02.T03.check-runtime-122/python/python.exe -B artifacts/tmp/CAP-05.S02.T03.performance-124.py c17511401808d003eaa2c74ff0b866e65a6955d9 benchmark",
+    "exitCode": 1,
+    "result": "FAIL",
+    "durationSeconds": 826.0118275999994,
+    "rawOutput": "artifacts/tmp/CAP-05.S02.T03.performance-124.benchmark.log",
+    "rawOutputSha256": "7bfaf6fa99ee4ff2181fb47edc663fe83ed9d078f550363b8588bf65b53469f3",
+    "report": "artifacts/tmp/CAP-05.S02.T03.performance-124.benchmark.json",
+    "reportSha256": "fc1b2ca099d8b400806e7e3340c9a0a2a25982f0f6716006a22947865eb51f77",
+    "disposition": "Preserved unchanged; exact nonblocking owner acceptance is separate from machine disposition."
+  },
+  "performance_owner_note": {
+    "path": "artifacts/evidence/CAP-05.S02.T03.performance-owner-acceptance-01.md",
+    "sha256": "5dea8e7a2046f5ec229b10a143370c6048e62080da7c3f0f99d700f86219774a"
+  },
+  "proof_limits": [
+    "Actual parser/native/benchmark execution belongs to c1751140. Metadata-only publication and this independent disposition are not new executions.",
+    "Lawful synthetic scholarly fixtures do not establish correctness for all real documents. Authored ten tables versus eighteen model classifications preserves layoutGold FAIL, unknown confidence, ambiguous reading order/grids and warnings; scan remains incomplete with OCR disabled.",
+    "Discovery/pre-admission/workflow clock fixtures remain declared while the actual protected source, signed LPAC worker and encrypted raw retention execute production code. No live S03 operation admission/lease heartbeat or accepted normalized revision persistence is qualified.",
+    "S02 durably retains encrypted raw attempt artifacts and delivers strictly validated staged/unverified IR. It does not durably publish accepted normalized IR, mint canonical revision/anchor identities or advance a human-accepted document head.",
+    "Parent-death guardian exit120 remains adverse. Separate termination0.0902572 seconds, owned target cleanup and fresh inspection do not establish guardian exit0, a failure cause or deceased-parent ACL restoration.",
+    "Resource proof is the actual worker4CPU/4GiB/one-process Job and configured commit denial with owned positive/unconfined controls. Timeout uses the verified configured900-second outer/remaining budget plus an accelerated local deadline; no natural Docling OOM or900-second elapsed run is claimed.",
+    "No aggregate trusted-Core4GiB or measured5-second Core-decode guarantee is inferred. Finite JSON/Pydantic/Unicode/serialization operations are not per-byte interruptible.",
+    "Compilation reuse, fresh freeze/sign at the recorded build candidate and the authenticated executing-source/package bridge retain their original distinctions. This is not a new compilation/freeze at c1751140 or whole production-installed Core application/installer qualification.",
+    "Research-bearing wire is not logged. Child wire hashes are authenticated producer observations, not an independently reconstructed private full-wire value.",
+    "All original adverse resource/layout/media/normalization/guardian and development/method attempts remain adverse. Preparatory C11 static/fanout and allocation findings do not become invented measured large-document timeout/OOM observations.",
+    "The benchmark aggregate remains FAIL, exit1, at unchanged warm60/cold90 targets. Exact owner acceptance makes only the current warm62.5333542 observation nonblocking for task/S02; no cause, sample exclusion, future blanket exemption, further investigation/tuning/retest or W2/G2 release authority is inferred.",
+    "No new renderer/UI/reference change or database migration belongs to S02. Native OS UI/accessibility/viewer and later scholarly quality correction remain their approved downstream work."
+  ],
+  "deferred_obligations": [
+    "CAP-05.S03 live parse admission/heartbeat, immutable normalized revisions/anchors and explicit researcher acceptance; CAP-05.S04 native viewer/renderer/OS behavior; later enrichment/quality slices.",
+    "Affected integration checkpoint and fresh full W2/repository/profile/cross-capability/platform/security/privacy/rights/accessibility/performance/packaging qualification, independent Wave review and separate human G2 release decision."
+  ],
+  "scope_limit": "Independent CAP-05.S02 slice completion only at the exact qualified source and committed bundle. No taskctl/canonical state/Git mutation, external effect, checkpoint/Wave completion or human release approval is authorized by this review. Root records the ordinary slice transition separately.",
+  "slice_approval": true,
+  "wave_completion": false,
+  "release_approval": false
+}
