@@ -72,9 +72,7 @@ def _ir(
     checkpoint()
     text = TextProjection.from_raw("source-text", raw["text"])
     length = len(text.normalized_text)
-    ranges = tuple(
-        CodepointRange(start=start, end=end) for start, end in normalized.raw_ranges_for(0, length)
-    )
+    ranges = tuple(CodepointRange(start=start, end=end) for start, end in normalized.raw_ranges_for(0, length))
     return DocumentIR(
         schema_version="1.0",
         disposition="staged",
