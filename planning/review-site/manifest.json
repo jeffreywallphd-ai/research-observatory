@@ -3159,7 +3159,7 @@
         {
           "task_id": "W2.C14.T01",
           "title": "Create acquisition queue, conflict, and entitlement placeholders",
-          "status": "REVIEW",
+          "status": "DONE",
           "acceptance_criteria": [
             "Partial acquisitions resume or clean up safely; multiple copies remain distinguishable; lack of full text does not remove the metadata record or fabricate availability.",
             "Automated tests cover the expected path and at least one material failure or boundary condition.",
@@ -3188,61 +3188,103 @@
           "task_review": {
             "task_id": "W2.C14.T01",
             "title": "Create acquisition queue, conflict, and entitlement placeholders",
-            "status": "REVIEW",
+            "status": "DONE",
             "mode": "append-only",
             "latest_review": {
-              "reviewer": null,
-              "result": null,
-              "reviewed_at": null,
-              "notes": null
+              "reviewer": "agent:/root/s01_integration_review",
+              "result": "approved",
+              "reviewed_at": "2026-10-07T05:19:16+00:00",
+              "notes": "Independent expanded encryption/privacy fixture and corrective-integration review approves only actual frozen W2.C14.T01 R01 at a8e87082/base efbfa1a7. The exact two-line spec-admitted callback repair accepts the typed staging identity received from the unchanged product and forwards that same value to the actual original publication helper. Every encrypted-staging/plaintext-exclusion, inspection, interrupted-source/bounded-error/partial-cleanup, restart/exact-decryption, empty-object authentication, tamper quarantine, missing-key classification, key rotation and explicit plaintext-fixture assertion remains unchanged. All seven affected encrypted-object-store methods pass without skips using actual encrypted envelope I/O and synthetic memory keys. Changed-file Ruff and nonincremental ordinary-import mypy on the encrypted fixture plus original C13 rights migration root pass without silent mode or error suppression, closing the specifically reproduced runtime and imported-call defects. All producer/report/raw/canonical log and inherited authority/history bindings authenticate; all 13442 guarded inputs independently rehash with zero mismatch or unreadable file. Earlier one-case TypeError and C13 ordinary-import type FAIL remain immutable at their original candidate. Original T03 and C13 DONE approvals stay unchanged; S01/C13 support is historical. No product/framework/security/rights/migration/UX change or criterion-bound C14 blocker remains. This approves neither CP07 nor W2 qualification nor G2 human release."
             },
             "review_control": {
               "version": 1,
-              "attempts": [],
-              "current_submission": {
-                "id": "R01",
-                "submitted_by": "codex-w2-implementation",
-                "submitted_at": "2026-10-07T05:02:12+00:00",
-                "candidate_commit": "a8e87082b8150af47477e456b85438615dc7088d",
-                "base_commit": "efbfa1a708f3ee526e50084e1dba2c3e7e3d40d1",
-                "branch": "codex/w2-implementation",
-                "evidence_reference": {
-                  "type": "criterion-manifest",
-                  "path": "artifacts/evidence/W2.C14.T01.R01.json",
-                  "sha256": "f10efc2d042d3212b2dbe2708352a5ba29e71c90a255e0d1feec943a69d142b4",
-                  "commit": "a8e87082b8150af47477e456b85438615dc7088d",
-                  "recorded_at": "2026-10-07T05:02:12+00:00"
-                },
-                "acceptance_criteria_sha256": "b883d7d0c83c26edeafbf97cf02f0dde8e3e38b55b4629d221960d1acaa72e43",
-                "changed_paths": [
-                  "docs/planning-implementation-plan.md",
-                  "planning/backlog.yaml",
-                  "planning/review-site/manifest.json",
-                  "planning/review-site/waves/W2.html",
-                  "planning/status-summary.md",
-                  "tests/data/test_encrypted_object_store.py"
-                ],
-                "selected_checks": [
-                  ".venv/Scripts/python.exe -B -m unittest -v tests.data.test_encrypted_object_store.EncryptedObjectStoreTests",
-                  ".venv/Scripts/python.exe -B -m ruff format --check --config pyproject.toml -- tests/data/test_encrypted_object_store.py",
-                  ".venv/Scripts/python.exe -B -m ruff check --config pyproject.toml -- tests/data/test_encrypted_object_store.py",
-                  "$env:MYPYPATH='tools;services/core-api/src'; .venv/Scripts/python.exe -B -m mypy --config-file pyproject.toml --no-namespace-packages --no-incremental -- tests/data/test_encrypted_object_store.py tests/rights/test_migration.py"
-                ],
-                "deferred_checks": [
-                  "Fresh cluster2 rights/SDK/LPAC/acquisition/native/installed and build/smoke qualification remains W2.CP07 after independent correction approval and ordinary campaign resume.",
-                  "Fresh full repository/profile, complete cross-capability, security/privacy/rights/accessibility/performance/packaging and separate human G2 release remain W2 exit obligations."
-                ],
-                "selection_rationale": "The sole changed path is an old test callback incompatible with the approved product staging-identity argument. The full affected encrypted-store class exercises the restored encrypted inspection and interruption cleanup. File quality and two-root default-import type proof close the actual runtime/type defects. Expanded independent privacy/security fixture and corrective-integration review is required. No other passed suites are repeated for this two-line restoration.",
-                "selection_sha256": "7bce7e3e82dc5577a6ae4de2bfb3d3a69eb438a7753a14de8fccaf83c32f60b9",
-                "prior_attempt_id": null,
-                "open_finding_ids": [],
-                "root_cause_analysis": null,
-                "selected_command_ids": [
-                  "data:unit",
-                  "foundation:quality"
-                ],
-                "packet_sha256": "514aaaccffb92dac0844f732787804c7c49ce4073a3c6f0be47d3bdbda022002"
-              }
+              "attempts": [
+                {
+                  "submission": {
+                    "id": "R01",
+                    "submitted_by": "codex-w2-implementation",
+                    "submitted_at": "2026-10-07T05:02:12+00:00",
+                    "candidate_commit": "a8e87082b8150af47477e456b85438615dc7088d",
+                    "base_commit": "efbfa1a708f3ee526e50084e1dba2c3e7e3d40d1",
+                    "branch": "codex/w2-implementation",
+                    "evidence_reference": {
+                      "type": "criterion-manifest",
+                      "path": "artifacts/evidence/W2.C14.T01.R01.json",
+                      "sha256": "f10efc2d042d3212b2dbe2708352a5ba29e71c90a255e0d1feec943a69d142b4",
+                      "commit": "a8e87082b8150af47477e456b85438615dc7088d",
+                      "recorded_at": "2026-10-07T05:02:12+00:00"
+                    },
+                    "acceptance_criteria_sha256": "b883d7d0c83c26edeafbf97cf02f0dde8e3e38b55b4629d221960d1acaa72e43",
+                    "changed_paths": [
+                      "docs/planning-implementation-plan.md",
+                      "planning/backlog.yaml",
+                      "planning/review-site/manifest.json",
+                      "planning/review-site/waves/W2.html",
+                      "planning/status-summary.md",
+                      "tests/data/test_encrypted_object_store.py"
+                    ],
+                    "selected_checks": [
+                      ".venv/Scripts/python.exe -B -m unittest -v tests.data.test_encrypted_object_store.EncryptedObjectStoreTests",
+                      ".venv/Scripts/python.exe -B -m ruff format --check --config pyproject.toml -- tests/data/test_encrypted_object_store.py",
+                      ".venv/Scripts/python.exe -B -m ruff check --config pyproject.toml -- tests/data/test_encrypted_object_store.py",
+                      "$env:MYPYPATH='tools;services/core-api/src'; .venv/Scripts/python.exe -B -m mypy --config-file pyproject.toml --no-namespace-packages --no-incremental -- tests/data/test_encrypted_object_store.py tests/rights/test_migration.py"
+                    ],
+                    "deferred_checks": [
+                      "Fresh cluster2 rights/SDK/LPAC/acquisition/native/installed and build/smoke qualification remains W2.CP07 after independent correction approval and ordinary campaign resume.",
+                      "Fresh full repository/profile, complete cross-capability, security/privacy/rights/accessibility/performance/packaging and separate human G2 release remain W2 exit obligations."
+                    ],
+                    "selection_rationale": "The sole changed path is an old test callback incompatible with the approved product staging-identity argument. The full affected encrypted-store class exercises the restored encrypted inspection and interruption cleanup. File quality and two-root default-import type proof close the actual runtime/type defects. Expanded independent privacy/security fixture and corrective-integration review is required. No other passed suites are repeated for this two-line restoration.",
+                    "selection_sha256": "7bce7e3e82dc5577a6ae4de2bfb3d3a69eb438a7753a14de8fccaf83c32f60b9",
+                    "prior_attempt_id": null,
+                    "open_finding_ids": [],
+                    "root_cause_analysis": null,
+                    "selected_command_ids": [
+                      "data:unit",
+                      "foundation:quality"
+                    ],
+                    "packet_sha256": "514aaaccffb92dac0844f732787804c7c49ce4073a3c6f0be47d3bdbda022002"
+                  },
+                  "review": {
+                    "reviewer": "agent:/root/s01_integration_review",
+                    "result": "approved",
+                    "reviewed_at": "2026-10-07T05:19:16+00:00",
+                    "notes": "Independent expanded encryption/privacy fixture and corrective-integration review approves only actual frozen W2.C14.T01 R01 at a8e87082/base efbfa1a7. The exact two-line spec-admitted callback repair accepts the typed staging identity received from the unchanged product and forwards that same value to the actual original publication helper. Every encrypted-staging/plaintext-exclusion, inspection, interrupted-source/bounded-error/partial-cleanup, restart/exact-decryption, empty-object authentication, tamper quarantine, missing-key classification, key rotation and explicit plaintext-fixture assertion remains unchanged. All seven affected encrypted-object-store methods pass without skips using actual encrypted envelope I/O and synthetic memory keys. Changed-file Ruff and nonincremental ordinary-import mypy on the encrypted fixture plus original C13 rights migration root pass without silent mode or error suppression, closing the specifically reproduced runtime and imported-call defects. All producer/report/raw/canonical log and inherited authority/history bindings authenticate; all 13442 guarded inputs independently rehash with zero mismatch or unreadable file. Earlier one-case TypeError and C13 ordinary-import type FAIL remain immutable at their original candidate. Original T03 and C13 DONE approvals stay unchanged; S01/C13 support is historical. No product/framework/security/rights/migration/UX change or criterion-bound C14 blocker remains. This approves neither CP07 nor W2 qualification nor G2 human release."
+                  },
+                  "ledger": {
+                    "path": "artifacts/evidence/W2.C14.T01.review-R01.json",
+                    "sha256": "196154c2e58770041fc350744184ce3a629b94c9fd262fa5eee97b1d46d649fa"
+                  },
+                  "findings": [],
+                  "closures": [],
+                  "telemetry": {
+                    "task_id": "W2.C14.T01",
+                    "amendment_id": null,
+                    "attempt_id": "R01",
+                    "submitted_at": "2026-10-07T05:02:12+00:00",
+                    "reviewed_at": "2026-10-07T05:19:16+00:00",
+                    "duration_seconds": 1024,
+                    "outcome": "approved",
+                    "finding_counts": {
+                      "critical": 0,
+                      "high": 0,
+                      "medium": 0,
+                      "low": 0,
+                      "blocking": 0,
+                      "total": 0
+                    },
+                    "command_ids": [
+                      "data:unit",
+                      "foundation:quality"
+                    ],
+                    "remediation": {
+                      "prior_attempt_id": null,
+                      "replayed_finding_ids": [],
+                      "closed_finding_ids": []
+                    }
+                  }
+                }
+              ],
+              "current_submission": null
             }
           }
         }

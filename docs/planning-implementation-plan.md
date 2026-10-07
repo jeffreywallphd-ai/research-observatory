@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 6569689fe4e23a47da99b6fbed533eee8de0fb3f8a81530100bf563310ee2a50
+source_sha256: 7b1899264f23a8cbdee39097b3145ae5e628b09775b2ebeae44d2420c04b9043
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -4390,7 +4390,7 @@ Original tasks and approvals remain unchanged.
 
 ### W2.C14.T01 — Create acquisition queue, conflict, and entitlement placeholders
 
-**Status:** `REVIEW`. **Original task:** `CAP-05.S01.T03`. **Latest review:** `-`.
+**Status:** `DONE`. **Original task:** `CAP-05.S01.T03`. **Latest review:** `approved`.
 
 **Reproduction:** At clean committed candidate9a860fc45fe67d9582f4a37c81c90436b1ec715e, the unchanged encrypted object-staging test fails with TypeError because inspect_encrypted_staging accepts2arguments while the current approved product _publish receives3: staging, destination and exact staging identity. The callback also forwards only2arguments to the real helper. The helper signature was introduced by original approved T03 product implementation89da746a972d1faa6bd64739d8f9c86c6be21908 and remains unchanged. Fresh bounded one-case diagnostic artifacts/tmp/W2.C14.T01.red-01-9a860fc4.json SHA256 c238dcbb2a8dd3591b8eebc84fe1f17f278418d8f718d32b174f43aaf24e7b7c records actual exit1 and stable guarded inputs; raw log artifacts/tmp/W2.C14.T01.red-01-9a860fc4.encrypted-staging-fixture.log SHA256 6ff1dc11f9b5bbdbb8ec6e5933e217677e6fc21b037176525ca86587110d30ed retains1case/1error. The separate C13 default-import mypy observation also reports tests/data/test_encrypted_object_store.py:136 too few arguments and remains FAIL. C13 affected-file silent-import typing does not classify this defect as PASS.
 
@@ -4405,9 +4405,11 @@ Original tasks and approvals remain unchanged.
 - tests/data/test_encrypted_object_store.py
 #### Review history — W2.C14.T01
 
-**Review mode:** `append-only v1` / 0 completed round(s)
+**Review mode:** `append-only v1` / 1 completed round(s)
 
-**Current immutable submission awaiting review:** `R01` / packet SHA-256 `514aaaccffb92dac0844f732787804c7c49ce4073a3c6f0be47d3bdbda022002`
+##### Round R01
+
+**Immutable submission packet:** `R01` / packet SHA-256 `514aaaccffb92dac0844f732787804c7c49ce4073a3c6f0be47d3bdbda022002`
 
 - Candidate / base / branch: `a8e87082b8150af47477e456b85438615dc7088d` / `efbfa1a708f3ee526e50084e1dba2c3e7e3d40d1` / `codex/w2-implementation`
 - Submitted by / at: codex-w2-implementation / `2026-10-07T05:02:12+00:00`
@@ -4421,9 +4423,25 @@ Original tasks and approvals remain unchanged.
 - Prior round / replayed open findings: `-` / -
 - Root-cause escalation: -
 
-**Current latest-review projection:** `-` by - at `-`
+**Disposition / reviewer / time:** `approved` / agent:/root/s01_integration_review / `2026-10-07T05:19:16+00:00`
 
-**Latest notes:** -
+**Immutable review ledger:** `artifacts/evidence/W2.C14.T01.review-R01.json` / `196154c2e58770041fc350744184ce3a629b94c9fd262fa5eee97b1d46d649fa`
+
+**Review notes:** Independent expanded encryption/privacy fixture and corrective-integration review approves only actual frozen W2.C14.T01 R01 at a8e87082/base efbfa1a7. The exact two-line spec-admitted callback repair accepts the typed staging identity received from the unchanged product and forwards that same value to the actual original publication helper. Every encrypted-staging/plaintext-exclusion, inspection, interrupted-source/bounded-error/partial-cleanup, restart/exact-decryption, empty-object authentication, tamper quarantine, missing-key classification, key rotation and explicit plaintext-fixture assertion remains unchanged. All seven affected encrypted-object-store methods pass without skips using actual encrypted envelope I/O and synthetic memory keys. Changed-file Ruff and nonincremental ordinary-import mypy on the encrypted fixture plus original C13 rights migration root pass without silent mode or error suppression, closing the specifically reproduced runtime and imported-call defects. All producer/report/raw/canonical log and inherited authority/history bindings authenticate; all 13442 guarded inputs independently rehash with zero mismatch or unreadable file. Earlier one-case TypeError and C13 ordinary-import type FAIL remain immutable at their original candidate. Original T03 and C13 DONE approvals stay unchanged; S01/C13 support is historical. No product/framework/security/rights/migration/UX change or criterion-bound C14 blocker remains. This approves neither CP07 nor W2 qualification nor G2 human release.
+
+**Findings opened:**
+
+- None
+
+**Prior finding closures:**
+
+- None
+
+**Current immutable submission awaiting review:** None
+
+**Current latest-review projection:** `approved` by agent:/root/s01_integration_review at `2026-10-07T05:19:16+00:00`
+
+**Latest notes:** Independent expanded encryption/privacy fixture and corrective-integration review approves only actual frozen W2.C14.T01 R01 at a8e87082/base efbfa1a7. The exact two-line spec-admitted callback repair accepts the typed staging identity received from the unchanged product and forwards that same value to the actual original publication helper. Every encrypted-staging/plaintext-exclusion, inspection, interrupted-source/bounded-error/partial-cleanup, restart/exact-decryption, empty-object authentication, tamper quarantine, missing-key classification, key rotation and explicit plaintext-fixture assertion remains unchanged. All seven affected encrypted-object-store methods pass without skips using actual encrypted envelope I/O and synthetic memory keys. Changed-file Ruff and nonincremental ordinary-import mypy on the encrypted fixture plus original C13 rights migration root pass without silent mode or error suppression, closing the specifically reproduced runtime and imported-call defects. All producer/report/raw/canonical log and inherited authority/history bindings authenticate; all 13442 guarded inputs independently rehash with zero mismatch or unreadable file. Earlier one-case TypeError and C13 ordinary-import type FAIL remain immutable at their original candidate. Original T03 and C13 DONE approvals stay unchanged; S01/C13 support is historical. No product/framework/security/rights/migration/UX change or criterion-bound C14 blocker remains. This approves neither CP07 nor W2 qualification nor G2 human release.
 
 **Currently open findings:** -
 
