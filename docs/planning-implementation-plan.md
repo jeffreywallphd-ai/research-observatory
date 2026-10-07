@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: aeaee4a91bb13b8e4abbbd1c5a755f55a12ba3710c66c8ea902fcddcb08ec6f9
+source_sha256: 742891ff43a4ff01f8ad84ab1204e75cbe4e5729a264acbf951c115d32d66ffd
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -11129,7 +11129,7 @@ Original tasks and approvals remain unchanged.
 
 **Outcome:** A replaceable local parser pipeline produces normalized document structure with retained originals and quality signals.
 
-**Wave / priority / status / review:** `W2` / `P0` / `REVIEW` / `REVIEW`
+**Wave / priority / status / review:** `W2` / `P0` / `DONE` / `APPROVED`
 
 **Profiles / platforms:** `LOC`, `LAB` / `windows-x64`
 
@@ -11418,7 +11418,7 @@ Original tasks and approvals remain unchanged.
 
 **Outcome:** Every extracted passage and downstream assertion points to a specific immutable revision and stable location.
 
-**Wave / priority / status / review:** `W2` / `P0` / `NOT_STARTED` / `PENDING`
+**Wave / priority / status / review:** `W2` / `P0` / `READY` / `PENDING`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
@@ -11426,7 +11426,7 @@ Original tasks and approvals remain unchanged.
 
 #### - [ ] CAP-05.S03.T01 - Persist normalized sections, blocks, sentences, and references
 
-**Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `L` / `high`
+**Status / priority / estimate / risk:** `READY` / `P0` / `L` / `high`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 

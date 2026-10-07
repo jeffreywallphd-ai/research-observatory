@@ -29249,7 +29249,7 @@ capabilities:
     depends_on:
     - CAP-05.S01.T03
     - CAP-03.S04.T02
-    status: REVIEW
+    status: DONE
     tasks:
     - id: CAP-05.S02.T01
       capability_id: CAP-05
@@ -30317,14 +30317,15 @@ capabilities:
     platform_targets:
     - windows-x64
     completion:
-      status: REVIEW
-      reviewer: null
-      reviewed_at: null
+      status: APPROVED
+      reviewer: agent:/root/t03_product_review
+      reviewed_at: '2026-10-07T22:40:46+00:00'
       evidence:
       - artifacts/evidence/CAP-05.S02.qualification-01.json
-      notes: Committed integration packet fa5d5c4d56cc1d1eca28b7fb593f588bad1e1787 SHA197c55a378341fa7282d1ea32a14ade5932b224c7b03205df6ede178346c2431
-        authenticates c1751140 source, all three DONE approved tasks and actual protected parser handoff. Exact owner warm
-        timing acceptance retained with unchanged benchmark FAIL; independent slice disposition pending; no W2 release claim.
+      notes: Independent approved ledger artifacts/evidence/CAP-05.S02.review-01.json SHA4a64ebd805f75c061145402746da8cb13cc607fc9d643f6fd840b93c96d0f259
+        at b5603a0e2bda3dc6b6a22edf1be7cb567c540e49 authenticates packet fa5d5c4d/SHA197c55a3, source c1751140 and three DONE
+        approved tasks; no blocking findings. Exact accepted timing deviation and unchanged aggregate FAIL retained; S03 handoff
+        and W2 qualification/release remain separate.
   - id: CAP-05.S03
     title: Immutable document revisions and source anchors
     outcome: Every extracted passage and downstream assertion points to a specific immutable revision and stable location.
@@ -30337,7 +30338,7 @@ capabilities:
     depends_on:
     - CAP-05.S02.T03
     - CAP-02.S02.T03
-    status: NOT_STARTED
+    status: READY
     tasks:
     - id: CAP-05.S03.T01
       capability_id: CAP-05
@@ -30368,11 +30369,11 @@ capabilities:
       verification_commands:
       - python tools/verify.py --profile documents
       - python tools/verify.py --profile data
-      status: NOT_STARTED
+      status: READY
       owner: null
       branch: null
       started_at: null
-      updated_at: '2026-08-07T00:00:00+00:00'
+      updated_at: '2026-10-07T22:40:46+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
