@@ -1,0 +1,182 @@
+{
+  "task_id": "CAP-05.S02.T01",
+  "attempt_id": "R02",
+  "candidate_commit": "75bae16dca0be2dec5160a2e70e8682ba36b837c",
+  "base_commit": "91889b628d81ab5ae7f16d43905a143d5a3c552a",
+  "reviewed_state_commit": "75bae16dca0be2dec5160a2e70e8682ba36b837c",
+  "reviewer": "agent:/root/s02_t01_review",
+  "result": "approved",
+  "reviewed_at": "2026-10-07T11:31:53.998808+00:00",
+  "evidence_sha256": "19e33351ddb524c989d05377c9ba2629d8faba1541b37625f2e77abe7ddd181f",
+  "packet_sha256": "23d74fad5afdef6f07038c889a63a619637668c73e0b73a43eebd4e6fe251792",
+  "acceptance_criteria_sha256": "36b884bdb566d30495752be0770a5fd1116cc04c51efcff8bdf0a8608e5490c4",
+  "selection_sha256": "ac29a956a38602052da65da81ff5826e3deb4044a22bba88f87ae3b41a02b657",
+  "notes": "Independent expanded CAP-05.S02.T01 R02 remediation review approves candidate 75bae16dca0be2dec5160a2e70e8682ba36b837c and explicitly closes CAP-05.S02.T01.R01.F01 as fixed. The own-node semantic validator requires reference, citation-marker and table-cell spans to have linked node text, the same projection and contained normalized ranges after exact contributor validation. Independent replay rejects all three original contradictory span substitutions with ir-semantic-node-content-mismatch; valid rich IR remains accepted. Fresh committed evidence contains nine cross-node/projection/missing-text negative subcases, legitimate contained and reordered/noncontiguous NFC contributors, and authenticated staged handoff rejection without retained private exception context. The missed acceptance row, documentation and schema semantic inventory agree. Actual frozen R02 candidate/base/criteria/selection/evidence and exact R01/open-finding linkage authenticate through unchanged read-only taskctl validators with no errors. Seven fresh selected groups, 35 parser plus 9 existing attachment cases and zero skips passed; all log/report/producer/retained adverse hashes and 13479 stable guarded inputs authenticate. The owner-authorized public R01 representation preserves the original adverse outcome and finding, and the original local ledger bytes remain unchanged. No material incremental finding remains. This task-only approval retains the earlier contract/security/rights assessment and explicit evidence limits: synthetic parser/transport doubles do not qualify native/LPAC/Docling/resource behavior; actual adapters, durable revision/human acceptance, integrated slice and fresh Wave/release qualification remain pending.",
+  "acceptance_reviews": [
+    {
+      "criterion_index": 1,
+      "result": "satisfied",
+      "assessment": "F01 is fixed: semantic reference/citation/cell content is bound to its linked node projection and contained decoded text, with exact contributor/source-location validation. All original contradictions are refused; contained and reordered/noncontiguous NFC mappings remain legitimate. The unchanged raw-order/offset, recorded deterministic selection and staged-only failure contracts retain the prior independent assessment."
+    },
+    {
+      "criterion_index": 2,
+      "result": "satisfied",
+      "assessment": "Fresh selected checks pass with 35 parser plus 9 existing attachment cases, no skips, and authenticated committed input closure. New regression coverage exercises each original contradiction plus projection/missing-text denial, valid containment/NFC contributors and staged handoff rejection. Existing protected-source/rights/session runtime evidence remains accurately scoped to actual test-owned encrypted data and synthetic parser deliveries."
+    },
+    {
+      "criterion_index": 3,
+      "result": "satisfied",
+      "assessment": "The missed acceptance row, shared schema semantic inventory, generated portable snapshots and architecture documentation reflect the fix. Publication metadata has explicit owner authority and truthful original-versus-public provenance; original adverse proof remains locally immutable. No migration, dependency, UI, cryptography, accepted-head writer, security-authority or automation-framework source change is added. Broader fixture typing and slice/Wave duties remain deferred."
+    }
+  ],
+  "independence": {
+    "statement": "I authored the prior independent adverse disposition and separately authenticated its public representation, but did not author product implementation, regression tests, qualifying run/producer, owner authority or task/campaign transitions. This R02 disposition independently reviews the exact committed correction and actual frozen submission.",
+    "implementation_owner": "codex-w2-implementation",
+    "current_review_execution": "Bounded read-only remediation source/contracts/schema/docs review, Git/hash/JSON and unchanged taskctl binding validators, and a pure synthetic replay of the three original contradictions plus valid rich IR. No suites/build/native/network/resource checks, source/tests/framework/HEAD or canonical mutation; only unique ignored observations and this new ledger are written."
+  },
+  "evidence_reproduction": {
+    "frozen_submission": {
+      "id": "R02",
+      "submitted_by": "codex-w2-implementation",
+      "submitted_at": "2026-10-07T11:23:57+00:00",
+      "candidate_commit": "75bae16dca0be2dec5160a2e70e8682ba36b837c",
+      "base_commit": "91889b628d81ab5ae7f16d43905a143d5a3c552a",
+      "branch": "codex/w2-implementation",
+      "evidence_reference": {
+        "type": "criterion-manifest",
+        "path": "artifacts/evidence/CAP-05.S02.T01.R02.json",
+        "sha256": "19e33351ddb524c989d05377c9ba2629d8faba1541b37625f2e77abe7ddd181f",
+        "commit": "75bae16dca0be2dec5160a2e70e8682ba36b837c",
+        "recorded_at": "2026-10-07T11:23:57+00:00"
+      },
+      "acceptance_criteria_sha256": "36b884bdb566d30495752be0770a5fd1116cc04c51efcff8bdf0a8608e5490c4",
+      "changed_paths": [
+        "artifacts/evidence/CAP-05.S02.T01.R01.json",
+        "artifacts/evidence/CAP-05.S02.T01.publication-repair-01.owner.json",
+        "artifacts/evidence/CAP-05.S02.T01.review-R01.json",
+        "artifacts/evidence/CAP-05.S02.T01.task-start.md",
+        "docs/architecture/document-parsing.md",
+        "docs/planning-implementation-plan.md",
+        "packages/contracts/documents/document-ir.v1.schema.json",
+        "packages/contracts/documents/generate_parser_schema.py",
+        "packages/contracts/documents/parse-request.v1.schema.json",
+        "packages/contracts/documents/parse-result.v1.schema.json",
+        "packages/contracts/documents/parser-selection.v1.schema.json",
+        "planning/backlog.yaml",
+        "planning/review-site/CAP-05/CAP-05.S02.T01.html",
+        "planning/review-site/CAP-05/CAP-05.S02.html",
+        "planning/review-site/manifest.json",
+        "planning/status-summary.md",
+        "services/core-api/src/research_observatory_core/parsing/contracts.py",
+        "tests/parsing/test_document_ir.py",
+        "tests/parsing/test_parse_handoff.py"
+      ],
+      "selected_checks": [
+        ".venv/Scripts/python.exe -B -m unittest discover -v -s tests/parsing -p test_*.py",
+        ".venv/Scripts/python.exe -B -m unittest -v tests.documents.test_local_attachment.LocalAttachmentServiceTests",
+        ".venv/Scripts/python.exe -B packages/contracts/documents/generate_parser_schema.py --check",
+        ".venv/Scripts/python.exe -B -m ruff format --check --config pyproject.toml -- services/core-api/src/research_observatory_core/parsing services/core-api/src/research_observatory_core/ports/parsing.py services/core-api/src/research_observatory_core/object_store.py tests/parsing packages/contracts/documents/generate_parser_schema.py",
+        ".venv/Scripts/python.exe -B -m ruff check --config pyproject.toml -- services/core-api/src/research_observatory_core/parsing services/core-api/src/research_observatory_core/ports/parsing.py services/core-api/src/research_observatory_core/object_store.py tests/parsing packages/contracts/documents/generate_parser_schema.py",
+        "$env:MYPYPATH='tools;services/core-api/src'; .venv/Scripts/python.exe -B -m mypy --config-file pyproject.toml --no-namespace-packages --no-incremental -- services/core-api/src/research_observatory_core/parsing services/core-api/src/research_observatory_core/ports/parsing.py services/core-api/src/research_observatory_core/object_store.py tests/parsing/contract_fixtures.py tests/parsing/test_document_ir.py tests/parsing/test_normalization.py tests/parsing/test_parse_handoff.py tests/parsing/test_portable_schema.py tests/parsing/test_selection.py packages/contracts/documents/generate_parser_schema.py",
+        ".venv/Scripts/python.exe -B tools/architecture_check.py --repo ."
+      ],
+      "deferred_checks": [
+        "Native secure adapters and real isolated parser handoff, offline pinned Docling/assets/resources, raw-output persistence and integrated slice-wide restart/recovery remain S02.T02/T03 and slice qualification.",
+        "The expanded ordinary-import fixture type diagnostic has only the unchanged tests/documents/test_oa_acquisition.py baseline errors, independently reproduced on that file with ordinary configured imports. T01 product and nonfixture contract-test type proof does not claim that broader fixture audit passes. Broader repository quality remains a Wave exit obligation.",
+        "Human acceptance, immutable document heads/revisions and source viewer remain S03/S04. Full repository/profile, cross-capability, packaging, security/privacy/rights/accessibility/performance and G2 remain fresh W2 exit duties."
+      ],
+      "selection_rationale": "CAP-05.S02.T01.R01.F01 source-span integrity remediation: replay the semantic contradiction finding and incremental risks of containment under exact Unicode contributor mappings, schema semantic inventory and staged result validation. Fresh complete new parser-contract/handoff/protected-source tests plus directly affected schema, quality and architecture checks are selected; existing attachment regression confirms additive object-read compatibility. No new dependency, UI, migration, worker, accepted revision or framework change exists. Independent review replays F01 and this bounded delta, without repeating unrelated audits.",
+      "selection_sha256": "ac29a956a38602052da65da81ff5826e3deb4044a22bba88f87ae3b41a02b657",
+      "prior_attempt_id": "R01",
+      "open_finding_ids": [
+        "CAP-05.S02.T01.R01.F01"
+      ],
+      "root_cause_analysis": "R01 validated semantic spans against their projections but omitted the relationship to the identified node. The updated acceptance row and red regression precede the bounded validator fix. Reference/citation/cell content now requires the same projection and containment within the node decoded text; independent contributor mappings remain exact. Original private R01 evidence and adverse ledger bytes remain unchanged in ignored preservation; their owner-authorized public representations retain the same adverse finding and outcome.",
+      "selected_command_ids": [
+        "documents:unit",
+        "contracts:unit",
+        "foundation:quality",
+        "foundation:architecture"
+      ],
+      "packet_sha256": "23d74fad5afdef6f07038c889a63a619637668c73e0b73a43eebd4e6fe251792"
+    },
+    "packet_validation_errors": [],
+    "prior_round_control_validation_errors": [],
+    "manifest_sha256_semantics": "Existing taskctl canonical line-ending evidence hash.",
+    "fresh_report": {
+      "path": "artifacts/tmp/CAP-05.S02.T01.selected-02-75bae16d.json",
+      "sha256": "96d4022b52604904f52863dac95511a5c56f8d4208640d84f6cdce95d5cac92b"
+    },
+    "producer": {
+      "path": "artifacts/tmp/CAP-05.S02.T01.run-selected-02.py",
+      "sha256": "c411b0b97da4baac765ad502b192feac1f29a2b76f2faaddb75bd52baca58ce5"
+    },
+    "selected_check_groups": 7,
+    "parser_cases": 35,
+    "attachment_cases": 9,
+    "skipped_cases": 0,
+    "stable_input_count": 13479,
+    "stable_input_producer_guard": "Authenticated producer held Windows read handles against write/delete for every inventoried tracked and installed Python file throughout fresh committed execution; before/after maps match.",
+    "raw_and_canonical_check_hashes_authenticated": true,
+    "retained_adverse_hashes_authenticated": true,
+    "actual_executed_argv": "Authenticated against the finite producer; exact argv remains only in the ignored fresh report. Public command labels use repository-relative paths and dot for the architecture repository root.",
+    "authentication_observation": {
+      "path": "artifacts/tmp/CAP-05.S02.T01.R02-authentication-s02_t01_review-01.json",
+      "sha256": "f013545449b97746bf8c0b8581b5af16b067fb39caacc83cd6a3a610b89dc70b"
+    },
+    "prior_bounded_remediation_observation": {
+      "path": "artifacts/tmp/CAP-05.S02.T01.remediation-review-s02_t01_review-observation-01.json",
+      "sha256": "3cba5efae549ba714c3df1bc5aac5d36319718c39d40d554a1c4fb4a7011ba3a",
+      "role": "Background static assessment only; product bytes were subsequently authenticated at the exact R02 candidate and this formal disposition binds actual frozen R02 evidence."
+    },
+    "pure_semantic_probe": {
+      "execution": ".venv/Scripts/python.exe -B - (stdin; no suite/native fixture)",
+      "source": "import sys\nsys.path[:0] = ['services/core-api/src', '.']\nfrom pydantic import ValidationError\nfrom research_observatory_core.parsing.contracts import DocumentIR\nfrom tests.parsing.contract_fixtures import rich_ir_wire\nfor label, mutation in [('citation', lambda v: v['citations'][0].update(marker=v['references'][0]['rawText'])), ('reference', lambda v: v['references'][0].update(rawText=v['citations'][0]['marker'])), ('table-cell', lambda v: v['tables'][0]['cells'][0].update(rawText=v['references'][0]['rawText']))]:\n    value = rich_ir_wire()\n    mutation(value)\n    try:\n        DocumentIR.model_validate(value)\n    except ValidationError as error:\n        assert any('ir-semantic-node-content-mismatch' in part['msg'] for part in error.errors(include_input=False))\n        print(label + ': REJECTED ir-semantic-node-content-mismatch')\n    else:\n        raise AssertionError(label + ': contradiction accepted')\nDocumentIR.model_validate(rich_ir_wire())\nprint('valid-rich-ir: ACCEPTED')\n",
+      "observed_results": [
+        {
+          "case": "citation",
+          "result": "REJECTED",
+          "reason": "ir-semantic-node-content-mismatch"
+        },
+        {
+          "case": "reference",
+          "result": "REJECTED",
+          "reason": "ir-semantic-node-content-mismatch"
+        },
+        {
+          "case": "table-cell",
+          "result": "REJECTED",
+          "reason": "ir-semantic-node-content-mismatch"
+        },
+        {
+          "case": "valid-rich-ir",
+          "result": "ACCEPTED"
+        }
+      ],
+      "exit_code": 0
+    },
+    "approved_R01_publication_authority": {
+      "path": "artifacts/evidence/CAP-05.S02.T01.publication-repair-01.owner.json",
+      "sha256": "c80bb50da2e7a40e50c0341e58ca10b3a6a745bae565837e517b5b30ee0cf0bc"
+    },
+    "prior_R01_public_packet_sha256": "28b28ad9715989344f930749f640f74b835decd8cbaa6652ea9e6290176a08f5",
+    "original_adverse_ledger": {
+      "path": "artifacts/tmp/CAP-05.S02.T01.review-s02_t01_review-R01.json",
+      "sha256": "04f83399864ed804ce2a56c323d85fe65515c37cb278d96c194b80593170c5ec",
+      "preserved_byte_for_byte": true
+    },
+    "deferred": [
+      "Native secure adapters and real isolated parser handoff, offline pinned Docling/assets/resources, raw-output persistence and integrated slice-wide restart/recovery remain S02.T02/T03 and slice qualification.",
+      "The expanded ordinary-import fixture type diagnostic has only the unchanged tests/documents/test_oa_acquisition.py baseline errors, independently reproduced on that file with ordinary configured imports. T01 product and nonfixture contract-test type proof does not claim that broader fixture audit passes. Broader repository quality remains a Wave exit obligation.",
+      "Human acceptance, immutable document heads/revisions and source viewer remain S03/S04. Full repository/profile, cross-capability, packaging, security/privacy/rights/accessibility/performance and G2 remain fresh W2 exit duties."
+    ]
+  },
+  "findings": [],
+  "closures": [
+    {
+      "finding_id": "CAP-05.S02.T01.R01.F01",
+      "disposition": "fixed",
+      "evidence": "artifacts/evidence/CAP-05.S02.T01.R02.json at candidate 75bae16dca0be2dec5160a2e70e8682ba36b837c; artifacts/tmp/CAP-05.S02.T01.R02-authentication-s02_t01_review-01.json SHA f013545449b97746bf8c0b8581b5af16b067fb39caacc83cd6a3a610b89dc70b. Independently replaying the three exact R01 span substitutions now yields ir-semantic-node-content-mismatch; fresh parser regression log authenticates projection/missing-text denial, valid containment/NFC contributors and staged handoff rejection. Source fix is services/core-api/src/research_observatory_core/parsing/contracts.py:503-518; regression-first missed acceptance row and schema/docs updates are committed."
+    }
+  ]
+}

@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 3223e5b5af8211535919fe048b1dd08859dea92030b484ed1d3a9d21de366a99
+source_sha256: 6ce9c36890d48beb5ca540dcc96c857123a32ac30151a1178143730029c9aa05
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -11135,15 +11135,15 @@ Original tasks and approvals remain unchanged.
 
 **Dependencies:** `CAP-05.S01.T03`, `CAP-03.S04.T02`
 
-#### - [ ] CAP-05.S02.T01 - Define parser interface, document IR, and parser-selection policy
+#### - [x] CAP-05.S02.T01 - Define parser interface, document IR, and parser-selection policy
 
-**Status / priority / estimate / risk:** `IN_PROGRESS` / `P0` / `L` / `high`
+**Status / priority / estimate / risk:** `DONE` / `P0` / `L` / `high`
 
 **Profiles / platforms:** `LOC`, `LAB` / `windows-x64`
 
 **Dependencies:** `CAP-05.S01.T03`, `CAP-03.S04.T02`
 
-**Owner / review:** codex-w2-implementation / agent:/root/s02_t01_review (`changes-requested`)
+**Owner / review:** codex-w2-implementation / agent:/root/s02_t01_review (`approved`)
 
 **Objective:** Contracts for input formats, structural blocks, coordinates, references, tables, figures, warnings, confidence, and parser provenance.
 
@@ -11164,10 +11164,11 @@ Original tasks and approvals remain unchanged.
 **Evidence:**
 
 - `artifacts/evidence/CAP-05.S02.T01.R01.json` at `91889b628d81ab5ae7f16d43905a143d5a3c552a`
+- `artifacts/evidence/CAP-05.S02.T01.R02.json` at `75bae16dca0be2dec5160a2e70e8682ba36b837c`
 
 ##### Review history — CAP-05.S02.T01
 
-**Review mode:** `append-only v1` / 1 completed round(s)
+**Review mode:** `append-only v1` / 2 completed round(s)
 
 ###### Round R01
 
@@ -11199,17 +11200,47 @@ Original tasks and approvals remain unchanged.
 
 - None
 
+###### Round R02
+
+**Immutable submission packet:** `R02` / packet SHA-256 `23d74fad5afdef6f07038c889a63a619637668c73e0b73a43eebd4e6fe251792`
+
+- Candidate / base / branch: `75bae16dca0be2dec5160a2e70e8682ba36b837c` / `91889b628d81ab5ae7f16d43905a143d5a3c552a` / `codex/w2-implementation`
+- Submitted by / at: codex-w2-implementation / `2026-10-07T11:23:57+00:00`
+- Evidence: `artifacts/evidence/CAP-05.S02.T01.R02.json` / `19e33351ddb524c989d05377c9ba2629d8faba1541b37625f2e77abe7ddd181f` / `75bae16dca0be2dec5160a2e70e8682ba36b837c`
+- Acceptance-criteria SHA-256: `36b884bdb566d30495752be0770a5fd1116cc04c51efcff8bdf0a8608e5490c4`
+- Verification-selection SHA-256: `ac29a956a38602052da65da81ff5826e3deb4044a22bba88f87ae3b41a02b657`
+- Changed paths: `artifacts/evidence/CAP-05.S02.T01.R01.json`, `artifacts/evidence/CAP-05.S02.T01.publication-repair-01.owner.json`, `artifacts/evidence/CAP-05.S02.T01.review-R01.json`, `artifacts/evidence/CAP-05.S02.T01.task-start.md`, `docs/architecture/document-parsing.md`, `docs/planning-implementation-plan.md`, `packages/contracts/documents/document-ir.v1.schema.json`, `packages/contracts/documents/generate_parser_schema.py`, `packages/contracts/documents/parse-request.v1.schema.json`, `packages/contracts/documents/parse-result.v1.schema.json`, `packages/contracts/documents/parser-selection.v1.schema.json`, `planning/backlog.yaml`, `planning/review-site/CAP-05/CAP-05.S02.T01.html`, `planning/review-site/CAP-05/CAP-05.S02.html`, `planning/review-site/manifest.json`, `planning/status-summary.md`, `services/core-api/src/research_observatory_core/parsing/contracts.py`, `tests/parsing/test_document_ir.py`, `tests/parsing/test_parse_handoff.py`
+- Selected checks: `.venv/Scripts/python.exe -B -m unittest discover -v -s tests/parsing -p test_*.py`, `.venv/Scripts/python.exe -B -m unittest -v tests.documents.test_local_attachment.LocalAttachmentServiceTests`, `.venv/Scripts/python.exe -B packages/contracts/documents/generate_parser_schema.py --check`, `.venv/Scripts/python.exe -B -m ruff format --check --config pyproject.toml -- services/core-api/src/research_observatory_core/parsing services/core-api/src/research_observatory_core/ports/parsing.py services/core-api/src/research_observatory_core/object_store.py tests/parsing packages/contracts/documents/generate_parser_schema.py`, `.venv/Scripts/python.exe -B -m ruff check --config pyproject.toml -- services/core-api/src/research_observatory_core/parsing services/core-api/src/research_observatory_core/ports/parsing.py services/core-api/src/research_observatory_core/object_store.py tests/parsing packages/contracts/documents/generate_parser_schema.py`, `$env:MYPYPATH='tools;services/core-api/src'; .venv/Scripts/python.exe -B -m mypy --config-file pyproject.toml --no-namespace-packages --no-incremental -- services/core-api/src/research_observatory_core/parsing services/core-api/src/research_observatory_core/ports/parsing.py services/core-api/src/research_observatory_core/object_store.py tests/parsing/contract_fixtures.py tests/parsing/test_document_ir.py tests/parsing/test_normalization.py tests/parsing/test_parse_handoff.py tests/parsing/test_portable_schema.py tests/parsing/test_selection.py packages/contracts/documents/generate_parser_schema.py`, `.venv/Scripts/python.exe -B tools/architecture_check.py --repo .`
+- Deferred checks: `Native secure adapters and real isolated parser handoff, offline pinned Docling/assets/resources, raw-output persistence and integrated slice-wide restart/recovery remain S02.T02/T03 and slice qualification.`, `The expanded ordinary-import fixture type diagnostic has only the unchanged tests/documents/test_oa_acquisition.py baseline errors, independently reproduced on that file with ordinary configured imports. T01 product and nonfixture contract-test type proof does not claim that broader fixture audit passes. Broader repository quality remains a Wave exit obligation.`, `Human acceptance, immutable document heads/revisions and source viewer remain S03/S04. Full repository/profile, cross-capability, packaging, security/privacy/rights/accessibility/performance and G2 remain fresh W2 exit duties.`
+- Selection rationale: CAP-05.S02.T01.R01.F01 source-span integrity remediation: replay the semantic contradiction finding and incremental risks of containment under exact Unicode contributor mappings, schema semantic inventory and staged result validation. Fresh complete new parser-contract/handoff/protected-source tests plus directly affected schema, quality and architecture checks are selected; existing attachment regression confirms additive object-read compatibility. No new dependency, UI, migration, worker, accepted revision or framework change exists. Independent review replays F01 and this bounded delta, without repeating unrelated audits.
+- Prior round / replayed open findings: `R01` / `CAP-05.S02.T01.R01.F01`
+- Root-cause escalation: R01 validated semantic spans against their projections but omitted the relationship to the identified node. The updated acceptance row and red regression precede the bounded validator fix. Reference/citation/cell content now requires the same projection and containment within the node decoded text; independent contributor mappings remain exact. Original private R01 evidence and adverse ledger bytes remain unchanged in ignored preservation; their owner-authorized public representations retain the same adverse finding and outcome.
+
+**Disposition / reviewer / time:** `approved` / agent:/root/s02_t01_review / `2026-10-07T11:40:01+00:00`
+
+**Immutable review ledger:** `artifacts/evidence/CAP-05.S02.T01.review-R02.json` / `6397b93e710e870adeecd4827702e6f8f6bdc430cc53825899eb5ae8ef8eae0a`
+
+**Review notes:** Independent expanded CAP-05.S02.T01 R02 remediation review approves candidate 75bae16dca0be2dec5160a2e70e8682ba36b837c and explicitly closes CAP-05.S02.T01.R01.F01 as fixed. The own-node semantic validator requires reference, citation-marker and table-cell spans to have linked node text, the same projection and contained normalized ranges after exact contributor validation. Independent replay rejects all three original contradictory span substitutions with ir-semantic-node-content-mismatch; valid rich IR remains accepted. Fresh committed evidence contains nine cross-node/projection/missing-text negative subcases, legitimate contained and reordered/noncontiguous NFC contributors, and authenticated staged handoff rejection without retained private exception context. The missed acceptance row, documentation and schema semantic inventory agree. Actual frozen R02 candidate/base/criteria/selection/evidence and exact R01/open-finding linkage authenticate through unchanged read-only taskctl validators with no errors. Seven fresh selected groups, 35 parser plus 9 existing attachment cases and zero skips passed; all log/report/producer/retained adverse hashes and 13479 stable guarded inputs authenticate. The owner-authorized public R01 representation preserves the original adverse outcome and finding, and the original local ledger bytes remain unchanged. No material incremental finding remains. This task-only approval retains the earlier contract/security/rights assessment and explicit evidence limits: synthetic parser/transport doubles do not qualify native/LPAC/Docling/resource behavior; actual adapters, durable revision/human acceptance, integrated slice and fresh Wave/release qualification remain pending.
+
+**Findings opened:**
+
+- None
+
+**Prior finding closures:**
+
+- `CAP-05.S02.T01.R01.F01` `fixed` — artifacts/evidence/CAP-05.S02.T01.R02.json at candidate 75bae16dca0be2dec5160a2e70e8682ba36b837c; artifacts/tmp/CAP-05.S02.T01.R02-authentication-s02_t01_review-01.json SHA f013545449b97746bf8c0b8581b5af16b067fb39caacc83cd6a3a610b89dc70b. Independently replaying the three exact R01 span substitutions now yields ir-semantic-node-content-mismatch; fresh parser regression log authenticates projection/missing-text denial, valid containment/NFC contributors and staged handoff rejection. Source fix is services/core-api/src/research_observatory_core/parsing/contracts.py:503-518; regression-first missed acceptance row and schema/docs updates are committed.
+
 **Current immutable submission awaiting review:** None
 
-**Current latest-review projection:** `changes-requested` by agent:/root/s02_t01_review at `2026-10-07T09:31:12+00:00`
+**Current latest-review projection:** `approved` by agent:/root/s02_t01_review at `2026-10-07T11:40:01+00:00`
 
-**Latest notes:** Independent expanded CAP-05.S02.T01 review requests changes for one reproduced criterion-1 source-offset integrity defect: reference, citation-marker and table-cell semantic content can contradict the identified node text/location while DocumentIR accepts the IR. Exact frozen R01 candidate/base/criteria/selection/evidence packet authenticated through existing taskctl read-only functions with no packet errors. Seven fresh selected groups and 31 parser plus 9 existing attachment cases passed without skips as reported; logs, producer, 13476 stable-input report and retained adverse hashes authenticate. Closed registry/deterministic selection, failure/cancellation/output binding, exact retained copy provenance and current inspect+derive/Intent/privacy/native-session read and delivery fences were reviewed without a second material blocker. Scope and evidence limits are truthful: parser/transport doubles are synthetic; real native/LPAC/Docling/resource and durable revision/human acceptance work remains later tasks and slice/Wave qualification. Approval is denied until F01 closes; no new human decision or framework work is required.
+**Latest notes:** Independent expanded CAP-05.S02.T01 R02 remediation review approves candidate 75bae16dca0be2dec5160a2e70e8682ba36b837c and explicitly closes CAP-05.S02.T01.R01.F01 as fixed. The own-node semantic validator requires reference, citation-marker and table-cell spans to have linked node text, the same projection and contained normalized ranges after exact contributor validation. Independent replay rejects all three original contradictory span substitutions with ir-semantic-node-content-mismatch; valid rich IR remains accepted. Fresh committed evidence contains nine cross-node/projection/missing-text negative subcases, legitimate contained and reordered/noncontiguous NFC contributors, and authenticated staged handoff rejection without retained private exception context. The missed acceptance row, documentation and schema semantic inventory agree. Actual frozen R02 candidate/base/criteria/selection/evidence and exact R01/open-finding linkage authenticate through unchanged read-only taskctl validators with no errors. Seven fresh selected groups, 35 parser plus 9 existing attachment cases and zero skips passed; all log/report/producer/retained adverse hashes and 13479 stable guarded inputs authenticate. The owner-authorized public R01 representation preserves the original adverse outcome and finding, and the original local ledger bytes remain unchanged. No material incremental finding remains. This task-only approval retains the earlier contract/security/rights assessment and explicit evidence limits: synthetic parser/transport doubles do not qualify native/LPAC/Docling/resource behavior; actual adapters, durable revision/human acceptance, integrated slice and fresh Wave/release qualification remain pending.
 
-**Currently open findings:** `CAP-05.S02.T01.R01.F01`
+**Currently open findings:** -
 
 #### - [ ] CAP-05.S02.T02 - Implement native JATS/TEI/XML/HTML parsing
 
-**Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `L` / `medium`
+**Status / priority / estimate / risk:** `READY` / `P0` / `L` / `medium`
 
 **Profiles / platforms:** `LOC`, `LAB` / `windows-x64`
 
