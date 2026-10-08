@@ -91,6 +91,7 @@ class DocumentViewerService:
             trace,
             scoped,
             session_stop=lambda stop: session_stop.__setitem__(0, stop),
+            reuse_native_store=True,
         )
 
     def describe(self, command, *, trace_id):

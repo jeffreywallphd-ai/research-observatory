@@ -295,14 +295,17 @@ class DocumentAttachmentRuntime:
         action: Callable[[LocalDocumentAttachmentService, CorpusActor], Result],
         *,
         session_stop: Callable[[Callable[[], bool]], None] | None = None,
+        reuse_native_store: bool = False,
     ) -> Result:
+        if reuse_native_store and session_stop is None:
+            raise AttachmentProblem("attachment-authority-changed")
         native_stores: list[ObjectStore] = []
 
         def current(project_scope: _ProjectActionScope | None = None) -> Result:
             def authorized(_repository, actor, _intent, path: Path, actual_id: str) -> Result:
                 if actual_id != project_id:
                     raise AttachmentProblem("attachment-authority-changed")
-                if project_scope is None:
+                if not reuse_native_store:
                     objects = self._object_store_factory(path, actual_id)
                 else:
                     if len(native_stores) != 1:
@@ -331,7 +334,7 @@ class DocumentAttachmentRuntime:
             session_id,
             current,
             session_stop=session_stop,
-            store_consumer=native_stores.append,
+            store_consumer=native_stores.append if reuse_native_store else None,
         )
 
     def stage(
