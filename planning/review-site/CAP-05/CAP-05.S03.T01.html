@@ -89,9 +89,9 @@ python tools/verify.py --profile data
 ```</pre></article></section>
 <section class="section-heading"><span class="eyebrow">Task-start planning</span><h2>Assigned worksheet</h2><p>The worksheet is an optional planning aid and does not create a new approval or task state.</p></section>
 
-<details class="plan-details task-worksheet" open data-task-worksheet="CAP-05.S03.T01" data-worksheet-sha256="950dac409dc13689c75cfd16e9100fac659cc87d9ba404041965f6417827c902">
+<details class="plan-details task-worksheet" open data-task-worksheet="CAP-05.S03.T01" data-worksheet-sha256="720ed5c9ab7e27ccbad439cf9225554fae94cd70e302c4fd7e145e4c0186674a">
   <summary>Assigned task-start worksheet</summary>
-  <div class="worksheet-meta"><strong>Source:</strong> <code>artifacts/evidence/CAP-05.S03.T01.task-start.md</code> · <strong>SHA-256:</strong> <code>950dac409dc13689c75cfd16e9100fac659cc87d9ba404041965f6417827c902</code></div>
+  <div class="worksheet-meta"><strong>Source:</strong> <code>artifacts/evidence/CAP-05.S03.T01.task-start.md</code> · <strong>SHA-256:</strong> <code>720ed5c9ab7e27ccbad439cf9225554fae94cd70e302c4fd7e145e4c0186674a</code></div>
   <article class="plan-article"><pre class='markdown-fallback'># CAP-05.S03.T01 — immutable normalized document revisions
 
 Claim base: `d0752c3d0aac0162ada79effc41b88c9d2978bcf` on the existing
@@ -145,7 +145,18 @@ viewer and quality workspace delivery belongs to S04. No new parser, OCR,
 cloud service, scholarly-verification decision or automation-framework work.
 
 Required expanded independent task review remains pending. No new mandatory
-approval gate was discovered for implementation on the actual eligible host.</pre></article>
+approval gate was discovered for implementation on the actual eligible host.
+
+Independent pre-disposition finding F01 at candidate
+`a323add851fd2c3882e9b5a35b328d4d2577c3e7` exposed a missed bounded-writer row:
+the element-index routine rescanned and removed pending nodes although the IR
+already guarantees parent-before-child order. A valid chain caused quadratic
+parent visits during acceptance and each protected read. Preserve the finding
+and the reviewer&#x27;s adverse setup observation in
+`artifacts/tmp/CAP-05.S03.T01.independent-pre-disposition-finding-56.json`.
+Add a large valid chain/flat counting regression before changing the routine
+to one validated-order pass; replay real persistence and atomic-failure checks.
+This corrects the new product writer, with no parser timing or framework work.</pre></article>
 </details>
 <section class="section-heading"><span class="eyebrow">Execution evidence</span><h2>Review packets, rounds, and current projection</h2><p>Append-only controls retain every immutable round and finding closure. Pre-policy tasks remain explicitly latest-review-only.</p></section>
 

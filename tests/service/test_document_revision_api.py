@@ -26,6 +26,7 @@ class DocumentRevisionApiTests(unittest.TestCase):
 
             def shutdown(self):
                 pass
+
             def signal_stop(self, root=None):
                 pass
 

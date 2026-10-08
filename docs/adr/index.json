@@ -442,6 +442,15 @@
       "linkedTasks": [
         "CAP-05.S02.T03"
       ]
+    },
+    {
+      "id": "ADR-0046",
+      "path": "docs/adr/ADR-0046-bind-immutable-document-revisions-to-existing-human-authority.md",
+      "title": "Bind immutable document revisions to existing human authority",
+      "status": "Proposed",
+      "linkedTasks": [
+        "CAP-05.S03.T01"
+      ]
     }
   ]
 }

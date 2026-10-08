@@ -52,3 +52,14 @@ cloud service, scholarly-verification decision or automation-framework work.
 
 Required expanded independent task review remains pending. No new mandatory
 approval gate was discovered for implementation on the actual eligible host.
+
+Independent pre-disposition finding F01 at candidate
+`a323add851fd2c3882e9b5a35b328d4d2577c3e7` exposed a missed bounded-writer row:
+the element-index routine rescanned and removed pending nodes although the IR
+already guarantees parent-before-child order. A valid chain caused quadratic
+parent visits during acceptance and each protected read. Preserve the finding
+and the reviewer's adverse setup observation in
+`artifacts/tmp/CAP-05.S03.T01.independent-pre-disposition-finding-56.json`.
+Add a large valid chain/flat counting regression before changing the routine
+to one validated-order pass; replay real persistence and atomic-failure checks.
+This corrects the new product writer, with no parser timing or framework work.

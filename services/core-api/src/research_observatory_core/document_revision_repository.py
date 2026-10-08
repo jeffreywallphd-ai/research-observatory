@@ -829,16 +829,15 @@ class LocalDocumentRevisionRepository:
 
         for index, item in enumerate(accepted.structure.text_projections):
             insert("projection", item.projection_id, index)
-        pending = list(accepted.structure.nodes)
         saved = set()
-        while pending:
-            ready = [item for item in pending if item.parent_id is None or item.parent_id in saved]
-            if not ready:
+        # The canonical contract already requires parent-before-child order.
+        # Retain that order in one pass, including inside the canonical writer.
+        for item in accepted.structure.nodes:
+            parent = item.parent_id
+            if parent is not None and parent not in saved:
                 raise DocumentRevisionProblem("document-structure-cycle")
-            for item in ready:
-                insert("node", item.node_id, item.order, item.parent_id, kind=item.kind)
-                saved.add(item.node_id)
-                pending.remove(item)
+            insert("node", item.node_id, item.order, parent, kind=item.kind)
+            saved.add(item.node_id)
         for item in accepted.structure.references:
             insert("reference", item.reference_id, item.order, related=item.node_id)
         for index, item in enumerate(accepted.structure.citations):
