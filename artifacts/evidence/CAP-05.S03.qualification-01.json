@@ -1,0 +1,243 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "slice-qualification-evidence",
+  "sliceId": "CAP-05.S03",
+  "waveId": "W2",
+  "candidate": "745700188fb397e5fb01e841754c39d5ed087844",
+  "branch": "codex/w2-implementation",
+  "qualificationStatus": "SELECTED_CHECKS_PASSED_INDEPENDENT_DISPOSITION_PENDING",
+  "approval": {
+    "frozenWaveCommit": "c85a59f3a293f8e3f2eaf6454682c9a14b1efa55",
+    "approvedSlicePlan": {
+      "path": "planning/slice-plans/CAP-05/CAP-05.S03-immutable-document-revisions-and-source-anchors.md",
+      "sha256": "5caa283ac2981c1d6d67f2e9fe9e43bb806e58604b36d31bfb1c92ceeabb8d12",
+      "hashConvention": "raw-bytes"
+    },
+    "acceptedArchitecture": {
+      "path": "docs/adr/ADR-0029-preserve-document-revisions-and-mediate-source-viewing.md",
+      "sha256": "ffee796414cdde9155667c8c3a710e7c904197971b7714832c7c5bc950687e7b",
+      "hashConvention": "raw-bytes"
+    }
+  },
+  "taskEvidence": [
+    {
+      "taskId": "CAP-05.S03.T01",
+      "attemptId": "R01",
+      "candidate": "0fbad3859595ecc14968d2e036bbc4cb55054de8",
+      "criterionManifest": {
+        "type": "criterion-manifest",
+        "path": "artifacts/evidence/CAP-05.S03.T01.R01.json",
+        "sha256": "3a86371d6a30705d2e48a1f3d6c5fd458cb2d0ae7950c9c8d4ff7c62e083f43d",
+        "commit": "0fbad3859595ecc14968d2e036bbc4cb55054de8",
+        "recorded_at": "2026-10-08T02:00:45+00:00"
+      },
+      "independentReview": {
+        "path": "artifacts/evidence/CAP-05.S03.T01.review-R01.json",
+        "sha256": "a00d94705fd1475a6bf409298b728d107ffe6ce378a9aba4604bb251d4c6bfd7"
+      },
+      "disposition": "approved",
+      "resultReuse": false
+    },
+    {
+      "taskId": "CAP-05.S03.T02",
+      "attemptId": "R02",
+      "candidate": "ad664e896a547976c2728fd34d58ee00fbc7ca9b",
+      "criterionManifest": {
+        "type": "criterion-manifest",
+        "path": "artifacts/evidence/CAP-05.S03.T02.R02.json",
+        "sha256": "157889e22dd57a6ff46be28fd41382914ca6046862f1e2fdeb0721545ac44c70",
+        "commit": "ad664e896a547976c2728fd34d58ee00fbc7ca9b",
+        "recorded_at": "2026-10-08T04:37:07+00:00"
+      },
+      "independentReview": {
+        "path": "artifacts/evidence/CAP-05.S03.T02.review-R02.json",
+        "sha256": "5ddf25456c54d2137f9299ecd8e8607f609060542311f779a4ede93bf50bf905"
+      },
+      "disposition": "approved",
+      "resultReuse": false
+    },
+    {
+      "taskId": "CAP-05.S03.T03",
+      "attemptId": "R02",
+      "candidate": "0645daabc0b413dfa58fb5507dd89ad973d2ca5b",
+      "criterionManifest": {
+        "type": "criterion-manifest",
+        "path": "artifacts/evidence/CAP-05.S03.T03.R02.json",
+        "sha256": "7fce1ae8dd6d8c21165bdad626d5bdc5b0cde21c80d9529a076617267a95cda7",
+        "commit": "0645daabc0b413dfa58fb5507dd89ad973d2ca5b",
+        "recorded_at": "2026-10-08T14:00:21+00:00"
+      },
+      "independentReview": {
+        "path": "artifacts/evidence/CAP-05.S03.T03.review-R02.json",
+        "sha256": "1bb3d7b351d644f34a39657f1e40fbb16a1260d93c08b0d0dc61443d6b654108"
+      },
+      "disposition": "approved",
+      "resultReuse": false
+    }
+  ],
+  "verificationSelection": {
+    "selectedCommandIds": [
+      "documents:anchors"
+    ],
+    "freshChecks": [
+      "connected-acceptance-anchor-citation-reparse-service-recovery-stale-handoff",
+      "current-Reader-anchor-read-performance"
+    ],
+    "rationale": "All task reviews and previous material task proof remain exact authenticated history. Fresh connected integration and current Reader timing close the new cross-task/recovery/performance gaps. No source has changed since T03 R02 except completion metadata; no unchanged full-suite or Git-history replay, runtime cache reuse or parser-overage tuning.",
+    "deferredCoverage": [
+      "S04 owns attachment/route activation, original-byte PDF.js viewing, highlighted deep-link navigation and complete return journey.",
+      "The S02-S04 checkpoint owns fresh real installed renderer/native/accessibility wiring, viewer contention/cancellation and clean build/smoke. Current doubled Reader proof is never described as that installed journey.",
+      "Fresh full repository/profile/platform/package/security/privacy/rights/accessibility/performance matrix and permitted required hardware proof remain W2 qualification. No 8GB/16GB tier qualification is performed here.",
+      "Owner-requested configurable/smaller resource-suitable model changes need the bounded append-only successor product/experience/resource amendment before dependent implementation. They do not change this unaffected S03 contract."
+    ]
+  },
+  "checks": [
+    {
+      "name": "connected-S03-integration",
+      "status": "passed",
+      "candidate": "745700188fb397e5fb01e841754c39d5ed087844",
+      "fresh": true,
+      "commandId": "documents:anchors",
+      "report": {
+        "path": "artifacts/tmp/CAP-05.S03.integration-check-02.json",
+        "sha256": "09fd04425c7fb20bd45c4503bbc4b66dd419c1a551028674fe228395b2b05e42",
+        "hashConvention": "raw-bytes"
+      },
+      "producer": {
+        "path": "artifacts/tmp/CAP-05.S03.integration-check-02.py",
+        "sha256": "e8da1a53db11e9869e644891ab3520de2624d835a8317e55e77663b82eba13c5",
+        "hashConvention": "raw-bytes"
+      },
+      "fixture": {
+        "path": "artifacts/tmp/CAP-05.S03.integration-fixture-01.py",
+        "sha256": "77892705d48934535086ecb3349cadfaabeae715ca0decedf8e45b76e6f11f01",
+        "hashConvention": "raw-bytes"
+      },
+      "rawOutput": {
+        "path": "artifacts/tmp/CAP-05.S03.integration-check-02.log",
+        "sha256": "46f6146d6293a616433b6a36cec9cbc4a7a7486cf6ed60ee9cf0cec62d95cf2e",
+        "hashConvention": "raw-bytes"
+      },
+      "executedCases": 1,
+      "durationSeconds": 21.714858899998944
+    },
+    {
+      "name": "Reader-anchor-read-performance",
+      "status": "passed",
+      "candidate": "745700188fb397e5fb01e841754c39d5ed087844",
+      "fresh": true,
+      "commandId": "documents:anchors",
+      "report": {
+        "path": "artifacts/tmp/CAP-05.S03.integration-read-check-01.json",
+        "sha256": "3d45e0434bca00b19337cc795c23dda2b5274c646a7ebce674c470c381b48bb4",
+        "hashConvention": "raw-bytes"
+      },
+      "producer": {
+        "path": "artifacts/tmp/CAP-05.S03.integration-read-check-01.py",
+        "sha256": "bd25852e778a7de8fe7788e3d42c1549e750d7c98cb745332cbd826a2428072b",
+        "hashConvention": "raw-bytes"
+      },
+      "fixtureAndSamples": {
+        "path": "artifacts/tmp/CAP-05.S03.integration-read-check-01.fixture.json",
+        "sha256": "830647dc225cba7987ebda5355163f98b7f4d47033f230352fa1ed6ff2a38f0c",
+        "hashConvention": "raw-bytes"
+      },
+      "rawOutput": {
+        "path": "artifacts/tmp/CAP-05.S03.integration-read-check-01.log",
+        "sha256": "c141e97b816eb71bd409e10d853286b3f10d9d7acdfca2e534e6637b6018439c",
+        "hashConvention": "raw-bytes"
+      },
+      "executedCases": 1,
+      "durationSeconds": 21.002213100000517,
+      "warmP95Ms": 97.71070000715554,
+      "budgetMs": 100
+    }
+  ],
+  "integrationBoundaries": [
+    {
+      "criterion": "Sections5/10/17: immutable revision/source-anchor/citation/downstream outcome",
+      "proof": "Fresh connected S03 integration",
+      "observations": "Lawful protected source and explicitly synthetic retained parser output do not create an accepted revision before explicit current human acceptance. Accepted canonical nodes/anchors/context and ambiguous citation candidates retain exact identities. Later reparse creates a new accepted revision; historical anchor, source context, citation targets and revision history survive document Core service/gateway reconstruction."
+    },
+    {
+      "criterion": "Sections7/8/10: current authority, denial, cancellation, restart and recovery",
+      "proof": "Fresh connected S03 integration plus approved T03 R02 F01 closure",
+      "observations": "Reconstructed actual document Core service and FastAPI gateway obtain a fresh native session after real detach/project close/open/attach; old session denies. Current derive-rights denial does not classify damaged context as broken or publish stale facts. Stop inside publication denies and rolls back exact impact/stale/provenance/outbox counts. Fresh reconstructed authority retries once; replay adds nothing. This is service lifecycle reconstruction, not an OS process restart."
+    },
+    {
+      "criterion": "Sections5/13/14: material dependency and durable downstream handoff",
+      "proof": "Fresh connected S03 integration and reviewed T03 R02 migration/contract history",
+      "observations": "Exact portable source revision, canonical reference candidate identities and existing canonical dependency registrations drive a declared downstream evidence fixture. Authenticated broken context marks the exact direct and transitive outputs stale, leaves unrelated evidence unchanged and publishes exactly once. Schema27 and literal v26 migration/recovery histories remain authenticated reviewed task proof."
+    },
+    {
+      "criterion": "Sections6/10/17: public native contracts and reusable Reader experience",
+      "proof": "Reviewed T02 R02 and T03 R01/R02 task proof; fresh Core/session cross-task success/denial/recovery",
+      "observations": "Strict fixed opaque native request contracts, route registration, bounded delivery and typed renderer decoders retain their exact reviewed inputs. Existing mounted compiled Reader clicking/highlighting, explicit coordinate fallback, exact revision/confidence, scaling, keyboard/focus/themes and late-response clearing use a declared response double. They prove renderer behavior separately from actual Core/session boundaries. No S04 activation or installed native journey is inferred."
+    },
+    {
+      "criterion": "Section11: current bounded common structural context performance",
+      "proof": "Fresh Reader timing and latest independently approved T03 R02 resolver timing",
+      "observations": "20 warm current in-process HTTP/Core/native-session/Intent/privacy/rights/SQLCipher/envelope anchor-read requests give97.7107ms nearest-rank p95 on measured Windows11 x64 hardware. Latest task resolver is88.2239ms p95 at source-equivalent0645. Both are below the unchanged100ms budget. Fixture is authored synthetic structured text; neither claims full PDF/IR fetching, installed click-to-display, cold/minimum-tier or model inference performance."
+    }
+  ],
+  "performance": {
+    "currentReader": {
+      "warmP95Ms": 97.71070000715554,
+      "samples": 20,
+      "method": "nearest-rank p95,20 consecutive warm in-process current-authority HTTP requests",
+      "hostFacts": {
+        "os": "Windows-11-10.0.26200-SP0",
+        "architecture": "AMD64",
+        "logicalProcessors": 20,
+        "physicalTotalBytes": 16984227840,
+        "physicalAvailableBytesBeforeChecks": 4719394816,
+        "hardwareTierQualification": false
+      }
+    },
+    "latestReviewedResolver": {
+      "candidate": "0645daabc0b413dfa58fb5507dd89ad973d2ca5b",
+      "warmP95Ms": 88.22390000568703,
+      "report": {
+        "path": "artifacts/tmp/CAP-05.S03.T03.qualification-R02-68.timing.json",
+        "sha256": "46880f153d409600517fbc6f1fb961f1b39167edec0c6df496d3085794c309db",
+        "hashConvention": "raw-bytes"
+      }
+    },
+    "budgetMs": 100,
+    "allHardwareTiersQualified": false,
+    "parserInferenceExecuted": false
+  },
+  "preservedAdverse": [
+    {
+      "report": {
+        "path": "artifacts/tmp/CAP-05.S03.integration-check-01.json",
+        "sha256": "8a9fc1b27f24ee0c60704152199e205258f0cffe1f8df943f93f9df023726983",
+        "hashConvention": "raw-bytes"
+      },
+      "rawOutput": {
+        "path": "artifacts/tmp/CAP-05.S03.integration-check-01.log",
+        "sha256": "0e402672c7d2774be9554b849ca083d5d19fc514edfb1063845237ba4bb3b291",
+        "hashConvention": "raw-bytes"
+      },
+      "classification": "Collector FAIL: invocation discovered3 imported predecessor methods in addition to the connected case. All4 child cases passed; the single-case count guard rejected it. Corrected exact-case invocation02 passes without changing any assertion or product input."
+    },
+    {
+      "source": "Approved T02 R02 review retains282.8404/291.2944/279.44ms older Reader observations; they remain over-target observations."
+    },
+    {
+      "source": "T03 R01 F01 and its red/partial/complete correction evidence remain immutable; current R02 explicitly closes F01."
+    }
+  ],
+  "ownerDirection": {
+    "path": "artifacts/evidence/W2.owner-hardware-direction-01.md",
+    "sha256": "3010cf0baffb23e0f33c9ea52266365f07b63f6dd4c4d467c52183d6b693ade1",
+    "hashConvention": "raw-bytes"
+  },
+  "acceptedPriorParserOverage": "CAP-05.S02.T03.performance-owner-acceptance-01.md remains exact historical owner acceptance; no parser benchmark tuning or rerun.",
+  "limits": [
+    "Synthetic parser output and scholarly candidates are declared authored fixtures, not invented research findings or real parser/model quality qualification.",
+    "Actual Core/storage/principal proof is in-process HTTP; service reconstruction is explicit and no full application/OS process restart is claimed.",
+    "No model/resource/reference/security/scope/release amendment or approval is created by this evidence assembler.",
+    "Formal independent slice disposition remains pending; task completion and local-main integration do not complete W2 or approve release."
+  ]
+}
