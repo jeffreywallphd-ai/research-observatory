@@ -8,6 +8,7 @@ import time
 import unittest
 from concurrent.futures import ThreadPoolExecutor
 from contextlib import closing
+from dataclasses import replace
 from unittest.mock import patch
 
 import sqlcipher3.dbapi2 as sqlcipher
@@ -17,6 +18,11 @@ from research_observatory_core.app import create_app
 from research_observatory_core.authentication import capability_token_digest
 from research_observatory_core.document_viewer_service import DocumentViewerService
 from research_observatory_core.domain_contracts import new_uuid_v7
+from research_observatory_core.import_preview_service import ImportPreviewService
+from research_observatory_core.ingestion.import_drafts import ImportRights
+from research_observatory_core.ingestion.preview_activity import _GuardedSource
+from research_observatory_core.ingestion.source_chunks import ChunkedImportSource, put_source_chunk
+from research_observatory_core.main import DocumentAttachmentRuntime
 
 from tests.documents import test_document_revision_workflow as workflows
 
@@ -47,7 +53,31 @@ class DocumentViewerApiTests(unittest.TestCase):
         self.f = workflows.DocumentRevisionWorkflowTests(methodName="runTest")
         self.f.setUp()
         self.addCleanup(self.f.doCleanups)
-        self.viewer = DocumentViewerService(self.f.service.attachments, self.f.service.imports)
+        # This fixture's protected source deliberately uses a different key
+        # provider from the nested import fixture. Compose a native binding
+        # with that exact source adapter, matching production's shared provider
+        # rather than relying on an unrelated attachment factory override.
+        original = self.f.service.imports
+        adapters = original._action(self.f.command.root, lambda binding: binding.adapters)
+
+        def native_adapters(path, project):
+            self.assertEqual(self.f.command.root, str(path))
+            self.assertEqual(self.f.command.project_id, project)
+            return replace(adapters, store=self.f.f.fixture.store)
+
+        self.imports = ImportPreviewService(
+            original._projects,
+            original._privacy,
+            native_adapters,
+            local_actor_id=original._actor_id,
+            resume_epoch=original._epoch,
+            now=original._now,
+        )
+        self.addCleanup(self.imports.shutdown)
+        self.attachments = DocumentAttachmentRuntime(
+            self.imports, self.f.service.attachments._corpus, self.f.service.attachments._object_store_factory
+        )
+        self.viewer = DocumentViewerService(self.attachments, self.imports)
         self.addCleanup(self.viewer.shutdown)
         self.client = self.enterContext(
             TestClient(
@@ -65,7 +95,7 @@ class DocumentViewerApiTests(unittest.TestCase):
         self.command = {
             "root": self.f.command.root,
             "projectId": self.f.command.project_id,
-            "sessionId": self.f.command.session_id,
+            "sessionId": self.imports.native_context(self.f.command.root, self.f.command.project_id),
             "selector": {
                 "attachmentId": self.f.f.source.attachment_id,
                 "documentRevisionId": self.f.f.source.document_revision_id,
@@ -73,6 +103,115 @@ class DocumentViewerApiTests(unittest.TestCase):
         }
         self.range = dict(self.command, requestId=new_uuid_v7(), start=0, end=9)
         self.path = "/native/document-viewer"
+
+    def test_current_native_adapter_reads_without_reinitializing_its_key_and_policy_ports(self):
+        with patch.object(self.attachments, "_object_store_factory", side_effect=AssertionError("unexpected-reinit")):
+            response = self.client.post(self.path + "/range", json=self.range)
+        self.assertEqual(200, response.status_code, response.text)
+        self.assertEqual(b"Synthetic", base64.b64decode(response.json()["bytesBase64"], validate=True))
+
+    def test_native_close_reopen_denies_the_old_session_before_any_source_authentication(self):
+        self.assertEqual(200, self.client.post(self.path + "/range", json=self.range).status_code)
+        self.imports.detach(self.command["root"])
+        projects = self.imports._projects
+        projects.close(root=self.command["root"], trace_id="1" * 32)
+        projects.open(root=self.command["root"], trace_id="1" * 32)
+        current_session = self.imports.native_context(self.command["root"], self.command["projectId"])
+        self.assertNotEqual(self.command["sessionId"], current_session)
+        with patch.object(object_store, "_pull_frame", wraps=object_store._pull_frame) as authentication:
+            response = self.client.post(self.path + "/range", json=dict(self.range, requestId=new_uuid_v7()))
+            self.assertEqual(409, response.status_code)
+            authentication.assert_not_called()
+        self.assertEqual(
+            200,
+            self.client.post(
+                self.path + "/range", json=dict(self.range, sessionId=current_session, requestId=new_uuid_v7())
+            ).status_code,
+        )
+
+    def test_reused_native_adapter_rechecks_missing_keys_without_quarantining_a_healthy_original(self):
+        self.assertEqual(200, self.client.post(self.path + "/range", json=self.range).status_code)
+        keys = self.f.f.fixture.keys
+        saved = dict(keys.keys)
+        try:
+            keys.keys.clear()
+            response = self.client.post(self.path + "/range", json=dict(self.range, requestId=new_uuid_v7()))
+            self.assertEqual(409, response.status_code)
+            self.assertNotIn("bytesBase64", response.text)
+            self.assertEqual("available", self.f.f.fixture.store.metadata(self.f.f.source.object_sha256).storage_state)
+        finally:
+            keys.keys.update(saved)
+        self.assertEqual(
+            200, self.client.post(self.path + "/range", json=dict(self.range, requestId=new_uuid_v7())).status_code
+        )
+
+    def test_cancelled_viewer_allows_concurrent_guarded_import_read_and_metadata_writer_to_finish(self):
+        rights = ImportRights.model_validate(
+            {action: {"value": "permitted", "basis": "researcher-confirmed"} for action in ("store", "inspect")}
+        )
+        raw = b"Synthetic concurrent bibliography import\n"
+        binding = self.imports._action(self.command["root"], lambda selected: selected)
+        chunk = self.imports._guard(
+            binding,
+            lambda: put_source_chunk(binding.adapters.store, raw, rights=rights, created_at=self.f.f.actor.occurred_at),
+        )
+        source = ChunkedImportSource(binding.adapters.store, (chunk,), authorize=lambda: rights)
+        self.addCleanup(source.close)
+        imported = _GuardedSource(source, lambda action: self.imports._guard(binding, action))
+        entered, release = threading.Event(), threading.Event()
+        pull = object_store._pull_frame
+
+        def held_frame(*args, **kwargs):
+            value = pull(*args, **kwargs)
+            entered.set()
+            if not release.wait(3):
+                raise RuntimeError("synthetic-concurrent-release-timeout")
+            return value
+
+        def metadata_writer():
+            def write():
+                with closing(
+                    storage.open_canonical_database(
+                        self.f.f.fixture.corpus.database, expected_project_id=self.command["projectId"]
+                    )
+                ) as connection:
+                    connection.execute("BEGIN IMMEDIATE")
+                    cursor = connection.execute(
+                        "UPDATE object_records SET verified_at=verified_at WHERE project_id=? AND object_sha256=?",
+                        (self.command["projectId"], self.f.f.source.object_sha256),
+                    )
+                    self.assertEqual(1, cursor.rowcount)
+                    connection.execute("COMMIT")
+                    return True
+            return self.imports._guard(binding, write)
+
+        with patch.object(object_store, "_pull_frame", held_frame), ThreadPoolExecutor(max_workers=4) as executor:
+            viewer = executor.submit(self.client.post, self.path + "/range", json=self.range)
+            try:
+                self.assertTrue(entered.wait(2))
+                importing = executor.submit(imported.read, len(raw))
+                writing = executor.submit(metadata_writer)
+                deadline = time.monotonic() + 1
+                while self.imports._projects._mutex.waiting_count() < 2:
+                    self.assertLess(time.monotonic(), deadline)
+                    time.sleep(0.005)
+                command = {key: self.command[key] for key in ("root", "projectId", "sessionId")}
+                cancelling = executor.submit(
+                    self.client.post, self.path + "/cancel", json=dict(command, requestId=self.range["requestId"])
+                )
+                time.sleep(0.1)
+                self.assertFalse(cancelling.done())
+                self.assert_authentication_owns_writer()
+            finally:
+                release.set()
+            self.assertEqual(409, viewer.result(timeout=3).status_code)
+            self.assertTrue(cancelling.result(timeout=3).json()["drained"])
+            self.assertEqual(raw, importing.result(timeout=3))
+            self.assertTrue(writing.result(timeout=3))
+        self.assertFalse(object_store._READERS.in_use(self.command["projectId"], self.f.f.source.object_sha256))
+        self.assertEqual(
+            200, self.client.post(self.path + "/range", json=dict(self.range, requestId=new_uuid_v7())).status_code
+        )
 
     def test_current_original_metadata_and_exact_range_cross_the_authenticated_boundary(self):
         self.f.f.permit(derive="denied")

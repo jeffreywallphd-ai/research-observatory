@@ -283,6 +283,7 @@ class ImportPreviewService:
         action: Callable[[_ProjectActionScope], Result],
         *,
         session_stop: Callable[[Callable[[], bool]], None],
+        store_consumer: Callable[[ObjectStore], None] | None = None,
     ) -> Result:
         """Compose fresh nested metadata checks under one held native project guard."""
         scopes: list[_ProjectActionScope] = []
@@ -292,6 +293,11 @@ class ImportPreviewService:
             if binding.project_id != project_id or not secrets.compare_digest(binding.session_id, session_id):
                 raise PreviewProblem("preview-project-session-changed")
             session_stop(lambda: self._stopped.is_set() or binding.stopped.is_set())
+            if store_consumer is not None:
+                # Adapter lifetime is not authorization lifetime. Select only
+                # from this exact current binding, under its lifecycle guard;
+                # protected operations still validate current keys and policy.
+                store_consumer(binding.adapters.store)
             return action(scopes[0])
 
         return self._projects.perform_open_project_action(

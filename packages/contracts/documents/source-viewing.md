@@ -61,6 +61,14 @@ around that writer: each waiter still validates current actor, full metadata and
 rights independently after physical close. Ordinary repository callers retain
 their pre/post checks; expected metadata is never an authorization cache.
 
+Each of those fresh scopes selects the object adapter from the exact current
+native binding while holding its project/session lifecycle guard. That adapter
+was prepared at native open; repeating its migration and construction does not
+establish additional authority. Adapter reuse retains fresh Corpus checks at
+all three phases and fresh key, privacy, exact-copy and inspect checks for every
+protected operation. No adapter selection is retained across scopes or native
+close/reopen, and no bytes, transaction, rights decision or actor are cached.
+
 Cancelling IPC is a stop signal, not a drain acknowledgement. The original
 range promise resolves bytes only after physical close, or rejects a closed
 native disposition with schema version, project, request and a `drained` boolean.

@@ -296,12 +296,23 @@ class DocumentAttachmentRuntime:
         *,
         session_stop: Callable[[Callable[[], bool]], None] | None = None,
     ) -> Result:
+        native_stores: list[ObjectStore] = []
+
         def current(project_scope: _ProjectActionScope | None = None) -> Result:
             def authorized(_repository, actor, _intent, path: Path, actual_id: str) -> Result:
                 if actual_id != project_id:
                     raise AttachmentProblem("attachment-authority-changed")
+                if project_scope is None:
+                    objects = self._object_store_factory(path, actual_id)
+                else:
+                    if len(native_stores) != 1:
+                        raise AttachmentProblem("attachment-authority-changed")
+                    # The exact current native binding prepared this adapter
+                    # at open. Each operation still checks current authority,
+                    # keys and policy; no selected binding escapes this action.
+                    objects = native_stores[0]
                 service = LocalDocumentAttachmentService(
-                    path / "state/project.sqlite3", actual_id, self._object_store_factory(path, actual_id)
+                    path / "state/project.sqlite3", actual_id, objects
                 )
                 return action(service, actor)
 
@@ -320,6 +331,7 @@ class DocumentAttachmentRuntime:
             session_id,
             current,
             session_stop=session_stop,
+            store_consumer=native_stores.append,
         )
 
     def stage(
