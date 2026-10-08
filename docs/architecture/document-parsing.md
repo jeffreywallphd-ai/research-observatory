@@ -254,3 +254,50 @@ Engineering diagnostics and synthetic port tests do not qualify the installed
 product. Commit-bound package, native-principal, encrypted source-to-staged-IR,
 resource/cancellation/recovery and cold/warm performance proofs remain required
 before this task or its slice can complete.
+
+## Immutable normalized revisions (CAP-05.S03.T01)
+
+The native document-revision service submits one durable `document-parse`
+activity using the current human actor, accepted Intent, privacy policy, native
+session, source/copy rights and recorded parser selection. Source identity,
+retained-result identity and accepted original-document revision are distinct.
+Successful parsing stores an encrypted normalized result and its exact physical
+attempt/raw-artifact receipts; it does not advance the original document head.
+Failed, cancelled, partial, inspection-only and textless results cannot become
+accepted structure.
+
+An explicit human acceptance binds the retained receipt, confirmation digest,
+semantic command and expected current document revision. Core rechecks current
+authority, mints UUIDv7 identities for projections, nodes, references and citation
+markers, and remaps every hierarchy/span/geometry/reference link without changing
+the parsed text. It appends the original document revision, decision, immutable
+element index, material dependencies, provenance and scoped outbox event in one
+transaction. It does not assert scholarly verification. Exact authorized replay
+returns the same IDs without another publication; changed command reuse or a
+stale base conflicts. Earlier revisions remain readable after reopen under
+current source rights, and reparsing never reuses their element IDs.
+
+Schema 26 adds immutable parse-job, protected-result, accepted-revision and
+element-index tables. Its forward-only migration authenticates literal schema
+25, creates a verified restorable backup, preserves old rows and ciphertext,
+and rolls back on interruption. The recovery contract admits exact v26 chains
+while retaining the earlier target-v21 through v25 rules and fingerprints.
+
+All Core worker lanes share one admission controller and policy. The fixed
+document activity reserves four CPU slots, 4 GiB memory and 1 GiB disk, with one
+parser permit across projects; lighter metadata activities retain their smaller
+demand. Unknown or insufficient observed capacity leaves parsing unclaimed.
+The interactive reserve requires an additional CPU slot: a four-slot host is
+safely denied and its planned minimum-tier qualification remains unresolved.
+Heartbeat, lease checks and cancellation polling run outside canonical writers;
+inside publication, current durable authority and a latched native stop signal
+fence completion. The real long-running parser composition check proves lease
+renewal and an intervening canonical write, without repeating the accepted S02
+performance measurement.
+
+The bounded native routes expose parse/status/result, explicit acceptance,
+exact-revision reads and history. They accept no caller-supplied actor, structure
+or filesystem path authority. This task delivers protected Core persistence;
+anchor interactions and resolution follow in S03.T02/T03, and viewer delivery
+follows in S04. Synthetic parser tests and source-level Core execution do not
+qualify a newly packaged desktop installation.

@@ -61,6 +61,12 @@ class CoreSidecarPackageTests(unittest.TestCase):
                     "research_observatory_core.corpus_source_projection",
                     "research_observatory_core.document_attachment_api",
                     "research_observatory_core.document_attachment_repository",
+                    "research_observatory_core.document_parse_worker",
+                    "research_observatory_core.document_parse_workflow",
+                    "research_observatory_core.document_revision_api",
+                    "research_observatory_core.document_revision_repository",
+                    "research_observatory_core.document_revision_service",
+                    "research_observatory_core.document_revisions",
                     "research_observatory_core.connectors.adapters",
                     "research_observatory_core.connectors.broker",
                     "research_observatory_core.connectors.providers",
@@ -79,6 +85,7 @@ class CoreSidecarPackageTests(unittest.TestCase):
                     "research_observatory_core.ports.connector_runtime",
                     "research_observatory_core.ports.corpus_reports",
                     "research_observatory_core.ports.document_attachments",
+                    "research_observatory_core.ports.document_revisions",
                     "_cffi_backend",
                     "research_observatory_core.dependency_impacts",
                     "research_observatory_core.domain_compatibility",
@@ -103,6 +110,7 @@ class CoreSidecarPackageTests(unittest.TestCase):
                     "research_observatory_core.migrations.versions.v0021_plugin_grants",
                     "research_observatory_core.migrations.versions.v0022_document_attachments",
                     "research_observatory_core.migrations.versions.v0023_attachment_operations",
+                    "research_observatory_core.migrations.versions.v0026_document_revisions",
                     "research_observatory_core.plugin_grant_repository",
                     "research_observatory_core.plugin_job_repository",
                     "research_observatory_core.plugin_package_repository",
@@ -176,6 +184,17 @@ class CoreSidecarPackageTests(unittest.TestCase):
             "research_observatory_core.connectors.plugin_package_store",
             "research_observatory_core.connectors.plugin_workflow",
             "research_observatory_core.connectors.plugin_trust",
+        ):
+            self.assertIn(module, contract["requiredModules"])
+        for module in (
+            "research_observatory_core.document_parse_worker",
+            "research_observatory_core.document_parse_workflow",
+            "research_observatory_core.document_revision_api",
+            "research_observatory_core.document_revision_repository",
+            "research_observatory_core.document_revision_service",
+            "research_observatory_core.document_revisions",
+            "research_observatory_core.ports.document_revisions",
+            "research_observatory_core.migrations.versions.v0026_document_revisions",
         ):
             self.assertIn(module, contract["requiredModules"])
         self.assertIn("research_observatory_core.dependency_impacts", contract["requiredModules"])

@@ -1,0 +1,330 @@
+{
+  "$defs": {
+    "AcquisitionOrigin": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "remote-acquisition",
+          "title": "Kind",
+          "type": "string"
+        },
+        "locationId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "receiptSha256": {
+          "$ref": "#/$defs/Digest"
+        }
+      },
+      "required": [
+        "kind",
+        "locationId",
+        "receiptSha256"
+      ],
+      "title": "AcquisitionOrigin",
+      "type": "object"
+    },
+    "Digest": {
+      "pattern": "^[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "Format": {
+      "enum": [
+        "jats",
+        "tei",
+        "xml",
+        "html",
+        "pdf",
+        "docx",
+        "plain-text"
+      ],
+      "type": "string"
+    },
+    "Identity": {
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+      "type": "string"
+    },
+    "LocalOrigin": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "local-import",
+          "title": "Kind",
+          "type": "string"
+        }
+      },
+      "required": [
+        "kind"
+      ],
+      "title": "LocalOrigin",
+      "type": "object"
+    },
+    "ParseAttempt": {
+      "additionalProperties": false,
+      "properties": {
+        "jobId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "attemptId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "activityVersion": {
+          "$ref": "#/$defs/Token"
+        }
+      },
+      "required": [
+        "jobId",
+        "attemptId",
+        "activityVersion"
+      ],
+      "title": "ParseAttempt",
+      "type": "object"
+    },
+    "ParseBinding": {
+      "additionalProperties": false,
+      "properties": {
+        "source": {
+          "$ref": "#/$defs/SourceIdentity"
+        },
+        "attempt": {
+          "$ref": "#/$defs/ParseAttempt"
+        },
+        "producer": {
+          "$ref": "#/$defs/ParserDescriptor"
+        },
+        "selectionSha256": {
+          "$ref": "#/$defs/Digest"
+        }
+      },
+      "required": [
+        "source",
+        "attempt",
+        "producer",
+        "selectionSha256"
+      ],
+      "title": "ParseBinding",
+      "type": "object"
+    },
+    "ParserAsset": {
+      "additionalProperties": false,
+      "properties": {
+        "component": {
+          "$ref": "#/$defs/Token"
+        },
+        "version": {
+          "$ref": "#/$defs/Token"
+        },
+        "sha256": {
+          "$ref": "#/$defs/Digest"
+        }
+      },
+      "required": [
+        "component",
+        "version",
+        "sha256"
+      ],
+      "title": "ParserAsset",
+      "type": "object"
+    },
+    "ParserDescriptor": {
+      "additionalProperties": false,
+      "properties": {
+        "parserId": {
+          "$ref": "#/$defs/Token"
+        },
+        "version": {
+          "$ref": "#/$defs/Token"
+        },
+        "kind": {
+          "enum": [
+            "native",
+            "docling-cpu",
+            "degraded-inspection"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "inputFormats": {
+          "items": {
+            "$ref": "#/$defs/Format"
+          },
+          "minItems": 1,
+          "title": "Inputformats",
+          "type": "array"
+        },
+        "configurationVersion": {
+          "$ref": "#/$defs/Token"
+        },
+        "configurationSha256": {
+          "$ref": "#/$defs/Digest"
+        },
+        "assets": {
+          "items": {
+            "$ref": "#/$defs/ParserAsset"
+          },
+          "title": "Assets",
+          "type": "array"
+        }
+      },
+      "required": [
+        "parserId",
+        "version",
+        "kind",
+        "inputFormats",
+        "configurationVersion",
+        "configurationSha256",
+        "assets"
+      ],
+      "title": "ParserDescriptor",
+      "type": "object"
+    },
+    "ProjectIdentity": {
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[47][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+      "type": "string"
+    },
+    "SourceIdentity": {
+      "additionalProperties": false,
+      "properties": {
+        "projectId": {
+          "$ref": "#/$defs/ProjectIdentity"
+        },
+        "attachmentId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "documentId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "documentRevisionId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "candidateId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "sourceAssertionRevisionId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "workId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "workRevisionId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "versionId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "versionRevisionId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "objectSha256": {
+          "$ref": "#/$defs/Digest"
+        },
+        "byteLength": {
+          "maximum": 134217728,
+          "minimum": 0,
+          "title": "Bytelength",
+          "type": "integer"
+        },
+        "format": {
+          "$ref": "#/$defs/Format"
+        },
+        "provenance": {
+          "discriminator": {
+            "mapping": {
+              "local-import": "#/$defs/LocalOrigin",
+              "remote-acquisition": "#/$defs/AcquisitionOrigin"
+            },
+            "propertyName": "kind"
+          },
+          "oneOf": [
+            {
+              "$ref": "#/$defs/LocalOrigin"
+            },
+            {
+              "$ref": "#/$defs/AcquisitionOrigin"
+            }
+          ],
+          "title": "Provenance"
+        }
+      },
+      "required": [
+        "projectId",
+        "attachmentId",
+        "documentId",
+        "documentRevisionId",
+        "candidateId",
+        "sourceAssertionRevisionId",
+        "workId",
+        "workRevisionId",
+        "versionId",
+        "versionRevisionId",
+        "objectSha256",
+        "byteLength",
+        "format",
+        "provenance"
+      ],
+      "title": "SourceIdentity",
+      "type": "object"
+    },
+    "Token": {
+      "maxLength": 128,
+      "minLength": 1,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._+-]*$",
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schemaVersion": {
+      "const": "1.0",
+      "default": "1.0",
+      "title": "Schemaversion",
+      "type": "string"
+    },
+    "resultId": {
+      "$ref": "#/$defs/Identity"
+    },
+    "revisionId": {
+      "$ref": "#/$defs/Identity"
+    },
+    "binding": {
+      "$ref": "#/$defs/ParseBinding"
+    },
+    "objectSha256": {
+      "$ref": "#/$defs/Digest"
+    },
+    "byteLength": {
+      "exclusiveMinimum": 0,
+      "maximum": 67108864,
+      "title": "Bytelength",
+      "type": "integer"
+    },
+    "mediaType": {
+      "const": "application/vnd.research-observatory.normalized-parse-result+json",
+      "default": "application/vnd.research-observatory.normalized-parse-result+json",
+      "title": "Mediatype",
+      "type": "string"
+    }
+  },
+  "required": [
+    "resultId",
+    "revisionId",
+    "binding",
+    "objectSha256",
+    "byteLength"
+  ],
+  "title": "RetainedParseResultReceipt",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://research-observatory.local/contracts/documents/retained-parse-result.v1.schema.json",
+  "x-research-observatory-semanticRules": [
+    "exact-source-producer-configuration-assets-job-physical-attempt-and-authenticated-raw-receipts",
+    "successful-durable-output-required-before-explicit-trusted-human-structural-acceptance",
+    "current-native-session-human-intent-privacy-inspect-and-derive-authority-on-read-and-replay",
+    "acceptance-command-result-confirmation-and-expected-current-head-are-bound",
+    "atomic-decision-revision-core-minted-elements-provenance-dependencies-and-outbox",
+    "immutable-revision-scoped-uuidv7-identities-and-exact-graph-element-index",
+    "raw-and-nfc-unicode16-codepoint-contributor-mapping-preserved-with-source-geometry",
+    "incomplete-or-inspection-only-output-cannot-be-accepted-and-uncertainty-is-preserved",
+    "structural-acceptance-does-not-establish-scholarly-verification",
+    "strict-utf8-json-unique-fields-no-nonfinite-and-64-mib-wire-cap"
+  ]
+}

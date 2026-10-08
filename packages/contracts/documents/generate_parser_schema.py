@@ -13,6 +13,12 @@ from pydantic import TypeAdapter
 ROOT = Path(__file__).resolve().parents[3]
 sys.path.insert(0, str(ROOT / "services/core-api/src"))
 
+from research_observatory_core.document_revisions import (  # noqa: E402
+    AcceptedDocumentRevision,
+    CanonicalDocumentStructure,
+    DocumentRevisionAcceptance,
+    RetainedParseResultReceipt,
+)
 from research_observatory_core.parsing.contracts import DocumentIR  # noqa: E402
 from research_observatory_core.parsing.native_contracts import NativeStructure  # noqa: E402
 from research_observatory_core.parsing.requests import ParseRequest, ParseResult  # noqa: E402
@@ -24,7 +30,30 @@ OUTPUTS: dict[str, TypeAdapter[Any]] = {
     "parse-request.v1.schema.json": TypeAdapter(ParseRequest),
     "parse-result.v1.schema.json": TypeAdapter(ParseResult),
     "native-structure.v1.schema.json": TypeAdapter(NativeStructure),
+    "document-structure.v1.schema.json": TypeAdapter(CanonicalDocumentStructure),
+    "document-revision.v1.schema.json": TypeAdapter(AcceptedDocumentRevision),
+    "document-revision-acceptance.v1.schema.json": TypeAdapter(DocumentRevisionAcceptance),
+    "retained-parse-result.v1.schema.json": TypeAdapter(RetainedParseResultReceipt),
 }
+REVISION_SCHEMAS = set(OUTPUTS) - {
+    "document-ir.v1.schema.json",
+    "parser-selection.v1.schema.json",
+    "parse-request.v1.schema.json",
+    "parse-result.v1.schema.json",
+    "native-structure.v1.schema.json",
+}
+REVISION_RULES = [
+    "exact-source-producer-configuration-assets-job-physical-attempt-and-authenticated-raw-receipts",
+    "successful-durable-output-required-before-explicit-trusted-human-structural-acceptance",
+    "current-native-session-human-intent-privacy-inspect-and-derive-authority-on-read-and-replay",
+    "acceptance-command-result-confirmation-and-expected-current-head-are-bound",
+    "atomic-decision-revision-core-minted-elements-provenance-dependencies-and-outbox",
+    "immutable-revision-scoped-uuidv7-identities-and-exact-graph-element-index",
+    "raw-and-nfc-unicode16-codepoint-contributor-mapping-preserved-with-source-geometry",
+    "incomplete-or-inspection-only-output-cannot-be-accepted-and-uncertainty-is-preserved",
+    "structural-acceptance-does-not-establish-scholarly-verification",
+    "strict-utf8-json-unique-fields-no-nonfinite-and-64-mib-wire-cap",
+]
 SEMANTIC_RULES = [
     "ro-text-nfc-1-unicode-16-newline-fold-and-exact-raw-origin-mapping",
     "half-open-unicode-codepoint-ranges-not-byte-or-utf16-offsets",
@@ -46,17 +75,21 @@ def schema(name: str) -> dict[str, object]:
     result["$schema"] = "https://json-schema.org/draft/2020-12/schema"
     result["$id"] = f"https://research-observatory.local/contracts/documents/{name}"
     result["x-research-observatory-semanticRules"] = (
-        [
-            "original-source-byte-anchors-distinct-from-decoded-codepoints",
-            "unique-preorder-element-index-and-exact-nearest-source-parent",
-            "nonoverlapping-markup-and-owned-text-runs-cover-decoded-text",
-            "element-text-interval-equals-source-content-boundary-contributors",
-            "exact-selected-source-format-digest-length-and-parent-authenticated-artifact",
-            "no-worker-receipt-producer-attempt-storage-or-acceptance-authority",
-            "strict-utf8-json-unique-fields-no-nonfinite-and-64-mib-wire-cap",
-        ]
-        if name == "native-structure.v1.schema.json"
-        else SEMANTIC_RULES
+        REVISION_RULES
+        if name in REVISION_SCHEMAS
+        else (
+            [
+                "original-source-byte-anchors-distinct-from-decoded-codepoints",
+                "unique-preorder-element-index-and-exact-nearest-source-parent",
+                "nonoverlapping-markup-and-owned-text-runs-cover-decoded-text",
+                "element-text-interval-equals-source-content-boundary-contributors",
+                "exact-selected-source-format-digest-length-and-parent-authenticated-artifact",
+                "no-worker-receipt-producer-attempt-storage-or-acceptance-authority",
+                "strict-utf8-json-unique-fields-no-nonfinite-and-64-mib-wire-cap",
+            ]
+            if name == "native-structure.v1.schema.json"
+            else SEMANTIC_RULES
+        )
     )
     return result
 

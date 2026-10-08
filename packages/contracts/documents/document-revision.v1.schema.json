@@ -1,0 +1,1398 @@
+{
+  "$defs": {
+    "AcquisitionOrigin": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "remote-acquisition",
+          "title": "Kind",
+          "type": "string"
+        },
+        "locationId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "receiptSha256": {
+          "$ref": "#/$defs/Digest"
+        }
+      },
+      "required": [
+        "kind",
+        "locationId",
+        "receiptSha256"
+      ],
+      "title": "AcquisitionOrigin",
+      "type": "object"
+    },
+    "CanonicalCitation": {
+      "additionalProperties": false,
+      "properties": {
+        "citationId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "nodeId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "marker": {
+          "$ref": "#/$defs/TextSpan"
+        },
+        "referenceCandidates": {
+          "items": {
+            "$ref": "#/$defs/Identity"
+          },
+          "title": "Referencecandidates",
+          "type": "array"
+        },
+        "resolution": {
+          "enum": [
+            "candidate",
+            "ambiguous",
+            "unresolved"
+          ],
+          "title": "Resolution",
+          "type": "string"
+        }
+      },
+      "required": [
+        "citationId",
+        "nodeId",
+        "marker",
+        "referenceCandidates",
+        "resolution"
+      ],
+      "title": "CanonicalCitation",
+      "type": "object"
+    },
+    "CanonicalDocumentStructure": {
+      "additionalProperties": false,
+      "properties": {
+        "schemaVersion": {
+          "const": "1.0",
+          "title": "Schemaversion",
+          "type": "string"
+        },
+        "disposition": {
+          "const": "accepted-structure",
+          "title": "Disposition",
+          "type": "string"
+        },
+        "binding": {
+          "$ref": "#/$defs/ParseBinding"
+        },
+        "normalizationVersion": {
+          "const": "ro-text-nfc-1",
+          "title": "Normalizationversion",
+          "type": "string"
+        },
+        "unicodeVersion": {
+          "const": "16.0.0",
+          "title": "Unicodeversion",
+          "type": "string"
+        },
+        "textProjections": {
+          "items": {
+            "$ref": "#/$defs/CanonicalTextProjection"
+          },
+          "title": "Textprojections",
+          "type": "array"
+        },
+        "pages": {
+          "items": {
+            "$ref": "#/$defs/SourcePage"
+          },
+          "maxItems": 500,
+          "title": "Pages",
+          "type": "array"
+        },
+        "nodes": {
+          "items": {
+            "$ref": "#/$defs/CanonicalNode"
+          },
+          "title": "Nodes",
+          "type": "array"
+        },
+        "references": {
+          "items": {
+            "$ref": "#/$defs/CanonicalReference"
+          },
+          "title": "References",
+          "type": "array"
+        },
+        "citations": {
+          "items": {
+            "$ref": "#/$defs/CanonicalCitation"
+          },
+          "title": "Citations",
+          "type": "array"
+        },
+        "tables": {
+          "items": {
+            "$ref": "#/$defs/IRTable"
+          },
+          "title": "Tables",
+          "type": "array"
+        },
+        "figures": {
+          "items": {
+            "$ref": "#/$defs/IRFigure"
+          },
+          "title": "Figures",
+          "type": "array"
+        },
+        "rawArtifacts": {
+          "items": {
+            "$ref": "#/$defs/RawParserArtifact"
+          },
+          "title": "Rawartifacts",
+          "type": "array"
+        },
+        "quality": {
+          "$ref": "#/$defs/ParseQualityReport"
+        }
+      },
+      "required": [
+        "schemaVersion",
+        "disposition",
+        "binding",
+        "normalizationVersion",
+        "unicodeVersion",
+        "textProjections",
+        "pages",
+        "nodes",
+        "references",
+        "citations",
+        "tables",
+        "figures",
+        "rawArtifacts",
+        "quality"
+      ],
+      "title": "CanonicalDocumentStructure",
+      "type": "object"
+    },
+    "CanonicalElementIdentity": {
+      "additionalProperties": false,
+      "properties": {
+        "role": {
+          "$ref": "#/$defs/ElementRole"
+        },
+        "stagedId": {
+          "$ref": "#/$defs/Token"
+        },
+        "canonicalId": {
+          "$ref": "#/$defs/Identity"
+        }
+      },
+      "required": [
+        "role",
+        "stagedId",
+        "canonicalId"
+      ],
+      "title": "CanonicalElementIdentity",
+      "type": "object"
+    },
+    "CanonicalNode": {
+      "additionalProperties": false,
+      "properties": {
+        "nodeId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "kind": {
+          "$ref": "#/$defs/NodeKind"
+        },
+        "order": {
+          "$ref": "#/$defs/Count"
+        },
+        "parentId": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Identity"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "text": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/TextSpan"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "locator": {
+          "$ref": "#/$defs/SourceLocator"
+        },
+        "confidence": {
+          "$ref": "#/$defs/ConfidenceObservation"
+        },
+        "warnings": {
+          "items": {
+            "$ref": "#/$defs/ParserWarning"
+          },
+          "title": "Warnings",
+          "type": "array"
+        },
+        "sourceElementType": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Sourceelementtype"
+        }
+      },
+      "required": [
+        "nodeId",
+        "kind",
+        "order",
+        "parentId",
+        "text",
+        "locator",
+        "confidence",
+        "warnings",
+        "sourceElementType"
+      ],
+      "title": "CanonicalNode",
+      "type": "object"
+    },
+    "CanonicalReference": {
+      "additionalProperties": false,
+      "properties": {
+        "referenceId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "nodeId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "order": {
+          "$ref": "#/$defs/Count"
+        },
+        "rawText": {
+          "$ref": "#/$defs/TextSpan"
+        },
+        "identifiers": {
+          "items": {
+            "$ref": "#/$defs/ReferenceIdentifier"
+          },
+          "title": "Identifiers",
+          "type": "array"
+        }
+      },
+      "required": [
+        "referenceId",
+        "nodeId",
+        "order",
+        "rawText",
+        "identifiers"
+      ],
+      "title": "CanonicalReference",
+      "type": "object"
+    },
+    "CanonicalTextProjection": {
+      "additionalProperties": false,
+      "properties": {
+        "projectionId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "normalizationVersion": {
+          "const": "ro-text-nfc-1",
+          "title": "Normalizationversion",
+          "type": "string"
+        },
+        "unicodeVersion": {
+          "const": "16.0.0",
+          "title": "Unicodeversion",
+          "type": "string"
+        },
+        "rawText": {
+          "$ref": "#/$defs/Text"
+        },
+        "normalizedText": {
+          "$ref": "#/$defs/Text"
+        },
+        "mappings": {
+          "items": {
+            "$ref": "#/$defs/TextMapping"
+          },
+          "title": "Mappings",
+          "type": "array"
+        }
+      },
+      "required": [
+        "projectionId",
+        "normalizationVersion",
+        "unicodeVersion",
+        "rawText",
+        "normalizedText",
+        "mappings"
+      ],
+      "title": "CanonicalTextProjection",
+      "type": "object"
+    },
+    "CellConfidence": {
+      "additionalProperties": false,
+      "properties": {
+        "nodeId": {
+          "$ref": "#/$defs/Token"
+        },
+        "confidence": {
+          "$ref": "#/$defs/ConfidenceObservation"
+        }
+      },
+      "required": [
+        "nodeId",
+        "confidence"
+      ],
+      "title": "CellConfidence",
+      "type": "object"
+    },
+    "CodepointRange": {
+      "additionalProperties": false,
+      "properties": {
+        "start": {
+          "$ref": "#/$defs/Count"
+        },
+        "end": {
+          "$ref": "#/$defs/Count"
+        }
+      },
+      "required": [
+        "start",
+        "end"
+      ],
+      "title": "CodepointRange",
+      "type": "object"
+    },
+    "ConfidenceObservation": {
+      "additionalProperties": false,
+      "properties": {
+        "state": {
+          "enum": [
+            "reported",
+            "unknown",
+            "not-reported",
+            "not-applicable",
+            "unavailable"
+          ],
+          "title": "State",
+          "type": "string"
+        },
+        "value": {
+          "anyOf": [
+            {
+              "maximum": 1,
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Value"
+        }
+      },
+      "required": [
+        "state",
+        "value"
+      ],
+      "title": "ConfidenceObservation",
+      "type": "object"
+    },
+    "Coordinate": {
+      "minimum": 0,
+      "type": "number"
+    },
+    "Count": {
+      "maximum": 9007199254740991,
+      "minimum": 0,
+      "type": "integer"
+    },
+    "Digest": {
+      "pattern": "^[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "ElementRole": {
+      "enum": [
+        "projection",
+        "node",
+        "reference",
+        "citation"
+      ],
+      "type": "string"
+    },
+    "Format": {
+      "enum": [
+        "jats",
+        "tei",
+        "xml",
+        "html",
+        "pdf",
+        "docx",
+        "plain-text"
+      ],
+      "type": "string"
+    },
+    "IRFigure": {
+      "additionalProperties": false,
+      "properties": {
+        "nodeId": {
+          "$ref": "#/$defs/Token"
+        },
+        "caption": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/TextSpan"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "locator": {
+          "$ref": "#/$defs/SourceLocator"
+        },
+        "previewStageId": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Identity"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "nodeId",
+        "caption",
+        "locator",
+        "previewStageId"
+      ],
+      "title": "IRFigure",
+      "type": "object"
+    },
+    "IRTable": {
+      "additionalProperties": false,
+      "properties": {
+        "nodeId": {
+          "$ref": "#/$defs/Token"
+        },
+        "rows": {
+          "$ref": "#/$defs/Count"
+        },
+        "columns": {
+          "$ref": "#/$defs/Count"
+        },
+        "cells": {
+          "items": {
+            "$ref": "#/$defs/IRTableCell"
+          },
+          "title": "Cells",
+          "type": "array"
+        },
+        "gridState": {
+          "enum": [
+            "reported",
+            "ambiguous"
+          ],
+          "title": "Gridstate",
+          "type": "string"
+        }
+      },
+      "required": [
+        "nodeId",
+        "rows",
+        "columns",
+        "cells",
+        "gridState"
+      ],
+      "title": "IRTable",
+      "type": "object"
+    },
+    "IRTableCell": {
+      "additionalProperties": false,
+      "properties": {
+        "nodeId": {
+          "$ref": "#/$defs/Token"
+        },
+        "row": {
+          "$ref": "#/$defs/Count"
+        },
+        "column": {
+          "$ref": "#/$defs/Count"
+        },
+        "rowSpan": {
+          "$ref": "#/$defs/PositiveCount"
+        },
+        "columnSpan": {
+          "$ref": "#/$defs/PositiveCount"
+        },
+        "rawText": {
+          "$ref": "#/$defs/TextSpan"
+        },
+        "confidence": {
+          "$ref": "#/$defs/ConfidenceObservation"
+        }
+      },
+      "required": [
+        "nodeId",
+        "row",
+        "column",
+        "rowSpan",
+        "columnSpan",
+        "rawText",
+        "confidence"
+      ],
+      "title": "IRTableCell",
+      "type": "object"
+    },
+    "Identity": {
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+      "type": "string"
+    },
+    "Instant": {
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z$",
+      "type": "string"
+    },
+    "LocalOrigin": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "local-import",
+          "title": "Kind",
+          "type": "string"
+        }
+      },
+      "required": [
+        "kind"
+      ],
+      "title": "LocalOrigin",
+      "type": "object"
+    },
+    "NodeKind": {
+      "enum": [
+        "region",
+        "title",
+        "abstract",
+        "section",
+        "paragraph",
+        "sentence",
+        "list",
+        "list-item",
+        "footnote",
+        "reference",
+        "citation-marker",
+        "table",
+        "table-cell",
+        "figure",
+        "caption",
+        "equation",
+        "unknown"
+      ],
+      "type": "string"
+    },
+    "PageRegionLocator": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "page-region",
+          "title": "Kind",
+          "type": "string"
+        },
+        "pageIndex": {
+          "exclusiveMaximum": 500,
+          "minimum": 0,
+          "title": "Pageindex",
+          "type": "integer"
+        },
+        "x0": {
+          "$ref": "#/$defs/Coordinate"
+        },
+        "y0": {
+          "$ref": "#/$defs/Coordinate"
+        },
+        "x1": {
+          "$ref": "#/$defs/Coordinate"
+        },
+        "y1": {
+          "$ref": "#/$defs/Coordinate"
+        },
+        "unit": {
+          "const": "points",
+          "title": "Unit",
+          "type": "string"
+        },
+        "origin": {
+          "const": "top-left",
+          "title": "Origin",
+          "type": "string"
+        },
+        "frame": {
+          "const": "unrotated-source-page",
+          "title": "Frame",
+          "type": "string"
+        }
+      },
+      "required": [
+        "kind",
+        "pageIndex",
+        "x0",
+        "y0",
+        "x1",
+        "y1",
+        "unit",
+        "origin",
+        "frame"
+      ],
+      "title": "PageRegionLocator",
+      "type": "object"
+    },
+    "ParseAttempt": {
+      "additionalProperties": false,
+      "properties": {
+        "jobId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "attemptId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "activityVersion": {
+          "$ref": "#/$defs/Token"
+        }
+      },
+      "required": [
+        "jobId",
+        "attemptId",
+        "activityVersion"
+      ],
+      "title": "ParseAttempt",
+      "type": "object"
+    },
+    "ParseBinding": {
+      "additionalProperties": false,
+      "properties": {
+        "source": {
+          "$ref": "#/$defs/SourceIdentity"
+        },
+        "attempt": {
+          "$ref": "#/$defs/ParseAttempt"
+        },
+        "producer": {
+          "$ref": "#/$defs/ParserDescriptor"
+        },
+        "selectionSha256": {
+          "$ref": "#/$defs/Digest"
+        }
+      },
+      "required": [
+        "source",
+        "attempt",
+        "producer",
+        "selectionSha256"
+      ],
+      "title": "ParseBinding",
+      "type": "object"
+    },
+    "ParseQualityReport": {
+      "additionalProperties": false,
+      "properties": {
+        "missingTextPages": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/Count"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Missingtextpages"
+        },
+        "replacementCharacters": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Count"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "readingOrder": {
+          "enum": [
+            "reported-order",
+            "ambiguous",
+            "unavailable"
+          ],
+          "title": "Readingorder",
+          "type": "string"
+        },
+        "anchorCoverage": {
+          "$ref": "#/$defs/ConfidenceObservation"
+        },
+        "unresolvedReferences": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Count"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "tableCellConfidence": {
+          "items": {
+            "$ref": "#/$defs/CellConfidence"
+          },
+          "title": "Tablecellconfidence",
+          "type": "array"
+        },
+        "warnings": {
+          "items": {
+            "$ref": "#/$defs/ParserWarning"
+          },
+          "title": "Warnings",
+          "type": "array"
+        }
+      },
+      "required": [
+        "missingTextPages",
+        "replacementCharacters",
+        "readingOrder",
+        "anchorCoverage",
+        "unresolvedReferences",
+        "tableCellConfidence",
+        "warnings"
+      ],
+      "title": "ParseQualityReport",
+      "type": "object"
+    },
+    "ParserAsset": {
+      "additionalProperties": false,
+      "properties": {
+        "component": {
+          "$ref": "#/$defs/Token"
+        },
+        "version": {
+          "$ref": "#/$defs/Token"
+        },
+        "sha256": {
+          "$ref": "#/$defs/Digest"
+        }
+      },
+      "required": [
+        "component",
+        "version",
+        "sha256"
+      ],
+      "title": "ParserAsset",
+      "type": "object"
+    },
+    "ParserDescriptor": {
+      "additionalProperties": false,
+      "properties": {
+        "parserId": {
+          "$ref": "#/$defs/Token"
+        },
+        "version": {
+          "$ref": "#/$defs/Token"
+        },
+        "kind": {
+          "enum": [
+            "native",
+            "docling-cpu",
+            "degraded-inspection"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "inputFormats": {
+          "items": {
+            "$ref": "#/$defs/Format"
+          },
+          "minItems": 1,
+          "title": "Inputformats",
+          "type": "array"
+        },
+        "configurationVersion": {
+          "$ref": "#/$defs/Token"
+        },
+        "configurationSha256": {
+          "$ref": "#/$defs/Digest"
+        },
+        "assets": {
+          "items": {
+            "$ref": "#/$defs/ParserAsset"
+          },
+          "title": "Assets",
+          "type": "array"
+        }
+      },
+      "required": [
+        "parserId",
+        "version",
+        "kind",
+        "inputFormats",
+        "configurationVersion",
+        "configurationSha256",
+        "assets"
+      ],
+      "title": "ParserDescriptor",
+      "type": "object"
+    },
+    "ParserWarning": {
+      "additionalProperties": false,
+      "properties": {
+        "code": {
+          "$ref": "#/$defs/Token"
+        },
+        "severity": {
+          "enum": [
+            "information",
+            "warning",
+            "error"
+          ],
+          "title": "Severity",
+          "type": "string"
+        },
+        "nodeId": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Token"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "detail": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Text"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "code",
+        "severity",
+        "nodeId",
+        "detail"
+      ],
+      "title": "ParserWarning",
+      "type": "object"
+    },
+    "PositiveCount": {
+      "exclusiveMinimum": 0,
+      "maximum": 9007199254740991,
+      "type": "integer"
+    },
+    "ProjectIdentity": {
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[47][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+      "type": "string"
+    },
+    "RawParserArtifact": {
+      "additionalProperties": false,
+      "properties": {
+        "stageId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "objectSha256": {
+          "$ref": "#/$defs/Digest"
+        },
+        "byteLength": {
+          "$ref": "#/$defs/Count"
+        },
+        "mediaType": {
+          "pattern": "^[a-z0-9][a-z0-9.+-]*/[a-z0-9][a-z0-9.+-]*$",
+          "title": "Mediatype",
+          "type": "string"
+        }
+      },
+      "required": [
+        "stageId",
+        "objectSha256",
+        "byteLength",
+        "mediaType"
+      ],
+      "title": "RawParserArtifact",
+      "type": "object"
+    },
+    "ReferenceIdentifier": {
+      "additionalProperties": false,
+      "properties": {
+        "scheme": {
+          "$ref": "#/$defs/Token"
+        },
+        "observed": {
+          "$ref": "#/$defs/Text"
+        }
+      },
+      "required": [
+        "scheme",
+        "observed"
+      ],
+      "title": "ReferenceIdentifier",
+      "type": "object"
+    },
+    "RetainedParseResultReceipt": {
+      "additionalProperties": false,
+      "properties": {
+        "schemaVersion": {
+          "const": "1.0",
+          "default": "1.0",
+          "title": "Schemaversion",
+          "type": "string"
+        },
+        "resultId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "revisionId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "binding": {
+          "$ref": "#/$defs/ParseBinding"
+        },
+        "objectSha256": {
+          "$ref": "#/$defs/Digest"
+        },
+        "byteLength": {
+          "exclusiveMinimum": 0,
+          "maximum": 67108864,
+          "title": "Bytelength",
+          "type": "integer"
+        },
+        "mediaType": {
+          "const": "application/vnd.research-observatory.normalized-parse-result+json",
+          "default": "application/vnd.research-observatory.normalized-parse-result+json",
+          "title": "Mediatype",
+          "type": "string"
+        }
+      },
+      "required": [
+        "resultId",
+        "revisionId",
+        "binding",
+        "objectSha256",
+        "byteLength"
+      ],
+      "title": "RetainedParseResultReceipt",
+      "type": "object"
+    },
+    "SourceIdentity": {
+      "additionalProperties": false,
+      "properties": {
+        "projectId": {
+          "$ref": "#/$defs/ProjectIdentity"
+        },
+        "attachmentId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "documentId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "documentRevisionId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "candidateId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "sourceAssertionRevisionId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "workId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "workRevisionId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "versionId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "versionRevisionId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "objectSha256": {
+          "$ref": "#/$defs/Digest"
+        },
+        "byteLength": {
+          "maximum": 134217728,
+          "minimum": 0,
+          "title": "Bytelength",
+          "type": "integer"
+        },
+        "format": {
+          "$ref": "#/$defs/Format"
+        },
+        "provenance": {
+          "discriminator": {
+            "mapping": {
+              "local-import": "#/$defs/LocalOrigin",
+              "remote-acquisition": "#/$defs/AcquisitionOrigin"
+            },
+            "propertyName": "kind"
+          },
+          "oneOf": [
+            {
+              "$ref": "#/$defs/LocalOrigin"
+            },
+            {
+              "$ref": "#/$defs/AcquisitionOrigin"
+            }
+          ],
+          "title": "Provenance"
+        }
+      },
+      "required": [
+        "projectId",
+        "attachmentId",
+        "documentId",
+        "documentRevisionId",
+        "candidateId",
+        "sourceAssertionRevisionId",
+        "workId",
+        "workRevisionId",
+        "versionId",
+        "versionRevisionId",
+        "objectSha256",
+        "byteLength",
+        "format",
+        "provenance"
+      ],
+      "title": "SourceIdentity",
+      "type": "object"
+    },
+    "SourceLocator": {
+      "discriminator": {
+        "mapping": {
+          "page-region": "#/$defs/PageRegionLocator",
+          "text": "#/$defs/TextLocator",
+          "unavailable": "#/$defs/UnavailableLocator"
+        },
+        "propertyName": "kind"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/TextLocator"
+        },
+        {
+          "$ref": "#/$defs/PageRegionLocator"
+        },
+        {
+          "$ref": "#/$defs/UnavailableLocator"
+        }
+      ]
+    },
+    "SourcePage": {
+      "additionalProperties": false,
+      "properties": {
+        "pageIndex": {
+          "exclusiveMaximum": 500,
+          "minimum": 0,
+          "title": "Pageindex",
+          "type": "integer"
+        },
+        "width": {
+          "exclusiveMinimum": 0,
+          "title": "Width",
+          "type": "number"
+        },
+        "height": {
+          "exclusiveMinimum": 0,
+          "title": "Height",
+          "type": "number"
+        },
+        "rotation": {
+          "enum": [
+            0,
+            90,
+            180,
+            270
+          ],
+          "title": "Rotation",
+          "type": "integer"
+        },
+        "unit": {
+          "const": "points",
+          "title": "Unit",
+          "type": "string"
+        },
+        "origin": {
+          "const": "top-left",
+          "title": "Origin",
+          "type": "string"
+        },
+        "frame": {
+          "const": "unrotated-source-page",
+          "title": "Frame",
+          "type": "string"
+        }
+      },
+      "required": [
+        "pageIndex",
+        "width",
+        "height",
+        "rotation",
+        "unit",
+        "origin",
+        "frame"
+      ],
+      "title": "SourcePage",
+      "type": "object"
+    },
+    "Text": {
+      "type": "string"
+    },
+    "TextLocator": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "text",
+          "title": "Kind",
+          "type": "string"
+        },
+        "projectionId": {
+          "$ref": "#/$defs/Token"
+        },
+        "rawRanges": {
+          "items": {
+            "$ref": "#/$defs/CodepointRange"
+          },
+          "title": "Rawranges",
+          "type": "array"
+        }
+      },
+      "required": [
+        "kind",
+        "projectionId",
+        "rawRanges"
+      ],
+      "title": "TextLocator",
+      "type": "object"
+    },
+    "TextMapping": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "enum": [
+            "identity",
+            "transform"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "normalizedRange": {
+          "$ref": "#/$defs/CodepointRange"
+        },
+        "rawRanges": {
+          "items": {
+            "$ref": "#/$defs/CodepointRange"
+          },
+          "title": "Rawranges",
+          "type": "array"
+        }
+      },
+      "required": [
+        "kind",
+        "normalizedRange",
+        "rawRanges"
+      ],
+      "title": "TextMapping",
+      "type": "object"
+    },
+    "TextSpan": {
+      "additionalProperties": false,
+      "properties": {
+        "projectionId": {
+          "$ref": "#/$defs/Token"
+        },
+        "normalizedRange": {
+          "$ref": "#/$defs/CodepointRange"
+        },
+        "rawRanges": {
+          "items": {
+            "$ref": "#/$defs/CodepointRange"
+          },
+          "title": "Rawranges",
+          "type": "array"
+        }
+      },
+      "required": [
+        "projectionId",
+        "normalizedRange",
+        "rawRanges"
+      ],
+      "title": "TextSpan",
+      "type": "object"
+    },
+    "Token": {
+      "maxLength": 128,
+      "minLength": 1,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._+-]*$",
+      "type": "string"
+    },
+    "UnavailableLocator": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "unavailable",
+          "title": "Kind",
+          "type": "string"
+        },
+        "reason": {
+          "enum": [
+            "not-reported",
+            "format-has-no-pages",
+            "unsupported-location",
+            "parser-unavailable"
+          ],
+          "title": "Reason",
+          "type": "string"
+        }
+      },
+      "required": [
+        "kind",
+        "reason"
+      ],
+      "title": "UnavailableLocator",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schemaVersion": {
+      "const": "1.0",
+      "default": "1.0",
+      "title": "Schemaversion",
+      "type": "string"
+    },
+    "documentType": {
+      "const": "accepted-document-revision",
+      "default": "accepted-document-revision",
+      "title": "Documenttype",
+      "type": "string"
+    },
+    "projectId": {
+      "$ref": "#/$defs/ProjectIdentity"
+    },
+    "documentId": {
+      "$ref": "#/$defs/Identity"
+    },
+    "revisionId": {
+      "$ref": "#/$defs/Identity"
+    },
+    "previousRevisionId": {
+      "$ref": "#/$defs/Identity"
+    },
+    "result": {
+      "$ref": "#/$defs/RetainedParseResultReceipt"
+    },
+    "decisionId": {
+      "$ref": "#/$defs/Identity"
+    },
+    "decisionRevisionId": {
+      "$ref": "#/$defs/Identity"
+    },
+    "commandId": {
+      "$ref": "#/$defs/Identity"
+    },
+    "commandSha256": {
+      "$ref": "#/$defs/Digest"
+    },
+    "acceptedBy": {
+      "$ref": "#/$defs/Identity"
+    },
+    "acceptedActorType": {
+      "const": "human",
+      "default": "human",
+      "title": "Acceptedactortype",
+      "type": "string"
+    },
+    "acceptedAt": {
+      "$ref": "#/$defs/Instant"
+    },
+    "intentRevisionId": {
+      "$ref": "#/$defs/Identity"
+    },
+    "intentSha256": {
+      "$ref": "#/$defs/Digest"
+    },
+    "policySha256": {
+      "$ref": "#/$defs/Digest"
+    },
+    "rightsStatus": {
+      "const": "allowed",
+      "default": "allowed",
+      "title": "Rightsstatus",
+      "type": "string"
+    },
+    "scholarlyVerification": {
+      "const": "unverified",
+      "default": "unverified",
+      "title": "Scholarlyverification",
+      "type": "string"
+    },
+    "contentSha256": {
+      "$ref": "#/$defs/Digest"
+    },
+    "structureSha256": {
+      "$ref": "#/$defs/Digest"
+    },
+    "elementIdentities": {
+      "items": {
+        "$ref": "#/$defs/CanonicalElementIdentity"
+      },
+      "title": "Elementidentities",
+      "type": "array"
+    },
+    "structure": {
+      "$ref": "#/$defs/CanonicalDocumentStructure"
+    }
+  },
+  "required": [
+    "projectId",
+    "documentId",
+    "revisionId",
+    "previousRevisionId",
+    "result",
+    "decisionId",
+    "decisionRevisionId",
+    "commandId",
+    "commandSha256",
+    "acceptedBy",
+    "acceptedAt",
+    "intentRevisionId",
+    "intentSha256",
+    "policySha256",
+    "contentSha256",
+    "structureSha256",
+    "elementIdentities",
+    "structure"
+  ],
+  "title": "AcceptedDocumentRevision",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://research-observatory.local/contracts/documents/document-revision.v1.schema.json",
+  "x-research-observatory-semanticRules": [
+    "exact-source-producer-configuration-assets-job-physical-attempt-and-authenticated-raw-receipts",
+    "successful-durable-output-required-before-explicit-trusted-human-structural-acceptance",
+    "current-native-session-human-intent-privacy-inspect-and-derive-authority-on-read-and-replay",
+    "acceptance-command-result-confirmation-and-expected-current-head-are-bound",
+    "atomic-decision-revision-core-minted-elements-provenance-dependencies-and-outbox",
+    "immutable-revision-scoped-uuidv7-identities-and-exact-graph-element-index",
+    "raw-and-nfc-unicode16-codepoint-contributor-mapping-preserved-with-source-geometry",
+    "incomplete-or-inspection-only-output-cannot-be-accepted-and-uncertainty-is-preserved",
+    "structural-acceptance-does-not-establish-scholarly-verification",
+    "strict-utf8-json-unique-fields-no-nonfinite-and-64-mib-wire-cap"
+  ]
+}

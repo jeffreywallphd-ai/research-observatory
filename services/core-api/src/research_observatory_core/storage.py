@@ -47,7 +47,8 @@ from research_observatory_core.ports.database_keys import (
 
 APPLICATION_ID = 0x524F4253  # ASCII "ROBS"
 DATABASE_PROFILE = "sqlite-wal-v1"
-DATABASE_SCHEMA_VERSION = 25
+DATABASE_SCHEMA_VERSION = 26
+DOCUMENT_REVISION_PREDECESSOR_DATABASE_SCHEMA_VERSION = 25
 DOCUMENT_INTAKE_PREDECESSOR_DATABASE_SCHEMA_VERSION = 24
 ACQUISITION_PREDECESSOR_DATABASE_SCHEMA_VERSION = 23
 ATTACHMENT_OPERATION_PREDECESSOR_DATABASE_SCHEMA_VERSION = 22
@@ -163,6 +164,12 @@ DOCUMENT_INTAKE_TABLES = (
     "document_attachment_recoveries",
     "document_access_needs",
 )
+DOCUMENT_REVISION_TABLES = (
+    "document_parse_jobs",
+    "document_parse_results",
+    "document_normalized_revisions",
+    "document_structure_elements",
+)
 
 EXPECTED_TABLES = (
     "schema_metadata",
@@ -230,6 +237,7 @@ EXPECTED_TABLES = (
     *ATTACHMENT_OPERATION_TABLES,
     *ACQUISITION_TABLES,
     *DOCUMENT_INTAKE_TABLES,
+    *DOCUMENT_REVISION_TABLES,
 )
 IMMUTABLE_ROW_TABLES = (
     "schema_metadata",
@@ -290,6 +298,7 @@ IMMUTABLE_ROW_TABLES = (
     *ATTACHMENT_OPERATION_TABLES,
     *ACQUISITION_TABLES,
     *DOCUMENT_INTAKE_TABLES,
+    *DOCUMENT_REVISION_TABLES,
 )
 MUTABLE_STATE_TABLES = (
     "object_records",
@@ -306,6 +315,10 @@ EXPECTED_TRIGGERS = tuple(
         + [
             "document_intake_job_binding",
             "document_attachment_recovery_binding",
+            "document_parse_job_binding",
+            "document_parse_result_binding",
+            "document_normalized_revision_binding",
+            "document_structure_element_binding",
             "object_records_envelope_insert",
             "object_records_envelope_update",
             "provenance_events_bridge_legacy_after_insert",
@@ -434,6 +447,9 @@ EXPECTED_INDEXES = (
     "document_attachment_candidates_object",
     "document_attachment_assertions_version",
     "document_attachment_operations_candidate",
+    "document_parse_results_job",
+    "document_normalized_revisions_document",
+    "document_structure_elements_revision",
 )
 V1_SCHEMA_SHA256 = "61e5693187250e240f9b6cae573e3b89752ae9b135c6c739d14ff3dfbf6dfdc9"
 V1_PROFILE_SHA256 = "fcd3ee269f5d80ce4b554ffc4578d0d16cd941b4afecea19f8860197a77bd1c0"
@@ -465,7 +481,8 @@ DOCUMENT_ATTACHMENT_PREDECESSOR_SCHEMA_SHA256 = "c0aa9be9916fbe517f1ae94a86aeac1
 ATTACHMENT_OPERATION_PREDECESSOR_SCHEMA_SHA256 = "32dc9a2b87efdd8b69b92271b8b1841e40da07bbc86e9943f59dbe5784f2617e"
 ACQUISITION_PREDECESSOR_SCHEMA_SHA256 = "0d5eb89a3975aa1d95fa4d190ce8debfee2ae43d390669ce8b3acb5f10a1a41e"
 DOCUMENT_INTAKE_PREDECESSOR_SCHEMA_SHA256 = "8078a6f7132200e6cf9e729f116c7b8ad6cd7c2bcf61d56f337e594dc7552a97"
-EXPECTED_SCHEMA_SHA256 = "5c2090bb9586117f8f0e521efcb74ab10bd64a855fdcdc943035385cd1742951"
+DOCUMENT_REVISION_PREDECESSOR_SCHEMA_SHA256 = "5c2090bb9586117f8f0e521efcb74ab10bd64a855fdcdc943035385cd1742951"
+EXPECTED_SCHEMA_SHA256 = "39e3fdd0fffedd2b226f74ebf48190efdecc0e53b9376dfce30e924de2206f2c"
 
 _PROFILE_DOCUMENT: dict[str, Any] = {
     "schemaVersion": "1.0",
@@ -538,7 +555,8 @@ DOCUMENT_ATTACHMENT_PREDECESSOR_PROFILE_SHA256 = "74ed7818d261958b0039aef90c00b4
 ATTACHMENT_OPERATION_PREDECESSOR_PROFILE_SHA256 = "67361cdaa6b082a552f89a40c5a83036526da3a1230c8f6d3bef4cb57cc43997"
 ACQUISITION_PREDECESSOR_PROFILE_SHA256 = "bc4f7aa4029ed660329b407362c017a42de2966f1d18bbbcbe7c75f1afa837f5"
 DOCUMENT_INTAKE_PREDECESSOR_PROFILE_SHA256 = "b8f925467533ee5810343ce3a83a0035b8bf5e1f1989d421279994e0f73b9e1e"
-EXPECTED_PROFILE_SHA256 = "50c8583b7958c4e035690fdcf305c8d968b3a4c26a21f18e8744436eabf45721"
+DOCUMENT_REVISION_PREDECESSOR_PROFILE_SHA256 = "50c8583b7958c4e035690fdcf305c8d968b3a4c26a21f18e8744436eabf45721"
+EXPECTED_PROFILE_SHA256 = "b29c98353dc218688eb20ce1dc60ca05ee7b62e59cdbe1e514caffa75544289c"
 if _PROFILE_SHA256 != EXPECTED_PROFILE_SHA256:
     raise RuntimeError("compiled SQLite profile differs from its reviewed fingerprint")
 
@@ -3610,6 +3628,7 @@ SCHEMA_METADATA_V22_DDL = SCHEMA_METADATA_V21_DDL.replace("schema_version = 21",
 SCHEMA_METADATA_V23_DDL = SCHEMA_METADATA_V22_DDL.replace("schema_version = 22", "schema_version = 23")
 SCHEMA_METADATA_V24_DDL = SCHEMA_METADATA_V23_DDL.replace("schema_version = 23", "schema_version = 24")
 SCHEMA_METADATA_V25_DDL = SCHEMA_METADATA_V24_DDL.replace("schema_version = 24", "schema_version = 25")
+SCHEMA_METADATA_V26_DDL = SCHEMA_METADATA_V25_DDL.replace("schema_version = 25", "schema_version = 26")
 
 _V16_AGGREGATE_IDENTITY_DDL = next(
     statement for statement in _V1_DDL_STATEMENTS if "CREATE TABLE aggregate_identities" in statement
@@ -5423,8 +5442,194 @@ DOCUMENT_INTAKE_DDL = (
 )
 
 
+DOCUMENT_REVISION_DDL = (
+    f"""
+        CREATE TABLE document_parse_jobs (
+            job_id TEXT PRIMARY KEY,
+            project_id TEXT NOT NULL,
+            command_id TEXT NOT NULL UNIQUE CHECK ({_uuid_check("command_id", "7")}),
+            source_revision_id TEXT NOT NULL,
+            input_json TEXT NOT NULL CHECK (json_valid(input_json)),
+            input_sha256 TEXT NOT NULL CHECK ({_sha256_check("input_sha256")}),
+            actor_id TEXT NOT NULL CHECK ({_uuid_check("actor_id", "7")}),
+            session_id TEXT NOT NULL CHECK (length(session_id)=32 AND session_id=lower(session_id)
+                AND session_id NOT GLOB '*[^0-9a-f]*'),
+            created_at TEXT NOT NULL CHECK ({_timestamp_check("created_at")}),
+            FOREIGN KEY (job_id) REFERENCES workflow_queue_jobs(job_id)
+                ON UPDATE RESTRICT ON DELETE RESTRICT,
+            FOREIGN KEY (source_revision_id,project_id) REFERENCES aggregate_revisions(revision_id,project_id)
+                ON UPDATE RESTRICT ON DELETE RESTRICT,
+            UNIQUE (job_id,project_id)
+        ) STRICT
+    """,
+    f"""
+        CREATE TABLE document_parse_results (
+            result_id TEXT PRIMARY KEY CHECK ({_uuid_check("result_id", "7")}),
+            project_id TEXT NOT NULL,
+            revision_id TEXT NOT NULL UNIQUE,
+            job_id TEXT NOT NULL,
+            attempt_id TEXT NOT NULL UNIQUE,
+            object_sha256 TEXT NOT NULL CHECK ({_sha256_check("object_sha256")}),
+            byte_length INTEGER NOT NULL CHECK (byte_length BETWEEN 1 AND 67108864),
+            receipt_json TEXT NOT NULL CHECK (json_valid(receipt_json)),
+            created_at TEXT NOT NULL CHECK ({_timestamp_check("created_at")}),
+            FOREIGN KEY (job_id,project_id) REFERENCES document_parse_jobs(job_id,project_id)
+                ON UPDATE RESTRICT ON DELETE RESTRICT,
+            FOREIGN KEY (attempt_id) REFERENCES workflow_job_attempts(attempt_id)
+                ON UPDATE RESTRICT ON DELETE RESTRICT,
+            FOREIGN KEY (revision_id,project_id) REFERENCES aggregate_revisions(revision_id,project_id)
+                ON UPDATE RESTRICT ON DELETE RESTRICT,
+            FOREIGN KEY (project_id,object_sha256) REFERENCES object_records(project_id,object_sha256)
+                ON UPDATE RESTRICT ON DELETE RESTRICT,
+            UNIQUE (result_id,project_id)
+        ) STRICT
+    """,
+    f"""
+        CREATE TABLE document_normalized_revisions (
+            revision_id TEXT PRIMARY KEY,
+            project_id TEXT NOT NULL,
+            document_id TEXT NOT NULL,
+            previous_revision_id TEXT NOT NULL,
+            result_id TEXT NOT NULL,
+            decision_id TEXT NOT NULL CHECK ({_uuid_check("decision_id", "7")}),
+            decision_revision_id TEXT NOT NULL UNIQUE,
+            command_id TEXT NOT NULL UNIQUE CHECK ({_uuid_check("command_id", "7")}),
+            command_sha256 TEXT NOT NULL CHECK ({_sha256_check("command_sha256")}),
+            object_sha256 TEXT NOT NULL CHECK ({_sha256_check("object_sha256")}),
+            content_sha256 TEXT NOT NULL CHECK ({_sha256_check("content_sha256")}),
+            structure_sha256 TEXT NOT NULL CHECK ({_sha256_check("structure_sha256")}),
+            actor_id TEXT NOT NULL CHECK ({_uuid_check("actor_id", "7")}),
+            accepted_at TEXT NOT NULL CHECK ({_timestamp_check("accepted_at")}),
+            FOREIGN KEY (revision_id,project_id) REFERENCES aggregate_revisions(revision_id,project_id)
+                ON UPDATE RESTRICT ON DELETE RESTRICT,
+            FOREIGN KEY (previous_revision_id,project_id) REFERENCES aggregate_revisions(revision_id,project_id)
+                ON UPDATE RESTRICT ON DELETE RESTRICT,
+            FOREIGN KEY (result_id,project_id) REFERENCES document_parse_results(result_id,project_id)
+                ON UPDATE RESTRICT ON DELETE RESTRICT,
+            FOREIGN KEY (decision_revision_id,project_id) REFERENCES aggregate_revisions(revision_id,project_id)
+                ON UPDATE RESTRICT ON DELETE RESTRICT,
+            FOREIGN KEY (project_id,object_sha256) REFERENCES object_records(project_id,object_sha256)
+                ON UPDATE RESTRICT ON DELETE RESTRICT,
+            UNIQUE (revision_id,project_id)
+        ) STRICT
+    """,
+    f"""
+        CREATE TABLE document_structure_elements (
+            element_id TEXT PRIMARY KEY CHECK ({_uuid_check("element_id", "7")}),
+            project_id TEXT NOT NULL,
+            revision_id TEXT NOT NULL,
+            role TEXT NOT NULL CHECK (role IN ('projection','node','reference','citation')),
+            staged_id TEXT NOT NULL CHECK (length(staged_id) BETWEEN 1 AND 128
+                AND substr(staged_id,1,1) GLOB '[A-Za-z0-9]'
+                AND staged_id NOT GLOB '*[^A-Za-z0-9._+-]*'),
+            element_order INTEGER NOT NULL CHECK (element_order BETWEEN 0 AND 9007199254740991),
+            parent_id TEXT,
+            related_node_id TEXT,
+            node_kind TEXT CHECK (length(node_kind) BETWEEN 1 AND 32 AND node_kind NOT GLOB '*[^a-z-]*'),
+            FOREIGN KEY (revision_id,project_id) REFERENCES document_normalized_revisions(revision_id,project_id)
+                ON UPDATE RESTRICT ON DELETE RESTRICT,
+            FOREIGN KEY (parent_id,revision_id,project_id) REFERENCES document_structure_elements
+                (element_id,revision_id,project_id) ON UPDATE RESTRICT ON DELETE RESTRICT,
+            FOREIGN KEY (related_node_id,revision_id,project_id) REFERENCES document_structure_elements
+                (element_id,revision_id,project_id) ON UPDATE RESTRICT ON DELETE RESTRICT,
+            CHECK ((role='node')=(node_kind IS NOT NULL)),
+            CHECK (role='node' OR parent_id IS NULL),
+            CHECK ((role IN ('reference','citation'))=(related_node_id IS NOT NULL)),
+            UNIQUE (element_id,revision_id,project_id),
+            UNIQUE (project_id,revision_id,role,staged_id),
+            UNIQUE (project_id,revision_id,role,element_order)
+        ) STRICT
+    """,
+    """
+        CREATE TRIGGER document_parse_job_binding BEFORE INSERT ON document_parse_jobs
+        WHEN NOT EXISTS (SELECT 1 FROM workflow_queue_jobs j JOIN document_attachment_assertions a
+            ON a.project_id=j.project_id
+            WHERE j.job_id=NEW.job_id AND j.project_id=NEW.project_id
+                AND j.activity_type='document-parse' AND j.concurrency_class='document'
+                AND j.command_fingerprint='sha256:'||NEW.input_sha256
+                AND a.document_revision_id=NEW.source_revision_id
+                AND json_extract(NEW.input_json,'$.actorId')=NEW.actor_id
+                AND json_extract(NEW.input_json,'$.sessionId')=NEW.session_id
+                AND json_extract(NEW.input_json,'$.commandId')=NEW.command_id)
+        BEGIN SELECT RAISE(ABORT,'document parse job binding denied'); END
+    """,
+    """
+        CREATE TRIGGER document_parse_result_binding BEFORE INSERT ON document_parse_results
+        WHEN NOT EXISTS (SELECT 1 FROM workflow_queue_jobs j
+            JOIN workflow_job_attempts a ON a.project_id=j.project_id AND a.job_id=j.job_id
+            JOIN aggregate_revisions r ON r.project_id=j.project_id
+            JOIN documents d ON d.project_id=r.project_id AND d.revision_id=r.revision_id
+            JOIN object_records o ON o.project_id=d.project_id AND o.object_sha256=d.object_sha256
+            WHERE j.job_id=NEW.job_id AND j.project_id=NEW.project_id AND j.state='running'
+                AND a.attempt_id=NEW.attempt_id AND j.current_attempt_id=a.attempt_id AND a.state='running'
+                AND r.revision_id=NEW.revision_id AND r.aggregate_id=NEW.result_id
+                AND d.object_sha256=NEW.object_sha256 AND o.byte_length=NEW.byte_length
+                AND o.protection_profile='project-encrypted-v1'
+                AND o.media_type='application/vnd.research-observatory.normalized-parse-result+json'
+                AND json_extract(NEW.receipt_json,'$.resultId')=NEW.result_id
+                AND json_extract(NEW.receipt_json,'$.revisionId')=NEW.revision_id
+                AND json_extract(NEW.receipt_json,'$.objectSha256')=NEW.object_sha256
+                AND json_extract(NEW.receipt_json,'$.byteLength')=NEW.byte_length
+                AND json_extract(NEW.receipt_json,'$.binding.attempt.jobId')=NEW.job_id
+                AND json_extract(NEW.receipt_json,'$.binding.attempt.attemptId')=NEW.attempt_id)
+        BEGIN SELECT RAISE(ABORT,'document parse result binding denied'); END
+    """,
+    """
+        CREATE TRIGGER document_normalized_revision_binding BEFORE INSERT ON document_normalized_revisions
+        WHEN NOT EXISTS (SELECT 1 FROM aggregate_revisions current
+            JOIN documents d ON d.project_id=current.project_id AND d.revision_id=current.revision_id
+            JOIN object_records o ON o.project_id=d.project_id AND o.object_sha256=d.object_sha256
+            JOIN aggregate_revisions prior ON prior.project_id=current.project_id
+                AND prior.aggregate_id=current.aggregate_id
+            JOIN document_parse_results result ON result.project_id=current.project_id
+            JOIN workflow_committed_outputs output ON output.project_id=result.project_id
+                AND output.job_id=result.job_id
+            JOIN workflow_queue_jobs j ON j.project_id=output.project_id AND j.job_id=output.job_id
+            JOIN aggregate_revisions decision ON decision.project_id=current.project_id
+            JOIN provenance_events p ON p.project_id=current.project_id AND p.revision_id=current.revision_id
+            WHERE current.project_id=NEW.project_id AND current.revision_id=NEW.revision_id
+                AND current.aggregate_id=NEW.document_id AND current.knowledge_status='extracted'
+                AND prior.revision_id=NEW.previous_revision_id AND current.revision=prior.revision+1
+                AND d.object_sha256=NEW.object_sha256 AND result.result_id=NEW.result_id
+                AND o.protection_profile='project-encrypted-v1'
+                AND o.media_type='application/vnd.research-observatory.document-revision+json'
+                AND json_extract(result.receipt_json,'$.binding.source.documentId')=NEW.document_id
+                AND output.attempt_id=result.attempt_id AND j.current_attempt_id=result.attempt_id
+                AND j.state='succeeded'
+                AND decision.revision_id=NEW.decision_revision_id AND decision.aggregate_id=NEW.decision_id
+                AND decision.aggregate_kind='decision'
+                AND p.actor_type='human' AND p.actor_id=NEW.actor_id AND p.occurred_at=NEW.accepted_at
+                AND EXISTS (SELECT 1 FROM provenance_events human
+                    WHERE human.project_id=decision.project_id AND human.revision_id=decision.revision_id
+                        AND human.actor_type='human' AND human.actor_id=NEW.actor_id
+                        AND human.occurred_at=NEW.accepted_at))
+        BEGIN SELECT RAISE(ABORT,'document normalized revision binding denied'); END
+    """,
+    """
+        CREATE TRIGGER document_structure_element_binding BEFORE INSERT ON document_structure_elements
+        WHEN (NEW.parent_id IS NOT NULL AND NOT EXISTS (
+            SELECT 1 FROM document_structure_elements parent WHERE parent.project_id=NEW.project_id
+                AND parent.revision_id=NEW.revision_id AND parent.element_id=NEW.parent_id AND parent.role='node'))
+          OR (NEW.related_node_id IS NOT NULL AND NOT EXISTS (
+            SELECT 1 FROM document_structure_elements node WHERE node.project_id=NEW.project_id
+                AND node.revision_id=NEW.revision_id AND node.element_id=NEW.related_node_id AND node.role='node'
+                AND node.node_kind=CASE NEW.role WHEN 'reference' THEN 'reference' ELSE 'citation-marker' END))
+        BEGIN SELECT RAISE(ABORT,'document structure element binding denied'); END
+    """,
+    *(
+        statement
+        for table in DOCUMENT_REVISION_TABLES
+        for statement in _immutable_triggers(table, "document parsing and accepted revision history is append-only")
+    ),
+    "CREATE INDEX document_parse_results_job ON document_parse_results(project_id,job_id,attempt_id)",
+    "CREATE INDEX document_normalized_revisions_document ON document_normalized_revisions(project_id,document_id)",
+    "CREATE INDEX document_structure_elements_revision ON "
+    "document_structure_elements(project_id,revision_id,role,element_order)",
+)
+
+
 _DDL_STATEMENTS = (
-    SCHEMA_METADATA_V25_DDL,
+    SCHEMA_METADATA_V26_DDL,
     *_V17_BASE_DDL_STATEMENTS,
     SCHEMA_MIGRATIONS_DDL,
     *SCHEMA_MIGRATIONS_TRIGGERS,
@@ -5452,6 +5657,7 @@ _DDL_STATEMENTS = (
     *ATTACHMENT_OPERATION_DDL,
     *ACQUISITION_DDL,
     *DOCUMENT_INTAKE_DDL,
+    *DOCUMENT_REVISION_DDL,
 )
 
 

@@ -1,5 +1,12 @@
 # Local storage contracts
 
+The current executable database is schema 26. The document-revision migration
+adds immutable parse jobs/results, accepted normalized revisions and scoped
+element indices. `sqlite-migration-recovery.schema.json` preserves target-v21
+through v25 readers and adds exact source-v1 through v25 chains to target-v26,
+including source/target fingerprints and backup-path binding. Historical profile
+documents and already recorded recovery manifests retain their original meaning.
+
 `sqlite-profile.v1.json` is the exact portable profile contract for the current
 version-18 canonical local database. It fixes the database identity, version, scalar storage domain,
 connection controls, checkpoint authority, integrity checks, and normalized

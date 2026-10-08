@@ -1,0 +1,61 @@
+{
+  "$defs": {
+    "Digest": {
+      "pattern": "^[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "Identity": {
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schemaVersion": {
+      "const": "1.0",
+      "default": "1.0",
+      "title": "Schemaversion",
+      "type": "string"
+    },
+    "commandId": {
+      "$ref": "#/$defs/Identity"
+    },
+    "resultId": {
+      "$ref": "#/$defs/Identity"
+    },
+    "expectedCurrentRevisionId": {
+      "$ref": "#/$defs/Identity"
+    },
+    "confirmationSha256": {
+      "$ref": "#/$defs/Digest"
+    },
+    "decision": {
+      "const": "accept-structure",
+      "title": "Decision",
+      "type": "string"
+    }
+  },
+  "required": [
+    "commandId",
+    "resultId",
+    "expectedCurrentRevisionId",
+    "confirmationSha256",
+    "decision"
+  ],
+  "title": "DocumentRevisionAcceptance",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://research-observatory.local/contracts/documents/document-revision-acceptance.v1.schema.json",
+  "x-research-observatory-semanticRules": [
+    "exact-source-producer-configuration-assets-job-physical-attempt-and-authenticated-raw-receipts",
+    "successful-durable-output-required-before-explicit-trusted-human-structural-acceptance",
+    "current-native-session-human-intent-privacy-inspect-and-derive-authority-on-read-and-replay",
+    "acceptance-command-result-confirmation-and-expected-current-head-are-bound",
+    "atomic-decision-revision-core-minted-elements-provenance-dependencies-and-outbox",
+    "immutable-revision-scoped-uuidv7-identities-and-exact-graph-element-index",
+    "raw-and-nfc-unicode16-codepoint-contributor-mapping-preserved-with-source-geometry",
+    "incomplete-or-inspection-only-output-cannot-be-accepted-and-uncertainty-is-preserved",
+    "structural-acceptance-does-not-establish-scholarly-verification",
+    "strict-utf8-json-unique-fields-no-nonfinite-and-64-mib-wire-cap"
+  ]
+}

@@ -18,6 +18,7 @@ sys.path.insert(0, str(ROOT / "services/core-api/src"))
 from research_observatory_core import storage  # noqa: E402
 from research_observatory_core.migrations import runner  # noqa: E402
 from research_observatory_core.migrations.versions import v0025_document_intake_recovery as migration  # noqa: E402
+from research_observatory_core.migrations.versions import v0026_document_revisions as current_migration  # noqa: E402
 
 
 class AcquisitionRecoveryMigrationTests(unittest.TestCase):
@@ -89,7 +90,7 @@ class AcquisitionRecoveryMigrationTests(unittest.TestCase):
                 manifest, project, database = self.load(fixture_name)
                 self.assert_predecessor_rows(database, manifest)
                 plan = runner.plan_database_migration(database, expected_project_id=manifest["projectId"])
-                self.assertEqual((migration.revision,), plan.migration_ids)
+                self.assertEqual((migration.revision, current_migration.revision), plan.migration_ids)
                 result = runner.migrate_database(database, expected_project_id=manifest["projectId"])
                 self.assertEqual("migrated", result.status)
                 self.assert_predecessor_rows(database, manifest)
@@ -102,7 +103,7 @@ class AcquisitionRecoveryMigrationTests(unittest.TestCase):
                     storage.open_canonical_database(database, expected_project_id=manifest["projectId"])
                 ) as db:
                     self.assertTrue(storage.database_integrity_report(db, expected_project_id=manifest["projectId"]).ok)
-                    self.assertEqual(25, db.execute("PRAGMA user_version").fetchone()[0])
+                    self.assertEqual(storage.DATABASE_SCHEMA_VERSION, db.execute("PRAGMA user_version").fetchone()[0])
                     for table in storage.DOCUMENT_INTAKE_TABLES:
                         self.assertEqual(0, db.execute(f'SELECT COUNT(*) FROM "{table}"').fetchone()[0])
                 self.assertEqual(

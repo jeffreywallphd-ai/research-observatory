@@ -7,7 +7,7 @@ import re
 import threading
 from collections.abc import Callable, Mapping
 from concurrent.futures import ThreadPoolExecutor
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from types import MappingProxyType
 from typing import Any, Protocol, cast
@@ -101,6 +101,31 @@ class WorkerCapacity:
 
 
 @dataclass(frozen=True, slots=True)
+class ActivityWorkerDemand:
+    """Trusted activity-specific bounds, distinct from portable job payloads.
+
+    Exclusive activities share one process-wide permit, across projects. The
+    fixed activity name is the permit identity; unrelated metadata work does
+    not acquire it.
+    """
+
+    concurrency_class: ConcurrencyClass
+    resources: WorkerResources
+    exclusive: bool = False
+
+    def __post_init__(self) -> None:
+        if (
+            self.concurrency_class not in _CONCURRENCY_CLASSES
+            or not isinstance(self.resources, WorkerResources)
+            or self.resources.cpu_slots < 1
+            or self.resources.memory_bytes < 1
+            or self.resources.disk_bytes < 1
+            or type(self.exclusive) is not bool
+        ):
+            raise ValueError("worker activity demand is invalid")
+
+
+@dataclass(frozen=True, slots=True)
 class ProjectWorkerPolicy:
     """Trusted local composition; no job payload can choose its own allowance."""
 
@@ -108,9 +133,10 @@ class ProjectWorkerPolicy:
     quota: WorkerResources | None
     demands: Mapping[ConcurrencyClass, WorkerResources]
     concurrency_limits: Mapping[ConcurrencyClass, int]
+    activity_demands: Mapping[str, ActivityWorkerDemand] = field(default_factory=dict)
 
     def __post_init__(self) -> None:
-        demands, limits = dict(self.demands), dict(self.concurrency_limits)
+        demands, limits, activities = dict(self.demands), dict(self.concurrency_limits), dict(self.activity_demands)
         if (
             not isinstance(self.project_id, str)
             or _PROJECT_ID.fullmatch(self.project_id) is None
@@ -124,10 +150,18 @@ class ProjectWorkerPolicy:
                 or demand.disk_bytes < 1
                 for demand in demands.values()
             )
+            or len(activities) > 64
+            or any(
+                not _stable_code(name)
+                or not isinstance(demand, ActivityWorkerDemand)
+                or demand.concurrency_class not in demands
+                for name, demand in activities.items()
+            )
         ):
             raise ValueError("worker project admission policy is invalid")
         object.__setattr__(self, "demands", MappingProxyType(demands))
         object.__setattr__(self, "concurrency_limits", MappingProxyType(limits))
+        object.__setattr__(self, "activity_demands", MappingProxyType(activities))
 
 
 @dataclass(frozen=True, slots=True)
@@ -158,6 +192,7 @@ class _WorkerReservation:
     volume_id: int
     concurrency_class: ConcurrencyClass
     demand: WorkerResources
+    exclusive_activities: frozenset[str]
 
 
 class LocalAdmissionController:
@@ -176,6 +211,7 @@ class LocalAdmissionController:
         self._lock = threading.RLock()
         self._policies: dict[str, tuple[ProjectWorkerPolicy, int]] = {}
         self._reservations: dict[object, _WorkerReservation] = {}
+        self._activity_policies: dict[str, ActivityWorkerDemand] = {}
 
     def register(self, binding: LocalWorkerAdmission) -> None:
         with self._lock:
@@ -186,18 +222,59 @@ class LocalAdmissionController:
             previous = self._policies.get(identity)
             if previous is not None and previous != registered:
                 raise ValueError("worker admission project policy or volume conflict")
+            for name, demand in binding.policy.activity_demands.items():
+                existing = self._activity_policies.get(name)
+                if existing is not None and existing != demand:
+                    raise ValueError("worker admission activity policy conflict")
+            self._activity_policies.update(binding.policy.activity_demands)
             self._policies[identity] = registered
 
-    def reserve(self, binding: LocalWorkerAdmission, kind: ConcurrencyClass, *, local_limit: int) -> object | None:
+    def reserve(
+        self,
+        binding: LocalWorkerAdmission,
+        kind: ConcurrencyClass,
+        *,
+        local_limit: int,
+        activity_types: tuple[str, ...] = (),
+    ) -> object | None:
         with self._lock:
             if binding.controller is not self:
                 raise ValueError("worker admission controller identity mismatch")
             binding.validate(binding.repository)
             policy = binding.policy
+            if (
+                type(activity_types) is not tuple
+                or len(activity_types) > 64
+                or len(set(activity_types)) != len(activity_types)
+                or any(not _stable_code(name) for name in activity_types)
+            ):
+                raise ValueError("worker admission activity filter is invalid")
+            selected = []
+            for name in activity_types:
+                activity = policy.activity_demands.get(name)
+                known = self._activity_policies.get(name)
+                if known is not None and activity != known:
+                    raise ValueError("worker admission activity policy is missing")
+                if activity is not None:
+                    if activity.concurrency_class != kind:
+                        raise ValueError("worker admission activity class mismatch")
+                    selected.append((name, activity))
             demand = policy.demands.get(kind)
             if demand is None or policy.quota is None:
                 return None
+            # Fixed eligible handlers determine the reservation before claim.
+            # The next payload cannot lower its allowance, and mixed handlers
+            # reserve every dimension of the largest eligible activity.
+            demand = WorkerResources(
+                *(
+                    max(row)
+                    for row in zip(demand.values(), *(item.resources.values() for _, item in selected), strict=True)
+                )
+            )
+            exclusive = frozenset(name for name, activity in selected if activity.exclusive)
             reservations = tuple(self._reservations.values())
+            if any(exclusive.intersection(row.exclusive_activities) for row in reservations):
+                return None
             project = tuple(row for row in reservations if row.project_id == policy.project_id)
             count = sum(row.concurrency_class == kind for row in project)
             if count >= min(local_limit, policy.concurrency_limits.get(kind, 0)):
@@ -228,7 +305,9 @@ class LocalAdmissionController:
                 if amount and (available is None or used + amount + held > available):
                     return None
             token = object()
-            self._reservations[token] = _WorkerReservation(policy.project_id, binding.volume_id, kind, demand)
+            self._reservations[token] = _WorkerReservation(
+                policy.project_id, binding.volume_id, kind, demand, exclusive
+            )
             return token
 
     def release(self, token: object) -> None:
@@ -420,6 +499,8 @@ class LocalWorkerSupervisor:
         admission.validate(repository)
         if (
             not handlers
+            or len(handlers) > 64
+            or any(not _stable_code(name) or not callable(handler) for name, handler in handlers.items())
             or not concurrency_limits
             or any(kind not in _CONCURRENCY_CLASSES for kind in concurrency_limits)
             or any(
@@ -450,7 +531,7 @@ class LocalWorkerSupervisor:
         self._lease_duration_ms = lease_duration_ms
         self._recovery_batch_size = recovery_batch_size
         self._admission = admission
-        self._activity_types = activity_types
+        self._activity_types = tuple(sorted(self._handlers)) if activity_types is None else tuple(activity_types)
 
     def _execute(self, claim: WorkflowJobClaim) -> WorkflowJobRecord:
         context = WorkflowActivityContext(self._repository, claim, self._now, self._lease_duration_ms)
@@ -517,8 +598,18 @@ class LocalWorkerSupervisor:
         controller = self._admission.controller
         try:
             for concurrency_class, limit in self._limits.items():
+                eligible = tuple(
+                    name
+                    for name in self._activity_types
+                    if name not in self._admission.policy.activity_demands
+                    or self._admission.policy.activity_demands[name].concurrency_class == concurrency_class
+                )
+                if not eligible:
+                    continue
                 for _ in range(limit):
-                    token = controller.reserve(self._admission, concurrency_class, local_limit=limit)
+                    token = controller.reserve(
+                        self._admission, concurrency_class, local_limit=limit, activity_types=eligible
+                    )
                     if token is None:
                         break
                     try:
@@ -531,7 +622,7 @@ class LocalWorkerSupervisor:
                             concurrency_classes=(concurrency_class,),
                             now=self._now(),
                             lease_duration_ms=self._lease_duration_ms,
-                            activity_types=self._activity_types,
+                            activity_types=eligible,
                         )
                     except BaseException:
                         controller.release(token)
@@ -559,6 +650,7 @@ class LocalWorkerSupervisor:
 
 
 __all__ = [
+    "ActivityWorkerDemand",
     "LocalAdmissionController",
     "LocalWorkerAdmission",
     "LocalWorkerSupervisor",

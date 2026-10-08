@@ -6005,31 +6005,39 @@ class _SqliteWorkflowQueueRepository(WorkflowQueueRepository):
         if not is_uuid_v7(job_id):
             raise WorkflowQueueProblem("workflow accepted job identity is invalid")
         with self._transaction(write=False) as connection:
-            job = self._row(self._select_job(connection, self._project_id, job_id))
-            activity = connection.execute(
-                "SELECT activity_type FROM workflow_queue_jobs WHERE project_id=? AND job_id=?",
-                (self._project_id, job_id),
-            ).fetchone()[0]
-            self._accepted_scope_integrity(connection, (activity,), job_id=job_id)
-            row = connection.execute(
-                "SELECT o.job_id,j.activity_type,e.segment_key,e.sequence,o.output_manifest_json,"
-                "o.output_record_sha256,o.attempt_id,j.current_attempt_id,j.state,j.committed_output_sha256,"
-                "a.state,o.idempotency_key,j.idempotency_key,"
-                "o.command_fingerprint,j.command_fingerprint,e.record_json,e.idempotency_sha256 "
-                "FROM workflow_committed_outputs o JOIN workflow_queue_jobs j USING (project_id,job_id) "
-                "LEFT JOIN workflow_job_attempts a ON a.attempt_id=o.attempt_id AND a.job_id=o.job_id "
-                "JOIN provenance_ledger_events e ON e.project_id=o.project_id AND e.event_id=o.provenance_event_id "
-                "WHERE o.project_id=? AND o.job_id=?",
-                (self._project_id, job_id),
-            ).fetchone()
-            if row is None:
-                return job, None
-            snapshot = WorkflowAcceptedSnapshot(
-                self._project_id,
-                (activity,),
-                (self._accepted_anchor(connection, row[2], row[3]),),
-            )
-            return job, self._accepted_row(connection, row, snapshot)
+            return self._accepted_status_with_connection(connection, job_id)
+
+    def _accepted_status_with_connection(
+        self, connection: CanonicalConnection, job_id: str
+    ) -> tuple[WorkflowJobRecord, WorkflowAcceptedOutput | None]:
+        """Trusted Core composition in an already-held canonical transaction."""
+        if not is_uuid_v7(job_id):
+            raise WorkflowQueueProblem("workflow accepted job identity is invalid")
+        job = self._row(self._select_job(connection, self._project_id, job_id))
+        activity = connection.execute(
+            "SELECT activity_type FROM workflow_queue_jobs WHERE project_id=? AND job_id=?",
+            (self._project_id, job_id),
+        ).fetchone()[0]
+        self._accepted_scope_integrity(connection, (activity,), job_id=job_id)
+        row = connection.execute(
+            "SELECT o.job_id,j.activity_type,e.segment_key,e.sequence,o.output_manifest_json,"
+            "o.output_record_sha256,o.attempt_id,j.current_attempt_id,j.state,j.committed_output_sha256,"
+            "a.state,o.idempotency_key,j.idempotency_key,"
+            "o.command_fingerprint,j.command_fingerprint,e.record_json,e.idempotency_sha256 "
+            "FROM workflow_committed_outputs o JOIN workflow_queue_jobs j USING (project_id,job_id) "
+            "LEFT JOIN workflow_job_attempts a ON a.attempt_id=o.attempt_id AND a.job_id=o.job_id "
+            "JOIN provenance_ledger_events e ON e.project_id=o.project_id AND e.event_id=o.provenance_event_id "
+            "WHERE o.project_id=? AND o.job_id=?",
+            (self._project_id, job_id),
+        ).fetchone()
+        if row is None:
+            return job, None
+        snapshot = WorkflowAcceptedSnapshot(
+            self._project_id,
+            (activity,),
+            (self._accepted_anchor(connection, row[2], row[3]),),
+        )
+        return job, self._accepted_row(connection, row, snapshot)
 
     def continuation_jobs(self, job_id: str) -> tuple[WorkflowJobRecord, ...]:
         if not is_uuid_v7(job_id):

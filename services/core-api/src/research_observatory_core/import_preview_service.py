@@ -257,6 +257,16 @@ class ImportPreviewService:
 
         return self._action(root, guarded)
 
+    def native_stop_latch(self, root: str, project_id: str, session_id: str) -> Callable[[], bool]:
+        """Capture only trusted session Events; usable without locks or I/O."""
+
+        def selected(binding: _Binding) -> Callable[[], bool]:
+            if binding.project_id != project_id or not secrets.compare_digest(binding.session_id, session_id):
+                raise PreviewProblem("preview-project-session-changed")
+            return lambda: self._stopped.is_set() or binding.stopped.is_set()
+
+        return self._action(root, selected)
+
     def intake_status(self, root: str, preview_id: str) -> tuple[PreviewState, WorkflowJobRecord | None]:
         def status(binding: _Binding):
             state = binding.adapters.previews.read(preview_id)

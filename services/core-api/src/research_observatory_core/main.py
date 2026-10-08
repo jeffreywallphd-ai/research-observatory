@@ -44,6 +44,9 @@ from .document_attachment_api import (
     DocumentStatusQuery,
 )
 from .document_attachment_repository import AcquisitionRepository, LocalDocumentAttachmentService
+from .document_parse_worker import document_worker_policy
+from .document_revision_repository import LocalDocumentRevisionRepository
+from .document_revision_service import DocumentRevisionService
 from .import_preview_repository import sqlite_import_preview_repository
 from .import_preview_service import ImportPreviewService, ImportProjectAdapters
 from .logging import emit_log_record
@@ -104,7 +107,7 @@ from .windows_credentials import (
     create_windows_object_key_provider,
     default_windows_profile_vault_path,
 )
-from .workflow_executor import LocalAdmissionController, LocalWorkerAdmission, ProjectWorkerPolicy, WorkerResources
+from .workflow_executor import LocalAdmissionController, LocalWorkerAdmission, WorkerResources
 from .workflow_progress import WorkflowProgressService
 
 EXIT_CONFIGURATION_ERROR = 2
@@ -502,14 +505,11 @@ def create_runtime_app(
     # One process-wide resource ledger, with explicit interactive headroom.
     # These are conservative admission reservations, not OS-enforced quotas.
     controller = LocalAdmissionController(interactive_reserve=WorkerResources(1, 256 * 1024**2, 0, 256 * 1024**2))
-    # Both activities share the document lane and its one project-wide policy.
-    # Reserve the larger import demand for either; never register conflicting
-    # quotas or permit a connector to bypass an active import reservation.
-    document_demand = WorkerResources(1, 256 * 1024**2, 0, 1024**3)
+    # Every adapter shares this policy. Actual parser activity eligibility
+    # reserves the four-CPU/four-GiB bounds before claim; metadata stays lighter.
 
     def import_adapters(path: Path, identity: str) -> ImportProjectAdapters:
         queue = sqlite_workflow_queue_repository(path, identity)
-        demand = document_demand
         return ImportProjectAdapters(
             previews=sqlite_import_preview_repository(path / "state/project.sqlite3", identity),
             intents=sqlite_intent_revision_repository(path, identity),
@@ -525,7 +525,7 @@ def create_runtime_app(
             admission=sqlite_workflow_admission_binding(
                 queue,
                 controller=controller,
-                policy=ProjectWorkerPolicy(identity, demand, {"document": demand}, {"document": 1}),
+                policy=document_worker_policy(identity),
             ),
         )
 
@@ -541,6 +541,7 @@ def create_runtime_app(
     plugin_worker = None
     corpus = None
     attachments = None
+    document_revisions = None
     if workflow_context is not None and resolved_actor_id is not None and resolved_provider is not None:
         imports = ImportPreviewService(
             projects,
@@ -565,14 +566,13 @@ def create_runtime_app(
 
         def connector_adapters(path: Path, identity: str) -> ConnectorWorkerAdapters:
             queue = sqlite_workflow_queue_repository(path, identity)
-            demand = document_demand
             return ConnectorWorkerAdapters(
                 connector_pages(path, identity),
                 queue,
                 sqlite_workflow_admission_binding(
                     queue,
                     controller=controller,
-                    policy=ProjectWorkerPolicy(identity, demand, {"document": demand}, {"document": 1}),
+                    policy=document_worker_policy(identity),
                 ),
             )
 
@@ -640,14 +640,13 @@ def create_runtime_app(
                     access_policy=privacy.object_access_policy(str(path)),
                     reconcile_abandoned=False,
                 )
-                demand = document_demand
                 return PluginWorkerAdapters(
                     PluginJobRepository(path / "state/project.sqlite3", identity, objects),
                     queue,
                     sqlite_workflow_admission_binding(
                         queue,
                         controller=controller,
-                        policy=ProjectWorkerPolicy(identity, demand, {"document": demand}, {"document": 1}),
+                        policy=document_worker_policy(identity),
                     ),
                     objects,
                 )
@@ -666,14 +665,13 @@ def create_runtime_app(
 
         def reconciliation_adapters(path: Path, identity: str) -> ReconciliationBatchAdapters:
             queue = sqlite_workflow_queue_repository(path, identity)
-            demand = document_demand
             return ReconciliationBatchAdapters(
                 SqliteReconciliationRepository(path / "state/project.sqlite3", identity),
                 queue,
                 sqlite_workflow_admission_binding(
                     queue,
                     controller=controller,
-                    policy=ProjectWorkerPolicy(identity, demand, {"document": demand}, {"document": 1}),
+                    policy=document_worker_policy(identity),
                 ),
             )
 
@@ -723,8 +721,18 @@ def create_runtime_app(
             admission_factory=lambda path, identity: sqlite_workflow_admission_binding(
                 sqlite_workflow_queue_repository(path, identity),
                 controller=controller,
-                policy=ProjectWorkerPolicy(identity, document_demand, {"document": document_demand}, {"document": 1}),
+                policy=document_worker_policy(identity),
             ),
+        )
+        document_revisions = DocumentRevisionService(
+            attachments,
+            imports,
+            lambda path, identity: sqlite_workflow_admission_binding(
+                sqlite_workflow_queue_repository(path, identity),
+                controller=controller,
+                policy=document_worker_policy(identity),
+            ),
+            repository_factory=LocalDocumentRevisionRepository,
         )
     return create_app(
         settings=settings,
@@ -734,6 +742,7 @@ def create_runtime_app(
         privacy=privacy,
         imports=imports,
         attachments=attachments,
+        document_revisions=document_revisions,
         connectors=connectors,
         plugin_admin=plugin_admin,
         plugin_consent=plugin_consent,

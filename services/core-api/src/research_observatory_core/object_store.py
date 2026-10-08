@@ -3238,6 +3238,25 @@ class _LocalObjectStore:
 
     def _read_parser_manifest(self, connection: CanonicalConnection, receipt: Any) -> bytes:
         """Trusted publication callback only; authenticate exact encrypted intent."""
+        return self._read_protected_document_artifact(
+            connection, receipt, "application/vnd.research-observatory.parser-attempt+json"
+        )
+
+    def _read_protected_document_artifact(
+        self, connection: CanonicalConnection, receipt: Any, media_type: str
+    ) -> bytes:
+        """Trusted source-fenced callback; authenticate bounded encrypted bytes."""
+        if media_type not in {
+            "application/vnd.research-observatory.parser-attempt+json",
+            "application/vnd.research-observatory.normalized-parse-result+json",
+            "application/vnd.research-observatory.document-revision+json",
+            "application/vnd.research-observatory.docling-output+json",
+            "application/vnd.research-observatory.native-structure+json",
+            "application/vnd.research-observatory.text-parser-output+json",
+            "application/vnd.research-observatory.pdf-inspection+json",
+            "image/png",
+        }:
+            raise _bounded(ObjectAccessDenied, "document artifact media invalid")
         state = self._state()
         metadata = _metadata(connection, state.project_id, _validate_sha256(receipt.object_sha256))
         if (
@@ -3247,7 +3266,7 @@ class _LocalObjectStore:
                 "available",
                 _ENCRYPTED_PROFILE,
                 receipt.byte_length,
-                "application/vnd.research-observatory.parser-attempt+json",
+                media_type,
             )
             or not 0 < metadata.byte_length <= 64 * 1_048_576
         ):
