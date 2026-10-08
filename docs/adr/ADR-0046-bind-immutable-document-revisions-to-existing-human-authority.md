@@ -287,3 +287,16 @@ minimum-tier criteria, security authority or release approval. No8GB/16GB
 qualification or parser-model workload is part of T03.
 
 - `CAP-05.S03.T03`
+
+## CAP-05.S03.T03 R01 authority remediation
+
+R01's adverse review exposed a native-stop publication window. The scoped actor
+provider now invokes its existing live guard whenever a repository obtains the
+current actor. Broken-anchor invalidation therefore observes the trusted stop
+at its final in-writer authority fence. Anchor creation also rechecks that live
+actor and durable authority after its canonical append and before its owning
+protected-object writer commits. The delivery fence remains in place. A stop
+before either publication rolls back canonical aggregate/dependency, provenance
+and outbox facts; reopening requires a fresh session and valid retry remains
+exactly once. This restores the approved cancellation boundary without changing
+security authority, acceptance criteria, migration or framework behavior.

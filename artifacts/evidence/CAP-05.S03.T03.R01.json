@@ -1,0 +1,861 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "CAP-05.S03.T03",
+  "baseCommit": "c1899e0de48e79221ff0335a31c976ef87e02db5",
+  "commit": "c2e92e7575a04aa8f8e5642623868e3b9adfdc1d",
+  "branch": "codex/w2-implementation",
+  "changedFiles": [
+    "apps/desktop/src-tauri/src/document_reader.rs",
+    "apps/desktop/src-tauri/src/lib.rs",
+    "apps/desktop/src-tauri/src/supervisor.rs",
+    "apps/desktop/src/app/sourceAnchors.ts",
+    "apps/desktop/src/app/sourceAnchorsNative.ts",
+    "apps/desktop/src/app/sourceResolution.test.ts",
+    "artifacts/evidence/CAP-05.S03.T03.task-start.md",
+    "artifacts/evidence/W2.owner-hardware-direction-01.md",
+    "docs/adr/ADR-0046-bind-immutable-document-revisions-to-existing-human-authority.md",
+    "docs/adr/index.json",
+    "docs/architecture/local-sqlite-storage.md",
+    "docs/planning-implementation-plan.md",
+    "packages/contracts/anchors/README.md",
+    "packages/contracts/anchors/anchor-resolution.v1.schema.json",
+    "packages/contracts/anchors/citation-links.v1.schema.json",
+    "packages/contracts/anchors/generate_anchor_schema.py",
+    "packages/contracts/provenance/provenance-event.template.py.txt",
+    "packages/contracts/storage/README.md",
+    "packages/contracts/storage/sqlite-migration-recovery.schema.json",
+    "packages/contracts/storage/sqlite-profile.schema.json",
+    "packages/contracts/storage/sqlite-profile.v1.json",
+    "packages/contracts/workflow-profile/workflow-profile.template.py.txt",
+    "packaging/build-inputs.json",
+    "planning/backlog.yaml",
+    "planning/review-site/CAP-05/CAP-05.S03.T03.html",
+    "planning/review-site/CAP-05/CAP-05.S03.html",
+    "planning/review-site/manifest.json",
+    "planning/review-site/waves/W2.html",
+    "planning/status-summary.md",
+    "quality-scope.json",
+    "services/core-api/packaging/sidecar-build.json",
+    "services/core-api/src/research_observatory_core/anchors/contracts.py",
+    "services/core-api/src/research_observatory_core/corpus_repository.py",
+    "services/core-api/src/research_observatory_core/corpus_service.py",
+    "services/core-api/src/research_observatory_core/dependency_impacts.py",
+    "services/core-api/src/research_observatory_core/document_revision_api.py",
+    "services/core-api/src/research_observatory_core/document_revision_service.py",
+    "services/core-api/src/research_observatory_core/import_preview_service.py",
+    "services/core-api/src/research_observatory_core/main.py",
+    "services/core-api/src/research_observatory_core/migrations/runner.py",
+    "services/core-api/src/research_observatory_core/migrations/versions/v0027_revision_invalidations.py",
+    "services/core-api/src/research_observatory_core/object_store.py",
+    "services/core-api/src/research_observatory_core/ports/repositories.py",
+    "services/core-api/src/research_observatory_core/ports/source_anchors.py",
+    "services/core-api/src/research_observatory_core/privacy.py",
+    "services/core-api/src/research_observatory_core/projects.py",
+    "services/core-api/src/research_observatory_core/provenance_contracts.py",
+    "services/core-api/src/research_observatory_core/repositories.py",
+    "services/core-api/src/research_observatory_core/research_intents.py",
+    "services/core-api/src/research_observatory_core/source_anchor_repository.py",
+    "services/core-api/src/research_observatory_core/storage.py",
+    "services/core-api/src/research_observatory_core/workflow_profile_contracts.py",
+    "tests/anchors/test_anchor_resolution.py",
+    "tests/anchors/test_native_resolution_composition.py",
+    "tests/contracts/test_provenance_contracts.py",
+    "tests/contracts/test_workflow_profile_contracts.py",
+    "tests/data/test_sqlite_migrations.py",
+    "tests/documents/test_acquisition_recovery_migration.py",
+    "tests/documents/test_anchor_invalidation_migration.py",
+    "tests/documents/test_document_revision_migration.py",
+    "tests/documents/test_document_revision_workflow.py",
+    "tests/fixtures/documents/v26-populated-predecessor.json",
+    "tests/fixtures/documents/v26-populated-predecessor.zip",
+    "tests/packaging/test_core_sidecar_package.py",
+    "tests/service/test_project_lifecycle.py",
+    "tests/service/test_research_intents.py",
+    "tests/service/test_source_anchor_api.py",
+    "tools/core_sidecar_build.py"
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "checkIds": [
+        "actual-core-resolution",
+        "resolution-citation-invalidation",
+        "populated-v26-migration",
+        "renderer-unit"
+      ],
+      "evidence": [
+        "Declared synthetic accepted structure/reference/citation fixtures resolve to exact retained source revisions, readable bounded context, adjacent text, document metadata and explicit canonical candidate/ambiguous/unresolved reference targets. A later accepted head never silently migrates the original anchor; close/reopen retains the exact history.",
+        "Authenticated broken protected context or a selector mismatch atomically appends canonical source-version dependency impact, conservative direct/transitive stale state, provenance and existing outbox facts. Idempotent replay/reopen preserves one invalidation; unknown IDs, foreign sources and rights denial do not invalidate dependents. Failed publication rolls back and retry succeeds.",
+        "Common resolution authenticates bounded protected context without reading whole PDF or normalized IR, and without falsely updating original-source verified_at/storage state. Twenty fresh consecutive warm actual-Core resolutions retain the unchanged 100ms nearest-rank p95 criterion."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "checkIds": [
+        "actual-core-resolution",
+        "resolution-citation-invalidation",
+        "current-authority",
+        "strict-native-api",
+        "original-source-boundaries",
+        "populated-v26-migration",
+        "current-migration-path",
+        "immutable-catalog-provenance",
+        "native-command",
+        "renderer-unit"
+      ],
+      "evidence": [
+        "Current native human/session/Intent/privacy and exact-copy inspect-plus-derive authority fence lookup, protected context, delivery and stale side effects. Wrong or missing identifiers, late native detach, retained-hash Intent-content substitution, revoked derive, corrupt canonical/outbox context, failed or foreign source resolution and atomic publication failure deny safely with no research-bearing diagnostics or unrelated stale mutation. Rights denial remains durably audited.",
+        "A literal populated committed schema26 predecessor retains schema/row/object digests across migration27; twelve fault seams retain the exact prior database and allow a clean retry. Existing v1-to-current and current idempotency paths remain covered. Strict native body/Origin/opaque command fields and renderer decoders reject malformed/mixed-identity input.",
+        "Only the exact validated recursively immutable compiled workflow catalog reuses validation. Each invocation reads a detached coherent Intent/workflow snapshot and closes the read transaction. Nested project scope remains bound to the held guard/thread/root/project and rechecks current metadata/access. Source identity lookup and protected context share one owning writer; failures close it before protected reads. Existing original-source authentication and source-copy authority remain independently covered."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "checkIds": [
+        "portable-anchor-schemas",
+        "workflow-generator",
+        "provenance-generator",
+        "populated-v26-migration",
+        "current-migration-path",
+        "adr-coverage",
+        "architecture",
+        "package-contract",
+        "build-manifest",
+        "lint",
+        "format",
+        "types",
+        "renderer-types",
+        "native-command"
+      ],
+      "evidence": [
+        "Generated portable resolution and citation-link schemas, strict Core/native/renderer contracts, schema27 migration/recovery/profile identities, literal synthetic predecessor and narrow module/build inventories match the implementation. Complete provenance content and hashes remain checked; no historical ledger validation is waived.",
+        "Existing Proposed ADR0046 links the T03 canonical source identity, owning transaction, authority/performance and migration implementation with exact affected paths. Fresh original claim-base-to-candidate ADR and architecture checks pass. Accepted ADRs, frozen Wave packets and approved UX references remain unchanged. No automation-framework source behavior was developed; the sidecar builder change only registers the product migration module.",
+        "Owner model/resource direction is retained as a request for a future product amendment, not exact architecture/reference approval. No 8GB/16GB hardware-tier qualification, parser-overage investigation, lighter parser implementation, source-viewer activation or W2 release claim is included."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "verificationSelection": {
+    "selectedCommandIds": [
+      "contracts:unit",
+      "data:unit",
+      "desktop:application",
+      "documents:anchor-schemas",
+      "documents:anchors",
+      "documents:unit",
+      "foundation:adr",
+      "foundation:architecture",
+      "foundation:build-manifest",
+      "foundation:quality",
+      "packaging:unit",
+      "service:unit"
+    ],
+    "riskAnalysis": "Exact source/public/native contracts, encrypted context and current human/Intent/privacy/rights authority, canonical atomic invalidation and schema27 migration require expanded independent task review. Fresh selected checks cover those material risks, incremental shared catalog/provenance/project authority changes and affected product packaging/types. Actual performance runs first with no concurrent tests. No unchanged full-history or full-profile replay; broader integration, installed-desktop and full Wave qualification remain deferred. Runtime/dependency closure is not reused.",
+    "deferred": [
+      "Integrated S03 slice E2E, restart/recovery and independent slice review",
+      "S04 secure source viewer activation",
+      "Product model/resource successor amendment before dependent implementation",
+      "Fresh full W2 repository/profile, installation/security/accessibility/performance and separate human release gate"
+    ]
+  },
+  "checks": [
+    {
+      "id": "actual-core-resolution",
+      "commandId": "documents:anchors",
+      "exitCode": 0,
+      "durationSeconds": 26.081296800024575,
+      "command": "./artifacts/tmp/CAP-05.S02.T03.check-runtime-122/python/python.exe -B -m unittest tests.anchors.test_native_resolution_composition -v",
+      "workingDirectory": ".",
+      "commit": "c2e92e7575a04aa8f8e5642623868e3b9adfdc1d",
+      "result": "PASS",
+      "rawOutput": "artifacts/tmp/CAP-05.S03.T03.qualification-50.actual-core-resolution.log",
+      "rawOutputSha256": "c684b8b87a55f5fa7ea9bd633b60daa832ff288c983c5a4af072fa35a81eb312",
+      "rawOutputCanonicalSha256": "4e5913561ecbe23bb68752a2f8ce6dcbbe9362e486c1fe586dcc22da9ecc8424",
+      "inputReport": "artifacts/tmp/CAP-05.S03.T03.qualification-50.json",
+      "inputReportSha256": "7a82f9741474fb4ff10781695ef35df7038cd5aad8cf89422a814a8816547913",
+      "provenance": "Fresh execution at this unchanged committed candidate. Tracked source and the producer/runtime record deny writes/deletion during the run; the authenticated owned Python runtime denies writes/create/delete. Configured pinned Node/Rust with current offline exact-lock dependencies. No result reuse or complete global dependency-closure claim. Actual in-process Core HTTP/current native session/SQLCipher/encrypted-envelope composition; synthetic accepted parser IR, no model inference or installed Tauri process claim."
+    },
+    {
+      "id": "resolution-citation-invalidation",
+      "commandId": "documents:anchors",
+      "exitCode": 0,
+      "durationSeconds": 79.12167829999817,
+      "command": "./artifacts/tmp/CAP-05.S02.T03.check-runtime-122/python/python.exe -B -m unittest tests.anchors.test_anchor_resolution tests.anchors.test_anchor_contracts tests.anchors.test_anchor_repository -v",
+      "workingDirectory": ".",
+      "commit": "c2e92e7575a04aa8f8e5642623868e3b9adfdc1d",
+      "result": "PASS",
+      "rawOutput": "artifacts/tmp/CAP-05.S03.T03.qualification-50.resolution-citation-invalidation.log",
+      "rawOutputSha256": "b0216d7123a3faccbf69128e668edc160f43e35c865f5d76400520f2ce2bb412",
+      "rawOutputCanonicalSha256": "311bc586de1651c36294d0808976984f3cbc65f7a5c513dedbf943e7d2b40f51",
+      "inputReport": "artifacts/tmp/CAP-05.S03.T03.qualification-50.json",
+      "inputReportSha256": "7a82f9741474fb4ff10781695ef35df7038cd5aad8cf89422a814a8816547913",
+      "provenance": "Fresh execution at this unchanged committed candidate. Tracked source and the producer/runtime record deny writes/deletion during the run; the authenticated owned Python runtime denies writes/create/delete. Configured pinned Node/Rust with current offline exact-lock dependencies. No result reuse or complete global dependency-closure claim. Actual in-process Core HTTP/current native session/SQLCipher/encrypted-envelope composition; synthetic accepted parser IR, no model inference or installed Tauri process claim."
+    },
+    {
+      "id": "current-authority",
+      "commandId": "service:unit",
+      "exitCode": 0,
+      "durationSeconds": 6.683141200017417,
+      "command": "./artifacts/tmp/CAP-05.S02.T03.check-runtime-122/python/python.exe -B -m unittest tests.service.test_research_intents.ResearchIntentServiceTests.test_readonly_authority_snapshot_is_detached_and_fresh_per_invocation tests.service.test_research_intents.ResearchIntentServiceTests.test_readonly_authority_snapshot_defers_bounded_failure_and_closes_database tests.service.test_research_intents.ResearchIntentServiceTests.test_readonly_authority_snapshot_keeps_one_coherent_read_during_a_commit tests.service.test_research_intents.ResearchIntentServiceTests.test_readonly_authority_snapshot_unexpected_failure_releases_transaction tests.service.test_research_intents.ResearchIntentServiceTests.test_restart_denies_tampered_workflow_acceptance_lookup tests.service.test_research_intents.ResearchIntentServiceTests.test_restart_denies_rehashed_selection_with_substituted_intent_reference tests.service.test_research_intents.ResearchIntentServiceTests.test_restart_denies_complete_workflow_authority_deletion_after_activation tests.service.test_research_intents.ResearchIntentServiceTests.test_restart_denies_workflow_activation_deletion_while_selection_remains tests.service.test_research_intents.ResearchIntentServiceTests.test_restart_denies_activation_witness_deletion_while_settings_remain tests.service.test_research_intents.ResearchIntentServiceTests.test_restart_denies_substituted_activation_witness_hash tests.service.test_research_intents.ResearchIntentServiceTests.test_idempotent_replay_survives_restart_and_rejects_changed_command_or_actor tests.service.test_project_lifecycle.ProjectLifecycleTests.test_nested_project_scope_is_local_to_the_held_guard_and_rechecks_metadata -v",
+      "workingDirectory": ".",
+      "commit": "c2e92e7575a04aa8f8e5642623868e3b9adfdc1d",
+      "result": "PASS",
+      "rawOutput": "artifacts/tmp/CAP-05.S03.T03.qualification-50.current-authority.log",
+      "rawOutputSha256": "d077cffa39ab337d32b101dd9daf394e08e76e4f48a0e3ff03c66f65006ba1d7",
+      "rawOutputCanonicalSha256": "20092fefc3174bfbdae30f34fe4c2ca5ddeb8ad81c753b7f7cd9c8bb348a4197",
+      "inputReport": "artifacts/tmp/CAP-05.S03.T03.qualification-50.json",
+      "inputReportSha256": "7a82f9741474fb4ff10781695ef35df7038cd5aad8cf89422a814a8816547913",
+      "provenance": "Fresh execution at this unchanged committed candidate. Tracked source and the producer/runtime record deny writes/deletion during the run; the authenticated owned Python runtime denies writes/create/delete. Configured pinned Node/Rust with current offline exact-lock dependencies. No result reuse or complete global dependency-closure claim. Actual in-process Core HTTP/current native session/SQLCipher/encrypted-envelope composition; synthetic accepted parser IR, no model inference or installed Tauri process claim."
+    },
+    {
+      "id": "strict-native-api",
+      "commandId": "service:unit",
+      "exitCode": 0,
+      "durationSeconds": 5.126326800003881,
+      "command": "./artifacts/tmp/CAP-05.S02.T03.check-runtime-122/python/python.exe -B -m unittest tests.service.test_source_anchor_api tests.service.test_document_revision_api -v",
+      "workingDirectory": ".",
+      "commit": "c2e92e7575a04aa8f8e5642623868e3b9adfdc1d",
+      "result": "PASS",
+      "rawOutput": "artifacts/tmp/CAP-05.S03.T03.qualification-50.strict-native-api.log",
+      "rawOutputSha256": "905f8ea22c8b37ba2600c18e7937fbca7cf564abf3b9d58740965f959457bfef",
+      "rawOutputCanonicalSha256": "a7218ffa0de6f8fed887f37e8e6eeea9748a8ff9a25dbf7c39035012618d88cc",
+      "inputReport": "artifacts/tmp/CAP-05.S03.T03.qualification-50.json",
+      "inputReportSha256": "7a82f9741474fb4ff10781695ef35df7038cd5aad8cf89422a814a8816547913",
+      "provenance": "Fresh execution at this unchanged committed candidate. Tracked source and the producer/runtime record deny writes/deletion during the run; the authenticated owned Python runtime denies writes/create/delete. Configured pinned Node/Rust with current offline exact-lock dependencies. No result reuse or complete global dependency-closure claim. Actual in-process Core HTTP/current native session/SQLCipher/encrypted-envelope composition; synthetic accepted parser IR, no model inference or installed Tauri process claim."
+    },
+    {
+      "id": "original-source-boundaries",
+      "commandId": "documents:unit",
+      "exitCode": 0,
+      "durationSeconds": 18.580857400025707,
+      "command": "./artifacts/tmp/CAP-05.S02.T03.check-runtime-122/python/python.exe -B -m unittest tests.parsing.test_protected_parse_source.ProtectedParseSourceTests.test_inspect_does_not_grant_derive_and_success_uses_exact_encrypted_copy tests.parsing.test_protected_parse_source.ProtectedParseSourceTests.test_deduplicated_ciphertext_origin_is_not_copy_authority tests.parsing.test_protected_parse_source.ProtectedParseSourceTests.test_rights_change_before_delivery_releases_writer_and_exposes_no_ir tests.parsing.test_protected_parse_source.ProtectedParseSourceTests.test_actual_project_close_and_reopen_refuses_old_session_delivery tests.parsing.test_protected_parse_source.ProtectedParseSourceTests.test_stale_intent_privacy_and_identical_digest_foreign_source_are_denied -v",
+      "workingDirectory": ".",
+      "commit": "c2e92e7575a04aa8f8e5642623868e3b9adfdc1d",
+      "result": "PASS",
+      "rawOutput": "artifacts/tmp/CAP-05.S03.T03.qualification-50.original-source-boundaries.log",
+      "rawOutputSha256": "7e2f3902457cf5c866f8d1750d050b52ac0cb687ef7ef90d27b8b37c1c8d4276",
+      "rawOutputCanonicalSha256": "7a76ca5a8adc3393071f80cf6b192d039ae497c323cdf3e568f5dcd46c10cf44",
+      "inputReport": "artifacts/tmp/CAP-05.S03.T03.qualification-50.json",
+      "inputReportSha256": "7a82f9741474fb4ff10781695ef35df7038cd5aad8cf89422a814a8816547913",
+      "provenance": "Fresh execution at this unchanged committed candidate. Tracked source and the producer/runtime record deny writes/deletion during the run; the authenticated owned Python runtime denies writes/create/delete. Configured pinned Node/Rust with current offline exact-lock dependencies. No result reuse or complete global dependency-closure claim. Actual in-process Core HTTP/current native session/SQLCipher/encrypted-envelope composition; synthetic accepted parser IR, no model inference or installed Tauri process claim."
+    },
+    {
+      "id": "populated-v26-migration",
+      "commandId": "documents:unit",
+      "exitCode": 0,
+      "durationSeconds": 9.269103700004052,
+      "command": "./artifacts/tmp/CAP-05.S02.T03.check-runtime-122/python/python.exe -B -m unittest tests.documents.test_anchor_invalidation_migration -v",
+      "workingDirectory": ".",
+      "commit": "c2e92e7575a04aa8f8e5642623868e3b9adfdc1d",
+      "result": "PASS",
+      "rawOutput": "artifacts/tmp/CAP-05.S03.T03.qualification-50.populated-v26-migration.log",
+      "rawOutputSha256": "17b19362aa63df3f837ad6fff3c774da446bc1da7c0e46fa7d5ba4502a9c5e42",
+      "rawOutputCanonicalSha256": "b035477bfcf5d25057fe816ace6a05c7b778898e63edaaa79f83f56ad6e959d1",
+      "inputReport": "artifacts/tmp/CAP-05.S03.T03.qualification-50.json",
+      "inputReportSha256": "7a82f9741474fb4ff10781695ef35df7038cd5aad8cf89422a814a8816547913",
+      "provenance": "Fresh execution at this unchanged committed candidate. Tracked source and the producer/runtime record deny writes/deletion during the run; the authenticated owned Python runtime denies writes/create/delete. Configured pinned Node/Rust with current offline exact-lock dependencies. No result reuse or complete global dependency-closure claim. Actual in-process Core HTTP/current native session/SQLCipher/encrypted-envelope composition; synthetic accepted parser IR, no model inference or installed Tauri process claim."
+    },
+    {
+      "id": "current-migration-path",
+      "commandId": "data:unit",
+      "exitCode": 0,
+      "durationSeconds": 3.0347916999890003,
+      "command": "./artifacts/tmp/CAP-05.S02.T03.check-runtime-122/python/python.exe -B -m unittest tests.data.test_sqlite_migrations.SqliteMigrationTests.test_migrates_exact_v1_fixture_with_verified_restorable_backup_and_history tests.data.test_sqlite_migrations.SqliteMigrationTests.test_fresh_current_database_is_idempotent_without_migration_authority_leak -v",
+      "workingDirectory": ".",
+      "commit": "c2e92e7575a04aa8f8e5642623868e3b9adfdc1d",
+      "result": "PASS",
+      "rawOutput": "artifacts/tmp/CAP-05.S03.T03.qualification-50.current-migration-path.log",
+      "rawOutputSha256": "5a1c0e9276cd211574829fdd175e6edc920d3844114bdf753819f0b83469f789",
+      "rawOutputCanonicalSha256": "1e8e822e16e7d1bdac1ea2a0878c7455ce09f8b5dd09c71626a35219046c4749",
+      "inputReport": "artifacts/tmp/CAP-05.S03.T03.qualification-50.json",
+      "inputReportSha256": "7a82f9741474fb4ff10781695ef35df7038cd5aad8cf89422a814a8816547913",
+      "provenance": "Fresh execution at this unchanged committed candidate. Tracked source and the producer/runtime record deny writes/deletion during the run; the authenticated owned Python runtime denies writes/create/delete. Configured pinned Node/Rust with current offline exact-lock dependencies. No result reuse or complete global dependency-closure claim. Actual in-process Core HTTP/current native session/SQLCipher/encrypted-envelope composition; synthetic accepted parser IR, no model inference or installed Tauri process claim."
+    },
+    {
+      "id": "immutable-catalog-provenance",
+      "commandId": "contracts:unit",
+      "exitCode": 0,
+      "durationSeconds": 2.103504700004123,
+      "command": "./artifacts/tmp/CAP-05.S02.T03.check-runtime-122/python/python.exe -B -m unittest tests.contracts.test_workflow_profile_contracts.WorkflowProfileContractTests.test_governed_catalog_is_exact_hash_bound_and_has_all_fourteen_profiles tests.contracts.test_workflow_profile_contracts.WorkflowProfileContractTests.test_catalog_drift_unknown_fields_and_future_contracts_fail_closed tests.contracts.test_workflow_profile_contracts.WorkflowProfileContractTests.test_compiled_catalog_is_one_recursively_owned_immutable_snapshot tests.contracts.test_workflow_profile_contracts.WorkflowProfileContractTests.test_only_compiled_catalog_identity_reuses_validation tests.contracts.test_workflow_profile_contracts.WorkflowProfileContractTests.test_invalid_compiled_catalog_cannot_be_published tests.contracts.test_workflow_profile_contracts.WorkflowProfileContractTests.test_selection_revision_binds_intent_catalog_profile_and_immutable_predecessor tests.contracts.test_workflow_profile_contracts.WorkflowProfileContractTests.test_stage_state_represents_navigation_not_analytical_job_state tests.contracts.test_workflow_profile_contracts.WorkflowProfileContractTests.test_profile_migration_maps_every_prior_stage_without_rewriting_history tests.contracts.test_workflow_profile_contracts.WorkflowProfileContractTests.test_canonical_hashes_are_stable_across_reload tests.contracts.test_provenance_contracts -v",
+      "workingDirectory": ".",
+      "commit": "c2e92e7575a04aa8f8e5642623868e3b9adfdc1d",
+      "result": "PASS",
+      "rawOutput": "artifacts/tmp/CAP-05.S03.T03.qualification-50.immutable-catalog-provenance.log",
+      "rawOutputSha256": "893a0206b3032332c343d808ca0c5843ae841fb4b32341774e588fd8fe8c71ab",
+      "rawOutputCanonicalSha256": "70b61393206b647d3919c6473fbef7f684fe2986ce9e5370cad5dfce3d1f4966",
+      "inputReport": "artifacts/tmp/CAP-05.S03.T03.qualification-50.json",
+      "inputReportSha256": "7a82f9741474fb4ff10781695ef35df7038cd5aad8cf89422a814a8816547913",
+      "provenance": "Fresh execution at this unchanged committed candidate. Tracked source and the producer/runtime record deny writes/deletion during the run; the authenticated owned Python runtime denies writes/create/delete. Configured pinned Node/Rust with current offline exact-lock dependencies. No result reuse or complete global dependency-closure claim. Actual in-process Core HTTP/current native session/SQLCipher/encrypted-envelope composition; synthetic accepted parser IR, no model inference or installed Tauri process claim."
+    },
+    {
+      "id": "lint",
+      "commandId": "foundation:quality",
+      "exitCode": 0,
+      "durationSeconds": 0.13816059997770935,
+      "command": "./artifacts/tmp/CAP-05.S02.T03.check-runtime-122/python/python.exe -B -m ruff check packages/contracts/anchors/generate_anchor_schema.py services/core-api/src/research_observatory_core/anchors/contracts.py services/core-api/src/research_observatory_core/corpus_repository.py services/core-api/src/research_observatory_core/corpus_service.py services/core-api/src/research_observatory_core/dependency_impacts.py services/core-api/src/research_observatory_core/document_revision_api.py services/core-api/src/research_observatory_core/document_revision_service.py services/core-api/src/research_observatory_core/import_preview_service.py services/core-api/src/research_observatory_core/main.py services/core-api/src/research_observatory_core/migrations/runner.py services/core-api/src/research_observatory_core/migrations/versions/v0027_revision_invalidations.py services/core-api/src/research_observatory_core/object_store.py services/core-api/src/research_observatory_core/ports/repositories.py services/core-api/src/research_observatory_core/ports/source_anchors.py services/core-api/src/research_observatory_core/privacy.py services/core-api/src/research_observatory_core/projects.py services/core-api/src/research_observatory_core/provenance_contracts.py services/core-api/src/research_observatory_core/repositories.py services/core-api/src/research_observatory_core/research_intents.py services/core-api/src/research_observatory_core/source_anchor_repository.py services/core-api/src/research_observatory_core/storage.py services/core-api/src/research_observatory_core/workflow_profile_contracts.py tests/anchors/test_anchor_resolution.py tests/anchors/test_native_resolution_composition.py tests/contracts/test_provenance_contracts.py tests/contracts/test_workflow_profile_contracts.py tests/data/test_sqlite_migrations.py tests/documents/test_acquisition_recovery_migration.py tests/documents/test_anchor_invalidation_migration.py tests/documents/test_document_revision_migration.py tests/documents/test_document_revision_workflow.py tests/packaging/test_core_sidecar_package.py tests/service/test_project_lifecycle.py tests/service/test_research_intents.py tests/service/test_source_anchor_api.py tools/core_sidecar_build.py",
+      "workingDirectory": ".",
+      "commit": "c2e92e7575a04aa8f8e5642623868e3b9adfdc1d",
+      "result": "PASS",
+      "rawOutput": "artifacts/tmp/CAP-05.S03.T03.qualification-50.lint.log",
+      "rawOutputSha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18",
+      "rawOutputCanonicalSha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18",
+      "inputReport": "artifacts/tmp/CAP-05.S03.T03.qualification-50.json",
+      "inputReportSha256": "7a82f9741474fb4ff10781695ef35df7038cd5aad8cf89422a814a8816547913",
+      "provenance": "Fresh execution at this unchanged committed candidate. Tracked source and the producer/runtime record deny writes/deletion during the run; the authenticated owned Python runtime denies writes/create/delete. Configured pinned Node/Rust with current offline exact-lock dependencies. No result reuse or complete global dependency-closure claim. Actual in-process Core HTTP/current native session/SQLCipher/encrypted-envelope composition; synthetic accepted parser IR, no model inference or installed Tauri process claim."
+    },
+    {
+      "id": "format",
+      "commandId": "foundation:quality",
+      "exitCode": 0,
+      "durationSeconds": 0.1360872999939602,
+      "command": "./artifacts/tmp/CAP-05.S02.T03.check-runtime-122/python/python.exe -B -m ruff format --check packages/contracts/anchors/generate_anchor_schema.py services/core-api/src/research_observatory_core/anchors/contracts.py services/core-api/src/research_observatory_core/corpus_repository.py services/core-api/src/research_observatory_core/corpus_service.py services/core-api/src/research_observatory_core/dependency_impacts.py services/core-api/src/research_observatory_core/document_revision_api.py services/core-api/src/research_observatory_core/document_revision_service.py services/core-api/src/research_observatory_core/import_preview_service.py services/core-api/src/research_observatory_core/main.py services/core-api/src/research_observatory_core/migrations/runner.py services/core-api/src/research_observatory_core/migrations/versions/v0027_revision_invalidations.py services/core-api/src/research_observatory_core/object_store.py services/core-api/src/research_observatory_core/ports/repositories.py services/core-api/src/research_observatory_core/ports/source_anchors.py services/core-api/src/research_observatory_core/privacy.py services/core-api/src/research_observatory_core/projects.py services/core-api/src/research_observatory_core/provenance_contracts.py services/core-api/src/research_observatory_core/repositories.py services/core-api/src/research_observatory_core/research_intents.py services/core-api/src/research_observatory_core/source_anchor_repository.py services/core-api/src/research_observatory_core/storage.py services/core-api/src/research_observatory_core/workflow_profile_contracts.py tests/anchors/test_anchor_resolution.py tests/anchors/test_native_resolution_composition.py tests/contracts/test_provenance_contracts.py tests/contracts/test_workflow_profile_contracts.py tests/data/test_sqlite_migrations.py tests/documents/test_acquisition_recovery_migration.py tests/documents/test_anchor_invalidation_migration.py tests/documents/test_document_revision_migration.py tests/documents/test_document_revision_workflow.py tests/packaging/test_core_sidecar_package.py tests/service/test_project_lifecycle.py tests/service/test_research_intents.py tests/service/test_source_anchor_api.py tools/core_sidecar_build.py",
+      "workingDirectory": ".",
+      "commit": "c2e92e7575a04aa8f8e5642623868e3b9adfdc1d",
+      "result": "PASS",
+      "rawOutput": "artifacts/tmp/CAP-05.S03.T03.qualification-50.format.log",
+      "rawOutputSha256": "2de9ddcc7788f957b3bb03cb8e20b1f07f56cc1347066641a4e1de2f2570418e",
+      "rawOutputCanonicalSha256": "2de9ddcc7788f957b3bb03cb8e20b1f07f56cc1347066641a4e1de2f2570418e",
+      "inputReport": "artifacts/tmp/CAP-05.S03.T03.qualification-50.json",
+      "inputReportSha256": "7a82f9741474fb4ff10781695ef35df7038cd5aad8cf89422a814a8816547913",
+      "provenance": "Fresh execution at this unchanged committed candidate. Tracked source and the producer/runtime record deny writes/deletion during the run; the authenticated owned Python runtime denies writes/create/delete. Configured pinned Node/Rust with current offline exact-lock dependencies. No result reuse or complete global dependency-closure claim. Actual in-process Core HTTP/current native session/SQLCipher/encrypted-envelope composition; synthetic accepted parser IR, no model inference or installed Tauri process claim."
+    },
+    {
+      "id": "types",
+      "commandId": "foundation:quality",
+      "exitCode": 0,
+      "durationSeconds": 7.548571100021945,
+      "command": "./artifacts/tmp/CAP-05.S02.T03.check-runtime-122/python/python.exe -B -m mypy --no-incremental services/core-api/src/research_observatory_core/anchors/contracts.py services/core-api/src/research_observatory_core/corpus_repository.py services/core-api/src/research_observatory_core/corpus_service.py services/core-api/src/research_observatory_core/dependency_impacts.py services/core-api/src/research_observatory_core/document_revision_api.py services/core-api/src/research_observatory_core/document_revision_service.py services/core-api/src/research_observatory_core/import_preview_service.py services/core-api/src/research_observatory_core/main.py services/core-api/src/research_observatory_core/migrations/runner.py services/core-api/src/research_observatory_core/migrations/versions/v0027_revision_invalidations.py services/core-api/src/research_observatory_core/object_store.py services/core-api/src/research_observatory_core/ports/repositories.py services/core-api/src/research_observatory_core/ports/source_anchors.py services/core-api/src/research_observatory_core/privacy.py services/core-api/src/research_observatory_core/projects.py services/core-api/src/research_observatory_core/provenance_contracts.py services/core-api/src/research_observatory_core/repositories.py services/core-api/src/research_observatory_core/research_intents.py services/core-api/src/research_observatory_core/source_anchor_repository.py services/core-api/src/research_observatory_core/storage.py services/core-api/src/research_observatory_core/workflow_profile_contracts.py",
+      "workingDirectory": ".",
+      "commit": "c2e92e7575a04aa8f8e5642623868e3b9adfdc1d",
+      "result": "PASS",
+      "rawOutput": "artifacts/tmp/CAP-05.S03.T03.qualification-50.types.log",
+      "rawOutputSha256": "a3ee8cc563d620855a76e1c43ed6f1118b5d68435d0c1b38b01ae7646398501f",
+      "rawOutputCanonicalSha256": "3253c7a5a8535995ce0dc8b25611174b1763d2c9ff1bbb0a29e2e90cca3ca91e",
+      "inputReport": "artifacts/tmp/CAP-05.S03.T03.qualification-50.json",
+      "inputReportSha256": "7a82f9741474fb4ff10781695ef35df7038cd5aad8cf89422a814a8816547913",
+      "provenance": "Fresh execution at this unchanged committed candidate. Tracked source and the producer/runtime record deny writes/deletion during the run; the authenticated owned Python runtime denies writes/create/delete. Configured pinned Node/Rust with current offline exact-lock dependencies. No result reuse or complete global dependency-closure claim. Actual in-process Core HTTP/current native session/SQLCipher/encrypted-envelope composition; synthetic accepted parser IR, no model inference or installed Tauri process claim."
+    },
+    {
+      "id": "portable-anchor-schemas",
+      "commandId": "documents:anchor-schemas",
+      "exitCode": 0,
+      "durationSeconds": 0.5813008999975864,
+      "command": "./artifacts/tmp/CAP-05.S02.T03.check-runtime-122/python/python.exe -B packages/contracts/anchors/generate_anchor_schema.py --check",
+      "workingDirectory": ".",
+      "commit": "c2e92e7575a04aa8f8e5642623868e3b9adfdc1d",
+      "result": "PASS",
+      "rawOutput": "artifacts/tmp/CAP-05.S03.T03.qualification-50.portable-anchor-schemas.log",
+      "rawOutputSha256": "9e70564a6485362e4a4b36a9984490c9b0c58eae8639198fd926d8c964731ae3",
+      "rawOutputCanonicalSha256": "c4232e96d850095c7ad5917d2ff4084acf1ec8551dd2b58ef4fd4b343bc8aa44",
+      "inputReport": "artifacts/tmp/CAP-05.S03.T03.qualification-50.json",
+      "inputReportSha256": "7a82f9741474fb4ff10781695ef35df7038cd5aad8cf89422a814a8816547913",
+      "provenance": "Fresh execution at this unchanged committed candidate. Tracked source and the producer/runtime record deny writes/deletion during the run; the authenticated owned Python runtime denies writes/create/delete. Configured pinned Node/Rust with current offline exact-lock dependencies. No result reuse or complete global dependency-closure claim. Actual in-process Core HTTP/current native session/SQLCipher/encrypted-envelope composition; synthetic accepted parser IR, no model inference or installed Tauri process claim."
+    },
+    {
+      "id": "workflow-generator",
+      "commandId": "contracts:unit",
+      "exitCode": 0,
+      "durationSeconds": 0.05536359999678098,
+      "command": "./.local/toolchains/node-v24.19.0-win-x64/node.exe packages/contracts/workflow-profile/generate.mjs --check",
+      "workingDirectory": ".",
+      "commit": "c2e92e7575a04aa8f8e5642623868e3b9adfdc1d",
+      "result": "PASS",
+      "rawOutput": "artifacts/tmp/CAP-05.S03.T03.qualification-50.workflow-generator.log",
+      "rawOutputSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "rawOutputCanonicalSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "inputReport": "artifacts/tmp/CAP-05.S03.T03.qualification-50.json",
+      "inputReportSha256": "7a82f9741474fb4ff10781695ef35df7038cd5aad8cf89422a814a8816547913",
+      "provenance": "Fresh execution at this unchanged committed candidate. Tracked source and the producer/runtime record deny writes/deletion during the run; the authenticated owned Python runtime denies writes/create/delete. Configured pinned Node/Rust with current offline exact-lock dependencies. No result reuse or complete global dependency-closure claim. Actual in-process Core HTTP/current native session/SQLCipher/encrypted-envelope composition; synthetic accepted parser IR, no model inference or installed Tauri process claim."
+    },
+    {
+      "id": "provenance-generator",
+      "commandId": "contracts:unit",
+      "exitCode": 0,
+      "durationSeconds": 0.04849580000154674,
+      "command": "./.local/toolchains/node-v24.19.0-win-x64/node.exe packages/contracts/provenance/generate.mjs --check",
+      "workingDirectory": ".",
+      "commit": "c2e92e7575a04aa8f8e5642623868e3b9adfdc1d",
+      "result": "PASS",
+      "rawOutput": "artifacts/tmp/CAP-05.S03.T03.qualification-50.provenance-generator.log",
+      "rawOutputSha256": "452f9911f45b5cfb62a0b7dccbf504f8127dd47e8052c1db4903d1481afbef2a",
+      "rawOutputCanonicalSha256": "452f9911f45b5cfb62a0b7dccbf504f8127dd47e8052c1db4903d1481afbef2a",
+      "inputReport": "artifacts/tmp/CAP-05.S03.T03.qualification-50.json",
+      "inputReportSha256": "7a82f9741474fb4ff10781695ef35df7038cd5aad8cf89422a814a8816547913",
+      "provenance": "Fresh execution at this unchanged committed candidate. Tracked source and the producer/runtime record deny writes/deletion during the run; the authenticated owned Python runtime denies writes/create/delete. Configured pinned Node/Rust with current offline exact-lock dependencies. No result reuse or complete global dependency-closure claim. Actual in-process Core HTTP/current native session/SQLCipher/encrypted-envelope composition; synthetic accepted parser IR, no model inference or installed Tauri process claim."
+    },
+    {
+      "id": "architecture",
+      "commandId": "foundation:architecture",
+      "exitCode": 0,
+      "durationSeconds": 4.263092000008328,
+      "command": "./artifacts/tmp/CAP-05.S02.T03.check-runtime-122/python/python.exe -B tools/architecture_check.py --repo .",
+      "workingDirectory": ".",
+      "commit": "c2e92e7575a04aa8f8e5642623868e3b9adfdc1d",
+      "result": "PASS",
+      "rawOutput": "artifacts/tmp/CAP-05.S03.T03.qualification-50.architecture.log",
+      "rawOutputSha256": "51a256bf6a7b2e89ab1d1b97aa19077aabf0e8858a450de1f5ceb155ed5c3e88",
+      "rawOutputCanonicalSha256": "1ba622fdbf569bf9ab13ee46e639b636ea005c560abcd4b168f782d8fbdc3f74",
+      "inputReport": "artifacts/tmp/CAP-05.S03.T03.qualification-50.json",
+      "inputReportSha256": "7a82f9741474fb4ff10781695ef35df7038cd5aad8cf89422a814a8816547913",
+      "provenance": "Fresh execution at this unchanged committed candidate. Tracked source and the producer/runtime record deny writes/deletion during the run; the authenticated owned Python runtime denies writes/create/delete. Configured pinned Node/Rust with current offline exact-lock dependencies. No result reuse or complete global dependency-closure claim. Actual in-process Core HTTP/current native session/SQLCipher/encrypted-envelope composition; synthetic accepted parser IR, no model inference or installed Tauri process claim."
+    },
+    {
+      "id": "adr-coverage",
+      "commandId": "foundation:adr",
+      "exitCode": 0,
+      "durationSeconds": 2.1622189999907278,
+      "command": "./artifacts/tmp/CAP-05.S02.T03.check-runtime-122/python/python.exe -B tools/adr_check.py --repo . --base c1899e0de48e79221ff0335a31c976ef87e02db5 --head c2e92e7575a04aa8f8e5642623868e3b9adfdc1d",
+      "workingDirectory": ".",
+      "commit": "c2e92e7575a04aa8f8e5642623868e3b9adfdc1d",
+      "result": "PASS",
+      "rawOutput": "artifacts/tmp/CAP-05.S03.T03.qualification-50.adr-coverage.log",
+      "rawOutputSha256": "07f57f5638832849c27c64de4012888e96a6e1ec170c54babe7a3e6c38ca64c9",
+      "rawOutputCanonicalSha256": "7978a0b0670afb9d01b002e5595cfbc23d75b93573ff6d4bc154070c03fc73a3",
+      "inputReport": "artifacts/tmp/CAP-05.S03.T03.qualification-50.json",
+      "inputReportSha256": "7a82f9741474fb4ff10781695ef35df7038cd5aad8cf89422a814a8816547913",
+      "provenance": "Fresh execution at this unchanged committed candidate. Tracked source and the producer/runtime record deny writes/deletion during the run; the authenticated owned Python runtime denies writes/create/delete. Configured pinned Node/Rust with current offline exact-lock dependencies. No result reuse or complete global dependency-closure claim. Actual in-process Core HTTP/current native session/SQLCipher/encrypted-envelope composition; synthetic accepted parser IR, no model inference or installed Tauri process claim."
+    },
+    {
+      "id": "package-contract",
+      "commandId": "packaging:unit",
+      "exitCode": 0,
+      "durationSeconds": 1.2391822999925353,
+      "command": "./artifacts/tmp/CAP-05.S02.T03.check-runtime-122/python/python.exe -B -m unittest tests.packaging.test_core_sidecar_package.CoreSidecarPackageTests.test_build_contract_is_strict_and_version_bound -v",
+      "workingDirectory": ".",
+      "commit": "c2e92e7575a04aa8f8e5642623868e3b9adfdc1d",
+      "result": "PASS",
+      "rawOutput": "artifacts/tmp/CAP-05.S03.T03.qualification-50.package-contract.log",
+      "rawOutputSha256": "ae523ad9a43a325a072f126ca6c75f22cda432974b8b61480b9041191774eacd",
+      "rawOutputCanonicalSha256": "4a7259e6f196ef8cd25e0cbad0a28e9988a516bac737403ebc429b282a79ed8d",
+      "inputReport": "artifacts/tmp/CAP-05.S03.T03.qualification-50.json",
+      "inputReportSha256": "7a82f9741474fb4ff10781695ef35df7038cd5aad8cf89422a814a8816547913",
+      "provenance": "Fresh execution at this unchanged committed candidate. Tracked source and the producer/runtime record deny writes/deletion during the run; the authenticated owned Python runtime denies writes/create/delete. Configured pinned Node/Rust with current offline exact-lock dependencies. No result reuse or complete global dependency-closure claim. Actual in-process Core HTTP/current native session/SQLCipher/encrypted-envelope composition; synthetic accepted parser IR, no model inference or installed Tauri process claim."
+    },
+    {
+      "id": "build-manifest",
+      "commandId": "foundation:build-manifest",
+      "exitCode": 0,
+      "durationSeconds": 25.667939600010868,
+      "command": "./artifacts/tmp/CAP-05.S02.T03.check-runtime-122/python/python.exe -B tools/build_manifest.py --repo . --output ./artifacts/tmp/CAP-05.S03.T03.qualification-50.build.json",
+      "workingDirectory": ".",
+      "commit": "c2e92e7575a04aa8f8e5642623868e3b9adfdc1d",
+      "result": "PASS",
+      "rawOutput": "artifacts/tmp/CAP-05.S03.T03.qualification-50.build-manifest.log",
+      "rawOutputSha256": "651d48d1e4b3e3c396dedc2127af60dedbed767c7f6de3ea4a8bf8e0ec0af60d",
+      "rawOutputCanonicalSha256": "a4e64afc3ad76b9736c2a81ad7875f3f7597b6507bf5c93486b4cce4a080c8fa",
+      "inputReport": "artifacts/tmp/CAP-05.S03.T03.qualification-50.json",
+      "inputReportSha256": "7a82f9741474fb4ff10781695ef35df7038cd5aad8cf89422a814a8816547913",
+      "provenance": "Fresh execution at this unchanged committed candidate. Tracked source and the producer/runtime record deny writes/deletion during the run; the authenticated owned Python runtime denies writes/create/delete. Configured pinned Node/Rust with current offline exact-lock dependencies. No result reuse or complete global dependency-closure claim. Actual in-process Core HTTP/current native session/SQLCipher/encrypted-envelope composition; synthetic accepted parser IR, no model inference or installed Tauri process claim."
+    },
+    {
+      "id": "native-command",
+      "commandId": "desktop:application",
+      "exitCode": 0,
+      "durationSeconds": 21.863609499996528,
+      "command": "./.local/toolchains/cargo/bin/cargo.exe test --lib document_reader::tests --locked --offline",
+      "workingDirectory": "apps/desktop/src-tauri",
+      "commit": "c2e92e7575a04aa8f8e5642623868e3b9adfdc1d",
+      "result": "PASS",
+      "rawOutput": "artifacts/tmp/CAP-05.S03.T03.qualification-50.native-command.log",
+      "rawOutputSha256": "6fd6db2a247bff973689e2d8b7f475e3d4b5b05237a46e0ea472d6a9468e2b48",
+      "rawOutputCanonicalSha256": "6fd6db2a247bff973689e2d8b7f475e3d4b5b05237a46e0ea472d6a9468e2b48",
+      "inputReport": "artifacts/tmp/CAP-05.S03.T03.qualification-50.json",
+      "inputReportSha256": "7a82f9741474fb4ff10781695ef35df7038cd5aad8cf89422a814a8816547913",
+      "provenance": "Fresh execution at this unchanged committed candidate. Tracked source and the producer/runtime record deny writes/deletion during the run; the authenticated owned Python runtime denies writes/create/delete. Configured pinned Node/Rust with current offline exact-lock dependencies. No result reuse or complete global dependency-closure claim. Actual in-process Core HTTP/current native session/SQLCipher/encrypted-envelope composition; synthetic accepted parser IR, no model inference or installed Tauri process claim."
+    },
+    {
+      "id": "renderer-unit",
+      "commandId": "desktop:application",
+      "exitCode": 0,
+      "durationSeconds": 2.315832299995236,
+      "command": "./.local/toolchains/node-v24.19.0-win-x64/node.exe apps/desktop/node_modules/vitest/vitest.mjs run --root apps/desktop src/app/sourceAnchors.test.ts src/app/sourceResolution.test.ts",
+      "workingDirectory": ".",
+      "commit": "c2e92e7575a04aa8f8e5642623868e3b9adfdc1d",
+      "result": "PASS",
+      "rawOutput": "artifacts/tmp/CAP-05.S03.T03.qualification-50.renderer-unit.log",
+      "rawOutputSha256": "e26dc84f052ab6867a9d6997ca3d83dbec1ec4da8be68f89a60fa66302aa8cf6",
+      "rawOutputCanonicalSha256": "e26dc84f052ab6867a9d6997ca3d83dbec1ec4da8be68f89a60fa66302aa8cf6",
+      "inputReport": "artifacts/tmp/CAP-05.S03.T03.qualification-50.json",
+      "inputReportSha256": "7a82f9741474fb4ff10781695ef35df7038cd5aad8cf89422a814a8816547913",
+      "provenance": "Fresh execution at this unchanged committed candidate. Tracked source and the producer/runtime record deny writes/deletion during the run; the authenticated owned Python runtime denies writes/create/delete. Configured pinned Node/Rust with current offline exact-lock dependencies. No result reuse or complete global dependency-closure claim. Actual in-process Core HTTP/current native session/SQLCipher/encrypted-envelope composition; synthetic accepted parser IR, no model inference or installed Tauri process claim."
+    },
+    {
+      "id": "renderer-types",
+      "commandId": "desktop:application",
+      "exitCode": 0,
+      "durationSeconds": 0.4995741000166163,
+      "command": "./.local/toolchains/node-v24.19.0-win-x64/node.exe apps/desktop/node_modules/typescript/bin/tsc --noEmit -p apps/desktop/tsconfig.json",
+      "workingDirectory": ".",
+      "commit": "c2e92e7575a04aa8f8e5642623868e3b9adfdc1d",
+      "result": "PASS",
+      "rawOutput": "artifacts/tmp/CAP-05.S03.T03.qualification-50.renderer-types.log",
+      "rawOutputSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "rawOutputCanonicalSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "inputReport": "artifacts/tmp/CAP-05.S03.T03.qualification-50.json",
+      "inputReportSha256": "7a82f9741474fb4ff10781695ef35df7038cd5aad8cf89422a814a8816547913",
+      "provenance": "Fresh execution at this unchanged committed candidate. Tracked source and the producer/runtime record deny writes/deletion during the run; the authenticated owned Python runtime denies writes/create/delete. Configured pinned Node/Rust with current offline exact-lock dependencies. No result reuse or complete global dependency-closure claim. Actual in-process Core HTTP/current native session/SQLCipher/encrypted-envelope composition; synthetic accepted parser IR, no model inference or installed Tauri process claim."
+    }
+  ],
+  "machineArtifacts": [
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T03.qualification-50.json",
+      "sha256": "7a82f9741474fb4ff10781695ef35df7038cd5aad8cf89422a814a8816547913"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T03.qualification-50.py",
+      "sha256": "e731f2870e90a5fcad2fa8225b9a92f9a1a2ce184d556d761ced36c956df3d55"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T03.qualification-50.timing.json",
+      "sha256": "8cf5e43eb9d94632d74f05f6fe7b80efe651ed2188af0f26a2f7df656540d742"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T03.qualification-50.build.json",
+      "sha256": "badc88ffc3522a7db10c72d912661e4423db21cd0d8b5b08cbc564cf0955962e"
+    }
+  ],
+  "scopeLimits": {
+    "nativeCore": "Exact-revision resolution/citation contracts, canonical broken-anchor invalidation, populated v26 migration/rollback, native/session/Intent/privacy/rights authority and unchanged 100ms p95 criterion. Declared synthetic source/IR/graphs; actual Core HTTP, SQLCipher and encrypted envelopes. No parser inference, 8GB/16GB hardware-tier qualification, original PDF rendering, installed desktop or Wave release claim.",
+    "performance": {
+      "samples": 20,
+      "warmP95Ms": 87.42809999966994,
+      "targetMs": 100,
+      "method": "Nearest-rank p95 of fresh actual in-process HTTP/current native authority/SQLCipher/encrypted-context requests; no parser inference or larger hardware-tier qualification."
+    },
+    "activation": "S04 owns attachment activation, workspace routing and original-byte source viewer; this task supplies bounded resolution/citation ports."
+  },
+  "adverseObservations": [
+    "All task-owned development failures remain preserved. Earlier resolver p95s exceeded 100ms; after authority/writer changes, development runs measured86.6224ms and instrumented105.1671ms p95. No waiver or qualification inferred from either.",
+    "Late-Intent test fixtures34-36 did not commit their intended corruption and were invalid characterizations; corrected37 established the retained-hash corruption defect, and38/43 verify denial after the content-hash fix.",
+    "Pinned Windows TypeScript7 compiler failed to resolve transitive dependencies through pnpm junction parents in41/46. Offline exact-lock local public-hoist links48 restored resolution; no manifest, lockfile, compiler or scripts changed;49 passed. Dependency closure is not reused."
+  ],
+  "preservedSetupError": {
+    "path": "artifacts/tmp/CAP-05.S03.T03.qualification-50.console.log",
+    "sha256": "651e95e48d13d1678d1916d904c86f428c37ef51c64f5f83e45feb59415b8173",
+    "status": "SETUP_ERROR",
+    "scope": "Initial invocation lacked the owned sealed dependency path and failed before the qualification helper started. The corrected invocation supplies that path; no product/runtime source or assertion was changed."
+  },
+  "historicalObservations": [
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T03.authority-regressions-30.log",
+      "sha256": "1fc7c76b1df64679d28d09ca8b2f242a523e2d4ba64de57f45a4c4ee62400fd6",
+      "scope": "Preserved development, adverse, setup or partial observation at its original inputs. No current qualification PASS inferred."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T03.catalog-characterization-24.log",
+      "sha256": "82824f5e8b45c0fa37108582cf7af793f83b33b82918c7d4270edf697585b109",
+      "scope": "Preserved development, adverse, setup or partial observation at its original inputs. No current qualification PASS inferred."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T03.catalog-development-25.log",
+      "sha256": "11e4938be8d70099c85f8cfa33a329904324fdcc4c7a4bded3760e5260326de0",
+      "scope": "Preserved development, adverse, setup or partial observation at its original inputs. No current qualification PASS inferred."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T03.claim-01.log",
+      "sha256": "ef1d018cd76298479954b4354c8627257cdfb5bebc1b618d30d7cb8841af9934",
+      "scope": "Preserved development, adverse, setup or partial observation at its original inputs. No current qualification PASS inferred."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T03.claim-site-02.log",
+      "sha256": "33442ed1be8e637d6f75078049fbb7cbc65219ab6f4b397560e988edc278672b",
+      "scope": "Preserved development, adverse, setup or partial observation at its original inputs. No current qualification PASS inferred."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T03.desktop-dependency-restore-45.log",
+      "sha256": "3839c832d617bf7555887af6bd2d26a020f350153566ff92a4b04ed501a34704",
+      "scope": "Preserved development, adverse, setup or partial observation at its original inputs. No current qualification PASS inferred."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T03.desktop-local-links-48.log",
+      "sha256": "554c2b88a83881092fdea5ec0a602df98ca19f87fa857e22a3d84cdb23471944",
+      "scope": "Preserved development, adverse, setup or partial observation at its original inputs. No current qualification PASS inferred."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T03.intent-hash-characterization-34.log",
+      "sha256": "552a22094b9e7f89a1e704ac42e51c6bdbb1b42f753843efd7385bf36314e869",
+      "scope": "Preserved development, adverse, setup or partial observation at its original inputs. No current qualification PASS inferred."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T03.intent-hash-characterization-35.log",
+      "sha256": "d830c1004c8aa34bca1138fb03079fe5bc39e872c65e8bcc8718721c9bdfe1c1",
+      "scope": "Preserved development, adverse, setup or partial observation at its original inputs. No current qualification PASS inferred."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T03.intent-hash-characterization-36.log",
+      "sha256": "b21c71c55bf76a795f70c9807d5ca9b70da6c982d251afc984cfb6fec9823d24",
+      "scope": "Preserved development, adverse, setup or partial observation at its original inputs. No current qualification PASS inferred."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T03.intent-hash-characterization-37.log",
+      "sha256": "a06862f10f99aee52c22c1c2a878fef7bb07cb78ab19d569ddd3f1dda423605c",
+      "scope": "Preserved development, adverse, setup or partial observation at its original inputs. No current qualification PASS inferred."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T03.latency-breakdown-23.json",
+      "sha256": "6d324f6fad986147a4197a1d425e206d52562bc707e46d55c8caeaba6339908f",
+      "scope": "Preserved development, adverse, setup or partial observation at its original inputs. No current qualification PASS inferred."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T03.latency-breakdown-23.log",
+      "sha256": "f3129f0b3c50e176a4bc616290b654c9d386a6954f76bc6f0464bc249f123c0d",
+      "scope": "Preserved development, adverse, setup or partial observation at its original inputs. No current qualification PASS inferred."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T03.latency-breakdown-31.json",
+      "sha256": "01e384e00a71023a6deda5367cae297fa1ade9dde53a591623c749cb06170e82",
+      "scope": "Preserved development, adverse, setup or partial observation at its original inputs. No current qualification PASS inferred."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T03.latency-breakdown-31.log",
+      "sha256": "d003279d8e8aa95a828b5ef3c6e3b1255669fb3116092046cac8fec2a6ac7545",
+      "scope": "Preserved development, adverse, setup or partial observation at its original inputs. No current qualification PASS inferred."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T03.latency-breakdown-44.json",
+      "sha256": "142e06d2ed7e57f24d5154eda68c4619ab18dabeb910f437aa2aea01552197da",
+      "scope": "Preserved development, adverse, setup or partial observation at its original inputs. No current qualification PASS inferred."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T03.latency-breakdown-44.log",
+      "sha256": "c396eaa859011e966cbee9df732951dde6c726fd94731d5810413a42299aadef",
+      "scope": "Preserved development, adverse, setup or partial observation at its original inputs. No current qualification PASS inferred."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T03.latency-commit-diagnostic-47.json",
+      "sha256": "753be7a5f8242db4aaf5bd744ab259e422c8d05be44dec7d2bcc8eebbe749f6d",
+      "scope": "Preserved development, adverse, setup or partial observation at its original inputs. No current qualification PASS inferred."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T03.latency-commit-diagnostic-47.log",
+      "sha256": "c9df75553d942c29498fa2a75853d6e3534c34408938225db424fae671c5485e",
+      "scope": "Preserved development, adverse, setup or partial observation at its original inputs. No current qualification PASS inferred."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T03.migration-characterization-12.log",
+      "sha256": "ced2129cad1b938d1e19706d3a1321a466e4d1473da188ee24dedbde93c8c4cf",
+      "scope": "Preserved development, adverse, setup or partial observation at its original inputs. No current qualification PASS inferred."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T03.migration-development-13.log",
+      "sha256": "fadf78b671d7a31c75f9ea5febe83bddfcd8d5202c7d6a7b1323f964420d634d",
+      "scope": "Preserved development, adverse, setup or partial observation at its original inputs. No current qualification PASS inferred."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T03.migration-development-14.log",
+      "sha256": "6364ba262f702e2402e9fa13c1486a972f321844e06df794322d49b0b5e5d6ed",
+      "scope": "Preserved development, adverse, setup or partial observation at its original inputs. No current qualification PASS inferred."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T03.native-format-51.log",
+      "sha256": "b08b462ed239eee0b56b638c38d9a72f2da1191e3637cb9819cfa27b8951618d",
+      "scope": "Preserved development, adverse, setup or partial observation at its original inputs. No current qualification PASS inferred."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T03.native-format-52.log",
+      "sha256": "2f7b2009190114f34a0eeb6226e736e4df875bc5c4108cf28e08012b4b66d28f",
+      "scope": "Preserved development, adverse, setup or partial observation at its original inputs. No current qualification PASS inferred."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T03.native-hash-development-38.log",
+      "sha256": "af44c2cdee9c5a00c0a02ab0add39eadb4c9adbefc1a8f8a4e52d8e75b6d5c08",
+      "scope": "Preserved development, adverse, setup or partial observation at its original inputs. No current qualification PASS inferred."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T03.privacy-publication-adverse-55.json",
+      "sha256": "28431da8c4a5ffcfe9ef4a030a16eebd056a03fe7ed4d5e103718483265f4342",
+      "scope": "Preserved development, adverse, setup or partial observation at its original inputs. No current qualification PASS inferred."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T03.product-types-39.log",
+      "sha256": "2ea2f145073618ad4942f12b0a9f35703e4034dba25845bb07451da20cfe8df2",
+      "scope": "Preserved development, adverse, setup or partial observation at its original inputs. No current qualification PASS inferred."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T03.profile-resolver-17.log",
+      "sha256": "b166c0215d2509adcdf72cd89782215de35dd8c176dd59d0c88e470745cdbd1e",
+      "scope": "Preserved development, adverse, setup or partial observation at its original inputs. No current qualification PASS inferred."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T03.profile-resolver-18.log",
+      "sha256": "d4dc9d1d11113d185d40a18c381b27e8fa7c5e9e969c73f7927add7879ff3f0d",
+      "scope": "Preserved development, adverse, setup or partial observation at its original inputs. No current qualification PASS inferred."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T03.renderer-development-16.log",
+      "sha256": "49d15ca4ce288c109dd1c789e403ad26e8fa0d71d67ea59d0bfe279d505767f9",
+      "scope": "Preserved development, adverse, setup or partial observation at its original inputs. No current qualification PASS inferred."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T03.renderer-resolution-46.log",
+      "sha256": "10ac97c84eb3f3712eafc5384cf2d887ab9ff9d8d55dafc9d92f1b20333560b6",
+      "scope": "Preserved development, adverse, setup or partial observation at its original inputs. No current qualification PASS inferred."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T03.renderer-types-40.log",
+      "sha256": "f2ce1cb9707b06072f43d5577fd7e5c393d29b9574dd4c69a2f47e1b7cb286c2",
+      "scope": "Preserved development, adverse, setup or partial observation at its original inputs. No current qualification PASS inferred."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T03.renderer-types-41.log",
+      "sha256": "3043e7159298615044c4d12f1176c3891764fe5fc2fe0ddadc2849ac39f6b9f0",
+      "scope": "Preserved development, adverse, setup or partial observation at its original inputs. No current qualification PASS inferred."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T03.renderer-types-49.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "scope": "Preserved development, adverse, setup or partial observation at its original inputs. No current qualification PASS inferred."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T03.resolution-characterization-03.log",
+      "sha256": "fccbd2e7d518132c297a1804978f06d2fdbd6ae7b8fda72c24174fd37cf23703",
+      "scope": "Preserved development, adverse, setup or partial observation at its original inputs. No current qualification PASS inferred."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T03.resolution-characterization-04.log",
+      "sha256": "8c9d5d6398615c873c47a79a9a78f31d890d87a601329a146f43ac2f75a90b48",
+      "scope": "Preserved development, adverse, setup or partial observation at its original inputs. No current qualification PASS inferred."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T03.resolution-development-05.log",
+      "sha256": "1419256ed3a2f824fdc9113a1661a4fb37e1d370e67cc834b3b744a50968a5a1",
+      "scope": "Preserved development, adverse, setup or partial observation at its original inputs. No current qualification PASS inferred."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T03.resolution-development-08.log",
+      "sha256": "3c4a5df242e17e7a8552cb695c601b518631dc79c91855cf23438b206df5a324",
+      "scope": "Preserved development, adverse, setup or partial observation at its original inputs. No current qualification PASS inferred."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T03.resolution-development-10.log",
+      "sha256": "402b2e1593ce178ea469cfd14590b8d9620a20f2334fcbfd9f9a7867cb17c3d2",
+      "scope": "Preserved development, adverse, setup or partial observation at its original inputs. No current qualification PASS inferred."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T03.resolution-development-15.log",
+      "sha256": "7620ab8a22d358dca82e3e714d679ab46802e1392be14cdf2282e521243ad153",
+      "scope": "Preserved development, adverse, setup or partial observation at its original inputs. No current qualification PASS inferred."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T03.resolution-development-22.log",
+      "sha256": "54f4f68fe893cf71561ef8a0b79a46ec1cdd5546299693e07ac1b38d228a596b",
+      "scope": "Preserved development, adverse, setup or partial observation at its original inputs. No current qualification PASS inferred."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T03.resolution-diagnostic-06.log",
+      "sha256": "729ebfcc836ba99491c33256415eaf022fecf445cc9ccd301f03779708a1b47b",
+      "scope": "Preserved development, adverse, setup or partial observation at its original inputs. No current qualification PASS inferred."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T03.resolution-diagnostic-07.log",
+      "sha256": "587388096b7c4c46110d4c00e7b984cde1ab8475d92a2e99f2ca128216163734",
+      "scope": "Preserved development, adverse, setup or partial observation at its original inputs. No current qualification PASS inferred."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T03.resolution-diagnostic-09.log",
+      "sha256": "352a9711095eee4026b645305b3aacd641a703c0deb5153e9fd87b69382343a5",
+      "scope": "Preserved development, adverse, setup or partial observation at its original inputs. No current qualification PASS inferred."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T03.resolution-diagnostic-11.log",
+      "sha256": "7a30d150146b0d430fdcdae8f7f23dfbef49027c59816c2b67b99cd52d31c4eb",
+      "scope": "Preserved development, adverse, setup or partial observation at its original inputs. No current qualification PASS inferred."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T03.resolver-timing-15.json",
+      "sha256": "eb8f97ad85416d813ac90323202711b28d92f92d9c48b0ff9ef7ee0a6dab2a41",
+      "scope": "Preserved development, adverse, setup or partial observation at its original inputs. No current qualification PASS inferred."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T03.resolver-timing-22.json",
+      "sha256": "863a14e24548ee85fcbbecff5a86816f0f76a86a95e0538159f36d6438b0bea6",
+      "scope": "Preserved development, adverse, setup or partial observation at its original inputs. No current qualification PASS inferred."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T03.resolver-timing-25.json",
+      "sha256": "9d62d4618a151d9d8467ff8cc5b77c969e33033a88c97d4448beb6c4997080fd",
+      "scope": "Preserved development, adverse, setup or partial observation at its original inputs. No current qualification PASS inferred."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T03.resolver-timing-28.json",
+      "sha256": "f69ab4b917fce892c5a510bf5568af15ae1ac50a9f18c59c747f0f67bb1d05cd",
+      "scope": "Preserved development, adverse, setup or partial observation at its original inputs. No current qualification PASS inferred."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T03.resolver-timing-29.json",
+      "sha256": "6ab334c3aa42b223741cdce42379fec23d513c56eadf78e2caea9e440e0de640",
+      "scope": "Preserved development, adverse, setup or partial observation at its original inputs. No current qualification PASS inferred."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T03.resolver-timing-33.json",
+      "sha256": "4c66437acb06512da249fba32db506ec8dd0117cf3294a12dc37d9240f169729",
+      "scope": "Preserved development, adverse, setup or partial observation at its original inputs. No current qualification PASS inferred."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T03.resolver-timing-38.json",
+      "sha256": "231e31f3b4c3033b871c1dfcf9af2baff9a5d696013bedfa6c3fb71b031b8b81",
+      "scope": "Preserved development, adverse, setup or partial observation at its original inputs. No current qualification PASS inferred."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T03.resolver-timing-43.json",
+      "sha256": "a06638b7db64680066216e84a5e5f23a7c0c1fa2c8ec9d96ac2d8f0bc2301621",
+      "scope": "Preserved development, adverse, setup or partial observation at its original inputs. No current qualification PASS inferred."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T03.scope-characterization-32.log",
+      "sha256": "79e8e7cab9a148842a358d96d4a4bde78cac3dbec0fbfe165c7fe05bf12bd5f9",
+      "scope": "Preserved development, adverse, setup or partial observation at its original inputs. No current qualification PASS inferred."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T03.scoped-native-33.log",
+      "sha256": "a2b83b8d068bac0b5756eb943dbecbc8b0f48d422d130b1a3b3c3108dd9bb56b",
+      "scope": "Preserved development, adverse, setup or partial observation at its original inputs. No current qualification PASS inferred."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T03.single-writer-characterization-42.log",
+      "sha256": "3542c64a911811fe5babf682b61182cbcd41525076daa8dff3d06888dce387c5",
+      "scope": "Preserved development, adverse, setup or partial observation at its original inputs. No current qualification PASS inferred."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T03.single-writer-development-43.log",
+      "sha256": "11782a86f9bb5fcce2b23cbf43886ad20f48dc763b1dd0474c346bba3deefd7b",
+      "scope": "Preserved development, adverse, setup or partial observation at its original inputs. No current qualification PASS inferred."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T03.snapshot-characterization-26.log",
+      "sha256": "af0447f8b48aef368ffecda25e1a99676982b9cd30732f271627428b55a39c66",
+      "scope": "Preserved development, adverse, setup or partial observation at its original inputs. No current qualification PASS inferred."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T03.snapshot-development-28.log",
+      "sha256": "ca879f2db997410ff39812de21647a326dae58d29d843ccdf2a8d944b8dc4969",
+      "scope": "Preserved development, adverse, setup or partial observation at its original inputs. No current qualification PASS inferred."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T03.snapshot-native-29.log",
+      "sha256": "a766b9334efff2d109764bac6507108aaa9812e03148099c3bd7c6deaaefbf2e",
+      "scope": "Preserved development, adverse, setup or partial observation at its original inputs. No current qualification PASS inferred."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T03.v26-capture-01.log",
+      "sha256": "f7ee5c963882cc83a7e2eabef0b78ef2ecdb241e3fcea0b248371159ad735549",
+      "scope": "Preserved development, adverse, setup or partial observation at its original inputs. No current qualification PASS inferred."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T03.v26-capture-02.log",
+      "sha256": "a20dbd50761ac97078f5e0aae810ddb752c195c52dfae962989587068588362c",
+      "scope": "Preserved development, adverse, setup or partial observation at its original inputs. No current qualification PASS inferred."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T03.v27-fingerprints-02.json",
+      "sha256": "cd485c84987c1b082c5b3434535ca7f1ea02310b54cb95506a1425d5bed81b10",
+      "scope": "Preserved development, adverse, setup or partial observation at its original inputs. No current qualification PASS inferred."
+    }
+  ],
+  "acceptedPriorPerformance": {
+    "path": "artifacts/evidence/CAP-05.S02.T03.performance-owner-acceptance-01.md",
+    "sha256": "5dea8e7a2046f5ec229b10a143370c6048e62080da7c3f0f99d700f86219774a",
+    "scope": "Preserve the exact prior 62.5333542-second owner-accepted parser observation; no tuning/retest or broader waiver."
+  }
+}

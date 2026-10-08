@@ -8,12 +8,16 @@ import os
 import sqlite3
 import time
 import unittest
+from contextlib import closing
 from pathlib import Path
 from unittest.mock import patch
 
 from research_observatory_core import storage
 from research_observatory_core.document_revisions import DocumentRevisionProblem
 from research_observatory_core.domain_contracts import new_uuid_v7
+from research_observatory_core.object_store import _object_relative_path
+from research_observatory_core.ports.repositories import AggregateRevisionDraft
+from research_observatory_core.repositories import create_sqlite_unit_of_work_factory
 from research_observatory_core.source_anchor_repository import LocalSourceAnchorRepository
 
 from tests.anchors import test_native_anchor_composition as predecessor
@@ -99,6 +103,120 @@ class NativeResolutionCompositionTests(unittest.TestCase):
         self.assertEqual(409, response.status_code)
         self.assertNotIn("Second synthetic", response.text)
         self.assertEqual(409, self.f.post("anchor-resolve", **self.fields).status_code)
+
+    def _reopen_native_session(self):
+        preview = self.f.f.f.preview
+        old_session = dict(self.f.session)
+        preview.service.detach(preview.root)
+        preview.projects.close(root=preview.root, trace_id="f" * 32)
+        preview.projects.open(root=preview.root, trace_id="f" * 32)
+        preview.service.attach(preview.root)
+        self.f.session["sessionId"] = preview.service.native_context(preview.root, self.anchor["target"]["projectId"])
+        self.assertNotEqual(old_session["sessionId"], self.f.session["sessionId"])
+        return old_session
+
+    def test_native_stop_during_invalidation_rolls_back_and_fresh_session_retries_once(self):
+        fixture = self.f.f.fixture
+        project = self.anchor["target"]["projectId"]
+        anchor_revision = self.anchor["anchorRevisionId"]
+        with create_sqlite_unit_of_work_factory(fixture.database, project)() as unit:
+            source = unit.aggregates.get_revision(anchor_revision)
+            unit.aggregates.append(
+                AggregateRevisionDraft(
+                    revision_id=new_uuid_v7(),
+                    aggregate_id=new_uuid_v7(),
+                    aggregate_kind="evidence",
+                    created_at=fixture.now,
+                    modified_at=fixture.now,
+                    display_label_observed="Synthetic stopped anchor-dependent evidence",
+                    display_label_normalized=None,
+                    knowledge_status="observed",
+                    rights_status="unknown",
+                    provenance_inputs=(source,),
+                    dependency_coverage="complete",
+                    material_dependencies=fixture.repository._dependencies((source,)),
+                ),
+                fixture.repository._event(fixture.actor, fixture.now, "evidence.created", "fixture." + new_uuid_v7()),
+                expected_revision=None,
+            )
+            unit.commit()
+        with closing(storage.open_canonical_database(fixture.database, expected_project_id=project)) as connection:
+            digest = connection.execute(
+                "SELECT object_sha256 FROM documents WHERE revision_id=?", (anchor_revision,)
+            ).fetchone()[0]
+        path = fixture.f.fixture.project_root / "objects" / _object_relative_path(project, digest)
+        damaged = bytearray(path.read_bytes())
+        damaged[-1] ^= 1
+        path.write_bytes(damaged)
+        tables = ("dependency_impact_runs", "dependency_stale_causes", "provenance_events", "outbox_events")
+
+        def counts():
+            with closing(storage.open_canonical_database(fixture.database, expected_project_id=project)) as connection:
+                return {
+                    table: connection.execute('SELECT count(*) FROM "' + table + '"').fetchone()[0] for table in tables
+                }
+
+        before = counts()
+        stops = []
+
+        def stop(step):
+            self.f.f.f.preview.service.signal_stop(self.f.f.f.preview.root)
+            stops.append(step)
+
+        with patch("research_observatory_core.source_anchor_repository._publication_step", stop):
+            response = self.f.post("anchor-resolve", **self.fields)
+        self.assertEqual(["anchor-dependents-stale"], stops)
+        self.assertEqual(409, response.status_code)
+        self.assertNotIn("Second synthetic", response.text)
+        self.assertEqual(before, counts())
+
+        old_session = self._reopen_native_session()
+        old = self.f.client.post("/native/document-revisions/anchor-resolve", json=old_session | self.fields)
+        self.assertEqual(409, old.status_code)
+        self.assertEqual(before, counts())
+        retried = self.f.post("anchor-resolve", **self.fields)
+        self.assertEqual(200, retried.status_code)
+        self.assertEqual("broken", retried.json()["status"])
+        published = counts()
+        self.assertEqual({table: value + 1 for table, value in before.items()}, published)
+        replayed = self.f.post("anchor-resolve", **self.fields)
+        self.assertEqual(200, replayed.status_code)
+        self.assertEqual(retried.json(), replayed.json())
+        self.assertEqual(published, counts())
+
+    def test_native_stop_during_anchor_creation_rolls_back(self):
+        fixture = self.f.f.fixture
+        project = self.anchor["target"]["projectId"]
+        tables = ("aggregate_revisions", "documents", "provenance_events", "outbox_events")
+
+        def counts():
+            with closing(storage.open_canonical_database(fixture.database, expected_project_id=project)) as connection:
+                return {
+                    table: connection.execute('SELECT count(*) FROM "' + table + '"').fetchone()[0] for table in tables
+                }
+
+        before = counts()
+        stops = []
+
+        def stop(step):
+            self.f.f.f.preview.service.signal_stop(self.f.f.f.preview.root)
+            stops.append(step)
+
+        with patch("research_observatory_core.source_anchor_repository._publication_step", stop):
+            response = self.f.post(
+                "anchor-create",
+                commandId=new_uuid_v7(),
+                selection={
+                    "schemaVersion": "1.0",
+                    "revisionId": self.f.accepted.revision_id,
+                    "nodeId": self.f.accepted.structure.nodes[0].node_id,
+                    "normalizedRange": {"start": 0, "end": 5},
+                },
+            )
+        self.assertEqual(["anchor-recorded"], stops)
+        self.assertEqual(409, response.status_code)
+        self.assertNotIn("First synthetic", response.text)
+        self.assertEqual(before, counts())
 
     def test_lookup_and_context_share_owned_writer_without_verifying_original_bytes(self):
         database = self.f.f.fixture.database

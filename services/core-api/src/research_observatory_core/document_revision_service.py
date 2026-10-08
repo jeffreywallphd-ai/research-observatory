@@ -171,7 +171,7 @@ class DocumentRevisionService:
                 selected._database,
                 command.project_id,
                 selected._objects,
-                actor=lambda: actor,
+                actor=lambda: guard(lambda: actor),
                 guard=guard,
                 now=self.now,
             )

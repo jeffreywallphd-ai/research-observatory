@@ -1,0 +1,514 @@
+{
+  "task_id": "CAP-05.S03.T03",
+  "attempt_id": "R01",
+  "reviewer": "agent:/root/t03_task_review",
+  "result": "changes-requested",
+  "reviewed_state_commit": "c2e92e7575a04aa8f8e5642623868e3b9adfdc1d",
+  "candidate_commit": "c2e92e7575a04aa8f8e5642623868e3b9adfdc1d",
+  "base_commit": "c1899e0de48e79221ff0335a31c976ef87e02db5",
+  "evidence_sha256": "ba955d61e2ef7e191ba39e18fbc422002032db6982eb41e6d59f0197f9b3f2a7",
+  "findings": [
+    {
+      "id": "CAP-05.S03.T03-R01-F01",
+      "severity": "high",
+      "blocking": true,
+      "criterion_index": 2,
+      "title": "Late native stop denies delivery after committing broken-anchor invalidation",
+      "reproduction": "At exact candidate c2e92e7575a04aa8f8e5642623868e3b9adfdc1d execute artifacts/tmp/CAP-05.S03.T03.reviewer-late-stop-01.py with the owned sealed Python runtime and Core dependency path. The existing actual native Core/SQLCipher fixture creates a protected anchor and synthetic dependent evidence, corrupts only the owned derivative ciphertext, and patches the existing precommit _publication_step('anchor-dependents-stale') seam to call the trusted native ImportPreviewService.signal_stop for that fixture root. Stop occurs inside the owning writer before its final authority check and COMMIT. The endpoint returns HTTP 409 with no passage text, but dependency_impact_runs increases 2 to 3, dependency_stale_causes 1 to 2, provenance_events 25 to 26 and outbox_events 24 to 25. Successful observation is in artifacts/tmp/CAP-05.S03.T03.reviewer-late-stop-02.log (raw SHA-256 c37c69a39e7ef60b910289ce0bf3af784bfe4bd70de0fc20e77e3d095c65df1e). The service checks the latch at guard entry and after the repository returns, while its actor callback returns a frozen actor without checking stop. The repository's final _current_actor/_authority path checks durable Intent/privacy but misses the trusted stop, and the object store commits before the service detects it. Existing test_substitutions_and_late_native_detach_deny_research_content signals detach only after resolve returns, so it proves delivery denial without covering this publication window. Governing contracts: Approved S03 sections 5.2, 7, 8 and 9.3 require current trusted authority and safe failure/recovery for consequential atomic publication. The task-start current-principal row and R01 criterion 2 explicitly claim native/session authority fences stale side effects. ADR0046's documentary mapping states that the trusted stop latch fences late detach while repository writers revalidate authority. Systems Design 13.5 requires cooperative interruption of active work. Affected criteria are 1 and 2. Source locations: services/core-api/src/research_observatory_core/document_revision_service.py:163, services/core-api/src/research_observatory_core/document_revision_service.py:174, services/core-api/src/research_observatory_core/document_revision_service.py:180, services/core-api/src/research_observatory_core/source_anchor_repository.py:147, services/core-api/src/research_observatory_core/source_anchor_repository.py:391, services/core-api/src/research_observatory_core/object_store.py:3631.",
+      "required_remediation": "First record this adverse R01 disposition and update the missed acceptance row. Add the exact focused regression before product edits: a trusted stop during broken-anchor publication must yield bounded denial, close/roll back the owning writer, and preserve pre-request invalidation/run/stale/provenance/outbox counts. Restore current native stop checking inside the repository's owning writer, including before publication/protected work and its final precommit fence, without weakening durable Intent/privacy/exact-copy rights, original-source integrity or denial auditing. Keep the existing delivery fence. Reopen a fresh native session and prove a valid retry publishes exactly once. Preserve this R01/reproduction and the initial setup failure, produce a strict-descendant R02 packet, and replay F01 plus the changed authority/performance risk with fresh focused native/Core checks and unchanged 100 ms p95 evidence. No framework change, scope amendment, parser retest, criterion relaxation, history rewrite or new approval is required."
+    }
+  ],
+  "closures": [],
+  "acceptance_reviews": [
+    {
+      "criterion_index": 1,
+      "result": "not-satisfied",
+      "assessment": "Exact accepted source-revision context, adjacent protected text, canonical label origin, retained old-revision resolution and candidate/ambiguous/unresolved citation targets are supported by the selected proof. Authenticated broken derivative detection conservatively marks direct and transitive evidence stale atomically and idempotently; unknown/foreign IDs, canonical outbox loss and rights denial do not establish a broken anchor. The fresh structural resolver observation is 87.4281 ms nearest-rank warm p95 under the unchanged 100 ms budget. F01 prevents accepting the authorized publication boundary: a trusted stop before commit still creates a new invalidation, propagation run, stale cause and outbox fact, despite the request being denied."
+    },
+    {
+      "criterion_index": 2,
+      "result": "not-satisfied",
+      "assessment": "All 21 selected groups truthfully pass at the unchanged candidate and producer. Focused cases establish current durable Intent/privacy/exact-copy rights, retained-hash Intent corruption denial, source lookup/context single-writer ownership, failure close, durable denied-rights audit, strict body/Origin/opaque native commands and renderer identity/status/selector/cursor bounds. Catalog validation reuse applies only to the one fully validated recursively immutable compiled identity; foreign/detached values remain fully validated. The fresh readonly Intent snapshot closes its coherent transaction and returns detached frozen values or bounded failure records; scoped nested project actions remain thread/root/project/lifetime bound and recheck layout/profile/access. Full provenance content/hash validation remains active. The independent late-stop reproduction exposes F01, so the stated current native authority through stale side effects is not established by the passing delivery-only test."
+    },
+    {
+      "criterion_index": 3,
+      "result": "satisfied",
+      "assessment": "The bounded task uses existing canonical Document identities, protected artifacts, material dependencies, provenance and outbox authority. Generated resolution/citation schemas, concrete API/port/client contracts, schema27 profile/recovery fingerprints and the exact product migration module inventory match the change. Literal populated committed schema26 rows, impact runs, metadata/history, indexes/triggers/FKs and ciphertext are preserved under the backed-up forward migration; all twelve material interruption seams and current/v1 migration paths have authenticated fresh proof. Existing Proposed ADR0046 supplies exact T03 mapping and the original-claim-base ADR/architecture checks pass. Accepted ADR0013/0024/0029, frozen Wave/reference approvals and existing parser acceptance remain unchanged. No automation-framework behavior or unapproved model/resource tier was developed. F01 requires restoring the declared product authority behavior, not changing the approved contract."
+    }
+  ],
+  "independence": {
+    "implementation_owner": "codex-w2-implementation",
+    "statement": "I independently inspected the exact committed candidate and evidence with a separate agent identity, then authored and ran only one focused disposable actual-Core reproduction prompted by the concrete late-stop gap. I did not author product or qualifying tests/producers, edit implementation, commit, mutate taskctl, integrate main, approve scope, or decide a release. My only tracked write is this formal review ledger; reproduction and authentication diagnostics are ignored task-owned files."
+  },
+  "scope_limits": {
+    "nativeCore": "Actual current native human/session/Intent/privacy/exact-copy rights, SQLCipher and encrypted-envelope/API composition using declared synthetic accepted parser IR and downstream evidence.",
+    "reproduction": "Trusted stop is signaled at the existing precommit publication seam in a disposable project. This proves durable side effects separately from delivery denial; no actual installed Tauri process is asserted.",
+    "performance": "Twenty fresh consecutive warm in-process actual-Core resolutions, nearest-rank p95 87.4280999997 ms at the reported current Windows AMD64 host, unchanged 100 ms. No parser inference, full PDF/IR read, installed package, cold or 8GB/16GB tier qualification.",
+    "deferred": "Integrated S03 E2E/restart/recovery and independent slice review, S04 secure source-viewer activation, the requested future model/resource amendment, fresh full W2 affected/repository/profile/installation/security/privacy/rights/accessibility/performance/package/platform qualification and separate human release gate remain required."
+  },
+  "preserved_adverse_observations": [
+    "All 69 manifest-retained artifact/reference raw hashes match, including development failures, over-target timing, invalid initial late-Intent characterizations, pinned TypeScript dependency-resolution failures and the original qualification-helper dependency-path SETUP_ERROR.",
+    "The initial reviewer reproduction failed to resolve its disposable temporary project under the sandbox; reviewer-late-stop-01.log remains SETUP_ERROR, not a product or passing observation. The unchanged focused reproduction then executed with approved bounded local filesystem authority and observed F01 in reviewer-late-stop-02.log.",
+    "The first read-only authentication helper assertion applied text newline canonicalization to the ZIP archive. The corrected binary/text hash convention matches the independent exact privacy reports; no content, admission or scanner exception changed.",
+    "Submission path-resolution/publication diagnostics remain the owner's retained facts; this reviewer does not infer successful submission until authenticating the frozen packet."
+  ],
+  "verification_selection": {
+    "selectedCommandIds": [
+      "contracts:unit",
+      "data:unit",
+      "desktop:application",
+      "documents:anchor-schemas",
+      "documents:anchors",
+      "documents:unit",
+      "foundation:adr",
+      "foundation:architecture",
+      "foundation:build-manifest",
+      "foundation:quality",
+      "packaging:unit",
+      "service:unit"
+    ],
+    "riskAnalysis": "Expanded task review is required by public/native authority, protected I/O, consequential invalidation/provenance and migration changes. Authenticate the exact fresh criterion-linked reports instead of replaying unchanged suites. One focused actual-Core reproduction is justified by the source-observed current-stop gap. No unchanged full history/profile, archive rescan, parser benchmark or minimum-tier test was run.",
+    "deferred": [
+      "Integrated S03 slice qualification/review",
+      "S04 actual source-viewer activation",
+      "Product model/resource successor amendment before dependent implementation",
+      "Fresh full W2 qualification and separate human release gate"
+    ]
+  },
+  "accepted_prior_performance": {
+    "path": "artifacts/evidence/CAP-05.S02.T03.performance-owner-acceptance-01.md",
+    "sha256": "5dea8e7a2046f5ec229b10a143370c6048e62080da7c3f0f99d700f86219774a",
+    "scope": "Preserve the exact owner-accepted 62.5333542-second warm parser observation. No tuning, retest or broader waiver."
+  },
+  "optional_adjacent_findings": [],
+  "notes": "Changes requested for CAP-05.S03.T03 at exact R01 candidate c2e92e7575a04aa8f8e5642623868e3b9adfdc1d. F01 is the sole blocking finding: a native stop before the owning context writer commits returns 409 without research content but still publishes invalidation, downstream staleness, provenance and outbox. The 21 selected group PASS and 87.4281 ms warm resolver p95 are authentic within their declared scope and remain retained; they do not close the newly reproduced authority boundary. Correct and replay this focused boundary in a superseding candidate. No slice, installed desktop, minimum-tier, parser or Wave/release approval is given.",
+  "packet_sha256": "2d9dc8ecb8c2d690f3b77828463d2b3469a36fb8aa961f75444d45252c66b7e6",
+  "acceptance_criteria_sha256": "bdb126dfc82e8ed17f35264508c1894cc8aae3d2e1bd3a175e9dc85cba27ae63",
+  "selection_sha256": "b713080b2ef02d1694a11c6dc4829bd0624a9cb84fe5270b47fdb9b716b3e124",
+  "reviewed_at": "2026-10-08T13:24:55Z",
+  "evidence_reproduction": {
+    "frozen_packet_authentication": {
+      "result": "PASS",
+      "existing_read_only_binding_function": "taskctl.task_submission_packet_errors",
+      "errors": [],
+      "packet_sha256": "2d9dc8ecb8c2d690f3b77828463d2b3469a36fb8aa961f75444d45252c66b7e6",
+      "evidence_reference": {
+        "type": "criterion-manifest",
+        "path": "artifacts/evidence/CAP-05.S03.T03.R01.json",
+        "sha256": "ba955d61e2ef7e191ba39e18fbc422002032db6982eb41e6d59f0197f9b3f2a7",
+        "commit": "c2e92e7575a04aa8f8e5642623868e3b9adfdc1d",
+        "recorded_at": "2026-10-08T13:15:29+00:00"
+      },
+      "acceptance_criteria_sha256": "bdb126dfc82e8ed17f35264508c1894cc8aae3d2e1bd3a175e9dc85cba27ae63",
+      "selection_sha256": "b713080b2ef02d1694a11c6dc4829bd0624a9cb84fe5270b47fdb9b716b3e124",
+      "prior_attempt_id": null,
+      "formal_open_finding_ids_before_review": [],
+      "changed_paths": 68,
+      "base_ancestry_verified": true,
+      "source": "artifacts/tmp/CAP-05.S03.T03.reviewer-freeze-01.json"
+    },
+    "authenticated_checks": [
+      {
+        "id": "actual-core-resolution",
+        "command_id": "documents:anchors",
+        "candidate_commit": "c2e92e7575a04aa8f8e5642623868e3b9adfdc1d",
+        "result": "PASS",
+        "exit_code": 0,
+        "raw_output": {
+          "path": "artifacts/tmp/CAP-05.S03.T03.qualification-50.actual-core-resolution.log",
+          "sha256": "c684b8b87a55f5fa7ea9bd633b60daa832ff288c983c5a4af072fa35a81eb312",
+          "canonical_sha256": "4e5913561ecbe23bb68752a2f8ce6dcbbe9362e486c1fe586dcc22da9ecc8424"
+        },
+        "authentication": "Raw receipt/log and line-ending-canonical evidence hashes verified; all 21 declarations bind the exact candidate. Source inspected separately for criterion adequacy."
+      },
+      {
+        "id": "resolution-citation-invalidation",
+        "command_id": "documents:anchors",
+        "candidate_commit": "c2e92e7575a04aa8f8e5642623868e3b9adfdc1d",
+        "result": "PASS",
+        "exit_code": 0,
+        "raw_output": {
+          "path": "artifacts/tmp/CAP-05.S03.T03.qualification-50.resolution-citation-invalidation.log",
+          "sha256": "b0216d7123a3faccbf69128e668edc160f43e35c865f5d76400520f2ce2bb412",
+          "canonical_sha256": "311bc586de1651c36294d0808976984f3cbc65f7a5c513dedbf943e7d2b40f51"
+        },
+        "authentication": "Raw receipt/log and line-ending-canonical evidence hashes verified; all 21 declarations bind the exact candidate. Source inspected separately for criterion adequacy."
+      },
+      {
+        "id": "current-authority",
+        "command_id": "service:unit",
+        "candidate_commit": "c2e92e7575a04aa8f8e5642623868e3b9adfdc1d",
+        "result": "PASS",
+        "exit_code": 0,
+        "raw_output": {
+          "path": "artifacts/tmp/CAP-05.S03.T03.qualification-50.current-authority.log",
+          "sha256": "d077cffa39ab337d32b101dd9daf394e08e76e4f48a0e3ff03c66f65006ba1d7",
+          "canonical_sha256": "20092fefc3174bfbdae30f34fe4c2ca5ddeb8ad81c753b7f7cd9c8bb348a4197"
+        },
+        "authentication": "Raw receipt/log and line-ending-canonical evidence hashes verified; all 21 declarations bind the exact candidate. Source inspected separately for criterion adequacy."
+      },
+      {
+        "id": "strict-native-api",
+        "command_id": "service:unit",
+        "candidate_commit": "c2e92e7575a04aa8f8e5642623868e3b9adfdc1d",
+        "result": "PASS",
+        "exit_code": 0,
+        "raw_output": {
+          "path": "artifacts/tmp/CAP-05.S03.T03.qualification-50.strict-native-api.log",
+          "sha256": "905f8ea22c8b37ba2600c18e7937fbca7cf564abf3b9d58740965f959457bfef",
+          "canonical_sha256": "a7218ffa0de6f8fed887f37e8e6eeea9748a8ff9a25dbf7c39035012618d88cc"
+        },
+        "authentication": "Raw receipt/log and line-ending-canonical evidence hashes verified; all 21 declarations bind the exact candidate. Source inspected separately for criterion adequacy."
+      },
+      {
+        "id": "original-source-boundaries",
+        "command_id": "documents:unit",
+        "candidate_commit": "c2e92e7575a04aa8f8e5642623868e3b9adfdc1d",
+        "result": "PASS",
+        "exit_code": 0,
+        "raw_output": {
+          "path": "artifacts/tmp/CAP-05.S03.T03.qualification-50.original-source-boundaries.log",
+          "sha256": "7e2f3902457cf5c866f8d1750d050b52ac0cb687ef7ef90d27b8b37c1c8d4276",
+          "canonical_sha256": "7a76ca5a8adc3393071f80cf6b192d039ae497c323cdf3e568f5dcd46c10cf44"
+        },
+        "authentication": "Raw receipt/log and line-ending-canonical evidence hashes verified; all 21 declarations bind the exact candidate. Source inspected separately for criterion adequacy."
+      },
+      {
+        "id": "populated-v26-migration",
+        "command_id": "documents:unit",
+        "candidate_commit": "c2e92e7575a04aa8f8e5642623868e3b9adfdc1d",
+        "result": "PASS",
+        "exit_code": 0,
+        "raw_output": {
+          "path": "artifacts/tmp/CAP-05.S03.T03.qualification-50.populated-v26-migration.log",
+          "sha256": "17b19362aa63df3f837ad6fff3c774da446bc1da7c0e46fa7d5ba4502a9c5e42",
+          "canonical_sha256": "b035477bfcf5d25057fe816ace6a05c7b778898e63edaaa79f83f56ad6e959d1"
+        },
+        "authentication": "Raw receipt/log and line-ending-canonical evidence hashes verified; all 21 declarations bind the exact candidate. Source inspected separately for criterion adequacy."
+      },
+      {
+        "id": "current-migration-path",
+        "command_id": "data:unit",
+        "candidate_commit": "c2e92e7575a04aa8f8e5642623868e3b9adfdc1d",
+        "result": "PASS",
+        "exit_code": 0,
+        "raw_output": {
+          "path": "artifacts/tmp/CAP-05.S03.T03.qualification-50.current-migration-path.log",
+          "sha256": "5a1c0e9276cd211574829fdd175e6edc920d3844114bdf753819f0b83469f789",
+          "canonical_sha256": "1e8e822e16e7d1bdac1ea2a0878c7455ce09f8b5dd09c71626a35219046c4749"
+        },
+        "authentication": "Raw receipt/log and line-ending-canonical evidence hashes verified; all 21 declarations bind the exact candidate. Source inspected separately for criterion adequacy."
+      },
+      {
+        "id": "immutable-catalog-provenance",
+        "command_id": "contracts:unit",
+        "candidate_commit": "c2e92e7575a04aa8f8e5642623868e3b9adfdc1d",
+        "result": "PASS",
+        "exit_code": 0,
+        "raw_output": {
+          "path": "artifacts/tmp/CAP-05.S03.T03.qualification-50.immutable-catalog-provenance.log",
+          "sha256": "893a0206b3032332c343d808ca0c5843ae841fb4b32341774e588fd8fe8c71ab",
+          "canonical_sha256": "70b61393206b647d3919c6473fbef7f684fe2986ce9e5370cad5dfce3d1f4966"
+        },
+        "authentication": "Raw receipt/log and line-ending-canonical evidence hashes verified; all 21 declarations bind the exact candidate. Source inspected separately for criterion adequacy."
+      },
+      {
+        "id": "lint",
+        "command_id": "foundation:quality",
+        "candidate_commit": "c2e92e7575a04aa8f8e5642623868e3b9adfdc1d",
+        "result": "PASS",
+        "exit_code": 0,
+        "raw_output": {
+          "path": "artifacts/tmp/CAP-05.S03.T03.qualification-50.lint.log",
+          "sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18",
+          "canonical_sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18"
+        },
+        "authentication": "Raw receipt/log and line-ending-canonical evidence hashes verified; all 21 declarations bind the exact candidate. Source inspected separately for criterion adequacy."
+      },
+      {
+        "id": "format",
+        "command_id": "foundation:quality",
+        "candidate_commit": "c2e92e7575a04aa8f8e5642623868e3b9adfdc1d",
+        "result": "PASS",
+        "exit_code": 0,
+        "raw_output": {
+          "path": "artifacts/tmp/CAP-05.S03.T03.qualification-50.format.log",
+          "sha256": "2de9ddcc7788f957b3bb03cb8e20b1f07f56cc1347066641a4e1de2f2570418e",
+          "canonical_sha256": "2de9ddcc7788f957b3bb03cb8e20b1f07f56cc1347066641a4e1de2f2570418e"
+        },
+        "authentication": "Raw receipt/log and line-ending-canonical evidence hashes verified; all 21 declarations bind the exact candidate. Source inspected separately for criterion adequacy."
+      },
+      {
+        "id": "types",
+        "command_id": "foundation:quality",
+        "candidate_commit": "c2e92e7575a04aa8f8e5642623868e3b9adfdc1d",
+        "result": "PASS",
+        "exit_code": 0,
+        "raw_output": {
+          "path": "artifacts/tmp/CAP-05.S03.T03.qualification-50.types.log",
+          "sha256": "a3ee8cc563d620855a76e1c43ed6f1118b5d68435d0c1b38b01ae7646398501f",
+          "canonical_sha256": "3253c7a5a8535995ce0dc8b25611174b1763d2c9ff1bbb0a29e2e90cca3ca91e"
+        },
+        "authentication": "Raw receipt/log and line-ending-canonical evidence hashes verified; all 21 declarations bind the exact candidate. Source inspected separately for criterion adequacy."
+      },
+      {
+        "id": "portable-anchor-schemas",
+        "command_id": "documents:anchor-schemas",
+        "candidate_commit": "c2e92e7575a04aa8f8e5642623868e3b9adfdc1d",
+        "result": "PASS",
+        "exit_code": 0,
+        "raw_output": {
+          "path": "artifacts/tmp/CAP-05.S03.T03.qualification-50.portable-anchor-schemas.log",
+          "sha256": "9e70564a6485362e4a4b36a9984490c9b0c58eae8639198fd926d8c964731ae3",
+          "canonical_sha256": "c4232e96d850095c7ad5917d2ff4084acf1ec8551dd2b58ef4fd4b343bc8aa44"
+        },
+        "authentication": "Raw receipt/log and line-ending-canonical evidence hashes verified; all 21 declarations bind the exact candidate. Source inspected separately for criterion adequacy."
+      },
+      {
+        "id": "workflow-generator",
+        "command_id": "contracts:unit",
+        "candidate_commit": "c2e92e7575a04aa8f8e5642623868e3b9adfdc1d",
+        "result": "PASS",
+        "exit_code": 0,
+        "raw_output": {
+          "path": "artifacts/tmp/CAP-05.S03.T03.qualification-50.workflow-generator.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "canonical_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "authentication": "Raw receipt/log and line-ending-canonical evidence hashes verified; all 21 declarations bind the exact candidate. Source inspected separately for criterion adequacy."
+      },
+      {
+        "id": "provenance-generator",
+        "command_id": "contracts:unit",
+        "candidate_commit": "c2e92e7575a04aa8f8e5642623868e3b9adfdc1d",
+        "result": "PASS",
+        "exit_code": 0,
+        "raw_output": {
+          "path": "artifacts/tmp/CAP-05.S03.T03.qualification-50.provenance-generator.log",
+          "sha256": "452f9911f45b5cfb62a0b7dccbf504f8127dd47e8052c1db4903d1481afbef2a",
+          "canonical_sha256": "452f9911f45b5cfb62a0b7dccbf504f8127dd47e8052c1db4903d1481afbef2a"
+        },
+        "authentication": "Raw receipt/log and line-ending-canonical evidence hashes verified; all 21 declarations bind the exact candidate. Source inspected separately for criterion adequacy."
+      },
+      {
+        "id": "architecture",
+        "command_id": "foundation:architecture",
+        "candidate_commit": "c2e92e7575a04aa8f8e5642623868e3b9adfdc1d",
+        "result": "PASS",
+        "exit_code": 0,
+        "raw_output": {
+          "path": "artifacts/tmp/CAP-05.S03.T03.qualification-50.architecture.log",
+          "sha256": "51a256bf6a7b2e89ab1d1b97aa19077aabf0e8858a450de1f5ceb155ed5c3e88",
+          "canonical_sha256": "1ba622fdbf569bf9ab13ee46e639b636ea005c560abcd4b168f782d8fbdc3f74"
+        },
+        "authentication": "Raw receipt/log and line-ending-canonical evidence hashes verified; all 21 declarations bind the exact candidate. Source inspected separately for criterion adequacy."
+      },
+      {
+        "id": "adr-coverage",
+        "command_id": "foundation:adr",
+        "candidate_commit": "c2e92e7575a04aa8f8e5642623868e3b9adfdc1d",
+        "result": "PASS",
+        "exit_code": 0,
+        "raw_output": {
+          "path": "artifacts/tmp/CAP-05.S03.T03.qualification-50.adr-coverage.log",
+          "sha256": "07f57f5638832849c27c64de4012888e96a6e1ec170c54babe7a3e6c38ca64c9",
+          "canonical_sha256": "7978a0b0670afb9d01b002e5595cfbc23d75b93573ff6d4bc154070c03fc73a3"
+        },
+        "authentication": "Raw receipt/log and line-ending-canonical evidence hashes verified; all 21 declarations bind the exact candidate. Source inspected separately for criterion adequacy."
+      },
+      {
+        "id": "package-contract",
+        "command_id": "packaging:unit",
+        "candidate_commit": "c2e92e7575a04aa8f8e5642623868e3b9adfdc1d",
+        "result": "PASS",
+        "exit_code": 0,
+        "raw_output": {
+          "path": "artifacts/tmp/CAP-05.S03.T03.qualification-50.package-contract.log",
+          "sha256": "ae523ad9a43a325a072f126ca6c75f22cda432974b8b61480b9041191774eacd",
+          "canonical_sha256": "4a7259e6f196ef8cd25e0cbad0a28e9988a516bac737403ebc429b282a79ed8d"
+        },
+        "authentication": "Raw receipt/log and line-ending-canonical evidence hashes verified; all 21 declarations bind the exact candidate. Source inspected separately for criterion adequacy."
+      },
+      {
+        "id": "build-manifest",
+        "command_id": "foundation:build-manifest",
+        "candidate_commit": "c2e92e7575a04aa8f8e5642623868e3b9adfdc1d",
+        "result": "PASS",
+        "exit_code": 0,
+        "raw_output": {
+          "path": "artifacts/tmp/CAP-05.S03.T03.qualification-50.build-manifest.log",
+          "sha256": "651d48d1e4b3e3c396dedc2127af60dedbed767c7f6de3ea4a8bf8e0ec0af60d",
+          "canonical_sha256": "a4e64afc3ad76b9736c2a81ad7875f3f7597b6507bf5c93486b4cce4a080c8fa"
+        },
+        "authentication": "Raw receipt/log and line-ending-canonical evidence hashes verified; all 21 declarations bind the exact candidate. Source inspected separately for criterion adequacy."
+      },
+      {
+        "id": "native-command",
+        "command_id": "desktop:application",
+        "candidate_commit": "c2e92e7575a04aa8f8e5642623868e3b9adfdc1d",
+        "result": "PASS",
+        "exit_code": 0,
+        "raw_output": {
+          "path": "artifacts/tmp/CAP-05.S03.T03.qualification-50.native-command.log",
+          "sha256": "6fd6db2a247bff973689e2d8b7f475e3d4b5b05237a46e0ea472d6a9468e2b48",
+          "canonical_sha256": "6fd6db2a247bff973689e2d8b7f475e3d4b5b05237a46e0ea472d6a9468e2b48"
+        },
+        "authentication": "Raw receipt/log and line-ending-canonical evidence hashes verified; all 21 declarations bind the exact candidate. Source inspected separately for criterion adequacy."
+      },
+      {
+        "id": "renderer-unit",
+        "command_id": "desktop:application",
+        "candidate_commit": "c2e92e7575a04aa8f8e5642623868e3b9adfdc1d",
+        "result": "PASS",
+        "exit_code": 0,
+        "raw_output": {
+          "path": "artifacts/tmp/CAP-05.S03.T03.qualification-50.renderer-unit.log",
+          "sha256": "e26dc84f052ab6867a9d6997ca3d83dbec1ec4da8be68f89a60fa66302aa8cf6",
+          "canonical_sha256": "e26dc84f052ab6867a9d6997ca3d83dbec1ec4da8be68f89a60fa66302aa8cf6"
+        },
+        "authentication": "Raw receipt/log and line-ending-canonical evidence hashes verified; all 21 declarations bind the exact candidate. Source inspected separately for criterion adequacy."
+      },
+      {
+        "id": "renderer-types",
+        "command_id": "desktop:application",
+        "candidate_commit": "c2e92e7575a04aa8f8e5642623868e3b9adfdc1d",
+        "result": "PASS",
+        "exit_code": 0,
+        "raw_output": {
+          "path": "artifacts/tmp/CAP-05.S03.T03.qualification-50.renderer-types.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "canonical_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "authentication": "Raw receipt/log and line-ending-canonical evidence hashes verified; all 21 declarations bind the exact candidate. Source inspected separately for criterion adequacy."
+      }
+    ],
+    "machine_artifact_authentication": {
+      "result": "PASS",
+      "manifest_references": 69,
+      "all_raw_hashes_match": true,
+      "producer_hash_matches": true,
+      "changed_product_inputs": 56,
+      "all_changed_product_hashes_match": true,
+      "diagnostic": {
+        "path": "artifacts/tmp/CAP-05.S03.T03.reviewer-authenticate-01.json",
+        "sha256": "6f26b266549e1d114487791d81bf07727e490b13f394aac9d718f8a1b6dc3fdc"
+      },
+      "input_boundary": "HEAD and product inputs remained fixed during independent source inspection and the focused reproduction. The owner's atomic submission alone changed planning state. The fresh producer used tracked-input locks and an owned immutable Python snapshot. No runtime result reuse or complete ambient Node/Rust dependency closure is asserted."
+    },
+    "performance_authentication": {
+      "samples": 20,
+      "nearestRankP95Ms": 87.42809999966994,
+      "reportedP95Ms": 87.42809999966994,
+      "budgetMs": 100,
+      "hostFacts": {
+        "os": "Windows-11-10.0.26200-SP0",
+        "architecture": "AMD64",
+        "logicalProcessors": 20,
+        "physicalTotalBytes": 16984227840,
+        "physicalAvailableBytesBeforeChecks": 5082243072,
+        "hardwareTierQualification": false
+      },
+      "total_selected_duration_seconds": 276.97070040000835
+    },
+    "independent_focused_reproduction": {
+      "result": "CONFIRMED_BLOCKING_FINDING",
+      "candidate_commit": "c2e92e7575a04aa8f8e5642623868e3b9adfdc1d",
+      "producer": {
+        "path": "artifacts/tmp/CAP-05.S03.T03.reviewer-late-stop-01.py",
+        "sha256": "efddac2495020b119fde90b12458d8eaffdf4330578f4b13d7a84dc8e0c2da4b"
+      },
+      "initial_setup_error": {
+        "path": "artifacts/tmp/CAP-05.S03.T03.reviewer-late-stop-01.log",
+        "sha256": "4a30e7ed40c5e4764d64c18eb5c55fb28826f765ccb50602a0cf69d98e32bae5"
+      },
+      "successful_observation": {
+        "path": "artifacts/tmp/CAP-05.S03.T03.reviewer-late-stop-02.log",
+        "sha256": "c37c69a39e7ef60b910289ce0bf3af784bfe4bd70de0fc20e77e3d095c65df1e"
+      },
+      "http_status": 409,
+      "research_text_disclosed": false,
+      "stop_seam": "anchor-dependents-stale",
+      "before": {
+        "dependency_impact_runs": 2,
+        "dependency_stale_causes": 1,
+        "provenance_events": 25,
+        "outbox_events": 24
+      },
+      "after": {
+        "dependency_impact_runs": 3,
+        "dependency_stale_causes": 2,
+        "provenance_events": 26,
+        "outbox_events": 25
+      },
+      "assertion": "Trusted stop before final writer authority/commit denies delivery but does not roll back publication."
+    },
+    "existing_independent_privacy_authentication": {
+      "result": "PASS",
+      "reports": [
+        {
+          "path": ".local/CAP-05.S03.T03.privacy-review-01.json",
+          "sha256": "938a69bf58a8cbe1d9c54af7ca16474c5c986952e4c09ae83b0a337bd594c487",
+          "reviewer": "agent:/root/t03_fixture_privacy_review",
+          "disposition": "privacy-approved-exact-archive-only",
+          "exactAdmissions": [
+            {
+              "path": "tests/fixtures/documents/v26-populated-predecessor.zip",
+              "hashConvention": "raw-binary",
+              "canonicalHashMatches": true
+            }
+          ]
+        },
+        {
+          "path": ".local/CAP-05.S03.T03.privacy-review-02.json",
+          "sha256": "84dc6c1b9be6fa31ec18133b420569de0fbbd5d60708b216f422bc47ae4d3f75",
+          "reviewer": "agent:/root/t03_fixture_privacy_review",
+          "disposition": "privacy-approved-exact-manifest-content-digest-findings",
+          "exactAdmissions": [
+            {
+              "path": "tests/fixtures/documents/v26-populated-predecessor.json",
+              "hashConvention": "LF-canonical-text",
+              "canonicalHashMatches": true
+            }
+          ]
+        },
+        {
+          "path": ".local/CAP-05.S03.T03.privacy-review-03.json",
+          "sha256": "e66b47a26720d1dda1ae8066294da7c281ccbd9ef8a9b098d82c24b5c1c7d547",
+          "reviewer": "agent:/root/t03_fixture_privacy_review",
+          "disposition": null,
+          "exactAdmissions": []
+        },
+        {
+          "path": ".local/CAP-05.S03.T03.privacy-review-04.json",
+          "sha256": "8043c46dcf68c0bc1895685fd48d5b0f0472221afda188d5695ec20e4c609476",
+          "reviewer": "agent:/root/t03_fixture_privacy_review",
+          "disposition": null,
+          "exactAdmissions": []
+        },
+        {
+          "path": ".local/CAP-05.S03.T03.privacy-review-05.json",
+          "sha256": "9547bab476795c984410f0e69f69c36ad176a079d4e07459d48f27c78c6b840c",
+          "reviewer": "agent:/root/t03_fixture_privacy_review",
+          "disposition": "privacy-approved-exact-test-artifact-findings",
+          "exactAdmissions": [
+            {
+              "path": "tests/service/test_project_lifecycle.py",
+              "hashConvention": "LF-canonical-text",
+              "canonicalHashMatches": true
+            },
+            {
+              "path": "tests/service/test_research_intents.py",
+              "hashConvention": "LF-canonical-text",
+              "canonicalHashMatches": true
+            }
+          ]
+        }
+      ],
+      "successor_registry": {
+        "path": ".local/CAP-05.S03.T03.reviewed-artifacts-03.json",
+        "sha256": "170fc6039a3a211d4e3316fc0b4cf248160a7d4d3652f665c0a759a65394474c"
+      },
+      "scope": "Exact approved archive/manifest/test admissions and preserved diagnostic reports were authenticated, with raw binary versus LF-canonical text hashing. No archive or historical metadata rescan; diagnostic privacy reports03/04 are not promoted to hook or product approval."
+    }
+  }
+}

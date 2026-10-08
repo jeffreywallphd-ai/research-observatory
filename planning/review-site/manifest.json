@@ -22635,14 +22635,214 @@
               "task_id": "CAP-05.S03.T03",
               "title": "Implement anchor resolution and citation-link APIs",
               "status": "IN_PROGRESS",
-              "mode": "latest-review-only",
+              "mode": "append-only",
               "latest_review": {
-                "reviewer": null,
-                "result": null,
-                "reviewed_at": null,
-                "notes": null
+                "reviewer": "agent:/root/t03_task_review",
+                "result": "changes-requested",
+                "reviewed_at": "2026-10-08T13:25:53+00:00",
+                "notes": "Changes requested for CAP-05.S03.T03 at exact R01 candidate c2e92e7575a04aa8f8e5642623868e3b9adfdc1d. F01 is the sole blocking finding: a native stop before the owning context writer commits returns 409 without research content but still publishes invalidation, downstream staleness, provenance and outbox. The 21 selected group PASS and 87.4281 ms warm resolver p95 are authentic within their declared scope and remain retained; they do not close the newly reproduced authority boundary. Correct and replay this focused boundary in a superseding candidate. No slice, installed desktop, minimum-tier, parser or Wave/release approval is given."
               },
-              "review_control": null
+              "review_control": {
+                "version": 1,
+                "attempts": [
+                  {
+                    "submission": {
+                      "id": "R01",
+                      "submitted_by": "codex-w2-implementation",
+                      "submitted_at": "2026-10-08T13:15:29+00:00",
+                      "candidate_commit": "c2e92e7575a04aa8f8e5642623868e3b9adfdc1d",
+                      "base_commit": "c1899e0de48e79221ff0335a31c976ef87e02db5",
+                      "branch": "codex/w2-implementation",
+                      "evidence_reference": {
+                        "type": "criterion-manifest",
+                        "path": "artifacts/evidence/CAP-05.S03.T03.R01.json",
+                        "sha256": "ba955d61e2ef7e191ba39e18fbc422002032db6982eb41e6d59f0197f9b3f2a7",
+                        "commit": "c2e92e7575a04aa8f8e5642623868e3b9adfdc1d",
+                        "recorded_at": "2026-10-08T13:15:29+00:00"
+                      },
+                      "acceptance_criteria_sha256": "bdb126dfc82e8ed17f35264508c1894cc8aae3d2e1bd3a175e9dc85cba27ae63",
+                      "changed_paths": [
+                        "apps/desktop/src-tauri/src/document_reader.rs",
+                        "apps/desktop/src-tauri/src/lib.rs",
+                        "apps/desktop/src-tauri/src/supervisor.rs",
+                        "apps/desktop/src/app/sourceAnchors.ts",
+                        "apps/desktop/src/app/sourceAnchorsNative.ts",
+                        "apps/desktop/src/app/sourceResolution.test.ts",
+                        "artifacts/evidence/CAP-05.S03.T03.task-start.md",
+                        "artifacts/evidence/W2.owner-hardware-direction-01.md",
+                        "docs/adr/ADR-0046-bind-immutable-document-revisions-to-existing-human-authority.md",
+                        "docs/adr/index.json",
+                        "docs/architecture/local-sqlite-storage.md",
+                        "docs/planning-implementation-plan.md",
+                        "packages/contracts/anchors/README.md",
+                        "packages/contracts/anchors/anchor-resolution.v1.schema.json",
+                        "packages/contracts/anchors/citation-links.v1.schema.json",
+                        "packages/contracts/anchors/generate_anchor_schema.py",
+                        "packages/contracts/provenance/provenance-event.template.py.txt",
+                        "packages/contracts/storage/README.md",
+                        "packages/contracts/storage/sqlite-migration-recovery.schema.json",
+                        "packages/contracts/storage/sqlite-profile.schema.json",
+                        "packages/contracts/storage/sqlite-profile.v1.json",
+                        "packages/contracts/workflow-profile/workflow-profile.template.py.txt",
+                        "packaging/build-inputs.json",
+                        "planning/backlog.yaml",
+                        "planning/review-site/CAP-05/CAP-05.S03.T03.html",
+                        "planning/review-site/CAP-05/CAP-05.S03.html",
+                        "planning/review-site/manifest.json",
+                        "planning/review-site/waves/W2.html",
+                        "planning/status-summary.md",
+                        "quality-scope.json",
+                        "services/core-api/packaging/sidecar-build.json",
+                        "services/core-api/src/research_observatory_core/anchors/contracts.py",
+                        "services/core-api/src/research_observatory_core/corpus_repository.py",
+                        "services/core-api/src/research_observatory_core/corpus_service.py",
+                        "services/core-api/src/research_observatory_core/dependency_impacts.py",
+                        "services/core-api/src/research_observatory_core/document_revision_api.py",
+                        "services/core-api/src/research_observatory_core/document_revision_service.py",
+                        "services/core-api/src/research_observatory_core/import_preview_service.py",
+                        "services/core-api/src/research_observatory_core/main.py",
+                        "services/core-api/src/research_observatory_core/migrations/runner.py",
+                        "services/core-api/src/research_observatory_core/migrations/versions/v0027_revision_invalidations.py",
+                        "services/core-api/src/research_observatory_core/object_store.py",
+                        "services/core-api/src/research_observatory_core/ports/repositories.py",
+                        "services/core-api/src/research_observatory_core/ports/source_anchors.py",
+                        "services/core-api/src/research_observatory_core/privacy.py",
+                        "services/core-api/src/research_observatory_core/projects.py",
+                        "services/core-api/src/research_observatory_core/provenance_contracts.py",
+                        "services/core-api/src/research_observatory_core/repositories.py",
+                        "services/core-api/src/research_observatory_core/research_intents.py",
+                        "services/core-api/src/research_observatory_core/source_anchor_repository.py",
+                        "services/core-api/src/research_observatory_core/storage.py",
+                        "services/core-api/src/research_observatory_core/workflow_profile_contracts.py",
+                        "tests/anchors/test_anchor_resolution.py",
+                        "tests/anchors/test_native_resolution_composition.py",
+                        "tests/contracts/test_provenance_contracts.py",
+                        "tests/contracts/test_workflow_profile_contracts.py",
+                        "tests/data/test_sqlite_migrations.py",
+                        "tests/documents/test_acquisition_recovery_migration.py",
+                        "tests/documents/test_anchor_invalidation_migration.py",
+                        "tests/documents/test_document_revision_migration.py",
+                        "tests/documents/test_document_revision_workflow.py",
+                        "tests/fixtures/documents/v26-populated-predecessor.json",
+                        "tests/fixtures/documents/v26-populated-predecessor.zip",
+                        "tests/packaging/test_core_sidecar_package.py",
+                        "tests/service/test_project_lifecycle.py",
+                        "tests/service/test_research_intents.py",
+                        "tests/service/test_source_anchor_api.py",
+                        "tools/core_sidecar_build.py"
+                      ],
+                      "selected_checks": [
+                        "./artifacts/tmp/CAP-05.S02.T03.check-runtime-122/python/python.exe -B -m unittest tests.anchors.test_native_resolution_composition -v",
+                        "./artifacts/tmp/CAP-05.S02.T03.check-runtime-122/python/python.exe -B -m unittest tests.anchors.test_anchor_resolution tests.anchors.test_anchor_contracts tests.anchors.test_anchor_repository -v",
+                        "./artifacts/tmp/CAP-05.S02.T03.check-runtime-122/python/python.exe -B -m unittest tests.service.test_research_intents.ResearchIntentServiceTests.test_readonly_authority_snapshot_is_detached_and_fresh_per_invocation tests.service.test_research_intents.ResearchIntentServiceTests.test_readonly_authority_snapshot_defers_bounded_failure_and_closes_database tests.service.test_research_intents.ResearchIntentServiceTests.test_readonly_authority_snapshot_keeps_one_coherent_read_during_a_commit tests.service.test_research_intents.ResearchIntentServiceTests.test_readonly_authority_snapshot_unexpected_failure_releases_transaction tests.service.test_research_intents.ResearchIntentServiceTests.test_restart_denies_tampered_workflow_acceptance_lookup tests.service.test_research_intents.ResearchIntentServiceTests.test_restart_denies_rehashed_selection_with_substituted_intent_reference tests.service.test_research_intents.ResearchIntentServiceTests.test_restart_denies_complete_workflow_authority_deletion_after_activation tests.service.test_research_intents.ResearchIntentServiceTests.test_restart_denies_workflow_activation_deletion_while_selection_remains tests.service.test_research_intents.ResearchIntentServiceTests.test_restart_denies_activation_witness_deletion_while_settings_remain tests.service.test_research_intents.ResearchIntentServiceTests.test_restart_denies_substituted_activation_witness_hash tests.service.test_research_intents.ResearchIntentServiceTests.test_idempotent_replay_survives_restart_and_rejects_changed_command_or_actor tests.service.test_project_lifecycle.ProjectLifecycleTests.test_nested_project_scope_is_local_to_the_held_guard_and_rechecks_metadata -v",
+                        "./artifacts/tmp/CAP-05.S02.T03.check-runtime-122/python/python.exe -B -m unittest tests.service.test_source_anchor_api tests.service.test_document_revision_api -v",
+                        "./artifacts/tmp/CAP-05.S02.T03.check-runtime-122/python/python.exe -B -m unittest tests.parsing.test_protected_parse_source.ProtectedParseSourceTests.test_inspect_does_not_grant_derive_and_success_uses_exact_encrypted_copy tests.parsing.test_protected_parse_source.ProtectedParseSourceTests.test_deduplicated_ciphertext_origin_is_not_copy_authority tests.parsing.test_protected_parse_source.ProtectedParseSourceTests.test_rights_change_before_delivery_releases_writer_and_exposes_no_ir tests.parsing.test_protected_parse_source.ProtectedParseSourceTests.test_actual_project_close_and_reopen_refuses_old_session_delivery tests.parsing.test_protected_parse_source.ProtectedParseSourceTests.test_stale_intent_privacy_and_identical_digest_foreign_source_are_denied -v",
+                        "./artifacts/tmp/CAP-05.S02.T03.check-runtime-122/python/python.exe -B -m unittest tests.documents.test_anchor_invalidation_migration -v",
+                        "./artifacts/tmp/CAP-05.S02.T03.check-runtime-122/python/python.exe -B -m unittest tests.data.test_sqlite_migrations.SqliteMigrationTests.test_migrates_exact_v1_fixture_with_verified_restorable_backup_and_history tests.data.test_sqlite_migrations.SqliteMigrationTests.test_fresh_current_database_is_idempotent_without_migration_authority_leak -v",
+                        "./artifacts/tmp/CAP-05.S02.T03.check-runtime-122/python/python.exe -B -m unittest tests.contracts.test_workflow_profile_contracts.WorkflowProfileContractTests.test_governed_catalog_is_exact_hash_bound_and_has_all_fourteen_profiles tests.contracts.test_workflow_profile_contracts.WorkflowProfileContractTests.test_catalog_drift_unknown_fields_and_future_contracts_fail_closed tests.contracts.test_workflow_profile_contracts.WorkflowProfileContractTests.test_compiled_catalog_is_one_recursively_owned_immutable_snapshot tests.contracts.test_workflow_profile_contracts.WorkflowProfileContractTests.test_only_compiled_catalog_identity_reuses_validation tests.contracts.test_workflow_profile_contracts.WorkflowProfileContractTests.test_invalid_compiled_catalog_cannot_be_published tests.contracts.test_workflow_profile_contracts.WorkflowProfileContractTests.test_selection_revision_binds_intent_catalog_profile_and_immutable_predecessor tests.contracts.test_workflow_profile_contracts.WorkflowProfileContractTests.test_stage_state_represents_navigation_not_analytical_job_state tests.contracts.test_workflow_profile_contracts.WorkflowProfileContractTests.test_profile_migration_maps_every_prior_stage_without_rewriting_history tests.contracts.test_workflow_profile_contracts.WorkflowProfileContractTests.test_canonical_hashes_are_stable_across_reload tests.contracts.test_provenance_contracts -v",
+                        "./artifacts/tmp/CAP-05.S02.T03.check-runtime-122/python/python.exe -B -m ruff check packages/contracts/anchors/generate_anchor_schema.py services/core-api/src/research_observatory_core/anchors/contracts.py services/core-api/src/research_observatory_core/corpus_repository.py services/core-api/src/research_observatory_core/corpus_service.py services/core-api/src/research_observatory_core/dependency_impacts.py services/core-api/src/research_observatory_core/document_revision_api.py services/core-api/src/research_observatory_core/document_revision_service.py services/core-api/src/research_observatory_core/import_preview_service.py services/core-api/src/research_observatory_core/main.py services/core-api/src/research_observatory_core/migrations/runner.py services/core-api/src/research_observatory_core/migrations/versions/v0027_revision_invalidations.py services/core-api/src/research_observatory_core/object_store.py services/core-api/src/research_observatory_core/ports/repositories.py services/core-api/src/research_observatory_core/ports/source_anchors.py services/core-api/src/research_observatory_core/privacy.py services/core-api/src/research_observatory_core/projects.py services/core-api/src/research_observatory_core/provenance_contracts.py services/core-api/src/research_observatory_core/repositories.py services/core-api/src/research_observatory_core/research_intents.py services/core-api/src/research_observatory_core/source_anchor_repository.py services/core-api/src/research_observatory_core/storage.py services/core-api/src/research_observatory_core/workflow_profile_contracts.py tests/anchors/test_anchor_resolution.py tests/anchors/test_native_resolution_composition.py tests/contracts/test_provenance_contracts.py tests/contracts/test_workflow_profile_contracts.py tests/data/test_sqlite_migrations.py tests/documents/test_acquisition_recovery_migration.py tests/documents/test_anchor_invalidation_migration.py tests/documents/test_document_revision_migration.py tests/documents/test_document_revision_workflow.py tests/packaging/test_core_sidecar_package.py tests/service/test_project_lifecycle.py tests/service/test_research_intents.py tests/service/test_source_anchor_api.py tools/core_sidecar_build.py",
+                        "./artifacts/tmp/CAP-05.S02.T03.check-runtime-122/python/python.exe -B -m ruff format --check packages/contracts/anchors/generate_anchor_schema.py services/core-api/src/research_observatory_core/anchors/contracts.py services/core-api/src/research_observatory_core/corpus_repository.py services/core-api/src/research_observatory_core/corpus_service.py services/core-api/src/research_observatory_core/dependency_impacts.py services/core-api/src/research_observatory_core/document_revision_api.py services/core-api/src/research_observatory_core/document_revision_service.py services/core-api/src/research_observatory_core/import_preview_service.py services/core-api/src/research_observatory_core/main.py services/core-api/src/research_observatory_core/migrations/runner.py services/core-api/src/research_observatory_core/migrations/versions/v0027_revision_invalidations.py services/core-api/src/research_observatory_core/object_store.py services/core-api/src/research_observatory_core/ports/repositories.py services/core-api/src/research_observatory_core/ports/source_anchors.py services/core-api/src/research_observatory_core/privacy.py services/core-api/src/research_observatory_core/projects.py services/core-api/src/research_observatory_core/provenance_contracts.py services/core-api/src/research_observatory_core/repositories.py services/core-api/src/research_observatory_core/research_intents.py services/core-api/src/research_observatory_core/source_anchor_repository.py services/core-api/src/research_observatory_core/storage.py services/core-api/src/research_observatory_core/workflow_profile_contracts.py tests/anchors/test_anchor_resolution.py tests/anchors/test_native_resolution_composition.py tests/contracts/test_provenance_contracts.py tests/contracts/test_workflow_profile_contracts.py tests/data/test_sqlite_migrations.py tests/documents/test_acquisition_recovery_migration.py tests/documents/test_anchor_invalidation_migration.py tests/documents/test_document_revision_migration.py tests/documents/test_document_revision_workflow.py tests/packaging/test_core_sidecar_package.py tests/service/test_project_lifecycle.py tests/service/test_research_intents.py tests/service/test_source_anchor_api.py tools/core_sidecar_build.py",
+                        "./artifacts/tmp/CAP-05.S02.T03.check-runtime-122/python/python.exe -B -m mypy --no-incremental services/core-api/src/research_observatory_core/anchors/contracts.py services/core-api/src/research_observatory_core/corpus_repository.py services/core-api/src/research_observatory_core/corpus_service.py services/core-api/src/research_observatory_core/dependency_impacts.py services/core-api/src/research_observatory_core/document_revision_api.py services/core-api/src/research_observatory_core/document_revision_service.py services/core-api/src/research_observatory_core/import_preview_service.py services/core-api/src/research_observatory_core/main.py services/core-api/src/research_observatory_core/migrations/runner.py services/core-api/src/research_observatory_core/migrations/versions/v0027_revision_invalidations.py services/core-api/src/research_observatory_core/object_store.py services/core-api/src/research_observatory_core/ports/repositories.py services/core-api/src/research_observatory_core/ports/source_anchors.py services/core-api/src/research_observatory_core/privacy.py services/core-api/src/research_observatory_core/projects.py services/core-api/src/research_observatory_core/provenance_contracts.py services/core-api/src/research_observatory_core/repositories.py services/core-api/src/research_observatory_core/research_intents.py services/core-api/src/research_observatory_core/source_anchor_repository.py services/core-api/src/research_observatory_core/storage.py services/core-api/src/research_observatory_core/workflow_profile_contracts.py",
+                        "./artifacts/tmp/CAP-05.S02.T03.check-runtime-122/python/python.exe -B packages/contracts/anchors/generate_anchor_schema.py --check",
+                        "./.local/toolchains/node-v24.19.0-win-x64/node.exe packages/contracts/workflow-profile/generate.mjs --check",
+                        "./.local/toolchains/node-v24.19.0-win-x64/node.exe packages/contracts/provenance/generate.mjs --check",
+                        "./artifacts/tmp/CAP-05.S02.T03.check-runtime-122/python/python.exe -B tools/architecture_check.py --repo .",
+                        "./artifacts/tmp/CAP-05.S02.T03.check-runtime-122/python/python.exe -B tools/adr_check.py --repo . --base c1899e0de48e79221ff0335a31c976ef87e02db5 --head c2e92e7575a04aa8f8e5642623868e3b9adfdc1d",
+                        "./artifacts/tmp/CAP-05.S02.T03.check-runtime-122/python/python.exe -B -m unittest tests.packaging.test_core_sidecar_package.CoreSidecarPackageTests.test_build_contract_is_strict_and_version_bound -v",
+                        "./artifacts/tmp/CAP-05.S02.T03.check-runtime-122/python/python.exe -B tools/build_manifest.py --repo . --output ./artifacts/tmp/CAP-05.S03.T03.qualification-50.build.json",
+                        "./.local/toolchains/cargo/bin/cargo.exe test --lib document_reader::tests --locked --offline",
+                        "./.local/toolchains/node-v24.19.0-win-x64/node.exe apps/desktop/node_modules/vitest/vitest.mjs run --root apps/desktop src/app/sourceAnchors.test.ts src/app/sourceResolution.test.ts",
+                        "./.local/toolchains/node-v24.19.0-win-x64/node.exe apps/desktop/node_modules/typescript/bin/tsc --noEmit -p apps/desktop/tsconfig.json"
+                      ],
+                      "deferred_checks": [
+                        "Integrated S03 slice E2E, restart/recovery and independent slice review",
+                        "S04 secure source viewer activation",
+                        "Product model/resource successor amendment before dependent implementation",
+                        "Fresh full W2 repository/profile, installation/security/accessibility/performance and separate human release gate"
+                      ],
+                      "selection_rationale": "Exact source/public/native contracts, encrypted context and current human/Intent/privacy/rights authority, canonical atomic invalidation and schema27 migration require expanded independent task review. Fresh selected checks cover those material risks, incremental shared catalog/provenance/project authority changes and affected product packaging/types. Actual performance runs first with no concurrent tests. No unchanged full-history or full-profile replay; broader integration, installed-desktop and full Wave qualification remain deferred. Runtime/dependency closure is not reused.",
+                      "selection_sha256": "b713080b2ef02d1694a11c6dc4829bd0624a9cb84fe5270b47fdb9b716b3e124",
+                      "prior_attempt_id": null,
+                      "open_finding_ids": [],
+                      "root_cause_analysis": null,
+                      "selected_command_ids": [
+                        "contracts:unit",
+                        "data:unit",
+                        "desktop:application",
+                        "documents:anchor-schemas",
+                        "documents:anchors",
+                        "documents:unit",
+                        "foundation:adr",
+                        "foundation:architecture",
+                        "foundation:build-manifest",
+                        "foundation:quality",
+                        "packaging:unit",
+                        "service:unit"
+                      ],
+                      "packet_sha256": "2d9dc8ecb8c2d690f3b77828463d2b3469a36fb8aa961f75444d45252c66b7e6"
+                    },
+                    "review": {
+                      "reviewer": "agent:/root/t03_task_review",
+                      "result": "changes-requested",
+                      "reviewed_at": "2026-10-08T13:25:53+00:00",
+                      "notes": "Changes requested for CAP-05.S03.T03 at exact R01 candidate c2e92e7575a04aa8f8e5642623868e3b9adfdc1d. F01 is the sole blocking finding: a native stop before the owning context writer commits returns 409 without research content but still publishes invalidation, downstream staleness, provenance and outbox. The 21 selected group PASS and 87.4281 ms warm resolver p95 are authentic within their declared scope and remain retained; they do not close the newly reproduced authority boundary. Correct and replay this focused boundary in a superseding candidate. No slice, installed desktop, minimum-tier, parser or Wave/release approval is given."
+                    },
+                    "ledger": {
+                      "path": "artifacts/evidence/CAP-05.S03.T03.review-R01.json",
+                      "sha256": "e14bb6391896831d7a0f39ccd627ffec92afc937dd1d8020e5d906d23e500005"
+                    },
+                    "findings": [
+                      {
+                        "id": "CAP-05.S03.T03-R01-F01",
+                        "severity": "high",
+                        "blocking": true,
+                        "criterion_index": 2,
+                        "title": "Late native stop denies delivery after committing broken-anchor invalidation",
+                        "reproduction": "At exact candidate c2e92e7575a04aa8f8e5642623868e3b9adfdc1d execute artifacts/tmp/CAP-05.S03.T03.reviewer-late-stop-01.py with the owned sealed Python runtime and Core dependency path. The existing actual native Core/SQLCipher fixture creates a protected anchor and synthetic dependent evidence, corrupts only the owned derivative ciphertext, and patches the existing precommit _publication_step('anchor-dependents-stale') seam to call the trusted native ImportPreviewService.signal_stop for that fixture root. Stop occurs inside the owning writer before its final authority check and COMMIT. The endpoint returns HTTP 409 with no passage text, but dependency_impact_runs increases 2 to 3, dependency_stale_causes 1 to 2, provenance_events 25 to 26 and outbox_events 24 to 25. Successful observation is in artifacts/tmp/CAP-05.S03.T03.reviewer-late-stop-02.log (raw SHA-256 c37c69a39e7ef60b910289ce0bf3af784bfe4bd70de0fc20e77e3d095c65df1e). The service checks the latch at guard entry and after the repository returns, while its actor callback returns a frozen actor without checking stop. The repository's final _current_actor/_authority path checks durable Intent/privacy but misses the trusted stop, and the object store commits before the service detects it. Existing test_substitutions_and_late_native_detach_deny_research_content signals detach only after resolve returns, so it proves delivery denial without covering this publication window. Governing contracts: Approved S03 sections 5.2, 7, 8 and 9.3 require current trusted authority and safe failure/recovery for consequential atomic publication. The task-start current-principal row and R01 criterion 2 explicitly claim native/session authority fences stale side effects. ADR0046's documentary mapping states that the trusted stop latch fences late detach while repository writers revalidate authority. Systems Design 13.5 requires cooperative interruption of active work. Affected criteria are 1 and 2. Source locations: services/core-api/src/research_observatory_core/document_revision_service.py:163, services/core-api/src/research_observatory_core/document_revision_service.py:174, services/core-api/src/research_observatory_core/document_revision_service.py:180, services/core-api/src/research_observatory_core/source_anchor_repository.py:147, services/core-api/src/research_observatory_core/source_anchor_repository.py:391, services/core-api/src/research_observatory_core/object_store.py:3631.",
+                        "required_remediation": "First record this adverse R01 disposition and update the missed acceptance row. Add the exact focused regression before product edits: a trusted stop during broken-anchor publication must yield bounded denial, close/roll back the owning writer, and preserve pre-request invalidation/run/stale/provenance/outbox counts. Restore current native stop checking inside the repository's owning writer, including before publication/protected work and its final precommit fence, without weakening durable Intent/privacy/exact-copy rights, original-source integrity or denial auditing. Keep the existing delivery fence. Reopen a fresh native session and prove a valid retry publishes exactly once. Preserve this R01/reproduction and the initial setup failure, produce a strict-descendant R02 packet, and replay F01 plus the changed authority/performance risk with fresh focused native/Core checks and unchanged 100 ms p95 evidence. No framework change, scope amendment, parser retest, criterion relaxation, history rewrite or new approval is required."
+                      }
+                    ],
+                    "closures": [],
+                    "telemetry": {
+                      "task_id": "CAP-05.S03.T03",
+                      "amendment_id": null,
+                      "attempt_id": "R01",
+                      "submitted_at": "2026-10-08T13:15:29+00:00",
+                      "reviewed_at": "2026-10-08T13:25:53+00:00",
+                      "duration_seconds": 624,
+                      "outcome": "changes-requested",
+                      "finding_counts": {
+                        "critical": 0,
+                        "high": 1,
+                        "medium": 0,
+                        "low": 0,
+                        "blocking": 1,
+                        "total": 1
+                      },
+                      "command_ids": [
+                        "contracts:unit",
+                        "data:unit",
+                        "desktop:application",
+                        "documents:anchor-schemas",
+                        "documents:anchors",
+                        "documents:unit",
+                        "foundation:adr",
+                        "foundation:architecture",
+                        "foundation:build-manifest",
+                        "foundation:quality",
+                        "packaging:unit",
+                        "service:unit"
+                      ],
+                      "remediation": {
+                        "prior_attempt_id": null,
+                        "replayed_finding_ids": [],
+                        "closed_finding_ids": []
+                      }
+                    }
+                  }
+                ],
+                "current_submission": null
+              }
             }
           ],
           "tasks": [
@@ -22701,7 +22901,7 @@
               "plan_section_sha256": "421e749fb65c955d0ee49f6df47b8ace81a469347fc6ffcf63dd7e5a3f46b3e9",
               "worksheet": {
                 "path": "artifacts/evidence/CAP-05.S03.T03.task-start.md",
-                "sha256": "85bfbc2a0a04f7bf4c4393a251a851a5caf4da116c02d373a8f0137d597a2e18"
+                "sha256": "7e02f3c97d730b3ff5d96855489910913c42010cca72de77ce8603ad17d5c042"
               }
             }
           ]

@@ -610,6 +610,7 @@ class LocalSourceAnchorRepository:
                         raise DocumentRevisionProblem("source-anchor-revision-changed")
                     aggregates.append(self._draft(record, stored.object_sha256), record.event, expected_revision=None)
                     _publication_step("anchor-recorded")
+                    self.revisions._authority(connection, self._current_actor())
                 return record
 
             return self.revisions._put(raw, ANCHOR_MEDIA_TYPE, target.source, publish, lambda: False)
