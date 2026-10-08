@@ -81,6 +81,31 @@ class ViewerRangeAdmissionTests(unittest.TestCase):
             self.assertEqual(b"abcdefghijklmnop", future.result(timeout=2))
         self.assertEqual(5, len(calls))
 
+    def test_cancelled_last_waiter_cannot_settle_before_actual_callback_close(self):
+        entered, release, closed = threading.Event(), threading.Event(), threading.Event()
+        self.addCleanup(release.set)
+
+        def held_owner(stopped):
+            entered.set()
+            try:
+                self.assertTrue(release.wait(2))
+                if stopped():
+                    raise ObjectReadCancelled()
+                return b"abcdefghijklmnop"
+            finally:
+                closed.set()
+
+        waiter = self.request(self.key, "held-owner", held_owner)
+        self.assertTrue(entered.wait(2))
+        self.assertTrue(self.pool.cancel(self.key.project_id, self.key.session_id, "held-owner"))
+        threading.Event().wait(0.15)
+        self.assertFalse(waiter.done(), "settled waiter must establish actual owner closure")
+        self.assertFalse(closed.is_set())
+        release.set()
+        with self.assertRaises(ObjectReadCancelled):
+            waiter.result(timeout=2)
+        self.assertTrue(closed.is_set())
+
     def test_only_eight_requests_can_wait_and_cancelled_queued_work_never_reads(self):
         read, entered, release, calls = self.held_read()
         active = self.request(self.key, "active", read)

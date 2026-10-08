@@ -13,7 +13,7 @@ external-open and export actions. Those actions remain unavailable in T01.
 | `document_viewer_source` | `/native/document-viewer/source` | Exact source metadata |
 | `document_viewer_range` | `/native/document-viewer/range` | Native validated raw ArrayBuffer IPC |
 | `document_viewer_text` | `/native/document-viewer/text` | Exact accepted text chunk |
-| `document_viewer_cancel` | `/native/document-viewer/cancel` | Opaque request cancellation |
+| `document_viewer_cancel` | `/native/document-viewer/cancel` | Native stop signal; original range supplies terminal disposition |
 
 The renderer names the project, attachment, original revision, optional accepted
 normalized revision and bounded operation fields. Native adds its selected root,
@@ -53,6 +53,25 @@ the cooperative reader. Project actions remain reentrant and FIFO, so waiting
 metadata writers can run between ranges. Native remembers a cancellation that
 arrives before registration, scoped to its actual window and opaque key; bounded
 cancellation-memory exhaustion fails closed.
+
+Cancelling IPC is a stop signal, not a drain acknowledgement. The original
+range promise resolves bytes only after physical close, or rejects a closed
+native disposition with schema version, project, request and a `drained` boolean.
+Native errors after Core issuance acknowledge termination only from Core's exact
+root/project/session/request registration: its correlated private response binds
+schema version, project, native session, request and `drained`. Core waits at most
+one second for participation to end; last-member cancellation additionally waits
+for the actual active callback to close its stream and transaction. An independently
+authorized coalesced follower retains collective ownership. Unknown registration,
+lost transport or deadline expiry is not successful drain. Bounded terminal records
+support late cancellation; unconsumed early markers cannot expire into admission.
+
+The renderer consumes the original range disposition, never settlement of the
+stop signal. Unknown drain poisons the byte session after pending-map removal,
+denies replacement, and retains its in-flight reservation; a later confirmed
+terminal result can release that reservation but cannot erase a missed deadline.
+Native likewise retains bounded unresolved admission ownership. Cancelled native
+owner/project/request identities remain denied if a delayed duplicate arrives.
 
 Original inspection adds no source anchor, structural acceptance or scholarly
 claim. Successful object verification retains the existing verification metadata

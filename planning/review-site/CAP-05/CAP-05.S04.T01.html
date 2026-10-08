@@ -91,9 +91,9 @@ python tools/verify.py --profile security-local
 ```</pre></article></section>
 <section class="section-heading"><span class="eyebrow">Task-start planning</span><h2>Assigned worksheet</h2><p>The worksheet is an optional planning aid and does not create a new approval or task state.</p></section>
 
-<details class="plan-details task-worksheet" open data-task-worksheet="CAP-05.S04.T01" data-worksheet-sha256="55684ec931141b6cf54f8782102465a226ffde0870b4f178d3ffb7dd86cd541c">
+<details class="plan-details task-worksheet" open data-task-worksheet="CAP-05.S04.T01" data-worksheet-sha256="e4c197e164b45098ea5573f5cf751d76f782166c5c6dafc77613c63c79108878">
   <summary>Assigned task-start worksheet</summary>
-  <div class="worksheet-meta"><strong>Source:</strong> <code>artifacts/evidence/CAP-05.S04.T01.task-start.md</code> · <strong>SHA-256:</strong> <code>55684ec931141b6cf54f8782102465a226ffde0870b4f178d3ffb7dd86cd541c</code></div>
+  <div class="worksheet-meta"><strong>Source:</strong> <code>artifacts/evidence/CAP-05.S04.T01.task-start.md</code> · <strong>SHA-256:</strong> <code>e4c197e164b45098ea5573f5cf751d76f782166c5c6dafc77613c63c79108878</code></div>
   <article class="plan-article"><pre class='markdown-fallback'># CAP-05.S04.T01 — secure local source viewer
 
 Claim base: `1bd33a6ba180487b239e3315e302b6db6aaea123`.
@@ -174,7 +174,26 @@ reopen, rather than only ignoring a late UI update.
 The corrected worktree passed all six actual-worker cases (search, render and
 thumbnail while loading text or an uncached page), nine ownership unit tests
 and strict typing. The actual-worker byte port is explicitly synthetic; this
-does not qualify native transport, complete resource footprint or p95 latency.</pre></article>
+does not qualify native transport, complete resource footprint or p95 latency.
+
+## Candidate cancellation finding CRA01-F01
+
+Independent candidate review at `1941bfa06bab014a7aca58c00275e87035ebc55d`
+found that transport settlement was mistaken for physical reader drain. The
+range pool could release a cancelled last waiter before its callback closed the
+stream/transaction; Native discarded the cancel result and the renderer&#x27;s
+`allSettled` erased failures. This is a product defect within the existing task,
+not an authority change or a request for another amendment.
+
+The missed acceptance row is actual owner termination before replacement.
+Regression proof holds real encrypted authentication after transport cancellation,
+checks explicit pending denial at the one-second boundary, and permits replacement
+only after acknowledged physical close. A coalesced live follower must survive.
+Early/late registration and lost acknowledgements must never imply success.
+Native range settlement must carry exact request-bound terminal disposition;
+renderer unknown-drain failure remains latched after pending removal, retains its
+range reservation until closure is established, and denies replacement. These
+regressions are being added before remediation; no closure is claimed here.</pre></article>
 </details>
 <section class="section-heading"><span class="eyebrow">Execution evidence</span><h2>Review packets, rounds, and current projection</h2><p>Append-only controls retain every immutable round and finding closure. Pre-policy tasks remain explicitly latest-review-only.</p></section>
 

@@ -6,10 +6,13 @@ import json
 import threading
 import time
 import unittest
+from concurrent.futures import ThreadPoolExecutor
+from contextlib import closing
 from unittest.mock import patch
 
+import sqlcipher3.dbapi2 as sqlcipher
 from fastapi.testclient import TestClient
-from research_observatory_core import object_store
+from research_observatory_core import object_store, storage
 from research_observatory_core.app import create_app
 from research_observatory_core.authentication import capability_token_digest
 from research_observatory_core.document_viewer_service import DocumentViewerService
@@ -19,6 +22,27 @@ from tests.documents import test_document_revision_workflow as workflows
 
 
 class DocumentViewerApiTests(unittest.TestCase):
+    def assert_authentication_owns_writer(self):
+        # The stream registry begins after full authentication. During the
+        # held authentication frame, test the actual encrypted writer instead.
+        # Test-owned key provider only; do not weaken the product connection's
+        # PRAGMA authorizer to obtain a diagnostic connection with timeout=0.
+        with storage._DATABASE_PROTECTION_LOCK:
+            keys = storage._DATABASE_PROTECTION.provider
+        material = keys.active_material_for_test(self.f.f.source.project_id)
+        with closing(
+            sqlcipher.connect(
+                self.f.f.fixture.corpus.database.as_uri() + "?mode=rw",
+                uri=True,
+                timeout=0,
+                isolation_level=None,
+            )
+        ) as database:
+            database.execute("PRAGMA key = \"x'" + material.hex() + "'\"")
+            self.assertTrue(database.execute("SELECT name FROM sqlite_schema LIMIT 1").fetchone())
+            with self.assertRaisesRegex(sqlcipher.OperationalError, "locked"):
+                database.execute("BEGIN IMMEDIATE")
+
     def setUp(self):
         self.f = workflows.DocumentRevisionWorkflowTests(methodName="runTest")
         self.f.setUp()
@@ -122,11 +146,20 @@ class DocumentViewerApiTests(unittest.TestCase):
             try:
                 self.assertTrue(entered.wait(2), "owned source authentication was not reached")
                 cancel_command = {key: self.command[key] for key in ("root", "projectId", "sessionId")}
-                cancelled = self.client.post(
-                    self.path + "/cancel", json=dict(cancel_command, requestId=self.range["requestId"])
-                )
+                with ThreadPoolExecutor(max_workers=1) as executor:
+                    cancellation = executor.submit(
+                        self.client.post,
+                        self.path + "/cancel",
+                        json=dict(cancel_command, requestId=self.range["requestId"]),
+                    )
+                    time.sleep(0.15)
+                    self.assertFalse(cancellation.done(), "cancel ack must await the physical encrypted reader")
+                    self.assert_authentication_owns_writer()
+                    release.set()
+                    cancelled = cancellation.result(timeout=2)
                 self.assertEqual(200, cancelled.status_code, cancelled.text)
-                self.assertTrue(cancelled.json()["cancelled"])
+                self.assertTrue(cancelled.json()["drained"])
+                self.assertEqual(self.range["requestId"], cancelled.json()["requestId"])
             finally:
                 release.set()
                 thread.join(2)
@@ -141,6 +174,106 @@ class DocumentViewerApiTests(unittest.TestCase):
         self.assertEqual(
             200, self.client.post(self.path + "/range", json=dict(self.range, requestId=new_uuid_v7())).status_code
         )
+
+    def test_cancel_ack_denies_at_deadline_while_real_authentication_is_still_held(self):
+        entered, release = threading.Event(), threading.Event()
+        pull = object_store._pull_frame
+        replies = []
+
+        def held_frame(*args, **kwargs):
+            result = pull(*args, **kwargs)
+            entered.set()
+            if not release.wait(4):
+                raise RuntimeError("synthetic-release-timeout")
+            return result
+
+        with patch.object(object_store, "_pull_frame", held_frame):
+            thread = threading.Thread(
+                target=lambda: replies.append(self.client.post(self.path + "/range", json=self.range))
+            )
+            thread.start()
+            try:
+                self.assertTrue(entered.wait(2))
+                command = {key: self.command[key] for key in ("root", "projectId", "sessionId")}
+                started = time.monotonic()
+                cancelled = self.client.post(
+                    self.path + "/cancel", json=dict(command, requestId=self.range["requestId"])
+                )
+                self.assertEqual(200, cancelled.status_code, cancelled.text)
+                self.assertFalse(cancelled.json()["drained"])
+                self.assertLess(time.monotonic() - started, 1.3)
+                self.assertTrue(thread.is_alive())
+                self.assert_authentication_owns_writer()
+            finally:
+                release.set()
+                thread.join(2)
+        self.assertFalse(thread.is_alive())
+        self.assertEqual([409], [response.status_code for response in replies])
+        self.assertFalse(object_store._READERS.in_use(self.f.f.source.project_id, self.f.f.source.object_sha256))
+        self.assertTrue(
+            self.client.post(self.path + "/cancel", json=dict(command, requestId=self.range["requestId"])).json()[
+                "drained"
+            ]
+        )
+
+    def test_early_cancel_waits_for_late_registration_and_never_admits_a_source_read(self):
+        command = {key: self.command[key] for key in ("root", "projectId", "sessionId")}
+        with ThreadPoolExecutor(max_workers=1) as executor:
+            cancelled = executor.submit(
+                self.client.post, self.path + "/cancel", json=dict(command, requestId=self.range["requestId"])
+            )
+            time.sleep(0.1)
+            self.assertFalse(cancelled.done(), "absent registration cannot acknowledge physical drain")
+            response = self.client.post(self.path + "/range", json=self.range)
+            self.assertEqual(409, response.status_code)
+            ack = cancelled.result(timeout=2)
+        self.assertTrue(ack.json()["drained"])
+        self.assertFalse(object_store._READERS.in_use(self.f.f.source.project_id, self.f.f.source.object_sha256))
+
+    def test_cancelled_exact_follower_hands_off_real_reader_without_stopping_live_member(self):
+        entered, release = threading.Event(), threading.Event()
+        barrier = threading.Barrier(2)
+        pull, read_range = object_store._pull_frame, self.viewer.ranges.read
+        second = dict(self.range, requestId=new_uuid_v7())
+
+        def admitted_after_both_authorizations(*args, **kwargs):
+            barrier.wait(timeout=2)
+            return read_range(*args, **kwargs)
+
+        def held_frame(*args, **kwargs):
+            result = pull(*args, **kwargs)
+            entered.set()
+            if not release.wait(3):
+                raise RuntimeError("synthetic-release-timeout")
+            return result
+
+        with (
+            patch.object(self.viewer.ranges, "read", admitted_after_both_authorizations),
+            patch.object(object_store, "_pull_frame", held_frame),
+            ThreadPoolExecutor(max_workers=2) as executor,
+        ):
+            first_reply = executor.submit(self.client.post, self.path + "/range", json=self.range)
+            second_reply = executor.submit(self.client.post, self.path + "/range", json=second)
+            try:
+                self.assertTrue(entered.wait(2))
+                deadline = time.monotonic() + 1
+                while self.viewer.ranges.pending_count(self.command["projectId"]) != 2:
+                    self.assertLess(time.monotonic(), deadline)
+                    time.sleep(0.005)
+                command = {key: self.command[key] for key in ("root", "projectId", "sessionId")}
+                foreign = dict(command, root=command["root"] + "-foreign", requestId=self.range["requestId"])
+                self.assertFalse(self.client.post(self.path + "/cancel", json=foreign).json()["drained"])
+                ack = self.client.post(self.path + "/cancel", json=dict(command, requestId=self.range["requestId"]))
+                self.assertTrue(ack.json()["drained"], ack.text)
+                self.assertEqual(409, first_reply.result(timeout=1).status_code)
+                self.assertFalse(second_reply.done())
+                self.assert_authentication_owns_writer()
+            finally:
+                release.set()
+            follower = second_reply.result(timeout=2)
+        self.assertEqual(200, follower.status_code, follower.text)
+        self.assertEqual(b"Synthetic", base64.b64decode(follower.json()["bytesBase64"], validate=True))
+        self.assertFalse(object_store._READERS.in_use(self.f.f.source.project_id, self.f.f.source.object_sha256))
 
     def test_real_asgi_disconnect_reaches_cooperative_reader_and_denies_delivery(self):
         entered, observed_stop = threading.Event(), threading.Event()

@@ -79,3 +79,22 @@ The corrected worktree passed all six actual-worker cases (search, render and
 thumbnail while loading text or an uncached page), nine ownership unit tests
 and strict typing. The actual-worker byte port is explicitly synthetic; this
 does not qualify native transport, complete resource footprint or p95 latency.
+
+## Candidate cancellation finding CRA01-F01
+
+Independent candidate review at `1941bfa06bab014a7aca58c00275e87035ebc55d`
+found that transport settlement was mistaken for physical reader drain. The
+range pool could release a cancelled last waiter before its callback closed the
+stream/transaction; Native discarded the cancel result and the renderer's
+`allSettled` erased failures. This is a product defect within the existing task,
+not an authority change or a request for another amendment.
+
+The missed acceptance row is actual owner termination before replacement.
+Regression proof holds real encrypted authentication after transport cancellation,
+checks explicit pending denial at the one-second boundary, and permits replacement
+only after acknowledged physical close. A coalesced live follower must survive.
+Early/late registration and lost acknowledgements must never imply success.
+Native range settlement must carry exact request-bound terminal disposition;
+renderer unknown-drain failure remains latched after pending removal, retains its
+range reservation until closure is established, and denies replacement. These
+regressions are being added before remediation; no closure is claimed here.

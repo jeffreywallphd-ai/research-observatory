@@ -1,4 +1,4 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { decodeViewerMetadata, decodeViewerText, viewerSourcesMatch, ViewerBufferBudget, ViewerByteSession } from "./documentViewer";
 import { sourceAnchorFixture } from "../../../../tests/desktop/fixtures/anchor-contract";
 import { decodeSourceAnchor } from "./sourceAnchors";
@@ -71,5 +71,41 @@ describe("controlled viewer source bytes", () => {
     }
     expect(viewerSourcesMatch(source, { ...source, workRevisionId: nodeId })).toBe(false);
     expect(viewerSourcesMatch(source, { ...source })).toBe(true);
+  });
+  it("retains unknown physical-drain failure after transport settlement and denies replacement", async () => {
+    let fail: (error: Error) => void = () => undefined;
+    const budget = new ViewerBufferBudget();
+    const session = new ViewerByteSession(source.projectId, selector, { source, normalizedRevisionId: null }, {
+      source: async () => null,
+      range: async () => new Promise<ArrayBuffer | null>((_resolve, reject) => { fail = reject; }),
+    }, budget);
+    const read = session.read(0, 4);
+    session.close();
+    fail(new Error("viewer-owned-read-drain-pending"));
+    await expect(read).rejects.toThrow("viewer-owned-read-drain-pending");
+    await expect(session.drain()).rejects.toThrow("viewer-owned-read-drain-pending");
+    expect(() => session.fresh()).toThrow("viewer-owned-read-drain-pending");
+    expect(budget.used).toBe(4 * 6 + 8192);
+  });
+  it("latches a drain deadline even when the actual owner acknowledges closure later", async () => {
+    vi.useFakeTimers();
+    try {
+      let closeOwner: () => void = () => undefined;
+      const session = new ViewerByteSession(source.projectId, selector, { source, normalizedRevisionId: null }, {
+        source: async () => null,
+        range: async () => new Promise<null>((resolve) => { closeOwner = () => resolve(null); }),
+      }, new ViewerBufferBudget());
+      const read = session.read(0, 4);
+      const stopped = expect(read).rejects.toThrow("viewer-source-unavailable");
+      session.close();
+      const drain = expect(session.drain()).rejects.toThrow("viewer-owned-read-drain-pending");
+      await vi.advanceTimersByTimeAsync(1000);
+      await drain;
+      expect(() => session.fresh()).toThrow("viewer-owned-read-drain-pending");
+      expect(session.budget.used).toBe(4 * 6 + 8192);
+      closeOwner(); await stopped;
+      expect(session.budget.used).toBe(0);
+      await expect(session.drain()).rejects.toThrow("viewer-owned-read-drain-pending");
+    } finally { vi.useRealTimers(); }
   });
 });

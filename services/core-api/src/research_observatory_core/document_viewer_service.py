@@ -3,6 +3,8 @@
 import hashlib
 import json
 import threading
+import time
+from collections import OrderedDict
 from collections.abc import Callable
 from dataclasses import dataclass, field
 
@@ -42,8 +44,11 @@ class DocumentViewerService:
         self.attachments, self.imports = attachments, imports
         self.repository_factory = repository_factory
         self.ranges = DocumentViewerRangePool()
-        self._mutex = threading.Lock()
+        self._mutex = threading.Condition(threading.Lock())
         self._requests: dict[tuple[str, str, str], _Request] = {}
+        self._terminal: OrderedDict[tuple[str, str, str], str] = OrderedDict()
+        self._early_cancellations: dict[tuple[str, str, str], str] = {}
+        self._cancel_overflow = False
         self._stopped = threading.Event()
 
     def _scoped(self, command, trace, action, *, request: _Request | None = None):
@@ -110,13 +115,17 @@ class DocumentViewerService:
         # Register before waiting for project authority. A concurrent native
         # cancellation cannot be lost while the initial metadata guard waits.
         with self._mutex:
-            if self._stopped.is_set():
+            if self._stopped.is_set() or self._cancel_overflow:
                 raise ObjectReadCancelled()
-            if identity in self._requests:
+            if identity in self._requests or identity in self._terminal:
                 raise ViewerRangeProblem("viewer-request-conflict")
             if len(self._requests) >= 64:
                 raise ViewerRangeProblem("viewer-queue-full")
             self._requests[identity] = request
+            if self._early_cancellations.get(identity) == command.root:
+                request.stop.set()
+                self._early_cancellations.pop(identity)
+            self._mutex.notify_all()
         try:
             metadata, principal = self._scoped(
                 command,
@@ -173,14 +182,46 @@ class DocumentViewerService:
             request.stop.set()
             with self._mutex:
                 self._requests.pop(identity, None)
+                # read_range only reaches this after its own participation is
+                # terminal, including last-member physical callback closure.
+                self._terminal[identity] = request.root
+                while len(self._terminal) > 256:
+                    self._terminal.popitem(last=False)
+                self._mutex.notify_all()
 
     def cancel(self, command) -> bool:
+        """Acknowledge exact terminal ownership, never mere stop/absence."""
+        identity = (command.project_id, command.session_id, command.request_id)
+        deadline = time.monotonic() + 1.0
         with self._mutex:
-            request = self._requests.get((command.project_id, command.session_id, command.request_id))
-            if request is None or request.root != command.root:
+            request = self._requests.get(identity)
+            if request is not None and request.root != command.root:
                 return False
-            request.stop.set()
-        return True
+            if identity in self._terminal:
+                return self._terminal[identity] == command.root
+            if request is None:
+                early_root = self._early_cancellations.get(identity)
+                if early_root is not None and early_root != command.root:
+                    return False
+                if early_root is None:
+                    if len(self._early_cancellations) >= 256:
+                        self._cancel_overflow = True
+                        return False
+                    # No expiry can turn a delayed issued operation into live
+                    # work. Unconsumed bounded markers exhaust closed.
+                    self._early_cancellations[identity] = command.root
+            while True:
+                request = self._requests.get(identity)
+                if request is not None:
+                    if request.root != command.root:
+                        return False
+                    request.stop.set()
+                if identity in self._terminal:
+                    return self._terminal[identity] == command.root
+                remaining = deadline - time.monotonic()
+                if remaining <= 0:
+                    return False
+                self._mutex.wait(remaining)
 
     def signal_stop(self, root: str | None = None) -> None:
         if root is None:

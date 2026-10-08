@@ -164,6 +164,19 @@ class DocumentViewerRangePool:
                     raise ViewerRangeProblem("viewer-response-invalid")
                 return group.value
             finally:
+                # A cancelled participant may hand ownership to a live exact
+                # follower. The last participant cannot settle while its actual
+                # callback still owns the encrypted stream/transaction. Queued
+                # groups have acquired neither and can be cancelled immediately.
+                while (
+                    not group.done
+                    and self._active is group
+                    and (
+                        self._stopped.is_set()
+                        or not any(other is not member and not other.stopped() for other in group.members.values())
+                    )
+                ):
+                    self._condition.wait(_STOP_POLL_SECONDS)
                 self._requests.pop(identity, None)
                 group.members.pop(identity, None)
                 if not group.members:

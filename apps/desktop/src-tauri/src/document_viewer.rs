@@ -208,6 +208,7 @@ struct PendingRange {
     connection: Arc<NativeImportConnection>,
     session: Mutex<Option<String>>,
     cancelled: AtomicBool,
+    drained: AtomicBool,
 }
 
 type RequestKey = (String, String);
@@ -233,7 +234,18 @@ struct OwnedRequest {
 impl Drop for OwnedRequest {
     fn drop(&mut self) {
         self.pending.cancelled.store(true, Ordering::Release);
-        if let Ok(mut requests) = self.manager.pending.lock()
+        if self
+            .pending
+            .session
+            .lock()
+            .is_ok_and(|session| session.is_none())
+        {
+            self.pending.drained.store(true, Ordering::Release);
+        }
+        // Unknown physical termination retains bounded admission ownership.
+        // Dropping a native future cannot silently free an in-use Core read.
+        if self.pending.drained.load(Ordering::Acquire)
+            && let Ok(mut requests) = self.manager.pending.lock()
             && requests
                 .active
                 .get(&self.key)
@@ -245,16 +257,27 @@ impl Drop for OwnedRequest {
 }
 
 impl DocumentViewerManager {
+    fn no_active_owner(&self, key: &RequestKey) -> bool {
+        self.pending
+            .lock()
+            .is_ok_and(|requests| !requests.active.contains_key(key))
+    }
     fn register(
         &self,
         key: RequestKey,
         owner: isize,
         connection: Arc<NativeImportConnection>,
-    ) -> Result<OwnedRequest, ()> {
-        let mut requests = self.pending.lock().map_err(|_| ())?;
-        if requests.early_cancel.remove(&(owner, key.clone()))
-            || requests.cancellation_overflow
-            || requests.active.contains_key(&key)
+    ) -> Result<OwnedRequest, bool> {
+        let mut requests = self.pending.lock().map_err(|_| false)?;
+        if requests.active.contains_key(&key) {
+            return Err(false);
+        }
+        if requests.early_cancel.contains(&(owner, key.clone())) {
+            // The original range itself observes this never-issued marker.
+            // Keep it: a delayed duplicate cannot reuse the cancelled identity.
+            return Err(true);
+        }
+        if requests.cancellation_overflow
             || requests.active.len() >= 64
             || requests
                 .active
@@ -263,13 +286,14 @@ impl DocumentViewerManager {
                 .count()
                 >= 9
         {
-            return Err(());
+            return Err(true);
         }
         let pending = Arc::new(PendingRange {
             owner,
             connection,
             session: Mutex::new(None),
             cancelled: AtomicBool::new(false),
+            drained: AtomicBool::new(false),
         });
         requests.active.insert(key.clone(), Arc::clone(&pending));
         Ok(OwnedRequest {
@@ -281,7 +305,7 @@ impl DocumentViewerManager {
 
     fn cancel(&self, key: &RequestKey, owner: isize) -> Option<Arc<PendingRange>> {
         let mut requests = self.pending.lock().ok()?;
-        let Some(pending) = requests.active.get(key) else {
+        let Some(pending) = requests.active.get(key).cloned() else {
             // Tauri may poll a cancellation before the already-issued range
             // future registers. Remember that exact owner/request without an
             // expiry that could admit delayed work. Overflow denies new work.
@@ -296,18 +320,76 @@ impl DocumentViewerManager {
             return None;
         }
         pending.cancelled.store(true, Ordering::Release);
-        Some(Arc::clone(pending))
+        // Preserve the cancelled identity even if it registered before its
+        // current-context lookup, but never issued the Core range. Lease drop
+        // may then prove no reader exists; a delayed duplicate still cannot run.
+        if requests.early_cancel.len() < 256 {
+            requests.early_cancel.insert((owner, key.clone()));
+        } else {
+            requests.cancellation_overflow = true;
+        }
+        Some(pending)
     }
 }
 
-fn cancel_core(pending: &PendingRange, key: &RequestKey) {
-    let session = pending.session.lock().ok().and_then(|value| value.clone());
+#[derive(Deserialize)]
+#[serde(rename_all = "camelCase", deny_unknown_fields)]
+struct CoreDrainAck {
+    schema_version: String,
+    project_id: String,
+    session_id: String,
+    request_id: String,
+    drained: bool,
+}
+
+fn drain_ack_matches(body: &str, key: &RequestKey, session: &str) -> bool {
+    body.len() <= 8192
+        && serde_json::from_str::<CoreDrainAck>(body).is_ok_and(|ack| {
+            ack.schema_version == "1.0"
+                && ack.project_id == key.0
+                && ack.session_id == session
+                && ack.request_id == key.1
+                && ack.drained
+        })
+}
+
+fn cancel_core(pending: &PendingRange, key: &RequestKey) -> bool {
+    let Ok(session) = pending.session.lock().map(|value| value.clone()) else {
+        return false;
+    };
     if let Some(session) = session {
-        let _ = pending.connection.document_request(
+        let result = pending.connection.document_request(
             NativeDocumentAction::ViewerCancel,
             json!({"root":pending.connection.document_root(), "projectId":key.0,
                 "sessionId":session, "requestId":key.1}),
         );
+        return result.is_ok_and(|response| {
+            response.status == 200
+                && response.content_type == "application/json"
+                && drain_ack_matches(&response.body, key, &session)
+        });
+    }
+    // No Core range was issued; current-context lookup alone owns no source.
+    true
+}
+
+#[derive(Clone, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub(crate) struct ViewerRangeFailure {
+    schema_version: &'static str,
+    project_id: String,
+    request_id: String,
+    drained: bool,
+}
+
+impl ViewerRangeFailure {
+    fn new(request: &ViewerRangeRequest, drained: bool) -> Self {
+        Self {
+            schema_version: "1.0",
+            project_id: request.project_id.clone(),
+            request_id: request.request_id.clone(),
+            drained,
+        }
     }
 }
 
@@ -493,50 +575,62 @@ pub(crate) async fn document_viewer_range(
     lock: State<'_, ApplicationLockManager>,
     manager: State<'_, DocumentViewerManager>,
     request: ViewerRangeRequest,
-) -> Result<tauri::ipc::Response, ()> {
+) -> Result<tauri::ipc::Response, ViewerRangeFailure> {
+    let denied = |drained| ViewerRangeFailure::new(&request, drained);
+    let key = (request.project_id.clone(), request.request_id.clone());
     if !request.valid() {
-        return Err(());
+        return Err(denied(manager.no_active_owner(&key)));
     }
-    let owner = crate::directory_window_handle(&window).ok_or(())?;
-    let ticket = lock.begin_protected_action().map_err(|_| ())?;
+    let owner = crate::directory_window_handle(&window)
+        .ok_or_else(|| denied(manager.no_active_owner(&key)))?;
+    let ticket = lock
+        .begin_protected_action()
+        .map_err(|_| denied(manager.no_active_owner(&key)))?;
     let connection = Arc::new(
         supervisor
             .native_document_connection(&request.project_id)
-            .map_err(|_| ())?,
+            .map_err(|_| denied(manager.no_active_owner(&key)))?,
     );
-    let lease = manager.register(
-        (request.project_id.clone(), request.request_id.clone()),
-        owner,
-        Arc::clone(&connection),
-    )?;
+    let lease = manager
+        .register(
+            (request.project_id.clone(), request.request_id.clone()),
+            owner,
+            Arc::clone(&connection),
+        )
+        .map_err(denied)?;
     let pending = Arc::clone(&lease.pending);
     let selected = request.clone();
     let gate = lock.inner().clone();
     let owned_window = window.clone();
-    let response = tauri::async_runtime::spawn_blocking(move || {
+    let (result, drained) = tauri::async_runtime::spawn_blocking(move || {
         let result = (|| {
             let context = current_document_context(&pending.connection, &selected.project_id).map_err(|_| ())?;
-            *pending.session.lock().map_err(|_| ())? = Some(context.session_id.clone());
-            pending.connection.document_request_owned(NativeDocumentAction::ViewerRange,
+            {
+                let mut session = pending.session.lock().map_err(|_| ())?;
+                if pending.cancelled.load(Ordering::Acquire) { return Err(()); }
+                *session = Some(context.session_id.clone());
+            }
+            let response = pending.connection.document_request_owned(NativeDocumentAction::ViewerRange,
                 json!({"root":pending.connection.document_root(), "projectId":selected.project_id,
                     "sessionId":context.session_id, "selector":selected.selector,
                     "requestId":selected.request_id, "start":selected.start, "end":selected.end}),
                 &|| !pending.cancelled.load(Ordering::Acquire) && gate.finish_protected_action(ticket).is_ok()
-                    && crate::directory_window_handle(&owned_window) == Some(owner)).map_err(|_| ())
+                    && crate::directory_window_handle(&owned_window) == Some(owner)).map_err(|_| ())?;
+            if response.status != 200 || response.content_type != "application/json" { return Err(()); }
+            decode_range(&response.body, &selected)
         })();
-        if result.is_err() { cancel_core(&pending, &(selected.project_id, selected.request_id)); }
-        result
-    }).await.map_err(|_| ())??;
+        let drained = result.is_ok() || cancel_core(&pending, &(selected.project_id, selected.request_id));
+        pending.drained.store(drained, Ordering::Release);
+        (result, drained)
+    }).await.map_err(|_| denied(false))?;
+    let bytes = result.map_err(|_| denied(drained))?;
     if !connection.is_current()
         || lease.pending.cancelled.load(Ordering::Acquire)
         || lock.finish_protected_action(ticket).is_err()
         || crate::directory_window_handle(&window) != Some(owner)
-        || response.status != 200
-        || response.content_type != "application/json"
     {
-        return Err(());
+        return Err(denied(true));
     }
-    let bytes = decode_range(&response.body, &request)?;
     // Raw IPC byte delivery avoids a renderer-side base64/source-sized copy.
     lock.commit_protected_action(ticket, || {
         connection.publish_current(|| {
@@ -548,7 +642,7 @@ pub(crate) async fn document_viewer_range(
             Ok(tauri::ipc::Response::new(bytes))
         })
     })
-    .map_err(|_| ())
+    .map_err(|_| denied(true))
 }
 
 #[tauri::command]
@@ -565,11 +659,9 @@ pub(crate) async fn document_viewer_cancel(
     }
     let owner = crate::directory_window_handle(&window).ok_or(())?;
     let key = (request.project_id, request.request_id);
-    if let Some(pending) = manager.cancel(&key, owner) {
-        tauri::async_runtime::spawn_blocking(move || cancel_core(&pending, &key))
-            .await
-            .map_err(|_| ())?;
-    }
+    // Stop only. The original range IPC carries its independently established
+    // terminal disposition after the owning native worker acknowledges Core.
+    let _ = manager.cancel(&key, owner);
     Ok(())
 }
 
@@ -696,6 +788,116 @@ mod tests {
             .register(key.clone(), 43, Arc::clone(&connection))
             .unwrap();
         drop(other);
+        assert!(
+            manager
+                .register(key.clone(), 42, Arc::clone(&connection))
+                .is_err()
+        );
         assert!(manager.register(key, 42, connection).is_err());
+    }
+
+    #[test]
+    fn drain_ack_is_exact_and_unknown_owned_termination_retains_admission() {
+        let request = request();
+        let key = (request.project_id, request.request_id);
+        let ack = json!({"schemaVersion":"1.0", "projectId":key.0,
+            "sessionId":"native-session", "requestId":key.1, "drained":true});
+        assert!(drain_ack_matches(&ack.to_string(), &key, "native-session"));
+        for field in [
+            "schemaVersion",
+            "projectId",
+            "sessionId",
+            "requestId",
+            "drained",
+        ] {
+            let mut changed = ack.clone();
+            changed[field] = json!("substituted");
+            assert!(!drain_ack_matches(
+                &changed.to_string(),
+                &key,
+                "native-session"
+            ));
+        }
+        let mut pending_ack = ack.clone();
+        pending_ack["drained"] = json!(false);
+        assert!(!drain_ack_matches(
+            &pending_ack.to_string(),
+            &key,
+            "native-session"
+        ));
+        let mut injected = ack;
+        injected["root"] = json!("untrusted");
+        assert!(!drain_ack_matches(
+            &injected.to_string(),
+            &key,
+            "native-session"
+        ));
+
+        let manager = DocumentViewerManager::default();
+        let connection = Arc::new(NativeImportConnection::unavailable_for_attachment_test(
+            &key.0,
+        ));
+        let lease = manager
+            .register(key.clone(), 42, Arc::clone(&connection))
+            .unwrap();
+        *lease.pending.session.lock().unwrap() = Some("native-session".into());
+        drop(lease);
+        assert!(manager.register(key.clone(), 42, connection).is_err());
+        assert!(manager.cancel(&key, 42).is_some());
+    }
+
+    #[test]
+    fn cancelled_registered_but_never_issued_identity_cannot_be_replayed() {
+        let manager = DocumentViewerManager::default();
+        let request = request();
+        let key = (request.project_id, request.request_id);
+        let connection = Arc::new(NativeImportConnection::unavailable_for_attachment_test(
+            &key.0,
+        ));
+        let lease = manager
+            .register(key.clone(), 42, Arc::clone(&connection))
+            .unwrap();
+        assert!(lease.pending.session.lock().unwrap().is_none());
+        assert!(manager.cancel(&key, 42).is_some());
+        drop(lease);
+        assert!(manager.register(key, 42, connection).is_err());
+    }
+
+    #[test]
+    fn cancelled_active_or_unknown_owner_never_returns_a_drained_duplicate_verdict() {
+        let manager = DocumentViewerManager::default();
+        let request = request();
+        let key = (request.project_id, request.request_id);
+        let connection = Arc::new(NativeImportConnection::unavailable_for_attachment_test(
+            &key.0,
+        ));
+        let lease = manager
+            .register(key.clone(), 42, Arc::clone(&connection))
+            .unwrap();
+        *lease.pending.session.lock().unwrap() = Some("native-session".into());
+        assert!(manager.cancel(&key, 42).is_some());
+        assert!(!manager.no_active_owner(&key));
+        assert!(matches!(
+            manager.register(key.clone(), 42, Arc::clone(&connection)),
+            Err(false)
+        ));
+        drop(lease);
+        assert!(matches!(
+            manager.register(key.clone(), 42, Arc::clone(&connection)),
+            Err(false)
+        ));
+
+        let closed_key = (key.0.clone(), "00000000-0000-7000-8000-000000000009".into());
+        let closed = manager
+            .register(closed_key.clone(), 42, Arc::clone(&connection))
+            .unwrap();
+        *closed.pending.session.lock().unwrap() = Some("native-session".into());
+        assert!(manager.cancel(&closed_key, 42).is_some());
+        closed.pending.drained.store(true, Ordering::Release);
+        drop(closed);
+        assert!(matches!(
+            manager.register(closed_key, 42, connection),
+            Err(true)
+        ));
     }
 }

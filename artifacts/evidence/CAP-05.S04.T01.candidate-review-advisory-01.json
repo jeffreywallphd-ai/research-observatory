@@ -1,0 +1,155 @@
+{
+  "schemaVersion": "1.0-advisory",
+  "documentType": "independent-candidate-security-correctness-advisory",
+  "id": "CAP-05.S04.T01.candidate-review-advisory-01",
+  "taskId": "CAP-05.S04.T01",
+  "waveId": "W2",
+  "author": "/root/s04_method_gate_readiness",
+  "recordedAt": "2026-10-08T22:31:18Z",
+  "baseCommit": "1bd33a6ba180487b239e3315e302b6db6aaea123",
+  "candidateCommit": "1941bfa06bab014a7aca58c00275e87035ebc55d",
+  "scope": "Independent bounded security/correctness advisory on the committed product implementation and available selected evidence. Candidate code was read through git show/diff. No product/framework/backlog/taskctl/HEAD change, test execution, formal task disposition or task approval was performed. Only this advisory is authored.",
+  "result": "ACTIONABLE_CANCELLATION_DRAIN_FINDING_AND_INCOMPLETE_QUALIFICATION",
+  "governingAuthority": [
+    "AGENTS.md: accepted ADR precedence, unchanged authority boundaries, exact committed qualifying evidence, expanded independent high-risk/security/public-contract review, adverse evidence preservation.",
+    "docs/automation/project-automation-guide.md sections 8.1 and 8.2; docs/automation/codex-tracking-guide.md Evidence and Independent review; docs/automation/workflow-efficiency.md Freeze acceptance, Review each boundary once, essential native checks and Stable snapshots.",
+    "planning/backlog.yaml CAP-05.S04.T01 and planning/slice-plans/CAP-05/CAP-05.S04-source-viewer-and-evidence-inspection-experience.md sections 4, 7-12 and 19.",
+    "Accepted docs/adr/ADR-0029-preserve-document-revisions-and-mediate-source-viewing.md Source viewer: cooperative cancellation, actual reader/lease release, current authorization, no direct paths/cache, large-source/resource/latency limits and inert local PDF.js.",
+    "Approved RO-UI-ACADEMIC-MINIMAL-1.9 and inherited Reader/workflow semantics, including the Reader page inventory and immutable reference approval. EX01 is not a generic T01 or future-gate method waiver.",
+    "docs/adr/ADR-0047-bind-local-source-viewing-to-existing-protected-read-authority.md is Proposed documentary mapping only and supplies no new authority. packages/contracts/documents/source-viewing.md states replacement waits for actual admitted-reader drain.",
+    "Direct owner restrictions supplied to the review: no automation-framework source work after A05 and no 8GiB/16GiB model/tier qualification runs. No new amendment is pending or required to correct this task-owned implementation defect."
+  ],
+  "reviewedProductBoundaries": [
+    "Core private source/range/text/cancel APIs and strict integer/size/closed-request constraints.",
+    "Exact original versus accepted normalized revision mapping; per-copy inspect permission for originals, separate derive requirement for accepted text, current principal/Intent/privacy/source and post-read delivery authorization.",
+    "Object-store full authentication before first byte; cooperative stop checkpoints; healthy-ciphertext cancellation versus corruption quarantine; transaction/reader cleanup.",
+    "Owned range admission/coalescing/per-waiter cancellation and FIFO project-action fairness between bounded reads.",
+    "Native closed command shapes, opaque source/range/request correlation, trusted root/session/connection/window/lock fences and raw bounded IPC byte delivery.",
+    "Renderer source correlation, byte-session admission, decoder generation retirement, search reader cancellation, page/thumbnail surface ownership and inert React structured text.",
+    "Pinned local PDF.js worker transforms, fixed asset inventory/origin constraints, disabled remote worker fetches/XFA/annotations/native decoder paths, worker buffer/message guards and bounded bundled font/CMap pool.",
+    "Recorded processing-original Reader handoff, selected Work/version return context and ordinary verification-selection state preserving the actual block/reopen history."
+  ],
+  "findings": [
+    {
+      "id": "CAP-05.S04.T01.CRA01-F01",
+      "priority": "P1",
+      "severity": "high",
+      "blocking": true,
+      "status": "OPEN_AT_REVIEWED_CANDIDATE",
+      "title": "Transport settlement is treated as physical Core reader drain",
+      "primaryLocation": {
+        "path": "apps/desktop/src/app/documentViewer.ts",
+        "startLine": 153,
+        "endLine": 160
+      },
+      "relatedLocations": [
+        "apps/desktop/src/app/pdfDocumentViewer.ts:29-52",
+        "apps/desktop/src-tauri/src/document_viewer.rs:303-312",
+        "apps/desktop/src-tauri/src/document_viewer.rs:516-529",
+        "apps/desktop/src-tauri/src/supervisor.rs:3504-3512",
+        "services/core-api/src/research_observatory_core/document_viewer_service.py:173-180",
+        "services/core-api/src/research_observatory_core/document_viewer_ranges.py:155-158",
+        "services/core-api/src/research_observatory_core/document_viewer_ranges.py:213-218"
+      ],
+      "criterion": "ADR-0029 requires real cooperative cancellation and owned reader/lease release, with the supported maximum-source cancellation boundary <=1 second. The task-owned source-viewing contract and PdfDocumentViewer.stop comments additionally promise actual admitted-reader drain before replacement decoder/range admission.",
+      "evidence": "ViewerByteSession.drain waits only Promise.allSettled over port.range promises. Native owned HTTP reads return cancellation as soon as their authorization latch fails, and cancel_core posts a route whose service implementation only sets request.stop. DocumentViewerRangePool.read raises for a cancelled waiter before group.done; the physical group owner closes later in _run. Therefore an IPC promise may settle while the old Core authentication/stream/transaction remains active. PdfDocumentViewer.ensure can then create a replacement decoder after this transport-only drain resolves. No terminal owner acknowledgement crosses the reviewed native protocol. Existing scheduler/fair project locks prevent simultaneous physical reads, but do not make early IPC settlement proof of drain or enforce the claimed replacement deadline.",
+      "reproduction": "Hold the real original authentication loop after a bounded frame has entered, cancel its native/renderer operation, allow the native IPC request to settle while retaining the held Core owner, then request a replacement render. At this candidate, drain can resolve and replacement decoder construction can occur before the held owner is released. Observe the actual reader registry/transaction and replacement admission, not only a UI callback or synthetic byte-port promise. This reviewer did not execute that regression; the defect is established by the candidate control-flow inspection.",
+      "smallestClosure": "Bind cancellation/drain acknowledgement to the exact root/project/native-session/request and physical terminal state. Last-member cancellation must not acknowledge drain before the owned stream/transaction closes; surviving coalesced followers keep independent authorization and ownership. Deadline expiry or unknown/failed acknowledgement must explicitly deny replacement. Persist failed/unknown drain state in the byte-session owner: Promise.allSettled or pending removal must not erase it.",
+      "requiredRegression": "A held real encrypted-read/native transport case proves no replacement decoder/range enters before actual close; a >1-second held owner returns explicit drain-pending denial; failed/lost acknowledgements remain poisoned after pending removal; early cancellation/late Core registration cannot turn an absent request into a false drain; live exact duplicate followers survive one member's cancellation with fresh delivery authority.",
+      "proposedParentClosure": "The parent proposed a Core terminal event, acknowledgement after participation ends and last-member physical owner closes, <=1-second or drain-pending denial, renderer acknowledgement waiting and poisoned unresolved drain, while preserving followers and the one-active scheduler. This direction addresses the finding if it also handles absent/early/lost cancellation and persists failure after pending removal.",
+      "closureState": "PROPOSED_ONLY_UNIMPLEMENTED_AND_UNVERIFIED_IN_THIS_REVIEW",
+      "amendmentRequiredForRestorativeClosure": false
+    }
+  ],
+  "availableEvidence": [
+    {
+      "path": "artifacts/tmp/CAP-05.S04.T01.product-package-proof-01.json",
+      "sha256": "ac00d12c48473145e86207c01c1f87244e1f7cee6ee49ed9db78f2bfa46e1e90",
+      "producerPath": "artifacts/tmp/CAP-05.S04.T01.product-package-proof-01.py",
+      "producerSha256": "cdee8718c3fd4b97e05d000c9a56e7aeb48517bf3cc0dda0f1e3b10ae2e0afe3",
+      "observedResult": "PASS",
+      "candidateBinding": "Report names 1941bfa06bab014a7aca58c00275e87035ebc55d and enumerates its selected inputs/artifacts. Producer and report were inspected, not rerun.",
+      "supportedScope": "195-artifact complete product inventory, manifest input/output/pin/reference/Reader route/local CSP/capability identities and unchanged shared framework controls.",
+      "limits": "Static package proof does not establish actual runtime confinement, native cancellation/drain, complete memory, p95 latency or public-helper/profile PASS."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S04.T01.native-viewer-resume-01.result.json",
+      "sha256": "9b60159e963efcd518eb5207f46460401c00e2f2f2f95f3312cb2743086e2f5a",
+      "observedResult": "PASS",
+      "candidateBinding": "Report names 1941bfa06bab014a7aca58c00275e87035ebc55d, binary SHA256 a4513a6c4027480803cb359f9f0db7b4e11747077cef18424267a5a2a5ba3d63 and product-manifest SHA256 f509de079543c4eb2103f7392c818a89cec3078b78a210f8d0d6196963623f43. Producer, UIA code and final event tail were inspected, not rerun.",
+      "supportedScope": "Actual shipping renderer/Wry/native/Core encrypted-original happy-path first-page status plus return to the selected source and owned exit 0, using declared synthetic inspection/capacity fixture seed adapters and no model execution.",
+      "sample": {"opens": 1, "clickToDisplayedStatusMs": 4918.8901000000005},
+      "limits": "UIA observes the actual Page 1 of 50 displayed status. One click-to-status sample is not cold/warm p95, direct renderer/Core-readiness timing, malicious-document confinement, cancellation, maximum-source drain, complete peak footprint or minimum-tier qualification. Its duration exceeds 1.5 seconds and cannot be reported as meeting the accepted latency target."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S04.T01.core-focused-01.log",
+      "sha256": "840484cf2fa21362136aad29a1953e32447fdfecc153eba4b5e224184f0bbb93",
+      "observedResult": "33 focused tests passed in 75.676 seconds",
+      "supportedScope": "Real encrypted object, private API, authority, admission and fairness tests; selected source tests were inspected.",
+      "limits": "Retained worktree log; this review did not independently execute tests or establish exact-candidate producer/input closure for that log. It is not physical Native/Wry cancellation proof."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S04.T01.native-tests-04.log",
+      "sha256": "f5370968c1dc9bac466cebd628fb911edc48aefd0bc542dfa9e5babd376206fa",
+      "observedResult": "Five focused native unit tests passed; 203 other tests filtered",
+      "supportedScope": "Closed native request/response correlation and early-cancellation ownership tests.",
+      "limits": "Static/unit ownership tests do not prove actual runtime drain, origin/lock delivery races or packaging qualification; no independent rerun or complete candidate closure was made."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S04.T01.recorded-source-green-02.log",
+      "sha256": "5bde1caac89c8a3daf175d3fc9c42e34f25798d674bc36b567c09a984e07ecf0",
+      "observedResult": "20 tests across three files passed",
+      "supportedScope": "Recorded processing-original handoff and viewer/attachment ownership tests; corresponding candidate source was inspected.",
+      "limits": "The latest typecheck log was empty when inspected; a completed typecheck PASS is parent-reported rather than independently established here. Test logs were not independently rerun or fully authenticated to candidate execution."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S04.T01.worker-cancel-01.log",
+      "sha256": "82a2b3ad4a56c11a66e61a4bd06e327e28fb2b1b2acccf83a01bb900719b7e0e",
+      "observedResult": "FAIL: search bounded-probe-timeout; render/thumbnail cases passed",
+      "disposition": "Preserved adverse run. Candidate now owns SDK text readers, but this review does not manufacture a passing original run or formal finding closure."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S04.T01.worker-cancel-02.log",
+      "sha256": "8b20c5667b9dc00ba2d25e58a40705f20e09aa082fa8158139683009487bdd3d",
+      "observedResult": "All six actual-worker search/render/thumbnail and dictionary cases report PASS",
+      "supportedScope": "Actual bundled SDK/worker cancellation and replacement over an explicitly synthetic byte port.",
+      "limits": "Synthetic byte-port settlement cannot close CRA01-F01, which concerns physical native/Core ownership. Worktree probe, no exact-candidate native/memory/p95 qualification claim."
+    }
+  ],
+  "remainingQualification": [
+    {
+      "area": "Cancellation and recovery",
+      "required": "Correct CRA01-F01, then prove actual renderer/native/Core cancellation during authentication/prefix discard/uncached render/search/thumbnail and project lock/close; actual <=1-second owner/lease release at 128MiB with concurrent metadata writes; no late bytes, failed drain denial and exact fresh retry."
+    },
+    {
+      "area": "Complete resources and hostile documents",
+      "required": "Measure complete/peak viewer and worker ownership, including JS objects/strings, retained buffers, native/Core/IPC copies, decode surfaces and fonts/CMaps under representative/stress/malformed/huge-page/hostile fixtures. Fixed budget reservations and constructor/message guards are not physical heap measurements. Demonstrate safe rejection before the 256MiB aggregate boundary. No forbidden 8GiB/16GiB model/tier runs are authorized."
+    },
+    {
+      "area": "Latency and large-source behavior",
+      "required": "Exact-candidate real product 10MiB/50-page cold/warm p95 over at least 20 opens using the accepted readiness-to-first-page definition, plus 128MiB/500-page stress and no eager all-page/whole-file prefetch. Earlier Core/browser bridge probes and one native UIA smoke do not establish the target or minimum tier. Retain adverse timings; do not relax the accepted target."
+    },
+    {
+      "area": "Real native security and rights",
+      "required": "Actual packaged origin/worker/local-resource confinement and denied remote assets; malicious PDF actions/scripts/XFA/attachments/forms and inert text; window/lock/connection/session/source/rights revocation races and denial before byte/text delivery, with unchanged source/metadata recovery."
+    },
+    {
+      "area": "Experience and evidence closure",
+      "required": "Exact-candidate approved Reader/workflow/token/page/interaction/theme/focus/accessibility/reflow proof; stable complete selected inputs/installed producer identity and criterion map; required independent task disposition followed by integrated slice/checkpoint and fresh Wave qualification. No mandatory future coverage is waived by ordinary method selection."
+    }
+  ],
+  "preservedHistory": [
+    "artifacts/evidence/CAP-05.S04.T01.verification-selection-advisory-01.json remains a bounded authority/method-selection advisory, not task or owner approval.",
+    "The mistaken verification-method block and successful ordinary reopen are preserved by artifacts/evidence/CAP-05.S04.T01.verification-selection-state-01.json and retained operation receipts; no new owner amendment is inferred.",
+    "The original unchanged product/CSP helper failures remain failures. No desktop:application or public profile result is fabricated.",
+    "The withdrawn uncommitted shared-verifier edit and worker/admission/cancellation adverse runs remain retained; this review changes none of their bytes or outcomes."
+  ],
+  "recommendedNextStep": "Remediate the product-owned cancellation/drain finding after active candidate checks finish and parent permits product-input changes. Add the focused real-owner regression before remediation where practical, commit the successor candidate, then rerun affected exact-candidate checks and incrementally review the fix. Continue required resource/security/native/experience qualification within owner restrictions; stop only at a demonstrated unmet governed boundary. No task completion or owner/release request is supported by this partial evidence.",
+  "taskApproval": false,
+  "formalTaskDisposition": null,
+  "ownerApprovalReadiness": false,
+  "waveCompletion": false,
+  "releaseApproval": false,
+  "testsExecutedByReviewer": [],
+  "changedByReviewer": ["artifacts/evidence/CAP-05.S04.T01.candidate-review-advisory-01.json"]
+}

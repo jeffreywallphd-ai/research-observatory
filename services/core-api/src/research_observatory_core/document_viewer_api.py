@@ -117,8 +117,17 @@ def register_document_viewer_routes(app: FastAPI, runtime: Callable):
 
     @router.post("/cancel")
     def cancel(request: Request, command: ViewerCancelCommand):
-        # Exact opaque registration only: this performs no lifecycle/DB action
-        # and cannot wait behind the source read it is trying to stop.
-        return run(request, lambda service: {"cancelled": service.cancel(command)})
+        # No lifecycle/DB lock: the bounded wait observes actual owner closure.
+        # Unknown registration or deadline expiry is explicitly not drained.
+        return run(
+            request,
+            lambda service: {
+                "schemaVersion": "1.0",
+                "projectId": command.project_id,
+                "sessionId": command.session_id,
+                "requestId": command.request_id,
+                "drained": service.cancel(command),
+            },
+        )
 
     app.include_router(router)

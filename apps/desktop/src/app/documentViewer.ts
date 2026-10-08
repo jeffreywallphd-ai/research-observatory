@@ -16,6 +16,9 @@ export interface ViewerMetadata {
 }
 export interface DocumentViewerPort {
   readonly source: (projectId: string, selector: ViewerSelector) => Promise<ViewerMetadata | null>;
+  // Resolution (including null) proves the owned participation is terminal or
+  // never issued. Rejection means termination is unknown; callers must deny
+  // replacement and retain admission accounting until closure is established.
   readonly range: (projectId: string, selector: ViewerSelector, requestId: string, start: number,
     end: number, signal: AbortSignal) => Promise<ArrayBuffer | null>;
 }
@@ -101,6 +104,8 @@ export const nativeDocumentViewerPort: DocumentViewerPort = {
   async range(projectId, selector, requestId, start, end, signal) {
     if (typeof window === "undefined" || !("__TAURI_INTERNALS__" in window) || signal.aborted) return null;
     const cancel = () => {
+      // This is only a stop signal. The range result below supplies the exact
+      // physical-terminal acknowledgement; cancel IPC settlement proves none.
       void invoke("document_viewer_cancel", { request: { schemaVersion: "1.0", projectId, requestId } }).catch(() => undefined);
     };
     signal.addEventListener("abort", cancel, { once: true });
@@ -108,20 +113,33 @@ export const nativeDocumentViewerPort: DocumentViewerPort = {
       const response = await invoke<unknown>("document_viewer_range", {
         request: { schemaVersion: "1.0", projectId, selector, requestId, start, end },
       });
-      return !signal.aborted && response instanceof ArrayBuffer && response.byteLength === end - start ? response : null;
-    } catch { return null; }
+      if (!(response instanceof ArrayBuffer) || response.byteLength !== end - start) throw new Error("viewer-owned-read-drain-pending");
+      return !signal.aborted ? response : null;
+    } catch (failure) {
+      const fields: Record<string, PropertyDescriptor> = failure && typeof failure === "object" && !Array.isArray(failure)
+        ? Object.getOwnPropertyDescriptors(failure) : {};
+      if (Reflect.ownKeys(fields).length !== 4
+        || ["schemaVersion", "projectId", "requestId", "drained"].some((key) => !fields[key] || !("value" in fields[key]!))
+        || fields["schemaVersion"]!.value !== "1.0" || fields["projectId"]!.value !== projectId
+        || fields["requestId"]!.value !== requestId || fields["drained"]!.value !== true) {
+        throw new Error("viewer-owned-read-drain-pending");
+      }
+      return null;
+    }
     finally { signal.removeEventListener("abort", cancel); }
   },
 };
 
 export class ViewerByteSession {
   private live = true;
+  private drainFailed = false;
   private pending = new Map<string, { controller: AbortController; promise: Promise<Uint8Array<ArrayBuffer>> }>();
   constructor(readonly projectId: string, readonly selector: ViewerSelector, readonly metadata: ViewerMetadata,
     private readonly port: DocumentViewerPort, readonly budget: ViewerBufferBudget) {
     if (!decodeViewerMetadata(metadata, projectId, selector)) throw new Error("viewer-source-unavailable");
   }
   async read(start: number, end: number): Promise<Uint8Array<ArrayBuffer>> {
+    if (this.drainFailed) throw new Error("viewer-owned-read-drain-pending");
     if (!this.live || !Number.isSafeInteger(start) || !Number.isSafeInteger(end)
       || start < 0 || start >= end || end > this.metadata.source.byteLength || end - start > VIEWER_RANGE_LIMIT) {
       throw new Error("viewer-source-unavailable");
@@ -134,13 +152,18 @@ export class ViewerByteSession {
     // The render owner separately reserves the worker and page surfaces.
     const release = this.budget.reserve((end - start) * 6 + 8192);
     const controller = new AbortController();
+    let confirmedClosed = false;
     const promise = this.port.range(this.projectId, this.selector, newAttachmentId(), start, end, controller.signal)
+      .catch(() => { this.drainFailed = true; throw new Error("viewer-owned-read-drain-pending"); })
       .then((buffer) => {
+        // Port resolution denotes real termination (or a never-issued read),
+        // including null for an explicitly acknowledged cancellation/denial.
+        confirmedClosed = true;
         if (!this.live || controller.signal.aborted || !(buffer instanceof ArrayBuffer) || buffer.byteLength !== end - start) {
           throw new Error("viewer-source-unavailable");
         }
         return new Uint8Array(buffer);
-      }).finally(() => { this.pending.delete(key); release(); });
+      }).finally(() => { this.pending.delete(key); if (confirmedClosed) release(); });
     this.pending.set(key, { controller, promise });
     return promise;
   }
@@ -148,15 +171,21 @@ export class ViewerByteSession {
     for (const pending of this.pending.values()) pending.controller.abort();
   }
   fresh(): ViewerByteSession {
+    if (this.drainFailed || this.pending.size) throw new Error("viewer-owned-read-drain-pending");
     return new ViewerByteSession(this.projectId, this.selector, this.metadata, this.port, this.budget);
   }
   async drain(): Promise<void> {
+    if (this.drainFailed) throw new Error("viewer-owned-read-drain-pending");
     let timeout: ReturnType<typeof setTimeout> | undefined;
     try {
       await Promise.race([
         Promise.allSettled([...this.pending.values()].map((request) => request.promise)),
-        new Promise<never>((_resolve, reject) => { timeout = setTimeout(() => reject(new Error("viewer-source-unavailable")), 1000); }),
+        new Promise<never>((_resolve, reject) => { timeout = setTimeout(() => reject(new Error("viewer-owned-read-drain-pending")), 1000); }),
       ]);
+      if (this.drainFailed) throw new Error("viewer-owned-read-drain-pending");
+    } catch {
+      this.drainFailed = true;
+      throw new Error("viewer-owned-read-drain-pending");
     } finally { if (timeout !== undefined) clearTimeout(timeout); }
   }
   close(): void { this.live = false; this.cancelPending(); }
