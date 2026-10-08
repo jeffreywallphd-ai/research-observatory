@@ -449,7 +449,8 @@
       "title": "Bind immutable document revisions to existing human authority",
       "status": "Proposed",
       "linkedTasks": [
-        "CAP-05.S03.T01"
+        "CAP-05.S03.T01",
+        "CAP-05.S03.T02"
       ]
     }
   ]

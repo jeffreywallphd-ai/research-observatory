@@ -43,3 +43,11 @@ through the existing revision adapter and portable SourceAnchorRepository port,
 register its exact name, and update the new module fixture. Architecture and
 packaging regressions must pass; no generic storage exemption or new automation
 behavior is introduced.
+
+Independent R01 finding adds the missed criterion3 acceptance row: public
+portable contracts, the new port and product check registrations require a
+changed indexed documentary ADR with exact affected-path coverage. ADR adverse57
+reproduces the gap; append T02's implementation mapping to existing Proposed
+ADR0046 and run the existing ADR change-set check before resubmission. Retain all
+passing functional54 outputs and prior failures with their exact candidates;
+no accepted decision or frozen approval is edited.

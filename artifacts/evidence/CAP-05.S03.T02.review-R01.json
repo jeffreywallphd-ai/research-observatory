@@ -1,0 +1,406 @@
+{
+  "task_id": "CAP-05.S03.T02",
+  "attempt_id": "R01",
+  "reviewer": "agent:/root/s03_t01_review",
+  "result": "changes-requested",
+  "reviewed_at": "2026-10-08T04:01:09.313569+00:00",
+  "reviewed_state_commit": "e2292dbac10aabcafe510b6799579b3714db1b5c",
+  "candidate_commit": "e2292dbac10aabcafe510b6799579b3714db1b5c",
+  "base_commit": "45ea077cfd651802c265e09679f3843156a00c5a",
+  "packet_sha256": "64f22553c6ebb93fa053748ecc8efdd067aaef20691d9549dccb33fbcffe44ef",
+  "evidence_sha256": "b6a627d9bc03558073a3330d245a0f546de406672f41938245a68aaa4aa371fa",
+  "acceptance_criteria_sha256": "5002d4e6c8729c5a40600cdf4fcb19fbb9b8bdb2582d8c15de7698212549e070",
+  "selection_sha256": "8d5bd7dd83e7d0b1fe034f57379fa1896cec3b85dc66c61bfa492478f8f0eacc",
+  "findings": [
+    {
+      "id": "CAP-05.S03.T02-R01-F01",
+      "severity": "medium",
+      "blocking": true,
+      "criterion_index": 3,
+      "title": "Protected anchor contracts and port lack required changed documentary ADR coverage",
+      "reproduction": "At exact candidate e2292dbac10aabcafe510b6799579b3714db1b5c, compare against claim base 45ea077cfd651802c265e09679f3843156a00c5a and execute python tools/adr_check.py --repo . --base 45ea077cfd651802c265e09679f3843156a00c5a --head e2292dbac10aabcafe510b6799579b3714db1b5c. The owner independently ran this after my read-only policy/diff finding; artifacts/tmp/CAP-05.S03.T02.adr-adverse-57.log (raw SHA-256 24ff21a221862af87e5f0794191cf31682d89351790fd29e72d11c2514aa85f7) reports 12 errors. architecture-protected-paths.json protects packages/contracts/README.md, all eight new packages/contracts/anchors files, quality-scope.json, services/core-api/src/research_observatory_core/ports/source_anchors.py and verification-profiles.json. tools/adr_check.py:144-164 accepts coverage only from changed indexed Proposed/Accepted ADRs. No ADR appears in the 49-path candidate diff, so unchanged accepted ADR0029 and Proposed ADR0046 cannot satisfy this enforcement. qualification54 omitted this change-set check; its overall PASS establishes only its 15 selected groups. Criterion3 and approved plan 9.2 sequence 6 require the relevant contract/architecture documentation and checks.",
+      "required_remediation": "In a strict-descendant candidate, extend the existing Proposed documentary ADR0046 with the T02 implementation mapping, task link and precise affected paths for the public anchor contracts/README, SourceAnchorRepository port, verification/quality registration and concrete persistence/native composition. Document the existing canonical Document/provenance/dependency/outbox authority, bounded derivative-context authentication versus full original-byte authentication, exact selectors/current rights and deferred S04 activation. Keep accepted architecture and frozen approvals unchanged; no new authority or amendment is required. Add the claim-base-to-corrected-candidate ADR change-set check to criterion3 evidence and obtain a fresh PASS. Preserve ADR57, qualification50/52 and this formal R01 finding; bind a superseding R02 packet to the corrected candidate, replay F01 plus incremental documentation/input-closure risk, and reuse passing product evidence only where its exact unchanged input closure is established."
+    }
+  ],
+  "closures": [],
+  "acceptance_reviews": [
+    {
+      "criterion_index": 1,
+      "result": "satisfied",
+      "assessment": "Core derives exact accepted-revision/node/projection IDs, bounded quote/context and NFC Unicode 16 half-open codepoint offsets from authenticated structure; repeated text cannot relocate the target. Real encrypted repository reconstruction/DB reopen preserves selectors and canonical immutable anchor publication; a new accepted head does not move an existing anchor. Fresh actual Core/session/SQLCipher/native API outputs feed the mounted React fixture through an explicitly doubled Tauri response bridge. The actual component highlights the intended passage, retains the exact revision, visibly labels missing-coordinate text fallback, supports keyboard/focus/return and both themes with 200% scaling/narrow reflow, clears on lock and ignores late delivery. Authored geometry expectations prove normalization and explicit rotation/scaling. This is repository reopen plus component remount proof; no full Core/Tauri process restart or activated attachment-to-reader journey is inferred. Approved STYLE_GUIDE 1.4/WORKFLOW_CATALOG defer that activation to S04."
+    },
+    {
+      "criterion_index": 2,
+      "result": "satisfied",
+      "assessment": "All 15 selected fixed-candidate groups pass: 34 Python unittest cases, 1 Rust fixed-command case and 7 renderer cases, 42 executed cases with no declared skips; 201 unrelated Rust cases are filtered, not qualified. Cases challenge current exact-copy inspect/derive, human/session/Intent/privacy authority, stale actor/session and rights, command conflicts/equal concurrent replay, selector disagreement, wrong revision/range/project, corrupt context, canonical outbox loss and atomic rollback. Six affected predecessor cases retain full original-source authentication, deduplicated-copy authority and delivery/close denial. The common read authenticates one bounded context envelope and canonical derivation without original/full-IR reads or a false original verification update. Fixed native fields/body/Origin/redaction and inert markup/Unicode/lock tests support the altered boundaries. Scope remains the actual Core composition and explicitly doubled mounted-renderer bridge, not installation or OS-native journey qualification."
+    },
+    {
+      "criterion_index": 3,
+      "result": "not-satisfied",
+      "assessment": "Six generated schemas, strict Core/renderer value decoding, existing canonical Document aggregate/encrypted-artifact/provenance/dependency/outbox persistence, root-level adapter/portable factory, exact-name architecture registration and sorted packaging inventory/fixture are supported by the authenticated narrow checks. No migration or parallel identity store is introduced. However the public contracts/port and quality/verification changes require changed indexed ADR coverage, and the actual ADR57 check fails on 12 protected paths. F01 is the sole formal blocker. The documentary correction can map unchanged accepted decisions in Proposed ADR0046 without changing scope/security/release authority."
+    }
+  ],
+  "independence": {
+    "implementation_owner": "codex-w2-implementation",
+    "statement": "I supplied a read-only advisory task-start preflight, independently reviewed the original 85861 candidate and bounded relocation/registration changes at e2292dba, detected the missing ADR coverage by inspecting the policy/checker and exact Git diff, and authenticated the frozen packet and existing evidence. I did not author product/tests/producers, run qualifying checks, implement corrections, perform owner decisions or mutate task state. The owner independently executed ADR57. This ledger is my only write for this T02 review."
+  },
+  "evidence_reproduction": {
+    "frozen_packet_authentication": {
+      "result": "PASS",
+      "existing_read_only_binding_function": "taskctl.task_submission_packet_errors",
+      "errors": [],
+      "packet_sha256": "64f22553c6ebb93fa053748ecc8efdd067aaef20691d9549dccb33fbcffe44ef",
+      "evidence_reference": {
+        "type": "criterion-manifest",
+        "path": "artifacts/evidence/CAP-05.S03.T02.R01.json",
+        "sha256": "b6a627d9bc03558073a3330d245a0f546de406672f41938245a68aaa4aa371fa",
+        "commit": "e2292dbac10aabcafe510b6799579b3714db1b5c",
+        "recorded_at": "2026-10-08T03:51:39+00:00"
+      },
+      "acceptance_criteria_sha256": "5002d4e6c8729c5a40600cdf4fcb19fbb9b8bdb2582d8c15de7698212549e070",
+      "selection_sha256": "8d5bd7dd83e7d0b1fe034f57379fa1896cec3b85dc66c61bfa492478f8f0eacc",
+      "prior_attempt_id": null,
+      "formal_open_finding_ids_before_review": [],
+      "changed_paths": 49,
+      "base_ancestry_verified": true
+    },
+    "authenticated_checks": [
+      {
+        "id": "lint",
+        "command_id": "foundation:quality",
+        "candidate_commit": "e2292dbac10aabcafe510b6799579b3714db1b5c",
+        "result": "PASS",
+        "exit_code": 0,
+        "raw_output": {
+          "path": "artifacts/tmp/CAP-05.S03.T02.qualification-54.lint.log",
+          "sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18",
+          "canonical_sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18"
+        },
+        "executed_cases": null,
+        "skips": []
+      },
+      {
+        "id": "format",
+        "command_id": "foundation:quality",
+        "candidate_commit": "e2292dbac10aabcafe510b6799579b3714db1b5c",
+        "result": "PASS",
+        "exit_code": 0,
+        "raw_output": {
+          "path": "artifacts/tmp/CAP-05.S03.T02.qualification-54.format.log",
+          "sha256": "c4fd3f494556e5e7cf4355131a1080dbdcf0bbf09664638af9984db197ad88c0",
+          "canonical_sha256": "c4fd3f494556e5e7cf4355131a1080dbdcf0bbf09664638af9984db197ad88c0"
+        },
+        "executed_cases": null,
+        "skips": []
+      },
+      {
+        "id": "types",
+        "command_id": "foundation:quality",
+        "candidate_commit": "e2292dbac10aabcafe510b6799579b3714db1b5c",
+        "result": "PASS",
+        "exit_code": 0,
+        "raw_output": {
+          "path": "artifacts/tmp/CAP-05.S03.T02.qualification-54.types.log",
+          "sha256": "7aefcacc6d445354a115cf76fcdea696165be7ad8cf9b86a60ea98727c6e96f6",
+          "canonical_sha256": "157a09cfcdfdfb5977479c5a1c08345149263a3e990a2ec976ef28aaeec9cae6"
+        },
+        "executed_cases": null,
+        "skips": []
+      },
+      {
+        "id": "portable-schemas",
+        "command_id": "documents:anchor-schemas",
+        "candidate_commit": "e2292dbac10aabcafe510b6799579b3714db1b5c",
+        "result": "PASS",
+        "exit_code": 0,
+        "raw_output": {
+          "path": "artifacts/tmp/CAP-05.S03.T02.qualification-54.portable-schemas.log",
+          "sha256": "9e70564a6485362e4a4b36a9984490c9b0c58eae8639198fd926d8c964731ae3",
+          "canonical_sha256": "c4232e96d850095c7ad5917d2ff4084acf1ec8551dd2b58ef4fd4b343bc8aa44"
+        },
+        "executed_cases": null,
+        "skips": []
+      },
+      {
+        "id": "architecture",
+        "command_id": "foundation:architecture",
+        "candidate_commit": "e2292dbac10aabcafe510b6799579b3714db1b5c",
+        "result": "PASS",
+        "exit_code": 0,
+        "raw_output": {
+          "path": "artifacts/tmp/CAP-05.S03.T02.qualification-54.architecture.log",
+          "sha256": "51a256bf6a7b2e89ab1d1b97aa19077aabf0e8858a450de1f5ceb155ed5c3e88",
+          "canonical_sha256": "1ba622fdbf569bf9ab13ee46e639b636ea005c560abcd4b168f782d8fbdc3f74"
+        },
+        "executed_cases": null,
+        "skips": []
+      },
+      {
+        "id": "anchors",
+        "command_id": "documents:anchors",
+        "candidate_commit": "e2292dbac10aabcafe510b6799579b3714db1b5c",
+        "result": "PASS",
+        "exit_code": 0,
+        "raw_output": {
+          "path": "artifacts/tmp/CAP-05.S03.T02.qualification-54.anchors.log",
+          "sha256": "9d0251d12ea8de7c1ca8451e36dc6f2de7fef91bdafb1bda628fb460d17c59b7",
+          "canonical_sha256": "75314c8951c2bfad0d63c0499915b90ae3c73d9ea4faccc9ab5953d5a565da51"
+        },
+        "executed_cases": 20,
+        "skips": []
+      },
+      {
+        "id": "original-source-boundaries",
+        "command_id": "documents:unit",
+        "candidate_commit": "e2292dbac10aabcafe510b6799579b3714db1b5c",
+        "result": "PASS",
+        "exit_code": 0,
+        "raw_output": {
+          "path": "artifacts/tmp/CAP-05.S03.T02.qualification-54.original-source-boundaries.log",
+          "sha256": "2637abc2d9d941fe22a02721ac558264aa5a7cc07090a7e71eae870361fc9c02",
+          "canonical_sha256": "6cfd39d2480568c8d08351d08a52cca3547a5e9a871f62c193d06c3ac2db7ddd"
+        },
+        "executed_cases": 6,
+        "skips": []
+      },
+      {
+        "id": "native-api",
+        "command_id": "service:unit",
+        "candidate_commit": "e2292dbac10aabcafe510b6799579b3714db1b5c",
+        "result": "PASS",
+        "exit_code": 0,
+        "raw_output": {
+          "path": "artifacts/tmp/CAP-05.S03.T02.qualification-54.native-api.log",
+          "sha256": "669796e2a3863518787ea44cd4f86abde0331d1fdb17c1e97853a3fe9be27df7",
+          "canonical_sha256": "1609724b14cf16e361aa3563c453d33110888d414d9f8c0ba8f7465434521641"
+        },
+        "executed_cases": 5,
+        "skips": []
+      },
+      {
+        "id": "package-contract",
+        "command_id": "packaging:unit",
+        "candidate_commit": "e2292dbac10aabcafe510b6799579b3714db1b5c",
+        "result": "PASS",
+        "exit_code": 0,
+        "raw_output": {
+          "path": "artifacts/tmp/CAP-05.S03.T02.qualification-54.package-contract.log",
+          "sha256": "ae523ad9a43a325a072f126ca6c75f22cda432974b8b61480b9041191774eacd",
+          "canonical_sha256": "4a7259e6f196ef8cd25e0cbad0a28e9988a516bac737403ebc429b282a79ed8d"
+        },
+        "executed_cases": 1,
+        "skips": []
+      },
+      {
+        "id": "actual-core-composition",
+        "command_id": "documents:anchors",
+        "candidate_commit": "e2292dbac10aabcafe510b6799579b3714db1b5c",
+        "result": "PASS",
+        "exit_code": 0,
+        "raw_output": {
+          "path": "artifacts/tmp/CAP-05.S03.T02.qualification-54.actual-core-composition.log",
+          "sha256": "7f990a903b7ec66928e6838ee08912b24cd1254bd2950a0c4ab578e76555265f",
+          "canonical_sha256": "ec529209f2b436a70fa3fd81b90ae284dc6fd9edd2ea5d1742b7c46bf01c2c4a"
+        },
+        "executed_cases": 1,
+        "skips": []
+      },
+      {
+        "id": "native-command",
+        "command_id": "desktop:application",
+        "candidate_commit": "e2292dbac10aabcafe510b6799579b3714db1b5c",
+        "result": "PASS",
+        "exit_code": 0,
+        "raw_output": {
+          "path": "artifacts/tmp/CAP-05.S03.T02.qualification-54.native-command.log",
+          "sha256": "10e6fc24e8b845eb1963a3d076307ce5b23c88b10632d5701593889b44732cde",
+          "canonical_sha256": "10e6fc24e8b845eb1963a3d076307ce5b23c88b10632d5701593889b44732cde"
+        },
+        "executed_cases": 1,
+        "skips": []
+      },
+      {
+        "id": "renderer-unit",
+        "command_id": "desktop:application",
+        "candidate_commit": "e2292dbac10aabcafe510b6799579b3714db1b5c",
+        "result": "PASS",
+        "exit_code": 0,
+        "raw_output": {
+          "path": "artifacts/tmp/CAP-05.S03.T02.qualification-54.renderer-unit.log",
+          "sha256": "d19eeb430de349da237f4b4d83e2299e04cec88bacc41bf4bbd6868655f2d7f7",
+          "canonical_sha256": "d19eeb430de349da237f4b4d83e2299e04cec88bacc41bf4bbd6868655f2d7f7"
+        },
+        "executed_cases": 7,
+        "skips": []
+      },
+      {
+        "id": "renderer-types",
+        "command_id": "desktop:application",
+        "candidate_commit": "e2292dbac10aabcafe510b6799579b3714db1b5c",
+        "result": "PASS",
+        "exit_code": 0,
+        "raw_output": {
+          "path": "artifacts/tmp/CAP-05.S03.T02.qualification-54.renderer-types.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "canonical_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "executed_cases": null,
+        "skips": []
+      },
+      {
+        "id": "reader-fixture-build",
+        "command_id": "desktop:application",
+        "candidate_commit": "e2292dbac10aabcafe510b6799579b3714db1b5c",
+        "result": "PASS",
+        "exit_code": 0,
+        "raw_output": {
+          "path": "artifacts/tmp/CAP-05.S03.T02.qualification-54.reader-fixture-build.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "canonical_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "executed_cases": null,
+        "skips": []
+      },
+      {
+        "id": "reader-browser",
+        "command_id": "documents:anchors",
+        "candidate_commit": "e2292dbac10aabcafe510b6799579b3714db1b5c",
+        "result": "PASS",
+        "exit_code": 0,
+        "raw_output": {
+          "path": "artifacts/tmp/CAP-05.S03.T02.qualification-54.reader-browser.log",
+          "sha256": "4abe600133f4f166fdd36f33534cf4425fafadeff1fecb92a2400166e5c9bd4e",
+          "canonical_sha256": "28b1eed6771767fcb19f90cb4e29309a45cf059a90f15b34be5acc45cc99171a"
+        },
+        "executed_cases": 1,
+        "skips": []
+      }
+    ],
+    "machine_artifacts": [
+      {
+        "path": "artifacts/tmp/CAP-05.S03.T02.qualification-54.json",
+        "sha256": "b58cc3f55478309fc4b71489af1cbfca19c10f2f737006a0b8d8c080b2655d19"
+      },
+      {
+        "path": "artifacts/tmp/CAP-05.S03.T02.qualification-54.py",
+        "sha256": "55489b93a57e0106419c84b100bb10f6efdd7b2114e9528cb890fcbdff58a60e"
+      },
+      {
+        "path": "artifacts/tmp/CAP-05.S03.T02.reader-api-fixture-54.json",
+        "sha256": "b50b251a582d1c88f83323bc55f9b1c2857d032b7945e44e7df43edcb11bd193"
+      },
+      {
+        "path": "artifacts/tmp/CAP-05.S03.T02.reader-browser-build-54/source-anchor-reader.css",
+        "sha256": "fb64e441a02666517c68d7cd3667408f3747439fa735e365a8306970e236193a"
+      },
+      {
+        "path": "artifacts/tmp/CAP-05.S03.T02.reader-browser-build-54/source-anchor-reader.js",
+        "sha256": "13f8f14e50df7a0bc203c3a9ee61ba7e0043c91d711d9367546034b1e27d39a2"
+      }
+    ],
+    "source_input_authentication": {
+      "result": "PASS",
+      "tracked_files": 6162,
+      "runtime_executables": 3,
+      "sealed_python_files": 9208,
+      "source_inventory_report": "artifacts/tmp/CAP-05.S03.T02.qualification-54.json",
+      "source_inventory_report_sha256": "b58cc3f55478309fc4b71489af1cbfca19c10f2f737006a0b8d8c080b2655d19",
+      "producer_sha256": "55489b93a57e0106419c84b100bb10f6efdd7b2114e9528cb890fcbdff58a60e",
+      "sealed_runtime_record": "artifacts/tmp/CAP-05.S02.T03.check-runtime-130.json",
+      "sealed_runtime_record_sha256": "765b653b9c074d820a6ff8821052a8ae78232610d0046f69ef57a61ac96448b0",
+      "timing": "All listed current bytes matched before the subsequent authorized taskctl submission/generated REVIEW-state metadata updates; shared candidate and product source remain fixed. Qualification held tracked-source/helper locks and the owned immutable Python snapshot.",
+      "limits": "Node/Rust executable hashes and configured current dependencies are authenticated only as declared; no complete global dependency closure, cached-result reuse or newly frozen installation qualification is inferred."
+    },
+    "historical_reference_authentication": {
+      "result": "PASS",
+      "records": 86,
+      "raw_hashes_all_match": true,
+      "accepted_prior_performance": {
+        "path": "artifacts/evidence/CAP-05.S02.T03.performance-owner-acceptance-01.md",
+        "sha256": "5dea8e7a2046f5ec229b10a143370c6048e62080da7c3f0f99d700f86219774a",
+        "scope": "Preserve the exact prior 62.5333542-second owner-accepted warm observation. No overage tuning/retest or broader waiver."
+      }
+    },
+    "adverse_adr_check": {
+      "path": "artifacts/tmp/CAP-05.S03.T02.adr-adverse-57.log",
+      "raw_sha256": "24ff21a221862af87e5f0794191cf31682d89351790fd29e72d11c2514aa85f7",
+      "result": "FAIL",
+      "protected_path_errors": 12,
+      "performed_by": "implementation owner after independent static finding",
+      "reviewer_reran_check": false
+    },
+    "reviewer_execution_observations": [
+      "An initial source-hash enumeration aborted before authentication because the relative portable-interpreter/pathlib workspace resolution appended the workspace basename. The read-only enumeration was corrected to the explicit absolute workspace and then all source/runtime/artifact hashes matched. The interpreter emitted its pre-existing real-location warning. No product/check rerun or input mutation occurred.",
+      "Evidence binding uses the existing taskctl LF-normalized payload SHA-256; the sorted-JSON digest printed during exploratory inspection is a different value and is not used as the packet evidence identity."
+    ]
+  },
+  "scope_limits": {
+    "nativeCore": "Actual current native session, human/Intent/privacy/rights, SQLCipher, encrypted envelopes and API composition with in-process HTTP and authored synthetic accepted parser IR.",
+    "renderer": "Actual compiled React component in Chromium, fixed Tauri response double populated by fresh actual Core outputs. No actual installed Tauri process, native OS-dialog or new clean package qualification asserted.",
+    "activation": "S04 owns attachment button, workspace routing, original-byte PDF.js and full return journey.",
+    "storage": "Bounded derivative context authentication never claims original PDF-byte verification.",
+    "performance": "Fresh read timing is observation only. S03 <=100 ms target remains open for T03 and slice qualification; no waiver."
+  },
+  "preserved_adverse_observations": {
+    "qualification50": {
+      "status": "FAIL",
+      "candidate": "85861cecedd8d37b6f8034b8e9134a90cb5f647f",
+      "failedChecks": [
+        "architecture",
+        "package-contract"
+      ],
+      "correction": "Move adapter to established root location, compose through revision adapter/portable port, register exact module name, sort required inventory and update explicit package fixture."
+    },
+    "qualification52": {
+      "status": "FAIL",
+      "candidate": "eb256986f24f9e1dca93b2e308c6d29570fab22c",
+      "failedChecks": [
+        "lint"
+      ],
+      "correction": "Sort the single relocated test import; no product semantics or assertion changed."
+    },
+    "anchorReadPerformance": {
+      "freshP95Ms": 291.29439999815077,
+      "samples": 20,
+      "method": "19th ordered sample (nearest-rank p95) of fresh in-process HTTP reads through current native authority and SQLCipher context authentication.",
+      "targetMs": 100,
+      "status": "OVER_TARGET_OBSERVATION",
+      "qualification": "Required S03 resolver performance remains open; T02 has no performance-pass claim."
+    },
+    "priorWholeRendererLint": {
+      "path": "artifacts/tmp/CAP-05.S03.T02.renderer-lint-development-45.log",
+      "sha256": "a80f2c5ff895bc285c40f6515fe5d037903eea358b8ec9234a582f78caefe25d",
+      "status": "FAIL",
+      "locations": [
+        "src/app/AvailableCopiesPane.tsx: explicit any is not allowed",
+        "src/app/documentAcquisition.test.ts: renderer/build source must remain offline"
+      ],
+      "scope": "Both findings are in unchanged predecessor files; retain for affected/Wave closure. Current T02 types and focused tests pass, no whole-renderer lint PASS claimed."
+    }
+  },
+  "verification_selection": {
+    "selectedCommandIds": [
+      "desktop:application",
+      "documents:anchor-schemas",
+      "documents:anchors",
+      "documents:unit",
+      "foundation:architecture",
+      "foundation:quality",
+      "packaging:unit",
+      "service:unit"
+    ],
+    "riskAnalysis": "Protected research selectors, atomic canonical persistence, current native/session/rights authority and cross-process portable commands require expanded task disposition with real-boundary integration. Narrow changed-module, predecessor source, native command, schema/package and mounted-reader checks prove the task criteria. No unchanged full-history or full-profile replay, parser benchmark or accepted warm-overage investigation.",
+    "deferred": [
+      "S03.T03 resolution, citation links, stale dependencies and slice performance/E2E/independent review",
+      "S04 attachment activation and source-byte reader",
+      "Fresh full repository/affected profiles, native installed desktop, accessibility/security/performance, minimum hardware and separate W2 release decision"
+    ]
+  },
+  "accepted_prior_performance": {
+    "path": "artifacts/evidence/CAP-05.S02.T03.performance-owner-acceptance-01.md",
+    "sha256": "5dea8e7a2046f5ec229b10a143370c6048e62080da7c3f0f99d700f86219774a",
+    "scope": "Preserve the exact prior 62.5333542-second owner-accepted warm observation. No overage tuning/retest or broader waiver."
+  },
+  "optional_adjacent_findings": [],
+  "notes": "Changes requested solely for missing changed/indexed documentary ADR coverage of12 protected paths (criterion3). The15 selected final-candidate groups pass and support the bounded selector, encrypted persistence, current-authority and inert Reader behavior. No additional product blocker was found. Fresh291.2944 ms and preliminary279.44 ms read p95 observations exceed the S03 target and remain unresolved for T03/slice qualification; renderer/native packaging/activation limits and all earlier adverse evidence remain retained."
+}

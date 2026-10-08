@@ -6,6 +6,7 @@ date: 2026-10-07
 deciders: []
 linked_tasks:
   - CAP-05.S03.T01
+  - CAP-05.S03.T02
 decision_scope: Documentary implementation mapping of immutable normalized structure, human acceptance and live parser admission to accepted ADR-0013/0024/0025/0029; no new security, product scope, framework or release authority.
 affected_paths:
   - packages/contracts/documents/**
@@ -27,6 +28,21 @@ affected_paths:
   - services/core-api/src/research_observatory_core/app.py
   - services/core-api/src/research_observatory_core/import_preview_service.py
   - services/core-api/packaging/sidecar-build.json
+  - packages/contracts/anchors/**
+  - packages/contracts/README.md
+  - services/core-api/src/research_observatory_core/anchors/**
+  - services/core-api/src/research_observatory_core/source_anchor_repository.py
+  - services/core-api/src/research_observatory_core/ports/source_anchors.py
+  - apps/desktop/src/app/sourceAnchors*.*
+  - apps/desktop/src/app/SourceAnchorReader*.*
+  - apps/desktop/src-tauri/src/document_reader.rs
+  - tools/architecture_check.py
+  - tools/core_sidecar_build.py
+  - tests/anchors/**
+  - tests/service/test_source_anchor_api.py
+  - tests/packaging/test_core_sidecar_package.py
+  - quality-scope.json
+  - verification-profiles.json
 supersedes: []
 superseded_by: null
 ---
@@ -119,3 +135,57 @@ the separate release decision remain required.
 ## Task links
 
 - `CAP-05.S03.T01`
+
+## CAP-05.S03.T02 implementation mapping
+
+This append-only Proposed implementation note maps the already approved anchor
+outcome to accepted ADR-0013/0024/0029. It adds no decision authority or frozen
+Wave/reference change. T01's documented decisions and adverse minimum-tier
+obligation remain unchanged.
+
+Core derives protected selectors only from an exact accepted immutable revision.
+Project/document/source/revision/node/projection IDs must agree. When text
+selectors are available, NFC Unicode 16.0.0 code-point spans and
+exact/prefix/suffix/context text must agree; absence is explicit. Quote/context
+caps are 2048/8192 code points; the protected envelope is at most 32 KiB. Geometry retains
+the unrotated top-left source frame, normalized rectangle, original dimensions,
+explicit quarter-turn rotation and reported block granularity. Missing geometry
+has an explicit structural/text fallback. There is no fuzzy reassignment to a
+new accepted head or scholarly verification inference.
+
+An anchor is a derived canonical Document aggregate using the existing encrypted
+object, current human/native-session/Intent/privacy/exact-copy inspect+derive
+authority, provenance, material source-revision dependency and scoped outbox.
+Publication/replay is atomic and idempotent; changed semantic commands conflict.
+The private named source_anchor_repository adapter composes through the existing
+revision adapter and portable SourceAnchorRepository port. Business and port
+modules gain no SQLite, root, key or connection authority. Exact adapter/module
+registration and strict sorted sidecar inventories retain existing checks.
+
+Common reads authenticate the small retained context and full canonical replay
+under current source authorization, without loading full PDF or normalized IR.
+Derivative authentication does not verify original bytes or update their
+verification timestamp. Original source streaming retains its existing complete
+authentication and current-copy rights. Corrupt derivative data cannot quarantine
+the original. Late or detached session results deny or clear protected state.
+
+Five fixed native commands accept opaque identities/ranges, retain current
+window/project/session delivery fencing, and never accept renderer-supplied
+root/actor/quotes/coordinates. The reusable Reader strictly decodes those contracts
+and converts code points to UTF16 explicitly. Inert passage highlighting,
+structural fallback, revision/confidence labels, keyboard return, scaling,
+theme/reflow and late-lock clearing follow the inherited approved reference.
+Attachment activation/workspace routing and original-byte PDF.js rendering remain
+CAP-05.S04. Resolution/citation links, stale-dependent propagation and the 100 ms
+S03 resolver budget remain CAP-05.S03.T03/slice obligations.
+
+Focused evidence covers authored selector/geometry/Unicode cases, actual protected
+SQLCipher persistence/reconstruction, canonical integrity/atomic interruption,
+native-session/rights denial and actual Core API composition. The mounted actual
+React component uses an explicit fixed Tauri response double populated from Core
+synthetic outputs. These proofs do not claim a full Core/Tauri process restart,
+new installed package, minimum-tier, benchmark or Wave release qualification.
+Existing ADR change-set validation is required for the protected contract/port
+and product check registrations; omission is preserved as R01's finding.
+
+- `CAP-05.S03.T02`
