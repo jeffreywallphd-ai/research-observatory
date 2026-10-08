@@ -1,0 +1,163 @@
+{
+  "document_type": "independent-slice-review",
+  "slice_id": "CAP-05.S03",
+  "review_round": "01",
+  "reviewer": "agent:/root/s03_slice_readiness",
+  "result": "approved",
+  "reviewed_at": "2026-10-08T14:57:08Z",
+  "reviewed_state_commit": "13473c4b509e50a59b7c36de609e8615d03e4cd1",
+  "candidate_commit": "745700188fb397e5fb01e841754c39d5ed087844",
+  "product_candidate_commit": "0645daabc0b413dfa58fb5507dd89ad973d2ca5b",
+  "evidence_delivery_commit": "13473c4b509e50a59b7c36de609e8615d03e4cd1",
+  "approval_commit": "c85a59f3a293f8e3f2eaf6454682c9a14b1efa55",
+  "evidence_reference": {
+    "path": "artifacts/evidence/CAP-05.S03.qualification-01.json",
+    "sha256": "ba0f36691d628f93fc15ab8039a43f1710ff8e717fbd8c77ddef5649f165d97c",
+    "commit": "13473c4b509e50a59b7c36de609e8615d03e4cd1",
+    "hash_convention": "LF-canonical"
+  },
+  "reviewed_backlog_sha256": "2666df87ce68404c5843e6b313583a88d82d69cffce64d6b7327666d3cc0dfab",
+  "notes": "Independent bounded integration review approves CAP-05.S03 slice completion at qualified candidate 745700188fb397e5fb01e841754c39d5ed087844 and exact evidence-only delivery 13473c4b509e50a59b7c36de609e8615d03e4cd1. Product inputs remain unchanged from independently approved T03 R02 0645daabc0b413dfa58fb5507dd89ad973d2ca5b. All three tasks are DONE and independently approved. Fresh connected actual Core/current native session/SQLCipher/envelope proof establishes explicit human acceptance, immutable old/new revisions and exact anchors/citation candidates, service/gateway reconstruction, old-session denial, rights-denied versus broken classification, trusted-stop rollback, direct/transitive downstream staleness and exactly-once recovery. Current Reader anchor-read warm p95 is 97.71070000715554 ms against the unchanged 100 ms budget; the latest reviewed resolver p95 is 88.22390000568703 ms. No criterion-bound blocking finding remains. Service reconstruction, synthetic parser output, doubled renderer and current hardware limitations are explicit. This disposition does not approve S04 activation, the S02-S04 checkpoint, installed desktop/process restart, hardware/model changes, W2 qualification or release.",
+  "independence": {
+    "implementation_owner": "codex-w2-implementation",
+    "statement": "I performed read-only S03 readiness preparation and scope-boundary clarification before this formal review. I authored no product change, committed product test, qualifying producer, fixture, qualifying execution or evidence bundle. I am not the campaign owner or a task implementation owner. I inspected the exact candidate, producer/fixture assertions, relevant source/portable contracts, authority and recovery boundaries, raw outputs, prior independent dispositions and preserved adverse evidence. I authenticated files and recomputed the percentile without executing product tests or benchmarks. This append-only formal review is my sole authorized tracked write; I made no commit, HEAD change, taskctl/backlog mutation, scope approval or release decision."
+  },
+  "integration_assessment": [
+    {
+      "criterion": "Approved S03 sections 5/10/17 and T01/T02/T03: connected immutable revision, anchor, readable context and citation outcome",
+      "result": "satisfied",
+      "assessment": "The exact selected connected case starts from a lawful protected original and explicitly authored retained parser IR. It asserts that staging creates no accepted normalized revision, then accepts through the actual current-authorized Core endpoint and preserves scholarly unverified status. The API-produced accepted node and citation identifiers create an exact protected anchor with readable [1] context and the original ambiguous canonical reference candidate set. A second explicit acceptance creates a distinct revision; old anchor resolution, saved anchor replay, citation links and both historical revisions survive service/gateway reconstruction. Current task dispositions authenticate broader identity/normalization/geometry, malformed-input and immutable-history coverage. No actual parser/model output quality or S04 viewer activation is inferred."
+    },
+    {
+      "criterion": "Approved S03 sections 7/8/10: current authority, failure, cancellation, relevant restart and recovery",
+      "result": "satisfied",
+      "assessment": "The connected case shuts down the document service and gateway, performs actual native detach/project close/open/attach, constructs a new DocumentRevisionService and FastAPI gateway, obtains a distinct native session and denies the old session without the protected passage. Persisted revision/anchor/citation reads work through the new service. Corrupt encrypted context under revoked derive rights returns denial without a broken-anchor/stale publication. After rights restoration, injected trusted stop at the publication seam returns denial with all impact/stale/provenance/outbox counts unchanged. A second service reconstruction obtains fresh authority, classifies the authenticated broken derivative, and successfully retries once. This adequately tests S03 durable backend lifecycle recovery in the declared fixture; it is not an OS process or activated desktop restart. The formal T03 R02 F01 closure separately retains both invalidation and creation publication-seam rollback/retry proof."
+    },
+    {
+      "criterion": "Approved S03 sections 5/13/14: durable dependency and portable downstream handoff",
+      "result": "satisfied",
+      "assessment": "The fixture consumes public Core response identities for the accepted revision, anchor revision and exact citation/reference targets. Its declared synthetic canonical graph registers direct, transitive and unrelated evidence using the existing aggregate/dependency machinery. Broken-anchor resolution marks exactly the direct/transitive outputs stale, leaves unrelated evidence unchanged and preserves the same propagation result and durable counts on replay. Private helpers are confined to synthetic graph setup, not a new downstream production authority. Inspection of the documented versioned anchor receipt/resolution/citation schemas and SourceAnchorRepository port confirms that consumers receive opaque exact identities and typed values without paths, database handles, keys or parser-specific nodes. Reviewed schema 26/27 literal-predecessor migration and interrupted recovery proof remains exact historical coverage; no unchanged migration-fault matrix replay is needed for this evidence-only candidate."
+    },
+    {
+      "criterion": "Approved S03 sections 6/10/17 and exact S03/S04 scope: native public contracts and reusable Reader behavior",
+      "result": "satisfied-with-explicit-boundary",
+      "assessment": "Current source inputs authenticate the fixed native request shapes, route registration, opaque authority fields, current-window/project/session/lock delivery fences, response caps and typed renderer decoders previously independently reviewed in T02/T03. Fresh connected actual Core/session checks exercise current success/denial/recovery separately. The reviewed compiled Reader fixture establishes clicking/highlighting, exact revision/confidence, visible missing-coordinate fallback, Unicode display conversion, scaling, keyboard/focus, themes/reflow and late-response clearing with a declared response double. S04 owns attachment/route activation, original-byte PDF.js and the full deep-link/return journey. The approved S02-S04 checkpoint places real renderer/native/accessibility wiring and clean build/smoke after S04. Deliberate Reader nonactivation is therefore not a S03 blocker, and no installed journey is claimed."
+    },
+    {
+      "criterion": "Approved S03 section 11: bounded common structural/page context performance",
+      "result": "satisfied-with-explicit-boundary",
+      "assessment": "The fresh Reader-path producer executes the actual anchor-read composition case under authenticated immutable source/dependency guards. Its 20 finite consecutive warm HTTP/current-session/Intent/privacy/rights/SQLCipher/envelope samples independently recompute by nearest-rank to 97.71070000715554 ms p95, below the unchanged 100 ms cap. The fixture/report sample values agree. Latest independently approved T03 R02 resolver timing remains 88.22390000568703 ms at unchanged product inputs and is cited as reviewed history, not a fresh slice rerun or cached native PASS. The bounded retained-context code and authenticated prior forbidden whole-PDF/IR checks support the resource claim. Cold, installed click-to-display, minimum-tier and model inference performance are not qualified. Prior over-target values are retained."
+    },
+    {
+      "criterion": "Approved S03 sections 10/15/17: authenticated task evidence, scope, adverse history and independent completion",
+      "result": "satisfied",
+      "assessment": "The committed evidence JSON identifies the frozen approval, approved S03 plan/accepted ADR, all latest exact task manifests/reviews, fresh selected commands, criterion-linked boundaries, artifacts and deferred coverage. Canonical hashes, reviewed candidates and each latest task review's approved result/evidence binding match. The delivery commit adds only the bundle to the qualified candidate; the product-to-delivery diff contains only evidence/planning metadata. Both fresh reports' complete 6181 recorded source inputs match current bytes; all 9208 installed Python/Core dependency files match the authenticated runtime inventory. Collector01 remains FAIL with its successful four-case child log; retry02 selects the exact connected case and retains the identical fixture/assertions. No disabled test, product change, hidden S03 blocker, scope relaxation or automation-framework development was introduced."
+    }
+  ],
+  "evidence_reproduction": {
+    "method": "Read/hash/source-and-assertion inspection at fixed committed HEAD; no test, native, model, benchmark, full-suite or broad Git-history replay.",
+    "candidate_identity": {
+      "head_before_and_after_read_only_review": "13473c4b509e50a59b7c36de609e8615d03e4cd1",
+      "branch": "codex/w2-implementation",
+      "tracked_and_untracked_status_before_review_write": "clean",
+      "qualified_candidate_to_delivery_changed_paths": [
+        "artifacts/evidence/CAP-05.S03.qualification-01.json"
+      ],
+      "product_diff_classification": "Only task/slice evidence, backlog and generated planning metadata after approved T03 R02; no product source change."
+    },
+    "authentication": {
+      "bundle_canonical_sha256": "ba0f36691d628f93fc15ab8039a43f1710ff8e717fbd8c77ddef5649f165d97c",
+      "bundle_raw_artifact_and_authority_references": 14,
+      "canonical_latest_task_manifest_and_review_references": 6,
+      "fresh_reports": [
+        {
+          "path": "artifacts/tmp/CAP-05.S03.integration-check-02.json",
+          "sha256": "09fd04425c7fb20bd45c4503bbc4b66dd419c1a551028674fe228395b2b05e42",
+          "status": "PASS",
+          "exit_code": 0,
+          "executed_cases": 1,
+          "source_inputs_authenticated": 6181,
+          "duration_seconds": 21.714858899998944
+        },
+        {
+          "path": "artifacts/tmp/CAP-05.S03.integration-read-check-01.json",
+          "sha256": "3d45e0434bca00b19337cc795c23dda2b5274c646a7ebce674c470c381b48bb4",
+          "status": "PASS",
+          "exit_code": 0,
+          "executed_cases": 1,
+          "source_inputs_authenticated": 6181,
+          "duration_seconds": 21.002213100000517
+        }
+      ],
+      "installed_runtime": {
+        "inventory": "artifacts/tmp/CAP-05.S02.T03.check-runtime-130.json",
+        "sha256": "765b653b9c074d820a6ff8821052a8ae78232610d0046f69ef57a61ac96448b0",
+        "files_authenticated": 9208,
+        "bytes_authenticated": 315392488,
+        "producer_boundary": "Inspected producers validate all inventory bytes, hold tracked/fixture/producer/runtime-record write-delete guards, execute against a create-replace-delete-denied immutable runtime snapshot, and recheck HEAD/clean state/runtime bytes after execution."
+      },
+      "mismatches": [],
+      "runtime_result_reuse": false
+    },
+    "percentile_recalculation": {
+      "sample_count": 20,
+      "method": "ascending finite raw sample values, index 18; nearest-rank p95",
+      "reader_p95_ms": 97.71070000715554,
+      "budget_ms": 100,
+      "warm_state": true,
+      "fixture_scope": "Declared synthetic accepted structure; current in-process Core/native session and protected storage.",
+      "hardware_tier_qualification": false
+    }
+  },
+  "prior_findings_replayed": [
+    {
+      "finding_id": "CAP-05.S03.T02-R01-F01",
+      "status": "closed-by-exact-approved-R02",
+      "proof": "Authenticated T02 R02 review and immutable documentary ADR coverage closure; no new accepted decision or frozen reference was changed."
+    },
+    {
+      "finding_id": "CAP-05.S03.T03-R01-F01",
+      "status": "closed-by-exact-approved-R02-and-connected-replay",
+      "proof": "Authenticated R02 formal closure for live native stop at both publication paths; fresh connected invalidation rollback, new-service/session retry and unchanged replay counts."
+    }
+  ],
+  "preserved_adverse_observations": [
+    "T01 qualification67 remains FAIL for original safe non-admission; its independently approved targeted native74/73 proof and advisory quadratic-index finding/failure/closure remain unchanged. No formal legacy review round is invented.",
+    "T02 Reader p95 observations 282.8404, 291.2944 and 279.44 ms remain over-target history; fresh current 97.7107 ms does not erase them.",
+    "T03 R01 native-stop publication defect and red/partial/complete correction history remain immutable and explicitly closed by approved R02.",
+    "Connected collector01 remains FAIL although all four child cases passed. The guard expected one case. Exact-case retry02 preserves the same fixture hash and assertions and passes one selected case with no skips; no failed result is relabeled.",
+    "The exact owner-accepted CAP-05.S02.T03 62.5333542-second parser warm observation and original adverse report remain unchanged; no tuning or remeasurement occurred."
+  ],
+  "verification_selection": {
+    "selected_command_ids": [
+      "documents:anchors"
+    ],
+    "fresh_boundary_checks": [
+      "connected-S03-integration",
+      "Reader-anchor-read-performance"
+    ],
+    "historical_coverage": "Authenticate independent T01/T02/T03 task dispositions and exact unchanged contracts/migrations/native/renderer/security/authority proof. Do not represent old runtime observations as fresh execution.",
+    "rationale": "The only new candidate path is an evidence bundle. Fresh connected cross-task failure/denial/lifecycle/stale handoff and current Reader timing close the material new slice gaps. Existing expanded task reviews cover unchanged module-level contracts and fault matrices. No credible new impact requires an unchanged full-suite, history, parser benchmark or installed viewer replay."
+  },
+  "proof_limits": [
+    "Authored lawful scholarly/source/parser/downstream fixtures are synthetic and establish no real scholarly finding, parser/model-quality result or automatic evidence acceptance.",
+    "Actual Core HTTP, native-session authority, SQLCipher and envelopes are in-process. Document service/gateway reconstruction reuses configured attachment/import/runtime adapters and exercises persisted state/new sessions; it is not an OS process, full application or installed Tauri restart.",
+    "Native request/registration/delivery source and task checks plus fresh actual Core/session composition establish their named boundaries. The mounted Reader uses an explicit response double and does not establish installed renderer/native wiring.",
+    "The two current warm timings cover bounded common context paths on the measured host. They do not qualify cold/large-source/model/full-UI latency, hardware tiers or resource-suitable model profiles.",
+    "Downstream evidence is a declared synthetic canonical graph. Public opaque identities, typed contracts and dependency behavior are qualified; no later capability's production behavior is claimed.",
+    "This review authenticates historical evidence and fresh receipts without new qualifying execution. It does not cache a review, infer approval from root summaries or treat self-declared hashes alone as execution proof."
+  ],
+  "deferred_obligations": [
+    "CAP-05.S04 attachment/route/PDF.js activation, highlighted deep-link navigation, full return journey and its own task/slice proof.",
+    "Approved S02-S04 checkpoint: real renderer/native/accessibility wiring, viewer contention/cancellation, required permitted hardware proof and affected union plus clean build/smoke. Its closure occurs after S04.",
+    "Owner-requested 2-3 GiB/configurable resource-suitable models and W5 larger-feature deferral require a concrete approved append-only successor product/ADR/experience/resource amendment before dependent changes. Existing frozen criteria remain; no 8GB/16GB run is authorized here.",
+    "Fresh full affected/repository/profile/platform/package/security/privacy/rights/accessibility/performance and cross-capability restart/recovery qualification, independent Wave review and the separate human G2 release decision."
+  ],
+  "findings": [],
+  "closures": [],
+  "optional_adjacent_findings": [],
+  "scope_limit": "CAP-05.S03 independent slice disposition only at the exact qualified source and committed evidence delivery. No taskctl/backlog transition, checkpoint/Wave completion, hardware/model/reference amendment, external action or human release approval is performed by this ledger.",
+  "slice_approval": true,
+  "wave_completion": false,
+  "release_approval": false
+}

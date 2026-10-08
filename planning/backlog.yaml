@@ -30338,7 +30338,7 @@ capabilities:
     depends_on:
     - CAP-05.S02.T03
     - CAP-02.S02.T03
-    status: IN_PROGRESS
+    status: DONE
     tasks:
     - id: CAP-05.S03.T01
       capability_id: CAP-05
@@ -31503,11 +31503,17 @@ capabilities:
     platform_targets:
     - windows-x64
     completion:
-      status: PENDING
-      reviewer: null
-      reviewed_at: null
-      evidence: []
-      notes: null
+      status: APPROVED
+      reviewer: agent:/root/s03_slice_readiness
+      reviewed_at: '2026-10-08T15:05:42+00:00'
+      evidence:
+      - artifacts/evidence/CAP-05.S03.qualification-01.json
+      notes: Independent CAP-05.S03.review-01.json approved the exact evidence delivery 13473c4b509e50a59b7c36de609e8615d03e4cd1
+        and qualified candidate 745700188fb397e5fb01e841754c39d5ed087844; LF-canonical review SHA-256 336df51c9da7971eb2e417a0516be898c0f766fcb5364b0a7bb06709e12ee540.
+        Zero blocking findings; all three tasks DONE and independently approved. Fresh connected current-authority/immutable-revision/anchor/citation/staleness/denial/cancellation/service-reconstruction/recovery
+        proof and Reader p95 97.7107 ms pass. Declared synthetic and in-process fixture limits remain; S04 activation, S02-S04
+        checkpoint, installed desktop/process restart, hardware/model amendment, W2 qualification and release are not approved
+        by this disposition.
   - id: CAP-05.S04
     title: Source viewer and evidence inspection experience
     outcome: Researchers can read original pages and structured text side by side, navigate anchors, and inspect provenance
@@ -31521,7 +31527,7 @@ capabilities:
     depends_on:
     - CAP-05.S03.T03
     - CAP-01.S02.T03
-    status: NOT_STARTED
+    status: READY
     tasks:
     - id: CAP-05.S04.T01
       capability_id: CAP-05
@@ -31553,11 +31559,11 @@ capabilities:
       - python tools/verify.py --profile desktop
       - python tools/verify.py --profile documents
       - python tools/verify.py --profile security-local
-      status: NOT_STARTED
+      status: READY
       owner: null
       branch: null
       started_at: null
-      updated_at: '2026-08-07T00:00:00+00:00'
+      updated_at: '2026-10-08T15:05:42+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''

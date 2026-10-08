@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 2666df87ce68404c5843e6b313583a88d82d69cffce64d6b7327666d3cc0dfab
+source_sha256: eb7e9c1338844c0252aed51f32fda112ee7f01849281201689b01d6e9be86f58
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -11418,7 +11418,7 @@ Original tasks and approvals remain unchanged.
 
 **Outcome:** Every extracted passage and downstream assertion points to a specific immutable revision and stable location.
 
-**Wave / priority / status / review:** `W2` / `P0` / `IN_PROGRESS` / `PENDING`
+**Wave / priority / status / review:** `W2` / `P0` / `DONE` / `APPROVED`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
@@ -11709,7 +11709,7 @@ Original tasks and approvals remain unchanged.
 
 **Outcome:** Researchers can read original pages and structured text side by side, navigate anchors, and inspect provenance without leaving the workflow.
 
-**Wave / priority / status / review:** `W2` / `P0` / `NOT_STARTED` / `PENDING`
+**Wave / priority / status / review:** `W2` / `P0` / `READY` / `PENDING`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
@@ -11717,7 +11717,7 @@ Original tasks and approvals remain unchanged.
 
 #### - [ ] CAP-05.S04.T01 - Build secure local PDF/page and structured-text viewer
 
-**Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `L` / `high`
+**Status / priority / estimate / risk:** `READY` / `P0` / `L` / `high`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
