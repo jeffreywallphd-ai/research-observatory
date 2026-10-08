@@ -34,11 +34,11 @@ retains an encrypted rollback copy, verifies the staged key after restart, and
 only then activates it with compare-and-swap. Schema migrations use the same
 protected connection and create encrypted migration backups.
 
-## Current version-25 authority
+## Current version-26 authority
 
 | Concern | Current rule |
 |---|---|
-| Database identity | application ID `0x524f4253`, `user_version=25`, profile `sqlite-wal-v1` |
+| Database identity | application ID `0x524f4253`, `user_version=26`, profile `sqlite-wal-v1` |
 | Durable identities | lowercase UUIDv7 text; project UUIDv4 bridge and prior canonical actor identifiers are explicitly retained |
 | Time | UTC RFC 3339 text at fixed millisecond precision |
 | Types | STRICT `INTEGER`, `REAL`, and `TEXT`; no `ANY` or `BLOB` columns |
@@ -121,15 +121,15 @@ replace immutable sealed report snapshots.
 
 T01 established schema version 1 and its sealed ordinary connection factory.
 The backup-first migration authority now advances exact supported v1 through v24
-profiles to current schema v25. It owns forward migrations, backup-before-migrate,
+profiles to current schema v26. It owns forward migrations, backup-before-migrate,
 checkpointed snapshots, frozen source fixtures, and failure recovery. The migration
 runner validates and checkpoints the source, reserves SQLite's writer lock, creates and verifies an online backup
 through a second held connection, and only then runs the reviewed Alembic
 revision in one transaction. The immutable recovery manifest binds the backup
 bytes and both schema fingerprints; a failed transaction rolls back while the
-verified backup remains available. A current version-25 database is detected
+verified backup remains available. A current version-26 database is detected
 idempotently and is never backed up or rewritten.
-A version-24 source receives a verified backup before migration to v25.
+A version-25 source receives a verified backup before migration to v26.
 Committed v3 history is never
 rewritten; v4 adds only the post-schema object-envelope upgrade journal and v5
 adds the truthful `legacy-unreported` backfill for missing technical object
@@ -371,3 +371,21 @@ Local access needs grant no rights or availability. Exact baseline and populated
 v24 predecessor fixtures preserve prior rows, history and ciphertext; the v24
 recovery contract is retained as an immutable snapshot. Forward migration uses
 the existing verified backup and interruption recovery procedure.
+
+## Version 26 normalized document structure
+
+Version 26 adds immutable `document_parse_jobs`, `document_parse_results`,
+`document_normalized_revisions` and `document_structure_elements`. Durable
+parse inputs and retained encrypted results bind the exact physical workflow
+attempt and original source. Explicit current-authorized human acceptance
+appends the original document revision, decision, complete structure index,
+dependencies, provenance and scoped outbox publication atomically. Parsing
+alone never advances the accepted head. Current native session, Intent, privacy
+and source rights govern reads, retries and publication. Prior accepted
+revisions and literal version-25 predecessor rows/ciphertext remain preserved.
+Parent-before-child index traversal is bounded to one validated-order pass.
+
+The portable profile and recovery contract carry the exact current schema and
+profile fingerprints. Historical target-v21 through v25 manifest meanings are
+retained; target-v26 adds an exact source/chain/hash/path binding and verified
+backup-before-migration recovery.

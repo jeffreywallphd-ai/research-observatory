@@ -10,6 +10,8 @@ decision_scope: Documentary implementation mapping of immutable normalized struc
 affected_paths:
   - packages/contracts/documents/**
   - packages/contracts/storage/sqlite-migration-recovery.schema.json
+  - packages/contracts/storage/sqlite-profile.v1.json
+  - docs/architecture/local-sqlite-storage.md
   - packages/contracts/storage/README.md
   - services/core-api/src/research_observatory_core/document_revision*.py
   - services/core-api/src/research_observatory_core/document_revisions.py
