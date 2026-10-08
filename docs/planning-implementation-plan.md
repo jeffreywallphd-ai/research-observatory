@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: f1155cd02f4ceed96195b690e1cf05250c12f4f8464e808e764d46ce8a1073a1
+source_sha256: a6b2167b25c69a032109002dec40c8dd89ef6d284d74b601e31c6e7984a8d622
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -11497,15 +11497,15 @@ Original tasks and approvals remain unchanged.
 
 **Currently open findings:** -
 
-#### - [ ] CAP-05.S03.T02 - Implement page, bounding-box, and text-span anchors
+#### - [x] CAP-05.S03.T02 - Implement page, bounding-box, and text-span anchors
 
-**Status / priority / estimate / risk:** `IN_PROGRESS` / `P0` / `L` / `high`
+**Status / priority / estimate / risk:** `DONE` / `P0` / `L` / `high`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
 **Dependencies:** `CAP-05.S03.T01`
 
-**Owner / review:** codex-w2-implementation / agent:/root/s03_t01_review (`changes-requested`)
+**Owner / review:** codex-w2-implementation / agent:/root/s03_t01_review (`approved`)
 
 **Objective:** Anchor model supporting page number, normalized rectangle, character span, block/sentence IDs, and anchor-confidence metadata.
 
@@ -11527,10 +11527,11 @@ Original tasks and approvals remain unchanged.
 **Evidence:**
 
 - `artifacts/evidence/CAP-05.S03.T02.R01.json` at `e2292dbac10aabcafe510b6799579b3714db1b5c`
+- `artifacts/evidence/CAP-05.S03.T02.R02.json` at `ad664e896a547976c2728fd34d58ee00fbc7ca9b`
 
 ##### Review history — CAP-05.S03.T02
 
-**Review mode:** `append-only v1` / 1 completed round(s)
+**Review mode:** `append-only v1` / 2 completed round(s)
 
 ###### Round R01
 
@@ -11562,17 +11563,47 @@ Original tasks and approvals remain unchanged.
 
 - None
 
+###### Round R02
+
+**Immutable submission packet:** `R02` / packet SHA-256 `7eebe79cd1d528a64f57203f555effe3673f4c6ebbdc4224110ba10961fd9ab7`
+
+- Candidate / base / branch: `ad664e896a547976c2728fd34d58ee00fbc7ca9b` / `e2292dbac10aabcafe510b6799579b3714db1b5c` / `codex/w2-implementation`
+- Submitted by / at: codex-w2-implementation / `2026-10-08T04:37:07+00:00`
+- Evidence: `artifacts/evidence/CAP-05.S03.T02.R02.json` / `157889e22dd57a6ff46be28fd41382914ca6046862f1e2fdeb0721545ac44c70` / `ad664e896a547976c2728fd34d58ee00fbc7ca9b`
+- Acceptance-criteria SHA-256: `5002d4e6c8729c5a40600cdf4fcb19fbb9b8bdb2582d8c15de7698212549e070`
+- Verification-selection SHA-256: `3e8e6e23fe3120d4e3506a197eaebeabe10fbb9043d16777d82d02b68180c1aa`
+- Changed paths: `artifacts/evidence/CAP-05.S03.T02.R01.json`, `artifacts/evidence/CAP-05.S03.T02.review-R01.json`, `artifacts/evidence/CAP-05.S03.T02.task-start.md`, `docs/adr/ADR-0046-bind-immutable-document-revisions-to-existing-human-authority.md`, `docs/adr/index.json`, `docs/planning-implementation-plan.md`, `planning/backlog.yaml`, `planning/review-site/CAP-05/CAP-05.S03.T02.html`, `planning/review-site/CAP-05/CAP-05.S03.html`, `planning/review-site/manifest.json`, `planning/status-summary.md`
+- Selected checks: `./artifacts/tmp/CAP-05.S02.T03.check-runtime-122/python/python.exe -B tools/adr_check.py --repo . --base 45ea077cfd651802c265e09679f3843156a00c5a --head ad664e896a547976c2728fd34d58ee00fbc7ca9b`, `./artifacts/tmp/CAP-05.S02.T03.check-runtime-122/python/python.exe -B -m ruff check packages/contracts/anchors/generate_anchor_schema.py services/core-api/src/research_observatory_core/anchors/__init__.py services/core-api/src/research_observatory_core/anchors/contracts.py services/core-api/src/research_observatory_core/document_revision_api.py services/core-api/src/research_observatory_core/document_revision_repository.py services/core-api/src/research_observatory_core/document_revision_service.py services/core-api/src/research_observatory_core/object_store.py services/core-api/src/research_observatory_core/ports/source_anchors.py services/core-api/src/research_observatory_core/source_anchor_repository.py tests/anchors/__init__.py tests/anchors/test_anchor_contracts.py tests/anchors/test_anchor_reader_interactions.py tests/anchors/test_anchor_repository.py tests/anchors/test_native_anchor_composition.py tests/packaging/test_core_sidecar_package.py tests/service/test_source_anchor_api.py tools/architecture_check.py tools/core_sidecar_build.py`, `./artifacts/tmp/CAP-05.S02.T03.check-runtime-122/python/python.exe -B -m ruff format --check packages/contracts/anchors/generate_anchor_schema.py services/core-api/src/research_observatory_core/anchors/__init__.py services/core-api/src/research_observatory_core/anchors/contracts.py services/core-api/src/research_observatory_core/document_revision_api.py services/core-api/src/research_observatory_core/document_revision_repository.py services/core-api/src/research_observatory_core/document_revision_service.py services/core-api/src/research_observatory_core/object_store.py services/core-api/src/research_observatory_core/ports/source_anchors.py services/core-api/src/research_observatory_core/source_anchor_repository.py tests/anchors/__init__.py tests/anchors/test_anchor_contracts.py tests/anchors/test_anchor_reader_interactions.py tests/anchors/test_anchor_repository.py tests/anchors/test_native_anchor_composition.py tests/packaging/test_core_sidecar_package.py tests/service/test_source_anchor_api.py tools/architecture_check.py tools/core_sidecar_build.py`, `./artifacts/tmp/CAP-05.S02.T03.check-runtime-122/python/python.exe -B -m mypy --no-incremental services/core-api/src/research_observatory_core/anchors/__init__.py services/core-api/src/research_observatory_core/anchors/contracts.py services/core-api/src/research_observatory_core/document_revision_api.py services/core-api/src/research_observatory_core/document_revision_repository.py services/core-api/src/research_observatory_core/document_revision_service.py services/core-api/src/research_observatory_core/object_store.py services/core-api/src/research_observatory_core/ports/source_anchors.py services/core-api/src/research_observatory_core/source_anchor_repository.py`, `./artifacts/tmp/CAP-05.S02.T03.check-runtime-122/python/python.exe -B packages/contracts/anchors/generate_anchor_schema.py --check`, `./artifacts/tmp/CAP-05.S02.T03.check-runtime-122/python/python.exe -B tools/architecture_check.py --repo .`, `./artifacts/tmp/CAP-05.S02.T03.check-runtime-122/python/python.exe -B -m unittest tests.anchors.test_anchor_contracts tests.anchors.test_anchor_repository -v`, `./artifacts/tmp/CAP-05.S02.T03.check-runtime-122/python/python.exe -B -m unittest tests.parsing.test_protected_parse_source.ProtectedParseSourceTests.test_inspect_does_not_grant_derive_and_success_uses_exact_encrypted_copy tests.parsing.test_protected_parse_source.ProtectedParseSourceTests.test_deduplicated_ciphertext_origin_is_not_copy_authority tests.parsing.test_protected_parse_source.ProtectedParseSourceTests.test_rights_change_before_delivery_releases_writer_and_exposes_no_ir tests.parsing.test_protected_parse_source.ProtectedParseSourceTests.test_actual_project_close_and_reopen_refuses_old_session_delivery tests.parsing.test_protected_parse_source.ProtectedParseSourceTests.test_stale_intent_privacy_and_identical_digest_foreign_source_are_denied tests.documents.test_local_attachment.LocalAttachmentServiceTests.test_exact_attached_read_uses_current_inspect_right_and_generic_hash_read_denies -v`, `./artifacts/tmp/CAP-05.S02.T03.check-runtime-122/python/python.exe -B -m unittest tests.service.test_source_anchor_api tests.service.test_document_revision_api -v`, `./artifacts/tmp/CAP-05.S02.T03.check-runtime-122/python/python.exe -B -m unittest tests.packaging.test_core_sidecar_package.CoreSidecarPackageTests.test_build_contract_is_strict_and_version_bound -v`, `./artifacts/tmp/CAP-05.S02.T03.check-runtime-122/python/python.exe -B -m unittest tests.anchors.test_native_anchor_composition -v`, `./.local/toolchains/cargo/bin/cargo.exe test --lib document_reader::tests --locked --offline`, `./.local/toolchains/node-v24.19.0-win-x64/node.exe apps/desktop/node_modules/vitest/vitest.mjs run --root apps/desktop src/app/sourceAnchors.test.ts src/app/SourceAnchorReader.test.tsx`, `./.local/toolchains/node-v24.19.0-win-x64/node.exe apps/desktop/node_modules/typescript/bin/tsc --noEmit -p apps/desktop/tsconfig.json`, `./.local/toolchains/node-v24.19.0-win-x64/node.exe tests/desktop/fixtures/source-anchor-reader.mjs ./artifacts/tmp/CAP-05.S03.T02.reader-browser-build-67`, `./artifacts/tmp/CAP-05.S02.T03.check-runtime-122/python/python.exe -B -m unittest tests.anchors.test_anchor_reader_interactions -v`
+- Deferred checks: `S03.T03 resolution, citation links, stale dependencies and slice performance/E2E/independent review`, `S04 attachment activation and source-byte reader`, `Fresh full repository/affected profiles, native installed desktop, accessibility/security/performance, minimum hardware and separate W2 release decision`
+- Selection rationale: R02 replays only the R01 F01 documentary-contract finding plus incremental documentation, evidence and input-boundary risk. Product bytes are unchanged from the independently reviewed R01 candidate. Exact ADR coverage is fresh; bounded criterion proof is also fresh because native/principal checks are fresh-only and complete Node/Rust dependency closure is unknown, so no old runtime result is reused. Protected research selectors, atomic canonical persistence, current native/session/rights authority and cross-process portable commands require expanded task disposition with real-boundary integration. Narrow changed-module, predecessor source, native command, schema/package and mounted-reader checks prove the task criteria. No unchanged full-history or full-profile replay, parser benchmark or accepted warm-overage investigation.
+- Prior round / replayed open findings: `R01` / `CAP-05.S03.T02-R01-F01`
+- Root-cause escalation: -
+
+**Disposition / reviewer / time:** `approved` / agent:/root/s03_t01_review / `2026-10-08T04:57:14+00:00`
+
+**Immutable review ledger:** `artifacts/evidence/CAP-05.S03.T02.review-R02.json` / `5ddf25456c54d2137f9299ecd8e8607f609060542311f779a4ede93bf50bf905`
+
+**Review notes:** Approved for CAP-05.S03.T02 only after authenticating frozen R02 and fresh qualification67. Prior R01 F01 is fixed, with no new blocking finding. All 16 selected groups and 42 executed behavioral cases pass within the stated actual Core/repository-reopen and explicitly doubled mounted-renderer scope. Fresh 282.8404 ms, R01 291.2944 ms and preliminary 279.44 ms read p95 observations remain above the S03 100 ms target. This task disposition does not qualify S03 performance, S04 activation, installed desktop/process restart, minimum hardware, slice or Wave/release obligations.
+
+**Findings opened:**
+
+- None
+
+**Prior finding closures:**
+
+- `CAP-05.S03.T02-R01-F01` `fixed` — At exact strict-descendant candidate ad664e896a547976c2728fd34d58ee00fbc7ca9b, existing Proposed ADR0046 and its index link T02 and append the implementation mapping with precise coverage of all 12 previously uncovered protected contract/port/check-registration paths. The worksheet retains the missed criterion3 row and R01/adverse history. Independent incremental inspection confirms no accepted ADR/frozen approval or product/test/schema/checker bytes changed. Fresh qualification67 executes the existing ADR change-set check with original claim base 45ea077cfd651802c265e09679f3843156a00c5a and head ad664e896a547976c2728fd34d58ee00fbc7ca9b: PASS, 46 indexed ADRs and 53 changed paths inspected. Authenticated log artifacts/tmp/CAP-05.S03.T02.qualification-67.adr-coverage.log has raw SHA-256 09a7fc92e82d1f228d6fb7177e5309cc887bcf1806105edc2215bd60706ac480 and LF-canonical SHA-256 f02e1948e9711651da0268de124b2f9fc6f5b241ddb1717fe8cb8baeb8fb98cc. The fresh report raw SHA-256 is 6de5d94ba1da60b87907b1a830454891560b8c13cfb1bb87bcb2ec7d88852122. Frozen R02 supersedes exact R01 and lists F01; packet/evidence/criteria/selection hashes match. No new authority, generic exemption or automation-framework behavior was introduced.
+
 **Current immutable submission awaiting review:** None
 
-**Current latest-review projection:** `changes-requested` by agent:/root/s03_t01_review at `2026-10-08T04:12:40+00:00`
+**Current latest-review projection:** `approved` by agent:/root/s03_t01_review at `2026-10-08T04:57:14+00:00`
 
-**Latest notes:** Changes requested solely for missing changed/indexed documentary ADR coverage of12 protected paths (criterion3). The15 selected final-candidate groups pass and support the bounded selector, encrypted persistence, current-authority and inert Reader behavior. No additional product blocker was found. Fresh291.2944 ms and preliminary279.44 ms read p95 observations exceed the S03 target and remain unresolved for T03/slice qualification; renderer/native packaging/activation limits and all earlier adverse evidence remain retained.
+**Latest notes:** Approved for CAP-05.S03.T02 only after authenticating frozen R02 and fresh qualification67. Prior R01 F01 is fixed, with no new blocking finding. All 16 selected groups and 42 executed behavioral cases pass within the stated actual Core/repository-reopen and explicitly doubled mounted-renderer scope. Fresh 282.8404 ms, R01 291.2944 ms and preliminary 279.44 ms read p95 observations remain above the S03 100 ms target. This task disposition does not qualify S03 performance, S04 activation, installed desktop/process restart, minimum hardware, slice or Wave/release obligations.
 
-**Currently open findings:** `CAP-05.S03.T02-R01-F01`
+**Currently open findings:** -
 
 #### - [ ] CAP-05.S03.T03 - Implement anchor resolution and citation-link APIs
 
-**Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `M` / `high`
+**Status / priority / estimate / risk:** `READY` / `P0` / `M` / `high`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 

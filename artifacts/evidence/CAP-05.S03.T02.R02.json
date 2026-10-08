@@ -1,0 +1,1007 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "CAP-05.S03.T02",
+  "baseCommit": "e2292dbac10aabcafe510b6799579b3714db1b5c",
+  "commit": "ad664e896a547976c2728fd34d58ee00fbc7ca9b",
+  "branch": "codex/w2-implementation",
+  "supersedes": {
+    "path": "artifacts/evidence/CAP-05.S03.T02.R01.json",
+    "sha256": "b6a627d9bc03558073a3330d245a0f546de406672f41938245a68aaa4aa371fa",
+    "commit": "e2292dbac10aabcafe510b6799579b3714db1b5c"
+  },
+  "reviewerDisposition": {
+    "openFindingIds": [
+      "CAP-05.S03.T02-R01-F01"
+    ]
+  },
+  "changedFiles": [
+    "artifacts/evidence/CAP-05.S03.T02.R01.json",
+    "artifacts/evidence/CAP-05.S03.T02.review-R01.json",
+    "artifacts/evidence/CAP-05.S03.T02.task-start.md",
+    "docs/adr/ADR-0046-bind-immutable-document-revisions-to-existing-human-authority.md",
+    "docs/adr/index.json",
+    "docs/planning-implementation-plan.md",
+    "planning/backlog.yaml",
+    "planning/review-site/CAP-05/CAP-05.S03.T02.html",
+    "planning/review-site/CAP-05/CAP-05.S03.html",
+    "planning/review-site/manifest.json",
+    "planning/status-summary.md"
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "checkIds": [
+        "anchors",
+        "actual-core-composition",
+        "renderer-unit",
+        "reader-browser"
+      ],
+      "evidence": [
+        "Real SQLCipher/encrypted repository close/reopen preserves exact accepted revision/node/projection/code-point selectors and immutable canonical Document identity/provenance/dependencies/outbox. New accepted heads do not move historical anchors; equal command retries publish once. Authored repeated text, CRLF/NFC/supplementary characters, normalized unrotated geometry and display rotation/scaling have explicit expectations.",
+        "The actual Reader component opens the exact Core-produced synthetic anchor, highlights the intended passage using explicit Unicode-to-UTF16 conversion, visibly labels missing-coordinate structural/text fallback and exact revision, tolerates both themes/200% scaling/narrow reflow, supports keyboard focus/return, clears on lock and ignores late responses. Core restart and renderer remount are proven separately; browser fixed native-response bridge is explicitly doubled. Approved attachment activation and PDF.js source-byte rendering remain S04 work."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "checkIds": [
+        "anchors",
+        "original-source-boundaries",
+        "native-api",
+        "actual-core-composition",
+        "native-command",
+        "renderer-unit",
+        "reader-browser"
+      ],
+      "evidence": [
+        "Current native human/session/Intent/privacy and exact-copy inspect+derive authority fence create/read/list/replay; actor change, detached session, changed command selection, wrong revision/range/project, revoked derive, corrupt bounded context, missing canonical outbox and atomic precommit interruption deny safely. Actual concurrent equal retries retain one publication under the existing native lifecycle guard.",
+        "Common anchor read authenticates its bounded encrypted context and complete existing aggregate replay without opening original PDF/full IR or falsely updating original verification. Original source-stream authentication, deduplicated-copy authority and existing inspect/derive/restart/privacy denial remain covered by six selected predecessor boundary cases. Strict native/body/Origin/redaction cases and fixed renderer command fields reject supplied root/actor/session/quotes/coordinates; no wrong passage is substituted."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "checkIds": [
+        "adr-coverage",
+        "lint",
+        "format",
+        "types",
+        "portable-schemas",
+        "architecture",
+        "package-contract",
+        "anchors",
+        "renderer-types",
+        "native-api"
+      ],
+      "evidence": [
+        "Six generated portable anchor/selection/context/geometry/outline/revision-choice schemas and strict Core/renderer decoding bind exact identifiers, offsets, confidence and source metadata. Existing canonical derived Document aggregate/encrypted-artifact/provenance/dependency/outbox publication is reused; no new identity store or schema migration is required.",
+        "Fresh original-claim-base-to-candidate ADR change-set validation passes. Existing Proposed ADR0046 now links T02, has precise affected-path coverage and an append-only implementation mapping for canonical authority, current exact selectors, derivative/original authentication and deferred S04 work. Accepted ADRs and frozen approvals are unchanged. The persistence adapter follows the established named root-level storage boundary and portable SourceAnchorRepository factory; exact-name registration and sorted strict sidecar module inventory/fixture pass existing architecture/package rules. No generic storage exemption or new automation behavior. Product build/check registration, synthetic fixtures and contract documentation match the task. The reusable inert Reader is intentionally unactivated until S04 under the approved inherited reference."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "verificationSelection": {
+    "selectedCommandIds": [
+      "desktop:application",
+      "documents:anchor-schemas",
+      "documents:anchors",
+      "documents:unit",
+      "foundation:adr",
+      "foundation:architecture",
+      "foundation:quality",
+      "packaging:unit",
+      "service:unit"
+    ],
+    "riskAnalysis": "R02 replays only the R01 F01 documentary-contract finding plus incremental documentation, evidence and input-boundary risk. Product bytes are unchanged from the independently reviewed R01 candidate. Exact ADR coverage is fresh; bounded criterion proof is also fresh because native/principal checks are fresh-only and complete Node/Rust dependency closure is unknown, so no old runtime result is reused. Protected research selectors, atomic canonical persistence, current native/session/rights authority and cross-process portable commands require expanded task disposition with real-boundary integration. Narrow changed-module, predecessor source, native command, schema/package and mounted-reader checks prove the task criteria. No unchanged full-history or full-profile replay, parser benchmark or accepted warm-overage investigation.",
+    "deferred": [
+      "S03.T03 resolution, citation links, stale dependencies and slice performance/E2E/independent review",
+      "S04 attachment activation and source-byte reader",
+      "Fresh full repository/affected profiles, native installed desktop, accessibility/security/performance, minimum hardware and separate W2 release decision"
+    ]
+  },
+  "checks": [
+    {
+      "id": "adr-coverage",
+      "commandId": "foundation:adr",
+      "exitCode": 0,
+      "durationSeconds": 2.109151500000735,
+      "command": "./artifacts/tmp/CAP-05.S02.T03.check-runtime-122/python/python.exe -B tools/adr_check.py --repo . --base 45ea077cfd651802c265e09679f3843156a00c5a --head ad664e896a547976c2728fd34d58ee00fbc7ca9b",
+      "workingDirectory": ".",
+      "commit": "ad664e896a547976c2728fd34d58ee00fbc7ca9b",
+      "result": "PASS",
+      "rawOutput": "artifacts/tmp/CAP-05.S03.T02.qualification-67.adr-coverage.log",
+      "rawOutputSha256": "09a7fc92e82d1f228d6fb7177e5309cc887bcf1806105edc2215bd60706ac480",
+      "rawOutputCanonicalSha256": "f02e1948e9711651da0268de124b2f9fc6f5b241ddb1717fe8cb8baeb8fb98cc",
+      "inputReport": "artifacts/tmp/CAP-05.S03.T02.qualification-67.json",
+      "inputReportSha256": "6de5d94ba1da60b87907b1a830454891560b8c13cfb1bb87bcb2ec7d88852122",
+      "provenance": "Fresh execution at this unchanged committed candidate with all tracked source/helper files locked against writes/deletion and authenticated owned Python runtime denied writes/create/delete. Configured local Node/Rust and current installed dependencies; no prior-result reuse or complete global dependency-closure claim. Actual mounted renderer uses an explicit Tauri response double; actual Core/native session/SQLCipher/envelopes are exercised separately."
+    },
+    {
+      "id": "lint",
+      "commandId": "foundation:quality",
+      "exitCode": 0,
+      "durationSeconds": 0.13249270000960678,
+      "command": "./artifacts/tmp/CAP-05.S02.T03.check-runtime-122/python/python.exe -B -m ruff check packages/contracts/anchors/generate_anchor_schema.py services/core-api/src/research_observatory_core/anchors/__init__.py services/core-api/src/research_observatory_core/anchors/contracts.py services/core-api/src/research_observatory_core/document_revision_api.py services/core-api/src/research_observatory_core/document_revision_repository.py services/core-api/src/research_observatory_core/document_revision_service.py services/core-api/src/research_observatory_core/object_store.py services/core-api/src/research_observatory_core/ports/source_anchors.py services/core-api/src/research_observatory_core/source_anchor_repository.py tests/anchors/__init__.py tests/anchors/test_anchor_contracts.py tests/anchors/test_anchor_reader_interactions.py tests/anchors/test_anchor_repository.py tests/anchors/test_native_anchor_composition.py tests/packaging/test_core_sidecar_package.py tests/service/test_source_anchor_api.py tools/architecture_check.py tools/core_sidecar_build.py",
+      "workingDirectory": ".",
+      "commit": "ad664e896a547976c2728fd34d58ee00fbc7ca9b",
+      "result": "PASS",
+      "rawOutput": "artifacts/tmp/CAP-05.S03.T02.qualification-67.lint.log",
+      "rawOutputSha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18",
+      "rawOutputCanonicalSha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18",
+      "inputReport": "artifacts/tmp/CAP-05.S03.T02.qualification-67.json",
+      "inputReportSha256": "6de5d94ba1da60b87907b1a830454891560b8c13cfb1bb87bcb2ec7d88852122",
+      "provenance": "Fresh execution at this unchanged committed candidate with all tracked source/helper files locked against writes/deletion and authenticated owned Python runtime denied writes/create/delete. Configured local Node/Rust and current installed dependencies; no prior-result reuse or complete global dependency-closure claim. Actual mounted renderer uses an explicit Tauri response double; actual Core/native session/SQLCipher/envelopes are exercised separately."
+    },
+    {
+      "id": "format",
+      "commandId": "foundation:quality",
+      "exitCode": 0,
+      "durationSeconds": 0.12817460000223946,
+      "command": "./artifacts/tmp/CAP-05.S02.T03.check-runtime-122/python/python.exe -B -m ruff format --check packages/contracts/anchors/generate_anchor_schema.py services/core-api/src/research_observatory_core/anchors/__init__.py services/core-api/src/research_observatory_core/anchors/contracts.py services/core-api/src/research_observatory_core/document_revision_api.py services/core-api/src/research_observatory_core/document_revision_repository.py services/core-api/src/research_observatory_core/document_revision_service.py services/core-api/src/research_observatory_core/object_store.py services/core-api/src/research_observatory_core/ports/source_anchors.py services/core-api/src/research_observatory_core/source_anchor_repository.py tests/anchors/__init__.py tests/anchors/test_anchor_contracts.py tests/anchors/test_anchor_reader_interactions.py tests/anchors/test_anchor_repository.py tests/anchors/test_native_anchor_composition.py tests/packaging/test_core_sidecar_package.py tests/service/test_source_anchor_api.py tools/architecture_check.py tools/core_sidecar_build.py",
+      "workingDirectory": ".",
+      "commit": "ad664e896a547976c2728fd34d58ee00fbc7ca9b",
+      "result": "PASS",
+      "rawOutput": "artifacts/tmp/CAP-05.S03.T02.qualification-67.format.log",
+      "rawOutputSha256": "c4fd3f494556e5e7cf4355131a1080dbdcf0bbf09664638af9984db197ad88c0",
+      "rawOutputCanonicalSha256": "c4fd3f494556e5e7cf4355131a1080dbdcf0bbf09664638af9984db197ad88c0",
+      "inputReport": "artifacts/tmp/CAP-05.S03.T02.qualification-67.json",
+      "inputReportSha256": "6de5d94ba1da60b87907b1a830454891560b8c13cfb1bb87bcb2ec7d88852122",
+      "provenance": "Fresh execution at this unchanged committed candidate with all tracked source/helper files locked against writes/deletion and authenticated owned Python runtime denied writes/create/delete. Configured local Node/Rust and current installed dependencies; no prior-result reuse or complete global dependency-closure claim. Actual mounted renderer uses an explicit Tauri response double; actual Core/native session/SQLCipher/envelopes are exercised separately."
+    },
+    {
+      "id": "types",
+      "commandId": "foundation:quality",
+      "exitCode": 0,
+      "durationSeconds": 6.386257299993304,
+      "command": "./artifacts/tmp/CAP-05.S02.T03.check-runtime-122/python/python.exe -B -m mypy --no-incremental services/core-api/src/research_observatory_core/anchors/__init__.py services/core-api/src/research_observatory_core/anchors/contracts.py services/core-api/src/research_observatory_core/document_revision_api.py services/core-api/src/research_observatory_core/document_revision_repository.py services/core-api/src/research_observatory_core/document_revision_service.py services/core-api/src/research_observatory_core/object_store.py services/core-api/src/research_observatory_core/ports/source_anchors.py services/core-api/src/research_observatory_core/source_anchor_repository.py",
+      "workingDirectory": ".",
+      "commit": "ad664e896a547976c2728fd34d58ee00fbc7ca9b",
+      "result": "PASS",
+      "rawOutput": "artifacts/tmp/CAP-05.S03.T02.qualification-67.types.log",
+      "rawOutputSha256": "7aefcacc6d445354a115cf76fcdea696165be7ad8cf9b86a60ea98727c6e96f6",
+      "rawOutputCanonicalSha256": "157a09cfcdfdfb5977479c5a1c08345149263a3e990a2ec976ef28aaeec9cae6",
+      "inputReport": "artifacts/tmp/CAP-05.S03.T02.qualification-67.json",
+      "inputReportSha256": "6de5d94ba1da60b87907b1a830454891560b8c13cfb1bb87bcb2ec7d88852122",
+      "provenance": "Fresh execution at this unchanged committed candidate with all tracked source/helper files locked against writes/deletion and authenticated owned Python runtime denied writes/create/delete. Configured local Node/Rust and current installed dependencies; no prior-result reuse or complete global dependency-closure claim. Actual mounted renderer uses an explicit Tauri response double; actual Core/native session/SQLCipher/envelopes are exercised separately."
+    },
+    {
+      "id": "portable-schemas",
+      "commandId": "documents:anchor-schemas",
+      "exitCode": 0,
+      "durationSeconds": 0.5867204000096535,
+      "command": "./artifacts/tmp/CAP-05.S02.T03.check-runtime-122/python/python.exe -B packages/contracts/anchors/generate_anchor_schema.py --check",
+      "workingDirectory": ".",
+      "commit": "ad664e896a547976c2728fd34d58ee00fbc7ca9b",
+      "result": "PASS",
+      "rawOutput": "artifacts/tmp/CAP-05.S03.T02.qualification-67.portable-schemas.log",
+      "rawOutputSha256": "9e70564a6485362e4a4b36a9984490c9b0c58eae8639198fd926d8c964731ae3",
+      "rawOutputCanonicalSha256": "c4232e96d850095c7ad5917d2ff4084acf1ec8551dd2b58ef4fd4b343bc8aa44",
+      "inputReport": "artifacts/tmp/CAP-05.S03.T02.qualification-67.json",
+      "inputReportSha256": "6de5d94ba1da60b87907b1a830454891560b8c13cfb1bb87bcb2ec7d88852122",
+      "provenance": "Fresh execution at this unchanged committed candidate with all tracked source/helper files locked against writes/deletion and authenticated owned Python runtime denied writes/create/delete. Configured local Node/Rust and current installed dependencies; no prior-result reuse or complete global dependency-closure claim. Actual mounted renderer uses an explicit Tauri response double; actual Core/native session/SQLCipher/envelopes are exercised separately."
+    },
+    {
+      "id": "architecture",
+      "commandId": "foundation:architecture",
+      "exitCode": 0,
+      "durationSeconds": 4.272604500001762,
+      "command": "./artifacts/tmp/CAP-05.S02.T03.check-runtime-122/python/python.exe -B tools/architecture_check.py --repo .",
+      "workingDirectory": ".",
+      "commit": "ad664e896a547976c2728fd34d58ee00fbc7ca9b",
+      "result": "PASS",
+      "rawOutput": "artifacts/tmp/CAP-05.S03.T02.qualification-67.architecture.log",
+      "rawOutputSha256": "51a256bf6a7b2e89ab1d1b97aa19077aabf0e8858a450de1f5ceb155ed5c3e88",
+      "rawOutputCanonicalSha256": "1ba622fdbf569bf9ab13ee46e639b636ea005c560abcd4b168f782d8fbdc3f74",
+      "inputReport": "artifacts/tmp/CAP-05.S03.T02.qualification-67.json",
+      "inputReportSha256": "6de5d94ba1da60b87907b1a830454891560b8c13cfb1bb87bcb2ec7d88852122",
+      "provenance": "Fresh execution at this unchanged committed candidate with all tracked source/helper files locked against writes/deletion and authenticated owned Python runtime denied writes/create/delete. Configured local Node/Rust and current installed dependencies; no prior-result reuse or complete global dependency-closure claim. Actual mounted renderer uses an explicit Tauri response double; actual Core/native session/SQLCipher/envelopes are exercised separately."
+    },
+    {
+      "id": "anchors",
+      "commandId": "documents:anchors",
+      "exitCode": 0,
+      "durationSeconds": 53.290240700007416,
+      "command": "./artifacts/tmp/CAP-05.S02.T03.check-runtime-122/python/python.exe -B -m unittest tests.anchors.test_anchor_contracts tests.anchors.test_anchor_repository -v",
+      "workingDirectory": ".",
+      "commit": "ad664e896a547976c2728fd34d58ee00fbc7ca9b",
+      "result": "PASS",
+      "rawOutput": "artifacts/tmp/CAP-05.S03.T02.qualification-67.anchors.log",
+      "rawOutputSha256": "4f10500b6d330f3f94c7f0bd2d4859e0949ebf29b88e8bb844cb633db028196b",
+      "rawOutputCanonicalSha256": "e126535243eacb0a4bfc4699a52427a3757161ef87dd46200339c7b46682924d",
+      "inputReport": "artifacts/tmp/CAP-05.S03.T02.qualification-67.json",
+      "inputReportSha256": "6de5d94ba1da60b87907b1a830454891560b8c13cfb1bb87bcb2ec7d88852122",
+      "provenance": "Fresh execution at this unchanged committed candidate with all tracked source/helper files locked against writes/deletion and authenticated owned Python runtime denied writes/create/delete. Configured local Node/Rust and current installed dependencies; no prior-result reuse or complete global dependency-closure claim. Actual mounted renderer uses an explicit Tauri response double; actual Core/native session/SQLCipher/envelopes are exercised separately."
+    },
+    {
+      "id": "original-source-boundaries",
+      "commandId": "documents:unit",
+      "exitCode": 0,
+      "durationSeconds": 22.211324900010368,
+      "command": "./artifacts/tmp/CAP-05.S02.T03.check-runtime-122/python/python.exe -B -m unittest tests.parsing.test_protected_parse_source.ProtectedParseSourceTests.test_inspect_does_not_grant_derive_and_success_uses_exact_encrypted_copy tests.parsing.test_protected_parse_source.ProtectedParseSourceTests.test_deduplicated_ciphertext_origin_is_not_copy_authority tests.parsing.test_protected_parse_source.ProtectedParseSourceTests.test_rights_change_before_delivery_releases_writer_and_exposes_no_ir tests.parsing.test_protected_parse_source.ProtectedParseSourceTests.test_actual_project_close_and_reopen_refuses_old_session_delivery tests.parsing.test_protected_parse_source.ProtectedParseSourceTests.test_stale_intent_privacy_and_identical_digest_foreign_source_are_denied tests.documents.test_local_attachment.LocalAttachmentServiceTests.test_exact_attached_read_uses_current_inspect_right_and_generic_hash_read_denies -v",
+      "workingDirectory": ".",
+      "commit": "ad664e896a547976c2728fd34d58ee00fbc7ca9b",
+      "result": "PASS",
+      "rawOutput": "artifacts/tmp/CAP-05.S03.T02.qualification-67.original-source-boundaries.log",
+      "rawOutputSha256": "ba2ffc38ae5a32e83bd3cc674cc97061477a860af7d846e1a3947f0b2e33fc9a",
+      "rawOutputCanonicalSha256": "2aa9be86384b8d690afed1f21e86bf579ded1a005e067ece1f51409a539a7560",
+      "inputReport": "artifacts/tmp/CAP-05.S03.T02.qualification-67.json",
+      "inputReportSha256": "6de5d94ba1da60b87907b1a830454891560b8c13cfb1bb87bcb2ec7d88852122",
+      "provenance": "Fresh execution at this unchanged committed candidate with all tracked source/helper files locked against writes/deletion and authenticated owned Python runtime denied writes/create/delete. Configured local Node/Rust and current installed dependencies; no prior-result reuse or complete global dependency-closure claim. Actual mounted renderer uses an explicit Tauri response double; actual Core/native session/SQLCipher/envelopes are exercised separately."
+    },
+    {
+      "id": "native-api",
+      "commandId": "service:unit",
+      "exitCode": 0,
+      "durationSeconds": 5.199464799996349,
+      "command": "./artifacts/tmp/CAP-05.S02.T03.check-runtime-122/python/python.exe -B -m unittest tests.service.test_source_anchor_api tests.service.test_document_revision_api -v",
+      "workingDirectory": ".",
+      "commit": "ad664e896a547976c2728fd34d58ee00fbc7ca9b",
+      "result": "PASS",
+      "rawOutput": "artifacts/tmp/CAP-05.S03.T02.qualification-67.native-api.log",
+      "rawOutputSha256": "15fb9bb0287a744fe64ffd29324d9f1dd334570bc50141c9d12d0becbfb55543",
+      "rawOutputCanonicalSha256": "46951ac0e5323b6d6e32748911891b01a57c9f63d9918e7dde6ce81087f3bba2",
+      "inputReport": "artifacts/tmp/CAP-05.S03.T02.qualification-67.json",
+      "inputReportSha256": "6de5d94ba1da60b87907b1a830454891560b8c13cfb1bb87bcb2ec7d88852122",
+      "provenance": "Fresh execution at this unchanged committed candidate with all tracked source/helper files locked against writes/deletion and authenticated owned Python runtime denied writes/create/delete. Configured local Node/Rust and current installed dependencies; no prior-result reuse or complete global dependency-closure claim. Actual mounted renderer uses an explicit Tauri response double; actual Core/native session/SQLCipher/envelopes are exercised separately."
+    },
+    {
+      "id": "package-contract",
+      "commandId": "packaging:unit",
+      "exitCode": 0,
+      "durationSeconds": 1.2539831999893067,
+      "command": "./artifacts/tmp/CAP-05.S02.T03.check-runtime-122/python/python.exe -B -m unittest tests.packaging.test_core_sidecar_package.CoreSidecarPackageTests.test_build_contract_is_strict_and_version_bound -v",
+      "workingDirectory": ".",
+      "commit": "ad664e896a547976c2728fd34d58ee00fbc7ca9b",
+      "result": "PASS",
+      "rawOutput": "artifacts/tmp/CAP-05.S03.T02.qualification-67.package-contract.log",
+      "rawOutputSha256": "ae523ad9a43a325a072f126ca6c75f22cda432974b8b61480b9041191774eacd",
+      "rawOutputCanonicalSha256": "4a7259e6f196ef8cd25e0cbad0a28e9988a516bac737403ebc429b282a79ed8d",
+      "inputReport": "artifacts/tmp/CAP-05.S03.T02.qualification-67.json",
+      "inputReportSha256": "6de5d94ba1da60b87907b1a830454891560b8c13cfb1bb87bcb2ec7d88852122",
+      "provenance": "Fresh execution at this unchanged committed candidate with all tracked source/helper files locked against writes/deletion and authenticated owned Python runtime denied writes/create/delete. Configured local Node/Rust and current installed dependencies; no prior-result reuse or complete global dependency-closure claim. Actual mounted renderer uses an explicit Tauri response double; actual Core/native session/SQLCipher/envelopes are exercised separately."
+    },
+    {
+      "id": "actual-core-composition",
+      "commandId": "documents:anchors",
+      "exitCode": 0,
+      "durationSeconds": 16.63487449999957,
+      "command": "./artifacts/tmp/CAP-05.S02.T03.check-runtime-122/python/python.exe -B -m unittest tests.anchors.test_native_anchor_composition -v",
+      "workingDirectory": ".",
+      "commit": "ad664e896a547976c2728fd34d58ee00fbc7ca9b",
+      "result": "PASS",
+      "rawOutput": "artifacts/tmp/CAP-05.S03.T02.qualification-67.actual-core-composition.log",
+      "rawOutputSha256": "1a557f7685b385c5775fa44b4c172422ac0e3b3b4a71f2b2c29a81751f40d71a",
+      "rawOutputCanonicalSha256": "f3029b31ecf3e2ba2ae0a1a6b6e499d637b5f2a80ab0349c122a477b154dc760",
+      "inputReport": "artifacts/tmp/CAP-05.S03.T02.qualification-67.json",
+      "inputReportSha256": "6de5d94ba1da60b87907b1a830454891560b8c13cfb1bb87bcb2ec7d88852122",
+      "provenance": "Fresh execution at this unchanged committed candidate with all tracked source/helper files locked against writes/deletion and authenticated owned Python runtime denied writes/create/delete. Configured local Node/Rust and current installed dependencies; no prior-result reuse or complete global dependency-closure claim. Actual mounted renderer uses an explicit Tauri response double; actual Core/native session/SQLCipher/envelopes are exercised separately."
+    },
+    {
+      "id": "native-command",
+      "commandId": "desktop:application",
+      "exitCode": 0,
+      "durationSeconds": 0.4742998000001535,
+      "command": "./.local/toolchains/cargo/bin/cargo.exe test --lib document_reader::tests --locked --offline",
+      "workingDirectory": "apps/desktop/src-tauri",
+      "commit": "ad664e896a547976c2728fd34d58ee00fbc7ca9b",
+      "result": "PASS",
+      "rawOutput": "artifacts/tmp/CAP-05.S03.T02.qualification-67.native-command.log",
+      "rawOutputSha256": "a41ccdb3d50fd6725f849f26848c4d49bde2dcbc6acc7a2bbdcd8a31a00c136c",
+      "rawOutputCanonicalSha256": "a41ccdb3d50fd6725f849f26848c4d49bde2dcbc6acc7a2bbdcd8a31a00c136c",
+      "inputReport": "artifacts/tmp/CAP-05.S03.T02.qualification-67.json",
+      "inputReportSha256": "6de5d94ba1da60b87907b1a830454891560b8c13cfb1bb87bcb2ec7d88852122",
+      "provenance": "Fresh execution at this unchanged committed candidate with all tracked source/helper files locked against writes/deletion and authenticated owned Python runtime denied writes/create/delete. Configured local Node/Rust and current installed dependencies; no prior-result reuse or complete global dependency-closure claim. Actual mounted renderer uses an explicit Tauri response double; actual Core/native session/SQLCipher/envelopes are exercised separately."
+    },
+    {
+      "id": "renderer-unit",
+      "commandId": "desktop:application",
+      "exitCode": 0,
+      "durationSeconds": 0.6008641000080388,
+      "command": "./.local/toolchains/node-v24.19.0-win-x64/node.exe apps/desktop/node_modules/vitest/vitest.mjs run --root apps/desktop src/app/sourceAnchors.test.ts src/app/SourceAnchorReader.test.tsx",
+      "workingDirectory": ".",
+      "commit": "ad664e896a547976c2728fd34d58ee00fbc7ca9b",
+      "result": "PASS",
+      "rawOutput": "artifacts/tmp/CAP-05.S03.T02.qualification-67.renderer-unit.log",
+      "rawOutputSha256": "c466b571adb2256c1161b87fa7d4fd73681df15bfae89e352b9aee655ac1851f",
+      "rawOutputCanonicalSha256": "c466b571adb2256c1161b87fa7d4fd73681df15bfae89e352b9aee655ac1851f",
+      "inputReport": "artifacts/tmp/CAP-05.S03.T02.qualification-67.json",
+      "inputReportSha256": "6de5d94ba1da60b87907b1a830454891560b8c13cfb1bb87bcb2ec7d88852122",
+      "provenance": "Fresh execution at this unchanged committed candidate with all tracked source/helper files locked against writes/deletion and authenticated owned Python runtime denied writes/create/delete. Configured local Node/Rust and current installed dependencies; no prior-result reuse or complete global dependency-closure claim. Actual mounted renderer uses an explicit Tauri response double; actual Core/native session/SQLCipher/envelopes are exercised separately."
+    },
+    {
+      "id": "renderer-types",
+      "commandId": "desktop:application",
+      "exitCode": 0,
+      "durationSeconds": 0.5159908000059659,
+      "command": "./.local/toolchains/node-v24.19.0-win-x64/node.exe apps/desktop/node_modules/typescript/bin/tsc --noEmit -p apps/desktop/tsconfig.json",
+      "workingDirectory": ".",
+      "commit": "ad664e896a547976c2728fd34d58ee00fbc7ca9b",
+      "result": "PASS",
+      "rawOutput": "artifacts/tmp/CAP-05.S03.T02.qualification-67.renderer-types.log",
+      "rawOutputSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "rawOutputCanonicalSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "inputReport": "artifacts/tmp/CAP-05.S03.T02.qualification-67.json",
+      "inputReportSha256": "6de5d94ba1da60b87907b1a830454891560b8c13cfb1bb87bcb2ec7d88852122",
+      "provenance": "Fresh execution at this unchanged committed candidate with all tracked source/helper files locked against writes/deletion and authenticated owned Python runtime denied writes/create/delete. Configured local Node/Rust and current installed dependencies; no prior-result reuse or complete global dependency-closure claim. Actual mounted renderer uses an explicit Tauri response double; actual Core/native session/SQLCipher/envelopes are exercised separately."
+    },
+    {
+      "id": "reader-fixture-build",
+      "commandId": "desktop:application",
+      "exitCode": 0,
+      "durationSeconds": 0.23873959999764338,
+      "command": "./.local/toolchains/node-v24.19.0-win-x64/node.exe tests/desktop/fixtures/source-anchor-reader.mjs ./artifacts/tmp/CAP-05.S03.T02.reader-browser-build-67",
+      "workingDirectory": ".",
+      "commit": "ad664e896a547976c2728fd34d58ee00fbc7ca9b",
+      "result": "PASS",
+      "rawOutput": "artifacts/tmp/CAP-05.S03.T02.qualification-67.reader-fixture-build.log",
+      "rawOutputSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "rawOutputCanonicalSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "inputReport": "artifacts/tmp/CAP-05.S03.T02.qualification-67.json",
+      "inputReportSha256": "6de5d94ba1da60b87907b1a830454891560b8c13cfb1bb87bcb2ec7d88852122",
+      "provenance": "Fresh execution at this unchanged committed candidate with all tracked source/helper files locked against writes/deletion and authenticated owned Python runtime denied writes/create/delete. Configured local Node/Rust and current installed dependencies; no prior-result reuse or complete global dependency-closure claim. Actual mounted renderer uses an explicit Tauri response double; actual Core/native session/SQLCipher/envelopes are exercised separately."
+    },
+    {
+      "id": "reader-browser",
+      "commandId": "documents:anchors",
+      "exitCode": 0,
+      "durationSeconds": 1.4260829999984708,
+      "command": "./artifacts/tmp/CAP-05.S02.T03.check-runtime-122/python/python.exe -B -m unittest tests.anchors.test_anchor_reader_interactions -v",
+      "workingDirectory": ".",
+      "commit": "ad664e896a547976c2728fd34d58ee00fbc7ca9b",
+      "result": "PASS",
+      "rawOutput": "artifacts/tmp/CAP-05.S03.T02.qualification-67.reader-browser.log",
+      "rawOutputSha256": "19b1523d995c2e0a29024bd9f4d835887d41047464ae6aae5ca93fc53b2eeaf2",
+      "rawOutputCanonicalSha256": "1bcee14207a7a18451df3760521c357e7f3b71918d095c75778e5661d9b3bf24",
+      "inputReport": "artifacts/tmp/CAP-05.S03.T02.qualification-67.json",
+      "inputReportSha256": "6de5d94ba1da60b87907b1a830454891560b8c13cfb1bb87bcb2ec7d88852122",
+      "provenance": "Fresh execution at this unchanged committed candidate with all tracked source/helper files locked against writes/deletion and authenticated owned Python runtime denied writes/create/delete. Configured local Node/Rust and current installed dependencies; no prior-result reuse or complete global dependency-closure claim. Actual mounted renderer uses an explicit Tauri response double; actual Core/native session/SQLCipher/envelopes are exercised separately."
+    }
+  ],
+  "machineArtifacts": [
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T02.qualification-67.json",
+      "sha256": "6de5d94ba1da60b87907b1a830454891560b8c13cfb1bb87bcb2ec7d88852122"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T02.qualification-67.py",
+      "sha256": "a599eab99800969322dea6124c17e248750d488457a283be26dac9e24a590099"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T02.reader-api-fixture-67.json",
+      "sha256": "0016b42289f9ff5051ce0a1a195c7cd62501056a0d0fc9d2e34ac1a882959c9b"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T02.reader-browser-build-67/source-anchor-reader.css",
+      "sha256": "fb64e441a02666517c68d7cd3667408f3747439fa735e365a8306970e236193a"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T02.reader-browser-build-67/source-anchor-reader.js",
+      "sha256": "13f8f14e50df7a0bc203c3a9ee61ba7e0043c91d711d9367546034b1e27d39a2"
+    }
+  ],
+  "scopeLimits": {
+    "nativeCore": "Actual current native session, human/Intent/privacy/rights, SQLCipher, encrypted envelopes and API composition with in-process HTTP and authored synthetic accepted parser IR.",
+    "renderer": "Actual compiled React component in Chromium, fixed Tauri response double populated by fresh actual Core outputs. No actual installed Tauri process, native OS-dialog or new clean package qualification asserted.",
+    "activation": "S04 owns attachment button, workspace routing, original-byte PDF.js and full return journey.",
+    "storage": "Bounded derivative context authentication never claims original PDF-byte verification.",
+    "performance": "Fresh read timing is observation only. S03 <=100 ms target remains open for T03 and slice qualification; no waiver."
+  },
+  "adverseObservations": {
+    "qualification50": {
+      "status": "FAIL",
+      "candidate": "85861cecedd8d37b6f8034b8e9134a90cb5f647f",
+      "failedChecks": [
+        "architecture",
+        "package-contract"
+      ],
+      "correction": "Move adapter to established root location, compose through revision adapter/portable port, register exact module name, sort required inventory and update explicit package fixture."
+    },
+    "qualification52": {
+      "status": "FAIL",
+      "candidate": "eb256986f24f9e1dca93b2e308c6d29570fab22c",
+      "failedChecks": [
+        "lint"
+      ],
+      "correction": "Sort the single relocated test import; no product semantics or assertion changed."
+    },
+    "anchorReadPerformance": {
+      "freshP95Ms": 282.8404000028968,
+      "samples": 20,
+      "method": "19th ordered sample (nearest-rank p95) of fresh in-process HTTP reads through current native authority and SQLCipher context authentication.",
+      "targetMs": 100,
+      "status": "OVER_TARGET_OBSERVATION",
+      "qualification": "Required S03 resolver performance remains open; T02 has no performance-pass claim."
+    },
+    "priorWholeRendererLint": {
+      "path": "artifacts/tmp/CAP-05.S03.T02.renderer-lint-development-45.log",
+      "sha256": "a80f2c5ff895bc285c40f6515fe5d037903eea358b8ec9234a582f78caefe25d",
+      "status": "FAIL",
+      "locations": [
+        "src/app/AvailableCopiesPane.tsx: explicit any is not allowed",
+        "src/app/documentAcquisition.test.ts: renderer/build source must remain offline"
+      ],
+      "scope": "Both findings are in unchanged predecessor files; retain for affected/Wave closure. Current T02 types and focused tests pass, no whole-renderer lint PASS claimed."
+    }
+  },
+  "historicalObservations": [
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T02.adapter-correction-51.log",
+      "sha256": "7d6092c84a6b7aabcc7631d89dd43c503de6f46b53af458f7e2894df2b606e33",
+      "scope": "Preserved development/adverse/partial/setup observation at its original candidate; no current qualification PASS inferred."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T02.adr-adverse-57.log",
+      "sha256": "24ff21a221862af87e5f0794191cf31682d89351790fd29e72d11c2514aa85f7",
+      "scope": "Preserved development/adverse/partial/setup observation at its original candidate; no current qualification PASS inferred."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T02.adr-document-index-65.log",
+      "sha256": "52966c631197e93d6d43ea18062c8b58dd7c1c08c1940528602639337ea6f8f1",
+      "scope": "Preserved development/adverse/partial/setup observation at its original candidate; no current qualification PASS inferred."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T02.api-green-19.log",
+      "sha256": "cb425637efdb6517baea48d51e9e612ce76a2c354973272ce07497817a2d2bc0",
+      "scope": "Preserved development/adverse/partial/setup observation at its original candidate; no current qualification PASS inferred."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T02.api-red-16.log",
+      "sha256": "474d5d7ada780a9dc7fce2070ae7661f5c1385aa07b59beae94ff3fe72851339",
+      "scope": "Preserved development/adverse/partial/setup observation at its original candidate; no current qualification PASS inferred."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T02.claim-02.log",
+      "sha256": "4f3ec18858686ac76c4ffbc2a243e79f7ab1ecae1fae531f83e1dc322f7ffa33",
+      "scope": "Preserved development/adverse/partial/setup observation at its original candidate; no current qualification PASS inferred."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T02.claim-site-05.log",
+      "sha256": "ebd764e997cba93a5e4f771fedfbabc3a04f5a90d55a7b75197cfdfba3d16a7f",
+      "scope": "Preserved development/adverse/partial/setup observation at its original candidate; no current qualification PASS inferred."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T02.claim-site-check-06.log",
+      "sha256": "d6b4aabfbf04f2e0e52f0737fc127f4236f25f394f67a0092fcd99e5d5de45e3",
+      "scope": "Preserved development/adverse/partial/setup observation at its original candidate; no current qualification PASS inferred."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T02.claim-views-03.log",
+      "sha256": "5c70bb33b88608bbe98be37b45436727ec04c5b01e06c6e384682f622921b27b",
+      "scope": "Preserved development/adverse/partial/setup observation at its original candidate; no current qualification PASS inferred."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T02.claim-views-check-04.log",
+      "sha256": "36ebe8ba5eed16d416087f957ce901132e936a4ed14c97dbcb91651c3e2678aa",
+      "scope": "Preserved development/adverse/partial/setup observation at its original candidate; no current qualification PASS inferred."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T02.contract-green-07.log",
+      "sha256": "410acb395b5a6e39f9d4ba0a09a5a6abf496e300591983d75d41d42e4572e89f",
+      "scope": "Preserved development/adverse/partial/setup observation at its original candidate; no current qualification PASS inferred."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T02.contract-green-08.log",
+      "sha256": "81f54b2ac311ff06c92a137889ba2a561ef330560e07c57866c5b7071d74b741",
+      "scope": "Preserved development/adverse/partial/setup observation at its original candidate; no current qualification PASS inferred."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T02.contract-red-01.log",
+      "sha256": "fe64c4863e8e1ba012ce05b0d764fe4ece7dd302c79c5157cb58f09fc215cfe0",
+      "scope": "Preserved development/adverse/partial/setup observation at its original candidate; no current qualification PASS inferred."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T02.documentary-remediation-commit-66.log",
+      "sha256": "8c64aeea26dccab9c975cc3691d780518ce9af743a3ee72f13248a9815a1f02e",
+      "scope": "Preserved development/adverse/partial/setup observation at its original candidate; no current qualification PASS inferred."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T02.documentary-remediation-error-63.json",
+      "sha256": "782663cb7b59402267911984fc17bf8f43407ef2853107466dc991144a5557be",
+      "scope": "Preserved development/adverse/partial/setup observation at its original candidate; no current qualification PASS inferred."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T02.format-22.log",
+      "sha256": "d9d79976036ac55b771b47f6cecaa66a30fe59749dba207bd67b2104ca5c29d7",
+      "scope": "Preserved development/adverse/partial/setup observation at its original candidate; no current qualification PASS inferred."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T02.format-development-18.log",
+      "sha256": "63567b58c496d177aa1455d812117faae34728e9782bba8844aa93eb72d2e8e1",
+      "scope": "Preserved development/adverse/partial/setup observation at its original candidate; no current qualification PASS inferred."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T02.format-development-40.log",
+      "sha256": "7015d3c7fc11a151e272b44a7c8476349c6377fec965067c783b4e390e8ef0bf",
+      "scope": "Preserved development/adverse/partial/setup observation at its original candidate; no current qualification PASS inferred."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T02.import-order-53.log",
+      "sha256": "5cb28baa003ba642252220ff46a993ef8fd3508d85896e2beba8d158025a8f42",
+      "scope": "Preserved development/adverse/partial/setup observation at its original candidate; no current qualification PASS inferred."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T02.lint-development-15.log",
+      "sha256": "77b6d3e8f7682f69be8c262c19ca5d4dacc71bb6e290bea31451dcd80f865865",
+      "scope": "Preserved development/adverse/partial/setup observation at its original candidate; no current qualification PASS inferred."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T02.lint-development-20.log",
+      "sha256": "b57465831a12d07b7cc17de3eac70a2770eec463edeef30ba63fc2f755c00b8c",
+      "scope": "Preserved development/adverse/partial/setup observation at its original candidate; no current qualification PASS inferred."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T02.lint-development-38.log",
+      "sha256": "158199e4191d32b3c7dbca3af7549f877eb04d47bf3ec79c75446f1e8bbf4c7c",
+      "scope": "Preserved development/adverse/partial/setup observation at its original candidate; no current qualification PASS inferred."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T02.lint-development-44.log",
+      "sha256": "d68f199748486b338afa77c8a653eb5cdb4c232d374b72f6c5e90bdc97838c9e",
+      "scope": "Preserved development/adverse/partial/setup observation at its original candidate; no current qualification PASS inferred."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T02.lint-development-47.log",
+      "sha256": "a4443afdcfb6d7363adb285762515ccf7cf50473b1a05c20c1a50f6bed4d26b0",
+      "scope": "Preserved development/adverse/partial/setup observation at its original candidate; no current qualification PASS inferred."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T02.lint-fix-17.log",
+      "sha256": "465ac1c294352fa2463e0fe0a1ef7e1689e172e85471c94d1edcc6800cb26086",
+      "scope": "Preserved development/adverse/partial/setup observation at its original candidate; no current qualification PASS inferred."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T02.lint-fix-21.log",
+      "sha256": "4b9315462a6ef4a2fe64e4dc2aec1252bf2299ac92f4976c0e81c84799cff44a",
+      "scope": "Preserved development/adverse/partial/setup observation at its original candidate; no current qualification PASS inferred."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T02.native-api-composition-39.log",
+      "sha256": "6283cfece4b90ef6373e20dcdd7870bba75c1c4d2585467abfe73b34b154e108",
+      "scope": "Preserved development/adverse/partial/setup observation at its original candidate; no current qualification PASS inferred."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T02.native-command-configured-30.log",
+      "sha256": "d5d017c6e4831e52cdd278b2a0231b36fca697602b715c7494beffcae10f5109",
+      "scope": "Preserved development/adverse/partial/setup observation at its original candidate; no current qualification PASS inferred."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T02.native-command-development-26.log",
+      "sha256": "d868de0a33669e756be48548f22c5d32272f3ee2b914c94171f7320081244fc4",
+      "scope": "Preserved development/adverse/partial/setup observation at its original candidate; no current qualification PASS inferred."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T02.next-01.log",
+      "sha256": "2a252d7109185b104911faf01886a7a17ca3c9ac13538335959217464e790bbb",
+      "scope": "Preserved development/adverse/partial/setup observation at its original candidate; no current qualification PASS inferred."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T02.principal-green-14.log",
+      "sha256": "87f7d0b49591367eb2d3a25b0b40855885b3c7e263b5c723f09c2a845011cef1",
+      "scope": "Preserved development/adverse/partial/setup observation at its original candidate; no current qualification PASS inferred."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T02.product-candidate-commit-48.log",
+      "sha256": "6d15a4c5eb813248d686d7a92e67a4019f3389cc3e207d333af215c7796cd95c",
+      "scope": "Preserved development/adverse/partial/setup observation at its original candidate; no current qualification PASS inferred."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T02.qualification-50.actual-core-composition.log",
+      "sha256": "92605bdb8b218d50f509c856aaa764e995518ed2c8a79ce959d9185b77df7566",
+      "scope": "Preserved development/adverse/partial/setup observation at its original candidate; no current qualification PASS inferred."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T02.qualification-50.anchors.log",
+      "sha256": "b9d5157c485161086d39f2411ce375cb5eda4bb9b0f33493a3d3769d2a2d0d09",
+      "scope": "Preserved development/adverse/partial/setup observation at its original candidate; no current qualification PASS inferred."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T02.qualification-50.architecture.log",
+      "sha256": "87df3e21a572e2f9604ae29e15f19fe522973ce260d8a755854e09c6e6df37f8",
+      "scope": "Preserved development/adverse/partial/setup observation at its original candidate; no current qualification PASS inferred."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T02.qualification-50.format.log",
+      "sha256": "d41ae50829b47e318b0787bc39d2a2ea2d52b518cfc7900d2efd569e6d26ab88",
+      "scope": "Preserved development/adverse/partial/setup observation at its original candidate; no current qualification PASS inferred."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T02.qualification-50.json",
+      "sha256": "7595a4e7a42489083f2d5d9505f787d27dcdcbfd75726cf7f8337786117779a9",
+      "scope": "Preserved development/adverse/partial/setup observation at its original candidate; no current qualification PASS inferred."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T02.qualification-50.lint.log",
+      "sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18",
+      "scope": "Preserved development/adverse/partial/setup observation at its original candidate; no current qualification PASS inferred."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T02.qualification-50.native-api.log",
+      "sha256": "93b744cee4ad8a3f61822a221b27e55cc0976f3c27a966608cd44f50a1fda3ff",
+      "scope": "Preserved development/adverse/partial/setup observation at its original candidate; no current qualification PASS inferred."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T02.qualification-50.native-command.log",
+      "sha256": "ce2229ae060a0379ea872881a2a5e8e6a1286d0274860b1a1e41f8b044d35c99",
+      "scope": "Preserved development/adverse/partial/setup observation at its original candidate; no current qualification PASS inferred."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T02.qualification-50.original-source-boundaries.log",
+      "sha256": "58f6b40e19eca66aac25b1e25f191e0c2681c59011aa4358f4e73c2b7d7c3c10",
+      "scope": "Preserved development/adverse/partial/setup observation at its original candidate; no current qualification PASS inferred."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T02.qualification-50.package-contract.log",
+      "sha256": "28f2600e6fe55d2aa23844af63dc0ffafb2267e56ee0b3b30552f03030a5fdd2",
+      "scope": "Preserved development/adverse/partial/setup observation at its original candidate; no current qualification PASS inferred."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T02.qualification-50.portable-schemas.log",
+      "sha256": "9e70564a6485362e4a4b36a9984490c9b0c58eae8639198fd926d8c964731ae3",
+      "scope": "Preserved development/adverse/partial/setup observation at its original candidate; no current qualification PASS inferred."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T02.qualification-50.reader-browser.log",
+      "sha256": "727b8123e5d7f0f7328f7ee54081a9016cd90e9649c719e6cba64585a2cf2cef",
+      "scope": "Preserved development/adverse/partial/setup observation at its original candidate; no current qualification PASS inferred."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T02.qualification-50.reader-fixture-build.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "scope": "Preserved development/adverse/partial/setup observation at its original candidate; no current qualification PASS inferred."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T02.qualification-50.renderer-types.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "scope": "Preserved development/adverse/partial/setup observation at its original candidate; no current qualification PASS inferred."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T02.qualification-50.renderer-unit.log",
+      "sha256": "29efe26288a929fe4cbc32e45c3a89c987503512bc419d11016a9d160793df14",
+      "scope": "Preserved development/adverse/partial/setup observation at its original candidate; no current qualification PASS inferred."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T02.qualification-50.types.log",
+      "sha256": "e2702f9afc4c0f80ff1e8624f77af7a7d2689ca184512114aae5967a76229ba8",
+      "scope": "Preserved development/adverse/partial/setup observation at its original candidate; no current qualification PASS inferred."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T02.qualification-52.actual-core-composition.log",
+      "sha256": "f9fca3b0e4374971e31e9be0ebe2c8fe45fe240368492234304c00c75299edec",
+      "scope": "Preserved development/adverse/partial/setup observation at its original candidate; no current qualification PASS inferred."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T02.qualification-52.anchors.log",
+      "sha256": "7995b1e7677b547b0af410ff6b93885b3498ea851c7fb37df663a314a01d086d",
+      "scope": "Preserved development/adverse/partial/setup observation at its original candidate; no current qualification PASS inferred."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T02.qualification-52.architecture.log",
+      "sha256": "51a256bf6a7b2e89ab1d1b97aa19077aabf0e8858a450de1f5ceb155ed5c3e88",
+      "scope": "Preserved development/adverse/partial/setup observation at its original candidate; no current qualification PASS inferred."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T02.qualification-52.format.log",
+      "sha256": "c4fd3f494556e5e7cf4355131a1080dbdcf0bbf09664638af9984db197ad88c0",
+      "scope": "Preserved development/adverse/partial/setup observation at its original candidate; no current qualification PASS inferred."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T02.qualification-52.json",
+      "sha256": "f79cc67ab2a1d7a4cb92788a25477728ec1e3b1fb83c0cc486bed7ed96720040",
+      "scope": "Preserved development/adverse/partial/setup observation at its original candidate; no current qualification PASS inferred."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T02.qualification-52.lint.log",
+      "sha256": "d0bcacfe70c40c9fae42cc8fdaa78ffd25166a1e172d1ec78023f75367fe3e36",
+      "scope": "Preserved development/adverse/partial/setup observation at its original candidate; no current qualification PASS inferred."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T02.qualification-52.native-api.log",
+      "sha256": "aecb549979464549a442fadfaac463613314ff0cd7a9d4e35497acba4798dfbe",
+      "scope": "Preserved development/adverse/partial/setup observation at its original candidate; no current qualification PASS inferred."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T02.qualification-52.native-command.log",
+      "sha256": "50f72efcd857e1f825b9d52b6d9234c73611dfde777535be00808a7f8f5eed44",
+      "scope": "Preserved development/adverse/partial/setup observation at its original candidate; no current qualification PASS inferred."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T02.qualification-52.original-source-boundaries.log",
+      "sha256": "326c1fb31b33c8c91e21204e7f9fbfc850b5ed386174fc27b9a72fed598b75ca",
+      "scope": "Preserved development/adverse/partial/setup observation at its original candidate; no current qualification PASS inferred."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T02.qualification-52.package-contract.log",
+      "sha256": "ae523ad9a43a325a072f126ca6c75f22cda432974b8b61480b9041191774eacd",
+      "scope": "Preserved development/adverse/partial/setup observation at its original candidate; no current qualification PASS inferred."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T02.qualification-52.portable-schemas.log",
+      "sha256": "9e70564a6485362e4a4b36a9984490c9b0c58eae8639198fd926d8c964731ae3",
+      "scope": "Preserved development/adverse/partial/setup observation at its original candidate; no current qualification PASS inferred."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T02.qualification-52.reader-browser.log",
+      "sha256": "0a014bfe0c26bedea1729a9a454b83cc3e9b2d1f7fffb716922de8fbbcea2e63",
+      "scope": "Preserved development/adverse/partial/setup observation at its original candidate; no current qualification PASS inferred."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T02.qualification-52.reader-fixture-build.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "scope": "Preserved development/adverse/partial/setup observation at its original candidate; no current qualification PASS inferred."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T02.qualification-52.renderer-types.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "scope": "Preserved development/adverse/partial/setup observation at its original candidate; no current qualification PASS inferred."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T02.qualification-52.renderer-unit.log",
+      "sha256": "767fcdfdbf6eb134099c468d19e3c417b82f98500549c83fbe60e1568a0f3fc7",
+      "scope": "Preserved development/adverse/partial/setup observation at its original candidate; no current qualification PASS inferred."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T02.qualification-52.types.log",
+      "sha256": "7aefcacc6d445354a115cf76fcdea696165be7ad8cf9b86a60ea98727c6e96f6",
+      "scope": "Preserved development/adverse/partial/setup observation at its original candidate; no current qualification PASS inferred."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T02.qualification-54.actual-core-composition.log",
+      "sha256": "7f990a903b7ec66928e6838ee08912b24cd1254bd2950a0c4ab578e76555265f",
+      "scope": "Preserved development/adverse/partial/setup observation at its original candidate; no current qualification PASS inferred."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T02.qualification-54.anchors.log",
+      "sha256": "9d0251d12ea8de7c1ca8451e36dc6f2de7fef91bdafb1bda628fb460d17c59b7",
+      "scope": "Preserved development/adverse/partial/setup observation at its original candidate; no current qualification PASS inferred."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T02.qualification-54.architecture.log",
+      "sha256": "51a256bf6a7b2e89ab1d1b97aa19077aabf0e8858a450de1f5ceb155ed5c3e88",
+      "scope": "Preserved development/adverse/partial/setup observation at its original candidate; no current qualification PASS inferred."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T02.qualification-54.format.log",
+      "sha256": "c4fd3f494556e5e7cf4355131a1080dbdcf0bbf09664638af9984db197ad88c0",
+      "scope": "Preserved development/adverse/partial/setup observation at its original candidate; no current qualification PASS inferred."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T02.qualification-54.json",
+      "sha256": "b58cc3f55478309fc4b71489af1cbfca19c10f2f737006a0b8d8c080b2655d19",
+      "scope": "Preserved development/adverse/partial/setup observation at its original candidate; no current qualification PASS inferred."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T02.qualification-54.lint.log",
+      "sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18",
+      "scope": "Preserved development/adverse/partial/setup observation at its original candidate; no current qualification PASS inferred."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T02.qualification-54.native-api.log",
+      "sha256": "669796e2a3863518787ea44cd4f86abde0331d1fdb17c1e97853a3fe9be27df7",
+      "scope": "Preserved development/adverse/partial/setup observation at its original candidate; no current qualification PASS inferred."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T02.qualification-54.native-command.log",
+      "sha256": "10e6fc24e8b845eb1963a3d076307ce5b23c88b10632d5701593889b44732cde",
+      "scope": "Preserved development/adverse/partial/setup observation at its original candidate; no current qualification PASS inferred."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T02.qualification-54.original-source-boundaries.log",
+      "sha256": "2637abc2d9d941fe22a02721ac558264aa5a7cc07090a7e71eae870361fc9c02",
+      "scope": "Preserved development/adverse/partial/setup observation at its original candidate; no current qualification PASS inferred."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T02.qualification-54.package-contract.log",
+      "sha256": "ae523ad9a43a325a072f126ca6c75f22cda432974b8b61480b9041191774eacd",
+      "scope": "Preserved development/adverse/partial/setup observation at its original candidate; no current qualification PASS inferred."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T02.qualification-54.portable-schemas.log",
+      "sha256": "9e70564a6485362e4a4b36a9984490c9b0c58eae8639198fd926d8c964731ae3",
+      "scope": "Preserved development/adverse/partial/setup observation at its original candidate; no current qualification PASS inferred."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T02.qualification-54.reader-browser.log",
+      "sha256": "4abe600133f4f166fdd36f33534cf4425fafadeff1fecb92a2400166e5c9bd4e",
+      "scope": "Preserved development/adverse/partial/setup observation at its original candidate; no current qualification PASS inferred."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T02.qualification-54.reader-fixture-build.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "scope": "Preserved development/adverse/partial/setup observation at its original candidate; no current qualification PASS inferred."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T02.qualification-54.renderer-types.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "scope": "Preserved development/adverse/partial/setup observation at its original candidate; no current qualification PASS inferred."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T02.qualification-54.renderer-unit.log",
+      "sha256": "d19eeb430de349da237f4b4d83e2299e04cec88bacc41bf4bbd6868655f2d7f7",
+      "scope": "Preserved development/adverse/partial/setup observation at its original candidate; no current qualification PASS inferred."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T02.qualification-54.types.log",
+      "sha256": "7aefcacc6d445354a115cf76fcdea696165be7ad8cf9b86a60ea98727c6e96f6",
+      "scope": "Preserved development/adverse/partial/setup observation at its original candidate; no current qualification PASS inferred."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T02.read-profile-41.log",
+      "sha256": "2fde86c0ada3a4e6eb8c54d6127d76f1c5462c63b023f6a2d6f6047a6e178e19",
+      "scope": "Preserved development/adverse/partial/setup observation at its original candidate; no current qualification PASS inferred."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T02.reader-api-fixture-39.json",
+      "sha256": "53956eaf502bfb82c15fdc6fd2ffb29cffaf4102bc6cb77f95ce6042dad7d6af",
+      "scope": "Preserved development/adverse/partial/setup observation at its original candidate; no current qualification PASS inferred."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T02.reader-api-fixture-50.json",
+      "sha256": "a24023a8cfda8935d4bf5b377e608b730102f6a1aaa35980b6de5e253bcc8496",
+      "scope": "Preserved development/adverse/partial/setup observation at its original candidate; no current qualification PASS inferred."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T02.reader-api-fixture-52.json",
+      "sha256": "166d78969379f512f7af61df2e2744970f0d50344ee22c328810f47d75f86b69",
+      "scope": "Preserved development/adverse/partial/setup observation at its original candidate; no current qualification PASS inferred."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T02.reader-api-fixture-54.json",
+      "sha256": "b50b251a582d1c88f83323bc55f9b1c2857d032b7945e44e7df43edcb11bd193",
+      "scope": "Preserved development/adverse/partial/setup observation at its original candidate; no current qualification PASS inferred."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T02.reader-browser-build-42.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "scope": "Preserved development/adverse/partial/setup observation at its original candidate; no current qualification PASS inferred."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T02.reader-component-green-33.log",
+      "sha256": "95b398abe93e86886cbe3d1739ca326e666796a5c3842a635553f1a153c841a5",
+      "scope": "Preserved development/adverse/partial/setup observation at its original candidate; no current qualification PASS inferred."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T02.reader-component-red-32.log",
+      "sha256": "4c9a5a0d80fc2d2a1431d72ab9f4616909844e8c7b02ab633a8d6bdc9a37ae52",
+      "scope": "Preserved development/adverse/partial/setup observation at its original candidate; no current qualification PASS inferred."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T02.reader-interactions-development-43.log",
+      "sha256": "b3957bec893d95ce32c0b7e09008627f8cc63ffdde948cc23ed7f83b78d502e5",
+      "scope": "Preserved development/adverse/partial/setup observation at its original candidate; no current qualification PASS inferred."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T02.reader-interactions-development-46.log",
+      "sha256": "163204c2c46acb4254f76e51dae8f9e208d9a27e10a5e35cc94455617f6d112d",
+      "scope": "Preserved development/adverse/partial/setup observation at its original candidate; no current qualification PASS inferred."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T02.reader-revisions-green-24.log",
+      "sha256": "d213612febbecb06afcbcbd1d5a6eb4ab011a92b25d63828c8e0901b53520d78",
+      "scope": "Preserved development/adverse/partial/setup observation at its original candidate; no current qualification PASS inferred."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T02.reader-revisions-red-23.log",
+      "sha256": "d5a239754da678fbe0ab190acea74025935a1725d404e773f5dd2d694eb743d3",
+      "scope": "Preserved development/adverse/partial/setup observation at its original candidate; no current qualification PASS inferred."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T02.record-review-61.log",
+      "sha256": "de289a95d246483d958ff26b04d64a417d6d4f173e36fd627684df7008066365",
+      "scope": "Preserved development/adverse/partial/setup observation at its original candidate; no current qualification PASS inferred."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T02.remediation-state-site-64.log",
+      "sha256": "33442ed1be8e637d6f75078049fbb7cbc65219ab6f4b397560e988edc278672b",
+      "scope": "Preserved development/adverse/partial/setup observation at its original candidate; no current qualification PASS inferred."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T02.renderer-contract-configured-29.log",
+      "sha256": "173a03250a4406307687a531434593d4ac85aa58e1ab4e41db9001eb88b43bde",
+      "scope": "Preserved development/adverse/partial/setup observation at its original candidate; no current qualification PASS inferred."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T02.renderer-contract-configured-31.log",
+      "sha256": "b968b945cb718aa3475bed854458bcdee7eadf367be39434acfff8b6789c7900",
+      "scope": "Preserved development/adverse/partial/setup observation at its original candidate; no current qualification PASS inferred."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T02.renderer-contract-green-28.log",
+      "sha256": "13399ba12f6853f93d1e876f7f5eac0ebd47c80e8e178db8332b090eb91b00ce",
+      "scope": "Preserved development/adverse/partial/setup observation at its original candidate; no current qualification PASS inferred."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T02.renderer-contract-red-27.log",
+      "sha256": "13399ba12f6853f93d1e876f7f5eac0ebd47c80e8e178db8332b090eb91b00ce",
+      "scope": "Preserved development/adverse/partial/setup observation at its original candidate; no current qualification PASS inferred."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T02.renderer-lint-development-45.log",
+      "sha256": "a80f2c5ff895bc285c40f6515fe5d037903eea358b8ec9234a582f78caefe25d",
+      "scope": "Preserved development/adverse/partial/setup observation at its original candidate; no current qualification PASS inferred."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T02.renderer-types-development-34.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "scope": "Preserved development/adverse/partial/setup observation at its original candidate; no current qualification PASS inferred."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T02.repository-development-10.log",
+      "sha256": "81f3231179e6f5bb221496797966a0d4cad2f183e39e189a23f6f33b9079b35c",
+      "scope": "Preserved development/adverse/partial/setup observation at its original candidate; no current qualification PASS inferred."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T02.repository-development-11.log",
+      "sha256": "b0fbf8dcfef559275930d0bf0c8d78714d5648b6a4fc7bac2e06e632d337d883",
+      "scope": "Preserved development/adverse/partial/setup observation at its original candidate; no current qualification PASS inferred."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T02.repository-development-13.log",
+      "sha256": "ff439bba909e33d192e42066d503a87e623b63e906bca2c7bc802525b083631e",
+      "scope": "Preserved development/adverse/partial/setup observation at its original candidate; no current qualification PASS inferred."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T02.repository-development-36.log",
+      "sha256": "eb082b2046727f923ccace4e0f37747f5e4515f379b4293c8abbb08206a12b24",
+      "scope": "Preserved development/adverse/partial/setup observation at its original candidate; no current qualification PASS inferred."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T02.repository-red-09.log",
+      "sha256": "1f0223775389fb00059e23d91288386b2b732be743d362f559e585dece3202a7",
+      "scope": "Preserved development/adverse/partial/setup observation at its original candidate; no current qualification PASS inferred."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T02.repository-targeted-12.log",
+      "sha256": "7ec1fba78e2e11308992b38a63374d789637f53374a4e0bb965f55ed926c47df",
+      "scope": "Preserved development/adverse/partial/setup observation at its original candidate; no current qualification PASS inferred."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T02.review-state-site-60.log",
+      "sha256": "33442ed1be8e637d6f75078049fbb7cbc65219ab6f4b397560e988edc278672b",
+      "scope": "Preserved development/adverse/partial/setup observation at its original candidate; no current qualification PASS inferred."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T02.schemas-generation-37.log",
+      "sha256": "f10874f6a431c8800205d5846ca49aed947b366fa303759b748da1dd329c0fbb",
+      "scope": "Preserved development/adverse/partial/setup observation at its original candidate; no current qualification PASS inferred."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T02.submit-56.log",
+      "sha256": "b0d5f4fc5416cddfc9ed5186b9bd2d6a84175b8ef45ce4edfe7fccc62c5bd09b",
+      "scope": "Preserved development/adverse/partial/setup observation at its original candidate; no current qualification PASS inferred."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T02.types-development-25.log",
+      "sha256": "0fc932ca56043805258702e1a1c6dc06b11c942b49f44790e2d9d6af65a390b5",
+      "scope": "Preserved development/adverse/partial/setup observation at its original candidate; no current qualification PASS inferred."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T02.types-development-35.log",
+      "sha256": "e2702f9afc4c0f80ff1e8624f77af7a7d2689ca184512114aae5967a76229ba8",
+      "scope": "Preserved development/adverse/partial/setup observation at its original candidate; no current qualification PASS inferred."
+    }
+  ],
+  "remediation": {
+    "findingId": "CAP-05.S03.T02-R01-F01",
+    "productBytesChanged": false,
+    "scope": "Append-only Proposed ADR0046 mapping/index/task-start acceptance row; preserve R01 and every earlier adverse result. No framework improvement or new scope/authority.",
+    "adrAdverse": {
+      "path": "artifacts/tmp/CAP-05.S03.T02.adr-adverse-57.log",
+      "sha256": "24ff21a221862af87e5f0794191cf31682d89351790fd29e72d11c2514aa85f7",
+      "status": "FAIL"
+    },
+    "remediationSetupError": {
+      "path": "artifacts/tmp/CAP-05.S03.T02.documentary-remediation-error-63.json",
+      "sha256": "782663cb7b59402267911984fc17bf8f43407ef2853107466dc991144a5557be",
+      "status": "SETUP_ERROR"
+    },
+    "priorReview": {
+      "path": "artifacts/evidence/CAP-05.S03.T02.review-R01.json",
+      "sha256": "81483fa3164b2f0d90cb53ad440819d968ae62e006d9258ed1c3570e2d44f415",
+      "result": "changes-requested"
+    }
+  },
+  "acceptedPriorPerformance": {
+    "path": "artifacts/evidence/CAP-05.S02.T03.performance-owner-acceptance-01.md",
+    "sha256": "5dea8e7a2046f5ec229b10a143370c6048e62080da7c3f0f99d700f86219774a",
+    "scope": "Preserve the exact prior 62.5333542-second owner-accepted warm observation. No overage tuning/retest or broader waiver."
+  }
+}
