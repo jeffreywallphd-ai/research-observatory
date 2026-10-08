@@ -22,8 +22,8 @@ from research_observatory_core.document_revision_service import DocumentRevision
 from research_observatory_core.domain_contracts import new_uuid_v7  # noqa: E402
 from research_observatory_core.main import DocumentAttachmentRuntime  # noqa: E402
 from research_observatory_core.repositories import (  # noqa: E402
-    _SqliteIntentRevisionRepository,
     _SqliteWorkflowQueueRepository,
+    sqlite_intent_authority_snapshot,
     sqlite_workflow_admission_binding,
 )
 from research_observatory_core.workflow_executor import (  # noqa: E402
@@ -97,9 +97,7 @@ class DocumentRevisionWorkflowTests(unittest.TestCase):
                     repository_factory=lambda path, project: SqliteCorpusRepository(
                         path / "state/project.sqlite3", project
                     ),
-                    intent_factory=lambda path, project: _SqliteIntentRevisionRepository(
-                        path / "state/project.sqlite3", project
-                    ),
+                    intent_factory=sqlite_intent_authority_snapshot,
                     actor_id=self.f.actor.actor_id,
                     now=now,
                 ),

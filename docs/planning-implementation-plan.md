@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: a6b2167b25c69a032109002dec40c8dd89ef6d284d74b601e31c6e7984a8d622
+source_sha256: 4a3a9261c987fb7f4d695dff2b01ad3eeee5b7427278983ab51519f4a5188ba0
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -11603,13 +11603,13 @@ Original tasks and approvals remain unchanged.
 
 #### - [ ] CAP-05.S03.T03 - Implement anchor resolution and citation-link APIs
 
-**Status / priority / estimate / risk:** `READY` / `P0` / `M` / `high`
+**Status / priority / estimate / risk:** `IN_PROGRESS` / `P0` / `M` / `high`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
 **Dependencies:** `CAP-05.S03.T02`
 
-**Owner / review:** - / - (`-`)
+**Owner / review:** codex-w2-implementation / - (`-`)
 
 **Objective:** APIs to resolve evidence to source context, adjacent text, document metadata, and canonical reference targets.
 

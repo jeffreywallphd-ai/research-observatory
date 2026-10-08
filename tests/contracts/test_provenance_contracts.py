@@ -19,6 +19,7 @@ if str(CORE_SRC) not in sys.path:
 from research_observatory_core.provenance_contracts import (  # noqa: E402
     PROVENANCE_SCHEMA_SHA256,
     canonical_provenance_json,
+    canonical_provenance_record,
     decode_provenance_event,
     is_known_provenance_event,
     provenance_event_errors,
@@ -31,6 +32,24 @@ JsonRecord = dict[str, object]
 class ProvenanceContractTests(unittest.TestCase):
     schema_path: Path
     fixture_path: Path
+
+    def test_single_validation_record_is_owned_strict_and_hashes_exact_canonical_bytes(self) -> None:
+        value = self.fixture()
+        decoded, canonical, digest = canonical_provenance_record(value)
+        self.assertEqual(canonical_provenance_json(value), canonical)
+        self.assertEqual(provenance_record_sha256(value), digest)
+        self.assertEqual("sha256:" + sha256(canonical.encode("utf-8")).hexdigest(), digest)
+        original_id = decoded["id"]
+        value["id"] = "invalid-mutation"
+        self.assertEqual(original_id, decoded["id"])
+        with self.assertRaises(TypeError):
+            decoded["id"] = "mutation"  # type: ignore[index]
+        with self.assertRaises(ValueError):
+            canonical_provenance_record(value)
+        invalid = self.fixture()
+        self.activity_of(invalid)["status"] = "invented"
+        with self.assertRaises(ValueError):
+            canonical_provenance_record(invalid)
 
     @classmethod
     def setUpClass(cls) -> None:

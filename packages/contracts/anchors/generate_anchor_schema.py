@@ -10,10 +10,12 @@ sys.path.insert(0, str(ROOT / "services/core-api/src"))
 
 from research_observatory_core.anchors.contracts import (  # noqa: E402
     AnchorSelection,
+    CitationLinkResolution,
     DocumentReaderOutline,
     DocumentReaderRevisions,
     NormalizedPageRegion,
     SourceAnchorReceipt,
+    SourceAnchorResolution,
     SourceAnchorTarget,
 )
 
@@ -24,6 +26,8 @@ OUTPUTS = {
     "page-region.v1.schema.json": NormalizedPageRegion,
     "reader-outline.v1.schema.json": DocumentReaderOutline,
     "reader-revisions.v1.schema.json": DocumentReaderRevisions,
+    "anchor-resolution.v1.schema.json": SourceAnchorResolution,
+    "citation-links.v1.schema.json": CitationLinkResolution,
 }
 RULES = [
     "core-mints-anchor-and-revision-ids-on-existing-canonical-document-aggregate",

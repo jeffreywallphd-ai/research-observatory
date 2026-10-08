@@ -34,11 +34,11 @@ retains an encrypted rollback copy, verifies the staged key after restart, and
 only then activates it with compare-and-swap. Schema migrations use the same
 protected connection and create encrypted migration backups.
 
-## Current version-26 authority
+## Current version-27 authority
 
 | Concern | Current rule |
 |---|---|
-| Database identity | application ID `0x524f4253`, `user_version=26`, profile `sqlite-wal-v1` |
+| Database identity | application ID `0x524f4253`, `user_version=27`, profile `sqlite-wal-v1` |
 | Durable identities | lowercase UUIDv7 text; project UUIDv4 bridge and prior canonical actor identifiers are explicitly retained |
 | Time | UTC RFC 3339 text at fixed millisecond precision |
 | Types | STRICT `INTEGER`, `REAL`, and `TEXT`; no `ANY` or `BLOB` columns |
@@ -120,16 +120,16 @@ replace immutable sealed report snapshots.
 ## Evolution and recovery boundary
 
 T01 established schema version 1 and its sealed ordinary connection factory.
-The backup-first migration authority now advances exact supported v1 through v24
-profiles to current schema v26. It owns forward migrations, backup-before-migrate,
+The backup-first migration authority now advances exact supported v1 through v26
+profiles to current schema v27. It owns forward migrations, backup-before-migrate,
 checkpointed snapshots, frozen source fixtures, and failure recovery. The migration
 runner validates and checkpoints the source, reserves SQLite's writer lock, creates and verifies an online backup
 through a second held connection, and only then runs the reviewed Alembic
 revision in one transaction. The immutable recovery manifest binds the backup
 bytes and both schema fingerprints; a failed transaction rolls back while the
-verified backup remains available. A current version-26 database is detected
+verified backup remains available. A current version-27 database is detected
 idempotently and is never backed up or rewritten.
-A version-25 source receives a verified backup before migration to v26.
+A version-26 source receives a verified backup before migration to v27.
 Committed v3 history is never
 rewritten; v4 adds only the post-schema object-envelope upgrade journal and v5
 adds the truthful `legacy-unreported` backfill for missing technical object
@@ -389,3 +389,20 @@ The portable profile and recovery contract carry the exact current schema and
 profile fingerprints. Historical target-v21 through v25 manifest meanings are
 retained; target-v26 adds an exact source/chain/hash/path binding and verified
 backup-before-migration recovery.
+
+## Version 27 exact revision invalidation
+
+Version 27 widens only `dependency_impact_runs` to admit the closed
+`SOURCE_VERSION`/`source-revision` invalidation shape without a successor or
+replacement/configuration fields. An authenticated broken retained anchor can
+therefore invalidate its exact revision and propagate downstream staleness in
+the same canonical writer transaction. Denied or unknown source authority cannot
+publish invalidation. No new aggregate identity, parser result or replacement
+source is created.
+
+The backed-up table rebuild preserves all version-26 rows, indexes, append-only
+triggers, migration history and encrypted objects. Interrupted steps roll back
+to the literal populated version-26 predecessor before normal retry. Earlier
+recovery-manifest branches retain their original fingerprints and interpretation;
+the appended target-v27 branch binds its exact source, migration chain, hashes
+and verified backup.

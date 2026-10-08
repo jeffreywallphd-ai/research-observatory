@@ -57,7 +57,7 @@ from .ports.workflow_executor import (
     WorkflowQueueRepository,
 )
 from .privacy import ProjectPrivacyService
-from .projects import ProjectLifecycleService
+from .projects import ProjectLifecycleService, _ProjectActionScope
 from .research_intents import validated_workflow_authority
 from .workflow_executor import (
     LocalWorkerAdmission,
@@ -246,11 +246,19 @@ class ImportPreviewService:
         return self._action(root, context)
 
     def in_native_session[Result](
-        self, root: str, project_id: str, session_id: str, action: Callable[[], Result]
+        self,
+        root: str,
+        project_id: str,
+        session_id: str,
+        action: Callable[[], Result],
+        *,
+        session_stop: Callable[[Callable[[], bool]], None] | None = None,
     ) -> Result:
         def guarded(binding: _Binding) -> Result:
             if binding.project_id != project_id or not secrets.compare_digest(binding.session_id, session_id):
                 raise PreviewProblem("preview-project-session-changed")
+            if session_stop is not None:
+                session_stop(lambda: self._stopped.is_set() or binding.stopped.is_set())
             # Retain the project's reentrant lifecycle mutex through the bounded
             # action. Close/reopen cannot interleave between this check and I/O.
             return action()
@@ -266,6 +274,32 @@ class ImportPreviewService:
             return lambda: self._stopped.is_set() or binding.stopped.is_set()
 
         return self._action(root, selected)
+
+    def in_native_scoped_session[Result](
+        self,
+        root: str,
+        project_id: str,
+        session_id: str,
+        action: Callable[[_ProjectActionScope], Result],
+        *,
+        session_stop: Callable[[Callable[[], bool]], None],
+    ) -> Result:
+        """Compose fresh nested metadata checks under one held native project guard."""
+        scopes: list[_ProjectActionScope] = []
+
+        def guarded(path: Path, identity: str) -> Result:
+            binding = self._binding(path, identity)
+            if binding.project_id != project_id or not secrets.compare_digest(binding.session_id, session_id):
+                raise PreviewProblem("preview-project-session-changed")
+            session_stop(lambda: self._stopped.is_set() or binding.stopped.is_set())
+            return action(scopes[0])
+
+        return self._projects.perform_open_project_action(
+            root=root,
+            require_write=True,
+            action=guarded,
+            scope_consumer=scopes.append,
+        )
 
     def intake_status(self, root: str, preview_id: str) -> tuple[PreviewState, WorkflowJobRecord | None]:
         def status(binding: _Binding):

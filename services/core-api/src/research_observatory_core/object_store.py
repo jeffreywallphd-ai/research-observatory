@@ -3278,14 +3278,22 @@ class _LocalObjectStore:
             raise _bounded(ObjectAccessDenied, "parser intent unavailable")
         path, buckets = _object_path(state.objects, state.project_id, metadata.object_sha256, create=False)
         with _stable_directories([state.root, state.objects, *buckets]):
-            reader = _verified_stored_reader(state, connection, path, metadata)
             try:
-                data = reader.read(metadata.byte_length + 1)
-                if len(data) != metadata.byte_length or hashlib.sha256(data).hexdigest() != receipt.object_sha256:
-                    raise ObjectAccessDenied("parser intent invalid")
-                return data
-            finally:
-                reader.close()
+                reader = _verified_stored_reader(state, connection, path, metadata)
+                try:
+                    data = reader.read(metadata.byte_length + 1)
+                    if len(data) != metadata.byte_length or hashlib.sha256(data).hexdigest() != receipt.object_sha256:
+                        raise ObjectAccessDenied("parser intent invalid")
+                    return data
+                finally:
+                    reader.close()
+            except OSError:
+                if media_type == "application/vnd.research-observatory.source-anchor+json":
+                    # Keep derivative authentication failure distinct from an
+                    # invalid project-directory boundary. Original reads and
+                    # quarantine behavior retain their existing semantics.
+                    raise _bounded(ObjectCorrupt, "source anchor context unavailable") from None
+                raise
 
     def put_parser_artifact[Result](
         self,
@@ -3381,6 +3389,49 @@ class _LocalObjectStore:
             raise _bounded(ObjectAccessDenied, "document context action invalid")
         return results[0]
 
+    def _read_resolved_authorized_document_context[Result](
+        self,
+        anchor_id: str,
+        normalized_revision_id: str,
+        *,
+        actor: CorpusActor,
+        resolve_source: Callable[[CanonicalConnection], SourceIdentity],
+        action: Callable[[CanonicalConnection, SourceIdentity], Result],
+    ) -> Result:
+        """Resolve canonical source identity inside the owning context writer.
+
+        Source resolution reads identity only. Protected context is delivered
+        after all existing exact-copy, rights and access checks on that writer.
+        No borrowed transaction or original-byte verification is introduced.
+        """
+        from .parsing.contracts import SourceIdentity
+
+        if not callable(resolve_source) or not callable(action):
+            raise _bounded(ObjectAccessDenied, "document context action invalid")
+        sources: list[SourceIdentity] = []
+        results: list[Result] = []
+
+        def source(connection: CanonicalConnection) -> SourceIdentity:
+            value = SourceIdentity.model_validate(resolve_source(connection))
+            sources.append(value)
+            return value
+
+        def current(connection: CanonicalConnection) -> None:
+            if len(sources) != 1:
+                raise ObjectAccessDenied("document context source invalid")
+            results.append(action(connection, sources[0]))
+
+        self._open_document_attachment(
+            anchor_id,
+            normalized_revision_id,
+            actor=actor,
+            context_action=current,
+            context_source_resolver=source,
+        )
+        if len(results) != 1:
+            raise _bounded(ObjectAccessDenied, "document context action invalid")
+        return results[0]
+
     def _open_document_attachment(
         self,
         attachment_id: str,
@@ -3391,12 +3442,13 @@ class _LocalObjectStore:
         before_stream: Callable[[CanonicalConnection], None] | None = None,
         publication_connection: CanonicalConnection | None = None,
         context_action: Callable[[CanonicalConnection], None] | None = None,
+        context_source_resolver: Callable[[CanonicalConnection], SourceIdentity] | None = None,
     ) -> VerifiedObjectStream | None:
 
         from pydantic import ValidationError
 
         from .domain_contracts import is_uuid_v7
-        from .parsing.contracts import AcquisitionOrigin
+        from .parsing.contracts import AcquisitionOrigin, SourceIdentity
         from .ports.acquisition import AcquisitionReceipt
         from .reconciliation.contracts import SourceAssertion
         from .rights_policy import RightsRequest, RightsSubject, RightsUse
@@ -3408,10 +3460,20 @@ class _LocalObjectStore:
             or (
                 context_action is not None
                 and (
-                    expected_source is None
+                    (expected_source is None and context_source_resolver is None)
                     or before_stream is not None
                     or publication_connection is not None
                     or not callable(context_action)
+                )
+            )
+            or (
+                context_source_resolver is not None
+                and (
+                    not callable(context_source_resolver)
+                    or context_action is None
+                    or expected_source is not None
+                    or before_stream is not None
+                    or publication_connection is not None
                 )
             )
         ):
@@ -3429,6 +3491,12 @@ class _LocalObjectStore:
                         state.database, expected_project_id=state.project_id
                     )
                     connection.execute("BEGIN IMMEDIATE")
+                if context_source_resolver is not None:
+                    expected_source = SourceIdentity.model_validate(context_source_resolver(connection))
+                    if expected_source.project_id != state.project_id:
+                        raise ObjectAccessDenied("document context source invalid")
+                    attachment_id = expected_source.attachment_id
+                    document_revision_id = expected_source.document_revision_id
                 row = connection.execute(
                     "SELECT a.object_sha256,a.candidate_id,a.source_assertion_revision_id,s.assertion_json "
                     "FROM document_attachment_assertions a "

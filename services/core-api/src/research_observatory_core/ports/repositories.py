@@ -166,7 +166,13 @@ class DependencyAuditDiagnostic:
 
 @dataclass(frozen=True, slots=True)
 class DependencyChange:
-    """Exact immutable endpoint change whose downstream impact is evaluated."""
+    """Exact immutable endpoint change whose downstream impact is evaluated.
+
+    Source-revision invalidation has no replacement endpoint/fingerprint. Its
+    change_id names the succeeded output-free canonical invalidation event,
+    authenticated by the adapter before admission and persisted-run replay.
+    Other revision changes retain two real, distinct ordered revisions.
+    """
 
     change_id: str
     idempotency_key: str
@@ -543,13 +549,16 @@ class IntentProjectIdentity:
 
 
 @runtime_checkable
-class IntentRevisionRepository(Protocol):
+class IntentRevisionReader(Protocol):
     def project_identity(self) -> IntentProjectIdentity | None: ...
 
     def read(self) -> tuple[IntentRevisionRecord, ...]: ...
 
     def read_workflow_authority(self) -> WorkflowAuthorityMutation: ...
 
+
+@runtime_checkable
+class IntentRevisionRepository(IntentRevisionReader, Protocol):
     def replay(
         self,
         *,
@@ -716,6 +725,7 @@ __all__ = [
     "DependencyRelationType",
     "DependencyStaleState",
     "IntentAuditEvent",
+    "IntentRevisionReader",
     "IntentRevisionRecord",
     "IntentRevisionRepository",
     "KnowledgeStatus",

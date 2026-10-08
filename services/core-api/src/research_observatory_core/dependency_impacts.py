@@ -88,6 +88,24 @@ def _canonical_actor(value: str) -> bool:
     return is_uuid_v7(value) or _ACTOR_IDENTIFIER.fullmatch(value) is not None
 
 
+def revision_invalidation(change: DependencyChange) -> bool:
+    """An output-free invalidation, distinct from an unknown replacement.
+
+    Persistence must authenticate the matching canonical invalidation event;
+    this predicate establishes only the portable endpoint shape.
+    """
+    return (
+        change.reason == "SOURCE_VERSION"
+        and change.dependency_kind == "source-revision"
+        and is_uuid_v7(change.previous_revision_id)
+        and change.replacement_revision_id is None
+        and change.replacement_fingerprint is None
+        and change.configuration_id is None
+        and change.previous_configuration_version is None
+        and change.replacement_configuration_version is None
+    )
+
+
 def _validate_change(change: DependencyChange) -> None:
     revision_change = change.previous_revision_id is not None or change.replacement_revision_id is not None
     configuration_change = (
@@ -122,7 +140,7 @@ def _validate_change(change: DependencyChange) -> None:
         if (
             change.dependency_kind not in _REVISION_KINDS
             or not is_uuid_v7(change.previous_revision_id)
-            or not is_uuid_v7(change.replacement_revision_id)
+            or (not is_uuid_v7(change.replacement_revision_id) and not revision_invalidation(change))
             or change.previous_revision_id == change.replacement_revision_id
         ):
             raise ValueError("revision change authority is invalid")
@@ -380,7 +398,9 @@ def plan_dependency_impact(
                     path,
                     edge.dependency_id,
                     edge,
-                    "unknown" if change.replacement_fingerprint is None else "confirmed",
+                    "unknown"
+                    if change.replacement_fingerprint is None and not revision_invalidation(change)
+                    else "confirmed",
                 ),
             )
 

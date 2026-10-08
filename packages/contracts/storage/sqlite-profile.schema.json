@@ -35,13 +35,13 @@
       "const": "sqlite-wal-v1"
     },
     "databaseSchemaVersion": {
-      "const": 26
+      "const": 27
     },
     "applicationId": {
       "const": 1380926035
     },
     "schemaFingerprintSha256": {
-      "const": "39e3fdd0fffedd2b226f74ebf48190efdecc0e53b9376dfce30e924de2206f2c"
+      "const": "6dd6d3f62c0236dd3f810a01ac7b88370ba17b483cf3612fde34b82b29ade913"
     },
     "minimumSqliteVersion": {
       "const": "3.37.0"

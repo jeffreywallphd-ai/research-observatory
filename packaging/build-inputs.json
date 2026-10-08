@@ -159,7 +159,27 @@
     "planning/wave-amendment-approvals/wave-amendment-approval.schema.json",
     "tests/fixtures/scholarly-corpus/manifest.schema.json",
     "verification/desktop-ui-baseline.schema.json",
-    "verification/desktop-ui.schema.json"
+    "verification/desktop-ui.schema.json",
+    "packages/contracts/documents/acquisition-location.v1.schema.json",
+    "packages/contracts/documents/acquisition-receipt.v1.schema.json",
+    "packages/contracts/documents/acquisition-selection.v1.schema.json",
+    "packages/contracts/documents/document-ir.v1.schema.json",
+    "packages/contracts/documents/document-revision-acceptance.v1.schema.json",
+    "packages/contracts/documents/document-revision.v1.schema.json",
+    "packages/contracts/documents/document-structure.v1.schema.json",
+    "packages/contracts/documents/native-structure.v1.schema.json",
+    "packages/contracts/documents/parse-request.v1.schema.json",
+    "packages/contracts/documents/parse-result.v1.schema.json",
+    "packages/contracts/documents/parser-selection.v1.schema.json",
+    "packages/contracts/documents/retained-parse-result.v1.schema.json",
+    "packages/contracts/anchors/anchor-resolution.v1.schema.json",
+    "packages/contracts/anchors/anchor-selection.v1.schema.json",
+    "packages/contracts/anchors/citation-links.v1.schema.json",
+    "packages/contracts/anchors/page-region.v1.schema.json",
+    "packages/contracts/anchors/reader-outline.v1.schema.json",
+    "packages/contracts/anchors/reader-revisions.v1.schema.json",
+    "packages/contracts/anchors/source-anchor-target.v1.schema.json",
+    "packages/contracts/anchors/source-anchor.v1.schema.json"
   ],
   "modelManifests": []
 }

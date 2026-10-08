@@ -45,6 +45,16 @@ pub(crate) struct AnchorReadRequest {
 
 #[derive(Deserialize)]
 #[serde(rename_all = "camelCase", deny_unknown_fields)]
+pub(crate) struct CitationLinksRequest {
+    schema_version: String,
+    project_id: String,
+    revision_id: String,
+    citation_id: String,
+    after_reference_id: Option<String>,
+}
+
+#[derive(Deserialize)]
+#[serde(rename_all = "camelCase", deny_unknown_fields)]
 struct CodepointRange {
     start: u64,
     end: u64,
@@ -253,9 +263,89 @@ pub(crate) async fn document_reader_anchor_list(
     .await
 }
 
+#[tauri::command]
+pub(crate) async fn document_reader_anchor_resolve(
+    window: tauri::WebviewWindow,
+    supervisor: State<'_, RuntimeSupervisor>,
+    lock: State<'_, ApplicationLockManager>,
+    request: AnchorReadRequest,
+) -> Result<Option<Value>, ()> {
+    if !project(&request.schema_version, &request.project_id)
+        || !uuid(&request.anchor_id)
+        || !uuid(&request.expected_revision_id)
+    {
+        return Ok(None);
+    }
+    self::request(
+        window,
+        supervisor,
+        lock,
+        request.project_id,
+        NativeDocumentAction::AnchorResolve,
+        json!({"anchorId":request.anchor_id,"expectedRevisionId":request.expected_revision_id}),
+    )
+    .await
+}
+
+#[tauri::command]
+pub(crate) async fn document_reader_citation_links(
+    window: tauri::WebviewWindow,
+    supervisor: State<'_, RuntimeSupervisor>,
+    lock: State<'_, ApplicationLockManager>,
+    request: CitationLinksRequest,
+) -> Result<Option<Value>, ()> {
+    if !project(&request.schema_version, &request.project_id)
+        || !uuid(&request.revision_id)
+        || !uuid(&request.citation_id)
+        || request
+            .after_reference_id
+            .as_ref()
+            .is_some_and(|id| !uuid(id))
+    {
+        return Ok(None);
+    }
+    self::request(
+        window,
+        supervisor,
+        lock,
+        request.project_id,
+        NativeDocumentAction::CitationLinks,
+        json!({"revisionId":request.revision_id,"citationId":request.citation_id,
+               "afterReferenceId":request.after_reference_id,"limit":2}),
+    )
+    .await
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn resolution_and_citation_links_accept_only_opaque_exact_identifiers() {
+        let id = "00000000-0000-7000-8000-000000000001";
+        let resolve = json!({"schemaVersion":"1.0", "projectId":id,
+            "anchorId":id, "expectedRevisionId":id});
+        let links = json!({"schemaVersion":"1.0", "projectId":id,
+            "revisionId":id, "citationId":id, "afterReferenceId":null});
+        assert!(serde_json::from_value::<AnchorReadRequest>(resolve.clone()).is_ok());
+        assert!(serde_json::from_value::<CitationLinksRequest>(links.clone()).is_ok());
+        for key in [
+            "root",
+            "actorId",
+            "sessionId",
+            "url",
+            "quote",
+            "limit",
+            "model",
+        ] {
+            let mut altered = resolve.clone();
+            altered[key] = json!("untrusted");
+            assert!(serde_json::from_value::<AnchorReadRequest>(altered).is_err());
+            let mut altered = links.clone();
+            altered[key] = json!("untrusted");
+            assert!(serde_json::from_value::<CitationLinksRequest>(altered).is_err());
+        }
+    }
 
     #[test]
     fn renderer_cannot_supply_root_actor_quote_or_geometry_authority() {

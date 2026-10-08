@@ -154,7 +154,43 @@ class DocumentRevisionService:
         return self._current(command, trace_id, lambda repository: repository.history(command.document_id))
 
     def _anchors(self, command, trace_id, action):
-        return self._current(command, trace_id, lambda repository: action(repository.source_anchors()))
+        session_stop: list[Callable[[], bool]] = [lambda: True]
+
+        def scoped(selected, actor):
+            active = [True]
+            stopped = session_stop[0]
+
+            def guard(read):
+                if not active[0] or stopped():
+                    raise DocumentRevisionProblem("source-anchor-authority-scope-ended")
+                # The enclosing _action holds the current native/project guard.
+                # Repository writers still revalidate durable Intent/privacy/rights.
+                return read()
+
+            repository = self.repository_factory(
+                selected._database,
+                command.project_id,
+                selected._objects,
+                actor=lambda: actor,
+                guard=guard,
+                now=self.now,
+            )
+            try:
+                result = action(repository.source_anchors())
+                if stopped():
+                    raise DocumentRevisionProblem("source-anchor-authority-scope-ended")
+                return result
+            finally:
+                active[0] = False
+
+        return self.attachments._action(
+            command.root,
+            command.project_id,
+            command.session_id,
+            trace_id,
+            scoped,
+            session_stop=lambda stopped: session_stop.__setitem__(0, stopped),
+        )
 
     def anchor_create(self, command, *, trace_id):
         return self._anchors(
@@ -169,6 +205,25 @@ class DocumentRevisionService:
             return anchor
 
         return self._anchors(command, trace_id, read)
+
+    def anchor_resolve(self, command, *, trace_id):
+        return self._anchors(
+            command,
+            trace_id,
+            lambda repository: repository.resolve(command.anchor_id, expected_revision_id=command.expected_revision_id),
+        )
+
+    def citation_links(self, command, *, trace_id):
+        return self._anchors(
+            command,
+            trace_id,
+            lambda repository: repository.citation_links(
+                command.revision_id,
+                command.citation_id,
+                after_reference_id=command.after_reference_id,
+                limit=command.limit,
+            ),
+        )
 
     def reader_revisions(self, command, *, trace_id):
         return self._anchors(command, trace_id, lambda repository: repository.reader_revisions(command.attachment_id))

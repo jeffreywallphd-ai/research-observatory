@@ -8,9 +8,9 @@ pub mod directory_picker;
 #[cfg(windows)]
 mod document_attachment;
 #[cfg(windows)]
-mod document_reader;
-#[cfg(windows)]
 mod document_drop;
+#[cfg(windows)]
+mod document_reader;
 #[cfg(windows)]
 mod document_runtime;
 #[cfg(windows)]
@@ -1014,7 +1014,9 @@ fn application_builder() -> tauri::Builder<tauri::Wry> {
         document_reader::document_reader_outline,
         document_reader::document_reader_anchor_create,
         document_reader::document_reader_anchor_read,
-        document_reader::document_reader_anchor_list
+        document_reader::document_reader_anchor_list,
+        document_reader::document_reader_anchor_resolve,
+        document_reader::document_reader_citation_links
     ];
     #[cfg(not(windows))]
     let handler: fn(tauri::ipc::Invoke<tauri::Wry>) -> bool = tauri::generate_handler![

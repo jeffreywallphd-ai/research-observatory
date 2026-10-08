@@ -49,6 +49,13 @@ class SourceAnchorReadCommand(DocumentSession):
     expected_revision_id: Identity
 
 
+class CitationLinksCommand(DocumentSession):
+    revision_id: Identity
+    citation_id: Identity
+    after_reference_id: Identity | None = None
+    limit: Annotated[int, Field(strict=True, ge=1, le=2)] = 2
+
+
 class DocumentReaderRevisionsCommand(DocumentSession):
     attachment_id: Identity
 
@@ -159,6 +166,24 @@ def register_document_revision_routes(app: FastAPI, runtime: Callable):
     def anchor_list(request: Request, command: SourceAnchorListCommand):
         return run(
             request, lambda service: {"anchorIds": service.anchor_list(command, trace_id=request.state.trace_id)}
+        )
+
+    @router.post("/anchor-resolve")
+    def anchor_resolve(request: Request, command: SourceAnchorReadCommand):
+        return run(
+            request,
+            lambda service: service.anchor_resolve(command, trace_id=request.state.trace_id).model_dump(
+                mode="json", by_alias=True
+            ),
+        )
+
+    @router.post("/citation-links")
+    def citation_links(request: Request, command: CitationLinksCommand):
+        return run(
+            request,
+            lambda service: service.citation_links(command, trace_id=request.state.trace_id).model_dump(
+                mode="json", by_alias=True
+            ),
         )
 
     @router.post("/reader-outline")

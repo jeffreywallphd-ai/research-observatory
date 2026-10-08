@@ -152,6 +152,117 @@ class SourceAnchorReceipt(IRValue):
     target: SourceAnchorTarget = Field(repr=False)
 
 
+class SourceDocumentMetadata(IRValue):
+    project_id: ProjectIdentity
+    document_id: Identity
+    revision_id: Identity
+    accepted_at: Instant
+    display_label: Annotated[str, Field(strict=True, max_length=512)] = Field(repr=False)
+    label_origin: Literal["canonical-document-revision"] = "canonical-document-revision"
+
+
+class AnchorStalePropagation(IRValue):
+    run_id: Identity
+    state: Literal["completed"]
+    total_items: Count
+    processed_items: Count
+    stale_count: Count
+    unknown_count: Count
+
+    @model_validator(mode="after")
+    def completed_writes(self) -> Self:
+        if self.processed_items != self.total_items or self.stale_count + self.unknown_count > self.processed_items:
+            raise ValueError("anchor-stale-propagation-incomplete")
+        return self
+
+
+class SourceAnchorResolution(IRValue):
+    schema_version: Literal["1.0"] = "1.0"
+    anchor_id: Identity
+    anchor_revision_id: Identity
+    source: SourceIdentity
+    metadata: SourceDocumentMetadata
+    status: Literal["exact", "fallback", "missing", "broken"]
+    selector_used: Literal["page-region", "structural-text", "not-resolved"]
+    reason: Literal["protected-context-unavailable", "readable-text-not-reported"] | None
+    target: SourceAnchorTarget | None = Field(repr=False)
+    propagation: AnchorStalePropagation | None
+    scholarly_verification: Literal["unverified"] = "unverified"
+
+    @model_validator(mode="after")
+    def exact_resolution_binding(self) -> Self:
+        if (self.metadata.project_id, self.metadata.document_id) != (self.source.project_id, self.source.document_id):
+            raise ValueError("anchor-resolution-source-invalid")
+        if self.status in {"exact", "fallback"}:
+            if (
+                self.target is None
+                or self.reason is not None
+                or self.propagation is not None
+                or self.selector_used == "not-resolved"
+                or (self.target.source, self.target.revision_id) != (self.source, self.metadata.revision_id)
+                or self.target.context is None
+                or (self.status == "exact") != (self.target.page_region is not None)
+                or self.selector_used != ("page-region" if self.status == "exact" else "structural-text")
+            ):
+                raise ValueError("anchor-resolution-target-invalid")
+        elif (
+            self.target is not None
+            or self.selector_used != "not-resolved"
+            or (self.status == "broken") != (self.propagation is not None)
+            or self.reason
+            != ("protected-context-unavailable" if self.status == "broken" else "readable-text-not-reported")
+        ):
+            raise ValueError("anchor-resolution-failure-invalid")
+        return self
+
+
+class CitationReferenceTarget(IRValue):
+    reference_id: Identity
+    target: SourceAnchorTarget = Field(repr=False)
+    preview_truncated: bool
+
+
+class CitationLinkResolution(IRValue):
+    schema_version: Literal["1.0"] = "1.0"
+    citation_id: Identity
+    source: SourceIdentity
+    metadata: SourceDocumentMetadata
+    marker: SourceAnchorTarget = Field(repr=False)
+    marker_truncated: bool
+    resolution: Literal["candidate", "ambiguous", "unresolved"]
+    total_candidates: Count
+    targets: tuple[CitationReferenceTarget, ...] = Field(max_length=2, repr=False)
+    next_reference_id: Identity | None
+    scholarly_verification: Literal["unverified"] = "unverified"
+
+    @model_validator(mode="after")
+    def reference_identity_and_uncertainty(self) -> Self:
+        if (
+            (self.metadata.project_id, self.metadata.document_id, self.metadata.revision_id)
+            != (self.marker.project_id, self.marker.document_id, self.marker.revision_id)
+            or self.marker.source != self.source
+            or len({row.reference_id for row in self.targets}) != len(self.targets)
+            or any(
+                (row.target.source, row.target.revision_id) != (self.source, self.metadata.revision_id)
+                for row in self.targets
+            )
+            or self.total_candidates < len(self.targets)
+            or (self.resolution == "unresolved" and self.total_candidates != 0)
+            or (self.resolution == "candidate" and self.total_candidates != 1)
+            or (self.resolution == "ambiguous" and self.total_candidates < 2)
+            or (
+                self.next_reference_id is not None
+                and (
+                    not self.targets
+                    or self.next_reference_id != self.targets[-1].reference_id
+                    or self.total_candidates <= len(self.targets)
+                )
+            )
+        ):
+            raise ValueError("citation-link-resolution-invalid")
+        return self
+
+
 class ReaderOutlineNode(IRValue):
     node_id: Identity
     node_kind: NodeKind

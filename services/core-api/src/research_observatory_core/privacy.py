@@ -40,7 +40,7 @@ from .ports.repositories import (
     RepositoryConflict,
     RepositoryProblem,
 )
-from .projects import ProjectLifecycleService, _held_directory_renamer, _stable_directories
+from .projects import ProjectLifecycleService, _held_directory_renamer, _ProjectActionScope, _stable_directories
 
 _SETTING_KEYS = (
     "privacy.cache-retention-days",
@@ -675,8 +675,9 @@ class ProjectPrivacyService:
             )
         return repository
 
-    def get(self, root: str) -> PrivacyPolicyProjection:
-        return self._projects.perform_open_project_action(
+    def get(self, root: str, *, project_scope: _ProjectActionScope | None = None) -> PrivacyPolicyProjection:
+        perform = self._projects.perform_open_project_action if project_scope is None else project_scope.perform
+        return perform(
             root=root,
             require_write=False,
             action=lambda path, project_id: _read_policy(self._repository(path, project_id), project_id),

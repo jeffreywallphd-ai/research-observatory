@@ -622,16 +622,21 @@ def is_known_provenance_event(event: Mapping[str, Any]) -> bool:
     return cast(str, event.get("type")) in KNOWN_PROVENANCE_EVENT_ACTIVITIES
 
 
-def canonical_provenance_json(value: object) -> str:
+def canonical_provenance_record(value: object) -> tuple[ProvenanceEventSnapshot, str, str]:
+    """Validate once; return owned immutable values and their exact canonical bytes/hash."""
     decoded = decode_provenance_event(value)
     if decoded is None:
         raise ValueError("invalid provenance event")
-    return _canonical_json(decoded)
+    canonical = _canonical_json(decoded)
+    return decoded, canonical, f"sha256:{sha256(canonical.encode('utf-8')).hexdigest()}"
+
+
+def canonical_provenance_json(value: object) -> str:
+    return canonical_provenance_record(value)[1]
 
 
 def provenance_record_sha256(value: object) -> str:
-    canonical = canonical_provenance_json(value).encode("utf-8")
-    return f"sha256:{sha256(canonical).hexdigest()}"
+    return canonical_provenance_record(value)[2]
 
 
 __all__ = [
@@ -639,6 +644,7 @@ __all__ = [
     "PROVENANCE_SCHEMA_SHA256",
     "ProvenanceEventSnapshot",
     "canonical_provenance_json",
+    "canonical_provenance_record",
     "decode_provenance_event",
     "is_known_provenance_event",
     "provenance_event_errors",

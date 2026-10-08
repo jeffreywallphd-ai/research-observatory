@@ -19,6 +19,7 @@ from research_observatory_core import storage  # noqa: E402
 from research_observatory_core.migrations import runner  # noqa: E402
 from research_observatory_core.migrations.versions import v0025_document_intake_recovery as migration  # noqa: E402
 from research_observatory_core.migrations.versions import v0026_document_revisions as current_migration  # noqa: E402
+from research_observatory_core.migrations.versions import v0027_revision_invalidations as invalidation  # noqa: E402
 
 
 class AcquisitionRecoveryMigrationTests(unittest.TestCase):
@@ -90,7 +91,9 @@ class AcquisitionRecoveryMigrationTests(unittest.TestCase):
                 manifest, project, database = self.load(fixture_name)
                 self.assert_predecessor_rows(database, manifest)
                 plan = runner.plan_database_migration(database, expected_project_id=manifest["projectId"])
-                self.assertEqual((migration.revision, current_migration.revision), plan.migration_ids)
+                self.assertEqual(
+                    (migration.revision, current_migration.revision, invalidation.revision), plan.migration_ids
+                )
                 result = runner.migrate_database(database, expected_project_id=manifest["projectId"])
                 self.assertEqual("migrated", result.status)
                 self.assert_predecessor_rows(database, manifest)

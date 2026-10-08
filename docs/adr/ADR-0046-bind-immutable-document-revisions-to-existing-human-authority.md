@@ -7,7 +7,8 @@ deciders: []
 linked_tasks:
   - CAP-05.S03.T01
   - CAP-05.S03.T02
-decision_scope: Documentary implementation mapping of immutable normalized structure, human acceptance and live parser admission to accepted ADR-0013/0024/0025/0029; no new security, product scope, framework or release authority.
+  - CAP-05.S03.T03
+decision_scope: Documentary implementation mapping of immutable normalized structure, human acceptance and live parser admission to accepted ADR-0013/0024/0025/0026/0029; no new security, product scope, framework or release authority.
 affected_paths:
   - packages/contracts/documents/**
   - packages/contracts/storage/sqlite-migration-recovery.schema.json
@@ -33,9 +34,28 @@ affected_paths:
   - services/core-api/src/research_observatory_core/anchors/**
   - services/core-api/src/research_observatory_core/source_anchor_repository.py
   - services/core-api/src/research_observatory_core/ports/source_anchors.py
+  - services/core-api/src/research_observatory_core/ports/repositories.py
+  - services/core-api/src/research_observatory_core/dependency_impacts.py
   - apps/desktop/src/app/sourceAnchors*.*
   - apps/desktop/src/app/SourceAnchorReader*.*
   - apps/desktop/src-tauri/src/document_reader.rs
+  - apps/desktop/src-tauri/src/supervisor.rs
+  - apps/desktop/src-tauri/src/lib.rs
+  - apps/desktop/src/app/sourceResolution.test.ts
+  - packaging/build-inputs.json
+  - packages/contracts/provenance/provenance-event.template.py.txt
+  - services/core-api/src/research_observatory_core/provenance_contracts.py
+  - packages/contracts/workflow-profile/workflow-profile.template.py.txt
+  - services/core-api/src/research_observatory_core/workflow_profile_contracts.py
+  - services/core-api/src/research_observatory_core/corpus_service.py
+  - services/core-api/src/research_observatory_core/corpus_repository.py
+  - services/core-api/src/research_observatory_core/projects.py
+  - services/core-api/src/research_observatory_core/privacy.py
+  - services/core-api/src/research_observatory_core/research_intents.py
+  - tests/contracts/test_workflow_profile_contracts.py
+  - tests/service/test_research_intents.py
+  - tests/service/test_project_lifecycle.py
+  - tests/documents/test_document_revision_workflow.py
   - tools/architecture_check.py
   - tools/core_sidecar_build.py
   - tests/anchors/**
@@ -189,3 +209,81 @@ Existing ADR change-set validation is required for the protected contract/port
 and product check registrations; omission is preserved as R01's finding.
 
 - `CAP-05.S03.T02`
+
+## CAP-05.S03.T03 implementation mapping
+
+The existing exact-revision anchor port adds resolution and bounded citation
+reference links. Resolution authenticates the retained context and canonical
+registration under the current native session, accepted Intent, privacy policy
+and source-copy inspect/derive rights. Metadata names the exact immutable source
+revision and reports its canonical label origin. Exact page-region, structural
+fallback, missing readable text and authenticated broken context remain distinct.
+No new source revision, fuzzy match or scholarly verification is invented.
+
+An authenticated broken derivative reuses canonical output-free invalidation
+provenance and existing dependency-impact traversal in the same writer transaction.
+Schema 27 permits only the closed SOURCE_VERSION/source-revision no-successor
+shape with no replacement/configuration fields. The dedicated backed-up migration
+preserves all schema-26 rows, migration history, encrypted artifacts, indexes,
+triggers and foreign keys; interrupted material steps roll back to the exact
+populated predecessor and retry through the normal migration authority. Old
+recovery-manifest branches retain their exact interpretation. Unknown IDs,
+foreign revisions, unreadable canonical authority and rights denial do not
+establish a broken anchor or stale outputs.
+
+Citation links use accepted canonical reference identities, maintain candidate/
+ambiguous/unresolved states and expose at most two targets per page with explicit
+preview truncation. Both hidden native routes accept only opaque IDs and bounded
+cursors. They inherit current window/project/session/lock fencing, deny extra
+renderer authority and cap delivery at 128KiB. Typed renderer decoders reject
+identity mixing and contradictory status/selector/propagation/cursor values.
+Actual source viewing and evidence UI activation remain S04.
+
+One native authority action encloses resolution. A trusted stop latch fences
+late detach and delivery while repository writers revalidate durable authority.
+Common context resolution still avoids full PDF and normalized-IR reads. Exact
+canonical serialization already validates an owned event; its digest is computed
+from those same bytes without a duplicate decode. The complete provenance ledger
+integrity checks remain active. Measured performance failures remain failures
+until the unchanged100ms criterion is proven on a committed candidate.
+
+The generated approved workflow catalog is fully validated before one privately
+retained recursively immutable snapshot is published. Only that exact object's
+identity reuses catalog validation; external catalogs and detached decoder
+snapshots retain complete validation. Selection, stage, migration, content hashes
+and current authority checks remain strict. Corpus gathers its fresh project
+bridge, Intent history and workflow authority in one short canonical read
+transaction per invocation. It closes the database before returning detached
+immutable outcomes through a read-only port. Bounded failures surface at the
+original reader method without retaining exception tracebacks or database
+capabilities. The general write adapter and later current Intent, privacy,
+rights, source and stop fences are unchanged.
+
+Native anchor operations may provide a private nested project-action scope only
+while the original lifecycle mutex and stable directory guards are held. The
+scope expires on return and rejects cross-thread, foreign-root and changed
+project identity use. Nested Corpus/privacy calls still reassess layout,
+manifest/profile compatibility and current access; only the redundant lifecycle
+database validation is shared. Their fresh canonical repositories continue to
+validate storage/schema/project identity. Ordinary entry points retain complete
+lifecycle validation. The existing in-writer current Intent fence also recomputes
+the canonical content hash, denying external content corruption that preserves
+the declared revision ID/hash/status. No approval or source authority is cached
+across requests.
+
+Resolution's canonical source-identity lookup runs once inside the existing
+owning document-context writer. The exact normalized revision is checked before
+all original exact-copy/acquisition, inspect/derive and object-access checks.
+Protected context is read only after those checks. Resolver failure rolls back
+and closes that writer; foreign project identity denies before context. Successful
+context and broken-anchor propagation retain its one owning commit. Current
+rights denial retains its durable audit commit. Borrowed publication connections
+cannot use this context path. Original-byte authentication, verified_at and
+quarantine behavior remain unchanged.
+
+The new model/resource owner direction is a separate requested product amendment;
+this mapping does not change the fixed parser model, resource reservation,
+minimum-tier criteria, security authority or release approval. No8GB/16GB
+qualification or parser-model workload is part of T03.
+
+- `CAP-05.S03.T03`

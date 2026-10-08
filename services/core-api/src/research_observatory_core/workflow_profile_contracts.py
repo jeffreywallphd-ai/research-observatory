@@ -1524,7 +1524,7 @@ def _semantic_stage_mapping(
     return target is None and item["targetStageKey"] is None
 
 
-def workflow_profile_catalog_errors(value: object) -> tuple[str, ...]:
+def _full_workflow_profile_catalog_errors(value: object) -> tuple[str, ...]:
     try:
         errors = _validation_errors(value, _definition("WorkflowProfileCatalog"), "$")
         if errors:
@@ -1544,6 +1544,12 @@ def workflow_profile_catalog_errors(value: object) -> tuple[str, ...]:
         return tuple(dict.fromkeys(errors))
     except KeyError, TypeError, ValueError:
         return ("workflow-profile-catalog-structure-invalid",)
+
+
+def workflow_profile_catalog_errors(value: object) -> tuple[str, ...]:
+    if value is _COMPILED_APPROVED_CATALOG:
+        return ()
+    return _full_workflow_profile_catalog_errors(value)
 
 
 def project_workflow_selection_errors(catalog_value: object, value: object) -> tuple[str, ...]:
@@ -1819,13 +1825,16 @@ def decode_workflow_profile_catalog(value: object) -> WorkflowProfileCatalogSnap
     return cast(WorkflowProfileCatalogSnapshot, owned) if not workflow_profile_catalog_errors(owned) else None
 
 
-def approved_workflow_profile_catalog() -> WorkflowProfileCatalogSnapshot:
-    """Return a detached immutable snapshot of the generated governed catalog."""
-
+def _compile_approved_workflow_catalog() -> WorkflowProfileCatalogSnapshot:
     owned = _owned_frozen(_APPROVED_CATALOG)
-    if workflow_profile_catalog_errors(owned):
+    if _full_workflow_profile_catalog_errors(owned):
         raise RuntimeError("generated approved workflow profile catalog is invalid")
     return cast(WorkflowProfileCatalogSnapshot, owned)
+
+
+def approved_workflow_profile_catalog() -> WorkflowProfileCatalogSnapshot:
+    """Return the fully validated, recursively owned immutable compiled catalog."""
+    return _COMPILED_APPROVED_CATALOG
 
 
 def decode_project_workflow_selection(catalog: object, value: object) -> ProjectWorkflowSelectionSnapshot | None:
@@ -1874,3 +1883,8 @@ def canonical_workflow_profile_json(value: object) -> str:
 
 def workflow_profile_record_sha256(value: object) -> str:
     return f"sha256:{sha256(canonical_workflow_profile_json(value).encode('utf-8')).hexdigest()}"
+
+
+# Only this successfully validated private snapshot can reuse catalog validation.
+# External values and decoder snapshots always traverse the complete validator.
+_COMPILED_APPROVED_CATALOG = _compile_approved_workflow_catalog()

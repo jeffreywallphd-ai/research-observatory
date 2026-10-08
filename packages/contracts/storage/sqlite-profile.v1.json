@@ -2,9 +2,9 @@
   "schemaVersion": "1.0",
   "documentType": "research-observatory-sqlite-profile",
   "profileId": "sqlite-wal-v1",
-  "databaseSchemaVersion": 26,
+  "databaseSchemaVersion": 27,
   "applicationId": 1380926035,
-  "schemaFingerprintSha256": "39e3fdd0fffedd2b226f74ebf48190efdecc0e53b9376dfce30e924de2206f2c",
+  "schemaFingerprintSha256": "6dd6d3f62c0236dd3f810a01ac7b88370ba17b483cf3612fde34b82b29ade913",
   "minimumSqliteVersion": "3.37.0",
   "identifierStorage": {
     "project": "uuid4-bridge-or-uuid7-lowercase-text",

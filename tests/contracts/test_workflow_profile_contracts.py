@@ -19,9 +19,11 @@ REPO = Path(__file__).resolve().parents[2]
 CONTRACT_ROOT = REPO / "packages" / "contracts" / "workflow-profile"
 sys.path.insert(0, str(REPO / "services" / "core-api" / "src"))
 
+from research_observatory_core import workflow_profile_contracts as workflow_contracts  # noqa: E402
 from research_observatory_core.workflow_profile_contracts import (  # noqa: E402
     GOVERNED_WORKFLOW_CATALOG_SHA256,
     WORKFLOW_PROFILE_SCHEMA_SHA256,
+    approved_workflow_profile_catalog,
     canonical_workflow_profile_json,
     decode_project_workflow_selection,
     decode_workflow_profile_catalog,
@@ -614,6 +616,53 @@ class WorkflowProfileContractTests(unittest.TestCase):
         future = copy.deepcopy(self.catalog)
         future["contractVersion"] = "2.0.0"
         self.assertIsNone(decode_workflow_profile_catalog(future))
+
+    def test_compiled_catalog_is_one_recursively_owned_immutable_snapshot(self) -> None:
+        snapshot = cast(Any, approved_workflow_profile_catalog())
+        self.assertTrue(snapshot is approved_workflow_profile_catalog())
+        for record, key in (
+            (snapshot["governedReference"], "referenceId"),
+            (snapshot["profiles"][0], "title"),
+            (snapshot["profiles"][0]["stages"][0], "stageKey"),
+        ):
+            with self.assertRaises(TypeError):
+                record[key] = "substituted"
+        self.assertIsInstance(snapshot["profiles"], tuple)
+        self.assertIsInstance(snapshot["profiles"][0]["stages"], tuple)
+        self.assertEqual(canonical_workflow_profile_json(self.catalog), canonical_workflow_profile_json(snapshot))
+
+    def test_only_compiled_catalog_identity_reuses_validation(self) -> None:
+        compiled = approved_workflow_profile_catalog()
+        foreign = decode_workflow_profile_catalog(self.catalog)
+        assert foreign is not None
+        self.assertTrue(compiled is not foreign)
+        with patch.object(
+            workflow_contracts, "_validation_errors", wraps=workflow_contracts._validation_errors
+        ) as validate:
+            self.assertEqual((), workflow_profile_catalog_errors(compiled))
+            self.assertFalse(validate.called)
+            for value in (self.catalog, foreign, None, object()):
+                validate.reset_mock()
+                errors = workflow_profile_catalog_errors(value)
+                self.assertTrue(validate.called)
+                self.assertEqual(bool(errors), value is None or type(value) is object)
+        invalid_selection = copy.deepcopy(self.selection)
+        invalid_selection["profile"]["profileId"] = "unknown-profile"
+        self.assertTrue(project_workflow_selection_errors(compiled, invalid_selection))
+        stage = fixture("valid-workflow-stage-state.v1.json")
+        stage["status"] = "completed"
+        stage["completionEvidenceIds"] = []
+        self.assertTrue(workflow_stage_state_errors(compiled, self.selection, stage))
+        migration = fixture("valid-workflow-profile-migration.v1.json")
+        migration["stageMappings"] = []
+        self.assertTrue(workflow_profile_migration_errors(compiled, migration))
+
+    def test_invalid_compiled_catalog_cannot_be_published(self) -> None:
+        malformed = copy.deepcopy(self.catalog)
+        malformed["contractVersion"] = "2.0.0"
+        with patch.object(workflow_contracts, "_APPROVED_CATALOG", malformed), self.assertRaises(RuntimeError):
+            workflow_contracts._compile_approved_workflow_catalog()
+        self.assertEqual((), workflow_profile_catalog_errors(approved_workflow_profile_catalog()))
 
     def test_selection_revision_binds_intent_catalog_profile_and_immutable_predecessor(self) -> None:
         self.assertEqual((), project_workflow_selection_errors(self.catalog, self.selection))

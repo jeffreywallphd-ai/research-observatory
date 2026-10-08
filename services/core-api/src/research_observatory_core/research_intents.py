@@ -35,6 +35,7 @@ from .ports.repositories import (
     IntentAuditEvent,
     IntentPolicyAuditEvent,
     IntentPolicyDecisionRecord,
+    IntentRevisionReader,
     IntentRevisionRecord,
     IntentRevisionRepository,
     RepositoryConflict,
@@ -1440,7 +1441,7 @@ def _validate_intent_authority_references(
 
 
 def validated_workflow_authority(
-    repository: IntentRevisionRepository,
+    repository: IntentRevisionReader,
     *,
     expected_project_id: str | None,
     revisions: tuple[Mapping[str, object], ...] | None = None,

@@ -504,6 +504,18 @@ class ProjectLifecycleProblem(Exception):
         )
 
 
+@dataclass(frozen=True, slots=True)
+class _ProjectActionScope:
+    """Nested metadata assessment usable only inside its owning project action."""
+
+    _run: Callable[[str, bool, Callable[[Path, str], Any]], Any]
+
+    def perform(
+        self, *, root: str, require_write: bool, action: Callable[[Path, str], _PROJECT_ACTION_RESULT]
+    ) -> _PROJECT_ACTION_RESULT:
+        return cast(_PROJECT_ACTION_RESULT, self._run(root, require_write, action))
+
+
 class ProjectLifecycleService:
     """Serialize package lifecycle operations for one supervised Core process."""
 
@@ -730,6 +742,7 @@ class ProjectLifecycleService:
         root: str,
         require_write: bool,
         action: Callable[[Path, str], _PROJECT_ACTION_RESULT],
+        scope_consumer: Callable[[_ProjectActionScope], None] | None = None,
     ) -> _PROJECT_ACTION_RESULT:
         """Run one bounded project action while retaining lifecycle authority.
 
@@ -742,31 +755,63 @@ class ProjectLifecycleService:
         with self._mutex:
             path = _canonical_directory(root)
             with _stable_directories(self._project_guard_paths(path)):
-                self._validate_layout(path)
-                manifest, _profile, compatibility = self._assess_documents(path)
-                access = self._opened.get(path)
-                if access is None:
-                    raise ProjectLifecycleProblem(
-                        status=409,
-                        code="RO-CORE-PROJECT-NOT-OPEN",
-                        title="Project is not open",
-                        detail="Project-scoped settings require an open local project session.",
-                        remediation="Open the compatible project locally and retry.",
-                    )
-                if require_write and (
-                    access is not ProjectAccessMode.READ_WRITE
-                    or compatibility is not ProjectCompatibilityState.COMPATIBLE
-                ):
-                    raise ProjectLifecycleProblem(
-                        status=409,
-                        code="RO-CORE-PROJECT-READ-ONLY",
-                        title="Project is read-only",
-                        detail="Privacy settings and cache cleanup cannot mutate a read-only project.",
-                        remediation="Use a compatible writable project copy and retry.",
-                    )
-                project_id = str(manifest["projectId"])
+                project_id = self._assess_open_project_authority(path, require_write=require_write)
                 self._validate_database(path, project_id)
-                return action(path, project_id)
+                if scope_consumer is None:
+                    return action(path, project_id)
+                active = True
+                owner_thread = threading.get_ident()
+
+                def nested(
+                    selected_root: str, selected_write: bool, selected_action: Callable[[Path, str], Any]
+                ) -> Any:
+                    if (
+                        not active
+                        or threading.get_ident() != owner_thread
+                        or not callable(selected_action)
+                        or _canonical_directory(selected_root) != path
+                    ):
+                        raise ProjectLifecycleProblem(
+                            status=409,
+                            code="RO-CORE-PROJECT-ACTION-SCOPE-INVALID",
+                            title="Project action scope is unavailable",
+                            detail="Nested project authority must stay within its owning current action.",
+                            remediation="Retry through the current project action.",
+                        )
+                    current_id = self._assess_open_project_authority(path, require_write=selected_write)
+                    if current_id != project_id:
+                        raise ProjectLifecycleProblem.invalid_path()
+                    return selected_action(path, current_id)
+
+                try:
+                    scope_consumer(_ProjectActionScope(nested))
+                    return action(path, project_id)
+                finally:
+                    active = False
+
+    def _assess_open_project_authority(self, path: Path, *, require_write: bool) -> str:
+        self._validate_layout(path)
+        manifest, _profile, compatibility = self._assess_documents(path)
+        access = self._opened.get(path)
+        if access is None:
+            raise ProjectLifecycleProblem(
+                status=409,
+                code="RO-CORE-PROJECT-NOT-OPEN",
+                title="Project is not open",
+                detail="Project-scoped settings require an open local project session.",
+                remediation="Open the compatible project locally and retry.",
+            )
+        if require_write and (
+            access is not ProjectAccessMode.READ_WRITE or compatibility is not ProjectCompatibilityState.COMPATIBLE
+        ):
+            raise ProjectLifecycleProblem(
+                status=409,
+                code="RO-CORE-PROJECT-READ-ONLY",
+                title="Project is read-only",
+                detail="Privacy settings and cache cleanup cannot mutate a read-only project.",
+                remediation="Use a compatible writable project copy and retry.",
+            )
+        return str(manifest["projectId"])
 
     def open(self, *, root: str, trace_id: str) -> ProjectProjection:
         with self._mutex:

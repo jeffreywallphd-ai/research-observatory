@@ -50,6 +50,7 @@ from research_observatory_core.migrations.versions import (  # noqa: E402
     v0024_open_access_acquisition,
     v0025_document_intake_recovery,
     v0026_document_revisions,
+    v0027_revision_invalidations,
 )
 
 v0006_actor_identity = runner.v0006_actor_identity
@@ -715,7 +716,7 @@ class SqliteMigrationTests(unittest.TestCase):
         before = self.database.read_bytes()
         plan = plan_database_migration(self.database, expected_project_id=PROJECT_ID)
         self.assertEqual(1, plan.source_schema_version)
-        self.assertEqual(26, plan.target_schema_version)
+        self.assertEqual(27, plan.target_schema_version)
         self.assertTrue(plan.migration_required)
         self.assertEqual(
             (
@@ -744,6 +745,7 @@ class SqliteMigrationTests(unittest.TestCase):
                 v0024_open_access_acquisition.revision,
                 v0025_document_intake_recovery.revision,
                 v0026_document_revisions.revision,
+                v0027_revision_invalidations.revision,
             ),
             plan.migration_ids,
         )
@@ -757,7 +759,7 @@ class SqliteMigrationTests(unittest.TestCase):
         result = migrate_database(self.database, expected_project_id=PROJECT_ID)
         self.assertEqual("migrated", result.status)
         self.assertEqual(1, result.source_schema_version)
-        self.assertEqual(26, result.target_schema_version)
+        self.assertEqual(27, result.target_schema_version)
         self.assertEqual(
             (
                 "0002_schema_history",
@@ -785,6 +787,7 @@ class SqliteMigrationTests(unittest.TestCase):
                 v0024_open_access_acquisition.revision,
                 v0025_document_intake_recovery.revision,
                 v0026_document_revisions.revision,
+                v0027_revision_invalidations.revision,
             ),
             result.migration_ids,
         )
@@ -812,13 +815,14 @@ class SqliteMigrationTests(unittest.TestCase):
             (23, storage.ACQUISITION_PREDECESSOR_SCHEMA_SHA256),
             (24, storage.DOCUMENT_INTAKE_PREDECESSOR_SCHEMA_SHA256),
             (25, storage.DOCUMENT_REVISION_PREDECESSOR_SCHEMA_SHA256),
+            (26, storage.REVISION_INVALIDATION_PREDECESSOR_SCHEMA_SHA256),
         ):
             historical = json.loads(json.dumps(document))
             historical["targetSchemaVersion"] = target_version
             historical["targetSchemaSha256"] = target_sha256
             historical["migrationIds"] = document["migrationIds"][: target_version - 1]
             historical["backup"]["relativePath"] = document["backup"]["relativePath"].replace(
-                "-to-v26-", f"-to-v{target_version}-"
+                "-to-v27-", f"-to-v{target_version}-"
             )
             self.assertEqual([], list(validator.iter_errors(historical)))
             historical["migrationIds"] = document["migrationIds"]
@@ -831,9 +835,10 @@ class SqliteMigrationTests(unittest.TestCase):
             v0024_open_access_acquisition.revision,
             v0025_document_intake_recovery.revision,
             v0026_document_revisions.revision,
+            v0027_revision_invalidations.revision,
         ]
         v22_predecessor["backup"]["relativePath"] = document["backup"]["relativePath"].replace(
-            "v1-to-v26-", "v22-to-v26-"
+            "v1-to-v27-", "v22-to-v27-"
         )
         self.assertEqual([], list(validator.iter_errors(v22_predecessor)))
         v22_predecessor["migrationIds"] = [v0022_document_attachments.revision]
@@ -1079,6 +1084,15 @@ class SqliteMigrationTests(unittest.TestCase):
                         26,
                         result.recovery_manifest_sha256,
                         storage.DOCUMENT_REVISION_PREDECESSOR_SCHEMA_SHA256,
+                        storage.REVISION_INVALIDATION_PREDECESSOR_SCHEMA_SHA256,
+                        "alembic-1.18.5",
+                    ),
+                    (
+                        v0027_revision_invalidations.revision,
+                        26,
+                        27,
+                        result.recovery_manifest_sha256,
+                        storage.REVISION_INVALIDATION_PREDECESSOR_SCHEMA_SHA256,
                         storage.EXPECTED_SCHEMA_SHA256,
                         "alembic-1.18.5",
                     ),
@@ -1118,7 +1132,7 @@ class SqliteMigrationTests(unittest.TestCase):
         create_version_2_fixture(self.database)
         plan = plan_database_migration(self.database, expected_project_id=PROJECT_ID)
         self.assertEqual(2, plan.source_schema_version)
-        self.assertEqual(26, plan.target_schema_version)
+        self.assertEqual(27, plan.target_schema_version)
         self.assertEqual(
             (
                 "0003_object_envelopes",
@@ -1145,6 +1159,7 @@ class SqliteMigrationTests(unittest.TestCase):
                 v0024_open_access_acquisition.revision,
                 v0025_document_intake_recovery.revision,
                 v0026_document_revisions.revision,
+                v0027_revision_invalidations.revision,
             ),
             plan.migration_ids,
         )
@@ -1177,6 +1192,7 @@ class SqliteMigrationTests(unittest.TestCase):
                 v0024_open_access_acquisition.revision,
                 v0025_document_intake_recovery.revision,
                 v0026_document_revisions.revision,
+                v0027_revision_invalidations.revision,
             ),
             result.migration_ids,
         )
@@ -1378,6 +1394,13 @@ class SqliteMigrationTests(unittest.TestCase):
                         25,
                         26,
                         storage.DOCUMENT_REVISION_PREDECESSOR_SCHEMA_SHA256,
+                        storage.REVISION_INVALIDATION_PREDECESSOR_SCHEMA_SHA256,
+                    ),
+                    (
+                        v0027_revision_invalidations.revision,
+                        26,
+                        27,
+                        storage.REVISION_INVALIDATION_PREDECESSOR_SCHEMA_SHA256,
                         storage.EXPECTED_SCHEMA_SHA256,
                     ),
                 ),
@@ -1418,6 +1441,7 @@ class SqliteMigrationTests(unittest.TestCase):
                         v0024_open_access_acquisition.revision,
                         v0025_document_intake_recovery.revision,
                         v0026_document_revisions.revision,
+                        v0027_revision_invalidations.revision,
                     ),
                     plan.migration_ids,
                 )
@@ -1447,6 +1471,7 @@ class SqliteMigrationTests(unittest.TestCase):
                         v0024_open_access_acquisition.revision,
                         v0025_document_intake_recovery.revision,
                         v0026_document_revisions.revision,
+                        v0027_revision_invalidations.revision,
                     ),
                     result.migration_ids,
                 )
@@ -1489,6 +1514,7 @@ class SqliteMigrationTests(unittest.TestCase):
                             v0024_open_access_acquisition.revision,
                             v0025_document_intake_recovery.revision,
                             v0026_document_revisions.revision,
+                            v0027_revision_invalidations.revision,
                         )
                         if legacy_object
                         else (
@@ -1515,6 +1541,7 @@ class SqliteMigrationTests(unittest.TestCase):
                             v0024_open_access_acquisition.revision,
                             v0025_document_intake_recovery.revision,
                             v0026_document_revisions.revision,
+                            v0027_revision_invalidations.revision,
                         ),
                         history,
                     )
@@ -1549,6 +1576,7 @@ class SqliteMigrationTests(unittest.TestCase):
                 v0024_open_access_acquisition.revision,
                 v0025_document_intake_recovery.revision,
                 v0026_document_revisions.revision,
+                v0027_revision_invalidations.revision,
             ),
             plan.migration_ids,
         )
@@ -1578,6 +1606,7 @@ class SqliteMigrationTests(unittest.TestCase):
                 v0024_open_access_acquisition.revision,
                 v0025_document_intake_recovery.revision,
                 v0026_document_revisions.revision,
+                v0027_revision_invalidations.revision,
             ),
             result.migration_ids,
         )
@@ -1756,6 +1785,13 @@ class SqliteMigrationTests(unittest.TestCase):
                         25,
                         26,
                         storage.DOCUMENT_REVISION_PREDECESSOR_SCHEMA_SHA256,
+                        storage.REVISION_INVALIDATION_PREDECESSOR_SCHEMA_SHA256,
+                    ),
+                    (
+                        v0027_revision_invalidations.revision,
+                        26,
+                        27,
+                        storage.REVISION_INVALIDATION_PREDECESSOR_SCHEMA_SHA256,
                         storage.EXPECTED_SCHEMA_SHA256,
                     ),
                 ),
@@ -1804,6 +1840,7 @@ class SqliteMigrationTests(unittest.TestCase):
                 v0024_open_access_acquisition.revision,
                 v0025_document_intake_recovery.revision,
                 v0026_document_revisions.revision,
+                v0027_revision_invalidations.revision,
             ),
             plan.migration_ids,
         )
@@ -1832,6 +1869,7 @@ class SqliteMigrationTests(unittest.TestCase):
                 v0024_open_access_acquisition.revision,
                 v0025_document_intake_recovery.revision,
                 v0026_document_revisions.revision,
+                v0027_revision_invalidations.revision,
             ),
             result.migration_ids,
         )
@@ -1890,6 +1928,7 @@ class SqliteMigrationTests(unittest.TestCase):
                 v0024_open_access_acquisition.revision,
                 v0025_document_intake_recovery.revision,
                 v0026_document_revisions.revision,
+                v0027_revision_invalidations.revision,
             ),
             plan.migration_ids,
         )
@@ -1917,6 +1956,7 @@ class SqliteMigrationTests(unittest.TestCase):
                 v0024_open_access_acquisition.revision,
                 v0025_document_intake_recovery.revision,
                 v0026_document_revisions.revision,
+                v0027_revision_invalidations.revision,
             ),
             result.migration_ids,
         )
@@ -1966,6 +2006,7 @@ class SqliteMigrationTests(unittest.TestCase):
                 v0024_open_access_acquisition.revision,
                 v0025_document_intake_recovery.revision,
                 v0026_document_revisions.revision,
+                v0027_revision_invalidations.revision,
             ),
             plan.migration_ids,
         )
@@ -1993,6 +2034,7 @@ class SqliteMigrationTests(unittest.TestCase):
                 v0024_open_access_acquisition.revision,
                 v0025_document_intake_recovery.revision,
                 v0026_document_revisions.revision,
+                v0027_revision_invalidations.revision,
             ),
             result.migration_ids,
         )
@@ -2052,6 +2094,7 @@ class SqliteMigrationTests(unittest.TestCase):
                     v0024_open_access_acquisition.revision,
                     v0025_document_intake_recovery.revision,
                     v0026_document_revisions.revision,
+                    v0027_revision_invalidations.revision,
                 ),
                 tuple(
                     str(row[0])
@@ -2102,6 +2145,7 @@ class SqliteMigrationTests(unittest.TestCase):
                 v0024_open_access_acquisition.revision,
                 v0025_document_intake_recovery.revision,
                 v0026_document_revisions.revision,
+                v0027_revision_invalidations.revision,
             ),
             plan.migration_ids,
         )
@@ -2126,6 +2170,7 @@ class SqliteMigrationTests(unittest.TestCase):
                 v0024_open_access_acquisition.revision,
                 v0025_document_intake_recovery.revision,
                 v0026_document_revisions.revision,
+                v0027_revision_invalidations.revision,
             ),
             result.migration_ids,
         )
@@ -2160,7 +2205,7 @@ class SqliteMigrationTests(unittest.TestCase):
             }
             self.assertEqual(workflow_tables_before, workflow_tables_after)
             self.assertEqual(
-                v0026_document_revisions.revision,
+                v0027_revision_invalidations.revision,
                 current.execute(
                     "SELECT migration_id FROM schema_migrations ORDER BY to_schema_version DESC LIMIT 1"
                 ).fetchone()[0],
@@ -2192,6 +2237,7 @@ class SqliteMigrationTests(unittest.TestCase):
                 v0024_open_access_acquisition.revision,
                 v0025_document_intake_recovery.revision,
                 v0026_document_revisions.revision,
+                v0027_revision_invalidations.revision,
             ),
             plan.migration_ids,
         )
@@ -2217,6 +2263,7 @@ class SqliteMigrationTests(unittest.TestCase):
                 v0024_open_access_acquisition.revision,
                 v0025_document_intake_recovery.revision,
                 v0026_document_revisions.revision,
+                v0027_revision_invalidations.revision,
             ),
             result.migration_ids,
         )
@@ -2246,7 +2293,7 @@ class SqliteMigrationTests(unittest.TestCase):
             ):
                 self.assertEqual(0, current.execute(f"SELECT count(*) FROM {table}").fetchone()[0])
             self.assertEqual(
-                v0026_document_revisions.revision,
+                v0027_revision_invalidations.revision,
                 current.execute(
                     "SELECT migration_id FROM schema_migrations ORDER BY to_schema_version DESC LIMIT 1"
                 ).fetchone()[0],
@@ -2257,8 +2304,8 @@ class SqliteMigrationTests(unittest.TestCase):
     def test_fresh_v6_history_remains_current_after_v15_upgrade_and_restart(self) -> None:
         create_fresh_version_6_fixture(self.database)
         projection = runner.migration_framework_projection()
-        self.assertEqual(26, projection["targetSchemaVersion"])
-        self.assertEqual(v0026_document_revisions.revision, projection["revisions"][-1])
+        self.assertEqual(27, projection["targetSchemaVersion"])
+        self.assertEqual(v0027_revision_invalidations.revision, projection["revisions"][-1])
 
         plan = plan_database_migration(self.database, expected_project_id=PROJECT_ID)
         self.assertEqual(6, plan.source_schema_version)
@@ -2284,6 +2331,7 @@ class SqliteMigrationTests(unittest.TestCase):
                 v0024_open_access_acquisition.revision,
                 v0025_document_intake_recovery.revision,
                 v0026_document_revisions.revision,
+                v0027_revision_invalidations.revision,
             ),
             plan.migration_ids,
         )
@@ -2449,6 +2497,13 @@ class SqliteMigrationTests(unittest.TestCase):
                         25,
                         26,
                         storage.DOCUMENT_REVISION_PREDECESSOR_SCHEMA_SHA256,
+                        storage.REVISION_INVALIDATION_PREDECESSOR_SCHEMA_SHA256,
+                    ),
+                    (
+                        v0027_revision_invalidations.revision,
+                        26,
+                        27,
+                        storage.REVISION_INVALIDATION_PREDECESSOR_SCHEMA_SHA256,
                         storage.EXPECTED_SCHEMA_SHA256,
                     ),
                 ),

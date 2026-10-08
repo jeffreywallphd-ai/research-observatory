@@ -19,6 +19,7 @@ REPO = Path(__file__).resolve().parents[2]
 SERVICE_SRC = REPO / "services" / "core-api" / "src"
 sys.path.insert(0, str(SERVICE_SRC))
 
+from research_observatory_core import repositories as repository_adapters  # noqa: E402
 from research_observatory_core.app import create_app  # noqa: E402
 from research_observatory_core.authentication import capability_token_digest  # noqa: E402
 from research_observatory_core.config import CoreSettings  # noqa: E402
@@ -115,6 +116,105 @@ class ResearchIntentFixture(unittest.TestCase):
 
 
 class ResearchIntentServiceTests(ResearchIntentFixture):
+    def test_readonly_authority_snapshot_is_detached_and_fresh_per_invocation(self) -> None:
+        saved = self.service.save_draft(draft_request(self.root), trace_id=TRACE, idempotency_key="72" * 16)
+        live = sqlite_intent_revision_repository(Path(self.root), self.project.project_id)
+        expected = (live.project_identity(), live.read(), live.read_workflow_authority())
+        with patch.object(
+            repository_adapters, "open_canonical_database", wraps=repository_adapters.open_canonical_database
+        ) as opened:
+            snapshot = repository_adapters.sqlite_intent_authority_snapshot(Path(self.root), self.project.project_id)
+            self.assertEqual(1, opened.call_count)
+            self.assertEqual(
+                expected, (snapshot.project_identity(), snapshot.read(), snapshot.read_workflow_authority())
+            )
+            self.assertEqual(1, opened.call_count)
+        self.assertFalse(hasattr(snapshot, "append"))
+        self.assertFalse(hasattr(snapshot, "replay"))
+        self.assertEqual(saved.revision, snapshot.read()[0].revision)
+        self.service.save_draft(
+            draft_request(self.root, expected_revision=saved.revision), trace_id=TRACE, idempotency_key="73" * 16
+        )
+        fresh = repository_adapters.sqlite_intent_authority_snapshot(Path(self.root), self.project.project_id)
+        self.assertEqual(saved.revision + 1, fresh.read()[0].revision)
+        self.assertEqual(saved.revision, snapshot.read()[0].revision)
+
+    def test_readonly_authority_snapshot_defers_bounded_failure_and_closes_database(self) -> None:
+        self.service.save_draft(draft_request(self.root), trace_id=TRACE, idempotency_key="74" * 16)
+        opened_connections = []
+        original_open = repository_adapters.open_canonical_database
+
+        def opened(*args, **kwargs):
+            connection = original_open(*args, **kwargs)
+            opened_connections.append(connection)
+            return connection
+
+        with patch.object(repository_adapters, "open_canonical_database", opened):
+            snapshot = repository_adapters.sqlite_intent_authority_snapshot(Path(self.root), self.project.project_id)
+        self.assertEqual(1, len(opened_connections))
+        with self.assertRaises(sqlite3.ProgrammingError):
+            opened_connections[0].execute("SELECT 1")
+        connection = sqlite3.connect(Path(self.root) / "state/project.sqlite3")
+        try:
+            trigger = connection.execute("SELECT sql FROM sqlite_master WHERE name='settings_no_update'").fetchone()[0]
+            connection.execute("DROP TRIGGER settings_no_update")
+            connection.execute(
+                "UPDATE settings SET text_value='invalid-json' "
+                "WHERE setting_key='research-intent.workflow-authority-binding'"
+            )
+            connection.execute(trigger)
+            connection.commit()
+        finally:
+            connection.close()
+        fresh = repository_adapters.sqlite_intent_authority_snapshot(Path(self.root), self.project.project_id)
+        self.assertIsNotNone(fresh.project_identity())
+        self.assertTrue(fresh.read())
+        with self.assertRaises(repository_adapters.RepositoryTransactionFailed):
+            fresh.read_workflow_authority()
+        self.assertIsNotNone(snapshot.read_workflow_authority().activation)
+
+    def test_readonly_authority_snapshot_keeps_one_coherent_read_during_a_commit(self) -> None:
+        saved = self.service.save_draft(draft_request(self.root), trace_id=TRACE, idempotency_key="75" * 16)
+        adapter = repository_adapters._SqliteIntentRevisionRepository
+        original_identity = adapter._project_identity_from_connection
+
+        def advance_after_read(repository, connection):
+            identity = original_identity(repository, connection)
+            self.service.save_draft(
+                draft_request(self.root, expected_revision=saved.revision), trace_id=TRACE, idempotency_key="76" * 16
+            )
+            return identity
+
+        with patch.object(adapter, "_project_identity_from_connection", advance_after_read):
+            snapshot = repository_adapters.sqlite_intent_authority_snapshot(Path(self.root), self.project.project_id)
+        self.assertEqual(saved.revision, snapshot.read()[0].revision)
+        self.assertIsNotNone(snapshot.read_workflow_authority().activation)
+        fresh = repository_adapters.sqlite_intent_authority_snapshot(Path(self.root), self.project.project_id)
+        self.assertEqual(saved.revision + 1, fresh.read()[0].revision)
+
+    def test_readonly_authority_snapshot_unexpected_failure_releases_transaction(self) -> None:
+        opened_connections = []
+        original_open = repository_adapters.open_canonical_database
+
+        def opened(*args, **kwargs):
+            connection = original_open(*args, **kwargs)
+            opened_connections.append(connection)
+            return connection
+
+        with (
+            patch.object(repository_adapters, "open_canonical_database", opened),
+            patch.object(
+                repository_adapters._SqliteIntentRevisionRepository,
+                "_read_from_connection",
+                side_effect=RuntimeError("synthetic fault"),
+            ),
+            self.assertRaisesRegex(RuntimeError, "synthetic fault"),
+        ):
+            repository_adapters.sqlite_intent_authority_snapshot(Path(self.root), self.project.project_id)
+        self.assertEqual(1, len(opened_connections))
+        with self.assertRaises(sqlite3.ProgrammingError):
+            opened_connections[0].execute("SELECT 1")
+
     def test_incomplete_draft_is_durable_but_cannot_launch(self) -> None:
         command = draft_request(
             self.root,

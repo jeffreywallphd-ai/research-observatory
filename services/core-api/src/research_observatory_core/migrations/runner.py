@@ -47,6 +47,7 @@ from research_observatory_core.migrations.versions import (
     v0024_open_access_acquisition,
     v0025_document_intake_recovery,
     v0026_document_revisions,
+    v0027_revision_invalidations,
 )
 
 _MANIFEST_DOCUMENT_TYPE = "research-observatory-sqlite-migration-recovery"
@@ -232,6 +233,7 @@ def migration_framework_projection() -> dict[str, Any]:
             storage.ACQUISITION_PREDECESSOR_DATABASE_SCHEMA_VERSION,
             storage.DOCUMENT_INTAKE_PREDECESSOR_DATABASE_SCHEMA_VERSION,
             storage.DOCUMENT_REVISION_PREDECESSOR_DATABASE_SCHEMA_VERSION,
+            storage.REVISION_INVALIDATION_PREDECESSOR_DATABASE_SCHEMA_VERSION,
         ],
         "revisions": [
             v0002_schema_history.revision,
@@ -259,6 +261,7 @@ def migration_framework_projection() -> dict[str, Any]:
             v0024_open_access_acquisition.revision,
             v0025_document_intake_recovery.revision,
             v0026_document_revisions.revision,
+            v0027_revision_invalidations.revision,
         ],
         "backupRequired": True,
         "downgradeMode": "restore-verified-backup",
@@ -454,6 +457,10 @@ _SUPPORTED_PROFILES = {
     storage.DOCUMENT_REVISION_PREDECESSOR_DATABASE_SCHEMA_VERSION: (
         storage.DOCUMENT_REVISION_PREDECESSOR_PROFILE_SHA256,
         storage.DOCUMENT_REVISION_PREDECESSOR_SCHEMA_SHA256,
+    ),
+    storage.REVISION_INVALIDATION_PREDECESSOR_DATABASE_SCHEMA_VERSION: (
+        storage.REVISION_INVALIDATION_PREDECESSOR_PROFILE_SHA256,
+        storage.REVISION_INVALIDATION_PREDECESSOR_SCHEMA_SHA256,
     ),
     storage.DATABASE_SCHEMA_VERSION: (
         storage.EXPECTED_PROFILE_SHA256,
@@ -759,6 +766,13 @@ def _valid_migration_history(schema_version: int, rows: tuple[tuple[Any, ...], .
             25,
             26,
             storage.DOCUMENT_REVISION_PREDECESSOR_SCHEMA_SHA256,
+            storage.REVISION_INVALIDATION_PREDECESSOR_SCHEMA_SHA256,
+        ),
+        (
+            v0027_revision_invalidations.revision,
+            26,
+            27,
+            storage.REVISION_INVALIDATION_PREDECESSOR_SCHEMA_SHA256,
             storage.EXPECTED_SCHEMA_SHA256,
         ),
     )
@@ -926,9 +940,16 @@ def _migration_ids(source_version: int) -> tuple[str, ...]:
         and v0026_document_revisions.down_revision == v0025_document_intake_recovery.revision
         and v0026_document_revisions.source_schema_version
         == storage.DOCUMENT_REVISION_PREDECESSOR_DATABASE_SCHEMA_VERSION
-        and v0026_document_revisions.target_schema_version == storage.DATABASE_SCHEMA_VERSION
-        and v0026_document_revisions.TARGET_SCHEMA_SHA256 == storage.EXPECTED_SCHEMA_SHA256
-        and v0026_document_revisions.TARGET_PROFILE_SHA256 == storage.EXPECTED_PROFILE_SHA256
+        and v0026_document_revisions.target_schema_version
+        == storage.REVISION_INVALIDATION_PREDECESSOR_DATABASE_SCHEMA_VERSION
+        and v0026_document_revisions.TARGET_SCHEMA_SHA256 == storage.REVISION_INVALIDATION_PREDECESSOR_SCHEMA_SHA256
+        and v0026_document_revisions.TARGET_PROFILE_SHA256 == storage.REVISION_INVALIDATION_PREDECESSOR_PROFILE_SHA256
+        and v0027_revision_invalidations.down_revision == v0026_document_revisions.revision
+        and v0027_revision_invalidations.source_schema_version
+        == storage.REVISION_INVALIDATION_PREDECESSOR_DATABASE_SCHEMA_VERSION
+        and v0027_revision_invalidations.target_schema_version == storage.DATABASE_SCHEMA_VERSION
+        and v0027_revision_invalidations.TARGET_SCHEMA_SHA256 == storage.EXPECTED_SCHEMA_SHA256
+        and v0027_revision_invalidations.TARGET_PROFILE_SHA256 == storage.EXPECTED_PROFILE_SHA256
     )
     if not registry_valid:
         raise MigrationProblem("migration-registry-invalid")
@@ -958,6 +979,7 @@ def _migration_ids(source_version: int) -> tuple[str, ...]:
         v0024_open_access_acquisition,
         v0025_document_intake_recovery,
         v0026_document_revisions,
+        v0027_revision_invalidations,
     )
     for index, migration in enumerate(chain):
         if source_version == migration.source_schema_version:
@@ -2025,11 +2047,29 @@ def _run_migrations(
                 "applied_at": applied_at,
                 "backup_manifest_sha256": backup_manifest_sha256,
                 "source_schema_sha256": storage.DOCUMENT_REVISION_PREDECESSOR_SCHEMA_SHA256,
+                "target_schema_sha256": storage.REVISION_INVALIDATION_PREDECESSOR_SCHEMA_SHA256,
+                "targetSchemaSha256": storage.REVISION_INVALIDATION_PREDECESSOR_SCHEMA_SHA256,
+                "targetProfileSha256": storage.REVISION_INVALIDATION_PREDECESSOR_PROFILE_SHA256,
+                "revisionAuthority": storage.DOCUMENT_REVISION_DDL,
+                "schemaMetadataDdl": storage.SCHEMA_METADATA_V26_DDL,
+                "schemaMetadataTriggers": v0002_schema_history.SCHEMA_METADATA_TRIGGERS,
+            },
+        )
+
+    if source_schema_version <= storage.REVISION_INVALIDATION_PREDECESSOR_DATABASE_SCHEMA_VERSION:
+        v0027_revision_invalidations.apply(
+            operations,
+            {
+                "migration_id": v0027_revision_invalidations.revision,
+                "applied_at": applied_at,
+                "backup_manifest_sha256": backup_manifest_sha256,
+                "source_schema_sha256": storage.REVISION_INVALIDATION_PREDECESSOR_SCHEMA_SHA256,
                 "target_schema_sha256": storage.EXPECTED_SCHEMA_SHA256,
                 "targetSchemaSha256": storage.EXPECTED_SCHEMA_SHA256,
                 "targetProfileSha256": storage.EXPECTED_PROFILE_SHA256,
-                "revisionAuthority": storage.DOCUMENT_REVISION_DDL,
-                "schemaMetadataDdl": storage.SCHEMA_METADATA_V26_DDL,
+                "impactRunsDdl": storage.DEPENDENCY_IMPACT_RUNS_V27_DDL,
+                "impactRunsAuthority": storage.DEPENDENCY_IMPACT_RUN_AUTHORITY,
+                "schemaMetadataDdl": storage.SCHEMA_METADATA_V27_DDL,
                 "schemaMetadataTriggers": v0002_schema_history.SCHEMA_METADATA_TRIGGERS,
             },
         )

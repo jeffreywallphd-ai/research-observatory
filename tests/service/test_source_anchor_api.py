@@ -34,6 +34,9 @@ class SourceAnchorApiTests(unittest.TestCase):
                 owner.calls.append(command)
                 raise RuntimeError("synthetic-private-passage")
 
+            anchor_resolve = anchor_create
+            citation_links = anchor_create
+
         self.client = self.enterContext(
             TestClient(
                 create_app(
@@ -97,6 +100,35 @@ class SourceAnchorApiTests(unittest.TestCase):
                 for path in self.client.get("/openapi.json").json()["paths"]
             )
         )
+
+    def test_resolution_and_reference_routes_reject_authority_and_unbounded_requests(self):
+        base = {key: self.command[key] for key in ("root", "projectId", "sessionId")}
+        cases = (
+            ("anchor-resolve", base | {"anchorId": new_uuid_v7(), "expectedRevisionId": new_uuid_v7()}),
+            ("citation-links", base | {"revisionId": new_uuid_v7(), "citationId": new_uuid_v7(), "limit": 2}),
+        )
+        for action, command in cases:
+            path = "/native/document-revisions/" + action
+            for field in ("actorId", "source", "quote", "url", "resolvedReferenceId", "scholarlyVerification"):
+                response = self.client.post(path, json=command | {field: "synthetic-private-passage"})
+                self.assertEqual(422, response.status_code)
+                self.assertNotIn("synthetic-private-passage", response.text)
+            self.assertEqual(
+                403, self.client.post(path, json=command, headers={"Origin": "tauri://localhost"}).status_code
+            )
+            self.assertEqual(401, self.client.post(path, json=command, headers={"Authorization": ""}).status_code)
+            response = self.client.post(path, json=command)
+            self.assertEqual(409, response.status_code)
+            self.assertNotIn("synthetic-private-passage", response.text)
+        reference = cases[1][1]
+        for limit in (0, 3, True, "2"):
+            self.assertEqual(
+                422,
+                self.client.post(
+                    "/native/document-revisions/citation-links", json=reference | {"limit": limit}
+                ).status_code,
+            )
+        self.assertEqual(2, len(self.calls))
 
 
 if __name__ == "__main__":

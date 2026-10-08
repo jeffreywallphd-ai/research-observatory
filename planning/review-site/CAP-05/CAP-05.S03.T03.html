@@ -38,7 +38,7 @@
       <nav class="breadcrumbs" aria-label="Breadcrumb"><a href="../index.html">Planning review</a><span>/</span><a href="index.html">CAP-document-inspection</a><span>/</span><a href="CAP-05.S03.html">SLICE-immutable-document-revisions-and-source-anchors</a><span>/</span><span aria-current="page">CAP-05.S03.T03</span></nav>
 
 <section class="hero compact" data-task-page="CAP-05.S03.T03">
-  <div class="hero-top"><div><span class="eyebrow">CAP-05.S03.T03 · task 3 of 3</span><h1>Implement anchor resolution and citation-link APIs</h1><p>APIs to resolve evidence to source context, adjacent text, document metadata, and canonical reference targets.</p></div><span class="status status-ready">Ready</span></div>
+  <div class="hero-top"><div><span class="eyebrow">CAP-05.S03.T03 · task 3 of 3</span><h1>Implement anchor resolution and citation-link APIs</h1><p>APIs to resolve evidence to source context, adjacent text, document metadata, and canonical reference targets.</p></div><span class="status status-in-progress">In_Progress</span></div>
   <dl class="summary-grid"><div><dt>Wave</dt><dd>W2</dd></div><div><dt>Slice</dt><dd><a href="CAP-05.S03.html">SLICE-immutable-document-revisions-and-source-anchors</a></dd></div><div><dt>Risk / review</dt><dd>high / agent-review</dd></div><div><dt>Latest review</dt><dd>not reviewed</dd></div></dl>
 </section>
 <section class="task-summary"><div class="section-heading"><span class="eyebrow">Authoritative task record</span><h2>Scope and acceptance</h2></div>
@@ -49,7 +49,7 @@
 <section class="task-summary"><div class="section-heading"><span class="eyebrow">Verification inventory</span><h2>Profiles and commands</h2></div>
   <h3>Verification profiles</h3><ul class="gate-criteria"><li>documents</li><li>service</li></ul>
   <h3>Commands</h3><ul class="gate-criteria"><li>python tools/verify.py --profile documents</li><li>python tools/verify.py --profile service</li></ul>
-  <p data-task-claim="CAP-05.S03.T03" data-task-owner="unclaimed" data-task-branch="none" data-task-base-sha="none"><strong>Claim projection:</strong> owner <code>unclaimed</code> · branch <code>none</code> · base <code>none</code></p>
+  <p data-task-claim="CAP-05.S03.T03" data-task-owner="codex-w2-implementation" data-task-branch="codex/w2-implementation" data-task-base-sha="c1899e0de48e79221ff0335a31c976ef87e02db5"><strong>Claim projection:</strong> owner <code>codex-w2-implementation</code> · branch <code>codex/w2-implementation</code> · base <code>c1899e0de48e79221ff0335a31c976ef87e02db5</code></p>
 </section>
 <section class="task-summary" data-task-plan="CAP-05.S03.T03" data-task-plan-sha256="421e749fb65c955d0ee49f6df47b8ace81a469347fc6ffcf63dd7e5a3f46b3e9"><div class="section-heading"><span class="eyebrow">Approved implementation intent</span><h2>Task plan</h2></div><article class="plan-article compact-article"><pre class='markdown-fallback'>### 9.3 `CAP-05.S03.T03` - Implement anchor resolution and citation-link APIs
 **Objective:** APIs to resolve evidence to source context, adjacent text, document metadata, and canonical reference targets.
@@ -233,13 +233,55 @@ These sources constrain implementation choices but do not replace repository-spe
 **Plan status:** PROPOSED - HUMAN APPROVAL REQUIRED.
 **Authoritative work state remains:** `planning/backlog.yaml`.</pre></article></section>
 <section class="section-heading"><span class="eyebrow">Task-start planning</span><h2>Assigned worksheet</h2><p>The worksheet is an optional planning aid and does not create a new approval or task state.</p></section>
-<p class="decision-meta" data-task-worksheet-absent="CAP-05.S03.T03">No optional task-start worksheet is assigned. This does not block execution.</p>
+
+<details class="plan-details task-worksheet" open data-task-worksheet="CAP-05.S03.T03" data-worksheet-sha256="85bfbc2a0a04f7bf4c4393a251a851a5caf4da116c02d373a8f0137d597a2e18">
+  <summary>Assigned task-start worksheet</summary>
+  <div class="worksheet-meta"><strong>Source:</strong> <code>artifacts/evidence/CAP-05.S03.T03.task-start.md</code> · <strong>SHA-256:</strong> <code>85bfbc2a0a04f7bf4c4393a251a851a5caf4da116c02d373a8f0137d597a2e18</code></div>
+  <article class="plan-article"><pre class='markdown-fallback'># CAP-05.S03.T03 — anchor resolution and citation-link APIs
+
+Claim base: `c1899e0de48e79221ff0335a31c976ef87e02db5`.
+CAP-05.S03.T02 is DONE, independently approved and integrated locally. The
+approved S03 section9.3 and accepted ADR0013/0024/0029 govern this task. Reuse
+canonical Document revisions, accepted structure, protected artifacts, current
+native/session/Intent/privacy/exact-copy rights and material-dependency records.
+No lighter parsing tier, parser benchmark tuning, automation-framework work,
+source-byte PDF activation or scholarly verification is included.
+
+| Material outcome/boundary | Planned proof |
+|---|---|
+| Evidence resolves to its exact accepted source revision, readable retained context/adjacent text, document metadata and canonical reference targets. | Authored synthetic structural/reference/citation fixtures through actual Core, SQLCipher and envelopes; reconstruction/reopen and later accepted-head cases retain old exact targets. Candidate/ambiguous/unresolved reference states stay explicit; no invented scholarly match or silent migration. |
+| A broken anchor conservatively marks exact downstream revisions stale using existing durable dependency propagation. | Damaged/missing protected anchor and selector mismatch cases; authenticated canonical anchor/source and current rights before classification; existing append-only provenance/outbox/stale state, exact/idempotent retry and reopen. Unknown IDs, foreign sources and denied requests do not mutate staleness. |
+| Current principal and source authority remain valid through delivery and side effects. | Actual lock/session, actor/Intent/privacy and rights-denial composition; substitutions and late changes deny with no research-bearing diagnostics, URLs or unrelated writes. |
+| Performance work preserves live authority and transaction ownership. | Exact immutable compiled catalog alone reuses full validation; foreign/malformed catalogs still fail. A fresh detached read-only Intent/bridge/workflow snapshot closes its coherent read transaction. Nested project scope expires and denies cross-thread/root/profile substitutions while retaining fresh metadata/access assessment. In-writer Intent content hashing detects corruption with unchanged declared hash. One context writer resolves source identity before exact-copy checks; lookup failure/foreign identity close before protected context, rights denial remains durable, and original verified_at/storage state stay unchanged. |
+| Common structural/page resolution avoids full PDF/IR reads and meets the local100ms p95 budget. | Instrument forbidden whole-source reads; fresh actual API measurements with declared synthetic fixtures, warm state, sample method and runtime/hardware facts. Preserve T02 observations282.8404/291.2944/279.44ms as over-target. Use scoped existing transactions/authority checks; no privilege cache or weakened integrity assertion. |
+| Public contracts and exact native commands are bounded, portable and strict. | Generated schemas, malformed/mixed-identity/body/Origin cases, native opaque-argument tests, selected lint/types and package/architecture coverage when impacted. Research content stays in protected artifacts and authorized responses. |
+| Documentary architecture, audit and compatibility match the final change. | Append the implementation mapping/task link/precise affected paths to existing Proposed ADR0046 and index; exact claim-base-to-candidate ADR check. Preserve accepted decisions, frozen approvals, T02 R01/F01/R02 and the accepted S02 warm observation. |
+
+Add the smallest behavioral failing/characterization tests before product edits
+where practical. A short read-only independent design preflight targets canonical
+reference identity, broken-versus-denied classification, atomic stale propagation
+and the current-authority/performance boundary. Root implements the product work.
+Select affected contract/repository/API/graph/native checks; broader integrated
+S03 performance/restart/recovery review, S04 activation and installed desktop,
+minimum-tier and fresh full W2 qualification remain separate required coverage.
+
+Development timing is diagnostic, not task qualification. The first measured
+breakdown averaged155.6ms (p95158.6ms), with nine database opens. After the scoped
+authority and single-writer changes, one focused check measured86.6ms p95. The
+instrumented phase run averaged89.5ms (p95105.2ms), with four database opens;
+its slower responses were concentrated in authorized context access, not lookup
+or database opening. A targeted commit diagnostic averaged84.5ms (p9587.5ms),
+with durable context commits averaging2.5ms. These observations and all earlier
+failures remain in task-owned development logs. They do not establish performance
+on a committed candidate or waive the unchanged100ms criterion. Parser inference,
+whole-PDF/IR reads and8GB/16GB hardware-tier qualification were excluded.</pre></article>
+</details>
 <section class="section-heading"><span class="eyebrow">Execution evidence</span><h2>Review packets, rounds, and current projection</h2><p>Append-only controls retain every immutable round and finding closure. Pre-policy tasks remain explicitly latest-review-only.</p></section>
 
 <section class="review-toolbar" data-task-review-id="CAP-05.S03.T03" data-review-mode="latest-review-only">
   <h3>CAP-05.S03.T03 — Implement anchor resolution and citation-link APIs</h3>
   <p><strong>Legacy latest-review-only projection.</strong> No append-only review rounds are recorded; this view does not fabricate historical attempts.</p>
-  <dl class="summary-grid" data-current-review-projection="CAP-05.S03.T03" data-current-review-result="not-reviewed" data-current-reviewer="none" data-current-reviewed-at="none"><div><dt>Task status</dt><dd>READY</dd></div><div><dt>Latest result</dt><dd>not reviewed</dd></div><div><dt>Reviewer</dt><dd>none</dd></div><div><dt>Reviewed at</dt><dd><code>none</code></dd></div></dl>
+  <dl class="summary-grid" data-current-review-projection="CAP-05.S03.T03" data-current-review-result="not-reviewed" data-current-reviewer="none" data-current-reviewed-at="none"><div><dt>Task status</dt><dd>IN_PROGRESS</dd></div><div><dt>Latest result</dt><dd>not reviewed</dd></div><div><dt>Reviewer</dt><dd>none</dd></div><div><dt>Reviewed at</dt><dd><code>none</code></dd></div></dl>
   <p><strong>Latest notes:</strong> None</p>
 </section>
 <nav class="page-turn" aria-label="Task navigation"><a class="button button-quiet" href="CAP-05.S03.T02.html">Previous</a><a class="button button-primary" href="CAP-05.S03.html">Next</a></nav>

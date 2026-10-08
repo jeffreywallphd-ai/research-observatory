@@ -26,7 +26,7 @@ Responses and errors must not enter logs, support bundles or deep-link URLs.
 
 Persistence reuses the existing derived Document aggregate, encrypted object
 envelopes, immutable provenance, material source dependency and atomic outbox.
-No new schema migration or separate anchor identity store is introduced. A common
+No separate anchor identity store is introduced. A common
 read authenticates at most 32 KiB of retained context and canonical registration;
 it does not load the original PDF or the complete normalized IR. This establishes
 derivative-context integrity, **not** current original-byte verification. Opening
@@ -45,3 +45,14 @@ Regenerate/check shapes with `python packages/contracts/anchors/generate_anchor_
 and `--check`. JSON Schema covers value shape; Core enforces the listed semantic
 and current-authority rules. Fixture/tests reside in `tests/anchors/` and the
 desktop source-anchor contract/passage checks.
+
+CAP-05.S03.T03 adds exact-revision resolution and paged citation/reference links.
+Resolution returns canonical document metadata and `exact`, `fallback`, `missing`
+or `broken`; it never searches a newer revision or promotes scholarly status.
+Only an authenticated broken derivative, under current source authority, records
+an output-free canonical invalidation and conservatively propagates staleness in
+the same transaction. Schema 27 preserves the existing dependency-impact
+authority while allowing this no-successor event. Denial or unknown IDs cannot
+create a broken-anchor fact. Citation candidates remain candidate/ambiguous/
+unresolved, with at most two exact canonical targets per page and explicit preview
+truncation. Neither endpoint fetches an external reference URL.

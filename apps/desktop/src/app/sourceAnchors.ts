@@ -120,7 +120,11 @@ export function pageRegionPixels(region: PageRegion, width: number, height: numb
 export function decodeSourceAnchor(value: unknown, projectId: string, revisionId: string): SourceAnchor | null {
   const receipt = object(value, ["schemaVersion", "anchorId", "anchorRevisionId", "createdAt", "target"]);
   if (!receipt || receipt["schemaVersion"] !== "1.0" || !id(receipt["anchorId"]) || !id(receipt["anchorRevisionId"]) || !instant(receipt["createdAt"])) return null;
-  const item = object(receipt["target"], ["schemaVersion", "projectId", "documentId", "revisionId", "source", "contentSha256", "structureSha256", "nodeId", "nodeKind", "blockId", "sentenceId", "projectionId", "normalizationVersion", "unicodeVersion", "textPosition", "quote", "context", "pageRegion", "coordinatesState", "confidence", "scholarlyVerification"]);
+  return decodeSourceAnchorTarget(receipt["target"], projectId, revisionId) ? receipt as unknown as SourceAnchor : null;
+}
+
+export function decodeSourceAnchorTarget(value: unknown, projectId: string, revisionId: string): SourceAnchorTarget | null {
+  const item = object(value, ["schemaVersion", "projectId", "documentId", "revisionId", "source", "contentSha256", "structureSha256", "nodeId", "nodeKind", "blockId", "sentenceId", "projectionId", "normalizationVersion", "unicodeVersion", "textPosition", "quote", "context", "pageRegion", "coordinatesState", "confidence", "scholarlyVerification"]);
   if (!item || item["schemaVersion"] !== "1.0" || item["projectId"] !== projectId || item["revisionId"] !== revisionId || !id(revisionId)
     || !id(item["documentId"]) || !id(item["nodeId"]) || !nodeKinds.includes(String(item["nodeKind"]))
     || !nullableId(item["blockId"]) || !nullableId(item["sentenceId"]) || !nullableId(item["projectionId"])
@@ -147,7 +151,98 @@ export function decodeSourceAnchor(value: unknown, projectId: string, revisionId
       || points.slice(Math.max(0, highlight.start - 64), highlight.start).join("") !== quote["prefix"]
       || points.slice(highlight.end, highlight.end + 64).join("") !== quote["suffix"]) return null;
   }
-  return receipt as unknown as SourceAnchor;
+  return item as unknown as SourceAnchorTarget;
+}
+
+export interface SourceDocumentMetadata {
+  readonly projectId: string; readonly documentId: string; readonly revisionId: string; readonly acceptedAt: string;
+  readonly displayLabel: string; readonly labelOrigin: "canonical-document-revision";
+}
+export interface AnchorStalePropagation {
+  readonly runId: string; readonly state: "completed"; readonly totalItems: number; readonly processedItems: number;
+  readonly staleCount: number; readonly unknownCount: number;
+}
+export interface SourceAnchorResolution {
+  readonly schemaVersion: "1.0"; readonly anchorId: string; readonly anchorRevisionId: string;
+  readonly source: SourceIdentity; readonly metadata: SourceDocumentMetadata;
+  readonly status: "exact" | "fallback" | "missing" | "broken";
+  readonly selectorUsed: "page-region" | "structural-text" | "not-resolved";
+  readonly reason: "protected-context-unavailable" | "readable-text-not-reported" | null;
+  readonly target: SourceAnchorTarget | null; readonly propagation: AnchorStalePropagation | null;
+  readonly scholarlyVerification: "unverified";
+}
+export interface CitationLinkResolution {
+  readonly schemaVersion: "1.0"; readonly citationId: string; readonly source: SourceIdentity;
+  readonly metadata: SourceDocumentMetadata; readonly marker: SourceAnchorTarget; readonly markerTruncated: boolean;
+  readonly resolution: "candidate" | "ambiguous" | "unresolved"; readonly totalCandidates: number;
+  readonly targets: readonly { readonly referenceId: string; readonly target: SourceAnchorTarget; readonly previewTruncated: boolean }[];
+  readonly nextReferenceId: string | null; readonly scholarlyVerification: "unverified";
+}
+
+function sameSource(a: SourceIdentity, b: SourceIdentity): boolean {
+  return Object.entries(a).every(([key, value]) => key === "provenance"
+    ? Object.entries(a.provenance).length === Object.entries(b.provenance).length
+      && Object.entries(a.provenance).every(([k, v]) => Object.entries(b.provenance).some(([other, actual]) => k === other && v === actual))
+    : Object.entries(b).some(([other, actual]) => key === other && value === actual));
+}
+function documentMetadata(value: unknown, source: SourceIdentity, revisionId: string): SourceDocumentMetadata | null {
+  const item = object(value, ["projectId", "documentId", "revisionId", "acceptedAt", "displayLabel", "labelOrigin"]);
+  return item && item["projectId"] === source.projectId && item["documentId"] === source.documentId
+    && item["revisionId"] === revisionId && id(revisionId) && revisionId !== source.documentRevisionId
+    && instant(item["acceptedAt"]) && text(item["displayLabel"], 512) && item["labelOrigin"] === "canonical-document-revision"
+    ? item as unknown as SourceDocumentMetadata : null;
+}
+
+export function decodeAnchorResolution(value: unknown, projectId: string, revisionId: string, anchorId: string): SourceAnchorResolution | null {
+  const item = object(value, ["schemaVersion", "anchorId", "anchorRevisionId", "source", "metadata", "status", "selectorUsed", "reason", "target", "propagation", "scholarlyVerification"]);
+  const source = decodeSourceIdentity(item?.["source"], projectId);
+  if (!item || item["schemaVersion"] !== "1.0" || !id(anchorId) || item["anchorId"] !== anchorId
+    || !id(item["anchorRevisionId"]) || !source || !documentMetadata(item["metadata"], source, revisionId)
+    || item["scholarlyVerification"] !== "unverified") return null;
+  if (item["status"] === "exact" || item["status"] === "fallback") {
+    const target = decodeSourceAnchorTarget(item["target"], projectId, revisionId);
+    if (!target || !sameSource(source, target.source) || !target.context || item["propagation"] !== null || item["reason"] !== null
+      || (item["status"] === "exact" ? item["selectorUsed"] !== "page-region" || target.pageRegion === null
+        : item["selectorUsed"] !== "structural-text" || target.pageRegion !== null)) return null;
+  } else if (item["status"] === "missing" || item["status"] === "broken") {
+    if (item["target"] !== null || item["selectorUsed"] !== "not-resolved") return null;
+    if (item["status"] === "missing") {
+      if (item["reason"] !== "readable-text-not-reported" || item["propagation"] !== null) return null;
+    } else {
+      const propagation = object(item["propagation"], ["runId", "state", "totalItems", "processedItems", "staleCount", "unknownCount"]);
+      if (item["reason"] !== "protected-context-unavailable" || !propagation || !id(propagation["runId"])
+        || propagation["state"] !== "completed" || !count(propagation["totalItems"]) || !count(propagation["processedItems"])
+        || !count(propagation["staleCount"]) || !count(propagation["unknownCount"])
+        || propagation["totalItems"] !== propagation["processedItems"]
+        || propagation["staleCount"] + propagation["unknownCount"] > propagation["processedItems"]) return null;
+    }
+  } else return null;
+  return item as unknown as SourceAnchorResolution;
+}
+
+export function decodeCitationLinks(value: unknown, projectId: string, revisionId: string, citationId: string): CitationLinkResolution | null {
+  const item = object(value, ["schemaVersion", "citationId", "source", "metadata", "marker", "markerTruncated", "resolution", "totalCandidates", "targets", "nextReferenceId", "scholarlyVerification"]);
+  const source = decodeSourceIdentity(item?.["source"], projectId);
+  const marker = decodeSourceAnchorTarget(item?.["marker"], projectId, revisionId);
+  if (!item || item["schemaVersion"] !== "1.0" || !id(citationId) || item["citationId"] !== citationId || !source || !marker
+    || !sameSource(source, marker.source) || !documentMetadata(item["metadata"], source, revisionId)
+    || typeof item["markerTruncated"] !== "boolean" || item["scholarlyVerification"] !== "unverified"
+    || !count(item["totalCandidates"]) || !Array.isArray(item["targets"]) || item["targets"].length > 2
+    || item["targets"].length > item["totalCandidates"] || !nullableId(item["nextReferenceId"])) return null;
+  const total = item["totalCandidates"];
+  if (item["resolution"] === "unresolved" ? total !== 0 : item["resolution"] === "candidate" ? total !== 1
+    : item["resolution"] === "ambiguous" ? total < 2 : true) return null;
+  const identities = new Set<string>();
+  for (const value of item["targets"]) {
+    const row = object(value, ["referenceId", "target", "previewTruncated"]);
+    const target = decodeSourceAnchorTarget(row?.["target"], projectId, revisionId);
+    if (!row || !id(row["referenceId"]) || identities.has(row["referenceId"]) || !target || !sameSource(source, target.source)
+      || typeof row["previewTruncated"] !== "boolean") return null;
+    identities.add(row["referenceId"]);
+  }
+  if (item["nextReferenceId"] !== null && (item["targets"].length === 0 || total <= item["targets"].length
+    || item["nextReferenceId"] !== item["targets"].at(-1)["referenceId"])) return null;
+  return item as unknown as CitationLinkResolution;
 }
 
 export function decodeReaderRevisions(value: unknown, projectId: string, attachmentId: string): ReaderRevisions | null {

@@ -6,6 +6,7 @@ import sqlite3
 import subprocess
 import sys
 import tempfile
+import threading
 import unittest
 from pathlib import Path
 from unittest.mock import patch
@@ -61,6 +62,49 @@ class ProjectLifecycleTests(unittest.TestCase):
             template_id="theory-synthesis",
             trace_id=TRACE,
         )
+
+    def test_nested_project_scope_is_local_to_the_held_guard_and_rechecks_metadata(self) -> None:
+        project = self.create()
+        self.service.open(root=project.root, trace_id=TRACE)
+        scopes = []
+
+        def current(path, identity):
+            scope = scopes[0]
+            with patch.object(self.service, "_validate_database", wraps=self.service._validate_database) as validate:
+                self.assertEqual(
+                    identity, scope.perform(root=project.root, require_write=True, action=lambda _path, value: value)
+                )
+                self.assertFalse(validate.called)
+            failures = []
+
+            def other_thread():
+                try:
+                    scope.perform(root=project.root, require_write=False, action=lambda _path, _id: None)
+                except ProjectLifecycleProblem as error:
+                    failures.append(error.code)
+
+            worker = threading.Thread(target=other_thread)
+            worker.start()
+            worker.join(timeout=2)
+            self.assertFalse(worker.is_alive())
+            self.assertEqual(["RO-CORE-PROJECT-ACTION-SCOPE-INVALID"], failures)
+            with self.assertRaises(ProjectLifecycleProblem):
+                scope.perform(root=str(self.parent), require_write=False, action=lambda _path, _id: None)
+            profile = path / "config/project-profile.json"
+            previous = profile.read_bytes()
+            try:
+                profile.write_text("{}", encoding="utf-8")
+                with self.assertRaises(ProjectLifecycleProblem):
+                    scope.perform(root=project.root, require_write=True, action=lambda _path, _id: None)
+            finally:
+                profile.write_bytes(previous)
+
+        self.service.perform_open_project_action(
+            root=project.root, require_write=True, action=current, scope_consumer=scopes.append
+        )
+        with self.assertRaises(ProjectLifecycleProblem):
+            scopes[0].perform(root=project.root, require_write=False, action=lambda _path, _id: None)
+        self.service.close(root=project.root, trace_id=TRACE)
 
     @staticmethod
     def package_bytes(root: Path) -> dict[str, bytes]:

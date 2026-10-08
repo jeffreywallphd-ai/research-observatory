@@ -22634,7 +22634,7 @@
             {
               "task_id": "CAP-05.S03.T03",
               "title": "Implement anchor resolution and citation-link APIs",
-              "status": "READY",
+              "status": "IN_PROGRESS",
               "mode": "latest-review-only",
               "latest_review": {
                 "reviewer": null,
@@ -22688,18 +22688,21 @@
             {
               "task_id": "CAP-05.S03.T03",
               "title": "Implement anchor resolution and citation-link APIs",
-              "status": "READY",
+              "status": "IN_PROGRESS",
               "page": "CAP-05/CAP-05.S03.T03.html",
               "dependencies": [
                 "CAP-05.S03.T02"
               ],
               "claim": {
-                "owner": null,
-                "branch": null,
-                "base_sha": null
+                "owner": "codex-w2-implementation",
+                "branch": "codex/w2-implementation",
+                "base_sha": "c1899e0de48e79221ff0335a31c976ef87e02db5"
               },
               "plan_section_sha256": "421e749fb65c955d0ee49f6df47b8ace81a469347fc6ffcf63dd7e5a3f46b3e9",
-              "worksheet": null
+              "worksheet": {
+                "path": "artifacts/evidence/CAP-05.S03.T03.task-start.md",
+                "sha256": "85bfbc2a0a04f7bf4c4393a251a851a5caf4da116c02d373a8f0137d597a2e18"
+              }
             }
           ]
         },

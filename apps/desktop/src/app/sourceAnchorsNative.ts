@@ -1,7 +1,7 @@
 import { invoke } from "@tauri-apps/api/core";
 import {
-  decodeAnchorIds, decodeReaderOutline, decodeReaderRevisions, decodeSourceAnchor,
-  type AnchorSelection, type ReaderOutline, type ReaderRevisions, type SourceAnchor,
+  decodeAnchorIds, decodeAnchorResolution, decodeCitationLinks, decodeReaderOutline, decodeReaderRevisions, decodeSourceAnchor,
+  type AnchorSelection, type CitationLinkResolution, type ReaderOutline, type ReaderRevisions, type SourceAnchor, type SourceAnchorResolution,
 } from "./sourceAnchors";
 
 export interface SourceAnchorPort {
@@ -12,6 +12,11 @@ export interface SourceAnchorPort {
   readonly create: (projectId: string, commandId: string, selection: AnchorSelection) => Promise<SourceAnchor | null>;
 }
 
+export interface SourceResolutionPort {
+  readonly resolve: (projectId: string, revisionId: string, anchorId: string) => Promise<SourceAnchorResolution | null>;
+  readonly citationLinks: (projectId: string, revisionId: string, citationId: string, afterReferenceId?: string | null) => Promise<CitationLinkResolution | null>;
+}
+
 async function request(command: string, fields: object): Promise<unknown> {
   if (typeof window === "undefined" || !("__TAURI_INTERNALS__" in window)) return null;
   try { return await invoke<unknown>(command, { request: { schemaVersion: "1.0", ...fields } }); }
@@ -19,7 +24,13 @@ async function request(command: string, fields: object): Promise<unknown> {
 }
 
 // Root, session, human actor, rights and protected quote/context remain Core/native owned.
-export const nativeSourceAnchorPort: SourceAnchorPort = {
+export const nativeSourceAnchorPort: SourceAnchorPort & SourceResolutionPort = {
+  async resolve(projectId, revisionId, anchorId) {
+    return decodeAnchorResolution(await request("document_reader_anchor_resolve", { projectId, anchorId, expectedRevisionId: revisionId }), projectId, revisionId, anchorId);
+  },
+  async citationLinks(projectId, revisionId, citationId, afterReferenceId = null) {
+    return decodeCitationLinks(await request("document_reader_citation_links", { projectId, revisionId, citationId, afterReferenceId }), projectId, revisionId, citationId);
+  },
   async revisions(projectId, attachmentId) {
     return decodeReaderRevisions(await request("document_reader_revisions", { projectId, attachmentId }), projectId, attachmentId);
   },

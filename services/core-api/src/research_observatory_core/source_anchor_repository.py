@@ -6,26 +6,44 @@ import hashlib
 from contextlib import closing
 from dataclasses import asdict, dataclass
 
-from pydantic import Field, model_validator
+from pydantic import Field, ValidationError, model_validator
 
 from .anchors.contracts import (
     ANCHOR_MEDIA_TYPE,
     MAX_ANCHOR_BYTES,
     MAX_QUOTE_CODEPOINTS,
     AnchorSelection,
+    AnchorStalePropagation,
+    CitationLinkResolution,
+    CitationReferenceTarget,
     DocumentReaderOutline,
     DocumentReaderRevisions,
     ReaderOutlineNode,
     ReaderRevisionSummary,
     SourceAnchorReceipt,
+    SourceAnchorResolution,
     SourceAnchorTarget,
+    SourceDocumentMetadata,
     build_target,
 )
 from .document_revisions import DocumentRevisionProblem, protected_json
 from .domain_contracts import is_uuid_v7, new_uuid_v7
 from .parsing.contracts import CodepointRange, IRValue
-from .ports.repositories import AggregateRevision, AggregateRevisionDraft, AtomicRepositoryEvent, MaterialDependency
-from .repositories import _command_fingerprint, _material_registration_with_connection
+from .ports.object_store import ObjectCorrupt, ObjectNotFound
+from .ports.repositories import (
+    DEFAULT_DEPENDENCY_IMPACT_LIMITS,
+    AggregateRevision,
+    AggregateRevisionDraft,
+    AtomicRepositoryEvent,
+    DependencyChange,
+    MaterialDependency,
+)
+from .repositories import (
+    _command_fingerprint,
+    _material_registration_with_connection,
+    _projection_content_sha256,
+    _SqliteDependencyImpactRepository,
+)
 from .storage import open_canonical_database
 
 
@@ -120,6 +138,19 @@ class LocalSourceAnchorRepository:
             return result
 
         return self.revisions.objects._read_authorized_document_context(source, actor=actor, action=current)
+
+    def _fenced_resolved(self, anchor_id, revision_id, resolve_source, action):
+        actor = self._current_actor()
+
+        def current(connection, source):
+            self.revisions._authority(connection, actor)
+            result = action(connection, actor, source)
+            self.revisions._authority(connection, self._current_actor())
+            return result
+
+        return self.revisions.objects._read_resolved_authorized_document_context(
+            anchor_id, revision_id, actor=actor, resolve_source=resolve_source, action=current
+        )
 
     def _target_revision(self, connection, anchor_revision_id):
         rows = connection.execute(
@@ -225,6 +256,279 @@ class LocalSourceAnchorRepository:
 
     def create(self, command_id, selection):
         return self.receipt(self._create_record(command_id, selection))
+
+    @staticmethod
+    def _metadata(revision):
+        return SourceDocumentMetadata(
+            project_id=revision.project_id,
+            document_id=revision.aggregate_id,
+            revision_id=revision.revision_id,
+            accepted_at=revision.modified_at,
+            display_label=revision.display_label_observed,
+        )
+
+    def _event_for_key(self, connection, key):
+        rows = connection.execute(
+            "SELECT p.event_id,o.outbox_id,p.event_type,p.occurred_at,o.available_at,"
+            "p.trace_id,p.actor_type,p.actor_id,o.idempotency_key FROM outbox_events o "
+            "JOIN provenance_events p ON p.project_id=o.project_id AND p.revision_id=o.revision_id "
+            "AND p.record_sha256=o.record_sha256 WHERE o.project_id=? AND o.idempotency_key=?",
+            (self.revisions.project, key),
+        ).fetchall()
+        if len(rows) != 1:
+            raise DocumentRevisionProblem("source-anchor-provenance-invalid")
+        return AtomicRepositoryEvent(*tuple(rows[0]))
+
+    def _canonical_anchor(self, connection, anchor_id):
+        """Authenticate identity/derivation independently of unreadable payload bytes."""
+        with self.revisions._aggregates(connection) as aggregates:
+            revision = aggregates.get(anchor_id)
+            registration = _material_registration_with_connection(
+                connection, self.revisions.project, revision.revision_id
+            )
+            if (
+                revision.aggregate_kind != "document"
+                or revision.revision != 0
+                or revision.knowledge_status != "extracted"
+                or revision.rights_status != "allowed"
+                or registration.coverage != "complete"
+                or len(registration.dependencies) != 1
+            ):
+                raise DocumentRevisionProblem("source-anchor-binding-invalid")
+            dependency = registration.dependencies[0]
+            if dependency.dependency_kind != "source-revision" or dependency.relation_type != "direct":
+                raise DocumentRevisionProblem("source-anchor-dependency-invalid")
+            source_revision = aggregates.get_revision(dependency.revision_id)
+            source = self._source(connection, source_revision.revision_id)
+            row = connection.execute(
+                "SELECT idempotency_key FROM outbox_events WHERE project_id=? AND revision_id=? "
+                "AND event_type='org.research-observatory.document.revision-recorded.v1'",
+                (self.revisions.project, revision.revision_id),
+            ).fetchall()
+            if len(row) != 1 or not str(row[0][0]).startswith("document.anchor."):
+                raise DocumentRevisionProblem("source-anchor-provenance-invalid")
+            event = self._event_for_key(connection, str(row[0][0]))
+            if (
+                not is_uuid_v7(event.idempotency_key.removeprefix("document.anchor."))
+                or event.actor_type != "human"
+                or (revision.created_at, revision.modified_at) != (event.occurred_at, event.occurred_at)
+                or source_revision.aggregate_kind != "document"
+                or source_revision.aggregate_id != source.document_id
+                or dependency.fingerprint != _projection_content_sha256(source_revision)
+                or registration.registration_event_id != event.event_id
+            ):
+                raise DocumentRevisionProblem("source-anchor-provenance-invalid")
+            fingerprint = _command_fingerprint(
+                self.revisions.project,
+                revision,
+                event,
+                None,
+                (source_revision,),
+                "complete",
+                (dependency,),
+            )
+            if aggregates._replay(event, fingerprint) != revision:
+                raise DocumentRevisionProblem("source-anchor-provenance-invalid")
+            return revision, source_revision, source
+
+    def _invalidate_broken(self, connection, revision):
+        key = "document.anchor-broken." + revision.revision_id
+        impacts = _SqliteDependencyImpactRepository(self.revisions.database, self.revisions.project)
+        existing = connection.execute(
+            "SELECT run_id,change_id FROM dependency_impact_runs WHERE project_id=? AND idempotency_key=?",
+            (self.revisions.project, key),
+        ).fetchone()
+        if existing is None:
+            actor = self._current_actor()
+            event = self.revisions._event(
+                actor, self.revisions.now(), "org.research-observatory.document.invalidated.v1", key
+            )
+            change = DependencyChange(
+                change_id=event.event_id,
+                idempotency_key=key,
+                reason="SOURCE_VERSION",
+                dependency_kind="source-revision",
+                previous_revision_id=revision.revision_id,
+                replacement_revision_id=None,
+                configuration_id=None,
+                previous_configuration_version=None,
+                replacement_configuration_version=None,
+                previous_fingerprint=_projection_content_sha256(revision),
+                replacement_fingerprint=None,
+                propagation_policy_id="dependency.material.v1",
+                propagation_policy_version="1.0.0",
+                actor_id=event.actor_id,
+                trace_id=event.trace_id,
+                occurred_at=event.occurred_at,
+            )
+            with self.revisions._aggregates(connection) as aggregates:
+                aggregates.invalidate(revision.revision_id, event)
+            preview = impacts._preview_with_connection(
+                connection, change, decisions=(), limits=DEFAULT_DEPENDENCY_IMPACT_LIMITS
+            )
+            run = impacts._begin_with_connection(
+                connection,
+                change,
+                preview_sha256=preview.preview_sha256,
+                run_id=new_uuid_v7(),
+                batch_size=1000,
+            )
+        else:
+            event = self._event_for_key(connection, key)
+            with self.revisions._aggregates(connection) as aggregates:
+                aggregates.invalidate(revision.revision_id, event)
+            change = impacts._change_with_connection(connection, str(existing[1]))
+            if (change.change_id, change.previous_revision_id) != (event.event_id, revision.revision_id):
+                raise DocumentRevisionProblem("source-anchor-invalidation-conflict")
+            run = impacts._run_with_connection(connection, str(existing[0]))
+        while run.state == "running":
+            self.revisions._authority(connection, self._current_actor())
+            run = impacts._advance_with_connection(
+                connection, run.run_id, expected_checkpoint_sha256=run.checkpoint_sha256
+            )
+        if run.state != "completed":
+            raise DocumentRevisionProblem("source-anchor-invalidation-incomplete")
+        _publication_step("anchor-dependents-stale")
+        return AnchorStalePropagation(
+            run_id=run.run_id,
+            state=run.state,
+            total_items=run.total_items,
+            processed_items=run.processed_items,
+            stale_count=run.stale_count,
+            unknown_count=run.unknown_count,
+        )
+
+    def resolve(self, anchor_id, *, expected_revision_id):
+        if not is_uuid_v7(anchor_id) or not is_uuid_v7(expected_revision_id):
+            raise DocumentRevisionProblem("source-anchor-resolution-invalid")
+
+        def read():
+            def resolve_source(db):
+                with self.revisions._aggregates(db) as aggregates:
+                    revision = aggregates.get(anchor_id)
+                target_revision_id = self._target_revision(db, revision.revision_id)
+                if target_revision_id != expected_revision_id:
+                    raise DocumentRevisionProblem("source-anchor-revision-mismatch")
+                return self._source(db, target_revision_id)
+
+            def selected(connection, _actor, source):
+                try:
+                    record = self._record(connection, anchor_id)
+                except ObjectCorrupt, ObjectNotFound, OSError, ValidationError:
+                    record = None
+                except DocumentRevisionProblem as error:
+                    if error.code != "source-anchor-structure-invalid":
+                        raise
+                    record = None
+                if record is None:
+                    canonical, source_revision, confirmed_source = self._canonical_anchor(connection, anchor_id)
+                    if confirmed_source != source or source_revision.revision_id != expected_revision_id:
+                        raise DocumentRevisionProblem("source-anchor-revision-mismatch")
+                    return SourceAnchorResolution(
+                        anchor_id=anchor_id,
+                        anchor_revision_id=canonical.revision_id,
+                        source=source,
+                        metadata=self._metadata(source_revision),
+                        status="broken",
+                        selector_used="not-resolved",
+                        reason="protected-context-unavailable",
+                        target=None,
+                        propagation=self._invalidate_broken(connection, canonical),
+                    )
+                target = record.target
+                missing = target.context is None
+                return SourceAnchorResolution(
+                    anchor_id=record.anchor_id,
+                    anchor_revision_id=record.anchor_revision_id,
+                    source=target.source,
+                    metadata=self._metadata(record.source_revision),
+                    status="missing" if missing else "exact" if target.page_region is not None else "fallback",
+                    selector_used="not-resolved"
+                    if missing
+                    else "page-region"
+                    if target.page_region is not None
+                    else "structural-text",
+                    reason="readable-text-not-reported" if missing else None,
+                    target=None if missing else target,
+                    propagation=None,
+                )
+
+            return self._fenced_resolved(anchor_id, expected_revision_id, resolve_source, selected)
+
+        return self._bounded(read)
+
+    def citation_links(self, revision_id, citation_id, *, after_reference_id=None, limit=2):
+        if (
+            not is_uuid_v7(revision_id)
+            or not is_uuid_v7(citation_id)
+            or type(limit) is not int
+            or not 1 <= limit <= 2
+            or (after_reference_id is not None and not is_uuid_v7(after_reference_id))
+        ):
+            raise DocumentRevisionProblem("citation-link-request-invalid")
+
+        def read():
+            with closing(
+                open_canonical_database(self.revisions.database, expected_project_id=self.revisions.project)
+            ) as db:
+                source = self._source(db, revision_id)
+
+            def selected(connection, _actor):
+                accepted = self.revisions._accepted(connection, revision_id)
+                citation = next((row for row in accepted.structure.citations if row.citation_id == citation_id), None)
+                if citation is None:
+                    raise DocumentRevisionProblem("citation-link-unavailable")
+
+                def target(node_id, span):
+                    return build_target(
+                        accepted,
+                        AnchorSelection(
+                            revision_id=revision_id,
+                            node_id=node_id,
+                            normalized_range=CodepointRange(
+                                start=span.start, end=min(span.end, span.start + MAX_QUOTE_CODEPOINTS)
+                            ),
+                        ),
+                    )
+
+                candidates = citation.reference_candidates
+                start = 0
+                if after_reference_id is not None:
+                    if after_reference_id not in candidates:
+                        raise DocumentRevisionProblem("citation-link-cursor-invalid")
+                    start = candidates.index(after_reference_id) + 1
+                by_id = {row.reference_id: row for row in accepted.structure.references}
+                targets = tuple(
+                    CitationReferenceTarget(
+                        reference_id=reference_id,
+                        target=target(by_id[reference_id].node_id, by_id[reference_id].raw_text.normalized_range),
+                        preview_truncated=by_id[reference_id].raw_text.normalized_range.end
+                        - by_id[reference_id].raw_text.normalized_range.start
+                        > MAX_QUOTE_CODEPOINTS,
+                    )
+                    for reference_id in candidates[start : start + limit]
+                )
+                with self.revisions._aggregates(connection) as aggregates:
+                    source_revision = aggregates.get_revision(revision_id)
+                result = CitationLinkResolution(
+                    citation_id=citation_id,
+                    source=source,
+                    metadata=self._metadata(source_revision),
+                    marker=target(citation.node_id, citation.marker.normalized_range),
+                    marker_truncated=citation.marker.normalized_range.end - citation.marker.normalized_range.start
+                    > MAX_QUOTE_CODEPOINTS,
+                    resolution=citation.resolution,
+                    total_candidates=len(candidates),
+                    targets=targets,
+                    next_reference_id=targets[-1].reference_id if targets and start + limit < len(candidates) else None,
+                )
+                if len(protected_json(result)) > 128 * 1024:
+                    raise DocumentRevisionProblem("citation-link-response-limit")
+                return result
+
+            return self._fenced(source, selected)
+
+        return self._bounded(read)
 
     def _read_record(self, anchor_id):
         if not is_uuid_v7(anchor_id):

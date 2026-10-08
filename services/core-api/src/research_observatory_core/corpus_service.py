@@ -36,7 +36,7 @@ from .ports.corpus import CorpusActor, CorpusConnectorQueryResolver, CorpusRepos
 from .ports.corpus_reports import CorpusReportRepository
 from .ports.import_previews import PreviewProblem
 from .ports.reconciliation import ReconciliationConnectorSourceService, ReconciliationSourceService
-from .ports.repositories import IntentRevisionRepository, RepositoryProblem
+from .ports.repositories import IntentRevisionReader, RepositoryProblem
 from .ports.rights import (
     RightsOutputRecheckState,
     RightsPermissionDraft,
@@ -45,7 +45,7 @@ from .ports.rights import (
     RightsRepository,
 )
 from .privacy import PrivacyPolicyProblem, ProjectPrivacyService
-from .projects import ProjectLifecycleProblem, ProjectLifecycleService
+from .projects import ProjectLifecycleProblem, ProjectLifecycleService, _ProjectActionScope
 from .reconciliation.contracts import ReconciliationProblem, SourceAddress, SourceAssertion
 from .research_intents import IntentProblem, validated_workflow_authority
 from .rights_policy import RightsDecision, RightsPolicyRevision, RightsRequest, RightsSubject, RightsUse
@@ -116,7 +116,7 @@ class CorpusService:
         imports: ReconciliationSourceService,
         connectors: ReconciliationConnectorSourceService,
         repository_factory: Callable[[Path, str], CorpusRepository],
-        intent_factory: Callable[[Path, str], IntentRevisionRepository],
+        intent_factory: Callable[[Path, str], IntentRevisionReader],
         actor_id: str,
         connector_query: CorpusConnectorQueryResolver | None = None,
         rights_repository_factory: Callable[[Path, str], RightsRepository] | None = None,
@@ -320,6 +320,7 @@ class CorpusService:
         action: Callable[[CorpusRepository, CorpusActor, str, Path, str], Result],
         *,
         require_write: bool = True,
+        project_scope: _ProjectActionScope | None = None,
     ) -> Result:
         if not isinstance(trace_id, str) or _TRACE.fullmatch(trace_id) is None:
             raise CorpusProblem("corpus-trace-invalid")
@@ -346,7 +347,11 @@ class CorpusService:
             intent_hash = content_hash.removeprefix("sha256:")
             if _HASH.fullmatch(intent_hash) is None:
                 raise CorpusProblem("corpus-intent-unavailable")
-            policy = self._privacy.get(str(path))
+            policy = (
+                self._privacy.get(str(path))
+                if project_scope is None
+                else self._privacy.get(str(path), project_scope=project_scope)
+            )
             if policy.project_id != project_id:
                 raise CorpusProblem("corpus-policy-unavailable")
             policy_hash = fingerprint(policy.model_dump(mode="json", by_alias=True)).removeprefix("sha256:")
@@ -361,7 +366,8 @@ class CorpusService:
             return action(self._repository(path, project_id), actor, revision_id, path, project_id)
 
         try:
-            return self._projects.perform_open_project_action(root=root, require_write=require_write, action=guarded)
+            perform = self._projects.perform_open_project_action if project_scope is None else project_scope.perform
+            return perform(root=root, require_write=require_write, action=guarded)
         except ProjectLifecycleProblem, RepositoryProblem, PrivacyPolicyProblem, IntentProblem:
             raise CorpusProblem("corpus-authority-unavailable") from None
         except RightsProblem as error:

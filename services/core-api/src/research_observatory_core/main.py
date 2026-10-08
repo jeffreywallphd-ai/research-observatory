@@ -77,11 +77,12 @@ from .ports.import_previews import PreviewProblem
 from .ports.object_store import ObjectStore
 from .ports.object_store_keys import ObjectMasterKeyProvider
 from .privacy import ProjectPrivacyService
-from .projects import ProjectLifecycleProblem, ProjectLifecycleService
+from .projects import ProjectLifecycleProblem, ProjectLifecycleService, _ProjectActionScope
 from .provenance import ProvenanceService
 from .repositories import (
     create_sqlite_unit_of_work_factory,
     sqlite_dependency_impact_repository,
+    sqlite_intent_authority_snapshot,
     sqlite_intent_revision_repository,
     sqlite_material_dependency_repository,
     sqlite_privacy_policy_repository,
@@ -291,8 +292,10 @@ class DocumentAttachmentRuntime:
         session_id: str,
         trace_id: str,
         action: Callable[[LocalDocumentAttachmentService, CorpusActor], Result],
+        *,
+        session_stop: Callable[[Callable[[], bool]], None] | None = None,
     ) -> Result:
-        def current() -> Result:
+        def current(project_scope: _ProjectActionScope | None = None) -> Result:
             def authorized(_repository, actor, _intent, path: Path, actual_id: str) -> Result:
                 if actual_id != project_id:
                     raise AttachmentProblem("attachment-authority-changed")
@@ -304,9 +307,19 @@ class DocumentAttachmentRuntime:
             # Corpus owns current researcher, accepted Intent, privacy and
             # write authority. The native session fences close/reopen and
             # project switches throughout this one bounded action.
-            return self._corpus._with_authority(root, trace_id, authorized)
+            if project_scope is None:
+                return self._corpus._with_authority(root, trace_id, authorized)
+            return self._corpus._with_authority(root, trace_id, authorized, project_scope=project_scope)
 
-        return self._imports.in_native_session(root, project_id, session_id, current)
+        if session_stop is None:
+            return self._imports.in_native_session(root, project_id, session_id, current)
+        return self._imports.in_native_scoped_session(
+            root,
+            project_id,
+            session_id,
+            current,
+            session_stop=session_stop,
+        )
 
     def stage(
         self,
@@ -697,7 +710,7 @@ def create_runtime_app(
             report_repository_factory=lambda path, identity: SqliteCorpusReportRepository(
                 path / "state/project.sqlite3", identity
             ),
-            intent_factory=sqlite_intent_revision_repository,
+            intent_factory=sqlite_intent_authority_snapshot,
             actor_id=resolved_actor_id,
             connector_query=ConnectorWorkerQueryResolver(connectors),
             rights_repository_factory=lambda path, identity: SqliteRightsRepository(

@@ -515,6 +515,8 @@ pub(crate) enum NativeDocumentAction {
     AnchorCreate,
     AnchorRead,
     AnchorList,
+    AnchorResolve,
+    CitationLinks,
 }
 
 #[cfg(windows)]
@@ -536,6 +538,8 @@ impl NativeDocumentAction {
             Self::AnchorCreate => "/native/document-revisions/anchor-create",
             Self::AnchorRead => "/native/document-revisions/anchor-read",
             Self::AnchorList => "/native/document-revisions/anchor-list",
+            Self::AnchorResolve => "/native/document-revisions/anchor-resolve",
+            Self::CitationLinks => "/native/document-revisions/citation-links",
         }
     }
 }

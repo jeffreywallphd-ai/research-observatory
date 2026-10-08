@@ -71,7 +71,8 @@
         22,
         23,
         24,
-        25
+        25,
+        26
       ]
     },
     "targetSchemaVersion": {
@@ -81,13 +82,14 @@
         23,
         24,
         25,
-        26
+        26,
+        27
       ]
     },
     "migrationIds": {
       "type": "array",
       "minItems": 1,
-      "maxItems": 25,
+      "maxItems": 26,
       "items": {
         "type": "string"
       }
@@ -118,7 +120,8 @@
         "32dc9a2b87efdd8b69b92271b8b1841e40da07bbc86e9943f59dbe5784f2617e",
         "0d5eb89a3975aa1d95fa4d190ce8debfee2ae43d390669ce8b3acb5f10a1a41e",
         "8078a6f7132200e6cf9e729f116c7b8ad6cd7c2bcf61d56f337e594dc7552a97",
-        "5c2090bb9586117f8f0e521efcb74ab10bd64a855fdcdc943035385cd1742951"
+        "5c2090bb9586117f8f0e521efcb74ab10bd64a855fdcdc943035385cd1742951",
+        "39e3fdd0fffedd2b226f74ebf48190efdecc0e53b9376dfce30e924de2206f2c"
       ]
     },
     "targetSchemaSha256": {
@@ -128,7 +131,8 @@
         "0d5eb89a3975aa1d95fa4d190ce8debfee2ae43d390669ce8b3acb5f10a1a41e",
         "8078a6f7132200e6cf9e729f116c7b8ad6cd7c2bcf61d56f337e594dc7552a97",
         "5c2090bb9586117f8f0e521efcb74ab10bd64a855fdcdc943035385cd1742951",
-        "39e3fdd0fffedd2b226f74ebf48190efdecc0e53b9376dfce30e924de2206f2c"
+        "39e3fdd0fffedd2b226f74ebf48190efdecc0e53b9376dfce30e924de2206f2c",
+        "6dd6d3f62c0236dd3f810a01ac7b88370ba17b483cf3612fde34b82b29ade913"
       ]
     },
     "checkpoint": {
@@ -167,7 +171,7 @@
       "properties": {
         "relativePath": {
           "type": "string",
-          "pattern": "^state/migration-backups/v(?:[1-9]|1[0-9]|2[0-5])-to-v2[1-6]-[0-9a-f]{32}/project\\.sqlite3$"
+          "pattern": "^state/migration-backups/v(?:[1-9]|1[0-9]|2[0-6])-to-v2[1-7]-[0-9a-f]{32}/project\\.sqlite3$"
         },
         "sha256": {
           "type": "string",
@@ -5906,6 +5910,1859 @@
                   "properties": {
                     "relativePath": {
                       "pattern": "^state/migration-backups/v25-to-v26-[0-9a-f]{32}/project\\.sqlite3$"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "targetSchemaVersion": {
+            "const": 27
+          }
+        }
+      },
+      "then": {
+        "allOf": [
+          {
+            "properties": {
+              "targetSchemaSha256": {
+                "const": "6dd6d3f62c0236dd3f810a01ac7b88370ba17b483cf3612fde34b82b29ade913"
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "sourceSchemaVersion": {
+                  "const": 1
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "sourceSchemaSha256": {
+                  "const": "61e5693187250e240f9b6cae573e3b89752ae9b135c6c739d14ff3dfbf6dfdc9"
+                },
+                "migrationIds": {
+                  "prefixItems": [
+                    {
+                      "const": "0002_schema_history"
+                    },
+                    {
+                      "const": "0003_object_envelopes"
+                    },
+                    {
+                      "const": "0004_object_envelope_upgrades"
+                    },
+                    {
+                      "const": "0005_object_creation_source"
+                    },
+                    {
+                      "const": "0006_actor_identity"
+                    },
+                    {
+                      "const": "0007_provenance_ledger"
+                    },
+                    {
+                      "const": "0008_workflow_executor"
+                    },
+                    {
+                      "const": "0009_material_dependencies"
+                    },
+                    {
+                      "const": "0010_dependency_impacts"
+                    },
+                    {
+                      "const": "0011_import_previews"
+                    },
+                    {
+                      "const": "0012_import_summaries"
+                    },
+                    {
+                      "const": "0013_import_commits"
+                    },
+                    {
+                      "const": "0014_scholarly_reconciliation"
+                    },
+                    {
+                      "const": "0015_reconciliation_review"
+                    },
+                    {
+                      "const": "0016_work_versions"
+                    },
+                    {
+                      "const": "0017_corpus_items"
+                    },
+                    {
+                      "const": "0018_rights_policy"
+                    },
+                    {
+                      "const": "0019_corpus_reports"
+                    },
+                    {
+                      "const": "0020_corpus_source_projection"
+                    },
+                    {
+                      "const": "0021_plugin_grants"
+                    },
+                    {
+                      "const": "0022_document_attachments"
+                    },
+                    {
+                      "const": "0023_attachment_operations"
+                    },
+                    {
+                      "const": "0024_open_access_acquisition"
+                    },
+                    {
+                      "const": "0025_document_intake_recovery"
+                    },
+                    {
+                      "const": "0026_document_revisions"
+                    },
+                    {
+                      "const": "0027_revision_invalidations"
+                    }
+                  ],
+                  "minItems": 26,
+                  "maxItems": 26,
+                  "items": false
+                },
+                "backup": {
+                  "properties": {
+                    "relativePath": {
+                      "pattern": "^state/migration-backups/v1-to-v27-[0-9a-f]{32}/project\\.sqlite3$"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "sourceSchemaVersion": {
+                  "const": 2
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "sourceSchemaSha256": {
+                  "const": "afd48fbe857de4172215e9cb61a0f6137e73edec685dcc116bedbb66eb519dda"
+                },
+                "migrationIds": {
+                  "prefixItems": [
+                    {
+                      "const": "0003_object_envelopes"
+                    },
+                    {
+                      "const": "0004_object_envelope_upgrades"
+                    },
+                    {
+                      "const": "0005_object_creation_source"
+                    },
+                    {
+                      "const": "0006_actor_identity"
+                    },
+                    {
+                      "const": "0007_provenance_ledger"
+                    },
+                    {
+                      "const": "0008_workflow_executor"
+                    },
+                    {
+                      "const": "0009_material_dependencies"
+                    },
+                    {
+                      "const": "0010_dependency_impacts"
+                    },
+                    {
+                      "const": "0011_import_previews"
+                    },
+                    {
+                      "const": "0012_import_summaries"
+                    },
+                    {
+                      "const": "0013_import_commits"
+                    },
+                    {
+                      "const": "0014_scholarly_reconciliation"
+                    },
+                    {
+                      "const": "0015_reconciliation_review"
+                    },
+                    {
+                      "const": "0016_work_versions"
+                    },
+                    {
+                      "const": "0017_corpus_items"
+                    },
+                    {
+                      "const": "0018_rights_policy"
+                    },
+                    {
+                      "const": "0019_corpus_reports"
+                    },
+                    {
+                      "const": "0020_corpus_source_projection"
+                    },
+                    {
+                      "const": "0021_plugin_grants"
+                    },
+                    {
+                      "const": "0022_document_attachments"
+                    },
+                    {
+                      "const": "0023_attachment_operations"
+                    },
+                    {
+                      "const": "0024_open_access_acquisition"
+                    },
+                    {
+                      "const": "0025_document_intake_recovery"
+                    },
+                    {
+                      "const": "0026_document_revisions"
+                    },
+                    {
+                      "const": "0027_revision_invalidations"
+                    }
+                  ],
+                  "minItems": 25,
+                  "maxItems": 25,
+                  "items": false
+                },
+                "backup": {
+                  "properties": {
+                    "relativePath": {
+                      "pattern": "^state/migration-backups/v2-to-v27-[0-9a-f]{32}/project\\.sqlite3$"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "sourceSchemaVersion": {
+                  "const": 3
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "sourceSchemaSha256": {
+                  "const": "246ad968bb1931732c827d0739882c0d59ce91a06c7075867c503c0ef52fd356"
+                },
+                "migrationIds": {
+                  "prefixItems": [
+                    {
+                      "const": "0004_object_envelope_upgrades"
+                    },
+                    {
+                      "const": "0005_object_creation_source"
+                    },
+                    {
+                      "const": "0006_actor_identity"
+                    },
+                    {
+                      "const": "0007_provenance_ledger"
+                    },
+                    {
+                      "const": "0008_workflow_executor"
+                    },
+                    {
+                      "const": "0009_material_dependencies"
+                    },
+                    {
+                      "const": "0010_dependency_impacts"
+                    },
+                    {
+                      "const": "0011_import_previews"
+                    },
+                    {
+                      "const": "0012_import_summaries"
+                    },
+                    {
+                      "const": "0013_import_commits"
+                    },
+                    {
+                      "const": "0014_scholarly_reconciliation"
+                    },
+                    {
+                      "const": "0015_reconciliation_review"
+                    },
+                    {
+                      "const": "0016_work_versions"
+                    },
+                    {
+                      "const": "0017_corpus_items"
+                    },
+                    {
+                      "const": "0018_rights_policy"
+                    },
+                    {
+                      "const": "0019_corpus_reports"
+                    },
+                    {
+                      "const": "0020_corpus_source_projection"
+                    },
+                    {
+                      "const": "0021_plugin_grants"
+                    },
+                    {
+                      "const": "0022_document_attachments"
+                    },
+                    {
+                      "const": "0023_attachment_operations"
+                    },
+                    {
+                      "const": "0024_open_access_acquisition"
+                    },
+                    {
+                      "const": "0025_document_intake_recovery"
+                    },
+                    {
+                      "const": "0026_document_revisions"
+                    },
+                    {
+                      "const": "0027_revision_invalidations"
+                    }
+                  ],
+                  "minItems": 24,
+                  "maxItems": 24,
+                  "items": false
+                },
+                "backup": {
+                  "properties": {
+                    "relativePath": {
+                      "pattern": "^state/migration-backups/v3-to-v27-[0-9a-f]{32}/project\\.sqlite3$"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "sourceSchemaVersion": {
+                  "const": 4
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "sourceSchemaSha256": {
+                  "const": "0b957b48a4280c0dd3c3f9ec518ac44b5fff9354e828572cd2af8aa95e496ff6"
+                },
+                "migrationIds": {
+                  "prefixItems": [
+                    {
+                      "const": "0005_object_creation_source"
+                    },
+                    {
+                      "const": "0006_actor_identity"
+                    },
+                    {
+                      "const": "0007_provenance_ledger"
+                    },
+                    {
+                      "const": "0008_workflow_executor"
+                    },
+                    {
+                      "const": "0009_material_dependencies"
+                    },
+                    {
+                      "const": "0010_dependency_impacts"
+                    },
+                    {
+                      "const": "0011_import_previews"
+                    },
+                    {
+                      "const": "0012_import_summaries"
+                    },
+                    {
+                      "const": "0013_import_commits"
+                    },
+                    {
+                      "const": "0014_scholarly_reconciliation"
+                    },
+                    {
+                      "const": "0015_reconciliation_review"
+                    },
+                    {
+                      "const": "0016_work_versions"
+                    },
+                    {
+                      "const": "0017_corpus_items"
+                    },
+                    {
+                      "const": "0018_rights_policy"
+                    },
+                    {
+                      "const": "0019_corpus_reports"
+                    },
+                    {
+                      "const": "0020_corpus_source_projection"
+                    },
+                    {
+                      "const": "0021_plugin_grants"
+                    },
+                    {
+                      "const": "0022_document_attachments"
+                    },
+                    {
+                      "const": "0023_attachment_operations"
+                    },
+                    {
+                      "const": "0024_open_access_acquisition"
+                    },
+                    {
+                      "const": "0025_document_intake_recovery"
+                    },
+                    {
+                      "const": "0026_document_revisions"
+                    },
+                    {
+                      "const": "0027_revision_invalidations"
+                    }
+                  ],
+                  "minItems": 23,
+                  "maxItems": 23,
+                  "items": false
+                },
+                "backup": {
+                  "properties": {
+                    "relativePath": {
+                      "pattern": "^state/migration-backups/v4-to-v27-[0-9a-f]{32}/project\\.sqlite3$"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "sourceSchemaVersion": {
+                  "const": 5
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "sourceSchemaSha256": {
+                  "const": "4d505b3f925e9df09b137cae61b56125878aa84fd0d6cb353e5d415a0602e2fd"
+                },
+                "migrationIds": {
+                  "prefixItems": [
+                    {
+                      "const": "0006_actor_identity"
+                    },
+                    {
+                      "const": "0007_provenance_ledger"
+                    },
+                    {
+                      "const": "0008_workflow_executor"
+                    },
+                    {
+                      "const": "0009_material_dependencies"
+                    },
+                    {
+                      "const": "0010_dependency_impacts"
+                    },
+                    {
+                      "const": "0011_import_previews"
+                    },
+                    {
+                      "const": "0012_import_summaries"
+                    },
+                    {
+                      "const": "0013_import_commits"
+                    },
+                    {
+                      "const": "0014_scholarly_reconciliation"
+                    },
+                    {
+                      "const": "0015_reconciliation_review"
+                    },
+                    {
+                      "const": "0016_work_versions"
+                    },
+                    {
+                      "const": "0017_corpus_items"
+                    },
+                    {
+                      "const": "0018_rights_policy"
+                    },
+                    {
+                      "const": "0019_corpus_reports"
+                    },
+                    {
+                      "const": "0020_corpus_source_projection"
+                    },
+                    {
+                      "const": "0021_plugin_grants"
+                    },
+                    {
+                      "const": "0022_document_attachments"
+                    },
+                    {
+                      "const": "0023_attachment_operations"
+                    },
+                    {
+                      "const": "0024_open_access_acquisition"
+                    },
+                    {
+                      "const": "0025_document_intake_recovery"
+                    },
+                    {
+                      "const": "0026_document_revisions"
+                    },
+                    {
+                      "const": "0027_revision_invalidations"
+                    }
+                  ],
+                  "minItems": 22,
+                  "maxItems": 22,
+                  "items": false
+                },
+                "backup": {
+                  "properties": {
+                    "relativePath": {
+                      "pattern": "^state/migration-backups/v5-to-v27-[0-9a-f]{32}/project\\.sqlite3$"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "sourceSchemaVersion": {
+                  "const": 6
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "sourceSchemaSha256": {
+                  "const": "11856aa1b328924596692f08acce368ffbb8798441353fe6a76036329460a7d4"
+                },
+                "migrationIds": {
+                  "prefixItems": [
+                    {
+                      "const": "0007_provenance_ledger"
+                    },
+                    {
+                      "const": "0008_workflow_executor"
+                    },
+                    {
+                      "const": "0009_material_dependencies"
+                    },
+                    {
+                      "const": "0010_dependency_impacts"
+                    },
+                    {
+                      "const": "0011_import_previews"
+                    },
+                    {
+                      "const": "0012_import_summaries"
+                    },
+                    {
+                      "const": "0013_import_commits"
+                    },
+                    {
+                      "const": "0014_scholarly_reconciliation"
+                    },
+                    {
+                      "const": "0015_reconciliation_review"
+                    },
+                    {
+                      "const": "0016_work_versions"
+                    },
+                    {
+                      "const": "0017_corpus_items"
+                    },
+                    {
+                      "const": "0018_rights_policy"
+                    },
+                    {
+                      "const": "0019_corpus_reports"
+                    },
+                    {
+                      "const": "0020_corpus_source_projection"
+                    },
+                    {
+                      "const": "0021_plugin_grants"
+                    },
+                    {
+                      "const": "0022_document_attachments"
+                    },
+                    {
+                      "const": "0023_attachment_operations"
+                    },
+                    {
+                      "const": "0024_open_access_acquisition"
+                    },
+                    {
+                      "const": "0025_document_intake_recovery"
+                    },
+                    {
+                      "const": "0026_document_revisions"
+                    },
+                    {
+                      "const": "0027_revision_invalidations"
+                    }
+                  ],
+                  "minItems": 21,
+                  "maxItems": 21,
+                  "items": false
+                },
+                "backup": {
+                  "properties": {
+                    "relativePath": {
+                      "pattern": "^state/migration-backups/v6-to-v27-[0-9a-f]{32}/project\\.sqlite3$"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "sourceSchemaVersion": {
+                  "const": 7
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "sourceSchemaSha256": {
+                  "const": "49329a82e7ade17d57f09a33e650d81e1b3b1d67dc6e4e3b4c8a79d24b6f7475"
+                },
+                "migrationIds": {
+                  "prefixItems": [
+                    {
+                      "const": "0008_workflow_executor"
+                    },
+                    {
+                      "const": "0009_material_dependencies"
+                    },
+                    {
+                      "const": "0010_dependency_impacts"
+                    },
+                    {
+                      "const": "0011_import_previews"
+                    },
+                    {
+                      "const": "0012_import_summaries"
+                    },
+                    {
+                      "const": "0013_import_commits"
+                    },
+                    {
+                      "const": "0014_scholarly_reconciliation"
+                    },
+                    {
+                      "const": "0015_reconciliation_review"
+                    },
+                    {
+                      "const": "0016_work_versions"
+                    },
+                    {
+                      "const": "0017_corpus_items"
+                    },
+                    {
+                      "const": "0018_rights_policy"
+                    },
+                    {
+                      "const": "0019_corpus_reports"
+                    },
+                    {
+                      "const": "0020_corpus_source_projection"
+                    },
+                    {
+                      "const": "0021_plugin_grants"
+                    },
+                    {
+                      "const": "0022_document_attachments"
+                    },
+                    {
+                      "const": "0023_attachment_operations"
+                    },
+                    {
+                      "const": "0024_open_access_acquisition"
+                    },
+                    {
+                      "const": "0025_document_intake_recovery"
+                    },
+                    {
+                      "const": "0026_document_revisions"
+                    },
+                    {
+                      "const": "0027_revision_invalidations"
+                    }
+                  ],
+                  "minItems": 20,
+                  "maxItems": 20,
+                  "items": false
+                },
+                "backup": {
+                  "properties": {
+                    "relativePath": {
+                      "pattern": "^state/migration-backups/v7-to-v27-[0-9a-f]{32}/project\\.sqlite3$"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "sourceSchemaVersion": {
+                  "const": 8
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "sourceSchemaSha256": {
+                  "const": "1f5d94ac9a17732c72405fdda945df75d1558c444eaf7b6a5dcf286a50443b04"
+                },
+                "migrationIds": {
+                  "prefixItems": [
+                    {
+                      "const": "0009_material_dependencies"
+                    },
+                    {
+                      "const": "0010_dependency_impacts"
+                    },
+                    {
+                      "const": "0011_import_previews"
+                    },
+                    {
+                      "const": "0012_import_summaries"
+                    },
+                    {
+                      "const": "0013_import_commits"
+                    },
+                    {
+                      "const": "0014_scholarly_reconciliation"
+                    },
+                    {
+                      "const": "0015_reconciliation_review"
+                    },
+                    {
+                      "const": "0016_work_versions"
+                    },
+                    {
+                      "const": "0017_corpus_items"
+                    },
+                    {
+                      "const": "0018_rights_policy"
+                    },
+                    {
+                      "const": "0019_corpus_reports"
+                    },
+                    {
+                      "const": "0020_corpus_source_projection"
+                    },
+                    {
+                      "const": "0021_plugin_grants"
+                    },
+                    {
+                      "const": "0022_document_attachments"
+                    },
+                    {
+                      "const": "0023_attachment_operations"
+                    },
+                    {
+                      "const": "0024_open_access_acquisition"
+                    },
+                    {
+                      "const": "0025_document_intake_recovery"
+                    },
+                    {
+                      "const": "0026_document_revisions"
+                    },
+                    {
+                      "const": "0027_revision_invalidations"
+                    }
+                  ],
+                  "minItems": 19,
+                  "maxItems": 19,
+                  "items": false
+                },
+                "backup": {
+                  "properties": {
+                    "relativePath": {
+                      "pattern": "^state/migration-backups/v8-to-v27-[0-9a-f]{32}/project\\.sqlite3$"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "sourceSchemaVersion": {
+                  "const": 9
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "sourceSchemaSha256": {
+                  "const": "a1f8087eda44532e269d19adfc6ee90591e00ca7a69be0ddab0db7c84744d2cc"
+                },
+                "migrationIds": {
+                  "prefixItems": [
+                    {
+                      "const": "0010_dependency_impacts"
+                    },
+                    {
+                      "const": "0011_import_previews"
+                    },
+                    {
+                      "const": "0012_import_summaries"
+                    },
+                    {
+                      "const": "0013_import_commits"
+                    },
+                    {
+                      "const": "0014_scholarly_reconciliation"
+                    },
+                    {
+                      "const": "0015_reconciliation_review"
+                    },
+                    {
+                      "const": "0016_work_versions"
+                    },
+                    {
+                      "const": "0017_corpus_items"
+                    },
+                    {
+                      "const": "0018_rights_policy"
+                    },
+                    {
+                      "const": "0019_corpus_reports"
+                    },
+                    {
+                      "const": "0020_corpus_source_projection"
+                    },
+                    {
+                      "const": "0021_plugin_grants"
+                    },
+                    {
+                      "const": "0022_document_attachments"
+                    },
+                    {
+                      "const": "0023_attachment_operations"
+                    },
+                    {
+                      "const": "0024_open_access_acquisition"
+                    },
+                    {
+                      "const": "0025_document_intake_recovery"
+                    },
+                    {
+                      "const": "0026_document_revisions"
+                    },
+                    {
+                      "const": "0027_revision_invalidations"
+                    }
+                  ],
+                  "minItems": 18,
+                  "maxItems": 18,
+                  "items": false
+                },
+                "backup": {
+                  "properties": {
+                    "relativePath": {
+                      "pattern": "^state/migration-backups/v9-to-v27-[0-9a-f]{32}/project\\.sqlite3$"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "sourceSchemaVersion": {
+                  "const": 10
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "sourceSchemaSha256": {
+                  "const": "49459b9ca8e54d27ad45abf16615946107a8d73e1ba8e211f1c45bc8fa230187"
+                },
+                "migrationIds": {
+                  "prefixItems": [
+                    {
+                      "const": "0011_import_previews"
+                    },
+                    {
+                      "const": "0012_import_summaries"
+                    },
+                    {
+                      "const": "0013_import_commits"
+                    },
+                    {
+                      "const": "0014_scholarly_reconciliation"
+                    },
+                    {
+                      "const": "0015_reconciliation_review"
+                    },
+                    {
+                      "const": "0016_work_versions"
+                    },
+                    {
+                      "const": "0017_corpus_items"
+                    },
+                    {
+                      "const": "0018_rights_policy"
+                    },
+                    {
+                      "const": "0019_corpus_reports"
+                    },
+                    {
+                      "const": "0020_corpus_source_projection"
+                    },
+                    {
+                      "const": "0021_plugin_grants"
+                    },
+                    {
+                      "const": "0022_document_attachments"
+                    },
+                    {
+                      "const": "0023_attachment_operations"
+                    },
+                    {
+                      "const": "0024_open_access_acquisition"
+                    },
+                    {
+                      "const": "0025_document_intake_recovery"
+                    },
+                    {
+                      "const": "0026_document_revisions"
+                    },
+                    {
+                      "const": "0027_revision_invalidations"
+                    }
+                  ],
+                  "minItems": 17,
+                  "maxItems": 17,
+                  "items": false
+                },
+                "backup": {
+                  "properties": {
+                    "relativePath": {
+                      "pattern": "^state/migration-backups/v10-to-v27-[0-9a-f]{32}/project\\.sqlite3$"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "sourceSchemaVersion": {
+                  "const": 11
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "sourceSchemaSha256": {
+                  "const": "33f607dea1a2b20e0d1b451cafdbcaa5d1bb58e1b91499525adad40bc5a8f5c0"
+                },
+                "migrationIds": {
+                  "prefixItems": [
+                    {
+                      "const": "0012_import_summaries"
+                    },
+                    {
+                      "const": "0013_import_commits"
+                    },
+                    {
+                      "const": "0014_scholarly_reconciliation"
+                    },
+                    {
+                      "const": "0015_reconciliation_review"
+                    },
+                    {
+                      "const": "0016_work_versions"
+                    },
+                    {
+                      "const": "0017_corpus_items"
+                    },
+                    {
+                      "const": "0018_rights_policy"
+                    },
+                    {
+                      "const": "0019_corpus_reports"
+                    },
+                    {
+                      "const": "0020_corpus_source_projection"
+                    },
+                    {
+                      "const": "0021_plugin_grants"
+                    },
+                    {
+                      "const": "0022_document_attachments"
+                    },
+                    {
+                      "const": "0023_attachment_operations"
+                    },
+                    {
+                      "const": "0024_open_access_acquisition"
+                    },
+                    {
+                      "const": "0025_document_intake_recovery"
+                    },
+                    {
+                      "const": "0026_document_revisions"
+                    },
+                    {
+                      "const": "0027_revision_invalidations"
+                    }
+                  ],
+                  "minItems": 16,
+                  "maxItems": 16,
+                  "items": false
+                },
+                "backup": {
+                  "properties": {
+                    "relativePath": {
+                      "pattern": "^state/migration-backups/v11-to-v27-[0-9a-f]{32}/project\\.sqlite3$"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "sourceSchemaVersion": {
+                  "const": 12
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "sourceSchemaSha256": {
+                  "const": "42a9886d0b9d132071cebe3170d12b46a048148f9c69dcf624178d4f281840fa"
+                },
+                "migrationIds": {
+                  "prefixItems": [
+                    {
+                      "const": "0013_import_commits"
+                    },
+                    {
+                      "const": "0014_scholarly_reconciliation"
+                    },
+                    {
+                      "const": "0015_reconciliation_review"
+                    },
+                    {
+                      "const": "0016_work_versions"
+                    },
+                    {
+                      "const": "0017_corpus_items"
+                    },
+                    {
+                      "const": "0018_rights_policy"
+                    },
+                    {
+                      "const": "0019_corpus_reports"
+                    },
+                    {
+                      "const": "0020_corpus_source_projection"
+                    },
+                    {
+                      "const": "0021_plugin_grants"
+                    },
+                    {
+                      "const": "0022_document_attachments"
+                    },
+                    {
+                      "const": "0023_attachment_operations"
+                    },
+                    {
+                      "const": "0024_open_access_acquisition"
+                    },
+                    {
+                      "const": "0025_document_intake_recovery"
+                    },
+                    {
+                      "const": "0026_document_revisions"
+                    },
+                    {
+                      "const": "0027_revision_invalidations"
+                    }
+                  ],
+                  "minItems": 15,
+                  "maxItems": 15,
+                  "items": false
+                },
+                "backup": {
+                  "properties": {
+                    "relativePath": {
+                      "pattern": "^state/migration-backups/v12-to-v27-[0-9a-f]{32}/project\\.sqlite3$"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "sourceSchemaVersion": {
+                  "const": 13
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "sourceSchemaSha256": {
+                  "const": "13e54503130f8e40036beed26659c5bda2787928c56444987619366e4310b064"
+                },
+                "migrationIds": {
+                  "prefixItems": [
+                    {
+                      "const": "0014_scholarly_reconciliation"
+                    },
+                    {
+                      "const": "0015_reconciliation_review"
+                    },
+                    {
+                      "const": "0016_work_versions"
+                    },
+                    {
+                      "const": "0017_corpus_items"
+                    },
+                    {
+                      "const": "0018_rights_policy"
+                    },
+                    {
+                      "const": "0019_corpus_reports"
+                    },
+                    {
+                      "const": "0020_corpus_source_projection"
+                    },
+                    {
+                      "const": "0021_plugin_grants"
+                    },
+                    {
+                      "const": "0022_document_attachments"
+                    },
+                    {
+                      "const": "0023_attachment_operations"
+                    },
+                    {
+                      "const": "0024_open_access_acquisition"
+                    },
+                    {
+                      "const": "0025_document_intake_recovery"
+                    },
+                    {
+                      "const": "0026_document_revisions"
+                    },
+                    {
+                      "const": "0027_revision_invalidations"
+                    }
+                  ],
+                  "minItems": 14,
+                  "maxItems": 14,
+                  "items": false
+                },
+                "backup": {
+                  "properties": {
+                    "relativePath": {
+                      "pattern": "^state/migration-backups/v13-to-v27-[0-9a-f]{32}/project\\.sqlite3$"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "sourceSchemaVersion": {
+                  "const": 14
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "sourceSchemaSha256": {
+                  "const": "4b8b87b1024b855fa1eee932b41b9d4a8d8492823b17968eb3d17eda24b5ccb2"
+                },
+                "migrationIds": {
+                  "prefixItems": [
+                    {
+                      "const": "0015_reconciliation_review"
+                    },
+                    {
+                      "const": "0016_work_versions"
+                    },
+                    {
+                      "const": "0017_corpus_items"
+                    },
+                    {
+                      "const": "0018_rights_policy"
+                    },
+                    {
+                      "const": "0019_corpus_reports"
+                    },
+                    {
+                      "const": "0020_corpus_source_projection"
+                    },
+                    {
+                      "const": "0021_plugin_grants"
+                    },
+                    {
+                      "const": "0022_document_attachments"
+                    },
+                    {
+                      "const": "0023_attachment_operations"
+                    },
+                    {
+                      "const": "0024_open_access_acquisition"
+                    },
+                    {
+                      "const": "0025_document_intake_recovery"
+                    },
+                    {
+                      "const": "0026_document_revisions"
+                    },
+                    {
+                      "const": "0027_revision_invalidations"
+                    }
+                  ],
+                  "minItems": 13,
+                  "maxItems": 13,
+                  "items": false
+                },
+                "backup": {
+                  "properties": {
+                    "relativePath": {
+                      "pattern": "^state/migration-backups/v14-to-v27-[0-9a-f]{32}/project\\.sqlite3$"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "sourceSchemaVersion": {
+                  "const": 15
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "sourceSchemaSha256": {
+                  "const": "6361c684264358e94c19c90bd67f6f2d47eda21c107d1012a3f86b5cf2faf949"
+                },
+                "migrationIds": {
+                  "prefixItems": [
+                    {
+                      "const": "0016_work_versions"
+                    },
+                    {
+                      "const": "0017_corpus_items"
+                    },
+                    {
+                      "const": "0018_rights_policy"
+                    },
+                    {
+                      "const": "0019_corpus_reports"
+                    },
+                    {
+                      "const": "0020_corpus_source_projection"
+                    },
+                    {
+                      "const": "0021_plugin_grants"
+                    },
+                    {
+                      "const": "0022_document_attachments"
+                    },
+                    {
+                      "const": "0023_attachment_operations"
+                    },
+                    {
+                      "const": "0024_open_access_acquisition"
+                    },
+                    {
+                      "const": "0025_document_intake_recovery"
+                    },
+                    {
+                      "const": "0026_document_revisions"
+                    },
+                    {
+                      "const": "0027_revision_invalidations"
+                    }
+                  ],
+                  "minItems": 12,
+                  "maxItems": 12,
+                  "items": false
+                },
+                "backup": {
+                  "properties": {
+                    "relativePath": {
+                      "pattern": "^state/migration-backups/v15-to-v27-[0-9a-f]{32}/project\\.sqlite3$"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "sourceSchemaVersion": {
+                  "const": 16
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "sourceSchemaSha256": {
+                  "const": "faa1dcd5823f086986ea3a86a8cc85369edd826f2a0c1d724f923bdff9f293f5"
+                },
+                "migrationIds": {
+                  "prefixItems": [
+                    {
+                      "const": "0017_corpus_items"
+                    },
+                    {
+                      "const": "0018_rights_policy"
+                    },
+                    {
+                      "const": "0019_corpus_reports"
+                    },
+                    {
+                      "const": "0020_corpus_source_projection"
+                    },
+                    {
+                      "const": "0021_plugin_grants"
+                    },
+                    {
+                      "const": "0022_document_attachments"
+                    },
+                    {
+                      "const": "0023_attachment_operations"
+                    },
+                    {
+                      "const": "0024_open_access_acquisition"
+                    },
+                    {
+                      "const": "0025_document_intake_recovery"
+                    },
+                    {
+                      "const": "0026_document_revisions"
+                    },
+                    {
+                      "const": "0027_revision_invalidations"
+                    }
+                  ],
+                  "minItems": 11,
+                  "maxItems": 11,
+                  "items": false
+                },
+                "backup": {
+                  "properties": {
+                    "relativePath": {
+                      "pattern": "^state/migration-backups/v16-to-v27-[0-9a-f]{32}/project\\.sqlite3$"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "sourceSchemaVersion": {
+                  "const": 17
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "sourceSchemaSha256": {
+                  "const": "bb068798493011b7b2300c076e9f129443fe15939aabdf16dc62af33ac6a7945"
+                },
+                "migrationIds": {
+                  "prefixItems": [
+                    {
+                      "const": "0018_rights_policy"
+                    },
+                    {
+                      "const": "0019_corpus_reports"
+                    },
+                    {
+                      "const": "0020_corpus_source_projection"
+                    },
+                    {
+                      "const": "0021_plugin_grants"
+                    },
+                    {
+                      "const": "0022_document_attachments"
+                    },
+                    {
+                      "const": "0023_attachment_operations"
+                    },
+                    {
+                      "const": "0024_open_access_acquisition"
+                    },
+                    {
+                      "const": "0025_document_intake_recovery"
+                    },
+                    {
+                      "const": "0026_document_revisions"
+                    },
+                    {
+                      "const": "0027_revision_invalidations"
+                    }
+                  ],
+                  "minItems": 10,
+                  "maxItems": 10,
+                  "items": false
+                },
+                "backup": {
+                  "properties": {
+                    "relativePath": {
+                      "pattern": "^state/migration-backups/v17-to-v27-[0-9a-f]{32}/project\\.sqlite3$"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "sourceSchemaVersion": {
+                  "const": 18
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "sourceSchemaSha256": {
+                  "const": "a9812a5fad0394652a070b3fd8466961eb3e88a928965d56e89d57008b89b503"
+                },
+                "migrationIds": {
+                  "prefixItems": [
+                    {
+                      "const": "0019_corpus_reports"
+                    },
+                    {
+                      "const": "0020_corpus_source_projection"
+                    },
+                    {
+                      "const": "0021_plugin_grants"
+                    },
+                    {
+                      "const": "0022_document_attachments"
+                    },
+                    {
+                      "const": "0023_attachment_operations"
+                    },
+                    {
+                      "const": "0024_open_access_acquisition"
+                    },
+                    {
+                      "const": "0025_document_intake_recovery"
+                    },
+                    {
+                      "const": "0026_document_revisions"
+                    },
+                    {
+                      "const": "0027_revision_invalidations"
+                    }
+                  ],
+                  "minItems": 9,
+                  "maxItems": 9,
+                  "items": false
+                },
+                "backup": {
+                  "properties": {
+                    "relativePath": {
+                      "pattern": "^state/migration-backups/v18-to-v27-[0-9a-f]{32}/project\\.sqlite3$"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "sourceSchemaVersion": {
+                  "const": 19
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "sourceSchemaSha256": {
+                  "const": "829684b8a5274b6666400c2719ea9302384a8bdd01024b8f952b49a834ae52ba"
+                },
+                "migrationIds": {
+                  "prefixItems": [
+                    {
+                      "const": "0020_corpus_source_projection"
+                    },
+                    {
+                      "const": "0021_plugin_grants"
+                    },
+                    {
+                      "const": "0022_document_attachments"
+                    },
+                    {
+                      "const": "0023_attachment_operations"
+                    },
+                    {
+                      "const": "0024_open_access_acquisition"
+                    },
+                    {
+                      "const": "0025_document_intake_recovery"
+                    },
+                    {
+                      "const": "0026_document_revisions"
+                    },
+                    {
+                      "const": "0027_revision_invalidations"
+                    }
+                  ],
+                  "minItems": 8,
+                  "maxItems": 8,
+                  "items": false
+                },
+                "backup": {
+                  "properties": {
+                    "relativePath": {
+                      "pattern": "^state/migration-backups/v19-to-v27-[0-9a-f]{32}/project\\.sqlite3$"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "sourceSchemaVersion": {
+                  "const": 20
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "sourceSchemaSha256": {
+                  "const": "c6bdef5f65d5f688747a1effed96f3cd79556e37891946e1985841bce4ae1cd6"
+                },
+                "migrationIds": {
+                  "prefixItems": [
+                    {
+                      "const": "0021_plugin_grants"
+                    },
+                    {
+                      "const": "0022_document_attachments"
+                    },
+                    {
+                      "const": "0023_attachment_operations"
+                    },
+                    {
+                      "const": "0024_open_access_acquisition"
+                    },
+                    {
+                      "const": "0025_document_intake_recovery"
+                    },
+                    {
+                      "const": "0026_document_revisions"
+                    },
+                    {
+                      "const": "0027_revision_invalidations"
+                    }
+                  ],
+                  "minItems": 7,
+                  "maxItems": 7,
+                  "items": false
+                },
+                "backup": {
+                  "properties": {
+                    "relativePath": {
+                      "pattern": "^state/migration-backups/v20-to-v27-[0-9a-f]{32}/project\\.sqlite3$"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "sourceSchemaVersion": {
+                  "const": 21
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "sourceSchemaSha256": {
+                  "const": "c0aa9be9916fbe517f1ae94a86aeac13f19a92ec366b1a4d4d816bff614da034"
+                },
+                "migrationIds": {
+                  "prefixItems": [
+                    {
+                      "const": "0022_document_attachments"
+                    },
+                    {
+                      "const": "0023_attachment_operations"
+                    },
+                    {
+                      "const": "0024_open_access_acquisition"
+                    },
+                    {
+                      "const": "0025_document_intake_recovery"
+                    },
+                    {
+                      "const": "0026_document_revisions"
+                    },
+                    {
+                      "const": "0027_revision_invalidations"
+                    }
+                  ],
+                  "minItems": 6,
+                  "maxItems": 6,
+                  "items": false
+                },
+                "backup": {
+                  "properties": {
+                    "relativePath": {
+                      "pattern": "^state/migration-backups/v21-to-v27-[0-9a-f]{32}/project\\.sqlite3$"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "sourceSchemaVersion": {
+                  "const": 22
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "sourceSchemaSha256": {
+                  "const": "32dc9a2b87efdd8b69b92271b8b1841e40da07bbc86e9943f59dbe5784f2617e"
+                },
+                "migrationIds": {
+                  "prefixItems": [
+                    {
+                      "const": "0023_attachment_operations"
+                    },
+                    {
+                      "const": "0024_open_access_acquisition"
+                    },
+                    {
+                      "const": "0025_document_intake_recovery"
+                    },
+                    {
+                      "const": "0026_document_revisions"
+                    },
+                    {
+                      "const": "0027_revision_invalidations"
+                    }
+                  ],
+                  "minItems": 5,
+                  "maxItems": 5,
+                  "items": false
+                },
+                "backup": {
+                  "properties": {
+                    "relativePath": {
+                      "pattern": "^state/migration-backups/v22-to-v27-[0-9a-f]{32}/project\\.sqlite3$"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "sourceSchemaVersion": {
+                  "const": 23
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "sourceSchemaSha256": {
+                  "const": "0d5eb89a3975aa1d95fa4d190ce8debfee2ae43d390669ce8b3acb5f10a1a41e"
+                },
+                "migrationIds": {
+                  "prefixItems": [
+                    {
+                      "const": "0024_open_access_acquisition"
+                    },
+                    {
+                      "const": "0025_document_intake_recovery"
+                    },
+                    {
+                      "const": "0026_document_revisions"
+                    },
+                    {
+                      "const": "0027_revision_invalidations"
+                    }
+                  ],
+                  "minItems": 4,
+                  "maxItems": 4,
+                  "items": false
+                },
+                "backup": {
+                  "properties": {
+                    "relativePath": {
+                      "pattern": "^state/migration-backups/v23-to-v27-[0-9a-f]{32}/project\\.sqlite3$"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "sourceSchemaVersion": {
+                  "const": 24
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "sourceSchemaSha256": {
+                  "const": "8078a6f7132200e6cf9e729f116c7b8ad6cd7c2bcf61d56f337e594dc7552a97"
+                },
+                "migrationIds": {
+                  "prefixItems": [
+                    {
+                      "const": "0025_document_intake_recovery"
+                    },
+                    {
+                      "const": "0026_document_revisions"
+                    },
+                    {
+                      "const": "0027_revision_invalidations"
+                    }
+                  ],
+                  "minItems": 3,
+                  "maxItems": 3,
+                  "items": false
+                },
+                "backup": {
+                  "properties": {
+                    "relativePath": {
+                      "pattern": "^state/migration-backups/v24-to-v27-[0-9a-f]{32}/project\\.sqlite3$"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "sourceSchemaVersion": {
+                  "const": 25
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "sourceSchemaSha256": {
+                  "const": "5c2090bb9586117f8f0e521efcb74ab10bd64a855fdcdc943035385cd1742951"
+                },
+                "migrationIds": {
+                  "prefixItems": [
+                    {
+                      "const": "0026_document_revisions"
+                    },
+                    {
+                      "const": "0027_revision_invalidations"
+                    }
+                  ],
+                  "minItems": 2,
+                  "maxItems": 2,
+                  "items": false
+                },
+                "backup": {
+                  "properties": {
+                    "relativePath": {
+                      "pattern": "^state/migration-backups/v25-to-v27-[0-9a-f]{32}/project\\.sqlite3$"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "sourceSchemaVersion": {
+                  "const": 26
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "sourceSchemaSha256": {
+                  "const": "39e3fdd0fffedd2b226f74ebf48190efdecc0e53b9376dfce30e924de2206f2c"
+                },
+                "migrationIds": {
+                  "prefixItems": [
+                    {
+                      "const": "0027_revision_invalidations"
+                    }
+                  ],
+                  "minItems": 1,
+                  "maxItems": 1,
+                  "items": false
+                },
+                "backup": {
+                  "properties": {
+                    "relativePath": {
+                      "pattern": "^state/migration-backups/v26-to-v27-[0-9a-f]{32}/project\\.sqlite3$"
                     }
                   }
                 }

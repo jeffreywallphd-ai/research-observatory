@@ -26,6 +26,7 @@ from .dependency_impacts import (
     conditional_decision_authority_document,
     dependency_change_authority_document,
     plan_dependency_impact,
+    revision_invalidation,
     validate_dependency_impact_limits,
 )
 from .domain_contracts import is_uuid_v7, new_uuid_v7
@@ -51,6 +52,7 @@ from .ports.repositories import (
     IntentPolicyAuditEvent,
     IntentPolicyDecisionRecord,
     IntentProjectIdentity,
+    IntentRevisionReader,
     IntentRevisionRecord,
     IntentRevisionRepository,
     KnowledgeStatus,
@@ -119,7 +121,12 @@ from .provenance import (
     canonical_invalidation_provenance_event,
     canonical_workflow_completion_provenance_event,
 )
-from .provenance_contracts import canonical_provenance_json, decode_provenance_event, provenance_record_sha256
+from .provenance_contracts import (
+    canonical_provenance_json,
+    canonical_provenance_record,
+    decode_provenance_event,
+    provenance_record_sha256,
+)
 from .recalculation_contracts import (
     RecalculationAuthority,
     RecalculationCandidateCommit,
@@ -457,16 +464,21 @@ class _SqliteIntentRevisionRepository(IntentRevisionRepository):
         return open_canonical_database(self._database, expected_project_id=self._project_id)
 
     def project_identity(self) -> IntentProjectIdentity | None:
-        """Read the retained ADR-0013 bridge, without equating v4/v7 identities."""
         try:
             connection = self._open()
             try:
-                rows = connection.execute(
-                    "SELECT revision, value_type, text_value FROM settings WHERE project_id=? AND setting_key=?",
-                    (self._project_id, _INTENT_BRIDGE_KEY),
-                ).fetchall()
+                return self._project_identity_from_connection(connection)
             finally:
                 connection.close()
+        except OSError, sqlite3.Error, StorageProblem, TypeError, ValueError, IndexError:
+            raise _transaction_failure("research intent bridge is invalid") from None
+
+    def _project_identity_from_connection(self, connection: CanonicalConnection) -> IntentProjectIdentity | None:
+        try:
+            rows = connection.execute(
+                "SELECT revision, value_type, text_value FROM settings WHERE project_id=? AND setting_key=?",
+                (self._project_id, _INTENT_BRIDGE_KEY),
+            ).fetchall()
             if not rows:
                 return None
             if len(rows) != 1 or rows[0][0] != 0 or rows[0][1] != "text":
@@ -489,18 +501,24 @@ class _SqliteIntentRevisionRepository(IntentRevisionRepository):
         try:
             connection = self._open()
             try:
-                bridge = connection.execute(
-                    "SELECT revision, value_type, text_value FROM settings "
-                    "WHERE project_id=? AND setting_key=? ORDER BY revision",
-                    (self._project_id, _INTENT_BRIDGE_KEY),
-                ).fetchall()
-                rows = connection.execute(
-                    "SELECT revision, value_type, text_value FROM settings "
-                    "WHERE project_id=? AND setting_key=? ORDER BY revision DESC LIMIT 100",
-                    (self._project_id, _INTENT_REVISION_KEY),
-                ).fetchall()
+                return self._read_from_connection(connection)
             finally:
                 connection.close()
+        except OSError, sqlite3.Error, StorageProblem, TypeError, ValueError, IndexError:
+            raise _transaction_failure("research intent read failed") from None
+
+    def _read_from_connection(self, connection: CanonicalConnection) -> tuple[IntentRevisionRecord, ...]:
+        try:
+            bridge = connection.execute(
+                "SELECT revision, value_type, text_value FROM settings "
+                "WHERE project_id=? AND setting_key=? ORDER BY revision",
+                (self._project_id, _INTENT_BRIDGE_KEY),
+            ).fetchall()
+            rows = connection.execute(
+                "SELECT revision, value_type, text_value FROM settings "
+                "WHERE project_id=? AND setting_key=? ORDER BY revision DESC LIMIT 100",
+                (self._project_id, _INTENT_REVISION_KEY),
+            ).fetchall()
         except OSError, sqlite3.Error, StorageProblem, TypeError, ValueError, IndexError:
             raise _transaction_failure("research intent read failed") from None
         if not rows:
@@ -541,96 +559,102 @@ class _SqliteIntentRevisionRepository(IntentRevisionRepository):
         try:
             connection = self._open()
             try:
-                activation_rows = connection.execute(
-                    "SELECT revision, value_type, text_value FROM settings "
-                    "WHERE project_id=? AND setting_key=? ORDER BY revision",
-                    (self._project_id, _INTENT_WORKFLOW_AUTHORITY_KEY),
-                ).fetchall()
-                if len(activation_rows) > 1:
-                    raise ValueError("workflow authority activation is ambiguous")
-                activation: WorkflowAuthorityRecord | None = None
-                if activation_rows:
-                    revision, value_type, content_json = activation_rows[0]
-                    if (
-                        revision != 0
-                        or value_type != "text"
-                        or not isinstance(content_json, str)
-                        or len(content_json.encode("utf-8")) > 262_144
-                        or not isinstance(json.loads(content_json), dict)
-                    ):
-                        raise ValueError("workflow authority activation is invalid")
-                    activation = WorkflowAuthorityRecord(revision=revision, content_json=content_json)
-                witness_rows = connection.execute(
-                    "SELECT event_id, occurred_at, actor_type, actor_id, record_sha256 "
-                    "FROM provenance_events WHERE project_id=? AND event_type='workflow.profile.activated'",
-                    (self._project_id,),
-                ).fetchall()
-                if len(witness_rows) > 1:
-                    raise ValueError("workflow authority witness is ambiguous")
-                activation_witness: WorkflowAuthorityWitness | None = None
-                if witness_rows:
-                    event_id, occurred_at, actor_type, actor_id, record_sha256 = witness_rows[0]
-                    if (
-                        not is_uuid_v7(event_id)
-                        or not isinstance(occurred_at, str)
-                        or actor_type != "human"
-                        or not is_uuid_v7(actor_id)
-                        or not isinstance(record_sha256, str)
-                        or len(record_sha256) != 64
-                    ):
-                        raise ValueError("workflow authority witness is invalid")
-                    activation_witness = WorkflowAuthorityWitness(
-                        event_id=event_id,
-                        occurred_at=occurred_at,
-                        actor_id=actor_id,
-                        record_sha256=record_sha256,
-                    )
-                values: dict[str, tuple[WorkflowAuthorityRecord, ...]] = {}
-                for key in (_WORKFLOW_SELECTION_KEY, _WORKFLOW_MIGRATION_KEY, _WORKFLOW_ACCEPTANCE_KEY):
-                    rows = connection.execute(
-                        "SELECT revision, value_type, text_value FROM settings "
-                        "WHERE project_id=? AND setting_key=? ORDER BY revision",
-                        (self._project_id, key),
-                    ).fetchall()
-                    records: list[WorkflowAuthorityRecord] = []
-                    for revision, value_type, content_json in rows:
-                        if (
-                            not isinstance(revision, int)
-                            or revision < 1
-                            or value_type != "text"
-                            or not isinstance(content_json, str)
-                            or len(content_json.encode("utf-8")) > 262_144
-                        ):
-                            raise ValueError("workflow authority record is invalid")
-                        value = json.loads(content_json)
-                        if not isinstance(value, dict):
-                            raise ValueError("workflow authority record is invalid")
-                        records.append(WorkflowAuthorityRecord(revision=revision, content_json=content_json))
-                    values[key] = tuple(records)
-                stage_rows = connection.execute(
-                    "SELECT revision, value_type, text_value FROM settings "
-                    "WHERE project_id=? AND setting_key=? ORDER BY revision",
-                    (self._project_id, _WORKFLOW_STAGE_STATE_KEY),
-                ).fetchall()
-                stage_states: list[WorkflowStageStateRecord] = []
-                for storage_revision, value_type, content_json in stage_rows:
-                    if (
-                        not isinstance(storage_revision, int)
-                        or storage_revision < 1
-                        or value_type != "text"
-                        or not isinstance(content_json, str)
-                        or len(content_json.encode("utf-8")) > 262_144
-                        or not isinstance(json.loads(content_json), dict)
-                    ):
-                        raise ValueError("workflow stage-state record is invalid")
-                    stage_states.append(
-                        WorkflowStageStateRecord(
-                            storage_revision=storage_revision,
-                            content_json=content_json,
-                        )
-                    )
+                return self._read_workflow_authority_from_connection(connection)
             finally:
                 connection.close()
+        except OSError, sqlite3.Error, StorageProblem, TypeError, ValueError, IndexError:
+            raise _transaction_failure("workflow profile authority read failed") from None
+
+    def _read_workflow_authority_from_connection(self, connection: CanonicalConnection) -> WorkflowAuthorityMutation:
+        try:
+            activation_rows = connection.execute(
+                "SELECT revision, value_type, text_value FROM settings "
+                "WHERE project_id=? AND setting_key=? ORDER BY revision",
+                (self._project_id, _INTENT_WORKFLOW_AUTHORITY_KEY),
+            ).fetchall()
+            if len(activation_rows) > 1:
+                raise ValueError("workflow authority activation is ambiguous")
+            activation: WorkflowAuthorityRecord | None = None
+            if activation_rows:
+                revision, value_type, content_json = activation_rows[0]
+                if (
+                    revision != 0
+                    or value_type != "text"
+                    or not isinstance(content_json, str)
+                    or len(content_json.encode("utf-8")) > 262_144
+                    or not isinstance(json.loads(content_json), dict)
+                ):
+                    raise ValueError("workflow authority activation is invalid")
+                activation = WorkflowAuthorityRecord(revision=revision, content_json=content_json)
+            witness_rows = connection.execute(
+                "SELECT event_id, occurred_at, actor_type, actor_id, record_sha256 "
+                "FROM provenance_events WHERE project_id=? AND event_type='workflow.profile.activated'",
+                (self._project_id,),
+            ).fetchall()
+            if len(witness_rows) > 1:
+                raise ValueError("workflow authority witness is ambiguous")
+            activation_witness: WorkflowAuthorityWitness | None = None
+            if witness_rows:
+                event_id, occurred_at, actor_type, actor_id, record_sha256 = witness_rows[0]
+                if (
+                    not is_uuid_v7(event_id)
+                    or not isinstance(occurred_at, str)
+                    or actor_type != "human"
+                    or not is_uuid_v7(actor_id)
+                    or not isinstance(record_sha256, str)
+                    or len(record_sha256) != 64
+                ):
+                    raise ValueError("workflow authority witness is invalid")
+                activation_witness = WorkflowAuthorityWitness(
+                    event_id=event_id,
+                    occurred_at=occurred_at,
+                    actor_id=actor_id,
+                    record_sha256=record_sha256,
+                )
+            values: dict[str, tuple[WorkflowAuthorityRecord, ...]] = {}
+            for key in (_WORKFLOW_SELECTION_KEY, _WORKFLOW_MIGRATION_KEY, _WORKFLOW_ACCEPTANCE_KEY):
+                rows = connection.execute(
+                    "SELECT revision, value_type, text_value FROM settings "
+                    "WHERE project_id=? AND setting_key=? ORDER BY revision",
+                    (self._project_id, key),
+                ).fetchall()
+                records: list[WorkflowAuthorityRecord] = []
+                for revision, value_type, content_json in rows:
+                    if (
+                        not isinstance(revision, int)
+                        or revision < 1
+                        or value_type != "text"
+                        or not isinstance(content_json, str)
+                        or len(content_json.encode("utf-8")) > 262_144
+                    ):
+                        raise ValueError("workflow authority record is invalid")
+                    value = json.loads(content_json)
+                    if not isinstance(value, dict):
+                        raise ValueError("workflow authority record is invalid")
+                    records.append(WorkflowAuthorityRecord(revision=revision, content_json=content_json))
+                values[key] = tuple(records)
+            stage_rows = connection.execute(
+                "SELECT revision, value_type, text_value FROM settings "
+                "WHERE project_id=? AND setting_key=? ORDER BY revision",
+                (self._project_id, _WORKFLOW_STAGE_STATE_KEY),
+            ).fetchall()
+            stage_states: list[WorkflowStageStateRecord] = []
+            for storage_revision, value_type, content_json in stage_rows:
+                if (
+                    not isinstance(storage_revision, int)
+                    or storage_revision < 1
+                    or value_type != "text"
+                    or not isinstance(content_json, str)
+                    or len(content_json.encode("utf-8")) > 262_144
+                    or not isinstance(json.loads(content_json), dict)
+                ):
+                    raise ValueError("workflow stage-state record is invalid")
+                stage_states.append(
+                    WorkflowStageStateRecord(
+                        storage_revision=storage_revision,
+                        content_json=content_json,
+                    )
+                )
         except OSError, sqlite3.Error, StorageProblem, TypeError, ValueError, json.JSONDecodeError:
             raise _transaction_failure("workflow profile authority read failed") from None
         return WorkflowAuthorityMutation(
@@ -1217,6 +1241,66 @@ def sqlite_intent_revision_repository(path: Path, project_id: str) -> IntentRevi
     """Compose intent persistence after lifecycle validation binds the project root."""
 
     return _SqliteIntentRevisionRepository(path / "state" / "project.sqlite3", project_id)
+
+
+@dataclass(frozen=True, slots=True)
+class _IntentReadFailure:
+    message: str
+
+
+@dataclass(frozen=True, slots=True)
+class _IntentAuthoritySnapshot(IntentRevisionReader):
+    """Detached outcomes for one Corpus invocation; no write or database capability."""
+
+    identity: IntentProjectIdentity | None | _IntentReadFailure
+    revisions: tuple[IntentRevisionRecord, ...] | _IntentReadFailure
+    workflow: WorkflowAuthorityMutation | _IntentReadFailure
+
+    def project_identity(self) -> IntentProjectIdentity | None:
+        if isinstance(self.identity, _IntentReadFailure):
+            raise _transaction_failure(self.identity.message) from None
+        return self.identity
+
+    def read(self) -> tuple[IntentRevisionRecord, ...]:
+        if isinstance(self.revisions, _IntentReadFailure):
+            raise _transaction_failure(self.revisions.message) from None
+        return self.revisions
+
+    def read_workflow_authority(self) -> WorkflowAuthorityMutation:
+        if isinstance(self.workflow, _IntentReadFailure):
+            raise _transaction_failure(self.workflow.message) from None
+        return self.workflow
+
+
+def _intent_read_outcome[Result](read: Callable[[], Result]) -> Result | _IntentReadFailure:
+    try:
+        return read()
+    except RepositoryTransactionFailed as error:
+        # Never retain exceptions: their traceback can keep database authority alive.
+        return _IntentReadFailure(str(error))
+
+
+def sqlite_intent_authority_snapshot(path: Path, project_id: str) -> IntentRevisionReader:
+    """Read fresh coherent authority, then release the canonical lease before use."""
+    repository = _SqliteIntentRevisionRepository(path / "state" / "project.sqlite3", project_id)
+    try:
+        connection = repository._open()
+        try:
+            connection.execute("BEGIN")
+            result = _IntentAuthoritySnapshot(
+                _intent_read_outcome(lambda: repository._project_identity_from_connection(connection)),
+                _intent_read_outcome(lambda: repository._read_from_connection(connection)),
+                _intent_read_outcome(lambda: repository._read_workflow_authority_from_connection(connection)),
+            )
+            return result
+        finally:
+            try:
+                if connection.in_transaction:
+                    connection.rollback()
+            finally:
+                connection.close()
+    except OSError, sqlite3.Error, StorageProblem, TypeError, ValueError, IndexError:
+        raise _transaction_failure("research intent authority snapshot failed") from None
 
 
 class _SqliteWorkflowProgressRepository(WorkflowProgressRepository):
@@ -3000,11 +3084,7 @@ class _SqliteAggregateRepository:
                 self._mark_failed()
                 raise RepositoryTransactionFailed("idempotency record has no canonical provenance")
             try:
-                decoded = decode_provenance_event(json.loads(str(row[10])))
-                if decoded is None:
-                    raise ValueError("canonical provenance is invalid")
-                record_json = canonical_provenance_json(decoded)
-                record_sha256 = provenance_record_sha256(decoded)
+                decoded, record_json, record_sha256 = canonical_provenance_record(json.loads(str(row[10])))
                 data = cast(dict[str, Any], decoded["data"])
                 outputs = cast(tuple[dict[str, Any], ...], data["outputs"])
                 agent = cast(dict[str, Any], data["agent"])
@@ -3260,11 +3340,7 @@ def _ledger_integrity_state(connection: CanonicalConnection, project_id: str) ->
     sequence_by_segment: dict[str, int] = {}
     for row in rows:
         try:
-            decoded = decode_provenance_event(json.loads(str(row[4])))
-            if decoded is None:
-                return "integrity-review"
-            record_json = canonical_provenance_json(decoded)
-            record_sha256 = provenance_record_sha256(decoded)
+            decoded, record_json, record_sha256 = canonical_provenance_record(json.loads(str(row[4])))
             trace_id = str(decoded["traceparent"]).split("-")[1]
         except TypeError, ValueError, json.JSONDecodeError, IndexError:
             return "integrity-review"
@@ -3730,6 +3806,9 @@ class _SqliteDependencyImpactRepository(DependencyImpactRepository):
         connection: CanonicalConnection,
         change: DependencyChange,
     ) -> None:
+        if revision_invalidation(change):
+            self._validate_invalidation_authority(connection, change)
+            return
         if change.previous_revision_id is None or change.replacement_revision_id is None:
             return
         rows = connection.execute(
@@ -3759,6 +3838,68 @@ class _SqliteDependencyImpactRepository(DependencyImpactRepository):
         }.get(change.dependency_kind)
         if required_kind is not None and str(previous[2]) != required_kind:
             raise RepositoryConflict("dependency change endpoint kind differs from its authority")
+
+    def _validate_invalidation_authority(self, connection: CanonicalConnection, change: DependencyChange) -> None:
+        row = connection.execute(
+            "SELECT l.record_json,o.idempotency_key,o.revision_id,o.available_at,p.actor_id,p.trace_id,p.occurred_at "
+            "FROM provenance_ledger_events l JOIN provenance_ledger_checkpoints c "
+            "ON c.project_id=l.project_id AND c.event_id=l.event_id AND c.segment_key=l.segment_key "
+            "JOIN outbox_events o ON o.project_id=c.project_id AND o.outbox_id=c.checkpoint_id "
+            "JOIN provenance_events p ON p.project_id=l.project_id AND p.event_id=l.event_id "
+            "WHERE l.project_id=? AND l.event_id=?",
+            (self._project_id, change.change_id),
+        ).fetchone()
+        if row is None or _ledger_integrity_state(connection, self._project_id) != "verified":
+            raise RepositoryConflict("dependency invalidation provenance is unavailable")
+        event = decode_provenance_event(json.loads(str(row[0])))
+        revision = _revision_with_connection(connection, self._project_id, cast(str, change.previous_revision_id))
+        if event is None:
+            raise RepositoryConflict("dependency invalidation provenance is invalid")
+        data = event["data"]
+        inputs = data["inputs"]
+        activity = data["activity"]
+        if (
+            tuple(row[1:])
+            != (
+                change.idempotency_key,
+                change.previous_revision_id,
+                change.occurred_at,
+                change.actor_id,
+                change.trace_id,
+                change.occurred_at,
+            )
+            or event["projectid"] != self._project_id
+            or event["id"] != change.change_id
+            or event["actorid"] != change.actor_id
+            or event["time"] != change.occurred_at
+            or str(event["traceparent"]).split("-")[1] != change.trace_id
+            or not str(event["type"]).endswith(".invalidated.v1")
+            or event["subject"]
+            != (
+                f"project/{self._project_id}/entity/{revision.aggregate_kind}/"
+                f"{revision.aggregate_id}/revision/{revision.revision_id}"
+            )
+            or activity["activityType"] != "invalidation"
+            or activity["status"] != "succeeded"
+            or data["outputs"]
+            or len(inputs) != 1
+            or (inputs[0]["entityId"], inputs[0]["revisionId"], inputs[0]["entityKind"], inputs[0]["contentHash"])
+            != (
+                revision.aggregate_id,
+                revision.revision_id,
+                revision.aggregate_kind,
+                _projection_content_sha256(revision),
+            )
+            or change.previous_fingerprint != _projection_content_sha256(revision)
+            or not any(
+                relation["relationType"] == "wasInvalidatedBy"
+                and relation["entity"] == {"entityId": revision.aggregate_id, "revisionId": revision.revision_id}
+                and relation["activityId"] == activity["activityId"]
+                and relation["occurredAt"] == change.occurred_at
+                for relation in data["relations"]
+            )
+        ):
+            raise RepositoryConflict("dependency invalidation authority differs")
 
     def preview(
         self,
@@ -4090,86 +4231,9 @@ class _SqliteDependencyImpactRepository(DependencyImpactRepository):
         try:
             connection = open_canonical_database(self._database, expected_project_id=self._project_id)
             connection.execute("BEGIN IMMEDIATE")
-            current = self._run_with_connection(connection, run_id)
-            if current.checkpoint_sha256 != expected_checkpoint_sha256:
-                raise RepositoryConflict("dependency propagation checkpoint is stale or substituted")
-            if current.state != "running":
-                raise RepositoryConflict("dependency propagation run is terminal")
-            self._verify_run_snapshot(connection, run_id)
-            batch_size = int(
-                connection.execute(
-                    "SELECT batch_size FROM dependency_impact_runs WHERE project_id=? AND run_id=?",
-                    (self._project_id, run_id),
-                ).fetchone()[0]
+            projection = self._advance_with_connection(
+                connection, run_id, expected_checkpoint_sha256=expected_checkpoint_sha256
             )
-            items = tuple(
-                tuple(row)
-                for row in connection.execute(
-                    """
-                    SELECT item_sequence, item_id, output_revision_id, output_kind,
-                           disposition, depth, relation_type, path_json, path_sha256,
-                           path_length, path_truncated, cycle_group_id, confidence,
-                           review_required
-                      FROM dependency_impact_items
-                     WHERE project_id=? AND run_id=? AND item_sequence>?
-                     ORDER BY item_sequence LIMIT ?
-                    """,
-                    (self._project_id, run_id, current.processed_items, batch_size),
-                ).fetchall()
-            )
-            run_authority = connection.execute(
-                """
-                SELECT change_id, reason, propagation_policy_id,
-                       propagation_policy_version, occurred_at
-                  FROM dependency_impact_runs
-                 WHERE project_id=? AND run_id=?
-                """,
-                (self._project_id, run_id),
-            ).fetchone()
-            if run_authority is None or not items:
-                raise RepositoryProblem("dependency propagation checkpoint is inconsistent")
-            added_stale, added_unknown = _record_dependency_stale_batch(
-                connection,
-                run_id=run_id,
-                project_id=self._project_id,
-                change_id=str(run_authority[0]),
-                reason=cast(StalenessReason, run_authority[1]),
-                propagation_policy_id=str(run_authority[2]),
-                propagation_policy_version=str(run_authority[3]),
-                detected_at=str(run_authority[4]),
-                items=items,
-            )
-            processed = current.processed_items + len(items)
-            stale_count = current.stale_count + added_stale
-            unknown_count = current.unknown_count + added_unknown
-            prior_sequence = int(
-                connection.execute(
-                    "SELECT max(sequence) FROM dependency_impact_audit_events WHERE project_id=? AND run_id=?",
-                    (self._project_id, run_id),
-                ).fetchone()[0]
-            )
-            event_type = "completed" if processed == current.total_items else "checkpoint"
-            checkpoint = _impact_checkpoint_sha256(
-                run_id=run_id,
-                sequence=prior_sequence + 1,
-                event_type=event_type,
-                processed_items=processed,
-                stale_count=stale_count,
-                unknown_count=unknown_count,
-                previous_checkpoint_sha256=current.checkpoint_sha256,
-            )
-            self._insert_audit(
-                connection,
-                run_id=run_id,
-                sequence=prior_sequence + 1,
-                event_type=event_type,
-                processed_items=processed,
-                stale_count=stale_count,
-                unknown_count=unknown_count,
-                checkpoint_sha256=checkpoint,
-                occurred_at=_impact_timestamp(),
-            )
-            projection = self._run_with_connection(connection, run_id)
             connection.execute("COMMIT")
             return projection
         except RepositoryProblem:
@@ -4190,6 +4254,94 @@ class _SqliteDependencyImpactRepository(DependencyImpactRepository):
         finally:
             if connection is not None:
                 connection.close()
+
+    def _advance_with_connection(
+        self, connection: CanonicalConnection, run_id: str, *, expected_checkpoint_sha256: str
+    ) -> DependencyPropagationRun:
+        """Apply one existing checkpoint inside the caller's sole writer."""
+        if not connection.in_transaction:
+            raise RepositoryProblem("dependency propagation requires an active transaction")
+        current = self._run_with_connection(connection, run_id)
+        if current.checkpoint_sha256 != expected_checkpoint_sha256:
+            raise RepositoryConflict("dependency propagation checkpoint is stale or substituted")
+        if current.state != "running":
+            raise RepositoryConflict("dependency propagation run is terminal")
+        self._verify_run_snapshot(connection, run_id)
+        batch_size = int(
+            connection.execute(
+                "SELECT batch_size FROM dependency_impact_runs WHERE project_id=? AND run_id=?",
+                (self._project_id, run_id),
+            ).fetchone()[0]
+        )
+        items = tuple(
+            tuple(row)
+            for row in connection.execute(
+                """
+                SELECT item_sequence, item_id, output_revision_id, output_kind,
+                       disposition, depth, relation_type, path_json, path_sha256,
+                       path_length, path_truncated, cycle_group_id, confidence,
+                       review_required
+                  FROM dependency_impact_items
+                 WHERE project_id=? AND run_id=? AND item_sequence>?
+                 ORDER BY item_sequence LIMIT ?
+                """,
+                (self._project_id, run_id, current.processed_items, batch_size),
+            ).fetchall()
+        )
+        run_authority = connection.execute(
+            """
+            SELECT change_id, reason, propagation_policy_id,
+                   propagation_policy_version, occurred_at
+              FROM dependency_impact_runs
+             WHERE project_id=? AND run_id=?
+            """,
+            (self._project_id, run_id),
+        ).fetchone()
+        if run_authority is None or not items:
+            raise RepositoryProblem("dependency propagation checkpoint is inconsistent")
+        added_stale, added_unknown = _record_dependency_stale_batch(
+            connection,
+            run_id=run_id,
+            project_id=self._project_id,
+            change_id=str(run_authority[0]),
+            reason=cast(StalenessReason, run_authority[1]),
+            propagation_policy_id=str(run_authority[2]),
+            propagation_policy_version=str(run_authority[3]),
+            detected_at=str(run_authority[4]),
+            items=items,
+        )
+        processed = current.processed_items + len(items)
+        stale_count = current.stale_count + added_stale
+        unknown_count = current.unknown_count + added_unknown
+        prior_sequence = int(
+            connection.execute(
+                "SELECT max(sequence) FROM dependency_impact_audit_events WHERE project_id=? AND run_id=?",
+                (self._project_id, run_id),
+            ).fetchone()[0]
+        )
+        event_type = "completed" if processed == current.total_items else "checkpoint"
+        checkpoint = _impact_checkpoint_sha256(
+            run_id=run_id,
+            sequence=prior_sequence + 1,
+            event_type=event_type,
+            processed_items=processed,
+            stale_count=stale_count,
+            unknown_count=unknown_count,
+            previous_checkpoint_sha256=current.checkpoint_sha256,
+        )
+        self._insert_audit(
+            connection,
+            run_id=run_id,
+            sequence=prior_sequence + 1,
+            event_type=event_type,
+            processed_items=processed,
+            stale_count=stale_count,
+            unknown_count=unknown_count,
+            checkpoint_sha256=checkpoint,
+            occurred_at=_impact_timestamp(),
+        )
+        projection = self._run_with_connection(connection, run_id)
+        return projection
 
     def _decisions_with_connection(
         self,
@@ -4229,6 +4381,8 @@ class _SqliteDependencyImpactRepository(DependencyImpactRepository):
         if row is None:
             raise RepositoryNotFound("dependency propagation run was not found")
         change = self._change_with_connection(connection, str(row[0]))
+        if revision_invalidation(change):
+            self._validate_invalidation_authority(connection, change)
         decisions = self._decisions_with_connection(connection, run_id)
         items = []
         for sequence, item in enumerate(
@@ -8399,6 +8553,7 @@ def sqlite_dependency_impact_repository(path: Path, project_id: str) -> Dependen
 __all__ = [
     "create_sqlite_unit_of_work_factory",
     "sqlite_dependency_impact_repository",
+    "sqlite_intent_authority_snapshot",
     "sqlite_intent_revision_repository",
     "sqlite_material_dependency_repository",
     "sqlite_privacy_policy_repository",

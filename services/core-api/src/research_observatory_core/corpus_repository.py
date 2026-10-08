@@ -182,6 +182,14 @@ class SqliteCorpusRepository:
         ):
             raise CorpusProblem("corpus-intent-changed")
 
+        # Authenticate current content too: a retained declared hash is not proof.
+        content = {key: item for key, item in value.items() if key != "revisionContentHash"}
+        actual_hash = hashlib.sha256(
+            json.dumps(content, ensure_ascii=True, sort_keys=True, separators=(",", ":")).encode("utf-8")
+        ).hexdigest()
+        if actual_hash != actor.intent_sha256:
+            raise CorpusProblem("corpus-intent-changed")
+
         policy_revision = connection.execute(
             "SELECT MAX(revision) FROM settings WHERE project_id=? AND setting_key LIKE 'privacy.%'",
             (self._project,),

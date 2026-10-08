@@ -115,6 +115,7 @@ class CoreSidecarPackageTests(unittest.TestCase):
                     "research_observatory_core.migrations.versions.v0022_document_attachments",
                     "research_observatory_core.migrations.versions.v0023_attachment_operations",
                     "research_observatory_core.migrations.versions.v0026_document_revisions",
+                    "research_observatory_core.migrations.versions.v0027_revision_invalidations",
                     "research_observatory_core.plugin_grant_repository",
                     "research_observatory_core.plugin_job_repository",
                     "research_observatory_core.plugin_package_repository",
@@ -199,6 +200,7 @@ class CoreSidecarPackageTests(unittest.TestCase):
             "research_observatory_core.document_revisions",
             "research_observatory_core.ports.document_revisions",
             "research_observatory_core.migrations.versions.v0026_document_revisions",
+            "research_observatory_core.migrations.versions.v0027_revision_invalidations",
         ):
             self.assertIn(module, contract["requiredModules"])
         self.assertIn("research_observatory_core.dependency_impacts", contract["requiredModules"])
