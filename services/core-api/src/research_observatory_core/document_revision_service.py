@@ -153,6 +153,44 @@ class DocumentRevisionService:
     def history(self, command, *, trace_id):
         return self._current(command, trace_id, lambda repository: repository.history(command.document_id))
 
+    def _anchors(self, command, trace_id, action):
+        from .anchors.repository import LocalSourceAnchorRepository
+
+        return self._current(command, trace_id, lambda repository: action(LocalSourceAnchorRepository(repository)))
+
+    def anchor_create(self, command, *, trace_id):
+        return self._anchors(
+            command, trace_id, lambda repository: repository.create(command.command_id, command.selection)
+        )
+
+    def anchor_read(self, command, *, trace_id):
+        def read(repository):
+            anchor = repository.read(command.anchor_id)
+            if anchor.target.revision_id != command.expected_revision_id:
+                raise DocumentRevisionProblem("source-anchor-revision-mismatch")
+            return anchor
+
+        return self._anchors(command, trace_id, read)
+
+    def reader_revisions(self, command, *, trace_id):
+        return self._anchors(command, trace_id, lambda repository: repository.reader_revisions(command.attachment_id))
+
+    def anchor_list(self, command, *, trace_id):
+        return self._anchors(
+            command,
+            trace_id,
+            lambda repository: repository.list(command.revision_id, after_id=command.after_id, limit=command.limit),
+        )
+
+    def reader_outline(self, command, *, trace_id):
+        return self._anchors(
+            command,
+            trace_id,
+            lambda repository: repository.outline(
+                command.revision_id, after_node_id=command.after_node_id, limit=command.limit
+            ),
+        )
+
     def run_pending(self):
         with self.runner:
             with self.mutex:

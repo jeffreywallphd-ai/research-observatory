@@ -8,6 +8,8 @@ pub mod directory_picker;
 #[cfg(windows)]
 mod document_attachment;
 #[cfg(windows)]
+mod document_reader;
+#[cfg(windows)]
 mod document_drop;
 #[cfg(windows)]
 mod document_runtime;
@@ -1007,7 +1009,12 @@ fn application_builder() -> tauri::Builder<tauri::Wry> {
         document_attachment::document_acquisition_clear_review,
         document_attachment::document_acquisition_download,
         document_attachment::document_acquisition_access_need,
-        document_attachment::document_acquisition_recover
+        document_attachment::document_acquisition_recover,
+        document_reader::document_reader_revisions,
+        document_reader::document_reader_outline,
+        document_reader::document_reader_anchor_create,
+        document_reader::document_reader_anchor_read,
+        document_reader::document_reader_anchor_list
     ];
     #[cfg(not(windows))]
     let handler: fn(tauri::ipc::Invoke<tauri::Wry>) -> bool = tauri::generate_handler![

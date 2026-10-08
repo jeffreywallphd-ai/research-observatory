@@ -510,6 +510,11 @@ pub(crate) enum NativeDocumentAction {
     AccessNeed,
     Retained,
     Candidate,
+    ReaderRevisions,
+    ReaderOutline,
+    AnchorCreate,
+    AnchorRead,
+    AnchorList,
 }
 
 #[cfg(windows)]
@@ -526,6 +531,11 @@ impl NativeDocumentAction {
             Self::AccessNeed => "/native/document-attachments/access-needs",
             Self::Retained => "/native/document-attachments/retained-candidates",
             Self::Candidate => "/native/document-attachments/candidate",
+            Self::ReaderRevisions => "/native/document-revisions/reader-revisions",
+            Self::ReaderOutline => "/native/document-revisions/reader-outline",
+            Self::AnchorCreate => "/native/document-revisions/anchor-create",
+            Self::AnchorRead => "/native/document-revisions/anchor-read",
+            Self::AnchorList => "/native/document-revisions/anchor-list",
         }
     }
 }

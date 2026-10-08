@@ -2,9 +2,12 @@
 
 from collections.abc import Callable
 from dataclasses import asdict
+from typing import Annotated
 
 from fastapi import APIRouter, FastAPI, Request
+from pydantic import Field
 
+from .anchors.contracts import AnchorSelection
 from .document_attachment_api import BoundedDocumentJsonRoute, DocumentSession
 from .document_revisions import DocumentRevisionAcceptance, DocumentRevisionProblem
 from .ingestion.import_drafts import Identity
@@ -34,6 +37,32 @@ class DocumentRevisionReadCommand(DocumentSession):
 
 class DocumentRevisionHistoryCommand(DocumentSession):
     document_id: Identity
+
+
+class SourceAnchorCreateCommand(DocumentSession):
+    command_id: Identity
+    selection: AnchorSelection
+
+
+class SourceAnchorReadCommand(DocumentSession):
+    anchor_id: Identity
+    expected_revision_id: Identity
+
+
+class DocumentReaderRevisionsCommand(DocumentSession):
+    attachment_id: Identity
+
+
+class SourceAnchorListCommand(DocumentSession):
+    revision_id: Identity
+    after_id: Identity | None = None
+    limit: Annotated[int, Field(strict=True, ge=1, le=100)] = 100
+
+
+class DocumentReaderOutlineCommand(DocumentSession):
+    revision_id: Identity
+    after_node_id: Identity | None = None
+    limit: Annotated[int, Field(strict=True, ge=1, le=50)] = 50
 
 
 def register_document_revision_routes(app: FastAPI, runtime: Callable):
@@ -107,5 +136,47 @@ def register_document_revision_routes(app: FastAPI, runtime: Callable):
     @router.post("/history")
     def history(request: Request, command: DocumentRevisionHistoryCommand):
         return run(request, lambda service: {"revisionIds": service.history(command, trace_id=request.state.trace_id)})
+
+    @router.post("/anchor-create")
+    def anchor_create(request: Request, command: SourceAnchorCreateCommand):
+        return run(
+            request,
+            lambda service: service.anchor_create(command, trace_id=request.state.trace_id).model_dump(
+                mode="json", by_alias=True
+            ),
+        )
+
+    @router.post("/anchor-read")
+    def anchor_read(request: Request, command: SourceAnchorReadCommand):
+        return run(
+            request,
+            lambda service: service.anchor_read(command, trace_id=request.state.trace_id).model_dump(
+                mode="json", by_alias=True
+            ),
+        )
+
+    @router.post("/anchor-list")
+    def anchor_list(request: Request, command: SourceAnchorListCommand):
+        return run(
+            request, lambda service: {"anchorIds": service.anchor_list(command, trace_id=request.state.trace_id)}
+        )
+
+    @router.post("/reader-outline")
+    def reader_outline(request: Request, command: DocumentReaderOutlineCommand):
+        return run(
+            request,
+            lambda service: service.reader_outline(command, trace_id=request.state.trace_id).model_dump(
+                mode="json", by_alias=True
+            ),
+        )
+
+    @router.post("/reader-revisions")
+    def reader_revisions(request: Request, command: DocumentReaderRevisionsCommand):
+        return run(
+            request,
+            lambda service: service.reader_revisions(command, trace_id=request.state.trace_id).model_dump(
+                mode="json", by_alias=True
+            ),
+        )
 
     app.include_router(router)

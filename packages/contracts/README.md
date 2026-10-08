@@ -141,6 +141,12 @@ shared semantic matrix rejects duplicate or wrong-role relations, completed
 PROV facts or outputs for failed/cancelled/denied outcomes, and missing
 generation or attribution for any succeeded output, including future types.
 
+`anchors/` defines exact accepted-revision passage targets, protected bounded
+context, structural/code-point selectors and normalized page regions. Current
+human/session/rights authority remains in Core; a valid selector never grants
+access or scholarly verification. The existing canonical Document aggregate
+owns immutable anchor publication and its provenance/dependency/outbox.
+
 `workflow/` defines executor-neutral, versioned workflow definitions and
 restart-reconstructable execution snapshots. Separate workflow-run, step-run,
 logical-job, physical-attempt, checkpoint, immutable-artifact, and human-task

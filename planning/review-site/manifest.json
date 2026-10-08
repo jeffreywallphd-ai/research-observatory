@@ -22327,7 +22327,7 @@
             {
               "task_id": "CAP-05.S03.T02",
               "title": "Implement page, bounding-box, and text-span anchors",
-              "status": "READY",
+              "status": "IN_PROGRESS",
               "mode": "latest-review-only",
               "latest_review": {
                 "reviewer": null,
@@ -22375,18 +22375,21 @@
             {
               "task_id": "CAP-05.S03.T02",
               "title": "Implement page, bounding-box, and text-span anchors",
-              "status": "READY",
+              "status": "IN_PROGRESS",
               "page": "CAP-05/CAP-05.S03.T02.html",
               "dependencies": [
                 "CAP-05.S03.T01"
               ],
               "claim": {
-                "owner": null,
-                "branch": null,
-                "base_sha": null
+                "owner": "codex-w2-implementation",
+                "branch": "codex/w2-implementation",
+                "base_sha": "45ea077cfd651802c265e09679f3843156a00c5a"
               },
               "plan_section_sha256": "a1b0f6826e423b878ebf62dc7e2fe360774fe291a75c4ffe68c7ad10836dbb2a",
-              "worksheet": null
+              "worksheet": {
+                "path": "artifacts/evidence/CAP-05.S03.T02.task-start.md",
+                "sha256": "2e29027d59c0c3c924233166799f124d9759cd01fb7ae73320f9bef0ed375bff"
+              }
             },
             {
               "task_id": "CAP-05.S03.T03",

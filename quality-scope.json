@@ -10,6 +10,17 @@
     "workers"
   ],
   "pythonFiles": [
+    "packages/contracts/anchors/generate_anchor_schema.py",
+    "services/core-api/src/research_observatory_core/anchors/__init__.py",
+    "services/core-api/src/research_observatory_core/anchors/contracts.py",
+    "services/core-api/src/research_observatory_core/anchors/repository.py",
+    "services/core-api/src/research_observatory_core/ports/source_anchors.py",
+    "tests/anchors/__init__.py",
+    "tests/anchors/test_anchor_contracts.py",
+    "tests/anchors/test_anchor_repository.py",
+    "tests/anchors/test_native_anchor_composition.py",
+    "tests/anchors/test_anchor_reader_interactions.py",
+    "tests/service/test_source_anchor_api.py",
     "tests/connectors/test_connector_network_failures.py",
     "tests/connectors/test_plugin_manifest_contract.py",
     "tests/connectors/test_plugin_broker.py",

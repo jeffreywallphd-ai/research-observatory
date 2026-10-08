@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: ff132930932e94006d7149c95aa20362a19667c334894b2427b8ad47d692d934
+source_sha256: d9d610e14597d92e88c74452cba77723abf116c1ff31cadeebaee1b10fb4e70e
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -11499,13 +11499,13 @@ Original tasks and approvals remain unchanged.
 
 #### - [ ] CAP-05.S03.T02 - Implement page, bounding-box, and text-span anchors
 
-**Status / priority / estimate / risk:** `READY` / `P0` / `L` / `high`
+**Status / priority / estimate / risk:** `IN_PROGRESS` / `P0` / `L` / `high`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
 **Dependencies:** `CAP-05.S03.T01`
 
-**Owner / review:** - / - (`-`)
+**Owner / review:** codex-w2-implementation / - (`-`)
 
 **Objective:** Anchor model supporting page number, normalized rectangle, character span, block/sentence IDs, and anchor-confidence metadata.
 

@@ -1,0 +1,78 @@
+{
+  "$defs": {
+    "CodepointRange": {
+      "additionalProperties": false,
+      "properties": {
+        "start": {
+          "$ref": "#/$defs/Count"
+        },
+        "end": {
+          "$ref": "#/$defs/Count"
+        }
+      },
+      "required": [
+        "start",
+        "end"
+      ],
+      "title": "CodepointRange",
+      "type": "object"
+    },
+    "Count": {
+      "maximum": 9007199254740991,
+      "minimum": 0,
+      "type": "integer"
+    },
+    "Identity": {
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schemaVersion": {
+      "const": "1.0",
+      "default": "1.0",
+      "title": "Schemaversion",
+      "type": "string"
+    },
+    "revisionId": {
+      "$ref": "#/$defs/Identity"
+    },
+    "nodeId": {
+      "$ref": "#/$defs/Identity"
+    },
+    "normalizedRange": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/CodepointRange"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    }
+  },
+  "required": [
+    "revisionId",
+    "nodeId"
+  ],
+  "title": "AnchorSelection",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://research-observatory.local/contracts/anchors/anchor-selection.v1.schema.json",
+  "x-research-observatory-semanticRules": [
+    "core-mints-anchor-and-revision-ids-on-existing-canonical-document-aggregate",
+    "exact-accepted-revision-project-copy-and-structural-projection-identities-are-authoritative",
+    "quote-position-context-and-selected-node-agree-without-fuzzy-relocation",
+    "ro-text-nfc-1-unicode16-half-open-codepoint-offsets-with-explicit-utf16-renderer-conversion",
+    "normalized-rectangle-unrotated-source-page-top-left-with-explicit-page-dimensions-and-rotation",
+    "page-number-is-one-based-display-of-zero-based-page-index-and-block-granularity-is-explicit",
+    "missing-coordinates-and-unknown-confidence-remain-distinct-visible-states",
+    "current-native-human-session-intent-privacy-inspect-and-derive-authority-on-replay-and-delivery",
+    "encrypted-retained-context-has-canonical-provenance-dependency-and-outbox-integrity",
+    "context-authentication-does-not-establish-current-original-byte-integrity",
+    "same-command-same-actor-same-selection-replays-and-conflicting-retries-deny",
+    "selection-and-parser-confidence-do-not-confer-human-scholarly-verification"
+  ]
+}

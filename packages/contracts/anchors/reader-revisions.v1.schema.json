@@ -1,0 +1,212 @@
+{
+  "$defs": {
+    "AcquisitionOrigin": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "remote-acquisition",
+          "title": "Kind",
+          "type": "string"
+        },
+        "locationId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "receiptSha256": {
+          "$ref": "#/$defs/Digest"
+        }
+      },
+      "required": [
+        "kind",
+        "locationId",
+        "receiptSha256"
+      ],
+      "title": "AcquisitionOrigin",
+      "type": "object"
+    },
+    "Digest": {
+      "pattern": "^[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "Format": {
+      "enum": [
+        "jats",
+        "tei",
+        "xml",
+        "html",
+        "pdf",
+        "docx",
+        "plain-text"
+      ],
+      "type": "string"
+    },
+    "Identity": {
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+      "type": "string"
+    },
+    "Instant": {
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z$",
+      "type": "string"
+    },
+    "LocalOrigin": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "local-import",
+          "title": "Kind",
+          "type": "string"
+        }
+      },
+      "required": [
+        "kind"
+      ],
+      "title": "LocalOrigin",
+      "type": "object"
+    },
+    "ProjectIdentity": {
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[47][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+      "type": "string"
+    },
+    "ReaderRevisionSummary": {
+      "additionalProperties": false,
+      "properties": {
+        "revisionId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "acceptedAt": {
+          "$ref": "#/$defs/Instant"
+        }
+      },
+      "required": [
+        "revisionId",
+        "acceptedAt"
+      ],
+      "title": "ReaderRevisionSummary",
+      "type": "object"
+    },
+    "SourceIdentity": {
+      "additionalProperties": false,
+      "properties": {
+        "projectId": {
+          "$ref": "#/$defs/ProjectIdentity"
+        },
+        "attachmentId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "documentId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "documentRevisionId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "candidateId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "sourceAssertionRevisionId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "workId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "workRevisionId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "versionId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "versionRevisionId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "objectSha256": {
+          "$ref": "#/$defs/Digest"
+        },
+        "byteLength": {
+          "maximum": 134217728,
+          "minimum": 0,
+          "title": "Bytelength",
+          "type": "integer"
+        },
+        "format": {
+          "$ref": "#/$defs/Format"
+        },
+        "provenance": {
+          "discriminator": {
+            "mapping": {
+              "local-import": "#/$defs/LocalOrigin",
+              "remote-acquisition": "#/$defs/AcquisitionOrigin"
+            },
+            "propertyName": "kind"
+          },
+          "oneOf": [
+            {
+              "$ref": "#/$defs/LocalOrigin"
+            },
+            {
+              "$ref": "#/$defs/AcquisitionOrigin"
+            }
+          ],
+          "title": "Provenance"
+        }
+      },
+      "required": [
+        "projectId",
+        "attachmentId",
+        "documentId",
+        "documentRevisionId",
+        "candidateId",
+        "sourceAssertionRevisionId",
+        "workId",
+        "workRevisionId",
+        "versionId",
+        "versionRevisionId",
+        "objectSha256",
+        "byteLength",
+        "format",
+        "provenance"
+      ],
+      "title": "SourceIdentity",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schemaVersion": {
+      "const": "1.0",
+      "default": "1.0",
+      "title": "Schemaversion",
+      "type": "string"
+    },
+    "source": {
+      "$ref": "#/$defs/SourceIdentity"
+    },
+    "revisions": {
+      "items": {
+        "$ref": "#/$defs/ReaderRevisionSummary"
+      },
+      "maxItems": 100,
+      "title": "Revisions",
+      "type": "array"
+    }
+  },
+  "required": [
+    "source",
+    "revisions"
+  ],
+  "title": "DocumentReaderRevisions",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://research-observatory.local/contracts/anchors/reader-revisions.v1.schema.json",
+  "x-research-observatory-semanticRules": [
+    "core-mints-anchor-and-revision-ids-on-existing-canonical-document-aggregate",
+    "exact-accepted-revision-project-copy-and-structural-projection-identities-are-authoritative",
+    "quote-position-context-and-selected-node-agree-without-fuzzy-relocation",
+    "ro-text-nfc-1-unicode16-half-open-codepoint-offsets-with-explicit-utf16-renderer-conversion",
+    "normalized-rectangle-unrotated-source-page-top-left-with-explicit-page-dimensions-and-rotation",
+    "page-number-is-one-based-display-of-zero-based-page-index-and-block-granularity-is-explicit",
+    "missing-coordinates-and-unknown-confidence-remain-distinct-visible-states",
+    "current-native-human-session-intent-privacy-inspect-and-derive-authority-on-replay-and-delivery",
+    "encrypted-retained-context-has-canonical-provenance-dependency-and-outbox-integrity",
+    "context-authentication-does-not-establish-current-original-byte-integrity",
+    "same-command-same-actor-same-selection-replays-and-conflicting-retries-deny",
+    "selection-and-parser-confidence-do-not-confer-human-scholarly-verification"
+  ]
+}

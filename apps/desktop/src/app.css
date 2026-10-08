@@ -204,6 +204,14 @@ main > .workflow-context { margin-block: 0 var(--space-5); }
 .locked-card .brand-mark { width: var(--space-10); height: var(--space-10); }
 .locked-recovery-confirmation { --ro-notice-gap: var(--space-4); border-color: var(--warning-border); }
 .workspace-layer:not([hidden]) { display: contents; }
+.source-anchor-layout { display: grid; grid-template-columns: minmax(12rem, .7fr) minmax(20rem, 1.6fr) minmax(14rem, .8fr); gap: var(--space-4); align-items: start; }
+.source-anchor-layout > *, .source-anchor-layout .ro-card { min-width: 0; }
+.source-anchor-list { display: grid; gap: var(--space-2); padding: 0; list-style: none; }
+.source-anchor-list button { width: 100%; white-space: normal; overflow-wrap: anywhere; text-align: start; }
+.anchor-paper { padding: var(--card-padding-lg); }
+.anchor-passage-text { font-family: var(--font-serif); line-height: 1.65; white-space: pre-wrap; overflow-wrap: anywhere; }
+.anchor-passage-text mark { color: var(--text-strong); background: var(--warning-soft); box-shadow: inset 0 -2px var(--warning); }
+@media (max-width: 75rem) { .source-anchor-layout { grid-template-columns: 1fr; } }
 .locked-error { color: var(--danger); }
 .shortcut-dialog dl, .shortcut-dialog dl div { display: grid; gap: var(--space-2); }
 .shortcut-dialog dl { margin: 0; }

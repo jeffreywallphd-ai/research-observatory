@@ -1,0 +1,109 @@
+{
+  "$defs": {
+    "UnitCoordinate": {
+      "maximum": 1,
+      "minimum": 0,
+      "type": "number"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "pageIndex": {
+      "exclusiveMaximum": 500,
+      "minimum": 0,
+      "title": "Pageindex",
+      "type": "integer"
+    },
+    "pageNumber": {
+      "maximum": 500,
+      "minimum": 1,
+      "title": "Pagenumber",
+      "type": "integer"
+    },
+    "x0": {
+      "$ref": "#/$defs/UnitCoordinate"
+    },
+    "y0": {
+      "$ref": "#/$defs/UnitCoordinate"
+    },
+    "x1": {
+      "$ref": "#/$defs/UnitCoordinate"
+    },
+    "y1": {
+      "$ref": "#/$defs/UnitCoordinate"
+    },
+    "sourceWidth": {
+      "exclusiveMinimum": 0,
+      "title": "Sourcewidth",
+      "type": "number"
+    },
+    "sourceHeight": {
+      "exclusiveMinimum": 0,
+      "title": "Sourceheight",
+      "type": "number"
+    },
+    "rotation": {
+      "enum": [
+        0,
+        90,
+        180,
+        270
+      ],
+      "title": "Rotation",
+      "type": "integer"
+    },
+    "frame": {
+      "const": "unrotated-source-page",
+      "default": "unrotated-source-page",
+      "title": "Frame",
+      "type": "string"
+    },
+    "origin": {
+      "const": "top-left",
+      "default": "top-left",
+      "title": "Origin",
+      "type": "string"
+    },
+    "unit": {
+      "const": "normalized",
+      "default": "normalized",
+      "title": "Unit",
+      "type": "string"
+    },
+    "granularity": {
+      "const": "block",
+      "default": "block",
+      "title": "Granularity",
+      "type": "string"
+    }
+  },
+  "required": [
+    "pageIndex",
+    "pageNumber",
+    "x0",
+    "y0",
+    "x1",
+    "y1",
+    "sourceWidth",
+    "sourceHeight",
+    "rotation"
+  ],
+  "title": "NormalizedPageRegion",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://research-observatory.local/contracts/anchors/page-region.v1.schema.json",
+  "x-research-observatory-semanticRules": [
+    "core-mints-anchor-and-revision-ids-on-existing-canonical-document-aggregate",
+    "exact-accepted-revision-project-copy-and-structural-projection-identities-are-authoritative",
+    "quote-position-context-and-selected-node-agree-without-fuzzy-relocation",
+    "ro-text-nfc-1-unicode16-half-open-codepoint-offsets-with-explicit-utf16-renderer-conversion",
+    "normalized-rectangle-unrotated-source-page-top-left-with-explicit-page-dimensions-and-rotation",
+    "page-number-is-one-based-display-of-zero-based-page-index-and-block-granularity-is-explicit",
+    "missing-coordinates-and-unknown-confidence-remain-distinct-visible-states",
+    "current-native-human-session-intent-privacy-inspect-and-derive-authority-on-replay-and-delivery",
+    "encrypted-retained-context-has-canonical-provenance-dependency-and-outbox-integrity",
+    "context-authentication-does-not-establish-current-original-byte-integrity",
+    "same-command-same-actor-same-selection-replays-and-conflicting-retries-deny",
+    "selection-and-parser-confidence-do-not-confer-human-scholarly-verification"
+  ]
+}

@@ -3250,6 +3250,7 @@ class _LocalObjectStore:
             "application/vnd.research-observatory.parser-attempt+json",
             "application/vnd.research-observatory.normalized-parse-result+json",
             "application/vnd.research-observatory.document-revision+json",
+            "application/vnd.research-observatory.source-anchor+json",
             "application/vnd.research-observatory.docling-output+json",
             "application/vnd.research-observatory.native-structure+json",
             "application/vnd.research-observatory.text-parser-output+json",
@@ -3268,7 +3269,11 @@ class _LocalObjectStore:
                 receipt.byte_length,
                 media_type,
             )
-            or not 0 < metadata.byte_length <= 64 * 1_048_576
+            or not 0
+            < metadata.byte_length
+            <= (
+                32 * 1024 if media_type == "application/vnd.research-observatory.source-anchor+json" else 64 * 1_048_576
+            )
         ):
             raise _bounded(ObjectAccessDenied, "parser intent unavailable")
         path, buckets = _object_path(state.objects, state.project_id, metadata.object_sha256, create=False)
@@ -3341,6 +3346,41 @@ class _LocalObjectStore:
             raise _bounded(ObjectAccessDenied, "parser artifact publication invalid")
         return results[0]
 
+    def _read_authorized_document_context[Result](
+        self,
+        source: SourceIdentity,
+        *,
+        actor: CorpusActor,
+        action: Callable[[CanonicalConnection], Result],
+    ) -> Result:
+        """Trusted derivative callback: current exact-copy authority, no PDF read.
+
+        The callback must authenticate its own bounded encrypted artifact and
+        canonical derivation. This authorizes a derivative read; it does not
+        authenticate original bytes, update their verified_at, or expose an
+        original stream. Ordinary original opens keep their full verification.
+        """
+        from .parsing.contracts import SourceIdentity
+
+        source = SourceIdentity.model_validate(source)
+        if not callable(action):
+            raise _bounded(ObjectAccessDenied, "document context action invalid")
+        results: list[Result] = []
+
+        def current(connection: CanonicalConnection) -> None:
+            results.append(action(connection))
+
+        self._open_document_attachment(
+            source.attachment_id,
+            source.document_revision_id,
+            actor=actor,
+            expected_source=source,
+            context_action=current,
+        )
+        if len(results) != 1:
+            raise _bounded(ObjectAccessDenied, "document context action invalid")
+        return results[0]
+
     def _open_document_attachment(
         self,
         attachment_id: str,
@@ -3350,6 +3390,7 @@ class _LocalObjectStore:
         expected_source: SourceIdentity | None = None,
         before_stream: Callable[[CanonicalConnection], None] | None = None,
         publication_connection: CanonicalConnection | None = None,
+        context_action: Callable[[CanonicalConnection], None] | None = None,
     ) -> VerifiedObjectStream | None:
 
         from pydantic import ValidationError
@@ -3361,7 +3402,19 @@ class _LocalObjectStore:
         from .rights_policy import RightsRequest, RightsSubject, RightsUse
         from .rights_repository import RightsProblem, SqliteRightsRepository
 
-        if not is_uuid_v7(attachment_id) or not is_uuid_v7(document_revision_id):
+        if (
+            not is_uuid_v7(attachment_id)
+            or not is_uuid_v7(document_revision_id)
+            or (
+                context_action is not None
+                and (
+                    expected_source is None
+                    or before_stream is not None
+                    or publication_connection is not None
+                    or not callable(context_action)
+                )
+            )
+        ):
             raise _bounded(ObjectAccessDenied, "document attachment identity is invalid")
         state = self._state()
         connection: CanonicalConnection | None = None
@@ -3505,6 +3558,10 @@ class _LocalObjectStore:
                         destination_id=None,
                     ),
                 )
+                if context_action is not None:
+                    context_action(connection)
+                    connection.execute("COMMIT")
+                    return None
                 destination, buckets = _object_path(state.objects, state.project_id, digest, create=False)
                 with _stable_directories([state.root, state.objects, *buckets]):
                     reader = _verified_stored_reader(state, connection, destination, metadata)
@@ -3541,7 +3598,12 @@ class _LocalObjectStore:
                             connection.execute("ROLLBACK")
                     if publication_connection is None:
                         connection.close()
-            if isinstance(failure, ObjectCorrupt) and digest is not None and publication_connection is None:
+            if (
+                isinstance(failure, ObjectCorrupt)
+                and digest is not None
+                and publication_connection is None
+                and context_action is None
+            ):
                 _mark_quarantined(state, digest)
             if failure is not None:
                 raise failure

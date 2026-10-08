@@ -38,7 +38,7 @@
       <nav class="breadcrumbs" aria-label="Breadcrumb"><a href="../index.html">Planning review</a><span>/</span><a href="index.html">CAP-document-inspection</a><span>/</span><a href="CAP-05.S03.html">SLICE-immutable-document-revisions-and-source-anchors</a><span>/</span><span aria-current="page">CAP-05.S03.T02</span></nav>
 
 <section class="hero compact" data-task-page="CAP-05.S03.T02">
-  <div class="hero-top"><div><span class="eyebrow">CAP-05.S03.T02 · task 2 of 3</span><h1>Implement page, bounding-box, and text-span anchors</h1><p>Anchor model supporting page number, normalized rectangle, character span, block/sentence IDs, and anchor-confidence metadata.</p></div><span class="status status-ready">Ready</span></div>
+  <div class="hero-top"><div><span class="eyebrow">CAP-05.S03.T02 · task 2 of 3</span><h1>Implement page, bounding-box, and text-span anchors</h1><p>Anchor model supporting page number, normalized rectangle, character span, block/sentence IDs, and anchor-confidence metadata.</p></div><span class="status status-in-progress">In_Progress</span></div>
   <dl class="summary-grid"><div><dt>Wave</dt><dd>W2</dd></div><div><dt>Slice</dt><dd><a href="CAP-05.S03.html">SLICE-immutable-document-revisions-and-source-anchors</a></dd></div><div><dt>Risk / review</dt><dd>high / agent-review</dd></div><div><dt>Latest review</dt><dd>not reviewed</dd></div></dl>
 </section>
 <section class="task-summary"><div class="section-heading"><span class="eyebrow">Authoritative task record</span><h2>Scope and acceptance</h2></div>
@@ -49,7 +49,7 @@
 <section class="task-summary"><div class="section-heading"><span class="eyebrow">Verification inventory</span><h2>Profiles and commands</h2></div>
   <h3>Verification profiles</h3><ul class="gate-criteria"><li>documents</li><li>desktop</li></ul>
   <h3>Commands</h3><ul class="gate-criteria"><li>python tools/verify.py --profile documents</li><li>python tools/verify.py --profile desktop</li></ul>
-  <p data-task-claim="CAP-05.S03.T02" data-task-owner="unclaimed" data-task-branch="none" data-task-base-sha="none"><strong>Claim projection:</strong> owner <code>unclaimed</code> · branch <code>none</code> · base <code>none</code></p>
+  <p data-task-claim="CAP-05.S03.T02" data-task-owner="codex-w2-implementation" data-task-branch="codex/w2-implementation" data-task-base-sha="45ea077cfd651802c265e09679f3843156a00c5a"><strong>Claim projection:</strong> owner <code>codex-w2-implementation</code> · branch <code>codex/w2-implementation</code> · base <code>45ea077cfd651802c265e09679f3843156a00c5a</code></p>
 </section>
 <section class="task-summary" data-task-plan="CAP-05.S03.T02" data-task-plan-sha256="a1b0f6826e423b878ebf62dc7e2fe360774fe291a75c4ffe68c7ad10836dbb2a"><div class="section-heading"><span class="eyebrow">Approved implementation intent</span><h2>Task plan</h2></div><article class="plan-article compact-article"><pre class='markdown-fallback'>### 9.2 `CAP-05.S03.T02` - Implement page, bounding-box, and text-span anchors
 **Objective:** Anchor model supporting page number, normalized rectangle, character span, block/sentence IDs, and anchor-confidence metadata.
@@ -89,13 +89,52 @@ python tools/verify.py --profile documents
 python tools/verify.py --profile desktop
 ```</pre></article></section>
 <section class="section-heading"><span class="eyebrow">Task-start planning</span><h2>Assigned worksheet</h2><p>The worksheet is an optional planning aid and does not create a new approval or task state.</p></section>
-<p class="decision-meta" data-task-worksheet-absent="CAP-05.S03.T02">No optional task-start worksheet is assigned. This does not block execution.</p>
+
+<details class="plan-details task-worksheet" open data-task-worksheet="CAP-05.S03.T02" data-worksheet-sha256="2e29027d59c0c3c924233166799f124d9759cd01fb7ae73320f9bef0ed375bff">
+  <summary>Assigned task-start worksheet</summary>
+  <div class="worksheet-meta"><strong>Source:</strong> <code>artifacts/evidence/CAP-05.S03.T02.task-start.md</code> · <strong>SHA-256:</strong> <code>2e29027d59c0c3c924233166799f124d9759cd01fb7ae73320f9bef0ed375bff</code></div>
+  <article class="plan-article"><pre class='markdown-fallback'># CAP-05.S03.T02 — passage anchors
+
+Claim base: `45ea077cfd651802c265e09679f3843156a00c5a`.
+The active W2 campaign owns this task; `CAP-05.S03.T01` is DONE and independently
+approved. Authority is the approved S03 slice section 9.2, accepted ADR-0029,
+ADR-0013/0024 canonical identity and provenance, existing protected object and
+current native-session/Intent/rights boundaries, and the inherited Document
+Reader reference in `RO-UI-ACADEMIC-MINIMAL-1.9`.
+
+| Material boundary | Planned proof |
+|---|---|
+| Clicking the same anchor after restart identifies the exact accepted revision and passage. | Real SQLCipher/encrypted-object reopen plus renderer selection/highlight; later accepted heads do not move historical anchors. |
+| Structural IDs, source revision, project, projection, span and quote agree. | Wrong revision/node/project/range, repeated quote, changed command and corruption cases fail explicitly; no fuzzy reassignment. |
+| NFC Unicode 16.0.0 offsets count code points, including supplementary characters and CRLF normalization. | Authored synthetic expectations plus explicit renderer code-point/UTF-16 conversion. |
+| Geometry retains unrotated top-left source coordinates, normalized rectangle, source dimensions and rotation. | Rotated/scaled geometry fixtures; unavailable coordinates display a structural/text fallback. Geometry is block-level when the parser reports only a block rectangle. |
+| Protected selector/context creation is atomic, immutable and idempotent. | Existing canonical derived Document identity, protected artifact, provenance, source-revision dependency and outbox; failure before commit and exact/changed retries. No separate anchor identity store. |
+| Every create/read/list action uses the current native principal, exact copy, Intent/privacy and rights. | Real composition denial after lock, rights/actor change, substituted identities and corrupt ciphertext. Research text stays encrypted and out of diagnostics/deep-link URLs. |
+| A common anchor read is bounded and does not load the whole PDF or normalized IR. | Authenticate the small retained context artifact and canonical authority; instrument forbidden original/IR reads and measure the actual selected path. Creation/outline inspection separately authenticates normalized structure. |
+| Reader follows source → selected passage → return journey in both themes and keyboard/reflow states. | Approved three-region inert structured-text reader, exact revision/status, visible fallback, focus and return checks; protected state clears on lock/close. |
+
+First tests precede product edits: selector identity/range/normalization/geometry
+and explicit fallback tests, followed by durable restart/retry/denial tests at
+the existing encrypted repository boundary. A brief read-only independent design
+preflight under task-start planning step 4 is incorporated. It found no authority
+gate and emphasized exact selector agreement, current rights on replay, separate
+derivative versus original-byte authentication, canonical ledger integrity,
+context-relative Unicode offsets, and late-response clearing on lock.
+
+PDF.js source-byte rendering belongs to CAP-05.S04; this task must label its real
+structured-text view. Context/citation-link APIs and broken-dependent propagation
+belong to CAP-05.S03.T03. No parser replacement, lighter parsing tier, evidence
+verification, automation-framework improvement, or replay/tuning of the accepted
+CAP-05.S02.T03 warm timing overage is included. Full repository/desktop/documents
+profiles and broader platform/packaging qualification remain slice/Wave work;
+task checks select the affected contract, persistence, native and reader risks.</pre></article>
+</details>
 <section class="section-heading"><span class="eyebrow">Execution evidence</span><h2>Review packets, rounds, and current projection</h2><p>Append-only controls retain every immutable round and finding closure. Pre-policy tasks remain explicitly latest-review-only.</p></section>
 
 <section class="review-toolbar" data-task-review-id="CAP-05.S03.T02" data-review-mode="latest-review-only">
   <h3>CAP-05.S03.T02 — Implement page, bounding-box, and text-span anchors</h3>
   <p><strong>Legacy latest-review-only projection.</strong> No append-only review rounds are recorded; this view does not fabricate historical attempts.</p>
-  <dl class="summary-grid" data-current-review-projection="CAP-05.S03.T02" data-current-review-result="not-reviewed" data-current-reviewer="none" data-current-reviewed-at="none"><div><dt>Task status</dt><dd>READY</dd></div><div><dt>Latest result</dt><dd>not reviewed</dd></div><div><dt>Reviewer</dt><dd>none</dd></div><div><dt>Reviewed at</dt><dd><code>none</code></dd></div></dl>
+  <dl class="summary-grid" data-current-review-projection="CAP-05.S03.T02" data-current-review-result="not-reviewed" data-current-reviewer="none" data-current-reviewed-at="none"><div><dt>Task status</dt><dd>IN_PROGRESS</dd></div><div><dt>Latest result</dt><dd>not reviewed</dd></div><div><dt>Reviewer</dt><dd>none</dd></div><div><dt>Reviewed at</dt><dd><code>none</code></dd></div></dl>
   <p><strong>Latest notes:</strong> None</p>
 </section>
 <nav class="page-turn" aria-label="Task navigation"><a class="button button-quiet" href="CAP-05.S03.T01.html">Previous</a><a class="button button-primary" href="CAP-05.S03.T03.html">Next</a></nav>

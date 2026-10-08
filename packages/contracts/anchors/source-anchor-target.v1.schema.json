@@ -1,0 +1,544 @@
+{
+  "$defs": {
+    "AcquisitionOrigin": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "remote-acquisition",
+          "title": "Kind",
+          "type": "string"
+        },
+        "locationId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "receiptSha256": {
+          "$ref": "#/$defs/Digest"
+        }
+      },
+      "required": [
+        "kind",
+        "locationId",
+        "receiptSha256"
+      ],
+      "title": "AcquisitionOrigin",
+      "type": "object"
+    },
+    "AnchorContext": {
+      "additionalProperties": false,
+      "properties": {
+        "start": {
+          "$ref": "#/$defs/Count"
+        },
+        "text": {
+          "maxLength": 8192,
+          "title": "Text",
+          "type": "string"
+        },
+        "highlight": {
+          "$ref": "#/$defs/CodepointRange"
+        }
+      },
+      "required": [
+        "start",
+        "text",
+        "highlight"
+      ],
+      "title": "AnchorContext",
+      "type": "object"
+    },
+    "AnchorQuote": {
+      "additionalProperties": false,
+      "properties": {
+        "exact": {
+          "maxLength": 2048,
+          "minLength": 1,
+          "title": "Exact",
+          "type": "string"
+        },
+        "prefix": {
+          "maxLength": 64,
+          "title": "Prefix",
+          "type": "string"
+        },
+        "suffix": {
+          "maxLength": 64,
+          "title": "Suffix",
+          "type": "string"
+        }
+      },
+      "required": [
+        "exact",
+        "prefix",
+        "suffix"
+      ],
+      "title": "AnchorQuote",
+      "type": "object"
+    },
+    "CodepointRange": {
+      "additionalProperties": false,
+      "properties": {
+        "start": {
+          "$ref": "#/$defs/Count"
+        },
+        "end": {
+          "$ref": "#/$defs/Count"
+        }
+      },
+      "required": [
+        "start",
+        "end"
+      ],
+      "title": "CodepointRange",
+      "type": "object"
+    },
+    "ConfidenceObservation": {
+      "additionalProperties": false,
+      "properties": {
+        "state": {
+          "enum": [
+            "reported",
+            "unknown",
+            "not-reported",
+            "not-applicable",
+            "unavailable"
+          ],
+          "title": "State",
+          "type": "string"
+        },
+        "value": {
+          "anyOf": [
+            {
+              "maximum": 1,
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Value"
+        }
+      },
+      "required": [
+        "state",
+        "value"
+      ],
+      "title": "ConfidenceObservation",
+      "type": "object"
+    },
+    "CoordinatesState": {
+      "enum": [
+        "available",
+        "not-reported",
+        "format-has-no-pages",
+        "unsupported-location",
+        "parser-unavailable"
+      ],
+      "type": "string"
+    },
+    "Count": {
+      "maximum": 9007199254740991,
+      "minimum": 0,
+      "type": "integer"
+    },
+    "Digest": {
+      "pattern": "^[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "Format": {
+      "enum": [
+        "jats",
+        "tei",
+        "xml",
+        "html",
+        "pdf",
+        "docx",
+        "plain-text"
+      ],
+      "type": "string"
+    },
+    "Identity": {
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+      "type": "string"
+    },
+    "LocalOrigin": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "local-import",
+          "title": "Kind",
+          "type": "string"
+        }
+      },
+      "required": [
+        "kind"
+      ],
+      "title": "LocalOrigin",
+      "type": "object"
+    },
+    "NodeKind": {
+      "enum": [
+        "region",
+        "title",
+        "abstract",
+        "section",
+        "paragraph",
+        "sentence",
+        "list",
+        "list-item",
+        "footnote",
+        "reference",
+        "citation-marker",
+        "table",
+        "table-cell",
+        "figure",
+        "caption",
+        "equation",
+        "unknown"
+      ],
+      "type": "string"
+    },
+    "NormalizedPageRegion": {
+      "additionalProperties": false,
+      "properties": {
+        "pageIndex": {
+          "exclusiveMaximum": 500,
+          "minimum": 0,
+          "title": "Pageindex",
+          "type": "integer"
+        },
+        "pageNumber": {
+          "maximum": 500,
+          "minimum": 1,
+          "title": "Pagenumber",
+          "type": "integer"
+        },
+        "x0": {
+          "$ref": "#/$defs/UnitCoordinate"
+        },
+        "y0": {
+          "$ref": "#/$defs/UnitCoordinate"
+        },
+        "x1": {
+          "$ref": "#/$defs/UnitCoordinate"
+        },
+        "y1": {
+          "$ref": "#/$defs/UnitCoordinate"
+        },
+        "sourceWidth": {
+          "exclusiveMinimum": 0,
+          "title": "Sourcewidth",
+          "type": "number"
+        },
+        "sourceHeight": {
+          "exclusiveMinimum": 0,
+          "title": "Sourceheight",
+          "type": "number"
+        },
+        "rotation": {
+          "enum": [
+            0,
+            90,
+            180,
+            270
+          ],
+          "title": "Rotation",
+          "type": "integer"
+        },
+        "frame": {
+          "const": "unrotated-source-page",
+          "default": "unrotated-source-page",
+          "title": "Frame",
+          "type": "string"
+        },
+        "origin": {
+          "const": "top-left",
+          "default": "top-left",
+          "title": "Origin",
+          "type": "string"
+        },
+        "unit": {
+          "const": "normalized",
+          "default": "normalized",
+          "title": "Unit",
+          "type": "string"
+        },
+        "granularity": {
+          "const": "block",
+          "default": "block",
+          "title": "Granularity",
+          "type": "string"
+        }
+      },
+      "required": [
+        "pageIndex",
+        "pageNumber",
+        "x0",
+        "y0",
+        "x1",
+        "y1",
+        "sourceWidth",
+        "sourceHeight",
+        "rotation"
+      ],
+      "title": "NormalizedPageRegion",
+      "type": "object"
+    },
+    "ProjectIdentity": {
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[47][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+      "type": "string"
+    },
+    "SourceIdentity": {
+      "additionalProperties": false,
+      "properties": {
+        "projectId": {
+          "$ref": "#/$defs/ProjectIdentity"
+        },
+        "attachmentId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "documentId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "documentRevisionId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "candidateId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "sourceAssertionRevisionId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "workId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "workRevisionId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "versionId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "versionRevisionId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "objectSha256": {
+          "$ref": "#/$defs/Digest"
+        },
+        "byteLength": {
+          "maximum": 134217728,
+          "minimum": 0,
+          "title": "Bytelength",
+          "type": "integer"
+        },
+        "format": {
+          "$ref": "#/$defs/Format"
+        },
+        "provenance": {
+          "discriminator": {
+            "mapping": {
+              "local-import": "#/$defs/LocalOrigin",
+              "remote-acquisition": "#/$defs/AcquisitionOrigin"
+            },
+            "propertyName": "kind"
+          },
+          "oneOf": [
+            {
+              "$ref": "#/$defs/LocalOrigin"
+            },
+            {
+              "$ref": "#/$defs/AcquisitionOrigin"
+            }
+          ],
+          "title": "Provenance"
+        }
+      },
+      "required": [
+        "projectId",
+        "attachmentId",
+        "documentId",
+        "documentRevisionId",
+        "candidateId",
+        "sourceAssertionRevisionId",
+        "workId",
+        "workRevisionId",
+        "versionId",
+        "versionRevisionId",
+        "objectSha256",
+        "byteLength",
+        "format",
+        "provenance"
+      ],
+      "title": "SourceIdentity",
+      "type": "object"
+    },
+    "UnitCoordinate": {
+      "maximum": 1,
+      "minimum": 0,
+      "type": "number"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schemaVersion": {
+      "const": "1.0",
+      "default": "1.0",
+      "title": "Schemaversion",
+      "type": "string"
+    },
+    "projectId": {
+      "$ref": "#/$defs/ProjectIdentity"
+    },
+    "documentId": {
+      "$ref": "#/$defs/Identity"
+    },
+    "revisionId": {
+      "$ref": "#/$defs/Identity"
+    },
+    "source": {
+      "$ref": "#/$defs/SourceIdentity"
+    },
+    "contentSha256": {
+      "$ref": "#/$defs/Digest"
+    },
+    "structureSha256": {
+      "$ref": "#/$defs/Digest"
+    },
+    "nodeId": {
+      "$ref": "#/$defs/Identity"
+    },
+    "nodeKind": {
+      "$ref": "#/$defs/NodeKind"
+    },
+    "blockId": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Identity"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "sentenceId": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Identity"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "projectionId": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Identity"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "normalizationVersion": {
+      "const": "ro-text-nfc-1",
+      "default": "ro-text-nfc-1",
+      "title": "Normalizationversion",
+      "type": "string"
+    },
+    "unicodeVersion": {
+      "const": "16.0.0",
+      "default": "16.0.0",
+      "title": "Unicodeversion",
+      "type": "string"
+    },
+    "textPosition": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/CodepointRange"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "quote": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/AnchorQuote"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "context": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/AnchorContext"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "pageRegion": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/NormalizedPageRegion"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "coordinatesState": {
+      "$ref": "#/$defs/CoordinatesState"
+    },
+    "confidence": {
+      "$ref": "#/$defs/ConfidenceObservation"
+    },
+    "scholarlyVerification": {
+      "const": "unverified",
+      "default": "unverified",
+      "title": "Scholarlyverification",
+      "type": "string"
+    }
+  },
+  "required": [
+    "projectId",
+    "documentId",
+    "revisionId",
+    "source",
+    "contentSha256",
+    "structureSha256",
+    "nodeId",
+    "nodeKind",
+    "blockId",
+    "sentenceId",
+    "projectionId",
+    "textPosition",
+    "quote",
+    "context",
+    "pageRegion",
+    "coordinatesState",
+    "confidence"
+  ],
+  "title": "SourceAnchorTarget",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://research-observatory.local/contracts/anchors/source-anchor-target.v1.schema.json",
+  "x-research-observatory-semanticRules": [
+    "core-mints-anchor-and-revision-ids-on-existing-canonical-document-aggregate",
+    "exact-accepted-revision-project-copy-and-structural-projection-identities-are-authoritative",
+    "quote-position-context-and-selected-node-agree-without-fuzzy-relocation",
+    "ro-text-nfc-1-unicode16-half-open-codepoint-offsets-with-explicit-utf16-renderer-conversion",
+    "normalized-rectangle-unrotated-source-page-top-left-with-explicit-page-dimensions-and-rotation",
+    "page-number-is-one-based-display-of-zero-based-page-index-and-block-granularity-is-explicit",
+    "missing-coordinates-and-unknown-confidence-remain-distinct-visible-states",
+    "current-native-human-session-intent-privacy-inspect-and-derive-authority-on-replay-and-delivery",
+    "encrypted-retained-context-has-canonical-provenance-dependency-and-outbox-integrity",
+    "context-authentication-does-not-establish-current-original-byte-integrity",
+    "same-command-same-actor-same-selection-replays-and-conflicting-retries-deny",
+    "selection-and-parser-confidence-do-not-confer-human-scholarly-verification"
+  ]
+}
