@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: f595959bc542d59c97eadda5a0108481c5944893565c3810eebe118bfc18b053
+source_sha256: ff132930932e94006d7149c95aa20362a19667c334894b2427b8ad47d692d934
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -11418,21 +11418,21 @@ Original tasks and approvals remain unchanged.
 
 **Outcome:** Every extracted passage and downstream assertion points to a specific immutable revision and stable location.
 
-**Wave / priority / status / review:** `W2` / `P0` / `READY` / `PENDING`
+**Wave / priority / status / review:** `W2` / `P0` / `IN_PROGRESS` / `PENDING`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
 **Dependencies:** `CAP-05.S02.T03`, `CAP-02.S02.T03`
 
-#### - [ ] CAP-05.S03.T01 - Persist normalized sections, blocks, sentences, and references
+#### - [x] CAP-05.S03.T01 - Persist normalized sections, blocks, sentences, and references
 
-**Status / priority / estimate / risk:** `IN_PROGRESS` / `P0` / `L` / `high`
+**Status / priority / estimate / risk:** `DONE` / `P0` / `L` / `high`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
 **Dependencies:** `CAP-05.S02.T03`, `CAP-02.S02.T03`
 
-**Owner / review:** codex-w2-implementation / - (`-`)
+**Owner / review:** codex-w2-implementation / agent:/root/s03_t01_review (`approved`)
 
 **Objective:** Canonical document-revision schema and repositories for structural hierarchy, ordering, labels, text, and reference links.
 
@@ -11451,17 +11451,55 @@ Original tasks and approvals remain unchanged.
 - python tools/verify.py --profile documents
 - python tools/verify.py --profile data
 
+**Evidence:**
+
+- `artifacts/evidence/CAP-05.S03.T01.R01.json` at `0fbad3859595ecc14968d2e036bbc4cb55054de8`
+
 ##### Review history — CAP-05.S03.T01
 
-**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+**Review mode:** `append-only v1` / 1 completed round(s)
 
-**Current latest-review projection:** `-` by - at `-`
+###### Round R01
 
-**Latest notes:** -
+**Immutable submission packet:** `R01` / packet SHA-256 `aaf0a1756f133fa806082dab5ba6092e0cc2a9e443349a8991e91d7d792c7416`
+
+- Candidate / base / branch: `0fbad3859595ecc14968d2e036bbc4cb55054de8` / `d0752c3d0aac0162ada79effc41b88c9d2978bcf` / `codex/w2-implementation`
+- Submitted by / at: codex-w2-implementation / `2026-10-08T02:00:45+00:00`
+- Evidence: `artifacts/evidence/CAP-05.S03.T01.R01.json` / `3a86371d6a30705d2e48a1f3d6c5fd458cb2d0ae7950c9c8d4ff7c62e083f43d` / `0fbad3859595ecc14968d2e036bbc4cb55054de8`
+- Acceptance-criteria SHA-256: `66ad316a0b5c646278b61257591d09f6fbe77b1c1fc67aac1bb5beb79cfa8a52`
+- Verification-selection SHA-256: `e71fe55acaf01b4e3e5a84386633b0474a1654c9093f0784c94bb2ed677851a0`
+- Changed paths: `artifacts/evidence/CAP-05.S03.T01.privacy-binding-02.json`, `artifacts/evidence/CAP-05.S03.T01.privacy-review-01.json`, `artifacts/evidence/CAP-05.S03.T01.task-start.md`, `docs/adr/ADR-0046-bind-immutable-document-revisions-to-existing-human-authority.md`, `docs/adr/index.json`, `docs/architecture/document-parsing.md`, `docs/architecture/local-sqlite-storage.md`, `docs/planning-implementation-plan.md`, `packages/contracts/documents/README.md`, `packages/contracts/documents/document-revision-acceptance.v1.schema.json`, `packages/contracts/documents/document-revision.v1.schema.json`, `packages/contracts/documents/document-structure.v1.schema.json`, `packages/contracts/documents/generate_parser_schema.py`, `packages/contracts/documents/retained-parse-result.v1.schema.json`, `packages/contracts/storage/README.md`, `packages/contracts/storage/sqlite-migration-recovery.schema.json`, `packages/contracts/storage/sqlite-profile.schema.json`, `packages/contracts/storage/sqlite-profile.v1.json`, `planning/backlog.yaml`, `planning/review-site/CAP-05/CAP-05.S03.T01.html`, `planning/review-site/CAP-05/CAP-05.S03.html`, `planning/review-site/CAP-05/index.html`, `planning/review-site/manifest.json`, `planning/review-site/waves/W2.html`, `planning/status-summary.md`, `services/core-api/packaging/sidecar-build.json`, `services/core-api/src/research_observatory_core/app.py`, `services/core-api/src/research_observatory_core/document_parse_worker.py`, `services/core-api/src/research_observatory_core/document_parse_workflow.py`, `services/core-api/src/research_observatory_core/document_revision_api.py`, `services/core-api/src/research_observatory_core/document_revision_repository.py`, `services/core-api/src/research_observatory_core/document_revision_service.py`, `services/core-api/src/research_observatory_core/document_revisions.py`, `services/core-api/src/research_observatory_core/import_preview_service.py`, `services/core-api/src/research_observatory_core/main.py`, `services/core-api/src/research_observatory_core/migrations/runner.py`, `services/core-api/src/research_observatory_core/migrations/versions/v0026_document_revisions.py`, `services/core-api/src/research_observatory_core/object_store.py`, `services/core-api/src/research_observatory_core/ports/document_revisions.py`, `services/core-api/src/research_observatory_core/repositories.py`, `services/core-api/src/research_observatory_core/storage.py`, `services/core-api/src/research_observatory_core/workflow_executor.py`, `tests/data/test_sqlite_migrations.py`, `tests/documents/test_acquisition_recovery_migration.py`, `tests/documents/test_document_revision_contracts.py`, `tests/documents/test_document_revision_index.py`, `tests/documents/test_document_revision_migration.py`, `tests/documents/test_document_revision_repository.py`, `tests/documents/test_document_revision_workflow.py`, `tests/fixtures/documents/v25-populated-predecessor.json`, `tests/fixtures/documents/v25-populated-predecessor.zip`, `tests/packaging/test_core_sidecar_package.py`, `tests/service/test_document_revision_api.py`, `tests/workflows/test_document_parse_admission.py`, `tools/architecture_check.py`, `tools/core_sidecar_build.py`
+- Selected checks: `./artifacts/tmp/CAP-05.S02.T03.check-runtime-122/python/python.exe -B -m ruff check packages/contracts/documents/generate_parser_schema.py services/core-api/src/research_observatory_core/app.py services/core-api/src/research_observatory_core/document_parse_worker.py services/core-api/src/research_observatory_core/document_parse_workflow.py services/core-api/src/research_observatory_core/document_revision_api.py services/core-api/src/research_observatory_core/document_revision_repository.py services/core-api/src/research_observatory_core/document_revision_service.py services/core-api/src/research_observatory_core/document_revisions.py services/core-api/src/research_observatory_core/import_preview_service.py services/core-api/src/research_observatory_core/main.py services/core-api/src/research_observatory_core/migrations/runner.py services/core-api/src/research_observatory_core/migrations/versions/v0026_document_revisions.py services/core-api/src/research_observatory_core/object_store.py services/core-api/src/research_observatory_core/ports/document_revisions.py services/core-api/src/research_observatory_core/repositories.py services/core-api/src/research_observatory_core/storage.py services/core-api/src/research_observatory_core/workflow_executor.py tests/data/test_sqlite_migrations.py tests/documents/test_acquisition_recovery_migration.py tests/documents/test_document_revision_contracts.py tests/documents/test_document_revision_index.py tests/documents/test_document_revision_migration.py tests/documents/test_document_revision_repository.py tests/documents/test_document_revision_workflow.py tests/packaging/test_core_sidecar_package.py tests/service/test_document_revision_api.py tests/workflows/test_document_parse_admission.py tools/architecture_check.py tools/core_sidecar_build.py`, `./artifacts/tmp/CAP-05.S02.T03.check-runtime-122/python/python.exe -B -m ruff format --check packages/contracts/documents/generate_parser_schema.py services/core-api/src/research_observatory_core/app.py services/core-api/src/research_observatory_core/document_parse_worker.py services/core-api/src/research_observatory_core/document_parse_workflow.py services/core-api/src/research_observatory_core/document_revision_api.py services/core-api/src/research_observatory_core/document_revision_repository.py services/core-api/src/research_observatory_core/document_revision_service.py services/core-api/src/research_observatory_core/document_revisions.py services/core-api/src/research_observatory_core/import_preview_service.py services/core-api/src/research_observatory_core/main.py services/core-api/src/research_observatory_core/migrations/runner.py services/core-api/src/research_observatory_core/migrations/versions/v0026_document_revisions.py services/core-api/src/research_observatory_core/object_store.py services/core-api/src/research_observatory_core/ports/document_revisions.py services/core-api/src/research_observatory_core/repositories.py services/core-api/src/research_observatory_core/storage.py services/core-api/src/research_observatory_core/workflow_executor.py tests/data/test_sqlite_migrations.py tests/documents/test_acquisition_recovery_migration.py tests/documents/test_document_revision_contracts.py tests/documents/test_document_revision_index.py tests/documents/test_document_revision_migration.py tests/documents/test_document_revision_repository.py tests/documents/test_document_revision_workflow.py tests/packaging/test_core_sidecar_package.py tests/service/test_document_revision_api.py tests/workflows/test_document_parse_admission.py tools/architecture_check.py tools/core_sidecar_build.py`, `./artifacts/tmp/CAP-05.S02.T03.check-runtime-122/python/python.exe -B -m mypy --no-incremental services/core-api/src`, `./artifacts/tmp/CAP-05.S02.T03.check-runtime-122/python/python.exe -B packages/contracts/documents/generate_parser_schema.py --check`, `./artifacts/tmp/CAP-05.S02.T03.check-runtime-122/python/python.exe -B tools/architecture_check.py --repo ./.`, `./artifacts/tmp/CAP-05.S02.T03.check-runtime-122/python/python.exe -B tools/adr_check.py --repo ./. --base d0752c3d0aac0162ada79effc41b88c9d2978bcf --head 0fbad3859595ecc14968d2e036bbc4cb55054de8`, `./artifacts/tmp/CAP-05.S02.T03.check-runtime-122/python/python.exe -B -m unittest tests.documents.test_document_revision_contracts tests.documents.test_document_revision_index tests.documents.test_document_revision_repository tests.documents.test_document_revision_workflow tests.documents.test_document_revision_migration tests.documents.test_acquisition_recovery_migration -v`, `./artifacts/tmp/CAP-05.S02.T03.check-runtime-122/python/python.exe -B -m unittest tests.workflows.test_document_parse_admission tests.workflows.test_local_workflow_executor -v`, `./artifacts/tmp/CAP-05.S02.T03.check-runtime-122/python/python.exe -B -m unittest tests.parsing.test_parser_artifacts tests.parsing.test_protected_parse_source -v`, `./artifacts/tmp/CAP-05.S02.T03.check-runtime-122/python/python.exe -B -m unittest tests.data.test_sqlite_migrations tests.data.test_sqlite_schema tests.data.test_sqlite_recovery_contract -v`, `./artifacts/tmp/CAP-05.S02.T03.check-runtime-122/python/python.exe -B -m unittest tests.service.test_document_revision_api tests.service.test_document_attachment_api tests.service.test_project_lifecycle -v`, `./artifacts/tmp/CAP-05.S02.T03.check-runtime-122/python/python.exe -B -m unittest tests.packaging.test_core_sidecar_package -v`, `./artifacts/tmp/CAP-05.S02.T03.check-runtime-122/python/python.exe -B ./artifacts/tmp/CAP-05.S03.T01.native-composition-73.py 0fbad3859595ecc14968d2e036bbc4cb55054de8`
+- Deferred checks: `Integrated S03 anchors/resolution and slice review`, `W2 fresh full profiles, clean packaging, cross-capability matrix, minimum hardware and separate release decision`
+- Selection rationale: New immutable persistence, schema migration, rights/human authority, cross-process result binding and native API require expanded task review plus risk-selected real-boundary proof. Selected narrowed product/contract/migration/worker/source/lifecycle/packaging checks establish task criteria. No unchanged full history replay or accepted performance overage work.
+- Prior round / replayed open findings: `-` / -
+- Root-cause escalation: -
+
+**Disposition / reviewer / time:** `approved` / agent:/root/s03_t01_review / `2026-10-08T02:19:48+00:00`
+
+**Immutable review ledger:** `artifacts/evidence/CAP-05.S03.T01.review-R01.json` / `a00d94705fd1475a6bf409298b728d107ffe6ce378a9aba4604bb251d4c6bfd7`
+
+**Review notes:** Independent expanded CAP-05.S03.T01 R01 review approves exact0fbad3859595ecc14968d2e036bbc4cb55054de8 and authenticated frozen packet. Immutable normalized structure, current-authorized human acceptance, replay/concurrency, encrypted retention, atomic publication and literal-predecessor migration/recovery satisfy all three criteria. Advisory F01 is closed by the one-pass correction and preserved red/current passing regressions; no formal prior round is invented. Twelve qualification67 groups and fresh native74/73 provide13 passing selected records;67 itself remains FAIL for original non-admission. The160 unittest cases include2 explicit skips. Actual57.8336492-second LPAC inference proves live lease/write/persistence composition under unchanged limits; it is not timing-budget, minimum-tier, model-quality or newly packaged desktop qualification. Prior memory/readiness failures, historical adverse evidence and exact accepted prior warm-overage observation remain preserved. No open blocking finding. This disposition approves this task only; integrated S03 review, fresh W2/full-platform/packaging/minimum-hardware qualification and the separate human release gate remain required.
+
+**Findings opened:**
+
+- None
+
+**Prior finding closures:**
+
+- None
+
+**Current immutable submission awaiting review:** None
+
+**Current latest-review projection:** `approved` by agent:/root/s03_t01_review at `2026-10-08T02:19:48+00:00`
+
+**Latest notes:** Independent expanded CAP-05.S03.T01 R01 review approves exact0fbad3859595ecc14968d2e036bbc4cb55054de8 and authenticated frozen packet. Immutable normalized structure, current-authorized human acceptance, replay/concurrency, encrypted retention, atomic publication and literal-predecessor migration/recovery satisfy all three criteria. Advisory F01 is closed by the one-pass correction and preserved red/current passing regressions; no formal prior round is invented. Twelve qualification67 groups and fresh native74/73 provide13 passing selected records;67 itself remains FAIL for original non-admission. The160 unittest cases include2 explicit skips. Actual57.8336492-second LPAC inference proves live lease/write/persistence composition under unchanged limits; it is not timing-budget, minimum-tier, model-quality or newly packaged desktop qualification. Prior memory/readiness failures, historical adverse evidence and exact accepted prior warm-overage observation remain preserved. No open blocking finding. This disposition approves this task only; integrated S03 review, fresh W2/full-platform/packaging/minimum-hardware qualification and the separate human release gate remain required.
+
+**Currently open findings:** -
 
 #### - [ ] CAP-05.S03.T02 - Implement page, bounding-box, and text-span anchors
 
-**Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `L` / `high`
+**Status / priority / estimate / risk:** `READY` / `P0` / `L` / `high`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 

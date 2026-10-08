@@ -30338,7 +30338,7 @@ capabilities:
     depends_on:
     - CAP-05.S02.T03
     - CAP-02.S02.T03
-    status: READY
+    status: IN_PROGRESS
     tasks:
     - id: CAP-05.S03.T01
       capability_id: CAP-05
@@ -30369,29 +30369,219 @@ capabilities:
       verification_commands:
       - python tools/verify.py --profile documents
       - python tools/verify.py --profile data
-      status: IN_PROGRESS
+      status: DONE
       owner: codex-w2-implementation
       branch: codex/w2-implementation
       started_at: '2026-10-07T22:59:45+00:00'
-      updated_at: '2026-10-07T22:59:45+00:00'
-      completed_at: null
+      updated_at: '2026-10-08T02:19:48+00:00'
+      completed_at: '2026-10-08T02:19:48+00:00'
       blocker: null
       implementation_notes: ''
-      evidence: []
-      review:
-        reviewer: null
-        result: null
-        reviewed_at: null
-        notes: null
+      evidence:
+      - type: criterion-manifest
+        path: artifacts/evidence/CAP-05.S03.T01.R01.json
+        sha256: 3a86371d6a30705d2e48a1f3d6c5fd458cb2d0ae7950c9c8d4ff7c62e083f43d
+        commit: 0fbad3859595ecc14968d2e036bbc4cb55054de8
+        recorded_at: '2026-10-08T02:00:45+00:00'
+      review: &id092
+        reviewer: agent:/root/s03_t01_review
+        result: approved
+        reviewed_at: '2026-10-08T02:19:48+00:00'
+        notes: Independent expanded CAP-05.S03.T01 R01 review approves exact0fbad3859595ecc14968d2e036bbc4cb55054de8 and authenticated
+          frozen packet. Immutable normalized structure, current-authorized human acceptance, replay/concurrency, encrypted
+          retention, atomic publication and literal-predecessor migration/recovery satisfy all three criteria. Advisory F01
+          is closed by the one-pass correction and preserved red/current passing regressions; no formal prior round is invented.
+          Twelve qualification67 groups and fresh native74/73 provide13 passing selected records;67 itself remains FAIL for
+          original non-admission. The160 unittest cases include2 explicit skips. Actual57.8336492-second LPAC inference proves
+          live lease/write/persistence composition under unchanged limits; it is not timing-budget, minimum-tier, model-quality
+          or newly packaged desktop qualification. Prior memory/readiness failures, historical adverse evidence and exact
+          accepted prior warm-overage observation remain preserved. No open blocking finding. This disposition approves this
+          task only; integrated S03 review, fresh W2/full-platform/packaging/minimum-hardware qualification and the separate
+          human release gate remain required.
       base_sha: d0752c3d0aac0162ada79effc41b88c9d2978bcf
-      lease:
-        claimed_by: codex-w2-implementation
-        claimed_at: '2026-10-07T22:59:45+00:00'
-        expires_at: '2026-10-08T06:59:45+00:00'
-      verification_state: null
+      lease: null
+      verification_state: passed
       worktree: .
       platform_targets:
       - windows-x64
+      review_control:
+        version: 1
+        attempts:
+        - submission:
+            id: R01
+            submitted_by: codex-w2-implementation
+            submitted_at: '2026-10-08T02:00:45+00:00'
+            candidate_commit: 0fbad3859595ecc14968d2e036bbc4cb55054de8
+            base_commit: d0752c3d0aac0162ada79effc41b88c9d2978bcf
+            branch: codex/w2-implementation
+            evidence_reference:
+              type: criterion-manifest
+              path: artifacts/evidence/CAP-05.S03.T01.R01.json
+              sha256: 3a86371d6a30705d2e48a1f3d6c5fd458cb2d0ae7950c9c8d4ff7c62e083f43d
+              commit: 0fbad3859595ecc14968d2e036bbc4cb55054de8
+              recorded_at: '2026-10-08T02:00:45+00:00'
+            acceptance_criteria_sha256: 66ad316a0b5c646278b61257591d09f6fbe77b1c1fc67aac1bb5beb79cfa8a52
+            changed_paths:
+            - artifacts/evidence/CAP-05.S03.T01.privacy-binding-02.json
+            - artifacts/evidence/CAP-05.S03.T01.privacy-review-01.json
+            - artifacts/evidence/CAP-05.S03.T01.task-start.md
+            - docs/adr/ADR-0046-bind-immutable-document-revisions-to-existing-human-authority.md
+            - docs/adr/index.json
+            - docs/architecture/document-parsing.md
+            - docs/architecture/local-sqlite-storage.md
+            - docs/planning-implementation-plan.md
+            - packages/contracts/documents/README.md
+            - packages/contracts/documents/document-revision-acceptance.v1.schema.json
+            - packages/contracts/documents/document-revision.v1.schema.json
+            - packages/contracts/documents/document-structure.v1.schema.json
+            - packages/contracts/documents/generate_parser_schema.py
+            - packages/contracts/documents/retained-parse-result.v1.schema.json
+            - packages/contracts/storage/README.md
+            - packages/contracts/storage/sqlite-migration-recovery.schema.json
+            - packages/contracts/storage/sqlite-profile.schema.json
+            - packages/contracts/storage/sqlite-profile.v1.json
+            - planning/backlog.yaml
+            - planning/review-site/CAP-05/CAP-05.S03.T01.html
+            - planning/review-site/CAP-05/CAP-05.S03.html
+            - planning/review-site/CAP-05/index.html
+            - planning/review-site/manifest.json
+            - planning/review-site/waves/W2.html
+            - planning/status-summary.md
+            - services/core-api/packaging/sidecar-build.json
+            - services/core-api/src/research_observatory_core/app.py
+            - services/core-api/src/research_observatory_core/document_parse_worker.py
+            - services/core-api/src/research_observatory_core/document_parse_workflow.py
+            - services/core-api/src/research_observatory_core/document_revision_api.py
+            - services/core-api/src/research_observatory_core/document_revision_repository.py
+            - services/core-api/src/research_observatory_core/document_revision_service.py
+            - services/core-api/src/research_observatory_core/document_revisions.py
+            - services/core-api/src/research_observatory_core/import_preview_service.py
+            - services/core-api/src/research_observatory_core/main.py
+            - services/core-api/src/research_observatory_core/migrations/runner.py
+            - services/core-api/src/research_observatory_core/migrations/versions/v0026_document_revisions.py
+            - services/core-api/src/research_observatory_core/object_store.py
+            - services/core-api/src/research_observatory_core/ports/document_revisions.py
+            - services/core-api/src/research_observatory_core/repositories.py
+            - services/core-api/src/research_observatory_core/storage.py
+            - services/core-api/src/research_observatory_core/workflow_executor.py
+            - tests/data/test_sqlite_migrations.py
+            - tests/documents/test_acquisition_recovery_migration.py
+            - tests/documents/test_document_revision_contracts.py
+            - tests/documents/test_document_revision_index.py
+            - tests/documents/test_document_revision_migration.py
+            - tests/documents/test_document_revision_repository.py
+            - tests/documents/test_document_revision_workflow.py
+            - tests/fixtures/documents/v25-populated-predecessor.json
+            - tests/fixtures/documents/v25-populated-predecessor.zip
+            - tests/packaging/test_core_sidecar_package.py
+            - tests/service/test_document_revision_api.py
+            - tests/workflows/test_document_parse_admission.py
+            - tools/architecture_check.py
+            - tools/core_sidecar_build.py
+            selected_checks:
+            - ./artifacts/tmp/CAP-05.S02.T03.check-runtime-122/python/python.exe -B -m ruff check packages/contracts/documents/generate_parser_schema.py
+              services/core-api/src/research_observatory_core/app.py services/core-api/src/research_observatory_core/document_parse_worker.py
+              services/core-api/src/research_observatory_core/document_parse_workflow.py services/core-api/src/research_observatory_core/document_revision_api.py
+              services/core-api/src/research_observatory_core/document_revision_repository.py services/core-api/src/research_observatory_core/document_revision_service.py
+              services/core-api/src/research_observatory_core/document_revisions.py services/core-api/src/research_observatory_core/import_preview_service.py
+              services/core-api/src/research_observatory_core/main.py services/core-api/src/research_observatory_core/migrations/runner.py
+              services/core-api/src/research_observatory_core/migrations/versions/v0026_document_revisions.py services/core-api/src/research_observatory_core/object_store.py
+              services/core-api/src/research_observatory_core/ports/document_revisions.py services/core-api/src/research_observatory_core/repositories.py
+              services/core-api/src/research_observatory_core/storage.py services/core-api/src/research_observatory_core/workflow_executor.py
+              tests/data/test_sqlite_migrations.py tests/documents/test_acquisition_recovery_migration.py tests/documents/test_document_revision_contracts.py
+              tests/documents/test_document_revision_index.py tests/documents/test_document_revision_migration.py tests/documents/test_document_revision_repository.py
+              tests/documents/test_document_revision_workflow.py tests/packaging/test_core_sidecar_package.py tests/service/test_document_revision_api.py
+              tests/workflows/test_document_parse_admission.py tools/architecture_check.py tools/core_sidecar_build.py
+            - ./artifacts/tmp/CAP-05.S02.T03.check-runtime-122/python/python.exe -B -m ruff format --check packages/contracts/documents/generate_parser_schema.py
+              services/core-api/src/research_observatory_core/app.py services/core-api/src/research_observatory_core/document_parse_worker.py
+              services/core-api/src/research_observatory_core/document_parse_workflow.py services/core-api/src/research_observatory_core/document_revision_api.py
+              services/core-api/src/research_observatory_core/document_revision_repository.py services/core-api/src/research_observatory_core/document_revision_service.py
+              services/core-api/src/research_observatory_core/document_revisions.py services/core-api/src/research_observatory_core/import_preview_service.py
+              services/core-api/src/research_observatory_core/main.py services/core-api/src/research_observatory_core/migrations/runner.py
+              services/core-api/src/research_observatory_core/migrations/versions/v0026_document_revisions.py services/core-api/src/research_observatory_core/object_store.py
+              services/core-api/src/research_observatory_core/ports/document_revisions.py services/core-api/src/research_observatory_core/repositories.py
+              services/core-api/src/research_observatory_core/storage.py services/core-api/src/research_observatory_core/workflow_executor.py
+              tests/data/test_sqlite_migrations.py tests/documents/test_acquisition_recovery_migration.py tests/documents/test_document_revision_contracts.py
+              tests/documents/test_document_revision_index.py tests/documents/test_document_revision_migration.py tests/documents/test_document_revision_repository.py
+              tests/documents/test_document_revision_workflow.py tests/packaging/test_core_sidecar_package.py tests/service/test_document_revision_api.py
+              tests/workflows/test_document_parse_admission.py tools/architecture_check.py tools/core_sidecar_build.py
+            - ./artifacts/tmp/CAP-05.S02.T03.check-runtime-122/python/python.exe -B -m mypy --no-incremental services/core-api/src
+            - ./artifacts/tmp/CAP-05.S02.T03.check-runtime-122/python/python.exe -B packages/contracts/documents/generate_parser_schema.py
+              --check
+            - ./artifacts/tmp/CAP-05.S02.T03.check-runtime-122/python/python.exe -B tools/architecture_check.py --repo ./.
+            - ./artifacts/tmp/CAP-05.S02.T03.check-runtime-122/python/python.exe -B tools/adr_check.py --repo ./. --base d0752c3d0aac0162ada79effc41b88c9d2978bcf
+              --head 0fbad3859595ecc14968d2e036bbc4cb55054de8
+            - ./artifacts/tmp/CAP-05.S02.T03.check-runtime-122/python/python.exe -B -m unittest tests.documents.test_document_revision_contracts
+              tests.documents.test_document_revision_index tests.documents.test_document_revision_repository tests.documents.test_document_revision_workflow
+              tests.documents.test_document_revision_migration tests.documents.test_acquisition_recovery_migration -v
+            - ./artifacts/tmp/CAP-05.S02.T03.check-runtime-122/python/python.exe -B -m unittest tests.workflows.test_document_parse_admission
+              tests.workflows.test_local_workflow_executor -v
+            - ./artifacts/tmp/CAP-05.S02.T03.check-runtime-122/python/python.exe -B -m unittest tests.parsing.test_parser_artifacts
+              tests.parsing.test_protected_parse_source -v
+            - ./artifacts/tmp/CAP-05.S02.T03.check-runtime-122/python/python.exe -B -m unittest tests.data.test_sqlite_migrations
+              tests.data.test_sqlite_schema tests.data.test_sqlite_recovery_contract -v
+            - ./artifacts/tmp/CAP-05.S02.T03.check-runtime-122/python/python.exe -B -m unittest tests.service.test_document_revision_api
+              tests.service.test_document_attachment_api tests.service.test_project_lifecycle -v
+            - ./artifacts/tmp/CAP-05.S02.T03.check-runtime-122/python/python.exe -B -m unittest tests.packaging.test_core_sidecar_package
+              -v
+            - ./artifacts/tmp/CAP-05.S02.T03.check-runtime-122/python/python.exe -B ./artifacts/tmp/CAP-05.S03.T01.native-composition-73.py
+              0fbad3859595ecc14968d2e036bbc4cb55054de8
+            deferred_checks:
+            - Integrated S03 anchors/resolution and slice review
+            - W2 fresh full profiles, clean packaging, cross-capability matrix, minimum hardware and separate release decision
+            selection_rationale: New immutable persistence, schema migration, rights/human authority, cross-process result
+              binding and native API require expanded task review plus risk-selected real-boundary proof. Selected narrowed
+              product/contract/migration/worker/source/lifecycle/packaging checks establish task criteria. No unchanged full
+              history replay or accepted performance overage work.
+            selection_sha256: e71fe55acaf01b4e3e5a84386633b0474a1654c9093f0784c94bb2ed677851a0
+            prior_attempt_id: null
+            open_finding_ids: []
+            root_cause_analysis: null
+            selected_command_ids:
+            - contracts:unit
+            - data:unit
+            - documents:unit
+            - foundation:adr
+            - foundation:architecture
+            - foundation:quality
+            - packaging:unit
+            - service:unit
+            packet_sha256: aaf0a1756f133fa806082dab5ba6092e0cc2a9e443349a8991e91d7d792c7416
+          review: *id092
+          ledger:
+            path: artifacts/evidence/CAP-05.S03.T01.review-R01.json
+            sha256: a00d94705fd1475a6bf409298b728d107ffe6ce378a9aba4604bb251d4c6bfd7
+          findings: []
+          closures: []
+          telemetry:
+            task_id: CAP-05.S03.T01
+            amendment_id: null
+            attempt_id: R01
+            submitted_at: '2026-10-08T02:00:45+00:00'
+            reviewed_at: '2026-10-08T02:19:48+00:00'
+            duration_seconds: 1143
+            outcome: approved
+            finding_counts:
+              critical: 0
+              high: 0
+              medium: 0
+              low: 0
+              blocking: 0
+              total: 0
+            command_ids:
+            - contracts:unit
+            - data:unit
+            - documents:unit
+            - foundation:adr
+            - foundation:architecture
+            - foundation:quality
+            - packaging:unit
+            - service:unit
+            remediation:
+              prior_attempt_id: null
+              replayed_finding_ids: []
+              closed_finding_ids: []
+        current_submission: null
     - id: CAP-05.S03.T02
       capability_id: CAP-05
       slice_id: CAP-05.S03
@@ -30420,11 +30610,11 @@ capabilities:
       verification_commands:
       - python tools/verify.py --profile documents
       - python tools/verify.py --profile desktop
-      status: NOT_STARTED
+      status: READY
       owner: null
       branch: null
       started_at: null
-      updated_at: '2026-08-07T00:00:00+00:00'
+      updated_at: '2026-10-08T02:19:48+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -30500,7 +30690,7 @@ capabilities:
       without leaving the workflow.
     wave: W2
     priority: P0
-    deployment_profiles: &id092
+    deployment_profiles: &id093
     - LOC
     - LAB
     - ALL
@@ -30527,7 +30717,7 @@ capabilities:
       - CAP-01.S02.T03
       priority: P0
       wave: W2
-      deployment_profiles: *id092
+      deployment_profiles: *id093
       estimate: L
       risk: high
       review_gate: agent-review
@@ -30577,7 +30767,7 @@ capabilities:
       - CAP-05.S04.T01
       priority: P0
       wave: W2
-      deployment_profiles: *id092
+      deployment_profiles: *id093
       estimate: L
       risk: medium
       review_gate: agent-review
@@ -30625,7 +30815,7 @@ capabilities:
       - CAP-05.S04.T02
       priority: P0
       wave: W2
-      deployment_profiles: *id092
+      deployment_profiles: *id093
       estimate: M
       risk: high
       review_gate: rights-review
@@ -30668,7 +30858,7 @@ capabilities:
     outcome: Document-internal scholarly structures become inspectable records without losing page context.
     wave: W2
     priority: P1
-    deployment_profiles: &id093
+    deployment_profiles: &id094
     - LOC
     - LAB
     - ALL
@@ -30694,7 +30884,7 @@ capabilities:
       - CAP-05.S03.T03
       priority: P1
       wave: W2
-      deployment_profiles: *id093
+      deployment_profiles: *id094
       estimate: L
       risk: high
       review_gate: agent-review
@@ -30741,7 +30931,7 @@ capabilities:
       - CAP-05.S05.T01
       priority: P1
       wave: W2
-      deployment_profiles: *id093
+      deployment_profiles: *id094
       estimate: L
       risk: medium
       review_gate: agent-review
@@ -30788,7 +30978,7 @@ capabilities:
       - CAP-05.S04.T02
       priority: P1
       wave: W2
-      deployment_profiles: *id093
+      deployment_profiles: *id094
       estimate: L
       risk: high
       review_gate: agent-review
@@ -30831,7 +31021,7 @@ capabilities:
     outcome: Parsing errors can be diagnosed and corrected without obscuring machine output or provenance.
     wave: W2
     priority: P0
-    deployment_profiles: &id094
+    deployment_profiles: &id095
     - LOC
     - LAB
     - ALL
@@ -30858,7 +31048,7 @@ capabilities:
       - CAP-03.S05.T02
       priority: P0
       wave: W2
-      deployment_profiles: *id094
+      deployment_profiles: *id095
       estimate: M
       risk: medium
       review_gate: agent-review
@@ -30905,7 +31095,7 @@ capabilities:
       - CAP-05.S05.T01
       priority: P0
       wave: W2
-      deployment_profiles: *id094
+      deployment_profiles: *id095
       estimate: L
       risk: high
       review_gate: agent-review
@@ -30952,7 +31142,7 @@ capabilities:
       - CAP-05.S06.T02
       priority: P0
       wave: W2
-      deployment_profiles: *id094
+      deployment_profiles: *id095
       estimate: L
       risk: high
       review_gate: agent-review
@@ -31015,7 +31205,7 @@ capabilities:
     outcome: Exact terminology, Boolean logic, metadata filters, and reproducible ranking are available through SQLite FTS5.
     wave: W3
     priority: P0
-    deployment_profiles: &id095
+    deployment_profiles: &id096
     - LOC
     - LAB
     - ALL
@@ -31043,7 +31233,7 @@ capabilities:
       - CAP-05.S03.T03
       priority: P0
       wave: W3
-      deployment_profiles: *id095
+      deployment_profiles: *id096
       estimate: M
       risk: medium
       review_gate: agent-review
@@ -31089,7 +31279,7 @@ capabilities:
       - CAP-06.S01.T01
       priority: P0
       wave: W3
-      deployment_profiles: *id095
+      deployment_profiles: *id096
       estimate: L
       risk: high
       review_gate: agent-review
@@ -31135,7 +31325,7 @@ capabilities:
       - CAP-06.S01.T02
       priority: P0
       wave: W3
-      deployment_profiles: *id095
+      deployment_profiles: *id096
       estimate: L
       risk: medium
       review_gate: agent-review
@@ -31178,7 +31368,7 @@ capabilities:
     outcome: Conceptually related literature is retrievable through a replaceable, versioned local embedding interface.
     wave: W3
     priority: P0
-    deployment_profiles: &id096
+    deployment_profiles: &id097
     - LOC
     - LAB
     - ALL
@@ -31206,7 +31396,7 @@ capabilities:
       - CAP-07.S01.T03
       priority: P0
       wave: W3
-      deployment_profiles: *id096
+      deployment_profiles: *id097
       estimate: L
       risk: high
       review_gate: agent-review
@@ -31254,7 +31444,7 @@ capabilities:
       - CAP-06.S02.T01
       priority: P0
       wave: W3
-      deployment_profiles: *id096
+      deployment_profiles: *id097
       estimate: L
       risk: high
       review_gate: agent-review
@@ -31305,7 +31495,7 @@ capabilities:
       - CAP-06.S02.T02
       priority: P0
       wave: W3
-      deployment_profiles: *id096
+      deployment_profiles: *id097
       estimate: L
       risk: high
       review_gate: agent-review
@@ -31348,7 +31538,7 @@ capabilities:
     outcome: Search ensembles combine exact, semantic, graph, and project-specific relevance while preserving component evidence.
     wave: W3
     priority: P0
-    deployment_profiles: &id097
+    deployment_profiles: &id098
     - LOC
     - LAB
     - ALL
@@ -31376,7 +31566,7 @@ capabilities:
       - CAP-06.S02.T03
       priority: P0
       wave: W3
-      deployment_profiles: *id097
+      deployment_profiles: *id098
       estimate: M
       risk: medium
       review_gate: agent-review
@@ -31421,7 +31611,7 @@ capabilities:
       - CAP-06.S03.T01
       priority: P0
       wave: W3
-      deployment_profiles: *id097
+      deployment_profiles: *id098
       estimate: L
       risk: high
       review_gate: agent-review
@@ -31469,7 +31659,7 @@ capabilities:
       - CAP-06.S03.T02
       priority: P0
       wave: W3
-      deployment_profiles: *id097
+      deployment_profiles: *id098
       estimate: M
       risk: high
       review_gate: agent-review
@@ -31514,7 +31704,7 @@ capabilities:
     outcome: Researchers can iteratively broaden, narrow, branch, and compare searches without losing their reasoning history.
     wave: W3
     priority: P0
-    deployment_profiles: &id098
+    deployment_profiles: &id099
     - LOC
     - LAB
     - ALL
@@ -31542,7 +31732,7 @@ capabilities:
       - CAP-04.S02.T03
       priority: P0
       wave: W3
-      deployment_profiles: *id098
+      deployment_profiles: *id099
       estimate: L
       risk: medium
       review_gate: agent-review
@@ -31589,7 +31779,7 @@ capabilities:
       - CAP-06.S04.T01
       priority: P0
       wave: W3
-      deployment_profiles: *id098
+      deployment_profiles: *id099
       estimate: L
       risk: high
       review_gate: agent-review
@@ -31637,7 +31827,7 @@ capabilities:
       - CAP-06.S04.T02
       priority: P0
       wave: W3
-      deployment_profiles: *id098
+      deployment_profiles: *id099
       estimate: L
       risk: high
       review_gate: agent-review
@@ -31682,7 +31872,7 @@ capabilities:
     outcome: Field structure and collection bias are visible before analytical claims are made.
     wave: W3
     priority: P0
-    deployment_profiles: &id099
+    deployment_profiles: &id100
     - LOC
     - LAB
     - ALL
@@ -31710,7 +31900,7 @@ capabilities:
       - CAP-04.S04.T03
       priority: P0
       wave: W3
-      deployment_profiles: *id099
+      deployment_profiles: *id100
       estimate: L
       risk: medium
       review_gate: agent-review
@@ -31760,7 +31950,7 @@ capabilities:
       - CAP-06.S05.T01
       priority: P0
       wave: W3
-      deployment_profiles: *id099
+      deployment_profiles: *id100
       estimate: L
       risk: high
       review_gate: agent-review
@@ -31810,7 +32000,7 @@ capabilities:
       - CAP-06.S05.T02
       priority: P0
       wave: W3
-      deployment_profiles: *id099
+      deployment_profiles: *id100
       estimate: L
       risk: high
       review_gate: agent-review
@@ -31856,7 +32046,7 @@ capabilities:
       missed-paper risk.
     wave: W3
     priority: P0
-    deployment_profiles: &id100
+    deployment_profiles: &id101
     - LOC
     - LAB
     - ALL
@@ -31884,7 +32074,7 @@ capabilities:
       - CAP-03.S02.T03
       priority: P0
       wave: W3
-      deployment_profiles: *id100
+      deployment_profiles: *id101
       estimate: L
       risk: high
       review_gate: agent-review
@@ -31934,7 +32124,7 @@ capabilities:
       - CAP-06.S06.T01
       priority: P0
       wave: W3
-      deployment_profiles: *id100
+      deployment_profiles: *id101
       estimate: L
       risk: high
       review_gate: agent-review
@@ -31983,7 +32173,7 @@ capabilities:
       - CAP-06.S06.T02
       priority: P0
       wave: W3
-      deployment_profiles: *id100
+      deployment_profiles: *id101
       estimate: L
       risk: high
       review_gate: method-review
@@ -32046,7 +32236,7 @@ capabilities:
     outcome: AI capabilities are invoked by scholarly task type rather than hard-coded vendor API.
     wave: W1
     priority: P0
-    deployment_profiles: &id101
+    deployment_profiles: &id102
     - LOC
     - LAB
     - ALL
@@ -32074,7 +32264,7 @@ capabilities:
       - CAP-00.S03.T03
       priority: P0
       wave: W1
-      deployment_profiles: *id101
+      deployment_profiles: *id102
       estimate: L
       risk: high
       review_gate: agent-review
@@ -32106,7 +32296,7 @@ capabilities:
         sha256: 28967a00f413267c2ccb82efb098e35d13350472db0a0885daba93ceb2c64c44
         commit: e4f70e7c87d06f0b09ac8da46465bf957968ba79
         recorded_at: '2026-08-28T17:20:44+00:00'
-      review: &id102
+      review: &id103
         reviewer: codex-independent
         result: approved
         reviewed_at: '2026-08-28T17:23:30+00:00'
@@ -32406,7 +32596,7 @@ capabilities:
             - foundation:backlog
             - foundation:backlog-views
             packet_sha256: 59857ca41a8b84f5c156c3bac749d4a8a1890fa7075f2c143b59c0278edc6ac4
-          review: *id102
+          review: *id103
           ledger:
             path: artifacts/evidence/CAP-07.S01.T01.review-R02.json
             sha256: 2e081c3e8402f7fb610dad62feeb63e7c436ee754e916d09f2a45f2c75da2349
@@ -32473,7 +32663,7 @@ capabilities:
       - CAP-07.S01.T01
       priority: P0
       wave: W1
-      deployment_profiles: *id101
+      deployment_profiles: *id102
       estimate: M
       risk: high
       review_gate: agent-review
@@ -32497,7 +32687,7 @@ capabilities:
         sha256: e636bcd14cd7cb3b69c2437bfcf403853dc91a60a98bb4df6293f56b986d5ad8
         commit: 162745fc07585f33926baa54915846ba9048e1e8
         recorded_at: '2026-09-06T12:13:30+00:00'
-      review: &id103
+      review: &id104
         reviewer: agent:/root/model_registry_review
         result: approved
         reviewed_at: '2026-09-06T12:18:30+00:00'
@@ -34165,7 +34355,7 @@ capabilities:
             - foundation:architecture
             - foundation:backlog-views
             packet_sha256: b25df6df141028d53aaa9702b8d53949333b92b2d2efe5782aa90c9a6c81cd40
-          review: *id103
+          review: *id104
           ledger:
             path: artifacts/evidence/CAP-07.S01.T02.review-R01.json
             sha256: c0c0a293e38b009c99788c3e52fc34886e432c9ead7134ac0fa4eaaaaa56cd6d
@@ -34219,7 +34409,7 @@ capabilities:
       - CAP-07.S01.T02
       priority: P0
       wave: W1
-      deployment_profiles: *id101
+      deployment_profiles: *id102
       estimate: L
       risk: high
       review_gate: security-review
@@ -34245,7 +34435,7 @@ capabilities:
         sha256: 92f84bb9c2046a38835f8658deb709117117b48984a732d2757dfe7c8b40d0f6
         commit: 25327cece02112c97492b0f28af9ac3df1e19c40
         recorded_at: '2026-09-06T15:57:44+00:00'
-      review: &id104
+      review: &id105
         reviewer: agent:/root/decoder_memo_review
         result: approved
         reviewed_at: '2026-09-06T16:03:33+00:00'
@@ -34420,7 +34610,7 @@ capabilities:
             - foundation:backlog-views
             - foundation:backlog
             packet_sha256: 4e50706bff62d014970ad33355990577cfbb3e9e682e904d05270c4a05ac7777
-          review: *id104
+          review: *id105
           ledger:
             path: artifacts/evidence/CAP-07.S01.T03.review-R01.json
             sha256: 113a451d66b249cba1209949e76725b8f8a237a3f9acd5129d630d9deeba693e
@@ -34474,7 +34664,7 @@ capabilities:
       server.
     wave: W3
     priority: P0
-    deployment_profiles: &id105
+    deployment_profiles: &id106
     - LOC
     - LAB
     depends_on:
@@ -34501,7 +34691,7 @@ capabilities:
       - CAP-01.S03.T03
       priority: P0
       wave: W3
-      deployment_profiles: *id105
+      deployment_profiles: *id106
       estimate: L
       risk: high
       review_gate: agent-review
@@ -34551,7 +34741,7 @@ capabilities:
       - CAP-07.S02.T01
       priority: P0
       wave: W3
-      deployment_profiles: *id105
+      deployment_profiles: *id106
       estimate: L
       risk: high
       review_gate: agent-review
@@ -34601,7 +34791,7 @@ capabilities:
       - CAP-07.S02.T02
       priority: P0
       wave: W3
-      deployment_profiles: *id105
+      deployment_profiles: *id106
       estimate: M
       risk: medium
       review_gate: agent-review
@@ -34645,7 +34835,7 @@ capabilities:
       controls.
     wave: W3
     priority: P1
-    deployment_profiles: &id106
+    deployment_profiles: &id107
     - LOC
     - LAB
     - UNI
@@ -34674,7 +34864,7 @@ capabilities:
       - CAP-02.S04.T01
       priority: P1
       wave: W3
-      deployment_profiles: *id106
+      deployment_profiles: *id107
       estimate: L
       risk: medium
       review_gate: agent-review
@@ -34719,7 +34909,7 @@ capabilities:
       - CAP-07.S03.T01
       priority: P1
       wave: W3
-      deployment_profiles: *id106
+      deployment_profiles: *id107
       estimate: L
       risk: high
       review_gate: privacy-review
@@ -34766,7 +34956,7 @@ capabilities:
       - CAP-07.S03.T02
       priority: P1
       wave: W3
-      deployment_profiles: *id106
+      deployment_profiles: *id107
       estimate: M
       risk: high
       review_gate: agent-review
@@ -34811,7 +35001,7 @@ capabilities:
     outcome: AI behavior is reproducible and testable as versioned configuration rather than hidden prompt strings.
     wave: W3
     priority: P0
-    deployment_profiles: &id107
+    deployment_profiles: &id108
     - LOC
     - LAB
     - ALL
@@ -34838,7 +35028,7 @@ capabilities:
       - CAP-00.S05.T02
       priority: P0
       wave: W3
-      deployment_profiles: *id107
+      deployment_profiles: *id108
       estimate: M
       risk: high
       review_gate: agent-review
@@ -34884,7 +35074,7 @@ capabilities:
       - CAP-07.S04.T01
       priority: P0
       wave: W3
-      deployment_profiles: *id107
+      deployment_profiles: *id108
       estimate: L
       risk: high
       review_gate: agent-review
@@ -34931,7 +35121,7 @@ capabilities:
       - CAP-07.S04.T02
       priority: P0
       wave: W3
-      deployment_profiles: *id107
+      deployment_profiles: *id108
       estimate: L
       risk: high
       review_gate: model-review
@@ -34976,7 +35166,7 @@ capabilities:
       content.
     wave: W3
     priority: P0
-    deployment_profiles: &id108
+    deployment_profiles: &id109
     - LOC
     - LAB
     - ALL
@@ -35003,7 +35193,7 @@ capabilities:
       - CAP-03.S03.T03
       priority: P0
       wave: W3
-      deployment_profiles: *id108
+      deployment_profiles: *id109
       estimate: M
       risk: medium
       review_gate: agent-review
@@ -35049,7 +35239,7 @@ capabilities:
       - CAP-07.S05.T01
       priority: P0
       wave: W3
-      deployment_profiles: *id108
+      deployment_profiles: *id109
       estimate: M
       risk: high
       review_gate: agent-review
@@ -35099,7 +35289,7 @@ capabilities:
       - CAP-07.S05.T02
       priority: P0
       wave: W3
-      deployment_profiles: *id108
+      deployment_profiles: *id109
       estimate: L
       risk: high
       review_gate: model-review
@@ -35162,7 +35352,7 @@ capabilities:
     outcome: A small stable scholarly core can be extended by domain and method packs under explicit version governance.
     wave: W3
     priority: P0
-    deployment_profiles: &id109
+    deployment_profiles: &id110
     - LOC
     - LAB
     - ALL
@@ -35190,7 +35380,7 @@ capabilities:
       - CAP-07.S04.T02
       priority: P0
       wave: W3
-      deployment_profiles: *id109
+      deployment_profiles: *id110
       estimate: L
       risk: high
       review_gate: agent-review
@@ -35238,7 +35428,7 @@ capabilities:
       - CAP-08.S01.T01
       priority: P0
       wave: W3
-      deployment_profiles: *id109
+      deployment_profiles: *id110
       estimate: L
       risk: high
       review_gate: agent-review
@@ -35285,7 +35475,7 @@ capabilities:
       - CAP-08.S01.T02
       priority: P0
       wave: W3
-      deployment_profiles: *id109
+      deployment_profiles: *id110
       estimate: M
       risk: high
       review_gate: agent-review
@@ -35329,7 +35519,7 @@ capabilities:
       absent fields.
     wave: W3
     priority: P0
-    deployment_profiles: &id110
+    deployment_profiles: &id111
     - LOC
     - LAB
     - ALL
@@ -35359,7 +35549,7 @@ capabilities:
       - CAP-07.S04.T02
       priority: P0
       wave: W3
-      deployment_profiles: *id110
+      deployment_profiles: *id111
       estimate: L
       risk: high
       review_gate: agent-review
@@ -35409,7 +35599,7 @@ capabilities:
       - CAP-08.S02.T01
       priority: P0
       wave: W3
-      deployment_profiles: *id110
+      deployment_profiles: *id111
       estimate: L
       risk: high
       review_gate: agent-review
@@ -35459,7 +35649,7 @@ capabilities:
       - CAP-08.S02.T02
       priority: P0
       wave: W3
-      deployment_profiles: *id110
+      deployment_profiles: *id111
       estimate: L
       risk: high
       review_gate: agent-review
@@ -35502,7 +35692,7 @@ capabilities:
     outcome: Extracted content is stored with decomposed certainty and explicit epistemic status.
     wave: W3
     priority: P0
-    deployment_profiles: &id111
+    deployment_profiles: &id112
     - LOC
     - LAB
     - ALL
@@ -35530,7 +35720,7 @@ capabilities:
       - CAP-03.S03.T02
       priority: P0
       wave: W3
-      deployment_profiles: *id111
+      deployment_profiles: *id112
       estimate: L
       risk: high
       review_gate: agent-review
@@ -35576,7 +35766,7 @@ capabilities:
       - CAP-08.S03.T01
       priority: P0
       wave: W3
-      deployment_profiles: *id111
+      deployment_profiles: *id112
       estimate: L
       risk: high
       review_gate: agent-review
@@ -35626,7 +35816,7 @@ capabilities:
       - CAP-08.S03.T02
       priority: P0
       wave: W3
-      deployment_profiles: *id111
+      deployment_profiles: *id112
       estimate: M
       risk: high
       review_gate: agent-review
@@ -35669,7 +35859,7 @@ capabilities:
     outcome: A separate verifier tests passage entailment, schema fit, anchor validity, and unsupported inference.
     wave: W3
     priority: P0
-    deployment_profiles: &id112
+    deployment_profiles: &id113
     - LOC
     - LAB
     - ALL
@@ -35697,7 +35887,7 @@ capabilities:
       - CAP-07.S05.T03
       priority: P0
       wave: W3
-      deployment_profiles: *id112
+      deployment_profiles: *id113
       estimate: L
       risk: high
       review_gate: agent-review
@@ -35745,7 +35935,7 @@ capabilities:
       - CAP-08.S04.T01
       priority: P0
       wave: W3
-      deployment_profiles: *id112
+      deployment_profiles: *id113
       estimate: L
       risk: high
       review_gate: agent-review
@@ -35794,7 +35984,7 @@ capabilities:
       - CAP-08.S04.T02
       priority: P0
       wave: W3
-      deployment_profiles: *id112
+      deployment_profiles: *id113
       estimate: M
       risk: high
       review_gate: method-review
@@ -35837,7 +36027,7 @@ capabilities:
     outcome: Researchers can inspect, filter, compare, pivot, correct, and trace evidence at scale.
     wave: W3
     priority: P0
-    deployment_profiles: &id113
+    deployment_profiles: &id114
     - LOC
     - LAB
     - ALL
@@ -35864,7 +36054,7 @@ capabilities:
       - CAP-01.S02.T01
       priority: P0
       wave: W3
-      deployment_profiles: *id113
+      deployment_profiles: *id114
       estimate: L
       risk: medium
       review_gate: agent-review
@@ -35912,7 +36102,7 @@ capabilities:
       - CAP-08.S05.T01
       priority: P0
       wave: W3
-      deployment_profiles: *id113
+      deployment_profiles: *id114
       estimate: L
       risk: high
       review_gate: agent-review
@@ -35962,7 +36152,7 @@ capabilities:
       - CAP-08.S05.T02
       priority: P0
       wave: W3
-      deployment_profiles: *id113
+      deployment_profiles: *id114
       estimate: L
       risk: high
       review_gate: agent-review
@@ -36007,7 +36197,7 @@ capabilities:
     outcome: Human plurality and review outcomes are measurable and preserved.
     wave: W3
     priority: P0
-    deployment_profiles: &id114
+    deployment_profiles: &id115
     - LOC
     - LAB
     - ALL
@@ -36035,7 +36225,7 @@ capabilities:
       - CAP-04.S04.T02
       priority: P0
       wave: W3
-      deployment_profiles: *id114
+      deployment_profiles: *id115
       estimate: L
       risk: high
       review_gate: agent-review
@@ -36083,7 +36273,7 @@ capabilities:
       - CAP-08.S06.T01
       priority: P0
       wave: W3
-      deployment_profiles: *id114
+      deployment_profiles: *id115
       estimate: L
       risk: high
       review_gate: human-review
@@ -36130,7 +36320,7 @@ capabilities:
       - CAP-08.S06.T02
       priority: P0
       wave: W3
-      deployment_profiles: *id114
+      deployment_profiles: *id115
       estimate: M
       risk: high
       review_gate: agent-review
@@ -36193,7 +36383,7 @@ capabilities:
     outcome: The system can query scholarly relations locally without binding the domain to a particular graph database.
     wave: W4
     priority: P0
-    deployment_profiles: &id115
+    deployment_profiles: &id116
     - LOC
     - LAB
     - ALL
@@ -36221,7 +36411,7 @@ capabilities:
       - CAP-03.S05.T02
       priority: P0
       wave: W4
-      deployment_profiles: *id115
+      deployment_profiles: *id116
       estimate: L
       risk: high
       review_gate: agent-review
@@ -36267,7 +36457,7 @@ capabilities:
       - CAP-09.S01.T01
       priority: P0
       wave: W4
-      deployment_profiles: *id115
+      deployment_profiles: *id116
       estimate: L
       risk: high
       review_gate: agent-review
@@ -36315,7 +36505,7 @@ capabilities:
       - CAP-09.S01.T02
       priority: P0
       wave: W4
-      deployment_profiles: *id115
+      deployment_profiles: *id116
       estimate: L
       risk: high
       review_gate: agent-review
@@ -36358,7 +36548,7 @@ capabilities:
     outcome: Internal paper semantics become a multi-granular argument representation with preserved wording and evidence.
     wave: W4
     priority: P0
-    deployment_profiles: &id116
+    deployment_profiles: &id117
     - LOC
     - LAB
     - ALL
@@ -36386,7 +36576,7 @@ capabilities:
       - CAP-08.S06.T02
       priority: P0
       wave: W4
-      deployment_profiles: *id116
+      deployment_profiles: *id117
       estimate: L
       risk: high
       review_gate: agent-review
@@ -36436,7 +36626,7 @@ capabilities:
       - CAP-09.S02.T01
       priority: P0
       wave: W4
-      deployment_profiles: *id116
+      deployment_profiles: *id117
       estimate: L
       risk: high
       review_gate: agent-review
@@ -36485,7 +36675,7 @@ capabilities:
       - CAP-09.S02.T02
       priority: P0
       wave: W4
-      deployment_profiles: *id116
+      deployment_profiles: *id117
       estimate: L
       risk: high
       review_gate: agent-review
@@ -36528,7 +36718,7 @@ capabilities:
     outcome: Studies are normalized into defensible comparison sets before support, contradiction, or boundary inference.
     wave: W4
     priority: P0
-    deployment_profiles: &id117
+    deployment_profiles: &id118
     - LOC
     - LAB
     - ALL
@@ -36556,7 +36746,7 @@ capabilities:
       - CAP-08.S05.T03
       priority: P0
       wave: W4
-      deployment_profiles: *id117
+      deployment_profiles: *id118
       estimate: L
       risk: high
       review_gate: agent-review
@@ -36602,7 +36792,7 @@ capabilities:
       - CAP-09.S03.T01
       priority: P0
       wave: W4
-      deployment_profiles: *id117
+      deployment_profiles: *id118
       estimate: L
       risk: high
       review_gate: agent-review
@@ -36651,7 +36841,7 @@ capabilities:
       - CAP-09.S03.T02
       priority: P0
       wave: W4
-      deployment_profiles: *id117
+      deployment_profiles: *id118
       estimate: L
       risk: high
       review_gate: method-review
@@ -36696,7 +36886,7 @@ capabilities:
     outcome: Complex field structures are navigable through task-specific views rather than one undifferentiated network.
     wave: W4
     priority: P0
-    deployment_profiles: &id118
+    deployment_profiles: &id119
     - LOC
     - LAB
     - ALL
@@ -36724,7 +36914,7 @@ capabilities:
       - CAP-06.S05.T01
       priority: P0
       wave: W4
-      deployment_profiles: *id118
+      deployment_profiles: *id119
       estimate: L
       risk: medium
       review_gate: agent-review
@@ -36772,7 +36962,7 @@ capabilities:
       - CAP-09.S04.T01
       priority: P0
       wave: W4
-      deployment_profiles: *id118
+      deployment_profiles: *id119
       estimate: L
       risk: high
       review_gate: agent-review
@@ -36821,7 +37011,7 @@ capabilities:
       - CAP-09.S04.T02
       priority: P0
       wave: W4
-      deployment_profiles: *id118
+      deployment_profiles: *id119
       estimate: M
       risk: medium
       review_gate: agent-review
@@ -36866,7 +37056,7 @@ capabilities:
     outcome: Narrative and tabular synthesis is downstream of accepted evidence and preserves disagreement and uncertainty.
     wave: W4
     priority: P0
-    deployment_profiles: &id119
+    deployment_profiles: &id120
     - LOC
     - LAB
     - ALL
@@ -36894,7 +37084,7 @@ capabilities:
       - CAP-08.S06.T02
       priority: P0
       wave: W4
-      deployment_profiles: *id119
+      deployment_profiles: *id120
       estimate: L
       risk: high
       review_gate: agent-review
@@ -36944,7 +37134,7 @@ capabilities:
       - CAP-09.S05.T01
       priority: P0
       wave: W4
-      deployment_profiles: *id119
+      deployment_profiles: *id120
       estimate: L
       risk: high
       review_gate: agent-review
@@ -36994,7 +37184,7 @@ capabilities:
       - CAP-09.S05.T02
       priority: P0
       wave: W4
-      deployment_profiles: *id119
+      deployment_profiles: *id120
       estimate: L
       risk: high
       review_gate: scholarly-review
@@ -37039,7 +37229,7 @@ capabilities:
     outcome: A project can produce a rights-aware record of corpus, searches, schemas, models, decisions, analysis, and outputs.
     wave: W4
     priority: P0
-    deployment_profiles: &id120
+    deployment_profiles: &id121
     - LOC
     - LAB
     - ALL
@@ -37067,7 +37257,7 @@ capabilities:
       - CAP-04.S04.T02
       priority: P0
       wave: W4
-      deployment_profiles: *id120
+      deployment_profiles: *id121
       estimate: L
       risk: high
       review_gate: agent-review
@@ -37117,7 +37307,7 @@ capabilities:
       - CAP-09.S06.T01
       priority: P0
       wave: W4
-      deployment_profiles: *id120
+      deployment_profiles: *id121
       estimate: M
       risk: high
       review_gate: agent-review
@@ -37166,7 +37356,7 @@ capabilities:
       - CAP-09.S06.T02
       priority: P0
       wave: W4
-      deployment_profiles: *id120
+      deployment_profiles: *id121
       estimate: L
       risk: high
       review_gate: agent-review
@@ -37235,7 +37425,7 @@ capabilities:
       local workflow.
     wave: W4
     priority: P0
-    deployment_profiles: &id121
+    deployment_profiles: &id122
     - LOC
     - LAB
     - ALL
@@ -37263,7 +37453,7 @@ capabilities:
       - CAP-06.S03.T03
       priority: P0
       wave: W4
-      deployment_profiles: *id121
+      deployment_profiles: *id122
       estimate: L
       risk: high
       review_gate: agent-review
@@ -37309,7 +37499,7 @@ capabilities:
       - CAP-10.S01.T01
       priority: P0
       wave: W4
-      deployment_profiles: *id121
+      deployment_profiles: *id122
       estimate: L
       risk: high
       review_gate: agent-review
@@ -37359,7 +37549,7 @@ capabilities:
       - CAP-10.S01.T02
       priority: P0
       wave: W4
-      deployment_profiles: *id121
+      deployment_profiles: *id122
       estimate: L
       risk: high
       review_gate: scholarly-review
@@ -37404,7 +37594,7 @@ capabilities:
     outcome: A separate workflow attempts to narrow or invalidate the proposed contribution rather than helping sell it.
     wave: W4
     priority: P0
-    deployment_profiles: &id122
+    deployment_profiles: &id123
     - LOC
     - LAB
     - ALL
@@ -37432,7 +37622,7 @@ capabilities:
       - CAP-09.S06.T01
       priority: P0
       wave: W4
-      deployment_profiles: *id122
+      deployment_profiles: *id123
       estimate: L
       risk: high
       review_gate: agent-review
@@ -37482,7 +37672,7 @@ capabilities:
       - CAP-10.S02.T01
       priority: P0
       wave: W4
-      deployment_profiles: *id122
+      deployment_profiles: *id123
       estimate: L
       risk: high
       review_gate: agent-review
@@ -37532,7 +37722,7 @@ capabilities:
       - CAP-10.S02.T02
       priority: P0
       wave: W4
-      deployment_profiles: *id122
+      deployment_profiles: *id123
       estimate: M
       risk: high
       review_gate: scholarly-review
@@ -37575,7 +37765,7 @@ capabilities:
     outcome: A candidate moves from algorithmic signal to a reviewer-defensible, monitored scholarly object.
     wave: W4
     priority: P0
-    deployment_profiles: &id123
+    deployment_profiles: &id124
     - LOC
     - LAB
     - ALL
@@ -37603,7 +37793,7 @@ capabilities:
       - CAP-03.S05.T03
       priority: P0
       wave: W4
-      deployment_profiles: *id123
+      deployment_profiles: *id124
       estimate: L
       risk: high
       review_gate: agent-review
@@ -37651,7 +37841,7 @@ capabilities:
       - CAP-10.S03.T01
       priority: P0
       wave: W4
-      deployment_profiles: *id123
+      deployment_profiles: *id124
       estimate: L
       risk: high
       review_gate: agent-review
@@ -37701,7 +37891,7 @@ capabilities:
       - CAP-10.S03.T02
       priority: P0
       wave: W4
-      deployment_profiles: *id123
+      deployment_profiles: *id124
       estimate: M
       risk: high
       review_gate: agent-review
@@ -37747,7 +37937,7 @@ capabilities:
       authority.
     wave: W7
     priority: P0
-    deployment_profiles: &id124
+    deployment_profiles: &id125
     - LOC
     - LAB
     - ALL
@@ -37775,7 +37965,7 @@ capabilities:
       - CAP-08.S01.T03
       priority: P0
       wave: W7
-      deployment_profiles: *id124
+      deployment_profiles: *id125
       estimate: L
       risk: high
       review_gate: critical-method-review
@@ -37823,7 +38013,7 @@ capabilities:
       - CAP-10.S05.T01
       priority: P0
       wave: W7
-      deployment_profiles: *id124
+      deployment_profiles: *id125
       estimate: L
       risk: high
       review_gate: critical-method-review
@@ -37873,7 +38063,7 @@ capabilities:
       - CAP-10.S05.T02
       priority: P0
       wave: W7
-      deployment_profiles: *id124
+      deployment_profiles: *id125
       estimate: L
       risk: high
       review_gate: interpretive-review
@@ -37918,7 +38108,7 @@ capabilities:
     outcome: Opportunity signals are separated by contribution logic, evidence requirements, and false-positive risks.
     wave: W9
     priority: P1
-    deployment_profiles: &id125
+    deployment_profiles: &id126
     - LOC
     - LAB
     - ALL
@@ -37946,7 +38136,7 @@ capabilities:
       - CAP-09.S03.T03
       priority: P1
       wave: W9
-      deployment_profiles: *id125
+      deployment_profiles: *id126
       estimate: L
       risk: high
       review_gate: agent-review
@@ -37996,7 +38186,7 @@ capabilities:
       - CAP-10.S04.T01
       priority: P1
       wave: W9
-      deployment_profiles: *id125
+      deployment_profiles: *id126
       estimate: L
       risk: high
       review_gate: agent-review
@@ -38046,7 +38236,7 @@ capabilities:
       - CAP-10.S04.T02
       priority: P1
       wave: W9
-      deployment_profiles: *id125
+      deployment_profiles: *id126
       estimate: L
       risk: high
       review_gate: research-preview-review
@@ -38091,7 +38281,7 @@ capabilities:
     outcome: Researchers can compare candidates on transparent dimensions without collapsing them into an opaque novelty score.
     wave: W9
     priority: P1
-    deployment_profiles: &id126
+    deployment_profiles: &id127
     - LOC
     - LAB
     - UNI
@@ -38120,7 +38310,7 @@ capabilities:
       - CAP-10.S05.T02
       priority: P1
       wave: W9
-      deployment_profiles: *id126
+      deployment_profiles: *id127
       estimate: M
       risk: high
       review_gate: agent-review
@@ -38168,7 +38358,7 @@ capabilities:
       - CAP-10.S06.T01
       priority: P1
       wave: W9
-      deployment_profiles: *id126
+      deployment_profiles: *id127
       estimate: L
       risk: medium
       review_gate: agent-review
@@ -38216,7 +38406,7 @@ capabilities:
       - CAP-10.S06.T02
       priority: P1
       wave: W9
-      deployment_profiles: *id126
+      deployment_profiles: *id127
       estimate: L
       risk: high
       review_gate: agent-review
@@ -38262,7 +38452,7 @@ capabilities:
       as a generic alert.
     wave: W9
     priority: P1
-    deployment_profiles: &id127
+    deployment_profiles: &id128
     - LOC
     - LAB
     - ALL
@@ -38290,7 +38480,7 @@ capabilities:
       - CAP-09.S06.T01
       priority: P1
       wave: W9
-      deployment_profiles: *id127
+      deployment_profiles: *id128
       estimate: L
       risk: medium
       review_gate: agent-review
@@ -38338,7 +38528,7 @@ capabilities:
       - CAP-10.S07.T01
       priority: P1
       wave: W9
-      deployment_profiles: *id127
+      deployment_profiles: *id128
       estimate: L
       risk: high
       review_gate: agent-review
@@ -38388,7 +38578,7 @@ capabilities:
       - CAP-10.S07.T02
       priority: P1
       wave: W9
-      deployment_profiles: *id127
+      deployment_profiles: *id128
       estimate: L
       risk: high
       review_gate: agent-review
@@ -38454,7 +38644,7 @@ capabilities:
       loads.
     wave: W5
     priority: P0
-    deployment_profiles: &id128
+    deployment_profiles: &id129
     - LOC
     - LAB
     depends_on:
@@ -38481,7 +38671,7 @@ capabilities:
       - CAP-07.S02.T03
       priority: P0
       wave: W5
-      deployment_profiles: *id128
+      deployment_profiles: *id129
       estimate: M
       risk: high
       review_gate: agent-review
@@ -38526,7 +38716,7 @@ capabilities:
       - CAP-11.S01.T01
       priority: P0
       wave: W5
-      deployment_profiles: *id128
+      deployment_profiles: *id129
       estimate: L
       risk: high
       review_gate: agent-review
@@ -38574,7 +38764,7 @@ capabilities:
       - CAP-11.S01.T02
       priority: P0
       wave: W5
-      deployment_profiles: *id128
+      deployment_profiles: *id129
       estimate: L
       risk: high
       review_gate: agent-review
@@ -38617,7 +38807,7 @@ capabilities:
     outcome: Expected failures do not lose accepted scholarly work or leave projects in ambiguous states.
     wave: W5
     priority: P0
-    deployment_profiles: &id129
+    deployment_profiles: &id130
     - LOC
     - LAB
     depends_on:
@@ -38644,7 +38834,7 @@ capabilities:
       - CAP-02.S02.T02
       priority: P0
       wave: W5
-      deployment_profiles: *id129
+      deployment_profiles: *id130
       estimate: L
       risk: high
       review_gate: agent-review
@@ -38692,7 +38882,7 @@ capabilities:
       - CAP-11.S02.T01
       priority: P0
       wave: W5
-      deployment_profiles: *id129
+      deployment_profiles: *id130
       estimate: L
       risk: high
       review_gate: agent-review
@@ -38742,7 +38932,7 @@ capabilities:
       - CAP-11.S02.T02
       priority: P0
       wave: W5
-      deployment_profiles: *id129
+      deployment_profiles: *id130
       estimate: L
       risk: high
       review_gate: agent-review
@@ -38787,7 +38977,7 @@ capabilities:
     outcome: The local edition has verified no-account/offline behavior and a reviewed threat/control baseline.
     wave: W5
     priority: P0
-    deployment_profiles: &id130
+    deployment_profiles: &id131
     - LOC
     - LAB
     depends_on:
@@ -38816,7 +39006,7 @@ capabilities:
       - CAP-09.S06.T03
       priority: P0
       wave: W5
-      deployment_profiles: *id130
+      deployment_profiles: *id131
       estimate: L
       risk: high
       review_gate: agent-review
@@ -38864,7 +39054,7 @@ capabilities:
       - CAP-11.S03.T01
       priority: P0
       wave: W5
-      deployment_profiles: *id130
+      deployment_profiles: *id131
       estimate: L
       risk: high
       review_gate: security-review
@@ -38910,7 +39100,7 @@ capabilities:
       - CAP-11.S03.T02
       priority: P0
       wave: W5
-      deployment_profiles: *id130
+      deployment_profiles: *id131
       estimate: L
       risk: high
       review_gate: privacy-rights-review
@@ -38954,7 +39144,7 @@ capabilities:
       interaction barriers.
     wave: W5
     priority: P0
-    deployment_profiles: &id131
+    deployment_profiles: &id132
     - LOC
     - LAB
     depends_on:
@@ -38981,7 +39171,7 @@ capabilities:
       - CAP-10.S03.T02
       priority: P0
       wave: W5
-      deployment_profiles: *id131
+      deployment_profiles: *id132
       estimate: L
       risk: high
       review_gate: accessibility-review
@@ -39029,7 +39219,7 @@ capabilities:
       - CAP-11.S04.T01
       priority: P0
       wave: W5
-      deployment_profiles: *id131
+      deployment_profiles: *id132
       estimate: L
       risk: high
       review_gate: user-research-review
@@ -39075,7 +39265,7 @@ capabilities:
       - CAP-11.S04.T02
       priority: P0
       wave: W5
-      deployment_profiles: *id131
+      deployment_profiles: *id132
       estimate: L
       risk: medium
       review_gate: agent-review
@@ -39173,7 +39363,7 @@ capabilities:
     outcome: A laboratory can manage multiple independent PCs while retaining local project operation and predictable support.
     wave: W5
     priority: P0
-    deployment_profiles: &id132
+    deployment_profiles: &id133
     - LAB
     depends_on:
     - CAP-01.S05.T03
@@ -39199,7 +39389,7 @@ capabilities:
       - CAP-02.S05.T03
       priority: P0
       wave: W5
-      deployment_profiles: *id132
+      deployment_profiles: *id133
       estimate: M
       risk: medium
       review_gate: agent-review
@@ -39247,7 +39437,7 @@ capabilities:
       - CAP-11.S05.T01
       priority: P0
       wave: W5
-      deployment_profiles: *id132
+      deployment_profiles: *id133
       estimate: L
       risk: high
       review_gate: agent-review
@@ -39297,7 +39487,7 @@ capabilities:
       - CAP-11.S05.T02
       priority: P0
       wave: W5
-      deployment_profiles: *id132
+      deployment_profiles: *id133
       estimate: M
       risk: medium
       review_gate: agent-review
@@ -39341,7 +39531,7 @@ capabilities:
       workflows.
     wave: W5
     priority: P0
-    deployment_profiles: &id133
+    deployment_profiles: &id134
     - LOC
     - LAB
     depends_on:
@@ -39372,7 +39562,7 @@ capabilities:
       - CAP-10.S03.T03
       priority: P0
       wave: W5
-      deployment_profiles: *id133
+      deployment_profiles: *id134
       estimate: M
       risk: high
       review_gate: agent-review
@@ -39425,7 +39615,7 @@ capabilities:
       - CAP-11.S06.T01
       priority: P0
       wave: W5
-      deployment_profiles: *id133
+      deployment_profiles: *id134
       estimate: L
       risk: high
       review_gate: release-review
@@ -39473,7 +39663,7 @@ capabilities:
       - CAP-11.S06.T02
       priority: P0
       wave: W5
-      deployment_profiles: *id133
+      deployment_profiles: *id134
       estimate: M
       risk: high
       review_gate: executive-release-gate
@@ -39536,7 +39726,7 @@ capabilities:
       deployment context.
     wave: W10
     priority: P2
-    deployment_profiles: &id134
+    deployment_profiles: &id135
     - UNI
     depends_on:
     - CAP-11.S06.T03
@@ -39560,7 +39750,7 @@ capabilities:
       - CAP-11.S06.T03
       priority: P2
       wave: W10
-      deployment_profiles: *id134
+      deployment_profiles: *id135
       estimate: L
       risk: high
       review_gate: agent-review
@@ -39608,7 +39798,7 @@ capabilities:
       - CAP-12.S01.T01
       priority: P2
       wave: W10
-      deployment_profiles: *id134
+      deployment_profiles: *id135
       estimate: L
       risk: high
       review_gate: agent-review
@@ -39658,7 +39848,7 @@ capabilities:
       - CAP-12.S01.T02
       priority: P2
       wave: W10
-      deployment_profiles: *id134
+      deployment_profiles: *id135
       estimate: L
       risk: high
       review_gate: agent-review
@@ -39704,7 +39894,7 @@ capabilities:
       and workflow infrastructure.
     wave: W10
     priority: P2
-    deployment_profiles: &id135
+    deployment_profiles: &id136
     - UNI
     depends_on:
     - CAP-12.S01.T01
@@ -39732,7 +39922,7 @@ capabilities:
       - CAP-03.S04.T03
       priority: P2
       wave: W10
-      deployment_profiles: *id135
+      deployment_profiles: *id136
       estimate: L
       risk: high
       review_gate: agent-review
@@ -39778,7 +39968,7 @@ capabilities:
       - CAP-12.S02.T01
       priority: P2
       wave: W10
-      deployment_profiles: *id135
+      deployment_profiles: *id136
       estimate: L
       risk: high
       review_gate: agent-review
@@ -39826,7 +40016,7 @@ capabilities:
       - CAP-12.S02.T02
       priority: P2
       wave: W10
-      deployment_profiles: *id135
+      deployment_profiles: *id136
       estimate: L
       risk: high
       review_gate: agent-review
@@ -39870,7 +40060,7 @@ capabilities:
       functions.
     wave: W10
     priority: P2
-    deployment_profiles: &id136
+    deployment_profiles: &id137
     - UNI
     depends_on:
     - CAP-12.S02.T03
@@ -39893,7 +40083,7 @@ capabilities:
       - CAP-12.S02.T03
       priority: P2
       wave: W10
-      deployment_profiles: *id136
+      deployment_profiles: *id137
       estimate: L
       risk: high
       review_gate: security-review
@@ -39939,7 +40129,7 @@ capabilities:
       - CAP-12.S03.T01
       priority: P2
       wave: W10
-      deployment_profiles: *id136
+      deployment_profiles: *id137
       estimate: L
       risk: high
       review_gate: security-review
@@ -39985,7 +40175,7 @@ capabilities:
       - CAP-12.S03.T02
       priority: P2
       wave: W10
-      deployment_profiles: *id136
+      deployment_profiles: *id137
       estimate: L
       risk: high
       review_gate: security-review
@@ -40026,7 +40216,7 @@ capabilities:
     outcome: Research groups can share projects, assign work, compare decisions, discuss disputes, and retain scholarly plurality.
     wave: W10
     priority: P2
-    deployment_profiles: &id137
+    deployment_profiles: &id138
     - UNI
     depends_on:
     - CAP-12.S03.T03
@@ -40050,7 +40240,7 @@ capabilities:
       - CAP-08.S06.T02
       priority: P2
       wave: W10
-      deployment_profiles: *id137
+      deployment_profiles: *id138
       estimate: L
       risk: high
       review_gate: agent-review
@@ -40097,7 +40287,7 @@ capabilities:
       - CAP-12.S04.T01
       priority: P2
       wave: W10
-      deployment_profiles: *id137
+      deployment_profiles: *id138
       estimate: L
       risk: high
       review_gate: agent-review
@@ -40147,7 +40337,7 @@ capabilities:
       - CAP-12.S04.T02
       priority: P2
       wave: W10
-      deployment_profiles: *id137
+      deployment_profiles: *id138
       estimate: L
       risk: high
       review_gate: scholarly-review
@@ -40193,7 +40383,7 @@ capabilities:
       egress, collaboration, and export.
     wave: W10
     priority: P2
-    deployment_profiles: &id138
+    deployment_profiles: &id139
     - UNI
     depends_on:
     - CAP-12.S03.T02
@@ -40221,7 +40411,7 @@ capabilities:
       - CAP-07.S01.T03
       priority: P2
       wave: W10
-      deployment_profiles: *id138
+      deployment_profiles: *id139
       estimate: L
       risk: high
       review_gate: rights-review
@@ -40267,7 +40457,7 @@ capabilities:
       - CAP-12.S05.T01
       priority: P2
       wave: W10
-      deployment_profiles: *id138
+      deployment_profiles: *id139
       estimate: L
       risk: high
       review_gate: privacy-rights-review
@@ -40313,7 +40503,7 @@ capabilities:
       - CAP-12.S05.T02
       priority: P2
       wave: W10
-      deployment_profiles: *id138
+      deployment_profiles: *id139
       estimate: L
       risk: high
       review_gate: model-security-review
@@ -40356,7 +40546,7 @@ capabilities:
     outcome: The university edition is observable, supportable, recoverable, and validated with a real research group.
     wave: W10
     priority: P2
-    deployment_profiles: &id139
+    deployment_profiles: &id140
     - UNI
     depends_on:
     - CAP-12.S04.T03
@@ -40382,7 +40572,7 @@ capabilities:
       - CAP-12.S05.T03
       priority: P2
       wave: W10
-      deployment_profiles: *id139
+      deployment_profiles: *id140
       estimate: L
       risk: high
       review_gate: agent-review
@@ -40428,7 +40618,7 @@ capabilities:
       - CAP-12.S06.T01
       priority: P2
       wave: W10
-      deployment_profiles: *id139
+      deployment_profiles: *id140
       estimate: L
       risk: high
       review_gate: operations-review
@@ -40474,7 +40664,7 @@ capabilities:
       - CAP-12.S06.T02
       priority: P2
       wave: W10
-      deployment_profiles: *id139
+      deployment_profiles: *id140
       estimate: L
       risk: high
       review_gate: executive-release-gate
@@ -40535,7 +40725,7 @@ capabilities:
     outcome: Organizations, regions, plans, policies, and tenant resources are provisioned through auditable lifecycle workflows.
     wave: W11
     priority: P3
-    deployment_profiles: &id140
+    deployment_profiles: &id141
     - CLD
     depends_on:
     - CAP-12.S06.T03
@@ -40559,7 +40749,7 @@ capabilities:
       - CAP-12.S06.T03
       priority: P3
       wave: W11
-      deployment_profiles: *id140
+      deployment_profiles: *id141
       estimate: L
       risk: high
       review_gate: agent-review
@@ -40605,7 +40795,7 @@ capabilities:
       - CAP-13.S01.T01
       priority: P3
       wave: W11
-      deployment_profiles: *id140
+      deployment_profiles: *id141
       estimate: L
       risk: high
       review_gate: cloud-architecture-review
@@ -40651,7 +40841,7 @@ capabilities:
       - CAP-13.S01.T02
       priority: P3
       wave: W11
-      deployment_profiles: *id140
+      deployment_profiles: *id141
       estimate: L
       risk: high
       review_gate: security-review
@@ -40693,7 +40883,7 @@ capabilities:
       isolation as policy requires.
     wave: W11
     priority: P3
-    deployment_profiles: &id141
+    deployment_profiles: &id142
     - CLD
     depends_on:
     - CAP-13.S01.T03
@@ -40719,7 +40909,7 @@ capabilities:
       - CAP-12.S02.T03
       priority: P3
       wave: W11
-      deployment_profiles: *id141
+      deployment_profiles: *id142
       estimate: L
       risk: high
       review_gate: security-review
@@ -40765,7 +40955,7 @@ capabilities:
       - CAP-13.S02.T01
       priority: P3
       wave: W11
-      deployment_profiles: *id141
+      deployment_profiles: *id142
       estimate: L
       risk: high
       review_gate: cloud-architecture-review
@@ -40811,7 +41001,7 @@ capabilities:
       - CAP-13.S02.T02
       priority: P3
       wave: W11
-      deployment_profiles: *id141
+      deployment_profiles: *id142
       estimate: L
       risk: high
       review_gate: operations-review
@@ -40852,7 +41042,7 @@ capabilities:
     outcome: Organizations can govern membership and plans while usage is measured transparently by value-driving resource.
     wave: W11
     priority: P3
-    deployment_profiles: &id142
+    deployment_profiles: &id143
     - CLD
     depends_on:
     - CAP-13.S01.T02
@@ -40876,7 +41066,7 @@ capabilities:
       - CAP-13.S01.T02
       priority: P3
       wave: W11
-      deployment_profiles: *id142
+      deployment_profiles: *id143
       estimate: L
       risk: high
       review_gate: security-review
@@ -40922,7 +41112,7 @@ capabilities:
       - CAP-13.S03.T01
       priority: P3
       wave: W11
-      deployment_profiles: *id142
+      deployment_profiles: *id143
       estimate: L
       risk: high
       review_gate: agent-review
@@ -40968,7 +41158,7 @@ capabilities:
       - CAP-13.S03.T02
       priority: P3
       wave: W11
-      deployment_profiles: *id142
+      deployment_profiles: *id143
       estimate: L
       risk: high
       review_gate: finance-security-review
@@ -41009,7 +41199,7 @@ capabilities:
     outcome: Cloud analytical workloads scale by class without sacrificing reproducibility, rights, or budget controls.
     wave: W11
     priority: P3
-    deployment_profiles: &id143
+    deployment_profiles: &id144
     - CLD
     depends_on:
     - CAP-13.S02.T02
@@ -41035,7 +41225,7 @@ capabilities:
       - CAP-07.S05.T02
       priority: P3
       wave: W11
-      deployment_profiles: *id143
+      deployment_profiles: *id144
       estimate: L
       risk: high
       review_gate: agent-review
@@ -41081,7 +41271,7 @@ capabilities:
       - CAP-13.S04.T01
       priority: P3
       wave: W11
-      deployment_profiles: *id143
+      deployment_profiles: *id144
       estimate: L
       risk: high
       review_gate: model-security-review
@@ -41127,7 +41317,7 @@ capabilities:
       - CAP-13.S04.T02
       priority: P3
       wave: W11
-      deployment_profiles: *id143
+      deployment_profiles: *id144
       estimate: L
       risk: high
       review_gate: finance-operations-review
@@ -41169,7 +41359,7 @@ capabilities:
       boundaries.
     wave: W11
     priority: P3
-    deployment_profiles: &id144
+    deployment_profiles: &id145
     - CLD
     depends_on:
     - CAP-13.S02.T03
@@ -41195,7 +41385,7 @@ capabilities:
       - CAP-13.S03.T01
       priority: P3
       wave: W11
-      deployment_profiles: *id144
+      deployment_profiles: *id145
       estimate: L
       risk: high
       review_gate: security-review
@@ -41241,7 +41431,7 @@ capabilities:
       - CAP-13.S05.T01
       priority: P3
       wave: W11
-      deployment_profiles: *id144
+      deployment_profiles: *id145
       estimate: L
       risk: high
       review_gate: privacy-review
@@ -41287,7 +41477,7 @@ capabilities:
       - CAP-13.S05.T02
       priority: P3
       wave: W11
-      deployment_profiles: *id144
+      deployment_profiles: *id145
       estimate: L
       risk: high
       review_gate: security-review
@@ -41329,7 +41519,7 @@ capabilities:
       behavior.
     wave: W11
     priority: P3
-    deployment_profiles: &id145
+    deployment_profiles: &id146
     - CLD
     depends_on:
     - CAP-13.S04.T03
@@ -41355,7 +41545,7 @@ capabilities:
       - CAP-13.S05.T03
       priority: P3
       wave: W11
-      deployment_profiles: *id145
+      deployment_profiles: *id146
       estimate: L
       risk: high
       review_gate: agent-review
@@ -41403,7 +41593,7 @@ capabilities:
       - CAP-13.S06.T01
       priority: P3
       wave: W11
-      deployment_profiles: *id145
+      deployment_profiles: *id146
       estimate: L
       risk: high
       review_gate: operations-review
@@ -41449,7 +41639,7 @@ capabilities:
       - CAP-13.S06.T02
       priority: P3
       wave: W11
-      deployment_profiles: *id145
+      deployment_profiles: *id146
       estimate: L
       risk: high
       review_gate: executive-release-gate
@@ -41519,7 +41709,7 @@ capabilities:
     outcome: One codebase builds and reports its capabilities consistently across qualified desktop operating systems.
     wave: W6
     priority: P0
-    deployment_profiles: &id146
+    deployment_profiles: &id147
     - LOC
     - LAB
     platform_targets:
@@ -41551,7 +41741,7 @@ capabilities:
       - CAP-11.S06.T03
       priority: P0
       wave: W6
-      deployment_profiles: *id146
+      deployment_profiles: *id147
       platform_targets:
       - platform-neutral
       estimate: M
@@ -41601,7 +41791,7 @@ capabilities:
       - CAP-14.S01.T01
       priority: P0
       wave: W6
-      deployment_profiles: *id146
+      deployment_profiles: *id147
       platform_targets:
       - platform-neutral
       estimate: M
@@ -41651,7 +41841,7 @@ capabilities:
       - CAP-14.S01.T02
       priority: P0
       wave: W6
-      deployment_profiles: *id146
+      deployment_profiles: *id147
       platform_targets:
       - platform-neutral
       estimate: M
@@ -41690,7 +41880,7 @@ capabilities:
     outcome: The local product is production-ready on supported Apple Silicon macOS versions.
     wave: W6
     priority: P0
-    deployment_profiles: *id146
+    deployment_profiles: *id147
     platform_targets:
     - macos-arm64
     depends_on:
@@ -41717,7 +41907,7 @@ capabilities:
       - CAP-14.S01.T03
       priority: P0
       wave: W6
-      deployment_profiles: *id146
+      deployment_profiles: *id147
       platform_targets:
       - macos-arm64
       estimate: M
@@ -41765,7 +41955,7 @@ capabilities:
       - CAP-14.S02.T01
       priority: P0
       wave: W6
-      deployment_profiles: *id146
+      deployment_profiles: *id147
       platform_targets:
       - macos-arm64
       estimate: M
@@ -41815,7 +42005,7 @@ capabilities:
       - CAP-14.S02.T02
       priority: P0
       wave: W6
-      deployment_profiles: *id146
+      deployment_profiles: *id147
       platform_targets:
       - macos-arm64
       estimate: M
@@ -41858,7 +42048,7 @@ capabilities:
     outcome: The local product is production-ready on approved Ubuntu-compatible Linux workstation profiles.
     wave: W6
     priority: P0
-    deployment_profiles: *id146
+    deployment_profiles: *id147
     platform_targets:
     - linux-x64
     - linux-arm64
@@ -41886,7 +42076,7 @@ capabilities:
       - CAP-14.S01.T03
       priority: P0
       wave: W6
-      deployment_profiles: *id146
+      deployment_profiles: *id147
       platform_targets:
       - linux-x64
       - linux-arm64
@@ -41935,7 +42125,7 @@ capabilities:
       - CAP-14.S03.T01
       priority: P0
       wave: W6
-      deployment_profiles: *id146
+      deployment_profiles: *id147
       platform_targets:
       - linux-x64
       - linux-arm64
@@ -41986,7 +42176,7 @@ capabilities:
       - CAP-14.S03.T02
       priority: P0
       wave: W6
-      deployment_profiles: *id146
+      deployment_profiles: *id147
       platform_targets:
       - linux-x64
       - linux-arm64
@@ -42030,7 +42220,7 @@ capabilities:
     outcome: Hardware acceleration is optional, governed, observable, and portable across supported desktop platforms.
     wave: W6
     priority: P0
-    deployment_profiles: *id146
+    deployment_profiles: *id147
     platform_targets:
     - windows-x64
     - macos-arm64
@@ -42062,7 +42252,7 @@ capabilities:
       - CAP-07.S02.T03
       priority: P0
       wave: W6
-      deployment_profiles: *id146
+      deployment_profiles: *id147
       platform_targets:
       - platform-neutral
       estimate: M
@@ -42113,7 +42303,7 @@ capabilities:
       - CAP-14.S03.T01
       priority: P0
       wave: W6
-      deployment_profiles: *id146
+      deployment_profiles: *id147
       platform_targets:
       - linux-x64
       - linux-arm64
@@ -42168,7 +42358,7 @@ capabilities:
       - CAP-14.S03.T01
       priority: P0
       wave: W6
-      deployment_profiles: *id146
+      deployment_profiles: *id147
       platform_targets:
       - platform-neutral
       estimate: M
@@ -42214,7 +42404,7 @@ capabilities:
       systems.
     wave: W6
     priority: P0
-    deployment_profiles: *id146
+    deployment_profiles: *id147
     platform_targets:
     - windows-x64
     - macos-arm64
@@ -42246,7 +42436,7 @@ capabilities:
       - CAP-14.S03.T03
       priority: P0
       wave: W6
-      deployment_profiles: *id146
+      deployment_profiles: *id147
       platform_targets:
       - platform-neutral
       estimate: M
@@ -42296,7 +42486,7 @@ capabilities:
       - CAP-14.S05.T01
       priority: P0
       wave: W6
-      deployment_profiles: *id146
+      deployment_profiles: *id147
       platform_targets:
       - platform-neutral
       estimate: M
@@ -42349,7 +42539,7 @@ capabilities:
       - CAP-14.S04.T03
       priority: P0
       wave: W6
-      deployment_profiles: *id146
+      deployment_profiles: *id147
       platform_targets:
       - platform-neutral
       estimate: M
@@ -42390,7 +42580,7 @@ capabilities:
     outcome: The complete local edition is release-qualified on Windows, macOS, and Linux.
     wave: W6
     priority: P0
-    deployment_profiles: *id146
+    deployment_profiles: *id147
     platform_targets:
     - windows-x64
     - macos-arm64
@@ -42420,7 +42610,7 @@ capabilities:
       - CAP-14.S05.T03
       priority: P0
       wave: W6
-      deployment_profiles: *id146
+      deployment_profiles: *id147
       platform_targets:
       - platform-neutral
       estimate: M
@@ -42470,7 +42660,7 @@ capabilities:
       - CAP-14.S06.T01
       priority: P0
       wave: W6
-      deployment_profiles: *id146
+      deployment_profiles: *id147
       platform_targets:
       - platform-neutral
       estimate: M
@@ -42522,7 +42712,7 @@ capabilities:
       - CAP-14.S06.T02
       priority: P0
       wave: W6
-      deployment_profiles: *id146
+      deployment_profiles: *id147
       platform_targets:
       - platform-neutral
       estimate: M
@@ -42584,7 +42774,7 @@ capabilities:
     outcome: Study designs are first-class, versioned, source-grounded research objects.
     wave: W7
     priority: P0
-    deployment_profiles: &id147
+    deployment_profiles: &id148
     - LOC
     - LAB
     - ALL
@@ -42616,7 +42806,7 @@ capabilities:
       - CAP-10.S03.T03
       priority: P0
       wave: W7
-      deployment_profiles: *id147
+      deployment_profiles: *id148
       platform_targets:
       - platform-neutral
       estimate: M
@@ -42667,7 +42857,7 @@ capabilities:
       - CAP-09.S05.T03
       priority: P0
       wave: W7
-      deployment_profiles: *id147
+      deployment_profiles: *id148
       platform_targets:
       - platform-neutral
       estimate: M
@@ -42720,7 +42910,7 @@ capabilities:
       - CAP-03.S05.T03
       priority: P0
       wave: W7
-      deployment_profiles: *id147
+      deployment_profiles: *id148
       platform_targets:
       - platform-neutral
       estimate: M
@@ -42761,7 +42951,7 @@ capabilities:
     outcome: Researchers receive plural, evidence-backed design options and retain final authority.
     wave: W7
     priority: P0
-    deployment_profiles: *id147
+    deployment_profiles: *id148
     platform_targets:
     - platform-neutral
     depends_on:
@@ -42788,7 +42978,7 @@ capabilities:
       - CAP-15.S01.T03
       priority: P0
       wave: W7
-      deployment_profiles: *id147
+      deployment_profiles: *id148
       platform_targets:
       - platform-neutral
       estimate: M
@@ -42838,7 +43028,7 @@ capabilities:
       - CAP-15.S02.T01
       priority: P0
       wave: W7
-      deployment_profiles: *id147
+      deployment_profiles: *id148
       platform_targets:
       - platform-neutral
       estimate: M
@@ -42888,7 +43078,7 @@ capabilities:
       - CAP-15.S02.T02
       priority: P0
       wave: W7
-      deployment_profiles: *id147
+      deployment_profiles: *id148
       platform_targets:
       - platform-neutral
       estimate: M
@@ -42927,7 +43117,7 @@ capabilities:
     outcome: The selected design contains an implementable and reviewable empirical data plan.
     wave: W7
     priority: P0
-    deployment_profiles: *id147
+    deployment_profiles: *id148
     platform_targets:
     - platform-neutral
     depends_on:
@@ -42954,7 +43144,7 @@ capabilities:
       - CAP-15.S02.T03
       priority: P0
       wave: W7
-      deployment_profiles: *id147
+      deployment_profiles: *id148
       platform_targets:
       - platform-neutral
       estimate: M
@@ -43003,7 +43193,7 @@ capabilities:
       - CAP-09.S02.T01
       priority: P0
       wave: W7
-      deployment_profiles: *id147
+      deployment_profiles: *id148
       platform_targets:
       - platform-neutral
       estimate: M
@@ -43053,7 +43243,7 @@ capabilities:
       - CAP-15.S03.T02
       priority: P0
       wave: W7
-      deployment_profiles: *id147
+      deployment_profiles: *id148
       platform_targets:
       - platform-neutral
       estimate: M
@@ -43092,7 +43282,7 @@ capabilities:
     outcome: The protocol states how evidence will be produced, evaluated, governed, and interpreted under alternative outcomes.
     wave: W7
     priority: P0
-    deployment_profiles: *id147
+    deployment_profiles: *id148
     platform_targets:
     - platform-neutral
     depends_on:
@@ -43119,7 +43309,7 @@ capabilities:
       - CAP-15.S03.T03
       priority: P0
       wave: W7
-      deployment_profiles: *id147
+      deployment_profiles: *id148
       platform_targets:
       - platform-neutral
       estimate: M
@@ -43167,7 +43357,7 @@ capabilities:
       - CAP-15.S04.T01
       priority: P0
       wave: W7
-      deployment_profiles: *id147
+      deployment_profiles: *id148
       platform_targets:
       - platform-neutral
       estimate: M
@@ -43217,7 +43407,7 @@ capabilities:
       - CAP-15.S04.T02
       priority: P0
       wave: W7
-      deployment_profiles: *id147
+      deployment_profiles: *id148
       platform_targets:
       - platform-neutral
       estimate: M
@@ -43258,7 +43448,7 @@ capabilities:
     outcome: Researchers can produce a source-grounded, reviewable empirical protocol and analysis plan.
     wave: W7
     priority: P0
-    deployment_profiles: *id147
+    deployment_profiles: *id148
     platform_targets:
     - platform-neutral
     depends_on:
@@ -43286,7 +43476,7 @@ capabilities:
       - CAP-00.S06.T04
       priority: P0
       wave: W7
-      deployment_profiles: *id147
+      deployment_profiles: *id148
       platform_targets:
       - platform-neutral
       estimate: M
@@ -43337,7 +43527,7 @@ capabilities:
       - CAP-09.S06.T03
       priority: P0
       wave: W7
-      deployment_profiles: *id147
+      deployment_profiles: *id148
       platform_targets:
       - platform-neutral
       estimate: M
@@ -43387,7 +43577,7 @@ capabilities:
       - CAP-15.S05.T02
       priority: P0
       wave: W7
-      deployment_profiles: *id147
+      deployment_profiles: *id148
       platform_targets:
       - platform-neutral
       estimate: M
@@ -43430,7 +43620,7 @@ capabilities:
     outcome: The study-design capability is production-ready, source-grounded, and expert-reviewed.
     wave: W7
     priority: P0
-    deployment_profiles: *id147
+    deployment_profiles: *id148
     platform_targets:
     - platform-neutral
     depends_on:
@@ -43457,7 +43647,7 @@ capabilities:
       - CAP-15.S05.T03
       priority: P0
       wave: W7
-      deployment_profiles: *id147
+      deployment_profiles: *id148
       platform_targets:
       - platform-neutral
       estimate: M
@@ -43507,7 +43697,7 @@ capabilities:
       - CAP-15.S06.T01
       priority: P0
       wave: W7
-      deployment_profiles: *id147
+      deployment_profiles: *id148
       platform_targets:
       - platform-neutral
       estimate: M
@@ -43555,7 +43745,7 @@ capabilities:
       - CAP-15.S06.T02
       priority: P0
       wave: W7
-      deployment_profiles: *id147
+      deployment_profiles: *id148
       platform_targets:
       - platform-neutral
       estimate: M
@@ -43614,7 +43804,7 @@ capabilities:
     outcome: Article architecture is versioned, inspectable, and separated from generated prose.
     wave: W7
     priority: P0
-    deployment_profiles: &id148
+    deployment_profiles: &id149
     - LOC
     - LAB
     - ALL
@@ -43645,7 +43835,7 @@ capabilities:
       - CAP-09.S06.T03
       priority: P0
       wave: W7
-      deployment_profiles: *id148
+      deployment_profiles: *id149
       platform_targets:
       - platform-neutral
       estimate: M
@@ -43695,7 +43885,7 @@ capabilities:
       - CAP-16.S01.T01
       priority: P0
       wave: W7
-      deployment_profiles: *id148
+      deployment_profiles: *id149
       platform_targets:
       - platform-neutral
       estimate: M
@@ -43744,7 +43934,7 @@ capabilities:
       - CAP-03.S05.T03
       priority: P0
       wave: W7
-      deployment_profiles: *id148
+      deployment_profiles: *id149
       platform_targets:
       - platform-neutral
       estimate: M
@@ -43785,7 +43975,7 @@ capabilities:
     outcome: Empirical conference and journal skeletons are complete, adaptable, and linked to protocol/result requirements.
     wave: W7
     priority: P0
-    deployment_profiles: *id148
+    deployment_profiles: *id149
     platform_targets:
     - platform-neutral
     depends_on:
@@ -43814,7 +44004,7 @@ capabilities:
       - CAP-15.S05.T02
       priority: P0
       wave: W7
-      deployment_profiles: *id148
+      deployment_profiles: *id149
       platform_targets:
       - platform-neutral
       estimate: M
@@ -43862,7 +44052,7 @@ capabilities:
       - CAP-16.S02.T01
       priority: P0
       wave: W7
-      deployment_profiles: *id148
+      deployment_profiles: *id149
       platform_targets:
       - platform-neutral
       estimate: M
@@ -43911,7 +44101,7 @@ capabilities:
       - CAP-15.S04.T03
       priority: P0
       wave: W7
-      deployment_profiles: *id148
+      deployment_profiles: *id149
       platform_targets:
       - platform-neutral
       estimate: M
@@ -43952,7 +44142,7 @@ capabilities:
     outcome: Theory manuscripts receive coherent argument architecture while preserving epistemic plurality.
     wave: W7
     priority: P0
-    deployment_profiles: *id148
+    deployment_profiles: *id149
     platform_targets:
     - platform-neutral
     depends_on:
@@ -43981,7 +44171,7 @@ capabilities:
       - CAP-09.S05.T03
       priority: P0
       wave: W7
-      deployment_profiles: *id148
+      deployment_profiles: *id149
       platform_targets:
       - platform-neutral
       estimate: M
@@ -44030,7 +44220,7 @@ capabilities:
       - CAP-09.S02.T03
       priority: P0
       wave: W7
-      deployment_profiles: *id148
+      deployment_profiles: *id149
       platform_targets:
       - platform-neutral
       estimate: M
@@ -44080,7 +44270,7 @@ capabilities:
       - CAP-16.S03.T02
       priority: P0
       wave: W7
-      deployment_profiles: *id148
+      deployment_profiles: *id149
       platform_targets:
       - platform-neutral
       estimate: M
@@ -44119,7 +44309,7 @@ capabilities:
     outcome: Critical manuscripts receive rigorous evidence and argument scaffolding without epistemic flattening.
     wave: W7
     priority: P0
-    deployment_profiles: *id148
+    deployment_profiles: *id149
     platform_targets:
     - platform-neutral
     depends_on:
@@ -44148,7 +44338,7 @@ capabilities:
       - CAP-10.S05.T03
       priority: P0
       wave: W7
-      deployment_profiles: *id148
+      deployment_profiles: *id149
       platform_targets:
       - platform-neutral
       estimate: M
@@ -44196,7 +44386,7 @@ capabilities:
       - CAP-16.S04.T01
       priority: P0
       wave: W7
-      deployment_profiles: *id148
+      deployment_profiles: *id149
       platform_targets:
       - platform-neutral
       estimate: M
@@ -44246,7 +44436,7 @@ capabilities:
       - CAP-16.S04.T02
       priority: P0
       wave: W7
-      deployment_profiles: *id148
+      deployment_profiles: *id149
       platform_targets:
       - platform-neutral
       estimate: M
@@ -44285,7 +44475,7 @@ capabilities:
     outcome: Researchers can approve a publication-ready article architecture before prose generation.
     wave: W7
     priority: P0
-    deployment_profiles: *id148
+    deployment_profiles: *id149
     platform_targets:
     - platform-neutral
     depends_on:
@@ -44317,7 +44507,7 @@ capabilities:
       - CAP-00.S06.T04
       priority: P0
       wave: W7
-      deployment_profiles: *id148
+      deployment_profiles: *id149
       platform_targets:
       - platform-neutral
       estimate: M
@@ -44367,7 +44557,7 @@ capabilities:
       - CAP-16.S05.T01
       priority: P0
       wave: W7
-      deployment_profiles: *id148
+      deployment_profiles: *id149
       platform_targets:
       - platform-neutral
       estimate: M
@@ -44419,7 +44609,7 @@ capabilities:
       - CAP-16.S05.T02
       priority: P0
       wave: W7
-      deployment_profiles: *id148
+      deployment_profiles: *id149
       platform_targets:
       - platform-neutral
       estimate: M
@@ -44458,7 +44648,7 @@ capabilities:
     outcome: The article-architecture capability is production-ready across research and output types.
     wave: W7
     priority: P0
-    deployment_profiles: *id148
+    deployment_profiles: *id149
     platform_targets:
     - platform-neutral
     depends_on:
@@ -44485,7 +44675,7 @@ capabilities:
       - CAP-16.S05.T03
       priority: P0
       wave: W7
-      deployment_profiles: *id148
+      deployment_profiles: *id149
       platform_targets:
       - platform-neutral
       estimate: M
@@ -44535,7 +44725,7 @@ capabilities:
       - CAP-16.S06.T01
       priority: P0
       wave: W7
-      deployment_profiles: *id148
+      deployment_profiles: *id149
       platform_targets:
       - platform-neutral
       estimate: M
@@ -44584,7 +44774,7 @@ capabilities:
       - CAP-15.S06.T03
       priority: P0
       wave: W7
-      deployment_profiles: *id148
+      deployment_profiles: *id149
       platform_targets:
       - platform-neutral
       estimate: M
@@ -44643,7 +44833,7 @@ capabilities:
     outcome: Unpublished study results enter through a confidential, rights-aware, versioned channel.
     wave: W8
     priority: P0
-    deployment_profiles: &id149
+    deployment_profiles: &id150
     - LOC
     - LAB
     - ALL
@@ -44674,7 +44864,7 @@ capabilities:
       - CAP-15.S01.T03
       priority: P0
       wave: W8
-      deployment_profiles: *id149
+      deployment_profiles: *id150
       platform_targets:
       - platform-neutral
       estimate: M
@@ -44727,7 +44917,7 @@ capabilities:
       - CAP-07.S03.T02
       priority: P0
       wave: W8
-      deployment_profiles: *id149
+      deployment_profiles: *id150
       platform_targets:
       - platform-neutral
       estimate: M
@@ -44778,7 +44968,7 @@ capabilities:
       - CAP-03.S03.T02
       priority: P0
       wave: W8
-      deployment_profiles: *id149
+      deployment_profiles: *id150
       platform_targets:
       - platform-neutral
       estimate: M
@@ -44819,7 +45009,7 @@ capabilities:
     outcome: Methods and results become structured candidates linked to exact report evidence.
     wave: W8
     priority: P0
-    deployment_profiles: *id149
+    deployment_profiles: *id150
     platform_targets:
     - platform-neutral
     depends_on:
@@ -44847,7 +45037,7 @@ capabilities:
       - CAP-05.S04.T03
       priority: P0
       wave: W8
-      deployment_profiles: *id149
+      deployment_profiles: *id150
       platform_targets:
       - platform-neutral
       estimate: M
@@ -44899,7 +45089,7 @@ capabilities:
       - CAP-17.S02.T01
       priority: P0
       wave: W8
-      deployment_profiles: *id149
+      deployment_profiles: *id150
       platform_targets:
       - platform-neutral
       estimate: M
@@ -44951,7 +45141,7 @@ capabilities:
       - CAP-17.S02.T01
       priority: P0
       wave: W8
-      deployment_profiles: *id149
+      deployment_profiles: *id150
       platform_targets:
       - platform-neutral
       estimate: M
@@ -44994,7 +45184,7 @@ capabilities:
     outcome: Actual study conduct and results are distinguished from plans and verified before authoring.
     wave: W8
     priority: P0
-    deployment_profiles: *id149
+    deployment_profiles: *id150
     platform_targets:
     - platform-neutral
     depends_on:
@@ -45023,7 +45213,7 @@ capabilities:
       - CAP-15.S05.T03
       priority: P0
       wave: W8
-      deployment_profiles: *id149
+      deployment_profiles: *id150
       platform_targets:
       - platform-neutral
       estimate: M
@@ -45073,7 +45263,7 @@ capabilities:
       - CAP-17.S03.T01
       priority: P0
       wave: W8
-      deployment_profiles: *id149
+      deployment_profiles: *id150
       platform_targets:
       - platform-neutral
       estimate: M
@@ -45125,7 +45315,7 @@ capabilities:
       - CAP-17.S03.T02
       priority: P0
       wave: W8
-      deployment_profiles: *id149
+      deployment_profiles: *id150
       platform_targets:
       - platform-neutral
       estimate: M
@@ -45166,7 +45356,7 @@ capabilities:
     outcome: Verified study results become durable evidence with complete downstream impact tracking.
     wave: W8
     priority: P0
-    deployment_profiles: *id149
+    deployment_profiles: *id150
     platform_targets:
     - platform-neutral
     depends_on:
@@ -45195,7 +45385,7 @@ capabilities:
       - CAP-09.S01.T03
       priority: P0
       wave: W8
-      deployment_profiles: *id149
+      deployment_profiles: *id150
       platform_targets:
       - platform-neutral
       estimate: M
@@ -45245,7 +45435,7 @@ capabilities:
       - CAP-17.S04.T01
       priority: P0
       wave: W8
-      deployment_profiles: *id149
+      deployment_profiles: *id150
       platform_targets:
       - platform-neutral
       estimate: M
@@ -45298,7 +45488,7 @@ capabilities:
       - CAP-03.S05.T03
       priority: P0
       wave: W8
-      deployment_profiles: *id149
+      deployment_profiles: *id150
       platform_targets:
       - platform-neutral
       estimate: M
@@ -45339,7 +45529,7 @@ capabilities:
     outcome: Researchers can inspect, verify, and approve result evidence for downstream manuscripts.
     wave: W8
     priority: P0
-    deployment_profiles: *id149
+    deployment_profiles: *id150
     platform_targets:
     - platform-neutral
     depends_on:
@@ -45367,7 +45557,7 @@ capabilities:
       - CAP-00.S06.T04
       priority: P0
       wave: W8
-      deployment_profiles: *id149
+      deployment_profiles: *id150
       platform_targets:
       - platform-neutral
       estimate: M
@@ -45417,7 +45607,7 @@ capabilities:
       - CAP-17.S05.T01
       priority: P0
       wave: W8
-      deployment_profiles: *id149
+      deployment_profiles: *id150
       platform_targets:
       - platform-neutral
       estimate: M
@@ -45469,7 +45659,7 @@ capabilities:
       - CAP-17.S05.T02
       priority: P0
       wave: W8
-      deployment_profiles: *id149
+      deployment_profiles: *id150
       platform_targets:
       - platform-neutral
       estimate: M
@@ -45508,7 +45698,7 @@ capabilities:
     outcome: Technical-report and result evidence is trustworthy enough for controlled manuscript use.
     wave: W8
     priority: P0
-    deployment_profiles: *id149
+    deployment_profiles: *id150
     platform_targets:
     - platform-neutral
     depends_on:
@@ -45535,7 +45725,7 @@ capabilities:
       - CAP-17.S05.T03
       priority: P0
       wave: W8
-      deployment_profiles: *id149
+      deployment_profiles: *id150
       platform_targets:
       - platform-neutral
       estimate: M
@@ -45585,7 +45775,7 @@ capabilities:
       - CAP-17.S06.T01
       priority: P0
       wave: W8
-      deployment_profiles: *id149
+      deployment_profiles: *id150
       platform_targets:
       - platform-neutral
       estimate: M
@@ -45635,7 +45825,7 @@ capabilities:
       - CAP-17.S06.T02
       priority: P0
       wave: W8
-      deployment_profiles: *id149
+      deployment_profiles: *id150
       platform_targets:
       - platform-neutral
       estimate: M
@@ -45695,7 +45885,7 @@ capabilities:
     outcome: Drafts are durable, versioned scholarly objects with human ownership and selective recalculation.
     wave: W8
     priority: P0
-    deployment_profiles: &id150
+    deployment_profiles: &id151
     - LOC
     - LAB
     - ALL
@@ -45726,7 +45916,7 @@ capabilities:
       - CAP-03.S03.T02
       priority: P0
       wave: W8
-      deployment_profiles: *id150
+      deployment_profiles: *id151
       platform_targets:
       - platform-neutral
       estimate: M
@@ -45777,7 +45967,7 @@ capabilities:
       - CAP-03.S04.T03
       priority: P0
       wave: W8
-      deployment_profiles: *id150
+      deployment_profiles: *id151
       platform_targets:
       - platform-neutral
       estimate: M
@@ -45826,7 +46016,7 @@ capabilities:
       - CAP-03.S05.T03
       priority: P0
       wave: W8
-      deployment_profiles: *id150
+      deployment_profiles: *id151
       platform_targets:
       - platform-neutral
       estimate: M
@@ -45867,7 +46057,7 @@ capabilities:
     outcome: Generated prose is section-specific, source-grounded, inspectable, and unable to conceal unsupported content.
     wave: W8
     priority: P0
-    deployment_profiles: *id150
+    deployment_profiles: *id151
     platform_targets:
     - platform-neutral
     depends_on:
@@ -45897,7 +46087,7 @@ capabilities:
       - CAP-09.S05.T01
       priority: P0
       wave: W8
-      deployment_profiles: *id150
+      deployment_profiles: *id151
       platform_targets:
       - platform-neutral
       estimate: M
@@ -45950,7 +46140,7 @@ capabilities:
       - CAP-07.S04.T03
       priority: P0
       wave: W8
-      deployment_profiles: *id150
+      deployment_profiles: *id151
       platform_targets:
       - platform-neutral
       estimate: M
@@ -46002,7 +46192,7 @@ capabilities:
       - CAP-18.S02.T02
       priority: P0
       wave: W8
-      deployment_profiles: *id150
+      deployment_profiles: *id151
       platform_targets:
       - platform-neutral
       estimate: M
@@ -46045,7 +46235,7 @@ capabilities:
     outcome: The platform can draft a complete empirical article from verified study and literature evidence.
     wave: W8
     priority: P0
-    deployment_profiles: *id150
+    deployment_profiles: *id151
     platform_targets:
     - platform-neutral
     depends_on:
@@ -46074,7 +46264,7 @@ capabilities:
       - CAP-17.S03.T03
       priority: P0
       wave: W8
-      deployment_profiles: *id150
+      deployment_profiles: *id151
       platform_targets:
       - platform-neutral
       estimate: M
@@ -46127,7 +46317,7 @@ capabilities:
       - CAP-17.S05.T03
       priority: P0
       wave: W8
-      deployment_profiles: *id150
+      deployment_profiles: *id151
       platform_targets:
       - platform-neutral
       estimate: M
@@ -46180,7 +46370,7 @@ capabilities:
       - CAP-09.S05.T03
       priority: P0
       wave: W8
-      deployment_profiles: *id150
+      deployment_profiles: *id151
       platform_targets:
       - platform-neutral
       estimate: M
@@ -46221,7 +46411,7 @@ capabilities:
     outcome: The platform can develop full theory and critical article drafts while preserving epistemic and authorial plurality.
     wave: W8
     priority: P0
-    deployment_profiles: *id150
+    deployment_profiles: *id151
     platform_targets:
     - platform-neutral
     depends_on:
@@ -46251,7 +46441,7 @@ capabilities:
       - CAP-16.S03.T03
       priority: P0
       wave: W8
-      deployment_profiles: *id150
+      deployment_profiles: *id151
       platform_targets:
       - platform-neutral
       estimate: M
@@ -46304,7 +46494,7 @@ capabilities:
       - CAP-16.S04.T03
       priority: P0
       wave: W8
-      deployment_profiles: *id150
+      deployment_profiles: *id151
       platform_targets:
       - platform-neutral
       estimate: M
@@ -46355,7 +46545,7 @@ capabilities:
       - CAP-18.S04.T02
       priority: P0
       wave: W8
-      deployment_profiles: *id150
+      deployment_profiles: *id151
       platform_targets:
       - platform-neutral
       estimate: M
@@ -46396,7 +46586,7 @@ capabilities:
     outcome: Researchers can review, edit, approve, and export complete source-grounded manuscripts.
     wave: W8
     priority: P0
-    deployment_profiles: *id150
+    deployment_profiles: *id151
     platform_targets:
     - platform-neutral
     depends_on:
@@ -46426,7 +46616,7 @@ capabilities:
       - CAP-00.S06.T04
       priority: P0
       wave: W8
-      deployment_profiles: *id150
+      deployment_profiles: *id151
       platform_targets:
       - platform-neutral
       estimate: M
@@ -46476,7 +46666,7 @@ capabilities:
       - CAP-18.S05.T01
       priority: P0
       wave: W8
-      deployment_profiles: *id150
+      deployment_profiles: *id151
       platform_targets:
       - platform-neutral
       estimate: M
@@ -46527,7 +46717,7 @@ capabilities:
       - CAP-09.S06.T03
       priority: P0
       wave: W8
-      deployment_profiles: *id150
+      deployment_profiles: *id151
       platform_targets:
       - platform-neutral
       estimate: M
@@ -46566,7 +46756,7 @@ capabilities:
     outcome: Manuscript drafting is accurate, auditable, editable, and production-ready across article types.
     wave: W8
     priority: P0
-    deployment_profiles: *id150
+    deployment_profiles: *id151
     platform_targets:
     - platform-neutral
     depends_on:
@@ -46593,7 +46783,7 @@ capabilities:
       - CAP-18.S05.T03
       priority: P0
       wave: W8
-      deployment_profiles: *id150
+      deployment_profiles: *id151
       platform_targets:
       - platform-neutral
       estimate: M
@@ -46643,7 +46833,7 @@ capabilities:
       - CAP-18.S06.T01
       priority: P0
       wave: W8
-      deployment_profiles: *id150
+      deployment_profiles: *id151
       platform_targets:
       - platform-neutral
       estimate: M
@@ -46693,7 +46883,7 @@ capabilities:
       - CAP-18.S06.T02
       priority: P0
       wave: W8
-      deployment_profiles: *id150
+      deployment_profiles: *id151
       platform_targets:
       - platform-neutral
       estimate: M
@@ -46754,7 +46944,7 @@ capabilities:
     outcome: Reviewer simulations are role-bounded, reproducible, and independent before editorial synthesis.
     wave: W8
     priority: P0
-    deployment_profiles: &id151
+    deployment_profiles: &id152
     - LOC
     - LAB
     - ALL
@@ -46784,7 +46974,7 @@ capabilities:
       - CAP-18.S01.T03
       priority: P0
       wave: W8
-      deployment_profiles: *id151
+      deployment_profiles: *id152
       platform_targets:
       - platform-neutral
       estimate: M
@@ -46835,7 +47025,7 @@ capabilities:
       - CAP-16.S01.T03
       priority: P0
       wave: W8
-      deployment_profiles: *id151
+      deployment_profiles: *id152
       platform_targets:
       - platform-neutral
       estimate: M
@@ -46884,7 +47074,7 @@ capabilities:
       - CAP-07.S04.T03
       priority: P0
       wave: W8
-      deployment_profiles: *id151
+      deployment_profiles: *id152
       platform_targets:
       - platform-neutral
       estimate: M
@@ -46928,7 +47118,7 @@ capabilities:
       reviews.
     wave: W8
     priority: P0
-    deployment_profiles: *id151
+    deployment_profiles: *id152
     platform_targets:
     - platform-neutral
     depends_on:
@@ -46955,7 +47145,7 @@ capabilities:
       - CAP-19.S01.T03
       priority: P0
       wave: W8
-      deployment_profiles: *id151
+      deployment_profiles: *id152
       platform_targets:
       - platform-neutral
       estimate: M
@@ -47008,7 +47198,7 @@ capabilities:
       - CAP-17.S05.T03
       priority: P0
       wave: W8
-      deployment_profiles: *id151
+      deployment_profiles: *id152
       platform_targets:
       - platform-neutral
       estimate: M
@@ -47063,7 +47253,7 @@ capabilities:
       - CAP-18.S05.T02
       priority: P0
       wave: W8
-      deployment_profiles: *id151
+      deployment_profiles: *id152
       platform_targets:
       - platform-neutral
       estimate: M
@@ -47106,7 +47296,7 @@ capabilities:
     outcome: Any draft can enter a reproducible, evidence-aware reviewer simulation without losing its original state.
     wave: W8
     priority: P0
-    deployment_profiles: *id151
+    deployment_profiles: *id152
     platform_targets:
     - platform-neutral
     depends_on:
@@ -47134,7 +47324,7 @@ capabilities:
       - CAP-05.S04.T03
       priority: P0
       wave: W8
-      deployment_profiles: *id151
+      deployment_profiles: *id152
       platform_targets:
       - platform-neutral
       estimate: M
@@ -47188,7 +47378,7 @@ capabilities:
       - CAP-17.S05.T03
       priority: P0
       wave: W8
-      deployment_profiles: *id151
+      deployment_profiles: *id152
       platform_targets:
       - platform-neutral
       estimate: M
@@ -47240,7 +47430,7 @@ capabilities:
       - CAP-19.S03.T02
       priority: P0
       wave: W8
-      deployment_profiles: *id151
+      deployment_profiles: *id152
       platform_targets:
       - platform-neutral
       estimate: M
@@ -47283,7 +47473,7 @@ capabilities:
     outcome: The system produces rigorous, transparent simulated peer review while preserving disagreement and uncertainty.
     wave: W8
     priority: P0
-    deployment_profiles: *id151
+    deployment_profiles: *id152
     platform_targets:
     - platform-neutral
     depends_on:
@@ -47312,7 +47502,7 @@ capabilities:
       - CAP-19.S03.T03
       priority: P0
       wave: W8
-      deployment_profiles: *id151
+      deployment_profiles: *id152
       platform_targets:
       - platform-neutral
       estimate: M
@@ -47362,7 +47552,7 @@ capabilities:
       - CAP-19.S04.T01
       priority: P0
       wave: W8
-      deployment_profiles: *id151
+      deployment_profiles: *id152
       platform_targets:
       - platform-neutral
       estimate: M
@@ -47412,7 +47602,7 @@ capabilities:
       - CAP-19.S04.T02
       priority: P0
       wave: W8
-      deployment_profiles: *id151
+      deployment_profiles: *id152
       platform_targets:
       - platform-neutral
       estimate: M
@@ -47455,7 +47645,7 @@ capabilities:
     outcome: Reviewer feedback becomes a transparent, author-controlled revision plan and auditable response.
     wave: W8
     priority: P0
-    deployment_profiles: *id151
+    deployment_profiles: *id152
     platform_targets:
     - platform-neutral
     depends_on:
@@ -47482,7 +47672,7 @@ capabilities:
       - CAP-19.S04.T03
       priority: P0
       wave: W8
-      deployment_profiles: *id151
+      deployment_profiles: *id152
       platform_targets:
       - platform-neutral
       estimate: M
@@ -47532,7 +47722,7 @@ capabilities:
       - CAP-19.S05.T01
       priority: P0
       wave: W8
-      deployment_profiles: *id151
+      deployment_profiles: *id152
       platform_targets:
       - platform-neutral
       estimate: M
@@ -47585,7 +47775,7 @@ capabilities:
       - CAP-18.S01.T03
       priority: P0
       wave: W8
-      deployment_profiles: *id151
+      deployment_profiles: *id152
       platform_targets:
       - platform-neutral
       estimate: M
@@ -47628,7 +47818,7 @@ capabilities:
     outcome: Extended simulated review and revision are production-ready and complete the G8 local research lifecycle.
     wave: W8
     priority: P0
-    deployment_profiles: *id151
+    deployment_profiles: *id152
     platform_targets:
     - platform-neutral
     depends_on:
@@ -47657,7 +47847,7 @@ capabilities:
       - CAP-00.S06.T04
       priority: P0
       wave: W8
-      deployment_profiles: *id151
+      deployment_profiles: *id152
       platform_targets:
       - platform-neutral
       estimate: M
@@ -47707,7 +47897,7 @@ capabilities:
       - CAP-19.S06.T01
       priority: P0
       wave: W8
-      deployment_profiles: *id151
+      deployment_profiles: *id152
       platform_targets:
       - platform-neutral
       estimate: M
@@ -47757,7 +47947,7 @@ capabilities:
       - CAP-17.S06.T03
       priority: P0
       wave: W8
-      deployment_profiles: *id151
+      deployment_profiles: *id152
       platform_targets:
       - platform-neutral
       estimate: M
@@ -47871,7 +48061,7 @@ control_plane:
         sha256: d2fe107e767b09b7b22a8e1403b2b94a3988f11e8cbc6b6cdab63af03cff17f7
         commit: 42e016bca44d9046e0e27599d679bc69d28d3384
         recorded_at: '2026-08-22T15:55:45+00:00'
-      review: &id152
+      review: &id153
         reviewer: b00-independent-reviewer
         result: approved
         reviewed_at: '2026-08-22T16:07:28+00:00'
@@ -47993,7 +48183,7 @@ control_plane:
           sha256: d2fe107e767b09b7b22a8e1403b2b94a3988f11e8cbc6b6cdab63af03cff17f7
           commit: 42e016bca44d9046e0e27599d679bc69d28d3384
           recorded_at: '2026-08-22T15:55:45+00:00'
-        review: *id152
+        review: *id153
         ledger:
           path: planning/governance-recovery-approvals/GRR-0001.B00.review-R05.json
           sha256: 6add97afeda6f0974a1d80f5bc781989fcdcd98fe3eeea0f0fdf8d3233589297
@@ -48032,7 +48222,7 @@ control_plane:
           sha256: 439c21c799d297bcc04da757b8ce004b2635f3c2f91bf7994f1b6123b94e992d
           commit: 56cedf07906bbb157d374806e73092b943b41103
           recorded_at: '2026-08-22T18:53:43+00:00'
-        review: &id153
+        review: &id154
           reviewer: b01-independent-reviewer
           result: approved
           reviewed_at: '2026-08-22T19:05:18+00:00'
@@ -48085,7 +48275,7 @@ control_plane:
             sha256: 439c21c799d297bcc04da757b8ce004b2635f3c2f91bf7994f1b6123b94e992d
             commit: 56cedf07906bbb157d374806e73092b943b41103
             recorded_at: '2026-08-22T18:53:43+00:00'
-          review: *id153
+          review: *id154
           ledger:
             path: planning/governance-recovery-approvals/GRR-0001.B01.review-R02.json
             sha256: 3dd0cceda6983ec1aef1b3715c284869fc9e0aeb4be2e8145d1fe1b46d89f9ff
@@ -48114,7 +48304,7 @@ control_plane:
         sha256: 8486550a69fd4fd9429d516a1ab6b9f60fd83d604fc32fe4a11d09f11dbc8091
         commit: af5c4260413cfa8490ca9540784bcecc12d81fac
         recorded_at: '2026-08-22T22:27:15+00:00'
-      review: &id154
+      review: &id155
         reviewer: grr2-b00-independent-reviewer
         result: approved
         reviewed_at: '2026-08-23T23:45:25+00:00'
@@ -48145,7 +48335,7 @@ control_plane:
           sha256: 8486550a69fd4fd9429d516a1ab6b9f60fd83d604fc32fe4a11d09f11dbc8091
           commit: af5c4260413cfa8490ca9540784bcecc12d81fac
           recorded_at: '2026-08-22T22:27:15+00:00'
-        review: *id154
+        review: *id155
         ledger:
           path: planning/governance-recovery-approvals/GRR-0002.B00.review-R01.json
           sha256: 9a5efe9d7a9feabeb0a11829df4954a74f9d7a6d2d5089af92f4bfc337ccdfe2
@@ -48172,7 +48362,7 @@ control_plane:
           sha256: 7a53880c91eb34c7d64dfe4b41764d9855426fade152008e2fe01edb9bc800f5
           commit: 0b9f4a63e35dbd6163239b39f1ec5b9aa03156bf
           recorded_at: '2026-08-24T19:05:01+00:00'
-        review: &id155
+        review: &id156
           reviewer: independent-control-security-reviewer
           result: approved
           reviewed_at: '2026-08-24T19:28:20+00:00'
@@ -48259,7 +48449,7 @@ control_plane:
             sha256: 7a53880c91eb34c7d64dfe4b41764d9855426fade152008e2fe01edb9bc800f5
             commit: 0b9f4a63e35dbd6163239b39f1ec5b9aa03156bf
             recorded_at: '2026-08-24T19:05:01+00:00'
-          review: *id155
+          review: *id156
           ledger:
             path: planning/governance-recovery-approvals/GRR-0002.B01.review-R03.json
             sha256: 7c2a547ac369cdfb63ccae1dd2a094ed2b3c8064a46a5e249a123a0633d55d1f
@@ -48287,7 +48477,7 @@ control_plane:
           sha256: 21d06572051bb0271c541d0588c7f9935b14b70348320799652d0f6c73f8b3dd
           commit: 7e0c6c61918c4ed1b860b0125a7e8591b967b341
           recorded_at: '2026-08-26T15:09:54+00:00'
-        review: &id156
+        review: &id157
           reviewer: independent-b02-control-security-reviewer
           result: approved
           reviewed_at: '2026-08-26T15:26:55+00:00'
@@ -48382,7 +48572,7 @@ control_plane:
             sha256: 21d06572051bb0271c541d0588c7f9935b14b70348320799652d0f6c73f8b3dd
             commit: 7e0c6c61918c4ed1b860b0125a7e8591b967b341
             recorded_at: '2026-08-26T15:09:54+00:00'
-          review: *id156
+          review: *id157
           ledger:
             path: planning/governance-recovery-approvals/GRR-0002.B02.review-R03.json
             sha256: 30865832e32d6416d06b2020d2efb71e5b998c7e2abbf985a4e810e89ea13823
@@ -48789,7 +48979,7 @@ wave_amendments:
       commit: 4f256763401772298bf75c634f2c7b2355882f10
       recorded_at: '2026-08-21T01:30:59+00:00'
     verification_state: passed
-    review: &id157
+    review: &id158
       reviewer: b00-independent-reviewer
       result: approved
       reviewed_at: '2026-08-21T01:37:41+00:00'
@@ -49061,7 +49251,7 @@ wave_amendments:
           - W1.A02.T01-R01-F02
           root_cause_analysis: null
           packet_sha256: 8cec357a17c4cecf3e0996e353a573f1e95ccdebdece542949bb667215f316cd
-        review: *id157
+        review: *id158
         ledger:
           path: artifacts/evidence/W1.A02.T01.review-R02.json
           sha256: f8913f680808ba3119935de66d170305a94e61b7818941154cbbc654745e5ac5
@@ -49122,7 +49312,7 @@ wave_amendments:
       commit: aa714b7c16def6add4662e0d1c44d0bc89e7c349
       recorded_at: '2026-08-21T02:50:29+00:00'
     verification_state: passed
-    review: &id158
+    review: &id159
       reviewer: b00-independent-reviewer
       result: approved
       reviewed_at: '2026-08-21T02:59:03+00:00'
@@ -49407,7 +49597,7 @@ wave_amendments:
           - foundation:quality
           - foundation:backlog
           packet_sha256: c3616f12a4889acaec5ef31fe6f7b5bc00bc5f126665a047a9225f12ae275d03
-        review: *id158
+        review: *id159
         ledger:
           path: artifacts/evidence/W1.A02.T02.review-R02.json
           sha256: 2700fd6eff428b03a257f22e7acc511d11ef9196e9224dfa188ab9357c2cc117
@@ -49886,7 +50076,7 @@ wave_amendments:
       commit: 0362cfe72c84f167338329490f6799ba9f84a808
       recorded_at: '2026-08-22T20:04:57+00:00'
     verification_state: passed
-    review: &id159
+    review: &id160
       reviewer: b00-independent-reviewer
       result: approved
       reviewed_at: '2026-08-22T20:13:45+00:00'
@@ -50114,7 +50304,7 @@ wave_amendments:
           - foundation:quality
           - foundation:backlog
           packet_sha256: 15eaaa895273188e63a333cf5cb2f9a359a2b879764d6a7b5c850ddc6955ac22
-        review: *id159
+        review: *id160
         ledger:
           path: artifacts/evidence/W1.A03.T01.review-R02.json
           sha256: cd9e363e474d9d2d957c8fcc9049b631f441553e8a0e8c36a5fb1b98d883ef02
@@ -50559,7 +50749,7 @@ wave_amendments:
       commit: 6111293f8d534e79aa8a509dfa8d37e43b218037
       recorded_at: '2026-08-30T16:23:17+00:00'
     verification_state: passed
-    review: &id160
+    review: &id161
       reviewer: codex-independent-application-lock-security-reviewer
       result: approved
       reviewed_at: '2026-08-30T16:30:38+00:00'
@@ -50791,7 +50981,7 @@ wave_amendments:
           - desktop:unit
           - security-local:unit
           packet_sha256: 3d5c43eba52747a6a19a07ca9b9e4111b150f56dd47b76a15fbf420d6c4c2f00
-        review: *id160
+        review: *id161
         ledger:
           path: artifacts/evidence/W1.A05.T01.review-R02.json
           sha256: 0dd2a40eeb4a4b30d26f302c96165ca544d72f4c0b9badea1e7fcb31c2407428
@@ -50882,7 +51072,7 @@ wave_amendments:
       commit: 3f91f7721e293b72d8367e1036c5875dc1f14ff2
       recorded_at: '2026-08-30T16:57:01+00:00'
     verification_state: passed
-    review: &id161
+    review: &id162
       reviewer: codex-independent-windows-hello-security-reviewer
       result: approved
       reviewed_at: '2026-08-30T17:05:36+00:00'
@@ -50994,7 +51184,7 @@ wave_amendments:
           - desktop:unit
           - security-local:unit
           packet_sha256: 90829877b916cb5569a1fb8cf7abb9ee5dfd1a539248a4ac96b08c2f8689bedd
-        review: *id161
+        review: *id162
         ledger:
           path: artifacts/evidence/W1.A05.T02.review-R01.json
           sha256: 7653b00135129ac61a055355fbaae31fe80b0083b39a26ca714111045f1d869b
@@ -51084,7 +51274,7 @@ wave_amendments:
       commit: c94ab3ef76529f7eee0d2f002423c21aec3e1161
       recorded_at: '2026-08-30T18:23:42+00:00'
     verification_state: passed
-    review: &id162
+    review: &id163
       reviewer: codex-independent-sign-in-policy-security-reviewer
       result: approved
       reviewed_at: '2026-08-30T18:29:24+00:00'
@@ -51410,7 +51600,7 @@ wave_amendments:
           - security-local:supply-chain
           - security-local:unit
           packet_sha256: fce7cc189396d82ff36e51c7974870ef892333659eb912069451079e4b6045ce
-        review: *id162
+        review: *id163
         ledger:
           path: artifacts/evidence/W1.A05.T03.review-R02.json
           sha256: 4d91b43e1021d25a08f76ce3c06f7e94b060ad6b782cfc2fe4d778ec9af7f3ef
@@ -51548,7 +51738,7 @@ wave_amendments:
       previous_reference_id: RO-UI-ACADEMIC-MINIMAL-1.3
       implementation_agent: agent:codex
     verification_state: passed
-    review: &id163
+    review: &id164
       reviewer: agent:t04-r03-independent-reviewer
       result: approved
       reviewed_at: '2026-09-01T12:32:41+00:00'
@@ -52097,7 +52287,7 @@ wave_amendments:
           - desktop:ui-accessibility
           - security-local:unit
           packet_sha256: 7f0619464e329555a7425bec4cb7c0d8d3b0135c45be5c98e25ca9bcb5c0225f
-        review: *id163
+        review: *id164
         ledger:
           path: artifacts/evidence/W1.A05.T04.review-R03.json
           sha256: 690090792b43760c23e48121528fd94ad371eabfaab61295f0da863b4b8d701b
@@ -52420,7 +52610,7 @@ wave_amendments:
       commit: 8cfefe0249581bbf26f2bc4c97aeab0289007657
       recorded_at: '2026-09-03T18:16:54+00:00'
     verification_state: passed
-    review: &id164
+    review: &id165
       reviewer: ecr5-planning-authority-reviewer
       result: approved
       reviewed_at: '2026-09-03T18:22:37+00:00'
@@ -52489,7 +52679,7 @@ wave_amendments:
           - foundation:backlog-views
           - foundation:ui-reference
           packet_sha256: 8d56e37b828055df00004def87b0b68930602b97a667058e66af4c0a46d18ab8
-        review: *id164
+        review: *id165
         ledger:
           path: artifacts/evidence/task-reviews/W1.A06.T01/R01.json
           sha256: 70c8476da4e6b3c1328ab948dfe8d1200217d20a79b7a7ac72aa49e3b6dd8b74
@@ -52744,7 +52934,7 @@ wave_amendments:
       commit: 7baa4346aa68e9a7357e00b872f4b2965b167d4b
       recorded_at: '2026-09-04T10:56:14+00:00'
     verification_state: passed
-    review: &id165
+    review: &id166
       reviewer: ecr6-planning-authority-reviewer
       result: approved
       reviewed_at: '2026-09-04T11:04:12+00:00'
@@ -52821,7 +53011,7 @@ wave_amendments:
           - foundation:backlog-views
           - foundation:ui-reference
           packet_sha256: 2f06a3679f58ef9a78328983e1e99715eca6b3ceb2386a491f22518563640386
-        review: *id165
+        review: *id166
         ledger:
           path: artifacts/evidence/task-reviews/W1.A07.T01/R01.json
           sha256: 3ac7f895180e4aff0dd177d6e525cc49aad8f63c80d16e85e0aade8da9d93ab7
@@ -53115,7 +53305,7 @@ wave_amendments:
       commit: 455546efec1cf972dd0713664c4a130aba1478fb
       recorded_at: '2026-09-05T00:42:22+00:00'
     verification_state: passed
-    review: &id166
+    review: &id167
       reviewer: agent:t01-r02-independent-reviewer
       result: approved
       reviewed_at: '2026-09-05T00:46:34+00:00'
@@ -53410,7 +53600,7 @@ wave_amendments:
           - desktop:ui-accessibility
           - desktop:ui-visual-regression
           packet_sha256: 7b0a3ca8c4f328e466a3cccc321af47ba017f9b54860b1aa2191807870d6be6f
-        review: *id166
+        review: *id167
         ledger:
           path: artifacts/evidence/W1.A08.T01.review-R02.json
           sha256: 792770c30e5ac7d5af02f36fa21742a9d936c30437a13a41c2d7240a62762101
@@ -53525,7 +53715,7 @@ wave_amendments:
       commit: b13113bf65630c70a7163fbd422194e2289b9db3
       recorded_at: '2026-09-06T04:11:10+00:00'
     verification_state: passed
-    review: &id167
+    review: &id168
       reviewer: agent:window_launch_planning
       result: approved
       reviewed_at: '2026-09-06T04:20:51+00:00'
@@ -54826,7 +55016,7 @@ wave_amendments:
           - desktop:ui-visual-regression
           - desktop:performance
           packet_sha256: 8b072feeff0a2d13a3cc5a49959684552bc395ca2762634d1d1151b0287e4d89
-        review: *id167
+        review: *id168
         ledger:
           path: artifacts/evidence/W1.A08.T02.review-R01.json
           sha256: 088cdca4c1e0ad888a20367428178d6e5aa0e88e8589575e3f51930a46b14ec8
@@ -55114,7 +55304,7 @@ wave_amendments:
       commit: 7a46e91a4558d9286a94d21aa85b050f6323e286
       recorded_at: '2026-09-05T13:23:47+00:00'
     verification_state: passed
-    review: &id168
+    review: &id169
       reviewer: agent:t01-r02-independent-reviewer
       result: approved
       reviewed_at: '2026-09-05T13:31:01+00:00'
@@ -55362,7 +55552,7 @@ wave_amendments:
           - desktop:ui-visual-regression
           - e2e-local:system
           packet_sha256: 643b977c1b875f7b11edd5f1c70e36857fa9796e4d9cb3b980e3ee9535a3bc43
-        review: *id168
+        review: *id169
         ledger:
           path: artifacts/evidence/W1.A09.T01.review-R01.json
           sha256: 8609e02b527340c3da3efd4cd465c81c7cc136d083f6998bb9ff43a975f92e00
@@ -55444,7 +55634,7 @@ wave_amendments:
       commit: a6a219ce0ec32bc96b151aad13c19c5646ec8db6
       recorded_at: '2026-09-05T14:11:49+00:00'
     verification_state: passed
-    review: &id169
+    review: &id170
       reviewer: agent:/root/t01_publication_checkpoint
       result: approved
       reviewed_at: '2026-09-05T14:21:57+00:00'
@@ -55540,7 +55730,7 @@ wave_amendments:
           - security-local:unit
           - foundation:backlog-views
           packet_sha256: 6015c4c671b4a031d109130d2105f882ec73221b46272a7ee41752d0e6f2e415
-        review: *id169
+        review: *id170
         ledger:
           path: artifacts/evidence/W1.A09.T02.review-R01.json
           sha256: 38126680eb82121f0ccd13bf572060296c9250137bc755403af011a27b602dd0
@@ -55625,7 +55815,7 @@ wave_amendments:
       commit: 30357ec178cc1a57646b7fe64dca3ee7670756d2
       recorded_at: '2026-09-05T22:11:30+00:00'
     verification_state: passed
-    review: &id170
+    review: &id171
       reviewer: agent:/root/t03_acceptance_review
       result: approved
       reviewed_at: '2026-09-05T22:18:10+00:00'
@@ -55767,7 +55957,7 @@ wave_amendments:
           - security-local:unit
           - foundation:backlog-views
           packet_sha256: 3a998b90f30a6118478f4e474c9100c3dee56e019e21bf19c51b64df9362f1d6
-        review: *id170
+        review: *id171
         ledger:
           path: artifacts/evidence/W1.A09.T03.review-R01.json
           sha256: 04bbbd016f496e82b09c2245909cd70493d04c6cb2d4d37771efda57d92e8642
@@ -55847,7 +56037,7 @@ wave_amendments:
       commit: 6cb1514f2f2349e3e34e40e059986e635cd609cc
       recorded_at: '2026-09-05T23:56:21+00:00'
     verification_state: passed
-    review: &id171
+    review: &id172
       reviewer: agent:/root/t03_acceptance_review
       result: approved
       reviewed_at: '2026-09-06T00:03:20+00:00'
@@ -56140,7 +56330,7 @@ wave_amendments:
           - foundation:unit
           - foundation:backlog-views
           packet_sha256: 0534f799ece7dcc1139a621bb93f756ffd0f4d46dde7b15074482c7571fe0ed1
-        review: *id171
+        review: *id172
         ledger:
           path: artifacts/evidence/W1.A09.T04.review-R02.json
           sha256: 94c747ec3d0630687e2befe96a6f1fe041de8b04b12852c770dc543805b33f68
@@ -56409,7 +56599,7 @@ wave_amendments:
       commit: a2e16012cfa9eb9a0f3413438fa0a88583d0be50
       recorded_at: '2026-10-02T20:40:25+00:00'
     verification_state: passed
-    review: &id172
+    review: &id173
       reviewer: agent:/root/verifier_repair_review
       result: approved
       reviewed_at: '2026-10-02T20:52:44+00:00'
@@ -56660,7 +56850,7 @@ wave_amendments:
           - foundation:adr
           - foundation:backlog
           packet_sha256: ccf45f6499f9d474c7d490465bb55c2ad61e095047fe1b533590199b06192a57
-        review: *id172
+        review: *id173
         ledger:
           path: artifacts/evidence/W2.A01.T01.review-R02.json
           sha256: 7b6ad12d4b0a7bb482c41a8df2986a30966bf04678c0cd63b18853616f346c1f
@@ -56759,7 +56949,7 @@ wave_amendments:
       commit: 988ee4789f2004cce83187f971760d5b5f3e02ca
       recorded_at: '2026-10-02T23:57:26+00:00'
     verification_state: passed
-    review: &id173
+    review: &id174
       reviewer: agent:/root/t02_gate_maintenance_review
       result: approved
       reviewed_at: '2026-10-03T00:12:14+00:00'
@@ -57057,7 +57247,7 @@ wave_amendments:
           - foundation:backlog
           - desktop:unit
           packet_sha256: 2c32f27323835dc3b780f58ecbc0b7ca93a9fd8788a7d340f07a2708589f0f1a
-        review: *id173
+        review: *id174
         ledger:
           path: artifacts/evidence/W2.A01.T02.review-R02.json
           sha256: e56190d1c45e41d0f07d47b46030131b2b873bdb7f4b9cbed7916784cf79eec6
@@ -57325,7 +57515,7 @@ wave_amendments:
       commit: f989ba75b605c2d53db058441ecea211ae41c776
       recorded_at: '2026-10-03T13:33:53+00:00'
     verification_state: passed
-    review: &id174
+    review: &id175
       reviewer: agent:/root/activation_privacy_review
       result: approved
       reviewed_at: '2026-10-03T13:52:21+00:00'
@@ -57422,7 +57612,7 @@ wave_amendments:
           - foundation:backlog
           - foundation:backlog-views
           packet_sha256: 9e6e90f73a4fd0a710f28f407e239f5d519b46a81a36072a97ece35294f8fba1
-        review: *id174
+        review: *id175
         ledger:
           path: artifacts/evidence/W2.A02.T01.review-R01.json
           sha256: d50593a6bd6f5e180b373bd925647179f40a192fb9d7d59c2ebaffb27f910c45
@@ -57674,7 +57864,7 @@ wave_amendments:
       commit: aa09664678ca3ca8fa7a428cb60f3565d2c0e9bd
       recorded_at: '2026-10-03T23:31:58+00:00'
     verification_state: passed
-    review: &id175
+    review: &id176
       reviewer: agent:/root/maint26_independent_review
       result: approved
       reviewed_at: '2026-10-03T23:51:46+00:00'
@@ -57786,7 +57976,7 @@ wave_amendments:
           - foundation:backlog
           - foundation:backlog-views
           packet_sha256: db9f32de6ea1c746755792dc625811ec70a2ee2555a4f581bc864d6172cd6d29
-        review: *id175
+        review: *id176
         ledger:
           path: artifacts/evidence/W2.A03.T01.review-R01.json
           sha256: c0c9c10e3e6d271edd13db1c767ed8d4d07b5564b8a28f5b4c383173cf14d159
@@ -57868,7 +58058,7 @@ wave_amendments:
       commit: 06a69348c5de5c60cccecde400ab2271200ec50d
       recorded_at: '2026-10-04T18:51:12+00:00'
     verification_state: passed
-    review: &id176
+    review: &id177
       reviewer: agent:/root/a03_t02_authority_review
       result: approved
       reviewed_at: '2026-10-04T19:13:28+00:00'
@@ -58114,7 +58304,7 @@ wave_amendments:
           - foundation:backlog
           - foundation:backlog-views
           packet_sha256: ed16baccd8ea38e9d5e6bdea917bae0d19296ad612e329fc899b58235749cd13
-        review: *id176
+        review: *id177
         ledger:
           path: artifacts/evidence/W2.A03.T02.review-R01.json
           sha256: 6dddd39b9a0303fa2febd78d00e3bc6d7106038c111b7181bf406b82af68ff15
@@ -58374,7 +58564,7 @@ wave_amendments:
       commit: 6a07f37de16e9d5da49cb0b36400e6fe2fb195e0
       recorded_at: '2026-10-04T16:03:14+00:00'
     verification_state: passed
-    review: &id177
+    review: &id178
       reviewer: agent:/root/a03_t02_authority_review
       result: approved
       reviewed_at: '2026-10-04T16:20:11+00:00'
@@ -58489,7 +58679,7 @@ wave_amendments:
           - foundation:backlog
           - foundation:backlog-views
           packet_sha256: a0a0da4b619123d139d47b9076e32c68ae39659397e7c59be2c0d284c97c22e7
-        review: *id177
+        review: *id178
         ledger:
           path: artifacts/evidence/W2.A04.T01.review-R01.json
           sha256: fbe33e8621195d977cd336653fbf633d7e74506d6d1f2a72887b68bb074bb8d1
@@ -58771,7 +58961,7 @@ wave_amendments:
       commit: 9106f485d32150943e8fbedd5299d5882021e183
       recorded_at: '2026-10-05T06:15:46+00:00'
     verification_state: passed
-    review: &id178
+    review: &id179
       reviewer: agent:/root/a05_t01_review
       result: approved
       reviewed_at: '2026-10-05T06:38:54+00:00'
@@ -58895,7 +59085,7 @@ wave_amendments:
           - foundation:backlog-views
           - foundation:ui-reference
           packet_sha256: f3e47146ffbfc75b15f21959c3ae4a80a0c6614b76cc480ad7ab804ae4253a4f
-        review: *id178
+        review: *id179
         ledger:
           path: artifacts/evidence/W2.A05.T01.review-R01.json
           sha256: f33aa6d3bff44c440013a93e9acb80a2539d7e129db6993da6234a4cd16dec28
@@ -58981,7 +59171,7 @@ wave_amendments:
       commit: 03e501c4550c7aa61e1e60827d49f7174faab1ef
       recorded_at: '2026-10-05T07:22:02+00:00'
     verification_state: passed
-    review: &id179
+    review: &id180
       reviewer: agent:/root/a05_t02_review
       result: approved
       reviewed_at: '2026-10-05T07:39:40+00:00'
@@ -59084,7 +59274,7 @@ wave_amendments:
           - foundation:backlog
           - foundation:backlog-views
           packet_sha256: 7d146fa976c5a8b5bf9a9304fac5e99edef7805c5c9d8c211e9d34993cb24618
-        review: *id179
+        review: *id180
         ledger:
           path: artifacts/evidence/W2.A05.T02.review-R01.json
           sha256: 20b2ef49ce578e6cb605b2e61be373265db11e60938393eb1032aa394bb08721

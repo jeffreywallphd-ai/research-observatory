@@ -1,0 +1,859 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "CAP-05.S03.T01",
+  "baseCommit": "d0752c3d0aac0162ada79effc41b88c9d2978bcf",
+  "commit": "0fbad3859595ecc14968d2e036bbc4cb55054de8",
+  "branch": "codex/w2-implementation",
+  "changedFiles": [
+    "artifacts/evidence/CAP-05.S03.T01.privacy-binding-02.json",
+    "artifacts/evidence/CAP-05.S03.T01.privacy-review-01.json",
+    "artifacts/evidence/CAP-05.S03.T01.task-start.md",
+    "docs/adr/ADR-0046-bind-immutable-document-revisions-to-existing-human-authority.md",
+    "docs/adr/index.json",
+    "docs/architecture/document-parsing.md",
+    "docs/architecture/local-sqlite-storage.md",
+    "docs/planning-implementation-plan.md",
+    "packages/contracts/documents/README.md",
+    "packages/contracts/documents/document-revision-acceptance.v1.schema.json",
+    "packages/contracts/documents/document-revision.v1.schema.json",
+    "packages/contracts/documents/document-structure.v1.schema.json",
+    "packages/contracts/documents/generate_parser_schema.py",
+    "packages/contracts/documents/retained-parse-result.v1.schema.json",
+    "packages/contracts/storage/README.md",
+    "packages/contracts/storage/sqlite-migration-recovery.schema.json",
+    "packages/contracts/storage/sqlite-profile.schema.json",
+    "packages/contracts/storage/sqlite-profile.v1.json",
+    "planning/backlog.yaml",
+    "planning/review-site/CAP-05/CAP-05.S03.T01.html",
+    "planning/review-site/CAP-05/CAP-05.S03.html",
+    "planning/review-site/CAP-05/index.html",
+    "planning/review-site/manifest.json",
+    "planning/review-site/waves/W2.html",
+    "planning/status-summary.md",
+    "services/core-api/packaging/sidecar-build.json",
+    "services/core-api/src/research_observatory_core/app.py",
+    "services/core-api/src/research_observatory_core/document_parse_worker.py",
+    "services/core-api/src/research_observatory_core/document_parse_workflow.py",
+    "services/core-api/src/research_observatory_core/document_revision_api.py",
+    "services/core-api/src/research_observatory_core/document_revision_repository.py",
+    "services/core-api/src/research_observatory_core/document_revision_service.py",
+    "services/core-api/src/research_observatory_core/document_revisions.py",
+    "services/core-api/src/research_observatory_core/import_preview_service.py",
+    "services/core-api/src/research_observatory_core/main.py",
+    "services/core-api/src/research_observatory_core/migrations/runner.py",
+    "services/core-api/src/research_observatory_core/migrations/versions/v0026_document_revisions.py",
+    "services/core-api/src/research_observatory_core/object_store.py",
+    "services/core-api/src/research_observatory_core/ports/document_revisions.py",
+    "services/core-api/src/research_observatory_core/repositories.py",
+    "services/core-api/src/research_observatory_core/storage.py",
+    "services/core-api/src/research_observatory_core/workflow_executor.py",
+    "tests/data/test_sqlite_migrations.py",
+    "tests/documents/test_acquisition_recovery_migration.py",
+    "tests/documents/test_document_revision_contracts.py",
+    "tests/documents/test_document_revision_index.py",
+    "tests/documents/test_document_revision_migration.py",
+    "tests/documents/test_document_revision_repository.py",
+    "tests/documents/test_document_revision_workflow.py",
+    "tests/fixtures/documents/v25-populated-predecessor.json",
+    "tests/fixtures/documents/v25-populated-predecessor.zip",
+    "tests/packaging/test_core_sidecar_package.py",
+    "tests/service/test_document_revision_api.py",
+    "tests/workflows/test_document_parse_admission.py",
+    "tools/architecture_check.py",
+    "tools/core_sidecar_build.py"
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "checkIds": [
+        "revisions",
+        "actual-native-workflow"
+      ],
+      "evidence": [
+        "Actual SQLCipher/encrypted persistence tests accept two distinct parses, retain the original bytes, reopen both accepted revisions and verify stable exact-revision IDs with disjoint IDs across content. Complete hierarchy/text projections/references/citations and raw/NFC/code-point/geometry metadata survive Core identity remapping without scholarly verification.",
+        "One actual signed LPAC Docling parse on a synthetic ten-page PDF runs beyond the initial30s lease. Real Windows capacity/admission, live durable heartbeat and an actual concurrent canonical rights publication complete during inference. Encrypted raw/normalized output is retained before explicit current-human acceptance; reopen and exact acceptance replay preserve the revision/IDs and create no extra publication. Installed-discovery and synthetic research setup are declared fixtures; no benchmark or newly packaged desktop claim."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "checkIds": [
+        "revisions",
+        "admission-workflow",
+        "source-staging",
+        "native-api-lifecycle",
+        "migration-compatibility",
+        "actual-native-workflow"
+      ],
+      "evidence": [
+        "Focused tests cover current human/Intent/privacy/native-session/rights authority, partial/textless/inspection denial, exact command retry and changed semantic reuse, actual concurrent equal-base conflict, altered validly hashed workflow authority, corrupt encrypted output, atomic precommit rollback, durable cancellation/rights revocation and prior output preservation.",
+        "Admission tests freeze the complete activity/filter map, reserve maximum actual activity demand before claim, safely deny unknown/insufficient capacity, retain light metadata demand, share one parser permit across projects and release it on outcomes. A four-slot host is denied; the approved minimum hardware tier remains W2 qualification coverage.",
+        "Independent pre-disposition F01 identified quadratic indexing inside acceptance/read transactions. A pre-fix 4096-node chain produced16785407 parent accesses and failed the bound. The corrected one-pass valid-order traversal passes chain/flat counting and real persistence/atomic-failure checks; the finding and adverse probe setup remain retained."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "checkIds": [
+        "lint",
+        "format",
+        "types",
+        "portable-schemas",
+        "architecture",
+        "adr",
+        "revisions",
+        "migration-compatibility",
+        "package-contract"
+      ],
+      "evidence": [
+        "Additive schema26 authenticates a literal populated schema25 captured at the claimed predecessor before any schema edits. Migration failure at eight material seams preserves all authenticated predecessor rows/history/ciphertext with a verified restorable backup; successful retry/reopen reaches exact schema26. Legacy recovery contracts retain old target21 through25 fingerprints/chains and add exact target26 source/hash/chain/path rules.",
+        "Portable protected-result, normalized structure, explicit acceptance and accepted-revision schemas, dependency-neutral worker port, product sidecar module inventory, architecture documentation and Proposed documentary ADR0046 map implementation to existing accepted ADR0013/24/25/29. Human decision, original document revision, structure index, material dependencies, provenance and scoped outbox publication remain atomic. Current storage profile/schema and architecture guide match exact schema26 inventory and fingerprints; existing conformance failures were preserved and corrected without test weakening. No automation-framework feature, new product/security authority, governed UX change or release approval is introduced."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "verificationSelection": {
+    "selectedCommandIds": [
+      "contracts:unit",
+      "data:unit",
+      "documents:unit",
+      "foundation:adr",
+      "foundation:architecture",
+      "foundation:quality",
+      "packaging:unit",
+      "service:unit"
+    ],
+    "riskAnalysis": "New immutable persistence, schema migration, rights/human authority, cross-process result binding and native API require expanded task review plus risk-selected real-boundary proof. Selected narrowed product/contract/migration/worker/source/lifecycle/packaging checks establish task criteria. No unchanged full history replay or accepted performance overage work.",
+    "deferred": [
+      "Integrated S03 anchors/resolution and slice review",
+      "W2 fresh full profiles, clean packaging, cross-capability matrix, minimum hardware and separate release decision"
+    ]
+  },
+  "checks": [
+    {
+      "id": "lint",
+      "commandId": "foundation:quality",
+      "exitCode": 0,
+      "durationSeconds": 0.13516530000197235,
+      "command": "./artifacts/tmp/CAP-05.S02.T03.check-runtime-122/python/python.exe -B -m ruff check packages/contracts/documents/generate_parser_schema.py services/core-api/src/research_observatory_core/app.py services/core-api/src/research_observatory_core/document_parse_worker.py services/core-api/src/research_observatory_core/document_parse_workflow.py services/core-api/src/research_observatory_core/document_revision_api.py services/core-api/src/research_observatory_core/document_revision_repository.py services/core-api/src/research_observatory_core/document_revision_service.py services/core-api/src/research_observatory_core/document_revisions.py services/core-api/src/research_observatory_core/import_preview_service.py services/core-api/src/research_observatory_core/main.py services/core-api/src/research_observatory_core/migrations/runner.py services/core-api/src/research_observatory_core/migrations/versions/v0026_document_revisions.py services/core-api/src/research_observatory_core/object_store.py services/core-api/src/research_observatory_core/ports/document_revisions.py services/core-api/src/research_observatory_core/repositories.py services/core-api/src/research_observatory_core/storage.py services/core-api/src/research_observatory_core/workflow_executor.py tests/data/test_sqlite_migrations.py tests/documents/test_acquisition_recovery_migration.py tests/documents/test_document_revision_contracts.py tests/documents/test_document_revision_index.py tests/documents/test_document_revision_migration.py tests/documents/test_document_revision_repository.py tests/documents/test_document_revision_workflow.py tests/packaging/test_core_sidecar_package.py tests/service/test_document_revision_api.py tests/workflows/test_document_parse_admission.py tools/architecture_check.py tools/core_sidecar_build.py",
+      "commit": "0fbad3859595ecc14968d2e036bbc4cb55054de8",
+      "result": "PASS",
+      "rawOutput": "artifacts/tmp/CAP-05.S03.T01.qualification-67.lint.log",
+      "rawOutputSha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18",
+      "rawOutputCanonicalSha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18",
+      "inputReport": "artifacts/tmp/CAP-05.S03.T01.qualification-67.json",
+      "inputReportSha256": "7b027ba4849fc4a6f5512c8da87666cedfb4ecedf856d9c6b59fbbeef72a60e2",
+      "provenance": "Executed on this same unchanged committed candidate with source/helper and exact installed runtime locks. Twelve individually passing groups are from67; diagnosed safe memory admission deferral remains adverse in67/53, and only the affected native group was freshly retried in74/73. Actual native parser package has write/create/delete denial for its lifetime. No cache, benchmark rerun, full profile, minimum-tier or new desktop-package claim."
+    },
+    {
+      "id": "format",
+      "commandId": "foundation:quality",
+      "exitCode": 0,
+      "durationSeconds": 0.12690119999751914,
+      "command": "./artifacts/tmp/CAP-05.S02.T03.check-runtime-122/python/python.exe -B -m ruff format --check packages/contracts/documents/generate_parser_schema.py services/core-api/src/research_observatory_core/app.py services/core-api/src/research_observatory_core/document_parse_worker.py services/core-api/src/research_observatory_core/document_parse_workflow.py services/core-api/src/research_observatory_core/document_revision_api.py services/core-api/src/research_observatory_core/document_revision_repository.py services/core-api/src/research_observatory_core/document_revision_service.py services/core-api/src/research_observatory_core/document_revisions.py services/core-api/src/research_observatory_core/import_preview_service.py services/core-api/src/research_observatory_core/main.py services/core-api/src/research_observatory_core/migrations/runner.py services/core-api/src/research_observatory_core/migrations/versions/v0026_document_revisions.py services/core-api/src/research_observatory_core/object_store.py services/core-api/src/research_observatory_core/ports/document_revisions.py services/core-api/src/research_observatory_core/repositories.py services/core-api/src/research_observatory_core/storage.py services/core-api/src/research_observatory_core/workflow_executor.py tests/data/test_sqlite_migrations.py tests/documents/test_acquisition_recovery_migration.py tests/documents/test_document_revision_contracts.py tests/documents/test_document_revision_index.py tests/documents/test_document_revision_migration.py tests/documents/test_document_revision_repository.py tests/documents/test_document_revision_workflow.py tests/packaging/test_core_sidecar_package.py tests/service/test_document_revision_api.py tests/workflows/test_document_parse_admission.py tools/architecture_check.py tools/core_sidecar_build.py",
+      "commit": "0fbad3859595ecc14968d2e036bbc4cb55054de8",
+      "result": "PASS",
+      "rawOutput": "artifacts/tmp/CAP-05.S03.T01.qualification-67.format.log",
+      "rawOutputSha256": "dde85ab0ab657507e2a1c53a7cfe26e5ab8acfd4abe3547bac113731d2477097",
+      "rawOutputCanonicalSha256": "dde85ab0ab657507e2a1c53a7cfe26e5ab8acfd4abe3547bac113731d2477097",
+      "inputReport": "artifacts/tmp/CAP-05.S03.T01.qualification-67.json",
+      "inputReportSha256": "7b027ba4849fc4a6f5512c8da87666cedfb4ecedf856d9c6b59fbbeef72a60e2",
+      "provenance": "Executed on this same unchanged committed candidate with source/helper and exact installed runtime locks. Twelve individually passing groups are from67; diagnosed safe memory admission deferral remains adverse in67/53, and only the affected native group was freshly retried in74/73. Actual native parser package has write/create/delete denial for its lifetime. No cache, benchmark rerun, full profile, minimum-tier or new desktop-package claim."
+    },
+    {
+      "id": "types",
+      "commandId": "foundation:quality",
+      "exitCode": 0,
+      "durationSeconds": 8.832805999991251,
+      "command": "./artifacts/tmp/CAP-05.S02.T03.check-runtime-122/python/python.exe -B -m mypy --no-incremental services/core-api/src",
+      "commit": "0fbad3859595ecc14968d2e036bbc4cb55054de8",
+      "result": "PASS",
+      "rawOutput": "artifacts/tmp/CAP-05.S03.T01.qualification-67.types.log",
+      "rawOutputSha256": "9c64cbe96b0f50e7371819d985f790f3240cfe7edd806fdab90aaeb0d8d9ccba",
+      "rawOutputCanonicalSha256": "86903a61a92237d8dd52f0d7acaec822fc3c8b0257e183097a492fd2320879e0",
+      "inputReport": "artifacts/tmp/CAP-05.S03.T01.qualification-67.json",
+      "inputReportSha256": "7b027ba4849fc4a6f5512c8da87666cedfb4ecedf856d9c6b59fbbeef72a60e2",
+      "provenance": "Executed on this same unchanged committed candidate with source/helper and exact installed runtime locks. Twelve individually passing groups are from67; diagnosed safe memory admission deferral remains adverse in67/53, and only the affected native group was freshly retried in74/73. Actual native parser package has write/create/delete denial for its lifetime. No cache, benchmark rerun, full profile, minimum-tier or new desktop-package claim."
+    },
+    {
+      "id": "portable-schemas",
+      "commandId": "contracts:unit",
+      "exitCode": 0,
+      "durationSeconds": 0.6085632000031183,
+      "command": "./artifacts/tmp/CAP-05.S02.T03.check-runtime-122/python/python.exe -B packages/contracts/documents/generate_parser_schema.py --check",
+      "commit": "0fbad3859595ecc14968d2e036bbc4cb55054de8",
+      "result": "PASS",
+      "rawOutput": "artifacts/tmp/CAP-05.S03.T01.qualification-67.portable-schemas.log",
+      "rawOutputSha256": "a55ee30fb47c9afacd282abc3e69cce6ee0e020d9d710eb2dc98eda54569bb56",
+      "rawOutputCanonicalSha256": "cf42b66dd1df678fb7cf5ffaf80552a60597b0a2f2ef96323d1949800d8f6085",
+      "inputReport": "artifacts/tmp/CAP-05.S03.T01.qualification-67.json",
+      "inputReportSha256": "7b027ba4849fc4a6f5512c8da87666cedfb4ecedf856d9c6b59fbbeef72a60e2",
+      "provenance": "Executed on this same unchanged committed candidate with source/helper and exact installed runtime locks. Twelve individually passing groups are from67; diagnosed safe memory admission deferral remains adverse in67/53, and only the affected native group was freshly retried in74/73. Actual native parser package has write/create/delete denial for its lifetime. No cache, benchmark rerun, full profile, minimum-tier or new desktop-package claim."
+    },
+    {
+      "id": "architecture",
+      "commandId": "foundation:architecture",
+      "exitCode": 0,
+      "durationSeconds": 4.249328300007619,
+      "command": "./artifacts/tmp/CAP-05.S02.T03.check-runtime-122/python/python.exe -B tools/architecture_check.py --repo ./.",
+      "commit": "0fbad3859595ecc14968d2e036bbc4cb55054de8",
+      "result": "PASS",
+      "rawOutput": "artifacts/tmp/CAP-05.S03.T01.qualification-67.architecture.log",
+      "rawOutputSha256": "51a256bf6a7b2e89ab1d1b97aa19077aabf0e8858a450de1f5ceb155ed5c3e88",
+      "rawOutputCanonicalSha256": "1ba622fdbf569bf9ab13ee46e639b636ea005c560abcd4b168f782d8fbdc3f74",
+      "inputReport": "artifacts/tmp/CAP-05.S03.T01.qualification-67.json",
+      "inputReportSha256": "7b027ba4849fc4a6f5512c8da87666cedfb4ecedf856d9c6b59fbbeef72a60e2",
+      "provenance": "Executed on this same unchanged committed candidate with source/helper and exact installed runtime locks. Twelve individually passing groups are from67; diagnosed safe memory admission deferral remains adverse in67/53, and only the affected native group was freshly retried in74/73. Actual native parser package has write/create/delete denial for its lifetime. No cache, benchmark rerun, full profile, minimum-tier or new desktop-package claim."
+    },
+    {
+      "id": "adr",
+      "commandId": "foundation:adr",
+      "exitCode": 0,
+      "durationSeconds": 2.1501514999981737,
+      "command": "./artifacts/tmp/CAP-05.S02.T03.check-runtime-122/python/python.exe -B tools/adr_check.py --repo ./. --base d0752c3d0aac0162ada79effc41b88c9d2978bcf --head 0fbad3859595ecc14968d2e036bbc4cb55054de8",
+      "commit": "0fbad3859595ecc14968d2e036bbc4cb55054de8",
+      "result": "PASS",
+      "rawOutput": "artifacts/tmp/CAP-05.S03.T01.qualification-67.adr.log",
+      "rawOutputSha256": "9b96f9f26dd90f0e6cc405256b211331631c0232b499fbc1f31356946c9f53f7",
+      "rawOutputCanonicalSha256": "178e8d55bc8c6f56b9abbd141d6a37071edeff6fa842a441b130fbac7d43374b",
+      "inputReport": "artifacts/tmp/CAP-05.S03.T01.qualification-67.json",
+      "inputReportSha256": "7b027ba4849fc4a6f5512c8da87666cedfb4ecedf856d9c6b59fbbeef72a60e2",
+      "provenance": "Executed on this same unchanged committed candidate with source/helper and exact installed runtime locks. Twelve individually passing groups are from67; diagnosed safe memory admission deferral remains adverse in67/53, and only the affected native group was freshly retried in74/73. Actual native parser package has write/create/delete denial for its lifetime. No cache, benchmark rerun, full profile, minimum-tier or new desktop-package claim."
+    },
+    {
+      "id": "revisions",
+      "commandId": "documents:unit",
+      "exitCode": 0,
+      "durationSeconds": 66.31985690000874,
+      "command": "./artifacts/tmp/CAP-05.S02.T03.check-runtime-122/python/python.exe -B -m unittest tests.documents.test_document_revision_contracts tests.documents.test_document_revision_index tests.documents.test_document_revision_repository tests.documents.test_document_revision_workflow tests.documents.test_document_revision_migration tests.documents.test_acquisition_recovery_migration -v",
+      "commit": "0fbad3859595ecc14968d2e036bbc4cb55054de8",
+      "result": "PASS",
+      "rawOutput": "artifacts/tmp/CAP-05.S03.T01.qualification-67.revisions.log",
+      "rawOutputSha256": "80cded132e4aad6e928b8ad92c71670cd8f69a88e66cf843b02f085337c377b7",
+      "rawOutputCanonicalSha256": "d39240d64bffa26d46ea8c3c4dba6dbaffe19cd229ad7edd085eb6149764969f",
+      "inputReport": "artifacts/tmp/CAP-05.S03.T01.qualification-67.json",
+      "inputReportSha256": "7b027ba4849fc4a6f5512c8da87666cedfb4ecedf856d9c6b59fbbeef72a60e2",
+      "provenance": "Executed on this same unchanged committed candidate with source/helper and exact installed runtime locks. Twelve individually passing groups are from67; diagnosed safe memory admission deferral remains adverse in67/53, and only the affected native group was freshly retried in74/73. Actual native parser package has write/create/delete denial for its lifetime. No cache, benchmark rerun, full profile, minimum-tier or new desktop-package claim."
+    },
+    {
+      "id": "admission-workflow",
+      "commandId": "data:unit",
+      "exitCode": 0,
+      "durationSeconds": 14.414876800001366,
+      "command": "./artifacts/tmp/CAP-05.S02.T03.check-runtime-122/python/python.exe -B -m unittest tests.workflows.test_document_parse_admission tests.workflows.test_local_workflow_executor -v",
+      "commit": "0fbad3859595ecc14968d2e036bbc4cb55054de8",
+      "result": "PASS",
+      "rawOutput": "artifacts/tmp/CAP-05.S03.T01.qualification-67.admission-workflow.log",
+      "rawOutputSha256": "2b638b687211e4ec3b2e61b9c51b96a12006b04029442d9b8fd93b114f4c9097",
+      "rawOutputCanonicalSha256": "85534bd7a378b5db0da7233a3775d416b2b101a51451412910d74c4eab6b747c",
+      "inputReport": "artifacts/tmp/CAP-05.S03.T01.qualification-67.json",
+      "inputReportSha256": "7b027ba4849fc4a6f5512c8da87666cedfb4ecedf856d9c6b59fbbeef72a60e2",
+      "provenance": "Executed on this same unchanged committed candidate with source/helper and exact installed runtime locks. Twelve individually passing groups are from67; diagnosed safe memory admission deferral remains adverse in67/53, and only the affected native group was freshly retried in74/73. Actual native parser package has write/create/delete denial for its lifetime. No cache, benchmark rerun, full profile, minimum-tier or new desktop-package claim."
+    },
+    {
+      "id": "source-staging",
+      "commandId": "documents:unit",
+      "exitCode": 0,
+      "durationSeconds": 75.73469549999572,
+      "command": "./artifacts/tmp/CAP-05.S02.T03.check-runtime-122/python/python.exe -B -m unittest tests.parsing.test_parser_artifacts tests.parsing.test_protected_parse_source -v",
+      "commit": "0fbad3859595ecc14968d2e036bbc4cb55054de8",
+      "result": "PASS",
+      "rawOutput": "artifacts/tmp/CAP-05.S03.T01.qualification-67.source-staging.log",
+      "rawOutputSha256": "6f07b4fa3e0e1f741783ddd1436070f29144a978daa84fc68b311dfc9ee828bf",
+      "rawOutputCanonicalSha256": "4ce87e6c6def6e3626d86b7fd98548afc3d8ba5b1ff3a0e654509c5ad701e10d",
+      "inputReport": "artifacts/tmp/CAP-05.S03.T01.qualification-67.json",
+      "inputReportSha256": "7b027ba4849fc4a6f5512c8da87666cedfb4ecedf856d9c6b59fbbeef72a60e2",
+      "provenance": "Executed on this same unchanged committed candidate with source/helper and exact installed runtime locks. Twelve individually passing groups are from67; diagnosed safe memory admission deferral remains adverse in67/53, and only the affected native group was freshly retried in74/73. Actual native parser package has write/create/delete denial for its lifetime. No cache, benchmark rerun, full profile, minimum-tier or new desktop-package claim."
+    },
+    {
+      "id": "migration-compatibility",
+      "commandId": "data:unit",
+      "exitCode": 0,
+      "durationSeconds": 53.885274599990225,
+      "command": "./artifacts/tmp/CAP-05.S02.T03.check-runtime-122/python/python.exe -B -m unittest tests.data.test_sqlite_migrations tests.data.test_sqlite_schema tests.data.test_sqlite_recovery_contract -v",
+      "commit": "0fbad3859595ecc14968d2e036bbc4cb55054de8",
+      "result": "PASS",
+      "rawOutput": "artifacts/tmp/CAP-05.S03.T01.qualification-67.migration-compatibility.log",
+      "rawOutputSha256": "fa9bf1ea91425c39fd84942253f004f2a6c87794fde07a947d43f120fc7fb3cd",
+      "rawOutputCanonicalSha256": "40ea657613f73ba89855c679c3a3d575e7b408493b7ede0520e18aff36a5a4e2",
+      "inputReport": "artifacts/tmp/CAP-05.S03.T01.qualification-67.json",
+      "inputReportSha256": "7b027ba4849fc4a6f5512c8da87666cedfb4ecedf856d9c6b59fbbeef72a60e2",
+      "provenance": "Executed on this same unchanged committed candidate with source/helper and exact installed runtime locks. Twelve individually passing groups are from67; diagnosed safe memory admission deferral remains adverse in67/53, and only the affected native group was freshly retried in74/73. Actual native parser package has write/create/delete denial for its lifetime. No cache, benchmark rerun, full profile, minimum-tier or new desktop-package claim."
+    },
+    {
+      "id": "native-api-lifecycle",
+      "commandId": "service:unit",
+      "exitCode": 0,
+      "durationSeconds": 13.88745020001079,
+      "command": "./artifacts/tmp/CAP-05.S02.T03.check-runtime-122/python/python.exe -B -m unittest tests.service.test_document_revision_api tests.service.test_document_attachment_api tests.service.test_project_lifecycle -v",
+      "commit": "0fbad3859595ecc14968d2e036bbc4cb55054de8",
+      "result": "PASS",
+      "rawOutput": "artifacts/tmp/CAP-05.S03.T01.qualification-67.native-api-lifecycle.log",
+      "rawOutputSha256": "680cf04894ca86ebd9119edb2556b722e15c94102d6b214a540cb6a015a8ebd4",
+      "rawOutputCanonicalSha256": "3f1f8937a70f84ce44dd5d8fc4ee947b0bd83e66d624f888530a14cac4db1fc6",
+      "inputReport": "artifacts/tmp/CAP-05.S03.T01.qualification-67.json",
+      "inputReportSha256": "7b027ba4849fc4a6f5512c8da87666cedfb4ecedf856d9c6b59fbbeef72a60e2",
+      "provenance": "Executed on this same unchanged committed candidate with source/helper and exact installed runtime locks. Twelve individually passing groups are from67; diagnosed safe memory admission deferral remains adverse in67/53, and only the affected native group was freshly retried in74/73. Actual native parser package has write/create/delete denial for its lifetime. No cache, benchmark rerun, full profile, minimum-tier or new desktop-package claim."
+    },
+    {
+      "id": "package-contract",
+      "commandId": "packaging:unit",
+      "exitCode": 0,
+      "durationSeconds": 35.02915009998833,
+      "command": "./artifacts/tmp/CAP-05.S02.T03.check-runtime-122/python/python.exe -B -m unittest tests.packaging.test_core_sidecar_package -v",
+      "commit": "0fbad3859595ecc14968d2e036bbc4cb55054de8",
+      "result": "PASS",
+      "rawOutput": "artifacts/tmp/CAP-05.S03.T01.qualification-67.package-contract.log",
+      "rawOutputSha256": "9b6ca2953b3a4aab7d449e91ce1a8c3c175fab13b7a3c33e77e943917df0f8b0",
+      "rawOutputCanonicalSha256": "a43cbe97008a456c0407ab8cb820b361fa7266effef2c11af5d8387ab5abb827",
+      "inputReport": "artifacts/tmp/CAP-05.S03.T01.qualification-67.json",
+      "inputReportSha256": "7b027ba4849fc4a6f5512c8da87666cedfb4ecedf856d9c6b59fbbeef72a60e2",
+      "provenance": "Executed on this same unchanged committed candidate with source/helper and exact installed runtime locks. Twelve individually passing groups are from67; diagnosed safe memory admission deferral remains adverse in67/53, and only the affected native group was freshly retried in74/73. Actual native parser package has write/create/delete denial for its lifetime. No cache, benchmark rerun, full profile, minimum-tier or new desktop-package claim."
+    },
+    {
+      "id": "actual-native-workflow",
+      "commandId": "documents:unit",
+      "exitCode": 0,
+      "durationSeconds": 96.15761749999365,
+      "command": "./artifacts/tmp/CAP-05.S02.T03.check-runtime-122/python/python.exe -B ./artifacts/tmp/CAP-05.S03.T01.native-composition-73.py 0fbad3859595ecc14968d2e036bbc4cb55054de8",
+      "commit": "0fbad3859595ecc14968d2e036bbc4cb55054de8",
+      "result": "PASS",
+      "rawOutput": "artifacts/tmp/CAP-05.S03.T01.native-targeted-74.log",
+      "rawOutputSha256": "130167e4ca8ea296675e2248f8f1fd99cff1cd3da7a9c653c49621e135c50255",
+      "rawOutputCanonicalSha256": "f30bb8afa3b0b1d2b73b3c4c507be4ff6bbb171b902dd79bfb7cce8f7451e0bf",
+      "inputReport": "artifacts/tmp/CAP-05.S03.T01.native-targeted-74.json",
+      "inputReportSha256": "daa88a7ad3a29f653fbf3c9f77c32b4354de5f1daa033553c0661a2244d1fbf9",
+      "provenance": "Executed on this same unchanged committed candidate with source/helper and exact installed runtime locks. Twelve individually passing groups are from67; diagnosed safe memory admission deferral remains adverse in67/53, and only the affected native group was freshly retried in74/73. Actual native parser package has write/create/delete denial for its lifetime. No cache, benchmark rerun, full profile, minimum-tier or new desktop-package claim."
+    }
+  ],
+  "machineArtifacts": [
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T01.qualification-67.json",
+      "sha256": "7b027ba4849fc4a6f5512c8da87666cedfb4ecedf856d9c6b59fbbeef72a60e2",
+      "reportedStatus": "FAIL",
+      "candidate": "0fbad3859595ecc14968d2e036bbc4cb55054de8"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T01.native-targeted-74.json",
+      "sha256": "daa88a7ad3a29f653fbf3c9f77c32b4354de5f1daa033553c0661a2244d1fbf9",
+      "reportedStatus": "PASS",
+      "candidate": "0fbad3859595ecc14968d2e036bbc4cb55054de8"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T01.native-composition-73.json",
+      "sha256": "3faa2c29a9f951e1c026fba89442ee0e65d525f61907bf7dff83afce3c476031",
+      "reportedStatus": "PASS",
+      "candidate": "0fbad3859595ecc14968d2e036bbc4cb55054de8"
+    }
+  ],
+  "nativeWorkflowObservation": {
+    "actualParserSeconds": 57.8336491999944,
+    "durableState": "succeeded",
+    "retainedBeforeAcceptance": true,
+    "explicitHumanAcceptance": true,
+    "scholarlyVerification": "unverified",
+    "reopenExact": true,
+    "replayNoExtraPublication": true,
+    "pages": 10,
+    "nodeCount": 315
+  },
+  "diagnosedNativeRetry": {
+    "reason": "Real Windows available memory below unchanged parser plus interactive reservation left the first job queued. The native-only retry waited boundedly for actual capacity and then used the unchanged actual admission policy. Original53/67 and the second bounded readiness failure69/70 stay FAIL. After the owner freed memory, fresh73/74 use actual observed capacity with unchanged reservation policy; no other application or resource boundary was altered by this campaign.",
+    "priorNativeReport": "artifacts/tmp/CAP-05.S03.T01.native-composition-53.json",
+    "priorNativeSha256": "f499b8b62546ed8768ae182377c2ef7c5ef9dd96e929239b3f1a46d3729d5c9e"
+  },
+  "priorIndependentFinding": {
+    "path": "artifacts/tmp/CAP-05.S03.T01.independent-pre-disposition-finding-56.json",
+    "sha256": "d7d08692a16b440a3009f4282434e16bd94d038cbb6ec7abbce31ce64b87151f",
+    "findingId": "F01",
+    "candidate": "a323add851fd2c3882e9b5a35b328d4d2577c3e7",
+    "proposedClosure": "Bounded one-pass traversal plus counting and actual publication checks; independent final closure required."
+  },
+  "historicalObservations": [
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T01.admission-development-02.log",
+      "sha256": "c28f8f0cdd18799d3e4ea5886f8d6f11879319e6e08c96a2cd987f6670ac8da7",
+      "scope": "Preserved development/adverse/setup/partial observation; no current candidate PASS or completed group claim."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T01.admission-development-03.log",
+      "sha256": "9610f5f2e7751d496727b2fd4a67f2f184fd80ff2c18637be77334eb8a76ffd7",
+      "scope": "Preserved development/adverse/setup/partial observation; no current candidate PASS or completed group claim."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T01.admission-red-01.log",
+      "sha256": "0abb18ea956564e0d56f4f985e0323f51157d9112f90f187311c58de4a30e8d0",
+      "scope": "Preserved development/adverse/setup/partial observation; no current candidate PASS or completed group claim."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T01.api-development-42.log",
+      "sha256": "7f66b91b607ee37412c9af88d5ac9809441df854c2df8fbf89011247333e1a33",
+      "scope": "Preserved development/adverse/setup/partial observation; no current candidate PASS or completed group claim."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T01.api-diagnostic-39.log",
+      "sha256": "b770e54e55c92ae6061ec978ae6a4073593828d275a53c992c3ae2abbb3f7f51",
+      "scope": "Preserved development/adverse/setup/partial observation; no current candidate PASS or completed group claim."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T01.architecture-development-40.log",
+      "sha256": "5bc8af95d2b9e8912e45ca9c6d01dd864b36895df2c98767b165158e31ff484f",
+      "scope": "Preserved development/adverse/setup/partial observation; no current candidate PASS or completed group claim."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T01.architecture-development-41.log",
+      "sha256": "924dd35bf0358fe512b1918288f9e67e65f1e564b7717df4f204e86f71d37fe8",
+      "scope": "Preserved development/adverse/setup/partial observation; no current candidate PASS or completed group claim."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T01.architecture-development-46.log",
+      "sha256": "dfc98f82fcb0836ad17c7683defe32b538d1500fa1e153a2b8f482a9320ccfe8",
+      "scope": "Preserved development/adverse/setup/partial observation; no current candidate PASS or completed group claim."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T01.claim-01.log",
+      "sha256": "a03a7169f3ecdaddd16f7d36ec2ddd1c1405c4c59e04b6724a9e03b5290345e9",
+      "scope": "Preserved development/adverse/setup/partial observation; no current candidate PASS or completed group claim."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T01.claim-fixture-commit-02.log",
+      "sha256": "7fc9e9511321338cb8fbd18a52ed9cbe0ea233703e6957c886ffece1e9bbbf0d",
+      "scope": "Preserved development/adverse/setup/partial observation; no current candidate PASS or completed group claim."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T01.contract-api-development-37.log",
+      "sha256": "d8dd5759dee1671f463187dc746912aeb126658ffbb200127479c9643584866d",
+      "scope": "Preserved development/adverse/setup/partial observation; no current candidate PASS or completed group claim."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T01.format-development-23.log",
+      "sha256": "644af48c2b5454cf892ddc79f9cf9f220ee9db8ef828b8a21c2529630dac7e70",
+      "scope": "Preserved development/adverse/setup/partial observation; no current candidate PASS or completed group claim."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T01.format-development-31.log",
+      "sha256": "c78704cb42c55c9e5696a809ad3f2ae7392782cc71f6c16fe30841d61337b9d6",
+      "scope": "Preserved development/adverse/setup/partial observation; no current candidate PASS or completed group claim."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T01.index-green-59.log",
+      "sha256": "f79e0dba287f9ab9b7b4c712fc625f534eb07f3f1c233ec96885c92242b3ff9a",
+      "scope": "Preserved development/adverse/setup/partial observation; no current candidate PASS or completed group claim."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T01.index-red-57.log",
+      "sha256": "ba65a04210a4f35eaa6a00f6e3ac22bceb2d194010f8e02754b1af86e2ffa492",
+      "scope": "Preserved development/adverse/setup/partial observation; no current candidate PASS or completed group claim."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T01.integrated-development-47.log",
+      "sha256": "a91380b89eaa0a75cfe0aa776431e8bef6891246ca10426ab0f851ea3d71b481",
+      "scope": "Preserved development/adverse/setup/partial observation; no current candidate PASS or completed group claim."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T01.legacy-migration-development-51.log",
+      "sha256": "6e212212a9807b79c984e79ff903eb44dd8dc77b3f6cf7286224391babd5508d",
+      "scope": "Preserved development/adverse/setup/partial observation; no current candidate PASS or completed group claim."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T01.lint-development-21.log",
+      "sha256": "872e93024b28e2ea2937fcb2b28122248e802258d3522342d0cef596bcdf96dd",
+      "scope": "Preserved development/adverse/setup/partial observation; no current candidate PASS or completed group claim."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T01.lint-development-22.log",
+      "sha256": "d5bba643f3e4e796392840d82e83c385d89db6f833c8bee541b75cc048f5115c",
+      "scope": "Preserved development/adverse/setup/partial observation; no current candidate PASS or completed group claim."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T01.lint-development-30.log",
+      "sha256": "c3a0c2556eeb0dde263418b438ca90ae70b97fe787289bb85ff5adad4b8b9f99",
+      "scope": "Preserved development/adverse/setup/partial observation; no current candidate PASS or completed group claim."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T01.lint-development-38.log",
+      "sha256": "9ddb0870b937caf40d19fa7551143ffdbcb2e9af26e26265eab001f15fabadd7",
+      "scope": "Preserved development/adverse/setup/partial observation; no current candidate PASS or completed group claim."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T01.lint-development-44.log",
+      "sha256": "1a0ea618a76e8928f000df4e74b8c7f70d268fe8fb82245c20fce98371beb047",
+      "scope": "Preserved development/adverse/setup/partial observation; no current candidate PASS or completed group claim."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T01.migration-development-10.log",
+      "sha256": "3333f57863184b30023b43ffabaf34f8f1fc4cde944c9a0e01e76bf1d47a08bf",
+      "scope": "Preserved development/adverse/setup/partial observation; no current candidate PASS or completed group claim."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T01.migration-development-11.log",
+      "sha256": "3812eacb0de03a2a2e62808f31636fb23295cb14b50ba10260a58e789a3fe68e",
+      "scope": "Preserved development/adverse/setup/partial observation; no current candidate PASS or completed group claim."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T01.migration-development-12.log",
+      "sha256": "7b6796685fc97a0110a5dc1bc49429bcd333dba2a56ee534cc30caf9a75c713d",
+      "scope": "Preserved development/adverse/setup/partial observation; no current candidate PASS or completed group claim."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T01.migration-development-13.log",
+      "sha256": "6bcc7dc333b648c8899f170bbf7cbbc60716f9f62bbf9855f53e866f3b61b731",
+      "scope": "Preserved development/adverse/setup/partial observation; no current candidate PASS or completed group claim."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T01.migration-red-08.log",
+      "sha256": "3188f184fb4574af0f2104fd1813e5e04f5298bbdbd419dcc07827f0cbffd3bc",
+      "scope": "Preserved development/adverse/setup/partial observation; no current candidate PASS or completed group claim."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T01.native-targeted-70.execution.log",
+      "sha256": "e0dc3044f7a1f832e0854becbf9c122e7290ae475a70580b1f3828265dca7ada",
+      "scope": "Preserved development/adverse/setup/partial observation; no current candidate PASS or completed group claim."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T01.native-targeted-70.log",
+      "sha256": "fb22a8162b315a7d169d8f2148eaf503d5960c7305caa2af0ce5032139faaf0c",
+      "scope": "Preserved development/adverse/setup/partial observation; no current candidate PASS or completed group claim."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T01.packaging-contract-development-52.log",
+      "sha256": "bc2ee3bd1a242a449e93ef3f349b6eb89bcc7c33e36ec0ed2cd508ef41a0e87b",
+      "scope": "Preserved development/adverse/setup/partial observation; no current candidate PASS or completed group claim."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T01.persistence-development-29.log",
+      "sha256": "881f9eb710424e786f02d4ccaa589af817cc206650950c23108e972ec34cf346",
+      "scope": "Preserved development/adverse/setup/partial observation; no current candidate PASS or completed group claim."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T01.persistence-development-32.log",
+      "sha256": "accd7975f5920b73f1f8a8e6891c60705efd9984a0df621f22b3807725004660",
+      "scope": "Preserved development/adverse/setup/partial observation; no current candidate PASS or completed group claim."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T01.persistence-development-35.log",
+      "sha256": "42acaddb63fdbda6ee4d81b9d8c0a660668dc77271c8cdc345ecff004864f02c",
+      "scope": "Preserved development/adverse/setup/partial observation; no current candidate PASS or completed group claim."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T01.principal-development-48.log",
+      "sha256": "52899746f444fe084ec3446191466ad5cb04244dd64553f3971a7ce49f89842b",
+      "scope": "Preserved development/adverse/setup/partial observation; no current candidate PASS or completed group claim."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T01.product-candidate-commit-54.log",
+      "sha256": "3214d1bbbf317d7d38125289015828d0937e4208a8dcb7901d24751753a42378",
+      "scope": "Preserved development/adverse/setup/partial observation; no current candidate PASS or completed group claim."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T01.profile-green-65.log",
+      "sha256": "01f1dfc5dbba486bdbe39d32deeb2d5569f4312740288ac034cea7d09a7b2094",
+      "scope": "Preserved development/adverse/setup/partial observation; no current candidate PASS or completed group claim."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T01.profile-schema-green-66.log",
+      "sha256": "ddcbc5c949d42023af376d506aa1d124ce8ac1de13344633383cb553e3c87ccf",
+      "scope": "Preserved development/adverse/setup/partial observation; no current candidate PASS or completed group claim."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T01.publication-01.backlog-views-check.log",
+      "sha256": "36ebe8ba5eed16d416087f957ce901132e936a4ed14c97dbcb91651c3e2678aa",
+      "scope": "Preserved development/adverse/setup/partial observation; no current candidate PASS or completed group claim."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T01.publication-01.backlog-views.log",
+      "sha256": "5c70bb33b88608bbe98be37b45436727ec04c5b01e06c6e384682f622921b27b",
+      "scope": "Preserved development/adverse/setup/partial observation; no current candidate PASS or completed group claim."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T01.publication-01.review-site-check.log",
+      "sha256": "d6b4aabfbf04f2e0e52f0737fc127f4236f25f394f67a0092fcd99e5d5de45e3",
+      "scope": "Preserved development/adverse/setup/partial observation; no current candidate PASS or completed group claim."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T01.publication-01.review-site.log",
+      "sha256": "ebd764e997cba93a5e4f771fedfbabc3a04f5a90d55a7b75197cfdfba3d16a7f",
+      "scope": "Preserved development/adverse/setup/partial observation; no current candidate PASS or completed group claim."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T01.qualification-55.admission-workflow.log",
+      "sha256": "20d552853d130e677871b9da6a09814f12a25d03dcfa13d302936ec89100c16a",
+      "scope": "Preserved development/adverse/setup/partial observation; no current candidate PASS or completed group claim."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T01.qualification-55.adr.log",
+      "sha256": "7c329207c911cab8257cc64c8e3f0ae1ea592659b55fa898fb6983212ff1bb4c",
+      "scope": "Preserved development/adverse/setup/partial observation; no current candidate PASS or completed group claim."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T01.qualification-55.architecture.log",
+      "sha256": "51a256bf6a7b2e89ab1d1b97aa19077aabf0e8858a450de1f5ceb155ed5c3e88",
+      "scope": "Preserved development/adverse/setup/partial observation; no current candidate PASS or completed group claim."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T01.qualification-55.format.log",
+      "sha256": "867607ca7786b144484420b966a332db008177af7b39e1e31d43e72abbbcfbb2",
+      "scope": "Preserved development/adverse/setup/partial observation; no current candidate PASS or completed group claim."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T01.qualification-55.lint.log",
+      "sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18",
+      "scope": "Preserved development/adverse/setup/partial observation; no current candidate PASS or completed group claim."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T01.qualification-55.log",
+      "sha256": "2806b147c046f0d8c561d8b0d354682ee36b155441513110165781f3e70b8751",
+      "scope": "Preserved development/adverse/setup/partial observation; no current candidate PASS or completed group claim."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T01.qualification-55.portable-schemas.log",
+      "sha256": "a55ee30fb47c9afacd282abc3e69cce6ee0e020d9d710eb2dc98eda54569bb56",
+      "scope": "Preserved development/adverse/setup/partial observation; no current candidate PASS or completed group claim."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T01.qualification-55.revisions.log",
+      "sha256": "1b06c23d131149b2a6ffbf159daa5452847cb91a95c2dfcaffc50238b8211844",
+      "scope": "Preserved development/adverse/setup/partial observation; no current candidate PASS or completed group claim."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T01.qualification-55.types.log",
+      "sha256": "9c64cbe96b0f50e7371819d985f790f3240cfe7edd806fdab90aaeb0d8d9ccba",
+      "scope": "Preserved development/adverse/setup/partial observation; no current candidate PASS or completed group claim."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T01.qualification-61.admission-workflow.log",
+      "sha256": "c49c0585bca1fe70586bd1c5420b4e1d68bb3003f762a1f4f8cfc018e869b458",
+      "scope": "Preserved development/adverse/setup/partial observation; no current candidate PASS or completed group claim."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T01.qualification-61.adr.log",
+      "sha256": "09a7fc92e82d1f228d6fb7177e5309cc887bcf1806105edc2215bd60706ac480",
+      "scope": "Preserved development/adverse/setup/partial observation; no current candidate PASS or completed group claim."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T01.qualification-61.architecture.log",
+      "sha256": "51a256bf6a7b2e89ab1d1b97aa19077aabf0e8858a450de1f5ceb155ed5c3e88",
+      "scope": "Preserved development/adverse/setup/partial observation; no current candidate PASS or completed group claim."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T01.qualification-61.format.log",
+      "sha256": "dde85ab0ab657507e2a1c53a7cfe26e5ab8acfd4abe3547bac113731d2477097",
+      "scope": "Preserved development/adverse/setup/partial observation; no current candidate PASS or completed group claim."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T01.qualification-61.lint.log",
+      "sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18",
+      "scope": "Preserved development/adverse/setup/partial observation; no current candidate PASS or completed group claim."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T01.qualification-61.log",
+      "sha256": "ca04d5a5833efa724ac2cdd6e914827d57ed8daced58800720dded284cd605ab",
+      "scope": "Preserved development/adverse/setup/partial observation; no current candidate PASS or completed group claim."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T01.qualification-61.migration-compatibility.log",
+      "sha256": "b75a8cbea00f0ecd2d0e35d968712e6efac62d39284195321fa397565d25e09e",
+      "scope": "Preserved development/adverse/setup/partial observation; no current candidate PASS or completed group claim."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T01.qualification-61.native-api-lifecycle.log",
+      "sha256": "6885ebfc38e441ee38164d9e9166637e489fee694cd92791f67cc3651a663be5",
+      "scope": "Preserved development/adverse/setup/partial observation; no current candidate PASS or completed group claim."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T01.qualification-61.package-contract.log",
+      "sha256": "181b5dcf4fa1538663bedf2528f607be63b053cb05aad724db495f3309cc6cc6",
+      "scope": "Preserved development/adverse/setup/partial observation; no current candidate PASS or completed group claim."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T01.qualification-61.portable-schemas.log",
+      "sha256": "a55ee30fb47c9afacd282abc3e69cce6ee0e020d9d710eb2dc98eda54569bb56",
+      "scope": "Preserved development/adverse/setup/partial observation; no current candidate PASS or completed group claim."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T01.qualification-61.revisions.log",
+      "sha256": "ebdb1d78d18ed2c26d57734eb158a9857e133a8248c4f835de4df987be80261a",
+      "scope": "Preserved development/adverse/setup/partial observation; no current candidate PASS or completed group claim."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T01.qualification-61.source-staging.log",
+      "sha256": "01006fd3668d219745fd55a26623d52f5148e1d4910490a958b0f37633a88f9c",
+      "scope": "Preserved development/adverse/setup/partial observation; no current candidate PASS or completed group claim."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T01.qualification-61.types.log",
+      "sha256": "9c64cbe96b0f50e7371819d985f790f3240cfe7edd806fdab90aaeb0d8d9ccba",
+      "scope": "Preserved development/adverse/setup/partial observation; no current candidate PASS or completed group claim."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T01.read-diagnostic-33.log",
+      "sha256": "1a27a169265b8090a1703a5a0d3b7f209a4c2e62f2138604570b1fbe99d84bb0",
+      "scope": "Preserved development/adverse/setup/partial observation; no current candidate PASS or completed group claim."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T01.read-diagnostic-34.log",
+      "sha256": "5e16920c056498d44090a8e2dcee98d01ab77f218d4a634a18a111b16e363b82",
+      "scope": "Preserved development/adverse/setup/partial observation; no current candidate PASS or completed group claim."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T01.repository-cause-16.log",
+      "sha256": "49ce73a84974106e318de736a9f55f29d42245ffb164b62a6e91f429fbc8aeeb",
+      "scope": "Preserved development/adverse/setup/partial observation; no current candidate PASS or completed group claim."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T01.repository-cause-17.log",
+      "sha256": "c8d3311287c8405904506b7f9b4bfce28db7873c55633144b048f5c7f1c7d41d",
+      "scope": "Preserved development/adverse/setup/partial observation; no current candidate PASS or completed group claim."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T01.repository-development-15.log",
+      "sha256": "3bbef7a8afddc8e336b12e3e7b80f2629e0d4051e66c2d3aafc9996333c68147",
+      "scope": "Preserved development/adverse/setup/partial observation; no current candidate PASS or completed group claim."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T01.repository-development-18.log",
+      "sha256": "933285860b6a74007ffe901385af05c872f7b1bc74aacbd763d4d34ba16d1e86",
+      "scope": "Preserved development/adverse/setup/partial observation; no current candidate PASS or completed group claim."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T01.repository-development-19.log",
+      "sha256": "3c1235c6a7562e02c93ef7a2e2ad4a06a4a1f67be8a52a3742aba094e52e71af",
+      "scope": "Preserved development/adverse/setup/partial observation; no current candidate PASS or completed group claim."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T01.repository-development-20.log",
+      "sha256": "b73579e0f828a7a1fde1a5e123fd0b7565bd814de805c33438da9280fe94a2ee",
+      "scope": "Preserved development/adverse/setup/partial observation; no current candidate PASS or completed group claim."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T01.repository-red-14.log",
+      "sha256": "c430f86eeabca056a1efb6d694d0452f42287a640a8cba12056a6d71cb097a54",
+      "scope": "Preserved development/adverse/setup/partial observation; no current candidate PASS or completed group claim."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T01.revision-contracts-development-07.log",
+      "sha256": "0ee0dc84df2dba0432c915285ef5843079f6d28d827323ea8f5d84276e637f4f",
+      "scope": "Preserved development/adverse/setup/partial observation; no current candidate PASS or completed group claim."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T01.revision-contracts-red-06.log",
+      "sha256": "41a3c4f1d5b0dd87d17c3510fe8a20af4e01d73d965c1ee1ae0454c5ee0ac736",
+      "scope": "Preserved development/adverse/setup/partial observation; no current candidate PASS or completed group claim."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T01.types-development-36.log",
+      "sha256": "aa04c87ec263abe39ce66ddae143bb96d163c5adab54c1d5a72a5e6723107be3",
+      "scope": "Preserved development/adverse/setup/partial observation; no current candidate PASS or completed group claim."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T01.types-development-45.log",
+      "sha256": "fac025d5b95354ff13679ccd42bc6a45fabb847d0e2a1752a7d3a8202dff603c",
+      "scope": "Preserved development/adverse/setup/partial observation; no current candidate PASS or completed group claim."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T01.types-development-49.log",
+      "sha256": "fac025d5b95354ff13679ccd42bc6a45fabb847d0e2a1752a7d3a8202dff603c",
+      "scope": "Preserved development/adverse/setup/partial observation; no current candidate PASS or completed group claim."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T01.v25-populated-capture-01.log",
+      "sha256": "5f19e4146fdc9a3ceb58b8b8a4c5f36a6abca21fdee872012691c4a50f62a52a",
+      "scope": "Preserved development/adverse/setup/partial observation; no current candidate PASS or completed group claim."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T01.v26-fingerprints-09.log",
+      "sha256": "a6b94f5a2bf9f1b9295d1d9dc1a82dd6654e3cde7be5ccbf76d81bc6c312386d",
+      "scope": "Preserved development/adverse/setup/partial observation; no current candidate PASS or completed group claim."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T01.workflow-development-04.log",
+      "sha256": "c0721f627c1bd228bfc7abb7217eb1277b279eef1ea02f0458cfc7bc3fa1a002",
+      "scope": "Preserved development/adverse/setup/partial observation; no current candidate PASS or completed group claim."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T01.workflow-development-05.log",
+      "sha256": "c9f5089bf41db696fb5c05b1387658722095ff82a295f4bda06a8ad2a6f4bd19",
+      "scope": "Preserved development/adverse/setup/partial observation; no current candidate PASS or completed group claim."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T01.workflow-development-24.log",
+      "sha256": "1398cf4f9a9cd1db448673ce14ccc0734b3aaab7671fc7413ad2ef49d9a8b6ec",
+      "scope": "Preserved development/adverse/setup/partial observation; no current candidate PASS or completed group claim."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T01.workflow-development-25.log",
+      "sha256": "3f6377e7a9db5df1554ec24794f98b9da27df52918038a9a79090eb971b35452",
+      "scope": "Preserved development/adverse/setup/partial observation; no current candidate PASS or completed group claim."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T01.workflow-development-26.log",
+      "sha256": "3b1e3081df814b50b68a6619268be664f09cdb7116fd543eaedf8960d2fb8e02",
+      "scope": "Preserved development/adverse/setup/partial observation; no current candidate PASS or completed group claim."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T01.workflow-development-27.log",
+      "sha256": "eead3666db23867043a6b6760803b73521dda7b494d003aae9e0c7700dd6824e",
+      "scope": "Preserved development/adverse/setup/partial observation; no current candidate PASS or completed group claim."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T01.workflow-development-28.log",
+      "sha256": "eb6af07c1f97604982eee37c437e22ede5a1f7eba5cfa893273997668f521a6e",
+      "scope": "Preserved development/adverse/setup/partial observation; no current candidate PASS or completed group claim."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T01.worksheet-publication-60.log",
+      "sha256": "1a53c1daf1372f759b46754f4c9f258de29cb5bedfda075d879cc792c441152d",
+      "scope": "Preserved development/adverse/setup/partial observation; no current candidate PASS or completed group claim."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T01.worksheet-site-check-63.log",
+      "sha256": "d6b4aabfbf04f2e0e52f0737fc127f4236f25f394f67a0092fcd99e5d5de45e3",
+      "scope": "Preserved development/adverse/setup/partial observation; no current candidate PASS or completed group claim."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T01.qualification-55.json",
+      "sha256": "42a265f726657582d0774f3d508eb3fd98935ac615cf3377b220000e5b8fb457",
+      "scope": "Preserved adverse/partial attempt; original disposition never relabeled. Named passing group outputs bind this exact candidate where explicitly included."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T01.qualification-stop-58.json",
+      "sha256": "2d6a9ebce02721fe807d1243c570d5852bc86ef9f3c9562779c780336d34175c",
+      "scope": "Preserved adverse/partial attempt; original disposition never relabeled. Named passing group outputs bind this exact candidate where explicitly included."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T01.qualification-61.json",
+      "sha256": "c2eefea950dc772cbdcafaeb61b41e3861febf2d1b0b26e6b4105220d93572da",
+      "scope": "Preserved adverse/partial attempt; original disposition never relabeled. Named passing group outputs bind this exact candidate where explicitly included."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T01.qualification-stop-64.json",
+      "sha256": "da56274b0178af7f2e2a541da5debffcede5968a6bad831a9237bc4babb76d28",
+      "scope": "Preserved adverse/partial attempt; original disposition never relabeled. Named passing group outputs bind this exact candidate where explicitly included."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T01.native-composition-53.json",
+      "sha256": "f499b8b62546ed8768ae182377c2ef7c5ef9dd96e929239b3f1a46d3729d5c9e",
+      "scope": "Preserved adverse/partial attempt; original disposition never relabeled. Named passing group outputs bind this exact candidate where explicitly included."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T01.native-composition-69.json",
+      "sha256": "3c281546cddc2bce2be4f1bb4c97dc337896803c7eed0e043d6673b75f0f780a",
+      "scope": "Preserved adverse/partial attempt; original disposition never relabeled. Named passing group outputs bind this exact candidate where explicitly included."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T01.native-targeted-70.json",
+      "sha256": "c5e87c81bf02581e8ac28449d0b8019ba4036b8644e9417b04178dc82bb555b3",
+      "scope": "Preserved adverse/partial attempt; original disposition never relabeled. Named passing group outputs bind this exact candidate where explicitly included."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T01.native-capacity-checkpoint-72.json",
+      "sha256": "b378b1aed72b32d5f4db6e38ad7ab49c094ff135778d6cbf7be7693b5a83abf9",
+      "scope": "Preserved adverse/partial attempt; original disposition never relabeled. Named passing group outputs bind this exact candidate where explicitly included."
+    }
+  ],
+  "developmentRegressions": [],
+  "acceptedPriorPerformance": {
+    "path": "artifacts/evidence/CAP-05.S02.T03.performance-owner-acceptance-01.md",
+    "sha256": "5dea8e7a2046f5ec229b10a143370c6048e62080da7c3f0f99d700f86219774a",
+    "scope": "Exact prior62.5333542s warm measurement accepted; preserve original FAIL and targets, no overage investigation/retest or broader waiver."
+  }
+}

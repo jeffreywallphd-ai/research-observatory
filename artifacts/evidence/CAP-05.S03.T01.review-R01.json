@@ -1,0 +1,457 @@
+{
+  "task_id": "CAP-05.S03.T01",
+  "attempt_id": "R01",
+  "reviewer": "agent:/root/s03_t01_review",
+  "result": "approved",
+  "reviewed_at": "2026-10-08T02:09:57.388578+00:00",
+  "reviewed_state_commit": "0fbad3859595ecc14968d2e036bbc4cb55054de8",
+  "candidate_commit": "0fbad3859595ecc14968d2e036bbc4cb55054de8",
+  "base_commit": "d0752c3d0aac0162ada79effc41b88c9d2978bcf",
+  "packet_sha256": "aaf0a1756f133fa806082dab5ba6092e0cc2a9e443349a8991e91d7d792c7416",
+  "evidence_sha256": "3a86371d6a30705d2e48a1f3d6c5fd458cb2d0ae7950c9c8d4ff7c62e083f43d",
+  "acceptance_criteria_sha256": "66ad316a0b5c646278b61257591d09f6fbe77b1c1fc67aac1bb5beb79cfa8a52",
+  "selection_sha256": "e71fe55acaf01b4e3e5a84386633b0474a1654c9093f0784c94bb2ed677851a0",
+  "findings": [],
+  "closures": [],
+  "acceptance_reviews": [
+    {
+      "criterion_index": 1,
+      "result": "satisfied",
+      "assessment": "The real encrypted repository tests accept two distinct reparses on the original aggregate, preserve original source bytes, reopen both immutable accepted revisions and demonstrate stable exact-revision IDs with disjoint IDs between revisions. Complete hierarchy, raw/NFC/code-point text mappings, source geometry, references, citation candidates, tables, figures and quality links remain bound after Core UUIDv7 remapping. The fresh native73 service composition independently retains exact-attempt raw and normalized encrypted output before explicit synthetic human acceptance, then reads the accepted revision through a new repository and replays the same command without added publications. Acceptance preserves scholarly unverified status. The original immutable source revision stays distinct from accepted normalized revisions."
+    },
+    {
+      "criterion_index": 2,
+      "result": "satisfied",
+      "assessment": "Thirteen selected passing check records comprise twelve individually successful qualification67 groups and one fresh diagnosed native-only retry74/73. The unittest groups report160 cases with2 declared skips,158 executed. Tests exercise current human/Intent/privacy/native-session/source-rights authority, semantic command retry/conflict, actual concurrent equal-base conflict, corrupted protected output, incomplete/inspection eligibility, validly hashed substituted workflow definition, cancellation/rights revocation, atomic precommit rollback, predecessor recovery and resources. Prior advisory F01 is addressed by a pre-correction counting failure at4096 chain nodes and a one-pass implementation; the final23-case revision bundle passes counting and actual persistence/rollback cases. Native73 demonstrates57.8336492 seconds of actual LPAC parser inference under unchanged4GiB/one-process limits with durable lease renewal and a canonical write during inference. Original53/67 and69/70 non-admission/readiness failures remain FAIL; no overall67 PASS, minimum-tier qualification, benchmark result or newly frozen desktop qualification is inferred."
+    },
+    {
+      "criterion_index": 3,
+      "result": "satisfied",
+      "assessment": "Portable result/structure/acceptance/revision schemas, worker port, sidecar inventories, migration26, literal populated v25 fixture, current SQLite profile/schema and documentation match the approved contract. The literal predecessor and all eight material migration interruption seams preserve old rows/history/ciphertext and verified backup, with successful retry/reopen. Legacy recovery contract meanings remain retained. Revision, explicit human decision, complete structural index, material dependencies, provenance, scoped invalidation/outbox publication and encrypted object metadata commit atomically; current rights and native authority are rechecked for reads/replay/publication. Proposed ADR0046 documents implementation under accepted ADR0013/24/25/29 without creating new authority. Independent fixture privacy-review/binding bytes are part of the authenticated candidate. No automation-framework feature, new parser/runtime, governed experience change, accepted-scope amendment or release authority is introduced."
+    }
+  ],
+  "independence": {
+    "implementation_owner": "codex-w2-implementation",
+    "statement": "I authored the independent preparatory F01 diagnostic, a bounded exact-method operation-count probe and this first controlled task disposition. I did not author product implementation, tracked tests, qualifying producers/runs, owner decisions, task transitions or accepted architecture. Diagnostic advice remains distinct from implementation ownership.",
+    "current_review_execution": "Read-only expanded contract/security/privacy/rights/migration/replay/atomicity/source review at a323add, then incremental one-pass index/counting/schema26 mapping review at0fbad385. Authenticated exact manifest, frozen R01 packet, report/producers/logs, declared skips, retained adverse records and actual source/runtime/package input bytes. No test/build/native/network/performance execution, full-history replay, product/framework/HEAD mutation or owner decision; writes are only the requested ignored diagnostic and this append-only review ledger."
+  },
+  "evidence_reproduction": {
+    "frozen_packet_authentication": {
+      "result": "PASS",
+      "existing_read_only_binding_function": "taskctl.task_submission_packet_errors",
+      "errors": [],
+      "candidate_commit": "0fbad3859595ecc14968d2e036bbc4cb55054de8",
+      "base_commit": "d0752c3d0aac0162ada79effc41b88c9d2978bcf",
+      "packet_sha256": "aaf0a1756f133fa806082dab5ba6092e0cc2a9e443349a8991e91d7d792c7416",
+      "acceptance_criteria_sha256": "66ad316a0b5c646278b61257591d09f6fbe77b1c1fc67aac1bb5beb79cfa8a52",
+      "selection_sha256": "e71fe55acaf01b4e3e5a84386633b0474a1654c9093f0784c94bb2ed677851a0",
+      "evidence_reference": {
+        "type": "criterion-manifest",
+        "path": "artifacts/evidence/CAP-05.S03.T01.R01.json",
+        "sha256": "3a86371d6a30705d2e48a1f3d6c5fd458cb2d0ae7950c9c8d4ff7c62e083f43d",
+        "commit": "0fbad3859595ecc14968d2e036bbc4cb55054de8",
+        "recorded_at": "2026-10-08T02:00:45+00:00"
+      },
+      "prior_attempt_id": null,
+      "formal_open_finding_ids": [],
+      "changed_paths": 56,
+      "base_ancestry_verified": true
+    },
+    "authenticated_checks": [
+      {
+        "id": "lint",
+        "command_id": "foundation:quality",
+        "candidate_commit": "0fbad3859595ecc14968d2e036bbc4cb55054de8",
+        "result": "PASS",
+        "exit_code": 0,
+        "raw_output": {
+          "path": "artifacts/tmp/CAP-05.S03.T01.qualification-67.lint.log",
+          "sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18",
+          "canonical_sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18"
+        },
+        "unittest_cases": null,
+        "skips": []
+      },
+      {
+        "id": "format",
+        "command_id": "foundation:quality",
+        "candidate_commit": "0fbad3859595ecc14968d2e036bbc4cb55054de8",
+        "result": "PASS",
+        "exit_code": 0,
+        "raw_output": {
+          "path": "artifacts/tmp/CAP-05.S03.T01.qualification-67.format.log",
+          "sha256": "dde85ab0ab657507e2a1c53a7cfe26e5ab8acfd4abe3547bac113731d2477097",
+          "canonical_sha256": "dde85ab0ab657507e2a1c53a7cfe26e5ab8acfd4abe3547bac113731d2477097"
+        },
+        "unittest_cases": null,
+        "skips": []
+      },
+      {
+        "id": "types",
+        "command_id": "foundation:quality",
+        "candidate_commit": "0fbad3859595ecc14968d2e036bbc4cb55054de8",
+        "result": "PASS",
+        "exit_code": 0,
+        "raw_output": {
+          "path": "artifacts/tmp/CAP-05.S03.T01.qualification-67.types.log",
+          "sha256": "9c64cbe96b0f50e7371819d985f790f3240cfe7edd806fdab90aaeb0d8d9ccba",
+          "canonical_sha256": "86903a61a92237d8dd52f0d7acaec822fc3c8b0257e183097a492fd2320879e0"
+        },
+        "unittest_cases": null,
+        "skips": []
+      },
+      {
+        "id": "portable-schemas",
+        "command_id": "contracts:unit",
+        "candidate_commit": "0fbad3859595ecc14968d2e036bbc4cb55054de8",
+        "result": "PASS",
+        "exit_code": 0,
+        "raw_output": {
+          "path": "artifacts/tmp/CAP-05.S03.T01.qualification-67.portable-schemas.log",
+          "sha256": "a55ee30fb47c9afacd282abc3e69cce6ee0e020d9d710eb2dc98eda54569bb56",
+          "canonical_sha256": "cf42b66dd1df678fb7cf5ffaf80552a60597b0a2f2ef96323d1949800d8f6085"
+        },
+        "unittest_cases": null,
+        "skips": []
+      },
+      {
+        "id": "architecture",
+        "command_id": "foundation:architecture",
+        "candidate_commit": "0fbad3859595ecc14968d2e036bbc4cb55054de8",
+        "result": "PASS",
+        "exit_code": 0,
+        "raw_output": {
+          "path": "artifacts/tmp/CAP-05.S03.T01.qualification-67.architecture.log",
+          "sha256": "51a256bf6a7b2e89ab1d1b97aa19077aabf0e8858a450de1f5ceb155ed5c3e88",
+          "canonical_sha256": "1ba622fdbf569bf9ab13ee46e639b636ea005c560abcd4b168f782d8fbdc3f74"
+        },
+        "unittest_cases": null,
+        "skips": []
+      },
+      {
+        "id": "adr",
+        "command_id": "foundation:adr",
+        "candidate_commit": "0fbad3859595ecc14968d2e036bbc4cb55054de8",
+        "result": "PASS",
+        "exit_code": 0,
+        "raw_output": {
+          "path": "artifacts/tmp/CAP-05.S03.T01.qualification-67.adr.log",
+          "sha256": "9b96f9f26dd90f0e6cc405256b211331631c0232b499fbc1f31356946c9f53f7",
+          "canonical_sha256": "178e8d55bc8c6f56b9abbd141d6a37071edeff6fa842a441b130fbac7d43374b"
+        },
+        "unittest_cases": null,
+        "skips": []
+      },
+      {
+        "id": "revisions",
+        "command_id": "documents:unit",
+        "candidate_commit": "0fbad3859595ecc14968d2e036bbc4cb55054de8",
+        "result": "PASS",
+        "exit_code": 0,
+        "raw_output": {
+          "path": "artifacts/tmp/CAP-05.S03.T01.qualification-67.revisions.log",
+          "sha256": "80cded132e4aad6e928b8ad92c71670cd8f69a88e66cf843b02f085337c377b7",
+          "canonical_sha256": "d39240d64bffa26d46ea8c3c4dba6dbaffe19cd229ad7edd085eb6149764969f"
+        },
+        "unittest_cases": 23,
+        "skips": []
+      },
+      {
+        "id": "admission-workflow",
+        "command_id": "data:unit",
+        "candidate_commit": "0fbad3859595ecc14968d2e036bbc4cb55054de8",
+        "result": "PASS",
+        "exit_code": 0,
+        "raw_output": {
+          "path": "artifacts/tmp/CAP-05.S03.T01.qualification-67.admission-workflow.log",
+          "sha256": "2b638b687211e4ec3b2e61b9c51b96a12006b04029442d9b8fd93b114f4c9097",
+          "canonical_sha256": "85534bd7a378b5db0da7233a3775d416b2b101a51451412910d74c4eab6b747c"
+        },
+        "unittest_cases": 44,
+        "skips": []
+      },
+      {
+        "id": "source-staging",
+        "command_id": "documents:unit",
+        "candidate_commit": "0fbad3859595ecc14968d2e036bbc4cb55054de8",
+        "result": "PASS",
+        "exit_code": 0,
+        "raw_output": {
+          "path": "artifacts/tmp/CAP-05.S03.T01.qualification-67.source-staging.log",
+          "sha256": "6f07b4fa3e0e1f741783ddd1436070f29144a978daa84fc68b311dfc9ee828bf",
+          "canonical_sha256": "4ce87e6c6def6e3626d86b7fd98548afc3d8ba5b1ff3a0e654509c5ad701e10d"
+        },
+        "unittest_cases": 22,
+        "skips": []
+      },
+      {
+        "id": "migration-compatibility",
+        "command_id": "data:unit",
+        "candidate_commit": "0fbad3859595ecc14968d2e036bbc4cb55054de8",
+        "result": "PASS",
+        "exit_code": 0,
+        "raw_output": {
+          "path": "artifacts/tmp/CAP-05.S03.T01.qualification-67.migration-compatibility.log",
+          "sha256": "fa9bf1ea91425c39fd84942253f004f2a6c87794fde07a947d43f120fc7fb3cd",
+          "canonical_sha256": "40ea657613f73ba89855c679c3a3d575e7b408493b7ede0520e18aff36a5a4e2"
+        },
+        "unittest_cases": 34,
+        "skips": []
+      },
+      {
+        "id": "native-api-lifecycle",
+        "command_id": "service:unit",
+        "candidate_commit": "0fbad3859595ecc14968d2e036bbc4cb55054de8",
+        "result": "PASS",
+        "exit_code": 0,
+        "raw_output": {
+          "path": "artifacts/tmp/CAP-05.S03.T01.qualification-67.native-api-lifecycle.log",
+          "sha256": "680cf04894ca86ebd9119edb2556b722e15c94102d6b214a540cb6a015a8ebd4",
+          "canonical_sha256": "3f1f8937a70f84ce44dd5d8fc4ee947b0bd83e66d624f888530a14cac4db1fc6"
+        },
+        "unittest_cases": 31,
+        "skips": [
+          "test_native_route_to_encrypted_stage_and_signed_lpac_worker (tests.service.test_document_attachment_api.DocumentAttachmentRealPortTests.test_native_route_to_encrypted_stage_and_signed_lpac_worker) ... skipped 'signed worker and Core guardian are required'"
+        ]
+      },
+      {
+        "id": "package-contract",
+        "command_id": "packaging:unit",
+        "candidate_commit": "0fbad3859595ecc14968d2e036bbc4cb55054de8",
+        "result": "PASS",
+        "exit_code": 0,
+        "raw_output": {
+          "path": "artifacts/tmp/CAP-05.S03.T01.qualification-67.package-contract.log",
+          "sha256": "9b6ca2953b3a4aab7d449e91ce1a8c3c175fab13b7a3c33e77e943917df0f8b0",
+          "canonical_sha256": "a43cbe97008a456c0407ab8cb820b361fa7266effef2c11af5d8387ab5abb827"
+        },
+        "unittest_cases": 6,
+        "skips": [
+          "test_build_contract_rejects_a_redirected_governed_file (tests.packaging.test_core_sidecar_package.CoreSidecarPackageTests.test_build_contract_rejects_a_redirected_governed_file) ... skipped 'file symlinks are not available for this Windows token'"
+        ]
+      },
+      {
+        "id": "actual-native-workflow",
+        "command_id": "documents:unit",
+        "candidate_commit": "0fbad3859595ecc14968d2e036bbc4cb55054de8",
+        "result": "PASS",
+        "exit_code": 0,
+        "raw_output": {
+          "path": "artifacts/tmp/CAP-05.S03.T01.native-targeted-74.log",
+          "sha256": "130167e4ca8ea296675e2248f8f1fd99cff1cd3da7a9c653c49621e135c50255",
+          "canonical_sha256": "f30bb8afa3b0b1d2b73b3c4c507be4ff6bbb171b902dd79bfb7cce8f7451e0bf"
+        },
+        "unittest_cases": null,
+        "skips": []
+      }
+    ],
+    "final_reports": [
+      {
+        "path": "artifacts/tmp/CAP-05.S03.T01.qualification-67.json",
+        "sha256": "7b027ba4849fc4a6f5512c8da87666cedfb4ecedf856d9c6b59fbbeef72a60e2",
+        "reportedStatus": "FAIL",
+        "candidate": "0fbad3859595ecc14968d2e036bbc4cb55054de8"
+      },
+      {
+        "path": "artifacts/tmp/CAP-05.S03.T01.native-targeted-74.json",
+        "sha256": "daa88a7ad3a29f653fbf3c9f77c32b4354de5f1daa033553c0661a2244d1fbf9",
+        "reportedStatus": "PASS",
+        "candidate": "0fbad3859595ecc14968d2e036bbc4cb55054de8"
+      },
+      {
+        "path": "artifacts/tmp/CAP-05.S03.T01.native-composition-73.json",
+        "sha256": "3faa2c29a9f951e1c026fba89442ee0e65d525f61907bf7dff83afce3c476031",
+        "reportedStatus": "PASS",
+        "candidate": "0fbad3859595ecc14968d2e036bbc4cb55054de8"
+      }
+    ],
+    "input_closure": {
+      "source_inputs": 6132,
+      "same_source_inputs_in_qualification67_targeted74_native73": true,
+      "sealed_interpreter_and_library_files": 9208,
+      "signed_parser_inventory_files": 2128,
+      "qualification_helper_files": 2,
+      "parser_inventory_sha256": "ebb0197926694d00710b486093e5c8b417a0ec0faa702ba42f3538e08ccbc573",
+      "runtime_record": {
+        "path": "artifacts/tmp/CAP-05.S02.T03.check-runtime-130.json",
+        "sha256": "765b653b9c074d820a6ff8821052a8ae78232610d0046f69ef57a61ac96448b0"
+      },
+      "qualification_producer": {
+        "path": "artifacts/tmp/CAP-05.S03.T01.qualification-67.py",
+        "sha256": "f7608f2c1032289fb83957bd1b98ba1c73b9e0380e25e1fa4ee282f3692cd6e9"
+      },
+      "native_retry_producer": {
+        "path": "artifacts/tmp/CAP-05.S03.T01.native-targeted-74.py",
+        "sha256": "61c59167c56c4d9fa8f549e22fd55649b3db78a28f07d26201cd03d3fb388155"
+      },
+      "native_composition_producer": {
+        "path": "artifacts/tmp/CAP-05.S03.T01.native-composition-73.py",
+        "sha256": "a54180e810ad23d0900877b3b77ab40bf2a9c20633dd9b46be3801a8b68d8067"
+      },
+      "method": "Read-only raw-byte authentication of every recorded current source, sealed installed interpreter/library input and signed parser inventory file; complete base-to-candidate changed-file equality and ancestry. Source equality was authenticated before taskctl submission-state projections. Qualifying producers hold Windows file/package locks and recheck exact source/runtime bytes; native worker frozen-source Analysis entries are compared against their original build candidate. Parent-owned execution provenance and actual reports/logs were inspected; a self-hash alone is not treated as execution proof. No cache or profile/history replay."
+    },
+    "native_workflow": {
+      "report": {
+        "path": "artifacts/tmp/CAP-05.S03.T01.native-composition-73.json",
+        "sha256": "3faa2c29a9f951e1c026fba89442ee0e65d525f61907bf7dff83afce3c476031"
+      },
+      "retry_report": {
+        "path": "artifacts/tmp/CAP-05.S03.T01.native-targeted-74.json",
+        "sha256": "daa88a7ad3a29f653fbf3c9f77c32b4354de5f1daa033553c0661a2244d1fbf9"
+      },
+      "actual_parser_seconds": 57.8336491999944,
+      "initial_lease_seconds": 30,
+      "durable_heartbeat_observations": 32,
+      "canonical_write": {
+        "startedSeconds": 26.58634220001113,
+        "completedSeconds": 26.623514900013106,
+        "durationSeconds": 0.03717270000197459,
+        "completedDuringInference": true
+      },
+      "principal": {
+        "token": {
+          "appContainer": true,
+          "lessPrivileged": true,
+          "capabilityCount": 0,
+          "allApplicationPackagesDenied": true,
+          "integrityLevelRid": 4096
+        },
+        "peakJobCommittedBytes": 2208755712,
+        "memoryLimitBytes": 4294967296,
+        "cpuAffinity": 85,
+        "activeProcessLimit": 1
+      },
+      "capacity_observations": [
+        {
+          "cpu_slots": 20,
+          "memory_bytes": 4534751232,
+          "gpu_bytes": null,
+          "disk_bytes": 66272636928
+        },
+        {
+          "cpu_slots": 20,
+          "memory_bytes": 4624191488,
+          "gpu_bytes": null,
+          "disk_bytes": 66271797248
+        }
+      ],
+      "outcome": {
+        "actualParserSeconds": 57.8336491999944,
+        "durableState": "succeeded",
+        "retainedBeforeAcceptance": true,
+        "explicitHumanAcceptance": true,
+        "scholarlyVerification": "unverified",
+        "reopenExact": true,
+        "replayNoExtraPublication": true,
+        "pages": 10,
+        "nodeCount": 315
+      },
+      "method_limits": [
+        "Synthetic research/project/PDF/human/session/rights setup and installed-package discovery are declared fixtures; current Core authority, SQLCipher/encrypted storage, actual Windows admission, native signed LPAC parser and durable queue/lease execute. No real scholarly evidence, actual human user decision, model-layout quality acceptance or user-facing desktop workflow is claimed.",
+        "Reopen means a new repository instance with authenticated durable state, not a restarted packaged desktop process. Process/installation-wide qualification remains at slice/W2 scope.",
+        "Inference duration is one workflow-composition observation beyond the initial lease interval; it is neither p95 timing nor a performance-budget comparison. No owner-accepted warm-overage investigation/retest.",
+        "Actual host has20 CPU slots and sufficient observed available memory. Conservative4-slot denial remains safe; approved four-core minimum-tier qualification is unresolved W2 coverage."
+      ]
+    },
+    "pre_submission_advisory_replay": {
+      "formal_history_meaning": "F01 was a genuine independent pre-disposition diagnostic before any controlled task submission. There is no prior formal task finding or invented adverse RNN round; formal findings[] and closures[] remain empty. This object appends the independent advisory closure without rewriting the preserved diagnostic.",
+      "finding_id": "F01",
+      "diagnostic": {
+        "path": "artifacts/tmp/CAP-05.S03.T01.independent-pre-disposition-finding-56.json",
+        "sha256": "d7d08692a16b440a3009f4282434e16bd94d038cbb6ec7abbce31ce64b87151f",
+        "findingId": "F01",
+        "candidate": "a323add851fd2c3882e9b5a35b328d4d2577c3e7",
+        "proposedClosure": "Bounded one-pass traversal plus counting and actual publication checks; independent final closure required."
+      },
+      "status": "addressed-before-first-controlled-submission",
+      "closure": "The canonical contract already requires every parent earlier in node order. The corrected index makes one validated-order pass, retains defensive missing-parent denial and exact index fields/ordering, and removes rescans/list deletions. The4096-node chain regression failed before correction with16785407 parent accesses against12288 bound; development green and final committed23-case revision bundle pass chain/flat access counting, ID/order/parent checks and real acceptance/replay/reopen/atomic-failure coverage.",
+      "development_red": {
+        "path": "artifacts/tmp/CAP-05.S03.T01.index-red-57.log",
+        "sha256": "ba65a04210a4f35eaa6a00f6e3ac22bceb2d194010f8e02754b1af86e2ffa492"
+      },
+      "development_green": {
+        "path": "artifacts/tmp/CAP-05.S03.T01.index-green-59.log",
+        "sha256": "f79e0dba287f9ab9b7b4c712fc625f534eb07f3f1c233ec96885c92242b3ff9a"
+      },
+      "final_proof": {
+        "check_id": "revisions",
+        "test": "tests.documents.test_document_revision_index.DocumentRevisionIndexTests.test_large_valid_chain_and_flat_hierarchy_have_bounded_parent_reads_and_exact_order",
+        "bundle_cases": 23
+      },
+      "retained_probe_error": "Initial reviewer expected count was one too high due to root short-circuit; its failed assertion and interpreter-launch warning are preserved in diagnostic56. Corrected exact-method counting matches quadratic formula; no timing/resource-exhaustion or canonical-state execution was inferred."
+    },
+    "adverse_history": {
+      "authenticated_references": 96,
+      "manifest_key": "historicalObservations",
+      "qualification67_overall_status": "FAIL",
+      "retry_meaning": {
+        "reason": "Real Windows available memory below unchanged parser plus interactive reservation left the first job queued. The native-only retry waited boundedly for actual capacity and then used the unchanged actual admission policy. Original53/67 and the second bounded readiness failure69/70 stay FAIL. After the owner freed memory, fresh73/74 use actual observed capacity with unchanged reservation policy; no other application or resource boundary was altered by this campaign.",
+        "priorNativeReport": "artifacts/tmp/CAP-05.S03.T01.native-composition-53.json",
+        "priorNativeSha256": "f499b8b62546ed8768ae182377c2ef7c5ef9dd96e929239b3f1a46d3729d5c9e"
+      },
+      "selected_records": [
+        {
+          "path": "artifacts/tmp/CAP-05.S03.T01.index-red-57.log",
+          "sha256": "ba65a04210a4f35eaa6a00f6e3ac22bceb2d194010f8e02754b1af86e2ffa492",
+          "scope": "Preserved development/adverse/setup/partial observation; no current candidate PASS or completed group claim."
+        },
+        {
+          "path": "artifacts/tmp/CAP-05.S03.T01.qualification-55.json",
+          "sha256": "42a265f726657582d0774f3d508eb3fd98935ac615cf3377b220000e5b8fb457",
+          "scope": "Preserved adverse/partial attempt; original disposition never relabeled. Named passing group outputs bind this exact candidate where explicitly included."
+        },
+        {
+          "path": "artifacts/tmp/CAP-05.S03.T01.qualification-61.json",
+          "sha256": "c2eefea950dc772cbdcafaeb61b41e3861febf2d1b0b26e6b4105220d93572da",
+          "scope": "Preserved adverse/partial attempt; original disposition never relabeled. Named passing group outputs bind this exact candidate where explicitly included."
+        },
+        {
+          "path": "artifacts/tmp/CAP-05.S03.T01.native-composition-53.json",
+          "sha256": "f499b8b62546ed8768ae182377c2ef7c5ef9dd96e929239b3f1a46d3729d5c9e",
+          "scope": "Preserved adverse/partial attempt; original disposition never relabeled. Named passing group outputs bind this exact candidate where explicitly included."
+        },
+        {
+          "path": "artifacts/tmp/CAP-05.S03.T01.native-composition-69.json",
+          "sha256": "3c281546cddc2bce2be4f1bb4c97dc337896803c7eed0e043d6673b75f0f780a",
+          "scope": "Preserved adverse/partial attempt; original disposition never relabeled. Named passing group outputs bind this exact candidate where explicitly included."
+        },
+        {
+          "path": "artifacts/tmp/CAP-05.S03.T01.native-targeted-70.json",
+          "sha256": "c5e87c81bf02581e8ac28449d0b8019ba4036b8644e9417b04178dc82bb555b3",
+          "scope": "Preserved adverse/partial attempt; original disposition never relabeled. Named passing group outputs bind this exact candidate where explicitly included."
+        }
+      ],
+      "meaning": "All96 historical reference raw-byte hashes match. Preserve prior format/ADR/schema conformance failures, development/partial stops, original memory admission/readiness denials and reviewer probe errors with their actual candidate/outcome. Only the diagnosed failed native group was retried at unchanged product candidate with fresh capacity; prior completed groups remain individually passing."
+    },
+    "skipped_and_deferred": {
+      "unittest_cases_reported": 160,
+      "executed_unittest_cases": 158,
+      "explicit_skips": [
+        {
+          "check_id": "native-api-lifecycle",
+          "case": "test_native_route_to_encrypted_stage_and_signed_lpac_worker (tests.service.test_document_attachment_api.DocumentAttachmentRealPortTests.test_native_route_to_encrypted_stage_and_signed_lpac_worker) ... skipped 'signed worker and Core guardian are required'"
+        },
+        {
+          "check_id": "package-contract",
+          "case": "test_build_contract_rejects_a_redirected_governed_file (tests.packaging.test_core_sidecar_package.CoreSidecarPackageTests.test_build_contract_rejects_a_redirected_governed_file) ... skipped 'file symlinks are not available for this Windows token'"
+        }
+      ],
+      "assessment": "The native attachment HTTP test requires a signed worker/Core guardian unavailable to that unit group; native73 proves the changed document revision service, actual admission, LPAC and protected persistence separately, without relabeling that skipped HTTP/installation case. File-symlink redirected-build denial cannot execute under this token. These remain explicit packaging/slice/W2 qualification coverage and do not invalidate the selected T01 persistence criteria. No new packaged desktop or platform completeness is asserted.",
+      "deferred": [
+        "Integrated S03 anchors/resolution and slice review",
+        "W2 fresh full profiles, clean packaging, cross-capability matrix, minimum hardware and separate release decision"
+      ]
+    },
+    "performance_owner_observation": {
+      "path": "artifacts/evidence/CAP-05.S02.T03.performance-owner-acceptance-01.md",
+      "sha256": "5dea8e7a2046f5ec229b10a143370c6048e62080da7c3f0f99d700f86219774a",
+      "scope": "Exact prior62.5333542s warm measurement accepted; preserve original FAIL and targets, no overage investigation/retest or broader waiver."
+    },
+    "reviewer_setup_observations": [
+      "Initial incremental documentary read guessed ADR0032 filename and failed without changing files; indexed actual Proposed ADR0046 was then read successfully.",
+      "Initial attachment authentication applied canonical LF to a raw machine-report digest, failed before disposition, then verified the correct raw-versus-canonical boundary. Raw reports and raw+canonical logs match; no artifact was changed.",
+      "Interpreter-location warnings accompanied reviewer in-memory probes/authentication while Python executed and returned the recorded outcomes. No runtime setup mutation occurred."
+    ]
+  },
+  "notes": "Independent expanded CAP-05.S03.T01 R01 review approves exact0fbad3859595ecc14968d2e036bbc4cb55054de8 and authenticated frozen packet. Immutable normalized structure, current-authorized human acceptance, replay/concurrency, encrypted retention, atomic publication and literal-predecessor migration/recovery satisfy all three criteria. Advisory F01 is closed by the one-pass correction and preserved red/current passing regressions; no formal prior round is invented. Twelve qualification67 groups and fresh native74/73 provide13 passing selected records;67 itself remains FAIL for original non-admission. The160 unittest cases include2 explicit skips. Actual57.8336492-second LPAC inference proves live lease/write/persistence composition under unchanged limits; it is not timing-budget, minimum-tier, model-quality or newly packaged desktop qualification. Prior memory/readiness failures, historical adverse evidence and exact accepted prior warm-overage observation remain preserved. No open blocking finding. This disposition approves this task only; integrated S03 review, fresh W2/full-platform/packaging/minimum-hardware qualification and the separate human release gate remain required."
+}
