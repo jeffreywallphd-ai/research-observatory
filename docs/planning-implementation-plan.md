@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 9036ecd640f1314572c56746aa12755029ab09f09df7e38744a65e49c9c2927a
+source_sha256: 2666df87ce68404c5843e6b313583a88d82d69cffce64d6b7327666d3cc0dfab
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -11601,15 +11601,15 @@ Original tasks and approvals remain unchanged.
 
 **Currently open findings:** -
 
-#### - [ ] CAP-05.S03.T03 - Implement anchor resolution and citation-link APIs
+#### - [x] CAP-05.S03.T03 - Implement anchor resolution and citation-link APIs
 
-**Status / priority / estimate / risk:** `IN_PROGRESS` / `P0` / `M` / `high`
+**Status / priority / estimate / risk:** `DONE` / `P0` / `M` / `high`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
 **Dependencies:** `CAP-05.S03.T02`
 
-**Owner / review:** codex-w2-implementation / agent:/root/t03_task_review (`changes-requested`)
+**Owner / review:** codex-w2-implementation / agent:/root/t03_task_review (`approved`)
 
 **Objective:** APIs to resolve evidence to source context, adjacent text, document metadata, and canonical reference targets.
 
@@ -11631,10 +11631,11 @@ Original tasks and approvals remain unchanged.
 **Evidence:**
 
 - `artifacts/evidence/CAP-05.S03.T03.R01.json` at `c2e92e7575a04aa8f8e5642623868e3b9adfdc1d`
+- `artifacts/evidence/CAP-05.S03.T03.R02.json` at `0645daabc0b413dfa58fb5507dd89ad973d2ca5b`
 
 ##### Review history — CAP-05.S03.T03
 
-**Review mode:** `append-only v1` / 1 completed round(s)
+**Review mode:** `append-only v1` / 2 completed round(s)
 
 ###### Round R01
 
@@ -11666,13 +11667,43 @@ Original tasks and approvals remain unchanged.
 
 - None
 
+###### Round R02
+
+**Immutable submission packet:** `R02` / packet SHA-256 `5939fe076063672ed6826b700cb4bd1f2ddc1489ca7f82d65a6276febcabfcc0`
+
+- Candidate / base / branch: `0645daabc0b413dfa58fb5507dd89ad973d2ca5b` / `c2e92e7575a04aa8f8e5642623868e3b9adfdc1d` / `codex/w2-implementation`
+- Submitted by / at: codex-w2-implementation / `2026-10-08T14:00:21+00:00`
+- Evidence: `artifacts/evidence/CAP-05.S03.T03.R02.json` / `7fce1ae8dd6d8c21165bdad626d5bdc5b0cde21c80d9529a076617267a95cda7` / `0645daabc0b413dfa58fb5507dd89ad973d2ca5b`
+- Acceptance-criteria SHA-256: `bdb126dfc82e8ed17f35264508c1894cc8aae3d2e1bd3a175e9dc85cba27ae63`
+- Verification-selection SHA-256: `48095fb4c1f8fb15e0ca3ca82649ba5ac97bfa92d0a0ba9f78b656b68c31d2c7`
+- Changed paths: `artifacts/evidence/CAP-05.S03.T03.R01.json`, `artifacts/evidence/CAP-05.S03.T03.review-R01.json`, `artifacts/evidence/CAP-05.S03.T03.task-start.md`, `docs/adr/ADR-0046-bind-immutable-document-revisions-to-existing-human-authority.md`, `docs/planning-implementation-plan.md`, `planning/backlog.yaml`, `planning/review-site/CAP-05/CAP-05.S03.T03.html`, `planning/review-site/CAP-05/CAP-05.S03.html`, `planning/review-site/manifest.json`, `planning/status-summary.md`, `services/core-api/src/research_observatory_core/document_revision_service.py`, `services/core-api/src/research_observatory_core/source_anchor_repository.py`, `tests/anchors/test_native_resolution_composition.py`
+- Selected checks: `./artifacts/tmp/CAP-05.S02.T03.check-runtime-122/python/python.exe -B -m unittest tests.anchors.test_native_resolution_composition -v`, `./artifacts/tmp/CAP-05.S02.T03.check-runtime-122/python/python.exe -B -m unittest tests.anchors.test_native_anchor_composition -v`, `./artifacts/tmp/CAP-05.S02.T03.check-runtime-122/python/python.exe -B -m unittest tests.anchors.test_anchor_resolution tests.anchors.test_anchor_contracts tests.anchors.test_anchor_repository -v`, `./artifacts/tmp/CAP-05.S02.T03.check-runtime-122/python/python.exe -B -m unittest tests.service.test_source_anchor_api tests.service.test_document_revision_api -v`, `./artifacts/tmp/CAP-05.S02.T03.check-runtime-122/python/python.exe -B -m ruff check services/core-api/src/research_observatory_core/document_revision_service.py services/core-api/src/research_observatory_core/source_anchor_repository.py tests/anchors/test_native_resolution_composition.py`, `./artifacts/tmp/CAP-05.S02.T03.check-runtime-122/python/python.exe -B -m ruff format --check services/core-api/src/research_observatory_core/document_revision_service.py services/core-api/src/research_observatory_core/source_anchor_repository.py tests/anchors/test_native_resolution_composition.py`, `./artifacts/tmp/CAP-05.S02.T03.check-runtime-122/python/python.exe -B -m mypy --no-incremental services/core-api/src/research_observatory_core/document_revision_service.py services/core-api/src/research_observatory_core/source_anchor_repository.py`, `./artifacts/tmp/CAP-05.S02.T03.check-runtime-122/python/python.exe -B tools/architecture_check.py --repo .`, `./artifacts/tmp/CAP-05.S02.T03.check-runtime-122/python/python.exe -B tools/adr_check.py --repo . --base c2e92e7575a04aa8f8e5642623868e3b9adfdc1d --head 0645daabc0b413dfa58fb5507dd89ad973d2ca5b`
+- Deferred checks: `Unchanged R01 migration27/literal v26 recovery, portable generators, immutable catalog, native Rust/renderer and packaging inputs are authenticated historical proof, not fresh R02 execution or reused PASS receipts. No credible impact path from the two authority edits to those unchanged boundaries; full repository/profile/history replay is not selected.`, `Integrated S03 E2E/restart/recovery and independent slice review; S04 secure source-viewer activation.`, `Requested product model/resource amendment before dependent implementation; fresh full W2 repository/profile/package/platform/security/accessibility/performance qualification and separate human release gate.`
+- Selection rationale: Replay CAP-05.S03.T03-R01-F01 and the incremental anchor creation commit path. Fresh actual Core/native/SQLCipher/envelope tests prove rollback, delivery denial, current durable Intent/privacy/rights, real reopen and exactly-once retry; fresh unchanged100ms performance proves the guard did not regress resolution. Selected affected API/contract/repository checks, quality, architecture and exact incremental ADR coverage. Authenticate unchanged R01 source/evidence for historical coverage; no full history/profile replay, new runtime cache or native-proof reuse.
+- Prior round / replayed open findings: `R01` / `CAP-05.S03.T03-R01-F01`
+- Root-cause escalation: The service supplied a frozen actor callback, bypassing its trusted native-stop latch at the repository's final in-writer authority check. The existing test detached after repository return and therefore only proved delivery denial. The missed row now requires stop inside publication, unchanged durable counts, actual close/reopen, old-session denial and exactly-once retry. Guarded actor delivery restores the existing live scope; anchor creation also needs a final current-actor/durable-authority fence after append because its owning protected-object publisher has a distinct commit path. Red63 and partial64 remain failures; both boundaries are now covered by fresh R02 composition.
+
+**Disposition / reviewer / time:** `approved` / agent:/root/t03_task_review / `2026-10-08T14:22:44+00:00`
+
+**Immutable review ledger:** `artifacts/evidence/CAP-05.S03.T03.review-R02.json` / `1bb3d7b351d644f34a39657f1e40fbb16a1260d93c08b0d0dc61443d6b654108`
+
+**Review notes:** Approve CAP-05.S03.T03 R02 at exact candidate0645daabc0b413dfa58fb5507dd89ad973d2ca5b. Explicitly close CAP-05.S03.T03-R01-F01 as fixed, with no new findings. Independent actual-Core proof confirms both stop publication paths roll back, deny without research text, recover through actual close/reopen with new native authority, and retry/replay exactly once. All nine fresh selected groups, prior adverse records and frozen packet authenticate; unchanged100ms warm p95 is88.2239ms. Approval is bounded to this task's exact Core/native-session/synthetic-IR evidence and does not approve a slice, installed desktop, model/resource tier, parser retest, scope amendment or Wave release.
+
+**Findings opened:**
+
+- None
+
+**Prior finding closures:**
+
+- `CAP-05.S03.T03-R01-F01` `fixed` — At exact strict-descendant candidate 0645daabc0b413dfa58fb5507dd89ad973d2ca5b, DocumentRevisionService._anchors:174 supplies actor=lambda: guard(lambda: actor), so every existing repository _current_actor() call observes the trusted native stop and scoped lifetime. The unchanged final _fenced_resolved authority check therefore raises inside the owning writer after anchor-dependents-stale and before COMMIT. Incremental inspection also confirms creation's distinct protected-object publisher now calls the existing durable _authority(connection, self._current_actor()) after anchor-recorded at source_anchor_repository.py:613, before returning to its owning commit. The missed acceptance row and Proposed ADR0046 mapping are updated; two regressions failed before source changes in red63, and partial64 retains the creation failure. Fresh qualification-R02-68 passes all seven actual native/Core resolution cases, including both stop seams, invalidation close/reopen, old-session denial and exactly-once retry. Independent disposable actual-Core proof reviewer-R02-closure-01 separately observes invalidation stop HTTP409 without research text and unchanged dependency_impact_runs/dependency_stale_causes/provenance_events/outbox_events 2/1/25/24; actual detach/close/open/attach rejects old authority409, valid retry publishes 3/2/26/25, and replay adds nothing. Creation stop returns409 with aggregate_revisions/documents/provenance_events/outbox_events unchanged17/6/24/23; actual reopen rejects old authority409, valid retry publishes18/7/25/24 and replay adds nothing. The live actor change retains the existing delivery fence and durable Intent/privacy/exact-copy rights checks and denial auditing. Fresh20-sample nearest-rank p95 is88.22390000568703ms under unchanged100ms. Frozen R02 explicitly supersedes R01 and replays the sole open F01; packet/evidence/criteria/selection and preserved adverse hashes authenticate. No authority, migration, criterion, framework or scope change is required or introduced.
+
 **Current immutable submission awaiting review:** None
 
-**Current latest-review projection:** `changes-requested` by agent:/root/t03_task_review at `2026-10-08T13:25:53+00:00`
+**Current latest-review projection:** `approved` by agent:/root/t03_task_review at `2026-10-08T14:22:44+00:00`
 
-**Latest notes:** Changes requested for CAP-05.S03.T03 at exact R01 candidate c2e92e7575a04aa8f8e5642623868e3b9adfdc1d. F01 is the sole blocking finding: a native stop before the owning context writer commits returns 409 without research content but still publishes invalidation, downstream staleness, provenance and outbox. The 21 selected group PASS and 87.4281 ms warm resolver p95 are authentic within their declared scope and remain retained; they do not close the newly reproduced authority boundary. Correct and replay this focused boundary in a superseding candidate. No slice, installed desktop, minimum-tier, parser or Wave/release approval is given.
+**Latest notes:** Approve CAP-05.S03.T03 R02 at exact candidate0645daabc0b413dfa58fb5507dd89ad973d2ca5b. Explicitly close CAP-05.S03.T03-R01-F01 as fixed, with no new findings. Independent actual-Core proof confirms both stop publication paths roll back, deny without research text, recover through actual close/reopen with new native authority, and retry/replay exactly once. All nine fresh selected groups, prior adverse records and frozen packet authenticate; unchanged100ms warm p95 is88.2239ms. Approval is bounded to this task's exact Core/native-session/synthetic-IR evidence and does not approve a slice, installed desktop, model/resource tier, parser retest, scope amendment or Wave release.
 
-**Currently open findings:** `CAP-05.S03.T03-R01-F01`
+**Currently open findings:** -
 
 ### SLICE-source-viewer-and-evidence-inspection-experience (`CAP-05.S04`) - Source viewer and evidence inspection experience
 

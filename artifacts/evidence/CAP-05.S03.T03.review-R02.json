@@ -1,0 +1,362 @@
+{
+  "task_id": "CAP-05.S03.T03",
+  "attempt_id": "R02",
+  "reviewer": "agent:/root/t03_task_review",
+  "result": "approved",
+  "reviewed_at": "2026-10-08T14:10:33.284786+00:00",
+  "reviewed_state_commit": "0645daabc0b413dfa58fb5507dd89ad973d2ca5b",
+  "candidate_commit": "0645daabc0b413dfa58fb5507dd89ad973d2ca5b",
+  "base_commit": "c2e92e7575a04aa8f8e5642623868e3b9adfdc1d",
+  "packet_sha256": "5939fe076063672ed6826b700cb4bd1f2ddc1489ca7f82d65a6276febcabfcc0",
+  "evidence_sha256": "7fce1ae8dd6d8c21165bdad626d5bdc5b0cde21c80d9529a076617267a95cda7",
+  "acceptance_criteria_sha256": "bdb126dfc82e8ed17f35264508c1894cc8aae3d2e1bd3a175e9dc85cba27ae63",
+  "selection_sha256": "48095fb4c1f8fb15e0ca3ca82649ba5ac97bfa92d0a0ba9f78b656b68c31d2c7",
+  "findings": [],
+  "closures": [
+    {
+      "finding_id": "CAP-05.S03.T03-R01-F01",
+      "disposition": "fixed",
+      "evidence": "At exact strict-descendant candidate 0645daabc0b413dfa58fb5507dd89ad973d2ca5b, DocumentRevisionService._anchors:174 supplies actor=lambda: guard(lambda: actor), so every existing repository _current_actor() call observes the trusted native stop and scoped lifetime. The unchanged final _fenced_resolved authority check therefore raises inside the owning writer after anchor-dependents-stale and before COMMIT. Incremental inspection also confirms creation's distinct protected-object publisher now calls the existing durable _authority(connection, self._current_actor()) after anchor-recorded at source_anchor_repository.py:613, before returning to its owning commit. The missed acceptance row and Proposed ADR0046 mapping are updated; two regressions failed before source changes in red63, and partial64 retains the creation failure. Fresh qualification-R02-68 passes all seven actual native/Core resolution cases, including both stop seams, invalidation close/reopen, old-session denial and exactly-once retry. Independent disposable actual-Core proof reviewer-R02-closure-01 separately observes invalidation stop HTTP409 without research text and unchanged dependency_impact_runs/dependency_stale_causes/provenance_events/outbox_events 2/1/25/24; actual detach/close/open/attach rejects old authority409, valid retry publishes 3/2/26/25, and replay adds nothing. Creation stop returns409 with aggregate_revisions/documents/provenance_events/outbox_events unchanged17/6/24/23; actual reopen rejects old authority409, valid retry publishes18/7/25/24 and replay adds nothing. The live actor change retains the existing delivery fence and durable Intent/privacy/exact-copy rights checks and denial auditing. Fresh20-sample nearest-rank p95 is88.22390000568703ms under unchanged100ms. Frozen R02 explicitly supersedes R01 and replays the sole open F01; packet/evidence/criteria/selection and preserved adverse hashes authenticate. No authority, migration, criterion, framework or scope change is required or introduced."
+    }
+  ],
+  "acceptance_reviews": [
+    {
+      "criterion_index": 1,
+      "result": "satisfied",
+      "assessment": "R01's exact accepted source-revision context, adjacent protected text, observed document labels, retained old-revision resolution and explicit candidate/ambiguous/unresolved canonical citation targets remain supported by reviewed historical proof and unchanged authenticated inputs. Fresh R02 repository/API/composition cases confirm bounded resolution and conservative direct/transitive broken-anchor propagation, canonical provenance/outbox publication and idempotency. F01's missing authorized publication boundary is now closed: stop inside the owning writer rolls back all four invalidation counts, actual close/reopen requires fresh native authority, and retry commits exactly once. Independent proof also closes creation's incremental publication route. Twenty fresh consecutive warm actual-Core resolutions yield nearest-rank p95 88.22390000568703ms against the unchanged100ms budget; no full PDF/IR reads, parser inference or resource-tier qualification is claimed."
+    },
+    {
+      "criterion_index": 2,
+      "result": "satisfied",
+      "assessment": "All nine selected fresh groups authenticate at the exact fixed candidate:40 Python cases across native resolution/composition, anchor creation, resolution/citation/repository contracts and strict API suites, with no declared skips, plus affected lint/format/types/architecture/ADR checks. The two failure-first regressions exercise trusted stop after canonical append but before each writer's commit. The independent closure proof separately verifies durable counts, no research text, actual detach/close/open/attach, stale-session denial and exactly-once retry/replay for both invalidation and creation. Fresh cases retain current native session/Intent/privacy/exact-copy rights, retained-declared-hash Intent corruption denial, post-repository delivery stop, failed/foreign lookup writer cleanup, strict fields and durable denied-rights auditing. Unchanged R01 catalog/snapshot/scoped-lifecycle/provenance/migration/native-renderer/package boundaries remain authenticated historical coverage; no fresh execution or cached PASS is inferred for them."
+    },
+    {
+      "criterion_index": 3,
+      "result": "satisfied",
+      "assessment": "The incremental product diff is one replacement of the frozen actor callback by its existing scoped live guard and one final current-actor/durable-authority check in creation, with two regressions. The task worksheet records the missed acceptance row and failure sequence; Proposed ADR0046 maps both publication paths to the existing approved authority/cancellation contract. R01 evidence, changes-requested review and adverse history are preserved. Fresh exact R01-to-R02 ADR checking passes with46 indexed records and13 changed paths; affected architecture/quality checks pass.1186 unchanged product/test/tool inputs match R01's independently reviewed bytes. Accepted ADR0013/0024/0029, approved S03 scope, public contracts, schema27/literal predecessor, frozen approvals, original-source integrity and accepted62.5333542s parser observation remain unchanged. No automation-framework behavior, scope/criterion relaxation, resource amendment, new approval or parser retest is introduced."
+    }
+  ],
+  "independence": {
+    "implementation_owner": "codex-w2-implementation",
+    "statement": "I performed the independent R01 review and reproduced F01. For R02 I inspected the exact committed incremental source/tests/worksheet/ADR mapping, authenticated fresh proof and the frozen packet, and authored one bounded disposable actual-Core closure proof using the established synthetic fixture. I authored neither product corrections nor committed tests or owner qualification producers. I performed no product edit, commit, taskctl mutation, integration, scope approval or release decision. This formal ledger is my sole new tracked write; authentication and closure diagnostics are ignored task-owned artifacts. HEAD and product inputs remained fixed; the owner's submission and generated view refresh are separate planning operations."
+  },
+  "verification_selection": {
+    "selectedCommandIds": [
+      "documents:anchors",
+      "foundation:adr",
+      "foundation:architecture",
+      "foundation:quality",
+      "service:unit"
+    ],
+    "riskAnalysis": "Replay the sole open R01 F01 plus creation's incremental owning-writer publication fence and credible shared actor/performance risk. Inspect the two authority edits and failure-first tests, authenticate nine fresh selected groups and the frozen superseding packet, and independently observe durable rollback/recovery at both precommit seams. Reuse no runtime outcomes; cite and authenticate already reviewed unchanged coverage. No unchanged full suite/history/profile, privacy archive rescan or parser benchmark is repeated.",
+    "deferred": [
+      "Unchanged R01 migration27/literal v26 recovery, portable generators, immutable catalog, native Rust/renderer and packaging inputs are authenticated historical proof, not fresh R02 execution or reused PASS receipts. No credible impact path from the two authority edits to those unchanged boundaries; full repository/profile/history replay is not selected.",
+      "Integrated S03 E2E/restart/recovery and independent slice review; S04 secure source-viewer activation.",
+      "Requested product model/resource amendment before dependent implementation; fresh full W2 repository/profile/package/platform/security/accessibility/performance qualification and separate human release gate."
+    ]
+  },
+  "scope_limits": {
+    "nativeCore": "Actual in-process Core HTTP/current human native session/accepted Intent/privacy/exact-copy inspect+derive rights, SQLCipher and encrypted-envelope composition with declared synthetic accepted parser IR and downstream evidence.",
+    "closure": "One independent disposable proof at both existing precommit seams measures canonical counts separately from delivery denial, then performs actual native detach/project close/open/attach and tests old-session denial and exactly-once retry/replay. No installed Tauri or full application process restart is inferred.",
+    "performance": "Twenty fresh warm actual-Core/session/SQLCipher/envelope requests, nearest-rank p95 88.22390000568703ms at the recorded Windows AMD64 host, unchanged100ms. No independent performance remeasurement, model inference, whole PDF/IR read, cold baseline or8GB/16GB qualification.",
+    "historical": "Unchanged migration27/literal populated schema26 and all fault seams, immutable catalog validation, detached Intent snapshot, provenance integrity, native/renderer and package proof are authenticated reviewed R01 history, not fresh R02 execution or reused native/principal PASS receipts.",
+    "deferred": "Integrated S03 E2E/restart/recovery and independent slice review; S04 secure source-viewer activation; any concrete model/resource amendment before dependent implementation; fresh full W2 affected/repository/profile/package/platform/security/privacy/rights/accessibility/performance qualification and the separate human release gate."
+  },
+  "preserved_adverse_observations": [
+    "R01 remains changes-requested at c2e92e7: stop returned409 after invalidation counts2/1/25/24 became3/2/26/25. Its formal review, original reproduction and initial sandbox path-resolution setup failure remain intact.",
+    "F01-red-63 fails both pre-edit regressions with extra canonical publication. F01-green-64 is partial FAIL: invalidation passes, creation still appends17/6/24/23 to18/7/25/24. Development65 is not substituted for fresh R02 qualification.",
+    "R01's retained over-target development timing, initial qualification-helper import-path SETUP_ERROR and publication diagnostics remain preserved through its exact authenticated manifest/review. The exact accepted parser62.5333542-second observation is untouched.",
+    "Read-only frozen-packet authentication emitted the pre-existing sandbox interpreter real-location warning and nevertheless exited0 with no validation errors. The bounded closure proof used the previously established local temporary-project permission; it had no setup or product failure."
+  ],
+  "accepted_prior_performance": {
+    "path": "artifacts/evidence/CAP-05.S02.T03.performance-owner-acceptance-01.md",
+    "sha256": "5dea8e7a2046f5ec229b10a143370c6048e62080da7c3f0f99d700f86219774a",
+    "scope": "Exact owner-accepted62.5333542-second parser observation; no tuning/retest or broader waiver."
+  },
+  "optional_adjacent_findings": [],
+  "notes": "Approve CAP-05.S03.T03 R02 at exact candidate0645daabc0b413dfa58fb5507dd89ad973d2ca5b. Explicitly close CAP-05.S03.T03-R01-F01 as fixed, with no new findings. Independent actual-Core proof confirms both stop publication paths roll back, deny without research text, recover through actual close/reopen with new native authority, and retry/replay exactly once. All nine fresh selected groups, prior adverse records and frozen packet authenticate; unchanged100ms warm p95 is88.2239ms. Approval is bounded to this task's exact Core/native-session/synthetic-IR evidence and does not approve a slice, installed desktop, model/resource tier, parser retest, scope amendment or Wave release.",
+  "evidence_reproduction": {
+    "frozen_packet_authentication": {
+      "result": "PASS",
+      "existing_read_only_binding_function": "taskctl.task_submission_packet_errors",
+      "errors": [],
+      "submitted_at": "2026-10-08T14:00:21+00:00",
+      "packet_sha256": "5939fe076063672ed6826b700cb4bd1f2ddc1489ca7f82d65a6276febcabfcc0",
+      "evidence_reference": {
+        "type": "criterion-manifest",
+        "path": "artifacts/evidence/CAP-05.S03.T03.R02.json",
+        "sha256": "7fce1ae8dd6d8c21165bdad626d5bdc5b0cde21c80d9529a076617267a95cda7",
+        "commit": "0645daabc0b413dfa58fb5507dd89ad973d2ca5b",
+        "recorded_at": "2026-10-08T14:00:21+00:00"
+      },
+      "acceptance_criteria_sha256": "bdb126dfc82e8ed17f35264508c1894cc8aae3d2e1bd3a175e9dc85cba27ae63",
+      "selection_sha256": "48095fb4c1f8fb15e0ca3ca82649ba5ac97bfa92d0a0ba9f78b656b68c31d2c7",
+      "prior_attempt_id": "R01",
+      "formal_open_finding_ids_before_review": [
+        "CAP-05.S03.T03-R01-F01"
+      ],
+      "canonical_selected_command_ids": 5,
+      "changed_paths": 13,
+      "base_ancestry_verified": true,
+      "diagnostic": {
+        "path": "artifacts/tmp/CAP-05.S03.T03.reviewer-R02-freeze-01.json",
+        "sha256": "c213fc3094f9f35bd92db11682611c0393835311185d645630585ef188d89f59"
+      }
+    },
+    "prior_review": {
+      "path": "artifacts/evidence/CAP-05.S03.T03.review-R01.json",
+      "sha256": "e14bb6391896831d7a0f39ccd627ffec92afc937dd1d8020e5d906d23e500005",
+      "result": "changes-requested"
+    },
+    "authenticated_checks": [
+      {
+        "id": "actual-core-resolution-F01",
+        "command_id": "documents:anchors",
+        "result": "PASS",
+        "exit_code": 0,
+        "duration_seconds": 34.40088589998777,
+        "raw_output": {
+          "path": "artifacts/tmp/CAP-05.S03.T03.qualification-R02-68.actual-core-resolution-F01.log",
+          "sha256": "107c1518bc6c60cfcf5155f4ae0e70c3a8da45452771ecc2f66ad6c6efba2ed0",
+          "canonical_sha256": "53dfffa5b70c01f04b3c8e41d1111c254d1b1b0a42deef27ac5694e7fd48dc20"
+        },
+        "executed_cases": 7,
+        "skips": []
+      },
+      {
+        "id": "actual-core-anchor-creation",
+        "command_id": "documents:anchors",
+        "result": "PASS",
+        "exit_code": 0,
+        "duration_seconds": 10.7472028999764,
+        "raw_output": {
+          "path": "artifacts/tmp/CAP-05.S03.T03.qualification-R02-68.actual-core-anchor-creation.log",
+          "sha256": "36424e81c6e434a02c9de705250352907fe6fd01c148f75ad15019789b53d8f9",
+          "canonical_sha256": "808f9debcf77fb2e0e7799113349864dd07fa200d2342aad2b700792624a0e5f"
+        },
+        "executed_cases": 1,
+        "skips": []
+      },
+      {
+        "id": "resolution-citation-invalidation",
+        "command_id": "documents:anchors",
+        "result": "PASS",
+        "exit_code": 0,
+        "duration_seconds": 78.5486513999931,
+        "raw_output": {
+          "path": "artifacts/tmp/CAP-05.S03.T03.qualification-R02-68.resolution-citation-invalidation.log",
+          "sha256": "4a19f1bdf80fa691ccbaa447c6c2b0d4c404cd9669e924ef2dc6dba546524569",
+          "canonical_sha256": "ef501853d4961f44e8afecda70569d97d4aac6ba1f1066ff0b735e9e87922a3b"
+        },
+        "executed_cases": 26,
+        "skips": []
+      },
+      {
+        "id": "strict-native-api",
+        "command_id": "service:unit",
+        "result": "PASS",
+        "exit_code": 0,
+        "duration_seconds": 5.095808999991277,
+        "raw_output": {
+          "path": "artifacts/tmp/CAP-05.S03.T03.qualification-R02-68.strict-native-api.log",
+          "sha256": "5f091851ccbff854a6e6ef0464b4cdc10cbe3f00d344fe78ee563c61921bffed",
+          "canonical_sha256": "81d70bb7fbcf885e5e177d0408fbff06f2b2c90cd0dac3a730ffc4511a7f0f84"
+        },
+        "executed_cases": 6,
+        "skips": []
+      },
+      {
+        "id": "lint",
+        "command_id": "foundation:quality",
+        "result": "PASS",
+        "exit_code": 0,
+        "duration_seconds": 0.13761909998720512,
+        "raw_output": {
+          "path": "artifacts/tmp/CAP-05.S03.T03.qualification-R02-68.lint.log",
+          "sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18",
+          "canonical_sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18"
+        },
+        "executed_cases": null,
+        "skips": []
+      },
+      {
+        "id": "format",
+        "command_id": "foundation:quality",
+        "result": "PASS",
+        "exit_code": 0,
+        "duration_seconds": 0.12994610000168905,
+        "raw_output": {
+          "path": "artifacts/tmp/CAP-05.S03.T03.qualification-R02-68.format.log",
+          "sha256": "eee76f865de5a9f2456950f710ae5d5f9b5bd0ea02aa54f614c5eed6642a0bfd",
+          "canonical_sha256": "eee76f865de5a9f2456950f710ae5d5f9b5bd0ea02aa54f614c5eed6642a0bfd"
+        },
+        "executed_cases": null,
+        "skips": []
+      },
+      {
+        "id": "types",
+        "command_id": "foundation:quality",
+        "result": "PASS",
+        "exit_code": 0,
+        "duration_seconds": 5.1733667999797035,
+        "raw_output": {
+          "path": "artifacts/tmp/CAP-05.S03.T03.qualification-R02-68.types.log",
+          "sha256": "0c37c4158c91ef55c724ba017bf6465f26018199badb08e3ff13f98acdf056c2",
+          "canonical_sha256": "f9b031e5c45aa702cd4fef028d465551cb20a2c4698e0913c7b00766b20ac4d8"
+        },
+        "executed_cases": null,
+        "skips": []
+      },
+      {
+        "id": "architecture",
+        "command_id": "foundation:architecture",
+        "result": "PASS",
+        "exit_code": 0,
+        "duration_seconds": 4.257977800007211,
+        "raw_output": {
+          "path": "artifacts/tmp/CAP-05.S03.T03.qualification-R02-68.architecture.log",
+          "sha256": "51a256bf6a7b2e89ab1d1b97aa19077aabf0e8858a450de1f5ceb155ed5c3e88",
+          "canonical_sha256": "1ba622fdbf569bf9ab13ee46e639b636ea005c560abcd4b168f782d8fbdc3f74"
+        },
+        "executed_cases": null,
+        "skips": []
+      },
+      {
+        "id": "adr-coverage",
+        "command_id": "foundation:adr",
+        "result": "PASS",
+        "exit_code": 0,
+        "duration_seconds": 2.1185586000210606,
+        "raw_output": {
+          "path": "artifacts/tmp/CAP-05.S03.T03.qualification-R02-68.adr-coverage.log",
+          "sha256": "68ae641fdb3e3690d4353d82f88328c921aa069352cbdcd53ab15b69b4f53198",
+          "canonical_sha256": "9f5c4660f2ef41d1ca3dddcdb7cf1ba61345d1ef147d3b061d9b543390fce4d0"
+        },
+        "executed_cases": null,
+        "skips": []
+      }
+    ],
+    "machine_artifact_authentication": {
+      "result": "PASS",
+      "manifest_reference_raw_hashes": 11,
+      "changed_product_inputs": [
+        "services/core-api/src/research_observatory_core/document_revision_service.py",
+        "services/core-api/src/research_observatory_core/source_anchor_repository.py",
+        "tests/anchors/test_native_resolution_composition.py"
+      ],
+      "unchanged_product_inputs_authenticated": 1186,
+      "producer_sha256": "9536105f2d1d3f17595ff68f5fcd4f6185235109043678a2840ba68a49e3db1d",
+      "runtime_input_sha256": "765b653b9c074d820a6ff8821052a8ae78232610d0046f69ef57a61ac96448b0",
+      "total_selected_duration_seconds": 151.34789420000743,
+      "runtime_result_reuse": false,
+      "diagnostic": {
+        "path": "artifacts/tmp/CAP-05.S03.T03.reviewer-R02-authenticate-01.json",
+        "sha256": "b1993e7d11b0525272bab725ab0e688d2bce0b98447b35a6ba6a11cda29bc731"
+      }
+    },
+    "performance_authentication": {
+      "samples": 20,
+      "nearest_rank_p95_ms": 88.22390000568703,
+      "budget_ms": 100,
+      "host_facts": {
+        "os": "Windows-11-10.0.26200-SP0",
+        "architecture": "AMD64",
+        "logicalProcessors": 20,
+        "physicalTotalBytes": 16984227840,
+        "physicalAvailableBytesBeforeChecks": 4689358848,
+        "hardwareTierQualification": false
+      }
+    },
+    "independent_focused_closure": {
+      "result": "PASS",
+      "candidate_commit": "0645daabc0b413dfa58fb5507dd89ad973d2ca5b",
+      "producer": {
+        "path": "artifacts/tmp/CAP-05.S03.T03.reviewer-R02-closure-01.py",
+        "sha256": "38b28df82b45e42c985e7d22618684ffaf379043a6d6aa6c5e500fc40d85cf46"
+      },
+      "report": {
+        "path": "artifacts/tmp/CAP-05.S03.T03.reviewer-R02-closure-01.json",
+        "sha256": "a38ed2f009aa4d90cbec4bd32afc45815a870b4d0be32458d8358a1411ed0db7"
+      },
+      "raw_output": {
+        "path": "artifacts/tmp/CAP-05.S03.T03.reviewer-R02-closure-01.log",
+        "sha256": "d47aeb75f6bedd6f07af31e56559db414b7dde6b66ff4a236395af2737f5ab53"
+      },
+      "observations": [
+        {
+          "mode": "invalidation",
+          "stop_seam": "anchor-dependents-stale",
+          "stop_steps": [
+            "anchor-dependents-stale"
+          ],
+          "before": {
+            "dependency_impact_runs": 2,
+            "dependency_stale_causes": 1,
+            "provenance_events": 25,
+            "outbox_events": 24
+          },
+          "after_stop_denial": {
+            "dependency_impact_runs": 2,
+            "dependency_stale_causes": 1,
+            "provenance_events": 25,
+            "outbox_events": 24
+          },
+          "denied_http_status": 409,
+          "research_text_disclosed": false,
+          "old_session_http_status": 409,
+          "after_fresh_session_retry": {
+            "dependency_impact_runs": 3,
+            "dependency_stale_causes": 2,
+            "provenance_events": 26,
+            "outbox_events": 25
+          },
+          "after_idempotent_replay": {
+            "dependency_impact_runs": 3,
+            "dependency_stale_causes": 2,
+            "provenance_events": 26,
+            "outbox_events": 25
+          },
+          "actual_detach_close_open_attach": true,
+          "fresh_session_differs": true
+        },
+        {
+          "mode": "creation",
+          "stop_seam": "anchor-recorded",
+          "stop_steps": [
+            "anchor-recorded"
+          ],
+          "before": {
+            "aggregate_revisions": 17,
+            "documents": 6,
+            "provenance_events": 24,
+            "outbox_events": 23
+          },
+          "after_stop_denial": {
+            "aggregate_revisions": 17,
+            "documents": 6,
+            "provenance_events": 24,
+            "outbox_events": 23
+          },
+          "denied_http_status": 409,
+          "research_text_disclosed": false,
+          "old_session_http_status": 409,
+          "after_fresh_session_retry": {
+            "aggregate_revisions": 18,
+            "documents": 7,
+            "provenance_events": 25,
+            "outbox_events": 24
+          },
+          "after_idempotent_replay": {
+            "aggregate_revisions": 18,
+            "documents": 7,
+            "provenance_events": 25,
+            "outbox_events": 24
+          },
+          "actual_detach_close_open_attach": true,
+          "fresh_session_differs": true
+        }
+      ],
+      "scope": "Declared synthetic accepted IR; actual in-process Core HTTP/current native session/SQLCipher/encrypted envelopes/canonical dependency publication. No parser inference, performance remeasurement, installed Tauri, hardware tier or Wave approval."
+    }
+  }
+}

@@ -1,0 +1,334 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "CAP-05.S03.T03",
+  "baseCommit": "c2e92e7575a04aa8f8e5642623868e3b9adfdc1d",
+  "commit": "0645daabc0b413dfa58fb5507dd89ad973d2ca5b",
+  "branch": "codex/w2-implementation",
+  "changedFiles": [
+    "artifacts/evidence/CAP-05.S03.T03.R01.json",
+    "artifacts/evidence/CAP-05.S03.T03.review-R01.json",
+    "artifacts/evidence/CAP-05.S03.T03.task-start.md",
+    "docs/adr/ADR-0046-bind-immutable-document-revisions-to-existing-human-authority.md",
+    "docs/planning-implementation-plan.md",
+    "planning/backlog.yaml",
+    "planning/review-site/CAP-05/CAP-05.S03.T03.html",
+    "planning/review-site/CAP-05/CAP-05.S03.html",
+    "planning/review-site/manifest.json",
+    "planning/status-summary.md",
+    "services/core-api/src/research_observatory_core/document_revision_service.py",
+    "services/core-api/src/research_observatory_core/source_anchor_repository.py",
+    "tests/anchors/test_native_resolution_composition.py"
+  ],
+  "supersedes": {
+    "path": "artifacts/evidence/CAP-05.S03.T03.R01.json",
+    "sha256": "ba955d61e2ef7e191ba39e18fbc422002032db6982eb41e6d59f0197f9b3f2a7",
+    "commit": "c2e92e7575a04aa8f8e5642623868e3b9adfdc1d"
+  },
+  "reviewerDisposition": {
+    "openFindingIds": [
+      "CAP-05.S03.T03-R01-F01"
+    ],
+    "rootCauseAnalysis": "The service supplied a frozen actor callback, bypassing its trusted native-stop latch at the repository's final in-writer authority check. The existing test detached after repository return and therefore only proved delivery denial. The missed row now requires stop inside publication, unchanged durable counts, actual close/reopen, old-session denial and exactly-once retry. Guarded actor delivery restores the existing live scope; anchor creation also needs a final current-actor/durable-authority fence after append because its owning protected-object publisher has a distinct commit path. Red63 and partial64 remain failures; both boundaries are now covered by fresh R02 composition."
+  },
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "checkIds": [
+        "actual-core-resolution-F01",
+        "actual-core-anchor-creation",
+        "resolution-citation-invalidation"
+      ],
+      "evidence": [
+        "Exact accepted source-revision context, adjacent text, metadata and canonical candidate/ambiguous/unresolved reference targets remain readable after reopen without whole PDF/IR reads or silent movement to a later accepted head.",
+        "Broken-anchor propagation retains conservative direct/transitive canonical dependency, provenance and outbox publication. A trusted stop at the publication seam now denies and rolls back all four durable counts. Actual close/reopen invalidates the old native session; the valid retry appends one invalidation and replay adds none.",
+        "The same current native stop guard and final durable-authority fence roll back anchor creation before its owning writer commit. Fresh twenty warm actual-Core resolutions meet the unchanged100ms nearest-rank p95 budget."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "checkIds": [
+        "actual-core-resolution-F01",
+        "actual-core-anchor-creation",
+        "resolution-citation-invalidation",
+        "strict-native-api"
+      ],
+      "evidence": [
+        "F01 is replayed at its exact precommit seam with bounded HTTP409 and no research text or canonical invalidation/run/stale/provenance/outbox writes. Recovery uses actual native detach, project close/open and attach; old authority denies and a fresh valid retry publishes exactly once.",
+        "Anchor creation's own precommit seam also preserves aggregate/document/provenance/outbox counts after trusted stop. Current session/Intent/privacy/exact-copy rights, retained-hash Intent tampering, post-repository delivery stop, failed/foreign lookup rollback, strict API fields and durable denial auditing remain covered.",
+        "R01's independently reviewed unchanged migration, catalog, generator, native/renderer and package proof remains historical. R02 does not report a fresh replay or cached PASS for those unchanged boundaries; its exact source byte authentication and bounded impact analysis are recorded separately."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "checkIds": [
+        "actual-core-resolution-F01",
+        "actual-core-anchor-creation",
+        "lint",
+        "format",
+        "types",
+        "architecture",
+        "adr-coverage"
+      ],
+      "evidence": [
+        "The incremental product correction consists of the existing scoped actor guard and final anchor-creation current actor/authority check, plus two failure-first regressions and their acceptance/Proposed ADR0046 mapping. R01 findings, checks and approvals are retained append-only; taskctl and generated views reflect the adverse round.",
+        "Existing accepted ADRs, approved Wave/UX packets, contracts/migration27/predecessor bytes, original-source authentication and rights audit remain unchanged. No automation-framework source behavior, parser retest/tuning, resource-tier or scope/criterion change is introduced.",
+        "Fresh narrow quality, architecture and exact R01-to-R02 ADR checks pass. The requested configurable/resource-suitable models and W5 larger-tier deferral remain separate owner direction pending concrete product amendment approval."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "verificationSelection": {
+    "selectedCommandIds": [
+      "documents:anchors",
+      "foundation:adr",
+      "foundation:architecture",
+      "foundation:quality",
+      "service:unit"
+    ],
+    "riskAnalysis": "Replay CAP-05.S03.T03-R01-F01 and the incremental anchor creation commit path. Fresh actual Core/native/SQLCipher/envelope tests prove rollback, delivery denial, current durable Intent/privacy/rights, real reopen and exactly-once retry; fresh unchanged100ms performance proves the guard did not regress resolution. Selected affected API/contract/repository checks, quality, architecture and exact incremental ADR coverage. Authenticate unchanged R01 source/evidence for historical coverage; no full history/profile replay, new runtime cache or native-proof reuse.",
+    "deferred": [
+      "Unchanged R01 migration27/literal v26 recovery, portable generators, immutable catalog, native Rust/renderer and packaging inputs are authenticated historical proof, not fresh R02 execution or reused PASS receipts. No credible impact path from the two authority edits to those unchanged boundaries; full repository/profile/history replay is not selected.",
+      "Integrated S03 E2E/restart/recovery and independent slice review; S04 secure source-viewer activation.",
+      "Requested product model/resource amendment before dependent implementation; fresh full W2 repository/profile/package/platform/security/accessibility/performance qualification and separate human release gate."
+    ]
+  },
+  "checks": [
+    {
+      "id": "actual-core-resolution-F01",
+      "commandId": "documents:anchors",
+      "exitCode": 0,
+      "durationSeconds": 34.40088589998777,
+      "command": "./artifacts/tmp/CAP-05.S02.T03.check-runtime-122/python/python.exe -B -m unittest tests.anchors.test_native_resolution_composition -v",
+      "workingDirectory": ".",
+      "commit": "0645daabc0b413dfa58fb5507dd89ad973d2ca5b",
+      "result": "PASS",
+      "rawOutput": "artifacts/tmp/CAP-05.S03.T03.qualification-R02-68.actual-core-resolution-F01.log",
+      "rawOutputSha256": "107c1518bc6c60cfcf5155f4ae0e70c3a8da45452771ecc2f66ad6c6efba2ed0",
+      "rawOutputCanonicalSha256": "53dfffa5b70c01f04b3c8e41d1111c254d1b1b0a42deef27ac5694e7fd48dc20",
+      "inputReport": "artifacts/tmp/CAP-05.S03.T03.qualification-R02-68.json",
+      "inputReportSha256": "af762f9649e4871ee0aa72de29ac35389e79620fce9da0a9111b5e9ba5000d73",
+      "provenance": "Fresh execution at this fixed committed candidate with write/delete-denied tracked inputs and authenticated immutable owned Python runtime. Actual in-process Core HTTP/native session/SQLCipher/encrypted envelopes; declared synthetic accepted parser IR. No installed Tauri, model inference, cached execution or hardware-tier qualification."
+    },
+    {
+      "id": "actual-core-anchor-creation",
+      "commandId": "documents:anchors",
+      "exitCode": 0,
+      "durationSeconds": 10.7472028999764,
+      "command": "./artifacts/tmp/CAP-05.S02.T03.check-runtime-122/python/python.exe -B -m unittest tests.anchors.test_native_anchor_composition -v",
+      "workingDirectory": ".",
+      "commit": "0645daabc0b413dfa58fb5507dd89ad973d2ca5b",
+      "result": "PASS",
+      "rawOutput": "artifacts/tmp/CAP-05.S03.T03.qualification-R02-68.actual-core-anchor-creation.log",
+      "rawOutputSha256": "36424e81c6e434a02c9de705250352907fe6fd01c148f75ad15019789b53d8f9",
+      "rawOutputCanonicalSha256": "808f9debcf77fb2e0e7799113349864dd07fa200d2342aad2b700792624a0e5f",
+      "inputReport": "artifacts/tmp/CAP-05.S03.T03.qualification-R02-68.json",
+      "inputReportSha256": "af762f9649e4871ee0aa72de29ac35389e79620fce9da0a9111b5e9ba5000d73",
+      "provenance": "Fresh execution at this fixed committed candidate with write/delete-denied tracked inputs and authenticated immutable owned Python runtime. Actual in-process Core HTTP/native session/SQLCipher/encrypted envelopes; declared synthetic accepted parser IR. No installed Tauri, model inference, cached execution or hardware-tier qualification."
+    },
+    {
+      "id": "resolution-citation-invalidation",
+      "commandId": "documents:anchors",
+      "exitCode": 0,
+      "durationSeconds": 78.5486513999931,
+      "command": "./artifacts/tmp/CAP-05.S02.T03.check-runtime-122/python/python.exe -B -m unittest tests.anchors.test_anchor_resolution tests.anchors.test_anchor_contracts tests.anchors.test_anchor_repository -v",
+      "workingDirectory": ".",
+      "commit": "0645daabc0b413dfa58fb5507dd89ad973d2ca5b",
+      "result": "PASS",
+      "rawOutput": "artifacts/tmp/CAP-05.S03.T03.qualification-R02-68.resolution-citation-invalidation.log",
+      "rawOutputSha256": "4a19f1bdf80fa691ccbaa447c6c2b0d4c404cd9669e924ef2dc6dba546524569",
+      "rawOutputCanonicalSha256": "ef501853d4961f44e8afecda70569d97d4aac6ba1f1066ff0b735e9e87922a3b",
+      "inputReport": "artifacts/tmp/CAP-05.S03.T03.qualification-R02-68.json",
+      "inputReportSha256": "af762f9649e4871ee0aa72de29ac35389e79620fce9da0a9111b5e9ba5000d73",
+      "provenance": "Fresh execution at this fixed committed candidate with write/delete-denied tracked inputs and authenticated immutable owned Python runtime. Actual in-process Core HTTP/native session/SQLCipher/encrypted envelopes; declared synthetic accepted parser IR. No installed Tauri, model inference, cached execution or hardware-tier qualification."
+    },
+    {
+      "id": "strict-native-api",
+      "commandId": "service:unit",
+      "exitCode": 0,
+      "durationSeconds": 5.095808999991277,
+      "command": "./artifacts/tmp/CAP-05.S02.T03.check-runtime-122/python/python.exe -B -m unittest tests.service.test_source_anchor_api tests.service.test_document_revision_api -v",
+      "workingDirectory": ".",
+      "commit": "0645daabc0b413dfa58fb5507dd89ad973d2ca5b",
+      "result": "PASS",
+      "rawOutput": "artifacts/tmp/CAP-05.S03.T03.qualification-R02-68.strict-native-api.log",
+      "rawOutputSha256": "5f091851ccbff854a6e6ef0464b4cdc10cbe3f00d344fe78ee563c61921bffed",
+      "rawOutputCanonicalSha256": "81d70bb7fbcf885e5e177d0408fbff06f2b2c90cd0dac3a730ffc4511a7f0f84",
+      "inputReport": "artifacts/tmp/CAP-05.S03.T03.qualification-R02-68.json",
+      "inputReportSha256": "af762f9649e4871ee0aa72de29ac35389e79620fce9da0a9111b5e9ba5000d73",
+      "provenance": "Fresh execution at this fixed committed candidate with write/delete-denied tracked inputs and authenticated immutable owned Python runtime. Actual in-process Core HTTP/native session/SQLCipher/encrypted envelopes; declared synthetic accepted parser IR. No installed Tauri, model inference, cached execution or hardware-tier qualification."
+    },
+    {
+      "id": "lint",
+      "commandId": "foundation:quality",
+      "exitCode": 0,
+      "durationSeconds": 0.13761909998720512,
+      "command": "./artifacts/tmp/CAP-05.S02.T03.check-runtime-122/python/python.exe -B -m ruff check services/core-api/src/research_observatory_core/document_revision_service.py services/core-api/src/research_observatory_core/source_anchor_repository.py tests/anchors/test_native_resolution_composition.py",
+      "workingDirectory": ".",
+      "commit": "0645daabc0b413dfa58fb5507dd89ad973d2ca5b",
+      "result": "PASS",
+      "rawOutput": "artifacts/tmp/CAP-05.S03.T03.qualification-R02-68.lint.log",
+      "rawOutputSha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18",
+      "rawOutputCanonicalSha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18",
+      "inputReport": "artifacts/tmp/CAP-05.S03.T03.qualification-R02-68.json",
+      "inputReportSha256": "af762f9649e4871ee0aa72de29ac35389e79620fce9da0a9111b5e9ba5000d73",
+      "provenance": "Fresh execution at this fixed committed candidate with write/delete-denied tracked inputs and authenticated immutable owned Python runtime. Actual in-process Core HTTP/native session/SQLCipher/encrypted envelopes; declared synthetic accepted parser IR. No installed Tauri, model inference, cached execution or hardware-tier qualification."
+    },
+    {
+      "id": "format",
+      "commandId": "foundation:quality",
+      "exitCode": 0,
+      "durationSeconds": 0.12994610000168905,
+      "command": "./artifacts/tmp/CAP-05.S02.T03.check-runtime-122/python/python.exe -B -m ruff format --check services/core-api/src/research_observatory_core/document_revision_service.py services/core-api/src/research_observatory_core/source_anchor_repository.py tests/anchors/test_native_resolution_composition.py",
+      "workingDirectory": ".",
+      "commit": "0645daabc0b413dfa58fb5507dd89ad973d2ca5b",
+      "result": "PASS",
+      "rawOutput": "artifacts/tmp/CAP-05.S03.T03.qualification-R02-68.format.log",
+      "rawOutputSha256": "eee76f865de5a9f2456950f710ae5d5f9b5bd0ea02aa54f614c5eed6642a0bfd",
+      "rawOutputCanonicalSha256": "eee76f865de5a9f2456950f710ae5d5f9b5bd0ea02aa54f614c5eed6642a0bfd",
+      "inputReport": "artifacts/tmp/CAP-05.S03.T03.qualification-R02-68.json",
+      "inputReportSha256": "af762f9649e4871ee0aa72de29ac35389e79620fce9da0a9111b5e9ba5000d73",
+      "provenance": "Fresh execution at this fixed committed candidate with write/delete-denied tracked inputs and authenticated immutable owned Python runtime. Actual in-process Core HTTP/native session/SQLCipher/encrypted envelopes; declared synthetic accepted parser IR. No installed Tauri, model inference, cached execution or hardware-tier qualification."
+    },
+    {
+      "id": "types",
+      "commandId": "foundation:quality",
+      "exitCode": 0,
+      "durationSeconds": 5.1733667999797035,
+      "command": "./artifacts/tmp/CAP-05.S02.T03.check-runtime-122/python/python.exe -B -m mypy --no-incremental services/core-api/src/research_observatory_core/document_revision_service.py services/core-api/src/research_observatory_core/source_anchor_repository.py",
+      "workingDirectory": ".",
+      "commit": "0645daabc0b413dfa58fb5507dd89ad973d2ca5b",
+      "result": "PASS",
+      "rawOutput": "artifacts/tmp/CAP-05.S03.T03.qualification-R02-68.types.log",
+      "rawOutputSha256": "0c37c4158c91ef55c724ba017bf6465f26018199badb08e3ff13f98acdf056c2",
+      "rawOutputCanonicalSha256": "f9b031e5c45aa702cd4fef028d465551cb20a2c4698e0913c7b00766b20ac4d8",
+      "inputReport": "artifacts/tmp/CAP-05.S03.T03.qualification-R02-68.json",
+      "inputReportSha256": "af762f9649e4871ee0aa72de29ac35389e79620fce9da0a9111b5e9ba5000d73",
+      "provenance": "Fresh execution at this fixed committed candidate with write/delete-denied tracked inputs and authenticated immutable owned Python runtime. Actual in-process Core HTTP/native session/SQLCipher/encrypted envelopes; declared synthetic accepted parser IR. No installed Tauri, model inference, cached execution or hardware-tier qualification."
+    },
+    {
+      "id": "architecture",
+      "commandId": "foundation:architecture",
+      "exitCode": 0,
+      "durationSeconds": 4.257977800007211,
+      "command": "./artifacts/tmp/CAP-05.S02.T03.check-runtime-122/python/python.exe -B tools/architecture_check.py --repo .",
+      "workingDirectory": ".",
+      "commit": "0645daabc0b413dfa58fb5507dd89ad973d2ca5b",
+      "result": "PASS",
+      "rawOutput": "artifacts/tmp/CAP-05.S03.T03.qualification-R02-68.architecture.log",
+      "rawOutputSha256": "51a256bf6a7b2e89ab1d1b97aa19077aabf0e8858a450de1f5ceb155ed5c3e88",
+      "rawOutputCanonicalSha256": "1ba622fdbf569bf9ab13ee46e639b636ea005c560abcd4b168f782d8fbdc3f74",
+      "inputReport": "artifacts/tmp/CAP-05.S03.T03.qualification-R02-68.json",
+      "inputReportSha256": "af762f9649e4871ee0aa72de29ac35389e79620fce9da0a9111b5e9ba5000d73",
+      "provenance": "Fresh execution at this fixed committed candidate with write/delete-denied tracked inputs and authenticated immutable owned Python runtime. Actual in-process Core HTTP/native session/SQLCipher/encrypted envelopes; declared synthetic accepted parser IR. No installed Tauri, model inference, cached execution or hardware-tier qualification."
+    },
+    {
+      "id": "adr-coverage",
+      "commandId": "foundation:adr",
+      "exitCode": 0,
+      "durationSeconds": 2.1185586000210606,
+      "command": "./artifacts/tmp/CAP-05.S02.T03.check-runtime-122/python/python.exe -B tools/adr_check.py --repo . --base c2e92e7575a04aa8f8e5642623868e3b9adfdc1d --head 0645daabc0b413dfa58fb5507dd89ad973d2ca5b",
+      "workingDirectory": ".",
+      "commit": "0645daabc0b413dfa58fb5507dd89ad973d2ca5b",
+      "result": "PASS",
+      "rawOutput": "artifacts/tmp/CAP-05.S03.T03.qualification-R02-68.adr-coverage.log",
+      "rawOutputSha256": "68ae641fdb3e3690d4353d82f88328c921aa069352cbdcd53ab15b69b4f53198",
+      "rawOutputCanonicalSha256": "9f5c4660f2ef41d1ca3dddcdb7cf1ba61345d1ef147d3b061d9b543390fce4d0",
+      "inputReport": "artifacts/tmp/CAP-05.S03.T03.qualification-R02-68.json",
+      "inputReportSha256": "af762f9649e4871ee0aa72de29ac35389e79620fce9da0a9111b5e9ba5000d73",
+      "provenance": "Fresh execution at this fixed committed candidate with write/delete-denied tracked inputs and authenticated immutable owned Python runtime. Actual in-process Core HTTP/native session/SQLCipher/encrypted envelopes; declared synthetic accepted parser IR. No installed Tauri, model inference, cached execution or hardware-tier qualification."
+    }
+  ],
+  "machineArtifacts": [
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T03.qualification-R02-68.json",
+      "sha256": "af762f9649e4871ee0aa72de29ac35389e79620fce9da0a9111b5e9ba5000d73"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T03.qualification-R02-68.py",
+      "sha256": "9536105f2d1d3f17595ff68f5fcd4f6185235109043678a2840ba68a49e3db1d"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T03.qualification-R02-68.timing.json",
+      "sha256": "46880f153d409600517fbc6f1fb961f1b39167edec0c6df496d3085794c309db"
+    }
+  ],
+  "scopeLimits": {
+    "nativeCore": "R01 F01 native-stop publication rollback, actual close/reopen/new-session denial and exactly-once retry; incremental anchor creation actor/precommit fence; resolution/citation/rights/original integrity and unchanged 100ms p95. Actual current Core HTTP/session/SQLCipher/encrypted envelopes with declared synthetic parser IR. No model inference or installed Tauri claim.",
+    "performance": {
+      "samples": 20,
+      "warmP95Ms": 88.22390000568703,
+      "targetMs": 100,
+      "method": "Nearest-rank p95 of fresh actual in-process HTTP/current native authority/SQLCipher/encrypted-context requests; no parser inference, installed Tauri or hardware-tier qualification."
+    },
+    "activation": "S04 owns attachment activation, workspace routing and original-byte source viewer; this task supplies bounded resolution/citation ports."
+  },
+  "adverseObservations": [
+    "R01 is changes-requested, not approval. Its real late-stop reproduction returned409 after canonical dependency/provenance/outbox publication.",
+    "Both F01 regressions failed before source edits in red63. Guarding the actor closed invalidation/recovery but creation still failed in partial64. Adding the creation publisher's final current authority check closed both in development65. All original logs remain preserved."
+  ],
+  "historicalObservations": [
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T03.reviewer-late-stop-01.py",
+      "sha256": "efddac2495020b119fde90b12458d8eaffdf4330578f4b13d7a84dc8e0c2da4b",
+      "scope": "Preserved adverse, setup or development observation at its original inputs; not current committed-candidate qualification."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T03.reviewer-late-stop-01.log",
+      "sha256": "4a30e7ed40c5e4764d64c18eb5c55fb28826f765ccb50602a0cf69d98e32bae5",
+      "scope": "Preserved adverse, setup or development observation at its original inputs; not current committed-candidate qualification."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T03.reviewer-late-stop-02.log",
+      "sha256": "c37c69a39e7ef60b910289ce0bf3af784bfe4bd70de0fc20e77e3d095c65df1e",
+      "scope": "Preserved adverse, setup or development observation at its original inputs; not current committed-candidate qualification."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T03.F01-red-63.log",
+      "sha256": "e75caac2864a8f623019b073f7ff4193c4440d8efcbcec051d601426466ba4d0",
+      "scope": "Preserved adverse, setup or development observation at its original inputs; not current committed-candidate qualification."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T03.F01-green-64.log",
+      "sha256": "4096bcbd05227de66f1f4eb87011b533161972fa71aaf20f7d4e067970f8dba6",
+      "scope": "Preserved adverse, setup or development observation at its original inputs; not current committed-candidate qualification."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T03.F01-green-65.log",
+      "sha256": "330d596dffebc7cd4f47a774d40e8c8bd60b05884c214f151592096772fc377d",
+      "scope": "Preserved adverse, setup or development observation at its original inputs; not current committed-candidate qualification."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S03.T03.qualification-50.console.log",
+      "sha256": "651e95e48d13d1678d1916d904c86f428c37ef51c64f5f83e45feb59415b8173",
+      "scope": "Preserved adverse, setup or development observation at its original inputs; not current committed-candidate qualification."
+    }
+  ],
+  "historicalReviewedCoverage": {
+    "manifest": {
+      "path": "artifacts/evidence/CAP-05.S03.T03.R01.json",
+      "sha256": "ba955d61e2ef7e191ba39e18fbc422002032db6982eb41e6d59f0197f9b3f2a7",
+      "candidate": "c2e92e7575a04aa8f8e5642623868e3b9adfdc1d"
+    },
+    "review": {
+      "path": "artifacts/evidence/CAP-05.S03.T03.review-R01.json",
+      "sha256": "e14bb6391896831d7a0f39ccd627ffec92afc937dd1d8020e5d906d23e500005",
+      "result": "changes-requested"
+    },
+    "unchangedInputs": {
+      "receipt": "artifacts/tmp/CAP-05.S03.T03.qualification-50.json",
+      "sha256": "7a82f9741474fb4ff10781695ef35df7038cd5aad8cf89422a814a8816547913",
+      "candidate": "c2e92e7575a04aa8f8e5642623868e3b9adfdc1d",
+      "authenticatedFiles": 1186,
+      "resultReuse": false,
+      "scope": "Historical boundary authentication only; current native/principal/performance checks execute fresh."
+    },
+    "resultReuse": false,
+    "scope": "R01 already reviewed criterion3 and unchanged boundaries; its blocking F01 is not approved or erased. Only R02's fresh risk-selected proof can close the changed authority boundary."
+  },
+  "acceptedPriorPerformance": {
+    "path": "artifacts/evidence/CAP-05.S02.T03.performance-owner-acceptance-01.md",
+    "sha256": "5dea8e7a2046f5ec229b10a143370c6048e62080da7c3f0f99d700f86219774a",
+    "scope": "Preserve the exact prior 62.5333542-second owner-accepted parser observation; no tuning/retest or broader waiver."
+  }
+}

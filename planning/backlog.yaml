@@ -31032,12 +31032,12 @@ capabilities:
       verification_commands:
       - python tools/verify.py --profile documents
       - python tools/verify.py --profile service
-      status: IN_PROGRESS
+      status: DONE
       owner: codex-w2-implementation
       branch: codex/w2-implementation
       started_at: '2026-10-08T05:21:04+00:00'
-      updated_at: '2026-10-08T13:25:53+00:00'
-      completed_at: null
+      updated_at: '2026-10-08T14:22:44+00:00'
+      completed_at: '2026-10-08T14:22:44+00:00'
       blocker: null
       implementation_notes: ''
       evidence:
@@ -31046,22 +31046,24 @@ capabilities:
         sha256: ba955d61e2ef7e191ba39e18fbc422002032db6982eb41e6d59f0197f9b3f2a7
         commit: c2e92e7575a04aa8f8e5642623868e3b9adfdc1d
         recorded_at: '2026-10-08T13:15:29+00:00'
+      - type: criterion-manifest
+        path: artifacts/evidence/CAP-05.S03.T03.R02.json
+        sha256: 7fce1ae8dd6d8c21165bdad626d5bdc5b0cde21c80d9529a076617267a95cda7
+        commit: 0645daabc0b413dfa58fb5507dd89ad973d2ca5b
+        recorded_at: '2026-10-08T14:00:21+00:00'
       review: &id094
         reviewer: agent:/root/t03_task_review
-        result: changes-requested
-        reviewed_at: '2026-10-08T13:25:53+00:00'
-        notes: 'Changes requested for CAP-05.S03.T03 at exact R01 candidate c2e92e7575a04aa8f8e5642623868e3b9adfdc1d. F01
-          is the sole blocking finding: a native stop before the owning context writer commits returns 409 without research
-          content but still publishes invalidation, downstream staleness, provenance and outbox. The 21 selected group PASS
-          and 87.4281 ms warm resolver p95 are authentic within their declared scope and remain retained; they do not close
-          the newly reproduced authority boundary. Correct and replay this focused boundary in a superseding candidate. No
-          slice, installed desktop, minimum-tier, parser or Wave/release approval is given.'
+        result: approved
+        reviewed_at: '2026-10-08T14:22:44+00:00'
+        notes: Approve CAP-05.S03.T03 R02 at exact candidate0645daabc0b413dfa58fb5507dd89ad973d2ca5b. Explicitly close CAP-05.S03.T03-R01-F01
+          as fixed, with no new findings. Independent actual-Core proof confirms both stop publication paths roll back, deny
+          without research text, recover through actual close/reopen with new native authority, and retry/replay exactly once.
+          All nine fresh selected groups, prior adverse records and frozen packet authenticate; unchanged100ms warm p95 is88.2239ms.
+          Approval is bounded to this task's exact Core/native-session/synthetic-IR evidence and does not approve a slice,
+          installed desktop, model/resource tier, parser retest, scope amendment or Wave release.
       base_sha: c1899e0de48e79221ff0335a31c976ef87e02db5
-      lease:
-        claimed_by: codex-w2-implementation
-        claimed_at: '2026-10-08T13:25:53+00:00'
-        expires_at: '2026-10-08T21:25:53+00:00'
-      verification_state: null
+      lease: null
+      verification_state: passed
       worktree: .
       platform_targets:
       - windows-x64
@@ -31283,7 +31285,16 @@ capabilities:
             - packaging:unit
             - service:unit
             packet_sha256: 2d9dc8ecb8c2d690f3b77828463d2b3469a36fb8aa961f75444d45252c66b7e6
-          review: *id094
+          review:
+            reviewer: agent:/root/t03_task_review
+            result: changes-requested
+            reviewed_at: '2026-10-08T13:25:53+00:00'
+            notes: 'Changes requested for CAP-05.S03.T03 at exact R01 candidate c2e92e7575a04aa8f8e5642623868e3b9adfdc1d.
+              F01 is the sole blocking finding: a native stop before the owning context writer commits returns 409 without
+              research content but still publishes invalidation, downstream staleness, provenance and outbox. The 21 selected
+              group PASS and 87.4281 ms warm resolver p95 are authentic within their declared scope and remain retained; they
+              do not close the newly reproduced authority boundary. Correct and replay this focused boundary in a superseding
+              candidate. No slice, installed desktop, minimum-tier, parser or Wave/release approval is given.'
           ledger:
             path: artifacts/evidence/CAP-05.S03.T03.review-R01.json
             sha256: e14bb6391896831d7a0f39ccd627ffec92afc937dd1d8020e5d906d23e500005
@@ -31357,6 +31368,137 @@ capabilities:
               prior_attempt_id: null
               replayed_finding_ids: []
               closed_finding_ids: []
+        - submission:
+            id: R02
+            submitted_by: codex-w2-implementation
+            submitted_at: '2026-10-08T14:00:21+00:00'
+            candidate_commit: 0645daabc0b413dfa58fb5507dd89ad973d2ca5b
+            base_commit: c2e92e7575a04aa8f8e5642623868e3b9adfdc1d
+            branch: codex/w2-implementation
+            evidence_reference:
+              type: criterion-manifest
+              path: artifacts/evidence/CAP-05.S03.T03.R02.json
+              sha256: 7fce1ae8dd6d8c21165bdad626d5bdc5b0cde21c80d9529a076617267a95cda7
+              commit: 0645daabc0b413dfa58fb5507dd89ad973d2ca5b
+              recorded_at: '2026-10-08T14:00:21+00:00'
+            acceptance_criteria_sha256: bdb126dfc82e8ed17f35264508c1894cc8aae3d2e1bd3a175e9dc85cba27ae63
+            changed_paths:
+            - artifacts/evidence/CAP-05.S03.T03.R01.json
+            - artifacts/evidence/CAP-05.S03.T03.review-R01.json
+            - artifacts/evidence/CAP-05.S03.T03.task-start.md
+            - docs/adr/ADR-0046-bind-immutable-document-revisions-to-existing-human-authority.md
+            - docs/planning-implementation-plan.md
+            - planning/backlog.yaml
+            - planning/review-site/CAP-05/CAP-05.S03.T03.html
+            - planning/review-site/CAP-05/CAP-05.S03.html
+            - planning/review-site/manifest.json
+            - planning/status-summary.md
+            - services/core-api/src/research_observatory_core/document_revision_service.py
+            - services/core-api/src/research_observatory_core/source_anchor_repository.py
+            - tests/anchors/test_native_resolution_composition.py
+            selected_checks:
+            - ./artifacts/tmp/CAP-05.S02.T03.check-runtime-122/python/python.exe -B -m unittest tests.anchors.test_native_resolution_composition
+              -v
+            - ./artifacts/tmp/CAP-05.S02.T03.check-runtime-122/python/python.exe -B -m unittest tests.anchors.test_native_anchor_composition
+              -v
+            - ./artifacts/tmp/CAP-05.S02.T03.check-runtime-122/python/python.exe -B -m unittest tests.anchors.test_anchor_resolution
+              tests.anchors.test_anchor_contracts tests.anchors.test_anchor_repository -v
+            - ./artifacts/tmp/CAP-05.S02.T03.check-runtime-122/python/python.exe -B -m unittest tests.service.test_source_anchor_api
+              tests.service.test_document_revision_api -v
+            - ./artifacts/tmp/CAP-05.S02.T03.check-runtime-122/python/python.exe -B -m ruff check services/core-api/src/research_observatory_core/document_revision_service.py
+              services/core-api/src/research_observatory_core/source_anchor_repository.py tests/anchors/test_native_resolution_composition.py
+            - ./artifacts/tmp/CAP-05.S02.T03.check-runtime-122/python/python.exe -B -m ruff format --check services/core-api/src/research_observatory_core/document_revision_service.py
+              services/core-api/src/research_observatory_core/source_anchor_repository.py tests/anchors/test_native_resolution_composition.py
+            - ./artifacts/tmp/CAP-05.S02.T03.check-runtime-122/python/python.exe -B -m mypy --no-incremental services/core-api/src/research_observatory_core/document_revision_service.py
+              services/core-api/src/research_observatory_core/source_anchor_repository.py
+            - ./artifacts/tmp/CAP-05.S02.T03.check-runtime-122/python/python.exe -B tools/architecture_check.py --repo .
+            - ./artifacts/tmp/CAP-05.S02.T03.check-runtime-122/python/python.exe -B tools/adr_check.py --repo . --base c2e92e7575a04aa8f8e5642623868e3b9adfdc1d
+              --head 0645daabc0b413dfa58fb5507dd89ad973d2ca5b
+            deferred_checks:
+            - Unchanged R01 migration27/literal v26 recovery, portable generators, immutable catalog, native Rust/renderer
+              and packaging inputs are authenticated historical proof, not fresh R02 execution or reused PASS receipts. No
+              credible impact path from the two authority edits to those unchanged boundaries; full repository/profile/history
+              replay is not selected.
+            - Integrated S03 E2E/restart/recovery and independent slice review; S04 secure source-viewer activation.
+            - Requested product model/resource amendment before dependent implementation; fresh full W2 repository/profile/package/platform/security/accessibility/performance
+              qualification and separate human release gate.
+            selection_rationale: Replay CAP-05.S03.T03-R01-F01 and the incremental anchor creation commit path. Fresh actual
+              Core/native/SQLCipher/envelope tests prove rollback, delivery denial, current durable Intent/privacy/rights,
+              real reopen and exactly-once retry; fresh unchanged100ms performance proves the guard did not regress resolution.
+              Selected affected API/contract/repository checks, quality, architecture and exact incremental ADR coverage.
+              Authenticate unchanged R01 source/evidence for historical coverage; no full history/profile replay, new runtime
+              cache or native-proof reuse.
+            selection_sha256: 48095fb4c1f8fb15e0ca3ca82649ba5ac97bfa92d0a0ba9f78b656b68c31d2c7
+            prior_attempt_id: R01
+            open_finding_ids:
+            - CAP-05.S03.T03-R01-F01
+            root_cause_analysis: The service supplied a frozen actor callback, bypassing its trusted native-stop latch at
+              the repository's final in-writer authority check. The existing test detached after repository return and therefore
+              only proved delivery denial. The missed row now requires stop inside publication, unchanged durable counts,
+              actual close/reopen, old-session denial and exactly-once retry. Guarded actor delivery restores the existing
+              live scope; anchor creation also needs a final current-actor/durable-authority fence after append because its
+              owning protected-object publisher has a distinct commit path. Red63 and partial64 remain failures; both boundaries
+              are now covered by fresh R02 composition.
+            selected_command_ids:
+            - documents:anchors
+            - foundation:adr
+            - foundation:architecture
+            - foundation:quality
+            - service:unit
+            packet_sha256: 5939fe076063672ed6826b700cb4bd1f2ddc1489ca7f82d65a6276febcabfcc0
+          review: *id094
+          ledger:
+            path: artifacts/evidence/CAP-05.S03.T03.review-R02.json
+            sha256: 1bb3d7b351d644f34a39657f1e40fbb16a1260d93c08b0d0dc61443d6b654108
+          findings: []
+          closures:
+          - finding_id: CAP-05.S03.T03-R01-F01
+            disposition: fixed
+            evidence: 'At exact strict-descendant candidate 0645daabc0b413dfa58fb5507dd89ad973d2ca5b, DocumentRevisionService._anchors:174
+              supplies actor=lambda: guard(lambda: actor), so every existing repository _current_actor() call observes the
+              trusted native stop and scoped lifetime. The unchanged final _fenced_resolved authority check therefore raises
+              inside the owning writer after anchor-dependents-stale and before COMMIT. Incremental inspection also confirms
+              creation''s distinct protected-object publisher now calls the existing durable _authority(connection, self._current_actor())
+              after anchor-recorded at source_anchor_repository.py:613, before returning to its owning commit. The missed
+              acceptance row and Proposed ADR0046 mapping are updated; two regressions failed before source changes in red63,
+              and partial64 retains the creation failure. Fresh qualification-R02-68 passes all seven actual native/Core resolution
+              cases, including both stop seams, invalidation close/reopen, old-session denial and exactly-once retry. Independent
+              disposable actual-Core proof reviewer-R02-closure-01 separately observes invalidation stop HTTP409 without research
+              text and unchanged dependency_impact_runs/dependency_stale_causes/provenance_events/outbox_events 2/1/25/24;
+              actual detach/close/open/attach rejects old authority409, valid retry publishes 3/2/26/25, and replay adds nothing.
+              Creation stop returns409 with aggregate_revisions/documents/provenance_events/outbox_events unchanged17/6/24/23;
+              actual reopen rejects old authority409, valid retry publishes18/7/25/24 and replay adds nothing. The live actor
+              change retains the existing delivery fence and durable Intent/privacy/exact-copy rights checks and denial auditing.
+              Fresh20-sample nearest-rank p95 is88.22390000568703ms under unchanged100ms. Frozen R02 explicitly supersedes
+              R01 and replays the sole open F01; packet/evidence/criteria/selection and preserved adverse hashes authenticate.
+              No authority, migration, criterion, framework or scope change is required or introduced.'
+          telemetry:
+            task_id: CAP-05.S03.T03
+            amendment_id: null
+            attempt_id: R02
+            submitted_at: '2026-10-08T14:00:21+00:00'
+            reviewed_at: '2026-10-08T14:22:44+00:00'
+            duration_seconds: 1343
+            outcome: approved
+            finding_counts:
+              critical: 0
+              high: 0
+              medium: 0
+              low: 0
+              blocking: 0
+              total: 0
+            command_ids:
+            - documents:anchors
+            - foundation:adr
+            - foundation:architecture
+            - foundation:quality
+            - service:unit
+            remediation:
+              prior_attempt_id: R01
+              replayed_finding_ids:
+              - CAP-05.S03.T03-R01-F01
+              closed_finding_ids:
+              - CAP-05.S03.T03-R01-F01
         current_submission: null
     platform_targets:
     - windows-x64
