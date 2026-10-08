@@ -171,7 +171,9 @@ class DocumentViewerInteractionsTests(unittest.TestCase):
         self.wait(lambda: self.page.evaluate("() => typeof window.__VIEWER_UI_TEST__.releaseRender === 'function'"))
         self.assertEqual(1, self.page.evaluate("() => window.__VIEWER_UI_TEST__.revisionCalls"))
         self.assertFalse(self.page.get_by_role("button", name="Next page", exact=True).is_enabled())
-        self.page.evaluate("() => { window.__VIEWER_UI_TEST__.holdRender = false; window.__VIEWER_UI_TEST__.releaseRender(); }")
+        self.page.evaluate(
+            "() => { window.__VIEWER_UI_TEST__.holdRender = false; window.__VIEWER_UI_TEST__.releaseRender(); }"
+        )
         self.wait(lambda: self.page.get_by_role("button", name="Next page", exact=True).is_enabled())
         self.wait(lambda: self.page.evaluate("() => window.__VIEWER_UI_TEST__.revisionCalls === 2"))
         self.select_text().click()
