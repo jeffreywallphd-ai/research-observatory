@@ -1,6 +1,6 @@
 import { AnnotationMode, PDFDataRangeTransport, PDFWorker, getDocument, type PDFDocumentLoadingTask,
   type PDFDocumentProxy, type PDFPageProxy, type RenderTask } from "pdfjs-dist";
-import { ViewerByteSession, type ViewerBufferBudget } from "./documentViewer";
+import { VIEWER_RANGE_LIMIT, ViewerByteSession, type ViewerBufferBudget } from "./documentViewer";
 import { retainViewerMessage } from "./viewerWorkerMessages";
 import { ViewerAssetPool } from "./viewerAssets";
 import type { TextContent } from "pdfjs-dist/types/src/display/api";
@@ -206,7 +206,10 @@ class PdfDecoderSession {
         catch (error) { owner.assetRequests.delete(target.href); throw error; }
       }
     }
-    this.loading = getDocument({ range: new SourceRanges(), worker: this.pdfWorker, rangeChunkSize: 65536,
+    // Each range repeats complete source authentication. Use the already
+    // approved 1MiB range bound to avoid many small authenticated round trips;
+    // automatic prefetch/streaming stays disabled and SDK reads remain serial.
+    this.loading = getDocument({ range: new SourceRanges(), worker: this.pdfWorker, rangeChunkSize: VIEWER_RANGE_LIMIT,
       disableRange: false, disableStream: true, disableAutoFetch: true, enableXfa: false,
       useWorkerFetch: false, useWasm: false, isOffscreenCanvasSupported: false, isImageDecoderSupported: false,
       maxImageSize: 4 * 1024 * 1024, canvasMaxAreaInBytes: 16 * 1024 * 1024,

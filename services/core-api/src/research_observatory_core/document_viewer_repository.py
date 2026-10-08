@@ -72,6 +72,48 @@ class LocalDocumentViewerRepository:
 
         return self.revisions._bounded(read)
 
+    def _read_owned_range(
+        self,
+        selector: ViewerSourceSelector,
+        expected: ViewerSourceMetadata,
+        *,
+        start: int,
+        end: int,
+        cancellation_requested: Callable[[], bool] = lambda: False,
+    ) -> bytes:
+        """Physical read for the service's mandatory fresh delivery fence.
+
+        Expected metadata is request-local identity, never authorization. The
+        owning service supplies a fresh actor/Intent/privacy scope, and the
+        encrypted adapter verifies exact canonical source and current inspect
+        rights inside its writer. Every waiter must separately validate current
+        authority and full metadata after this stream/transaction has closed.
+        Ordinary repository callers retain read_range's pre/post validation.
+        """
+
+        def read():
+            selected = ViewerSourceSelector.model_validate(selector)
+            metadata = ViewerSourceMetadata.model_validate(expected)
+            if (
+                metadata.source.project_id != self.revisions.project
+                or metadata.source.attachment_id != selected.attachment_id
+                or metadata.source.document_revision_id != selected.document_revision_id
+                or metadata.normalized_revision_id != selected.normalized_revision_id
+            ):
+                raise DocumentRevisionProblem("viewer-source-changed")
+            value = self.revisions.objects._read_inspected_document_range(
+                metadata.source,
+                start=start,
+                end=end,
+                actor=self.revisions.actor(),
+                cancellation_requested=cancellation_requested,
+            )
+            if cancellation_requested() is not False:
+                raise ObjectReadCancelled()
+            return value
+
+        return self.revisions._bounded(read)
+
     def text_chunk(self, selector: ViewerSourceSelector, *, node_id: str, offset: int) -> ViewerTextChunk:
         if not is_uuid_v7(node_id) or type(offset) is not int or not 0 <= offset <= 64 * 1024 * 1024:
             raise DocumentRevisionProblem("viewer-text-selection-invalid")

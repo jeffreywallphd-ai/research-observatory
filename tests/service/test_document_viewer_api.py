@@ -121,6 +121,41 @@ class DocumentViewerApiTests(unittest.TestCase):
         self.assertEqual(409, self.client.post(self.path + "/text", json=command).status_code)
         self.assertEqual(200, self.client.post(self.path + "/range", json=self.range).status_code)
 
+    def test_rights_revoked_between_selection_and_physical_admission_deny_without_reading(self):
+        admitted_read = self.viewer.ranges.read
+
+        def revoked(*args, **kwargs):
+            self.f.f.fixture.publish_right(
+                self.f.f.candidate, value="denied", predecessor=self.f.f.policy.revision_id, inspect=True
+            )
+            return admitted_read(*args, **kwargs)
+
+        with (
+            patch.object(self.viewer.ranges, "read", revoked),
+            patch.object(object_store, "_pull_frame", wraps=object_store._pull_frame) as authentication,
+        ):
+            response = self.client.post(self.path + "/range", json=self.range)
+            self.assertEqual(409, response.status_code)
+            self.assertNotIn("bytesBase64", response.text)
+            authentication.assert_not_called()
+
+    def test_rights_revoked_after_owned_physical_close_deny_private_api_delivery(self):
+        store_type = type(self.f.f.fixture.store)
+        read = store_type._read_inspected_document_range
+
+        def revoke_after_close(store, *args, **kwargs):
+            result = read(store, *args, **kwargs)
+            self.assertFalse(object_store._READERS.in_use(self.f.f.source.project_id, self.f.f.source.object_sha256))
+            self.f.f.fixture.publish_right(
+                self.f.f.candidate, value="denied", predecessor=self.f.f.policy.revision_id, inspect=True
+            )
+            return result
+
+        with patch.object(store_type, "_read_inspected_document_range", revoke_after_close):
+            response = self.client.post(self.path + "/range", json=self.range)
+        self.assertEqual(409, response.status_code)
+        self.assertNotIn("bytesBase64", response.text)
+
     def test_cancel_route_stops_the_owned_authentication_and_releases_its_actual_writer(self):
         entered, release = threading.Event(), threading.Event()
         pull = object_store._pull_frame

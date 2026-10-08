@@ -54,6 +54,13 @@ metadata writers can run between ranges. Native remembers a cancellation that
 arrives before registration, scoped to its actual window and opaque key; bounded
 cancellation-memory exhaustion fails closed.
 
+Within an owned read, initial metadata is only request-local expected identity.
+The fresh owning actor/Intent/privacy scope and exact encrypted writer establish
+current inspect authority. The service does not repeat redundant descriptions
+around that writer: each waiter still validates current actor, full metadata and
+rights independently after physical close. Ordinary repository callers retain
+their pre/post checks; expected metadata is never an authorization cache.
+
 Cancelling IPC is a stop signal, not a drain acknowledgement. The original
 range promise resolves bytes only after physical close, or rejects a closed
 native disposition with schema version, project, request and a `drained` boolean.
@@ -82,13 +89,15 @@ PDF actions and copied research text are not written into viewer diagnostics.
 
 The shipping dependency is exactly `pdfjs-dist@6.4.299` (Apache-2.0); its bundled
 worker SHA-256 is checked by the product build. Unique, fail-closed transforms
-cap contiguous range groups at 1MiB with 64KiB chunks and serialize actual SDK
+cap contiguous range groups and chunks at 1MiB and serialize actual SDK
 range-reader admission. The SDK retains its existing missing-chunk bookkeeping;
 deferred demands hold no source bytes or native/Core lease. Closing the document
 prevents them from acquiring a range reader. This does not add a renderer byte
 queue or enlarge Core's eight-waiter limit. A changed dependency or patch anchor
 fails the build. Preserve the upstream package
 license in packaging; the existing exact lockfile supplies dependency provenance.
+The 1MiB chunk uses the existing transport bound to avoid repeating full source
+authentication for small adjacent demands. Whole-file prefetch stays disabled.
 
 The dedicated module worker is local. Its source has no document-controlled
 module or asset URL. Automatic streaming/prefetch, XFA, annotations, forms,

@@ -57,6 +57,33 @@ class ViewerSourceAuthorityTests(unittest.TestCase):
             with self.assertRaises(DocumentRevisionProblem):
                 action()
 
+    def test_owned_expected_identity_is_not_an_authorization_grant(self):
+        self.f.f.permit(derive="denied")
+        expected = self.viewer.describe(self.selector)
+        self.assertEqual(
+            b"Synthetic", self.viewer._read_owned_range(self.selector, expected, start=0, end=9)
+        )
+        self.f.f.fixture.publish_right(
+            self.f.f.candidate, value="denied", predecessor=self.f.f.policy.revision_id, inspect=True
+        )
+        with self.assertRaises(DocumentRevisionProblem):
+            self.viewer._read_owned_range(self.selector, expected, start=0, end=9)
+
+    def test_owned_expected_identity_substitutions_deny_before_plaintext_read(self):
+        from research_observatory_core import object_store
+
+        expected = self.viewer.describe(self.selector)
+        replacements = [
+            expected.model_copy(update={"source": expected.source.model_copy(update={field: new_uuid_v7()})})
+            for field in ("project_id", "attachment_id", "document_revision_id", "work_revision_id")
+        ]
+        replacements.append(expected.model_copy(update={"normalized_revision_id": new_uuid_v7()}))
+        with patch.object(object_store, "_pull_frame", wraps=object_store._pull_frame) as authenticated_frame:
+            for substituted in replacements:
+                with self.subTest(source=substituted), self.assertRaises(DocumentRevisionProblem):
+                    self.viewer._read_owned_range(self.selector, substituted, start=0, end=9)
+            authenticated_frame.assert_not_called()
+
     def test_structured_text_is_bounded_exact_revision_and_does_not_create_anchors(self):
         parsed = self.f.parse()
         normalized = self.f.repository.accept(self.f.command(parsed))

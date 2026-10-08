@@ -152,13 +152,14 @@ class DocumentViewerService:
                     def stop():
                         return stopped() or cancelled()
 
-                    if (
-                        _principal(actor) != principal
-                        or repository.describe(command.selector, cancellation_requested=stop) != metadata
-                    ):
+                    if _principal(actor) != principal:
                         raise DocumentRevisionProblem("viewer-authority-changed")
-                    return repository.read_range(
-                        command.selector, start=command.start, end=command.end, cancellation_requested=stop
+                    # Do not replay identical metadata descriptions around the
+                    # physical read. This fresh scope and the encrypted writer
+                    # establish current authority; each waiter still performs
+                    # complete fresh validation below after actual closure.
+                    return repository._read_owned_range(
+                        command.selector, metadata, start=command.start, end=command.end, cancellation_requested=stop
                     )
 
                 # Coalesced readers own cancellation collectively. A member's
