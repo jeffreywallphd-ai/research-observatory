@@ -46,6 +46,7 @@ function ViewerSession({ project, handoff, announce, onReturn, port = nativeDocu
   const canvas = useRef<HTMLCanvasElement>(null), heading = useRef<HTMLHeadingElement>(null);
   const thumbnails = useRef(new Map<number, HTMLCanvasElement>()), generation = useRef(0), textGeneration = useRef(0), searchGeneration = useRef(0), live = useRef(true);
   const ownedPdf = useRef<PdfViewer | null>(null);
+  const acceptedRevisions = useRef<(() => void) | null>(null);
   const selector: ViewerSelector = { attachmentId: handoff.attachmentId, documentRevisionId: handoff.documentRevisionId, normalizedRevisionId: null };
   function restoreFocus(target: Element | null, current: () => boolean): void {
     requestAnimationFrame(() => {
@@ -67,6 +68,7 @@ function ViewerSession({ project, handoff, announce, onReturn, port = nativeDocu
     let bytes: ViewerByteSession | null = null, viewer: PdfViewer | null = null;
     setMetadata(null); setPdf(null); setPages(0); setPage(1); setRevision(""); setRevisions([]); setText(null); setFailure(null); setBusy(true);
     setNodes([]); setNextNode(null); setQuery(""); setSearching(false); setTextBusy(false);
+    acceptedRevisions.current = null;
     setStatus("Checking current copy and inspection permission…"); setTextStatus("Choose an accepted revision to inspect structured text.");
     heading.current?.focus();
     void (async () => {
@@ -76,19 +78,25 @@ function ViewerSession({ project, handoff, announce, onReturn, port = nativeDocu
       setMetadata(value);
       // The original is readable without an accepted parse or derive permission.
       // Accepted revision lookup may deny separately and must not replace it.
-      void anchors.revisions(project.projectId, handoff.attachmentId).then((result) => {
-        const accepted = decodeReaderRevisions(result, project.projectId, handoff.attachmentId);
-        if (current() && accepted && viewerSourcesMatch(accepted.source, value.source)) setRevisions(accepted.revisions.map((item) => item.revisionId));
-      }).catch(() => undefined);
+      acceptedRevisions.current = () => {
+        if (!current()) return;
+        void anchors.revisions(project.projectId, handoff.attachmentId).then((result) => {
+          const accepted = decodeReaderRevisions(result, project.projectId, handoff.attachmentId);
+          if (current() && accepted && viewerSourcesMatch(accepted.source, value.source)) setRevisions(accepted.revisions.map((item) => item.revisionId));
+        }).catch(() => undefined);
+      };
       if (value.source.format === "pdf") {
         const budget = new ViewerBufferBudget(); bytes = new ViewerByteSession(project.projectId, selector, value, port, budget);
         viewer = createPdf(bytes, budget, (code) => { if (current()) fail(code); }); ownedPdf.current = viewer;
         const count = await viewer.open();
         if (!current()) { viewer.close(); return; }
         setPages(count); setPdf(viewer); notify("Original loaded. Rendering the first permitted page…");
-      } else { setBusy(false); notify("Select an accepted revision for inert structured text. Active HTML, attachments and external document actions are unavailable."); }
+      } else {
+        acceptedRevisions.current?.(); acceptedRevisions.current = null;
+        setBusy(false); notify("Select an accepted revision for inert structured text. Active HTML, attachments and external document actions are unavailable.");
+      }
     })().catch(() => { if (current()) fail("viewer-source-unavailable"); });
-    return () => { live.current = false; generation.current += 1; textGeneration.current += 1; searchGeneration.current += 1; bytes?.close(); viewer?.close(); ownedPdf.current = null; };
+    return () => { live.current = false; generation.current += 1; textGeneration.current += 1; searchGeneration.current += 1; acceptedRevisions.current = null; bytes?.close(); viewer?.close(); ownedPdf.current = null; };
   }, [project.projectId, handoff.attachmentId, handoff.documentRevisionId, port, anchors, createPdf, retry]);
 
   useEffect(() => {
@@ -99,6 +107,9 @@ function ViewerSession({ project, handoff, announce, onReturn, port = nativeDocu
       if (!active || !live.current) return;
       setBusy(false); notify(`Page ${page} of ${pages} displayed.`);
       restoreFocus(priorFocus, () => active);
+      // Optional structured-revision lookup must not compete with the initial
+      // protected PDF ranges for Core's project writer before page one appears.
+      const lookup = acceptedRevisions.current; acceptedRevisions.current = null; lookup?.();
       // Only the bounded previous/current/next thumbnail window is rendered.
       for (const [number, thumbnail] of thumbnails.current) {
         if (!active || !live.current) return;

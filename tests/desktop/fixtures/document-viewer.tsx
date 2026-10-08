@@ -18,9 +18,10 @@ const selection = { projectId: source.projectId, sourceAssertionRevisionId: sour
 const handoff = { attachmentId: source.attachmentId, documentRevisionId: source.documentRevisionId, selection };
 const root = createRoot(document.getElementById("root")!);
 const state = {
-  sourceCalls: 0, closes: 0, rendered: [] as { page: number; scale: number }[], returns: [] as object[],
+  sourceCalls: 0, revisionCalls: 0, closes: 0, rendered: [] as { page: number; scale: number }[], returns: [] as object[],
   denySource: false, substituteSource: false, denyText: false, holdText: false, releaseText: null as (() => void) | null,
   holdSearch: false, releaseSearch: null as (() => void) | null,
+  holdRender: false, releaseRender: null as (() => void) | null,
   mount(active = true): void {
     root.render(<DocumentViewerWorkspace project={{ projectId: source.projectId, open: true } as ProjectProjection}
       handoff={handoff} active={active} announce={() => undefined} onReturn={() => { state.returns.push(selection); state.mount(false); }}
@@ -33,7 +34,7 @@ const port = {
   range: async () => null,
 };
 const anchors = {
-  revisions: async () => ({ schemaVersion: "1.0" as const, source, revisions: [{ revisionId: revision, acceptedAt: fixture.createdAt }] }),
+  revisions: async () => { state.revisionCalls += 1; return { schemaVersion: "1.0" as const, source, revisions: [{ revisionId: revision, acceptedAt: fixture.createdAt }] }; },
   outline: async () => ({ schemaVersion: "1.0" as const, projectId: source.projectId, documentId: source.documentId, revisionId: revision,
     source, viewKind: "accepted-structured-text" as const, scholarlyVerification: "unverified" as const,
     nodes: [{ nodeId, nodeKind: "paragraph", preview: "Synthetic element", pageNumber: 2, hasText: true,
@@ -46,7 +47,10 @@ const textPort = { text: async (_project: string, _selector: object, _node: stri
     pageNumber: 2, offset, text: "Synthetic inert <script>window.viewerDocumentExecuted=true</script> text", nextOffset: null };
 } };
 const pdfFactory = (): PdfViewer => ({ open: async () => 3,
-  render: async (canvas, page, scale) => { state.rendered.push({ page, scale }); canvas.width = 612; canvas.height = 792; },
+  render: async (canvas, page, scale) => {
+    if (state.holdRender) await new Promise<void>((resolve) => { state.releaseRender = resolve; });
+    state.rendered.push({ page, scale }); canvas.width = 612; canvas.height = 792;
+  },
   thumbnail: async (canvas) => { canvas.width = 96; canvas.height = 128; },
   releaseCanvas: (canvas) => { canvas.width = canvas.height = 0; },
   find: async () => { if (state.holdSearch) await new Promise<void>((resolve) => { state.releaseSearch = resolve; }); return 3; },

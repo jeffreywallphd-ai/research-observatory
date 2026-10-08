@@ -164,6 +164,20 @@ class DocumentViewerInteractionsTests(unittest.TestCase):
         self.assertFalse(any(not url.startswith("http://tauri.localhost/") for url in self.requests))
         self.assertFalse(self.errors)
 
+    def test_optional_revision_lookup_waits_for_first_page_and_stays_available_afterwards(self):
+        self.wait(lambda: self.page.evaluate("() => window.__VIEWER_UI_TEST__.revisionCalls === 1"))
+        self.page.evaluate("() => { window.__VIEWER_UI_TEST__.holdRender = true; }")
+        self.page.get_by_role("button", name="Retry current source status", exact=True).click()
+        self.wait(lambda: self.page.evaluate("() => typeof window.__VIEWER_UI_TEST__.releaseRender === 'function'"))
+        self.assertEqual(1, self.page.evaluate("() => window.__VIEWER_UI_TEST__.revisionCalls"))
+        self.assertFalse(self.page.get_by_role("button", name="Next page", exact=True).is_enabled())
+        self.page.evaluate("() => { window.__VIEWER_UI_TEST__.holdRender = false; window.__VIEWER_UI_TEST__.releaseRender(); }")
+        self.wait(lambda: self.page.get_by_role("button", name="Next page", exact=True).is_enabled())
+        self.wait(lambda: self.page.evaluate("() => window.__VIEWER_UI_TEST__.revisionCalls === 2"))
+        self.select_text().click()
+        self.page.get_by_text("Unverified extraction", exact=True).wait_for()
+        self.assertFalse(self.errors)
+
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)

@@ -104,8 +104,12 @@ prevents them from acquiring a range reader. This does not add a renderer byte
 queue or enlarge Core's eight-waiter limit. A changed dependency or patch anchor
 fails the build. Preserve the upstream package
 license in packaging; the existing exact lockfile supplies dependency provenance.
-The 1MiB chunk uses the existing transport bound to avoid repeating full source
-authentication for small adjacent demands. Whole-file prefetch stays disabled.
+The decoder requests 128KiB chunks for ordinary demands, keeping small page
+reads below the maximum IPC transfer. Adjacent groups remain bounded at 1MiB.
+Whole-file prefetch stays disabled. Optional accepted-revision lookup starts
+after the first PDF page is displayed, so it does not compete for Core's writer
+during initial original-page loading; inert structured sources request it
+immediately. Current source and derivative permissions remain independent.
 
 The dedicated module worker is local. Its source has no document-controlled
 module or asset URL. Automatic streaming/prefetch, XFA, annotations, forms,
