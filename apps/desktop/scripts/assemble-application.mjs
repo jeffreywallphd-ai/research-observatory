@@ -13,6 +13,11 @@ const packageInputRoots = [
   path.join(repoRoot, "packages", "ui-tokens"),
 ];
 const expectedArtifacts = new Set(["assets/app.css", "assets/app.js", "assets/app.js.map", "index.html"]);
+const pdfResources = JSON.parse(await readFile(path.join(appRoot, "pdfjs-assets.json"), "utf8"));
+if (pdfResources.package !== "pdfjs-dist" || pdfResources.version !== "6.4.299") throw new Error("PDF resource pin mismatch");
+for (const name of ["assets/DocumentViewerWorkspace.js", "assets/DocumentViewerWorkspace.js.map",
+  "assets/documentViewer.worker.js", "assets/documentViewer.worker.js.map",
+  "assets/pdf.worker.js", "assets/pdf.worker.js.map", ...Object.keys(pdfResources.files)]) expectedArtifacts.add(name);
 
 function sha256(bytes) {
   return createHash("sha256").update(bytes).digest("hex");
@@ -52,6 +57,9 @@ for (const artifact of await filesBelow(productRoot)) {
     throw new Error(`reference-only page entered the desktop product bundle: ${relative}`);
   }
   artifacts[relative] = sha256(await readFile(artifact));
+  if (pdfResources.files[relative] && artifacts[relative] !== pdfResources.files[relative].sha256) {
+    throw new Error(`changed pinned PDF resource: ${relative}`);
+  }
 }
 if (Object.keys(artifacts).sort().join("\n") !== [...expectedArtifacts].sort().join("\n")) {
   throw new Error(`desktop product artifact inventory is incomplete: ${Object.keys(artifacts).sort().join(", ")}`);

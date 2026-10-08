@@ -24,6 +24,7 @@
     "@research-observatory/ui-components": "workspace:*",
     "@research-observatory/ui-tokens": "workspace:*",
     "@tauri-apps/api": "2.11.1",
+    "pdfjs-dist": "6.4.299",
     "react": "19.2.8",
     "react-dom": "19.2.8"
   },

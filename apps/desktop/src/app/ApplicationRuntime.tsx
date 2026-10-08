@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
+import { lazy, Suspense, useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { invoke } from "@tauri-apps/api/core";
 import { listen, type UnlistenFn } from "@tauri-apps/api/event";
 
@@ -37,6 +37,8 @@ import { sameAttachmentSelection, type AttachmentSelection } from "./documentAtt
 import { CorpusCanvasWorkspace } from "./CorpusCanvasWorkspace";
 import { SourceManagerWorkspace } from "./SourceManagerWorkspace";
 import { ModelCenterWorkspace } from "./ModelCenterWorkspace";
+
+const DocumentViewerWorkspace = lazy(() => import("./DocumentViewerWorkspace").then((module) => ({ default: module.DocumentViewerWorkspace })));
 import {
   WorkflowContextBar,
   WorkflowNavigation,
@@ -862,6 +864,13 @@ export function ApplicationRuntime({ workflowTransport = packagedProjectTranspor
     announce("Task Center opened. The exact selected Work/version return context is retained.");
   }, [announce, navigateWorkspaceState]);
 
+  const openAttachmentReader = useCallback((handoff: AttachmentHandoff) => {
+    if (applicationLockRef.current.state !== "unlocked" || currentProjectRef.current?.projectId !== handoff.selection.projectId
+      || !handoff.attachmentId || !handoff.documentRevisionId) return;
+    setAttachmentHandoff(handoff); navigateWorkspaceState("reader");
+    announce("Document Reader opened for the exact selected Work/version. Current source permission will be checked again.");
+  }, [announce, navigateWorkspaceState]);
+
   const retainAttachmentRecovery = useCallback((selection: AttachmentSelection, handoff: AttachmentHandoff | null) => {
     if (applicationLockRef.current.state !== "unlocked" || currentProjectRef.current?.projectId !== selection.projectId) return;
     setAttachmentHandoff((current) => handoff ?? (current && sameAttachmentSelection(current.selection, selection) ? null : current));
@@ -1300,7 +1309,10 @@ export function ApplicationRuntime({ workflowTransport = packagedProjectTranspor
           ) : (workspace === "application-settings" ? previousWorkspaceRef.current : workspace) === "imports" ? (
             <ImportWorkspace project={currentProject} announce={announce}
               attachmentReturn={attachmentReturn} onAttachmentReturnConsumed={consumeAttachmentReturn}
-              onTaskCenter={openAttachmentTaskCenter} onAttachmentRecovery={retainAttachmentRecovery} />
+              onTaskCenter={openAttachmentTaskCenter} onOpenReader={openAttachmentReader} onAttachmentRecovery={retainAttachmentRecovery} />
+          ) : (workspace === "application-settings" ? previousWorkspaceRef.current : workspace) === "reader" ? (
+            <Suspense fallback={<p role="status">Loading the local Document Reader…</p>}><DocumentViewerWorkspace project={currentProject} handoff={attachmentHandoff} active={workspace === "reader"}
+              announce={announce} onReturn={() => attachmentHandoff ? returnToAttachment() : navigateWorkspaceState("imports")} /></Suspense>
           ) : (workspace === "application-settings" ? previousWorkspaceRef.current : workspace) === "corpus" ? (
             <CorpusCanvasWorkspace project={currentProject} announce={announce} active={workspace === "corpus"} onNavigate={navigateWorkspaceState} />
           ) : (workspace === "application-settings" ? previousWorkspaceRef.current : workspace) === "sources" ? (

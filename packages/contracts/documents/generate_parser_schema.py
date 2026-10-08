@@ -23,6 +23,11 @@ from research_observatory_core.parsing.contracts import DocumentIR  # noqa: E402
 from research_observatory_core.parsing.native_contracts import NativeStructure  # noqa: E402
 from research_observatory_core.parsing.requests import ParseRequest, ParseResult  # noqa: E402
 from research_observatory_core.parsing.selection import ParserSelection  # noqa: E402
+from research_observatory_core.ports.document_viewer import (  # noqa: E402
+    ViewerSourceMetadata,
+    ViewerSourceSelector,
+    ViewerTextChunk,
+)
 
 OUTPUTS: dict[str, TypeAdapter[Any]] = {
     "document-ir.v1.schema.json": TypeAdapter(DocumentIR),
@@ -34,14 +39,32 @@ OUTPUTS: dict[str, TypeAdapter[Any]] = {
     "document-revision.v1.schema.json": TypeAdapter(AcceptedDocumentRevision),
     "document-revision-acceptance.v1.schema.json": TypeAdapter(DocumentRevisionAcceptance),
     "retained-parse-result.v1.schema.json": TypeAdapter(RetainedParseResultReceipt),
+    "viewer-source-selector.v1.schema.json": TypeAdapter(ViewerSourceSelector),
+    "viewer-source-metadata.v1.schema.json": TypeAdapter(ViewerSourceMetadata),
+    "viewer-text-chunk.v1.schema.json": TypeAdapter(ViewerTextChunk),
 }
-REVISION_SCHEMAS = set(OUTPUTS) - {
-    "document-ir.v1.schema.json",
-    "parser-selection.v1.schema.json",
-    "parse-request.v1.schema.json",
-    "parse-result.v1.schema.json",
-    "native-structure.v1.schema.json",
-}
+VIEWER_SCHEMAS = {name for name in OUTPUTS if name.startswith("viewer-")}
+REVISION_SCHEMAS = (
+    set(OUTPUTS)
+    - {
+        "document-ir.v1.schema.json",
+        "parser-selection.v1.schema.json",
+        "parse-request.v1.schema.json",
+        "parse-result.v1.schema.json",
+        "native-structure.v1.schema.json",
+    }
+    - VIEWER_SCHEMAS
+)
+VIEWER_RULES = [
+    "opaque-exact-attachment-original-and-optional-distinct-accepted-normalized-revision",
+    "current-native-session-project-human-intent-privacy-and-per-copy-inspect-authority",
+    "source-at-most-128-mib-range-at-most-1-mib-whole-original-authentication-before-bytes",
+    "no-renderer-path-url-credential-actor-policy-or-caller-owned-rights",
+    "structured-text-separately-requires-current-derive-authority-at-read-and-delivery",
+    "exact-accepted-revision-element-offset-and-at-most-4096-unicode-codepoints",
+    "next-offset-null-or-exact-offset-plus-text-codepoints-not-utf16-or-bytes",
+    "selection-metadata-and-extraction-are-not-permission-or-scholarly-verification",
+]
 REVISION_RULES = [
     "exact-source-producer-configuration-assets-job-physical-attempt-and-authenticated-raw-receipts",
     "successful-durable-output-required-before-explicit-trusted-human-structural-acceptance",
@@ -75,7 +98,9 @@ def schema(name: str) -> dict[str, object]:
     result["$schema"] = "https://json-schema.org/draft/2020-12/schema"
     result["$id"] = f"https://research-observatory.local/contracts/documents/{name}"
     result["x-research-observatory-semanticRules"] = (
-        REVISION_RULES
+        VIEWER_RULES
+        if name in VIEWER_SCHEMAS
+        else REVISION_RULES
         if name in REVISION_SCHEMAS
         else (
             [

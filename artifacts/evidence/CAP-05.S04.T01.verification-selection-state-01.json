@@ -1,0 +1,39 @@
+{
+  "documentType": "task-verification-selection-correction",
+  "taskId": "CAP-05.S04.T01",
+  "observationHead": "1bd33a6ba180487b239e3315e302b6db6aaea123",
+  "interpretation": "Initial root interpretation incorrectly treated candidate helper predicates as mandatory approval gates. Independent advisory resolved ordinary selection authority under section8.1. Actual block published before cancellation; ordinary reopen committed. W2 remained ACTIVE. No owner decision, framework edit or qualifying task verdict is implied.",
+  "advisoryPath": "artifacts/evidence/CAP-05.S04.T01.verification-selection-advisory-01.json",
+  "receipts": [
+    {
+      "authority": "evidence-only",
+      "casOutcome": "matched-and-replaced",
+      "changedFields": [
+        "capabilities"
+      ],
+      "documentType": "taskctl-transition-receipt",
+      "operation": "block",
+      "predecessorSha256": "4d6bee9254f16e2fef7b27b8a733ca40edb72384872930016a83990847ff258a",
+      "producerCommit": "1bd33a6ba180487b239e3315e302b6db6aaea123",
+      "producerCommitSemantics": "entry-HEAD observation; not runner authentication or a stable-HEAD assertion",
+      "status": "COMMITTED",
+      "successorSha256": "8e109aeb7f71513649200ed2a4fc82473ddc1635c400adba0aa30b98ddf29851"
+    },
+    {
+      "authority": "evidence-only",
+      "casOutcome": "matched-and-replaced",
+      "changedFields": [
+        "capabilities"
+      ],
+      "documentType": "taskctl-transition-receipt",
+      "operation": "reopen",
+      "predecessorSha256": "8e109aeb7f71513649200ed2a4fc82473ddc1635c400adba0aa30b98ddf29851",
+      "producerCommit": "1bd33a6ba180487b239e3315e302b6db6aaea123",
+      "producerCommitSemantics": "entry-HEAD observation; not runner authentication or a stable-HEAD assertion",
+      "status": "COMMITTED",
+      "successorSha256": "1b589087d92f24fe9880d80bb841ce492f3291efd4ac2b9d8ea9abe7f1d28d89"
+    }
+  ],
+  "taskApproval": false,
+  "waveCompletion": false
+}

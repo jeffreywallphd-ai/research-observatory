@@ -453,6 +453,15 @@
         "CAP-05.S03.T02",
         "CAP-05.S03.T03"
       ]
+    },
+    {
+      "id": "ADR-0047",
+      "path": "docs/adr/ADR-0047-bind-local-source-viewing-to-existing-protected-read-authority.md",
+      "title": "Bind local source viewing to existing protected read authority",
+      "status": "Proposed",
+      "linkedTasks": [
+        "CAP-05.S04.T01"
+      ]
     }
   ]
 }

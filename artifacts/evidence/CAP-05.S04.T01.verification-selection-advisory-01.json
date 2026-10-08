@@ -1,0 +1,143 @@
+{
+  "schemaVersion": "1.0-advisory",
+  "documentType": "independent-task-verification-selection-advisory",
+  "id": "CAP-05.S04.T01.verification-selection-advisory-01",
+  "taskId": "CAP-05.S04.T01",
+  "waveId": "W2",
+  "author": "/root/s04_method_gate_readiness",
+  "recordedAt": "2026-10-08T21:45:25Z",
+  "scope": "Bounded independent read-only authority and verification-method-selection assessment, followed by recording this advisory only. Not a task completion review, exact-candidate disposition, amendment readiness review, owner approval request or release qualification.",
+  "observationBoundary": {
+    "observedHead": "1bd33a6ba180487b239e3315e302b6db6aaea123",
+    "worktree": "Disclosed owned uncommitted CAP-05.S04.T01 viewer implementation; source and configuration were inspected in that working tree. Helper output was retained from earlier direct unchanged-helper invocations. Those results are not exact-commit qualifying evidence.",
+    "taskStateAtInspection": "The inspected backlog projected CAP-05.S04.T01 IN_PROGRESS with the original base SHA equal to observedHead. No task-state mutation was performed by this reviewer.",
+    "subsequentParentReport": "The parent subsequently reported that the verification block had already been committed and that an ordinary reopen preserving the original base had been launched, with W2 ACTIVE and no pause. This advisory does not independently attest those transitions or a successful reopen receipt.",
+    "testsExecutedByReviewer": [],
+    "sourceEditsByReviewer": [],
+    "reviewerWrites": [
+      "artifacts/evidence/CAP-05.S04.T01.verification-selection-advisory-01.json"
+    ]
+  },
+  "conclusion": {
+    "result": "ADDITIONAL_METHOD_EXCEPTION_NOT_DEMONSTRATED_REQUIRED_AT_T01_SCOPE",
+    "assessment": "The unchanged helper failures alone do not establish a need for another owner-approved one-task verification-method exception. Existing risk-selected verification permits separately named task-owned product and security checks when they prove every material approved obligation, preserve adverse results and do not replace approved acceptance or security authority. No inspected T01 criterion requires these particular helper verdicts or a complete desktop/profile replay at ordinary task scope.",
+    "smallestLawfulRoute": "Continue the approved T01 product work using existing operations; preserve original helper failures; commit the candidate before qualifying verification; select existing applicable checks and separately named authenticated task-owned proof for the current product inventory, approved reference binding, Reader boundary and actual local CSP behavior; obtain the required expanded independent product/security task disposition. No shared verifier, selector, registry, framework, schema, policy, CI or controller modification is authorized by this advisory.",
+    "unsupportedAuthorityNotGranted": "No authority is granted to waive a criterion, change security authority, manufacture a public-command PASS, monkeypatch a helper, add a command-registry entry, extend EX01 to an unrelated later task, or qualify a future mandatory gate without its required proof."
+  },
+  "governingSources": [
+    {
+      "path": "AGENTS.md",
+      "section": "Source authority; Approval and stop boundaries; Evidence and completion",
+      "obligation": "Accepted ADRs govern their decisions; current code does not make a defect desired architecture. Select narrow affected checks, preserve adverse findings and approvals, use exact committed qualifying candidates, and require human authority for changes to approved scope, security authority or release criteria."
+    },
+    {
+      "path": "docs/automation/project-automation-guide.md",
+      "section": "8.1 Verification breadth by workflow stage",
+      "lines": [299, 324, 335],
+      "obligation": "Task verification_profiles and verification_commands define coverage domains and candidate commands, not mandatory full-profile replay at ordinary task scope. Select checks by concrete changed-path risks and acceptance-closure rows; record selected/deferred coverage and rationale. Earlier broad runs require explicit criteria, credible profile-wide impact or an unlocalized failure."
+    },
+    {
+      "path": "planning/slice-plans/CAP-05/CAP-05.S04-source-viewer-and-evidence-inspection-experience.md",
+      "section": "9.1 CAP-05.S04.T01; 7 Security, privacy, rights and research integrity; 10 Slice-wide verification matrix",
+      "lines": [185, 205, 221, 223, 319],
+      "obligation": "The approved plan expressly selects affected checks under the verification-breadth rule; full listed profiles remain slice/Wave coverage. T01 must open controlled encrypted streams, bound large-document behavior, protect paths, test expected and material failure behavior, and preserve all relevant security and experience obligations."
+    },
+    {
+      "path": "planning/backlog.yaml",
+      "section": "CAP-05.S04.T01",
+      "obligation": "The task has three outcome-based acceptance criteria and desktop/documents/security-local coverage. It does not separately mandate product_build_errors, security_errors or their historical literal inventory/CSP predicates. Its high-risk agent-review gate remains required."
+    },
+    {
+      "path": "docs/adr/ADR-0029-preserve-document-revisions-and-mediate-source-viewing.md",
+      "section": "Source viewer",
+      "lines": [123, 125],
+      "obligation": "Use locally bundled pinned PDF.js workers and inert structured text; authenticated bounded Core byte requests with no raw URL/path/unrestricted command; no remote assets, scripting, XFA, actions or attachments; preserve resource, cancellation, lease, rights and performance boundaries."
+    },
+    {
+      "path": "docs/adr/ADR-0005-activate-the-offline-tauri-desktop-application.md",
+      "section": "Decision; Verification",
+      "obligation": "The host uses restrictive offline CSP, no devUrl or global Tauri bridge, narrow reviewed privileged contracts and exact build input/output bindings. This establishes substantive boundaries rather than an immutable four-file future product bundle."
+    },
+    {
+      "path": "docs/automation/project-automation-guide.md",
+      "section": "2.2 Controlled enabler amendment lane; 3.1 Decision-complete stopped-gate handoff",
+      "obligation": "Actual changes to approved authority need independent packet review and human approval. An automation failure alone does not trigger amendment/bootstrap work. A real approval stop needs a decision-complete handoff; do not invent an additional approval requirement from command-selection difficulty."
+    },
+    {
+      "path": "docs/automation/workflow-efficiency.md",
+      "section": "Choose the smallest lawful route; Freeze acceptance, not learning; Fast checks first; essential native checks remain; Stable snapshots and coordination",
+      "obligation": "Continue an open approved task inside its contract; freeze acceptance without discarding new failure evidence; select appropriate checks while retaining real native/principal proof; use committed stable inputs for qualification."
+    },
+    {
+      "path": "docs/automation/codex-tracking-guide.md",
+      "section": "Evidence; Independent review",
+      "lines": [101, 126, 148],
+      "obligation": "Map criteria to named passing machine checks and exact committed evidence. Canonical selectedCommandIds must be existing keys representing checks actually executed; separate raw commands remain truthful. Review the exact candidate with expanded security/public-contract scrutiny."
+    },
+    {
+      "path": "planning/verification-method-approvals/CAP-05.S01.T03.EX01.json",
+      "section": "approvedVerificationSubstitution; unchangedBoundaries",
+      "obligation": "The exact original T03/1.9 exception and specified later consumption are bounded. No generic later-task, future-reference or release exemption exists, and additional incompatibilities are not automatically exempted. Ordinary T01 method selection is justified by section 8.1, not an inferred expansion of EX01."
+    }
+  ],
+  "unchangedHelperFailures": [
+    {
+      "helper": "desktop_app_check.product_build_errors",
+      "implementation": "tools/desktop_app_check.py:258",
+      "retainedLog": "artifacts/evidence/CAP-05.S04.T01.unchanged-product-inventory-03.log",
+      "retainedLogSha256FromInspectedDiagnostic": "9d12bf3047e16c8f960f8214acc93d3ec361bf186f8eee332a2a72c8a94db379",
+      "actualEarlierHelperVerdict": "FAIL",
+      "failures": [
+        "The fixed EXPECTED_PRODUCT_ARTIFACTS set permits only index.html, assets/app.css, assets/app.js and assets/app.js.map, rejecting the disclosed 195-artifact viewer bundle, including PDF.js workers, CMaps, fonts and notices.",
+        "The product manifest reference identity is compared to unchanged verification/extensions/desktop-ui.json rather than independently authenticating the approved 1.9 identity/package.",
+        "The hard-coded IMPLEMENTED_PRODUCT_PAGE_CONTRACTS omits document-reader.html, causing the newly implemented approved Reader route name to be classified as reference-only runtime leakage."
+      ],
+      "assessment": "These exact historical predicates do not establish a violated T01 acceptance criterion by themselves. They still require replacement coverage of actual build/input/output identity, approved experience binding, and absence of genuine reference-fixture leakage. Do not relabel the failed helper or desktop:application as PASS."
+    },
+    {
+      "helper": "desktop_app_check.security_errors",
+      "implementation": "tools/desktop_app_check.py:723",
+      "retainedLog": "artifacts/evidence/CAP-05.S04.T01.unchanged-security-selector-01.log",
+      "retainedLogSha256FromInspectedDiagnostic": "bd997cc4c99972be64f109cb189deb457bf5afdd985d4ae83a1380ceee83ab2a",
+      "actualEarlierHelperVerdict": "FAIL",
+      "failures": [
+        "Tauri CSP must exactly match the reviewed offline source allowlist."
+      ],
+      "observedDelta": "apps/desktop/src-tauri/tauri.conf.json adds worker-src 'self' and adds 'self' to connect-src ipc: http://ipc.localhost. Other inspected CSP directives, the named main-window capability, packaged frontendDist, freezePrototype and absence of the global Tauri bridge remain unchanged.",
+      "assessment": "The literal mismatch requires substantive current security proof. It does not by itself demonstrate that the accepted local PDF.js implementation expands approved security authority. This reviewer did not execute runtime CSP or destination-denial checks."
+    }
+  ],
+  "cspSecurityDistinction": {
+    "methodSelection": "Separately prove the accepted local viewer security obligations against the current committed product rather than claim a stale literal helper has passed.",
+    "consistentApprovedDirection": "Explicit local worker and same-origin packaged asset loading are consistent with the accepted locally pinned PDF.js viewer direction when actual confinement to packaged local origins is established.",
+    "requiredProof": "Authenticate the exact directives and asset inventory; demonstrate actual production packaged origins and denied remote asset/network requests; preserve narrow privileged-command capability and native origin checks; prove inert structured/document content, no direct paths, authenticated bounded ranges and project/session/rights denial.",
+    "authorityChangeTrigger": "Remote destinations, arbitrary protocols or navigation, broader native capabilities, unrestricted source/credential/file access, or relaxed isolation/rights/resource obligations would be an actual security authority change requiring the approved amendment/human route. The present advisory does not authorize any such change.",
+    "runtimeConfinementEstablishedByThisReview": false
+  },
+  "ownerNoFrameworkRestriction": {
+    "source": "Direct owner restriction supplied to this independent assessment, corroborated by EX01 unchangedBoundaries.",
+    "restriction": "After A05, no automation/framework source work; only authorized product feature work and required existing operations. Keep shared verification source, selector, policy, schema, CI, controller, dependency/runtime and command-registry controls unchanged.",
+    "consequence": "Use ordinary risk-selected checks and authenticated separately named task-owned proof without changing or monkeypatching shared controls. The restriction does not make a stale candidate command mandatory or confer authority to remove a substantive criterion."
+  },
+  "requiredUnaffectedProof": [
+    "Exact committed candidate, original claim-base ancestry, complete changed-path inventory and stable selected input/producer binding.",
+    "Complete current product input/output inventory, pinned PDF.js/CMap/font/license identities, actual deterministic builds, approved reference/package binding and absence of actual reference-only fixtures or markers in the functional product.",
+    "Real native/renderer/Core protected source path, current project/session/rights authorization and denial, bounded authenticated ranges, no direct paths, plaintext cache or unrestricted commands.",
+    "Viewer virtualization, bounded queue/read/buffer ownership, cancellation with lease release, concurrent-write fairness, project close/lock and restart/recovery behavior required by ADR-0029.",
+    "Actual production local worker/asset confinement, denied remote assets, disabled PDF scripting/XFA/actions/attachments and inert structured content.",
+    "Required keyboard/focus/accessibility, theme, Reader interactions and governed experience checks.",
+    "ADR-0029 representative/stress performance and complete resource-footprint obligations; exploratory samples are not qualifying p95, minimum-hardware or peak-memory evidence.",
+    "Criterion-linked selected/deferred coverage, truthful actual command outcomes and existing canonical IDs for checks actually executed, with failed exploratory helper outcomes retained outside all-exit-zero qualifying checks.",
+    "Independent exact-candidate high-risk product/security task disposition and all later integrated slice/checkpoint/fresh Wave qualification and separate human release gates."
+  ],
+  "limits": [
+    "No tests were executed, no product or automation source was edited and no taskctl mutation, commit or owner decision was performed by this reviewer.",
+    "The observed implementation was uncommitted. This advisory does not establish exact-candidate security, task acceptance, source-free proof completeness, ordinary reopen success or any approval readiness.",
+    "EX01 is not extended. The unchanged helper failures and their diagnostic limitations remain adverse evidence.",
+    "Future required full slice/Wave coverage and fresh real native/security/rights/recovery/platform qualification are not waived. If an actual mandatory criterion or authority conflict remains unprovable, that demonstrated boundary must be handled through its governing route."
+  ],
+  "taskApproval": false,
+  "ownerApprovalReadiness": false,
+  "waveCompletion": false,
+  "releaseApproval": false
+}

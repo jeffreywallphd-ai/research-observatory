@@ -24,6 +24,8 @@ from .corpus_service import CorpusService
 from .document_attachment_api import DocumentRuntimePort, register_document_attachment_routes
 from .document_revision_api import register_document_revision_routes
 from .document_revision_service import DocumentRevisionService
+from .document_viewer_api import register_document_viewer_routes
+from .document_viewer_service import DocumentViewerService
 from .import_api import register_import_routes
 from .import_intake_api import register_intake_routes
 from .import_preview_service import ImportPreviewService
@@ -131,6 +133,7 @@ class RuntimeContext:
     imports: ImportPreviewService | None = None
     attachments: DocumentRuntimePort | None = None
     document_revisions: DocumentRevisionService | None = None
+    document_viewer: DocumentViewerService | None = None
     connectors: ConnectorWorkerService | None = None
     plugin_admin: PluginAdminService | None = None
     plugin_consent: PluginConsentService | None = None
@@ -157,6 +160,7 @@ def create_app(
     imports: ImportPreviewService | None = None,
     attachments: DocumentRuntimePort | None = None,
     document_revisions: DocumentRevisionService | None = None,
+    document_viewer: DocumentViewerService | None = None,
     connectors: ConnectorWorkerService | None = None,
     plugin_admin: PluginAdminService | None = None,
     plugin_consent: PluginConsentService | None = None,
@@ -206,6 +210,7 @@ def create_app(
             imports=imports,
             attachments=attachments,
             document_revisions=document_revisions,
+            document_viewer=document_viewer,
             connectors=connectors,
             plugin_admin=plugin_admin,
             plugin_consent=plugin_consent,
@@ -231,6 +236,8 @@ def create_app(
         finally:
             context.state = RuntimeState.STOPPING
             signal_workers(context)
+            if context.document_viewer is not None:
+                context.document_viewer.shutdown()
             if context.reconciliation is not None:
                 context.reconciliation.shutdown()
             if context.connectors is not None:
@@ -364,6 +371,7 @@ def create_app(
     register_intake_routes(app, lambda request: runtime(request).imports, project_problem)
     register_document_attachment_routes(app, lambda request: runtime(request).attachments)
     register_document_revision_routes(app, lambda request: runtime(request).document_revisions)
+    register_document_viewer_routes(app, lambda request: runtime(request).document_viewer)
     register_connector_routes(app, lambda request: runtime(request).connectors, project_problem)
     register_plugin_routes(app, lambda request: runtime(request).plugin_admin, project_problem)
     register_plugin_invocation_routes(
@@ -378,6 +386,8 @@ def create_app(
 
     def signal_workers(context: RuntimeContext, root: str | None = None) -> None:
         # No lifecycle locks or waits until every worker has received its signal.
+        if context.document_viewer is not None:
+            context.document_viewer.signal_stop(root)
         if context.document_revisions is not None:
             context.document_revisions.signal_stop(root)
         if context.imports is not None:

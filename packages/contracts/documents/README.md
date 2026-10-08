@@ -14,6 +14,9 @@ provenance. The parser schemas below add staged structure under ADR-0028/0029:
 | `document-structure.v1.schema.json` | Lossless structure with Core-generated revision-scoped element UUIDs |
 | `document-revision-acceptance.v1.schema.json` | Exact result confirmation and expected head, with no caller-supplied actor or structure |
 | `document-revision.v1.schema.json` | Immutable human-accepted structural revision, decision, source binding and identity map |
+| `viewer-source-selector.v1.schema.json` | Opaque exact attachment/original and optional accepted normalized revision |
+| `viewer-source-metadata.v1.schema.json` | Current full source identity, with original and normalized revisions kept distinct |
+| `viewer-text-chunk.v1.schema.json` | Exact accepted element and bounded Unicode text chunk; separately governed derivation |
 
 Generate with `python packages/contracts/documents/generate_parser_schema.py`;
 `--check` rejects drift. JSON Schema proves shape. The additional graph, mapping,
@@ -32,3 +35,8 @@ an earlier acceptance. Structural acceptance remains scholarly `unverified`.
 
 See [document parsing](../../../docs/architecture/document-parsing.md) for
 normalization, offset mapping, selection and protected-source boundaries.
+
+The private native viewer protocol is described in [source viewing](source-viewing.md).
+Its schemas describe values; they neither expose a public Core route nor grant
+source access. Native/Core current-authority and exact-source checks remain
+required at read and delivery.

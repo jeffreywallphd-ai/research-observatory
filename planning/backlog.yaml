@@ -31527,7 +31527,7 @@ capabilities:
     depends_on:
     - CAP-05.S03.T03
     - CAP-01.S02.T03
-    status: READY
+    status: IN_PROGRESS
     tasks:
     - id: CAP-05.S04.T01
       capability_id: CAP-05
@@ -31559,11 +31559,11 @@ capabilities:
       - python tools/verify.py --profile desktop
       - python tools/verify.py --profile documents
       - python tools/verify.py --profile security-local
-      status: READY
-      owner: null
-      branch: null
-      started_at: null
-      updated_at: '2026-10-08T15:05:42+00:00'
+      status: IN_PROGRESS
+      owner: codex-w2-implementation
+      branch: codex/w2-implementation
+      started_at: '2026-10-08T19:08:53+00:00'
+      updated_at: '2026-10-08T21:44:59+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -31572,13 +31572,19 @@ capabilities:
         reviewer: null
         result: null
         reviewed_at: null
-        notes: null
-      base_sha: null
-      lease: null
+        notes: 'Reopened: Independent authority assessment confirms automation-guide8.1 and approved S04 permit risk-selected
+          task-owned proof without changing approved criteria. Preserve failed old helper results; no framework edits, generic
+          EX01 exemption, waived product/security/resource obligations or new owner decision.'
+      base_sha: 1bd33a6ba180487b239e3315e302b6db6aaea123
+      lease:
+        claimed_by: codex-w2-implementation
+        claimed_at: '2026-10-08T21:44:59+00:00'
+        expires_at: '2026-10-09T05:44:59+00:00'
       verification_state: null
-      worktree: null
+      worktree: .
       platform_targets:
       - windows-x64
+      cancellation: null
     - id: CAP-05.S04.T02
       capability_id: CAP-05
       slice_id: CAP-05.S04

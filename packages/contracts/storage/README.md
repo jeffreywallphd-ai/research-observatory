@@ -161,6 +161,15 @@ exact allow decision after applying project privacy, consent, and destination
 rules; deny, require-confirmation, exceptions, and malformed decisions expose no
 stream.
 
+Exact attached-original reads additionally accept an optional trusted cooperative
+stop callback under ADR-0029. Complete source authentication still precedes the
+first byte. Cancellation checkpoints perform no nested I/O or authorization,
+release the owned reader and roll back its writer; `ObjectReadCancelled` does
+not quarantine healthy ciphertext. A later retry revalidates current authority
+and authenticates the whole original again. Existing callers and encryption,
+key-loss, corruption and migration semantics remain unchanged. This additive
+Python port does not change the portable object profile or schema fingerprint.
+
 The same profile fixes T03's categorized physical accounting and maintenance
 boundary. Deployment configuration supplies optional project and shared-cache
 soft/hard byte limits plus the mandatory local free-space reserve. Low disk or a

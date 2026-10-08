@@ -2,9 +2,12 @@ import { fileURLToPath, URL } from "node:url";
 
 import react from "@vitejs/plugin-react";
 import { defineConfig } from "vite";
+import { boundedPdfWorker, pdfAssetNotices } from "./pdfjsWorkerBuild";
 
 export default defineConfig({
-  plugins: [react()],
+  plugins: [react(), boundedPdfWorker(), pdfAssetNotices()],
+  worker: { format: "es", plugins: () => [boundedPdfWorker()],
+    rollupOptions: { output: { entryFileNames: "assets/documentViewer.worker.js", chunkFileNames: "assets/pdf.worker.js" } } },
   define: {
     "process.env.NODE_ENV": JSON.stringify("production"),
   },
@@ -13,6 +16,7 @@ export default defineConfig({
   },
   clearScreen: false,
   build: {
+    assetsInlineLimit: 0,
     target: "es2023",
     outDir: "product-dist",
     emptyOutDir: true,

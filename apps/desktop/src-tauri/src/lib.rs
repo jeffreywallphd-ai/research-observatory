@@ -14,6 +14,8 @@ mod document_reader;
 #[cfg(windows)]
 mod document_runtime;
 #[cfg(windows)]
+mod document_viewer;
+#[cfg(windows)]
 mod import_report;
 mod import_runtime;
 #[cfg(windows)]
@@ -1016,7 +1018,11 @@ fn application_builder() -> tauri::Builder<tauri::Wry> {
         document_reader::document_reader_anchor_read,
         document_reader::document_reader_anchor_list,
         document_reader::document_reader_anchor_resolve,
-        document_reader::document_reader_citation_links
+        document_reader::document_reader_citation_links,
+        document_viewer::document_viewer_source,
+        document_viewer::document_viewer_text,
+        document_viewer::document_viewer_range,
+        document_viewer::document_viewer_cancel
     ];
     #[cfg(not(windows))]
     let handler: fn(tauri::ipc::Invoke<tauri::Wry>) -> bool = tauri::generate_handler![
@@ -1154,6 +1160,8 @@ fn setup_runtime(
     app.manage(connector_configuration::ConfigurationManager::default());
     #[cfg(windows)]
     app.manage(document_attachment::DocumentAttachmentManager::default());
+    #[cfg(windows)]
+    app.manage(document_viewer::DocumentViewerManager::default());
     if lock.is_unlocked() {
         let startup = supervisor.clone();
         tauri::async_runtime::spawn_blocking(move || startup.start());

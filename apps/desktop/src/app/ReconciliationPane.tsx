@@ -9,10 +9,11 @@ import type { AttachmentHandoff } from "./DocumentAttachmentPane";
 type Client = ReturnType<typeof createCoreApiClient>;
 const active = (status: ReconciliationBatchStatus | null): boolean => Boolean(status && !["succeeded", "failed", "cancelled"].includes(status.state));
 
-export function ReconciliationPane({ root, projectId, client, announce, headingRef, onTaskCenter, returnAttachment, onAttachmentReturnConsumed, onAttachmentRecovery }: {
+export function ReconciliationPane({ root, projectId, client, announce, headingRef, onTaskCenter, onOpenReader, returnAttachment, onAttachmentReturnConsumed, onAttachmentRecovery }: {
   readonly root: string; readonly projectId: string; readonly client: Client; readonly announce: (message: string) => void;
   readonly headingRef: RefObject<HTMLHeadingElement | null>;
   readonly onTaskCenter?: ((handoff: AttachmentHandoff) => void) | undefined;
+  readonly onOpenReader?: ((handoff: AttachmentHandoff) => void) | undefined;
   readonly returnAttachment?: AttachmentHandoff | null | undefined;
   readonly onAttachmentReturnConsumed?: ((handoff: AttachmentHandoff) => void) | undefined;
   readonly onAttachmentRecovery?: ((selection: AttachmentHandoff["selection"], handoff: AttachmentHandoff | null) => void) | undefined;
@@ -136,7 +137,7 @@ export function ReconciliationPane({ root, projectId, client, announce, headingR
       </> : null}
     </div></Panel>
     {versionOpen ? <ReconciliationVersionsPane root={root} projectId={projectId} client={client} announce={announce}
-      onTaskCenter={onTaskCenter} returnAttachment={returnAttachment} onAttachmentReturnConsumed={onAttachmentReturnConsumed}
+      onTaskCenter={onTaskCenter} onOpenReader={onOpenReader} returnAttachment={returnAttachment} onAttachmentReturnConsumed={onAttachmentReturnConsumed}
       onAttachmentRecovery={onAttachmentRecovery}
       onClose={() => { setVersionOpen(false); globalThis.requestAnimationFrame(() => { if (live.current) versionButton.current?.focus(); }); }}
       onDenied={() => { setPage(null); setSelected(null); }} /> : null}

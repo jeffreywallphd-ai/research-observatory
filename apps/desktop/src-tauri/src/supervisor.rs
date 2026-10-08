@@ -28,6 +28,7 @@ const MAX_DIAGNOSTICS: usize = 64;
 const CAPABILITY_TOKEN_BYTES: usize = 32;
 const MAX_CORPUS_REPORT_REQUEST_BYTES: usize = 32_768;
 const MAX_CORPUS_REPORT_RESPONSE_BYTES: usize = 33_554_432;
+const MAX_VIEWER_RANGE_RESPONSE_BYTES: usize = 1_406_296; // 1 MiB base64 + bounded identity envelope.
 const EXPECTED_CORE_CAPABILITIES: &[&str] = &[
     "intent.acceptance",
     "intent.drafts",
@@ -517,6 +518,10 @@ pub(crate) enum NativeDocumentAction {
     AnchorList,
     AnchorResolve,
     CitationLinks,
+    ViewerSource,
+    ViewerText,
+    ViewerRange,
+    ViewerCancel,
 }
 
 #[cfg(windows)]
@@ -540,6 +545,10 @@ impl NativeDocumentAction {
             Self::AnchorList => "/native/document-revisions/anchor-list",
             Self::AnchorResolve => "/native/document-revisions/anchor-resolve",
             Self::CitationLinks => "/native/document-revisions/citation-links",
+            Self::ViewerSource => "/native/document-viewer/source",
+            Self::ViewerText => "/native/document-viewer/text",
+            Self::ViewerRange => "/native/document-viewer/range",
+            Self::ViewerCancel => "/native/document-viewer/cancel",
         }
     }
 }
@@ -607,6 +616,8 @@ impl NativeImportConnection {
             Some(self.cancellation.as_ref()),
             if matches!(action, NativeDocumentAction::Download) {
                 Duration::from_secs(325)
+            } else if matches!(action, NativeDocumentAction::ViewerRange) {
+                Duration::from_secs(10)
             } else {
                 Duration::from_secs(2)
             },
@@ -3469,6 +3480,7 @@ fn authenticated_api_request_bytes_owned(
         return Err("RO-CORE-API-CANCELLED");
     }
     let response_limit = match api_request.path.as_str() {
+        "/native/document-viewer/range" => MAX_VIEWER_RANGE_RESPONSE_BYTES,
         "/projects/corpus/reports/create"
         | "/projects/corpus/reports/inspect"
         | "/projects/corpus/reports/drill" => MAX_CORPUS_REPORT_RESPONSE_BYTES,

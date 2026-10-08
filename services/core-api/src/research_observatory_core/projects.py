@@ -34,6 +34,7 @@ from .models import (
     ProjectRecoveryAction,
 )
 from .ports.object_store import ObjectKeyUnavailable, ObjectStoreProblem
+from .project_action_mutex import FairProjectActionMutex
 from .storage import StorageProblem, initialize_database, validate_canonical_database
 from .workflow_profile_contracts import approved_workflow_profile_catalog
 
@@ -524,7 +525,7 @@ class ProjectLifecycleService:
             raise TypeError("object upgrade must be a callable composition boundary")
         self._instance_id = str(uuid.uuid4())
         self._opened: dict[Path, ProjectAccessMode] = {}
-        self._mutex = threading.RLock()
+        self._mutex = FairProjectActionMutex()
         self._object_upgrade = object_upgrade
 
     @staticmethod

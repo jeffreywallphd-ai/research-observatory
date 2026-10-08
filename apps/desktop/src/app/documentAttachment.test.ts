@@ -11,6 +11,7 @@ import {
   isInterruptedPriorSessionStatus,
   canStartAttachmentReview,
   canReviewAvailableCopies,
+  canOpenRecordedSource,
   decodeAttachmentStatus,
   DOCUMENT_ATTACHMENT_COMMANDS,
   attachmentProblemMessage,
@@ -29,6 +30,21 @@ const commandId = "01900000-0000-7000-8000-000000000010";
 const sessionId = "a".repeat(32);
 
 describe("attachment failure evidence", () => {
+  it("allows exact recorded originals independently of parsing, while denying missing, mismatched and adverse handoffs", () => {
+    const selection = attachmentSelection(context(), versionId, sourceId)!;
+    const recorded = decodeAttachmentStatus({ schemaVersion: "1.0", status: "processing", selection,
+      operationId, commandId, attachmentId: candidateId, documentRevisionId: commandId,
+      code: null, retryRequest: null })!;
+    expect(canOpenRecordedSource(recorded, selection)).toBe(true);
+    expect(canOpenRecordedSource({ ...recorded, status: "available" }, selection)).toBe(true);
+    expect(canOpenRecordedSource(recorded, { ...selection, versionRevisionId: candidateId })).toBe(false);
+    expect(canOpenRecordedSource({ ...recorded, documentRevisionId: null }, selection)).toBe(false);
+    for (const status of ["candidate", "downloading", "validating", "denied", "failed", "cancelled", "unconfirmed"] as const)
+      expect(canOpenRecordedSource({ ...recorded, status }, selection)).toBe(false);
+    expect(canOpenRecordedSource({ ...recorded, code: "rights-denied" }, selection)).toBe(false);
+    expect(canOpenRecordedSource(null, selection)).toBe(false);
+    expect(canOpenRecordedSource(recorded, null)).toBe(false);
+  });
   it("keeps a generic post-selection rejection distinct from evidence that no file was selected", () => {
     // The real Windows r01 transfer reached held staging before Core rejected
     // it. This fallback also serves failures before selection, so it cannot

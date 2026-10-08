@@ -4,7 +4,7 @@ import { Button, Notification, Panel, StatusBadge } from "@research-observatory/
 import {
   attachmentBeginRequest, attachmentCancelRequest, attachmentCommitRequest, attachmentProblemMessage,
   attachmentSelection, attachmentStatusMessage, attachmentStatusRequest, canStartAttachmentReview, canReviewAvailableCopies,
-  isInterruptedPriorSessionStatus, newAttachmentId, sameAttachmentSelection,
+  isInterruptedPriorSessionStatus, newAttachmentId, sameAttachmentSelection, canOpenRecordedSource,
   type AttachmentCandidate, type AttachmentCommitRequest, type AttachmentEvent, type AttachmentOutcome,
   type AttachmentProblemCode, type AttachmentSelection, type AttachmentMode, type AttachmentStatus,
 } from "./documentAttachment";
@@ -42,7 +42,7 @@ const sameSavedDecision = (left: AttachmentCommitRequest, right: AttachmentCommi
   && left.matchConfirmed === right.matchConfirmed && left.permittedUse === right.permittedUse;
 
 export function DocumentAttachmentPane({ root, context, versionId, client, announce, onClose, onTaskCenter, initialSourceId,
-  onRecoveryContext: recoveryContext, initialHandoff, port = nativeDocumentAttachmentPort }: {
+  onRecoveryContext: recoveryContext, initialHandoff, onOpenReader, port = nativeDocumentAttachmentPort }: {
   readonly root: string;
   readonly context: VersionContext;
   readonly versionId: string;
@@ -50,6 +50,7 @@ export function DocumentAttachmentPane({ root, context, versionId, client, annou
   readonly announce: (message: string) => void;
   readonly onClose: () => void;
   readonly onTaskCenter?: ((handoff: AttachmentHandoff) => void) | undefined;
+  readonly onOpenReader?: ((handoff: AttachmentHandoff) => void) | undefined;
   readonly onRecoveryContext?: ((selection: AttachmentSelection, handoff: AttachmentHandoff | null) => void) | undefined;
   readonly initialSourceId?: string | undefined;
   readonly initialHandoff?: AttachmentHandoff | null | undefined;
@@ -416,6 +417,7 @@ export function DocumentAttachmentPane({ root, context, versionId, client, annou
   }
 
   const currentStatus = problem ? attachmentProblemMessage(problem) : status;
+  const readable = !busy && !unconfirmed && canOpenRecordedSource(attachmentStatus, selected);
   return <Panel title="Attach full text to selected version"><section className="ro-stack ro-form" aria-label="Selected-version attachment"
     aria-busy={busy} onKeyDown={(event) => {
       if (event.key === "Escape") {
@@ -472,7 +474,11 @@ export function DocumentAttachmentPane({ root, context, versionId, client, annou
         attachmentId: committed?.status === "attached" ? committed.attachmentId : attachmentStatus?.attachmentId ?? null,
         documentRevisionId: committed?.status === "attached" ? committed.documentRevisionId : attachmentStatus?.documentRevisionId ?? null }); }}>View Task Center</Button>
       <Button disabled={busy || Boolean(unconfirmed)} onClick={onClose}>Return to Work versions</Button></div>
-    <Button disabled>Open in Document Reader · pending viewer</Button>
-    <p>The reader stays unavailable until CAP-05.S04 provides protected source viewing and an exact-revision return route.</p>
+    <Button disabled={!readable || !onOpenReader} onClick={() => {
+      if (!readable || !attachmentStatus || !selected) return;
+      onOpenReader?.({ selection: selected, operationId: attachmentStatus.operationId, commitRequest: null,
+        attachmentId: attachmentStatus.attachmentId, documentRevisionId: attachmentStatus.documentRevisionId, copyId });
+    }}>Open in Document Reader</Button>
+    <p>Opening the reader rechecks this exact original revision and its current inspection permission.</p>
   </section></Panel>;
 }

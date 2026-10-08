@@ -15,6 +15,7 @@ export interface ImportWorkspaceProps {
   readonly attachmentReturn?: AttachmentHandoff | null;
   readonly onAttachmentReturnConsumed?: (handoff: AttachmentHandoff) => void;
   readonly onTaskCenter?: (handoff: AttachmentHandoff) => void;
+  readonly onOpenReader?: (handoff: AttachmentHandoff) => void;
   readonly onAttachmentRecovery?: (selection: AttachmentHandoff["selection"], handoff: AttachmentHandoff | null) => void;
 }
 
@@ -27,7 +28,7 @@ export function ImportWorkspace(props: ImportWorkspaceProps): ReactNode {
   return <ImportProject key={`${project.projectId}\u0000${project.root}`} {...props} project={project} />;
 }
 
-function ImportProject({ project, announce, transport = packagedProjectTransport, initialPreviews, attachmentReturn, onAttachmentReturnConsumed, onTaskCenter, onAttachmentRecovery }: ImportWorkspaceProps & { readonly project: ProjectProjection }): ReactNode {
+function ImportProject({ project, announce, transport = packagedProjectTransport, initialPreviews, attachmentReturn, onAttachmentReturnConsumed, onTaskCenter, onOpenReader, onAttachmentRecovery }: ImportWorkspaceProps & { readonly project: ProjectProjection }): ReactNode {
   const client = useMemo(() => createCoreApiClient(transport), [transport]);
   const [page, setPage] = useState<ImportPreviewPage | null>(initialPreviews ?? null);
   const [after, setAfter] = useState<string | null>(null);
@@ -131,6 +132,6 @@ function ImportProject({ project, announce, transport = packagedProjectTransport
     </div>
     <ReconciliationPane root={project.root} projectId={project.projectId} client={client} announce={announce} headingRef={reconciliationHeading}
       returnAttachment={attachmentReturn} onAttachmentReturnConsumed={onAttachmentReturnConsumed}
-      onTaskCenter={onTaskCenter} onAttachmentRecovery={onAttachmentRecovery} />
+      onTaskCenter={onTaskCenter} onOpenReader={onOpenReader} onAttachmentRecovery={onAttachmentRecovery} />
   </div>;
 }

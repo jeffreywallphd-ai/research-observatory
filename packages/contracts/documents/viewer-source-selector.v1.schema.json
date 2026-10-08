@@ -1,0 +1,46 @@
+{
+  "$defs": {
+    "Identity": {
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "attachmentId": {
+      "$ref": "#/$defs/Identity"
+    },
+    "documentRevisionId": {
+      "$ref": "#/$defs/Identity"
+    },
+    "normalizedRevisionId": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Identity"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    }
+  },
+  "required": [
+    "attachmentId",
+    "documentRevisionId"
+  ],
+  "title": "ViewerSourceSelector",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://research-observatory.local/contracts/documents/viewer-source-selector.v1.schema.json",
+  "x-research-observatory-semanticRules": [
+    "opaque-exact-attachment-original-and-optional-distinct-accepted-normalized-revision",
+    "current-native-session-project-human-intent-privacy-and-per-copy-inspect-authority",
+    "source-at-most-128-mib-range-at-most-1-mib-whole-original-authentication-before-bytes",
+    "no-renderer-path-url-credential-actor-policy-or-caller-owned-rights",
+    "structured-text-separately-requires-current-derive-authority-at-read-and-delivery",
+    "exact-accepted-revision-element-offset-and-at-most-4096-unicode-codepoints",
+    "next-offset-null-or-exact-offset-plus-text-codepoints-not-utf16-or-bytes",
+    "selection-metadata-and-extraction-are-not-permission-or-scholarly-verification"
+  ]
+}

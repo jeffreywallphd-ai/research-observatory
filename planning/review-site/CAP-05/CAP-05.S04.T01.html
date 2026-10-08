@@ -38,7 +38,7 @@
       <nav class="breadcrumbs" aria-label="Breadcrumb"><a href="../index.html">Planning review</a><span>/</span><a href="index.html">CAP-document-inspection</a><span>/</span><a href="CAP-05.S04.html">SLICE-source-viewer-and-evidence-inspection-experience</a><span>/</span><span aria-current="page">CAP-05.S04.T01</span></nav>
 
 <section class="hero compact" data-task-page="CAP-05.S04.T01">
-  <div class="hero-top"><div><span class="eyebrow">CAP-05.S04.T01 · task 1 of 3</span><h1>Build secure local PDF/page and structured-text viewer</h1><p>Desktop viewer with page thumbnails, zoom, text view, section navigation, search, and restricted external-link behavior.</p></div><span class="status status-ready">Ready</span></div>
+  <div class="hero-top"><div><span class="eyebrow">CAP-05.S04.T01 · task 1 of 3</span><h1>Build secure local PDF/page and structured-text viewer</h1><p>Desktop viewer with page thumbnails, zoom, text view, section navigation, search, and restricted external-link behavior.</p></div><span class="status status-in-progress">In_Progress</span></div>
   <dl class="summary-grid"><div><dt>Wave</dt><dd>W2</dd></div><div><dt>Slice</dt><dd><a href="CAP-05.S04.html">SLICE-source-viewer-and-evidence-inspection-experience</a></dd></div><div><dt>Risk / review</dt><dd>high / agent-review</dd></div><div><dt>Latest review</dt><dd>not reviewed</dd></div></dl>
 </section>
 <section class="task-summary"><div class="section-heading"><span class="eyebrow">Authoritative task record</span><h2>Scope and acceptance</h2></div>
@@ -49,7 +49,7 @@
 <section class="task-summary"><div class="section-heading"><span class="eyebrow">Verification inventory</span><h2>Profiles and commands</h2></div>
   <h3>Verification profiles</h3><ul class="gate-criteria"><li>desktop</li><li>documents</li><li>security-local</li></ul>
   <h3>Commands</h3><ul class="gate-criteria"><li>python tools/verify.py --profile desktop</li><li>python tools/verify.py --profile documents</li><li>python tools/verify.py --profile security-local</li></ul>
-  <p data-task-claim="CAP-05.S04.T01" data-task-owner="unclaimed" data-task-branch="none" data-task-base-sha="none"><strong>Claim projection:</strong> owner <code>unclaimed</code> · branch <code>none</code> · base <code>none</code></p>
+  <p data-task-claim="CAP-05.S04.T01" data-task-owner="codex-w2-implementation" data-task-branch="codex/w2-implementation" data-task-base-sha="1bd33a6ba180487b239e3315e302b6db6aaea123"><strong>Claim projection:</strong> owner <code>codex-w2-implementation</code> · branch <code>codex/w2-implementation</code> · base <code>1bd33a6ba180487b239e3315e302b6db6aaea123</code></p>
 </section>
 <section class="task-summary" data-task-plan="CAP-05.S04.T01" data-task-plan-sha256="b2fdfaa1342355a52bc8f6cdf27723736a3c616dc5b653cfc13c5a9277ef95bf"><div class="section-heading"><span class="eyebrow">Approved implementation intent</span><h2>Task plan</h2></div><article class="plan-article compact-article"><pre class='markdown-fallback'>### 9.1 `CAP-05.S04.T01` - Build secure local PDF/page and structured-text viewer
 **Objective:** Desktop viewer with page thumbnails, zoom, text view, section navigation, search, and restricted external-link behavior.
@@ -90,14 +90,99 @@ python tools/verify.py --profile documents
 python tools/verify.py --profile security-local
 ```</pre></article></section>
 <section class="section-heading"><span class="eyebrow">Task-start planning</span><h2>Assigned worksheet</h2><p>The worksheet is an optional planning aid and does not create a new approval or task state.</p></section>
-<p class="decision-meta" data-task-worksheet-absent="CAP-05.S04.T01">No optional task-start worksheet is assigned. This does not block execution.</p>
+
+<details class="plan-details task-worksheet" open data-task-worksheet="CAP-05.S04.T01" data-worksheet-sha256="55684ec931141b6cf54f8782102465a226ffde0870b4f178d3ffb7dd86cd541c">
+  <summary>Assigned task-start worksheet</summary>
+  <div class="worksheet-meta"><strong>Source:</strong> <code>artifacts/evidence/CAP-05.S04.T01.task-start.md</code> · <strong>SHA-256:</strong> <code>55684ec931141b6cf54f8782102465a226ffde0870b4f178d3ffb7dd86cd541c</code></div>
+  <article class="plan-article"><pre class='markdown-fallback'># CAP-05.S04.T01 — secure local source viewer
+
+Claim base: `1bd33a6ba180487b239e3315e302b6db6aaea123`.
+Authority: frozen W2 at `c85a59f3a293f8e3f2eaf6454682c9a14b1efa55`,
+CAP-05.S04 sections 4, 7–12 and 19, accepted ADR-0016/0017/0029,
+and RO-UI-ACADEMIC-MINIMAL-1.9 with its inherited Reader/workflow contract.
+Taskctl selected this READY task after both dependency tasks were DONE.
+
+| Material boundary | Implementation and planned proof |
+|---|---|
+| Controlled source access | Original and normalized revision identities remain distinct. Core resolves exact immutable attachment/copy/project/source binding, current native session, human Intent/privacy and per-copy inspect permission; substituted IDs and revoked authority deny delivery. Derived structured text retains its separate derive requirement. |
+| Integrity and cancellation | Optional trusted cancellation checkpoints during whole-source authentication and bounded prefix reads. No bytes before final authentication. Cancellation rolls back/closes without quarantining healthy ciphertext; existing corruption/key-loss behavior stays intact. Real encrypted-object tests plus maximum-source cancellation/concurrent writer proof. |
+| Admission and fairness | Source &lt;=128MiB, range &lt;=1MiB, one active read/project, eight queued operations. Exact duplicate coalescing retains each requester&#x27;s cancellation/authority. Cancel obsolete work before admission; close the writer before delivery and permit metadata writes between ranges. |
+| Native transport | Fixed typed viewer commands, bounded byte responses and exact range/source correlation; native root/session/token/window/generation remain trusted. Lock/close denies late delivery and drains owned work. Real renderer/native/Core integration, beyond unit doubles. |
+| Inert source rendering | Locally pinned PDF.js worker, no document URL, active scripting/XFA/forms/actions/attachments or remote assets. Structured text is inert. Hostile/malformed/oversized fixtures and no-egress checks. |
+| Viewer memory and latency | Virtualize visible pages/thumbnails, cancel stale renders and account for worker source allocation, transfers, surfaces and hostile decoding within 256MiB. Qualify representative 10MiB/50-page cold/warm p95 &lt;=1.5s over &gt;=20 opens and 128MiB/500-page stress; cancellation/lease release &lt;=1s. |
+| Experience and handoff | Approved Reader toolbar/outline/source/inspector and selected Work/Version return context; page navigation, zoom, text, sections, search and restricted external links. Keyboard/focus, reflow and both themes. T02 owns durable deep links/multiple highlights; T03 owns the rights-aware action broker. |
+| Compatibility and evidence | Additive port cancellation, unchanged encryption/migration format and historical revisions. Focused affected tests first, exact committed candidate qualification and expanded independent review; S02–S04 checkpoint and fresh Wave matrix remain later gates. |
+
+Read-only independent design preflight by `agent:/root/s04_t01_design_preflight`
+found no implementation approval gate. Its material cancellation classification,
+inspect-only, revision-mapping, transport, delivery and memory risks are included
+above. It is advisory, not a task approval.
+
+Owner direction remains binding: no 8GiB/16GiB tier qualification variants on
+this host, no automation-framework source work after A05, and no investigation
+or rerun of the accepted parser timing overage. The existing minimum-tier
+qualification claim remains unproven. The resource/model successor packet must
+be concrete and approved before dependent authority changes; it does not block
+unaffected viewer implementation. No completion, hardware-tier qualification or
+release claim is made by this worksheet.
+
+## Current checkpoint and adverse evidence
+
+The first actual Core/worker maximum-source diagnostic denied the SDK&#x27;s ninth
+concurrent range. The pinned worker now caps groups and serializes range-reader
+admission; the 128MiB/500-page diagnostic reached the first and last page and
+searched the last page. A separate cancellation advisory identified shared SDK
+demands surviving operation cancellation. The viewer now retires that decoder
+generation and drains admitted readers before replacement. Actual worker
+operation-cancellation/recovery qualification remains required.
+
+Worktree checks passed: 33 focused real encrypted-object/private API/authority/
+admission/fairness tests, 20 viewer/SDK tests, three mounted Reader checks,
+affected lint, schemas and strict typing. The product assembles 195 fixed local
+artifacts, including pinned CMaps/fonts, worker modules and license notices.
+The updated 10MiB/50-page exploratory Core/worker open took about1.214 seconds.
+These are advisory observations, not exact-candidate qualification, native/Wry
+proof, minimum-tier qualification, a complete/peak footprint or20-open p95.
+
+The unchanged shared product verifier rejects the new artifact inventory,
+the Reader route and the stale1.8 reference selector. Its security helper rejects
+the local-only worker/asset CSP against its earlier literal allowlist. EX01 is
+not a generic later-task exemption. An attempted uncommitted shared-verifier
+edit was withdrawn byte-for-byte; the patch and adverse diagnostics remain in
+ignored task output. No framework source change is included. A bounded,
+source-free verification-method proposal was initially considered. Fresh
+independent authority review by `agent:/root/s04_method_gate_readiness` found
+that proposal unnecessary: automation-guide section8.1 and the approved S04
+plan make profile commands candidate coverage, not mandatory helper verdicts.
+Ordinary task-owned proof may establish the current package/approved Reader/
+local-only CSP while preserving adverse helper results and all material
+functional/security/platform/UX/performance obligations. This does not infer
+a generic EX01 exemption or waive any slice/Wave gate. The block validator
+completed its atomic publication before cancellation could occur. Its actual
+receipt is preserved; ordinary taskctl reopen committed successfully, retaining
+the original base and owner. The task is IN_PROGRESS and the campaign remains
+ACTIVE; no pause or new owner decision is requested.
+
+The actual pinned-worker uncached-operation probe passed render and thumbnail
+cancellation but timed out on search: terminating the decoder did not settle
+the main-thread SDK text reader. The adverse run is retained at
+`artifacts/tmp/CAP-05.S04.T01.worker-cancel-01.log`. Search now owns the public
+SDK stream reader and cancels it during decoder retirement before worker
+termination. Required regression proof includes settling the old search,
+denying replacement byte admission until drain, and successful exact-source
+reopen, rather than only ignoring a late UI update.
+The corrected worktree passed all six actual-worker cases (search, render and
+thumbnail while loading text or an uncached page), nine ownership unit tests
+and strict typing. The actual-worker byte port is explicitly synthetic; this
+does not qualify native transport, complete resource footprint or p95 latency.</pre></article>
+</details>
 <section class="section-heading"><span class="eyebrow">Execution evidence</span><h2>Review packets, rounds, and current projection</h2><p>Append-only controls retain every immutable round and finding closure. Pre-policy tasks remain explicitly latest-review-only.</p></section>
 
 <section class="review-toolbar" data-task-review-id="CAP-05.S04.T01" data-review-mode="latest-review-only">
   <h3>CAP-05.S04.T01 — Build secure local PDF/page and structured-text viewer</h3>
   <p><strong>Legacy latest-review-only projection.</strong> No append-only review rounds are recorded; this view does not fabricate historical attempts.</p>
-  <dl class="summary-grid" data-current-review-projection="CAP-05.S04.T01" data-current-review-result="not-reviewed" data-current-reviewer="none" data-current-reviewed-at="none"><div><dt>Task status</dt><dd>READY</dd></div><div><dt>Latest result</dt><dd>not reviewed</dd></div><div><dt>Reviewer</dt><dd>none</dd></div><div><dt>Reviewed at</dt><dd><code>none</code></dd></div></dl>
-  <p><strong>Latest notes:</strong> None</p>
+  <dl class="summary-grid" data-current-review-projection="CAP-05.S04.T01" data-current-review-result="not-reviewed" data-current-reviewer="none" data-current-reviewed-at="none"><div><dt>Task status</dt><dd>IN_PROGRESS</dd></div><div><dt>Latest result</dt><dd>not reviewed</dd></div><div><dt>Reviewer</dt><dd>none</dd></div><div><dt>Reviewed at</dt><dd><code>none</code></dd></div></dl>
+  <p><strong>Latest notes:</strong> Reopened: Independent authority assessment confirms automation-guide8.1 and approved S04 permit risk-selected task-owned proof without changing approved criteria. Preserve failed old helper results; no framework edits, generic EX01 exemption, waived product/security/resource obligations or new owner decision.</p>
 </section>
 <nav class="page-turn" aria-label="Task navigation"><a class="button button-quiet" href="CAP-05.S04.html">Previous</a><a class="button button-primary" href="CAP-05.S04.T02.html">Next</a></nav>
 

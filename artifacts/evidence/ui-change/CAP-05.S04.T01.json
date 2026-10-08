@@ -1,0 +1,46 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "ui-change-evidence",
+  "taskId": "CAP-05.S04.T01",
+  "changeKind": "approved-reference-implementation",
+  "contractPath": "artifacts/evidence/ui-change/CAP-05.S04.T01.json",
+  "implementationAgent": "agent:codex-w2-implementation",
+  "changedFiles": [
+    "apps/desktop/src/app.css",
+    "apps/desktop/src/app/ApplicationRuntime.tsx",
+    "apps/desktop/src/app/DocumentAttachmentPane.tsx",
+    "apps/desktop/src/app/DocumentViewerWorkspace.tsx",
+    "apps/desktop/src/app/ImportWorkspace.tsx",
+    "apps/desktop/src/app/ReconciliationPane.tsx",
+    "apps/desktop/src/app/ReconciliationVersionsPane.tsx",
+    "apps/desktop/src/app/documentViewer.ts",
+    "apps/desktop/src/app/documentViewer.worker.ts",
+    "apps/desktop/src/app/pdfDocumentViewer.ts",
+    "apps/desktop/src/app/viewerAssets.ts",
+    "apps/desktop/src/app/viewerWorkerMessages.ts",
+    "apps/desktop/src/app/viewerWorkerQuota.ts",
+    "apps/desktop/src/app/workflowNavigationModel.ts",
+    "apps/desktop/src/app/documentAttachment.ts"
+  ],
+  "reference": {
+    "referenceId": "RO-UI-ACADEMIC-MINIMAL-1.9",
+    "version": "1.9",
+    "packageSha256": "24b8d62356863980ae9a13db7d6a06b04b76c60e2f1920d2e888cadecfb24c4b",
+    "approvalCommit": "556369f77186324194789ee26eb0baf00fd936a8",
+    "approvedBy": "human:repository-owner",
+    "previousReferenceId": "RO-UI-ACADEMIC-MINIMAL-1.8"
+  },
+  "implementationScope": "The inherited approved Reader experience: exact selected Work/version handoff, protected original PDF and separately permitted accepted text, bounded thumbnails, page/zoom/search, inert links, provenance, keyboard/focus/reflow and themes. Ordinary task-owned verification is permitted by the independent selection advisory; no new owner-method decision is pending. Implementation remains incomplete pending exact-candidate native/decoder/resource/latency proof and independent disposition. Rights action broker and durable links belong to T03/T02.",
+  "focusedEvidence": [
+    {
+      "command": "node node_modules/vitest/vitest.mjs run src/app/documentViewer.test.ts src/app/pdfjsWorkerBuild.test.ts src/app/pdfDocumentViewer.test.ts src/app/viewerAssets.test.ts src/app/viewerWorkerMessages.test.ts src/app/viewerWorkerQuota.test.ts",
+      "result": "passed",
+      "scope": "20 affected worktree tests; actual pinned SDK scheduling method plus declared doubles for ownership, source binding, allocation, messages and cancellation generation. Not native or committed-candidate qualification."
+    },
+    {
+      "command": "python -B -m unittest tests.desktop.test_document_viewer_interactions -v",
+      "result": "passed",
+      "scope": "Three worktree mounted Reader checks with declared synthetic ports and PDF decoder: exact source substitution/retry, page/zoom/text/keyboard/return, late state denial, search cancellation, reflow and light/dark captures. Not encrypted/native/actual PDF-decoder proof."
+    }
+  ]
+}

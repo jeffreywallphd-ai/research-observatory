@@ -19,10 +19,11 @@ const versionLabel = (context: VersionContext, id: string): string => {
   return index < 0 ? "Historical version" : `${label(context.versions[index]!.definition.kind)} · version ${index + 1}`;
 };
 
-export function ReconciliationVersionsPane({ root, projectId, client, announce, onClose, onDenied, onTaskCenter, returnAttachment, onAttachmentReturnConsumed, onAttachmentRecovery }: {
+export function ReconciliationVersionsPane({ root, projectId, client, announce, onClose, onDenied, onTaskCenter, onOpenReader, returnAttachment, onAttachmentReturnConsumed, onAttachmentRecovery }: {
   readonly root: string; readonly projectId: string; readonly client: Client; readonly announce: (message: string) => void;
   readonly onClose: () => void; readonly onDenied: () => void;
   readonly onTaskCenter?: ((handoff: AttachmentHandoff) => void) | undefined;
+  readonly onOpenReader?: ((handoff: AttachmentHandoff) => void) | undefined;
   readonly returnAttachment?: AttachmentHandoff | null | undefined;
   readonly onAttachmentReturnConsumed?: ((handoff: AttachmentHandoff) => void) | undefined;
   readonly onAttachmentRecovery?: ((selection: AttachmentHandoff["selection"], handoff: AttachmentHandoff | null) => void) | undefined;
@@ -261,7 +262,7 @@ export function ReconciliationVersionsPane({ root, projectId, client, announce, 
             ref={(element) => { if (element) attachmentTriggers.current.set(version.versionId, element); else attachmentTriggers.current.delete(version.versionId); }}
             onClick={() => { setAttachmentInitialSourceId(undefined); setAttachmentHandoff(null); setAttachmentVersionId(version.versionId); }}>Attach full text to this version</Button> }))} rowKey={(row) => String(row.id)} />
       {attachmentVersionId ? <DocumentAttachmentPane key={attachmentVersionId} root={root} context={context} versionId={attachmentVersionId}
-        client={client} announce={announce} onClose={closeAttachment} onTaskCenter={onTaskCenter}
+        client={client} announce={announce} onClose={closeAttachment} onTaskCenter={onTaskCenter} onOpenReader={onOpenReader}
         onRecoveryContext={onAttachmentRecovery} initialSourceId={attachmentInitialSourceId} initialHandoff={attachmentHandoff} /> : null}
       {historical ? <section className="ro-stack" aria-label="Retained version history"><h4 ref={historyHeading} tabIndex={-1}>Retained version revision</h4>
         <p>{label(historical.definition.kind)} · {dateLabel(historical.definition.date)}</p><p className="ro-wrap-anywhere">Revision: {historical.revisionId}. Decision: {historical.decisionRevisionId}.</p>

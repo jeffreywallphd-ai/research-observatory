@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: eb7e9c1338844c0252aed51f32fda112ee7f01849281201689b01d6e9be86f58
+source_sha256: 5e569827b626c3c4b6c836c98514c169c7339ec7fe44c2da3ee0c2111ebbacd2
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -11709,7 +11709,7 @@ Original tasks and approvals remain unchanged.
 
 **Outcome:** Researchers can read original pages and structured text side by side, navigate anchors, and inspect provenance without leaving the workflow.
 
-**Wave / priority / status / review:** `W2` / `P0` / `READY` / `PENDING`
+**Wave / priority / status / review:** `W2` / `P0` / `IN_PROGRESS` / `PENDING`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
@@ -11717,13 +11717,13 @@ Original tasks and approvals remain unchanged.
 
 #### - [ ] CAP-05.S04.T01 - Build secure local PDF/page and structured-text viewer
 
-**Status / priority / estimate / risk:** `READY` / `P0` / `L` / `high`
+**Status / priority / estimate / risk:** `IN_PROGRESS` / `P0` / `L` / `high`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
 **Dependencies:** `CAP-05.S03.T03`, `CAP-01.S02.T03`
 
-**Owner / review:** - / - (`-`)
+**Owner / review:** codex-w2-implementation / - (`-`)
 
 **Objective:** Desktop viewer with page thumbnails, zoom, text view, section navigation, search, and restricted external-link behavior.
 
@@ -11749,7 +11749,7 @@ Original tasks and approvals remain unchanged.
 
 **Current latest-review projection:** `-` by - at `-`
 
-**Latest notes:** -
+**Latest notes:** Reopened: Independent authority assessment confirms automation-guide8.1 and approved S04 permit risk-selected task-owned proof without changing approved criteria. Preserve failed old helper results; no framework edits, generic EX01 exemption, waived product/security/resource obligations or new owner decision.
 
 #### - [ ] CAP-05.S04.T02 - Implement deep links, highlights, and context panels
 

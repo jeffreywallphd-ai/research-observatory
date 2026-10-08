@@ -47,6 +47,7 @@ from .document_attachment_repository import AcquisitionRepository, LocalDocument
 from .document_parse_worker import document_worker_policy
 from .document_revision_repository import LocalDocumentRevisionRepository
 from .document_revision_service import DocumentRevisionService
+from .document_viewer_service import DocumentViewerService
 from .import_preview_repository import sqlite_import_preview_repository
 from .import_preview_service import ImportPreviewService, ImportProjectAdapters
 from .logging import emit_log_record
@@ -756,6 +757,7 @@ def create_runtime_app(
         imports=imports,
         attachments=attachments,
         document_revisions=document_revisions,
+        document_viewer=DocumentViewerService(attachments, imports) if attachments is not None else None,
         connectors=connectors,
         plugin_admin=plugin_admin,
         plugin_consent=plugin_consent,

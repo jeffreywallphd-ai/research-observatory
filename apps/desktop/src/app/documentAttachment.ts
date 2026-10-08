@@ -240,6 +240,13 @@ export function canReviewAvailableCopies(result: AttachmentStatus | null): boole
   // The native preview and explicit download still recheck current authority.
   return canStartAttachmentReview(result) || result?.status === "failed" && result.code === "rights-denied";
 }
+export function canOpenRecordedSource(result: AttachmentStatus | null, selection: AttachmentSelection | null): boolean {
+  // Processing concerns derivatives. The separately mediated original still
+  // requires fresh Core inspection authority before the viewer receives bytes.
+  return Boolean(result && selection && ["processing", "available"].includes(result.status)
+    && result.code === null && result.attachmentId && result.documentRevisionId
+    && sameAttachmentSelection(selection, result.selection));
+}
 export function decodeAttachmentEvent(value: unknown): AttachmentEvent | null {
   const probe = object(value, ["schemaVersion", "status", "operationId", "sessionId", "selection", "candidate"])
     ?? object(value, ["schemaVersion", "status", "operationId", "sessionId", "selection", "code"])

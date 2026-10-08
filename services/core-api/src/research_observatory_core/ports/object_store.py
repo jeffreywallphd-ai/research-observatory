@@ -8,6 +8,9 @@ from typing import BinaryIO, Literal, Protocol, runtime_checkable
 
 from .corpus import CorpusActor
 
+MAX_VIEWER_SOURCE_BYTES = 128 * 1024 * 1024
+MAX_VIEWER_RANGE_BYTES = 1024 * 1024
+
 RightsStatus = Literal["allowed", "denied", "unknown", "not-applicable"]
 ObjectCreationSource = Literal[
     "local-import",
@@ -108,6 +111,12 @@ class ObjectSourceTooLarge(ObjectStoreProblem):
 
 class ObjectStagingCancelled(ObjectStoreProblem):
     code = "RO-CORE-OBJECT-STAGING-CANCELLED"
+
+
+class ObjectReadCancelled(ObjectStoreProblem):
+    """A trusted read stop signal denied access; ciphertext remains recoverable."""
+
+    code = "RO-CORE-OBJECT-READ-CANCELLED"
 
 
 class ObjectStagingCleanupRequired(ObjectStoreProblem):
@@ -275,9 +284,37 @@ class ObjectStore(Protocol):
     ) -> VerifiedObjectStream: ...
 
     def open_document_attachment(
-        self, attachment_id: str, document_revision_id: str, *, actor: CorpusActor
+        self,
+        attachment_id: str,
+        document_revision_id: str,
+        *,
+        actor: CorpusActor,
+        cancellation_requested: Callable[[], bool] | None = None,
     ) -> VerifiedObjectStream:
-        """Read an exact attached revision after current per-copy inspect authority."""
+        """Read an exact inspected copy; an optional trusted stop applies until close.
+
+        Authentication completes before the first byte. Cancellation closes and
+        rolls back the owned reader without classifying healthy bytes as corrupt.
+        The signal performs no I/O, permission checks or database operations.
+        """
+        ...
+
+    def read_document_attachment_range(
+        self,
+        attachment_id: str,
+        document_revision_id: str,
+        *,
+        start: int,
+        end: int,
+        actor: CorpusActor,
+        cancellation_requested: Callable[[], bool] | None = None,
+    ) -> bytes:
+        """Authenticate an inspected original and return one bounded half-open range.
+
+        The adapter discards any prefix in bounded chunks and closes its stream
+        and transaction before return. This is sequential access, not O(1) seek.
+        The caller still owns request admission and current-authority delivery.
+        """
         ...
 
     def metadata(self, object_sha256: str) -> StoredObject: ...
@@ -292,6 +329,8 @@ class ObjectStore(Protocol):
 
 
 __all__ = [
+    "MAX_VIEWER_RANGE_BYTES",
+    "MAX_VIEWER_SOURCE_BYTES",
     "CleanupCategory",
     "ObjectAccessClass",
     "ObjectAccessDecision",
@@ -308,6 +347,7 @@ __all__ = [
     "ObjectKeyUnavailable",
     "ObjectNotFound",
     "ObjectPutCommand",
+    "ObjectReadCancelled",
     "ObjectReferenced",
     "ObjectSourceTooLarge",
     "ObjectStagingCancelled",

@@ -30,6 +30,8 @@ if TYPE_CHECKING:
 
 from .ports.corpus import CorpusActor
 from .ports.object_store import (
+    MAX_VIEWER_RANGE_BYTES,
+    MAX_VIEWER_SOURCE_BYTES,
     CleanupCategory,
     ObjectAccessClass,
     ObjectAccessDecision,
@@ -45,6 +47,7 @@ from .ports.object_store import (
     ObjectKeyUnavailable,
     ObjectNotFound,
     ObjectPutCommand,
+    ObjectReadCancelled,
     ObjectReferenced,
     ObjectSourceTooLarge,
     ObjectStagingCancelled,
@@ -610,7 +613,33 @@ def _open_read_locked(path: Path) -> io.FileIO:
     return os.fdopen(descriptor, "rb", buffering=0)
 
 
-def _verified_reader(path: Path, expected_sha256: str, expected_length: int) -> io.FileIO:
+def _check_read_cancel(cancellation_requested: Callable[[], bool] | None) -> None:
+    if cancellation_requested is None:
+        return
+    try:
+        cancelled = cancellation_requested()
+    except Exception:
+        raise ObjectReadCancelled("object read cancellation signal is unavailable") from None
+    if cancelled is not False:
+        raise ObjectReadCancelled("object read cancelled")
+
+
+def _valid_viewer_range(start: object, end: object) -> bool:
+    return (
+        type(start) is int
+        and type(end) is int
+        and 0 <= start < end <= MAX_VIEWER_SOURCE_BYTES
+        and end - start <= MAX_VIEWER_RANGE_BYTES
+    )
+
+
+def _verified_reader(
+    path: Path,
+    expected_sha256: str,
+    expected_length: int,
+    *,
+    cancellation_requested: Callable[[], bool] | None = None,
+) -> io.FileIO:
     reader = _open_read_locked(path)
     try:
         status = os.fstat(reader.fileno())
@@ -619,13 +648,16 @@ def _verified_reader(path: Path, expected_sha256: str, expected_length: int) -> 
             raise OSError("object identity is not exclusive")
         digest = hashlib.sha256()
         length = 0
+        _check_read_cancel(cancellation_requested)
         while block := reader.read(_CHUNK_BYTES):
+            _check_read_cancel(cancellation_requested)
             digest.update(block)
             length += len(block)
         if digest.hexdigest() != expected_sha256 or length != expected_length:
             raise OSError("object integrity differs")
         if not _file_matches(path, reader.fileno(), identity):
             raise OSError("object identity changed")
+        _check_read_cancel(cancellation_requested)
         reader.seek(0)
         return reader
     except BaseException:
@@ -734,12 +766,15 @@ def _verify_encrypted_payload(
     project_id: str,
     expected_sha256: str,
     expected_length: int,
+    cancellation_requested: Callable[[], bool] | None = None,
 ) -> None:
+    _check_read_cancel(cancellation_requested)
     stream_state = _start_pull(reader, data_key)
     digest = hashlib.sha256()
     length = 0
     frame_index = 0
     while True:
+        _check_read_cancel(cancellation_requested)
         message, final = _pull_frame(
             reader,
             stream_state,
@@ -755,11 +790,13 @@ def _verify_encrypted_payload(
         frame_index += 1
     if digest.hexdigest() != expected_sha256 or length != expected_length:
         raise OSError("encrypted object plaintext identity differs")
+    _check_read_cancel(cancellation_requested)
 
 
 class _EncryptedReader:
     __slots__ = (
         "_buffer",
+        "_cancellation_requested",
         "_finished",
         "_frame_index",
         "_identity",
@@ -777,6 +814,7 @@ class _EncryptedReader:
         project_id: str,
         path: Path,
         identity: tuple[int, int],
+        cancellation_requested: Callable[[], bool] | None = None,
     ) -> None:
         self._reader = reader
         self._path = path
@@ -786,8 +824,10 @@ class _EncryptedReader:
         self._frame_index = 0
         self._buffer = bytearray()
         self._finished = False
+        self._cancellation_requested = cancellation_requested
 
     def _next(self) -> None:
+        _check_read_cancel(self._cancellation_requested)
         if self._finished:
             return
         message, final = _pull_frame(
@@ -802,10 +842,12 @@ class _EncryptedReader:
             self._frame_index += 1
 
     def read(self, size: int = -1) -> bytes:
+        _check_read_cancel(self._cancellation_requested)
         if size == 0:
             return b""
         while not self._finished and (size < 0 or len(self._buffer) < size):
             self._next()
+        _check_read_cancel(self._cancellation_requested)
         if size < 0:
             result = bytes(self._buffer)
             self._buffer.clear()
@@ -833,7 +875,9 @@ def _verified_encrypted_reader(
     wrapped_key: str | None,
     wrap_nonce: str | None,
     key_provider: ObjectMasterKeyProvider | None,
+    cancellation_requested: Callable[[], bool] | None = None,
 ) -> _EncryptedReader:
+    _check_read_cancel(cancellation_requested)
     data_key = _unwrap_data_key(
         key_provider,
         project_id=project_id,
@@ -854,9 +898,11 @@ def _verified_encrypted_reader(
             project_id=project_id,
             expected_sha256=object_sha256,
             expected_length=byte_length,
+            cancellation_requested=cancellation_requested,
         )
         if not _file_matches(path, reader.fileno(), identity):
             raise OSError("encrypted object identity changed")
+        _check_read_cancel(cancellation_requested)
         reader.seek(0)
         return _EncryptedReader(
             reader,
@@ -864,6 +910,7 @@ def _verified_encrypted_reader(
             project_id=project_id,
             path=path,
             identity=identity,
+            cancellation_requested=cancellation_requested,
         )
     except BaseException:
         reader.close()
@@ -918,7 +965,7 @@ class _ReaderRegistry:
             raise ValueError("verified object stream is closed")
         return entry.reader.read(size)
 
-    def close(self, token: str | None) -> None:
+    def close(self, token: str | None, *, rollback: bool = False) -> None:
         if token is None:
             return
         with self._lock:
@@ -926,7 +973,7 @@ class _ReaderRegistry:
         if entry is not None:
             try:
                 if entry.connection.in_transaction:
-                    entry.connection.execute("COMMIT")
+                    entry.connection.execute("ROLLBACK" if rollback else "COMMIT")
             except sqlite3.Error, StorageProblem:
                 if entry.connection.in_transaction:
                     with suppress(sqlite3.Error, StorageProblem):
@@ -958,6 +1005,9 @@ class _VerifiedObjectStream:
         result = b""
         try:
             result = _READERS.read(self.__token, size)
+        except ObjectReadCancelled:
+            self._close(rollback=True)
+            raise
         except OSError:
             self.close()
             failure = _bounded(ObjectCorrupt, "verified object stream failed")
@@ -968,15 +1018,18 @@ class _VerifiedObjectStream:
         return result
 
     def close(self) -> None:
+        self._close()
+
+    def _close(self, *, rollback: bool = False) -> None:
         token = self.__token
         self.__token = None
-        _READERS.close(token)
+        _READERS.close(token, rollback=rollback)
 
     def __enter__(self) -> VerifiedObjectStream:
         return self
 
     def __exit__(self, exc_type: object, exc_value: object, traceback: object) -> None:
-        self.close()
+        self._close(rollback=isinstance(exc_value, ObjectReadCancelled))
 
     def __del__(self) -> None:
         with suppress(Exception):
@@ -1480,11 +1533,15 @@ def _verified_stored_reader(
     connection: CanonicalConnection,
     path: Path,
     metadata: StoredObject,
+    *,
+    cancellation_requested: Callable[[], bool] | None = None,
 ) -> Any:
     if metadata.envelope_version == _PLAINTEXT_FIXTURE:
         if metadata.protection_profile != _PLAINTEXT_FIXTURE or not state.allow_plaintext_fixture:
             raise _bounded(ObjectAccessDenied, "plaintext object fixtures are disabled")
-        return _verified_reader(path, metadata.object_sha256, metadata.byte_length)
+        return _verified_reader(
+            path, metadata.object_sha256, metadata.byte_length, cancellation_requested=cancellation_requested
+        )
     if metadata.envelope_version != _ENCRYPTED_ENVELOPE or metadata.protection_profile != _ENCRYPTED_PROFILE:
         raise _bounded(ObjectCorrupt, "object encryption profile is invalid")
     wrapped_key, wrap_nonce = _encryption_material(
@@ -1502,6 +1559,7 @@ def _verified_stored_reader(
         wrapped_key=wrapped_key,
         wrap_nonce=wrap_nonce,
         key_provider=state.key_provider,
+        cancellation_requested=cancellation_requested,
     )
 
 
@@ -3210,11 +3268,18 @@ class _LocalObjectStore:
             raise _bounded(ObjectStoreProblem, "object verification failed")
 
     def open_document_attachment(
-        self, attachment_id: str, document_revision_id: str, *, actor: CorpusActor
+        self,
+        attachment_id: str,
+        document_revision_id: str,
+        *,
+        actor: CorpusActor,
+        cancellation_requested: Callable[[], bool] | None = None,
     ) -> VerifiedObjectStream:
         """Read an exact attached revision after current per-copy inspect authority."""
 
-        stream = self._open_document_attachment(attachment_id, document_revision_id, actor=actor)
+        stream = self._open_document_attachment(
+            attachment_id, document_revision_id, actor=actor, cancellation_requested=cancellation_requested
+        )
         assert stream is not None
         return stream
 
@@ -3235,6 +3300,86 @@ class _LocalObjectStore:
         )
         assert stream is not None
         return stream
+
+    def read_document_attachment_range(
+        self,
+        attachment_id: str,
+        document_revision_id: str,
+        *,
+        start: int,
+        end: int,
+        actor: CorpusActor,
+        cancellation_requested: Callable[[], bool] | None = None,
+    ) -> bytes:
+        return self._read_attachment_range(
+            attachment_id,
+            document_revision_id,
+            start=start,
+            end=end,
+            actor=actor,
+            cancellation_requested=cancellation_requested,
+        )
+
+    def _read_inspected_document_range(
+        self,
+        source: SourceIdentity,
+        *,
+        start: int,
+        end: int,
+        actor: CorpusActor,
+        cancellation_requested: Callable[[], bool] | None = None,
+    ) -> bytes:
+        from .parsing.contracts import SourceIdentity
+
+        source = SourceIdentity.model_validate(source)
+        return self._read_attachment_range(
+            source.attachment_id,
+            source.document_revision_id,
+            start=start,
+            end=end,
+            actor=actor,
+            cancellation_requested=cancellation_requested,
+            expected_source=source,
+        )
+
+    def _read_attachment_range(
+        self,
+        attachment_id: str,
+        document_revision_id: str,
+        *,
+        start: int,
+        end: int,
+        actor: CorpusActor,
+        cancellation_requested: Callable[[], bool] | None,
+        expected_source: SourceIdentity | None = None,
+    ) -> bytes:
+        if not _valid_viewer_range(start, end):
+            raise ObjectAccessDenied("document byte range is invalid")
+        stream = self._open_document_attachment(
+            attachment_id,
+            document_revision_id,
+            actor=actor,
+            cancellation_requested=cancellation_requested,
+            requested_range=(start, end),
+            expected_source=expected_source,
+            require_derive=expected_source is None,
+        )
+        assert stream is not None
+        with stream:
+            remaining = start
+            while remaining:
+                _check_read_cancel(cancellation_requested)
+                prefix = stream.read(min(remaining, _CHUNK_BYTES))
+                if not prefix:
+                    raise ObjectCorrupt("verified document range is unavailable")
+                remaining -= len(prefix)
+                del prefix
+            _check_read_cancel(cancellation_requested)
+            result = stream.read(end - start)
+            _check_read_cancel(cancellation_requested)
+            if len(result) != end - start:
+                raise ObjectCorrupt("verified document range is unavailable")
+            return result
 
     def _read_parser_manifest(self, connection: CanonicalConnection, receipt: Any) -> bytes:
         """Trusted publication callback only; authenticate exact encrypted intent."""
@@ -3389,6 +3534,34 @@ class _LocalObjectStore:
             raise _bounded(ObjectAccessDenied, "document context action invalid")
         return results[0]
 
+    def _read_inspected_document_context[Result](
+        self,
+        source: SourceIdentity,
+        *,
+        actor: CorpusActor,
+        action: Callable[[CanonicalConnection], Result],
+        cancellation_requested: Callable[[], bool] | None = None,
+    ) -> Result:
+        """Exact-original metadata/delivery fence; grants no derivative access."""
+        from .parsing.contracts import SourceIdentity
+
+        source = SourceIdentity.model_validate(source)
+        if not callable(action):
+            raise ObjectAccessDenied("document viewer context invalid")
+        results: list[Result] = []
+        self._open_document_attachment(
+            source.attachment_id,
+            source.document_revision_id,
+            actor=actor,
+            expected_source=source,
+            context_action=lambda connection: results.append(action(connection)),
+            cancellation_requested=cancellation_requested,
+            require_derive=False,
+        )
+        if len(results) != 1:
+            raise ObjectAccessDenied("document viewer context invalid")
+        return results[0]
+
     def _read_resolved_authorized_document_context[Result](
         self,
         anchor_id: str,
@@ -3443,6 +3616,9 @@ class _LocalObjectStore:
         publication_connection: CanonicalConnection | None = None,
         context_action: Callable[[CanonicalConnection], None] | None = None,
         context_source_resolver: Callable[[CanonicalConnection], SourceIdentity] | None = None,
+        cancellation_requested: Callable[[], bool] | None = None,
+        requested_range: tuple[int, int] | None = None,
+        require_derive: bool = True,
     ) -> VerifiedObjectStream | None:
 
         from pydantic import ValidationError
@@ -3457,6 +3633,26 @@ class _LocalObjectStore:
         if (
             not is_uuid_v7(attachment_id)
             or not is_uuid_v7(document_revision_id)
+            or (cancellation_requested is not None and not callable(cancellation_requested))
+            or type(require_derive) is not bool
+            or (
+                not require_derive
+                and (
+                    expected_source is None
+                    or (context_action is None and requested_range is None)
+                    or before_stream is not None
+                    or publication_connection is not None
+                    or context_source_resolver is not None
+                )
+            )
+            or (
+                requested_range is not None
+                and (
+                    not isinstance(requested_range, tuple)
+                    or len(requested_range) != 2
+                    or not _valid_viewer_range(*requested_range)
+                )
+            )
             or (
                 context_action is not None
                 and (
@@ -3485,6 +3681,7 @@ class _LocalObjectStore:
         failure: ObjectStoreProblem | None = None
         with state.lock, _stable_directories([state.root, state.state, state.objects, state.temporary]):
             try:
+                _check_read_cancel(cancellation_requested)
                 connection = publication_connection
                 if connection is None:
                     connection = _open_thread_transferable_canonical_database(
@@ -3588,7 +3785,7 @@ class _LocalObjectStore:
                 from .rights_policy import RightsAction
 
                 actions: tuple[RightsAction, ...] = (
-                    ("inspect", "derive") if expected_source is not None else ("inspect",)
+                    ("inspect", "derive") if expected_source is not None and require_derive else ("inspect",)
                 )
                 for action in actions:
                     decision = rights.evaluate_with_connection(
@@ -3616,6 +3813,11 @@ class _LocalObjectStore:
                 # never a grant or restriction inherited from shared ciphertext.
                 if expected_source is not None and metadata.byte_length != expected_source.byte_length:
                     raise ObjectAccessDenied("parse object identity is inconsistent")
+                if requested_range is not None:
+                    if metadata.byte_length > MAX_VIEWER_SOURCE_BYTES:
+                        raise ObjectSourceTooLarge("document exceeds the local viewer source limit")
+                    if requested_range[1] > metadata.byte_length:
+                        raise ObjectAccessDenied("document byte range is invalid")
                 _authorize_access(
                     state,
                     _access_request(
@@ -3627,12 +3829,17 @@ class _LocalObjectStore:
                     ),
                 )
                 if context_action is not None:
+                    _check_read_cancel(cancellation_requested)
                     context_action(connection)
+                    _check_read_cancel(cancellation_requested)
                     connection.execute("COMMIT")
                     return None
                 destination, buckets = _object_path(state.objects, state.project_id, digest, create=False)
                 with _stable_directories([state.root, state.objects, *buckets]):
-                    reader = _verified_stored_reader(state, connection, destination, metadata)
+                    reader = _verified_stored_reader(
+                        state, connection, destination, metadata, cancellation_requested=cancellation_requested
+                    )
+                _check_read_cancel(cancellation_requested)
                 connection.execute(
                     "UPDATE object_records SET verified_at=COALESCE(verified_at, ?) "
                     "WHERE project_id=? AND object_sha256=? AND storage_state='available'",

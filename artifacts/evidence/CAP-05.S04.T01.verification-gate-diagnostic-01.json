@@ -1,0 +1,90 @@
+{
+  "schemaVersion": "1.0-diagnostic",
+  "documentType": "task-verification-gate-diagnostic",
+  "id": "CAP-05.S04.T01.verification-gate-01",
+  "taskId": "CAP-05.S04.T01",
+  "waveId": "W2",
+  "recordedAt": "2026-10-08T21:41:53.137921+00:00",
+  "observedHead": "1bd33a6ba180487b239e3315e302b6db6aaea123",
+  "observationBoundary": "Uncommitted owned product implementation, direct unchanged product and security helpers, retained actual failure output. No qualifying task submission, full public profile or owner-authorized replacement has occurred.",
+  "observations": [
+    {
+      "id": "product-package",
+      "invocation": "desktop_app_check.product_build_errors(Path.cwd())",
+      "actualExitCode": 1,
+      "completedHelperVerdict": "FAIL",
+      "fullProfileExecuted": false,
+      "log": {
+        "path": "artifacts/evidence/CAP-05.S04.T01.unchanged-product-inventory-03.log",
+        "sha256": "9d12bf3047e16c8f960f8214acc93d3ec361bf186f8eee332a2a72c8a94db379"
+      },
+      "scope": "Direct unchanged helper invocation on the disclosed working tree. Not an exact-commit qualifying profile result."
+    },
+    {
+      "id": "local-csp",
+      "invocation": "desktop_app_check.security_errors(Path.cwd())",
+      "actualExitCode": 1,
+      "completedHelperVerdict": "FAIL",
+      "fullProfileExecuted": false,
+      "log": {
+        "path": "artifacts/evidence/CAP-05.S04.T01.unchanged-security-selector-01.log",
+        "sha256": "bd997cc4c99972be64f109cb189deb457bf5afdd985d4ae83a1380ceee83ab2a"
+      },
+      "scope": "Direct unchanged helper invocation on the disclosed working tree. Not an exact-commit qualifying profile result."
+    }
+  ],
+  "observedProduct": {
+    "manifest": {
+      "path": "apps/desktop/product-dist/application-manifest.json",
+      "sha256": "f34ace8e2d6274efb3502a07fa95def2cb9a4a8dc6666f01864f86f942563419"
+    },
+    "artifactCount": 195,
+    "referenceId": "RO-UI-ACADEMIC-MINIMAL-1.9",
+    "referencePackageSha256": "24b8d62356863980ae9a13db7d6a06b04b76c60e2f1920d2e888cadecfb24c4b",
+    "pinManifest": {
+      "path": "apps/desktop/pdfjs-assets.json",
+      "sha256": "d7c418290e4725d7658862037034fa8c45de895756118e56983414a6cb5194fc"
+    },
+    "tauriConfiguration": {
+      "path": "apps/desktop/src-tauri/tauri.conf.json",
+      "sha256": "1b774c7be68f3f6573cdd03cdf121d748c208c9aa935317e2365668815ba88e9"
+    }
+  },
+  "unchangedControls": [
+    {
+      "path": "tools/desktop_app_check.py",
+      "sha256": "cb617d6448e8a358317ecf530266d5bd64ed6ff7212729c4cdf8895449e813c8"
+    },
+    {
+      "path": "verification/extensions/desktop-ui.json",
+      "sha256": "f7cab0dca35bbed27511e7bde3bf1824b83925c79955bdc0f6ec4daa9f09d708"
+    },
+    {
+      "path": "tools/ui_conformance.py",
+      "sha256": "8be73d09a2b3ee81a1a5079593b8f1cf57539d067cebe99f2744de4fc975b8e2"
+    },
+    {
+      "path": "tools/product_style_check.py",
+      "sha256": "b682228ce0a1ae8ae7093490cfc3247c00843e3612a3476325ef46148ebc92c0"
+    },
+    {
+      "path": "tools/ui_change_gate.py",
+      "sha256": "fa77fdf99c05b64954c4ce62956e137f2a97f09b96f42d4d75aeb68c05cde126"
+    }
+  ],
+  "withdrawnMutation": {
+    "path": "artifacts/tmp/CAP-05.S04.T01.withdrawn-shared-verifier-edit-01.patch",
+    "sha256": "6d248a5324c8d2b88e79eec6ca74153d62d5b733ccf16d8d6d3ca35d40e597b7",
+    "status": "Uncommitted edit withdrawn byte-for-byte; retained ignored patch is adverse preparation evidence, not an approved control change or qualifying check.",
+    "restoredVerifierGitBlobSHA256": "cb617d6448e8a358317ecf530266d5bd64ed6ff7212729c4cdf8895449e813c8"
+  },
+  "limitations": [
+    "Actual production renderer/native/Core transport and cancellation proof remain incomplete.",
+    "Single exploratory Core/Chromium-worker samples do not prove 20-open cold/warm p95, minimum hardware or complete/peak footprint.",
+    "The helper failures are not failures of every substantive product criterion and are not a full-profile verdict.",
+    "No framework source, shared selector, policy, schema, CI or command-registry change is included."
+  ],
+  "taskApproval": false,
+  "waveCompletion": false,
+  "releaseApproval": false
+}
