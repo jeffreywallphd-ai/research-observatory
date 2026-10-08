@@ -154,9 +154,7 @@ class DocumentRevisionService:
         return self._current(command, trace_id, lambda repository: repository.history(command.document_id))
 
     def _anchors(self, command, trace_id, action):
-        from .anchors.repository import LocalSourceAnchorRepository
-
-        return self._current(command, trace_id, lambda repository: action(LocalSourceAnchorRepository(repository)))
+        return self._current(command, trace_id, lambda repository: action(repository.source_anchors()))
 
     def anchor_create(self, command, *, trace_id):
         return self._anchors(

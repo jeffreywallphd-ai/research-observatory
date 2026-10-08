@@ -40,6 +40,7 @@ _REPOSITORY_ADAPTER_MODULES = {
     "rights_repository",
     "document_attachment_repository",
     "document_revision_repository",
+    "source_anchor_repository",
     "plugin_grant_repository",
     "plugin_job_repository",
     "plugin_package_repository",

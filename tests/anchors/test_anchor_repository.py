@@ -13,7 +13,7 @@ ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / "services/core-api/src"))
 
 from research_observatory_core.anchors.contracts import AnchorSelection  # noqa: E402
-from research_observatory_core.anchors.repository import LocalSourceAnchorRepository  # noqa: E402
+from research_observatory_core.source_anchor_repository import LocalSourceAnchorRepository  # noqa: E402
 from research_observatory_core.document_revisions import DocumentRevisionProblem  # noqa: E402
 from research_observatory_core.domain_contracts import new_uuid_v7  # noqa: E402
 from research_observatory_core.object_store import _object_relative_path  # noqa: E402
@@ -150,7 +150,7 @@ class AnchorRepositoryTests(unittest.TestCase):
         before = self.f.counts()
         with (
             patch(
-                "research_observatory_core.anchors.repository._publication_step",
+                "research_observatory_core.source_anchor_repository._publication_step",
                 side_effect=RuntimeError("synthetic interruption"),
             ),
             self.assertRaises(DocumentRevisionProblem),

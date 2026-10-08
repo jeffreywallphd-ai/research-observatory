@@ -140,7 +140,7 @@ def load_build_contract(repo: Path) -> dict[str, Any]:
             "truststore",
             "research_observatory_core.anchors",
             "research_observatory_core.anchors.contracts",
-            "research_observatory_core.anchors.repository",
+            "research_observatory_core.source_anchor_repository",
             "research_observatory_core.ports.source_anchors",
             "research_observatory_core.connector_repository",
             "research_observatory_core.connector_api",

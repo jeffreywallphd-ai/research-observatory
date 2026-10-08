@@ -13,7 +13,7 @@
     "packages/contracts/anchors/generate_anchor_schema.py",
     "services/core-api/src/research_observatory_core/anchors/__init__.py",
     "services/core-api/src/research_observatory_core/anchors/contracts.py",
-    "services/core-api/src/research_observatory_core/anchors/repository.py",
+    "services/core-api/src/research_observatory_core/source_anchor_repository.py",
     "services/core-api/src/research_observatory_core/ports/source_anchors.py",
     "tests/anchors/__init__.py",
     "tests/anchors/test_anchor_contracts.py",

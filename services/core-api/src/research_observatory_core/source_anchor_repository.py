@@ -8,13 +8,7 @@ from dataclasses import asdict, dataclass
 
 from pydantic import Field, model_validator
 
-from ..document_revisions import DocumentRevisionProblem, protected_json
-from ..domain_contracts import is_uuid_v7, new_uuid_v7
-from ..parsing.contracts import CodepointRange, IRValue
-from ..ports.repositories import AggregateRevision, AggregateRevisionDraft, AtomicRepositoryEvent, MaterialDependency
-from ..repositories import _command_fingerprint, _material_registration_with_connection
-from ..storage import open_canonical_database
-from .contracts import (
+from .anchors.contracts import (
     ANCHOR_MEDIA_TYPE,
     MAX_ANCHOR_BYTES,
     MAX_QUOTE_CODEPOINTS,
@@ -27,6 +21,12 @@ from .contracts import (
     SourceAnchorTarget,
     build_target,
 )
+from .document_revisions import DocumentRevisionProblem, protected_json
+from .domain_contracts import is_uuid_v7, new_uuid_v7
+from .parsing.contracts import CodepointRange, IRValue
+from .ports.repositories import AggregateRevision, AggregateRevisionDraft, AtomicRepositoryEvent, MaterialDependency
+from .repositories import _command_fingerprint, _material_registration_with_connection
+from .storage import open_canonical_database
 
 
 def _publication_step(_step: str) -> None:

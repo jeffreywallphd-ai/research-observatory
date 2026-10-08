@@ -33,3 +33,13 @@ verification, automation-framework improvement, or replay/tuning of the accepted
 CAP-05.S02.T03 warm timing overage is included. Full repository/desktop/documents
 profiles and broader platform/packaging qualification remain slice/Wave work;
 task checks select the affected contract, persistence, native and reader risks.
+
+Committed qualification50 exposed two missed integration checks: the new
+persistence module must use the existing named adapter boundary rather than
+reside in the business package, and the sidecar required-module inventory must
+remain sorted and match the explicit packaging fixture. Preserve that failed
+run. Move only this adapter to the established root-level location, compose it
+through the existing revision adapter and portable SourceAnchorRepository port,
+register its exact name, and update the new module fixture. Architecture and
+packaging regressions must pass; no generic storage exemption or new automation
+behavior is introduced.

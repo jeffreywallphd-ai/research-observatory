@@ -46,6 +46,7 @@ from .ports.corpus import CorpusActor
 from .ports.document_attachments import DocumentPublicationGuard
 from .ports.object_store import ObjectPutCommand
 from .ports.repositories import AggregateRevision, AggregateRevisionDraft, AtomicRepositoryEvent, MaterialDependency
+from .ports.source_anchors import SourceAnchorRepository
 from .ports.workflow_executor import WorkflowActor, WorkflowJobClaim, WorkflowOutputReference
 from .repositories import (
     _UNIT_OF_WORKS,
@@ -84,6 +85,11 @@ class LocalDocumentRevisionRepository:
         self.actor, self.guard, self.now = actor, guard, now
         self.queue = _SqliteWorkflowQueueRepository(database, project_id)
         self.corpus = SqliteCorpusRepository(database, project_id)
+
+    def source_anchors(self) -> SourceAnchorRepository:
+        from .source_anchor_repository import LocalSourceAnchorRepository
+
+        return LocalSourceAnchorRepository(self)
 
     def _bounded(self, action):
         try:
