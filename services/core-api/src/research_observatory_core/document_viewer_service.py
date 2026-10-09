@@ -110,6 +110,15 @@ class DocumentViewerService:
             ),
         )
 
+    def outline(self, command, *, trace_id):
+        return self._scoped(
+            command,
+            trace_id,
+            lambda repository, _actor, _stopped: repository.outline(
+                command.selector, after_node_id=command.after_node_id
+            ),
+        )
+
     def read_range(self, command, *, trace_id, cancellation_requested: Callable[[], bool] = lambda: False):
         identity = (command.project_id, command.session_id, command.request_id)
         request = _Request(command.root, transport_stop=cancellation_requested)

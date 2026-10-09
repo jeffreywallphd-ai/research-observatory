@@ -1,10 +1,18 @@
 import { invoke } from "@tauri-apps/api/core";
 import { newAttachmentId } from "./documentAttachment";
-import { decodeSourceIdentity, type SourceIdentity } from "./sourceAnchors";
+import { decodeReaderOutline, decodeSourceIdentity, type ReaderOutline, type SourceIdentity } from "./sourceAnchors";
 
 export const VIEWER_SOURCE_LIMIT = 128 * 1024 * 1024;
 export const VIEWER_RANGE_LIMIT = 1024 * 1024;
 export const VIEWER_BUFFER_LIMIT = 256 * 1024 * 1024;
+export const VIEWER_CORE_BASE_ALLOWANCE = 32 * 1024 * 1024;
+export function viewerWorkerAllowance(sourceBytes: number): number {
+  if (!Number.isSafeInteger(sourceBytes) || sourceBytes <= 0 || sourceBytes > VIEWER_SOURCE_LIMIT) throw new Error("viewer-resource-limit");
+  return sourceBytes + 16 * 1024 * 1024;
+}
+export function viewerCoreAllowance(sourceBytes: number): number {
+  return VIEWER_BUFFER_LIMIT - viewerWorkerAllowance(sourceBytes) - (64 + 8 + 8) * 1024 * 1024;
+}
 export interface ViewerSelector {
   readonly attachmentId: string;
   readonly documentRevisionId: string;
@@ -28,8 +36,25 @@ export interface ViewerTextChunk {
   readonly pageNumber: number | null; readonly offset: number; readonly text: string; readonly nextOffset: number | null;
 }
 export interface DocumentViewerTextPort {
+  // Fixed unknown-drain failure retains admission after ambiguous Native IPC.
   readonly text: (projectId: string, selector: ViewerSelector, nodeId: string, offset: number) => Promise<ViewerTextChunk | null>;
 }
+export interface DocumentViewerOutlinePort {
+  readonly outline: (projectId: string, selector: ViewerSelector, afterNodeId: string | null) => Promise<ReaderOutline | null>;
+}
+export const nativeDocumentViewerOutlinePort: DocumentViewerOutlinePort = {
+  async outline(projectId, selector, afterNodeId) {
+    if (typeof window === "undefined" || !("__TAURI_INTERNALS__" in window) || !selector.normalizedRevisionId) return null;
+    try { return decodeReaderOutline(await invoke<unknown>("document_viewer_outline", {
+      request: { schemaVersion: "1.0", projectId, selector, afterNodeId },
+    }), projectId, selector.normalizedRevisionId); }
+    catch (failure) {
+      if (failure === "viewer-resource-limit") throw new Error("viewer-resource-limit");
+      if (failure === "viewer-source-unavailable") return null;
+      throw new Error("viewer-owned-read-drain-pending");
+    }
+  },
+};
 
 export function viewerSourcesMatch(left: SourceIdentity, right: SourceIdentity): boolean {
   return Object.entries(left).every(([key, value]) => key === "provenance"
@@ -56,7 +81,11 @@ export const nativeDocumentViewerTextPort: DocumentViewerTextPort = {
   async text(projectId, selector, nodeId, offset) {
     if (typeof window === "undefined" || !("__TAURI_INTERNALS__" in window)) return null;
     try { return decodeViewerText(await invoke<unknown>("document_viewer_text", { request: { schemaVersion: "1.0", projectId, selector, nodeId, offset } }), projectId, selector, nodeId, offset); }
-    catch { return null; }
+    catch (failure) {
+      if (failure === "viewer-resource-limit") throw new Error("viewer-resource-limit");
+      if (failure === "viewer-source-unavailable") return null;
+      throw new Error("viewer-owned-read-drain-pending");
+    }
   },
 };
 
@@ -88,6 +117,25 @@ export class ViewerBufferBudget {
     return () => {
       const held = this.allocations.get(key);
       if (held !== undefined) { this.size -= held; this.allocations.delete(key); }
+    };
+  }
+}
+
+// A decoder and its structured IPC share the same project-writer frame space.
+// Keep that space charged until every owner actually settles, including owners
+// retained after the renderer session or decoder generation has disappeared.
+export class ViewerCoreAdmission {
+  private references = 0;
+  private release: (() => void) | null = null;
+  constructor(private readonly budget: ViewerBufferBudget) {}
+  retain(): () => void {
+    if (this.references === 0) this.release = this.budget.reserve(VIEWER_CORE_BASE_ALLOWANCE);
+    this.references += 1;
+    let live = true;
+    return () => {
+      if (!live) return;
+      live = false; this.references -= 1;
+      if (this.references === 0) { this.release?.(); this.release = null; }
     };
   }
 }
@@ -135,9 +183,11 @@ export class ViewerByteSession {
   private drainFailed = false;
   private pending = new Map<string, { controller: AbortController; promise: Promise<Uint8Array<ArrayBuffer>> }>();
   constructor(readonly projectId: string, readonly selector: ViewerSelector, readonly metadata: ViewerMetadata,
-    private readonly port: DocumentViewerPort, readonly budget: ViewerBufferBudget) {
+    private readonly port: DocumentViewerPort, readonly budget: ViewerBufferBudget,
+    readonly coreAdmission = new ViewerCoreAdmission(budget)) {
     if (!decodeViewerMetadata(metadata, projectId, selector)) throw new Error("viewer-source-unavailable");
   }
+  get hasPendingReads(): boolean { return this.pending.size > 0 || this.drainFailed; }
   async read(start: number, end: number): Promise<Uint8Array<ArrayBuffer>> {
     if (this.drainFailed) throw new Error("viewer-owned-read-drain-pending");
     if (!this.live || !Number.isSafeInteger(start) || !Number.isSafeInteger(end)
@@ -172,7 +222,7 @@ export class ViewerByteSession {
   }
   fresh(): ViewerByteSession {
     if (this.drainFailed || this.pending.size) throw new Error("viewer-owned-read-drain-pending");
-    return new ViewerByteSession(this.projectId, this.selector, this.metadata, this.port, this.budget);
+    return new ViewerByteSession(this.projectId, this.selector, this.metadata, this.port, this.budget, this.coreAdmission);
   }
   async drain(): Promise<void> {
     if (this.drainFailed) throw new Error("viewer-owned-read-drain-pending");

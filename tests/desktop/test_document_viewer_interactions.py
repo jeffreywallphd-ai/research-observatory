@@ -180,6 +180,43 @@ class DocumentViewerInteractionsTests(unittest.TestCase):
         self.page.get_by_text("Unverified extraction", exact=True).wait_for()
         self.assertFalse(self.errors)
 
+    def test_structured_resource_denial_retains_original_navigation_and_recovers(self):
+        self.page.evaluate("() => { window.__VIEWER_UI_TEST__.limitOutline = true; }")
+        self.page.get_by_label("Accepted structured revision").select_option(index=1)
+        self.page.get_by_text("This structured view exceeds the local viewer limit.", exact=False).wait_for()
+        self.assertTrue(self.page.get_by_role("button", name="Next page", exact=True).is_enabled())
+        self.assertTrue(self.page.locator("canvas[role=img]").is_visible())
+        self.page.get_by_role("button", name="Next page", exact=True).click()
+        self.wait(lambda: self.page.get_by_label("Source page", exact=True).input_value() == "2")
+        self.page.evaluate("() => { window.__VIEWER_UI_TEST__.limitOutline = false; }")
+        self.page.get_by_label("Accepted structured revision").select_option(index=0)
+        element = self.select_text()
+        self.page.evaluate("() => { window.__VIEWER_UI_TEST__.limitText = true; }")
+        element.click()
+        self.page.get_by_text("This structured view exceeds the local viewer limit.", exact=False).wait_for()
+        self.assertFalse(self.page.get_by_text("Synthetic inert", exact=False).count())
+        self.assertTrue(self.page.get_by_role("button", name="Next page", exact=True).is_enabled())
+        self.page.evaluate("() => { window.__VIEWER_UI_TEST__.limitText = false; }")
+        element.click()
+        self.page.get_by_text("Unverified extraction", exact=True).wait_for()
+        self.assertFalse(self.errors)
+
+    def test_retry_keeps_previous_structured_ipc_charge_until_its_real_settlement(self):
+        self.page.evaluate("() => { window.__VIEWER_UI_TEST__.holdText = true; }")
+        self.select_text().click()
+        self.wait(lambda: self.page.evaluate("() => typeof window.__VIEWER_UI_TEST__.releaseText === 'function'"))
+        self.page.get_by_role("button", name="Retry current source status", exact=True).click()
+        self.wait(lambda: self.page.get_by_role("button", name="Next page", exact=True).is_enabled())
+        self.page.get_by_label("Accepted structured revision").select_option(index=1)
+        self.page.get_by_text("This structured view exceeds the local viewer limit.", exact=False).wait_for()
+        self.page.evaluate(
+            "() => { window.__VIEWER_UI_TEST__.holdText = false; window.__VIEWER_UI_TEST__.releaseText(); }"
+        )
+        self.page.get_by_label("Accepted structured revision").select_option(index=0)
+        self.select_text().click()
+        self.page.get_by_text("Unverified extraction", exact=True).wait_for()
+        self.assertFalse(self.errors)
+
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)

@@ -109,6 +109,68 @@ impl ViewerTextRequest {
     }
 }
 
+#[derive(Clone, Deserialize)]
+#[serde(rename_all = "camelCase", deny_unknown_fields)]
+pub(crate) struct ViewerOutlineRequest {
+    schema_version: String,
+    project_id: String,
+    selector: ViewerSelector,
+    after_node_id: Option<String>,
+}
+
+impl ViewerOutlineRequest {
+    fn source(&self) -> ViewerSourceRequest {
+        ViewerSourceRequest {
+            schema_version: self.schema_version.clone(),
+            project_id: self.project_id.clone(),
+            selector: self.selector.clone(),
+        }
+    }
+    fn valid(&self) -> bool {
+        self.source().valid()
+            && self.selector.normalized_revision_id.is_some()
+            && self
+                .after_node_id
+                .as_ref()
+                .is_none_or(|id| crate::supervisor::canonical_uuid_v7(id))
+    }
+}
+
+fn outline_matches(value: &Value, request: &ViewerOutlineRequest) -> bool {
+    value.as_object().is_some_and(|fields| {
+        fields.len() == 9
+            && [
+                "schemaVersion",
+                "projectId",
+                "documentId",
+                "revisionId",
+                "source",
+                "viewKind",
+                "scholarlyVerification",
+                "nodes",
+                "nextNodeId",
+            ]
+            .iter()
+            .all(|key| fields.contains_key(*key))
+    }) && value["schemaVersion"] == "1.0"
+        && value["projectId"].as_str() == Some(request.project_id.as_str())
+        && value["revisionId"].as_str() == request.selector.normalized_revision_id.as_deref()
+        && value["documentId"] == value["source"]["documentId"]
+        && value["viewKind"] == "accepted-structured-text"
+        && value["scholarlyVerification"] == "unverified"
+        && metadata_matches(
+            &json!({"source":value["source"], "normalizedRevisionId":request.selector.normalized_revision_id}),
+            &request.source(),
+        )
+        && value["nodes"]
+            .as_array()
+            .is_some_and(|nodes| nodes.len() <= 50)
+        && (value["nextNodeId"].is_null()
+            || value["nextNodeId"]
+                .as_str()
+                .is_some_and(crate::supervisor::canonical_uuid_v7))
+}
+
 fn text_matches(value: &Value, request: &ViewerTextRequest) -> bool {
     value.as_object().is_some_and(|fields| fields.len() == 7)
         && metadata_matches(&value["metadata"], &request.source())
@@ -156,39 +218,55 @@ pub(crate) async fn document_viewer_text(
     supervisor: State<'_, RuntimeSupervisor>,
     lock: State<'_, ApplicationLockManager>,
     request: ViewerTextRequest,
-) -> Result<Option<Value>, ()> {
+) -> Result<Option<Value>, String> {
     if !request.valid() {
-        return Err(());
+        return Err("viewer-source-unavailable".to_string());
     }
-    let owner = crate::directory_window_handle(&window).ok_or(())?;
-    let ticket = lock.begin_protected_action().map_err(|_| ())?;
+    let owner = crate::directory_window_handle(&window)
+        .ok_or_else(|| "viewer-source-unavailable".to_string())?;
+    let ticket = lock
+        .begin_protected_action()
+        .map_err(|_| "viewer-source-unavailable".to_string())?;
     let connection = Arc::new(
         supervisor
             .native_document_connection(&request.project_id)
-            .map_err(|_| ())?,
+            .map_err(|_| "viewer-source-unavailable".to_string())?,
     );
     let worker = Arc::clone(&connection);
     let selected = request.clone();
     let gate = lock.inner().clone();
     let owned_window = window.clone();
     let response = tauri::async_runtime::spawn_blocking(move || {
-        let context = current_document_context(&worker, &selected.project_id).map_err(|_| ())?;
+        let context = current_document_context(&worker, &selected.project_id).map_err(|_| "viewer-source-unavailable".to_string())?;
         worker.document_request_owned(NativeDocumentAction::ViewerText,
             json!({"root":worker.document_root(), "projectId":selected.project_id, "sessionId":context.session_id,
                 "selector":selected.selector, "nodeId":selected.node_id, "offset":selected.offset}),
             &|| gate.finish_protected_action(ticket).is_ok() && crate::directory_window_handle(&owned_window) == Some(owner))
-            .map_err(|_| ())
-    }).await.map_err(|_| ())??;
+            // Once issued, a deadline/disconnect is not proof that Core's
+            // synchronous artifact callback has physically finished.
+            .map_err(|_| "viewer-owned-read-drain-pending".to_string())
+    }).await.map_err(|_| "viewer-owned-read-drain-pending".to_string())??;
     if !connection.is_current()
         || lock.finish_protected_action(ticket).is_err()
         || crate::directory_window_handle(&window) != Some(owner)
-        || response.status != 200
+    {
+        return Ok(None);
+    }
+    if response.status == 413
+        && response.body.len() <= 8192
+        && serde_json::from_str::<Value>(&response.body)
+            .is_ok_and(|value| value["code"] == "RO-CORE-DOCUMENT-VIEWER-RESOURCE-LIMIT")
+    {
+        return Err("viewer-resource-limit".to_string());
+    }
+    if response.status != 200
         || response.content_type != "application/json"
         || response.body.len() > 32768
     {
         return Ok(None);
     }
-    let value = serde_json::from_str::<Value>(&response.body).map_err(|_| ())?;
+    let value = serde_json::from_str::<Value>(&response.body)
+        .map_err(|_| "viewer-source-unavailable".to_string())?;
     if !text_matches(&value, &request) {
         return Ok(None);
     }
@@ -200,7 +278,74 @@ pub(crate) async fn document_viewer_text(
             Ok(Some(value))
         })
     })
-    .map_err(|_| ())
+    .map_err(|_| "viewer-source-unavailable".to_string())
+}
+
+#[tauri::command]
+pub(crate) async fn document_viewer_outline(
+    window: tauri::WebviewWindow,
+    supervisor: State<'_, RuntimeSupervisor>,
+    lock: State<'_, ApplicationLockManager>,
+    request: ViewerOutlineRequest,
+) -> Result<Option<Value>, String> {
+    if !request.valid() {
+        return Err("viewer-source-unavailable".to_string());
+    }
+    let owner = crate::directory_window_handle(&window)
+        .ok_or_else(|| "viewer-source-unavailable".to_string())?;
+    let ticket = lock
+        .begin_protected_action()
+        .map_err(|_| "viewer-source-unavailable".to_string())?;
+    let connection = Arc::new(
+        supervisor
+            .native_document_connection(&request.project_id)
+            .map_err(|_| "viewer-source-unavailable".to_string())?,
+    );
+    let worker = Arc::clone(&connection);
+    let selected = request.clone();
+    let gate = lock.inner().clone();
+    let owned_window = window.clone();
+    let response = tauri::async_runtime::spawn_blocking(move || {
+        let context = current_document_context(&worker, &selected.project_id).map_err(|_| "viewer-source-unavailable".to_string())?;
+        worker.document_request_owned(NativeDocumentAction::ViewerOutline,
+            json!({"root":worker.document_root(), "projectId":selected.project_id, "sessionId":context.session_id,
+                "selector":selected.selector, "afterNodeId":selected.after_node_id}),
+            &|| gate.finish_protected_action(ticket).is_ok() && crate::directory_window_handle(&owned_window) == Some(owner))
+            .map_err(|_| "viewer-owned-read-drain-pending".to_string())
+    }).await.map_err(|_| "viewer-owned-read-drain-pending".to_string())??;
+    if !connection.is_current()
+        || lock.finish_protected_action(ticket).is_err()
+        || crate::directory_window_handle(&window) != Some(owner)
+    {
+        return Ok(None);
+    }
+    if response.status == 413
+        && response.body.len() <= 8192
+        && serde_json::from_str::<Value>(&response.body)
+            .is_ok_and(|value| value["code"] == "RO-CORE-DOCUMENT-VIEWER-RESOURCE-LIMIT")
+    {
+        return Err("viewer-resource-limit".to_string());
+    }
+    if response.status != 200
+        || response.content_type != "application/json"
+        || response.body.len() > 131072
+    {
+        return Ok(None);
+    }
+    let value = serde_json::from_str::<Value>(&response.body)
+        .map_err(|_| "viewer-source-unavailable".to_string())?;
+    if !outline_matches(&value, &request) {
+        return Ok(None);
+    }
+    lock.commit_protected_action(ticket, || {
+        connection.publish_current(|| {
+            if crate::directory_window_handle(&window) != Some(owner) {
+                return Err("RO-DOCUMENT-VIEWER-DENIED");
+            }
+            Ok(Some(value))
+        })
+    })
+    .map_err(|_| "viewer-source-unavailable".to_string())
 }
 
 struct PendingRange {
@@ -752,6 +897,53 @@ mod tests {
         let mut injected = value;
         injected["path"] = json!("untrusted");
         assert!(!text_matches(&injected, &request));
+    }
+
+    #[test]
+    fn viewer_outline_is_exact_and_renderer_cannot_supply_authority() {
+        let mut range = request();
+        range.selector.normalized_revision_id = Some("00000000-0000-7000-8000-000000000009".into());
+        let request = ViewerOutlineRequest {
+            schema_version: range.schema_version.clone(),
+            project_id: range.project_id.clone(),
+            selector: range.selector.clone(),
+            after_node_id: None,
+        };
+        let source = response(&range)["metadata"]["source"].clone();
+        let value = json!({"schemaVersion":"1.0", "projectId":request.project_id,
+            "documentId":source["documentId"], "revisionId":request.selector.normalized_revision_id,
+            "source":source, "viewKind":"accepted-structured-text", "scholarlyVerification":"unverified",
+            "nodes":[], "nextNodeId":null});
+        assert!(request.valid());
+        assert!(outline_matches(&value, &request));
+        for field in [
+            "projectId",
+            "revisionId",
+            "documentId",
+            "viewKind",
+            "scholarlyVerification",
+            "nextNodeId",
+        ] {
+            let mut changed = value.clone();
+            changed[field] = json!("untrusted");
+            assert!(!outline_matches(&changed, &request));
+        }
+        let mut changed = value.clone();
+        changed["source"]["attachmentId"] = json!(range.request_id);
+        assert!(!outline_matches(&changed, &request));
+        let mut changed = value.clone();
+        changed["nodes"] = json!(vec![Value::Null; 51]);
+        assert!(!outline_matches(&changed, &request));
+        let mut changed = value;
+        changed["path"] = json!("untrusted");
+        assert!(!outline_matches(&changed, &request));
+        let command = json!({"schemaVersion":request.schema_version, "projectId":request.project_id,
+            "selector":request.selector, "afterNodeId":null});
+        for field in ["root", "sessionId", "actorId", "url", "rights"] {
+            let mut changed = command.clone();
+            changed[field] = json!("untrusted");
+            assert!(serde_json::from_value::<ViewerOutlineRequest>(changed).is_err());
+        }
     }
 
     #[test]

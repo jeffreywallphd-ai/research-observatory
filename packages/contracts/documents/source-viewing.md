@@ -13,6 +13,7 @@ external-open and export actions. Those actions remain unavailable in T01.
 | `document_viewer_source` | `/native/document-viewer/source` | Exact source metadata |
 | `document_viewer_range` | `/native/document-viewer/range` | Native validated raw ArrayBuffer IPC |
 | `document_viewer_text` | `/native/document-viewer/text` | Exact accepted text chunk |
+| `document_viewer_outline` | `/native/document-viewer/outline` | Bounded accepted-revision outline under Viewer admission |
 | `document_viewer_cancel` | `/native/document-viewer/cancel` | Native stop signal; original range supplies terminal disposition |
 
 The renderer names the project, attachment, original revision, optional accepted
@@ -131,6 +132,36 @@ are unavailable. Map/Set message contents are counted; hidden native clone stora
 is rejected. Every retained message graph keeps its clone charge until its last
 owned child is collected. Closing cancels reads/renders/assets, terminates the
 worker immediately and clears owned surfaces and references.
+
+The trusted original length sets the dedicated worker allowance to source length
+plus16MiB, bounded at144MiB. Bootstrap remains16MiB until exactly one closed
+configuration message arrives from the trusted main integration, before decoder
+traffic. The main/surface allowance is64MiB and bundled assets8MiB. Core's
+allowance is256MiB minus those amounts and8MiB range/receiver headroom:32MiB for
+a128MiB original,150MiB for a10MiB original. These are backing-buffer accounting
+bounds, separate from Python/JavaScript object heaps and process commit.
+
+Viewer structured reads reserve24MiB within Core's allowance for encryption
+frames and source context, then cumulatively charge128 times each protected
+artifact's authenticated declared byte length plus4096 before allocation.
+Accepted artifacts, normalized results, raw inputs and repeated parser manifests
+all share that call's ledger. Charges remain until the call finishes. Original
+integrity, ordinary revision/anchor readers and the general64MiB parser-artifact
+contract remain unchanged. An over-budget outline or text request returns the
+fixed resource denial, preserving the accepted revision, original and metadata;
+the Reader can continue original-page inspection.
+
+All Reader instances in one window share one admission ledger, including retired
+sessions. A reference-counted32MiB Core group belongs to each source session;
+decoder generations and structured calls retain it until actual closure. A
+structured call additionally reserves its Core allowance minus32MiB. The project
+action guard serializes source and derivative callbacks; their frame allowance
+is shared, not duplicated. Worker termination releases decoder/main/assets,
+while pending original reads retain Core admission until successful physical
+drain. A Native deadline/disconnect after structured issuance retains the group
+and extra charge: transport settlement is not physical Core termination. Late
+responses cannot publish into a replaced session. Unknown closure prevents
+unaccounted replacement admission; it is not relabeled successful cancellation.
 
 Page navigation that interrupts outstanding work, and Cancel search, retire the
 entire decoder generation because the pinned SDK shares its missing-chunk

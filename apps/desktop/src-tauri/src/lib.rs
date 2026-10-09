@@ -1021,6 +1021,7 @@ fn application_builder() -> tauri::Builder<tauri::Wry> {
         document_reader::document_reader_citation_links,
         document_viewer::document_viewer_source,
         document_viewer::document_viewer_text,
+        document_viewer::document_viewer_outline,
         document_viewer::document_viewer_range,
         document_viewer::document_viewer_cancel
     ];

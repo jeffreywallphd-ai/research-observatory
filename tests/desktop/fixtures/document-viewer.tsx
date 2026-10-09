@@ -19,13 +19,14 @@ const handoff = { attachmentId: source.attachmentId, documentRevisionId: source.
 const root = createRoot(document.getElementById("root")!);
 const state = {
   sourceCalls: 0, revisionCalls: 0, closes: 0, rendered: [] as { page: number; scale: number }[], returns: [] as object[],
-  denySource: false, substituteSource: false, denyText: false, holdText: false, releaseText: null as (() => void) | null,
+  denySource: false, substituteSource: false, denyText: false, limitOutline: false, limitText: false,
+  holdText: false, releaseText: null as (() => void) | null,
   holdSearch: false, releaseSearch: null as (() => void) | null,
   holdRender: false, releaseRender: null as (() => void) | null,
   mount(active = true): void {
     root.render(<DocumentViewerWorkspace project={{ projectId: source.projectId, open: true } as ProjectProjection}
       handoff={handoff} active={active} announce={() => undefined} onReturn={() => { state.returns.push(selection); state.mount(false); }}
-      port={port} anchors={anchors} textPort={textPort} pdfFactory={pdfFactory} />);
+      port={port} anchors={anchors} outlinePort={outlinePort} textPort={textPort} pdfFactory={pdfFactory} />);
   },
 };
 const port = {
@@ -43,8 +44,13 @@ const anchors = {
 };
 const textPort = { text: async (_project: string, _selector: object, _node: string, offset: number) => {
   if (state.holdText) await new Promise<void>((resolve) => { state.releaseText = resolve; });
+  if (state.limitText) throw new Error("viewer-resource-limit");
   return state.denyText ? null : { metadata: { source, normalizedRevisionId: revision }, nodeId, nodeKind: "paragraph" as const,
     pageNumber: 2, offset, text: "Synthetic inert <script>window.viewerDocumentExecuted=true</script> text", nextOffset: null };
+} };
+const outlinePort = { outline: async () => {
+  if (state.limitOutline) throw new Error("viewer-resource-limit");
+  return anchors.outline();
 } };
 const pdfFactory = (): PdfViewer => ({ open: async () => 3,
   render: async (canvas, page, scale) => {

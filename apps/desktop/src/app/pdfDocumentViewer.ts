@@ -1,6 +1,6 @@
 import { AnnotationMode, PDFDataRangeTransport, PDFWorker, getDocument, type PDFDocumentLoadingTask,
   type PDFDocumentProxy, type PDFPageProxy, type RenderTask } from "pdfjs-dist";
-import { ViewerByteSession, type ViewerBufferBudget } from "./documentViewer";
+import { ViewerByteSession, viewerWorkerAllowance, type ViewerBufferBudget } from "./documentViewer";
 import { retainViewerMessage } from "./viewerWorkerMessages";
 import { ViewerAssetPool } from "./viewerAssets";
 import type { TextContent } from "pdfjs-dist/types/src/display/api";
@@ -113,6 +113,7 @@ class PdfDecoderSession {
   private surfaceBytes = 0;
   private surfaces = new Map<HTMLCanvasElement, number>();
   private releases: (() => void)[] = [];
+  private releaseCore: (() => void) | null = null;
   private readonly assets = new ViewerAssetPool();
   private readonly assetStop = new AbortController();
   private readonly assetRequests = new Map<string, Promise<Uint8Array<ArrayBuffer>>>();
@@ -124,10 +125,13 @@ class PdfDecoderSession {
     try {
       // Includes worker source/decoder backing stores, main decoded clones and
       // all page/intermediate surfaces, and local built-in font/CMap resources.
-      this.releases.push(budget.reserve(144 * 1024 * 1024));
+      const workerAllowance = viewerWorkerAllowance(bytes.metadata.source.byteLength);
+      this.releases.push(budget.reserve(workerAllowance));
       this.releases.push(budget.reserve(64 * 1024 * 1024));
       this.releases.push(budget.reserve(8 * 1024 * 1024));
+      this.releaseCore = bytes.coreAdmission.retain();
       this.worker = worker = new Worker(new URL("./documentViewer.worker.ts", import.meta.url), { type: "module", name: "protected-document-viewer" });
+      this.worker.postMessage({ viewerQuotaLimit: workerAllowance });
       const messages = { held: 0 };
       this.worker.addEventListener("message", (event: MessageEvent<unknown>) => {
         try {
@@ -137,7 +141,7 @@ class PdfDecoderSession {
       });
       this.worker.addEventListener("error", (event) => { event.preventDefault(); this.fail("viewer-source-unavailable"); });
       this.pdfWorker = PDFWorker.create({ port: this.worker });
-    } catch (error) { worker?.terminate(); for (const release of this.releases) release(); throw error; }
+    } catch (error) { worker?.terminate(); for (const release of this.releases) release(); this.releaseCore?.(); this.releaseCore = null; throw error; }
   }
   private fail(code: string): void {
     if (!this.live) return;
@@ -193,7 +197,7 @@ class PdfDecoderSession {
         const target = new URL(url, window.location.href);
         if (target.origin !== window.location.origin || !["http:", "https:", "tauri:"].includes(target.protocol)) throw new Error("viewer-remote-resource-denied");
         // These immutable bundled resources are public application assets.
-        // Sharing their bounded promise does not cache any original source.
+        // Sharing their bounded promise does not cache original source bytes.
         const prior = owner.assetRequests.get(target.href);
         if (prior) return prior;
         const request = (async () => {
@@ -317,6 +321,11 @@ class PdfDecoderSession {
     void this.loading?.destroy().catch(() => undefined);
     for (const canvas of this.surfaces.keys()) this.dropSurface(canvas);
     for (const release of this.releases) release(); this.releases = [];
+    const releaseCore = this.releaseCore; this.releaseCore = null;
+    if (releaseCore) {
+      if (!this.bytes.hasPendingReads) releaseCore();
+      else void this.bytes.drain().then(releaseCore).catch(() => undefined);
+    }
     this.document = this.page = this.renderTask = this.loading = null;
   }
 }

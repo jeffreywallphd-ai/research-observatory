@@ -520,6 +520,7 @@ pub(crate) enum NativeDocumentAction {
     CitationLinks,
     ViewerSource,
     ViewerText,
+    ViewerOutline,
     ViewerRange,
     ViewerCancel,
 }
@@ -547,6 +548,7 @@ impl NativeDocumentAction {
             Self::CitationLinks => "/native/document-revisions/citation-links",
             Self::ViewerSource => "/native/document-viewer/source",
             Self::ViewerText => "/native/document-viewer/text",
+            Self::ViewerOutline => "/native/document-viewer/outline",
             Self::ViewerRange => "/native/document-viewer/range",
             Self::ViewerCancel => "/native/document-viewer/cancel",
         }

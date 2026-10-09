@@ -11,16 +11,18 @@ vi.mock("pdfjs-dist", () => ({
   getDocument: () => ({ promise: Promise.resolve(sdk.document), destroy: () => Promise.resolve() }),
 }));
 afterEach(() => vi.unstubAllGlobals());
-function setup(getPage: (number: number) => Promise<unknown>): { viewer: PdfDocumentViewer; budget: ViewerBufferBudget } {
-  vi.stubGlobal("Worker", class { addEventListener(): void {} terminate(): void { sdk.terminated += 1; } });
+function setup(getPage: (number: number) => Promise<unknown>, range: () => Promise<ArrayBuffer | null> = async () => null): {
+  viewer: PdfDocumentViewer; budget: ViewerBufferBudget; bytes: ViewerByteSession;
+} {
+  vi.stubGlobal("Worker", class { addEventListener(): void {} postMessage(): void {} terminate(): void { sdk.terminated += 1; } });
   sdk.document = { numPages: 3, getPage, cleanup: () => Promise.resolve() };
   const fixture = sourceAnchorFixture();
   const source = decodeSourceAnchor(fixture, "00000000-0000-7000-8000-000000000001", "00000000-0000-7000-8000-000000000003")!.target.source;
   const selector = { attachmentId: source.attachmentId, documentRevisionId: source.documentRevisionId, normalizedRevisionId: null };
   const budget = new ViewerBufferBudget(), bytes = new ViewerByteSession(source.projectId, selector, { source, normalizedRevisionId: null }, {
-    source: async () => null, range: async () => null,
+    source: async () => null, range,
   }, budget);
-  return { viewer: new PdfDocumentViewer(bytes, budget, () => undefined), budget };
+  return { viewer: new PdfDocumentViewer(bytes, budget, () => undefined), budget, bytes };
 }
 const canvas = (): HTMLCanvasElement => ({ width: 0, height: 0, getContext: () => ({}) }) as unknown as HTMLCanvasElement;
 function page(reject = false): { render: ReturnType<typeof vi.fn>; cleanup: ReturnType<typeof vi.fn>; getViewport: () => { width: number; height: number } } {
@@ -28,6 +30,18 @@ function page(reject = false): { render: ReturnType<typeof vi.fn>; cleanup: Retu
     render: vi.fn(() => ({ promise: reject ? Promise.reject(new Error("synthetic-render-failure")) : Promise.resolve(), cancel: vi.fn() })) };
 }
 describe("PDF thumbnail ownership during navigation", () => {
+  it("keeps Core admission after worker termination until the actual byte owner settles", async () => {
+    let finish: (value: null) => void = () => undefined;
+    const { viewer, budget, bytes } = setup(async () => page(), () => new Promise((resolve) => { finish = resolve; }));
+    await viewer.open();
+    const read = expect(bytes.read(0, 4)).rejects.toThrow("viewer-source-unavailable");
+    const before = sdk.terminated;
+    viewer.close();
+    expect(sdk.terminated).toBe(before + 1);
+    expect(budget.used).toBe(32 * 1024 * 1024 + 4 * 6 + 8192);
+    finish(null); await read; await bytes.drain();
+    await vi.waitFor(() => expect(budget.used).toBe(0), { timeout: 50, interval: 1 });
+  });
   it("settles cancellation while an uncached SDK page callback can no longer reply", async () => {
     const current = page();
     const { viewer, budget } = setup(async (number) => number === 2 ? new Promise(() => undefined) : current);

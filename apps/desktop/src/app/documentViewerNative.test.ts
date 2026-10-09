@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { nativeDocumentViewerPort } from "./documentViewer";
+import { nativeDocumentViewerPort, nativeDocumentViewerOutlinePort, nativeDocumentViewerTextPort } from "./documentViewer";
 
 const invoke = vi.hoisted(() => vi.fn());
 vi.mock("@tauri-apps/api/core", () => ({ invoke }));
@@ -13,6 +13,22 @@ const selector = { attachmentId: "00000000-0000-7000-8000-000000000003",
 describe("native range terminal acknowledgement", () => {
   beforeEach(() => { invoke.mockReset(); vi.stubGlobal("window", { __TAURI_INTERNALS__: {} }); });
   afterEach(() => vi.unstubAllGlobals());
+  it("preserves only the fixed Native resource denial for structured outline and text", async () => {
+    const selected = { ...selector, normalizedRevisionId: requestId };
+    invoke.mockRejectedValueOnce("viewer-resource-limit");
+    await expect(nativeDocumentViewerOutlinePort.outline(projectId, selected, null)).rejects.toThrow("viewer-resource-limit");
+    expect(invoke).toHaveBeenLastCalledWith("document_viewer_outline", {
+      request: { schemaVersion: "1.0", projectId, selector: selected, afterNodeId: null },
+    });
+    invoke.mockRejectedValueOnce("viewer-resource-limit");
+    await expect(nativeDocumentViewerTextPort.text(projectId, selected, requestId, 0)).rejects.toThrow("viewer-resource-limit");
+    invoke.mockRejectedValueOnce({ code: "viewer-resource-limit", path: "untrusted" });
+    await expect(nativeDocumentViewerOutlinePort.outline(projectId, selected, null)).rejects.toThrow("viewer-owned-read-drain-pending");
+    invoke.mockRejectedValueOnce("viewer-source-unavailable");
+    expect(await nativeDocumentViewerOutlinePort.outline(projectId, selected, null)).toBeNull();
+    invoke.mockRejectedValueOnce("viewer-owned-read-drain-pending");
+    await expect(nativeDocumentViewerTextPort.text(projectId, selected, requestId, 0)).rejects.toThrow("viewer-owned-read-drain-pending");
+  });
   it("does not use settled cancel IPC as evidence that the original read closed", async () => {
     let finish: (failure: unknown) => void = () => undefined;
     invoke.mockImplementation((command: string) => command === "document_viewer_cancel" ? Promise.resolve()

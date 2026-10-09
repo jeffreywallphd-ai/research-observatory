@@ -1,5 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
-import { decodeViewerMetadata, decodeViewerText, viewerSourcesMatch, ViewerBufferBudget, ViewerByteSession } from "./documentViewer";
+import { decodeViewerMetadata, decodeViewerText, viewerSourcesMatch, viewerCoreAllowance, viewerWorkerAllowance,
+  VIEWER_CORE_BASE_ALLOWANCE, ViewerCoreAdmission, ViewerBufferBudget, ViewerByteSession } from "./documentViewer";
 import { sourceAnchorFixture } from "../../../../tests/desktop/fixtures/anchor-contract";
 import { decodeSourceAnchor } from "./sourceAnchors";
 
@@ -7,6 +8,30 @@ const fixture = sourceAnchorFixture();
 const source = decodeSourceAnchor(fixture, "00000000-0000-7000-8000-000000000001", "00000000-0000-7000-8000-000000000003")!.target.source;
 const selector = { attachmentId: source.attachmentId, documentRevisionId: source.documentRevisionId, normalizedRevisionId: null };
 describe("controlled viewer source bytes", () => {
+  it("retains shared Core admission across decoder retirement and independent session replacement", () => {
+    const budget = new ViewerBufferBudget(), oldCore = new ViewerCoreAdmission(budget);
+    const releaseDecoder = oldCore.retain(), releaseText = oldCore.retain();
+    expect(budget.used).toBe(VIEWER_CORE_BASE_ALLOWANCE);
+    releaseDecoder(); expect(budget.used).toBe(VIEWER_CORE_BASE_ALLOWANCE);
+    const nextCore = new ViewerCoreAdmission(budget), releaseNext = nextCore.retain();
+    expect(budget.used).toBe(2 * VIEWER_CORE_BASE_ALLOWANCE);
+    releaseText(); releaseText(); expect(budget.used).toBe(VIEWER_CORE_BASE_ALLOWANCE);
+    releaseNext(); expect(budget.used).toBe(0);
+  });
+  it("holds the source-sized decoder and structured read allowances together until settlement", () => {
+    const mib = 1024 * 1024, budget = new ViewerBufferBudget();
+    expect(viewerWorkerAllowance(10 * mib)).toBe(26 * mib);
+    expect(viewerCoreAllowance(10 * mib)).toBe(150 * mib);
+    expect(viewerCoreAllowance(128 * mib)).toBe(32 * mib);
+    for (const invalid of [0, -1, 1.5, NaN, 128 * mib + 1]) expect(() => viewerWorkerAllowance(invalid)).toThrow("viewer-resource-limit");
+    const releaseDecoder = budget.reserve(viewerWorkerAllowance(10 * mib) + (64 + 8) * mib + VIEWER_CORE_BASE_ALLOWANCE);
+    const releaseText = budget.reserve(viewerCoreAllowance(10 * mib) - VIEWER_CORE_BASE_ALLOWANCE);
+    expect(budget.used).toBe(248 * mib);
+    expect(() => budget.reserve(viewerCoreAllowance(10 * mib) - VIEWER_CORE_BASE_ALLOWANCE)).toThrow("viewer-resource-limit");
+    const releaseRange = budget.reserve(6 * mib + 8192);
+    expect(budget.used).toBeLessThan(256 * mib);
+    releaseRange(); releaseText(); releaseDecoder(); expect(budget.used).toBe(0);
+  });
   it("binds metadata to the exact original and rejects injected paths and revisions", () => {
     const value = { source, normalizedRevisionId: null };
     expect(decodeViewerMetadata(value, source.projectId, selector)?.source).toEqual(source);

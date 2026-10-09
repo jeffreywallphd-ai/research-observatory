@@ -183,6 +183,7 @@ class DocumentViewerApiTests(unittest.TestCase):
                     self.assertEqual(1, cursor.rowcount)
                     connection.execute("COMMIT")
                     return True
+
             return self.imports._guard(binding, write)
 
         with patch.object(object_store, "_pull_frame", held_frame), ThreadPoolExecutor(max_workers=4) as executor:
@@ -258,6 +259,40 @@ class DocumentViewerApiTests(unittest.TestCase):
         self.assertEqual((), repository.source_anchors().list(accepted.revision_id))
         self.f.f.permit(derive="denied")
         self.assertEqual(409, self.client.post(self.path + "/text", json=command).status_code)
+        self.assertEqual(200, self.client.post(self.path + "/range", json=self.range).status_code)
+
+    def test_viewer_outline_and_text_use_admission_while_normal_revision_read_is_unchanged(self):
+        repository = self.f.fixture.repository
+        accepted = repository.accept(self.f.fixture.command(self.f.fixture.parse()))
+        selected = dict(
+            self.command, selector=dict(self.command["selector"], normalizedRevisionId=accepted.revision_id)
+        )
+        outline = self.client.post(self.path + "/outline", json=dict(selected, afterNodeId=None))
+        self.assertEqual(200, outline.status_code, outline.text)
+        self.assertEqual(accepted.revision_id, outline.json()["revisionId"])
+        node = next(item for item in accepted.structure.nodes if item.text is not None)
+        text = dict(selected, nodeId=node.node_id, offset=0)
+        from research_observatory_core.document_viewer_allocations import ViewerArtifactReads
+
+        with patch.object(ViewerArtifactReads, "cost_multiplier", 2**40):
+            for path, command in (("/outline", dict(selected, afterNodeId=None)), ("/text", text)):
+                response = self.client.post(self.path + path, json=command)
+                self.assertEqual(413, response.status_code, response.text)
+                self.assertEqual("RO-CORE-DOCUMENT-VIEWER-RESOURCE-LIMIT", response.json()["code"])
+            self.assertEqual(accepted.revision_id, repository.read(accepted.revision_id).revision_id)
+            self.assertEqual(200, self.client.post(self.path + "/range", json=self.range).status_code)
+        self.assertEqual(200, self.client.post(self.path + "/text", json=text).status_code)
+
+    def test_viewer_outline_denies_substituted_original_or_derive_permission(self):
+        repository = self.f.fixture.repository
+        accepted = repository.accept(self.f.fixture.command(self.f.fixture.parse()))
+        selected = dict(
+            self.command, selector=dict(self.command["selector"], normalizedRevisionId=accepted.revision_id)
+        )
+        wrong = dict(selected, selector=dict(selected["selector"], documentRevisionId=new_uuid_v7()))
+        self.assertEqual(409, self.client.post(self.path + "/outline", json=wrong).status_code)
+        self.f.f.permit(derive="denied")
+        self.assertEqual(409, self.client.post(self.path + "/outline", json=selected).status_code)
         self.assertEqual(200, self.client.post(self.path + "/range", json=self.range).status_code)
 
     def test_rights_revoked_between_selection_and_physical_admission_deny_without_reading(self):

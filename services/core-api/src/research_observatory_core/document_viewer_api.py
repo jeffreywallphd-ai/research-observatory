@@ -10,6 +10,7 @@ from fastapi import APIRouter, FastAPI, Request
 from pydantic import Field, model_validator
 
 from .document_attachment_api import BoundedDocumentJsonRoute, DocumentSession
+from .document_revisions import DocumentRevisionProblem
 from .parsing.contracts import Identity
 from .ports.document_viewer import ViewerSourceSelector
 from .ports.object_store import MAX_VIEWER_RANGE_BYTES, MAX_VIEWER_SOURCE_BYTES, ObjectReadCancelled
@@ -41,6 +42,10 @@ class ViewerTextCommand(ViewerSourceCommand):
     offset: Annotated[int, Field(strict=True, ge=0, le=64 * 1024 * 1024)]
 
 
+class ViewerOutlineCommand(ViewerSourceCommand):
+    after_node_id: Identity | None = None
+
+
 def register_document_viewer_routes(app: FastAPI, runtime: Callable):
     router = APIRouter(prefix="/native/document-viewer", route_class=BoundedDocumentJsonRoute, include_in_schema=False)
 
@@ -50,7 +55,19 @@ def register_document_viewer_routes(app: FastAPI, runtime: Callable):
             if service is None:
                 raise RuntimeError("viewer-unavailable")
             return action(service)
-        except Exception:
+        except Exception as failure:
+            if isinstance(failure, DocumentRevisionProblem) and failure.code == "viewer-resource-limit":
+                raise CoreProblem(
+                    problem_detail(
+                        status=413,
+                        code="RO-CORE-DOCUMENT-VIEWER-RESOURCE-LIMIT",
+                        title="Structured view exceeds the local limit",
+                        detail="This structured view would exceed the bounded local viewer allocation.",
+                        trace_id=request.state.trace_id,
+                        retryable=False,
+                        remediation="Continue inspecting the retained original or return to source review.",
+                    )
+                ) from None
             raise CoreProblem(
                 problem_detail(
                     status=409,
@@ -111,6 +128,15 @@ def register_document_viewer_routes(app: FastAPI, runtime: Callable):
         return run(
             request,
             lambda service: service.text_chunk(command, trace_id=request.state.trace_id).model_dump(
+                mode="json", by_alias=True
+            ),
+        )
+
+    @router.post("/outline")
+    def outline(request: Request, command: ViewerOutlineCommand):
+        return run(
+            request,
+            lambda service: service.outline(command, trace_id=request.state.trace_id).model_dump(
                 mode="json", by_alias=True
             ),
         )

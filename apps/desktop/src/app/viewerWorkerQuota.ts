@@ -1,8 +1,11 @@
 // Installed before PDF.js executes in its dedicated worker. Conservatively
 // retain allocation charges until collection or worker termination. Imported
 // PDF data cannot supply executable callbacks, URLs or allocation authority.
-export function installViewerWorkerQuota(scope: Record<string, unknown>, limit: number): { readonly used: () => number; readonly accept: (buffer: ArrayBuffer) => void } {
+export function installViewerWorkerQuota(scope: Record<string, unknown>, limit: number): {
+  readonly used: () => number; readonly accept: (buffer: ArrayBuffer) => void; readonly configure: (bytes: number) => void;
+} {
   let used = 0;
+  let configured = false;
   const held = new WeakSet<object>();
   const originalBuffer = scope["ArrayBuffer"] as typeof ArrayBuffer;
   const collected = new FinalizationRegistry<number>((bytes) => { used -= bytes; });
@@ -97,5 +100,10 @@ export function installViewerWorkerQuota(scope: Record<string, unknown>, limit: 
   scope["XMLHttpRequest"] = undefined;
   scope["WebSocket"] = undefined;
   scope["importScripts"] = () => { throw new Error("viewer-remote-resource-denied"); };
-  return { used: () => used, accept: account };
+  return { used: () => used, accept: account, configure(bytes) {
+    if (configured || !Number.isSafeInteger(bytes) || bytes < 16 * 1024 * 1024 || bytes > 144 * 1024 * 1024 || used > bytes) {
+      throw new Error("viewer-resource-limit");
+    }
+    limit = bytes; configured = true;
+  } };
 }

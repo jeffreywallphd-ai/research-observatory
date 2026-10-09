@@ -134,3 +134,21 @@ expansion denial and fresh recovery. The first attempt's two fixture failures
 zero-sized initial surfaces. Worktree results are not exact-candidate approval.
 The3s product target is explicitly selected by the owner; LT01 direct-record
 procedure adoption remains pending. No repeated value decision is requested.
+
+The allocation remediation uses a Viewer-only cumulative protected-artifact
+ledger, preserving ordinary revision readers and all protected validation.
+The source-sized decoder allowance frees room for structured inspection of
+ordinary sources without changing parser limits. A shared window ledger and
+reference-counted Core allowance keep old calls visible during retry/replacement.
+Native structured deadline/disconnect failures retain admission as unknown drain.
+Independent narrow assessment identified the outline denial-mapping and
+structured transport-lifetime gaps; both are addressed in this product unit.
+
+Worktree checks retained under `artifacts/tmp/CAP-05.S04.T01.artifact-*` include
+twenty-one Core tests (one outline-status failure, followed by its passing focused
+regression), twenty-six renderer tests, strict TypeScript, nine Native command
+tests, six mounted Reader journeys and four actual pinned-decoder cases.
+Sandbox-only fixture/cache failures are retained separately. The broad desktop
+lint also reports two pre-existing unrelated source literals; it is not a clean
+repository/profile claim. These results select affected product risks and do not
+qualify a committed candidate, approve T01, adopt LT01 or complete W2.

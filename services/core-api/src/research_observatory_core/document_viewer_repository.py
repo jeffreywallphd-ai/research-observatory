@@ -3,6 +3,7 @@
 from collections.abc import Callable
 
 from .document_revisions import DocumentRevisionProblem
+from .document_viewer_allocations import ViewerOutlineReads, viewer_revision_reads
 from .domain_contracts import is_uuid_v7
 from .ports.document_viewer import ViewerSourceMetadata, ViewerSourceSelector, ViewerTextChunk
 from .ports.object_store import ObjectReadCancelled
@@ -123,10 +124,11 @@ class LocalDocumentViewerRepository:
             if metadata.normalized_revision_id is None:
                 raise DocumentRevisionProblem("viewer-structured-revision-required")
             actor = self.revisions.actor()
+            bounded = viewer_revision_reads(self.revisions, metadata.source.byte_length)
 
             def current(connection):
                 self.revisions._authority(connection, actor)
-                accepted = self.revisions._accepted(connection, metadata.normalized_revision_id)
+                accepted = bounded._accepted(connection, metadata.normalized_revision_id)
                 if (
                     accepted.document_id != metadata.source.document_id
                     or accepted.result.binding.source != metadata.source
@@ -176,6 +178,25 @@ class LocalDocumentViewerRepository:
                 metadata.source,
                 actor=current_actor,
                 action=lambda connection: self.revisions._authority(connection, current_actor),
+            )
+            return result
+
+        return self.revisions._bounded(read)
+
+    def outline(self, selector: ViewerSourceSelector, *, after_node_id=None):
+        def read():
+            metadata = self.describe(selector)
+            if metadata.normalized_revision_id is None:
+                raise DocumentRevisionProblem("viewer-structured-revision-required")
+            bounded = viewer_revision_reads(self.revisions, metadata.source.byte_length)
+            result = ViewerOutlineReads(bounded).outline(metadata.normalized_revision_id, after_node_id=after_node_id)
+            if result.source != metadata.source or self.describe(selector) != metadata:
+                raise DocumentRevisionProblem("viewer-source-changed")
+            actor = self.revisions.actor()
+            self.revisions.objects._read_authorized_document_context(
+                metadata.source,
+                actor=actor,
+                action=lambda connection: self.revisions._authority(connection, actor),
             )
             return result
 

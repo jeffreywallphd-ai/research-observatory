@@ -3,6 +3,21 @@ import { describe, expect, it } from "vitest";
 import { installViewerWorkerQuota } from "./viewerWorkerQuota";
 
 describe("dedicated viewer worker backing stores", () => {
+  it("configures the authenticated source allowance once and rejects excess before construction", () => {
+    const result = runInNewContext(`
+      const mib = 1024 * 1024;
+      const quota = (${installViewerWorkerQuota.toString()})(globalThis, 16 * mib);
+      new Uint8Array(1);
+      let invalid = false, repeated = false, denied = false;
+      try { quota.configure(145 * mib); } catch { invalid = true; }
+      quota.configure(26 * mib);
+      const source = new Uint8Array(10 * mib);
+      try { quota.configure(144 * mib); } catch { repeated = true; }
+      try { new Uint8Array(16 * mib); } catch { denied = true; }
+      ({ invalid, repeated, denied, used: quota.used(), sourceLength: source.length });
+    `) as unknown;
+    expect(result).toEqual({ invalid: true, repeated: true, denied: true, used: 10 * 1024 * 1024 + 1, sourceLength: 10 * 1024 * 1024 });
+  });
   it("admits allocations before construction and counts copies but not aliases", () => {
     const result = runInNewContext(`
       const quota = (${installViewerWorkerQuota.toString()})(globalThis, 256);

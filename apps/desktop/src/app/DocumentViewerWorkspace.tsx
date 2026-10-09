@@ -2,8 +2,9 @@ import { useEffect, useRef, useState, type ReactNode } from "react";
 import type { ProjectProjection } from "@research-observatory/contracts/core-api";
 import { Button, Notification, Panel, StatusBadge } from "@research-observatory/ui-components";
 import type { AttachmentHandoff } from "./DocumentAttachmentPane";
-import { decodeViewerMetadata, decodeViewerText, viewerSourcesMatch, nativeDocumentViewerPort, nativeDocumentViewerTextPort, ViewerBufferBudget, ViewerByteSession,
-  type DocumentViewerPort, type DocumentViewerTextPort, type ViewerMetadata, type ViewerSelector, type ViewerTextChunk } from "./documentViewer";
+import { decodeViewerMetadata, decodeViewerText, viewerSourcesMatch, nativeDocumentViewerPort, nativeDocumentViewerTextPort,
+  nativeDocumentViewerOutlinePort, viewerCoreAllowance, VIEWER_CORE_BASE_ALLOWANCE, ViewerBufferBudget, ViewerCoreAdmission, ViewerByteSession,
+  type DocumentViewerPort, type DocumentViewerOutlinePort, type DocumentViewerTextPort, type ViewerMetadata, type ViewerSelector, type ViewerTextChunk } from "./documentViewer";
 import { PdfDocumentViewer } from "./pdfDocumentViewer";
 import { nativeSourceAnchorPort, type SourceAnchorPort } from "./sourceAnchorsNative";
 import { decodeReaderOutline, decodeReaderRevisions, type ReaderOutlineNode } from "./sourceAnchors";
@@ -17,9 +18,12 @@ interface Props {
   readonly project: ProjectProjection | null; readonly handoff: AttachmentHandoff | null; readonly active: boolean;
   readonly announce: (message: string) => void; readonly onReturn: () => void;
   readonly port?: DocumentViewerPort; readonly anchors?: SourceAnchorPort; readonly textPort?: DocumentViewerTextPort;
+  readonly outlinePort?: DocumentViewerOutlinePort;
   readonly pdfFactory?: (bytes: ViewerByteSession, budget: ViewerBufferBudget, failure: (code: string) => void) => PdfViewer;
 }
 const pdfFactory = (bytes: ViewerByteSession, budget: ViewerBufferBudget, failure: (code: string) => void): PdfViewer => new PdfDocumentViewer(bytes, budget, failure);
+// Session replacement cannot hide old Native calls which are still draining.
+const windowViewerBudget = new ViewerBufferBudget();
 
 export function DocumentViewerWorkspace(props: Props): ReactNode {
   const { project, handoff } = props;
@@ -32,7 +36,7 @@ export function DocumentViewerWorkspace(props: Props): ReactNode {
 }
 
 function ViewerSession({ project, handoff, announce, onReturn, port = nativeDocumentViewerPort, anchors = nativeSourceAnchorPort,
-  textPort = nativeDocumentViewerTextPort, pdfFactory: createPdf = pdfFactory }: Props & {
+  textPort = nativeDocumentViewerTextPort, outlinePort = nativeDocumentViewerOutlinePort, pdfFactory: createPdf = pdfFactory }: Props & {
     project: ProjectProjection; handoff: AttachmentHandoff & { attachmentId: string; documentRevisionId: string };
   }): ReactNode {
   const [metadata, setMetadata] = useState<ViewerMetadata | null>(null), [pdf, setPdf] = useState<PdfViewer | null>(null);
@@ -46,6 +50,8 @@ function ViewerSession({ project, handoff, announce, onReturn, port = nativeDocu
   const canvas = useRef<HTMLCanvasElement>(null), heading = useRef<HTMLHeadingElement>(null);
   const thumbnails = useRef(new Map<number, HTMLCanvasElement>()), generation = useRef(0), textGeneration = useRef(0), searchGeneration = useRef(0), live = useRef(true);
   const ownedPdf = useRef<PdfViewer | null>(null);
+  const ownedBudget = useRef<ViewerBufferBudget | null>(null);
+  const ownedCore = useRef<ViewerCoreAdmission | null>(null);
   const acceptedRevisions = useRef<(() => void) | null>(null);
   const selector: ViewerSelector = { attachmentId: handoff.attachmentId, documentRevisionId: handoff.documentRevisionId, normalizedRevisionId: null };
   function restoreFocus(target: Element | null, current: () => boolean): void {
@@ -76,6 +82,8 @@ function ViewerSession({ project, handoff, announce, onReturn, port = nativeDocu
       if (!current()) return;
       if (!value || Object.entries(handoff.selection).some(([key, expected]) => value.source[key as keyof typeof value.source] !== expected)) { fail("viewer-source-unavailable"); return; }
       setMetadata(value);
+      const budget = windowViewerBudget; ownedBudget.current = budget;
+      const core = new ViewerCoreAdmission(budget); ownedCore.current = core;
       // The original is readable without an accepted parse or derive permission.
       // Accepted revision lookup may deny separately and must not replace it.
       acceptedRevisions.current = () => {
@@ -86,7 +94,7 @@ function ViewerSession({ project, handoff, announce, onReturn, port = nativeDocu
         }).catch(() => undefined);
       };
       if (value.source.format === "pdf") {
-        const budget = new ViewerBufferBudget(); bytes = new ViewerByteSession(project.projectId, selector, value, port, budget);
+        bytes = new ViewerByteSession(project.projectId, selector, value, port, budget, core);
         viewer = createPdf(bytes, budget, (code) => { if (current()) fail(code); }); ownedPdf.current = viewer;
         const count = await viewer.open();
         if (!current()) { viewer.close(); return; }
@@ -96,7 +104,7 @@ function ViewerSession({ project, handoff, announce, onReturn, port = nativeDocu
         setBusy(false); notify("Select an accepted revision for inert structured text. Active HTML, attachments and external document actions are unavailable.");
       }
     })().catch(() => { if (current()) fail("viewer-source-unavailable"); });
-    return () => { live.current = false; generation.current += 1; textGeneration.current += 1; searchGeneration.current += 1; acceptedRevisions.current = null; bytes?.close(); viewer?.close(); ownedPdf.current = null; };
+    return () => { live.current = false; generation.current += 1; textGeneration.current += 1; searchGeneration.current += 1; acceptedRevisions.current = null; bytes?.close(); viewer?.close(); ownedPdf.current = null; ownedBudget.current = null; ownedCore.current = null; };
   }, [project.projectId, handoff.attachmentId, handoff.documentRevisionId, port, anchors, createPdf, retry]);
 
   useEffect(() => {
@@ -122,25 +130,55 @@ function ViewerSession({ project, handoff, announce, onReturn, port = nativeDocu
   async function outline(selectedRevision: string, after: string | null = null): Promise<void> {
     const ticket = ++textGeneration.current, priorFocus = document.activeElement;
     setText(null); setTextBusy(true);
-    const value = decodeReaderOutline(await anchors.outline(project.projectId, selectedRevision, after).catch(() => null), project.projectId, selectedRevision);
+    let limited = false, unknownDrain = false, result: unknown = null, release = (): void => undefined;
+    try {
+      release = reserveStructured();
+      result = await outlinePort.outline(project.projectId, { ...selector, normalizedRevisionId: selectedRevision }, after);
+    } catch (error) {
+      limited = error instanceof Error && error.message === "viewer-resource-limit";
+      unknownDrain = error instanceof Error && error.message === "viewer-owned-read-drain-pending";
+    }
+    finally { if (!unknownDrain) release(); }
+    const value = decodeReaderOutline(result, project.projectId, selectedRevision);
     if (!live.current || ticket !== textGeneration.current) return;
+    if (unknownDrain) { fail("viewer-owned-read-drain-pending"); return; }
     setTextBusy(false);
     restoreFocus(priorFocus, () => ticket === textGeneration.current);
     if (!value || !metadata || !viewerSourcesMatch(value.source, metadata.source)) {
-      setNodes([]); setNextNode(null); setTextStatus("Structured text is unavailable or no longer permitted. The original remains separately governed."); return;
+      setNodes([]); setNextNode(null); setTextStatus(limited ? structuredLimitStatus
+        : "Structured text is unavailable or no longer permitted. The original remains separately governed."); return;
     }
     setNodes(value.nodes); setNextNode(value.nextNodeId); setTextStatus("Select a structural element to inspect its bounded text and exact source revision.");
   }
   async function passage(node: ReaderOutlineNode, offset = 0): Promise<void> {
     const ticket = ++textGeneration.current, priorFocus = document.activeElement; setText(null); setTextBusy(true);
     const selection = { ...selector, normalizedRevisionId: revision };
-    const value = decodeViewerText(await textPort.text(project.projectId, selection, node.nodeId, offset).catch(() => null), project.projectId, selection, node.nodeId, offset);
+    let limited = false, unknownDrain = false, result: unknown = null, release = (): void => undefined;
+    try { release = reserveStructured(); result = await textPort.text(project.projectId, selection, node.nodeId, offset); }
+    catch (error) {
+      limited = error instanceof Error && error.message === "viewer-resource-limit";
+      unknownDrain = error instanceof Error && error.message === "viewer-owned-read-drain-pending";
+    }
+    finally { if (!unknownDrain) release(); }
+    const value = decodeViewerText(result, project.projectId, selection, node.nodeId, offset);
     if (!live.current || ticket !== textGeneration.current) return;
+    if (unknownDrain) { fail("viewer-owned-read-drain-pending"); return; }
     setTextBusy(false);
     restoreFocus(priorFocus, () => ticket === textGeneration.current);
-    if (!value || !metadata || !viewerSourcesMatch(value.metadata.source, metadata.source)) { setTextStatus("This exact text element could not be confirmed. No substitute passage was displayed."); return; }
+    if (!value || !metadata || !viewerSourcesMatch(value.metadata.source, metadata.source)) {
+      setTextStatus(limited ? structuredLimitStatus : "This exact text element could not be confirmed. No substitute passage was displayed."); return;
+    }
     setText(value); setTextStatus("Accepted structured text displayed. Extraction remains unverified.");
     if (value.pageNumber && pages >= value.pageNumber) setPage(value.pageNumber);
+  }
+  const structuredLimitStatus = "This structured view exceeds the local viewer limit. Its accepted revision, original and metadata remain retained; continue inspecting the original or return to source review.";
+  function reserveStructured(): () => void {
+    if (!metadata || !ownedBudget.current || !ownedCore.current) throw new Error("viewer-source-unavailable");
+    const releaseCore = ownedCore.current.retain();
+    try {
+      const releaseExtra = ownedBudget.current.reserve(viewerCoreAllowance(metadata.source.byteLength) - VIEWER_CORE_BASE_ALLOWANCE);
+      return () => { releaseExtra(); releaseCore(); };
+    } catch (error) { releaseCore(); throw error; }
   }
   async function search(): Promise<void> {
     if (!pdf || !query || searching) return;

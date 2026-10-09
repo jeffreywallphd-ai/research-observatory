@@ -2,13 +2,23 @@ import { installViewerWorkerQuota } from "./viewerWorkerQuota";
 import { viewerMessageFootprint } from "./viewerWorkerMessages";
 
 const scope = globalThis as unknown as { postMessage: (data: unknown, transfer?: Transferable[]) => void; close: () => void };
-const quota = installViewerWorkerQuota(globalThis as unknown as Record<string, unknown>, 144 * 1024 * 1024);
+// Module bootstrap stays bounded before the one trusted source configuration.
+const quota = installViewerWorkerQuota(globalThis as unknown as Record<string, unknown>, 16 * 1024 * 1024);
 const post = scope.postMessage.bind(scope), outstanding = new Map<number, number>();
 let identity = 0, held = 0;
 let ready = false;
+let configured = false;
 const queued: MessageEvent<unknown>[] = [];
 globalThis.addEventListener("message", (event: MessageEvent<unknown>) => {
   const data = event.data;
+  if (data && typeof data === "object" && "viewerQuotaLimit" in data) {
+    event.stopImmediatePropagation();
+    try {
+      if (Reflect.ownKeys(data).length !== 1 || typeof data.viewerQuotaLimit !== "number") throw new Error("viewer-resource-limit");
+      quota.configure(data.viewerQuotaLimit); configured = true;
+    } catch { post({ viewerFailure: "viewer-resource-limit" }); scope.close(); }
+    return;
+  }
   if (data && typeof data === "object" && "viewerReleaseId" in data) {
     event.stopImmediatePropagation();
     if (typeof data.viewerReleaseId === "number") {
@@ -16,7 +26,10 @@ globalThis.addEventListener("message", (event: MessageEvent<unknown>) => {
     }
     return;
   }
-  try { for (const buffer of viewerMessageFootprint(data).buffers) quota.accept(buffer); }
+  try {
+    if (!configured) throw new Error("viewer-resource-limit");
+    for (const buffer of viewerMessageFootprint(data).buffers) quota.accept(buffer);
+  }
   catch { event.stopImmediatePropagation(); post({ viewerFailure: "viewer-resource-limit" }); scope.close(); return; }
   if (!ready) {
     event.stopImmediatePropagation();
