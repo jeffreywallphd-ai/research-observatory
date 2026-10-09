@@ -38,7 +38,7 @@
       <nav class="breadcrumbs" aria-label="Breadcrumb"><a href="../index.html">Planning review</a><span>/</span><a href="index.html">CAP-document-inspection</a><span>/</span><a href="CAP-05.S04.html">SLICE-source-viewer-and-evidence-inspection-experience</a><span>/</span><span aria-current="page">CAP-05.S04.T01</span></nav>
 
 <section class="hero compact" data-task-page="CAP-05.S04.T01">
-  <div class="hero-top"><div><span class="eyebrow">CAP-05.S04.T01 · task 1 of 3</span><h1>Build secure local PDF/page and structured-text viewer</h1><p>Desktop viewer with page thumbnails, zoom, text view, section navigation, search, and restricted external-link behavior.</p></div><span class="status status-blocked">Blocked</span></div>
+  <div class="hero-top"><div><span class="eyebrow">CAP-05.S04.T01 · task 1 of 3</span><h1>Build secure local PDF/page and structured-text viewer</h1><p>Desktop viewer with page thumbnails, zoom, text view, section navigation, search, and restricted external-link behavior.</p></div><span class="status status-in-progress">In_Progress</span></div>
   <dl class="summary-grid"><div><dt>Wave</dt><dd>W2</dd></div><div><dt>Slice</dt><dd><a href="CAP-05.S04.html">SLICE-source-viewer-and-evidence-inspection-experience</a></dd></div><div><dt>Risk / review</dt><dd>high / agent-review</dd></div><div><dt>Latest review</dt><dd>not reviewed</dd></div></dl>
 </section>
 <section class="task-summary"><div class="section-heading"><span class="eyebrow">Authoritative task record</span><h2>Scope and acceptance</h2></div>
@@ -91,9 +91,9 @@ python tools/verify.py --profile security-local
 ```</pre></article></section>
 <section class="section-heading"><span class="eyebrow">Task-start planning</span><h2>Assigned worksheet</h2><p>The worksheet is an optional planning aid and does not create a new approval or task state.</p></section>
 
-<details class="plan-details task-worksheet" open data-task-worksheet="CAP-05.S04.T01" data-worksheet-sha256="f011e2493f469d97f9a3936f1da106b4aa817c17f9b93a57bdc6dd2414d4850f">
+<details class="plan-details task-worksheet" open data-task-worksheet="CAP-05.S04.T01" data-worksheet-sha256="e65fb47aa019f52904cbac7bc74932f275de45c310b027f39da7e0a1ce602809">
   <summary>Assigned task-start worksheet</summary>
-  <div class="worksheet-meta"><strong>Source:</strong> <code>artifacts/evidence/CAP-05.S04.T01.task-start.md</code> · <strong>SHA-256:</strong> <code>f011e2493f469d97f9a3936f1da106b4aa817c17f9b93a57bdc6dd2414d4850f</code></div>
+  <div class="worksheet-meta"><strong>Source:</strong> <code>artifacts/evidence/CAP-05.S04.T01.task-start.md</code> · <strong>SHA-256:</strong> <code>e65fb47aa019f52904cbac7bc74932f275de45c310b027f39da7e0a1ce602809</code></div>
   <article class="plan-article"><pre class='markdown-fallback'># CAP-05.S04.T01 — secure local source viewer
 
 Claim base: `1bd33a6ba180487b239e3315e302b6db6aaea123`.
@@ -109,7 +109,7 @@ Taskctl selected this READY task after both dependency tasks were DONE.
 | Admission and fairness | Source &lt;=128MiB, range &lt;=1MiB, one active read/project, eight queued operations. Exact duplicate coalescing retains each requester&#x27;s cancellation/authority. Cancel obsolete work before admission; close the writer before delivery and permit metadata writes between ranges. |
 | Native transport | Fixed typed viewer commands, bounded byte responses and exact range/source correlation; native root/session/token/window/generation remain trusted. Lock/close denies late delivery and drains owned work. Real renderer/native/Core integration, beyond unit doubles. |
 | Inert source rendering | Locally pinned PDF.js worker, no document URL, active scripting/XFA/forms/actions/attachments or remote assets. Structured text is inert. Hostile/malformed/oversized fixtures and no-egress checks. |
-| Viewer memory and latency | Virtualize visible pages/thumbnails, cancel stale renders and account for worker source allocation, transfers, surfaces and hostile decoding within 256MiB. Qualify representative 10MiB/50-page cold/warm p95 &lt;=1.5s over &gt;=20 opens and 128MiB/500-page stress; cancellation/lease release &lt;=1s. |
+| Viewer memory and latency | Virtualize visible pages/thumbnails, cancel stale renders and account for worker source allocation, transfers, surfaces and hostile decoding within 256MiB. The approved [LT01 supplement](CAP-05.S04.T01.latency-target-amendment-01.adopted.json) changes only representative 10MiB/50-page cold/warm p95 to &lt;=3.0s over &gt;=20 opens. Preserve 128MiB/500-page stress and cancellation/lease release &lt;=1s. The original 1.5s criterion remains immutable history and a later optimization goal. |
 | Experience and handoff | Approved Reader toolbar/outline/source/inspector and selected Work/Version return context; page navigation, zoom, text, sections, search and restricted external links. Keyboard/focus, reflow and both themes. T02 owns durable deep links/multiple highlights; T03 owns the rights-aware action broker. |
 | Compatibility and evidence | Additive port cancellation, unchanged encryption/migration format and historical revisions. Focused affected tests first, exact committed candidate qualification and expanded independent review; S02–S04 checkpoint and fresh Wave matrix remain later gates. |
 
@@ -247,15 +247,35 @@ tests, six mounted Reader journeys and four actual pinned-decoder cases.
 Sandbox-only fixture/cache failures are retained separately. The broad desktop
 lint also reports two pre-existing unrelated source literals; it is not a clean
 repository/profile claim. These results select affected product risks and do not
-qualify a committed candidate, approve T01, adopt LT01 or complete W2.</pre></article>
+qualify a committed candidate, approve T01, adopt LT01 or complete W2.
+
+## Approved LT01 adoption and current resume boundary
+
+The owner explicitly approved the reviewed LT01 procedure exception on October 9.
+The immutable [owner record](CAP-05.S04.T01.latency-target-amendment-01.owner-approval.json)
+binds the proposal and independent readiness review. The authoritative
+[criterion supplement](CAP-05.S04.T01.latency-target-amendment-01.adopted.json)
+sets the representative first-page target to 3.0 seconds; it preserves the same
+fixture, cold/warm p95 methodology, minimum repetitions, full authentication and
+actual renderer/gateway/Native/Core measurement. Earlier pending-adoption notes
+above remain historical observations, not the current authority state.
+
+The current partial proof is retained in
+[partial-observations-02](CAP-05.S04.T01.partial-observations-02.json), including
+actual Native accepted text/outline, denial/resource/retry, maximum-source
+cancellation and in-flight terminal-generation revocation, plus shipping-renderer
+maximum-document use. Formal latency/resource qualification and independent T01
+disposition remain required. Resume the same owned task through ordinary taskctl;
+do not claim again or alter its original identity/base/dependencies. No task,
+slice, Wave, minimum-hardware or release completion follows from LT01 adoption.</pre></article>
 </details>
 <section class="section-heading"><span class="eyebrow">Execution evidence</span><h2>Review packets, rounds, and current projection</h2><p>Append-only controls retain every immutable round and finding closure. Pre-policy tasks remain explicitly latest-review-only.</p></section>
 
 <section class="review-toolbar" data-task-review-id="CAP-05.S04.T01" data-review-mode="latest-review-only">
   <h3>CAP-05.S04.T01 — Build secure local PDF/page and structured-text viewer</h3>
   <p><strong>Legacy latest-review-only projection.</strong> No append-only review rounds are recorded; this view does not fabricate historical attempts.</p>
-  <dl class="summary-grid" data-current-review-projection="CAP-05.S04.T01" data-current-review-result="not-reviewed" data-current-reviewer="none" data-current-reviewed-at="none"><div><dt>Task status</dt><dd>BLOCKED</dd></div><div><dt>Latest result</dt><dd>not reviewed</dd></div><div><dt>Reviewer</dt><dd>none</dd></div><div><dt>Reviewed at</dt><dd><code>none</code></dd></div></dl>
-  <p><strong>Latest notes:</strong> Reopened: Independent authority assessment confirms automation-guide8.1 and approved S04 permit risk-selected task-owned proof without changing approved criteria. Preserve failed old helper results; no framework edits, generic EX01 exemption, waived product/security/resource obligations or new owner decision.</p>
+  <dl class="summary-grid" data-current-review-projection="CAP-05.S04.T01" data-current-review-result="not-reviewed" data-current-reviewer="none" data-current-reviewed-at="none"><div><dt>Task status</dt><dd>IN_PROGRESS</dd></div><div><dt>Latest result</dt><dd>not reviewed</dd></div><div><dt>Reviewer</dt><dd>none</dd></div><div><dt>Reviewed at</dt><dd><code>none</code></dd></div></dl>
+  <p><strong>Latest notes:</strong> Reopened: Exact owner-approved LT01 supplement adopted at 5ea52d01; complete unchanged Reader security/resource obligations, fresh 3.0-second cold/warm qualification and independent task review. Preserve all historical criteria and adverse observations; no framework work or new claim.</p>
 </section>
 <nav class="page-turn" aria-label="Task navigation"><a class="button button-quiet" href="CAP-05.S04.html">Previous</a><a class="button button-primary" href="CAP-05.S04.T02.html">Next</a></nav>
 

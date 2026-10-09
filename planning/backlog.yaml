@@ -31559,33 +31559,27 @@ capabilities:
       - python tools/verify.py --profile desktop
       - python tools/verify.py --profile documents
       - python tools/verify.py --profile security-local
-      status: BLOCKED
+      status: IN_PROGRESS
       owner: codex-w2-implementation
       branch: codex/w2-implementation
       started_at: '2026-10-08T19:08:53+00:00'
-      updated_at: '2026-10-09T14:32:35+00:00'
+      updated_at: '2026-10-09T19:24:15+00:00'
       completed_at: null
-      blocker:
-        reason: Reader3s target is selected by the owner; the exact LT01 direct-record procedure exception remains pending.
-          Current original1.5s criterion is not relaxed or passed. Focused product proof is preserved in partial-observations-02;
-          no task or W2 completion.
-        next_action: Approve the already-present LT01 procedure request at proposal canonical SHA2567e9a511cd533ae3523aebafffe54d00182d0fdcf9251c3787be554b95ac0d75d
-          and independently reviewed readiness0159169909ba49557462e3b26d18d446567abbfc040de028dd90a362bfc131a0; adopt append-only,
-          reopen the same owned T01 without a new claim, finish cold/warm qualification and independent review, then continue
-          S04.T02 and the remaining W2 tasks.
-        recorded_at: '2026-10-09T14:32:35+00:00'
-        owner: codex-w2-implementation
+      blocker: null
       implementation_notes: ''
       evidence: []
       review:
         reviewer: null
         result: null
         reviewed_at: null
-        notes: 'Reopened: Independent authority assessment confirms automation-guide8.1 and approved S04 permit risk-selected
-          task-owned proof without changing approved criteria. Preserve failed old helper results; no framework edits, generic
-          EX01 exemption, waived product/security/resource obligations or new owner decision.'
+        notes: 'Reopened: Exact owner-approved LT01 supplement adopted at 5ea52d01; complete unchanged Reader security/resource
+          obligations, fresh 3.0-second cold/warm qualification and independent task review. Preserve all historical criteria
+          and adverse observations; no framework work or new claim.'
       base_sha: 1bd33a6ba180487b239e3315e302b6db6aaea123
-      lease: null
+      lease:
+        claimed_by: codex-w2-implementation
+        claimed_at: '2026-10-09T19:24:15+00:00'
+        expires_at: '2026-10-10T03:24:15+00:00'
       verification_state: null
       worktree: .
       platform_targets:

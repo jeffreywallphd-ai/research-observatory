@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 9b05c8fb613805c8388ab1988520f8e050adc3ad5aca472d73ce4171c78e0716
+source_sha256: 39bf4a4da840881ddd3ea4771aba5e87e6de54204503c2e7c94c3c3cfc15f9c2
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -11717,7 +11717,7 @@ Original tasks and approvals remain unchanged.
 
 #### - [ ] CAP-05.S04.T01 - Build secure local PDF/page and structured-text viewer
 
-**Status / priority / estimate / risk:** `BLOCKED` / `P0` / `L` / `high`
+**Status / priority / estimate / risk:** `IN_PROGRESS` / `P0` / `L` / `high`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
@@ -11749,7 +11749,7 @@ Original tasks and approvals remain unchanged.
 
 **Current latest-review projection:** `-` by - at `-`
 
-**Latest notes:** Reopened: Independent authority assessment confirms automation-guide8.1 and approved S04 permit risk-selected task-owned proof without changing approved criteria. Preserve failed old helper results; no framework edits, generic EX01 exemption, waived product/security/resource obligations or new owner decision.
+**Latest notes:** Reopened: Exact owner-approved LT01 supplement adopted at 5ea52d01; complete unchanged Reader security/resource obligations, fresh 3.0-second cold/warm qualification and independent task review. Preserve all historical criteria and adverse observations; no framework work or new claim.
 
 #### - [ ] CAP-05.S04.T02 - Implement deep links, highlights, and context panels
 

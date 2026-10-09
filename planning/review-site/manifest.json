@@ -23034,13 +23034,13 @@
             {
               "task_id": "CAP-05.S04.T01",
               "title": "Build secure local PDF/page and structured-text viewer",
-              "status": "BLOCKED",
+              "status": "IN_PROGRESS",
               "mode": "latest-review-only",
               "latest_review": {
                 "reviewer": null,
                 "result": null,
                 "reviewed_at": null,
-                "notes": "Reopened: Independent authority assessment confirms automation-guide8.1 and approved S04 permit risk-selected task-owned proof without changing approved criteria. Preserve failed old helper results; no framework edits, generic EX01 exemption, waived product/security/resource obligations or new owner decision."
+                "notes": "Reopened: Exact owner-approved LT01 supplement adopted at 5ea52d01; complete unchanged Reader security/resource obligations, fresh 3.0-second cold/warm qualification and independent task review. Preserve all historical criteria and adverse observations; no framework work or new claim."
               },
               "review_control": null
             },
@@ -23075,7 +23075,7 @@
             {
               "task_id": "CAP-05.S04.T01",
               "title": "Build secure local PDF/page and structured-text viewer",
-              "status": "BLOCKED",
+              "status": "IN_PROGRESS",
               "page": "CAP-05/CAP-05.S04.T01.html",
               "dependencies": [
                 "CAP-05.S03.T03",
@@ -23089,7 +23089,7 @@
               "plan_section_sha256": "b2fdfaa1342355a52bc8f6cdf27723736a3c616dc5b653cfc13c5a9277ef95bf",
               "worksheet": {
                 "path": "artifacts/evidence/CAP-05.S04.T01.task-start.md",
-                "sha256": "f011e2493f469d97f9a3936f1da106b4aa817c17f9b93a57bdc6dd2414d4850f"
+                "sha256": "e65fb47aa019f52904cbac7bc74932f275de45c310b027f39da7e0a1ce602809"
               }
             },
             {
