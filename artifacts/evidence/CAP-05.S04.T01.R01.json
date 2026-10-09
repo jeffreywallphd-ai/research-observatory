@@ -1,0 +1,967 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "CAP-05.S04.T01",
+  "baseCommit": "1bd33a6ba180487b239e3315e302b6db6aaea123",
+  "commit": "91fe7b323d2cddb2cd7de287f05b961af3472bc8",
+  "branch": "codex/w2-implementation",
+  "changedFiles": [
+    "apps/desktop/package.json",
+    "apps/desktop/pdfjs-assets.json",
+    "apps/desktop/pdfjsWorkerBuild.ts",
+    "apps/desktop/scripts/assemble-application.mjs",
+    "apps/desktop/src-tauri/src/document_viewer.rs",
+    "apps/desktop/src-tauri/src/document_viewer/windows_integration_tests.rs",
+    "apps/desktop/src-tauri/src/lib.rs",
+    "apps/desktop/src-tauri/src/supervisor.rs",
+    "apps/desktop/src-tauri/tauri.conf.json",
+    "apps/desktop/src/app.css",
+    "apps/desktop/src/app/ApplicationRuntime.tsx",
+    "apps/desktop/src/app/DocumentAttachmentPane.tsx",
+    "apps/desktop/src/app/DocumentViewerWorkspace.tsx",
+    "apps/desktop/src/app/ImportWorkspace.tsx",
+    "apps/desktop/src/app/ReconciliationPane.tsx",
+    "apps/desktop/src/app/ReconciliationVersionsPane.tsx",
+    "apps/desktop/src/app/documentAttachment.test.ts",
+    "apps/desktop/src/app/documentAttachment.ts",
+    "apps/desktop/src/app/documentViewer.test.ts",
+    "apps/desktop/src/app/documentViewer.ts",
+    "apps/desktop/src/app/documentViewer.worker.ts",
+    "apps/desktop/src/app/documentViewerNative.test.ts",
+    "apps/desktop/src/app/pdfDocumentViewer.test.ts",
+    "apps/desktop/src/app/pdfDocumentViewer.ts",
+    "apps/desktop/src/app/pdfjsWorker.d.ts",
+    "apps/desktop/src/app/pdfjsWorkerBuild.test.ts",
+    "apps/desktop/src/app/viewerAssets.test.ts",
+    "apps/desktop/src/app/viewerAssets.ts",
+    "apps/desktop/src/app/viewerWorkerMessages.test.ts",
+    "apps/desktop/src/app/viewerWorkerMessages.ts",
+    "apps/desktop/src/app/viewerWorkerQuota.test.ts",
+    "apps/desktop/src/app/viewerWorkerQuota.ts",
+    "apps/desktop/src/app/workflowNavigationModel.ts",
+    "apps/desktop/vite.product.config.ts",
+    "artifacts/evidence/CAP-05.S04.T01.candidate-review-advisory-01.json",
+    "artifacts/evidence/CAP-05.S04.T01.latency-target-amendment-01.adopted.json",
+    "artifacts/evidence/CAP-05.S04.T01.latency-target-amendment-01.owner-approval.json",
+    "artifacts/evidence/CAP-05.S04.T01.latency-target-amendment-01.proposal.json",
+    "artifacts/evidence/CAP-05.S04.T01.latency-target-amendment-01.readiness-review-01.json",
+    "artifacts/evidence/CAP-05.S04.T01.latency-target-amendment-01.review.html",
+    "artifacts/evidence/CAP-05.S04.T01.partial-observations-01.json",
+    "artifacts/evidence/CAP-05.S04.T01.partial-observations-02.json",
+    "artifacts/evidence/CAP-05.S04.T01.task-start.md",
+    "artifacts/evidence/CAP-05.S04.T01.unchanged-product-inventory-03.log",
+    "artifacts/evidence/CAP-05.S04.T01.unchanged-security-selector-01.log",
+    "artifacts/evidence/CAP-05.S04.T01.verification-gate-diagnostic-01.json",
+    "artifacts/evidence/CAP-05.S04.T01.verification-selection-advisory-01.json",
+    "artifacts/evidence/CAP-05.S04.T01.verification-selection-state-01.json",
+    "artifacts/evidence/W2.pause-checkpoint-20261008.md",
+    "artifacts/evidence/ui-change/CAP-05.S04.T01.json",
+    "docs/adr/ADR-0047-bind-local-source-viewing-to-existing-protected-read-authority.md",
+    "docs/adr/index.json",
+    "docs/planning-implementation-plan.md",
+    "packages/contracts/documents/README.md",
+    "packages/contracts/documents/generate_parser_schema.py",
+    "packages/contracts/documents/source-viewing.md",
+    "packages/contracts/documents/viewer-source-metadata.v1.schema.json",
+    "packages/contracts/documents/viewer-source-selector.v1.schema.json",
+    "packages/contracts/documents/viewer-text-chunk.v1.schema.json",
+    "packages/contracts/storage/README.md",
+    "planning/backlog.yaml",
+    "planning/review-site/CAP-05/CAP-05.S04.T01.html",
+    "planning/review-site/CAP-05/CAP-05.S04.html",
+    "planning/review-site/CAP-05/index.html",
+    "planning/review-site/manifest.json",
+    "planning/review-site/waves/W2.html",
+    "planning/status-summary.md",
+    "pnpm-lock.yaml",
+    "services/core-api/src/research_observatory_core/app.py",
+    "services/core-api/src/research_observatory_core/document_viewer_allocations.py",
+    "services/core-api/src/research_observatory_core/document_viewer_api.py",
+    "services/core-api/src/research_observatory_core/document_viewer_ranges.py",
+    "services/core-api/src/research_observatory_core/document_viewer_repository.py",
+    "services/core-api/src/research_observatory_core/document_viewer_service.py",
+    "services/core-api/src/research_observatory_core/import_preview_service.py",
+    "services/core-api/src/research_observatory_core/main.py",
+    "services/core-api/src/research_observatory_core/object_store.py",
+    "services/core-api/src/research_observatory_core/ports/document_viewer.py",
+    "services/core-api/src/research_observatory_core/ports/object_store.py",
+    "services/core-api/src/research_observatory_core/project_action_mutex.py",
+    "services/core-api/src/research_observatory_core/projects.py",
+    "tests/desktop/fixtures/bounded_pdf.py",
+    "tests/desktop/fixtures/document-viewer.mjs",
+    "tests/desktop/fixtures/document-viewer.tsx",
+    "tests/desktop/fixtures/viewer-decoder.mjs",
+    "tests/desktop/fixtures/viewer-decoder.ts",
+    "tests/desktop/test_document_viewer_interactions.py",
+    "tests/desktop/test_viewer_decoder.py",
+    "tests/documents/test_viewer_artifact_budget.py",
+    "tests/documents/test_viewer_metadata_fairness.py",
+    "tests/documents/test_viewer_object_ranges.py",
+    "tests/documents/test_viewer_range_admission.py",
+    "tests/documents/test_viewer_read_cancellation.py",
+    "tests/documents/test_viewer_source_authority.py",
+    "tests/documents/viewer_native_windows_fixture.py",
+    "tests/service/test_document_viewer_api.py"
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "checkIds": [
+        "core-selected-closure",
+        "actual-worker-cancel-reopen",
+        "renderer-ownership-units",
+        "mounted-and-hostile-decoder",
+        "real-native-accepted-boundaries",
+        "real-native-maximum-cancel",
+        "actual-renderer-maximum-document",
+        "actual-renderer-cold-warm-p95"
+      ],
+      "evidence": [
+        "Local encrypted originals flow through authenticated bounded Viewer ranges and pinned local decoder assets; no direct source paths, eager all-page load, remote decoder assets or active document content. Exact accepted outline and structured text remain bound to current source revision and rights.",
+        "Fresh actual maximum-source navigation and conservative backing admission are covered alongside decoder expansion/resource denial, owned cancellation/drain and valid retry. Full process job footprint is reported separately from the256MiB backing-admission budget.",
+        "Approved LT01 fresh cold20 p95 2659.1579ms and warm20 p95 2728.0284ms meet the strict3000ms target. This declared host result does not establish minimum-hardware or shipping installer qualification."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "checkIds": [
+        "core-selected-closure",
+        "native-ownership-units",
+        "real-native-accepted-boundaries",
+        "real-native-maximum-cancel",
+        "actual-worker-cancel-reopen",
+        "mounted-and-hostile-decoder",
+        "actual-renderer-maximum-document"
+      ],
+      "evidence": [
+        "Current actor/rights and native session fences, substituted/corrupt source denial, held authentication and writer ownership, ASGI disconnect, coalesced followers, terminal generation revocation, bounded queue/FIFO metadata, resource denial and fresh recovery are exercised at the fixed candidate.",
+        "Mounted Reader and hostile pinned decoder checks cover controls, search/navigation/zoom/section text, local assets, invalid messages, quota/expansion failures, cancellation and reopened-generation isolation. Actual renderer maximum and representative runs prove the Native/Core route; direct-handler tests are not relabeled as UI dispatch, actual OS close or manual lock proof."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "checkIds": [
+        "changed-python-format",
+        "changed-python-lint",
+        "changed-python-types",
+        "current-reader-boundary",
+        "bounded-adr",
+        "viewer-schema",
+        "typescript",
+        "current-package-local-csp",
+        "viewer-build-and-handoff-units"
+      ],
+      "evidence": [
+        "Current closed Viewer contracts, generator fixtures, acceptance worksheet, dependency-injected local read composition, pinned PDF.js6.4.299 assets and governed reference1.9 package match the committed implementation. Fresh changed production typing, all changed Python lint/format, TypeScript, schemas, bounded ADR and product-specific architecture/package/CSP checks pass.",
+        "The unchanged generic architecture/product/security selector limitations and exploratory broad test typing failures remain adverse records. Current task-owned proof resolves their actual affected boundaries without changing automation controls or declaring a generic profile PASS. ADR0047 remains Proposed and does not supply new authority.",
+        "No parser overage tuning,8/16GiB model execution, private-research transfer, controller/helper edit, release claim, or unrelated scope expansion. Requested configurable resource-fit models and2\u20133GiB support remain a separate unadopted successor; larger resource work remains W5."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "verificationSelection": {
+    "selectedCommandIds": [
+      "desktop:application",
+      "desktop:performance",
+      "desktop:unit",
+      "documents:unit",
+      "foundation:adr",
+      "foundation:architecture",
+      "foundation:quality"
+    ],
+    "riskAnalysis": "Changed protected source/rights/range lifetime and decoder/Native/public cross-process contracts require fresh real Core, Native and shipping renderer proof plus cancellation/denial/recovery, maximum capacity and the approved representative cold/warm performance method. Select changed production quality, exact contracts/ADR, pinned local assets and governed package/CSP. Inputs and shared HEAD remain fixed; no real-boundary or benchmark reuse.",
+    "deferred": [
+      "Deep-link/highlight/context and rights-aware copy/print/export are ordered T02/T03 scope; their currently unavailable actions are not claimed complete.",
+      "Fresh integrated S04 slice review and restart/relocation/rights/E2E qualification; full affected repository/profiles, installed packaging, required hardware/platform/accessibility/privacy/security and independent W2 review precede the separate human release gate.",
+      "Minimum hardware is not qualified by this host; no actual8/16GiB model/tier run or proof of2\u20133GiB operation. Separate model/resource successor remains unadopted."
+    ]
+  },
+  "checks": [
+    {
+      "id": "changed-python-format",
+      "commandId": "foundation:quality",
+      "exitCode": 0,
+      "durationSeconds": 0.07991460000630468,
+      "command": "./.venv/Scripts/python.exe -B -m ruff format --check --config pyproject.toml -- packages/contracts/documents/generate_parser_schema.py services/core-api/src/research_observatory_core/app.py services/core-api/src/research_observatory_core/document_viewer_allocations.py services/core-api/src/research_observatory_core/document_viewer_api.py services/core-api/src/research_observatory_core/document_viewer_ranges.py services/core-api/src/research_observatory_core/document_viewer_repository.py services/core-api/src/research_observatory_core/document_viewer_service.py services/core-api/src/research_observatory_core/import_preview_service.py services/core-api/src/research_observatory_core/main.py services/core-api/src/research_observatory_core/object_store.py services/core-api/src/research_observatory_core/ports/document_viewer.py services/core-api/src/research_observatory_core/ports/object_store.py services/core-api/src/research_observatory_core/project_action_mutex.py services/core-api/src/research_observatory_core/projects.py tests/desktop/fixtures/bounded_pdf.py tests/desktop/test_document_viewer_interactions.py tests/desktop/test_viewer_decoder.py tests/documents/test_viewer_artifact_budget.py tests/documents/test_viewer_metadata_fairness.py tests/documents/test_viewer_object_ranges.py tests/documents/test_viewer_range_admission.py tests/documents/test_viewer_read_cancellation.py tests/documents/test_viewer_source_authority.py tests/documents/viewer_native_windows_fixture.py tests/service/test_document_viewer_api.py",
+      "workingDirectory": ".",
+      "commit": "91fe7b323d2cddb2cd7de287f05b961af3472bc8",
+      "result": "PASS",
+      "rawOutput": "artifacts/tmp/CAP-05.S04.T01.qualifying-static-04.changed-python-format.log",
+      "rawOutputSha256": "7715b02781372f8741fb309aee97a6483e689c9039f0d78081dd910f70b0256e",
+      "rawOutputCanonicalSha256": "7715b02781372f8741fb309aee97a6483e689c9039f0d78081dd910f70b0256e",
+      "inputReport": "artifacts/tmp/CAP-05.S04.T01.qualifying-static-04.json",
+      "inputReportSha256": "0fc09d5495ebdef43884e81b75aea10acbc008d098be753520f3915486efb174",
+      "provenance": "Fresh named child check of the exact executed producer, fixed candidate and authenticated write/delete-denied selected inputs. Full child argv and runtime identities remain in ignored input reports. This is affected task coverage, not a generic full-profile PASS.",
+      "commandNormalization": "Exact executed child argv. Repository prefix is relative; authenticated-fixture-python labels the held external interpreter whose original path and bytes are retained in the ignored input report. No check or measurement was rerun or changed."
+    },
+    {
+      "id": "changed-python-lint",
+      "commandId": "foundation:quality",
+      "exitCode": 0,
+      "durationSeconds": 0.08912459999555722,
+      "command": "./.venv/Scripts/python.exe -B -m ruff check --config pyproject.toml -- packages/contracts/documents/generate_parser_schema.py services/core-api/src/research_observatory_core/app.py services/core-api/src/research_observatory_core/document_viewer_allocations.py services/core-api/src/research_observatory_core/document_viewer_api.py services/core-api/src/research_observatory_core/document_viewer_ranges.py services/core-api/src/research_observatory_core/document_viewer_repository.py services/core-api/src/research_observatory_core/document_viewer_service.py services/core-api/src/research_observatory_core/import_preview_service.py services/core-api/src/research_observatory_core/main.py services/core-api/src/research_observatory_core/object_store.py services/core-api/src/research_observatory_core/ports/document_viewer.py services/core-api/src/research_observatory_core/ports/object_store.py services/core-api/src/research_observatory_core/project_action_mutex.py services/core-api/src/research_observatory_core/projects.py tests/desktop/fixtures/bounded_pdf.py tests/desktop/test_document_viewer_interactions.py tests/desktop/test_viewer_decoder.py tests/documents/test_viewer_artifact_budget.py tests/documents/test_viewer_metadata_fairness.py tests/documents/test_viewer_object_ranges.py tests/documents/test_viewer_range_admission.py tests/documents/test_viewer_read_cancellation.py tests/documents/test_viewer_source_authority.py tests/documents/viewer_native_windows_fixture.py tests/service/test_document_viewer_api.py",
+      "workingDirectory": ".",
+      "commit": "91fe7b323d2cddb2cd7de287f05b961af3472bc8",
+      "result": "PASS",
+      "rawOutput": "artifacts/tmp/CAP-05.S04.T01.qualifying-static-04.changed-python-lint.log",
+      "rawOutputSha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18",
+      "rawOutputCanonicalSha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18",
+      "inputReport": "artifacts/tmp/CAP-05.S04.T01.qualifying-static-04.json",
+      "inputReportSha256": "0fc09d5495ebdef43884e81b75aea10acbc008d098be753520f3915486efb174",
+      "provenance": "Fresh named child check of the exact executed producer, fixed candidate and authenticated write/delete-denied selected inputs. Full child argv and runtime identities remain in ignored input reports. This is affected task coverage, not a generic full-profile PASS.",
+      "commandNormalization": "Exact executed child argv. Repository prefix is relative; authenticated-fixture-python labels the held external interpreter whose original path and bytes are retained in the ignored input report. No check or measurement was rerun or changed."
+    },
+    {
+      "id": "changed-python-types",
+      "commandId": "foundation:quality",
+      "exitCode": 0,
+      "durationSeconds": 0.4093192000000272,
+      "command": "./.venv/Scripts/python.exe -B -m mypy --config-file pyproject.toml --no-namespace-packages -- packages/contracts/documents/generate_parser_schema.py services/core-api/src/research_observatory_core/app.py services/core-api/src/research_observatory_core/document_viewer_allocations.py services/core-api/src/research_observatory_core/document_viewer_api.py services/core-api/src/research_observatory_core/document_viewer_ranges.py services/core-api/src/research_observatory_core/document_viewer_repository.py services/core-api/src/research_observatory_core/document_viewer_service.py services/core-api/src/research_observatory_core/import_preview_service.py services/core-api/src/research_observatory_core/main.py services/core-api/src/research_observatory_core/object_store.py services/core-api/src/research_observatory_core/ports/document_viewer.py services/core-api/src/research_observatory_core/ports/object_store.py services/core-api/src/research_observatory_core/project_action_mutex.py services/core-api/src/research_observatory_core/projects.py",
+      "workingDirectory": ".",
+      "commit": "91fe7b323d2cddb2cd7de287f05b961af3472bc8",
+      "result": "PASS",
+      "rawOutput": "artifacts/tmp/CAP-05.S04.T01.qualifying-static-04.changed-python-types.log",
+      "rawOutputSha256": "e903677c248a6ca6ac9094eed21b5350be088d014c43570c553f047d8f487a0a",
+      "rawOutputCanonicalSha256": "fe22d95914d7fdd98483ace256b7f2708db4be1255737e5d7cca4d16703ca242",
+      "inputReport": "artifacts/tmp/CAP-05.S04.T01.qualifying-static-04.json",
+      "inputReportSha256": "0fc09d5495ebdef43884e81b75aea10acbc008d098be753520f3915486efb174",
+      "provenance": "Fresh named child check of the exact executed producer, fixed candidate and authenticated write/delete-denied selected inputs. Full child argv and runtime identities remain in ignored input reports. This is affected task coverage, not a generic full-profile PASS.",
+      "commandNormalization": "Exact executed child argv. Repository prefix is relative; authenticated-fixture-python labels the held external interpreter whose original path and bytes are retained in the ignored input report. No check or measurement was rerun or changed."
+    },
+    {
+      "id": "current-reader-boundary",
+      "commandId": "foundation:architecture",
+      "exitCode": 0,
+      "durationSeconds": 4.308442799985642,
+      "command": "./.venv/Scripts/python.exe -B artifacts/tmp/CAP-05.S04.T01.product-boundary-proof-01.py",
+      "workingDirectory": ".",
+      "commit": "91fe7b323d2cddb2cd7de287f05b961af3472bc8",
+      "result": "PASS",
+      "rawOutput": "artifacts/tmp/CAP-05.S04.T01.qualifying-static-04.current-reader-boundary.log",
+      "rawOutputSha256": "1d7f7dc2ae96eb40d493e65ec66145bea615c3da65853c546177202e99bedf56",
+      "rawOutputCanonicalSha256": "881969c810b561b646d4ff5a8d6f759c375ea864d294de9d1774b0cb5a96efe2",
+      "inputReport": "artifacts/tmp/CAP-05.S04.T01.qualifying-static-04.json",
+      "inputReportSha256": "0fc09d5495ebdef43884e81b75aea10acbc008d098be753520f3915486efb174",
+      "provenance": "Fresh named child check of the exact executed producer, fixed candidate and authenticated write/delete-denied selected inputs. Full child argv and runtime identities remain in ignored input reports. This is affected task coverage, not a generic full-profile PASS.",
+      "commandNormalization": "Exact executed child argv. Repository prefix is relative; authenticated-fixture-python labels the held external interpreter whose original path and bytes are retained in the ignored input report. No check or measurement was rerun or changed."
+    },
+    {
+      "id": "bounded-adr",
+      "commandId": "foundation:adr",
+      "exitCode": 0,
+      "durationSeconds": 1.9770985000068322,
+      "command": "./.venv/Scripts/python.exe -B tools/adr_check.py --repo . --base 1bd33a6ba180487b239e3315e302b6db6aaea123 --head 91fe7b323d2cddb2cd7de287f05b961af3472bc8",
+      "workingDirectory": ".",
+      "commit": "91fe7b323d2cddb2cd7de287f05b961af3472bc8",
+      "result": "PASS",
+      "rawOutput": "artifacts/tmp/CAP-05.S04.T01.qualifying-static-04.bounded-adr.log",
+      "rawOutputSha256": "a6edc77a2f48d182873bd310748194f520276fcb758661b8abc2db181a2e1098",
+      "rawOutputCanonicalSha256": "7a6836a5da516febf35f33b988e75beb6fa19cb706007c408754da65b079c692",
+      "inputReport": "artifacts/tmp/CAP-05.S04.T01.qualifying-static-04.json",
+      "inputReportSha256": "0fc09d5495ebdef43884e81b75aea10acbc008d098be753520f3915486efb174",
+      "provenance": "Fresh named child check of the exact executed producer, fixed candidate and authenticated write/delete-denied selected inputs. Full child argv and runtime identities remain in ignored input reports. This is affected task coverage, not a generic full-profile PASS.",
+      "commandNormalization": "Exact executed child argv. Repository prefix is relative; authenticated-fixture-python labels the held external interpreter whose original path and bytes are retained in the ignored input report. No check or measurement was rerun or changed."
+    },
+    {
+      "id": "viewer-schema",
+      "commandId": "documents:unit",
+      "exitCode": 0,
+      "durationSeconds": 0.3526482000015676,
+      "command": "./.venv/Scripts/python.exe -B packages/contracts/documents/generate_parser_schema.py --check",
+      "workingDirectory": ".",
+      "commit": "91fe7b323d2cddb2cd7de287f05b961af3472bc8",
+      "result": "PASS",
+      "rawOutput": "artifacts/tmp/CAP-05.S04.T01.qualifying-static-04.viewer-schema.log",
+      "rawOutputSha256": "a55ee30fb47c9afacd282abc3e69cce6ee0e020d9d710eb2dc98eda54569bb56",
+      "rawOutputCanonicalSha256": "cf42b66dd1df678fb7cf5ffaf80552a60597b0a2f2ef96323d1949800d8f6085",
+      "inputReport": "artifacts/tmp/CAP-05.S04.T01.qualifying-static-04.json",
+      "inputReportSha256": "0fc09d5495ebdef43884e81b75aea10acbc008d098be753520f3915486efb174",
+      "provenance": "Fresh named child check of the exact executed producer, fixed candidate and authenticated write/delete-denied selected inputs. Full child argv and runtime identities remain in ignored input reports. This is affected task coverage, not a generic full-profile PASS.",
+      "commandNormalization": "Exact executed child argv. Repository prefix is relative; authenticated-fixture-python labels the held external interpreter whose original path and bytes are retained in the ignored input report. No check or measurement was rerun or changed."
+    },
+    {
+      "id": "viewer-build-and-handoff-units",
+      "commandId": "desktop:unit",
+      "exitCode": 0,
+      "durationSeconds": 6.294830600003479,
+      "command": "./.local/toolchains/node-v24.19.0-win-x64/node.exe apps/desktop/node_modules/vitest/vitest.mjs run apps/desktop/src/app/pdfjsWorkerBuild.test.ts apps/desktop/src/app/documentAttachment.test.ts",
+      "workingDirectory": ".",
+      "commit": "91fe7b323d2cddb2cd7de287f05b961af3472bc8",
+      "result": "PASS",
+      "rawOutput": "artifacts/tmp/CAP-05.S04.T01.qualifying-static-04.viewer-build-and-handoff-units.log",
+      "rawOutputSha256": "1cbc5131ae642e0dbc1d07f2628ec95000cabc3bb31c1f8cc3e558165d206b2f",
+      "rawOutputCanonicalSha256": "1cbc5131ae642e0dbc1d07f2628ec95000cabc3bb31c1f8cc3e558165d206b2f",
+      "inputReport": "artifacts/tmp/CAP-05.S04.T01.qualifying-static-04.json",
+      "inputReportSha256": "0fc09d5495ebdef43884e81b75aea10acbc008d098be753520f3915486efb174",
+      "provenance": "Fresh named child check of the exact executed producer, fixed candidate and authenticated write/delete-denied selected inputs. Full child argv and runtime identities remain in ignored input reports. This is affected task coverage, not a generic full-profile PASS.",
+      "commandNormalization": "Exact executed child argv. Repository prefix is relative; authenticated-fixture-python labels the held external interpreter whose original path and bytes are retained in the ignored input report. No check or measurement was rerun or changed."
+    },
+    {
+      "id": "core-selected-closure",
+      "commandId": "documents:unit",
+      "exitCode": 0,
+      "durationSeconds": 71.42038589998265,
+      "command": "authenticated-fixture-python -B -m unittest -v tests.documents.test_viewer_artifact_budget tests.service.test_document_viewer_api.DocumentViewerApiTests.test_viewer_outline_and_text_use_admission_while_normal_revision_read_is_unchanged tests.service.test_document_viewer_api.DocumentViewerApiTests.test_viewer_outline_denies_substituted_original_or_derive_permission tests.service.test_document_viewer_api.DocumentViewerApiTests.test_cancel_route_stops_the_owned_authentication_and_releases_its_actual_writer tests.service.test_document_viewer_api.DocumentViewerApiTests.test_cancel_ack_denies_at_deadline_while_real_authentication_is_still_held tests.service.test_document_viewer_api.DocumentViewerApiTests.test_cancelled_exact_follower_hands_off_real_reader_without_stopping_live_member tests.service.test_document_viewer_api.DocumentViewerApiTests.test_real_asgi_disconnect_reaches_cooperative_reader_and_denies_delivery tests.service.test_document_viewer_api.DocumentViewerApiTests.test_native_close_reopen_denies_the_old_session_before_any_source_authentication tests.service.test_document_viewer_api.DocumentViewerApiTests.test_current_original_metadata_and_exact_range_cross_the_authenticated_boundary tests.service.test_document_viewer_api.DocumentViewerApiTests.test_foreign_project_stale_session_and_source_substitution_deny tests.service.test_document_viewer_api.DocumentViewerApiTests.test_exact_accepted_text_crosses_private_transport_without_anchor_creation tests.service.test_document_viewer_api.DocumentViewerApiTests.test_rights_revoked_between_selection_and_physical_admission_deny_without_reading tests.service.test_document_viewer_api.DocumentViewerApiTests.test_rights_revoked_after_owned_physical_close_deny_private_api_delivery tests.service.test_document_viewer_api.DocumentViewerApiTests.test_renderer_origin_missing_native_auth_and_unbounded_commands_deny tests.documents.test_viewer_source_authority.ViewerSourceAuthorityTests.test_inspect_only_original_remains_readable_but_derivative_still_requires_derive tests.documents.test_viewer_source_authority.ViewerSourceAuthorityTests.test_derive_revoked_after_artifact_context_closes_denies_text_delivery tests.documents.test_viewer_source_authority.ViewerSourceAuthorityTests.test_structured_text_is_bounded_exact_revision_and_does_not_create_anchors tests.documents.test_viewer_range_admission tests.documents.test_viewer_metadata_fairness tests.documents.test_viewer_read_cancellation.ViewerReadCancellationTests.test_corrupt_final_frame_with_live_cancel_probe_still_denies_before_first_byte tests.documents.test_viewer_object_ranges.ViewerObjectRangeTests.test_cancel_during_prefix_discard_rolls_back_and_fresh_retry_returns_exact_range",
+      "workingDirectory": ".",
+      "commit": "91fe7b323d2cddb2cd7de287f05b961af3472bc8",
+      "result": "PASS",
+      "rawOutput": "artifacts/tmp/CAP-05.S04.T01.core-candidate-proof-10.core-selected-closure.log",
+      "rawOutputSha256": "f27783cc6e6c6aeaa140103fe8a8ed24ab95466594a3fcf6fb7e23d54a3a053f",
+      "rawOutputCanonicalSha256": "3d20f2f95eec27c3ff74d86de038513427483015a3ae018d9f1cbb80db13c86f",
+      "inputReport": "artifacts/tmp/CAP-05.S04.T01.core-candidate-proof-10.json",
+      "inputReportSha256": "44fd136dfe30b6e6ae1fb1849c0785e6119d7d3ac94849cf9ab578a0d2694ad5",
+      "provenance": "Fresh named child check of the exact executed producer, fixed candidate and authenticated write/delete-denied selected inputs. Full child argv and runtime identities remain in ignored input reports. This is affected task coverage, not a generic full-profile PASS.",
+      "commandNormalization": "Exact executed child argv. Repository prefix is relative; authenticated-fixture-python labels the held external interpreter whose original path and bytes are retained in the ignored input report. No check or measurement was rerun or changed."
+    },
+    {
+      "id": "mounted-ui-build",
+      "commandId": "desktop:unit",
+      "exitCode": 0,
+      "durationSeconds": 1.678569800016703,
+      "command": "./.local/toolchains/node-v24.19.0-win-x64/node.exe tests/desktop/fixtures/document-viewer.mjs ./artifacts/tmp/CAP-05.S04.T01.viewer-ui-fixture-05",
+      "workingDirectory": ".",
+      "commit": "91fe7b323d2cddb2cd7de287f05b961af3472bc8",
+      "result": "PASS",
+      "rawOutput": "artifacts/tmp/CAP-05.S04.T01.qualifying-focused-02.mounted-ui-build.log",
+      "rawOutputSha256": "b566697482f32b633a48396e0d777cf81c332f8df2179cb8374172d5618725ee",
+      "rawOutputCanonicalSha256": "b566697482f32b633a48396e0d777cf81c332f8df2179cb8374172d5618725ee",
+      "inputReport": "artifacts/tmp/CAP-05.S04.T01.qualifying-focused-02.json",
+      "inputReportSha256": "2ff4997b0e0593b5d69ad03a8e4b5d53ce6f121af29a662b9894e0610e7eaf56",
+      "provenance": "Fresh named child check of the exact executed producer, fixed candidate and authenticated write/delete-denied selected inputs. Full child argv and runtime identities remain in ignored input reports. This is affected task coverage, not a generic full-profile PASS.",
+      "commandNormalization": "Exact executed child argv. Repository prefix is relative; authenticated-fixture-python labels the held external interpreter whose original path and bytes are retained in the ignored input report. No check or measurement was rerun or changed."
+    },
+    {
+      "id": "hostile-decoder-build",
+      "commandId": "desktop:unit",
+      "exitCode": 0,
+      "durationSeconds": 0.8863688999845181,
+      "command": "./.local/toolchains/node-v24.19.0-win-x64/node.exe tests/desktop/fixtures/viewer-decoder.mjs",
+      "workingDirectory": ".",
+      "commit": "91fe7b323d2cddb2cd7de287f05b961af3472bc8",
+      "result": "PASS",
+      "rawOutput": "artifacts/tmp/CAP-05.S04.T01.qualifying-focused-02.hostile-decoder-build.log",
+      "rawOutputSha256": "e3df132117b223397253e980b9fbbc1289c8979ed92beca57a1be70f9a2f20b0",
+      "rawOutputCanonicalSha256": "c6fd8cab0161749a3f728081de589d516f92eb7a24ce4153038c2dd9283f6a4a",
+      "inputReport": "artifacts/tmp/CAP-05.S04.T01.qualifying-focused-02.json",
+      "inputReportSha256": "2ff4997b0e0593b5d69ad03a8e4b5d53ce6f121af29a662b9894e0610e7eaf56",
+      "provenance": "Fresh named child check of the exact executed producer, fixed candidate and authenticated write/delete-denied selected inputs. Full child argv and runtime identities remain in ignored input reports. This is affected task coverage, not a generic full-profile PASS.",
+      "commandNormalization": "Exact executed child argv. Repository prefix is relative; authenticated-fixture-python labels the held external interpreter whose original path and bytes are retained in the ignored input report. No check or measurement was rerun or changed."
+    },
+    {
+      "id": "actual-worker-cancel-build",
+      "commandId": "desktop:unit",
+      "exitCode": 0,
+      "durationSeconds": 0.9146028000104707,
+      "command": "./.local/toolchains/node-v24.19.0-win-x64/node.exe artifacts/tmp/CAP-05.S04.T01.qualifying-worker-cancel-02/build.mjs",
+      "workingDirectory": ".",
+      "commit": "91fe7b323d2cddb2cd7de287f05b961af3472bc8",
+      "result": "PASS",
+      "rawOutput": "artifacts/tmp/CAP-05.S04.T01.qualifying-focused-02.actual-worker-cancel-build.log",
+      "rawOutputSha256": "14786f91e2fb13e3e02a5b9ccbabc796940d98a72992aa21c791a73cf95bb267",
+      "rawOutputCanonicalSha256": "c1a385e1ef0a821bdef7904cdaed2ef685e1f4061b7c7450b83713d910a3319b",
+      "inputReport": "artifacts/tmp/CAP-05.S04.T01.qualifying-focused-02.json",
+      "inputReportSha256": "2ff4997b0e0593b5d69ad03a8e4b5d53ce6f121af29a662b9894e0610e7eaf56",
+      "provenance": "Fresh named child check of the exact executed producer, fixed candidate and authenticated write/delete-denied selected inputs. Full child argv and runtime identities remain in ignored input reports. This is affected task coverage, not a generic full-profile PASS.",
+      "commandNormalization": "Exact executed child argv. Repository prefix is relative; authenticated-fixture-python labels the held external interpreter whose original path and bytes are retained in the ignored input report. No check or measurement was rerun or changed."
+    },
+    {
+      "id": "actual-worker-cancel-reopen",
+      "commandId": "desktop:unit",
+      "exitCode": 0,
+      "durationSeconds": 3.4230284999939613,
+      "command": "./.venv/Scripts/python.exe -B artifacts/tmp/CAP-05.S04.T01.qualifying-worker-cancel-02/probe.py",
+      "workingDirectory": ".",
+      "commit": "91fe7b323d2cddb2cd7de287f05b961af3472bc8",
+      "result": "PASS",
+      "rawOutput": "artifacts/tmp/CAP-05.S04.T01.qualifying-focused-02.actual-worker-cancel-reopen.log",
+      "rawOutputSha256": "ae7efe5dc72b313f24f5860e4a0591120ed92e8f68f5c8ae0d23577c82b1f436",
+      "rawOutputCanonicalSha256": "41c833ed19b87cc5f539b3f82f2f8296893ce3ad1d8e8f946d20b1ec67e12be7",
+      "inputReport": "artifacts/tmp/CAP-05.S04.T01.qualifying-focused-02.json",
+      "inputReportSha256": "2ff4997b0e0593b5d69ad03a8e4b5d53ce6f121af29a662b9894e0610e7eaf56",
+      "provenance": "Fresh named child check of the exact executed producer, fixed candidate and authenticated write/delete-denied selected inputs. Full child argv and runtime identities remain in ignored input reports. This is affected task coverage, not a generic full-profile PASS.",
+      "commandNormalization": "Exact executed child argv. Repository prefix is relative; authenticated-fixture-python labels the held external interpreter whose original path and bytes are retained in the ignored input report. No check or measurement was rerun or changed."
+    },
+    {
+      "id": "typescript",
+      "commandId": "foundation:quality",
+      "exitCode": 0,
+      "durationSeconds": 0.6236798999889288,
+      "command": "./.local/toolchains/node-v24.19.0-win-x64/node.exe apps/desktop/node_modules/typescript/bin/tsc --noEmit -p apps/desktop/tsconfig.json",
+      "workingDirectory": ".",
+      "commit": "91fe7b323d2cddb2cd7de287f05b961af3472bc8",
+      "result": "PASS",
+      "rawOutput": "artifacts/tmp/CAP-05.S04.T01.qualifying-focused-02.typescript.log",
+      "rawOutputSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "rawOutputCanonicalSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "inputReport": "artifacts/tmp/CAP-05.S04.T01.qualifying-focused-02.json",
+      "inputReportSha256": "2ff4997b0e0593b5d69ad03a8e4b5d53ce6f121af29a662b9894e0610e7eaf56",
+      "provenance": "Fresh named child check of the exact executed producer, fixed candidate and authenticated write/delete-denied selected inputs. Full child argv and runtime identities remain in ignored input reports. This is affected task coverage, not a generic full-profile PASS.",
+      "commandNormalization": "Exact executed child argv. Repository prefix is relative; authenticated-fixture-python labels the held external interpreter whose original path and bytes are retained in the ignored input report. No check or measurement was rerun or changed."
+    },
+    {
+      "id": "renderer-ownership-units",
+      "commandId": "desktop:unit",
+      "exitCode": 0,
+      "durationSeconds": 5.900487000006251,
+      "command": "./.local/toolchains/node-v24.19.0-win-x64/node.exe apps/desktop/node_modules/vitest/vitest.mjs run apps/desktop/src/app/documentViewer.test.ts apps/desktop/src/app/documentViewerNative.test.ts apps/desktop/src/app/pdfDocumentViewer.test.ts apps/desktop/src/app/viewerAssets.test.ts apps/desktop/src/app/viewerWorkerMessages.test.ts apps/desktop/src/app/viewerWorkerQuota.test.ts",
+      "workingDirectory": ".",
+      "commit": "91fe7b323d2cddb2cd7de287f05b961af3472bc8",
+      "result": "PASS",
+      "rawOutput": "artifacts/tmp/CAP-05.S04.T01.qualifying-focused-02.renderer-ownership-units.log",
+      "rawOutputSha256": "d8869470ca91524609d2e38d6af525ba44cf4c81d6b7782c62972058a4f0c7e2",
+      "rawOutputCanonicalSha256": "d8869470ca91524609d2e38d6af525ba44cf4c81d6b7782c62972058a4f0c7e2",
+      "inputReport": "artifacts/tmp/CAP-05.S04.T01.qualifying-focused-02.json",
+      "inputReportSha256": "2ff4997b0e0593b5d69ad03a8e4b5d53ce6f121af29a662b9894e0610e7eaf56",
+      "provenance": "Fresh named child check of the exact executed producer, fixed candidate and authenticated write/delete-denied selected inputs. Full child argv and runtime identities remain in ignored input reports. This is affected task coverage, not a generic full-profile PASS.",
+      "commandNormalization": "Exact executed child argv. Repository prefix is relative; authenticated-fixture-python labels the held external interpreter whose original path and bytes are retained in the ignored input report. No check or measurement was rerun or changed."
+    },
+    {
+      "id": "mounted-and-hostile-decoder",
+      "commandId": "desktop:unit",
+      "exitCode": 0,
+      "durationSeconds": 6.517855500016594,
+      "command": "./.venv/Scripts/python.exe -B -m unittest -v tests.desktop.test_document_viewer_interactions tests.desktop.test_viewer_decoder",
+      "workingDirectory": ".",
+      "commit": "91fe7b323d2cddb2cd7de287f05b961af3472bc8",
+      "result": "PASS",
+      "rawOutput": "artifacts/tmp/CAP-05.S04.T01.qualifying-focused-02.mounted-and-hostile-decoder.log",
+      "rawOutputSha256": "6713d91bf4ea4b34f218c0855c7568decfc91a9c6e0f2984395773181eca6814",
+      "rawOutputCanonicalSha256": "d7ae7bc715431f920984b61b6dfc4e9df046563a236bd5bbe9ab5dea19ade111",
+      "inputReport": "artifacts/tmp/CAP-05.S04.T01.qualifying-focused-02.json",
+      "inputReportSha256": "2ff4997b0e0593b5d69ad03a8e4b5d53ce6f121af29a662b9894e0610e7eaf56",
+      "provenance": "Fresh named child check of the exact executed producer, fixed candidate and authenticated write/delete-denied selected inputs. Full child argv and runtime identities remain in ignored input reports. This is affected task coverage, not a generic full-profile PASS.",
+      "commandNormalization": "Exact executed child argv. Repository prefix is relative; authenticated-fixture-python labels the held external interpreter whose original path and bytes are retained in the ignored input report. No check or measurement was rerun or changed."
+    },
+    {
+      "id": "current-package-local-csp",
+      "commandId": "desktop:application",
+      "exitCode": 0,
+      "durationSeconds": 2.039348799997242,
+      "command": "./.venv/Scripts/python.exe -B artifacts/tmp/CAP-05.S04.T01.product-package-proof-05.py",
+      "workingDirectory": ".",
+      "commit": "91fe7b323d2cddb2cd7de287f05b961af3472bc8",
+      "result": "PASS",
+      "rawOutput": "artifacts/tmp/CAP-05.S04.T01.qualifying-focused-02.current-package-local-csp.log",
+      "rawOutputSha256": "4f758ef2533b427368cc16ba25aeeef7f7e4582ce809215d4edc0eb2afecb197",
+      "rawOutputCanonicalSha256": "7ac36bd358b9b223eb77dbb14ae16a40c4e8e10412a89a28b76e65671c563324",
+      "inputReport": "artifacts/tmp/CAP-05.S04.T01.qualifying-focused-02.json",
+      "inputReportSha256": "2ff4997b0e0593b5d69ad03a8e4b5d53ce6f121af29a662b9894e0610e7eaf56",
+      "provenance": "Fresh named child check of the exact executed producer, fixed candidate and authenticated write/delete-denied selected inputs. Full child argv and runtime identities remain in ignored input reports. This is affected task coverage, not a generic full-profile PASS.",
+      "commandNormalization": "Exact executed child argv. Repository prefix is relative; authenticated-fixture-python labels the held external interpreter whose original path and bytes are retained in the ignored input report. No check or measurement was rerun or changed."
+    },
+    {
+      "id": "native-ownership-units",
+      "commandId": "desktop:unit",
+      "exitCode": 0,
+      "durationSeconds": 0.8564843000203837,
+      "command": "./.venv/Scripts/python.exe -B artifacts/tmp/CAP-05.S04.T01.qualifying-native-units-04.py 91fe7b323d2cddb2cd7de287f05b961af3472bc8",
+      "workingDirectory": ".",
+      "commit": "91fe7b323d2cddb2cd7de287f05b961af3472bc8",
+      "result": "PASS",
+      "rawOutput": "artifacts/tmp/CAP-05.S04.T01.qualifying-native-units-04.run.log",
+      "rawOutputSha256": "6789b8cf32e178fdacc367c18b9a7d8734399814ddd67a436714311106704d95",
+      "rawOutputCanonicalSha256": "5df2994bb46d7bcea9731d02bccedf01585bc3add44db4137916a6337cacd601",
+      "inputReport": "artifacts/tmp/CAP-05.S04.T01.qualifying-native-units-04.json",
+      "inputReportSha256": "a17539e7fe79b5b5df613be1020b813b613d8dabd95af8b227a605ed3879f7a1",
+      "provenance": "Nine exact Rust ownership/drain/registration units in a fresh debug test binary with the approved Common Controls6/asInvoker manifest. No real-principal or renderer dispatch claim from these units."
+    },
+    {
+      "id": "real-native-accepted-boundaries",
+      "commandId": "desktop:application",
+      "exitCode": 0,
+      "durationSeconds": 12.190485300001455,
+      "command": "./.venv/Scripts/python.exe -B artifacts/tmp/CAP-05.S04.T01.qualifying-native-accepted-02.py 91fe7b323d2cddb2cd7de287f05b961af3472bc8",
+      "workingDirectory": ".",
+      "commit": "91fe7b323d2cddb2cd7de287f05b961af3472bc8",
+      "result": "PASS",
+      "rawOutput": "artifacts/tmp/CAP-05.S04.T01.qualifying-native-accepted-02.run.log",
+      "rawOutputSha256": "512852b75c10a15ddd2e0b857ffa435f2a6387a7bc3728b62538fa5621c57ada",
+      "rawOutputCanonicalSha256": "814268881362d9b4b9e3687e5126c28fcd0aa2c0c98282ba5bb66bc8ef21f893",
+      "inputReport": "artifacts/tmp/CAP-05.S04.T01.qualifying-native-accepted-02.json",
+      "inputReportSha256": "181b8cccccc9a20c20404268dcc1622af5030f35997780ecd8950c7a0970b8bb",
+      "provenance": "Fresh real Windows Native/Core/vault/SQLCipher/encrypted-original read, exact accepted text/outline, source substitution and copy/derive denial, resource status/retry and terminal-generation close. Declared synthetic accepted parser IR. Direct Native handlers; renderer invoke, manual lock and OS-close behavior are not established by this check."
+    },
+    {
+      "id": "real-native-maximum-cancel",
+      "commandId": "desktop:application",
+      "exitCode": 0,
+      "durationSeconds": 9.805462099990109,
+      "command": "./.venv/Scripts/python.exe -B artifacts/tmp/CAP-05.S04.T01.qualifying-native-maximum-02.py 91fe7b323d2cddb2cd7de287f05b961af3472bc8",
+      "workingDirectory": ".",
+      "commit": "91fe7b323d2cddb2cd7de287f05b961af3472bc8",
+      "result": "PASS",
+      "rawOutput": "artifacts/tmp/CAP-05.S04.T01.qualifying-native-maximum-02.run.log",
+      "rawOutputSha256": "bd20dd6a4dc0b6ca2e74da83769396a96a41787ffe110edc088c983a06d84055",
+      "rawOutputCanonicalSha256": "19d7b5a9198ef4d9507be9da434dd4f1bfa018656ff27706269802ae848e57d8",
+      "inputReport": "artifacts/tmp/CAP-05.S04.T01.qualifying-native-maximum-02.json",
+      "inputReportSha256": "03445fbe64cd98b7bb7a8ea63b529a0913bf0e67821d00a828629e35e950aaa3",
+      "provenance": "Fresh actual 128 MiB protected original and 1 MiB range; correlated cancellation and writer release, in-flight terminal generation revocation, exact tail recovery, owned cleanup zero. Direct Native handlers. No actual OS close, manual lock, model-tier or minimum-hardware claim."
+    },
+    {
+      "id": "actual-renderer-maximum-document",
+      "commandId": "desktop:application",
+      "exitCode": 0,
+      "durationSeconds": 80.41204770002514,
+      "command": "./.venv/Scripts/python.exe -B artifacts/tmp/CAP-05.S04.T01.qualifying-stress-02.py 91fe7b323d2cddb2cd7de287f05b961af3472bc8",
+      "workingDirectory": ".",
+      "commit": "91fe7b323d2cddb2cd7de287f05b961af3472bc8",
+      "result": "PASS",
+      "rawOutput": "artifacts/tmp/CAP-05.S04.T01.qualifying-stress-02.run.log",
+      "rawOutputSha256": "e2bb27d8717d3dd7e55b5d12620dac39cb3a9df5978bf1ddb784c49b57b5626f",
+      "rawOutputCanonicalSha256": "a72fcb338424729c70537033253470dab4b1e94b08e2400eed7f628f21d9e413",
+      "inputReport": "artifacts/tmp/CAP-05.S04.T01.qualifying-stress-02.json",
+      "inputReportSha256": "dd5bf84137a39ebcbe767308b792dcf2df030d5aaadab1549ce9797a0ba3054b",
+      "provenance": "Fresh shipping renderer/Wry/Native/Core on the actual 128 MiB/500-page encrypted fixture: first page, page500 search, adjacent navigation and return. Complete owned Windows job commit footprint and physical cleanup are measured. One maximum-document observation is not the representative p95 criterion or a 256 MiB full-process limit."
+    },
+    {
+      "id": "actual-renderer-cold-warm-p95",
+      "commandId": "desktop:performance",
+      "exitCode": 0,
+      "durationSeconds": 715.4071192999836,
+      "command": "./.venv/Scripts/python.exe -B artifacts/tmp/CAP-05.S04.T01.qualifying-latency-05.py 91fe7b323d2cddb2cd7de287f05b961af3472bc8",
+      "workingDirectory": ".",
+      "commit": "91fe7b323d2cddb2cd7de287f05b961af3472bc8",
+      "result": "PASS",
+      "rawOutput": "artifacts/tmp/CAP-05.S04.T01.qualifying-latency-05.run.log",
+      "rawOutputSha256": "02b6aa8fa1dabde9836ae298647f5850fd4a6471cc23f3e94e9ca6448a0a3d5d",
+      "rawOutputCanonicalSha256": "54d43a0ffd49c91ed49c619b9d23289fdf4f2483715796e4fe7da24af1585fc4",
+      "inputReport": "artifacts/tmp/CAP-05.S04.T01.qualifying-latency-05.json",
+      "inputReportSha256": "fb7100db71a517d835a261bb6cbf3e54384ee447c08db4cf6375d988296adcd1",
+      "provenance": "Fresh20 cold Native/Core/WebView launches and20 warm Reader opens, including the initial warm sample, on the fully authenticated 10 MiB/50-page original. Exact owned input event through actual first-page completion includes renderer/gateway/Native/Core and20ms requested observation plus scan overhead. Strict nearest-rank p95 <=3000ms; no rounding, subtraction, OS cache purge or reused distribution. Separate startup diagnostic is expressly nonqualifying."
+    }
+  ],
+  "machineArtifacts": [
+    {
+      "path": "artifacts/tmp/CAP-05.S04.T01.qualifying-static-04.json",
+      "sha256": "0fc09d5495ebdef43884e81b75aea10acbc008d098be753520f3915486efb174"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S04.T01.qualifying-static-04.changed-python-format.log",
+      "sha256": "7715b02781372f8741fb309aee97a6483e689c9039f0d78081dd910f70b0256e"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S04.T01.qualifying-static-04.py",
+      "sha256": "ebcf572f2cb34d4b108827816f95b95278dedf05532d517d299790d39c28db54"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S04.T01.qualifying-static-04.changed-python-lint.log",
+      "sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S04.T01.qualifying-static-04.changed-python-types.log",
+      "sha256": "e903677c248a6ca6ac9094eed21b5350be088d014c43570c553f047d8f487a0a"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S04.T01.qualifying-static-04.current-reader-boundary.log",
+      "sha256": "1d7f7dc2ae96eb40d493e65ec66145bea615c3da65853c546177202e99bedf56"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S04.T01.qualifying-static-04.bounded-adr.log",
+      "sha256": "a6edc77a2f48d182873bd310748194f520276fcb758661b8abc2db181a2e1098"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S04.T01.qualifying-static-04.viewer-schema.log",
+      "sha256": "a55ee30fb47c9afacd282abc3e69cce6ee0e020d9d710eb2dc98eda54569bb56"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S04.T01.qualifying-static-04.viewer-build-and-handoff-units.log",
+      "sha256": "1cbc5131ae642e0dbc1d07f2628ec95000cabc3bb31c1f8cc3e558165d206b2f"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S04.T01.core-candidate-proof-10.json",
+      "sha256": "44fd136dfe30b6e6ae1fb1849c0785e6119d7d3ac94849cf9ab578a0d2694ad5"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S04.T01.core-candidate-proof-10.core-selected-closure.log",
+      "sha256": "f27783cc6e6c6aeaa140103fe8a8ed24ab95466594a3fcf6fb7e23d54a3a053f"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S04.T01.core-candidate-proof-10.py",
+      "sha256": "ad641b01aae0ceb5ebc4bd4262777fa2c5b154497bd0bcf997102868c5feff89"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S04.T01.qualifying-focused-02.json",
+      "sha256": "2ff4997b0e0593b5d69ad03a8e4b5d53ce6f121af29a662b9894e0610e7eaf56"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S04.T01.qualifying-focused-02.mounted-ui-build.log",
+      "sha256": "b566697482f32b633a48396e0d777cf81c332f8df2179cb8374172d5618725ee"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S04.T01.qualifying-focused-02.py",
+      "sha256": "781936d973a68c633d35808a941075307873a0afb24e00b412f6b92e73963764"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S04.T01.qualifying-focused-02.hostile-decoder-build.log",
+      "sha256": "e3df132117b223397253e980b9fbbc1289c8979ed92beca57a1be70f9a2f20b0"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S04.T01.qualifying-focused-02.actual-worker-cancel-build.log",
+      "sha256": "14786f91e2fb13e3e02a5b9ccbabc796940d98a72992aa21c791a73cf95bb267"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S04.T01.qualifying-focused-02.actual-worker-cancel-reopen.log",
+      "sha256": "ae7efe5dc72b313f24f5860e4a0591120ed92e8f68f5c8ae0d23577c82b1f436"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S04.T01.qualifying-focused-02.typescript.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S04.T01.qualifying-focused-02.renderer-ownership-units.log",
+      "sha256": "d8869470ca91524609d2e38d6af525ba44cf4c81d6b7782c62972058a4f0c7e2"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S04.T01.qualifying-focused-02.mounted-and-hostile-decoder.log",
+      "sha256": "6713d91bf4ea4b34f218c0855c7568decfc91a9c6e0f2984395773181eca6814"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S04.T01.qualifying-focused-02.current-package-local-csp.log",
+      "sha256": "4f758ef2533b427368cc16ba25aeeef7f7e4582ce809215d4edc0eb2afecb197"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S04.T01.qualifying-native-units-04.json",
+      "sha256": "a17539e7fe79b5b5df613be1020b813b613d8dabd95af8b227a605ed3879f7a1"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S04.T01.qualifying-native-units-04.run.log",
+      "sha256": "6789b8cf32e178fdacc367c18b9a7d8734399814ddd67a436714311106704d95"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S04.T01.qualifying-native-units-04.py",
+      "sha256": "c674d99882cc0fe9fa7a68fc3aacf5b036bba601593cf6aff7f83d37229cf46b"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S04.T01.qualifying-native-units-04.stdout.log",
+      "sha256": "83c886ccb48f868b57d20b06a3ddf32eec5d243c38e15fdd21316e7cc264cfd0"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S04.T01.qualifying-native-units-04.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S04.T01.qualifying-native-accepted-02.json",
+      "sha256": "181b8cccccc9a20c20404268dcc1622af5030f35997780ecd8950c7a0970b8bb"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S04.T01.qualifying-native-accepted-02.run.log",
+      "sha256": "512852b75c10a15ddd2e0b857ffa435f2a6387a7bc3728b62538fa5621c57ada"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S04.T01.qualifying-native-accepted-02.py",
+      "sha256": "73cef2cc1bdce8f3acb6a422c22fea837d8ead583329d3ce2bf156a6c84bb8fd"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S04.T01.qualifying-native-accepted-02.stdout.log",
+      "sha256": "5f07be778e7cb8e44d47d07861a840bce018ef635948e702c9e95c4aaaf02ad5"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S04.T01.qualifying-native-accepted-02.stderr.log",
+      "sha256": "425d68cce5f2b87195c7b4873bc5c857ff2a2af3f5aee605812aa6ac143956e6"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S04.T01.qualifying-native-maximum-02.json",
+      "sha256": "03445fbe64cd98b7bb7a8ea63b529a0913bf0e67821d00a828629e35e950aaa3"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S04.T01.qualifying-native-maximum-02.run.log",
+      "sha256": "bd20dd6a4dc0b6ca2e74da83769396a96a41787ffe110edc088c983a06d84055"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S04.T01.qualifying-native-maximum-02.py",
+      "sha256": "6aab9550d98ea9fc969a227905ac7a12012945fb8724f6238fcce14821fec331"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S04.T01.qualifying-native-maximum-02.stdout.log",
+      "sha256": "949c43fa5cda802078c4cb446d80e77bee270e4f0fc3981a42cb9ff83b383d13"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S04.T01.qualifying-native-maximum-02.stderr.log",
+      "sha256": "58dd10de5c4f054d9a2a62854dc4ee02b41244db69ccef39f653aa503398be91"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S04.T01.qualifying-stress-02.json",
+      "sha256": "dd5bf84137a39ebcbe767308b792dcf2df030d5aaadab1549ce9797a0ba3054b"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S04.T01.qualifying-stress-02.run.log",
+      "sha256": "e2bb27d8717d3dd7e55b5d12620dac39cb3a9df5978bf1ddb784c49b57b5626f"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S04.T01.qualifying-stress-02.py",
+      "sha256": "34133c5d9cccd183b9171db66ed478d24739741b8e524023f733ca1532658df2"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S04.T01.qualifying-stress-02.child.result.json",
+      "sha256": "6481f36af1a621d8546c1f53dc3a0a35fbf92ed19e8fa953a32a0962777b1dbd"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S04.T01.qualifying-stress-02.run-child.log",
+      "sha256": "650608e1d0ba0d15e788c90db7315eb624cf11760e7db98bdb1a921cc108e331"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S04.T01.qualifying-latency-05.json",
+      "sha256": "fb7100db71a517d835a261bb6cbf3e54384ee447c08db4cf6375d988296adcd1"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S04.T01.qualifying-latency-05.run.log",
+      "sha256": "02b6aa8fa1dabde9836ae298647f5850fd4a6471cc23f3e94e9ca6448a0a3d5d"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S04.T01.qualifying-latency-05.py",
+      "sha256": "c09ab08a2908e98c5caf0536cd9fbadbe4a791757ea59feac503f1f4301778a9"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S04.T01.qualifying-native-build-02.json",
+      "sha256": "e12c78ce073c817d471d7b1c6ad50742f27e0f0d8b1b46f10f750bb25bee4bd3"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S04.T01.qualifying-native-build-02.run.log",
+      "sha256": "c96351a2cb4dd02de38fa377369663d1779cbc37b7cea6c2d8fe3d3f2bb9258b"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S04.T01.qualifying-native-tests-build-02.json",
+      "sha256": "ba9b1f93252750dc0c621bacec712c74551ec216fcbe442499b6c820f1d394a0"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S04.T01.qualifying-native-tests-build-02.run.log",
+      "sha256": "b9c1db06fba01b6468e395cb5b92fa9f75bcd136eb41c77d4a6db12c24a615ff"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S04.T01.qualifying-fixture-before-02.json",
+      "sha256": "3b2f2b688f3032bd1eebbcbbf90959192b12e638d403c107289f8344da6d4da4"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S04.T01.qualifying-fixture-before-02.run.log",
+      "sha256": "2c1fc4b13d1d8284850275d03669ca02032c9e996910b310f3069154647e4db7"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S04.T01.qualifying-fixture-after-02.json",
+      "sha256": "04cb13a868e4922583d8efe986e74121f88a64b16a2e0455043fd01656590381"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S04.T01.qualifying-fixture-after-02.run.log",
+      "sha256": "8df9a0bfc3e0e096f96e797091262b7e2a269cc7ecd24dbc8a7f88d7e69cc130"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S04.T01.qualifying-max-fixture-before-02.json",
+      "sha256": "b3cc911341d9c3d59fcf289fa883c6d828516edaef57a1d7d2a5a6f64f26bb18"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S04.T01.qualifying-max-fixture-before-02.run.log",
+      "sha256": "53531f70bf01a75866b18b3a2b69a732d57fdd9134ded619316a3cba4bdc0b46"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S04.T01.qualifying-package-03.json",
+      "sha256": "b44710a6386f68b10b852479f622d2b0e9c4080b4e675e69d5992c3bae6d3f22"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S04.T01.qualifying-package-03.run.log",
+      "sha256": "3d905986e6a10daaa43c49e5c53f7424740812bde360e97acaeda0c3c1c14698"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S04.T01.product-boundary-proof-01.json",
+      "sha256": "4798fc9e944b99d372bb2f9092a14fd25b14a5cbc2a610a251ddfa32d9de59da"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S04.T01.product-boundary-proof-01.py",
+      "sha256": "6888459832ac8a8a19c93f187e1deadac8a3c969eb2ade80aedd2fd2e32c116e"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S04.T01.product-package-proof-05.json",
+      "sha256": "c96b8749743e13fb675d0f85a3d30f1015264efe1622dc5a42a214f527566d33"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S04.T01.product-package-proof-05.py",
+      "sha256": "59b45b01ed90df0ea10beb634d44f88985a31d811fb120f42e841e5c7b9f6c86"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S04.T01.native-viewer-uia-12.cs",
+      "sha256": "8cba5ce84d391a390f51287c79669362024d1e5725843f86622e117f0e7582c0"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S04.T01.native-viewer-uia-12.ps1",
+      "sha256": "9d4614d4c2f5d260014e08df26ff68ca6f0c6c576b340879d71e71abde559362"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S04.T01.qualifying-latency-child-05.py",
+      "sha256": "acea9bb0d1a2ff1ef5425ec438f4d11310900e5315bdf9ff1341d84996abaebd"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S04.T01.qualifying-stress-child-02.py",
+      "sha256": "eb95eb3198f150b4a7fbeee267121089015d7a91c66578c97cb39d378396f7bf"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S04.T01.owned-native-job-01.py",
+      "sha256": "991d6cc09aa992ba3675e3107058d934c9e0d56750aa9457ae4b3d1e642efe58"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S04.T01.qualifying-fixture-01.py",
+      "sha256": "8559360ce7a1b0b0d90cd34f56d0f50bceea78978ba03c5381f6b6672c1aadb3"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S04.T01.qualifying-max-fixture-01.py",
+      "sha256": "7e83ee993670a58797fd4eaae33120444778484b7ea846a2ff65ed57ea497505"
+    },
+    {
+      "path": "artifacts/evidence/CAP-05.S04.T01.task-start.md",
+      "sha256": "b1b8e1dccc71fb8a1322d198f14c88b35ac204937e6e32480b4f334b576d0e9c"
+    },
+    {
+      "path": "artifacts/evidence/ui-change/CAP-05.S04.T01.json",
+      "sha256": "2282379d5e3e6f9bf5268e43cbf56765f0cafaf84ea6dbeb7baf0218705c8255"
+    },
+    {
+      "path": "artifacts/evidence/CAP-05.S04.T01.latency-target-amendment-01.adopted.json",
+      "sha256": "99798833d3cca799dcf4e083f486c6d98f74c3820591ef4a41af62dafcad6bbb"
+    },
+    {
+      "path": "artifacts/evidence/CAP-05.S04.T01.latency-target-amendment-01.owner-approval.json",
+      "sha256": "489c14b2cc26f1131add46f2200be64f2ddf9d85a27a42417b1dafd5b5607d11"
+    },
+    {
+      "path": "artifacts/evidence/CAP-05.S04.T01.partial-observations-02.json",
+      "sha256": "4adca41b87c2f31d442d679e942185b24ae185ab5102a0e33269053094850485"
+    },
+    {
+      "path": "artifacts/evidence/CAP-05.S04.T01.unchanged-product-inventory-03.log",
+      "sha256": "9d12bf3047e16c8f960f8214acc93d3ec361bf186f8eee332a2a72c8a94db379"
+    },
+    {
+      "path": "artifacts/evidence/CAP-05.S04.T01.unchanged-security-selector-01.log",
+      "sha256": "bd997cc4c99972be64f109cb189deb457bf5afdd985d4ae83a1380ceee83ab2a"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S04.T01.qualifying-latency-01.json",
+      "sha256": "789112188843eddbb1b322fc817ad59845439cd66b88e015006d610257c42ea3"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S04.T01.qualifying-latency-02.json",
+      "sha256": "0b4328e6803eae68d9bfa549771137adceb86f28a615914709365387c74af027"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S04.T01.qualifying-latency-03.json",
+      "sha256": "34dc68ef82db7112c8fdfe362a669e245238cd35d05c0d7f9114f70c5934676e"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S04.T01.qualifying-native-units-01.json",
+      "sha256": "26da675d13fc501be4e9bb47b331456ae702719a13949defc22ee06d0f99306c"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S04.T01.qualifying-static-01.json",
+      "sha256": "f439dbab12fad7008a0a28b1fb7d497ac58b20d5d2aa34a1226850b885f61af4"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S04.T01.qualifying-static-02.json",
+      "sha256": "6b8e2ad4451a331866e751586b92eaa07d441fa8148c2b3e3f72fde14362acaa"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S04.T01.qualifying-static-03.json",
+      "sha256": "26c5fea654b4b02a118e03ba5f0c740bebaf0e54efaf4c0f4406ed9741ffdf3a"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S04.T01.fixture-stale-lock-preservation-01.json",
+      "sha256": "2616a32e8c8b4d7f50f5061e629dccfa7db9eac9ef3b5982aaaefff06d5c8509"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S04.T01.stale-lock-timeline-correction-01.json",
+      "sha256": "7c40cbdb098369e8683e24355772b0ec3f124b5a3b77dfcd8788c3f67df446ae"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S04.T01.prepare-evidence-R01-01.py",
+      "sha256": "fdd8f86ab10551c5c6cf9d884b62aef69a38f521c6c1ef3e850cac1de43b576e"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S04.T01.R01.unsubmitted-draft-01.json",
+      "sha256": "2e5219f059ada21a67e97f7f945a8700cffbae9099c4959b0b825b8002b4115a"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S04.T01.normalize-evidence-commands-01.py",
+      "sha256": "5b5c32d699f19c1230179d7cc491ac83a6a282f41db2f20a8f0e92ad68e0842c"
+    }
+  ],
+  "measuredLatency": {
+    "cold": {
+      "count": 20,
+      "nearestRankP95Ms": 2659.1579,
+      "minimumMs": 2341.1053,
+      "maximumMs": 2663.047,
+      "limitMs": 3000
+    },
+    "warm": {
+      "count": 20,
+      "nearestRankP95Ms": 2728.0284,
+      "minimumMs": 2478.1011000000003,
+      "maximumMs": 2939.7765,
+      "limitMs": 3000
+    }
+  },
+  "scopeLimits": [
+    "Task-only fresh current-candidate proof. The actual fixture Python runtime is authenticated at8758 files, but is not the sealed shipping Core package122.",
+    "Windows x64 declared host and synthetic accepted parser IR; no model inference, tier qualification, installed application release or minimum-hardware claim.",
+    "Current generic architecture helper remains FAIL for three stale classifications; separately named product proof passes actual governing dependency boundaries.",
+    "The256MiB limit applies to conservative backing admission, not complete job private commit; the latter is separately measured and disclosed."
+  ],
+  "preservedAdverseObservations": [
+    {
+      "path": "artifacts/tmp/CAP-05.S04.T01.qualifying-latency-01.json",
+      "sha256": "789112188843eddbb1b322fc817ad59845439cd66b88e015006d610257c42ea3",
+      "qualifyingCurrentCandidate": false
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S04.T01.qualifying-latency-02.json",
+      "sha256": "0b4328e6803eae68d9bfa549771137adceb86f28a615914709365387c74af027",
+      "qualifyingCurrentCandidate": false
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S04.T01.qualifying-latency-03.json",
+      "sha256": "34dc68ef82db7112c8fdfe362a669e245238cd35d05c0d7f9114f70c5934676e",
+      "qualifyingCurrentCandidate": false
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S04.T01.qualifying-native-units-01.json",
+      "sha256": "26da675d13fc501be4e9bb47b331456ae702719a13949defc22ee06d0f99306c",
+      "qualifyingCurrentCandidate": false
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S04.T01.qualifying-static-01.json",
+      "sha256": "f439dbab12fad7008a0a28b1fb7d497ac58b20d5d2aa34a1226850b885f61af4",
+      "qualifyingCurrentCandidate": false
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S04.T01.qualifying-static-02.json",
+      "sha256": "6b8e2ad4451a331866e751586b92eaa07d441fa8148c2b3e3f72fde14362acaa",
+      "qualifyingCurrentCandidate": false
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S04.T01.qualifying-static-03.json",
+      "sha256": "26c5fea654b4b02a118e03ba5f0c740bebaf0e54efaf4c0f4406ed9741ffdf3a",
+      "qualifyingCurrentCandidate": false
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S04.T01.fixture-stale-lock-preservation-01.json",
+      "sha256": "2616a32e8c8b4d7f50f5061e629dccfa7db9eac9ef3b5982aaaefff06d5c8509",
+      "qualifyingCurrentCandidate": false
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S04.T01.stale-lock-timeline-correction-01.json",
+      "sha256": "7c40cbdb098369e8683e24355772b0ec3f124b5a3b77dfcd8788c3f67df446ae",
+      "qualifyingCurrentCandidate": false
+    }
+  ],
+  "adverseDisposition": "Earlier incomplete/failed latency attempts, warm p95=3007.8004ms with100ms requested polling, stale owned fixture marker and its corrected cold13 timeline, missing Common Controls activation and broad test typing/generic selector failures remain unchanged. New fresh20+20 uses prospective20ms observation precision, preserves overhead, and substitutes no historical samples. Source composition was corrected and every material physical boundary rerun. No failure is relabeled PASS.",
+  "taskApproval": false,
+  "sliceApproval": false,
+  "waveCompletion": false,
+  "releaseApproval": false,
+  "publicationNormalization": {
+    "priorUnsubmittedDraft": {
+      "path": "artifacts/tmp/CAP-05.S04.T01.R01.unsubmitted-draft-01.json",
+      "sha256": "2e5219f059ada21a67e97f7f945a8700cffbae9099c4959b0b825b8002b4115a"
+    },
+    "reason": "The controller rejected duplicate parent-producer command labels before any atomic submission. Use the actual distinct executed child commands; preserve the rejected draft and all proof bytes.",
+    "productSourceChanged": false,
+    "checksRepeated": false,
+    "approvalChanged": false
+  }
+}

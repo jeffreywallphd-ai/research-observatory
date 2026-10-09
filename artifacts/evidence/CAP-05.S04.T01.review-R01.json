@@ -1,0 +1,200 @@
+{
+  "task_id": "CAP-05.S04.T01",
+  "attempt_id": "R01",
+  "reviewer": "agent:/root/reader_latency_amendment_readiness",
+  "result": "approved",
+  "reviewed_at": "2026-10-09T21:23:37+00:00",
+  "reviewed_state_commit": "91fe7b323d2cddb2cd7de287f05b961af3472bc8",
+  "candidate_commit": "91fe7b323d2cddb2cd7de287f05b961af3472bc8",
+  "base_commit": "1bd33a6ba180487b239e3315e302b6db6aaea123",
+  "packet_sha256": "e6799265e7fc9d2a77b40c9ca7a77c4bba05d1876a6fc26444efb55b0c10ee0b",
+  "evidence_sha256": "d1cb8cece275ddcc4e4d4b5ffcc4687e91f69851d874d8f6052938d40d2e89bd",
+  "acceptance_criteria_sha256": "746d0b01159a8ee9c013fbe9ad148c6d7321a6d7951936c404d5684dcde7eb69",
+  "selection_sha256": "485e4ce3fe1ac08f900b9d206b829235e741772c6ec0c6863636fd110cfd9a23",
+  "findings": [],
+  "closures": [],
+  "acceptance_reviews": [
+    {
+      "criterion_index": 1,
+      "result": "satisfied",
+      "assessment": "The committed Reader opens the exact permitted encrypted original through fixed Native-owned source/range commands and complete authenticated Core reads. Renderer selectors contain opaque identities; Native owns project root, token, session, window and lock generation. Source association and current inspect/derive rights are checked before admission and again before delivery. No source path, active PDF action or remote decoder asset is introduced into untrusted document content. The pinned local PDF.js worker renders only admitted pages and a bounded thumbnail window. Fresh real Wry/Native/Core proof opens and navigates the 128 MiB/500-page encrypted original, searches/renders page500 and returns to the selected source. Fresh representative20 cold and20 warm opens include full authentication and the actual renderer/Native/Core route: nearest-rank p95 is2659.1579ms cold and2728.0284ms warm, both below the explicitly adopted3000ms LT01 limit. Conservative shared-window allocation admission accounts for decoder, main/surfaces, local assets, range transfer and cumulative protected derivative reads; resource denial preserves the original and metadata. Complete owned-job commit is separately measured, not mislabeled as a256MiB full-process limit. This establishes the declared-host task criterion, not minimum-hardware, installer or Wave qualification."
+    },
+    {
+      "criterion_index": 2,
+      "result": "satisfied",
+      "assessment": "Fresh exact-candidate machine evidence includes32 actual encrypted/Core/API/admission/fairness cases;27 renderer ownership/Native adapter/asset/message/quota units;9 Native registration/drain/range/text/outline units;6 actual pinned worker cancellation/reopen cases over a declared synthetic byte port; and10 mounted Reader/actual hostile decoder cases. The actual Windows Native/Core/vault/SQLCipher accepted fixture proves exact text/outline, substituted-source and copy/derive denial, mapped resource denial, exact fresh recovery and terminal-generation delivery denial. The maximum-source Native test separately proves exact correlated drained denial and preserved independent metadata writer within39.885ms after cancellation and36.0385ms during in-flight terminal revocation, plus exact fresh tail recovery. Actual Core held-authentication, deadline, coalesced-follower, ASGI disconnect, prefix-discard and final-frame corruption regressions compose with those direct Native handlers and SDK lifecycle tests to close the physical-drain defect. Unknown termination remains denied and retains admission; transport settlement is no longer used as a physical-drain assertion. Mounted tests cover keyboard/focus/reflow/themes, controls and late locked delivery; hostile pinned decoder tests cover inert actions, malformed input, overlarge surface and expansion denial/recovery. Direct handlers are not relabeled as renderer invoke dispatch, manual-lock UI or actual OS-close testing."
+    },
+    {
+      "criterion_index": 3,
+      "result": "satisfied",
+      "assessment": "The96-path base-to-candidate inventory matches the frozen R01 packet. The change is product-owned Viewer source/range/structured-read contracts, current-authority adapters, pinned local PDF.js integration, Reader handoff/UI, tests/fixtures and criterion documentation. Protected storage format and canonical identity/rights authority remain intact. The task worksheet records the missed physical-drain and derivative-allocation rows and their adverse results. Final service composition requires its portable repository factory; main and the real API fixture compose local adapters with the same live actor/guard/now, so business logic no longer imports either concrete repository. The typed captured-group cancellation callback preserves its exact group. Fresh production14 Python typing, all25 changed Python format/lint, TypeScript, generated Viewer schemas, bounded ADR and current product dependency/package/CSP proofs pass. The approved inherited reference1.9 and actual195-file frontend inventory bind the final assembly; the release Native artifact is freshly built and copied with verified equality. Generic helper failures caused by stale role/import/inventory/reference literals remain failures and are explicitly distinguished from the affected task-owned proof. ADR0047 remains Proposed, not new authority. The appended LT01 adoption changes only the owner-approved latency scalar. No automation controller/helper edit, parser-overage retest, forbidden8/16GiB model run, scope relaxation or unrelated product expansion is approved here."
+    }
+  ],
+  "advisory_resolution": {
+    "finding_id": "CAP-05.S04.T01.CRA01-F01",
+    "prior_record": {
+      "path": "artifacts/evidence/CAP-05.S04.T01.candidate-review-advisory-01.json",
+      "sha256": "e2b1496946f7b731c46684d523a43d1ad937256b0cc90c54aa9757accd9ad341",
+      "reviewed_candidate": "1941bfa06bab014a7aca58c00275e87035ebc55d",
+      "preserved_status": "OPEN_AT_REVIEWED_CANDIDATE"
+    },
+    "current_candidate": "91fe7b323d2cddb2cd7de287f05b961af3472bc8",
+    "disposition": "resolved_at_current_candidate",
+    "controlled_closure_created": false,
+    "assessment": "CRA01-F01 was an independent candidate advisory, not a prior controlled RNN finding. R01's frozen open_finding_ids is empty; findings and closures therefore remain empty rather than inventing a controlled closure. At this candidate, Core cancellation distinguishes participation from physical last-owner termination and waits for the latter before acknowledging drain. Live exact followers retain independent authority. Native retains exact registration/issuance identity, validates correlated terminal acknowledgement and denies unknown/early/lost ownership; the renderer latches unknown drain after pending removal, keeps the owned reservation and blocks replacement. Decoder retirement settles SDK callers but waits for physical byte drain before a fresh decoder/range generation. Core admission is shared across decoder generations and structured calls and is released only at proven termination. Fresh Core32 includes held real authentication beyond the deadline, physical writer release, exact follower ownership and disconnect/prefix/corruption seams; Native9 includes early/late registration, active/unknown duplicate and exact acknowledgement cases; renderer27 plus actual SDK6 verify persistent poisoning and replacement ordering. Fresh Native maximum-source cancellation/terminal writer witnesses and exact tail recovery provide the real Wry/Native/Core composition. These selected proofs support resolution at91fe7b without changing the historical advisory's bytes or status. No claim is made that independent SQLCipher contention alone identifies the authentication phase; the separate actual-Core held-authentication regression supplies that scope.",
+    "check_ids": [
+      "core-selected-closure",
+      "native-ownership-units",
+      "renderer-ownership-units",
+      "actual-worker-cancel-reopen",
+      "real-native-maximum-cancel",
+      "real-native-accepted-boundaries"
+    ]
+  },
+  "independence": {
+    "implementation_owner": "codex-w2-implementation",
+    "statement": "I independently inspected the affected product boundaries through bounded advisory/source reviews, replayed CRA01-F01 and the derivative allocation/lifetime risks, reviewed the final source composition and proof producers, authenticated the immutable R01 packet and referenced raw results, and recomputed both percentiles from all fresh child sample records. I authored no product correction, committed test, qualification producer, command normalization or taskctl mutation. I ran no test/build/benchmark or optional full-history/profile check during this review. This review ledger is my sole current tracked write. HEAD stayed91fe7b; the owner's submitted-ledger/generated-view publication is separate and does not alter the qualified product inputs."
+  },
+  "verification_selection": {
+    "selectedCommandIds": [
+      "desktop:application",
+      "desktop:performance",
+      "desktop:unit",
+      "documents:unit",
+      "foundation:adr",
+      "foundation:architecture",
+      "foundation:quality"
+    ],
+    "riskAnalysis": "Review the secure local Reader's opaque public/cross-process contracts, current source/rights/session/window authority, physical cancellation and unknown-drain replacement, protected derivative allocation, actual pinned decoder and governed handoff. Replay the existing advisory findings plus the final typed callback and dependency-injection correction. Authenticate21 selected current-candidate checks and87 artifacts, the approved LT01 baseline, actual fixture/package/runtime identities and all raw20+20 latency child receipts. Native/principal and benchmark results are fresh; no old observation or cached PASS is substituted. Source-unit reasoning and earlier adverse findings are carried forward with their original scope, not re-executed or relabeled.",
+    "deferred": [
+      "CAP-05.S04.T02 owns durable opaque deep links, multiple anchor highlights and context/repair navigation; T03 owns the rights-aware copy/print/external/export broker. These tasks remain unfinished.",
+      "Integrated S04 end-to-end restart/relocation/recovery/rights/accessibility and independent slice review, required shared checkpoints and fresh full affected/repository/profile W2 qualification remain later gates.",
+      "Declared Windows x64 host only. No numerical minimum-hardware Reader gate is invented from the generic slice wording or parser4GiB cap; minimumTierQualified remains false for slice/Wave qualification and support disclosure. No2–3GiB support or actual8/16GiB model/tier qualification is claimed.",
+      "Installed application/shipping Core package, required packaging/platform/hardware/security/privacy/accessibility matrix, independent Wave review and separate human release approval remain open. Configurable resource-fit models require the unadopted successor route; larger resource work remains W5."
+    ]
+  },
+  "scope_limits": {
+    "qualification": "CAP-05.S04.T01 R01 only at91fe7b. Task approval is not integrated slice qualification, W2 completion or release.",
+    "native": "Actual owned Wry state, production handlers, supervised Core, Windows-protected vault and SQLCipher/encrypted objects. Accepted text fixture is explicit synthetic IR retained/accepted through real revision APIs with the parse pump stopped; no parser/model run. Handler tests do not prove actual renderer IPC dispatch, manual-lock UI or OS-close invocation.",
+    "renderer": "Actual embedded approved renderer/pinned worker/Native/Core original-viewer opens and128MiB/500-page use; mounted journey and hostile SDK proofs have declared synthetic ports. Their scopes are composed, not conflated into one end-to-end test.",
+    "runtime": "The actual installed source-fixture Python/Core runtime is authenticated at8758 files and held write/delete-denied, with expected bytes compared before/after. It is not sealed shipping Core package122 or global OS/WebView/runtime qualification. The verified copied Native/frontend package and signed-worker clone are held under the existing immutable directory boundary for the measured lifetime.",
+    "memory": "Worker allowance equals authenticated source length+16MiB, maximum144MiB; main/surfaces64MiB, assets8MiB and range/transfer headroom8MiB leave a source-dependent Core allowance, minimum32MiB. Core reserves24MiB for full4MiB encrypted frames/context and cumulatively admits protected artifact backing at128*bytes+4096 before allocation, without nested refunds. Shared window budgeting and reference-counted Core lifetime prevent old in-flight generations from disappearing. Unknown physical drain retains admission. Full Windows no-breakaway owned-job kernel aggregate committed peak is a separate measured quantity, including general objects, Native/Core and all WebView descendants.",
+    "hardware": "Recorded Windows10.0.26200 x64 host, Intel i5-14600KF14 cores/20 logical processors,16586160KiB installed physical memory and3870664KiB free at latency05 start. Using that declared host is not an8/16GiB model run. minimumTierQualified:false; no2–3GiB or4GiB laptop claim.",
+    "shutdown": "Owned Core marker release before forced cleanup and zero remaining owned processes are proven. Stress observes five WebView descendants after Native exit; the owned job terminates them. Natural complete application descendant shutdown is not claimed.",
+    "helper": "The unchanged generic architecture helper still reports three stale classifications; current product-boundary proof verifies protected adapter roles, relative port resolution and required composition while preserving the helper FAIL. The unchanged product/security selector limitations and exploratory broad test typing failure remain adverse, not generic profile PASS."
+  },
+  "preserved_adverse_observations": [
+    "CRA01-F01 remains OPEN_AT_REVIEWED_CANDIDATE in its immutable advisory at1941bfa; this ledger supplies only the supported current-candidate resolution narrative.",
+    "Earlier complete accepted/result artifact overlap exceeded the Viewer backing budget. The Viewer-only cumulative admission and lifetime correction restore the existing256MiB requirement; ordinary revision/reconciliation/parser contracts are unchanged.",
+    "Native accepted zero-test invocation, old undersized resource-denial fixture, seed parse-pump/model-nonexecution uncertainty, maximum close setup failure and stdout-label publication failure remain preserved through partial-observations-02 and their original records. No historical attempt is promoted to PASS.",
+    "Latency01's initial cold13 handoff failure remains of unknown cause and has no sample. Latency02's stale owned marker and append-only timeline correction remain retained. Normal Core shutdown grace prevents stale-marker successors; it is not evidence that cold13's initial cause was repaired.",
+    "Latency03 warm nearest-rank p95=3007.8004ms at100ms requested polling remains FAIL. Latency05 prospectively uses20ms requested first-page polling with all scan/event overhead, new20+20 samples and strict3000ms comparison. No interval subtraction, rounded boundary, discarded warm initial sample or historical sample reuse occurs.",
+    "Direct Native startup STATUS_ENTRYPOINT_NOT_FOUND with empty stdout, broad static/test typing failures, initial generic architecture defect and subsequent stale classifications, unchanged product/security selector failures, and package preparation failures remain unchanged. Isolated test manifest assembly uses only the existing approved Common Controls6/asInvoker/uiAccessfalse resource with bound input/output/manifest/SDK tool hashes.",
+    "The first R01 draft was rejected for duplicate parent-producer command labels before atomic submission. Its exact bytes and the normalization producer are bound in the final manifest. Only actual child command labels and publication metadata changed; all other check fields, source, proof results and raw outputs stayed fixed.",
+    "Read-only frozen-packet authentication emitted the pre-existing sandbox interpreter real-location warning and exited0 with no binding errors. No test or runtime result is inferred from that warning."
+  ],
+  "evidence_reproduction": {
+    "frozen_packet_authentication": {
+      "result": "PASS",
+      "existing_read_only_binding_function": "taskctl.task_submission_packet_errors",
+      "errors": [],
+      "submitted_at": "2026-10-09T21:14:31+00:00",
+      "status_before_review": "REVIEW",
+      "submitted_by": "codex-w2-implementation",
+      "packet_sha256": "e6799265e7fc9d2a77b40c9ca7a77c4bba05d1876a6fc26444efb55b0c10ee0b",
+      "evidence_reference": {
+        "type": "criterion-manifest",
+        "path": "artifacts/evidence/CAP-05.S04.T01.R01.json",
+        "sha256": "d1cb8cece275ddcc4e4d4b5ffcc4687e91f69851d874d8f6052938d40d2e89bd",
+        "commit": "91fe7b323d2cddb2cd7de287f05b961af3472bc8",
+        "recorded_at": "2026-10-09T21:14:31+00:00"
+      },
+      "evidence_raw_sha256": "da690bfbca14106895e9d6a16377c5d710fe366eb5c18dfccfda772145a7d41d",
+      "acceptance_criteria_sha256": "746d0b01159a8ee9c013fbe9ad148c6d7321a6d7951936c404d5684dcde7eb69",
+      "selection_sha256": "485e4ce3fe1ac08f900b9d206b829235e741772c6ec0c6863636fd110cfd9a23",
+      "prior_attempt_id": null,
+      "formal_open_finding_ids_before_review": [],
+      "selected_command_id_count": 7,
+      "selected_check_count": 21,
+      "changed_paths": 96,
+      "base_ancestry_verified": true,
+      "head_verified": "91fe7b323d2cddb2cd7de287f05b961af3472bc8"
+    },
+    "artifact_authentication": {
+      "machine_artifact_count": 87,
+      "missing_or_mismatched_artifacts": [],
+      "raw_and_input_check_count": 21,
+      "missing_or_mismatched_check_bindings": [],
+      "changed_files_match_exact_base_diff": true,
+      "selected_command_spellings_unique": true,
+      "current_source_inputs_changed_by_reviewer": false
+    },
+    "qualifying_measurements": {
+      "latency": {
+        "path": "artifacts/tmp/CAP-05.S04.T01.qualifying-latency-05.json",
+        "fresh": true,
+        "raw_child_receipts_authenticated": true,
+        "cold": {
+          "count": 20,
+          "nearest_rank_p95_ms": 2659.1579,
+          "maximum_ms": 2663.047
+        },
+        "warm": {
+          "count": 20,
+          "nearest_rank_p95_ms": 2728.0284,
+          "maximum_ms": 2939.7765
+        },
+        "adopted_limit_ms": 3000,
+        "distribution_recomputed_by_reviewer": true,
+        "startup_diagnostic_excluded_as_nonqualifying": true,
+        "all_children_pass_exact_candidate_input_and_owned_cleanup_boundaries": true,
+        "duration_seconds": 715.4071192999836
+      },
+      "maximum_native": {
+        "path": "artifacts/tmp/CAP-05.S04.T01.qualifying-native-maximum-02.json",
+        "source_bytes": 134217728,
+        "range_bytes": 1048576,
+        "cancel_and_writer_ms": 39.885,
+        "terminal_exit_and_writer_ms": 36.0385,
+        "exact_correlated_drained_denial": true,
+        "independent_writer_preserved": true,
+        "fresh_tail_exact": true,
+        "writer_contention_alone_proves_authentication_phase": false,
+        "actual_os_close_requested": false,
+        "renderer_abort_dispatch_proven": false,
+        "manual_lock_proven": false
+      },
+      "maximum_renderer": {
+        "path": "artifacts/tmp/CAP-05.S04.T01.qualifying-stress-02.json",
+        "source_bytes": 134217728,
+        "pages": 500,
+        "first_page_observed_ms": 10606.2057,
+        "last_page_search_render_adjacent_navigation_return": true,
+        "kernel_peak_aggregate_committed_bytes": 621080576,
+        "active_descendants_after_native_exit": 5,
+        "active_owned_processes_after_cleanup": 0,
+        "core_marker_released_before_forced_cleanup": true,
+        "representative_p95_claim": false
+      },
+      "selected_case_counts": {
+        "core_private_api_encrypted_admission_fairness": 32,
+        "renderer_ownership_units": 27,
+        "native_ownership_units": 9,
+        "actual_sdk_worker_cancel_reopen": 6,
+        "mounted_reader_and_hostile_decoder": 10
+      }
+    },
+    "partial_adverse_index": {
+      "path": "artifacts/evidence/CAP-05.S04.T01.partial-observations-02.json",
+      "sha256": "4adca41b87c2f31d442d679e942185b24ae185ab5102a0e33269053094850485",
+      "current_qualification": false
+    },
+    "reviewer_tests_executed": []
+  },
+  "optional_adjacent_findings": [],
+  "notes": "Approve CAP-05.S04.T01 R01 at exact candidate91fe7b323d2cddb2cd7de287f05b961af3472bc8. All three task criteria are satisfied by the reviewed source and21 fresh selected checks, with87 authenticated artifacts and exact frozen packet/criterion/selection bindings. Fresh20 cold and20 warm actual Reader opens give nearest-rank p95=2659.1579ms and2728.0284ms under the owner-adopted3000ms target; no additional tuning is warranted for this task. CRA01-F01 is resolved at this candidate by exact physical-drain/unknown-denial/lifetime implementation and fresh real Core/Native plus SDK/renderer regressions; its historical advisory remains unchanged and no controlled closure is invented. No new finding is open. Approval is task-only: minimum-tier, T02/T03, integrated slice/checkpoint, shipping packaging/full affected profiles and independent Wave qualification plus the separate human release gate remain required.",
+  "task_approval": true,
+  "slice_approval": false,
+  "wave_completion": false,
+  "release_approval": false
+}
