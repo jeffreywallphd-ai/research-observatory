@@ -11,7 +11,7 @@ use std::path::{Path, PathBuf};
 use std::process::{Child, ChildStdin, ChildStdout, Command, Stdio};
 use std::sync::mpsc;
 use std::time::{Duration, Instant};
-use tauri::{ipc::IpcResponse, Manager};
+use tauri::{Manager, ipc::IpcResponse};
 
 struct Writer {
     process: Child,
@@ -165,16 +165,18 @@ fn exercise(
         std::thread::sleep(Duration::from_millis(2));
     }
     let began = Instant::now();
-    assert!(tauri::async_runtime::block_on(document_viewer_cancel(
-        window.clone(),
-        window.state(),
-        ViewerCancelRequest {
-            schema_version: "1.0".into(),
-            project_id: key.0.clone(),
-            request_id: key.1.clone(),
-        },
-    ))
-    .is_ok());
+    assert!(
+        tauri::async_runtime::block_on(document_viewer_cancel(
+            window.clone(),
+            window.state(),
+            ViewerCancelRequest {
+                schema_version: "1.0".into(),
+                project_id: key.0.clone(),
+                request_id: key.1.clone(),
+            },
+        ))
+        .is_ok()
+    );
     let result = receive
         .recv_timeout(Duration::from_secs(1))
         .expect("exact original range settles");
@@ -216,11 +218,67 @@ fn exercise(
         format!("{:x}", Sha256::digest(bytes)),
         receipt["tailSha256"].as_str().unwrap()
     );
-    // Explicit-none has no manual application lock. Exercise its actual terminal
-    // close fence rather than forcing a state or claiming a lock witness.
+    // The terminal generation must stop an already issued real read, not just
+    // reject a later request. Explicit-none has no manual application lock.
+    let mut closing = request.clone();
+    closing.request_id = "00000000-0000-7000-8000-000000000025".into();
+    let closing_key = (closing.project_id.clone(), closing.request_id.clone());
+    let (send, receive) = mpsc::channel();
+    let owned_window = window.clone();
+    let running = std::thread::spawn(move || {
+        send.send(range(&owned_window, closing)).unwrap();
+    });
+    let pending_deadline = Instant::now() + Duration::from_secs(3);
+    loop {
+        let issued = manager
+            .pending
+            .lock()
+            .unwrap()
+            .active
+            .get(&closing_key)
+            .is_some_and(|pending| pending.session.lock().unwrap().is_some());
+        assert!(
+            matches!(receive.try_recv(), Err(mpsc::TryRecvError::Empty)),
+            "original range is unsettled before terminal exit"
+        );
+        if issued && writer.request("observe")["outcome"] == "busy" {
+            break;
+        }
+        assert!(
+            Instant::now() < pending_deadline,
+            "terminal exit starts during actual owned SQLCipher work"
+        );
+        std::thread::sleep(Duration::from_millis(2));
+    }
+    let began = Instant::now();
     window
         .state::<ApplicationLockManager>()
         .begin_terminal_exit();
+    let result = receive
+        .recv_timeout(Duration::from_secs(1))
+        .expect("terminal-exit range settles");
+    let failure = match result {
+        Err(failure) => failure,
+        Ok(_) => panic!("terminal exit delivered protected source bytes"),
+    };
+    assert_eq!(
+        (&failure.project_id, &failure.request_id),
+        (&closing_key.0, &closing_key.1)
+    );
+    assert!(
+        failure.drained,
+        "terminal exit carries actual Core reader closure"
+    );
+    let committed = writer.request("commit");
+    assert_eq!(committed["outcome"], "committed");
+    assert_eq!(committed["preserved"], true);
+    assert!(
+        began.elapsed() <= Duration::from_secs(1),
+        "terminal-exit drain AND writer commit <=1s"
+    );
+    let terminal_exit_and_writer_ms = began.elapsed().as_secs_f64() * 1000.0;
+    assert!(manager.no_active_owner(&closing_key));
+    running.join().unwrap();
     let mut closed = request;
     closed.request_id = "00000000-0000-7000-8000-000000000023".into();
     assert!(
@@ -232,7 +290,9 @@ fn exercise(
         json!({"kind":"native-viewer-max-cancel", "status":"PASS",
         "sourceBytes":MAX_SOURCE,"rangeBytes":MAX_RANGE,"correlatedDrainedDenial":true,
         "writerPreserved":true,"cancelAndWriterMs":cancel_and_writer_ms,
-        "freshTailExact":true,"terminalCloseDenied":true,"rendererAbortDispatchProven":false,
+        "freshTailExact":true,"terminalCloseDenied":true,"terminalExitDuringOwnedRange":true,
+        "terminalExitAndWriterMs":terminal_exit_and_writer_ms,"actualOsCloseRequested":false,
+        "manualLockProven":false,"rendererAbortDispatchProven":false,
         "writerContentionProvesAuthenticationPhase":false,"modelExecuted":false})
     );
 }
@@ -313,9 +373,11 @@ fn exercise_accepted(
         value["metadata"]["source"]["objectSha256"],
         receipt["sourceSha256"]
     );
-    assert!(!value
-        .to_string()
-        .contains(receipt["root"].as_str().unwrap()));
+    assert!(
+        !value
+            .to_string()
+            .contains(receipt["root"].as_str().unwrap())
+    );
     let outline = read_outline(&normal)
         .unwrap()
         .expect("real accepted outline crosses Native/Core");
@@ -327,9 +389,11 @@ fn exercise_accepted(
     assert_eq!(outline["source"], value["metadata"]["source"]);
     assert_eq!(outline["nodes"].as_array().unwrap().len(), 1);
     assert_eq!(outline["nodes"][0]["nodeId"], normal.node_id);
-    assert!(!outline
-        .to_string()
-        .contains(receipt["root"].as_str().unwrap()));
+    assert!(
+        !outline
+            .to_string()
+            .contains(receipt["root"].as_str().unwrap())
+    );
 
     let mut substituted = normal.clone();
     substituted.selector.document_revision_id = "018f0000-0000-7000-8000-ffffffffffff".into();
@@ -415,12 +479,14 @@ fn run_native_test(
         PathBuf::from(std::env::var_os("RO_VIEWER_NATIVE_FIXTURE").expect("fixture required"));
     assert_eq!(dunce::canonicalize(&fixture).unwrap(), fixture);
     assert_eq!(fixture.parent(), Some(repo.join("artifacts/tmp").as_path()));
-    assert!(fixture
-        .file_name()
-        .unwrap()
-        .to_str()
-        .unwrap()
-        .starts_with("directory-dialog-viewer-native-"));
+    assert!(
+        fixture
+            .file_name()
+            .unwrap()
+            .to_str()
+            .unwrap()
+            .starts_with("directory-dialog-viewer-native-")
+    );
     let python =
         PathBuf::from(std::env::var_os("RO_VIEWER_NATIVE_PYTHON").expect("Python required"));
     let payload = std::fs::read(fixture.join("viewer-receipt.json")).unwrap();
