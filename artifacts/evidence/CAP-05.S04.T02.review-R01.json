@@ -1,0 +1,190 @@
+{
+  "task_id": "CAP-05.S04.T02",
+  "attempt_id": "R01",
+  "reviewer": "agent:/root/reader_anchor_review",
+  "result": "approved",
+  "reviewed_state_commit": "68e1df19a0807058fd32c9c314c6852a5ac4a6ed",
+  "candidate_commit": "68e1df19a0807058fd32c9c314c6852a5ac4a6ed",
+  "base_commit": "780e1d8e79ad7136f9c362535e642adbfdeb5437",
+  "findings": [],
+  "closures": [],
+  "acceptance_reviews": [
+    {
+      "criterion_index": 1,
+      "result": "satisfied",
+      "assessment": "The closed versioned link carries only project, attachment, original, exact accepted revision and ordered opaque anchor identities. Current project/session/source/rights authority is reconstructed through Native/Core; path, token, quote and cached permission are not persisted in the link. The corrected Reader entry and session keys include the linked normalized revision, so a successive B link cannot retain A. Actual shipping renderer/Wry/Native/Core initial, restart and physically relocated runs restore two distinct contexts for the older accepted revision after a later head exists. Restart and relocation each contain two complete UIA snapshots with both context sections and exact old revision metadata; genuine Work/version return, owned exit0 and cleanup0 pass. The physical move preserves the 15 project files and removes the old project path, while preserving the genuine destination lifecycle and closed profile state. Mounted tests establish missing/broken canonical revision metadata and source-review return without rewriting anchors or substituting a different revision. Future evidence/graph pages and OS-global protocol registration are not claimed."
+    },
+    {
+      "criterion_index": 2,
+      "result": "satisfied",
+      "assessment": "The selected proof contains28 fresh renderer value/ownership units,13 fresh mounted Reader journeys,10 fresh Native ownership/drain units, real Native protected-context handlers and three actual shipping Reader phases. The successful13-case encrypted Core/API child from3b is reused only after authenticating its unchanged source/test/producer and installed runtime input closure; its original overall failed report remains adverse. Tests cover multiple distinct retained contexts without full IR, later-head stability, original/anchor/normalized revision substitution, derive denial, broken protected context, resource denial before decryption and post-read rights revocation before delivery. Renderer admission retains old in-flight charge until proven physical settlement, blocks unknown settlement/replacement and prevents late A or locked/substituted results from publishing. Unicode inert highlights, rotated geometry/fallback, keyboard/focus/reflow/themes and exact Work/version return are covered by mounted proofs with declared synthetic ports. Direct Native handlers and actual shipping invocation are identified separately; no manual-lock/in-flight OS-close claim is invented."
+    },
+    {
+      "criterion_index": 3,
+      "result": "satisfied",
+      "assessment": "The39-path claim-base-to-candidate inventory matches the reviewed manifest and frozen submission. Changes are bounded to opaque link/schema/transport, retained protected anchor resolution, current-authority delivery checks, Reader handoff/context/highlighting, tests/fixtures and relevant task/contract documentation. No database migration, encryption envelope, canonical identity/rights authority or automation framework is changed. The accepted ADR0029 governs exact immutable revision and protected source viewing; proposed ADR0047 is documentary mapping, not new authority. Fresh affected format/lint, generated link schema, ADR check at68, style conformance, TypeScript and renderer units pass. Registered command IDs describe affected coverage; schema generation is not full unit discovery and product-style is not ui_change_gate or full-profile execution. The approved inherited reference1.9, product frontend inventory, fresh release Native build, copied package and actual installed Core runtime are authenticated. No unrelated future page/export broker, forbidden8/16GiB model/tier run, latency optimization or accepted parser-overage tuning is included."
+    }
+  ],
+  "advisory_resolution": {
+    "finding_id": "CAP-05.S04.T02-ADVISORY-F01",
+    "prior_record": {
+      "path": "artifacts/evidence/CAP-05.S04.T02.review-advisory-01.md",
+      "reviewed_candidate": "98f7fea87a88c359ea73d867e5472697ac2c45e6",
+      "preserved_status": "blocking_at_reviewed_candidate",
+      "sha256": "dd4edbb783cae0f8ef1802e182cabf6dec83ada183a5797580764d6fcf357c5c"
+    },
+    "current_candidate": "68e1df19a0807058fd32c9c314c6852a5ac4a6ed",
+    "disposition": "resolved_at_current_candidate",
+    "controlled_closure_created": false,
+    "assessment": "The98 advisory exposed an A-to-B link retaining A because normalized revision was absent from entry/session identity. The owner preserved a first-failing mounted regression, then included the linked normalized revision in both keys. Current mounted13 replays successive links with and without an existing handoff and a late A completion. The corrected late-A test first requires resource denial/no context while A physically drains, then releases A and retries to obtain exact B contexts without stale A publication. This restores the required conservative admission invariant rather than weakening a valid protection. The sole3b-to68 diff is that test expectation; affected quality and all mounted cases are fresh at68. The advisory is historical candidate evidence, not a prior controlled RNN finding; no controlled closure is invented and the original bytes/status remain preserved.",
+    "check_ids": [
+      "mounted-reader-journey",
+      "renderer-values-ownership",
+      "shipping-reader-link-restart",
+      "shipping-reader-link-relocated"
+    ]
+  },
+  "independence": {
+    "implementation_owner": "codex-w2-implementation",
+    "statement": "I independently reviewed the governing approved scope/ADR/contracts and bounded source diff, reproduced the98 exact-revision defect through an ignored mounted diagnostic, and reviewed its correction, retained adverse evidence, final producers and raw results. I authored no product correction, committed regression, qualification producer, command normalization, planning/taskctl mutation or commit. This ledger is my sole current tracked write; the earlier advisory remains immutable. I executed no current-candidate test/build/benchmark or optional full-profile replay. Shared HEAD stayed68; the owner's submission/generated-view publication is separate from qualified product inputs."
+  },
+  "verification_selection": {
+    "selectedCommandIds": [
+      "desktop:application",
+      "desktop:unit",
+      "documents:unit",
+      "foundation:adr",
+      "foundation:quality",
+      "foundation:ui-change"
+    ],
+    "riskAnalysis": "Expanded independent task review covers the new public/cross-process opaque link and anchor contract, exact source/revision/identity, rights at issue/delivery, protected-read memory/physical settlement, stale generation fencing, governed Reader/accessibility and durable restart/physical relocation. Replay ADVISORY-F01 and incremental corrected late-A test risks; authenticate15 selected check bindings,60 artifacts, installed runtime/package/source closures and actual UIA/raw Native witnesses. Only the successful unchanged encrypted Core/API child is reused with explicit old candidate provenance; all inexpensive affected quality/schema/ADR/style/TypeScript/renderer and mounted results are fresh.",
+    "deferred": [
+      "CAP-05.S04.T03 rights-aware copy/print/external-open/annotation/quotation export remains unfinished ordered scope.",
+      "Integrated S04 end-to-end evidence/independent slice review, required checkpoints and fresh full affected/repository/profile W2 qualification remain required.",
+      "Required platform/hardware/security/privacy/rights/accessibility/performance/packaging matrix, installed/sealed shipping Core package and independent Wave review plus separate human release gate remain open.",
+      "No actual8/16GiB model/tier qualification, invented minimum-hardware or2–3GiB claim. Configurable resource-fit models remain an unadopted successor; larger resource work remains W5. Existing T01 latency/adopted parser overage is not retested or tuned."
+    ]
+  },
+  "scope_limits": {
+    "qualification": "CAP-05.S04.T02 R01 only at68. Task approval is not integrated slice, W2 or release approval.",
+    "native": "Actual owned Wry state, production Native handlers, supervised Core, Windows-protected vault and encrypted accepted artifacts. Direct handlers do not establish renderer invoke dispatch, manual lock or in-flight OS-close testing. Separate shipping phases prove actual renderer invocation and restart/physical relocation.",
+    "renderer": "Actual shipping product renderer in the existing integration-harness Native startup for one owned synthetic project; no renderer port override, debugger or JS injection. Mounted interaction proofs use declared synthetic fixture ports/decoder.",
+    "runtime": "Authenticated actual installed Python/Core runtime8758 files, product package/frontend, Native binaries and signed-worker selector. This is not sealed shipping Core122, installer/signing or global Windows/WebView runtime qualification.",
+    "source_fixture": "Explicit authored synthetic accepted IR retained through real revision APIs; no parser/model execution, scholarly source accuracy or hardware-tier performance claim.",
+    "recovery": "Missing/broken anchors retain canonical revision and return for source review without rewriting canonical IDs or silently replacing the revision. Future repair/replacement surfaces and OS-global URI registration are not implemented or claimed."
+  },
+  "preserved_adverse_observations": [
+    "ADVISORY-F01 remains blocking at reviewed98 in the immutable advisory; only the current-candidate resolution is supplied here.",
+    "Focused02's late-A mounted expectation failed because the required shared budget correctly denied B while A was draining. The corrected test preserves that protection and passes fresh current-candidate mounted13.",
+    "Focused03's broad quality/Node/ADR reuse attribution is invalid and remains adverse/supporting. Only its fresh mounted build/journey is selected; focused04 freshly replaces cheap affected results, and only the original successful Core/API child is separately authenticated/reused.",
+    "Raw prior unregistered foundation:contracts and desktop:style IDs and foundation:architecture ADR labeling remain in immutable reports. Final registered logical affected-coverage attribution retains exact original argv/output/digests and does not claim a full profile PASS.",
+    "Restart02's partial UIA observation failed the strict canonical context predicate and its forced cleanup left a synthetic stale marker. Restart03 correctly denied that marker; marker bytes and independently proven dead owner were preserved.",
+    "Restart04 had complete context snapshots but failed due to producer Unicode decoding. Successor05 changes only producer UTF8/Unicode escape and cleanup logging; complete stable contexts/metadata remain required. No source defect repair is inferred from these producer/setup corrections.",
+    "The initial R01 publication was rejected before freezing a round because aggregate producer commands were duplicated. The unpublished manifest and rejection remain preserved. Final publication normalizes distinct actual child command labels and explanatory provenance and updates the task-owned binder digest; all source, raw results, input reports, other check fields and artifact records remain unchanged.",
+    "Read-only authentication emitted the pre-existing sandbox interpreter real-location warning, with scripts returning0 except an explicitly corrected review-only UTF8 BOM read. No test/runtime result is inferred from either diagnostic."
+  ],
+  "evidence_reproduction": {
+    "artifact_authentication": {
+      "machine_artifact_count": 60,
+      "missing_or_mismatched_artifacts": [],
+      "raw_and_input_check_count": 15,
+      "missing_or_mismatched_check_bindings": [],
+      "selected_report_input_unique_path_hash_count": 10592,
+      "selected_report_input_mismatches": [],
+      "native_build_source_and_raw_bindings_authenticated": true,
+      "changed_files_match_exact_base_diff": true,
+      "selected_command_spellings_unique": true,
+      "current_source_inputs_changed_by_reviewer": false
+    },
+    "qualifying_measurements": {
+      "selected_case_counts": {
+        "encrypted_core_private_api_reused": 13,
+        "renderer_units_fresh": 28,
+        "mounted_reader_fresh": 13,
+        "native_ownership_fresh": 10
+      },
+      "shipping_reader": {
+        "initial": {
+          "path": "artifacts/tmp/CAP-05.S04.T02.qualifying-reader-link-02.initial.json",
+          "duration_seconds": 28.86447849997785,
+          "complete_context_snapshots": 1
+        },
+        "restart": {
+          "path": "artifacts/tmp/CAP-05.S04.T02.qualifying-reader-link-05.restart.json",
+          "duration_seconds": 29.726376299979165,
+          "complete_context_snapshots": 2
+        },
+        "relocated": {
+          "path": "artifacts/tmp/CAP-05.S04.T02.qualifying-reader-link-05.relocated.json",
+          "duration_seconds": 30.322466199984774,
+          "complete_context_snapshots": 2
+        },
+        "distinct_contexts": 2,
+        "exact_old_revision_occurrences_per_complete_snapshot": 3,
+        "genuine_return": true,
+        "owned_exit": 0,
+        "owned_cleanup_active_processes": 0,
+        "later_head_does_not_substitute": true
+      },
+      "physical_relocation": {
+        "path": "artifacts/tmp/CAP-05.S04.T02.relocate-reader-fixture-01.json",
+        "old_project_path_absent": true,
+        "source_and_target_project_file_maps_equal": true,
+        "project_file_count": 15,
+        "genuine_target_lifecycle_preserved": true
+      }
+    },
+    "reviewer_current_candidate_tests_executed": [],
+    "reviewer_prior_diagnostic": "Ignored mounted98 exact-revision reproduction described in the immutable advisory; not current-candidate qualification.",
+    "publication_correction": {
+      "unpublished_manifest": {
+        "path": "artifacts/tmp/CAP-05.S04.T02.unsubmitted-manifest-01.json",
+        "sha256": "95831977eafaa4106b518aa50985175ba2d84a6d07553b35baec35c624c489b9"
+      },
+      "rejection_log": {
+        "path": "artifacts/tmp/CAP-05.S04.T02.submit-R01.run.log",
+        "sha256": "12645b38ac32617761ec0fc1b22af69bc8cd16461e8fa033e137aec3fc489195"
+      },
+      "scope": "Only check command labels/explanatory provenance and task-owned binder digest differ; product and qualifying result bytes unchanged."
+    },
+    "frozen_packet_authentication": {
+      "result": "PASS",
+      "existing_read_only_binding_function": "taskctl.task_submission_packet_errors",
+      "errors": [],
+      "manifest_binding_function": "taskctl.validate_task_evidence",
+      "manifest_errors": [],
+      "submitted_at": "2026-10-09T23:03:20+00:00",
+      "status_before_review": "REVIEW",
+      "submitted_by": "codex-w2-implementation",
+      "packet_sha256": "c2ab85de48ad8966b4830779a496e3fc4c6432f2cd18421d9d4e526ff5218b3d",
+      "evidence_reference": {
+        "type": "criterion-manifest",
+        "path": "artifacts/evidence/CAP-05.S04.T02.R01.json",
+        "sha256": "a67d9f45de0600ecc5844e2a3856e18f92bba021a1b827528f1a545ef5551c64",
+        "commit": "68e1df19a0807058fd32c9c314c6852a5ac4a6ed",
+        "recorded_at": "2026-10-09T23:03:20+00:00"
+      },
+      "evidence_raw_sha256": "567e24abf856269eb76e9be3d78c57b348417e661add669bd040fe5534ddece7",
+      "acceptance_criteria_sha256": "3e34632ceabf509a0b4a0b96ef42c102d5fa0f0346d3ddf2b00e39e84ad44426",
+      "selection_sha256": "eccdb0607102cd1ec3ec4421861e845f5ad1d71efc0261d950bd1ea832abffbb",
+      "prior_attempt_id": null,
+      "formal_open_finding_ids_before_review": [],
+      "selected_command_id_count": 6,
+      "selected_check_count": 15,
+      "changed_paths": 39,
+      "base_ancestry_verified": true,
+      "head_verified": "68e1df19a0807058fd32c9c314c6852a5ac4a6ed"
+    }
+  },
+  "optional_adjacent_findings": [],
+  "notes": "Approve CAP-05.S04.T02 R01 at exact candidate68e1df19a0807058fd32c9c314c6852a5ac4a6ed. The three task criteria are satisfied by the bounded source and15 selected checks with60 authenticated artifacts and exact frozen packet/criterion/selection bindings. ADVISORY-F01 is resolved by exact linked revision identity and current mounted successive-link/late-result regressions; its historical adverse record remains unchanged. Actual shipping restart and physical relocation each show two complete stable context snapshots at the exact older revision with genuine return, exit0 and owned cleanup0. No active blocker remains. Approval is task-only: T03, integrated S04/checkpoints, full affected W2/platform/hardware/packaging qualification, independent Wave review and separate human release gate remain required.",
+  "task_approval": true,
+  "slice_approval": false,
+  "wave_completion": false,
+  "release_approval": false,
+  "reviewed_at": "2026-10-09T23:11:06+00:00",
+  "packet_sha256": "c2ab85de48ad8966b4830779a496e3fc4c6432f2cd18421d9d4e526ff5218b3d",
+  "evidence_sha256": "a67d9f45de0600ecc5844e2a3856e18f92bba021a1b827528f1a545ef5551c64",
+  "acceptance_criteria_sha256": "3e34632ceabf509a0b4a0b96ef42c102d5fa0f0346d3ddf2b00e39e84ad44426",
+  "selection_sha256": "eccdb0607102cd1ec3ec4421861e845f5ad1d71efc0261d950bd1ea832abffbb"
+}

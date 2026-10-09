@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: c9512d073be60e1da9afbe8fa63c0e750dfb0b7dfcbb3fff7a36b6f611aaeb4f
+source_sha256: 31b718460b5e60218cc233ab0e586bdfb4502c5d203bb70d970b95e9313fe38e
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -11789,15 +11789,15 @@ Original tasks and approvals remain unchanged.
 
 **Currently open findings:** -
 
-#### - [ ] CAP-05.S04.T02 - Implement deep links, highlights, and context panels
+#### - [x] CAP-05.S04.T02 - Implement deep links, highlights, and context panels
 
-**Status / priority / estimate / risk:** `IN_PROGRESS` / `P0` / `L` / `medium`
+**Status / priority / estimate / risk:** `DONE` / `P0` / `L` / `medium`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
 **Dependencies:** `CAP-05.S04.T01`
 
-**Owner / review:** codex-w2-implementation / - (`-`)
+**Owner / review:** codex-w2-implementation / agent:/root/reader_anchor_review (`approved`)
 
 **Objective:** Navigation from evidence/graph/synthesis objects to highlighted source anchors with surrounding text, metadata, and processing status.
 
@@ -11817,17 +11817,55 @@ Original tasks and approvals remain unchanged.
 - python tools/verify.py --profile documents
 - python tools/verify.py --profile e2e-local
 
+**Evidence:**
+
+- `artifacts/evidence/CAP-05.S04.T02.R01.json` at `68e1df19a0807058fd32c9c314c6852a5ac4a6ed`
+
 ##### Review history — CAP-05.S04.T02
 
-**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+**Review mode:** `append-only v1` / 1 completed round(s)
 
-**Current latest-review projection:** `-` by - at `-`
+###### Round R01
 
-**Latest notes:** -
+**Immutable submission packet:** `R01` / packet SHA-256 `c2ab85de48ad8966b4830779a496e3fc4c6432f2cd18421d9d4e526ff5218b3d`
+
+- Candidate / base / branch: `68e1df19a0807058fd32c9c314c6852a5ac4a6ed` / `780e1d8e79ad7136f9c362535e642adbfdeb5437` / `codex/w2-implementation`
+- Submitted by / at: codex-w2-implementation / `2026-10-09T23:03:20+00:00`
+- Evidence: `artifacts/evidence/CAP-05.S04.T02.R01.json` / `a67d9f45de0600ecc5844e2a3856e18f92bba021a1b827528f1a545ef5551c64` / `68e1df19a0807058fd32c9c314c6852a5ac4a6ed`
+- Acceptance-criteria SHA-256: `3e34632ceabf509a0b4a0b96ef42c102d5fa0f0346d3ddf2b00e39e84ad44426`
+- Verification-selection SHA-256: `eccdb0607102cd1ec3ec4421861e845f5ad1d71efc0261d950bd1ea832abffbb`
+- Changed paths: `apps/desktop/src-tauri/src/document_viewer.rs`, `apps/desktop/src-tauri/src/document_viewer/windows_integration_tests.rs`, `apps/desktop/src-tauri/src/lib.rs`, `apps/desktop/src-tauri/src/supervisor.rs`, `apps/desktop/src/app.css`, `apps/desktop/src/app/ApplicationRuntime.tsx`, `apps/desktop/src/app/DocumentViewerWorkspace.tsx`, `apps/desktop/src/app/SourceAnchorReader.tsx`, `apps/desktop/src/app/ViewerAnchorContexts.tsx`, `apps/desktop/src/app/documentViewer.ts`, `apps/desktop/src/app/pdfDocumentViewer.ts`, `apps/desktop/src/app/viewerDeepLinks.test.ts`, `apps/desktop/src/app/viewerDeepLinks.ts`, `apps/desktop/src/app/viewerMainAdmission.test.ts`, `artifacts/evidence/CAP-05.S04.T02.review-advisory-01.md`, `artifacts/evidence/CAP-05.S04.T02.task-start.md`, `artifacts/evidence/ui-change/CAP-05.S04.T02.json`, `docs/adr/ADR-0047-bind-local-source-viewing-to-existing-protected-read-authority.md`, `docs/adr/index.json`, `docs/planning-implementation-plan.md`, `packages/contracts/documents/generate_parser_schema.py`, `packages/contracts/documents/source-viewing.md`, `packages/contracts/documents/viewer-deep-link.v1.schema.json`, `planning/backlog.yaml`, `planning/review-site/CAP-05/CAP-05.S04.T02.html`, `planning/review-site/CAP-05/CAP-05.S04.html`, `planning/review-site/manifest.json`, `planning/review-site/waves/W2.html`, `planning/status-summary.md`, `services/core-api/src/research_observatory_core/document_viewer_api.py`, `services/core-api/src/research_observatory_core/document_viewer_repository.py`, `services/core-api/src/research_observatory_core/document_viewer_service.py`, `services/core-api/src/research_observatory_core/ports/document_viewer.py`, `tests/contracts/test_viewer_deep_links.py`, `tests/desktop/fixtures/document-viewer.tsx`, `tests/desktop/test_document_viewer_interactions.py`, `tests/documents/test_viewer_anchor_context.py`, `tests/documents/viewer_native_windows_fixture.py`, `tests/service/test_document_viewer_api.py`
+- Selected checks: `.venv/Scripts/python.exe -B -m ruff format --check packages/contracts/documents/generate_parser_schema.py services/core-api/src/research_observatory_core/document_viewer_api.py services/core-api/src/research_observatory_core/document_viewer_repository.py services/core-api/src/research_observatory_core/document_viewer_service.py services/core-api/src/research_observatory_core/ports/document_viewer.py tests/contracts/test_viewer_deep_links.py tests/desktop/test_document_viewer_interactions.py tests/documents/test_viewer_anchor_context.py tests/documents/viewer_native_windows_fixture.py tests/service/test_document_viewer_api.py`, `.venv/Scripts/python.exe -B -m ruff check packages/contracts/documents/generate_parser_schema.py services/core-api/src/research_observatory_core/document_viewer_api.py services/core-api/src/research_observatory_core/document_viewer_repository.py services/core-api/src/research_observatory_core/document_viewer_service.py services/core-api/src/research_observatory_core/ports/document_viewer.py tests/contracts/test_viewer_deep_links.py tests/desktop/test_document_viewer_interactions.py tests/documents/test_viewer_anchor_context.py tests/documents/viewer_native_windows_fixture.py tests/service/test_document_viewer_api.py`, `.venv/Scripts/python.exe -B packages/contracts/documents/generate_parser_schema.py --check`, `.venv/Scripts/python.exe -B tools/adr_check.py --repo . --base 780e1d8e79ad7136f9c362535e642adbfdeb5437 --head 68e1df19a0807058fd32c9c314c6852a5ac4a6ed`, `.venv/Scripts/python.exe -B tools/product_style_check.py --repo .`, `.local/toolchains/node-v24.19.0-win-x64/node.exe apps/desktop/node_modules/typescript/bin/tsc --noEmit -p apps/desktop/tsconfig.json`, `.local/toolchains/node-v24.19.0-win-x64/node.exe apps/desktop/node_modules/vitest/vitest.mjs run apps/desktop/src/app/viewerDeepLinks.test.ts apps/desktop/src/app/viewerMainAdmission.test.ts apps/desktop/src/app/documentViewer.test.ts apps/desktop/src/app/documentViewerNative.test.ts apps/desktop/src/app/pdfDocumentViewer.test.ts apps/desktop/src/app/sourceAnchors.test.ts`, `.venv/Scripts/python.exe -B -m unittest -v tests.contracts.test_viewer_deep_links tests.documents.test_viewer_anchor_context tests.service.test_document_viewer_api.DocumentViewerApiTests.test_retained_anchor_private_api_is_exact_and_rejects_renderer_authority tests.service.test_document_viewer_api.DocumentViewerApiTests.test_anchor_private_api_denies_substitution_derive_and_expired_session_without_text tests.service.test_document_viewer_api.DocumentViewerApiTests.test_anchor_rights_revoked_after_physical_read_deny_delivery tests.service.test_document_viewer_api.DocumentViewerApiTests.test_exact_accepted_text_crosses_private_transport_without_anchor_creation tests.service.test_document_viewer_api.DocumentViewerApiTests.test_viewer_outline_and_text_use_admission_while_normal_revision_read_is_unchanged`, `.local/toolchains/node-v24.19.0-win-x64/node.exe tests/desktop/fixtures/document-viewer.mjs artifacts/tmp/CAP-05.S04.T02.viewer-ui-fixture-06`, `.venv/Scripts/python.exe -B -m unittest -v tests.desktop.test_document_viewer_interactions`, `./.venv/Scripts/python.exe -B artifacts/tmp/CAP-05.S04.T02.qualifying-native-units-01.py 68e1df19a0807058fd32c9c314c6852a5ac4a6ed`, `./.venv/Scripts/python.exe -B artifacts/tmp/CAP-05.S04.T02.qualifying-native-accepted-03.py 68e1df19a0807058fd32c9c314c6852a5ac4a6ed`, `./.venv/Scripts/python.exe -B artifacts/tmp/CAP-05.S04.T02.qualifying-reader-link-02.py 68e1df19a0807058fd32c9c314c6852a5ac4a6ed initial`, `./.venv/Scripts/python.exe -B artifacts/tmp/CAP-05.S04.T02.qualifying-reader-link-05.py 68e1df19a0807058fd32c9c314c6852a5ac4a6ed restart`, `./.venv/Scripts/python.exe -B artifacts/tmp/CAP-05.S04.T02.qualifying-reader-link-05.py 68e1df19a0807058fd32c9c314c6852a5ac4a6ed relocated`
+- Deferred checks: `T03 policy-driven copy/print/external-open/annotation/quotation export remains ordered unfinished scope; current broad blocked actions are not completion evidence.`, `Integrated S04 slice and checkpoint review, fresh full affected repository/profiles and cross-capability/security/privacy/rights/accessibility/performance/packaging/required-platform W2 qualification plus independent Wave review and separate human release gate remain required.`, `No actual8/16GiB model/tier runs; larger-resource work remains W5. Configurable resource-fit models/possible2–3GiB operation remain separate unadopted successor; no minimum-hardware claim. Existing T01 LT01 p95 and accepted parser overage are not retested here.`
+- Selection rationale: Exact-revision links cross Renderer/Native/Core, rights/delivery and protected-read lifetime boundaries: require real encrypted Core and Native plus actual shipping restart/physical relocation, current candidate mounted failure replay and focused value/quality/schema/ADR/style checks. Only the successful unchanged Core/API child group is reused with authenticated input closure; no broad Node/quality/ADR reuse. Shared HEAD/selected inputs fixed during current runs.
+- Prior round / replayed open findings: `-` / -
+- Root-cause escalation: -
+
+**Disposition / reviewer / time:** `approved` / agent:/root/reader_anchor_review / `2026-10-09T23:11:49+00:00`
+
+**Immutable review ledger:** `artifacts/evidence/CAP-05.S04.T02.review-R01.json` / `61224917b84283296d53629a2fa3812e252f05d87bb41c87b1f86369735ca710`
+
+**Review notes:** Approve CAP-05.S04.T02 R01 at exact candidate68e1df19a0807058fd32c9c314c6852a5ac4a6ed. The three task criteria are satisfied by the bounded source and15 selected checks with60 authenticated artifacts and exact frozen packet/criterion/selection bindings. ADVISORY-F01 is resolved by exact linked revision identity and current mounted successive-link/late-result regressions; its historical adverse record remains unchanged. Actual shipping restart and physical relocation each show two complete stable context snapshots at the exact older revision with genuine return, exit0 and owned cleanup0. No active blocker remains. Approval is task-only: T03, integrated S04/checkpoints, full affected W2/platform/hardware/packaging qualification, independent Wave review and separate human release gate remain required.
+
+**Findings opened:**
+
+- None
+
+**Prior finding closures:**
+
+- None
+
+**Current immutable submission awaiting review:** None
+
+**Current latest-review projection:** `approved` by agent:/root/reader_anchor_review at `2026-10-09T23:11:49+00:00`
+
+**Latest notes:** Approve CAP-05.S04.T02 R01 at exact candidate68e1df19a0807058fd32c9c314c6852a5ac4a6ed. The three task criteria are satisfied by the bounded source and15 selected checks with60 authenticated artifacts and exact frozen packet/criterion/selection bindings. ADVISORY-F01 is resolved by exact linked revision identity and current mounted successive-link/late-result regressions; its historical adverse record remains unchanged. Actual shipping restart and physical relocation each show two complete stable context snapshots at the exact older revision with genuine return, exit0 and owned cleanup0. No active blocker remains. Approval is task-only: T03, integrated S04/checkpoints, full affected W2/platform/hardware/packaging qualification, independent Wave review and separate human release gate remain required.
+
+**Currently open findings:** -
 
 #### - [ ] CAP-05.S04.T03 - Enforce rights-aware viewer actions and export
 
-**Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `M` / `high`
+**Status / priority / estimate / risk:** `READY` / `P0` / `M` / `high`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
