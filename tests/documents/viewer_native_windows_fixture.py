@@ -36,7 +36,7 @@ def confined(path: Path) -> Path:
     return resolved
 
 
-def seed() -> Path:
+def seed(*, accepted: bool = False) -> Path:
     from research_observatory_core.authentication import NativeWorkflowContext, capability_token_digest
     from research_observatory_core.config import CoreSettings
     from research_observatory_core.document_attachment_repository import LocalDocumentAttachmentService
@@ -62,7 +62,6 @@ def seed() -> Path:
         expected_authority="127.0.0.1:49152",
     )
     helper = ImportRuntimeCompositionTests()
-    operation, command = new_uuid_v7(), new_uuid_v7()
     with (
         patch(
             "research_observatory_core.repositories._windows_worker_capacity",
@@ -76,27 +75,36 @@ def seed() -> Path:
         session = runtime.context(str(project_root), selected["projectId"])
 
         def authored(service, actor):
+            operation, command = new_uuid_v7(), new_uuid_v7()
+
             def inspection(source, **_):
                 digest, size = hashlib.sha256(), 0
                 while block := source.read(65536):
                     digest.update(block)
                     size += len(block)
                 return SimpleNamespace(
-                    format="pdf", media_type="application/pdf", size_bytes=size, sha256=digest.hexdigest()
+                    format="plain-text" if accepted else "pdf",
+                    media_type="text/plain" if accepted else "application/pdf",
+                    size_bytes=size,
+                    sha256=digest.hexdigest(),
                 )
 
             local = LocalDocumentAttachmentService(
                 service._database, selected["projectId"], service._objects, inspector=inspection
             )
             with tempfile.TemporaryFile(dir=root / "temporary") as source:
-                write_bounded_pdf(source, pages=500, byte_length=128 * 1024**2)
-                source.seek(-1024 * 1024, 2)
+                if accepted:
+                    source.write(b"SYNTHETIC Native accepted-structure source.\n")
+                    source.seek(0)
+                else:
+                    write_bounded_pdf(source, pages=500, byte_length=128 * 1024**2)
+                    source.seek(-1024 * 1024, 2)
                 tail_digest = hashlib.sha256(source.read(1024 * 1024)).hexdigest()
                 source.seek(0)
                 candidate = local.stage(
                     source,
-                    source_name="synthetic-maximum-viewer.pdf",
-                    declared_media_type="application/pdf",
+                    source_name="synthetic-accepted-viewer.txt" if accepted else "synthetic-maximum-viewer.pdf",
+                    declared_media_type="text/plain" if accepted else "application/pdf",
                     source_assertion_revision_id=selected["sourceAssertionRevisionId"],
                     work_id=selected["workId"],
                     work_revision_id=selected["workRevisionId"],
@@ -131,6 +139,55 @@ def seed() -> Path:
         candidate, attachment, tail_digest = runtime._action(
             str(project_root), selected["projectId"], session, "1" * 32, authored
         )
+        accepted_receipts = None
+        if accepted:
+            publish_derive(runtime, project_root, selected["projectId"], session, candidate, "permitted")
+            normal = seed_revision(
+                app,
+                project_root,
+                selected["projectId"],
+                session,
+                attachment.attachment_id,
+                "SYNTHETIC accepted Native text.",
+            )
+            large = seed_revision(
+                app,
+                project_root,
+                selected["projectId"],
+                session,
+                attachment.attachment_id,
+                "S" * 65536,
+                expected=normal.revision_id,
+            )
+            denied_candidate, denied_attachment, _ = runtime._action(
+                str(project_root), selected["projectId"], session, "1" * 32, authored
+            )
+            publish_derive(runtime, project_root, selected["projectId"], session, denied_candidate, "permitted")
+            denied = seed_revision(
+                app,
+                project_root,
+                selected["projectId"],
+                session,
+                denied_attachment.attachment_id,
+                "SYNTHETIC denied derivative.",
+            )
+            publish_derive(runtime, project_root, selected["projectId"], session, denied_candidate, "denied")
+
+            def binding(item, original):
+                return {
+                    "selector": {
+                        "attachmentId": original.attachment_id,
+                        "documentRevisionId": original.document_revision_id,
+                        "normalizedRevisionId": item.revision_id,
+                    },
+                    "nodeId": item.structure.nodes[0].node_id,
+                }
+
+            accepted_receipts = {
+                "normal": binding(normal, attachment),
+                "large": binding(large, attachment),
+                "denied": binding(denied, denied_attachment),
+            }
         assert client.post("/projects/close", json={"root": str(project_root)}).status_code == 200
     assert (project_root / "state/project.sqlite3").read_bytes()[:16] != b"SQLite format 3\x00"
     receipt = {
@@ -145,13 +202,137 @@ def seed() -> Path:
         "sourceSha256": candidate.object_sha256,
         "sourceBytes": candidate.byte_length,
         "tailSha256": tail_digest,
-        "pages": 500,
+        "pages": None if accepted else 500,
         "seedAdapters": ["synthetic-inspection", "synthetic-capacity"],
         "modelExecuted": False,
     }
+    if accepted_receipts is not None:
+        receipt["acceptedFixtures"] = accepted_receipts
+        receipt["seedAdapters"].append("explicitly-synthetic-parser-output-through-real-revision-apis")
     with (root / "viewer-receipt.json").open("x", encoding="utf-8") as target:
         json.dump(receipt, target)
     return root
+
+
+def publish_derive(runtime, root, project, session, candidate, value):
+    """Publish actual copy-specific rights; never mutate policy tables."""
+    from research_observatory_core.domain_contracts import new_uuid_v7
+    from research_observatory_core.ports.rights import RightsPermissionDraft
+    from research_observatory_core.rights_policy import RightsUse
+
+    def publish(service, actor):
+        prior = service._rights.current(candidate.rights_subject, actor=actor)
+        assert prior is not None
+        permissions = tuple(
+            RightsPermissionDraft(
+                use=RightsUse(
+                    action=action,
+                    purpose="document-attachment" if action == "store" else "document-analysis",
+                    destination_kind="local-project",
+                ),
+                value=value if action == "derive" else "permitted",
+                basis="researcher-confirmed",
+                confidence="confirmed",
+                grantee_actor_id=actor.actor_id,
+                evidence_revision_ids=(candidate.source_assertion_revision_id,),
+            )
+            for action in ("store", "inspect", "derive")
+        )
+        service._rights.publish_draft(
+            candidate.rights_subject,
+            permissions,
+            prior.revision_id,
+            command_id=new_uuid_v7(),
+            command_sha256="5" * 64,
+            actor=actor,
+        )
+
+    runtime._action(str(root), project, session, "1" * 32, publish)
+
+
+def seed_revision(app, root, project, session, attachment, raw, *, expected=None):
+    """Retain and human-accept authored IR through the real repository APIs."""
+    from research_observatory_core.document_attachment_repository import LocalParserArtifactStager
+    from research_observatory_core.document_parse_workflow import DocumentParseInput
+    from research_observatory_core.document_revisions import DocumentRevisionAcceptance
+    from research_observatory_core.domain_contracts import new_uuid_v7
+    from research_observatory_core.parsing.contracts import DocumentIR
+    from research_observatory_core.parsing.requests import ParseSuccess
+    from research_observatory_core.parsing.selection import (
+        ParserRegistry,
+        RegisteredParser,
+        SelectionSource,
+        select_parser,
+    )
+
+    from tests.parsing import contract_fixtures
+    from tests.workflows.test_local_workflow_executor import WORKER_A
+
+    service = app.state.runtime.document_revisions
+    repository, selected, actor = service._repository(str(root), project, session, "1" * 32)
+    source = repository.source(attachment)
+    selection = select_parser(
+        (SelectionSource(source, "available", "primary"),),
+        ParserRegistry(
+            (RegisteredParser(contract_fixtures.descriptor("ro-native-text", ("plain-text",)), "available"),)
+        ),
+        primary_attachment_id=attachment,
+    )
+    intent = service.imports._action(str(root), lambda binding: service.imports._intent(binding))
+    inputs = DocumentParseInput(
+        project_id=project,
+        command_id=new_uuid_v7(),
+        actor_id=actor.actor_id,
+        session_id=session,
+        source=source,
+        selection=selection,
+        intent=intent,
+        policy_sha256=actor.policy_sha256,
+    )
+    job = repository.submit(inputs)
+    now = service.now()
+    claim = repository.queue.claim_next(
+        worker_id=WORKER_A,
+        concurrency_classes=("document",),
+        activity_types=("document-parse",),
+        now=now,
+        lease_duration_ms=30000,
+    )
+    assert claim is not None and claim.job_id == job.job_id
+    repository.queue.start(claim, now=now)
+    request = inputs.request(claim)
+    stager = LocalParserArtifactStager(
+        selected._database,
+        selected._objects,
+        claim=claim,
+        request=request,
+        actor=repository.actor,
+        guard=repository.guard,
+        now=service.now,
+    )
+    artifact = stager(
+        request,
+        b'{"synthetic-parser-output":true}',
+        media_type="application/vnd.research-observatory.text-parser-output+json",
+        cancelled=lambda: False,
+    )
+    wire = contract_fixtures.ir(request.binding, raw=raw).model_dump(mode="json", by_alias=True)
+    wire["rawArtifacts"] = [artifact.model_dump(mode="json", by_alias=True)]
+    retained, _ = repository.retain(
+        claim,
+        request,
+        ParseSuccess(schema_version="1.0", kind="success", binding=request.binding, ir=DocumentIR.model_validate(wire)),
+        stopped=lambda: False,
+    )
+    return repository.accept(
+        DocumentRevisionAcceptance(
+            command_id=new_uuid_v7(),
+            result_id=retained.result_id,
+            expected_current_revision_id=expected or source.document_revision_id,
+            confirmation_sha256=hashlib.sha256(retained.model_dump_json(by_alias=True).encode()).hexdigest(),
+            decision="accept-structure",
+        )
+    )
 
 
 def writer(root: Path) -> None:
@@ -237,13 +418,16 @@ def writer(root: Path) -> None:
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("action", choices=("seed", "writer"))
+    parser.add_argument("action", choices=("seed", "seed-accepted", "writer"))
     parser.add_argument("--fixture", type=Path)
     arguments = parser.parse_args()
-    if arguments.action == "seed":
+    if arguments.action in {"seed", "seed-accepted"}:
         if os.name != "nt":
             raise RuntimeError("windows-principal-required")
-        print(json.dumps({"fixture": str(seed()), "modelExecuted": False}), flush=True)
+        print(
+            json.dumps({"fixture": str(seed(accepted=arguments.action == "seed-accepted")), "modelExecuted": False}),
+            flush=True,
+        )
     elif arguments.fixture is not None:
         writer(arguments.fixture)
     else:

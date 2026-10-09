@@ -1,4 +1,4 @@
-//! Opt-in actual Wry/Native/Core maximum-source cancellation with a real writer.
+//! Opt-in actual Wry/Native/Core reads, rights and maximum-source cancellation.
 //! Direct production handler calls do not prove renderer abort dispatch; the
 //! actual shipping-renderer observation and source-held Core regression are
 //! separate evidence. Writer contention is not an authentication-phase marker.
@@ -11,7 +11,7 @@ use std::path::{Path, PathBuf};
 use std::process::{Child, ChildStdin, ChildStdout, Command, Stdio};
 use std::sync::mpsc;
 use std::time::{Duration, Instant};
-use tauri::{Manager, ipc::IpcResponse};
+use tauri::{ipc::IpcResponse, Manager};
 
 struct Writer {
     process: Child,
@@ -165,18 +165,16 @@ fn exercise(
         std::thread::sleep(Duration::from_millis(2));
     }
     let began = Instant::now();
-    assert!(
-        tauri::async_runtime::block_on(document_viewer_cancel(
-            window.clone(),
-            window.state(),
-            ViewerCancelRequest {
-                schema_version: "1.0".into(),
-                project_id: key.0.clone(),
-                request_id: key.1.clone(),
-            },
-        ))
-        .is_ok()
-    );
+    assert!(tauri::async_runtime::block_on(document_viewer_cancel(
+        window.clone(),
+        window.state(),
+        ViewerCancelRequest {
+            schema_version: "1.0".into(),
+            project_id: key.0.clone(),
+            request_id: key.1.clone(),
+        },
+    ))
+    .is_ok());
     let result = receive
         .recv_timeout(Duration::from_secs(1))
         .expect("exact original range settles");
@@ -242,23 +240,187 @@ fn exercise(
 #[test]
 #[ignore = "opt-in real Windows principal, owned Wry event loop and seeded encrypted maximum fixture"]
 fn real_native_maximum_cancel_releases_writer_and_preserves_exact_tail() {
+    run_native_test("RO_RUN_VIEWER_NATIVE_MAX", exercise);
+}
+
+#[test]
+#[ignore = "opt-in real Windows principal, owned Wry event loop and synthetic accepted encrypted fixture"]
+fn real_native_accepted_text_outline_rights_resource_and_close_fences() {
+    run_native_test("RO_RUN_VIEWER_NATIVE_ACCEPTED", exercise_accepted);
+}
+
+fn exercise_accepted(
+    window: tauri::WebviewWindow,
+    _repo: PathBuf,
+    _fixture: PathBuf,
+    _python: PathBuf,
+    receipt: Value,
+) {
+    let supervisor = window.state::<RuntimeSupervisor>();
+    let deadline = Instant::now() + Duration::from_secs(60);
+    while supervisor.status().state != RuntimeState::Ready {
+        assert!(
+            Instant::now() < deadline,
+            "actual supervised Core becomes ready"
+        );
+        std::thread::sleep(Duration::from_millis(25));
+    }
+    let opened = supervisor
+        .api_request(&CoreApiRequest {
+            method: "POST".into(),
+            path: "/projects/open".into(),
+            body: Some(json!({"root":receipt["root"]}).to_string()),
+            if_match: None,
+            idempotency_key: None,
+        })
+        .expect("real selected-project authority");
+    assert_eq!(opened.status, 200);
+    let text = |fixture: &Value| -> ViewerTextRequest {
+        serde_json::from_value(
+            json!({"schemaVersion":"1.0", "projectId":receipt["projectId"],
+            "selector":fixture["selector"], "nodeId":fixture["nodeId"], "offset":0}),
+        )
+        .unwrap()
+    };
+    let read_text = |request| {
+        tauri::async_runtime::block_on(document_viewer_text(
+            window.clone(),
+            window.state(),
+            window.state(),
+            request,
+        ))
+    };
+    let read_outline = |request: &ViewerTextRequest| {
+        tauri::async_runtime::block_on(document_viewer_outline(
+            window.clone(),
+            window.state(),
+            window.state(),
+            ViewerOutlineRequest {
+                schema_version: request.schema_version.clone(),
+                project_id: request.project_id.clone(),
+                selector: request.selector.clone(),
+                after_node_id: None,
+            },
+        ))
+    };
+    let normal = text(&receipt["acceptedFixtures"]["normal"]);
+    let value = read_text(normal.clone())
+        .unwrap()
+        .expect("real accepted text crosses Native/Core");
+    assert!(text_matches(&value, &normal));
+    assert_eq!(value["text"], "SYNTHETIC accepted Native text.");
     assert_eq!(
-        std::env::var("RO_RUN_VIEWER_NATIVE_MAX").as_deref(),
-        Ok("1")
+        value["metadata"]["source"]["objectSha256"],
+        receipt["sourceSha256"]
     );
+    assert!(!value
+        .to_string()
+        .contains(receipt["root"].as_str().unwrap()));
+    let outline = read_outline(&normal)
+        .unwrap()
+        .expect("real accepted outline crosses Native/Core");
+    assert_eq!(outline["scholarlyVerification"], "unverified");
+    assert_eq!(
+        outline["revisionId"].as_str(),
+        normal.selector.normalized_revision_id.as_deref()
+    );
+    assert_eq!(outline["source"], value["metadata"]["source"]);
+    assert_eq!(outline["nodes"].as_array().unwrap().len(), 1);
+    assert_eq!(outline["nodes"][0]["nodeId"], normal.node_id);
+    assert!(!outline
+        .to_string()
+        .contains(receipt["root"].as_str().unwrap()));
+
+    let mut substituted = normal.clone();
+    substituted.selector.document_revision_id = "018f0000-0000-7000-8000-ffffffffffff".into();
+    assert!(matches!(read_text(substituted.clone()), Ok(None)));
+    assert!(matches!(read_outline(&substituted), Ok(None)));
+    let denied = text(&receipt["acceptedFixtures"]["denied"]);
+    assert_ne!(normal.selector.attachment_id, denied.selector.attachment_id);
+    assert!(matches!(read_text(denied.clone()), Ok(None)));
+    assert!(matches!(read_outline(&denied), Ok(None)));
+    let original = tauri::async_runtime::block_on(document_viewer_source(
+        window.clone(),
+        window.state(),
+        window.state(),
+        denied.source(),
+    ))
+    .unwrap()
+    .expect("derive-denied copy remains inspectable");
+    assert_eq!(
+        original["source"]["attachmentId"],
+        denied.selector.attachment_id
+    );
+    let original_range = range(
+        &window,
+        ViewerRangeRequest {
+            schema_version: "1.0".into(),
+            project_id: denied.project_id.clone(),
+            selector: denied.selector.clone(),
+            request_id: "018f0000-0000-7000-8000-000000000024".into(),
+            start: 0,
+            end: receipt["sourceBytes"].as_u64().unwrap(),
+        },
+    );
+    let bytes = match original_range {
+        Ok(response) => response.body().unwrap(),
+        Err(_) => panic!("derive-denied copy original range failed"),
+    };
+    match bytes {
+        tauri::ipc::InvokeResponseBody::Raw(bytes) => assert_eq!(
+            format!("{:x}", Sha256::digest(bytes)),
+            receipt["sourceSha256"].as_str().unwrap()
+        ),
+        _ => panic!("original range was not protected raw IPC"),
+    }
+    let large = text(&receipt["acceptedFixtures"]["large"]);
+    assert_eq!(
+        read_text(large.clone()),
+        Err("viewer-resource-limit".into())
+    );
+    assert_eq!(read_outline(&large), Err("viewer-resource-limit".into()));
+    assert_eq!(
+        read_text(normal.clone()).unwrap().unwrap()["text"],
+        value["text"]
+    );
+
+    window
+        .state::<ApplicationLockManager>()
+        .begin_terminal_exit();
+    assert_eq!(
+        read_text(normal.clone()),
+        Err("viewer-source-unavailable".into())
+    );
+    assert_eq!(
+        read_outline(&normal),
+        Err("viewer-source-unavailable".into())
+    );
+    println!(
+        "{}",
+        json!({"kind":"native-viewer-accepted", "status":"PASS",
+        "exactTextAndOutline":true, "substitutedSourceDenied":true, "copyDeriveDenied":true,
+        "deniedCopyOriginalExact":true, "resourceLimitMapped":true, "freshRetryExact":true,
+        "terminalCloseDenied":true, "inFlightCloseProven":false, "manualLockProven":false,
+        "rendererInvokeDispatchProven":false, "parserOutput":"explicitly-synthetic", "modelExecuted":false})
+    );
+}
+
+fn run_native_test(
+    flag: &str,
+    exercise: fn(tauri::WebviewWindow, PathBuf, PathBuf, PathBuf, Value),
+) {
+    assert_eq!(std::env::var(flag).as_deref(), Ok("1"));
     let repo = dunce::canonicalize(Path::new(env!("CARGO_MANIFEST_DIR")).join("../../..")).unwrap();
     let fixture =
         PathBuf::from(std::env::var_os("RO_VIEWER_NATIVE_FIXTURE").expect("fixture required"));
     assert_eq!(dunce::canonicalize(&fixture).unwrap(), fixture);
     assert_eq!(fixture.parent(), Some(repo.join("artifacts/tmp").as_path()));
-    assert!(
-        fixture
-            .file_name()
-            .unwrap()
-            .to_str()
-            .unwrap()
-            .starts_with("directory-dialog-viewer-native-")
-    );
+    assert!(fixture
+        .file_name()
+        .unwrap()
+        .to_str()
+        .unwrap()
+        .starts_with("directory-dialog-viewer-native-"));
     let python =
         PathBuf::from(std::env::var_os("RO_VIEWER_NATIVE_PYTHON").expect("Python required"));
     let payload = std::fs::read(fixture.join("viewer-receipt.json")).unwrap();
