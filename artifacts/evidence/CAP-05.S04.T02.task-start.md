@@ -18,6 +18,7 @@ framework change, new actor authority or overwrite of historical anchors.
 | Criterion 1: distinguish multiple anchors | Bounded context window, numbered keyboard list and markers, exact code-point context highlight, validated rotated page geometry with visible fallback. | Mounted Reader cases for two anchors, Unicode, inert text, page/zoom, keyboard/focus, reflow, themes and geometry mismatch. |
 | Criterion 1: missing/broken context | Authenticated canonical revision metadata and a real return to the selected source for review; no later-revision substitution or invented repair. | Actual retained-anchor resolution and broken-context provenance; mounted repair/return and separate unavailable/denied state. |
 | Exact identity and current authority | Current source identity, project/session/human/Intent/privacy, original and accepted revision, anchor ID and inspect/derive rights at read and delivery. | Real SQLCipher/encrypted repository and private API substitution, changed rights, stale session and late-delivery cases; actual Native binding. |
+| Linked revision replacement | A new link for the same original but a different normalized revision replaces the Reader session and its context, with or without a prior source handoff. | Mounted regression first fails on the stale revision, then verifies fresh exact revision metadata and both contexts; independent finding replay. |
 | Allocation and physical settlement | Viewer-only resolver shares the scoped repository and cumulative protected-artifact allowance. Shared main allowance contains bounded retained context; issued unknown Native drain retains admission across unmount/retry. | Admission before protected reads; maximum-source accounting, context eviction, known/unknown settlement and decoder-generation regression cases. |
 | Criterion 2: meaningful success/failure coverage | Tests precede product changes where practical. | Preserve first failing Core/Reader cases, then fresh affected candidate checks and one real vertical principal proof. |
 | Criterion 3: compatibility, contracts, audit | Additive link value/route and fixed private resolver; reuse canonical anchor metadata/invalidation. Database/envelope/anchor formats stay unchanged. Diagnostics and persisted link projection carry no research text. | Schema drift/strict decoding, existing anchor compatibility, output-free invalidation/denial checks, affected type/architecture and package conformance. |
@@ -42,3 +43,8 @@ small for a useful on-page target. Source selectors remain exact immutable
 revision selectors under the accepted repository contract.
 
 Mandatory gate discovered: none. Task completion and W2 release remain pending.
+
+Independent review identified omitted linked-revision session identity at candidate
+`98f7fea87a88c359ea73d867e5472697ac2c45e6`. The first mounted regression preserved
+the failure before the bounded correction. This refines criterion 1's exact-link
+risk; it does not introduce a new scope or acceptance target.

@@ -35,10 +35,14 @@ export function DocumentViewerWorkspace(props: Props): ReactNode {
   const { project, handoff } = props;
   if (!props.active || !project?.open) return <Notification tone="info" title="No open source">Open the project and select a permitted copy from its Work/version.</Notification>;
   if (!handoff?.attachmentId || !handoff.documentRevisionId || handoff.selection.projectId !== project.projectId) {
-    if (props.deepLink?.projectId === project.projectId) return <LinkedViewerEntry key={`${project.projectId}:${props.deepLink.selector.attachmentId}:${props.deepLink.selector.documentRevisionId}`} {...props} project={project} link={props.deepLink} />;
+    if (props.deepLink?.projectId === project.projectId) return <LinkedViewerEntry key={`${project.projectId}:${props.deepLink.selector.attachmentId}:${props.deepLink.selector.documentRevisionId}:${props.deepLink.selector.normalizedRevisionId}`} {...props} project={project} link={props.deepLink} />;
     return <Panel title="Document Reader"><p>No exact source selected. Open a permitted copy from the selected Work/version.</p><Button onClick={() => props.onReturn()}>Return to selected Work/version</Button></Panel>;
   }
-  return <ViewerSession key={`${project.projectId}:${handoff.attachmentId}:${handoff.documentRevisionId}`} {...props}
+  const linkedRevision = props.deepLink?.projectId === project.projectId
+    && props.deepLink.selector.attachmentId === handoff.attachmentId
+    && props.deepLink.selector.documentRevisionId === handoff.documentRevisionId
+    ? props.deepLink.selector.normalizedRevisionId : "";
+  return <ViewerSession key={`${project.projectId}:${handoff.attachmentId}:${handoff.documentRevisionId}:${linkedRevision}`} {...props}
     project={project} handoff={handoff as AttachmentHandoff & { attachmentId: string; documentRevisionId: string }} />;
 }
 

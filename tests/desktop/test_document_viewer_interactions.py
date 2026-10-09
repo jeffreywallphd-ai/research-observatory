@@ -261,6 +261,69 @@ class DocumentViewerInteractionsTests(unittest.TestCase):
         )
         self.assertFalse(self.errors)
 
+    def test_new_link_revision_replaces_context_with_and_without_prior_handoff(self):
+        for no_handoff in (False, True):
+            self.page.evaluate("() => window.__VIEWER_UI_TEST__.mount(false)")
+            self.page.get_by_text("No open source", exact=True).wait_for()
+            self.page.evaluate(
+                "noHandoff => { const s = window.__VIEWER_UI_TEST__; s.linkMode = true; "
+                "s.noHandoff = noHandoff; s.linkRevision = '00000000-0000-7000-8000-000000000003'; s.mount(); }",
+                no_handoff,
+            )
+            self.page.get_by_role("heading", name="Anchor 2 · Synthetic accepted source", exact=True).wait_for()
+            self.assertEqual(
+                "00000000-0000-7000-8000-000000000003",
+                self.page.get_by_label("Accepted structured revision").input_value(),
+            )
+            calls = self.page.evaluate("() => window.__VIEWER_UI_TEST__.anchorCalls")
+            self.page.evaluate(
+                "() => { const s = window.__VIEWER_UI_TEST__; "
+                "s.linkRevision = '00000000-0000-7000-8000-000000000023'; s.mount(); }"
+            )
+            self.wait(
+                lambda: (
+                    self.page.get_by_label("Accepted structured revision").input_value()
+                    == "00000000-0000-7000-8000-000000000023"
+                )
+            )
+            self.page.get_by_role("heading", name="Anchor 2 · Synthetic accepted source", exact=True).wait_for()
+            self.assertEqual(calls + 2, self.page.evaluate("() => window.__VIEWER_UI_TEST__.anchorCalls"))
+            self.assertEqual(["📚", "chosen"], self.page.locator(".viewer-anchor-context mark").all_text_contents())
+            self.assertEqual(
+                2,
+                self.page.locator(".viewer-anchor-context")
+                .get_by_text("00000000-0000-7000-8000-000000000023", exact=True)
+                .count(),
+            )
+        self.assertFalse(self.errors)
+
+    def test_late_previous_link_revision_cannot_replace_new_context(self):
+        self.page.evaluate("() => window.__VIEWER_UI_TEST__.mount(false)")
+        self.page.get_by_text("No open source", exact=True).wait_for()
+        self.page.evaluate(
+            "() => { const s = window.__VIEWER_UI_TEST__; s.linkMode = true; s.noHandoff = true; "
+            "s.holdAnchor = true; s.mount(); }"
+        )
+        self.wait(lambda: self.page.evaluate("() => typeof window.__VIEWER_UI_TEST__.releaseAnchor === 'function'"))
+        self.page.evaluate(
+            "() => { const s = window.__VIEWER_UI_TEST__; s.holdAnchor = false; "
+            "s.linkRevision = '00000000-0000-7000-8000-000000000023'; s.mount(); }"
+        )
+        self.page.get_by_role("heading", name="Anchor 2 · Synthetic accepted source", exact=True).wait_for()
+        self.page.evaluate("() => window.__VIEWER_UI_TEST__.releaseAnchor()")
+        self.wait(lambda: self.page.evaluate("() => window.__VIEWER_UI_TEST__.anchorCalls === 3"))
+        self.assertEqual(
+            "00000000-0000-7000-8000-000000000023",
+            self.page.get_by_label("Accepted structured revision").input_value(),
+        )
+        self.assertEqual(
+            2,
+            self.page.locator(".viewer-anchor-context")
+            .get_by_text("00000000-0000-7000-8000-000000000023", exact=True)
+            .count(),
+        )
+        self.assertFalse(self.errors)
+
     def test_late_anchor_after_lock_and_substituted_source_cannot_publish_context(self):
         self.page.evaluate("() => { const s = window.__VIEWER_UI_TEST__; s.anchorMode = true; s.holdAnchor = true; }")
         self.page.get_by_label("Accepted structured revision").select_option(index=1)
