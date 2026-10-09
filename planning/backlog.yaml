@@ -1499,13 +1499,13 @@ waves:
     profile: LOC
     platform: windows-x64
     started_at: '2026-09-19T17:21:58+00:00'
-    updated_at: '2026-10-08T11:16:53+00:00'
+    updated_at: '2026-10-09T11:57:40+00:00'
     pause_reason: null
     pause_category: null
     lease:
       claimed_by: codex-w2-implementation
-      claimed_at: '2026-10-08T11:16:53+00:00'
-      expires_at: '2026-10-09T11:16:53+00:00'
+      claimed_at: '2026-10-09T11:57:40+00:00'
+      expires_at: '2026-10-10T11:57:40+00:00'
     corrective_tasks:
     - title: Implement idempotent import commits and import manifests
       objective: Batch transaction and manifest linking source file hash, parser version, record decisions, errors, and resulting
@@ -31563,7 +31563,7 @@ capabilities:
       owner: codex-w2-implementation
       branch: codex/w2-implementation
       started_at: '2026-10-08T19:08:53+00:00'
-      updated_at: '2026-10-08T21:44:59+00:00'
+      updated_at: '2026-10-09T12:04:29+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -31578,8 +31578,8 @@ capabilities:
       base_sha: 1bd33a6ba180487b239e3315e302b6db6aaea123
       lease:
         claimed_by: codex-w2-implementation
-        claimed_at: '2026-10-08T21:44:59+00:00'
-        expires_at: '2026-10-09T05:44:59+00:00'
+        claimed_at: '2026-10-09T12:04:29+00:00'
+        expires_at: '2026-10-09T20:04:29+00:00'
       verification_state: null
       worktree: .
       platform_targets:

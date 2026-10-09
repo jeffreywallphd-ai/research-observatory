@@ -1,0 +1,250 @@
+"""Opt-in synthetic max-source fixture and independent SQLCipher writer.
+
+The Reader's Windows handler test uses this narrow product fixture. Seeding
+declares synthetic inspection/capacity and executes no model. The later Native
+read/cancel handlers, supervised Core, encrypted objects and writer are real.
+No key material, research content or command lines enter the writer protocol.
+"""
+
+from __future__ import annotations
+
+import argparse
+import hashlib
+import json
+import os
+import sys
+import tempfile
+import time
+from pathlib import Path
+from types import SimpleNamespace
+from unittest.mock import patch
+
+REPO = Path(__file__).resolve().parents[2]
+sys.path[:0] = [str(REPO), str(REPO / "services/core-api/src")]
+
+
+def confined(path: Path) -> Path:
+    scratch = (REPO / "artifacts/tmp").resolve(strict=True)
+    resolved = path.resolve(strict=True)
+    if resolved.parent != scratch or not resolved.name.startswith("directory-dialog-viewer-native-"):
+        raise ValueError("native-viewer-fixture-not-confined")
+    for part in (path, *path.parents):
+        if part.is_symlink() or part.is_junction():
+            raise ValueError("native-viewer-fixture-redirected")
+        if part == scratch:
+            break
+    return resolved
+
+
+def seed() -> Path:
+    from research_observatory_core.authentication import NativeWorkflowContext, capability_token_digest
+    from research_observatory_core.config import CoreSettings
+    from research_observatory_core.document_attachment_repository import LocalDocumentAttachmentService
+    from research_observatory_core.domain_contracts import new_uuid_v7
+    from research_observatory_core.main import create_runtime_app
+    from research_observatory_core.workflow_executor import WorkerCapacity
+
+    from tests.desktop.fixtures.bounded_pdf import write_bounded_pdf
+    from tests.desktop.tools.seed_document_drop_fixture import seed as seed_work
+    from tests.service.test_import_preview_service import ImportRuntimeCompositionTests
+
+    root = Path(tempfile.mkdtemp(prefix="directory-dialog-viewer-native-", dir=REPO / "artifacts/tmp"))
+    root = confined(root)
+    for name in ("projects", "vault", "temporary", "application-data", "webview"):
+        (root / name).mkdir()
+    selected = seed_work(root)
+    project_root = (root / "projects/document-drop-project").resolve(strict=True)
+    app = create_runtime_app(
+        settings=CoreSettings(),
+        profile_vault_root=root / "vault",
+        workflow_context=NativeWorkflowContext("b" * 32, "c" * 32),
+        capability_digest=capability_token_digest("a" * 64),
+        expected_authority="127.0.0.1:49152",
+    )
+    helper = ImportRuntimeCompositionTests()
+    operation, command = new_uuid_v7(), new_uuid_v7()
+    with (
+        patch(
+            "research_observatory_core.repositories._windows_worker_capacity",
+            return_value=WorkerCapacity(4, 4 * 1024**3, 0, 4 * 1024**3),
+        ),
+        helper.client(app) as client,
+    ):
+        opened = client.post("/projects/open", json={"root": str(project_root)})
+        assert opened.status_code == 200 and opened.json()["projectId"] == selected["projectId"]
+        runtime = app.state.runtime.attachments
+        session = runtime.context(str(project_root), selected["projectId"])
+
+        def authored(service, actor):
+            def inspection(source, **_):
+                digest, size = hashlib.sha256(), 0
+                while block := source.read(65536):
+                    digest.update(block)
+                    size += len(block)
+                return SimpleNamespace(
+                    format="pdf", media_type="application/pdf", size_bytes=size, sha256=digest.hexdigest()
+                )
+
+            local = LocalDocumentAttachmentService(
+                service._database, selected["projectId"], service._objects, inspector=inspection
+            )
+            with tempfile.TemporaryFile(dir=root / "temporary") as source:
+                write_bounded_pdf(source, pages=500, byte_length=128 * 1024**2)
+                source.seek(-1024 * 1024, 2)
+                tail_digest = hashlib.sha256(source.read(1024 * 1024)).hexdigest()
+                source.seek(0)
+                candidate = local.stage(
+                    source,
+                    source_name="synthetic-maximum-viewer.pdf",
+                    declared_media_type="application/pdf",
+                    source_assertion_revision_id=selected["sourceAssertionRevisionId"],
+                    work_id=selected["workId"],
+                    work_revision_id=selected["workRevisionId"],
+                    version_id=selected["versionId"],
+                    version_revision_id=selected["versionRevisionId"],
+                    actor=actor,
+                    operation_id=operation,
+                    session_id=session,
+                )
+            attachment = local.commit(
+                candidate.candidate_id,
+                confirmation_sha256=candidate.candidate_sha256,
+                command_id=command,
+                actor=actor,
+                operation_id=operation,
+                session_id=session,
+                match_confirmed=True,
+                permitted_use="project-only",
+                exact_selection=tuple(
+                    selected[key]
+                    for key in (
+                        "sourceAssertionRevisionId",
+                        "workId",
+                        "workRevisionId",
+                        "versionId",
+                        "versionRevisionId",
+                    )
+                ),
+            )
+            return candidate, attachment, tail_digest
+
+        candidate, attachment, tail_digest = runtime._action(
+            str(project_root), selected["projectId"], session, "1" * 32, authored
+        )
+        assert client.post("/projects/close", json={"root": str(project_root)}).status_code == 200
+    assert (project_root / "state/project.sqlite3").read_bytes()[:16] != b"SQLite format 3\x00"
+    receipt = {
+        "schemaVersion": "1.0",
+        "projectId": selected["projectId"],
+        "root": str(project_root),
+        "selector": {
+            "attachmentId": attachment.attachment_id,
+            "documentRevisionId": attachment.document_revision_id,
+            "normalizedRevisionId": None,
+        },
+        "sourceSha256": candidate.object_sha256,
+        "sourceBytes": candidate.byte_length,
+        "tailSha256": tail_digest,
+        "pages": 500,
+        "seedAdapters": ["synthetic-inspection", "synthetic-capacity"],
+        "modelExecuted": False,
+    }
+    with (root / "viewer-receipt.json").open("x", encoding="utf-8") as target:
+        json.dump(receipt, target)
+    return root
+
+
+def writer(root: Path) -> None:
+    import sqlcipher3.dbapi2 as sqlcipher
+    from research_observatory_core.windows_credentials import create_windows_database_key_provider
+
+    root = confined(root)
+    receipt = json.loads((root / "viewer-receipt.json").read_text(encoding="utf-8"))
+    project_root = Path(receipt["root"]).resolve(strict=True)
+    if project_root.parent != root / "projects":
+        raise ValueError("native-viewer-project-not-confined")
+    provider = create_windows_database_key_provider(root / "vault")
+    connection = sqlcipher.connect(
+        (project_root / "state/project.sqlite3").as_uri() + "?mode=rw", uri=True, timeout=0, isolation_level=None
+    )
+    try:
+        with provider.active_key(receipt["projectId"], create=False) as lease:
+            lease.use(lambda material: connection.execute("PRAGMA key = \"x'" + material.hex() + "'\""))
+        before = connection.execute(
+            "SELECT storage_state,verified_at FROM object_records WHERE project_id=? AND object_sha256=?",
+            (receipt["projectId"], receipt["sourceSha256"]),
+        ).fetchone()
+        assert before is not None and before[0] == "available"
+        print(json.dumps({"kind": "writer-ready", "protected": True}), flush=True)
+        for line in sys.stdin:
+            if len(line) > 128:
+                raise ValueError("native-writer-command-too-large")
+            command = json.loads(line)
+            if command == {"action": "close"}:
+                return
+            if command not in ({"action": "observe"}, {"action": "commit"}):
+                raise ValueError("native-writer-command-invalid")
+            began = time.perf_counter()
+            while True:
+                try:
+                    connection.execute("BEGIN IMMEDIATE")
+                    if command["action"] == "commit":
+                        updated = connection.execute(
+                            "UPDATE object_records SET verified_at=verified_at WHERE project_id=? AND object_sha256=?",
+                            (receipt["projectId"], receipt["sourceSha256"]),
+                        )
+                        assert updated.rowcount == 1
+                        connection.execute("COMMIT")
+                        after = connection.execute(
+                            "SELECT storage_state,verified_at FROM object_records "
+                            "WHERE project_id=? AND object_sha256=?",
+                            (receipt["projectId"], receipt["sourceSha256"]),
+                        ).fetchone()
+                        assert before == after
+                    else:
+                        connection.execute("ROLLBACK")
+                    print(
+                        json.dumps(
+                            {
+                                "kind": "writer-result",
+                                "outcome": "committed" if command["action"] == "commit" else "available",
+                                "preserved": True,
+                                "elapsedMs": (time.perf_counter() - began) * 1000,
+                            }
+                        ),
+                        flush=True,
+                    )
+                    break
+                except sqlcipher.OperationalError as error:
+                    if "locked" not in str(error).lower():
+                        raise
+                    if command["action"] == "observe" or time.perf_counter() - began >= 1:
+                        print(
+                            json.dumps(
+                                {
+                                    "kind": "writer-result",
+                                    "outcome": "busy",
+                                    "elapsedMs": (time.perf_counter() - began) * 1000,
+                                }
+                            ),
+                            flush=True,
+                        )
+                        break
+                    time.sleep(0.005)
+    finally:
+        connection.close()
+
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+    parser.add_argument("action", choices=("seed", "writer"))
+    parser.add_argument("--fixture", type=Path)
+    arguments = parser.parse_args()
+    if arguments.action == "seed":
+        if os.name != "nt":
+            raise RuntimeError("windows-principal-required")
+        print(json.dumps({"fixture": str(seed()), "modelExecuted": False}), flush=True)
+    elif arguments.fixture is not None:
+        writer(arguments.fixture)
+    else:
+        raise ValueError("native-viewer-fixture-required")

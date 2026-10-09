@@ -901,3 +901,7 @@ mod tests {
         ));
     }
 }
+
+#[cfg(all(test, feature = "integration-harness"))]
+#[path = "document_viewer/windows_integration_tests.rs"]
+mod windows_integration_tests;
