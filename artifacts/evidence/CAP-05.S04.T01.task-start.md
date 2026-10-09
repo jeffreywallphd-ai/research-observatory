@@ -13,7 +13,7 @@ Taskctl selected this READY task after both dependency tasks were DONE.
 | Admission and fairness | Source <=128MiB, range <=1MiB, one active read/project, eight queued operations. Exact duplicate coalescing retains each requester's cancellation/authority. Cancel obsolete work before admission; close the writer before delivery and permit metadata writes between ranges. |
 | Native transport | Fixed typed viewer commands, bounded byte responses and exact range/source correlation; native root/session/token/window/generation remain trusted. Lock/close denies late delivery and drains owned work. Real renderer/native/Core integration, beyond unit doubles. |
 | Inert source rendering | Locally pinned PDF.js worker, no document URL, active scripting/XFA/forms/actions/attachments or remote assets. Structured text is inert. Hostile/malformed/oversized fixtures and no-egress checks. |
-| Viewer memory and latency | Virtualize visible pages/thumbnails, cancel stale renders and account for worker source allocation, transfers, surfaces and hostile decoding within 256MiB. Qualify representative 10MiB/50-page cold/warm p95 <=1.5s over >=20 opens and 128MiB/500-page stress; cancellation/lease release <=1s. |
+| Viewer memory and latency | Virtualize visible pages/thumbnails, cancel stale renders and account for worker source allocation, transfers, surfaces and hostile decoding within 256MiB. The approved [LT01 supplement](CAP-05.S04.T01.latency-target-amendment-01.adopted.json) changes only representative 10MiB/50-page cold/warm p95 to <=3.0s over >=20 opens. Preserve 128MiB/500-page stress and cancellation/lease release <=1s. The original 1.5s criterion remains immutable history and a later optimization goal. |
 | Experience and handoff | Approved Reader toolbar/outline/source/inspector and selected Work/Version return context; page navigation, zoom, text, sections, search and restricted external links. Keyboard/focus, reflow and both themes. T02 owns durable deep links/multiple highlights; T03 owns the rights-aware action broker. |
 | Compatibility and evidence | Additive port cancellation, unchanged encryption/migration format and historical revisions. Focused affected tests first, exact committed candidate qualification and expanded independent review; S02–S04 checkpoint and fresh Wave matrix remain later gates. |
 
@@ -152,3 +152,23 @@ Sandbox-only fixture/cache failures are retained separately. The broad desktop
 lint also reports two pre-existing unrelated source literals; it is not a clean
 repository/profile claim. These results select affected product risks and do not
 qualify a committed candidate, approve T01, adopt LT01 or complete W2.
+
+## Approved LT01 adoption and current resume boundary
+
+The owner explicitly approved the reviewed LT01 procedure exception on October 9.
+The immutable [owner record](CAP-05.S04.T01.latency-target-amendment-01.owner-approval.json)
+binds the proposal and independent readiness review. The authoritative
+[criterion supplement](CAP-05.S04.T01.latency-target-amendment-01.adopted.json)
+sets the representative first-page target to 3.0 seconds; it preserves the same
+fixture, cold/warm p95 methodology, minimum repetitions, full authentication and
+actual renderer/gateway/Native/Core measurement. Earlier pending-adoption notes
+above remain historical observations, not the current authority state.
+
+The current partial proof is retained in
+[partial-observations-02](CAP-05.S04.T01.partial-observations-02.json), including
+actual Native accepted text/outline, denial/resource/retry, maximum-source
+cancellation and in-flight terminal-generation revocation, plus shipping-renderer
+maximum-document use. Formal latency/resource qualification and independent T01
+disposition remain required. Resume the same owned task through ordinary taskctl;
+do not claim again or alter its original identity/base/dependencies. No task,
+slice, Wave, minimum-hardware or release completion follows from LT01 adoption.

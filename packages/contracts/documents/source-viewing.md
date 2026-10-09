@@ -6,6 +6,15 @@ source envelope, database migration, cache of original plaintext or new actor
 authority. T02 owns durable deep links; T03 owns rights-aware copy, print,
 external-open and export actions. Those actions remain unavailable in T01.
 
+The owner-approved [LT01 criterion supplement](../../../artifacts/evidence/CAP-05.S04.T01.latency-target-amendment-01.adopted.json)
+sets representative 10MiB/50-page cold/warm p95 first-page opening after Core
+readiness to <=3.0 seconds over at least20 opens, including full authentication
+and actual renderer/gateway/Native/Core through the rendered first permitted
+page. Only that latency scalar supersedes the original ADR-0029 and S04 section11
+target. Their frozen bodies, historical measurements and all security,
+cancellation, resource and qualification obligations remain unchanged. The
+original1.5-second value is retained as a later optimization goal.
+
 ## Transport and identity
 
 | Renderer command | Fixed private Core route | Delivery |

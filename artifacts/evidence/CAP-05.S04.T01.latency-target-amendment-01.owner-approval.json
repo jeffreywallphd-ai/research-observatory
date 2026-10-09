@@ -1,0 +1,39 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "reader-latency-target-direct-record-owner-approval",
+  "id": "CAP-05.S04.T01.LT01.OWNER01",
+  "taskId": "CAP-05.S04.T01",
+  "waveId": "W2",
+  "status": "APPROVED",
+  "recordedAt": "2026-10-09T19:22:21Z",
+  "approvedBy": "human-project-owner",
+  "approvalEvidence": {
+    "source": "latest direct human message in the campaign chat",
+    "message": "Approved. Please pick up where you left off completing W2 until the work is complete.  Use the workflow and AGENTS.md to guide the work.",
+    "context": "Explicit approval of the exact LT01 packet identified in the immediately preceding decision-complete handoff. The 3.0-second value was already explicitly selected; this approval includes the pending one-criterion direct-record procedure exception."
+  },
+  "adoptionPredecessorCommit": "dbd773eea9efe97e6eafcbf3ed9b222ca3148d5c",
+  "proposal": {
+    "path": "artifacts/evidence/CAP-05.S04.T01.latency-target-amendment-01.proposal.json",
+    "commit": "d3ee992d4b15db37d798657c6efde6a5dbb313ac",
+    "lfCanonicalSHA256": "7e9a511cd533ae3523aebafffe54d00182d0fdcf9251c3787be554b95ac0d75d"
+  },
+  "readinessReview": {
+    "path": "artifacts/evidence/CAP-05.S04.T01.latency-target-amendment-01.readiness-review-01.json",
+    "commit": "f18cf8e0b4af44cc2b150b32abf93ca592c377ed",
+    "lfCanonicalSHA256": "0159169909ba49557462e3b26d18d446567abbfc040de028dd90a362bfc131a0"
+  },
+  "reviewBrief": {
+    "path": "artifacts/evidence/CAP-05.S04.T01.latency-target-amendment-01.review.html",
+    "commit": "d3ee992d4b15db37d798657c6efde6a5dbb313ac",
+    "lfCanonicalSHA256": "702f571a8e5188d6a1bbe92fdc0c7ef17239e9a338bd3f270fd993732c202563"
+  },
+  "hashMethod": "SHA-256 of UTF-8 bytes after CRLF and bare CR normalization to LF; preserve all other bytes and final newline.",
+  "approvedScope": "Only the exact reviewed proposal's 3.0-second Reader criterion and one-time direct append-only recording procedure, including the permitted current worksheet/live-contract references and ordinary owned T01 resumption.",
+  "noFrameworkSourceAuthority": true,
+  "taskCompletionApproved": false,
+  "sliceCompletionApproved": false,
+  "waveCompletionApproved": false,
+  "releaseApproved": false,
+  "historyPolicy": "Immutable append-only owner record. Preserve the frozen Wave, original ADR/slice bodies, task identity/base/dependencies, all earlier observations and adverse findings. This record does not turn any prior observation into a qualification PASS."
+}

@@ -1,0 +1,58 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "authoritative-reader-latency-criterion-supplement",
+  "id": "CAP-05.S04.T01.LT01.ADOPT01",
+  "taskId": "CAP-05.S04.T01",
+  "waveId": "W2",
+  "status": "ADOPTED",
+  "effectiveBoundary": "Committed publication of this supplement and its exact owner approval, before ordinary T01 resumption and qualifying checks.",
+  "adoptionPredecessorCommit": "dbd773eea9efe97e6eafcbf3ed9b222ca3148d5c",
+  "frozenWaveCommit": "c85a59f3a293f8e3f2eaf6454682c9a14b1efa55",
+  "originalTaskBaseCommit": "1bd33a6ba180487b239e3315e302b6db6aaea123",
+  "ownerApproval": {
+    "path": "artifacts/evidence/CAP-05.S04.T01.latency-target-amendment-01.owner-approval.json",
+    "lfCanonicalSHA256": "489c14b2cc26f1131add46f2200be64f2ddf9d85a27a42417b1dafd5b5607d11"
+  },
+  "proposal": {
+    "path": "artifacts/evidence/CAP-05.S04.T01.latency-target-amendment-01.proposal.json",
+    "commit": "d3ee992d4b15db37d798657c6efde6a5dbb313ac",
+    "lfCanonicalSHA256": "7e9a511cd533ae3523aebafffe54d00182d0fdcf9251c3787be554b95ac0d75d"
+  },
+  "readinessReview": {
+    "path": "artifacts/evidence/CAP-05.S04.T01.latency-target-amendment-01.readiness-review-01.json",
+    "commit": "f18cf8e0b4af44cc2b150b32abf93ca592c377ed",
+    "lfCanonicalSHA256": "0159169909ba49557462e3b26d18d446567abbfc040de028dd90a362bfc131a0"
+  },
+  "criterionDelta": {
+    "originalLimitSeconds": 1.5,
+    "replacementLimitSeconds": 3.0,
+    "fixture": "10 MiB / 50-page born-digital PDF",
+    "metric": "cold/warm p95 open-to-first-permitted-page after Core readiness",
+    "minimumOpens": 20,
+    "platform": "declared Windows x64 tier",
+    "includes": ["full-source authentication", "actual renderer/gateway/native/Core", "first page rendered"],
+    "supersedesOnly": ["ADR-0029 Source viewer representative first-page latency target", "CAP-05.S04 section11 same latency target"],
+    "laterOptimizationGoalSeconds": 1.5
+  },
+  "approvedProcedure": "One criterion-specific direct append-only owner record and independently reviewed supplement instead of a separate ECR/bootstrap/executable amendment campaign. This is not a generic procedure or framework exception.",
+  "quiescenceObserved": "No campaign-owned producer, product build/test or tracker mutation was running during adoption. The existing task was BLOCKED with its original owner/base; the Wave campaign remained ACTIVE.",
+  "unchangedObligations": [
+    "source <=128 MiB; range <=1 MiB; one active source read/project; queue <=8",
+    "full authentication before bytes and fresh identity/principal/Intent/privacy/rights at each required scope and delivery",
+    "cancel/lease release <=1 second at maximum source with concurrent writes; no false drain acknowledgement",
+    "128 MiB/500-page stress and complete actual viewer/worker resource measurement",
+    "256 MiB aggregate viewer-owned buffer budget and bounded rendering",
+    "no plaintext disk cache, eager whole-file prefetch, direct source paths, remote assets or document active content",
+    "security, privacy, rights, accessibility, failure/restart/recovery and formal independent task/slice/Wave gates",
+    "fresh Wave qualification and separate human release gate",
+    "no actual 8/16 GiB variant runs; larger-resource work deferred to W5",
+    "no further effort on the separately accepted parser two-second overage"
+  ],
+  "historyPolicy": "Original ADR, slice, frozen Wave approvals and historical 1.5-second results remain unchanged. No earlier result is retrospectively relabeled PASS. Qualification must bind the approved supplement, exact committed candidate and selected input closure.",
+  "frameworkSourceChangesAuthorized": false,
+  "latencyQualified": false,
+  "taskApproved": false,
+  "sliceApproved": false,
+  "waveComplete": false,
+  "releaseApproved": false
+}
