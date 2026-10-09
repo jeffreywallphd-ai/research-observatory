@@ -1,0 +1,194 @@
+{
+  "schemaVersion": "1.0",
+  "kind": "partial-task-execution-observations",
+  "taskId": "CAP-05.S04.T01",
+  "checkpointCandidate": "0c89d757f856140d3d6993ffae65a13bacf4d228",
+  "taskCompletion": false,
+  "latencyQualification": false,
+  "bufferBudgetQualification": false,
+  "independentTaskApproval": false,
+  "frameworkSourceMutation": false,
+  "modelExecuted": false,
+  "sourceRecords": [
+    {
+      "path": "artifacts/tmp/CAP-05.S04.T01.core-candidate-proof-05.json",
+      "sha256": "caa51b6a4194b9c86b4d79d7dddecec06df60d1888959d221c29113d78c6b540"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S04.T01.native-max-run-03.publication-correction-01.json",
+      "sha256": "1ac66541aa41efe46093a7644ec2685b9c99cebc012c289e2584fc705162676b"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S04.T01.native-viewer-resume-13.result.json",
+      "sha256": "c2440ff8f2d734f01f9b3bba3ba31ffab0a1ac65e65764062c3c5f47279140a5"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S04.T01.native-viewer-resume-15.result.json",
+      "sha256": "5053fbd66aa8ac1a963f5199fcd9263c2dac3fb60d42739f2ffb36298dd69b43"
+    }
+  ],
+  "coreChecks": {
+    "candidate": "0c89d757f856140d3d6993ffae65a13bacf4d228",
+    "fresh": true,
+    "inputBoundary": "Selected tracked Core/worker/contract/test/helper inputs, producer and runtime record held write/delete-denied. Exact-byte sealed installed Python runtime held write/create/delete-denied. Fixed committed candidate; no concurrent changes in this boundary. Fresh proof, no reuse or global dependency-closure claim.",
+    "producerSHA256": "d68caae9905fceede9627e662cf04da83f61de964f73a5ad67746391283d24a1",
+    "runtimeRecordSHA256": "765b653b9c074d820a6ff8821052a8ae78232610d0046f69ef57a61ac96448b0",
+    "checks": [
+      {
+        "id": "core-selected-closure",
+        "commandId": "documents:unit",
+        "exitCode": 0,
+        "durationSeconds": 55.41557959999773,
+        "outputPath": "artifacts/tmp/CAP-05.S04.T01.core-candidate-proof-05.core-selected-closure.log",
+        "outputSHA256": "d6edef3b328a65ace3ea01bcaba0bbc80ffb2d082fbc0376c33ab0cd322372fb"
+      }
+    ],
+    "limits": "Fourteen selected real Core checks join current authority, held authentication, real writer drain, follower ownership, ASGI disconnect and protected-text delivery. No Native/decoder/tier/p95 claim from Core tests."
+  },
+  "maximumNativeCancellation": {
+    "candidate": "0c89d757f856140d3d6993ffae65a13bacf4d228",
+    "testResult": {
+      "cancelAndWriterMs": 20.77,
+      "correlatedDrainedDenial": true,
+      "freshTailExact": true,
+      "kind": "native-viewer-max-cancel",
+      "modelExecuted": false,
+      "rangeBytes": 1048576,
+      "rendererAbortDispatchProven": false,
+      "sourceBytes": 134217728,
+      "status": "PASS",
+      "terminalCloseDenied": true,
+      "writerContentionProvesAuthenticationPhase": false,
+      "writerPreserved": true
+    },
+    "assembly": {
+      "sourceSHA256": "803841b0736b1f8348004cee09d01704c84251551a061c7ddeec49b04d93c4d4",
+      "assembledSHA256": "952f72de700b13dfe9115397ca61f3053d1249d334382daf1835be6b6625ac35",
+      "manifestSHA256": "debbc886d79228c211ae063f3b1d230b59bb39768c9ff3b574c08c7a10a4ccab",
+      "toolSHA256": "1b8a272d586a9ab53ac2ccd457a88bd0210d7d7ac3daea5b34743cc2afe73b26",
+      "delta": "Exact approved Common Controls6/asInvoker activation resource applied to isolated product-test executable; no Rust/test/production code change",
+      "candidate": "0c89d757f856140d3d6993ffae65a13bacf4d228"
+    },
+    "sourceArtifacts": {
+      "artifacts/tmp/CAP-05.S04.T01.native-max-run-03.json": "18d3f9523975cad11bdc742de340568f0a9588190b61b11a1e0787e62adf48db",
+      "artifacts/tmp/CAP-05.S04.T01.native-max-run-03.stdout.log": "4b4fa6d5be25a46ec0d43b8177ed8ea045603327b4b30684965674677563e6af",
+      "artifacts/tmp/CAP-05.S04.T01.native-max-run-03.stderr.log": "db6532ec745a262d1d8c209ba341f442fb82adfdeb8c5afcf6832031fad55407",
+      "artifacts/tmp/CAP-05.S04.T01.native-max-snapshot-03/extracted.manifest": "ccb7b0de53b4cd4a9bb563a0900393c48512713564e7d0107e59507113e1b9eb",
+      "artifacts/tmp/CAP-05.S04.T01.native-max-publication-correction-01.py": "5f14caa67b951e3b4656c381ba04b59bc100c976b030cd5333e11bcdca99b1da"
+    },
+    "embeddedManifestVerified": true,
+    "limits": [
+      "Manifest-assembled product handler test, not shipping installation or renderer abort dispatch.",
+      "Terminal close denies a fresh request after exit; no in-flight-close claim.",
+      "Writer contention is not an authentication-phase marker.",
+      "Resource peak includes the test writer; not viewer-owned buffer enforcement."
+    ],
+    "publication": "Retained stdout proves one passed test. Original FAIL result from the output parser remains unchanged; append-only correction contains no rerun."
+  },
+  "representativeNativeDiagnostic": {
+    "candidate": "f18cf8e0b4af44cc2b150b32abf93ca592c377ed",
+    "firstPageSamplesMs": [
+      2688.96,
+      2592.877,
+      2477.9868
+    ],
+    "workflow": [
+      {
+        "action": "first-page",
+        "observed": true
+      },
+      {
+        "action": "next-page",
+        "observed": true
+      },
+      {
+        "action": "previous-page",
+        "observed": true
+      },
+      {
+        "action": "text-search",
+        "observed": true
+      },
+      {
+        "action": "return-context",
+        "observed": true
+      }
+    ],
+    "binarySHA256": "a0030be040bb7409f156b4cc15cbc3dab92ce4ad382fd1b88380ef37d4967635",
+    "productManifestSHA256": "20c9e32fa64ac733507424a7d6c8cdc363b4681fe17579490095ae97005f030c",
+    "limits": "Three 10MiB/50-page observations only, not20-open cold/warm p95, minimum-tier proof or immutable package qualification. The100ms process sampler may miss transient/reparented/PID-reused processes; its sums are not a complete footprint or lifetime upper bound."
+  },
+  "maximumNativeDiagnostic": {
+    "candidate": "0c89d757f856140d3d6993ffae65a13bacf4d228",
+    "sourceBytes": 134217728,
+    "pages": 500,
+    "firstPageSamplesMs": [
+      10611.522200000001
+    ],
+    "workflow": [
+      {
+        "action": "first-page",
+        "observed": true
+      },
+      {
+        "action": "last-page-text-search-and-render",
+        "observed": true
+      },
+      {
+        "action": "previous-distant-page",
+        "observed": true
+      },
+      {
+        "action": "next-distant-page",
+        "observed": true
+      },
+      {
+        "action": "return-context",
+        "observed": true
+      }
+    ],
+    "ownedJobMemory": {
+      "kernelPeakAggregateCommittedBytes": 623398912,
+      "kernelPeakSingleProcessCommittedBytes": 243806208,
+      "totalOwnedProcesses": 12,
+      "activeOwnedProcesses": 5,
+      "scope": "Native parent plus every descendant in its no-breakaway job, including Core and all WebView browser/renderer/GPU/utility processes. PDF worker memory resides inside WebView. Kernel aggregate committed peak; not working-set peak or the separate viewer-owned buffer accounting."
+    },
+    "binarySHA256": "a0030be040bb7409f156b4cc15cbc3dab92ce4ad382fd1b88380ef37d4967635",
+    "productManifestSHA256": "20c9e32fa64ac733507424a7d6c8cdc363b4681fe17579490095ae97005f030c",
+    "nativeExit": 0,
+    "limits": "Actual product renderer/Wry/Native/Core with encrypted synthetic original and synthetic seed-only inspection/capacity adapters. Kernel committed peak of Native's no-breakaway descendant job; not working-set/GPU-only memory or256MiB buffer proof. Five descendants remained immediately after Native exit and owned job cleanup terminated them. No normal complete shutdown or in-flight-close claim. Execution inputs were not frozen as a qualifying benchmark package; preserve as diagnostic."
+  },
+  "remainingClosure": [
+    "LT01 direct-record procedure decision remains pending;3s product choice is already explicit but not yet adopted under that proposal.",
+    "Fix admitted Core artifact and maximum-frame allocation overlaps in aggregate viewer buffer accounting, preserving original/metadata and non-viewer contracts.",
+    "Commit-bound decoder hostile/resource/no-egress proof and current Native stale/lock/in-flight delivery coverage.",
+    "Immutable execution-input boundary, representative cold/warm percentile, approved experience conformance and independent high-risk task disposition."
+  ],
+  "preservedAdverseArtifacts": [
+    {
+      "path": "artifacts/tmp/CAP-05.S04.T01.native-max-run-01.json",
+      "sha256": "d131034a92225ea8c889928e681a62ab102a87807a04c2945c5f879165fbebcb"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S04.T01.native-max-run-02.json",
+      "sha256": "4a84bd0164d8023b379a7d4107c99dc0b093cab4b922d1693e16c02d224f3901"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S04.T01.native-max-run-03.json",
+      "sha256": "18d3f9523975cad11bdc742de340568f0a9588190b61b11a1e0787e62adf48db"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S04.T01.native-viewer-resume-14.result.json",
+      "sha256": "4e0a7b55886a0663dab1a1ab69d970e2a2521e7fe3c58ca077a2c14250f5c41e"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S04.T01.native-viewer-create-02.log",
+      "sha256": "3ac123eb308ceb97ffd5134f8b03b23ca387c1c207d704bb46411f0ede7ed08e"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S04.T01.decoder-tests-01.log",
+      "sha256": "120404662f5817f77a68dd111c04420443e79d944d8575d05366e267f69d8abf"
+    }
+  ]
+}

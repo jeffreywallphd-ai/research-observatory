@@ -98,3 +98,39 @@ Native range settlement must carry exact request-bound terminal disposition;
 renderer unknown-drain failure remains latched after pending removal, retains its
 range reservation until closure is established, and denies replacement. These
 regressions are being added before remediation; no closure is claimed here.
+
+## October 9 execution checkpoint and allocation finding
+
+The partial machine record at `CAP-05.S04.T01.partial-observations-01.json`
+preserves fourteen fresh Core checks at candidate
+`0c89d757f856140d3d6993ffae65a13bacf4d228` and the actual Native results.
+The manifest-assembled maximum-source handler test passed exact terminal drain,
+an independent preserved writer commit and exact fresh tail retry in20.77ms.
+The actual product renderer/Native/Core diagnostic reached page500, searched,
+navigated499/500 and returned to its selected Work/version. Its kernel job peak
+was623398912 committed bytes across the owned Native/Core/WebView descendants.
+These facts do not establish representative percentile, minimum-tier,
+immutable-package qualification or the separate256MiB owned-buffer budget.
+Five descendants remained immediately after Native exit; owned job cleanup
+terminated them. No normal complete shutdown or in-flight-close claim is made.
+
+Read-only independent allocation assessment identified a missed acceptance row:
+bounded text/outline responses did not bound their Core artifact loading.
+`_accepted` loads a complete accepted artifact, then revalidates its normalized
+result, raw artifacts and manifests. A64MiB artifact can overlap its reader
+buffer, slice and returned-byte copies while the PDF worker remains live.
+This is a product resource defect inside T01's approved budget, not new scope.
+Before remediation, add failure tests for allocation admission before protected
+reads, cumulative charge across nested artifacts/manifests, unchanged general
+revision readers, original availability after denied text, and bounded successful
+text/outline with the actual protected adapter. Preserve full-source integrity,
+current derivative rights and all acceptance validation; do not bypass `_accepted`
+or silently reduce the parser's general64MiB artifact contract.
+
+Actual pinned-decoder product tests cover authored active actions/links/widgets,
+malformed page-tree denial and retry, oversized surface denial, compressed-content
+expansion denial and fresh recovery. The first attempt's two fixture failures
+(default empty canvas dimensions) remain retained; the corrected fixture declares
+zero-sized initial surfaces. Worktree results are not exact-candidate approval.
+The3s product target is explicitly selected by the owner; LT01 direct-record
+procedure adoption remains pending. No repeated value decision is requested.
