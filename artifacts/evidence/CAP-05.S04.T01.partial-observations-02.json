@@ -1,0 +1,191 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "partial-product-observations",
+  "taskId": "CAP-05.S04.T01",
+  "candidateCommit": "eb645ceede7a1f520883c4b3234fc34e171de315",
+  "status": "PARTIAL-NOT-TASK-QUALIFICATION",
+  "taskCompletion": false,
+  "taskApproval": false,
+  "sliceApproval": false,
+  "waveCompletion": false,
+  "releaseApproval": false,
+  "sourceUnits": [
+    {
+      "candidate": "5e7ae9311e63039cfbe9d427232388c44ef9bd67",
+      "disposition": "changes-required",
+      "finding": "Real seeding parse pump could claim a synthetic job; model non-execution field was not proved."
+    },
+    {
+      "candidate": "48b888a9b1dfaab17f814b8658a311d160f531c3",
+      "disposition": "approved-source-unit",
+      "closure": "Stop/drain only the seed parse pump before synthetic submits; naturally oversized fixture, unchanged limits."
+    },
+    {
+      "candidate": "eb645ceede7a1f520883c4b3234fc34e171de315",
+      "disposition": "approved-source-unit",
+      "scope": "Actual maximum-source terminal-generation revocation, correlated drain and preserved writer; not formal T01 review."
+    }
+  ],
+  "independentReviewer": "agent:/root/reader_latency_amendment_readiness",
+  "currentCore": {
+    "tests": 20,
+    "record": {
+      "path": "artifacts/tmp/CAP-05.S04.T01.core-candidate-proof-08.json",
+      "sha256": "8aa96b39e794bd712448ce137f5d946151eca4fe952f377f28dfccff1d64c368"
+    },
+    "scope": "Sealed-runtime private Core/API, native-session, encrypted source, current identity/rights, real cancellation, coalescing, admission and Viewer artifact budget."
+  },
+  "currentNativeAccepted": {
+    "record": {
+      "path": "artifacts/tmp/CAP-05.S04.T01.native-accepted-run-04.json",
+      "sha256": "e436f5dd486c6c2f8118fe266eff605e57fec129fec01d064d6cc3dbb34d20a2"
+    },
+    "result": {
+      "copyDeriveDenied": true,
+      "deniedCopyOriginalExact": true,
+      "exactTextAndOutline": true,
+      "freshRetryExact": true,
+      "inFlightCloseProven": false,
+      "kind": "native-viewer-accepted",
+      "manualLockProven": false,
+      "modelExecuted": false,
+      "parserOutput": "explicitly-synthetic",
+      "rendererInvokeDispatchProven": false,
+      "resourceLimitMapped": true,
+      "status": "PASS",
+      "substitutedSourceDenied": true,
+      "terminalCloseDenied": true
+    },
+    "scope": "Actual Wry state and production Native handlers, supervised Core and protected accepted artifacts; direct handler, explicit synthetic IR."
+  },
+  "currentNativeMaximum": {
+    "record": {
+      "path": "artifacts/tmp/CAP-05.S04.T01.native-maximum-close-run-02.json",
+      "sha256": "3bfd248458134cae674ba4aa000076a57c9864286ae49922d3410784729c201c"
+    },
+    "result": {
+      "actualOsCloseRequested": false,
+      "cancelAndWriterMs": 146.3759,
+      "correlatedDrainedDenial": true,
+      "freshTailExact": true,
+      "kind": "native-viewer-max-cancel",
+      "manualLockProven": false,
+      "modelExecuted": false,
+      "rangeBytes": 1048576,
+      "rendererAbortDispatchProven": false,
+      "sourceBytes": 134217728,
+      "status": "PASS",
+      "terminalCloseDenied": true,
+      "terminalExitAndWriterMs": 34.774,
+      "terminalExitDuringOwnedRange": true,
+      "writerContentionProvesAuthenticationPhase": false,
+      "writerPreserved": true
+    },
+    "scope": "128MiB source, real Native/Core cancellation and terminal generation during owned range, independent preserved SQLCipher writer and exact fresh tail."
+  },
+  "currentRendererMaximum": {
+    "record": {
+      "path": "artifacts/tmp/CAP-05.S04.T01.native-candidate-stress-01.result.json",
+      "sha256": "900e92b877575a550202a2e0519434f9a86eeb3b16204b00436e9864d08415ee"
+    },
+    "publicationCheck": {
+      "path": "artifacts/tmp/CAP-05.S04.T01.native-candidate-stress-01.publication-check.json",
+      "sha256": "0f6c8c4d22d5679df4afb0af524e8b8c2a3110cafb07013863be5d64d45f70b0"
+    },
+    "firstPageMs": 11158.888,
+    "workflow": [
+      {
+        "action": "first-page",
+        "observed": true
+      },
+      {
+        "action": "last-page-text-search-and-render",
+        "observed": true
+      },
+      {
+        "action": "previous-distant-page",
+        "observed": true
+      },
+      {
+        "action": "next-distant-page",
+        "observed": true
+      },
+      {
+        "action": "return-context",
+        "observed": true
+      }
+    ],
+    "ownedJobPeakCommittedBytes": 613670912,
+    "activeDescendantsImmediatelyAfterNativeExit": 6,
+    "scope": "Fresh actual product renderer/Native/Core 128MiB/500page use and complete owned-job process commit observation. Existing profile retained; one observation. Job close kills owned descendants. No natural complete-shutdown, minimum-tier, percentile or256MiB backing-buffer counter proof."
+  },
+  "otherChecks": [
+    {
+      "tests": 9,
+      "scope": "Current Native DTO/admission units",
+      "output": {
+        "path": "artifacts/tmp/CAP-05.S04.T01.reader-candidate-native-unit-01.log",
+        "sha256": "a5d122fac1ae2b24bf18d58d6016d1ec95edccc8fe60c3d62910e450ea6901b3"
+      }
+    },
+    {
+      "tests": 10,
+      "scope": "Current mounted Reader journeys and actual pinned decoder active-content/malformed/large-surface/expansion denial and retry. Synthetic transport; no Native/tier proof.",
+      "output": {
+        "path": "artifacts/tmp/CAP-05.S04.T01.reader-candidate-browser-01.log",
+        "sha256": "d34efb3d8455b0b80c4ccd66cfff4d0cc0ab58ba068eac27aff6d2f3226cfe0e"
+      }
+    },
+    {
+      "scope": "Current strict TypeScript",
+      "output": {
+        "path": "artifacts/tmp/CAP-05.S04.T01.reader-candidate-types-01.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "tests": 27,
+      "candidate": "48b888a9b1dfaab17f814b8658a311d160f531c3",
+      "scope": "Earlier renderer lifecycle, native DTO, worker and asset tests; retained at their actual candidate, not presented as fresh at final HEAD.",
+      "output": {
+        "path": "artifacts/tmp/CAP-05.S04.T01.reader-candidate-unit-01.log",
+        "sha256": "f7c62b2673202132b80cfaa110c4471bc849199926174bb2d8521e65f2f604e2"
+      }
+    }
+  ],
+  "adverse": [
+    {
+      "path": "artifacts/tmp/CAP-05.S04.T01.native-accepted-adverse-note-01.json",
+      "sha256": "8d2966f17aa60098e91e1d97f19089deed5ed93f2840eeaff043d6009d14caf3"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S04.T01.native-accepted-run-01.json",
+      "sha256": "c4bf5927ddaf91a815efadecbabad8ccba4e267ec50ec7843629355f76403210"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S04.T01.native-accepted-run-02.json",
+      "sha256": "3dadc114adaa94b538ed18f4de0db1eab7b2f6e44ef7efa8cefc33fb36c72cc0"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S04.T01.native-maximum-close-run-01.json",
+      "sha256": "fc2c337d8a6ff71b2bf638901e24cea81eec438b9b6d5f46d14803314b13e683"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S04.T01.native-cold-stop-01.json",
+      "sha256": "5ec8093e5cc9ec3db58bd59feb5e97786af2d7f22540e9f9207d93f3e2a15ed4"
+    }
+  ],
+  "latencyAuthority": {
+    "ownerSelectedSeconds": 3.0,
+    "procedureStatus": "PENDING-EXPLICIT-APPROVAL",
+    "proposalPath": "artifacts/evidence/CAP-05.S04.T01.latency-target-amendment-01.proposal.json",
+    "proposalCanonicalSHA256": "7e9a511cd533ae3523aebafffe54d00182d0fdcf9251c3787be554b95ac0d75d",
+    "readinessPath": "artifacts/evidence/CAP-05.S04.T01.latency-target-amendment-01.readiness-review-01.json",
+    "readinessCanonicalSHA256": "0159169909ba49557462e3b26d18d446567abbfc040de028dd90a362bfc131a0",
+    "noRepeatedValueDecision": true,
+    "latencyQualification": false,
+    "next": "After explicit LT01 procedure approval, append its adoption at a quiescent boundary, then finish representative cold/warm qualification and formal criterion-linked T01 review."
+  },
+  "deferred": "Full packaging/profile/Wave qualification, minimum-tier claims and independent task/slice/Wave dispositions remain outstanding. No actual8/16GiB variants or parser-overage tuning. No framework source edits.",
+  "previousObservationRecord": "artifacts/evidence/CAP-05.S04.T01.partial-observations-01.json"
+}
