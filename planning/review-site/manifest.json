@@ -23034,7 +23034,7 @@
             {
               "task_id": "CAP-05.S04.T01",
               "title": "Build secure local PDF/page and structured-text viewer",
-              "status": "IN_PROGRESS",
+              "status": "BLOCKED",
               "mode": "latest-review-only",
               "latest_review": {
                 "reviewer": null,
@@ -23075,7 +23075,7 @@
             {
               "task_id": "CAP-05.S04.T01",
               "title": "Build secure local PDF/page and structured-text viewer",
-              "status": "IN_PROGRESS",
+              "status": "BLOCKED",
               "page": "CAP-05/CAP-05.S04.T01.html",
               "dependencies": [
                 "CAP-05.S03.T03",

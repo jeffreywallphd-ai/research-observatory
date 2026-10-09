@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: feb2baf0edba4e911a4b21706fdac92dd173428e3f118dd76ed1d3c83747471a
+source_sha256: 9b05c8fb613805c8388ab1988520f8e050adc3ad5aca472d73ce4171c78e0716
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -11717,7 +11717,7 @@ Original tasks and approvals remain unchanged.
 
 #### - [ ] CAP-05.S04.T01 - Build secure local PDF/page and structured-text viewer
 
-**Status / priority / estimate / risk:** `IN_PROGRESS` / `P0` / `L` / `high`
+**Status / priority / estimate / risk:** `BLOCKED` / `P0` / `L` / `high`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 

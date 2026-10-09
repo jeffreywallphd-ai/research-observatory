@@ -31559,13 +31559,22 @@ capabilities:
       - python tools/verify.py --profile desktop
       - python tools/verify.py --profile documents
       - python tools/verify.py --profile security-local
-      status: IN_PROGRESS
+      status: BLOCKED
       owner: codex-w2-implementation
       branch: codex/w2-implementation
       started_at: '2026-10-08T19:08:53+00:00'
-      updated_at: '2026-10-09T12:04:29+00:00'
+      updated_at: '2026-10-09T14:32:35+00:00'
       completed_at: null
-      blocker: null
+      blocker:
+        reason: Reader3s target is selected by the owner; the exact LT01 direct-record procedure exception remains pending.
+          Current original1.5s criterion is not relaxed or passed. Focused product proof is preserved in partial-observations-02;
+          no task or W2 completion.
+        next_action: Approve the already-present LT01 procedure request at proposal canonical SHA2567e9a511cd533ae3523aebafffe54d00182d0fdcf9251c3787be554b95ac0d75d
+          and independently reviewed readiness0159169909ba49557462e3b26d18d446567abbfc040de028dd90a362bfc131a0; adopt append-only,
+          reopen the same owned T01 without a new claim, finish cold/warm qualification and independent review, then continue
+          S04.T02 and the remaining W2 tasks.
+        recorded_at: '2026-10-09T14:32:35+00:00'
+        owner: codex-w2-implementation
       implementation_notes: ''
       evidence: []
       review:
@@ -31576,10 +31585,7 @@ capabilities:
           task-owned proof without changing approved criteria. Preserve failed old helper results; no framework edits, generic
           EX01 exemption, waived product/security/resource obligations or new owner decision.'
       base_sha: 1bd33a6ba180487b239e3315e302b6db6aaea123
-      lease:
-        claimed_by: codex-w2-implementation
-        claimed_at: '2026-10-09T12:04:29+00:00'
-        expires_at: '2026-10-09T20:04:29+00:00'
+      lease: null
       verification_state: null
       worktree: .
       platform_targets:
