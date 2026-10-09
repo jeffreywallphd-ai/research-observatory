@@ -8,10 +8,8 @@ from collections import OrderedDict
 from collections.abc import Callable
 from dataclasses import dataclass, field
 
-from .document_revision_repository import LocalDocumentRevisionRepository
 from .document_revisions import DocumentRevisionProblem
 from .document_viewer_ranges import DocumentViewerRangePool, ViewerRangeKey, ViewerRangeProblem
-from .document_viewer_repository import LocalDocumentViewerRepository
 from .ports.object_store import ObjectReadCancelled
 
 
@@ -40,7 +38,7 @@ class _Request:
 
 
 class DocumentViewerService:
-    def __init__(self, attachments, imports, *, repository_factory=LocalDocumentRevisionRepository) -> None:
+    def __init__(self, attachments, imports, *, repository_factory) -> None:
         self.attachments, self.imports = attachments, imports
         self.repository_factory = repository_factory
         self.ranges = DocumentViewerRangePool()
@@ -68,7 +66,7 @@ class DocumentViewerService:
                     raise ObjectReadCancelled()
                 return read()
 
-            revisions = self.repository_factory(
+            repository = self.repository_factory(
                 selected._database,
                 command.project_id,
                 selected._objects,
@@ -77,7 +75,7 @@ class DocumentViewerService:
                 now=lambda: actor.occurred_at,
             )
             try:
-                result = guard(lambda: action(LocalDocumentViewerRepository(revisions), actor, stopped))
+                result = guard(lambda: action(repository, actor, stopped))
                 if stopped():
                     raise ObjectReadCancelled()
                 return result

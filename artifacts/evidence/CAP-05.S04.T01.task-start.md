@@ -172,3 +172,24 @@ maximum-document use. Formal latency/resource qualification and independent T01
 disposition remain required. Resume the same owned task through ordinary taskctl;
 do not claim again or alter its original identity/base/dependencies. No task,
 slice, Wave, minimum-hardware or release completion follows from LT01 adoption.
+
+## Final composition acceptance row
+
+Criterion 3 includes the existing Core dependency direction: the application
+service receives its local read-adapter composition from `main`; it does not
+select concrete revision or viewer adapters. The fresh architecture
+characterization reported that missed dependency along with three checker
+classification limitations. The correction injects one required composed
+repository factory while retaining the same current actor, guard, occurrence
+time, native-store reuse, protected context and delivery checks. The real Core
+fixture composes those same adapters explicitly.
+
+Final evidence must replay actual protected-source, rights, cancellation,
+coalesced-follower and writer boundaries after this wiring correction. The
+typed cancellation callback retains its default-bound exact group. Production
+typing and all changed Python lint/format are selected; exploratory broad test
+typing diagnostics remain failures rather than claims of functional defects.
+The unchanged architecture helper's new-adapter inventory and relative-import
+limitations remain adverse evidence. Substantive task-owned proof must resolve
+the actual port import, adapter roles and required service injection without
+changing the helper, shared quality scope or architecture authority.

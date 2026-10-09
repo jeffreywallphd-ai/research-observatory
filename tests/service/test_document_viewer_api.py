@@ -16,6 +16,8 @@ from fastapi.testclient import TestClient
 from research_observatory_core import object_store, storage
 from research_observatory_core.app import create_app
 from research_observatory_core.authentication import capability_token_digest
+from research_observatory_core.document_revision_repository import LocalDocumentRevisionRepository
+from research_observatory_core.document_viewer_repository import LocalDocumentViewerRepository
 from research_observatory_core.document_viewer_service import DocumentViewerService
 from research_observatory_core.domain_contracts import new_uuid_v7
 from research_observatory_core.import_preview_service import ImportPreviewService
@@ -77,7 +79,13 @@ class DocumentViewerApiTests(unittest.TestCase):
         self.attachments = DocumentAttachmentRuntime(
             self.imports, self.f.service.attachments._corpus, self.f.service.attachments._object_store_factory
         )
-        self.viewer = DocumentViewerService(self.attachments, self.imports)
+        self.viewer = DocumentViewerService(
+            self.attachments,
+            self.imports,
+            repository_factory=lambda *args, **kwargs: LocalDocumentViewerRepository(
+                LocalDocumentRevisionRepository(*args, **kwargs)
+            ),
+        )
         self.addCleanup(self.viewer.shutdown)
         self.client = self.enterContext(
             TestClient(
