@@ -73,6 +73,11 @@ def seed(*, accepted: bool = False) -> Path:
         assert opened.status_code == 200 and opened.json()["projectId"] == selected["projectId"]
         runtime = app.state.runtime.attachments
         session = runtime.context(str(project_root), selected["projectId"])
+        if accepted:
+            # Project open attaches the actual parse pump. Stop/drain only it
+            # before exposing authored synthetic jobs; otherwise it can race
+            # our claim and invoke an installed parser during fixture seeding.
+            app.state.runtime.document_revisions.shutdown()
 
         def authored(service, actor):
             operation, command = new_uuid_v7(), new_uuid_v7()
@@ -156,7 +161,7 @@ def seed(*, accepted: bool = False) -> Path:
                 selected["projectId"],
                 session,
                 attachment.attachment_id,
-                "S" * 65536,
+                "S" * (1024 * 1024),
                 expected=normal.revision_id,
             )
             denied_candidate, denied_attachment, _ = runtime._action(
