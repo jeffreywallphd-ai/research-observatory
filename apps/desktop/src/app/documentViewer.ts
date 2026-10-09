@@ -1,6 +1,6 @@
 import { invoke } from "@tauri-apps/api/core";
 import { newAttachmentId } from "./documentAttachment";
-import { decodeReaderOutline, decodeSourceIdentity, type ReaderOutline, type SourceIdentity } from "./sourceAnchors";
+import { decodeAnchorResolution, decodeReaderOutline, decodeSourceIdentity, type SourceAnchorResolution, type ReaderOutline, type SourceIdentity } from "./sourceAnchors";
 
 export const VIEWER_SOURCE_LIMIT = 128 * 1024 * 1024;
 export const VIEWER_RANGE_LIMIT = 1024 * 1024;
@@ -42,6 +42,23 @@ export interface DocumentViewerTextPort {
 export interface DocumentViewerOutlinePort {
   readonly outline: (projectId: string, selector: ViewerSelector, afterNodeId: string | null) => Promise<ReaderOutline | null>;
 }
+export interface DocumentViewerAnchorPort {
+  // Terminal nullable result differs from ambiguous issued transport failure.
+  readonly resolve: (projectId: string, selector: ViewerSelector, anchorId: string) => Promise<SourceAnchorResolution | null>;
+}
+export const nativeDocumentViewerAnchorPort: DocumentViewerAnchorPort = {
+  async resolve(projectId, selector, anchorId) {
+    if (typeof window === "undefined" || !("__TAURI_INTERNALS__" in window) || !selector.normalizedRevisionId) return null;
+    try { return decodeAnchorResolution(await invoke<unknown>("document_viewer_anchor", {
+      request: { schemaVersion: "1.0", projectId, selector, anchorId },
+    }), projectId, selector.normalizedRevisionId, anchorId); }
+    catch (failure) {
+      if (failure === "viewer-resource-limit") throw new Error("viewer-resource-limit");
+      if (failure === "viewer-source-unavailable") return null;
+      throw new Error("viewer-owned-read-drain-pending");
+    }
+  },
+};
 export const nativeDocumentViewerOutlinePort: DocumentViewerOutlinePort = {
   async outline(projectId, selector, afterNodeId) {
     if (typeof window === "undefined" || !("__TAURI_INTERNALS__" in window) || !selector.normalizedRevisionId) return null;
@@ -140,6 +157,32 @@ export class ViewerCoreAdmission {
   }
 }
 
+/** Decoder clones/surfaces and bounded contexts share one 64 MiB main allowance. */
+export class ViewerMainAdmission {
+  private references = 0;
+  private contexts = 0;
+  private release: (() => void) | null = null;
+  constructor(private readonly budget: ViewerBufferBudget) {}
+  retain(): () => void {
+    if (this.references === 0) this.release = this.budget.reserve(64 * 1024 * 1024);
+    this.references += 1;
+    let live = true;
+    return () => {
+      if (!live) return;
+      live = false; this.references -= 1;
+      if (!this.references) { this.release?.(); this.release = null; }
+    };
+  }
+  context(): () => void {
+    // <=128 KiB wire, strict decoded strings/metadata, React text and DOM copies.
+    // Four 1 MiB charges fit beside 16 MiB clones and 32 MiB surfaces.
+    if (this.contexts >= 4) throw new Error("viewer-resource-limit");
+    const release = this.retain(); this.contexts += 1;
+    let live = true;
+    return () => { if (live) { live = false; this.contexts -= 1; release(); } };
+  }
+}
+
 export const nativeDocumentViewerPort: DocumentViewerPort = {
   async source(projectId, selector) {
     if (typeof window === "undefined" || !("__TAURI_INTERNALS__" in window)) return null;
@@ -184,7 +227,7 @@ export class ViewerByteSession {
   private pending = new Map<string, { controller: AbortController; promise: Promise<Uint8Array<ArrayBuffer>> }>();
   constructor(readonly projectId: string, readonly selector: ViewerSelector, readonly metadata: ViewerMetadata,
     private readonly port: DocumentViewerPort, readonly budget: ViewerBufferBudget,
-    readonly coreAdmission = new ViewerCoreAdmission(budget)) {
+    readonly coreAdmission = new ViewerCoreAdmission(budget), readonly mainAdmission = new ViewerMainAdmission(budget)) {
     if (!decodeViewerMetadata(metadata, projectId, selector)) throw new Error("viewer-source-unavailable");
   }
   get hasPendingReads(): boolean { return this.pending.size > 0 || this.drainFailed; }
@@ -222,7 +265,7 @@ export class ViewerByteSession {
   }
   fresh(): ViewerByteSession {
     if (this.drainFailed || this.pending.size) throw new Error("viewer-owned-read-drain-pending");
-    return new ViewerByteSession(this.projectId, this.selector, this.metadata, this.port, this.budget, this.coreAdmission);
+    return new ViewerByteSession(this.projectId, this.selector, this.metadata, this.port, this.budget, this.coreAdmission, this.mainAdmission);
   }
   async drain(): Promise<void> {
     if (this.drainFailed) throw new Error("viewer-owned-read-drain-pending");

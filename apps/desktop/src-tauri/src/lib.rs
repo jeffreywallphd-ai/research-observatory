@@ -1022,6 +1022,7 @@ fn application_builder() -> tauri::Builder<tauri::Wry> {
         document_viewer::document_viewer_source,
         document_viewer::document_viewer_text,
         document_viewer::document_viewer_outline,
+        document_viewer::document_viewer_anchor,
         document_viewer::document_viewer_range,
         document_viewer::document_viewer_cancel
     ];

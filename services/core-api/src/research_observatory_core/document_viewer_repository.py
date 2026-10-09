@@ -201,3 +201,49 @@ class LocalDocumentViewerRepository:
             return result
 
         return self.revisions._bounded(read)
+
+    def resolve_anchor(self, selector: ViewerSourceSelector, *, anchor_id: str):
+        """Exact retained context through the same scoped Viewer admission.
+
+        The canonical resolver authenticates its bounded anchor artifact and
+        provenance, never a whole accepted IR or a later revision. Its broken
+        context result retains the existing atomic invalidation behavior.
+        """
+
+        if not is_uuid_v7(anchor_id):
+            raise DocumentRevisionProblem("viewer-anchor-selection-invalid")
+
+        def read():
+            metadata = self.describe(selector)
+            if metadata.normalized_revision_id is None:
+                raise DocumentRevisionProblem("viewer-structured-revision-required")
+            bounded = viewer_revision_reads(self.revisions, metadata.source.byte_length)
+            result = ViewerOutlineReads(bounded).resolve(
+                anchor_id, expected_revision_id=metadata.normalized_revision_id
+            )
+            if result.source != metadata.source or self.describe(selector) != metadata:
+                raise DocumentRevisionProblem("viewer-source-changed")
+            actor = self.revisions.actor()
+            self.revisions.objects._read_authorized_document_context(
+                metadata.source,
+                actor=actor,
+                action=lambda connection: self.revisions._authority(connection, actor),
+            )
+            return result
+
+        return self.revisions._bounded(read)
+
+    def confirm_anchor_delivery(self, selector: ViewerSourceSelector, result):
+        """Fresh metadata and derive authority after the owned resolver closes."""
+
+        def confirm():
+            metadata = self.describe(selector)
+            if result.source != metadata.source or result.metadata.revision_id != metadata.normalized_revision_id:
+                raise DocumentRevisionProblem("viewer-source-changed")
+            actor = self.revisions.actor()
+            self.revisions.objects._read_authorized_document_context(
+                metadata.source, actor=actor, action=lambda connection: self.revisions._authority(connection, actor)
+            )
+            return result
+
+        return self.revisions._bounded(confirm)

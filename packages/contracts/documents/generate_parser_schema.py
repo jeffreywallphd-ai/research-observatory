@@ -24,6 +24,7 @@ from research_observatory_core.parsing.native_contracts import NativeStructure  
 from research_observatory_core.parsing.requests import ParseRequest, ParseResult  # noqa: E402
 from research_observatory_core.parsing.selection import ParserSelection  # noqa: E402
 from research_observatory_core.ports.document_viewer import (  # noqa: E402
+    ViewerDeepLink,
     ViewerSourceMetadata,
     ViewerSourceSelector,
     ViewerTextChunk,
@@ -42,6 +43,7 @@ OUTPUTS: dict[str, TypeAdapter[Any]] = {
     "viewer-source-selector.v1.schema.json": TypeAdapter(ViewerSourceSelector),
     "viewer-source-metadata.v1.schema.json": TypeAdapter(ViewerSourceMetadata),
     "viewer-text-chunk.v1.schema.json": TypeAdapter(ViewerTextChunk),
+    "viewer-deep-link.v1.schema.json": TypeAdapter(ViewerDeepLink),
 }
 VIEWER_SCHEMAS = {name for name in OUTPUTS if name.startswith("viewer-")}
 REVISION_SCHEMAS = (
@@ -98,7 +100,14 @@ def schema(name: str) -> dict[str, object]:
     result["$schema"] = "https://json-schema.org/draft/2020-12/schema"
     result["$id"] = f"https://research-observatory.local/contracts/documents/{name}"
     result["x-research-observatory-semanticRules"] = (
-        VIEWER_RULES
+        [
+            "ordered-unique-at-most-100-opaque-anchor-identities-and-exact-distinct-accepted-revision",
+            "portable-selection-without-path-session-credentials-rights-or-protected-text",
+            "explicit-project-open-unlock-and-fresh-current-authority-before-resolution",
+            "no-later-revision-substitution-or-scholarly-verification-from-navigation",
+        ]
+        if name == "viewer-deep-link.v1.schema.json"
+        else VIEWER_RULES
         if name in VIEWER_SCHEMAS
         else REVISION_RULES
         if name in REVISION_SCHEMAS

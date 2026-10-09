@@ -3,11 +3,14 @@ import type { ProjectProjection } from "@research-observatory/contracts/core-api
 import { Button, Notification, Panel, StatusBadge } from "@research-observatory/ui-components";
 import type { AttachmentHandoff } from "./DocumentAttachmentPane";
 import { decodeViewerMetadata, decodeViewerText, viewerSourcesMatch, nativeDocumentViewerPort, nativeDocumentViewerTextPort,
-  nativeDocumentViewerOutlinePort, viewerCoreAllowance, VIEWER_CORE_BASE_ALLOWANCE, ViewerBufferBudget, ViewerCoreAdmission, ViewerByteSession,
+  nativeDocumentViewerOutlinePort, nativeDocumentViewerAnchorPort, viewerCoreAllowance, VIEWER_CORE_BASE_ALLOWANCE, ViewerBufferBudget, ViewerCoreAdmission, ViewerMainAdmission, ViewerByteSession,
   type DocumentViewerPort, type DocumentViewerOutlinePort, type DocumentViewerTextPort, type ViewerMetadata, type ViewerSelector, type ViewerTextChunk } from "./documentViewer";
 import { PdfDocumentViewer } from "./pdfDocumentViewer";
 import { nativeSourceAnchorPort, type SourceAnchorPort } from "./sourceAnchorsNative";
 import { decodeReaderOutline, decodeReaderRevisions, type ReaderOutlineNode } from "./sourceAnchors";
+import { ViewerAnchorContexts } from "./ViewerAnchorContexts";
+import type { DocumentViewerAnchorPort } from "./documentViewer";
+import type { ViewerDeepLink } from "./viewerDeepLinks";
 
 export interface PdfViewer {
   open(): Promise<number>; render(canvas: HTMLCanvasElement, page: number, scale: number): Promise<void>;
@@ -16,9 +19,12 @@ export interface PdfViewer {
 }
 interface Props {
   readonly project: ProjectProjection | null; readonly handoff: AttachmentHandoff | null; readonly active: boolean;
-  readonly announce: (message: string) => void; readonly onReturn: () => void;
+  readonly announce: (message: string) => void; readonly onReturn: (handoff?: AttachmentHandoff) => void;
   readonly port?: DocumentViewerPort; readonly anchors?: SourceAnchorPort; readonly textPort?: DocumentViewerTextPort;
   readonly outlinePort?: DocumentViewerOutlinePort;
+  readonly anchorPort?: DocumentViewerAnchorPort;
+  readonly deepLink?: ViewerDeepLink | null;
+  readonly onRememberLink?: (link: ViewerDeepLink) => boolean;
   readonly pdfFactory?: (bytes: ViewerByteSession, budget: ViewerBufferBudget, failure: (code: string) => void) => PdfViewer;
 }
 const pdfFactory = (bytes: ViewerByteSession, budget: ViewerBufferBudget, failure: (code: string) => void): PdfViewer => new PdfDocumentViewer(bytes, budget, failure);
@@ -29,14 +35,37 @@ export function DocumentViewerWorkspace(props: Props): ReactNode {
   const { project, handoff } = props;
   if (!props.active || !project?.open) return <Notification tone="info" title="No open source">Open the project and select a permitted copy from its Work/version.</Notification>;
   if (!handoff?.attachmentId || !handoff.documentRevisionId || handoff.selection.projectId !== project.projectId) {
-    return <Panel title="Document Reader"><p>No exact source selected. Open a permitted copy from the selected Work/version.</p><Button onClick={props.onReturn}>Return to selected Work/version</Button></Panel>;
+    if (props.deepLink?.projectId === project.projectId) return <LinkedViewerEntry key={`${project.projectId}:${props.deepLink.selector.attachmentId}:${props.deepLink.selector.documentRevisionId}`} {...props} project={project} link={props.deepLink} />;
+    return <Panel title="Document Reader"><p>No exact source selected. Open a permitted copy from the selected Work/version.</p><Button onClick={() => props.onReturn()}>Return to selected Work/version</Button></Panel>;
   }
   return <ViewerSession key={`${project.projectId}:${handoff.attachmentId}:${handoff.documentRevisionId}`} {...props}
     project={project} handoff={handoff as AttachmentHandoff & { attachmentId: string; documentRevisionId: string }} />;
 }
 
+function LinkedViewerEntry(props: Props & { project: ProjectProjection; link: ViewerDeepLink }): ReactNode {
+  const [handoff, setHandoff] = useState<AttachmentHandoff | null>(null), [pending, setPending] = useState(true);
+  const port = props.port ?? nativeDocumentViewerPort;
+  useEffect(() => {
+    let live = true; setHandoff(null); setPending(true);
+    const selector = { ...props.link.selector, normalizedRevisionId: null };
+    void port.source(props.project.projectId, selector).then(result => {
+      if (!live) return;
+      const value = decodeViewerMetadata(result, props.project.projectId, selector);
+      if (value) { const s = value.source; setHandoff({ attachmentId: s.attachmentId, documentRevisionId: s.documentRevisionId,
+        operationId: null, commitRequest: null, selection: { projectId: s.projectId, workId: s.workId, workRevisionId: s.workRevisionId,
+          versionId: s.versionId, versionRevisionId: s.versionRevisionId, sourceAssertionRevisionId: s.sourceAssertionRevisionId } }); }
+      setPending(false);
+    }).catch(() => { if (live) setPending(false); });
+    return () => { live = false; };
+  }, [port, props.project.projectId, props.link.selector.attachmentId, props.link.selector.documentRevisionId]);
+  if (!handoff) return <Panel title="Document Reader"><p role="status">{pending ? "Checking the saved Reader link under current project permission…"
+    : "This exact linked source is unavailable or no longer permitted. Return to source review; no replacement source was opened."}</p><Button onClick={() => props.onReturn()}>Return to source review</Button></Panel>;
+  return <DocumentViewerWorkspace {...props} handoff={handoff} />;
+}
+
 function ViewerSession({ project, handoff, announce, onReturn, port = nativeDocumentViewerPort, anchors = nativeSourceAnchorPort,
-  textPort = nativeDocumentViewerTextPort, outlinePort = nativeDocumentViewerOutlinePort, pdfFactory: createPdf = pdfFactory }: Props & {
+  textPort = nativeDocumentViewerTextPort, outlinePort = nativeDocumentViewerOutlinePort, anchorPort = nativeDocumentViewerAnchorPort,
+  deepLink = null, onRememberLink, pdfFactory: createPdf = pdfFactory }: Props & {
     project: ProjectProjection; handoff: AttachmentHandoff & { attachmentId: string; documentRevisionId: string };
   }): ReactNode {
   const [metadata, setMetadata] = useState<ViewerMetadata | null>(null), [pdf, setPdf] = useState<PdfViewer | null>(null);
@@ -47,11 +76,16 @@ function ViewerSession({ project, handoff, announce, onReturn, port = nativeDocu
   const [revision, setRevision] = useState(""), [nodes, setNodes] = useState<readonly ReaderOutlineNode[]>([]);
   const [nextNode, setNextNode] = useState<string | null>(null), [text, setText] = useState<ViewerTextChunk | null>(null);
   const [textBusy, setTextBusy] = useState(false), [textStatus, setTextStatus] = useState("Choose an accepted revision to inspect structured text.");
+  const [firstPageReady, setFirstPageReady] = useState(false), [overlay, setOverlay] = useState<HTMLDivElement | null>(null);
+  const [viewport, setViewport] = useState({ width: 0, height: 0, page: 1 });
   const canvas = useRef<HTMLCanvasElement>(null), heading = useRef<HTMLHeadingElement>(null);
   const thumbnails = useRef(new Map<number, HTMLCanvasElement>()), generation = useRef(0), textGeneration = useRef(0), searchGeneration = useRef(0), live = useRef(true);
   const ownedPdf = useRef<PdfViewer | null>(null);
   const ownedBudget = useRef<ViewerBufferBudget | null>(null);
   const ownedCore = useRef<ViewerCoreAdmission | null>(null);
+  const ownedMain = useRef<ViewerMainAdmission | null>(null);
+  const linked = deepLink?.projectId === project.projectId && deepLink.selector.attachmentId === handoff.attachmentId
+    && deepLink.selector.documentRevisionId === handoff.documentRevisionId ? deepLink : null;
   const acceptedRevisions = useRef<(() => void) | null>(null);
   const selector: ViewerSelector = { attachmentId: handoff.attachmentId, documentRevisionId: handoff.documentRevisionId, normalizedRevisionId: null };
   function restoreFocus(target: Element | null, current: () => boolean): void {
@@ -73,7 +107,7 @@ function ViewerSession({ project, handoff, announce, onReturn, port = nativeDocu
     const current = (): boolean => live.current && generation.current === ticket;
     let bytes: ViewerByteSession | null = null, viewer: PdfViewer | null = null;
     setMetadata(null); setPdf(null); setPages(0); setPage(1); setRevision(""); setRevisions([]); setText(null); setFailure(null); setBusy(true);
-    setNodes([]); setNextNode(null); setQuery(""); setSearching(false); setTextBusy(false);
+    setNodes([]); setNextNode(null); setQuery(""); setSearching(false); setTextBusy(false); setFirstPageReady(false);
     acceptedRevisions.current = null;
     setStatus("Checking current copy and inspection permission…"); setTextStatus("Choose an accepted revision to inspect structured text.");
     heading.current?.focus();
@@ -84,27 +118,31 @@ function ViewerSession({ project, handoff, announce, onReturn, port = nativeDocu
       setMetadata(value);
       const budget = windowViewerBudget; ownedBudget.current = budget;
       const core = new ViewerCoreAdmission(budget); ownedCore.current = core;
+      const main = new ViewerMainAdmission(budget); ownedMain.current = main;
       // The original is readable without an accepted parse or derive permission.
       // Accepted revision lookup may deny separately and must not replace it.
       acceptedRevisions.current = () => {
         if (!current()) return;
         void anchors.revisions(project.projectId, handoff.attachmentId).then((result) => {
           const accepted = decodeReaderRevisions(result, project.projectId, handoff.attachmentId);
-          if (current() && accepted && viewerSourcesMatch(accepted.source, value.source)) setRevisions(accepted.revisions.map((item) => item.revisionId));
+          if (current() && accepted && viewerSourcesMatch(accepted.source, value.source)) {
+            setRevisions([...new Set([...(linked ? [linked.selector.normalizedRevisionId] : []), ...accepted.revisions.map((item) => item.revisionId)])]);
+            if (linked) setRevision(linked.selector.normalizedRevisionId);
+          }
         }).catch(() => undefined);
       };
       if (value.source.format === "pdf") {
-        bytes = new ViewerByteSession(project.projectId, selector, value, port, budget, core);
+        bytes = new ViewerByteSession(project.projectId, selector, value, port, budget, core, main);
         viewer = createPdf(bytes, budget, (code) => { if (current()) fail(code); }); ownedPdf.current = viewer;
         const count = await viewer.open();
         if (!current()) { viewer.close(); return; }
         setPages(count); setPdf(viewer); notify("Original loaded. Rendering the first permitted page…");
       } else {
         acceptedRevisions.current?.(); acceptedRevisions.current = null;
-        setBusy(false); notify("Select an accepted revision for inert structured text. Active HTML, attachments and external document actions are unavailable.");
+        setBusy(false); setFirstPageReady(true); notify("Select an accepted revision for inert structured text. Active HTML, attachments and external document actions are unavailable.");
       }
     })().catch(() => { if (current()) fail("viewer-source-unavailable"); });
-    return () => { live.current = false; generation.current += 1; textGeneration.current += 1; searchGeneration.current += 1; acceptedRevisions.current = null; bytes?.close(); viewer?.close(); ownedPdf.current = null; ownedBudget.current = null; ownedCore.current = null; };
+    return () => { live.current = false; generation.current += 1; textGeneration.current += 1; searchGeneration.current += 1; acceptedRevisions.current = null; bytes?.close(); viewer?.close(); ownedPdf.current = null; ownedBudget.current = null; ownedCore.current = null; ownedMain.current = null; };
   }, [project.projectId, handoff.attachmentId, handoff.documentRevisionId, port, anchors, createPdf, retry]);
 
   useEffect(() => {
@@ -113,7 +151,7 @@ function ViewerSession({ project, handoff, announce, onReturn, port = nativeDocu
     const element = canvas.current;
     void pdf.render(element, page, scale).then(async () => {
       if (!active || !live.current) return;
-      setBusy(false); notify(`Page ${page} of ${pages} displayed.`);
+      setBusy(false); setFirstPageReady(true); setViewport({ width: element.width, height: element.height, page }); notify(`Page ${page} of ${pages} displayed.`);
       restoreFocus(priorFocus, () => active);
       // Optional structured-revision lookup must not compete with the initial
       // protected PDF ranges for Core's project writer before page one appears.
@@ -197,11 +235,11 @@ function ViewerSession({ project, handoff, announce, onReturn, port = nativeDocu
     onCopy={blocked} onCut={blocked} onContextMenu={blocked} onDragStart={blocked}
     onKeyDown={(event) => {
       if ((event.ctrlKey || event.metaKey) && ["p", "s"].includes(event.key.toLowerCase())) blocked(event);
-      if (event.key === "Escape") { event.preventDefault(); pdf?.close(); onReturn(); }
+      if (event.key === "Escape") { event.preventDefault(); pdf?.close(); onReturn(handoff); }
     }}>
     <header className="page-header"><h1 className="ro-typography ro-typography--page-title" ref={heading} tabIndex={-1}>Document Reader</h1>
       <p className="page-subtitle">Inspect an exact permitted copy beside accepted structured text and its provenance.</p></header>
-    <div className="ro-action-row" id="reader-source-context"><Button onClick={() => { pdf?.close(); onReturn(); }}>Return to selected Work/version</Button>
+    <div className="ro-action-row" id="reader-source-context"><Button onClick={() => { pdf?.close(); onReturn(handoff); }}>Return to selected Work/version</Button>
       <Button disabled={busy || searching || page <= 1 || Boolean(failure)} onClick={() => setPage((value) => value - 1)}>Previous page</Button>
       <Button disabled={busy || searching || page >= pages || Boolean(failure)} onClick={() => setPage((value) => value + 1)}>Next page</Button>
       <label>Page <select aria-label="Source page" disabled={busy || searching || !pages || Boolean(failure)} value={page} onChange={(event) => setPage(Number(event.currentTarget.value))}>
@@ -238,7 +276,7 @@ function ViewerSession({ project, handoff, announce, onReturn, port = nativeDocu
         {nextNode ? <Button disabled={textBusy} onClick={() => void outline(revision, nextNode)}>More source elements</Button> : null}
       </Panel></aside>
       <article className="ro-card viewer-paper" aria-label="Original source page" aria-busy={busy}><h2>Original source</h2>
-        {pdf && !failure ? <canvas ref={canvas} role="img" aria-label={`Original PDF page ${page} of ${pages}. Use structured text for readable extraction.`} /> : <p>{busy ? "Opening protected source…" : "An original page rendering is unavailable for this format. Choose a permitted accepted revision for structured text."}</p>}
+        {pdf && !failure ? <div className="viewer-page-surface"><canvas ref={canvas} role="img" aria-label={`Original PDF page ${page} of ${pages}. Use structured text for readable extraction.`} /><div className="viewer-anchor-overlay" ref={setOverlay} /></div> : <p>{busy ? "Opening protected source…" : "An original page rendering is unavailable for this format. Choose a permitted accepted revision for structured text."}</p>}
         <section aria-label="Accepted structured text" aria-busy={textBusy}><h2>Accepted structured text</h2><p role="status">{textStatus}</p>
           {text ? <><p className="anchor-passage-text">{text.text || "This structural element has no readable text."}</p><StatusBadge tone="info">Unverified extraction</StatusBadge>
             {text.nextOffset !== null ? <Button disabled={textBusy} onClick={() => { const node = nodes.find((item) => item.nodeId === text.nodeId); if (node) void passage(node, text.nextOffset!); }}>Next text chunk</Button> : null}</> : null}
@@ -250,7 +288,13 @@ function ViewerSession({ project, handoff, announce, onReturn, port = nativeDocu
         <dt>Source hash</dt><dd>{metadata?.source.objectSha256 || "Not confirmed"}</dd><dt>Selected text element</dt><dd>{text?.nodeId || "Not selected"}</dd></dl>
         <p>Inspection is checked for every source request. Structured text also requires current derivation permission. No scholarly claim is verified by viewing a page.</p>
         <p>PDF scripts, forms, attachments and external links are inactive. Copy, print, external open and export are currently unavailable.</p>
-      </Panel></aside>
+      </Panel>
+        {metadata && revision && firstPageReady && !failure && ownedMain.current ? <Panel title="Anchor inspection"><ViewerAnchorContexts key={revision}
+          metadata={metadata} revisionId={revision} initial={linked} main={ownedMain.current} reserveCore={reserveStructured}
+          port={anchorPort} anchors={anchors} overlay={busy ? null : overlay} viewport={viewport}
+          onPage={(number) => { if (number >= 1 && number <= pages) setPage(number); }}
+          onRemember={onRememberLink} onReturn={() => { pdf?.close(); onReturn(handoff); }} onFailure={fail} /></Panel> : null}
+      </aside>
     </div>
   </section>;
 }

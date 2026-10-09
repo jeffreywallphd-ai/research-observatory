@@ -18,6 +18,10 @@ const selection = { projectId: source.projectId, sourceAssertionRevisionId: sour
 const handoff = { attachmentId: source.attachmentId, documentRevisionId: source.documentRevisionId, selection };
 const root = createRoot(document.getElementById("root")!);
 const state = {
+  anchorMode: false, linkMode: false, noHandoff: false, anchorCalls: 0, denyAnchor: false, wrongAnchorSource: false,
+  missingAnchor: false, holdAnchor: false, unknownAnchor: false, releaseAnchor: null as (() => void) | null,
+  anchorRotation: 0 as 0 | 90 | 180 | 270, mismatchGeometry: false,
+  savedLinks: [] as object[],
   sourceCalls: 0, revisionCalls: 0, closes: 0, rendered: [] as { page: number; scale: number }[], returns: [] as object[],
   denySource: false, substituteSource: false, denyText: false, limitOutline: false, limitText: false,
   holdText: false, releaseText: null as (() => void) | null,
@@ -25,8 +29,11 @@ const state = {
   holdRender: false, releaseRender: null as (() => void) | null,
   mount(active = true): void {
     root.render(<DocumentViewerWorkspace project={{ projectId: source.projectId, open: true } as ProjectProjection}
-      handoff={handoff} active={active} announce={() => undefined} onReturn={() => { state.returns.push(selection); state.mount(false); }}
-      port={port} anchors={anchors} outlinePort={outlinePort} textPort={textPort} pdfFactory={pdfFactory} />);
+      handoff={state.noHandoff ? null : { ...handoff, operationId: null, commitRequest: null }} active={active} announce={() => undefined} onReturn={(value) => { state.returns.push(value?.selection ?? selection); state.mount(false); }}
+      deepLink={state.linkMode ? { schemaVersion: "1.0", projectId: source.projectId, selector: { attachmentId: source.attachmentId,
+        documentRevisionId: source.documentRevisionId, normalizedRevisionId: revision }, anchorIds: [fixture.anchorId, secondAnchorId] } : null}
+      onRememberLink={(link) => { state.savedLinks.push(link); return true; }}
+      port={port} anchors={anchors} anchorPort={anchorPort} outlinePort={outlinePort} textPort={textPort} pdfFactory={pdfFactory} />);
   },
 };
 const port = {
@@ -40,8 +47,28 @@ const anchors = {
     source, viewKind: "accepted-structured-text" as const, scholarlyVerification: "unverified" as const,
     nodes: [{ nodeId, nodeKind: "paragraph", preview: "Synthetic element", pageNumber: 2, hasText: true,
       selection: { schemaVersion: "1.0" as const, revisionId: revision, nodeId, normalizedRange: { start: 0, end: 16 } } }], nextNodeId: null }),
-  list: async () => [], read: async () => null, create: async () => null,
+  list: async () => state.anchorMode ? [fixture.anchorId, secondAnchorId] : [], read: async () => null, create: async () => null,
 };
+const secondAnchorId = "00000000-0000-7000-8000-000000000022";
+const anchorPort = { resolve: async (_project: string, _selector: object, anchorId: string) => {
+  state.anchorCalls += 1;
+  if (state.holdAnchor) await new Promise<void>(resolve => { state.releaseAnchor = resolve; });
+  if (state.unknownAnchor) throw new Error("viewer-owned-read-drain-pending");
+  if (state.denyAnchor) return null;
+  const currentSource = state.wrongAnchorSource ? { ...source, workRevisionId: source.attachmentId } : source;
+  const second = anchorId === secondAnchorId;
+  const pageRegion = { pageIndex: 0, pageNumber: 1, x0: .1, y0: second ? .4 : .2, x1: .8, y1: second ? .5 : .3, sourceWidth: 612, sourceHeight: 792,
+    rotation: state.anchorRotation, frame: "unrotated-source-page" as const, origin: "top-left" as const, unit: "normalized" as const, granularity: "block" as const };
+  return { schemaVersion: "1.0" as const, anchorId, anchorRevisionId: fixture.anchorRevisionId,
+    source: currentSource, metadata: { projectId: source.projectId, documentId: source.documentId, revisionId: revision,
+      acceptedAt: fixture.createdAt, displayLabel: "Synthetic accepted source", labelOrigin: "canonical-document-revision" as const },
+    status: state.missingAnchor ? "missing" as const : "exact" as const, selectorUsed: state.missingAnchor ? "not-resolved" as const : "page-region" as const,
+    reason: state.missingAnchor ? "readable-text-not-reported" as const : null, propagation: null,
+    target: state.missingAnchor ? null : { ...fixture.target, ...(second ? {
+      textPosition: { start: 10, end: 16 }, quote: { exact: "chosen", prefix: "Préface 📚 ", suffix: "" },
+      context: { start: 0, text: "Préface 📚 chosen", highlight: { start: 10, end: 16 } },
+    } : {}), source: currentSource, pageRegion, coordinatesState: "available" as const }, scholarlyVerification: "unverified" as const };
+} };
 const textPort = { text: async (_project: string, _selector: object, _node: string, offset: number) => {
   if (state.holdText) await new Promise<void>((resolve) => { state.releaseText = resolve; });
   if (state.limitText) throw new Error("viewer-resource-limit");
@@ -55,7 +82,9 @@ const outlinePort = { outline: async () => {
 const pdfFactory = (): PdfViewer => ({ open: async () => 3,
   render: async (canvas, page, scale) => {
     if (state.holdRender) await new Promise<void>((resolve) => { state.releaseRender = resolve; });
-    state.rendered.push({ page, scale }); canvas.width = 612; canvas.height = 792;
+    state.rendered.push({ page, scale });
+    const rotated = !state.mismatchGeometry && (state.anchorRotation === 90 || state.anchorRotation === 270);
+    canvas.width = rotated ? 792 : 612; canvas.height = rotated ? 612 : 792;
   },
   thumbnail: async (canvas) => { canvas.width = 96; canvas.height = 128; },
   releaseCanvas: (canvas) => { canvas.width = canvas.height = 0; },

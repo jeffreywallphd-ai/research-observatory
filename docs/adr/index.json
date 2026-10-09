@@ -460,7 +460,8 @@
       "title": "Bind local source viewing to existing protected read authority",
       "status": "Proposed",
       "linkedTasks": [
-        "CAP-05.S04.T01"
+        "CAP-05.S04.T01",
+        "CAP-05.S04.T02"
       ]
     }
   ]

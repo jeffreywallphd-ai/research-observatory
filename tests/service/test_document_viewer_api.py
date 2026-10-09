@@ -14,6 +14,7 @@ from unittest.mock import patch
 import sqlcipher3.dbapi2 as sqlcipher
 from fastapi.testclient import TestClient
 from research_observatory_core import object_store, storage
+from research_observatory_core.anchors.contracts import AnchorSelection
 from research_observatory_core.app import create_app
 from research_observatory_core.authentication import capability_token_digest
 from research_observatory_core.document_revision_repository import LocalDocumentRevisionRepository
@@ -30,6 +31,69 @@ from tests.documents import test_document_revision_workflow as workflows
 
 
 class DocumentViewerApiTests(unittest.TestCase):
+    def anchor_command(self):
+        repository = self.f.fixture.repository
+        accepted = repository.accept(
+            self.f.fixture.command(self.f.fixture.parse(raw="Synthetic exact anchor context."))
+        )
+        node = next(item for item in accepted.structure.nodes if item.text is not None)
+        anchor = repository.source_anchors().create(
+            new_uuid_v7(),
+            AnchorSelection(
+                revision_id=accepted.revision_id, node_id=node.node_id, normalized_range={"start": 0, "end": 9}
+            ),
+        )
+        return dict(
+            self.command,
+            selector=dict(self.command["selector"], normalizedRevisionId=accepted.revision_id),
+            anchorId=anchor.anchor_id,
+        ), anchor
+
+    def test_retained_anchor_private_api_is_exact_and_rejects_renderer_authority(self):
+        command, anchor = self.anchor_command()
+        response = self.client.post(self.path + "/anchor", json=command)
+        self.assertEqual(200, response.status_code, response.text)
+        self.assertEqual(anchor.anchor_id, response.json()["anchorId"])
+        self.assertEqual(anchor.target.revision_id, response.json()["metadata"]["revisionId"])
+        self.assertEqual("Synthetic", response.json()["target"]["quote"]["exact"])
+        self.assertEqual(
+            422, self.client.post(self.path + "/anchor", json=dict(command, rights="permitted")).status_code
+        )
+        self.assertEqual(
+            403,
+            self.client.post(
+                self.path + "/anchor", json=command, headers={"Origin": "http://tauri.localhost"}
+            ).status_code,
+        )
+        self.assertNotIn(self.path + "/anchor", self.client.get("/openapi.json").json().get("paths", {}))
+
+    def test_anchor_private_api_denies_substitution_derive_and_expired_session_without_text(self):
+        command, _ = self.anchor_command()
+        for field in ("attachmentId", "documentRevisionId", "normalizedRevisionId"):
+            wrong = dict(command, selector=dict(command["selector"], **{field: new_uuid_v7()}))
+            response = self.client.post(self.path + "/anchor", json=wrong)
+            self.assertEqual(409, response.status_code)
+            self.assertNotIn("Synthetic", response.text)
+        self.f.f.permit(derive="denied")
+        self.assertEqual(409, self.client.post(self.path + "/anchor", json=command).status_code)
+        self.assertEqual(200, self.client.post(self.path + "/source", json=self.command).status_code)
+        self.imports.detach(self.command["root"])
+        self.assertEqual(409, self.client.post(self.path + "/anchor", json=command).status_code)
+
+    def test_anchor_rights_revoked_after_physical_read_deny_delivery(self):
+        command, _ = self.anchor_command()
+        resolve = LocalDocumentViewerRepository.resolve_anchor
+
+        def revoked(repository, *args, **kwargs):
+            value = resolve(repository, *args, **kwargs)
+            self.f.f.permit(derive="denied")
+            return value
+
+        with patch.object(LocalDocumentViewerRepository, "resolve_anchor", revoked):
+            response = self.client.post(self.path + "/anchor", json=command)
+        self.assertEqual(409, response.status_code)
+        self.assertNotIn("Synthetic", response.text)
+
     def assert_authentication_owns_writer(self):
         # The stream registry begins after full authentication. During the
         # held authentication frame, test the actual encrypted writer instead.

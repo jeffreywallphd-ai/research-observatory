@@ -6,6 +6,7 @@ date: 2026-10-08
 deciders: []
 linked_tasks:
   - CAP-05.S04.T01
+  - CAP-05.S04.T02
 decision_scope: Documentary implementation mapping of the approved local viewer and cooperative protected-read cancellation to accepted ADR-0016/0017/0029; no new product, security, migration, hardware or release authority.
 affected_paths:
   - services/core-api/src/research_observatory_core/object_store.py
@@ -138,3 +139,7 @@ performance, native principal and experience checks remain task obligations.
 ## Task links
 
 - `CAP-05.S04.T01` owns this implementation and qualification.
+- `CAP-05.S04.T02` extends the same approved source boundary with portable opaque
+  anchor selections, bounded retained context and fresh delivery authority.
+  It reuses accepted ADR-0029 and canonical anchors, changes no encryption or
+  migration format, and introduces no automation framework work or new authority.

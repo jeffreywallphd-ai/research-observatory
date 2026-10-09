@@ -117,6 +117,23 @@ class DocumentViewerService:
             ),
         )
 
+    def resolve_anchor(self, command, *, trace_id):
+        result, principal = self._scoped(
+            command,
+            trace_id,
+            lambda repository, actor, _stopped: (
+                repository.resolve_anchor(command.selector, anchor_id=command.anchor_id),
+                _principal(actor),
+            ),
+        )
+
+        def deliver(repository, actor, _stopped):
+            if _principal(actor) != principal:
+                raise DocumentRevisionProblem("viewer-authority-changed")
+            return repository.confirm_anchor_delivery(command.selector, result)
+
+        return self._scoped(command, trace_id, deliver)
+
     def read_range(self, command, *, trace_id, cancellation_requested: Callable[[], bool] = lambda: False):
         identity = (command.project_id, command.session_id, command.request_id)
         request = _Request(command.root, transport_stop=cancellation_requested)

@@ -46,6 +46,10 @@ class ViewerOutlineCommand(ViewerSourceCommand):
     after_node_id: Identity | None = None
 
 
+class ViewerAnchorCommand(ViewerSourceCommand):
+    anchor_id: Identity
+
+
 def register_document_viewer_routes(app: FastAPI, runtime: Callable):
     router = APIRouter(prefix="/native/document-viewer", route_class=BoundedDocumentJsonRoute, include_in_schema=False)
 
@@ -137,6 +141,15 @@ def register_document_viewer_routes(app: FastAPI, runtime: Callable):
         return run(
             request,
             lambda service: service.outline(command, trace_id=request.state.trace_id).model_dump(
+                mode="json", by_alias=True
+            ),
+        )
+
+    @router.post("/anchor")
+    def resolve_anchor(request: Request, command: ViewerAnchorCommand):
+        return run(
+            request,
+            lambda service: service.resolve_anchor(command, trace_id=request.state.trace_id).model_dump(
                 mode="json", by_alias=True
             ),
         )

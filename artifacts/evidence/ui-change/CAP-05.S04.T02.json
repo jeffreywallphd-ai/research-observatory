@@ -1,0 +1,39 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "ui-change-evidence",
+  "taskId": "CAP-05.S04.T02",
+  "changeKind": "approved-reference-implementation",
+  "contractPath": "artifacts/evidence/ui-change/CAP-05.S04.T02.json",
+  "implementationAgent": "agent:codex-w2-implementation",
+  "changedFiles": [
+    "apps/desktop/src/app.css",
+    "apps/desktop/src/app/ApplicationRuntime.tsx",
+    "apps/desktop/src/app/DocumentViewerWorkspace.tsx",
+    "apps/desktop/src/app/ViewerAnchorContexts.tsx",
+    "apps/desktop/src/app/SourceAnchorReader.tsx",
+    "apps/desktop/src/app/documentViewer.ts",
+    "apps/desktop/src/app/pdfDocumentViewer.ts",
+    "apps/desktop/src/app/viewerDeepLinks.ts"
+  ],
+  "reference": {
+    "referenceId": "RO-UI-ACADEMIC-MINIMAL-1.9",
+    "version": "1.9",
+    "packageSha256": "24b8d62356863980ae9a13db7d6a06b04b76c60e2f1920d2e888cadecfb24c4b",
+    "approvalCommit": "556369f77186324194789ee26eb0baf00fd936a8",
+    "approvedBy": "human:repository-owner",
+    "previousReferenceId": "RO-UI-ACADEMIC-MINIMAL-1.8"
+  },
+  "implementationScope": "Approved Reader anchor navigation: portable opaque exact-revision links, two bounded numbered highlights and inert contexts, source metadata and processing status, missing/broken source-review return, fresh authority, accessible keyboard controls, themes and reflow. Future evidence/graph/synthesis surfaces and OS protocol registration are not claimed. Work remains pending committed-candidate Native/restart/relocation evidence and independent disposition.",
+  "focusedEvidence": [
+    {
+      "command": "node apps/desktop/node_modules/vitest/vitest.mjs run apps/desktop/src/app/viewerDeepLinks.test.ts apps/desktop/src/app/viewerMainAdmission.test.ts apps/desktop/src/app/documentViewer.test.ts apps/desktop/src/app/pdfDocumentViewer.test.ts",
+      "result": "passed",
+      "scope": "20 worktree ownership/value tests; no Windows principal or committed-candidate claim."
+    },
+    {
+      "command": "python -B -m unittest tests.desktop.test_document_viewer_interactions.DocumentViewerInteractionsTests.test_two_anchors_unicode_geometry_zoom_reflow_and_exact_return tests.desktop.test_document_viewer_interactions.DocumentViewerInteractionsTests.test_late_anchor_after_lock_and_substituted_source_cannot_publish_context -v",
+      "result": "passed",
+      "scope": "Two focused worktree mounted Reader regressions with explicitly synthetic ports and PDF decoder; actual Native proof remains separate."
+    }
+  ]
+}

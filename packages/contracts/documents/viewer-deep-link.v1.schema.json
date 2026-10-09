@@ -1,0 +1,80 @@
+{
+  "$defs": {
+    "Identity": {
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+      "type": "string"
+    },
+    "ProjectIdentity": {
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[47][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+      "type": "string"
+    },
+    "ViewerSourceSelector": {
+      "additionalProperties": false,
+      "properties": {
+        "attachmentId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "documentRevisionId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "normalizedRevisionId": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Identity"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "attachmentId",
+        "documentRevisionId"
+      ],
+      "title": "ViewerSourceSelector",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "description": "Portable selection, reauthorized after explicit project open/unlock.",
+  "properties": {
+    "schemaVersion": {
+      "const": "1.0",
+      "title": "Schemaversion",
+      "type": "string"
+    },
+    "projectId": {
+      "$ref": "#/$defs/ProjectIdentity"
+    },
+    "selector": {
+      "$ref": "#/$defs/ViewerSourceSelector"
+    },
+    "anchorIds": {
+      "items": {
+        "$ref": "#/$defs/Identity"
+      },
+      "maxItems": 100,
+      "minItems": 1,
+      "title": "Anchorids",
+      "type": "array"
+    }
+  },
+  "required": [
+    "schemaVersion",
+    "projectId",
+    "selector",
+    "anchorIds"
+  ],
+  "title": "ViewerDeepLink",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://research-observatory.local/contracts/documents/viewer-deep-link.v1.schema.json",
+  "x-research-observatory-semanticRules": [
+    "ordered-unique-at-most-100-opaque-anchor-identities-and-exact-distinct-accepted-revision",
+    "portable-selection-without-path-session-credentials-rights-or-protected-text",
+    "explicit-project-open-unlock-and-fresh-current-authority-before-resolution",
+    "no-later-revision-substitution-or-scholarly-verification-from-navigation"
+  ]
+}

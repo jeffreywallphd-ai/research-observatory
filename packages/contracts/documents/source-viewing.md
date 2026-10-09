@@ -23,6 +23,7 @@ original1.5-second value is retained as a later optimization goal.
 | `document_viewer_range` | `/native/document-viewer/range` | Native validated raw ArrayBuffer IPC |
 | `document_viewer_text` | `/native/document-viewer/text` | Exact accepted text chunk |
 | `document_viewer_outline` | `/native/document-viewer/outline` | Bounded accepted-revision outline under Viewer admission |
+| `document_viewer_anchor` | `/native/document-viewer/anchor` | Exact retained anchor context under Viewer admission |
 | `document_viewer_cancel` | `/native/document-viewer/cancel` | Native stop signal; original range supplies terminal disposition |
 
 The renderer names the project, attachment, original revision, optional accepted
@@ -104,6 +105,37 @@ behavior; cancelled transactions do not advance it. Search queries, decoded text
 PDF actions and copied research text are not written into viewer diagnostics.
 
 ## Local decoder and admission
+
+CAP-05.S04.T02 adds the strict `viewer-deep-link.v1` value and portable route
+`research-observatory://reader/v1/<project>/<attachment>/<original>/<accepted>/<ordered-anchor-IDs>`.
+The projection contains one to100 unique UUIDv7 anchors, the exact distinct
+accepted revision and the existing UUIDv4/v7 project bridge. No root, session,
+capability, rights, quote or context is persisted. It is a selection, never an
+access grant. Downstream surfaces can dispatch the closed value or URI through
+the `research-observatory:reader-link` application event. This does not imply
+OS-wide protocol registration or implementation of future evidence/graph pages.
+On restart the Reader revalidates its per-project saved URI only after the human
+opens/unlocks that exact project; relocation changes no selector. Current source
+metadata reconstructs the Work/version return context, never a stored path.
+
+The Viewer-only anchor route reuses canonical retained anchor artifacts and
+atomic broken-context invalidation without loading the full accepted IR. Read
+and fresh service delivery scopes bind current human, Intent, privacy, session,
+per-copy inspect/derive authority and complete source identity. No latest-head
+substitution is permitted. Missing/broken results retain authenticated canonical
+revision metadata and offer source review/reselection; historical anchors are
+not silently repaired. Denied or unknown access supplies no protected context.
+
+At most two contexts are visible, with numbered equivalent keyboard controls,
+inert Unicode code-point highlights and bounded exact revision metadata.
+Validated page regions are rotated into the current canvas; mismatched or absent
+geometry visibly uses structural/text fallback. The64MiB main allowance is
+shared by decoder generations and contexts. Four conservative1MiB context
+charges fit beside16MiB decoded clones and32MiB canvas surfaces, leaving12MiB
+for other bounded main storage. A known terminal result releases the Core call
+charge; visible context retains its main charge until eviction/unmount.
+An issued ambiguous Native failure retains both charges. Retry and lock cannot
+erase unknown physical ownership; all window sessions share the256MiB ledger.
 
 The shipping dependency is exactly `pdfjs-dist@6.4.299` (Apache-2.0); its bundled
 worker SHA-256 is checked by the product build. Unique, fail-closed transforms

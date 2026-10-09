@@ -217,6 +217,101 @@ class DocumentViewerInteractionsTests(unittest.TestCase):
         self.page.get_by_text("Unverified extraction", exact=True).wait_for()
         self.assertFalse(self.errors)
 
+    def test_two_anchors_unicode_geometry_zoom_reflow_and_exact_return(self):
+        self.page.evaluate("() => { window.__VIEWER_UI_TEST__.anchorMode = true; }")
+        self.page.get_by_label("Accepted structured revision").select_option(index=1)
+        self.page.get_by_role("heading", name="Anchor 1 · Synthetic accepted source", exact=True).wait_for()
+        self.page.get_by_role("heading", name="Anchor 2 · Synthetic accepted source", exact=True).wait_for()
+        self.assertEqual(["📚", "chosen"], self.page.locator(".viewer-anchor-context mark").all_text_contents())
+        self.wait(lambda: self.page.locator(".viewer-anchor-marker").count() == 2)
+        self.assertEqual(["1", "2"], self.page.locator(".viewer-anchor-marker text").all_text_contents())
+        self.assertEqual(2, self.page.evaluate("() => window.__VIEWER_UI_TEST__.anchorCalls"))
+        self.assertNotIn("context", str(self.page.evaluate("() => window.__VIEWER_UI_TEST__.savedLinks")))
+        self.page.get_by_label("Source zoom").select_option("1.5")
+        self.wait(lambda: self.page.get_by_role("button", name="Next page", exact=True).is_enabled())
+        self.assertEqual(2, self.page.locator(".viewer-anchor-marker").count())
+        self.page.evaluate("() => document.documentElement.dataset.theme = 'dark'")
+        self.page.set_viewport_size({"width": 500, "height": 900})
+        self.assertLessEqual(self.page.evaluate("() => document.documentElement.scrollWidth"), 500)
+        self.page.get_by_role("button", name="Go to anchor 2 on page 1", exact=True).focus()
+        self.page.keyboard.press("Enter")
+        self.page.keyboard.press("Escape")
+        self.page.get_by_text("No open source", exact=True).wait_for()
+        self.assertEqual(0, self.page.locator(".viewer-anchor-context").count())
+        self.assertTrue(
+            self.page.evaluate("() => window.__VIEWER_UI_TEST__.returns[0].versionRevisionId.endsWith('000b')")
+        )
+        self.assertFalse(self.errors)
+
+    def test_saved_link_reopens_without_prior_handoff_and_missing_anchor_has_revision_and_source_review(self):
+        self.page.evaluate("() => window.__VIEWER_UI_TEST__.mount(false)")
+        self.page.get_by_text("No open source", exact=True).wait_for()
+        self.page.evaluate(
+            "() => { const s = window.__VIEWER_UI_TEST__; s.linkMode = true; s.noHandoff = true; "
+            "s.missingAnchor = true; s.mount(); }"
+        )
+        self.page.get_by_role("heading", name="Anchor 1 · Synthetic accepted source", exact=True).wait_for()
+        self.assertEqual(2, self.page.get_by_text("Anchor missing", exact=True).count())
+        self.assertTrue(self.page.get_by_text("00000000-0000-7000-8000-000000000003", exact=True).first.is_visible())
+        self.assertEqual(0, self.page.locator(".viewer-anchor-context mark").count())
+        self.page.get_by_role("button", name="Review source for missing anchor", exact=True).first.click()
+        self.page.get_by_text("No open source", exact=True).wait_for()
+        self.assertTrue(
+            self.page.evaluate("() => window.__VIEWER_UI_TEST__.returns[0].versionRevisionId.endsWith('000b')")
+        )
+        self.assertFalse(self.errors)
+
+    def test_late_anchor_after_lock_and_substituted_source_cannot_publish_context(self):
+        self.page.evaluate("() => { const s = window.__VIEWER_UI_TEST__; s.anchorMode = true; s.holdAnchor = true; }")
+        self.page.get_by_label("Accepted structured revision").select_option(index=1)
+        self.wait(lambda: self.page.evaluate("() => typeof window.__VIEWER_UI_TEST__.releaseAnchor === 'function'"))
+        self.page.evaluate("() => window.__VIEWER_UI_TEST__.mount(false)")
+        self.page.get_by_text("No open source", exact=True).wait_for()
+        self.page.evaluate(
+            "() => { const s = window.__VIEWER_UI_TEST__; s.holdAnchor = false; s.releaseAnchor(); "
+            "s.wrongAnchorSource = true; s.mount(); }"
+        )
+        self.wait(lambda: self.page.get_by_role("button", name="Next page", exact=True).is_enabled())
+        self.page.get_by_label("Accepted structured revision").select_option(index=1)
+        self.page.get_by_text("An exact anchor is unavailable or no longer permitted.", exact=False).wait_for()
+        self.assertEqual(0, self.page.locator(".viewer-anchor-context mark").count())
+        self.assertFalse(self.errors)
+
+    def test_rotated_geometry_and_mismatch_preserve_structural_context(self):
+        for rotation in (90, 180, 270):
+            self.page.evaluate("() => window.__VIEWER_UI_TEST__.mount(false)")
+            self.page.get_by_text("No open source", exact=True).wait_for()
+            self.page.evaluate(
+                "r => { const s = window.__VIEWER_UI_TEST__; s.anchorRotation = r; s.linkMode = true; s.mount(); }",
+                rotation,
+            )
+            self.page.get_by_role("heading", name="Anchor 2 · Synthetic accepted source", exact=True).wait_for()
+            self.wait(lambda: self.page.locator(".viewer-anchor-marker").count() == 2)
+        self.page.evaluate("() => window.__VIEWER_UI_TEST__.mount(false)")
+        self.page.get_by_text("No open source", exact=True).wait_for()
+        self.page.evaluate("() => { const s = window.__VIEWER_UI_TEST__; s.mismatchGeometry = true; s.mount(); }")
+        self.page.get_by_role("heading", name="Anchor 2 · Synthetic accepted source", exact=True).wait_for()
+        self.assertEqual(0, self.page.locator(".viewer-anchor-marker").count())
+        self.assertEqual(2, self.page.get_by_text("Structural/text fallback:", exact=False).count())
+        self.assertEqual(["📚", "chosen"], self.page.locator(".viewer-anchor-context mark").all_text_contents())
+        self.assertFalse(self.errors)
+
+    def test_ambiguous_anchor_transport_denies_context_and_unaccounted_retry(self):
+        self.page.evaluate(
+            "() => { const s = window.__VIEWER_UI_TEST__; s.anchorMode = true; s.unknownAnchor = true; }"
+        )
+        self.page.get_by_label("Accepted structured revision").select_option(index=1)
+        self.page.get_by_text("Source view unavailable", exact=True).wait_for()
+        self.assertEqual(1, self.page.evaluate("() => window.__VIEWER_UI_TEST__.anchorCalls"))
+        self.assertEqual(0, self.page.locator(".viewer-anchor-context mark").count())
+        self.page.evaluate("() => { window.__VIEWER_UI_TEST__.unknownAnchor = false; }")
+        self.page.get_by_role("button", name="Retry current source status", exact=True).click()
+        self.wait(lambda: self.page.get_by_role("button", name="Next page", exact=True).is_enabled())
+        self.page.get_by_label("Accepted structured revision").select_option(index=1)
+        self.page.get_by_text("This anchor context exceeds the local Viewer limit.", exact=False).wait_for()
+        self.assertEqual(1, self.page.evaluate("() => window.__VIEWER_UI_TEST__.anchorCalls"))
+        self.assertFalse(self.errors)
+
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)

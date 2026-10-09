@@ -23254,7 +23254,7 @@
             {
               "task_id": "CAP-05.S04.T02",
               "title": "Implement deep links, highlights, and context panels",
-              "status": "READY",
+              "status": "IN_PROGRESS",
               "mode": "latest-review-only",
               "latest_review": {
                 "reviewer": null,
@@ -23302,18 +23302,21 @@
             {
               "task_id": "CAP-05.S04.T02",
               "title": "Implement deep links, highlights, and context panels",
-              "status": "READY",
+              "status": "IN_PROGRESS",
               "page": "CAP-05/CAP-05.S04.T02.html",
               "dependencies": [
                 "CAP-05.S04.T01"
               ],
               "claim": {
-                "owner": null,
-                "branch": null,
-                "base_sha": null
+                "owner": "codex-w2-implementation",
+                "branch": "codex/w2-implementation",
+                "base_sha": "780e1d8e79ad7136f9c362535e642adbfdeb5437"
               },
               "plan_section_sha256": "add6c6e0b01c9351c645c16f6948d5f4d05d58513197883170c64d5d17a86279",
-              "worksheet": null
+              "worksheet": {
+                "path": "artifacts/evidence/CAP-05.S04.T02.task-start.md",
+                "sha256": "5f93d46b40c33db1a9f7cfe22085dbaf2b086390f7727859dd50ed9c0f0fddea"
+              }
             },
             {
               "task_id": "CAP-05.S04.T03",

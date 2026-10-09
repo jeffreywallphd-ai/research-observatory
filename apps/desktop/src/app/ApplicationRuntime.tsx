@@ -34,6 +34,8 @@ import { TaskCenterWorkspace } from "./TaskCenterWorkspace";
 import { ImportWorkspace } from "./ImportWorkspace";
 import type { AttachmentHandoff } from "./DocumentAttachmentPane";
 import { sameAttachmentSelection, type AttachmentSelection } from "./documentAttachment";
+import { decodeViewerDeepLink, parseViewerDeepLink, readStoredViewerDeepLink, rememberViewerDeepLink, VIEWER_LINK_EVENT,
+  type ViewerDeepLink } from "./viewerDeepLinks";
 import { CorpusCanvasWorkspace } from "./CorpusCanvasWorkspace";
 import { SourceManagerWorkspace } from "./SourceManagerWorkspace";
 import { ModelCenterWorkspace } from "./ModelCenterWorkspace";
@@ -358,6 +360,7 @@ export function ApplicationRuntime({ workflowTransport = packagedProjectTranspor
   const [workspace, setWorkspace] = useState<ApplicationWorkspace>("home");
   const [currentProject, setCurrentProject] = useState<ProjectProjection | null>(null);
   const [attachmentHandoff, setAttachmentHandoff] = useState<AttachmentHandoff | null>(null);
+  const [readerLink, setReaderLink] = useState<ViewerDeepLink | null>(null);
   const [attachmentReturn, setAttachmentReturn] = useState<AttachmentHandoff | null>(null);
   const workflowClient = useMemo(() => createCoreApiClient(workflowTransport), [workflowTransport]);
   const [workflowCatalog, setWorkflowCatalog] = useState<WorkflowProfileCatalogProjection | null>(null);
@@ -427,6 +430,7 @@ export function ApplicationRuntime({ workflowTransport = packagedProjectTranspor
       workflowCommandBusyRef.current = false;
       setCurrentProject(null);
       setAttachmentHandoff(null);
+      setReaderLink(null);
       setAttachmentReturn(null);
       setWorkflowCatalog(null);
       setWorkflowIntent(null);
@@ -576,6 +580,7 @@ export function ApplicationRuntime({ workflowTransport = packagedProjectTranspor
     setWorkflowCommandBusy(false);
     setCurrentProject(next);
     setAttachmentHandoff(null);
+    setReaderLink(null);
     setAttachmentReturn(null);
   }, [clearPendingSupportingRequest]);
 
@@ -867,9 +872,32 @@ export function ApplicationRuntime({ workflowTransport = packagedProjectTranspor
   const openAttachmentReader = useCallback((handoff: AttachmentHandoff) => {
     if (applicationLockRef.current.state !== "unlocked" || currentProjectRef.current?.projectId !== handoff.selection.projectId
       || !handoff.attachmentId || !handoff.documentRevisionId) return;
-    setAttachmentHandoff(handoff); navigateWorkspaceState("reader");
+    setReaderLink(null); setAttachmentHandoff(handoff); navigateWorkspaceState("reader");
     announce("Document Reader opened for the exact selected Work/version. Current source permission will be checked again.");
   }, [announce, navigateWorkspaceState]);
+
+  useEffect(() => {
+    function openLinkedReader(event: Event): void {
+      if (!(event instanceof CustomEvent)) return;
+      const link = typeof event.detail === "string" ? parseViewerDeepLink(event.detail) : decodeViewerDeepLink(event.detail);
+      if (!link || applicationLockRef.current.state !== "unlocked" || !currentProjectRef.current?.open
+        || currentProjectRef.current.projectId !== link.projectId) return;
+      setAttachmentHandoff(null); setReaderLink(link); navigateWorkspaceState("reader");
+      announce("Document Reader opened for the exact linked revision. Current source permission will be checked again.");
+    }
+    window.addEventListener(VIEWER_LINK_EVENT, openLinkedReader);
+    return () => window.removeEventListener(VIEWER_LINK_EVENT, openLinkedReader);
+  }, [announce, navigateWorkspaceState]);
+
+  const selectedReaderLink = useMemo(() => {
+    if (workspace !== "reader" || !currentProject?.open || applicationLock.state !== "unlocked") return null;
+    if (readerLink?.projectId === currentProject.projectId) return readerLink;
+    try { return readStoredViewerDeepLink(window.localStorage, currentProject.projectId); } catch { return null; }
+  }, [workspace, currentProject, applicationLock.state, readerLink]);
+  const retainReaderLink = useCallback((link: ViewerDeepLink): boolean => {
+    if (applicationLockRef.current.state !== "unlocked" || currentProjectRef.current?.projectId !== link.projectId) return false;
+    try { return rememberViewerDeepLink(window.localStorage, link); } catch { return false; }
+  }, []);
 
   const retainAttachmentRecovery = useCallback((selection: AttachmentSelection, handoff: AttachmentHandoff | null) => {
     if (applicationLockRef.current.state !== "unlocked" || currentProjectRef.current?.projectId !== selection.projectId) return;
@@ -1312,7 +1340,8 @@ export function ApplicationRuntime({ workflowTransport = packagedProjectTranspor
               onTaskCenter={openAttachmentTaskCenter} onOpenReader={openAttachmentReader} onAttachmentRecovery={retainAttachmentRecovery} />
           ) : (workspace === "application-settings" ? previousWorkspaceRef.current : workspace) === "reader" ? (
             <Suspense fallback={<p role="status">Loading the local Document Reader…</p>}><DocumentViewerWorkspace project={currentProject} handoff={attachmentHandoff} active={workspace === "reader"}
-              announce={announce} onReturn={() => attachmentHandoff ? returnToAttachment() : navigateWorkspaceState("imports")} /></Suspense>
+              deepLink={selectedReaderLink} onRememberLink={retainReaderLink}
+              announce={announce} onReturn={(handoff) => handoff || attachmentHandoff ? returnToAttachment(handoff) : navigateWorkspaceState("imports")} /></Suspense>
           ) : (workspace === "application-settings" ? previousWorkspaceRef.current : workspace) === "corpus" ? (
             <CorpusCanvasWorkspace project={currentProject} announce={announce} active={workspace === "corpus"} onNavigate={navigateWorkspaceState} />
           ) : (workspace === "application-settings" ? previousWorkspaceRef.current : workspace) === "sources" ? (

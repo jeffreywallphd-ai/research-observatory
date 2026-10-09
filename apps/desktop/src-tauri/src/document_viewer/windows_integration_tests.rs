@@ -364,6 +364,42 @@ fn exercise_accepted(
         ))
     };
     let normal = text(&receipt["acceptedFixtures"]["normal"]);
+    let linked = |anchor_id: &str, selector: ViewerSelector| {
+        tauri::async_runtime::block_on(document_viewer_anchor(
+            window.clone(),
+            window.state(),
+            window.state(),
+            ViewerAnchorRequest {
+                schema_version: "1.0".into(),
+                project_id: receipt["projectId"].as_str().unwrap().into(),
+                selector,
+                anchor_id: anchor_id.into(),
+            },
+        ))
+    };
+    let anchor_ids = receipt["acceptedFixtures"]["anchors"].as_array().unwrap();
+    assert_eq!(anchor_ids.len(), 2);
+    let first = linked(anchor_ids[0].as_str().unwrap(), normal.selector.clone())
+        .unwrap()
+        .unwrap();
+    let second = linked(anchor_ids[1].as_str().unwrap(), normal.selector.clone())
+        .unwrap()
+        .unwrap();
+    assert_eq!(
+        first["metadata"]["revisionId"].as_str(),
+        normal.selector.normalized_revision_id.as_deref()
+    );
+    assert_ne!(
+        first["target"]["quote"]["exact"],
+        second["target"]["quote"]["exact"]
+    );
+    assert_eq!(first["source"], second["source"]);
+    let mut substituted_anchor = normal.selector.clone();
+    substituted_anchor.document_revision_id = normal.node_id.clone();
+    assert!(matches!(
+        linked(anchor_ids[0].as_str().unwrap(), substituted_anchor),
+        Ok(None)
+    ));
     let value = read_text(normal.clone())
         .unwrap()
         .expect("real accepted text crosses Native/Core");

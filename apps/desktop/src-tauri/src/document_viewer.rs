@@ -136,6 +136,75 @@ impl ViewerOutlineRequest {
     }
 }
 
+#[derive(Clone, Deserialize)]
+#[serde(rename_all = "camelCase", deny_unknown_fields)]
+pub(crate) struct ViewerAnchorRequest {
+    schema_version: String,
+    project_id: String,
+    selector: ViewerSelector,
+    anchor_id: String,
+}
+
+impl ViewerAnchorRequest {
+    fn source(&self) -> ViewerSourceRequest {
+        ViewerSourceRequest {
+            schema_version: self.schema_version.clone(),
+            project_id: self.project_id.clone(),
+            selector: self.selector.clone(),
+        }
+    }
+    fn valid(&self) -> bool {
+        self.source().valid()
+            && self.selector.normalized_revision_id.is_some()
+            && crate::supervisor::canonical_uuid_v7(&self.anchor_id)
+    }
+}
+
+fn anchor_matches(value: &Value, request: &ViewerAnchorRequest) -> bool {
+    value.as_object().is_some_and(|fields| {
+        fields.len() == 11
+            && [
+                "schemaVersion",
+                "anchorId",
+                "anchorRevisionId",
+                "source",
+                "metadata",
+                "status",
+                "selectorUsed",
+                "reason",
+                "target",
+                "propagation",
+                "scholarlyVerification",
+            ]
+            .iter()
+            .all(|key| fields.contains_key(*key))
+    }) && value["schemaVersion"] == "1.0"
+        && value["anchorId"].as_str() == Some(request.anchor_id.as_str())
+        && value["anchorRevisionId"]
+            .as_str()
+            .is_some_and(crate::supervisor::canonical_uuid_v7)
+        && value["metadata"]["projectId"].as_str() == Some(request.project_id.as_str())
+        && value["metadata"]["revisionId"].as_str()
+            == request.selector.normalized_revision_id.as_deref()
+        && value["metadata"]["documentId"] == value["source"]["documentId"]
+        && metadata_matches(
+            &json!({"source":value["source"], "normalizedRevisionId":request.selector.normalized_revision_id}),
+            &request.source(),
+        )
+        && value["scholarlyVerification"] == "unverified"
+        && match value["status"].as_str() {
+            Some("exact" | "fallback") => {
+                value["target"]["source"] == value["source"]
+                    && value["target"]["revisionId"].as_str()
+                        == request.selector.normalized_revision_id.as_deref()
+                    && value["target"]["projectId"].as_str() == Some(request.project_id.as_str())
+                    && value["target"]["scholarlyVerification"] == "unverified"
+            }
+            Some("missing" | "broken") => value["target"].is_null(),
+            _ => false,
+        }
+}
+
 fn outline_matches(value: &Value, request: &ViewerOutlineRequest) -> bool {
     value.as_object().is_some_and(|fields| {
         fields.len() == 9
@@ -335,6 +404,73 @@ pub(crate) async fn document_viewer_outline(
     let value = serde_json::from_str::<Value>(&response.body)
         .map_err(|_| "viewer-source-unavailable".to_string())?;
     if !outline_matches(&value, &request) {
+        return Ok(None);
+    }
+    lock.commit_protected_action(ticket, || {
+        connection.publish_current(|| {
+            if crate::directory_window_handle(&window) != Some(owner) {
+                return Err("RO-DOCUMENT-VIEWER-DENIED");
+            }
+            Ok(Some(value))
+        })
+    })
+    .map_err(|_| "viewer-source-unavailable".to_string())
+}
+
+#[tauri::command]
+pub(crate) async fn document_viewer_anchor(
+    window: tauri::WebviewWindow,
+    supervisor: State<'_, RuntimeSupervisor>,
+    lock: State<'_, ApplicationLockManager>,
+    request: ViewerAnchorRequest,
+) -> Result<Option<Value>, String> {
+    if !request.valid() {
+        return Err("viewer-source-unavailable".to_string());
+    }
+    let owner = crate::directory_window_handle(&window)
+        .ok_or_else(|| "viewer-source-unavailable".to_string())?;
+    let ticket = lock
+        .begin_protected_action()
+        .map_err(|_| "viewer-source-unavailable".to_string())?;
+    let connection = Arc::new(
+        supervisor
+            .native_document_connection(&request.project_id)
+            .map_err(|_| "viewer-source-unavailable".to_string())?,
+    );
+    let worker = Arc::clone(&connection);
+    let selected = request.clone();
+    let gate = lock.inner().clone();
+    let owned_window = window.clone();
+    let response = tauri::async_runtime::spawn_blocking(move || {
+        let context = current_document_context(&worker, &selected.project_id).map_err(|_| "viewer-source-unavailable".to_string())?;
+        worker.document_request_owned(NativeDocumentAction::ViewerAnchor,
+            json!({"root":worker.document_root(), "projectId":selected.project_id, "sessionId":context.session_id,
+                "selector":selected.selector, "anchorId":selected.anchor_id}),
+            &|| gate.finish_protected_action(ticket).is_ok() && crate::directory_window_handle(&owned_window) == Some(owner))
+            .map_err(|_| "viewer-owned-read-drain-pending".to_string())
+    }).await.map_err(|_| "viewer-owned-read-drain-pending".to_string())??;
+    if !connection.is_current()
+        || lock.finish_protected_action(ticket).is_err()
+        || crate::directory_window_handle(&window) != Some(owner)
+    {
+        return Ok(None);
+    }
+    if response.status == 413
+        && response.body.len() <= 8192
+        && serde_json::from_str::<Value>(&response.body)
+            .is_ok_and(|value| value["code"] == "RO-CORE-DOCUMENT-VIEWER-RESOURCE-LIMIT")
+    {
+        return Err("viewer-resource-limit".to_string());
+    }
+    if response.status != 200
+        || response.content_type != "application/json"
+        || response.body.len() > 131072
+    {
+        return Ok(None);
+    }
+    let value = serde_json::from_str::<Value>(&response.body)
+        .map_err(|_| "viewer-source-unavailable".to_string())?;
+    if !anchor_matches(&value, &request) {
         return Ok(None);
     }
     lock.commit_protected_action(ticket, || {
@@ -867,6 +1003,59 @@ mod tests {
             let mut changed = base.clone();
             changed["start"] = value;
             assert!(serde_json::from_value::<ViewerRangeRequest>(changed).is_err());
+        }
+    }
+
+    #[test]
+    fn anchor_context_binds_exact_original_normalized_revision_and_anchor() {
+        let mut selected = request();
+        selected.selector.normalized_revision_id =
+            Some("00000000-0000-7000-8000-000000000009".into());
+        let request = ViewerAnchorRequest {
+            schema_version: "1.0".into(),
+            project_id: selected.project_id.clone(),
+            selector: selected.selector.clone(),
+            anchor_id: selected.request_id.clone(),
+        };
+        assert!(request.valid());
+        let source = response(&selected)["metadata"]["source"].clone();
+        let value = json!({"schemaVersion":"1.0", "anchorId":request.anchor_id,
+            "anchorRevisionId":"00000000-0000-7000-8000-000000000010", "source":source,
+            "metadata":{"projectId":request.project_id,"documentId":source["documentId"],"revisionId":request.selector.normalized_revision_id},
+            "status":"exact", "selectorUsed":"page-region", "reason":null,"propagation":null,
+            "target":{"source":source,"revisionId":request.selector.normalized_revision_id,"projectId":request.project_id,"scholarlyVerification":"unverified"},
+            "scholarlyVerification":"unverified"});
+        assert!(anchor_matches(&value, &request));
+        for field in ["schemaVersion", "anchorId", "scholarlyVerification"] {
+            let mut changed = value.clone();
+            changed[field] = json!("substituted");
+            assert!(!anchor_matches(&changed, &request));
+        }
+        for field in ["projectId", "attachmentId", "documentRevisionId"] {
+            let mut changed = value.clone();
+            changed["source"][field] = json!(selected.request_id);
+            assert!(!anchor_matches(&changed, &request));
+        }
+        let mut changed = value.clone();
+        changed["metadata"]["revisionId"] = json!(selected.request_id);
+        assert!(!anchor_matches(&changed, &request));
+        let mut missing = value;
+        missing["status"] = json!("missing");
+        missing["target"] = Value::Null;
+        assert!(anchor_matches(&missing, &request));
+        let base = json!({"schemaVersion":"1.0","projectId":request.project_id,"selector":request.selector,"anchorId":request.anchor_id});
+        for field in [
+            "root",
+            "sessionId",
+            "actorId",
+            "url",
+            "path",
+            "rights",
+            "quote",
+        ] {
+            let mut changed = base.clone();
+            changed[field] = json!("untrusted");
+            assert!(serde_json::from_value::<ViewerAnchorRequest>(changed).is_err());
         }
     }
 

@@ -38,7 +38,7 @@
       <nav class="breadcrumbs" aria-label="Breadcrumb"><a href="../index.html">Planning review</a><span>/</span><a href="index.html">CAP-document-inspection</a><span>/</span><a href="CAP-05.S04.html">SLICE-source-viewer-and-evidence-inspection-experience</a><span>/</span><span aria-current="page">CAP-05.S04.T02</span></nav>
 
 <section class="hero compact" data-task-page="CAP-05.S04.T02">
-  <div class="hero-top"><div><span class="eyebrow">CAP-05.S04.T02 · task 2 of 3</span><h1>Implement deep links, highlights, and context panels</h1><p>Navigation from evidence/graph/synthesis objects to highlighted source anchors with surrounding text, metadata, and processing status.</p></div><span class="status status-ready">Ready</span></div>
+  <div class="hero-top"><div><span class="eyebrow">CAP-05.S04.T02 · task 2 of 3</span><h1>Implement deep links, highlights, and context panels</h1><p>Navigation from evidence/graph/synthesis objects to highlighted source anchors with surrounding text, metadata, and processing status.</p></div><span class="status status-in-progress">In_Progress</span></div>
   <dl class="summary-grid"><div><dt>Wave</dt><dd>W2</dd></div><div><dt>Slice</dt><dd><a href="CAP-05.S04.html">SLICE-source-viewer-and-evidence-inspection-experience</a></dd></div><div><dt>Risk / review</dt><dd>medium / agent-review</dd></div><div><dt>Latest review</dt><dd>not reviewed</dd></div></dl>
 </section>
 <section class="task-summary"><div class="section-heading"><span class="eyebrow">Authoritative task record</span><h2>Scope and acceptance</h2></div>
@@ -49,7 +49,7 @@
 <section class="task-summary"><div class="section-heading"><span class="eyebrow">Verification inventory</span><h2>Profiles and commands</h2></div>
   <h3>Verification profiles</h3><ul class="gate-criteria"><li>desktop</li><li>documents</li><li>e2e-local</li></ul>
   <h3>Commands</h3><ul class="gate-criteria"><li>python tools/verify.py --profile desktop</li><li>python tools/verify.py --profile documents</li><li>python tools/verify.py --profile e2e-local</li></ul>
-  <p data-task-claim="CAP-05.S04.T02" data-task-owner="unclaimed" data-task-branch="none" data-task-base-sha="none"><strong>Claim projection:</strong> owner <code>unclaimed</code> · branch <code>none</code> · base <code>none</code></p>
+  <p data-task-claim="CAP-05.S04.T02" data-task-owner="codex-w2-implementation" data-task-branch="codex/w2-implementation" data-task-base-sha="780e1d8e79ad7136f9c362535e642adbfdeb5437"><strong>Claim projection:</strong> owner <code>codex-w2-implementation</code> · branch <code>codex/w2-implementation</code> · base <code>780e1d8e79ad7136f9c362535e642adbfdeb5437</code></p>
 </section>
 <section class="task-summary" data-task-plan="CAP-05.S04.T02" data-task-plan-sha256="add6c6e0b01c9351c645c16f6948d5f4d05d58513197883170c64d5d17a86279"><div class="section-heading"><span class="eyebrow">Approved implementation intent</span><h2>Task plan</h2></div><article class="plan-article compact-article"><pre class='markdown-fallback'>### 9.2 `CAP-05.S04.T02` - Implement deep links, highlights, and context panels
 **Objective:** Navigation from evidence/graph/synthesis objects to highlighted source anchors with surrounding text, metadata, and processing status.
@@ -89,13 +89,61 @@ python tools/verify.py --profile documents
 python tools/verify.py --profile e2e-local
 ```</pre></article></section>
 <section class="section-heading"><span class="eyebrow">Task-start planning</span><h2>Assigned worksheet</h2><p>The worksheet is an optional planning aid and does not create a new approval or task state.</p></section>
-<p class="decision-meta" data-task-worksheet-absent="CAP-05.S04.T02">No optional task-start worksheet is assigned. This does not block execution.</p>
+
+<details class="plan-details task-worksheet" open data-task-worksheet="CAP-05.S04.T02" data-worksheet-sha256="5f93d46b40c33db1a9f7cfe22085dbaf2b086390f7727859dd50ed9c0f0fddea">
+  <summary>Assigned task-start worksheet</summary>
+  <div class="worksheet-meta"><strong>Source:</strong> <code>artifacts/evidence/CAP-05.S04.T02.task-start.md</code> · <strong>SHA-256:</strong> <code>5f93d46b40c33db1a9f7cfe22085dbaf2b086390f7727859dd50ed9c0f0fddea</code></div>
+  <article class="plan-article"><pre class='markdown-fallback'># CAP-05.S04.T02 — durable source links and anchor inspection
+
+Claim base: `780e1d8e79ad7136f9c362535e642adbfdeb5437` on
+`codex/w2-implementation`, owned by `codex-w2-implementation`.
+CAP-05.S04.T01 is DONE, independently approved and integrated into local main.
+The approved W2 campaign remains active.
+
+Authority: the backlog&#x27;s three T02 criteria, S04 sections 4–9.2,
+accepted ADR-0001/0013/0024/0029, existing protected source/anchor contracts,
+and the inherited Reader in RO-UI-ACADEMIC-MINIMAL-1.9. LT01 changes only the
+representative first-page target to 3.0 seconds; its fresh T01 proof remains
+bound to its own candidate. This task introduces no model, resource tier,
+framework change, new actor authority or overwrite of historical anchors.
+
+| Material outcome or risk | Implementation boundary | Planned proof |
+|---|---|---|
+| Criterion 1: portable links after restart/relocation | Versioned opaque project, attachment, original/accepted revision and ordered anchor IDs; fresh resolution after explicit project open/unlock. No root, session, token, quote or cached source metadata in the link. | Strict Python/TypeScript value and URI cases; actual Native/Core retained anchors and shipping Reader after restart and confined relocation. |
+| Criterion 1: distinguish multiple anchors | Bounded context window, numbered keyboard list and markers, exact code-point context highlight, validated rotated page geometry with visible fallback. | Mounted Reader cases for two anchors, Unicode, inert text, page/zoom, keyboard/focus, reflow, themes and geometry mismatch. |
+| Criterion 1: missing/broken context | Authenticated canonical revision metadata and a real return to the selected source for review; no later-revision substitution or invented repair. | Actual retained-anchor resolution and broken-context provenance; mounted repair/return and separate unavailable/denied state. |
+| Exact identity and current authority | Current source identity, project/session/human/Intent/privacy, original and accepted revision, anchor ID and inspect/derive rights at read and delivery. | Real SQLCipher/encrypted repository and private API substitution, changed rights, stale session and late-delivery cases; actual Native binding. |
+| Allocation and physical settlement | Viewer-only resolver shares the scoped repository and cumulative protected-artifact allowance. Shared main allowance contains bounded retained context; issued unknown Native drain retains admission across unmount/retry. | Admission before protected reads; maximum-source accounting, context eviction, known/unknown settlement and decoder-generation regression cases. |
+| Criterion 2: meaningful success/failure coverage | Tests precede product changes where practical. | Preserve first failing Core/Reader cases, then fresh affected candidate checks and one real vertical principal proof. |
+| Criterion 3: compatibility, contracts, audit | Additive link value/route and fixed private resolver; reuse canonical anchor metadata/invalidation. Database/envelope/anchor formats stay unchanged. Diagnostics and persisted link projection carry no research text. | Schema drift/strict decoding, existing anchor compatibility, output-free invalidation/denial checks, affected type/architecture and package conformance. |
+| Workflow continuity | Reader navigation/return preserves the selected Work/version and supporting workflow context; lock clears protected state and restart requires fresh authority. | Mounted journey and actual restart/relocation; no workflow completion or acceptance from inspection. |
+
+Read-only independent preflight: incorporated the existing bounded retained-context
+resolver, exact source/delivery fence, and structured Native terminal-versus-unknown
+model. Ordinary nullable anchor IPC cannot prove physical settlement. At most two
+contexts are visible; remaining selected anchors are opaque IDs. No whole accepted
+IR is loaded merely to resolve a retained anchor.
+
+First tests target two exact retained anchors, a later accepted head, substitution,
+derive denial, broken context and resource admission. Broader unchanged profiles,
+full history audits, parser/model runs and percentile benchmarks are deferred to
+their required slice/checkpoint/Wave boundaries. No 8/16 GiB variant is run.
+
+Primary guidance rechecked on 2026-10-09: [Web Annotation selectors](https://www.w3.org/TR/annotation-model/#selectors),
+[target size](https://www.w3.org/WAI/WCAG22/Understanding/target-size-minimum.html),
+and [focus visibility](https://www.w3.org/WAI/WCAG22/Understanding/focus-not-obscured-minimum.html).
+Equivalent list controls remain available when page regions overlap or are too
+small for a useful on-page target. Source selectors remain exact immutable
+revision selectors under the accepted repository contract.
+
+Mandatory gate discovered: none. Task completion and W2 release remain pending.</pre></article>
+</details>
 <section class="section-heading"><span class="eyebrow">Execution evidence</span><h2>Review packets, rounds, and current projection</h2><p>Append-only controls retain every immutable round and finding closure. Pre-policy tasks remain explicitly latest-review-only.</p></section>
 
 <section class="review-toolbar" data-task-review-id="CAP-05.S04.T02" data-review-mode="latest-review-only">
   <h3>CAP-05.S04.T02 — Implement deep links, highlights, and context panels</h3>
   <p><strong>Legacy latest-review-only projection.</strong> No append-only review rounds are recorded; this view does not fabricate historical attempts.</p>
-  <dl class="summary-grid" data-current-review-projection="CAP-05.S04.T02" data-current-review-result="not-reviewed" data-current-reviewer="none" data-current-reviewed-at="none"><div><dt>Task status</dt><dd>READY</dd></div><div><dt>Latest result</dt><dd>not reviewed</dd></div><div><dt>Reviewer</dt><dd>none</dd></div><div><dt>Reviewed at</dt><dd><code>none</code></dd></div></dl>
+  <dl class="summary-grid" data-current-review-projection="CAP-05.S04.T02" data-current-review-result="not-reviewed" data-current-reviewer="none" data-current-reviewed-at="none"><div><dt>Task status</dt><dd>IN_PROGRESS</dd></div><div><dt>Latest result</dt><dd>not reviewed</dd></div><div><dt>Reviewer</dt><dd>none</dd></div><div><dt>Reviewed at</dt><dd><code>none</code></dd></div></dl>
   <p><strong>Latest notes:</strong> None</p>
 </section>
 <nav class="page-turn" aria-label="Task navigation"><a class="button button-quiet" href="CAP-05.S04.T01.html">Previous</a><a class="button button-primary" href="CAP-05.S04.T03.html">Next</a></nav>

@@ -127,7 +127,7 @@ class PdfDecoderSession {
       // all page/intermediate surfaces, and local built-in font/CMap resources.
       const workerAllowance = viewerWorkerAllowance(bytes.metadata.source.byteLength);
       this.releases.push(budget.reserve(workerAllowance));
-      this.releases.push(budget.reserve(64 * 1024 * 1024));
+      this.releases.push(bytes.mainAdmission.retain());
       this.releases.push(budget.reserve(8 * 1024 * 1024));
       this.releaseCore = bytes.coreAdmission.retain();
       this.worker = worker = new Worker(new URL("./documentViewer.worker.ts", import.meta.url), { type: "module", name: "protected-document-viewer" });

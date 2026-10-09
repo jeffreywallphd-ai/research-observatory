@@ -193,6 +193,23 @@ def seed(*, accepted: bool = False) -> Path:
                 "large": binding(large, attachment),
                 "denied": binding(denied, denied_attachment),
             }
+            from research_observatory_core.anchors.contracts import AnchorSelection
+
+            repository, _, _ = app.state.runtime.document_revisions._repository(
+                str(project_root), selected["projectId"], session, "1" * 32
+            )
+            source_anchors = repository.source_anchors()
+            accepted_receipts["anchors"] = [
+                source_anchors.create(
+                    new_uuid_v7(),
+                    AnchorSelection(
+                        revision_id=normal.revision_id,
+                        node_id=normal.structure.nodes[0].node_id,
+                        normalized_range={"start": start, "end": end},
+                    ),
+                ).anchor_id
+                for start, end in ((0, 9), (10, 18))
+            ]
         assert client.post("/projects/close", json={"root": str(project_root)}).status_code == 200
     assert (project_root / "state/project.sqlite3").read_bytes()[:16] != b"SQLite format 3\x00"
     receipt = {

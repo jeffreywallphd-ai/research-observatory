@@ -21,7 +21,7 @@ export function AnchorPassage({ anchor, scale }: { readonly anchor: SourceAnchor
     <h3>Accepted structured text</h3>
     <p>{target.pageRegion ? `Page ${target.pageRegion.pageNumber} · block region available; this view shows structured text.`
       : `Structural/text fallback · coordinates ${target.coordinatesState.replaceAll("-", " ")}.`}</p>
-    {context && range ? <p className="anchor-passage-text" style={{ fontSize: `${scale}%` }}>{context.text.slice(0, range.start)}<mark aria-label="Selected source passage">{context.text.slice(range.start, range.end)}</mark>{context.text.slice(range.end)}</p>
+    {context && range ? <p className={`anchor-passage-text anchor-scale-${scale}`}>{context.text.slice(0, range.start)}<mark aria-label="Selected source passage">{context.text.slice(range.start, range.end)}</mark>{context.text.slice(range.end)}</p>
       : <Notification tone="info" title="Structural anchor">This element has no text span. Its exact structural identity is retained; inspect its source when page viewing is available.</Notification>}
     <p>Revision {target.revisionId} · element {target.nodeId}</p>
     <StatusBadge tone="info">Unverified extraction</StatusBadge>
