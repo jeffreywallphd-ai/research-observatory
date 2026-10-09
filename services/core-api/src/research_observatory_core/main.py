@@ -314,9 +314,7 @@ class DocumentAttachmentRuntime:
                     # at open. Each operation still checks current authority,
                     # keys and policy; no selected binding escapes this action.
                     objects = native_stores[0]
-                service = LocalDocumentAttachmentService(
-                    path / "state/project.sqlite3", actual_id, objects
-                )
+                service = LocalDocumentAttachmentService(path / "state/project.sqlite3", actual_id, objects)
                 return action(service, actor)
 
             # Corpus owns current researcher, accepted Intent, privacy and

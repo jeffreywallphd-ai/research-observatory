@@ -122,8 +122,10 @@ class ViewerReadCancellationTests(unittest.TestCase):
         self.assert_preserved_and_released()
 
     def test_corrupt_final_frame_with_live_cancel_probe_still_denies_before_first_byte(self):
-        ciphertext = self.f.project_root / "objects" / object_store._object_relative_path(
-            self.f.corpus.project, self.candidate.object_sha256
+        ciphertext = (
+            self.f.project_root
+            / "objects"
+            / object_store._object_relative_path(self.f.corpus.project, self.candidate.object_sha256)
         )
         payload = bytearray(ciphertext.read_bytes())
         payload[-1] ^= 1

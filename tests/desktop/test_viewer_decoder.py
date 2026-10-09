@@ -39,13 +39,15 @@ def authored_pdf(*, active=False, huge_page=False, compressed_bomb=False):
         + b"\nendstream",
     ]
     if active:
-        objects.extend([
-            b"<< /Type /Action /S /JavaScript /JS (globalThis.viewerDocumentExecuted=true) >>",
-            b"<< /Type /Annot /Subtype /Link /Rect [0 0 100 100] "
-            b"/A << /S /URI /URI (https://untrusted.invalid/active-source) >> >>",
-            b"<< /Type /Annot /Subtype /Widget /Rect [0 0 100 100] "
-            b"/AA << /E << /S /Launch /F (untrusted.exe) >> >> >>",
-        ])
+        objects.extend(
+            [
+                b"<< /Type /Action /S /JavaScript /JS (globalThis.viewerDocumentExecuted=true) >>",
+                b"<< /Type /Annot /Subtype /Link /Rect [0 0 100 100] "
+                b"/A << /S /URI /URI (https://untrusted.invalid/active-source) >> >>",
+                b"<< /Type /Annot /Subtype /Widget /Rect [0 0 100 100] "
+                b"/AA << /E << /S /Launch /F (untrusted.exe) >> >> >>",
+            ]
+        )
     payload, offsets = bytearray(b"%PDF-1.7\n%\xe2\xe3\xcf\xd3\n"), [0]
     for number, value in enumerate(objects, 1):
         offsets.append(len(payload))
@@ -54,9 +56,7 @@ def authored_pdf(*, active=False, huge_page=False, compressed_bomb=False):
     payload.extend(f"xref\n0 {len(offsets)}\n0000000000 65535 f \n".encode())
     for offset in offsets[1:]:
         payload.extend(f"{offset:010d} 00000 n \n".encode())
-    payload.extend(
-        f"trailer\n<< /Size {len(offsets)} /Root 1 0 R >>\nstartxref\n{xref}\n%%EOF\n".encode()
-    )
+    payload.extend(f"trailer\n<< /Size {len(offsets)} /Root 1 0 R >>\nstartxref\n{xref}\n%%EOF\n".encode())
     return bytes(payload)
 
 
@@ -92,7 +92,7 @@ class ViewerDecoderTests(unittest.TestCase):
                     content_type="text/html",
                     body='<!doctype html><html><head><meta http-equiv="Content-Security-Policy" '
                     "content=\"default-src 'self'; script-src 'self'; worker-src 'self'; "
-                    "connect-src 'self'\"></head><body><canvas width=\"0\" height=\"0\"></canvas>"
+                    'connect-src \'self\'"></head><body><canvas width="0" height="0"></canvas>'
                     '<script type="module" src="/decoder.js"></script></body></html>',
                 )
                 return

@@ -60,9 +60,7 @@ class ViewerSourceAuthorityTests(unittest.TestCase):
     def test_owned_expected_identity_is_not_an_authorization_grant(self):
         self.f.f.permit(derive="denied")
         expected = self.viewer.describe(self.selector)
-        self.assertEqual(
-            b"Synthetic", self.viewer._read_owned_range(self.selector, expected, start=0, end=9)
-        )
+        self.assertEqual(b"Synthetic", self.viewer._read_owned_range(self.selector, expected, start=0, end=9))
         self.f.f.fixture.publish_right(
             self.f.f.candidate, value="denied", predecessor=self.f.f.policy.revision_id, inspect=True
         )
