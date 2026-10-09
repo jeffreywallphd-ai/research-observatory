@@ -1,0 +1,100 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "reader-latency-target-and-direct-record-procedure-proposal",
+  "id": "CAP-05.S04.T01.LT01",
+  "taskId": "CAP-05.S04.T01",
+  "waveId": "W2",
+  "status": "PROPOSED-PROCEDURE-EXCEPTION",
+  "productPredecessorCommit": "2116ed9cf5e5c9d05f63e21d433b6472df7c6a4d",
+  "frozenWaveCommit": "c85a59f3a293f8e3f2eaf6454682c9a14b1efa55",
+  "originalTaskBaseCommit": "1bd33a6ba180487b239e3315e302b6db6aaea123",
+  "governingBindings": [
+    {
+      "path": "docs/adr/ADR-0029-preserve-document-revisions-and-mediate-source-viewing.md",
+      "commit": "2116ed9cf5e5c9d05f63e21d433b6472df7c6a4d",
+      "sha256": "ffee796414cdde9155667c8c3a710e7c904197971b7714832c7c5bc950687e7b"
+    },
+    {
+      "path": "planning/slice-plans/CAP-05/CAP-05.S04-source-viewer-and-evidence-inspection-experience.md",
+      "commit": "2116ed9cf5e5c9d05f63e21d433b6472df7c6a4d",
+      "sha256": "3245d99eb79f2cc5a5651c538db71d9bcd5a2b5e4d7d104edd7a52d8132f246c"
+    },
+    {
+      "path": "docs/automation/project-automation-guide.md",
+      "commit": "2116ed9cf5e5c9d05f63e21d433b6472df7c6a4d",
+      "sha256": "3fbc6f4bf6c045d5a9422ef9bfa8fcf1371cf99f6a4a8d509cf1c371c4242364"
+    }
+  ],
+  "ownerProductDecision": {
+    "status": "EXPLICITLY-APPROVED-IN-CHAT",
+    "date": "2026-10-09",
+    "request": "Raise the overly optimistic initial Reader target; prioritize working software and defer extensive optimization.",
+    "questionDefinition": "p95 first-page opening of the representative 10 MiB/50-page PDF",
+    "selectedAnswer": "3 seconds (tighter; may require more tuning)",
+    "noFurtherValueDecisionRequested": true
+  },
+  "criterionDelta": {
+    "originalLimitSeconds": 1.5,
+    "replacementLimitSeconds": 3.0,
+    "fixture": "10 MiB / 50-page born-digital PDF",
+    "metric": "cold/warm p95 open-to-first-permitted-page after Core readiness",
+    "minimumOpens": 20,
+    "platform": "declared Windows x64 tier",
+    "includes": [
+      "full-source authentication",
+      "actual renderer/gateway/native/Core",
+      "first page rendered"
+    ],
+    "supersedesOnly": [
+      "ADR-0029 Source viewer representative first-page latency target",
+      "CAP-05.S04 section11 same latency target"
+    ],
+    "laterOptimizationGoalSeconds": 1.5
+  },
+  "requestedProcedureException": {
+    "scope": "This one Reader latency criterion only; direct append-only owner record and independent readiness review instead of a new ECR/bootstrap/executable amendment campaign.",
+    "reason": "The owner has already selected the exact product target and prohibited further automation-framework development. Existing section2.2 would otherwise add a separate amendment campaign for this single scalar change.",
+    "quiescence": "No product edits, tests or builds while this criterion supplement is reviewed/adopted. Preserve the current task state; existing owner lease renewal and evidence-only bookkeeping may complete.",
+    "authorizes": [
+      "append one immutable owner approval of this exact proposal and readiness review",
+      "append the authoritative product-criterion supplement",
+      "update only current task worksheet and live source-viewing contract references to the supplement; do not edit the frozen Wave packet, original slice plan, original ADR body or any prior approval",
+      "continue the existing owned T01 through ordinary taskctl transitions"
+    ],
+    "doesNotAuthorize": [
+      "framework/controller/helper/schema/hook/CI source edits",
+      "new generic approval bypass",
+      "new encryption format or plaintext cache",
+      "change to original task identity/base/dependencies or generic acceptance text",
+      "task/slice/Wave completion",
+      "integration without required review",
+      "W2 release or external effects"
+    ]
+  },
+  "unchangedObligations": [
+    "source <=128 MiB; range <=1 MiB; one active source read/project; queue <=8",
+    "full authentication before bytes and fresh identity/principal/Intent/privacy/rights at each required scope and delivery",
+    "cancel/lease release <=1 second at maximum source with concurrent writes; no false drain acknowledgement",
+    "128 MiB/500-page stress and complete actual viewer/worker resource measurement",
+    "256 MiB aggregate viewer-owned buffer budget and bounded rendering",
+    "no plaintext disk cache, eager whole-file prefetch, direct source paths, remote assets or document active content",
+    "security, privacy, rights, accessibility, failure/restart/recovery and formal independent task/slice/Wave gates",
+    "fresh Wave qualification and separate human release gate",
+    "no actual 8/16 GiB variant runs; larger-resource work deferred to W5",
+    "no further effort on the separately accepted parser two-second overage"
+  ],
+  "historyPolicy": "Preserve frozen approvals, all prior measurements and adverse findings. No earlier result becomes a retrospective PASS. The 3-second criterion becomes operative only after this proposal/readiness record and its direct-record procedure exception are approved.",
+  "alternatives": [
+    {
+      "id": "direct-record",
+      "recommendation": true,
+      "description": "Use this exact independently reviewed one-criterion supplement; no framework implementation task."
+    },
+    {
+      "id": "ordinary-ecr",
+      "recommendation": false,
+      "description": "Use the full existing ECR/bootstrap/task/exit/checkpoint adoption lifecycle for this criterion; no framework source redesign is authorized."
+    }
+  ],
+  "resumeCondition": "Explicit approval of this exact reviewed direct-record procedure exception; the 3-second product choice is already approved. Record adoption, then continue T01 functionality and bounded 3-second qualification; stop optional tuning once it qualifies."
+}
