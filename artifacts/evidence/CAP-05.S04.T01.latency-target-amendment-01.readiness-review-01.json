@@ -1,0 +1,78 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "reader-latency-target-procedure-packet-readiness-review",
+  "id": "CAP-05.S04.T01.LT01.R01",
+  "taskId": "CAP-05.S04.T01",
+  "waveId": "W2",
+  "reviewer": "agent:/root/reader_latency_amendment_readiness",
+  "reviewedAt": "2026-10-09T11:18:41Z",
+  "candidateCommit": "d3ee992d4b15db37d798657c6efde6a5dbb313ac",
+  "productPredecessorCommit": "2116ed9cf5e5c9d05f63e21d433b6472df7c6a4d",
+  "frozenWaveCommit": "c85a59f3a293f8e3f2eaf6454682c9a14b1efa55",
+  "originalTaskBaseCommit": "1bd33a6ba180487b239e3315e302b6db6aaea123",
+  "proposal": {
+    "path": "artifacts/evidence/CAP-05.S04.T01.latency-target-amendment-01.proposal.json",
+    "commit": "d3ee992d4b15db37d798657c6efde6a5dbb313ac",
+    "lfCanonicalSHA256": "7e9a511cd533ae3523aebafffe54d00182d0fdcf9251c3787be554b95ac0d75d"
+  },
+  "reviewBrief": {
+    "path": "artifacts/evidence/CAP-05.S04.T01.latency-target-amendment-01.review.html",
+    "commit": "d3ee992d4b15db37d798657c6efde6a5dbb313ac",
+    "lfCanonicalSHA256": "702f571a8e5188d6a1bbe92fdc0c7ef17239e9a338bd3f270fd993732c202563"
+  },
+  "hashMethod": "SHA-256 of UTF-8 committed blob bytes after CRLF and bare CR normalization to LF, with all other bytes and the final newline preserved. Working-tree LF-canonical bytes also matched the committed proposal and brief.",
+  "result": "APPROVED-FOR-OWNER-PROCEDURE-DECISION",
+  "disposition": "The exact packet is ready for the owner's narrow procedure-exception decision. The owner has already explicitly approved the 3.0-second product value. This independent readiness disposition does not approve or adopt the pending direct-record exception and does not qualify the product task.",
+  "scope": "Independent read-only inspection of the exact two-file packet, its predecessor and governing bindings, the owner's supplied direction, and the smallest lawful authority-change route. No completed-history audit, product tests, builds, benchmarks, controller transition or source implementation was performed.",
+  "findings": [],
+  "blockingFindingCount": 0,
+  "bindingTruth": {
+    "candidateMatchedCurrentHEADDuringInspection": true,
+    "proposalAndBriefMatchedCommittedCandidate": true,
+    "allThreeDeclaredGoverningLFCanonicalHashesMatched": true,
+    "governingFilesUnchangedFromProductPredecessor": true,
+    "productAndFrameworkSourceUnchangedFromProductPredecessor": true,
+    "candidateDeltaPaths": [
+      "artifacts/evidence/CAP-05.S04.T01.latency-target-amendment-01.proposal.json",
+      "artifacts/evidence/CAP-05.S04.T01.latency-target-amendment-01.review.html",
+      "artifacts/evidence/W2.pause-checkpoint-20261008.md"
+    ],
+    "owner3SecondProductChoice": "EXPLICITLY-APPROVED-IN-SUPPLIED-CHAT",
+    "directRecordProcedureException": "PENDING-EXPLICIT-OWNER-APPROVAL",
+    "adoption": "NOT-CLAIMED",
+    "runtimeQuiescence": "The campaign owner reports the owned readiness run was interrupted with partial output retained and no lease/ledger mutation or running product test/build. This packet review inspected committed documentation and did not independently exercise or qualify runtime behavior."
+  },
+  "authorityAssessment": [
+    "The original ADR-0029 source-viewer criterion and S04 section11 retain 1.5 seconds. The proposal identifies their exact bound bytes, proposes only 3.0 seconds for the same representative fixture/measurement, and preserves the original bodies and frozen Wave approval.",
+    "The owner's explicit 3-second answer authorizes the scalar product decision; no further value choice is needed. The answer does not itself approve bypassing section2.2's immutable ECR/bootstrap/task/exit/checkpoint lifecycle.",
+    "The proposed one-task direct-record exception is expressly pending. It also expressly substitutes execution quiescence with preservation of the current task state, allowing only existing owner lease renewal and evidence-only bookkeeping. It cannot be reported as ordinary section2.2 adoption.",
+    "VM01 and EX01 remain task-specific historical authorities, not reusable exceptions. The proposed LT01 creates no generic future maintenance, criteria or approval bypass.",
+    "The ordinary ECR route remains available as the alternative. The recommended direct-record route requires explicit owner approval of this exact reviewed exception, then an append-only owner record and authoritative criterion supplement before relying on 3.0 seconds in qualification."
+  ],
+  "requiredUnchangedObligations": [
+    "Representative 10 MiB/50-page born-digital PDF; cold/warm p95 over at least 20 opens on the declared Windows x64 tier; opening after Core readiness through the first permitted page actually rendered, including full authentication and actual renderer/gateway/native/Core. Bind hardware, fixture, sample methodology, raw samples and exact candidate/package inputs before qualification.",
+    "Source <=128 MiB, range <=1 MiB, one active source read per project, queue <=8, bounded duplicate coalescing and rendering; no unaccounted source-sized copy or eager whole-file prefetch.",
+    "Full authentication before bytes; fresh identity/principal/Intent/privacy/rights in every required scope and at delivery; immediate stale/lock/close denial and no false drain acknowledgement.",
+    "Cancellation and actual lease release <=1 second at maximum source with concurrent writes; retain material cancellation, failure and recovery proofs.",
+    "128 MiB/500-page stress and complete actual viewer/worker resource measurement; 256 MiB aggregate viewer-owned buffers including worker backing allocation, transfers, decoded surfaces and thumbnails.",
+    "No plaintext disk cache, direct source paths, changed encryption format, unrestricted native command, remote assets, document scripting/XFA/actions/attachments or rights bypass.",
+    "Security, privacy, rights, accessibility, failure/restart/recovery, independent expanded task review, integrated slice evidence/review, checkpoints, fresh Wave qualification and separate human release gate remain required.",
+    "No actual 8/16 GiB variant runs; larger-resource work remains deferred to W5. The separately accepted parser timing overage is not reopened.",
+    "Preserve all earlier observations, adverse findings, immutable task/reference/Wave approvals and historical 1.5-second criteria. No prior observation becomes a retrospective PASS. Stop optional latency tuning once the operative 3.0-second criterion actually qualifies."
+  ],
+  "selectedReviewChecks": [
+    "Read the exact committed proposal and HTML brief; confirm they agree on value, measurement, pending exception, unchanged gates, alternatives and resume condition.",
+    "Authenticate the proposal/brief LF-canonical committed hashes and compare their working-tree canonical bytes.",
+    "Authenticate all three governing-file hashes against their named predecessor commit and verify those files are unchanged at the reviewed candidate.",
+    "Inspect the predecessor-to-candidate path inventory to confirm the packet changes no product/framework source or original governing body; inspect the frozen ADR's original latency/sample/resource statements.",
+    "Review AGENTS authority/approval boundaries, planning authority changes, repository mismatch protocol, automation-guide section2.2/8.1-8.3, efficiency review scope, and task-operation independent-review requirements."
+  ],
+  "deferredCoverage": "All implementation qualification, latency samples, full resource/cancellation/stress proof and ordinary task/slice/Wave review. Documentation-only packet readiness does not require replaying product profiles and cannot substitute for those proofs.",
+  "approvalAndResumeBoundary": "After this readiness record is committed, obtain explicit owner approval of the exact proposal candidate/hash and its direct-record procedure exception, acknowledging that the 3.0-second product choice is already approved. Append the owner approval binding both proposal and readiness, append the authoritative criterion supplement, and update only the permitted current worksheet/live contract references. Then continue the existing owned T01 through unchanged supported taskctl transitions and complete bounded 3.0-second qualification plus all unchanged obligations. If the exception is not approved, use the ordinary ECR route or retain the original criterion; do not silently adopt LT01.",
+  "productQualificationReviewed": false,
+  "taskApproved": false,
+  "sliceApproved": false,
+  "waveComplete": false,
+  "releaseApproved": false,
+  "frameworkSourceChangesAuthorized": false
+}
