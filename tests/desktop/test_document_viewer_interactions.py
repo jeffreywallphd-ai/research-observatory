@@ -309,8 +309,12 @@ class DocumentViewerInteractionsTests(unittest.TestCase):
             "() => { const s = window.__VIEWER_UI_TEST__; s.holdAnchor = false; "
             "s.linkRevision = '00000000-0000-7000-8000-000000000023'; s.mount(); }"
         )
-        self.page.get_by_role("heading", name="Anchor 2 · Synthetic accepted source", exact=True).wait_for()
+        self.page.get_by_text("This anchor context exceeds the local Viewer limit.", exact=False).wait_for()
+        self.assertEqual(0, self.page.locator(".viewer-anchor-context mark").count())
+        self.assertEqual(1, self.page.evaluate("() => window.__VIEWER_UI_TEST__.anchorCalls"))
         self.page.evaluate("() => window.__VIEWER_UI_TEST__.releaseAnchor()")
+        self.page.get_by_role("button", name="Retry current source status", exact=True).click()
+        self.page.get_by_role("heading", name="Anchor 2 · Synthetic accepted source", exact=True).wait_for()
         self.wait(lambda: self.page.evaluate("() => window.__VIEWER_UI_TEST__.anchorCalls === 3"))
         self.assertEqual(
             "00000000-0000-7000-8000-000000000023",
