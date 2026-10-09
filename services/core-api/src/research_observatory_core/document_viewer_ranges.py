@@ -208,7 +208,11 @@ class DocumentViewerRangePool:
             try:
                 if self._group_stopped(group):
                     raise ObjectReadCancelled()
-                value = group.read(lambda selected=group: self._group_stopped(selected))
+
+                def group_cancelled(selected: _Group = group) -> bool:
+                    return self._group_stopped(selected)
+
+                value = group.read(group_cancelled)
                 if self._group_stopped(group):
                     raise ObjectReadCancelled()
                 if type(value) is not bytes or len(value) != group.key.end - group.key.start:
