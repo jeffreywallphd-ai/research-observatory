@@ -464,6 +464,15 @@
         "CAP-05.S04.T02",
         "CAP-05.S04.T03"
       ]
+    },
+    {
+      "id": "ADR-0048",
+      "path": "docs/adr/ADR-0048-bind-reference-enrichment-to-existing-canonical-matching-and-protected-document-authority.md",
+      "title": "Bind reference enrichment to existing canonical matching and protected document authority",
+      "status": "Proposed",
+      "linkedTasks": [
+        "CAP-05.S05.T01"
+      ]
     }
   ]
 }

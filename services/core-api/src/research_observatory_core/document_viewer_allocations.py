@@ -41,13 +41,17 @@ class ViewerArtifactReads:
 
     def _read_protected_document_artifact(self, connection, receipt, media_type):
         size = receipt.byte_length
+        self.admit_bytes(size)
+        return self._objects._read_protected_document_artifact(connection, receipt, media_type)
+
+    def admit_bytes(self, size):
+        """Charge additional protected reference/catalog models in the same call."""
         if type(size) is not int or size <= 0:
             raise DocumentRevisionProblem("viewer-resource-limit")
         charge = size * self.cost_multiplier + 4096
         if charge > self.remaining:
             raise DocumentRevisionProblem("viewer-resource-limit")
         self.remaining -= charge
-        return self._objects._read_protected_document_artifact(connection, receipt, media_type)
 
     def _read_parser_manifest(self, connection, receipt):
         # Delegating this helper would let its internal adapter call bypass the

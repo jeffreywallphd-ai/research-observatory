@@ -1,0 +1,220 @@
+{
+  "$defs": {
+    "AcquisitionOrigin": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "remote-acquisition",
+          "title": "Kind",
+          "type": "string"
+        },
+        "locationId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "receiptSha256": {
+          "$ref": "#/$defs/Digest"
+        }
+      },
+      "required": [
+        "kind",
+        "locationId",
+        "receiptSha256"
+      ],
+      "title": "AcquisitionOrigin",
+      "type": "object"
+    },
+    "Digest": {
+      "pattern": "^[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "Format": {
+      "enum": [
+        "jats",
+        "tei",
+        "xml",
+        "html",
+        "pdf",
+        "docx",
+        "plain-text"
+      ],
+      "type": "string"
+    },
+    "Identity": {
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+      "type": "string"
+    },
+    "LocalOrigin": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "local-import",
+          "title": "Kind",
+          "type": "string"
+        }
+      },
+      "required": [
+        "kind"
+      ],
+      "title": "LocalOrigin",
+      "type": "object"
+    },
+    "ProjectIdentity": {
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[47][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+      "type": "string"
+    },
+    "SourceIdentity": {
+      "additionalProperties": false,
+      "properties": {
+        "projectId": {
+          "$ref": "#/$defs/ProjectIdentity"
+        },
+        "attachmentId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "documentId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "documentRevisionId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "candidateId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "sourceAssertionRevisionId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "workId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "workRevisionId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "versionId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "versionRevisionId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "objectSha256": {
+          "$ref": "#/$defs/Digest"
+        },
+        "byteLength": {
+          "maximum": 134217728,
+          "minimum": 0,
+          "title": "Bytelength",
+          "type": "integer"
+        },
+        "format": {
+          "$ref": "#/$defs/Format"
+        },
+        "provenance": {
+          "discriminator": {
+            "mapping": {
+              "local-import": "#/$defs/LocalOrigin",
+              "remote-acquisition": "#/$defs/AcquisitionOrigin"
+            },
+            "propertyName": "kind"
+          },
+          "oneOf": [
+            {
+              "$ref": "#/$defs/LocalOrigin"
+            },
+            {
+              "$ref": "#/$defs/AcquisitionOrigin"
+            }
+          ],
+          "title": "Provenance"
+        }
+      },
+      "required": [
+        "projectId",
+        "attachmentId",
+        "documentId",
+        "documentRevisionId",
+        "candidateId",
+        "sourceAssertionRevisionId",
+        "workId",
+        "workRevisionId",
+        "versionId",
+        "versionRevisionId",
+        "objectSha256",
+        "byteLength",
+        "format",
+        "provenance"
+      ],
+      "title": "SourceIdentity",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "description": "No protected reference text; current per-copy rights still fence delivery.",
+  "properties": {
+    "schemaVersion": {
+      "const": "1.0",
+      "default": "1.0",
+      "title": "Schemaversion",
+      "type": "string"
+    },
+    "projectId": {
+      "$ref": "#/$defs/ProjectIdentity"
+    },
+    "source": {
+      "$ref": "#/$defs/SourceIdentity"
+    },
+    "documentRevisionId": {
+      "$ref": "#/$defs/Identity"
+    },
+    "collectionId": {
+      "$ref": "#/$defs/Identity"
+    },
+    "collectionRevisionId": {
+      "$ref": "#/$defs/Identity"
+    },
+    "status": {
+      "const": "unavailable",
+      "default": "unavailable",
+      "title": "Status",
+      "type": "string"
+    },
+    "reasonCode": {
+      "enum": [
+        "viewer-resource-limit",
+        "references-unavailable"
+      ],
+      "title": "Reasoncode",
+      "type": "string"
+    },
+    "scholarlyVerification": {
+      "const": "unverified",
+      "default": "unverified",
+      "title": "Scholarlyverification",
+      "type": "string"
+    }
+  },
+  "required": [
+    "projectId",
+    "source",
+    "documentRevisionId",
+    "collectionId",
+    "collectionRevisionId",
+    "reasonCode"
+  ],
+  "title": "ReferenceReaderNotice",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://research-observatory.local/contracts/documents/reference-reader-notice.v1.schema.json",
+  "x-research-observatory-semanticRules": [
+    "separate-encrypted-derived-collection-preserves-immutable-accepted-v1-document-and-original-provenance",
+    "current-native-human-project-intent-privacy-inspect-and-derive-authority-through-publication-and-delivery",
+    "ordered-raw-reference-and-exact-accepted-source-spans-with-missing-fields-left-missing",
+    "native-attribute-role-evidence-authenticated-against-retained-parser-artifact-not-invented-from-v1-ir",
+    "canonical-current-complete-sealed-work-catalog-and-existing-exact-and-ranking-kernels-no-new-work",
+    "identifier-index-cannot-hide-competing-exact-work-or-denied-unavailable-current-source",
+    "syntax-and-inferred-link-are-not-scholarly-verification-similarity-keeps-scores-and-human-review-state",
+    "atomic-canonical-object-provenance-outbox-material-leaf-manifests-and-expected-head-exact-retry",
+    "full-collection-at-most-1000-references-and-16-mib-encrypted-json",
+    "reader-one-reference-1024-raw-codepoints-four-256-codepoint-field-and-identifier-previews-four-candidates-64-kib-utf8",
+    "truncation-and-total-counts-explicit-pagination-pins-collection-revision",
+    "unavailable-notice-contains-only-rights-fenced-opaque-head-no-reference-text-or-candidate-authority"
+  ]
+}

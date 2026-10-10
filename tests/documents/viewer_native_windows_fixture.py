@@ -272,7 +272,7 @@ def publish_derive(runtime, root, project, session, candidate, value):
     runtime._action(str(root), project, session, "1" * 32, publish)
 
 
-def seed_revision(app, root, project, session, attachment, raw, *, expected=None):
+def seed_revision(app, root, project, session, attachment, raw, *, expected=None, reference=False):
     """Retain and human-accept authored IR through the real repository APIs."""
     from research_observatory_core.document_attachment_repository import LocalParserArtifactStager
     from research_observatory_core.document_parse_workflow import DocumentParseInput
@@ -340,6 +340,17 @@ def seed_revision(app, root, project, session, attachment, raw, *, expected=None
     )
     wire = contract_fixtures.ir(request.binding, raw=raw).model_dump(mode="json", by_alias=True)
     wire["rawArtifacts"] = [artifact.model_dump(mode="json", by_alias=True)]
+    if reference:
+        wire["nodes"][0]["kind"] = "reference"
+        wire["references"] = [
+            {
+                "stagedId": "synthetic-reference-1",
+                "nodeId": wire["nodes"][0]["stagedId"],
+                "order": 0,
+                "rawText": wire["nodes"][0]["text"],
+                "identifiers": [{"scheme": "doi", "observed": "10.99999/document-drop"}],
+            }
+        ]
     retained, _ = repository.retain(
         claim,
         request,

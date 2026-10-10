@@ -38,7 +38,7 @@
       <nav class="breadcrumbs" aria-label="Breadcrumb"><a href="../index.html">Planning review</a><span>/</span><a href="index.html">CAP-document-inspection</a><span>/</span><a href="CAP-05.S05.html">SLICE-references-citation-contexts-tables-and-figures</a><span>/</span><span aria-current="page">CAP-05.S05.T01</span></nav>
 
 <section class="hero compact" data-task-page="CAP-05.S05.T01">
-  <div class="hero-top"><div><span class="eyebrow">CAP-05.S05.T01 · task 1 of 3</span><h1>Extract and reconcile reference-list entries</h1><p>Parsed references, identifiers, raw strings, author/year/title fields, and links to canonical works or unresolved candidates.</p></div><span class="status status-ready">Ready</span></div>
+  <div class="hero-top"><div><span class="eyebrow">CAP-05.S05.T01 · task 1 of 3</span><h1>Extract and reconcile reference-list entries</h1><p>Parsed references, identifiers, raw strings, author/year/title fields, and links to canonical works or unresolved candidates.</p></div><span class="status status-in-progress">In_Progress</span></div>
   <dl class="summary-grid"><div><dt>Wave</dt><dd>W2</dd></div><div><dt>Slice</dt><dd><a href="CAP-05.S05.html">SLICE-references-citation-contexts-tables-and-figures</a></dd></div><div><dt>Risk / review</dt><dd>high / agent-review</dd></div><div><dt>Latest review</dt><dd>not reviewed</dd></div></dl>
 </section>
 <section class="task-summary"><div class="section-heading"><span class="eyebrow">Authoritative task record</span><h2>Scope and acceptance</h2></div>
@@ -49,7 +49,7 @@
 <section class="task-summary"><div class="section-heading"><span class="eyebrow">Verification inventory</span><h2>Profiles and commands</h2></div>
   <h3>Verification profiles</h3><ul class="gate-criteria"><li>documents</li><li>service</li></ul>
   <h3>Commands</h3><ul class="gate-criteria"><li>python tools/verify.py --profile documents</li><li>python tools/verify.py --profile service</li></ul>
-  <p data-task-claim="CAP-05.S05.T01" data-task-owner="unclaimed" data-task-branch="none" data-task-base-sha="none"><strong>Claim projection:</strong> owner <code>unclaimed</code> · branch <code>none</code> · base <code>none</code></p>
+  <p data-task-claim="CAP-05.S05.T01" data-task-owner="codex-w2-implementation" data-task-branch="codex/w2-implementation" data-task-base-sha="8071903db413ae3dae1acd1c2232607dbc70e917"><strong>Claim projection:</strong> owner <code>codex-w2-implementation</code> · branch <code>codex/w2-implementation</code> · base <code>8071903db413ae3dae1acd1c2232607dbc70e917</code></p>
 </section>
 <section class="task-summary" data-task-plan="CAP-05.S05.T01" data-task-plan-sha256="5c78dd79ac3cba4a62339796fee018b4e7ff29ae3cdf877b9be68a84b85a3411"><div class="section-heading"><span class="eyebrow">Approved implementation intent</span><h2>Task plan</h2></div><article class="plan-article compact-article"><pre class='markdown-fallback'>### 9.1 `CAP-05.S05.T01` - Extract and reconcile reference-list entries
 **Objective:** Parsed references, identifiers, raw strings, author/year/title fields, and links to canonical works or unresolved candidates.
@@ -88,13 +88,60 @@ python tools/verify.py --profile documents
 python tools/verify.py --profile service
 ```</pre></article></section>
 <section class="section-heading"><span class="eyebrow">Task-start planning</span><h2>Assigned worksheet</h2><p>The worksheet is an optional planning aid and does not create a new approval or task state.</p></section>
-<p class="decision-meta" data-task-worksheet-absent="CAP-05.S05.T01">No optional task-start worksheet is assigned. This does not block execution.</p>
+
+<details class="plan-details task-worksheet" open data-task-worksheet="CAP-05.S05.T01" data-worksheet-sha256="d67898e88463d2cf1299a07fd321eb32bdd978bd8a64fae6e3670404792d61e7">
+  <summary>Assigned task-start worksheet</summary>
+  <div class="worksheet-meta"><strong>Source:</strong> <code>artifacts/evidence/CAP-05.S05.T01.task-start.md</code> · <strong>SHA-256:</strong> <code>d67898e88463d2cf1299a07fd321eb32bdd978bd8a64fae6e3670404792d61e7</code></div>
+  <article class="plan-article"><pre class='markdown-fallback'># CAP-05.S05.T01 — extract and reconcile reference-list entries
+
+Claim base: `8071903db413ae3dae1acd1c2232607dbc70e917`; campaign
+`codex/w2-implementation`, owner `codex-w2-implementation`.
+
+Authority: the approved W2 packet at
+`c85a59f3a293f8e3f2eaf6454682c9a14b1efa55`, the canonical backlog task,
+[S05 §§5–9.1, 11–14, 19](../../planning/slice-plans/CAP-05/CAP-05.S05-references-citation-contexts-tables-and-figures.md),
+accepted ADR-0027/0029 and existing canonical identity/provenance contracts.
+CAP-05.S03.T03 is DONE; CP08 is independently approved and integrated.
+The current experience reference is RO-UI-ACADEMIC-MINIMAL-1.9, Document Reader
+outline, inert source inspection and selected-work/version return context.
+
+This task adds local reference enrichment. It does not create or merge Works,
+verify scholarship, enable network destinations, change accepted document v1,
+select a parser/model, implement citation contexts/tables/figures, change resource
+tier/release criteria, or develop the automation framework. Reader LT01 and the
+owner-accepted parser observation remain historical; neither is replayed here.
+
+| Material boundary | Planned proof |
+|---|---|
+| Ordered raw reference content and author/year/title observations | Authored synthetic JATS/TEI and unstructured fixtures; exact raw contributor ranges, NFC/CRLF/astral offsets, field namespace/format/ancestry attribution. Missing fields and unavailable attributes stay unknown. |
+| Identity, matching and uncertainty | Reuse accepted reference/node IDs, exact document/structure hashes and CAP-04 Work revisions. Test unique valid identifiers, competing/disputed/reassigned identifiers, unanchored parser identifiers, and fuzzy component scores with human-review state. No raw reference becomes a fake import SourceAddress or new Work. |
+| Complete current match set | Reuse the indexed exact assessment and ranking kernel. Recheck complete matching-key results, current sealed Work heads/members and input freshness before publication/delivery. New duplicate/membership between preparation and writer invalidates publication; no pagination or denied-source omission proves false uniqueness. |
+| Protected authority and provenance | Current Native/project/session/human/Intent/privacy and source inspect+derive, plus current target-source authority, throughout publication/read/delivery. Actual SQLCipher/encrypted-object tests exercise denial, project/actor/revision substitution, changed rights and impacted inputs. All material source/Work/decision dependencies survive the common 64-input limit through existing traversable manifests. |
+| Atomicity and recovery | New encrypted, versioned enrichment separate from immutable accepted document. Command/actor/payload replay and expected enrichment predecessor. Fault before commit, cancellation, corrupt payload, close/reopen, and retry preserve accepted document and old enrichment; no partial complete coverage. |
+| Exact predecessor and migration | Capture a literal populated current v27 fixture before product edits, binding its existing schema/profile fingerprints and retained rows/ciphertexts. Additive backup-first v28 migration; interrupt each material step and prove exact predecessor rollback and retry. Never edit earlier fixture bytes or migration authorities. |
+| Resource boundary | Explicit reference/catalog/field/byte/comparison/wall-time limits and current cancellation checks; visible failure leaves original/base document usable. No models or 8/16 GiB hardware runs. |
+| Real principal and experience | Fixed opaque Native IPC → bounded Core route → protected source and canonical reconciliation → encrypted durable collection → typed Reader inspection. One actual owned current Native/Core/renderer vertical proof plus keyboard, safe failure, late-response/lock clearing and exact source/return tests. Existing Reader admission accounts retained protected views. |
+| Evidence truth | Commit implementation before criterion-linked focused checks and expanded independent task review. Authored/synthetic parsing tests are not signed parser/model or scholarly-quality evidence. Preserve adverse observations. |
+
+Read-only adversarial preflight: incorporated from `reader_rights_task_review`.
+It identified complete match-set uniqueness, impacted Work/source/decision
+freshness, unavailable TEI attributes, full provenance beyond 64 inputs, and
+per-reference ranking rather than irrelevant target–target comparisons. This
+advice is not task approval.
+
+Selected coverage: reference extraction/contracts, affected reconciliation,
+actual protected persistence/authority, predecessor migration/rollback, strict
+Core/Native/client boundary, focused product types/style/schema and Reader
+conformance. Full unchanged profiles, citation/table/figure outcomes, broad
+performance, installer/platform/resource tiers and release qualification remain
+slice/Wave work. No mandatory new human gate was identified for this task.</pre></article>
+</details>
 <section class="section-heading"><span class="eyebrow">Execution evidence</span><h2>Review packets, rounds, and current projection</h2><p>Append-only controls retain every immutable round and finding closure. Pre-policy tasks remain explicitly latest-review-only.</p></section>
 
 <section class="review-toolbar" data-task-review-id="CAP-05.S05.T01" data-review-mode="latest-review-only">
   <h3>CAP-05.S05.T01 — Extract and reconcile reference-list entries</h3>
   <p><strong>Legacy latest-review-only projection.</strong> No append-only review rounds are recorded; this view does not fabricate historical attempts.</p>
-  <dl class="summary-grid" data-current-review-projection="CAP-05.S05.T01" data-current-review-result="not-reviewed" data-current-reviewer="none" data-current-reviewed-at="none"><div><dt>Task status</dt><dd>READY</dd></div><div><dt>Latest result</dt><dd>not reviewed</dd></div><div><dt>Reviewer</dt><dd>none</dd></div><div><dt>Reviewed at</dt><dd><code>none</code></dd></div></dl>
+  <dl class="summary-grid" data-current-review-projection="CAP-05.S05.T01" data-current-review-result="not-reviewed" data-current-reviewer="none" data-current-reviewed-at="none"><div><dt>Task status</dt><dd>IN_PROGRESS</dd></div><div><dt>Latest result</dt><dd>not reviewed</dd></div><div><dt>Reviewer</dt><dd>none</dd></div><div><dt>Reviewed at</dt><dd><code>none</code></dd></div></dl>
   <p><strong>Latest notes:</strong> None</p>
 </section>
 <nav class="page-turn" aria-label="Task navigation"><a class="button button-quiet" href="CAP-05.S05.html">Previous</a><a class="button button-primary" href="CAP-05.S05.T02.html">Next</a></nav>

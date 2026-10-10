@@ -1,6 +1,6 @@
 # Local storage contracts
 
-The current executable database is schema 27. Schema 26 adds immutable parse
+The current executable database is schema 28. Schema 26 adds immutable parse
 jobs/results, accepted normalized revisions and scoped element indices. Schema
 27 permits an authenticated, output-free source invalidation without inventing
 a replacement revision. It preserves every existing impact run, index, trigger
@@ -9,6 +9,12 @@ and historical row under a verified backup and transactional forward migration.
 through v26 readers and adds exact source-v1 through v26 chains to target-v27,
 including source/target fingerprints and backup-path binding. Historical profile
 documents and already recorded recovery manifests retain their original meaning.
+Schema 28 appends separate encrypted document-enrichment revisions and scoped
+element, identifier and Work-target indices. It keeps accepted v1 structures,
+all prior rows and their fingerprints unchanged. Its dedicated verified-backup
+migration covers all 27 material interruption steps; recovery also accepts exact
+source-v1 through v27 chains to target-v28. No reference field or index grants
+current rights, human authority or scholarly verification.
 
 `sqlite-profile.v1.json` is the exact portable profile contract for the current
 canonical local database. It fixes the database identity, version, scalar storage domain,

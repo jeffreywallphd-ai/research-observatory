@@ -4,7 +4,7 @@
   "baseline": "1.3",
   "supplemental_release": "1.3.4",
   "review_interface_release": "1.4.0",
-  "generated_at": "2026-10-10T03:58:14.886631+00:00",
+  "generated_at": "2026-10-10T04:22:55.171470+00:00",
   "entry_point": "index.html",
   "feedback_schema_version": "1.1",
   "waves": [
@@ -23655,7 +23655,7 @@
             {
               "task_id": "CAP-05.S05.T01",
               "title": "Extract and reconcile reference-list entries",
-              "status": "READY",
+              "status": "IN_PROGRESS",
               "mode": "latest-review-only",
               "latest_review": {
                 "reviewer": null,
@@ -23696,18 +23696,21 @@
             {
               "task_id": "CAP-05.S05.T01",
               "title": "Extract and reconcile reference-list entries",
-              "status": "READY",
+              "status": "IN_PROGRESS",
               "page": "CAP-05/CAP-05.S05.T01.html",
               "dependencies": [
                 "CAP-05.S03.T03"
               ],
               "claim": {
-                "owner": null,
-                "branch": null,
-                "base_sha": null
+                "owner": "codex-w2-implementation",
+                "branch": "codex/w2-implementation",
+                "base_sha": "8071903db413ae3dae1acd1c2232607dbc70e917"
               },
               "plan_section_sha256": "5c78dd79ac3cba4a62339796fee018b4e7ff29ae3cdf877b9be68a84b85a3411",
-              "worksheet": null
+              "worksheet": {
+                "path": "artifacts/evidence/CAP-05.S05.T01.task-start.md",
+                "sha256": "d67898e88463d2cf1299a07fd321eb32bdd978bd8a64fae6e3670404792d61e7"
+              }
             },
             {
               "task_id": "CAP-05.S05.T02",

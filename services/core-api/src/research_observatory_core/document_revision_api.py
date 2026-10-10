@@ -9,6 +9,7 @@ from pydantic import Field
 
 from .anchors.contracts import AnchorSelection
 from .document_attachment_api import BoundedDocumentJsonRoute, DocumentSession
+from .document_references import ReferenceEnrichmentCommand
 from .document_revisions import DocumentRevisionAcceptance, DocumentRevisionProblem
 from .ingestion.import_drafts import Identity
 from .transport import CoreProblem, problem_detail
@@ -70,6 +71,16 @@ class DocumentReaderOutlineCommand(DocumentSession):
     revision_id: Identity
     after_node_id: Identity | None = None
     limit: Annotated[int, Field(strict=True, ge=1, le=50)] = 50
+
+
+class DocumentReferenceEnrichCommand(DocumentSession):
+    enrichment: ReferenceEnrichmentCommand
+
+
+class DocumentReferenceReadCommand(DocumentSession):
+    revision_id: Identity
+    expected_collection_revision_id: Identity | None = None
+    after_order: Annotated[int, Field(strict=True, ge=0, le=999)] | None = None
 
 
 def register_document_revision_routes(app: FastAPI, runtime: Callable):
@@ -203,5 +214,22 @@ def register_document_revision_routes(app: FastAPI, runtime: Callable):
                 mode="json", by_alias=True
             ),
         )
+
+    @router.post("/references-enrich")
+    def references_enrich(request: Request, command: DocumentReferenceEnrichCommand):
+        return run(
+            request,
+            lambda service: service.reference_enrich(command, trace_id=request.state.trace_id).model_dump(
+                mode="json", by_alias=True
+            ),
+        )
+
+    @router.post("/references-read")
+    def references_read(request: Request, command: DocumentReferenceReadCommand):
+        def current(service):
+            result = service.references_read(command, trace_id=request.state.trace_id)
+            return None if result is None else result.model_dump(mode="json", by_alias=True)
+
+        return run(request, current)
 
     app.include_router(router)

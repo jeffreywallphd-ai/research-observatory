@@ -451,9 +451,21 @@ class SqliteReconciliationRepository:
     def _assessment(
         self, connection: CanonicalConnection, source: SourceAssertion, resolve: ReconciliationSourceResolver
     ) -> MatchAssessment:
+        return self._identifier_assessment(connection, source.identifiers, resolve)
+
+    def _identifier_assessment(
+        self,
+        connection: CanonicalConnection,
+        identifiers: tuple[IdentifierAssertion, ...],
+        resolve: ReconciliationSourceResolver,
+        *,
+        inspected: set[str] | None = None,
+    ) -> MatchAssessment:
+        # Document references reuse the exact index and current assignment rules;
+        # they never impersonate an import/connector SourceAssertion.
         works: set[str] = set()
         unresolved = False
-        for scheme, value in _keys(source.identifiers):
+        for scheme, value in _keys(identifiers):
             rows = connection.execute(
                 "SELECT assertion_revision_id, work_id FROM reconciliation_identifier_links "
                 "WHERE project_id=? AND scheme=? AND key_sha256=? LIMIT 257",
@@ -462,6 +474,8 @@ class SqliteReconciliationRepository:
             if len(rows) > 256:
                 raise ReconciliationProblem("reconciliation-match-limit")
             for revision, work in rows:
+                if inspected is not None:
+                    inspected.add(revision)
                 candidate = self._authorized_load(connection, revision, resolve)
                 if (scheme, value) not in _keys(candidate.assertion.identifiers) or work != candidate.result.work_id:
                     raise ReconciliationProblem("reconciliation-integrity-invalid")
@@ -480,7 +494,7 @@ class SqliteReconciliationRepository:
             )
             for work in sorted(works)
         }
-        result = assess_match(source.identifiers, existing)
+        result = assess_match(identifiers, existing)
         if unresolved:
             return MatchAssessment(
                 "review-required",
@@ -507,6 +521,12 @@ class SqliteReconciliationRepository:
         payload_configuration: str = "assertion-payload",
         extra_parameter: tuple[str, str, str] | None = None,
         checkpoint: Callable[[], None] | None = None,
+        revision_id: str | None = None,
+        aggregate_id: str | None = None,
+        object_sha256: str | None = None,
+        event_type: str | None = None,
+        idempotency_key: str | None = None,
+        sort_manifest_inputs: bool = False,
     ) -> AggregateRevision:
         # A propagation run has a fixed graph snapshot. Later outputs must not
         # evade an existing impact by being appended after that snapshot.
@@ -514,6 +534,9 @@ class SqliteReconciliationRepository:
         # Preserve complete, traversable provenance within the common 64-input
         # envelope. Material and historical-only leaves never share a manifest.
         while len(sources) + len(historical_sources) > 64:
+            if sort_manifest_inputs:
+                sources = tuple(sorted(sources, key=lambda item: item.revision_id))
+                historical_sources = tuple(sorted(historical_sources, key=lambda item: item.revision_id))
 
             def pack(items: tuple[AggregateRevision, ...], *, historical: bool) -> tuple[AggregateRevision, ...]:
                 return tuple(
@@ -532,12 +555,13 @@ class SqliteReconciliationRepository:
                         ),
                         payload_configuration="input-manifest",
                         checkpoint=checkpoint,
+                        sort_manifest_inputs=sort_manifest_inputs,
                     )
                     for offset in range(0, len(items), 64)
                 )
 
             sources, historical_sources = pack(sources, historical=False), pack(historical_sources, historical=True)
-        revision = new_uuid_v7()
+        revision = revision_id or new_uuid_v7()
         dependencies = tuple(
             MaterialDependency(
                 new_uuid_v7(),
@@ -591,7 +615,7 @@ class SqliteReconciliationRepository:
         return aggregates.append(
             AggregateRevisionDraft(
                 revision_id=revision,
-                aggregate_id=current.aggregate_id if current else new_uuid_v7(),
+                aggregate_id=current.aggregate_id if current else aggregate_id or new_uuid_v7(),
                 aggregate_kind=kind,
                 created_at=current.created_at if current else actor.occurred_at,
                 modified_at=actor.occurred_at,
@@ -602,17 +626,18 @@ class SqliteReconciliationRepository:
                 dependency_coverage="complete",
                 provenance_inputs=sources + historical_sources,
                 material_dependencies=dependencies,
+                object_sha256=object_sha256,
             ),
             AtomicRepositoryEvent(
                 event_id=new_uuid_v7(),
                 outbox_id=new_uuid_v7(),
-                event_type=kind + ".reconciled",
+                event_type=event_type or kind + ".reconciled",
                 occurred_at=actor.occurred_at,
                 available_at=actor.occurred_at,
                 trace_id=actor.trace_id,
                 actor_type=actor.actor_type,
                 actor_id=actor.actor_id,
-                idempotency_key="reconcile-" + revision,
+                idempotency_key=idempotency_key or "reconcile-" + revision,
             ),
             expected_revision=current.revision if current else None,
         )
@@ -1285,9 +1310,11 @@ class SqliteReconciliationRepository:
             impacted = connection.execute(
                 "SELECT 1 FROM dependency_impact_items WHERE project_id=? AND output_revision_id IN ("
                 + ",".join("?" for _ in inspected_revisions)
-                + ") UNION ALL SELECT 1 FROM dependency_impact_runs WHERE project_id=? AND previous_revision_id IN ("
-                + ",".join("?" for _ in inspected_revisions)
-                + ") AND (replacement_fingerprint IS NULL OR replacement_fingerprint<>previous_fingerprint) LIMIT 1",
+                + ") "
+                "UNION ALL SELECT 1 FROM dependency_impact_runs "
+                "WHERE project_id=? AND previous_revision_id IN (" + ",".join("?" for _ in inspected_revisions) + ") "
+                "AND (replacement_fingerprint IS NULL OR replacement_fingerprint<>previous_fingerprint) "
+                "LIMIT 1",
                 (self._project, *inspected_revisions, self._project, *inspected_revisions),
             ).fetchone()
             result = ReconciliationInspection(

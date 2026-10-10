@@ -1,0 +1,50 @@
+{
+  "$defs": {
+    "Identity": {
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "commandId": {
+      "$ref": "#/$defs/Identity"
+    },
+    "revisionId": {
+      "$ref": "#/$defs/Identity"
+    },
+    "expectedCollectionRevisionId": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Identity"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    }
+  },
+  "required": [
+    "commandId",
+    "revisionId",
+    "expectedCollectionRevisionId"
+  ],
+  "title": "ReferenceEnrichmentCommand",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://research-observatory.local/contracts/documents/reference-enrichment-command.v1.schema.json",
+  "x-research-observatory-semanticRules": [
+    "separate-encrypted-derived-collection-preserves-immutable-accepted-v1-document-and-original-provenance",
+    "current-native-human-project-intent-privacy-inspect-and-derive-authority-through-publication-and-delivery",
+    "ordered-raw-reference-and-exact-accepted-source-spans-with-missing-fields-left-missing",
+    "native-attribute-role-evidence-authenticated-against-retained-parser-artifact-not-invented-from-v1-ir",
+    "canonical-current-complete-sealed-work-catalog-and-existing-exact-and-ranking-kernels-no-new-work",
+    "identifier-index-cannot-hide-competing-exact-work-or-denied-unavailable-current-source",
+    "syntax-and-inferred-link-are-not-scholarly-verification-similarity-keeps-scores-and-human-review-state",
+    "atomic-canonical-object-provenance-outbox-material-leaf-manifests-and-expected-head-exact-retry",
+    "full-collection-at-most-1000-references-and-16-mib-encrypted-json",
+    "reader-one-reference-1024-raw-codepoints-four-256-codepoint-field-and-identifier-previews-four-candidates-64-kib-utf8",
+    "truncation-and-total-counts-explicit-pagination-pins-collection-revision",
+    "unavailable-notice-contains-only-rights-fenced-opaque-head-no-reference-text-or-candidate-authority"
+  ]
+}

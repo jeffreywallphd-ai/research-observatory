@@ -8,6 +8,8 @@ import { sourceAnchorFixture } from "./anchor-contract";
 import { decodeSourceAnchor } from "../../../apps/desktop/src/app/sourceAnchors";
 import type { ViewerSelector } from "../../../apps/desktop/src/app/documentViewer";
 import type { ReaderAction, ReaderActionPort, ReaderActionRequest } from "../../../apps/desktop/src/app/viewerActions";
+import { referenceReaderFixture } from "./reference-reader";
+import type { DocumentReferencePort } from "../../../apps/desktop/src/app/documentReferences";
 import "../../../packages/ui-tokens/index.css";
 import "../../../packages/ui-components/src/styles.css";
 import "../../../apps/desktop/src/app.css";
@@ -20,6 +22,9 @@ const selection = { projectId: source.projectId, sourceAssertionRevisionId: sour
 const handoff = { attachmentId: source.attachmentId, documentRevisionId: source.documentRevisionId, selection };
 const root = createRoot(document.getElementById("root")!);
 const state = {
+  referenceCalls: [] as object[], referenceExists: false, denyReferences: false, wrongReferenceSource: false,
+  referenceMode: "unresolved" as "unresolved" | "exact-linked" | "candidate", holdReference: false,
+  releaseReference: null as (() => void) | null, unknownReference: false, staleReferences: false,
   actionCalls: [] as ReaderActionRequest[], actionPermissions: {} as Partial<Record<ReaderAction, boolean>>,
   holdAction: false, unknownAction: false, partialAction: false,
   releaseAction: null as (() => void) | null, activeActions: new Set<string>(),
@@ -38,9 +43,45 @@ const state = {
       deepLink={state.linkMode ? { schemaVersion: "1.0", projectId: source.projectId, selector: { attachmentId: source.attachmentId,
         documentRevisionId: source.documentRevisionId, normalizedRevisionId: state.linkRevision }, anchorIds: [fixture.anchorId, secondAnchorId] } : null}
       onRememberLink={(link) => { state.savedLinks.push(link); return true; }}
-      port={port} anchors={anchors} anchorPort={anchorPort} outlinePort={outlinePort} textPort={textPort} pdfFactory={pdfFactory} actionPort={actionPort} />);
+      port={port} anchors={anchors} anchorPort={anchorPort} outlinePort={outlinePort} textPort={textPort} pdfFactory={pdfFactory} actionPort={actionPort} referencePort={referencePort} />);
   },
 };
+const referencePort: DocumentReferencePort = {
+  read: async (_project, selectedRevision, expected, after) => {
+    state.referenceCalls.push({ kind: "read", selectedRevision, expected, after });
+    if (state.holdReference) await new Promise<void>(resolve => { state.releaseReference = resolve; });
+    if (state.unknownReference) throw new Error("synthetic-unknown-issued-read");
+    if (state.staleReferences) {
+      const value = referenceReaderFixture();
+      return { schemaVersion: "1.0", projectId: source.projectId, source, documentRevisionId: revision,
+        collectionId: value.collectionId, collectionRevisionId: value.collectionRevisionId,
+        status: "unavailable", reasonCode: "references-unavailable", scholarlyVerification: "unverified" };
+    }
+    return !state.referenceExists || state.denyReferences ? null : referencePage();
+  },
+  enrich: async (_project, selectedRevision, command, expected) => {
+    state.referenceCalls.push({ kind: "enrich", selectedRevision, command, expected }); state.referenceExists = true;
+    return state.denyReferences ? null : referencePage();
+  },
+};
+function referencePage(): object {
+  const value = referenceReaderFixture() as { entries: Record<string, unknown>[] };
+  const entry = value.entries[0]!;
+  entry["rawPreview"] = "Synthetic inert <script>window.referenceExecuted=true</script> reference 📚";
+  entry["rawLength"] = Array.from(entry["rawPreview"] as string).length;
+  entry["anchor"] = { ...(entry["anchor"] as object), source };
+  if (state.referenceMode === "exact-linked") {
+    entry["linkState"] = "exact-linked"; entry["target"] = { workId: source.workId, revisionId: source.workRevisionId };
+  }
+  if (state.referenceMode === "candidate") {
+    entry["linkState"] = "candidate"; entry["candidateCount"] = 1; entry["candidates"] = [{
+      target: { workId: source.workId, revisionId: source.workRevisionId }, score: 9200, features: [], flags: [],
+      reviewState: "human-review-required", algorithm: "scholarly-duplicate-ranking/1.0.0", featureVersion: "scholarly-duplicate-features/1.0.0",
+      configurationSha256: "b3e04c16bcfbb8588a718d55a94217a21a02ba1877fa9ea6ba187ebcdfc98dfc",
+    }];
+  }
+  return { ...value, source: state.wrongReferenceSource ? { ...source, workRevisionId: source.attachmentId } : source };
+}
 // Explicit interaction doubles, never OS output or Native/Core authority proof.
 const actionPolicy = "00000000-0000-7000-8000-000000000024";
 const actionPort: ReaderActionPort = {

@@ -13,6 +13,7 @@ from pydantic import TypeAdapter
 ROOT = Path(__file__).resolve().parents[3]
 sys.path.insert(0, str(ROOT / "services/core-api/src"))
 
+from research_observatory_core.document_references import ReferenceCollection, ReferenceEnrichmentCommand  # noqa: E402
 from research_observatory_core.document_revisions import (  # noqa: E402
     AcceptedDocumentRevision,
     CanonicalDocumentStructure,
@@ -38,8 +39,13 @@ from research_observatory_core.ports.viewer_actions import (  # noqa: E402
     ViewerQuotationOutput,
     ViewerRightsReviewReceipt,
 )
+from research_observatory_core.reference_reader import ReferenceReaderNotice, ReferenceReaderPage  # noqa: E402
 
 OUTPUTS: dict[str, TypeAdapter[Any]] = {
+    "reference-collection.v1.schema.json": TypeAdapter(ReferenceCollection),
+    "reference-enrichment-command.v1.schema.json": TypeAdapter(ReferenceEnrichmentCommand),
+    "reference-reader-page.v1.schema.json": TypeAdapter(ReferenceReaderPage),
+    "reference-reader-notice.v1.schema.json": TypeAdapter(ReferenceReaderNotice),
     "document-ir.v1.schema.json": TypeAdapter(DocumentIR),
     "parser-selection.v1.schema.json": TypeAdapter(ParserSelection),
     "parse-request.v1.schema.json": TypeAdapter(ParseRequest),
@@ -62,6 +68,7 @@ OUTPUTS: dict[str, TypeAdapter[Any]] = {
     "viewer-original-handoff.v1.schema.json": TypeAdapter(ViewerOriginalHandoff),
 }
 VIEWER_SCHEMAS = {name for name in OUTPUTS if name.startswith("viewer-")}
+REFERENCE_SCHEMAS = {name for name in OUTPUTS if name.startswith("reference-")}
 REVISION_SCHEMAS = (
     set(OUTPUTS)
     - {
@@ -72,7 +79,25 @@ REVISION_SCHEMAS = (
         "native-structure.v1.schema.json",
     }
     - VIEWER_SCHEMAS
+    - REFERENCE_SCHEMAS
 )
+REFERENCE_RULES = [
+    "separate-encrypted-derived-collection-preserves-immutable-accepted-v1-document-and-original-provenance",
+    "current-native-human-project-intent-privacy-inspect-and-derive-authority-through-publication-and-delivery",
+    "ordered-raw-reference-and-exact-accepted-source-spans-with-missing-fields-left-missing",
+    "native-attribute-role-evidence-authenticated-against-retained-parser-artifact-not-invented-from-v1-ir",
+    "canonical-current-complete-sealed-work-catalog-and-existing-exact-and-ranking-kernels-no-new-work",
+    "identifier-index-cannot-hide-competing-exact-work-or-denied-unavailable-current-source",
+    "syntax-and-inferred-link-are-not-scholarly-verification-similarity-keeps-scores-and-human-review-state",
+    "atomic-canonical-object-provenance-outbox-material-leaf-manifests-and-expected-head-exact-retry",
+    "full-collection-at-most-1000-references-and-16-mib-encrypted-json",
+    (
+        "reader-one-reference-1024-raw-codepoints-four-256-codepoint-field-and-identi"
+        "fier-previews-four-candidates-64-kib-utf8"
+    ),
+    "truncation-and-total-counts-explicit-pagination-pins-collection-revision",
+    "unavailable-notice-contains-only-rights-fenced-opaque-head-no-reference-text-or-candidate-authority",
+]
 VIEWER_RULES = [
     "opaque-exact-attachment-original-and-optional-distinct-accepted-normalized-revision",
     "current-native-session-project-human-intent-privacy-and-per-copy-inspect-authority",
@@ -151,6 +176,8 @@ def schema(name: str) -> dict[str, object]:
             "no-later-revision-substitution-or-scholarly-verification-from-navigation",
         ]
         if name == "viewer-deep-link.v1.schema.json"
+        else REFERENCE_RULES
+        if name in REFERENCE_SCHEMAS
         else ACTION_RULES
         if name in ACTION_SCHEMAS
         else VIEWER_RULES

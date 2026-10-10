@@ -40,10 +40,21 @@ class _Registration:
 
 
 class DocumentRevisionService:
-    def __init__(self, attachments, imports, admission_factory, *, repository_factory, runtime=None, now=_now):
+    def __init__(
+        self,
+        attachments,
+        imports,
+        admission_factory,
+        *,
+        repository_factory,
+        runtime=None,
+        now=_now,
+        reconciliation=None,
+    ):
         self.attachments, self.imports, self.admission_factory = attachments, imports, admission_factory
         self.runtime, self.now = runtime or InstalledDocumentParserRuntime(), now
         self.repository_factory = repository_factory
+        self.reconciliation = reconciliation
         self.registrations = {}
         self.mutex, self.runner = threading.RLock(), threading.Lock()
         self.stopped, self.wake = threading.Event(), threading.Event()
@@ -153,7 +164,7 @@ class DocumentRevisionService:
     def history(self, command, *, trace_id):
         return self._current(command, trace_id, lambda repository: repository.history(command.document_id))
 
-    def _anchors(self, command, trace_id, action):
+    def _scoped_repository(self, command, trace_id, action):
         session_stop: list[Callable[[], bool]] = [lambda: True]
 
         def scoped(selected, actor):
@@ -176,7 +187,7 @@ class DocumentRevisionService:
                 now=self.now,
             )
             try:
-                result = action(repository.source_anchors())
+                result = action(repository, actor, stopped)
                 if stopped():
                     raise DocumentRevisionProblem("source-anchor-authority-scope-ended")
                 return result
@@ -191,6 +202,105 @@ class DocumentRevisionService:
             scoped,
             session_stop=lambda stopped: session_stop.__setitem__(0, stopped),
         )
+
+    def _anchors(self, command, trace_id, action):
+        return self._scoped_repository(
+            command, trace_id, lambda repository, _actor, _stopped: action(repository.source_anchors())
+        )
+
+    def _references(self, command, trace_id, action):
+        from .document_reference_repository import LocalDocumentReferenceRepository
+
+        if self.reconciliation is None:
+            raise DocumentRevisionProblem("document-references-unavailable")
+
+        def scoped(repository, actor, stopped):
+            def current(reconciler, observed, resolve, intent, path):
+                from .document_viewer_allocations import viewer_revision_reads
+
+                if (
+                    observed.actor_id,
+                    observed.intent_sha256,
+                    observed.policy_sha256,
+                    intent.revision_id,
+                    reconciler._project,
+                    reconciler._database,
+                    path,
+                ) != (
+                    actor.actor_id,
+                    actor.intent_sha256,
+                    actor.policy_sha256,
+                    actor.intent_revision_id,
+                    repository.project,
+                    repository.database,
+                    Path(command.root),
+                ):
+                    raise DocumentRevisionProblem("document-references-authority-mismatch")
+                selected = LocalDocumentReferenceRepository(repository, resolve=resolve)
+                source = selected._source(
+                    command.enrichment.revision_id if hasattr(command, "enrichment") else command.revision_id
+                )
+                bounded = viewer_revision_reads(repository, source.byte_length)
+                result = action(
+                    LocalDocumentReferenceRepository(bounded, resolve=resolve, admit=bounded.objects.admit_bytes),
+                    stopped,
+                )
+                if stopped():
+                    raise DocumentRevisionProblem("document-references-scope-ended")
+                return result
+
+            # Reentrant lifecycle fence: actual import/connector rights resolver
+            # remains current and never escapes the Native-owned source scope.
+            return self.reconciliation._with_authority(command.root, trace_id, current)
+
+        return self._scoped_repository(command, trace_id, scoped)
+
+    def reference_enrich(self, command, *, trace_id):
+        from .reference_reader import reader_page
+
+        def enrich(repository, stopped):
+            collection = repository.enrich(command.enrichment, cancelled=stopped)
+            return reader_page(collection, repository._source(collection.document_revision_id))
+
+        return self._references(command, trace_id, enrich)
+
+    def references_read(self, command, *, trace_id):
+        from .reference_reader import ReferenceReaderNotice, reader_page
+
+        def read(repository, stopped):
+            try:
+                collection = repository.read(command.revision_id, cancelled=stopped)
+            except DocumentRevisionProblem as problem:
+                # Return only a current, rights-fenced opaque head so the user
+                # can request a CAS refresh. No old protected reference leaks
+                # through a stale, corrupted or unavailable matching snapshot.
+                if stopped():
+                    raise
+                head = repository.current_head(command.revision_id)
+                if head is None:
+                    raise
+                return ReferenceReaderNotice(
+                    project_id=command.project_id,
+                    source=repository._source(command.revision_id),
+                    document_revision_id=command.revision_id,
+                    collection_id=head[1],
+                    collection_revision_id=head[0],
+                    reason_code="viewer-resource-limit"
+                    if problem.code == "viewer-resource-limit"
+                    else "references-unavailable",
+                )
+            if collection is None:
+                if command.expected_collection_revision_id is not None or command.after_order is not None:
+                    raise DocumentRevisionProblem("document-references-page-unavailable")
+                return None
+            if (
+                command.expected_collection_revision_id is not None
+                and collection.collection_revision_id != command.expected_collection_revision_id
+            ) or (command.after_order is not None and command.expected_collection_revision_id is None):
+                raise DocumentRevisionProblem("document-references-page-changed")
+            return reader_page(collection, repository._source(command.revision_id), after_order=command.after_order)
+
+        return self._references(command, trace_id, read)
 
     def anchor_create(self, command, *, trace_id):
         return self._anchors(

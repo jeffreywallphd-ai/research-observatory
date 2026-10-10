@@ -4,7 +4,7 @@ use crate::application_lock::ApplicationLockManager;
 use crate::document_runtime::current_document_context;
 use crate::supervisor::{NativeDocumentAction, RuntimeSupervisor};
 use serde::Deserialize;
-use serde_json::{Value, json};
+use serde_json::{json, Value};
 use std::sync::Arc;
 use tauri::State;
 
@@ -23,6 +23,52 @@ pub(crate) struct ReaderOutlineRequest {
     project_id: String,
     revision_id: String,
     after_node_id: Option<String>,
+}
+
+#[derive(Deserialize)]
+#[serde(rename_all = "camelCase", deny_unknown_fields)]
+pub(crate) struct ReferenceEnrichRequest {
+    schema_version: String,
+    project_id: String,
+    command_id: String,
+    revision_id: String,
+    expected_collection_revision_id: Option<String>,
+}
+
+impl ReferenceEnrichRequest {
+    fn valid(&self) -> bool {
+        project(&self.schema_version, &self.project_id)
+            && uuid(&self.command_id)
+            && uuid(&self.revision_id)
+            && self
+                .expected_collection_revision_id
+                .as_ref()
+                .is_none_or(|id| uuid(id))
+    }
+}
+
+#[derive(Deserialize)]
+#[serde(rename_all = "camelCase", deny_unknown_fields)]
+pub(crate) struct ReferenceReadRequest {
+    schema_version: String,
+    project_id: String,
+    revision_id: String,
+    expected_collection_revision_id: Option<String>,
+    after_order: Option<u16>,
+}
+
+impl ReferenceReadRequest {
+    fn valid(&self) -> bool {
+        project(&self.schema_version, &self.project_id)
+            && uuid(&self.revision_id)
+            && self
+                .expected_collection_revision_id
+                .as_ref()
+                .is_none_or(|id| uuid(id))
+            && self
+                .after_order
+                .is_none_or(|order| order < 1000 && self.expected_collection_revision_id.is_some())
+    }
 }
 
 #[derive(Deserialize)]
@@ -144,6 +190,43 @@ async fn request(
     serde_json::from_str(&response.body)
         .map(Some)
         .map_err(|_| ())
+}
+
+#[tauri::command]
+pub(crate) async fn document_reader_references_enrich(
+    window: tauri::WebviewWindow,
+    supervisor: State<'_, RuntimeSupervisor>,
+    lock: State<'_, ApplicationLockManager>,
+    request: ReferenceEnrichRequest,
+) -> Result<Option<Value>, ()> {
+    if !request.valid() {
+        return Ok(None);
+    }
+    self::request(
+        window,
+        supervisor,
+        lock,
+        request.project_id,
+        NativeDocumentAction::ReferencesEnrich,
+        json!({"enrichment":{"commandId":request.command_id,"revisionId":request.revision_id,
+            "expectedCollectionRevisionId":request.expected_collection_revision_id}}),
+    )
+    .await
+}
+
+#[tauri::command]
+pub(crate) async fn document_reader_references_read(
+    window: tauri::WebviewWindow,
+    supervisor: State<'_, RuntimeSupervisor>,
+    lock: State<'_, ApplicationLockManager>,
+    request: ReferenceReadRequest,
+) -> Result<Option<Value>, ()> {
+    if !request.valid() {
+        return Ok(None);
+    }
+    self::request(window, supervisor, lock, request.project_id, NativeDocumentAction::ReferencesRead,
+        json!({"revisionId":request.revision_id,"expectedCollectionRevisionId":request.expected_collection_revision_id,
+            "afterOrder":request.after_order})).await
 }
 
 #[tauri::command]
@@ -362,14 +445,56 @@ mod tests {
         }
         let mut bad = base.clone();
         bad["selection"]["normalizedRange"]["end"] = json!(2054);
-        assert!(
-            !serde_json::from_value::<AnchorCreateRequest>(bad)
-                .unwrap()
-                .selection
-                .valid()
-        );
+        assert!(!serde_json::from_value::<AnchorCreateRequest>(bad)
+            .unwrap()
+            .selection
+            .valid());
         let mut bad = base;
         bad["selection"]["quote"] = json!("untrusted");
         assert!(serde_json::from_value::<AnchorCreateRequest>(bad).is_err());
+    }
+
+    #[test]
+    fn reference_commands_are_closed_and_page_a_fixed_collection_revision() {
+        let id = "00000000-0000-7000-8000-000000000001";
+        let read = json!({"schemaVersion":"1.0","projectId":id,"revisionId":id,
+            "expectedCollectionRevisionId":id,"afterOrder":0});
+        let enrich = json!({"schemaVersion":"1.0","projectId":id,"revisionId":id,
+            "commandId":id,"expectedCollectionRevisionId":null});
+        assert!(serde_json::from_value::<ReferenceReadRequest>(read.clone())
+            .unwrap()
+            .valid());
+        assert!(
+            serde_json::from_value::<ReferenceEnrichRequest>(enrich.clone())
+                .unwrap()
+                .valid()
+        );
+        for key in [
+            "root",
+            "actorId",
+            "source",
+            "url",
+            "referenceText",
+            "targetWorkId",
+            "limit",
+            "model",
+        ] {
+            let mut changed = read.clone();
+            changed[key] = json!("untrusted");
+            assert!(serde_json::from_value::<ReferenceReadRequest>(changed).is_err());
+            let mut changed = enrich.clone();
+            changed[key] = json!("untrusted");
+            assert!(serde_json::from_value::<ReferenceEnrichRequest>(changed).is_err());
+        }
+        let mut changed = read.clone();
+        changed["afterOrder"] = json!(1000);
+        assert!(!serde_json::from_value::<ReferenceReadRequest>(changed)
+            .unwrap()
+            .valid());
+        let mut changed = read;
+        changed["expectedCollectionRevisionId"] = Value::Null;
+        assert!(!serde_json::from_value::<ReferenceReadRequest>(changed)
+            .unwrap()
+            .valid());
     }
 }

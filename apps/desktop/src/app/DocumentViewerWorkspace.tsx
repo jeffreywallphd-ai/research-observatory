@@ -14,6 +14,8 @@ import type { ViewerDeepLink } from "./viewerDeepLinks";
 import { ViewerActionsPane } from "./ViewerActionsPane";
 import { decodeReaderAction, nativeReaderActionPort, type ReaderActionPort, type ReaderActionRequest } from "./viewerActions";
 import { newAttachmentId } from "./documentAttachment";
+import { ViewerReferencesPane } from "./ViewerReferencesPane";
+import { nativeDocumentReferencePort, type DocumentReferencePort } from "./documentReferences";
 
 export interface PdfViewer {
   open(): Promise<number>; render(canvas: HTMLCanvasElement, page: number, scale: number): Promise<void>;
@@ -27,6 +29,7 @@ interface Props {
   readonly outlinePort?: DocumentViewerOutlinePort;
   readonly anchorPort?: DocumentViewerAnchorPort;
   readonly actionPort?: ReaderActionPort;
+  readonly referencePort?: DocumentReferencePort;
   readonly deepLink?: ViewerDeepLink | null;
   readonly onRememberLink?: (link: ViewerDeepLink) => boolean;
   readonly pdfFactory?: (bytes: ViewerByteSession, budget: ViewerBufferBudget, failure: (code: string) => void) => PdfViewer;
@@ -73,7 +76,7 @@ function LinkedViewerEntry(props: Props & { project: ProjectProjection; link: Vi
 
 function ViewerSession({ project, handoff, announce, onReturn, port = nativeDocumentViewerPort, anchors = nativeSourceAnchorPort,
   textPort = nativeDocumentViewerTextPort, outlinePort = nativeDocumentViewerOutlinePort, anchorPort = nativeDocumentViewerAnchorPort,
-  deepLink = null, onRememberLink, actionPort = nativeReaderActionPort, pdfFactory: createPdf = pdfFactory }: Props & {
+  deepLink = null, onRememberLink, actionPort = nativeReaderActionPort, referencePort = nativeDocumentReferencePort, pdfFactory: createPdf = pdfFactory }: Props & {
     project: ProjectProjection; handoff: AttachmentHandoff & { attachmentId: string; documentRevisionId: string };
   }): ReactNode {
   const [metadata, setMetadata] = useState<ViewerMetadata | null>(null), [pdf, setPdf] = useState<PdfViewer | null>(null);
@@ -323,6 +326,13 @@ function ViewerSession({ project, handoff, announce, onReturn, port = nativeDocu
         <p>Inspection is checked for every source request. Structured text also requires current derivation permission. No scholarly claim is verified by viewing a page.</p>
         <p>PDF scripts, forms, attachments and external links are inactive. Use the separate permitted source actions for copying, printing and export.</p>
       </Panel>
+        {metadata && revision && firstPageReady && !failure && ownedMain.current ? <ViewerReferencesPane key={`references:${revision}`}
+          metadata={metadata} revisionId={revision} port={referencePort} main={ownedMain.current} reserveCore={reserveStructured}
+          onFailure={fail} onSource={(entry) => {
+            if (entry.anchor?.pageRegion && entry.anchor.pageRegion.pageNumber <= pages) setPage(entry.anchor.pageRegion.pageNumber);
+            void passage({ nodeId: entry.nodeId, nodeKind: "reference", preview: "", selection: { schemaVersion: "1.0", revisionId: revision,
+              nodeId: entry.nodeId, normalizedRange: null }, pageNumber: entry.anchor?.pageRegion?.pageNumber ?? null, hasText: true });
+          }} /> : null}
         {metadata && revision && firstPageReady && !failure && ownedMain.current ? <Panel title="Anchor inspection"><ViewerAnchorContexts key={revision}
           metadata={metadata} revisionId={revision} initial={linked} main={ownedMain.current} reserveCore={reserveStructured}
           port={anchorPort} anchors={anchors} overlay={busy ? null : overlay} viewport={viewport}

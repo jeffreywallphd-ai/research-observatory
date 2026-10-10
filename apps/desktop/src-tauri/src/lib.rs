@@ -1026,6 +1026,8 @@ fn application_builder() -> tauri::Builder<tauri::Wry> {
         document_attachment::document_acquisition_recover,
         document_reader::document_reader_revisions,
         document_reader::document_reader_outline,
+        document_reader::document_reader_references_enrich,
+        document_reader::document_reader_references_read,
         document_reader::document_reader_anchor_create,
         document_reader::document_reader_anchor_read,
         document_reader::document_reader_anchor_list,

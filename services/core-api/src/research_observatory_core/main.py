@@ -761,6 +761,7 @@ def create_runtime_app(
                 policy=document_worker_policy(identity),
             ),
             repository_factory=LocalDocumentRevisionRepository,
+            reconciliation=reconciliation,
         )
     return create_app(
         settings=settings,

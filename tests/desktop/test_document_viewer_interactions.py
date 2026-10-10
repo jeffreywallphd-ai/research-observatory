@@ -15,6 +15,78 @@ REPO = Path(__file__).resolve().parents[2]
 
 
 class DocumentViewerInteractionsTests(unittest.TestCase):
+    def test_unavailable_reference_head_refreshes_without_displaying_stale_text(self):
+        self.select_text()
+        self.page.evaluate("window.__VIEWER_UI_TEST__.staleReferences=true")
+        self.page.get_by_role("button", name="Inspect references", exact=True).click()
+        self.page.get_by_text("no prior text was displayed", exact=False).wait_for()
+        self.assertEqual(0, self.page.get_by_role("region", name="Reference 1", exact=True).count())
+        self.page.get_by_role("button", name="Refresh reference matches", exact=True).click()
+        self.page.get_by_role("region", name="Reference 1", exact=True).wait_for()
+        calls = self.page.evaluate("window.__VIEWER_UI_TEST__.referenceCalls")
+        self.assertEqual(["read", "enrich"], [call["kind"] for call in calls])
+        self.assertIsNotNone(calls[1]["expected"])
+        self.assertFalse(self.errors)
+
+    def test_ambiguous_reference_read_keeps_admission_and_denies_unaccounted_retry(self):
+        self.select_text()
+        self.page.evaluate("window.__VIEWER_UI_TEST__.unknownReference=true")
+        self.page.get_by_role("button", name="Inspect references", exact=True).click()
+        self.page.get_by_text("Source view unavailable", exact=True).wait_for()
+        self.assertEqual(1, len(self.page.evaluate("window.__VIEWER_UI_TEST__.referenceCalls")))
+        self.assertEqual(0, self.page.get_by_role("region", name="Reference 1", exact=True).count())
+        self.page.evaluate("window.__VIEWER_UI_TEST__.unknownReference=false")
+        self.page.get_by_role("button", name="Retry current source status", exact=True).click()
+        self.wait(lambda: self.page.get_by_role("button", name="Next page", exact=True).is_enabled())
+        self.page.get_by_label("Accepted structured revision").select_option(index=1)
+        self.page.get_by_role("button", name="Inspect references", exact=True).click()
+        self.page.get_by_text("References exceed the local Reader limit", exact=False).wait_for()
+        self.assertEqual(1, len(self.page.evaluate("window.__VIEWER_UI_TEST__.referenceCalls")))
+        self.assertFalse(self.errors)
+
+    def test_references_preserve_inert_text_current_source_and_opaque_commands(self):
+        self.select_text()
+        self.page.get_by_role("button", name="Inspect references", exact=True).click()
+        self.page.get_by_role("button", name="Extract references", exact=True).click()
+        reference = self.page.get_by_role("region", name="Reference 1", exact=True)
+        self.assertIn("<script>", reference.inner_text())
+        self.assertFalse(self.page.evaluate("Boolean(window.referenceExecuted)"))
+        self.page.get_by_role("button", name="Jump to reference source", exact=True).click()
+        self.page.wait_for_function("document.body.textContent.includes('Synthetic inert')")
+        self.page.get_by_role("button", name="Return to selected Work/version", exact=True).click()
+        self.assertEqual(0, self.page.get_by_role("region", name="Reference inspection", exact=True).count())
+        calls = self.page.evaluate("window.__VIEWER_UI_TEST__.referenceCalls")
+        self.assertEqual(["read", "enrich"], [call["kind"] for call in calls])
+        self.assertEqual({"kind", "selectedRevision", "command", "expected"}, set(calls[1]))
+
+    def test_reference_uncertainty_target_inspection_and_source_substitution_denial(self):
+        self.select_text()
+        self.page.evaluate(
+            "window.__VIEWER_UI_TEST__.referenceExists=true; window.__VIEWER_UI_TEST__.referenceMode='candidate'"
+        )
+        self.page.get_by_role("button", name="Inspect references", exact=True).click()
+        self.page.get_by_role("button", name="Inspect candidate Work", exact=True).click()
+        self.assertIn(
+            "Matched Work revision", self.page.get_by_role("region", name="Canonical reference target").inner_text()
+        )
+        self.assertIn(
+            "human review required", self.page.get_by_role("region", name="Reference 1", exact=True).inner_text()
+        )
+        self.page.evaluate("window.__VIEWER_UI_TEST__.wrongReferenceSource=true")
+        self.page.get_by_role("button", name="Inspect references", exact=True).click()
+        self.page.wait_for_function("document.body.textContent.includes('no substitute collection')")
+        self.assertEqual(0, self.page.get_by_role("region", name="Reference 1", exact=True).count())
+
+    def test_lock_clears_late_reference_without_substituting_text(self):
+        self.select_text()
+        self.page.evaluate(
+            "window.__VIEWER_UI_TEST__.referenceExists=true; window.__VIEWER_UI_TEST__.holdReference=true"
+        )
+        self.page.get_by_role("button", name="Inspect references", exact=True).click()
+        self.page.wait_for_function("window.__VIEWER_UI_TEST__.releaseReference !== null")
+        self.page.evaluate("window.__VIEWER_UI_TEST__.mount(false); window.__VIEWER_UI_TEST__.releaseReference()")
+        self.assertEqual(0, self.page.get_by_role("region", name="Reference 1", exact=True).count())
+
     @classmethod
     def setUpClass(cls):
         cls.directory = Path(os.environ["RO_VIEWER_UI_FIXTURE"])

@@ -40,3 +40,32 @@ The private native viewer protocol is described in [source viewing](source-viewi
 Its schemas describe values; they neither expose a public Core route nor grant
 source access. Native/Core current-authority and exact-source checks remain
 required at read and delivery.
+
+Reference enrichment appends a separate encrypted `reference-collection.v1`
+revision, preserving the accepted document and ordered raw reference spans.
+Fields carry source spans and extracted/inferred status. Unavailable native
+attributes stay missing; reported author roles require authenticated retained
+native output. Identifiers reuse the existing normalizer. Exact automatic links
+require agreement between the complete current sealed Work catalog and indexed
+assessment; uncertain matches retain component scores and human-review state.
+No enrichment creates a Work, changes a verification state or opens a URL.
+
+`reference-enrichment-command.v1` carries opaque document/command/expected-head
+IDs. Publication atomically binds ciphertext, canonical revision, human
+provenance, outbox and all material inputs, including traversable manifests
+beyond 64 inputs. Refresh appends a new revision and replacement propagation;
+exact retries do not create duplicate history. Read/retry recheck current
+Native/project/human/Intent/privacy, inspect/derive, target-source rights and
+material-input freshness. The original remains transitive provenance through
+the later explicit acceptance; an earlier original impact is never erased.
+
+`reference-reader-page.v1` exposes one entry per page: at most 1,024 raw
+codepoints, four identifier previews and four field previews of 256 codepoints,
+four scored candidate previews and a bounded exact source anchor. Truncation
+and total counts are explicit; the UTF-8 page is capped at 64 KiB. Pagination
+pins the collection revision. All complete data remains encrypted. A
+`reference-reader-notice.v1` contains only a current rights-fenced opaque head
+and content-free unavailable/resource-limit status, allowing an explicit CAS
+refresh without exposing a stale collection. Reader admission includes these
+artifact, catalog and publication allocations. Unknown issued Native failures
+retain admission until physical settlement; lock/close clears visible previews.

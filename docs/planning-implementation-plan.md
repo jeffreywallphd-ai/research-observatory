@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: c460764dd9929a8306635b880b4d08c46be5164973300022bd477738d010cfca
+source_sha256: c842d24d0d91ad6a98da33509e3df5fbda12f2ed7657ea5883ad5a0c96c515d0
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -11948,13 +11948,13 @@ Original tasks and approvals remain unchanged.
 
 #### - [ ] CAP-05.S05.T01 - Extract and reconcile reference-list entries
 
-**Status / priority / estimate / risk:** `READY` / `P1` / `L` / `high`
+**Status / priority / estimate / risk:** `IN_PROGRESS` / `P1` / `L` / `high`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
 **Dependencies:** `CAP-05.S03.T03`
 
-**Owner / review:** - / - (`-`)
+**Owner / review:** codex-w2-implementation / - (`-`)
 
 **Objective:** Parsed references, identifiers, raw strings, author/year/title fields, and links to canonical works or unresolved candidates.
 

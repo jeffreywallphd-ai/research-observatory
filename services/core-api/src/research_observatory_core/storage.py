@@ -37,6 +37,12 @@ from research_observatory_core.migrations.versions.v0005_object_creation_source 
     OBJECT_CREATION_SOURCE_COLUMN,
     SCHEMA_METADATA_V5_DDL,
 )
+from research_observatory_core.migrations.versions.v0028_document_enrichments import (
+    DDL as DOCUMENT_ENRICHMENT_DDL,
+)
+from research_observatory_core.migrations.versions.v0028_document_enrichments import (
+    TABLES as DOCUMENT_ENRICHMENT_TABLES,
+)
 from research_observatory_core.ports.database_keys import (
     DatabaseKeyConflict,
     DatabaseKeyLease,
@@ -47,7 +53,8 @@ from research_observatory_core.ports.database_keys import (
 
 APPLICATION_ID = 0x524F4253  # ASCII "ROBS"
 DATABASE_PROFILE = "sqlite-wal-v1"
-DATABASE_SCHEMA_VERSION = 27
+DATABASE_SCHEMA_VERSION = 28
+DOCUMENT_ENRICHMENT_PREDECESSOR_DATABASE_SCHEMA_VERSION = 27
 REVISION_INVALIDATION_PREDECESSOR_DATABASE_SCHEMA_VERSION = 26
 DOCUMENT_REVISION_PREDECESSOR_DATABASE_SCHEMA_VERSION = 25
 DOCUMENT_INTAKE_PREDECESSOR_DATABASE_SCHEMA_VERSION = 24
@@ -239,6 +246,7 @@ EXPECTED_TABLES = (
     *ACQUISITION_TABLES,
     *DOCUMENT_INTAKE_TABLES,
     *DOCUMENT_REVISION_TABLES,
+    *DOCUMENT_ENRICHMENT_TABLES,
 )
 IMMUTABLE_ROW_TABLES = (
     "schema_metadata",
@@ -300,6 +308,7 @@ IMMUTABLE_ROW_TABLES = (
     *ACQUISITION_TABLES,
     *DOCUMENT_INTAKE_TABLES,
     *DOCUMENT_REVISION_TABLES,
+    *DOCUMENT_ENRICHMENT_TABLES,
 )
 MUTABLE_STATE_TABLES = (
     "object_records",
@@ -314,6 +323,9 @@ EXPECTED_TRIGGERS = tuple(
     sorted(
         [f"{table}_no_{operation}" for table in IMMUTABLE_ROW_TABLES for operation in ("delete", "update")]
         + [
+            "document_enrichment_binding",
+            "document_enrichment_element_binding",
+            "document_enrichment_target_binding",
             "document_intake_job_binding",
             "document_attachment_recovery_binding",
             "document_parse_job_binding",
@@ -384,6 +396,10 @@ EXPECTED_TRIGGERS = tuple(
     )
 )
 EXPECTED_INDEXES = (
+    "document_enrichments_document",
+    "document_enrichment_elements_order",
+    "document_enrichment_identifiers_key",
+    "document_enrichment_targets_work",
     "aggregate_revisions_project_kind",
     "outbox_events_dispatch",
     "provenance_events_project_time",
@@ -484,7 +500,8 @@ ACQUISITION_PREDECESSOR_SCHEMA_SHA256 = "0d5eb89a3975aa1d95fa4d190ce8debfee2ae43
 DOCUMENT_INTAKE_PREDECESSOR_SCHEMA_SHA256 = "8078a6f7132200e6cf9e729f116c7b8ad6cd7c2bcf61d56f337e594dc7552a97"
 DOCUMENT_REVISION_PREDECESSOR_SCHEMA_SHA256 = "5c2090bb9586117f8f0e521efcb74ab10bd64a855fdcdc943035385cd1742951"
 REVISION_INVALIDATION_PREDECESSOR_SCHEMA_SHA256 = "39e3fdd0fffedd2b226f74ebf48190efdecc0e53b9376dfce30e924de2206f2c"
-EXPECTED_SCHEMA_SHA256 = "6dd6d3f62c0236dd3f810a01ac7b88370ba17b483cf3612fde34b82b29ade913"
+DOCUMENT_ENRICHMENT_PREDECESSOR_SCHEMA_SHA256 = "6dd6d3f62c0236dd3f810a01ac7b88370ba17b483cf3612fde34b82b29ade913"
+EXPECTED_SCHEMA_SHA256 = "3f29b29cface11d5355f704c943459243fc7f9d0baf07725747c73547b1e4cb6"
 
 _PROFILE_DOCUMENT: dict[str, Any] = {
     "schemaVersion": "1.0",
@@ -559,7 +576,8 @@ ACQUISITION_PREDECESSOR_PROFILE_SHA256 = "bc4f7aa4029ed660329b407362c017a42de296
 DOCUMENT_INTAKE_PREDECESSOR_PROFILE_SHA256 = "b8f925467533ee5810343ce3a83a0035b8bf5e1f1989d421279994e0f73b9e1e"
 DOCUMENT_REVISION_PREDECESSOR_PROFILE_SHA256 = "50c8583b7958c4e035690fdcf305c8d968b3a4c26a21f18e8744436eabf45721"
 REVISION_INVALIDATION_PREDECESSOR_PROFILE_SHA256 = "b29c98353dc218688eb20ce1dc60ca05ee7b62e59cdbe1e514caffa75544289c"
-EXPECTED_PROFILE_SHA256 = "034d2b29092d29be8008cc7149287cf92c350aa31cd045451ca8bae0d563bf77"
+DOCUMENT_ENRICHMENT_PREDECESSOR_PROFILE_SHA256 = "034d2b29092d29be8008cc7149287cf92c350aa31cd045451ca8bae0d563bf77"
+EXPECTED_PROFILE_SHA256 = "6cc9fc713678dcbaab23bd922a4010098cbd05922932a4b5f4840967f8f377e6"
 if _PROFILE_SHA256 != EXPECTED_PROFILE_SHA256:
     raise RuntimeError("compiled SQLite profile differs from its reviewed fingerprint")
 
@@ -2911,7 +2929,10 @@ RECONCILIATION_DDL = (
         for table in RECONCILIATION_TABLES
         for statement in _immutable_triggers(table, "scholarly reconciliation history is append-only")
     ),
-    "CREATE INDEX reconciliation_identifier_lookup ON reconciliation_identifier_links (project_id, scheme, key_sha256)",
+    (
+        "CREATE INDEX reconciliation_identifier_lookup ON "
+        "reconciliation_identifier_links (project_id, scheme, key_sha256)"
+    ),
     "CREATE INDEX reconciliation_work_sources ON reconciliation_work_revisions (project_id, work_id)",
     """
         CREATE TRIGGER reconciliation_work_binding BEFORE INSERT ON reconciliation_work_revisions
@@ -3167,7 +3188,10 @@ RECONCILIATION_REVIEW_DDL = (
         for table in RECONCILIATION_REVIEW_TABLES
         for statement in _immutable_triggers(table, "scholarly review history is append-only")
     ),
-    "CREATE INDEX reconciliation_current_membership ON reconciliation_work_members (project_id, assertion_revision_id)",
+    (
+        "CREATE INDEX reconciliation_current_membership ON "
+        "reconciliation_work_members (project_id, assertion_revision_id)"
+    ),
     "CREATE INDEX reconciliation_state_predecessor ON reconciliation_work_states (project_id, previous_revision_id)",
     "CREATE INDEX reconciliation_alias_target ON reconciliation_work_states (project_id, alias_target)",
     """
@@ -3537,24 +3561,31 @@ WORK_VERSION_DDL = (
                 AND assertion_revision_id>=NEW.assertion_revision_id)
         BEGIN SELECT RAISE(ABORT,'scholarly version source binding denied'); END
     """,
-    """
-        CREATE TRIGGER reconciliation_relation_binding BEFORE INSERT ON reconciliation_version_relations
-        WHEN NOT EXISTS (SELECT 1 FROM material_dependencies m WHERE m.project_id=NEW.project_id
-            AND m.output_revision_id=NEW.revision_id AND m.configuration_id='scholarly.version-relation'
-            AND m.fingerprint='sha256:' || NEW.content_sha256)
-        OR EXISTS (SELECT 1 FROM reconciliation_work_states WHERE project_id=NEW.project_id AND work_id=NEW.relation_id)
-        OR EXISTS (SELECT 1 FROM reconciliation_versions WHERE project_id=NEW.project_id AND version_id=NEW.relation_id)
-        OR EXISTS (SELECT 1 FROM reconciliation_assertions a JOIN aggregate_revisions r ON r.revision_id=a.revision_id
-            WHERE r.project_id=NEW.project_id AND r.aggregate_id=NEW.relation_id)
-        OR EXISTS (SELECT 1 FROM import_source_records WHERE project_id=NEW.project_id AND aggregate_id=NEW.relation_id)
-        OR NOT EXISTS (SELECT 1 FROM aggregate_revisions r WHERE r.revision_id=NEW.revision_id
-            AND r.project_id=NEW.project_id AND r.aggregate_id=NEW.relation_id AND r.aggregate_kind='record'
-                AND r.revision=0)
-            OR EXISTS (SELECT 1 FROM reconciliation_versions s JOIN reconciliation_versions t ON
-                s.version_id=t.version_id
-                WHERE s.revision_id=NEW.source_revision_id AND t.revision_id=NEW.target_revision_id)
-        BEGIN SELECT RAISE(ABORT,'scholarly version relation binding denied'); END
-    """,
+    (
+        "\n        CREATE TRIGGER reconciliation_relation_binding BEFORE INSERT ON "
+        "reconciliation_version_relations\n        WHEN NOT EXISTS (SELECT 1 FROM "
+        "material_dependencies m WHERE m.project_id=NEW.project_id\n            AND "
+        "m.output_revision_id=NEW.revision_id AND "
+        "m.configuration_id='scholarly.version-relation'\n            AND "
+        "m.fingerprint='sha256:' || NEW.content_sha256)\n        OR EXISTS (SELECT 1 "
+        "FROM reconciliation_work_states WHERE project_id=NEW.project_id AND "
+        "work_id=NEW.relation_id)\n        OR EXISTS (SELECT 1 FROM "
+        "reconciliation_versions WHERE project_id=NEW.project_id AND "
+        "version_id=NEW.relation_id)\n        OR EXISTS (SELECT 1 FROM "
+        "reconciliation_assertions a JOIN aggregate_revisions r ON "
+        "r.revision_id=a.revision_id\n            WHERE r.project_id=NEW.project_id "
+        "AND r.aggregate_id=NEW.relation_id)\n        OR EXISTS (SELECT 1 FROM "
+        "import_source_records WHERE project_id=NEW.project_id AND "
+        "aggregate_id=NEW.relation_id)\n        OR NOT EXISTS (SELECT 1 FROM "
+        "aggregate_revisions r WHERE r.revision_id=NEW.revision_id\n            AND "
+        "r.project_id=NEW.project_id AND r.aggregate_id=NEW.relation_id AND "
+        "r.aggregate_kind='record'\n                AND r.revision=0)\n            OR "
+        "EXISTS (SELECT 1 FROM reconciliation_versions s JOIN "
+        "reconciliation_versions t ON\n                s.version_id=t.version_id\n     "
+        "           WHERE s.revision_id=NEW.source_revision_id AND "
+        "t.revision_id=NEW.target_revision_id)\n        BEGIN SELECT "
+        "RAISE(ABORT,'scholarly version relation binding denied'); END\n    "
+    ),
     """
         CREATE TRIGGER reconciliation_relation_evidence_binding BEFORE INSERT ON reconciliation_relation_evidence
         WHEN NEW.ordinal<>(SELECT COUNT(*)+1 FROM reconciliation_relation_evidence WHERE
@@ -3633,6 +3664,7 @@ SCHEMA_METADATA_V24_DDL = SCHEMA_METADATA_V23_DDL.replace("schema_version = 23",
 SCHEMA_METADATA_V25_DDL = SCHEMA_METADATA_V24_DDL.replace("schema_version = 24", "schema_version = 25")
 SCHEMA_METADATA_V26_DDL = SCHEMA_METADATA_V25_DDL.replace("schema_version = 25", "schema_version = 26")
 SCHEMA_METADATA_V27_DDL = SCHEMA_METADATA_V26_DDL.replace("schema_version = 26", "schema_version = 27")
+SCHEMA_METADATA_V28_DDL = SCHEMA_METADATA_V27_DDL.replace("schema_version = 27", "schema_version = 28")
 
 _V16_AGGREGATE_IDENTITY_DDL = next(
     statement for statement in _V1_DDL_STATEMENTS if "CREATE TABLE aggregate_identities" in statement
@@ -4349,76 +4381,81 @@ RIGHTS_POLICY_DDL = (
         )
         for statement in _immutable_triggers(table, f"{table} history is append-only")
     ),
-    """
-        CREATE TRIGGER rights_policy_revision_binding BEFORE INSERT ON rights_policy_revisions
-        WHEN NOT EXISTS (
-            SELECT 1 FROM aggregate_revisions AS r
-            WHERE r.revision_id = NEW.revision_id AND r.aggregate_id = NEW.policy_id
-              AND r.aggregate_kind = 'decision' AND r.project_id = NEW.project_id
-              AND r.revision = NEW.revision_number AND r.rights_status = 'unknown'
-        ) OR NOT EXISTS (
-            SELECT 1 FROM rights_policy_subjects AS s
-            JOIN reconciliation_assertions AS a ON a.revision_id = s.source_assertion_revision_id
-              AND a.project_id = s.project_id
-            WHERE s.project_id = NEW.project_id AND s.subject_sha256 = NEW.subject_sha256
-              AND s.policy_id = NEW.policy_id
-              AND json_extract(NEW.policy_json, '$.subject.sourceAssertionRevisionId') IS s.source_assertion_revision_id
-              AND json_extract(NEW.policy_json, '$.subject.copyId') IS s.copy_id
-              AND json_extract(NEW.policy_json, '$.subject.copyLocation') IS s.copy_location
-              AND json_extract(NEW.policy_json, '$.subject.resourceClass') IS s.resource_class
-              AND json_type(NEW.policy_json, '$.sourceObservation') = 'object'
-              AND json_extract(NEW.policy_json, '$.sourceObservation.projectId') IS s.project_id
-              AND json_extract(NEW.policy_json, '$.sourceObservation.sourceAssertionRevisionId') IS a.revision_id
-              AND json_extract(NEW.policy_json, '$.sourceObservation.sourceRevisionId') IS a.source_revision_id
-              AND json_extract(NEW.policy_json, '$.sourceObservation.sourceSha256')
-                  IS json_extract(a.assertion_json, '$.sourceSha256')
-              AND json_extract(NEW.policy_json, '$.sourceObservation.provider')
-                  IS json_extract(a.assertion_json, '$.provider')
-              AND json_extract(NEW.policy_json, '$.subject.address.kind')
-                  IS json_extract(a.assertion_json, '$.address.kind')
-              AND json_extract(NEW.policy_json, '$.subject.address.contextId')
-                  IS json_extract(a.assertion_json, '$.address.contextId')
-              AND json_extract(NEW.policy_json, '$.subject.address.revisionId')
-                  IS json_extract(a.assertion_json, '$.address.revisionId')
-              AND json_extract(NEW.policy_json, '$.subject.address.ordinal')
-                  IS json_extract(a.assertion_json, '$.address.ordinal')
-              AND json_extract(NEW.policy_json, '$.subject.address.recordKey')
-                  IS json_extract(a.assertion_json, '$.address.recordKey')
-              AND json_extract(NEW.policy_json, '$.sourceObservation.address.kind')
-                  IS json_extract(a.assertion_json, '$.address.kind')
-              AND json_extract(NEW.policy_json, '$.sourceObservation.address.contextId')
-                  IS json_extract(a.assertion_json, '$.address.contextId')
-              AND json_extract(NEW.policy_json, '$.sourceObservation.address.revisionId')
-                  IS json_extract(a.assertion_json, '$.address.revisionId')
-              AND json_extract(NEW.policy_json, '$.sourceObservation.address.ordinal')
-                  IS json_extract(a.assertion_json, '$.address.ordinal')
-              AND json_extract(NEW.policy_json, '$.sourceObservation.address.recordKey')
-                  IS json_extract(a.assertion_json, '$.address.recordKey')
-              AND json_extract(s.subject_json, '$.address.kind')
-                  IS json_extract(a.assertion_json, '$.address.kind')
-              AND json_extract(s.subject_json, '$.address.contextId')
-                  IS json_extract(a.assertion_json, '$.address.contextId')
-              AND json_extract(s.subject_json, '$.address.revisionId')
-                  IS json_extract(a.assertion_json, '$.address.revisionId')
-              AND json_extract(s.subject_json, '$.address.ordinal')
-                  IS json_extract(a.assertion_json, '$.address.ordinal')
-              AND json_extract(s.subject_json, '$.address.recordKey')
-                  IS json_extract(a.assertion_json, '$.address.recordKey')
-        ) OR (NEW.revision_number = 0 AND EXISTS (
-            SELECT 1 FROM rights_policy_revisions AS prior
-            WHERE prior.project_id = NEW.project_id AND prior.subject_sha256 = NEW.subject_sha256
-        )) OR (NEW.revision_number > 0 AND NOT EXISTS (
-            SELECT 1 FROM rights_policy_revisions AS prior
-            WHERE prior.revision_id = NEW.predecessor_revision_id
-              AND prior.project_id = NEW.project_id AND prior.subject_sha256 = NEW.subject_sha256
-              AND prior.policy_id = NEW.policy_id AND prior.revision_number = NEW.revision_number - 1
-              AND prior.revision_number = (
-                  SELECT MAX(head.revision_number) FROM rights_policy_revisions AS head
-                  WHERE head.project_id = NEW.project_id AND head.subject_sha256 = NEW.subject_sha256
-              )
-        ))
-        BEGIN SELECT RAISE(ABORT, 'rights policy revision binding denied'); END
-    """,
+    (
+        "\n        CREATE TRIGGER rights_policy_revision_binding BEFORE INSERT ON "
+        "rights_policy_revisions\n        WHEN NOT EXISTS (\n            SELECT 1 FROM "
+        "aggregate_revisions AS r\n            WHERE r.revision_id = NEW.revision_id "
+        "AND r.aggregate_id = NEW.policy_id\n              AND r.aggregate_kind = "
+        "'decision' AND r.project_id = NEW.project_id\n              AND r.revision = "
+        "NEW.revision_number AND r.rights_status = 'unknown'\n        ) OR NOT EXISTS "
+        "(\n            SELECT 1 FROM rights_policy_subjects AS s\n            JOIN "
+        "reconciliation_assertions AS a ON a.revision_id = "
+        "s.source_assertion_revision_id\n              AND a.project_id = "
+        "s.project_id\n            WHERE s.project_id = NEW.project_id AND "
+        "s.subject_sha256 = NEW.subject_sha256\n              AND s.policy_id = "
+        "NEW.policy_id\n              AND json_extract(NEW.policy_json, "
+        "'$.subject.sourceAssertionRevisionId') IS s.source_assertion_revision_id\n   "
+        "           AND json_extract(NEW.policy_json, '$.subject.copyId') IS "
+        "s.copy_id\n              AND json_extract(NEW.policy_json, "
+        "'$.subject.copyLocation') IS s.copy_location\n              AND "
+        "json_extract(NEW.policy_json, '$.subject.resourceClass') IS "
+        "s.resource_class\n              AND json_type(NEW.policy_json, "
+        "'$.sourceObservation') = 'object'\n              AND "
+        "json_extract(NEW.policy_json, '$.sourceObservation.projectId') IS "
+        "s.project_id\n              AND json_extract(NEW.policy_json, "
+        "'$.sourceObservation.sourceAssertionRevisionId') IS a.revision_id\n          "
+        "    AND json_extract(NEW.policy_json, "
+        "'$.sourceObservation.sourceRevisionId') IS a.source_revision_id\n            "
+        "  AND json_extract(NEW.policy_json, '$.sourceObservation.sourceSha256')\n    "
+        "              IS json_extract(a.assertion_json, '$.sourceSha256')\n          "
+        "    AND json_extract(NEW.policy_json, '$.sourceObservation.provider')\n      "
+        "            IS json_extract(a.assertion_json, '$.provider')\n              "
+        "AND json_extract(NEW.policy_json, '$.subject.address.kind')\n                "
+        "  IS json_extract(a.assertion_json, '$.address.kind')\n              AND "
+        "json_extract(NEW.policy_json, '$.subject.address.contextId')\n               "
+        "   IS json_extract(a.assertion_json, '$.address.contextId')\n              "
+        "AND json_extract(NEW.policy_json, '$.subject.address.revisionId')\n          "
+        "        IS json_extract(a.assertion_json, '$.address.revisionId')\n          "
+        "    AND json_extract(NEW.policy_json, '$.subject.address.ordinal')\n         "
+        "         IS json_extract(a.assertion_json, '$.address.ordinal')\n            "
+        "  AND json_extract(NEW.policy_json, '$.subject.address.recordKey')\n         "
+        "         IS json_extract(a.assertion_json, '$.address.recordKey')\n          "
+        "    AND json_extract(NEW.policy_json, '$.sourceObservation.address.kind')\n  "
+        "                IS json_extract(a.assertion_json, '$.address.kind')\n        "
+        "      AND json_extract(NEW.policy_json, "
+        "'$.sourceObservation.address.contextId')\n                  IS "
+        "json_extract(a.assertion_json, '$.address.contextId')\n              AND "
+        "json_extract(NEW.policy_json, '$.sourceObservation.address.revisionId')\n    "
+        "              IS json_extract(a.assertion_json, '$.address.revisionId')\n    "
+        "          AND json_extract(NEW.policy_json, "
+        "'$.sourceObservation.address.ordinal')\n                  IS "
+        "json_extract(a.assertion_json, '$.address.ordinal')\n              AND "
+        "json_extract(NEW.policy_json, '$.sourceObservation.address.recordKey')\n     "
+        "             IS json_extract(a.assertion_json, '$.address.recordKey')\n      "
+        "        AND json_extract(s.subject_json, '$.address.kind')\n                 "
+        " IS json_extract(a.assertion_json, '$.address.kind')\n              AND "
+        "json_extract(s.subject_json, '$.address.contextId')\n                  IS "
+        "json_extract(a.assertion_json, '$.address.contextId')\n              AND "
+        "json_extract(s.subject_json, '$.address.revisionId')\n                  IS "
+        "json_extract(a.assertion_json, '$.address.revisionId')\n              AND "
+        "json_extract(s.subject_json, '$.address.ordinal')\n                  IS "
+        "json_extract(a.assertion_json, '$.address.ordinal')\n              AND "
+        "json_extract(s.subject_json, '$.address.recordKey')\n                  IS "
+        "json_extract(a.assertion_json, '$.address.recordKey')\n        ) OR "
+        "(NEW.revision_number = 0 AND EXISTS (\n            SELECT 1 FROM "
+        "rights_policy_revisions AS prior\n            WHERE prior.project_id = "
+        "NEW.project_id AND prior.subject_sha256 = NEW.subject_sha256\n        )) OR "
+        "(NEW.revision_number > 0 AND NOT EXISTS (\n            SELECT 1 FROM "
+        "rights_policy_revisions AS prior\n            WHERE prior.revision_id = "
+        "NEW.predecessor_revision_id\n              AND prior.project_id = "
+        "NEW.project_id AND prior.subject_sha256 = NEW.subject_sha256\n              "
+        "AND prior.policy_id = NEW.policy_id AND prior.revision_number = "
+        "NEW.revision_number - 1\n              AND prior.revision_number = (\n        "
+        "          SELECT MAX(head.revision_number) FROM rights_policy_revisions AS "
+        "head\n                  WHERE head.project_id = NEW.project_id AND "
+        "head.subject_sha256 = NEW.subject_sha256\n              )\n        ))\n        "
+        "BEGIN SELECT RAISE(ABORT, 'rights policy revision binding denied'); END\n    "
+    ),
     """
         CREATE TRIGGER rights_policy_recheck_binding BEFORE INSERT ON rights_policy_rechecks
         WHEN NOT EXISTS (
@@ -5195,7 +5232,10 @@ DOCUMENT_ATTACHMENT_DDL = (
         for table in DOCUMENT_ATTACHMENT_TABLES
         for statement in _immutable_triggers(table, "document attachment history is append-only")
     ),
-    "CREATE INDEX document_attachment_candidates_work ON document_attachment_candidates(project_id,work_id,version_id)",
+    (
+        "CREATE INDEX document_attachment_candidates_work ON "
+        "document_attachment_candidates(project_id,work_id,version_id)"
+    ),
     "CREATE INDEX document_attachment_candidates_object ON document_attachment_candidates(project_id,object_sha256)",
     "CREATE INDEX document_attachment_assertions_version "
     "ON document_attachment_assertions(project_id,version_revision_id)",
@@ -5330,29 +5370,37 @@ ACQUISITION_DDL = (
                 (revision_id,project_id) ON UPDATE RESTRICT ON DELETE RESTRICT
         ) STRICT
     """,
-    """
-        CREATE TRIGGER document_acquisition_source_binding BEFORE INSERT ON document_acquisition_sources
-        WHEN NOT EXISTS (SELECT 1 FROM document_attachment_candidates c
-            JOIN document_attachment_operations o ON o.project_id=c.project_id AND o.candidate_id=c.candidate_id
-            JOIN acquisition_attempts attempt ON attempt.project_id=o.project_id AND attempt.operation_id=o.operation_id
-            JOIN acquisition_locations l ON l.project_id=c.project_id
-                AND l.source_assertion_revision_id=c.source_assertion_revision_id
-            JOIN rights_policy_revisions r ON r.project_id=l.project_id
-            JOIN rights_policy_subjects s ON s.project_id=r.project_id AND s.subject_sha256=r.subject_sha256
-            WHERE c.candidate_id=NEW.candidate_id AND c.project_id=NEW.project_id AND l.location_id=NEW.location_id
-                AND attempt.location_id=l.location_id AND attempt.operation_id=NEW.operation_id
-                AND attempt.actor_id=o.actor_id AND attempt.session_id=o.session_id
-                AND attempt.confirmation_sha256=json_extract(NEW.receipt_json,'$.confirmationSha256')
-                AND r.revision_id=NEW.provider_policy_revision_id AND s.copy_id=l.location_id
-                AND s.copy_location='provider-hosted' AND s.resource_class='full-text'
-                AND s.source_assertion_revision_id=c.source_assertion_revision_id
-                AND json_extract(NEW.receipt_json,'$.locationId')=l.location_id
-                AND json_extract(NEW.receipt_json,'$.locationSha256')=l.location_sha256
-                AND json_extract(NEW.receipt_json,'$.providerPolicyRevisionId')=r.revision_id
-                AND json_extract(NEW.receipt_json,'$.actualSha256')=c.object_sha256
-                AND json_extract(NEW.receipt_json,'$.expandedBytes')=c.byte_length)
-        BEGIN SELECT RAISE(ABORT,'acquisition source binding denied'); END
-    """,
+    (
+        "\n        CREATE TRIGGER document_acquisition_source_binding BEFORE INSERT "
+        "ON document_acquisition_sources\n        WHEN NOT EXISTS (SELECT 1 FROM "
+        "document_attachment_candidates c\n            JOIN "
+        "document_attachment_operations o ON o.project_id=c.project_id AND "
+        "o.candidate_id=c.candidate_id\n            JOIN acquisition_attempts attempt "
+        "ON attempt.project_id=o.project_id AND attempt.operation_id=o.operation_id\n "
+        "           JOIN acquisition_locations l ON l.project_id=c.project_id\n       "
+        "         AND l.source_assertion_revision_id=c.source_assertion_revision_id\n "
+        "           JOIN rights_policy_revisions r ON r.project_id=l.project_id\n     "
+        "       JOIN rights_policy_subjects s ON s.project_id=r.project_id AND "
+        "s.subject_sha256=r.subject_sha256\n            WHERE "
+        "c.candidate_id=NEW.candidate_id AND c.project_id=NEW.project_id AND "
+        "l.location_id=NEW.location_id\n                AND "
+        "attempt.location_id=l.location_id AND "
+        "attempt.operation_id=NEW.operation_id\n                AND "
+        "attempt.actor_id=o.actor_id AND attempt.session_id=o.session_id\n            "
+        "    AND attempt.confirmation_sha256=json_extract(NEW.receipt_json,'$.confirm"
+        "ationSha256')\n                AND "
+        "r.revision_id=NEW.provider_policy_revision_id AND s.copy_id=l.location_id\n  "
+        "              AND s.copy_location='provider-hosted' AND "
+        "s.resource_class='full-text'\n                AND "
+        "s.source_assertion_revision_id=c.source_assertion_revision_id\n              "
+        "  AND json_extract(NEW.receipt_json,'$.locationId')=l.location_id\n          "
+        "      AND json_extract(NEW.receipt_json,'$.locationSha256')=l.location_sha25"
+        "6\n                AND json_extract(NEW.receipt_json,'$.providerPolicyRevisio"
+        "nId')=r.revision_id\n                AND "
+        "json_extract(NEW.receipt_json,'$.actualSha256')=c.object_sha256\n            "
+        "    AND json_extract(NEW.receipt_json,'$.expandedBytes')=c.byte_length)\n    "
+        "    BEGIN SELECT RAISE(ABORT,'acquisition source binding denied'); END\n    "
+    ),
     *(
         statement
         for table in ACQUISITION_TABLES
@@ -5662,7 +5710,7 @@ DOCUMENT_REVISION_DDL = (
 
 
 _DDL_STATEMENTS = (
-    SCHEMA_METADATA_V27_DDL,
+    SCHEMA_METADATA_V28_DDL,
     *_V17_BASE_DDL_STATEMENTS,
     SCHEMA_MIGRATIONS_DDL,
     *SCHEMA_MIGRATIONS_TRIGGERS,
@@ -5691,6 +5739,7 @@ _DDL_STATEMENTS = (
     *ACQUISITION_DDL,
     *DOCUMENT_INTAKE_DDL,
     *DOCUMENT_REVISION_DDL,
+    *DOCUMENT_ENRICHMENT_DDL,
 )
 
 

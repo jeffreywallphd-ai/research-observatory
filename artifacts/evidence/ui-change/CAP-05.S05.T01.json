@@ -1,0 +1,29 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "ui-change-evidence",
+  "taskId": "CAP-05.S05.T01",
+  "changeKind": "approved-reference-implementation",
+  "contractPath": "artifacts/evidence/ui-change/CAP-05.S05.T01.json",
+  "implementationAgent": "agent:codex-w2-implementation",
+  "changedFiles": [
+    "apps/desktop/src/app/DocumentViewerWorkspace.tsx",
+    "apps/desktop/src/app/ViewerReferencesPane.tsx",
+    "apps/desktop/src/app/documentReferences.ts"
+  ],
+  "reference": {
+    "referenceId": "RO-UI-ACADEMIC-MINIMAL-1.9",
+    "version": "1.9",
+    "packageSha256": "24b8d62356863980ae9a13db7d6a06b04b76c60e2f1920d2e888cadecfb24c4b",
+    "approvalCommit": "d4691f716f839f4aac5bb50563b56ac863b32685",
+    "approvedBy": "human:repository-owner",
+    "previousReferenceId": "RO-UI-ACADEMIC-MINIMAL-1.8"
+  },
+  "implementationScope": "Approved Document Reader source-inspector reference extraction and canonical target inspection. Opaque fixed commands, one bounded inert reference preview, explicit truncation and extracted/inferred status, human-review similarity candidates, exact source jump, current rights and cumulative resource admission, stale/unavailable opaque recovery selector, lock and late-response clearing. No changed reference, identity adjudication, model, network, output action, hardware qualification or automation-framework development. Commit-bound proof and independent task disposition remain required.",
+  "focusedEvidence": [
+    {
+      "command": "python -B -m unittest tests.desktop.test_document_viewer_interactions",
+      "result": "passed",
+      "scope": "Five new focused mounted journeys over declared synthetic ports/decoder, including opaque stale recovery and uncertain read admission; no actual renderer dispatch or committed-candidate qualification claim."
+    }
+  ]
+}
