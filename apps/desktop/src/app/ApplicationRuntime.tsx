@@ -799,15 +799,15 @@ export function ApplicationRuntime({ workflowTransport = packagedProjectTranspor
     return true;
   }, [announce]);
 
-  const navigateWorkspaceState = useCallback((nextWorkspace: ApplicationWorkspace) => {
-    if (!qualityNavigationAllowed(nextWorkspace)) return;
+  const navigateWorkspaceState = useCallback((nextWorkspace: ApplicationWorkspace): boolean => {
+    if (!qualityNavigationAllowed(nextWorkspace)) return false;
     clearPendingSupportingRequest();
     workspaceRef.current = nextWorkspace;
     const authority = workflowAuthority;
     if (!authority) {
       setSupportingReturn(null);
       setWorkspace(nextWorkspace);
-      return;
+      return true;
     }
     const classification = workspaceClassification(authority, nextWorkspace);
     if (classification.role === "supporting") {
@@ -824,7 +824,7 @@ export function ApplicationRuntime({ workflowTransport = packagedProjectTranspor
         );
         if (!ticket) {
           setWorkspace(nextWorkspace);
-          return;
+          return true;
         }
         pendingSupportingRequestRef.current = ticket;
         setSupportingHandoffPending(true);
@@ -882,6 +882,7 @@ export function ApplicationRuntime({ workflowTransport = packagedProjectTranspor
       setSupportingReturn(null);
     }
     setWorkspace(nextWorkspace);
+    return true;
   }, [announce, applyWorkflowProgress, clearPendingSupportingRequest, qualityNavigationAllowed, workflowAuthority, workflowClient, workflowProgress]);
 
   const openAttachmentTaskCenter = useCallback((handoff: AttachmentHandoff) => {
@@ -952,7 +953,7 @@ export function ApplicationRuntime({ workflowTransport = packagedProjectTranspor
   }, []);
 
   const openProjectHome = useCallback(() => {
-    navigateWorkspaceState("home");
+    if (!navigateWorkspaceState("home")) return;
     announce("Project Home opened. Choose Start guided workflow to begin explicitly.");
     globalThis.window?.requestAnimationFrame(() => homeRef.current?.focus());
   }, [announce, navigateWorkspaceState]);
@@ -1158,12 +1159,12 @@ export function ApplicationRuntime({ workflowTransport = packagedProjectTranspor
   }, [applyLockedRecoveryResult]);
 
   const openApplicationSettings = useCallback((trigger?: HTMLElement | null) => {
+    if (!navigateWorkspaceState("application-settings")) return;
     if (workspace !== "application-settings") {
       previousWorkspaceRef.current = workspace;
       applicationSettingsRestoreFocusRef.current = trigger
         ?? (document.activeElement instanceof HTMLElement ? document.activeElement : null);
     }
-    navigateWorkspaceState("application-settings");
     announce("Application Security and sign-in settings opened.");
   }, [announce, navigateWorkspaceState, workspace]);
 
@@ -1322,8 +1323,7 @@ export function ApplicationRuntime({ workflowTransport = packagedProjectTranspor
             onSelectStage={navigateToStage}
             onSelectWorkspace={(nextWorkspace) => {
               if (nextWorkspace === "application-settings") openApplicationSettings();
-              else {
-                navigateWorkspaceState(nextWorkspace);
+              else if (navigateWorkspaceState(nextWorkspace)) {
                 announce(`${nextWorkspace === "home" ? "Project home" : nextWorkspace} opened.`);
               }
             }}

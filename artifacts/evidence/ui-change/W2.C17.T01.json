@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "ui-change-evidence",
+  "changeKind": "defect-restoration",
+  "implementationAgent": "agent:codex-w2-implementation",
+  "reference": {
+    "referenceId": "RO-UI-ACADEMIC-MINIMAL-1.9",
+    "version": "1.9",
+    "packageSha256": "24b8d62356863980ae9a13db7d6a06b04b76c60e2f1920d2e888cadecfb24c4b",
+    "approvalCommit": "d4691f716f839f4aac5bb50563b56ac863b32685",
+    "approvedBy": "human:repository-owner",
+    "previousReferenceId": "RO-UI-ACADEMIC-MINIMAL-1.8"
+  },
+  "taskId": "W2.C17.T01",
+  "contractPath": "artifacts/evidence/ui-change/W2.C17.T01.json",
+  "changedFiles": ["apps/desktop/src/app/ApplicationRuntime.tsx"],
+  "restoration": {
+    "defect": "Ordinary All tools and application-settings callbacks overwrite the existing Parsing Quality blocked-navigation denial with a success announcement despite retaining the dirty, busy or issued-unknown correction/reconciliation. The Project Home callback has the same unconditional notice and focus pattern.",
+    "expectedBehavior": "Retain the unchanged approved navigation guard, workspace, rationale and exact command ownership. Report navigation success only when navigation was allowed; denied navigation retains the truthful live-region explanation. After Undo, completion or exact retry, normal navigation remains available. No acceptance or primary workflow completion is implied."
+  },
+  "focusedEvidence": [
+    {
+      "command": "node tests/desktop/fixtures/reprocessing-navigation.mjs <owned fixture>; python -B -m unittest -v tests.desktop.test_reprocessing_workflow_navigation",
+      "result": "passed",
+      "scope": "Development-only actual ApplicationRuntime, Parsing Quality and Reprocessing with authored project/workflow/command ports: dirty, busy and issued-unknown states across stage, return, Source Manager, Project home, application settings and Ctrl+K; settled denial, exact rationale/command ownership, identical unknown retry, zero implicit acceptances and successful recovery. Fresh fixture build and all 18 combinations passed in artifacts/tmp/W2.C17.T01.development-02.json (raw SHA256 7541d0f666233c4ac1b60b5eab3e3a81742d05edf7ab6bb700f3556619e0553a). Failing characterization and locator errors remain preserved. This is not committed-candidate, Native/Core/encrypted, OS accessibility, hardware/model, slice or Wave qualification; fresh committed verification and required independent dispositions remain separate."
+    }
+  ]
+}
