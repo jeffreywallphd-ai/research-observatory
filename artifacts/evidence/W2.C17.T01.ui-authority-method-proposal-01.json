@@ -1,0 +1,273 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "exact-source-free-ui-restoration-method-proposal",
+  "status": "PROPOSED_PENDING_INDEPENDENT_READINESS_AND_OWNER_DECISION",
+  "taskId": "W2.C17.T01",
+  "originTaskId": "CAP-05.S06.T03",
+  "waveId": "W2",
+  "candidateCommit": "aa43e3fcee791ffa73e41d5969bbaff3ff42476e",
+  "exactProductPaths": [
+    "apps/desktop/src/app/ApplicationRuntime.tsx",
+    "tests/desktop/test_reprocessing_workflow_navigation.py"
+  ],
+  "reference": {
+    "referenceId": "RO-UI-ACADEMIC-MINIMAL-1.9",
+    "version": "1.9",
+    "packageSha256": "24b8d62356863980ae9a13db7d6a06b04b76c60e2f1920d2e888cadecfb24c4b",
+    "approvalCommit": "d4691f716f839f4aac5bb50563b56ac863b32685",
+    "approvedBy": "human:repository-owner",
+    "previousReferenceId": "RO-UI-ACADEMIC-MINIMAL-1.8"
+  },
+  "substitutionPredicates": [
+    "linked_correction_authority:1779",
+    "validate:6975-6977"
+  ],
+  "producer": {
+    "path": "artifacts/tmp/W2.C17.T01-ui-authority-proof-03.py",
+    "sha256": "9c61d1de18fbf21e502f2d607f26489f44a708b76105ea0b5161a67091cd20b9"
+  },
+  "taskApproval": false,
+  "waveCompletion": false,
+  "releaseApproval": false,
+  "frameworkSourceChangesAuthorized": false,
+  "requestedDecision": "Classify this exact two-file committed fix as restoration of the unchanged owner-approved Academic Minimal 1.9 behavior. Authorize only this task-owned, source-free verification method to supply the missing human restorative classification with independent current-candidate review at the two named origin selectors. Preserve every other normal claim, scope, reference, schema, history, criterion, lease, submission and independent review requirement. This approval precedes alternate method use; it does not claim to precede the already authorized restoration code.",
+  "productProblem": "Navigation was refused while Parsing Quality owned a dirty, busy or issued-unknown command, but Source Manager, Project Home and application-settings callbacks overwrote the denial with an opened success notice. The workspace and command were still retained.",
+  "productResult": "navigateWorkspaceState returns an explicit allowed result. Success notices and Home/settings side effects run only after allowed navigation. Denied navigation retains the existing truthful notice, workspace, rationale and exact command; navigation succeeds after Undo, completion or exact retry. No implicit acceptance occurs.",
+  "patch": {
+    "path": "artifacts/evidence/W2.C17.T01.product-fix-02.patch",
+    "sha256": "26f6f2c9c9ac092e6aeb39657a928e4649401cf1a812e48756eb37cc4ca7be31"
+  },
+  "productBlobSHA256": {
+    "apps/desktop/src/app/ApplicationRuntime.tsx": "872b5be7c81b7b4f1b278de941523455e571bd1db1c8daffc2a325c7c7de4636",
+    "tests/desktop/test_reprocessing_workflow_navigation.py": "00b96f37ba0c43a3a8da7f61484343e311bfa14429ab64a9efd3d1e87b9fb900"
+  },
+  "claim": {
+    "baseCommit": "a8681406463cc246999ef29e40a5f4d3b918f468",
+    "recordCommit": "d0b13fd9e162cdfc54717e5351fe481c5dee8313",
+    "owner": "codex-w2-implementation",
+    "branch": "codex/w2-implementation",
+    "worktree": ".",
+    "receipt": {
+      "path": "artifacts/tmp/W2.C17.T01.claim-01.log",
+      "sha256": "15908a7c01b32aec92ce82231e4ade91e63d928eabde37f037df8e1cf819fde5"
+    },
+    "spec": {
+      "path": "artifacts/evidence/W2.C17.T01.spec.json",
+      "sha256": "d70a6f538208f18a70052815ac166331fda717dfad20b79dfe036f4faafeafe5",
+      "commit": "a8681406463cc246999ef29e40a5f4d3b918f468"
+    },
+    "originalTaskSnapshotSHA256": "5c7e4e19a4ea321dfd53ba3b4a4c40f2719e4c12991dd34692fcb4757369231a"
+  },
+  "evidence": {
+    "freshCandidateRun": {
+      "path": "artifacts/tmp/W2.C17.T01.qualifying-03.attempt-02.json",
+      "sha256": "059fcccf3b15ab2736ac31fb1b40dd4f3c96385a73db4785bd8587f546f62817"
+    },
+    "elapsedSeconds": 87.00853349996032,
+    "selectedInputsUnchanged": true,
+    "builtFixtureUnchanged": true,
+    "passingAffectedChecks": [
+      {
+        "id": "affected-python-format",
+        "commandId": "foundation:quality",
+        "exitCode": 0,
+        "durationSeconds": 0.10575579997384921,
+        "timeoutSeconds": 180,
+        "rawOutput": "artifacts/tmp/W2.C17.T01.qualifying-03.attempt-02.affected-python-format.log",
+        "rawOutputSHA256": "fd2299c9f1c6dc869070883e281051bfe93aacf66c1a3b0069f45b4aa410ca50",
+        "portableCommand": "python -B -m ruff format --check tests/desktop/test_reprocessing_workflow_navigation.py"
+      },
+      {
+        "id": "affected-python-lint",
+        "commandId": "foundation:quality",
+        "exitCode": 0,
+        "durationSeconds": 0.08929580001858994,
+        "timeoutSeconds": 180,
+        "rawOutput": "artifacts/tmp/W2.C17.T01.qualifying-03.attempt-02.affected-python-lint.log",
+        "rawOutputSHA256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18",
+        "portableCommand": "python -B -m ruff check tests/desktop/test_reprocessing_workflow_navigation.py"
+      },
+      {
+        "id": "affected-python-types",
+        "commandId": "foundation:quality",
+        "exitCode": 0,
+        "durationSeconds": 1.590026299993042,
+        "timeoutSeconds": 180,
+        "rawOutput": "artifacts/tmp/W2.C17.T01.qualifying-03.attempt-02.affected-python-types.log",
+        "rawOutputSHA256": "8e63ae22e8213e327a5e9cbd584067681681bd8ef7f25c869877887ccdcfc4ff",
+        "portableCommand": "python -B -m mypy --no-incremental --follow-imports=silent tests/desktop/test_reprocessing_workflow_navigation.py"
+      },
+      {
+        "id": "desktop-types",
+        "commandId": "desktop:application",
+        "exitCode": 0,
+        "durationSeconds": 0.6509824999957345,
+        "timeoutSeconds": 180,
+        "rawOutput": "artifacts/tmp/W2.C17.T01.qualifying-03.attempt-02.desktop-types.log",
+        "rawOutputSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "portableCommand": "node node_modules/typescript/bin/tsc --noEmit (apps/desktop)"
+      },
+      {
+        "id": "root-and-workflow-regression",
+        "commandId": "desktop:unit",
+        "exitCode": 0,
+        "durationSeconds": 1.8690707000205293,
+        "timeoutSeconds": 180,
+        "rawOutput": "artifacts/tmp/W2.C17.T01.qualifying-03.attempt-02.root-and-workflow-regression.log",
+        "rawOutputSHA256": "09df606e89ca259db5b0f6c1b5a739b863242d295bc639c15bf5a66b0716df74",
+        "portableCommand": "node node_modules/vitest/vitest.mjs run src/app/ApplicationRuntime.test.tsx src/app/workflowNavigation.test.ts src/app/WorkflowNavigation.test.tsx (apps/desktop)"
+      },
+      {
+        "id": "production-root-fixture-build",
+        "commandId": "desktop:application",
+        "exitCode": 0,
+        "durationSeconds": 1.195608300040476,
+        "timeoutSeconds": 90,
+        "rawOutput": "artifacts/tmp/W2.C17.T01.qualifying-03.attempt-02.production-root-fixture-build.log",
+        "rawOutputSHA256": "b566697482f32b633a48396e0d777cf81c332f8df2179cb8374172d5618725ee",
+        "portableCommand": "node tests/desktop/fixtures/reprocessing-navigation.mjs <owned fresh fixture>"
+      },
+      {
+        "id": "stable-announcement-and-recovery",
+        "commandId": "desktop:unit",
+        "exitCode": 0,
+        "durationSeconds": 20.10694179998245,
+        "timeoutSeconds": 150,
+        "rawOutput": "artifacts/tmp/W2.C17.T01.qualifying-03.attempt-02.stable-announcement-and-recovery.log",
+        "rawOutputSHA256": "5b511770b2c4818edee6293dd9ad3e95421536eba69889826860b98d247ee1a7",
+        "portableCommand": "python -B -m unittest -v tests.desktop.test_reprocessing_workflow_navigation (fresh fixture selected by local environment)"
+      }
+    ],
+    "originalCommandFailure": {
+      "id": "ui-change-authority",
+      "commandId": "foundation:ui-change",
+      "exitCode": 1,
+      "durationSeconds": 41.90482709999196,
+      "timeoutSeconds": 180,
+      "rawOutput": "artifacts/tmp/W2.C17.T01.qualifying-03.attempt-02.ui-change-authority.log",
+      "rawOutputSHA256": "ef82e3ca8224de8628b94733be8114cf3e812e0bc900a54744ab2b1fba7e10dc",
+      "portableCommand": "python -B tools/ui_change_gate.py --repo . --base a8681406463cc246999ef29e40a5f4d3b918f468 --head aa43e3fcee791ffa73e41d5969bbaff3ff42476e"
+    },
+    "overallRunStatus": "FAIL",
+    "originalCommandPassClaimed": false,
+    "behavioralCoverage": "18 dirty/busy/unknown by stage/return/Source Manager/Project Home/settings/Ctrl+K combinations; exact command/rationale/ownership, settled denial, identical unknown retry, zero implicit acceptance and allowed recovery. 29 existing root/workflow tests also pass.",
+    "methodLimits": "Mounted production components with authored project/workflow/command ports; no Native/Core/encrypted state, OS accessibility, actual model, hardware tier, installer, slice or Wave qualification.",
+    "independentProductAssessment": {
+      "path": "artifacts/tmp/W2.C17.T01.product-restoration-assessment-01.json",
+      "sha256": "c233e085462d20c271820c92364a7c3e611ce3f39502349f4fe36a8a0ed8de39"
+    },
+    "authorityProducerPreparation": {
+      "path": "artifacts/tmp/W2.C17.T01.ui-authority-proof-preparation-03.json",
+      "sha256": "e5e7de5fee7bd9a27297270c25ad87bee82a7512cca4759acce7c52b650a8016"
+    },
+    "independentFiniteProducerPreflight": {
+      "path": "artifacts/tmp/W2.C17.T01.ui-authority-proof-preflight-03.json",
+      "sha256": "c931a72958bc3bd10c3e0a47a59c4b26e0817eb83d811b3659c5dc5b3bd91178"
+    },
+    "actualIdentityCharacterization": {
+      "path": "artifacts/tmp/W2.C17.T01-ui-authority-identity-characterization-run03.json",
+      "sha256": "48efcdb5e1e129f86f6dce22956ca3b46611db3492cd0a8da2cc2f79d9539885"
+    }
+  },
+  "preservedAdverseEvidence": [
+    {
+      "path": "artifacts/tmp/W2.C17.T01.red-03.attempt-01.json",
+      "sha256": "405cdf21130f88cd88f5f6c49c3ee42f0716c211efd2d4cd1144a354da01ed86"
+    },
+    {
+      "path": "artifacts/tmp/W2.C17.T01.red-locator-remediation-01.json",
+      "sha256": "80cacfdbcfdc0d7805cd0a21dd6a2f026cd3d77531bbf8afbfea6728c91a5f99"
+    },
+    {
+      "path": "artifacts/tmp/W2.C17.T01.red-03.attempt-02.json",
+      "sha256": "6732190035ab0f1721e7ce60d6bc21e89b5b2d35f487f6c7950f7e083fa426a4"
+    },
+    {
+      "path": "artifacts/tmp/W2.C17.T01.red-test-source-02.py",
+      "sha256": "2a4c0bc89101a8dc61a0513a5f5105f8f7fce6a5885dc898cce8d43c2ae9938f"
+    },
+    {
+      "path": "artifacts/tmp/W2.C17.T01.development-01.json",
+      "sha256": "42b29c252af9ac6eee622d761304fd4cd6de2b78155f082e36c476b574cbe51b"
+    },
+    {
+      "path": "artifacts/tmp/W2.C17.T01.development-02.json",
+      "sha256": "7541d0f666233c4ac1b60b5eab3e3a81742d05edf7ab6bb700f3556619e0553a"
+    },
+    {
+      "path": "artifacts/tmp/W2.C17.T01.qualifying-03.attempt-01.json",
+      "sha256": "a54f99a987d7837c3f2454aaa4f49d45fd2dfd267913b6c4328f1a08f1347f2c"
+    },
+    {
+      "path": "artifacts/tmp/W2.C17.T01.ui-authority-proof-preflight-01.json",
+      "sha256": "9b85e7d7dc8f2efd9d60e5b8b92a883a27133f2b4aa38fc608557c6f93e66e9f"
+    },
+    {
+      "path": "artifacts/tmp/W2.C17.T01.ui-authority-proof-preflight-02.json",
+      "sha256": "26d94ee1872289d2fd56dbd0613c6644f2894af4daa6e6628b5c992a0b423a88"
+    }
+  ],
+  "adverseDisposition": [
+    "Red01: 18 setup errors before navigation assertions because a filled textarea changed its accessible label. Preserved; corrected to the exact comparison-region textbox without editing product code.",
+    "Red02: nine real false announcements reproduced with original product code across three blocked states and Source Manager/Home/settings. Other nine cases passed; no setup errors. Its exact test source is preserved separately.",
+    "Development01: blocked-denial assertions passed; three post-recovery settings waits used a nonexistent heading. Preserved; selector corrected to the existing Security & sign-in heading without changing product code.",
+    "Development02: fresh build and all 18 cases passed, explicitly development-only.",
+    "Committed qualifying01: stable source/fixture, 29 root tests and all 18 navigation cases passed; overall FAIL from the UI origin selector and seven test-only lint errors. Successor binds loop helpers and wraps identical string constants; assertions and root bytes are unchanged.",
+    "Committed qualifying02: all seven affected children pass with stable inputs; overall FAIL solely from the unchanged public UI authority command. Alternate authority proof remains unexecuted until the exact owner decision.",
+    "Authority preflight01: reviewer alias predicate issue preserved. Revised exact installed identity predicate independently reviewed; actual pure characterization passed all 28 declared cases. This proves no human approval or full authority execution."
+  ],
+  "methodBoundary": {
+    "reason": "The immutable DONE origin has agent-review plus approved-reference-implementation 1.9 and no amendment. The installed human-origin selector refuses that combination; its conformance fallback requires absent experience metadata and the original older reference. Existing 1.9 approval and EX01 do not authorize a new linked-origin exemption.",
+    "equivalence": "Authenticate exact direct owner restorative classification and independent current-fix assessment instead of selecting the human-review obligation solely from the original task label. Consume this same obligation at its duplicate selector. Do not edit or relabel the origin, add amendment metadata, borrow the conformance fallback, or claim the public command passed.",
+    "retainedChecks": [
+      "Current clean HEAD, full claim base, exact branch/worktree/owner/unexpired lease and unchanged committed spec/paused predecessor/origin/review history",
+      "Ordinary v1.0 defect-restoration schema and single exact UI contract; exact implementation files and regular Git objects",
+      "Full per-commit scope and hidden add/revert checks; unchanged product/reference/dependency/control source after the reviewed fix",
+      "Exact approved reference 1.9/package/ancestral owner approval; no reference or criteria changes",
+      "Unchanged explicit restorationClassification branch if actually present; no field added to borrow another lane",
+      "Actual criterion-linked passing checks, normal atomic taskctl submission and independent corrective integration disposition"
+    ],
+    "authorityProofExecuted": false,
+    "genericFutureException": false,
+    "sharedCheckerPolicySchemaControllerCiAdrChanges": false,
+    "sourceAssessment": {
+      "path": "artifacts/tmp/W2.C17.T01.ui-authority-route-assessment-01.json",
+      "sha256": "5be8b312352e4669ccca8cf1708749cb8e3f1bc9af303906a178961356fd98bd"
+    }
+  },
+  "alternatives": [
+    {
+      "option": "Approve this exact source-free classification and method",
+      "recommended": true,
+      "effect": "Close the unsupported metadata route for this reviewed correction, keep the framework unchanged, then complete normal correction and W2 evidence/review gates."
+    },
+    {
+      "option": "Defer the correction",
+      "recommended": false,
+      "effect": "Leave the task and W2 unfinished; do not treat the false announcement as accepted behavior or advance W3."
+    },
+    {
+      "option": "Repair the shared checker",
+      "recommended": false,
+      "effect": "Would require reversing the owner's no-further-framework-work direction and independently reviewing a protected control change; no such change is requested or authorized here."
+    }
+  ],
+  "remainingGates": [
+    "Exact owner method decision and fresh authorized alternate authority proof",
+    "Normal criterion manifest, independent formal W2.C17.T01 corrective integration review and local integration",
+    "CAP-05.S06 real shipping Native/Core/UIA, protected-state, current 1.9 conformance, recovery and performance evidence with independent slice review",
+    "Remaining shared-interface checkpoint and fresh full W2 qualification, retained broad-check and hardware/resource gaps, independent Wave review",
+    "Separate human G2 release decision after its prerequisites are complete",
+    "W3 initiation, refinement, complete packet review and exact Wave approval before execution"
+  ],
+  "currentDelivery": {
+    "ordinaryW2TasksDone": 33,
+    "ordinaryW2TasksTotal": 33,
+    "slicesDone": 10,
+    "slicesTotal": 11,
+    "pendingSlice": "CAP-05.S06",
+    "G2": "PENDING",
+    "W3Started": false
+  },
+  "resumeCondition": "After direct approval of this exact proposal and independently committed readiness record, publish the append-only owner decision in the existing task evidence namespace. Reopen/renew only the existing owned correction through taskctl if needed, execute this pinned source-free proof at a clean metadata descendant, submit actual criterion-linked passing evidence and obtain normal independent formal review. No manual DONE, origin rewrite, reference change or release approval."
+}

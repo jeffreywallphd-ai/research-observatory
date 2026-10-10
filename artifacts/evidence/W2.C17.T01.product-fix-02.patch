@@ -1,0 +1,166 @@
+diff --git a/apps/desktop/src/app/ApplicationRuntime.tsx b/apps/desktop/src/app/ApplicationRuntime.tsx
+index ec5c057e..c9a6d646 100644
+--- a/apps/desktop/src/app/ApplicationRuntime.tsx
++++ b/apps/desktop/src/app/ApplicationRuntime.tsx
+@@ -799,15 +799,15 @@ export function ApplicationRuntime({ workflowTransport = packagedProjectTranspor
+     return true;
+   }, [announce]);
+ 
+-  const navigateWorkspaceState = useCallback((nextWorkspace: ApplicationWorkspace) => {
+-    if (!qualityNavigationAllowed(nextWorkspace)) return;
++  const navigateWorkspaceState = useCallback((nextWorkspace: ApplicationWorkspace): boolean => {
++    if (!qualityNavigationAllowed(nextWorkspace)) return false;
+     clearPendingSupportingRequest();
+     workspaceRef.current = nextWorkspace;
+     const authority = workflowAuthority;
+     if (!authority) {
+       setSupportingReturn(null);
+       setWorkspace(nextWorkspace);
+-      return;
++      return true;
+     }
+     const classification = workspaceClassification(authority, nextWorkspace);
+     if (classification.role === "supporting") {
+@@ -824,7 +824,7 @@ export function ApplicationRuntime({ workflowTransport = packagedProjectTranspor
+         );
+         if (!ticket) {
+           setWorkspace(nextWorkspace);
+-          return;
++          return true;
+         }
+         pendingSupportingRequestRef.current = ticket;
+         setSupportingHandoffPending(true);
+@@ -882,6 +882,7 @@ export function ApplicationRuntime({ workflowTransport = packagedProjectTranspor
+       setSupportingReturn(null);
+     }
+     setWorkspace(nextWorkspace);
++    return true;
+   }, [announce, applyWorkflowProgress, clearPendingSupportingRequest, qualityNavigationAllowed, workflowAuthority, workflowClient, workflowProgress]);
+ 
+   const openAttachmentTaskCenter = useCallback((handoff: AttachmentHandoff) => {
+@@ -952,7 +953,7 @@ export function ApplicationRuntime({ workflowTransport = packagedProjectTranspor
+   }, []);
+ 
+   const openProjectHome = useCallback(() => {
+-    navigateWorkspaceState("home");
++    if (!navigateWorkspaceState("home")) return;
+     announce("Project Home opened. Choose Start guided workflow to begin explicitly.");
+     globalThis.window?.requestAnimationFrame(() => homeRef.current?.focus());
+   }, [announce, navigateWorkspaceState]);
+@@ -1158,12 +1159,12 @@ export function ApplicationRuntime({ workflowTransport = packagedProjectTranspor
+   }, [applyLockedRecoveryResult]);
+ 
+   const openApplicationSettings = useCallback((trigger?: HTMLElement | null) => {
++    if (!navigateWorkspaceState("application-settings")) return;
+     if (workspace !== "application-settings") {
+       previousWorkspaceRef.current = workspace;
+       applicationSettingsRestoreFocusRef.current = trigger
+         ?? (document.activeElement instanceof HTMLElement ? document.activeElement : null);
+     }
+-    navigateWorkspaceState("application-settings");
+     announce("Application Security and sign-in settings opened.");
+   }, [announce, navigateWorkspaceState, workspace]);
+ 
+@@ -1322,8 +1323,7 @@ export function ApplicationRuntime({ workflowTransport = packagedProjectTranspor
+             onSelectStage={navigateToStage}
+             onSelectWorkspace={(nextWorkspace) => {
+               if (nextWorkspace === "application-settings") openApplicationSettings();
+-              else {
+-                navigateWorkspaceState(nextWorkspace);
++              else if (navigateWorkspaceState(nextWorkspace)) {
+                 announce(`${nextWorkspace === "home" ? "Project home" : nextWorkspace} opened.`);
+               }
+             }}
+diff --git a/tests/desktop/test_reprocessing_workflow_navigation.py b/tests/desktop/test_reprocessing_workflow_navigation.py
+index 7dcb1f03..b13ee24c 100644
+--- a/tests/desktop/test_reprocessing_workflow_navigation.py
++++ b/tests/desktop/test_reprocessing_workflow_navigation.py
+@@ -31,7 +31,7 @@ class ReprocessingWorkflowNavigationTests(unittest.TestCase):
+ 
+     def test_actual_pending_reconciliation_guards_guided_stage_and_return(self):
+         for mode in ("dirty", "busy", "unknown"):
+-            for route in ("stage", "return"):
++            for route in ("stage", "return", "workspace", "home", "settings", "command-shortcut"):
+                 with self.subTest(mode=mode, route=route):
+                     context = self.browser.new_context(viewport={"width": 1280, "height": 900})
+                     try:
+@@ -96,17 +96,47 @@ class ReprocessingWorkflowNavigationTests(unittest.TestCase):
+                         owner = page.get_by_role("region", name="Parsing Quality and Corrections", exact=True)
+                         page.wait_for_function("window.__REPROCESSING_UI_TEST__.blocked")
+                         before = page.evaluate("JSON.stringify(window.__REPROCESSING_UI_TEST__.calls)")
+-                        target = (
+-                            page.locator("[data-workflow-stage-key] > button")
+-                            if route == "stage"
+-                            else page.get_by_role(
++                        rationale = page.get_by_role("region", name="Reparse comparison", exact=True).get_by_role(
++                            "textbox"
++                        )
++                        self.assertEqual("SYNTHETIC exact reprocessing navigation rationale", rationale.input_value())
++                        if route == "stage":
++                            target = page.locator("[data-workflow-stage-key] > button")
++                        elif route == "return":
++                            target = page.get_by_role(
+                                 "button", name="Return to current step · Synthetic current stage", exact=True
+                             )
++                        elif route == "workspace":
++                            target = page.get_by_role("button", name="Source Manager", exact=True)
++                        elif route == "settings":
++                            target = page.locator("[data-application-settings-trigger]")
++                        else:
++                            target = page.get_by_role("button", name="Project home", exact=True)
++
++                        def navigate(route=route, page=page, target=target):
++                            if route == "command-shortcut":
++                                page.keyboard.press("Control+k")
++                            else:
++                                target.click()
++
++                        def settle_announcement(page=page):
++                            page.evaluate(
++                                "() => new Promise(resolve => "
++                                "requestAnimationFrame(() => requestAnimationFrame(resolve)))"
++                            )
++
++                        navigate()
++                        settle_announcement()
++                        self.assertEqual(
++                            "Save or undo the local correction, and resolve a pending command, "
++                            "before leaving Parsing Quality.",
++                            page.locator("[data-live-region]").inner_text(),
+                         )
+-                        target.click()
+                         self.assertEqual(1, owner.count())
+                         self.assertEqual(0, page.evaluate("window.__REPROCESSING_ROOT_TEST__.unmounted"))
+                         self.assertEqual(before, page.evaluate("JSON.stringify(window.__REPROCESSING_UI_TEST__.calls)"))
++                        self.assertEqual("SYNTHETIC exact reprocessing navigation rationale", rationale.input_value())
++                        self.assertEqual(0, page.evaluate("window.__REPROCESSING_UI_TEST__.acceptedCount"))
+                         if mode == "dirty":
+                             page.get_by_role("button", name="Undo unsaved reconciliation", exact=True).click()
+                         elif mode == "busy":
+@@ -119,8 +149,24 @@ class ReprocessingWorkflowNavigationTests(unittest.TestCase):
+                                 "button", name="Retry exact pending reprocessing command", exact=True
+                             ).click()
+                         page.wait_for_function("!window.__REPROCESSING_UI_TEST__.blocked")
+-                        target.click()
+-                        owner.wait_for(state="detached")
++                        if mode == "unknown":
++                            commands = page.evaluate(
++                                "window.__REPROCESSING_UI_TEST__.calls.filter("
++                                "command => command.action === 'reconcile')"
++                            )
++                            self.assertEqual(2, len(commands))
++                            self.assertEqual(commands[0], commands[1])
++                            self.assertEqual(1, page.evaluate("window.__REPROCESSING_UI_TEST__.reconciledCount"))
++                        navigate()
++                        if route == "settings":
++                            page.get_by_role("heading", name="Security & sign-in", exact=True).wait_for()
++                        else:
++                            owner.wait_for(state="detached")
++                        settle_announcement()
++                        if route == "workspace":
++                            self.assertEqual("sources opened.", page.locator("[data-live-region]").inner_text())
++                            self.assertEqual("page", target.get_attribute("aria-current"))
++                        self.assertEqual(0, page.evaluate("window.__REPROCESSING_UI_TEST__.acceptedCount"))
+                     finally:
+                         context.close()
+ 
