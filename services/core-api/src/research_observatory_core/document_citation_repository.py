@@ -252,7 +252,7 @@ class LocalDocumentCitationRepository(LocalDocumentReferenceRepository):
         ):
             raise CitationProblem("citation-collection-requires-review")
 
-    def enrich(self, command, *, cancelled: Callable[[], bool] = lambda: False):
+    def enrich(self, command, *, cancelled: Callable[[], bool] = lambda: False, _deliver=None):
         def enrich():
             selected = CitationEnrichmentCommand.model_validate(command)
             source = self._source(selected.revision_id)
@@ -353,6 +353,16 @@ class LocalDocumentCitationRepository(LocalDocumentReferenceRepository):
                     material[reference.collection_revision_id] = aggregates.get_revision(
                         reference.collection_revision_id
                     )
+
+                    def deliver():
+                        # Core's bounded projection consumes these exact authenticated
+                        # values after the publication-time freshness checks. Failure
+                        # remains inside the same canonical transaction on both paths.
+                        result = collection if _deliver is None else _deliver(collection, source, reference, accepted)
+                        _publication_step("citation-before-commit")
+                        self._check(cancelled)
+                        return result
+
                     if existing:
                         if (
                             tuple(existing) != (collection.collection_revision_id, digest)
@@ -360,7 +370,7 @@ class LocalDocumentCitationRepository(LocalDocumentReferenceRepository):
                         ):
                             raise CitationProblem("citation-command-reuse-conflict")
                         self._validate(connection, aggregates, collection, set(material))
-                        return collection
+                        return deliver()
                     head = self._head(connection, selected.revision_id)
                     if (head[0] if head else None) != selected.expected_collection_revision_id:
                         raise CitationProblem("citation-collection-predecessor-changed")
@@ -408,9 +418,7 @@ class LocalDocumentCitationRepository(LocalDocumentReferenceRepository):
                         reconciler._publish_impacts(
                             connection, (reconciler._change(previous, revision, human, human=False),)
                         )
-                    _publication_step("citation-before-commit")
-                    self._check(cancelled)
-                    return collection
+                    return deliver()
 
             result = self.revisions._put(raw, CITATION_MEDIA_TYPE, source, publish, cancelled)
             self._check(cancelled)

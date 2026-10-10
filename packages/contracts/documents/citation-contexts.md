@@ -16,6 +16,15 @@ Publication uses the existing canonical writer, human provenance, outbox and
 complete material inputs. Cancellation, CAS conflict or precommit failure
 preserves prior history. Exact retries and restart do not duplicate revisions.
 
+Core builds the bounded Reader delivery inside that same publication transaction,
+on both a new extraction and an exact retry. It uses the authenticated accepted
+document, reference collection and source after current equality, head, payload,
+catalog and material-input checks. Projection validation/failure and the final
+precommit cancellation check roll back canonical publication together. The
+ordinary repository return remains the immutable collection. The delivery path
+retains the cumulative Viewer admission ledger, fixed multiplier 128 and 24-MiB
+frame allowance while avoiding duplicate protected reads after publication.
+
 Authenticated JATS, TEI and HTML links preserve each reported target member.
 Missing members are unresolved; duplicate source identities are ambiguous.
 Numeric, grouped/ranged and author-year/narrative patterns are marked inferred.

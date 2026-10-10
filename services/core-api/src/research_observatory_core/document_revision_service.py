@@ -318,11 +318,11 @@ class DocumentRevisionService:
         )
 
     def citation_enrich(self, command, *, trace_id):
+        from .citation_reader import reader_page
         from .document_citation_repository import LocalDocumentCitationRepository
 
         def enrich(repository, stopped):
-            collection = repository.enrich(command.enrichment, cancelled=stopped)
-            return self._citation_page(repository, collection, stopped)
+            return repository.enrich(command.enrichment, cancelled=stopped, _deliver=reader_page)
 
         return self._references(command, trace_id, enrich, repository_factory=LocalDocumentCitationRepository)
 

@@ -4573,6 +4573,107 @@ waves:
           nonincremental ordinary-import mypy without suppression. Obtain independent correction/integration disposition,
           then resume the same W2 campaign and fresh CP07 before remaining parser tasks. Historical S01/SDK/C13/C14 support
           stays historical; full W2 and G2 remain separate.
+    - title: Extract in-text citation contexts and targets
+      objective: Citation markers linked to reference entries with sentence/paragraph context, location, and multi-target
+        handling.
+      dependencies:
+      - CAP-05.S05.T01
+      acceptance_criteria:
+      - Fixture citation styles resolve correctly; unresolved and ambiguous targets are explicit; contexts retain exact source
+        anchors.
+      - Automated tests cover the expected path and at least one material failure or boundary condition.
+      - Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.
+      verification_commands:
+      - python tools/verify.py --profile documents
+      - python tools/verify.py --profile graph
+      deployment_profiles:
+      - LOC
+      - LAB
+      - ALL
+      platform_targets:
+      - windows-x64
+      verification_profiles:
+      - documents
+      - graph
+      id: W2.C16.T01
+      wave: W2
+      priority: P1
+      status: IN_PROGRESS
+      owner: codex-w2-implementation
+      branch: codex/w2-implementation
+      base_sha: eb8518099155c07a1ca91ba2aedc2c650c2f6a2e
+      worktree: .
+      lease:
+        claimed_by: codex-w2-implementation
+        claimed_at: '2026-10-10T11:47:14+00:00'
+        expires_at: '2026-10-10T19:47:14+00:00'
+      started_at: '2026-10-10T11:47:14+00:00'
+      updated_at: '2026-10-10T11:47:14+00:00'
+      completed_at: null
+      blocker: null
+      implementation_notes: ''
+      evidence: []
+      verification_state: null
+      review:
+        reviewer: null
+        result: null
+        reviewed_at: null
+        notes: null
+      review_control:
+        version: 1
+        attempts: []
+        current_submission: null
+      correction:
+        origin_task_id: CAP-05.S05.T02
+        origin_commit: 10bd669e0686edec150557830dbfcf64b7a1dc1f
+        paused_state_sha256: 9d1301c1317ee244a46e9575e10b358e6a01f5f91e992676c4968eea22c472fc
+        origin_sha256: e42c801524e3eddaa254cc73a9b2a6a2db5c4e9deae72ea3a157a153491aeb91
+        origin_contract_sha256: 6cf6538b06a1c8eb0ea8a845c1fdff3785344f164cda53e3eecd7404d501dc3f
+        origin_history_sha256: 6c521939559436f9214e3800913f748d329211f9f712ffb783bdd739c8c669b0
+        origin_amendment_id: null
+        authority_sha256: c92ce7e9bac1b8a49d13d649a5980fea61e56ee953d238c734d8ff5f04f4c9e5
+        spec:
+          path: artifacts/evidence/W2.C16.T01.spec.json
+          sha256: 3abec345a87455c0cc504ad0388bdc79998ce25e9c5291614f88ea9fcfaca1b7
+          commit: eb8518099155c07a1ca91ba2aedc2c650c2f6a2e
+        reproduction: 'At clean committed 10bd669e0686edec150557830dbfcf64b7a1dc1f the real Windows Reader S05 initial integration
+          fails to deliver citations after extraction. The disposable authored 50-page Docling IR fixture has exactly two
+          inferred source-grounded citation contexts. An actual Core refresh returns HTTP 409 after publishing a new encrypted
+          citation head; a separately fenced read returns HTTP 200 with that head. The unchanged cumulative ViewerArtifactReads
+          admission rejects a repeated 61,881-byte protected artifact with 6,956,544 budget remaining because its fixed charge
+          is 7,924,864. The response-building path rereads accepted/reference data after canonical commit. Production client
+          decoders accept the saved page. Actual failure and diagnostic evidence: artifacts/tmp/CAP-05.S05.qualifying-reader-01.initial.json
+          SHA-256 1c13eb7082cd5e9034e3dd5a34ffb6912480ecac9f38c23a5132d8bed5d60937; artifacts/tmp/CAP-05.S05.citation-diagnostic-01.json
+          SHA-256 fc6009c5daeb099f5d7da79a1e770067167632e29ef944fdd6d5cb9ef49af27b; artifacts/tmp/CAP-05.S05.citation-client-diagnostic-01.log
+          SHA-256 f4d9df330233b090c895498c4c44b0a36a6d32fa4dcd28bf9ce2a9e056dfa030; artifacts/tmp/CAP-05.S05.citation-diagnostic-02.json
+          SHA-256 5b8fbe045d50afc2670f3c36cbb127c365ba32bd5b2e636e3892aa6aa04debff; artifacts/tmp/CAP-05.S05.citation-diagnostic-03.adverse.json
+          SHA-256 4566c2ce4ae88b591b3ae1f14d119ab7a3967b740cddcbe4d779be7bb89222f5; artifacts/tmp/CAP-05.S05.citation-diagnostic-04.json
+          SHA-256 e8c8fbe93199280884bdf5db3def15026e62e98a161aa0f6345587184d61cc38; artifacts/tmp/CAP-05.S05.citation-diagnostic-04.log
+          SHA-256 15a5f24864898eb74b9aa54999b48355fe5e1236d3094c2e35882a4de7b5ee85. No model ran. These diagnostic results
+          do not qualify the task or slice.'
+        changed_paths:
+        - packages/contracts/documents/citation-contexts.md
+        - services/core-api/src/research_observatory_core/document_citation_repository.py
+        - services/core-api/src/research_observatory_core/document_revision_service.py
+        - tests/documents/test_citation_repository.py
+        - tests/documents/test_citation_service.py
+        impact_analysis: Restore the original T02 inspectable citation outcome by constructing the existing bounded Reader
+          page inside the existing atomic citation publication using the exact already-authenticated accepted/reference/source
+          values. Use a private optional delivery callback on both new and exact-command retry paths; existing repository
+          callers still receive the collection. Retain current actor, accepted-equality, reference head/record/payload, target
+          catalog, material dependency and outer current-rights/session/Native delivery checks. Retain reader_page source/payload
+          binding and closed 64-KiB shape. Projection validation or failure rolls back the same object/aggregate/enrichment/index/material/provenance/outbox
+          transaction. Keep the final before-commit hook and cancellation check after projection. The source frame remains
+          24 MiB and cumulative admission multiplier remains 128 with no reset/refund or authorization cache relaxation. Add
+          a failing default-budget 50-page real Core regression before source changes, cover successful initial/refresh/idempotent
+          response and exact source contexts, delivery-failure rollback and post-projection cancellation/retry/reopen; retain
+          existing rights, stale-reference, catalog/material and immutable-IR tests. Run affected citation repository/service/reader
+          tests, changed-file format/lint/type checks, and fresh shipping Reader integration against the actual local Native/Core/vault/SQLCipher
+          boundary. Replay S05 relevant cancellation/recovery/denial and integrated structures at slice scope after independent
+          correction disposition. Reuse only explicitly bound historical unmodified citation-style checks as support; no fresh
+          correctness claim from that history alone. Full repository/profile and cross-capability qualification remain the
+          W2 exit obligation. No new product scope, UX/reference, schema/migration, security/rights authority, threshold,
+          model/hardware run, framework/controller or history change.
     resume_records:
     - id: W2.R01
       wave_id: W2

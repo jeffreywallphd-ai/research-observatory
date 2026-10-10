@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 13ececec58b9b27322345c5a0fdd682b3ca2cfaebf59b5000f401b93864659d2
+source_sha256: 568d1cc5cceaa09a74dfe4f391e84f86fd007269e9ac96bb555dcbe4185a8ada
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -4499,6 +4499,37 @@ Original tasks and approvals remain unchanged.
 **Current latest-review projection:** `approved` by agent:/root/s01_integration_review at `2026-10-07T06:51:42+00:00`
 
 **Latest notes:** Independent expanded migration-fixture and corrective-integration review approves only actual frozen W2.C15.T01 R01 at cdf802d9/base 68003a03. The sole admitted SDK test fixture restores current schema25 IDs, explicit appended history rows, current fingerprint/helper/manifest expectations and empty additive tables. Immutable Git comparisons preserve the exact encrypted v20 constructor, first three historical rows and every original test assertion apart from admitted current-target/helper changes. Full affected protected SQLCipher class executes both original methods without skips, including all eight original v21 material-step fault subtests, rollback/replan/retry, exact predecessor fingerprints, verified backup bytes and actual reopen. Four guarded checks pass, including nonincremental ordinary-import mypy without suppression. Producer/report/raw/canonical log and inherited authority/history pins authenticate; the retained actual stale-target FAIL remains adverse. The complete 13445-input physical rehash was performed in the pre-submit IN_PROGRESS phase, with zero mismatch or unreadable input; before/after guarded execution maps remain equal. Later controller/view metadata changes are expected and are not represented as equal to that pre-submit physical inventory. No product/schema/migration/security/rights/UX/framework change or C15 criterion-bound blocker remains. This disposition does not approve CP07, W2 qualification or G2 release.
+
+**Currently open findings:** -
+
+### W2.C16.T01 — Extract in-text citation contexts and targets
+
+**Status:** `IN_PROGRESS`. **Original task:** `CAP-05.S05.T02`. **Latest review:** `-`.
+
+**Reproduction:** At clean committed 10bd669e0686edec150557830dbfcf64b7a1dc1f the real Windows Reader S05 initial integration fails to deliver citations after extraction. The disposable authored 50-page Docling IR fixture has exactly two inferred source-grounded citation contexts. An actual Core refresh returns HTTP 409 after publishing a new encrypted citation head; a separately fenced read returns HTTP 200 with that head. The unchanged cumulative ViewerArtifactReads admission rejects a repeated 61,881-byte protected artifact with 6,956,544 budget remaining because its fixed charge is 7,924,864. The response-building path rereads accepted/reference data after canonical commit. Production client decoders accept the saved page. Actual failure and diagnostic evidence: artifacts/tmp/CAP-05.S05.qualifying-reader-01.initial.json SHA-256 1c13eb7082cd5e9034e3dd5a34ffb6912480ecac9f38c23a5132d8bed5d60937; artifacts/tmp/CAP-05.S05.citation-diagnostic-01.json SHA-256 fc6009c5daeb099f5d7da79a1e770067167632e29ef944fdd6d5cb9ef49af27b; artifacts/tmp/CAP-05.S05.citation-client-diagnostic-01.log SHA-256 f4d9df330233b090c895498c4c44b0a36a6d32fa4dcd28bf9ce2a9e056dfa030; artifacts/tmp/CAP-05.S05.citation-diagnostic-02.json SHA-256 5b8fbe045d50afc2670f3c36cbb127c365ba32bd5b2e636e3892aa6aa04debff; artifacts/tmp/CAP-05.S05.citation-diagnostic-03.adverse.json SHA-256 4566c2ce4ae88b591b3ae1f14d119ab7a3967b740cddcbe4d779be7bb89222f5; artifacts/tmp/CAP-05.S05.citation-diagnostic-04.json SHA-256 e8c8fbe93199280884bdf5db3def15026e62e98a161aa0f6345587184d61cc38; artifacts/tmp/CAP-05.S05.citation-diagnostic-04.log SHA-256 15a5f24864898eb74b9aa54999b48355fe5e1236d3094c2e35882a4de7b5ee85. No model ran. These diagnostic results do not qualify the task or slice.
+
+**Inherited criteria:**
+
+- Fixture citation styles resolve correctly; unresolved and ambiguous targets are explicit; contexts retain exact source anchors.
+- Automated tests cover the expected path and at least one material failure or boundary condition.
+- Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.
+
+**Bounded changed paths:**
+
+- packages/contracts/documents/citation-contexts.md
+- services/core-api/src/research_observatory_core/document_citation_repository.py
+- services/core-api/src/research_observatory_core/document_revision_service.py
+- tests/documents/test_citation_repository.py
+- tests/documents/test_citation_service.py
+#### Review history — W2.C16.T01
+
+**Review mode:** `append-only v1` / 0 completed round(s)
+
+**Current immutable submission awaiting review:** None
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
 
 **Currently open findings:** -
 

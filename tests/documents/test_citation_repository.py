@@ -11,6 +11,7 @@ from unittest.mock import patch
 ROOT = Path(__file__).resolve().parents[2]
 sys.path[:0] = [str(ROOT / "services/core-api/src"), str(ROOT)]
 
+from research_observatory_core.citation_reader import reader_page  # noqa: E402
 from research_observatory_core.document_citation_repository import LocalDocumentCitationRepository  # noqa: E402
 from research_observatory_core.document_citations import CitationEnrichmentCommand  # noqa: E402
 from research_observatory_core.document_reference_repository import LocalDocumentReferenceRepository  # noqa: E402
@@ -220,6 +221,108 @@ class CitationRepositoryTests(unittest.TestCase):
                     "SELECT COUNT(*) FROM document_enrichments WHERE enrichment_kind='citation-contexts'"
                 ).fetchone()[0],
             )
+
+    def canonical_rows(self):
+        with closing(open_canonical_database(self.f.database, expected_project_id=self.accepted.project_id)) as db:
+            names = [
+                row[0]
+                for row in db.execute("SELECT name FROM sqlite_schema WHERE type='table'")
+                if row[0] in {"object_records", "outbox_events"}
+                or row[0].startswith(("aggregate_", "document_enrichment", "material_", "dependency_", "provenance_"))
+            ]
+            return {
+                name: tuple(sorted((tuple(row) for row in db.execute('SELECT * FROM "' + name + '"')), key=repr))
+                for name in names
+            }
+
+    def test_transactional_delivery_retains_exact_authenticated_inputs_default_and_retry(self):
+        command = self.command()
+        observed = []
+
+        def deliver(collection, source, reference, accepted):
+            self.assertEqual(self.accepted, accepted)
+            self.assertEqual(self.ref, reference)
+            self.assertEqual(accepted.structure.binding.source, source)
+            observed.append(collection.collection_revision_id)
+            return reader_page(collection, source, reference, accepted)
+
+        page = self.repository.enrich(command, _deliver=deliver)
+        before = self.canonical_rows()
+        self.assertEqual(page, self.repository.enrich(command, _deliver=deliver))
+        self.assertEqual(before, self.canonical_rows())
+        self.assertEqual([page.collection_revision_id] * 2, observed)
+        collection = self.repository.enrich(command)
+        self.assertEqual(collection, self.reopen().read(self.accepted.revision_id))
+        self.assertEqual(page.collection_revision_id, collection.collection_revision_id)
+        self.assertEqual(before, self.canonical_rows())
+
+    def test_delivery_failure_and_post_projection_cancellation_roll_back_complete_canonical_state(self):
+        def fail(*_values):
+            raise ValueError("synthetic-reader-projection-failure")
+
+        initial = self.command()
+        before = self.canonical_rows()
+        with self.assertRaises(DocumentRevisionProblem):
+            self.repository.enrich(initial, _deliver=fail)
+        self.assertEqual(before, self.canonical_rows())
+        self.assertIsNone(self.reopen().read(self.accepted.revision_id))
+        page = self.repository.enrich(initial, _deliver=reader_page)
+        saved = self.reopen().read(self.accepted.revision_id)
+        before = self.canonical_rows()
+        # A delivery failure on the exact retry must also preserve all rows.
+        with self.assertRaises(DocumentRevisionProblem):
+            self.repository.enrich(initial, _deliver=fail)
+        self.assertEqual(before, self.canonical_rows())
+        refresh = self.command(page.collection_revision_id)
+        with self.assertRaises(DocumentRevisionProblem):
+            self.repository.enrich(refresh, _deliver=fail)
+        self.assertEqual(before, self.canonical_rows())
+        self.assertEqual(saved, self.reopen().read(self.accepted.revision_id))
+        cancelled = False
+        delivered = []
+
+        def cancel_after_projection(collection, source, reference, accepted):
+            nonlocal cancelled
+            result = reader_page(collection, source, reference, accepted)
+            delivered.append(result)
+            cancelled = True
+            return result
+
+        with self.assertRaises(DocumentRevisionProblem):
+            self.repository.enrich(refresh, cancelled=lambda: cancelled, _deliver=cancel_after_projection)
+        self.assertEqual(1, len(delivered))
+        self.assertEqual(before, self.canonical_rows())
+        self.assertEqual(saved, self.reopen().read(self.accepted.revision_id))
+        replacement = self.repository.enrich(refresh, _deliver=reader_page)
+        self.assertNotEqual(page.collection_revision_id, replacement.collection_revision_id)
+        self.assertEqual(
+            replacement.collection_revision_id, self.reopen().read(self.accepted.revision_id).collection_revision_id
+        )
+        self.assertEqual(self.accepted, self.f.repository.read(self.accepted.revision_id))
+
+    def test_transactional_delivery_cannot_skip_reference_freshness_or_current_rights(self):
+        delivered = []
+
+        def deliver(*values):
+            delivered.append(True)
+            return reader_page(*values)
+
+        def refresh(step):
+            if step == "citation-prepared":
+                self.ref = self.references.enrich(self.reference_command(self.ref.collection_revision_id))
+
+        with (
+            patch("research_observatory_core.document_citation_repository._publication_step", side_effect=refresh),
+            self.assertRaises(DocumentRevisionProblem),
+        ):
+            self.repository.enrich(self.command(), _deliver=deliver)
+        self.assertEqual([], delivered)
+        self.f.f.permit(derive="denied")
+        before = self.canonical_rows()
+        with self.assertRaises(DocumentRevisionProblem):
+            self.repository.enrich(self.command(), _deliver=deliver)
+        self.assertEqual([], delivered)
+        self.assertEqual(before, self.canonical_rows())
 
 
 if __name__ == "__main__":
