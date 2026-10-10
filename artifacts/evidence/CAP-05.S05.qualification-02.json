@@ -1,0 +1,539 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "slice-qualification-evidence",
+  "sliceId": "CAP-05.S05",
+  "waveId": "W2",
+  "candidate": "cbc70e964299c970991e3442e82c44f482b7a8ba",
+  "productCandidate": "cbc70e964299c970991e3442e82c44f482b7a8ba",
+  "controlPublicationCandidate": "e75da6df4131f17f7914d887da8605bada3d8611",
+  "branch": "codex/w2-implementation",
+  "qualificationStatus": "SELECTED_CHECKS_PASSED_INDEPENDENT_DISPOSITION_PENDING",
+  "approval": {
+    "frozenWaveCommit": "c85a59f3a293f8e3f2eaf6454682c9a14b1efa55",
+    "approvedSlicePlan": {
+      "path": "planning/slice-plans/CAP-05/CAP-05.S05-references-citation-contexts-tables-and-figures.md",
+      "sha256": "b8e945c79d2bf800f44d691d48d50d6f9528e72379830e4e38b224bc45be58d4",
+      "hashConvention": "raw-bytes"
+    },
+    "acceptedArchitecture": {
+      "path": "docs/adr/ADR-0029-preserve-document-revisions-and-mediate-source-viewing.md",
+      "sha256": "ffee796414cdde9155667c8c3a710e7c904197971b7714832c7c5bc950687e7b",
+      "hashConvention": "raw-bytes"
+    },
+    "experience": "RO-UI-ACADEMIC-MINIMAL-1.9; approved publication d4691f716f839f4aac5bb50563b56ac863b32685"
+  },
+  "taskEvidence": [
+    {
+      "taskId": "CAP-05.S05.T01",
+      "candidate": "b3eadee8cf945e4b77f91fe1d35a7db85c6cc10e",
+      "criterionManifest": {
+        "path": "artifacts/evidence/CAP-05.S05.T01.R01.json",
+        "sha256": "47f60ad734c856849fa44fbf793cb08da20cc9c973ddc8f75ad889f93d583515",
+        "hashConvention": "LF-canonical"
+      },
+      "independentReview": {
+        "path": "artifacts/evidence/CAP-05.S05.T01.review-R01.json",
+        "sha256": "f6e23b1868547c592d15c86ff3243ae7c398b268782b0644876d12f5c16170d9",
+        "hashConvention": "LF-canonical"
+      },
+      "disposition": "approved",
+      "resultReuse": false,
+      "provenance": "Authenticated independently reviewed task history; no fresh slice replay or cached Native result claim."
+    },
+    {
+      "taskId": "CAP-05.S05.T02",
+      "candidate": "0c07c80813d3a3c6d7d78a1b1a6823eec1a7898e",
+      "criterionManifest": {
+        "path": "artifacts/evidence/CAP-05.S05.T02.R01.json",
+        "sha256": "583b0957b5920f7516ef327b45d2a14a138c0571336cfe25ba670db6c0be2135",
+        "hashConvention": "LF-canonical"
+      },
+      "independentReview": {
+        "path": "artifacts/evidence/CAP-05.S05.T02.review-R01.json",
+        "sha256": "7916e8c5a61c0e6bb3f702151786649b6bee601bc90bf010d544adf9e3f4e1b3",
+        "hashConvention": "LF-canonical"
+      },
+      "disposition": "approved",
+      "resultReuse": false,
+      "provenance": "Authenticated independently reviewed task history; no fresh slice replay or cached Native result claim."
+    },
+    {
+      "taskId": "CAP-05.S05.T03",
+      "candidate": "421747d5ebc6c7045b9d34dea9d1c6560c6c30c5",
+      "criterionManifest": {
+        "path": "artifacts/evidence/CAP-05.S05.T03.R01.json",
+        "sha256": "8de2f34f0fd0cc641416ce4cf159a300fab1e123a47f6cb26b72eae14fe295e9",
+        "hashConvention": "LF-canonical"
+      },
+      "independentReview": {
+        "path": "artifacts/evidence/CAP-05.S05.T03.review-R01.json",
+        "sha256": "147c775f9213d93b24b672f85326aa3fe71cdebee4f9c1e924190584f9257e33",
+        "hashConvention": "LF-canonical"
+      },
+      "disposition": "approved",
+      "resultReuse": false,
+      "provenance": "Authenticated independently reviewed task history; no fresh slice replay or cached Native result claim."
+    }
+  ],
+  "verificationSelection": {
+    "selectedCommandIds": [
+      "desktop:application",
+      "documents:unit"
+    ],
+    "rationale": "Fresh owned shipping Native/renderer/Core initial and restart compose all three scholarly structures from one protected accepted authored fixture. Fresh protected Core checks copy-rights denial, resource refusal, all-structure stale-session rejection, reference-head refresh invalidating only its citation dependency, explicit context recovery and retained independent table/exclusion. Three existing fresh encrypted cases retain pre-cancel refusal and their original fault coverage; a separate fresh combined-fixture producer challenges initially-false mid-operation cancellation after actual canonical writes for each writer and a reference fault only at reference-before-commit, with exact rollback and reopen equality. Portable schema consumers validate each complete retained collection. Existing independent task reviews remain authenticated history; no task audit, cached Native result, model/benchmark or unchanged full-profile replay is inferred.",
+    "deferredCoverage": [
+      "S06 task/slice implementation and review.",
+      "Fresh full affected repository/profile, Windows packaging, security/privacy/rights/accessibility/performance and cross-capability W2 qualification, independent Wave review and separate G2 human release.",
+      "No 8/16 GiB model/hardware runs, minimum 2/3 GiB support claim, parser-overage tuning, Reader latency replay or clipboard action."
+    ]
+  },
+  "checks": [
+    {
+      "name": "shipping-Reader-combined-initial",
+      "status": "passed",
+      "fresh": true,
+      "candidate": "cbc70e964299c970991e3442e82c44f482b7a8ba",
+      "commandId": "desktop:application",
+      "command": ".venv/Scripts/python.exe -B artifacts/tmp/CAP-05.S05.qualifying-reader-02.py cbc70e964299c970991e3442e82c44f482b7a8ba initial",
+      "report": {
+        "path": "artifacts/tmp/CAP-05.S05.qualifying-reader-02.initial.json",
+        "sha256": "d5073d908d4c5d4b919e3a28acd6e535f545848d2e1565ce6ba2c0165a4d5b43",
+        "hashConvention": "raw-bytes"
+      },
+      "rawOutput": {
+        "path": "artifacts/tmp/CAP-05.S05.qualifying-reader-02.initial.outer.log",
+        "sha256": "c5dd77a6e5bd2abdc335af346533236dcb9dc760b5da104bd052dec176161ebb",
+        "hashConvention": "raw-bytes"
+      },
+      "producer": {
+        "path": "artifacts/tmp/CAP-05.S05.qualifying-reader-02.py",
+        "sha256": "f08cf74615d24a5e6036e4d7d55e566895be6cd9c84e76cbb1622aacc7d64995",
+        "hashConvention": "raw-bytes"
+      },
+      "durationSeconds": 122.0211209000554,
+      "exitCode": 0,
+      "nativeEvents": {
+        "path": "artifacts/tmp/CAP-05.S05.qualifying-reader-02.initial.events.jsonl",
+        "sha256": "de56df5b5ebfc965afbca9049caecf94c4cc95729513c36fa21cc05bcdb4cf7d",
+        "hashConvention": "raw-bytes"
+      },
+      "nativeStderr": {
+        "path": "artifacts/tmp/CAP-05.S05.qualifying-reader-02.initial.stderr.log",
+        "sha256": "c7c6254c278ee63e7915984b60ac553b8b2514ba7426966c2b5967997efeda6e",
+        "hashConvention": "raw-bytes"
+      },
+      "builtBinaryCandidate": "cbc70e964299c970991e3442e82c44f482b7a8ba",
+      "buildResultReplayed": false,
+      "currentProductInputEqualityChecked": true,
+      "ownedCleanupProcesses": 0
+    },
+    {
+      "name": "shipping-Reader-combined-restart",
+      "status": "passed",
+      "fresh": true,
+      "candidate": "cbc70e964299c970991e3442e82c44f482b7a8ba",
+      "commandId": "desktop:application",
+      "command": ".venv/Scripts/python.exe -B artifacts/tmp/CAP-05.S05.qualifying-reader-02.py cbc70e964299c970991e3442e82c44f482b7a8ba restart",
+      "report": {
+        "path": "artifacts/tmp/CAP-05.S05.qualifying-reader-02.restart.json",
+        "sha256": "f9c887acf67c15d3edea75967fc9b421bace9322cda230233f3d8eb60cc7e237",
+        "hashConvention": "raw-bytes"
+      },
+      "rawOutput": {
+        "path": "artifacts/tmp/CAP-05.S05.qualifying-reader-02.restart.outer.log",
+        "sha256": "7bf618d3e422442495ca9bf00593a1c1280ab71229cdc07468f9d5487aa65d52",
+        "hashConvention": "raw-bytes"
+      },
+      "producer": {
+        "path": "artifacts/tmp/CAP-05.S05.qualifying-reader-02.py",
+        "sha256": "f08cf74615d24a5e6036e4d7d55e566895be6cd9c84e76cbb1622aacc7d64995",
+        "hashConvention": "raw-bytes"
+      },
+      "durationSeconds": 102.54501020000316,
+      "exitCode": 0,
+      "nativeEvents": {
+        "path": "artifacts/tmp/CAP-05.S05.qualifying-reader-02.restart.events.jsonl",
+        "sha256": "a5cc87a947e6c8accb1603a5c69f4977c70c9552592d8dcb976d6bb4423138a3",
+        "hashConvention": "raw-bytes"
+      },
+      "nativeStderr": {
+        "path": "artifacts/tmp/CAP-05.S05.qualifying-reader-02.restart.stderr.log",
+        "sha256": "c7c6254c278ee63e7915984b60ac553b8b2514ba7426966c2b5967997efeda6e",
+        "hashConvention": "raw-bytes"
+      },
+      "builtBinaryCandidate": "cbc70e964299c970991e3442e82c44f482b7a8ba",
+      "buildResultReplayed": false,
+      "currentProductInputEqualityChecked": true,
+      "ownedCleanupProcesses": 0
+    },
+    {
+      "name": "protected-Core-cross-enrichment-failure-recovery",
+      "status": "passed",
+      "fresh": true,
+      "candidate": "cbc70e964299c970991e3442e82c44f482b7a8ba",
+      "commandId": "documents:unit",
+      "command": ".venv/Scripts/python.exe -B artifacts/tmp/CAP-05.S05.qualifying-core-seams-02.py cbc70e964299c970991e3442e82c44f482b7a8ba",
+      "report": {
+        "path": "artifacts/tmp/CAP-05.S05.qualifying-core-seams-02.json",
+        "sha256": "5a2bd59085ed5f6f1e4cf167364399f8e87402ecc868cc27b861308d0a861b5b",
+        "hashConvention": "raw-bytes"
+      },
+      "rawOutput": {
+        "path": "artifacts/tmp/CAP-05.S05.qualifying-core-seams-02.log",
+        "sha256": "6d90d27f569dc427de7cee2db4014c090bced92764d56f3c34a7d2db38150c32",
+        "hashConvention": "raw-bytes"
+      },
+      "producer": {
+        "path": "artifacts/tmp/CAP-05.S05.qualifying-core-seams-02.py",
+        "sha256": "24438c7f4d819442ab8488a787d52c28b70c29ff854f10fc69f59f47c1ee7778",
+        "hashConvention": "raw-bytes"
+      },
+      "durationSeconds": 26.06947410001885,
+      "exitCode": 0
+    },
+    {
+      "name": "three-encrypted-writer-pre-cancel-and-fault-cases",
+      "status": "passed",
+      "fresh": true,
+      "candidate": "cbc70e964299c970991e3442e82c44f482b7a8ba",
+      "commandId": "documents:unit",
+      "command": ".venv/Scripts/python.exe -B artifacts/tmp/CAP-05.S05.qualifying-cancellation-02.py cbc70e964299c970991e3442e82c44f482b7a8ba",
+      "report": {
+        "path": "artifacts/tmp/CAP-05.S05.qualifying-cancellation-02.json",
+        "sha256": "0fd26cb307846d4bc5f42173620a313d3c234a3e1970699a4e2504332a99992b",
+        "hashConvention": "raw-bytes"
+      },
+      "rawOutput": {
+        "path": "artifacts/tmp/CAP-05.S05.qualifying-cancellation-02.outer.log",
+        "sha256": "38e7b12f97fc940478da23f6f98ff6a59091670d76931539127372a053d395ff",
+        "hashConvention": "raw-bytes"
+      },
+      "producer": {
+        "path": "artifacts/tmp/CAP-05.S05.qualifying-cancellation-02.py",
+        "sha256": "f16a23515180e4ad4e1c306622c5b2a486710d848e2f200e0f8f3bfb3dab95bb",
+        "hashConvention": "raw-bytes"
+      },
+      "durationSeconds": 18.611725299968384,
+      "exitCode": 0,
+      "rawChildOutput": {
+        "path": "artifacts/tmp/CAP-05.S05.qualifying-cancellation-02.raw.log",
+        "sha256": "5e2d5b913bbf544ab98412c9982c86f55fae2d1918f39329b2789b84c0fa22b5",
+        "hashConvention": "raw-bytes"
+      }
+    },
+    {
+      "name": "encrypted-writers-midoperation-cancel-reference-before-commit-rollback",
+      "status": "passed",
+      "fresh": true,
+      "candidate": "cbc70e964299c970991e3442e82c44f482b7a8ba",
+      "commandId": "documents:unit",
+      "command": ".venv/Scripts/python.exe -B artifacts/tmp/CAP-05.S05.qualifying-midoperation-02.py cbc70e964299c970991e3442e82c44f482b7a8ba",
+      "report": {
+        "path": "artifacts/tmp/CAP-05.S05.qualifying-midoperation-02.json",
+        "sha256": "197f2cfaebd0aba8815b138ab5e9667f134f9ebf5e9b19024b577ed6c085aac6",
+        "hashConvention": "raw-bytes"
+      },
+      "rawOutput": {
+        "path": "artifacts/tmp/CAP-05.S05.qualifying-midoperation-02.log",
+        "sha256": "adba8dcfed97e7c309ee0a0f1ae64b278524cf9bd93b4a60040c1b04aa4b3999",
+        "hashConvention": "raw-bytes"
+      },
+      "producer": {
+        "path": "artifacts/tmp/CAP-05.S05.qualifying-midoperation-02.py",
+        "sha256": "318af744895822e8f75c5f3d416651d36bfcde82e2ae8ff1c55ec92f87f26180",
+        "hashConvention": "raw-bytes"
+      },
+      "durationSeconds": 23.978658100008033,
+      "exitCode": 0
+    }
+  ],
+  "fixturePreparation": {
+    "path": "artifacts/tmp/CAP-05.S05.prepare-combined-fixture-03.json",
+    "sha256": "ae4285d5e70f822e6907a1c1d55689dc38270104febed8e4fb3bd8ac8bf0d5fa",
+    "hashConvention": "raw-bytes"
+  },
+  "fixtureLifecycle": {
+    "path": "artifacts/tmp/CAP-05.S05.prepare-combined-fixture-03.lifecycle.json",
+    "sha256": "0878214837aec235fdcde9b335a1fdf525e99af50a7f291f883fdf9f9b6f0476",
+    "hashConvention": "raw-bytes"
+  },
+  "fixtureProducer": {
+    "path": "artifacts/tmp/CAP-05.S05.prepare-combined-fixture-03.py",
+    "sha256": "77531a64e525ebc9ba647958119b3e1ee60a85a45025ec2da03fc74330d35b8c",
+    "hashConvention": "raw-bytes"
+  },
+  "encryptedObservations": [
+    {
+      "path": "artifacts/tmp/CAP-05.S05.integration-baseline-03.before.json",
+      "sha256": "dd3df61457037fd89b02e198e37f370f0b4855642d3d41beabee48a2bc7ffe5c",
+      "hashConvention": "raw-bytes"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S05.integration-baseline-03.initial.json",
+      "sha256": "7d287fefc3de9bda231228714c2afb367d5ca8c26e0ce5b9368bd471c5095d40",
+      "hashConvention": "raw-bytes"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S05.integration-baseline-03.restart.json",
+      "sha256": "749b67b6eff9ac5f1b293def0ea660b834110ac4404a6d8281cb49860f4e724b",
+      "hashConvention": "raw-bytes"
+    }
+  ],
+  "encryptedObservationProducer": {
+    "path": "artifacts/tmp/CAP-05.S05.integration-baseline-03.py",
+    "sha256": "31ff33439c05d82c52886e220593b96942d97242d6d9bd509a7a620bcbfb5660",
+    "hashConvention": "raw-bytes"
+  },
+  "ownedUIA": [
+    {
+      "path": "artifacts/tmp/CAP-05.S05.T03.reader-uia-01.ps1",
+      "sha256": "03f2a3f5d82367ad434d2814c6ff6ff95929bf1063e323e5ee6f9a10dc8b1643",
+      "hashConvention": "raw-bytes"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S05.T03.reader-uia-01.cs",
+      "sha256": "808e16902da5918236097053c739af5f5de1cf79b172d01361c0c599aec1a41a",
+      "hashConvention": "raw-bytes"
+    }
+  ],
+  "shippingAssembly": {
+    "path": "artifacts/tmp/W2.C16.T01.qualifying-package-01.json",
+    "sha256": "fad1031b5f524914d1e1ae7a4f1bd2921f73e5ed479fc66766d595a247defb1c",
+    "hashConvention": "raw-bytes"
+  },
+  "inputAuthentication": {
+    "uniqueObservedInputPaths": 10302,
+    "allCurrentHashesMatch": true,
+    "crossReportConflicts": 0,
+    "method": "Actual producer locks and no source/HEAD writers across qualifying runs; current exact byte authentication during assembly. Ignored local report input lists retain machine-specific paths."
+  },
+  "integrationBoundaries": [
+    {
+      "area": "Connected source and handoff",
+      "proof": "One human-accepted authored Docling revision carries an exact linked raw reference, inferred unverified candidate and unresolved citation, reported captions, ten retained cells and figure. All original/accepted/source/canonical Work pins remain exact, including caption/ninth-cell/reference/citation jumps and original pages 2/3. Complete versioned reference/citation/table-figure collections validate without private consumer modules."
+    },
+    {
+      "area": "Restart and controlled human exclusion",
+      "proof": "Two new shipping processes inspect the same exact immutable collections and explicit researcher exclusion; encrypted full-collection equality is observed. Both return to selected Work/version clearing all protected panes, exit 0 and leave no owned descendants."
+    },
+    {
+      "area": "Cross-enrichment failure and recovery",
+      "proof": "Fresh actual Core/current Windows principal with DPAPI and SQLCipher rejects all three structures under current denied derive rights, stale session and exhausted resource admission without collection content. Reference refresh makes the retained old citation context unavailable; an exact stale reference request cannot publish. Explicit refresh appends a new context with the candidate and unresolved marker retained; independent table collection/exclusion and original accepted IR remain unchanged."
+    },
+    {
+      "area": "Cancellation and precommit",
+      "proof": "Three existing encrypted cases preserve pre-cancel refusal and fault behavior; the reference case interrupts preparation and is not transaction-rollback proof. Four separate combined-fixture operations reach exact before-commit hooks after pending canonical writes: three initially-false cancellations and a reference fault. Relevant row hashes, all heads and complete prior collections/accepted IR must remain equal after rollback and reopen."
+    },
+    {
+      "area": "Accessibility, privacy and architecture",
+      "proof": "Fresh shipping UIA uses exact uniquely owned native window/regions, visible status, named controls and inert text. Independent task client/mounted/Native proof covers keyboard/focus, themes/reflow, late/lock clearing, closed request shapes and source/permission substitution. Reader/Core preserve shared physical admission, local-only protected source and no external figure fetch. No hardware screen-reader, fresh complete keyboard traversal or pixel parity claim."
+    },
+    {
+      "area": "Performance and bounded resources",
+      "proof": "Actual shipping lazy eight-cell paging, current Core refusal and current cancellation/deadline cases compose the bounded behavior. This run records observed Core transport durations and owned-job timings; UIA orchestration duration is not Reader product latency or a parser/model benchmark. Approved 3-second Reader evidence and exact owner-accepted parser overage remain unchanged."
+    }
+  ],
+  "performanceObservation": {
+    "coreRequestCount": 24,
+    "coreTransportMinimumSeconds": 0.02922330005094409,
+    "coreTransportMaximumSeconds": 1.32459239999298,
+    "coreTransportSortedSeconds": [
+      0.02922330005094409,
+      0.051047799992375076,
+      0.11531179997837171,
+      0.40807990002213046,
+      0.5148942999658175,
+      0.5390475000021979,
+      0.5462640000041574,
+      0.571694899990689,
+      0.5819791000103578,
+      0.6251141999964602,
+      0.7352312000002712,
+      0.7669507000246085,
+      0.7946792999864556,
+      0.8292424999526702,
+      0.9015227999771014,
+      0.912365399999544,
+      0.9137281999574043,
+      1.140605099964887,
+      1.141276900016237,
+      1.17280539998319,
+      1.2012316000182182,
+      1.2146650000358932,
+      1.2395412999903783,
+      1.32459239999298
+    ],
+    "method": "Warm authenticated Core TestClient requests including protected I/O, one disposable 50-page authored fixture; operation timings are observations, not p95 model/hardware qualification.",
+    "regressionControls": "Existing fixed resource/cell/page/frame admission and cancellation/deadline regressions; no target relaxation."
+  },
+  "adverseHistory": {
+    "taskAdverseEvidencePreserved": true,
+    "taskRecords": [
+      {
+        "path": "artifacts/evidence/CAP-05.S05.T01.R01.json",
+        "sha256": "47f60ad734c856849fa44fbf793cb08da20cc9c973ddc8f75ad889f93d583515",
+        "hashConvention": "LF-canonical"
+      },
+      {
+        "path": "artifacts/evidence/CAP-05.S05.T02.R01.json",
+        "sha256": "583b0957b5920f7516ef327b45d2a14a138c0571336cfe25ba670db6c0be2135",
+        "hashConvention": "LF-canonical"
+      },
+      {
+        "path": "artifacts/evidence/CAP-05.S05.T03.R01.json",
+        "sha256": "8de2f34f0fd0cc641416ce4cf159a300fab1e123a47f6cb26b72eae14fe295e9",
+        "hashConvention": "LF-canonical"
+      }
+    ],
+    "statement": "Every task retains original failed/adverse checks and independent disposition. No prior failed aggregate, parser performance observation, UIA fixture attempt or layoutGold observation is reclassified as PASS."
+  },
+  "limits": [
+    "Authored accepted IR proves wiring, immutable state and source authority, not scientific truth, model accuracy or new parser/runtime quality.",
+    "Current Core TestClient transport and fresh shipping Native/renderer principal establish distinct named boundaries.",
+    "Native was freshly built offline at the corrected product candidate, with unchanged shipping renderer and actual runtime separately authenticated. The initial/restart principal runs were freshly executed at that same candidate; later control-only commits do not relabel their execution identity.",
+    "Slice proof does not complete S06, W2 qualification, independent Wave review or G2 release."
+  ],
+  "correctiveIntegration": {
+    "taskId": "W2.C16.T01",
+    "originTaskId": "CAP-05.S05.T02",
+    "status": "DONE",
+    "review": "approved",
+    "criterionManifest": {
+      "path": "artifacts/evidence/W2.C16.T01.R01.json",
+      "sha256": "47b458688652778eda4f180d30a3aea1311bf3443cb96bbf43874cc66f30e7da",
+      "hashConvention": "LF-canonical"
+    },
+    "independentReview": {
+      "path": "artifacts/evidence/W2.C16.T01.review-R01.json",
+      "sha256": "0cfd0951b36a559f474bb2487533b5f269eb871e870c1cabd7837b9094bd169d",
+      "hashConvention": "LF-canonical"
+    },
+    "qualifyingCandidate": "cbc70e964299c970991e3442e82c44f482b7a8ba",
+    "controlPublicationCandidate": "e75da6df4131f17f7914d887da8605bada3d8611",
+    "controlOnlyChangedFiles": [
+      "artifacts/evidence/W2.C16.T01.R01.json",
+      "artifacts/evidence/W2.C16.T01.review-R01.json",
+      "docs/planning-implementation-plan.md",
+      "planning/backlog.yaml",
+      "planning/review-site/manifest.json",
+      "planning/review-site/waves/W2.html",
+      "planning/status-summary.md"
+    ],
+    "sourceInputsCurrent": true,
+    "statement": "The correction and S05 integration share the freshly executed checks at the exact corrected product candidate. Current source/runtime inputs are authenticated above; subsequent commits publish independently approved task/evidence/tracking records only. No Native result is presented as newly executed at the successor control commit."
+  },
+  "correctiveAdverseHistory": [
+    {
+      "path": "artifacts/tmp/CAP-05.S05.qualifying-reader-01.initial.json",
+      "sha256": "1c13eb7082cd5e9034e3dd5a34ffb6912480ecac9f38c23a5132d8bed5d60937",
+      "hashConvention": "raw-bytes"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S05.citation-diagnostic-04.json",
+      "sha256": "e8c8fbe93199280884bdf5db3def15026e62e98a161aa0f6345587184d61cc38",
+      "hashConvention": "raw-bytes"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S05.citation-diagnostic-04.log",
+      "sha256": "15a5f24864898eb74b9aa54999b48355fe5e1236d3094c2e35882a4de7b5ee85",
+      "hashConvention": "raw-bytes"
+    },
+    {
+      "path": "artifacts/tmp/W2.C16.T01.characterize-large-01.json",
+      "sha256": "ba6d94c3cedae92013259ff30f94e749e3e93cb7a4c9b4874a4a2092c70b448b",
+      "hashConvention": "raw-bytes"
+    },
+    {
+      "path": "artifacts/tmp/W2.C16.T01.characterize-large-01.log",
+      "sha256": "d905368ada67095a582c39d8c0bdd20d3de155a8eb92c1fd7274cd333d34c303",
+      "hashConvention": "raw-bytes"
+    }
+  ],
+  "correctiveAdverseStatement": "Original shipping extraction exceeded cumulative admission after canonical publication; the new before-edit default-budget regression reproduced HTTP 409. Both remain adverse. The linked correction constructs the existing bounded delivery within the unchanged canonical transaction, keeping admission/current authority/public schemas unchanged. Fresh corrected principal and rollback results close this finding; old failures are not reclassified.",
+  "freshNativeBuild": {
+    "path": "artifacts/tmp/W2.C16.T01.qualifying-native-build-01.json",
+    "sha256": "c2816f7330189665319fc8e7378a5bb71b90683ac09cb09e0ee0295a6aa59b4f",
+    "hashConvention": "raw-bytes"
+  },
+  "assemblerProducer": {
+    "path": "artifacts/tmp/CAP-05.S05.assemble-evidence-02.py",
+    "sha256": "f53557188ca85fb128781d0344fdbd7a368d67c60425be4c9c587af7202374a7",
+    "hashConvention": "raw-bytes"
+  },
+  "operationalAdverseEvidence": [
+    {
+      "path": "artifacts/tmp/W2.resume-20261010.readiness.log",
+      "sha256": "0eadebdea5697eb028cdd64b8bdde0e3bd296d9a2b74d9e934f5db1ac94ab028",
+      "hashConvention": "raw-bytes"
+    },
+    {
+      "path": "artifacts/tmp/W2.resume-20261010.readiness.adverse.json",
+      "sha256": "6c7e6b36ed98e2add8b98260f7cb8fa22c183723e9ed941f6a599f7235434718",
+      "hashConvention": "raw-bytes"
+    }
+  ],
+  "operationalAdverseStatement": "Resume site generation preceded T03 review publication; its later consistency check saw the newly published ledger and rejected the stale projection. The failure is retained. Subsequent current closeout generation/check does not change frozen approval or reclassify this failed check as PASS.",
+  "fixturePreparationHistory": [
+    {
+      "path": "artifacts/tmp/CAP-05.S05.prepare-combined-fixture-01.py",
+      "sha256": "41ee53e2cb529b5ca9d36c6e7258fdcd0565d9e4d8c9f93ab9488453cd397879",
+      "hashConvention": "raw-bytes"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S05.prepare-combined-fixture-01.log",
+      "sha256": "1b71657707e5244500c69ec9111db1c114f0a567094d42bc3ab8827372d7e107",
+      "hashConvention": "raw-bytes"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S05.prepare-combined-fixture-01.lifecycle.json",
+      "sha256": "4e83529525744073ff198db1b44cbe62a4d4c61ff113fdb1ea23cc7b7b054056",
+      "hashConvention": "raw-bytes"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S05.prepare-combined-fixture-01.adverse.json",
+      "sha256": "8408bdc25b55495a09fb0cf729ddad91165d8a11c26f92fa1efa9571c70c2907",
+      "hashConvention": "raw-bytes"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S05.prepare-fixture-retry-01.py",
+      "sha256": "a1c103c0abc8d94b4298e9df2f608090022fa7ea8c59707e799436df428831cc",
+      "hashConvention": "raw-bytes"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S05.prepare-combined-fixture-02.log",
+      "sha256": "2805761e496c6e307c570263047522e457a89248dd731fcdae4470870bcc18e8",
+      "hashConvention": "raw-bytes"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S05.prepare-combined-fixture-02.stderr.log",
+      "sha256": "ba851ecbce5a8ac4ed04cc2b406cd3f4a70e598acc6e796b3ae701d80c7e5c1b",
+      "hashConvention": "raw-bytes"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S05.integration-baseline-01.py",
+      "sha256": "6624feeae558e80f17043e142eaf5a080a0da73018ea12e767f72da8bc36c842",
+      "hashConvention": "raw-bytes"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S05.integration-baseline-01.before.log",
+      "sha256": "d7a23a3aeb900384f7d2fb7bb5f2f6210793d7653803dc192feb92cb700806d6",
+      "hashConvention": "raw-bytes"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S05.integration-baseline-01.before.adverse.json",
+      "sha256": "9c678dba8ff81656a11f04aa9907106fb4fcbc42c3f90b4703aad882248cf0b4",
+      "hashConvention": "raw-bytes"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S05.prepare-baseline-retry-01.py",
+      "sha256": "63c7874daa246684f3116d095506afe8870ea5181e7c41defad85627f1c5fb87",
+      "hashConvention": "raw-bytes"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S05.integration-baseline-02.before.log",
+      "sha256": "f71077eb2aca96967679be2029a0cfc03175af92fb11f2164c30d87c0d9a251a",
+      "hashConvention": "raw-bytes"
+    }
+  ],
+  "fixturePreparationHistoryStatement": "Initial Native lifecycle initialization timed out before ready and left zero owned processes. A fresh current-assembly fixture with stderr captured to a file passed the unchanged 40-second bound. The first private citation baseline read failed because its required reference predecessor did not yet exist; the successor observes its actual absent encrypted head. Both adverse results and producers remain unchanged. Successful setup is not qualifying shipping evidence."
+}
