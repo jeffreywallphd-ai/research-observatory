@@ -113,21 +113,23 @@ class ReprocessingWorkflowNavigationTests(unittest.TestCase):
                         else:
                             target = page.get_by_role("button", name="Project home", exact=True)
 
-                        def navigate():
+                        def navigate(route=route, page=page, target=target):
                             if route == "command-shortcut":
                                 page.keyboard.press("Control+k")
                             else:
                                 target.click()
 
-                        def settle_announcement():
+                        def settle_announcement(page=page):
                             page.evaluate(
-                                "() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)))"
+                                "() => new Promise(resolve => "
+                                "requestAnimationFrame(() => requestAnimationFrame(resolve)))"
                             )
 
                         navigate()
                         settle_announcement()
                         self.assertEqual(
-                            "Save or undo the local correction, and resolve a pending command, before leaving Parsing Quality.",
+                            "Save or undo the local correction, and resolve a pending command, "
+                            "before leaving Parsing Quality.",
                             page.locator("[data-live-region]").inner_text(),
                         )
                         self.assertEqual(1, owner.count())
@@ -149,7 +151,8 @@ class ReprocessingWorkflowNavigationTests(unittest.TestCase):
                         page.wait_for_function("!window.__REPROCESSING_UI_TEST__.blocked")
                         if mode == "unknown":
                             commands = page.evaluate(
-                                "window.__REPROCESSING_UI_TEST__.calls.filter(command => command.action === 'reconcile')"
+                                "window.__REPROCESSING_UI_TEST__.calls.filter("
+                                "command => command.action === 'reconcile')"
                             )
                             self.assertEqual(2, len(commands))
                             self.assertEqual(commands[0], commands[1])
