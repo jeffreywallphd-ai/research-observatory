@@ -1,0 +1,441 @@
+{
+  "document_type": "independent-slice-review",
+  "slice_id": "CAP-05.S05",
+  "wave_id": "W2",
+  "review_round": "R01",
+  "reviewer": "agent:/root/reader_table_figure_review",
+  "result": "approved",
+  "reviewed_at": "2026-10-10T13:20:06.959997+00:00",
+  "reviewed_state_commit": "61b96e50a9fe4b1c65fd9c4297772861e60c4ac0",
+  "candidate_commit": "cbc70e964299c970991e3442e82c44f482b7a8ba",
+  "product_candidate_commit": "cbc70e964299c970991e3442e82c44f482b7a8ba",
+  "control_publication_commit": "e75da6df4131f17f7914d887da8605bada3d8611",
+  "evidence_delivery_commit": "61b96e50a9fe4b1c65fd9c4297772861e60c4ac0",
+  "approval_commit": "c85a59f3a293f8e3f2eaf6454682c9a14b1efa55",
+  "evidence_reference": {
+    "path": "artifacts/evidence/CAP-05.S05.qualification-02.json",
+    "sha256": "c3140af867b99b0f93ebec8706ecf184627f037ef2f2ec759b1e317595757b56",
+    "raw_sha256": "5f2370e9d33bd17a004bc57f5fb304627b636790c838716342fc856e28f6b0ba",
+    "commit": "61b96e50a9fe4b1c65fd9c4297772861e60c4ac0",
+    "hash_convention": "LF-canonical"
+  },
+  "reviewed_backlog_sha256": "2bb889a4a42eb290a235eb0d3d8a58b148cb86077f3a221310826dca0b4f68a1",
+  "notes": "Approve CAP-05.S05 integrated slice behavior at tested product candidate cbc70e964299c970991e3442e82c44f482b7a8ba, control-only publication e75da6df4131f17f7914d887da8605bada3d8611 and exact evidence delivery 61b96e50a9fe4b1c65fd9c4297772861e60c4ac0. All three original tasks and linked citation restoration W2.C16.T01 are DONE with authenticated independent approved dispositions. Fresh actual shipping initial/restart, protected Core cross-enrichment denial/resource/CAS/recovery and material before-commit cancellation/fault proof compose inspectable reference/citation/table-figure structures, exact source/cell/preview anchors, human exclusion, immutable accepted state and portable handoff. The prior committed-head/late-response resource failure is closed by the transaction-bound restoration and fresh integrated proof. No material integration blocker remains. This is S05 slice approval only; S06, fresh full W2 qualification, independent Wave review and separate human G2 remain required.",
+  "independence": {
+    "implementation_owner": "codex-w2-implementation",
+    "statement": "I am not the implementation or campaign owner. I independently reviewed the approved material S05 scope, reference/citation/table-figure authority and dependency/cancellation/handoff seams, ignored combined producers and raw outcomes. I retained the completed expanded T03 audit without repeating it, identified the insufficient pre-cancel proof boundary before qualification and reviewed the added real before-commit challenges. I inspected the original integrated citation failure and actual Core/response/resource seams, corrected my UI-only inference, then independently approved the exact linked C16 restoration. For this final slice disposition I authenticated the committed bundle, all references, prior approved task/correction records and ancestry, metadata-only successor changes, and the already-reviewed material integration proof. I authored no product/test/contract/fixture/producer/framework/controller change, no qualifying execution or bundle and no backlog/HEAD mutation. This ledger is my sole write in the formal slice disposition. No build, product test, model/parser, hardware-tier, benchmark, clipboard/external action, broad profile or full unchanged input audit was replayed."
+  },
+  "integration_assessment": [
+    {
+      "criterion": "Approved S05 §§4-5,9-10,13,15,17: connected scholarly structures, exact source and portable handoff",
+      "result": "satisfied",
+      "assessment": "Fresh initial/restart execute the actual authenticated shipping Renderer/Wry/Native invoke and supervised Core against the Windows protected vault/SQLCipher combined accepted fixture. One lawful retained50-page source with human-accepted authored Docling IR carries raw ordered reference text, an exact canonical target link, an inferred unverified numeric citation candidate and explicit unresolved marker, a table with reported caption and ten retained cells, and a figure. Canonical project/attachment/Work/version, original revision/digest and accepted revision/content/structure anchors stay exact through reference/citation/caption/ninth-cell jumps and original page2/3 viewing. Citation contexts bind the exact retained reference collection/revision/protected digest as well as accepted source anchors. Table/cell row/column/span/header and exact preview object/original geometry authority remain as reviewed in T03; preview capability is distinct from receipt membership or an image URL. Cells and inferred candidates remain unverified, with visible unknown/low-quality limits rather than quantitative evidence claims. Initial/restart full encrypted reference, citation and table-figure collections compare equal and validate against all three complete portable versioned schemas using the public JSON Schema consumer. Future CAP-08/09/18 can consume the typed immutable fixture without private repository modules; citation does not imply evidential support or authorize drafting/export."
+    },
+    {
+      "criterion": "Approved S05 §§5,7-8,10,12,14,17: current authority and cross-enrichment freshness/denial/recovery",
+      "result": "satisfied",
+      "assessment": "The reviewed shared paths retain current human actor, live Native/project/session, Intent/privacy and inspect/derive/source rights through preparation, publication, exact retry, delivery and preview. Canonical accepted equality, exact source identity, reference head/record/protected payload, current target catalog and complete material dependency checks fence derived publication. Fresh actual protected Core seams establish current content-free resource refusal for all three structures, current derive-rights409 denial with no collection CID/content, restored-current-authority reads and old-session409 after close/reopen. Rights-current resource or stale-reference notices may retain only the approved opaque collection/source identity and no entries; a notice is not content or a grant. Reference refresh invalidates dependent old citation delivery while the independent table collection and explicit exclusion remain usable; an exact stale reference publication command refuses, and explicit citation refresh appends a new reference-bound collection retaining the inferred candidate/unresolved marker. Original/accepted IR and prior revisions are preserved. Current source/copy-rights observation labels do not prove a system clipboard action. Core/Native/client requests and replies remain closed, opaque and content bounded; no renderer grant, database handle, path or external figure fetch is introduced."
+    },
+    {
+      "criterion": "Approved S05 §§5,8,10,12,14,17: transaction failure, initially-false cancellation, restart and immutable researcher exclusion",
+      "result": "satisfied",
+      "assessment": "The three existing fresh encrypted tests preserve preparation/pre-cancel refusal and their original fault scope; the reference-prepared interruption is explicitly not publication rollback proof. The four added fresh combined-fixture challenges reach real pending aggregate revision, document enrichment, provenance and outbox writes on the actual SQLCipher publication connection before three initially-false cancellations at reference/citation/table-figures-before-commit or a separate reference-before-commit fault. Reference/table element indexes grow; inferred citations have no canonical IDs and leave their enrichment element index unchanged.22 relevant table counts/hashes, all current heads, full prior collections and accepted IR equal their pre-operation values after rollback, and project close/reopen verifies the same canonical state. Separate C16 repository proof covers callback projection failure on initial/refresh/exact retry and final cancellation after projection. Fresh shipping initial records explicit human exclusion without overwriting the original parse; restart inspects that same persisted exclusion and collections in a new OS process with fresh authority. Both return to selected Work/version, clear protected panes, exit0 and leave zero owned descendants. No new migration is required; existing canonical writer/schema28/provenance/material-input/outbox history remains authoritative."
+    },
+    {
+      "criterion": "Approved S05 §§5,7-8,10-11,15,17 and linked C16: atomic bounded delivery and admission",
+      "result": "satisfied",
+      "assessment": "The original integrated FAIL exposed a valid committed citation head followed by response resource409 on duplicate postcommit accepted/reference reads under one cumulative budget. Linked C16 is now formally DONE/approved at the exact tested product commit. Its private trusted Reader delivery callback uses already authenticated accepted/reference/source values inside the existing canonical publication transaction after all current fences, on both new and idempotent branches. Existing reader_page validates exact reference revision/payload, accepted revision/content/structure/source and the closed64-KiB page; callback failure rolls back publication, and the existing before-commit hook/final cancellation follows projection. Default repository callers still receive the collection; public schemas and saved-read behavior remain. Fresh default-budget50-page actual Core initial/refresh/exact-retry/reopen and new delivery-failure/cancellation regressions plus fresh integrated shipping initial/restart close the failure.24-MiB source frame, fixed multiplier128 and cumulative admission remain unchanged without reset/refund or authorization caching. Table delivery still lazy-loads one object/eight cells, with explicit totals, truncation and pinned paging; fresh UI requires the complete2-of10 status and exact ninth/tenth retained cells. No threshold relaxation, latency tuning or model execution was used to obtain this approval."
+    },
+    {
+      "criterion": "Approved S05 §§6-7,10,15,17 and approved UI1.9: coherent inert accessible Reader and recovery",
+      "result": "satisfied-with-explicit-boundary",
+      "assessment": "The approved RO-UI-ACADEMIC-MINIMAL-1.9 publication lineage and authenticated expanded T03 review bind the existing Reader workflow; the frozen S05 plan retains its inherited1.7 text and differs from the approved snapshot only by approval/status metadata, while the later explicitly approved1.9 governs implemented experience. Fresh owned UIA observes named controls, source navigation, reference/citation/table-figure statuses, unknown/unverified quality, controlled exclusion, cell paging and Work return on initial/restart. Extracted text, captions and reference URLs remain inert untrusted content. Previously independent task client/mounted/Native proof covers keyboard/focus, themes/reflow, source/permission substitution, Lock/stale/late-response clearing, closed shapes and physical admission ownership; those results are authenticated history rather than new slice executions. Six retained read-only UIA transients in the passing runs receive narrowly bounded fresh observation retries: three ElementNotAvailable dumps and three exact zero-table-region polls while a protected read is pending. Owned HWND/PID identity is reverified; duplicate regions/other errors fail; no mutation is retried and full later source/cell/status assertions pass. This proves the observed connected experience, not hardware screenreader execution, complete fresh keyboard traversal or pixel parity."
+    },
+    {
+      "criterion": "Approved S05 §§10-19: truthful evidence, architecture, performance limits and scope",
+      "result": "satisfied-with-explicit-boundary",
+      "assessment": "The exact committed bundle binds frozen W2 approval, material plan and accepted ADR-0029, three original criterion/review records, DONE/approved C16 criterion/review and five fresh named combined principal/Core/cancellation checks, fixture/lifecycle/encrypted before/initial/restart, owned UIA, actual package/runtime and fresh offline Native build, assembler and adverse history. All64 reference occurrences across60 unique files authenticate with their stated raw/LF convention. Approved ADR bytes and S05 substantive plan body are unchanged. Qualifying execution stayed at cbc70e...; e75... publishes only evidence/planning/control metadata and61b96e... adds only the slice bundle. Current installed/source closure was independently authenticated before task submission during C16; the slice assembler separately checked10,302 observed inputs after correction closeout. I verified new references and metadata-only ancestry instead of replaying that unchanged audit or fresh tests. Synthetic IR/capacity prove wiring/state only. Warm protected Core request observations, fixed resource/deadline/cancellation regression and lazy paging are bounded performance evidence; they are not a new cold/warm p95 hardware/model baseline, minimum RAM or Reader product latency claim. Approved3-second Reader evidence and exact owner-accepted parser overage remain unchanged. Full affected/repository/profile W2 matrix and inherited unwaived CSP/startup/quality/inventory debt remain required, without a waiver or release approval."
+    }
+  ],
+  "corrective_integration": {
+    "task_id": "W2.C16.T01",
+    "origin_task_id": "CAP-05.S05.T02",
+    "status": "DONE",
+    "review": "approved",
+    "product_candidate": "cbc70e964299c970991e3442e82c44f482b7a8ba",
+    "criterion_manifest": {
+      "path": "artifacts/evidence/W2.C16.T01.R01.json",
+      "sha256": "47b458688652778eda4f180d30a3aea1311bf3443cb96bbf43874cc66f30e7da",
+      "hashConvention": "LF-canonical"
+    },
+    "independent_review": {
+      "path": "artifacts/evidence/W2.C16.T01.review-R01.json",
+      "sha256": "0cfd0951b36a559f474bb2487533b5f269eb871e870c1cabd7837b9094bd169d",
+      "hashConvention": "LF-canonical"
+    },
+    "authority_preserved": true,
+    "affected_integration_reviewed": true,
+    "assessment": "Fresh C16 and S05 use the same freshly executed product-candidate principal proof; no result is claimed newly executed at either later metadata commit. Exact original source/rights/current actor/Native/session/Intent/privacy/reference/catalog/material authority, default collection compatibility, public shapes and fixed admission remain. Atomic before-commit projection/final cancellation closes the prior late-response defect while preserving original task approval/history. This slice approval now follows the completed independent correction prerequisite."
+  },
+  "evidence_reproduction": {
+    "method": "Read/hash/contract-and-assertion inspection of committed delivery and retained affected integration; no qualifying execution or general result cache.",
+    "candidate_identity": {
+      "head_before_review_write": "61b96e50a9fe4b1c65fd9c4297772861e60c4ac0",
+      "branch": "codex/w2-implementation",
+      "tracked_and_untracked_status_before_review_write": "clean",
+      "product_execution_candidate": "cbc70e964299c970991e3442e82c44f482b7a8ba",
+      "control_publication_candidate": "e75da6df4131f17f7914d887da8605bada3d8611",
+      "evidence_delivery_commit": "61b96e50a9fe4b1c65fd9c4297772861e60c4ac0",
+      "product_to_control_changed_paths": [
+        "artifacts/evidence/W2.C16.T01.R01.json",
+        "artifacts/evidence/W2.C16.T01.review-R01.json",
+        "docs/planning-implementation-plan.md",
+        "planning/backlog.yaml",
+        "planning/review-site/manifest.json",
+        "planning/review-site/waves/W2.html",
+        "planning/status-summary.md"
+      ],
+      "control_to_delivery_changed_paths": [
+        "artifacts/evidence/CAP-05.S05.qualification-02.json"
+      ],
+      "committed_bundle_equals_working_LF_canonical_bytes": true,
+      "product_source_changed_after_qualification": false,
+      "fresh_execution_at_control_or_delivery_claimed": false
+    },
+    "authentication": {
+      "bundle_canonical_sha256": "c3140af867b99b0f93ebec8706ecf184627f037ef2f2ec759b1e317595757b56",
+      "bundle_raw_sha256": "5f2370e9d33bd17a004bc57f5fb304627b636790c838716342fc856e28f6b0ba",
+      "bundle_reference_count": 64,
+      "unique_bundle_references": 60,
+      "all_reference_hashes_match": true,
+      "task_and_correction_records": [
+        {
+          "task": "CAP-05.S05.T01",
+          "candidate": "b3eadee8cf945e4b77f91fe1d35a7db85c6cc10e",
+          "status": "DONE",
+          "review": "approved",
+          "manifest_sha256": "47f60ad734c856849fa44fbf793cb08da20cc9c973ddc8f75ad889f93d583515",
+          "review_sha256": "f6e23b1868547c592d15c86ff3243ae7c398b268782b0644876d12f5c16170d9"
+        },
+        {
+          "task": "CAP-05.S05.T02",
+          "candidate": "0c07c80813d3a3c6d7d78a1b1a6823eec1a7898e",
+          "status": "DONE",
+          "review": "approved",
+          "manifest_sha256": "583b0957b5920f7516ef327b45d2a14a138c0571336cfe25ba670db6c0be2135",
+          "review_sha256": "7916e8c5a61c0e6bb3f702151786649b6bee601bc90bf010d544adf9e3f4e1b3"
+        },
+        {
+          "task": "CAP-05.S05.T03",
+          "candidate": "421747d5ebc6c7045b9d34dea9d1c6560c6c30c5",
+          "status": "DONE",
+          "review": "approved",
+          "manifest_sha256": "8de2f34f0fd0cc641416ce4cf159a300fab1e123a47f6cb26b72eae14fe295e9",
+          "review_sha256": "147c775f9213d93b24b672f85326aa3fe71cdebee4f9c1e924190584f9257e33"
+        },
+        {
+          "task": "W2.C16.T01",
+          "candidate": "cbc70e964299c970991e3442e82c44f482b7a8ba",
+          "status": "DONE",
+          "review": "approved",
+          "manifest_sha256": "47b458688652778eda4f180d30a3aea1311bf3443cb96bbf43874cc66f30e7da",
+          "review_sha256": "0cfd0951b36a559f474bb2487533b5f269eb871e870c1cabd7837b9094bd169d"
+        }
+      ],
+      "latest_task_candidates_are_product_candidate_ancestors": true,
+      "task_reviews_match_manifest_and_backlog_DONE_records": true,
+      "fresh_reports": [
+        {
+          "name": "shipping-Reader-combined-initial",
+          "path": "artifacts/tmp/CAP-05.S05.qualifying-reader-02.initial.json",
+          "raw_sha256": "d5073d908d4c5d4b919e3a28acd6e535f545848d2e1565ce6ba2c0165a4d5b43",
+          "seconds": 122.0211209000554,
+          "selected_input_count": 10298,
+          "owned_exit": 0,
+          "owned_cleanup": 0
+        },
+        {
+          "name": "shipping-Reader-combined-restart",
+          "path": "artifacts/tmp/CAP-05.S05.qualifying-reader-02.restart.json",
+          "raw_sha256": "f9c887acf67c15d3edea75967fc9b421bace9322cda230233f3d8eb60cc7e237",
+          "seconds": 102.54501020000316,
+          "selected_input_count": 10298,
+          "owned_exit": 0,
+          "owned_cleanup": 0
+        },
+        {
+          "name": "protected-Core-cross-enrichment-failure-recovery",
+          "path": "artifacts/tmp/CAP-05.S05.qualifying-core-seams-02.json",
+          "raw_sha256": "5a2bd59085ed5f6f1e4cf167364399f8e87402ecc868cc27b861308d0a861b5b",
+          "seconds": 26.06947410001885,
+          "selected_input_count": 10032
+        },
+        {
+          "name": "three-encrypted-writer-pre-cancel-and-fault-cases",
+          "path": "artifacts/tmp/CAP-05.S05.qualifying-cancellation-02.json",
+          "raw_sha256": "0fd26cb307846d4bc5f42173620a313d3c234a3e1970699a4e2504332a99992b",
+          "seconds": 18.611725299968384,
+          "selected_input_count": 9784
+        },
+        {
+          "name": "encrypted-writers-midoperation-cancel-reference-before-commit-rollback",
+          "path": "artifacts/tmp/CAP-05.S05.qualifying-midoperation-02.json",
+          "raw_sha256": "197f2cfaebd0aba8815b138ab5e9667f134f9ebf5e9b19024b577ed6c085aac6",
+          "seconds": 23.978658100008033,
+          "selected_input_count": 9785
+        }
+      ],
+      "prior_independent_input_authentication": "During expanded C16 review,110 artifact/report/raw/canonical/producer comparisons and11,723 unique actual selected input files totaling481,400,148 bytes authenticated with zero mismatch in115.1800164seconds before submit metadata publication. The same selected source/runtime proof remains fixed. This final slice review checks exact new bundle/producers/results and metadata-only descendants; it does not repeat those file hashes or qualifying execution.",
+      "slice_assembler_input_authentication": {
+        "uniqueObservedInputPaths": 10302,
+        "allCurrentHashesMatch": true,
+        "crossReportConflicts": 0,
+        "method": "Actual producer locks and no source/HEAD writers across qualifying runs; current exact byte authentication during assembly. Ignored local report input lists retain machine-specific paths."
+      },
+      "encrypted_baseline": "Before/initial/restart all retain exact original/accepted source/content/structure/seed and object/cell anchors; complete initial/restart reference/citation/table-figure collections are equal. Public schema consumers validate the three final full collections.",
+      "midoperation_cases": [
+        {
+          "kind": "reference",
+          "mode": "cancel",
+          "hooks": [
+            "reference-prepared",
+            "reference-before-commit"
+          ],
+          "cancelChecks": 134,
+          "canonicalWritesReached": true,
+          "rolledBack": true,
+          "allPriorCollectionsAndAcceptedSourceUnchanged": true
+        },
+        {
+          "kind": "citation",
+          "mode": "cancel",
+          "hooks": [
+            "citation-prepared",
+            "citation-before-commit"
+          ],
+          "cancelChecks": 352,
+          "canonicalWritesReached": true,
+          "rolledBack": true,
+          "allPriorCollectionsAndAcceptedSourceUnchanged": true
+        },
+        {
+          "kind": "table-figures",
+          "mode": "cancel",
+          "hooks": [
+            "table-figures-prepared",
+            "table-figures-before-commit"
+          ],
+          "cancelChecks": 239,
+          "canonicalWritesReached": true,
+          "rolledBack": true,
+          "allPriorCollectionsAndAcceptedSourceUnchanged": true
+        },
+        {
+          "kind": "reference",
+          "mode": "fault",
+          "hooks": [
+            "reference-prepared",
+            "reference-before-commit"
+          ],
+          "cancelChecks": 133,
+          "canonicalWritesReached": true,
+          "rolledBack": true,
+          "allPriorCollectionsAndAcceptedSourceUnchanged": true
+        }
+      ],
+      "rollback_table_count": 22,
+      "full_state_and_heads_equal_after_rollback": true,
+      "reopened_state_equal": true
+    }
+  },
+  "producer_boundaries": {
+    "statement": "The final assembler02 preexecution correction binds Core-seams02 and midoperation02 actual .log outputs while Reader/cancellation retain .outer.log; cancellation separately binds raw child output. Exact producer bytes authenticate. Executed producers and assertion strength are unchanged.",
+    "uia_retries": "Initial retains two ElementNotAvailable dumps and two exact zero-table polls; restart retains one of each. Only read-only observations receive the inherited at-most-two additional dump attempts or existing15-second cell-count loop. Current owned root is reverified, duplicate regions/other exceptions fail, and all complete status/cell/source/page/exclusion/return assertions remain. No mutations are retried.",
+    "notice_semantics": "Unexecuted Core-seams01 incorrectly expected no CID on rights-current resource/stale-reference notices. Seams02 was corrected before execution to the unchanged opaque CID/source-without-entries contract. The earlier producer remains unchanged. Derive-denied409 still carries neither CID nor research content.",
+    "cancellation_scope": "Preparation/pre-cancel cases and four real initially-false/before-commit challenges are separately named. C16 projection callback fault/postprojection cancellation has separate repository proof; the slice mid-operation producer exercises the ordinary default collection branch.",
+    "setup_scope": "Fixture/lifecycle preparation and encrypted baselines establish actual retained inputs; setup success is not itself qualifying shipping proof."
+  },
+  "adverse_assessment": {
+    "formal_round_statement": "This is the first formal S05 slice disposition. No missing prior slice review round, controlled finding ID or controlled closure is invented. Previous task ledgers and adverse observations remain append-only history.",
+    "product_failure": {
+      "subject": "Canonical citation publication followed by postcommit response resource refusal",
+      "original_candidate": "10bd669e0686edec150557830dbfcf64b7a1dc1f",
+      "preserved_refs": [
+        {
+          "path": "artifacts/tmp/CAP-05.S05.qualifying-reader-01.initial.json",
+          "sha256": "1c13eb7082cd5e9034e3dd5a34ffb6912480ecac9f38c23a5132d8bed5d60937",
+          "hashConvention": "raw-bytes"
+        },
+        {
+          "path": "artifacts/tmp/CAP-05.S05.citation-diagnostic-04.json",
+          "sha256": "e8c8fbe93199280884bdf5db3def15026e62e98a161aa0f6345587184d61cc38",
+          "hashConvention": "raw-bytes"
+        },
+        {
+          "path": "artifacts/tmp/CAP-05.S05.citation-diagnostic-04.log",
+          "sha256": "15a5f24864898eb74b9aa54999b48355fe5e1236d3094c2e35882a4de7b5ee85",
+          "hashConvention": "raw-bytes"
+        },
+        {
+          "path": "artifacts/tmp/W2.C16.T01.characterize-large-01.json",
+          "sha256": "ba6d94c3cedae92013259ff30f94e749e3e93cb7a4c9b4874a4a2092c70b448b",
+          "hashConvention": "raw-bytes"
+        },
+        {
+          "path": "artifacts/tmp/W2.C16.T01.characterize-large-01.log",
+          "sha256": "d905368ada67095a582c39d8c0bdd20d3de155a8eb92c1fd7274cd333d34c303",
+          "hashConvention": "raw-bytes"
+        }
+      ],
+      "assessment": "Original shipping initial FAIL63.3067401seconds showed the actual could-not-confirm status and forced owned-job cleanup with zero surviving owned processes. Diagnostic04 observed committed new citation head/resource409 for61,881-byte protected artifact at fixed charge7,924,864 versus remaining6,956,544; subsequent current read200 and production decoders accepted the saved collection. The prospective default-budget50-page regression first failed before the bounded C16 product edit. The failed run is not a wording/observer success. C16 transactional delivery and fresh default-budget/Native/restart/rollback proof close the defect; original FAIL remains.",
+      "inference_correction": "The earlier inference that a first UI no-collection notice proved preparation succeeded was withdrawn: Native maps known non200 to absence. Actual protected Core/head observations, not UI wording alone, establish canonical commit and root cause.",
+      "disposition": "resolved_at_tested_product_candidate"
+    },
+    "material_cancellation_preflight": "The initially proposed three preparation/pre-cancel tests could not establish cancellation during pending canonical publication. Before execution, four additional exact before-commit challenges were added and independently reviewed. Pending writes plus rollback/reopen equality now supply the missing material boundary without weakening or relabeling the earlier tests.",
+    "operational_adverse_refs": [
+      {
+        "path": "artifacts/tmp/W2.resume-20261010.readiness.log",
+        "sha256": "0eadebdea5697eb028cdd64b8bdde0e3bd296d9a2b74d9e934f5db1ac94ab028",
+        "hashConvention": "raw-bytes"
+      },
+      {
+        "path": "artifacts/tmp/W2.resume-20261010.readiness.adverse.json",
+        "sha256": "6c7e6b36ed98e2add8b98260f7cb8fa22c183723e9ed941f6a599f7235434718",
+        "hashConvention": "raw-bytes"
+      }
+    ],
+    "operational_assessment": "Resume site generation preceded T03 review publication; its later consistency check saw the newly published ledger and rejected the stale projection. The failure is retained. Subsequent current closeout generation/check does not change frozen approval or reclassify this failed check as PASS.",
+    "fixture_preparation_history": [
+      {
+        "path": "artifacts/tmp/CAP-05.S05.prepare-combined-fixture-01.py",
+        "sha256": "41ee53e2cb529b5ca9d36c6e7258fdcd0565d9e4d8c9f93ab9488453cd397879",
+        "hashConvention": "raw-bytes"
+      },
+      {
+        "path": "artifacts/tmp/CAP-05.S05.prepare-combined-fixture-01.log",
+        "sha256": "1b71657707e5244500c69ec9111db1c114f0a567094d42bc3ab8827372d7e107",
+        "hashConvention": "raw-bytes"
+      },
+      {
+        "path": "artifacts/tmp/CAP-05.S05.prepare-combined-fixture-01.lifecycle.json",
+        "sha256": "4e83529525744073ff198db1b44cbe62a4d4c61ff113fdb1ea23cc7b7b054056",
+        "hashConvention": "raw-bytes"
+      },
+      {
+        "path": "artifacts/tmp/CAP-05.S05.prepare-combined-fixture-01.adverse.json",
+        "sha256": "8408bdc25b55495a09fb0cf729ddad91165d8a11c26f92fa1efa9571c70c2907",
+        "hashConvention": "raw-bytes"
+      },
+      {
+        "path": "artifacts/tmp/CAP-05.S05.prepare-fixture-retry-01.py",
+        "sha256": "a1c103c0abc8d94b4298e9df2f608090022fa7ea8c59707e799436df428831cc",
+        "hashConvention": "raw-bytes"
+      },
+      {
+        "path": "artifacts/tmp/CAP-05.S05.prepare-combined-fixture-02.log",
+        "sha256": "2805761e496c6e307c570263047522e457a89248dd731fcdae4470870bcc18e8",
+        "hashConvention": "raw-bytes"
+      },
+      {
+        "path": "artifacts/tmp/CAP-05.S05.prepare-combined-fixture-02.stderr.log",
+        "sha256": "ba851ecbce5a8ac4ed04cc2b406cd3f4a70e598acc6e796b3ae701d80c7e5c1b",
+        "hashConvention": "raw-bytes"
+      },
+      {
+        "path": "artifacts/tmp/CAP-05.S05.integration-baseline-01.py",
+        "sha256": "6624feeae558e80f17043e142eaf5a080a0da73018ea12e767f72da8bc36c842",
+        "hashConvention": "raw-bytes"
+      },
+      {
+        "path": "artifacts/tmp/CAP-05.S05.integration-baseline-01.before.log",
+        "sha256": "d7a23a3aeb900384f7d2fb7bb5f2f6210793d7653803dc192feb92cb700806d6",
+        "hashConvention": "raw-bytes"
+      },
+      {
+        "path": "artifacts/tmp/CAP-05.S05.integration-baseline-01.before.adverse.json",
+        "sha256": "9c678dba8ff81656a11f04aa9907106fb4fcbc42c3f90b4703aad882248cf0b4",
+        "hashConvention": "raw-bytes"
+      },
+      {
+        "path": "artifacts/tmp/CAP-05.S05.prepare-baseline-retry-01.py",
+        "sha256": "63c7874daa246684f3116d095506afe8870ea5181e7c41defad85627f1c5fb87",
+        "hashConvention": "raw-bytes"
+      },
+      {
+        "path": "artifacts/tmp/CAP-05.S05.integration-baseline-02.before.log",
+        "sha256": "f71077eb2aca96967679be2029a0cfc03175af92fb11f2164c30d87c0d9a251a",
+        "hashConvention": "raw-bytes"
+      }
+    ],
+    "fixture_assessment": "Initial Native lifecycle initialization timed out before ready and left zero owned processes. A fresh current-assembly fixture with stderr captured to a file passed the unchanged 40-second bound. The first private citation baseline read failed because its required reference predecessor did not yet exist; the successor observes its actual absent encrypted head. Both adverse results and producers remain unchanged. Successful setup is not qualifying shipping evidence.",
+    "task_history": "Authenticated T01/T02/T03 and C16 manifests/reviews retain all original failures, informal first-failing corrections, publication fixture error, UIA count/pending-region predecessors and declared instrument limits. No prior failing aggregate/parser/layoutGold/fixture result becomes PASS by this slice approval."
+  },
+  "verification_selection": {
+    "selectedCommandIds": [
+      "desktop:application",
+      "documents:unit"
+    ],
+    "rationale": "Fresh owned shipping Native/renderer/Core initial and restart compose all three scholarly structures from one protected accepted authored fixture. Fresh protected Core checks copy-rights denial, resource refusal, all-structure stale-session rejection, reference-head refresh invalidating only its citation dependency, explicit context recovery and retained independent table/exclusion. Three existing fresh encrypted cases retain pre-cancel refusal and their original fault coverage; a separate fresh combined-fixture producer challenges initially-false mid-operation cancellation after actual canonical writes for each writer and a reference fault only at reference-before-commit, with exact rollback and reopen equality. Portable schema consumers validate each complete retained collection. Existing independent task reviews remain authenticated history; no task audit, cached Native result, model/benchmark or unchanged full-profile replay is inferred.",
+    "deferredCoverage": [
+      "S06 task/slice implementation and review.",
+      "Fresh full affected repository/profile, Windows packaging, security/privacy/rights/accessibility/performance and cross-capability W2 qualification, independent Wave review and separate G2 human release.",
+      "No 8/16 GiB model/hardware runs, minimum 2/3 GiB support claim, parser-overage tuning, Reader latency replay or clipboard action."
+    ]
+  },
+  "performance_observation": {
+    "core_transport": {
+      "coreRequestCount": 24,
+      "coreTransportMinimumSeconds": 0.02922330005094409,
+      "coreTransportMaximumSeconds": 1.32459239999298,
+      "coreTransportSortedSeconds": [
+        0.02922330005094409,
+        0.051047799992375076,
+        0.11531179997837171,
+        0.40807990002213046,
+        0.5148942999658175,
+        0.5390475000021979,
+        0.5462640000041574,
+        0.571694899990689,
+        0.5819791000103578,
+        0.6251141999964602,
+        0.7352312000002712,
+        0.7669507000246085,
+        0.7946792999864556,
+        0.8292424999526702,
+        0.9015227999771014,
+        0.912365399999544,
+        0.9137281999574043,
+        1.140605099964887,
+        1.141276900016237,
+        1.17280539998319,
+        1.2012316000182182,
+        1.2146650000358932,
+        1.2395412999903783,
+        1.32459239999298
+      ],
+      "method": "Warm authenticated Core TestClient requests including protected I/O, one disposable 50-page authored fixture; operation timings are observations, not p95 model/hardware qualification.",
+      "regressionControls": "Existing fixed resource/cell/page/frame admission and cancellation/deadline regressions; no target relaxation."
+    },
+    "shipping_initial_seconds": 122.0211209000554,
+    "shipping_restart_seconds": 102.54501020000316,
+    "kernel_whole_owned_job_peak_bytes": {
+      "initial": 485412864,
+      "restart": 486764544
+    },
+    "interpretation": "Owned UIA orchestration durations and kernel aggregate committed peaks are measured process observations, not Reader response latency, viewer working-set, RAM-tier support, model quality or cost savings. No immutable performance baseline is changed."
+  },
+  "scope_limits": {
+    "synthetic": "Lawful authored source and human-accepted synthetic parser IR/capacity establish exact identity, wiring, persistence and recovery. No parser/model/hardware quality, numerical verification, study outcome or scientific support is inferred.",
+    "principal": "Actual Windows shipping integration-harness Native/Renderer/Core/vault/SQLCipher and separate protected Core TestClient/repository boundaries. Fresh offline Native release at the product candidate; unchanged shipping Renderer and known signed worker/guardian bytes have authenticated historical assembly lineage. No new frontend build, sealed installer, OS registration, signing/all-platform matrix or external clipboard effect is claimed.",
+    "accessibility": "Bounded fresh uniquely-owned UIA names/status/navigation and historical independently reviewed client/mounted semantics; no new hardware screenreader, complete fresh keyboard traversal or pixel-level reference claim.",
+    "performance": "No8/16-GiB/model run, minimum2/3-GiB claim, fresh Reader/p95 model benchmark, parser-overage tuning, threshold relaxation or latency optimization. Approved3-second Reader evidence and owner-accepted parser overage remain unchanged.",
+    "coverage": "S05 affected integration/adversarial review only. S06 implementation/review, fresh full affected/repository/profile Windows W2 cross-capability happy/failure/denial/cancellation/migration/restart/recovery, security/privacy/rights/accessibility/performance/packaging/platform checks, independent Wave disposition and separate human G2 remain required.",
+    "debt": "Inherited unwaived built-frame CSP/startup predicate and broad quality/inventory debt remain explicit W2 qualification obligations. Prior/bounded source tests are not a new full-profile PASS."
+  },
+  "findings": [],
+  "closures": [],
+  "optional_adjacent_findings": [],
+  "slice_approval": true,
+  "wave_completion": false,
+  "release_approval": false
+}
