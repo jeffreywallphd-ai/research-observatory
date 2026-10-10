@@ -1,0 +1,296 @@
+{
+  "task_id": "CAP-05.S05.T02",
+  "attempt_id": "R01",
+  "reviewer": "agent:/root/reader_anchor_review",
+  "result": "approved",
+  "reviewed_state_commit": "0c07c80813d3a3c6d7d78a1b1a6823eec1a7898e",
+  "candidate_commit": "0c07c80813d3a3c6d7d78a1b1a6823eec1a7898e",
+  "base_commit": "a48da60f0a59cca45dbbdac4c7a72e3986716170",
+  "findings": [],
+  "closures": [],
+  "acceptance_reviews": [
+    {
+      "criterion_index": 1,
+      "result": "satisfied",
+      "assessment": "Citation extraction preserves exact accepted source identity, raw marker and code-point selectors, paragraph context and explicitly inferred sentence context. Authenticated native RID/TEI/HTML targets consume exact canonical reference IDs; optional TEI type is not identity authority. Legitimate groups retain each member, missing members remain unresolved and duplicate targets remain ambiguous. Numeric labels come from source rather than reference ordinal. Native ancestor boundary mapping rejects unrepresentable cross-element selectors; authenticated nonbibliographic descendants fence flattened paragraph inference. Reported bibliography superscripts and footnote-body citations remain distinct from unreported superscripts. All extracted/inferred observations and canonical associations remain scholarly unverified, with missing confidence explicitly unknown. Actual shipping initial and new-process restart display exact reported [1] and inferred unresolved [9] contexts, exact current reference/canonical target identities, exact source passages after separate jumps, full source IDs and genuine return with protected text cleared. Authored parser IR is explicitly synthetic."
+    },
+    {
+      "criterion_index": 2,
+      "result": "satisfied",
+      "assessment": "Fresh selected proof contains 19 extraction/bounded Reader cases, 6 encrypted citation repository cases, 1 actual Windows Core/API authority case, 11 directly affected reference-input regression cases, 15 material dependency replacement cases, 11 renderer client cases, 26 mounted Reader journeys and 4 Native closed-command cases. Material cases cover grouped/missing/duplicate and nonbibliographic targets, Unicode/CRLF/repeated/cross-element source offsets, unknown native boundaries, current human/Native/Intent/privacy/inspect/derive and target-source authority, current reference revision and protected payload digest, transitive material freshness, reference refresh, CAS/conflicting command reuse/exact retry, cancellation and precommit rollback, encrypted reopen/corruption, strict cross-process value rejection and bounded one-context delivery. Mounted stale/Lock/substitution and uncertain-issued closure cases declare synthetic ports and retain conservative shared admission until physical settlement. Actual supervised Core/vault/SQLCipher and shipping Renderer/Wry/Native invoke are separate real-principal proof. Initial and restart exit the actual Native process with code 0 and leave zero owned processes. No unchanged broad suite or model/hardware/output boundary is inferred."
+    },
+    {
+      "criterion_index": 3,
+      "result": "satisfied",
+      "assessment": "The exact 40-path claim-base diff matches the frozen packet and is bounded to encrypted citation-context enrichment, fixed opaque Core/Native commands, strict client, inert approved 1.9 Reader controls, schemas, fixtures, tests, documentation and normal task metadata. The common canonical writer preserves immutable encrypted versions, provenance/dependencies, transactional CAS and replay lookup before minting; prepare, publication, retry and delivery revalidate current authority and the exact current reference head/digest. Reported citations reuse existing canonical IDs; inferred markers use immutable collection-revision/order/source addressing without a parallel canonical identity. Accepted IR v1, original/accepted document bytes, literal v28 migration and storage profile are unchanged. The shared reference input helper is additive with prior defaults retained and freshly checked. Proposed ADR-0049 documents the mapping to accepted authority without a new decision or supersession. Fresh affected format/lint/types, schema/ADR/style/UI conformance, client/mounted proof, frontend assembly and locked offline incremental Native release/test builds pass. No automation framework, new model, Work creation/adjudication, governed experience replacement, latency tuning or release criterion change was introduced."
+    }
+  ],
+  "advisory_resolution": {
+    "prior_record": {
+      "path": "artifacts/tmp/CAP-05.S05.T02.preflight-disposition-01.md",
+      "sha256": "34e6b59b5ceff0c8ef6c339002c7b4fe58a44a961743da3d511274116289e3ac",
+      "reviewed_base": "a48da60f0a59cca45dbbdac4c7a72e3986716170",
+      "preserved_status": "pre-submission-advisory"
+    },
+    "current_candidate": "0c07c80813d3a3c6d7d78a1b1a6823eec1a7898e",
+    "disposition": "resolved_at_current_candidate",
+    "controlled_closure_created": false,
+    "findings": [
+      {
+        "subject": "Optional TEI type must not gate an already canonical target",
+        "first_failing_log": "artifacts/tmp/CAP-05.S05.T02.tei-characterization-01.log",
+        "assessment": "The advisory identified loss of an authenticated canonical TEI ref target when optional type was absent. The owner preserved the first-failing characterization before correction. Current extraction consumes exact canonical fragment targets independently of optional type, and fresh current extraction proof replays the regression."
+      },
+      {
+        "subject": "Nonbibliographic callouts must not acquire bibliography identity through parent inference",
+        "first_failing_log": "artifacts/tmp/CAP-05.S05.T02.nonbibliographic-characterization-01.log",
+        "assessment": "The advisory identified bracketed footnote and unreported superscript descendants being reinterpreted as bibliography candidates through flattened parent text. The owner preserved three first-failing assertions before correction. Authenticated descendant intervals now fence inference; descendants lacking native offsets remain conservative. Footnote-body and reported bibliography semantics remain intact and fresh current proof replays the negative and positive cases."
+      }
+    ],
+    "formal_round_statement": "These were informal pre-submission source findings. R01 has no prior formal attempt or formal open finding; no legacy round, controlled finding ID or controlled closure is invented.",
+    "check_ids": [
+      "citation-styles-and-exact-source",
+      "encrypted-citation-publication",
+      "actual-core-citation-authority",
+      "mounted-reader-journeys"
+    ]
+  },
+  "incremental_review_resolution": {
+    "successor_mapping": {
+      "disposition": "appropriate_documentary_correction",
+      "assessment": "The successor from 61b0678331656b95d638043770fdb7b91c4d4f19 combines equivalent same-result guards with explicit parentheses and adds indexed Proposed ADR-0049 mapping to existing accepted ADR-0013/0024/0027/0029. It adds no new security, persistence or experience authority. The full failed focused01 report remains FAIL; fresh focused02 qualifies the exact successor."
+    },
+    "producer_boundaries": {
+      "disposition": "adequate_for_observed_proof",
+      "assessment": "Reader02 asserts the same complete status strings by joining Text descendants within each unique exact owned citation region; it does not weaken expected status or identity. A fresh disposable fixture repeats initial explicit reference and citation extraction. Reader03 permits at most two additional fresh read-only dump/dump-region attempts solely for ElementNotAvailableException. Writes, exact window ownership, source/target/return assertions and bounded failure behavior remain unchanged. Its successful restart retains every attempt and does not relabel reader02.restart FAIL. Current source/runtime and package inputs are held and authenticated through actual Native closure."
+    }
+  },
+  "independence": {
+    "implementation_owner": "codex-w2-implementation",
+    "statement": "I independently reviewed the approved material scope and accepted contracts, bounded claim-base source, material authority/persistence/cross-process paths, both advisory corrections, successor lint/ADR mapping, qualification producers, raw results, selected input closure and the frozen R01. I reported the advisory findings; the owner preserved their record and authored all corrections/producers. I authored only this independent review ledger, no product/test/planning/producer/controller mutation or commit. I executed read-only inspection, hashes and existing binding validation, with no qualifying test/build/model/benchmark/clipboard replay. Shared product HEAD stayed fixed. Normal post-submit backlog and generated review-state publication are outside the already completed product proof."
+  },
+  "verification_selection": {
+    "selectedCommandIds": [
+      "desktop:application",
+      "desktop:unit",
+      "documents:unit",
+      "foundation:adr",
+      "foundation:quality",
+      "foundation:ui-change",
+      "graph:unit"
+    ],
+    "riskAnalysis": "Changed protected citation publication, exact source identity and private cross-process Reader contracts require fresh focused contracts, actual SQLCipher/Core authority, directly changed reference input-helper regression, dependency replacement, client/mounted journeys and actual Native/shipping proof. No migration change or full-profile-wide impact. Source and actual installed dependencies are locked at one committed candidate.",
+    "deferred": [
+      "S05 table/figure extraction, integrated slice end-to-end proof and independent slice disposition remain ordered later work.",
+      "Fresh full affected/repository/profile W2 qualification, required platform/security/privacy/rights/accessibility/performance/packaging matrix, independent Wave review and separate human release remain required.",
+      "No 8/16GiB model/tier tests or minimum2/3GiB claim. Larger computing remains W5; adopted Reader latency and owner-accepted parser overage are not tuned/replayed.",
+      "Inherited built-frame CSP/startup predicate and broad quality/inventory debt remain disclosed and unwaived; no framework repairs in this task."
+    ]
+  },
+  "scope_limits": {
+    "qualification": "CAP-05.S05.T02 R01 only at the exact committed candidate. Task approval is not S05 slice/checkpoint/Wave or human release approval.",
+    "synthetic_source": "Authored synthetic accepted parser IR and mounted substitute ports are explicit. No actual parser/model accuracy, scholarly support, verification, study result or acceptance-probability claim.",
+    "actual_principal": "Actual Windows protected vault, SQLCipher, supervised Core and shipping renderer/Wry/Native invocation in an owned integration-harness project; unit and mounted boundaries are separately identified.",
+    "runtime": "Fresh frontend and Native assembly, current Core/contracts and authenticated actual installed fixture runtime, signed worker and guardian selectors. No model job is executed. This is not a sealed installer, cold all-crate rebuild, signing/release or full Windows/WebView qualification.",
+    "physical_closure": "Actual owned Native process exit and descendant cleanup are proved for the shipping initial/restart journeys. Mounted uncertain-issued and Lock/stale cases prove conservative client accounting with synthetic ports; no manual in-flight OS Lock or output/clipboard/printer test is invented.",
+    "resource": "Reported kernel aggregate committed peaks include the whole owned process job and are not viewer-owned buffer, working-set, maximum-document throughput, minimum-hardware or new performance qualification.",
+    "experience": "Citation controls implement approved 1.9 Reader regions. Exact canonical target inspection is provenance/identity display, not canonical Work verification or adjudication.",
+    "deferred_risks": "Ordered T03 and integrated S05 evidence/review, later checkpoint/Wave full affected/profile and platform/security/privacy/rights/accessibility/performance/packaging qualification, independent Wave review and human release remain required. Inherited built-frame CSP/startup predicate and broader quality/inventory/type or classifier debt remain unwaived. No framework repair or model/hardware-tier/latency replay is authorized here."
+  },
+  "preserved_adverse_observations": [
+    {
+      "path": "artifacts/tmp/CAP-05.S05.T02.qualifying-focused-01.json",
+      "sha256": "4ed1591ec084a6a2838c7cf314816922d62895301a0fa16487d6fac639199c43",
+      "qualifyingAsWholeReport": false
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S05.T02.qualifying-reader-01.initial.json",
+      "sha256": "b94d000e6d0df4e8da81496b8d72464c644ad4cb55eb22566d564b3cb5d696f8",
+      "qualifyingAsWholeReport": false
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S05.T02.qualifying-reader-02.restart.json",
+      "sha256": "7fc5e8e6a09de5d416b82ceb8be205aed91b937c31bfddefa4529ce3e072dea2",
+      "qualifyingAsWholeReport": false
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S05.T02.characterization-before-01.log",
+      "sha256": "bfcaf730d1cc514401fd26cb9875bcb5a316700a91c0bb843ebb93f2055408bf",
+      "qualifyingAsWholeReport": false
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S05.T02.repository-before-01.log",
+      "sha256": "4fd119980e0cc283bd47b977f0aebfc4bc7f9a0dbf5552b43f8e8dca1415af1d",
+      "qualifyingAsWholeReport": false
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S05.T02.repository-development-01.log",
+      "sha256": "bb072d57392d2916ff8aeb6d9e2921596b5a1b497721e3df4c3f339669835678",
+      "qualifyingAsWholeReport": false
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S05.T02.repository-development-02.log",
+      "sha256": "30960456ef500958a8007f2781a52c7f4e8f830d844b1dbcccc3e2404920082f",
+      "qualifyingAsWholeReport": false
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S05.T02.repository-development-03.log",
+      "sha256": "d1e87f1c0340fb5650c2e481eae0fd839aa50a0b3937be5cc2887aacc5068bfd",
+      "qualifyingAsWholeReport": false
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S05.T02.mounted-build-development-01.log",
+      "sha256": "bd473761d6f9939f1e5bf7dd0948fe4617e4829b6ddf80a8bbaedefba04ec1bd",
+      "qualifyingAsWholeReport": false
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S05.T02.mounted-development-02.log",
+      "sha256": "f1bdd8f386436e2f3632246068d31f153df4d478899208d034b1a852d706110d",
+      "qualifyingAsWholeReport": false
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S05.T02.client-development-01.log",
+      "sha256": "87ba6243f668d45155af93e6e3b7e76999370283e3a4687badc9a1f3988555ed",
+      "qualifyingAsWholeReport": false
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S05.T02.types-development-02.log",
+      "sha256": "203ef9e207f291596be1e515ec4424cdbb5cf922e4dfa150b77bd9ace5318779",
+      "qualifyingAsWholeReport": false
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S05.T02.types-development-03.log",
+      "sha256": "f7cf49ff429ac6229897301d9a69196cd600edaab15694c6d08622b984dacaf1",
+      "qualifyingAsWholeReport": false
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S05.T02.schema-development-02.log",
+      "sha256": "11ed05d0518d77fcd94cae77a851a01416d1f5751ba3a82bb758f43e06b18cca",
+      "qualifyingAsWholeReport": false
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S05.T02.tei-characterization-01.log",
+      "sha256": "d672b51b62f165276c5c39945f4df9e7d41f7d20e34c2242562f45af85966d2a",
+      "qualifyingAsWholeReport": false
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S05.T02.nonbibliographic-characterization-01.log",
+      "sha256": "91a8fa50e4cafb0e808d56ac6acd2edfa4bc522ea2386f1e21c4b0c36696b11c",
+      "qualifyingAsWholeReport": false
+    }
+  ],
+  "evidence_reproduction": {
+    "artifact_authentication": {
+      "machine_artifact_count": 97,
+      "selected_check_count": 23,
+      "missing_or_mismatched_artifacts": [],
+      "missing_or_mismatched_check_bindings": [],
+      "current_unique_hashed_path_count": 13259,
+      "current_unique_hashed_path_scope": "Machine artifacts plus deduplicated selected source, installed dependencies/runtime, tools, producers and assembly paths",
+      "selected_input_mismatches": [],
+      "selected_input_rows_by_report": {
+        "artifacts/tmp/CAP-05.S05.T02.qualifying-focused-02.json": 14287,
+        "artifacts/tmp/CAP-05.S05.T02.qualifying-native-build-01.json": 443,
+        "artifacts/tmp/CAP-05.S05.T02.qualifying-native-tests-build-01.json": 443,
+        "artifacts/tmp/CAP-05.S05.T02.qualifying-native-units-01.json": 450,
+        "artifacts/tmp/CAP-05.S05.T02.qualifying-reader-02.initial.json": 10282,
+        "artifacts/tmp/CAP-05.S05.T02.qualifying-reader-03.restart.json": 10282
+      },
+      "changed_files_match_exact_base_diff": true,
+      "changed_path_count": 40,
+      "selected_command_spellings_unique": true,
+      "actual_vite_working_directory": "apps/desktop",
+      "current_source_inputs_changed_by_reviewer": false
+    },
+    "qualifying_measurements": {
+      "selected_case_counts": {
+        "citation_extraction_and_reader": 19,
+        "encrypted_repository": 6,
+        "actual_core_api": 1,
+        "affected_reference_inputs": 11,
+        "material_dependency_replacement": 15,
+        "renderer_units": 11,
+        "mounted_reader": 26,
+        "native_closed_commands": 4
+      },
+      "shipping_initial": {
+        "path": "artifacts/tmp/CAP-05.S05.T02.qualifying-reader-02.initial.json",
+        "duration_seconds": 67.18941639998229,
+        "result": "PASS",
+        "owned_exit": 0,
+        "owned_cleanup_active_processes": 0,
+        "explicit_fresh_extraction": true,
+        "exact_citation_contexts_and_current_canonical_target": true,
+        "exact_source_jump_and_return": true
+      },
+      "shipping_restart": {
+        "path": "artifacts/tmp/CAP-05.S05.T02.qualifying-reader-03.restart.json",
+        "duration_seconds": 59.69177540001692,
+        "result": "PASS",
+        "owned_exit": 0,
+        "owned_cleanup_active_processes": 0,
+        "retained_encrypted_collection": true,
+        "exact_citation_contexts_and_current_canonical_target": true,
+        "exact_source_jump_and_return": true
+      },
+      "package": {
+        "files": 197,
+        "frontend_source_pins": 243,
+        "current_core_contract_source_pins": 1011,
+        "actual_installed_runtime_files": 8758,
+        "signed_worker_files": 61,
+        "source_manifest_sha256": "e9d7f6a0c8e0f3b5f4ae6201e2c3dd9593f319b2a635eab953b8b99493fcf0a2",
+        "native_build_record_sha256": "c15e41bd54586e259131732df8d46d80865b50b09339446dd10670ce2697288b"
+      }
+    },
+    "reviewer_current_candidate_tests_executed": [],
+    "frozen_packet_authentication": {
+      "result": "PASS",
+      "existing_read_only_binding_function": "taskctl.task_submission_packet_errors",
+      "errors": [],
+      "manifest_binding_function": "taskctl.validate_task_evidence",
+      "manifest_errors": [],
+      "submitted_at": "2026-10-10T08:18:34+00:00",
+      "status_before_review": "REVIEW",
+      "submitted_by": "codex-w2-implementation",
+      "packet_sha256": "80acd4a5a07a90d7997bf5735c2d8f85672274cc30f77db030650af23ea13dc5",
+      "evidence_reference": {
+        "type": "criterion-manifest",
+        "path": "artifacts/evidence/CAP-05.S05.T02.R01.json",
+        "sha256": "583b0957b5920f7516ef327b45d2a14a138c0571336cfe25ba670db6c0be2135",
+        "commit": "0c07c80813d3a3c6d7d78a1b1a6823eec1a7898e",
+        "recorded_at": "2026-10-10T08:18:34+00:00"
+      },
+      "evidence_raw_sha256": "64ef3a9f6d0d52edc17e673042386d793be02a683d3d28badb49b6db07f21600",
+      "evidence_hash_convention": "UTF-8 text with CRLF/CR normalized to LF; raw SHA256 is separately retained",
+      "acceptance_criteria_sha256": "28a439f198c769f953d38c06ea60cb19a34e009a3907274fb375f3561d561bac",
+      "selection_sha256": "02c8fc28ad5b640306aa47ca1f1547f6438cebd780ae75922fdf06fe621a5701",
+      "prior_attempt_id": null,
+      "prior_formal_attempt_count": 0,
+      "formal_open_finding_ids_before_review": [],
+      "selected_command_id_count": 7,
+      "selected_check_count": 23,
+      "base_ancestry_verified": true,
+      "head_verified": "0c07c80813d3a3c6d7d78a1b1a6823eec1a7898e",
+      "backlog_snapshot_raw_sha256": "a8ed1b7890e18ee19ea8cf9727c7724e8cdf3e85fd157f8ea3c418193a87914f",
+      "existing_submit_receipt": {
+        "path": "artifacts/tmp/CAP-05.S05.T02.submit-R01-01.log",
+        "status": "COMMITTED",
+        "cas_outcome": "matched-and-replaced",
+        "successor_sha256": "a8ed1b7890e18ee19ea8cf9727c7724e8cdf3e85fd157f8ea3c418193a87914f"
+      }
+    },
+    "reviewer_authentication_diagnostics": "Existing interpreter real-location warning was emitted by read-only inspection. An initial binding invocation used a relative repository root and failed before validation at a missing path; the corrected explicit-root invocation returned 0 with both binding error lists empty. No qualifying result or product defect is inferred from either diagnostic."
+  },
+  "optional_adjacent_findings": [],
+  "notes": "Approve CAP-05.S05.T02 R01 at exact 0c07c80813d3a3c6d7d78a1b1a6823eec1a7898e. All three material task criteria are supported by bounded reviewed source, 23 fresh selected checks, 97 authenticated artifacts, selected source/runtime closure and exact frozen packet/criteria/selection bindings. Both informal advisory defects are resolved at the current candidate with first-failing evidence preserved; no prior formal round is invented. Actual shipping initial/restart prove exact contexts/current target/source jump/return and encrypted retained state with Native exit 0 and zero owned processes. No active blocking finding remains. Later S05 integration, checkpoint/Wave/profile/platform qualification, inherited unwaived debt and human release remain open.",
+  "task_approval": true,
+  "slice_approval": false,
+  "wave_completion": false,
+  "release_approval": false,
+  "reviewed_at": "2026-10-10T08:30:48Z",
+  "packet_sha256": "80acd4a5a07a90d7997bf5735c2d8f85672274cc30f77db030650af23ea13dc5",
+  "evidence_sha256": "583b0957b5920f7516ef327b45d2a14a138c0571336cfe25ba670db6c0be2135",
+  "acceptance_criteria_sha256": "28a439f198c769f953d38c06ea60cb19a34e009a3907274fb375f3561d561bac",
+  "selection_sha256": "02c8fc28ad5b640306aa47ca1f1547f6438cebd780ae75922fdf06fe621a5701"
+}

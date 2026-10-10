@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 76b33a64617f548276e0a1bf1e5f95f53ab6e912c6472574f306b9d26169458a
+source_sha256: 59f9169624c9ce756ecef266d3926b06531a0cc34e68d04677771030a90593ca
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -12019,15 +12019,15 @@ Original tasks and approvals remain unchanged.
 
 **Currently open findings:** -
 
-#### - [ ] CAP-05.S05.T02 - Extract in-text citation contexts and targets
+#### - [x] CAP-05.S05.T02 - Extract in-text citation contexts and targets
 
-**Status / priority / estimate / risk:** `IN_PROGRESS` / `P1` / `L` / `medium`
+**Status / priority / estimate / risk:** `DONE` / `P1` / `L` / `medium`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
 **Dependencies:** `CAP-05.S05.T01`
 
-**Owner / review:** codex-w2-implementation / - (`-`)
+**Owner / review:** codex-w2-implementation / agent:/root/reader_anchor_review (`approved`)
 
 **Objective:** Citation markers linked to reference entries with sentence/paragraph context, location, and multi-target handling.
 
@@ -12046,17 +12046,55 @@ Original tasks and approvals remain unchanged.
 - python tools/verify.py --profile documents
 - python tools/verify.py --profile graph
 
+**Evidence:**
+
+- `artifacts/evidence/CAP-05.S05.T02.R01.json` at `0c07c80813d3a3c6d7d78a1b1a6823eec1a7898e`
+
 ##### Review history — CAP-05.S05.T02
 
-**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+**Review mode:** `append-only v1` / 1 completed round(s)
 
-**Current latest-review projection:** `-` by - at `-`
+###### Round R01
 
-**Latest notes:** -
+**Immutable submission packet:** `R01` / packet SHA-256 `80acd4a5a07a90d7997bf5735c2d8f85672274cc30f77db030650af23ea13dc5`
+
+- Candidate / base / branch: `0c07c80813d3a3c6d7d78a1b1a6823eec1a7898e` / `a48da60f0a59cca45dbbdac4c7a72e3986716170` / `codex/w2-implementation`
+- Submitted by / at: codex-w2-implementation / `2026-10-10T08:18:34+00:00`
+- Evidence: `artifacts/evidence/CAP-05.S05.T02.R01.json` / `583b0957b5920f7516ef327b45d2a14a138c0571336cfe25ba670db6c0be2135` / `0c07c80813d3a3c6d7d78a1b1a6823eec1a7898e`
+- Acceptance-criteria SHA-256: `28a439f198c769f953d38c06ea60cb19a34e009a3907274fb375f3561d561bac`
+- Verification-selection SHA-256: `02c8fc28ad5b640306aa47ca1f1547f6438cebd780ae75922fdf06fe621a5701`
+- Changed paths: `apps/desktop/src-tauri/src/document_reader.rs`, `apps/desktop/src-tauri/src/lib.rs`, `apps/desktop/src-tauri/src/supervisor.rs`, `apps/desktop/src/app/DocumentViewerWorkspace.tsx`, `apps/desktop/src/app/ViewerCitationsPane.tsx`, `apps/desktop/src/app/documentCitations.test.ts`, `apps/desktop/src/app/documentCitations.ts`, `artifacts/evidence/CAP-05.S05.T02.task-start.md`, `artifacts/evidence/ui-change/CAP-05.S05.T02.json`, `docs/adr/ADR-0049-bind-citation-contexts-to-existing-canonical-and-protected-document-authority.md`, `docs/adr/index.json`, `docs/planning-implementation-plan.md`, `packages/contracts/documents/README.md`, `packages/contracts/documents/citation-collection.v1.schema.json`, `packages/contracts/documents/citation-contexts.md`, `packages/contracts/documents/citation-enrichment-command.v1.schema.json`, `packages/contracts/documents/citation-reader-notice.v1.schema.json`, `packages/contracts/documents/citation-reader-page.v1.schema.json`, `packages/contracts/documents/generate_parser_schema.py`, `planning/backlog.yaml`, `planning/review-site/CAP-05/CAP-05.S05.T02.html`, `planning/review-site/CAP-05/CAP-05.S05.html`, `planning/review-site/manifest.json`, `planning/review-site/waves/W2.html`, `planning/status-summary.md`, `services/core-api/src/research_observatory_core/citation_reader.py`, `services/core-api/src/research_observatory_core/document_citation_repository.py`, `services/core-api/src/research_observatory_core/document_citations.py`, `services/core-api/src/research_observatory_core/document_reference_repository.py`, `services/core-api/src/research_observatory_core/document_revision_api.py`, `services/core-api/src/research_observatory_core/document_revision_service.py`, `services/core-api/src/research_observatory_core/object_store.py`, `tests/desktop/fixtures/citation-reader.ts`, `tests/desktop/fixtures/document-viewer.tsx`, `tests/desktop/test_document_viewer_interactions.py`, `tests/documents/test_citation_contexts.py`, `tests/documents/test_citation_reader.py`, `tests/documents/test_citation_repository.py`, `tests/documents/test_citation_service.py`, `tests/documents/viewer_native_windows_fixture.py`
+- Selected checks: `.venv\Scripts\python.exe -B -m ruff format --check packages/contracts/documents/generate_parser_schema.py services/core-api/src/research_observatory_core/citation_reader.py services/core-api/src/research_observatory_core/document_citation_repository.py services/core-api/src/research_observatory_core/document_citations.py services/core-api/src/research_observatory_core/document_reference_repository.py services/core-api/src/research_observatory_core/document_revision_api.py services/core-api/src/research_observatory_core/document_revision_service.py services/core-api/src/research_observatory_core/object_store.py tests/desktop/test_document_viewer_interactions.py tests/documents/test_citation_contexts.py tests/documents/test_citation_reader.py tests/documents/test_citation_repository.py tests/documents/test_citation_service.py tests/documents/viewer_native_windows_fixture.py`, `.venv\Scripts\python.exe -B -m ruff check packages/contracts/documents/generate_parser_schema.py services/core-api/src/research_observatory_core/citation_reader.py services/core-api/src/research_observatory_core/document_citation_repository.py services/core-api/src/research_observatory_core/document_citations.py services/core-api/src/research_observatory_core/document_reference_repository.py services/core-api/src/research_observatory_core/document_revision_api.py services/core-api/src/research_observatory_core/document_revision_service.py services/core-api/src/research_observatory_core/object_store.py tests/desktop/test_document_viewer_interactions.py tests/documents/test_citation_contexts.py tests/documents/test_citation_reader.py tests/documents/test_citation_repository.py tests/documents/test_citation_service.py tests/documents/viewer_native_windows_fixture.py`, `.venv\Scripts\python.exe -B -m mypy services/core-api/src/research_observatory_core/citation_reader.py services/core-api/src/research_observatory_core/document_citation_repository.py services/core-api/src/research_observatory_core/document_citations.py services/core-api/src/research_observatory_core/document_reference_repository.py services/core-api/src/research_observatory_core/document_revision_api.py services/core-api/src/research_observatory_core/document_revision_service.py services/core-api/src/research_observatory_core/object_store.py`, `.venv\Scripts\python.exe -B packages/contracts/documents/generate_parser_schema.py --check`, `.venv\Scripts\python.exe -B tools/adr_check.py --repo . --base a48da60f0a59cca45dbbdac4c7a72e3986716170 --head 0c07c80813d3a3c6d7d78a1b1a6823eec1a7898e`, `.venv\Scripts\python.exe -B tools/product_style_check.py --repo .`, `.venv\Scripts\python.exe -B tools/ui_change_gate.py --repo . --base a48da60f0a59cca45dbbdac4c7a72e3986716170 --head 0c07c80813d3a3c6d7d78a1b1a6823eec1a7898e`, `.local\toolchains\node-v24.19.0-win-x64\node.exe apps/desktop/node_modules/typescript/bin/tsc --noEmit -p apps/desktop/tsconfig.json`, `.local\toolchains\node-v24.19.0-win-x64\node.exe apps/desktop/node_modules/vitest/vitest.mjs run apps/desktop/src/app/documentCitations.test.ts apps/desktop/src/app/documentReferences.test.ts apps/desktop/src/app/documentViewerNative.test.ts`, `.venv\Scripts\python.exe -B -m unittest -v tests.documents.test_citation_contexts tests.documents.test_citation_reader`, `.venv\Scripts\python.exe -B -m unittest -v tests.documents.test_citation_repository`, `.venv\Scripts\python.exe -B -m unittest -v tests.documents.test_citation_service`, `.venv\Scripts\python.exe -B -m unittest -v tests.documents.test_reference_repository tests.documents.test_reference_service tests.service.test_reference_api`, `.venv\Scripts\python.exe -B -m unittest -v tests.graph.test_dependency_impacts`, `.local\toolchains\node-v24.19.0-win-x64\node.exe tests/desktop/fixtures/document-viewer.mjs artifacts\tmp\CAP-05.S05.T02.mounted-qualification-02`, `.venv\Scripts\python.exe -B -m unittest -v tests.desktop.test_document_viewer_interactions`, `.local\toolchains\node-v24.19.0-win-x64\node.exe apps\desktop\node_modules\vite\bin\vite.js build --config vite.product.config.ts`, `.local\toolchains\node-v24.19.0-win-x64\node.exe apps/desktop/scripts/assemble-application.mjs`, `.local\toolchains\rustup\toolchains\1.96.1-x86_64-pc-windows-msvc\bin\cargo.exe build --manifest-path apps/desktop/src-tauri/Cargo.toml --release --locked --offline --features integration-harness --example project_contract_probe -j 1 --message-format json-render-diagnostics`, `.local\toolchains\rustup\toolchains\1.96.1-x86_64-pc-windows-msvc\bin\cargo.exe test --manifest-path apps/desktop/src-tauri/Cargo.toml --locked --offline --features integration-harness --lib --no-run -j 1 --message-format json-render-diagnostics`, `artifacts\tmp\CAP-05.S05.T02.qualifying-native-units-01\reference-contract-tests.exe document_reader::tests:: --nocapture --test-threads=1`, `.venv/Scripts/python.exe -B artifacts/tmp/CAP-05.S05.T02.qualifying-reader-02.py 0c07c80813d3a3c6d7d78a1b1a6823eec1a7898e initial`, `.venv/Scripts/python.exe -B artifacts/tmp/CAP-05.S05.T02.qualifying-reader-03.py 0c07c80813d3a3c6d7d78a1b1a6823eec1a7898e restart`
+- Deferred checks: `S05 table/figure extraction, integrated slice end-to-end proof and independent slice disposition remain ordered later work.`, `Fresh full affected/repository/profile W2 qualification, required platform/security/privacy/rights/accessibility/performance/packaging matrix, independent Wave review and separate human release remain required.`, `No 8/16GiB model/tier tests or minimum2/3GiB claim. Larger computing remains W5; adopted Reader latency and owner-accepted parser overage are not tuned/replayed.`, `Inherited built-frame CSP/startup predicate and broad quality/inventory debt remain disclosed and unwaived; no framework repairs in this task.`
+- Selection rationale: Changed protected citation publication, exact source identity and private cross-process Reader contracts require fresh focused contracts, actual SQLCipher/Core authority, directly changed reference input-helper regression, dependency replacement, client/mounted journeys and actual Native/shipping proof. No migration change or full-profile-wide impact. Source and actual installed dependencies are locked at one committed candidate.
+- Prior round / replayed open findings: `-` / -
+- Root-cause escalation: -
+
+**Disposition / reviewer / time:** `approved` / agent:/root/reader_anchor_review / `2026-10-10T08:35:33+00:00`
+
+**Immutable review ledger:** `artifacts/evidence/CAP-05.S05.T02.review-R01.json` / `7916e8c5a61c0e6bb3f702151786649b6bee601bc90bf010d544adf9e3f4e1b3`
+
+**Review notes:** Approve CAP-05.S05.T02 R01 at exact 0c07c80813d3a3c6d7d78a1b1a6823eec1a7898e. All three material task criteria are supported by bounded reviewed source, 23 fresh selected checks, 97 authenticated artifacts, selected source/runtime closure and exact frozen packet/criteria/selection bindings. Both informal advisory defects are resolved at the current candidate with first-failing evidence preserved; no prior formal round is invented. Actual shipping initial/restart prove exact contexts/current target/source jump/return and encrypted retained state with Native exit 0 and zero owned processes. No active blocking finding remains. Later S05 integration, checkpoint/Wave/profile/platform qualification, inherited unwaived debt and human release remain open.
+
+**Findings opened:**
+
+- None
+
+**Prior finding closures:**
+
+- None
+
+**Current immutable submission awaiting review:** None
+
+**Current latest-review projection:** `approved` by agent:/root/reader_anchor_review at `2026-10-10T08:35:33+00:00`
+
+**Latest notes:** Approve CAP-05.S05.T02 R01 at exact 0c07c80813d3a3c6d7d78a1b1a6823eec1a7898e. All three material task criteria are supported by bounded reviewed source, 23 fresh selected checks, 97 authenticated artifacts, selected source/runtime closure and exact frozen packet/criteria/selection bindings. Both informal advisory defects are resolved at the current candidate with first-failing evidence preserved; no prior formal round is invented. Actual shipping initial/restart prove exact contexts/current target/source jump/return and encrypted retained state with Native exit 0 and zero owned processes. No active blocking finding remains. Later S05 integration, checkpoint/Wave/profile/platform qualification, inherited unwaived debt and human release remain open.
+
+**Currently open findings:** -
 
 #### - [ ] CAP-05.S05.T03 - Represent tables and figures with captions and page anchors
 
-**Status / priority / estimate / risk:** `NOT_STARTED` / `P1` / `L` / `high`
+**Status / priority / estimate / risk:** `READY` / `P1` / `L` / `high`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 

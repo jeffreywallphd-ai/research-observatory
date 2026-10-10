@@ -23840,20 +23840,174 @@
             {
               "task_id": "CAP-05.S05.T02",
               "title": "Extract in-text citation contexts and targets",
-              "status": "IN_PROGRESS",
-              "mode": "latest-review-only",
+              "status": "DONE",
+              "mode": "append-only",
               "latest_review": {
-                "reviewer": null,
-                "result": null,
-                "reviewed_at": null,
-                "notes": null
+                "reviewer": "agent:/root/reader_anchor_review",
+                "result": "approved",
+                "reviewed_at": "2026-10-10T08:35:33+00:00",
+                "notes": "Approve CAP-05.S05.T02 R01 at exact 0c07c80813d3a3c6d7d78a1b1a6823eec1a7898e. All three material task criteria are supported by bounded reviewed source, 23 fresh selected checks, 97 authenticated artifacts, selected source/runtime closure and exact frozen packet/criteria/selection bindings. Both informal advisory defects are resolved at the current candidate with first-failing evidence preserved; no prior formal round is invented. Actual shipping initial/restart prove exact contexts/current target/source jump/return and encrypted retained state with Native exit 0 and zero owned processes. No active blocking finding remains. Later S05 integration, checkpoint/Wave/profile/platform qualification, inherited unwaived debt and human release remain open."
               },
-              "review_control": null
+              "review_control": {
+                "version": 1,
+                "attempts": [
+                  {
+                    "submission": {
+                      "id": "R01",
+                      "submitted_by": "codex-w2-implementation",
+                      "submitted_at": "2026-10-10T08:18:34+00:00",
+                      "candidate_commit": "0c07c80813d3a3c6d7d78a1b1a6823eec1a7898e",
+                      "base_commit": "a48da60f0a59cca45dbbdac4c7a72e3986716170",
+                      "branch": "codex/w2-implementation",
+                      "evidence_reference": {
+                        "type": "criterion-manifest",
+                        "path": "artifacts/evidence/CAP-05.S05.T02.R01.json",
+                        "sha256": "583b0957b5920f7516ef327b45d2a14a138c0571336cfe25ba670db6c0be2135",
+                        "commit": "0c07c80813d3a3c6d7d78a1b1a6823eec1a7898e",
+                        "recorded_at": "2026-10-10T08:18:34+00:00"
+                      },
+                      "acceptance_criteria_sha256": "28a439f198c769f953d38c06ea60cb19a34e009a3907274fb375f3561d561bac",
+                      "changed_paths": [
+                        "apps/desktop/src-tauri/src/document_reader.rs",
+                        "apps/desktop/src-tauri/src/lib.rs",
+                        "apps/desktop/src-tauri/src/supervisor.rs",
+                        "apps/desktop/src/app/DocumentViewerWorkspace.tsx",
+                        "apps/desktop/src/app/ViewerCitationsPane.tsx",
+                        "apps/desktop/src/app/documentCitations.test.ts",
+                        "apps/desktop/src/app/documentCitations.ts",
+                        "artifacts/evidence/CAP-05.S05.T02.task-start.md",
+                        "artifacts/evidence/ui-change/CAP-05.S05.T02.json",
+                        "docs/adr/ADR-0049-bind-citation-contexts-to-existing-canonical-and-protected-document-authority.md",
+                        "docs/adr/index.json",
+                        "docs/planning-implementation-plan.md",
+                        "packages/contracts/documents/README.md",
+                        "packages/contracts/documents/citation-collection.v1.schema.json",
+                        "packages/contracts/documents/citation-contexts.md",
+                        "packages/contracts/documents/citation-enrichment-command.v1.schema.json",
+                        "packages/contracts/documents/citation-reader-notice.v1.schema.json",
+                        "packages/contracts/documents/citation-reader-page.v1.schema.json",
+                        "packages/contracts/documents/generate_parser_schema.py",
+                        "planning/backlog.yaml",
+                        "planning/review-site/CAP-05/CAP-05.S05.T02.html",
+                        "planning/review-site/CAP-05/CAP-05.S05.html",
+                        "planning/review-site/manifest.json",
+                        "planning/review-site/waves/W2.html",
+                        "planning/status-summary.md",
+                        "services/core-api/src/research_observatory_core/citation_reader.py",
+                        "services/core-api/src/research_observatory_core/document_citation_repository.py",
+                        "services/core-api/src/research_observatory_core/document_citations.py",
+                        "services/core-api/src/research_observatory_core/document_reference_repository.py",
+                        "services/core-api/src/research_observatory_core/document_revision_api.py",
+                        "services/core-api/src/research_observatory_core/document_revision_service.py",
+                        "services/core-api/src/research_observatory_core/object_store.py",
+                        "tests/desktop/fixtures/citation-reader.ts",
+                        "tests/desktop/fixtures/document-viewer.tsx",
+                        "tests/desktop/test_document_viewer_interactions.py",
+                        "tests/documents/test_citation_contexts.py",
+                        "tests/documents/test_citation_reader.py",
+                        "tests/documents/test_citation_repository.py",
+                        "tests/documents/test_citation_service.py",
+                        "tests/documents/viewer_native_windows_fixture.py"
+                      ],
+                      "selected_checks": [
+                        ".venv\\Scripts\\python.exe -B -m ruff format --check packages/contracts/documents/generate_parser_schema.py services/core-api/src/research_observatory_core/citation_reader.py services/core-api/src/research_observatory_core/document_citation_repository.py services/core-api/src/research_observatory_core/document_citations.py services/core-api/src/research_observatory_core/document_reference_repository.py services/core-api/src/research_observatory_core/document_revision_api.py services/core-api/src/research_observatory_core/document_revision_service.py services/core-api/src/research_observatory_core/object_store.py tests/desktop/test_document_viewer_interactions.py tests/documents/test_citation_contexts.py tests/documents/test_citation_reader.py tests/documents/test_citation_repository.py tests/documents/test_citation_service.py tests/documents/viewer_native_windows_fixture.py",
+                        ".venv\\Scripts\\python.exe -B -m ruff check packages/contracts/documents/generate_parser_schema.py services/core-api/src/research_observatory_core/citation_reader.py services/core-api/src/research_observatory_core/document_citation_repository.py services/core-api/src/research_observatory_core/document_citations.py services/core-api/src/research_observatory_core/document_reference_repository.py services/core-api/src/research_observatory_core/document_revision_api.py services/core-api/src/research_observatory_core/document_revision_service.py services/core-api/src/research_observatory_core/object_store.py tests/desktop/test_document_viewer_interactions.py tests/documents/test_citation_contexts.py tests/documents/test_citation_reader.py tests/documents/test_citation_repository.py tests/documents/test_citation_service.py tests/documents/viewer_native_windows_fixture.py",
+                        ".venv\\Scripts\\python.exe -B -m mypy services/core-api/src/research_observatory_core/citation_reader.py services/core-api/src/research_observatory_core/document_citation_repository.py services/core-api/src/research_observatory_core/document_citations.py services/core-api/src/research_observatory_core/document_reference_repository.py services/core-api/src/research_observatory_core/document_revision_api.py services/core-api/src/research_observatory_core/document_revision_service.py services/core-api/src/research_observatory_core/object_store.py",
+                        ".venv\\Scripts\\python.exe -B packages/contracts/documents/generate_parser_schema.py --check",
+                        ".venv\\Scripts\\python.exe -B tools/adr_check.py --repo . --base a48da60f0a59cca45dbbdac4c7a72e3986716170 --head 0c07c80813d3a3c6d7d78a1b1a6823eec1a7898e",
+                        ".venv\\Scripts\\python.exe -B tools/product_style_check.py --repo .",
+                        ".venv\\Scripts\\python.exe -B tools/ui_change_gate.py --repo . --base a48da60f0a59cca45dbbdac4c7a72e3986716170 --head 0c07c80813d3a3c6d7d78a1b1a6823eec1a7898e",
+                        ".local\\toolchains\\node-v24.19.0-win-x64\\node.exe apps/desktop/node_modules/typescript/bin/tsc --noEmit -p apps/desktop/tsconfig.json",
+                        ".local\\toolchains\\node-v24.19.0-win-x64\\node.exe apps/desktop/node_modules/vitest/vitest.mjs run apps/desktop/src/app/documentCitations.test.ts apps/desktop/src/app/documentReferences.test.ts apps/desktop/src/app/documentViewerNative.test.ts",
+                        ".venv\\Scripts\\python.exe -B -m unittest -v tests.documents.test_citation_contexts tests.documents.test_citation_reader",
+                        ".venv\\Scripts\\python.exe -B -m unittest -v tests.documents.test_citation_repository",
+                        ".venv\\Scripts\\python.exe -B -m unittest -v tests.documents.test_citation_service",
+                        ".venv\\Scripts\\python.exe -B -m unittest -v tests.documents.test_reference_repository tests.documents.test_reference_service tests.service.test_reference_api",
+                        ".venv\\Scripts\\python.exe -B -m unittest -v tests.graph.test_dependency_impacts",
+                        ".local\\toolchains\\node-v24.19.0-win-x64\\node.exe tests/desktop/fixtures/document-viewer.mjs artifacts\\tmp\\CAP-05.S05.T02.mounted-qualification-02",
+                        ".venv\\Scripts\\python.exe -B -m unittest -v tests.desktop.test_document_viewer_interactions",
+                        ".local\\toolchains\\node-v24.19.0-win-x64\\node.exe apps\\desktop\\node_modules\\vite\\bin\\vite.js build --config vite.product.config.ts",
+                        ".local\\toolchains\\node-v24.19.0-win-x64\\node.exe apps/desktop/scripts/assemble-application.mjs",
+                        ".local\\toolchains\\rustup\\toolchains\\1.96.1-x86_64-pc-windows-msvc\\bin\\cargo.exe build --manifest-path apps/desktop/src-tauri/Cargo.toml --release --locked --offline --features integration-harness --example project_contract_probe -j 1 --message-format json-render-diagnostics",
+                        ".local\\toolchains\\rustup\\toolchains\\1.96.1-x86_64-pc-windows-msvc\\bin\\cargo.exe test --manifest-path apps/desktop/src-tauri/Cargo.toml --locked --offline --features integration-harness --lib --no-run -j 1 --message-format json-render-diagnostics",
+                        "artifacts\\tmp\\CAP-05.S05.T02.qualifying-native-units-01\\reference-contract-tests.exe document_reader::tests:: --nocapture --test-threads=1",
+                        ".venv/Scripts/python.exe -B artifacts/tmp/CAP-05.S05.T02.qualifying-reader-02.py 0c07c80813d3a3c6d7d78a1b1a6823eec1a7898e initial",
+                        ".venv/Scripts/python.exe -B artifacts/tmp/CAP-05.S05.T02.qualifying-reader-03.py 0c07c80813d3a3c6d7d78a1b1a6823eec1a7898e restart"
+                      ],
+                      "deferred_checks": [
+                        "S05 table/figure extraction, integrated slice end-to-end proof and independent slice disposition remain ordered later work.",
+                        "Fresh full affected/repository/profile W2 qualification, required platform/security/privacy/rights/accessibility/performance/packaging matrix, independent Wave review and separate human release remain required.",
+                        "No 8/16GiB model/tier tests or minimum2/3GiB claim. Larger computing remains W5; adopted Reader latency and owner-accepted parser overage are not tuned/replayed.",
+                        "Inherited built-frame CSP/startup predicate and broad quality/inventory debt remain disclosed and unwaived; no framework repairs in this task."
+                      ],
+                      "selection_rationale": "Changed protected citation publication, exact source identity and private cross-process Reader contracts require fresh focused contracts, actual SQLCipher/Core authority, directly changed reference input-helper regression, dependency replacement, client/mounted journeys and actual Native/shipping proof. No migration change or full-profile-wide impact. Source and actual installed dependencies are locked at one committed candidate.",
+                      "selection_sha256": "02c8fc28ad5b640306aa47ca1f1547f6438cebd780ae75922fdf06fe621a5701",
+                      "prior_attempt_id": null,
+                      "open_finding_ids": [],
+                      "root_cause_analysis": null,
+                      "selected_command_ids": [
+                        "desktop:application",
+                        "desktop:unit",
+                        "documents:unit",
+                        "foundation:adr",
+                        "foundation:quality",
+                        "foundation:ui-change",
+                        "graph:unit"
+                      ],
+                      "packet_sha256": "80acd4a5a07a90d7997bf5735c2d8f85672274cc30f77db030650af23ea13dc5"
+                    },
+                    "review": {
+                      "reviewer": "agent:/root/reader_anchor_review",
+                      "result": "approved",
+                      "reviewed_at": "2026-10-10T08:35:33+00:00",
+                      "notes": "Approve CAP-05.S05.T02 R01 at exact 0c07c80813d3a3c6d7d78a1b1a6823eec1a7898e. All three material task criteria are supported by bounded reviewed source, 23 fresh selected checks, 97 authenticated artifacts, selected source/runtime closure and exact frozen packet/criteria/selection bindings. Both informal advisory defects are resolved at the current candidate with first-failing evidence preserved; no prior formal round is invented. Actual shipping initial/restart prove exact contexts/current target/source jump/return and encrypted retained state with Native exit 0 and zero owned processes. No active blocking finding remains. Later S05 integration, checkpoint/Wave/profile/platform qualification, inherited unwaived debt and human release remain open."
+                    },
+                    "ledger": {
+                      "path": "artifacts/evidence/CAP-05.S05.T02.review-R01.json",
+                      "sha256": "7916e8c5a61c0e6bb3f702151786649b6bee601bc90bf010d544adf9e3f4e1b3"
+                    },
+                    "findings": [],
+                    "closures": [],
+                    "telemetry": {
+                      "task_id": "CAP-05.S05.T02",
+                      "amendment_id": null,
+                      "attempt_id": "R01",
+                      "submitted_at": "2026-10-10T08:18:34+00:00",
+                      "reviewed_at": "2026-10-10T08:35:33+00:00",
+                      "duration_seconds": 1019,
+                      "outcome": "approved",
+                      "finding_counts": {
+                        "critical": 0,
+                        "high": 0,
+                        "medium": 0,
+                        "low": 0,
+                        "blocking": 0,
+                        "total": 0
+                      },
+                      "command_ids": [
+                        "desktop:application",
+                        "desktop:unit",
+                        "documents:unit",
+                        "foundation:adr",
+                        "foundation:quality",
+                        "foundation:ui-change",
+                        "graph:unit"
+                      ],
+                      "remediation": {
+                        "prior_attempt_id": null,
+                        "replayed_finding_ids": [],
+                        "closed_finding_ids": []
+                      }
+                    }
+                  }
+                ],
+                "current_submission": null
+              }
             },
             {
               "task_id": "CAP-05.S05.T03",
               "title": "Represent tables and figures with captions and page anchors",
-              "status": "NOT_STARTED",
+              "status": "READY",
               "mode": "latest-review-only",
               "latest_review": {
                 "reviewer": null,
@@ -23887,7 +24041,7 @@
             {
               "task_id": "CAP-05.S05.T02",
               "title": "Extract in-text citation contexts and targets",
-              "status": "IN_PROGRESS",
+              "status": "DONE",
               "page": "CAP-05/CAP-05.S05.T02.html",
               "dependencies": [
                 "CAP-05.S05.T01"
@@ -23906,7 +24060,7 @@
             {
               "task_id": "CAP-05.S05.T03",
               "title": "Represent tables and figures with captions and page anchors",
-              "status": "NOT_STARTED",
+              "status": "READY",
               "page": "CAP-05/CAP-05.S05.T03.html",
               "dependencies": [
                 "CAP-05.S05.T02",
