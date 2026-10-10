@@ -1,0 +1,1632 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "CAP-05.S06.T03",
+  "baseCommit": "c7073e66de252514df6e1e209e011233a841d5ba",
+  "commit": "b7e6d0bbe4a1adb9efb8430c83d194fd2db673c3",
+  "branch": "codex/w2-implementation",
+  "changedFiles": [
+    "apps/desktop/src-tauri/src/document_reprocessing.rs",
+    "apps/desktop/src-tauri/src/document_reprocessing/windows_integration_tests.rs",
+    "apps/desktop/src-tauri/src/lib.rs",
+    "apps/desktop/src-tauri/src/supervisor.rs",
+    "apps/desktop/src/app/ParsingQualityWorkspace.tsx",
+    "apps/desktop/src/app/ReprocessingPanel.tsx",
+    "apps/desktop/src/app/documentReprocessing.test.ts",
+    "apps/desktop/src/app/documentReprocessing.ts",
+    "artifacts/evidence/CAP-05.S06.T03.pre-submission-adverse-01.md",
+    "artifacts/evidence/CAP-05.S06.T03.task-start.md",
+    "artifacts/evidence/ui-change/CAP-05.S06.T03.json",
+    "docs/adr/ADR-0053-bind-document-reprocessing-to-existing-per-document-acceptance-authority.md",
+    "docs/adr/index.json",
+    "docs/planning-implementation-plan.md",
+    "packages/contracts/documents/README.md",
+    "packages/contracts/documents/document-reprocessing-acceptance.v1.schema.json",
+    "packages/contracts/documents/document-reprocessing-accepted-view.v1.schema.json",
+    "packages/contracts/documents/document-reprocessing-batch-view.v1.schema.json",
+    "packages/contracts/documents/document-reprocessing-cancel.v1.schema.json",
+    "packages/contracts/documents/document-reprocessing-continue.v1.schema.json",
+    "packages/contracts/documents/document-reprocessing-create.v1.schema.json",
+    "packages/contracts/documents/document-reprocessing-page.v1.schema.json",
+    "packages/contracts/documents/document-reprocessing-queue.v1.schema.json",
+    "packages/contracts/documents/document-reprocessing-reconcile.v1.schema.json",
+    "packages/contracts/documents/generate_parser_schema.py",
+    "planning/backlog.yaml",
+    "planning/review-site/CAP-05/CAP-05.S06.T03.html",
+    "planning/review-site/CAP-05/CAP-05.S06.html",
+    "planning/review-site/manifest.json",
+    "planning/review-site/waves/W2.html",
+    "planning/status-summary.md",
+    "quality-scope.json",
+    "services/core-api/src/research_observatory_core/app.py",
+    "services/core-api/src/research_observatory_core/document_corrections.py",
+    "services/core-api/src/research_observatory_core/document_reprocessing.py",
+    "services/core-api/src/research_observatory_core/document_reprocessing_api.py",
+    "services/core-api/src/research_observatory_core/document_revision_repository.py",
+    "services/core-api/src/research_observatory_core/document_revision_service.py",
+    "services/core-api/src/research_observatory_core/object_store.py",
+    "services/core-api/src/research_observatory_core/ports/document_reprocessing.py",
+    "tests/anchors/test_anchor_repository.py",
+    "tests/desktop/fixtures/document-reprocessing.ts",
+    "tests/desktop/fixtures/parsing-quality-native-driver.ts",
+    "tests/desktop/fixtures/parsing-quality.tsx",
+    "tests/desktop/fixtures/reprocessing-native-driver.ts",
+    "tests/desktop/fixtures/reprocessing-navigation-doubles.tsx",
+    "tests/desktop/fixtures/reprocessing-navigation.mjs",
+    "tests/desktop/fixtures/reprocessing-ports.ts",
+    "tests/desktop/fixtures/reprocessing.mjs",
+    "tests/desktop/fixtures/reprocessing.tsx",
+    "tests/desktop/test_reprocessing_interactions.py",
+    "tests/desktop/test_reprocessing_workflow_navigation.py",
+    "tests/documents/reprocessing_native_windows_sidecar.py",
+    "tests/documents/test_document_correction_repository.py",
+    "tests/documents/test_document_reprocessing.py",
+    "tests/documents/test_document_reprocessing_repository.py",
+    "tests/documents/test_document_reprocessing_service.py",
+    "tests/documents/test_document_revision_repository.py",
+    "tests/documents/viewer_native_windows_fixture.py"
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "checkIds": [
+        "correction-domain-lineage",
+        "protected-correction-persistence",
+        "actual-native-core-correction-authority",
+        "actual-renderer-native-core-reprocessing",
+        "desktop-reprocessing-interactions",
+        "guided-reprocessing-navigation",
+        "correction-codecs-and-reader-regression",
+        "native-reprocessing-request-boundaries"
+      ],
+      "evidence": [
+        "Initial acceptance and exact historical replay remain compatible; new replacement of accepted normalized structure requires an immutable per-document reparse comparison and explicit human reconciliation/acceptance. Preview, failed and unaccepted items preserve old heads. Old/new structure and anchor candidates retain ambiguity rather than relocating evidence. Every active correction generation maps its exact operations to authenticated new targets; old decisions, actor/rationale, source and parser output remain immutable.",
+        "One current-source-fenced writer publishes the authenticated machine receipt, nested reconciled corrections, final head, provenance/outbox and scoped dependency intent together. Literal normal correction verification succeeds after encrypted reopen. Accepted impact marks only material affected descendants stale; unrelated/non-material current objects remain usable. Larger impact is explicitly pending and current-authority checkpoint read/resume survives restart and exact lost-reply retry."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "checkIds": [
+        "correction-domain-lineage",
+        "protected-correction-persistence",
+        "actual-native-core-correction-authority",
+        "actual-renderer-native-core-reprocessing",
+        "desktop-reprocessing-interactions",
+        "guided-reprocessing-navigation",
+        "correction-codecs-and-reader-regression",
+        "native-reprocessing-request-boundaries",
+        "original-revision-anchor-enrichment-regression",
+        "correction-predecessor-interactions",
+        "native-correction-request-regression"
+      ],
+      "evidence": [
+        "Fresh verbose domain, SQLCipher repository, current Native-authorized Core, mounted production interaction and Native request checks cover identity/authority substitution, all correction families and generations, known partial-result denial, per-document cancellation/reopen, immutable replay, compound rollback, current rights/session continuation and selective direct/transitive/conditional/legacy impact. Cancellation wins new-job admission inside its writer; superseded creation and continuation retries return authenticated successor facts without admitting old inputs. Actual Native-authorized Core queue admission precedes protected adapter reads. A durable reconciliation followed by projection failure returns content-free503, while known pre-publication denial remains409; exact retry retains one plan and no duplicate canonical facts.",
+        "Nine actual production-component interaction cases cover inert content, two themes, narrow layout, exact unknown-command ownership, repeated new batches, typed reference mapping, separate quality regressions, bounded paged candidates, checkpoint rediscovery and lost reconciliation replies. Mounted authored ports prove byte-identical reconciliation command retention, one stored plan and no automatic acceptance; separate actual API/SQLCipher tests prove durable mutation classification. Actual ApplicationRuntime plus production Quality/Reprocessing preserves dirty/busy/unknown state across stage and Return routes. Separate fresh Windows Wry/Native/supervised Core proof explicitly accepts reconciled human corrections, returns through Reader and reopens authenticated encrypted state."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "checkIds": [
+        "affected-python-format",
+        "affected-python-lint",
+        "affected-python-types",
+        "document-schemas",
+        "affected-adr",
+        "affected-product-dependency-and-lint-delta",
+        "ui-change-authority",
+        "desktop-types",
+        "fresh-production-build",
+        "fresh-production-assembly",
+        "original-revision-anchor-enrichment-regression",
+        "correction-predecessor-interactions",
+        "native-correction-request-regression"
+      ],
+      "evidence": [
+        "Additive closed schemas, typed port/API, protected repository composition, fixed Native actions, approved Academic Minimal1.9 implementation, authored fixtures and documentation stay within the approved task. Proposed ADR0053 documents inherited accepted ADR0029 authority and does not create new authority. Existing storage/migration/IR/structure/revision contracts remain byte-identical. The Python inventory is strictly additive and precedes renderer publication; no controller, hook, CI or shared framework source changes.",
+        "Affected format/lint/types, schemas, ADR/UI authority, source-level dependency/lint delta and production build/assembly pass. Existing full architecture/lint failures remain explicitly failed and unwaived for Wave disposition. Raw pre-submission, setup, fixture, polling and reviewer findings are preserved; none is reclassified as fresh passing proof."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "checks": [
+    {
+      "id": "ui-change-authority",
+      "commandId": "foundation:ui-change",
+      "command": ".venv\\Scripts\\python.exe -B tools/ui_change_gate.py --repo . --base c7073e66de252514df6e1e209e011233a841d5ba --head b7e6d0bbe4a1adb9efb8430c83d194fd2db673c3",
+      "workingDirectory": ".",
+      "commit": "b7e6d0bbe4a1adb9efb8430c83d194fd2db673c3",
+      "exitCode": 0,
+      "result": "PASS",
+      "durationSeconds": 7.20435750001343,
+      "rawOutput": "artifacts/tmp/CAP-05.S06.T03.qualifying-focused-02.ui-change-authority.log",
+      "rawOutputSha256": "536020c0f3b99d53e346068d92d55d0a781f2187598e1882d4ff40d516093635",
+      "rawOutputCanonicalSha256": "d813f142f303396d7db8ea4b67b6ae4f982d7690ad288ae43286b6f8d72ed433",
+      "inputReport": "artifacts/tmp/CAP-05.S06.T03.qualifying-focused-02.json",
+      "inputReportSha256": "3c59454da08db14feecac55f2dff68ee7d0bcaeb19e7559735ed5b2bb5994f8c",
+      "producerSha256": "c22960974cec37b2ad905fba3e195d77b47f2d45390c926e8f726b9c0de9d953",
+      "provenance": "Fresh child at the committed candidate with selected source and actual runtime held. Portable display argv; ignored authenticated execution report retains exact actual argv. Known inherited architecture/lint failures remain unwaived; no full profile or Wave pass."
+    },
+    {
+      "id": "affected-python-format",
+      "commandId": "foundation:quality",
+      "command": ".venv\\Scripts\\python.exe -B -m ruff format --check packages/contracts/documents/generate_parser_schema.py services/core-api/src/research_observatory_core/app.py services/core-api/src/research_observatory_core/document_corrections.py services/core-api/src/research_observatory_core/document_reprocessing.py services/core-api/src/research_observatory_core/document_reprocessing_api.py services/core-api/src/research_observatory_core/document_revision_repository.py services/core-api/src/research_observatory_core/document_revision_service.py services/core-api/src/research_observatory_core/object_store.py services/core-api/src/research_observatory_core/ports/document_reprocessing.py tests/anchors/test_anchor_repository.py tests/desktop/test_reprocessing_interactions.py tests/desktop/test_reprocessing_workflow_navigation.py tests/documents/reprocessing_native_windows_sidecar.py tests/documents/test_document_correction_repository.py tests/documents/test_document_reprocessing.py tests/documents/test_document_reprocessing_repository.py tests/documents/test_document_reprocessing_service.py tests/documents/test_document_revision_repository.py tests/documents/viewer_native_windows_fixture.py",
+      "workingDirectory": ".",
+      "commit": "b7e6d0bbe4a1adb9efb8430c83d194fd2db673c3",
+      "exitCode": 0,
+      "result": "PASS",
+      "durationSeconds": 0.08988640003371984,
+      "rawOutput": "artifacts/tmp/CAP-05.S06.T03.qualifying-focused-02.affected-python-format.log",
+      "rawOutputSha256": "a0a0f191878d553ae2b88299d5ead34d7a6367937ff1bd9e304fb73059c83f8a",
+      "rawOutputCanonicalSha256": "a0a0f191878d553ae2b88299d5ead34d7a6367937ff1bd9e304fb73059c83f8a",
+      "inputReport": "artifacts/tmp/CAP-05.S06.T03.qualifying-focused-02.json",
+      "inputReportSha256": "3c59454da08db14feecac55f2dff68ee7d0bcaeb19e7559735ed5b2bb5994f8c",
+      "producerSha256": "c22960974cec37b2ad905fba3e195d77b47f2d45390c926e8f726b9c0de9d953",
+      "provenance": "Fresh child at the committed candidate with selected source and actual runtime held. Portable display argv; ignored authenticated execution report retains exact actual argv. Known inherited architecture/lint failures remain unwaived; no full profile or Wave pass."
+    },
+    {
+      "id": "affected-python-lint",
+      "commandId": "foundation:quality",
+      "command": ".venv\\Scripts\\python.exe -B -m ruff check packages/contracts/documents/generate_parser_schema.py services/core-api/src/research_observatory_core/app.py services/core-api/src/research_observatory_core/document_corrections.py services/core-api/src/research_observatory_core/document_reprocessing.py services/core-api/src/research_observatory_core/document_reprocessing_api.py services/core-api/src/research_observatory_core/document_revision_repository.py services/core-api/src/research_observatory_core/document_revision_service.py services/core-api/src/research_observatory_core/object_store.py services/core-api/src/research_observatory_core/ports/document_reprocessing.py tests/anchors/test_anchor_repository.py tests/desktop/test_reprocessing_interactions.py tests/desktop/test_reprocessing_workflow_navigation.py tests/documents/reprocessing_native_windows_sidecar.py tests/documents/test_document_correction_repository.py tests/documents/test_document_reprocessing.py tests/documents/test_document_reprocessing_repository.py tests/documents/test_document_reprocessing_service.py tests/documents/test_document_revision_repository.py tests/documents/viewer_native_windows_fixture.py",
+      "workingDirectory": ".",
+      "commit": "b7e6d0bbe4a1adb9efb8430c83d194fd2db673c3",
+      "exitCode": 0,
+      "result": "PASS",
+      "durationSeconds": 0.08134159998735413,
+      "rawOutput": "artifacts/tmp/CAP-05.S06.T03.qualifying-focused-02.affected-python-lint.log",
+      "rawOutputSha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18",
+      "rawOutputCanonicalSha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18",
+      "inputReport": "artifacts/tmp/CAP-05.S06.T03.qualifying-focused-02.json",
+      "inputReportSha256": "3c59454da08db14feecac55f2dff68ee7d0bcaeb19e7559735ed5b2bb5994f8c",
+      "producerSha256": "c22960974cec37b2ad905fba3e195d77b47f2d45390c926e8f726b9c0de9d953",
+      "provenance": "Fresh child at the committed candidate with selected source and actual runtime held. Portable display argv; ignored authenticated execution report retains exact actual argv. Known inherited architecture/lint failures remain unwaived; no full profile or Wave pass."
+    },
+    {
+      "id": "affected-python-types",
+      "commandId": "foundation:quality",
+      "command": ".venv\\Scripts\\python.exe -B -m mypy --follow-imports=silent packages/contracts/documents/generate_parser_schema.py services/core-api/src/research_observatory_core/app.py services/core-api/src/research_observatory_core/document_corrections.py services/core-api/src/research_observatory_core/document_reprocessing.py services/core-api/src/research_observatory_core/document_reprocessing_api.py services/core-api/src/research_observatory_core/document_revision_repository.py services/core-api/src/research_observatory_core/document_revision_service.py services/core-api/src/research_observatory_core/object_store.py services/core-api/src/research_observatory_core/ports/document_reprocessing.py tests/anchors/test_anchor_repository.py tests/desktop/test_reprocessing_interactions.py tests/desktop/test_reprocessing_workflow_navigation.py tests/documents/reprocessing_native_windows_sidecar.py tests/documents/test_document_correction_repository.py tests/documents/test_document_reprocessing.py tests/documents/test_document_reprocessing_repository.py tests/documents/test_document_reprocessing_service.py tests/documents/test_document_revision_repository.py tests/documents/viewer_native_windows_fixture.py",
+      "workingDirectory": ".",
+      "commit": "b7e6d0bbe4a1adb9efb8430c83d194fd2db673c3",
+      "exitCode": 0,
+      "result": "PASS",
+      "durationSeconds": 0.4543631999986246,
+      "rawOutput": "artifacts/tmp/CAP-05.S06.T03.qualifying-focused-02.affected-python-types.log",
+      "rawOutputSha256": "6b17fb6a37a46097878dda7d24d47ea3abd7a26d94efdbf8f17ad1c639872d16",
+      "rawOutputCanonicalSha256": "df31673ff938e9a6a603c56cfd13949b42c1b8edcba9d2688c7f771f48c449d9",
+      "inputReport": "artifacts/tmp/CAP-05.S06.T03.qualifying-focused-02.json",
+      "inputReportSha256": "3c59454da08db14feecac55f2dff68ee7d0bcaeb19e7559735ed5b2bb5994f8c",
+      "producerSha256": "c22960974cec37b2ad905fba3e195d77b47f2d45390c926e8f726b9c0de9d953",
+      "provenance": "Fresh child at the committed candidate with selected source and actual runtime held. Portable display argv; ignored authenticated execution report retains exact actual argv. Known inherited architecture/lint failures remain unwaived; no full profile or Wave pass."
+    },
+    {
+      "id": "document-schemas",
+      "commandId": "documents:unit",
+      "command": ".venv\\Scripts\\python.exe -B packages/contracts/documents/generate_parser_schema.py --check",
+      "workingDirectory": ".",
+      "commit": "b7e6d0bbe4a1adb9efb8430c83d194fd2db673c3",
+      "exitCode": 0,
+      "result": "PASS",
+      "durationSeconds": 0.6892339999903925,
+      "rawOutput": "artifacts/tmp/CAP-05.S06.T03.qualifying-focused-02.document-schemas.log",
+      "rawOutputSha256": "a55ee30fb47c9afacd282abc3e69cce6ee0e020d9d710eb2dc98eda54569bb56",
+      "rawOutputCanonicalSha256": "cf42b66dd1df678fb7cf5ffaf80552a60597b0a2f2ef96323d1949800d8f6085",
+      "inputReport": "artifacts/tmp/CAP-05.S06.T03.qualifying-focused-02.json",
+      "inputReportSha256": "3c59454da08db14feecac55f2dff68ee7d0bcaeb19e7559735ed5b2bb5994f8c",
+      "producerSha256": "c22960974cec37b2ad905fba3e195d77b47f2d45390c926e8f726b9c0de9d953",
+      "provenance": "Fresh child at the committed candidate with selected source and actual runtime held. Portable display argv; ignored authenticated execution report retains exact actual argv. Known inherited architecture/lint failures remain unwaived; no full profile or Wave pass."
+    },
+    {
+      "id": "affected-adr",
+      "commandId": "foundation:adr",
+      "command": ".venv\\Scripts\\python.exe -B tools/adr_check.py --repo . --base c7073e66de252514df6e1e209e011233a841d5ba --head b7e6d0bbe4a1adb9efb8430c83d194fd2db673c3",
+      "workingDirectory": ".",
+      "commit": "b7e6d0bbe4a1adb9efb8430c83d194fd2db673c3",
+      "exitCode": 0,
+      "result": "PASS",
+      "durationSeconds": 2.05982419999782,
+      "rawOutput": "artifacts/tmp/CAP-05.S06.T03.qualifying-focused-02.affected-adr.log",
+      "rawOutputSha256": "c4c243a739807a102e9ee08a30eb4268187bc607f4012ac87f390753f87a1a60",
+      "rawOutputCanonicalSha256": "f2fad6cd741408290c881a2432ff8fe84c50755b342120d45ba869c79f82d37a",
+      "inputReport": "artifacts/tmp/CAP-05.S06.T03.qualifying-focused-02.json",
+      "inputReportSha256": "3c59454da08db14feecac55f2dff68ee7d0bcaeb19e7559735ed5b2bb5994f8c",
+      "producerSha256": "c22960974cec37b2ad905fba3e195d77b47f2d45390c926e8f726b9c0de9d953",
+      "provenance": "Fresh child at the committed candidate with selected source and actual runtime held. Portable display argv; ignored authenticated execution report retains exact actual argv. Known inherited architecture/lint failures remain unwaived; no full profile or Wave pass."
+    },
+    {
+      "id": "affected-product-dependency-and-lint-delta",
+      "commandId": "foundation:architecture",
+      "command": ".venv\\Scripts\\python.exe -B artifacts/tmp/CAP-05.S06.T03-qualifying-delta-02.py c7073e66de252514df6e1e209e011233a841d5ba b7e6d0bbe4a1adb9efb8430c83d194fd2db673c3 artifacts\\tmp\\CAP-05.S06.T03-qualify-temp-02",
+      "workingDirectory": ".",
+      "commit": "b7e6d0bbe4a1adb9efb8430c83d194fd2db673c3",
+      "exitCode": 0,
+      "result": "PASS",
+      "durationSeconds": 24.863586399995256,
+      "rawOutput": "artifacts/tmp/CAP-05.S06.T03.qualifying-focused-02.affected-product-dependency-and-lint-delta.log",
+      "rawOutputSha256": "9edfd7be339e1cc7139172fae940f7b0ed22efc3c9032b55bf471c7f5d244ada",
+      "rawOutputCanonicalSha256": "c091803cfc54e3097cbe58c62d50decefbcc215fd4ee2342a27626d0c3d26daf",
+      "inputReport": "artifacts/tmp/CAP-05.S06.T03.qualifying-focused-02.json",
+      "inputReportSha256": "3c59454da08db14feecac55f2dff68ee7d0bcaeb19e7559735ed5b2bb5994f8c",
+      "producerSha256": "c22960974cec37b2ad905fba3e195d77b47f2d45390c926e8f726b9c0de9d953",
+      "provenance": "Fresh child at the committed candidate with selected source and actual runtime held. Portable display argv; ignored authenticated execution report retains exact actual argv. Known inherited architecture/lint failures remain unwaived; no full profile or Wave pass."
+    },
+    {
+      "id": "desktop-types",
+      "commandId": "desktop:application",
+      "command": ".local\\toolchains\\node-v24.19.0-win-x64\\node.exe apps\\desktop\\node_modules\\typescript\\bin\\tsc --noEmit",
+      "workingDirectory": "apps/desktop",
+      "commit": "b7e6d0bbe4a1adb9efb8430c83d194fd2db673c3",
+      "exitCode": 0,
+      "result": "PASS",
+      "durationSeconds": 0.6752552000107244,
+      "rawOutput": "artifacts/tmp/CAP-05.S06.T03.qualifying-focused-02.desktop-types.log",
+      "rawOutputSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "rawOutputCanonicalSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "inputReport": "artifacts/tmp/CAP-05.S06.T03.qualifying-focused-02.json",
+      "inputReportSha256": "3c59454da08db14feecac55f2dff68ee7d0bcaeb19e7559735ed5b2bb5994f8c",
+      "producerSha256": "c22960974cec37b2ad905fba3e195d77b47f2d45390c926e8f726b9c0de9d953",
+      "provenance": "Fresh child at the committed candidate with selected source and actual runtime held. Portable display argv; ignored authenticated execution report retains exact actual argv. Known inherited architecture/lint failures remain unwaived; no full profile or Wave pass."
+    },
+    {
+      "id": "correction-codecs-and-reader-regression",
+      "commandId": "desktop:unit",
+      "command": ".local\\toolchains\\node-v24.19.0-win-x64\\node.exe apps\\desktop\\node_modules\\vitest\\vitest.mjs run src/app/documentReprocessing.test.ts src/app/documentCorrections.test.ts src/app/documentViewer.test.ts src/app/documentCitations.test.ts src/app/ApplicationRuntime.test.tsx src/app/workflowNavigation.test.ts src/app/WorkflowNavigation.test.tsx",
+      "workingDirectory": "apps/desktop",
+      "commit": "b7e6d0bbe4a1adb9efb8430c83d194fd2db673c3",
+      "exitCode": 0,
+      "result": "PASS",
+      "durationSeconds": 1.96712500002468,
+      "rawOutput": "artifacts/tmp/CAP-05.S06.T03.qualifying-focused-02.correction-codecs-and-reader-regression.log",
+      "rawOutputSha256": "6cafd797333f7301777973e2a0a9082f3de32680a556d4fc80e6956f6f609ca3",
+      "rawOutputCanonicalSha256": "6cafd797333f7301777973e2a0a9082f3de32680a556d4fc80e6956f6f609ca3",
+      "inputReport": "artifacts/tmp/CAP-05.S06.T03.qualifying-focused-02.json",
+      "inputReportSha256": "3c59454da08db14feecac55f2dff68ee7d0bcaeb19e7559735ed5b2bb5994f8c",
+      "producerSha256": "c22960974cec37b2ad905fba3e195d77b47f2d45390c926e8f726b9c0de9d953",
+      "provenance": "Fresh child at the committed candidate with selected source and actual runtime held. Portable display argv; ignored authenticated execution report retains exact actual argv. Known inherited architecture/lint failures remain unwaived; no full profile or Wave pass."
+    },
+    {
+      "id": "correction-domain-lineage",
+      "commandId": "documents:unit",
+      "command": ".venv\\Scripts\\python.exe -B -m unittest -v tests.documents.test_document_reprocessing tests.documents.test_document_corrections tests.documents.test_document_correction_lineage tests.documents.test_reference_entries",
+      "workingDirectory": ".",
+      "commit": "b7e6d0bbe4a1adb9efb8430c83d194fd2db673c3",
+      "exitCode": 0,
+      "result": "PASS",
+      "durationSeconds": 3.79795620002551,
+      "rawOutput": "artifacts/tmp/CAP-05.S06.T03.qualifying-focused-02.correction-domain-lineage.log",
+      "rawOutputSha256": "83db489870597bf678fdcfdc9450f6f0b5a06a2f7c698c5d30d48ea5e6d3ea2d",
+      "rawOutputCanonicalSha256": "cd5e68bc53a7d945541a44236115480eb352c384a9bb94884904ec24295722c7",
+      "inputReport": "artifacts/tmp/CAP-05.S06.T03.qualifying-focused-02.json",
+      "inputReportSha256": "3c59454da08db14feecac55f2dff68ee7d0bcaeb19e7559735ed5b2bb5994f8c",
+      "producerSha256": "c22960974cec37b2ad905fba3e195d77b47f2d45390c926e8f726b9c0de9d953",
+      "provenance": "Fresh child at the committed candidate with selected source and actual runtime held. Portable display argv; ignored authenticated execution report retains exact actual argv. Known inherited architecture/lint failures remain unwaived; no full profile or Wave pass."
+    },
+    {
+      "id": "protected-correction-persistence",
+      "commandId": "documents:unit",
+      "command": ".venv\\Scripts\\python.exe -B -m unittest -v tests.documents.test_document_reprocessing_repository tests.documents.test_document_correction_repository",
+      "workingDirectory": ".",
+      "commit": "b7e6d0bbe4a1adb9efb8430c83d194fd2db673c3",
+      "exitCode": 0,
+      "result": "PASS",
+      "durationSeconds": 171.1590017999988,
+      "rawOutput": "artifacts/tmp/CAP-05.S06.T03.qualifying-focused-02.protected-correction-persistence.log",
+      "rawOutputSha256": "e2dc211b58a6a19b43ca3489469743dc1d68faf66ce2a81e98a919c03c6fae20",
+      "rawOutputCanonicalSha256": "d20ac14852e3aacc83dbfac81a7704a000d4ce905bc7fb1b6d03738f2b343678",
+      "inputReport": "artifacts/tmp/CAP-05.S06.T03.qualifying-focused-02.json",
+      "inputReportSha256": "3c59454da08db14feecac55f2dff68ee7d0bcaeb19e7559735ed5b2bb5994f8c",
+      "producerSha256": "c22960974cec37b2ad905fba3e195d77b47f2d45390c926e8f726b9c0de9d953",
+      "provenance": "Fresh child at the committed candidate with selected source and actual runtime held. Portable display argv; ignored authenticated execution report retains exact actual argv. Known inherited architecture/lint failures remain unwaived; no full profile or Wave pass."
+    },
+    {
+      "id": "actual-native-core-correction-authority",
+      "commandId": "documents:unit",
+      "command": ".venv\\Scripts\\python.exe -B -m unittest -v tests.documents.test_document_reprocessing_service tests.documents.test_document_correction_service",
+      "workingDirectory": ".",
+      "commit": "b7e6d0bbe4a1adb9efb8430c83d194fd2db673c3",
+      "exitCode": 0,
+      "result": "PASS",
+      "durationSeconds": 173.31558070000028,
+      "rawOutput": "artifacts/tmp/CAP-05.S06.T03.qualifying-focused-02.actual-native-core-correction-authority.log",
+      "rawOutputSha256": "3bd4feab622008d5f7075b0cf8612ba4c9d82a777414b6ec3e3c109608827fc8",
+      "rawOutputCanonicalSha256": "9dae280101d79138ea97a1235ae794e8a84f2ae33c408292cf0ae315244f06a6",
+      "inputReport": "artifacts/tmp/CAP-05.S06.T03.qualifying-focused-02.json",
+      "inputReportSha256": "3c59454da08db14feecac55f2dff68ee7d0bcaeb19e7559735ed5b2bb5994f8c",
+      "producerSha256": "c22960974cec37b2ad905fba3e195d77b47f2d45390c926e8f726b9c0de9d953",
+      "provenance": "Fresh child at the committed candidate with selected source and actual runtime held. Portable display argv; ignored authenticated execution report retains exact actual argv. Known inherited architecture/lint failures remain unwaived; no full profile or Wave pass."
+    },
+    {
+      "id": "original-revision-anchor-enrichment-regression",
+      "commandId": "documents:unit",
+      "command": ".venv\\Scripts\\python.exe -B -m unittest -v tests.documents.test_document_revision_repository tests.anchors.test_anchor_repository.AnchorRepositoryTests.test_restart_reads_exact_encrypted_anchor_with_atomic_provenance_dependencies tests.anchors.test_anchor_repository.AnchorRepositoryTests.test_common_read_authenticates_context_without_original_or_whole_ir tests.anchors.test_anchor_repository.AnchorRepositoryTests.test_new_accepted_head_does_not_move_old_anchor tests.documents.test_reference_repository.ReferenceRepositoryTests.test_encrypted_publication_exact_retry_reopen_and_base_revision_preserved",
+      "workingDirectory": ".",
+      "commit": "b7e6d0bbe4a1adb9efb8430c83d194fd2db673c3",
+      "exitCode": 0,
+      "result": "PASS",
+      "durationSeconds": 63.82339490001323,
+      "rawOutput": "artifacts/tmp/CAP-05.S06.T03.qualifying-focused-02.original-revision-anchor-enrichment-regression.log",
+      "rawOutputSha256": "25795c0bc111562533422f219f6027f1128cc977bb104f026b93570cc0234ae4",
+      "rawOutputCanonicalSha256": "bd53404d226ef382a015ab5f67940075d71ab5c29f2de1057817fde6b45d13eb",
+      "inputReport": "artifacts/tmp/CAP-05.S06.T03.qualifying-focused-02.json",
+      "inputReportSha256": "3c59454da08db14feecac55f2dff68ee7d0bcaeb19e7559735ed5b2bb5994f8c",
+      "producerSha256": "c22960974cec37b2ad905fba3e195d77b47f2d45390c926e8f726b9c0de9d953",
+      "provenance": "Fresh child at the committed candidate with selected source and actual runtime held. Portable display argv; ignored authenticated execution report retains exact actual argv. Known inherited architecture/lint failures remain unwaived; no full profile or Wave pass."
+    },
+    {
+      "id": "production-component-test-build",
+      "commandId": "desktop:application",
+      "command": ".local\\toolchains\\node-v24.19.0-win-x64\\node.exe tests/desktop/fixtures/reprocessing.mjs artifacts\\tmp\\CAP-05.S06.T03-ui-qualifying-02",
+      "workingDirectory": ".",
+      "commit": "b7e6d0bbe4a1adb9efb8430c83d194fd2db673c3",
+      "exitCode": 0,
+      "result": "PASS",
+      "durationSeconds": 0.9640434000175446,
+      "rawOutput": "artifacts/tmp/CAP-05.S06.T03.qualifying-focused-02.production-component-test-build.log",
+      "rawOutputSha256": "b566697482f32b633a48396e0d777cf81c332f8df2179cb8374172d5618725ee",
+      "rawOutputCanonicalSha256": "b566697482f32b633a48396e0d777cf81c332f8df2179cb8374172d5618725ee",
+      "inputReport": "artifacts/tmp/CAP-05.S06.T03.qualifying-focused-02.json",
+      "inputReportSha256": "3c59454da08db14feecac55f2dff68ee7d0bcaeb19e7559735ed5b2bb5994f8c",
+      "producerSha256": "c22960974cec37b2ad905fba3e195d77b47f2d45390c926e8f726b9c0de9d953",
+      "provenance": "Fresh child at the committed candidate with selected source and actual runtime held. Portable display argv; ignored authenticated execution report retains exact actual argv. Known inherited architecture/lint failures remain unwaived; no full profile or Wave pass."
+    },
+    {
+      "id": "desktop-reprocessing-interactions",
+      "commandId": "desktop:unit",
+      "command": ".venv\\Scripts\\python.exe -B -m unittest -v tests.desktop.test_reprocessing_interactions",
+      "workingDirectory": ".",
+      "commit": "b7e6d0bbe4a1adb9efb8430c83d194fd2db673c3",
+      "exitCode": 0,
+      "result": "PASS",
+      "durationSeconds": 5.555418299976736,
+      "rawOutput": "artifacts/tmp/CAP-05.S06.T03.qualifying-focused-02.desktop-reprocessing-interactions.log",
+      "rawOutputSha256": "1baf8d2c10b3051e74cb113acc45df422ac9f6cfaa756ac56713f0205d3df0de",
+      "rawOutputCanonicalSha256": "a75c367fb63eb7c9250f1724ba472c3355c931929748d76a2554f5d773814820",
+      "inputReport": "artifacts/tmp/CAP-05.S06.T03.qualifying-focused-02.json",
+      "inputReportSha256": "3c59454da08db14feecac55f2dff68ee7d0bcaeb19e7559735ed5b2bb5994f8c",
+      "producerSha256": "c22960974cec37b2ad905fba3e195d77b47f2d45390c926e8f726b9c0de9d953",
+      "provenance": "Fresh child at the committed candidate with selected source and actual runtime held. Portable display argv; ignored authenticated execution report retains exact actual argv. Known inherited architecture/lint failures remain unwaived; no full profile or Wave pass."
+    },
+    {
+      "id": "production-root-navigation-test-build",
+      "commandId": "desktop:application",
+      "command": ".local\\toolchains\\node-v24.19.0-win-x64\\node.exe tests/desktop/fixtures/reprocessing-navigation.mjs artifacts\\tmp\\CAP-05.S06.T03-navigation-qualifying-02",
+      "workingDirectory": ".",
+      "commit": "b7e6d0bbe4a1adb9efb8430c83d194fd2db673c3",
+      "exitCode": 0,
+      "result": "PASS",
+      "durationSeconds": 1.3906700999941677,
+      "rawOutput": "artifacts/tmp/CAP-05.S06.T03.qualifying-focused-02.production-root-navigation-test-build.log",
+      "rawOutputSha256": "b566697482f32b633a48396e0d777cf81c332f8df2179cb8374172d5618725ee",
+      "rawOutputCanonicalSha256": "b566697482f32b633a48396e0d777cf81c332f8df2179cb8374172d5618725ee",
+      "inputReport": "artifacts/tmp/CAP-05.S06.T03.qualifying-focused-02.json",
+      "inputReportSha256": "3c59454da08db14feecac55f2dff68ee7d0bcaeb19e7559735ed5b2bb5994f8c",
+      "producerSha256": "c22960974cec37b2ad905fba3e195d77b47f2d45390c926e8f726b9c0de9d953",
+      "provenance": "Fresh child at the committed candidate with selected source and actual runtime held. Portable display argv; ignored authenticated execution report retains exact actual argv. Known inherited architecture/lint failures remain unwaived; no full profile or Wave pass."
+    },
+    {
+      "id": "guided-reprocessing-navigation",
+      "commandId": "desktop:unit",
+      "command": ".venv\\Scripts\\python.exe -B -m unittest -v tests.desktop.test_reprocessing_workflow_navigation",
+      "workingDirectory": ".",
+      "commit": "b7e6d0bbe4a1adb9efb8430c83d194fd2db673c3",
+      "exitCode": 0,
+      "result": "PASS",
+      "durationSeconds": 7.341081499995198,
+      "rawOutput": "artifacts/tmp/CAP-05.S06.T03.qualifying-focused-02.guided-reprocessing-navigation.log",
+      "rawOutputSha256": "8097ab6d8270dfcac67e08ca9a5f1772eb2cbc8c9a6de3ac9e10717cd23698e8",
+      "rawOutputCanonicalSha256": "a12ab7cb7b33900a20f67c6aa263835cfbab3e9590ea4b8068fc1e23e9730e37",
+      "inputReport": "artifacts/tmp/CAP-05.S06.T03.qualifying-focused-02.json",
+      "inputReportSha256": "3c59454da08db14feecac55f2dff68ee7d0bcaeb19e7559735ed5b2bb5994f8c",
+      "producerSha256": "c22960974cec37b2ad905fba3e195d77b47f2d45390c926e8f726b9c0de9d953",
+      "provenance": "Fresh child at the committed candidate with selected source and actual runtime held. Portable display argv; ignored authenticated execution report retains exact actual argv. Known inherited architecture/lint failures remain unwaived; no full profile or Wave pass."
+    },
+    {
+      "id": "correction-predecessor-component-test-build",
+      "commandId": "desktop:application",
+      "command": ".local\\toolchains\\node-v24.19.0-win-x64\\node.exe tests/desktop/fixtures/parsing-quality.mjs artifacts\\tmp\\CAP-05.S06.T03-correction-regression-qualifying-02",
+      "workingDirectory": ".",
+      "commit": "b7e6d0bbe4a1adb9efb8430c83d194fd2db673c3",
+      "exitCode": 0,
+      "result": "PASS",
+      "durationSeconds": 1.058160099957604,
+      "rawOutput": "artifacts/tmp/CAP-05.S06.T03.qualifying-focused-02.correction-predecessor-component-test-build.log",
+      "rawOutputSha256": "b566697482f32b633a48396e0d777cf81c332f8df2179cb8374172d5618725ee",
+      "rawOutputCanonicalSha256": "b566697482f32b633a48396e0d777cf81c332f8df2179cb8374172d5618725ee",
+      "inputReport": "artifacts/tmp/CAP-05.S06.T03.qualifying-focused-02.json",
+      "inputReportSha256": "3c59454da08db14feecac55f2dff68ee7d0bcaeb19e7559735ed5b2bb5994f8c",
+      "producerSha256": "c22960974cec37b2ad905fba3e195d77b47f2d45390c926e8f726b9c0de9d953",
+      "provenance": "Fresh child at the committed candidate with selected source and actual runtime held. Portable display argv; ignored authenticated execution report retains exact actual argv. Known inherited architecture/lint failures remain unwaived; no full profile or Wave pass."
+    },
+    {
+      "id": "correction-predecessor-interactions",
+      "commandId": "desktop:unit",
+      "command": ".venv\\Scripts\\python.exe -B -m unittest -v tests.desktop.test_parsing_quality_interactions",
+      "workingDirectory": ".",
+      "commit": "b7e6d0bbe4a1adb9efb8430c83d194fd2db673c3",
+      "exitCode": 0,
+      "result": "PASS",
+      "durationSeconds": 2.068233500001952,
+      "rawOutput": "artifacts/tmp/CAP-05.S06.T03.qualifying-focused-02.correction-predecessor-interactions.log",
+      "rawOutputSha256": "e968ce67228ac8dc3b080729fb344ef3b9da9122343caa9dcb7e19b57f7d8333",
+      "rawOutputCanonicalSha256": "aec578359344d37ffa882985bdd4439b85ad4af97b444748b95674d1e9d08426",
+      "inputReport": "artifacts/tmp/CAP-05.S06.T03.qualifying-focused-02.json",
+      "inputReportSha256": "3c59454da08db14feecac55f2dff68ee7d0bcaeb19e7559735ed5b2bb5994f8c",
+      "producerSha256": "c22960974cec37b2ad905fba3e195d77b47f2d45390c926e8f726b9c0de9d953",
+      "provenance": "Fresh child at the committed candidate with selected source and actual runtime held. Portable display argv; ignored authenticated execution report retains exact actual argv. Known inherited architecture/lint failures remain unwaived; no full profile or Wave pass."
+    },
+    {
+      "id": "native-reprocessing-test-build",
+      "commandId": "desktop:application",
+      "command": ".local\\toolchains\\rustup\\toolchains\\1.96.1-x86_64-pc-windows-msvc\\bin\\cargo.exe test --manifest-path apps/desktop/src-tauri/Cargo.toml --locked --offline --features integration-harness --lib --no-run -j1",
+      "workingDirectory": ".",
+      "commit": "b7e6d0bbe4a1adb9efb8430c83d194fd2db673c3",
+      "exitCode": 0,
+      "result": "PASS",
+      "durationSeconds": 33.534783399954904,
+      "rawOutput": "artifacts/tmp/CAP-05.S06.T03.qualifying-focused-02.native-reprocessing-test-build.log",
+      "rawOutputSha256": "61464eba4505589ae1eafacee8368dcaa5eb3d7e5e7a70f5d1f2d46416b543f5",
+      "rawOutputCanonicalSha256": "61464eba4505589ae1eafacee8368dcaa5eb3d7e5e7a70f5d1f2d46416b543f5",
+      "inputReport": "artifacts/tmp/CAP-05.S06.T03.qualifying-focused-02.json",
+      "inputReportSha256": "3c59454da08db14feecac55f2dff68ee7d0bcaeb19e7559735ed5b2bb5994f8c",
+      "producerSha256": "c22960974cec37b2ad905fba3e195d77b47f2d45390c926e8f726b9c0de9d953",
+      "provenance": "Fresh child at the committed candidate with selected source and actual runtime held. Portable display argv; ignored authenticated execution report retains exact actual argv. Known inherited architecture/lint failures remain unwaived; no full profile or Wave pass."
+    },
+    {
+      "id": "owned-test-activation-manifest",
+      "commandId": "desktop:application",
+      "command": "mt.exe -nologo -manifest apps/desktop/src-tauri/resources/example-application.manifest -outputresource:artifacts\\tmp\\CAP-05.S06.T03-qualify-temp-02\\reprocessing-witness.exe;#1",
+      "workingDirectory": ".",
+      "commit": "b7e6d0bbe4a1adb9efb8430c83d194fd2db673c3",
+      "exitCode": 0,
+      "result": "PASS",
+      "durationSeconds": 1.2970449000131339,
+      "rawOutput": "artifacts/tmp/CAP-05.S06.T03.qualifying-focused-02.owned-test-activation-manifest.log",
+      "rawOutputSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "rawOutputCanonicalSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "inputReport": "artifacts/tmp/CAP-05.S06.T03.qualifying-focused-02.json",
+      "inputReportSha256": "3c59454da08db14feecac55f2dff68ee7d0bcaeb19e7559735ed5b2bb5994f8c",
+      "producerSha256": "c22960974cec37b2ad905fba3e195d77b47f2d45390c926e8f726b9c0de9d953",
+      "provenance": "Fresh child at the committed candidate with selected source and actual runtime held. Portable display argv; ignored authenticated execution report retains exact actual argv. Known inherited architecture/lint failures remain unwaived; no full profile or Wave pass."
+    },
+    {
+      "id": "native-reprocessing-request-boundaries",
+      "commandId": "desktop:application",
+      "command": "artifacts\\tmp\\CAP-05.S06.T03-qualify-temp-02\\reprocessing-witness.exe document_reprocessing::tests --nocapture --test-threads=1",
+      "workingDirectory": ".",
+      "commit": "b7e6d0bbe4a1adb9efb8430c83d194fd2db673c3",
+      "exitCode": 0,
+      "result": "PASS",
+      "durationSeconds": 0.4685478000319563,
+      "rawOutput": "artifacts/tmp/CAP-05.S06.T03.qualifying-focused-02.native-reprocessing-request-boundaries.log",
+      "rawOutputSha256": "7782a3d73422c919ac226459990276c35212da216deb2e425973d6b5a71c4030",
+      "rawOutputCanonicalSha256": "7782a3d73422c919ac226459990276c35212da216deb2e425973d6b5a71c4030",
+      "inputReport": "artifacts/tmp/CAP-05.S06.T03.qualifying-focused-02.json",
+      "inputReportSha256": "3c59454da08db14feecac55f2dff68ee7d0bcaeb19e7559735ed5b2bb5994f8c",
+      "producerSha256": "c22960974cec37b2ad905fba3e195d77b47f2d45390c926e8f726b9c0de9d953",
+      "provenance": "Fresh child at the committed candidate with selected source and actual runtime held. Portable display argv; ignored authenticated execution report retains exact actual argv. Known inherited architecture/lint failures remain unwaived; no full profile or Wave pass."
+    },
+    {
+      "id": "native-correction-request-regression",
+      "commandId": "desktop:application",
+      "command": "artifacts\\tmp\\CAP-05.S06.T03-qualify-temp-02\\reprocessing-witness.exe document_corrections::tests --nocapture --test-threads=1",
+      "workingDirectory": ".",
+      "commit": "b7e6d0bbe4a1adb9efb8430c83d194fd2db673c3",
+      "exitCode": 0,
+      "result": "PASS",
+      "durationSeconds": 0.01549159997375682,
+      "rawOutput": "artifacts/tmp/CAP-05.S06.T03.qualifying-focused-02.native-correction-request-regression.log",
+      "rawOutputSha256": "6e426eebbe56b681c5371b08b290e22dc50bcbcf7d7213e4233543a52fdffb3c",
+      "rawOutputCanonicalSha256": "6e426eebbe56b681c5371b08b290e22dc50bcbcf7d7213e4233543a52fdffb3c",
+      "inputReport": "artifacts/tmp/CAP-05.S06.T03.qualifying-focused-02.json",
+      "inputReportSha256": "3c59454da08db14feecac55f2dff68ee7d0bcaeb19e7559735ed5b2bb5994f8c",
+      "producerSha256": "c22960974cec37b2ad905fba3e195d77b47f2d45390c926e8f726b9c0de9d953",
+      "provenance": "Fresh child at the committed candidate with selected source and actual runtime held. Portable display argv; ignored authenticated execution report retains exact actual argv. Known inherited architecture/lint failures remain unwaived; no full profile or Wave pass."
+    },
+    {
+      "id": "synthetic-native-project-seed",
+      "commandId": "documents:unit",
+      "command": ".venv\\Scripts\\python.exe -B tests/documents/correction_native_windows_fixture.py",
+      "workingDirectory": ".",
+      "commit": "b7e6d0bbe4a1adb9efb8430c83d194fd2db673c3",
+      "exitCode": 0,
+      "result": "PASS",
+      "durationSeconds": 24.411266200011596,
+      "rawOutput": "artifacts/tmp/CAP-05.S06.T03.qualifying-focused-02.synthetic-native-project-seed.log",
+      "rawOutputSha256": "d4c4f77b2849c5568c28fb06a6e43d8860161d0ddf7635f5ebb7573425708a29",
+      "rawOutputCanonicalSha256": "907d5de0d45b659624ebfb4ecfe53c12e74045378f7d4c6902293e777ad17bf8",
+      "inputReport": "artifacts/tmp/CAP-05.S06.T03.qualifying-focused-02.json",
+      "inputReportSha256": "3c59454da08db14feecac55f2dff68ee7d0bcaeb19e7559735ed5b2bb5994f8c",
+      "producerSha256": "c22960974cec37b2ad905fba3e195d77b47f2d45390c926e8f726b9c0de9d953",
+      "provenance": "Fresh child at the committed candidate with selected source and actual runtime held. Portable display argv; ignored authenticated execution report retains exact actual argv. Known inherited architecture/lint failures remain unwaived; no full profile or Wave pass."
+    },
+    {
+      "id": "actual-renderer-native-core-reprocessing",
+      "commandId": "desktop:application",
+      "command": "artifacts\\tmp\\CAP-05.S06.T03-qualify-temp-02\\reprocessing-witness.exe document_reprocessing::windows_integration_tests::actual_renderer_corrected_reparse_accept_reader_and_reopen --ignored --exact --nocapture --test-threads=1",
+      "workingDirectory": ".",
+      "commit": "b7e6d0bbe4a1adb9efb8430c83d194fd2db673c3",
+      "exitCode": 0,
+      "result": "PASS",
+      "durationSeconds": 27.53634210000746,
+      "rawOutput": "artifacts/tmp/CAP-05.S06.T03.qualifying-focused-02.actual-renderer-native-core-reprocessing.log",
+      "rawOutputSha256": "635252bddba7c6dddc42f8882981d1d10f6fde6cee5d51e122b88af368ff1512",
+      "rawOutputCanonicalSha256": "635252bddba7c6dddc42f8882981d1d10f6fde6cee5d51e122b88af368ff1512",
+      "inputReport": "artifacts/tmp/CAP-05.S06.T03.qualifying-focused-02.json",
+      "inputReportSha256": "3c59454da08db14feecac55f2dff68ee7d0bcaeb19e7559735ed5b2bb5994f8c",
+      "producerSha256": "c22960974cec37b2ad905fba3e195d77b47f2d45390c926e8f726b9c0de9d953",
+      "provenance": "Fresh child at the committed candidate with selected source and actual runtime held. Portable display argv; ignored authenticated execution report retains exact actual argv. Known inherited architecture/lint failures remain unwaived; no full profile or Wave pass."
+    },
+    {
+      "id": "clean-production-output",
+      "commandId": "desktop:application",
+      "command": ".local\\toolchains\\node-v24.19.0-win-x64\\node.exe scripts/clean-dist.mjs",
+      "workingDirectory": "apps/desktop",
+      "commit": "b7e6d0bbe4a1adb9efb8430c83d194fd2db673c3",
+      "exitCode": 0,
+      "result": "PASS",
+      "durationSeconds": 0.1348957999725826,
+      "rawOutput": "artifacts/tmp/CAP-05.S06.T03.qualifying-focused-02.clean-production-output.log",
+      "rawOutputSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "rawOutputCanonicalSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "inputReport": "artifacts/tmp/CAP-05.S06.T03.qualifying-focused-02.json",
+      "inputReportSha256": "3c59454da08db14feecac55f2dff68ee7d0bcaeb19e7559735ed5b2bb5994f8c",
+      "producerSha256": "c22960974cec37b2ad905fba3e195d77b47f2d45390c926e8f726b9c0de9d953",
+      "provenance": "Fresh child at the committed candidate with selected source and actual runtime held. Portable display argv; ignored authenticated execution report retains exact actual argv. Known inherited architecture/lint failures remain unwaived; no full profile or Wave pass."
+    },
+    {
+      "id": "fresh-production-build",
+      "commandId": "desktop:application",
+      "command": ".local\\toolchains\\node-v24.19.0-win-x64\\node.exe node_modules/vite/bin/vite.js build --config vite.product.config.ts",
+      "workingDirectory": "apps/desktop",
+      "commit": "b7e6d0bbe4a1adb9efb8430c83d194fd2db673c3",
+      "exitCode": 0,
+      "result": "PASS",
+      "durationSeconds": 1.8631856000283733,
+      "rawOutput": "artifacts/tmp/CAP-05.S06.T03.qualifying-focused-02.fresh-production-build.log",
+      "rawOutputSha256": "ff4e7f7dce25d7b51ea37a04d7231aa3ca46c22768b30e35eaf6e2a56e42a04f",
+      "rawOutputCanonicalSha256": "ff4e7f7dce25d7b51ea37a04d7231aa3ca46c22768b30e35eaf6e2a56e42a04f",
+      "inputReport": "artifacts/tmp/CAP-05.S06.T03.qualifying-focused-02.json",
+      "inputReportSha256": "3c59454da08db14feecac55f2dff68ee7d0bcaeb19e7559735ed5b2bb5994f8c",
+      "producerSha256": "c22960974cec37b2ad905fba3e195d77b47f2d45390c926e8f726b9c0de9d953",
+      "provenance": "Fresh child at the committed candidate with selected source and actual runtime held. Portable display argv; ignored authenticated execution report retains exact actual argv. Known inherited architecture/lint failures remain unwaived; no full profile or Wave pass."
+    },
+    {
+      "id": "fresh-production-assembly",
+      "commandId": "desktop:application",
+      "command": ".local\\toolchains\\node-v24.19.0-win-x64\\node.exe scripts/assemble-application.mjs",
+      "workingDirectory": "apps/desktop",
+      "commit": "b7e6d0bbe4a1adb9efb8430c83d194fd2db673c3",
+      "exitCode": 0,
+      "result": "PASS",
+      "durationSeconds": 0.23629030003212392,
+      "rawOutput": "artifacts/tmp/CAP-05.S06.T03.qualifying-focused-02.fresh-production-assembly.log",
+      "rawOutputSha256": "dbf723d5b9b7af1d4e852393152e1c409e24f8c5b122cc4c95210ad0f3d291fe",
+      "rawOutputCanonicalSha256": "dbf723d5b9b7af1d4e852393152e1c409e24f8c5b122cc4c95210ad0f3d291fe",
+      "inputReport": "artifacts/tmp/CAP-05.S06.T03.qualifying-focused-02.json",
+      "inputReportSha256": "3c59454da08db14feecac55f2dff68ee7d0bcaeb19e7559735ed5b2bb5994f8c",
+      "producerSha256": "c22960974cec37b2ad905fba3e195d77b47f2d45390c926e8f726b9c0de9d953",
+      "provenance": "Fresh child at the committed candidate with selected source and actual runtime held. Portable display argv; ignored authenticated execution report retains exact actual argv. Known inherited architecture/lint failures remain unwaived; no full profile or Wave pass."
+    }
+  ],
+  "verificationSelection": {
+    "selectedCommandIds": [
+      "foundation:ui-change",
+      "foundation:quality",
+      "documents:unit",
+      "foundation:adr",
+      "foundation:architecture",
+      "desktop:application",
+      "desktop:unit"
+    ],
+    "riskAnalysis": "Per-document reprocessing changes protected public/cross-process contracts, immutable correction lineage, scoped stale propagation and navigation ownership. Select fresh affected checks, real encrypted compound acceptance/current authority, failure/rollback/restart, directly affected predecessor regressions, actual production root journeys and Windows component-to-Core proof. Full inherited failures are retained with unchanged governing code and exact source-level delta.",
+    "deferred": [
+      "S06 integrated slice disposition and representative resource/performance/accessibility evidence remain required.",
+      "Fresh full W2 repository/affected profiles, cross-capability qualification, security/privacy/rights/accessibility/performance/packaging/restart/recovery, independent Wave review and separate human release remain required. Inherited full gate failures are not waived.",
+      "No 8/16GiB variant or model execution, installed-package, physical2/3GiB support, optimization campaign or shared framework repair claim."
+    ]
+  },
+  "adverseEvidence": [
+    {
+      "path": "artifacts/evidence/CAP-05.S06.T03.pre-submission-adverse-01.md",
+      "sha256": "a5b7f5d6bddf7340dc7ee776f7683dbb9b8b3f6ae38e64c26209d926deffec26",
+      "canonicalSha256": "a5b7f5d6bddf7340dc7ee776f7683dbb9b8b3f6ae38e64c26209d926deffec26"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T03.admission-red-01.log",
+      "sha256": "fee6d271497fc354cf911c967939a6cbfdda58022bce207b6e2f592b57fb2f11",
+      "canonicalSha256": "6c60e50c36f5984b3bdb67ab150acb79dbea3fc0986f189f6b171afe1f1aa89d"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T03.atomic-development-01.log",
+      "sha256": "d56ab172f2ee4dcbf4038fd5de481f6bdec87a6b1ae5ddf1b6fb40aaab80c045",
+      "canonicalSha256": "571d2639f24370a1ef7ce9913bd40db9f30620a8026853ec458725b81adbf53c"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T03.atomic-development-02.log",
+      "sha256": "6540c6bbd1131b1b3b4df4cfb7d456b24f4d61f668825fb470ee8c92488cb195",
+      "canonicalSha256": "afa77f28e3436df0eee5b30380655120d146c358843366a165ef57e0fad8e031"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T03.atomic-development-03.log",
+      "sha256": "7a007a79c611f025843fdc141ce772e65aacdb62e79c5c923e7bc42767742f3c",
+      "canonicalSha256": "ee1ec7d619b7d4f240459b55fef3ec29f41d39084296c9f04e17ee18fdf047b6"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T03.atomic-development-04.log",
+      "sha256": "afcdfc334920483b1be985b7eb48c2c729cedf93baab7593f621f92e2c8c3374",
+      "canonicalSha256": "3fd2208d1ccf3997f6e0aa62658e932f649b055cddb2ad2a2ecf05627047c7fd"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T03.atomic-diagnostic-01.log",
+      "sha256": "ca76a582d0af0f606e5c1cc597d3f637094bbf8d440473a55516c3d998e2e935",
+      "canonicalSha256": "92417e56ba1659877e9a429b40245702682f8a2d61b0877518dbbeffa3b0e946"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T03.atomic-diagnostic-02.log",
+      "sha256": "631c3ac41fea5322b17f1a779f4365d1d6692e65d05160b6e0a9691a3f62b682",
+      "canonicalSha256": "dcc34882d4be2ac640ec54df84ac5da970cc7fe09b02ebf74dd222f734c3b8dc"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T03.atomic-diagnostic-03.log",
+      "sha256": "053561356f68cff5ad67ea2e1bc377f023e73896f2f71bcf96b2450baf9924b0",
+      "canonicalSha256": "0babd7b60bf5e0f4b1e2f40ccc739d438e27038b1c2a3aab55ca70b282244a35"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T03.atomic-diagnostic-04.log",
+      "sha256": "f1316ae256f839c7d2715df23532ed1b14d6351b43eca34868daddf4b54153d3",
+      "canonicalSha256": "cc10acdb820b913acd53bf6e7c5032feaffd8a1a1156121fd7e800146d7ad200"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T03.atomic-red-01.log",
+      "sha256": "b707d8082c66854dde2db26b900953bd9366830406eb660865859c8e1abee71d",
+      "canonicalSha256": "920af8925473b4b432dd99cd3cf2acacea41ad8c05c8d6d55de465a8c1bc2a7f"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T03.atomic-red-02.log",
+      "sha256": "a7e66046adb78ca4fabf118e010080f6697d43f53d74aa316ed058745714b387",
+      "canonicalSha256": "19ef18d1e397998313ea6c144791062aea67f46b8294c02ff7d834941bbf0148"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T03.claim-01.log",
+      "sha256": "df1d7cc78bae645472814edab1fc722f96f031b476de78eec956397ec6f41756",
+      "canonicalSha256": "5df1d27133d8729ccfabe50126d9433a9d091c683e767c8006c39d199f8973cd"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T03.claim-projection-01.json",
+      "sha256": "fd677f9c5749776b6b4ebf47b9c9b46010581daa3791aaecccd41e02136e53ee",
+      "canonicalSha256": "d611a69f2eceec214e3f02220c9f4a6ffde460ad292b290666129afbd9fbb00d"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T03.claim-site-generation-01.log",
+      "sha256": "ebd764e997cba93a5e4f771fedfbabc3a04f5a90d55a7b75197cfdfba3d16a7f",
+      "canonicalSha256": "331ad0a0966e3bc261d3189b779a7c7d2b238b03a13f1cafc67f9f614df9beab"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T03.comparison-baseline-review-01.json",
+      "sha256": "327e1f81b29c06113f6cdb52564ead8f6e5d953a04a430a2f14b8b7b0a109fc2",
+      "canonicalSha256": "327e1f81b29c06113f6cdb52564ead8f6e5d953a04a430a2f14b8b7b0a109fc2"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T03.comparison-baseline-review-02.json",
+      "sha256": "8db492b9872c810cd279724da354472a081eb5cbe9f756bd5970db2b808aaaa4",
+      "canonicalSha256": "8db492b9872c810cd279724da354472a081eb5cbe9f756bd5970db2b808aaaa4"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T03.comparison-measurement-01.json",
+      "sha256": "567116f37cbcecd8af8bf898c4e6471fba6926ece975a8b1fd365b5930192185",
+      "canonicalSha256": "78a3db7c15c088252ee6f052651d6a69ba6791111f8c873c8a02a26b5f557d2d"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T03.comparison-measurement-01.log",
+      "sha256": "3555b5c240a1caf7460e479044a6b1e83eb2a75438ce96fc79dee750bc8a86d5",
+      "canonicalSha256": "6452c7d66e8a161bd09afb41f12b0004d652313735ba11f8d72d35b4ba284f41"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T03.corrected-development-01.log",
+      "sha256": "324290aac9a7ca91ae3443b7c3d07cf81ca63e67e5f15b9ad5576390da7f8362",
+      "canonicalSha256": "f136842da3f081bc8baa5d2f5bfe58a0b8db0257cf75d1401c5c7d049c54aa5f"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T03.desktop-codecs-development-01.log",
+      "sha256": "9217307b4f57f2e0635bbbead7f4c60ef500e07ac9b6fe5e39862475df6c2d6d",
+      "canonicalSha256": "673460b289e41f13640635b75fd41c749e1aa1904ce9956ab0a76f8da12788f5"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T03.desktop-codecs-development-02.log",
+      "sha256": "d0be8acfbdf2eb7bc17cc4afaf1e1edebe4417ca2c8cf35c32bd96e281af979f",
+      "canonicalSha256": "513d02afccea99800bd7f2105d024fa7b34af303c1d3b985b323cfdae67f9d64"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T03.desktop-codecs-development-03.log",
+      "sha256": "97a0e4486888f452ed10233a6601b5c3261a1fb98ba942ea03f7a66683b0f17c",
+      "canonicalSha256": "88ca7dc79ef258a5a63fcd396a98ab9ff169027e3f0bae9844bb3bd45c250610"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T03.desktop-types-development-01.log",
+      "sha256": "c5ac846976a39afbc5bfc2f4abd92c8e2f34c10e749b4505aeec745f99afb7a9",
+      "canonicalSha256": "a2d697fe9a7ae2055e265795f0ad7cc308fff882326ef5ce0928b81650f1d4f3"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T03.desktop-types-development-02.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "canonicalSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T03.desktop-types-development-03.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "canonicalSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T03.desktop-types-development-04.log",
+      "sha256": "c556ac040a8079ee15a40bf961151aa9ae2602f03e969648503d517c0250ae54",
+      "canonicalSha256": "baa2e978b81600ae7dc05e8a15dd2a6753493b3d5e5b1447936391ce84662956"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T03.desktop-types-development-05.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "canonicalSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T03.desktop-types-development-06.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "canonicalSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T03.domain-development-01.log",
+      "sha256": "3659693c2565181b4ed228d7b26ea7706bc585b6b36dbdeed50c1737bab7ba98",
+      "canonicalSha256": "176d2019a830609aa649f2f87dc6920edba86239e9de719b7abdcc005327291f"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T03.domain-development-02.log",
+      "sha256": "831b7a80347bc806f641e4b4ec564f3dcfbc640962dea9a39aa023666bcaccc7",
+      "canonicalSha256": "0df0db5bf161c4da09c204f9870c468dd4bdde4cc3c5729c193bc2626d13973d"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T03.domain-development-03.log",
+      "sha256": "93883069b8c03913c2ea0d62edb65fe51c3967687398d30b087775f84bad8692",
+      "canonicalSha256": "ffe1b99eecfa16f9a3ec9a8a588d607a2a814786fc7ee3215f528cba5b4aedf4"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T03.domain-development-04.log",
+      "sha256": "cea5c1ebbadc89f872c75170355d471ffca6195ae8e1410c1bf74cd4dcc5cc42",
+      "canonicalSha256": "79cf3dc38312f3102a30306d4a51ca94a918305ed7acaa31867086f0a5e0095d"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T03.domain-development-05.log",
+      "sha256": "bf9b5bbd2450decf92267b41005ccbb9d649b063d8bfce92d38f85e6f9d0b7c8",
+      "canonicalSha256": "50f98a150be5ad50368a633f32a262936a297312880d536ddca297616023bb51"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T03.domain-red-01.log",
+      "sha256": "6f170a01bb257239acf90676460079ab0b3ee686421083d894d72cd09b715b8d",
+      "canonicalSha256": "4634815259d4704809b0dba884a047cb693ceee20357a5ab17ebdb2e8239e51b"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T03.fixture-format-01.log",
+      "sha256": "d9d79976036ac55b771b47f6cecaa66a30fe59749dba207bd67b2104ca5c29d7",
+      "canonicalSha256": "413a709001976657cb743636fd34e48fc41d8d302d665460d3f874b3313da127"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T03.fixture-ruff-01.log",
+      "sha256": "a4443afdcfb6d7363adb285762515ccf7cf50473b1a05c20c1a50f6bed4d26b0",
+      "canonicalSha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T03.format-development-01.log",
+      "sha256": "c49aab194ca2079fe3ed170f0fceef9f4231e76c8b7b1b93c386e9f36b3497fa",
+      "canonicalSha256": "76fa4b2623f7616f54019b2ef7e69f8ea82fb9c08f15336614a4bdf1b9271027"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T03.generation-impact-development-01.log",
+      "sha256": "100dad158e7b022bb7218397af5fa25584b4271d955989b964c594e765112718",
+      "canonicalSha256": "7405915a464e83308c787ef88da7d9d7016017287b5db63592b43cd8c1457f39"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T03.generations-batch-development-01.log",
+      "sha256": "d3bafa41820b37a6e96bf6d808854b7f4fabfb8eb8612754c35bda198c06a471",
+      "canonicalSha256": "3c4be8577ac3ed2b013e4f7b380bb9b60e35c6a39d0990edbc4a2e31a7ea3260"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T03.identity-partial-development-01.log",
+      "sha256": "3daaeee8332d4976bca5b2052819aef26975a2cb35d954481dce6ff406f69f6d",
+      "canonicalSha256": "82ce094608a30b72c0fd65d6c81bb9185c72b838d2f7fb2a41f56308ba0eefb0"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T03.impact-development-01.log",
+      "sha256": "f21f732f8db5f48a3b885a74de99924dd175e09d8f4914d4afe7ad27f6f16acb",
+      "canonicalSha256": "89930de3ac92a02927389582a540a79db484636db6f4fb5cfce3641382c45092"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T03.incremental-core-assessment-01.json",
+      "sha256": "9f8d40b5727128a3e25dcac79d0ac96270349bac26d22700ec4bb75a7a104df4",
+      "canonicalSha256": "9f8d40b5727128a3e25dcac79d0ac96270349bac26d22700ec4bb75a7a104df4"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T03.independent-create-cancel-replay-setup-01.json",
+      "sha256": "02821b3dc5b1c2f253957fd3c7ecdb73b6931d26c6f88e86d76838f689e38e03",
+      "canonicalSha256": "02821b3dc5b1c2f253957fd3c7ecdb73b6931d26c6f88e86d76838f689e38e03"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T03.independent-create-cancel-replay-setup-02.json",
+      "sha256": "97769460fecdd8cc1ce2eb6b6f6ff1cd48dbedfa51052e6cc1b140b4ea35826b",
+      "canonicalSha256": "97769460fecdd8cc1ce2eb6b6f6ff1cd48dbedfa51052e6cc1b140b4ea35826b"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T03.independent-replay-01.json",
+      "sha256": "edae9e68d41e0bb9adf87535aed29d61f91fea2b3485de965c1154e3ac3f9f32",
+      "canonicalSha256": "edae9e68d41e0bb9adf87535aed29d61f91fea2b3485de965c1154e3ac3f9f32"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T03.mypy-development-01.log",
+      "sha256": "4a4aee6787f4b9f71625feacd637486fc6f31235dd37a61db5c710294b118b97",
+      "canonicalSha256": "d8602c2bdc5bdb398ce56a78a68bb60d032162504ee087bdd2d2cbcd9b452af1"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T03.mypy-development-02.log",
+      "sha256": "fee20c3530f537c7b40dc53d0dc95a5516f6bc7f4c3a6fee16cac0f567c253f0",
+      "canonicalSha256": "9a745446a15bba345446df4ea44d087851eebb11d6810a77bde5e8a29fa9556a"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T03.mypy-development-03.log",
+      "sha256": "75877ef4ea6bde68d5b213b530a0fc827872ef8e56d408c203b3afda0bf5efb8",
+      "canonicalSha256": "b73d4e361fb2cfc499cbc8e596b28d00dca4e322523f6518dbeec3097fc694d7"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T03.mypy-development-04.log",
+      "sha256": "2b5c5103f0c0a4c03b00a75b3693280cbc8157b1a5c55b995dec1ae435f08e98",
+      "canonicalSha256": "63185dda167723a66b057c62b54ba276e41b4e352bc74f0a40092605c0c562bc"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T03.mypy-development-05.log",
+      "sha256": "b1b82bb69aa8ee5fe5bde53844e58303672b4f6e3cde230080c34b567fc50bfe",
+      "canonicalSha256": "803cfefd7ed9e4dc69c1c5600e7261578e0033cb4b9fa916eec17c5adb38e656"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T03.native-batch-inspect-01.log",
+      "sha256": "0f281952f8a67710c064803998b829b5c626445577e13926a1aa6c1cfba86c99",
+      "canonicalSha256": "c843679ea8fa8eacf5f87397a671d7f06c1f6a941e6ba93903631c9346e79fc8"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T03.native-batch-inspect-02.log",
+      "sha256": "b270f6c44f0ec84347a46b14a771c6948955c064ad14647f8665bb972c9a243c",
+      "canonicalSha256": "4cce85f26c53ae1757813fd350b55c2a5360dd573b54532b75894503907bf05c"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T03.native-build-development-03.log",
+      "sha256": "9bcbc35c31921252f4c8591c7f1f5a1a24184c2b96dd873b144143ee1143efe2",
+      "canonicalSha256": "8b45332dce215113771e6696a4a03cdd0d9ccddb627aaf9e94faf8e29fb1c284"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T03.native-build-development-04.log",
+      "sha256": "52406fa327f7dfc2e262a22550709608dcbdca2ffd1cc3163c64a7f29272d2d0",
+      "canonicalSha256": "e7c0aaede153916bdaba4cc19e4576fc17ec35fddfbabf32d2836b2320d67f6c"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T03.native-development-01.log",
+      "sha256": "d41d2ea230e5a991ba20d7c25e193be49d5bac924a33c055e52604eb5457325c",
+      "canonicalSha256": "ee65336f72dc3baff99d73cefbfb10dd2fe25eb4b7244fe39692d9b6129135da"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T03.native-development-02.activation.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "canonicalSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T03.native-development-02.actual-renderer.log",
+      "sha256": "a7029243e686a26de287612374dbb4e0cbe622663710b519d25b3212bc9690bc",
+      "canonicalSha256": "a7029243e686a26de287612374dbb4e0cbe622663710b519d25b3212bc9690bc"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T03.native-development-02.build.log",
+      "sha256": "9f4202218024c61d4cc81514baae2c268aa66212807a75dffb13ea1af4c64d87",
+      "canonicalSha256": "9f4202218024c61d4cc81514baae2c268aa66212807a75dffb13ea1af4c64d87"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T03.native-development-02.log",
+      "sha256": "cb6675b7fd7e37fea686f7589e77c610bb599aa26e6b14f13df7903270a61e65",
+      "canonicalSha256": "f78ba0a6b3d5757fd25f642e2324b4e78d8d829c58dbcacf7c85e507cf0d0459"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T03.native-development-02.request-boundaries.log",
+      "sha256": "7782a3d73422c919ac226459990276c35212da216deb2e425973d6b5a71c4030",
+      "canonicalSha256": "7782a3d73422c919ac226459990276c35212da216deb2e425973d6b5a71c4030"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T03.native-development-02.seed.log",
+      "sha256": "14a69bb075c2c5d49be2824ae62b7589aec92d4c0e0a7f24c53126d521dcd259",
+      "canonicalSha256": "54e86b321da4fd8c45eb89fdbd8baa189a54f93dff689c14a0089ef13c825bff"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T03.native-development-03.actual-renderer.log",
+      "sha256": "8775ed4306c878d0054c3f3c42a7d25cca9e279e70892d41ff82215a608ea832",
+      "canonicalSha256": "8775ed4306c878d0054c3f3c42a7d25cca9e279e70892d41ff82215a608ea832"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T03.native-development-03.log",
+      "sha256": "98fe5a85696116aa7e3d90fb2d87f103bc993a7c07c54875f3c16dfcd7f7ed92",
+      "canonicalSha256": "c5c9300b235e5009f5890eeac5e5d52595f901f1b72b1ced0038743a27ace7a5"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T03.native-development-04.activation.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "canonicalSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T03.native-development-04.actual-renderer.log",
+      "sha256": "50411a2ed70e1c830a341d30f008fc0feb4ab48ab706908c8b25a1ae647dd02b",
+      "canonicalSha256": "50411a2ed70e1c830a341d30f008fc0feb4ab48ab706908c8b25a1ae647dd02b"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T03.native-development-04.build.log",
+      "sha256": "5aaf3fc44aac02bbeb50443404196fcb9089e7457d3568947f4b0abecf819c91",
+      "canonicalSha256": "5aaf3fc44aac02bbeb50443404196fcb9089e7457d3568947f4b0abecf819c91"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T03.native-development-04.log",
+      "sha256": "ab604a0a1bd7fac319c21cba52d00069af37b5bcc22db80fc21817e37dd5bcd6",
+      "canonicalSha256": "02bce03b07b5c6d416a78cc3f23503fa69a68d13b8874c9c6bf9ce4dd046a7ba"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T03.native-development-04.request-boundaries.log",
+      "sha256": "7782a3d73422c919ac226459990276c35212da216deb2e425973d6b5a71c4030",
+      "canonicalSha256": "7782a3d73422c919ac226459990276c35212da216deb2e425973d6b5a71c4030"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T03.native-development-04.seed.log",
+      "sha256": "03604012efe8979bef2986f5591d43ebf2399a5ebe4335e0051730d811fcb997",
+      "canonicalSha256": "90dd707a044f8f1fe8e81051e5dcc38d99cd72612c7a8614b4500746d0d528aa"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T03.native-development-05.activation.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "canonicalSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T03.native-development-05.actual-renderer.log",
+      "sha256": "072dbb32aad17b6c938c1350768093d292ff8a3f0dcc81ce7ca926b43ce51d55",
+      "canonicalSha256": "072dbb32aad17b6c938c1350768093d292ff8a3f0dcc81ce7ca926b43ce51d55"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T03.native-development-05.build.log",
+      "sha256": "33222d8f77bbc37376a8e729cd97b274632762f4c176984fc732878481dabd9b",
+      "canonicalSha256": "33222d8f77bbc37376a8e729cd97b274632762f4c176984fc732878481dabd9b"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T03.native-development-05.log",
+      "sha256": "3ddda84ee1071693f11fce0d966732814f0442f5aaec581484f83d66090e0877",
+      "canonicalSha256": "2a4b910993e193499162bf26a9c9a3fcc2cb603d1dcfa100f4c3d0bfb93bda90"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T03.native-development-05.request-boundaries.log",
+      "sha256": "7782a3d73422c919ac226459990276c35212da216deb2e425973d6b5a71c4030",
+      "canonicalSha256": "7782a3d73422c919ac226459990276c35212da216deb2e425973d6b5a71c4030"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T03.native-development-05.seed.log",
+      "sha256": "80ff81966a0a68105e5b3a28eae7662802b73c5a366c346d8092ff3f817bc0ce",
+      "canonicalSha256": "6592a40e921fe6b7d95b96325cedd2f5c1286d0a4108021deacf05b3b11207eb"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T03.native-development-06.activation.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "canonicalSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T03.native-development-06.actual-renderer.log",
+      "sha256": "19160966d4f8e6b86cee5fe090701ef521233a371a7040f2b24d1b5f73bad509",
+      "canonicalSha256": "19160966d4f8e6b86cee5fe090701ef521233a371a7040f2b24d1b5f73bad509"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T03.native-development-06.build.log",
+      "sha256": "9bc04f82f6b744d28325b62c5b884bbcacebd43b45a5e83239d07e1e86103210",
+      "canonicalSha256": "9bc04f82f6b744d28325b62c5b884bbcacebd43b45a5e83239d07e1e86103210"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T03.native-development-06.log",
+      "sha256": "0ba7308201c14ad213f007b7b78b4a43ed3cd5c3a5bcbcea2d426ae8a6093a9e",
+      "canonicalSha256": "2f6e62be5ace698e7f3278e03cc640b88c283da282206e2883c2bf3d04cf1c0e"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T03.native-development-06.request-boundaries.log",
+      "sha256": "7782a3d73422c919ac226459990276c35212da216deb2e425973d6b5a71c4030",
+      "canonicalSha256": "7782a3d73422c919ac226459990276c35212da216deb2e425973d6b5a71c4030"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T03.native-development-06.seed.log",
+      "sha256": "6b376a57adaa3198ad8a55626390e012f45b609cdf99744e40a47f6e5d66b1aa",
+      "canonicalSha256": "1a65bbcdf0b90af9abc03041b978138540f194214a00e311ba7b275721aca764"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T03.native-request-development-01.log",
+      "sha256": "7713b4b9471c0980c3ab893ff5c2126b88ae1775d09ab6039d2087d856aaad7d",
+      "canonicalSha256": "caf14831b016ac766dfe24c5a66df0c9a5ed735cd2bf829dd494d49313f687e1"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T03.native-request-development-02.log",
+      "sha256": "770735645fba7ad2440bbbcc101e6a3f5c2fd3e20f0eda849882d248dc5368b3",
+      "canonicalSha256": "8e0c39975446cb131f5c1f5652f7d8f9f1b72a5e6792d6a04930c7ba4b41fca8"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T03.native-ui-build-development-01.log",
+      "sha256": "577cbd8762bdd0e7590f07f91e3c6e762363eabd9cb5fa3d9e1823fbbc302c0d",
+      "canonicalSha256": "6b6c5ce0303ac76a3cdcbbba403678fab4f1a6de8a3975cbefebf4aeb89f76bd"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T03.native-ui-build-development-02.log",
+      "sha256": "9ea6421a810ca1da5dd76c23d271fa3c04faba282931e7c53511507f2860655e",
+      "canonicalSha256": "b566697482f32b633a48396e0d777cf81c332f8df2179cb8374172d5618725ee"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T03.native-ui-build-development-04.log",
+      "sha256": "9ea6421a810ca1da5dd76c23d271fa3c04faba282931e7c53511507f2860655e",
+      "canonicalSha256": "b566697482f32b633a48396e0d777cf81c332f8df2179cb8374172d5618725ee"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T03.native-ui-build-development-05.log",
+      "sha256": "9ea6421a810ca1da5dd76c23d271fa3c04faba282931e7c53511507f2860655e",
+      "canonicalSha256": "b566697482f32b633a48396e0d777cf81c332f8df2179cb8374172d5618725ee"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T03.native-ui-build-development-06.log",
+      "sha256": "9ea6421a810ca1da5dd76c23d271fa3c04faba282931e7c53511507f2860655e",
+      "canonicalSha256": "b566697482f32b633a48396e0d777cf81c332f8df2179cb8374172d5618725ee"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T03.native-ui-incremental-02.json",
+      "sha256": "0e42f3d906ab3582e5f91e8f1299246adb92fd7534da3b7d153702f8668275d3",
+      "canonicalSha256": "0e42f3d906ab3582e5f91e8f1299246adb92fd7534da3b7d153702f8668275d3"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T03.navigation-build-development-01.log",
+      "sha256": "9ea6421a810ca1da5dd76c23d271fa3c04faba282931e7c53511507f2860655e",
+      "canonicalSha256": "b566697482f32b633a48396e0d777cf81c332f8df2179cb8374172d5618725ee"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T03.navigation-development-01.log",
+      "sha256": "44290861938ca80bb60695eb3f10e1944eb17f864e6e03dea707688406358fdd",
+      "canonicalSha256": "b8e0dd5311bb69d10f5d556bed33a0cf31c24b2b9ca2a4a56c0cd3858081e4c4"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T03.navigation-development-02.log",
+      "sha256": "f331c4e2ccffe9ed9de86be0690e8a2eb2db6631f9a19e10da227329576623ad",
+      "canonicalSha256": "4efb63322b8ee88d093fd8a74dac3f3da95c65c07cc89fffe0dee425868a05dc"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T03.new-batch-characterization-01.log",
+      "sha256": "ff450d8fecc5da6c35b77139933a2bc42e334404cd5703a9f747b26447fc2212",
+      "canonicalSha256": "fa3fb7d232ef27a387d452ee6b35a32f087bbd05cf619d1c8d3c7df83ed47606"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T03.operation-mapping-development-01.log",
+      "sha256": "14c747b60720b9ac4d1f2661ab9bffbd6f5f1ed2eb146335e6da372e816340b8",
+      "canonicalSha256": "2ed6ce356d58bd42e1b0ffc5dffc3614c7d2c89691dfb765318876c08ad00bf4"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T03.partial-red-01.log",
+      "sha256": "f4d6e1c004f9fa89b34199fcb172380197b1b6038867af19914fcd713bc8f441",
+      "canonicalSha256": "f50968b9765290f0a45aea27c4c239b5b6e494ebf258b898678315bfc7b03150"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T03.production-manifest-01.json",
+      "sha256": "8e2a2902981809492a01f6f37c645ccaba75872c5098001b4ad15d32d1409c9b",
+      "canonicalSha256": "8e2a2902981809492a01f6f37c645ccaba75872c5098001b4ad15d32d1409c9b"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T03.production-manifest-02.json",
+      "sha256": "a88649cb42f3c06356dfe290040469e440a9ce72c74343ade1b7c00ed904dd4e",
+      "canonicalSha256": "a88649cb42f3c06356dfe290040469e440a9ce72c74343ade1b7c00ed904dd4e"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T03.qualifying-focused-01.actual-native-core-correction-authority.log",
+      "sha256": "d64fd09cfdd74b9f461bbe8d40950de616a9640b6baa6d72be1390791406bad3",
+      "canonicalSha256": "79a878f89b7b9b48ee3685d295b6a245770eb3967eee289256509966e77ba0a2"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T03.qualifying-focused-01.actual-renderer-native-core-reprocessing.log",
+      "sha256": "b35e3d7858e97277a4d3fdef86c53f128bca3bb19a6a7e17f3c005c184c02be7",
+      "canonicalSha256": "b35e3d7858e97277a4d3fdef86c53f128bca3bb19a6a7e17f3c005c184c02be7"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T03.qualifying-focused-01.affected-adr.log",
+      "sha256": "a688acd6005a06e1c32b6f38e8855e7b10004149bb471389a1f05966e6b0c44c",
+      "canonicalSha256": "fcb3d9d38449bc3879c8fd010cafa9c32e48d738383f6fc188517afa5625181c"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T03.qualifying-focused-01.affected-product-dependency-and-lint-delta.log",
+      "sha256": "9edfd7be339e1cc7139172fae940f7b0ed22efc3c9032b55bf471c7f5d244ada",
+      "canonicalSha256": "c091803cfc54e3097cbe58c62d50decefbcc215fd4ee2342a27626d0c3d26daf"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T03.qualifying-focused-01.affected-python-format.log",
+      "sha256": "c4fd3f494556e5e7cf4355131a1080dbdcf0bbf09664638af9984db197ad88c0",
+      "canonicalSha256": "c4fd3f494556e5e7cf4355131a1080dbdcf0bbf09664638af9984db197ad88c0"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T03.qualifying-focused-01.affected-python-lint.log",
+      "sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18",
+      "canonicalSha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T03.qualifying-focused-01.affected-python-types.log",
+      "sha256": "c2da66a3a1bfcf48a3d33b51e238e705bec896a18f0ea9a0f12ff5f81445b905",
+      "canonicalSha256": "664b1645e15b0aa8aba4c4fe3fc8223f67115cbd00decd99e874cef82ba1d0c2"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T03.qualifying-focused-01.clean-production-output.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "canonicalSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T03.qualifying-focused-01.correction-codecs-and-reader-regression.log",
+      "sha256": "f7eb97dc3572b70a9cd577f236055ba850c08908b01ad8068f428cda1db936c3",
+      "canonicalSha256": "f7eb97dc3572b70a9cd577f236055ba850c08908b01ad8068f428cda1db936c3"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T03.qualifying-focused-01.correction-domain-lineage.log",
+      "sha256": "28e39e7c56dc415367a1e4b5e0ba7887784449a15705e5ab0f52d72973a27592",
+      "canonicalSha256": "ad4f1795949366b1ac93b7d7beaa3f5e3bdbba97f583eb9948ec785acfb65aa1"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T03.qualifying-focused-01.correction-predecessor-component-test-build.log",
+      "sha256": "b566697482f32b633a48396e0d777cf81c332f8df2179cb8374172d5618725ee",
+      "canonicalSha256": "b566697482f32b633a48396e0d777cf81c332f8df2179cb8374172d5618725ee"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T03.qualifying-focused-01.correction-predecessor-interactions.log",
+      "sha256": "8327dcb418949d61b518e0d7a1dfb694a47ead4b3d569b8c95b9d3a7cb71fbf8",
+      "canonicalSha256": "a06412d6f3181791bf1dcf615ce1e545df593fddde3f10d3b12af8b0fccccbd9"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T03.qualifying-focused-01.desktop-reprocessing-interactions.log",
+      "sha256": "84ce46964246196b89b00dd467e58e82c74949046864c3a668dd9034c8704af8",
+      "canonicalSha256": "f879d61ac634bc20dfe20642d415e82238c4d2d4ec80e4b61bc768113cc0dea6"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T03.qualifying-focused-01.desktop-types.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "canonicalSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T03.qualifying-focused-01.document-schemas.log",
+      "sha256": "a55ee30fb47c9afacd282abc3e69cce6ee0e020d9d710eb2dc98eda54569bb56",
+      "canonicalSha256": "cf42b66dd1df678fb7cf5ffaf80552a60597b0a2f2ef96323d1949800d8f6085"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T03.qualifying-focused-01.fresh-production-assembly.log",
+      "sha256": "dbf723d5b9b7af1d4e852393152e1c409e24f8c5b122cc4c95210ad0f3d291fe",
+      "canonicalSha256": "dbf723d5b9b7af1d4e852393152e1c409e24f8c5b122cc4c95210ad0f3d291fe"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T03.qualifying-focused-01.fresh-production-build.log",
+      "sha256": "bf65bf8ca154e3ba47e86807a46955121991d9e05dfd67a3882c9378a59df89b",
+      "canonicalSha256": "bf65bf8ca154e3ba47e86807a46955121991d9e05dfd67a3882c9378a59df89b"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T03.qualifying-focused-01.full-architecture-retained.log",
+      "sha256": "b7aa2057c4ecc9ac022e3441cb24c5cfee501bae4c85325b77ee2f2c1c75dd2b",
+      "canonicalSha256": "ea9c40ecd14bd41cea1c02512c1f82175439d18c79bed195c425015070b46d17"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T03.qualifying-focused-01.full-desktop-lint-retained.log",
+      "sha256": "c6ce2ff68fbb73acfcbd7935fcdfabff26f761af4ac6bf3dcaec076ef66a2260",
+      "canonicalSha256": "6c7ee94e2b0c2e98d37e84f7a30e9ae740fe0d98c69562e66f8e7f9a03147554"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T03.qualifying-focused-01.guided-reprocessing-navigation.log",
+      "sha256": "3f7ebeb0c22b623f431afeb8e774f71002a4dff4029c7ce276c41a3d9dc4036a",
+      "canonicalSha256": "35388b8a26a7dc5cbd1bce6d192dddf7ddac1103d8c2076f9279d690cfaa48b9"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T03.qualifying-focused-01.json",
+      "sha256": "ef5182d5e34e6569d27675af43d1481b5c3cc25302370276b504a0fad1b838f3",
+      "canonicalSha256": "e1ae02edad6bd7680810e8dd14f6e7423487dfe8213cd893e9940cf0bf2f49f5"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T03.qualifying-focused-01.native-correction-request-regression.log",
+      "sha256": "6e426eebbe56b681c5371b08b290e22dc50bcbcf7d7213e4233543a52fdffb3c",
+      "canonicalSha256": "6e426eebbe56b681c5371b08b290e22dc50bcbcf7d7213e4233543a52fdffb3c"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T03.qualifying-focused-01.native-reprocessing-request-boundaries.log",
+      "sha256": "7782a3d73422c919ac226459990276c35212da216deb2e425973d6b5a71c4030",
+      "canonicalSha256": "7782a3d73422c919ac226459990276c35212da216deb2e425973d6b5a71c4030"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T03.qualifying-focused-01.native-reprocessing-test-build.log",
+      "sha256": "c18b00302355cb5bf9f8d38b822e1ca92d05cd83fd8907ad123075130c62844f",
+      "canonicalSha256": "c18b00302355cb5bf9f8d38b822e1ca92d05cd83fd8907ad123075130c62844f"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T03.qualifying-focused-01.original-revision-anchor-enrichment-regression.log",
+      "sha256": "894db39c58bf63eda7b1ae6edeed6b16b881c9b2d7fd10d3366a2f5d3a31a109",
+      "canonicalSha256": "3e06f116b65e89072677bb01475bf909dc712b32d22c29e84656faa2374466d2"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T03.qualifying-focused-01.owned-test-activation-manifest.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "canonicalSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T03.qualifying-focused-01.production-component-test-build.log",
+      "sha256": "b566697482f32b633a48396e0d777cf81c332f8df2179cb8374172d5618725ee",
+      "canonicalSha256": "b566697482f32b633a48396e0d777cf81c332f8df2179cb8374172d5618725ee"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T03.qualifying-focused-01.production-root-navigation-test-build.log",
+      "sha256": "b566697482f32b633a48396e0d777cf81c332f8df2179cb8374172d5618725ee",
+      "canonicalSha256": "b566697482f32b633a48396e0d777cf81c332f8df2179cb8374172d5618725ee"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T03.qualifying-focused-01.protected-correction-persistence.log",
+      "sha256": "3d85215e83ad11070b4648fed58c3b204251398a175f29d5af630ea40c180e18",
+      "canonicalSha256": "d27779f948a0481e21eeff007c72995da0a4195a23b7bc9afc5581d757616d72"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T03.qualifying-focused-01.synthetic-native-project-seed.log",
+      "sha256": "9735851d71da7b832d06a9ec2998be03c456fde8fb4917508630f63d7d0f47cf",
+      "canonicalSha256": "97b22224a70ab1a2def9f82e0b87c206638c5b2fb79fcd0c190fd8f62cd2d105"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T03.qualifying-focused-01.ui-change-authority.log",
+      "sha256": "42c80dbf87a7b917fb303c0112368c208c83336d5eba4868676aead1e1210b87",
+      "canonicalSha256": "f1060530ce5ed303f77cd3dbaedd83f3c85eaa68489e03e166a941843d5d852a"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T03.qualifying-focused-02.full-architecture-retained.log",
+      "sha256": "b7aa2057c4ecc9ac022e3441cb24c5cfee501bae4c85325b77ee2f2c1c75dd2b",
+      "canonicalSha256": "ea9c40ecd14bd41cea1c02512c1f82175439d18c79bed195c425015070b46d17"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T03.qualifying-focused-02.full-desktop-lint-retained.log",
+      "sha256": "c6ce2ff68fbb73acfcbd7935fcdfabff26f761af4ac6bf3dcaec076ef66a2260",
+      "canonicalSha256": "6c7ee94e2b0c2e98d37e84f7a30e9ae740fe0d98c69562e66f8e7f9a03147554"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T03.recovery-development-01.log",
+      "sha256": "f3711d4f5d4d1139f9cba6fcdba23084b1abf51fbcfc66e9f9285c16b2314029",
+      "canonicalSha256": "a7850b400efa8e130e29ed5a95cf866382932ca8dcd5f90a9e0323e6ee5eb950"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T03.recovery-development-02.log",
+      "sha256": "7006aadb3f7becc4fb593a0c741a9f12f819e4bcbdeca83831d03557f6fd3ad4",
+      "canonicalSha256": "45b57ba28cd976e199a3eb61d2dbcaf7265b336efffefcbc7d1fae2d84e61717"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T03.reference-map-characterization-01.log",
+      "sha256": "6442e8f79ae76a4db33bfe334254b8f1f8e535da80c8ae4f6b4300eaf167d97b",
+      "canonicalSha256": "3c075b42c8705af74e164d60ea2b866b5fcebe7c02ddee36e72b6d6a709f6a6f"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T03.reference-map-characterization-02.log",
+      "sha256": "e5d69fa6c7c8aafec6747988440259707bc54618008c2c8b97d8d7a0cd01cc43",
+      "canonicalSha256": "17d4c96f18dacddcbf05b515163d3e3684f5c5d5b976c3d670159a60668487de"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T03.reference-map-characterization-03.log",
+      "sha256": "47e3f4f8b5b4a6dc05c5b85c12c68d196468d96c10c7d6d44e112bf4460d38c9",
+      "canonicalSha256": "77215515d60dd554bfa69ed9de48d34f8c322471bf58fb77334ba10f0493aa33"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T03.remediation-delivery-01.log",
+      "sha256": "3caa38cec8ac01b08c1745062316a972749e8ff71d76e64c958b07ec0f59ce12",
+      "canonicalSha256": "48cbed138967cbd50492116f4b6dfb10b6a32e99335091746d21c5afc8a64cd7"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T03.remediation-format-01.log",
+      "sha256": "ddbeb1af58df3080514ad7b372dfc903731740cb81b1744e3a84509dbc6af51e",
+      "canonicalSha256": "312aa6799a11e3fee7b47aec6a186cd825eaa7baab39cf8155d2cdf16e5ceea2"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T03.remediation-format-02.log",
+      "sha256": "f08816d3c7b2c5a427a0a26a7974cf80ef8d9517d9a7d4c74ec326b8456a2ab9",
+      "canonicalSha256": "e318848d10148bf24559cb86b2cb9a44d61b1589689c617c4d7d2c41e75bdf5a"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T03.remediation-format-03.log",
+      "sha256": "d82b2e11dea11c2f20397a6df9f537ff7ad4f31812561847a029523a2eee9965",
+      "canonicalSha256": "7f91b78bd9b70da724739493343262e8ad6de8dc3726be8e0e30152bb24f8da4"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T03.remediation-green-01.log",
+      "sha256": "74047a2a4cca4b590403a330efd3c23cf505aeae2d3f7846ca1db5ea8a37896b",
+      "canonicalSha256": "88784f611b86914dc5e220568033915b0d919084b65388d54458faa5d6675e79"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T03.remediation-red-01.log",
+      "sha256": "da5af8051a9e7b4af84c9a3aaa19978e677564be4c653d3487983b7323955d27",
+      "canonicalSha256": "723d1454c26bc690a760adb11357089b81f643775e232273dd9b6c44cf2578bc"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T03.remediation-red-02.log",
+      "sha256": "5cfe791299b13582ab5b4e8b01d93c286fd0175df70cc0db0f48ad94fa0584a0",
+      "canonicalSha256": "e367aa4102f009aa9dd38125cd41c31547e083ab4d2b857ce10f379a34a22572"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T03.remediation-ruff-01.log",
+      "sha256": "05fd773336ea5e3ef1108b015501840434433975c0ed16d9272d90719dc80a3d",
+      "canonicalSha256": "5dedf266af224868872be929eb7c5b27e37e68a10cb31525f27907f8dc1f8a84"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T03.remediation-ruff-02.log",
+      "sha256": "77765791c4443d794d2795741d2ce44de40b09d44bd1abd5d20518f211bcdf20",
+      "canonicalSha256": "f82fac47140bfb4b42dc6ef9ba86dfced4749f5b862579fc6b423877296b70d4"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T03.remediation-ruff-03.log",
+      "sha256": "957b2ba53c00baa2f6e254cdfcfe80e4e0092c1af0420c68a496a23c261935cc",
+      "canonicalSha256": "52da525774628866d0d8111f7d359957d5dd777ffcc217e6ae42cf22bca66fd0"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T03.remediation-ruff-04.log",
+      "sha256": "957b2ba53c00baa2f6e254cdfcfe80e4e0092c1af0420c68a496a23c261935cc",
+      "canonicalSha256": "52da525774628866d0d8111f7d359957d5dd777ffcc217e6ae42cf22bca66fd0"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T03.remediation-ruff-fix-01.log",
+      "sha256": "05fd773336ea5e3ef1108b015501840434433975c0ed16d9272d90719dc80a3d",
+      "canonicalSha256": "5dedf266af224868872be929eb7c5b27e37e68a10cb31525f27907f8dc1f8a84"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T03.remediation-schema-01.log",
+      "sha256": "75c4608af89047b36845c1ef30a0d0a37a2967837b60dbd11d36a3301a9bc3c3",
+      "canonicalSha256": "53eeac6ca6267b4ffe2507324e9bc1e682d1fb34aeec1ae7e7a8bceb38550d73"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T03.remediation-schema-02.log",
+      "sha256": "762993b1d72111c835fd8eefa54e8e580fef2bcda21fd1253f58c2ada2e35c0b",
+      "canonicalSha256": "3bdfc59a8484d03c758a994a5b231a2fff42971cc1a293d6e71075fdf95cb46e"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T03.remediation-types-01.log",
+      "sha256": "ba8cdd036aee7dcd8385baf38d1606f63ef08d2bb709f5a34d8fe666ca17d74c",
+      "canonicalSha256": "0b56b0fbf6cdb331f4019e2b7f07bab360467ea6a90a9814019a99d69abb7fa4"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T03.remediation-types-02.log",
+      "sha256": "bac9890520cd9fe108f6b690b280d808923e4fdd4c0190cbccd0620ed2d818c3",
+      "canonicalSha256": "4271cd9b8740d7ca6f28f76ab2379ec688c7faa1f01214de9b9bee00f0d72979"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T03.remediation-types-03.log",
+      "sha256": "50fe2bb45879127538da9ac47d27fea590457430f0aa291fd66ade44cd9baf88",
+      "canonicalSha256": "21a9f35d19f9046ae0a9fd637e5aa4f301743ae4658544856a6a3bf301c72584"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T03.remediation-types-04.log",
+      "sha256": "16e527d6e72bb57cb4f91c99e5351f4094716cab3c112830f9025370dbc49605",
+      "canonicalSha256": "be25435713e1725df818213f68a1fc78a90df5c23666611c2e3ce713212fc7cb"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T03.remediation-types-05.log",
+      "sha256": "53165188649d68700134961e135c25e6efc50ffb5f70ab9bd4e2f146eece5fba",
+      "canonicalSha256": "f458f5d9634b43ec1d58e53389250ad7a356f213ab44071a5d0c56813806f175"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T03.revision-correction-regression-development-01.log",
+      "sha256": "06b6adf4102d83a1b5017c455024ee0ea6a88ce74398060fdbdf1d646c52083f",
+      "canonicalSha256": "626eef22a95838258ff3dcc08c0634d98968fb0012cffcf0acbf2a2f5ee4a18a"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T03.revision-correction-regression-development-02.log",
+      "sha256": "14cf33f97bf1bc6d0735b5e766ae541ceb7a2dfa051055642da1261ee2a5dd95",
+      "canonicalSha256": "5037b3d15b6db047dfa069dd8aab7b09d60646056fbae55e6b0e566c31727e07"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T03.rollback-development-01.log",
+      "sha256": "6a54a7b5873c49df6662be8c9b12092d87d29a5510a1a7a92d72af92d72e4c7e",
+      "canonicalSha256": "578508f11884fc2be1a14026cc8af179e9e8a78d353166b24db2d77d8642fc21"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T03.route-red-01.log",
+      "sha256": "2189ed76612e202873ab5a82aec3a70eefa00d56e2feff9430412c03996ed30d",
+      "canonicalSha256": "f7920df704cc90bb2b67c7c1fc08afb5fcf33a11efe62b8621444f2c4a7e9714"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T03.ruff-development-01.log",
+      "sha256": "4266a67ef0a3b7ca1cf2053e9a87de64e60a373d9cf167484b123483c1d366e7",
+      "canonicalSha256": "76fbcec78b80bb1ea43712135c15271076f89429e8b918536aff24b1fdae7f7f"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T03.ruff-development-02.log",
+      "sha256": "647727d510c9d3c463467eee69a1a3d72a6ca2fe847379fcb1c3046c1bf8fb80",
+      "canonicalSha256": "ef14796498ab0883051299bfb7cb9fe2556d43059c7550e3b1cdced65f94a1fb"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T03.ruff-development-03.log",
+      "sha256": "fbc3f054ce376900191bf5c7e93cfe048843c02f094ad450b8031e51595a2f25",
+      "canonicalSha256": "93f91b5c9d02fd942c1b23c91b5b679827b3a477e7dd1be0574de260e24d4779"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T03.ruff-development-04.log",
+      "sha256": "37ce3a7226e8a9a1fbb34c995ab8d26930a3d8809b9b9e57329a85bcf3764742",
+      "canonicalSha256": "c49a24d99d6878ad503db137cf82260b30425f81c897f8688607a28d0ee1be7e"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T03.ruff-development-05.log",
+      "sha256": "957b2ba53c00baa2f6e254cdfcfe80e4e0092c1af0420c68a496a23c261935cc",
+      "canonicalSha256": "52da525774628866d0d8111f7d359957d5dd777ffcc217e6ae42cf22bca66fd0"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T03.ruff-development-06.log",
+      "sha256": "957b2ba53c00baa2f6e254cdfcfe80e4e0092c1af0420c68a496a23c261935cc",
+      "canonicalSha256": "52da525774628866d0d8111f7d359957d5dd777ffcc217e6ae42cf22bca66fd0"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T03.ruff-fix-01.log",
+      "sha256": "59fad478f07ce516e4cb6e88e2ecbbbc56790c4490ae4048938f24ed6c54f7c3",
+      "canonicalSha256": "5f7b0e736970344b54eb4b05aa7472ce7a2ed13c193ff5a2ef81ee18ef83f7aa"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T03.ruff-fix-02.log",
+      "sha256": "a457cfe453d6586eac74c33c0b6b9ac2ab9d56843fef1efdcfdda4e23ec173f3",
+      "canonicalSha256": "a4974695ecc40eb9943ad502af06a0c38d03892490909a841b3a2121bee8fd65"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T03.ruff-fix-03.log",
+      "sha256": "bd55c272a26cf57b11602e7b8731d4a5d9d861331b5312e98a3fcc7afaa3ff54",
+      "canonicalSha256": "d57dd845e6472a3d01c11d6433ca175062f4e028b0ec018930567615f0cfd5bc"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T03.ruff-format-02.log",
+      "sha256": "ce0a339750783e4d6c95bfc553a1afc763f41222903ba6f398c96f18e9fd704c",
+      "canonicalSha256": "61bcdc2dfe3add99b683bcd8d5a99ee2aa8e1b95f1bb27739e7b03baa22b7a69"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T03.ruff-format-03.log",
+      "sha256": "f08816d3c7b2c5a427a0a26a7974cf80ef8d9517d9a7d4c74ec326b8456a2ab9",
+      "canonicalSha256": "e318848d10148bf24559cb86b2cb9a44d61b1589689c617c4d7d2c41e75bdf5a"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T03.schema-development-01.log",
+      "sha256": "fdea67bb3a98dc98ee025a37d36a93f2f902c549add8d8a3326245ccd14844df",
+      "canonicalSha256": "29ed18105f67794d7ab286d2bbe8391b39b29d4b83a026c8c818f4593d8da7ca"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T03.schema-development-02.log",
+      "sha256": "762993b1d72111c835fd8eefa54e8e580fef2bcda21fd1253f58c2ada2e35c0b",
+      "canonicalSha256": "3bdfc59a8484d03c758a994a5b231a2fff42971cc1a293d6e71075fdf95cb46e"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T03.selective-impact-development-01.log",
+      "sha256": "448616f3005199c07d77c36cb0664343046cf2c80e8fde73e8ffcbe0a5270392",
+      "canonicalSha256": "3cf480f0e798bdcbaa7d5fdd68b45966d6c1237d1639806eb60acbdd14cfb986"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T03.service-development-01.log",
+      "sha256": "fd624df12212b66a9375b443f0ffe4068a39d2ca0a3f76e9bb3d18320eda3600",
+      "canonicalSha256": "930464a949b788ab271ba41f0d8aaddab59d5e291990a368ee6de9f6e150c353"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T03.service-development-02.log",
+      "sha256": "0aec1c2d14c3dfe851849af539cad9fd076f6bade49598dccb7364481089185c",
+      "canonicalSha256": "15aef6dcf8943445c120c7ed88e0339859959aa28a859dc3ccf4da675e680207"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T03.service-development-03.log",
+      "sha256": "42196d78bc6c3a336a6ac192d1637558441cce3f42313e2ffaa4ac6102be2cda",
+      "canonicalSha256": "099e0bb59de596363f32049571d76a64dd6b1f76f7ecad7e7fc0df546d0364d7"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T03.service-diagnostic-01.log",
+      "sha256": "4fc9db84c1a55602bdeb4e15fe983fa20192a92578304963de68531461c7c2ef",
+      "canonicalSha256": "0a23a377a786c548b516fe6960b4099010cc42afa5cd35436aeefee1e4f281ec"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T03.sidecar-startup-development-01.log",
+      "sha256": "aaa72d02835f6d6f0075c51ecb110423f56221f479daeb4128cf5a2d4e7da754",
+      "canonicalSha256": "73f600075d059d183ae78da247a47ce60d36a55f9057f76182c298296a3aed9a"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T03.sidecar-startup-development-02.log",
+      "sha256": "f558f55e04eb69a9cafd8a32655c84cf410678951478a007f8308535bb468226",
+      "canonicalSha256": "384339fdfbd50efc556a1af634f7b9bd55a6c5333f99df52e7de9ca0081edcd2"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T03.sidecar-startup-red-01.log",
+      "sha256": "aaa72d02835f6d6f0075c51ecb110423f56221f479daeb4128cf5a2d4e7da754",
+      "canonicalSha256": "73f600075d059d183ae78da247a47ce60d36a55f9057f76182c298296a3aed9a"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T03.structure-red-01.log",
+      "sha256": "2ead22eb9e196aead40905f9b1ea8ff86a099dfb4fa64af38112f8c147435920",
+      "canonicalSha256": "f04ec95e26119fc1b1ef499067084dc2ae78229f7a8bd8cd01e5ae2fe19b1088"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T03.ui-build-development-01.log",
+      "sha256": "9ea6421a810ca1da5dd76c23d271fa3c04faba282931e7c53511507f2860655e",
+      "canonicalSha256": "b566697482f32b633a48396e0d777cf81c332f8df2179cb8374172d5618725ee"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T03.ui-build-development-02.log",
+      "sha256": "9ea6421a810ca1da5dd76c23d271fa3c04faba282931e7c53511507f2860655e",
+      "canonicalSha256": "b566697482f32b633a48396e0d777cf81c332f8df2179cb8374172d5618725ee"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T03.ui-build-development-03.log",
+      "sha256": "9ea6421a810ca1da5dd76c23d271fa3c04faba282931e7c53511507f2860655e",
+      "canonicalSha256": "b566697482f32b633a48396e0d777cf81c332f8df2179cb8374172d5618725ee"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T03.ui-build-development-04.log",
+      "sha256": "9ea6421a810ca1da5dd76c23d271fa3c04faba282931e7c53511507f2860655e",
+      "canonicalSha256": "b566697482f32b633a48396e0d777cf81c332f8df2179cb8374172d5618725ee"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T03.ui-build-development-05.log",
+      "sha256": "9ea6421a810ca1da5dd76c23d271fa3c04faba282931e7c53511507f2860655e",
+      "canonicalSha256": "b566697482f32b633a48396e0d777cf81c332f8df2179cb8374172d5618725ee"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T03.ui-build-development-06.log",
+      "sha256": "9ea6421a810ca1da5dd76c23d271fa3c04faba282931e7c53511507f2860655e",
+      "canonicalSha256": "b566697482f32b633a48396e0d777cf81c332f8df2179cb8374172d5618725ee"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T03.ui-development-04.log",
+      "sha256": "4a25801ff23b3c31aadcb46ce9ee35ff29e094f7df88399bccccc560b0b38bbc",
+      "canonicalSha256": "0fcc1e3c060376558ee12c600ad4d5a10e91ad5cea491484d13f067ab8d307b2"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T03.ui-development-05.log",
+      "sha256": "cf0396704f3093e863d79e213ddc8880662fa29bac4f1ec8838ad99c65e8fbf3",
+      "canonicalSha256": "371ad9ce9996bbb9f69794b69751d2b10bb1420561d4d06c297887ffa7e7536e"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T03.ui-development-06.log",
+      "sha256": "acfe497fc963e079d99f6582e0b4b1118328e91a9390ad858da0e264aa663903",
+      "canonicalSha256": "0516c90d76aa3f17e88163acda1b7a2a34d4b01da4e99627841c7020dfab6ed2"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T03.ui-development-07.build-02.log",
+      "sha256": "9ea6421a810ca1da5dd76c23d271fa3c04faba282931e7c53511507f2860655e",
+      "canonicalSha256": "b566697482f32b633a48396e0d777cf81c332f8df2179cb8374172d5618725ee"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T03.ui-development-07.build.log",
+      "sha256": "c55a05ff079e2e6c1232b85babefc4ba89a6f75ff8d0e4b41c0c6b64f60ac38e",
+      "canonicalSha256": "55eb1d50425b9253d19f1385eb218b6365a13111c0f13ed1f4d44d3918d1a816"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T03.ui-development-07.log",
+      "sha256": "b4d2f2a338fedf2548c14f93cef095c10f16d1cac87cce4993cceb735dd64c20",
+      "canonicalSha256": "b2bf3399bdbe3bca410f3076ec5f4cd9fa2caa1636f4e7d7c3f965eafc9b4f69"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T03.ui-fixture-probe-01.log",
+      "sha256": "45f2e38bf6663fa5a6130c4d1baa6ab8c103e09a7fb055fe3c91bce47c27b06f",
+      "canonicalSha256": "cebe30dda875bd796b70edd89d91a6df67cb07ae4ca87b3547aa725aeee5e196"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T03.ui-lineage-recording-01.json",
+      "sha256": "f810dbda96c874d81f1cfcadb41447fec9830e5a99fc246eec005489948eb89d",
+      "canonicalSha256": "b40910db693f8af25df7e790f0c5ac3c8c98794881b041126f443bc80c33d0ca"
+    }
+  ],
+  "adverseDisposition": "All adverse and partial development results are preserved. Only the authenticated fresh candidate children qualify the task; inherited broad gates remain failed and unwaived.",
+  "supportingEvidence": [
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T03.qualifying-delta-02.json",
+      "sha256": "4e6f3b7bbdf24c59dbcf42948043424d4b3878068c12f2ad3b827b3dc0738a63",
+      "canonicalSha256": "0d9e06f8a88af1b22c6dae0062a2a640d59f754b628f06ef3ab2b928053ba5ae"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T03.ui-lineage-recording-01.json",
+      "sha256": "f810dbda96c874d81f1cfcadb41447fec9830e5a99fc246eec005489948eb89d",
+      "canonicalSha256": "b40910db693f8af25df7e790f0c5ac3c8c98794881b041126f443bc80c33d0ca"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T03.production-manifest-02.json",
+      "sha256": "a88649cb42f3c06356dfe290040469e440a9ce72c74343ade1b7c00ed904dd4e",
+      "canonicalSha256": "a88649cb42f3c06356dfe290040469e440a9ce72c74343ade1b7c00ed904dd4e"
+    }
+  ],
+  "reviewerDisposition": {
+    "openFindingIds": [],
+    "scope": "Independent development findings and encrypted replay are preserved and addressed by focused regressions; formal exact commit-bound disposition remains pending."
+  },
+  "limitations": [
+    "Authored parser selection/output and explicit component test page; authored mounted ports and project/Core navigation doubles. Actual Windows Native/Core/vault/SQLCipher supplied separately. No OS keyboard/UIA, installed packaging, model accuracy, larger hardware or full Wave claim."
+  ],
+  "taskApproval": false,
+  "sliceApproval": false,
+  "waveCompletion": false,
+  "releaseApproval": false
+}
