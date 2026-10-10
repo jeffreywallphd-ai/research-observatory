@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 279efab8d149c913b15fba8ac54938bf431f3e5e7be34eac74c5d104f78c3f54
+source_sha256: 1227257934aa4ca57912bbabfd82b14530adf3cdb6536d64d0c1e8eafdacd0d9
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -291,7 +291,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 ## W2 - Windows local evidence foundation
 
-**Pre-Wave approval / campaign / qualification:** `APPROVED` / `PAUSED` / `PAUSED`
+**Pre-Wave approval / campaign / qualification:** `APPROVED` / `ACTIVE` / `IN_PROGRESS`
 
 **Capability contributions:** `CAP-04`, `CAP-05`
 
@@ -12001,7 +12001,7 @@ Original tasks and approvals remain unchanged.
 
 **Outcome:** Document-internal scholarly structures become inspectable records without losing page context.
 
-**Wave / priority / status / review:** `W2` / `P1` / `IN_PROGRESS` / `PENDING`
+**Wave / priority / status / review:** `W2` / `P1` / `DONE` / `APPROVED`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
@@ -12230,7 +12230,7 @@ Original tasks and approvals remain unchanged.
 
 **Outcome:** Parsing errors can be diagnosed and corrected without obscuring machine output or provenance.
 
-**Wave / priority / status / review:** `W2` / `P0` / `NOT_STARTED` / `PENDING`
+**Wave / priority / status / review:** `W2` / `P0` / `READY` / `PENDING`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
@@ -12238,7 +12238,7 @@ Original tasks and approvals remain unchanged.
 
 #### - [ ] CAP-05.S06.T01 - Implement parsing quality metrics and triage rules
 
-**Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `M` / `medium`
+**Status / priority / estimate / risk:** `READY` / `P0` / `M` / `medium`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 

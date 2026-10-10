@@ -1490,20 +1490,22 @@ waves:
     notes: Owner explicitly approved the complete W2 execution packet and requested implementation; G1 prototype limitations
       remain recorded, not waived.
   campaign:
-    status: PAUSED
+    status: ACTIVE
     scope: wave
     owner: codex-w2-implementation
     branch: codex/w2-implementation
     worktree: .
-    base_sha: aa9c620f933a47d174a7f27a044f58b04d8961ab
+    base_sha: 85628b3c81f55f38f899590c2d42058cc5dd0b68
     profile: LOC
     platform: windows-x64
     started_at: '2026-09-19T17:21:58+00:00'
-    updated_at: '2026-10-10T11:22:06+00:00'
-    pause_reason: Confirmed S05 citation delivery exceeds unchanged request admission after canonical commit; pause ordinary
-      execution for authority-preserving W2.C16.T01 restoration of CAP-05.S05.T02.
-    pause_category: infeasible
-    lease: null
+    updated_at: '2026-10-10T13:41:20+00:00'
+    pause_reason: null
+    pause_category: null
+    lease:
+      claimed_by: codex-w2-implementation
+      claimed_at: '2026-10-10T13:41:20+00:00'
+      expires_at: '2026-10-11T13:41:20+00:00'
     corrective_tasks:
     - title: Implement idempotent import commits and import manifests
       objective: Batch transaction and manifest linking source file hash, parser version, record decisions, errors, and resulting
@@ -4970,6 +4972,18 @@ waves:
       platform: windows-x64
       actor: codex-w2-implementation
       resumed_at: '2026-10-07T07:17:40+00:00'
+    - id: W2.R16
+      wave_id: W2
+      control_revision: 12
+      prior_status: PAUSED
+      pre_resume_commit: 85628b3c81f55f38f899590c2d42058cc5dd0b68
+      prior_campaign_sha256: 2ee10cda3da26204a29ca409387853f4d89f70739ef50b0ee99f73fd30c7ab00
+      branch: codex/w2-implementation
+      worktree: .
+      profile: LOC
+      platform: windows-x64
+      actor: codex-w2-implementation
+      resumed_at: '2026-10-10T13:41:20+00:00'
   checkpoints:
   - id: W2.CP01
     kind: risk-cluster
@@ -5062,7 +5076,7 @@ waves:
       correction indicated, no checker repair or release waiver. Prior adverse findings, CSP/quality/type debt, minimum hardware/configurable
       model decisions, full profiles/installer/Wave/G2 remain pending and unwaived. Resume CAP-05.S05.T01 after local integration.'
   completion:
-    status: PAUSED
+    status: IN_PROGRESS
     reviewer: null
     reviewed_at: null
     evidence: []
@@ -32539,7 +32553,7 @@ capabilities:
     - ALL
     depends_on:
     - CAP-05.S03.T03
-    status: IN_PROGRESS
+    status: DONE
     tasks:
     - id: CAP-05.S05.T01
       capability_id: CAP-05
@@ -33275,11 +33289,17 @@ capabilities:
     platform_targets:
     - windows-x64
     completion:
-      status: PENDING
-      reviewer: null
-      reviewed_at: null
-      evidence: []
-      notes: null
+      status: APPROVED
+      reviewer: agent:/root/reader_table_figure_review
+      reviewed_at: '2026-10-10T14:17:25+00:00'
+      evidence:
+      - artifacts/evidence/CAP-05.S05.qualification-02.json
+      - artifacts/evidence/CAP-05.S05.review-R01.json
+      notes: Independent approved CAP-05.S05.review-R01.json, LF-canonical SHA256 f7ca6aa69ada68b43b878bee9b1fddac40a1ff126908ec969e3f1df417260c3b,
+        reviewed delivery 61b96e50a9fe4b1c65fd9c4297772861e60c4ac0, tested product cbc70e964299c970991e3442e82c44f482b7a8ba.
+        Six integration criteria satisfied with explicit principal/accessibility/performance limits and zero blocking findings.
+        W2.C16.T01 DONE/approved; all S05 tasks DONE. S05 only; S06, fresh full W2 qualification, independent Wave review
+        and G2 remain required.
   - id: CAP-05.S06
     title: Parsing quality, correction, and reprocessing
     outcome: Parsing errors can be diagnosed and corrected without obscuring machine output or provenance.
@@ -33292,7 +33312,7 @@ capabilities:
     depends_on:
     - CAP-05.S04.T02
     - CAP-03.S05.T02
-    status: NOT_STARTED
+    status: READY
     tasks:
     - id: CAP-05.S06.T01
       capability_id: CAP-05
@@ -33320,11 +33340,11 @@ capabilities:
       - documents
       verification_commands:
       - python tools/verify.py --profile documents
-      status: NOT_STARTED
+      status: READY
       owner: null
       branch: null
       started_at: null
-      updated_at: '2026-08-07T00:00:00+00:00'
+      updated_at: '2026-10-10T14:17:25+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
