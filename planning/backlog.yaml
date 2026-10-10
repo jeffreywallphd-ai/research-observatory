@@ -1499,7 +1499,7 @@ waves:
     profile: LOC
     platform: windows-x64
     started_at: '2026-09-19T17:21:58+00:00'
-    updated_at: '2026-10-09T11:57:40+00:00'
+    updated_at: '2026-10-10T03:43:50+00:00'
     pause_reason: null
     pause_category: null
     lease:
@@ -4834,6 +4834,19 @@ waves:
     notes: 'CP07 independently approved at c7726035afd2620356cd4b84060a90dcb2861001: 19 fresh affected build and principal
       checks, 322 unittest cases without skips; exact rebuilt worker08 installed and runtime closure; adverse attempts retained.
       Parser tasks, fresh W2 qualification and human G2 release remain pending.'
+  - id: W2.CP08
+    kind: risk-cluster
+    recorded_by: codex-w2-implementation
+    recorded_at: '2026-10-10T03:43:50+00:00'
+    evidence:
+    - artifacts/evidence/W2.CP08.qualification-01.json
+    - artifacts/evidence/W2.CP08.review-01.json
+    notes: 'Independently approved CAP-05.S02-S04 parser/revision/anchor/Reader cluster at source candidate 9684b7ba438b8d3734987a36e239e7486d0a9e8e;
+      qualification LF SHA256 d8a7c929d2062e9a69730e34133fc8bdd87bbc5d9f0d953e89865abf4bbe7578; review SHA256 6fc5f9d4dea7ce90913a68fa4fc2c247579e1f03603d4ce6879a146497c3cbe4.
+      Twenty passing observations, 218 Python cases, nine renderer cases, ten Native cases and fresh shipping smoke 32.6853
+      seconds with exit0 and owned0. Architecture exit1 preserved: eight independently diagnosed classifier defects, no product
+      correction indicated, no checker repair or release waiver. Prior adverse findings, CSP/quality/type debt, minimum hardware/configurable
+      model decisions, full profiles/installer/Wave/G2 remain pending and unwaived. Resume CAP-05.S05.T01 after local integration.'
   completion:
     status: IN_PROGRESS
     reviewer: null

@@ -1,0 +1,2519 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "wave-risk-cluster-checkpoint-qualification",
+  "checkpointId": "W2.CP08",
+  "wave": "W2",
+  "candidateCommit": "9684b7ba438b8d3734987a36e239e7486d0a9e8e",
+  "status": "COMPLETE_WITH_ADVERSE_ARCHITECTURE_PENDING_INDEPENDENT_REVIEW",
+  "allSelectedChecksPassed": false,
+  "independentArchitectureDiagnosis": {
+    "path": "artifacts/tmp/W2.CP08.architecture-triage-02.json",
+    "sha256": "9b5ab0b872d017e0d5d89abee15620b71769787180b22005994acee8ce831938",
+    "hashConvention": "raw-bytes"
+  },
+  "preservedFailedSelectedAttempt": {
+    "path": "artifacts/tmp/W2.CP08.selected-01.json",
+    "sha256": "39fc9b699122540377a412607e28222b39264ea80a9639855664cf1ce6dd7dfb"
+  },
+  "postFailureInputClosure": {
+    "path": "artifacts/tmp/W2.CP08.selected-01.post-failure-closure.json",
+    "sha256": "658e3af93010b7c52231aba6d068d403057738f1a10a2886fe45ee9a0c04bb9b"
+  },
+  "purpose": "Approved W2 parser/immutable document revision/source anchor/Reader S02-S04 risk cluster, before references and quality work consume these interfaces.",
+  "freshReports": [
+    {
+      "path": "artifacts/tmp/W2.CP08.selected-02.json",
+      "sha256": "9f460e6ee72869444c71bcdcc612f2c196bc9757f36646474d1dfbcfb74c3b8d",
+      "hashConvention": "raw-bytes"
+    },
+    {
+      "path": "artifacts/tmp/W2.CP08.package-02.json",
+      "sha256": "83633dd50241531260024baf984b9da21d63b1ccf9971c515a1b6b36faffd9f0",
+      "hashConvention": "raw-bytes"
+    },
+    {
+      "path": "artifacts/tmp/W2.CP08.shipping-smoke-02.json",
+      "sha256": "29bd5ee4fb49d0547d98e328d5bc155af918ba0c20a8c8c10d7de146c0c3ec4f",
+      "hashConvention": "raw-bytes"
+    }
+  ],
+  "checks": [
+    {
+      "name": "affected-format",
+      "commandId": "foundation:quality",
+      "exitCode": 0,
+      "durationSeconds": 0.1308390999911353,
+      "fresh": true,
+      "candidate": "9684b7ba438b8d3734987a36e239e7486d0a9e8e",
+      "passed": true,
+      "classification": "completed passing checkpoint check",
+      "rawOutput": {
+        "path": "artifacts/tmp/W2.CP08.selected-01.affected-format.log",
+        "sha256": "7a340da38ae65b1fde7d1e27b294de067e2bd0ac37ef92c9f1edbe0cafbed9ba",
+        "hashConvention": "raw-bytes"
+      },
+      "unittestCases": 0,
+      "skipDisclosure": []
+    },
+    {
+      "name": "affected-lint",
+      "commandId": "foundation:quality",
+      "exitCode": 0,
+      "durationSeconds": 0.15260440000565723,
+      "fresh": true,
+      "candidate": "9684b7ba438b8d3734987a36e239e7486d0a9e8e",
+      "passed": true,
+      "classification": "completed passing checkpoint check",
+      "rawOutput": {
+        "path": "artifacts/tmp/W2.CP08.selected-01.affected-lint.log",
+        "sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18",
+        "hashConvention": "raw-bytes"
+      },
+      "unittestCases": 0,
+      "skipDisclosure": []
+    },
+    {
+      "name": "affected-product-types",
+      "commandId": "foundation:quality",
+      "exitCode": 0,
+      "durationSeconds": 0.7409940999932587,
+      "fresh": true,
+      "candidate": "9684b7ba438b8d3734987a36e239e7486d0a9e8e",
+      "passed": true,
+      "classification": "completed passing checkpoint check",
+      "rawOutput": {
+        "path": "artifacts/tmp/W2.CP08.selected-01.affected-product-types.log",
+        "sha256": "94052817dfe271c9180d5fb69d1a5187415e233dec083b3d4a14ff2067e6dba0",
+        "hashConvention": "raw-bytes"
+      },
+      "unittestCases": 0,
+      "skipDisclosure": []
+    },
+    {
+      "name": "document-schema",
+      "commandId": "documents:unit",
+      "exitCode": 0,
+      "durationSeconds": 0.46613889996660873,
+      "fresh": true,
+      "candidate": "9684b7ba438b8d3734987a36e239e7486d0a9e8e",
+      "passed": true,
+      "classification": "completed passing checkpoint check",
+      "rawOutput": {
+        "path": "artifacts/tmp/W2.CP08.selected-01.document-schema.log",
+        "sha256": "a55ee30fb47c9afacd282abc3e69cce6ee0e020d9d710eb2dc98eda54569bb56",
+        "hashConvention": "raw-bytes"
+      },
+      "unittestCases": 0,
+      "skipDisclosure": []
+    },
+    {
+      "name": "anchor-schema",
+      "commandId": "documents:anchor-schemas",
+      "exitCode": 0,
+      "durationSeconds": 0.30605120002292097,
+      "fresh": true,
+      "candidate": "9684b7ba438b8d3734987a36e239e7486d0a9e8e",
+      "passed": true,
+      "classification": "completed passing checkpoint check",
+      "rawOutput": {
+        "path": "artifacts/tmp/W2.CP08.selected-01.anchor-schema.log",
+        "sha256": "9e70564a6485362e4a4b36a9984490c9b0c58eae8639198fd926d8c964731ae3",
+        "hashConvention": "raw-bytes"
+      },
+      "unittestCases": 0,
+      "skipDisclosure": []
+    },
+    {
+      "name": "parser-to-immutable-structure",
+      "commandId": "documents:unit",
+      "exitCode": 0,
+      "durationSeconds": 53.14265440002782,
+      "fresh": true,
+      "candidate": "9684b7ba438b8d3734987a36e239e7486d0a9e8e",
+      "passed": true,
+      "classification": "completed passing checkpoint check",
+      "rawOutput": {
+        "path": "artifacts/tmp/W2.CP08.selected-01.parser-to-immutable-structure.log",
+        "sha256": "a9e4cdc711239c62c2600dba434b7bfa63cf29efbcbb48836f2c85d5014987d0",
+        "hashConvention": "raw-bytes"
+      },
+      "unittestCases": 71,
+      "skipDisclosure": []
+    },
+    {
+      "name": "revisions-and-compatibility",
+      "commandId": "documents:unit",
+      "exitCode": 0,
+      "durationSeconds": 61.057746800011955,
+      "fresh": true,
+      "candidate": "9684b7ba438b8d3734987a36e239e7486d0a9e8e",
+      "passed": true,
+      "classification": "completed passing checkpoint check",
+      "rawOutput": {
+        "path": "artifacts/tmp/W2.CP08.selected-01.revisions-and-compatibility.log",
+        "sha256": "f021c5172a353c0f665434247951de00bbac20b17d85896cba9d35905267231a",
+        "hashConvention": "raw-bytes"
+      },
+      "unittestCases": 21,
+      "skipDisclosure": []
+    },
+    {
+      "name": "anchors-invalidation-current-api",
+      "commandId": "documents:anchors",
+      "exitCode": 0,
+      "durationSeconds": 91.12453570001526,
+      "fresh": true,
+      "candidate": "9684b7ba438b8d3734987a36e239e7486d0a9e8e",
+      "passed": true,
+      "classification": "completed passing checkpoint check",
+      "rawOutput": {
+        "path": "artifacts/tmp/W2.CP08.selected-01.anchors-invalidation-current-api.log",
+        "sha256": "b8fba003328f7d2563c6a448f60a2aab81aa77f5f89aa9c0f937f6934e126de3",
+        "hashConvention": "raw-bytes"
+      },
+      "unittestCases": 34,
+      "skipDisclosure": []
+    },
+    {
+      "name": "protected-reader-actions-and-denials",
+      "commandId": "documents:unit",
+      "exitCode": 0,
+      "durationSeconds": 246.26352779997978,
+      "fresh": true,
+      "candidate": "9684b7ba438b8d3734987a36e239e7486d0a9e8e",
+      "passed": true,
+      "classification": "completed passing checkpoint check",
+      "rawOutput": {
+        "path": "artifacts/tmp/W2.CP08.selected-01.protected-reader-actions-and-denials.log",
+        "sha256": "6d03365fcd63677fc6ab09735647fc703eaa5d36212aa8d6424a134c8609942a",
+        "hashConvention": "raw-bytes"
+      },
+      "unittestCases": 75,
+      "skipDisclosure": []
+    },
+    {
+      "name": "desktop-types",
+      "commandId": "foundation:quality",
+      "exitCode": 0,
+      "durationSeconds": 0.9254186000325717,
+      "fresh": true,
+      "candidate": "9684b7ba438b8d3734987a36e239e7486d0a9e8e",
+      "passed": true,
+      "classification": "completed passing checkpoint check",
+      "rawOutput": {
+        "path": "artifacts/tmp/W2.CP08.selected-01.desktop-types.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "hashConvention": "raw-bytes"
+      },
+      "unittestCases": 0,
+      "skipDisclosure": []
+    },
+    {
+      "name": "renderer-reader-contracts",
+      "commandId": "desktop:unit",
+      "exitCode": 0,
+      "durationSeconds": 4.2734147000010125,
+      "fresh": true,
+      "candidate": "9684b7ba438b8d3734987a36e239e7486d0a9e8e",
+      "passed": true,
+      "classification": "completed passing checkpoint check",
+      "rawOutput": {
+        "path": "artifacts/tmp/W2.CP08.selected-01.renderer-reader-contracts.log",
+        "sha256": "610935af59e3ad8e2cb1cd11363d92bc625b394023c0a7cabf0420b218b859b2",
+        "hashConvention": "raw-bytes"
+      },
+      "unittestCases": 0,
+      "skipDisclosure": []
+    },
+    {
+      "name": "mounted-reader-build",
+      "commandId": "desktop:unit",
+      "exitCode": 0,
+      "durationSeconds": 1.0650173000176437,
+      "fresh": true,
+      "candidate": "9684b7ba438b8d3734987a36e239e7486d0a9e8e",
+      "passed": true,
+      "classification": "completed passing checkpoint check",
+      "rawOutput": {
+        "path": "artifacts/tmp/W2.CP08.selected-01.mounted-reader-build.log",
+        "sha256": "b566697482f32b633a48396e0d777cf81c332f8df2179cb8374172d5618725ee",
+        "hashConvention": "raw-bytes"
+      },
+      "unittestCases": 0,
+      "skipDisclosure": []
+    },
+    {
+      "name": "mounted-reader-journeys",
+      "commandId": "desktop:unit",
+      "exitCode": 0,
+      "durationSeconds": 7.0521717999945395,
+      "fresh": true,
+      "candidate": "9684b7ba438b8d3734987a36e239e7486d0a9e8e",
+      "passed": true,
+      "classification": "completed passing checkpoint check",
+      "rawOutput": {
+        "path": "artifacts/tmp/W2.CP08.selected-01.mounted-reader-journeys.log",
+        "sha256": "d4627762c000a5cb44971b1a9eccfe677ea0b91579a1bfdce5fd318a1af6abc5",
+        "hashConvention": "raw-bytes"
+      },
+      "unittestCases": 17,
+      "skipDisclosure": []
+    },
+    {
+      "name": "architecture",
+      "commandId": "foundation:architecture",
+      "exitCode": 1,
+      "durationSeconds": 4.412913799984381,
+      "fresh": true,
+      "candidate": "9684b7ba438b8d3734987a36e239e7486d0a9e8e",
+      "passed": false,
+      "classification": "independently diagnosed nonblocking checker classification debt; failed check retained, no waiver",
+      "rawOutput": {
+        "path": "artifacts/tmp/W2.CP08.selected-01.architecture.log",
+        "sha256": "ba5c6ca29e79a27aefb2c33c307dd056e68b9d3aa5845c70883be76667e2510f",
+        "hashConvention": "raw-bytes"
+      },
+      "unittestCases": 0,
+      "skipDisclosure": []
+    },
+    {
+      "name": "product-style",
+      "commandId": "foundation:ui-change",
+      "exitCode": 0,
+      "durationSeconds": 1.0584773999871686,
+      "fresh": true,
+      "candidate": "9684b7ba438b8d3734987a36e239e7486d0a9e8e",
+      "passed": true,
+      "classification": "completed passing checkpoint check",
+      "rawOutput": {
+        "path": "artifacts/tmp/W2.CP08.selected-02.product-style.log",
+        "sha256": "f4eb25e4862e786cccc56ba2c917d1a04330081bcd9625ea89304ac260bd35db",
+        "hashConvention": "raw-bytes"
+      },
+      "unittestCases": 0,
+      "skipDisclosure": []
+    },
+    {
+      "name": "shipping-renderer-build",
+      "commandId": "desktop:application",
+      "exitCode": 0,
+      "durationSeconds": 1.451529300014954,
+      "fresh": true,
+      "candidate": "9684b7ba438b8d3734987a36e239e7486d0a9e8e",
+      "passed": true,
+      "classification": "completed passing checkpoint check",
+      "rawOutput": {
+        "path": "artifacts/tmp/W2.CP08.selected-02.shipping-renderer-build.log",
+        "sha256": "a44951bde552e683853a503d48c0ca8b9ca6fd3ae3da6bf210b0651ffacdfcf2",
+        "hashConvention": "raw-bytes"
+      },
+      "unittestCases": 0,
+      "skipDisclosure": []
+    },
+    {
+      "name": "shipping-renderer-assembly",
+      "commandId": "desktop:application",
+      "exitCode": 0,
+      "durationSeconds": 0.11498940002638847,
+      "fresh": true,
+      "candidate": "9684b7ba438b8d3734987a36e239e7486d0a9e8e",
+      "passed": true,
+      "classification": "completed passing checkpoint check",
+      "rawOutput": {
+        "path": "artifacts/tmp/W2.CP08.selected-02.shipping-renderer-assembly.log",
+        "sha256": "d01fc2f8c88737bfc7f2dcdfbda74df492655a7b2908f1deaa9735ead1a504ca",
+        "hashConvention": "raw-bytes"
+      },
+      "unittestCases": 0,
+      "skipDisclosure": []
+    },
+    {
+      "name": "native-viewer-test-build",
+      "commandId": "desktop:unit",
+      "exitCode": 0,
+      "durationSeconds": 24.459964899986517,
+      "fresh": true,
+      "candidate": "9684b7ba438b8d3734987a36e239e7486d0a9e8e",
+      "passed": true,
+      "classification": "completed passing checkpoint check",
+      "rawOutput": {
+        "path": "artifacts/tmp/W2.CP08.selected-02.native-viewer-test-build.log",
+        "sha256": "10d29457dfcee1b12225d1132203f313c70e09b27e81e754e7f4db4cb5c5fc5b",
+        "hashConvention": "raw-bytes"
+      },
+      "unittestCases": 0,
+      "skipDisclosure": []
+    },
+    {
+      "name": "native-viewer-manifest",
+      "commandId": "desktop:unit",
+      "exitCode": 0,
+      "durationSeconds": 1.336110699980054,
+      "fresh": true,
+      "candidate": "9684b7ba438b8d3734987a36e239e7486d0a9e8e",
+      "passed": true,
+      "classification": "completed passing checkpoint check",
+      "rawOutput": {
+        "path": "artifacts/tmp/W2.CP08.selected-02.native-viewer-manifest.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "hashConvention": "raw-bytes"
+      },
+      "unittestCases": 0,
+      "skipDisclosure": []
+    },
+    {
+      "name": "native-viewer-ownership-drain",
+      "commandId": "desktop:unit",
+      "exitCode": 0,
+      "durationSeconds": 0.8647995999781415,
+      "fresh": true,
+      "candidate": "9684b7ba438b8d3734987a36e239e7486d0a9e8e",
+      "passed": true,
+      "classification": "completed passing checkpoint check",
+      "rawOutput": {
+        "path": "artifacts/tmp/W2.CP08.selected-02.native-viewer-ownership-drain.log",
+        "sha256": "553dfca5599f38f1f4f2be22103813f3d480499ad2aafa9ebc1326eca8ea8f11",
+        "hashConvention": "raw-bytes"
+      },
+      "unittestCases": 0,
+      "skipDisclosure": []
+    },
+    {
+      "name": "locked-native-build",
+      "commandId": "desktop:application",
+      "exitCode": 0,
+      "durationSeconds": 150.76467180001782,
+      "fresh": true,
+      "candidate": "9684b7ba438b8d3734987a36e239e7486d0a9e8e",
+      "passed": true,
+      "classification": "completed passing checkpoint check",
+      "rawOutput": {
+        "path": "artifacts/tmp/W2.CP08.selected-02.locked-native-build.log",
+        "sha256": "4184e96d982a466caf6f1bc4c4fc8b87e653a5b98e67bbd94cf6bf7bbc0af727",
+        "hashConvention": "raw-bytes"
+      },
+      "unittestCases": 0,
+      "skipDisclosure": []
+    }
+  ],
+  "freshNativeSmoke": {
+    "commandId": "desktop:application",
+    "candidate": "9684b7ba438b8d3734987a36e239e7486d0a9e8e",
+    "producer": {
+      "path": "artifacts/tmp/W2.CP08.shipping-smoke-02.py",
+      "sha256": "4bee90ce34535cfce1d03d1f32a8e7b8473219c27027fcff761f3d47c804c0cc",
+      "hashConvention": "raw-bytes"
+    },
+    "rawOutput": {
+      "path": "artifacts/tmp/W2.CP08.shipping-smoke-02.outer.log",
+      "sha256": "bad4e0e31c1d6146344732a7ff1c5fc7635af96a3366538e06c8d8f12f6a42cb",
+      "hashConvention": "raw-bytes"
+    },
+    "nativeEvents": {
+      "path": "artifacts/tmp/W2.CP08.shipping-smoke-02.events.jsonl",
+      "sha256": "8379d44a17b06272c9ec7e7d83af7a35e4d38ab485dd04ef4dd567380492a1e2",
+      "hashConvention": "raw-bytes"
+    },
+    "nativeStderr": {
+      "path": "artifacts/tmp/W2.CP08.shipping-smoke-02.stderr.log",
+      "sha256": "c7c6254c278ee63e7915984b60ac553b8b2514ba7426966c2b5967997efeda6e",
+      "hashConvention": "raw-bytes"
+    },
+    "durationSeconds": 32.685324600024614,
+    "exitCode": 0,
+    "physicalOwnedProcessesAfter": 0,
+    "observations": "Newly built and assembled product renderer/Wry/Native/Core reopens the retained exact older normalized revision, displays two exact contexts and the original first page, returns to the selected Work/version, exits normally and physically drains. No consent or source action execution."
+  },
+  "producers": [
+    {
+      "path": "artifacts/tmp/W2.CP08.selected-02.py",
+      "sha256": "b1ab508e23ccf49aeaf6886487bb7528f254d5e6e20e285228e67a5f0a1b3020",
+      "hashConvention": "raw-bytes"
+    },
+    {
+      "path": "artifacts/tmp/W2.CP08.package-02.py",
+      "sha256": "6baa7616a4d66fdc6e0356b6869c0ec4aed9f58b29b435af2bed426b1b857b00",
+      "hashConvention": "raw-bytes"
+    },
+    {
+      "path": "artifacts/tmp/W2.CP08.prepare-qualification-02.py",
+      "sha256": "66db4fe78ca5250c4e369dba156d8bed10193018b4439c75adc59fed819bac4c",
+      "hashConvention": "raw-bytes"
+    }
+  ],
+  "inputClosure": {
+    "candidateAndSelectedInputsStable": true,
+    "runtimeSourceInputsWriteDeleteGuarded": true,
+    "selectedInputCount": 23505,
+    "smokeInputCount": 23776,
+    "freshGeneratedNativeBuildInputs": {
+      "native-viewer-test-build": [
+        {
+          "path": "apps/desktop/product-dist/application-manifest.json",
+          "sha256": "cea26659031c4a8dd5fcb4e620e6efe248635b299eaf252321b93744760fd38e"
+        },
+        {
+          "path": "apps/desktop/product-dist/index.html",
+          "sha256": "d3499c13b59f8e03aec1235d8262ab6191f6418ed36029f2e6b3012ad04cd771"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/78-EUC-H.bcmap",
+          "sha256": "d92a261336dc18b8c03a46eb4d462382d33f4338fa195d303256b2031434c874"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/78-EUC-V.bcmap",
+          "sha256": "61670bebc4e4827b67230c054fd0d820d6e30c3584d02e386804e62bbedc032a"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/78-H.bcmap",
+          "sha256": "ece6415b853d61e1b2560165151407d35cf16e6556932b85a13ea75276b77402"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/78-RKSJ-H.bcmap",
+          "sha256": "696b1f973c97623496703809eaaa5f9b40696c77540057413f4b826a08edfa7b"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/78-RKSJ-V.bcmap",
+          "sha256": "53cb6d560ab377da48cf65d6dcacb0bdb31f13fab7066c580de38c12a73a7ff9"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/78-V.bcmap",
+          "sha256": "289000f02fd34872b6975503217f33abae6bee676e7d28f640473a67c8db1712"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/78ms-RKSJ-H.bcmap",
+          "sha256": "a2442595218f5f8bd8e1b42188e368587d876cfe0cc4cd87196f077c878f72e2"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/78ms-RKSJ-V.bcmap",
+          "sha256": "f8ddceba96bfd9d3740bd1789ee30d1f47c78371520a8084f71f7df58f19be0b"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/83pv-RKSJ-H.bcmap",
+          "sha256": "44040051ec818fe09b9703472bea72efd2759d5eeb5ff0d77c718d6bb5e6d1df"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/90ms-RKSJ-H.bcmap",
+          "sha256": "c13e043e85ff715b75bb03801e8fd0fb8f3a75e4a48496faa6baaf92b5b48ba1"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/90ms-RKSJ-V.bcmap",
+          "sha256": "499bb916ce1adbe4289b6e5811f4dc20eb238cdc2ffad20cf26ae56716885bab"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/90msp-RKSJ-H.bcmap",
+          "sha256": "7b8b3b8bbf821702e9a4df9f3596ce292380c8c1b0925dedadbb4e4b2d80498b"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/90msp-RKSJ-V.bcmap",
+          "sha256": "6296c2b5c07dca8128e96d5296d621a3268803d4fa0e5812a21e52fe2802aacb"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/90pv-RKSJ-H.bcmap",
+          "sha256": "fb5103f03d3a34547e18d316e52b6d9b26e485c662999222f84d2ba54c2e4fa8"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/90pv-RKSJ-V.bcmap",
+          "sha256": "7bcb5ad2ba55b9662ce379e16c2d9cc2b82d621a579807353741172e4af615c2"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/Add-H.bcmap",
+          "sha256": "a2ffab28b990998181bcca9b0e914bb2207820f100ae31d5c469444892e5ad8e"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/Add-RKSJ-H.bcmap",
+          "sha256": "b29f4b52e2465d0485856d5e69f1ba69927deb2848d8fd328c8035583b35bb7e"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/Add-RKSJ-V.bcmap",
+          "sha256": "2aa2232c283a3f5d0997c2834a36cead0b79ce2657944cfeed08140c293460ff"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/Add-V.bcmap",
+          "sha256": "25125d3b1be64e86b2df5b3344170b45a42bcaa0b46e43a34314ef73c166e542"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/Adobe-CNS1-0.bcmap",
+          "sha256": "8c65be9d51a9f269a547dc12460707aaf4031ab67ebe8a2900f4b4cc6b3e450e"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/Adobe-CNS1-1.bcmap",
+          "sha256": "73152bc1a59cc594b414ac6068be48e5512b96ae85920c40e32a99269fdb0c04"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/Adobe-CNS1-2.bcmap",
+          "sha256": "a1b8d353bdef9584c820464e8f1c9e2013d64ebf433cba0aa831dddf515818c2"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/Adobe-CNS1-3.bcmap",
+          "sha256": "2ffc0c75c79fafde506163d3c08c390d183251009f3fbf6ae50d1167d14b9570"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/Adobe-CNS1-4.bcmap",
+          "sha256": "98a1f470c878c6b9691a4d7aef776af8ac9b55f5587c9fafa00547f3bf655716"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/Adobe-CNS1-5.bcmap",
+          "sha256": "ddd6e29955eb8cb545f2ebd09c628c3bbda5023256eda1b728f743c75fb77829"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/Adobe-CNS1-6.bcmap",
+          "sha256": "317bb2db71e0e5b7b0c47b75de1da915c2e22f65f0c0861507f9ca7ba238f8a2"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/Adobe-CNS1-UCS2.bcmap",
+          "sha256": "e665837f2197c6bd08cd8955ad4d6932cee2398e2e328b25b00e6bfb3bd72af9"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/Adobe-GB1-0.bcmap",
+          "sha256": "8b81cce8a11d510e505704953cfa4e4ab080c1a0cab991145a3512ee433946b9"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/Adobe-GB1-1.bcmap",
+          "sha256": "0426983081788ec7202703e71f1efa4b860f75b936994236010b39d89251a81e"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/Adobe-GB1-2.bcmap",
+          "sha256": "e67b37a83b160ab3831306a71a605893b24454ee81ac9b6123bf2d3984d268d5"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/Adobe-GB1-3.bcmap",
+          "sha256": "aa299afc3e12a28726147305f191be28c7498078c8b182ece7886ac79cd99078"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/Adobe-GB1-4.bcmap",
+          "sha256": "8fbd7d74c2ddb1350c1cecce54a73fde3f5453093d4bed445283ec0033d2097f"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/Adobe-GB1-5.bcmap",
+          "sha256": "c22cb2fcff24112fa31dab2111bdc51957006576d31aad5a25e67793ac01428c"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/Adobe-GB1-UCS2.bcmap",
+          "sha256": "20507620260c0c935c35afc1e70e5888aa7125d5ec7ffc03cef1959feb2c1641"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/Adobe-Japan1-0.bcmap",
+          "sha256": "464f08905236f5703b1f5cf8358767c8b18e6bcc808840d081f1de2c7ab38134"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/Adobe-Japan1-1.bcmap",
+          "sha256": "4c823848722187d1ffe75ae3f5f9126ccd2d7895a05fad14c919fb119e037008"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/Adobe-Japan1-2.bcmap",
+          "sha256": "7810fb808e367e70429e90a9478fe6a3fdc3e214f25c7582ce9c2da6a242315c"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/Adobe-Japan1-3.bcmap",
+          "sha256": "84deb1828711ad3d390c9899c38abce1bf619d65ff7bf1a326ec95acc45f08f8"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/Adobe-Japan1-4.bcmap",
+          "sha256": "3f8a4f974919c2b8bae5d10175ffa2673be140481e00840542c85d48ef184067"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/Adobe-Japan1-5.bcmap",
+          "sha256": "1d3ce4ff28d977f8cf37a912ae4ec811f4175c3167b1ec0b2567feec3e79e1db"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/Adobe-Japan1-6.bcmap",
+          "sha256": "5609797b9401b30be72ef9645da62a87829f058c3be4b5c623383119f584b1d9"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/Adobe-Japan1-UCS2.bcmap",
+          "sha256": "66c5d0dc4964f4093e77b194023f3a0f689324028ec8330e1e1d0570bcba7c2f"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/Adobe-Korea1-0.bcmap",
+          "sha256": "dfb8c3874f0e5a8c3acf597d2c12d2b63e90bc5e4f0fce990ec4c56077d80b32"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/Adobe-Korea1-1.bcmap",
+          "sha256": "62f277b7b1c441c007797ae707d5c37258d029ce4661a2b911e2e1ee35e6adc1"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/Adobe-Korea1-2.bcmap",
+          "sha256": "1d77068af462f96d7ad28ad7e7d43eef6423c685b479d7dc25ff5df38db0380d"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/Adobe-Korea1-UCS2.bcmap",
+          "sha256": "857b723088be97255053562bfa41bd1075a7f7910d3bab59a0645c8bbc7060ff"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/app.css",
+          "sha256": "78615de568288ae40f0fde824db9673cbb4eef1e0eebdd0edac49a292995cd24"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/app.js",
+          "sha256": "3ff3610927e2b945d7fe64c0d8eee88a2a86cee9bd17f38bb57c479d835be9ed"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/app.js.map",
+          "sha256": "592c45fa89f4874d0c2c15eb97d114bce1439b6e35d45f957d11438f3f1def2e"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/B5-H.bcmap",
+          "sha256": "718ad0ffbef4c34f8f3f31292c462e519cd567a5511fc8b346c60010d64f4ef9"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/B5-V.bcmap",
+          "sha256": "b5c37383517477620ced927b6b4ffd4f4cc6230d8051b5b46a21d6768e07f7d8"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/B5pc-H.bcmap",
+          "sha256": "bab6028aead1d6149400e904ab10cfd319082d826473ed4c582c8eeed920f17e"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/B5pc-V.bcmap",
+          "sha256": "41543142b9767f3b76133899fc8453282b01ad3c653acaeea42d78c5a7d08c63"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/CNS-EUC-H.bcmap",
+          "sha256": "e8f89cd61e6486b948205da46499d659ed0aed949b7095fd3c8e95ffe2b0e7a9"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/CNS-EUC-V.bcmap",
+          "sha256": "cae422bec2ac6dbe86bf921cec942bacd2d0b733ffcca5f91b3ba14e917025a0"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/CNS1-H.bcmap",
+          "sha256": "e8487971ab20cd16f3de3e8ac56ec994b72b658ad113f2818239dfd5108f501a"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/CNS1-V.bcmap",
+          "sha256": "42df8076aaa7574505e7304af83a3323ec032c4177d64b1309db8c043d594a8a"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/CNS2-H.bcmap",
+          "sha256": "bc6024d274d440f0625c69e25f37036ef6cb6689432ceaa160d3432a2a716ca7"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/CNS2-V.bcmap",
+          "sha256": "2e4f70a8afd23a121030fc2e5b5f3816e903b11e7ba8b8c09654b31c80399c38"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/documentViewer.worker.js",
+          "sha256": "cae8f34ab9c1f98922e4bd1d5d094e152893080882b89a96806c9af86549a507"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/documentViewer.worker.js.map",
+          "sha256": "889fb6cc9352e2f022427e22fe70bea0b9b884c2dc280dd9bd733415a1c18cf7"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/DocumentViewerWorkspace.js",
+          "sha256": "a3f9d74f3c88f854c6d02b0bc87511bc309d62741302071db06616db5beb5da7"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/DocumentViewerWorkspace.js.map",
+          "sha256": "f20a9c9bc1395eee7a31d69dbbff29cc57d551e1acb4c98b091be3f10f7ca1c6"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/ETen-B5-H.bcmap",
+          "sha256": "87ee6b3f5bfda5fe26fa35431264c7d73070d10dbbf398a75185d63ae322c18d"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/ETen-B5-V.bcmap",
+          "sha256": "47dc0d2c21e3bde317947aec1675ceabc1d5460a60bf9c24334b8c407a17172c"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/ETenms-B5-H.bcmap",
+          "sha256": "d5f5a73da4173b7da9a3a20e16f26f9cd5d12deb1553409919e0cec6fd37fdee"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/ETenms-B5-V.bcmap",
+          "sha256": "18252fca90f472f479af1bddd60d6ab51c8e1b55dcf6845951426504934543e0"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/ETHK-B5-H.bcmap",
+          "sha256": "d2f10fa519336bc4efcc7b6deb9604b75429946b40d82e311cb3a97a1994c89a"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/ETHK-B5-V.bcmap",
+          "sha256": "1fea3fd0d9f0f679f80505800851ef2e4131d81127e18c006938ffa2f4c8b247"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/EUC-H.bcmap",
+          "sha256": "f9939cd57fccdc65c5d9f4c205fd497ebdbd283643308da5663801a8c1d9c595"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/EUC-V.bcmap",
+          "sha256": "1283a50a706507c4436da83ede9ad7a4440be25378f2e96f6c81a430081426a3"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/Ext-H.bcmap",
+          "sha256": "4000ed4e61a1c668ef453bbd0603cfa383defa793abd46a57ed870d7f527350b"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/Ext-RKSJ-H.bcmap",
+          "sha256": "e0d2f0df337660e73813238dd4a725f11f0621b90f3273857db253d0e7694caa"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/Ext-RKSJ-V.bcmap",
+          "sha256": "f617a22b6d67febb187990952006c91a9f5a4db21155d268c656252d0c21985d"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/Ext-V.bcmap",
+          "sha256": "c2087fb845a9e3acea0c2922cd40e6af67e11957bec74dcd597f1285edd490ce"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/FoxitDingbats.pfb",
+          "sha256": "845c752392b6c914fb989c75a08b7792b88f542d2499042ef2889f8c814a16ed"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/FoxitFixed.pfb",
+          "sha256": "b6c8fe53f134b8b6d4578cd2d544df4cee9624c4efa8d51a560fb40ea296101b"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/FoxitFixedBold.pfb",
+          "sha256": "f1b7159702973f54fc86254ea38bcf3712b2a736eb3a0995751e9f4bb45ad603"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/FoxitFixedBoldItalic.pfb",
+          "sha256": "8a000945843bd31add06aee63bf9fd41b7578b4f3242a4b7cd46349ad9d24d4d"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/FoxitFixedItalic.pfb",
+          "sha256": "5007faf8320fa1fcc08b8894b356ad976f60b992ba29ee5272578bbdebaf3876"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/FoxitSerif.pfb",
+          "sha256": "4f57d2b9d884af8f907bf22df6019b52d86cbf6214fdbd02b1ae05472a543f35"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/FoxitSerifBold.pfb",
+          "sha256": "0bdf4b04e964139818d51eda03d566ba999fc3ba2421b1c6c51f9dc969022e80"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/FoxitSerifBoldItalic.pfb",
+          "sha256": "a406cac82583bf98175cb62c87ed5e95c45fbb34eece63a10b0a13e793cb2e10"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/FoxitSerifItalic.pfb",
+          "sha256": "610ae0687198045c4db5d1a6650fd5e92536631706382eb8b72e38df578d0ae9"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/FoxitSymbol.pfb",
+          "sha256": "47967d055530e7357088a08403115425643ec2cdfd6201ba8af0fbd7116c1539"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/GB-EUC-H.bcmap",
+          "sha256": "928bad06fd84a48f5ba7150d7716609119fb660f2aaa73eccad81ddab9b9d203"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/GB-EUC-V.bcmap",
+          "sha256": "a9ad88ac2479da529b16dc48abc5952332e27bc355335f91df5729a587533324"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/GB-H.bcmap",
+          "sha256": "1018c777a8910b5bb46d7d54a4aee9d51ca5cff8addb2b41c969d9101cb3fd1c"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/GB-V.bcmap",
+          "sha256": "0b96789143c0bbf9f1641ae7165b3456dccd14dabffcbb0bd654d5bf6f94f863"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/GBK-EUC-H.bcmap",
+          "sha256": "2103fed28650ede096a2281104a1a8a4304dae0db414342c636867522307123b"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/GBK-EUC-V.bcmap",
+          "sha256": "a7fd35dd14d9dbdb955f34e6c0630618b6620dfd09d4283b2f65a65ce77fcaea"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/GBK2K-H.bcmap",
+          "sha256": "3d919ae72af16c5cc6846ec87a4326a9f125e493c59d3628429d35c2c95fe8c4"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/GBK2K-V.bcmap",
+          "sha256": "b927fdfd595c07ce9158bf2ec13f4641b2e83b01c70989dadfabd6ed7c6ac2dc"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/GBKp-EUC-H.bcmap",
+          "sha256": "d15ebd8e81fb4fe8a244f1b1e877922e03500ac69eddf5001093e502430451d2"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/GBKp-EUC-V.bcmap",
+          "sha256": "fdc736d46e642625dccc8ad8c59f2c69fc7db7a13f2e799c6c6b779e707bb97a"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/GBpc-EUC-H.bcmap",
+          "sha256": "3c4a4eb82f05abe51f6650985c630e180438bfdd491318f5d20d2ec29236e1c3"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/GBpc-EUC-V.bcmap",
+          "sha256": "215bdfa2842705624b4cf4cd29b8e3c720f1e192365e0305c11030a424c84d7c"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/GBT-EUC-H.bcmap",
+          "sha256": "dc5f44e48a39f3367ae28665027d8ab1d8cedb5a9dcc5068a900acd6709f60f9"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/GBT-EUC-V.bcmap",
+          "sha256": "a1ad24e63653b8aa388c18fa5e498f007564e43dde699a9f91ccb4645c999be8"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/GBT-H.bcmap",
+          "sha256": "8afda745a505763f3ff54c8126eeb48ef376ea9ed07d9f42ff9a22c5c547ec57"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/GBT-V.bcmap",
+          "sha256": "cdc2ec5c3c7c7033290c9a8894878202f08674eb9b1ae7d36218430326768771"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/GBTpc-EUC-H.bcmap",
+          "sha256": "7b23e2f7bfdb6c918f567b7324bf858f398bd8cd5f268d74ece19a3c91bf4f32"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/GBTpc-EUC-V.bcmap",
+          "sha256": "d7a1b13ead9ab511cf2cd01de6ce8b02aa8e8767e84895337d7a3b67f039f93b"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/H.bcmap",
+          "sha256": "a0233e21047ec00b852125b243cbcf30abee511155b6d8159c24f944384bc9ee"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/Hankaku.bcmap",
+          "sha256": "b454701f7aecd7856769016dfd04ca64280a060f2c67a2466d50b4395d24974e"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/Hiragana.bcmap",
+          "sha256": "2ed669394756dd9458651cd9995ab29ab691ecb7686659003306cdf22767a414"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/HKdla-B5-H.bcmap",
+          "sha256": "5242bce18fb13ab4cc59b146a03eba36e4ce42667eeff09e10981a9d2aa4996b"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/HKdla-B5-V.bcmap",
+          "sha256": "2e0537f786c0791d41a925f72bad2d4e7268aa6cbf15a1400a722672cec38e2c"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/HKdlb-B5-H.bcmap",
+          "sha256": "fdc8159984bf5dbe475c0d5dfcb621ecee4dea07c38c668bd77f4c679e23b9b3"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/HKdlb-B5-V.bcmap",
+          "sha256": "b249eb9dcb915ab45057c5d4d7aa55ef88d0efbb092af6bae0b2d4705d139abf"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/HKgccs-B5-H.bcmap",
+          "sha256": "ab64c7fc5e9b2e97750cc4f269b0da14fd8649e49151b7598c8df86599bac591"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/HKgccs-B5-V.bcmap",
+          "sha256": "02ebdf7cdffb5395fb21091cd58a013a18ae5388922822f9dc6292ef16b98956"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/HKm314-B5-H.bcmap",
+          "sha256": "bfd8bbde6b36a9da4c1c902c74121a30d9807a7079a00eeea218be6adc223cef"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/HKm314-B5-V.bcmap",
+          "sha256": "2a64a815cfb6fdd480674a868762e3d161fda17543b20c9209978559f0667164"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/HKm471-B5-H.bcmap",
+          "sha256": "49d7c037758826b5b6c0fa329c35bbf25d3943197754e72ecd30c6fb04d745e6"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/HKm471-B5-V.bcmap",
+          "sha256": "be24c109e78aa4fe3c1f27d30aab3ed0741e783fa1b6b6c2719741072b54b132"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/HKscs-B5-H.bcmap",
+          "sha256": "08599378f41d96b40537adef6e6edcc4a787bc63f5accf47c026df4905a13914"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/HKscs-B5-V.bcmap",
+          "sha256": "d073542b7dad1c4cbf01c1af5f0cd13218d1281a491956e310c55702fc8705c4"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/Katakana.bcmap",
+          "sha256": "3b6ca6642fbf8822da00d5e58a8aa275216d5c32dbf2bd73e934197fc9fc5c53"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/KSC-EUC-H.bcmap",
+          "sha256": "6784e16dbc5861c036c23d3e55f0d4ba0975a3e464da0ee8e49bcfff0be070c4"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/KSC-EUC-V.bcmap",
+          "sha256": "fdb36bad85e9924823d49db374067988e024cf80fc894711f2c9178951cbbe95"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/KSC-H.bcmap",
+          "sha256": "c1f6d61f1d3304fd539a65ae72624fa567ecc3853bf52e283958a7a2515b3eee"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/KSC-Johab-H.bcmap",
+          "sha256": "939993d213f68db763bf156217c217ae23af082b91a0eacecf3d11eb4ff8ef8c"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/KSC-Johab-V.bcmap",
+          "sha256": "5d61967aac0e666def721e8b8d0fed8f95a879a14f2e76ce516c3d11c621e519"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/KSC-V.bcmap",
+          "sha256": "d7da5afd9f1fe74816d79c9325f0139a4efb6438664ebfdf9a7aa92f3034360f"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/KSCms-UHC-H.bcmap",
+          "sha256": "5b70d8f6a4fa9e2283dc649f0ff95d906d56efbee50a20e8d2faec3a8fed078e"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/KSCms-UHC-HW-H.bcmap",
+          "sha256": "a5e6ba22aceb02fdedee11bfb9ed138463d89e85b87810b9f075b469d936f8ec"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/KSCms-UHC-HW-V.bcmap",
+          "sha256": "890332a6a26880d463a12f2a6ff048bf9cf7e45077cfb1ca8815b89baa7bf411"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/KSCms-UHC-V.bcmap",
+          "sha256": "1631b531c9a40c8cbe24c2317dba107362e49fa6e18af620414d627c111d570c"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/KSCpc-EUC-H.bcmap",
+          "sha256": "709480682c55cedbb0124b9960d78e28febeee0df2e34607d61aac6601647ec7"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/KSCpc-EUC-V.bcmap",
+          "sha256": "031707887d6fc2378a36cdb6775334fd7a236c3f95048d8436abf43fe26fc49d"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/LiberationSans-Bold.ttf",
+          "sha256": "361c61b82d575c5c35fd9157fda8b0194bcfcd0d88ea8521a4fb5dd53d33dddc"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/LiberationSans-BoldItalic.ttf",
+          "sha256": "a224075ac17495ad0a3af3bc0a419ac0704a8b3fd1095456201fb9b095fc281d"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/LiberationSans-Italic.ttf",
+          "sha256": "832b4406dbef23628800d3aaad21048534ac84d7e3ad955be83b8172ed8ef512"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/LiberationSans-Regular.ttf",
+          "sha256": "f8ace1f892b2bd9dc1792ba7f097fa7588f84fed48321480e04de5390828221f"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/LICENSE_FOXIT",
+          "sha256": "b578cdd2345840ada550bd12519533812320d5f1d21cf4c1c7e1b1b0a31c98b7"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/LICENSE_LIBERATION",
+          "sha256": "d2c4d5b3e115a519cb58eb691aa64538397e2611f9ebe801392cf9667997e7dc"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/NWP-H.bcmap",
+          "sha256": "286c6c9e335da330928a01edc3c97a3a623f1f7f3c42762b0a7dc2f651b1a78f"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/NWP-V.bcmap",
+          "sha256": "3a75fb7b59adfb172710758c425d8ac6c93fd5360a64dd4afd5dd04e60ab4b4d"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/pdf.worker.js",
+          "sha256": "15908d67d6cc0ee52a4788ccbdcb554181e80f2a0800b03800a5014adcbdd835"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/pdf.worker.js.map",
+          "sha256": "45c3e49b7ff505297156b28028b0e3f3f4027972afcdde31d158f6b978d44b5e"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/pdfjs.LICENSE",
+          "sha256": "0d542e0c8804e39aa7f37eb00da5a762149dc682d7829451287e11b938e94594"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/RKSJ-H.bcmap",
+          "sha256": "a70de61a22a898f693f02cc011c3e3cff2e10aaa7cddb4661e456a21ae859f78"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/RKSJ-V.bcmap",
+          "sha256": "68c1a64506471a524ea5cfc3b3a9f8f70031989a6bd95427b1351f33ccf50b06"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/Roman.bcmap",
+          "sha256": "1c6b3ef9d9e5cb1aa329142ce9414b90f9b6d7f9182a2a9e927378dab8f0d43f"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/UniCNS-UCS2-H.bcmap",
+          "sha256": "779428116752f34e2490a1941d24e4634c71e3c22d053b811d2090ae2fb3c704"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/UniCNS-UCS2-V.bcmap",
+          "sha256": "1e5cc184b850ea44abc2df8ae5674279df668e8edf5e2a1a2ea2bd77adbd280f"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/UniCNS-UTF16-H.bcmap",
+          "sha256": "32ff139b3c7b91d6ad25f994701f3ce7b242906022c418fd73e6493fc228bfe5"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/UniCNS-UTF16-V.bcmap",
+          "sha256": "278eb1e68d1a236c60ef59472cf0176ee0d45f364285e76ca12419a08d46fb9a"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/UniCNS-UTF32-H.bcmap",
+          "sha256": "bf26eb67fe19ee5ba915799e80ca72408400aa8342fdf6a244a4f44de8f97336"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/UniCNS-UTF32-V.bcmap",
+          "sha256": "f7da3caf83ceb1cb37936fa10700d9ba6e9c3f72c5bc9724e3ac79bff0c0179e"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/UniCNS-UTF8-H.bcmap",
+          "sha256": "2f2a742bcd1a84a148a4a518b9eed51a8f9c6ca5ed3bc5e2e41fff97de5dc2d8"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/UniCNS-UTF8-V.bcmap",
+          "sha256": "b7c3f10780a8c62dd1c8ff6c30dc1e4e23b6cdc87c3a96fcd514cc98ffd3af9d"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/UniGB-UCS2-H.bcmap",
+          "sha256": "9201569b402e81ad8860650bd86350c4fa28e5dd5971f05fcacaf40f51de18ed"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/UniGB-UCS2-V.bcmap",
+          "sha256": "f10282335e4d64203bc2a653a3a47d745ec76c8ae04549f4d50180c1899be216"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/UniGB-UTF16-H.bcmap",
+          "sha256": "386fd39581245c034da016a92d23f3df1117d169f996100050b264fc09a84e35"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/UniGB-UTF16-V.bcmap",
+          "sha256": "0473cfbba612b92dd9918f0ff8aee9112897c48e0ffdc0eb82da3144ed8ea84a"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/UniGB-UTF32-H.bcmap",
+          "sha256": "f48a145dc4e3ed1dca1dde7111716a72306a2a4191ab05c6bae3a5c3a961cd2f"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/UniGB-UTF32-V.bcmap",
+          "sha256": "106acc49b7118bdef944e32107b4f348238f3929a0a15d3b7aab7b9101535993"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/UniGB-UTF8-H.bcmap",
+          "sha256": "f217b439c80ee5fa1bc2cf6d1defcc319f8d84483d166a00ee199e05a68588df"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/UniGB-UTF8-V.bcmap",
+          "sha256": "a64df947632878eacc532fa193c735c92a383b7d66e6f8374ac193af7c64fc63"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/UniJIS-UCS2-H.bcmap",
+          "sha256": "ad2352f40870880fbf7f8ee5abadff743fbd025fbf9830b8ada472d1c5e4da0b"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/UniJIS-UCS2-HW-H.bcmap",
+          "sha256": "16e87edca954177c0881c874859d6783220925d821b5cdfb8755b61ebd93f9ce"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/UniJIS-UCS2-HW-V.bcmap",
+          "sha256": "1973457e2c0192819947e56068625b34fb9a72ecc8a476ce6d7eaae5f73e2e5c"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/UniJIS-UCS2-V.bcmap",
+          "sha256": "42a133d8e2ce9dd6d2288018e01592d2bf2435b326d39b94ea0b6e6a44ac33d3"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/UniJIS-UTF16-H.bcmap",
+          "sha256": "f6a89c5688978548c83fcee990e205bc63c74274d5c69b49032a3bd4c49a05ee"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/UniJIS-UTF16-V.bcmap",
+          "sha256": "c67126fc7c73850855186bb0d6482ac0a365057e0b58778c4ab9f234683fef53"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/UniJIS-UTF32-H.bcmap",
+          "sha256": "96195950ce0fe24443d8eb426fa6b88534ec421d7bef9046f0b2362809cfba73"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/UniJIS-UTF32-V.bcmap",
+          "sha256": "ed4dafda402bdd19c4d5d8bf2ab41473c0f86f384552b4c7b963d6627daedeb1"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/UniJIS-UTF8-H.bcmap",
+          "sha256": "798fb0bf06ab0788d1f6a91c2db7de581612eef03c628f10e8f7ecd8f70ab448"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/UniJIS-UTF8-V.bcmap",
+          "sha256": "1021611424f913b2df0bfdbe94bd327c04e224ec89d8e821c6501ea3d21f4265"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/UniJIS2004-UTF16-H.bcmap",
+          "sha256": "710a32d7cb43fd6bd9dbf30da5971f8c941590f74441e208d852c2be0e74cc97"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/UniJIS2004-UTF16-V.bcmap",
+          "sha256": "3b149aff5c5707b57fb3215d1775852c8b1f413ec0f679ea628f25cf87fe098d"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/UniJIS2004-UTF32-H.bcmap",
+          "sha256": "8d2658e18741af7937d586a57c89729a6fec0d86121197c1f8518aa58b29cdfb"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/UniJIS2004-UTF32-V.bcmap",
+          "sha256": "6dd475782f2897648a683c48b2fa015a15b8f06856760bddc8a17a63f418bacb"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/UniJIS2004-UTF8-H.bcmap",
+          "sha256": "691c614ce432b3e62486efb54e5c84c6da5afe9b51b21253bde4758feb484183"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/UniJIS2004-UTF8-V.bcmap",
+          "sha256": "40a8c7ea2d46711c5f78fc9a878a7db68b1543ba5cd60ecf14f519a2deb829b7"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/UniJISPro-UCS2-HW-V.bcmap",
+          "sha256": "6826f94d789d7bf1960668c1c5819c34c9585c1b23152fbc19ee81c7df08524b"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/UniJISPro-UCS2-V.bcmap",
+          "sha256": "493de9fd1a08f7946065d8ab58f0c3c9fe489f5a0f109f2d05a3169b4bd5789f"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/UniJISPro-UTF8-V.bcmap",
+          "sha256": "6181d382cf736c5e09492e8be9f26f31fa25b7462253f23ab16646af432cad81"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/UniJISX0213-UTF32-H.bcmap",
+          "sha256": "692044e1fb33445668632bc9fe7386805c624864be1ddeb29d65bb0c99fc630c"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/UniJISX0213-UTF32-V.bcmap",
+          "sha256": "dd54e16ca7bffb3a886242549b2bf7d78a277087f7c60d2636f118c21a5b0646"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/UniJISX02132004-UTF32-H.bcmap",
+          "sha256": "f80ea5a989be30ccda5a8804baef6d3b4b044d2b339bf8b31c671b2466171cf6"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/UniJISX02132004-UTF32-V.bcmap",
+          "sha256": "94c22bd99e771c5fbe0dd8dc39850570d4db0075074aca13e272813edd7cc57f"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/UniKS-UCS2-H.bcmap",
+          "sha256": "a1081396ab4adb6f4a5b6c15f896963c244c1c9bcb65ce5616d06096a1b9811c"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/UniKS-UCS2-V.bcmap",
+          "sha256": "6cab547431958fbdc1d401d06ebd4dd61a73f5509a10f974df32bcbca11a2e43"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/UniKS-UTF16-H.bcmap",
+          "sha256": "42d35b396286499dfae1737a07adb3a64500df37b426580bfb1d3ea872938519"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/UniKS-UTF16-V.bcmap",
+          "sha256": "5bdb7390c80dcc136cb47d41dc7460082560969c17322ee739fe3020fb642410"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/UniKS-UTF32-H.bcmap",
+          "sha256": "3a01ec51ed1b828101351e337ffb8250abe11880032e5210f881170fed2588de"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/UniKS-UTF32-V.bcmap",
+          "sha256": "dfda895eceaed081af030dbbb962b49629eea817fc3c02bae15db93d0c68acd7"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/UniKS-UTF8-H.bcmap",
+          "sha256": "3fac9c65145f72d7d42157a3b9c5ed6904632184e6a0888f2b828699afd2002f"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/UniKS-UTF8-V.bcmap",
+          "sha256": "9ecc6cf30dd354b9778ddba163b6cc7302b087ce9f39d1ba73472d2b75ed13ca"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/V.bcmap",
+          "sha256": "b9ad1c0c09ff14bca52f9a28a9767eb857ad0e8946e64ba14c7387a7eb69866a"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/WP-Symbol.bcmap",
+          "sha256": "543923bead225732aba30976690ee89095a19628277b5863efecc2c728d5d7bf"
+        }
+      ],
+      "locked-native-build": [
+        {
+          "path": "apps/desktop/product-dist/application-manifest.json",
+          "sha256": "cea26659031c4a8dd5fcb4e620e6efe248635b299eaf252321b93744760fd38e"
+        },
+        {
+          "path": "apps/desktop/product-dist/index.html",
+          "sha256": "d3499c13b59f8e03aec1235d8262ab6191f6418ed36029f2e6b3012ad04cd771"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/78-EUC-H.bcmap",
+          "sha256": "d92a261336dc18b8c03a46eb4d462382d33f4338fa195d303256b2031434c874"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/78-EUC-V.bcmap",
+          "sha256": "61670bebc4e4827b67230c054fd0d820d6e30c3584d02e386804e62bbedc032a"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/78-H.bcmap",
+          "sha256": "ece6415b853d61e1b2560165151407d35cf16e6556932b85a13ea75276b77402"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/78-RKSJ-H.bcmap",
+          "sha256": "696b1f973c97623496703809eaaa5f9b40696c77540057413f4b826a08edfa7b"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/78-RKSJ-V.bcmap",
+          "sha256": "53cb6d560ab377da48cf65d6dcacb0bdb31f13fab7066c580de38c12a73a7ff9"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/78-V.bcmap",
+          "sha256": "289000f02fd34872b6975503217f33abae6bee676e7d28f640473a67c8db1712"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/78ms-RKSJ-H.bcmap",
+          "sha256": "a2442595218f5f8bd8e1b42188e368587d876cfe0cc4cd87196f077c878f72e2"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/78ms-RKSJ-V.bcmap",
+          "sha256": "f8ddceba96bfd9d3740bd1789ee30d1f47c78371520a8084f71f7df58f19be0b"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/83pv-RKSJ-H.bcmap",
+          "sha256": "44040051ec818fe09b9703472bea72efd2759d5eeb5ff0d77c718d6bb5e6d1df"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/90ms-RKSJ-H.bcmap",
+          "sha256": "c13e043e85ff715b75bb03801e8fd0fb8f3a75e4a48496faa6baaf92b5b48ba1"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/90ms-RKSJ-V.bcmap",
+          "sha256": "499bb916ce1adbe4289b6e5811f4dc20eb238cdc2ffad20cf26ae56716885bab"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/90msp-RKSJ-H.bcmap",
+          "sha256": "7b8b3b8bbf821702e9a4df9f3596ce292380c8c1b0925dedadbb4e4b2d80498b"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/90msp-RKSJ-V.bcmap",
+          "sha256": "6296c2b5c07dca8128e96d5296d621a3268803d4fa0e5812a21e52fe2802aacb"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/90pv-RKSJ-H.bcmap",
+          "sha256": "fb5103f03d3a34547e18d316e52b6d9b26e485c662999222f84d2ba54c2e4fa8"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/90pv-RKSJ-V.bcmap",
+          "sha256": "7bcb5ad2ba55b9662ce379e16c2d9cc2b82d621a579807353741172e4af615c2"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/Add-H.bcmap",
+          "sha256": "a2ffab28b990998181bcca9b0e914bb2207820f100ae31d5c469444892e5ad8e"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/Add-RKSJ-H.bcmap",
+          "sha256": "b29f4b52e2465d0485856d5e69f1ba69927deb2848d8fd328c8035583b35bb7e"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/Add-RKSJ-V.bcmap",
+          "sha256": "2aa2232c283a3f5d0997c2834a36cead0b79ce2657944cfeed08140c293460ff"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/Add-V.bcmap",
+          "sha256": "25125d3b1be64e86b2df5b3344170b45a42bcaa0b46e43a34314ef73c166e542"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/Adobe-CNS1-0.bcmap",
+          "sha256": "8c65be9d51a9f269a547dc12460707aaf4031ab67ebe8a2900f4b4cc6b3e450e"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/Adobe-CNS1-1.bcmap",
+          "sha256": "73152bc1a59cc594b414ac6068be48e5512b96ae85920c40e32a99269fdb0c04"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/Adobe-CNS1-2.bcmap",
+          "sha256": "a1b8d353bdef9584c820464e8f1c9e2013d64ebf433cba0aa831dddf515818c2"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/Adobe-CNS1-3.bcmap",
+          "sha256": "2ffc0c75c79fafde506163d3c08c390d183251009f3fbf6ae50d1167d14b9570"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/Adobe-CNS1-4.bcmap",
+          "sha256": "98a1f470c878c6b9691a4d7aef776af8ac9b55f5587c9fafa00547f3bf655716"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/Adobe-CNS1-5.bcmap",
+          "sha256": "ddd6e29955eb8cb545f2ebd09c628c3bbda5023256eda1b728f743c75fb77829"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/Adobe-CNS1-6.bcmap",
+          "sha256": "317bb2db71e0e5b7b0c47b75de1da915c2e22f65f0c0861507f9ca7ba238f8a2"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/Adobe-CNS1-UCS2.bcmap",
+          "sha256": "e665837f2197c6bd08cd8955ad4d6932cee2398e2e328b25b00e6bfb3bd72af9"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/Adobe-GB1-0.bcmap",
+          "sha256": "8b81cce8a11d510e505704953cfa4e4ab080c1a0cab991145a3512ee433946b9"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/Adobe-GB1-1.bcmap",
+          "sha256": "0426983081788ec7202703e71f1efa4b860f75b936994236010b39d89251a81e"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/Adobe-GB1-2.bcmap",
+          "sha256": "e67b37a83b160ab3831306a71a605893b24454ee81ac9b6123bf2d3984d268d5"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/Adobe-GB1-3.bcmap",
+          "sha256": "aa299afc3e12a28726147305f191be28c7498078c8b182ece7886ac79cd99078"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/Adobe-GB1-4.bcmap",
+          "sha256": "8fbd7d74c2ddb1350c1cecce54a73fde3f5453093d4bed445283ec0033d2097f"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/Adobe-GB1-5.bcmap",
+          "sha256": "c22cb2fcff24112fa31dab2111bdc51957006576d31aad5a25e67793ac01428c"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/Adobe-GB1-UCS2.bcmap",
+          "sha256": "20507620260c0c935c35afc1e70e5888aa7125d5ec7ffc03cef1959feb2c1641"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/Adobe-Japan1-0.bcmap",
+          "sha256": "464f08905236f5703b1f5cf8358767c8b18e6bcc808840d081f1de2c7ab38134"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/Adobe-Japan1-1.bcmap",
+          "sha256": "4c823848722187d1ffe75ae3f5f9126ccd2d7895a05fad14c919fb119e037008"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/Adobe-Japan1-2.bcmap",
+          "sha256": "7810fb808e367e70429e90a9478fe6a3fdc3e214f25c7582ce9c2da6a242315c"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/Adobe-Japan1-3.bcmap",
+          "sha256": "84deb1828711ad3d390c9899c38abce1bf619d65ff7bf1a326ec95acc45f08f8"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/Adobe-Japan1-4.bcmap",
+          "sha256": "3f8a4f974919c2b8bae5d10175ffa2673be140481e00840542c85d48ef184067"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/Adobe-Japan1-5.bcmap",
+          "sha256": "1d3ce4ff28d977f8cf37a912ae4ec811f4175c3167b1ec0b2567feec3e79e1db"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/Adobe-Japan1-6.bcmap",
+          "sha256": "5609797b9401b30be72ef9645da62a87829f058c3be4b5c623383119f584b1d9"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/Adobe-Japan1-UCS2.bcmap",
+          "sha256": "66c5d0dc4964f4093e77b194023f3a0f689324028ec8330e1e1d0570bcba7c2f"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/Adobe-Korea1-0.bcmap",
+          "sha256": "dfb8c3874f0e5a8c3acf597d2c12d2b63e90bc5e4f0fce990ec4c56077d80b32"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/Adobe-Korea1-1.bcmap",
+          "sha256": "62f277b7b1c441c007797ae707d5c37258d029ce4661a2b911e2e1ee35e6adc1"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/Adobe-Korea1-2.bcmap",
+          "sha256": "1d77068af462f96d7ad28ad7e7d43eef6423c685b479d7dc25ff5df38db0380d"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/Adobe-Korea1-UCS2.bcmap",
+          "sha256": "857b723088be97255053562bfa41bd1075a7f7910d3bab59a0645c8bbc7060ff"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/app.css",
+          "sha256": "78615de568288ae40f0fde824db9673cbb4eef1e0eebdd0edac49a292995cd24"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/app.js",
+          "sha256": "3ff3610927e2b945d7fe64c0d8eee88a2a86cee9bd17f38bb57c479d835be9ed"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/app.js.map",
+          "sha256": "592c45fa89f4874d0c2c15eb97d114bce1439b6e35d45f957d11438f3f1def2e"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/B5-H.bcmap",
+          "sha256": "718ad0ffbef4c34f8f3f31292c462e519cd567a5511fc8b346c60010d64f4ef9"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/B5-V.bcmap",
+          "sha256": "b5c37383517477620ced927b6b4ffd4f4cc6230d8051b5b46a21d6768e07f7d8"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/B5pc-H.bcmap",
+          "sha256": "bab6028aead1d6149400e904ab10cfd319082d826473ed4c582c8eeed920f17e"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/B5pc-V.bcmap",
+          "sha256": "41543142b9767f3b76133899fc8453282b01ad3c653acaeea42d78c5a7d08c63"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/CNS-EUC-H.bcmap",
+          "sha256": "e8f89cd61e6486b948205da46499d659ed0aed949b7095fd3c8e95ffe2b0e7a9"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/CNS-EUC-V.bcmap",
+          "sha256": "cae422bec2ac6dbe86bf921cec942bacd2d0b733ffcca5f91b3ba14e917025a0"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/CNS1-H.bcmap",
+          "sha256": "e8487971ab20cd16f3de3e8ac56ec994b72b658ad113f2818239dfd5108f501a"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/CNS1-V.bcmap",
+          "sha256": "42df8076aaa7574505e7304af83a3323ec032c4177d64b1309db8c043d594a8a"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/CNS2-H.bcmap",
+          "sha256": "bc6024d274d440f0625c69e25f37036ef6cb6689432ceaa160d3432a2a716ca7"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/CNS2-V.bcmap",
+          "sha256": "2e4f70a8afd23a121030fc2e5b5f3816e903b11e7ba8b8c09654b31c80399c38"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/documentViewer.worker.js",
+          "sha256": "cae8f34ab9c1f98922e4bd1d5d094e152893080882b89a96806c9af86549a507"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/documentViewer.worker.js.map",
+          "sha256": "889fb6cc9352e2f022427e22fe70bea0b9b884c2dc280dd9bd733415a1c18cf7"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/DocumentViewerWorkspace.js",
+          "sha256": "a3f9d74f3c88f854c6d02b0bc87511bc309d62741302071db06616db5beb5da7"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/DocumentViewerWorkspace.js.map",
+          "sha256": "f20a9c9bc1395eee7a31d69dbbff29cc57d551e1acb4c98b091be3f10f7ca1c6"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/ETen-B5-H.bcmap",
+          "sha256": "87ee6b3f5bfda5fe26fa35431264c7d73070d10dbbf398a75185d63ae322c18d"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/ETen-B5-V.bcmap",
+          "sha256": "47dc0d2c21e3bde317947aec1675ceabc1d5460a60bf9c24334b8c407a17172c"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/ETenms-B5-H.bcmap",
+          "sha256": "d5f5a73da4173b7da9a3a20e16f26f9cd5d12deb1553409919e0cec6fd37fdee"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/ETenms-B5-V.bcmap",
+          "sha256": "18252fca90f472f479af1bddd60d6ab51c8e1b55dcf6845951426504934543e0"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/ETHK-B5-H.bcmap",
+          "sha256": "d2f10fa519336bc4efcc7b6deb9604b75429946b40d82e311cb3a97a1994c89a"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/ETHK-B5-V.bcmap",
+          "sha256": "1fea3fd0d9f0f679f80505800851ef2e4131d81127e18c006938ffa2f4c8b247"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/EUC-H.bcmap",
+          "sha256": "f9939cd57fccdc65c5d9f4c205fd497ebdbd283643308da5663801a8c1d9c595"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/EUC-V.bcmap",
+          "sha256": "1283a50a706507c4436da83ede9ad7a4440be25378f2e96f6c81a430081426a3"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/Ext-H.bcmap",
+          "sha256": "4000ed4e61a1c668ef453bbd0603cfa383defa793abd46a57ed870d7f527350b"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/Ext-RKSJ-H.bcmap",
+          "sha256": "e0d2f0df337660e73813238dd4a725f11f0621b90f3273857db253d0e7694caa"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/Ext-RKSJ-V.bcmap",
+          "sha256": "f617a22b6d67febb187990952006c91a9f5a4db21155d268c656252d0c21985d"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/Ext-V.bcmap",
+          "sha256": "c2087fb845a9e3acea0c2922cd40e6af67e11957bec74dcd597f1285edd490ce"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/FoxitDingbats.pfb",
+          "sha256": "845c752392b6c914fb989c75a08b7792b88f542d2499042ef2889f8c814a16ed"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/FoxitFixed.pfb",
+          "sha256": "b6c8fe53f134b8b6d4578cd2d544df4cee9624c4efa8d51a560fb40ea296101b"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/FoxitFixedBold.pfb",
+          "sha256": "f1b7159702973f54fc86254ea38bcf3712b2a736eb3a0995751e9f4bb45ad603"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/FoxitFixedBoldItalic.pfb",
+          "sha256": "8a000945843bd31add06aee63bf9fd41b7578b4f3242a4b7cd46349ad9d24d4d"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/FoxitFixedItalic.pfb",
+          "sha256": "5007faf8320fa1fcc08b8894b356ad976f60b992ba29ee5272578bbdebaf3876"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/FoxitSerif.pfb",
+          "sha256": "4f57d2b9d884af8f907bf22df6019b52d86cbf6214fdbd02b1ae05472a543f35"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/FoxitSerifBold.pfb",
+          "sha256": "0bdf4b04e964139818d51eda03d566ba999fc3ba2421b1c6c51f9dc969022e80"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/FoxitSerifBoldItalic.pfb",
+          "sha256": "a406cac82583bf98175cb62c87ed5e95c45fbb34eece63a10b0a13e793cb2e10"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/FoxitSerifItalic.pfb",
+          "sha256": "610ae0687198045c4db5d1a6650fd5e92536631706382eb8b72e38df578d0ae9"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/FoxitSymbol.pfb",
+          "sha256": "47967d055530e7357088a08403115425643ec2cdfd6201ba8af0fbd7116c1539"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/GB-EUC-H.bcmap",
+          "sha256": "928bad06fd84a48f5ba7150d7716609119fb660f2aaa73eccad81ddab9b9d203"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/GB-EUC-V.bcmap",
+          "sha256": "a9ad88ac2479da529b16dc48abc5952332e27bc355335f91df5729a587533324"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/GB-H.bcmap",
+          "sha256": "1018c777a8910b5bb46d7d54a4aee9d51ca5cff8addb2b41c969d9101cb3fd1c"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/GB-V.bcmap",
+          "sha256": "0b96789143c0bbf9f1641ae7165b3456dccd14dabffcbb0bd654d5bf6f94f863"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/GBK-EUC-H.bcmap",
+          "sha256": "2103fed28650ede096a2281104a1a8a4304dae0db414342c636867522307123b"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/GBK-EUC-V.bcmap",
+          "sha256": "a7fd35dd14d9dbdb955f34e6c0630618b6620dfd09d4283b2f65a65ce77fcaea"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/GBK2K-H.bcmap",
+          "sha256": "3d919ae72af16c5cc6846ec87a4326a9f125e493c59d3628429d35c2c95fe8c4"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/GBK2K-V.bcmap",
+          "sha256": "b927fdfd595c07ce9158bf2ec13f4641b2e83b01c70989dadfabd6ed7c6ac2dc"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/GBKp-EUC-H.bcmap",
+          "sha256": "d15ebd8e81fb4fe8a244f1b1e877922e03500ac69eddf5001093e502430451d2"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/GBKp-EUC-V.bcmap",
+          "sha256": "fdc736d46e642625dccc8ad8c59f2c69fc7db7a13f2e799c6c6b779e707bb97a"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/GBpc-EUC-H.bcmap",
+          "sha256": "3c4a4eb82f05abe51f6650985c630e180438bfdd491318f5d20d2ec29236e1c3"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/GBpc-EUC-V.bcmap",
+          "sha256": "215bdfa2842705624b4cf4cd29b8e3c720f1e192365e0305c11030a424c84d7c"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/GBT-EUC-H.bcmap",
+          "sha256": "dc5f44e48a39f3367ae28665027d8ab1d8cedb5a9dcc5068a900acd6709f60f9"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/GBT-EUC-V.bcmap",
+          "sha256": "a1ad24e63653b8aa388c18fa5e498f007564e43dde699a9f91ccb4645c999be8"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/GBT-H.bcmap",
+          "sha256": "8afda745a505763f3ff54c8126eeb48ef376ea9ed07d9f42ff9a22c5c547ec57"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/GBT-V.bcmap",
+          "sha256": "cdc2ec5c3c7c7033290c9a8894878202f08674eb9b1ae7d36218430326768771"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/GBTpc-EUC-H.bcmap",
+          "sha256": "7b23e2f7bfdb6c918f567b7324bf858f398bd8cd5f268d74ece19a3c91bf4f32"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/GBTpc-EUC-V.bcmap",
+          "sha256": "d7a1b13ead9ab511cf2cd01de6ce8b02aa8e8767e84895337d7a3b67f039f93b"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/H.bcmap",
+          "sha256": "a0233e21047ec00b852125b243cbcf30abee511155b6d8159c24f944384bc9ee"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/Hankaku.bcmap",
+          "sha256": "b454701f7aecd7856769016dfd04ca64280a060f2c67a2466d50b4395d24974e"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/Hiragana.bcmap",
+          "sha256": "2ed669394756dd9458651cd9995ab29ab691ecb7686659003306cdf22767a414"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/HKdla-B5-H.bcmap",
+          "sha256": "5242bce18fb13ab4cc59b146a03eba36e4ce42667eeff09e10981a9d2aa4996b"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/HKdla-B5-V.bcmap",
+          "sha256": "2e0537f786c0791d41a925f72bad2d4e7268aa6cbf15a1400a722672cec38e2c"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/HKdlb-B5-H.bcmap",
+          "sha256": "fdc8159984bf5dbe475c0d5dfcb621ecee4dea07c38c668bd77f4c679e23b9b3"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/HKdlb-B5-V.bcmap",
+          "sha256": "b249eb9dcb915ab45057c5d4d7aa55ef88d0efbb092af6bae0b2d4705d139abf"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/HKgccs-B5-H.bcmap",
+          "sha256": "ab64c7fc5e9b2e97750cc4f269b0da14fd8649e49151b7598c8df86599bac591"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/HKgccs-B5-V.bcmap",
+          "sha256": "02ebdf7cdffb5395fb21091cd58a013a18ae5388922822f9dc6292ef16b98956"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/HKm314-B5-H.bcmap",
+          "sha256": "bfd8bbde6b36a9da4c1c902c74121a30d9807a7079a00eeea218be6adc223cef"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/HKm314-B5-V.bcmap",
+          "sha256": "2a64a815cfb6fdd480674a868762e3d161fda17543b20c9209978559f0667164"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/HKm471-B5-H.bcmap",
+          "sha256": "49d7c037758826b5b6c0fa329c35bbf25d3943197754e72ecd30c6fb04d745e6"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/HKm471-B5-V.bcmap",
+          "sha256": "be24c109e78aa4fe3c1f27d30aab3ed0741e783fa1b6b6c2719741072b54b132"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/HKscs-B5-H.bcmap",
+          "sha256": "08599378f41d96b40537adef6e6edcc4a787bc63f5accf47c026df4905a13914"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/HKscs-B5-V.bcmap",
+          "sha256": "d073542b7dad1c4cbf01c1af5f0cd13218d1281a491956e310c55702fc8705c4"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/Katakana.bcmap",
+          "sha256": "3b6ca6642fbf8822da00d5e58a8aa275216d5c32dbf2bd73e934197fc9fc5c53"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/KSC-EUC-H.bcmap",
+          "sha256": "6784e16dbc5861c036c23d3e55f0d4ba0975a3e464da0ee8e49bcfff0be070c4"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/KSC-EUC-V.bcmap",
+          "sha256": "fdb36bad85e9924823d49db374067988e024cf80fc894711f2c9178951cbbe95"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/KSC-H.bcmap",
+          "sha256": "c1f6d61f1d3304fd539a65ae72624fa567ecc3853bf52e283958a7a2515b3eee"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/KSC-Johab-H.bcmap",
+          "sha256": "939993d213f68db763bf156217c217ae23af082b91a0eacecf3d11eb4ff8ef8c"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/KSC-Johab-V.bcmap",
+          "sha256": "5d61967aac0e666def721e8b8d0fed8f95a879a14f2e76ce516c3d11c621e519"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/KSC-V.bcmap",
+          "sha256": "d7da5afd9f1fe74816d79c9325f0139a4efb6438664ebfdf9a7aa92f3034360f"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/KSCms-UHC-H.bcmap",
+          "sha256": "5b70d8f6a4fa9e2283dc649f0ff95d906d56efbee50a20e8d2faec3a8fed078e"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/KSCms-UHC-HW-H.bcmap",
+          "sha256": "a5e6ba22aceb02fdedee11bfb9ed138463d89e85b87810b9f075b469d936f8ec"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/KSCms-UHC-HW-V.bcmap",
+          "sha256": "890332a6a26880d463a12f2a6ff048bf9cf7e45077cfb1ca8815b89baa7bf411"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/KSCms-UHC-V.bcmap",
+          "sha256": "1631b531c9a40c8cbe24c2317dba107362e49fa6e18af620414d627c111d570c"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/KSCpc-EUC-H.bcmap",
+          "sha256": "709480682c55cedbb0124b9960d78e28febeee0df2e34607d61aac6601647ec7"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/KSCpc-EUC-V.bcmap",
+          "sha256": "031707887d6fc2378a36cdb6775334fd7a236c3f95048d8436abf43fe26fc49d"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/LiberationSans-Bold.ttf",
+          "sha256": "361c61b82d575c5c35fd9157fda8b0194bcfcd0d88ea8521a4fb5dd53d33dddc"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/LiberationSans-BoldItalic.ttf",
+          "sha256": "a224075ac17495ad0a3af3bc0a419ac0704a8b3fd1095456201fb9b095fc281d"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/LiberationSans-Italic.ttf",
+          "sha256": "832b4406dbef23628800d3aaad21048534ac84d7e3ad955be83b8172ed8ef512"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/LiberationSans-Regular.ttf",
+          "sha256": "f8ace1f892b2bd9dc1792ba7f097fa7588f84fed48321480e04de5390828221f"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/LICENSE_FOXIT",
+          "sha256": "b578cdd2345840ada550bd12519533812320d5f1d21cf4c1c7e1b1b0a31c98b7"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/LICENSE_LIBERATION",
+          "sha256": "d2c4d5b3e115a519cb58eb691aa64538397e2611f9ebe801392cf9667997e7dc"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/NWP-H.bcmap",
+          "sha256": "286c6c9e335da330928a01edc3c97a3a623f1f7f3c42762b0a7dc2f651b1a78f"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/NWP-V.bcmap",
+          "sha256": "3a75fb7b59adfb172710758c425d8ac6c93fd5360a64dd4afd5dd04e60ab4b4d"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/pdf.worker.js",
+          "sha256": "15908d67d6cc0ee52a4788ccbdcb554181e80f2a0800b03800a5014adcbdd835"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/pdf.worker.js.map",
+          "sha256": "45c3e49b7ff505297156b28028b0e3f3f4027972afcdde31d158f6b978d44b5e"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/pdfjs.LICENSE",
+          "sha256": "0d542e0c8804e39aa7f37eb00da5a762149dc682d7829451287e11b938e94594"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/RKSJ-H.bcmap",
+          "sha256": "a70de61a22a898f693f02cc011c3e3cff2e10aaa7cddb4661e456a21ae859f78"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/RKSJ-V.bcmap",
+          "sha256": "68c1a64506471a524ea5cfc3b3a9f8f70031989a6bd95427b1351f33ccf50b06"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/Roman.bcmap",
+          "sha256": "1c6b3ef9d9e5cb1aa329142ce9414b90f9b6d7f9182a2a9e927378dab8f0d43f"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/UniCNS-UCS2-H.bcmap",
+          "sha256": "779428116752f34e2490a1941d24e4634c71e3c22d053b811d2090ae2fb3c704"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/UniCNS-UCS2-V.bcmap",
+          "sha256": "1e5cc184b850ea44abc2df8ae5674279df668e8edf5e2a1a2ea2bd77adbd280f"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/UniCNS-UTF16-H.bcmap",
+          "sha256": "32ff139b3c7b91d6ad25f994701f3ce7b242906022c418fd73e6493fc228bfe5"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/UniCNS-UTF16-V.bcmap",
+          "sha256": "278eb1e68d1a236c60ef59472cf0176ee0d45f364285e76ca12419a08d46fb9a"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/UniCNS-UTF32-H.bcmap",
+          "sha256": "bf26eb67fe19ee5ba915799e80ca72408400aa8342fdf6a244a4f44de8f97336"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/UniCNS-UTF32-V.bcmap",
+          "sha256": "f7da3caf83ceb1cb37936fa10700d9ba6e9c3f72c5bc9724e3ac79bff0c0179e"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/UniCNS-UTF8-H.bcmap",
+          "sha256": "2f2a742bcd1a84a148a4a518b9eed51a8f9c6ca5ed3bc5e2e41fff97de5dc2d8"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/UniCNS-UTF8-V.bcmap",
+          "sha256": "b7c3f10780a8c62dd1c8ff6c30dc1e4e23b6cdc87c3a96fcd514cc98ffd3af9d"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/UniGB-UCS2-H.bcmap",
+          "sha256": "9201569b402e81ad8860650bd86350c4fa28e5dd5971f05fcacaf40f51de18ed"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/UniGB-UCS2-V.bcmap",
+          "sha256": "f10282335e4d64203bc2a653a3a47d745ec76c8ae04549f4d50180c1899be216"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/UniGB-UTF16-H.bcmap",
+          "sha256": "386fd39581245c034da016a92d23f3df1117d169f996100050b264fc09a84e35"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/UniGB-UTF16-V.bcmap",
+          "sha256": "0473cfbba612b92dd9918f0ff8aee9112897c48e0ffdc0eb82da3144ed8ea84a"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/UniGB-UTF32-H.bcmap",
+          "sha256": "f48a145dc4e3ed1dca1dde7111716a72306a2a4191ab05c6bae3a5c3a961cd2f"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/UniGB-UTF32-V.bcmap",
+          "sha256": "106acc49b7118bdef944e32107b4f348238f3929a0a15d3b7aab7b9101535993"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/UniGB-UTF8-H.bcmap",
+          "sha256": "f217b439c80ee5fa1bc2cf6d1defcc319f8d84483d166a00ee199e05a68588df"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/UniGB-UTF8-V.bcmap",
+          "sha256": "a64df947632878eacc532fa193c735c92a383b7d66e6f8374ac193af7c64fc63"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/UniJIS-UCS2-H.bcmap",
+          "sha256": "ad2352f40870880fbf7f8ee5abadff743fbd025fbf9830b8ada472d1c5e4da0b"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/UniJIS-UCS2-HW-H.bcmap",
+          "sha256": "16e87edca954177c0881c874859d6783220925d821b5cdfb8755b61ebd93f9ce"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/UniJIS-UCS2-HW-V.bcmap",
+          "sha256": "1973457e2c0192819947e56068625b34fb9a72ecc8a476ce6d7eaae5f73e2e5c"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/UniJIS-UCS2-V.bcmap",
+          "sha256": "42a133d8e2ce9dd6d2288018e01592d2bf2435b326d39b94ea0b6e6a44ac33d3"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/UniJIS-UTF16-H.bcmap",
+          "sha256": "f6a89c5688978548c83fcee990e205bc63c74274d5c69b49032a3bd4c49a05ee"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/UniJIS-UTF16-V.bcmap",
+          "sha256": "c67126fc7c73850855186bb0d6482ac0a365057e0b58778c4ab9f234683fef53"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/UniJIS-UTF32-H.bcmap",
+          "sha256": "96195950ce0fe24443d8eb426fa6b88534ec421d7bef9046f0b2362809cfba73"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/UniJIS-UTF32-V.bcmap",
+          "sha256": "ed4dafda402bdd19c4d5d8bf2ab41473c0f86f384552b4c7b963d6627daedeb1"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/UniJIS-UTF8-H.bcmap",
+          "sha256": "798fb0bf06ab0788d1f6a91c2db7de581612eef03c628f10e8f7ecd8f70ab448"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/UniJIS-UTF8-V.bcmap",
+          "sha256": "1021611424f913b2df0bfdbe94bd327c04e224ec89d8e821c6501ea3d21f4265"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/UniJIS2004-UTF16-H.bcmap",
+          "sha256": "710a32d7cb43fd6bd9dbf30da5971f8c941590f74441e208d852c2be0e74cc97"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/UniJIS2004-UTF16-V.bcmap",
+          "sha256": "3b149aff5c5707b57fb3215d1775852c8b1f413ec0f679ea628f25cf87fe098d"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/UniJIS2004-UTF32-H.bcmap",
+          "sha256": "8d2658e18741af7937d586a57c89729a6fec0d86121197c1f8518aa58b29cdfb"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/UniJIS2004-UTF32-V.bcmap",
+          "sha256": "6dd475782f2897648a683c48b2fa015a15b8f06856760bddc8a17a63f418bacb"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/UniJIS2004-UTF8-H.bcmap",
+          "sha256": "691c614ce432b3e62486efb54e5c84c6da5afe9b51b21253bde4758feb484183"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/UniJIS2004-UTF8-V.bcmap",
+          "sha256": "40a8c7ea2d46711c5f78fc9a878a7db68b1543ba5cd60ecf14f519a2deb829b7"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/UniJISPro-UCS2-HW-V.bcmap",
+          "sha256": "6826f94d789d7bf1960668c1c5819c34c9585c1b23152fbc19ee81c7df08524b"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/UniJISPro-UCS2-V.bcmap",
+          "sha256": "493de9fd1a08f7946065d8ab58f0c3c9fe489f5a0f109f2d05a3169b4bd5789f"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/UniJISPro-UTF8-V.bcmap",
+          "sha256": "6181d382cf736c5e09492e8be9f26f31fa25b7462253f23ab16646af432cad81"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/UniJISX0213-UTF32-H.bcmap",
+          "sha256": "692044e1fb33445668632bc9fe7386805c624864be1ddeb29d65bb0c99fc630c"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/UniJISX0213-UTF32-V.bcmap",
+          "sha256": "dd54e16ca7bffb3a886242549b2bf7d78a277087f7c60d2636f118c21a5b0646"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/UniJISX02132004-UTF32-H.bcmap",
+          "sha256": "f80ea5a989be30ccda5a8804baef6d3b4b044d2b339bf8b31c671b2466171cf6"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/UniJISX02132004-UTF32-V.bcmap",
+          "sha256": "94c22bd99e771c5fbe0dd8dc39850570d4db0075074aca13e272813edd7cc57f"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/UniKS-UCS2-H.bcmap",
+          "sha256": "a1081396ab4adb6f4a5b6c15f896963c244c1c9bcb65ce5616d06096a1b9811c"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/UniKS-UCS2-V.bcmap",
+          "sha256": "6cab547431958fbdc1d401d06ebd4dd61a73f5509a10f974df32bcbca11a2e43"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/UniKS-UTF16-H.bcmap",
+          "sha256": "42d35b396286499dfae1737a07adb3a64500df37b426580bfb1d3ea872938519"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/UniKS-UTF16-V.bcmap",
+          "sha256": "5bdb7390c80dcc136cb47d41dc7460082560969c17322ee739fe3020fb642410"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/UniKS-UTF32-H.bcmap",
+          "sha256": "3a01ec51ed1b828101351e337ffb8250abe11880032e5210f881170fed2588de"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/UniKS-UTF32-V.bcmap",
+          "sha256": "dfda895eceaed081af030dbbb962b49629eea817fc3c02bae15db93d0c68acd7"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/UniKS-UTF8-H.bcmap",
+          "sha256": "3fac9c65145f72d7d42157a3b9c5ed6904632184e6a0888f2b828699afd2002f"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/UniKS-UTF8-V.bcmap",
+          "sha256": "9ecc6cf30dd354b9778ddba163b6cc7302b087ce9f39d1ba73472d2b75ed13ca"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/V.bcmap",
+          "sha256": "b9ad1c0c09ff14bca52f9a28a9767eb857ad0e8946e64ba14c7387a7eb69866a"
+        },
+        {
+          "path": "apps/desktop/product-dist/assets/WP-Symbol.bcmap",
+          "sha256": "543923bead225732aba30976690ee89095a19628277b5863efecc2c728d5d7bf"
+        }
+      ]
+    },
+    "freshCargoArtifacts": {
+      "native-viewer-test-build": {
+        "path": "target/debug/deps/research_observatory_desktop_lib-1922d4e089438d1c.exe",
+        "sha256": "eefee6a7d74a9d92236ce682af1ef9258d947068e0fdc97db15591b82e7d81bd"
+      },
+      "locked-native-build": {
+        "path": "target/release/examples/project_contract_probe.exe",
+        "sha256": "fc6d5d588068ee225ebda3b12af1b26313005c537c10232604a23cdff197633a"
+      }
+    },
+    "nativeViewerSnapshot": {
+      "path": "artifacts/tmp/W2.CP08.native-viewer-tests-02/reader-test.exe",
+      "sha256": "d63348ef76fd69007101c03a7267a01dd38006dec714a57c9e51ed1aa55e8ed5",
+      "manifestSHA256": "debbc886d79228c211ae063f3b1d230b59bb39768c9ff3b574c08c7a10a4ccab",
+      "testCases": 10
+    },
+    "sharedContractInputs": [
+      {
+        "path": "artifacts/evidence/CAP-05.S04.T01.latency-target-amendment-01.adopted.json",
+        "sha256": "99798833d3cca799dcf4e083f486c6d98f74c3820591ef4a41af62dafcad6bbb",
+        "hashConvention": "raw-bytes",
+        "candidateGitSHA256": "99798833d3cca799dcf4e083f486c6d98f74c3820591ef4a41af62dafcad6bbb"
+      },
+      {
+        "path": "artifacts/evidence/ui-change/CAP-05.S04.T03.json",
+        "sha256": "74941f433ab36a25072d9d0904389366a5b45a67f9f62302af1a9167501edf34",
+        "hashConvention": "raw-bytes",
+        "candidateGitSHA256": "74941f433ab36a25072d9d0904389366a5b45a67f9f62302af1a9167501edf34"
+      },
+      {
+        "path": "docs/adr/ADR-0027-keep-scholarly-source-replay-separate-from-private-authentication.md",
+        "sha256": "a3a8e676b6648de2fd020e85fd725c11b743cbf770460a675e5f0abba8daaae9",
+        "hashConvention": "raw-bytes",
+        "candidateGitSHA256": "a3a8e676b6648de2fd020e85fd725c11b743cbf770460a675e5f0abba8daaae9"
+      },
+      {
+        "path": "docs/adr/ADR-0028-isolate-windows-connectors-and-parsers-behind-narrow-brokers.md",
+        "sha256": "d9232622652e1fddc814452cd9619ecae27f3cae3bae8db3ef66817800e3e48f",
+        "hashConvention": "raw-bytes",
+        "candidateGitSHA256": "d9232622652e1fddc814452cd9619ecae27f3cae3bae8db3ef66817800e3e48f"
+      },
+      {
+        "path": "docs/adr/ADR-0029-preserve-document-revisions-and-mediate-source-viewing.md",
+        "sha256": "ffee796414cdde9155667c8c3a710e7c904197971b7714832c7c5bc950687e7b",
+        "hashConvention": "raw-bytes",
+        "candidateGitSHA256": "ffee796414cdde9155667c8c3a710e7c904197971b7714832c7c5bc950687e7b"
+      },
+      {
+        "path": "packages/contracts/anchors/README.md",
+        "sha256": "52e7221047fca1d13852092a6e9e0afc4ac60ddb080ebc45e2e6a6a86115f99e",
+        "hashConvention": "raw-bytes",
+        "candidateGitSHA256": "52e7221047fca1d13852092a6e9e0afc4ac60ddb080ebc45e2e6a6a86115f99e"
+      },
+      {
+        "path": "packages/contracts/anchors/anchor-resolution.v1.schema.json",
+        "sha256": "b375e70a3b3428a0985b1d51cb40d1560e44e7527c9ac795494a0390f13c5087",
+        "hashConvention": "raw-bytes",
+        "candidateGitSHA256": "b375e70a3b3428a0985b1d51cb40d1560e44e7527c9ac795494a0390f13c5087"
+      },
+      {
+        "path": "packages/contracts/anchors/anchor-selection.v1.schema.json",
+        "sha256": "f58b1134b5c4d0305841a7123443f9aee50824e3260c9e91dbbbb00fcce00425",
+        "hashConvention": "raw-bytes",
+        "candidateGitSHA256": "f58b1134b5c4d0305841a7123443f9aee50824e3260c9e91dbbbb00fcce00425"
+      },
+      {
+        "path": "packages/contracts/anchors/citation-links.v1.schema.json",
+        "sha256": "0791906c6bfe75ae58e1999a01d873d2c2fc5fc7422db9e032abca6d9c0000f6",
+        "hashConvention": "raw-bytes",
+        "candidateGitSHA256": "0791906c6bfe75ae58e1999a01d873d2c2fc5fc7422db9e032abca6d9c0000f6"
+      },
+      {
+        "path": "packages/contracts/anchors/generate_anchor_schema.py",
+        "sha256": "c8a0902b9800af2b7176744d0e72a55e4384c7fc8c44aa95da2daa6827427c97",
+        "hashConvention": "raw-bytes",
+        "candidateGitSHA256": "c8a0902b9800af2b7176744d0e72a55e4384c7fc8c44aa95da2daa6827427c97"
+      },
+      {
+        "path": "packages/contracts/anchors/page-region.v1.schema.json",
+        "sha256": "89b36317b81db5131280824a45a78660130e4d55404f32a0015040f5d0d0da7b",
+        "hashConvention": "raw-bytes",
+        "candidateGitSHA256": "89b36317b81db5131280824a45a78660130e4d55404f32a0015040f5d0d0da7b"
+      },
+      {
+        "path": "packages/contracts/anchors/reader-outline.v1.schema.json",
+        "sha256": "203526003e379bb04462c50baa04bc87676e282ab806dce0222bba6ecbe2b5a7",
+        "hashConvention": "raw-bytes",
+        "candidateGitSHA256": "203526003e379bb04462c50baa04bc87676e282ab806dce0222bba6ecbe2b5a7"
+      },
+      {
+        "path": "packages/contracts/anchors/reader-revisions.v1.schema.json",
+        "sha256": "9cbc525a6889e14fe7d94324415dfe246505152ad69c1ce193068cfefbd8fd98",
+        "hashConvention": "raw-bytes",
+        "candidateGitSHA256": "9cbc525a6889e14fe7d94324415dfe246505152ad69c1ce193068cfefbd8fd98"
+      },
+      {
+        "path": "packages/contracts/anchors/source-anchor-target.v1.schema.json",
+        "sha256": "1d52915e23ed1a5832b1379883d19056a580bf15688b497a5cae55111534e50f",
+        "hashConvention": "raw-bytes",
+        "candidateGitSHA256": "1d52915e23ed1a5832b1379883d19056a580bf15688b497a5cae55111534e50f"
+      },
+      {
+        "path": "packages/contracts/anchors/source-anchor.v1.schema.json",
+        "sha256": "f2a8158dc49a70595d1ee585e4d5b77fb37bce7186b563390f0590bbff7442d0",
+        "hashConvention": "raw-bytes",
+        "candidateGitSHA256": "f2a8158dc49a70595d1ee585e4d5b77fb37bce7186b563390f0590bbff7442d0"
+      },
+      {
+        "path": "packages/contracts/documents/README.md",
+        "sha256": "8628bf6da20a7278795d33e56a6327cb7fe1bf432393430e610285c4ddcca350",
+        "hashConvention": "raw-bytes",
+        "candidateGitSHA256": "8628bf6da20a7278795d33e56a6327cb7fe1bf432393430e610285c4ddcca350"
+      },
+      {
+        "path": "packages/contracts/documents/acquisition-location.v1.schema.json",
+        "sha256": "7445e5e952c4f6a5636d03ec0cb2349913b3b4878c75507de5a6c976ae6a4805",
+        "hashConvention": "raw-bytes",
+        "candidateGitSHA256": "7f911a72fb8ac62dbd211062d5a1e3dea9405779f7bf02341851bdab7567bfd3"
+      },
+      {
+        "path": "packages/contracts/documents/acquisition-receipt.v1.schema.json",
+        "sha256": "021c0ee3ece04c70dae9e006c2c63bbd0012cb084d93068a85be1eb7e43f5f10",
+        "hashConvention": "raw-bytes",
+        "candidateGitSHA256": "7a160a499c9eda49176b979f4a4bc41e82a816650b3925f25b786e1c22766948"
+      },
+      {
+        "path": "packages/contracts/documents/acquisition-selection.v1.schema.json",
+        "sha256": "0df7528b6479b7a130c0fe70b6ec24534854ce754582ea739218d71c081f2bb4",
+        "hashConvention": "raw-bytes",
+        "candidateGitSHA256": "2f11d944b4ca2444987998565a06327cf18c3cb0db1baaf44498e19be1420c45"
+      },
+      {
+        "path": "packages/contracts/documents/document-ir.v1.schema.json",
+        "sha256": "d642b352b5ca84dc92e1a281afbd142c4ae3c201debb0e598f128d7715264bc1",
+        "hashConvention": "raw-bytes",
+        "candidateGitSHA256": "d642b352b5ca84dc92e1a281afbd142c4ae3c201debb0e598f128d7715264bc1"
+      },
+      {
+        "path": "packages/contracts/documents/document-revision-acceptance.v1.schema.json",
+        "sha256": "5bb52387d9b061a4914fe3d10cc612b48d82937ca48b95c358836849fcebeea8",
+        "hashConvention": "raw-bytes",
+        "candidateGitSHA256": "5bb52387d9b061a4914fe3d10cc612b48d82937ca48b95c358836849fcebeea8"
+      },
+      {
+        "path": "packages/contracts/documents/document-revision.v1.schema.json",
+        "sha256": "4341a29255f991a68145fce59df46b21756c860dd901c180035b338796019073",
+        "hashConvention": "raw-bytes",
+        "candidateGitSHA256": "4341a29255f991a68145fce59df46b21756c860dd901c180035b338796019073"
+      },
+      {
+        "path": "packages/contracts/documents/document-structure.v1.schema.json",
+        "sha256": "2d0ae8f732f5dc58a011ae25c53ef3516bddb165e6ff1d8baac4e40bf20eff3c",
+        "hashConvention": "raw-bytes",
+        "candidateGitSHA256": "2d0ae8f732f5dc58a011ae25c53ef3516bddb165e6ff1d8baac4e40bf20eff3c"
+      },
+      {
+        "path": "packages/contracts/documents/generate_parser_schema.py",
+        "sha256": "51b2dad7703249cf6954d46666b2689233866a9027740624e311c5dc82af4f79",
+        "hashConvention": "raw-bytes",
+        "candidateGitSHA256": "51b2dad7703249cf6954d46666b2689233866a9027740624e311c5dc82af4f79"
+      },
+      {
+        "path": "packages/contracts/documents/native-structure.v1.schema.json",
+        "sha256": "c4dd5dc5b01deb393e14ab806c0a3fa3b20c1aa680bbd0082843c5ac571d313f",
+        "hashConvention": "raw-bytes",
+        "candidateGitSHA256": "c4dd5dc5b01deb393e14ab806c0a3fa3b20c1aa680bbd0082843c5ac571d313f"
+      },
+      {
+        "path": "packages/contracts/documents/parse-request.v1.schema.json",
+        "sha256": "a32f837f79729f73dc607fa895a9332c8109634688c2bed8bde56abe2197f281",
+        "hashConvention": "raw-bytes",
+        "candidateGitSHA256": "a32f837f79729f73dc607fa895a9332c8109634688c2bed8bde56abe2197f281"
+      },
+      {
+        "path": "packages/contracts/documents/parse-result.v1.schema.json",
+        "sha256": "4fd67127c7ede036613b637c8d7d7bbb7097054429043cfacc66c9aa46915031",
+        "hashConvention": "raw-bytes",
+        "candidateGitSHA256": "4fd67127c7ede036613b637c8d7d7bbb7097054429043cfacc66c9aa46915031"
+      },
+      {
+        "path": "packages/contracts/documents/parser-selection.v1.schema.json",
+        "sha256": "c602fd1ccf765058363606660ce47a8df6c4f2e1e84b7c4679a55a19d448df04",
+        "hashConvention": "raw-bytes",
+        "candidateGitSHA256": "c602fd1ccf765058363606660ce47a8df6c4f2e1e84b7c4679a55a19d448df04"
+      },
+      {
+        "path": "packages/contracts/documents/retained-parse-result.v1.schema.json",
+        "sha256": "472938355ede0564465b9b540200d4d2d55aa3b0a11d484bb0b3a71b1b642565",
+        "hashConvention": "raw-bytes",
+        "candidateGitSHA256": "472938355ede0564465b9b540200d4d2d55aa3b0a11d484bb0b3a71b1b642565"
+      },
+      {
+        "path": "packages/contracts/documents/source-viewing.md",
+        "sha256": "cd307be23cf51b223931c2c06d6abb7f45cd1e55b3e8853605e39f7faf9db366",
+        "hashConvention": "raw-bytes",
+        "candidateGitSHA256": "cd307be23cf51b223931c2c06d6abb7f45cd1e55b3e8853605e39f7faf9db366"
+      },
+      {
+        "path": "packages/contracts/documents/viewer-action-payload.v1.schema.json",
+        "sha256": "b8cc3906ce6c5308b3969ba04adc6cd8f9b13dc27d9af2ba7a74b4f3a3e17982",
+        "hashConvention": "raw-bytes",
+        "candidateGitSHA256": "b8cc3906ce6c5308b3969ba04adc6cd8f9b13dc27d9af2ba7a74b4f3a3e17982"
+      },
+      {
+        "path": "packages/contracts/documents/viewer-action-request.v1.schema.json",
+        "sha256": "dda5a8442690d677df0e11931ef04797ebf4e0116993dc8f0f9642e91495c634",
+        "hashConvention": "raw-bytes",
+        "candidateGitSHA256": "dda5a8442690d677df0e11931ef04797ebf4e0116993dc8f0f9642e91495c634"
+      },
+      {
+        "path": "packages/contracts/documents/viewer-annotation-output.v1.schema.json",
+        "sha256": "a0ca2b9a10f9e1d196f308017dd320a06491a6c3980c72db16710765f0d928f2",
+        "hashConvention": "raw-bytes",
+        "candidateGitSHA256": "a0ca2b9a10f9e1d196f308017dd320a06491a6c3980c72db16710765f0d928f2"
+      },
+      {
+        "path": "packages/contracts/documents/viewer-deep-link.v1.schema.json",
+        "sha256": "f95b41e732ed7e83a2c8ce0d0e4736a125881de37c3de7750bf6763af09380b3",
+        "hashConvention": "raw-bytes",
+        "candidateGitSHA256": "f95b41e732ed7e83a2c8ce0d0e4736a125881de37c3de7750bf6763af09380b3"
+      },
+      {
+        "path": "packages/contracts/documents/viewer-original-handoff.v1.schema.json",
+        "sha256": "4342713d194f83c0f895b81293239aa8a22ee8954588a4ea686cae26ca7ed6b1",
+        "hashConvention": "raw-bytes",
+        "candidateGitSHA256": "4342713d194f83c0f895b81293239aa8a22ee8954588a4ea686cae26ca7ed6b1"
+      },
+      {
+        "path": "packages/contracts/documents/viewer-policy-decision.v1.schema.json",
+        "sha256": "e113c6a55c3af5e1f332892eb6c9b71381bca404bb33cdeb47e2c85523b09a2c",
+        "hashConvention": "raw-bytes",
+        "candidateGitSHA256": "e113c6a55c3af5e1f332892eb6c9b71381bca404bb33cdeb47e2c85523b09a2c"
+      },
+      {
+        "path": "packages/contracts/documents/viewer-quotation-output.v1.schema.json",
+        "sha256": "aee53e1fb7f18557de68b3cb2291b927d3da5a600f10da8dbb4cde9f650363ff",
+        "hashConvention": "raw-bytes",
+        "candidateGitSHA256": "aee53e1fb7f18557de68b3cb2291b927d3da5a600f10da8dbb4cde9f650363ff"
+      },
+      {
+        "path": "packages/contracts/documents/viewer-rights-review-receipt.v1.schema.json",
+        "sha256": "f91b08e9a01e8b6e439c541b479f5aefbb7242cf4d00dd0700f028af268a4029",
+        "hashConvention": "raw-bytes",
+        "candidateGitSHA256": "f91b08e9a01e8b6e439c541b479f5aefbb7242cf4d00dd0700f028af268a4029"
+      },
+      {
+        "path": "packages/contracts/documents/viewer-source-metadata.v1.schema.json",
+        "sha256": "79e64026487644f72d3eefa8127635594d1b9405ea9c68314f5e7ab709907ee1",
+        "hashConvention": "raw-bytes",
+        "candidateGitSHA256": "79e64026487644f72d3eefa8127635594d1b9405ea9c68314f5e7ab709907ee1"
+      },
+      {
+        "path": "packages/contracts/documents/viewer-source-selector.v1.schema.json",
+        "sha256": "71d0a8919db7e8b1e9b6bc8c53855b8805918b82d88596d8c8918385abea1362",
+        "hashConvention": "raw-bytes",
+        "candidateGitSHA256": "71d0a8919db7e8b1e9b6bc8c53855b8805918b82d88596d8c8918385abea1362"
+      },
+      {
+        "path": "packages/contracts/documents/viewer-text-chunk.v1.schema.json",
+        "sha256": "7e7796da3de481036c2c626d11b409fa2aac45fa46951f6197728403ab7fd229",
+        "hashConvention": "raw-bytes",
+        "candidateGitSHA256": "7e7796da3de481036c2c626d11b409fa2aac45fa46951f6197728403ab7fd229"
+      }
+    ],
+    "scope": "Tracked source/contracts, actual installed Python/Core/Node/Cargo source and tool executable bytes are authenticated; derived frontend bytes are separately held during Native builds. Actual test executable is held during ownership/drain checks. Native smoke holds the assembled product, signed worker, actual Core runtime and selected fixture/producer bytes. Host Windows/WebView remain declared platform dependencies."
+  },
+  "reviewedSliceHistory": [
+    {
+      "sliceId": "CAP-05.S02",
+      "candidate": "c17511401808d003eaa2c74ff0b866e65a6955d9",
+      "qualification": {
+        "path": "artifacts/evidence/CAP-05.S02.qualification-01.json",
+        "sha256": "197c55a378341fa7282d1ea32a14ade5932b224c7b03205df6ede178346c2431",
+        "hashConvention": "LF-canonical"
+      },
+      "independentReview": {
+        "path": "artifacts/evidence/CAP-05.S02.review-01.json",
+        "sha256": "4a64ebd805f75c061145402746da8cb13cc607fc9d643f6fd840b93c96d0f259",
+        "hashConvention": "LF-canonical"
+      },
+      "disposition": "approved",
+      "provenance": "Exact independently approved slice packet; no fresh replay or new approval."
+    },
+    {
+      "sliceId": "CAP-05.S03",
+      "candidate": "745700188fb397e5fb01e841754c39d5ed087844",
+      "qualification": {
+        "path": "artifacts/evidence/CAP-05.S03.qualification-01.json",
+        "sha256": "ba0f36691d628f93fc15ab8039a43f1710ff8e717fbd8c77ddef5649f165d97c",
+        "hashConvention": "LF-canonical"
+      },
+      "independentReview": {
+        "path": "artifacts/evidence/CAP-05.S03.review-01.json",
+        "sha256": "336df51c9da7971eb2e417a0516be898c0f766fcb5364b0a7bb06709e12ee540",
+        "hashConvention": "LF-canonical"
+      },
+      "disposition": "approved",
+      "provenance": "Exact independently approved slice packet; no fresh replay or new approval."
+    },
+    {
+      "sliceId": "CAP-05.S04",
+      "candidate": "00091983e4919e77b94a455c75ce8f511f8a77bf",
+      "qualification": {
+        "path": "artifacts/evidence/CAP-05.S04.qualification-01.json",
+        "sha256": "cbdda37eaa80d0153ae97224bf03b56a5003a79098c5254f77cbddc4df1887a4",
+        "hashConvention": "LF-canonical"
+      },
+      "independentReview": {
+        "path": "artifacts/evidence/CAP-05.S04.review-01.json",
+        "sha256": "611f52a9d1f8a0a87f239dd50422f1419b8879b6fc84fea3db3b252728c04f86",
+        "hashConvention": "LF-canonical"
+      },
+      "disposition": "approved",
+      "provenance": "Exact independently approved slice packet; no fresh replay or new approval."
+    }
+  ],
+  "reviewedTaskHistory": [
+    {
+      "taskId": "CAP-05.S02.T01",
+      "candidate": "75bae16dca0be2dec5160a2e70e8682ba36b837c",
+      "criterionManifest": {
+        "path": "artifacts/evidence/CAP-05.S02.T01.R02.json",
+        "sha256": "19e33351ddb524c989d05377c9ba2629d8faba1541b37625f2e77abe7ddd181f",
+        "hashConvention": "LF-canonical"
+      },
+      "independentReview": {
+        "path": "artifacts/evidence/CAP-05.S02.T01.review-R02.json",
+        "sha256": "6397b93e710e870adeecd4827702e6f8f6bdc430cc53825899eb5ae8ef8eae0a",
+        "hashConvention": "LF-canonical"
+      },
+      "disposition": "approved",
+      "provenance": "Exact latest independently approved task packet; no fresh task replay."
+    },
+    {
+      "taskId": "CAP-05.S02.T02",
+      "candidate": "6d9369d0d14388486db2c70ba9720fb7695b556e",
+      "criterionManifest": {
+        "path": "artifacts/evidence/CAP-05.S02.T02.R02.json",
+        "sha256": "7371f519ddcd284068027ba55850beef7deff2c21c23500cbbac342255d0b76b",
+        "hashConvention": "LF-canonical"
+      },
+      "independentReview": {
+        "path": "artifacts/evidence/CAP-05.S02.T02.review-R02.json",
+        "sha256": "d5c0b55a63ac4a8ec6bd0a4f7fd90d34829a05556e08e045de65e3d86585e2a5",
+        "hashConvention": "LF-canonical"
+      },
+      "disposition": "approved",
+      "provenance": "Exact latest independently approved task packet; no fresh task replay."
+    },
+    {
+      "taskId": "CAP-05.S02.T03",
+      "candidate": "c17511401808d003eaa2c74ff0b866e65a6955d9",
+      "criterionManifest": {
+        "path": "artifacts/evidence/CAP-05.S02.T03.R01.json",
+        "sha256": "5e629932746a0a97bae8933bb5038e65dab93c39727b8ac238b850e83bea2205",
+        "hashConvention": "LF-canonical"
+      },
+      "independentReview": {
+        "path": "artifacts/evidence/CAP-05.S02.T03.review-R01.json",
+        "sha256": "4a1d1d3f1f52239a831673f79dd640cf332af617ead63190cce332cfd2711910",
+        "hashConvention": "LF-canonical"
+      },
+      "disposition": "approved",
+      "provenance": "Exact latest independently approved task packet; no fresh task replay."
+    },
+    {
+      "taskId": "CAP-05.S03.T01",
+      "candidate": "0fbad3859595ecc14968d2e036bbc4cb55054de8",
+      "criterionManifest": {
+        "path": "artifacts/evidence/CAP-05.S03.T01.R01.json",
+        "sha256": "3a86371d6a30705d2e48a1f3d6c5fd458cb2d0ae7950c9c8d4ff7c62e083f43d",
+        "hashConvention": "LF-canonical"
+      },
+      "independentReview": {
+        "path": "artifacts/evidence/CAP-05.S03.T01.review-R01.json",
+        "sha256": "a00d94705fd1475a6bf409298b728d107ffe6ce378a9aba4604bb251d4c6bfd7",
+        "hashConvention": "LF-canonical"
+      },
+      "disposition": "approved",
+      "provenance": "Exact latest independently approved task packet; no fresh task replay."
+    },
+    {
+      "taskId": "CAP-05.S03.T02",
+      "candidate": "ad664e896a547976c2728fd34d58ee00fbc7ca9b",
+      "criterionManifest": {
+        "path": "artifacts/evidence/CAP-05.S03.T02.R02.json",
+        "sha256": "157889e22dd57a6ff46be28fd41382914ca6046862f1e2fdeb0721545ac44c70",
+        "hashConvention": "LF-canonical"
+      },
+      "independentReview": {
+        "path": "artifacts/evidence/CAP-05.S03.T02.review-R02.json",
+        "sha256": "5ddf25456c54d2137f9299ecd8e8607f609060542311f779a4ede93bf50bf905",
+        "hashConvention": "LF-canonical"
+      },
+      "disposition": "approved",
+      "provenance": "Exact latest independently approved task packet; no fresh task replay."
+    },
+    {
+      "taskId": "CAP-05.S03.T03",
+      "candidate": "0645daabc0b413dfa58fb5507dd89ad973d2ca5b",
+      "criterionManifest": {
+        "path": "artifacts/evidence/CAP-05.S03.T03.R02.json",
+        "sha256": "7fce1ae8dd6d8c21165bdad626d5bdc5b0cde21c80d9529a076617267a95cda7",
+        "hashConvention": "LF-canonical"
+      },
+      "independentReview": {
+        "path": "artifacts/evidence/CAP-05.S03.T03.review-R02.json",
+        "sha256": "1bb3d7b351d644f34a39657f1e40fbb16a1260d93c08b0d0dc61443d6b654108",
+        "hashConvention": "LF-canonical"
+      },
+      "disposition": "approved",
+      "provenance": "Exact latest independently approved task packet; no fresh task replay."
+    },
+    {
+      "taskId": "CAP-05.S04.T01",
+      "candidate": "91fe7b323d2cddb2cd7de287f05b961af3472bc8",
+      "criterionManifest": {
+        "path": "artifacts/evidence/CAP-05.S04.T01.R01.json",
+        "sha256": "d1cb8cece275ddcc4e4d4b5ffcc4687e91f69851d874d8f6052938d40d2e89bd",
+        "hashConvention": "LF-canonical"
+      },
+      "independentReview": {
+        "path": "artifacts/evidence/CAP-05.S04.T01.review-R01.json",
+        "sha256": "22df8a5406d0b79d642fa3baa695a381667998deba9cad0a8c57331fd9104038",
+        "hashConvention": "LF-canonical"
+      },
+      "disposition": "approved",
+      "provenance": "Exact latest independently approved task packet; no fresh task replay."
+    },
+    {
+      "taskId": "CAP-05.S04.T02",
+      "candidate": "68e1df19a0807058fd32c9c314c6852a5ac4a6ed",
+      "criterionManifest": {
+        "path": "artifacts/evidence/CAP-05.S04.T02.R01.json",
+        "sha256": "a67d9f45de0600ecc5844e2a3856e18f92bba021a1b827528f1a545ef5551c64",
+        "hashConvention": "LF-canonical"
+      },
+      "independentReview": {
+        "path": "artifacts/evidence/CAP-05.S04.T02.review-R01.json",
+        "sha256": "61224917b84283296d53629a2fa3812e252f05d87bb41c87b1f86369735ca710",
+        "hashConvention": "LF-canonical"
+      },
+      "disposition": "approved",
+      "provenance": "Exact latest independently approved task packet; no fresh task replay."
+    },
+    {
+      "taskId": "CAP-05.S04.T03",
+      "candidate": "3fdb6e104937e2d22b2c4396ddee1eb8fdb3fe88",
+      "criterionManifest": {
+        "path": "artifacts/evidence/CAP-05.S04.T03.R01.json",
+        "sha256": "b1f6203f3938e9f8bd84a79ec960efa6a9cb8679909f52a5c166fe248854cd8c",
+        "hashConvention": "LF-canonical"
+      },
+      "independentReview": {
+        "path": "artifacts/evidence/CAP-05.S04.T03.review-R01.json",
+        "sha256": "9902c32f2ac3b077f627f66d170286e23d7fa52e85dc9cb7312891d42c813186",
+        "hashConvention": "LF-canonical"
+      },
+      "disposition": "approved",
+      "provenance": "Exact latest independently approved task packet; no fresh task replay."
+    }
+  ],
+  "verificationSelection": {
+    "selectedCommandIds": [
+      "desktop:application",
+      "desktop:unit",
+      "documents:anchor-schemas",
+      "documents:anchors",
+      "documents:unit",
+      "foundation:architecture",
+      "foundation:quality",
+      "foundation:ui-change"
+    ],
+    "rationale": "Fresh affected union across parser contracts/raw normalization, immutable revision/migration/compatibility, anchors/invalidation/current API, protected Reader actions/denials/cancellation, mounted renderer interaction, architecture/style/schema/type checks, fresh product frontend and locked offline Native builds, existing Native ownership/drain group and actual assembled shipping Native smoke. Historical task/slice proofs are authenticated once for already reviewed principal boundaries; no unchanged benchmark, clipboard or model-tier replay.",
+    "deferredCoverage": [
+      "Full repository/deployment-profile matrix, complete installer/runtime packaging and cross-capability Wave qualification remain fresh W2 exit work.",
+      "No 8/16 GiB model/hardware runs; no 2/3 GiB or minimum-tier claim. Configurable/smaller model direction requires its bounded product decision.",
+      "Owner-adopted 3.0-second Reader p95 and accepted parser overage retain prior qualified evidence; no tuning or benchmark replay here."
+    ]
+  },
+  "adverseEvidence": [
+    "Fresh architecture check exited1 with8 adapter/relative-port classifications. Independent source-bound diagnosis is retained; no checker repair, product refactor, all-green claim or release waiver. All other remaining groups continued once at the same source candidate.",
+    "CAP-05.S04 qualification-01 and independent review retain earlier failed setup/journey/platform attempts, including the overall failed journey02 and its separately authenticated completed observations.",
+    "Inherited built-frame CSP predicate mismatch and full quality inventory/test-type debt remain adverse, unwaived and outside this selected checkpoint. No framework repair is authorized.",
+    "Known minimum-tier admission/resource limits remain unqualified; this checkpoint does not assert they were solved."
+  ],
+  "proofLimits": [
+    "Clean worktree and fresh Cargo invocation use existing dependency build artifacts; this is not a cold rebuild of every third-party crate.",
+    "Actual discovered base Python, standard library and installed Core libraries. Selected executable/source/extension bytes will be held write/delete-denied during the fresh runs. Windows/WebView remain declared host platform dependencies. No global runtime or shipping Core qualification.",
+    "Actual shipping renderer, Wry, Native invoke and supervised Core with Windows vault/encrypted retained anchors. Authored synthetic IR, no parser/model execution. Existing integration-harness startup opens only this owned synthetic project. No renderer port override, debugger, JS injection, OS protocol registration, installer or hardware-tier claim.",
+    "Synthetic documents and accepted IR in Native smoke do not prove parser/model accuracy or scholarly verification.",
+    "This checkpoint is neither Wave completion nor G2 release approval."
+  ],
+  "independentDisposition": "pending",
+  "waveCompletion": false,
+  "releaseApproval": false
+}

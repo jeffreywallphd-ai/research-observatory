@@ -1,0 +1,512 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "wave-risk-cluster-checkpoint-review",
+  "checkpointId": "W2.CP08",
+  "attemptId": "R01",
+  "reviewer": "agent:/root/reader_anchor_review",
+  "result": "approved",
+  "reviewedAt": "2026-10-10T03:43:04.179538+00:00",
+  "candidateCommit": "9684b7ba438b8d3734987a36e239e7486d0a9e8e",
+  "reviewedStateCommit": "9684b7ba438b8d3734987a36e239e7486d0a9e8e",
+  "evidencePath": "artifacts/evidence/W2.CP08.qualification-01.json",
+  "evidenceSha256": "d8a7c929d2062e9a69730e34133fc8bdd87bbc5d9f0d953e89865abf4bbe7578",
+  "evidenceHashConvention": "LF-canonical",
+  "evidenceRawSha256": "421d8ee5900ae9e57c18da9bcc98d4022eb615b98af79f8547992e5c438fd49d",
+  "publicationState": "The qualification packet is uncommitted at this review. This disposition binds its exact raw and LF-canonical bytes to the committed source candidate. Evidence publication, checkpoint recording, local integration and task selection remain implementation-owner operations.",
+  "notes": "Independent bounded review approves the W2.CP08 S02-S04 shared-interface and runtime integration checkpoint at exact 9684b7ba438b8d3734987a36e239e7486d0a9e8e. The 494 packet reference occurrences (298 distinct path/digest/convention identities), guarded selected and smoke input inventories, current package and three slice/nine latest task bindings authenticate. Raw execution establishes 21 accumulated observations: 20 pass and architecture exit1 remains failed. The eight architecture diagnostics are the preserved independently diagnosed adapter/relative-port classifier defects, with no demonstrated product violation. Fresh proof includes 218 unittest cases, nine renderer unit cases, ten Native ownership/drain cases, fresh current renderer and incremental locked offline Native assembly, and actual shipping older-revision/two-context/original/return smoke with exit0 and physical cleanup0. No criterion-bound blocking integration finding remains. This approval is neither an all-green architecture/full-profile claim nor minimum-hardware/model-tier, installer, Wave completion or G2 release approval.",
+  "authority": {
+    "route": "AGENTS.md evidence/review route; project-automation-guide 8.1/8.2; workflow-efficiency reading map, review boundaries, closed-input reuse and stable snapshots; codex-tracking-guide evidence and independent review.",
+    "scope": "Approved planning/W2-initiation.md Execution checkpoints cluster3: CAP-05.S02-S04 packaged offline parser -> immutable anchors -> viewer. Review accumulated affected checks, exact shared identities, clean-worktree build/smoke and open risks. Do not repeat unchanged expanded task/slice or principal audits.",
+    "acceptedArchitecture": [
+      "ADR-0027",
+      "ADR-0028",
+      "ADR-0029"
+    ],
+    "documentaryMapping": "ADR-0047 remains Proposed, documentary only; no new security/product/release authority is inferred.",
+    "noNewAuthority": "No product, framework, controller, rights, security, migration, UX, performance-target or release-criterion change is authorized by this review."
+  },
+  "acceptanceReviews": [
+    {
+      "criterion": "Parser result -> immutable revision -> exact portable anchors and current API",
+      "result": "satisfied",
+      "assessment": "Fresh71 parser/IR/raw-retention cases,21 revision/workflow/migration cases and34 anchor/invalidation/current-API cases connect the current contracts. Literal populated v25/v26 migration and each-material-step rollback/retry cases preserve prior rows, ciphertext and history; exact retries and equal-base concurrency preserve canonical identity and predecessor authority. The authenticated S02/S03 independent approvals supply already reviewed actual signed LPAC/offline parser, protected raw retention and connected explicit human acceptance proof. Current Native smoke uses declared authored accepted IR; it is not a new model/parser-accuracy execution."
+    },
+    {
+      "criterion": "Protected Viewer rights, verified-range cancellation/contention and exact retained revision",
+      "result": "satisfied",
+      "assessment": "Fresh75 protected Reader/Core/API cases establish current inspect/derive/action-specific authority, full-source verification, revocation after physical close, bounded admission, independent duplicate followers, physical cancellation ownership, writer/intervening guarded import progress and no unauthorized delivery. Fresh17 mounted cases replay successive-link revision identity, late previous result/lock fences, ambiguous/broken/resource behavior, separate nonexecuting rights review and conservative unknown-action closure. Fresh10 Native cases cover opaque authority rejection, exact source/anchor correlation, early cancel, physical drain acknowledgment and unknown-owner admission retention. Mounted doubles remain distinct from the actual shipping Native/Core proof."
+    },
+    {
+      "criterion": "Fresh clean-worktree renderer/Native assembly and real shipping reopen/return",
+      "result": "satisfied",
+      "assessment": "Fresh renderer build/assembly and locked offline Cargo invocations run at the unchanged committed candidate. Cargo reports fresh:false for both current product libtest and release example compiler-artifact rows, and their exact executable hashes bridge to the held test snapshot and copied package. Dependency artifacts are reused; no cold all-crate rebuild is claimed. All197 assembled package files,237 frontend source inputs,8758 actual Core runtime entries and61 signed worker copy files authenticate. The actual new process/Wry renderer/Core handshake reopens the retained older accepted revision without selecting it anew, produces two stable UIA dumps with two distinct context groups, both exact opaque anchor IDs, three older-revision values, original revision and Page1of50; it returns to the canonical selected Work/version, exits0 and drains its owned job to0."
+    },
+    {
+      "criterion": "Reference/accessibility/recovery and retained numerical authority",
+      "result": "satisfied within checkpoint scope",
+      "assessment": "Current types, product style, document/anchor schemas and nine renderer unit cases pass, with all eight coverage IDs registered. The adopted reference1.9 and LT01 contract identities are pinned; no UX or latency-target amendment is introduced. Authenticated S04 review binds actual denial, keyboard traversal, theme/reflow announcements, nonexecuting review, Native destination cancellation/focus recovery and new-process identified Save/return. T01 measurements and T02 physical relocation remain their independently reviewed task proof. Current32.6853-second smoke is a connected journey duration, not first-page latency, benchmark or hardware-tier evidence. Minimum-tier suitability and broader platform/performance obligations remain unresolved and are not inferred from configured limits."
+    },
+    {
+      "criterion": "Truthful evidence, immutable reviewed history and private metadata boundary",
+      "result": "satisfied",
+      "assessment": "Selected01 remains FAIL at architecture, with its exact report and post-failure23498-input closure preserved. Selected02 copies the actual earlier observations verbatim and runs only unexecuted remaining groups; COMPLETE_WITH_ADVERSE_ARCHITECTURE and allSelectedChecksPassed=false are retained. Every raw log/count/exit/timing binds its producer/report. Historical latest frozen submissions and ledgers match canonical backlog IDs, candidates, reviewer/disposition/digests and current immutable Git bytes; slice evidence additionally matches the historical delivery Git bytes and ancestry. Historical results are not promoted to fresh executions or new approvals. Generated/artifact pins are confined relative paths; raw Cargo/runtime metadata remain in hashed ignored reports. No absolute machine/user path is found in the publishable packet."
+    }
+  ],
+  "authentication": {
+    "headExactAndTrackedWorktreeClean": true,
+    "untrackedAtReviewStart": [
+      "artifacts/evidence/W2.CP08.qualification-01.json"
+    ],
+    "qualification": {
+      "path": "artifacts/evidence/W2.CP08.qualification-01.json",
+      "sha256": "d8a7c929d2062e9a69730e34133fc8bdd87bbc5d9f0d953e89865abf4bbe7578",
+      "hashConvention": "LF-canonical",
+      "rawSha256": "421d8ee5900ae9e57c18da9bcc98d4022eb615b98af79f8547992e5c438fd49d"
+    },
+    "freshReports": [
+      {
+        "path": "artifacts/tmp/W2.CP08.selected-02.json",
+        "sha256": "9f460e6ee72869444c71bcdcc612f2c196bc9757f36646474d1dfbcfb74c3b8d",
+        "hashConvention": "raw-bytes"
+      },
+      {
+        "path": "artifacts/tmp/W2.CP08.package-02.json",
+        "sha256": "83633dd50241531260024baf984b9da21d63b1ccf9971c515a1b6b36faffd9f0",
+        "hashConvention": "raw-bytes"
+      },
+      {
+        "path": "artifacts/tmp/W2.CP08.shipping-smoke-02.json",
+        "sha256": "29bd5ee4fb49d0547d98e328d5bc155af918ba0c20a8c8c10d7de146c0c3ec4f",
+        "hashConvention": "raw-bytes"
+      }
+    ],
+    "referencedArtifacts": {
+      "independentlyRehashedReferenceOccurrences": 494,
+      "distinctPathDigestConventionIdentities": 298,
+      "mismatches": [],
+      "method": "Read/hash each exact packet reference using its declared raw or LF-canonical convention; no qualifying operation is rerun."
+    },
+    "closedInputMaps": {
+      "priorSelectedInputCount": 23498,
+      "continuedSelectedInputCount": 23505,
+      "nativeSmokeInputCount": 23776,
+      "independentlyRehashedFileConventionVariants": 24030,
+      "mismatches": [],
+      "scope": "Current bytes of every prior/continued selected and smoke input are independently rehashed with deduplication. Producer source establishes write/delete-denied holds during actual runs; exact producer hashes authenticate. The old post-failure closure is bound and independently matched to the failed report."
+    },
+    "sharedContractInputs": {
+      "count": 41,
+      "rawWorkingPinsExact": true,
+      "candidateGitBlobDigestsExact": true,
+      "heldProductAdrInputsMatch": true,
+      "mismatches": []
+    },
+    "currentPackage": {
+      "packageFiles": 197,
+      "frontendSourceInputs": 237,
+      "actualCoreRuntimeEntries": 8758,
+      "signedWorkerCopyFiles": 61,
+      "allDigestsMatch": true,
+      "nativeBuildReportToPackageToSmokeExact": true,
+      "nativeCompilerArtifactsCompiledAtFreshInvocation": true,
+      "allCrateColdRebuild": false
+    },
+    "currentProductInputs": {
+      "productDeltaAfterT03Candidate": "none",
+      "comparisonBase": "3fdb6e104937e2d22b2c4396ddee1eb8fdb3fe88",
+      "pathsCompared": [
+        "apps",
+        "services",
+        "workers",
+        "packages",
+        "tests",
+        "tools",
+        "architecture-boundaries.json"
+      ],
+      "status": "No changed product/test/framework files in the Git delta; later tracking/site/evidence publication is not product execution."
+    },
+    "historicalSlices": [
+      {
+        "sliceId": "CAP-05.S02",
+        "candidate": "c17511401808d003eaa2c74ff0b866e65a6955d9",
+        "qualification": {
+          "path": "artifacts/evidence/CAP-05.S02.qualification-01.json",
+          "sha256": "197c55a378341fa7282d1ea32a14ade5932b224c7b03205df6ede178346c2431",
+          "hashConvention": "LF-canonical"
+        },
+        "independentReview": {
+          "path": "artifacts/evidence/CAP-05.S02.review-01.json",
+          "sha256": "4a64ebd805f75c061145402746da8cb13cc607fc9d643f6fd840b93c96d0f259",
+          "hashConvention": "LF-canonical"
+        },
+        "disposition": "approved",
+        "provenance": "Exact independently approved slice packet; no fresh replay or new approval."
+      },
+      {
+        "sliceId": "CAP-05.S03",
+        "candidate": "745700188fb397e5fb01e841754c39d5ed087844",
+        "qualification": {
+          "path": "artifacts/evidence/CAP-05.S03.qualification-01.json",
+          "sha256": "ba0f36691d628f93fc15ab8039a43f1710ff8e717fbd8c77ddef5649f165d97c",
+          "hashConvention": "LF-canonical"
+        },
+        "independentReview": {
+          "path": "artifacts/evidence/CAP-05.S03.review-01.json",
+          "sha256": "336df51c9da7971eb2e417a0516be898c0f766fcb5364b0a7bb06709e12ee540",
+          "hashConvention": "LF-canonical"
+        },
+        "disposition": "approved",
+        "provenance": "Exact independently approved slice packet; no fresh replay or new approval."
+      },
+      {
+        "sliceId": "CAP-05.S04",
+        "candidate": "00091983e4919e77b94a455c75ce8f511f8a77bf",
+        "qualification": {
+          "path": "artifacts/evidence/CAP-05.S04.qualification-01.json",
+          "sha256": "cbdda37eaa80d0153ae97224bf03b56a5003a79098c5254f77cbddc4df1887a4",
+          "hashConvention": "LF-canonical"
+        },
+        "independentReview": {
+          "path": "artifacts/evidence/CAP-05.S04.review-01.json",
+          "sha256": "611f52a9d1f8a0a87f239dd50422f1419b8879b6fc84fea3db3b252728c04f86",
+          "hashConvention": "LF-canonical"
+        },
+        "disposition": "approved",
+        "provenance": "Exact independently approved slice packet; no fresh replay or new approval."
+      }
+    ],
+    "historicalLatestTasks": [
+      {
+        "taskId": "CAP-05.S02.T01",
+        "candidate": "75bae16dca0be2dec5160a2e70e8682ba36b837c",
+        "criterionManifest": {
+          "path": "artifacts/evidence/CAP-05.S02.T01.R02.json",
+          "sha256": "19e33351ddb524c989d05377c9ba2629d8faba1541b37625f2e77abe7ddd181f",
+          "hashConvention": "LF-canonical"
+        },
+        "independentReview": {
+          "path": "artifacts/evidence/CAP-05.S02.T01.review-R02.json",
+          "sha256": "6397b93e710e870adeecd4827702e6f8f6bdc430cc53825899eb5ae8ef8eae0a",
+          "hashConvention": "LF-canonical"
+        },
+        "disposition": "approved",
+        "provenance": "Exact latest independently approved task packet; no fresh task replay."
+      },
+      {
+        "taskId": "CAP-05.S02.T02",
+        "candidate": "6d9369d0d14388486db2c70ba9720fb7695b556e",
+        "criterionManifest": {
+          "path": "artifacts/evidence/CAP-05.S02.T02.R02.json",
+          "sha256": "7371f519ddcd284068027ba55850beef7deff2c21c23500cbbac342255d0b76b",
+          "hashConvention": "LF-canonical"
+        },
+        "independentReview": {
+          "path": "artifacts/evidence/CAP-05.S02.T02.review-R02.json",
+          "sha256": "d5c0b55a63ac4a8ec6bd0a4f7fd90d34829a05556e08e045de65e3d86585e2a5",
+          "hashConvention": "LF-canonical"
+        },
+        "disposition": "approved",
+        "provenance": "Exact latest independently approved task packet; no fresh task replay."
+      },
+      {
+        "taskId": "CAP-05.S02.T03",
+        "candidate": "c17511401808d003eaa2c74ff0b866e65a6955d9",
+        "criterionManifest": {
+          "path": "artifacts/evidence/CAP-05.S02.T03.R01.json",
+          "sha256": "5e629932746a0a97bae8933bb5038e65dab93c39727b8ac238b850e83bea2205",
+          "hashConvention": "LF-canonical"
+        },
+        "independentReview": {
+          "path": "artifacts/evidence/CAP-05.S02.T03.review-R01.json",
+          "sha256": "4a1d1d3f1f52239a831673f79dd640cf332af617ead63190cce332cfd2711910",
+          "hashConvention": "LF-canonical"
+        },
+        "disposition": "approved",
+        "provenance": "Exact latest independently approved task packet; no fresh task replay."
+      },
+      {
+        "taskId": "CAP-05.S03.T01",
+        "candidate": "0fbad3859595ecc14968d2e036bbc4cb55054de8",
+        "criterionManifest": {
+          "path": "artifacts/evidence/CAP-05.S03.T01.R01.json",
+          "sha256": "3a86371d6a30705d2e48a1f3d6c5fd458cb2d0ae7950c9c8d4ff7c62e083f43d",
+          "hashConvention": "LF-canonical"
+        },
+        "independentReview": {
+          "path": "artifacts/evidence/CAP-05.S03.T01.review-R01.json",
+          "sha256": "a00d94705fd1475a6bf409298b728d107ffe6ce378a9aba4604bb251d4c6bfd7",
+          "hashConvention": "LF-canonical"
+        },
+        "disposition": "approved",
+        "provenance": "Exact latest independently approved task packet; no fresh task replay."
+      },
+      {
+        "taskId": "CAP-05.S03.T02",
+        "candidate": "ad664e896a547976c2728fd34d58ee00fbc7ca9b",
+        "criterionManifest": {
+          "path": "artifacts/evidence/CAP-05.S03.T02.R02.json",
+          "sha256": "157889e22dd57a6ff46be28fd41382914ca6046862f1e2fdeb0721545ac44c70",
+          "hashConvention": "LF-canonical"
+        },
+        "independentReview": {
+          "path": "artifacts/evidence/CAP-05.S03.T02.review-R02.json",
+          "sha256": "5ddf25456c54d2137f9299ecd8e8607f609060542311f779a4ede93bf50bf905",
+          "hashConvention": "LF-canonical"
+        },
+        "disposition": "approved",
+        "provenance": "Exact latest independently approved task packet; no fresh task replay."
+      },
+      {
+        "taskId": "CAP-05.S03.T03",
+        "candidate": "0645daabc0b413dfa58fb5507dd89ad973d2ca5b",
+        "criterionManifest": {
+          "path": "artifacts/evidence/CAP-05.S03.T03.R02.json",
+          "sha256": "7fce1ae8dd6d8c21165bdad626d5bdc5b0cde21c80d9529a076617267a95cda7",
+          "hashConvention": "LF-canonical"
+        },
+        "independentReview": {
+          "path": "artifacts/evidence/CAP-05.S03.T03.review-R02.json",
+          "sha256": "1bb3d7b351d644f34a39657f1e40fbb16a1260d93c08b0d0dc61443d6b654108",
+          "hashConvention": "LF-canonical"
+        },
+        "disposition": "approved",
+        "provenance": "Exact latest independently approved task packet; no fresh task replay."
+      },
+      {
+        "taskId": "CAP-05.S04.T01",
+        "candidate": "91fe7b323d2cddb2cd7de287f05b961af3472bc8",
+        "criterionManifest": {
+          "path": "artifacts/evidence/CAP-05.S04.T01.R01.json",
+          "sha256": "d1cb8cece275ddcc4e4d4b5ffcc4687e91f69851d874d8f6052938d40d2e89bd",
+          "hashConvention": "LF-canonical"
+        },
+        "independentReview": {
+          "path": "artifacts/evidence/CAP-05.S04.T01.review-R01.json",
+          "sha256": "22df8a5406d0b79d642fa3baa695a381667998deba9cad0a8c57331fd9104038",
+          "hashConvention": "LF-canonical"
+        },
+        "disposition": "approved",
+        "provenance": "Exact latest independently approved task packet; no fresh task replay."
+      },
+      {
+        "taskId": "CAP-05.S04.T02",
+        "candidate": "68e1df19a0807058fd32c9c314c6852a5ac4a6ed",
+        "criterionManifest": {
+          "path": "artifacts/evidence/CAP-05.S04.T02.R01.json",
+          "sha256": "a67d9f45de0600ecc5844e2a3856e18f92bba021a1b827528f1a545ef5551c64",
+          "hashConvention": "LF-canonical"
+        },
+        "independentReview": {
+          "path": "artifacts/evidence/CAP-05.S04.T02.review-R01.json",
+          "sha256": "61224917b84283296d53629a2fa3812e252f05d87bb41c87b1f86369735ca710",
+          "hashConvention": "LF-canonical"
+        },
+        "disposition": "approved",
+        "provenance": "Exact latest independently approved task packet; no fresh task replay."
+      },
+      {
+        "taskId": "CAP-05.S04.T03",
+        "candidate": "3fdb6e104937e2d22b2c4396ddee1eb8fdb3fe88",
+        "criterionManifest": {
+          "path": "artifacts/evidence/CAP-05.S04.T03.R01.json",
+          "sha256": "b1f6203f3938e9f8bd84a79ec960efa6a9cb8679909f52a5c166fe248854cd8c",
+          "hashConvention": "LF-canonical"
+        },
+        "independentReview": {
+          "path": "artifacts/evidence/CAP-05.S04.T03.review-R01.json",
+          "sha256": "9902c32f2ac3b077f627f66d170286e23d7fa52e85dc9cb7312891d42c813186",
+          "hashConvention": "LF-canonical"
+        },
+        "disposition": "approved",
+        "provenance": "Exact latest independently approved task packet; no fresh task replay."
+      }
+    ],
+    "historicalBindings": {
+      "approvedSlices": 3,
+      "latestApprovedTasks": 9,
+      "canonicalBacklogStateExact": true,
+      "taskSubmissionLedgerCandidateReviewerDigestExact": true,
+      "currentImmutableGitBytesExact": true,
+      "sliceEvidenceHistoricalDeliveryGitBytesExact": true,
+      "allHistoricalCandidatesAndSliceDeliveryCommitsAncestral": true,
+      "noHistoricalExecutionOrApprovalCached": true
+    },
+    "producers": [
+      {
+        "path": "artifacts/tmp/W2.CP08.selected-02.py",
+        "sha256": "b1ab508e23ccf49aeaf6886487bb7528f254d5e6e20e285228e67a5f0a1b3020",
+        "hashConvention": "raw-bytes"
+      },
+      {
+        "path": "artifacts/tmp/W2.CP08.package-02.py",
+        "sha256": "6baa7616a4d66fdc6e0356b6869c0ec4aed9f58b29b435af2bed426b1b857b00",
+        "hashConvention": "raw-bytes"
+      },
+      {
+        "path": "artifacts/tmp/W2.CP08.prepare-qualification-02.py",
+        "sha256": "66db4fe78ca5250c4e369dba156d8bed10193018b4439c75adc59fed819bac4c",
+        "hashConvention": "raw-bytes"
+      },
+      {
+        "path": "artifacts/tmp/W2.CP08.shipping-smoke-02.py",
+        "sha256": "4bee90ce34535cfce1d03d1f32a8e7b8473219c27027fcff761f3d47c804c0cc",
+        "hashConvention": "raw-bytes"
+      },
+      {
+        "path": "artifacts/tmp/W2.CP08.selected-01.py",
+        "sha256": "4f3046d12805e592da81bd70b103590a1efacdceb59275ca3b9a094cc996c47c",
+        "hashConvention": "raw-bytes"
+      },
+      {
+        "path": "artifacts/tmp/CAP-05.S04.slice-uia-02.cs",
+        "sha256": "3e1fcf75cbb0c05ae53ff7e8dde34e24287f210cb231d91be66c573b2a99f65e",
+        "hashConvention": "raw-bytes"
+      },
+      {
+        "path": "artifacts/tmp/CAP-05.S04.slice-uia-02.ps1",
+        "sha256": "5c499d80655071d2c38633a426df366fb1dfbb568d86d9ccf5b56e685af82007",
+        "hashConvention": "raw-bytes"
+      }
+    ],
+    "registeredSelectedCommandIds": [
+      "desktop:application",
+      "desktop:unit",
+      "documents:anchor-schemas",
+      "documents:anchors",
+      "documents:unit",
+      "foundation:architecture",
+      "foundation:quality",
+      "foundation:ui-change"
+    ],
+    "privacy": "Packet references and projected generated/Cargo fields are relative. Complete machine runtime, raw argv and UI ownership information remain only in ignored authenticated reports. The review contains no new human-account/user-path/session/runtime setting."
+  },
+  "rawExecutionResults": {
+    "accumulatedCheckObservations": 21,
+    "passingCheckObservations": 20,
+    "architectureExitCode": 1,
+    "architecturePassed": false,
+    "pythonUnittestCases": 218,
+    "pythonCaseGroups": {
+      "parserIrRawRetention": 71,
+      "revisionsCompatibilityMigration": 21,
+      "anchorsInvalidationCurrentApi": 34,
+      "protectedReaderActionsAndDenials": 75,
+      "mountedReaderJourneys": 17
+    },
+    "rendererUnitCases": 9,
+    "nativeOwnershipDrainCases": 10,
+    "skipsInSelectedCaseGroups": 0,
+    "smoke": {
+      "status": "PASS",
+      "elapsedSeconds": 32.685324600024614,
+      "uiaActions": 10,
+      "failedUiaActions": 0,
+      "stableExactContextSnapshots": 2,
+      "contextGroupsPerStableSnapshot": 2,
+      "olderRevisionValuesPerStableSnapshot": 3,
+      "originalFirstPage": "Page 1 of 50 displayed.",
+      "returnToSelectedWorkVersion": true,
+      "ownedExitCode": 0,
+      "physicalOwnedProcessesAfterCleanup": 0,
+      "modelExecuted": false,
+      "actionExecutionRequested": false
+    },
+    "reportsRetainOriginalDurationAndProvenance": true
+  },
+  "findings": [],
+  "closures": [
+    {
+      "subject": "Binder path projection preflight",
+      "criterion": "No new machine metadata in tracked evidence",
+      "closure": "prepare-qualification-02.py relative_pin confines generated/artifact paths, validates exact digests and emits no raw Cargo object. The published packet is independently inspected and contains no absolute machine path."
+    },
+    {
+      "subject": "Binder historical authentication preflight",
+      "criterion": "Exact independently reviewed immutable task/slice evidence",
+      "closure": "Current binder checks exact latest frozen submission and ledger identities/candidates/reviewers/dispositions/digests, ancestry and slice evidence historical Git bytes. Independent review repeats that finite authentication once for all3 slices/9 tasks and finds no mismatch."
+    }
+  ],
+  "preservedAdverse": {
+    "failedSelectedAttempt": {
+      "path": "artifacts/tmp/W2.CP08.selected-01.json",
+      "sha256": "39fc9b699122540377a412607e28222b39264ea80a9639855664cf1ce6dd7dfb"
+    },
+    "postFailureClosure": {
+      "path": "artifacts/tmp/W2.CP08.selected-01.post-failure-closure.json",
+      "sha256": "658e3af93010b7c52231aba6d068d403057738f1a10a2886fe45ee9a0c04bb9b"
+    },
+    "architectureRawFailure": {
+      "path": "artifacts/tmp/W2.CP08.selected-01.architecture.log",
+      "sha256": "ba5c6ca29e79a27aefb2c33c307dd056e68b9d3aa5845c70883be76667e2510f",
+      "hashConvention": "raw-bytes"
+    },
+    "architectureDiagnosis": {
+      "path": "artifacts/tmp/W2.CP08.architecture-triage-02.json",
+      "sha256": "9b5ab0b872d017e0d5d89abee15620b71769787180b22005994acee8ce831938",
+      "hashConvention": "raw-bytes"
+    },
+    "architectureAdjudication": "All eight remain documented classifier false positives: seven come from three omitted repository/adapter-helper filenames and one from ignoring relative sibling-port resolution. The underlying accepted Core ports/adapters rule is not waived; the command exit1 remains a failed result. This is nonblocking open classifier debt at this bounded integration checkpoint, not whole-check PASS or framework repair authority.",
+    "inherited": [
+      "Fresh architecture check exited1 with8 adapter/relative-port classifications. Independent source-bound diagnosis is retained; no checker repair, product refactor, all-green claim or release waiver. All other remaining groups continued once at the same source candidate.",
+      "CAP-05.S04 qualification-01 and independent review retain earlier failed setup/journey/platform attempts, including the overall failed journey02 and its separately authenticated completed observations.",
+      "Inherited built-frame CSP predicate mismatch and full quality inventory/test-type debt remain adverse, unwaived and outside this selected checkpoint. No framework repair is authorized.",
+      "Known minimum-tier admission/resource limits remain unqualified; this checkpoint does not assert they were solved."
+    ],
+    "historicalPerformance": "S02 warm62.5333542s remains FAIL against unchanged60s target, with its exact owner acceptance nonblocking only for the recorded task/slice observation; layoutGoldFAIL/guardianexit120 remain adverse. LT01 adopted3.0s Reader p95 and T01 measurements retain their original scope. No new sample exclusion, tuning, tier qualification or release waiver is inferred.",
+    "startupProbe": "The inherited attachment startup probe/readiness timeout is not promoted to PASS. Actual Core handshake/readyz/runtime-version and the owned UIA Reader route independently provide the named smoke result."
+  },
+  "openRisks": [
+    {
+      "risk": "Architecture classifier debt",
+      "blockingForThisCheckpoint": false,
+      "evidence": {
+        "path": "artifacts/tmp/W2.CP08.architecture-triage-02.json",
+        "sha256": "9b5ab0b872d017e0d5d89abee15620b71769787180b22005994acee8ce831938",
+        "hashConvention": "raw-bytes"
+      },
+      "limit": "Existing command remains exit1; later fresh full-profile/Wave gate is not waived. No framework edit is authorized."
+    },
+    {
+      "risk": "Inherited built-frame CSP predicate and full quality inventory/test-type debt",
+      "blockingForThisCheckpoint": false,
+      "limit": "These prior profile failures remain explicit and unwaived; selected passing style/types/runtime proof does not declare full-profile success or change product CSP authority."
+    },
+    {
+      "risk": "Minimum-tier resources and model/hardware suitability",
+      "blockingForThisCheckpoint": false,
+      "limit": "Configured process and Viewer admission limits and prior measured host observations do not qualify8/16GiB or2/3GiB hardware/model tiers. Known larger-tier/resource limits remain unresolved; owner-directed smaller/configurable model direction requires its bounded product decision, and release qualification remains required."
+    },
+    {
+      "risk": "Installer/global runtime/platform matrix",
+      "blockingForThisCheckpoint": false,
+      "limit": "The fixture uses actual current Core runtime and current Native/renderer with declared owned locations; it is not sealed shipping Core, full installed product or installer qualification."
+    }
+  ],
+  "independence": {
+    "disclosedPriorRoles": "This reviewer previously performed independent T02 task and S04 slice review; bounded T03 rights/Native/private-clipboard readiness advisories; CP08 producer/binder preflight; and the exact eight-error architecture diagnosis. Those read-only/advisory roles are disclosed and preserved. No prior formal checkpoint approval is inferred.",
+    "implementationAndExecutionOwner": "Root campaign implementation agent",
+    "independentOfImplementationAndExecution": "This reviewer authored no CP08 product/test/source/fixture/qualification producer or campaign transition, performed no qualifying tests/build/native/model/benchmark/clipboard execution, and made no commits or taskctl mutation. Root owned actual execution. Required prior task/slice dispositions come from the bound independent ledgers.",
+    "currentReviewMethod": "Read/hash, immutable Git/JSON/YAML/raw-log/source comparison and arithmetic only. This unique append-only review JSON is the sole write during formal review. Earlier ignored triage records are separately preserved."
+  },
+  "limitations": [
+    "Clean worktree and fresh Cargo invocation use existing dependency build artifacts; this is not a cold rebuild of every third-party crate.",
+    "Actual discovered base Python, standard library and installed Core libraries. Selected executable/source/extension bytes will be held write/delete-denied during the fresh runs. Windows/WebView remain declared host platform dependencies. No global runtime or shipping Core qualification.",
+    "Actual shipping renderer, Wry, Native invoke and supervised Core with Windows vault/encrypted retained anchors. Authored synthetic IR, no parser/model execution. Existing integration-harness startup opens only this owned synthetic project. No renderer port override, debugger, JS injection, OS protocol registration, installer or hardware-tier claim.",
+    "Synthetic documents and accepted IR in Native smoke do not prove parser/model accuracy or scholarly verification.",
+    "This checkpoint is neither Wave completion nor G2 release approval.",
+    "This review approves accumulated shared-boundary integration and exact current evidence; it does not reapprove task/slice work or rerun their already reviewed expanded audits.",
+    "Fresh parser group includes authored raw/IR fixtures and current contracts; actual offline model and LPAC principal qualification remain authenticated historical S02 evidence, not a fresh CP08 conversion benchmark.",
+    "The real shipping smoke uses the retained encrypted synthetic project and current window ownership; it adds no fresh consent, quotation output, Native dialog, clipboard, print, relocation or hardware-screen-reader claim.",
+    "Kernel job memory is Native plus Core and all WebView descendants, not separate Viewer-owned buffer accounting or minimum-tier proof. No current latency or model resource benchmark is inferred.",
+    "Architecture and other declared profile debt remain failed/adverse. Approval of the product criterion adjudication does not relabel a test or authorize a test change.",
+    "Earlier failed S04 setup/journey observations, exact owner-accepted parser overage and all historical adverse rounds remain their original results."
+  ],
+  "deferredToWaveExit": "Fresh full affected/repository/deployment-profile matrix, complete cross-capability happy/failure/denial/cancellation/migration/restart/recovery, security/privacy/rights/accessibility/performance/resources, sealed runtime/installer/package and required platform qualification, independent Wave review and separate human G2 release. Resource/model successor decisions cannot be inferred from this review.",
+  "waveCompletion": false,
+  "releaseApproval": false,
+  "remainingOperations": [
+    "Normal exact-byte evidence/review publication and checkpoint recording by the implementation owner.",
+    "Continue dependency-eligible approved W2 work through taskctl without creating a human checkpoint gate.",
+    "Resolve required later product/resource decisions and complete fresh full Wave qualification, independent review and separate release gate."
+  ]
+}
