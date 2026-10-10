@@ -1,0 +1,94 @@
+{
+  "$defs": {
+    "Identity": {
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+      "type": "string"
+    },
+    "ViewerAction": {
+      "enum": [
+        "copy-quotation",
+        "print-quotation",
+        "export-quotation",
+        "export-annotation",
+        "open-external-original"
+      ],
+      "type": "string"
+    },
+    "ViewerSourceSelector": {
+      "additionalProperties": false,
+      "properties": {
+        "attachmentId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "documentRevisionId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "normalizedRevisionId": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Identity"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "attachmentId",
+        "documentRevisionId"
+      ],
+      "title": "ViewerSourceSelector",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schemaVersion": {
+      "const": "1.0",
+      "default": "1.0",
+      "title": "Schemaversion",
+      "type": "string"
+    },
+    "selector": {
+      "$ref": "#/$defs/ViewerSourceSelector"
+    },
+    "action": {
+      "$ref": "#/$defs/ViewerAction"
+    },
+    "anchorId": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Identity"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    }
+  },
+  "required": [
+    "selector",
+    "action"
+  ],
+  "title": "ViewerActionRequest",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://research-observatory.local/contracts/documents/viewer-action-request.v1.schema.json",
+  "x-research-observatory-semanticRules": [
+    "fixed-action-specific-inspect-derive-quote-and-local-export-purposes-not-generic-project-export",
+    "exact-retained-copy-source-assertion-human-intent-privacy-policy-and-anchor-authority",
+    "explicit-trusted-human-permitted-use-review-is-idempotent-and-does-not-execute-an-action",
+    "unrelated-assertions-identities-recorded-and-expiry-times-remain-immutable",
+    "denial-expiry-dispute-and-propagation-cannot-be-overridden-by-missing-permission-review",
+    "native-only-payload-no-renderer-text-path-actor-grant-or-program-authority",
+    "fresh-permission-after-materialization-and-destination-before-native-publication",
+    "exact-at-most-2048-codepoint-quotation-with-source-revision-anchor-and-citation-identifiers",
+    "annotation-excludes-quotation-and-context-and-preserves-geometry-and-uncertainty",
+    "content-free-denial-audit-and-direct-browser-transfer-disabled",
+    "delivered-plaintext-is-explicitly-outside-project-protection-and-extraction-remains-unverified",
+    "bounded-create-new-native-output-and-physical-closure-before-releasing-ownership"
+  ]
+}

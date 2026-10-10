@@ -259,6 +259,7 @@ struct RunningProcess {
     containment: ProcessTreeContainment,
     capability_token: CapabilityToken,
     cancellation: Arc<AtomicBool>,
+    physically_closed: Arc<AtomicBool>,
     port: u16,
 }
 
@@ -375,6 +376,7 @@ impl SupervisorInner {
         };
         match process.child.try_wait() {
             Ok(Some(status)) => {
+                process.physically_closed.store(true, Ordering::Release);
                 self.process = None;
                 if status.success() && self.state == RuntimeState::Stopped {
                     self.transition(RuntimeState::Stopped, Some("RO-CORE-STOPPED"), "process");
@@ -478,6 +480,7 @@ pub(crate) struct NativeImportConnection {
     port: u16,
     token: CapabilityToken,
     cancellation: Arc<AtomicBool>,
+    physically_closed: Arc<AtomicBool>,
     attempt: u8,
     project_generation: u64,
     root: String,
@@ -522,6 +525,9 @@ pub(crate) enum NativeDocumentAction {
     ViewerText,
     ViewerOutline,
     ViewerAnchor,
+    ViewerActionPolicy,
+    ViewerRightsReview,
+    ViewerActionPayload,
     ViewerRange,
     ViewerCancel,
 }
@@ -551,6 +557,9 @@ impl NativeDocumentAction {
             Self::ViewerText => "/native/document-viewer/text",
             Self::ViewerOutline => "/native/document-viewer/outline",
             Self::ViewerAnchor => "/native/document-viewer/anchor",
+            Self::ViewerActionPolicy => "/native/document-viewer/action-policy",
+            Self::ViewerRightsReview => "/native/document-viewer/rights-review",
+            Self::ViewerActionPayload => "/native/document-viewer/action-payload",
             Self::ViewerRange => "/native/document-viewer/range",
             Self::ViewerCancel => "/native/document-viewer/cancel",
         }
@@ -559,12 +568,18 @@ impl NativeDocumentAction {
 
 impl NativeImportConnection {
     #[cfg(all(test, windows))]
+    pub(crate) fn action_test_connection(project: &str, closed: bool) -> Self {
+        let result=Self::unavailable_for_attachment_test(project);
+        result.physically_closed.store(closed,Ordering::Release); result
+    }
+    #[cfg(all(test, windows))]
     pub(crate) fn unavailable_for_attachment_test(project_id: &str) -> Self {
         Self {
             supervisor: RuntimeSupervisor::new(Err("test-only-unavailable")),
             port: 0,
             token: CapabilityToken([0; CAPABILITY_TOKEN_BYTES]),
             cancellation: Arc::new(AtomicBool::new(true)),
+            physically_closed: Arc::new(AtomicBool::new(true)),
             attempt: 0,
             project_generation: 0,
             root: "C:/synthetic-attachment-test".into(),
@@ -575,6 +590,10 @@ impl NativeImportConnection {
     #[cfg(windows)]
     pub(crate) fn document_root(&self) -> &str {
         &self.root
+    }
+    #[cfg(windows)]
+    pub(crate) fn core_physically_closed(&self) -> bool {
+        self.physically_closed.load(Ordering::Acquire)
     }
 
     /// Fixed private attachment request. A renderer can neither select the
@@ -1214,6 +1233,7 @@ impl RuntimeSupervisor {
             port: process.port,
             token: process.capability_token.duplicate_for_request(),
             cancellation: Arc::clone(&process.cancellation),
+            physically_closed: Arc::clone(&process.physically_closed),
             attempt: inner.attempt,
             project_generation: inner.import_project.generation,
             root: root.to_owned(),
@@ -1609,6 +1629,7 @@ fn launch(
         containment,
         capability_token,
         cancellation: Arc::new(AtomicBool::new(false)),
+        physically_closed: Arc::new(AtomicBool::new(false)),
         port,
     })
 }
@@ -4182,7 +4203,7 @@ fn stop_running_process(process: &mut RunningProcess, security_stop: &AtomicBool
     let _ = process.stdin.write_all(b"shutdown\n");
     let _ = process.stdin.flush();
     let deadline = Instant::now() + STOP_TIMEOUT;
-    loop {
+    let stopped = loop {
         if security_stop.load(Ordering::Acquire) {
             break stop_running_process_immediately(process);
         }
@@ -4194,14 +4215,18 @@ fn stop_running_process(process: &mut RunningProcess, security_stop: &AtomicBool
                 break process.child.wait().is_ok();
             }
         }
-    }
+    };
+    if stopped { process.physically_closed.store(true, Ordering::Release); }
+    stopped
 }
 
 fn stop_running_process_immediately(process: &mut RunningProcess) -> bool {
     process.cancellation.store(true, Ordering::Release);
     process.containment.terminate();
     let _ = process.child.kill();
-    process.child.wait().is_ok()
+    let stopped = process.child.wait().is_ok();
+    if stopped { process.physically_closed.store(true, Ordering::Release); }
+    stopped
 }
 
 fn readiness_is_compatible(response: &[u8]) -> bool {
@@ -4678,6 +4703,7 @@ mod tests {
                 containment,
                 capability_token: token,
                 cancellation: Arc::new(AtomicBool::new(false)),
+                physically_closed: Arc::new(AtomicBool::new(false)),
                 port: listener.local_addr().unwrap().port(),
             });
             inner.state = RuntimeState::Ready;
@@ -7262,6 +7288,7 @@ mod tests {
             containment,
             capability_token: CapabilityToken::generate().unwrap(),
             cancellation: Arc::new(AtomicBool::new(false)),
+            physically_closed: Arc::new(AtomicBool::new(false)),
             port: 0,
         };
         let security = Arc::new(AtomicBool::new(false));

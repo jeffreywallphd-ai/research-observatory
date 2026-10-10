@@ -16,6 +16,12 @@ mod document_runtime;
 #[cfg(windows)]
 mod document_viewer;
 #[cfg(windows)]
+mod viewer_actions;
+#[cfg(windows)]
+mod viewer_export;
+#[cfg(windows)]
+mod viewer_print;
+#[cfg(windows)]
 mod import_report;
 mod import_runtime;
 #[cfg(windows)]
@@ -776,6 +782,8 @@ async fn application_lock_now(
 ) -> Result<ApplicationLockSnapshot, &'static str> {
     let (snapshot, changed) = lock.lock(ApplicationLockReason::Manual);
     if changed {
+        #[cfg(windows)]
+        app.state::<viewer_actions::ViewerActionManager>().cancel_all();
         picker.cancel_pending();
         support.clear_pending();
         emit_lock_snapshot(&app, lock.inner(), &snapshot);
@@ -785,6 +793,8 @@ async fn application_lock_now(
         tauri::async_runtime::spawn_blocking(move || supervisor.stop_for_application_lock())
             .await
             .map_err(|_| "RO-CORE-SUPERVISOR-FAILED")?;
+        #[cfg(windows)]
+        app.state::<viewer_actions::ViewerActionManager>().reconcile_closed();
     }
     Ok(snapshot)
 }
@@ -855,6 +865,8 @@ async fn application_sign_in_transition_commit(
     .await
     .map_err(|_| "RO-SIGN-IN-TRANSITION-FAILED")?;
     if result.outcome == application_lock::PolicyTransitionOutcome::Committed {
+        #[cfg(windows)]
+        { let actions=app.state::<viewer_actions::ViewerActionManager>(); actions.cancel_all(); actions.reconcile_closed(); }
         picker.cancel_pending();
         let _ = app.emit("application-lock-changed", &result.snapshot);
     }
@@ -1024,7 +1036,9 @@ fn application_builder() -> tauri::Builder<tauri::Wry> {
         document_viewer::document_viewer_outline,
         document_viewer::document_viewer_anchor,
         document_viewer::document_viewer_range,
-        document_viewer::document_viewer_cancel
+        document_viewer::document_viewer_cancel,
+        viewer_actions::document_viewer_action,
+        viewer_actions::document_viewer_action_cancel
     ];
     #[cfg(not(windows))]
     let handler: fn(tauri::ipc::Invoke<tauri::Wry>) -> bool = tauri::generate_handler![
@@ -1126,10 +1140,16 @@ fn application_builder() -> tauri::Builder<tauri::Wry> {
                     .state::<ApplicationLockManager>()
                     .begin_terminal_exit();
                 let supervisor = window.state::<RuntimeSupervisor>().inner().clone();
+                #[cfg(windows)]
+                let viewer_actions = window.state::<viewer_actions::ViewerActionManager>().inner().clone();
+                #[cfg(windows)]
+                viewer_actions.cancel_all();
                 supervisor.begin_native_exit();
                 let closing_window = window.clone();
                 tauri::async_runtime::spawn_blocking(move || {
                     supervisor.stop_for_native_exit(security);
+                    #[cfg(windows)]
+                    viewer_actions.wait_for_cleanup();
                     picker.wait_for_cleanup();
                     imports.wait_for_cleanup();
                     // Keep UI dispatch alive until native work has drained and
@@ -1164,6 +1184,8 @@ fn setup_runtime(
     app.manage(document_attachment::DocumentAttachmentManager::default());
     #[cfg(windows)]
     app.manage(document_viewer::DocumentViewerManager::default());
+    #[cfg(windows)]
+    app.manage(viewer_actions::ViewerActionManager::default());
     if lock.is_unlocked() {
         let startup = supervisor.clone();
         tauri::async_runtime::spawn_blocking(move || startup.start());
@@ -4641,12 +4663,16 @@ fn start_lock_monitor(
             }
             if let Some(snapshot) = lock.lock_if_idle() {
                 #[cfg(windows)]
+                app.state::<viewer_actions::ViewerActionManager>().cancel_all();
+                #[cfg(windows)]
                 app.state::<document_attachment::DocumentAttachmentManager>()
                     .cancel_all();
                 picker.cancel_pending();
                 support.clear_pending();
                 emit_lock_snapshot(&app, &lock, &snapshot);
                 supervisor.stop_for_application_lock();
+                #[cfg(windows)]
+                app.state::<viewer_actions::ViewerActionManager>().reconcile_closed();
             }
         }
     });

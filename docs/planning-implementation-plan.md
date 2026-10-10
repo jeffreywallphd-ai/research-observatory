@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 31b718460b5e60218cc233ab0e586bdfb4502c5d203bb70d970b95e9313fe38e
+source_sha256: 69ec7dde499498bced1082003b661e2238995a049542d0fe38b2d6f382d54478
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -11865,13 +11865,13 @@ Original tasks and approvals remain unchanged.
 
 #### - [ ] CAP-05.S04.T03 - Enforce rights-aware viewer actions and export
 
-**Status / priority / estimate / risk:** `READY` / `P0` / `M` / `high`
+**Status / priority / estimate / risk:** `IN_PROGRESS` / `P0` / `M` / `high`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
 **Dependencies:** `CAP-05.S04.T02`
 
-**Owner / review:** - / - (`-`)
+**Owner / review:** codex-w2-implementation / - (`-`)
 
 **Objective:** Policy-driven copy, print, external open, annotation export, and derivative-text limits with clear user messaging.
 

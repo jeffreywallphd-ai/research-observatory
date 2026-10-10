@@ -29,6 +29,15 @@ from research_observatory_core.ports.document_viewer import (  # noqa: E402
     ViewerSourceSelector,
     ViewerTextChunk,
 )
+from research_observatory_core.ports.viewer_actions import (  # noqa: E402
+    ViewerActionPayload,
+    ViewerActionRequest,
+    ViewerAnnotationOutput,
+    ViewerOriginalHandoff,
+    ViewerPolicyDecision,
+    ViewerQuotationOutput,
+    ViewerRightsReviewReceipt,
+)
 
 OUTPUTS: dict[str, TypeAdapter[Any]] = {
     "document-ir.v1.schema.json": TypeAdapter(DocumentIR),
@@ -44,6 +53,13 @@ OUTPUTS: dict[str, TypeAdapter[Any]] = {
     "viewer-source-metadata.v1.schema.json": TypeAdapter(ViewerSourceMetadata),
     "viewer-text-chunk.v1.schema.json": TypeAdapter(ViewerTextChunk),
     "viewer-deep-link.v1.schema.json": TypeAdapter(ViewerDeepLink),
+    "viewer-action-request.v1.schema.json": TypeAdapter(ViewerActionRequest),
+    "viewer-policy-decision.v1.schema.json": TypeAdapter(ViewerPolicyDecision),
+    "viewer-rights-review-receipt.v1.schema.json": TypeAdapter(ViewerRightsReviewReceipt),
+    "viewer-action-payload.v1.schema.json": TypeAdapter(ViewerActionPayload),
+    "viewer-quotation-output.v1.schema.json": TypeAdapter(ViewerQuotationOutput),
+    "viewer-annotation-output.v1.schema.json": TypeAdapter(ViewerAnnotationOutput),
+    "viewer-original-handoff.v1.schema.json": TypeAdapter(ViewerOriginalHandoff),
 }
 VIEWER_SCHEMAS = {name for name in OUTPUTS if name.startswith("viewer-")}
 REVISION_SCHEMAS = (
@@ -66,6 +82,34 @@ VIEWER_RULES = [
     "exact-accepted-revision-element-offset-and-at-most-4096-unicode-codepoints",
     "next-offset-null-or-exact-offset-plus-text-codepoints-not-utf16-or-bytes",
     "selection-metadata-and-extraction-are-not-permission-or-scholarly-verification",
+]
+ACTION_SCHEMAS = {
+    name
+    for name in VIEWER_SCHEMAS
+    if name
+    in {
+        "viewer-action-request.v1.schema.json",
+        "viewer-policy-decision.v1.schema.json",
+        "viewer-rights-review-receipt.v1.schema.json",
+        "viewer-action-payload.v1.schema.json",
+        "viewer-quotation-output.v1.schema.json",
+        "viewer-annotation-output.v1.schema.json",
+        "viewer-original-handoff.v1.schema.json",
+    }
+}
+ACTION_RULES = [
+    "fixed-action-specific-inspect-derive-quote-and-local-export-purposes-not-generic-project-export",
+    "exact-retained-copy-source-assertion-human-intent-privacy-policy-and-anchor-authority",
+    "explicit-trusted-human-permitted-use-review-is-idempotent-and-does-not-execute-an-action",
+    "unrelated-assertions-identities-recorded-and-expiry-times-remain-immutable",
+    "denial-expiry-dispute-and-propagation-cannot-be-overridden-by-missing-permission-review",
+    "native-only-payload-no-renderer-text-path-actor-grant-or-program-authority",
+    "fresh-permission-after-materialization-and-destination-before-native-publication",
+    "exact-at-most-2048-codepoint-quotation-with-source-revision-anchor-and-citation-identifiers",
+    "annotation-excludes-quotation-and-context-and-preserves-geometry-and-uncertainty",
+    "content-free-denial-audit-and-direct-browser-transfer-disabled",
+    "delivered-plaintext-is-explicitly-outside-project-protection-and-extraction-remains-unverified",
+    "bounded-create-new-native-output-and-physical-closure-before-releasing-ownership",
 ]
 REVISION_RULES = [
     "exact-source-producer-configuration-assets-job-physical-attempt-and-authenticated-raw-receipts",
@@ -107,6 +151,8 @@ def schema(name: str) -> dict[str, object]:
             "no-later-revision-substitution-or-scholarly-verification-from-navigation",
         ]
         if name == "viewer-deep-link.v1.schema.json"
+        else ACTION_RULES
+        if name in ACTION_SCHEMAS
         else VIEWER_RULES
         if name in VIEWER_SCHEMAS
         else REVISION_RULES

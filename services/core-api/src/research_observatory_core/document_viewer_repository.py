@@ -202,7 +202,7 @@ class LocalDocumentViewerRepository:
 
         return self.revisions._bounded(read)
 
-    def resolve_anchor(self, selector: ViewerSourceSelector, *, anchor_id: str):
+    def resolve_anchor(self, selector: ViewerSourceSelector, *, anchor_id: str, _retained_allowance: int = 0):
         """Exact retained context through the same scoped Viewer admission.
 
         The canonical resolver authenticates its bounded anchor artifact and
@@ -218,6 +218,9 @@ class LocalDocumentViewerRepository:
             if metadata.normalized_revision_id is None:
                 raise DocumentRevisionProblem("viewer-structured-revision-required")
             bounded = viewer_revision_reads(self.revisions, metadata.source.byte_length)
+            if type(_retained_allowance) is not int or not 0 <= _retained_allowance <= 2 * 1024 * 1024:
+                raise DocumentRevisionProblem("viewer-resource-limit")
+            bounded.objects.remaining -= _retained_allowance
             result = ViewerOutlineReads(bounded).resolve(
                 anchor_id, expected_revision_id=metadata.normalized_revision_id
             )
@@ -247,3 +250,34 @@ class LocalDocumentViewerRepository:
             return result
 
         return self.revisions._bounded(confirm)
+
+    def action_policy(self, selector, *, action, anchor_id=None, direct_transfer=False):
+        from .viewer_action_repository import ViewerActionRepository
+
+        return ViewerActionRepository(self).policy(
+            selector, action=action, anchor_id=anchor_id, direct_transfer=direct_transfer
+        )
+
+    def review_action_permissions(self, selector, *, action, expected_policy_revision_id, command_id, confirmed):
+        from .viewer_action_repository import ViewerActionRepository
+
+        return ViewerActionRepository(self).review(
+            selector,
+            action=action,
+            expected_policy_revision_id=expected_policy_revision_id,
+            command_id=command_id,
+            confirmed=confirmed,
+        )
+
+    def action_payload(
+        self, selector, *, action, anchor_id, expected_policy_revision_id, expected_authority_sha256=None
+    ):
+        from .viewer_action_repository import ViewerActionRepository
+
+        return ViewerActionRepository(self).payload(
+            selector,
+            action=action,
+            anchor_id=anchor_id,
+            expected_policy_revision_id=expected_policy_revision_id,
+            expected_authority_sha256=expected_authority_sha256,
+        )

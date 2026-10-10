@@ -11,9 +11,10 @@ from pydantic import Field, model_validator
 
 from .document_attachment_api import BoundedDocumentJsonRoute, DocumentSession
 from .document_revisions import DocumentRevisionProblem
-from .parsing.contracts import Identity
+from .parsing.contracts import Digest, Identity
 from .ports.document_viewer import ViewerSourceSelector
 from .ports.object_store import MAX_VIEWER_RANGE_BYTES, MAX_VIEWER_SOURCE_BYTES, ObjectReadCancelled
+from .ports.viewer_actions import ViewerAction, ViewerActionRequest
 from .transport import CoreProblem, problem_detail
 
 
@@ -48,6 +49,37 @@ class ViewerOutlineCommand(ViewerSourceCommand):
 
 class ViewerAnchorCommand(ViewerSourceCommand):
     anchor_id: Identity
+
+
+class ViewerPolicyCommand(ViewerSourceCommand):
+    request_id: Identity
+    direct_transfer: Annotated[bool, Field(strict=True)] = False
+    action: ViewerAction
+    anchor_id: Identity | None = None
+
+    @model_validator(mode="after")
+    def selected_action(self):
+        ViewerActionRequest(selector=self.selector, action=self.action, anchor_id=self.anchor_id)
+        return self
+
+
+class ViewerRightsReviewCommand(ViewerSourceCommand):
+    request_id: Identity
+    action: ViewerAction
+    expected_policy_revision_id: Identity | None
+    command_id: Identity
+    confirmed: Annotated[bool, Field(strict=True)]
+
+
+class ViewerPayloadCommand(ViewerPolicyCommand):
+    expected_policy_revision_id: Identity
+    expected_authority_sha256: Digest | None = None
+
+    @model_validator(mode="after")
+    def explicit_native_action(self):
+        if self.direct_transfer:
+            raise ValueError("viewer-direct-transfer-disabled")
+        return self
 
 
 def register_document_viewer_routes(app: FastAPI, runtime: Callable):
@@ -150,6 +182,33 @@ def register_document_viewer_routes(app: FastAPI, runtime: Callable):
         return run(
             request,
             lambda service: service.resolve_anchor(command, trace_id=request.state.trace_id).model_dump(
+                mode="json", by_alias=True
+            ),
+        )
+
+    @router.post("/action-policy")
+    def action_policy(request: Request, command: ViewerPolicyCommand):
+        return run(
+            request,
+            lambda service: service.action_policy(command, trace_id=request.state.trace_id).model_dump(
+                mode="json", by_alias=True
+            ),
+        )
+
+    @router.post("/rights-review")
+    def rights_review(request: Request, command: ViewerRightsReviewCommand):
+        return run(
+            request,
+            lambda service: service.review_action_permissions(command, trace_id=request.state.trace_id).model_dump(
+                mode="json", by_alias=True
+            ),
+        )
+
+    @router.post("/action-payload")
+    def action_payload(request: Request, command: ViewerPayloadCommand):
+        return run(
+            request,
+            lambda service: service.action_payload(command, trace_id=request.state.trace_id).model_dump(
                 mode="json", by_alias=True
             ),
         )

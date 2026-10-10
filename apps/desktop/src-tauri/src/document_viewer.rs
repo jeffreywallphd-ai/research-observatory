@@ -18,13 +18,13 @@ const MAX_RESPONSE: usize = 1_406_296;
 #[derive(Clone, Deserialize, Serialize, PartialEq)]
 #[serde(rename_all = "camelCase", deny_unknown_fields)]
 pub(crate) struct ViewerSelector {
-    attachment_id: String,
-    document_revision_id: String,
-    normalized_revision_id: Option<String>,
+    pub(crate) attachment_id: String,
+    pub(crate) document_revision_id: String,
+    pub(crate) normalized_revision_id: Option<String>,
 }
 
 impl ViewerSelector {
-    fn valid(&self) -> bool {
+    pub(crate) fn valid(&self) -> bool {
         crate::supervisor::canonical_uuid_v7(&self.attachment_id)
             && crate::supervisor::canonical_uuid_v7(&self.document_revision_id)
             && self.normalized_revision_id.as_ref().is_none_or(|id| {
@@ -36,9 +36,9 @@ impl ViewerSelector {
 #[derive(Clone, Deserialize)]
 #[serde(rename_all = "camelCase", deny_unknown_fields)]
 pub(crate) struct ViewerSourceRequest {
-    schema_version: String,
-    project_id: String,
-    selector: ViewerSelector,
+    pub(crate) schema_version: String,
+    pub(crate) project_id: String,
+    pub(crate) selector: ViewerSelector,
 }
 
 impl ViewerSourceRequest {
@@ -685,7 +685,7 @@ struct RangeResponse {
     bytes_base64: String,
 }
 
-fn metadata_matches(metadata: &Value, request: &ViewerSourceRequest) -> bool {
+pub(crate) fn metadata_matches(metadata: &Value, request: &ViewerSourceRequest) -> bool {
     let Some(fields) = metadata.as_object() else {
         return false;
     };

@@ -38,7 +38,7 @@
       <nav class="breadcrumbs" aria-label="Breadcrumb"><a href="../index.html">Planning review</a><span>/</span><a href="index.html">CAP-document-inspection</a><span>/</span><a href="CAP-05.S04.html">SLICE-source-viewer-and-evidence-inspection-experience</a><span>/</span><span aria-current="page">CAP-05.S04.T03</span></nav>
 
 <section class="hero compact" data-task-page="CAP-05.S04.T03">
-  <div class="hero-top"><div><span class="eyebrow">CAP-05.S04.T03 · task 3 of 3</span><h1>Enforce rights-aware viewer actions and export</h1><p>Policy-driven copy, print, external open, annotation export, and derivative-text limits with clear user messaging.</p></div><span class="status status-ready">Ready</span></div>
+  <div class="hero-top"><div><span class="eyebrow">CAP-05.S04.T03 · task 3 of 3</span><h1>Enforce rights-aware viewer actions and export</h1><p>Policy-driven copy, print, external open, annotation export, and derivative-text limits with clear user messaging.</p></div><span class="status status-in-progress">In_Progress</span></div>
   <dl class="summary-grid"><div><dt>Wave</dt><dd>W2</dd></div><div><dt>Slice</dt><dd><a href="CAP-05.S04.html">SLICE-source-viewer-and-evidence-inspection-experience</a></dd></div><div><dt>Risk / review</dt><dd>high / rights-review</dd></div><div><dt>Latest review</dt><dd>not reviewed</dd></div></dl>
 </section>
 <section class="task-summary"><div class="section-heading"><span class="eyebrow">Authoritative task record</span><h2>Scope and acceptance</h2></div>
@@ -49,7 +49,7 @@
 <section class="task-summary"><div class="section-heading"><span class="eyebrow">Verification inventory</span><h2>Profiles and commands</h2></div>
   <h3>Verification profiles</h3><ul class="gate-criteria"><li>desktop</li><li>security-local</li></ul>
   <h3>Commands</h3><ul class="gate-criteria"><li>python tools/verify.py --profile desktop</li><li>python tools/verify.py --profile security-local</li></ul>
-  <p data-task-claim="CAP-05.S04.T03" data-task-owner="unclaimed" data-task-branch="none" data-task-base-sha="none"><strong>Claim projection:</strong> owner <code>unclaimed</code> · branch <code>none</code> · base <code>none</code></p>
+  <p data-task-claim="CAP-05.S04.T03" data-task-owner="codex-w2-implementation" data-task-branch="codex/w2-implementation" data-task-base-sha="f27ab65fc54197143f07b7b92a87b5b70e2368e4"><strong>Claim projection:</strong> owner <code>codex-w2-implementation</code> · branch <code>codex/w2-implementation</code> · base <code>f27ab65fc54197143f07b7b92a87b5b70e2368e4</code></p>
 </section>
 <section class="task-summary" data-task-plan="CAP-05.S04.T03" data-task-plan-sha256="fc51b37eed3b117f9973a034e58a9546dd1540681584a087ff3bc596f9c5b4c5"><div class="section-heading"><span class="eyebrow">Approved implementation intent</span><h2>Task plan</h2></div><article class="plan-article compact-article"><pre class='markdown-fallback'>### 9.3 `CAP-05.S04.T03` - Enforce rights-aware viewer actions and export
 **Objective:** Policy-driven copy, print, external open, annotation export, and derivative-text limits with clear user messaging.
@@ -234,13 +234,86 @@ These sources constrain implementation choices but do not replace repository-spe
 **Plan status:** PROPOSED - HUMAN APPROVAL REQUIRED.
 **Authoritative work state remains:** `planning/backlog.yaml`.</pre></article></section>
 <section class="section-heading"><span class="eyebrow">Task-start planning</span><h2>Assigned worksheet</h2><p>The worksheet is an optional planning aid and does not create a new approval or task state.</p></section>
-<p class="decision-meta" data-task-worksheet-absent="CAP-05.S04.T03">No optional task-start worksheet is assigned. This does not block execution.</p>
+
+<details class="plan-details task-worksheet" open data-task-worksheet="CAP-05.S04.T03" data-worksheet-sha256="a4a077c99287901693a9703912c637443d6bea8903dbe8f46a2b6941789512e9">
+  <summary>Assigned task-start worksheet</summary>
+  <div class="worksheet-meta"><strong>Source:</strong> <code>artifacts/evidence/CAP-05.S04.T03.task-start.md</code> · <strong>SHA-256:</strong> <code>a4a077c99287901693a9703912c637443d6bea8903dbe8f46a2b6941789512e9</code></div>
+  <article class="plan-article"><pre class='markdown-fallback'># CAP-05.S04.T03 — Rights-aware Reader actions
+
+Claim base: `f27ab65fc54197143f07b7b92a87b5b70e2368e4`; owner
+`codex-w2-implementation`, existing `codex/w2-implementation` W2 campaign.
+CAP-05.S04.T02 is DONE, independently approved and integrated into local main.
+
+Authority: [approved slice §9.3](../../planning/slice-plans/CAP-05/CAP-05.S04-source-viewer-and-evidence-inspection-experience.md),
+[ADR-0029](../../docs/adr/ADR-0029-preserve-document-revisions-and-mediate-source-viewing.md),
+existing protected source/copy rights, accepted Intent/privacy/session boundaries,
+and approved Reader experience reference RO-UI-ACADEMIC-MINIMAL-1.9. The separate
+explicit permitted-use review remains in the Reader provenance region; it records
+source permission, then a separate action revalidates it. Neither publication nor
+a cached decision executes an action. Read-only independent preflight by
+`agent:/root/reader_anchor_review` found this bounded implementation within the
+approved experience; no new amendment or automation framework work is planned.
+
+## Acceptance closure
+
+| Material boundary | Product behavior and proof |
+|---|---|
+| Restricted and unknown sources | Every copy/print/quotation export/anchor annotation export/original external-open path uses fixed Core purposes and exact per-copy policy. Button, keyboard, DOM/context-menu, browser print and direct Native paths cannot export unapproved text. Real protected repository/API tests plus mounted interaction and actual Native proof. |
+| Explicit researcher permission | Native resolves the retained source assertion, candidate copy and address from opaque selectors. A distinct confirmed review uses trusted human, accepted Intent/hash, privacy fingerprint, exact predecessor and semantic command identity. Retry precedes ID/time minting; unrelated assertions, IDs and recorded/expiry times remain exact. Test stale predecessor, replay, unknown replacement, explicit denial, expiry, disputes, propagation pending and unrelated assertor. |
+| Executing destination | Only an otherwise current `rights-further-authority-required` local export proceeds through the action-specific Native destination. Other non-allow results remain unavailable. Generic project-export, remote egress, entitlement and source-observation authority remain unchanged. Planned proofs cover real local output, isolated clipboard, local PDF printer and an owned inert external consumer. Windows printing is limited to the qualified local Microsoft PDF stream target; unsupported queues are unavailable before source text enters them. |
+| Quotation identity and limits | Core resolves a retained exact anchor and returns only its exact quotation, original and normalized revisions, source assertion, Work/version, anchor revision, codepoint range, canonical citation label and policy basis. Context/prefix/suffix are not exported. Extraction stays unverified. The existing 2048-codepoint selection cap is a technical limit, not an invented quantitative license allowance. Annotation export contains selected anchor identifiers/geometry/confidence without surrounding or quoted text. |
+| Original external opening | Explicit source export permission and a Native-selected local destination/application are required. Stream the original through existing bounded verified ranges; verify the complete original digest. No hidden Viewer plaintext cache, renderer path/URL/program/actor/grant, provider or network route. The authorized local deliverable remains outside project protection and is disclosed as such. |
+| Fresh authority | Source, anchor, rights, trusted human, Intent, privacy, lock, Native window and session are rechecked after read/dialog and before publication. Changed authority prevents publication; historical decisions are not grants. Test changes during materialization and dialogs, denial and source substitutions. Core authorization and Native publication remain separate fences. |
+| Cross-layer permission contract | Native and renderer decode the actual six-field `RightsUse` wire value, including explicit null provider/region/share-group fields. Fixed local uses reject a remote provider, region or share group. A real Native/Core check exposed the initial three-field fixture mismatch; API, Native and renderer regressions cover the exact contract. |
+| Failure/recovery and privacy | Cancel, lost connection, denied rights, unavailable printer/application and failed write retain source/history. Hold create-new outputs, reject overwrite/reparse/network destinations, verify digest and clean owned incomplete plaintext on close/termination. Denial audit stores safe IDs/codes/hashes, never selected text or paths. No researcher clipboard inspection/save/restore or physical paper printing in tests. Actual Windows PDF callbacks are held during lock/cancellation to prove that flags do not release live ownership; sealed streams reject late writes. |
+| Resource ownership | Reuse Viewer admission and bounded readers, keep issued unknown-drain ownership until physical closure, bound policy/quote/response allocations, and avoid whole-source copies. Lock/unmount denies stale UI completion. No 8/16 GiB model or hardware-tier runs. |
+| Governed journey | Existing Reader regions, exact selected Work/version return, explicit source rights review, action-specific destination/plaintext disclosure, busy/denied/unavailable/cancel/error/retry states, keyboard/focus and accessible labels. Controls never silently grant permissions or send data on review. Check both primary Reader and alternate structured inspection. |
+
+First tests are real encrypted canonical repository cases for missing permission,
+explicit allowed quotation with identifiers, preserved assertions/retry, separate
+action scopes and content-free denial. Add changed-policy delivery and material
+OS publication/cancellation regressions as those adapters are implemented.
+Synthetic accepted IR fixtures are labelled as authored synthetic structure, not
+fresh parser/model execution.
+
+Selected task coverage: affected Core/private API, contract schema, Native unit
+and actual principal checks, mounted Reader journey, packaging/wiring and relevant
+quality/experience checks on a committed candidate. Full profiles, cross-task
+integration and fresh matrix remain at slice/Wave qualification. CAP-05.S04.T01&#x27;s
+approved 3-second latency evidence is retained; no further tuning or 20-open
+replay. The accepted parser overage is retained without tuning. No claim of 2/3
+GiB support, minimum hardware qualification, installer or Wave release follows
+from these tests.
+
+Native reference constraints: [clipboard ownership](https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-setclipboarddata),
+[private window stations](https://learn.microsoft.com/en-us/windows/win32/winstation/about-window-stations-and-desktops),
+[print confirmation](https://learn.microsoft.com/en-us/windows/win32/api/commdlg/ns-commdlg-printdlgw),
+[held print stream](https://learn.microsoft.com/en-us/windows/win32/api/documenttarget/nf-documenttarget-iprintdocumentpackagetargetfactory-createdocumentpackagetargetforprintjob),
+and [held-file deletion](https://learn.microsoft.com/en-us/windows/win32/api/fileapi/nf-fileapi-setfileinformationbyhandle).
+These documents inform implementation; they are not execution evidence.
+
+Mandatory gate discovered at start: none. Task, slice, Wave and human release
+gates remain required; this worksheet makes no completion claim.
+
+Development preflight found a physical-driver call could hold lifecycle mutexes
+and delay Lock. The supported local PDF path prepares output through a bounded
+held `IStream`, then rechecks Core permission before publishing the file. No
+printer pathname is handed to the driver. Unsupported physical queues fail
+closed; no USB/paper-printer qualification is claimed. This is the smallest
+local print implementation within the existing task, not new automation work.
+
+The private clipboard proof currently has a platform prerequisite: Windows
+denies named private window-station creation to the current non-elevated test
+principal. The failed setup attempts remain in ignored development logs and
+performed no clipboard access. A test against the researcher&#x27;s shared clipboard
+is not an alternative. Qualifying evidence remains pending.</pre></article>
+</details>
 <section class="section-heading"><span class="eyebrow">Execution evidence</span><h2>Review packets, rounds, and current projection</h2><p>Append-only controls retain every immutable round and finding closure. Pre-policy tasks remain explicitly latest-review-only.</p></section>
 
 <section class="review-toolbar" data-task-review-id="CAP-05.S04.T03" data-review-mode="latest-review-only">
   <h3>CAP-05.S04.T03 — Enforce rights-aware viewer actions and export</h3>
   <p><strong>Legacy latest-review-only projection.</strong> No append-only review rounds are recorded; this view does not fabricate historical attempts.</p>
-  <dl class="summary-grid" data-current-review-projection="CAP-05.S04.T03" data-current-review-result="not-reviewed" data-current-reviewer="none" data-current-reviewed-at="none"><div><dt>Task status</dt><dd>READY</dd></div><div><dt>Latest result</dt><dd>not reviewed</dd></div><div><dt>Reviewer</dt><dd>none</dd></div><div><dt>Reviewed at</dt><dd><code>none</code></dd></div></dl>
+  <dl class="summary-grid" data-current-review-projection="CAP-05.S04.T03" data-current-review-result="not-reviewed" data-current-reviewer="none" data-current-reviewed-at="none"><div><dt>Task status</dt><dd>IN_PROGRESS</dd></div><div><dt>Latest result</dt><dd>not reviewed</dd></div><div><dt>Reviewer</dt><dd>none</dd></div><div><dt>Reviewed at</dt><dd><code>none</code></dd></div></dl>
   <p><strong>Latest notes:</strong> None</p>
 </section>
 <nav class="page-turn" aria-label="Task navigation"><a class="button button-quiet" href="CAP-05.S04.T02.html">Previous</a><a class="button button-primary" href="CAP-05.S04.html">Next</a></nav>

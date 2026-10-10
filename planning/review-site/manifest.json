@@ -4,7 +4,7 @@
   "baseline": "1.3",
   "supplemental_release": "1.3.4",
   "review_interface_release": "1.4.0",
-  "generated_at": "2026-08-30T17:17:19.152638+00:00",
+  "generated_at": "2026-10-10T01:16:13.933611+00:00",
   "entry_point": "index.html",
   "feedback_schema_version": "1.1",
   "waves": [
@@ -23409,7 +23409,7 @@
             {
               "task_id": "CAP-05.S04.T03",
               "title": "Enforce rights-aware viewer actions and export",
-              "status": "READY",
+              "status": "IN_PROGRESS",
               "mode": "latest-review-only",
               "latest_review": {
                 "reviewer": null,
@@ -23463,18 +23463,21 @@
             {
               "task_id": "CAP-05.S04.T03",
               "title": "Enforce rights-aware viewer actions and export",
-              "status": "READY",
+              "status": "IN_PROGRESS",
               "page": "CAP-05/CAP-05.S04.T03.html",
               "dependencies": [
                 "CAP-05.S04.T02"
               ],
               "claim": {
-                "owner": null,
-                "branch": null,
-                "base_sha": null
+                "owner": "codex-w2-implementation",
+                "branch": "codex/w2-implementation",
+                "base_sha": "f27ab65fc54197143f07b7b92a87b5b70e2368e4"
               },
               "plan_section_sha256": "fc51b37eed3b117f9973a034e58a9546dd1540681584a087ff3bc596f9c5b4c5",
-              "worksheet": null
+              "worksheet": {
+                "path": "artifacts/evidence/CAP-05.S04.T03.task-start.md",
+                "sha256": "a4a077c99287901693a9703912c637443d6bea8903dbe8f46a2b6941789512e9"
+              }
             }
           ]
         },

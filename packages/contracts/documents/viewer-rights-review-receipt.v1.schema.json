@@ -1,0 +1,230 @@
+{
+  "$defs": {
+    "AcquisitionOrigin": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "remote-acquisition",
+          "title": "Kind",
+          "type": "string"
+        },
+        "locationId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "receiptSha256": {
+          "$ref": "#/$defs/Digest"
+        }
+      },
+      "required": [
+        "kind",
+        "locationId",
+        "receiptSha256"
+      ],
+      "title": "AcquisitionOrigin",
+      "type": "object"
+    },
+    "Digest": {
+      "pattern": "^[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "Format": {
+      "enum": [
+        "jats",
+        "tei",
+        "xml",
+        "html",
+        "pdf",
+        "docx",
+        "plain-text"
+      ],
+      "type": "string"
+    },
+    "Identity": {
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+      "type": "string"
+    },
+    "LocalOrigin": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "local-import",
+          "title": "Kind",
+          "type": "string"
+        }
+      },
+      "required": [
+        "kind"
+      ],
+      "title": "LocalOrigin",
+      "type": "object"
+    },
+    "ProjectIdentity": {
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[47][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+      "type": "string"
+    },
+    "SourceIdentity": {
+      "additionalProperties": false,
+      "properties": {
+        "projectId": {
+          "$ref": "#/$defs/ProjectIdentity"
+        },
+        "attachmentId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "documentId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "documentRevisionId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "candidateId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "sourceAssertionRevisionId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "workId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "workRevisionId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "versionId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "versionRevisionId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "objectSha256": {
+          "$ref": "#/$defs/Digest"
+        },
+        "byteLength": {
+          "maximum": 134217728,
+          "minimum": 0,
+          "title": "Bytelength",
+          "type": "integer"
+        },
+        "format": {
+          "$ref": "#/$defs/Format"
+        },
+        "provenance": {
+          "discriminator": {
+            "mapping": {
+              "local-import": "#/$defs/LocalOrigin",
+              "remote-acquisition": "#/$defs/AcquisitionOrigin"
+            },
+            "propertyName": "kind"
+          },
+          "oneOf": [
+            {
+              "$ref": "#/$defs/LocalOrigin"
+            },
+            {
+              "$ref": "#/$defs/AcquisitionOrigin"
+            }
+          ],
+          "title": "Provenance"
+        }
+      },
+      "required": [
+        "projectId",
+        "attachmentId",
+        "documentId",
+        "documentRevisionId",
+        "candidateId",
+        "sourceAssertionRevisionId",
+        "workId",
+        "workRevisionId",
+        "versionId",
+        "versionRevisionId",
+        "objectSha256",
+        "byteLength",
+        "format",
+        "provenance"
+      ],
+      "title": "SourceIdentity",
+      "type": "object"
+    },
+    "ViewerAction": {
+      "enum": [
+        "copy-quotation",
+        "print-quotation",
+        "export-quotation",
+        "export-annotation",
+        "open-external-original"
+      ],
+      "type": "string"
+    },
+    "ViewerSourceMetadata": {
+      "additionalProperties": false,
+      "properties": {
+        "source": {
+          "$ref": "#/$defs/SourceIdentity"
+        },
+        "normalizedRevisionId": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Identity"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "source"
+      ],
+      "title": "ViewerSourceMetadata",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schemaVersion": {
+      "const": "1.0",
+      "default": "1.0",
+      "title": "Schemaversion",
+      "type": "string"
+    },
+    "metadata": {
+      "$ref": "#/$defs/ViewerSourceMetadata"
+    },
+    "action": {
+      "$ref": "#/$defs/ViewerAction"
+    },
+    "policyRevisionId": {
+      "$ref": "#/$defs/Identity"
+    },
+    "status": {
+      "const": "recorded",
+      "default": "recorded",
+      "title": "Status",
+      "type": "string"
+    }
+  },
+  "required": [
+    "metadata",
+    "action",
+    "policyRevisionId"
+  ],
+  "title": "ViewerRightsReviewReceipt",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://research-observatory.local/contracts/documents/viewer-rights-review-receipt.v1.schema.json",
+  "x-research-observatory-semanticRules": [
+    "fixed-action-specific-inspect-derive-quote-and-local-export-purposes-not-generic-project-export",
+    "exact-retained-copy-source-assertion-human-intent-privacy-policy-and-anchor-authority",
+    "explicit-trusted-human-permitted-use-review-is-idempotent-and-does-not-execute-an-action",
+    "unrelated-assertions-identities-recorded-and-expiry-times-remain-immutable",
+    "denial-expiry-dispute-and-propagation-cannot-be-overridden-by-missing-permission-review",
+    "native-only-payload-no-renderer-text-path-actor-grant-or-program-authority",
+    "fresh-permission-after-materialization-and-destination-before-native-publication",
+    "exact-at-most-2048-codepoint-quotation-with-source-revision-anchor-and-citation-identifiers",
+    "annotation-excludes-quotation-and-context-and-preserves-geometry-and-uncertainty",
+    "content-free-denial-audit-and-direct-browser-transfer-disabled",
+    "delivered-plaintext-is-explicitly-outside-project-protection-and-extraction-remains-unverified",
+    "bounded-create-new-native-output-and-physical-closure-before-releasing-ownership"
+  ]
+}

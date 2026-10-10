@@ -379,6 +379,98 @@ class DocumentViewerInteractionsTests(unittest.TestCase):
         self.assertEqual(1, self.page.evaluate("() => window.__VIEWER_UI_TEST__.anchorCalls"))
         self.assertFalse(self.errors)
 
+    def select_action_anchor(self):
+        self.page.evaluate("() => window.__VIEWER_UI_TEST__.anchorMode = true")
+        self.page.get_by_label("Accepted structured revision").select_option(index=1)
+        self.page.get_by_role("button", name="Use anchor 1 for source actions", exact=True).click()
+        return self.page.get_by_role("region", name="Rights-aware Reader actions", exact=True)
+
+    def test_rights_review_is_explicit_separate_and_does_not_execute_output(self):
+        pane = self.select_action_anchor()
+        execute = pane.get_by_role("button", name="Copy selected quotation with source identifiers", exact=True)
+        self.assertFalse(execute.is_enabled())
+        pane.get_by_role("button", name="Check current permissions", exact=True).click()
+        record = pane.get_by_role("button", name="Record permitted use only", exact=True)
+        record.wait_for()
+        self.assertFalse(record.is_enabled())
+        pane.get_by_role("checkbox").check()
+        record.click()
+        pane.get_by_text("Permitted use recorded. No action was performed.", exact=False).wait_for()
+        self.assertEqual(
+            ["policy", "rights-review"],
+            self.page.evaluate("() => window.__VIEWER_UI_TEST__.actionCalls.map(x => x.stage)"),
+        )
+        self.assertFalse(execute.is_enabled())
+        pane.get_by_role("button", name="Check current permissions", exact=True).click()
+        self.wait(execute.is_enabled)
+        execute.click()
+        pane.get_by_text("The explicit action completed.", exact=False).wait_for()
+        calls = self.page.evaluate("() => window.__VIEWER_UI_TEST__.actionCalls")
+        self.assertEqual(["policy", "rights-review", "policy", "execute"], [x["stage"] for x in calls])
+        self.assertIsNone(calls[1]["anchorId"])
+        self.assertIsNotNone(calls[-1]["anchorId"])
+        self.assertTrue(
+            all(not {"text", "quote", "actorId", "destination", "applicationPath"}.intersection(x) for x in calls)
+        )
+        self.assertFalse(self.errors)
+
+    def test_alternate_copy_context_menu_and_print_shortcut_only_request_denial(self):
+        self.select_action_anchor()
+        for index, kind in enumerate(["copy", "contextmenu", "print"]):
+            prevented = self.page.evaluate(
+                """kind => {
+              const el = document.querySelector('.protected-document-viewer');
+              const event = kind === 'print' ? new KeyboardEvent('keydown',
+                {key:'p',ctrlKey:true,bubbles:true,cancelable:true})
+                : new Event(kind, {bubbles:true,cancelable:true});
+              el.dispatchEvent(event); return event.defaultPrevented;
+            }""",
+                kind,
+            )
+            self.assertTrue(prevented)
+            self.wait(lambda n=index: self.page.evaluate("() => window.__VIEWER_UI_TEST__.actionCalls.length") == n + 1)
+            self.wait(lambda: self.page.evaluate("() => window.__VIEWER_UI_TEST__.activeActions.size") == 0)
+        calls = self.page.evaluate("() => window.__VIEWER_UI_TEST__.actionCalls")
+        self.assertTrue(all(x["stage"] == "denied-attempt" for x in calls))
+        self.assertEqual("print-quotation", calls[-1]["action"])
+        self.assertTrue(all(not {"text", "quote", "destination"}.intersection(x) for x in calls))
+        self.assertFalse(self.errors)
+
+    def test_unknown_action_closure_prevents_retry_and_never_claims_completion(self):
+        pane = self.select_action_anchor()
+        self.page.evaluate("() => window.__VIEWER_UI_TEST__.unknownAction = true")
+        check = pane.get_by_role("button", name="Check current permissions", exact=True)
+        check.click()
+        pane.get_by_text("The issued action has not confirmed physical closure.", exact=False).wait_for()
+        self.assertFalse(check.is_enabled())
+        pane.get_by_role("button", name="Check completion / request cancellation", exact=True).click()
+        pane.get_by_text("Cancellation requested.", exact=False).wait_for()
+        self.assertEqual(1, self.page.evaluate("() => window.__VIEWER_UI_TEST__.actionCalls.length"))
+        self.assertFalse(self.errors)
+
+    def test_partial_output_warning_action_specific_permissions_and_source_return(self):
+        pane = self.select_action_anchor()
+        self.page.evaluate(
+            "() => { const s=window.__VIEWER_UI_TEST__; "
+            "s.actionPermissions['copy-quotation']=true; s.partialAction=true; }"
+        )
+        pane.get_by_role("button", name="Check current permissions", exact=True).click()
+        copy = pane.get_by_role("button", name="Copy selected quotation with source identifiers", exact=True)
+        self.wait(copy.is_enabled)
+        copy.click()
+        pane.get_by_text("The action was only partly confirmed.", exact=False).wait_for()
+        pane.get_by_label("Reader source action").select_option("export-annotation")
+        pane.get_by_text("it excludes quotation and surrounding text.", exact=False).wait_for()
+        save = pane.get_by_role("button", name="Save anchor annotation without quoted text", exact=True)
+        self.assertFalse(save.is_enabled())
+        pane.get_by_role("button", name="Check current permissions", exact=True).click()
+        pane.get_by_role("button", name="Record permitted use only", exact=True).wait_for()
+        self.assertFalse(save.is_enabled())
+        pane.get_by_role("button", name="Review selected source permissions", exact=True).click()
+        self.page.get_by_text("No open source", exact=True).wait_for()
+        self.assertEqual(1, self.page.evaluate("() => window.__VIEWER_UI_TEST__.returns.length"))
+        self.assertFalse(self.errors)
+
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)

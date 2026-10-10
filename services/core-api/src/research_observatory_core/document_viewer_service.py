@@ -48,6 +48,7 @@ class DocumentViewerService:
         self._early_cancellations: dict[tuple[str, str, str], str] = {}
         self._cancel_overflow = False
         self._stopped = threading.Event()
+        self._actions = threading.Lock()
 
     def _scoped(self, command, trace, action, *, request: _Request | None = None):
         session_stop: list[Callable[[], bool]] = [lambda: True]
@@ -133,6 +134,114 @@ class DocumentViewerService:
             return repository.confirm_anchor_delivery(command.selector, result)
 
         return self._scoped(command, trace_id, deliver)
+
+    def _viewer_action(self, command, trace_id, prepare, deliver):
+        # One physically owned rights action at a time, independent of whether
+        # the initiating renderer is still waiting for its response.
+        if not self._actions.acquire(blocking=False):
+            raise DocumentRevisionProblem("viewer-resource-limit")
+        identity = (command.project_id, command.session_id, command.request_id)
+        request = _Request(command.root)
+        registered = False
+        try:
+            with self._mutex:
+                if self._stopped.is_set() or self._cancel_overflow:
+                    raise ObjectReadCancelled()
+                if identity in self._requests or identity in self._terminal:
+                    raise ViewerRangeProblem("viewer-request-conflict")
+                if len(self._requests) >= 64:
+                    raise ViewerRangeProblem("viewer-queue-full")
+                self._requests[identity] = request
+                registered = True
+                if self._early_cancellations.get(identity) == command.root:
+                    request.stop.set()
+                    self._early_cancellations.pop(identity)
+                self._mutex.notify_all()
+            result, principal = self._scoped(
+                command,
+                trace_id,
+                lambda repository, actor, _stopped: (prepare(repository), _principal(actor)),
+                request=request,
+            )
+
+            def current(repository, actor, _stopped):
+                if _principal(actor) != principal:
+                    raise DocumentRevisionProblem("viewer-authority-changed")
+                return deliver(repository, result)
+
+            return self._scoped(command, trace_id, current, request=request)
+        finally:
+            # A cancel receipt becomes drained only after both actual protected
+            # callbacks and their database/object owners have returned. A lost
+            # response may follow an already committed rights review; retry is
+            # semantic and never implies that the publication was rolled back.
+            request.stop.set()
+            if registered:
+                with self._mutex:
+                    self._requests.pop(identity, None)
+                    self._terminal[identity] = request.root
+                    while len(self._terminal) > 256:
+                        self._terminal.popitem(last=False)
+                    self._mutex.notify_all()
+            self._actions.release()
+
+    def action_policy(self, command, *, trace_id):
+        def current(repository):
+            return repository.action_policy(
+                command.selector,
+                action=command.action,
+                anchor_id=command.anchor_id,
+                direct_transfer=command.direct_transfer,
+            )
+
+        def deliver(repository, result):
+            if current(repository) != result:
+                raise DocumentRevisionProblem("viewer-authority-changed")
+            return result
+
+        return self._viewer_action(command, trace_id, current, deliver)
+
+    def review_action_permissions(self, command, *, trace_id):
+        def prepare(repository):
+            return repository.review_action_permissions(
+                command.selector,
+                action=command.action,
+                expected_policy_revision_id=command.expected_policy_revision_id,
+                command_id=command.command_id,
+                confirmed=command.confirmed,
+            )
+
+        def deliver(repository, result):
+            if repository.describe(command.selector) != result.metadata:
+                raise DocumentRevisionProblem("viewer-source-changed")
+            return result
+
+        return self._viewer_action(command, trace_id, prepare, deliver)
+
+    def action_payload(self, command, *, trace_id):
+        from .viewer_action_repository import viewer_authority_sha256
+
+        def prepare(repository):
+            return repository.action_payload(
+                command.selector,
+                action=command.action,
+                anchor_id=command.anchor_id,
+                expected_policy_revision_id=command.expected_policy_revision_id,
+                expected_authority_sha256=command.expected_authority_sha256,
+            )
+
+        def deliver(repository, result):
+            current = repository.action_policy(command.selector, action=command.action, anchor_id=command.anchor_id)
+            if (
+                current.state != "ready"
+                or current.policy_revision_id != result.policy_revision_id
+                or current.metadata != result.metadata
+                or viewer_authority_sha256(repository.revisions.actor()) != result.authority_sha256
+            ):
+                raise DocumentRevisionProblem("viewer-authority-changed")
+            return result
+
+        return self._viewer_action(command, trace_id, prepare, deliver)
 
     def read_range(self, command, *, trace_id, cancellation_requested: Callable[[], bool] = lambda: False):
         identity = (command.project_id, command.session_id, command.request_id)

@@ -11,6 +11,9 @@ import { decodeReaderOutline, decodeReaderRevisions, type ReaderOutlineNode } fr
 import { ViewerAnchorContexts } from "./ViewerAnchorContexts";
 import type { DocumentViewerAnchorPort } from "./documentViewer";
 import type { ViewerDeepLink } from "./viewerDeepLinks";
+import { ViewerActionsPane } from "./ViewerActionsPane";
+import { decodeReaderAction, nativeReaderActionPort, type ReaderActionPort, type ReaderActionRequest } from "./viewerActions";
+import { newAttachmentId } from "./documentAttachment";
 
 export interface PdfViewer {
   open(): Promise<number>; render(canvas: HTMLCanvasElement, page: number, scale: number): Promise<void>;
@@ -23,6 +26,7 @@ interface Props {
   readonly port?: DocumentViewerPort; readonly anchors?: SourceAnchorPort; readonly textPort?: DocumentViewerTextPort;
   readonly outlinePort?: DocumentViewerOutlinePort;
   readonly anchorPort?: DocumentViewerAnchorPort;
+  readonly actionPort?: ReaderActionPort;
   readonly deepLink?: ViewerDeepLink | null;
   readonly onRememberLink?: (link: ViewerDeepLink) => boolean;
   readonly pdfFactory?: (bytes: ViewerByteSession, budget: ViewerBufferBudget, failure: (code: string) => void) => PdfViewer;
@@ -69,7 +73,7 @@ function LinkedViewerEntry(props: Props & { project: ProjectProjection; link: Vi
 
 function ViewerSession({ project, handoff, announce, onReturn, port = nativeDocumentViewerPort, anchors = nativeSourceAnchorPort,
   textPort = nativeDocumentViewerTextPort, outlinePort = nativeDocumentViewerOutlinePort, anchorPort = nativeDocumentViewerAnchorPort,
-  deepLink = null, onRememberLink, pdfFactory: createPdf = pdfFactory }: Props & {
+  deepLink = null, onRememberLink, actionPort = nativeReaderActionPort, pdfFactory: createPdf = pdfFactory }: Props & {
     project: ProjectProjection; handoff: AttachmentHandoff & { attachmentId: string; documentRevisionId: string };
   }): ReactNode {
   const [metadata, setMetadata] = useState<ViewerMetadata | null>(null), [pdf, setPdf] = useState<PdfViewer | null>(null);
@@ -78,6 +82,8 @@ function ViewerSession({ project, handoff, announce, onReturn, port = nativeDocu
   const [failure, setFailure] = useState<string | null>(null), [retry, setRetry] = useState(0), [query, setQuery] = useState("");
   const [searching, setSearching] = useState(false), [revisions, setRevisions] = useState<readonly string[]>([]);
   const [revision, setRevision] = useState(""), [nodes, setNodes] = useState<readonly ReaderOutlineNode[]>([]);
+  const [actionAnchor, setActionAnchor] = useState<string | null>(null);
+  useEffect(() => { setActionAnchor(null); }, [revision]);
   const [nextNode, setNextNode] = useState<string | null>(null), [text, setText] = useState<ViewerTextChunk | null>(null);
   const [textBusy, setTextBusy] = useState(false), [textStatus, setTextStatus] = useState("Choose an accepted revision to inspect structured text.");
   const [firstPageReady, setFirstPageReady] = useState(false), [overlay, setOverlay] = useState<HTMLDivElement | null>(null);
@@ -112,6 +118,7 @@ function ViewerSession({ project, handoff, announce, onReturn, port = nativeDocu
     let bytes: ViewerByteSession | null = null, viewer: PdfViewer | null = null;
     setMetadata(null); setPdf(null); setPages(0); setPage(1); setRevision(""); setRevisions([]); setText(null); setFailure(null); setBusy(true);
     setNodes([]); setNextNode(null); setQuery(""); setSearching(false); setTextBusy(false); setFirstPageReady(false);
+    setActionAnchor(null);
     acceptedRevisions.current = null;
     setStatus("Checking current copy and inspection permission…"); setTextStatus("Choose an accepted revision to inspect structured text.");
     heading.current?.focus();
@@ -143,7 +150,7 @@ function ViewerSession({ project, handoff, announce, onReturn, port = nativeDocu
         setPages(count); setPdf(viewer); notify("Original loaded. Rendering the first permitted page…");
       } else {
         acceptedRevisions.current?.(); acceptedRevisions.current = null;
-        setBusy(false); setFirstPageReady(true); notify("Select an accepted revision for inert structured text. Active HTML, attachments and external document actions are unavailable.");
+        setBusy(false); setFirstPageReady(true); notify("Select an accepted revision for inert structured text. Active document content remains disabled; source actions require separate current permission and Native confirmation.");
       }
     })().catch(() => { if (current()) fail("viewer-source-unavailable"); });
     return () => { live.current = false; generation.current += 1; textGeneration.current += 1; searchGeneration.current += 1; acceptedRevisions.current = null; bytes?.close(); viewer?.close(); ownedPdf.current = null; ownedBudget.current = null; ownedCore.current = null; ownedMain.current = null; };
@@ -234,7 +241,30 @@ function ViewerSession({ project, handoff, announce, onReturn, port = nativeDocu
     finally { if (live.current && ticket === generation.current && searchTicket === searchGeneration.current) setSearching(false); }
   }
   const visiblePages = [page - 1, page, page + 1].filter((number) => number >= 1 && number <= pages);
-  function blocked(event: { preventDefault(): void }): void { event.preventDefault(); announce("Copy, print, external open and export are unavailable until their current rights are checked."); }
+  const directAttempt = useRef<ReaderActionRequest | null>(null);
+  useEffect(() => () => {
+    const pending = directAttempt.current;
+    if (pending) void actionPort.cancel(pending.projectId, pending.operationId);
+  }, [actionPort]);
+  function blocked(event: { preventDefault(): void; key?: string }): void {
+    event.preventDefault(); announce("Direct transfer is disabled. Use Permitted source actions to check rights and deliver an exact saved quotation.");
+    if (!metadata || !ownedMain.current || directAttempt.current || failure) return;
+    const request: ReaderActionRequest = { schemaVersion: "1.0", projectId: project.projectId,
+      selector: { ...selector, normalizedRevisionId: revision || null }, operationId: newAttachmentId(),
+      stage: "denied-attempt", action: event.key?.toLowerCase() === "p" ? "print-quotation" : "copy-quotation",
+      anchorId: null, expectedPolicyRevisionId: null, commandId: null, confirmed: false };
+    let releaseMain = (): void => undefined, releaseCore = (): void => undefined;
+    try { releaseMain = ownedMain.current.context(); releaseCore = reserveStructured(); }
+    catch { releaseMain(); return; }
+    directAttempt.current = request;
+    void (async () => {
+      let response;
+      try { response = decodeReaderAction(await actionPort.request(request), request, metadata); } catch { response = null; }
+      const drained = response?.drained === true || await actionPort.cancel(request.projectId, request.operationId);
+      if (drained) { releaseMain(); releaseCore(); if (directAttempt.current === request) directAttempt.current = null; }
+      else if (live.current) fail("viewer-owned-read-drain-pending");
+    })();
+  }
   return <section className="ro-page-region ro-stack protected-document-viewer" aria-label="Document Reader"
     onCopy={blocked} onCut={blocked} onContextMenu={blocked} onDragStart={blocked}
     onKeyDown={(event) => {
@@ -291,13 +321,17 @@ function ViewerSession({ project, handoff, announce, onReturn, port = nativeDocu
         <dt>Source</dt><dd>{metadata ? `${metadata.source.format.toUpperCase()} · ${metadata.source.byteLength.toLocaleString()} bytes · ${metadata.source.provenance.kind.replaceAll("-", " ")}` : "Current source not confirmed"}</dd>
         <dt>Source hash</dt><dd>{metadata?.source.objectSha256 || "Not confirmed"}</dd><dt>Selected text element</dt><dd>{text?.nodeId || "Not selected"}</dd></dl>
         <p>Inspection is checked for every source request. Structured text also requires current derivation permission. No scholarly claim is verified by viewing a page.</p>
-        <p>PDF scripts, forms, attachments and external links are inactive. Copy, print, external open and export are currently unavailable.</p>
+        <p>PDF scripts, forms, attachments and external links are inactive. Use the separate permitted source actions for copying, printing and export.</p>
       </Panel>
         {metadata && revision && firstPageReady && !failure && ownedMain.current ? <Panel title="Anchor inspection"><ViewerAnchorContexts key={revision}
           metadata={metadata} revisionId={revision} initial={linked} main={ownedMain.current} reserveCore={reserveStructured}
           port={anchorPort} anchors={anchors} overlay={busy ? null : overlay} viewport={viewport}
           onPage={(number) => { if (number >= 1 && number <= pages) setPage(number); }}
-          onRemember={onRememberLink} onReturn={() => { pdf?.close(); onReturn(handoff); }} onFailure={fail} /></Panel> : null}
+          onRemember={onRememberLink} onReturn={() => { pdf?.close(); onReturn(handoff); }} onFailure={fail} onActionAnchor={setActionAnchor} /></Panel> : null}
+        {metadata && firstPageReady && !failure && ownedMain.current ? <ViewerActionsPane key={revision}
+          metadata={{ ...metadata, normalizedRevisionId: revision || null }} anchorId={actionAnchor}
+          main={ownedMain.current} reserveCore={reserveStructured} port={actionPort} announce={announce}
+          onReturn={() => { pdf?.close(); onReturn(handoff); }} /> : null}
       </aside>
     </div>
   </section>;

@@ -7,6 +7,7 @@ import { DocumentViewerWorkspace, type PdfViewer } from "../../../apps/desktop/s
 import { sourceAnchorFixture } from "./anchor-contract";
 import { decodeSourceAnchor } from "../../../apps/desktop/src/app/sourceAnchors";
 import type { ViewerSelector } from "../../../apps/desktop/src/app/documentViewer";
+import type { ReaderAction, ReaderActionPort, ReaderActionRequest } from "../../../apps/desktop/src/app/viewerActions";
 import "../../../packages/ui-tokens/index.css";
 import "../../../packages/ui-components/src/styles.css";
 import "../../../apps/desktop/src/app.css";
@@ -19,6 +20,9 @@ const selection = { projectId: source.projectId, sourceAssertionRevisionId: sour
 const handoff = { attachmentId: source.attachmentId, documentRevisionId: source.documentRevisionId, selection };
 const root = createRoot(document.getElementById("root")!);
 const state = {
+  actionCalls: [] as ReaderActionRequest[], actionPermissions: {} as Partial<Record<ReaderAction, boolean>>,
+  holdAction: false, unknownAction: false, partialAction: false,
+  releaseAction: null as (() => void) | null, activeActions: new Set<string>(),
   anchorMode: false, linkMode: false, linkRevision: revision, noHandoff: false, anchorCalls: 0, denyAnchor: false, wrongAnchorSource: false,
   missingAnchor: false, holdAnchor: false, unknownAnchor: false, releaseAnchor: null as (() => void) | null,
   anchorRotation: 0 as 0 | 90 | 180 | 270, mismatchGeometry: false,
@@ -34,8 +38,41 @@ const state = {
       deepLink={state.linkMode ? { schemaVersion: "1.0", projectId: source.projectId, selector: { attachmentId: source.attachmentId,
         documentRevisionId: source.documentRevisionId, normalizedRevisionId: state.linkRevision }, anchorIds: [fixture.anchorId, secondAnchorId] } : null}
       onRememberLink={(link) => { state.savedLinks.push(link); return true; }}
-      port={port} anchors={anchors} anchorPort={anchorPort} outlinePort={outlinePort} textPort={textPort} pdfFactory={pdfFactory} />);
+      port={port} anchors={anchors} anchorPort={anchorPort} outlinePort={outlinePort} textPort={textPort} pdfFactory={pdfFactory} actionPort={actionPort} />);
   },
+};
+// Explicit interaction doubles, never OS output or Native/Core authority proof.
+const actionPolicy = "00000000-0000-7000-8000-000000000024";
+const actionPort: ReaderActionPort = {
+  request: async request => {
+    state.actionCalls.push(request); state.activeActions.add(request.operationId);
+    if (state.holdAction) await new Promise<void>(resolve => { state.releaseAction = resolve; });
+    if (!state.unknownAction) state.activeActions.delete(request.operationId);
+    const base = { schemaVersion: "1.0", projectId: source.projectId, operationId: request.operationId,
+      action: request.action, drained: !state.unknownAction, decision: null, review: null };
+    if (state.unknownAction) return { ...base, status: "unavailable" };
+    const metadata = { source, normalizedRevisionId: request.selector.normalizedRevisionId };
+    if (request.stage === "rights-review") {
+      if (request.confirmed) state.actionPermissions[request.action] = true;
+      return { ...base, status: "recorded", review: { schemaVersion: "1.0", metadata, action: request.action,
+        policyRevisionId: actionPolicy, status: "recorded" } };
+    }
+    if (request.stage === "execute") return { ...base, status: state.actionPermissions[request.action]
+      ? state.partialAction ? "partial" : "completed" : "unavailable" };
+    const allowed = state.actionPermissions[request.action] === true;
+    const denied = request.stage === "denied-attempt";
+    const uses = [{ action: "inspect", purpose: "document-analysis", destinationKind: "local-project" }];
+    if (request.action !== "open-external-original") uses.push({ action: "derive", purpose: "document-analysis", destinationKind: "local-project" });
+    if (["copy-quotation", "print-quotation", "export-quotation"].includes(request.action)) uses.push({ action: "quote", purpose: "viewer-quotation", destinationKind: "local-project" });
+    uses.push({ action: "export", purpose: `viewer-${request.action}`, destinationKind: "local-export" });
+    return { ...base, status: "policy", decision: { schemaVersion: "1.0", metadata, action: request.action,
+      anchorId: request.anchorId, policyRevisionId: actionPolicy, state: denied ? "denied" : allowed ? "ready" : "review-required",
+      reasonCode: denied ? "viewer-direct-transfer-disabled" : allowed ? "rights-permitted" : "rights-assertion-missing",
+      canReview: !denied && !allowed, selectionLimitCodepoints: 2048,
+      requirements: uses.map(use => ({ use: { ...use, provider: null, region: null, shareGroup: null }, code: denied ? "deny" : allowed ? "allow" : "unknown",
+        reasonCode: denied ? "viewer-direct-transfer-disabled" : allowed ? "rights-permitted" : "rights-assertion-missing" })) } };
+  },
+  cancel: async (_project, operation) => !state.activeActions.has(operation),
 };
 const port = {
   source: async () => { state.sourceCalls += 1; return state.denySource ? null : { source: state.substituteSource

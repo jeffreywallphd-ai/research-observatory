@@ -1,0 +1,398 @@
+{
+  "$defs": {
+    "AcquisitionOrigin": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "remote-acquisition",
+          "title": "Kind",
+          "type": "string"
+        },
+        "locationId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "receiptSha256": {
+          "$ref": "#/$defs/Digest"
+        }
+      },
+      "required": [
+        "kind",
+        "locationId",
+        "receiptSha256"
+      ],
+      "title": "AcquisitionOrigin",
+      "type": "object"
+    },
+    "DecisionCode": {
+      "enum": [
+        "allow",
+        "deny",
+        "unknown",
+        "require-confirmation"
+      ],
+      "type": "string"
+    },
+    "DestinationKind": {
+      "enum": [
+        "local-project",
+        "local-export",
+        "remote-model",
+        "external-export",
+        "collaboration"
+      ],
+      "type": "string"
+    },
+    "Digest": {
+      "pattern": "^[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "Format": {
+      "enum": [
+        "jats",
+        "tei",
+        "xml",
+        "html",
+        "pdf",
+        "docx",
+        "plain-text"
+      ],
+      "type": "string"
+    },
+    "Identity": {
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+      "type": "string"
+    },
+    "LocalOrigin": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "local-import",
+          "title": "Kind",
+          "type": "string"
+        }
+      },
+      "required": [
+        "kind"
+      ],
+      "title": "LocalOrigin",
+      "type": "object"
+    },
+    "ProjectIdentity": {
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[47][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+      "type": "string"
+    },
+    "RightsAction": {
+      "enum": [
+        "store",
+        "inspect",
+        "index",
+        "derive",
+        "model-use",
+        "quote",
+        "export",
+        "share"
+      ],
+      "type": "string"
+    },
+    "RightsUse": {
+      "additionalProperties": false,
+      "description": "One action and an exact purpose/destination; there are no wildcards.",
+      "properties": {
+        "action": {
+          "$ref": "#/$defs/RightsAction"
+        },
+        "purpose": {
+          "pattern": "^[a-z][a-z0-9-]{0,63}$",
+          "title": "Purpose",
+          "type": "string"
+        },
+        "destinationKind": {
+          "$ref": "#/$defs/DestinationKind"
+        },
+        "provider": {
+          "anyOf": [
+            {
+              "pattern": "^[a-z][a-z0-9-]{0,63}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Provider"
+        },
+        "region": {
+          "anyOf": [
+            {
+              "pattern": "^[a-z][a-z0-9-]{0,63}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Region"
+        },
+        "shareGroup": {
+          "anyOf": [
+            {
+              "pattern": "^[a-z][a-z0-9-]{0,63}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sharegroup"
+        }
+      },
+      "required": [
+        "action",
+        "purpose",
+        "destinationKind"
+      ],
+      "title": "RightsUse",
+      "type": "object"
+    },
+    "SourceIdentity": {
+      "additionalProperties": false,
+      "properties": {
+        "projectId": {
+          "$ref": "#/$defs/ProjectIdentity"
+        },
+        "attachmentId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "documentId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "documentRevisionId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "candidateId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "sourceAssertionRevisionId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "workId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "workRevisionId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "versionId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "versionRevisionId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "objectSha256": {
+          "$ref": "#/$defs/Digest"
+        },
+        "byteLength": {
+          "maximum": 134217728,
+          "minimum": 0,
+          "title": "Bytelength",
+          "type": "integer"
+        },
+        "format": {
+          "$ref": "#/$defs/Format"
+        },
+        "provenance": {
+          "discriminator": {
+            "mapping": {
+              "local-import": "#/$defs/LocalOrigin",
+              "remote-acquisition": "#/$defs/AcquisitionOrigin"
+            },
+            "propertyName": "kind"
+          },
+          "oneOf": [
+            {
+              "$ref": "#/$defs/LocalOrigin"
+            },
+            {
+              "$ref": "#/$defs/AcquisitionOrigin"
+            }
+          ],
+          "title": "Provenance"
+        }
+      },
+      "required": [
+        "projectId",
+        "attachmentId",
+        "documentId",
+        "documentRevisionId",
+        "candidateId",
+        "sourceAssertionRevisionId",
+        "workId",
+        "workRevisionId",
+        "versionId",
+        "versionRevisionId",
+        "objectSha256",
+        "byteLength",
+        "format",
+        "provenance"
+      ],
+      "title": "SourceIdentity",
+      "type": "object"
+    },
+    "ViewerAction": {
+      "enum": [
+        "copy-quotation",
+        "print-quotation",
+        "export-quotation",
+        "export-annotation",
+        "open-external-original"
+      ],
+      "type": "string"
+    },
+    "ViewerSourceMetadata": {
+      "additionalProperties": false,
+      "properties": {
+        "source": {
+          "$ref": "#/$defs/SourceIdentity"
+        },
+        "normalizedRevisionId": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Identity"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "source"
+      ],
+      "title": "ViewerSourceMetadata",
+      "type": "object"
+    },
+    "ViewerUseDecision": {
+      "additionalProperties": false,
+      "properties": {
+        "use": {
+          "$ref": "#/$defs/RightsUse"
+        },
+        "code": {
+          "$ref": "#/$defs/DecisionCode"
+        },
+        "reasonCode": {
+          "pattern": "^[a-z][a-z0-9-]{0,63}$",
+          "title": "Reasoncode",
+          "type": "string"
+        }
+      },
+      "required": [
+        "use",
+        "code",
+        "reasonCode"
+      ],
+      "title": "ViewerUseDecision",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schemaVersion": {
+      "const": "1.0",
+      "default": "1.0",
+      "title": "Schemaversion",
+      "type": "string"
+    },
+    "metadata": {
+      "$ref": "#/$defs/ViewerSourceMetadata"
+    },
+    "action": {
+      "$ref": "#/$defs/ViewerAction"
+    },
+    "anchorId": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Identity"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "policyRevisionId": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Identity"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "state": {
+      "enum": [
+        "ready",
+        "review-required",
+        "denied",
+        "unavailable"
+      ],
+      "title": "State",
+      "type": "string"
+    },
+    "reasonCode": {
+      "pattern": "^[a-z][a-z0-9-]{0,63}$",
+      "title": "Reasoncode",
+      "type": "string"
+    },
+    "canReview": {
+      "title": "Canreview",
+      "type": "boolean"
+    },
+    "requirements": {
+      "items": {
+        "$ref": "#/$defs/ViewerUseDecision"
+      },
+      "maxItems": 4,
+      "minItems": 2,
+      "title": "Requirements",
+      "type": "array"
+    },
+    "selectionLimitCodepoints": {
+      "const": 2048,
+      "default": 2048,
+      "title": "Selectionlimitcodepoints",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "metadata",
+    "action",
+    "anchorId",
+    "policyRevisionId",
+    "state",
+    "reasonCode",
+    "canReview",
+    "requirements"
+  ],
+  "title": "ViewerPolicyDecision",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://research-observatory.local/contracts/documents/viewer-policy-decision.v1.schema.json",
+  "x-research-observatory-semanticRules": [
+    "fixed-action-specific-inspect-derive-quote-and-local-export-purposes-not-generic-project-export",
+    "exact-retained-copy-source-assertion-human-intent-privacy-policy-and-anchor-authority",
+    "explicit-trusted-human-permitted-use-review-is-idempotent-and-does-not-execute-an-action",
+    "unrelated-assertions-identities-recorded-and-expiry-times-remain-immutable",
+    "denial-expiry-dispute-and-propagation-cannot-be-overridden-by-missing-permission-review",
+    "native-only-payload-no-renderer-text-path-actor-grant-or-program-authority",
+    "fresh-permission-after-materialization-and-destination-before-native-publication",
+    "exact-at-most-2048-codepoint-quotation-with-source-revision-anchor-and-citation-identifiers",
+    "annotation-excludes-quotation-and-context-and-preserves-geometry-and-uncertainty",
+    "content-free-denial-audit-and-direct-browser-transfer-disabled",
+    "delivered-plaintext-is-explicitly-outside-project-protection-and-extraction-remains-unverified",
+    "bounded-create-new-native-output-and-physical-closure-before-releasing-ownership"
+  ]
+}

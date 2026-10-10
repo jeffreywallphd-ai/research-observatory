@@ -12,6 +12,7 @@ pub enum DirectoryPurpose {
     CreateParent,
     OpenProject,
     ImportReport,
+    ViewerExport,
 }
 
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq)]
@@ -242,7 +243,7 @@ pub fn decode_request(payload: &serde_json::Value) -> Option<DirectoryRequest> {
     let request: DirectoryRequest =
         serde_json::from_value(serde_json::Value::Object(request.clone())).ok()?;
     // Report destinations are native-only, never a renderer path capability.
-    (request.purpose != DirectoryPurpose::ImportReport).then_some(request)
+    (!matches!(request.purpose, DirectoryPurpose::ImportReport | DirectoryPurpose::ViewerExport)).then_some(request)
 }
 
 pub fn valid_owner(owner: isize) -> bool {
@@ -559,6 +560,32 @@ impl DirectoryPickerManager {
         backend: impl FnOnce(&Reservation, &AuthorityCheck) -> DirectoryOutcome + Send + 'static,
     ) -> DirectoryOutcome {
         self.run_managed_worker(authority, backend)
+    }
+
+    #[cfg(windows)]
+    pub(crate) fn viewer_destination<T: Send + 'static>(
+        &self, owner: isize,
+        authority: impl Fn() -> bool + Send + Sync + 'static,
+        consume: impl FnOnce(PathBuf, AuthorityCheck) -> Result<T, PickerFailure> + Send + 'static,
+    ) -> Result<T, PickerFailure> {
+        #[cfg(feature = "integration-harness")]
+        let fixture_root = self.fixture_root.clone();
+        self.run_managed_worker(Arc::new(authority), move |reservation, authority| {
+            let request = DirectoryRequest { purpose: DirectoryPurpose::ViewerExport, previous_location: None };
+            let selected = native::show(owner, &request, &reservation.pending, authority,
+                #[cfg(feature = "integration-harness")] fixture_root.as_deref());
+            let path = match selected {
+                DirectoryOutcome::Selected { path } => PathBuf::from(path),
+                DirectoryOutcome::Cancelled => return Err(PickerFailure::Cancelled),
+                DirectoryOutcome::Unavailable => return Err(PickerFailure::Unavailable),
+                DirectoryOutcome::Failed => return Err(PickerFailure::Failed),
+            };
+            let pending = Arc::clone(&reservation.pending);
+            let authority = Arc::clone(authority);
+            let live: AuthorityCheck = Arc::new(move || !pending.cancelled.load(Ordering::Acquire) && authority_valid(&authority));
+            if !authority_valid(&live) { return Err(PickerFailure::Cancelled); }
+            consume(path, live)
+        })
     }
 
     #[cfg(windows)]
@@ -1187,6 +1214,8 @@ mod native {
                             .SetTitle(w!("Choose an existing Research Observatory project"))?,
                         Some(DirectoryPurpose::ImportReport) => dialog
                             .SetTitle(w!("Choose where to save the import diagnostic report"))?,
+                        Some(DirectoryPurpose::ViewerExport) => dialog
+                            .SetTitle(w!("Choose where to save the Reader output"))?,
                         None if document => dialog.SetTitle(w!("Choose a document to attach"))?,
                         None => dialog
                             .SetTitle(w!("Choose a bibliography or reference file to import"))?,

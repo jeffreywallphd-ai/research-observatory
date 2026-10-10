@@ -21,6 +21,7 @@ interface Props {
   readonly onRemember?: ((link: ViewerDeepLink) => boolean) | undefined;
   readonly onReturn: () => void;
   readonly onFailure: (code: string) => void;
+  readonly onActionAnchor?: (anchorId: string) => void;
 }
 interface HeldContext { readonly number: number; readonly value: SourceAnchorResolution; readonly release: () => void }
 
@@ -144,6 +145,8 @@ export function ViewerAnchorContexts(props: Props): ReactNode {
         {region ? <Button onClick={() => props.onPage(region.pageNumber)}>Go to anchor {number} on page {region.pageNumber}</Button> : null}
         <p>{coordinates ? "Numbered page region available; select its equivalent anchor control for context." : "Structural/text fallback: page geometry is unavailable here or does not match the rendered page. No page location was invented."}</p>
         <StatusBadge tone="info">Unverified extraction</StatusBadge>
+        {value.target && value.status !== "missing" && value.status !== "broken" && props.onActionAnchor
+          ? <Button onClick={() => props.onActionAnchor?.(value.anchorId)}>Use anchor {number} for source actions</Button> : null}
         {coordinates && props.overlay ? createPortal(<svg className="viewer-anchor-marker" aria-hidden="true" viewBox="0 0 100 100" preserveAspectRatio="none">
           <rect x={coordinates.x} y={coordinates.y} width={coordinates.width} height={coordinates.height} />
           <text x={coordinates.x} y={Math.max(3, coordinates.y)}>{number}</text></svg>, props.overlay) : null}

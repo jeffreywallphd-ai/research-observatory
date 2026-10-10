@@ -2412,6 +2412,7 @@ dependencies = [
  "windows",
  "windows-core 0.61.2",
  "windows-future",
+ "windows-numerics",
  "windows-sys 0.61.2",
 ]
 

@@ -14,7 +14,7 @@ use std::{
     time::{Duration, Instant},
 };
 use webview2_com::Microsoft::Web::WebView2::Win32::{
-    ICoreWebView2Controller, ICoreWebView2Controller4,
+    ICoreWebView2Controller, ICoreWebView2Controller4, ICoreWebView2Settings3,
 };
 #[cfg(feature = "integration-harness")]
 use windows::Win32::Graphics::Gdi::ClientToScreen;
@@ -1190,6 +1190,18 @@ fn install_internal(
                     .map_err(|_| "RO-DOCUMENT-EXTERNAL-DROP-CONTROL-UNAVAILABLE")?;
                 unsafe { controller4.SetAllowExternalDrop(false) }
                     .map_err(|_| "RO-DOCUMENT-EXTERNAL-DROP-CONTROL-UNAVAILABLE")?;
+                // Remove stock browser print/save/context-menu transfers before
+                // the protected window is shown. Reader actions are Native-owned.
+                let core = unsafe { controller.CoreWebView2() }
+                    .map_err(|_| "RO-VIEWER-BROWSER-CONTROLS-UNAVAILABLE")?;
+                let settings = unsafe { core.Settings() }
+                    .map_err(|_| "RO-VIEWER-BROWSER-CONTROLS-UNAVAILABLE")?;
+                unsafe { settings.SetAreDefaultContextMenusEnabled(false) }
+                    .map_err(|_| "RO-VIEWER-BROWSER-CONTROLS-UNAVAILABLE")?;
+                let settings3 = settings.cast::<ICoreWebView2Settings3>()
+                    .map_err(|_| "RO-VIEWER-BROWSER-CONTROLS-UNAVAILABLE")?;
+                unsafe { settings3.SetAreBrowserAcceleratorKeysEnabled(false) }
+                    .map_err(|_| "RO-VIEWER-BROWSER-CONTROLS-UNAVAILABLE")?;
                 let nodes = live_nodes(parent)?;
                 #[cfg(feature = "integration-harness")]
                 {

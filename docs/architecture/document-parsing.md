@@ -301,3 +301,38 @@ or filesystem path authority. This task delivers protected Core persistence;
 anchor interactions and resolution follow in S03.T02/T03, and viewer delivery
 follows in S04. Synthetic parser tests and source-level Core execution do not
 qualify a newly packaged desktop installation.
+
+## Rights-aware Reader actions (CAP-05.S04.T03)
+
+Reader copy, print, quotation export, annotation export and external original
+opening use fixed action-specific purposes against the exact retained copy.
+Permission review is a distinct, explicit human operation under current Intent,
+privacy and source authority. It preserves unrelated assertions and cannot
+override denial, expiry or dispute. Review replay returns the original receipt;
+review never executes an output action. The separate action rechecks source,
+anchor, policy, human and session authority after materialization and destination
+selection. Direct browser transfer is disabled and audited without selected text.
+
+Native receives private, bounded Core payloads; the renderer receives dispositions
+and opaque identifiers. Quotations contain only the exact saved selection (at
+most 2048 Unicode codepoints), source/revision/anchor/citation identifiers and
+permission basis. This is a technical cap, not a licensing allowance. Annotation
+output retains geometry and uncertainty without quotation or surrounding text.
+All extraction remains unverified.
+
+Explicit local deliverables are create-new, exclusive and delete-pending until
+digest verification and fresh authority permit publication. Local Microsoft
+Print to PDF receives a bounded held stream rather than a destination path;
+other printer queues are unavailable. Print setup and rendering hold no lifecycle
+mutex. The quotation PDF uses the application's layout. Cancellation keeps actual
+callback ownership until closure; sealed streams deny late writes. The clipboard
+adapter excludes history/cloud/monitor processing and never reads or restores the
+researcher's clipboard. External opening requires a held Native-selected local
+executable and a fully verified original deliverable. Authorized plaintext lies
+outside project protection, as disclosed before the action. An uncertain result
+after publication reports possible partial output rather than claiming rollback.
+
+The action lane permits one issued operation and retains unknown Core/Native
+ownership until an exact terminal acknowledgement or observed process exit.
+This is product behavior, not an automation-framework change. Development checks
+alone do not qualify the task, minimum hardware, installation or Wave release.

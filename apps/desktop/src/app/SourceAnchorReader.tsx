@@ -3,6 +3,7 @@ import { Button, Notification, Panel, StatusBadge } from "@research-observatory/
 import { newAttachmentId as newCommandId } from "./documentAttachment";
 import { codepointRangeToUtf16, decodeReaderOutline, decodeSourceAnchor, type AnchorSelection, type ReaderOutlineNode, type SourceAnchor, type SourceIdentity } from "./sourceAnchors";
 import { nativeSourceAnchorPort, type SourceAnchorPort } from "./sourceAnchorsNative";
+import { nativeReaderActionPort, type ReaderActionPort, type ReaderActionRequest } from "./viewerActions";
 
 function sameSource(a: SourceIdentity, b: SourceIdentity): boolean {
   return (["projectId", "attachmentId", "documentId", "documentRevisionId", "candidateId", "sourceAssertionRevisionId", "workId", "workRevisionId", "versionId", "versionRevisionId", "objectSha256", "byteLength", "format"] as const)
@@ -36,6 +37,7 @@ interface Props {
   readonly announce: (message: string) => void;
   readonly onReturn: () => void;
   readonly port?: SourceAnchorPort;
+  readonly actionPort?: ReaderActionPort;
 }
 
 // CAP-05.S04 owns activation of the protected reader route and source-byte viewer.
@@ -49,7 +51,12 @@ export function SourceAnchorReader(props: Props): ReactNode {
   return <ReaderSession key={key} {...props} />;
 }
 
-function ReaderSession({ source, revisionId, announce, onReturn, port = nativeSourceAnchorPort }: Props): ReactNode {
+function ReaderSession({ source, revisionId, announce, onReturn, port = nativeSourceAnchorPort, actionPort = nativeReaderActionPort }: Props): ReactNode {
+  const directTransfer = useRef<ReaderActionRequest | null>(null);
+  useEffect(() => () => {
+    const transfer = directTransfer.current;
+    if (transfer) void actionPort.cancel(transfer.projectId, transfer.operationId);
+  }, [actionPort]);
   const [nodes, setNodes] = useState<readonly ReaderOutlineNode[]>([]);
   const [nextNode, setNextNode] = useState<string | null>(null);
   const [anchors, setAnchors] = useState<readonly string[]>([]);
@@ -137,13 +144,23 @@ function ReaderSession({ source, revisionId, announce, onReturn, port = nativeSo
     setBusy(false);
   }
 
-  const blockedTransfer = (event: { preventDefault(): void }): void => {
-    event.preventDefault(); notify("Copy, print and export are unavailable in this text inspection view.");
+  const blockedTransfer = (event: { preventDefault(): void; key?: string }): void => {
+    event.preventDefault(); notify("Direct transfer is disabled. Return to the selected source and use the Reader's permitted source actions.");
+    if (directTransfer.current) return;
+    const request: ReaderActionRequest = { schemaVersion: "1.0", projectId: source.projectId,
+      selector: { attachmentId: source.attachmentId, documentRevisionId: source.documentRevisionId, normalizedRevisionId: revisionId },
+      operationId: newCommandId(), stage: "denied-attempt", action: event.key?.toLowerCase() === "p" ? "print-quotation" : "copy-quotation",
+      anchorId: null, expectedPolicyRevisionId: null, commandId: null, confirmed: false };
+    directTransfer.current = request;
+    void actionPort.request(request).then(() => actionPort.cancel(request.projectId, request.operationId),
+      () => actionPort.cancel(request.projectId, request.operationId)).then(drained => {
+      if (drained && directTransfer.current === request) directTransfer.current = null;
+    });
   };
   return <section className="ro-stack source-anchor-reader" aria-label="Document Reader" aria-busy={busy}
-    onCopy={blockedTransfer} onCut={blockedTransfer} onContextMenu={blockedTransfer}
+    onCopy={blockedTransfer} onCut={blockedTransfer} onContextMenu={blockedTransfer} onDragStart={blockedTransfer}
     onKeyDown={(event) => {
-      if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "p") blockedTransfer(event);
+      if ((event.ctrlKey || event.metaKey) && ["p", "s"].includes(event.key.toLowerCase())) blockedTransfer(event);
       if (event.key === "Escape") { event.preventDefault(); onReturn(); }
     }}>
     <div className="ro-action-row" id="reader-source-context"><Button onClick={onReturn}>Return to selected Work/version</Button>
