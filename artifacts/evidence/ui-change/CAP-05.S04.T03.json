@@ -8,15 +8,15 @@
   "changedFiles": [
     "apps/desktop/src/app/DocumentViewerWorkspace.tsx",
     "apps/desktop/src/app/SourceAnchorReader.tsx",
-    "apps/desktop/src/app/ViewerAnchorContexts.tsx",
     "apps/desktop/src/app/ViewerActionsPane.tsx",
+    "apps/desktop/src/app/ViewerAnchorContexts.tsx",
     "apps/desktop/src/app/viewerActions.ts"
   ],
   "reference": {
     "referenceId": "RO-UI-ACADEMIC-MINIMAL-1.9",
     "version": "1.9",
     "packageSha256": "24b8d62356863980ae9a13db7d6a06b04b76c60e2f1920d2e888cadecfb24c4b",
-    "approvalCommit": "556369f77186324194789ee26eb0baf00fd936a8",
+    "approvalCommit": "d4691f716f839f4aac5bb50563b56ac863b32685",
     "approvedBy": "human:repository-owner",
     "previousReferenceId": "RO-UI-ACADEMIC-MINIMAL-1.8"
   },
