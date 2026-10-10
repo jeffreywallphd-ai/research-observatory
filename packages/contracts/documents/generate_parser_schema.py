@@ -13,6 +13,8 @@ from pydantic import TypeAdapter
 ROOT = Path(__file__).resolve().parents[3]
 sys.path.insert(0, str(ROOT / "services/core-api/src"))
 
+from research_observatory_core.citation_reader import CitationReaderNotice, CitationReaderPage  # noqa: E402
+from research_observatory_core.document_citations import CitationCollection, CitationEnrichmentCommand  # noqa: E402
 from research_observatory_core.document_references import ReferenceCollection, ReferenceEnrichmentCommand  # noqa: E402
 from research_observatory_core.document_revisions import (  # noqa: E402
     AcceptedDocumentRevision,
@@ -42,6 +44,10 @@ from research_observatory_core.ports.viewer_actions import (  # noqa: E402
 from research_observatory_core.reference_reader import ReferenceReaderNotice, ReferenceReaderPage  # noqa: E402
 
 OUTPUTS: dict[str, TypeAdapter[Any]] = {
+    "citation-collection.v1.schema.json": TypeAdapter(CitationCollection),
+    "citation-enrichment-command.v1.schema.json": TypeAdapter(CitationEnrichmentCommand),
+    "citation-reader-page.v1.schema.json": TypeAdapter(CitationReaderPage),
+    "citation-reader-notice.v1.schema.json": TypeAdapter(CitationReaderNotice),
     "reference-collection.v1.schema.json": TypeAdapter(ReferenceCollection),
     "reference-enrichment-command.v1.schema.json": TypeAdapter(ReferenceEnrichmentCommand),
     "reference-reader-page.v1.schema.json": TypeAdapter(ReferenceReaderPage),
@@ -69,6 +75,7 @@ OUTPUTS: dict[str, TypeAdapter[Any]] = {
 }
 VIEWER_SCHEMAS = {name for name in OUTPUTS if name.startswith("viewer-")}
 REFERENCE_SCHEMAS = {name for name in OUTPUTS if name.startswith("reference-")}
+CITATION_SCHEMAS = {name for name in OUTPUTS if name.startswith("citation-")}
 REVISION_SCHEMAS = (
     set(OUTPUTS)
     - {
@@ -80,7 +87,23 @@ REVISION_SCHEMAS = (
     }
     - VIEWER_SCHEMAS
     - REFERENCE_SCHEMAS
+    - CITATION_SCHEMAS
 )
+CITATION_RULES = [
+    "immutable-encrypted-canonical-collection-exact-reference-collection-id-revision-and-protected-payload-digest",
+    "current-native-human-project-intent-privacy-source-inspect-derive-and-canonical-target-authority-through-delivery",
+    "exact-accepted-revision-node-projection-and-codepoint-raw-contributors-no-normalized-prefix-guessing",
+    "native-per-member-target-tokens-distinguish-unique-groups-partial-missing-and-duplicate-ids",
+    "numbering-requires-reported-label-no-reference-order-or-footnote-math-superscript-target-inference",
+    "author-year-and-sentence-patterns-explicitly-inferred-no-scholarly-support-or-verification",
+    "cross-element-normalization-boundary-preserves-exact-child-anchor-and-unknown-ancestor-highlight",
+    "inferred-markers-use-collection-revision-order-and-source-selectors-not-new-canonical-element-identities",
+    "expected-reference-and-citation-head-cas-exact-retry-full-inputs-and-atomic-provenance-outbox-stale-propagation",
+    "accepted-v1-original-and-literal-v28-remain-unchanged-no-model-or-network-operation",
+    "bounded-1000-markers-128-target-members-16-mib-collection-five-second-cooperative-operation",
+    "one-64-kib-reader-context-256-marker-1024-context-codepoints-four-groups-four-reference-previews-explicit-counts",
+    "opaque-rights-fenced-unavailable-head-is-not-permission-to-display-prior-protected-context",
+]
 REFERENCE_RULES = [
     "separate-encrypted-derived-collection-preserves-immutable-accepted-v1-document-and-original-provenance",
     "current-native-human-project-intent-privacy-inspect-and-derive-authority-through-publication-and-delivery",
@@ -176,6 +199,8 @@ def schema(name: str) -> dict[str, object]:
             "no-later-revision-substitution-or-scholarly-verification-from-navigation",
         ]
         if name == "viewer-deep-link.v1.schema.json"
+        else CITATION_RULES
+        if name in CITATION_SCHEMAS
         else REFERENCE_RULES
         if name in REFERENCE_SCHEMAS
         else ACTION_RULES

@@ -23840,7 +23840,7 @@
             {
               "task_id": "CAP-05.S05.T02",
               "title": "Extract in-text citation contexts and targets",
-              "status": "READY",
+              "status": "IN_PROGRESS",
               "mode": "latest-review-only",
               "latest_review": {
                 "reviewer": null,
@@ -23887,18 +23887,21 @@
             {
               "task_id": "CAP-05.S05.T02",
               "title": "Extract in-text citation contexts and targets",
-              "status": "READY",
+              "status": "IN_PROGRESS",
               "page": "CAP-05/CAP-05.S05.T02.html",
               "dependencies": [
                 "CAP-05.S05.T01"
               ],
               "claim": {
-                "owner": null,
-                "branch": null,
-                "base_sha": null
+                "owner": "codex-w2-implementation",
+                "branch": "codex/w2-implementation",
+                "base_sha": "a48da60f0a59cca45dbbdac4c7a72e3986716170"
               },
               "plan_section_sha256": "3c7f6b0c692829fbcd223a3bc5a356fddb0beef49866a3d81026dfb8809dc8ae",
-              "worksheet": null
+              "worksheet": {
+                "path": "artifacts/evidence/CAP-05.S05.T02.task-start.md",
+                "sha256": "b7007d7a801979c503619fedec754c7b3e3c4dd485a5ab63009162d2b6d321f0"
+              }
             },
             {
               "task_id": "CAP-05.S05.T03",

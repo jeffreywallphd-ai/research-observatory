@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: e295c42702e8321ee9fa27ed1105434147ec1f11cd6013521335430f374ce530
+source_sha256: 76b33a64617f548276e0a1bf1e5f95f53ab6e912c6472574f306b9d26169458a
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -12021,13 +12021,13 @@ Original tasks and approvals remain unchanged.
 
 #### - [ ] CAP-05.S05.T02 - Extract in-text citation contexts and targets
 
-**Status / priority / estimate / risk:** `READY` / `P1` / `L` / `medium`
+**Status / priority / estimate / risk:** `IN_PROGRESS` / `P1` / `L` / `medium`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
 **Dependencies:** `CAP-05.S05.T01`
 
-**Owner / review:** - / - (`-`)
+**Owner / review:** codex-w2-implementation / - (`-`)
 
 **Objective:** Citation markers linked to reference entries with sentence/paragraph context, location, and multi-target handling.
 

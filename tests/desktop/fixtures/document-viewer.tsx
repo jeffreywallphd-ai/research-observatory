@@ -10,6 +10,8 @@ import type { ViewerSelector } from "../../../apps/desktop/src/app/documentViewe
 import type { ReaderAction, ReaderActionPort, ReaderActionRequest } from "../../../apps/desktop/src/app/viewerActions";
 import { referenceReaderFixture } from "./reference-reader";
 import type { DocumentReferencePort } from "../../../apps/desktop/src/app/documentReferences";
+import { citationReaderFixture } from "./citation-reader";
+import type { DocumentCitationPort } from "../../../apps/desktop/src/app/documentCitations";
 import "../../../packages/ui-tokens/index.css";
 import "../../../packages/ui-components/src/styles.css";
 import "../../../apps/desktop/src/app.css";
@@ -22,6 +24,8 @@ const selection = { projectId: source.projectId, sourceAssertionRevisionId: sour
 const handoff = { attachmentId: source.attachmentId, documentRevisionId: source.documentRevisionId, selection };
 const root = createRoot(document.getElementById("root")!);
 const state = {
+  citationCalls: [] as object[], textCalls: [] as object[], citationExists: false, staleCitations: false,
+  wrongCitationSource: false, holdCitation: false, unknownCitation: false, releaseCitation: null as (() => void) | null,
   referenceCalls: [] as object[], referenceExists: false, denyReferences: false, wrongReferenceSource: false,
   referenceMode: "unresolved" as "unresolved" | "exact-linked" | "candidate", holdReference: false,
   releaseReference: null as (() => void) | null, unknownReference: false, staleReferences: false,
@@ -43,7 +47,37 @@ const state = {
       deepLink={state.linkMode ? { schemaVersion: "1.0", projectId: source.projectId, selector: { attachmentId: source.attachmentId,
         documentRevisionId: source.documentRevisionId, normalizedRevisionId: state.linkRevision }, anchorIds: [fixture.anchorId, secondAnchorId] } : null}
       onRememberLink={(link) => { state.savedLinks.push(link); return true; }}
-      port={port} anchors={anchors} anchorPort={anchorPort} outlinePort={outlinePort} textPort={textPort} pdfFactory={pdfFactory} actionPort={actionPort} referencePort={referencePort} />);
+      port={port} anchors={anchors} anchorPort={anchorPort} outlinePort={outlinePort} textPort={textPort} pdfFactory={pdfFactory} actionPort={actionPort} referencePort={referencePort} citationPort={citationPort} />);
+  },
+};
+function citationPage(after: number | null): object {
+  const value = citationReaderFixture() as { entries: Record<string, unknown>[]; collectionId: string; collectionRevisionId: string };
+  const entry = value.entries[0]!;
+  entry["anchor"] = { ...(entry["anchor"] as object), source };
+  entry["order"] = after === null ? 0 : 1;
+  const part = entry["paragraph"] as Record<string, unknown>;
+  part["textPreview"] = "Synthetic inert <script>window.citationExecuted=true</script> context 📚";
+  part["textLength"] = Array.from(part["textPreview"] as string).length;
+  part["normalizedRange"] = { start: 0, end: part["textLength"] };
+  return { ...value, total: 2, afterOrder: after, nextAfterOrder: after === null ? 0 : null,
+    source: state.wrongCitationSource ? { ...source, workRevisionId: source.attachmentId } : source };
+}
+const citationPort: DocumentCitationPort = {
+  read: async (_project, selectedRevision, expected, after) => {
+    state.citationCalls.push({ kind: "read", selectedRevision, expected, after });
+    if (state.holdCitation) await new Promise<void>(resolve => { state.releaseCitation = resolve; });
+    if (state.unknownCitation) throw new Error("synthetic-unknown-issued-citation");
+    if (state.staleCitations) {
+      const v = citationReaderFixture() as { collectionId: string; collectionRevisionId: string };
+      return { schemaVersion: "1.0", projectId: source.projectId, source, documentRevisionId: revision,
+        collectionId: v.collectionId, collectionRevisionId: v.collectionRevisionId,
+        status: "unavailable", reasonCode: "citations-unavailable", scholarlyVerification: "unverified" };
+    }
+    return state.citationExists ? citationPage(after) : null;
+  },
+  enrich: async (_project, selectedRevision, command, reference, expected) => {
+    state.citationCalls.push({ kind: "enrich", selectedRevision, command, reference, expected });
+    state.citationExists = true; return citationPage(null);
   },
 };
 const referencePort: DocumentReferencePort = {
@@ -150,6 +184,7 @@ const anchorPort = { resolve: async (_project: string, selector: ViewerSelector,
     } : {}), revisionId: resolvedRevision, source: currentSource, pageRegion, coordinatesState: "available" as const }, scholarlyVerification: "unverified" as const };
 } };
 const textPort = { text: async (_project: string, _selector: object, _node: string, offset: number) => {
+  state.textCalls.push({ node: _node, offset });
   if (state.holdText) await new Promise<void>((resolve) => { state.releaseText = resolve; });
   if (state.limitText) throw new Error("viewer-resource-limit");
   return state.denyText ? null : { metadata: { source, normalizedRevisionId: revision }, nodeId, nodeKind: "paragraph" as const,

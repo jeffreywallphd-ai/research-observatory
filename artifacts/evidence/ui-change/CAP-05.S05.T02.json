@@ -1,0 +1,29 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "ui-change-evidence",
+  "taskId": "CAP-05.S05.T02",
+  "changeKind": "approved-reference-implementation",
+  "contractPath": "artifacts/evidence/ui-change/CAP-05.S05.T02.json",
+  "implementationAgent": "agent:codex-w2-implementation",
+  "changedFiles": [
+    "apps/desktop/src/app/DocumentViewerWorkspace.tsx",
+    "apps/desktop/src/app/ViewerCitationsPane.tsx",
+    "apps/desktop/src/app/documentCitations.ts"
+  ],
+  "reference": {
+    "referenceId": "RO-UI-ACADEMIC-MINIMAL-1.9",
+    "version": "1.9",
+    "packageSha256": "24b8d62356863980ae9a13db7d6a06b04b76c60e2f1920d2e888cadecfb24c4b",
+    "approvalCommit": "d4691f716f839f4aac5bb50563b56ac863b32685",
+    "approvedBy": "human:repository-owner",
+    "previousReferenceId": "RO-UI-ACADEMIC-MINIMAL-1.8"
+  },
+  "implementationScope": "Approved Document Reader citation/source inspection. Fixed opaque commands expose one bounded inert context with exact accepted source identity, per-member target uncertainty, extracted/inferred status and explicit truncation. Preserve current authority, resource admission, explicit extraction/refresh, exact source/reference jumps, selected-work/version return and lock/late-response clearing. No new route/reference, model, network destination, scholarly verification, hardware qualification or automation framework work. Commit-bound proof and independent disposition remain required.",
+  "focusedEvidence": [
+    {
+      "command": "python -B -m unittest selected citation cases in tests.desktop.test_document_viewer_interactions",
+      "result": "passed",
+      "scope": "Four authored mounted Reader journeys: extraction, exact source offsets, reference inspection, return, pinned paging, stale or substituted targets, lock/late response and unknown issued IPC admission. Two synchronization failures are retained in development-02; their focused replay passed in development-03. Synthetic ports establish component behavior, not actual Native dispatch or committed-candidate qualification."
+    }
+  ]
+}

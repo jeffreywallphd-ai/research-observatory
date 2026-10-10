@@ -69,3 +69,8 @@ and content-free unavailable/resource-limit status, allowing an explicit CAS
 refresh without exposing a stale collection. Reader admission includes these
 artifact, catalog and publication allocations. Unknown issued Native failures
 retain admission until physical settlement; lock/close clears visible previews.
+
+[Citation contexts](citation-contexts.md) describes `citation-collection.v1`,
+the opaque enrichment command and bounded Reader page/notice schemas. Contexts
+bind exact current references and accepted source locations; reported,
+inferred, ambiguous and unresolved observations remain distinct and unverified.

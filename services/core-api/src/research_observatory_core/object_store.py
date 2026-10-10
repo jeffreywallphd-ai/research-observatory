@@ -3397,6 +3397,7 @@ class _LocalObjectStore:
             "application/vnd.research-observatory.document-revision+json",
             "application/vnd.research-observatory.source-anchor+json",
             "application/vnd.research-observatory.document-references+json",
+            "application/vnd.research-observatory.document-citations+json",
             "application/vnd.research-observatory.docling-output+json",
             "application/vnd.research-observatory.native-structure+json",
             "application/vnd.research-observatory.text-parser-output+json",

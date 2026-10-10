@@ -9,6 +9,7 @@ from pydantic import Field
 
 from .anchors.contracts import AnchorSelection
 from .document_attachment_api import BoundedDocumentJsonRoute, DocumentSession
+from .document_citations import CitationEnrichmentCommand
 from .document_references import ReferenceEnrichmentCommand
 from .document_revisions import DocumentRevisionAcceptance, DocumentRevisionProblem
 from .ingestion.import_drafts import Identity
@@ -83,6 +84,16 @@ class DocumentReferenceReadCommand(DocumentSession):
     after_order: Annotated[int, Field(strict=True, ge=0, le=999)] | None = None
 
 
+class DocumentCitationEnrichCommand(DocumentSession):
+    enrichment: CitationEnrichmentCommand
+
+
+class DocumentCitationReadCommand(DocumentSession):
+    revision_id: Identity
+    expected_collection_revision_id: Identity | None = None
+    after_order: Annotated[int, Field(strict=True, ge=0, le=999)] | None = None
+
+
 def register_document_revision_routes(app: FastAPI, runtime: Callable):
     router = APIRouter(
         prefix="/native/document-revisions", route_class=BoundedDocumentJsonRoute, include_in_schema=False
@@ -106,6 +117,23 @@ def register_document_revision_routes(app: FastAPI, runtime: Callable):
                     remediation="Review the current source and parse status before confirming another action.",
                 )
             ) from None
+
+    @router.post("/citations-enrich")
+    def citations_enrich(request: Request, command: DocumentCitationEnrichCommand):
+        return run(
+            request,
+            lambda service: service.citation_enrich(command, trace_id=request.state.trace_id).model_dump(
+                mode="json", by_alias=True
+            ),
+        )
+
+    @router.post("/citations-read")
+    def citations_read(request: Request, command: DocumentCitationReadCommand):
+        def current(service):
+            result = service.citations_read(command, trace_id=request.state.trace_id)
+            return None if result is None else result.model_dump(mode="json", by_alias=True)
+
+        return run(request, current)
 
     @router.post("/parse")
     def parse(request: Request, command: DocumentParseCommand):

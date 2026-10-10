@@ -272,7 +272,7 @@ def publish_derive(runtime, root, project, session, candidate, value):
     runtime._action(str(root), project, session, "1" * 32, publish)
 
 
-def seed_revision(app, root, project, session, attachment, raw, *, expected=None, reference=False):
+def seed_revision(app, root, project, session, attachment, raw, *, expected=None, reference=False, change=None):
     """Retain and human-accept authored IR through the real repository APIs."""
     from research_observatory_core.document_attachment_repository import LocalParserArtifactStager
     from research_observatory_core.document_parse_workflow import DocumentParseInput
@@ -351,6 +351,8 @@ def seed_revision(app, root, project, session, attachment, raw, *, expected=None
                 "identifiers": [{"scheme": "doi", "observed": "10.99999/document-drop"}],
             }
         ]
+    if change is not None:
+        change(wire)
     retained, _ = repository.retain(
         claim,
         request,

@@ -1,0 +1,55 @@
+{
+  "$defs": {
+    "Identity": {
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "commandId": {
+      "$ref": "#/$defs/Identity"
+    },
+    "revisionId": {
+      "$ref": "#/$defs/Identity"
+    },
+    "referenceCollectionRevisionId": {
+      "$ref": "#/$defs/Identity"
+    },
+    "expectedCollectionRevisionId": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Identity"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    }
+  },
+  "required": [
+    "commandId",
+    "revisionId",
+    "referenceCollectionRevisionId",
+    "expectedCollectionRevisionId"
+  ],
+  "title": "CitationEnrichmentCommand",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://research-observatory.local/contracts/documents/citation-enrichment-command.v1.schema.json",
+  "x-research-observatory-semanticRules": [
+    "immutable-encrypted-canonical-collection-exact-reference-collection-id-revision-and-protected-payload-digest",
+    "current-native-human-project-intent-privacy-source-inspect-derive-and-canonical-target-authority-through-delivery",
+    "exact-accepted-revision-node-projection-and-codepoint-raw-contributors-no-normalized-prefix-guessing",
+    "native-per-member-target-tokens-distinguish-unique-groups-partial-missing-and-duplicate-ids",
+    "numbering-requires-reported-label-no-reference-order-or-footnote-math-superscript-target-inference",
+    "author-year-and-sentence-patterns-explicitly-inferred-no-scholarly-support-or-verification",
+    "cross-element-normalization-boundary-preserves-exact-child-anchor-and-unknown-ancestor-highlight",
+    "inferred-markers-use-collection-revision-order-and-source-selectors-not-new-canonical-element-identities",
+    "expected-reference-and-citation-head-cas-exact-retry-full-inputs-and-atomic-provenance-outbox-stale-propagation",
+    "accepted-v1-original-and-literal-v28-remain-unchanged-no-model-or-network-operation",
+    "bounded-1000-markers-128-target-members-16-mib-collection-five-second-cooperative-operation",
+    "one-64-kib-reader-context-256-marker-1024-context-codepoints-four-groups-four-reference-previews-explicit-counts",
+    "opaque-rights-fenced-unavailable-head-is-not-permission-to-display-prior-protected-context"
+  ]
+}

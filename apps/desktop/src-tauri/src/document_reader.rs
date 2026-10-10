@@ -49,6 +49,30 @@ impl ReferenceEnrichRequest {
 
 #[derive(Deserialize)]
 #[serde(rename_all = "camelCase", deny_unknown_fields)]
+pub(crate) struct CitationEnrichRequest {
+    schema_version: String,
+    project_id: String,
+    command_id: String,
+    revision_id: String,
+    reference_collection_revision_id: String,
+    expected_collection_revision_id: Option<String>,
+}
+
+impl CitationEnrichRequest {
+    fn valid(&self) -> bool {
+        project(&self.schema_version, &self.project_id)
+            && uuid(&self.command_id)
+            && uuid(&self.revision_id)
+            && uuid(&self.reference_collection_revision_id)
+            && self
+                .expected_collection_revision_id
+                .as_ref()
+                .is_none_or(|id| uuid(id))
+    }
+}
+
+#[derive(Deserialize)]
+#[serde(rename_all = "camelCase", deny_unknown_fields)]
 pub(crate) struct ReferenceReadRequest {
     schema_version: String,
     project_id: String,
@@ -230,6 +254,44 @@ pub(crate) async fn document_reader_references_read(
 }
 
 #[tauri::command]
+pub(crate) async fn document_reader_citations_enrich(
+    window: tauri::WebviewWindow,
+    supervisor: State<'_, RuntimeSupervisor>,
+    lock: State<'_, ApplicationLockManager>,
+    request: CitationEnrichRequest,
+) -> Result<Option<Value>, ()> {
+    if !request.valid() {
+        return Ok(None);
+    }
+    self::request(
+        window,
+        supervisor,
+        lock,
+        request.project_id,
+        NativeDocumentAction::CitationsEnrich,
+        json!({"enrichment":{"commandId":request.command_id,"revisionId":request.revision_id,
+            "referenceCollectionRevisionId":request.reference_collection_revision_id,
+            "expectedCollectionRevisionId":request.expected_collection_revision_id}}),
+    )
+    .await
+}
+
+#[tauri::command]
+pub(crate) async fn document_reader_citations_read(
+    window: tauri::WebviewWindow,
+    supervisor: State<'_, RuntimeSupervisor>,
+    lock: State<'_, ApplicationLockManager>,
+    request: ReferenceReadRequest,
+) -> Result<Option<Value>, ()> {
+    if !request.valid() {
+        return Ok(None);
+    }
+    self::request(window, supervisor, lock, request.project_id, NativeDocumentAction::CitationsRead,
+        json!({"revisionId":request.revision_id,"expectedCollectionRevisionId":request.expected_collection_revision_id,
+               "afterOrder":request.after_order})).await
+}
+
+#[tauri::command]
 pub(crate) async fn document_reader_revisions(
     window: tauri::WebviewWindow,
     supervisor: State<'_, RuntimeSupervisor>,
@@ -402,6 +464,40 @@ pub(crate) async fn document_reader_citation_links(
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn citation_enrichment_requires_exact_reference_head_and_no_renderer_authority() {
+        let id = "00000000-0000-7000-8000-000000000001";
+        let enrich = json!({"schemaVersion":"1.0","projectId":id,"revisionId":id,
+            "commandId":id,"referenceCollectionRevisionId":id,"expectedCollectionRevisionId":null});
+        assert!(
+            serde_json::from_value::<CitationEnrichRequest>(enrich.clone())
+                .unwrap()
+                .valid()
+        );
+        for key in [
+            "root",
+            "actorId",
+            "sessionId",
+            "marker",
+            "context",
+            "targetWorkId",
+            "url",
+            "limit",
+        ] {
+            let mut altered = enrich.clone();
+            altered[key] = json!("untrusted");
+            assert!(serde_json::from_value::<CitationEnrichRequest>(altered).is_err());
+        }
+        let mut altered = enrich.clone();
+        altered["referenceCollectionRevisionId"] = Value::Null;
+        assert!(serde_json::from_value::<CitationEnrichRequest>(altered).is_err());
+        let mut altered = enrich;
+        altered["referenceCollectionRevisionId"] = json!("untrusted");
+        assert!(!serde_json::from_value::<CitationEnrichRequest>(altered)
+            .unwrap()
+            .valid());
+    }
 
     #[test]
     fn resolution_and_citation_links_accept_only_opaque_exact_identifiers() {

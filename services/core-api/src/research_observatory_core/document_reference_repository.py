@@ -292,7 +292,16 @@ class LocalDocumentReferenceRepository:
                 targets.append((*prefix, ordinal, work.work_id, work.revision_id, relation, score))
         return elements, identifiers, targets
 
-    def _validate_inputs(self, connection, aggregates, collection, expected):
+    def _validate_inputs(
+        self,
+        connection,
+        aggregates,
+        collection,
+        expected,
+        *,
+        payload_configuration="reference-collection",
+        extra_parameter=("reference-ranking", "1.0.0", DEFAULT_CONFIG.fingerprint),
+    ):
         # Canonical manifests preserve all material leaves beyond 64 inputs.
         leaves: set[str] = set()
         visited: set[str] = set()
@@ -347,10 +356,13 @@ class LocalDocumentReferenceRepository:
                 # _append's payload fingerprint uses the actual protected UTF-8
                 # object bytes, whose digest is independently authenticated above.
                 root = aggregates.get_revision(revision_id)
-                if params.get("scholarly.reference-collection") != (
+                if params.get("scholarly." + payload_configuration) != (
                     "1.0.0",
                     "sha256:" + root.object_sha256,
-                ) or params.get("scholarly.reference-ranking") != ("1.0.0", "sha256:" + DEFAULT_CONFIG.fingerprint):
+                ) or params.get("scholarly." + extra_parameter[0]) != (
+                    extra_parameter[1],
+                    "sha256:" + extra_parameter[2],
+                ):
                     raise ReferenceProblem("reference-collection-dependency-invalid")
         if leaves != expected:
             raise ReferenceProblem("reference-collection-dependency-invalid")

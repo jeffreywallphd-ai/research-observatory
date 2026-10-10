@@ -208,8 +208,10 @@ class DocumentRevisionService:
             command, trace_id, lambda repository, _actor, _stopped: action(repository.source_anchors())
         )
 
-    def _references(self, command, trace_id, action):
+    def _references(self, command, trace_id, action, *, repository_factory=None):
         from .document_reference_repository import LocalDocumentReferenceRepository
+
+        factory = repository_factory or LocalDocumentReferenceRepository
 
         if self.reconciliation is None:
             raise DocumentRevisionProblem("document-references-unavailable")
@@ -236,13 +238,13 @@ class DocumentRevisionService:
                     Path(command.root),
                 ):
                     raise DocumentRevisionProblem("document-references-authority-mismatch")
-                selected = LocalDocumentReferenceRepository(repository, resolve=resolve)
+                selected = factory(repository, resolve=resolve)
                 source = selected._source(
                     command.enrichment.revision_id if hasattr(command, "enrichment") else command.revision_id
                 )
                 bounded = viewer_revision_reads(repository, source.byte_length)
                 result = action(
-                    LocalDocumentReferenceRepository(bounded, resolve=resolve, admit=bounded.objects.admit_bytes),
+                    factory(bounded, resolve=resolve, admit=bounded.objects.admit_bytes),
                     stopped,
                 )
                 if stopped():
@@ -301,6 +303,64 @@ class DocumentRevisionService:
             return reader_page(collection, repository._source(command.revision_id), after_order=command.after_order)
 
         return self._references(command, trace_id, read)
+
+    def _citation_page(self, repository, collection, stopped, after_order=None):
+        from .citation_reader import reader_page
+
+        reference = repository.references.read(collection.document_revision_id, cancelled=stopped)
+        accepted = repository.revisions.read(collection.document_revision_id)
+        return reader_page(
+            collection,
+            repository._source(collection.document_revision_id),
+            reference,
+            accepted,
+            after_order=after_order,
+        )
+
+    def citation_enrich(self, command, *, trace_id):
+        from .document_citation_repository import LocalDocumentCitationRepository
+
+        def enrich(repository, stopped):
+            collection = repository.enrich(command.enrichment, cancelled=stopped)
+            return self._citation_page(repository, collection, stopped)
+
+        return self._references(command, trace_id, enrich, repository_factory=LocalDocumentCitationRepository)
+
+    def citations_read(self, command, *, trace_id):
+        from .citation_reader import CitationReaderNotice
+        from .document_citation_repository import LocalDocumentCitationRepository
+
+        def read(repository, stopped):
+            try:
+                collection = repository.read(command.revision_id, cancelled=stopped)
+                if collection is None:
+                    if command.expected_collection_revision_id is not None or command.after_order is not None:
+                        raise DocumentRevisionProblem("document-citations-page-unavailable")
+                    return None
+                if (
+                    command.expected_collection_revision_id is not None
+                    and collection.collection_revision_id != command.expected_collection_revision_id
+                ) or (command.after_order is not None and command.expected_collection_revision_id is None):
+                    raise DocumentRevisionProblem("document-citations-page-changed")
+                return self._citation_page(repository, collection, stopped, command.after_order)
+            except DocumentRevisionProblem as problem:
+                if stopped():
+                    raise
+                head = repository.current_head(command.revision_id)
+                if head is None:
+                    raise
+                return CitationReaderNotice(
+                    project_id=command.project_id,
+                    source=repository._source(command.revision_id),
+                    document_revision_id=command.revision_id,
+                    collection_id=head[1],
+                    collection_revision_id=head[0],
+                    reason_code="viewer-resource-limit"
+                    if problem.code == "viewer-resource-limit"
+                    else "citations-unavailable",
+                )
+
+        return self._references(command, trace_id, read, repository_factory=LocalDocumentCitationRepository)
 
     def anchor_create(self, command, *, trace_id):
         return self._anchors(

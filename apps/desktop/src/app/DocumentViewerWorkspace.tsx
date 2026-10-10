@@ -16,6 +16,8 @@ import { decodeReaderAction, nativeReaderActionPort, type ReaderActionPort, type
 import { newAttachmentId } from "./documentAttachment";
 import { ViewerReferencesPane } from "./ViewerReferencesPane";
 import { nativeDocumentReferencePort, type DocumentReferencePort } from "./documentReferences";
+import { ViewerCitationsPane } from "./ViewerCitationsPane";
+import { nativeDocumentCitationPort, type DocumentCitationPort } from "./documentCitations";
 
 export interface PdfViewer {
   open(): Promise<number>; render(canvas: HTMLCanvasElement, page: number, scale: number): Promise<void>;
@@ -30,6 +32,7 @@ interface Props {
   readonly anchorPort?: DocumentViewerAnchorPort;
   readonly actionPort?: ReaderActionPort;
   readonly referencePort?: DocumentReferencePort;
+  readonly citationPort?: DocumentCitationPort;
   readonly deepLink?: ViewerDeepLink | null;
   readonly onRememberLink?: (link: ViewerDeepLink) => boolean;
   readonly pdfFactory?: (bytes: ViewerByteSession, budget: ViewerBufferBudget, failure: (code: string) => void) => PdfViewer;
@@ -76,7 +79,7 @@ function LinkedViewerEntry(props: Props & { project: ProjectProjection; link: Vi
 
 function ViewerSession({ project, handoff, announce, onReturn, port = nativeDocumentViewerPort, anchors = nativeSourceAnchorPort,
   textPort = nativeDocumentViewerTextPort, outlinePort = nativeDocumentViewerOutlinePort, anchorPort = nativeDocumentViewerAnchorPort,
-  deepLink = null, onRememberLink, actionPort = nativeReaderActionPort, referencePort = nativeDocumentReferencePort, pdfFactory: createPdf = pdfFactory }: Props & {
+  deepLink = null, onRememberLink, actionPort = nativeReaderActionPort, referencePort = nativeDocumentReferencePort, citationPort = nativeDocumentCitationPort, pdfFactory: createPdf = pdfFactory }: Props & {
     project: ProjectProjection; handoff: AttachmentHandoff & { attachmentId: string; documentRevisionId: string };
   }): ReactNode {
   const [metadata, setMetadata] = useState<ViewerMetadata | null>(null), [pdf, setPdf] = useState<PdfViewer | null>(null);
@@ -329,6 +332,18 @@ function ViewerSession({ project, handoff, announce, onReturn, port = nativeDocu
         {metadata && revision && firstPageReady && !failure && ownedMain.current ? <ViewerReferencesPane key={`references:${revision}`}
           metadata={metadata} revisionId={revision} port={referencePort} main={ownedMain.current} reserveCore={reserveStructured}
           onFailure={fail} onSource={(entry) => {
+            if (entry.anchor?.pageRegion && entry.anchor.pageRegion.pageNumber <= pages) setPage(entry.anchor.pageRegion.pageNumber);
+            void passage({ nodeId: entry.nodeId, nodeKind: "reference", preview: "", selection: { schemaVersion: "1.0", revisionId: revision,
+              nodeId: entry.nodeId, normalizedRange: null }, pageNumber: entry.anchor?.pageRegion?.pageNumber ?? null, hasText: true });
+          }} /> : null}
+        {metadata && revision && firstPageReady && !failure && ownedMain.current ? <ViewerCitationsPane key={`citations:${revision}`}
+          metadata={metadata} revisionId={revision} port={citationPort} referencePort={referencePort} main={ownedMain.current} reserveCore={reserveStructured}
+          onFailure={fail} onSource={(entry) => {
+            if (entry.anchor?.pageRegion && entry.anchor.pageRegion.pageNumber <= pages) setPage(entry.anchor.pageRegion.pageNumber);
+            void passage({ nodeId: entry.nodeId, nodeKind: entry.anchor?.nodeKind ?? "citation-marker", preview: "", selection: {
+              schemaVersion: "1.0", revisionId: revision, nodeId: entry.nodeId, normalizedRange: entry.anchor?.textPosition ?? null },
+              pageNumber: entry.anchor?.pageRegion?.pageNumber ?? null, hasText: true }, entry.textOffset);
+          }} onReferenceSource={(entry) => {
             if (entry.anchor?.pageRegion && entry.anchor.pageRegion.pageNumber <= pages) setPage(entry.anchor.pageRegion.pageNumber);
             void passage({ nodeId: entry.nodeId, nodeKind: "reference", preview: "", selection: { schemaVersion: "1.0", revisionId: revision,
               nodeId: entry.nodeId, normalizedRange: null }, pageNumber: entry.anchor?.pageRegion?.pageNumber ?? null, hasText: true });
