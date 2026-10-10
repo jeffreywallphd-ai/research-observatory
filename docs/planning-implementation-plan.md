@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 413d7db0331a1addc90a466763f1c98d06001c3fa0966560cc43443969d24f2b
+source_sha256: 751045796a464a4e2e2bcf443b1505514707acf26a7f509478f759e763317a53
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -4560,6 +4560,34 @@ Original tasks and approvals remain unchanged.
 **Current latest-review projection:** `approved` by agent:/root/reader_table_figure_review at `2026-10-10T12:51:42+00:00`
 
 **Latest notes:** Approve exact W2.C16.T01 R01 candidate cbc70e964299c970991e3442e82c44f482b7a8ba and its frozen criterion evidence. Transactional bounded citation delivery restores the approved outcome on publication and retry with unchanged current authority, source/reference/material bindings, default collection compatibility, public schemas and fixed admission. Fresh protected real Core and shipping initial/restart plus rollback/recovery proof close the prior late-response admission failure. Original adverse observations and instrument limits remain preserved. No material blocking finding remains; formal S05, Wave and release disposition is separate.
+
+**Currently open findings:** -
+
+### W2.C17.T01 — Implement parser upgrade comparison and stale propagation
+
+**Status:** `IN_PROGRESS`. **Original task:** `CAP-05.S06.T03`. **Latest review:** `-`.
+
+**Reproduction:** Independent static shipping-UIA preflight at b7e6d0bbe4a1adb9efb8430c83d194fd2db673c3 identifies a truthful-outcome defect in ApplicationRuntime. While Parsing Quality owns a dirty, pending or issued-unknown correction/reconciliation, qualityNavigationAllowed refuses ordinary navigation and schedules the required denial announcement. The All tools callback then unconditionally schedules sources opened, overwriting that denial even though the workspace and exact command remain owned. Evidence: artifacts/tmp/CAP-05.S06.shipping-uia-preflight-01.json SHA256 966a72a4a8e3f49a97c64a6b5a9eb5fabded4bfc8408357bed49377936be5f30. A fresh independent mounted production-root diagnostic at committed 58a290f08668558083cc13fc074831164be537c7 reproduces the false sources opened announcement after two animation frames in all three states, preserves exact command/owner/rationale, and observes successful navigation after Undo, release or exact retry. Report: artifacts/tmp/CAP-05.S06.navigation-announcement-diagnostic-01.attempt-01.json SHA256 14b4df1380ff974a67fb6d91d4684d7231c3e9609e1e0f10bf3a38fd28183dcd. Its 5786 source/runtime and 198 fixture inputs remain fixed; sandbox startup denial is preserved. Diagnostic uses authored ports/transport, not Native/OS/Core/encrypted qualification. The prepared strict shipping assertion remains unchanged and has not yet executed. Add the production-root behavioral characterization before product edits.
+
+**Inherited criteria:**
+
+- A parser upgrade cannot silently replace accepted structure; changed anchors are reported; accepted reparse marks only affected evidence and outputs stale.
+- Automated tests cover the expected path and at least one material failure or boundary condition.
+- Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.
+
+**Bounded changed paths:**
+
+- apps/desktop/src/app/ApplicationRuntime.tsx
+- tests/desktop/test_reprocessing_workflow_navigation.py
+#### Review history — W2.C17.T01
+
+**Review mode:** `append-only v1` / 0 completed round(s)
+
+**Current immutable submission awaiting review:** None
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
 
 **Currently open findings:** -
 

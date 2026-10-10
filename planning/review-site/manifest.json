@@ -3571,6 +3571,54 @@
               "current_submission": null
             }
           }
+        },
+        {
+          "task_id": "W2.C17.T01",
+          "title": "Implement parser upgrade comparison and stale propagation",
+          "status": "IN_PROGRESS",
+          "acceptance_criteria": [
+            "A parser upgrade cannot silently replace accepted structure; changed anchors are reported; accepted reparse marks only affected evidence and outputs stale.",
+            "Automated tests cover the expected path and at least one material failure or boundary condition.",
+            "Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion."
+          ],
+          "correction": {
+            "origin_task_id": "CAP-05.S06.T03",
+            "origin_commit": "3befc9169f1304184232a3baf7103bfa13e60ba5",
+            "paused_state_sha256": "a278cb2661c430775faff69b7824a7be81cec9c7dfbb4602fc84f708d95330fc",
+            "origin_sha256": "5c7e4e19a4ea321dfd53ba3b4a4c40f2719e4c12991dd34692fcb4757369231a",
+            "origin_contract_sha256": "bc8b8f8d7525ca4d8d4d6259aa928dc42a9e42d61eeff4cc82fe8fe5c860d666",
+            "origin_history_sha256": "85a1b7caec9f8bd0b8be97d8ede97900482c0b73eda18dd04fe6f255cba2acb7",
+            "origin_amendment_id": null,
+            "authority_sha256": "c92ce7e9bac1b8a49d13d649a5980fea61e56ee953d238c734d8ff5f04f4c9e5",
+            "spec": {
+              "path": "artifacts/evidence/W2.C17.T01.spec.json",
+              "sha256": "d70a6f538208f18a70052815ac166331fda717dfad20b79dfe036f4faafeafe5",
+              "commit": "a8681406463cc246999ef29e40a5f4d3b918f468"
+            },
+            "reproduction": "Independent static shipping-UIA preflight at b7e6d0bbe4a1adb9efb8430c83d194fd2db673c3 identifies a truthful-outcome defect in ApplicationRuntime. While Parsing Quality owns a dirty, pending or issued-unknown correction/reconciliation, qualityNavigationAllowed refuses ordinary navigation and schedules the required denial announcement. The All tools callback then unconditionally schedules sources opened, overwriting that denial even though the workspace and exact command remain owned. Evidence: artifacts/tmp/CAP-05.S06.shipping-uia-preflight-01.json SHA256 966a72a4a8e3f49a97c64a6b5a9eb5fabded4bfc8408357bed49377936be5f30. A fresh independent mounted production-root diagnostic at committed 58a290f08668558083cc13fc074831164be537c7 reproduces the false sources opened announcement after two animation frames in all three states, preserves exact command/owner/rationale, and observes successful navigation after Undo, release or exact retry. Report: artifacts/tmp/CAP-05.S06.navigation-announcement-diagnostic-01.attempt-01.json SHA256 14b4df1380ff974a67fb6d91d4684d7231c3e9609e1e0f10bf3a38fd28183dcd. Its 5786 source/runtime and 198 fixture inputs remain fixed; sandbox startup denial is preserved. Diagnostic uses authored ports/transport, not Native/OS/Core/encrypted qualification. The prepared strict shipping assertion remains unchanged and has not yet executed. Add the production-root behavioral characterization before product edits.",
+            "changed_paths": [
+              "apps/desktop/src/app/ApplicationRuntime.tsx",
+              "tests/desktop/test_reprocessing_workflow_navigation.py"
+            ],
+            "impact_analysis": "Restore the existing approved Academic Minimal 1.9 blocked-navigation outcome. Return an explicit boolean from navigateWorkspaceState and announce All tools navigation success only when navigation was allowed. Preserve the existing dirty, pending and issued-unknown guard, exact workspace/command ownership, asynchronous supporting-return checks and successful workspace behavior. Extend the existing actual ApplicationRuntime/production Quality/Reprocessing regression with the ordinary Source Manager route and stable live-region assertions for all three guard states, retaining stage/return cases and successful navigation after undo or exact retry. Select affected Python format/lint/type, desktop TypeScript, existing root/navigation tests, current production fixture build and actual-root interaction proof, plus exact approved-reference authority check. Preserve the preflight, failing characterization, original approved task and all evidence. Current Core, Native, acceptance, source revisions, rights, events, parser/model, dependency, migration, resource and security contracts remain byte-identical. Independently review this bounded correction before local integration; perform fresh shipping UIA/Core readback, full slice/checkpoint and fresh W2 qualification afterward. No new scope, reference, criterion, threshold, framework/controller change, hardware/model run or release approval."
+          },
+          "task_review": {
+            "task_id": "W2.C17.T01",
+            "title": "Implement parser upgrade comparison and stale propagation",
+            "status": "IN_PROGRESS",
+            "mode": "append-only",
+            "latest_review": {
+              "reviewer": null,
+              "result": null,
+              "reviewed_at": null,
+              "notes": null
+            },
+            "review_control": {
+              "version": 1,
+              "attempts": [],
+              "current_submission": null
+            }
+          }
         }
       ]
     },
