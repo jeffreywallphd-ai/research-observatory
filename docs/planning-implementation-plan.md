@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 098b99151ecc2cbeb1737a72d3b88b7f19f121113de94dcb65210cb742bb0831
+source_sha256: e295c42702e8321ee9fa27ed1105434147ec1f11cd6013521335430f374ce530
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -11940,21 +11940,21 @@ Original tasks and approvals remain unchanged.
 
 **Outcome:** Document-internal scholarly structures become inspectable records without losing page context.
 
-**Wave / priority / status / review:** `W2` / `P1` / `READY` / `PENDING`
+**Wave / priority / status / review:** `W2` / `P1` / `IN_PROGRESS` / `PENDING`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
 **Dependencies:** `CAP-05.S03.T03`
 
-#### - [ ] CAP-05.S05.T01 - Extract and reconcile reference-list entries
+#### - [x] CAP-05.S05.T01 - Extract and reconcile reference-list entries
 
-**Status / priority / estimate / risk:** `IN_PROGRESS` / `P1` / `L` / `high`
+**Status / priority / estimate / risk:** `DONE` / `P1` / `L` / `high`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
 **Dependencies:** `CAP-05.S03.T03`
 
-**Owner / review:** codex-w2-implementation / - (`-`)
+**Owner / review:** codex-w2-implementation / agent:/root/reader_anchor_review (`approved`)
 
 **Objective:** Parsed references, identifiers, raw strings, author/year/title fields, and links to canonical works or unresolved candidates.
 
@@ -11973,17 +11973,55 @@ Original tasks and approvals remain unchanged.
 - python tools/verify.py --profile documents
 - python tools/verify.py --profile service
 
+**Evidence:**
+
+- `artifacts/evidence/CAP-05.S05.T01.R01.json` at `b3eadee8cf945e4b77f91fe1d35a7db85c6cc10e`
+
 ##### Review history — CAP-05.S05.T01
 
-**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+**Review mode:** `append-only v1` / 1 completed round(s)
 
-**Current latest-review projection:** `-` by - at `-`
+###### Round R01
 
-**Latest notes:** -
+**Immutable submission packet:** `R01` / packet SHA-256 `599b0628e85a96200635550b22e650e415303a8fea611c451bcbad22a7de18d7`
+
+- Candidate / base / branch: `b3eadee8cf945e4b77f91fe1d35a7db85c6cc10e` / `8071903db413ae3dae1acd1c2232607dbc70e917` / `codex/w2-implementation`
+- Submitted by / at: codex-w2-implementation / `2026-10-10T06:26:46+00:00`
+- Evidence: `artifacts/evidence/CAP-05.S05.T01.R01.json` / `47f60ad734c856849fa44fbf793cb08da20cc9c973ddc8f75ad889f93d583515` / `b3eadee8cf945e4b77f91fe1d35a7db85c6cc10e`
+- Acceptance-criteria SHA-256: `931d31132e89c951ea2680f40a6c3d54b82eb0122b9bcbfe717b3a4067a2f1e4`
+- Verification-selection SHA-256: `54cde69fef421782b13c1b7ab337c47917ba22458e8cd0336692edc712a2a805`
+- Changed paths: `apps/desktop/src-tauri/src/document_reader.rs`, `apps/desktop/src-tauri/src/lib.rs`, `apps/desktop/src-tauri/src/supervisor.rs`, `apps/desktop/src/app/DocumentViewerWorkspace.tsx`, `apps/desktop/src/app/ViewerReferencesPane.tsx`, `apps/desktop/src/app/documentReferences.test.ts`, `apps/desktop/src/app/documentReferences.ts`, `artifacts/evidence/CAP-05.S05.T01.task-start.md`, `artifacts/evidence/ui-change/CAP-05.S05.T01.json`, `docs/adr/ADR-0048-bind-reference-enrichment-to-existing-canonical-matching-and-protected-document-authority.md`, `docs/adr/index.json`, `docs/planning-implementation-plan.md`, `packages/contracts/documents/README.md`, `packages/contracts/documents/generate_parser_schema.py`, `packages/contracts/documents/reference-collection.v1.schema.json`, `packages/contracts/documents/reference-enrichment-command.v1.schema.json`, `packages/contracts/documents/reference-reader-notice.v1.schema.json`, `packages/contracts/documents/reference-reader-page.v1.schema.json`, `packages/contracts/storage/README.md`, `packages/contracts/storage/sqlite-migration-recovery.schema.json`, `packages/contracts/storage/sqlite-profile.v1.json`, `planning/backlog.yaml`, `planning/review-site/CAP-05/CAP-05.S05.T01.html`, `planning/review-site/CAP-05/CAP-05.S05.html`, `planning/review-site/CAP-05/index.html`, `planning/review-site/manifest.json`, `planning/review-site/waves/W2.html`, `planning/status-summary.md`, `services/core-api/src/research_observatory_core/document_reference_repository.py`, `services/core-api/src/research_observatory_core/document_references.py`, `services/core-api/src/research_observatory_core/document_revision_api.py`, `services/core-api/src/research_observatory_core/document_revision_service.py`, `services/core-api/src/research_observatory_core/document_viewer_allocations.py`, `services/core-api/src/research_observatory_core/main.py`, `services/core-api/src/research_observatory_core/migrations/runner.py`, `services/core-api/src/research_observatory_core/migrations/versions/v0028_document_enrichments.py`, `services/core-api/src/research_observatory_core/object_store.py`, `services/core-api/src/research_observatory_core/reconciliation_repository.py`, `services/core-api/src/research_observatory_core/reference_matching_repository.py`, `services/core-api/src/research_observatory_core/reference_reader.py`, `services/core-api/src/research_observatory_core/storage.py`, `tests/data/test_sqlite_migrations.py`, `tests/desktop/fixtures/document-viewer.tsx`, `tests/desktop/fixtures/reference-reader.ts`, `tests/desktop/test_document_viewer_interactions.py`, `tests/documents/reference_catalog_fixture.py`, `tests/documents/test_acquisition_recovery_migration.py`, `tests/documents/test_anchor_invalidation_migration.py`, `tests/documents/test_document_revision_migration.py`, `tests/documents/test_reference_catalog.py`, `tests/documents/test_reference_entries.py`, `tests/documents/test_reference_matching.py`, `tests/documents/test_reference_migration.py`, `tests/documents/test_reference_reader.py`, `tests/documents/test_reference_repository.py`, `tests/documents/test_reference_service.py`, `tests/documents/viewer_native_windows_fixture.py`, `tests/fixtures/documents/v27-populated-predecessor.json`, `tests/fixtures/documents/v27-populated-predecessor.zip`, `tests/service/test_reference_api.py`
+- Selected checks: `.venv\Scripts\python.exe -B -m ruff format --check packages/contracts/documents/generate_parser_schema.py services/core-api/src/research_observatory_core/document_reference_repository.py services/core-api/src/research_observatory_core/document_references.py services/core-api/src/research_observatory_core/document_revision_api.py services/core-api/src/research_observatory_core/document_revision_service.py services/core-api/src/research_observatory_core/document_viewer_allocations.py services/core-api/src/research_observatory_core/main.py services/core-api/src/research_observatory_core/migrations/runner.py services/core-api/src/research_observatory_core/migrations/versions/v0028_document_enrichments.py services/core-api/src/research_observatory_core/object_store.py services/core-api/src/research_observatory_core/reconciliation_repository.py services/core-api/src/research_observatory_core/reference_matching_repository.py services/core-api/src/research_observatory_core/reference_reader.py services/core-api/src/research_observatory_core/storage.py tests/data/test_sqlite_migrations.py tests/desktop/test_document_viewer_interactions.py tests/documents/reference_catalog_fixture.py tests/documents/test_acquisition_recovery_migration.py tests/documents/test_anchor_invalidation_migration.py tests/documents/test_document_revision_migration.py tests/documents/test_reference_catalog.py tests/documents/test_reference_entries.py tests/documents/test_reference_matching.py tests/documents/test_reference_migration.py tests/documents/test_reference_reader.py tests/documents/test_reference_repository.py tests/documents/test_reference_service.py tests/documents/viewer_native_windows_fixture.py tests/service/test_reference_api.py`, `.venv\Scripts\python.exe -B -m ruff check packages/contracts/documents/generate_parser_schema.py services/core-api/src/research_observatory_core/document_reference_repository.py services/core-api/src/research_observatory_core/document_references.py services/core-api/src/research_observatory_core/document_revision_api.py services/core-api/src/research_observatory_core/document_revision_service.py services/core-api/src/research_observatory_core/document_viewer_allocations.py services/core-api/src/research_observatory_core/main.py services/core-api/src/research_observatory_core/migrations/runner.py services/core-api/src/research_observatory_core/migrations/versions/v0028_document_enrichments.py services/core-api/src/research_observatory_core/object_store.py services/core-api/src/research_observatory_core/reconciliation_repository.py services/core-api/src/research_observatory_core/reference_matching_repository.py services/core-api/src/research_observatory_core/reference_reader.py services/core-api/src/research_observatory_core/storage.py tests/data/test_sqlite_migrations.py tests/desktop/test_document_viewer_interactions.py tests/documents/reference_catalog_fixture.py tests/documents/test_acquisition_recovery_migration.py tests/documents/test_anchor_invalidation_migration.py tests/documents/test_document_revision_migration.py tests/documents/test_reference_catalog.py tests/documents/test_reference_entries.py tests/documents/test_reference_matching.py tests/documents/test_reference_migration.py tests/documents/test_reference_reader.py tests/documents/test_reference_repository.py tests/documents/test_reference_service.py tests/documents/viewer_native_windows_fixture.py tests/service/test_reference_api.py`, `.venv\Scripts\python.exe -B -m mypy services/core-api/src/research_observatory_core/document_reference_repository.py services/core-api/src/research_observatory_core/document_references.py services/core-api/src/research_observatory_core/document_revision_api.py services/core-api/src/research_observatory_core/document_revision_service.py services/core-api/src/research_observatory_core/document_viewer_allocations.py services/core-api/src/research_observatory_core/main.py services/core-api/src/research_observatory_core/migrations/runner.py services/core-api/src/research_observatory_core/migrations/versions/v0028_document_enrichments.py services/core-api/src/research_observatory_core/object_store.py services/core-api/src/research_observatory_core/reconciliation_repository.py services/core-api/src/research_observatory_core/reference_matching_repository.py services/core-api/src/research_observatory_core/reference_reader.py services/core-api/src/research_observatory_core/storage.py`, `.venv\Scripts\python.exe -B packages/contracts/documents/generate_parser_schema.py --check`, `.venv\Scripts\python.exe -B tools/adr_check.py --repo . --base 8071903db413ae3dae1acd1c2232607dbc70e917 --head b3eadee8cf945e4b77f91fe1d35a7db85c6cc10e`, `.venv\Scripts\python.exe -B tools/product_style_check.py --repo .`, `.venv\Scripts\python.exe -B tools/ui_change_gate.py --repo . --base 8071903db413ae3dae1acd1c2232607dbc70e917 --head b3eadee8cf945e4b77f91fe1d35a7db85c6cc10e`, `.local\toolchains\node-v24.19.0-win-x64\node.exe apps/desktop/node_modules/typescript/bin/tsc --noEmit -p apps/desktop/tsconfig.json`, `.local\toolchains\node-v24.19.0-win-x64\node.exe apps/desktop/node_modules/vitest/vitest.mjs run apps/desktop/src/app/documentReferences.test.ts apps/desktop/src/app/documentViewerNative.test.ts apps/desktop/src/app/documentViewer.test.ts`, `.venv\Scripts\python.exe -B -m unittest -v tests.documents.test_reference_entries tests.documents.test_reference_matching tests.documents.test_reference_catalog tests.documents.test_reference_reader`, `.venv\Scripts\python.exe -B -m unittest -v tests.documents.test_reference_repository`, `.venv\Scripts\python.exe -B -m unittest -v tests.documents.test_reference_service tests.service.test_reference_api`, `.venv\Scripts\python.exe -B -m unittest -v tests.documents.test_reference_migration tests.documents.test_acquisition_recovery_migration tests.documents.test_document_revision_migration tests.documents.test_anchor_invalidation_migration tests.data.test_sqlite_migrations`, `.local\toolchains\node-v24.19.0-win-x64\node.exe tests/desktop/fixtures/document-viewer.mjs artifacts\tmp\CAP-05.S05.T01.mounted-qualification-01`, `.venv\Scripts\python.exe -B -m unittest -v tests.desktop.test_document_viewer_interactions`, `.local\toolchains\node-v24.19.0-win-x64\node.exe apps\desktop\node_modules\vite\bin\vite.js build --config vite.product.config.ts`, `.local\toolchains\node-v24.19.0-win-x64\node.exe apps/desktop/scripts/assemble-application.mjs`, `.local\toolchains\rustup\toolchains\1.96.1-x86_64-pc-windows-msvc\bin\cargo.exe build --manifest-path apps/desktop/src-tauri/Cargo.toml --release --locked --offline --features integration-harness --example project_contract_probe -j 1 --message-format json-render-diagnostics`, `.local\toolchains\rustup\toolchains\1.96.1-x86_64-pc-windows-msvc\bin\cargo.exe test --manifest-path apps/desktop/src-tauri/Cargo.toml --locked --offline --features integration-harness --lib --no-run -j 1 --message-format json-render-diagnostics`, `artifacts\tmp\CAP-05.S05.T01.qualifying-native-units-01\reference-contract-tests.exe document_reader::tests:: --nocapture --test-threads=1`, `.venv/Scripts/python.exe -B artifacts/tmp/CAP-05.S05.T01.qualifying-reader-04.py b3eadee8cf945e4b77f91fe1d35a7db85c6cc10e initial`, `.venv/Scripts/python.exe -B artifacts/tmp/CAP-05.S05.T01.qualifying-reader-04.py b3eadee8cf945e4b77f91fe1d35a7db85c6cc10e restart`
+- Deferred checks: `Full S05 citation/table/figure integration, canonical target navigation/adjudication and slice review remain later ordered S05 work.`, `Fresh full affected/repository/profile W2 qualification, packaging/security/privacy/rights/accessibility/performance, independent Wave disposition and human release remain required.`, `No 8/16GiB tier/model runs or 2/3GiB minimum qualification. Larger computing remains W5; qualified Reader latency and owner-accepted parser overage are not replayed.`
+- Selection rationale: Current reference identity/authority/persistence and cross-process Reader changes require fresh focused contracts, encrypted actual Core, predecessor recovery, client/mounted, Native and actual shipping proofs. Input/source candidate remains fixed. No blanket profile replay.
+- Prior round / replayed open findings: `-` / -
+- Root-cause escalation: -
+
+**Disposition / reviewer / time:** `approved` / agent:/root/reader_anchor_review / `2026-10-10T06:42:04+00:00`
+
+**Immutable review ledger:** `artifacts/evidence/CAP-05.S05.T01.review-R01.json` / `f6e23b1868547c592d15c86ff3243ae7c398b268782b0644876d12f5c16170d9`
+
+**Review notes:** Approve CAP-05.S05.T01 R01 at exactb3eadee8cf945e4b77f91fe1d35a7db85c6cc10e. All three material task criteria are satisfied by the reviewed bounded source and22 fresh selected checks with69 authenticated artifacts, current input closure and exact frozen packet/criteria/selection bindings. InformalF01 and its incremental allocation boundary are resolved at this candidate with adverse evidence preserved and no invented formal predecessor round. Actual shipping initial/restart prove exact reference/canonical revision/source jump/return and retained encrypted state with Native exit0/owned0. No active blocking finding remains. Approval is task-only; later S05 work, integrated slice/checkpoints, full W2/platform/packaging qualification, inherited unwaived debt, independent Wave review and human release remain open.
+
+**Findings opened:**
+
+- None
+
+**Prior finding closures:**
+
+- None
+
+**Current immutable submission awaiting review:** None
+
+**Current latest-review projection:** `approved` by agent:/root/reader_anchor_review at `2026-10-10T06:42:04+00:00`
+
+**Latest notes:** Approve CAP-05.S05.T01 R01 at exactb3eadee8cf945e4b77f91fe1d35a7db85c6cc10e. All three material task criteria are satisfied by the reviewed bounded source and22 fresh selected checks with69 authenticated artifacts, current input closure and exact frozen packet/criteria/selection bindings. InformalF01 and its incremental allocation boundary are resolved at this candidate with adverse evidence preserved and no invented formal predecessor round. Actual shipping initial/restart prove exact reference/canonical revision/source jump/return and retained encrypted state with Native exit0/owned0. No active blocking finding remains. Approval is task-only; later S05 work, integrated slice/checkpoints, full W2/platform/packaging qualification, inherited unwaived debt, independent Wave review and human release remain open.
+
+**Currently open findings:** -
 
 #### - [ ] CAP-05.S05.T02 - Extract in-text citation contexts and targets
 
-**Status / priority / estimate / risk:** `NOT_STARTED` / `P1` / `L` / `medium`
+**Status / priority / estimate / risk:** `READY` / `P1` / `L` / `medium`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
