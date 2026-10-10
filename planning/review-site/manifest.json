@@ -3423,7 +3423,7 @@
         {
           "task_id": "W2.C16.T01",
           "title": "Extract in-text citation contexts and targets",
-          "status": "IN_PROGRESS",
+          "status": "DONE",
           "acceptance_criteria": [
             "Fixture citation styles resolve correctly; unresolved and ambiguous targets are explicit; contexts retain exact source anchors.",
             "Automated tests cover the expected path and at least one material failure or boundary condition.",
@@ -3456,17 +3456,118 @@
           "task_review": {
             "task_id": "W2.C16.T01",
             "title": "Extract in-text citation contexts and targets",
-            "status": "IN_PROGRESS",
+            "status": "DONE",
             "mode": "append-only",
             "latest_review": {
-              "reviewer": null,
-              "result": null,
-              "reviewed_at": null,
-              "notes": null
+              "reviewer": "agent:/root/reader_table_figure_review",
+              "result": "approved",
+              "reviewed_at": "2026-10-10T12:51:42+00:00",
+              "notes": "Approve exact W2.C16.T01 R01 candidate cbc70e964299c970991e3442e82c44f482b7a8ba and its frozen criterion evidence. Transactional bounded citation delivery restores the approved outcome on publication and retry with unchanged current authority, source/reference/material bindings, default collection compatibility, public schemas and fixed admission. Fresh protected real Core and shipping initial/restart plus rollback/recovery proof close the prior late-response admission failure. Original adverse observations and instrument limits remain preserved. No material blocking finding remains; formal S05, Wave and release disposition is separate."
             },
             "review_control": {
               "version": 1,
-              "attempts": [],
+              "attempts": [
+                {
+                  "submission": {
+                    "id": "R01",
+                    "submitted_by": "codex-w2-implementation",
+                    "submitted_at": "2026-10-10T12:28:24+00:00",
+                    "candidate_commit": "cbc70e964299c970991e3442e82c44f482b7a8ba",
+                    "base_commit": "eb8518099155c07a1ca91ba2aedc2c650c2f6a2e",
+                    "branch": "codex/w2-implementation",
+                    "evidence_reference": {
+                      "type": "criterion-manifest",
+                      "path": "artifacts/evidence/W2.C16.T01.R01.json",
+                      "sha256": "47b458688652778eda4f180d30a3aea1311bf3443cb96bbf43874cc66f30e7da",
+                      "commit": "cbc70e964299c970991e3442e82c44f482b7a8ba",
+                      "recorded_at": "2026-10-10T12:28:24+00:00"
+                    },
+                    "acceptance_criteria_sha256": "28a439f198c769f953d38c06ea60cb19a34e009a3907274fb375f3561d561bac",
+                    "changed_paths": [
+                      "artifacts/evidence/W2.C16.T01.task-start.md",
+                      "docs/planning-implementation-plan.md",
+                      "packages/contracts/documents/citation-contexts.md",
+                      "planning/backlog.yaml",
+                      "planning/review-site/manifest.json",
+                      "planning/review-site/waves/W2.html",
+                      "planning/status-summary.md",
+                      "services/core-api/src/research_observatory_core/document_citation_repository.py",
+                      "services/core-api/src/research_observatory_core/document_revision_service.py",
+                      "tests/documents/test_citation_repository.py",
+                      "tests/documents/test_citation_service.py"
+                    ],
+                    "selected_checks": [
+                      ".venv\\Scripts\\python.exe -B -m ruff format --check services/core-api/src/research_observatory_core/document_citation_repository.py services/core-api/src/research_observatory_core/document_revision_service.py tests/documents/test_citation_repository.py tests/documents/test_citation_service.py",
+                      ".venv\\Scripts\\python.exe -B -m ruff check services/core-api/src/research_observatory_core/document_citation_repository.py services/core-api/src/research_observatory_core/document_revision_service.py tests/documents/test_citation_repository.py tests/documents/test_citation_service.py",
+                      ".venv\\Scripts\\python.exe -B -m mypy --no-incremental services/core-api/src/research_observatory_core/document_citation_repository.py services/core-api/src/research_observatory_core/document_revision_service.py",
+                      ".venv\\Scripts\\python.exe -B packages/contracts/documents/generate_parser_schema.py --check",
+                      ".venv\\Scripts\\python.exe -B -m unittest -v tests.documents.test_citation_contexts tests.documents.test_citation_reader",
+                      ".venv\\Scripts\\python.exe -B -m unittest -v tests.documents.test_citation_repository",
+                      ".venv\\Scripts\\python.exe -B -m unittest -v tests.documents.test_citation_service",
+                      ".local\\toolchains\\rustup\\toolchains\\1.96.1-x86_64-pc-windows-msvc\\bin\\cargo.exe build --manifest-path apps/desktop/src-tauri/Cargo.toml --release --locked --offline --features integration-harness --example project_contract_probe -j 1 --message-format json-render-diagnostics",
+                      ".venv/Scripts/python.exe -B artifacts/tmp/CAP-05.S05.qualifying-reader-02.py cbc70e964299c970991e3442e82c44f482b7a8ba initial",
+                      ".venv/Scripts/python.exe -B artifacts/tmp/CAP-05.S05.qualifying-reader-02.py cbc70e964299c970991e3442e82c44f482b7a8ba restart",
+                      ".venv/Scripts/python.exe -B artifacts/tmp/CAP-05.S05.qualifying-core-seams-02.py cbc70e964299c970991e3442e82c44f482b7a8ba",
+                      ".venv/Scripts/python.exe -B artifacts/tmp/CAP-05.S05.qualifying-cancellation-02.py cbc70e964299c970991e3442e82c44f482b7a8ba",
+                      ".venv/Scripts/python.exe -B artifacts/tmp/CAP-05.S05.qualifying-midoperation-02.py cbc70e964299c970991e3442e82c44f482b7a8ba"
+                    ],
+                    "deferred_checks": [
+                      "Formal S05 slice disposition, S06 tasks and fresh full affected/repository/profile W2 qualification, inherited unwaived debt, independent Wave review and separate human G2 remain required.",
+                      "No 8/16-GiB run, minimum 2/3-GiB claim, model quality, installer or latency replay/optimization here."
+                    ],
+                    "selection_rationale": "Restore the original T02 inspectable citation outcome by constructing the existing bounded Reader page inside the existing atomic citation publication using the exact already-authenticated accepted/reference/source values. Use a private optional delivery callback on both new and exact-command retry paths; existing repository callers still receive the collection. Retain current actor, accepted-equality, reference head/record/payload, target catalog, material dependency and outer current-rights/session/Native delivery checks. Retain reader_page source/payload binding and closed 64-KiB shape. Projection validation or failure rolls back the same object/aggregate/enrichment/index/material/provenance/outbox transaction. Keep the final before-commit hook and cancellation check after projection. The source frame remains 24 MiB and cumulative admission multiplier remains 128 with no reset/refund or authorization cache relaxation. Add a failing default-budget 50-page real Core regression before source changes, cover successful initial/refresh/idempotent response and exact source contexts, delivery-failure rollback and post-projection cancellation/retry/reopen; retain existing rights, stale-reference, catalog/material and immutable-IR tests. Run affected citation repository/service/reader tests, changed-file format/lint/type checks, and fresh shipping Reader integration against the actual local Native/Core/vault/SQLCipher boundary. Replay S05 relevant cancellation/recovery/denial and integrated structures at slice scope after independent correction disposition. Reuse only explicitly bound historical unmodified citation-style checks as support; no fresh correctness claim from that history alone. Full repository/profile and cross-capability qualification remain the W2 exit obligation. No new product scope, UX/reference, schema/migration, security/rights authority, threshold, model/hardware run, framework/controller or history change.",
+                    "selection_sha256": "e11bf0b332aaa2f6041dd4c27bc6f63a5fca68f31fdbb37bb861cb7351e6e457",
+                    "prior_attempt_id": null,
+                    "open_finding_ids": [],
+                    "root_cause_analysis": null,
+                    "selected_command_ids": [
+                      "desktop:application",
+                      "documents:unit",
+                      "foundation:quality"
+                    ],
+                    "packet_sha256": "711f9dc7a4fd8c154acd817595f9fe155481d5f5ec25e55e414a1a598f512e17"
+                  },
+                  "review": {
+                    "reviewer": "agent:/root/reader_table_figure_review",
+                    "result": "approved",
+                    "reviewed_at": "2026-10-10T12:51:42+00:00",
+                    "notes": "Approve exact W2.C16.T01 R01 candidate cbc70e964299c970991e3442e82c44f482b7a8ba and its frozen criterion evidence. Transactional bounded citation delivery restores the approved outcome on publication and retry with unchanged current authority, source/reference/material bindings, default collection compatibility, public schemas and fixed admission. Fresh protected real Core and shipping initial/restart plus rollback/recovery proof close the prior late-response admission failure. Original adverse observations and instrument limits remain preserved. No material blocking finding remains; formal S05, Wave and release disposition is separate."
+                  },
+                  "ledger": {
+                    "path": "artifacts/evidence/W2.C16.T01.review-R01.json",
+                    "sha256": "0cfd0951b36a559f474bb2487533b5f269eb871e870c1cabd7837b9094bd169d"
+                  },
+                  "findings": [],
+                  "closures": [],
+                  "telemetry": {
+                    "task_id": "W2.C16.T01",
+                    "amendment_id": null,
+                    "attempt_id": "R01",
+                    "submitted_at": "2026-10-10T12:28:24+00:00",
+                    "reviewed_at": "2026-10-10T12:51:42+00:00",
+                    "duration_seconds": 1398,
+                    "outcome": "approved",
+                    "finding_counts": {
+                      "critical": 0,
+                      "high": 0,
+                      "medium": 0,
+                      "low": 0,
+                      "blocking": 0,
+                      "total": 0
+                    },
+                    "command_ids": [
+                      "desktop:application",
+                      "documents:unit",
+                      "foundation:quality"
+                    ],
+                    "remediation": {
+                      "prior_attempt_id": null,
+                      "replayed_finding_ids": [],
+                      "closed_finding_ids": []
+                    }
+                  }
+                }
+              ],
               "current_submission": null
             }
           }

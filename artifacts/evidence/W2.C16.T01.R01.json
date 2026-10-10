@@ -1,0 +1,592 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "W2.C16.T01",
+  "baseCommit": "eb8518099155c07a1ca91ba2aedc2c650c2f6a2e",
+  "commit": "cbc70e964299c970991e3442e82c44f482b7a8ba",
+  "branch": "codex/w2-implementation",
+  "changedFiles": [
+    "artifacts/evidence/W2.C16.T01.task-start.md",
+    "docs/planning-implementation-plan.md",
+    "packages/contracts/documents/citation-contexts.md",
+    "planning/backlog.yaml",
+    "planning/review-site/manifest.json",
+    "planning/review-site/waves/W2.html",
+    "planning/status-summary.md",
+    "services/core-api/src/research_observatory_core/document_citation_repository.py",
+    "services/core-api/src/research_observatory_core/document_revision_service.py",
+    "tests/documents/test_citation_repository.py",
+    "tests/documents/test_citation_service.py"
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "checkIds": [
+        "citation-styles-and-source-projections",
+        "encrypted-publication-and-transactional-delivery",
+        "real-core-default-budget-delivery-refresh-retry-reopen-and-denial",
+        "shipping-integrated-citation-delivery",
+        "shipping-integrated-citation-restart"
+      ],
+      "evidence": [
+        "Fresh style/anchor tests retain explicit uncertain/unresolved targets and exact source context. Real default-budget 50-page Core publication, refresh, exact retry and reopen now deliver the existing bounded page; shipping reference/citation/source/Work handoff succeeds on a fresh authored fixture."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "checkIds": [
+        "encrypted-publication-and-transactional-delivery",
+        "real-core-default-budget-delivery-refresh-retry-reopen-and-denial",
+        "integrated-current-rights-resource-and-reference-cas",
+        "integrated-material-cancellation-and-fault-rollback",
+        "shipping-integrated-citation-restart"
+      ],
+      "evidence": [
+        "Projection failure on initial/refresh/exact retry and cancellation after projection roll back all relevant canonical object/aggregate/enrichment/index/material/dependency/provenance/outbox rows. Prior accepted IR and collection remain usable; retry/reopen succeeds. Concurrent reference refresh and current rights denial prevent delivery. Fresh integrated material cancellation/fault, deny/resource/CAS and restart proof preserve adverse predecessors."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "checkIds": [
+        "affected-python-format",
+        "affected-python-lint",
+        "affected-product-types",
+        "closed-document-schemas",
+        "native-release-build",
+        "encrypted-publication-and-transactional-delivery"
+      ],
+      "evidence": [
+        "The two Core modules, two citation tests and contract note restore the original T02 outcome. Default repository collection return, exact opaque public schemas, current source/actor/reference/catalog/material checks and existing canonical transaction remain. Admission code/frame/multiplier and immutable schema/source/history bytes are unchanged. No UX/security/scope/threshold/model/framework change or release authority."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "verificationSelection": {
+    "selectedCommandIds": [
+      "desktop:application",
+      "documents:unit",
+      "foundation:quality"
+    ],
+    "riskAnalysis": "Restore the original T02 inspectable citation outcome by constructing the existing bounded Reader page inside the existing atomic citation publication using the exact already-authenticated accepted/reference/source values. Use a private optional delivery callback on both new and exact-command retry paths; existing repository callers still receive the collection. Retain current actor, accepted-equality, reference head/record/payload, target catalog, material dependency and outer current-rights/session/Native delivery checks. Retain reader_page source/payload binding and closed 64-KiB shape. Projection validation or failure rolls back the same object/aggregate/enrichment/index/material/provenance/outbox transaction. Keep the final before-commit hook and cancellation check after projection. The source frame remains 24 MiB and cumulative admission multiplier remains 128 with no reset/refund or authorization cache relaxation. Add a failing default-budget 50-page real Core regression before source changes, cover successful initial/refresh/idempotent response and exact source contexts, delivery-failure rollback and post-projection cancellation/retry/reopen; retain existing rights, stale-reference, catalog/material and immutable-IR tests. Run affected citation repository/service/reader tests, changed-file format/lint/type checks, and fresh shipping Reader integration against the actual local Native/Core/vault/SQLCipher boundary. Replay S05 relevant cancellation/recovery/denial and integrated structures at slice scope after independent correction disposition. Reuse only explicitly bound historical unmodified citation-style checks as support; no fresh correctness claim from that history alone. Full repository/profile and cross-capability qualification remain the W2 exit obligation. No new product scope, UX/reference, schema/migration, security/rights authority, threshold, model/hardware run, framework/controller or history change.",
+    "deferred": [
+      "Formal S05 slice disposition, S06 tasks and fresh full affected/repository/profile W2 qualification, inherited unwaived debt, independent Wave review and separate human G2 remain required.",
+      "No 8/16-GiB run, minimum 2/3-GiB claim, model quality, installer or latency replay/optimization here."
+    ]
+  },
+  "checks": [
+    {
+      "id": "affected-python-format",
+      "commandId": "foundation:quality",
+      "exitCode": 0,
+      "durationSeconds": 0.20543659996474162,
+      "command": ".venv\\Scripts\\python.exe -B -m ruff format --check services/core-api/src/research_observatory_core/document_citation_repository.py services/core-api/src/research_observatory_core/document_revision_service.py tests/documents/test_citation_repository.py tests/documents/test_citation_service.py",
+      "workingDirectory": ".",
+      "commit": "cbc70e964299c970991e3442e82c44f482b7a8ba",
+      "result": "PASS",
+      "rawOutput": "artifacts/tmp/W2.C16.T01.qualifying-focused-01.affected-python-format.log",
+      "rawOutputSha256": "177f260a5645724013185e4b140c7045cc39e56c0c97b120f5cb23599f85f0de",
+      "rawOutputCanonicalSha256": "177f260a5645724013185e4b140c7045cc39e56c0c97b120f5cb23599f85f0de",
+      "inputReport": "artifacts/tmp/W2.C16.T01.qualifying-focused-01.json",
+      "inputReportSha256": "a73df76279e5bb81460f3d4a43df781dbc99fd0fb0ab968bcf772eef059ff017",
+      "producerSha256": "18e7fa35e74c6778978931853d787509ce95e36347e4623bfe82bb05aafcfeec",
+      "provenance": "Fresh observed fixed-candidate proof with selected source/actual installed runtime held stable. Authored parser data proves wiring/state; no model or minimum hardware qualification."
+    },
+    {
+      "id": "affected-python-lint",
+      "commandId": "foundation:quality",
+      "exitCode": 0,
+      "durationSeconds": 0.09108260000357404,
+      "command": ".venv\\Scripts\\python.exe -B -m ruff check services/core-api/src/research_observatory_core/document_citation_repository.py services/core-api/src/research_observatory_core/document_revision_service.py tests/documents/test_citation_repository.py tests/documents/test_citation_service.py",
+      "workingDirectory": ".",
+      "commit": "cbc70e964299c970991e3442e82c44f482b7a8ba",
+      "result": "PASS",
+      "rawOutput": "artifacts/tmp/W2.C16.T01.qualifying-focused-01.affected-python-lint.log",
+      "rawOutputSha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18",
+      "rawOutputCanonicalSha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18",
+      "inputReport": "artifacts/tmp/W2.C16.T01.qualifying-focused-01.json",
+      "inputReportSha256": "a73df76279e5bb81460f3d4a43df781dbc99fd0fb0ab968bcf772eef059ff017",
+      "producerSha256": "18e7fa35e74c6778978931853d787509ce95e36347e4623bfe82bb05aafcfeec",
+      "provenance": "Fresh observed fixed-candidate proof with selected source/actual installed runtime held stable. Authored parser data proves wiring/state; no model or minimum hardware qualification."
+    },
+    {
+      "id": "affected-product-types",
+      "commandId": "foundation:quality",
+      "exitCode": 0,
+      "durationSeconds": 5.985828800010495,
+      "command": ".venv\\Scripts\\python.exe -B -m mypy --no-incremental services/core-api/src/research_observatory_core/document_citation_repository.py services/core-api/src/research_observatory_core/document_revision_service.py",
+      "workingDirectory": ".",
+      "commit": "cbc70e964299c970991e3442e82c44f482b7a8ba",
+      "result": "PASS",
+      "rawOutput": "artifacts/tmp/W2.C16.T01.qualifying-focused-01.affected-product-types.log",
+      "rawOutputSha256": "0c37c4158c91ef55c724ba017bf6465f26018199badb08e3ff13f98acdf056c2",
+      "rawOutputCanonicalSha256": "f9b031e5c45aa702cd4fef028d465551cb20a2c4698e0913c7b00766b20ac4d8",
+      "inputReport": "artifacts/tmp/W2.C16.T01.qualifying-focused-01.json",
+      "inputReportSha256": "a73df76279e5bb81460f3d4a43df781dbc99fd0fb0ab968bcf772eef059ff017",
+      "producerSha256": "18e7fa35e74c6778978931853d787509ce95e36347e4623bfe82bb05aafcfeec",
+      "provenance": "Fresh observed fixed-candidate proof with selected source/actual installed runtime held stable. Authored parser data proves wiring/state; no model or minimum hardware qualification."
+    },
+    {
+      "id": "closed-document-schemas",
+      "commandId": "documents:unit",
+      "exitCode": 0,
+      "durationSeconds": 0.5860220000031404,
+      "command": ".venv\\Scripts\\python.exe -B packages/contracts/documents/generate_parser_schema.py --check",
+      "workingDirectory": ".",
+      "commit": "cbc70e964299c970991e3442e82c44f482b7a8ba",
+      "result": "PASS",
+      "rawOutput": "artifacts/tmp/W2.C16.T01.qualifying-focused-01.closed-document-schemas.log",
+      "rawOutputSha256": "a55ee30fb47c9afacd282abc3e69cce6ee0e020d9d710eb2dc98eda54569bb56",
+      "rawOutputCanonicalSha256": "cf42b66dd1df678fb7cf5ffaf80552a60597b0a2f2ef96323d1949800d8f6085",
+      "inputReport": "artifacts/tmp/W2.C16.T01.qualifying-focused-01.json",
+      "inputReportSha256": "a73df76279e5bb81460f3d4a43df781dbc99fd0fb0ab968bcf772eef059ff017",
+      "producerSha256": "18e7fa35e74c6778978931853d787509ce95e36347e4623bfe82bb05aafcfeec",
+      "provenance": "Fresh observed fixed-candidate proof with selected source/actual installed runtime held stable. Authored parser data proves wiring/state; no model or minimum hardware qualification."
+    },
+    {
+      "id": "citation-styles-and-source-projections",
+      "commandId": "documents:unit",
+      "exitCode": 0,
+      "durationSeconds": 15.444409899995662,
+      "command": ".venv\\Scripts\\python.exe -B -m unittest -v tests.documents.test_citation_contexts tests.documents.test_citation_reader",
+      "workingDirectory": ".",
+      "commit": "cbc70e964299c970991e3442e82c44f482b7a8ba",
+      "result": "PASS",
+      "rawOutput": "artifacts/tmp/W2.C16.T01.qualifying-focused-01.citation-styles-and-source-projections.log",
+      "rawOutputSha256": "214a12346207d227f6c1db7c8b0d4f21105cc34c69818c74e1699c76b2315c16",
+      "rawOutputCanonicalSha256": "399265d909c0b41ad019ba5b4e2e5d94faa97700ff6f6c73d40c7ad8429ae242",
+      "inputReport": "artifacts/tmp/W2.C16.T01.qualifying-focused-01.json",
+      "inputReportSha256": "a73df76279e5bb81460f3d4a43df781dbc99fd0fb0ab968bcf772eef059ff017",
+      "producerSha256": "18e7fa35e74c6778978931853d787509ce95e36347e4623bfe82bb05aafcfeec",
+      "provenance": "Fresh observed fixed-candidate proof with selected source/actual installed runtime held stable. Authored parser data proves wiring/state; no model or minimum hardware qualification."
+    },
+    {
+      "id": "encrypted-publication-and-transactional-delivery",
+      "commandId": "documents:unit",
+      "exitCode": 0,
+      "durationSeconds": 50.72174379997887,
+      "command": ".venv\\Scripts\\python.exe -B -m unittest -v tests.documents.test_citation_repository",
+      "workingDirectory": ".",
+      "commit": "cbc70e964299c970991e3442e82c44f482b7a8ba",
+      "result": "PASS",
+      "rawOutput": "artifacts/tmp/W2.C16.T01.qualifying-focused-01.encrypted-publication-and-transactional-delivery.log",
+      "rawOutputSha256": "a1c7a874ec9cd331c2222ab2d3dbd949842f9091b0b1e0f2758721978993a130",
+      "rawOutputCanonicalSha256": "a36412aacf0df0d3b79b51d8df69b01fe6e14468c8ee46e6516e9587a34be45e",
+      "inputReport": "artifacts/tmp/W2.C16.T01.qualifying-focused-01.json",
+      "inputReportSha256": "a73df76279e5bb81460f3d4a43df781dbc99fd0fb0ab968bcf772eef059ff017",
+      "producerSha256": "18e7fa35e74c6778978931853d787509ce95e36347e4623bfe82bb05aafcfeec",
+      "provenance": "Fresh observed fixed-candidate proof with selected source/actual installed runtime held stable. Authored parser data proves wiring/state; no model or minimum hardware qualification."
+    },
+    {
+      "id": "real-core-default-budget-delivery-refresh-retry-reopen-and-denial",
+      "commandId": "documents:unit",
+      "exitCode": 0,
+      "durationSeconds": 77.48049830005039,
+      "command": ".venv\\Scripts\\python.exe -B -m unittest -v tests.documents.test_citation_service",
+      "workingDirectory": ".",
+      "commit": "cbc70e964299c970991e3442e82c44f482b7a8ba",
+      "result": "PASS",
+      "rawOutput": "artifacts/tmp/W2.C16.T01.qualifying-focused-01.real-core-default-budget-delivery-refresh-retry-reopen-and-denial.log",
+      "rawOutputSha256": "f51d681000a9b0fb5091d6de9cb41aed0a429896e21f26c0f53a5809a4fc7da1",
+      "rawOutputCanonicalSha256": "1b5bde01ee19345bd082c0b24caa7ae16c674c4a93f046457a9a85d52c8dc4d2",
+      "inputReport": "artifacts/tmp/W2.C16.T01.qualifying-focused-01.json",
+      "inputReportSha256": "a73df76279e5bb81460f3d4a43df781dbc99fd0fb0ab968bcf772eef059ff017",
+      "producerSha256": "18e7fa35e74c6778978931853d787509ce95e36347e4623bfe82bb05aafcfeec",
+      "provenance": "Fresh observed fixed-candidate proof with selected source/actual installed runtime held stable. Authored parser data proves wiring/state; no model or minimum hardware qualification."
+    },
+    {
+      "id": "native-release-build",
+      "commandId": "desktop:application",
+      "exitCode": 0,
+      "durationSeconds": 171.19303159997799,
+      "command": ".local\\toolchains\\rustup\\toolchains\\1.96.1-x86_64-pc-windows-msvc\\bin\\cargo.exe build --manifest-path apps/desktop/src-tauri/Cargo.toml --release --locked --offline --features integration-harness --example project_contract_probe -j 1 --message-format json-render-diagnostics",
+      "workingDirectory": ".",
+      "commit": "cbc70e964299c970991e3442e82c44f482b7a8ba",
+      "result": "PASS",
+      "rawOutput": "artifacts/tmp/W2.C16.T01.qualifying-native-build-01.stdout.jsonl",
+      "rawOutputSha256": "a9345fc8f93578f5ed55348b9f78af253e56864542689717d3cc1165c04bc899",
+      "rawOutputCanonicalSha256": "a9345fc8f93578f5ed55348b9f78af253e56864542689717d3cc1165c04bc899",
+      "inputReport": "artifacts/tmp/W2.C16.T01.qualifying-native-build-01.json",
+      "inputReportSha256": "c2816f7330189665319fc8e7378a5bb71b90683ac09cb09e0ee0295a6aa59b4f",
+      "producerSha256": "57efeca28ea2190391d312de536c645113a7158c81ffacef225d5ce8ab394dca",
+      "provenance": "Fresh observed fixed-candidate proof with selected source/actual installed runtime held stable. Authored parser data proves wiring/state; no model or minimum hardware qualification."
+    },
+    {
+      "id": "shipping-integrated-citation-delivery",
+      "commandId": "desktop:application",
+      "exitCode": 0,
+      "durationSeconds": 122.0211209000554,
+      "command": ".venv/Scripts/python.exe -B artifacts/tmp/CAP-05.S05.qualifying-reader-02.py cbc70e964299c970991e3442e82c44f482b7a8ba initial",
+      "workingDirectory": ".",
+      "commit": "cbc70e964299c970991e3442e82c44f482b7a8ba",
+      "result": "PASS",
+      "rawOutput": "artifacts/tmp/CAP-05.S05.qualifying-reader-02.initial.events.jsonl",
+      "rawOutputSha256": "de56df5b5ebfc965afbca9049caecf94c4cc95729513c36fa21cc05bcdb4cf7d",
+      "rawOutputCanonicalSha256": "4b6cea39e92f70582ff7aa54e9881fcc2e79003239ee8a7f1d619d709a01b08c",
+      "inputReport": "artifacts/tmp/CAP-05.S05.qualifying-reader-02.initial.json",
+      "inputReportSha256": "d5073d908d4c5d4b919e3a28acd6e535f545848d2e1565ce6ba2c0165a4d5b43",
+      "producerSha256": "f08cf74615d24a5e6036e4d7d55e566895be6cd9c84e76cbb1622aacc7d64995",
+      "provenance": "Fresh observed fixed-candidate proof with selected source/actual installed runtime held stable. Authored parser data proves wiring/state; no model or minimum hardware qualification."
+    },
+    {
+      "id": "shipping-integrated-citation-restart",
+      "commandId": "desktop:application",
+      "exitCode": 0,
+      "durationSeconds": 102.54501020000316,
+      "command": ".venv/Scripts/python.exe -B artifacts/tmp/CAP-05.S05.qualifying-reader-02.py cbc70e964299c970991e3442e82c44f482b7a8ba restart",
+      "workingDirectory": ".",
+      "commit": "cbc70e964299c970991e3442e82c44f482b7a8ba",
+      "result": "PASS",
+      "rawOutput": "artifacts/tmp/CAP-05.S05.qualifying-reader-02.restart.events.jsonl",
+      "rawOutputSha256": "a5cc87a947e6c8accb1603a5c69f4977c70c9552592d8dcb976d6bb4423138a3",
+      "rawOutputCanonicalSha256": "8b1da33c7a108a764ae334ae707a2c3ae506a45add4b71063de1029d922d2f7c",
+      "inputReport": "artifacts/tmp/CAP-05.S05.qualifying-reader-02.restart.json",
+      "inputReportSha256": "f9c887acf67c15d3edea75967fc9b421bace9322cda230233f3d8eb60cc7e237",
+      "producerSha256": "f08cf74615d24a5e6036e4d7d55e566895be6cd9c84e76cbb1622aacc7d64995",
+      "provenance": "Fresh observed fixed-candidate proof with selected source/actual installed runtime held stable. Authored parser data proves wiring/state; no model or minimum hardware qualification."
+    },
+    {
+      "id": "integrated-current-rights-resource-and-reference-cas",
+      "commandId": "documents:unit",
+      "exitCode": 0,
+      "durationSeconds": 26.06947410001885,
+      "command": ".venv/Scripts/python.exe -B artifacts/tmp/CAP-05.S05.qualifying-core-seams-02.py cbc70e964299c970991e3442e82c44f482b7a8ba",
+      "workingDirectory": ".",
+      "commit": "cbc70e964299c970991e3442e82c44f482b7a8ba",
+      "result": "PASS",
+      "rawOutput": "artifacts/tmp/CAP-05.S05.qualifying-core-seams-02.log",
+      "rawOutputSha256": "6d90d27f569dc427de7cee2db4014c090bced92764d56f3c34a7d2db38150c32",
+      "rawOutputCanonicalSha256": "5ab9f9f353a9a9f559476fad616c16f2f80dc5cf5407d8d40aaa866ba132c308",
+      "inputReport": "artifacts/tmp/CAP-05.S05.qualifying-core-seams-02.json",
+      "inputReportSha256": "5a2bd59085ed5f6f1e4cf167364399f8e87402ecc868cc27b861308d0a861b5b",
+      "producerSha256": "24438c7f4d819442ab8488a787d52c28b70c29ff854f10fc69f59f47c1ee7778",
+      "provenance": "Fresh observed fixed-candidate proof with selected source/actual installed runtime held stable. Authored parser data proves wiring/state; no model or minimum hardware qualification."
+    },
+    {
+      "id": "integrated-precancel-and-preparefault-characterization",
+      "commandId": "documents:unit",
+      "exitCode": 0,
+      "durationSeconds": 18.611725299968384,
+      "command": ".venv/Scripts/python.exe -B artifacts/tmp/CAP-05.S05.qualifying-cancellation-02.py cbc70e964299c970991e3442e82c44f482b7a8ba",
+      "workingDirectory": ".",
+      "commit": "cbc70e964299c970991e3442e82c44f482b7a8ba",
+      "result": "PASS",
+      "rawOutput": "artifacts/tmp/CAP-05.S05.qualifying-cancellation-02.raw.log",
+      "rawOutputSha256": "5e2d5b913bbf544ab98412c9982c86f55fae2d1918f39329b2789b84c0fa22b5",
+      "rawOutputCanonicalSha256": "51bc9953f159116154d25bbd539bebdf4bf0106350e2e97494184ea00bc14ffa",
+      "inputReport": "artifacts/tmp/CAP-05.S05.qualifying-cancellation-02.json",
+      "inputReportSha256": "0fd26cb307846d4bc5f42173620a313d3c234a3e1970699a4e2504332a99992b",
+      "producerSha256": "f16a23515180e4ad4e1c306622c5b2a486710d848e2f200e0f8f3bfb3dab95bb",
+      "provenance": "Fresh observed fixed-candidate proof with selected source/actual installed runtime held stable. Authored parser data proves wiring/state; no model or minimum hardware qualification."
+    },
+    {
+      "id": "integrated-material-cancellation-and-fault-rollback",
+      "commandId": "documents:unit",
+      "exitCode": 0,
+      "durationSeconds": 23.978658100008033,
+      "command": ".venv/Scripts/python.exe -B artifacts/tmp/CAP-05.S05.qualifying-midoperation-02.py cbc70e964299c970991e3442e82c44f482b7a8ba",
+      "workingDirectory": ".",
+      "commit": "cbc70e964299c970991e3442e82c44f482b7a8ba",
+      "result": "PASS",
+      "rawOutput": "artifacts/tmp/CAP-05.S05.qualifying-midoperation-02.log",
+      "rawOutputSha256": "adba8dcfed97e7c309ee0a0f1ae64b278524cf9bd93b4a60040c1b04aa4b3999",
+      "rawOutputCanonicalSha256": "098722f3df5c5876464d629d204f3e469c7b93b526ed56091c9990afd7e9a3d1",
+      "inputReport": "artifacts/tmp/CAP-05.S05.qualifying-midoperation-02.json",
+      "inputReportSha256": "197f2cfaebd0aba8815b138ab5e9667f134f9ebf5e9b19024b577ed6c085aac6",
+      "producerSha256": "318af744895822e8f75c5f3d416651d36bfcde82e2ae8ff1c55ec92f87f26180",
+      "provenance": "Fresh observed fixed-candidate proof with selected source/actual installed runtime held stable. Authored parser data proves wiring/state; no model or minimum hardware qualification."
+    }
+  ],
+  "machineArtifacts": [
+    {
+      "path": "artifacts/tmp/W2.C16.T01.qualifying-focused-01.json",
+      "sha256": "a73df76279e5bb81460f3d4a43df781dbc99fd0fb0ab968bcf772eef059ff017"
+    },
+    {
+      "path": "artifacts/tmp/W2.C16.T01.qualifying-focused-01.affected-python-format.log",
+      "sha256": "177f260a5645724013185e4b140c7045cc39e56c0c97b120f5cb23599f85f0de"
+    },
+    {
+      "path": "artifacts/tmp/W2.C16.T01.qualifying-focused-01.affected-python-lint.log",
+      "sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18"
+    },
+    {
+      "path": "artifacts/tmp/W2.C16.T01.qualifying-focused-01.affected-product-types.log",
+      "sha256": "0c37c4158c91ef55c724ba017bf6465f26018199badb08e3ff13f98acdf056c2"
+    },
+    {
+      "path": "artifacts/tmp/W2.C16.T01.qualifying-focused-01.closed-document-schemas.log",
+      "sha256": "a55ee30fb47c9afacd282abc3e69cce6ee0e020d9d710eb2dc98eda54569bb56"
+    },
+    {
+      "path": "artifacts/tmp/W2.C16.T01.qualifying-focused-01.citation-styles-and-source-projections.log",
+      "sha256": "214a12346207d227f6c1db7c8b0d4f21105cc34c69818c74e1699c76b2315c16"
+    },
+    {
+      "path": "artifacts/tmp/W2.C16.T01.qualifying-focused-01.encrypted-publication-and-transactional-delivery.log",
+      "sha256": "a1c7a874ec9cd331c2222ab2d3dbd949842f9091b0b1e0f2758721978993a130"
+    },
+    {
+      "path": "artifacts/tmp/W2.C16.T01.qualifying-focused-01.real-core-default-budget-delivery-refresh-retry-reopen-and-denial.log",
+      "sha256": "f51d681000a9b0fb5091d6de9cb41aed0a429896e21f26c0f53a5809a4fc7da1"
+    },
+    {
+      "path": "artifacts/tmp/W2.C16.T01.qualifying-native-build-01.json",
+      "sha256": "c2816f7330189665319fc8e7378a5bb71b90683ac09cb09e0ee0295a6aa59b4f"
+    },
+    {
+      "path": "artifacts/tmp/W2.C16.T01.qualifying-native-build-01.stdout.jsonl",
+      "sha256": "a9345fc8f93578f5ed55348b9f78af253e56864542689717d3cc1165c04bc899"
+    },
+    {
+      "path": "artifacts/tmp/W2.C16.T01.qualifying-native-build-01.stderr.log",
+      "sha256": "f61eeef08f6e49cc15aea31d33e5098fee685de9bc82fb5681fc5eb3749929a4"
+    },
+    {
+      "path": "artifacts/tmp/W2.C16.T01.qualifying-package-01.json",
+      "sha256": "fad1031b5f524914d1e1ae7a4f1bd2921f73e5ed479fc66766d595a247defb1c"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S05.qualifying-reader-02.initial.json",
+      "sha256": "d5073d908d4c5d4b919e3a28acd6e535f545848d2e1565ce6ba2c0165a4d5b43"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S05.qualifying-reader-02.initial.events.jsonl",
+      "sha256": "de56df5b5ebfc965afbca9049caecf94c4cc95729513c36fa21cc05bcdb4cf7d"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S05.qualifying-reader-02.initial.stderr.log",
+      "sha256": "c7c6254c278ee63e7915984b60ac553b8b2514ba7426966c2b5967997efeda6e"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S05.integration-baseline-03.initial.json",
+      "sha256": "7d287fefc3de9bda231228714c2afb367d5ca8c26e0ce5b9368bd471c5095d40"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S05.qualifying-reader-02.restart.json",
+      "sha256": "f9c887acf67c15d3edea75967fc9b421bace9322cda230233f3d8eb60cc7e237"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S05.qualifying-reader-02.restart.events.jsonl",
+      "sha256": "a5cc87a947e6c8accb1603a5c69f4977c70c9552592d8dcb976d6bb4423138a3"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S05.qualifying-reader-02.restart.stderr.log",
+      "sha256": "c7c6254c278ee63e7915984b60ac553b8b2514ba7426966c2b5967997efeda6e"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S05.integration-baseline-03.restart.json",
+      "sha256": "749b67b6eff9ac5f1b293def0ea660b834110ac4404a6d8281cb49860f4e724b"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S05.qualifying-core-seams-02.json",
+      "sha256": "5a2bd59085ed5f6f1e4cf167364399f8e87402ecc868cc27b861308d0a861b5b"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S05.qualifying-core-seams-02.log",
+      "sha256": "6d90d27f569dc427de7cee2db4014c090bced92764d56f3c34a7d2db38150c32"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S05.qualifying-cancellation-02.json",
+      "sha256": "0fd26cb307846d4bc5f42173620a313d3c234a3e1970699a4e2504332a99992b"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S05.qualifying-cancellation-02.raw.log",
+      "sha256": "5e2d5b913bbf544ab98412c9982c86f55fae2d1918f39329b2789b84c0fa22b5"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S05.qualifying-midoperation-02.json",
+      "sha256": "197f2cfaebd0aba8815b138ab5e9667f134f9ebf5e9b19024b577ed6c085aac6"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S05.qualifying-midoperation-02.log",
+      "sha256": "adba8dcfed97e7c309ee0a0f1ae64b278524cf9bd93b4a60040c1b04aa4b3999"
+    },
+    {
+      "path": "artifacts/evidence/W2.C16.T01.spec.json",
+      "sha256": "cb62e0e797ca55095e6b6a24d3b6e000bee47a41bae5085c785820301752ddbc"
+    },
+    {
+      "path": "artifacts/evidence/W2.C16.T01.task-start.md",
+      "sha256": "aafcce4deba7571bd9952abc10f4f02fe2da7a18df64317ed4259d36e630e11c"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S05.prepare-combined-fixture-03.py",
+      "sha256": "77531a64e525ebc9ba647958119b3e1ee60a85a45025ec2da03fc74330d35b8c"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S05.prepare-combined-fixture-03.json",
+      "sha256": "ae4285d5e70f822e6907a1c1d55689dc38270104febed8e4fb3bd8ac8bf0d5fa"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S05.prepare-combined-fixture-03.lifecycle.json",
+      "sha256": "0878214837aec235fdcde9b335a1fdf525e99af50a7f291f883fdf9f9b6f0476"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S05.integration-baseline-03.py",
+      "sha256": "31ff33439c05d82c52886e220593b96942d97242d6d9bd509a7a620bcbfb5660"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S05.integration-baseline-03.before.json",
+      "sha256": "dd3df61457037fd89b02e198e37f370f0b4855642d3d41beabee48a2bc7ffe5c"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S05.qualifying-reader-02.py",
+      "sha256": "f08cf74615d24a5e6036e4d7d55e566895be6cd9c84e76cbb1622aacc7d64995"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S05.qualifying-core-seams-02.py",
+      "sha256": "24438c7f4d819442ab8488a787d52c28b70c29ff854f10fc69f59f47c1ee7778"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S05.qualifying-cancellation-02.py",
+      "sha256": "f16a23515180e4ad4e1c306622c5b2a486710d848e2f200e0f8f3bfb3dab95bb"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S05.qualifying-midoperation-02.py",
+      "sha256": "318af744895822e8f75c5f3d416651d36bfcde82e2ae8ff1c55ec92f87f26180"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S05.T03.reader-uia-01.cs",
+      "sha256": "808e16902da5918236097053c739af5f5de1cf79b172d01361c0c599aec1a41a"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S05.T03.reader-uia-01.ps1",
+      "sha256": "03f2a3f5d82367ad434d2814c6ff6ff95929bf1063e323e5ee6f9a10dc8b1643"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S04.T01.owned-native-job-01.py",
+      "sha256": "991d6cc09aa992ba3675e3107058d934c9e0d56750aa9457ae4b3d1e642efe58"
+    },
+    {
+      "path": "artifacts/tmp/W2.C16.T01.qualifying-focused-01.py",
+      "sha256": "18e7fa35e74c6778978931853d787509ce95e36347e4623bfe82bb05aafcfeec"
+    },
+    {
+      "path": "artifacts/tmp/W2.C16.T01.qualifying-native-build-01.py",
+      "sha256": "57efeca28ea2190391d312de536c645113a7158c81ffacef225d5ce8ab394dca"
+    },
+    {
+      "path": "artifacts/tmp/W2.C16.T01.qualifying-package-01.py",
+      "sha256": "a275501c30ec1e74bdf9c434e64a38a9ebd6c88027135f0153a6c8473c0dae5e"
+    },
+    {
+      "path": "artifacts/tmp/W2.C16.T01.assemble-evidence-01.py",
+      "sha256": "947299a114953345e8ba4b7acbe16214cdbe08a40b840007b02c641ef5f88730"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S05.qualifying-reader-01.initial.json",
+      "sha256": "1c13eb7082cd5e9034e3dd5a34ffb6912480ecac9f38c23a5132d8bed5d60937"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S05.citation-diagnostic-04.json",
+      "sha256": "e8c8fbe93199280884bdf5db3def15026e62e98a161aa0f6345587184d61cc38"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S05.citation-diagnostic-03.adverse.json",
+      "sha256": "4566c2ce4ae88b591b3ae1f14d119ab7a3967b740cddcbe4d779be7bb89222f5"
+    },
+    {
+      "path": "artifacts/tmp/W2.C16.T01.characterize-large-01.json",
+      "sha256": "ba6d94c3cedae92013259ff30f94e749e3e93cb7a4c9b4874a4a2092c70b448b"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S05.qualifying-reader-01.initial.events.jsonl",
+      "sha256": "b953fc3db16e60244f26d7365e46e33d8f22acad82596b7fdc9476216591f3c5"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S05.qualifying-reader-01.initial.stderr.log",
+      "sha256": "c7c6254c278ee63e7915984b60ac553b8b2514ba7426966c2b5967997efeda6e"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S05.qualifying-reader-01.py",
+      "sha256": "4a08084e5bfee255d5772e0dd28f79cafea83488e81589135abb57abefbb8503"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S05.citation-diagnostic-01.json",
+      "sha256": "fc6009c5daeb099f5d7da79a1e770067167632e29ef944fdd6d5cb9ef49af27b"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S05.citation-diagnostic-02.json",
+      "sha256": "5b8fbe045d50afc2670f3c36cbb127c365ba32bd5b2e636e3892aa6aa04debff"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S05.citation-diagnostic-04.log",
+      "sha256": "15a5f24864898eb74b9aa54999b48355fe5e1236d3094c2e35882a4de7b5ee85"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S05.citation-client-diagnostic-01.log",
+      "sha256": "f4d9df330233b090c895498c4c44b0a36a6d32fa4dcd28bf9ce2a9e056dfa030"
+    },
+    {
+      "path": "artifacts/tmp/W2.C16.T01.characterize-large-01.log",
+      "sha256": "d905368ada67095a582c39d8c0bdd20d3de155a8eb92c1fd7274cd333d34c303"
+    },
+    {
+      "path": "artifacts/tmp/W2.C16.T01.characterize-large-01.py",
+      "sha256": "fc2639430065c0949069fba90870cf64c624e72b055ea1d5d58516d846ba4d5b"
+    },
+    {
+      "path": "artifacts/tmp/W2.C16.T01.test_citation_service.draft-01.py",
+      "sha256": "c67c9e4822e397fc3dc8bb7d49b6c9eeaceeb0617c7c7709d952ee6f974410a5"
+    },
+    {
+      "path": "artifacts/tmp/W2.C16.T01.development-01.log",
+      "sha256": "8b5e73c6a3fcdf49dde94d1269e6c098df5296edad5cfe7b19c6298697868c1d"
+    },
+    {
+      "path": "artifacts/tmp/W2.C16.T01.types-development-01.log",
+      "sha256": "992772ee93dd24f091853d1c564215ec45dbfe4bacd16d16d731019b819fad12"
+    }
+  ],
+  "preservedAdverseObservations": [
+    {
+      "path": "artifacts/tmp/CAP-05.S05.qualifying-reader-01.initial.json",
+      "sha256": "1c13eb7082cd5e9034e3dd5a34ffb6912480ecac9f38c23a5132d8bed5d60937",
+      "qualifyingAsWholeReport": false,
+      "disposition": "Original shipping integration FAIL retained: collection publication succeeded but response exceeded cumulative admission. No completion from the saved collection."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S05.citation-diagnostic-04.json",
+      "sha256": "e8c8fbe93199280884bdf5db3def15026e62e98a161aa0f6345587184d61cc38",
+      "qualifyingAsWholeReport": false,
+      "disposition": "Actual late viewer-resource-limit, HTTP 409 and committed head retained; no admission relaxation."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S05.citation-diagnostic-03.adverse.json",
+      "sha256": "4566c2ce4ae88b591b3ae1f14d119ab7a3967b740cddcbe4d779be7bb89222f5",
+      "qualifyingAsWholeReport": false,
+      "disposition": "Instrumentation accessed runtime before lifespan. Setup failure retained separately; successor diagnosed the real error."
+    },
+    {
+      "path": "artifacts/tmp/W2.C16.T01.characterize-large-01.json",
+      "sha256": "ba6d94c3cedae92013259ff30f94e749e3e93cb7a4c9b4874a4a2092c70b448b",
+      "qualifyingAsWholeReport": false,
+      "disposition": "One prospective default-budget 50-page regression FAIL on unchanged product source: HTTP 409. Diagnosis, not qualification."
+    }
+  ],
+  "correctiveIntegration": {
+    "originSha256": "e42c801524e3eddaa254cc73a9b2a6a2db5c4e9deae72ea3a157a153491aeb91",
+    "authorityPreserved": true,
+    "affectedChecks": [
+      ".venv\\Scripts\\python.exe -B -m ruff format --check services/core-api/src/research_observatory_core/document_citation_repository.py services/core-api/src/research_observatory_core/document_revision_service.py tests/documents/test_citation_repository.py tests/documents/test_citation_service.py",
+      ".venv\\Scripts\\python.exe -B -m ruff check services/core-api/src/research_observatory_core/document_citation_repository.py services/core-api/src/research_observatory_core/document_revision_service.py tests/documents/test_citation_repository.py tests/documents/test_citation_service.py",
+      ".venv\\Scripts\\python.exe -B -m mypy --no-incremental services/core-api/src/research_observatory_core/document_citation_repository.py services/core-api/src/research_observatory_core/document_revision_service.py",
+      ".venv\\Scripts\\python.exe -B packages/contracts/documents/generate_parser_schema.py --check",
+      ".venv\\Scripts\\python.exe -B -m unittest -v tests.documents.test_citation_contexts tests.documents.test_citation_reader",
+      ".venv\\Scripts\\python.exe -B -m unittest -v tests.documents.test_citation_repository",
+      ".venv\\Scripts\\python.exe -B -m unittest -v tests.documents.test_citation_service",
+      ".local\\toolchains\\rustup\\toolchains\\1.96.1-x86_64-pc-windows-msvc\\bin\\cargo.exe build --manifest-path apps/desktop/src-tauri/Cargo.toml --release --locked --offline --features integration-harness --example project_contract_probe -j 1 --message-format json-render-diagnostics",
+      ".venv/Scripts/python.exe -B artifacts/tmp/CAP-05.S05.qualifying-reader-02.py cbc70e964299c970991e3442e82c44f482b7a8ba initial",
+      ".venv/Scripts/python.exe -B artifacts/tmp/CAP-05.S05.qualifying-reader-02.py cbc70e964299c970991e3442e82c44f482b7a8ba restart",
+      ".venv/Scripts/python.exe -B artifacts/tmp/CAP-05.S05.qualifying-core-seams-02.py cbc70e964299c970991e3442e82c44f482b7a8ba",
+      ".venv/Scripts/python.exe -B artifacts/tmp/CAP-05.S05.qualifying-cancellation-02.py cbc70e964299c970991e3442e82c44f482b7a8ba",
+      ".venv/Scripts/python.exe -B artifacts/tmp/CAP-05.S05.qualifying-midoperation-02.py cbc70e964299c970991e3442e82c44f482b7a8ba"
+    ],
+    "reusedEvidence": [],
+    "rationale": "Restore approved inspectable citation delivery through the existing unchanged authority and canonical writer. All selected checks are freshly observed at the exact corrected candidate. Historical adverse/source-build records authenticate lineage and disclosure, not substituted passing results."
+  },
+  "taskApproval": false,
+  "sliceApproval": false,
+  "waveCompletion": false,
+  "releaseApproval": false
+}

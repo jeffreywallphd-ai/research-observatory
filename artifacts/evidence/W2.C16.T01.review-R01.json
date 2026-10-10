@@ -1,0 +1,149 @@
+{
+  "task_id": "W2.C16.T01",
+  "attempt_id": "R01",
+  "reviewer": "agent:/root/reader_table_figure_review",
+  "result": "approved",
+  "reviewed_state_commit": "cbc70e964299c970991e3442e82c44f482b7a8ba",
+  "candidate_commit": "cbc70e964299c970991e3442e82c44f482b7a8ba",
+  "base_commit": "eb8518099155c07a1ca91ba2aedc2c650c2f6a2e",
+  "reviewed_at": "2026-10-10T12:41:55.902911+00:00",
+  "packet_sha256": "711f9dc7a4fd8c154acd817595f9fe155481d5f5ec25e55e414a1a598f512e17",
+  "evidence_sha256": "47b458688652778eda4f180d30a3aea1311bf3443cb96bbf43874cc66f30e7da",
+  "evidence_raw_sha256": "c74fc51bb2f92ec1b93a68e3df65213336ed636bf2308198cff4a74e38b8aa7a",
+  "acceptance_criteria_sha256": "28a439f198c769f953d38c06ea60cb19a34e009a3907274fb375f3561d561bac",
+  "selection_sha256": "e11bf0b332aaa2f6041dd4c27bc6f63a5fca68f31fdbb37bb861cb7351e6e457",
+  "reviewed_backlog_sha256": "e2af218f57bccef72beef2b92f88a9f92b47beb9c1369a41d40fb51c989d1467",
+  "findings": [],
+  "closures": [],
+  "acceptance_reviews": [
+    {
+      "criterion_index": 1,
+      "result": "satisfied",
+      "assessment": "Existing style and exact-source projection proof preserves explicit uncertain, ambiguous and unresolved targets. The fresh actual Core default-budget 50-page regression exercises initial delivery, refresh, exact-command retry, pagination, denied rights and close/reopen against a lawful retained original and authored accepted IR. Citation Reader pages retain exact accepted revision/content/structure/source anchors and exact reference collection/revision/protected payload identity. Fresh shipping reference/citation/table-figure initial and new-process restart successfully inspect inferred and unresolved contexts, resolve source jumps, observe original pages, retain object and exclusion identity and return to the selected Work/version. Encrypted baseline and post-observation retain all three full collections and immutable accepted/original source pins. Authored parser IR proves wiring and persisted state, not model quality or scholarly verification."
+    },
+    {
+      "criterion_index": 2,
+      "result": "satisfied",
+      "assessment": "Fresh nine-case encrypted repository and two-case actual Core service proof cover the first-failing default-budget delivery and current rights, stale-reference, catalog/material and immutable-IR boundaries. The three new repository tests cover authenticated callback inputs on new publication and exact retry with default collection compatibility; projection failure on initial/refresh/exact retry and cancellation after projection with equality of relevant canonical rows; and concurrent reference replacement/current denial preventing delivery. Fresh integrated Core seams challenge content-free resource notices, derive denial, current session reopening, reference CAS and dependent citation refresh. Separate four material mid-operation challenges reach pending aggregate/enrichment/provenance/outbox writes with initially-false cancellation or before-commit fault, then prove rollback and reopen equality of 22 relevant tables, current heads, all retained collections and accepted IR. Three earlier preparation/pre-cancel tests retain their narrower labels. Fresh shipping processes both exit zero and leave zero owned descendants. Original failing observations are preserved and not reclassified as passes."
+    },
+    {
+      "criterion_index": 3,
+      "result": "satisfied",
+      "assessment": "The frozen 11-path claim-base diff contains the two Core modules, two citation tests, a citation contract note and normal task/planning metadata. A private optional trusted delivery callback constructs the existing closed Reader page inside the existing canonical publication transaction after current actor, accepted equality, reference head/record/payload, target catalog and complete material dependency validation. Both new and exact-command retry branches deliver before the existing before-commit hook and final cancellation check. Callback failure rolls back publication. Ordinary repository callers retain the collection return. Existing saved-read behavior, public Core/Native/client schemas, canonical storage/migrations, source/history bytes and current Native/project/session/Intent/privacy/source inspect/derive checks remain unchanged. Cumulative admission retains the 24-MiB frame and multiplier128 with no reset, refund or cached grant. Duplicate postcommit accepted/reference reads were removed by using already authenticated values in the same transaction. Fresh affected format/lint/type/schema and locked offline Native release proof pass. No framework/controller, governed UX/reference, security authority, threshold, model/hardware, latency or release-scope change was introduced."
+    }
+  ],
+  "corrective_integration": {
+    "evidence_sha256": "47b458688652778eda4f180d30a3aea1311bf3443cb96bbf43874cc66f30e7da",
+    "authority_preserved": true,
+    "affected_integration_reviewed": true,
+    "notes": "Independently reviewed the exact two Core modules, two citation tests, contract, C16 specification/task-start and inherited T02 authority; authenticated the frozen current packet and fresh actual Core/Native shipping integration, deny/resource/CAS, restart and transactional rollback evidence. The restoration delivers the existing bounded projection within the same protected canonical transaction on new and idempotent branches after the same current actor/source/reference/catalog/material fences, followed by the existing before-commit hook and final cancellation. Default collection compatibility, immutable approvals/history and public authority/admission contracts remain. The prior late admission failure is closed by fresh initial/refresh/exact-retry/reopen and integrated shipping proof; S05 formal publication remains a separate pending prerequisite."
+  },
+  "advisory_resolution": {
+    "formal_round_statement": "R01 has no prior formal C16 attempt or controlled open finding. The previous S05 integration failure and read-only preflight were diagnostic observations leading to this linked restoration; no prior formal finding ID or controlled closure is invented. Original T02 DONE/approved history remains immutable.",
+    "root_cause": "At clean S05 product candidate 10bd669e0686edec150557830dbfcf64b7a1dc1f, citation publication committed a valid new encrypted head before postcommit delivery reread accepted/reference artifacts on the same cumulative budget. Diagnostic04 observed HTTP409 viewer-resource-limit for a 61,881-byte artifact, fixed charge7,924,864 at remaining6,956,544, followed by HTTP200 showing the newly committed head. Production client decoders accepted the real saved response. This is a product atomic-response/resource defect, not an inferred-marker parsing or observer wording failure.",
+    "first_failing_regression": "artifacts/tmp/W2.C16.T01.characterize-large-01.json retains the prospective default-budget 50-page failure before product edits. Fresh actual Core regression now passes at the fixed candidate.",
+    "inference_correction": "Withdrawn earlier inference that the first no-collection UI notice proved repository preparation succeeded: Native maps known non200 responses to absence, so UI wording alone did not establish preparation or canonical absence. Actual protected Core/head observations establish the commit and root cause.",
+    "disposition": "resolved_at_current_candidate",
+    "controlled_closure_created": false
+  },
+  "producer_boundaries": {
+    "disposition": "adequate_for_observed_proof",
+    "assessment": "Reviewed the settled ignored producers and all owned reports/raw logs. Passing Reader02 runs preserve six read-only UIA transients: initial two ElementNotAvailable dump failures and two exact missing-table-region polls; restart one of each. At most two extra attempts apply only to read-only dump/dump-region ElementNotAvailable observations, with current owned HWND/PID root reverified. Exact table1:0 is allowed only inside the existing15-second full cell-count loop while the protected region is cleared pending read; duplicate regions and every other error fail. Mutations are not retried. Subsequent exact joined Text status, cell9/10 identities, source/page/exclusion and Work-return assertions all pass. Preexecution U+00B7 observer correction does not weaken an executed earlier assertion. Core seams02 corrects the unexecuted producer01 expectation to the approved rights-current content-free resource/CAS notice retaining opaque CID/source with no entries; rights-denied409 still exposes neither CID nor content. All predecessor bytes/logs remain preserved.",
+    "material_cancellation": "The four fresh challenges observe real pending SQLCipher writes before initially-false cancellation at the exact existing before-commit hooks. Reference/table index grows; inferred citations explicitly have no canonical IDs and retain the enrichment index. All cases require pending aggregate/enrichment/provenance/outbox writes and equality after rollback/reopen. They exercise default repository collection delivery; separate new repository tests exercise projection failure and final cancellation after the private callback.",
+    "label_limit": "The Core producer currentCopyRightsAllStructures flag concerns current derive/source-copy authority. It does not prove an actual system clipboard operation."
+  },
+  "independence": {
+    "implementation_owner": "codex-w2-implementation",
+    "statement": "I independently reviewed the applicable procedure and correction authority, exact source/spec/contract/task-start, affected integration seams and fresh qualification proof. I authored only this review ledger. I did not edit product, tests, contract, producers, fixtures, controller, planning, backlog or HEAD; I executed no qualifying build/test/model/benchmark/clipboard replay. Read-only preflight and diagnostic advice were separate from owner implementation and execution. Normal waves-only atomic submit metadata publication followed settled qualification and does not relabel later metadata as a qualifying execution candidate."
+  },
+  "evidence_reproduction": {
+    "manifest": "artifacts/evidence/W2.C16.T01.R01.json",
+    "fresh_selected_checks": 13,
+    "criterion_count": 3,
+    "machine_artifacts": 60,
+    "authentication": "Completed read-only authentication of raw/canonical manifest, 110 artifact/report/raw/canonical/producer comparisons, seven unique fresh reports, all60 machine artifacts and four adverse groups. Independently hashed11,723 unique actual selected input files totaling481,400,148 bytes in115.1800164seconds with zero mismatch/conflict before atomic submit metadata publication. No costly replay was performed.",
+    "focused": "Seven fresh groups PASS: affected format, lint, no-incremental product types, closed schemas,19 citation style/Reader cases,9 encrypted repository cases and2 actual Core service cases.",
+    "native_build_seconds": 171.1930316,
+    "shipping_initial": {
+      "result": "PASS",
+      "seconds": 122.0211209000554,
+      "owned_exit": 0,
+      "active_owned_processes_after_cleanup": 0,
+      "kernel_owned_aggregate_peak_bytes": 485412864
+    },
+    "shipping_restart": {
+      "result": "PASS",
+      "seconds": 102.54501020000316,
+      "owned_exit": 0,
+      "active_owned_processes_after_cleanup": 0,
+      "kernel_owned_aggregate_peak_bytes": 486764544
+    },
+    "core_seams_seconds": 26.0694741,
+    "existing_precancel_three_cases_seconds": 18.6117253,
+    "material_midoperation_four_cases_seconds": 23.9786581,
+    "package": "Authenticated197 package files,246 shipping source pins,1024 Core/contract pins and8758 installed runtime files. Fresh locked offline Native release build is candidate-bound; unchanged shipping Renderer assembly has separately authenticated T03 lineage. Signed worker/guardian exact known prior bytes remain. This is not a fresh frontend-build claim.",
+    "submit_receipt": {
+      "path": "artifacts/tmp/W2.C16.T01.submit-R01.log",
+      "result": "COMMITTED",
+      "cas": "matched-and-replaced",
+      "predecessor_sha256": "72ee0b0d7e34a84f8f46824e678ffe40e530bd1aaec0ba92c90afc159fc8c823",
+      "successor_sha256": "e2af218f57bccef72beef2b92f88a9f92b47beb9c1369a41d40fb51c989d1467",
+      "changed_fields": [
+        "waves"
+      ]
+    }
+  },
+  "preserved_adverse_observations": [
+    {
+      "path": "artifacts/tmp/CAP-05.S05.qualifying-reader-01.initial.json",
+      "sha256": "1c13eb7082cd5e9034e3dd5a34ffb6912480ecac9f38c23a5132d8bed5d60937",
+      "qualifyingAsWholeReport": false,
+      "disposition": "Original shipping integration FAIL retained: collection publication succeeded but response exceeded cumulative admission. No completion from the saved collection."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S05.citation-diagnostic-04.json",
+      "sha256": "e8c8fbe93199280884bdf5db3def15026e62e98a161aa0f6345587184d61cc38",
+      "qualifyingAsWholeReport": false,
+      "disposition": "Actual late viewer-resource-limit, HTTP 409 and committed head retained; no admission relaxation."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S05.citation-diagnostic-03.adverse.json",
+      "sha256": "4566c2ce4ae88b591b3ae1f14d119ab7a3967b740cddcbe4d779be7bb89222f5",
+      "qualifyingAsWholeReport": false,
+      "disposition": "Instrumentation accessed runtime before lifespan. Setup failure retained separately; successor diagnosed the real error."
+    },
+    {
+      "path": "artifacts/tmp/W2.C16.T01.characterize-large-01.json",
+      "sha256": "ba6d94c3cedae92013259ff30f94e749e3e93cb7a4c9b4874a4a2092c70b448b",
+      "qualifyingAsWholeReport": false,
+      "disposition": "One prospective default-budget 50-page regression FAIL on unchanged product source: HTTP 409. Diagnosis, not qualification."
+    }
+  ],
+  "adverse_assessment": "The original S05 shipping FAIL63.3067401s at citation delivery, forced owned-job cleanup with zero surviving owned processes, protected diagnostic04 committed-head/resource409, diagnostic03 pre-lifespan setup failure without project mutation, and first-failing default-budget50-page characterization remain adverse. Observer/preparation/site consistency failures retain their own original logs and narrower descriptions. Fresh passing successors close only their demonstrated boundaries; no failed run is relabeled or accepted merely because its later output can be decoded.",
+  "verification_selection": {
+    "selectedCommandIds": [
+      "desktop:application",
+      "documents:unit",
+      "foundation:quality"
+    ],
+    "riskAnalysis": "Restore the original T02 inspectable citation outcome by constructing the existing bounded Reader page inside the existing atomic citation publication using the exact already-authenticated accepted/reference/source values. Use a private optional delivery callback on both new and exact-command retry paths; existing repository callers still receive the collection. Retain current actor, accepted-equality, reference head/record/payload, target catalog, material dependency and outer current-rights/session/Native delivery checks. Retain reader_page source/payload binding and closed 64-KiB shape. Projection validation or failure rolls back the same object/aggregate/enrichment/index/material/provenance/outbox transaction. Keep the final before-commit hook and cancellation check after projection. The source frame remains 24 MiB and cumulative admission multiplier remains 128 with no reset/refund or authorization cache relaxation. Add a failing default-budget 50-page real Core regression before source changes, cover successful initial/refresh/idempotent response and exact source contexts, delivery-failure rollback and post-projection cancellation/retry/reopen; retain existing rights, stale-reference, catalog/material and immutable-IR tests. Run affected citation repository/service/reader tests, changed-file format/lint/type checks, and fresh shipping Reader integration against the actual local Native/Core/vault/SQLCipher boundary. Replay S05 relevant cancellation/recovery/denial and integrated structures at slice scope after independent correction disposition. Reuse only explicitly bound historical unmodified citation-style checks as support; no fresh correctness claim from that history alone. Full repository/profile and cross-capability qualification remain the W2 exit obligation. No new product scope, UX/reference, schema/migration, security/rights authority, threshold, model/hardware run, framework/controller or history change.",
+    "deferred": [
+      "Formal S05 slice disposition, S06 tasks and fresh full affected/repository/profile W2 qualification, inherited unwaived debt, independent Wave review and separate human G2 remain required.",
+      "No 8/16-GiB run, minimum 2/3-GiB claim, model quality, installer or latency replay/optimization here."
+    ]
+  },
+  "scope_limits": {
+    "qualification": "W2.C16.T01 R01 only at exact committed product candidate. C16 task approval permits controller review processing; it is not S05 slice, Wave or human release approval.",
+    "synthetic_source": "Authored accepted parser IR and declared capacity establish wiring, identity and state. No model accuracy, scholarly correctness, result/statistical verification or minimum hardware qualification is claimed.",
+    "actual_principal": "Windows protected vault/SQLCipher, supervised Core and actual shipping Renderer/Wry/Native invocation in an owned integration-harness project; separate real Core/TestClient and repository tests retain their distinct boundaries. No sealed installer, platform/signing matrix or external clipboard effect is established.",
+    "ux": "Approved UI1.9 authority remains. Named owned control UIA and source/handoff/restart assertions provide bounded experience proof, not comprehensive hardware screenreader/all-keyboard/pixel parity.",
+    "resource": "Measured kernel whole-owned-job aggregate peaks are neither viewer working-set nor minimum RAM/model/latency proof. No8/16-GiB/model run, minimum2/3-GiB claim, latency optimization or unchanged broad-profile replay was performed.",
+    "remaining": "C16 DONE/campaign resume, formal successor S05 evidence/review, S06 and fresh full affected/repository/profile W2 cross-capability happy/failure/denial/cancellation/migration/restart/recovery, security/privacy/rights/accessibility/performance/packaging/platform checks, independent Wave review and separate human G2 remain required. Inherited unwaived CSP/startup and broad quality/inventory debt remains. Approved3-second Reader target and owner-accepted parser overage are unchanged."
+  },
+  "optional_adjacent_findings": [],
+  "notes": "Approve exact W2.C16.T01 R01 candidate cbc70e964299c970991e3442e82c44f482b7a8ba and its frozen criterion evidence. Transactional bounded citation delivery restores the approved outcome on publication and retry with unchanged current authority, source/reference/material bindings, default collection compatibility, public schemas and fixed admission. Fresh protected real Core and shipping initial/restart plus rollback/recovery proof close the prior late-response admission failure. Original adverse observations and instrument limits remain preserved. No material blocking finding remains; formal S05, Wave and release disposition is separate.",
+  "task_approval": true,
+  "slice_approval": false,
+  "wave_completion": false,
+  "release_approval": false
+}

@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 568d1cc5cceaa09a74dfe4f391e84f86fd007269e9ac96bb555dcbe4185a8ada
+source_sha256: 279efab8d149c913b15fba8ac54938bf431f3e5e7be34eac74c5d104f78c3f54
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -4504,7 +4504,7 @@ Original tasks and approvals remain unchanged.
 
 ### W2.C16.T01 — Extract in-text citation contexts and targets
 
-**Status:** `IN_PROGRESS`. **Original task:** `CAP-05.S05.T02`. **Latest review:** `-`.
+**Status:** `DONE`. **Original task:** `CAP-05.S05.T02`. **Latest review:** `approved`.
 
 **Reproduction:** At clean committed 10bd669e0686edec150557830dbfcf64b7a1dc1f the real Windows Reader S05 initial integration fails to deliver citations after extraction. The disposable authored 50-page Docling IR fixture has exactly two inferred source-grounded citation contexts. An actual Core refresh returns HTTP 409 after publishing a new encrypted citation head; a separately fenced read returns HTTP 200 with that head. The unchanged cumulative ViewerArtifactReads admission rejects a repeated 61,881-byte protected artifact with 6,956,544 budget remaining because its fixed charge is 7,924,864. The response-building path rereads accepted/reference data after canonical commit. Production client decoders accept the saved page. Actual failure and diagnostic evidence: artifacts/tmp/CAP-05.S05.qualifying-reader-01.initial.json SHA-256 1c13eb7082cd5e9034e3dd5a34ffb6912480ecac9f38c23a5132d8bed5d60937; artifacts/tmp/CAP-05.S05.citation-diagnostic-01.json SHA-256 fc6009c5daeb099f5d7da79a1e770067167632e29ef944fdd6d5cb9ef49af27b; artifacts/tmp/CAP-05.S05.citation-client-diagnostic-01.log SHA-256 f4d9df330233b090c895498c4c44b0a36a6d32fa4dcd28bf9ce2a9e056dfa030; artifacts/tmp/CAP-05.S05.citation-diagnostic-02.json SHA-256 5b8fbe045d50afc2670f3c36cbb127c365ba32bd5b2e636e3892aa6aa04debff; artifacts/tmp/CAP-05.S05.citation-diagnostic-03.adverse.json SHA-256 4566c2ce4ae88b591b3ae1f14d119ab7a3967b740cddcbe4d779be7bb89222f5; artifacts/tmp/CAP-05.S05.citation-diagnostic-04.json SHA-256 e8c8fbe93199280884bdf5db3def15026e62e98a161aa0f6345587184d61cc38; artifacts/tmp/CAP-05.S05.citation-diagnostic-04.log SHA-256 15a5f24864898eb74b9aa54999b48355fe5e1236d3094c2e35882a4de7b5ee85. No model ran. These diagnostic results do not qualify the task or slice.
 
@@ -4523,13 +4523,43 @@ Original tasks and approvals remain unchanged.
 - tests/documents/test_citation_service.py
 #### Review history — W2.C16.T01
 
-**Review mode:** `append-only v1` / 0 completed round(s)
+**Review mode:** `append-only v1` / 1 completed round(s)
+
+##### Round R01
+
+**Immutable submission packet:** `R01` / packet SHA-256 `711f9dc7a4fd8c154acd817595f9fe155481d5f5ec25e55e414a1a598f512e17`
+
+- Candidate / base / branch: `cbc70e964299c970991e3442e82c44f482b7a8ba` / `eb8518099155c07a1ca91ba2aedc2c650c2f6a2e` / `codex/w2-implementation`
+- Submitted by / at: codex-w2-implementation / `2026-10-10T12:28:24+00:00`
+- Evidence: `artifacts/evidence/W2.C16.T01.R01.json` / `47b458688652778eda4f180d30a3aea1311bf3443cb96bbf43874cc66f30e7da` / `cbc70e964299c970991e3442e82c44f482b7a8ba`
+- Acceptance-criteria SHA-256: `28a439f198c769f953d38c06ea60cb19a34e009a3907274fb375f3561d561bac`
+- Verification-selection SHA-256: `e11bf0b332aaa2f6041dd4c27bc6f63a5fca68f31fdbb37bb861cb7351e6e457`
+- Changed paths: `artifacts/evidence/W2.C16.T01.task-start.md`, `docs/planning-implementation-plan.md`, `packages/contracts/documents/citation-contexts.md`, `planning/backlog.yaml`, `planning/review-site/manifest.json`, `planning/review-site/waves/W2.html`, `planning/status-summary.md`, `services/core-api/src/research_observatory_core/document_citation_repository.py`, `services/core-api/src/research_observatory_core/document_revision_service.py`, `tests/documents/test_citation_repository.py`, `tests/documents/test_citation_service.py`
+- Selected checks: `.venv\Scripts\python.exe -B -m ruff format --check services/core-api/src/research_observatory_core/document_citation_repository.py services/core-api/src/research_observatory_core/document_revision_service.py tests/documents/test_citation_repository.py tests/documents/test_citation_service.py`, `.venv\Scripts\python.exe -B -m ruff check services/core-api/src/research_observatory_core/document_citation_repository.py services/core-api/src/research_observatory_core/document_revision_service.py tests/documents/test_citation_repository.py tests/documents/test_citation_service.py`, `.venv\Scripts\python.exe -B -m mypy --no-incremental services/core-api/src/research_observatory_core/document_citation_repository.py services/core-api/src/research_observatory_core/document_revision_service.py`, `.venv\Scripts\python.exe -B packages/contracts/documents/generate_parser_schema.py --check`, `.venv\Scripts\python.exe -B -m unittest -v tests.documents.test_citation_contexts tests.documents.test_citation_reader`, `.venv\Scripts\python.exe -B -m unittest -v tests.documents.test_citation_repository`, `.venv\Scripts\python.exe -B -m unittest -v tests.documents.test_citation_service`, `.local\toolchains\rustup\toolchains\1.96.1-x86_64-pc-windows-msvc\bin\cargo.exe build --manifest-path apps/desktop/src-tauri/Cargo.toml --release --locked --offline --features integration-harness --example project_contract_probe -j 1 --message-format json-render-diagnostics`, `.venv/Scripts/python.exe -B artifacts/tmp/CAP-05.S05.qualifying-reader-02.py cbc70e964299c970991e3442e82c44f482b7a8ba initial`, `.venv/Scripts/python.exe -B artifacts/tmp/CAP-05.S05.qualifying-reader-02.py cbc70e964299c970991e3442e82c44f482b7a8ba restart`, `.venv/Scripts/python.exe -B artifacts/tmp/CAP-05.S05.qualifying-core-seams-02.py cbc70e964299c970991e3442e82c44f482b7a8ba`, `.venv/Scripts/python.exe -B artifacts/tmp/CAP-05.S05.qualifying-cancellation-02.py cbc70e964299c970991e3442e82c44f482b7a8ba`, `.venv/Scripts/python.exe -B artifacts/tmp/CAP-05.S05.qualifying-midoperation-02.py cbc70e964299c970991e3442e82c44f482b7a8ba`
+- Deferred checks: `Formal S05 slice disposition, S06 tasks and fresh full affected/repository/profile W2 qualification, inherited unwaived debt, independent Wave review and separate human G2 remain required.`, `No 8/16-GiB run, minimum 2/3-GiB claim, model quality, installer or latency replay/optimization here.`
+- Selection rationale: Restore the original T02 inspectable citation outcome by constructing the existing bounded Reader page inside the existing atomic citation publication using the exact already-authenticated accepted/reference/source values. Use a private optional delivery callback on both new and exact-command retry paths; existing repository callers still receive the collection. Retain current actor, accepted-equality, reference head/record/payload, target catalog, material dependency and outer current-rights/session/Native delivery checks. Retain reader_page source/payload binding and closed 64-KiB shape. Projection validation or failure rolls back the same object/aggregate/enrichment/index/material/provenance/outbox transaction. Keep the final before-commit hook and cancellation check after projection. The source frame remains 24 MiB and cumulative admission multiplier remains 128 with no reset/refund or authorization cache relaxation. Add a failing default-budget 50-page real Core regression before source changes, cover successful initial/refresh/idempotent response and exact source contexts, delivery-failure rollback and post-projection cancellation/retry/reopen; retain existing rights, stale-reference, catalog/material and immutable-IR tests. Run affected citation repository/service/reader tests, changed-file format/lint/type checks, and fresh shipping Reader integration against the actual local Native/Core/vault/SQLCipher boundary. Replay S05 relevant cancellation/recovery/denial and integrated structures at slice scope after independent correction disposition. Reuse only explicitly bound historical unmodified citation-style checks as support; no fresh correctness claim from that history alone. Full repository/profile and cross-capability qualification remain the W2 exit obligation. No new product scope, UX/reference, schema/migration, security/rights authority, threshold, model/hardware run, framework/controller or history change.
+- Prior round / replayed open findings: `-` / -
+- Root-cause escalation: -
+
+**Disposition / reviewer / time:** `approved` / agent:/root/reader_table_figure_review / `2026-10-10T12:51:42+00:00`
+
+**Immutable review ledger:** `artifacts/evidence/W2.C16.T01.review-R01.json` / `0cfd0951b36a559f474bb2487533b5f269eb871e870c1cabd7837b9094bd169d`
+
+**Review notes:** Approve exact W2.C16.T01 R01 candidate cbc70e964299c970991e3442e82c44f482b7a8ba and its frozen criterion evidence. Transactional bounded citation delivery restores the approved outcome on publication and retry with unchanged current authority, source/reference/material bindings, default collection compatibility, public schemas and fixed admission. Fresh protected real Core and shipping initial/restart plus rollback/recovery proof close the prior late-response admission failure. Original adverse observations and instrument limits remain preserved. No material blocking finding remains; formal S05, Wave and release disposition is separate.
+
+**Findings opened:**
+
+- None
+
+**Prior finding closures:**
+
+- None
 
 **Current immutable submission awaiting review:** None
 
-**Current latest-review projection:** `-` by - at `-`
+**Current latest-review projection:** `approved` by agent:/root/reader_table_figure_review at `2026-10-10T12:51:42+00:00`
 
-**Latest notes:** -
+**Latest notes:** Approve exact W2.C16.T01 R01 candidate cbc70e964299c970991e3442e82c44f482b7a8ba and its frozen criterion evidence. Transactional bounded citation delivery restores the approved outcome on publication and retry with unchanged current authority, source/reference/material bindings, default collection compatibility, public schemas and fixed admission. Fresh protected real Core and shipping initial/restart plus rollback/recovery proof close the prior late-response admission failure. Original adverse observations and instrument limits remain preserved. No material blocking finding remains; formal S05, Wave and release disposition is separate.
 
 **Currently open findings:** -
 
