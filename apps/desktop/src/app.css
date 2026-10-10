@@ -270,3 +270,15 @@ kbd { padding: var(--space-1) var(--space-2); color: var(--text-strong); backgro
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { scroll-behavior: auto !important; transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; }
 }
+/* Parsing quality uses the same cards, controls and tokens as the shared shell. */
+.quality-layout { display: grid; grid-template-columns: minmax(14rem, 1fr) minmax(0, 3fr); gap: var(--space-4); align-items: start; }
+.quality-comparison, .quality-dimensions { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-4); align-items: start; }
+.quality-dimensions { grid-template-columns: repeat(auto-fit, minmax(min(15rem, 100%), 1fr)); }
+.quality-node-list { padding-inline-start: var(--space-4); }
+.quality-node-list li { margin-block-end: var(--space-4); }
+.quality-id, .quality-private-text, .quality-layout p, .quality-layout dd { overflow-wrap: anywhere; }
+.quality-fields { display: grid; gap: var(--space-3); }
+.parsing-quality-workspace label { display: grid; gap: var(--space-2); }
+.parsing-quality-workspace select, .parsing-quality-workspace input, .parsing-quality-workspace textarea { max-width: 100%; min-width: 0; }
+.quality-layout > *, .quality-comparison > * { min-width: 0; }
+@media (max-width: 68rem) { .quality-layout, .quality-comparison { grid-template-columns: minmax(0, 1fr); } }

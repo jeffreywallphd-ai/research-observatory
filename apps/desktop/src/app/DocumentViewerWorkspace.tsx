@@ -15,6 +15,7 @@ import { ViewerActionsPane } from "./ViewerActionsPane";
 import { decodeReaderAction, nativeReaderActionPort, type ReaderActionPort, type ReaderActionRequest } from "./viewerActions";
 import { newAttachmentId } from "./documentAttachment";
 import { ViewerReferencesPane } from "./ViewerReferencesPane";
+import { ViewerHumanCorrectionsPane } from "./ViewerHumanCorrectionsPane";
 import { nativeDocumentReferencePort, type DocumentReferencePort } from "./documentReferences";
 import { ViewerCitationsPane } from "./ViewerCitationsPane";
 import { ViewerTableFiguresPane } from "./ViewerTableFiguresPane";
@@ -37,6 +38,8 @@ interface Props {
   readonly citationPort?: DocumentCitationPort;
   readonly tableFigurePort?: DocumentTableFigurePort;
   readonly deepLink?: ViewerDeepLink | null;
+  readonly initialRevision?: string | null;
+  readonly returnLabel?: string;
   readonly onRememberLink?: (link: ViewerDeepLink) => boolean;
   readonly pdfFactory?: (bytes: ViewerByteSession, budget: ViewerBufferBudget, failure: (code: string) => void) => PdfViewer;
 }
@@ -82,7 +85,7 @@ function LinkedViewerEntry(props: Props & { project: ProjectProjection; link: Vi
 
 function ViewerSession({ project, handoff, announce, onReturn, port = nativeDocumentViewerPort, anchors = nativeSourceAnchorPort,
   textPort = nativeDocumentViewerTextPort, outlinePort = nativeDocumentViewerOutlinePort, anchorPort = nativeDocumentViewerAnchorPort,
-  deepLink = null, onRememberLink, actionPort = nativeReaderActionPort, referencePort = nativeDocumentReferencePort, citationPort = nativeDocumentCitationPort, tableFigurePort = nativeDocumentTableFigurePort, pdfFactory: createPdf = pdfFactory }: Props & {
+  deepLink = null, initialRevision = null, returnLabel = "Return to selected Work/version", onRememberLink, actionPort = nativeReaderActionPort, referencePort = nativeDocumentReferencePort, citationPort = nativeDocumentCitationPort, tableFigurePort = nativeDocumentTableFigurePort, pdfFactory: createPdf = pdfFactory }: Props & {
     project: ProjectProjection; handoff: AttachmentHandoff & { attachmentId: string; documentRevisionId: string };
   }): ReactNode {
   const [metadata, setMetadata] = useState<ViewerMetadata | null>(null), [pdf, setPdf] = useState<PdfViewer | null>(null);
@@ -148,6 +151,7 @@ function ViewerSession({ project, handoff, announce, onReturn, port = nativeDocu
           if (current() && accepted && viewerSourcesMatch(accepted.source, value.source)) {
             setRevisions([...new Set([...(linked ? [linked.selector.normalizedRevisionId] : []), ...accepted.revisions.map((item) => item.revisionId)])]);
             if (linked) setRevision(linked.selector.normalizedRevisionId);
+            else if (initialRevision && accepted.revisions.some(item => item.revisionId === initialRevision)) setRevision(initialRevision);
           }
         }).catch(() => undefined);
       };
@@ -282,7 +286,7 @@ function ViewerSession({ project, handoff, announce, onReturn, port = nativeDocu
     }}>
     <header className="page-header"><h1 className="ro-typography ro-typography--page-title" ref={heading} tabIndex={-1}>Document Reader</h1>
       <p className="page-subtitle">Inspect an exact permitted copy beside accepted structured text and its provenance.</p></header>
-    <div className="ro-action-row" id="reader-source-context"><Button onClick={() => { pdf?.close(); onReturn(handoff); }}>Return to selected Work/version</Button>
+    <div className="ro-action-row" id="reader-source-context"><Button onClick={() => { pdf?.close(); onReturn(handoff); }}>{returnLabel}</Button>
       <Button disabled={busy || searching || page <= 1 || Boolean(failure)} onClick={() => setPage((value) => value - 1)}>Previous page</Button>
       <Button disabled={busy || searching || page >= pages || Boolean(failure)} onClick={() => setPage((value) => value + 1)}>Next page</Button>
       <label>Page <select aria-label="Source page" disabled={busy || searching || !pages || Boolean(failure)} value={page} onChange={(event) => setPage(Number(event.currentTarget.value))}>
@@ -332,6 +336,8 @@ function ViewerSession({ project, handoff, announce, onReturn, port = nativeDocu
         <p>Inspection is checked for every source request. Structured text also requires current derivation permission. No scholarly claim is verified by viewing a page.</p>
         <p>PDF scripts, forms, attachments and external links are inactive. Use the separate permitted source actions for copying, printing and export.</p>
       </Panel>
+        {metadata && revision && firstPageReady && !failure && ownedMain.current ? <ViewerHumanCorrectionsPane key={`human-corrections:${revision}`}
+          source={metadata.source} revision={revision} announce={announce} main={ownedMain.current} reserveCore={reserveStructured} onFailure={fail} /> : null}
         {metadata && revision && firstPageReady && !failure && ownedMain.current ? <ViewerReferencesPane key={`references:${revision}`}
           metadata={metadata} revisionId={revision} port={referencePort} main={ownedMain.current} reserveCore={reserveStructured}
           onFailure={fail} onSource={(entry) => {

@@ -537,6 +537,15 @@ pub(crate) enum NativeDocumentAction {
     ViewerActionPayload,
     ViewerRange,
     ViewerCancel,
+    CorrectionQueue,
+    CorrectionPage,
+    CorrectionSave,
+    CorrectionAccept,
+    CorrectionDiscard,
+    CorrectionDraft,
+    CorrectionImpact,
+    CorrectionTargets,
+    ParseQuality,
 }
 
 #[cfg(windows)]
@@ -576,6 +585,15 @@ impl NativeDocumentAction {
             Self::ViewerActionPayload => "/native/document-viewer/action-payload",
             Self::ViewerRange => "/native/document-viewer/range",
             Self::ViewerCancel => "/native/document-viewer/cancel",
+            Self::CorrectionQueue => "/native/document-corrections/queue",
+            Self::CorrectionPage => "/native/document-corrections/page",
+            Self::CorrectionSave => "/native/document-corrections/save",
+            Self::CorrectionAccept => "/native/document-corrections/accept",
+            Self::CorrectionDiscard => "/native/document-corrections/discard",
+            Self::CorrectionDraft => "/native/document-corrections/draft",
+            Self::CorrectionImpact => "/native/document-corrections/impact",
+            Self::CorrectionTargets => "/native/document-corrections/targets",
+            Self::ParseQuality => "/native/document-revisions/parse-quality",
         }
     }
 }
@@ -635,7 +653,8 @@ impl NativeImportConnection {
             return Err("RO-DOCUMENT-PROJECT-UNAVAILABLE");
         }
         let body = body.to_string();
-        if body.len() > 8192 {
+        let correction = matches!(action, NativeDocumentAction::CorrectionQueue | NativeDocumentAction::CorrectionPage | NativeDocumentAction::CorrectionSave | NativeDocumentAction::CorrectionAccept | NativeDocumentAction::CorrectionDiscard | NativeDocumentAction::CorrectionDraft | NativeDocumentAction::CorrectionImpact | NativeDocumentAction::CorrectionTargets);
+        if body.len() > if correction { 65536 } else { 8192 } {
             return Err("RO-DOCUMENT-REQUEST-INVALID");
         }
         let request = CoreApiRequest {
@@ -653,7 +672,7 @@ impl NativeImportConnection {
             Some(self.cancellation.as_ref()),
             if matches!(action, NativeDocumentAction::Download) {
                 Duration::from_secs(325)
-            } else if matches!(action, NativeDocumentAction::ViewerRange) {
+            } else if correction || matches!(action, NativeDocumentAction::ViewerRange) {
                 Duration::from_secs(10)
             } else {
                 Duration::from_secs(2)

@@ -39,8 +39,11 @@ import { decodeViewerDeepLink, parseViewerDeepLink, readStoredViewerDeepLink, re
 import { CorpusCanvasWorkspace } from "./CorpusCanvasWorkspace";
 import { SourceManagerWorkspace } from "./SourceManagerWorkspace";
 import { ModelCenterWorkspace } from "./ModelCenterWorkspace";
+import type { SourceIdentity } from "./sourceAnchors";
+import type { QualitySelection } from "./ParsingQualityWorkspace";
 
 const DocumentViewerWorkspace = lazy(() => import("./DocumentViewerWorkspace").then((module) => ({ default: module.DocumentViewerWorkspace })));
+const ParsingQualityWorkspace = lazy(() => import("./ParsingQualityWorkspace").then((module) => ({ default: module.ParsingQualityWorkspace })));
 import {
   WorkflowContextBar,
   WorkflowNavigation,
@@ -361,6 +364,10 @@ export function ApplicationRuntime({ workflowTransport = packagedProjectTranspor
   const [currentProject, setCurrentProject] = useState<ProjectProjection | null>(null);
   const [attachmentHandoff, setAttachmentHandoff] = useState<AttachmentHandoff | null>(null);
   const [readerLink, setReaderLink] = useState<ViewerDeepLink | null>(null);
+  const [qualitySelection, setQualitySelection] = useState<QualitySelection | null>(null);
+  const [qualityReaderRevision, setQualityReaderRevision] = useState<string | null>(null);
+  const qualityNavigationBlocked = useRef(false);
+  const blockQualityNavigation = useCallback((blocked: boolean) => { qualityNavigationBlocked.current = blocked; }, []);
   const [attachmentReturn, setAttachmentReturn] = useState<AttachmentHandoff | null>(null);
   const workflowClient = useMemo(() => createCoreApiClient(workflowTransport), [workflowTransport]);
   const [workflowCatalog, setWorkflowCatalog] = useState<WorkflowProfileCatalogProjection | null>(null);
@@ -431,6 +438,9 @@ export function ApplicationRuntime({ workflowTransport = packagedProjectTranspor
       setCurrentProject(null);
       setAttachmentHandoff(null);
       setReaderLink(null);
+      setQualitySelection(null);
+      setQualityReaderRevision(null);
+      qualityNavigationBlocked.current = false;
       setAttachmentReturn(null);
       setWorkflowCatalog(null);
       setWorkflowIntent(null);
@@ -581,6 +591,9 @@ export function ApplicationRuntime({ workflowTransport = packagedProjectTranspor
     setCurrentProject(next);
     setAttachmentHandoff(null);
     setReaderLink(null);
+    setQualitySelection(null);
+    setQualityReaderRevision(null);
+    qualityNavigationBlocked.current = false;
     setAttachmentReturn(null);
   }, [clearPendingSupportingRequest]);
 
@@ -778,7 +791,16 @@ export function ApplicationRuntime({ workflowTransport = packagedProjectTranspor
     }
   }, [announce, applyWorkflowProgress, clearPendingSupportingRequest, workflowClient]);
 
+  const qualityNavigationAllowed = useCallback((nextWorkspace: ApplicationWorkspace) => {
+    if (workspaceRef.current === "parsing-quality" && nextWorkspace !== "parsing-quality" && qualityNavigationBlocked.current) {
+      announce("Save or undo the local correction, and resolve a pending command, before leaving Parsing Quality.");
+      return false;
+    }
+    return true;
+  }, [announce]);
+
   const navigateWorkspaceState = useCallback((nextWorkspace: ApplicationWorkspace) => {
+    if (!qualityNavigationAllowed(nextWorkspace)) return;
     clearPendingSupportingRequest();
     workspaceRef.current = nextWorkspace;
     const authority = workflowAuthority;
@@ -860,7 +882,7 @@ export function ApplicationRuntime({ workflowTransport = packagedProjectTranspor
       setSupportingReturn(null);
     }
     setWorkspace(nextWorkspace);
-  }, [announce, applyWorkflowProgress, clearPendingSupportingRequest, workflowAuthority, workflowClient, workflowProgress]);
+  }, [announce, applyWorkflowProgress, clearPendingSupportingRequest, qualityNavigationAllowed, workflowAuthority, workflowClient, workflowProgress]);
 
   const openAttachmentTaskCenter = useCallback((handoff: AttachmentHandoff) => {
     if (applicationLockRef.current.state !== "unlocked" || currentProjectRef.current?.projectId !== handoff.selection.projectId) return;
@@ -872,9 +894,19 @@ export function ApplicationRuntime({ workflowTransport = packagedProjectTranspor
   const openAttachmentReader = useCallback((handoff: AttachmentHandoff) => {
     if (applicationLockRef.current.state !== "unlocked" || currentProjectRef.current?.projectId !== handoff.selection.projectId
       || !handoff.attachmentId || !handoff.documentRevisionId) return;
+    setQualitySelection(null); setQualityReaderRevision(null);
     setReaderLink(null); setAttachmentHandoff(handoff); navigateWorkspaceState("reader");
     announce("Document Reader opened for the exact selected Work/version. Current source permission will be checked again.");
   }, [announce, navigateWorkspaceState]);
+
+  const openQualityReader = useCallback((source: SourceIdentity, revision: string, selection: QualitySelection) => {
+    if (applicationLockRef.current.state !== "unlocked" || currentProjectRef.current?.projectId !== source.projectId
+      || selection.projectId !== source.projectId || qualityNavigationBlocked.current) return;
+    setQualitySelection(selection); setQualityReaderRevision(revision); setReaderLink(null);
+    setAttachmentHandoff({attachmentId:source.attachmentId,documentRevisionId:source.documentRevisionId,operationId:null,commitRequest:null,
+      selection:{projectId:source.projectId,workId:source.workId,workRevisionId:source.workRevisionId,versionId:source.versionId,versionRevisionId:source.versionRevisionId,sourceAssertionRevisionId:source.sourceAssertionRevisionId}});
+    navigateWorkspaceState("reader"); announce("Reader opened for the exact correction source. Return reloads the saved proposal under current authority.");
+  }, [announce,navigateWorkspaceState]);
 
   useEffect(() => {
     function openLinkedReader(event: Event): void {
@@ -882,6 +914,7 @@ export function ApplicationRuntime({ workflowTransport = packagedProjectTranspor
       const link = typeof event.detail === "string" ? parseViewerDeepLink(event.detail) : decodeViewerDeepLink(event.detail);
       if (!link || applicationLockRef.current.state !== "unlocked" || !currentProjectRef.current?.open
         || currentProjectRef.current.projectId !== link.projectId) return;
+      setQualitySelection(null); setQualityReaderRevision(null);
       setAttachmentHandoff(null); setReaderLink(link); navigateWorkspaceState("reader");
       announce("Document Reader opened for the exact linked revision. Current source permission will be checked again.");
     }
@@ -931,13 +964,14 @@ export function ApplicationRuntime({ workflowTransport = packagedProjectTranspor
       announce("That workflow step is not implemented in this version. The current primary step did not change.");
       return;
     }
+    if (!qualityNavigationAllowed(selected.workspace)) return;
     clearPendingSupportingRequest();
     setSupportingReturn(null);
     workspaceRef.current = selected.workspace;
     setWorkspace(selected.workspace);
     announce(`${selected.authority.profile.stages.find((stage) => stage.stageKey === stageKey)?.label ?? "Workflow step"} opened. No completion or checkpoint was recorded.`);
     globalThis.window?.requestAnimationFrame(() => homeRef.current?.focus());
-  }, [announce, clearPendingSupportingRequest, workflowAuthority]);
+  }, [announce, clearPendingSupportingRequest, qualityNavigationAllowed, workflowAuthority]);
 
   const returnToCurrentWorkflowStage = useCallback(() => {
     if (!supportingReturn || !workflowAuthority) return;
@@ -948,13 +982,14 @@ export function ApplicationRuntime({ workflowTransport = packagedProjectTranspor
       announce("The supporting context is stale. Reopen a primary workflow step before returning.");
       return;
     }
+    if (!qualityNavigationAllowed(selected.workspace)) return;
     clearPendingSupportingRequest();
     setSupportingReturn(null);
     workspaceRef.current = selected.workspace;
     setWorkspace(selected.workspace);
     announce(`Returned to current workflow step: ${selected.authority.profile.stages.find((stage) => stage.stageKey === selected.authority.currentStageKey)?.label ?? "current step"}.`);
     globalThis.window?.requestAnimationFrame(() => homeRef.current?.focus());
-  }, [announce, clearPendingSupportingRequest, supportingReturn, workflowAuthority, workflowProgress]);
+  }, [announce, clearPendingSupportingRequest, qualityNavigationAllowed, supportingReturn, workflowAuthority, workflowProgress]);
 
   const applyTheme = useCallback((next: ApplicationTheme) => {
     setTheme(next);
@@ -1340,8 +1375,12 @@ export function ApplicationRuntime({ workflowTransport = packagedProjectTranspor
               onTaskCenter={openAttachmentTaskCenter} onOpenReader={openAttachmentReader} onAttachmentRecovery={retainAttachmentRecovery} />
           ) : (workspace === "application-settings" ? previousWorkspaceRef.current : workspace) === "reader" ? (
             <Suspense fallback={<p role="status">Loading the local Document Reader…</p>}><DocumentViewerWorkspace project={currentProject} handoff={attachmentHandoff} active={workspace === "reader"}
-              deepLink={selectedReaderLink} onRememberLink={retainReaderLink}
-              announce={announce} onReturn={(handoff) => handoff || attachmentHandoff ? returnToAttachment(handoff) : navigateWorkspaceState("imports")} /></Suspense>
+              deepLink={selectedReaderLink} onRememberLink={retainReaderLink} initialRevision={qualityReaderRevision}
+              returnLabel={qualitySelection ? "Return to Parsing Quality" : "Return to selected Work/version"}
+              announce={announce} onReturn={(handoff) => qualitySelection?.projectId === currentProject?.projectId ? navigateWorkspaceState("parsing-quality") : handoff || attachmentHandoff ? returnToAttachment(handoff) : navigateWorkspaceState("imports")} /></Suspense>
+          ) : (workspace === "application-settings" ? previousWorkspaceRef.current : workspace) === "parsing-quality" ? (
+            <Suspense fallback={<p role="status">Loading local Parsing Quality…</p>}><ParsingQualityWorkspace project={currentProject} active={workspace === "parsing-quality"}
+              selection={qualitySelection} announce={announce} onReader={openQualityReader} onNavigationBlocked={blockQualityNavigation} /></Suspense>
           ) : (workspace === "application-settings" ? previousWorkspaceRef.current : workspace) === "corpus" ? (
             <CorpusCanvasWorkspace project={currentProject} announce={announce} active={workspace === "corpus"} onNavigate={navigateWorkspaceState} />
           ) : (workspace === "application-settings" ? previousWorkspaceRef.current : workspace) === "sources" ? (

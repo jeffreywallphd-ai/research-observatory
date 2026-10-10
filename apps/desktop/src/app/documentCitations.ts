@@ -17,7 +17,7 @@ export interface CitationPreview { readonly order: number; readonly canonicalCit
   readonly targets: readonly { readonly label: string; readonly resolution: Resolution; readonly referenceCount: number; readonly references: readonly CitationReference[] }[];
   readonly targetCount: number; readonly anchor: SourceAnchorTarget | null; readonly anchorTruncated: boolean;
   readonly paragraph: CitationContextPreview | null; readonly sentence: CitationContextPreview | null;
-  readonly contextReason: "available" | "not-reported" | "normalization-boundary" | "empty-marker";
+  readonly contextReason: "available" | "not-reported" | "normalization-boundary" | "empty-marker" | "excluded-region";
   readonly confidence: { readonly state: string; readonly value: number | null } }
 export interface CitationPage { readonly schemaVersion: "1.0"; readonly projectId: string; readonly source: SourceIdentity;
   readonly documentRevisionId: string; readonly collectionId: string; readonly collectionRevisionId: string;
@@ -80,7 +80,7 @@ function entry(value: unknown, page: Record<string, unknown>, source: SourceIden
     || !one(e["style"], ["reported", "numeric", "author-year", "narrative", "superscript"]) || !one(e["knowledgeStatus"], ["extracted", "inferred"])
     || (e["knowledgeStatus"] === "extracted") !== (e["canonicalCitationId"] !== null) || !one(e["resolution"], ["candidate", "ambiguous", "unresolved"])
     || !count(e["targetCount"], 128) || !array(e["targets"], 4) || e["targets"].length !== Math.min(4, e["targetCount"])
-    || !context(e["paragraph"]) || !context(e["sentence"]) || !one(e["contextReason"], ["available", "not-reported", "normalization-boundary", "empty-marker"])
+    || !context(e["paragraph"]) || !context(e["sentence"]) || !one(e["contextReason"], ["available", "not-reported", "normalization-boundary", "empty-marker", "excluded-region"])
     || typeof e["anchorTruncated"] !== "boolean") return false;
   const confidence = object(e["confidence"], ["state", "value"]);
   if (!confidence || !one(confidence["state"], ["reported", "unknown", "not-reported", "not-applicable", "unavailable"])

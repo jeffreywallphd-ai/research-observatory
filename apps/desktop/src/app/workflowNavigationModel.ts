@@ -11,6 +11,7 @@ export const IMPLEMENTED_WORKSPACES = Object.freeze([
   { id: "intent", label: "Research intent", pageContractIds: ["intent-contract.html"] },
   { id: "imports", label: "Ingestion & Reconciliation", pageContractIds: ["ingestion-reconciliation.html"] },
   { id: "reader", label: "Document Reader", pageContractIds: ["document-reader.html"] },
+  { id: "parsing-quality", label: "Parsing Quality & Corrections", pageContractIds: ["parsing-quality.html"] },
   { id: "corpus", label: "Corpus Canvas", pageContractIds: ["corpus-canvas.html"] },
   { id: "sources", label: "Source Manager", pageContractIds: ["source-manager.html"] },
   { id: "tasks", label: "Task Center", pageContractIds: ["task-center.html"] },

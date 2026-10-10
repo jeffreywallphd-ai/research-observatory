@@ -13,6 +13,11 @@ const packageInputRoots = [
   path.join(repoRoot, "packages", "ui-tokens"),
 ];
 const expectedArtifacts = new Set(["assets/app.css", "assets/app.js", "assets/app.js.map", "index.html"]);
+for (const name of ["ParsingQualityWorkspace", "documentCorrections", "documentAttachment", "preload-helper"]) {
+  expectedArtifacts.add(`assets/${name}.js`);
+  expectedArtifacts.add(`assets/${name}.js.map`);
+}
+expectedArtifacts.add("assets/rolldown-runtime.js");
 const pdfResources = JSON.parse(await readFile(path.join(appRoot, "pdfjs-assets.json"), "utf8"));
 if (pdfResources.package !== "pdfjs-dist" || pdfResources.version !== "6.4.299") throw new Error("PDF resource pin mismatch");
 for (const name of ["assets/DocumentViewerWorkspace.js", "assets/DocumentViewerWorkspace.js.map",

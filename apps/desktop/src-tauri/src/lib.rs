@@ -12,6 +12,8 @@ mod document_drop;
 #[cfg(windows)]
 mod document_reader;
 #[cfg(windows)]
+mod document_corrections;
+#[cfg(windows)]
 mod document_runtime;
 #[cfg(windows)]
 mod document_viewer;
@@ -1025,6 +1027,7 @@ fn application_builder() -> tauri::Builder<tauri::Wry> {
         document_attachment::document_acquisition_access_need,
         document_attachment::document_acquisition_recover,
         document_reader::document_reader_revisions,
+        document_corrections::document_correction_request,
         document_reader::document_reader_outline,
         document_reader::document_reader_references_enrich,
         document_reader::document_reader_references_read,
