@@ -359,6 +359,42 @@ def seed_revision(app, root, project, session, attachment, raw, *, expected=None
         ParseSuccess(schema_version="1.0", kind="success", binding=request.binding, ir=DocumentIR.model_validate(wire)),
         stopped=lambda: False,
     )
+    if expected is not None:
+        # Authored replacement fixtures use the same explicit comparison path
+        # as product replacements; initial acceptance remains ordinary.
+        from research_observatory_core.document_reprocessing import (
+            ReprocessingAcceptance,
+            ReprocessingCreate,
+            ReprocessingReconcile,
+        )
+
+        reprocessing = repository.reprocessing()
+        batch = reprocessing.create(
+            ReprocessingCreate(command_id=new_uuid_v7(), base_revision_ids=(expected,)),
+            input_factory=lambda _base: inputs,
+        )
+        page = reprocessing.compare(batch.batch_revision_id, batch.items[0].item_id)
+        assert page.total_obligations == 0
+        page = reprocessing.reconcile(
+            ReprocessingReconcile(
+                command_id=new_uuid_v7(),
+                comparison_revision_id=page.comparison_revision_id,
+                expected_plan_revision_id=None,
+                rationale="Authored fixture explicitly reviews this uncorrected replacement",
+                mappings=(),
+            )
+        )
+        accepted = reprocessing.accept(
+            ReprocessingAcceptance(
+                command_id=new_uuid_v7(),
+                plan_revision_id=page.plan_revision_id,
+                expected_current_revision_id=expected,
+                confirmation_sha256=page.confirmation_sha256,
+                expected_graph_sha256=page.impact.graph_sha256,
+                decision="accept-reparse",
+            )
+        )
+        return repository.read(accepted.revision_id)
     return repository.accept(
         DocumentRevisionAcceptance(
             command_id=new_uuid_v7(),

@@ -15,7 +15,9 @@ from contextlib import closing, contextmanager
 from dataclasses import dataclass, field, replace
 from io import BytesIO
 from pathlib import Path
+from typing import Literal
 
+from . import document_reprocessing as reprocessing
 from .corpus_repository import SqliteCorpusRepository
 from .document_attachment_repository import (
     LocalDocumentAttachmentService,
@@ -43,6 +45,7 @@ from .document_corrections import (
     CorrectionDiscard,
     CorrectionDraft,
     CorrectionInheritance,
+    CorrectionPreviewBase,
     CorrectionSave,
     apply_correction,
     value_sha256,
@@ -150,6 +153,9 @@ class LocalDocumentRevisionRepository:
 
     def corrections(self, *, target_resolver=None):
         return LocalDocumentCorrectionRepository(self, target_resolver=target_resolver)
+
+    def reprocessing(self, *, target_resolver=None):
+        return LocalDocumentReprocessingRepository(self, target_resolver=target_resolver)
 
     def _bounded(self, action):
         try:
@@ -653,6 +659,8 @@ class LocalDocumentRevisionRepository:
             machine, mapping = canonicalize_structure(parsed.ir, identity_factory=lambda: next(factory))
             if (machine, mapping) != (result.structure, result.element_identities):
                 raise DocumentRevisionProblem("document-revision-machine-binding-invalid")
+            if decision.display_label_observed == "Accept document reparse":
+                LocalDocumentReprocessingRepository(self)._verify_machine(connection, result)
         if correction_context is not None:
             correction_context.check(connection, self.project)
             correction_context.accepted[revision_id] = result
@@ -850,6 +858,14 @@ class LocalDocumentRevisionRepository:
                     current = aggregates.get(receipt.binding.source.document_id)
                     if current.revision_id != command.expected_current_revision_id:
                         raise DocumentRevisionProblem("document-revision-predecessor-changed")
+                    if (
+                        connection.execute(
+                            "SELECT 1 FROM document_normalized_revisions WHERE project_id=? AND revision_id=?",
+                            (self.project, current.revision_id),
+                        ).fetchone()
+                        is not None
+                    ):
+                        raise DocumentRevisionProblem("document-revision-reprocessing-required")
                 structure, identities = canonicalize_structure(result.ir)
                 return (
                     AcceptedDocumentRevision(
@@ -907,6 +923,14 @@ class LocalDocumentRevisionRepository:
                     current = aggregates.get(accepted.document_id)
                     if current != predecessor:
                         raise DocumentRevisionProblem("document-revision-predecessor-changed")
+                    if (
+                        connection.execute(
+                            "SELECT 1 FROM document_normalized_revisions WHERE project_id=? AND revision_id=?",
+                            (self.project, current.revision_id),
+                        ).fetchone()
+                        is not None
+                    ):
+                        raise DocumentRevisionProblem("document-revision-reprocessing-required")
                     retained = aggregates.get_revision(receipt.revision_id)
                     inputs: tuple[AggregateRevision, ...] = (current, retained)
                     decision = aggregates.append(
@@ -2099,3 +2123,1640 @@ class LocalDocumentCorrectionRepository:
             )
 
         return self.revisions._bounded(accept)
+
+
+class LocalDocumentReprocessingRepository:
+    """Protected proposals and one compound per-document acceptance transaction."""
+
+    def __init__(self, revisions, *, target_resolver=None):
+        self.revisions = revisions
+        self.corrections = revisions.corrections(target_resolver=target_resolver)
+        self.impacts = _SqliteDependencyImpactRepository(revisions.database, revisions.project)
+
+    @staticmethod
+    def _check(cancelled):
+        if cancelled():
+            raise DocumentRevisionProblem("document-reprocessing-stopped")
+
+    def _semantic(self, command, actor):
+        return self.corrections._semantic(command, actor)
+
+    def source_for_command(self, command):
+        with closing(
+            open_canonical_database(self.revisions.database, expected_project_id=self.revisions.project)
+        ) as connection:
+            if hasattr(command, "batch"):
+                return self.corrections._source_for_revision(connection, command.batch.base_revision_ids[0])
+            if hasattr(command, "after_batch_id"):
+                return None
+            selected = (
+                command.reconciliation.comparison_revision_id
+                if hasattr(command, "reconciliation")
+                else command.acceptance.plan_revision_id
+                if hasattr(command, "acceptance")
+                else command.continuation.batch_revision_id
+                if hasattr(command, "continuation")
+                else command.cancellation.batch_revision_id
+                if hasattr(command, "cancellation")
+                else command.batch_revision_id
+            )
+            return self._source(connection, self._record(connection, selected))
+
+    def _peek(self, connection, revision_id):
+        from pydantic import TypeAdapter
+
+        with self.revisions._aggregates(connection) as aggregates:
+            revision = aggregates.get_revision(revision_id)
+        metadata = connection.execute(
+            "SELECT byte_length,media_type FROM object_records WHERE project_id=? AND object_sha256=?",
+            (self.revisions.project, revision.object_sha256),
+        ).fetchone()
+        if (
+            revision.aggregate_kind != "document"
+            or metadata is None
+            or metadata[1] != reprocessing.REPROCESSING_MEDIA_TYPE
+            or not 0 < metadata[0] <= reprocessing.MAX_REPROCESSING_BYTES
+        ):
+            raise DocumentRevisionProblem("document-reprocessing-unavailable")
+        raw = self.revisions.objects._read_protected_document_artifact(
+            connection, _ProtectedReceipt(revision.object_sha256, metadata[0]), reprocessing.REPROCESSING_MEDIA_TYPE
+        )
+        record: reprocessing.ReprocessingRecord = TypeAdapter(reprocessing.ReprocessingRecord).validate_json(raw)
+        if (record.project_id, record.revision_id) != (self.revisions.project, revision_id):
+            raise DocumentRevisionProblem("document-reprocessing-binding-invalid")
+        identity = (
+            record.batch_id
+            if isinstance(record, reprocessing.ReprocessingBatch)
+            else record.comparison_id
+            if isinstance(record, reprocessing.ReprocessingComparison)
+            else record.plan_id
+            if isinstance(record, reprocessing.ReprocessingPlan)
+            else record.record_id
+        )
+        when = (
+            record.created_at
+            if isinstance(record, reprocessing.ReprocessingComparison)
+            else record.accepted_at
+            if isinstance(record, reprocessing.ReprocessingAccepted)
+            else record.authored_at
+        )
+        author = (
+            record.created_by
+            if isinstance(record, reprocessing.ReprocessingComparison)
+            else record.accepted_by
+            if isinstance(record, reprocessing.ReprocessingAccepted)
+            else record.authored_by
+        )
+        if (identity, when) != (revision.aggregate_id, revision.modified_at):
+            raise DocumentRevisionProblem("document-reprocessing-binding-invalid")
+        events = connection.execute(
+            "SELECT actor_type,actor_id,occurred_at FROM provenance_events WHERE project_id=? AND revision_id=?",
+            (self.revisions.project, revision_id),
+        ).fetchall()
+        if [tuple(e) for e in events] != [("human", author, when)]:
+            raise DocumentRevisionProblem("document-reprocessing-author-invalid")
+        if not isinstance(record, reprocessing.ReprocessingComparison):
+            if record.command_sha256 != self.corrections._semantic_values(
+                record.command, author, record.intent_revision_id, record.intent_sha256, record.policy_sha256
+            ):
+                raise DocumentRevisionProblem("document-reprocessing-command-invalid")
+        elif (
+            record.command_sha256
+            != hashlib.sha256(
+                protected_json(record.result) + record.batch_revision_id.encode() + record.item_id.encode()
+            ).hexdigest()
+        ):
+            raise DocumentRevisionProblem("document-reprocessing-command-invalid")
+        previous_id = (
+            record.previous_revision_id
+            if isinstance(record, (reprocessing.ReprocessingBatch, reprocessing.ReprocessingPlan))
+            else None
+        )
+        if previous_id:
+            with self.revisions._aggregates(connection) as aggregates:
+                previous = aggregates.get_revision(previous_id)
+            if (previous.aggregate_id, previous.revision + 1) != (revision.aggregate_id, revision.revision):
+                raise DocumentRevisionProblem("document-reprocessing-predecessor-invalid")
+        elif revision.revision != 0:
+            raise DocumentRevisionProblem("document-reprocessing-predecessor-invalid")
+        input_ids = (
+            tuple(i.base_revision_id for i in record.items)
+            if isinstance(record, reprocessing.ReprocessingBatch)
+            and isinstance(record.command, reprocessing.ReprocessingCreate)
+            else ()
+            if isinstance(record, reprocessing.ReprocessingBatch)
+            else (record.batch_revision_id, record.base_revision_id, record.result.revision_id)
+            if isinstance(record, reprocessing.ReprocessingComparison)
+            else (record.comparison_revision_id,)
+            if isinstance(record, reprocessing.ReprocessingPlan)
+            else (record.base_revision_id, record.comparison_revision_id, record.plan_revision_id)
+        )
+        if isinstance(record, reprocessing.ReprocessingAccepted):
+            comparison = self._peek(connection, record.comparison_revision_id)
+            input_ids = (*input_ids, comparison.result.revision_id)
+        if previous_id:
+            input_ids = (*input_ids, previous_id)
+        with self.revisions._aggregates(connection) as aggregates:
+            inputs = tuple(aggregates.get_revision(i) for i in dict.fromkeys(input_ids))
+        historical = {i.revision_id for i in inputs}
+        if isinstance(record, reprocessing.ReprocessingAccepted):
+            historical.discard(comparison.result.revision_id)
+        self.corrections._validate_inputs(connection, record.revision_id, inputs, historical)
+        return record
+
+    def _record(self, connection, revision_id, expected=None):
+        record = self._peek(connection, revision_id)
+        if expected is not None and not isinstance(record, expected):
+            raise DocumentRevisionProblem("document-reprocessing-binding-invalid")
+        return record
+
+    def _source(self, connection, record):
+        if isinstance(record, reprocessing.ReprocessingBatch):
+            return record.items[0].inputs.source
+        if isinstance(record, reprocessing.ReprocessingComparison):
+            return record.result.binding.source
+        comparison_id = record.comparison_revision_id
+        return self._record(connection, comparison_id, reprocessing.ReprocessingComparison).result.binding.source
+
+    def _run(self, revision_id, action, cancelled):
+        def current():
+            self._check(cancelled)
+            with closing(
+                open_canonical_database(self.revisions.database, expected_project_id=self.revisions.project)
+            ) as connection:
+                record = self._record(connection, revision_id)
+                source = self._source(connection, record)
+            result = self.revisions._source_fenced(
+                source, lambda connection, actor: action(connection, actor, self._record(connection, revision_id))
+            )
+            self._check(cancelled)
+            return result
+
+        return self.revisions._bounded(current)
+
+    def _key(self, record):
+        if isinstance(record, reprocessing.ReprocessingAccepted):
+            return "document-reprocessing-accepted-item-" + record.batch_id + "-" + record.item_id
+        if isinstance(record, reprocessing.ReprocessingComparison):
+            return "document-reprocessing-compare-" + record.batch_revision_id + "-" + record.item_id
+        return "document-reprocessing-" + record.document_type + "-" + record.command.command_id
+
+    def _replay(self, connection, key):
+        row = connection.execute(
+            "SELECT revision_id FROM outbox_events WHERE project_id=? AND idempotency_key=?",
+            (self.revisions.project, key),
+        ).fetchone()
+        return None if row is None else self._record(connection, row[0])
+
+    def _write(self, record, source, inputs, *, previous=None, check=lambda _c, _a: None, cancelled=lambda: False):
+        owner = self.revisions.actor()
+        raw = protected_json(record)
+        if len(raw) > reprocessing.MAX_REPROCESSING_BYTES:
+            raise DocumentRevisionProblem("document-reprocessing-limit")
+
+        def publish(connection, stored):
+            self._check(cancelled)
+            actor = self.revisions.actor()
+            self.revisions._authority(connection, actor)
+            if actor != owner:
+                raise DocumentRevisionProblem("document-reprocessing-authority-changed")
+            replay = self._replay(connection, self._key(record))
+            if replay is not None:
+                if replay.command_sha256 != record.command_sha256:
+                    raise DocumentRevisionProblem("document-reprocessing-command-conflict")
+                return replay
+            check(connection, actor)
+            with self.revisions._aggregates(connection) as aggregates:
+                predecessor = None if previous is None else aggregates.get_revision(previous)
+                identity = (
+                    record.batch_id
+                    if isinstance(record, reprocessing.ReprocessingBatch)
+                    else record.comparison_id
+                    if isinstance(record, reprocessing.ReprocessingComparison)
+                    else record.plan_id
+                )
+                if predecessor is not None and aggregates.get(identity) != predecessor:
+                    raise DocumentRevisionProblem("document-reprocessing-predecessor-changed")
+                retained = tuple(
+                    aggregates.get_revision(i) for i in dict.fromkeys((*inputs, *((previous,) if previous else ())))
+                )
+                aggregates.append(
+                    AggregateRevisionDraft(
+                        revision_id=record.revision_id,
+                        aggregate_id=identity,
+                        aggregate_kind="document",
+                        created_at=predecessor.created_at if predecessor else actor.occurred_at,
+                        modified_at=actor.occurred_at,
+                        display_label_observed=record.document_type,
+                        display_label_normalized=None,
+                        knowledge_status="observed",
+                        rights_status="allowed",
+                        dependency_coverage="complete",
+                        object_sha256=stored.object_sha256,
+                        provenance_inputs=retained,
+                        material_dependencies=self.corrections._dependencies(
+                            retained, set(i.revision_id for i in retained)
+                        ),
+                    ),
+                    self.revisions._event(
+                        actor,
+                        actor.occurred_at,
+                        "document.updated" if predecessor else "document.created",
+                        self._key(record),
+                    ),
+                    expected_revision=predecessor.revision if predecessor else None,
+                )
+            _publication_step("reprocessing-proposal-complete")
+            self._check(cancelled)
+            return record
+
+        return self.revisions._put(raw, reprocessing.REPROCESSING_MEDIA_TYPE, source, publish, cancelled)
+
+    def _current_batch(self, connection, batch):
+        with self.revisions._aggregates(connection) as aggregates:
+            if aggregates.get(batch.batch_id).revision_id != batch.revision_id or batch.state != "active":
+                raise DocumentRevisionProblem("document-reprocessing-batch-changed")
+
+    def _fence(self, connection, source, actor):
+        self.revisions.objects._open_document_attachment(
+            source.attachment_id,
+            source.document_revision_id,
+            actor=actor,
+            expected_source=source,
+            publication_connection=connection,
+            before_stream=lambda c: self.revisions._authority(c, actor),
+        )
+
+    def _item(self, batch, item_id):
+        item = next((i for i in batch.items if i.item_id == item_id), None)
+        if item is None:
+            raise DocumentRevisionProblem("document-reprocessing-item-unavailable")
+        return item
+
+    def _job(self, connection, item):
+        row = connection.execute(
+            "SELECT job_id FROM document_parse_jobs WHERE project_id=? AND command_id=?",
+            (self.revisions.project, item.inputs.command_id),
+        ).fetchone()
+        if row is None:
+            return None
+        if self.revisions._input(connection, row[0]) != item.inputs:
+            raise DocumentRevisionProblem("document-reprocessing-input-invalid")
+        return self.revisions.queue._accepted_status_with_connection(connection, row[0])[0]
+
+    def _accepted_item(self, connection, batch, item):
+        key = "document-reprocessing-accepted-item-" + batch.batch_id + "-" + item.item_id
+        return self._replay(connection, key)
+
+    def _batch_view(self, connection, batch, actor):
+        rows = []
+        for item in batch.items:
+            # Every item has its own original-copy permission; a batch is no grant.
+            self._fence(connection, item.inputs.source, actor)
+            base = self.revisions._accepted(connection, item.base_revision_id)
+            job = self._job(connection, item)
+            accepted = self._accepted_item(connection, batch, item)
+            with self.revisions._aggregates(connection) as aggregates:
+                current = aggregates.get(base.document_id)
+            state: reprocessing.ItemState = (
+                "accepted"
+                if accepted
+                else "cancelled"
+                if batch.state == "cancelled"
+                else "base-conflict"
+                if current.revision_id != base.revision_id
+                else "not-submitted"
+                if job is None
+                else "ready"
+                if job.state == "succeeded"
+                else "failed"
+                if job.state == "failed"
+                else "cancelled"
+                if job.state == "cancelled"
+                else "needs-continuation"
+                if item.inputs.session_id != getattr(self, "session_id", item.inputs.session_id)
+                or job.state == "interrupted"
+                else "processing"
+            )
+            rows.append(
+                reprocessing.ReprocessingItemView(
+                    item_id=item.item_id,
+                    base_revision_id=item.base_revision_id,
+                    job_id=None if job is None else job.job_id,
+                    state=state,
+                    accepted_revision_id=None if accepted is None else accepted.final_revision_id,
+                )
+            )
+        return reprocessing.ReprocessingBatchView(
+            project_id=self.revisions.project,
+            batch_id=batch.batch_id,
+            batch_revision_id=batch.revision_id,
+            state=batch.state,
+            items=tuple(rows),
+        )
+
+    def create(self, command, *, input_factory, cancelled=lambda: False):
+        command = reprocessing.ReprocessingCreate.model_validate(command)
+
+        def create():
+            self._check(cancelled)
+            actor = self.revisions.actor()
+            key = "document-reprocessing-document-reprocessing-batch-" + command.command_id
+            with closing(
+                open_canonical_database(self.revisions.database, expected_project_id=self.revisions.project)
+            ) as connection:
+                self.revisions._authority(connection, actor)
+                replay = self._replay(connection, key)
+                if replay:
+                    if replay.command_sha256 != self._semantic(command, actor):
+                        raise DocumentRevisionProblem("document-reprocessing-command-conflict")
+                    batch = replay
+                else:
+                    bases = tuple(
+                        self.revisions._accepted(connection, identity) for identity in command.base_revision_ids
+                    )
+                    if len({b.document_id for b in bases}) != len(bases):
+                        raise DocumentRevisionProblem("document-reprocessing-duplicate-document")
+                    items = []
+                    for base in bases:
+                        inputs = input_factory(base)
+                        if inputs.source != base.result.binding.source:
+                            raise DocumentRevisionProblem("document-reprocessing-source-changed")
+                        self.revisions._source_fenced(inputs.source, lambda c, a: self.revisions._authority(c, a))
+                        with self.revisions._aggregates(connection) as aggregates:
+                            if aggregates.get(base.document_id).revision_id != base.revision_id:
+                                raise DocumentRevisionProblem("document-reprocessing-base-changed")
+                        items.append(
+                            reprocessing.ReprocessingItem(
+                                item_id=new_uuid_v7(), base_revision_id=base.revision_id, inputs=inputs
+                            )
+                        )
+                    batch = reprocessing.ReprocessingBatch(
+                        project_id=self.revisions.project,
+                        batch_id=new_uuid_v7(),
+                        revision_id=new_uuid_v7(),
+                        previous_revision_id=None,
+                        command=command,
+                        command_id=command.command_id,
+                        command_sha256=self._semantic(command, actor),
+                        authored_by=actor.actor_id,
+                        authored_at=actor.occurred_at,
+                        intent_revision_id=actor.intent_revision_id,
+                        intent_sha256=actor.intent_sha256,
+                        policy_sha256=actor.policy_sha256,
+                        state="active",
+                        items=tuple(items),
+                    )
+            if replay is None:
+
+                def check(connection, _actor):
+                    with self.revisions._aggregates(connection) as aggregates:
+                        for base in bases:
+                            self._fence(connection, base.result.binding.source, _actor)
+                            if aggregates.get(base.document_id).revision_id != base.revision_id:
+                                raise DocumentRevisionProblem("document-reprocessing-base-changed")
+
+                batch = self._write(
+                    batch, batch.items[0].inputs.source, command.base_revision_ids, check=check, cancelled=cancelled
+                )
+            for item in batch.items:
+                self._check(cancelled)
+                # Persistence precedes enqueue. A crash exposes not-submitted;
+                # exact creation retry safely replays each existing job.
+                self.revisions.submit(item.inputs)
+            return self.read(batch.revision_id, cancelled=cancelled)
+
+        return self.revisions._bounded(create)
+
+    def read(self, batch_revision_id, *, cancelled=lambda: False):
+        return self._run(batch_revision_id, lambda c, a, b: self._batch_view(c, b, a), cancelled)
+
+    def queue(self, *, after_batch_id=None, cancelled=lambda: False):
+        def queue():
+            self._check(cancelled)
+            with closing(
+                open_canonical_database(self.revisions.database, expected_project_id=self.revisions.project)
+            ) as connection:
+                self.revisions._authority(connection, self.revisions.actor())
+                rows = connection.execute(
+                    "SELECT r.aggregate_id,r.revision_id FROM aggregate_revisions r "
+                    "WHERE r.project_id=? AND r.display_label_observed=? AND r.aggregate_id>? "
+                    "AND NOT EXISTS (SELECT 1 FROM aggregate_revisions later WHERE later.project_id=r.project_id "
+                    "AND later.aggregate_id=r.aggregate_id AND later.revision>r.revision) "
+                    "ORDER BY r.aggregate_id LIMIT 11",
+                    (self.revisions.project, "document-reprocessing-batch", after_batch_id or ""),
+                ).fetchall()
+            views = tuple(self.read(row[1], cancelled=cancelled) for row in rows[:10])
+            return reprocessing.ReprocessingQueue(
+                project_id=self.revisions.project,
+                items=views,
+                next_after_batch_id=rows[9][0] if len(rows) > 10 else None,
+            )
+
+        return self.revisions._bounded(queue)
+
+    def _generations(self, connection, accepted):
+        result: list[CorrectionDraft] = []
+        current = accepted
+        context = _CorrectionReadContext(connection, self.revisions.project)
+        while True:
+            with self.revisions._aggregates(connection) as aggregates:
+                decision = aggregates.get_revision(current.decision_revision_id)
+            if decision.display_label_observed != "Accept document correction":
+                break
+            if len(result) >= 32:
+                raise DocumentRevisionProblem("document-reprocessing-limit")
+            draft = self.corrections._verify_accepted(connection, current, context=context)
+            result.append(draft)
+            current = self.revisions._accepted(connection, draft.patch.base_revision_id, correction_context=context)
+        return tuple(reversed(result))
+
+    def _comparison(self, connection, comparison):
+        batch = self._record(connection, comparison.batch_revision_id, reprocessing.ReprocessingBatch)
+        item = self._item(batch, comparison.item_id)
+        job = self._job(connection, item)
+        if (
+            job is None
+            or job.state != "succeeded"
+            or (job.job_id, job.current_attempt_id) != (comparison.job_id, comparison.result.binding.attempt.attempt_id)
+        ):
+            raise DocumentRevisionProblem("document-reprocessing-result-binding-invalid")
+        output = self.revisions.queue._accepted_status_with_connection(connection, job.job_id)[1]
+        if output is None or len(output.outputs) != 1 or output.outputs[0].artifact_id != comparison.result.result_id:
+            raise DocumentRevisionProblem("document-reprocessing-result-binding-invalid")
+        receipt = self.revisions._receipt(connection, comparison.result.result_id)
+        parsed = self.revisions._result(connection, receipt)
+        source, producer = selected_values(item.inputs.selection)
+        if (
+            receipt,
+            receipt.binding.source,
+            receipt.binding.producer,
+            receipt.binding.selection_sha256,
+            receipt.binding.attempt.job_id,
+        ) != (comparison.result, source, producer, selection_sha256(item.inputs.selection), job.job_id):
+            raise DocumentRevisionProblem("document-reprocessing-result-binding-invalid")
+        base = self.revisions._accepted(connection, comparison.base_revision_id)
+        factory = iter(m.canonical_id for m in comparison.candidate.element_identities)
+        structure, identities = canonicalize_structure(parsed.ir, identity_factory=lambda: next(factory))
+        if (
+            comparison.candidate.structure,
+            comparison.candidate.element_identities,
+            comparison.candidate.result,
+            comparison.base_revision_id,
+        ) != (structure, identities, receipt, item.base_revision_id):
+            raise DocumentRevisionProblem("document-reprocessing-candidate-invalid")
+        drafts = self._generations(connection, base)
+        if tuple(d.revision_id for d in drafts) != comparison.correction_revision_ids:
+            raise DocumentRevisionProblem("document-reprocessing-obligations-invalid")
+        return batch, item, base, drafts
+
+    def compare(self, batch_revision_id, item_id, *, offset=0, cancelled=lambda: False):
+        def prepare(connection, actor, batch):
+            self._current_batch(connection, batch)
+            item = self._item(batch, item_id)
+            self._fence(connection, item.inputs.source, actor)
+            key = "document-reprocessing-compare-" + batch_revision_id + "-" + item_id
+            replay = self._replay(connection, key)
+            if replay:
+                return replay
+            job = self._job(connection, item)
+            if job is None or job.state != "succeeded":
+                raise DocumentRevisionProblem("document-reprocessing-output-unavailable")
+            output = self.revisions.queue._accepted_status_with_connection(connection, job.job_id)[1]
+            if output is None or len(output.outputs) != 1:
+                raise DocumentRevisionProblem("document-reprocessing-output-unavailable")
+            receipt = self.revisions._receipt(connection, output.outputs[0].artifact_id)
+            parsed = self.revisions._result(connection, receipt)
+            if (
+                receipt.binding.attempt.job_id,
+                receipt.binding.attempt.attempt_id,
+                receipt.binding.source,
+                receipt.binding.selection_sha256,
+            ) != (job.job_id, job.current_attempt_id, item.inputs.source, selection_sha256(item.inputs.selection)):
+                raise DocumentRevisionProblem("document-reprocessing-result-binding-invalid")
+            base = self.revisions._accepted(connection, item.base_revision_id)
+            structure, identities = canonicalize_structure(parsed.ir)
+            candidate = CorrectionPreviewBase(
+                revision_id=new_uuid_v7(),
+                result=receipt,
+                structure_sha256=value_sha256(structure),
+                element_identities=identities,
+                structure=structure,
+            )
+            return reprocessing.ReprocessingComparison(
+                project_id=self.revisions.project,
+                comparison_id=new_uuid_v7(),
+                revision_id=new_uuid_v7(),
+                batch_revision_id=batch_revision_id,
+                item_id=item_id,
+                base_revision_id=base.revision_id,
+                job_id=job.job_id,
+                result=receipt,
+                candidate=candidate,
+                correction_revision_ids=tuple(d.revision_id for d in self._generations(connection, base)),
+                created_by=actor.actor_id,
+                created_at=actor.occurred_at,
+                command_sha256=hashlib.sha256(
+                    protected_json(receipt) + batch_revision_id.encode() + item_id.encode()
+                ).hexdigest(),
+            )
+
+        comparison = self._run(batch_revision_id, prepare, cancelled)
+
+        def check(connection, _actor):
+            self._comparison(connection, comparison)
+            self._current_batch(connection, self._record(connection, batch_revision_id, reprocessing.ReprocessingBatch))
+
+        comparison = self._write(
+            comparison,
+            comparison.result.binding.source,
+            (batch_revision_id, comparison.base_revision_id, comparison.result.revision_id),
+            check=check,
+            cancelled=cancelled,
+        )
+        return self._page(comparison.revision_id, offset=offset, cancelled=cancelled)
+
+    def _latest_plan(self, connection, comparison_id):
+        rows = connection.execute(
+            "SELECT d.revision_id FROM material_dependencies m JOIN aggregate_revisions d "
+            "ON d.project_id=m.project_id AND d.revision_id=m.output_revision_id "
+            "WHERE m.project_id=? AND m.dependency_revision_id=? AND d.display_label_observed=? "
+            "AND NOT EXISTS (SELECT 1 FROM aggregate_revisions later WHERE later.project_id=d.project_id "
+            "AND later.aggregate_id=d.aggregate_id AND later.revision>d.revision) LIMIT 2",
+            (self.revisions.project, comparison_id, "document-reprocessing-plan"),
+        ).fetchall()
+        if len(rows) > 1:
+            raise DocumentRevisionProblem("document-reprocessing-plan-conflict")
+        return None if not rows else self._record(connection, rows[0][0], reprocessing.ReprocessingPlan)
+
+    def _plan_values(self, connection, comparison, plan, *, cancelled=lambda: False):
+        batch, item, base, drafts = self._comparison(connection, comparison)
+        candidate = comparison.candidate
+        inherited = CorrectionInheritance(
+            base_revision_id=candidate.revision_id,
+            expected_structure_sha256=candidate.structure_sha256,
+            labels=(),
+            excluded_node_ids=(),
+            reference_matches=(),
+        )
+        results = []
+        if plan is not None:
+            if plan.comparison_revision_id != comparison.revision_id or len(plan.steps) > len(drafts):
+                raise DocumentRevisionProblem("document-reprocessing-plan-invalid")
+            for draft, step in zip(drafts, plan.steps, strict=False):
+                self._check(cancelled)
+                patch = reprocessing.mapped_patch(draft, candidate, step.mappings)
+                if (step.original_draft_revision_id, step.mapped_patch) != (draft.revision_id, patch):
+                    raise DocumentRevisionProblem("document-reprocessing-plan-invalid")
+                result = apply_correction(candidate, patch, inherited=inherited, cancelled=cancelled)
+                factory = iter(m.canonical_id for m in step.next_candidate.element_identities)
+                structure, identities = canonicalize_structure(result.ir, identity_factory=factory.__next__)
+                if (
+                    step.next_candidate.structure,
+                    step.next_candidate.element_identities,
+                    step.next_candidate.result,
+                ) != (structure, identities, comparison.result):
+                    raise DocumentRevisionProblem("document-reprocessing-plan-invalid")
+                candidate = step.next_candidate
+                inherited = reprocessing.preview_inheritance(candidate, result)
+                self.corrections._targets(connection, result, fresh=False)
+                results.append(result)
+        return batch, item, base, drafts, candidate, inherited, tuple(results)
+
+    def _change(self, base_revision, replacement_id, actor, *, key, replacement_fingerprint):
+        return DependencyChange(
+            change_id=new_uuid_v7(),
+            idempotency_key=key,
+            reason="HUMAN_DECISION",
+            dependency_kind="source-revision",
+            previous_revision_id=base_revision.revision_id,
+            replacement_revision_id=replacement_id,
+            configuration_id=None,
+            previous_configuration_version=None,
+            replacement_configuration_version=None,
+            previous_fingerprint=_projection_content_sha256(base_revision),
+            replacement_fingerprint=replacement_fingerprint,
+            propagation_policy_id="dependency.propagation.v1",
+            propagation_policy_version="1.0.0",
+            actor_id=actor.actor_id,
+            trace_id=actor.trace_id,
+            occurred_at=actor.occurred_at,
+        )
+
+    def _prospective(self, connection, base, candidate, actor):
+        with self.revisions._aggregates(connection) as aggregates:
+            predecessor = aggregates.get_revision(base.revision_id)
+        change = self._change(
+            predecessor,
+            candidate.revision_id,
+            actor,
+            key="document-reprocessing-preview-" + candidate.revision_id,
+            replacement_fingerprint="sha256:" + candidate.structure_sha256,
+        )
+        return self.impacts._plan_with_connection(
+            connection, change, decisions=(), limits=DEFAULT_DEPENDENCY_IMPACT_LIMITS
+        )
+
+    @staticmethod
+    def _counts(items):
+        counts = {
+            name: 0 for name in ("unchanged", "moved", "modified", "added", "removed", "ambiguous", "unresolvable")
+        }
+        for item in items:
+            counts[item.state] += 1
+        return reprocessing.ReprocessingCounts(**counts)
+
+    def _anchors(self, connection, base, candidate, cancelled):
+        from .anchors.contracts import ANCHOR_MEDIA_TYPE
+
+        history = [base.revision_id]
+        for draft in reversed(self._generations(connection, base)):
+            history.append(draft.patch.base_revision_id)
+        placeholders = ",".join("?" for _ in history)
+        rows = connection.execute(
+            "SELECT DISTINCT r.aggregate_id FROM material_dependencies m JOIN aggregate_revisions r "
+            "ON r.project_id=m.project_id AND r.revision_id=m.output_revision_id "
+            "JOIN documents d ON d.project_id=r.project_id AND d.revision_id=r.revision_id "
+            "JOIN object_records o ON o.project_id=d.project_id AND o.object_sha256=d.object_sha256 "
+            "WHERE m.project_id=? AND m.dependency_revision_id IN ("
+            + placeholders
+            + ") AND o.media_type=? ORDER BY r.aggregate_id LIMIT 10001",
+            (self.revisions.project, *history, ANCHOR_MEDIA_TYPE),
+        ).fetchall()
+        if len(rows) > reprocessing.MAX_REPROCESSING_ITEMS:
+            raise DocumentRevisionProblem("document-reprocessing-limit")
+        result = []
+        anchors = self.revisions.source_anchors()
+        for row in rows:
+            self._check(cancelled)
+            record = anchors._record(connection, row[0])
+            old = self.revisions._accepted(connection, record.target.revision_id)
+            node = next(n for n in old.structure.nodes if n.node_id == record.target.node_id)
+            result.append(
+                reprocessing.anchor_candidates(
+                    record.anchor_id, record.target, candidate, old_locator=node.locator, cancelled=cancelled
+                )
+            )
+        return tuple(result)
+
+    def _page(self, comparison_revision_id, *, offset=0, cancelled=lambda: False):
+        if type(offset) is not int or not 0 <= offset <= 100_000:
+            raise DocumentRevisionProblem("document-reprocessing-page-invalid")
+
+        def page(connection, actor, comparison):
+            plan = self._latest_plan(connection, comparison.revision_id)
+            batch, item, base, drafts, candidate, _inherited, _results = self._plan_values(
+                connection, comparison, plan, cancelled=cancelled
+            )
+            generation = 0 if plan is None else len(plan.steps)
+            obligations = []
+            if generation < len(drafts):
+                draft = drafts[generation]
+                old = self.revisions._accepted(connection, draft.patch.base_revision_id)
+                nodes = {n.node_id: n for n in old.structure.nodes}
+                for index, operation in enumerate(draft.patch.operations):
+                    node = nodes[operation.node_id]
+                    obligations.append(
+                        reprocessing.ReprocessingObligation(
+                            obligation_id=reprocessing.operation_id(draft.revision_id, index, operation),
+                            original_draft_revision_id=draft.revision_id,
+                            original_base_revision_id=draft.patch.base_revision_id,
+                            operation_index=index,
+                            operation=operation.op,
+                            old_node_id=node.node_id,
+                            old_node_sha256=value_sha256(node),
+                            old_preview=reprocessing.node_text(old.structure, node)[:160],
+                            related_old_node_id=operation.before_node_id
+                            if operation.op == "reorder"
+                            else operation.with_node_id
+                            if operation.op == "merge"
+                            else None,
+                            original_reference_id=operation.reference_id
+                            if operation.op == "reference-rematch"
+                            else None,
+                            original_author=draft.authored_by,
+                            original_rationale=draft.rationale[:160],
+                        )
+                    )
+            total = sum(len(d.patch.operations) for d in drafts)
+            unresolved = sum(len(d.patch.operations) for d in drafts[generation:])
+            differences = reprocessing.compare_structures(base.structure, candidate.structure, cancelled=cancelled)
+            anchors = self._anchors(connection, base, candidate, cancelled)
+            if len(differences) + len(anchors) + len(candidate.structure.nodes) > reprocessing.MAX_REPROCESSING_ITEMS:
+                raise DocumentRevisionProblem("document-reprocessing-limit")
+            candidate_nodes = tuple(
+                reprocessing.ReprocessingNode(
+                    node_id=n.node_id,
+                    parent_id=n.parent_id,
+                    order=n.order,
+                    kind=n.kind,
+                    preview=reprocessing.node_text(candidate.structure, n)[:160],
+                    node_sha256=value_sha256(n),
+                    reference_id=next(
+                        (r.reference_id for r in candidate.structure.references if r.node_id == n.node_id), None
+                    ),
+                )
+                for n in candidate.structure.nodes[offset : offset + 20]
+            )
+            with self.revisions._aggregates(connection) as aggregates:
+                current = aggregates.get(base.document_id)
+            prospective = self._prospective(connection, base, candidate, actor)
+            state: Literal["review", "ready-to-accept", "base-conflict"] = (
+                "base-conflict"
+                if current.revision_id != base.revision_id
+                else "ready-to-accept"
+                if plan is not None and unresolved == 0
+                else "review"
+            )
+            old_parsed = self.revisions._result(connection, base.result)
+            new_parsed = self.revisions._result(connection, comparison.result)
+            length = max(len(differences), len(anchors), len(candidate.structure.nodes))
+            result = reprocessing.ReprocessingPage(
+                project_id=self.revisions.project,
+                batch_id=batch.batch_id,
+                batch_revision_id=batch.revision_id,
+                item_id=item.item_id,
+                base_revision_id=base.revision_id,
+                current_revision_id=current.revision_id,
+                source=comparison.result.binding.source,
+                job_id=comparison.job_id,
+                attempt_id=comparison.result.binding.attempt.attempt_id,
+                result_id=comparison.result.result_id,
+                comparison_revision_id=comparison.revision_id,
+                candidate_revision_id=candidate.revision_id,
+                plan_revision_id=None if plan is None else plan.revision_id,
+                confirmation_sha256=None if plan is None else value_sha256(plan),
+                generation=generation,
+                generation_count=len(drafts),
+                total_obligations=total,
+                unresolved_count=unresolved,
+                obligations=tuple(obligations),
+                candidate_nodes=candidate_nodes,
+                differences=differences[offset : offset + 20],
+                difference_counts=self._counts(differences),
+                anchor_candidates=anchors[offset : offset + 20],
+                anchor_counts=self._counts(anchors),
+                next_offset=offset + 20 if offset + 20 < length else None,
+                old_quality=assess_ir(old_parsed.ir, cancelled=cancelled),
+                new_quality=assess_ir(new_parsed.ir, cancelled=cancelled),
+                impact=reprocessing.ReprocessingImpact(
+                    graph_sha256=prospective.graph_sha256.removeprefix("sha256:"),
+                    affected_count=len(prospective.affected_output_revision_ids),
+                    informational_count=len(prospective.informational_output_revision_ids),
+                    legacy_unreported_count=prospective.legacy_unreported_count,
+                ),
+                state=state,
+            )
+            if len(protected_json(result)) > 128 * 1024:
+                raise DocumentRevisionProblem("document-reprocessing-limit")
+            self._check(cancelled)
+            return result
+
+        return self._run(comparison_revision_id, page, cancelled)
+
+    def reconcile(self, command, *, cancelled=lambda: False):
+        command = reprocessing.ReprocessingReconcile.model_validate(command)
+        if not command.rationale.strip():
+            raise DocumentRevisionProblem("document-reprocessing-rationale-empty")
+
+        def prepare(connection, actor, comparison):
+            key = "document-reprocessing-document-reprocessing-plan-" + command.command_id
+            replay = self._replay(connection, key)
+            if replay:
+                if replay.command_sha256 != self._semantic(command, actor):
+                    raise DocumentRevisionProblem("document-reprocessing-command-conflict")
+                return replay
+            previous = self._latest_plan(connection, comparison.revision_id)
+            if (None if previous is None else previous.revision_id) != command.expected_plan_revision_id:
+                raise DocumentRevisionProblem("document-reprocessing-plan-changed")
+            batch, _item, base, drafts, candidate, inherited, _results = self._plan_values(
+                connection, comparison, previous, cancelled=cancelled
+            )
+            self._current_batch(connection, batch)
+            with self.revisions._aggregates(connection) as aggregates:
+                if aggregates.get(base.document_id).revision_id != base.revision_id:
+                    raise DocumentRevisionProblem("document-reprocessing-base-changed")
+            steps = () if previous is None else previous.steps
+            if len(steps) < len(drafts):
+                draft = drafts[len(steps)]
+                patch = reprocessing.mapped_patch(draft, candidate, command.mappings)
+                successor, result = reprocessing.preview_step(
+                    candidate, patch, inherited, revision_id=new_uuid_v7(), cancelled=cancelled
+                )
+                self.corrections._targets(connection, result, fresh=True)
+                steps = (
+                    *steps,
+                    reprocessing.ReconciledGeneration(
+                        original_draft_revision_id=draft.revision_id,
+                        mapped_patch=patch,
+                        mappings=command.mappings,
+                        next_candidate=successor,
+                    ),
+                )
+            elif command.mappings or drafts:
+                raise DocumentRevisionProblem("document-reprocessing-reconciliation-complete")
+            return reprocessing.ReprocessingPlan(
+                project_id=self.revisions.project,
+                plan_id=new_uuid_v7() if previous is None else previous.plan_id,
+                revision_id=new_uuid_v7(),
+                previous_revision_id=None if previous is None else previous.revision_id,
+                comparison_revision_id=comparison.revision_id,
+                command=command,
+                command_sha256=self._semantic(command, actor),
+                authored_by=actor.actor_id,
+                authored_at=actor.occurred_at,
+                intent_revision_id=actor.intent_revision_id,
+                intent_sha256=actor.intent_sha256,
+                policy_sha256=actor.policy_sha256,
+                steps=steps,
+            )
+
+        plan = self._run(command.comparison_revision_id, prepare, cancelled)
+
+        def check(connection, actor):
+            current = self._latest_plan(connection, plan.comparison_revision_id)
+            if (None if current is None else current.revision_id) != plan.previous_revision_id:
+                raise DocumentRevisionProblem("document-reprocessing-plan-changed")
+            comparison = self._record(connection, plan.comparison_revision_id, reprocessing.ReprocessingComparison)
+            values = self._plan_values(connection, comparison, plan, cancelled=cancelled)
+            self._current_batch(connection, values[0])
+            if values[-1]:
+                self.corrections._targets(connection, values[-1][-1], fresh=True)
+
+        with closing(
+            open_canonical_database(self.revisions.database, expected_project_id=self.revisions.project)
+        ) as connection:
+            comparison = self._record(connection, plan.comparison_revision_id, reprocessing.ReprocessingComparison)
+        self._write(
+            plan,
+            comparison.result.binding.source,
+            (plan.comparison_revision_id,),
+            previous=plan.previous_revision_id,
+            check=check,
+            cancelled=cancelled,
+        )
+        return self._page(plan.comparison_revision_id, cancelled=cancelled)
+
+    def _verify_machine(self, connection, machine):
+        rows = connection.execute(
+            "SELECT d.dependency_revision_id FROM material_dependencies d JOIN documents r "
+            "ON r.project_id=d.project_id AND r.revision_id=d.dependency_revision_id "
+            "JOIN object_records o ON o.project_id=r.project_id AND o.object_sha256=r.object_sha256 "
+            "WHERE d.project_id=? AND d.output_revision_id=? AND o.media_type=? LIMIT 2",
+            (self.revisions.project, machine.decision_revision_id, reprocessing.REPROCESSING_MEDIA_TYPE),
+        ).fetchall()
+        if len(rows) != 1:
+            raise DocumentRevisionProblem("document-reprocessing-acceptance-record-missing")
+        record = self._record(connection, rows[0][0], reprocessing.ReprocessingAccepted)
+        comparison = self._record(connection, record.comparison_revision_id, reprocessing.ReprocessingComparison)
+        plan = self._record(connection, record.plan_revision_id, reprocessing.ReprocessingPlan)
+        batch, item, base, drafts, candidate, _inheritance, results = self._plan_values(connection, comparison, plan)
+        if len(plan.steps) != len(drafts) or (
+            record.batch_id,
+            record.batch_revision_id,
+            record.item_id,
+            record.base_revision_id,
+            record.machine_revision_id,
+            record.final_revision_id,
+            record.command.plan_revision_id,
+            record.command.confirmation_sha256,
+            record.command.expected_current_revision_id,
+            record.accepted_by,
+            record.intent_revision_id,
+            record.intent_sha256,
+            record.policy_sha256,
+        ) != (
+            batch.batch_id,
+            batch.revision_id,
+            item.item_id,
+            base.revision_id,
+            comparison.candidate.revision_id,
+            candidate.revision_id,
+            plan.revision_id,
+            value_sha256(plan),
+            base.revision_id,
+            machine.accepted_by,
+            machine.intent_revision_id,
+            machine.intent_sha256,
+            machine.policy_sha256,
+        ):
+            raise DocumentRevisionProblem("document-reprocessing-acceptance-binding-invalid")
+        ordinary = DocumentRevisionAcceptance(
+            command_id=record.machine_command_id,
+            result_id=comparison.result.result_id,
+            expected_current_revision_id=base.revision_id,
+            confirmation_sha256=hashlib.sha256(comparison.result.model_dump_json(by_alias=True).encode()).hexdigest(),
+            decision="accept-structure",
+        )
+        semantic = hashlib.sha256(
+            protected_json(ordinary) + protected_json(comparison.result) + record.accepted_by.encode()
+        ).hexdigest()
+        if (
+            machine.previous_revision_id,
+            machine.result,
+            machine.structure,
+            machine.element_identities,
+            machine.command_id,
+            machine.command_sha256,
+            machine.decision_id,
+            machine.decision_revision_id,
+        ) != (
+            base.revision_id,
+            comparison.result,
+            comparison.candidate.structure,
+            comparison.candidate.element_identities,
+            record.machine_command_id,
+            semantic,
+            record.machine_decision_id,
+            record.machine_decision_revision_id,
+        ) or semantic != record.machine_command_sha256:
+            raise DocumentRevisionProblem("document-reprocessing-machine-binding-invalid")
+        if len(record.nested_draft_revision_ids) != len(plan.steps) or len(record.final_command_ids) != len(plan.steps):
+            raise DocumentRevisionProblem("document-reprocessing-reconciliation-binding-invalid")
+        for step, result, draft_id, command_id in zip(
+            plan.steps, results, record.nested_draft_revision_ids, record.final_command_ids, strict=True
+        ):
+            # Literal nested correction verification recurses through this machine.
+            # Here authenticate the protected outer-to-draft/value bindings without
+            # recursing back into the final accepted read.
+            with self.revisions._aggregates(connection) as aggregates:
+                revision = aggregates.get_revision(draft_id)
+            metadata = connection.execute(
+                "SELECT byte_length,media_type FROM object_records WHERE project_id=? AND object_sha256=?",
+                (self.revisions.project, revision.object_sha256),
+            ).fetchone()
+            if metadata is None or metadata[1] != CORRECTION_MEDIA_TYPE or metadata[0] > MAX_CORRECTION_RECORD_BYTES:
+                raise DocumentRevisionProblem("document-reprocessing-reconciliation-binding-invalid")
+            draft = CorrectionDraft.model_validate_json(
+                self.revisions.objects._read_protected_document_artifact(
+                    connection, _ProtectedReceipt(revision.object_sha256, metadata[0]), CORRECTION_MEDIA_TYPE
+                )
+            )
+            if (
+                draft.patch,
+                draft.source,
+                draft.rationale,
+                draft.authored_by,
+                draft.intent_revision_id,
+                draft.intent_sha256,
+                draft.policy_sha256,
+                draft.preview_sha256,
+                draft.previous_draft_revision_id,
+                draft.state,
+            ) != (
+                step.mapped_patch,
+                comparison.result.binding.source,
+                plan.command.rationale,
+                record.accepted_by,
+                record.intent_revision_id,
+                record.intent_sha256,
+                record.policy_sha256,
+                result.result_sha256,
+                None,
+                "draft",
+            ):
+                raise DocumentRevisionProblem("document-reprocessing-reconciliation-binding-invalid")
+            successor = connection.execute(
+                "SELECT previous_revision_id,result_id,command_id,actor_id FROM document_normalized_revisions "
+                "WHERE project_id=? AND revision_id=?",
+                (self.revisions.project, step.next_candidate.revision_id),
+            ).fetchone()
+            if successor is None or tuple(successor) != (
+                step.mapped_patch.base_revision_id,
+                comparison.result.result_id,
+                command_id,
+                record.accepted_by,
+            ):
+                raise DocumentRevisionProblem("document-reprocessing-reconciliation-binding-invalid")
+        with self.revisions._aggregates(connection) as aggregates:
+            old = aggregates.get_revision(base.revision_id)
+            final = aggregates.get_revision(record.final_revision_id)
+        run = connection.execute(
+            "SELECT previous_revision_id,replacement_revision_id,previous_fingerprint,replacement_fingerprint,"
+            "actor_id,occurred_at,idempotency_key FROM dependency_impact_runs WHERE project_id=? AND run_id=?",
+            (self.revisions.project, record.impact_run_id),
+        ).fetchone()
+        if run is None or tuple(run) != (
+            base.revision_id,
+            record.final_revision_id,
+            _projection_content_sha256(old),
+            _projection_content_sha256(final),
+            record.accepted_by,
+            record.accepted_at,
+            "document-reprocessing-impact-" + record.command.command_id,
+        ):
+            raise DocumentRevisionProblem("document-reprocessing-impact-invalid")
+
+    def _stage(self, value, media, source, cancelled):
+        self._check(cancelled)
+        return self.revisions._put(protected_json(value), media, source, lambda _connection, stored: stored, cancelled)
+
+    def _insert_accepted(self, connection, accepted, stored):
+        connection.execute(
+            "INSERT INTO document_normalized_revisions VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+            (
+                accepted.revision_id,
+                self.revisions.project,
+                accepted.document_id,
+                accepted.previous_revision_id,
+                accepted.result.result_id,
+                accepted.decision_id,
+                accepted.decision_revision_id,
+                accepted.command_id,
+                accepted.command_sha256,
+                stored.object_sha256,
+                accepted.content_sha256,
+                accepted.structure_sha256,
+                accepted.accepted_by,
+                accepted.accepted_at,
+            ),
+        )
+        self.revisions._elements(connection, accepted)
+
+    def _append_accepted(
+        self, connection, aggregates, accepted, stored, current, inputs, historical, actor, *, correction
+    ):
+        decision = aggregates.append(
+            AggregateRevisionDraft(
+                revision_id=accepted.decision_revision_id,
+                aggregate_id=accepted.decision_id,
+                aggregate_kind="decision",
+                created_at=accepted.accepted_at,
+                modified_at=accepted.accepted_at,
+                display_label_observed="Accept document correction" if correction else "Accept document reparse",
+                display_label_normalized=None,
+                knowledge_status="observed",
+                rights_status="allowed",
+                dependency_coverage="complete",
+                provenance_inputs=inputs,
+                material_dependencies=self.corrections._dependencies(inputs, historical),
+            ),
+            self.revisions._event(
+                actor,
+                accepted.accepted_at,
+                "decision.created",
+                ("document-correction-decision-" if correction else "document-reprocessing-decision-")
+                + accepted.command_id,
+            ),
+            expected_revision=None,
+        )
+        _publication_step("reprocessing-decision-complete")
+        all_inputs = (*inputs, decision)
+        successor = aggregates.append(
+            AggregateRevisionDraft(
+                revision_id=accepted.revision_id,
+                aggregate_id=accepted.document_id,
+                aggregate_kind="document",
+                created_at=current.created_at,
+                modified_at=accepted.accepted_at,
+                display_label_observed=current.display_label_observed,
+                display_label_normalized=current.display_label_normalized,
+                knowledge_status="extracted",
+                rights_status="allowed",
+                object_sha256=stored.object_sha256,
+                dependency_coverage="complete",
+                provenance_inputs=all_inputs,
+                material_dependencies=self.corrections._dependencies(all_inputs, historical),
+            ),
+            self.revisions._event(
+                actor,
+                accepted.accepted_at,
+                "document.updated",
+                ("document-correction-accept-" if correction else "document-reprocessing-machine-")
+                + accepted.command_id,
+            ),
+            expected_revision=current.revision,
+        )
+        self._insert_accepted(connection, accepted, stored)
+        _publication_step("reprocessing-accepted-complete")
+        return successor
+
+    def _begin_impact(self, connection, previous, successor, actor, key, *, run_id):
+        change = self._change(
+            previous,
+            successor.revision_id,
+            actor,
+            key=key,
+            replacement_fingerprint=_projection_content_sha256(successor),
+        )
+        preview = self.impacts._preview_with_connection(
+            connection, change, decisions=(), limits=DEFAULT_DEPENDENCY_IMPACT_LIMITS
+        )
+        run = self.impacts._begin_with_connection(
+            connection, change, preview_sha256=preview.preview_sha256, run_id=run_id, batch_size=100
+        )
+        # The new acceptance itself is never on a material path from history.
+        if run.state == "running" and run.total_items <= 100:
+            run = self.impacts._advance_with_connection(
+                connection, run.run_id, expected_checkpoint_sha256=run.checkpoint_sha256
+            )
+        _publication_step("reprocessing-impact-complete")
+        return run
+
+    def _accepted_view(self, connection, record):
+        run = self.impacts._run_with_connection(connection, record.impact_run_id)
+        return reprocessing.ReprocessingAcceptedView(
+            project_id=self.revisions.project,
+            batch_id=record.batch_id,
+            batch_revision_id=record.batch_revision_id,
+            item_id=record.item_id,
+            previous_revision_id=record.base_revision_id,
+            revision_id=record.final_revision_id,
+            machine_revision_id=record.machine_revision_id,
+            impact_run_id=run.run_id,
+            impact_state=run.state,
+            impact_checkpoint_sha256=run.checkpoint_sha256.removeprefix("sha256:"),
+            processed_items=run.processed_items,
+            total_items=run.total_items,
+        )
+
+    def accept(self, command, *, cancelled=lambda: False):
+        command = reprocessing.ReprocessingAcceptance.model_validate(command)
+
+        def prepare(connection, actor, plan):
+            comparison = self._record(connection, plan.comparison_revision_id, reprocessing.ReprocessingComparison)
+            batch, item, base, drafts, candidate, _inherited, results = self._plan_values(
+                connection, comparison, plan, cancelled=cancelled
+            )
+            replay = self._accepted_item(connection, batch, item)
+            if replay:
+                if replay.command_sha256 != self._semantic(command, actor) or replay.command != command:
+                    raise DocumentRevisionProblem("document-reprocessing-command-conflict")
+                self.revisions._accepted(connection, replay.final_revision_id)
+                return replay
+            self._current_batch(connection, batch)
+            latest = self._latest_plan(connection, comparison.revision_id)
+            if latest is None or latest.revision_id != plan.revision_id or len(plan.steps) != len(drafts):
+                raise DocumentRevisionProblem("document-reprocessing-incomplete-reconciliation")
+            if command.expected_current_revision_id != base.revision_id or command.confirmation_sha256 != value_sha256(
+                plan
+            ):
+                raise DocumentRevisionProblem("document-reprocessing-confirmation-mismatch")
+            if (plan.intent_revision_id, plan.intent_sha256, plan.policy_sha256) != (
+                actor.intent_revision_id,
+                actor.intent_sha256,
+                actor.policy_sha256,
+            ):
+                raise DocumentRevisionProblem("document-reprocessing-authority-changed")
+            with self.revisions._aggregates(connection) as aggregates:
+                predecessor = aggregates.get(base.document_id)
+                if predecessor.revision_id != base.revision_id:
+                    raise DocumentRevisionProblem("document-reprocessing-base-changed")
+            preview = self._prospective(connection, base, candidate, actor)
+            if preview.graph_sha256 != "sha256:" + command.expected_graph_sha256:
+                raise DocumentRevisionProblem("document-reprocessing-graph-changed")
+            targets = tuple(self.corrections._targets(connection, result, fresh=True) for result in results)
+            common = dict(
+                project_id=self.revisions.project,
+                document_id=base.document_id,
+                result=comparison.result,
+                accepted_by=actor.actor_id,
+                accepted_at=actor.occurred_at,
+                intent_revision_id=actor.intent_revision_id,
+                intent_sha256=actor.intent_sha256,
+                policy_sha256=actor.policy_sha256,
+            )
+            ordinary = DocumentRevisionAcceptance(
+                command_id=new_uuid_v7(),
+                result_id=comparison.result.result_id,
+                expected_current_revision_id=base.revision_id,
+                confirmation_sha256=hashlib.sha256(
+                    comparison.result.model_dump_json(by_alias=True).encode()
+                ).hexdigest(),
+                decision="accept-structure",
+            )
+            semantic = hashlib.sha256(
+                protected_json(ordinary) + protected_json(comparison.result) + actor.actor_id.encode()
+            ).hexdigest()
+            machine = AcceptedDocumentRevision(
+                **common,
+                revision_id=comparison.candidate.revision_id,
+                previous_revision_id=base.revision_id,
+                decision_id=new_uuid_v7(),
+                decision_revision_id=new_uuid_v7(),
+                command_id=ordinary.command_id,
+                command_sha256=semantic,
+                content_sha256=content_sha256(comparison.candidate.structure),
+                structure_sha256=comparison.candidate.structure_sha256,
+                element_identities=comparison.candidate.element_identities,
+                structure=comparison.candidate.structure,
+            )
+            nested = []
+            prior = machine
+            for step, result in zip(plan.steps, results, strict=True):
+                save = CorrectionSave(
+                    command_id=new_uuid_v7(),
+                    draft_id=None,
+                    expected_draft_revision_id=None,
+                    patch=step.mapped_patch,
+                    rationale=plan.command.rationale,
+                )
+                draft = CorrectionDraft(
+                    project_id=self.revisions.project,
+                    draft_id=new_uuid_v7(),
+                    revision_id=new_uuid_v7(),
+                    previous_draft_revision_id=None,
+                    source=comparison.result.binding.source,
+                    patch=step.mapped_patch,
+                    rationale=save.rationale,
+                    authored_by=actor.actor_id,
+                    authored_at=actor.occurred_at,
+                    intent_revision_id=actor.intent_revision_id,
+                    intent_sha256=actor.intent_sha256,
+                    policy_sha256=actor.policy_sha256,
+                    command_id=save.command_id,
+                    command_sha256=self._semantic(save, actor),
+                    preview_sha256=result.result_sha256,
+                )
+                accept = CorrectionAcceptance(
+                    command_id=new_uuid_v7(),
+                    draft_revision_id=draft.revision_id,
+                    expected_current_revision_id=prior.revision_id,
+                    confirmation_sha256=value_sha256(draft),
+                    decision="accept-correction",
+                )
+                corrected = AcceptedDocumentRevision(
+                    **common,
+                    revision_id=step.next_candidate.revision_id,
+                    previous_revision_id=prior.revision_id,
+                    decision_id=new_uuid_v7(),
+                    decision_revision_id=new_uuid_v7(),
+                    command_id=accept.command_id,
+                    command_sha256=hashlib.sha256(
+                        protected_json(accept) + protected_json(draft) + actor.actor_id.encode()
+                    ).hexdigest(),
+                    content_sha256=content_sha256(step.next_candidate.structure),
+                    structure_sha256=step.next_candidate.structure_sha256,
+                    element_identities=step.next_candidate.element_identities,
+                    structure=step.next_candidate.structure,
+                )
+                nested.append((draft, corrected, result))
+                prior = corrected
+            outer = reprocessing.ReprocessingAccepted(
+                project_id=self.revisions.project,
+                record_id=new_uuid_v7(),
+                revision_id=new_uuid_v7(),
+                command=command,
+                command_sha256=self._semantic(command, actor),
+                batch_id=batch.batch_id,
+                batch_revision_id=batch.revision_id,
+                item_id=item.item_id,
+                comparison_revision_id=comparison.revision_id,
+                plan_revision_id=plan.revision_id,
+                base_revision_id=base.revision_id,
+                machine_revision_id=machine.revision_id,
+                final_revision_id=prior.revision_id,
+                machine_command_id=machine.command_id,
+                machine_decision_id=machine.decision_id,
+                machine_decision_revision_id=machine.decision_revision_id,
+                machine_command_sha256=machine.command_sha256,
+                nested_draft_revision_ids=tuple(d.revision_id for d, c, r in nested),
+                final_command_ids=tuple(c.command_id for d, c, r in nested),
+                impact_run_id=new_uuid_v7(),
+                accepted_by=actor.actor_id,
+                accepted_at=actor.occurred_at,
+                intent_revision_id=actor.intent_revision_id,
+                intent_sha256=actor.intent_sha256,
+                policy_sha256=actor.policy_sha256,
+            )
+            return outer, comparison, plan, batch, item, base, predecessor, machine, tuple(nested), targets, actor
+
+        prepared = self._run(command.plan_revision_id, prepare, cancelled)
+        if isinstance(prepared, reprocessing.ReprocessingAccepted):
+            return self._run(prepared.revision_id, lambda c, a, r: self._accepted_view(c, r), cancelled)
+        outer, comparison, plan, batch, item, base, predecessor, machine, nested, targets, owner = prepared
+        source = comparison.result.binding.source
+        machine_object = self._stage(machine, ACCEPTED_REVISION_MEDIA_TYPE, source, cancelled)
+        nested_objects = tuple(
+            (
+                self._stage(d, CORRECTION_MEDIA_TYPE, source, cancelled),
+                self._stage(c, ACCEPTED_REVISION_MEDIA_TYPE, source, cancelled),
+            )
+            for d, c, r in nested
+        )
+
+        def publish(connection, stored):
+            self._check(cancelled)
+            actor = self.revisions.actor()
+            self.revisions._authority(connection, actor)
+            if actor != owner:
+                raise DocumentRevisionProblem("document-reprocessing-authority-changed")
+            replay = self._accepted_item(connection, batch, item)
+            if replay:
+                if replay.command != command or replay.command_sha256 != outer.command_sha256:
+                    raise DocumentRevisionProblem("document-reprocessing-command-conflict")
+                self.revisions._accepted(connection, replay.final_revision_id)
+                return self._accepted_view(connection, replay)
+            values = self._plan_values(connection, comparison, plan, cancelled=cancelled)
+            self._current_batch(connection, batch)
+            latest = self._latest_plan(connection, comparison.revision_id)
+            if latest is None or latest.revision_id != plan.revision_id:
+                raise DocumentRevisionProblem("document-reprocessing-plan-changed")
+            if tuple(self.corrections._targets(connection, r, fresh=True) for r in values[-1]) != targets:
+                raise DocumentRevisionProblem("document-reprocessing-reference-authority-changed")
+            if (
+                self._prospective(connection, base, values[4], actor).graph_sha256
+                != "sha256:" + command.expected_graph_sha256
+            ):
+                raise DocumentRevisionProblem("document-reprocessing-graph-changed")
+            with self.revisions._aggregates(connection) as aggregates:
+                if aggregates.get(base.document_id) != predecessor:
+                    raise DocumentRevisionProblem("document-reprocessing-base-changed")
+                retained = aggregates.get_revision(comparison.result.revision_id)
+                historical_inputs = tuple(
+                    aggregates.get_revision(i) for i in (base.revision_id, comparison.revision_id, plan.revision_id)
+                )
+                outer_inputs = (*historical_inputs, retained)
+                outer_revision = aggregates.append(
+                    AggregateRevisionDraft(
+                        revision_id=outer.revision_id,
+                        aggregate_id=outer.record_id,
+                        aggregate_kind="document",
+                        created_at=outer.accepted_at,
+                        modified_at=outer.accepted_at,
+                        display_label_observed=outer.document_type,
+                        display_label_normalized=None,
+                        knowledge_status="observed",
+                        rights_status="allowed",
+                        object_sha256=stored.object_sha256,
+                        dependency_coverage="complete",
+                        provenance_inputs=outer_inputs,
+                        material_dependencies=self.corrections._dependencies(
+                            outer_inputs, {i.revision_id for i in historical_inputs}
+                        ),
+                    ),
+                    self.revisions._event(actor, outer.accepted_at, "document.created", self._key(outer)),
+                    expected_revision=None,
+                )
+                _publication_step("reprocessing-outer-complete")
+                current = self._append_accepted(
+                    connection,
+                    aggregates,
+                    machine,
+                    machine_object,
+                    predecessor,
+                    (predecessor, retained, outer_revision),
+                    {predecessor.revision_id},
+                    actor,
+                    correction=False,
+                )
+                for (draft, corrected, _result), (draft_object, corrected_object), target in zip(
+                    nested, nested_objects, targets, strict=True
+                ):
+                    draft_inputs = (current, retained, *target)
+                    draft_revision = aggregates.append(
+                        AggregateRevisionDraft(
+                            revision_id=draft.revision_id,
+                            aggregate_id=draft.draft_id,
+                            aggregate_kind="document",
+                            created_at=draft.authored_at,
+                            modified_at=draft.authored_at,
+                            display_label_observed="Document correction draft",
+                            display_label_normalized=None,
+                            knowledge_status="observed",
+                            rights_status="allowed",
+                            object_sha256=draft_object.object_sha256,
+                            dependency_coverage="complete",
+                            provenance_inputs=draft_inputs,
+                            material_dependencies=self.corrections._dependencies(draft_inputs, {current.revision_id}),
+                        ),
+                        self.revisions._event(
+                            actor, draft.authored_at, "document.created", "document-correction-save-" + draft.command_id
+                        ),
+                        expected_revision=None,
+                    )
+                    _publication_step("reprocessing-draft-complete")
+                    previous = current
+                    current = self._append_accepted(
+                        connection,
+                        aggregates,
+                        corrected,
+                        corrected_object,
+                        current,
+                        (current, retained, draft_revision, *target),
+                        {current.revision_id},
+                        actor,
+                        correction=True,
+                    )
+                    self._begin_impact(
+                        connection,
+                        previous,
+                        current,
+                        actor,
+                        "document-correction-impact-" + corrected.command_id,
+                        run_id=new_uuid_v7(),
+                    )
+                self._begin_impact(
+                    connection,
+                    predecessor,
+                    current,
+                    actor,
+                    "document-reprocessing-impact-" + command.command_id,
+                    run_id=outer.impact_run_id,
+                )
+            self._check(cancelled)
+            # Normal immutable readers verify both outer and literal correction
+            # contracts before the sole writer can commit.
+            self.revisions._accepted(connection, outer.final_revision_id)
+            return self._accepted_view(connection, outer)
+
+        return self.revisions._bounded(
+            lambda: self.revisions._put(
+                protected_json(outer), reprocessing.REPROCESSING_MEDIA_TYPE, source, publish, cancelled
+            )
+        )
+
+    def _cancel_jobs(self, batch, cancelled):
+        actor = self.revisions.actor()
+        for item in batch.items:
+            self._check(cancelled)
+
+            def cancel(connection, _actor, item=item):
+                job = self._job(connection, item)
+                return None if job is None or job.state in {"succeeded", "failed", "cancelled", "interrupted"} else job
+
+            job = self.revisions._source_fenced(item.inputs.source, cancel)
+            if job is not None:
+                self.revisions.queue.request_cancellation(
+                    job.job_id,
+                    actor=WorkflowActor(actor.actor_id, "human", "researcher"),
+                    now=self.revisions.now(),
+                    reason_code="document-reprocessing-cancelled",
+                    interruption_kind="user-cancel",
+                )
+
+    def cancel(self, command, *, cancelled=lambda: False):
+        command = reprocessing.ReprocessingCancel.model_validate(command)
+
+        def prepare(connection, actor, batch):
+            key = "document-reprocessing-document-reprocessing-batch-" + command.command_id
+            replay = self._replay(connection, key)
+            if replay:
+                if replay.command_sha256 != self._semantic(command, actor):
+                    raise DocumentRevisionProblem("document-reprocessing-command-conflict")
+                return replay
+            self._current_batch(connection, batch)
+            for item in batch.items:
+                self._fence(connection, item.inputs.source, actor)
+            return reprocessing.ReprocessingBatch(
+                project_id=self.revisions.project,
+                batch_id=batch.batch_id,
+                revision_id=new_uuid_v7(),
+                previous_revision_id=batch.revision_id,
+                command=command,
+                command_id=command.command_id,
+                command_sha256=self._semantic(command, actor),
+                authored_by=actor.actor_id,
+                authored_at=actor.occurred_at,
+                intent_revision_id=actor.intent_revision_id,
+                intent_sha256=actor.intent_sha256,
+                policy_sha256=actor.policy_sha256,
+                state="cancelled",
+                items=batch.items,
+            )
+
+        batch = self._run(command.batch_revision_id, prepare, cancelled)
+
+        def check(connection, actor):
+            prior = self._record(connection, batch.previous_revision_id, reprocessing.ReprocessingBatch)
+            self._current_batch(connection, prior)
+            for item in prior.items:
+                self._fence(connection, item.inputs.source, actor)
+
+        batch = self._write(
+            batch,
+            batch.items[0].inputs.source,
+            (),
+            previous=batch.previous_revision_id,
+            check=check,
+            cancelled=cancelled,
+        )
+        self._cancel_jobs(batch, cancelled)
+        return self.read(batch.revision_id, cancelled=cancelled)
+
+    def continue_item(self, command, *, input_factory, cancelled=lambda: False):
+        command = reprocessing.ReprocessingContinue.model_validate(command)
+
+        def prepare(connection, actor, batch):
+            key = "document-reprocessing-document-reprocessing-batch-" + command.command_id
+            replay = self._replay(connection, key)
+            if replay:
+                if replay.command_sha256 != self._semantic(command, actor):
+                    raise DocumentRevisionProblem("document-reprocessing-command-conflict")
+                return replay
+            self._current_batch(connection, batch)
+            item = self._item(batch, command.item_id)
+            self._fence(connection, item.inputs.source, actor)
+            job = self._job(connection, item)
+            if (
+                (None if job is None else job.job_id) != command.expected_job_id
+                or (job is not None and job.state == "succeeded")
+                or self._accepted_item(connection, batch, item)
+            ):
+                raise DocumentRevisionProblem("document-reprocessing-continuation-conflict")
+            base = self.revisions._accepted(connection, item.base_revision_id)
+            with self.revisions._aggregates(connection) as aggregates:
+                if aggregates.get(base.document_id).revision_id != base.revision_id:
+                    raise DocumentRevisionProblem("document-reprocessing-base-changed")
+            inputs = input_factory(base)
+            if (
+                inputs.source != item.inputs.source
+                or inputs.command_id == item.inputs.command_id
+                or inputs.actor_id != actor.actor_id
+            ):
+                raise DocumentRevisionProblem("document-reprocessing-continuation-invalid")
+            items = tuple(
+                i.model_copy(update={"inputs": inputs}) if i.item_id == item.item_id else i for i in batch.items
+            )
+            return reprocessing.ReprocessingBatch(
+                project_id=self.revisions.project,
+                batch_id=batch.batch_id,
+                revision_id=new_uuid_v7(),
+                previous_revision_id=batch.revision_id,
+                command=command,
+                command_id=command.command_id,
+                command_sha256=self._semantic(command, actor),
+                authored_by=actor.actor_id,
+                authored_at=actor.occurred_at,
+                intent_revision_id=actor.intent_revision_id,
+                intent_sha256=actor.intent_sha256,
+                policy_sha256=actor.policy_sha256,
+                state="active",
+                items=items,
+            )
+
+        batch = self._run(command.batch_revision_id, prepare, cancelled)
+
+        def check(connection, actor):
+            prior = self._record(connection, batch.previous_revision_id, reprocessing.ReprocessingBatch)
+            self._current_batch(connection, prior)
+            item = self._item(prior, command.item_id)
+            self._fence(connection, item.inputs.source, actor)
+            job = self._job(connection, item)
+            if (None if job is None else job.job_id) != command.expected_job_id or self._accepted_item(
+                connection, prior, item
+            ):
+                raise DocumentRevisionProblem("document-reprocessing-continuation-conflict")
+            with self.revisions._aggregates(connection) as aggregates:
+                if aggregates.get(item.inputs.source.document_id).revision_id != item.base_revision_id:
+                    raise DocumentRevisionProblem("document-reprocessing-base-changed")
+
+        batch = self._write(
+            batch,
+            batch.items[0].inputs.source,
+            (),
+            previous=batch.previous_revision_id,
+            check=check,
+            cancelled=cancelled,
+        )
+        item = self._item(batch, command.item_id)
+        # The previous immutable job remains inspectable; it cannot be silently
+        # rebound to a different Native session or new parser selection.
+        with closing(
+            open_canonical_database(self.revisions.database, expected_project_id=self.revisions.project)
+        ) as connection:
+            prior = self._record(connection, batch.previous_revision_id, reprocessing.ReprocessingBatch)
+        self._cancel_jobs(prior.model_copy(update={"items": (self._item(prior, command.item_id),)}), cancelled)
+        self.revisions.submit(item.inputs)
+        return self.read(batch.revision_id, cancelled=cancelled)
+
+    def read_impact(self, batch_revision_id, item_id, *, cancelled=lambda: False):
+        def read(connection, actor, batch):
+            item = self._item(batch, item_id)
+            self._fence(connection, item.inputs.source, actor)
+            record = self._accepted_item(connection, batch, item)
+            if record is None:
+                raise DocumentRevisionProblem("document-reprocessing-acceptance-unavailable")
+            self.revisions._accepted(connection, record.final_revision_id)
+            return self._accepted_view(connection, record)
+
+        return self._run(batch_revision_id, read, cancelled)
+
+    def resume_impact(self, batch_revision_id, item_id, expected_checkpoint_sha256, *, cancelled=lambda: False):
+        def resume(connection, actor, batch):
+            item = self._item(batch, item_id)
+            self._fence(connection, item.inputs.source, actor)
+            record = self._accepted_item(connection, batch, item)
+            if record is None:
+                raise DocumentRevisionProblem("document-reprocessing-acceptance-unavailable")
+            self.revisions._accepted(connection, record.final_revision_id)
+            run = self.impacts._run_with_connection(connection, record.impact_run_id)
+            expected = "sha256:" + expected_checkpoint_sha256
+            if expected != run.checkpoint_sha256:
+                self.impacts._verify_run_snapshot(connection, run.run_id)
+                observed = connection.execute(
+                    "SELECT 1 FROM dependency_impact_audit_events WHERE project_id=? AND run_id=? "
+                    "AND checkpoint_sha256=? AND processed_items<? LIMIT 1",
+                    (self.revisions.project, run.run_id, expected, run.processed_items),
+                ).fetchone()
+                if observed is None:
+                    raise DocumentRevisionProblem("document-reprocessing-impact-checkpoint-changed")
+                # An authenticated prior checkpoint already advanced. Return
+                # the current readback without consuming a second chunk.
+                return self._accepted_view(connection, record)
+            if run.state == "running":
+                self.impacts._advance_with_connection(connection, run.run_id, expected_checkpoint_sha256=expected)
+            self._check(cancelled)
+            return self._accepted_view(connection, record)
+
+        return self._run(batch_revision_id, resume, cancelled)

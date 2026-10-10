@@ -287,6 +287,143 @@ class DocumentRevisionService:
     def accept(self, command, *, trace_id):
         return self._current(command, trace_id, lambda repository: repository.accept(command.acceptance))
 
+    def _reprocessing(self, command, trace_id, action):
+        from .document_revisions import protected_json
+        from .document_viewer_allocations import viewer_revision_reads
+
+        def scoped(repository, actor, stopped):
+            source = repository.reprocessing().source_for_command(command)
+            bounded = viewer_revision_reads(repository, source.byte_length) if source else repository
+
+            def project_action(reconciler=None, observed=None, resolve=None, intent=None, path=None):
+                if reconciler is not None and (
+                    observed.actor_id,
+                    observed.intent_sha256,
+                    observed.policy_sha256,
+                    intent.revision_id,
+                    reconciler._project,
+                    reconciler._database,
+                    path,
+                ) != (
+                    actor.actor_id,
+                    actor.intent_sha256,
+                    actor.policy_sha256,
+                    actor.intent_revision_id,
+                    repository.project,
+                    repository.database,
+                    Path(command.root),
+                ):
+                    raise DocumentRevisionProblem("document-reprocessing-authority-mismatch")
+
+                def target(connection, match):
+                    if reconciler is None or resolve is None:
+                        raise DocumentRevisionProblem("document-reprocessing-reference-authority-unavailable")
+                    state = reconciler._state(connection, match.work_id)
+                    if (
+                        state.disposition != "active"
+                        or state.revision_id != match.work_revision_id
+                        or not reconciler._work_sources(connection, match.work_id, resolve)
+                    ):
+                        raise DocumentRevisionProblem("document-reprocessing-reference-authority-changed")
+                    with bounded._aggregates(connection) as aggregates:
+                        return aggregates.get_revision(state.revision_id)
+
+                selected = bounded.reprocessing(target_resolver=target)
+                selected.session_id = command.session_id
+                result = action(selected, stopped, lambda base: self._reprocessing_input(command, base, actor))
+                wire = result.model_dump(mode="json", by_alias=True)
+                if len(protected_json(result)) > 128 * 1024 or stopped():
+                    raise DocumentRevisionProblem("document-reprocessing-stopped-or-resource-limit")
+                return wire
+
+            if self.reconciliation is not None:
+                return self.reconciliation._with_authority(command.root, trace_id, project_action)
+            return project_action()
+
+        return self._scoped_repository(command, trace_id, scoped)
+
+    def _reprocessing_input(self, command, base, actor):
+        from .domain_contracts import new_uuid_v7
+
+        source = base.result.binding.source
+        installed = (
+            self.runtime.load_text()
+            if source.format == "plain-text"
+            else self.runtime.load_native()
+            if source.format in {"jats", "tei", "xml", "html"}
+            else self.runtime.load()
+        )
+        selection = select_parser(
+            (SelectionSource(source, "available", "primary"),),
+            ParserRegistry((RegisteredParser(installed.descriptor, "available"),)),
+            primary_attachment_id=source.attachment_id,
+        )
+        intent = self.imports._action(
+            command.root, lambda binding: self.imports._intent(binding, actor.intent_revision_id)
+        )
+        return DocumentParseInput(
+            project_id=command.project_id,
+            command_id=new_uuid_v7(),
+            actor_id=actor.actor_id,
+            session_id=command.session_id,
+            source=source,
+            selection=selection,
+            intent=intent,
+            policy_sha256=actor.policy_sha256,
+        )
+
+    def reprocessing_queue(self, command, *, trace_id):
+        return self._reprocessing(
+            command, trace_id, lambda r, s, _f: r.queue(after_batch_id=command.after_batch_id, cancelled=s)
+        )
+
+    def reprocessing_create(self, command, *, trace_id):
+        result = self._reprocessing(
+            command, trace_id, lambda r, s, f: r.create(command.batch, input_factory=f, cancelled=s)
+        )
+        self.attach(command.root)
+        return result
+
+    def reprocessing_read(self, command, *, trace_id):
+        return self._reprocessing(command, trace_id, lambda r, s, _f: r.read(command.batch_revision_id, cancelled=s))
+
+    def reprocessing_compare(self, command, *, trace_id):
+        return self._reprocessing(
+            command,
+            trace_id,
+            lambda r, s, _f: r.compare(command.batch_revision_id, command.item_id, offset=command.offset, cancelled=s),
+        )
+
+    def reprocessing_reconcile(self, command, *, trace_id):
+        return self._reprocessing(command, trace_id, lambda r, s, _f: r.reconcile(command.reconciliation, cancelled=s))
+
+    def reprocessing_accept(self, command, *, trace_id):
+        return self._reprocessing(command, trace_id, lambda r, s, _f: r.accept(command.acceptance, cancelled=s))
+
+    def reprocessing_continue(self, command, *, trace_id):
+        result = self._reprocessing(
+            command, trace_id, lambda r, s, f: r.continue_item(command.continuation, input_factory=f, cancelled=s)
+        )
+        self.attach(command.root)
+        return result
+
+    def reprocessing_cancel(self, command, *, trace_id):
+        return self._reprocessing(command, trace_id, lambda r, s, _f: r.cancel(command.cancellation, cancelled=s))
+
+    def reprocessing_read_impact(self, command, *, trace_id):
+        return self._reprocessing(
+            command, trace_id, lambda r, s, _f: r.read_impact(command.batch_revision_id, command.item_id, cancelled=s)
+        )
+
+    def reprocessing_resume_impact(self, command, *, trace_id):
+        return self._reprocessing(
+            command,
+            trace_id,
+            lambda r, s, _f: r.resume_impact(
+                command.batch_revision_id, command.item_id, command.expected_checkpoint_sha256, cancelled=s
+            ),
+        )
+
     def read(self, command, *, trace_id):
         return self._current(command, trace_id, lambda repository: repository.read(command.revision_id))
 

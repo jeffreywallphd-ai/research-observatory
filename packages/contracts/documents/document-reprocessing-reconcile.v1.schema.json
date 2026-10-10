@@ -1,0 +1,115 @@
+{
+  "$defs": {
+    "Digest": {
+      "pattern": "^[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "Identity": {
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+      "type": "string"
+    },
+    "Rationale": {
+      "maxLength": 1000,
+      "minLength": 1,
+      "type": "string"
+    },
+    "ReprocessingMapping": {
+      "additionalProperties": false,
+      "properties": {
+        "obligationId": {
+          "$ref": "#/$defs/Digest"
+        },
+        "nodeId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "relatedNodeId": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Identity"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "referenceId": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Identity"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "obligationId",
+        "nodeId",
+        "relatedNodeId",
+        "referenceId"
+      ],
+      "title": "ReprocessingMapping",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schemaVersion": {
+      "const": "1.0",
+      "default": "1.0",
+      "title": "Schemaversion",
+      "type": "string"
+    },
+    "commandId": {
+      "$ref": "#/$defs/Identity"
+    },
+    "comparisonRevisionId": {
+      "$ref": "#/$defs/Identity"
+    },
+    "expectedPlanRevisionId": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Identity"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "rationale": {
+      "$ref": "#/$defs/Rationale"
+    },
+    "mappings": {
+      "items": {
+        "$ref": "#/$defs/ReprocessingMapping"
+      },
+      "maxItems": 32,
+      "title": "Mappings",
+      "type": "array"
+    }
+  },
+  "required": [
+    "commandId",
+    "comparisonRevisionId",
+    "expectedPlanRevisionId",
+    "rationale",
+    "mappings"
+  ],
+  "title": "ReprocessingReconcile",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://research-observatory.local/contracts/documents/document-reprocessing-reconcile.v1.schema.json",
+  "x-research-observatory-semanticRules": [
+    "separate-per-document-explicit-acceptance-no-bulk-accept-or-silent-anchor-movement",
+    "original-source-parser-result-correction-decisions-and-accepted-history-immutable",
+    "all-authenticated-correction-generations-explicitly-remapped-to-exact-new-receipt-and-target-hashes",
+    "one-current-source-fenced-publication-writer-for-machine-corrections-human-decisions-and-material-impact",
+    "current-native-human-session-intent-privacy-source-and-work-authority-through-delivery",
+    "exact-command-retry-CAS-partial-batch-cancellation-and-explicit-new-session-continuation",
+    "unique-exact-quote-context-anchor-candidates-advisory-missing-and-ambiguous-remain-unresolved",
+    "complete-server-derived-unresolved-count-gates-acceptance-independent-of-page-offset",
+    "existing-material-graph-only-affected-outputs-stale-prospective-preview-rechecked-at-publication",
+    "ten-document-batch-32-generations-32-operations-10000-items-one-million-codepoints-five-second-operation"
+  ]
+}

@@ -545,6 +545,16 @@ pub(crate) enum NativeDocumentAction {
     CorrectionDraft,
     CorrectionImpact,
     CorrectionTargets,
+    ReprocessingQueue,
+    ReprocessingCreate,
+    ReprocessingRead,
+    ReprocessingReadImpact,
+    ReprocessingCompare,
+    ReprocessingReconcile,
+    ReprocessingAccept,
+    ReprocessingContinue,
+    ReprocessingCancel,
+    ReprocessingResumeImpact,
     ParseQuality,
 }
 
@@ -593,6 +603,16 @@ impl NativeDocumentAction {
             Self::CorrectionDraft => "/native/document-corrections/draft",
             Self::CorrectionImpact => "/native/document-corrections/impact",
             Self::CorrectionTargets => "/native/document-corrections/targets",
+            Self::ReprocessingQueue => "/native/document-reprocessing/queue",
+            Self::ReprocessingCreate => "/native/document-reprocessing/create",
+            Self::ReprocessingRead => "/native/document-reprocessing/read",
+            Self::ReprocessingReadImpact => "/native/document-reprocessing/read-impact",
+            Self::ReprocessingCompare => "/native/document-reprocessing/compare",
+            Self::ReprocessingReconcile => "/native/document-reprocessing/reconcile",
+            Self::ReprocessingAccept => "/native/document-reprocessing/accept",
+            Self::ReprocessingContinue => "/native/document-reprocessing/continue",
+            Self::ReprocessingCancel => "/native/document-reprocessing/cancel",
+            Self::ReprocessingResumeImpact => "/native/document-reprocessing/resume-impact",
             Self::ParseQuality => "/native/document-revisions/parse-quality",
         }
     }
@@ -653,7 +673,8 @@ impl NativeImportConnection {
             return Err("RO-DOCUMENT-PROJECT-UNAVAILABLE");
         }
         let body = body.to_string();
-        let correction = matches!(action, NativeDocumentAction::CorrectionQueue | NativeDocumentAction::CorrectionPage | NativeDocumentAction::CorrectionSave | NativeDocumentAction::CorrectionAccept | NativeDocumentAction::CorrectionDiscard | NativeDocumentAction::CorrectionDraft | NativeDocumentAction::CorrectionImpact | NativeDocumentAction::CorrectionTargets);
+        let correction = matches!(action, NativeDocumentAction::CorrectionQueue | NativeDocumentAction::CorrectionPage | NativeDocumentAction::CorrectionSave | NativeDocumentAction::CorrectionAccept | NativeDocumentAction::CorrectionDiscard | NativeDocumentAction::CorrectionDraft | NativeDocumentAction::CorrectionImpact | NativeDocumentAction::CorrectionTargets
+            | NativeDocumentAction::ReprocessingQueue | NativeDocumentAction::ReprocessingCreate | NativeDocumentAction::ReprocessingRead | NativeDocumentAction::ReprocessingReadImpact | NativeDocumentAction::ReprocessingCompare | NativeDocumentAction::ReprocessingReconcile | NativeDocumentAction::ReprocessingAccept | NativeDocumentAction::ReprocessingContinue | NativeDocumentAction::ReprocessingCancel | NativeDocumentAction::ReprocessingResumeImpact);
         if body.len() > if correction { 65536 } else { 8192 } {
             return Err("RO-DOCUMENT-REQUEST-INVALID");
         }

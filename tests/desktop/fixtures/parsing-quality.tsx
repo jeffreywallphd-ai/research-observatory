@@ -8,6 +8,7 @@ import {DocumentViewerWorkspace} from "../../../apps/desktop/src/app/DocumentVie
 import {decodeCorrectionPage,decodeCorrectionDraft,nativeDocumentCorrectionPort,type CorrectionPage,type CorrectionDraftView,type CorrectionCommand,type DocumentCorrectionPort} from "../../../apps/desktop/src/app/documentCorrections";
 import {correctionPageFixture,correctionDraftFixture,correctionQualityFixture,correctionSource,correctionIdentity,correctionRevision} from "./document-correction";
 import {runQualityNativeDriver} from "./parsing-quality-native-driver";
+import {runReprocessingNativeDriver} from "./reprocessing-native-driver";
 import "../../../packages/ui-tokens/index.css";
 import "../../../packages/ui-components/src/styles.css";
 import "../../../apps/desktop/src/app.css";
@@ -51,5 +52,5 @@ function mount(active=true): void {
         returnLabel="Return to Parsing Quality" announce={()=>{}} onReturn={()=>mount()} />);
     }} />);
 }
-Object.assign(window,{__QUALITY_UI_TEST__:state,__QUALITY_NATIVE_WITNESS__:{mount,run:runQualityNativeDriver,mountNative:(p:ProjectProjection,selection:QualitySelection)=> {state.native=true;nativeProject=p;savedSelection=selection;mount();}}});
+Object.assign(window,{__QUALITY_UI_TEST__:state,__REPROCESSING_NATIVE_DRIVER__:runReprocessingNativeDriver,__QUALITY_NATIVE_WITNESS__:{mount,run:runQualityNativeDriver,mountNative:(p:ProjectProjection,selection:QualitySelection)=> {state.native=true;nativeProject=p;savedSelection=selection;mount();}}});
 if(!("__TAURI_INTERNALS__" in window)) mount();

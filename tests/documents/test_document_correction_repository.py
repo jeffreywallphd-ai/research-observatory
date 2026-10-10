@@ -108,7 +108,7 @@ class DocumentCorrectionRepositoryTests(unittest.TestCase):
             value["nodes"] = [{**first, "stagedId": f"node-{i}", "order": i} for i in range(20)]
 
         parsed = self.f.parse("Authored synthetic tail", change=authored)
-        self.base = self.f.repository.accept(self.f.command(parsed, expected=self.base.revision_id))
+        self.base = self.f.reprocess_uncorrected_fixture(parsed, self.base)
         node = self.base.structure.nodes[-1]
         saving = self.save().model_copy(
             update={
@@ -298,7 +298,7 @@ class DocumentCorrectionRepositoryTests(unittest.TestCase):
             value["figures"][0]["previewStageId"] = None
 
         parsed = self.f.parse(change=authored)
-        self.base = self.f.repository.accept(self.f.command(parsed, expected=self.base.revision_id))
+        self.base = self.f.reprocess_uncorrected_fixture(parsed, self.base)
         paragraph = next(n for n in self.base.structure.nodes if n.kind == "paragraph")
         marker = next(n for n in self.base.structure.nodes if n.kind == "citation-marker")
         anchors = LocalSourceAnchorRepository(self.f.reopen())

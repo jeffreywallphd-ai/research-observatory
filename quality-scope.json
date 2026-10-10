@@ -584,6 +584,15 @@
     "tests/documents/test_document_correction_repository.py",
     "tests/documents/test_document_correction_service.py",
     "tests/documents/test_document_corrections.py",
-    "tests/desktop/test_quality_workflow_navigation.py"
+    "tests/desktop/test_quality_workflow_navigation.py",
+    "services/core-api/src/research_observatory_core/document_reprocessing.py",
+    "services/core-api/src/research_observatory_core/document_reprocessing_api.py",
+    "services/core-api/src/research_observatory_core/ports/document_reprocessing.py",
+    "tests/desktop/test_reprocessing_interactions.py",
+    "tests/desktop/test_reprocessing_workflow_navigation.py",
+    "tests/documents/reprocessing_native_windows_sidecar.py",
+    "tests/documents/test_document_reprocessing.py",
+    "tests/documents/test_document_reprocessing_repository.py",
+    "tests/documents/test_document_reprocessing_service.py"
   ]
 }

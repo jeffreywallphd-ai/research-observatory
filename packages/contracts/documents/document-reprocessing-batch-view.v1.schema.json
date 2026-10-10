@@ -1,0 +1,125 @@
+{
+  "$defs": {
+    "Identity": {
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+      "type": "string"
+    },
+    "ItemState": {
+      "enum": [
+        "not-submitted",
+        "processing",
+        "needs-continuation",
+        "failed",
+        "cancelled",
+        "ready",
+        "base-conflict",
+        "accepted"
+      ],
+      "type": "string"
+    },
+    "ProjectIdentity": {
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[47][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+      "type": "string"
+    },
+    "ReprocessingItemView": {
+      "additionalProperties": false,
+      "properties": {
+        "itemId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "baseRevisionId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "jobId": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Identity"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "state": {
+          "$ref": "#/$defs/ItemState"
+        },
+        "acceptedRevisionId": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Identity"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "itemId",
+        "baseRevisionId",
+        "jobId",
+        "state",
+        "acceptedRevisionId"
+      ],
+      "title": "ReprocessingItemView",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schemaVersion": {
+      "const": "1.0",
+      "default": "1.0",
+      "title": "Schemaversion",
+      "type": "string"
+    },
+    "projectId": {
+      "$ref": "#/$defs/ProjectIdentity"
+    },
+    "batchId": {
+      "$ref": "#/$defs/Identity"
+    },
+    "batchRevisionId": {
+      "$ref": "#/$defs/Identity"
+    },
+    "state": {
+      "enum": [
+        "active",
+        "cancelled"
+      ],
+      "title": "State",
+      "type": "string"
+    },
+    "items": {
+      "items": {
+        "$ref": "#/$defs/ReprocessingItemView"
+      },
+      "maxItems": 10,
+      "title": "Items",
+      "type": "array"
+    }
+  },
+  "required": [
+    "projectId",
+    "batchId",
+    "batchRevisionId",
+    "state",
+    "items"
+  ],
+  "title": "ReprocessingBatchView",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://research-observatory.local/contracts/documents/document-reprocessing-batch-view.v1.schema.json",
+  "x-research-observatory-semanticRules": [
+    "separate-per-document-explicit-acceptance-no-bulk-accept-or-silent-anchor-movement",
+    "original-source-parser-result-correction-decisions-and-accepted-history-immutable",
+    "all-authenticated-correction-generations-explicitly-remapped-to-exact-new-receipt-and-target-hashes",
+    "one-current-source-fenced-publication-writer-for-machine-corrections-human-decisions-and-material-impact",
+    "current-native-human-session-intent-privacy-source-and-work-authority-through-delivery",
+    "exact-command-retry-CAS-partial-batch-cancellation-and-explicit-new-session-continuation",
+    "unique-exact-quote-context-anchor-candidates-advisory-missing-and-ambiguous-remain-unresolved",
+    "complete-server-derived-unresolved-count-gates-acceptance-independent-of-page-offset",
+    "existing-material-graph-only-affected-outputs-stale-prospective-preview-rechecked-at-publication",
+    "ten-document-batch-32-generations-32-operations-10000-items-one-million-codepoints-five-second-operation"
+  ]
+}

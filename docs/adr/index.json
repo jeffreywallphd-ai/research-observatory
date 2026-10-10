@@ -509,6 +509,15 @@
       "linkedTasks": [
         "CAP-05.S06.T02"
       ]
+    },
+    {
+      "id": "ADR-0053",
+      "path": "docs/adr/ADR-0053-bind-document-reprocessing-to-existing-per-document-acceptance-authority.md",
+      "title": "Bind document reprocessing to existing per-document acceptance authority",
+      "status": "Proposed",
+      "linkedTasks": [
+        "CAP-05.S06.T03"
+      ]
     }
   ]
 }

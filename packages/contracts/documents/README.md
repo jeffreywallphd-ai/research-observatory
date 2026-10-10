@@ -140,3 +140,43 @@ Transformation/read bounds include 10,000 items, one million text codepoints,
 retain exact command identity for reconciliation. Component doubles establish
 UI behavior only; task-owned synthetic Wry/Core checks do not qualify parser
 models, a packaged installation, hardware tiers or Wave release.
+
+The additive `document-reprocessing-*` v1 schemas describe batches of at most ten
+documents, bounded old/new comparison pages, complete correction obligations and
+separate explicit per-document acceptance. Batch submission and comparison do
+not accept parser output. Every new replacement of a normalized head uses this
+path; initial ordinary acceptance and exact historical retries stay compatible.
+Each retained correction generation must be explicitly mapped to the exact new
+candidate nodes/references. Original operation digests, new result/job/physical
+attempt/selection, all mapped values, rationale and current actor bind the saved
+plan and its confirmation. Complete server counts block acceptance despite
+pagination or unseen candidate nodes. No aggregate scholarly confidence exists.
+
+Canonical IDs are fresh. Exact quote and context candidates are advisory:
+unchanged/moved, missing and ambiguous anchors stay distinct, and old anchors
+never move. Original source, parser output, accepted revisions and human history
+remain immutable. One current-source-fenced writer publishes the machine base,
+mapped saved corrections, human decisions, final head and graph impact. Normal
+accepted and correction readers authenticate that compound result after reopen.
+Historical inputs are non-material, so new accepted objects do not stale
+themselves; only graph-connected material consumers receive stale/unknown facts.
+
+Small impact completes in the writer; larger impact exposes a run/checkpoint
+for explicit resume. Read-impact recovers an accepted item's original batch
+binding from a later cancelled/continued batch. Retrying an already-advanced
+authenticated checkpoint returns current readback without applying another chunk.
+Cancellation stops future items and retains completed per-document decisions.
+Unfinished old-session work needs a new explicit immutable command/job under
+current Native authority; no security-lock continuation or acceptance is automatic.
+Unknown issued mutations keep their exact payload for explicit reconciliation.
+
+Current human/Intent/privacy, original-copy inspect/derive, exact Work authority,
+stop and resource fences apply through response delivery. Protected reprocessing
+records have an 8 MiB cap; commands 64 KiB and responses 128 KiB. Comparison is
+bounded to 10,000 retained model/collection items, one million retained string
+codepoints and one million cumulative span codepoints before detached copies
+(including nested cells, warnings, contributors and overlapping spans), 32 correction
+generations, 32 operations per generation and five-second cooperative work.
+Retained-IR text comparison is not proof of extraction recall from the source.
+Authored parser fixtures plus real Native/Core/vault/SQLCipher checks establish
+these boundaries without claiming installed parser, hardware or shipping proof.

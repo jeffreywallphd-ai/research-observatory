@@ -14,7 +14,15 @@ from typing import Annotated, Literal
 
 from pydantic import Field, field_validator, model_validator
 
-from .document_revisions import AcceptedDocumentRevision, DocumentRevisionProblem, Instant, protected_json
+from .document_revisions import (
+    AcceptedDocumentRevision,
+    CanonicalDocumentStructure,
+    CanonicalElementIdentity,
+    DocumentRevisionProblem,
+    Instant,
+    RetainedParseResultReceipt,
+    protected_json,
+)
 from .parsing.contracts import (
     CodepointRange,
     Digest,
@@ -235,7 +243,34 @@ class CorrectionResult(IRValue):
         return value_sha256(self)
 
 
-def staged_structure(base: AcceptedDocumentRevision) -> dict:
+class CorrectionPreviewBase(IRValue):
+    """Prospective machine/correction data; carries no accepted human decision."""
+
+    revision_id: Identity
+    result: RetainedParseResultReceipt
+    structure_sha256: Digest
+    element_identities: tuple[CanonicalElementIdentity, ...]
+    structure: CanonicalDocumentStructure = Field(repr=False)
+
+    @model_validator(mode="after")
+    def exact(self):
+        if self.structure_sha256 != value_sha256(self.structure) or self.result.binding != self.structure.binding:
+            raise ValueError("document-correction-preview-base-invalid")
+        roles = (
+            ("projection", [p.projection_id for p in self.structure.text_projections]),
+            ("node", [n.node_id for n in self.structure.nodes]),
+            ("reference", [r.reference_id for r in self.structure.references]),
+            ("citation", [c.citation_id for c in self.structure.citations]),
+        )
+        if any([m.canonical_id for m in self.element_identities if m.role == role] != ids for role, ids in roles) or (
+            len({m.canonical_id for m in self.element_identities}) != len(self.element_identities)
+            or len({(m.role, m.staged_id) for m in self.element_identities}) != len(self.element_identities)
+        ):
+            raise ValueError("document-correction-preview-base-invalid")
+        return self
+
+
+def staged_structure(base: AcceptedDocumentRevision | CorrectionPreviewBase) -> dict:
     """Use exact prior canonical IDs as detached staged keys for a successor."""
     wire = base.structure.model_dump(mode="json", by_alias=True)
     wire["disposition"] = "staged"
@@ -250,7 +285,7 @@ def staged_structure(base: AcceptedDocumentRevision) -> dict:
 
 
 def apply_correction(
-    base: AcceptedDocumentRevision,
+    base: AcceptedDocumentRevision | CorrectionPreviewBase,
     patch: CorrectionPatch,
     *,
     cancelled: Callable[[], bool] = lambda: False,
@@ -268,7 +303,7 @@ def apply_correction(
     try:
         checkpoint()
         # Admission precedes detached models, normalization and JSON copies.
-        if not isinstance(base, AcceptedDocumentRevision) or (
+        if not isinstance(base, (AcceptedDocumentRevision, CorrectionPreviewBase)) or (
             sum(
                 len(rows)
                 for rows in (
@@ -286,7 +321,7 @@ def apply_correction(
             > MAX_CORRECTION_TEXT_CODEPOINTS
         ):
             raise DocumentRevisionProblem("document-correction-limit")
-        base = AcceptedDocumentRevision.model_validate(base)
+        base = type(base).model_validate(base)
         patch = CorrectionPatch.model_validate(patch)
         if (patch.base_revision_id, patch.expected_structure_sha256) != (base.revision_id, base.structure_sha256):
             raise DocumentRevisionProblem("document-correction-base-changed")

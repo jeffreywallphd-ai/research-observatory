@@ -3396,6 +3396,7 @@ class _LocalObjectStore:
             "application/vnd.research-observatory.normalized-parse-result+json",
             "application/vnd.research-observatory.document-revision+json",
             "application/vnd.research-observatory.document-correction+json",
+            "application/vnd.research-observatory.document-reprocessing+json",
             "application/vnd.research-observatory.source-anchor+json",
             "application/vnd.research-observatory.document-references+json",
             "application/vnd.research-observatory.document-citations+json",
@@ -3425,6 +3426,8 @@ class _LocalObjectStore:
                 if media_type == "application/vnd.research-observatory.source-anchor+json"
                 else 128 * 1024
                 if media_type == "application/vnd.research-observatory.document-correction+json"
+                else 8 * 1_048_576
+                if media_type == "application/vnd.research-observatory.document-reprocessing+json"
                 else 64 * 1_048_576
             )
         ):

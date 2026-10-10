@@ -23,6 +23,7 @@ from .corpus_api import register_corpus_routes
 from .corpus_service import CorpusService
 from .document_attachment_api import DocumentRuntimePort, register_document_attachment_routes
 from .document_correction_api import register_document_correction_routes
+from .document_reprocessing_api import register_document_reprocessing_routes
 from .document_revision_api import register_document_revision_routes
 from .document_revision_service import DocumentRevisionService
 from .document_viewer_api import register_document_viewer_routes
@@ -373,6 +374,7 @@ def create_app(
     register_document_attachment_routes(app, lambda request: runtime(request).attachments)
     register_document_revision_routes(app, lambda request: runtime(request).document_revisions)
     register_document_correction_routes(app, lambda request: runtime(request).document_revisions)
+    register_document_reprocessing_routes(app, lambda request: runtime(request).document_revisions)
     register_document_viewer_routes(app, lambda request: runtime(request).document_viewer)
     register_connector_routes(app, lambda request: runtime(request).connectors, project_problem)
     register_plugin_routes(app, lambda request: runtime(request).plugin_admin, project_problem)

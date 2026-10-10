@@ -131,6 +131,44 @@ class DocumentRevisionRepositoryTests(unittest.TestCase):
                 )
             }
 
+    def reprocess_uncorrected_fixture(self, result, base):
+        """Seed an authored replacement through its explicit current route."""
+        from research_observatory_core.document_reprocessing import (
+            ReprocessingAcceptance,
+            ReprocessingCreate,
+            ReprocessingReconcile,
+        )
+
+        with closing(open_canonical_database(self.database, expected_project_id=self.f.source.project_id)) as db:
+            inputs = self.repository._input(db, result.binding.attempt.job_id)
+        reprocessing = self.repository.reprocessing()
+        batch = reprocessing.create(
+            ReprocessingCreate(command_id=new_uuid_v7(), base_revision_ids=(base.revision_id,)),
+            input_factory=lambda _base: inputs,
+        )
+        page = reprocessing.compare(batch.batch_revision_id, batch.items[0].item_id)
+        self.assertEqual(0, page.total_obligations)
+        page = reprocessing.reconcile(
+            ReprocessingReconcile(
+                command_id=new_uuid_v7(),
+                comparison_revision_id=page.comparison_revision_id,
+                expected_plan_revision_id=None,
+                rationale="Explicit authored uncorrected fixture replacement",
+                mappings=(),
+            )
+        )
+        outcome = reprocessing.accept(
+            ReprocessingAcceptance(
+                command_id=new_uuid_v7(),
+                plan_revision_id=page.plan_revision_id,
+                expected_current_revision_id=base.revision_id,
+                confirmation_sha256=page.confirmation_sha256,
+                expected_graph_sha256=page.impact.graph_sha256,
+                decision="accept-reparse",
+            )
+        )
+        return self.repository.read(outcome.revision_id)
+
     def test_retention_does_not_advance_source_acceptance_reparse_and_reopen_preserve_ids(self):
         first_result = self.parse()
         self.assertEqual(0, self.counts()["document_normalized_revisions"])
@@ -138,7 +176,40 @@ class DocumentRevisionRepositoryTests(unittest.TestCase):
         self.assertEqual(self.f.source.document_id, first.document_id)
         self.assertEqual("unverified", first.scholarly_verification)
         second_result = self.parse("Different normalized text")
-        second = self.repository.accept(self.command(second_result, expected=first.revision_id))
+        from research_observatory_core.document_reprocessing import (
+            ReprocessingAcceptance,
+            ReprocessingCreate,
+            ReprocessingReconcile,
+        )
+
+        with closing(open_canonical_database(self.database, expected_project_id=self.f.source.project_id)) as db:
+            inputs = self.repository._input(db, second_result.binding.attempt.job_id)
+        reprocessing = self.repository.reprocessing()
+        batch = reprocessing.create(
+            ReprocessingCreate(command_id=new_uuid_v7(), base_revision_ids=(first.revision_id,)),
+            input_factory=lambda _base: inputs,
+        )
+        page = reprocessing.compare(batch.batch_revision_id, batch.items[0].item_id)
+        page = reprocessing.reconcile(
+            ReprocessingReconcile(
+                command_id=new_uuid_v7(),
+                comparison_revision_id=page.comparison_revision_id,
+                expected_plan_revision_id=None,
+                rationale="Authored explicit replacement retains immutable original IDs",
+                mappings=(),
+            )
+        )
+        outcome = reprocessing.accept(
+            ReprocessingAcceptance(
+                command_id=new_uuid_v7(),
+                plan_revision_id=page.plan_revision_id,
+                expected_current_revision_id=first.revision_id,
+                confirmation_sha256=page.confirmation_sha256,
+                expected_graph_sha256=page.impact.graph_sha256,
+                decision="accept-reparse",
+            )
+        )
+        second = self.repository.read(outcome.revision_id)
         self.assertEqual(first.revision_id, second.previous_revision_id)
         self.assertTrue(
             {x.canonical_id for x in first.element_identities}.isdisjoint(

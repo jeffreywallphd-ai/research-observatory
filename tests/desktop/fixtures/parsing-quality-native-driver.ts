@@ -25,8 +25,8 @@ export async function runQualityNativeDriver(project: ProjectProjection,selectio
     const accepted=document.querySelector('[aria-label="Accepted structure"]'),proposed=document.querySelector('[aria-label="Proposed structure"]');
     if(accepted?.textContent?.includes("SYNTHETIC Native human label") || !proposed?.textContent?.includes("SYNTHETIC Native human label")) throw new Error("witness-proposal-separation");
     await click("Preview current impact");phase="acceptance";
-    await wait(()=>Boolean(document.querySelector('input[type="checkbox"]')));
-    (document.querySelector('input[type="checkbox"]') as HTMLInputElement).click();
+    await wait(()=>Boolean(Array.from(document.querySelectorAll("label")).find(l=>l.textContent?.startsWith("I accept this exact saved proposal"))));
+    (Array.from(document.querySelectorAll("label")).find(l=>l.textContent?.startsWith("I accept this exact saved proposal"))!.querySelector('input[type="checkbox"]') as HTMLInputElement).click();
     await click("Accept exact saved correction");
     await wait(()=>document.body.innerText.includes("Correction explicitly accepted."));
     await click("Open accepted revision in Reader");phase="reader";

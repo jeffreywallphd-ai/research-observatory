@@ -31,6 +31,17 @@ from research_observatory_core.document_corrections import (  # noqa: E402
     CorrectionSave,
 )
 from research_observatory_core.document_references import ReferenceCollection, ReferenceEnrichmentCommand  # noqa: E402
+from research_observatory_core.document_reprocessing import (  # noqa: E402
+    ReprocessingAcceptance,
+    ReprocessingAcceptedView,
+    ReprocessingBatchView,
+    ReprocessingCancel,
+    ReprocessingContinue,
+    ReprocessingCreate,
+    ReprocessingPage,
+    ReprocessingQueue,
+    ReprocessingReconcile,
+)
 from research_observatory_core.document_revisions import (  # noqa: E402
     AcceptedDocumentRevision,
     CanonicalDocumentStructure,
@@ -66,6 +77,15 @@ from research_observatory_core.reference_reader import ReferenceReaderNotice, Re
 from research_observatory_core.table_figure_reader import TableFigureReaderNotice, TableFigureReaderPage  # noqa: E402
 
 OUTPUTS: dict[str, TypeAdapter[Any]] = {
+    "document-reprocessing-create.v1.schema.json": TypeAdapter(ReprocessingCreate),
+    "document-reprocessing-continue.v1.schema.json": TypeAdapter(ReprocessingContinue),
+    "document-reprocessing-cancel.v1.schema.json": TypeAdapter(ReprocessingCancel),
+    "document-reprocessing-reconcile.v1.schema.json": TypeAdapter(ReprocessingReconcile),
+    "document-reprocessing-acceptance.v1.schema.json": TypeAdapter(ReprocessingAcceptance),
+    "document-reprocessing-queue.v1.schema.json": TypeAdapter(ReprocessingQueue),
+    "document-reprocessing-batch-view.v1.schema.json": TypeAdapter(ReprocessingBatchView),
+    "document-reprocessing-page.v1.schema.json": TypeAdapter(ReprocessingPage),
+    "document-reprocessing-accepted-view.v1.schema.json": TypeAdapter(ReprocessingAcceptedView),
     "document-correction-patch.v1.schema.json": TypeAdapter(CorrectionPatch),
     "document-correction-save.v1.schema.json": TypeAdapter(CorrectionSave),
     "document-correction-draft.v1.schema.json": TypeAdapter(CorrectionDraft),
@@ -119,6 +139,7 @@ CITATION_SCHEMAS = {name for name in OUTPUTS if name.startswith("citation-")}
 TABLE_FIGURE_SCHEMAS = {name for name in OUTPUTS if name.startswith("table-figure-")}
 QUALITY_SCHEMAS = {name for name in OUTPUTS if name.startswith("parsing-quality-")}
 CORRECTION_SCHEMAS = {name for name in OUTPUTS if name.startswith("document-correction-")}
+REPROCESSING_SCHEMAS = {name for name in OUTPUTS if name.startswith("document-reprocessing-")}
 REVISION_SCHEMAS = (
     set(OUTPUTS)
     - {
@@ -134,7 +155,20 @@ REVISION_SCHEMAS = (
     - TABLE_FIGURE_SCHEMAS
     - QUALITY_SCHEMAS
     - CORRECTION_SCHEMAS
+    - REPROCESSING_SCHEMAS
 )
+REPROCESSING_RULES = [
+    "separate-per-document-explicit-acceptance-no-bulk-accept-or-silent-anchor-movement",
+    "original-source-parser-result-correction-decisions-and-accepted-history-immutable",
+    "all-authenticated-correction-generations-explicitly-remapped-to-exact-new-receipt-and-target-hashes",
+    "one-current-source-fenced-publication-writer-for-machine-corrections-human-decisions-and-material-impact",
+    "current-native-human-session-intent-privacy-source-and-work-authority-through-delivery",
+    "exact-command-retry-CAS-partial-batch-cancellation-and-explicit-new-session-continuation",
+    "unique-exact-quote-context-anchor-candidates-advisory-missing-and-ambiguous-remain-unresolved",
+    "complete-server-derived-unresolved-count-gates-acceptance-independent-of-page-offset",
+    "existing-material-graph-only-affected-outputs-stale-prospective-preview-rechecked-at-publication",
+    "ten-document-batch-32-generations-32-operations-10000-items-one-million-codepoints-five-second-operation",
+]
 CORRECTION_RULES = [
     "typed-at-most-32-operations-on-exact-base-and-expected-original-node-reference-structure-digests",
     "saved-proposals-preview-undo-and-discard-never-advance-the-accepted-head",
@@ -285,6 +319,8 @@ def schema(name: str) -> dict[str, object]:
             "no-later-revision-substitution-or-scholarly-verification-from-navigation",
         ]
         if name == "viewer-deep-link.v1.schema.json"
+        else REPROCESSING_RULES
+        if name in REPROCESSING_SCHEMAS
         else CORRECTION_RULES
         if name in CORRECTION_SCHEMAS
         else QUALITY_RULES

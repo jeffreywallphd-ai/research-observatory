@@ -1,0 +1,49 @@
+{
+  "$defs": {
+    "Identity": {
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schemaVersion": {
+      "const": "1.0",
+      "default": "1.0",
+      "title": "Schemaversion",
+      "type": "string"
+    },
+    "commandId": {
+      "$ref": "#/$defs/Identity"
+    },
+    "baseRevisionIds": {
+      "items": {
+        "$ref": "#/$defs/Identity"
+      },
+      "maxItems": 10,
+      "minItems": 1,
+      "title": "Baserevisionids",
+      "type": "array"
+    }
+  },
+  "required": [
+    "commandId",
+    "baseRevisionIds"
+  ],
+  "title": "ReprocessingCreate",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://research-observatory.local/contracts/documents/document-reprocessing-create.v1.schema.json",
+  "x-research-observatory-semanticRules": [
+    "separate-per-document-explicit-acceptance-no-bulk-accept-or-silent-anchor-movement",
+    "original-source-parser-result-correction-decisions-and-accepted-history-immutable",
+    "all-authenticated-correction-generations-explicitly-remapped-to-exact-new-receipt-and-target-hashes",
+    "one-current-source-fenced-publication-writer-for-machine-corrections-human-decisions-and-material-impact",
+    "current-native-human-session-intent-privacy-source-and-work-authority-through-delivery",
+    "exact-command-retry-CAS-partial-batch-cancellation-and-explicit-new-session-continuation",
+    "unique-exact-quote-context-anchor-candidates-advisory-missing-and-ambiguous-remain-unresolved",
+    "complete-server-derived-unresolved-count-gates-acceptance-independent-of-page-offset",
+    "existing-material-graph-only-affected-outputs-stale-prospective-preview-rechecked-at-publication",
+    "ten-document-batch-32-generations-32-operations-10000-items-one-million-codepoints-five-second-operation"
+  ]
+}

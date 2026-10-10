@@ -1,0 +1,1409 @@
+{
+  "$defs": {
+    "AcquisitionOrigin": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "remote-acquisition",
+          "title": "Kind",
+          "type": "string"
+        },
+        "locationId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "receiptSha256": {
+          "$ref": "#/$defs/Digest"
+        }
+      },
+      "required": [
+        "kind",
+        "locationId",
+        "receiptSha256"
+      ],
+      "title": "AcquisitionOrigin",
+      "type": "object"
+    },
+    "AnchorDimension": {
+      "additionalProperties": false,
+      "properties": {
+        "state": {
+          "$ref": "#/$defs/ObservationState"
+        },
+        "basis": {
+          "const": "nonempty-text-node-locators",
+          "default": "nonempty-text-node-locators",
+          "title": "Basis",
+          "type": "string"
+        },
+        "observedCount": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/research_observatory_core__parsing__contracts__Count"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "expectedCount": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/research_observatory_core__parsing__contracts__Count"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "missingCount": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/research_observatory_core__parsing__contracts__Count"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "ambiguousCount": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/research_observatory_core__parsing__contracts__Count"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "parserObservation": {
+          "$ref": "#/$defs/ConfidenceObservation"
+        }
+      },
+      "required": [
+        "state",
+        "observedCount",
+        "expectedCount",
+        "missingCount",
+        "ambiguousCount",
+        "parserObservation"
+      ],
+      "title": "AnchorDimension",
+      "type": "object"
+    },
+    "CodepointRange": {
+      "additionalProperties": false,
+      "properties": {
+        "start": {
+          "$ref": "#/$defs/research_observatory_core__parsing__contracts__Count"
+        },
+        "end": {
+          "$ref": "#/$defs/research_observatory_core__parsing__contracts__Count"
+        }
+      },
+      "required": [
+        "start",
+        "end"
+      ],
+      "title": "CodepointRange",
+      "type": "object"
+    },
+    "ConfidenceDimension": {
+      "additionalProperties": false,
+      "properties": {
+        "state": {
+          "$ref": "#/$defs/ObservationState"
+        },
+        "reportedCount": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/research_observatory_core__parsing__contracts__Count"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "unknownCount": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/research_observatory_core__parsing__contracts__Count"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "notReportedCount": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/research_observatory_core__parsing__contracts__Count"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "notApplicableCount": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/research_observatory_core__parsing__contracts__Count"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "unavailableCount": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/research_observatory_core__parsing__contracts__Count"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "lowReportedCount": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/research_observatory_core__parsing__contracts__Count"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "triageThreshold": {
+          "default": 0.8,
+          "maximum": 0.8,
+          "minimum": 0.8,
+          "title": "Triagethreshold",
+          "type": "number"
+        }
+      },
+      "required": [
+        "state",
+        "reportedCount",
+        "unknownCount",
+        "notReportedCount",
+        "notApplicableCount",
+        "unavailableCount",
+        "lowReportedCount"
+      ],
+      "title": "ConfidenceDimension",
+      "type": "object"
+    },
+    "ConfidenceObservation": {
+      "additionalProperties": false,
+      "properties": {
+        "state": {
+          "enum": [
+            "reported",
+            "unknown",
+            "not-reported",
+            "not-applicable",
+            "unavailable"
+          ],
+          "title": "State",
+          "type": "string"
+        },
+        "value": {
+          "anyOf": [
+            {
+              "maximum": 1,
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Value"
+        }
+      },
+      "required": [
+        "state",
+        "value"
+      ],
+      "title": "ConfidenceObservation",
+      "type": "object"
+    },
+    "Coordinate": {
+      "minimum": 0,
+      "type": "number"
+    },
+    "CountDimension": {
+      "additionalProperties": false,
+      "properties": {
+        "state": {
+          "$ref": "#/$defs/ObservationState"
+        },
+        "basis": {
+          "$ref": "#/$defs/Token"
+        },
+        "count": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/research_observatory_core__parsing__contracts__Count"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "state",
+        "basis",
+        "count"
+      ],
+      "title": "CountDimension",
+      "type": "object"
+    },
+    "CoverageDimension": {
+      "additionalProperties": false,
+      "properties": {
+        "state": {
+          "$ref": "#/$defs/ObservationState"
+        },
+        "basis": {
+          "$ref": "#/$defs/Token"
+        },
+        "observedCount": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/research_observatory_core__parsing__contracts__Count"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "expectedCount": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/research_observatory_core__parsing__contracts__Count"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "missingCount": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/research_observatory_core__parsing__contracts__Count"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "ratio": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Ratio"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "state",
+        "basis",
+        "observedCount",
+        "expectedCount",
+        "missingCount",
+        "ratio"
+      ],
+      "title": "CoverageDimension",
+      "type": "object"
+    },
+    "DifferenceState": {
+      "enum": [
+        "unchanged",
+        "moved",
+        "modified",
+        "added",
+        "removed",
+        "ambiguous",
+        "unresolvable"
+      ],
+      "type": "string"
+    },
+    "Digest": {
+      "pattern": "^[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "Format": {
+      "enum": [
+        "jats",
+        "tei",
+        "xml",
+        "html",
+        "pdf",
+        "docx",
+        "plain-text"
+      ],
+      "type": "string"
+    },
+    "Identity": {
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+      "type": "string"
+    },
+    "LocalOrigin": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "local-import",
+          "title": "Kind",
+          "type": "string"
+        }
+      },
+      "required": [
+        "kind"
+      ],
+      "title": "LocalOrigin",
+      "type": "object"
+    },
+    "ObservationState": {
+      "enum": [
+        "reported",
+        "unknown",
+        "not-reported",
+        "not-applicable",
+        "ambiguous",
+        "unavailable"
+      ],
+      "type": "string"
+    },
+    "PageRegionLocator": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "page-region",
+          "title": "Kind",
+          "type": "string"
+        },
+        "pageIndex": {
+          "exclusiveMaximum": 500,
+          "minimum": 0,
+          "title": "Pageindex",
+          "type": "integer"
+        },
+        "x0": {
+          "$ref": "#/$defs/Coordinate"
+        },
+        "y0": {
+          "$ref": "#/$defs/Coordinate"
+        },
+        "x1": {
+          "$ref": "#/$defs/Coordinate"
+        },
+        "y1": {
+          "$ref": "#/$defs/Coordinate"
+        },
+        "unit": {
+          "const": "points",
+          "title": "Unit",
+          "type": "string"
+        },
+        "origin": {
+          "const": "top-left",
+          "title": "Origin",
+          "type": "string"
+        },
+        "frame": {
+          "const": "unrotated-source-page",
+          "title": "Frame",
+          "type": "string"
+        }
+      },
+      "required": [
+        "kind",
+        "pageIndex",
+        "x0",
+        "y0",
+        "x1",
+        "y1",
+        "unit",
+        "origin",
+        "frame"
+      ],
+      "title": "PageRegionLocator",
+      "type": "object"
+    },
+    "Preview": {
+      "maxLength": 160,
+      "type": "string"
+    },
+    "ProjectIdentity": {
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[47][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+      "type": "string"
+    },
+    "QualityAssessment": {
+      "additionalProperties": false,
+      "properties": {
+        "schemaVersion": {
+          "const": "1.0",
+          "default": "1.0",
+          "title": "Schemaversion",
+          "type": "string"
+        },
+        "definitionVersion": {
+          "const": "parsing-quality-definitions-1",
+          "default": "parsing-quality-definitions-1",
+          "title": "Definitionversion",
+          "type": "string"
+        },
+        "ruleVersion": {
+          "const": "parsing-quality-triage-1",
+          "default": "parsing-quality-triage-1",
+          "title": "Ruleversion",
+          "type": "string"
+        },
+        "availability": {
+          "enum": [
+            "available",
+            "not-yet-available",
+            "unavailable"
+          ],
+          "title": "Availability",
+          "type": "string"
+        },
+        "dimensions": {
+          "$ref": "#/$defs/QualityDimensions"
+        },
+        "reviewRequired": {
+          "title": "Reviewrequired",
+          "type": "boolean"
+        },
+        "reviewReasons": {
+          "items": {
+            "$ref": "#/$defs/ReviewReason"
+          },
+          "maxItems": 16,
+          "title": "Reviewreasons",
+          "type": "array"
+        },
+        "humanInspectionAvailable": {
+          "const": true,
+          "default": true,
+          "title": "Humaninspectionavailable",
+          "type": "boolean"
+        },
+        "scholarlyVerification": {
+          "const": "unverified",
+          "default": "unverified",
+          "title": "Scholarlyverification",
+          "type": "string"
+        }
+      },
+      "required": [
+        "availability",
+        "dimensions",
+        "reviewRequired",
+        "reviewReasons"
+      ],
+      "title": "QualityAssessment",
+      "type": "object"
+    },
+    "QualityDimensions": {
+      "additionalProperties": false,
+      "properties": {
+        "textCoverage": {
+          "$ref": "#/$defs/CoverageDimension"
+        },
+        "pageTextCoverage": {
+          "$ref": "#/$defs/CoverageDimension"
+        },
+        "encoding": {
+          "$ref": "#/$defs/CountDimension"
+        },
+        "readingOrder": {
+          "$ref": "#/$defs/ReadingOrderDimension"
+        },
+        "sections": {
+          "$ref": "#/$defs/StructureDimension"
+        },
+        "references": {
+          "$ref": "#/$defs/StructureDimension"
+        },
+        "expectedBlocks": {
+          "$ref": "#/$defs/StructureDimension"
+        },
+        "anchorCoverage": {
+          "$ref": "#/$defs/AnchorDimension"
+        },
+        "unresolvedReferences": {
+          "$ref": "#/$defs/CountDimension"
+        },
+        "extractionConfidence": {
+          "$ref": "#/$defs/ConfidenceDimension"
+        },
+        "tableCellConfidence": {
+          "$ref": "#/$defs/ConfidenceDimension"
+        },
+        "parserTableCellConfidence": {
+          "$ref": "#/$defs/ConfidenceDimension"
+        },
+        "tableGeometry": {
+          "$ref": "#/$defs/CountDimension"
+        },
+        "parserWarnings": {
+          "$ref": "#/$defs/WarningDimension"
+        }
+      },
+      "required": [
+        "textCoverage",
+        "pageTextCoverage",
+        "encoding",
+        "readingOrder",
+        "sections",
+        "references",
+        "expectedBlocks",
+        "anchorCoverage",
+        "unresolvedReferences",
+        "extractionConfidence",
+        "tableCellConfidence",
+        "parserTableCellConfidence",
+        "tableGeometry",
+        "parserWarnings"
+      ],
+      "title": "QualityDimensions",
+      "type": "object"
+    },
+    "Ratio": {
+      "maximum": 1,
+      "minimum": 0,
+      "type": "number"
+    },
+    "ReadingOrderDimension": {
+      "additionalProperties": false,
+      "properties": {
+        "state": {
+          "enum": [
+            "reported-order",
+            "ambiguous",
+            "unavailable"
+          ],
+          "title": "State",
+          "type": "string"
+        },
+        "warningCount": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/research_observatory_core__parsing__contracts__Count"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "basis": {
+          "const": "retained-parser-observation",
+          "default": "retained-parser-observation",
+          "title": "Basis",
+          "type": "string"
+        }
+      },
+      "required": [
+        "state",
+        "warningCount"
+      ],
+      "title": "ReadingOrderDimension",
+      "type": "object"
+    },
+    "ReprocessingCounts": {
+      "additionalProperties": false,
+      "properties": {
+        "unchanged": {
+          "$ref": "#/$defs/research_observatory_core__document_reprocessing__Count",
+          "default": 0
+        },
+        "moved": {
+          "$ref": "#/$defs/research_observatory_core__document_reprocessing__Count",
+          "default": 0
+        },
+        "modified": {
+          "$ref": "#/$defs/research_observatory_core__document_reprocessing__Count",
+          "default": 0
+        },
+        "added": {
+          "$ref": "#/$defs/research_observatory_core__document_reprocessing__Count",
+          "default": 0
+        },
+        "removed": {
+          "$ref": "#/$defs/research_observatory_core__document_reprocessing__Count",
+          "default": 0
+        },
+        "ambiguous": {
+          "$ref": "#/$defs/research_observatory_core__document_reprocessing__Count",
+          "default": 0
+        },
+        "unresolvable": {
+          "$ref": "#/$defs/research_observatory_core__document_reprocessing__Count",
+          "default": 0
+        }
+      },
+      "title": "ReprocessingCounts",
+      "type": "object"
+    },
+    "ReprocessingDifference": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "enum": [
+            "node",
+            "reference",
+            "anchor"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "oldId": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Token"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "newId": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Token"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "state": {
+          "$ref": "#/$defs/DifferenceState"
+        },
+        "oldPreview": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Preview"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "newPreview": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Preview"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "oldLocator": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/SourceLocator"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "newLocator": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/SourceLocator"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "kind",
+        "oldId",
+        "newId",
+        "state",
+        "oldPreview",
+        "newPreview",
+        "oldLocator",
+        "newLocator"
+      ],
+      "title": "ReprocessingDifference",
+      "type": "object"
+    },
+    "ReprocessingImpact": {
+      "additionalProperties": false,
+      "properties": {
+        "graphSha256": {
+          "$ref": "#/$defs/Digest"
+        },
+        "affectedCount": {
+          "$ref": "#/$defs/research_observatory_core__document_reprocessing__Count"
+        },
+        "informationalCount": {
+          "$ref": "#/$defs/research_observatory_core__document_reprocessing__Count"
+        },
+        "legacyUnreportedCount": {
+          "$ref": "#/$defs/research_observatory_core__document_reprocessing__Count"
+        },
+        "state": {
+          "const": "prospective-rechecked-at-acceptance",
+          "default": "prospective-rechecked-at-acceptance",
+          "title": "State",
+          "type": "string"
+        }
+      },
+      "required": [
+        "graphSha256",
+        "affectedCount",
+        "informationalCount",
+        "legacyUnreportedCount"
+      ],
+      "title": "ReprocessingImpact",
+      "type": "object"
+    },
+    "ReprocessingNode": {
+      "additionalProperties": false,
+      "properties": {
+        "nodeId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "parentId": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Identity"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "order": {
+          "$ref": "#/$defs/research_observatory_core__document_reprocessing__Count"
+        },
+        "kind": {
+          "$ref": "#/$defs/Token"
+        },
+        "preview": {
+          "$ref": "#/$defs/Preview"
+        },
+        "nodeSha256": {
+          "$ref": "#/$defs/Digest"
+        },
+        "referenceId": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Identity"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "nodeId",
+        "parentId",
+        "order",
+        "kind",
+        "preview",
+        "nodeSha256",
+        "referenceId"
+      ],
+      "title": "ReprocessingNode",
+      "type": "object"
+    },
+    "ReprocessingObligation": {
+      "additionalProperties": false,
+      "properties": {
+        "obligationId": {
+          "$ref": "#/$defs/Digest"
+        },
+        "originalDraftRevisionId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "originalBaseRevisionId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "operationIndex": {
+          "$ref": "#/$defs/research_observatory_core__document_reprocessing__Count"
+        },
+        "operation": {
+          "$ref": "#/$defs/Token"
+        },
+        "oldNodeId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "oldNodeSha256": {
+          "$ref": "#/$defs/Digest"
+        },
+        "oldPreview": {
+          "$ref": "#/$defs/Preview"
+        },
+        "relatedOldNodeId": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Identity"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "originalReferenceId": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Identity"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "originalAuthor": {
+          "$ref": "#/$defs/Identity"
+        },
+        "originalRationale": {
+          "$ref": "#/$defs/Preview"
+        }
+      },
+      "required": [
+        "obligationId",
+        "originalDraftRevisionId",
+        "originalBaseRevisionId",
+        "operationIndex",
+        "operation",
+        "oldNodeId",
+        "oldNodeSha256",
+        "oldPreview",
+        "relatedOldNodeId",
+        "originalReferenceId",
+        "originalAuthor",
+        "originalRationale"
+      ],
+      "title": "ReprocessingObligation",
+      "type": "object"
+    },
+    "ReviewReason": {
+      "enum": [
+        "missing-retained-text",
+        "missing-page-text",
+        "replacement-characters",
+        "reading-order-ambiguous",
+        "reading-order-warning",
+        "missing-anchors",
+        "missing-expected-blocks",
+        "unresolved-references",
+        "low-extraction-confidence",
+        "low-table-cell-confidence",
+        "low-anchor-coverage",
+        "table-geometry",
+        "parser-warnings",
+        "parser-partial-output",
+        "inspection-only-output",
+        "parser-failure",
+        "parse-cancelled"
+      ],
+      "type": "string"
+    },
+    "SourceIdentity": {
+      "additionalProperties": false,
+      "properties": {
+        "projectId": {
+          "$ref": "#/$defs/ProjectIdentity"
+        },
+        "attachmentId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "documentId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "documentRevisionId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "candidateId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "sourceAssertionRevisionId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "workId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "workRevisionId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "versionId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "versionRevisionId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "objectSha256": {
+          "$ref": "#/$defs/Digest"
+        },
+        "byteLength": {
+          "maximum": 134217728,
+          "minimum": 0,
+          "title": "Bytelength",
+          "type": "integer"
+        },
+        "format": {
+          "$ref": "#/$defs/Format"
+        },
+        "provenance": {
+          "discriminator": {
+            "mapping": {
+              "local-import": "#/$defs/LocalOrigin",
+              "remote-acquisition": "#/$defs/AcquisitionOrigin"
+            },
+            "propertyName": "kind"
+          },
+          "oneOf": [
+            {
+              "$ref": "#/$defs/LocalOrigin"
+            },
+            {
+              "$ref": "#/$defs/AcquisitionOrigin"
+            }
+          ],
+          "title": "Provenance"
+        }
+      },
+      "required": [
+        "projectId",
+        "attachmentId",
+        "documentId",
+        "documentRevisionId",
+        "candidateId",
+        "sourceAssertionRevisionId",
+        "workId",
+        "workRevisionId",
+        "versionId",
+        "versionRevisionId",
+        "objectSha256",
+        "byteLength",
+        "format",
+        "provenance"
+      ],
+      "title": "SourceIdentity",
+      "type": "object"
+    },
+    "SourceLocator": {
+      "discriminator": {
+        "mapping": {
+          "page-region": "#/$defs/PageRegionLocator",
+          "text": "#/$defs/TextLocator",
+          "unavailable": "#/$defs/UnavailableLocator"
+        },
+        "propertyName": "kind"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/TextLocator"
+        },
+        {
+          "$ref": "#/$defs/PageRegionLocator"
+        },
+        {
+          "$ref": "#/$defs/UnavailableLocator"
+        }
+      ]
+    },
+    "StructureDimension": {
+      "additionalProperties": false,
+      "properties": {
+        "state": {
+          "$ref": "#/$defs/ObservationState"
+        },
+        "basis": {
+          "$ref": "#/$defs/Token"
+        },
+        "observedCount": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/research_observatory_core__parsing__contracts__Count"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "expectedCount": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/research_observatory_core__parsing__contracts__Count"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "missingCount": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/research_observatory_core__parsing__contracts__Count"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "state",
+        "basis",
+        "observedCount",
+        "expectedCount",
+        "missingCount"
+      ],
+      "title": "StructureDimension",
+      "type": "object"
+    },
+    "TextLocator": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "text",
+          "title": "Kind",
+          "type": "string"
+        },
+        "projectionId": {
+          "$ref": "#/$defs/Token"
+        },
+        "rawRanges": {
+          "items": {
+            "$ref": "#/$defs/CodepointRange"
+          },
+          "title": "Rawranges",
+          "type": "array"
+        }
+      },
+      "required": [
+        "kind",
+        "projectionId",
+        "rawRanges"
+      ],
+      "title": "TextLocator",
+      "type": "object"
+    },
+    "Token": {
+      "maxLength": 128,
+      "minLength": 1,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._+-]*$",
+      "type": "string"
+    },
+    "UnavailableLocator": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "unavailable",
+          "title": "Kind",
+          "type": "string"
+        },
+        "reason": {
+          "enum": [
+            "not-reported",
+            "format-has-no-pages",
+            "unsupported-location",
+            "parser-unavailable"
+          ],
+          "title": "Reason",
+          "type": "string"
+        }
+      },
+      "required": [
+        "kind",
+        "reason"
+      ],
+      "title": "UnavailableLocator",
+      "type": "object"
+    },
+    "WarningDimension": {
+      "additionalProperties": false,
+      "properties": {
+        "state": {
+          "$ref": "#/$defs/ObservationState"
+        },
+        "count": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/research_observatory_core__parsing__contracts__Count"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "informationCount": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/research_observatory_core__parsing__contracts__Count"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "warningCount": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/research_observatory_core__parsing__contracts__Count"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "errorCount": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/research_observatory_core__parsing__contracts__Count"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "codes": {
+          "items": {
+            "$ref": "#/$defs/Token"
+          },
+          "maxItems": 32,
+          "title": "Codes",
+          "type": "array"
+        },
+        "codesTruncated": {
+          "title": "Codestruncated",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "state",
+        "count",
+        "informationCount",
+        "warningCount",
+        "errorCount",
+        "codes",
+        "codesTruncated"
+      ],
+      "title": "WarningDimension",
+      "type": "object"
+    },
+    "research_observatory_core__document_reprocessing__Count": {
+      "maximum": 100000,
+      "minimum": 0,
+      "type": "integer"
+    },
+    "research_observatory_core__parsing__contracts__Count": {
+      "maximum": 9007199254740991,
+      "minimum": 0,
+      "type": "integer"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schemaVersion": {
+      "const": "1.0",
+      "default": "1.0",
+      "title": "Schemaversion",
+      "type": "string"
+    },
+    "projectId": {
+      "$ref": "#/$defs/ProjectIdentity"
+    },
+    "batchId": {
+      "$ref": "#/$defs/Identity"
+    },
+    "batchRevisionId": {
+      "$ref": "#/$defs/Identity"
+    },
+    "itemId": {
+      "$ref": "#/$defs/Identity"
+    },
+    "baseRevisionId": {
+      "$ref": "#/$defs/Identity"
+    },
+    "currentRevisionId": {
+      "$ref": "#/$defs/Identity"
+    },
+    "source": {
+      "$ref": "#/$defs/SourceIdentity"
+    },
+    "jobId": {
+      "$ref": "#/$defs/Identity"
+    },
+    "attemptId": {
+      "$ref": "#/$defs/Identity"
+    },
+    "resultId": {
+      "$ref": "#/$defs/Identity"
+    },
+    "comparisonRevisionId": {
+      "$ref": "#/$defs/Identity"
+    },
+    "candidateRevisionId": {
+      "$ref": "#/$defs/Identity"
+    },
+    "planRevisionId": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Identity"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "confirmationSha256": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Digest"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "generation": {
+      "$ref": "#/$defs/research_observatory_core__document_reprocessing__Count"
+    },
+    "generationCount": {
+      "$ref": "#/$defs/research_observatory_core__document_reprocessing__Count"
+    },
+    "totalObligations": {
+      "$ref": "#/$defs/research_observatory_core__document_reprocessing__Count"
+    },
+    "unresolvedCount": {
+      "$ref": "#/$defs/research_observatory_core__document_reprocessing__Count"
+    },
+    "obligations": {
+      "items": {
+        "$ref": "#/$defs/ReprocessingObligation"
+      },
+      "maxItems": 32,
+      "title": "Obligations",
+      "type": "array"
+    },
+    "candidateNodes": {
+      "items": {
+        "$ref": "#/$defs/ReprocessingNode"
+      },
+      "maxItems": 20,
+      "title": "Candidatenodes",
+      "type": "array"
+    },
+    "differences": {
+      "items": {
+        "$ref": "#/$defs/ReprocessingDifference"
+      },
+      "maxItems": 20,
+      "title": "Differences",
+      "type": "array"
+    },
+    "differenceCounts": {
+      "$ref": "#/$defs/ReprocessingCounts"
+    },
+    "anchorCandidates": {
+      "items": {
+        "$ref": "#/$defs/ReprocessingDifference"
+      },
+      "maxItems": 20,
+      "title": "Anchorcandidates",
+      "type": "array"
+    },
+    "anchorCounts": {
+      "$ref": "#/$defs/ReprocessingCounts"
+    },
+    "nextOffset": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/research_observatory_core__document_reprocessing__Count"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "oldQuality": {
+      "$ref": "#/$defs/QualityAssessment"
+    },
+    "newQuality": {
+      "$ref": "#/$defs/QualityAssessment"
+    },
+    "impact": {
+      "$ref": "#/$defs/ReprocessingImpact"
+    },
+    "state": {
+      "enum": [
+        "review",
+        "ready-to-accept",
+        "base-conflict"
+      ],
+      "title": "State",
+      "type": "string"
+    },
+    "scholarlyVerification": {
+      "const": "unverified",
+      "default": "unverified",
+      "title": "Scholarlyverification",
+      "type": "string"
+    }
+  },
+  "required": [
+    "projectId",
+    "batchId",
+    "batchRevisionId",
+    "itemId",
+    "baseRevisionId",
+    "currentRevisionId",
+    "source",
+    "jobId",
+    "attemptId",
+    "resultId",
+    "comparisonRevisionId",
+    "candidateRevisionId",
+    "planRevisionId",
+    "confirmationSha256",
+    "generation",
+    "generationCount",
+    "totalObligations",
+    "unresolvedCount",
+    "obligations",
+    "candidateNodes",
+    "differences",
+    "differenceCounts",
+    "anchorCandidates",
+    "anchorCounts",
+    "nextOffset",
+    "oldQuality",
+    "newQuality",
+    "impact",
+    "state"
+  ],
+  "title": "ReprocessingPage",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://research-observatory.local/contracts/documents/document-reprocessing-page.v1.schema.json",
+  "x-research-observatory-semanticRules": [
+    "separate-per-document-explicit-acceptance-no-bulk-accept-or-silent-anchor-movement",
+    "original-source-parser-result-correction-decisions-and-accepted-history-immutable",
+    "all-authenticated-correction-generations-explicitly-remapped-to-exact-new-receipt-and-target-hashes",
+    "one-current-source-fenced-publication-writer-for-machine-corrections-human-decisions-and-material-impact",
+    "current-native-human-session-intent-privacy-source-and-work-authority-through-delivery",
+    "exact-command-retry-CAS-partial-batch-cancellation-and-explicit-new-session-continuation",
+    "unique-exact-quote-context-anchor-candidates-advisory-missing-and-ambiguous-remain-unresolved",
+    "complete-server-derived-unresolved-count-gates-acceptance-independent-of-page-offset",
+    "existing-material-graph-only-affected-outputs-stale-prospective-preview-rechecked-at-publication",
+    "ten-document-batch-32-generations-32-operations-10000-items-one-million-codepoints-five-second-operation"
+  ]
+}
