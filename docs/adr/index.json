@@ -461,7 +461,8 @@
       "status": "Proposed",
       "linkedTasks": [
         "CAP-05.S04.T01",
-        "CAP-05.S04.T02"
+        "CAP-05.S04.T02",
+        "CAP-05.S04.T03"
       ]
     }
   ]

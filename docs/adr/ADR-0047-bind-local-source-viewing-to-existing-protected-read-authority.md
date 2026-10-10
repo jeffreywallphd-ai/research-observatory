@@ -7,6 +7,7 @@ deciders: []
 linked_tasks:
   - CAP-05.S04.T01
   - CAP-05.S04.T02
+  - CAP-05.S04.T03
 decision_scope: Documentary implementation mapping of the approved local viewer and cooperative protected-read cancellation to accepted ADR-0016/0017/0029; no new product, security, migration, hardware or release authority.
 affected_paths:
   - services/core-api/src/research_observatory_core/object_store.py
@@ -17,6 +18,8 @@ affected_paths:
   - services/core-api/src/research_observatory_core/main.py
   - services/core-api/src/research_observatory_core/document_viewer*.py
   - services/core-api/src/research_observatory_core/ports/document_viewer.py
+  - services/core-api/src/research_observatory_core/ports/viewer_actions.py
+  - services/core-api/src/research_observatory_core/viewer_action_repository.py
   - packages/contracts/documents/**
   - packages/contracts/storage/README.md
   - apps/desktop/src/app/documentViewer*.*
@@ -24,6 +27,10 @@ affected_paths:
   - apps/desktop/src/app/viewerWorker*.*
   - apps/desktop/src/app/viewerAssets*.*
   - apps/desktop/src/app/DocumentViewer*.*
+  - apps/desktop/src/app/ViewerActionsPane.tsx
+  - apps/desktop/src/app/viewerActions*.*
+  - apps/desktop/src/app/ViewerAnchorContexts.tsx
+  - apps/desktop/src/app/SourceAnchorReader.tsx
   - apps/desktop/src/app/ApplicationRuntime*.*
   - apps/desktop/src/app/DocumentAttachmentPane.tsx
   - apps/desktop/src/app/ReconciliationPane.tsx
@@ -33,6 +40,10 @@ affected_paths:
   - apps/desktop/src/app.css
   - apps/desktop/src-tauri/src/document_reader.rs
   - apps/desktop/src-tauri/src/document_viewer.rs
+  - apps/desktop/src-tauri/src/viewer_actions.rs
+  - apps/desktop/src-tauri/src/viewer_actions/**
+  - apps/desktop/src-tauri/src/viewer_export.rs
+  - apps/desktop/src-tauri/src/viewer_print.rs
   - apps/desktop/src-tauri/src/supervisor.rs
   - apps/desktop/src-tauri/src/lib.rs
   - apps/desktop/src-tauri/tauri.conf.json
@@ -116,6 +127,33 @@ actual decoder/native measurements remain qualification requirements.
 
 ## Consequences
 
+### Rights-aware Reader actions
+
+CAP-05.S04.T03 implements the action-specific mediation already required by
+accepted ADR-0029. Closed source/anchor selectors cross Native to Core; source
+text, paths, programs, actors and grants are not renderer request authority.
+Existing retained-copy rights, trusted human, accepted Intent and privacy
+fingerprint govern every fixed inspect/derive/quote/local-export use. A separate
+explicit review records only otherwise missing or unknown permissions for that
+copy and action; it cannot override denial, expiry, disputes or pending
+propagation. Its receipt is not execution authority.
+
+Core materializes only the exact identified quotation or anchor annotation,
+with current per-copy policy and unverified extraction. Native separately
+selects local destinations, rechecks current Core and window/lock authority,
+and publishes held create-new outputs. An original handoff additionally verifies
+the complete retained original and holds the explicitly selected local
+application. Delivered plaintext is outside project protection.
+
+The initial Windows print adapter uses the local Microsoft PDF driver through a
+bounded held stream; other queues remain unavailable. Incomplete owned outputs
+are delete-pending before plaintext is written. Cancellation denies delivery
+but ownership remains until actual callbacks, Core frames and Native work
+close. Clipboard history/cloud suppression markers precede identified quotation
+publication. Tests use only authored fixtures and a private clipboard station.
+This documentary mapping adds no product/security authority, migration format,
+remote route, hardware tier or automation framework work.
+
 The change is additive and retains existing envelopes, keys, immutable source
 identities, schema/migration history and corruption quarantine behavior. No
 plaintext disk cache, new encryption construction, hosted service or automation
@@ -143,3 +181,6 @@ performance, native principal and experience checks remain task obligations.
   anchor selections, bounded retained context and fresh delivery authority.
   It reuses accepted ADR-0029 and canonical anchors, changes no encryption or
   migration format, and introduces no automation framework work or new authority.
+- `CAP-05.S04.T03` adds the approved rights-aware local action contracts and
+  distinct permission review, with Core/Native publication and physical-closure
+  checks. This Proposed record does not replace accepted ADR-0029 or task gates.
