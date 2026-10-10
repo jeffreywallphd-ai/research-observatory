@@ -1,0 +1,29 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "ui-change-evidence",
+  "changeKind": "approved-reference-implementation",
+  "implementationAgent": "agent:codex-w2-implementation",
+  "reference": {
+    "referenceId": "RO-UI-ACADEMIC-MINIMAL-1.9",
+    "version": "1.9",
+    "packageSha256": "24b8d62356863980ae9a13db7d6a06b04b76c60e2f1920d2e888cadecfb24c4b",
+    "approvalCommit": "d4691f716f839f4aac5bb50563b56ac863b32685",
+    "approvedBy": "human:repository-owner",
+    "previousReferenceId": "RO-UI-ACADEMIC-MINIMAL-1.8"
+  },
+  "taskId": "CAP-05.S06.T03",
+  "contractPath": "artifacts/evidence/ui-change/CAP-05.S06.T03.json",
+  "changedFiles": [
+    "apps/desktop/src/app/ParsingQualityWorkspace.tsx",
+    "apps/desktop/src/app/ReprocessingPanel.tsx",
+    "apps/desktop/src/app/documentReprocessing.ts"
+  ],
+  "implementationScope": "Approved Academic Minimal 1.9 Parsing Quality reprocessing: explicit selected-document batch, per-document old/new structure and quality comparison, retained-correction reconciliation, scoped impact and exact explicit acceptance. Current-authority checkpoint read and explicit continuation preserve restart and per-document outcomes. Existing shared controls and Reader return remain in use. No new reference, automatic acceptance, models, larger hardware or automation/framework change.",
+  "focusedEvidence": [
+    {
+      "command": "Eight mounted production reprocessing interaction tests and strict descriptor codec checks",
+      "result": "passed",
+      "scope": "Development-only production components with authored ports: explicit per-document acceptance, exact lost-reply retry, dirty/busy/lock ownership, repeated batch creation, typed reference mapping, separate quality regression, bounded paged candidates and pending impact rediscovery/resume. Raw UI development-05 and codec development-02 passed. No Native principal, packaged installation, model, frozen-candidate or Wave qualification claim; fresh committed proof remains required."
+    }
+  ]
+}
