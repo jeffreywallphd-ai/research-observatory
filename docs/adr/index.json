@@ -473,6 +473,15 @@
       "linkedTasks": [
         "CAP-05.S05.T01"
       ]
+    },
+    {
+      "id": "ADR-0049",
+      "path": "docs/adr/ADR-0049-bind-citation-contexts-to-existing-canonical-and-protected-document-authority.md",
+      "title": "Bind citation contexts to existing canonical and protected document authority",
+      "status": "Proposed",
+      "linkedTasks": [
+        "CAP-05.S05.T02"
+      ]
     }
   ]
 }

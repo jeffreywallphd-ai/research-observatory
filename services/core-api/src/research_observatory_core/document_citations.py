@@ -525,13 +525,14 @@ def extract_citation_contexts(
                 and start + left < c.marker.normalized_range.end
                 and end + left > c.marker.normalized_range.start
                 for c in structure.citations
-            ):
-                continue
-            elif not is_sup and any(
-                s.projection_id == p.projection_id
-                and span.normalized_range.start < s.normalized_range.end
-                and span.normalized_range.end > s.normalized_range.start
-                for _, s in callout_spans
+            ) or (
+                not is_sup
+                and any(
+                    s.projection_id == p.projection_id
+                    and span.normalized_range.start < s.normalized_range.end
+                    and span.normalized_range.end > s.normalized_range.start
+                    for _, s in callout_spans
+                )
             ):
                 continue
             groups: list[CitationTargetGroup] = []
