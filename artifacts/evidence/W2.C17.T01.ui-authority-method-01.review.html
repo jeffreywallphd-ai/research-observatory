@@ -1,0 +1,209 @@
+<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>W2.C17.T01 — truthful navigation correction</title>
+<style>body{max-width:850px;margin:40px auto;padding:0 24px;font:17px/1.55 system-ui,sans-serif;color:#202630;background:#f7f8fa}main{background:white;padding:28px;border:1px solid #cfd5de;border-radius:8px}h1{font-size:1.65rem;line-height:1.2}h2{font-size:1.1rem}a{color:#174c95}code,pre{font-size:.85rem;overflow-wrap:anywhere}pre{overflow:auto;white-space:pre-wrap;background:#f1f3f6;padding:14px}details{margin:18px 0}summary{cursor:pointer;font-weight:600}li{margin:7px 0}.status{border-left:4px solid #ae7800;padding:10px 15px;background:#fff8df}a:focus-visible,summary:focus-visible{outline:3px solid #1767af;outline-offset:3px}</style>
+<main><h1>W2.C17.T01: keep the truthful blocked-navigation notice</h1>
+<p class="status">Product fix verified. Independent readiness approved. Exact owner classification and verification-method decision pending. W2 and G2 remain incomplete.</p>
+<h2>The decision requested</h2>
+<p>Approve this exact small fix as restoration of the existing approved 1.9 behavior, and allow the reviewed task-owned verification method to supply its human classification at two unsupported approval-metadata selectors. <strong>No shared automation/framework code changes are authorized.</strong></p>
+<h2>What the fix does</h2>
+<p>When Parsing Quality refuses navigation because a correction is dirty, pending, or has an unknown outcome, the app keeps the truthful denial. It no longer announces that Source Manager, Project Home, or settings opened while retaining the old workspace. After Undo, completion, or exact retry, navigation remains available.</p>
+<p>At candidate <code>aa43e3fcee791ffa73e41d5969bbaff3ff42476e</code>, lint, format, Python/desktop types, 29 existing root/workflow tests, a fresh fixture build, and all 18 navigation combinations pass. The actual unchanged UI authority command still fails; that failure is preserved. These tests use production components with authored ports and do not prove shipping Native/Core/OS or model/hardware boundaries.</p>
+<h2>Why the decision is needed</h2>
+<p>The original completed task has an agent-review label plus approved-reference metadata. The installed checker cannot admit that combination through its linked-restoration routes. The <a href="../../docs/automation/design-first-ui-changes.md#linked-completed-task-restoration-existing-10">linked restoration procedure</a> says “Unsupported origins fail closed.” The <a href="../../docs/adr/ADR-0003-protect-design-first-ui-change-controls-and-immutable-lineage.md">accepted UI-control ADR</a> preserves human restorative classification. This proposal supplies the exact current human/independent review obligation without rewriting the original task or checker.</p>
+<h2>Recommendation and limits</h2>
+<p>Approve the exact source-free method, then complete normal correction submission/review and resume W2 qualification. Deferral leaves W2 blocked. Repairing the shared checker would reverse the owner's direction to stop framework work and is not recommended here.</p>
+<p>All ordinary claim, scope, history, reference, schema, criteria, lease and independent-review checks remain required. Shipping UIA/Core, current 1.9 conformance, slice/checkpoint, fresh full Wave qualification and the separate human G2 release gate remain required. This decision does not complete any of those gates or approve W3.</p>
+<p><a href="W2.C17.T01.ui-authority-method-proposal-01.json">Exact proposal</a> · <a href="W2.C17.T01.ui-authority-method-readiness-01.json">Independent readiness</a> · <a href="W2.C17.T01.product-fix-02.patch">Exact patch</a> · <a href="../../planning/review-site/waves/W2.html">W2 tracker</a> · <a href="../../planning/review-site/CAP-05/CAP-05.S06.html">Remaining slice</a></p>
+<details><summary>Exact immutable bindings</summary><pre>{
+  &quot;productCandidate&quot;: &quot;aa43e3fcee791ffa73e41d5969bbaff3ff42476e&quot;,
+  &quot;proposal&quot;: {
+    &quot;commit&quot;: &quot;6abd5b1c5ba161a900938c6079e96c8c2d29c315&quot;,
+    &quot;sha256&quot;: &quot;a20b84f2fa2d4a8085ddad24d24afe2f439644e141fe8e2e81bc64e0b760e2a8&quot;
+  },
+  &quot;readiness&quot;: {
+    &quot;commit&quot;: &quot;1a3f0ca68a659527254a752366c6e373b2f44c70&quot;,
+    &quot;sha256&quot;: &quot;fe281171f1759a46b476d55af29246bcca59ac3941f97e684df00dcdc8bf0ef3&quot;,
+    &quot;reviewer&quot;: &quot;agent:parsing_quality_review&quot;
+  },
+  &quot;patch&quot;: {
+    &quot;path&quot;: &quot;artifacts/evidence/W2.C17.T01.product-fix-02.patch&quot;,
+    &quot;sha256&quot;: &quot;26f6f2c9c9ac092e6aeb39657a928e4649401cf1a812e48756eb37cc4ca7be31&quot;
+  },
+  &quot;producer&quot;: {
+    &quot;path&quot;: &quot;artifacts/tmp/W2.C17.T01-ui-authority-proof-03.py&quot;,
+    &quot;sha256&quot;: &quot;9c61d1de18fbf21e502f2d607f26489f44a708b76105ea0b5161a67091cd20b9&quot;
+  },
+  &quot;exactPredicates&quot;: [
+    &quot;linked_correction_authority:1779&quot;,
+    &quot;validate:6975-6977&quot;
+  ]
+}</pre></details>
+<details><summary>Two-file patch</summary><pre>diff --git a/apps/desktop/src/app/ApplicationRuntime.tsx b/apps/desktop/src/app/ApplicationRuntime.tsx
+index ec5c057e..c9a6d646 100644
+--- a/apps/desktop/src/app/ApplicationRuntime.tsx
++++ b/apps/desktop/src/app/ApplicationRuntime.tsx
+@@ -799,15 +799,15 @@ export function ApplicationRuntime({ workflowTransport = packagedProjectTranspor
+     return true;
+   }, [announce]);
+ 
+-  const navigateWorkspaceState = useCallback((nextWorkspace: ApplicationWorkspace) =&gt; {
+-    if (!qualityNavigationAllowed(nextWorkspace)) return;
++  const navigateWorkspaceState = useCallback((nextWorkspace: ApplicationWorkspace): boolean =&gt; {
++    if (!qualityNavigationAllowed(nextWorkspace)) return false;
+     clearPendingSupportingRequest();
+     workspaceRef.current = nextWorkspace;
+     const authority = workflowAuthority;
+     if (!authority) {
+       setSupportingReturn(null);
+       setWorkspace(nextWorkspace);
+-      return;
++      return true;
+     }
+     const classification = workspaceClassification(authority, nextWorkspace);
+     if (classification.role === &quot;supporting&quot;) {
+@@ -824,7 +824,7 @@ export function ApplicationRuntime({ workflowTransport = packagedProjectTranspor
+         );
+         if (!ticket) {
+           setWorkspace(nextWorkspace);
+-          return;
++          return true;
+         }
+         pendingSupportingRequestRef.current = ticket;
+         setSupportingHandoffPending(true);
+@@ -882,6 +882,7 @@ export function ApplicationRuntime({ workflowTransport = packagedProjectTranspor
+       setSupportingReturn(null);
+     }
+     setWorkspace(nextWorkspace);
++    return true;
+   }, [announce, applyWorkflowProgress, clearPendingSupportingRequest, qualityNavigationAllowed, workflowAuthority, workflowClient, workflowProgress]);
+ 
+   const openAttachmentTaskCenter = useCallback((handoff: AttachmentHandoff) =&gt; {
+@@ -952,7 +953,7 @@ export function ApplicationRuntime({ workflowTransport = packagedProjectTranspor
+   }, []);
+ 
+   const openProjectHome = useCallback(() =&gt; {
+-    navigateWorkspaceState(&quot;home&quot;);
++    if (!navigateWorkspaceState(&quot;home&quot;)) return;
+     announce(&quot;Project Home opened. Choose Start guided workflow to begin explicitly.&quot;);
+     globalThis.window?.requestAnimationFrame(() =&gt; homeRef.current?.focus());
+   }, [announce, navigateWorkspaceState]);
+@@ -1158,12 +1159,12 @@ export function ApplicationRuntime({ workflowTransport = packagedProjectTranspor
+   }, [applyLockedRecoveryResult]);
+ 
+   const openApplicationSettings = useCallback((trigger?: HTMLElement | null) =&gt; {
++    if (!navigateWorkspaceState(&quot;application-settings&quot;)) return;
+     if (workspace !== &quot;application-settings&quot;) {
+       previousWorkspaceRef.current = workspace;
+       applicationSettingsRestoreFocusRef.current = trigger
+         ?? (document.activeElement instanceof HTMLElement ? document.activeElement : null);
+     }
+-    navigateWorkspaceState(&quot;application-settings&quot;);
+     announce(&quot;Application Security and sign-in settings opened.&quot;);
+   }, [announce, navigateWorkspaceState, workspace]);
+ 
+@@ -1322,8 +1323,7 @@ export function ApplicationRuntime({ workflowTransport = packagedProjectTranspor
+             onSelectStage={navigateToStage}
+             onSelectWorkspace={(nextWorkspace) =&gt; {
+               if (nextWorkspace === &quot;application-settings&quot;) openApplicationSettings();
+-              else {
+-                navigateWorkspaceState(nextWorkspace);
++              else if (navigateWorkspaceState(nextWorkspace)) {
+                 announce(`${nextWorkspace === &quot;home&quot; ? &quot;Project home&quot; : nextWorkspace} opened.`);
+               }
+             }}
+diff --git a/tests/desktop/test_reprocessing_workflow_navigation.py b/tests/desktop/test_reprocessing_workflow_navigation.py
+index 7dcb1f03..b13ee24c 100644
+--- a/tests/desktop/test_reprocessing_workflow_navigation.py
++++ b/tests/desktop/test_reprocessing_workflow_navigation.py
+@@ -31,7 +31,7 @@ class ReprocessingWorkflowNavigationTests(unittest.TestCase):
+ 
+     def test_actual_pending_reconciliation_guards_guided_stage_and_return(self):
+         for mode in (&quot;dirty&quot;, &quot;busy&quot;, &quot;unknown&quot;):
+-            for route in (&quot;stage&quot;, &quot;return&quot;):
++            for route in (&quot;stage&quot;, &quot;return&quot;, &quot;workspace&quot;, &quot;home&quot;, &quot;settings&quot;, &quot;command-shortcut&quot;):
+                 with self.subTest(mode=mode, route=route):
+                     context = self.browser.new_context(viewport={&quot;width&quot;: 1280, &quot;height&quot;: 900})
+                     try:
+@@ -96,17 +96,47 @@ class ReprocessingWorkflowNavigationTests(unittest.TestCase):
+                         owner = page.get_by_role(&quot;region&quot;, name=&quot;Parsing Quality and Corrections&quot;, exact=True)
+                         page.wait_for_function(&quot;window.__REPROCESSING_UI_TEST__.blocked&quot;)
+                         before = page.evaluate(&quot;JSON.stringify(window.__REPROCESSING_UI_TEST__.calls)&quot;)
+-                        target = (
+-                            page.locator(&quot;[data-workflow-stage-key] &gt; button&quot;)
+-                            if route == &quot;stage&quot;
+-                            else page.get_by_role(
++                        rationale = page.get_by_role(&quot;region&quot;, name=&quot;Reparse comparison&quot;, exact=True).get_by_role(
++                            &quot;textbox&quot;
++                        )
++                        self.assertEqual(&quot;SYNTHETIC exact reprocessing navigation rationale&quot;, rationale.input_value())
++                        if route == &quot;stage&quot;:
++                            target = page.locator(&quot;[data-workflow-stage-key] &gt; button&quot;)
++                        elif route == &quot;return&quot;:
++                            target = page.get_by_role(
+                                 &quot;button&quot;, name=&quot;Return to current step · Synthetic current stage&quot;, exact=True
+                             )
++                        elif route == &quot;workspace&quot;:
++                            target = page.get_by_role(&quot;button&quot;, name=&quot;Source Manager&quot;, exact=True)
++                        elif route == &quot;settings&quot;:
++                            target = page.locator(&quot;[data-application-settings-trigger]&quot;)
++                        else:
++                            target = page.get_by_role(&quot;button&quot;, name=&quot;Project home&quot;, exact=True)
++
++                        def navigate(route=route, page=page, target=target):
++                            if route == &quot;command-shortcut&quot;:
++                                page.keyboard.press(&quot;Control+k&quot;)
++                            else:
++                                target.click()
++
++                        def settle_announcement(page=page):
++                            page.evaluate(
++                                &quot;() =&gt; new Promise(resolve =&gt; &quot;
++                                &quot;requestAnimationFrame(() =&gt; requestAnimationFrame(resolve)))&quot;
++                            )
++
++                        navigate()
++                        settle_announcement()
++                        self.assertEqual(
++                            &quot;Save or undo the local correction, and resolve a pending command, &quot;
++                            &quot;before leaving Parsing Quality.&quot;,
++                            page.locator(&quot;[data-live-region]&quot;).inner_text(),
+                         )
+-                        target.click()
+                         self.assertEqual(1, owner.count())
+                         self.assertEqual(0, page.evaluate(&quot;window.__REPROCESSING_ROOT_TEST__.unmounted&quot;))
+                         self.assertEqual(before, page.evaluate(&quot;JSON.stringify(window.__REPROCESSING_UI_TEST__.calls)&quot;))
++                        self.assertEqual(&quot;SYNTHETIC exact reprocessing navigation rationale&quot;, rationale.input_value())
++                        self.assertEqual(0, page.evaluate(&quot;window.__REPROCESSING_UI_TEST__.acceptedCount&quot;))
+                         if mode == &quot;dirty&quot;:
+                             page.get_by_role(&quot;button&quot;, name=&quot;Undo unsaved reconciliation&quot;, exact=True).click()
+                         elif mode == &quot;busy&quot;:
+@@ -119,8 +149,24 @@ class ReprocessingWorkflowNavigationTests(unittest.TestCase):
+                                 &quot;button&quot;, name=&quot;Retry exact pending reprocessing command&quot;, exact=True
+                             ).click()
+                         page.wait_for_function(&quot;!window.__REPROCESSING_UI_TEST__.blocked&quot;)
+-                        target.click()
+-                        owner.wait_for(state=&quot;detached&quot;)
++                        if mode == &quot;unknown&quot;:
++                            commands = page.evaluate(
++                                &quot;window.__REPROCESSING_UI_TEST__.calls.filter(&quot;
++                                &quot;command =&gt; command.action === &#x27;reconcile&#x27;)&quot;
++                            )
++                            self.assertEqual(2, len(commands))
++                            self.assertEqual(commands[0], commands[1])
++                            self.assertEqual(1, page.evaluate(&quot;window.__REPROCESSING_UI_TEST__.reconciledCount&quot;))
++                        navigate()
++                        if route == &quot;settings&quot;:
++                            page.get_by_role(&quot;heading&quot;, name=&quot;Security &amp; sign-in&quot;, exact=True).wait_for()
++                        else:
++                            owner.wait_for(state=&quot;detached&quot;)
++                        settle_announcement()
++                        if route == &quot;workspace&quot;:
++                            self.assertEqual(&quot;sources opened.&quot;, page.locator(&quot;[data-live-region]&quot;).inner_text())
++                            self.assertEqual(&quot;page&quot;, target.get_attribute(&quot;aria-current&quot;))
++                        self.assertEqual(0, page.evaluate(&quot;window.__REPROCESSING_UI_TEST__.acceptedCount&quot;))
+                     finally:
+                         context.close()
+ 
+</pre></details>
+<details><summary>Preserved failures and their disposition</summary><ul><li>Red01: 18 setup errors before navigation assertions because a filled textarea changed its accessible label. Preserved; corrected to the exact comparison-region textbox without editing product code.</li><li>Red02: nine real false announcements reproduced with original product code across three blocked states and Source Manager/Home/settings. Other nine cases passed; no setup errors. Its exact test source is preserved separately.</li><li>Development01: blocked-denial assertions passed; three post-recovery settings waits used a nonexistent heading. Preserved; selector corrected to the existing Security &amp; sign-in heading without changing product code.</li><li>Development02: fresh build and all 18 cases passed, explicitly development-only.</li><li>Committed qualifying01: stable source/fixture, 29 root tests and all 18 navigation cases passed; overall FAIL from the UI origin selector and seven test-only lint errors. Successor binds loop helpers and wraps identical string constants; assertions and root bytes are unchanged.</li><li>Committed qualifying02: all seven affected children pass with stable inputs; overall FAIL solely from the unchanged public UI authority command. Alternate authority proof remains unexecuted until the exact owner decision.</li><li>Authority preflight01: reviewer alias predicate issue preserved. Revised exact installed identity predicate independently reviewed; actual pure characterization passed all 28 declared cases. This proves no human approval or full authority execution.</li></ul></details>
+</main></html>
