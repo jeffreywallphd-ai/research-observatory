@@ -1,0 +1,95 @@
+{
+  "$defs": {
+    "CorrectionWorkTarget": {
+      "additionalProperties": false,
+      "properties": {
+        "workId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "workRevisionId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "title": {
+          "$ref": "#/$defs/Preview"
+        },
+        "scholarlyVerification": {
+          "const": "unverified",
+          "default": "unverified",
+          "title": "Scholarlyverification",
+          "type": "string"
+        }
+      },
+      "required": [
+        "workId",
+        "workRevisionId",
+        "title"
+      ],
+      "title": "CorrectionWorkTarget",
+      "type": "object"
+    },
+    "Identity": {
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+      "type": "string"
+    },
+    "Preview": {
+      "maxLength": 160,
+      "type": "string"
+    },
+    "ProjectIdentity": {
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[47][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schemaVersion": {
+      "const": "1.0",
+      "default": "1.0",
+      "title": "Schemaversion",
+      "type": "string"
+    },
+    "projectId": {
+      "$ref": "#/$defs/ProjectIdentity"
+    },
+    "items": {
+      "items": {
+        "$ref": "#/$defs/CorrectionWorkTarget"
+      },
+      "maxItems": 10,
+      "title": "Items",
+      "type": "array"
+    },
+    "nextAfterWorkId": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Identity"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    }
+  },
+  "required": [
+    "projectId",
+    "items",
+    "nextAfterWorkId"
+  ],
+  "title": "CorrectionWorkTargets",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://research-observatory.local/contracts/documents/document-correction-targets.v1.schema.json",
+  "x-research-observatory-semanticRules": [
+    "typed-at-most-32-operations-on-exact-base-and-expected-original-node-reference-structure-digests",
+    "saved-proposals-preview-undo-and-discard-never-advance-the-accepted-head",
+    "explicit-exact-draft-confirmation-appends-human-decision-fresh-elements-provenance-outbox-and-scoped-impact-atomically",
+    "current-native-human-session-project-intent-privacy-source-inspect-derive-and-canonical-work-authority-through-publication-and-delivery",
+    "retain-original-parser-output-source-unicode-contributors-and-history-labels-human-matches-and-machine-assertions-are-distinct",
+    "authenticate-native-docling-relationships-against-original-machine-structure-before-mapping-successor-source-lineage",
+    "exact-command-retry-no-duplicate-or-conflicting-command-success-cas-and-cancellation-before-commit",
+    "encrypted-128-kib-record-10000-items-one-million-retained-codepoints-five-second-cooperative-transform-32-correction-generations",
+    "source-fenced-bounded-pages-20-nodes-160-codepoint-previews-10-jobs-targets-drafts-and-128-kib-delivery",
+    "impact-preview-is-prospective-and-rechecked-at-acceptance-not-recalculation-or-release-authority",
+    "accepted-revision-v1-and-literal-migrations-unchanged-no-parser-model-network-or-plaintext-scratch"
+  ]
+}

@@ -1,0 +1,35 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "ui-change-evidence",
+  "taskId": "CAP-05.S06.T02",
+  "changeKind": "approved-reference-implementation",
+  "contractPath": "artifacts/evidence/ui-change/CAP-05.S06.T02.json",
+  "implementationAgent": "agent:codex-w2-implementation",
+  "changedFiles": [
+    "apps/desktop/src/app/ParsingQualityWorkspace.tsx",
+    "apps/desktop/src/app/documentCorrections.ts",
+    "apps/desktop/src/app/ViewerHumanCorrectionsPane.tsx",
+    "apps/desktop/src/app/DocumentViewerWorkspace.tsx",
+    "apps/desktop/src/app/ApplicationRuntime.tsx",
+    "apps/desktop/src/app/workflowNavigationModel.ts",
+    "apps/desktop/src/app.css",
+    "apps/desktop/scripts/assemble-application.mjs",
+    "apps/desktop/src/app/documentCitations.ts"
+  ],
+  "reference": {
+    "referenceId": "RO-UI-ACADEMIC-MINIMAL-1.9",
+    "version": "1.9",
+    "packageSha256": "24b8d62356863980ae9a13db7d6a06b04b76c60e2f1920d2e888cadecfb24c4b",
+    "approvalCommit": "d4691f716f839f4aac5bb50563b56ac863b32685",
+    "approvedBy": "human:repository-owner",
+    "previousReferenceId": "RO-UI-ACADEMIC-MINIMAL-1.8"
+  },
+  "implementationScope": "Approved Parsing Quality page and support Reader return. Retained per-dimension quality, current queue, typed human corrections, accepted-versus-proposed structure, durable undo/discard history, current permitted Work picker, truthful prospective impact and exact explicit acceptance use existing shared Academic Minimal controls. Human labels and Work relationships stay distinct from machine observations and scholarly verification. Current source/session authority, lock clearing, keyboard/focus, both themes and unknown-command reconciliation remain required. No new reference, parser/model, larger hardware or shared automation-framework changes.",
+  "focusedEvidence": [
+    {
+      "command": "Focused Parsing Quality mounted interactions and actual Windows Wry/Core synthetic save/accept/Reader/reopen witness",
+      "result": "passed",
+      "scope": "Development-only: three authored component journeys and one actual production-component/Native/Core encrypted persistence journey passed. The Windows host uses an explicit test page and existing activation manifest. No model executed; no packaged installation or Wave qualification claim. Frozen-candidate fresh proof remains required."
+    }
+  ]
+}

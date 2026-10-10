@@ -184,8 +184,13 @@ class LocalDocumentCitationRepository(LocalDocumentReferenceRepository):
                 connection, aggregates, reference, set(snapshot.input_revision_ids) | {i.revision_id for i in inputs}
             )
             digest = aggregates.get_revision(reference.collection_revision_id).object_sha256
+        lineage = self.revisions.corrections().bound_lineage(connection, accepted)
         contexts = extract_citation_contexts(
-            accepted, reference.entries, native_artifact=self._native(connection, accepted), cancelled=cancelled
+            accepted,
+            reference.entries,
+            native_artifact=self._native(connection, accepted),
+            source_lineage=lineage,
+            cancelled=cancelled,
         )
         return accepted, contexts, inputs, reference, digest, snapshot, prepared
 

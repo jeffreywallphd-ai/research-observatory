@@ -1,0 +1,370 @@
+{
+  "$defs": {
+    "AnchorCorrection": {
+      "additionalProperties": false,
+      "properties": {
+        "nodeId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "expectedNodeSha256": {
+          "$ref": "#/$defs/Digest"
+        },
+        "op": {
+          "const": "adjust-anchor",
+          "title": "Op",
+          "type": "string"
+        },
+        "locator": {
+          "$ref": "#/$defs/PageRegionLocator"
+        }
+      },
+      "required": [
+        "nodeId",
+        "expectedNodeSha256",
+        "op",
+        "locator"
+      ],
+      "title": "AnchorCorrection",
+      "type": "object"
+    },
+    "Coordinate": {
+      "minimum": 0,
+      "type": "number"
+    },
+    "CorrectionOperation": {
+      "discriminator": {
+        "mapping": {
+          "adjust-anchor": "#/$defs/AnchorCorrection",
+          "exclude": "#/$defs/ExcludeCorrection",
+          "merge": "#/$defs/MergeCorrection",
+          "reference-rematch": "#/$defs/ReferenceRematchCorrection",
+          "relabel": "#/$defs/RelabelCorrection",
+          "reorder": "#/$defs/ReorderCorrection",
+          "split": "#/$defs/SplitCorrection"
+        },
+        "propertyName": "op"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/RelabelCorrection"
+        },
+        {
+          "$ref": "#/$defs/ReorderCorrection"
+        },
+        {
+          "$ref": "#/$defs/SplitCorrection"
+        },
+        {
+          "$ref": "#/$defs/MergeCorrection"
+        },
+        {
+          "$ref": "#/$defs/ReferenceRematchCorrection"
+        },
+        {
+          "$ref": "#/$defs/AnchorCorrection"
+        },
+        {
+          "$ref": "#/$defs/ExcludeCorrection"
+        }
+      ]
+    },
+    "Digest": {
+      "pattern": "^[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "ExcludeCorrection": {
+      "additionalProperties": false,
+      "properties": {
+        "nodeId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "expectedNodeSha256": {
+          "$ref": "#/$defs/Digest"
+        },
+        "op": {
+          "const": "exclude",
+          "title": "Op",
+          "type": "string"
+        }
+      },
+      "required": [
+        "nodeId",
+        "expectedNodeSha256",
+        "op"
+      ],
+      "title": "ExcludeCorrection",
+      "type": "object"
+    },
+    "Identity": {
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+      "type": "string"
+    },
+    "Label": {
+      "maxLength": 160,
+      "minLength": 1,
+      "type": "string"
+    },
+    "MergeCorrection": {
+      "additionalProperties": false,
+      "properties": {
+        "nodeId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "expectedNodeSha256": {
+          "$ref": "#/$defs/Digest"
+        },
+        "op": {
+          "const": "merge",
+          "title": "Op",
+          "type": "string"
+        },
+        "withNodeId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "expectedWithNodeSha256": {
+          "$ref": "#/$defs/Digest"
+        }
+      },
+      "required": [
+        "nodeId",
+        "expectedNodeSha256",
+        "op",
+        "withNodeId",
+        "expectedWithNodeSha256"
+      ],
+      "title": "MergeCorrection",
+      "type": "object"
+    },
+    "PageRegionLocator": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "page-region",
+          "title": "Kind",
+          "type": "string"
+        },
+        "pageIndex": {
+          "exclusiveMaximum": 500,
+          "minimum": 0,
+          "title": "Pageindex",
+          "type": "integer"
+        },
+        "x0": {
+          "$ref": "#/$defs/Coordinate"
+        },
+        "y0": {
+          "$ref": "#/$defs/Coordinate"
+        },
+        "x1": {
+          "$ref": "#/$defs/Coordinate"
+        },
+        "y1": {
+          "$ref": "#/$defs/Coordinate"
+        },
+        "unit": {
+          "const": "points",
+          "title": "Unit",
+          "type": "string"
+        },
+        "origin": {
+          "const": "top-left",
+          "title": "Origin",
+          "type": "string"
+        },
+        "frame": {
+          "const": "unrotated-source-page",
+          "title": "Frame",
+          "type": "string"
+        }
+      },
+      "required": [
+        "kind",
+        "pageIndex",
+        "x0",
+        "y0",
+        "x1",
+        "y1",
+        "unit",
+        "origin",
+        "frame"
+      ],
+      "title": "PageRegionLocator",
+      "type": "object"
+    },
+    "ReferenceRematchCorrection": {
+      "additionalProperties": false,
+      "properties": {
+        "nodeId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "expectedNodeSha256": {
+          "$ref": "#/$defs/Digest"
+        },
+        "op": {
+          "const": "reference-rematch",
+          "title": "Op",
+          "type": "string"
+        },
+        "referenceId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "expectedReferenceSha256": {
+          "$ref": "#/$defs/Digest"
+        },
+        "workId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "workRevisionId": {
+          "$ref": "#/$defs/Identity"
+        }
+      },
+      "required": [
+        "nodeId",
+        "expectedNodeSha256",
+        "op",
+        "referenceId",
+        "expectedReferenceSha256",
+        "workId",
+        "workRevisionId"
+      ],
+      "title": "ReferenceRematchCorrection",
+      "type": "object"
+    },
+    "RelabelCorrection": {
+      "additionalProperties": false,
+      "properties": {
+        "nodeId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "expectedNodeSha256": {
+          "$ref": "#/$defs/Digest"
+        },
+        "op": {
+          "const": "relabel",
+          "title": "Op",
+          "type": "string"
+        },
+        "label": {
+          "$ref": "#/$defs/Label"
+        }
+      },
+      "required": [
+        "nodeId",
+        "expectedNodeSha256",
+        "op",
+        "label"
+      ],
+      "title": "RelabelCorrection",
+      "type": "object"
+    },
+    "ReorderCorrection": {
+      "additionalProperties": false,
+      "properties": {
+        "nodeId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "expectedNodeSha256": {
+          "$ref": "#/$defs/Digest"
+        },
+        "op": {
+          "const": "reorder",
+          "title": "Op",
+          "type": "string"
+        },
+        "beforeNodeId": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Identity"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "nodeId",
+        "expectedNodeSha256",
+        "op",
+        "beforeNodeId"
+      ],
+      "title": "ReorderCorrection",
+      "type": "object"
+    },
+    "SplitCorrection": {
+      "additionalProperties": false,
+      "properties": {
+        "nodeId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "expectedNodeSha256": {
+          "$ref": "#/$defs/Digest"
+        },
+        "op": {
+          "const": "split",
+          "title": "Op",
+          "type": "string"
+        },
+        "at": {
+          "maximum": 9007199254740991,
+          "minimum": 0,
+          "title": "At",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "nodeId",
+        "expectedNodeSha256",
+        "op",
+        "at"
+      ],
+      "title": "SplitCorrection",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schemaVersion": {
+      "const": "1.0",
+      "default": "1.0",
+      "title": "Schemaversion",
+      "type": "string"
+    },
+    "baseRevisionId": {
+      "$ref": "#/$defs/Identity"
+    },
+    "expectedStructureSha256": {
+      "$ref": "#/$defs/Digest"
+    },
+    "operations": {
+      "items": {
+        "$ref": "#/$defs/CorrectionOperation"
+      },
+      "maxItems": 32,
+      "title": "Operations",
+      "type": "array"
+    }
+  },
+  "required": [
+    "baseRevisionId",
+    "expectedStructureSha256",
+    "operations"
+  ],
+  "title": "CorrectionPatch",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://research-observatory.local/contracts/documents/document-correction-patch.v1.schema.json",
+  "x-research-observatory-semanticRules": [
+    "typed-at-most-32-operations-on-exact-base-and-expected-original-node-reference-structure-digests",
+    "saved-proposals-preview-undo-and-discard-never-advance-the-accepted-head",
+    "explicit-exact-draft-confirmation-appends-human-decision-fresh-elements-provenance-outbox-and-scoped-impact-atomically",
+    "current-native-human-session-project-intent-privacy-source-inspect-derive-and-canonical-work-authority-through-publication-and-delivery",
+    "retain-original-parser-output-source-unicode-contributors-and-history-labels-human-matches-and-machine-assertions-are-distinct",
+    "authenticate-native-docling-relationships-against-original-machine-structure-before-mapping-successor-source-lineage",
+    "exact-command-retry-no-duplicate-or-conflicting-command-success-cas-and-cancellation-before-commit",
+    "encrypted-128-kib-record-10000-items-one-million-retained-codepoints-five-second-cooperative-transform-32-correction-generations",
+    "source-fenced-bounded-pages-20-nodes-160-codepoint-previews-10-jobs-targets-drafts-and-128-kib-delivery",
+    "impact-preview-is-prospective-and-rechecked-at-acceptance-not-recalculation-or-release-authority",
+    "accepted-revision-v1-and-literal-migrations-unchanged-no-parser-model-network-or-plaintext-scratch"
+  ]
+}

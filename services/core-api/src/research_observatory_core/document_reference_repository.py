@@ -137,8 +137,13 @@ class LocalDocumentReferenceRepository:
 
     def _prepare(self, connection, actor, document_revision_id, cancelled):
         self._check(cancelled)
-        accepted = self.revisions._accepted(connection, document_revision_id)
-        entries = extract_references(accepted, native_artifact=self._native(connection, accepted), cancelled=cancelled)
+        corrections = self.revisions.corrections()
+        context = corrections._context(connection, None)
+        accepted = self.revisions._accepted(connection, document_revision_id, correction_context=context)
+        lineage = corrections.bound_lineage(connection, accepted, context=context)
+        entries = extract_references(
+            accepted, native_artifact=self._native(connection, accepted), source_lineage=lineage, cancelled=cancelled
+        )
         with self.revisions._aggregates(connection) as aggregates:
             inputs = self._inputs(connection, aggregates, accepted)
             prepared, collect = self.matching.reconciliation._source_snapshot(

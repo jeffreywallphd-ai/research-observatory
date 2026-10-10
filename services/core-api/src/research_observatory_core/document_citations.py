@@ -36,7 +36,7 @@ MAX_TARGETS = 128
 MAX_CONTEXT_CODEPOINTS = 65536
 MAX_CITATION_SECONDS = 5.0
 type Resolution = Literal["candidate", "ambiguous", "unresolved"]
-type ContextReason = Literal["available", "not-reported", "normalization-boundary", "empty-marker"]
+type ContextReason = Literal["available", "not-reported", "normalization-boundary", "empty-marker", "excluded-region"]
 
 
 class CitationProblem(ValueError):
@@ -197,6 +197,7 @@ def extract_citation_contexts(
     references: tuple[ReferenceEntry, ...],
     *,
     native_artifact: bytes | None = None,
+    source_lineage=None,
     cancelled: Callable[[], bool] = lambda: False,
 ) -> tuple[CitationContext, ...]:
     deadline = time.monotonic() + MAX_CITATION_SECONDS
@@ -210,16 +211,38 @@ def extract_citation_contexts(
     checkpoint()
     # Authenticate retained native source relationships with the same boundary
     # as reference extraction; use independently extracted source fields below.
-    trusted = extract_references(accepted, native_artifact=native_artifact, cancelled=cancelled)
+    trusted = extract_references(
+        accepted, native_artifact=native_artifact, source_lineage=source_lineage, cancelled=cancelled
+    )
     if [(r.reference_id, r.node_id, r.raw_text_span, r.raw_text, r.fields) for r in trusted] != [
         (r.reference_id, r.node_id, r.raw_text_span, r.raw_text, r.fields) for r in references
     ]:
         raise CitationProblem("citation-reference-source-invalid")
     native = NativeStructure.model_validate_json(native_artifact) if native_artifact is not None else None
+    excluded_intervals = (
+        source_lineage.excluded_native_intervals(native, checkpoint=checkpoint)
+        if source_lineage is not None and native is not None
+        else ()
+    )
     structure = accepted.structure
     nodes = {n.node_id: n for n in structure.nodes}
     projections = {p.projection_id: p for p in structure.text_projections}
     reference_nodes = {r.node_id for r in trusted}
+
+    def native_element(node):
+        if native is None:
+            raise CitationProblem("citation-native-lineage-ambiguous")
+        index = node.order if source_lineage is None else source_lineage.native_index(node.node_id)
+        if index is None:
+            raise CitationProblem("citation-native-lineage-ambiguous")
+        return native.elements[index]
+
+    def absolute_intervals(node, span):
+        if source_lineage is not None:
+            return source_lineage.source_intervals(node.node_id, span, native, checkpoint=checkpoint)
+        origin = native_element(node).text_start
+        return tuple((origin + r.start, origin + r.end) for r in span.raw_ranges)
+
     children: dict[str | None, list[CanonicalNode]] = {}
     reported_projections: dict[str, set[str]] = {}
     for node in structure.nodes:
@@ -260,8 +283,7 @@ def extract_citation_contexts(
             continue
         callout_spans.append((node.node_id, node.text))
         if native is not None:
-            element = native.elements[node.order]
-            callout_raw.append((element.text_start, element.text_end))
+            callout_raw.extend(absolute_intervals(node, node.text))
         else:
             callout_ancestor = node.parent_id
             while callout_ancestor is not None:
@@ -284,7 +306,7 @@ def extract_citation_contexts(
         checkpoint()
         ref_node = nodes[ref.node_id]
         if native is not None:
-            element = native.elements[ref_node.order]
+            element = native_element(ref_node)
             for attr in element.attributes:
                 if (
                     attr.name in {"id", "{http://www.w3.org/XML/1998/namespace}id"}
@@ -306,7 +328,7 @@ def extract_citation_contexts(
                 while ancestor is not None and ancestor != ref.node_id:
                     parent = nodes[ancestor]
                     parent_ns, parent_name = _name(parent.source_element_type)
-                    attributes = native.elements[parent.order].attributes
+                    attributes = native_element(parent).attributes
                     author_role = parent_ns in allowed and (
                         (native.format == "tei" and parent_name == "author")
                         or (
@@ -368,6 +390,14 @@ def extract_citation_contexts(
     def emit(node, span, style, groups, canonical_id=None, canonical_order=None):
         nonlocal total_bytes
         checkpoint()
+        if source_lineage is not None:
+            if native is not None:
+                if any(
+                    low < b and high > a for low, high in absolute_intervals(node, span) for a, b in excluded_intervals
+                ):
+                    return
+            elif source_lineage.excludes_span(node.node_id, span, checkpoint=checkpoint):
+                return
         if len(entries) >= MAX_CITATIONS:
             raise CitationProblem("citation-operation-limit")
         p = projections[span.projection_id]
@@ -382,10 +412,15 @@ def extract_citation_contexts(
             pp = projections[para.text.projection_id]
             marker_range = span.normalized_range if pp.projection_id == p.projection_id else None
             if marker_range is None and native is not None:
-                origin = native.elements[node.order].text_start - native.elements[para.order].text_start
-                ranges = _merge_ranges(tuple((origin + r.start, origin + r.end) for r in span.raw_ranges))
-                if len(ranges) == 1:
-                    marker_range = _raw_to_normalized(mapping(pp), *ranges[0])
+                if source_lineage is not None:
+                    marker_range = source_lineage.current_range(
+                        para.node_id, absolute_intervals(node, span), native, checkpoint=checkpoint
+                    )
+                else:
+                    origin = native_element(node).text_start - native_element(para).text_start
+                    ranges = _merge_ranges(tuple((origin + r.start, origin + r.end) for r in span.raw_ranges))
+                    if len(ranges) == 1:
+                        marker_range = _raw_to_normalized(mapping(pp), *ranges[0])
             paragraph = text_context(para, para.text, marker_range, "source-element")
             reason = "available" if marker_range is not None else "normalization-boundary"
             if marker_range is not None:
@@ -401,6 +436,8 @@ def extract_citation_contexts(
                 sentence = text_context(
                     para, _span(pp, left, right, normalized=mapping(pp)), marker_range, "sentence-pattern"
                 )
+        if source_lineage is not None and source_lineage.excludes_span(para.node_id, para.text, checkpoint=checkpoint):
+            paragraph, sentence, reason = None, None, "excluded-region"
         anchor = (
             build_target(
                 accepted,
@@ -411,6 +448,10 @@ def extract_citation_contexts(
                 ),
             )
             if start < end
+            and not (
+                source_lineage is not None
+                and source_lineage.excludes_span(node.node_id, node.text, checkpoint=checkpoint)
+            )
             else None
         )
         entry = CitationContext(
@@ -436,22 +477,23 @@ def extract_citation_contexts(
         if total_bytes > MAX_CITATION_BYTES:
             raise CitationProblem("citation-operation-limit")
         source_order = (
-            (native.elements[node.order].text_start + min((r.start for r in span.raw_ranges), default=0), node.order)
+            (min((a for a, _ in absolute_intervals(node, span)), default=node.order), node.order)
             if native
             else (projection_order[p.projection_id], start, node.order)
         )
         entries.append((source_order, entry))
         if native is not None:
-            origin = native.elements[node.order].text_start
-            occupied.extend((origin + r.start, origin + r.end) for r in span.raw_ranges)
+            occupied.extend(absolute_intervals(node, span))
 
+    if native is not None and source_lineage is not None:
+        occupied.extend(excluded_intervals)
     for canonical_order, citation in enumerate(structure.citations):
         checkpoint()
         node = nodes[citation.node_id]
         style = "reported"
         reported_groups: tuple[CitationTargetGroup, ...] = ()
         if native is not None:
-            element = native.elements[node.order]
+            element = native_element(node)
             ns, name = _name(element.name)
             attrs = {
                 a.name: a.value for a in element.attributes if sum(b.name == a.name for b in element.attributes) == 1
@@ -485,6 +527,12 @@ def extract_citation_contexts(
         checkpoint()
         if node.text is None or owners[node.node_id] is not None:
             continue
+        if (
+            native is None
+            and source_lineage is not None
+            and source_lineage.excludes_span(node.node_id, node.text, checkpoint=checkpoint)
+        ):
+            continue
         # Scan the nearest textual container only, not its footnote/paragraph
         # ancestors again. Pure superscripts remain explicit unresolved values.
         is_sup = _name(node.source_element_type)[1] == "sup"
@@ -513,12 +561,10 @@ def extract_citation_contexts(
             if any(start < b and end > a for a, b in seen):
                 continue
             if native is not None:
-                origin = native.elements[node.order].text_start
-                if any(origin + r.start < b and origin + r.end > a for r in span.raw_ranges for a, b in occupied):
+                intervals = absolute_intervals(node, span)
+                if any(low < b and high > a for low, high in intervals for a, b in occupied):
                     continue
-                if not is_sup and any(
-                    origin + r.start < b and origin + r.end > a for r in span.raw_ranges for a, b in callout_raw
-                ):
+                if not is_sup and any(low < b and high > a for low, high in intervals for a, b in callout_raw):
                     continue
             elif any(
                 c.marker.projection_id == p.projection_id

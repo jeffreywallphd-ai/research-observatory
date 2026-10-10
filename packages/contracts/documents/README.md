@@ -113,3 +113,30 @@ before reads, the diagnostic limit of 10,000 items runs before flattening,
 the operation has a five-second cooperative deadline and reports are capped at
 64 KiB. Resource, stale-session, stop-latch and authority failures are content
 free. Desktop display/correction integration belongs to CAP-05.S06.T02.
+
+The additive `document-correction-*` v1 schemas describe closed typed patches,
+save/discard commands, exact explicit acceptance, protected human drafts and
+bounded queue/page/impact/current-Work projections. Native owns all runtime and
+principal authority. Expected base/old-value hashes are selectors and CAS inputs,
+not permissions. Saved or previewed operations do not update the accepted head.
+Only explicit acceptance appends fresh canonical identities, human provenance,
+dependencies and an impact event while preserving original parser observations.
+
+Human labels and reference selections remain separate accepted metadata in the
+Reader and Parsing Quality. Work targets retain their exact current revision and
+unverified state. Corrected source lineage authenticates original parser
+relationships before remapping identities; excluded source intervals cannot be
+rediscovered by ancestor scans. Citation `excluded-region` context denotes an
+unavailable quotation/context, not an empty or verified passage. Historical
+source anchors remain immutable. Protected accepted read-back replays the exact
+proposal, result, author/rationale and acceptor binding under current authority.
+
+Requests admit at most 32 operations within 64 KiB; protected records and responses
+are capped at 128 KiB. A page exposes 20 nodes with 160-codepoint previews, ten
+saved proposal selectors and ten current permitted Work choices per target page.
+Impact is prospective and rechecked at acceptance; recalculation is separate.
+Transformation/read bounds include 10,000 items, one million text codepoints,
+32 generations and a five-second cooperative deadline. Unknown issued outcomes
+retain exact command identity for reconciliation. Component doubles establish
+UI behavior only; task-owned synthetic Wry/Core checks do not qualify parser
+models, a packaged installation, hardware tiers or Wave release.

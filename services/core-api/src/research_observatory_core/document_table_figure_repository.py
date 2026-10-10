@@ -170,7 +170,10 @@ class LocalDocumentTableFigureRepository(LocalDocumentReferenceRepository):
 
     def _prepare(self, connection, actor, document_revision_id, cancelled):
         self._check(cancelled)
-        accepted = self.revisions._accepted(connection, document_revision_id)
+        corrections = self.revisions.corrections()
+        context = corrections._context(connection, None)
+        accepted = self.revisions._accepted(connection, document_revision_id, correction_context=context)
+        lineage = corrections.bound_lineage(connection, accepted, context=context)
         receipts = [r for r in accepted.structure.raw_artifacts if r.media_type == DOCLING_MEDIA_TYPE]
         if len(receipts) > 1 or (receipts and receipts[0].byte_length > MAX_TABLE_FIGURE_BYTES):
             raise TableFigureProblem("structure-parser-binding-invalid")
@@ -180,7 +183,11 @@ class LocalDocumentTableFigureRepository(LocalDocumentReferenceRepository):
             else None
         )
         entries = extract_table_figures(
-            accepted, native_artifact=self._native(connection, accepted), docling_artifact=docling, cancelled=cancelled
+            accepted,
+            native_artifact=self._native(connection, accepted),
+            docling_artifact=docling,
+            source_lineage=lineage,
+            cancelled=cancelled,
         )
         with self.revisions._aggregates(connection) as aggregates:
             inputs = self._inputs(connection, aggregates, accepted)

@@ -745,13 +745,15 @@ async def _stage_stream(request: Request, runtime: DocumentRuntimePort) -> Attac
 
 
 class BoundedDocumentJsonRoute(BoundedImportRoute):
+    command_bytes = _HEADER_BYTES
+
     def get_route_handler(self) -> Callable:
         handler = super().get_route_handler()
 
         async def bounded(request: Request) -> Response:
             body = bytearray()
             async for chunk in request.stream():
-                if len(body) + len(chunk) > _HEADER_BYTES:
+                if len(body) + len(chunk) > self.command_bytes:
                     raise _problem(
                         request,
                         413,

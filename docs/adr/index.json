@@ -500,6 +500,15 @@
       "linkedTasks": [
         "CAP-05.S06.T01"
       ]
+    },
+    {
+      "id": "ADR-0052",
+      "path": "docs/adr/ADR-0052-bind-manual-corrections-to-existing-immutable-document-authority.md",
+      "title": "Bind manual corrections to existing immutable document authority",
+      "status": "Proposed",
+      "linkedTasks": [
+        "CAP-05.S06.T02"
+      ]
     }
   ]
 }

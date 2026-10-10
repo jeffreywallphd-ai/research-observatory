@@ -572,6 +572,18 @@
     "services/core-api/src/research_observatory_core/parsing/quality.py",
     "tests/documents/test_parsing_quality.py",
     "tests/documents/test_parsing_quality_repository.py",
-    "tests/documents/test_parsing_quality_service.py"
+    "tests/documents/test_parsing_quality_service.py",
+    "services/core-api/src/research_observatory_core/document_correction_api.py",
+    "services/core-api/src/research_observatory_core/document_correction_lineage.py",
+    "services/core-api/src/research_observatory_core/document_correction_views.py",
+    "services/core-api/src/research_observatory_core/document_corrections.py",
+    "services/core-api/src/research_observatory_core/ports/document_corrections.py",
+    "tests/desktop/test_parsing_quality_interactions.py",
+    "tests/documents/correction_native_windows_fixture.py",
+    "tests/documents/test_document_correction_lineage.py",
+    "tests/documents/test_document_correction_repository.py",
+    "tests/documents/test_document_correction_service.py",
+    "tests/documents/test_document_corrections.py",
+    "tests/desktop/test_quality_workflow_navigation.py"
   ]
 }

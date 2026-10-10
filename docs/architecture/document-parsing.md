@@ -370,3 +370,41 @@ The action lane permits one issued operation and retains unknown Core/Native
 ownership until an exact terminal acknowledgement or observed process exit.
 This is product behavior, not an automation-framework change. Development checks
 alone do not qualify the task, minimum hardware, installation or Wave release.
+
+## Human parsing corrections (CAP-05.S06.T02)
+
+Parsing Quality displays retained per-dimension observations and exact accepted
+structure alongside a saved proposal. Its typed operations relabel human section
+metadata, reorder sibling subtrees, split or merge precisely mapped text blocks,
+select a current permitted Work for a reference, adjust original-page geometry,
+or exclude a corrupted region from the effective structure. Original bytes,
+parser IR, machine confidence, identifiers and prior accepted revisions remain
+immutable. A human reference selection appears separately in the Reader; it does
+not replace the machine matching assessment or establish identifier verification.
+
+Save, undo, discard and impact preview do not advance the accepted document head.
+Explicit acceptance binds the exact saved draft digest and current accepted base,
+then atomically appends a human decision, a new document revision with fresh
+canonical IDs, authenticated provenance, material inputs and a scoped dependency
+impact event. Exact retry returns the same durable outcome. Changed command reuse,
+stale heads, changed current Work authority and interrupted publication fail
+closed. Reopen replays the protected proposal and authenticates its accepted
+result; an acceptance label alone cannot authenticate corrected structure.
+
+Correction lineage authenticates Native/Docling relationships against the original
+machine structure before mapping corrected identities. Excluded original intervals
+remain masked in later generations, including ancestor citation scans. Without
+exact independent coordinates, an ancestor overlapping an excluded descendant
+cannot supply a new quotation or context. Previously saved anchors and original
+observations remain historical records under current source authority.
+
+Native owns project root, session and principal for fixed correction actions.
+Current human Intent, privacy and exact-source inspect/derive authority span
+materialization, publication and delivery. The correction lane admits at most 32
+operations, 10,000 items, one million text codepoints and 32 generations, with a
+five-second cooperative transformation/read deadline. Commands are capped at
+64 KiB and protected records/responses at 128 KiB. Reader pages expose 20 nodes
+with 160-codepoint previews and bounded saved-proposal selectors. Lock clears
+visible private state, and an unknown issued write retains its exact command for
+idempotent reconciliation rather than reporting rollback. No new database
+migration, parser/model selection or larger hardware qualification is introduced.

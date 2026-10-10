@@ -33519,11 +33519,11 @@ capabilities:
       verification_commands:
       - python tools/verify.py --profile desktop
       - python tools/verify.py --profile documents
-      status: READY
-      owner: null
-      branch: null
-      started_at: null
-      updated_at: '2026-10-10T15:44:02+00:00'
+      status: IN_PROGRESS
+      owner: codex-w2-implementation
+      branch: codex/w2-implementation
+      started_at: '2026-10-10T16:10:58+00:00'
+      updated_at: '2026-10-10T16:10:58+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -33533,10 +33533,13 @@ capabilities:
         result: null
         reviewed_at: null
         notes: null
-      base_sha: null
-      lease: null
+      base_sha: 4108a86d81b8b617939e20c5f9318db5e3e1f9e1
+      lease:
+        claimed_by: codex-w2-implementation
+        claimed_at: '2026-10-10T16:10:58+00:00'
+        expires_at: '2026-10-11T00:10:58+00:00'
       verification_state: null
-      worktree: null
+      worktree: .
       platform_targets:
       - windows-x64
     - id: CAP-05.S06.T03

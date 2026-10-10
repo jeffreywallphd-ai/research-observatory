@@ -219,6 +219,7 @@ def extract_references(
     accepted: AcceptedDocumentRevision,
     *,
     native_artifact: bytes | None = None,
+    source_lineage=None,
     cancelled: Callable[[], bool] = lambda: False,
 ) -> tuple[ReferenceEntry, ...]:
     """Derive values only. Caller authenticates the source and any retained bytes."""
@@ -238,6 +239,8 @@ def extract_references(
     nodes = {item.node_id: item for item in structure.nodes}
     native = None
     native_sha = None
+    if source_lineage is not None:
+        source_lineage.validate(accepted)
     if native_artifact is not None:
         native_sha = hashlib.sha256(native_artifact).hexdigest()
         if len(native_artifact) > MAX_REFERENCE_BYTES or not any(
@@ -248,7 +251,12 @@ def extract_references(
         ):
             raise ReferenceProblem("reference-native-binding-invalid")
         native = NativeStructure.model_validate_json(native_artifact)
-        if (
+        if source_lineage is not None:
+            # Authenticate the original parser shape literally. Correction
+            # order and fresh IDs are derived from protected replay, not from
+            # substituting a different artifact or weakening this boundary.
+            extract_references(source_lineage.machine_revision, native_artifact=native_artifact, cancelled=cancelled)
+        elif (
             (native.source_sha256, native.source_byte_length, native.format)
             != (
                 structure.binding.source.object_sha256,
@@ -270,6 +278,32 @@ def extract_references(
             or not any(item.raw_text == native.text for item in projections.values())
         ):
             raise ReferenceProblem("reference-native-binding-invalid")
+
+    def native_element(node):
+        if native is None:
+            raise ReferenceProblem("reference-native-binding-invalid")
+        index = node.order if source_lineage is None else source_lineage.native_index(node.node_id)
+        if index is None:
+            raise ReferenceProblem("reference-native-lineage-ambiguous")
+        return native.elements[index]
+
+    excluded_intervals = (
+        source_lineage.excluded_native_intervals(native, checkpoint=checkpoint)
+        if source_lineage is not None and native is not None
+        else ()
+    )
+
+    def excluded(node_id, span):
+        if source_lineage is None:
+            return False
+        if native is None:
+            return source_lineage.excludes_span(node_id, span, checkpoint=checkpoint)
+        return any(
+            low < end and high > start
+            for low, high in source_lineage.source_intervals(node_id, span, native, checkpoint=checkpoint)
+            for start, end in excluded_intervals
+        )
+
     reference_nodes = {item.node_id for item in structure.references}
     owners: dict[str, str | None] = {}
     descendants: dict[str, list] = {identity: [] for identity in reference_nodes}
@@ -300,7 +334,7 @@ def extract_references(
         for child in descendants[reference.node_id]:
             checkpoint()
             namespace, local = _name(child.source_element_type)
-            if namespace not in allowed or child.text is None:
+            if namespace not in allowed or child.text is None or excluded(child.node_id, child.text):
                 continue
             parent_names = []
             parent = child.parent_id
@@ -323,7 +357,7 @@ def extract_references(
                         if ns in allowed and element == "person-group"
                     ]
                     if groups:
-                        element = native.elements[nodes[groups[0]].order]
+                        element = native_element(nodes[groups[0]])
                         roles = [attr.value for attr in element.attributes if attr.name == "person-group-type"]
                         if roles == ["author"]:
                             name, role_parent = "authors", element.index
@@ -360,12 +394,15 @@ def extract_references(
                 mapped = normalize_text(projection.raw_text)
                 inferred_names: tuple[ReferenceFieldName, ...] = ("authors", "year", "title")
                 for name in inferred_names:
+                    source_span = _span(
+                        projection, start + pattern.start(name), start + pattern.end(name), normalized=mapped
+                    )
+                    if excluded(reference.node_id, source_span):
+                        continue
                     grouped[name] = [
                         ReferenceFieldValue(
                             value=pattern.group(name).strip(),
-                            source_span=_span(
-                                projection, start + pattern.start(name), start + pattern.end(name), normalized=mapped
-                            ),
+                            source_span=source_span,
                             knowledge_status="inferred",
                             basis="author-year-title-pattern",
                         )
@@ -383,6 +420,7 @@ def extract_references(
             if (
                 namespace not in allowed
                 or child.text is None
+                or excluded(child.node_id, child.text)
                 or (format, local)
                 not in {
                     ("jats", "pub-id"),
@@ -393,9 +431,7 @@ def extract_references(
             source_scheme = None
             if native is not None:
                 attribute = "pub-id-type" if format == "jats" else "type"
-                attributes = [
-                    attr.value.lower() for attr in native.elements[child.order].attributes if attr.name == attribute
-                ]
+                attributes = [attr.value.lower() for attr in native_element(child).attributes if attr.name == attribute]
                 source_scheme = attributes[0] if len(attributes) == 1 else "unknown"
             identifier_sources.append((child.text, source_scheme))
         # Explicit DOI wrappers only; preserve punctuation instead of guessing
@@ -476,9 +512,14 @@ def extract_references(
                     and (asserted.scheme, asserted.canonical) == (source_identifier.scheme, source_identifier.canonical)
                 ) or source_text.strip() == observed_identifier.strip()
                 if complete_match:
+                    source_span = candidate_span or _span(projection, source_start, source_end, normalized=mapped)
+                    # Explicit child spans were screened before admission;
+                    # fallback scans must independently check ancestor ranges.
+                    if candidate_span is None and excluded(reference.node_id, source_span):
+                        continue
                     if len(spans) >= 128:
                         raise ReferenceProblem("reference-operation-limit")
-                    spans.append(candidate_span or _span(projection, source_start, source_end, normalized=mapped))
+                    spans.append(source_span)
             identifiers.append(
                 ReferenceIdentifierAssertion(
                     assertion=IdentifierAssertion(
@@ -500,6 +541,10 @@ def extract_references(
                 ),
             )
             if start < end
+            and not (
+                source_lineage is not None
+                and source_lineage.excludes_span(reference.node_id, nodes[reference.node_id].text)
+            )
             else None
         )
         entries.append(

@@ -24528,7 +24528,7 @@
             {
               "task_id": "CAP-05.S06.T02",
               "title": "Build manual structural correction and annotation tools",
-              "status": "READY",
+              "status": "IN_PROGRESS",
               "mode": "latest-review-only",
               "latest_review": {
                 "reviewer": null,
@@ -24573,19 +24573,22 @@
             {
               "task_id": "CAP-05.S06.T02",
               "title": "Build manual structural correction and annotation tools",
-              "status": "READY",
+              "status": "IN_PROGRESS",
               "page": "CAP-05/CAP-05.S06.T02.html",
               "dependencies": [
                 "CAP-05.S06.T01",
                 "CAP-05.S05.T01"
               ],
               "claim": {
-                "owner": null,
-                "branch": null,
-                "base_sha": null
+                "owner": "codex-w2-implementation",
+                "branch": "codex/w2-implementation",
+                "base_sha": "4108a86d81b8b617939e20c5f9318db5e3e1f9e1"
               },
               "plan_section_sha256": "073e6889bfae0c895733618babc88bf2343bf160764389f9c0040e459b7fa600",
-              "worksheet": null
+              "worksheet": {
+                "path": "artifacts/evidence/CAP-05.S06.T02.task-start.md",
+                "sha256": "41fa8a5ae06d680c93f73787c9dce03ba511ef611aa70aa2bec5c7a73fd18982"
+              }
             },
             {
               "task_id": "CAP-05.S06.T03",

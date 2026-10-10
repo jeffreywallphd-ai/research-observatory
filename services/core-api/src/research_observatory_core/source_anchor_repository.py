@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import hashlib
+import time
 from contextlib import closing
 from dataclasses import asdict, dataclass
 
@@ -161,6 +162,24 @@ class LocalSourceAnchorRepository:
         if len(rows) != 1:
             raise DocumentRevisionProblem("source-anchor-dependency-invalid")
         return str(rows[0][0])
+
+    def _build_target(self, connection, accepted, selection):
+        corrections = self.revisions.corrections()
+        lineage = corrections.bound_lineage(connection, accepted)
+        target = build_target(accepted, selection)
+        node = next(n for n in accepted.structure.nodes if n.node_id == selection.node_id)
+        # Prefix/suffix context also contains source text. Without independent
+        # coordinate proof, an ancestor with an excluded descendant cannot
+        # supply a new passage quotation.
+        deadline = time.monotonic() + 5.0
+
+        def checkpoint():
+            if time.monotonic() > deadline:
+                raise DocumentRevisionProblem("source-anchor-operation-limit")
+
+        if lineage is not None and lineage.excludes_span(node.node_id, node.text, checkpoint=checkpoint):
+            raise DocumentRevisionProblem("source-anchor-excluded-region")
+        return target
 
     @staticmethod
     def _draft(record, digest):
@@ -480,7 +499,8 @@ class LocalSourceAnchorRepository:
                     raise DocumentRevisionProblem("citation-link-unavailable")
 
                 def target(node_id, span):
-                    return build_target(
+                    return self._build_target(
+                        connection,
                         accepted,
                         AnchorSelection(
                             revision_id=revision_id,
@@ -567,7 +587,10 @@ class LocalSourceAnchorRepository:
                     raise DocumentRevisionProblem("source-anchor-command-conflict")
                 return record
             accepted = self.revisions.read(command.revision_id)
-            target = build_target(accepted, command)
+            target = self.revisions._source_fenced(
+                accepted.structure.binding.source,
+                lambda connection, _actor: self._build_target(connection, accepted, command),
+            )
             with (
                 closing(
                     open_canonical_database(self.revisions.database, expected_project_id=self.revisions.project)

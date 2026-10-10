@@ -1,0 +1,1090 @@
+{
+  "$defs": {
+    "AcquisitionOrigin": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "remote-acquisition",
+          "title": "Kind",
+          "type": "string"
+        },
+        "locationId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "receiptSha256": {
+          "$ref": "#/$defs/Digest"
+        }
+      },
+      "required": [
+        "kind",
+        "locationId",
+        "receiptSha256"
+      ],
+      "title": "AcquisitionOrigin",
+      "type": "object"
+    },
+    "AnchorCorrection": {
+      "additionalProperties": false,
+      "properties": {
+        "nodeId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "expectedNodeSha256": {
+          "$ref": "#/$defs/Digest"
+        },
+        "op": {
+          "const": "adjust-anchor",
+          "title": "Op",
+          "type": "string"
+        },
+        "locator": {
+          "$ref": "#/$defs/PageRegionLocator"
+        }
+      },
+      "required": [
+        "nodeId",
+        "expectedNodeSha256",
+        "op",
+        "locator"
+      ],
+      "title": "AnchorCorrection",
+      "type": "object"
+    },
+    "CodepointRange": {
+      "additionalProperties": false,
+      "properties": {
+        "start": {
+          "$ref": "#/$defs/Count"
+        },
+        "end": {
+          "$ref": "#/$defs/Count"
+        }
+      },
+      "required": [
+        "start",
+        "end"
+      ],
+      "title": "CodepointRange",
+      "type": "object"
+    },
+    "Coordinate": {
+      "minimum": 0,
+      "type": "number"
+    },
+    "CorrectionDraft": {
+      "additionalProperties": false,
+      "properties": {
+        "schemaVersion": {
+          "const": "1.0",
+          "default": "1.0",
+          "title": "Schemaversion",
+          "type": "string"
+        },
+        "documentType": {
+          "const": "document-correction-draft",
+          "default": "document-correction-draft",
+          "title": "Documenttype",
+          "type": "string"
+        },
+        "correctionVersion": {
+          "const": "document-correction-1",
+          "default": "document-correction-1",
+          "title": "Correctionversion",
+          "type": "string"
+        },
+        "projectId": {
+          "$ref": "#/$defs/ProjectIdentity"
+        },
+        "draftId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "revisionId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "previousDraftRevisionId": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Identity"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "source": {
+          "$ref": "#/$defs/SourceIdentity"
+        },
+        "patch": {
+          "$ref": "#/$defs/CorrectionPatch"
+        },
+        "rationale": {
+          "$ref": "#/$defs/Rationale"
+        },
+        "authoredBy": {
+          "$ref": "#/$defs/Identity"
+        },
+        "authoredActorType": {
+          "const": "human",
+          "default": "human",
+          "title": "Authoredactortype",
+          "type": "string"
+        },
+        "authoredAt": {
+          "$ref": "#/$defs/Instant"
+        },
+        "intentRevisionId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "intentSha256": {
+          "$ref": "#/$defs/Digest"
+        },
+        "policySha256": {
+          "$ref": "#/$defs/Digest"
+        },
+        "commandId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "commandKind": {
+          "default": "save",
+          "enum": [
+            "save",
+            "discard"
+          ],
+          "title": "Commandkind",
+          "type": "string"
+        },
+        "commandSha256": {
+          "$ref": "#/$defs/Digest"
+        },
+        "previewSha256": {
+          "$ref": "#/$defs/Digest"
+        },
+        "state": {
+          "default": "draft",
+          "enum": [
+            "draft",
+            "discarded"
+          ],
+          "title": "State",
+          "type": "string"
+        }
+      },
+      "required": [
+        "projectId",
+        "draftId",
+        "revisionId",
+        "previousDraftRevisionId",
+        "source",
+        "patch",
+        "rationale",
+        "authoredBy",
+        "authoredAt",
+        "intentRevisionId",
+        "intentSha256",
+        "policySha256",
+        "commandId",
+        "commandSha256",
+        "previewSha256"
+      ],
+      "title": "CorrectionDraft",
+      "type": "object"
+    },
+    "CorrectionDraftSelector": {
+      "additionalProperties": false,
+      "properties": {
+        "draftRevisionId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "baseRevisionId": {
+          "$ref": "#/$defs/Identity"
+        }
+      },
+      "required": [
+        "draftRevisionId",
+        "baseRevisionId"
+      ],
+      "title": "CorrectionDraftSelector",
+      "type": "object"
+    },
+    "CorrectionDraftView": {
+      "additionalProperties": false,
+      "properties": {
+        "record": {
+          "$ref": "#/$defs/CorrectionDraft"
+        },
+        "confirmationSha256": {
+          "$ref": "#/$defs/Digest"
+        }
+      },
+      "required": [
+        "record",
+        "confirmationSha256"
+      ],
+      "title": "CorrectionDraftView",
+      "type": "object"
+    },
+    "CorrectionLabel": {
+      "additionalProperties": false,
+      "properties": {
+        "nodeId": {
+          "$ref": "#/$defs/Token"
+        },
+        "label": {
+          "$ref": "#/$defs/Label"
+        }
+      },
+      "required": [
+        "nodeId",
+        "label"
+      ],
+      "title": "CorrectionLabel",
+      "type": "object"
+    },
+    "CorrectionNodeView": {
+      "additionalProperties": false,
+      "properties": {
+        "nodeId": {
+          "$ref": "#/$defs/Token"
+        },
+        "parentId": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Token"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "order": {
+          "$ref": "#/$defs/Offset"
+        },
+        "kind": {
+          "$ref": "#/$defs/Token"
+        },
+        "expectedNodeSha256": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Digest"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "preview": {
+          "$ref": "#/$defs/Preview"
+        },
+        "label": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Preview"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "textStart": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Offset"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "textEnd": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Offset"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "locator": {
+          "$ref": "#/$defs/SourceLocator"
+        },
+        "referenceId": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Identity"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "expectedReferenceSha256": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Digest"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "state": {
+          "enum": [
+            "accepted",
+            "proposed"
+          ],
+          "title": "State",
+          "type": "string"
+        }
+      },
+      "required": [
+        "nodeId",
+        "parentId",
+        "order",
+        "kind",
+        "expectedNodeSha256",
+        "preview",
+        "label",
+        "textStart",
+        "textEnd",
+        "locator",
+        "referenceId",
+        "expectedReferenceSha256",
+        "state"
+      ],
+      "title": "CorrectionNodeView",
+      "type": "object"
+    },
+    "CorrectionOperation": {
+      "discriminator": {
+        "mapping": {
+          "adjust-anchor": "#/$defs/AnchorCorrection",
+          "exclude": "#/$defs/ExcludeCorrection",
+          "merge": "#/$defs/MergeCorrection",
+          "reference-rematch": "#/$defs/ReferenceRematchCorrection",
+          "relabel": "#/$defs/RelabelCorrection",
+          "reorder": "#/$defs/ReorderCorrection",
+          "split": "#/$defs/SplitCorrection"
+        },
+        "propertyName": "op"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/RelabelCorrection"
+        },
+        {
+          "$ref": "#/$defs/ReorderCorrection"
+        },
+        {
+          "$ref": "#/$defs/SplitCorrection"
+        },
+        {
+          "$ref": "#/$defs/MergeCorrection"
+        },
+        {
+          "$ref": "#/$defs/ReferenceRematchCorrection"
+        },
+        {
+          "$ref": "#/$defs/AnchorCorrection"
+        },
+        {
+          "$ref": "#/$defs/ExcludeCorrection"
+        }
+      ]
+    },
+    "CorrectionPatch": {
+      "additionalProperties": false,
+      "properties": {
+        "schemaVersion": {
+          "const": "1.0",
+          "default": "1.0",
+          "title": "Schemaversion",
+          "type": "string"
+        },
+        "baseRevisionId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "expectedStructureSha256": {
+          "$ref": "#/$defs/Digest"
+        },
+        "operations": {
+          "items": {
+            "$ref": "#/$defs/CorrectionOperation"
+          },
+          "maxItems": 32,
+          "title": "Operations",
+          "type": "array"
+        }
+      },
+      "required": [
+        "baseRevisionId",
+        "expectedStructureSha256",
+        "operations"
+      ],
+      "title": "CorrectionPatch",
+      "type": "object"
+    },
+    "Count": {
+      "maximum": 9007199254740991,
+      "minimum": 0,
+      "type": "integer"
+    },
+    "Digest": {
+      "pattern": "^[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "ExcludeCorrection": {
+      "additionalProperties": false,
+      "properties": {
+        "nodeId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "expectedNodeSha256": {
+          "$ref": "#/$defs/Digest"
+        },
+        "op": {
+          "const": "exclude",
+          "title": "Op",
+          "type": "string"
+        }
+      },
+      "required": [
+        "nodeId",
+        "expectedNodeSha256",
+        "op"
+      ],
+      "title": "ExcludeCorrection",
+      "type": "object"
+    },
+    "Format": {
+      "enum": [
+        "jats",
+        "tei",
+        "xml",
+        "html",
+        "pdf",
+        "docx",
+        "plain-text"
+      ],
+      "type": "string"
+    },
+    "HumanReferenceMatch": {
+      "additionalProperties": false,
+      "properties": {
+        "referenceId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "workId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "workRevisionId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "basis": {
+          "default": "human-proposed",
+          "enum": [
+            "human-proposed",
+            "human-accepted"
+          ],
+          "title": "Basis",
+          "type": "string"
+        },
+        "scholarlyVerification": {
+          "const": "unverified",
+          "default": "unverified",
+          "title": "Scholarlyverification",
+          "type": "string"
+        }
+      },
+      "required": [
+        "referenceId",
+        "workId",
+        "workRevisionId"
+      ],
+      "title": "HumanReferenceMatch",
+      "type": "object"
+    },
+    "Identity": {
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+      "type": "string"
+    },
+    "Instant": {
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z$",
+      "type": "string"
+    },
+    "Label": {
+      "maxLength": 160,
+      "minLength": 1,
+      "type": "string"
+    },
+    "LocalOrigin": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "local-import",
+          "title": "Kind",
+          "type": "string"
+        }
+      },
+      "required": [
+        "kind"
+      ],
+      "title": "LocalOrigin",
+      "type": "object"
+    },
+    "MergeCorrection": {
+      "additionalProperties": false,
+      "properties": {
+        "nodeId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "expectedNodeSha256": {
+          "$ref": "#/$defs/Digest"
+        },
+        "op": {
+          "const": "merge",
+          "title": "Op",
+          "type": "string"
+        },
+        "withNodeId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "expectedWithNodeSha256": {
+          "$ref": "#/$defs/Digest"
+        }
+      },
+      "required": [
+        "nodeId",
+        "expectedNodeSha256",
+        "op",
+        "withNodeId",
+        "expectedWithNodeSha256"
+      ],
+      "title": "MergeCorrection",
+      "type": "object"
+    },
+    "Offset": {
+      "maximum": 1000000,
+      "minimum": 0,
+      "type": "integer"
+    },
+    "PageRegionLocator": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "page-region",
+          "title": "Kind",
+          "type": "string"
+        },
+        "pageIndex": {
+          "exclusiveMaximum": 500,
+          "minimum": 0,
+          "title": "Pageindex",
+          "type": "integer"
+        },
+        "x0": {
+          "$ref": "#/$defs/Coordinate"
+        },
+        "y0": {
+          "$ref": "#/$defs/Coordinate"
+        },
+        "x1": {
+          "$ref": "#/$defs/Coordinate"
+        },
+        "y1": {
+          "$ref": "#/$defs/Coordinate"
+        },
+        "unit": {
+          "const": "points",
+          "title": "Unit",
+          "type": "string"
+        },
+        "origin": {
+          "const": "top-left",
+          "title": "Origin",
+          "type": "string"
+        },
+        "frame": {
+          "const": "unrotated-source-page",
+          "title": "Frame",
+          "type": "string"
+        }
+      },
+      "required": [
+        "kind",
+        "pageIndex",
+        "x0",
+        "y0",
+        "x1",
+        "y1",
+        "unit",
+        "origin",
+        "frame"
+      ],
+      "title": "PageRegionLocator",
+      "type": "object"
+    },
+    "Preview": {
+      "maxLength": 160,
+      "type": "string"
+    },
+    "ProjectIdentity": {
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[47][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+      "type": "string"
+    },
+    "Rationale": {
+      "maxLength": 1000,
+      "minLength": 1,
+      "type": "string"
+    },
+    "ReferenceRematchCorrection": {
+      "additionalProperties": false,
+      "properties": {
+        "nodeId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "expectedNodeSha256": {
+          "$ref": "#/$defs/Digest"
+        },
+        "op": {
+          "const": "reference-rematch",
+          "title": "Op",
+          "type": "string"
+        },
+        "referenceId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "expectedReferenceSha256": {
+          "$ref": "#/$defs/Digest"
+        },
+        "workId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "workRevisionId": {
+          "$ref": "#/$defs/Identity"
+        }
+      },
+      "required": [
+        "nodeId",
+        "expectedNodeSha256",
+        "op",
+        "referenceId",
+        "expectedReferenceSha256",
+        "workId",
+        "workRevisionId"
+      ],
+      "title": "ReferenceRematchCorrection",
+      "type": "object"
+    },
+    "RelabelCorrection": {
+      "additionalProperties": false,
+      "properties": {
+        "nodeId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "expectedNodeSha256": {
+          "$ref": "#/$defs/Digest"
+        },
+        "op": {
+          "const": "relabel",
+          "title": "Op",
+          "type": "string"
+        },
+        "label": {
+          "$ref": "#/$defs/Label"
+        }
+      },
+      "required": [
+        "nodeId",
+        "expectedNodeSha256",
+        "op",
+        "label"
+      ],
+      "title": "RelabelCorrection",
+      "type": "object"
+    },
+    "ReorderCorrection": {
+      "additionalProperties": false,
+      "properties": {
+        "nodeId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "expectedNodeSha256": {
+          "$ref": "#/$defs/Digest"
+        },
+        "op": {
+          "const": "reorder",
+          "title": "Op",
+          "type": "string"
+        },
+        "beforeNodeId": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Identity"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "nodeId",
+        "expectedNodeSha256",
+        "op",
+        "beforeNodeId"
+      ],
+      "title": "ReorderCorrection",
+      "type": "object"
+    },
+    "SourceIdentity": {
+      "additionalProperties": false,
+      "properties": {
+        "projectId": {
+          "$ref": "#/$defs/ProjectIdentity"
+        },
+        "attachmentId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "documentId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "documentRevisionId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "candidateId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "sourceAssertionRevisionId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "workId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "workRevisionId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "versionId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "versionRevisionId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "objectSha256": {
+          "$ref": "#/$defs/Digest"
+        },
+        "byteLength": {
+          "maximum": 134217728,
+          "minimum": 0,
+          "title": "Bytelength",
+          "type": "integer"
+        },
+        "format": {
+          "$ref": "#/$defs/Format"
+        },
+        "provenance": {
+          "discriminator": {
+            "mapping": {
+              "local-import": "#/$defs/LocalOrigin",
+              "remote-acquisition": "#/$defs/AcquisitionOrigin"
+            },
+            "propertyName": "kind"
+          },
+          "oneOf": [
+            {
+              "$ref": "#/$defs/LocalOrigin"
+            },
+            {
+              "$ref": "#/$defs/AcquisitionOrigin"
+            }
+          ],
+          "title": "Provenance"
+        }
+      },
+      "required": [
+        "projectId",
+        "attachmentId",
+        "documentId",
+        "documentRevisionId",
+        "candidateId",
+        "sourceAssertionRevisionId",
+        "workId",
+        "workRevisionId",
+        "versionId",
+        "versionRevisionId",
+        "objectSha256",
+        "byteLength",
+        "format",
+        "provenance"
+      ],
+      "title": "SourceIdentity",
+      "type": "object"
+    },
+    "SourceLocator": {
+      "discriminator": {
+        "mapping": {
+          "page-region": "#/$defs/PageRegionLocator",
+          "text": "#/$defs/TextLocator",
+          "unavailable": "#/$defs/UnavailableLocator"
+        },
+        "propertyName": "kind"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/TextLocator"
+        },
+        {
+          "$ref": "#/$defs/PageRegionLocator"
+        },
+        {
+          "$ref": "#/$defs/UnavailableLocator"
+        }
+      ]
+    },
+    "SplitCorrection": {
+      "additionalProperties": false,
+      "properties": {
+        "nodeId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "expectedNodeSha256": {
+          "$ref": "#/$defs/Digest"
+        },
+        "op": {
+          "const": "split",
+          "title": "Op",
+          "type": "string"
+        },
+        "at": {
+          "maximum": 9007199254740991,
+          "minimum": 0,
+          "title": "At",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "nodeId",
+        "expectedNodeSha256",
+        "op",
+        "at"
+      ],
+      "title": "SplitCorrection",
+      "type": "object"
+    },
+    "TextLocator": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "text",
+          "title": "Kind",
+          "type": "string"
+        },
+        "projectionId": {
+          "$ref": "#/$defs/Token"
+        },
+        "rawRanges": {
+          "items": {
+            "$ref": "#/$defs/CodepointRange"
+          },
+          "title": "Rawranges",
+          "type": "array"
+        }
+      },
+      "required": [
+        "kind",
+        "projectionId",
+        "rawRanges"
+      ],
+      "title": "TextLocator",
+      "type": "object"
+    },
+    "Token": {
+      "maxLength": 128,
+      "minLength": 1,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._+-]*$",
+      "type": "string"
+    },
+    "UnavailableLocator": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "unavailable",
+          "title": "Kind",
+          "type": "string"
+        },
+        "reason": {
+          "enum": [
+            "not-reported",
+            "format-has-no-pages",
+            "unsupported-location",
+            "parser-unavailable"
+          ],
+          "title": "Reason",
+          "type": "string"
+        }
+      },
+      "required": [
+        "kind",
+        "reason"
+      ],
+      "title": "UnavailableLocator",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schemaVersion": {
+      "const": "1.0",
+      "default": "1.0",
+      "title": "Schemaversion",
+      "type": "string"
+    },
+    "projectId": {
+      "$ref": "#/$defs/ProjectIdentity"
+    },
+    "source": {
+      "$ref": "#/$defs/SourceIdentity"
+    },
+    "documentId": {
+      "$ref": "#/$defs/Identity"
+    },
+    "revisionId": {
+      "$ref": "#/$defs/Identity"
+    },
+    "currentRevisionId": {
+      "$ref": "#/$defs/Identity"
+    },
+    "acceptedBy": {
+      "$ref": "#/$defs/Identity"
+    },
+    "acceptedAt": {
+      "$ref": "#/$defs/Instant"
+    },
+    "machineRevisionId": {
+      "$ref": "#/$defs/Identity"
+    },
+    "attachmentId": {
+      "$ref": "#/$defs/Identity"
+    },
+    "jobId": {
+      "$ref": "#/$defs/Identity"
+    },
+    "structureSha256": {
+      "$ref": "#/$defs/Digest"
+    },
+    "nodes": {
+      "items": {
+        "$ref": "#/$defs/CorrectionNodeView"
+      },
+      "maxItems": 20,
+      "title": "Nodes",
+      "type": "array"
+    },
+    "previewNodes": {
+      "items": {
+        "$ref": "#/$defs/CorrectionNodeView"
+      },
+      "maxItems": 20,
+      "title": "Previewnodes",
+      "type": "array"
+    },
+    "nextOffset": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Offset"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "draft": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/CorrectionDraftView"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "drafts": {
+      "items": {
+        "$ref": "#/$defs/CorrectionDraftSelector"
+      },
+      "maxItems": 10,
+      "title": "Drafts",
+      "type": "array"
+    },
+    "acceptedLabels": {
+      "items": {
+        "$ref": "#/$defs/CorrectionLabel"
+      },
+      "maxItems": 20,
+      "title": "Acceptedlabels",
+      "type": "array"
+    },
+    "acceptedReferenceMatches": {
+      "items": {
+        "$ref": "#/$defs/HumanReferenceMatch"
+      },
+      "maxItems": 20,
+      "title": "Acceptedreferencematches",
+      "type": "array"
+    },
+    "acceptedDecision": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/CorrectionDraftView"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "scholarlyVerification": {
+      "const": "unverified",
+      "default": "unverified",
+      "title": "Scholarlyverification",
+      "type": "string"
+    }
+  },
+  "required": [
+    "projectId",
+    "source",
+    "documentId",
+    "revisionId",
+    "currentRevisionId",
+    "acceptedBy",
+    "acceptedAt",
+    "machineRevisionId",
+    "attachmentId",
+    "jobId",
+    "structureSha256",
+    "nodes",
+    "previewNodes",
+    "nextOffset",
+    "draft",
+    "drafts",
+    "acceptedLabels",
+    "acceptedReferenceMatches",
+    "acceptedDecision"
+  ],
+  "title": "CorrectionPage",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://research-observatory.local/contracts/documents/document-correction-page.v1.schema.json",
+  "x-research-observatory-semanticRules": [
+    "typed-at-most-32-operations-on-exact-base-and-expected-original-node-reference-structure-digests",
+    "saved-proposals-preview-undo-and-discard-never-advance-the-accepted-head",
+    "explicit-exact-draft-confirmation-appends-human-decision-fresh-elements-provenance-outbox-and-scoped-impact-atomically",
+    "current-native-human-session-project-intent-privacy-source-inspect-derive-and-canonical-work-authority-through-publication-and-delivery",
+    "retain-original-parser-output-source-unicode-contributors-and-history-labels-human-matches-and-machine-assertions-are-distinct",
+    "authenticate-native-docling-relationships-against-original-machine-structure-before-mapping-successor-source-lineage",
+    "exact-command-retry-no-duplicate-or-conflicting-command-success-cas-and-cancellation-before-commit",
+    "encrypted-128-kib-record-10000-items-one-million-retained-codepoints-five-second-cooperative-transform-32-correction-generations",
+    "source-fenced-bounded-pages-20-nodes-160-codepoint-previews-10-jobs-targets-drafts-and-128-kib-delivery",
+    "impact-preview-is-prospective-and-rechecked-at-acceptance-not-recalculation-or-release-authority",
+    "accepted-revision-v1-and-literal-migrations-unchanged-no-parser-model-network-or-plaintext-scratch"
+  ]
+}

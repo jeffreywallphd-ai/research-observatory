@@ -419,6 +419,7 @@ def extract_table_figures(
     *,
     native_artifact: bytes | None = None,
     docling_artifact: bytes | None = None,
+    source_lineage=None,
     cancelled: Callable[[], bool] = lambda: False,
 ) -> tuple[TableFigureEntry, ...]:
     """Pure derivation; caller holds current source authority through delivery."""
@@ -446,10 +447,37 @@ def extract_table_figures(
     if native_artifact is not None and docling_artifact is not None:
         raise TableFigureProblem("structure-parser-binding-invalid")
     relationships: Relationships | None = None
+    relationship_base = accepted
+    if source_lineage is not None:
+        source_lineage.validate(accepted)
+        relationship_base = source_lineage.machine_revision
     if native_artifact is not None:
-        relationships = _native_relationships(accepted, native_artifact, checkpoint)
+        relationships = _native_relationships(relationship_base, native_artifact, checkpoint)
     elif docling_artifact is not None:
-        relationships = _docling_relationships(accepted, docling_artifact, checkpoint)
+        relationships = _docling_relationships(relationship_base, docling_artifact, checkpoint)
+    if relationships is not None and source_lineage is not None:
+        old_captions, old_labels, old_headers, old_ambiguous, old_unavailable = relationships
+
+        def lift(groups):
+            result = {}
+            for source, targets in groups.items():
+                checkpoint()
+                for current in source_lineage.retained_nodes(source):
+                    result[current] = tuple(
+                        dict.fromkeys(mapped for target in targets for mapped in source_lineage.retained_nodes(target))
+                    )
+            return result
+
+        def lift_set(values):
+            return {current for old in values for current in source_lineage.retained_nodes(old)}
+
+        relationships = (
+            lift(old_captions),
+            lift(old_labels),
+            {current: state for old, state in old_headers.items() for current in source_lineage.retained_nodes(old)},
+            lift_set(old_ambiguous),
+            lift_set(old_unavailable),
+        )
     captions: Mapping[str, Sequence[str]]
     labels: Mapping[str, Sequence[str]]
     headers: Mapping[str, HeaderState]
@@ -484,7 +512,7 @@ def extract_table_figures(
                     normalized_range=CodepointRange(start=start, end=min(end, start + MAX_QUOTE_CODEPOINTS)),
                 ),
             )
-            if start < end
+            if start < end and not (source_lineage is not None and source_lineage.excludes_span(identity, span))
             else None
         )
 

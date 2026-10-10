@@ -166,6 +166,124 @@ class DocumentRevisionService:
             ),
         )
 
+    def _corrections(self, command, trace_id, action):
+        from .document_corrections import MAX_CORRECTION_RECORD_BYTES
+        from .document_revisions import protected_json
+        from .document_viewer_allocations import viewer_revision_reads
+
+        def scoped(repository, actor, stopped):
+            correction = repository.corrections()
+            # Metadata selects the exact original before any artifact is
+            # decoded. Each adapter still enters its inspect+derive fence.
+            source = correction.source_for_command(command)
+            bounded = viewer_revision_reads(repository, source.byte_length) if source else repository
+
+            def project_action(reconciler=None, observed=None, resolve=None, intent=None, path=None):
+                if reconciler is not None and (
+                    observed.actor_id,
+                    observed.intent_sha256,
+                    observed.policy_sha256,
+                    intent.revision_id,
+                    reconciler._project,
+                    reconciler._database,
+                    path,
+                ) != (
+                    actor.actor_id,
+                    actor.intent_sha256,
+                    actor.policy_sha256,
+                    actor.intent_revision_id,
+                    repository.project,
+                    repository.database,
+                    Path(command.root),
+                ):
+                    raise DocumentRevisionProblem("document-correction-authority-mismatch")
+
+                def target(connection, match):
+                    if reconciler is None or resolve is None:
+                        raise DocumentRevisionProblem("document-correction-reference-authority-unavailable")
+                    state = reconciler._state(connection, match.work_id)
+                    if state.disposition != "active" or state.revision_id != match.work_revision_id:
+                        raise DocumentRevisionProblem("document-correction-reference-authority-changed")
+                    sources = reconciler._work_sources(connection, match.work_id, resolve)
+                    if not sources:
+                        raise DocumentRevisionProblem("document-correction-reference-authority-unavailable")
+                    with bounded._aggregates(connection) as aggregates:
+                        return aggregates.get_revision(state.revision_id)
+
+                selected = bounded.corrections(target_resolver=target)
+                result = action(selected, stopped, reconciler, resolve)
+                wire = result.model_dump(mode="json", by_alias=True)
+                if len(protected_json(result)) > MAX_CORRECTION_RECORD_BYTES or stopped():
+                    raise DocumentRevisionProblem("document-correction-stopped-or-resource-limit")
+                return wire
+
+            if self.reconciliation is not None:
+                return self.reconciliation._with_authority(command.root, trace_id, project_action)
+            return project_action()
+
+        return self._scoped_repository(command, trace_id, scoped)
+
+    def correction_queue(self, command, *, trace_id):
+        return self._corrections(
+            command,
+            trace_id,
+            lambda repo, stopped, _r, _s: repo.queue(after_job_id=command.after_job_id, cancelled=stopped),
+        )
+
+    def correction_page(self, command, *, trace_id):
+        return self._corrections(
+            command,
+            trace_id,
+            lambda repo, stopped, _r, _s: repo.page(
+                command.revision_id,
+                draft_revision_id=command.draft_revision_id,
+                offset=command.offset,
+                cancelled=stopped,
+            ),
+        )
+
+    def correction_save(self, command, *, trace_id):
+        return self._corrections(
+            command,
+            trace_id,
+            lambda repo, stopped, _r, _s: repo.draft_view(repo.save(command.correction, cancelled=stopped)),
+        )
+
+    def correction_accept(self, command, *, trace_id):
+        return self._corrections(
+            command,
+            trace_id,
+            lambda repo, stopped, _r, _s: repo.accepted_view(repo.accept(command.acceptance, cancelled=stopped)),
+        )
+
+    def correction_discard(self, command, *, trace_id):
+        return self._corrections(
+            command,
+            trace_id,
+            lambda repo, stopped, _r, _s: repo.draft_view(repo.discard(command.discard, cancelled=stopped)),
+        )
+
+    def correction_draft(self, command, *, trace_id):
+        return self._corrections(
+            command,
+            trace_id,
+            lambda repo, stopped, _r, _s: repo.draft_view(repo.read(command.draft_revision_id, cancelled=stopped)),
+        )
+
+    def correction_impact(self, command, *, trace_id):
+        return self._corrections(
+            command, trace_id, lambda repo, stopped, _r, _s: repo.impact(command.draft_revision_id, cancelled=stopped)
+        )
+
+    def correction_targets(self, command, *, trace_id):
+        return self._corrections(
+            command,
+            trace_id,
+            lambda repo, stopped, reconciler, resolve: repo.work_targets(
+                command.after_work_id, reconciler, resolve, cancelled=stopped
+            ),
+        )
+
     def accept(self, command, *, trace_id):
         return self._current(command, trace_id, lambda repository: repository.accept(command.acceptance))
 

@@ -356,7 +356,8 @@
         "available",
         "not-reported",
         "normalization-boundary",
-        "empty-marker"
+        "empty-marker",
+        "excluded-region"
       ],
       "type": "string"
     },

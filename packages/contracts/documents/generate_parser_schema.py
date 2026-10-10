@@ -15,6 +15,21 @@ sys.path.insert(0, str(ROOT / "services/core-api/src"))
 
 from research_observatory_core.citation_reader import CitationReaderNotice, CitationReaderPage  # noqa: E402
 from research_observatory_core.document_citations import CitationCollection, CitationEnrichmentCommand  # noqa: E402
+from research_observatory_core.document_correction_views import (  # noqa: E402
+    CorrectionAcceptedView,
+    CorrectionDraftView,
+    CorrectionImpactView,
+    CorrectionPage,
+    CorrectionQueue,
+    CorrectionWorkTargets,
+)
+from research_observatory_core.document_corrections import (  # noqa: E402
+    CorrectionAcceptance,
+    CorrectionDiscard,
+    CorrectionDraft,
+    CorrectionPatch,
+    CorrectionSave,
+)
 from research_observatory_core.document_references import ReferenceCollection, ReferenceEnrichmentCommand  # noqa: E402
 from research_observatory_core.document_revisions import (  # noqa: E402
     AcceptedDocumentRevision,
@@ -51,6 +66,17 @@ from research_observatory_core.reference_reader import ReferenceReaderNotice, Re
 from research_observatory_core.table_figure_reader import TableFigureReaderNotice, TableFigureReaderPage  # noqa: E402
 
 OUTPUTS: dict[str, TypeAdapter[Any]] = {
+    "document-correction-patch.v1.schema.json": TypeAdapter(CorrectionPatch),
+    "document-correction-save.v1.schema.json": TypeAdapter(CorrectionSave),
+    "document-correction-draft.v1.schema.json": TypeAdapter(CorrectionDraft),
+    "document-correction-acceptance.v1.schema.json": TypeAdapter(CorrectionAcceptance),
+    "document-correction-discard.v1.schema.json": TypeAdapter(CorrectionDiscard),
+    "document-correction-draft-view.v1.schema.json": TypeAdapter(CorrectionDraftView),
+    "document-correction-page.v1.schema.json": TypeAdapter(CorrectionPage),
+    "document-correction-queue.v1.schema.json": TypeAdapter(CorrectionQueue),
+    "document-correction-impact.v1.schema.json": TypeAdapter(CorrectionImpactView),
+    "document-correction-targets.v1.schema.json": TypeAdapter(CorrectionWorkTargets),
+    "document-correction-accepted.v1.schema.json": TypeAdapter(CorrectionAcceptedView),
     "parsing-quality-report.v1.schema.json": TypeAdapter(ParsingQualityReport),
     "parsing-quality-dimensions.v1.schema.json": TypeAdapter(QualityAssessment),
     "table-figure-collection.v1.schema.json": TypeAdapter(TableFigureCollection),
@@ -92,6 +118,7 @@ REFERENCE_SCHEMAS = {name for name in OUTPUTS if name.startswith("reference-")}
 CITATION_SCHEMAS = {name for name in OUTPUTS if name.startswith("citation-")}
 TABLE_FIGURE_SCHEMAS = {name for name in OUTPUTS if name.startswith("table-figure-")}
 QUALITY_SCHEMAS = {name for name in OUTPUTS if name.startswith("parsing-quality-")}
+CORRECTION_SCHEMAS = {name for name in OUTPUTS if name.startswith("document-correction-")}
 REVISION_SCHEMAS = (
     set(OUTPUTS)
     - {
@@ -106,7 +133,21 @@ REVISION_SCHEMAS = (
     - CITATION_SCHEMAS
     - TABLE_FIGURE_SCHEMAS
     - QUALITY_SCHEMAS
+    - CORRECTION_SCHEMAS
 )
+CORRECTION_RULES = [
+    "typed-at-most-32-operations-on-exact-base-and-expected-original-node-reference-structure-digests",
+    "saved-proposals-preview-undo-and-discard-never-advance-the-accepted-head",
+    "explicit-exact-draft-confirmation-appends-human-decision-fresh-elements-provenance-outbox-and-scoped-impact-atomically",
+    "current-native-human-session-project-intent-privacy-source-inspect-derive-and-canonical-work-authority-through-publication-and-delivery",
+    "retain-original-parser-output-source-unicode-contributors-and-history-labels-human-matches-and-machine-assertions-are-distinct",
+    "authenticate-native-docling-relationships-against-original-machine-structure-before-mapping-successor-source-lineage",
+    "exact-command-retry-no-duplicate-or-conflicting-command-success-cas-and-cancellation-before-commit",
+    "encrypted-128-kib-record-10000-items-one-million-retained-codepoints-five-second-cooperative-transform-32-correction-generations",
+    "source-fenced-bounded-pages-20-nodes-160-codepoint-previews-10-jobs-targets-drafts-and-128-kib-delivery",
+    "impact-preview-is-prospective-and-rechecked-at-acceptance-not-recalculation-or-release-authority",
+    "accepted-revision-v1-and-literal-migrations-unchanged-no-parser-model-network-or-plaintext-scratch",
+]
 QUALITY_RULES = [
     "separate-versioned-dimensions-review-triage-no-aggregate-correctness-or-scholarly-acceptance",
     "exact-durable-job-current-attempt-selected-source-producer-input-and-nullable-retained-result-bindings",
@@ -244,6 +285,8 @@ def schema(name: str) -> dict[str, object]:
             "no-later-revision-substitution-or-scholarly-verification-from-navigation",
         ]
         if name == "viewer-deep-link.v1.schema.json"
+        else CORRECTION_RULES
+        if name in CORRECTION_SCHEMAS
         else QUALITY_RULES
         if name in QUALITY_SCHEMAS
         else TABLE_FIGURE_RULES

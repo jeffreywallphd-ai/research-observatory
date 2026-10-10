@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 85dc1554d558914a0b70f647536abcf6cf4c37d125c33c24d6193a429d7fc7cd
+source_sha256: 9ae033a837954a19f53d84da35a2a2cff6a223b24983ce9917efb73398251d1c
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -12310,13 +12310,13 @@ Original tasks and approvals remain unchanged.
 
 #### - [ ] CAP-05.S06.T02 - Build manual structural correction and annotation tools
 
-**Status / priority / estimate / risk:** `READY` / `P0` / `L` / `high`
+**Status / priority / estimate / risk:** `IN_PROGRESS` / `P0` / `L` / `high`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
 **Dependencies:** `CAP-05.S06.T01`, `CAP-05.S05.T01`
 
-**Owner / review:** - / - (`-`)
+**Owner / review:** codex-w2-implementation / - (`-`)
 
 **Objective:** Controlled edits for section labels/order, merged/split blocks, reference matches, page anchors, and exclusion of corrupted regions.
 
