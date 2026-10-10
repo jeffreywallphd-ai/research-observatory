@@ -1,0 +1,197 @@
+{
+  "taskId": "W2.C17.T01",
+  "originTaskId": "CAP-05.S06.T03",
+  "candidateCommit": "aa43e3fcee791ffa73e41d5969bbaff3ff42476e",
+  "exactProductPaths": [
+    "apps/desktop/src/app/ApplicationRuntime.tsx",
+    "tests/desktop/test_reprocessing_workflow_navigation.py"
+  ],
+  "reference": {
+    "referenceId": "RO-UI-ACADEMIC-MINIMAL-1.9",
+    "version": "1.9",
+    "packageSha256": "24b8d62356863980ae9a13db7d6a06b04b76c60e2f1920d2e888cadecfb24c4b",
+    "approvalCommit": "d4691f716f839f4aac5bb50563b56ac863b32685",
+    "approvedBy": "human:repository-owner",
+    "previousReferenceId": "RO-UI-ACADEMIC-MINIMAL-1.8"
+  },
+  "substitutionPredicates": [
+    "linked_correction_authority:1779",
+    "validate:6975-6977"
+  ],
+  "producer": {
+    "path": "artifacts/tmp/W2.C17.T01-ui-authority-proof-03.py",
+    "sha256": "9c61d1de18fbf21e502f2d607f26489f44a708b76105ea0b5161a67091cd20b9"
+  },
+  "taskApproval": false,
+  "waveCompletion": false,
+  "releaseApproval": false,
+  "frameworkSourceChangesAuthorized": false,
+  "schemaVersion": "1.0",
+  "documentType": "exact-source-free-ui-restoration-method-readiness",
+  "status": "READY_FOR_EXACT_OWNER_DECISION",
+  "result": "approved",
+  "reviewer": "agent:parsing_quality_review",
+  "recordedAt": "2026-10-10T22:55:32.462473+00:00",
+  "proposal": {
+    "path": "artifacts/evidence/W2.C17.T01.ui-authority-method-proposal-01.json",
+    "sha256": "a20b84f2fa2d4a8085ddad24d24afe2f439644e141fe8e2e81bc64e0b760e2a8",
+    "commit": "6abd5b1c5ba161a900938c6079e96c8c2d29c315"
+  },
+  "methodReady": true,
+  "productRestoration": true,
+  "findings": [],
+  "readinessScope": "Independent readiness for only the exact proposed current fix and two source-free selector substitutions. This is not owner authority or formal task approval.",
+  "productAssessment": {
+    "path": "artifacts/tmp/W2.C17.T01.product-restoration-assessment-01.json",
+    "sha256": "c233e085462d20c271820c92364a7c3e611ce3f39502349f4fe36a8a0ed8de39"
+  },
+  "productEvidence": {
+    "freshCandidateRun": {
+      "path": "artifacts/tmp/W2.C17.T01.qualifying-03.attempt-02.json",
+      "sha256": "059fcccf3b15ab2736ac31fb1b40dd4f3c96385a73db4785bd8587f546f62817"
+    },
+    "aggregateStatus": "FAIL",
+    "elapsedSeconds": 87.00853349996032,
+    "reportedSourceInputCount": 18477,
+    "reportedFreshFixtureInputCount": 198,
+    "receiptReportsSelectedInputsAndFreshFixtureUnchanged": true,
+    "fixedCandidateAfter": "aa43e3fcee791ffa73e41d5969bbaff3ff42476e",
+    "sevenAffectedChildrenPass": true,
+    "originalPublicUiGateExitCode": 1,
+    "originalPublicUiGatePassClaimed": false,
+    "authenticatedRawChildren": [
+      {
+        "id": "ui-change-authority",
+        "exitCode": 1,
+        "rawOutput": "artifacts/tmp/W2.C17.T01.qualifying-03.attempt-02.ui-change-authority.log",
+        "rawOutputSHA256": "ef82e3ca8224de8628b94733be8114cf3e812e0bc900a54744ab2b1fba7e10dc"
+      },
+      {
+        "id": "affected-python-format",
+        "exitCode": 0,
+        "rawOutput": "artifacts/tmp/W2.C17.T01.qualifying-03.attempt-02.affected-python-format.log",
+        "rawOutputSHA256": "fd2299c9f1c6dc869070883e281051bfe93aacf66c1a3b0069f45b4aa410ca50"
+      },
+      {
+        "id": "affected-python-lint",
+        "exitCode": 0,
+        "rawOutput": "artifacts/tmp/W2.C17.T01.qualifying-03.attempt-02.affected-python-lint.log",
+        "rawOutputSHA256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18"
+      },
+      {
+        "id": "affected-python-types",
+        "exitCode": 0,
+        "rawOutput": "artifacts/tmp/W2.C17.T01.qualifying-03.attempt-02.affected-python-types.log",
+        "rawOutputSHA256": "8e63ae22e8213e327a5e9cbd584067681681bd8ef7f25c869877887ccdcfc4ff"
+      },
+      {
+        "id": "desktop-types",
+        "exitCode": 0,
+        "rawOutput": "artifacts/tmp/W2.C17.T01.qualifying-03.attempt-02.desktop-types.log",
+        "rawOutputSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "id": "root-and-workflow-regression",
+        "exitCode": 0,
+        "rawOutput": "artifacts/tmp/W2.C17.T01.qualifying-03.attempt-02.root-and-workflow-regression.log",
+        "rawOutputSHA256": "09df606e89ca259db5b0f6c1b5a739b863242d295bc639c15bf5a66b0716df74"
+      },
+      {
+        "id": "production-root-fixture-build",
+        "exitCode": 0,
+        "rawOutput": "artifacts/tmp/W2.C17.T01.qualifying-03.attempt-02.production-root-fixture-build.log",
+        "rawOutputSHA256": "b566697482f32b633a48396e0d777cf81c332f8df2179cb8374172d5618725ee"
+      },
+      {
+        "id": "stable-announcement-and-recovery",
+        "exitCode": 0,
+        "rawOutput": "artifacts/tmp/W2.C17.T01.qualifying-03.attempt-02.stable-announcement-and-recovery.log",
+        "rawOutputSHA256": "5b511770b2c4818edee6293dd9ad3e95421536eba69889826860b98d247ee1a7"
+      }
+    ],
+    "behavioralCoverage": "18 dirty/busy/issued-unknown by stage/Return/Source Manager/Home/settings/Ctrl+K cases and29 existing root/workflow tests. Exact pending commands/rationale/owner remain; denied notices settle truthfully; exact unknown retry creates one authored plan; acceptance remains zero; normal recovery permits navigation.",
+    "bounds": "Mounted production root and Quality/Reprocessing components with declared project/workflow/Core command ports. No Native/Core/encrypted, shipping UIA, physical assistive technology, model/hardware, installer or slice/Wave proof. Receipt/input-closure claims are authenticated as recorded;18477 inputs were not rehashed by this finite readiness review."
+  },
+  "methodAssessment": {
+    "preparedProducer": {
+      "path": "artifacts/tmp/W2.C17.T01-ui-authority-proof-03.py",
+      "sha256": "9c61d1de18fbf21e502f2d607f26489f44a708b76105ea0b5161a67091cd20b9"
+    },
+    "independentProducerPreflight": {
+      "path": "artifacts/tmp/W2.C17.T01.ui-authority-proof-preflight-03.json",
+      "sha256": "c931a72958bc3bd10c3e0a47a59c4b26e0817eb83d811b3659c5dc5b3bd91178"
+    },
+    "identityCharacterization": {
+      "path": "artifacts/tmp/W2.C17.T01-ui-authority-identity-characterization-run03.json",
+      "sha256": "48efcdb5e1e129f86f6dce22956ca3b46611db3492cd0a8da2cc2f79d9539885"
+    },
+    "identityResult": "Retained actual28-case pure characterization PASS; strict installed agent syntax and normalization reject implementation/repository-owner aliases and malformed identities. No helper or full producer execution and no proof of real authorship.",
+    "substitution": "Replace only inherited origin-label selection at linked_correction_authority:1779 and its duplicate validate:6975-6977 with exact direct owner classification plus this independent current-fix readiness. No origin relabel, amendment fabrication, conformance-fallback borrowing or original-command PASS.",
+    "retainedOrdinaryAssertions": [
+      "Exact normal full claim base/owner/branch/worktree/active lease, paused predecessor/spec/origin snapshot/review history and committed claim chronology remain authenticated by unchanged helpers.",
+      "Exact ordinary v1.0 defect-restoration schema, single contract, regular Git objects, exact implementation files and per-commit correction scope/hidden add-revert checks remain.",
+      "Approved1.9/reference package/ancestral owner approval remains unchanged from the correction base; no reference, criterion, policy/schema/controller/CI/ADR source change is allowed.",
+      "Explicit restorationClassification, if present, still invokes the unchanged classification helper. No field is added to enter another lane.",
+      "Immutable proposal/readiness/owner references, exact producer hash, ordered introductions and same task/origin/fix/reference/two selectors authenticate before helper imports; source/runtime/HEAD/decision/claim/spec inputs are rechecked afterwards.",
+      "Normal atomic taskctl criterion submission, independent formal corrective disposition and integration remain required. No task status mutation or completion authority is supplied."
+    ],
+    "governingSourceRawSHA256": {
+      "tools/ui_change_gate.py": "fa77fdf99c05b64954c4ce62956e137f2a97f09b96f42d4d75aeb68c05cde126",
+      "tools/taskctl.py": "9337fe41e90fd4b4d9bf39c32ca299ccca1c26f6f6b6a1d0b426a8ac062bc7e3"
+    },
+    "fullAuthorityProofExecuted": false,
+    "batchReaderLimit": "Reviewed selected-tree batch parser preserves exact raw-blob hash map with strict framing/type/OID/size/trailing-output checks and60-second subprocess bound. This is preparation, not memory/performance or complete history execution."
+  },
+  "preservedAdverse": {
+    "authenticatedReferences": [
+      {
+        "path": "artifacts/tmp/W2.C17.T01.red-03.attempt-01.json",
+        "sha256": "405cdf21130f88cd88f5f6c49c3ee42f0716c211efd2d4cd1144a354da01ed86"
+      },
+      {
+        "path": "artifacts/tmp/W2.C17.T01.red-locator-remediation-01.json",
+        "sha256": "80cacfdbcfdc0d7805cd0a21dd6a2f026cd3d77531bbf8afbfea6728c91a5f99"
+      },
+      {
+        "path": "artifacts/tmp/W2.C17.T01.red-03.attempt-02.json",
+        "sha256": "6732190035ab0f1721e7ce60d6bc21e89b5b2d35f487f6c7950f7e083fa426a4"
+      },
+      {
+        "path": "artifacts/tmp/W2.C17.T01.red-test-source-02.py",
+        "sha256": "2a4c0bc89101a8dc61a0513a5f5105f8f7fce6a5885dc898cce8d43c2ae9938f"
+      },
+      {
+        "path": "artifacts/tmp/W2.C17.T01.development-01.json",
+        "sha256": "42b29c252af9ac6eee622d761304fd4cd6de2b78155f082e36c476b574cbe51b"
+      },
+      {
+        "path": "artifacts/tmp/W2.C17.T01.development-02.json",
+        "sha256": "7541d0f666233c4ac1b60b5eab3e3a81742d05edf7ab6bb700f3556619e0553a"
+      },
+      {
+        "path": "artifacts/tmp/W2.C17.T01.qualifying-03.attempt-01.json",
+        "sha256": "a54f99a987d7837c3f2454aaa4f49d45fd2dfd267913b6c4328f1a08f1347f2c"
+      },
+      {
+        "path": "artifacts/tmp/W2.C17.T01.ui-authority-proof-preflight-01.json",
+        "sha256": "9b85e7d7dc8f2efd9d60e5b8b92a883a27133f2b4aa38fc608557c6f93e66e9f"
+      },
+      {
+        "path": "artifacts/tmp/W2.C17.T01.ui-authority-proof-preflight-02.json",
+        "sha256": "26d94ee1872289d2fd56dbd0613c6644f2894af4daa6e6628b5c992a0b423a88"
+      }
+    ],
+    "disclosure": "Red01 setup errors, red02 nine actual false announcements, development01 positive-heading errors, development02 development PASS, first committed authority+lint FAIL and independence-preflight01 adverse remain unchanged. The successor fresh receipt remains aggregate FAIL solely for the original public authority route."
+  },
+  "provenanceAndLimits": [
+    "Exact proposal local/raw Git bytes at its introduction, exact two-file patch and candidate Git blobs, producer/preflight/identity/assessment links and all eight fresh raw output digests were authenticated. All nine disclosed adverse references match.",
+    "Reused the independent current-product restoration assessment and finite ordinary-selector route assessment; inspected only current two-selector source equivalence and final bindings. No full helper/producer import, test, history, source/runtime inventory, build/UI/model replay or taskctl mutation.",
+    "Only this new public data record is authored. Root owns its normal commit and any later append-only owner decision. No prior evidence/source/HEAD/authority record changed.",
+    "Actual direct owner method/restorative classification decision and authorized fresh full source-free proof remain missing. Readiness approved does not authorize method execution.",
+    "Formal C17 task disposition, S06 shipping/Core/UIA/conformance/recovery/performance and full Wave/release gates remain separate; inherited broad architecture/lint/hardware gaps are unwaived."
+  ],
+  "ownerApprovalGranted": false,
+  "methodExecutionAuthorized": false,
+  "authorityProofExecuted": false,
+  "sliceCompletion": false
+}
