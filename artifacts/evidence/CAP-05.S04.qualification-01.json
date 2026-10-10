@@ -1,0 +1,314 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "slice-qualification-evidence",
+  "sliceId": "CAP-05.S04",
+  "waveId": "W2",
+  "candidate": "00091983e4919e77b94a455c75ce8f511f8a77bf",
+  "branch": "codex/w2-implementation",
+  "qualificationStatus": "SELECTED_CHECKS_PASSED_INDEPENDENT_DISPOSITION_PENDING",
+  "approval": {
+    "frozenWaveCommit": "c85a59f3a293f8e3f2eaf6454682c9a14b1efa55",
+    "approvedSlicePlan": {
+      "path": "planning/slice-plans/CAP-05/CAP-05.S04-source-viewer-and-evidence-inspection-experience.md",
+      "sha256": "3245d99eb79f2cc5a5651c538db71d9bcd5a2b5e4d7d104edd7a52d8132f246c",
+      "hashConvention": "raw-bytes"
+    },
+    "acceptedArchitecture": {
+      "path": "docs/adr/ADR-0029-preserve-document-revisions-and-mediate-source-viewing.md",
+      "sha256": "ffee796414cdde9155667c8c3a710e7c904197971b7714832c7c5bc950687e7b",
+      "hashConvention": "raw-bytes"
+    },
+    "latencySuccessor": {
+      "path": "artifacts/evidence/CAP-05.S04.T01.latency-target-amendment-01.adopted.json",
+      "sha256": "99798833d3cca799dcf4e083f486c6d98f74c3820591ef4a41af62dafcad6bbb",
+      "hashConvention": "LF-canonical"
+    },
+    "experience": "RO-UI-ACADEMIC-MINIMAL-1.9; approved publication d4691f716f839f4aac5bb50563b56ac863b32685"
+  },
+  "taskEvidence": [
+    {
+      "taskId": "CAP-05.S04.T01",
+      "candidate": "91fe7b323d2cddb2cd7de287f05b961af3472bc8",
+      "criterionManifest": {
+        "path": "artifacts/evidence/CAP-05.S04.T01.R01.json",
+        "sha256": "d1cb8cece275ddcc4e4d4b5ffcc4687e91f69851d874d8f6052938d40d2e89bd",
+        "hashConvention": "LF-canonical"
+      },
+      "independentReview": {
+        "path": "artifacts/evidence/CAP-05.S04.T01.review-R01.json",
+        "sha256": "22df8a5406d0b79d642fa3baa695a381667998deba9cad0a8c57331fd9104038",
+        "hashConvention": "LF-canonical"
+      },
+      "disposition": "approved",
+      "resultReuse": false,
+      "provenance": "Authenticated independently reviewed task history; not a fresh slice replay."
+    },
+    {
+      "taskId": "CAP-05.S04.T02",
+      "candidate": "68e1df19a0807058fd32c9c314c6852a5ac4a6ed",
+      "criterionManifest": {
+        "path": "artifacts/evidence/CAP-05.S04.T02.R01.json",
+        "sha256": "a67d9f45de0600ecc5844e2a3856e18f92bba021a1b827528f1a545ef5551c64",
+        "hashConvention": "LF-canonical"
+      },
+      "independentReview": {
+        "path": "artifacts/evidence/CAP-05.S04.T02.review-R01.json",
+        "sha256": "61224917b84283296d53629a2fa3812e252f05d87bb41c87b1f86369735ca710",
+        "hashConvention": "LF-canonical"
+      },
+      "disposition": "approved",
+      "resultReuse": false,
+      "provenance": "Authenticated independently reviewed task history; not a fresh slice replay."
+    },
+    {
+      "taskId": "CAP-05.S04.T03",
+      "candidate": "3fdb6e104937e2d22b2c4396ddee1eb8fdb3fe88",
+      "criterionManifest": {
+        "path": "artifacts/evidence/CAP-05.S04.T03.R01.json",
+        "sha256": "b1f6203f3938e9f8bd84a79ec960efa6a9cb8679909f52a5c166fe248854cd8c",
+        "hashConvention": "LF-canonical"
+      },
+      "independentReview": {
+        "path": "artifacts/evidence/CAP-05.S04.T03.review-R01.json",
+        "sha256": "9902c32f2ac3b077f627f66d170286e23d7fa52e85dc9cb7312891d42c813186",
+        "hashConvention": "LF-canonical"
+      },
+      "disposition": "approved",
+      "resultReuse": false,
+      "provenance": "Authenticated independently reviewed task history; not a fresh slice replay."
+    }
+  ],
+  "verificationSelection": {
+    "selectedCommandIds": [
+      "desktop:application"
+    ],
+    "rationale": "Actual connected renderer/Wry/Native/Core/DPAPI/SQLCipher observations compose the cross-task original/older-anchor/current-denial/nonexecuting-review/Native-cancel/restart/identified-output/return seams at the fixed candidate. Attempt02 completed denial and nonexecuting explicit review before a read-only snapshot failed; its overall FAIL is retained. Fresh03 continues the persisted consent and proves current permissions, cancellation and restarted separate delivery. Prior independently reviewed task checks remain exact history; no cached Native result or new execution is inferred from them. T03 adds action delivery, not a new original-read algorithm, parser or model. The approved 3-second p95 evidence and owner-accepted parser overage remain unchanged; no 20-open or model/tier replay.",
+    "deferredCoverage": [
+      "S02-S04 checkpoint: accumulated affected profile union and fresh clean build/smoke.",
+      "Fresh full repository/profile/platform/package/security/privacy/rights/accessibility/performance and cross-capability W2 qualification, independent Wave review and separate G2 human release.",
+      "No 8/16 GiB model/hardware testing or 2/3 GiB/minimum-tier support claim. Configurable/smaller model and W5 large-computing direction remains a separate bounded approved product decision."
+    ]
+  },
+  "checks": [
+    {
+      "name": "shipping-Reader-initial",
+      "status": "passed",
+      "fresh": true,
+      "candidate": "00091983e4919e77b94a455c75ce8f511f8a77bf",
+      "commandId": "desktop:application",
+      "command": ".venv/Scripts/python.exe -B artifacts/tmp/CAP-05.S04.qualifying-reader-journey-03.py 00091983e4919e77b94a455c75ce8f511f8a77bf initial",
+      "report": {
+        "path": "artifacts/tmp/CAP-05.S04.qualifying-reader-journey-03.initial.json",
+        "sha256": "860a053efbf87aff2d9dd3f1950270a88ac57ba542ddfc10e021a3e7372e8975",
+        "hashConvention": "raw-bytes"
+      },
+      "rawOutput": {
+        "path": "artifacts/tmp/CAP-05.S04.qualifying-reader-journey-03.initial.outer.log",
+        "sha256": "ef51196040ba7803a361daa29d44bf571e32c4d9b0758a8b81d426209f474cc4",
+        "hashConvention": "raw-bytes"
+      },
+      "nativeEvents": {
+        "path": "artifacts/tmp/CAP-05.S04.qualifying-reader-journey-03.initial.events.jsonl",
+        "sha256": "1d78a46f80566f1de4c3c7015e66873eedd58b95a95b77c0bc93270dd2142303",
+        "hashConvention": "raw-bytes"
+      },
+      "nativeStderr": {
+        "path": "artifacts/tmp/CAP-05.S04.qualifying-reader-journey-03.initial.stderr.log",
+        "sha256": "c7c6254c278ee63e7915984b60ac553b8b2514ba7426966c2b5967997efeda6e",
+        "hashConvention": "raw-bytes"
+      },
+      "producer": {
+        "path": "artifacts/tmp/CAP-05.S04.qualifying-reader-journey-03.py",
+        "sha256": "9368b23fca2c61d9023e3e39c86b2964d87b15beafdcd2ba7d85fad68dc4b0b5",
+        "hashConvention": "raw-bytes"
+      },
+      "ownedUIA": [
+        {
+          "path": "artifacts/tmp/CAP-05.S04.slice-uia-02.cs",
+          "sha256": "3e1fcf75cbb0c05ae53ff7e8dde34e24287f210cb231d91be66c573b2a99f65e",
+          "hashConvention": "raw-bytes"
+        },
+        {
+          "path": "artifacts/tmp/CAP-05.S04.slice-uia-02.ps1",
+          "sha256": "5c499d80655071d2c38633a426df366fb1dfbb568d86d9ccf5b56e685af82007",
+          "hashConvention": "raw-bytes"
+        }
+      ],
+      "durationSeconds": 35.50536529999226,
+      "exitCode": 0,
+      "builtBinaryCandidate": "3fdb6e104937e2d22b2c4396ddee1eb8fdb3fe88",
+      "buildResultReplayed": false,
+      "currentProductInputEqualityChecked": true
+    },
+    {
+      "name": "shipping-Reader-restart",
+      "status": "passed",
+      "fresh": true,
+      "candidate": "00091983e4919e77b94a455c75ce8f511f8a77bf",
+      "commandId": "desktop:application",
+      "command": ".venv/Scripts/python.exe -B artifacts/tmp/CAP-05.S04.qualifying-reader-journey-03.py 00091983e4919e77b94a455c75ce8f511f8a77bf restart",
+      "report": {
+        "path": "artifacts/tmp/CAP-05.S04.qualifying-reader-journey-03.restart.json",
+        "sha256": "7df1c5f343077a9212b8b568e75b1b14bb5c875e9d3bd7f0ef1f67aa352498a5",
+        "hashConvention": "raw-bytes"
+      },
+      "rawOutput": {
+        "path": "artifacts/tmp/CAP-05.S04.qualifying-reader-journey-03.restart.outer.log",
+        "sha256": "a9fd3c3dca33f61c605687897a24eb5afb7448bcb549250193e2e6898b88e27b",
+        "hashConvention": "raw-bytes"
+      },
+      "nativeEvents": {
+        "path": "artifacts/tmp/CAP-05.S04.qualifying-reader-journey-03.restart.events.jsonl",
+        "sha256": "b160a628920322ac3df30f5fc41293fdabfc140ac7b39a4de351ec28db4b0afd",
+        "hashConvention": "raw-bytes"
+      },
+      "nativeStderr": {
+        "path": "artifacts/tmp/CAP-05.S04.qualifying-reader-journey-03.restart.stderr.log",
+        "sha256": "c7c6254c278ee63e7915984b60ac553b8b2514ba7426966c2b5967997efeda6e",
+        "hashConvention": "raw-bytes"
+      },
+      "producer": {
+        "path": "artifacts/tmp/CAP-05.S04.qualifying-reader-journey-03.py",
+        "sha256": "9368b23fca2c61d9023e3e39c86b2964d87b15beafdcd2ba7d85fad68dc4b0b5",
+        "hashConvention": "raw-bytes"
+      },
+      "ownedUIA": [
+        {
+          "path": "artifacts/tmp/CAP-05.S04.slice-uia-02.cs",
+          "sha256": "3e1fcf75cbb0c05ae53ff7e8dde34e24287f210cb231d91be66c573b2a99f65e",
+          "hashConvention": "raw-bytes"
+        },
+        {
+          "path": "artifacts/tmp/CAP-05.S04.slice-uia-02.ps1",
+          "sha256": "5c499d80655071d2c38633a426df366fb1dfbb568d86d9ccf5b56e685af82007",
+          "hashConvention": "raw-bytes"
+        }
+      ],
+      "durationSeconds": 35.63544039998669,
+      "exitCode": 0,
+      "builtBinaryCandidate": "3fdb6e104937e2d22b2c4396ddee1eb8fdb3fe88",
+      "buildResultReplayed": false,
+      "currentProductInputEqualityChecked": true
+    }
+  ],
+  "completedObservationFromAdverseAttempt": {
+    "overallAttemptStatus": "FAIL",
+    "report": {
+      "path": "artifacts/tmp/CAP-05.S04.qualifying-reader-journey-02.initial.json",
+      "sha256": "e512b6db527bd1e1ec3231cf32e55d7c613d6582686de87dd1a0668551ddcfe8",
+      "hashConvention": "raw-bytes"
+    },
+    "producer": {
+      "path": "artifacts/tmp/CAP-05.S04.qualifying-reader-journey-02.py",
+      "sha256": "7fe47ccab2fa17bcb5d5cb17a7278fcfa2517c42036f0d44d795499ad8bdb4d0",
+      "hashConvention": "raw-bytes"
+    },
+    "rawOutput": {
+      "path": "artifacts/tmp/CAP-05.S04.qualifying-reader-journey-02.initial.outer.log",
+      "sha256": "33c964e3261c68bba693b73f3b18e849990ea9aa7069acbbc5c5c98849bfbb9e",
+      "hashConvention": "raw-bytes"
+    },
+    "completedObservations": [
+      "exact hard Copy denial with original inspection",
+      "owned Tab focus transition",
+      "actual Light/Dark status and960px reflow",
+      "actual explicit permitted-use review followed by asserted no Reader output"
+    ],
+    "independentReadOnlyAuthentication": "agent:/root/reader_anchor_review authenticated the producer,9703 unchanged selected inputs, raw action/status observations and graceful/physical cleanup before the fresh03 continuation. No formal slice approval was made by that advisory.",
+    "limit": "The read-only snapshot failed ElementNotAvailableException after these assertions. The whole attempt remains FAIL; no fresh03 consent or complete02 qualification is claimed."
+  },
+  "integrationBoundaries": [
+    {
+      "criterion": "Sections5/10/17: original, exact historical anchor/context and return outcome",
+      "proof": "Fresh initial and restarted shipping journeys; reviewed T01/T02 task manifests",
+      "observations": "Actual original Page1/50, selected older accepted normalized revision, two distinct exact contexts and source-action anchor remain connected through shipping compiled renderer, Wry, Native invoke and current supervised Core. New OS process reopens the same retained deep link without reselection and returns to the selected Work/version. Historical T02 real physical relocation proof remains separately authenticated history."
+    },
+    {
+      "criterion": "Sections7/8/10: rights, explicit human authority and Native delivery/cancellation",
+      "proof": "Actual completed02 deny/review observations with full attempt FAIL retained; fresh03 current-permission cancellation and restarted Save",
+      "observations": "Attempt02 completed exact rights-explicit-denial Copy while original inspection remained available, then a separate explicit human permitted-use review with asserted no output. Fresh03 continues that recorded use with a fresh permission check and real Native folder consent. Cancel produces no Reader file and restores owned Native thread focus. Restart preserves the recorded use but still requires a separate fresh check and destination; exact quotation binds original/normalized/anchor, project/attachment/candidate/source assertion/Work/version revisions and matching canonical citation metadata. Delivered plaintext is visibly outside project protection and extraction remains unverified."
+    },
+    {
+      "criterion": "Sections6/10/17: accessibility, focus, themes, reflow and reference conformance",
+      "proof": "Authenticated completed02 owned UIA observations, fresh03 cancelled-dialog focus and reviewed task mounted/contract conformance",
+      "observations": "Completed observations in attempt02 show accessible control/status names, one actual owned-window Tab focus transition, Light/Dark polite announcements and action-control bounds in a resized960px window; the overall attempt remains FAIL. Fresh03 proves cancelled-dialog Native thread focus is restored. Reviewed mounted task tests cover richer keyboard/DOM/theme/late-response cases. No hardware screen-reader, full keyboard traversal, pixel/phone-width parity or screenshot-only boundary claim."
+    },
+    {
+      "criterion": "Sections10/11/14/15: resource, failure, compatibility, security and complete evidence",
+      "proof": "All three exact approved task records and new cross-task principal proof",
+      "observations": "Historical T01 bounds/current-session/source denial/read cancellation, T02 missing/broken context and actual restart/relocation, T03 alternate-transfer denial, current six-field action purposes, private clipboard, local PDF held-callback Lock/cancel, inert consumer and physical incomplete-output cleanup retain exact independent dispositions. No new database migration occurs in S04. Accepted latency successor records3.0s p95 and reviewed2659.1579/2728.0284ms cold/warm observations; no new performance run is claimed. Existing full-profile debt remains explicit at checkpoint/Wave."
+    }
+  ],
+  "fixturePreparation": [
+    {
+      "path": "artifacts/tmp/CAP-05.S04.prepare-clean-reader-fixture-01.json",
+      "sha256": "46a70a27b3da23f42ac6fbcd489b7a3b32a3dd5971984f9446efa14b04cc76d0",
+      "hashConvention": "raw-bytes"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S04.diagnose-clean-reader-open-01.json",
+      "sha256": "f0a42a3908b3803574f5265d12344dc3d1b4763b3ad632ee72fba1d672498c4f",
+      "hashConvention": "raw-bytes"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S04.prepare-clean-reader-fixture-02.json",
+      "sha256": "c2bc48626768372527d80e992e940dde98994b22cac1d7367b4b13e4d510ed07",
+      "hashConvention": "raw-bytes"
+    }
+  ],
+  "adverseEvidence": [
+    "Journey02's read-only UI tree expired after actual denial/keyboard/themes/reflow/nonexecuting permitted-use review and the next fresh check. Its full FAIL and graceful/physical0 are preserved. Journey03 continues that persisted consent with exact transient-dump retries only; every failed dump stays logged, no mutation is retried and no stale snapshot is used.03 is not a fresh consent test.",
+    "Slice journey01 proved hard Copy denial and one owned Tab transition, then failed because the probe requested unsupported InvokePattern on the aria-pressed theme button. Actual application closed0 and physically drained0. Journey02 corrects only the owned theme activation, retains every assertion and the same lawful project. Parent PowerShell7/missing process-scoped execution-policy compiler preflights also remain adverse; qualification uses the producer's original Windows PowerShell5 host and bounded process-only policy.",
+    "Clean-fixture preparation01 omitted empty required directories and actual project open rejected422. It remains FAIL; diagnosis and setup02 restore only owned fixture layout via existing authority, preserving the historical source. The fixture bootstrap close timeout/physical owned cleanup is setup evidence, not product qualification.",
+    "Historical attachment-probe readiness timeout is preserved; actual shipping UIA independently proves current readiness and the completed journey.",
+    "T03 first shipping fixture copied the already relocated empty historical B project; its failed startup remains. Current package input equality and fresh shipping invocation do not relabel that attempt.",
+    "Inherited built-frame CSP predicate and full quality inventory/test-type debt retain adverse reports. These are not silently waived or repaired through prohibited automation work.",
+    "Historical 3007.8ms Reader and62.5333542-second parser observations remain retained; exact approved latency successor and owner acceptance do not erase them."
+  ],
+  "adverseArtifacts": [
+    {
+      "path": "artifacts/tmp/CAP-05.S04.qualifying-reader-journey-01.initial.json",
+      "sha256": "0f5896d411340d64738f89655f3a306094c871533fd1ce433e6f919ef6b08cd6",
+      "hashConvention": "raw-bytes"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S04.qualifying-reader-journey-01.initial.outer.log",
+      "sha256": "a3c2ed1f4dc06f0d4804d56549224c78fc61f9625d0547ac9613755a6a2c0867",
+      "hashConvention": "raw-bytes"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S04.qualifying-reader-journey-02.initial.json",
+      "sha256": "e512b6db527bd1e1ec3231cf32e55d7c613d6582686de87dd1a0668551ddcfe8",
+      "hashConvention": "raw-bytes"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S04.qualifying-reader-journey-02.initial.outer.log",
+      "sha256": "33c964e3261c68bba693b73f3b18e849990ea9aa7069acbbc5c5c98849bfbb9e",
+      "hashConvention": "raw-bytes"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S04.slice-uia-02.ps7-preflight-adverse.json",
+      "sha256": "fea4c857d6272693e73a730ab5b056da3403db620b61aac7f91d783cb8c94ee7",
+      "hashConvention": "raw-bytes"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S04.slice-uia-02.compile.log",
+      "sha256": "a844534fa2ef9977f22d67f8ee13a35eb267d98312fc60639fffb5a414e6a4da",
+      "hashConvention": "raw-bytes"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S04.slice-uia-02.compile-02.log",
+      "sha256": "d37305f3883f25bccfa41790a71c4e47355daa467ae11df4911d4a25735f75e3",
+      "hashConvention": "raw-bytes"
+    }
+  ],
+  "proofLimits": [
+    "Authored synthetic accepted IR and lawful synthetic documents; no actual parser/model quality or scholarly evidence acceptance.",
+    "Fresh desktop/Core process journeys execute the authenticated current product bytes from the assembled T03 integration package; build candidate is3fdb6e1 and no fresh build/installer is claimed here.",
+    "No renderer port override, debugger, JS injection, protocol registration, researcher clipboard access, global input/UI inspection, physical paper printer, external service or release action.",
+    "Historical task results are authenticated reviewed coverage, not cached or fresh Native/benchmark outcomes. Slice approval and Wave release await their separate independent/human gates."
+  ],
+  "independentDisposition": "pending",
+  "waveCompletion": false,
+  "releaseApproval": false
+}
