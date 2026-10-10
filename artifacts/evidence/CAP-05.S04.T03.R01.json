@@ -1,0 +1,970 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "CAP-05.S04.T03",
+  "baseCommit": "f27ab65fc54197143f07b7b92a87b5b70e2368e4",
+  "commit": "3fdb6e104937e2d22b2c4396ddee1eb8fdb3fe88",
+  "branch": "codex/w2-implementation",
+  "changedFiles": [
+    "Cargo.lock",
+    "apps/desktop/src-tauri/Cargo.toml",
+    "apps/desktop/src-tauri/src/directory_picker.rs",
+    "apps/desktop/src-tauri/src/document_drop.rs",
+    "apps/desktop/src-tauri/src/document_viewer.rs",
+    "apps/desktop/src-tauri/src/lib.rs",
+    "apps/desktop/src-tauri/src/supervisor.rs",
+    "apps/desktop/src-tauri/src/viewer_actions.rs",
+    "apps/desktop/src-tauri/src/viewer_actions/windows_integration_tests.rs",
+    "apps/desktop/src-tauri/src/viewer_export.rs",
+    "apps/desktop/src-tauri/src/viewer_print.rs",
+    "apps/desktop/src/app/DocumentViewerWorkspace.tsx",
+    "apps/desktop/src/app/SourceAnchorReader.tsx",
+    "apps/desktop/src/app/ViewerActionsPane.tsx",
+    "apps/desktop/src/app/ViewerAnchorContexts.tsx",
+    "apps/desktop/src/app/viewerActions.test.ts",
+    "apps/desktop/src/app/viewerActions.ts",
+    "artifacts/evidence/CAP-05.S04.T03.task-start.md",
+    "artifacts/evidence/ui-change/CAP-05.S04.T03.json",
+    "docs/adr/ADR-0047-bind-local-source-viewing-to-existing-protected-read-authority.md",
+    "docs/adr/index.json",
+    "docs/architecture/document-parsing.md",
+    "docs/planning-implementation-plan.md",
+    "packages/contracts/documents/generate_parser_schema.py",
+    "packages/contracts/documents/viewer-action-payload.v1.schema.json",
+    "packages/contracts/documents/viewer-action-request.v1.schema.json",
+    "packages/contracts/documents/viewer-annotation-output.v1.schema.json",
+    "packages/contracts/documents/viewer-original-handoff.v1.schema.json",
+    "packages/contracts/documents/viewer-policy-decision.v1.schema.json",
+    "packages/contracts/documents/viewer-quotation-output.v1.schema.json",
+    "packages/contracts/documents/viewer-rights-review-receipt.v1.schema.json",
+    "planning/backlog.yaml",
+    "planning/review-site/CAP-05/CAP-05.S04.T03.html",
+    "planning/review-site/CAP-05/CAP-05.S04.html",
+    "planning/review-site/manifest.json",
+    "planning/review-site/waves/W2.html",
+    "planning/status-summary.md",
+    "services/core-api/src/research_observatory_core/document_viewer_api.py",
+    "services/core-api/src/research_observatory_core/document_viewer_repository.py",
+    "services/core-api/src/research_observatory_core/document_viewer_service.py",
+    "services/core-api/src/research_observatory_core/ports/viewer_actions.py",
+    "services/core-api/src/research_observatory_core/viewer_action_repository.py",
+    "tests/desktop/fixtures/document-viewer.tsx",
+    "tests/desktop/test_document_viewer_interactions.py",
+    "tests/documents/test_viewer_actions.py",
+    "tests/service/test_viewer_actions_api.py"
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "checkIds": [
+        "encrypted-actions-and-private-api",
+        "renderer-action-contracts",
+        "mounted-reader-actions",
+        "actual-native-rights-dialog",
+        "shipping-reader-action",
+        "actual-private-clipboard",
+        "held-pdf-output",
+        "printed-identity",
+        "explicit-inert-consumer"
+      ],
+      "evidence": [
+        "Restricted/unknown/disputed/expired/pending sources remain denied across fixed action-specific Core purposes, Native closed selectors, renderer buttons and mediated DOM/keyboard/context-menu paths. Source permission review is explicit and nonexecuting; a separate action freshly rechecks human/Intent/privacy/source/anchor/rights.",
+        "Allowed exact anchor quotation carries full source/original/normalized/anchor/policy and citation identity with unverified status; selected context is excluded and 2048-codepoint technical cap enforced. Annotation export is identifiers/geometry without quoted context. Denial audit contains safe IDs/codes/hashes, never copied text or destination paths. Actual shipping Save, private isolated clipboard, verified local PDF and inert original consumer establish distinct output boundaries."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "checkIds": [
+        "encrypted-actions-and-private-api",
+        "renderer-action-contracts",
+        "mounted-reader-actions",
+        "viewer_actions-units",
+        "viewer_export-units",
+        "viewer_print-units",
+        "actual-native-rights-dialog",
+        "held-pdf-lock-cancel",
+        "owned-incomplete-termination",
+        "shipping-reader-action"
+      ],
+      "evidence": [
+        "Expected and material failure paths include fixed six-field local RightsUse, trusted real-principal/private API, semantic replay and predecessor equality, no override of explicit denial/dispute/expiry/propagation, fresh post-read authority, stale source/anchor and cancellation/lock/unknown physical ownership.",
+        "Real held create-new local files reject overwrite/reparse/substitution and delete uncommitted plaintext on actual owned termination. Real Windows PDF callback held during Lock/cancel retains physical ownership until settlement; sealed stream rejects late writes. Unit/mounted synthetic ports are not substituted for actual Native/Core/shipping principal proof."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "checkIds": [
+        "affected-python-format",
+        "affected-python-lint",
+        "affected-product-types",
+        "action-schemas",
+        "affected-adr",
+        "product-style",
+        "approved-ui-conformance",
+        "desktop-types",
+        "renderer-action-contracts",
+        "actual-native-rights-dialog",
+        "shipping-reader-action"
+      ],
+      "evidence": [
+        "Additive fixed action request/policy/review/output schemas, product generator, Core private API/repository/service, Native adapters and shared-token Reader controls/documentation/tests are updated. No database migration, new renderer actor/path/grant authority, remote transport or canonical identity store. Proposed ADR0047 documentary mapping now includes T03 without changing accepted ADR authority.",
+        "Actual approved reference1.9 publication lineage d4691f7 and sorted changed-file set are recorded in task/UI metadata; no new governed experience or approval is invented. Reader permission review stays in the existing provenance region. No automation framework/controller/hooks/helpers/schema/CI development, tier/model runs or latency/accepted parser overage tuning."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "verificationSelection": {
+    "selectedCommandIds": [
+      "desktop:application",
+      "desktop:unit",
+      "documents:unit",
+      "foundation:adr",
+      "foundation:quality",
+      "foundation:ui-change"
+    ],
+    "riskAnalysis": "Product text exits the encrypted Reader through explicit rights and physical Windows boundaries: current-candidate Core/API, renderer/mounted, schema/type/ADR/approved UI checks plus fresh actual Native/Core, Shell destination, private clipboard, local PDF stream/lock/cancel/termination, verified inert original consumer and actual shipping invoke. Stable committed candidate and selected input locks; no blanket reused proof or broad profile claim.",
+    "deferred": [
+      "Integrated S04 slice/checkpoint and fresh full affected/repository/profile W2 qualification, cross-capability restart/recovery/packaging/security/privacy/rights/accessibility/performance, independent Wave review and separate human release remain required.",
+      "Existing built-frame predicate rejects inherited unchanged PDF CSP; full quality inventory also has inherited coverage debt. Adverse evidence retained; no control waiver, framework repair or full-profile PASS asserted by this task.",
+      "No 8/16GiB tier/model runs. Larger resource work remains W5; no 2/3GiB or minimum-hardware qualification claim. Qualified T01 latency and accepted parser overage are not replayed. Unsupported physical printer queues remain unavailable; only local Microsoft PDF is qualified."
+    ]
+  },
+  "checks": [
+    {
+      "id": "affected-python-format",
+      "commandId": "foundation:quality",
+      "exitCode": 0,
+      "durationSeconds": 0.10392839997075498,
+      "command": ".venv/Scripts/python.exe -B -m ruff format --check packages/contracts/documents/generate_parser_schema.py services/core-api/src/research_observatory_core/document_viewer_api.py services/core-api/src/research_observatory_core/document_viewer_repository.py services/core-api/src/research_observatory_core/document_viewer_service.py services/core-api/src/research_observatory_core/ports/viewer_actions.py services/core-api/src/research_observatory_core/viewer_action_repository.py tests/desktop/test_document_viewer_interactions.py tests/documents/test_viewer_actions.py tests/service/test_viewer_actions_api.py",
+      "workingDirectory": ".",
+      "commit": "3fdb6e104937e2d22b2c4396ddee1eb8fdb3fe88",
+      "result": "PASS",
+      "rawOutput": "artifacts/tmp/CAP-05.S04.T03.qualifying-focused-03.affected-python-format.log",
+      "rawOutputSha256": "2ce9758b9f8abd876ec3e76c589e099e8b05377b1e7ea2331e81ee80f07bdff8",
+      "rawOutputCanonicalSha256": "2ce9758b9f8abd876ec3e76c589e099e8b05377b1e7ea2331e81ee80f07bdff8",
+      "inputReport": "artifacts/tmp/CAP-05.S04.T03.qualifying-focused-03.json",
+      "inputReportSha256": "970ad80a9720a01d98859e29e5001fe7bbdddc87a6a929c9158aa0b8d744856c",
+      "producerSha256": "bc62fecbaded716c9dbe1d470ee4abf392157e9449619d51f653421b74ab8b42",
+      "provenance": "Fresh current-candidate named child check; complete argv and held selected inputs in ignored report. Focused units/mounted cases use declared synthetic ports; separate actual Native and shipping proofs establish principal boundaries."
+    },
+    {
+      "id": "affected-python-lint",
+      "commandId": "foundation:quality",
+      "exitCode": 0,
+      "durationSeconds": 0.0809616000042297,
+      "command": ".venv/Scripts/python.exe -B -m ruff check packages/contracts/documents/generate_parser_schema.py services/core-api/src/research_observatory_core/document_viewer_api.py services/core-api/src/research_observatory_core/document_viewer_repository.py services/core-api/src/research_observatory_core/document_viewer_service.py services/core-api/src/research_observatory_core/ports/viewer_actions.py services/core-api/src/research_observatory_core/viewer_action_repository.py tests/desktop/test_document_viewer_interactions.py tests/documents/test_viewer_actions.py tests/service/test_viewer_actions_api.py",
+      "workingDirectory": ".",
+      "commit": "3fdb6e104937e2d22b2c4396ddee1eb8fdb3fe88",
+      "result": "PASS",
+      "rawOutput": "artifacts/tmp/CAP-05.S04.T03.qualifying-focused-03.affected-python-lint.log",
+      "rawOutputSha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18",
+      "rawOutputCanonicalSha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18",
+      "inputReport": "artifacts/tmp/CAP-05.S04.T03.qualifying-focused-03.json",
+      "inputReportSha256": "970ad80a9720a01d98859e29e5001fe7bbdddc87a6a929c9158aa0b8d744856c",
+      "producerSha256": "bc62fecbaded716c9dbe1d470ee4abf392157e9449619d51f653421b74ab8b42",
+      "provenance": "Fresh current-candidate named child check; complete argv and held selected inputs in ignored report. Focused units/mounted cases use declared synthetic ports; separate actual Native and shipping proofs establish principal boundaries."
+    },
+    {
+      "id": "affected-product-types",
+      "commandId": "foundation:quality",
+      "exitCode": 0,
+      "durationSeconds": 0.5809824999887496,
+      "command": ".venv/Scripts/python.exe -B -m mypy services/core-api/src/research_observatory_core/document_viewer_api.py services/core-api/src/research_observatory_core/document_viewer_repository.py services/core-api/src/research_observatory_core/document_viewer_service.py services/core-api/src/research_observatory_core/ports/viewer_actions.py services/core-api/src/research_observatory_core/viewer_action_repository.py",
+      "workingDirectory": ".",
+      "commit": "3fdb6e104937e2d22b2c4396ddee1eb8fdb3fe88",
+      "result": "PASS",
+      "rawOutput": "artifacts/tmp/CAP-05.S04.T03.qualifying-focused-03.affected-product-types.log",
+      "rawOutputSha256": "718df785efbbd4b57e63b5f64aff2c5b5592e433447681f759b307f97a3ec96a",
+      "rawOutputCanonicalSha256": "e317872697c2cbfdefa321527a6efe73290dff3a390b0fa8723b87092eccba6a",
+      "inputReport": "artifacts/tmp/CAP-05.S04.T03.qualifying-focused-03.json",
+      "inputReportSha256": "970ad80a9720a01d98859e29e5001fe7bbdddc87a6a929c9158aa0b8d744856c",
+      "producerSha256": "bc62fecbaded716c9dbe1d470ee4abf392157e9449619d51f653421b74ab8b42",
+      "provenance": "Fresh current-candidate named child check; complete argv and held selected inputs in ignored report. Focused units/mounted cases use declared synthetic ports; separate actual Native and shipping proofs establish principal boundaries."
+    },
+    {
+      "id": "action-schemas",
+      "commandId": "documents:unit",
+      "exitCode": 0,
+      "durationSeconds": 0.43690729996887967,
+      "command": ".venv/Scripts/python.exe -B packages/contracts/documents/generate_parser_schema.py --check",
+      "workingDirectory": ".",
+      "commit": "3fdb6e104937e2d22b2c4396ddee1eb8fdb3fe88",
+      "result": "PASS",
+      "rawOutput": "artifacts/tmp/CAP-05.S04.T03.qualifying-focused-03.action-schemas.log",
+      "rawOutputSha256": "a55ee30fb47c9afacd282abc3e69cce6ee0e020d9d710eb2dc98eda54569bb56",
+      "rawOutputCanonicalSha256": "cf42b66dd1df678fb7cf5ffaf80552a60597b0a2f2ef96323d1949800d8f6085",
+      "inputReport": "artifacts/tmp/CAP-05.S04.T03.qualifying-focused-03.json",
+      "inputReportSha256": "970ad80a9720a01d98859e29e5001fe7bbdddc87a6a929c9158aa0b8d744856c",
+      "producerSha256": "bc62fecbaded716c9dbe1d470ee4abf392157e9449619d51f653421b74ab8b42",
+      "provenance": "Fresh current-candidate named child check; complete argv and held selected inputs in ignored report. Focused units/mounted cases use declared synthetic ports; separate actual Native and shipping proofs establish principal boundaries."
+    },
+    {
+      "id": "affected-adr",
+      "commandId": "foundation:adr",
+      "exitCode": 0,
+      "durationSeconds": 2.022563899983652,
+      "command": ".venv/Scripts/python.exe -B tools/adr_check.py --repo . --base f27ab65fc54197143f07b7b92a87b5b70e2368e4 --head 3fdb6e104937e2d22b2c4396ddee1eb8fdb3fe88",
+      "workingDirectory": ".",
+      "commit": "3fdb6e104937e2d22b2c4396ddee1eb8fdb3fe88",
+      "result": "PASS",
+      "rawOutput": "artifacts/tmp/CAP-05.S04.T03.qualifying-focused-03.affected-adr.log",
+      "rawOutputSha256": "6368cfd93ce19b409dcf968b5cb168fb7147b38f8359bf6bf1d4849a6c17f5b6",
+      "rawOutputCanonicalSha256": "063aad662fa0e688c6693204985c57c043f337a7f5348c04f85f7fbb35989445",
+      "inputReport": "artifacts/tmp/CAP-05.S04.T03.qualifying-focused-03.json",
+      "inputReportSha256": "970ad80a9720a01d98859e29e5001fe7bbdddc87a6a929c9158aa0b8d744856c",
+      "producerSha256": "bc62fecbaded716c9dbe1d470ee4abf392157e9449619d51f653421b74ab8b42",
+      "provenance": "Fresh current-candidate named child check; complete argv and held selected inputs in ignored report. Focused units/mounted cases use declared synthetic ports; separate actual Native and shipping proofs establish principal boundaries."
+    },
+    {
+      "id": "product-style",
+      "commandId": "foundation:ui-change",
+      "exitCode": 0,
+      "durationSeconds": 1.0965040000155568,
+      "command": ".venv/Scripts/python.exe -B tools/product_style_check.py --repo .",
+      "workingDirectory": ".",
+      "commit": "3fdb6e104937e2d22b2c4396ddee1eb8fdb3fe88",
+      "result": "PASS",
+      "rawOutput": "artifacts/tmp/CAP-05.S04.T03.qualifying-focused-03.product-style.log",
+      "rawOutputSha256": "f4eb25e4862e786cccc56ba2c917d1a04330081bcd9625ea89304ac260bd35db",
+      "rawOutputCanonicalSha256": "8a4b98289a69c206afaeda4510a164e81f01a045127128bd3ab12d8513e05c57",
+      "inputReport": "artifacts/tmp/CAP-05.S04.T03.qualifying-focused-03.json",
+      "inputReportSha256": "970ad80a9720a01d98859e29e5001fe7bbdddc87a6a929c9158aa0b8d744856c",
+      "producerSha256": "bc62fecbaded716c9dbe1d470ee4abf392157e9449619d51f653421b74ab8b42",
+      "provenance": "Fresh current-candidate named child check; complete argv and held selected inputs in ignored report. Focused units/mounted cases use declared synthetic ports; separate actual Native and shipping proofs establish principal boundaries."
+    },
+    {
+      "id": "approved-ui-conformance",
+      "commandId": "foundation:ui-change",
+      "exitCode": 0,
+      "durationSeconds": 7.886117499961983,
+      "command": ".venv/Scripts/python.exe -B tools/ui_change_gate.py --repo . --base f27ab65fc54197143f07b7b92a87b5b70e2368e4 --head 3fdb6e104937e2d22b2c4396ddee1eb8fdb3fe88",
+      "workingDirectory": ".",
+      "commit": "3fdb6e104937e2d22b2c4396ddee1eb8fdb3fe88",
+      "result": "PASS",
+      "rawOutput": "artifacts/tmp/CAP-05.S04.T03.qualifying-focused-03.approved-ui-conformance.log",
+      "rawOutputSha256": "6b51cb9219f0fcc9a9a8a4d4a95894ace1be95b6ff52b6f9f19072b61015ed33",
+      "rawOutputCanonicalSha256": "00bfe9d82085a6777aadf39f2e578b825a6f1bc8d03af22d53c942dea2413ebe",
+      "inputReport": "artifacts/tmp/CAP-05.S04.T03.qualifying-focused-03.json",
+      "inputReportSha256": "970ad80a9720a01d98859e29e5001fe7bbdddc87a6a929c9158aa0b8d744856c",
+      "producerSha256": "bc62fecbaded716c9dbe1d470ee4abf392157e9449619d51f653421b74ab8b42",
+      "provenance": "Fresh current-candidate named child check; complete argv and held selected inputs in ignored report. Focused units/mounted cases use declared synthetic ports; separate actual Native and shipping proofs establish principal boundaries."
+    },
+    {
+      "id": "desktop-types",
+      "commandId": "foundation:quality",
+      "exitCode": 0,
+      "durationSeconds": 0.7781435999786481,
+      "command": ".local/toolchains/node-v24.19.0-win-x64/node.exe apps/desktop/node_modules/typescript/bin/tsc --noEmit -p apps/desktop/tsconfig.json",
+      "workingDirectory": ".",
+      "commit": "3fdb6e104937e2d22b2c4396ddee1eb8fdb3fe88",
+      "result": "PASS",
+      "rawOutput": "artifacts/tmp/CAP-05.S04.T03.qualifying-focused-03.desktop-types.log",
+      "rawOutputSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "rawOutputCanonicalSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "inputReport": "artifacts/tmp/CAP-05.S04.T03.qualifying-focused-03.json",
+      "inputReportSha256": "970ad80a9720a01d98859e29e5001fe7bbdddc87a6a929c9158aa0b8d744856c",
+      "producerSha256": "bc62fecbaded716c9dbe1d470ee4abf392157e9449619d51f653421b74ab8b42",
+      "provenance": "Fresh current-candidate named child check; complete argv and held selected inputs in ignored report. Focused units/mounted cases use declared synthetic ports; separate actual Native and shipping proofs establish principal boundaries."
+    },
+    {
+      "id": "renderer-action-contracts",
+      "commandId": "desktop:unit",
+      "exitCode": 0,
+      "durationSeconds": 6.076949700014666,
+      "command": ".local/toolchains/node-v24.19.0-win-x64/node.exe apps/desktop/node_modules/vitest/vitest.mjs run apps/desktop/src/app/viewerActions.test.ts apps/desktop/src/app/documentViewerNative.test.ts",
+      "workingDirectory": ".",
+      "commit": "3fdb6e104937e2d22b2c4396ddee1eb8fdb3fe88",
+      "result": "PASS",
+      "rawOutput": "artifacts/tmp/CAP-05.S04.T03.qualifying-focused-03.renderer-action-contracts.log",
+      "rawOutputSha256": "974b7a069890fd5ce9c4efe78203bc70ca83cbf09afb58fce0200d213c941c65",
+      "rawOutputCanonicalSha256": "974b7a069890fd5ce9c4efe78203bc70ca83cbf09afb58fce0200d213c941c65",
+      "inputReport": "artifacts/tmp/CAP-05.S04.T03.qualifying-focused-03.json",
+      "inputReportSha256": "970ad80a9720a01d98859e29e5001fe7bbdddc87a6a929c9158aa0b8d744856c",
+      "producerSha256": "bc62fecbaded716c9dbe1d470ee4abf392157e9449619d51f653421b74ab8b42",
+      "provenance": "Fresh current-candidate named child check; complete argv and held selected inputs in ignored report. Focused units/mounted cases use declared synthetic ports; separate actual Native and shipping proofs establish principal boundaries."
+    },
+    {
+      "id": "encrypted-actions-and-private-api",
+      "commandId": "documents:unit",
+      "exitCode": 0,
+      "durationSeconds": 79.95361989998491,
+      "command": ".venv/Scripts/python.exe -B -m unittest -v tests.documents.test_viewer_actions tests.service.test_viewer_actions_api",
+      "workingDirectory": ".",
+      "commit": "3fdb6e104937e2d22b2c4396ddee1eb8fdb3fe88",
+      "result": "PASS",
+      "rawOutput": "artifacts/tmp/CAP-05.S04.T03.qualifying-focused-03.encrypted-actions-and-private-api.log",
+      "rawOutputSha256": "3fc74ea0c3b3973dc7c9257cc79a4f3854f9ff7f194efa221c7cd4d1bb74d183",
+      "rawOutputCanonicalSha256": "72f6c0fa091f0f47e9cee17934bd86a71bfe34bf135589fec9f50ef218013ded",
+      "inputReport": "artifacts/tmp/CAP-05.S04.T03.qualifying-focused-03.json",
+      "inputReportSha256": "970ad80a9720a01d98859e29e5001fe7bbdddc87a6a929c9158aa0b8d744856c",
+      "producerSha256": "bc62fecbaded716c9dbe1d470ee4abf392157e9449619d51f653421b74ab8b42",
+      "provenance": "Fresh current-candidate named child check; complete argv and held selected inputs in ignored report. Focused units/mounted cases use declared synthetic ports; separate actual Native and shipping proofs establish principal boundaries."
+    },
+    {
+      "id": "mounted-reader-build",
+      "commandId": "desktop:unit",
+      "exitCode": 0,
+      "durationSeconds": 1.0963875000015832,
+      "command": ".local/toolchains/node-v24.19.0-win-x64/node.exe tests/desktop/fixtures/document-viewer.mjs artifacts/tmp/CAP-05.S04.T03.mounted-qualification-01",
+      "workingDirectory": ".",
+      "commit": "3fdb6e104937e2d22b2c4396ddee1eb8fdb3fe88",
+      "result": "PASS",
+      "rawOutput": "artifacts/tmp/CAP-05.S04.T03.qualifying-focused-03.mounted-reader-build.log",
+      "rawOutputSha256": "b566697482f32b633a48396e0d777cf81c332f8df2179cb8374172d5618725ee",
+      "rawOutputCanonicalSha256": "b566697482f32b633a48396e0d777cf81c332f8df2179cb8374172d5618725ee",
+      "inputReport": "artifacts/tmp/CAP-05.S04.T03.qualifying-focused-03.json",
+      "inputReportSha256": "970ad80a9720a01d98859e29e5001fe7bbdddc87a6a929c9158aa0b8d744856c",
+      "producerSha256": "bc62fecbaded716c9dbe1d470ee4abf392157e9449619d51f653421b74ab8b42",
+      "provenance": "Fresh current-candidate named child check; complete argv and held selected inputs in ignored report. Focused units/mounted cases use declared synthetic ports; separate actual Native and shipping proofs establish principal boundaries."
+    },
+    {
+      "id": "mounted-reader-actions",
+      "commandId": "desktop:unit",
+      "exitCode": 0,
+      "durationSeconds": 7.015372900001239,
+      "command": ".venv/Scripts/python.exe -B -m unittest -v tests.desktop.test_document_viewer_interactions",
+      "workingDirectory": ".",
+      "commit": "3fdb6e104937e2d22b2c4396ddee1eb8fdb3fe88",
+      "result": "PASS",
+      "rawOutput": "artifacts/tmp/CAP-05.S04.T03.qualifying-focused-03.mounted-reader-actions.log",
+      "rawOutputSha256": "93e429ed9760b7272a3cc93773046dd94546988f0444461d08dc99ccfc7f90b9",
+      "rawOutputCanonicalSha256": "beab0f2471c90861fc980555fe6d660d34684352bdbd718b9a0630aac618feed",
+      "inputReport": "artifacts/tmp/CAP-05.S04.T03.qualifying-focused-03.json",
+      "inputReportSha256": "970ad80a9720a01d98859e29e5001fe7bbdddc87a6a929c9158aa0b8d744856c",
+      "producerSha256": "bc62fecbaded716c9dbe1d470ee4abf392157e9449619d51f653421b74ab8b42",
+      "provenance": "Fresh current-candidate named child check; complete argv and held selected inputs in ignored report. Focused units/mounted cases use declared synthetic ports; separate actual Native and shipping proofs establish principal boundaries."
+    },
+    {
+      "id": "shipping-frontend",
+      "commandId": "desktop:application",
+      "exitCode": 0,
+      "durationSeconds": 1.2623464000062086,
+      "command": ".local/toolchains/node-v24.19.0-win-x64/node.exe node_modules/vite/bin/vite.js build --config vite.product.config.ts",
+      "workingDirectory": "apps/desktop",
+      "commit": "3fdb6e104937e2d22b2c4396ddee1eb8fdb3fe88",
+      "result": "PASS",
+      "rawOutput": "artifacts/tmp/CAP-05.S04.T03.qualifying-application-03.shipping-frontend.log",
+      "rawOutputSha256": "65a198cd96e8ab8f7177c84c432f5705821b10ce7e5e5d0c89d6fdeb93f82045",
+      "rawOutputCanonicalSha256": "a9aa68a7c4983d795bfcda15bf884dd37cc3e0ca4afc5c65e72ae3d9390148a1",
+      "inputReport": "artifacts/tmp/CAP-05.S04.T03.qualifying-application-03.json",
+      "inputReportSha256": "d963f4d1560d029701ea1532b0a91a6dbf0c124a45f5d9be749d0d6fa891f45c",
+      "producerSha256": "cdbe428e21cf2fb0047e1735c75c68d7e32d572c9f8e11beaca021cf8bc63ea0",
+      "provenance": "Fresh shipping frontend build/assembly only. This is not a built-frame validator or full desktop profile pass; inherited unchanged CSP predicate failure remains adverse."
+    },
+    {
+      "id": "shipping-assembly",
+      "commandId": "desktop:application",
+      "exitCode": 0,
+      "durationSeconds": 0.12117530003888533,
+      "command": ".local/toolchains/node-v24.19.0-win-x64/node.exe scripts/assemble-application.mjs",
+      "workingDirectory": "apps/desktop",
+      "commit": "3fdb6e104937e2d22b2c4396ddee1eb8fdb3fe88",
+      "result": "PASS",
+      "rawOutput": "artifacts/tmp/CAP-05.S04.T03.qualifying-application-03.shipping-assembly.log",
+      "rawOutputSha256": "d01fc2f8c88737bfc7f2dcdfbda74df492655a7b2908f1deaa9735ead1a504ca",
+      "rawOutputCanonicalSha256": "d01fc2f8c88737bfc7f2dcdfbda74df492655a7b2908f1deaa9735ead1a504ca",
+      "inputReport": "artifacts/tmp/CAP-05.S04.T03.qualifying-application-03.json",
+      "inputReportSha256": "d963f4d1560d029701ea1532b0a91a6dbf0c124a45f5d9be749d0d6fa891f45c",
+      "producerSha256": "cdbe428e21cf2fb0047e1735c75c68d7e32d572c9f8e11beaca021cf8bc63ea0",
+      "provenance": "Fresh shipping frontend build/assembly only. This is not a built-frame validator or full desktop profile pass; inherited unchanged CSP predicate failure remains adverse."
+    },
+    {
+      "id": "viewer_actions-units",
+      "commandId": "desktop:unit",
+      "exitCode": 0,
+      "durationSeconds": 0.435032700013835,
+      "command": "artifacts/tmp/CAP-05.S04.T03.qualifying-native-snapshot-02/reader-test.exe viewer_actions::tests:: --nocapture --test-threads=1",
+      "workingDirectory": ".",
+      "commit": "3fdb6e104937e2d22b2c4396ddee1eb8fdb3fe88",
+      "result": "PASS",
+      "rawOutput": "artifacts/tmp/CAP-05.S04.T03.qualifying-native-boundaries-02.viewer_actions-units.stdout.log",
+      "rawOutputSha256": "01206abde40fbae7ef0a409d21ddb51ecad1c2f006b6212acfd200f16b29978d",
+      "rawOutputCanonicalSha256": "01206abde40fbae7ef0a409d21ddb51ecad1c2f006b6212acfd200f16b29978d",
+      "inputReport": "artifacts/tmp/CAP-05.S04.T03.qualifying-native-boundaries-02.json",
+      "inputReportSha256": "e778d536665c14907f3d957f2e5cb3b6701f10fe364d7488a865266018425afd",
+      "producerSha256": "e81313a63776374309f82ea55edf11be344fcc38dd88362347af69b02f0f7979",
+      "provenance": "Fresh actual current-candidate Windows owned child. Native units remain unit scope; real encrypted Core/current rights/owned Shell dialog, local PDF callbacks and inert verified consumer are separately named. Termination case requires real owned exit1 and physically absent incomplete plaintext; parent qualification exit0. No renderer dispatch claim from direct Native tests.",
+      "actualChildExitCode": 0,
+      "expectedOwnedTermination": false
+    },
+    {
+      "id": "viewer_export-units",
+      "commandId": "desktop:unit",
+      "exitCode": 0,
+      "durationSeconds": 0.5356038000318222,
+      "command": "artifacts/tmp/CAP-05.S04.T03.qualifying-native-snapshot-02/reader-test.exe viewer_export::tests:: --nocapture --test-threads=1",
+      "workingDirectory": ".",
+      "commit": "3fdb6e104937e2d22b2c4396ddee1eb8fdb3fe88",
+      "result": "PASS",
+      "rawOutput": "artifacts/tmp/CAP-05.S04.T03.qualifying-native-boundaries-02.viewer_export-units.stdout.log",
+      "rawOutputSha256": "28d1e601e5e0c9cd03bef6af239ba06c7e4bd757008d5760698610a00eed3b2f",
+      "rawOutputCanonicalSha256": "28d1e601e5e0c9cd03bef6af239ba06c7e4bd757008d5760698610a00eed3b2f",
+      "inputReport": "artifacts/tmp/CAP-05.S04.T03.qualifying-native-boundaries-02.json",
+      "inputReportSha256": "e778d536665c14907f3d957f2e5cb3b6701f10fe364d7488a865266018425afd",
+      "producerSha256": "e81313a63776374309f82ea55edf11be344fcc38dd88362347af69b02f0f7979",
+      "provenance": "Fresh actual current-candidate Windows owned child. Native units remain unit scope; real encrypted Core/current rights/owned Shell dialog, local PDF callbacks and inert verified consumer are separately named. Termination case requires real owned exit1 and physically absent incomplete plaintext; parent qualification exit0. No renderer dispatch claim from direct Native tests.",
+      "actualChildExitCode": 0,
+      "expectedOwnedTermination": false
+    },
+    {
+      "id": "viewer_print-units",
+      "commandId": "desktop:unit",
+      "exitCode": 0,
+      "durationSeconds": 0.08134319999953732,
+      "command": "artifacts/tmp/CAP-05.S04.T03.qualifying-native-snapshot-02/reader-test.exe viewer_print::tests:: --nocapture --test-threads=1",
+      "workingDirectory": ".",
+      "commit": "3fdb6e104937e2d22b2c4396ddee1eb8fdb3fe88",
+      "result": "PASS",
+      "rawOutput": "artifacts/tmp/CAP-05.S04.T03.qualifying-native-boundaries-02.viewer_print-units.stdout.log",
+      "rawOutputSha256": "7e1874477af3d0ec7c50644b8e8eead42b7fb6d62958cc3a484feb349f072893",
+      "rawOutputCanonicalSha256": "7e1874477af3d0ec7c50644b8e8eead42b7fb6d62958cc3a484feb349f072893",
+      "inputReport": "artifacts/tmp/CAP-05.S04.T03.qualifying-native-boundaries-02.json",
+      "inputReportSha256": "e778d536665c14907f3d957f2e5cb3b6701f10fe364d7488a865266018425afd",
+      "producerSha256": "e81313a63776374309f82ea55edf11be344fcc38dd88362347af69b02f0f7979",
+      "provenance": "Fresh actual current-candidate Windows owned child. Native units remain unit scope; real encrypted Core/current rights/owned Shell dialog, local PDF callbacks and inert verified consumer are separately named. Termination case requires real owned exit1 and physically absent incomplete plaintext; parent qualification exit0. No renderer dispatch claim from direct Native tests.",
+      "actualChildExitCode": 0,
+      "expectedOwnedTermination": false
+    },
+    {
+      "id": "local-pdf-driver",
+      "commandId": "desktop:application",
+      "exitCode": 0,
+      "durationSeconds": 0.0184294999926351,
+      "command": "artifacts/tmp/CAP-05.S04.T03.qualifying-native-snapshot-02/reader-test.exe viewer_export::tests::actual_pdf_driver_selection_is_local_and_qualified --exact --ignored --nocapture --test-threads=1",
+      "workingDirectory": ".",
+      "commit": "3fdb6e104937e2d22b2c4396ddee1eb8fdb3fe88",
+      "result": "PASS",
+      "rawOutput": "artifacts/tmp/CAP-05.S04.T03.qualifying-native-boundaries-02.local-pdf-driver.stdout.log",
+      "rawOutputSha256": "cec697d969da11881d41a9a8dace805519ce911cd03daa1419ee4669299e288d",
+      "rawOutputCanonicalSha256": "cec697d969da11881d41a9a8dace805519ce911cd03daa1419ee4669299e288d",
+      "inputReport": "artifacts/tmp/CAP-05.S04.T03.qualifying-native-boundaries-02.json",
+      "inputReportSha256": "e778d536665c14907f3d957f2e5cb3b6701f10fe364d7488a865266018425afd",
+      "producerSha256": "e81313a63776374309f82ea55edf11be344fcc38dd88362347af69b02f0f7979",
+      "provenance": "Fresh actual current-candidate Windows owned child. Native units remain unit scope; real encrypted Core/current rights/owned Shell dialog, local PDF callbacks and inert verified consumer are separately named. Termination case requires real owned exit1 and physically absent incomplete plaintext; parent qualification exit0. No renderer dispatch claim from direct Native tests.",
+      "actualChildExitCode": 0,
+      "expectedOwnedTermination": false
+    },
+    {
+      "id": "held-pdf-output",
+      "commandId": "desktop:application",
+      "exitCode": 0,
+      "durationSeconds": 0.6413371000089683,
+      "command": "artifacts/tmp/CAP-05.S04.T03.qualifying-native-snapshot-02/reader-test.exe viewer_print::tests::actual_windows_pdf_print_uses_held_stream_and_retains_source_identity --exact --ignored --nocapture --test-threads=1",
+      "workingDirectory": ".",
+      "commit": "3fdb6e104937e2d22b2c4396ddee1eb8fdb3fe88",
+      "result": "PASS",
+      "rawOutput": "artifacts/tmp/CAP-05.S04.T03.qualifying-native-boundaries-02.held-pdf-output.stdout.log",
+      "rawOutputSha256": "4bc5e37b3eb8f4b1f34be6cd2bc74c0e563b8145dbcd09d1fffa8c638c47ebea",
+      "rawOutputCanonicalSha256": "4bc5e37b3eb8f4b1f34be6cd2bc74c0e563b8145dbcd09d1fffa8c638c47ebea",
+      "inputReport": "artifacts/tmp/CAP-05.S04.T03.qualifying-native-boundaries-02.json",
+      "inputReportSha256": "e778d536665c14907f3d957f2e5cb3b6701f10fe364d7488a865266018425afd",
+      "producerSha256": "e81313a63776374309f82ea55edf11be344fcc38dd88362347af69b02f0f7979",
+      "provenance": "Fresh actual current-candidate Windows owned child. Native units remain unit scope; real encrypted Core/current rights/owned Shell dialog, local PDF callbacks and inert verified consumer are separately named. Termination case requires real owned exit1 and physically absent incomplete plaintext; parent qualification exit0. No renderer dispatch claim from direct Native tests.",
+      "actualChildExitCode": 0,
+      "expectedOwnedTermination": false
+    },
+    {
+      "id": "printed-identity",
+      "commandId": "desktop:application",
+      "exitCode": 0,
+      "durationSeconds": 1.3629516999935731,
+      "command": ".local/toolchains/node-v24.19.0-win-x64/node.exe artifacts/tmp/CAP-05.S04.T03.qualifying-print-content-01.mjs artifacts/tmp/directory-dialog-print-stream-11104/reader-01a123ff-0000-7000-8000-000000000001.pdf",
+      "workingDirectory": ".",
+      "commit": "3fdb6e104937e2d22b2c4396ddee1eb8fdb3fe88",
+      "result": "PASS",
+      "rawOutput": "artifacts/tmp/CAP-05.S04.T03.qualifying-native-boundaries-02.printed-identity.stdout.log",
+      "rawOutputSha256": "45dc56d46cbe1bdd1c654ba00a0ef83ec717449a435e7878285ccecc27c6f0ae",
+      "rawOutputCanonicalSha256": "45dc56d46cbe1bdd1c654ba00a0ef83ec717449a435e7878285ccecc27c6f0ae",
+      "inputReport": "artifacts/tmp/CAP-05.S04.T03.qualifying-native-boundaries-02.json",
+      "inputReportSha256": "e778d536665c14907f3d957f2e5cb3b6701f10fe364d7488a865266018425afd",
+      "producerSha256": "e81313a63776374309f82ea55edf11be344fcc38dd88362347af69b02f0f7979",
+      "provenance": "Fresh actual current-candidate Windows owned child. Native units remain unit scope; real encrypted Core/current rights/owned Shell dialog, local PDF callbacks and inert verified consumer are separately named. Termination case requires real owned exit1 and physically absent incomplete plaintext; parent qualification exit0. No renderer dispatch claim from direct Native tests.",
+      "actualChildExitCode": 0,
+      "expectedOwnedTermination": false
+    },
+    {
+      "id": "held-pdf-lock-cancel",
+      "commandId": "desktop:application",
+      "exitCode": 0,
+      "durationSeconds": 0.885195700044278,
+      "command": "artifacts/tmp/CAP-05.S04.T03.qualifying-native-snapshot-02/reader-test.exe viewer_print::tests::actual_pdf_stream_lock_and_cancel_reject_delivery_and_keep_callback_ownership --exact --ignored --nocapture --test-threads=1",
+      "workingDirectory": ".",
+      "commit": "3fdb6e104937e2d22b2c4396ddee1eb8fdb3fe88",
+      "result": "PASS",
+      "rawOutput": "artifacts/tmp/CAP-05.S04.T03.qualifying-native-boundaries-02.held-pdf-lock-cancel.stdout.log",
+      "rawOutputSha256": "82d4479b9e1e9573d9c17eee4406fb51c6992cae51fb6bf57c04c5322eae427d",
+      "rawOutputCanonicalSha256": "82d4479b9e1e9573d9c17eee4406fb51c6992cae51fb6bf57c04c5322eae427d",
+      "inputReport": "artifacts/tmp/CAP-05.S04.T03.qualifying-native-boundaries-02.json",
+      "inputReportSha256": "e778d536665c14907f3d957f2e5cb3b6701f10fe364d7488a865266018425afd",
+      "producerSha256": "e81313a63776374309f82ea55edf11be344fcc38dd88362347af69b02f0f7979",
+      "provenance": "Fresh actual current-candidate Windows owned child. Native units remain unit scope; real encrypted Core/current rights/owned Shell dialog, local PDF callbacks and inert verified consumer are separately named. Termination case requires real owned exit1 and physically absent incomplete plaintext; parent qualification exit0. No renderer dispatch claim from direct Native tests.",
+      "actualChildExitCode": 0,
+      "expectedOwnedTermination": false
+    },
+    {
+      "id": "explicit-inert-consumer",
+      "commandId": "desktop:application",
+      "exitCode": 0,
+      "durationSeconds": 0.16927170002600178,
+      "command": "artifacts/tmp/CAP-05.S04.T03.qualifying-native-snapshot-02/reader-test.exe viewer_export::tests::actual_inert_consumer_reads_verified_original_without_private_environment --exact --ignored --nocapture --test-threads=1",
+      "workingDirectory": ".",
+      "commit": "3fdb6e104937e2d22b2c4396ddee1eb8fdb3fe88",
+      "result": "PASS",
+      "rawOutput": "artifacts/tmp/CAP-05.S04.T03.qualifying-native-boundaries-02.explicit-inert-consumer.stdout.log",
+      "rawOutputSha256": "45da143c680f5d334a296c8796a6c693ec6a3d9c6a92c4e69ea9ef8622dfa0d0",
+      "rawOutputCanonicalSha256": "45da143c680f5d334a296c8796a6c693ec6a3d9c6a92c4e69ea9ef8622dfa0d0",
+      "inputReport": "artifacts/tmp/CAP-05.S04.T03.qualifying-native-boundaries-02.json",
+      "inputReportSha256": "e778d536665c14907f3d957f2e5cb3b6701f10fe364d7488a865266018425afd",
+      "producerSha256": "e81313a63776374309f82ea55edf11be344fcc38dd88362347af69b02f0f7979",
+      "provenance": "Fresh actual current-candidate Windows owned child. Native units remain unit scope; real encrypted Core/current rights/owned Shell dialog, local PDF callbacks and inert verified consumer are separately named. Termination case requires real owned exit1 and physically absent incomplete plaintext; parent qualification exit0. No renderer dispatch claim from direct Native tests.",
+      "actualChildExitCode": 0,
+      "expectedOwnedTermination": false
+    },
+    {
+      "id": "authored-encrypted-fixture",
+      "commandId": "desktop:application",
+      "exitCode": 0,
+      "durationSeconds": 34.96598300000187,
+      "command": ".venv/Scripts/python.exe -B tests/documents/viewer_native_windows_fixture.py seed-accepted",
+      "workingDirectory": ".",
+      "commit": "3fdb6e104937e2d22b2c4396ddee1eb8fdb3fe88",
+      "result": "PASS",
+      "rawOutput": "artifacts/tmp/CAP-05.S04.T03.qualifying-native-boundaries-02.authored-encrypted-fixture.stdout.log",
+      "rawOutputSha256": "72fc32087f5aff5d8a1148701bfe6ec1440a01817fa5d0d8dd127cdbb09c0cd0",
+      "rawOutputCanonicalSha256": "ce31da59334dc498d79cf35d568d578208174d33c24a3b9637173a075e2d9fa2",
+      "inputReport": "artifacts/tmp/CAP-05.S04.T03.qualifying-native-boundaries-02.json",
+      "inputReportSha256": "e778d536665c14907f3d957f2e5cb3b6701f10fe364d7488a865266018425afd",
+      "producerSha256": "e81313a63776374309f82ea55edf11be344fcc38dd88362347af69b02f0f7979",
+      "provenance": "Fresh actual current-candidate Windows owned child. Native units remain unit scope; real encrypted Core/current rights/owned Shell dialog, local PDF callbacks and inert verified consumer are separately named. Termination case requires real owned exit1 and physically absent incomplete plaintext; parent qualification exit0. No renderer dispatch claim from direct Native tests.",
+      "actualChildExitCode": 0,
+      "expectedOwnedTermination": false
+    },
+    {
+      "id": "actual-native-rights-dialog",
+      "commandId": "desktop:application",
+      "exitCode": 0,
+      "durationSeconds": 15.755058800044935,
+      "command": "artifacts/tmp/CAP-05.S04.T03.qualifying-native-snapshot-02/reader-test.exe viewer_actions::windows_integration_tests::actual_native_rights_review_payload_and_local_output_preserve_source_identity --exact --ignored --nocapture --test-threads=1",
+      "workingDirectory": ".",
+      "commit": "3fdb6e104937e2d22b2c4396ddee1eb8fdb3fe88",
+      "result": "PASS",
+      "rawOutput": "artifacts/tmp/CAP-05.S04.T03.qualifying-native-boundaries-02.actual-native-rights-dialog.stdout.log",
+      "rawOutputSha256": "78fc1687a95fb248de1a38ff632c3c066b6708a4eacbd41d866b94342da9717c",
+      "rawOutputCanonicalSha256": "78fc1687a95fb248de1a38ff632c3c066b6708a4eacbd41d866b94342da9717c",
+      "inputReport": "artifacts/tmp/CAP-05.S04.T03.qualifying-native-boundaries-02.json",
+      "inputReportSha256": "e778d536665c14907f3d957f2e5cb3b6701f10fe364d7488a865266018425afd",
+      "producerSha256": "e81313a63776374309f82ea55edf11be344fcc38dd88362347af69b02f0f7979",
+      "provenance": "Fresh actual current-candidate Windows owned child. Native units remain unit scope; real encrypted Core/current rights/owned Shell dialog, local PDF callbacks and inert verified consumer are separately named. Termination case requires real owned exit1 and physically absent incomplete plaintext; parent qualification exit0. No renderer dispatch claim from direct Native tests.",
+      "actualChildExitCode": 0,
+      "expectedOwnedTermination": false
+    },
+    {
+      "id": "owned-incomplete-termination",
+      "commandId": "desktop:application",
+      "exitCode": 0,
+      "durationSeconds": 0.01570220000576228,
+      "command": "artifacts/tmp/CAP-05.S04.T03.qualifying-native-snapshot-02/reader-test.exe viewer_export::tests::owned_incomplete_file_child --exact --ignored --nocapture --test-threads=1",
+      "workingDirectory": ".",
+      "commit": "3fdb6e104937e2d22b2c4396ddee1eb8fdb3fe88",
+      "result": "PASS",
+      "rawOutput": "artifacts/tmp/CAP-05.S04.T03.qualifying-native-boundaries-02.outer.log",
+      "rawOutputSha256": "8b1433ea21c7ce0b8bd9e612960b27ad2ec34e4d986c8d795b71e70f01fee145",
+      "rawOutputCanonicalSha256": "b2b8c0b94358f36c9a278da9fe331da6d9823ae514bfb20200b2a412c8bb3cc8",
+      "inputReport": "artifacts/tmp/CAP-05.S04.T03.qualifying-native-boundaries-02.json",
+      "inputReportSha256": "e778d536665c14907f3d957f2e5cb3b6701f10fe364d7488a865266018425afd",
+      "producerSha256": "e81313a63776374309f82ea55edf11be344fcc38dd88362347af69b02f0f7979",
+      "provenance": "Fresh actual current-candidate Windows owned child. Native units remain unit scope; real encrypted Core/current rights/owned Shell dialog, local PDF callbacks and inert verified consumer are separately named. Termination case requires real owned exit1 and physically absent incomplete plaintext; parent qualification exit0. No renderer dispatch claim from direct Native tests.",
+      "actualChildExitCode": 1,
+      "expectedOwnedTermination": true
+    },
+    {
+      "id": "shipping-reader-action",
+      "commandId": "desktop:application",
+      "exitCode": 0,
+      "durationSeconds": 38.785933100036345,
+      "command": ".venv/Scripts/python.exe -B artifacts/tmp/CAP-05.S04.T03.qualifying-reader-actions-02.py 3fdb6e104937e2d22b2c4396ddee1eb8fdb3fe88",
+      "workingDirectory": ".",
+      "commit": "3fdb6e104937e2d22b2c4396ddee1eb8fdb3fe88",
+      "result": "PASS",
+      "rawOutput": "artifacts/tmp/CAP-05.S04.T03.qualifying-reader-actions-02.initial.outer.log",
+      "rawOutputSha256": "b2c84a0472498f971e97f0baadc67083dc26b29a25011cbbe4d5f31054e72033",
+      "rawOutputCanonicalSha256": "1b214e95fa9c17a6a0e6fbb263d90c1505ff4e5edaf22c5c7f201b782a562078",
+      "inputReport": "artifacts/tmp/CAP-05.S04.T03.qualifying-reader-actions-02.initial.json",
+      "inputReportSha256": "1b1ae7326d80cf2c4c3989512967a34093b09095bd0519edb235794f38c79b56",
+      "producerSha256": "f0c3316bcb1d08967b8f9c3e6bef4af15c10e0d84840fe82f99a15d839c8f27f",
+      "provenance": "Actual shipping renderer/Wry/Native invoke/supervised Core/Windows vault with retained authored encrypted anchors. Real explicit source review does not deliver; separate fresh check and actual Native folder dialog deliver exactly selected quotation/source IDs/unverified marker. Work/version return and graceful exit0/physical owned cleanup0 required. One functional journey, no latency replay or parser/model."
+    },
+    {
+      "id": "actual-private-clipboard",
+      "commandId": "desktop:application",
+      "exitCode": 0,
+      "durationSeconds": 22.1878099,
+      "command": "powershell.exe -NoProfile -File artifacts/tmp/CAP-05.S04.T03.private-clipboard-approval-01/launch-approved-once.ps1",
+      "workingDirectory": ".",
+      "commit": "3fdb6e104937e2d22b2c4396ddee1eb8fdb3fe88",
+      "result": "PASS",
+      "rawOutput": "artifacts/tmp/CAP-05.S04.T03.private-clipboard-approved-run-01.log",
+      "rawOutputSha256": "06711dc1422cab1233f146c16f12a5df16e7425c3c12ccc7e10bbef6193be85f",
+      "rawOutputCanonicalSha256": "a478b9b2f5cda4ad2c5afb629c6a0e5da39204b45dff3ee403f4c73b55a0b171",
+      "inputReport": "artifacts/tmp/CAP-05.S04.T03.private-clipboard-approved-run-01.json",
+      "inputReportSha256": "3866c50d6e8d10d66d60a7cb76f933bc6ed640f9b783fcd99dda3f934b4744bf",
+      "producerSha256": "a9ead0c25e8be2e43e4381c726de291ff5db99dc2f4fba9e6d6ddf64cb03547e",
+      "provenance": "One explicitly owner-authorized elevated exact-case child, current candidate and pinned executable. Fresh create-only private noninteractive station identity proven before clipboard access. Exact authored quotation/source/anchor/unverified text and three DWORD0 privacy markers inspected only there. Actual child exit0, fresh matching PID receipt and checked restore/close required. No researcher clipboard inspection/save/restore. Shipping product itself remains non-elevated."
+    }
+  ],
+  "machineArtifacts": [
+    {
+      "path": "artifacts/tmp/CAP-05.S04.T03.qualifying-focused-03.json",
+      "sha256": "970ad80a9720a01d98859e29e5001fe7bbdddc87a6a929c9158aa0b8d744856c"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S04.T03.qualifying-focused-03.affected-python-format.log",
+      "sha256": "2ce9758b9f8abd876ec3e76c589e099e8b05377b1e7ea2331e81ee80f07bdff8"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S04.T03.qualifying-focused-03.py",
+      "sha256": "bc62fecbaded716c9dbe1d470ee4abf392157e9449619d51f653421b74ab8b42"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S04.T03.qualifying-focused-03.affected-python-lint.log",
+      "sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S04.T03.qualifying-focused-03.affected-product-types.log",
+      "sha256": "718df785efbbd4b57e63b5f64aff2c5b5592e433447681f759b307f97a3ec96a"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S04.T03.qualifying-focused-03.action-schemas.log",
+      "sha256": "a55ee30fb47c9afacd282abc3e69cce6ee0e020d9d710eb2dc98eda54569bb56"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S04.T03.qualifying-focused-03.affected-adr.log",
+      "sha256": "6368cfd93ce19b409dcf968b5cb168fb7147b38f8359bf6bf1d4849a6c17f5b6"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S04.T03.qualifying-focused-03.product-style.log",
+      "sha256": "f4eb25e4862e786cccc56ba2c917d1a04330081bcd9625ea89304ac260bd35db"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S04.T03.qualifying-focused-03.approved-ui-conformance.log",
+      "sha256": "6b51cb9219f0fcc9a9a8a4d4a95894ace1be95b6ff52b6f9f19072b61015ed33"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S04.T03.qualifying-focused-03.desktop-types.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S04.T03.qualifying-focused-03.renderer-action-contracts.log",
+      "sha256": "974b7a069890fd5ce9c4efe78203bc70ca83cbf09afb58fce0200d213c941c65"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S04.T03.qualifying-focused-03.encrypted-actions-and-private-api.log",
+      "sha256": "3fc74ea0c3b3973dc7c9257cc79a4f3854f9ff7f194efa221c7cd4d1bb74d183"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S04.T03.qualifying-focused-03.mounted-reader-build.log",
+      "sha256": "b566697482f32b633a48396e0d777cf81c332f8df2179cb8374172d5618725ee"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S04.T03.qualifying-focused-03.mounted-reader-actions.log",
+      "sha256": "93e429ed9760b7272a3cc93773046dd94546988f0444461d08dc99ccfc7f90b9"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S04.T03.qualifying-application-03.json",
+      "sha256": "d963f4d1560d029701ea1532b0a91a6dbf0c124a45f5d9be749d0d6fa891f45c"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S04.T03.qualifying-application-03.shipping-frontend.log",
+      "sha256": "65a198cd96e8ab8f7177c84c432f5705821b10ce7e5e5d0c89d6fdeb93f82045"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S04.T03.qualifying-application-03.py",
+      "sha256": "cdbe428e21cf2fb0047e1735c75c68d7e32d572c9f8e11beaca021cf8bc63ea0"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S04.T03.qualifying-application-03.shipping-assembly.log",
+      "sha256": "d01fc2f8c88737bfc7f2dcdfbda74df492655a7b2908f1deaa9735ead1a504ca"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S04.T03.qualifying-native-boundaries-02.json",
+      "sha256": "e778d536665c14907f3d957f2e5cb3b6701f10fe364d7488a865266018425afd"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S04.T03.qualifying-native-boundaries-02.viewer_actions-units.stdout.log",
+      "sha256": "01206abde40fbae7ef0a409d21ddb51ecad1c2f006b6212acfd200f16b29978d"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S04.T03.qualifying-native-boundaries-02.py",
+      "sha256": "e81313a63776374309f82ea55edf11be344fcc38dd88362347af69b02f0f7979"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S04.T03.qualifying-native-boundaries-02.viewer_actions-units.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S04.T03.qualifying-native-boundaries-02.viewer_export-units.stdout.log",
+      "sha256": "28d1e601e5e0c9cd03bef6af239ba06c7e4bd757008d5760698610a00eed3b2f"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S04.T03.qualifying-native-boundaries-02.viewer_export-units.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S04.T03.qualifying-native-boundaries-02.viewer_print-units.stdout.log",
+      "sha256": "7e1874477af3d0ec7c50644b8e8eead42b7fb6d62958cc3a484feb349f072893"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S04.T03.qualifying-native-boundaries-02.viewer_print-units.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S04.T03.qualifying-native-boundaries-02.local-pdf-driver.stdout.log",
+      "sha256": "cec697d969da11881d41a9a8dace805519ce911cd03daa1419ee4669299e288d"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S04.T03.qualifying-native-boundaries-02.local-pdf-driver.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S04.T03.qualifying-native-boundaries-02.held-pdf-output.stdout.log",
+      "sha256": "4bc5e37b3eb8f4b1f34be6cd2bc74c0e563b8145dbcd09d1fffa8c638c47ebea"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S04.T03.qualifying-native-boundaries-02.held-pdf-output.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S04.T03.qualifying-native-boundaries-02.printed-identity.stdout.log",
+      "sha256": "45dc56d46cbe1bdd1c654ba00a0ef83ec717449a435e7878285ccecc27c6f0ae"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S04.T03.qualifying-native-boundaries-02.printed-identity.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S04.T03.qualifying-native-boundaries-02.held-pdf-lock-cancel.stdout.log",
+      "sha256": "82d4479b9e1e9573d9c17eee4406fb51c6992cae51fb6bf57c04c5322eae427d"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S04.T03.qualifying-native-boundaries-02.held-pdf-lock-cancel.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S04.T03.qualifying-native-boundaries-02.explicit-inert-consumer.stdout.log",
+      "sha256": "45da143c680f5d334a296c8796a6c693ec6a3d9c6a92c4e69ea9ef8622dfa0d0"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S04.T03.qualifying-native-boundaries-02.explicit-inert-consumer.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S04.T03.qualifying-native-boundaries-02.authored-encrypted-fixture.stdout.log",
+      "sha256": "72fc32087f5aff5d8a1148701bfe6ec1440a01817fa5d0d8dd127cdbb09c0cd0"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S04.T03.qualifying-native-boundaries-02.authored-encrypted-fixture.stderr.log",
+      "sha256": "eb012dbaf7df9cc33980d64529ca820eb2bb1c123858fbcb3d41685023d48b86"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S04.T03.qualifying-native-boundaries-02.actual-native-rights-dialog.stdout.log",
+      "sha256": "78fc1687a95fb248de1a38ff632c3c066b6708a4eacbd41d866b94342da9717c"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S04.T03.qualifying-native-boundaries-02.actual-native-rights-dialog.stderr.log",
+      "sha256": "425d68cce5f2b87195c7b4873bc5c857ff2a2af3f5aee605812aa6ac143956e6"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S04.T03.qualifying-native-boundaries-02.outer.log",
+      "sha256": "8b1433ea21c7ce0b8bd9e612960b27ad2ec34e4d986c8d795b71e70f01fee145"
+    },
+    {
+      "path": "artifacts/tmp/directory-dialog-print-stream-11104/reader-01a123ff-0000-7000-8000-000000000001.pdf",
+      "sha256": "a3041b28d380da21d5d9686bdf9bc687ebdcf42da74a1158cbaf8567f4bab75f"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S04.T03.qualifying-reader-actions-02.initial.json",
+      "sha256": "1b1ae7326d80cf2c4c3989512967a34093b09095bd0519edb235794f38c79b56"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S04.T03.qualifying-reader-actions-02.initial.outer.log",
+      "sha256": "b2c84a0472498f971e97f0baadc67083dc26b29a25011cbbe4d5f31054e72033"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S04.T03.qualifying-reader-actions-02.py",
+      "sha256": "f0c3316bcb1d08967b8f9c3e6bef4af15c10e0d84840fe82f99a15d839c8f27f"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S04.T03.qualifying-reader-actions-02.initial.events.jsonl",
+      "sha256": "0b89b732497a5d08f15976d2176190519ce3aeb342935d1fe255a5991f312e09"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S04.T03.qualifying-reader-actions-02.initial.stderr.log",
+      "sha256": "c7c6254c278ee63e7915984b60ac553b8b2514ba7426966c2b5967997efeda6e"
+    },
+    {
+      "path": "artifacts/tmp/directory-dialog-reader-actions-20261009-r01/projects/reader-01a1237d-0a93-70d7-af1b-6357c42712ce.json",
+      "sha256": "7222b9e8e675828809e335dc41f6f22514a6d07884acb6ea678f4aeef65b2ab7"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S04.T03.private-clipboard-approved-run-01.json",
+      "sha256": "3866c50d6e8d10d66d60a7cb76f933bc6ed640f9b783fcd99dda3f934b4744bf"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S04.T03.private-clipboard-11532.json",
+      "sha256": "ad9e2357045bab19d0b24813e32579a6759ecf5926c26e2efa76b546cab9a686"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S04.T03.private-clipboard-approval-01/review.html",
+      "sha256": "a3af9247d520c4adadfc58334acfd220f5ab8bb88faae4036f2df9a957718596"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S04.T03.private-clipboard-approval-01/launch-approved-once.ps1",
+      "sha256": "a9ead0c25e8be2e43e4381c726de291ff5db99dc2f4fba9e6d6ddf64cb03547e"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S04.T03.private-clipboard-approval-01/owner-authorization.json",
+      "sha256": "531df326bba8548038ccd6e551a97e2b72bdcd81d4da967e312092c64a2b9e46"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S04.T03.private-clipboard-approval-01/independent-readiness.json",
+      "sha256": "d63d53a445b9463633edca45a5457f53fa69fbbea9caf26d59dbd9551cd5b771"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S04.T03.private-clipboard-approved-run-01.log",
+      "sha256": "06711dc1422cab1233f146c16f12a5df16e7425c3c12ccc7e10bbef6193be85f"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S04.T03.qualifying-native-tests-build-02.json",
+      "sha256": "d3ab9bc0e3dfde6583c50144f6fcce017e7ba8f6747ed9c0fb09347cba1dc50a"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S04.T03.qualifying-native-tests-build-02.py",
+      "sha256": "bcea8ed9275ef18f6ecdf1ee7947300d7f2cd0279d5786610bd468efe7a552f7"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S04.T03.qualifying-native-build-01.json",
+      "sha256": "48f54e9720f825aa118efc2221b57ce03a10b7203f2758b7240aa9466a8b4eb5"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S04.T03.qualifying-native-build-01.py",
+      "sha256": "950854a918a147ae183d4b4a7c4fe080001eb83f31dae0a0e0c5f32b8f909bbf"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S04.T03.qualifying-package-01.json",
+      "sha256": "953d3a684aaf4ad20952dea5b0992b9f4929e8848034bd3fb1f71767c30971d9"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S04.T03.qualifying-package-01.py",
+      "sha256": "f8f349de588d5ec1828e8f283ca895b07e1bc8a3b376b84bce3dde6a697cd7b1"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S04.T03.reader-uia-01.cs",
+      "sha256": "84e47cd349dbfe690eba3e67d2e271df1423141aa0f857e49f771cc1f73551b9"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S04.T03.reader-uia-01.ps1",
+      "sha256": "e6b5673e0376d4ba56fe35a6b0bc8b970c1d88f37ac06030964fcc35606d0a90"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S04.T03.owned-reader-consumer.rs",
+      "sha256": "6ea7e59fd7f2471aff7b3ad729b10583a045590f2b97ee4b8e12fd926cbfd4a4"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S04.T03.qualifying-print-content-01.mjs",
+      "sha256": "dd4842b3d315d0ab45af2f2385c3d99e5547aa1a69ea71a75af8370ddc41a180"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S04.T03.prepare-evidence-R01-01.py",
+      "sha256": "2d72819c2e37ac931e4eeec0a5a2e75bf1e168b2acde10123391cdca15c343a8"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S04.T03.prepare-shipping-fixture-01.log",
+      "sha256": "47b7683ba187bdde4ed371c8bf84da633f16b4512ca0beefcdfe952b43732d7f"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S04.T03.prepare-shipping-fixture-02.json",
+      "sha256": "57b2f567777b0e978cd5146847e19a4e137cd72a32383006aac5623352a454f5"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S04.T03.prepare-shipping-fixture-03.py",
+      "sha256": "d8a2728322fa58e70b455400bce58a68b22c42cd4aac287393b4675a54fc1295"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S04.T03.prepare-shipping-fixture-03.json",
+      "sha256": "8981ad3445653dfde3049cfab21a4d8e6b4d9d297d64e62c92ccee9756ec78b8"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S04.T03.experience-lineage-validation-01.log",
+      "sha256": "30f2727360cd90a0f0aa7a744b2c8867d65e5d1ed94b5749fed4d951639edaa7"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S04.T01.owned-native-job-01.py",
+      "sha256": "991d6cc09aa992ba3675e3107058d934c9e0d56750aa9457ae4b3d1e642efe58"
+    },
+    {
+      "path": "artifacts/evidence/CAP-05.S04.T03.task-start.md",
+      "sha256": "a4a077c99287901693a9703912c637443d6bea8903dbe8f46a2b6941789512e9"
+    },
+    {
+      "path": "artifacts/evidence/ui-change/CAP-05.S04.T03.json",
+      "sha256": "74941f433ab36a25072d9d0904389366a5b45a67f9f62302af1a9167501edf34"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S04.T03.qualifying-focused-01.json",
+      "sha256": "0a72f4d20d9b8c07200939ec8c6eb2bffed1b7d4f9c7a693033cec8d5fe3afbc"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S04.T03.qualifying-focused-02.json",
+      "sha256": "8745335df8bed61744fb9e369a29a8f989aaa59e179473a773e2b3e66db8f2c1"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S04.T03.qualifying-application-01.json",
+      "sha256": "3f6e483898e70568b51ce7b4946b0e81d7b4c475aa9ae7187fe3f2117750b8db"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S04.T03.qualifying-application-02.json",
+      "sha256": "03a1e32e5cb96bf5d86fc8f960852118124517f9353d034a3acf7a95e4f3f972"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S04.T03.qualifying-reader-actions-01.initial.json",
+      "sha256": "59eafcd3feb0c129b9d83310bbbeaa0dbd43ffe9df6c0979490dccc7cbdf6c26"
+    }
+  ],
+  "preservedAdverseObservations": [
+    {
+      "path": "artifacts/tmp/CAP-05.S04.T03.qualifying-focused-01.json",
+      "sha256": "0a72f4d20d9b8c07200939ec8c6eb2bffed1b7d4f9c7a693033cec8d5fe3afbc",
+      "qualifyingAsWholeReport": false
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S04.T03.qualifying-focused-02.json",
+      "sha256": "8745335df8bed61744fb9e369a29a8f989aaa59e179473a773e2b3e66db8f2c1",
+      "qualifyingAsWholeReport": false
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S04.T03.qualifying-application-01.json",
+      "sha256": "3f6e483898e70568b51ce7b4946b0e81d7b4c475aa9ae7187fe3f2117750b8db",
+      "qualifyingAsWholeReport": false
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S04.T03.qualifying-application-02.json",
+      "sha256": "03a1e32e5cb96bf5d86fc8f960852118124517f9353d034a3acf7a95e4f3f972",
+      "qualifyingAsWholeReport": false
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S04.T03.qualifying-reader-actions-01.initial.json",
+      "sha256": "59eafcd3feb0c129b9d83310bbbeaa0dbd43ffe9df6c0979490dccc7cbdf6c26",
+      "qualifyingAsWholeReport": false
+    }
+  ],
+  "adverseDisposition": "Initial ADR map/UI publication metadata failures corrected in committed documentary mapping and canonical approved-reference metadata; current focused03 passes actual UI gate. Existing built-frame CSP failure is retained and not relabeled as a PASS. Prequalification setup/GDI/clipboard principal failures and shipping fixture graceful-close failure remain ignored adverse records; fresh owned actual checks are separately identified. Shipping01 failed before launch because its old authored project root was empty after T02 physical relocation; preparation03 copied the actual closed relocated project preserving historical sources and real directory IDs, then shipping02 passed. The inherited attachment startup-probe readiness-timeout remains in shipping02 events; that probe is not claimed passing. Independent owned UIA readiness and the complete T03 real action journey pass separately. No researcher clipboard fallback or historical evidence edits.",
+  "scopeLimits": [
+    "Authored synthetic accepted IR; no parser/model accuracy or minimum hardware claim.",
+    "Actual installed Python/Core fixture runtime is not sealed shipping Core/installer qualification.",
+    "Task-only Windows x64 checks; no full profile, physical paper printer, release or remote publication claim."
+  ],
+  "taskApproval": false,
+  "sliceApproval": false,
+  "waveCompletion": false,
+  "releaseApproval": false
+}

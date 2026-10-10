@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 69ec7dde499498bced1082003b661e2238995a049542d0fe38b2d6f382d54478
+source_sha256: 41db050f752f3b6ddc15cc0a91d270b025eb84b8fdfb1c0d8b032bbf4b6a3687
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -11863,15 +11863,15 @@ Original tasks and approvals remain unchanged.
 
 **Currently open findings:** -
 
-#### - [ ] CAP-05.S04.T03 - Enforce rights-aware viewer actions and export
+#### - [x] CAP-05.S04.T03 - Enforce rights-aware viewer actions and export
 
-**Status / priority / estimate / risk:** `IN_PROGRESS` / `P0` / `M` / `high`
+**Status / priority / estimate / risk:** `DONE` / `P0` / `M` / `high`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
 **Dependencies:** `CAP-05.S04.T02`
 
-**Owner / review:** codex-w2-implementation / - (`-`)
+**Owner / review:** codex-w2-implementation / agent:/root/reader_rights_task_review (`approved`)
 
 **Objective:** Policy-driven copy, print, external open, annotation export, and derivative-text limits with clear user messaging.
 
@@ -11890,13 +11890,51 @@ Original tasks and approvals remain unchanged.
 - python tools/verify.py --profile desktop
 - python tools/verify.py --profile security-local
 
+**Evidence:**
+
+- `artifacts/evidence/CAP-05.S04.T03.R01.json` at `3fdb6e104937e2d22b2c4396ddee1eb8fdb3fe88`
+
 ##### Review history — CAP-05.S04.T03
 
-**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+**Review mode:** `append-only v1` / 1 completed round(s)
 
-**Current latest-review projection:** `-` by - at `-`
+###### Round R01
 
-**Latest notes:** -
+**Immutable submission packet:** `R01` / packet SHA-256 `389440afce49c7139901e2511f618ea1beafdb23e797a82e311308aacd458199`
+
+- Candidate / base / branch: `3fdb6e104937e2d22b2c4396ddee1eb8fdb3fe88` / `f27ab65fc54197143f07b7b92a87b5b70e2368e4` / `codex/w2-implementation`
+- Submitted by / at: codex-w2-implementation / `2026-10-10T01:51:38+00:00`
+- Evidence: `artifacts/evidence/CAP-05.S04.T03.R01.json` / `b1f6203f3938e9f8bd84a79ec960efa6a9cb8679909f52a5c166fe248854cd8c` / `3fdb6e104937e2d22b2c4396ddee1eb8fdb3fe88`
+- Acceptance-criteria SHA-256: `0d3d19a2e9d5b0017451c7dff3b71253e0efec7f77e4d663800ac797ddbfd9f0`
+- Verification-selection SHA-256: `3e6734e95cf75ba5269fec3d6c99d9eb641607b81a49309401fd6912149cb7f8`
+- Changed paths: `Cargo.lock`, `apps/desktop/src-tauri/Cargo.toml`, `apps/desktop/src-tauri/src/directory_picker.rs`, `apps/desktop/src-tauri/src/document_drop.rs`, `apps/desktop/src-tauri/src/document_viewer.rs`, `apps/desktop/src-tauri/src/lib.rs`, `apps/desktop/src-tauri/src/supervisor.rs`, `apps/desktop/src-tauri/src/viewer_actions.rs`, `apps/desktop/src-tauri/src/viewer_actions/windows_integration_tests.rs`, `apps/desktop/src-tauri/src/viewer_export.rs`, `apps/desktop/src-tauri/src/viewer_print.rs`, `apps/desktop/src/app/DocumentViewerWorkspace.tsx`, `apps/desktop/src/app/SourceAnchorReader.tsx`, `apps/desktop/src/app/ViewerActionsPane.tsx`, `apps/desktop/src/app/ViewerAnchorContexts.tsx`, `apps/desktop/src/app/viewerActions.test.ts`, `apps/desktop/src/app/viewerActions.ts`, `artifacts/evidence/CAP-05.S04.T03.task-start.md`, `artifacts/evidence/ui-change/CAP-05.S04.T03.json`, `docs/adr/ADR-0047-bind-local-source-viewing-to-existing-protected-read-authority.md`, `docs/adr/index.json`, `docs/architecture/document-parsing.md`, `docs/planning-implementation-plan.md`, `packages/contracts/documents/generate_parser_schema.py`, `packages/contracts/documents/viewer-action-payload.v1.schema.json`, `packages/contracts/documents/viewer-action-request.v1.schema.json`, `packages/contracts/documents/viewer-annotation-output.v1.schema.json`, `packages/contracts/documents/viewer-original-handoff.v1.schema.json`, `packages/contracts/documents/viewer-policy-decision.v1.schema.json`, `packages/contracts/documents/viewer-quotation-output.v1.schema.json`, `packages/contracts/documents/viewer-rights-review-receipt.v1.schema.json`, `planning/backlog.yaml`, `planning/review-site/CAP-05/CAP-05.S04.T03.html`, `planning/review-site/CAP-05/CAP-05.S04.html`, `planning/review-site/manifest.json`, `planning/review-site/waves/W2.html`, `planning/status-summary.md`, `services/core-api/src/research_observatory_core/document_viewer_api.py`, `services/core-api/src/research_observatory_core/document_viewer_repository.py`, `services/core-api/src/research_observatory_core/document_viewer_service.py`, `services/core-api/src/research_observatory_core/ports/viewer_actions.py`, `services/core-api/src/research_observatory_core/viewer_action_repository.py`, `tests/desktop/fixtures/document-viewer.tsx`, `tests/desktop/test_document_viewer_interactions.py`, `tests/documents/test_viewer_actions.py`, `tests/service/test_viewer_actions_api.py`
+- Selected checks: `.venv/Scripts/python.exe -B -m ruff format --check packages/contracts/documents/generate_parser_schema.py services/core-api/src/research_observatory_core/document_viewer_api.py services/core-api/src/research_observatory_core/document_viewer_repository.py services/core-api/src/research_observatory_core/document_viewer_service.py services/core-api/src/research_observatory_core/ports/viewer_actions.py services/core-api/src/research_observatory_core/viewer_action_repository.py tests/desktop/test_document_viewer_interactions.py tests/documents/test_viewer_actions.py tests/service/test_viewer_actions_api.py`, `.venv/Scripts/python.exe -B -m ruff check packages/contracts/documents/generate_parser_schema.py services/core-api/src/research_observatory_core/document_viewer_api.py services/core-api/src/research_observatory_core/document_viewer_repository.py services/core-api/src/research_observatory_core/document_viewer_service.py services/core-api/src/research_observatory_core/ports/viewer_actions.py services/core-api/src/research_observatory_core/viewer_action_repository.py tests/desktop/test_document_viewer_interactions.py tests/documents/test_viewer_actions.py tests/service/test_viewer_actions_api.py`, `.venv/Scripts/python.exe -B -m mypy services/core-api/src/research_observatory_core/document_viewer_api.py services/core-api/src/research_observatory_core/document_viewer_repository.py services/core-api/src/research_observatory_core/document_viewer_service.py services/core-api/src/research_observatory_core/ports/viewer_actions.py services/core-api/src/research_observatory_core/viewer_action_repository.py`, `.venv/Scripts/python.exe -B packages/contracts/documents/generate_parser_schema.py --check`, `.venv/Scripts/python.exe -B tools/adr_check.py --repo . --base f27ab65fc54197143f07b7b92a87b5b70e2368e4 --head 3fdb6e104937e2d22b2c4396ddee1eb8fdb3fe88`, `.venv/Scripts/python.exe -B tools/product_style_check.py --repo .`, `.venv/Scripts/python.exe -B tools/ui_change_gate.py --repo . --base f27ab65fc54197143f07b7b92a87b5b70e2368e4 --head 3fdb6e104937e2d22b2c4396ddee1eb8fdb3fe88`, `.local/toolchains/node-v24.19.0-win-x64/node.exe apps/desktop/node_modules/typescript/bin/tsc --noEmit -p apps/desktop/tsconfig.json`, `.local/toolchains/node-v24.19.0-win-x64/node.exe apps/desktop/node_modules/vitest/vitest.mjs run apps/desktop/src/app/viewerActions.test.ts apps/desktop/src/app/documentViewerNative.test.ts`, `.venv/Scripts/python.exe -B -m unittest -v tests.documents.test_viewer_actions tests.service.test_viewer_actions_api`, `.local/toolchains/node-v24.19.0-win-x64/node.exe tests/desktop/fixtures/document-viewer.mjs artifacts/tmp/CAP-05.S04.T03.mounted-qualification-01`, `.venv/Scripts/python.exe -B -m unittest -v tests.desktop.test_document_viewer_interactions`, `.local/toolchains/node-v24.19.0-win-x64/node.exe node_modules/vite/bin/vite.js build --config vite.product.config.ts`, `.local/toolchains/node-v24.19.0-win-x64/node.exe scripts/assemble-application.mjs`, `artifacts/tmp/CAP-05.S04.T03.qualifying-native-snapshot-02/reader-test.exe viewer_actions::tests:: --nocapture --test-threads=1`, `artifacts/tmp/CAP-05.S04.T03.qualifying-native-snapshot-02/reader-test.exe viewer_export::tests:: --nocapture --test-threads=1`, `artifacts/tmp/CAP-05.S04.T03.qualifying-native-snapshot-02/reader-test.exe viewer_print::tests:: --nocapture --test-threads=1`, `artifacts/tmp/CAP-05.S04.T03.qualifying-native-snapshot-02/reader-test.exe viewer_export::tests::actual_pdf_driver_selection_is_local_and_qualified --exact --ignored --nocapture --test-threads=1`, `artifacts/tmp/CAP-05.S04.T03.qualifying-native-snapshot-02/reader-test.exe viewer_print::tests::actual_windows_pdf_print_uses_held_stream_and_retains_source_identity --exact --ignored --nocapture --test-threads=1`, `.local/toolchains/node-v24.19.0-win-x64/node.exe artifacts/tmp/CAP-05.S04.T03.qualifying-print-content-01.mjs artifacts/tmp/directory-dialog-print-stream-11104/reader-01a123ff-0000-7000-8000-000000000001.pdf`, `artifacts/tmp/CAP-05.S04.T03.qualifying-native-snapshot-02/reader-test.exe viewer_print::tests::actual_pdf_stream_lock_and_cancel_reject_delivery_and_keep_callback_ownership --exact --ignored --nocapture --test-threads=1`, `artifacts/tmp/CAP-05.S04.T03.qualifying-native-snapshot-02/reader-test.exe viewer_export::tests::actual_inert_consumer_reads_verified_original_without_private_environment --exact --ignored --nocapture --test-threads=1`, `.venv/Scripts/python.exe -B tests/documents/viewer_native_windows_fixture.py seed-accepted`, `artifacts/tmp/CAP-05.S04.T03.qualifying-native-snapshot-02/reader-test.exe viewer_actions::windows_integration_tests::actual_native_rights_review_payload_and_local_output_preserve_source_identity --exact --ignored --nocapture --test-threads=1`, `artifacts/tmp/CAP-05.S04.T03.qualifying-native-snapshot-02/reader-test.exe viewer_export::tests::owned_incomplete_file_child --exact --ignored --nocapture --test-threads=1`, `.venv/Scripts/python.exe -B artifacts/tmp/CAP-05.S04.T03.qualifying-reader-actions-02.py 3fdb6e104937e2d22b2c4396ddee1eb8fdb3fe88`, `powershell.exe -NoProfile -File artifacts/tmp/CAP-05.S04.T03.private-clipboard-approval-01/launch-approved-once.ps1`
+- Deferred checks: `Integrated S04 slice/checkpoint and fresh full affected/repository/profile W2 qualification, cross-capability restart/recovery/packaging/security/privacy/rights/accessibility/performance, independent Wave review and separate human release remain required.`, `Existing built-frame predicate rejects inherited unchanged PDF CSP; full quality inventory also has inherited coverage debt. Adverse evidence retained; no control waiver, framework repair or full-profile PASS asserted by this task.`, `No 8/16GiB tier/model runs. Larger resource work remains W5; no 2/3GiB or minimum-hardware qualification claim. Qualified T01 latency and accepted parser overage are not replayed. Unsupported physical printer queues remain unavailable; only local Microsoft PDF is qualified.`
+- Selection rationale: Product text exits the encrypted Reader through explicit rights and physical Windows boundaries: current-candidate Core/API, renderer/mounted, schema/type/ADR/approved UI checks plus fresh actual Native/Core, Shell destination, private clipboard, local PDF stream/lock/cancel/termination, verified inert original consumer and actual shipping invoke. Stable committed candidate and selected input locks; no blanket reused proof or broad profile claim.
+- Prior round / replayed open findings: `-` / -
+- Root-cause escalation: -
+
+**Disposition / reviewer / time:** `approved` / agent:/root/reader_rights_task_review / `2026-10-10T02:12:21+00:00`
+
+**Immutable review ledger:** `artifacts/evidence/CAP-05.S04.T03.review-R01.json` / `9902c32f2ac3b077f627f66d170286e23d7fa52e85dc9cb7312891d42c813186`
+
+**Review notes:** Approve CAP-05.S04.T03 R01 at exact candidate3fdb6e104937e2d22b2c4396ddee1eb8fdb3fe88. The three task criteria are satisfied by the bounded source and27 selected checks with79 authenticated artifacts and the independently verified actual frozen packet/criterion/selection bindings. The single owner-authorized private clipboard proof closes the previously unavailable OS boundary; exact shipping identified quotation delivery, permission review nonexecution, current rights and owned output/callback/termination evidence are distinct authenticated proofs. No material blocking finding remains. Preserve adverse CSP/startup/fixture/principal attempts without broad-profile or framework claims. Approval is task-only: integrated S04/checkpoints, fresh full affected W2 qualification, required platform/hardware/packaging evidence, independent Wave review and the separate human release gate remain required.
+
+**Findings opened:**
+
+- None
+
+**Prior finding closures:**
+
+- None
+
+**Current immutable submission awaiting review:** None
+
+**Current latest-review projection:** `approved` by agent:/root/reader_rights_task_review at `2026-10-10T02:12:21+00:00`
+
+**Latest notes:** Approve CAP-05.S04.T03 R01 at exact candidate3fdb6e104937e2d22b2c4396ddee1eb8fdb3fe88. The three task criteria are satisfied by the bounded source and27 selected checks with79 authenticated artifacts and the independently verified actual frozen packet/criterion/selection bindings. The single owner-authorized private clipboard proof closes the previously unavailable OS boundary; exact shipping identified quotation delivery, permission review nonexecution, current rights and owned output/callback/termination evidence are distinct authenticated proofs. No material blocking finding remains. Preserve adverse CSP/startup/fixture/principal attempts without broad-profile or framework claims. Approval is task-only: integrated S04/checkpoints, fresh full affected W2 qualification, required platform/hardware/packaging evidence, independent Wave review and the separate human release gate remain required.
+
+**Currently open findings:** -
 
 ### SLICE-references-citation-contexts-tables-and-figures (`CAP-05.S05`) - References, citation contexts, tables, and figures
 

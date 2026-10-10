@@ -1,0 +1,122 @@
+{
+  "task_id": "CAP-05.S04.T03",
+  "attempt_id": "R01",
+  "reviewer": "agent:/root/reader_rights_task_review",
+  "result": "approved",
+  "reviewed_at": "2026-10-10T02:00:41+00:00",
+  "reviewed_state_commit": "3fdb6e104937e2d22b2c4396ddee1eb8fdb3fe88",
+  "candidate_commit": "3fdb6e104937e2d22b2c4396ddee1eb8fdb3fe88",
+  "base_commit": "f27ab65fc54197143f07b7b92a87b5b70e2368e4",
+  "packet_sha256": "389440afce49c7139901e2511f618ea1beafdb23e797a82e311308aacd458199",
+  "evidence_sha256": "b1f6203f3938e9f8bd84a79ec960efa6a9cb8679909f52a5c166fe248854cd8c",
+  "acceptance_criteria_sha256": "0d3d19a2e9d5b0017451c7dff3b71253e0efec7f77e4d663800ac797ddbfd9f0",
+  "selection_sha256": "3e6734e95cf75ba5269fec3d6c99d9eb641607b81a49309401fd6912149cb7f8",
+  "findings": [],
+  "closures": [],
+  "acceptance_reviews": [
+    {
+      "criterion_index": 1,
+      "result": "satisfied",
+      "assessment": "Core derives fixed inspect/derive/quote/action-specific local-export uses from the closed action vocabulary and resolves the exact retained copy, trusted human, accepted Intent/privacy fingerprint and source/anchor identities. Renderer requests supply neither text, paths, programs, actors nor grants. Explicit permission review records only otherwise missing or unknown permissions, preserves unrelated assertions and times, rejects stale predecessors and replays its semantic receipt; it executes no output action and cannot override denial, expiry, dispute or pending propagation. Current policy is rechecked after materialization and Native destination selection. Exact quotations retain original and normalized revisions, source assertion, Work/version, anchor revision, codepoint position, canonical citation metadata and policy basis, with unverified status and no surrounding context. Annotation output excludes quotation/context. Native create-new local delivery, copy, PDF printing and original application handoff remain distinct physical boundaries. Browser/DOM/keyboard/context-menu transfers are denied and rights audit retains safe identifiers, codes and hashes rather than copied text or paths. Real encrypted Core/API proof, actual Native/Core/Shell destination proof and the actual shipping Save journey establish the vertical path. Separate actual private clipboard, held local PDF and inert consumer proofs authenticate the changed OS boundaries without claiming every action has a shipping end-to-end journey. The shipping delivered quotation exactly matches the retained older original/normalized revision and anchor; Work/version return, exit0 and owned cleanup0 pass."
+    },
+    {
+      "criterion_index": 2,
+      "result": "satisfied",
+      "assessment": "The 27 selected fresh check records cover expected and material failure paths through complementary Core/API, renderer value, mounted interaction, Native ownership and real Windows boundaries. Reviewed cases cover action-specific permission/replay/predecessor equality, direct-transfer denial, substitution and post-materialization rights changes, exact six-field local RightsUse decoding, cancellation before admission, unknown Core ownership and terminal delivery denial. Local outputs reject existing files, reparse destinations and substitution; delete-pending exclusive handles retain unpublished plaintext until physical closure and remove it on actual owned termination. The deliberate child exit1 is retained as actualChildExitCode and expectedOwnedTermination, while the parent positive termination check passes; it is not relabeled as child exit0. Actual Microsoft PDF callbacks held through Lock/cancel retain ownership until callback settlement, delete unpublished output, and sealed streams reject late writes. The one explicitly authorized private clipboard child used the pinned executable, fresh create-only station and checked station/desktop identity before clipboard access; it verified exact authored identified text and all three privacy markers, restored/closed owned objects, and exited0 within its own 30-second bound. Receipt PID11532 and parent outcome match. No researcher clipboard inspection, save, restore or second elevated run is used as proof."
+    },
+      {
+      "criterion_index": 3,
+      "result": "satisfied",
+      "assessment": "The exact 46-path base-to-candidate inventory matches the frozen submission and criterion manifest. Changes are bounded to additive source-action schemas/generator, private Core action mediation, Native local output/clipboard/PDF/application adapters and lifecycle ownership, shared Reader controls, tests/fixtures and relevant task/contract documentation. Current DPAPI-protected vault and SQLCipher/encrypted source boundaries are exercised by actual owned Native/Core and shipping fixtures; no key, encryption envelope, database migration or parallel identity store is introduced. Accepted ADR0029 remains governing authority; Proposed ADR0047 maps the implementation without granting new authority. The approved reference1.9 publication lineage is corrected to d4691f716f839f4aac5bb50563b56ac863b32685, and current affected UI conformance, schema/type/format/lint/ADR checks pass. Existing default browser context menus/accelerators are disabled before showing the protected window. Printer qualification is bounded to the local Microsoft PDF stream target; unsupported physical/network queues remain unavailable. No automation framework/controller/schema/CI development, remote route, 8/16GiB model/tier run, further Reader latency tuning or parser-overage optimization is included. Earlier adverse CSP, setup, metadata and fixture observations remain preserved rather than being turned into a full-profile PASS."
+    }
+  ],
+  "independence": {
+    "implementation_owner": "codex-w2-implementation",
+    "statement": "I independently read the applicable AGENTS/review/evidence routing, approved slice9.3, rights/Intent/privacy contracts and accepted ADR0029; reviewed the exact committed source diff, material failure paths, qualification producers, raw outcomes and final artifact bindings. I authored no product change, regression, qualification producer, manifest, taskctl mutation or commit. This review ledger is my sole tracked write. I executed no product test, clipboard/UAC action, parser/model/tier run, build, benchmark or broad profile. Read-only authentication of the actual frozen packet and manifest used existing taskctl binding functions. Shared product HEAD remained3fdb throughout this review."
+  },
+  "verification_selection": {
+    "selectedCommandIds": [
+      "desktop:application",
+      "desktop:unit",
+      "documents:unit",
+      "foundation:adr",
+      "foundation:quality",
+      "foundation:ui-change"
+    ],
+    "riskAnalysis": "Expanded rights/security review covers closed renderer/Native/Core authority, exact retained quotation/source identity, explicit review nonexecution and replay, alternate-path denial, current rights at materialization/destination/delivery, DPAPI/SQLCipher integration, local output lifetime/reparse/termination, clipboard privacy markers, bounded local PDF callbacks, original application handoff and content-free denial audit. Authenticate the 27 selected check records,79 artifact raw digests, current candidate/claimed base/inventory, producer/binary/package/source-input bindings and immutable R01 packet. No duplicate suites are demanded where inspected source, focused checks and separately named real principal proofs already close task risk.",
+    "deferred": [
+      "Integrated CAP-05.S04 end-to-end evidence and independent slice review, required checkpoints and fresh full affected/repository/profile W2 qualification remain required.",
+      "Cross-capability failure/denial/cancellation/migration/restart/recovery, security/privacy/rights/accessibility/performance/packaging and required platform qualification, independent Wave review and separate human release gate remain open.",
+      "The unchanged built-frame CSP predicate failure and inherited full quality inventory debt are retained; this task disposition grants no waiver and requests no unrelated automation framework work.",
+      "Actual installed Core fixture runtime is not sealed shipping Core or installer qualification. No minimum hardware,2/3GiB,8/16GiB model/tier or physical paper-printer claim. Existing T01 latency and accepted parser overage remain untuned."
+    ]
+  },
+  "scope_limits": {
+    "qualification": "CAP-05.S04.T03 R01 task-only independent disposition. Recording task completion remains the owner's separate taskctl review operation; this is not slice, Wave or release approval.",
+    "source_fixture": "Authored synthetic accepted IR and retained encrypted sources; no fresh parser/model execution or scholarly source-accuracy claim.",
+    "native": "Actual owned Native/Core/Shell destination, protected vault/source, held PDF stream and callbacks, incomplete-file termination, inert consumer and separately authorized isolated clipboard. Direct adapter/handler cases do not by themselves prove shipping renderer dispatch or every composed action journey.",
+    "shipping": "Actual product renderer/Wry/Native invoke/supervised Core Save journey with no renderer-port override, debugger or JavaScript injection. Existing owned integration startup is declared. Windows fixture runtime/package authentication does not qualify the sealed shipping Core, installer or global Windows/WebView deployment matrix.",
+    "plaintext": "Authorized clipboard/files/PDF/original handoff lie outside project protection. Incomplete held outputs are deleted; post-publication ambiguity is reported as possible partial output rather than invented rollback."
+  },
+  "preserved_adverse_observations": [
+    "The five adverse report references and digests in the frozen manifest remain immutable and are not qualifying whole-report PASS results.",
+    "Initial ADR mapping and canonical UI approval-publication metadata failures were corrected before current focused03 and its actual UI conformance check passed.",
+    "application01's existing built-frame validator rejects the inherited unchanged PDF CSP. application03 establishes frontend build/assembly only; no built-frame or full-profile PASS is inferred and no unrelated framework repair is demanded.",
+    "Earlier setup/GDI/clipboard-principal attempts and shipping fixture graceful-close failure remain adverse ignored records. Current native-boundaries02 and the single authorized isolated clipboard run are distinct fresh proofs, with no shared researcher clipboard fallback.",
+    "Shipping01 failed before startup because the old authored project root was empty after T02 physical relocation. Preparation03 copied the actual closed relocated project, preserved historical sources and real lifecycle identities, and shipping02 passed.",
+    "Shipping02 events preserve the inherited attachment startup-probe readiness-timeout. That probe is not claimed passing; independent owned UIA readiness and the complete T03 action journey, genuine return, exit0 and owned cleanup0 pass separately."
+  ],
+  "evidence_authentication": {
+    "machine_artifact_count": 79,
+    "selected_check_count": 27,
+    "machine_artifact_raw_digests_match": true,
+    "producer_and_raw_result_bindings_match": true,
+    "native_snapshot_and_printed_artifact_digests_match": true,
+    "shipping_package_entrypoint_and_output_digests_match": true,
+    "shipping_journey_seconds": 38.785933100036345,
+    "shipping_owned_exit": 0,
+    "shipping_owned_cleanup_active_processes": 0,
+    "clipboard": {
+      "authorization_path": "artifacts/tmp/CAP-05.S04.T03.private-clipboard-approval-01/owner-authorization.json",
+      "one_attempt_marker_path": "artifacts/tmp/CAP-05.S04.T03.private-clipboard-approval-01/attempt-started.json",
+      "receipt_path": "artifacts/tmp/CAP-05.S04.T03.private-clipboard-11532.json",
+      "receipt_sha256": "ad9e2357045bab19d0b24813e32579a6759ecf5926c26e2efa76b546cab9a686",
+      "pinned_executable_sha256": "277ed6f19e356277f5f2dca263424e7232cee72610152d2b8d90ab4fa0742034",
+      "actual_owned_exit": 0,
+      "elapsed_seconds_including_uac": 22.1878099,
+      "fresh_private_station": true,
+      "researcher_clipboard_accessed": false,
+      "exact_authored_identified_text_and_three_privacy_markers": true,
+      "owned_desktop_and_window_closed": true,
+      "reviewer_executed_clipboard_or_uac": false
+    },
+    "frozen_packet_authentication": {
+      "result": "PASS",
+      "status_before_review": "REVIEW",
+      "submitted_at": "2026-10-10T01:51:38+00:00",
+      "submitted_by": "codex-w2-implementation",
+      "existing_read_only_binding_function": "taskctl.task_submission_packet_errors",
+      "errors": [],
+      "manifest_binding_function": "taskctl.validate_task_evidence",
+      "manifest_errors": [],
+      "evidence_reference_path": "artifacts/evidence/CAP-05.S04.T03.R01.json",
+      "evidence_canonical_sha256": "b1f6203f3938e9f8bd84a79ec960efa6a9cb8679909f52a5c166fe248854cd8c",
+      "evidence_raw_sha256": "7cb876433027a597e3746285d6cc45595b32cfe04be79b54c037a7705e3c2391",
+      "packet_sha256": "389440afce49c7139901e2511f618ea1beafdb23e797a82e311308aacd458199",
+      "acceptance_criteria_sha256": "0d3d19a2e9d5b0017451c7dff3b71253e0efec7f77e4d663800ac797ddbfd9f0",
+      "selection_sha256": "3e6734e95cf75ba5269fec3d6c99d9eb641607b81a49309401fd6912149cb7f8",
+      "changed_paths": 46,
+      "selected_command_id_count": 6,
+      "prior_attempt_id": null,
+      "formal_open_finding_ids_before_review": [],
+      "head_verified": "3fdb6e104937e2d22b2c4396ddee1eb8fdb3fe88"
+    },
+    "reviewer_current_candidate_tests_executed": []
+  },
+  "optional_adjacent_findings": [],
+  "notes": "Approve CAP-05.S04.T03 R01 at exact candidate3fdb6e104937e2d22b2c4396ddee1eb8fdb3fe88. The three task criteria are satisfied by the bounded source and27 selected checks with79 authenticated artifacts and the independently verified actual frozen packet/criterion/selection bindings. The single owner-authorized private clipboard proof closes the previously unavailable OS boundary; exact shipping identified quotation delivery, permission review nonexecution, current rights and owned output/callback/termination evidence are distinct authenticated proofs. No material blocking finding remains. Preserve adverse CSP/startup/fixture/principal attempts without broad-profile or framework claims. Approval is task-only: integrated S04/checkpoints, fresh full affected W2 qualification, required platform/hardware/packaging evidence, independent Wave review and the separate human release gate remain required.",
+  "task_approval": true,
+  "slice_approval": false,
+  "wave_completion": false,
+  "release_approval": false
+}
