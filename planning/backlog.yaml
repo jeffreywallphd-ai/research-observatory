@@ -31527,7 +31527,7 @@ capabilities:
     depends_on:
     - CAP-05.S03.T03
     - CAP-01.S02.T03
-    status: IN_PROGRESS
+    status: DONE
     tasks:
     - id: CAP-05.S04.T01
       capability_id: CAP-05
@@ -32291,11 +32291,16 @@ capabilities:
     platform_targets:
     - windows-x64
     completion:
-      status: PENDING
-      reviewer: null
-      reviewed_at: null
-      evidence: []
-      notes: null
+      status: APPROVED
+      reviewer: agent:/root/reader_anchor_review
+      reviewed_at: '2026-10-10T02:54:50+00:00'
+      evidence:
+      - artifacts/evidence/CAP-05.S04.qualification-01.json
+      notes: Independent ledger artifacts/evidence/CAP-05.S04.review-01.json SHA611f52a9d1f8a0a87f239dd50422f1419b8879b6fc84fea3db3b252728c04f86
+        approved exact qualified00091983/deliveryaaad1bf0 and bundle LFcbdda37eaa80d0153ae97224bf03b56a5003a79098c5254f77cbddc4df1887a4.
+        No blocking findings. Actual shipping cancellation/focus/no-output and restart/current-permission/separate identified
+        Save/return/owned0 pass; completed02 observations retain overall FAIL. CP08/full W2/hardware/model/installer/G2 release
+        remain separate.
   - id: CAP-05.S05
     title: References, citation contexts, tables, and figures
     outcome: Document-internal scholarly structures become inspectable records without losing page context.
@@ -32307,7 +32312,7 @@ capabilities:
     - ALL
     depends_on:
     - CAP-05.S03.T03
-    status: NOT_STARTED
+    status: READY
     tasks:
     - id: CAP-05.S05.T01
       capability_id: CAP-05
@@ -32337,11 +32342,11 @@ capabilities:
       verification_commands:
       - python tools/verify.py --profile documents
       - python tools/verify.py --profile service
-      status: NOT_STARTED
+      status: READY
       owner: null
       branch: null
       started_at: null
-      updated_at: '2026-08-07T00:00:00+00:00'
+      updated_at: '2026-10-10T02:54:50+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''

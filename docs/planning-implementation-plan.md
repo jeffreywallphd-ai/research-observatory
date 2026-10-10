@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 41db050f752f3b6ddc15cc0a91d270b025eb84b8fdfb1c0d8b032bbf4b6a3687
+source_sha256: 358525679d45659faeed6459503eb0a57566b4a7486e46bc1644ef3badda65a0
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -11709,7 +11709,7 @@ Original tasks and approvals remain unchanged.
 
 **Outcome:** Researchers can read original pages and structured text side by side, navigate anchors, and inspect provenance without leaving the workflow.
 
-**Wave / priority / status / review:** `W2` / `P0` / `IN_PROGRESS` / `PENDING`
+**Wave / priority / status / review:** `W2` / `P0` / `DONE` / `APPROVED`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
@@ -11940,7 +11940,7 @@ Original tasks and approvals remain unchanged.
 
 **Outcome:** Document-internal scholarly structures become inspectable records without losing page context.
 
-**Wave / priority / status / review:** `W2` / `P1` / `NOT_STARTED` / `PENDING`
+**Wave / priority / status / review:** `W2` / `P1` / `READY` / `PENDING`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
@@ -11948,7 +11948,7 @@ Original tasks and approvals remain unchanged.
 
 #### - [ ] CAP-05.S05.T01 - Extract and reconcile reference-list entries
 
-**Status / priority / estimate / risk:** `NOT_STARTED` / `P1` / `L` / `high`
+**Status / priority / estimate / risk:** `READY` / `P1` / `L` / `high`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 

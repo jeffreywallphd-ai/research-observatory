@@ -1,0 +1,188 @@
+{
+  "document_type": "independent-slice-review",
+  "slice_id": "CAP-05.S04",
+  "review_round": "01",
+  "reviewer": "agent:/root/reader_anchor_review",
+  "result": "approved",
+  "reviewed_at": "2026-10-10T02:50:08Z",
+  "reviewed_state_commit": "aaad1bf0bf0eab06e0b4e87bd368af109c68fc2d",
+  "candidate_commit": "00091983e4919e77b94a455c75ce8f511f8a77bf",
+  "product_candidate_commit": "3fdb6e104937e2d22b2c4396ddee1eb8fdb3fe88",
+  "evidence_delivery_commit": "aaad1bf0bf0eab06e0b4e87bd368af109c68fc2d",
+  "approval_commit": "c85a59f3a293f8e3f2eaf6454682c9a14b1efa55",
+  "evidence_reference": {
+    "path": "artifacts/evidence/CAP-05.S04.qualification-01.json",
+    "sha256": "cbdda37eaa80d0153ae97224bf03b56a5003a79098c5254f77cbddc4df1887a4",
+    "raw_sha256": "11d0b0899701e233831c2536e1c51b8f8a84e5353b97b90c1b2d3940ced00e30",
+    "commit": "aaad1bf0bf0eab06e0b4e87bd368af109c68fc2d",
+    "hash_convention": "LF-canonical"
+  },
+  "reviewed_backlog_sha256": "41db050f752f3b6ddc15cc0a91d270b025eb84b8fdfb1c0d8b032bbf4b6a3687",
+  "notes": "Approve CAP-05.S04 slice integration at qualified candidate 00091983e4919e77b94a455c75ce8f511f8a77bf and exact evidence-only delivery aaad1bf0bf0eab06e0b4e87bd368af109c68fc2d. All three tasks are DONE with authenticated independent approved dispositions. Fresh actual shipping initial and restarted journeys connect the protected original, exact older accepted revision and two contexts, current action permission, actual Native destination cancellation or separate identified quotation delivery, return and physical cleanup. Journey02's completed exact denial, keyboard/theme/reflow and nonexecuting human review observations are authenticated explicitly within an overall FAIL; no fresh03 consent or whole02 PASS is inferred. No material criterion-bound integration blocker remains. This is slice approval only; the S02-S04 checkpoint, fresh full affected W2 qualification and separate human release gate remain open.",
+  "independence": {
+    "implementation_owner": "codex-w2-implementation",
+    "statement": "I am not the campaign or implementation owner. I performed independent read-only T02 review and bounded T03/S04 advisory work, including identifying the prior exact-revision substitution defect. I authored no product change, product regression, qualification producer, fixture, qualifying execution, taskctl mutation or evidence bundle. For this disposition I inspected the committed bundle, relevant authority and cross-task source/contract seams, producers and raw outcomes; authenticated the selected inputs and prior independent task dispositions; and replayed the material prior finding by source/evidence inspection. I ran no product test, Native journey, clipboard/UAC action, build, parser/model/tier run, benchmark, broad profile or broad Git-history audit. This append-only ledger is my sole write in the formal slice review. No commit, HEAD change, backlog mutation or release action is performed."
+  },
+  "integration_assessment": [
+    {
+      "criterion": "Approved S04 sections 5/10/13/17: connected original, exact historical anchor/context and portable handoff",
+      "result": "satisfied",
+      "assessment": "Fresh03 initial and restart execute the authenticated compiled renderer/Wry/Native invoke/supervised Core against the owned Windows vault and retained encrypted source. Raw UIA observations show Page 1 of 50 and two distinct context groups, with three exact older accepted revision values in consecutive complete snapshots. Restart opens that same retained link without revision reselection; the later accepted head is not substituted. Both journeys return to the selected Work/version and close normally. The delivered quotation's project/attachment/candidate/source assertion/Work and Version revisions match the authenticated canonical fixture; original revision, original digest, older normalized revision and exact anchor match retained seed values. Citation metadata binds the same project/document and exact normalized revision. The versioned opaque URI/application event contract remains usable by downstream fixtures without paths, credentials, sessions, database handles or a separate renderer. Future evidence/graph production pages and OS protocol registration are outside this slice's implemented extension-point claim."
+    },
+    {
+      "criterion": "Approved S04 sections 7/8/10 and T03: action-specific denial, explicit human review and separate lawful output",
+      "result": "satisfied",
+      "assessment": "Journey02 raw observations and its unchanged producer establish exact rights-explicit-denial Copy, a disabled Copy button, no permitted-use review bypass and continued original inspection. Its separate authority checkbox/Record action waits for the recorded-no-action status; the producer asserts no Reader file before the next permission check. That subsequent read-only dump fails ElementNotAvailableException, and the overall attempt remains FAIL with graceful exit0 and owned cleanup0. Fresh03 preserves that accepted human decision, checks current permission in a new process, confirms no review control is offered, and requires a separate Save action and Native folder decision. Restart again requires a fresh check and separate destination. Its exact bounded quotation is unverified, has the complete canonical source/citation identity, a policy revision and the four explicit inspect/derive/quote/action-specific local-export decisions. The delivered plaintext warning is visible. Expanded independent T03 proof supplies content-free denial audit, alternate transfer interception, current rights at materialization/destination/publication and the other action adapters; these are authenticated reviewed history, not new slice executions."
+    },
+    {
+      "criterion": "Approved S04 sections 8/10/14/17: cancellation, physical ownership, restart and recovery",
+      "result": "satisfied",
+      "assessment": "Fresh03 initial invokes Cancel on the uniquely verified Native-owned Shell folder dialog. It waits for the settled cancellation status, asserts no Reader output, observes focus returned within the verified Native UI thread, returns to the source workflow and exits0 with no active owned descendants. The focus snapshot also names the Permitted source actions heading; no full keyboard recovery claim is inferred. The separate restart is a new OS process with retained project/link/human rights and fresh authority, followed by successful identified delivery and physical cleanup0. The sole failed dump in restart is retained and followed by a fresh snapshot; inspected retries are limited to three read-only dump attempts for ElementNotAvailableException, reacquire and verify the same owned root each time, and never retry mutations or substitute a stale tree. Reviewed T01/T02/T03 proofs cover source/session/rights denial, corruption/broken context, resource admission, late results, unknown drain, maximum-source read cancellation, physical relocation and output/callback Lock/cancel/termination. No unchanged Native or migration fault matrix is replayed or relabeled fresh. S04 introduces no new database or encrypted-envelope migration."
+    },
+    {
+      "criterion": "Approved S04 sections 6/10/12/17: accessible connected Reader and approved reference",
+      "result": "satisfied-with-explicit-boundary",
+      "assessment": "Authenticated journey02 observations show one actual Tab transition from Check current permissions to Review selected source permissions, accessible control/status names, actual Light/Dark announcements and the action control contained within the resized 960px owned window. Fresh03 verifies cancelled-dialog Native focus restoration and successful workflow return. Independently reviewed task mounted proofs cover richer keyboard/DOM focus, inert Unicode highlights, distinct anchors, geometry/fallback, themes/reflow, late-response clearing and unavailable/recovery states. Current caller inspection preserves the linked normalized revision in entry/session identity, exact revision-scoped context/action controls and shared physical-ownership admission. The approved inherited RO-UI-ACADEMIC-MINIMAL-1.9 conformance and canonical publication lineage are authenticated through the exact T03 review. Controls remain within existing Reader selection/provenance regions; no intentional route or semantic reference replacement is inferred. The fresh native observations do not claim hardware screen-reader execution, complete keyboard traversal, phone-width or pixel parity, or a new visual-baseline approval."
+    },
+    {
+      "criterion": "Approved S04 sections 10/11/15/17: complete bounded evidence, architecture and performance obligations",
+      "result": "satisfied-with-explicit-boundary",
+      "assessment": "The committed bundle binds the approved material plan/ADR, all latest task manifests and independent reviews, selected desktop:application commands, fresh reports/raw outputs/Native events/producers, setup and adverse records, criterion-linked integration boundaries and deferred coverage. All references and current selected inputs authenticate. The accepted ADR body matches frozen approval; the current S04 plan differs from the approval snapshot only in approval/status publication metadata. The LT01 adoption and its exact owner/proposal/readiness pins authenticate and supersede only the representative latency scalar to 3.0 seconds. Independently reviewed T01 cold/warm 20-open p95 values remain 2659.1579/2728.0284ms with large-source/resource/cancellation proof; this review performs no new benchmark and infers no hardware-tier support. Changes after the compiled T03 product are only task evidence/planning metadata, and the delivery adds only the slice bundle. No framework change, parallel identity store, hidden manual production rights step, prohibited model/tier run or parser-overage tuning is introduced. Inherited built-frame CSP predicate/full quality debt and the startup-probe timeout remain disclosed profile obligations, not a full-profile PASS or waiver."
+    }
+  ],
+  "evidence_reproduction": {
+    "method": "Read/hash/source-and-assertion inspection at fixed committed delivery HEAD; no qualifying execution or result cache.",
+    "candidate_identity": {
+      "head_before_review_write": "aaad1bf0bf0eab06e0b4e87bd368af109c68fc2d",
+      "branch": "codex/w2-implementation",
+      "tracked_and_untracked_status_before_review_write": "clean",
+      "qualified_candidate_to_delivery_changed_paths": [
+        "artifacts/evidence/CAP-05.S04.qualification-01.json"
+      ],
+      "compiled_product_to_qualified_candidate_diff": "Task evidence, independent review, backlog and generated planning metadata only; no product source change.",
+      "committed_bundle_equals_working_LF_canonical_bytes": true
+    },
+    "authentication": {
+      "bundle_canonical_sha256": "cbdda37eaa80d0153ae97224bf03b56a5003a79098c5254f77cbddc4df1887a4",
+      "bundle_raw_sha256": "11d0b0899701e233831c2536e1c51b8f8a84e5353b97b90c1b2d3940ced00e30",
+      "bundle_reference_count": 36,
+      "unique_bundle_references": 31,
+      "latest_task_manifest_and_review_references": 6,
+      "latest_task_candidates_are_qualified_candidate_ancestors": true,
+      "latest_task_reviews_match_manifest_digests_and_backlog_DONE_records": true,
+      "fresh_reports": [
+        {
+          "path": "artifacts/tmp/CAP-05.S04.qualifying-reader-journey-03.initial.json",
+          "sha256": "860a053efbf87aff2d9dd3f1950270a88ac57ba542ddfc10e021a3e7372e8975",
+          "status": "PASS",
+          "candidate": "00091983e4919e77b94a455c75ce8f511f8a77bf",
+          "source_inputs_authenticated": 9705,
+          "duration_seconds": 35.50536529999226,
+          "owned_exit": 0,
+          "owned_cleanup_active_processes": 0,
+          "ui_actions": 18,
+          "failed_ui_actions": 0
+        },
+        {
+          "path": "artifacts/tmp/CAP-05.S04.qualifying-reader-journey-03.restart.json",
+          "sha256": "7df1c5f343077a9212b8b568e75b1b14bb5c875e9d3bd7f0ef1f67aa352498a5",
+          "status": "PASS",
+          "candidate": "00091983e4919e77b94a455c75ce8f511f8a77bf",
+          "source_inputs_authenticated": 9705,
+          "duration_seconds": 35.63544039998669,
+          "owned_exit": 0,
+          "owned_cleanup_active_processes": 0,
+          "ui_actions": 21,
+          "failed_read_only_dump_attempts": 1,
+          "failed_dump_disposition": "Exact ElementNotAvailableException retained; bounded fresh read succeeded."
+        }
+      ],
+      "prior_completed_observation": {
+        "path": "artifacts/tmp/CAP-05.S04.qualifying-reader-journey-02.initial.json",
+        "sha256": "e512b6db527bd1e1ec3231cf32e55d7c613d6582686de87dd1a0668551ddcfe8",
+        "overall_status": "FAIL",
+        "source_inputs_authenticated": 9703,
+        "producer_sha256": "7fe47ccab2fa17bcb5d5cb17a7278fcfa2517c42036f0d44d795499ad8bdb4d0",
+        "completed_observations": "Exact denial/original inspection, owned Tab, Light/Dark announcements/960px action bounds and separate recorded-no-action review plus no-output assertion.",
+        "graceful_exit": 0,
+        "owned_cleanup_active_processes": 0,
+        "whole_attempt_PASS_inferred": false,
+        "fresh03_consent_inferred": false
+      },
+      "shipping_package": {
+        "path": "artifacts/tmp/CAP-05.S04.T03.qualifying-package-01.json",
+        "sha256": "953d3a684aaf4ad20952dea5b0992b9f4929e8848034bd3fb1f71767c30971d9",
+        "built_candidate": "3fdb6e104937e2d22b2c4396ddee1eb8fdb3fe88",
+        "source_inputs_authenticated": 237,
+        "actual_fixture_runtime_files_authenticated": 8758,
+        "package_inventory_files_authenticated": 197,
+        "entrypoint_sha256": "eb076466410914057f18a2f5756b00b636cca1c66f31d4da647c0be795ad9653",
+        "new_build_claimed": false
+      },
+      "delivered_quotation": {
+        "sha256": "d5b0c6f0cf964d0332e67f776adf603da919b8dccd13b96096ff89be997ddabb",
+        "bytes": 2214,
+        "exact_canonical_source_and_older_normalized_anchor_identity_match": true,
+        "citation_matches_project_document_and_exact_normalized_revision": true,
+        "bounded_quotation_and_action_specific_policy_basis_match": true,
+        "scholarly_verification": "unverified"
+      },
+      "mismatches": [],
+      "runtime_result_reuse": false
+    }
+  },
+  "prior_findings_replayed": [
+    {
+      "finding_id": "CAP-05.S04.T02-ADVISORY-F01",
+      "status": "resolved-at-approved-T02-and-retained-current-source",
+      "prior_record": "artifacts/evidence/CAP-05.S04.T02.review-advisory-01.md",
+      "prior_record_sha256": "dd4edbb783cae0f8ef1802e182cabf6dec83ada183a5797580764d6fcf357c5c",
+      "proof": "The adverse98 record remains blocking at its reviewed candidate. Authenticated T02 R01 records exact revision identity correction and fresh successive-link/late-result regressions. Current entry/session keys still include the linked normalized revision; fresh slice restart displays the retained older revision rather than the later head. No controlled closure or legacy round is invented."
+    },
+    {
+      "finding_id": "CRA01-F01",
+      "status": "resolved-by-approved-T01-physical-drain-proof",
+      "proof": "Authenticated T01 independent disposition records exact owned read/drain/unknown-denial lifetime closure with actual Core/Native and decoder regressions. Current shared Reader context/action admission retains unresolved ownership; the new actual cancel and normal exits separately prove their slice lifecycle boundary. Historical advisory evidence remains unchanged."
+    }
+  ],
+  "preserved_adverse_observations": [
+    "Journey01 remains FAIL for unsupported theme InvokePattern after exact denial and Tab; graceful exit0 and physical cleanup0 are retained.",
+    "Journey02 remains FAIL for read-only ElementNotAvailableException after the named completed observations. Its persisted explicit human review is preserved; no reset or fabricated new confirmation is performed.",
+    "Fresh03 restart retains its single transient failed dump and subsequent successful fresh read; no failed mutation or stale snapshot is hidden.",
+    "Clean-fixture setup01's missing empty project directories caused real open rejection422. Diagnosis/setup02 restore only that owned layout and publish the exact synthetic denial through existing rights authority; no raw table mutation or model execution is used. Bootstrap cleanup is setup evidence, not successful product qualification.",
+    "Historical T02 revision-substitution/partial restart/stale marker/Unicode producer observations, T03 fixture/principal/build observations, inherited attachment-probe timeout and built-frame CSP/full quality debt remain separately adverse or explicitly closed at their named boundaries.",
+    "Original over-target Reader and owner-accepted parser observations remain historical evidence. LT01 changes only the approved latency scalar; neither history nor parser performance is retuned or relabeled."
+  ],
+  "verification_selection": {
+    "selected_command_ids": [
+      "desktop:application"
+    ],
+    "fresh_boundary_checks": [
+      "shipping-Reader-initial",
+      "shipping-Reader-restart"
+    ],
+    "historical_coverage": "Authenticate exact independently approved T01/T02/T03 manifests/reviews, task state and required authority/performance/native/mounted/contract proof. Authenticate only the explicitly completed observations from the overall failed02 attempt. No prior Native result, review or benchmark is represented as new execution.",
+    "rationale": "Expanded task reviews already cover unchanged security, rights, output and physical ownership implementation. Fresh connected shipping proof closes the remaining cross-task dispatch/current-permission/cancellation/restart/identified-output/return seams. The evidence-only delivery introduces no product/runtime change requiring an unchanged full-profile, latency, parser/model/tier or broad-history replay."
+  },
+  "proof_limits": [
+    "Retained lawful synthetic documents and explicitly authored accepted IR establish no scholarly finding, parser/model quality result or automatic evidence acceptance.",
+    "The initial clean owned profile was generated natively without a historical WebView copy; the retained encrypted project is a declared fixture.02/03 are subsequent real sessions with legitimate persisted human decisions, not repeated fresh-consent demonstrations or a generic installer clean-state matrix.",
+    "Actual compiled renderer/Wry/Native/Core and Windows protected fixtures establish the named connected principal boundaries. Integration startup substitutes only the declared owned policy/vault/WebView/temp/default-project locations. It does not qualify sealed shipping Core, installer, all Windows/WebView versions or all deployment profiles.",
+    "No researcher clipboard access, second elevated run, physical paper printing, unrelated application launch, external service, global input/UI control, renderer port override, debugger, JavaScript injection or OS protocol registration is performed for slice proof.",
+    "Actual accessibility observations are bounded as stated; richer mounted tests do not become hardware screen-reader or full keyboard/visual parity proof.",
+    "Historical T01 timing/resource and T02 physical relocation retain their exact independent task scope. The35.5-second action-journey durations are not first-page latency samples, hardware-tier qualification or new performance evidence."
+  ],
+  "deferred_obligations": [
+    "S02-S04 checkpoint: accumulated affected-profile union, fresh clean build/smoke, shared-interface/platform/security identities and open risks, including broader composed contention/cancellation/accessibility wiring coverage.",
+    "Fresh full affected/repository/profile/platform/package/security/privacy/rights/accessibility/performance and cross-capability failure/denial/cancellation/migration/restart/recovery W2 qualification, independent Wave review and separate G2 human release decision.",
+    "Inherited built-frame CSP predicate, startup-probe timeout and full quality inventory/test-type debt remain visible for their checkpoint/Wave disposition; this review grants no waiver or automation-framework authority.",
+    "No2/3GiB minimum-tier or8/16GiB model/hardware claim. Owner-directed configurable/smaller-model and W5 larger-computing changes require their own bounded approved successor; no further latency or accepted parser-overage tuning is authorized by this review."
+  ],
+  "findings": [],
+  "closures": [],
+  "optional_adjacent_findings": [],
+  "scope_limit": "CAP-05.S04 independent slice disposition only at the exact qualified candidate and committed evidence delivery. No taskctl/backlog transition, local-main integration, checkpoint/Wave completion, governed-reference/resource/model amendment, external action or human release approval is performed by this ledger.",
+  "slice_approval": true,
+  "wave_completion": false,
+  "release_approval": false
+}

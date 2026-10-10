@@ -4,7 +4,7 @@
   "baseline": "1.3",
   "supplemental_release": "1.3.4",
   "review_interface_release": "1.4.0",
-  "generated_at": "2026-10-10T02:27:42.819209+00:00",
+  "generated_at": "2026-10-10T03:08:56.949873+00:00",
   "entry_point": "index.html",
   "feedback_schema_version": "1.1",
   "waves": [
@@ -23655,7 +23655,7 @@
             {
               "task_id": "CAP-05.S05.T01",
               "title": "Extract and reconcile reference-list entries",
-              "status": "NOT_STARTED",
+              "status": "READY",
               "mode": "latest-review-only",
               "latest_review": {
                 "reviewer": null,
@@ -23696,7 +23696,7 @@
             {
               "task_id": "CAP-05.S05.T01",
               "title": "Extract and reconcile reference-list entries",
-              "status": "NOT_STARTED",
+              "status": "READY",
               "page": "CAP-05/CAP-05.S05.T01.html",
               "dependencies": [
                 "CAP-05.S03.T03"
