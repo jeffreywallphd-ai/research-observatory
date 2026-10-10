@@ -1,7 +1,7 @@
 ---
 document_type: generated-backlog-status-summary
 source: planning/backlog.yaml
-source_sha256: 751045796a464a4e2e2bcf443b1505514707acf26a7f509478f759e763317a53
+source_sha256: 9ace4cfd385b57a0a5b1fef20086e9106cc9350b4ca51aa122a84b4d91983cca
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -993,7 +993,7 @@ Append-only rounds remain distinct from the current latest-review projection. Le
 
 | Task | Status | Owner | Branch |
 |---|---|---|---|
-| `W2.C17.T01` Implement parser upgrade comparison and stale propagation | `IN_PROGRESS` | codex-w2-implementation | `codex/w2-implementation` |
+| `W2.C17.T01` Implement parser upgrade comparison and stale propagation | `BLOCKED` | codex-w2-implementation | `codex/w2-implementation` |
 
 ## Linked corrective tasks
 
@@ -1085,5 +1085,5 @@ Original tasks and approvals remain unchanged.
 
 ### W2.C17.T01 — Implement parser upgrade comparison and stale propagation
 
-**Status:** `IN_PROGRESS`. **Original task:** `CAP-05.S06.T03`. **Latest review:** `-`.
+**Status:** `BLOCKED`. **Original task:** `CAP-05.S06.T03`. **Latest review:** `-`.
 
