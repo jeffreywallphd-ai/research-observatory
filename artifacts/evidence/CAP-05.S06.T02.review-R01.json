@@ -1,0 +1,202 @@
+{
+  "task_id": "CAP-05.S06.T02",
+  "attempt_id": "R01",
+  "candidate_commit": "dc8172c2e89a764a6fa257c25130e9bd6c145db2",
+  "reviewed_state_commit": "dc8172c2e89a764a6fa257c25130e9bd6c145db2",
+  "base_commit": "4108a86d81b8b617939e20c5f9318db5e3e1f9e1",
+  "reviewer": "parsing_quality_review",
+  "result": "approved",
+  "reviewed_at": "2026-10-10T18:46:12Z",
+  "packet_sha256": "63ceef8d88ec166fe818f0e95dc32cd76d809261b14d2c9e67ca1615f37eee72",
+  "evidence_sha256": "110961428e9aeefb1546f723efb284a52089ba1f87fa3990f5b9f997d612872b",
+  "acceptance_criteria_sha256": "5d58bcf6badaaf4a77de4b4e000263ba750ccdbf8afbd74f9df38cae14c666e1",
+  "selection_sha256": "1a7d7c81e3be8ef20e66d5f2b40c70e2e14bff9f9292c0c6fe889e2fcf9aa323",
+  "findings": [],
+  "closures": [],
+  "acceptance_reviews": [
+    {
+      "criterion_index": 1,
+      "result": "satisfied",
+      "check_ids": [
+        "correction-domain-lineage",
+        "protected-correction-persistence",
+        "actual-native-core-correction-authority",
+        "actual-renderer-native-core-correction",
+        "desktop-correction-interactions",
+        "guided-correction-navigation",
+        "correction-codecs-and-reader-regression",
+        "native-correction-request-boundaries"
+      ],
+      "assessment": "The approved label/order, split/merge, reference rematch, page-anchor and exclusion operations bind an exact base revision, authenticated source lineage and expected old values. Protected saved proposals, undo, discard and proposed previews do not advance the accepted head. Explicit acceptance records the current authenticated human actor, rationale, typed patches and new immutable revision/element identities, with head, decision, provenance and scoped dependency facts in the existing atomic publication transaction. Readback authenticates encrypted decisions and reproduces their exact accepted result; exact retry adds no publication. Original parser observations, accepted history and prior anchors remain immutable. Original Native/Docling validation precedes corrected-ID mapping, so changed order/count cannot silently substitute original metadata. Authenticated exclusions suppress rediscovery and ancestor quotation while retaining original observations. Actual Reader accepted-human relationships and labels remain separate from machine assertions and scholarly verification. Current exact Work sources, rather than unknown generic Work rights metadata, determine rematch authority. Fresh Windows Wry evidence uses production quality/Reader components, actual Native routing, supervised Core and encrypted storage to save, explicitly accept, return to Reader and reopen; the authored test page and parser fixture limit that claim."
+    },
+    {
+      "criterion_index": 2,
+      "result": "satisfied",
+      "check_ids": [
+        "correction-domain-lineage",
+        "protected-correction-persistence",
+        "actual-native-core-correction-authority",
+        "actual-renderer-native-core-correction",
+        "desktop-correction-interactions",
+        "guided-correction-navigation",
+        "correction-codecs-and-reader-regression",
+        "native-correction-request-boundaries",
+        "original-revision-anchor-enrichment-regression"
+      ],
+      "assessment": "Fresh verbose logs establish 36 domain/lineage/reference cases, nine actual protected correction persistence cases, one actual Native-authenticated Core authority case, thirteen original revision/anchor/reference regressions, three focused component interaction journeys and the mounted production-root navigation test with six dirty/busy/unknown by stage/Return cases. Material failures include wrong base/old value, cross-revision and receipt substitution, invalid geometry, resource bounds, stale draft, CAS competition, interrupted publication, stopped or changed authority, exact versus changed-command retries and encrypted restart/readback. Repository interruption proves transaction rollback and retry. Actual Native/Core service evidence proves current project/root/session/human/Intent/privacy/source inspect-and-derive fencing, reopen and stopped delivery; it uses ordinary admission and does not inject a Native API allocation fault. Native closed request decoding and bounded Core record/item/text/deadline checks preserve resource limits. Component doubles prove unknown-outcome exact-command retention, inert content, authored keyboard interaction and late-unmount handling; separate real Native/Core evidence supplies the principal boundary. All three pre-submission P2 defects have independent source-level replays and fresh passing regressions. The retained temporary-project WinError5 setup failures occurred before the affected product code and are not reclassified as passing product executions."
+    },
+    {
+      "criterion_index": 3,
+      "result": "satisfied",
+      "check_ids": [
+        "affected-python-format",
+        "affected-python-lint",
+        "affected-python-types",
+        "document-schemas",
+        "affected-adr",
+        "affected-product-dependency-and-lint-delta",
+        "ui-change-authority",
+        "desktop-types",
+        "original-revision-anchor-enrichment-regression",
+        "fresh-production-build",
+        "fresh-production-assembly"
+      ],
+      "assessment": "The exact 73-path claim-base-to-candidate diff matches the frozen packet and criterion manifest. Additive closed correction contracts, protected aggregate/object media support, Core port/adapter and routes, fixed Native commands, approved 1.9 Parsing Quality/Reader behavior, product assembly, fixtures, documentation and existing audit/dependency publication stay within T02. Literal v28 migration, storage profile and accepted IR/structure/revision v1 schemas have unchanged base/candidate blobs; the existing generic protected aggregate accommodates drafts and decisions without a migration or weakening accepted v1 validation. Proposed ADR-0052 documents accepted ADR-0029 authority and grants no new decision or approval. The strictly additive Python inventory publication uses the unchanged existing rule; no checker, controller, hook, CI, threshold or framework source changes. Retained adverse commits precede a reconstructed unsubmitted publication with identical product tree, and final metadata changes only sort the exact eight UI implementation paths and record existing approved 1.9 lineage. Original claim, base, approved ancestors and local main are preserved. Fresh affected Python format/lint/explicit-target typing, schemas, ADR, approved UI authority, TypeScript, production build and assembly pass. Typing with follow-imports=silent does not claim to clear untouched imported debt. Exact affected architecture/lint deltas pass; the full 45 architecture findings and three desktop lint matches remain FAIL and unwaived."
+    }
+  ],
+  "pre_submission_replay": [
+    {
+      "finding": "Guided stage or Return loses dirty, busy or unknown correction ownership",
+      "severity": "P2",
+      "criterion_indexes": [
+        1,
+        2
+      ],
+      "original_candidate": "bbd00cb8f8d604e00058fb571ffcb471fb01d48f",
+      "result": "closed",
+      "reproduction": "Mounted production ApplicationRuntime and WorkflowNavigation previously unmounted the quality child and lost its exact pending command in all six dirty/busy/unknown by guided stage/Return cases. Navigation adverse attempts 01/02 are setup errors; attempt 03 records the six product failures.",
+      "closure": "The shared qualityNavigationAllowed check precedes ordinary, guided-stage and Return mutations. Independent read-only review confirms the repaired wiring and dependencies. The fresh guided-correction-navigation regression retains the child and command for all six blocked cases, then permits clean detachment. Child/Core doubles limit this check to actual root callback ownership, not Native authority or actual child state generation.",
+      "fresh_check_id": "guided-correction-navigation"
+    },
+    {
+      "finding": "Excluded reference fields or identifiers reappear through retained ancestor fallback scans",
+      "severity": "P2",
+      "criterion_indexes": [
+        1,
+        2
+      ],
+      "original_candidate": "bbd00cb8f8d604e00058fb571ffcb471fb01d48f",
+      "result": "closed",
+      "reproduction": "An authored JATS reference with an excluded article-title and DOI pub-id retained ancestor text that originally regenerated the excluded title and active DOI. Original observations must remain retained without reactivating excluded derived metadata.",
+      "closure": "Structured fields, inferred source spans and fallback identifier ranges now screen authenticated original exclusion intervals. Independent pure replay confirms the title disappears and the retained excluded DOI becomes inactive with no source span, including a later correction generation, while unaffected author/year values and original raw text remain usable. Authenticated citation and ancestor quote masks remain preserved.",
+      "fresh_check_id": "correction-domain-lineage",
+      "regression": "tests.documents.test_document_correction_lineage.CorrectionLineageTests.test_excluded_reference_fields_and_identifiers_cannot_reappear_in_fallback_scans"
+    },
+    {
+      "finding": "Preview-only split tail is hidden by accepted-count pagination",
+      "severity": "P2",
+      "criterion_indexes": [
+        1,
+        2
+      ],
+      "original_candidate": "bbd00cb8f8d604e00058fb571ffcb471fb01d48f",
+      "result": "closed",
+      "reproduction": "Splitting the last node of a twenty-node accepted structure yields twenty-one proposed nodes; accepted-only pagination originally returned no continuation and hid the final proposed fragment.",
+      "closure": "Continuation uses the maximum accepted/proposed count. Independent replay and fresh protected repository regression establish page zero with twenty accepted/twenty proposed nodes and next offset twenty, then a page with zero accepted/one proposed node and no continuation. The accepted head remains unchanged.",
+      "fresh_check_id": "protected-correction-persistence",
+      "regression": "tests.documents.test_document_correction_repository.DocumentCorrectionRepositoryTests.test_preview_only_tail_has_a_second_page_without_advancing_accepted_head"
+    }
+  ],
+  "evidence_review": {
+    "manifest_path": "artifacts/evidence/CAP-05.S06.T02.R01.json",
+    "manifest_raw_sha256": "0ef04b0478f722444e9fad767f903cf90a85df82bfd45375a9eda28895131494",
+    "manifest_canonical_sha256": "8415353e535e12ab3daec4cd5c3ef13a08e39f40050ef5da87dca859ac05827b",
+    "frozen_packet_path": "artifacts/tmp/CAP-05.S06.T02.frozen-submission-R01.json",
+    "packet_authentication": "The frozen copy equals canonical review_control.current_submission in REVIEW. Independent recomputation authenticates its packet, acceptance-criteria and verification-selection hashes, exact candidate/base/branch, attached evidence reference, 73 changed paths, 25 selected commands, selected command IDs, deferrals and rationale. This is the first formal submission, with no prior formal attempt or open finding. Formal findings/closures are empty; the separately recorded pre-submission replays do not invent a historical R01 or prior formal finding ID.",
+    "artifact_authentication": "All 25 selected check raw and CRLF-canonical output digests, focused-report and producer digests match their named files and child records. All 27 focused raw outputs, 93 retained adverse artifacts and four supporting artifacts are authenticated. The actual test executable and synthetic seed receipt match the focused report. The production manifest independently authenticates 252 source pins and 204 product artifacts; production build/assembly is separate from the earlier test-host execution. Five literal compatibility artifacts retain identical base/candidate Git blobs.",
+    "fixed_input_authentication": "Before taskctl submission, all 11,264 selected inputs matched their recorded digests with zero mismatch. The fresh producer locks all tracked non-artifact/non-site source, UI evidence, task producers and selected actual installed runtime/toolchain inputs while checks execute; it records selectedInputsUnchanged=true and the exact candidate afterward. Taskctl's subsequent REVIEW transition and generated projections do not reinterpret this fixed committed execution window or require replay of unchanged product checks.",
+    "focused_report": {
+      "path": "artifacts/tmp/CAP-05.S06.T02.qualifying-focused-04.json",
+      "sha256": "e2e4723d0258f957dedbc645c9c714476a6f8f54f070809c6be1f21328fd2e8e",
+      "producer_path": "artifacts/tmp/CAP-05.S06.T02-qualifying-focused-04.py",
+      "producer_sha256": "90360f5041d3e091cbb674ec24abf02ffd08cfb2f734042009f1203d66faa572",
+      "status": "FAIL",
+      "passing_children": 25,
+      "failing_children": 2,
+      "elapsed_seconds": 261.36250210000435,
+      "whole_report_qualifying": false
+    },
+    "affected_delta": {
+      "path": "artifacts/tmp/CAP-05.S06.T02.qualifying-delta-03.json",
+      "sha256": "f69eebcfb2f01d5574fc436de0116827ddfbe176d538e733609d0924e83c1bee",
+      "canonical_sha256": "05e6e32694d336b991c51cb286695b7cab003f0184d51391e4375034a77b01d4",
+      "status": "PASS",
+      "scope": "exact affected statement and matching-line delta only",
+      "baseline_architecture_findings": 45,
+      "candidate_architecture_findings": 45,
+      "baseline_desktop_lint_matches": 3,
+      "candidate_desktop_lint_matches": 3,
+      "full_architecture_status": "FAIL",
+      "full_desktop_lint_status": "FAIL",
+      "full_failures_waived": false,
+      "assessment": "The task-owned producer invokes the unchanged existing architecture checker API on the exact archived claim base and held candidate. Counter identities bind each offending call/import AST statement without line-position attributes; there are no added or removed statements. Desktop comparison binds every actual matching line under the unchanged checker rules, rather than per-file counts; no new match is added. Governing checker/contracts and literal compatibility blobs are unchanged. The full CLI failures are separately retained. This establishes affected delta, not repository-wide compliance."
+    },
+    "publication_authentication": "Inventory parent 337492f1dd43e28e55484223aeadb7e1e7a713a9 descends from original claim base 4108a86d81b8b617939e20c5f9318db5e3e1f9e1. Product b029ac5f49ae93d925c7cf7f56424463b9f1e3ef has tree 32cd696dba2a9769d2630a50582e8fa326231c99, identical to corrected 3c09671a8014a5fb055690d620bd605d62cf5d74 retained with bbd00 on codex/w2-t02-adverse-01. Final dc8172 changes only UI evidence inventory and the exact existing 1.9 experience_change mapping. Independent structural backlog comparison authenticates unchanged claim/status/owner/base/criteria/scope/approval/history apart from that lineage field before submission. No existing approved history or main was discarded. Fresh final evidence follows both publication and metadata repair; earlier failures remain adverse."
+  },
+  "independence": {
+    "task_owner": false,
+    "product_edits": false,
+    "qualifying_suites_rerun_by_reviewer": false,
+    "review_method": "Independent expanded read-only review of approved scope, exact Core/Native/desktop contracts and source, narrow pure finding replays, authenticated fresh committed evidence and frozen submission. Native/desktop advisory was read and its bounded claims independently checked. Only this new formal disposition ledger was written."
+  },
+  "verification_selection": {
+    "selected_command_ids": [
+      "foundation:ui-change",
+      "foundation:quality",
+      "documents:unit",
+      "foundation:adr",
+      "foundation:architecture",
+      "desktop:application",
+      "desktop:unit"
+    ],
+    "assessment": "The selected changed checks, domain and real protected persistence/authority boundaries, directly affected original regressions, focused production-component/root interactions, real Windows Native/Core journey and fresh production assembly adequately support T02. No unchanged broad-profile replay is required for this disposition. Attempted full architecture/lint failures remain explicit; only authenticated exact affected deltas satisfy the affected criterion.",
+    "deferred": [
+      "CAP-05.S06.T03 batch reparse comparison, anchor migration and broader stale propagation; integrated S06 failure/denial/cancellation/recovery/accessibility checks and independent slice disposition.",
+      "Actual OS keyboard/focus/UIA accessibility and in-flight lock/window-replacement races beyond the authored component and service proofs; shipping installation/signing and remaining desktop activation debt.",
+      "Fresh full W2 repository/affected/profile qualification, all inherited architecture/lint findings, cross-capability security/privacy/rights/accessibility/performance/packaging/platform/restart/recovery, independent Wave review and separate human release."
+    ]
+  },
+  "scope_limits": [
+    "Approval covers only CAP-05.S06.T02 at the exact frozen candidate; it does not complete S06, W2 or a release gate.",
+    "Synthetic authored parser output establishes correction/lineage wiring and boundaries, not parser/model accuracy, scholarly correctness or evidence verification.",
+    "The hidden authored Wry test page proves production quality/Reader component-to-Native-to-Core behavior with the real Windows protected runtime. It omits ApplicationRuntime, which is separately mounted with explicit quality-child/Core doubles. Programmatic DOM interaction and authored keyboard cases do not prove real OS keyboard/focus/UIA accessibility.",
+    "Stopped service materialization and terminal exit denial are proved at their named boundaries; no actual in-flight Native lock/window-replacement race or Native API resource-fault injection is claimed.",
+    "No installed shipping package/signing, model/hardware tier, 8/16 GiB execution, physical 2/3 GiB minimum, performance campaign, latency optimization or larger-computing qualification is included."
+  ],
+  "notes": "Independent CAP-05.S06.T02 R01 review approves the exact candidate and all three task criteria. Typed corrections preserve original parser output and immutable human history, bind exact source/base/old values and current authority, and create a new immutable revision plus scoped dependency facts only after explicit human acceptance. Authenticated persistence, actual Native/Core and bounded desktop evidence support success, denial, rollback, exact retry, restart and prior-finding closure. All three pre-submission P2 defects are explicitly replayed and closed without inventing a prior formal round. The focused report remains aggregate FAIL for 45 inherited architecture findings and three inherited desktop lint matches; exact affected deltas pass and no broad failure is waived. No active task blocker remains. T03, S06 integration/accessibility and fresh full Wave/shipping/model/hardware/release qualification remain required at their approved scopes.",
+  "task_approval": true,
+  "slice_approval": false,
+  "wave_completion": false,
+  "release_approval": false,
+  "publication_representation": {
+    "document_type": "public-representation-of-original-approved-R01",
+    "original_manifest_sha256": "8415353e535e12ab3daec4cd5c3ef13a08e39f40050ef5da87dca859ac05827b",
+    "original_packet_sha256": "6060ef06e44da45744eac84040c85dfda5112ecc1d8c23635ff82f598f81a7fe",
+    "original_ledger_sha256": "263605b7891317a1498aecc7a8272cfe469161bb2a7dad1246968fd7d3d2761b",
+    "snapshot": {
+      "path": "artifacts/tmp/CAP-05.S06.T02.publication-repair-01/snapshot-01.json",
+      "sha256": "9e3de05636aafeb73f55e9b7585d82f4595ea3565aee53779672a674013c658a"
+    },
+    "original_authentication": "All original reviewer identity, approval, timestamp, notes, assessments and reproduction text authenticate the original preserved R01, not this alternate representation. No new product review or execution is claimed.",
+    "public_manifest": {
+      "path": "artifacts/tmp/CAP-05.S06.T02.publication-repair-01/public-manifest.json",
+      "sha256": "110961428e9aeefb1546f723efb284a52089ba1f87fa3990f5b9f997d612872b"
+    },
+    "public_packet": {
+      "path": "artifacts/tmp/CAP-05.S06.T02.publication-repair-01/public-packet.json",
+      "sha256": "1d422b618ec1a3cea5a3068a4821042a1a10bac31cf3bb0b60216604a9638d12"
+    },
+    "public_packet_sha256": "63ceef8d88ec166fe818f0e95dc32cd76d809261b14d2c9e67ca1615f37eee72",
+    "authority": "Exact independent representation readiness and owner approval remain required before canonical replacement. No task/slice/Wave/release outcome is changed."
+  }
+}

@@ -1,0 +1,1101 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "CAP-05.S06.T02",
+  "baseCommit": "4108a86d81b8b617939e20c5f9318db5e3e1f9e1",
+  "commit": "dc8172c2e89a764a6fa257c25130e9bd6c145db2",
+  "branch": "codex/w2-implementation",
+  "changedFiles": [
+    "apps/desktop/scripts/assemble-application.mjs",
+    "apps/desktop/src-tauri/src/document_corrections.rs",
+    "apps/desktop/src-tauri/src/document_corrections/windows_integration_tests.rs",
+    "apps/desktop/src-tauri/src/lib.rs",
+    "apps/desktop/src-tauri/src/supervisor.rs",
+    "apps/desktop/src/app.css",
+    "apps/desktop/src/app/ApplicationRuntime.tsx",
+    "apps/desktop/src/app/DocumentViewerWorkspace.tsx",
+    "apps/desktop/src/app/ParsingQualityWorkspace.tsx",
+    "apps/desktop/src/app/ViewerHumanCorrectionsPane.tsx",
+    "apps/desktop/src/app/documentCitations.ts",
+    "apps/desktop/src/app/documentCorrections.test.ts",
+    "apps/desktop/src/app/documentCorrections.ts",
+    "apps/desktop/src/app/workflowNavigationModel.ts",
+    "artifacts/evidence/CAP-05.S06.T02.pre-submission-adverse-01.md",
+    "artifacts/evidence/CAP-05.S06.T02.task-start.md",
+    "artifacts/evidence/ui-change/CAP-05.S06.T02.json",
+    "docs/adr/ADR-0052-bind-manual-corrections-to-existing-immutable-document-authority.md",
+    "docs/adr/index.json",
+    "docs/architecture/document-parsing.md",
+    "docs/planning-implementation-plan.md",
+    "packages/contracts/documents/README.md",
+    "packages/contracts/documents/citation-collection.v1.schema.json",
+    "packages/contracts/documents/document-correction-acceptance.v1.schema.json",
+    "packages/contracts/documents/document-correction-accepted.v1.schema.json",
+    "packages/contracts/documents/document-correction-discard.v1.schema.json",
+    "packages/contracts/documents/document-correction-draft-view.v1.schema.json",
+    "packages/contracts/documents/document-correction-draft.v1.schema.json",
+    "packages/contracts/documents/document-correction-impact.v1.schema.json",
+    "packages/contracts/documents/document-correction-page.v1.schema.json",
+    "packages/contracts/documents/document-correction-patch.v1.schema.json",
+    "packages/contracts/documents/document-correction-queue.v1.schema.json",
+    "packages/contracts/documents/document-correction-save.v1.schema.json",
+    "packages/contracts/documents/document-correction-targets.v1.schema.json",
+    "packages/contracts/documents/generate_parser_schema.py",
+    "planning/backlog.yaml",
+    "planning/review-site/CAP-05/CAP-05.S06.T02.html",
+    "planning/review-site/CAP-05/CAP-05.S06.html",
+    "planning/review-site/manifest.json",
+    "planning/review-site/waves/W2.html",
+    "planning/status-summary.md",
+    "quality-scope.json",
+    "services/core-api/src/research_observatory_core/app.py",
+    "services/core-api/src/research_observatory_core/document_attachment_api.py",
+    "services/core-api/src/research_observatory_core/document_citation_repository.py",
+    "services/core-api/src/research_observatory_core/document_citations.py",
+    "services/core-api/src/research_observatory_core/document_correction_api.py",
+    "services/core-api/src/research_observatory_core/document_correction_lineage.py",
+    "services/core-api/src/research_observatory_core/document_correction_views.py",
+    "services/core-api/src/research_observatory_core/document_corrections.py",
+    "services/core-api/src/research_observatory_core/document_reference_repository.py",
+    "services/core-api/src/research_observatory_core/document_references.py",
+    "services/core-api/src/research_observatory_core/document_revision_repository.py",
+    "services/core-api/src/research_observatory_core/document_revision_service.py",
+    "services/core-api/src/research_observatory_core/document_table_figure_repository.py",
+    "services/core-api/src/research_observatory_core/document_table_figures.py",
+    "services/core-api/src/research_observatory_core/object_store.py",
+    "services/core-api/src/research_observatory_core/ports/document_corrections.py",
+    "services/core-api/src/research_observatory_core/source_anchor_repository.py",
+    "tests/desktop/fixtures/document-correction.ts",
+    "tests/desktop/fixtures/parsing-quality-native-driver.ts",
+    "tests/desktop/fixtures/parsing-quality.mjs",
+    "tests/desktop/fixtures/parsing-quality.tsx",
+    "tests/desktop/fixtures/quality-navigation-doubles.tsx",
+    "tests/desktop/fixtures/quality-navigation.mjs",
+    "tests/desktop/fixtures/quality-navigation.tsx",
+    "tests/desktop/test_parsing_quality_interactions.py",
+    "tests/desktop/test_quality_workflow_navigation.py",
+    "tests/documents/correction_native_windows_fixture.py",
+    "tests/documents/test_document_correction_lineage.py",
+    "tests/documents/test_document_correction_repository.py",
+    "tests/documents/test_document_correction_service.py",
+    "tests/documents/test_document_corrections.py"
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "checkIds": [
+        "correction-domain-lineage",
+        "protected-correction-persistence",
+        "actual-native-core-correction-authority",
+        "actual-renderer-native-core-correction",
+        "desktop-correction-interactions",
+        "guided-correction-navigation",
+        "correction-codecs-and-reader-regression",
+        "native-correction-request-boundaries"
+      ],
+      "evidence": [
+        "Seven closed typed operations bind the exact base revision, source nodes and expected old values. Encrypted saved drafts, undo, discard and proposed previews leave the original parser output and accepted head unchanged. Exact explicit acceptance records authenticated actor and human rationale, fresh canonical revision/element identities, provenance/outbox and scoped dependency facts atomically. Reopening and exact retry preserve immutable originals and decisions; wrong targets, stale drafts, concurrent acceptance and interrupted publication refuse or roll back.",
+        "Authenticated original-source lineage precedes correction ID mapping. Excluded children cannot reappear as inferred citation/reference title/DOI or ancestor quote context; distinct retained relationships and subsequent generations remain usable. Human rematches and labels remain separate from machine observations and scholarly verification. Reader uses the explicitly accepted revision only. The actual Windows Wry production-component/Native/Core journey saves, explicitly accepts, returns to Reader and reopens the encrypted result; its authored test page and synthetic parser fixture do not prove installed packaging or parser accuracy."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "checkIds": [
+        "correction-domain-lineage",
+        "protected-correction-persistence",
+        "actual-native-core-correction-authority",
+        "actual-renderer-native-core-correction",
+        "desktop-correction-interactions",
+        "guided-correction-navigation",
+        "correction-codecs-and-reader-regression",
+        "native-correction-request-boundaries",
+        "original-revision-anchor-enrichment-regression"
+      ],
+      "evidence": [
+        "Fresh named domain, encrypted repository, Native-authenticated Core, desktop interaction and Native request tests cover success plus material denial, identity substitution, bounded input/output, unknown outcome, CAS conflict, interruption, exact retry and restart paths. The original revision/anchor/reference regression selection passes. Every qualifying child is bound to this candidate and authenticated raw output while selected inputs and HEAD remain fixed.",
+        "Three independently reported pre-submission P2 defects are retained and repaired: guided stage/Return preserve dirty, busy and unknown command ownership; excluded fallback metadata stays inactive in later generations; preview-only split tails paginate without advancing the accepted head. Six mounted actual ApplicationRuntime route regressions use explicit child/Core doubles, and separately fresh Wry/Native/Core proof supplies the real principal boundary. The prior temporary-project WinError5 occurred before correction code and its adverse receipt remains retained."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "checkIds": [
+        "affected-python-format",
+        "affected-python-lint",
+        "affected-python-types",
+        "document-schemas",
+        "affected-adr",
+        "affected-product-dependency-and-lint-delta",
+        "ui-change-authority",
+        "desktop-types",
+        "original-revision-anchor-enrichment-regression",
+        "fresh-production-build",
+        "fresh-production-assembly"
+      ],
+      "evidence": [
+        "Additive closed correction contracts, protected Core adapter/port, fixed Native command routing, approved1.9 Parsing Quality and Reader support, product build assembly, fixtures and documentation are updated within the approved task. Proposed documentary ADR0052 maps existing accepted ADR0029; it adds no authority. Existing v28 migration, storage profile and IR/structure/revision v1 Git blobs are unchanged. Changed Python format/lint/typing, generated schemas, affected ADR, current UI authority, TypeScript and fresh production build/manifest authentication pass.",
+        "All new Python files are registered strictly additively in a separate non-UI source commit using the existing gate rule. Published b029 has the exact reviewed3c096 tree, retained on codex/w2-t02-adverse-01 with its bbd00 predecessor. This final candidate adds only the correct eight-file UI evidence inventory and existing approved1.9 experience-lineage record; all product source/modes and claim identity/base are unchanged. Approved ancestors/main were preserved. No checker, controller, hook, CI, threshold or framework source changed. Existing full architecture45 findings and desktop lint3 matches remain FAIL and unwaived; exact governing-code/AST-match deltas add no new finding. Full Wave disposition remains required."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "checks": [
+    {
+      "id": "ui-change-authority",
+      "commandId": "foundation:ui-change",
+      "command": ".venv\\Scripts\\python.exe -B tools/ui_change_gate.py --repo . --base 4108a86d81b8b617939e20c5f9318db5e3e1f9e1 --head dc8172c2e89a764a6fa257c25130e9bd6c145db2",
+      "workingDirectory": ".",
+      "commit": "dc8172c2e89a764a6fa257c25130e9bd6c145db2",
+      "exitCode": 0,
+      "result": "PASS",
+      "durationSeconds": 7.749734899960458,
+      "rawOutput": "artifacts/tmp/CAP-05.S06.T02.qualifying-focused-04.ui-change-authority.log",
+      "rawOutputSha256": "0de01d64ca795a951fce7b58732d3e4e295c099dafaaa27ab5792063377de848",
+      "rawOutputCanonicalSha256": "0367275f5629c0161d95c7efc3498f4418a3a75df0b2a5750553a4f7487a6fc8",
+      "inputReport": "artifacts/tmp/CAP-05.S06.T02.qualifying-focused-04.json",
+      "inputReportSha256": "e2e4723d0258f957dedbc645c9c714476a6f8f54f070809c6be1f21328fd2e8e",
+      "producerSha256": "90360f5041d3e091cbb674ec24abf02ffd08cfb2f734042009f1203d66faa572",
+      "provenance": "Fresh named passing child at the committed candidate, with selected source and installed fixture runtime held. Aggregate FAIL retains separate inherited full architecture/lint findings; no full-profile or Wave PASS."
+    },
+    {
+      "id": "affected-python-format",
+      "commandId": "foundation:quality",
+      "command": ".venv\\Scripts\\python.exe -B -m ruff format --check packages/contracts/documents/generate_parser_schema.py services/core-api/src/research_observatory_core/app.py services/core-api/src/research_observatory_core/document_attachment_api.py services/core-api/src/research_observatory_core/document_citation_repository.py services/core-api/src/research_observatory_core/document_citations.py services/core-api/src/research_observatory_core/document_correction_api.py services/core-api/src/research_observatory_core/document_correction_lineage.py services/core-api/src/research_observatory_core/document_correction_views.py services/core-api/src/research_observatory_core/document_corrections.py services/core-api/src/research_observatory_core/document_reference_repository.py services/core-api/src/research_observatory_core/document_references.py services/core-api/src/research_observatory_core/document_revision_repository.py services/core-api/src/research_observatory_core/document_revision_service.py services/core-api/src/research_observatory_core/document_table_figure_repository.py services/core-api/src/research_observatory_core/document_table_figures.py services/core-api/src/research_observatory_core/object_store.py services/core-api/src/research_observatory_core/ports/document_corrections.py services/core-api/src/research_observatory_core/source_anchor_repository.py tests/desktop/test_parsing_quality_interactions.py tests/desktop/test_quality_workflow_navigation.py tests/documents/correction_native_windows_fixture.py tests/documents/test_document_correction_lineage.py tests/documents/test_document_correction_repository.py tests/documents/test_document_correction_service.py tests/documents/test_document_corrections.py",
+      "workingDirectory": ".",
+      "commit": "dc8172c2e89a764a6fa257c25130e9bd6c145db2",
+      "exitCode": 0,
+      "result": "PASS",
+      "durationSeconds": 0.10083129996201023,
+      "rawOutput": "artifacts/tmp/CAP-05.S06.T02.qualifying-focused-04.affected-python-format.log",
+      "rawOutputSha256": "7715b02781372f8741fb309aee97a6483e689c9039f0d78081dd910f70b0256e",
+      "rawOutputCanonicalSha256": "7715b02781372f8741fb309aee97a6483e689c9039f0d78081dd910f70b0256e",
+      "inputReport": "artifacts/tmp/CAP-05.S06.T02.qualifying-focused-04.json",
+      "inputReportSha256": "e2e4723d0258f957dedbc645c9c714476a6f8f54f070809c6be1f21328fd2e8e",
+      "producerSha256": "90360f5041d3e091cbb674ec24abf02ffd08cfb2f734042009f1203d66faa572",
+      "provenance": "Fresh named passing child at the committed candidate, with selected source and installed fixture runtime held. Aggregate FAIL retains separate inherited full architecture/lint findings; no full-profile or Wave PASS."
+    },
+    {
+      "id": "affected-python-lint",
+      "commandId": "foundation:quality",
+      "command": ".venv\\Scripts\\python.exe -B -m ruff check packages/contracts/documents/generate_parser_schema.py services/core-api/src/research_observatory_core/app.py services/core-api/src/research_observatory_core/document_attachment_api.py services/core-api/src/research_observatory_core/document_citation_repository.py services/core-api/src/research_observatory_core/document_citations.py services/core-api/src/research_observatory_core/document_correction_api.py services/core-api/src/research_observatory_core/document_correction_lineage.py services/core-api/src/research_observatory_core/document_correction_views.py services/core-api/src/research_observatory_core/document_corrections.py services/core-api/src/research_observatory_core/document_reference_repository.py services/core-api/src/research_observatory_core/document_references.py services/core-api/src/research_observatory_core/document_revision_repository.py services/core-api/src/research_observatory_core/document_revision_service.py services/core-api/src/research_observatory_core/document_table_figure_repository.py services/core-api/src/research_observatory_core/document_table_figures.py services/core-api/src/research_observatory_core/object_store.py services/core-api/src/research_observatory_core/ports/document_corrections.py services/core-api/src/research_observatory_core/source_anchor_repository.py tests/desktop/test_parsing_quality_interactions.py tests/desktop/test_quality_workflow_navigation.py tests/documents/correction_native_windows_fixture.py tests/documents/test_document_correction_lineage.py tests/documents/test_document_correction_repository.py tests/documents/test_document_correction_service.py tests/documents/test_document_corrections.py",
+      "workingDirectory": ".",
+      "commit": "dc8172c2e89a764a6fa257c25130e9bd6c145db2",
+      "exitCode": 0,
+      "result": "PASS",
+      "durationSeconds": 0.08589499996742234,
+      "rawOutput": "artifacts/tmp/CAP-05.S06.T02.qualifying-focused-04.affected-python-lint.log",
+      "rawOutputSha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18",
+      "rawOutputCanonicalSha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18",
+      "inputReport": "artifacts/tmp/CAP-05.S06.T02.qualifying-focused-04.json",
+      "inputReportSha256": "e2e4723d0258f957dedbc645c9c714476a6f8f54f070809c6be1f21328fd2e8e",
+      "producerSha256": "90360f5041d3e091cbb674ec24abf02ffd08cfb2f734042009f1203d66faa572",
+      "provenance": "Fresh named passing child at the committed candidate, with selected source and installed fixture runtime held. Aggregate FAIL retains separate inherited full architecture/lint findings; no full-profile or Wave PASS."
+    },
+    {
+      "id": "affected-python-types",
+      "commandId": "foundation:quality",
+      "command": ".venv\\Scripts\\python.exe -B -m mypy --follow-imports=silent packages/contracts/documents/generate_parser_schema.py services/core-api/src/research_observatory_core/app.py services/core-api/src/research_observatory_core/document_attachment_api.py services/core-api/src/research_observatory_core/document_citation_repository.py services/core-api/src/research_observatory_core/document_citations.py services/core-api/src/research_observatory_core/document_correction_api.py services/core-api/src/research_observatory_core/document_correction_lineage.py services/core-api/src/research_observatory_core/document_correction_views.py services/core-api/src/research_observatory_core/document_corrections.py services/core-api/src/research_observatory_core/document_reference_repository.py services/core-api/src/research_observatory_core/document_references.py services/core-api/src/research_observatory_core/document_revision_repository.py services/core-api/src/research_observatory_core/document_revision_service.py services/core-api/src/research_observatory_core/document_table_figure_repository.py services/core-api/src/research_observatory_core/document_table_figures.py services/core-api/src/research_observatory_core/object_store.py services/core-api/src/research_observatory_core/ports/document_corrections.py services/core-api/src/research_observatory_core/source_anchor_repository.py tests/desktop/test_parsing_quality_interactions.py tests/desktop/test_quality_workflow_navigation.py tests/documents/correction_native_windows_fixture.py tests/documents/test_document_correction_lineage.py tests/documents/test_document_correction_repository.py tests/documents/test_document_correction_service.py tests/documents/test_document_corrections.py",
+      "workingDirectory": ".",
+      "commit": "dc8172c2e89a764a6fa257c25130e9bd6c145db2",
+      "exitCode": 0,
+      "result": "PASS",
+      "durationSeconds": 0.6861166000016965,
+      "rawOutput": "artifacts/tmp/CAP-05.S06.T02.qualifying-focused-04.affected-python-types.log",
+      "rawOutputSha256": "14f7b3e492c65485e65612ef5dcf9681b8c12755889c4514a2474a4510f74a10",
+      "rawOutputCanonicalSha256": "521e53066a363ec69a3862127d20de642114463485e6923ba593c38250537f8d",
+      "inputReport": "artifacts/tmp/CAP-05.S06.T02.qualifying-focused-04.json",
+      "inputReportSha256": "e2e4723d0258f957dedbc645c9c714476a6f8f54f070809c6be1f21328fd2e8e",
+      "producerSha256": "90360f5041d3e091cbb674ec24abf02ffd08cfb2f734042009f1203d66faa572",
+      "provenance": "Fresh named passing child at the committed candidate, with selected source and installed fixture runtime held. Aggregate FAIL retains separate inherited full architecture/lint findings; no full-profile or Wave PASS."
+    },
+    {
+      "id": "document-schemas",
+      "commandId": "documents:unit",
+      "command": ".venv\\Scripts\\python.exe -B packages/contracts/documents/generate_parser_schema.py --check",
+      "workingDirectory": ".",
+      "commit": "dc8172c2e89a764a6fa257c25130e9bd6c145db2",
+      "exitCode": 0,
+      "result": "PASS",
+      "durationSeconds": 0.5996490999823436,
+      "rawOutput": "artifacts/tmp/CAP-05.S06.T02.qualifying-focused-04.document-schemas.log",
+      "rawOutputSha256": "a55ee30fb47c9afacd282abc3e69cce6ee0e020d9d710eb2dc98eda54569bb56",
+      "rawOutputCanonicalSha256": "cf42b66dd1df678fb7cf5ffaf80552a60597b0a2f2ef96323d1949800d8f6085",
+      "inputReport": "artifacts/tmp/CAP-05.S06.T02.qualifying-focused-04.json",
+      "inputReportSha256": "e2e4723d0258f957dedbc645c9c714476a6f8f54f070809c6be1f21328fd2e8e",
+      "producerSha256": "90360f5041d3e091cbb674ec24abf02ffd08cfb2f734042009f1203d66faa572",
+      "provenance": "Fresh named passing child at the committed candidate, with selected source and installed fixture runtime held. Aggregate FAIL retains separate inherited full architecture/lint findings; no full-profile or Wave PASS."
+    },
+    {
+      "id": "affected-adr",
+      "commandId": "foundation:adr",
+      "command": ".venv\\Scripts\\python.exe -B tools/adr_check.py --repo . --base 4108a86d81b8b617939e20c5f9318db5e3e1f9e1 --head dc8172c2e89a764a6fa257c25130e9bd6c145db2",
+      "workingDirectory": ".",
+      "commit": "dc8172c2e89a764a6fa257c25130e9bd6c145db2",
+      "exitCode": 0,
+      "result": "PASS",
+      "durationSeconds": 2.0453822999843396,
+      "rawOutput": "artifacts/tmp/CAP-05.S06.T02.qualifying-focused-04.affected-adr.log",
+      "rawOutputSha256": "cb456887c5a14519b70b85c982f5fbc96f54886b65d1c0372a55c6408ac94673",
+      "rawOutputCanonicalSha256": "2b4d5dd229efbac88f543dc4e80e84d0b81f76c39bd2781be8dda7b1fad2993a",
+      "inputReport": "artifacts/tmp/CAP-05.S06.T02.qualifying-focused-04.json",
+      "inputReportSha256": "e2e4723d0258f957dedbc645c9c714476a6f8f54f070809c6be1f21328fd2e8e",
+      "producerSha256": "90360f5041d3e091cbb674ec24abf02ffd08cfb2f734042009f1203d66faa572",
+      "provenance": "Fresh named passing child at the committed candidate, with selected source and installed fixture runtime held. Aggregate FAIL retains separate inherited full architecture/lint findings; no full-profile or Wave PASS."
+    },
+    {
+      "id": "affected-product-dependency-and-lint-delta",
+      "commandId": "foundation:architecture",
+      "command": ".venv\\Scripts\\python.exe -B artifacts/tmp/CAP-05.S06.T02-qualifying-delta-03.py 4108a86d81b8b617939e20c5f9318db5e3e1f9e1 dc8172c2e89a764a6fa257c25130e9bd6c145db2 artifacts\\tmp\\CAP-05.S06.T02-qualify-temp-04",
+      "workingDirectory": ".",
+      "commit": "dc8172c2e89a764a6fa257c25130e9bd6c145db2",
+      "exitCode": 0,
+      "result": "PASS",
+      "durationSeconds": 24.960223399975803,
+      "rawOutput": "artifacts/tmp/CAP-05.S06.T02.qualifying-focused-04.affected-product-dependency-and-lint-delta.log",
+      "rawOutputSha256": "9edfd7be339e1cc7139172fae940f7b0ed22efc3c9032b55bf471c7f5d244ada",
+      "rawOutputCanonicalSha256": "c091803cfc54e3097cbe58c62d50decefbcc215fd4ee2342a27626d0c3d26daf",
+      "inputReport": "artifacts/tmp/CAP-05.S06.T02.qualifying-focused-04.json",
+      "inputReportSha256": "e2e4723d0258f957dedbc645c9c714476a6f8f54f070809c6be1f21328fd2e8e",
+      "producerSha256": "90360f5041d3e091cbb674ec24abf02ffd08cfb2f734042009f1203d66faa572",
+      "provenance": "Fresh named passing child at the committed candidate, with selected source and installed fixture runtime held. Aggregate FAIL retains separate inherited full architecture/lint findings; no full-profile or Wave PASS."
+    },
+    {
+      "id": "desktop-types",
+      "commandId": "desktop:application",
+      "command": ".local\\toolchains\\node-v24.19.0-win-x64\\node.exe apps\\desktop\\node_modules\\typescript\\bin\\tsc --noEmit",
+      "workingDirectory": "apps/desktop",
+      "commit": "dc8172c2e89a764a6fa257c25130e9bd6c145db2",
+      "exitCode": 0,
+      "result": "PASS",
+      "durationSeconds": 0.5782680999836884,
+      "rawOutput": "artifacts/tmp/CAP-05.S06.T02.qualifying-focused-04.desktop-types.log",
+      "rawOutputSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "rawOutputCanonicalSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "inputReport": "artifacts/tmp/CAP-05.S06.T02.qualifying-focused-04.json",
+      "inputReportSha256": "e2e4723d0258f957dedbc645c9c714476a6f8f54f070809c6be1f21328fd2e8e",
+      "producerSha256": "90360f5041d3e091cbb674ec24abf02ffd08cfb2f734042009f1203d66faa572",
+      "provenance": "Fresh named passing child at the committed candidate, with selected source and installed fixture runtime held. Aggregate FAIL retains separate inherited full architecture/lint findings; no full-profile or Wave PASS."
+    },
+    {
+      "id": "correction-codecs-and-reader-regression",
+      "commandId": "desktop:unit",
+      "command": ".local\\toolchains\\node-v24.19.0-win-x64\\node.exe apps\\desktop\\node_modules\\vitest\\vitest.mjs run src/app/documentCorrections.test.ts src/app/documentViewer.test.ts src/app/documentCitations.test.ts src/app/ApplicationRuntime.test.tsx src/app/workflowNavigation.test.ts src/app/WorkflowNavigation.test.tsx",
+      "workingDirectory": "apps/desktop",
+      "commit": "dc8172c2e89a764a6fa257c25130e9bd6c145db2",
+      "exitCode": 0,
+      "result": "PASS",
+      "durationSeconds": 1.4185557999880984,
+      "rawOutput": "artifacts/tmp/CAP-05.S06.T02.qualifying-focused-04.correction-codecs-and-reader-regression.log",
+      "rawOutputSha256": "adb8e2ad3197bb2a724507d61961a127a159af00c6365a2fdb7d29d2b7a930e0",
+      "rawOutputCanonicalSha256": "adb8e2ad3197bb2a724507d61961a127a159af00c6365a2fdb7d29d2b7a930e0",
+      "inputReport": "artifacts/tmp/CAP-05.S06.T02.qualifying-focused-04.json",
+      "inputReportSha256": "e2e4723d0258f957dedbc645c9c714476a6f8f54f070809c6be1f21328fd2e8e",
+      "producerSha256": "90360f5041d3e091cbb674ec24abf02ffd08cfb2f734042009f1203d66faa572",
+      "provenance": "Fresh named passing child at the committed candidate, with selected source and installed fixture runtime held. Aggregate FAIL retains separate inherited full architecture/lint findings; no full-profile or Wave PASS."
+    },
+    {
+      "id": "correction-domain-lineage",
+      "commandId": "documents:unit",
+      "command": ".venv\\Scripts\\python.exe -B -m unittest -v tests.documents.test_document_corrections tests.documents.test_document_correction_lineage tests.documents.test_reference_entries",
+      "workingDirectory": ".",
+      "commit": "dc8172c2e89a764a6fa257c25130e9bd6c145db2",
+      "exitCode": 0,
+      "result": "PASS",
+      "durationSeconds": 3.255913400033023,
+      "rawOutput": "artifacts/tmp/CAP-05.S06.T02.qualifying-focused-04.correction-domain-lineage.log",
+      "rawOutputSha256": "f8d8f09c0d531775fc570e01302f45ce80ebd799013ee6d431b4259116bc4508",
+      "rawOutputCanonicalSha256": "0ace30d47626f32003d12f98a30881c29a4a7623608d2f50f48ee32dd2e84d16",
+      "inputReport": "artifacts/tmp/CAP-05.S06.T02.qualifying-focused-04.json",
+      "inputReportSha256": "e2e4723d0258f957dedbc645c9c714476a6f8f54f070809c6be1f21328fd2e8e",
+      "producerSha256": "90360f5041d3e091cbb674ec24abf02ffd08cfb2f734042009f1203d66faa572",
+      "provenance": "Fresh named passing child at the committed candidate, with selected source and installed fixture runtime held. Aggregate FAIL retains separate inherited full architecture/lint findings; no full-profile or Wave PASS."
+    },
+    {
+      "id": "protected-correction-persistence",
+      "commandId": "documents:unit",
+      "command": ".venv\\Scripts\\python.exe -B -m unittest -v tests.documents.test_document_correction_repository",
+      "workingDirectory": ".",
+      "commit": "dc8172c2e89a764a6fa257c25130e9bd6c145db2",
+      "exitCode": 0,
+      "result": "PASS",
+      "durationSeconds": 45.75325450004311,
+      "rawOutput": "artifacts/tmp/CAP-05.S06.T02.qualifying-focused-04.protected-correction-persistence.log",
+      "rawOutputSha256": "6d1482d375769424a060a45f9254704c6c8c135c220455deb6d9b93398d88898",
+      "rawOutputCanonicalSha256": "d49de2ffb17edaa91c4396407b06f0bebe1e4538f83a9637df71eb9ccbae71f0",
+      "inputReport": "artifacts/tmp/CAP-05.S06.T02.qualifying-focused-04.json",
+      "inputReportSha256": "e2e4723d0258f957dedbc645c9c714476a6f8f54f070809c6be1f21328fd2e8e",
+      "producerSha256": "90360f5041d3e091cbb674ec24abf02ffd08cfb2f734042009f1203d66faa572",
+      "provenance": "Fresh named passing child at the committed candidate, with selected source and installed fixture runtime held. Aggregate FAIL retains separate inherited full architecture/lint findings; no full-profile or Wave PASS."
+    },
+    {
+      "id": "actual-native-core-correction-authority",
+      "commandId": "documents:unit",
+      "command": ".venv\\Scripts\\python.exe -B -m unittest -v tests.documents.test_document_correction_service",
+      "workingDirectory": ".",
+      "commit": "dc8172c2e89a764a6fa257c25130e9bd6c145db2",
+      "exitCode": 0,
+      "result": "PASS",
+      "durationSeconds": 33.31282479997026,
+      "rawOutput": "artifacts/tmp/CAP-05.S06.T02.qualifying-focused-04.actual-native-core-correction-authority.log",
+      "rawOutputSha256": "af697e2275ef0cd582347f644e42de753886e35c676e4b44c4194dfc32bd1bd2",
+      "rawOutputCanonicalSha256": "addc5a2fb3a81cb01147f5287a95ffae55932652efdf4606d5820180e5847ba7",
+      "inputReport": "artifacts/tmp/CAP-05.S06.T02.qualifying-focused-04.json",
+      "inputReportSha256": "e2e4723d0258f957dedbc645c9c714476a6f8f54f070809c6be1f21328fd2e8e",
+      "producerSha256": "90360f5041d3e091cbb674ec24abf02ffd08cfb2f734042009f1203d66faa572",
+      "provenance": "Fresh named passing child at the committed candidate, with selected source and installed fixture runtime held. Aggregate FAIL retains separate inherited full architecture/lint findings; no full-profile or Wave PASS."
+    },
+    {
+      "id": "original-revision-anchor-enrichment-regression",
+      "commandId": "documents:unit",
+      "command": ".venv\\Scripts\\python.exe -B -m unittest -v tests.documents.test_document_revision_repository tests.anchors.test_anchor_repository.AnchorRepositoryTests.test_restart_reads_exact_encrypted_anchor_with_atomic_provenance_dependencies tests.anchors.test_anchor_repository.AnchorRepositoryTests.test_common_read_authenticates_context_without_original_or_whole_ir tests.anchors.test_anchor_repository.AnchorRepositoryTests.test_new_accepted_head_does_not_move_old_anchor tests.documents.test_reference_repository.ReferenceRepositoryTests.test_encrypted_publication_exact_retry_reopen_and_base_revision_preserved",
+      "workingDirectory": ".",
+      "commit": "dc8172c2e89a764a6fa257c25130e9bd6c145db2",
+      "exitCode": 0,
+      "result": "PASS",
+      "durationSeconds": 57.8050329000107,
+      "rawOutput": "artifacts/tmp/CAP-05.S06.T02.qualifying-focused-04.original-revision-anchor-enrichment-regression.log",
+      "rawOutputSha256": "b6008931ea41006e8c29e00c8e9be15cb0dfdc6e1c513a25dff53dbf91d4dc77",
+      "rawOutputCanonicalSha256": "46eaf2d60824c4913ace101dcdcbaf2fe206812e7c9fe31789d00394d429408d",
+      "inputReport": "artifacts/tmp/CAP-05.S06.T02.qualifying-focused-04.json",
+      "inputReportSha256": "e2e4723d0258f957dedbc645c9c714476a6f8f54f070809c6be1f21328fd2e8e",
+      "producerSha256": "90360f5041d3e091cbb674ec24abf02ffd08cfb2f734042009f1203d66faa572",
+      "provenance": "Fresh named passing child at the committed candidate, with selected source and installed fixture runtime held. Aggregate FAIL retains separate inherited full architecture/lint findings; no full-profile or Wave PASS."
+    },
+    {
+      "id": "production-component-test-build",
+      "commandId": "desktop:application",
+      "command": ".local\\toolchains\\node-v24.19.0-win-x64\\node.exe tests/desktop/fixtures/parsing-quality.mjs artifacts\\tmp\\CAP-05.S06.T02-ui-qualifying-04",
+      "workingDirectory": ".",
+      "commit": "dc8172c2e89a764a6fa257c25130e9bd6c145db2",
+      "exitCode": 0,
+      "result": "PASS",
+      "durationSeconds": 1.1141244999598712,
+      "rawOutput": "artifacts/tmp/CAP-05.S06.T02.qualifying-focused-04.production-component-test-build.log",
+      "rawOutputSha256": "b566697482f32b633a48396e0d777cf81c332f8df2179cb8374172d5618725ee",
+      "rawOutputCanonicalSha256": "b566697482f32b633a48396e0d777cf81c332f8df2179cb8374172d5618725ee",
+      "inputReport": "artifacts/tmp/CAP-05.S06.T02.qualifying-focused-04.json",
+      "inputReportSha256": "e2e4723d0258f957dedbc645c9c714476a6f8f54f070809c6be1f21328fd2e8e",
+      "producerSha256": "90360f5041d3e091cbb674ec24abf02ffd08cfb2f734042009f1203d66faa572",
+      "provenance": "Fresh named passing child at the committed candidate, with selected source and installed fixture runtime held. Aggregate FAIL retains separate inherited full architecture/lint findings; no full-profile or Wave PASS."
+    },
+    {
+      "id": "desktop-correction-interactions",
+      "commandId": "desktop:unit",
+      "command": ".venv\\Scripts\\python.exe -B -m unittest -v tests.desktop.test_parsing_quality_interactions",
+      "workingDirectory": ".",
+      "commit": "dc8172c2e89a764a6fa257c25130e9bd6c145db2",
+      "exitCode": 0,
+      "result": "PASS",
+      "durationSeconds": 2.2866432999726385,
+      "rawOutput": "artifacts/tmp/CAP-05.S06.T02.qualifying-focused-04.desktop-correction-interactions.log",
+      "rawOutputSha256": "a3410028ebf7ea61bc7d06084a6678c287ee4bdc132b8b584fa8f791aeaf489e",
+      "rawOutputCanonicalSha256": "db320face56fc8623d3a841f484957187ff53327e9199140640ab900107769f8",
+      "inputReport": "artifacts/tmp/CAP-05.S06.T02.qualifying-focused-04.json",
+      "inputReportSha256": "e2e4723d0258f957dedbc645c9c714476a6f8f54f070809c6be1f21328fd2e8e",
+      "producerSha256": "90360f5041d3e091cbb674ec24abf02ffd08cfb2f734042009f1203d66faa572",
+      "provenance": "Fresh named passing child at the committed candidate, with selected source and installed fixture runtime held. Aggregate FAIL retains separate inherited full architecture/lint findings; no full-profile or Wave PASS."
+    },
+    {
+      "id": "production-root-navigation-test-build",
+      "commandId": "desktop:application",
+      "command": ".local\\toolchains\\node-v24.19.0-win-x64\\node.exe tests/desktop/fixtures/quality-navigation.mjs artifacts\\tmp\\CAP-05.S06.T02-navigation-qualifying-03",
+      "workingDirectory": ".",
+      "commit": "dc8172c2e89a764a6fa257c25130e9bd6c145db2",
+      "exitCode": 0,
+      "result": "PASS",
+      "durationSeconds": 1.1632300000055693,
+      "rawOutput": "artifacts/tmp/CAP-05.S06.T02.qualifying-focused-04.production-root-navigation-test-build.log",
+      "rawOutputSha256": "b566697482f32b633a48396e0d777cf81c332f8df2179cb8374172d5618725ee",
+      "rawOutputCanonicalSha256": "b566697482f32b633a48396e0d777cf81c332f8df2179cb8374172d5618725ee",
+      "inputReport": "artifacts/tmp/CAP-05.S06.T02.qualifying-focused-04.json",
+      "inputReportSha256": "e2e4723d0258f957dedbc645c9c714476a6f8f54f070809c6be1f21328fd2e8e",
+      "producerSha256": "90360f5041d3e091cbb674ec24abf02ffd08cfb2f734042009f1203d66faa572",
+      "provenance": "Fresh named passing child at the committed candidate, with selected source and installed fixture runtime held. Aggregate FAIL retains separate inherited full architecture/lint findings; no full-profile or Wave PASS."
+    },
+    {
+      "id": "guided-correction-navigation",
+      "commandId": "desktop:unit",
+      "command": ".venv\\Scripts\\python.exe -B -m unittest -v tests.desktop.test_quality_workflow_navigation",
+      "workingDirectory": ".",
+      "commit": "dc8172c2e89a764a6fa257c25130e9bd6c145db2",
+      "exitCode": 0,
+      "result": "PASS",
+      "durationSeconds": 3.8356869000126608,
+      "rawOutput": "artifacts/tmp/CAP-05.S06.T02.qualifying-focused-04.guided-correction-navigation.log",
+      "rawOutputSha256": "f42659fbe44acf562311f0bc924edacf25c198c89bd48ada78f3faa691aabd89",
+      "rawOutputCanonicalSha256": "a6ce2871a6d81c26c481030e0be5678d9479d856d7a39b51480928e6ce3db594",
+      "inputReport": "artifacts/tmp/CAP-05.S06.T02.qualifying-focused-04.json",
+      "inputReportSha256": "e2e4723d0258f957dedbc645c9c714476a6f8f54f070809c6be1f21328fd2e8e",
+      "producerSha256": "90360f5041d3e091cbb674ec24abf02ffd08cfb2f734042009f1203d66faa572",
+      "provenance": "Fresh named passing child at the committed candidate, with selected source and installed fixture runtime held. Aggregate FAIL retains separate inherited full architecture/lint findings; no full-profile or Wave PASS."
+    },
+    {
+      "id": "native-correction-test-build",
+      "commandId": "desktop:application",
+      "command": ".local\\toolchains\\rustup\\toolchains\\1.96.1-x86_64-pc-windows-msvc\\bin\\cargo.exe test --manifest-path apps/desktop/src-tauri/Cargo.toml --locked --offline --features integration-harness --lib --no-run -j1",
+      "workingDirectory": ".",
+      "commit": "dc8172c2e89a764a6fa257c25130e9bd6c145db2",
+      "exitCode": 0,
+      "result": "PASS",
+      "durationSeconds": 19.855621700000484,
+      "rawOutput": "artifacts/tmp/CAP-05.S06.T02.qualifying-focused-04.native-correction-test-build.log",
+      "rawOutputSha256": "7c4bac4923c4153a3199ad2880fa7c64fb56ec9d33193c2482626cdca0009fa6",
+      "rawOutputCanonicalSha256": "7c4bac4923c4153a3199ad2880fa7c64fb56ec9d33193c2482626cdca0009fa6",
+      "inputReport": "artifacts/tmp/CAP-05.S06.T02.qualifying-focused-04.json",
+      "inputReportSha256": "e2e4723d0258f957dedbc645c9c714476a6f8f54f070809c6be1f21328fd2e8e",
+      "producerSha256": "90360f5041d3e091cbb674ec24abf02ffd08cfb2f734042009f1203d66faa572",
+      "provenance": "Fresh named passing child at the committed candidate, with selected source and installed fixture runtime held. Aggregate FAIL retains separate inherited full architecture/lint findings; no full-profile or Wave PASS."
+    },
+    {
+      "id": "owned-test-activation-manifest",
+      "commandId": "desktop:application",
+      "command": "C:\\Program Files (x86)\\Windows Kits\\10\\bin\\10.0.26100.0\\x64\\mt.exe -nologo -manifest apps/desktop/src-tauri/resources/example-application.manifest -outputresource:.\\artifacts\\tmp\\CAP-05.S06.T02-qualify-temp-04\\correction-witness.exe;#1",
+      "workingDirectory": ".",
+      "commit": "dc8172c2e89a764a6fa257c25130e9bd6c145db2",
+      "exitCode": 0,
+      "result": "PASS",
+      "durationSeconds": 1.2497529999818653,
+      "rawOutput": "artifacts/tmp/CAP-05.S06.T02.qualifying-focused-04.owned-test-activation-manifest.log",
+      "rawOutputSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "rawOutputCanonicalSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "inputReport": "artifacts/tmp/CAP-05.S06.T02.qualifying-focused-04.json",
+      "inputReportSha256": "e2e4723d0258f957dedbc645c9c714476a6f8f54f070809c6be1f21328fd2e8e",
+      "producerSha256": "90360f5041d3e091cbb674ec24abf02ffd08cfb2f734042009f1203d66faa572",
+      "provenance": "Fresh named passing child at the committed candidate, with selected source and installed fixture runtime held. Aggregate FAIL retains separate inherited full architecture/lint findings; no full-profile or Wave PASS."
+    },
+    {
+      "id": "native-correction-request-boundaries",
+      "commandId": "desktop:application",
+      "command": "artifacts\\tmp\\CAP-05.S06.T02-qualify-temp-04\\correction-witness.exe document_corrections::tests --nocapture --test-threads=1",
+      "workingDirectory": ".",
+      "commit": "dc8172c2e89a764a6fa257c25130e9bd6c145db2",
+      "exitCode": 0,
+      "result": "PASS",
+      "durationSeconds": 0.4201105000101961,
+      "rawOutput": "artifacts/tmp/CAP-05.S06.T02.qualifying-focused-04.native-correction-request-boundaries.log",
+      "rawOutputSha256": "171a8ea6bd70a5f2d94aaf208e236a0b77ca3b0d560987ecf8d701e0730db3f8",
+      "rawOutputCanonicalSha256": "171a8ea6bd70a5f2d94aaf208e236a0b77ca3b0d560987ecf8d701e0730db3f8",
+      "inputReport": "artifacts/tmp/CAP-05.S06.T02.qualifying-focused-04.json",
+      "inputReportSha256": "e2e4723d0258f957dedbc645c9c714476a6f8f54f070809c6be1f21328fd2e8e",
+      "producerSha256": "90360f5041d3e091cbb674ec24abf02ffd08cfb2f734042009f1203d66faa572",
+      "provenance": "Fresh named passing child at the committed candidate, with selected source and installed fixture runtime held. Aggregate FAIL retains separate inherited full architecture/lint findings; no full-profile or Wave PASS."
+    },
+    {
+      "id": "synthetic-native-project-seed",
+      "commandId": "documents:unit",
+      "command": ".venv\\Scripts\\python.exe -B tests/documents/correction_native_windows_fixture.py",
+      "workingDirectory": ".",
+      "commit": "dc8172c2e89a764a6fa257c25130e9bd6c145db2",
+      "exitCode": 0,
+      "result": "PASS",
+      "durationSeconds": 23.232934200030286,
+      "rawOutput": "artifacts/tmp/CAP-05.S06.T02.qualifying-focused-04.synthetic-native-project-seed.log",
+      "rawOutputSha256": "cec18c4acf0a8066fe6f1c20e388f94e1aa91c0ccba16fd758b5377c5c623dcd",
+      "rawOutputCanonicalSha256": "210e77c0c2948154cce59bb6fbee305e48fa2dc903d139002739d2001687db04",
+      "inputReport": "artifacts/tmp/CAP-05.S06.T02.qualifying-focused-04.json",
+      "inputReportSha256": "e2e4723d0258f957dedbc645c9c714476a6f8f54f070809c6be1f21328fd2e8e",
+      "producerSha256": "90360f5041d3e091cbb674ec24abf02ffd08cfb2f734042009f1203d66faa572",
+      "provenance": "Fresh named passing child at the committed candidate, with selected source and installed fixture runtime held. Aggregate FAIL retains separate inherited full architecture/lint findings; no full-profile or Wave PASS."
+    },
+    {
+      "id": "actual-renderer-native-core-correction",
+      "commandId": "desktop:application",
+      "command": "artifacts\\tmp\\CAP-05.S06.T02-qualify-temp-04\\correction-witness.exe document_corrections::windows_integration_tests::actual_renderer_correction_save_accept_reader_and_reopen --ignored --exact --nocapture --test-threads=1",
+      "workingDirectory": ".",
+      "commit": "dc8172c2e89a764a6fa257c25130e9bd6c145db2",
+      "exitCode": 0,
+      "result": "PASS",
+      "durationSeconds": 16.00872469996102,
+      "rawOutput": "artifacts/tmp/CAP-05.S06.T02.qualifying-focused-04.actual-renderer-native-core-correction.log",
+      "rawOutputSha256": "09846a13a2e9ead3774e4d6e30e4e3ffde618251406a85ec96d35b6f5359fc5c",
+      "rawOutputCanonicalSha256": "09846a13a2e9ead3774e4d6e30e4e3ffde618251406a85ec96d35b6f5359fc5c",
+      "inputReport": "artifacts/tmp/CAP-05.S06.T02.qualifying-focused-04.json",
+      "inputReportSha256": "e2e4723d0258f957dedbc645c9c714476a6f8f54f070809c6be1f21328fd2e8e",
+      "producerSha256": "90360f5041d3e091cbb674ec24abf02ffd08cfb2f734042009f1203d66faa572",
+      "provenance": "Fresh named passing child at the committed candidate, with selected source and installed fixture runtime held. Aggregate FAIL retains separate inherited full architecture/lint findings; no full-profile or Wave PASS."
+    },
+    {
+      "id": "clean-production-output",
+      "commandId": "desktop:application",
+      "command": ".local\\toolchains\\node-v24.19.0-win-x64\\node.exe scripts/clean-dist.mjs",
+      "workingDirectory": "apps/desktop",
+      "commit": "dc8172c2e89a764a6fa257c25130e9bd6c145db2",
+      "exitCode": 0,
+      "result": "PASS",
+      "durationSeconds": 0.11517949996050447,
+      "rawOutput": "artifacts/tmp/CAP-05.S06.T02.qualifying-focused-04.clean-production-output.log",
+      "rawOutputSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "rawOutputCanonicalSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "inputReport": "artifacts/tmp/CAP-05.S06.T02.qualifying-focused-04.json",
+      "inputReportSha256": "e2e4723d0258f957dedbc645c9c714476a6f8f54f070809c6be1f21328fd2e8e",
+      "producerSha256": "90360f5041d3e091cbb674ec24abf02ffd08cfb2f734042009f1203d66faa572",
+      "provenance": "Fresh named passing child at the committed candidate, with selected source and installed fixture runtime held. Aggregate FAIL retains separate inherited full architecture/lint findings; no full-profile or Wave PASS."
+    },
+    {
+      "id": "fresh-production-build",
+      "commandId": "desktop:application",
+      "command": ".local\\toolchains\\node-v24.19.0-win-x64\\node.exe node_modules/vite/bin/vite.js build --config vite.product.config.ts",
+      "workingDirectory": "apps/desktop",
+      "commit": "dc8172c2e89a764a6fa257c25130e9bd6c145db2",
+      "exitCode": 0,
+      "result": "PASS",
+      "durationSeconds": 1.843412599992007,
+      "rawOutput": "artifacts/tmp/CAP-05.S06.T02.qualifying-focused-04.fresh-production-build.log",
+      "rawOutputSha256": "ad31a9815d1a0a536d17e0cf9f3878c75c8910264fbc67ef1fe35dde7cbf2911",
+      "rawOutputCanonicalSha256": "ad31a9815d1a0a536d17e0cf9f3878c75c8910264fbc67ef1fe35dde7cbf2911",
+      "inputReport": "artifacts/tmp/CAP-05.S06.T02.qualifying-focused-04.json",
+      "inputReportSha256": "e2e4723d0258f957dedbc645c9c714476a6f8f54f070809c6be1f21328fd2e8e",
+      "producerSha256": "90360f5041d3e091cbb674ec24abf02ffd08cfb2f734042009f1203d66faa572",
+      "provenance": "Fresh named passing child at the committed candidate, with selected source and installed fixture runtime held. Aggregate FAIL retains separate inherited full architecture/lint findings; no full-profile or Wave PASS."
+    },
+    {
+      "id": "fresh-production-assembly",
+      "commandId": "desktop:application",
+      "command": ".local\\toolchains\\node-v24.19.0-win-x64\\node.exe scripts/assemble-application.mjs",
+      "workingDirectory": "apps/desktop",
+      "commit": "dc8172c2e89a764a6fa257c25130e9bd6c145db2",
+      "exitCode": 0,
+      "result": "PASS",
+      "durationSeconds": 0.2687916000140831,
+      "rawOutput": "artifacts/tmp/CAP-05.S06.T02.qualifying-focused-04.fresh-production-assembly.log",
+      "rawOutputSha256": "dbf723d5b9b7af1d4e852393152e1c409e24f8c5b122cc4c95210ad0f3d291fe",
+      "rawOutputCanonicalSha256": "dbf723d5b9b7af1d4e852393152e1c409e24f8c5b122cc4c95210ad0f3d291fe",
+      "inputReport": "artifacts/tmp/CAP-05.S06.T02.qualifying-focused-04.json",
+      "inputReportSha256": "e2e4723d0258f957dedbc645c9c714476a6f8f54f070809c6be1f21328fd2e8e",
+      "producerSha256": "90360f5041d3e091cbb674ec24abf02ffd08cfb2f734042009f1203d66faa572",
+      "provenance": "Fresh named passing child at the committed candidate, with selected source and installed fixture runtime held. Aggregate FAIL retains separate inherited full architecture/lint findings; no full-profile or Wave PASS."
+    }
+  ],
+  "verificationSelection": {
+    "selectedCommandIds": [
+      "foundation:ui-change",
+      "foundation:quality",
+      "documents:unit",
+      "foundation:adr",
+      "foundation:architecture",
+      "desktop:application",
+      "desktop:unit"
+    ],
+    "riskAnalysis": "Typed correction and protected cross-process acceptance affect identity, rights/privacy, source exclusions, exact retries, encrypted state and UI ownership. Select fresh changed checks, domain/real persistence and authority proof, directly affected original regressions, focused mounted interactions/navigation, real Windows component-to-Core journey and production build. Full architecture/lint attempts are retained as inherited FAIL and exact affected deltas are separately reviewed.",
+    "deferred": [
+      "T03 parser upgrade batch preview/comparison/migration/stale propagation remains ordered next work. S06 integrated failure/cancellation/recovery/accessibility review remains required.",
+      "Fresh full W2 repository/affected profiles, cross-capability security/privacy/rights/accessibility/performance/packaging/platform/restart/recovery, independent Wave review and separate human release remain required. Inherited full architecture/lint and desktop activation debt is not waived.",
+      "No new parser/model, 8/16GiB variant, physical2/3GiB support claim, packaged installation, optimization campaign or shared automation-framework repair is included."
+    ]
+  },
+  "adverseEvidence": [
+    {
+      "path": "artifacts/evidence/CAP-05.S06.T02.pre-submission-adverse-01.md",
+      "sha256": "03eaedb147e1800ed249f12e60ae8f6b4f710a3ca0b7e25c8d374843431b2bd9",
+      "canonicalSha256": "03eaedb147e1800ed249f12e60ae8f6b4f710a3ca0b7e25c8d374843431b2bd9"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T02-excluded-parent-red-01.log",
+      "sha256": "f29ee43995c705ffeafbe685bafc3b882b59d71d7d132c418eb09981199d00b4",
+      "canonicalSha256": "393fa3a5f2b5fc3da5e9b84d4c080da02a2a74f85fda2d0cbfffe616ba93a705"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T02.adverse-pre-submission-core-01.log",
+      "sha256": "7f7bcd8551d894a836e98e591734aa6014b66d5d5c25df63ce75560f21d30064",
+      "canonicalSha256": "c456d0d3b9dcdd19fd2127e8e055e73b7fed29acec57d2bd3ae6d6cb22e7f454"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T02.discard-red-01.log",
+      "sha256": "2cfbc42d67b7bf36b8aa30eb232ee251a218570ce6e77459b1887148d950992c",
+      "canonicalSha256": "ed87d9b5437926fb223fe1dad7d19974f80adbc6f3d4933c86289a681dad10a5"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T02.domain-red-01.log",
+      "sha256": "ec5a3e2bada57987de8458dfede3ca99f9893290df6a273c1458f9c5cffa835e",
+      "canonicalSha256": "b93b9093b5df0072bf9144efc2499253db1dd8468b1fb04b730240a9846bdd38"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T02.native-core-correction-red-01.log",
+      "sha256": "40a73b818c30117df039de33da93c21dff4bb457e056d0a0fb503896cf8e213f",
+      "canonicalSha256": "0ef11021e327e6729cce465f18531708a842af5fd09d42e78a7c050a776fa9ea"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T02.navigation-adverse-01.log",
+      "sha256": "9f0388344b9a3ce95f0dadc4032bee65f059a2d978cea7950fa8e0de0e4ad338",
+      "canonicalSha256": "c941c6c0d279331b42bac40ba145342adf95bfe5da6ef5ceccf8038a3a7a4adf"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T02.navigation-adverse-02.log",
+      "sha256": "ade13287900d9ce907f41601f470d4e59c57a0e4c7336f09b9280ec2a4431494",
+      "canonicalSha256": "96a46158848f088a448cf2491220ffb4357f901cafd5cd8071c3864f6799637a"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T02.navigation-adverse-03.log",
+      "sha256": "f95aedde6c5ed5c90c69756bb49ad7986b5b735a3ad7dc1ebc19d491a6fa6157",
+      "canonicalSha256": "6ac9b21f72ce8fde4ae2ba7c6cd9e86491f021194df21616ad70295769d496d5"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T02.qualifying-focused-01.actual-native-core-correction-authority.log",
+      "sha256": "03c1811dd1db58743349515e9b02b3862e23026ed09098d9b36873ab1cb16b86",
+      "canonicalSha256": "cda7a6d2b7ea348295d759dd7b92dca5d29f4038a8b67926c6d38edebf92fdd5"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T02.qualifying-focused-01.affected-adr.log",
+      "sha256": "cce4bef9f96d4e226ce2f79cdf566a31e0e6c62667449ea7a8eca2dbf3f6ae36",
+      "canonicalSha256": "2d7dc1eb91ff96c6e21a0603077f3db29b59be65a87bd22bfc9fd6266bd68576"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T02.qualifying-focused-01.affected-python-format.log",
+      "sha256": "19c2e88957b1c3c58a4a7ed24fc196278e5a0541d48dc9f317a488583e59f74e",
+      "canonicalSha256": "19c2e88957b1c3c58a4a7ed24fc196278e5a0541d48dc9f317a488583e59f74e"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T02.qualifying-focused-01.affected-python-lint.log",
+      "sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18",
+      "canonicalSha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T02.qualifying-focused-01.affected-python-types.log",
+      "sha256": "653c24af21ad3bc4a8cf9a6ba237261490a6dc0b9703ef71eef912330b8ca539",
+      "canonicalSha256": "fa935e779fe5886f2480e415c7e46616bdedad407f9da1cca28e7d341d95f4d7"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T02.qualifying-focused-01.correction-codecs-and-reader-regression.log",
+      "sha256": "281a79fd568f81226836d8b25fbc0417032748a93a5ce56f8d38f4520886c3d2",
+      "canonicalSha256": "281a79fd568f81226836d8b25fbc0417032748a93a5ce56f8d38f4520886c3d2"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T02.qualifying-focused-01.correction-domain-lineage.log",
+      "sha256": "0ac22ee23ad39ff4f635b42f4f1cb945a2adac9cd2c186fd581ab5bd5d9a2915",
+      "canonicalSha256": "c1eb39bbb48dbb5ee857d59a324769a78ec693558958111dd17ffea3b7a963d9"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T02.qualifying-focused-01.desktop-correction-interactions.log",
+      "sha256": "a1189d0588b769cde424a68033767dc9ba445fe0be361bb4d0036fcbc1ecc2d0",
+      "canonicalSha256": "db92bd1a01db215c183f4323dc420386e2d79c9ff0bdabb027156c983c31be0d"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T02.qualifying-focused-01.desktop-types.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "canonicalSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T02.qualifying-focused-01.document-schemas.log",
+      "sha256": "a55ee30fb47c9afacd282abc3e69cce6ee0e020d9d710eb2dc98eda54569bb56",
+      "canonicalSha256": "cf42b66dd1df678fb7cf5ffaf80552a60597b0a2f2ef96323d1949800d8f6085"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T02.qualifying-focused-01.full-architecture-retained.log",
+      "sha256": "b7aa2057c4ecc9ac022e3441cb24c5cfee501bae4c85325b77ee2f2c1c75dd2b",
+      "canonicalSha256": "ea9c40ecd14bd41cea1c02512c1f82175439d18c79bed195c425015070b46d17"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T02.qualifying-focused-01.full-desktop-lint-retained.log",
+      "sha256": "d1a21c395c3c1aa421778fcf05fb9bfd8ce3cf56ffdd1a760186dda8287390ef",
+      "canonicalSha256": "bec45f9e592eb7e4c3b57e602a6d20fdf34c774750e5c9383fd3ebc49ff15e99"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T02.qualifying-focused-01.json",
+      "sha256": "a1a2937a0291245fe8561e9308a96128d776815699c2d36f53c5ad8b1e109d82",
+      "canonicalSha256": "7e01e833fca41bbab248b1aa7483484b48633fe380ae815791e6c2336839ff19"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T02.qualifying-focused-01.log",
+      "sha256": "b7cc3936e083f8dff562147029d5819fbc32c82d843a6598dea633790f62c96d",
+      "canonicalSha256": "f1124df5ea59de15a16cfbc5a4d294c4175b05a8c78df6ea04a42e2d7b90c027"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T02.qualifying-focused-01.native-correction-request-boundaries.log",
+      "sha256": "171a8ea6bd70a5f2d94aaf208e236a0b77ca3b0d560987ecf8d701e0730db3f8",
+      "canonicalSha256": "171a8ea6bd70a5f2d94aaf208e236a0b77ca3b0d560987ecf8d701e0730db3f8"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T02.qualifying-focused-01.native-correction-test-build.log",
+      "sha256": "52c32260f0415e66cbfb2adf82a253c8bfc578d20ea64446e1d5c90bc3a0f509",
+      "canonicalSha256": "52c32260f0415e66cbfb2adf82a253c8bfc578d20ea64446e1d5c90bc3a0f509"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T02.qualifying-focused-01.original-revision-anchor-enrichment-regression.log",
+      "sha256": "739a250a2d1af69af716035b76c8b016dd5aab30ddd4717b4d037d3a2e0bf138",
+      "canonicalSha256": "e1a0fe1d3063ec36aaed0c2f95556f181fb02d8d5f333e686240f345be150456"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T02.qualifying-focused-01.owned-test-activation-manifest.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "canonicalSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T02.qualifying-focused-01.production-component-test-build.log",
+      "sha256": "b566697482f32b633a48396e0d777cf81c332f8df2179cb8374172d5618725ee",
+      "canonicalSha256": "b566697482f32b633a48396e0d777cf81c332f8df2179cb8374172d5618725ee"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T02.qualifying-focused-01.protected-correction-persistence.log",
+      "sha256": "a2abcf8be7ec3f163cb5aa46dd877fd6a6d6a2609c28ec6e052bb969d320d61e",
+      "canonicalSha256": "a9f4cc62f25b4c0bc22a715d2b159c15e7d2b528c59c2d1be38cce12ffbac734"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T02.qualifying-focused-01.synthetic-native-project-seed.log",
+      "sha256": "0cbd9a4ba7ab33860b6a27a98e162862f7207bf881a785c95e72fdf626aed277",
+      "canonicalSha256": "070b17157cdbb06a20ca8f5639c397c39e4c1f8cb12e0dfe028a08c10449194d"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T02.qualifying-focused-02.actual-native-core-correction-authority.log",
+      "sha256": "e1c1b873d746fe60c04844a15e4bf1ee8d66f919b233d45068bcc42bf5d980a0",
+      "canonicalSha256": "9f571a9f3bbaf6b1aaac4039c26efb493e8b36296adb419b7d3eaec508cc2a5d"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T02.qualifying-focused-02.actual-renderer-native-core-correction.log",
+      "sha256": "08409a1eeef617e1d14f6dfacce499a0f4636cbd88900c0172baa6ce3d68b802",
+      "canonicalSha256": "08409a1eeef617e1d14f6dfacce499a0f4636cbd88900c0172baa6ce3d68b802"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T02.qualifying-focused-02.affected-adr.log",
+      "sha256": "cb456887c5a14519b70b85c982f5fbc96f54886b65d1c0372a55c6408ac94673",
+      "canonicalSha256": "2b4d5dd229efbac88f543dc4e80e84d0b81f76c39bd2781be8dda7b1fad2993a"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T02.qualifying-focused-02.affected-product-dependency-and-lint-delta.log",
+      "sha256": "9edfd7be339e1cc7139172fae940f7b0ed22efc3c9032b55bf471c7f5d244ada",
+      "canonicalSha256": "c091803cfc54e3097cbe58c62d50decefbcc215fd4ee2342a27626d0c3d26daf"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T02.qualifying-focused-02.affected-python-format.log",
+      "sha256": "7715b02781372f8741fb309aee97a6483e689c9039f0d78081dd910f70b0256e",
+      "canonicalSha256": "7715b02781372f8741fb309aee97a6483e689c9039f0d78081dd910f70b0256e"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T02.qualifying-focused-02.affected-python-lint.log",
+      "sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18",
+      "canonicalSha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T02.qualifying-focused-02.affected-python-types.log",
+      "sha256": "14f7b3e492c65485e65612ef5dcf9681b8c12755889c4514a2474a4510f74a10",
+      "canonicalSha256": "521e53066a363ec69a3862127d20de642114463485e6923ba593c38250537f8d"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T02.qualifying-focused-02.clean-production-output.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "canonicalSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T02.qualifying-focused-02.correction-codecs-and-reader-regression.log",
+      "sha256": "0c493ed7ff36813a6e3b146f4d49b5b069c9a6d0bc254d6dbbf886542e443c90",
+      "canonicalSha256": "0c493ed7ff36813a6e3b146f4d49b5b069c9a6d0bc254d6dbbf886542e443c90"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T02.qualifying-focused-02.correction-domain-lineage.log",
+      "sha256": "53093a714db82839efdd46f6203968380f06c60e7e0c3009ab8fa53a6830aa23",
+      "canonicalSha256": "443f618a354c1faadf4d0b95c6a1c1cd24820873c3fedf8acefcfafbbc3705e0"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T02.qualifying-focused-02.desktop-correction-interactions.log",
+      "sha256": "627979bb923558e7a21f5a8be09f998c9c9afad953c4a86fa0442baf8983a53d",
+      "canonicalSha256": "73f101510f2be8f306cac273ca1d49abae1d4878b22b2efea549aa80f7fb30d5"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T02.qualifying-focused-02.desktop-types.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "canonicalSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T02.qualifying-focused-02.document-schemas.log",
+      "sha256": "a55ee30fb47c9afacd282abc3e69cce6ee0e020d9d710eb2dc98eda54569bb56",
+      "canonicalSha256": "cf42b66dd1df678fb7cf5ffaf80552a60597b0a2f2ef96323d1949800d8f6085"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T02.qualifying-focused-02.fresh-production-assembly.log",
+      "sha256": "dbf723d5b9b7af1d4e852393152e1c409e24f8c5b122cc4c95210ad0f3d291fe",
+      "canonicalSha256": "dbf723d5b9b7af1d4e852393152e1c409e24f8c5b122cc4c95210ad0f3d291fe"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T02.qualifying-focused-02.fresh-production-build.log",
+      "sha256": "eaf4f495374b15231a361fb289baef701b86b55989bebda4b52b84fac5b33072",
+      "canonicalSha256": "eaf4f495374b15231a361fb289baef701b86b55989bebda4b52b84fac5b33072"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T02.qualifying-focused-02.full-architecture-retained.log",
+      "sha256": "b7aa2057c4ecc9ac022e3441cb24c5cfee501bae4c85325b77ee2f2c1c75dd2b",
+      "canonicalSha256": "ea9c40ecd14bd41cea1c02512c1f82175439d18c79bed195c425015070b46d17"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T02.qualifying-focused-02.full-desktop-lint-retained.log",
+      "sha256": "c6ce2ff68fbb73acfcbd7935fcdfabff26f761af4ac6bf3dcaec076ef66a2260",
+      "canonicalSha256": "6c7ee94e2b0c2e98d37e84f7a30e9ae740fe0d98c69562e66f8e7f9a03147554"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T02.qualifying-focused-02.guided-correction-navigation.log",
+      "sha256": "bdd75bc38ca7b4c6cad665fc2b4a2dc2278c975d27b7fdfa712917dbdd09f005",
+      "canonicalSha256": "c39ab3ad69de793ba476a8e34c116a65bdc78bb2aa9007cc537ef314cb764301"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T02.qualifying-focused-02.json",
+      "sha256": "adf5e47c9e457bf2e57086fb9315c272ae68d002dea5c5516ea4d38e838b0834",
+      "canonicalSha256": "662b234bf72e717b1944cb12448abf770fdf7d939b80524aa6df239566ff0d05"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T02.qualifying-focused-02.log",
+      "sha256": "861d29b9c186cbf4344aa228794b4f0308e43cf90d23f933d38d679695722e34",
+      "canonicalSha256": "e0bff95abdbbd05c652afb329977724ed59b600670b681a4fa740cf5e6d7e6eb"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T02.qualifying-focused-02.native-correction-request-boundaries.log",
+      "sha256": "171a8ea6bd70a5f2d94aaf208e236a0b77ca3b0d560987ecf8d701e0730db3f8",
+      "canonicalSha256": "171a8ea6bd70a5f2d94aaf208e236a0b77ca3b0d560987ecf8d701e0730db3f8"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T02.qualifying-focused-02.native-correction-test-build.log",
+      "sha256": "cdd11cbc3ddb41388ef5343b4fdecd0123a7161b4fc907d2571c7dff031e9631",
+      "canonicalSha256": "cdd11cbc3ddb41388ef5343b4fdecd0123a7161b4fc907d2571c7dff031e9631"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T02.qualifying-focused-02.original-revision-anchor-enrichment-regression.log",
+      "sha256": "ed57f662151b835b98670bfd66095e95f4c65ac595e47286d6fda654d48f8820",
+      "canonicalSha256": "b97ccf49e0cf3eb9c69945ae3feebf016331d200e35ae6572585bbdb209c8c56"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T02.qualifying-focused-02.owned-test-activation-manifest.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "canonicalSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T02.qualifying-focused-02.production-component-test-build.log",
+      "sha256": "b566697482f32b633a48396e0d777cf81c332f8df2179cb8374172d5618725ee",
+      "canonicalSha256": "b566697482f32b633a48396e0d777cf81c332f8df2179cb8374172d5618725ee"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T02.qualifying-focused-02.production-root-navigation-test-build.log",
+      "sha256": "b566697482f32b633a48396e0d777cf81c332f8df2179cb8374172d5618725ee",
+      "canonicalSha256": "b566697482f32b633a48396e0d777cf81c332f8df2179cb8374172d5618725ee"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T02.qualifying-focused-02.protected-correction-persistence.log",
+      "sha256": "f01974e84190a5779af4f1367303d43c61462413c54d59f439805dc9b6a1d028",
+      "canonicalSha256": "b848783db5ce0be5e20db96d99e230a12caee294f48611e01ad2dbcd2b14a5bb"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T02.qualifying-focused-02.synthetic-native-project-seed.log",
+      "sha256": "db1941eefa6d7b34f65bdb62e20793e856052598f614c76303c841a2330db8bc",
+      "canonicalSha256": "6164641a4d3ec6ce2f2cfcf3ea12d65898a9944776c69e19032fcc6af151f9f8"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T02.qualifying-focused-02.ui-change-authority.log",
+      "sha256": "6af03f7ed565f85efe7c5658f107cb0ea11a51c5eca448c9794e3d98351a7e94",
+      "canonicalSha256": "148f9b276f1a3bcd721a3f2db0db18448144ad17a7da5b7d956732bd008c47f9"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T02.qualifying-focused-03.actual-native-core-correction-authority.log",
+      "sha256": "923a33a3971e79ba5a42146b3aa4f656644bdc1987799090d25808772339de27",
+      "canonicalSha256": "ab70b373bc777e6180de14963c23bdcf36f9e4743f37e00e7c906fd3e075565b"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T02.qualifying-focused-03.actual-renderer-native-core-correction.log",
+      "sha256": "d6fffec1084728f2c848eab0fa43680ae140c8bb7d6615279fbe709eab4f32df",
+      "canonicalSha256": "d6fffec1084728f2c848eab0fa43680ae140c8bb7d6615279fbe709eab4f32df"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T02.qualifying-focused-03.affected-adr.log",
+      "sha256": "cb456887c5a14519b70b85c982f5fbc96f54886b65d1c0372a55c6408ac94673",
+      "canonicalSha256": "2b4d5dd229efbac88f543dc4e80e84d0b81f76c39bd2781be8dda7b1fad2993a"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T02.qualifying-focused-03.affected-product-dependency-and-lint-delta.log",
+      "sha256": "9edfd7be339e1cc7139172fae940f7b0ed22efc3c9032b55bf471c7f5d244ada",
+      "canonicalSha256": "c091803cfc54e3097cbe58c62d50decefbcc215fd4ee2342a27626d0c3d26daf"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T02.qualifying-focused-03.affected-python-format.log",
+      "sha256": "7715b02781372f8741fb309aee97a6483e689c9039f0d78081dd910f70b0256e",
+      "canonicalSha256": "7715b02781372f8741fb309aee97a6483e689c9039f0d78081dd910f70b0256e"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T02.qualifying-focused-03.affected-python-lint.log",
+      "sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18",
+      "canonicalSha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T02.qualifying-focused-03.affected-python-types.log",
+      "sha256": "14f7b3e492c65485e65612ef5dcf9681b8c12755889c4514a2474a4510f74a10",
+      "canonicalSha256": "521e53066a363ec69a3862127d20de642114463485e6923ba593c38250537f8d"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T02.qualifying-focused-03.clean-production-output.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "canonicalSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T02.qualifying-focused-03.correction-codecs-and-reader-regression.log",
+      "sha256": "44480c7757a133700c146a903c3e0b650f92b64cdc9098bd164fb421fb0a9037",
+      "canonicalSha256": "44480c7757a133700c146a903c3e0b650f92b64cdc9098bd164fb421fb0a9037"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T02.qualifying-focused-03.correction-domain-lineage.log",
+      "sha256": "6387ad4109ae83ff517ec5069b7fa559309b55752ed42e1d576f64baae05ecd2",
+      "canonicalSha256": "c4ec684bc3937411a9da208b7a3fec2bbc905577b9a94ba16b8f2ee3c2f4998f"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T02.qualifying-focused-03.desktop-correction-interactions.log",
+      "sha256": "638106cdff91c5df1cf9b056194dbd15bbe1fc659b17eeb096ff9580dc428df8",
+      "canonicalSha256": "d4026e1f975cedf6a337ddc1e6f00ff3846eb8b75bb4f541a623cd02d8789e97"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T02.qualifying-focused-03.desktop-types.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "canonicalSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T02.qualifying-focused-03.document-schemas.log",
+      "sha256": "a55ee30fb47c9afacd282abc3e69cce6ee0e020d9d710eb2dc98eda54569bb56",
+      "canonicalSha256": "cf42b66dd1df678fb7cf5ffaf80552a60597b0a2f2ef96323d1949800d8f6085"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T02.qualifying-focused-03.fresh-production-assembly.log",
+      "sha256": "dbf723d5b9b7af1d4e852393152e1c409e24f8c5b122cc4c95210ad0f3d291fe",
+      "canonicalSha256": "dbf723d5b9b7af1d4e852393152e1c409e24f8c5b122cc4c95210ad0f3d291fe"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T02.qualifying-focused-03.fresh-production-build.log",
+      "sha256": "e6547d2d789b5a0853638b17c13508525ff090ce3f72cea95c532a247dfab9f1",
+      "canonicalSha256": "e6547d2d789b5a0853638b17c13508525ff090ce3f72cea95c532a247dfab9f1"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T02.qualifying-focused-03.full-architecture-retained.log",
+      "sha256": "b7aa2057c4ecc9ac022e3441cb24c5cfee501bae4c85325b77ee2f2c1c75dd2b",
+      "canonicalSha256": "ea9c40ecd14bd41cea1c02512c1f82175439d18c79bed195c425015070b46d17"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T02.qualifying-focused-03.full-desktop-lint-retained.log",
+      "sha256": "c6ce2ff68fbb73acfcbd7935fcdfabff26f761af4ac6bf3dcaec076ef66a2260",
+      "canonicalSha256": "6c7ee94e2b0c2e98d37e84f7a30e9ae740fe0d98c69562e66f8e7f9a03147554"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T02.qualifying-focused-03.guided-correction-navigation.log",
+      "sha256": "747d067476785e5e068a37cdc3f179abd09f329bb07182ab0a5a995bfc005690",
+      "canonicalSha256": "fe87b79687e42024223366ca4bfb30ac90972888d9679387f800375596b16432"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T02.qualifying-focused-03.json",
+      "sha256": "8c9150e8e9d5ef6dc06f52a5d2ec44f39f5de8cc56eff7ee1e54f560a770d212",
+      "canonicalSha256": "379ec9d926418ae98a442b788e2c504169514534195bcf2f8c1afa6ecbb7ccf1"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T02.qualifying-focused-03.log",
+      "sha256": "03ca60581d760ed99b8653d070d4638f020f3f6fd778120985f60da74e3bb0cf",
+      "canonicalSha256": "3b1c38405a293d1eccd8f08743e6e6c417c812b3ef50ca6c54b8e5c0e873fdcd"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T02.qualifying-focused-03.native-correction-request-boundaries.log",
+      "sha256": "171a8ea6bd70a5f2d94aaf208e236a0b77ca3b0d560987ecf8d701e0730db3f8",
+      "canonicalSha256": "171a8ea6bd70a5f2d94aaf208e236a0b77ca3b0d560987ecf8d701e0730db3f8"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T02.qualifying-focused-03.native-correction-test-build.log",
+      "sha256": "81fb2a80731b8bb85cf13b67bac098ced29a31e74192556c8be62c80fc861d2f",
+      "canonicalSha256": "81fb2a80731b8bb85cf13b67bac098ced29a31e74192556c8be62c80fc861d2f"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T02.qualifying-focused-03.original-revision-anchor-enrichment-regression.log",
+      "sha256": "d5b3e4367dcd0deaf30db946ddbad1d346dbf34e30d2e739dfd262766a1f7fd5",
+      "canonicalSha256": "5b24be95bd1462e568ec66675e857b593d369a9e68e6df04c3d3b40cdd0263d0"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T02.qualifying-focused-03.owned-test-activation-manifest.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "canonicalSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T02.qualifying-focused-03.production-component-test-build.log",
+      "sha256": "b566697482f32b633a48396e0d777cf81c332f8df2179cb8374172d5618725ee",
+      "canonicalSha256": "b566697482f32b633a48396e0d777cf81c332f8df2179cb8374172d5618725ee"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T02.qualifying-focused-03.production-root-navigation-test-build.log",
+      "sha256": "b566697482f32b633a48396e0d777cf81c332f8df2179cb8374172d5618725ee",
+      "canonicalSha256": "b566697482f32b633a48396e0d777cf81c332f8df2179cb8374172d5618725ee"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T02.qualifying-focused-03.protected-correction-persistence.log",
+      "sha256": "efc0e70d97fb0f9b7029c96c35b57d9189782d66ab14388df56fc683325ed2bc",
+      "canonicalSha256": "e9f1343dd12ce964a2c73196e47a7e82fb068d82f2eb73c5873eddd6ef148bb5"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T02.qualifying-focused-03.synthetic-native-project-seed.log",
+      "sha256": "05c5e7aac13818af6479895dfed9ac2afe75ce2cf188e6e4552658e56fd58779",
+      "canonicalSha256": "7b280d374c9c4864f371d2c36a1c7a93487879a6fe2c0872a94706f5a56da02a"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T02.qualifying-focused-03.ui-change-authority.log",
+      "sha256": "635de25644f9fd560a7b39b4e80f5c6899767b339d1fb5f87937939d9e49b069",
+      "canonicalSha256": "a398cfe267d0bd7769f3b0a0b1d6988914774c18841c6fe7c9de48672decfb45"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T02.qualifying-focused-04.full-architecture-retained.log",
+      "sha256": "b7aa2057c4ecc9ac022e3441cb24c5cfee501bae4c85325b77ee2f2c1c75dd2b",
+      "canonicalSha256": "ea9c40ecd14bd41cea1c02512c1f82175439d18c79bed195c425015070b46d17"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T02.qualifying-focused-04.full-desktop-lint-retained.log",
+      "sha256": "c6ce2ff68fbb73acfcbd7935fcdfabff26f761af4ac6bf3dcaec076ef66a2260",
+      "canonicalSha256": "6c7ee94e2b0c2e98d37e84f7a30e9ae740fe0d98c69562e66f8e7f9a03147554"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T02.repository-red-01.log",
+      "sha256": "f5fc5c9d5a3f1a3d98988f32351a5b6b5bf8016f417cae13054f840094786421",
+      "canonicalSha256": "22ac443fa940e125d16b9b879f1831367d8c6d97f89c56129dcb3aff64a8b8d6"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T02.source-lineage-red-01.log",
+      "sha256": "596e41c06157c4bfa138ec7ace67022d1a50b7eab8e1714f55082fb62f1b8ef4",
+      "canonicalSha256": "002ff4ed894b67670adc99b8f45253455c7e4296138ab76d64e0539eca717ad1"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T02.successive-correction-red-01.log",
+      "sha256": "f94076693fa75f0a1c087d16292cf62aeba2f05a24b36e1082637c614e72e054",
+      "canonicalSha256": "94e2ee3659b69b0eff9b722f1ba298c908f056c4ba7efe100055ae444652b37c"
+    }
+  ],
+  "adverseDisposition": "Pre-submission defects, setup failures, producer errors and failed gates remain immutable adverse history. Reconstructed publication preserves every old commit and exact final product tree; only fresh candidate children qualify this submission. Inherited full gates remain explicitly failed.",
+  "supportingEvidence": [
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T02.qualifying-delta-03.json",
+      "sha256": "f69eebcfb2f01d5574fc436de0116827ddfbe176d538e733609d0924e83c1bee",
+      "canonicalSha256": "05e6e32694d336b991c51cb286695b7cab003f0184d51391e4375034a77b01d4"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T02-publication-repair-01.json",
+      "sha256": "d07c72f4c32a6d77a46bb4d98066898330dbdb8165cd0d6ca7a2ca8292061b4a",
+      "canonicalSha256": "252ef3357b3b584f4619ef52853a1ef2ecf96f8b4bb7fad5ec1fcea18f2c16a3"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T02.ui-lineage-recording-01.json",
+      "sha256": "3b9c74a5b12b139d5018398cbccdd4a7ab6bdddfeb5740530890d16b5134d57a",
+      "canonicalSha256": "98a20e6b6410299e264b64c652a52c38456e18e95aefe249d08ca0cb8b3d06f7"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T02.production-manifest-03.json",
+      "sha256": "28d881353712a9385ded0f83590facead34866dd4273771a3a19bd82e0ad9dcd",
+      "canonicalSha256": "28d881353712a9385ded0f83590facead34866dd4273771a3a19bd82e0ad9dcd"
+    }
+  ],
+  "reviewerDisposition": {
+    "openFindingIds": [],
+    "scope": "Three source-level P2 closures independently replayed; formal commit-bound task disposition remains pending."
+  },
+  "limitations": [
+    "Synthetic parser content; explicit component test page; declared mounted child/Core doubles; real Windows Native/Core/vault/SQLCipher boundary separately exercised. No installed-package, model accuracy, larger hardware or full Wave claim."
+  ],
+  "taskApproval": false,
+  "sliceApproval": false,
+  "waveCompletion": false,
+  "releaseApproval": false,
+  "publicationRepresentation": {
+    "documentType": "public-display-representation-of-preserved-approved-R01",
+    "originalManifest": {
+      "path": "artifacts/tmp/CAP-05.S06.T02.publication-repair-01/private-state/worktree/artifacts/evidence/CAP-05.S06.T02.R01.json",
+      "sha256": "0ef04b0478f722444e9fad767f903cf90a85df82bfd45375a9eda28895131494",
+      "canonicalSha256": "8415353e535e12ab3daec4cd5c3ef13a08e39f40050ef5da87dca859ac05827b"
+    },
+    "originalFrozenPacketSha256": "6060ef06e44da45744eac84040c85dfda5112ecc1d8c23635ff82f598f81a7fe",
+    "originalLedgerSha256": "263605b7891317a1498aecc7a8272cfe469161bb2a7dad1246968fd7d3d2761b",
+    "snapshot": {
+      "path": "artifacts/tmp/CAP-05.S06.T02.publication-repair-01/snapshot-01.json",
+      "sha256": "9e3de05636aafeb73f55e9b7585d82f4595ea3565aee53779672a674013c658a"
+    },
+    "meaning": "Only the owned test activation command's outputresource argument uses a repository-relative display path. Actual executed argv, candidate, criteria, results, raw outputs, input/producer bindings and adverse findings remain unchanged. The original R01 approval authenticates the original preserved bytes; separate representation authentication and exact owner authority are required before publication."
+  }
+}

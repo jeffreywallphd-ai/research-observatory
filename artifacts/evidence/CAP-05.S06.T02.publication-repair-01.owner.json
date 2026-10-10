@@ -1,0 +1,44 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "exact-unpublished-approved-task-publication-owner-authorization",
+  "taskId": "CAP-05.S06.T02",
+  "candidate": "dc8172c2e89a764a6fa257c25130e9bd6c145db2",
+  "proposal": {
+    "path": "artifacts/tmp/CAP-05.S06.T02.publication-repair-01/proposal.json",
+    "sha256": "638d579396016912e2765600ff03a4d793d38dcc224478398af25ee7f4512717"
+  },
+  "readiness": {
+    "path": "artifacts/tmp/CAP-05.S06.T02.publication-repair-01/readiness-review-01.json",
+    "sha256": "56d3bcddc2b7c1988d1a26c6446c92f6df531b56fab0bc5feb70da8d691f0c6b"
+  },
+  "ownerAuthority": "Actual direct human response in current chat to this exact reviewed packet",
+  "ownerResponse": "Approve this exact data-only correction",
+  "ownerRespondedAt": "Approval observed in current chat on 2026-10-10 after readiness review",
+  "recordedAt": "2026-10-10T19:22:01.721831+00:00",
+  "authorizedScope": [
+    "Publish only these exact data representations after preserving all original raw worktree/index/frozen packet bytes and hashes locally.",
+    "Replace one workspace-specific outputresource path in a recorded command with its repository-relative display. Preserve actual argv, all 25 results, candidate/base/branch, criteria, selected/deferred IDs, original review text/identity/timestamps, DONE status, findings, adverse evidence and telemetry. Rebind only derived evidence/packet/ledger hashes and add truthful representation provenance.",
+    "Regenerate named views with existing tools, validate canonical bindings and pass unchanged normal privacy/credential hooks. No product, framework, controller, hook, policy, security, experience, acceptance or release change.",
+    "Then locally integrate T02, claim and delegate dependency-eligible T03 through unchanged taskctl and continue W2 qualification and required release gates."
+  ],
+  "originalManifestSha256": "8415353e535e12ab3daec4cd5c3ef13a08e39f40050ef5da87dca859ac05827b",
+  "originalLedgerSha256": "263605b7891317a1498aecc7a8272cfe469161bb2a7dad1246968fd7d3d2761b",
+  "originalPacketSha256": "6060ef06e44da45744eac84040c85dfda5112ecc1d8c23635ff82f598f81a7fe",
+  "publicManifest": {
+    "path": "artifacts/tmp/CAP-05.S06.T02.publication-repair-01/public-manifest.json",
+    "sha256": "110961428e9aeefb1546f723efb284a52089ba1f87fa3990f5b9f997d612872b"
+  },
+  "publicLedger": {
+    "path": "artifacts/tmp/CAP-05.S06.T02.publication-repair-01/public-ledger.json",
+    "sha256": "36286739e24cff1516576c03e79ce2eff061aec83ff86e52e2ed02b1bbcbb181"
+  },
+  "publicPacketSha256": "63ceef8d88ec166fe818f0e95dc32cd76d809261b14d2c9e67ca1615f37eee72",
+  "publicBacklog": {
+    "path": "artifacts/tmp/CAP-05.S06.T02.publication-repair-01/public-backlog.yaml",
+    "sha256": "2cc0729a63de1cf0e559f42c98d55175b0d7c12637cfe2eee67b9473ffc65c16"
+  },
+  "originalR01ApprovalAndAllAdverseEvidencePreserved": true,
+  "newTaskApproval": false,
+  "waveCompleted": false,
+  "releaseApproved": false
+}
