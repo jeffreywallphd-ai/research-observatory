@@ -12,7 +12,7 @@ from unittest.mock import patch
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / "services/core-api/src"))
 
-from research_observatory_core.anchors.contracts import AnchorSelection  # noqa: E402
+from research_observatory_core.anchors.contracts import AnchorSelection, CodepointRange  # noqa: E402
 from research_observatory_core.document_revisions import DocumentRevisionProblem  # noqa: E402
 from research_observatory_core.domain_contracts import new_uuid_v7  # noqa: E402
 from research_observatory_core.object_store import _object_relative_path  # noqa: E402
@@ -32,7 +32,7 @@ class AnchorRepositoryTests(unittest.TestCase):
         self.selection = AnchorSelection(
             revision_id=self.accepted.revision_id,
             node_id=self.accepted.structure.nodes[0].node_id,
-            normalized_range={"start": 25, "end": 49},
+            normalized_range=CodepointRange(start=25, end=49),
         )
         self.command = new_uuid_v7()
         self.repository = self.reopen()
@@ -43,6 +43,7 @@ class AnchorRepositoryTests(unittest.TestCase):
     def test_restart_reads_exact_encrypted_anchor_with_atomic_provenance_dependencies(self):
         before = self.f.counts()
         anchor = self.repository.create(self.command, self.selection)
+        assert anchor.target.quote is not None
         self.assertEqual("Second synthetic passage", anchor.target.quote.exact)
         self.assertEqual(self.accepted.revision_id, anchor.target.revision_id)
         self.assertEqual(anchor, self.reopen().read(anchor.anchor_id))
@@ -124,7 +125,7 @@ class AnchorRepositoryTests(unittest.TestCase):
     def test_new_accepted_head_does_not_move_old_anchor(self):
         anchor = self.repository.create(self.command, self.selection)
         result = self.f.parse("Changed later synthetic source representation.")
-        later = self.f.repository.accept(self.f.command(result, expected=self.accepted.revision_id))
+        later = self.f.reprocess_uncorrected_fixture(result, self.accepted)
         self.assertNotEqual(anchor.target.revision_id, later.revision_id)
         self.assertEqual(anchor, self.reopen().read(anchor.anchor_id))
 
@@ -182,7 +183,7 @@ class AnchorRepositoryTests(unittest.TestCase):
 
     def test_reader_revision_choices_and_outline_keep_exact_source_without_PDF_reads(self):
         result = self.f.parse("Later synthetic paragraph.")
-        later = self.f.repository.accept(self.f.command(result, expected=self.accepted.revision_id))
+        later = self.f.reprocess_uncorrected_fixture(result, self.accepted)
         choices = self.repository.reader_revisions(self.f.f.source.attachment_id)
         self.assertEqual(self.f.f.source, choices.source)
         self.assertEqual(

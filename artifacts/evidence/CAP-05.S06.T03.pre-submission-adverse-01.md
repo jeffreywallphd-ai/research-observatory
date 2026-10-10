@@ -69,3 +69,54 @@ empty-obligation reconciliation and per-document acceptance path, preserving the
 original tail, ancestor quote, historical anchor and unchanged-head assertions.
 Retain the initial adverse log and rerun both affected cases; valid historical
 exact replays are covered separately and are not bypassed.
+
+The first committed selected run at `5ba2c750` remains FAIL. Its actual encrypted
+persistence, current Native/Core authority, mounted components/root navigation
+and Wry acceptance/Reader/reopen journey passed. The selected typing command
+reported 23 errors in four fixture files. The original revision/anchor regression
+reported one disposable-project rename setup error and one old-anchor replacement
+setup still using ordinary acceptance. Keep the whole report and raw children;
+fix narrow fixture types and the replacement setup without removing assertions.
+
+Independent read-only inspection and a finite encrypted reproduction also found
+two missed recovery boundaries. Creation persisted before enqueue, then cancellation
+with no job, followed by exact creation retry admitted a new job and returned the
+historical active view. New-job admission must authenticate the current active
+batch/item/input/base inside its existing writer; superseded retries read the
+authenticated successor without starting future work. A reconciliation saved its
+plan, then failed the return-page projection. Its aggregate/provenance/outbox
+facts persisted and exact retry added no duplicates, but catch-all Core 409 and
+Native definite denial lost the issued renderer command. Unconfirmed durable
+mutations need content-free unknown-outcome delivery and exact retry retention;
+pre-publication denials remain definite. The ignored independent replay report is
+`artifacts/tmp/CAP-05.S06.T03.independent-replay-01.json`, raw SHA-256
+`edae9e68d41e0bb9adf87535aed29d61f91fea2b3485de965c1154e3ac3f9f32`.
+Two earlier sandbox fixture setup errors are preserved separately. This is
+pre-submission development review, not an invented formal R01 disposition.
+
+The same source review found that queue listing bypassed the service's cumulative
+protected-read ledger because it has no single source selector. Individual caps,
+paging and stop checks do not replace that admission. Apply the existing trusted
+ledger before source discovery and queue reads; prove a bounded ordinary page and
+a content-free refusal before an over-budget adapter read. No framework policy,
+global limit, model or hardware requirement is changed by these corrections.
+
+Focused red reproductions preserve cancellation before missing-job submission,
+the cancellation winner at the actual admission writer, superseded continuation
+and post-publication response classification. After correction, ten selected
+development cases passed in 106.714 seconds, including a full ten-batch queue
+page, forced refusal before the protected adapter, actual Core 503/known 409,
+exact durable-plan retry and both unchanged historical-anchor assertions.
+The mounted lost-reconciliation reply case separately retained two identical
+issued commands, one saved plan and zero automatic acceptances. These are
+development observations; fresh checks at the new committed candidate and
+independent disposition remain required.
+
+A further development characterization passed in 36.760 seconds with four
+actual API subcases: an exception after durable commit, worker attachment,
+response serialization and outer authority-scope delivery. Each returned an
+unknown outcome; exact creation retry retained one batch and one job. The
+unchanged selected checker arguments then passed all nineteen changed Python
+files for types, lint and formatting, and the generated parser schemas matched.
+Exploratory checker/configuration and incorrect schema-tool-path invocations
+remain adverse setup evidence; neither changes the actual checker policy.

@@ -39,7 +39,8 @@ def main():
                     )
                 )
                 create = service.reprocessing_create
-                lock, submitted_jobs, futures = Lock(), set(), []
+                lock, futures = Lock(), []
+                submitted_jobs: set[str] = set()
                 # Match queue semantics: create returns after enqueue. Authored
                 # delivery runs separately rather than consuming Native's
                 # mutation-response deadline with synthetic SQLCipher work.

@@ -125,6 +125,36 @@ class ReprocessingInteractionsTests(unittest.TestCase):
         )
         self.assertFalse(self.errors)
 
+    def test_committed_reconciliation_lost_reply_retains_exact_command_and_one_plan(self):
+        self.page.get_by_role("checkbox", name=re.compile("^Document revision ")).check()
+        self.page.get_by_role("button", name="Reprocess selected", exact=True).click()
+        self.page.get_by_role("button", name="Compare this document", exact=True).click()
+        self.page.get_by_role("combobox", name=re.compile("^Candidate target")).select_option(index=1)
+        self.page.get_by_label("Reconciliation rationale", exact=True).fill(
+            "SYNTHETIC retain exact reconciliation across lost delivery"
+        )
+        self.page.evaluate("window.__REPROCESSING_UI_TEST__.unknown=true")
+        self.page.get_by_role("button", name="Save exact reconciliation and impact", exact=True).click()
+        self.page.get_by_text("The issued command outcome is unknown", exact=False).wait_for()
+        self.assertEqual(1, self.page.evaluate("window.__REPROCESSING_UI_TEST__.reconciledCount"))
+        self.assertEqual(0, self.page.evaluate("window.__REPROCESSING_UI_TEST__.acceptedCount"))
+        self.assertTrue(self.page.get_by_role("button", name="Reprocess selected", exact=True).is_disabled())
+        self.assertTrue(
+            self.page.get_by_role("button", name="Save exact reconciliation and impact", exact=True).is_disabled()
+        )
+        self.page.evaluate("window.__REPROCESSING_UI_TEST__.unknown=false")
+        self.page.get_by_role("button", name="Retry exact pending reprocessing command", exact=True).click()
+        self.page.get_by_role("checkbox", name=re.compile("^I approve this exact saved reconciliation")).wait_for()
+        self.assertEqual(1, self.page.evaluate("window.__REPROCESSING_UI_TEST__.reconciledCount"))
+        self.assertEqual(0, self.page.evaluate("window.__REPROCESSING_UI_TEST__.acceptedCount"))
+        self.assertTrue(
+            self.page.evaluate(
+                "(()=>{const c=window.__REPROCESSING_UI_TEST__.calls.filter(c=>c.action==='reconcile');"
+                "return c.length===2 && JSON.stringify(c[0])===JSON.stringify(c[1]);})()"
+            )
+        )
+        self.assertFalse(self.errors)
+
     def test_dirty_reconciliation_guard_and_lock_suppresses_late_private_reply(self):
         self.page.get_by_role("checkbox", name=re.compile("^Document revision ")).check()
         self.page.get_by_role("button", name="Reprocess selected", exact=True).click()

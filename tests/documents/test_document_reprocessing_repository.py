@@ -20,6 +20,7 @@ from research_observatory_core.document_corrections import (  # noqa: E402
 from research_observatory_core.document_reprocessing import (  # noqa: E402
     ReprocessingAcceptance,
     ReprocessingCancel,
+    ReprocessingContinue,
     ReprocessingCreate,
     ReprocessingMapping,
     ReprocessingReconcile,
@@ -674,6 +675,117 @@ class DocumentReprocessingRepositoryTests(unittest.TestCase):
         self.assertEqual(admitted, f.reopen().reprocessing().create(command, input_factory=factory))
         self.assertEqual(before, f.counts())
         self.assertEqual(base, f.reopen().read(base.revision_id))
+
+    def missing_input(self, base):
+        with closing(open_canonical_database(self.f.database, expected_project_id=base.project_id)) as db:
+            return self.f.repository._input(db, base.result.binding.attempt.job_id).model_copy(
+                update={"command_id": new_uuid_v7()}
+            )
+
+    def assert_no_job(self, inputs):
+        with closing(open_canonical_database(self.f.database, expected_project_id=inputs.project_id)) as db:
+            self.assertEqual(
+                0,
+                db.execute(
+                    "SELECT COUNT(*) FROM document_parse_jobs WHERE project_id=? AND command_id=?",
+                    (inputs.project_id, inputs.command_id),
+                ).fetchone()[0],
+            )
+
+    def test_cancelled_unsubmitted_batch_exact_create_retry_returns_current_without_job(self):
+        f = self.f
+        base = f.repository.accept(f.command(f.parse()))
+        inputs = self.missing_input(base)
+        command = ReprocessingCreate(command_id=new_uuid_v7(), base_revision_ids=(base.revision_id,))
+        repo = f.repository.reprocessing()
+        with (
+            patch.object(f.repository, "submit", side_effect=RuntimeError("authored-before-enqueue")),
+            self.assertRaises(fixtures.DocumentRevisionProblem),
+        ):
+            repo.create(command, input_factory=lambda _base: inputs)
+        retained = f.reopen().reprocessing().queue().items[0]
+        cancelled = repo.cancel(
+            ReprocessingCancel(command_id=new_uuid_v7(), batch_revision_id=retained.batch_revision_id)
+        )
+        before = f.counts()
+        factory = unittest.mock.Mock(side_effect=AssertionError("historical retry must retain its inputs"))
+        self.assertEqual(cancelled, f.reopen().reprocessing().create(command, input_factory=factory))
+        factory.assert_not_called()
+        self.assert_no_job(inputs)
+        self.assertEqual(before, f.counts())
+        self.assertEqual(base, f.reopen().read(base.revision_id))
+
+    def test_cancellation_winning_new_job_admission_writer_prevents_future_submission(self):
+        f = self.f
+        base = f.repository.accept(f.command(f.parse()))
+        inputs = self.missing_input(base)
+        command = ReprocessingCreate(command_id=new_uuid_v7(), base_revision_ids=(base.revision_id,))
+        repo = f.repository.reprocessing()
+        submit = f.repository.submit
+        observed = []
+
+        def cancel_before_writer(inputs, **kwargs):
+            retained = f.reopen().reprocessing().queue().items[0]
+            observed.append(
+                f.reopen()
+                .reprocessing()
+                .cancel(ReprocessingCancel(command_id=new_uuid_v7(), batch_revision_id=retained.batch_revision_id))
+            )
+            return submit(inputs, **kwargs)
+
+        with patch.object(f.repository, "submit", side_effect=cancel_before_writer):
+            current = repo.create(command, input_factory=lambda _base: inputs)
+        self.assertEqual(observed[0], current)
+        self.assert_no_job(inputs)
+        self.assertEqual(base, f.reopen().read(base.revision_id))
+
+    def test_superseded_continuation_retry_never_submits_its_old_unsubmitted_input(self):
+        f = self.f
+        base = f.repository.accept(f.command(f.parse()))
+        original_input = self.missing_input(base)
+        repo = f.repository.reprocessing()
+        batch = repo.create(
+            ReprocessingCreate(command_id=new_uuid_v7(), base_revision_ids=(base.revision_id,)),
+            input_factory=lambda _base: original_input,
+        )
+        first_input = self.missing_input(base)
+        first_command = ReprocessingContinue(
+            command_id=new_uuid_v7(),
+            batch_revision_id=batch.batch_revision_id,
+            item_id=batch.items[0].item_id,
+            expected_job_id=batch.items[0].job_id,
+        )
+        with (
+            patch.object(
+                f.repository,
+                "submit",
+                side_effect=fixtures.DocumentRevisionProblem("authored-before-continued-enqueue"),
+            ),
+            self.assertRaises(fixtures.DocumentRevisionProblem),
+        ):
+            repo.continue_item(first_command, input_factory=lambda _base: first_input)
+        successor = f.reopen().reprocessing().queue().items[0]
+        second_input = self.missing_input(base)
+        current = repo.continue_item(
+            ReprocessingContinue(
+                command_id=new_uuid_v7(),
+                batch_revision_id=successor.batch_revision_id,
+                item_id=successor.items[0].item_id,
+                expected_job_id=None,
+            ),
+            input_factory=lambda _base: second_input,
+        )
+        before = f.counts()
+        factory = unittest.mock.Mock(side_effect=AssertionError("historical continuation must retain its inputs"))
+        self.assertEqual(current, f.reopen().reprocessing().continue_item(first_command, input_factory=factory))
+        factory.assert_not_called()
+        self.assert_no_job(first_input)
+        self.assertEqual(before, f.counts())
+        cancelled = repo.cancel(
+            ReprocessingCancel(command_id=new_uuid_v7(), batch_revision_id=current.batch_revision_id)
+        )
+        self.assertEqual(cancelled, repo.continue_item(first_command, input_factory=factory))
+        self.assert_no_job(first_input)
 
     def test_retained_partial_result_quality_is_visible_but_no_complete_comparison_is_invented(self):
         f = self.f

@@ -17,6 +17,7 @@ import tempfile
 import time
 from pathlib import Path
 from types import SimpleNamespace
+from typing import BinaryIO, cast
 from unittest.mock import patch
 
 REPO = Path(__file__).resolve().parents[2]
@@ -53,6 +54,20 @@ def seed(*, accepted: bool = False) -> Path:
     for name in ("projects", "vault", "temporary", "application-data", "webview"):
         (root / name).mkdir()
     selected = seed_work(root)
+
+    def identity(key: str) -> str:
+        value = selected[key]
+        assert isinstance(value, str)
+        return value
+
+    project_id = identity("projectId")
+    selection = (
+        identity("sourceAssertionRevisionId"),
+        identity("workId"),
+        identity("workRevisionId"),
+        identity("versionId"),
+        identity("versionRevisionId"),
+    )
     project_root = (root / "projects/document-drop-project").resolve(strict=True)
     app = create_runtime_app(
         settings=CoreSettings(),
@@ -95,9 +110,12 @@ def seed(*, accepted: bool = False) -> Path:
                 )
 
             local = LocalDocumentAttachmentService(
-                service._database, selected["projectId"], service._objects, inspector=inspection
+                service._database, project_id, service._objects, inspector=inspection
             )
-            with tempfile.TemporaryFile(dir=root / "temporary") as source:
+            with tempfile.TemporaryFile(dir=root / "temporary") as temporary_source:
+                # Windows returns a wrapper with the complete binary stream
+                # interface; keep that owned stream rather than coercing data.
+                source = cast(BinaryIO, temporary_source)
                 if accepted:
                     source.write(b"SYNTHETIC Native accepted-structure source.\n")
                     source.seek(0)
@@ -110,11 +128,11 @@ def seed(*, accepted: bool = False) -> Path:
                     source,
                     source_name="synthetic-accepted-viewer.txt" if accepted else "synthetic-maximum-viewer.pdf",
                     declared_media_type="text/plain" if accepted else "application/pdf",
-                    source_assertion_revision_id=selected["sourceAssertionRevisionId"],
-                    work_id=selected["workId"],
-                    work_revision_id=selected["workRevisionId"],
-                    version_id=selected["versionId"],
-                    version_revision_id=selected["versionRevisionId"],
+                    source_assertion_revision_id=selection[0],
+                    work_id=selection[1],
+                    work_revision_id=selection[2],
+                    version_id=selection[3],
+                    version_revision_id=selection[4],
                     actor=actor,
                     operation_id=operation,
                     session_id=session,
@@ -128,16 +146,7 @@ def seed(*, accepted: bool = False) -> Path:
                 session_id=session,
                 match_confirmed=True,
                 permitted_use="project-only",
-                exact_selection=tuple(
-                    selected[key]
-                    for key in (
-                        "sourceAssertionRevisionId",
-                        "workId",
-                        "workRevisionId",
-                        "versionId",
-                        "versionRevisionId",
-                    )
-                ),
+                exact_selection=selection,
             )
             return candidate, attachment, tail_digest
 
@@ -193,7 +202,7 @@ def seed(*, accepted: bool = False) -> Path:
                 "large": binding(large, attachment),
                 "denied": binding(denied, denied_attachment),
             }
-            from research_observatory_core.anchors.contracts import AnchorSelection
+            from research_observatory_core.anchors.contracts import AnchorSelection, CodepointRange
 
             repository, _, _ = app.state.runtime.document_revisions._repository(
                 str(project_root), selected["projectId"], session, "1" * 32
@@ -205,7 +214,7 @@ def seed(*, accepted: bool = False) -> Path:
                     AnchorSelection(
                         revision_id=normal.revision_id,
                         node_id=normal.structure.nodes[0].node_id,
-                        normalized_range={"start": start, "end": end},
+                        normalized_range=CodepointRange(start=start, end=end),
                     ),
                 ).anchor_id
                 for start, end in ((0, 9), (10, 18))
@@ -407,7 +416,7 @@ def seed_revision(app, root, project, session, attachment, raw, *, expected=None
 
 
 def writer(root: Path) -> None:
-    import sqlcipher3.dbapi2 as sqlcipher
+    import sqlcipher3.dbapi2 as sqlcipher  # type: ignore[import-untyped]
     from research_observatory_core.windows_credentials import create_windows_database_key_provider
 
     root = confined(root)

@@ -119,6 +119,7 @@ class DocumentReprocessingTests(unittest.TestCase):
         self.assertEqual(
             "unresolvable", anchor_candidates(new_uuid_v7(), target, candidate("Different quotation")).state
         )
+        assert target.quote is not None
         repeated = target.model_copy(update={"quote": target.quote.model_copy(update={"prefix": "", "suffix": ""})})
         self.assertEqual(
             "ambiguous",

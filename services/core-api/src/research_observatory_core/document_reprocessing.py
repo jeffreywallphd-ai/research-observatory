@@ -57,6 +57,13 @@ type ItemState = Literal[
 ]
 
 
+class ReprocessingOutcomeUnknown(DocumentRevisionProblem):
+    """A durable mutation may exist, but its protected response is unconfirmed."""
+
+    def __init__(self) -> None:
+        super().__init__("document-reprocessing-outcome-unknown")
+
+
 class ReprocessingCreate(IRValue):
     schema_version: Literal["1.0"] = "1.0"
     command_id: Identity

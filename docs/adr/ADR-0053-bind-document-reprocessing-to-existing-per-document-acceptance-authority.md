@@ -69,6 +69,16 @@ already-advanced checkpoint returns current readback without consuming another
 chunk. Cancellation stops future items and preserves committed decisions.
 Unfinished old-session inputs need an explicit new immutable command/job under
 current authority; completed historical outcomes remain readable.
+Exact creation/continuation replay returns authenticated current batch facts
+after a successor, without resubmitting its older inputs. Missing-job admission
+checks the exact active batch, item, immutable input and current accepted base
+inside the existing source-fenced queue writer, closing cancellation races.
+
+Known pre-publication denials remain content-free 409. A completed publication
+callback with an ambiguous commit, or failed post-publication projection,
+attachment or response delivery, returns content-free 503. The existing Native
+unknown-outcome path retains the exact issued mutation for explicit retry;
+authenticated replay cannot duplicate its durable plan, decision or job.
 
 Unique exact quote and context produce advisory unchanged/moved candidates.
 Missing or ambiguous quotes remain unresolved and historical anchors never move.
@@ -82,6 +92,11 @@ authority apply through materialization, publication and delivery. Reference
 rematches require current active Work and its authenticated sources. Responses
 remain bounded and content-free on denial. Source/IR, authors/rationale, accepted
 history, storage/migrations and scholarly verification stay unchanged.
+The existing cumulative protected-read ledger begins before source discovery
+and also governs queue pages. Discovery/queue reserve no source decoder; a
+selected document tightens the existing allowance to authenticated source bytes
+without resetting or refunding spent artifact charges. Each protected adapter
+read is charged before materialization, including nested accepted/result reads.
 
 The object reader adds only the protected reprocessing media type and an 8 MiB
 read cap under the existing encryption/authentication profile. The quality-scope

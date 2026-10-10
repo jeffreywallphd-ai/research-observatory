@@ -169,6 +169,17 @@ Cancellation stops future items and retains completed per-document decisions.
 Unfinished old-session work needs a new explicit immutable command/job under
 current Native authority; no security-lock continuation or acceptance is automatic.
 Unknown issued mutations keep their exact payload for explicit reconciliation.
+Exact create/continuation retries authenticate the current batch successor and
+return its immutable facts without resubmitting superseded inputs. Each missing
+job is admitted only after its exact active batch/item/input and current base are
+checked in the same source-fenced queue writer. Cancellation cannot win that
+check and leave a later unsubmitted job silently admitted.
+
+Known pre-publication denials return content-free 409 responses. Once publication
+may have completed, an unconfirmed commit, projection, attachment or delivery
+returns content-free 503; Native treats that issued mutation as unknown and keeps
+the exact payload. Explicit retry authenticates the retained result and creates
+no duplicate plan, decision or job.
 
 Current human/Intent/privacy, original-copy inspect/derive, exact Work authority,
 stop and resource fences apply through response delivery. Protected reprocessing
@@ -178,5 +189,10 @@ codepoints and one million cumulative span codepoints before detached copies
 (including nested cells, warnings, contributors and overlapping spans), 32 correction
 generations, 32 operations per generation and five-second cooperative work.
 Retained-IR text comparison is not proof of extraction recall from the source.
+One cumulative protected-artifact read ledger starts before source discovery,
+including queue pages. Discovery and queue reserve no source decoder; selected
+document actions tighten the existing allowance to the authenticated source
+size while retaining every prior artifact charge. Admission precedes each
+protected adapter read, and nested validation cannot reset that spent budget.
 Authored parser fixtures plus real Native/Core/vault/SQLCipher checks establish
 these boundaries without claiming installed parser, hardware or shipping proof.

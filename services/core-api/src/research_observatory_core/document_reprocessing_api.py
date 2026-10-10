@@ -11,6 +11,7 @@ from .document_reprocessing import (
     ReprocessingCancel,
     ReprocessingContinue,
     ReprocessingCreate,
+    ReprocessingOutcomeUnknown,
     ReprocessingReconcile,
 )
 from .parsing.contracts import Digest, Identity
@@ -71,6 +72,18 @@ def register_document_reprocessing_routes(app, runtime):
             if service is None:
                 raise ValueError("document-reprocessing-unavailable")
             return action(service)
+        except ReprocessingOutcomeUnknown:
+            raise CoreProblem(
+                problem_detail(
+                    status=503,
+                    code="RO-CORE-DOCUMENT-REPROCESSING-OUTCOME-UNKNOWN",
+                    title="Document reprocessing outcome is unconfirmed",
+                    detail="The issued command may have persisted. Its protected response could not be confirmed.",
+                    trace_id=request.state.trace_id,
+                    retryable=True,
+                    remediation="Retain and retry the exact issued command before starting another action.",
+                )
+            ) from None
         except Exception:
             raise CoreProblem(
                 problem_detail(

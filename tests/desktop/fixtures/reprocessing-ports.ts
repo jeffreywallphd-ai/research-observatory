@@ -5,7 +5,7 @@ import { decodeCorrectionPage, type CorrectionPage, type DocumentCorrectionPort 
 import { decodeReprocessingAccepted, decodeReprocessingBatch, decodeReprocessingPage, type DocumentReprocessingPort, type ReprocessingCommand, type ReprocessingAccepted } from "../../../apps/desktop/src/app/documentReprocessing";
 import { correctionPageFixture,correctionQualityFixture,correctionSource,correctionRevision,correctionIdentity } from "./document-correction";
 import { reprocessingBatchFixture,reprocessingPageFixture,reprocessingAcceptedFixture,reprocessingBatchRevision,reprocessingItemId } from "./document-reprocessing";
-export const state={calls:[] as ReprocessingCommand[],acceptedCount:0,resumedCount:0,createdCount:0,expectedJobId:correctionIdentity(8003),referenceCandidate:false,qualityRegression:false,largeCandidatePages:false,runningImpact:false,blocked:false,hold:false,release:null as (()=>void) | null,unknown:false,invalid:false,returns:[] as QualitySelection[],page:decodeCorrectionPage(correctionPageFixture(),correctionSource.projectId,correctionRevision)!};
+export const state={calls:[] as ReprocessingCommand[],acceptedCount:0,resumedCount:0,createdCount:0,reconciledCount:0,expectedJobId:correctionIdentity(8003),referenceCandidate:false,qualityRegression:false,largeCandidatePages:false,runningImpact:false,blocked:false,hold:false,release:null as (()=>void) | null,unknown:false,invalid:false,returns:[] as QualitySelection[],page:decodeCorrectionPage(correctionPageFixture(),correctionSource.projectId,correctionRevision)!};
 let batch=decodeReprocessingBatch(reprocessingBatchFixture(),correctionSource.projectId)!;
 let comparison=decodeReprocessingPage(reprocessingPageFixture(),correctionSource.projectId,reprocessingBatchRevision,reprocessingItemId)!;
 let acceptedResult: ReprocessingAccepted | null=null;
@@ -36,7 +36,7 @@ export const reprocessing: DocumentReprocessingPort={async request(project,comma
       batch={...batch,batchId,batchRevisionId:revision,state:"active",items:[{itemId,jobId,baseRevisionId:command.batch.baseRevisionIds[0]!,state:"ready",acceptedRevisionId:null}]};
       comparison=decodeReprocessingPage({...reprocessingPageFixture(),batchId,batchRevisionId:revision,itemId,jobId},project,revision,itemId)!;value=batch;
     }
-    else if (command.action === "reconcile") {comparison={...comparison,planRevisionId:correctionIdentity(9000),confirmationSha256:"f".repeat(64),generation:1,unresolvedCount:0,obligations:[],state:"ready-to-accept"};value=comparison;}
+    else if (command.action === "reconcile") {state.reconciledCount+=1;comparison={...comparison,planRevisionId:correctionIdentity(9000),confirmationSha256:"f".repeat(64),generation:1,unresolvedCount:0,obligations:[],state:"ready-to-accept"};value=comparison;}
     else if (command.action === "accept") {
       const accepted=decodeReprocessingAccepted({...reprocessingAcceptedFixture(),batchId:batch.batchId,batchRevisionId:batch.batchRevisionId,itemId:comparison.itemId,...(state.runningImpact ? {impactState:"running",processedItems:0,totalItems:64} : {})},project,batch.batchRevisionId,comparison.itemId)!;acceptedResult=accepted;
       state.acceptedCount+=1;batch={...batch,items:batch.items.map(item=>({...item,state:"accepted",acceptedRevisionId:accepted.revisionId}))};

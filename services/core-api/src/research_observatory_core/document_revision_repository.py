@@ -272,7 +272,7 @@ class LocalDocumentRevisionRepository:
             raise DocumentRevisionProblem("document-parse-job-invalid")
         return inputs
 
-    def submit(self, inputs: DocumentParseInput):
+    def submit(self, inputs: DocumentParseInput, *, admission=None):
         inputs = DocumentParseInput.model_validate(inputs)
 
         def publish(connection, actor):
@@ -295,6 +295,11 @@ class LocalDocumentRevisionRepository:
                 ):
                     raise DocumentRevisionProblem("document-parse-command-conflict")
                 return self.queue._row(self.queue._select_job(connection, self.project, replay[0]))
+            if admission is not None:
+                # Reprocessing owns this internal admission condition. It runs
+                # in the same source-fenced writer as the new queue/input rows;
+                # ordinary parse submission retains its existing contract.
+                admission(connection, actor)
             accepted = self.queue._enqueue_with_connection(
                 connection,
                 submission(inputs, now=self.now()),
@@ -2278,7 +2283,7 @@ class LocalDocumentReprocessingRepository:
         comparison_id = record.comparison_revision_id
         return self._record(connection, comparison_id, reprocessing.ReprocessingComparison).result.binding.source
 
-    def _run(self, revision_id, action, cancelled):
+    def _run(self, revision_id, action, cancelled, *, mutation=False):
         def current():
             self._check(cancelled)
             with closing(
@@ -2286,11 +2291,22 @@ class LocalDocumentReprocessingRepository:
             ) as connection:
                 record = self._record(connection, revision_id)
                 source = self._source(connection, record)
-            result = self.revisions._source_fenced(
-                source, lambda connection, actor: action(connection, actor, self._record(connection, revision_id))
-            )
-            self._check(cancelled)
-            return result
+            completed = False
+
+            def selected(connection, actor):
+                nonlocal completed
+                result = action(connection, actor, self._record(connection, revision_id))
+                completed = True
+                return result
+
+            try:
+                result = self.revisions._source_fenced(source, selected)
+                self._check(cancelled)
+                return result
+            except Exception:
+                if mutation and completed:
+                    raise reprocessing.ReprocessingOutcomeUnknown() from None
+                raise
 
         return self.revisions._bounded(current)
 
@@ -2370,7 +2386,77 @@ class LocalDocumentReprocessingRepository:
             self._check(cancelled)
             return record
 
-        return self.revisions._put(raw, reprocessing.REPROCESSING_MEDIA_TYPE, source, publish, cancelled)
+        return self._publish_outcome(raw, source, publish, cancelled)
+
+    @staticmethod
+    @contextmanager
+    def _after_publication():
+        try:
+            yield
+        except Exception:
+            raise reprocessing.ReprocessingOutcomeUnknown() from None
+
+    def _publish_outcome(self, raw, source, publish, cancelled):
+        completed = False
+
+        def prepared(connection, stored):
+            nonlocal completed
+            result = publish(connection, stored)
+            completed = True
+            return result
+
+        try:
+            return self.revisions._put(raw, reprocessing.REPROCESSING_MEDIA_TYPE, source, prepared, cancelled)
+        except Exception:
+            # Once the publication callback completes, a commit/adapter error
+            # can no longer establish that the immutable mutation is absent.
+            if completed:
+                raise reprocessing.ReprocessingOutcomeUnknown() from None
+            raise
+
+    def _latest_batch(self, connection, batch):
+        with self.revisions._aggregates(connection) as aggregates:
+            head = aggregates.get(batch.batch_id)
+        current = self._record(connection, head.revision_id, reprocessing.ReprocessingBatch)
+        if current.batch_id != batch.batch_id or tuple((i.item_id, i.base_revision_id) for i in current.items) != tuple(
+            (i.item_id, i.base_revision_id) for i in batch.items
+        ):
+            raise DocumentRevisionProblem("document-reprocessing-batch-binding-invalid")
+        return current
+
+    def _current_batch_view(self, batch, cancelled):
+        return self._run(batch.revision_id, lambda c, a, b: self._batch_view(c, self._latest_batch(c, b), a), cancelled)
+
+    def _submit_current_items(self, batch, items, cancelled):
+        class AdmissionChanged(DocumentRevisionProblem):
+            pass
+
+        for item in items:
+            self._check(cancelled)
+
+            def admission(connection, actor, item=item):
+                self._check(cancelled)
+                current = self._latest_batch(connection, batch)
+                if current.revision_id != batch.revision_id or current.state != "active":
+                    raise AdmissionChanged("document-reprocessing-batch-changed")
+                if self._item(current, item.item_id) != item or self._accepted_item(connection, current, item):
+                    raise AdmissionChanged("document-reprocessing-item-changed")
+                self._fence(connection, item.inputs.source, actor)
+                base = self.revisions._accepted(connection, item.base_revision_id)
+                with self.revisions._aggregates(connection) as aggregates:
+                    if aggregates.get(base.document_id).revision_id != base.revision_id:
+                        raise AdmissionChanged("document-reprocessing-base-changed")
+
+            # The authenticated latest head is also the retry response. Never
+            # submit an older command's unsubmitted input after a successor.
+            view = self._current_batch_view(batch, cancelled)
+            if view.batch_revision_id != batch.revision_id or view.state != "active":
+                return view
+            try:
+                self.revisions.submit(item.inputs, admission=admission)
+            except AdmissionChanged:
+                return self._current_batch_view(batch, cancelled)
+        return self._current_batch_view(batch, cancelled)
 
     def _current_batch(self, connection, batch):
         with self.revisions._aggregates(connection) as aggregates:
@@ -2519,12 +2605,10 @@ class LocalDocumentReprocessingRepository:
                 batch = self._write(
                     batch, batch.items[0].inputs.source, command.base_revision_ids, check=check, cancelled=cancelled
                 )
-            for item in batch.items:
-                self._check(cancelled)
-                # Persistence precedes enqueue. A crash exposes not-submitted;
-                # exact creation retry safely replays each existing job.
-                self.revisions.submit(item.inputs)
-            return self.read(batch.revision_id, cancelled=cancelled)
+            with self._after_publication():
+                # Persistence precedes enqueue. Exact retry retains immutable
+                # inputs, while every missing job needs current batch admission.
+                return self._submit_current_items(batch, batch.items, cancelled)
 
         return self.revisions._bounded(create)
 
@@ -2995,7 +3079,8 @@ class LocalDocumentReprocessingRepository:
             check=check,
             cancelled=cancelled,
         )
-        return self._page(plan.comparison_revision_id, cancelled=cancelled)
+        with self._after_publication():
+            return self._page(plan.comparison_revision_id, cancelled=cancelled)
 
     def _verify_machine(self, connection, machine):
         rows = connection.execute(
@@ -3560,11 +3645,7 @@ class LocalDocumentReprocessingRepository:
             self.revisions._accepted(connection, outer.final_revision_id)
             return self._accepted_view(connection, outer)
 
-        return self.revisions._bounded(
-            lambda: self.revisions._put(
-                protected_json(outer), reprocessing.REPROCESSING_MEDIA_TYPE, source, publish, cancelled
-            )
-        )
+        return self.revisions._bounded(lambda: self._publish_outcome(protected_json(outer), source, publish, cancelled))
 
     def _cancel_jobs(self, batch, cancelled):
         actor = self.revisions.actor()
@@ -3631,8 +3712,9 @@ class LocalDocumentReprocessingRepository:
             check=check,
             cancelled=cancelled,
         )
-        self._cancel_jobs(batch, cancelled)
-        return self.read(batch.revision_id, cancelled=cancelled)
+        with self._after_publication():
+            self._cancel_jobs(batch, cancelled)
+            return self._current_batch_view(batch, cancelled)
 
     def continue_item(self, command, *, input_factory, cancelled=lambda: False):
         command = reprocessing.ReprocessingContinue.model_validate(command)
@@ -3709,16 +3791,19 @@ class LocalDocumentReprocessingRepository:
             check=check,
             cancelled=cancelled,
         )
-        item = self._item(batch, command.item_id)
-        # The previous immutable job remains inspectable; it cannot be silently
-        # rebound to a different Native session or new parser selection.
-        with closing(
-            open_canonical_database(self.revisions.database, expected_project_id=self.revisions.project)
-        ) as connection:
-            prior = self._record(connection, batch.previous_revision_id, reprocessing.ReprocessingBatch)
-        self._cancel_jobs(prior.model_copy(update={"items": (self._item(prior, command.item_id),)}), cancelled)
-        self.revisions.submit(item.inputs)
-        return self.read(batch.revision_id, cancelled=cancelled)
+        with self._after_publication():
+            current = self._current_batch_view(batch, cancelled)
+            if current.batch_revision_id != batch.revision_id or current.state != "active":
+                return current
+            item = self._item(batch, command.item_id)
+            # The previous immutable job remains inspectable; it cannot be
+            # rebound to a different Native session or parser selection.
+            with closing(
+                open_canonical_database(self.revisions.database, expected_project_id=self.revisions.project)
+            ) as connection:
+                prior = self._record(connection, batch.previous_revision_id, reprocessing.ReprocessingBatch)
+            self._cancel_jobs(prior.model_copy(update={"items": (self._item(prior, command.item_id),)}), cancelled)
+            return self._submit_current_items(batch, (item,), cancelled)
 
     def read_impact(self, batch_revision_id, item_id, *, cancelled=lambda: False):
         def read(connection, actor, batch):
@@ -3759,4 +3844,4 @@ class LocalDocumentReprocessingRepository:
             self._check(cancelled)
             return self._accepted_view(connection, record)
 
-        return self._run(batch_revision_id, resume, cancelled)
+        return self._run(batch_revision_id, resume, cancelled, mutation=True)

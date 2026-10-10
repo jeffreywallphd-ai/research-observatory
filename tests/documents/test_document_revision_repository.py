@@ -8,6 +8,7 @@ import unittest
 from contextlib import closing
 from dataclasses import replace
 from pathlib import Path
+from typing import Literal, cast
 from unittest.mock import patch
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -21,7 +22,7 @@ from research_observatory_core.document_revisions import (  # noqa: E402
     DocumentRevisionProblem,
 )
 from research_observatory_core.domain_contracts import new_uuid_v7  # noqa: E402
-from research_observatory_core.object_store import _object_relative_path  # noqa: E402
+from research_observatory_core.object_store import _LocalObjectStore, _object_relative_path  # noqa: E402
 from research_observatory_core.parsing.contracts import DocumentIR  # noqa: E402
 from research_observatory_core.parsing.requests import ParseSuccess  # noqa: E402
 from research_observatory_core.repositories import _SqliteWorkflowQueueRepository  # noqa: E402
@@ -39,6 +40,8 @@ class DocumentRevisionRepositoryTests(unittest.TestCase):
         self.addCleanup(self.f.doCleanups)
         self.f.permit()
         self.database = self.f.fixture.corpus.database
+        assert isinstance(self.f.fixture.store, _LocalObjectStore)
+        self.store = self.f.fixture.store
         self.now = self.f.actor.occurred_at
         self.actor = replace(self.f.actor, occurred_at=self.now)
         self.guard = lambda action: self.f.preview.service.in_native_session(
@@ -54,7 +57,7 @@ class DocumentRevisionRepositoryTests(unittest.TestCase):
         return LocalDocumentRevisionRepository(
             self.database,
             self.f.source.project_id,
-            self.f.fixture.store,
+            self.store,
             actor=lambda: self.actor,
             guard=self.guard,
             now=lambda: self.now,
@@ -79,12 +82,13 @@ class DocumentRevisionRepositoryTests(unittest.TestCase):
             now=self.now,
             lease_duration_ms=30_000,
         )
+        assert claim is not None
         self.assertEqual(job.job_id, claim.job_id)
         self.queue.start(claim, now=self.now)
         request = inputs.request(claim)
         stager = LocalParserArtifactStager(
             self.database,
-            self.f.fixture.store,
+            self.store,
             claim=claim,
             request=request,
             actor=lambda: self.actor,
@@ -220,7 +224,7 @@ class DocumentRevisionRepositoryTests(unittest.TestCase):
         self.assertEqual(first, reopened.read(first.revision_id))
         self.assertEqual(second, reopened.read(second.revision_id))
         self.assertEqual((first.revision_id, second.revision_id), reopened.history(self.f.source.document_id))
-        with self.f.fixture.store.open_parse_source(self.f.source, actor=self.actor) as original:
+        with self.store.open_parse_source(self.f.source, actor=self.actor) as original:
             self.assertEqual(b"Synthetic plain text full text\n", original.read())
 
     def test_exact_retry_has_no_new_publication_and_changed_command_conflicts(self):
@@ -258,7 +262,8 @@ class DocumentRevisionRepositoryTests(unittest.TestCase):
         command = self.command(result)
         self.repository.accept(command)
         before = self.counts()
-        self.actor = replace(self.actor, actor_type="worker")
+        # Deliberately invalid runtime principal; retain the protected denial.
+        self.actor = replace(self.actor, actor_type=cast(Literal["human"], "worker"))
         with self.assertRaises(DocumentRevisionProblem):
             self.repository.accept(command)
         self.assertEqual(before, self.counts())
@@ -348,6 +353,7 @@ class DocumentRevisionRepositoryTests(unittest.TestCase):
         with patch.object(_SqliteWorkflowQueueRepository, "claim_next", observed):
             self.parse()
         claim = claims[0]
+        assert claim is not None
         authority = self.repository.queue.authority(claim.job_id)
         self.assertIsNotNone(self.repository.claim_input(claim))
         definition = json.loads(authority.definition_json)

@@ -287,15 +287,26 @@ class DocumentRevisionService:
     def accept(self, command, *, trace_id):
         return self._current(command, trace_id, lambda repository: repository.accept(command.acceptance))
 
-    def _reprocessing(self, command, trace_id, action):
+    def _reprocessing(self, command, trace_id, action, *, mutation=False):
+        from .document_reprocessing import ReprocessingOutcomeUnknown
         from .document_revisions import protected_json
-        from .document_viewer_allocations import viewer_revision_reads
+        from .document_viewer_allocations import viewer_core_allowance, viewer_revision_reads
+
+        completed = False
 
         def scoped(repository, actor, stopped):
-            source = repository.reprocessing().source_for_command(command)
-            bounded = viewer_revision_reads(repository, source.byte_length) if source else repository
+            # Discovery/queue opens no source decoder. Charge every protected
+            # artifact from the first read, then reserve the authenticated
+            # selected source without resetting/refunding discovery charges.
+            bounded = viewer_revision_reads(repository, 1)
+            source = bounded.reprocessing().source_for_command(command)
+            if source:
+                bounded.objects.remaining -= viewer_core_allowance(1) - viewer_core_allowance(source.byte_length)
+                if bounded.objects.remaining < 0:
+                    raise DocumentRevisionProblem("viewer-resource-limit")
 
             def project_action(reconciler=None, observed=None, resolve=None, intent=None, path=None):
+                nonlocal completed
                 if reconciler is not None and (
                     observed.actor_id,
                     observed.intent_sha256,
@@ -331,6 +342,7 @@ class DocumentRevisionService:
                 selected = bounded.reprocessing(target_resolver=target)
                 selected.session_id = command.session_id
                 result = action(selected, stopped, lambda base: self._reprocessing_input(command, base, actor))
+                completed = True
                 wire = result.model_dump(mode="json", by_alias=True)
                 if len(protected_json(result)) > 128 * 1024 or stopped():
                     raise DocumentRevisionProblem("document-reprocessing-stopped-or-resource-limit")
@@ -340,7 +352,12 @@ class DocumentRevisionService:
                 return self.reconciliation._with_authority(command.root, trace_id, project_action)
             return project_action()
 
-        return self._scoped_repository(command, trace_id, scoped)
+        try:
+            return self._scoped_repository(command, trace_id, scoped)
+        except Exception:
+            if mutation and completed:
+                raise ReprocessingOutcomeUnknown() from None
+            raise
 
     def _reprocessing_input(self, command, base, actor):
         from .domain_contracts import new_uuid_v7
@@ -379,9 +396,14 @@ class DocumentRevisionService:
 
     def reprocessing_create(self, command, *, trace_id):
         result = self._reprocessing(
-            command, trace_id, lambda r, s, f: r.create(command.batch, input_factory=f, cancelled=s)
+            command, trace_id, lambda r, s, f: r.create(command.batch, input_factory=f, cancelled=s), mutation=True
         )
-        self.attach(command.root)
+        try:
+            self.attach(command.root)
+        except Exception:
+            from .document_reprocessing import ReprocessingOutcomeUnknown
+
+            raise ReprocessingOutcomeUnknown() from None
         return result
 
     def reprocessing_read(self, command, *, trace_id):
@@ -395,20 +417,34 @@ class DocumentRevisionService:
         )
 
     def reprocessing_reconcile(self, command, *, trace_id):
-        return self._reprocessing(command, trace_id, lambda r, s, _f: r.reconcile(command.reconciliation, cancelled=s))
+        return self._reprocessing(
+            command, trace_id, lambda r, s, _f: r.reconcile(command.reconciliation, cancelled=s), mutation=True
+        )
 
     def reprocessing_accept(self, command, *, trace_id):
-        return self._reprocessing(command, trace_id, lambda r, s, _f: r.accept(command.acceptance, cancelled=s))
+        return self._reprocessing(
+            command, trace_id, lambda r, s, _f: r.accept(command.acceptance, cancelled=s), mutation=True
+        )
 
     def reprocessing_continue(self, command, *, trace_id):
         result = self._reprocessing(
-            command, trace_id, lambda r, s, f: r.continue_item(command.continuation, input_factory=f, cancelled=s)
+            command,
+            trace_id,
+            lambda r, s, f: r.continue_item(command.continuation, input_factory=f, cancelled=s),
+            mutation=True,
         )
-        self.attach(command.root)
+        try:
+            self.attach(command.root)
+        except Exception:
+            from .document_reprocessing import ReprocessingOutcomeUnknown
+
+            raise ReprocessingOutcomeUnknown() from None
         return result
 
     def reprocessing_cancel(self, command, *, trace_id):
-        return self._reprocessing(command, trace_id, lambda r, s, _f: r.cancel(command.cancellation, cancelled=s))
+        return self._reprocessing(
+            command, trace_id, lambda r, s, _f: r.cancel(command.cancellation, cancelled=s), mutation=True
+        )
 
     def reprocessing_read_impact(self, command, *, trace_id):
         return self._reprocessing(
@@ -422,6 +458,7 @@ class DocumentRevisionService:
             lambda r, s, _f: r.resume_impact(
                 command.batch_revision_id, command.item_id, command.expected_checkpoint_sha256, cancelled=s
             ),
+            mutation=True,
         )
 
     def read(self, command, *, trace_id):
