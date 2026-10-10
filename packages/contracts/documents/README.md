@@ -17,6 +17,8 @@ provenance. The parser schemas below add staged structure under ADR-0028/0029:
 | `viewer-source-selector.v1.schema.json` | Opaque exact attachment/original and optional accepted normalized revision |
 | `viewer-source-metadata.v1.schema.json` | Current full source identity, with original and normalized revisions kept distinct |
 | `viewer-text-chunk.v1.schema.json` | Exact accepted element and bounded Unicode text chunk; separately governed derivation |
+| `parsing-quality-report.v1.schema.json` | Read-only durable job/attempt/source/result-bound quality and review triage |
+| `parsing-quality-dimensions.v1.schema.json` | Versioned separate observations; no aggregate correctness or acceptance |
 
 Generate with `python packages/contracts/documents/generate_parser_schema.py`;
 `--check` rejects drift. JSON Schema proves shape. The additional graph, mapping,
@@ -79,3 +81,35 @@ inferred, ambiguous and unresolved observations remain distinct and unverified.
 extraction/exclusion commands and bounded Reader page/notice schemas. Exact
 source relationships, sparse cells, original-page previews and uncertainty stay
 unverified; explicit human exclusion appends history and preserves the parse.
+
+`parsing-quality-report.v1` is a read-only projection for the Native-only
+`/native/document-revisions/parse-quality` query with an opaque job ID and current
+project session. It separately exposes retained text/page coverage, encoding,
+reading order, section/reference/block expectations, anchors, unresolved
+references, node/cell confidence, geometry and parser warnings. The exact source,
+selected producer/input/selection digests, current physical attempt and nullable
+retained result are bound; pending, failed and cancelled jobs never invent IR.
+Partial retained output can be diagnosed before any human acceptance.
+
+Coverage of normalized projection codepoints measures representation within
+the retained IR, including its overlapping native projections. It does not prove
+recall of original source text. Source-page coverage uses retained page geometry
+and nonempty text-bearing page locators; no-page formats report not applicable.
+Expected sections/references/blocks require namespace-aware observations in the
+exact authenticated native artifact. Without that basis expectations stay
+unknown; absent sections or references alone do not imply a broken document.
+
+Confidence state counts preserve reported, unknown, not reported, not applicable
+and unavailable observations. Parser table observations remain separate from
+cell observations. Reported values below 0.8 only trigger versioned review
+reasons, and no combined correctness score is returned. Human inspection and
+explicit acceptance retain authority. Warning codes/counts exclude raw details.
+Re-evaluation uses `parsing-quality-definitions-1`/`parsing-quality-triage-1` and
+does not modify source, original IR, accepted revisions, heads or provenance.
+
+Current Native/human/Intent/privacy and exact-copy inspect/derive rights span
+report construction and delivery. Existing cumulative artifact admission runs
+before reads, the diagnostic limit of 10,000 items runs before flattening,
+the operation has a five-second cooperative deadline and reports are capped at
+64 KiB. Resource, stale-session, stop-latch and authority failures are content
+free. Desktop display/correction integration belongs to CAP-05.S06.T02.

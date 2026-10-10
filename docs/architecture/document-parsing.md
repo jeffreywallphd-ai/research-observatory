@@ -255,6 +255,40 @@ product. Commit-bound package, native-principal, encrypted source-to-staged-IR,
 resource/cancellation/recovery and cold/warm performance proofs remain required
 before this task or its slice can complete.
 
+## Parsing quality diagnostics (CAP-05.S06.T01)
+
+The read-only Native `parse-quality` query derives versioned separate dimensions
+from an exact durable parse job and its encrypted retained result. Its report
+binds selected source/parser/input/selection digests and the current physical
+attempt; result identities are nullable until success. Retained partial output
+is diagnosable before acceptance. Failed/cancelled/pending jobs have unavailable
+dimensions, never fabricated IR, confidence or measured-zero coverage.
+
+Retained normalized projection coverage counts the union of node text ranges
+within each projection. Native parent/child projections can overlap source text;
+this metric measures representation within the IR and does not establish source
+recall. Page coverage identifies declared retained pages without nonempty located
+text, preserving no-page N/A and unknown page geometry. Expected structural blocks
+require the authenticated exact native artifact and existing format/namespace
+classification; no required scholarly section or reference count is guessed.
+
+Encoding, reading order, source locators, unresolved references, node confidence,
+cell confidence, separate parser cell observations, geometry and warning counts
+remain distinct. Missing text/anchors/expected blocks, ambiguity and parser
+failure route to review. Only reported numeric extraction observations below
+0.8 triage; unknown remains unknown. This query neither changes structural
+acceptance nor advances scholarly verification, and human inspection remains
+available subject to current source rights.
+
+The query reuses current Native/human/project/Intent/privacy and exact-copy
+inspect/derive fencing, protected artifact admission and the lifecycle stop
+latch through materialization/delivery. It caps 10,000 cumulative diagnostic
+items before flattening, checks a five-second operation deadline, returns at
+most 64 KiB and excludes raw parser warning details. No schema migration or
+publication occurs. Reopen re-derives the same report from durable identities and
+rule versions, preserving original ciphertext, human decisions and revision
+history. The correction desktop interaction is CAP-05.S06.T02 scope.
+
 ## Immutable normalized revisions (CAP-05.S03.T01)
 
 The native document-revision service submits one durable `document-parse`

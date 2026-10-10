@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 1227257934aa4ca57912bbabfd82b14530adf3cdb6536d64d0c1e8eafdacd0d9
+source_sha256: 0912bcf8a75e3876f2ba2b14c931d45c2d444c7524d9b06099ab0d6e2235af48
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -12238,13 +12238,13 @@ Original tasks and approvals remain unchanged.
 
 #### - [ ] CAP-05.S06.T01 - Implement parsing quality metrics and triage rules
 
-**Status / priority / estimate / risk:** `READY` / `P0` / `M` / `medium`
+**Status / priority / estimate / risk:** `IN_PROGRESS` / `P0` / `M` / `medium`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
 **Dependencies:** `CAP-05.S04.T02`, `CAP-03.S05.T02`
 
-**Owner / review:** - / - (`-`)
+**Owner / review:** codex-w2-implementation / - (`-`)
 
 **Objective:** Metrics for text coverage, reading-order anomalies, missing sections/references, encoding, page-anchor coverage, and parser warnings.
 

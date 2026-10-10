@@ -155,6 +155,17 @@ class DocumentRevisionService:
     def result(self, command, *, trace_id):
         return self._current(command, trace_id, lambda repository: repository.result(command.result_id))
 
+    def quality(self, command, *, trace_id):
+        # Keep report materialization within the current Native lifecycle scope;
+        # the stop latch is checked again before any derived projection escapes.
+        return self._scoped_repository(
+            command,
+            trace_id,
+            lambda repository, _actor, stopped: repository.quality(command.job_id, cancelled=stopped).model_dump(
+                mode="json", by_alias=True
+            ),
+        )
+
     def accept(self, command, *, trace_id):
         return self._current(command, trace_id, lambda repository: repository.accept(command.acceptance))
 

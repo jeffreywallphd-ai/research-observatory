@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import time
 from collections.abc import Callable
 from contextlib import closing, contextmanager
 from dataclasses import dataclass, replace
@@ -39,7 +40,9 @@ from .domain_contracts import is_uuid_v7, new_uuid_v7
 from .object_store import _LocalObjectStore
 from .parsing.contracts import AcquisitionOrigin, LocalOrigin, SourceIdentity
 from .parsing.normalization import MAX_IR_BYTES
+from .parsing.quality import ParsingQualityReport, assess_ir, unavailable_assessment
 from .parsing.requests import ParseRequest, ParseSuccess
+from .parsing.selection import selected_values, selection_sha256
 from .parsing.source import LocalProtectedParseSource, source_identity
 from .ports.acquisition import AcquisitionReceipt
 from .ports.corpus import CorpusActor
@@ -626,6 +629,95 @@ class LocalDocumentRevisionRepository:
                 return job, receipt
 
             return self._source_fenced(inputs.source, current)
+
+        return self._bounded(read)
+
+    def quality(self, job_id, *, cancelled: Callable[[], bool] = lambda: False) -> ParsingQualityReport:
+        """Read-only versioned triage, including unaccepted/failed durable jobs.
+
+        Reuse encrypted retained results and immutable attempt/source bindings.
+        Re-evaluation never publishes a revision, acceptance, event or new head.
+        """
+        from .document_viewer_allocations import viewer_revision_reads
+        from .parsing.native_contracts import NATIVE_MEDIA_TYPE
+
+        if not is_uuid_v7(job_id):
+            raise DocumentRevisionProblem("document-parse-job-unavailable")
+        deadline = time.monotonic() + 5.0
+
+        def stopped():
+            if cancelled() or time.monotonic() > deadline:
+                raise DocumentRevisionProblem("parsing-quality-stopped-or-resource-limit")
+
+        def read():
+            stopped()
+            with closing(open_canonical_database(self.database, expected_project_id=self.project)) as connection:
+                inputs = self._input(connection, job_id)
+            bounded = viewer_revision_reads(self, inputs.source.byte_length)
+
+            def current(connection, _actor):
+                stopped()
+                job, output = bounded.queue._accepted_status_with_connection(connection, job_id)
+                source, producer = selected_values(inputs.selection)
+                if len(producer.assets) > 32:
+                    raise DocumentRevisionProblem("parsing-quality-resource-limit")
+                receipt = None
+                assessment = unavailable_assessment(job.state)
+                if output is not None:
+                    if len(output.outputs) != 1:
+                        raise DocumentRevisionProblem("document-parse-output-not-successful")
+                    receipt = bounded._receipt(connection, output.outputs[0].artifact_id)
+                    result = bounded._result(connection, receipt)
+                    if (
+                        receipt.binding.source,
+                        receipt.binding.producer,
+                        receipt.binding.selection_sha256,
+                        receipt.binding.attempt.job_id,
+                        receipt.binding.attempt.attempt_id,
+                    ) != (
+                        source,
+                        producer,
+                        selection_sha256(inputs.selection),
+                        job.job_id,
+                        job.current_attempt_id,
+                    ):
+                        raise DocumentRevisionProblem("parsing-quality-result-binding-invalid")
+                    stopped()
+                    native_receipts = [item for item in result.ir.raw_artifacts if item.media_type == NATIVE_MEDIA_TYPE]
+                    if len(native_receipts) > 1:
+                        raise DocumentRevisionProblem("parsing-quality-native-binding-invalid")
+                    native = (
+                        None
+                        if not native_receipts
+                        else bounded.objects._read_protected_document_artifact(
+                            connection,
+                            native_receipts[0],
+                            NATIVE_MEDIA_TYPE,
+                        )
+                    )
+                    assessment = assess_ir(result.ir, native_artifact=native, cancelled=cancelled)
+                report = ParsingQualityReport(
+                    source=source,
+                    producer=producer,
+                    selection_sha256=selection_sha256(inputs.selection),
+                    input_sha256=inputs.configuration_hash.removeprefix("sha256:"),
+                    job_id=job.job_id,
+                    attempt_id=job.current_attempt_id,
+                    job_state=job.state,
+                    diagnostic_code=job.diagnostic_code,
+                    result_id=None if receipt is None else receipt.result_id,
+                    result_revision_id=None if receipt is None else receipt.revision_id,
+                    result_sha256=None if receipt is None else receipt.object_sha256,
+                    assessment=assessment,
+                )
+                if len(protected_json(report)) > 64 * 1024:
+                    raise DocumentRevisionProblem("parsing-quality-resource-limit")
+                stopped()
+                return report
+
+            report = bounded._source_fenced(inputs.source, current)
+            stopped()
+            return report
 
         return self._bounded(read)
 

@@ -568,6 +568,10 @@
     "tools/connector_conformance.py",
     "tests/connectors/test_plugin_sample_conformance.py",
     "tests/connectors/test_plugin_sample_native_lpac.py",
-    "tests/desktop/test_seed_document_drop_fixture.py"
+    "tests/desktop/test_seed_document_drop_fixture.py",
+    "services/core-api/src/research_observatory_core/parsing/quality.py",
+    "tests/documents/test_parsing_quality.py",
+    "tests/documents/test_parsing_quality_repository.py",
+    "tests/documents/test_parsing_quality_service.py"
   ]
 }

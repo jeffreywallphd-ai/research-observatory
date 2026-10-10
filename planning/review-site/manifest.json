@@ -24398,7 +24398,7 @@
             {
               "task_id": "CAP-05.S06.T01",
               "title": "Implement parsing quality metrics and triage rules",
-              "status": "READY",
+              "status": "IN_PROGRESS",
               "mode": "latest-review-only",
               "latest_review": {
                 "reviewer": null,
@@ -24439,16 +24439,16 @@
             {
               "task_id": "CAP-05.S06.T01",
               "title": "Implement parsing quality metrics and triage rules",
-              "status": "READY",
+              "status": "IN_PROGRESS",
               "page": "CAP-05/CAP-05.S06.T01.html",
               "dependencies": [
                 "CAP-05.S04.T02",
                 "CAP-03.S05.T02"
               ],
               "claim": {
-                "owner": null,
-                "branch": null,
-                "base_sha": null
+                "owner": "codex-w2-implementation",
+                "branch": "codex/w2-implementation",
+                "base_sha": "fa94c73984b69a14d58471fbbdb458dc8f24c8ea"
               },
               "plan_section_sha256": "4ebf7f52c4e805c1ee3b61307d2f021e88ff69c14287aefcd031eb4ff5ba75eb",
               "worksheet": null

@@ -1,0 +1,632 @@
+{
+  "$defs": {
+    "AnchorDimension": {
+      "additionalProperties": false,
+      "properties": {
+        "state": {
+          "$ref": "#/$defs/ObservationState"
+        },
+        "basis": {
+          "const": "nonempty-text-node-locators",
+          "default": "nonempty-text-node-locators",
+          "title": "Basis",
+          "type": "string"
+        },
+        "observedCount": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Count"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "expectedCount": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Count"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "missingCount": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Count"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "ambiguousCount": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Count"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "parserObservation": {
+          "$ref": "#/$defs/ConfidenceObservation"
+        }
+      },
+      "required": [
+        "state",
+        "observedCount",
+        "expectedCount",
+        "missingCount",
+        "ambiguousCount",
+        "parserObservation"
+      ],
+      "title": "AnchorDimension",
+      "type": "object"
+    },
+    "ConfidenceDimension": {
+      "additionalProperties": false,
+      "properties": {
+        "state": {
+          "$ref": "#/$defs/ObservationState"
+        },
+        "reportedCount": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Count"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "unknownCount": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Count"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "notReportedCount": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Count"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "notApplicableCount": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Count"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "unavailableCount": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Count"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "lowReportedCount": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Count"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "triageThreshold": {
+          "default": 0.8,
+          "maximum": 0.8,
+          "minimum": 0.8,
+          "title": "Triagethreshold",
+          "type": "number"
+        }
+      },
+      "required": [
+        "state",
+        "reportedCount",
+        "unknownCount",
+        "notReportedCount",
+        "notApplicableCount",
+        "unavailableCount",
+        "lowReportedCount"
+      ],
+      "title": "ConfidenceDimension",
+      "type": "object"
+    },
+    "ConfidenceObservation": {
+      "additionalProperties": false,
+      "properties": {
+        "state": {
+          "enum": [
+            "reported",
+            "unknown",
+            "not-reported",
+            "not-applicable",
+            "unavailable"
+          ],
+          "title": "State",
+          "type": "string"
+        },
+        "value": {
+          "anyOf": [
+            {
+              "maximum": 1,
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Value"
+        }
+      },
+      "required": [
+        "state",
+        "value"
+      ],
+      "title": "ConfidenceObservation",
+      "type": "object"
+    },
+    "Count": {
+      "maximum": 9007199254740991,
+      "minimum": 0,
+      "type": "integer"
+    },
+    "CountDimension": {
+      "additionalProperties": false,
+      "properties": {
+        "state": {
+          "$ref": "#/$defs/ObservationState"
+        },
+        "basis": {
+          "$ref": "#/$defs/Token"
+        },
+        "count": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Count"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "state",
+        "basis",
+        "count"
+      ],
+      "title": "CountDimension",
+      "type": "object"
+    },
+    "CoverageDimension": {
+      "additionalProperties": false,
+      "properties": {
+        "state": {
+          "$ref": "#/$defs/ObservationState"
+        },
+        "basis": {
+          "$ref": "#/$defs/Token"
+        },
+        "observedCount": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Count"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "expectedCount": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Count"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "missingCount": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Count"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "ratio": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Ratio"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "state",
+        "basis",
+        "observedCount",
+        "expectedCount",
+        "missingCount",
+        "ratio"
+      ],
+      "title": "CoverageDimension",
+      "type": "object"
+    },
+    "ObservationState": {
+      "enum": [
+        "reported",
+        "unknown",
+        "not-reported",
+        "not-applicable",
+        "ambiguous",
+        "unavailable"
+      ],
+      "type": "string"
+    },
+    "QualityDimensions": {
+      "additionalProperties": false,
+      "properties": {
+        "textCoverage": {
+          "$ref": "#/$defs/CoverageDimension"
+        },
+        "pageTextCoverage": {
+          "$ref": "#/$defs/CoverageDimension"
+        },
+        "encoding": {
+          "$ref": "#/$defs/CountDimension"
+        },
+        "readingOrder": {
+          "$ref": "#/$defs/ReadingOrderDimension"
+        },
+        "sections": {
+          "$ref": "#/$defs/StructureDimension"
+        },
+        "references": {
+          "$ref": "#/$defs/StructureDimension"
+        },
+        "expectedBlocks": {
+          "$ref": "#/$defs/StructureDimension"
+        },
+        "anchorCoverage": {
+          "$ref": "#/$defs/AnchorDimension"
+        },
+        "unresolvedReferences": {
+          "$ref": "#/$defs/CountDimension"
+        },
+        "extractionConfidence": {
+          "$ref": "#/$defs/ConfidenceDimension"
+        },
+        "tableCellConfidence": {
+          "$ref": "#/$defs/ConfidenceDimension"
+        },
+        "parserTableCellConfidence": {
+          "$ref": "#/$defs/ConfidenceDimension"
+        },
+        "tableGeometry": {
+          "$ref": "#/$defs/CountDimension"
+        },
+        "parserWarnings": {
+          "$ref": "#/$defs/WarningDimension"
+        }
+      },
+      "required": [
+        "textCoverage",
+        "pageTextCoverage",
+        "encoding",
+        "readingOrder",
+        "sections",
+        "references",
+        "expectedBlocks",
+        "anchorCoverage",
+        "unresolvedReferences",
+        "extractionConfidence",
+        "tableCellConfidence",
+        "parserTableCellConfidence",
+        "tableGeometry",
+        "parserWarnings"
+      ],
+      "title": "QualityDimensions",
+      "type": "object"
+    },
+    "Ratio": {
+      "maximum": 1,
+      "minimum": 0,
+      "type": "number"
+    },
+    "ReadingOrderDimension": {
+      "additionalProperties": false,
+      "properties": {
+        "state": {
+          "enum": [
+            "reported-order",
+            "ambiguous",
+            "unavailable"
+          ],
+          "title": "State",
+          "type": "string"
+        },
+        "warningCount": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Count"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "basis": {
+          "const": "retained-parser-observation",
+          "default": "retained-parser-observation",
+          "title": "Basis",
+          "type": "string"
+        }
+      },
+      "required": [
+        "state",
+        "warningCount"
+      ],
+      "title": "ReadingOrderDimension",
+      "type": "object"
+    },
+    "ReviewReason": {
+      "enum": [
+        "missing-retained-text",
+        "missing-page-text",
+        "replacement-characters",
+        "reading-order-ambiguous",
+        "reading-order-warning",
+        "missing-anchors",
+        "missing-expected-blocks",
+        "unresolved-references",
+        "low-extraction-confidence",
+        "low-table-cell-confidence",
+        "low-anchor-coverage",
+        "table-geometry",
+        "parser-warnings",
+        "parser-partial-output",
+        "inspection-only-output",
+        "parser-failure",
+        "parse-cancelled"
+      ],
+      "type": "string"
+    },
+    "StructureDimension": {
+      "additionalProperties": false,
+      "properties": {
+        "state": {
+          "$ref": "#/$defs/ObservationState"
+        },
+        "basis": {
+          "$ref": "#/$defs/Token"
+        },
+        "observedCount": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Count"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "expectedCount": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Count"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "missingCount": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Count"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "state",
+        "basis",
+        "observedCount",
+        "expectedCount",
+        "missingCount"
+      ],
+      "title": "StructureDimension",
+      "type": "object"
+    },
+    "Token": {
+      "maxLength": 128,
+      "minLength": 1,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._+-]*$",
+      "type": "string"
+    },
+    "WarningDimension": {
+      "additionalProperties": false,
+      "properties": {
+        "state": {
+          "$ref": "#/$defs/ObservationState"
+        },
+        "count": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Count"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "informationCount": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Count"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "warningCount": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Count"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "errorCount": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Count"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "codes": {
+          "items": {
+            "$ref": "#/$defs/Token"
+          },
+          "maxItems": 32,
+          "title": "Codes",
+          "type": "array"
+        },
+        "codesTruncated": {
+          "title": "Codestruncated",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "state",
+        "count",
+        "informationCount",
+        "warningCount",
+        "errorCount",
+        "codes",
+        "codesTruncated"
+      ],
+      "title": "WarningDimension",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schemaVersion": {
+      "const": "1.0",
+      "default": "1.0",
+      "title": "Schemaversion",
+      "type": "string"
+    },
+    "definitionVersion": {
+      "const": "parsing-quality-definitions-1",
+      "default": "parsing-quality-definitions-1",
+      "title": "Definitionversion",
+      "type": "string"
+    },
+    "ruleVersion": {
+      "const": "parsing-quality-triage-1",
+      "default": "parsing-quality-triage-1",
+      "title": "Ruleversion",
+      "type": "string"
+    },
+    "availability": {
+      "enum": [
+        "available",
+        "not-yet-available",
+        "unavailable"
+      ],
+      "title": "Availability",
+      "type": "string"
+    },
+    "dimensions": {
+      "$ref": "#/$defs/QualityDimensions"
+    },
+    "reviewRequired": {
+      "title": "Reviewrequired",
+      "type": "boolean"
+    },
+    "reviewReasons": {
+      "items": {
+        "$ref": "#/$defs/ReviewReason"
+      },
+      "maxItems": 16,
+      "title": "Reviewreasons",
+      "type": "array"
+    },
+    "humanInspectionAvailable": {
+      "const": true,
+      "default": true,
+      "title": "Humaninspectionavailable",
+      "type": "boolean"
+    },
+    "scholarlyVerification": {
+      "const": "unverified",
+      "default": "unverified",
+      "title": "Scholarlyverification",
+      "type": "string"
+    }
+  },
+  "required": [
+    "availability",
+    "dimensions",
+    "reviewRequired",
+    "reviewReasons"
+  ],
+  "title": "QualityAssessment",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://research-observatory.local/contracts/documents/parsing-quality-dimensions.v1.schema.json",
+  "x-research-observatory-semanticRules": [
+    "separate-versioned-dimensions-review-triage-no-aggregate-correctness-or-scholarly-acceptance",
+    "exact-durable-job-current-attempt-selected-source-producer-input-and-nullable-retained-result-bindings",
+    "failed-cancelled-and-not-yet-complete-have-no-invented-ir-counts-confidence-or-result",
+    "projection-codepoint-coverage-is-not-source-recall-page-coverage-is-not-applicable-for-no-page-formats",
+    "expected-sections-references-and-blocks-require-exact-authenticated-retained-native-elements",
+    "unknown-not-reported-not-applicable-ambiguous-unavailable-and-measured-zero-remain-distinct",
+    "only-reported-extraction-confidence-below-0.8-triages-never-cross-model-probability-or-human-inspection-block",
+    "current-native-human-project-intent-privacy-exact-source-inspect-and-derive-through-materialization-and-delivery",
+    "cumulative-existing-artifact-admission-10000-diagnostic-items-five-second-cooperative-operation-64kib-report",
+    "deterministic-reevaluation-preserves-original-parser-output-source-accepted-revisions-heads-and-provenance",
+    "warning-codes-and-counts-exclude-protected-parser-detail-text"
+  ]
+}

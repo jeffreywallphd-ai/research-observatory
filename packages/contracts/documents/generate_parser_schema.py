@@ -29,6 +29,7 @@ from research_observatory_core.document_table_figures import (  # noqa: E402
 )
 from research_observatory_core.parsing.contracts import DocumentIR  # noqa: E402
 from research_observatory_core.parsing.native_contracts import NativeStructure  # noqa: E402
+from research_observatory_core.parsing.quality import ParsingQualityReport, QualityAssessment  # noqa: E402
 from research_observatory_core.parsing.requests import ParseRequest, ParseResult  # noqa: E402
 from research_observatory_core.parsing.selection import ParserSelection  # noqa: E402
 from research_observatory_core.ports.document_viewer import (  # noqa: E402
@@ -50,6 +51,8 @@ from research_observatory_core.reference_reader import ReferenceReaderNotice, Re
 from research_observatory_core.table_figure_reader import TableFigureReaderNotice, TableFigureReaderPage  # noqa: E402
 
 OUTPUTS: dict[str, TypeAdapter[Any]] = {
+    "parsing-quality-report.v1.schema.json": TypeAdapter(ParsingQualityReport),
+    "parsing-quality-dimensions.v1.schema.json": TypeAdapter(QualityAssessment),
     "table-figure-collection.v1.schema.json": TypeAdapter(TableFigureCollection),
     "table-figure-command.v1.schema.json": TypeAdapter(TableFigureCommand),
     "table-figure-exclusion-command.v1.schema.json": TypeAdapter(TableFigureExcludeCommand),
@@ -88,6 +91,7 @@ VIEWER_SCHEMAS = {name for name in OUTPUTS if name.startswith("viewer-")}
 REFERENCE_SCHEMAS = {name for name in OUTPUTS if name.startswith("reference-")}
 CITATION_SCHEMAS = {name for name in OUTPUTS if name.startswith("citation-")}
 TABLE_FIGURE_SCHEMAS = {name for name in OUTPUTS if name.startswith("table-figure-")}
+QUALITY_SCHEMAS = {name for name in OUTPUTS if name.startswith("parsing-quality-")}
 REVISION_SCHEMAS = (
     set(OUTPUTS)
     - {
@@ -101,7 +105,21 @@ REVISION_SCHEMAS = (
     - REFERENCE_SCHEMAS
     - CITATION_SCHEMAS
     - TABLE_FIGURE_SCHEMAS
+    - QUALITY_SCHEMAS
 )
+QUALITY_RULES = [
+    "separate-versioned-dimensions-review-triage-no-aggregate-correctness-or-scholarly-acceptance",
+    "exact-durable-job-current-attempt-selected-source-producer-input-and-nullable-retained-result-bindings",
+    "failed-cancelled-and-not-yet-complete-have-no-invented-ir-counts-confidence-or-result",
+    "projection-codepoint-coverage-is-not-source-recall-page-coverage-is-not-applicable-for-no-page-formats",
+    "expected-sections-references-and-blocks-require-exact-authenticated-retained-native-elements",
+    "unknown-not-reported-not-applicable-ambiguous-unavailable-and-measured-zero-remain-distinct",
+    "only-reported-extraction-confidence-below-0.8-triages-never-cross-model-probability-or-human-inspection-block",
+    "current-native-human-project-intent-privacy-exact-source-inspect-and-derive-through-materialization-and-delivery",
+    "cumulative-existing-artifact-admission-10000-diagnostic-items-five-second-cooperative-operation-64kib-report",
+    "deterministic-reevaluation-preserves-original-parser-output-source-accepted-revisions-heads-and-provenance",
+    "warning-codes-and-counts-exclude-protected-parser-detail-text",
+]
 TABLE_FIGURE_RULES = [
     "canonical-table-figure-cell-identities-exact-original-and-accepted-source-with-v28-source-order-index",
     "authenticated-retained-native-namespace-container-and-docling-relationships-no-first-caption-or-header-promotion",
@@ -226,6 +244,8 @@ def schema(name: str) -> dict[str, object]:
             "no-later-revision-substitution-or-scholarly-verification-from-navigation",
         ]
         if name == "viewer-deep-link.v1.schema.json"
+        else QUALITY_RULES
+        if name in QUALITY_SCHEMAS
         else TABLE_FIGURE_RULES
         if name in TABLE_FIGURE_SCHEMAS
         else CITATION_RULES

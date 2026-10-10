@@ -213,6 +213,10 @@ def register_document_revision_routes(app: FastAPI, runtime: Callable):
 
         return run(request, current)
 
+    @router.post("/parse-quality")
+    def quality(request: Request, command: DocumentParseStatusCommand):
+        return run(request, lambda service: service.quality(command, trace_id=request.state.trace_id))
+
     @router.post("/accept")
     def accept(request: Request, command: DocumentAcceptCommand):
         return run(
