@@ -65,6 +65,16 @@ eligible catalog; the index may add uncertainty but cannot remove it. All target
 heads, source assertions, decisions and accepted parse inputs remain fresh and
 authorized. No Work is created or merged, and extraction/linking stays unverified.
 
+An identifier assertion is active only when a complete native identifier element
+or complete lexical segment supports it. Retained native identifier types bind the
+scheme when present. Ground the raw source through the existing identifier
+normalizer; text NFC, a strict substring, or guessed punctuation removal cannot
+establish exact identity. Unanchored assertions remain visible and inactive.
+DOI/ISBN internal spaces are preserved. A first word cannot prove the end of an
+unstructured identifier; validated resolver URI syntax, complete semantic text,
+reference end or a whitespace character forbidden inside the identifier supplies
+the boundary. Ambiguous shorter observations cannot trigger automatic linking.
+
 Publication uses the existing protected writer, canonical aggregate, event,
 outbox and material-dependency contracts. The optional canonical manifest order
 applies only to new reference publications; historical reconciliation manifests

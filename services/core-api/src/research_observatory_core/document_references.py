@@ -9,7 +9,9 @@ from __future__ import annotations
 import hashlib
 import re
 import time
-from collections.abc import Callable
+import unicodedata
+from bisect import bisect_left
+from collections.abc import Callable, Iterable, Iterator
 from dataclasses import asdict, dataclass
 from typing import Annotated, Final, Literal
 
@@ -28,7 +30,7 @@ from .reconciliation.candidates import (
 )
 from .reconciliation.contracts import CanonicalWorkReference
 from .reconciliation.exact import IdentifierAssertion, MatchAssessment
-from .reconciliation.identifiers import NORMALIZER_VERSION
+from .reconciliation.identifiers import NORMALIZER_VERSION, normalize_identifier
 
 REFERENCE_MEDIA_TYPE = "application/vnd.research-observatory.document-references+json"
 REFERENCE_EXTRACTION_VERSION: Final = "document-references/1.0.0"
@@ -199,9 +201,13 @@ def _span(projection, start: int, end: int, *, normalized=None) -> TextSpan:
 
 
 def _raw(projection, span: TextSpan) -> str:
+    return _raw_ranges(projection, ((part.start, part.end) for part in span.raw_ranges))
+
+
+def _raw_ranges(projection, ranges: Iterable[tuple[int, int]]) -> str:
     # Original source order, not NFC contributor order; never duplicate overlap.
     merged: list[tuple[int, int]] = []
-    for start, end in sorted((part.start, part.end) for part in span.raw_ranges):
+    for start, end in sorted(ranges):
         if merged and start <= merged[-1][1]:
             merged[-1] = (merged[-1][0], max(end, merged[-1][1]))
         else:
@@ -370,6 +376,28 @@ def extract_references(
         if len(reference.identifiers) > 128:
             raise ReferenceProblem("reference-operation-limit")
         observed_identifiers = [(item.scheme, item.observed) for item in reference.identifiers]
+        identifier_sources: list[tuple[TextSpan, str | None]] = []
+        for child in descendants[reference.node_id]:
+            checkpoint()
+            namespace, local = _name(child.source_element_type)
+            if (
+                namespace not in allowed
+                or child.text is None
+                or (format, local)
+                not in {
+                    ("jats", "pub-id"),
+                    ("tei", "idno"),
+                }
+            ):
+                continue
+            source_scheme = None
+            if native is not None:
+                attribute = "pub-id-type" if format == "jats" else "type"
+                attributes = [
+                    attr.value.lower() for attr in native.elements[child.order].attributes if attr.name == attribute
+                ]
+                source_scheme = attributes[0] if len(attributes) == 1 else "unknown"
+            identifier_sources.append((child.text, source_scheme))
         # Explicit DOI wrappers only; preserve punctuation instead of guessing
         # whether a terminal character belongs to an identifier or a sentence.
         if not reference.identifiers:
@@ -378,18 +406,79 @@ def extract_references(
             ):
                 if len(observed_identifiers) >= 128:
                     raise ReferenceProblem("reference-operation-limit")
-                observed_identifiers.append(("doi", explicit.group(1) or explicit.group(0)))
+                mapped = mapped or normalize_text(projection.raw_text)
+                group = 1 if explicit.group(1) is not None else 0
+                source_span = _span(
+                    projection, start + explicit.start(group), start + explicit.end(group), normalized=mapped
+                )
+                observed_identifiers.append(("doi", _raw(projection, source_span)))
         for scheme, observed_identifier in observed_identifiers:
             checkpoint()
-            needle = normalize_text(observed_identifier).normalized_text
+            asserted = normalize_identifier(scheme, observed_identifier)
             spans: list[TextSpan] = []
-            position = start
-            while needle and (position := projection.normalized_text.find(needle, position, end)) >= 0:
-                if len(spans) >= 128:
-                    raise ReferenceProblem("reference-operation-limit")
-                mapped = mapped or normalize_text(projection.raw_text)
-                spans.append(_span(projection, position, position + len(needle), normalized=mapped))
-                position += len(needle)
+
+            def candidate_sources(
+                *,
+                identifier_sources=identifier_sources,
+                mapped=mapped,
+                projection=projection,
+                normalized=normalized,
+                start=start,
+                asserted=asserted,
+            ) -> Iterator[tuple[str, TextSpan | None, str | None, int, int]]:
+                if identifier_sources:
+                    for source_span, source_scheme in identifier_sources:
+                        checkpoint()
+                        yield (
+                            _raw(projections[source_span.projection_id], source_span),
+                            source_span,
+                            source_scheme,
+                            0,
+                            0,
+                        )
+                    return
+                # URI syntax supplies a whitespace boundary. Bare DOI/ISBN
+                # values permit internal spaces: their first word cannot prove
+                # an identifier end. Keep the complete raw segment instead.
+                # Never trim punctuation or use text NFC as ID normalization.
+                source_mapping = mapped or normalize_text(projection.raw_text)
+                segment_ends = [
+                    index
+                    for index, char in enumerate(normalized)
+                    if char.isspace() and unicodedata.category(char) != "Zs"
+                ] + [len(normalized)]
+                for token in re.finditer(r"\S+", normalized):
+                    checkpoint()
+                    source_start, source_end = start + token.start(), start + token.end()
+                    source_text = _raw_ranges(projection, source_mapping.raw_ranges_for(source_start, source_end))
+                    if asserted.scheme in {"doi", "isbn"} and not source_text.lower().startswith(
+                        ("https://", "http://")
+                    ):
+                        # Reject impossible valid-ID beginnings before reading
+                        # a complete tail. This is rejection only; the existing
+                        # normalizer still decides every complete match.
+                        beginning = r"(?i)(?:doi:|10\.)" if asserted.scheme == "doi" else r"(?i)(?:ISBN|[0-9-])"
+                        if asserted.status == "valid" and re.match(beginning, source_text) is None:
+                            continue
+                        segment_end = segment_ends[bisect_left(segment_ends, token.end())]
+                        source_end = start + segment_end
+                        source_text = _raw_ranges(projection, source_mapping.raw_ranges_for(source_start, source_end))
+                    yield source_text, None, None, source_start, source_end
+
+            for source_text, candidate_span, source_scheme, source_start, source_end in candidate_sources():
+                checkpoint()
+                if source_scheme is not None and source_scheme != asserted.scheme:
+                    continue
+                source_identifier = normalize_identifier(scheme, source_text)
+                complete_match = (
+                    asserted.status == "valid"
+                    and source_identifier.status == "valid"
+                    and (asserted.scheme, asserted.canonical) == (source_identifier.scheme, source_identifier.canonical)
+                ) or source_text.strip() == observed_identifier.strip()
+                if complete_match:
+                    if len(spans) >= 128:
+                        raise ReferenceProblem("reference-operation-limit")
+                    spans.append(candidate_span or _span(projection, source_start, source_end, normalized=mapped))
             identifiers.append(
                 ReferenceIdentifierAssertion(
                     assertion=IdentifierAssertion(

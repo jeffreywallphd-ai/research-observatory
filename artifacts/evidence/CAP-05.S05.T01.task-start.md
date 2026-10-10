@@ -41,3 +41,23 @@ Core/Native/client boundary, focused product types/style/schema and Reader
 conformance. Full unchanged profiles, citation/table/figure outcomes, broad
 performance, installer/platform/resource tiers and release qualification remain
 slice/Wave work. No mandatory new human gate was identified for this task.
+
+Independent source review F01 exposed a missed boundary: substring presence is
+not complete identifier evidence. A strict DOI prefix could become active and
+auto-link a different Work. The root cause was unrestricted substring grounding
+after parser assertion. Before remediation, the new extraction-to-matching
+regression reproduced that wrong-link path, with embedded/prefix negatives and
+complete/wrapped/punctuation-preserving positives. Closure requires complete
+identifier-element or complete lexical-segment evidence using the existing identifier
+normalizer, exact source spans, no punctuation stripping or identifier NFC, and
+fresh affected publication/client/real-principal checks. The initial finding and
+failing log remain preserved; neither is relabeled as qualifying success.
+
+The same F01 inspection exposed whitespace ambiguity: DOI/ISBN normalizers can
+retain internal spaces, so a lexical first token alone cannot ground a shorter
+exact identifier. The unstructured short-DOI regression must fail before the
+guard is added. Full raw semantic values and validated resolver URI tokens retain
+their explicit boundaries; otherwise matching requires a complete raw segment
+through the end of the reference or a whitespace character forbidden inside the
+identifier. Ambiguous observations stay inactive for exact linking and available
+for human review. This is correction of the same exact-identity invariant.

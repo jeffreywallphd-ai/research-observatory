@@ -2,13 +2,17 @@
 
 import hashlib
 import sys
+import tracemalloc
 import unittest
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
 sys.path[:0] = [str(ROOT / "services/core-api/src"), str(ROOT)]
 
-from research_observatory_core.document_references import extract_references  # noqa: E402
+from research_observatory_core.document_references import (  # noqa: E402
+    MAX_REFERENCE_BYTES,
+    extract_references,
+)
 from research_observatory_core.document_revisions import (  # noqa: E402
     AcceptedDocumentRevision,
     RetainedParseResultReceipt,
@@ -119,6 +123,142 @@ class ReferenceExtractionTests(unittest.TestCase):
         identifier = extract_references(value)[0].identifiers[0]
         self.assertFalse(identifier.source_spans)
         self.assertFalse(identifier.assertion.active_for_matching)
+
+    def test_embedded_and_prefix_identifier_assertions_are_inactive(self):
+        for source in ("10.99999/SYNTHETIC-A", "prefix10.99999/SYNTHETIC", "10.99999/SYNTHETIC?x=1"):
+            with self.subTest(source=source):
+                raw = (
+                    "<article><back><ref-list><ref><mixed-citation>Authored synthetic doi:"
+                    + source
+                    + "</mixed-citation></ref></ref-list></back></article>"
+                ).encode()
+
+                def change(wire):
+                    wire["references"][0]["identifiers"] = [{"scheme": "doi", "observed": "10.99999/SYNTHETIC"}]
+
+                entry = extract_references(accepted_native(raw, change=change))[0]
+                self.assertFalse(entry.identifiers[0].assertion.active_for_matching)
+                self.assertFalse(entry.identifiers[0].source_spans)
+
+    def test_complete_identifiers_keep_wrappers_punctuation_and_structural_boundaries(self):
+        for raw_identifier in (
+            "10.99999/SYNTHETIC-A",
+            "https://doi.org/10.99999/SYNTHETIC-A",
+            "doi:10.99999/SYNTHETIC-A",
+        ):
+            with self.subTest(raw_identifier=raw_identifier):
+                raw = JATS.replace(b"10.99999/SYNTHETIC-A", raw_identifier.encode())
+                entry = extract_references(accepted_native(raw), native_artifact=native_parse(raw, "jats")[3])[0]
+                self.assertTrue(entry.identifiers[0].assertion.active_for_matching)
+                self.assertEqual("10.99999/synthetic-a", entry.identifiers[0].assertion.normalized.canonical)
+        raw = JATS.replace(b"SYNTHETIC-A", b"SYNTHETIC-A.")
+        entry = extract_references(accepted_native(raw))[0]
+        self.assertTrue(entry.identifiers[0].assertion.active_for_matching)
+        self.assertEqual("10.99999/synthetic-a.", entry.identifiers[0].assertion.normalized.canonical)
+
+    def test_identifier_grounding_never_rewrites_unicode_or_partial_native_values(self):
+        for source, scheme, assertion, active in (
+            ("10.99999/Cafe\u0301", "doi", "10.99999/Café", False),
+            ("10.99999/Cafe\u0301", "doi", "10.99999/Cafe\u0301", True),
+            ("10.99999/SYNTHETIC part", "doi", "10.99999/SYNTHETIC", False),
+            ("10.99999/SYNTHETIC part", "doi", "10.99999/SYNTHETIC part", True),
+            ("12345678", "pmid", "1234567", False),
+            ("12345678", "pmid", "12345678", True),
+        ):
+            with self.subTest(source=source, assertion=assertion):
+                raw = JATS.replace(b"10.99999/SYNTHETIC-A", source.encode()).replace(
+                    b'pub-id-type="doi"', f'pub-id-type="{scheme}"'.encode()
+                )
+
+                def change(wire, scheme=scheme, assertion=assertion):
+                    wire["references"][0]["identifiers"] = [{"scheme": scheme, "observed": assertion}]
+
+                value = accepted_native(raw, change=change)
+                for native_artifact in (None, native_parse(raw, "jats")[3]):
+                    entry = extract_references(value, native_artifact=native_artifact)[0]
+                    self.assertEqual(active, entry.identifiers[0].assertion.active_for_matching)
+
+    def test_retained_native_identifier_scheme_is_authoritative(self):
+        raw = JATS.replace(b"10.99999/SYNTHETIC-A", b"12345678").replace(b'pub-id-type="doi"', b'pub-id-type="pmid"')
+
+        def change(wire):
+            wire["references"][0]["identifiers"] = [{"scheme": "s2-corpus", "observed": "12345678"}]
+
+        entry = extract_references(accepted_native(raw, change=change), native_artifact=native_parse(raw, "jats")[3])[0]
+        self.assertFalse(entry.identifiers[0].assertion.active_for_matching)
+
+    def test_unstructured_identifier_observation_retains_original_unicode(self):
+        raw = (
+            "<article><back><ref-list><ref><mixed-citation>Authored synthetic doi:10.99999/Cafe\u0301"
+            "</mixed-citation></ref></ref-list></back></article>"
+        ).encode()
+        identifier = extract_references(accepted_native(raw))[0].identifiers[0]
+        self.assertEqual("10.99999/Cafe\u0301", identifier.assertion.observed)
+        self.assertEqual("10.99999/cafe\u0301", identifier.assertion.normalized.canonical)
+        self.assertTrue(identifier.assertion.active_for_matching)
+
+    def test_complete_unstructured_identifier_segments_and_resolver_uris_remain_active(self):
+        for source, assertion, canonical in (
+            ("doi:10.99999/SYNTHETIC part", "10.99999/SYNTHETIC part", "10.99999/synthetic part"),
+            (
+                "https://doi.org/10.99999/SYNTHETIC%20part more text",
+                "10.99999/SYNTHETIC part",
+                "10.99999/synthetic part",
+            ),
+            ("doi:10.99999/SYNTHETIC\nmore text", "10.99999/SYNTHETIC", "10.99999/synthetic"),
+        ):
+            with self.subTest(source=source):
+                raw = (
+                    "<article><back><ref-list><ref><mixed-citation>Authored synthetic "
+                    + source
+                    + "</mixed-citation></ref></ref-list></back></article>"
+                ).encode()
+
+                def change(wire, assertion=assertion):
+                    wire["references"][0]["identifiers"] = [{"scheme": "doi", "observed": assertion}]
+
+                identifier = extract_references(accepted_native(raw, change=change))[0].identifiers[0]
+                self.assertTrue(identifier.assertion.active_for_matching)
+                self.assertEqual(canonical, identifier.assertion.normalized.canonical)
+
+    def test_complete_unstructured_isbn_segments_keep_spaces_and_wrappers(self):
+        for source in ("ISBN: 978 0 306 40615 7", "ISBN-13: 978-0-306-40615-7", "--978-0-306-40615-7"):
+            with self.subTest(source=source):
+                raw = (
+                    "<article><back><ref-list><ref><mixed-citation>Authored synthetic "
+                    + source
+                    + "</mixed-citation></ref></ref-list></back></article>"
+                ).encode()
+
+                def change(wire):
+                    wire["references"][0]["identifiers"] = [{"scheme": "isbn", "observed": "9780306406157"}]
+
+                identifier = extract_references(accepted_native(raw, change=change))[0].identifiers[0]
+                self.assertTrue(identifier.assertion.active_for_matching)
+                self.assertEqual("9780306406157", identifier.assertion.normalized.canonical)
+
+    def test_many_unmatched_words_do_not_accumulate_source_sized_identifier_tails(self):
+        raw = (
+            "<article><back><ref-list><ref><mixed-citation>"
+            + "word " * 3000
+            + "</mixed-citation></ref></ref-list></back></article>"
+        ).encode()
+
+        def change(wire):
+            wire["references"][0]["identifiers"] = [{"scheme": "doi", "observed": "10.99999/absent"}]
+
+        accepted = accepted_native(raw, change=change)
+        before = protected_json(accepted)
+        self.assertFalse(tracemalloc.is_tracing())
+        tracemalloc.start()
+        try:
+            entry = extract_references(accepted)[0]
+            _, peak = tracemalloc.get_traced_memory()
+        finally:
+            tracemalloc.stop()
+        self.assertLess(peak, MAX_REFERENCE_BYTES)
+        self.assertFalse(entry.identifiers[0].assertion.active_for_matching)
+        self.assertEqual(before, protected_json(accepted))
 
     def test_oversized_reference_is_rejected_and_source_stays_immutable(self):
         raw = ("<article><back><ref-list><ref>" + "x" * 65537 + "</ref></ref-list></back></article>").encode()

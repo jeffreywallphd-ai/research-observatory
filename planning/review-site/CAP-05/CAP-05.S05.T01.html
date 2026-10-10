@@ -89,9 +89,9 @@ python tools/verify.py --profile service
 ```</pre></article></section>
 <section class="section-heading"><span class="eyebrow">Task-start planning</span><h2>Assigned worksheet</h2><p>The worksheet is an optional planning aid and does not create a new approval or task state.</p></section>
 
-<details class="plan-details task-worksheet" open data-task-worksheet="CAP-05.S05.T01" data-worksheet-sha256="d67898e88463d2cf1299a07fd321eb32bdd978bd8a64fae6e3670404792d61e7">
+<details class="plan-details task-worksheet" open data-task-worksheet="CAP-05.S05.T01" data-worksheet-sha256="00a112a040024790d508e0281bb08588c7db07d6b3dca809d55af10947de755e">
   <summary>Assigned task-start worksheet</summary>
-  <div class="worksheet-meta"><strong>Source:</strong> <code>artifacts/evidence/CAP-05.S05.T01.task-start.md</code> · <strong>SHA-256:</strong> <code>d67898e88463d2cf1299a07fd321eb32bdd978bd8a64fae6e3670404792d61e7</code></div>
+  <div class="worksheet-meta"><strong>Source:</strong> <code>artifacts/evidence/CAP-05.S05.T01.task-start.md</code> · <strong>SHA-256:</strong> <code>00a112a040024790d508e0281bb08588c7db07d6b3dca809d55af10947de755e</code></div>
   <article class="plan-article"><pre class='markdown-fallback'># CAP-05.S05.T01 — extract and reconcile reference-list entries
 
 Claim base: `8071903db413ae3dae1acd1c2232607dbc70e917`; campaign
@@ -134,7 +134,27 @@ actual protected persistence/authority, predecessor migration/rollback, strict
 Core/Native/client boundary, focused product types/style/schema and Reader
 conformance. Full unchanged profiles, citation/table/figure outcomes, broad
 performance, installer/platform/resource tiers and release qualification remain
-slice/Wave work. No mandatory new human gate was identified for this task.</pre></article>
+slice/Wave work. No mandatory new human gate was identified for this task.
+
+Independent source review F01 exposed a missed boundary: substring presence is
+not complete identifier evidence. A strict DOI prefix could become active and
+auto-link a different Work. The root cause was unrestricted substring grounding
+after parser assertion. Before remediation, the new extraction-to-matching
+regression reproduced that wrong-link path, with embedded/prefix negatives and
+complete/wrapped/punctuation-preserving positives. Closure requires complete
+identifier-element or complete lexical-segment evidence using the existing identifier
+normalizer, exact source spans, no punctuation stripping or identifier NFC, and
+fresh affected publication/client/real-principal checks. The initial finding and
+failing log remain preserved; neither is relabeled as qualifying success.
+
+The same F01 inspection exposed whitespace ambiguity: DOI/ISBN normalizers can
+retain internal spaces, so a lexical first token alone cannot ground a shorter
+exact identifier. The unstructured short-DOI regression must fail before the
+guard is added. Full raw semantic values and validated resolver URI tokens retain
+their explicit boundaries; otherwise matching requires a complete raw segment
+through the end of the reference or a whitespace character forbidden inside the
+identifier. Ambiguous observations stay inactive for exact linking and available
+for human review. This is correction of the same exact-identity invariant.</pre></article>
 </details>
 <section class="section-heading"><span class="eyebrow">Execution evidence</span><h2>Review packets, rounds, and current projection</h2><p>Append-only controls retain every immutable round and finding closure. Pre-policy tasks remain explicitly latest-review-only.</p></section>
 

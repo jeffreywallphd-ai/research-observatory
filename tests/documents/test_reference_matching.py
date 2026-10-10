@@ -55,6 +55,20 @@ class ReferenceMatchingTests(unittest.TestCase):
         self.assertEqual("unverified", matched[0].scholarly_verification)
         self.assertEqual("unverified", matched[0].identifiers[0].assertion.verification_state)
 
+    def test_source_identifier_prefix_cannot_auto_link_a_distinct_work(self):
+        def change(wire):
+            wire["references"][0]["identifiers"] = [{"scheme": "doi", "observed": "10.99999/SYNTHETIC"}]
+
+        entries = extract_references(accepted_native(JATS, change=change))
+        catalog = (snapshot(901, doi="10.99999/SYNTHETIC"),)
+        matched = match_reference_entries(entries, catalog, self.assess(entries, catalog))
+        self.assertFalse(entries[0].identifiers[0].assertion.active_for_matching)
+        self.assertFalse(entries[0].identifiers[0].source_spans)
+        self.assertNotEqual("exact-linked", matched[0].link_state)
+        self.assertIsNone(matched[0].target)
+        self.assertEqual("candidate", matched[0].link_state)
+        self.assertEqual("human-review-required", matched[0].candidates[0].review_state)
+
     def test_duplicate_exact_targets_remain_ambiguous_scored_review_candidates(self):
         entries, catalog = self.entries(), (snapshot(901), snapshot(902))
         matched = match_reference_entries(entries, catalog, self.assess(entries, catalog))
@@ -66,6 +80,23 @@ class ReferenceMatchingTests(unittest.TestCase):
             self.assertEqual("human-review-required", candidate.review_state)
             self.assertTrue(candidate.features)
             self.assertGreater(candidate.score, 0)
+
+    def test_unstructured_space_continuation_cannot_auto_link_a_shorter_doi(self):
+        raw = (
+            b"<article><back><ref-list><ref><mixed-citation>Example, A. (2024). Synthetic reference alpha. "
+            b"doi:10.99999/SYNTHETIC part</mixed-citation></ref></ref-list></back></article>"
+        )
+
+        def change(wire):
+            wire["references"][0]["identifiers"] = [{"scheme": "doi", "observed": "10.99999/SYNTHETIC"}]
+
+        for accepted in (accepted_native(raw), accepted_native(raw, change=change)):
+            entries = extract_references(accepted)
+            catalog = (snapshot(901, doi="10.99999/SYNTHETIC"),)
+            matched = match_reference_entries(entries, catalog, self.assess(entries, catalog))
+            self.assertFalse(entries[0].identifiers[0].assertion.active_for_matching)
+            self.assertIsNone(matched[0].target)
+            self.assertEqual("candidate", matched[0].link_state)
 
     def test_title_similarity_never_auto_links_even_at_perfect_score(self):
         entries, catalog = self.entries(), (snapshot(901, doi=""),)
