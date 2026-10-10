@@ -1,0 +1,116 @@
+{
+  "task_id": "CAP-05.S06.T01",
+  "attempt_id": "R01",
+  "candidate_commit": "e38de2ef1d78438d5a83466597d923a64bd6fffd",
+  "reviewed_state_commit": "e38de2ef1d78438d5a83466597d923a64bd6fffd",
+  "base_commit": "fa94c73984b69a14d58471fbbdb458dc8f24c8ea",
+  "reviewer": "parsing_quality_review",
+  "result": "approved",
+  "reviewed_at": "2026-10-10T15:34:17Z",
+  "packet_sha256": "87769cc2bc178d34fe3247ab76f7da205fe242f3211b73ab572ebb482a03ae6d",
+  "evidence_sha256": "89632e777d7c1555ec9534eaba2ff420446283196dbd66bd34c19bf5b019e847",
+  "acceptance_criteria_sha256": "a3d78a33e1a33ed85542653ba3fb706a10d477f2ccaf37d768d1e3c6ed44d866",
+  "selection_sha256": "cc60570593931c5d11499cca3cc8f9a8e9dd5d74657c51c1ff8c4285716c2810",
+  "findings": [],
+  "closures": [],
+  "acceptance_reviews": [
+    {
+      "criterion_index": 1,
+      "result": "satisfied",
+      "check_ids": [
+        "quality-dimensions-and-triage",
+        "protected-quality-persistence",
+        "actual-native-core-quality-authority"
+      ],
+      "assessment": "The versioned report separately exposes retained projection/page coverage, encoding, reading order, section/reference/block expectations, source locators, unresolved references, confidence states, geometry and parser warnings. Frozen authored fixtures route missing page text, missing or ambiguous anchors, exact authenticated absent native blocks, parser failure, partial output and reported confidence below 0.8 to review. No-page formats are not applicable; absent expectations remain unknown and observed zero sections/references does not invent scholarly omissions. Native expectations authenticate raw digest/length/source identity and compare exact source-element nodes, preventing extra nodes from cancelling a missing kind. Projection coverage expressly measures representation within retained IR, not original-source recall. No aggregate correctness score or scholarly acceptance is introduced. Confidence and human inspection remain separate. Visibility at T01 is the private Core/API contract; desktop display/correction belongs to T02."
+    },
+    {
+      "criterion_index": 2,
+      "result": "satisfied",
+      "check_ids": [
+        "quality-dimensions-and-triage",
+        "protected-quality-persistence",
+        "actual-native-core-quality-authority",
+        "original-revision-boundary-regression"
+      ],
+      "assessment": "Fresh verbose logs bind eight domain, four encrypted repository and one actual Native Core service case, plus nine unchanged original revision cases, to the exact committed candidate without skips. Material cases include authentic other-job output substitution with identical source/producer/selection, queued/failed/cancelled nullable results and exact physical attempts, partial retained output before acceptance, native absent expectations, all unavailable confidence states and the exact 0.8 threshold. Current Native/project/human/Intent/privacy and exact-copy inspect/derive authority fence report materialization. Stop is checked again after JSON materialization before delivery. Forced protected-artifact resource denial is proven by the actual encrypted repository test. The actual Native/Core service test proves principal/session/rights/lifecycle-stop boundaries and ordinary admission; it does not inject a Native API resource fault. Item admission precedes IR warning/cell flattening, native elements enter the cumulative count before classification, and code enforces a cooperative five-second deadline and 64 KiB report cap. Reports before acceptance and after reopen leave encrypted objects, queue facts, accepted heads and history intact. Authored parser output proves diagnostic wiring and boundary behavior, not model accuracy."
+    },
+    {
+      "criterion_index": 3,
+      "result": "satisfied",
+      "check_ids": [
+        "affected-python-format",
+        "affected-python-lint",
+        "affected-python-types",
+        "document-schemas",
+        "affected-adr",
+        "affected-product-dependency-delta",
+        "original-revision-boundary-regression"
+      ],
+      "assessment": "The exact 23-path base-to-candidate diff matches the frozen packet and criterion manifest. The change adds one private Native-only read route, Core report calculation/read composition, additive v1 schemas, focused fixtures/tests and scoped contract/architecture documentation. Existing accepted IR/structure/revision schemas, literal v28 migration and storage profile have identical base/candidate blobs and authenticated working bytes. Read-only rule evaluation appends no acceptance, revision, head, provenance or outbox mutation; original acceptance semantics remain unchanged. Proposed ADR-0051 documents existing accepted ADR-0029 authority and grants no new decision or approval. Four exact product/test names are added to the existing quality inventory; checker, controller, hooks, CI, thresholds and framework remain unchanged. Fresh changed Python format/lint/explicit-target typing, generated schemas and ADR checks pass. Typing uses follow-imports=silent and does not claim to clear untouched imported debt. Architecture proof is an exact affected delta, with the full 45-error failure expressly retained and unwaived."
+    }
+  ],
+  "evidence_review": {
+    "manifest_path": "artifacts/evidence/CAP-05.S06.T01.R01.json",
+    "manifest_raw_sha256": "3e9f639be354eb37747e2fe893d19ae0e973b76f34b57cb6eb544a8c25cd67d0",
+    "manifest_canonical_sha256": "89632e777d7c1555ec9534eaba2ff420446283196dbd66bd34c19bf5b019e847",
+    "frozen_packet_path": "artifacts/tmp/CAP-05.S06.T01.frozen-submission-R01.json",
+    "packet_authentication": "The immutable packet copy equals canonical review_control.current_submission in REVIEW. Its recomputed packet hash, candidate/base/branch, acceptance-criteria hash, evidence reference, changed paths, commands, selected IDs, deferred checks and selection rationale bind the reviewed manifest. R01 has no prior formal attempt or open finding; no historical round or closure is invented.",
+    "artifact_authentication": "All ten selected check raw-output, canonical-output, report and producer hashes match their named files. Each focused child exit/duration/output binding matches its producer report. All thirteen preserved adverse artifact raw/canonical hashes match. Changed paths equal the exact Git diff, and all five declared compatibility artifacts have matching base/candidate blobs and working-byte digests.",
+    "fixed_input_authentication": "Before taskctl submission, all 11,221 selected focused inputs and all 240 architecture-delta inputs matched their recorded digests. Producers hold the selected material source and actual installed runtime inputs while executing the exact candidate; before/after candidate and input identities are recorded. Later taskctl REVIEW metadata does not reinterpret those executions.",
+    "focused_report": {
+      "path": "artifacts/tmp/CAP-05.S06.T01.qualifying-focused-01.json",
+      "sha256": "5ae575347e32c9de137b4310c2040e15685e345b027e4c23755d9d784a7c949d",
+      "producer_sha256": "3ccc70f288a00fcd4f20ee795f5631c51feb8a7f8c70c8d514a598870451eeea",
+      "status": "FAIL",
+      "passing_children": 9,
+      "failing_children": 1,
+      "whole_report_qualifying": false
+    },
+    "architecture_delta": {
+      "path": "artifacts/tmp/CAP-05.S06.T01.architecture-delta-01.json",
+      "sha256": "5d942b1a83f7be2e403f9f9b3a1d6e81ffb384034f768a2c66ab98c4928d6228",
+      "producer_sha256": "ee70bd8cbc51f708a7ecd53fb362590071e8a75fe6369eee61e5078ef9ddd9f8",
+      "status": "PASS",
+      "scope": "affected boundary delta only",
+      "baseline_finding_count": 45,
+      "candidate_finding_count": 45,
+      "affected_finding_count": 0,
+      "contract_finding_count": 0,
+      "full_architecture_status": "FAIL",
+      "full_failure_waived": false,
+      "assessment": "The unchanged existing checker API evaluates an exact archived claim base and the committed candidate. Independent read-only authentication confirms equal base/candidate arrays, equality to all 45 full CLI findings, matching archived predecessor digest, identical blobs for all eight finding files and all three governing checker/contract inputs. The existing checker main comprises exactly those two APIs. This proves no introduced or affected finding; it does not prove full architecture compliance."
+    },
+    "attribution_limit": "Criterion 1's single-service wording is imprecise about forced resource denial. The repository case provides that fault proof; the Native service case provides actual principal/session/rights/stop proof and normal admission. This disposition preserves the precise allocation without inventing another test."
+  },
+  "independence": {
+    "task_owner": false,
+    "product_edits": false,
+    "qualifying_suites_rerun_by_reviewer": false,
+    "review_method": "Independent read-only review of accepted scope, exact committed product/tests/contracts and frozen criterion-linked fresh evidence; read-only digest/identity reproduction, followed only by creation of this ledger."
+  },
+  "verification_selection": {
+    "selected_command_ids": [
+      "foundation:quality",
+      "documents:unit",
+      "foundation:adr",
+      "foundation:architecture"
+    ],
+    "assessment": "Focused new module/API/repository, denial/resource/identity, compatibility and affected contract checks are adequate for T01. No parser/model, shipping desktop, dependency/runtime or migration change requires an early full-profile replay. The attempted full architecture check remains adverse; only its authenticated exact delta qualifies the affected criterion.",
+    "deferred": [
+      "CAP-05.S06.T02 desktop quality/correction and CAP-05.S06.T03 batch comparison/acceptance/stale propagation, integrated S06 end-to-end checks and independent slice disposition.",
+      "Fresh full W2 repository/affected/profile qualification and inherited architecture findings, cross-capability security/privacy/rights/accessibility/performance/packaging/platform/restart/recovery, independent Wave review and separate human release."
+    ]
+  },
+  "scope_limits": [
+    "Approval covers only CAP-05.S06.T01 Core/private API metrics and triage at the exact frozen candidate.",
+    "Synthetic authored IR/native fixtures establish wiring and boundaries, not parser/model accuracy, scholarly correctness or human evidence acceptance.",
+    "Actual Windows vault/SQLCipher/Native Core evidence does not establish a hardware minimum, shipping desktop/package/installer, performance or full platform/profile qualification.",
+    "No 8/16 GiB model/hardware execution, 2/3 GiB minimum claim, latency optimization, parser replay or larger-computing qualification is included."
+  ],
+  "notes": "Independent CAP-05.S06.T01 R01 review approves the exact candidate and all three criteria. Separate truthful dimensions and review triage, exact job/current attempt/source/result identity, current protected authority and stopped delivery, admitted resources and immutable existing parse/revision history are supported by authenticated focused proof. Forced resource denial is proven at the encrypted repository boundary; Native service evidence proves actual principal/session/rights/stop and ordinary admission. The full architecture check remains FAIL with 45 identical inherited findings; only the exact affected delta passes and no failure is waived. No active task blocking finding exists. T02/T03, S06 integration and Wave/release qualification remain required.",
+  "task_approval": true,
+  "slice_approval": false,
+  "wave_completion": false,
+  "release_approval": false
+}

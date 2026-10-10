@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 0912bcf8a75e3876f2ba2b14c931d45c2d444c7524d9b06099ab0d6e2235af48
+source_sha256: 85dc1554d558914a0b70f647536abcf6cf4c37d125c33c24d6193a429d7fc7cd
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -12230,21 +12230,21 @@ Original tasks and approvals remain unchanged.
 
 **Outcome:** Parsing errors can be diagnosed and corrected without obscuring machine output or provenance.
 
-**Wave / priority / status / review:** `W2` / `P0` / `READY` / `PENDING`
+**Wave / priority / status / review:** `W2` / `P0` / `IN_PROGRESS` / `PENDING`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
 **Dependencies:** `CAP-05.S04.T02`, `CAP-03.S05.T02`
 
-#### - [ ] CAP-05.S06.T01 - Implement parsing quality metrics and triage rules
+#### - [x] CAP-05.S06.T01 - Implement parsing quality metrics and triage rules
 
-**Status / priority / estimate / risk:** `IN_PROGRESS` / `P0` / `M` / `medium`
+**Status / priority / estimate / risk:** `DONE` / `P0` / `M` / `medium`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
 **Dependencies:** `CAP-05.S04.T02`, `CAP-03.S05.T02`
 
-**Owner / review:** codex-w2-implementation / - (`-`)
+**Owner / review:** codex-w2-implementation / parsing_quality_review (`approved`)
 
 **Objective:** Metrics for text coverage, reading-order anomalies, missing sections/references, encoding, page-anchor coverage, and parser warnings.
 
@@ -12262,17 +12262,55 @@ Original tasks and approvals remain unchanged.
 
 - python tools/verify.py --profile documents
 
+**Evidence:**
+
+- `artifacts/evidence/CAP-05.S06.T01.R01.json` at `e38de2ef1d78438d5a83466597d923a64bd6fffd`
+
 ##### Review history — CAP-05.S06.T01
 
-**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+**Review mode:** `append-only v1` / 1 completed round(s)
 
-**Current latest-review projection:** `-` by - at `-`
+###### Round R01
 
-**Latest notes:** -
+**Immutable submission packet:** `R01` / packet SHA-256 `87769cc2bc178d34fe3247ab76f7da205fe242f3211b73ab572ebb482a03ae6d`
+
+- Candidate / base / branch: `e38de2ef1d78438d5a83466597d923a64bd6fffd` / `fa94c73984b69a14d58471fbbdb458dc8f24c8ea` / `codex/w2-implementation`
+- Submitted by / at: codex-w2-implementation / `2026-10-10T15:21:29+00:00`
+- Evidence: `artifacts/evidence/CAP-05.S06.T01.R01.json` / `89632e777d7c1555ec9534eaba2ff420446283196dbd66bd34c19bf5b019e847` / `e38de2ef1d78438d5a83466597d923a64bd6fffd`
+- Acceptance-criteria SHA-256: `a3d78a33e1a33ed85542653ba3fb706a10d477f2ccaf37d768d1e3c6ed44d866`
+- Verification-selection SHA-256: `cc60570593931c5d11499cca3cc8f9a8e9dd5d74657c51c1ff8c4285716c2810`
+- Changed paths: `docs/adr/ADR-0051-bind-parsing-quality-triage-to-existing-protected-document-authority.md`, `docs/adr/index.json`, `docs/architecture/document-parsing.md`, `docs/planning-implementation-plan.md`, `packages/contracts/documents/README.md`, `packages/contracts/documents/generate_parser_schema.py`, `packages/contracts/documents/parsing-quality-dimensions.v1.schema.json`, `packages/contracts/documents/parsing-quality-report.v1.schema.json`, `planning/backlog.yaml`, `planning/review-site/CAP-05/CAP-05.S06.T01.html`, `planning/review-site/CAP-05/CAP-05.S06.html`, `planning/review-site/CAP-05/index.html`, `planning/review-site/manifest.json`, `planning/review-site/waves/W2.html`, `planning/status-summary.md`, `quality-scope.json`, `services/core-api/src/research_observatory_core/document_revision_api.py`, `services/core-api/src/research_observatory_core/document_revision_repository.py`, `services/core-api/src/research_observatory_core/document_revision_service.py`, `services/core-api/src/research_observatory_core/parsing/quality.py`, `tests/documents/test_parsing_quality.py`, `tests/documents/test_parsing_quality_repository.py`, `tests/documents/test_parsing_quality_service.py`
+- Selected checks: `.venv\Scripts\python.exe -B -m ruff format --check packages/contracts/documents/generate_parser_schema.py services/core-api/src/research_observatory_core/document_revision_api.py services/core-api/src/research_observatory_core/document_revision_repository.py services/core-api/src/research_observatory_core/document_revision_service.py services/core-api/src/research_observatory_core/parsing/quality.py tests/documents/test_parsing_quality.py tests/documents/test_parsing_quality_repository.py tests/documents/test_parsing_quality_service.py`, `.venv\Scripts\python.exe -B -m ruff check packages/contracts/documents/generate_parser_schema.py services/core-api/src/research_observatory_core/document_revision_api.py services/core-api/src/research_observatory_core/document_revision_repository.py services/core-api/src/research_observatory_core/document_revision_service.py services/core-api/src/research_observatory_core/parsing/quality.py tests/documents/test_parsing_quality.py tests/documents/test_parsing_quality_repository.py tests/documents/test_parsing_quality_service.py`, `.venv\Scripts\python.exe -B -m mypy --follow-imports=silent packages/contracts/documents/generate_parser_schema.py services/core-api/src/research_observatory_core/document_revision_api.py services/core-api/src/research_observatory_core/document_revision_repository.py services/core-api/src/research_observatory_core/document_revision_service.py services/core-api/src/research_observatory_core/parsing/quality.py tests/documents/test_parsing_quality.py tests/documents/test_parsing_quality_repository.py tests/documents/test_parsing_quality_service.py`, `.venv\Scripts\python.exe -B packages/contracts/documents/generate_parser_schema.py --check`, `.venv\Scripts\python.exe -B tools/adr_check.py --repo . --base fa94c73984b69a14d58471fbbdb458dc8f24c8ea --head e38de2ef1d78438d5a83466597d923a64bd6fffd`, `.venv\Scripts\python.exe -B -m unittest -v tests.documents.test_parsing_quality`, `.venv\Scripts\python.exe -B -m unittest -v tests.documents.test_parsing_quality_repository`, `.venv\Scripts\python.exe -B -m unittest -v tests.documents.test_parsing_quality_service`, `.venv\Scripts\python.exe -B -m unittest -v tests.documents.test_document_revision_repository`, `.venv/Scripts/python.exe -B artifacts/tmp/CAP-05.S06.T01.architecture-delta-01.py e38de2ef1d78438d5a83466597d923a64bd6fffd fa94c73984b69a14d58471fbbdb458dc8f24c8ea`
+- Deferred checks: `T02 desktop quality/correction tools and T03 parser comparison/batch acceptance/stale propagation remain unimplemented; integrated S06 end-to-end and independent slice review remain required.`, `Fresh full W2 affected/repository/profile qualification, cross-capability security/privacy/rights/accessibility/performance/packaging/platform/restart/recovery, independent Wave review and separate human release remain required. Inherited full architecture45 findings are unwaived.`, `No shipping desktop/package/installer, parser/model accuracy, physical hardware tier or2/3GiB minimum claim. No8/16GiB model/hardware runs; larger computing stays W5. No latency optimization or accepted62.533-second parser replay at task scope.`
+- Selection rationale: Core quality assessment, additive private API/cross-process report and protected repository read introduce exact identity, rights/privacy, immutable state and bounded-resource risks. Select fresh changed Python/schema/ADR checks,13 quality cases including actual Native/Core/vault/SQLCipher,9 original revision regressions and exact architecture delta. A full architecture check was attempted and failed on45 unchanged prior adapter classification findings; preserve it as adverse and qualify only its independently reviewed affected delta. No product migration, parser/model or desktop/runtime/dependency change requires early broad profile replay.
+- Prior round / replayed open findings: `-` / -
+- Root-cause escalation: -
+
+**Disposition / reviewer / time:** `approved` / parsing_quality_review / `2026-10-10T15:44:02+00:00`
+
+**Immutable review ledger:** `artifacts/evidence/CAP-05.S06.T01.review-R01.json` / `daa9c2808afb9b58545257dd57a9805bcfd8f295ff370e870ce98c5fd314ba47`
+
+**Review notes:** Independent CAP-05.S06.T01 R01 review approves the exact candidate and all three criteria. Separate truthful dimensions and review triage, exact job/current attempt/source/result identity, current protected authority and stopped delivery, admitted resources and immutable existing parse/revision history are supported by authenticated focused proof. Forced resource denial is proven at the encrypted repository boundary; Native service evidence proves actual principal/session/rights/stop and ordinary admission. The full architecture check remains FAIL with 45 identical inherited findings; only the exact affected delta passes and no failure is waived. No active task blocking finding exists. T02/T03, S06 integration and Wave/release qualification remain required.
+
+**Findings opened:**
+
+- None
+
+**Prior finding closures:**
+
+- None
+
+**Current immutable submission awaiting review:** None
+
+**Current latest-review projection:** `approved` by parsing_quality_review at `2026-10-10T15:44:02+00:00`
+
+**Latest notes:** Independent CAP-05.S06.T01 R01 review approves the exact candidate and all three criteria. Separate truthful dimensions and review triage, exact job/current attempt/source/result identity, current protected authority and stopped delivery, admitted resources and immutable existing parse/revision history are supported by authenticated focused proof. Forced resource denial is proven at the encrypted repository boundary; Native service evidence proves actual principal/session/rights/stop and ordinary admission. The full architecture check remains FAIL with 45 identical inherited findings; only the exact affected delta passes and no failure is waived. No active task blocking finding exists. T02/T03, S06 integration and Wave/release qualification remain required.
+
+**Currently open findings:** -
 
 #### - [ ] CAP-05.S06.T02 - Build manual structural correction and annotation tools
 
-**Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `L` / `high`
+**Status / priority / estimate / risk:** `READY` / `P0` / `L` / `high`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 

@@ -1,0 +1,388 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "CAP-05.S06.T01",
+  "baseCommit": "fa94c73984b69a14d58471fbbdb458dc8f24c8ea",
+  "commit": "e38de2ef1d78438d5a83466597d923a64bd6fffd",
+  "branch": "codex/w2-implementation",
+  "changedFiles": [
+    "docs/adr/ADR-0051-bind-parsing-quality-triage-to-existing-protected-document-authority.md",
+    "docs/adr/index.json",
+    "docs/architecture/document-parsing.md",
+    "docs/planning-implementation-plan.md",
+    "packages/contracts/documents/README.md",
+    "packages/contracts/documents/generate_parser_schema.py",
+    "packages/contracts/documents/parsing-quality-dimensions.v1.schema.json",
+    "packages/contracts/documents/parsing-quality-report.v1.schema.json",
+    "planning/backlog.yaml",
+    "planning/review-site/CAP-05/CAP-05.S06.T01.html",
+    "planning/review-site/CAP-05/CAP-05.S06.html",
+    "planning/review-site/CAP-05/index.html",
+    "planning/review-site/manifest.json",
+    "planning/review-site/waves/W2.html",
+    "planning/status-summary.md",
+    "quality-scope.json",
+    "services/core-api/src/research_observatory_core/document_revision_api.py",
+    "services/core-api/src/research_observatory_core/document_revision_repository.py",
+    "services/core-api/src/research_observatory_core/document_revision_service.py",
+    "services/core-api/src/research_observatory_core/parsing/quality.py",
+    "tests/documents/test_parsing_quality.py",
+    "tests/documents/test_parsing_quality_repository.py",
+    "tests/documents/test_parsing_quality_service.py"
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "checkIds": [
+        "quality-dimensions-and-triage",
+        "protected-quality-persistence",
+        "actual-native-core-quality-authority"
+      ],
+      "evidence": [
+        "Eight frozen authored-IR/native fixture tests expose independent text/projection/page coverage, encoding, reading order, sections/references and authenticated expected blocks, anchors, unresolved references, confidence and geometry/warnings. Known missing page text, broken/ambiguous anchors, authenticated absent blocks, parser failure and reported confidence below0.8 route to review. Unknown/not-reported/not-applicable remains distinct from measured zero; zero section/reference counts do not invent missing scholarly content, and no aggregate score advances human state.",
+        "Four actual Windows encrypted repository tests retain exact job/current attempt/source/producer/selection/input/result identity before acceptance, after reopening and for queued/failed/cancelled jobs. Authentic other-job substitution with identical source/producer/selection is denied. Read-only reports preserve raw protected objects, original IR, durable queue facts, accepted head and immutable history. One actual Native-authenticated Core service test exercises current session/human/project/Intent/privacy/current inspect+derive rights, resource and lifecycle delivery denial. Metrics are visible as separate versioned API fields; desktop display/correction is T02."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "checkIds": [
+        "quality-dimensions-and-triage",
+        "protected-quality-persistence",
+        "actual-native-core-quality-authority",
+        "original-revision-boundary-regression"
+      ],
+      "evidence": [
+        "Fresh13 new quality tests and9 unchanged original revision boundary tests pass at this exact commit. Material negative coverage includes cross-job identity, denied current authority and rights, absent/ambiguous/native expectations, unavailable confidence, failed/cancelled/pending output, cumulative item/artifact limits, report/delivery stop and read-only reopening. Authored parser IR is synthetic boundary data, not model accuracy.",
+        "The Native Core journey uses actual installed Windows runtime, vault and SQLCipher; synthetic payload fixtures and fault substitutions are declared separately. Exact named child outputs and producer/runtime/input digests are retained. All selected inputs and HEAD were held unchanged for qualification."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "checkIds": [
+        "affected-python-format",
+        "affected-python-lint",
+        "affected-python-types",
+        "document-schemas",
+        "affected-adr",
+        "affected-product-dependency-delta",
+        "original-revision-boundary-regression"
+      ],
+      "evidence": [
+        "Additive schema1 report/dimension contracts, generated schema checks, private Native-only read command, product architecture/contracts documentation and Proposed ADR0051 document accepted ADR0029. Original schema1 IR/structure/revision, literal v28 migration and storage profile are byte-identical to the claim base. All8 changed Python files pass format/lint/explicit-target typing; imported untouched typing debt is excluded with follow-imports=silent and no source suppression.",
+        "Exactly four new product/test file names are declared in the existing quality inventory. No automation checker, controller, hooks, CI, threshold, policy or framework changes. The full architecture check remains FAIL with45 inherited findings. Exact predecessor comparison establishes no new/affected finding with unchanged governing inputs; full Wave architecture disposition remains required. T02 desktop corrections and T03 batch comparison/stale propagation remain ordered later work."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "verificationSelection": {
+    "selectedCommandIds": [
+      "foundation:quality",
+      "documents:unit",
+      "foundation:adr",
+      "foundation:architecture"
+    ],
+    "riskAnalysis": "Core quality assessment, additive private API/cross-process report and protected repository read introduce exact identity, rights/privacy, immutable state and bounded-resource risks. Select fresh changed Python/schema/ADR checks,13 quality cases including actual Native/Core/vault/SQLCipher,9 original revision regressions and exact architecture delta. A full architecture check was attempted and failed on45 unchanged prior adapter classification findings; preserve it as adverse and qualify only its independently reviewed affected delta. No product migration, parser/model or desktop/runtime/dependency change requires early broad profile replay.",
+    "deferred": [
+      "T02 desktop quality/correction tools and T03 parser comparison/batch acceptance/stale propagation remain unimplemented; integrated S06 end-to-end and independent slice review remain required.",
+      "Fresh full W2 affected/repository/profile qualification, cross-capability security/privacy/rights/accessibility/performance/packaging/platform/restart/recovery, independent Wave review and separate human release remain required. Inherited full architecture45 findings are unwaived.",
+      "No shipping desktop/package/installer, parser/model accuracy, physical hardware tier or2/3GiB minimum claim. No8/16GiB model/hardware runs; larger computing stays W5. No latency optimization or accepted62.533-second parser replay at task scope."
+    ]
+  },
+  "checks": [
+    {
+      "id": "affected-python-format",
+      "commandId": "foundation:quality",
+      "command": ".venv\\Scripts\\python.exe -B -m ruff format --check packages/contracts/documents/generate_parser_schema.py services/core-api/src/research_observatory_core/document_revision_api.py services/core-api/src/research_observatory_core/document_revision_repository.py services/core-api/src/research_observatory_core/document_revision_service.py services/core-api/src/research_observatory_core/parsing/quality.py tests/documents/test_parsing_quality.py tests/documents/test_parsing_quality_repository.py tests/documents/test_parsing_quality_service.py",
+      "workingDirectory": ".",
+      "commit": "e38de2ef1d78438d5a83466597d923a64bd6fffd",
+      "exitCode": 0,
+      "result": "PASS",
+      "durationSeconds": 0.19379569997545332,
+      "rawOutput": "artifacts/tmp/CAP-05.S06.T01.qualifying-focused-01.affected-python-format.log",
+      "rawOutputSha256": "8e93d18ae56550d4eef2feac77e6630617c7e169246e56e39c75d58b46167985",
+      "rawOutputCanonicalSha256": "8e93d18ae56550d4eef2feac77e6630617c7e169246e56e39c75d58b46167985",
+      "inputReport": "artifacts/tmp/CAP-05.S06.T01.qualifying-focused-01.json",
+      "inputReportSha256": "5ae575347e32c9de137b4310c2040e15685e345b027e4c23755d9d784a7c949d",
+      "producerSha256": "3ccc70f288a00fcd4f20ee795f5631c51feb8a7f8c70c8d514a598870451eeea",
+      "provenance": "Fresh named passing child at the fixed committed candidate with selected source and actual installed runtime held. Aggregate report remains FAIL for the separate inherited architecture result."
+    },
+    {
+      "id": "affected-python-lint",
+      "commandId": "foundation:quality",
+      "command": ".venv\\Scripts\\python.exe -B -m ruff check packages/contracts/documents/generate_parser_schema.py services/core-api/src/research_observatory_core/document_revision_api.py services/core-api/src/research_observatory_core/document_revision_repository.py services/core-api/src/research_observatory_core/document_revision_service.py services/core-api/src/research_observatory_core/parsing/quality.py tests/documents/test_parsing_quality.py tests/documents/test_parsing_quality_repository.py tests/documents/test_parsing_quality_service.py",
+      "workingDirectory": ".",
+      "commit": "e38de2ef1d78438d5a83466597d923a64bd6fffd",
+      "exitCode": 0,
+      "result": "PASS",
+      "durationSeconds": 0.08190610003657639,
+      "rawOutput": "artifacts/tmp/CAP-05.S06.T01.qualifying-focused-01.affected-python-lint.log",
+      "rawOutputSha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18",
+      "rawOutputCanonicalSha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18",
+      "inputReport": "artifacts/tmp/CAP-05.S06.T01.qualifying-focused-01.json",
+      "inputReportSha256": "5ae575347e32c9de137b4310c2040e15685e345b027e4c23755d9d784a7c949d",
+      "producerSha256": "3ccc70f288a00fcd4f20ee795f5631c51feb8a7f8c70c8d514a598870451eeea",
+      "provenance": "Fresh named passing child at the fixed committed candidate with selected source and actual installed runtime held. Aggregate report remains FAIL for the separate inherited architecture result."
+    },
+    {
+      "id": "affected-python-types",
+      "commandId": "foundation:quality",
+      "command": ".venv\\Scripts\\python.exe -B -m mypy --follow-imports=silent packages/contracts/documents/generate_parser_schema.py services/core-api/src/research_observatory_core/document_revision_api.py services/core-api/src/research_observatory_core/document_revision_repository.py services/core-api/src/research_observatory_core/document_revision_service.py services/core-api/src/research_observatory_core/parsing/quality.py tests/documents/test_parsing_quality.py tests/documents/test_parsing_quality_repository.py tests/documents/test_parsing_quality_service.py",
+      "workingDirectory": ".",
+      "commit": "e38de2ef1d78438d5a83466597d923a64bd6fffd",
+      "exitCode": 0,
+      "result": "PASS",
+      "durationSeconds": 0.42742089997045696,
+      "rawOutput": "artifacts/tmp/CAP-05.S06.T01.qualifying-focused-01.affected-python-types.log",
+      "rawOutputSha256": "7aefcacc6d445354a115cf76fcdea696165be7ad8cf9b86a60ea98727c6e96f6",
+      "rawOutputCanonicalSha256": "157a09cfcdfdfb5977479c5a1c08345149263a3e990a2ec976ef28aaeec9cae6",
+      "inputReport": "artifacts/tmp/CAP-05.S06.T01.qualifying-focused-01.json",
+      "inputReportSha256": "5ae575347e32c9de137b4310c2040e15685e345b027e4c23755d9d784a7c949d",
+      "producerSha256": "3ccc70f288a00fcd4f20ee795f5631c51feb8a7f8c70c8d514a598870451eeea",
+      "provenance": "Fresh named passing child at the fixed committed candidate with selected source and actual installed runtime held. Aggregate report remains FAIL for the separate inherited architecture result."
+    },
+    {
+      "id": "document-schemas",
+      "commandId": "documents:unit",
+      "command": ".venv\\Scripts\\python.exe -B packages/contracts/documents/generate_parser_schema.py --check",
+      "workingDirectory": ".",
+      "commit": "e38de2ef1d78438d5a83466597d923a64bd6fffd",
+      "exitCode": 0,
+      "result": "PASS",
+      "durationSeconds": 0.5498560999985784,
+      "rawOutput": "artifacts/tmp/CAP-05.S06.T01.qualifying-focused-01.document-schemas.log",
+      "rawOutputSha256": "a55ee30fb47c9afacd282abc3e69cce6ee0e020d9d710eb2dc98eda54569bb56",
+      "rawOutputCanonicalSha256": "cf42b66dd1df678fb7cf5ffaf80552a60597b0a2f2ef96323d1949800d8f6085",
+      "inputReport": "artifacts/tmp/CAP-05.S06.T01.qualifying-focused-01.json",
+      "inputReportSha256": "5ae575347e32c9de137b4310c2040e15685e345b027e4c23755d9d784a7c949d",
+      "producerSha256": "3ccc70f288a00fcd4f20ee795f5631c51feb8a7f8c70c8d514a598870451eeea",
+      "provenance": "Fresh named passing child at the fixed committed candidate with selected source and actual installed runtime held. Aggregate report remains FAIL for the separate inherited architecture result."
+    },
+    {
+      "id": "affected-adr",
+      "commandId": "foundation:adr",
+      "command": ".venv\\Scripts\\python.exe -B tools/adr_check.py --repo . --base fa94c73984b69a14d58471fbbdb458dc8f24c8ea --head e38de2ef1d78438d5a83466597d923a64bd6fffd",
+      "workingDirectory": ".",
+      "commit": "e38de2ef1d78438d5a83466597d923a64bd6fffd",
+      "exitCode": 0,
+      "result": "PASS",
+      "durationSeconds": 2.16885060002096,
+      "rawOutput": "artifacts/tmp/CAP-05.S06.T01.qualifying-focused-01.affected-adr.log",
+      "rawOutputSha256": "c9b6adc5306da36cb0821734d1389149de35eb2f9188a93d6413fcc6a48ed60e",
+      "rawOutputCanonicalSha256": "d5f4d4ca3b01160ec2fcc24637cc5dd5eaeb63d6158eb7767415fa8e0f3699d5",
+      "inputReport": "artifacts/tmp/CAP-05.S06.T01.qualifying-focused-01.json",
+      "inputReportSha256": "5ae575347e32c9de137b4310c2040e15685e345b027e4c23755d9d784a7c949d",
+      "producerSha256": "3ccc70f288a00fcd4f20ee795f5631c51feb8a7f8c70c8d514a598870451eeea",
+      "provenance": "Fresh named passing child at the fixed committed candidate with selected source and actual installed runtime held. Aggregate report remains FAIL for the separate inherited architecture result."
+    },
+    {
+      "id": "quality-dimensions-and-triage",
+      "commandId": "documents:unit",
+      "command": ".venv\\Scripts\\python.exe -B -m unittest -v tests.documents.test_parsing_quality",
+      "workingDirectory": ".",
+      "commit": "e38de2ef1d78438d5a83466597d923a64bd6fffd",
+      "exitCode": 0,
+      "result": "PASS",
+      "durationSeconds": 1.3725764999981038,
+      "rawOutput": "artifacts/tmp/CAP-05.S06.T01.qualifying-focused-01.quality-dimensions-and-triage.log",
+      "rawOutputSha256": "fa73830b5ca1689c88a73017d4fb4aefba89e5551e79fb7493b14dd6d49e08ec",
+      "rawOutputCanonicalSha256": "fd6e973b79e2bb289ae5f913fd6779eccf9d547f3ba6f504878721d59ef16517",
+      "inputReport": "artifacts/tmp/CAP-05.S06.T01.qualifying-focused-01.json",
+      "inputReportSha256": "5ae575347e32c9de137b4310c2040e15685e345b027e4c23755d9d784a7c949d",
+      "producerSha256": "3ccc70f288a00fcd4f20ee795f5631c51feb8a7f8c70c8d514a598870451eeea",
+      "provenance": "Fresh named passing child at the fixed committed candidate with selected source and actual installed runtime held. Aggregate report remains FAIL for the separate inherited architecture result."
+    },
+    {
+      "id": "protected-quality-persistence",
+      "commandId": "documents:unit",
+      "command": ".venv\\Scripts\\python.exe -B -m unittest -v tests.documents.test_parsing_quality_repository",
+      "workingDirectory": ".",
+      "commit": "e38de2ef1d78438d5a83466597d923a64bd6fffd",
+      "exitCode": 0,
+      "result": "PASS",
+      "durationSeconds": 25.48301129997708,
+      "rawOutput": "artifacts/tmp/CAP-05.S06.T01.qualifying-focused-01.protected-quality-persistence.log",
+      "rawOutputSha256": "42297a7735ae6a7b1aee5441086b9bb8efcb8c35f0d885e499da9bbbea0b8b0d",
+      "rawOutputCanonicalSha256": "e03a548e68482d61a7798736f33ee086ba23bb1abfb2403ddc71f9051b0abb4a",
+      "inputReport": "artifacts/tmp/CAP-05.S06.T01.qualifying-focused-01.json",
+      "inputReportSha256": "5ae575347e32c9de137b4310c2040e15685e345b027e4c23755d9d784a7c949d",
+      "producerSha256": "3ccc70f288a00fcd4f20ee795f5631c51feb8a7f8c70c8d514a598870451eeea",
+      "provenance": "Fresh named passing child at the fixed committed candidate with selected source and actual installed runtime held. Aggregate report remains FAIL for the separate inherited architecture result."
+    },
+    {
+      "id": "actual-native-core-quality-authority",
+      "commandId": "documents:unit",
+      "command": ".venv\\Scripts\\python.exe -B -m unittest -v tests.documents.test_parsing_quality_service",
+      "workingDirectory": ".",
+      "commit": "e38de2ef1d78438d5a83466597d923a64bd6fffd",
+      "exitCode": 0,
+      "result": "PASS",
+      "durationSeconds": 38.0269999000011,
+      "rawOutput": "artifacts/tmp/CAP-05.S06.T01.qualifying-focused-01.actual-native-core-quality-authority.log",
+      "rawOutputSha256": "aec16472161e666b12ca7459f45ff751258060ffea593439348b3e5c109c196b",
+      "rawOutputCanonicalSha256": "c1fa2757d7debf81f8de4758308ee3d1869b844e423fe0cfbf8f959e81c4b85a",
+      "inputReport": "artifacts/tmp/CAP-05.S06.T01.qualifying-focused-01.json",
+      "inputReportSha256": "5ae575347e32c9de137b4310c2040e15685e345b027e4c23755d9d784a7c949d",
+      "producerSha256": "3ccc70f288a00fcd4f20ee795f5631c51feb8a7f8c70c8d514a598870451eeea",
+      "provenance": "Fresh named passing child at the fixed committed candidate with selected source and actual installed runtime held. Aggregate report remains FAIL for the separate inherited architecture result."
+    },
+    {
+      "id": "original-revision-boundary-regression",
+      "commandId": "documents:unit",
+      "command": ".venv\\Scripts\\python.exe -B -m unittest -v tests.documents.test_document_revision_repository",
+      "workingDirectory": ".",
+      "commit": "e38de2ef1d78438d5a83466597d923a64bd6fffd",
+      "exitCode": 0,
+      "result": "PASS",
+      "durationSeconds": 54.305143300036434,
+      "rawOutput": "artifacts/tmp/CAP-05.S06.T01.qualifying-focused-01.original-revision-boundary-regression.log",
+      "rawOutputSha256": "604e196d5988997b5fdaa5761dbe6281b5150c1adc57dc1fc205bb7220351631",
+      "rawOutputCanonicalSha256": "7b2fd1431bd0238331928702f72dc15498730ad03593fdd436e2d5b118d019a3",
+      "inputReport": "artifacts/tmp/CAP-05.S06.T01.qualifying-focused-01.json",
+      "inputReportSha256": "5ae575347e32c9de137b4310c2040e15685e345b027e4c23755d9d784a7c949d",
+      "producerSha256": "3ccc70f288a00fcd4f20ee795f5631c51feb8a7f8c70c8d514a598870451eeea",
+      "provenance": "Fresh named passing child at the fixed committed candidate with selected source and actual installed runtime held. Aggregate report remains FAIL for the separate inherited architecture result."
+    },
+    {
+      "id": "affected-product-dependency-delta",
+      "commandId": "foundation:architecture",
+      "command": ".venv/Scripts/python.exe -B artifacts/tmp/CAP-05.S06.T01.architecture-delta-01.py e38de2ef1d78438d5a83466597d923a64bd6fffd fa94c73984b69a14d58471fbbdb458dc8f24c8ea",
+      "workingDirectory": ".",
+      "commit": "e38de2ef1d78438d5a83466597d923a64bd6fffd",
+      "exitCode": 0,
+      "result": "PASS",
+      "durationSeconds": 14.241899999964517,
+      "rawOutput": "artifacts/tmp/CAP-05.S06.T01.architecture-delta-01.log",
+      "rawOutputSha256": "a4c20f9e81bac2d405bee9b67579eb8aec56874e8788f2b4e266b93c050d1a36",
+      "rawOutputCanonicalSha256": "ab8101b2da47038c73ac8909d0d13f0043e688714aff2167d3ac2b905eaddc9f",
+      "inputReport": "artifacts/tmp/CAP-05.S06.T01.architecture-delta-01.json",
+      "inputReportSha256": "5d942b1a83f7be2e403f9f9b3a1d6e81ffb384034f768a2c66ab98c4928d6228",
+      "producerSha256": "ee70bd8cbc51f708a7ecd53fb362590071e8a75fe6369eee61e5078ef9ddd9f8",
+      "provenance": "Fresh existing checker API on exact archived claimed predecessor and current committed Core source; equal 45 findings, all byte-identical untouched files, zero affected findings and unchanged checker/contracts. Full architecture result remains FAIL and is not waived."
+    }
+  ],
+  "preservedContracts": [
+    {
+      "path": "services/core-api/src/research_observatory_core/migrations/versions/v0028_document_enrichments.py",
+      "baseGitBlob": "8d5b2b64f8a2ca99e6546b134d0c9f509bd922d5",
+      "candidateGitBlob": "8d5b2b64f8a2ca99e6546b134d0c9f509bd922d5",
+      "workingBytesSHA256": "17c27d3a9358bd6f52b32c11f7e0ee4bc3e9ce37a359044783dce943b43863d0"
+    },
+    {
+      "path": "packages/contracts/storage/sqlite-profile.v1.json",
+      "baseGitBlob": "a510fb3ea7027c748f4d5215ae178d5798822e4f",
+      "candidateGitBlob": "a510fb3ea7027c748f4d5215ae178d5798822e4f",
+      "workingBytesSHA256": "584c2cd670067af8db73e14c6eebcf0253df9d04c4cfc4c130831aa1c582ae0a"
+    },
+    {
+      "path": "packages/contracts/documents/document-ir.v1.schema.json",
+      "baseGitBlob": "75725e91879210efaa254e63e6c7d31519d17987",
+      "candidateGitBlob": "75725e91879210efaa254e63e6c7d31519d17987",
+      "workingBytesSHA256": "d642b352b5ca84dc92e1a281afbd142c4ae3c201debb0e598f128d7715264bc1"
+    },
+    {
+      "path": "packages/contracts/documents/document-structure.v1.schema.json",
+      "baseGitBlob": "f1729791927cde36bae5cab90058bba31337077e",
+      "candidateGitBlob": "f1729791927cde36bae5cab90058bba31337077e",
+      "workingBytesSHA256": "2d0ae8f732f5dc58a011ae25c53ef3516bddb165e6ff1d8baac4e40bf20eff3c"
+    },
+    {
+      "path": "packages/contracts/documents/document-revision.v1.schema.json",
+      "baseGitBlob": "c358f40d2140c84f1a58b0f9b7af90aeca667e0c",
+      "candidateGitBlob": "c358f40d2140c84f1a58b0f9b7af90aeca667e0c",
+      "workingBytesSHA256": "4341a29255f991a68145fce59df46b21756c860dd901c180035b338796019073"
+    }
+  ],
+  "preservedAdverseObservations": [
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T01.qualifying-focused-01.json",
+      "sha256": "5ae575347e32c9de137b4310c2040e15685e345b027e4c23755d9d784a7c949d",
+      "canonicalSha256": "9535aa5f6c7de78a1a88b11ef341486b6e527409a3b142f2769ad90c19e1ee04",
+      "qualifyingAsWholeReport": false
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T01.domain-red-01.log",
+      "sha256": "367c9a73432ceab9331de96afc5016685e6dd9d8b827e83fcd1ce620f425944f",
+      "canonicalSha256": "aca796e5b1c48a19910c87df2871a5c239976baee8d84cd4570e16b5a3846b67",
+      "qualifyingAsWholeReport": false
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T01.exact-job-red-01.log",
+      "sha256": "f08660bb2fcddf7a85303592a57dfd7b423aad3b878eae7c6c6d6abfd8206af2",
+      "canonicalSha256": "db93be517db7c601a354e9ffcb38dc2f840851c13c1ad99dd0f0bffee0971952",
+      "qualifyingAsWholeReport": false
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T01.mypy-development-01.log",
+      "sha256": "d9eca5c1cd07e94de480a01c8e55b49c31ae796ae18adb7bce22e68be36c537c",
+      "canonicalSha256": "76f867ee1db8e440082824bda227517bb87bdd774061b66c4e1715b4ee68ae71",
+      "qualifyingAsWholeReport": false
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T01.mypy-development-02.log",
+      "sha256": "14558f69fc471a6fa639cc96849ea6f073aef234e9101c2252207906ebefbf96",
+      "canonicalSha256": "2f8bf79519c1654d1f957f0a6d22be87aad8092de4b95cc0161a8c8ba527e19d",
+      "qualifyingAsWholeReport": false
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T01.native-cumulative-red-01.log",
+      "sha256": "07116d677a55de817e8af535bc40b9f1f26a02c27b67da8c8e52c4af6a754622",
+      "canonicalSha256": "2a95ca69db876b53efeaf903968f5621a52228863f90ed16db019c37c5db8f1a",
+      "qualifyingAsWholeReport": false
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T01.qualifying-focused-01.product-dependency-boundaries.log",
+      "sha256": "87d07f16ecd6f8799e9a864a9e302b74def7d08a50fc36d49ae46c78adea4312",
+      "canonicalSha256": "7f2003cbd81bcc39742e83c26f60b7d5e2d760d904285b870be9d285f142e5db",
+      "qualifyingAsWholeReport": false
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T01.real-development-01.log",
+      "sha256": "8b49cc9d5a3b138ad048e9349fd16191015b1478d47704ccbc755f7da58835bd",
+      "canonicalSha256": "18a53b08399139235597aeaf5a5b7a375c8e327e833ab3d854c2f624ebb8545e",
+      "qualifyingAsWholeReport": false
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T01.repository-red-01.log",
+      "sha256": "7b15aad08cc99ce1f73ddc4a0e587f6aad86dce0613c126ce46bb950cfe9f0c6",
+      "canonicalSha256": "bbae16f53978d23ae19cb89df22d177698c6cc1cccac061197182bee51fbfebf",
+      "qualifyingAsWholeReport": false
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T01.repository-red-02.log",
+      "sha256": "c32553b8560fbbdbc188d1d3134a151ae66ae3bf3d1e6afe73cefcd9def86a7e",
+      "canonicalSha256": "9bf50582d42176a833b649200555bc28716eb90f7fb65b1fbfc7223c5bc583fc",
+      "qualifyingAsWholeReport": false
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T01.repository-red-03.log",
+      "sha256": "af557cf2d406bfea9af55b66ee06bbd390b138ef87fbdb039dc3886ca576daec",
+      "canonicalSha256": "1aea94266e89fd393050d44c450b5bf4c176f0b1bf2b37b675383119b5ddf708",
+      "qualifyingAsWholeReport": false
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T01.repository-red-04.log",
+      "sha256": "6fa59b707eb81a87914dfe0faff972f9e997ce04b2cea0440de1cdda89659f16",
+      "canonicalSha256": "fed8b06a8ebad62178d256009742235358476fdc0935a6eb4c4c07365fae3838",
+      "qualifyingAsWholeReport": false
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.T01.ruff-development-01.log",
+      "sha256": "feb0a3958b67d0a4c58d9fc802de240c994e3417ef4afa0f08901046ef22c6a6",
+      "canonicalSha256": "83da6ad8407d2ebc37a8ac8f6b15b96fd5418efa571cf1baff53f184d3d2b6ff",
+      "qualifyingAsWholeReport": false
+    }
+  ],
+  "adverseDisposition": "Initial absent feature and cumulative native-count/exact-job tests remain expected characterization failures. Development Windows Temp/rename setup and initial type/lint issues are preserved separately; exact failed original rename case passed its targeted unchanged retry. New authentic cross-job substitution reproduced an authority-binding defect, then the local job+attempt guard passed. Fresh qualifier at candidate has9 passing children and one failed full architecture child; its aggregate remains FAIL. Fresh existing-checker exact predecessor comparison proves the same45 findings in byte-identical untouched files and zero affected findings. No failed check or threshold was weakened and no full architecture or Wave pass is claimed.",
+  "reviewerDisposition": {
+    "openFindingIds": []
+  },
+  "scopeLimits": [
+    "Core/private API metrics and triage only; no desktop display/correction or batch workflow completion.",
+    "Authored parser IR/native fixtures test boundaries, not parsing accuracy or scholarly correctness.",
+    "Actual installed Windows runtime proof is not hardware-minimum or packaging/full-platform qualification."
+  ],
+  "taskApproval": false,
+  "sliceApproval": false,
+  "waveCompletion": false,
+  "releaseApproval": false
+}
