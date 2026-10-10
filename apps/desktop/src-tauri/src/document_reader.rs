@@ -97,6 +97,61 @@ impl ReferenceReadRequest {
 
 #[derive(Deserialize)]
 #[serde(rename_all = "camelCase", deny_unknown_fields)]
+pub(crate) struct TableFigureReadRequest {
+    schema_version: String,
+    project_id: String,
+    revision_id: String,
+    expected_collection_revision_id: Option<String>,
+    after_order: Option<u16>,
+    after_cell: Option<u16>,
+    cell_object_id: Option<String>,
+}
+
+impl TableFigureReadRequest {
+    fn valid(&self) -> bool {
+        project(&self.schema_version, &self.project_id)
+            && uuid(&self.revision_id)
+            && self
+                .expected_collection_revision_id
+                .as_ref()
+                .is_none_or(|id| uuid(id))
+            && self
+                .after_order
+                .is_none_or(|order| order < 1000 && self.expected_collection_revision_id.is_some())
+            && (self.after_cell.is_some() == self.cell_object_id.is_some())
+            && self.after_cell.is_none_or(|offset| {
+                offset < 10000 && self.expected_collection_revision_id.is_some()
+            })
+            && self.cell_object_id.as_ref().is_none_or(|id| uuid(id))
+    }
+}
+
+#[derive(Deserialize)]
+#[serde(rename_all = "camelCase", deny_unknown_fields)]
+pub(crate) struct TableFigureExcludeRequest {
+    schema_version: String,
+    project_id: String,
+    revision_id: String,
+    command_id: String,
+    expected_collection_revision_id: String,
+    node_id: String,
+    rationale: String,
+}
+
+impl TableFigureExcludeRequest {
+    fn valid(&self) -> bool {
+        project(&self.schema_version, &self.project_id)
+            && uuid(&self.revision_id)
+            && uuid(&self.command_id)
+            && uuid(&self.expected_collection_revision_id)
+            && uuid(&self.node_id)
+            && !self.rationale.trim().is_empty()
+            && self.rationale.chars().count() <= 256
+    }
+}
+
+#[derive(Deserialize)]
+#[serde(rename_all = "camelCase", deny_unknown_fields)]
 pub(crate) struct AnchorListRequest {
     schema_version: String,
     project_id: String,
@@ -292,6 +347,51 @@ pub(crate) async fn document_reader_citations_read(
 }
 
 #[tauri::command]
+pub(crate) async fn document_reader_table_figures_enrich(
+    window: tauri::WebviewWindow,
+    supervisor: State<'_, RuntimeSupervisor>,
+    lock: State<'_, ApplicationLockManager>,
+    request: ReferenceEnrichRequest,
+) -> Result<Option<Value>, ()> {
+    if !request.valid() {
+        return Ok(None);
+    }
+    self::request(window, supervisor, lock, request.project_id, NativeDocumentAction::TableFiguresEnrich,
+        json!({"enrichment":{"schemaVersion":"1.0","commandId":request.command_id,"revisionId":request.revision_id,
+            "expectedCollectionRevisionId":request.expected_collection_revision_id}})).await
+}
+
+#[tauri::command]
+pub(crate) async fn document_reader_table_figures_read(
+    window: tauri::WebviewWindow,
+    supervisor: State<'_, RuntimeSupervisor>,
+    lock: State<'_, ApplicationLockManager>,
+    request: TableFigureReadRequest,
+) -> Result<Option<Value>, ()> {
+    if !request.valid() {
+        return Ok(None);
+    }
+    self::request(window, supervisor, lock, request.project_id, NativeDocumentAction::TableFiguresRead,
+        json!({"revisionId":request.revision_id,"expectedCollectionRevisionId":request.expected_collection_revision_id,
+            "afterOrder":request.after_order,"afterCell":request.after_cell,"cellObjectId":request.cell_object_id})).await
+}
+
+#[tauri::command]
+pub(crate) async fn document_reader_table_figures_exclude(
+    window: tauri::WebviewWindow,
+    supervisor: State<'_, RuntimeSupervisor>,
+    lock: State<'_, ApplicationLockManager>,
+    request: TableFigureExcludeRequest,
+) -> Result<Option<Value>, ()> {
+    if !request.valid() {
+        return Ok(None);
+    }
+    self::request(window, supervisor, lock, request.project_id, NativeDocumentAction::TableFiguresExclude,
+        json!({"enrichment":{"schemaVersion":"1.0","commandId":request.command_id,"revisionId":request.revision_id,
+            "expectedCollectionRevisionId":request.expected_collection_revision_id,"nodeId":request.node_id,"rationale":request.rationale}})).await
+}
+
+#[tauri::command]
 pub(crate) async fn document_reader_revisions(
     window: tauri::WebviewWindow,
     supervisor: State<'_, RuntimeSupervisor>,
@@ -464,6 +564,70 @@ pub(crate) async fn document_reader_citation_links(
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn table_figure_cursors_and_exclusions_require_exact_ids_without_renderer_grants() {
+        let id = "00000000-0000-7000-8000-000000000001";
+        let read = json!({"schemaVersion":"1.0","projectId":id,"revisionId":id,
+            "expectedCollectionRevisionId":id,"afterOrder":null,"afterCell":0,"cellObjectId":id});
+        let exclude = json!({"schemaVersion":"1.0","projectId":id,"revisionId":id,"commandId":id,
+            "expectedCollectionRevisionId":id,"nodeId":id,"rationale":"Authored human exclusion"});
+        assert!(
+            serde_json::from_value::<TableFigureReadRequest>(read.clone())
+                .unwrap()
+                .valid()
+        );
+        assert!(
+            serde_json::from_value::<TableFigureExcludeRequest>(exclude.clone())
+                .unwrap()
+                .valid()
+        );
+        for key in [
+            "root",
+            "sessionId",
+            "actorId",
+            "source",
+            "url",
+            "image",
+            "row",
+            "confidence",
+            "permission",
+            "limit",
+        ] {
+            let mut value = read.clone();
+            value[key] = json!("untrusted");
+            assert!(serde_json::from_value::<TableFigureReadRequest>(value).is_err());
+            let mut value = exclude.clone();
+            value[key] = json!("untrusted");
+            assert!(serde_json::from_value::<TableFigureExcludeRequest>(value).is_err());
+        }
+        for (key, value) in [
+            ("expectedCollectionRevisionId", Value::Null),
+            ("cellObjectId", Value::Null),
+            ("afterCell", json!(10000)),
+        ] {
+            let mut wire = read.clone();
+            wire[key] = value;
+            assert!(!serde_json::from_value::<TableFigureReadRequest>(wire)
+                .unwrap()
+                .valid());
+        }
+        for value in [json!(-1), json!(0.5), json!(true)] {
+            let mut wire = read.clone();
+            wire["afterCell"] = value;
+            assert!(serde_json::from_value::<TableFigureReadRequest>(wire).is_err());
+        }
+        let mut wire = exclude.clone();
+        wire["expectedCollectionRevisionId"] = Value::Null;
+        assert!(serde_json::from_value::<TableFigureExcludeRequest>(wire).is_err());
+        for value in ["".to_string(), " ".to_string(), "x".repeat(257)] {
+            let mut wire = exclude.clone();
+            wire["rationale"] = json!(value);
+            assert!(!serde_json::from_value::<TableFigureExcludeRequest>(wire)
+                .unwrap()
+                .valid());
+        }
+    }
 
     #[test]
     fn citation_enrichment_requires_exact_reference_head_and_no_renderer_authority() {

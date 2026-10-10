@@ -5,13 +5,14 @@ from dataclasses import asdict
 from typing import Annotated
 
 from fastapi import APIRouter, FastAPI, Request
-from pydantic import Field
+from pydantic import Field, model_validator
 
 from .anchors.contracts import AnchorSelection
 from .document_attachment_api import BoundedDocumentJsonRoute, DocumentSession
 from .document_citations import CitationEnrichmentCommand
 from .document_references import ReferenceEnrichmentCommand
 from .document_revisions import DocumentRevisionAcceptance, DocumentRevisionProblem
+from .document_table_figures import TableFigureCommand, TableFigureExcludeCommand
 from .ingestion.import_drafts import Identity
 from .transport import CoreProblem, problem_detail
 
@@ -94,6 +95,31 @@ class DocumentCitationReadCommand(DocumentSession):
     after_order: Annotated[int, Field(strict=True, ge=0, le=999)] | None = None
 
 
+class DocumentTableFigureEnrichCommand(DocumentSession):
+    enrichment: TableFigureCommand
+
+
+class DocumentTableFigureExcludeCommand(DocumentSession):
+    enrichment: TableFigureExcludeCommand
+
+
+class DocumentTableFigureReadCommand(DocumentSession):
+    revision_id: Identity
+    expected_collection_revision_id: Identity | None = None
+    after_order: Annotated[int, Field(strict=True, ge=0, le=999)] | None = None
+    after_cell: Annotated[int, Field(strict=True, ge=0, le=9999)] | None = None
+    cell_object_id: Identity | None = None
+
+    @model_validator(mode="after")
+    def cursor_binding(self):
+        if (self.after_cell is None) != (self.cell_object_id is None) or (
+            (self.after_order is not None or self.after_cell is not None)
+            and self.expected_collection_revision_id is None
+        ):
+            raise ValueError("structure-reader-cursor-invalid")
+        return self
+
+
 def register_document_revision_routes(app: FastAPI, runtime: Callable):
     router = APIRouter(
         prefix="/native/document-revisions", route_class=BoundedDocumentJsonRoute, include_in_schema=False
@@ -131,6 +157,32 @@ def register_document_revision_routes(app: FastAPI, runtime: Callable):
     def citations_read(request: Request, command: DocumentCitationReadCommand):
         def current(service):
             result = service.citations_read(command, trace_id=request.state.trace_id)
+            return None if result is None else result.model_dump(mode="json", by_alias=True)
+
+        return run(request, current)
+
+    @router.post("/table-figures-enrich")
+    def table_figures_enrich(request: Request, command: DocumentTableFigureEnrichCommand):
+        return run(
+            request,
+            lambda service: service.table_figures_enrich(command, trace_id=request.state.trace_id).model_dump(
+                mode="json", by_alias=True
+            ),
+        )
+
+    @router.post("/table-figures-exclude")
+    def table_figures_exclude(request: Request, command: DocumentTableFigureExcludeCommand):
+        return run(
+            request,
+            lambda service: service.table_figures_exclude(command, trace_id=request.state.trace_id).model_dump(
+                mode="json", by_alias=True
+            ),
+        )
+
+    @router.post("/table-figures-read")
+    def table_figures_read(request: Request, command: DocumentTableFigureReadCommand):
+        def current(service):
+            result = service.table_figures_read(command, trace_id=request.state.trace_id)
             return None if result is None else result.model_dump(mode="json", by_alias=True)
 
         return run(request, current)

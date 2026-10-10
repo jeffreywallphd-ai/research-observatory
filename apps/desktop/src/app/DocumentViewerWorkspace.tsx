@@ -17,6 +17,8 @@ import { newAttachmentId } from "./documentAttachment";
 import { ViewerReferencesPane } from "./ViewerReferencesPane";
 import { nativeDocumentReferencePort, type DocumentReferencePort } from "./documentReferences";
 import { ViewerCitationsPane } from "./ViewerCitationsPane";
+import { ViewerTableFiguresPane } from "./ViewerTableFiguresPane";
+import { nativeDocumentTableFigurePort, type DocumentTableFigurePort } from "./documentTableFigures";
 import { nativeDocumentCitationPort, type DocumentCitationPort } from "./documentCitations";
 
 export interface PdfViewer {
@@ -33,6 +35,7 @@ interface Props {
   readonly actionPort?: ReaderActionPort;
   readonly referencePort?: DocumentReferencePort;
   readonly citationPort?: DocumentCitationPort;
+  readonly tableFigurePort?: DocumentTableFigurePort;
   readonly deepLink?: ViewerDeepLink | null;
   readonly onRememberLink?: (link: ViewerDeepLink) => boolean;
   readonly pdfFactory?: (bytes: ViewerByteSession, budget: ViewerBufferBudget, failure: (code: string) => void) => PdfViewer;
@@ -79,7 +82,7 @@ function LinkedViewerEntry(props: Props & { project: ProjectProjection; link: Vi
 
 function ViewerSession({ project, handoff, announce, onReturn, port = nativeDocumentViewerPort, anchors = nativeSourceAnchorPort,
   textPort = nativeDocumentViewerTextPort, outlinePort = nativeDocumentViewerOutlinePort, anchorPort = nativeDocumentViewerAnchorPort,
-  deepLink = null, onRememberLink, actionPort = nativeReaderActionPort, referencePort = nativeDocumentReferencePort, citationPort = nativeDocumentCitationPort, pdfFactory: createPdf = pdfFactory }: Props & {
+  deepLink = null, onRememberLink, actionPort = nativeReaderActionPort, referencePort = nativeDocumentReferencePort, citationPort = nativeDocumentCitationPort, tableFigurePort = nativeDocumentTableFigurePort, pdfFactory: createPdf = pdfFactory }: Props & {
     project: ProjectProjection; handoff: AttachmentHandoff & { attachmentId: string; documentRevisionId: string };
   }): ReactNode {
   const [metadata, setMetadata] = useState<ViewerMetadata | null>(null), [pdf, setPdf] = useState<PdfViewer | null>(null);
@@ -335,6 +338,16 @@ function ViewerSession({ project, handoff, announce, onReturn, port = nativeDocu
             if (entry.anchor?.pageRegion && entry.anchor.pageRegion.pageNumber <= pages) setPage(entry.anchor.pageRegion.pageNumber);
             void passage({ nodeId: entry.nodeId, nodeKind: "reference", preview: "", selection: { schemaVersion: "1.0", revisionId: revision,
               nodeId: entry.nodeId, normalizedRange: null }, pageNumber: entry.anchor?.pageRegion?.pageNumber ?? null, hasText: true });
+          }} /> : null}
+        {metadata && revision && firstPageReady && !failure && ownedMain.current ? <ViewerTableFiguresPane key={`table-figures:${revision}`}
+          metadata={metadata} revisionId={revision} port={tableFigurePort} main={ownedMain.current} reserveCore={reserveStructured}
+          onFailure={fail} onSource={jump => {
+            if (jump.pageNumber && jump.pageNumber <= pages) setPage(jump.pageNumber);
+            void passage({ nodeId: jump.nodeId, nodeKind: jump.nodeKind, preview: "", selection: { schemaVersion: "1.0", revisionId: revision,
+              nodeId: jump.nodeId, normalizedRange: jump.normalizedRange }, pageNumber: jump.pageNumber, hasText: jump.normalizedRange !== null }, jump.textOffset);
+          }} onPreview={entry => {
+            if (entry.preview.kind === "source-page-region" && entry.preview.sourceRevisionId === metadata.source.documentRevisionId
+              && entry.preview.objectSha256 === metadata.source.objectSha256 && entry.preview.locator.pageIndex + 1 <= pages) setPage(entry.preview.locator.pageIndex + 1);
           }} /> : null}
         {metadata && revision && firstPageReady && !failure && ownedMain.current ? <ViewerCitationsPane key={`citations:${revision}`}
           metadata={metadata} revisionId={revision} port={citationPort} referencePort={referencePort} main={ownedMain.current} reserveCore={reserveStructured}

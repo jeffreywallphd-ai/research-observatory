@@ -12,6 +12,8 @@ import { referenceReaderFixture } from "./reference-reader";
 import type { DocumentReferencePort } from "../../../apps/desktop/src/app/documentReferences";
 import { citationReaderFixture } from "./citation-reader";
 import type { DocumentCitationPort } from "../../../apps/desktop/src/app/documentCitations";
+import { tableFigureReaderFixture } from "./table-figure-reader";
+import type { DocumentTableFigurePort } from "../../../apps/desktop/src/app/documentTableFigures";
 import "../../../packages/ui-tokens/index.css";
 import "../../../packages/ui-components/src/styles.css";
 import "../../../apps/desktop/src/app.css";
@@ -24,6 +26,8 @@ const selection = { projectId: source.projectId, sourceAssertionRevisionId: sour
 const handoff = { attachmentId: source.attachmentId, documentRevisionId: source.documentRevisionId, selection };
 const root = createRoot(document.getElementById("root")!);
 const state = {
+  tableCalls: [] as object[], tableExists: false, staleTables: false, wrongTableSource: false, tableExcluded: false,
+  tableExclusion: null as object | null, holdTable: false, unknownTable: false, releaseTable: null as (() => void) | null,
   citationCalls: [] as object[], textCalls: [] as object[], citationExists: false, staleCitations: false,
   wrongCitationSource: false, holdCitation: false, unknownCitation: false, releaseCitation: null as (() => void) | null,
   referenceCalls: [] as object[], referenceExists: false, denyReferences: false, wrongReferenceSource: false,
@@ -47,7 +51,54 @@ const state = {
       deepLink={state.linkMode ? { schemaVersion: "1.0", projectId: source.projectId, selector: { attachmentId: source.attachmentId,
         documentRevisionId: source.documentRevisionId, normalizedRevisionId: state.linkRevision }, anchorIds: [fixture.anchorId, secondAnchorId] } : null}
       onRememberLink={(link) => { state.savedLinks.push(link); return true; }}
-      port={port} anchors={anchors} anchorPort={anchorPort} outlinePort={outlinePort} textPort={textPort} pdfFactory={pdfFactory} actionPort={actionPort} referencePort={referencePort} citationPort={citationPort} />);
+      port={port} anchors={anchors} anchorPort={anchorPort} outlinePort={outlinePort} textPort={textPort} pdfFactory={pdfFactory} actionPort={actionPort} referencePort={referencePort} citationPort={citationPort} tableFigurePort={tableFigurePort} />);
+  },
+};
+function tablePage(after: number | null, afterCell: number | null = null): object {
+  const value = tableFigureReaderFixture() as { entries: Record<string, unknown>[]; collectionId: string; collectionRevisionId: string };
+  const entry = value.entries[0]!;
+  entry["order"] = after === null ? 0 : 1;
+  if (after !== null) Object.assign(entry, { kind: "figure", jump: { ...(entry["jump"] as object), nodeKind: "figure" },
+    rows: null, columns: null, gridState: null, cells: [], cellCount: 0 });
+  else {
+    const cell = (entry["cells"] as Record<string, unknown>[])[0]!;
+    const start = afterCell === null ? 0 : afterCell + 1;
+    entry["cells"] = Array.from({ length: Math.min(8, 10 - start) }, (_, offset) => {
+      const order = start + offset, id = `00000000-0000-7000-8000-${(100 + order).toString().padStart(12, "0")}`;
+      return { ...cell, nodeId: id, cellOrder: order, jump: { ...(cell["jump"] as object), nodeId: id }, row: order, column: 0 };
+    });
+    Object.assign(entry, { cellCount: 10, afterCell, nextAfterCell: start < 8 ? 7 : null });
+  }
+  const caption = (entry["captions"] as Record<string, unknown>[])[0]!;
+  caption["textPreview"] = "Synthetic inert <script>window.tableExecuted=true</script> caption 📚";
+  caption["textLength"] = Array.from(caption["textPreview"] as string).length;
+  const jump = caption["jump"] as Record<string, unknown>;
+  jump["normalizedRange"] = { start: 8, end: 8 + Number(caption["textLength"]) };
+  Object.assign(entry, { excluded: state.tableExcluded, exclusion: state.tableExclusion });
+  return { ...value, total: 2, afterOrder: after, nextAfterOrder: after === null ? 0 : null,
+    source: state.wrongTableSource ? { ...source, workRevisionId: source.attachmentId } : source };
+}
+const tableFigurePort: DocumentTableFigurePort = {
+  read: async (_project, selectedRevision, expected, afterOrder, afterCell, cellObjectId) => {
+    state.tableCalls.push({ kind: "read", selectedRevision, expected, afterOrder, afterCell, cellObjectId });
+    if (state.holdTable) await new Promise<void>(resolve => { state.releaseTable = resolve; });
+    if (state.unknownTable) throw new Error("synthetic-unknown-issued-table");
+    if (state.staleTables) {
+      const value = tableFigureReaderFixture() as { collectionId: string; collectionRevisionId: string };
+      return { schemaVersion: "1.0", projectId: source.projectId, source, documentRevisionId: revision,
+        collectionId: value.collectionId, collectionRevisionId: value.collectionRevisionId, status: "unavailable",
+        reasonCode: "table-figures-unavailable", scholarlyVerification: "unverified" };
+    }
+    return state.tableExists ? tablePage(afterOrder, afterCell) : null;
+  },
+  enrich: async (_project, selectedRevision, command, expected) => {
+    state.tableCalls.push({ kind: "enrich", selectedRevision, command, expected }); state.tableExists = true; state.staleTables = false;
+    return tablePage(null);
+  },
+  exclude: async (_project, selectedRevision, command, expected, object, rationale) => {
+    state.tableCalls.push({ kind: "exclude", selectedRevision, command, expected, object, rationale });
+    state.tableExcluded = true; state.tableExclusion = { nodeId: object, actorId: nodeId, commandId: command, rationale, occurredAt: fixture.createdAt };
+    return tablePage(null);
   },
 };
 function citationPage(after: number | null): object {
@@ -187,7 +238,7 @@ const textPort = { text: async (_project: string, _selector: object, _node: stri
   state.textCalls.push({ node: _node, offset });
   if (state.holdText) await new Promise<void>((resolve) => { state.releaseText = resolve; });
   if (state.limitText) throw new Error("viewer-resource-limit");
-  return state.denyText ? null : { metadata: { source, normalizedRevisionId: revision }, nodeId, nodeKind: "paragraph" as const,
+  return state.denyText ? null : { metadata: { source, normalizedRevisionId: revision }, nodeId: _node, nodeKind: "paragraph" as const,
     pageNumber: 2, offset, text: "Synthetic inert <script>window.viewerDocumentExecuted=true</script> text", nextOffset: null };
 } };
 const outlinePort = { outline: async () => {

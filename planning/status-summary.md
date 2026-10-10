@@ -1,7 +1,7 @@
 ---
 document_type: generated-backlog-status-summary
 source: planning/backlog.yaml
-source_sha256: 59f9169624c9ce756ecef266d3926b06531a0cc34e68d04677771030a90593ca
+source_sha256: d12f2a9145820e9013316201cfb17c9131e30e1c1fd977cf67acad05c466973f
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -53,7 +53,7 @@ manual_edit: prohibited
 | Status | Count |
 |---|---:|
 | `NOT_STARTED` | 223 |
-| `READY` | 1 |
+| `IN_PROGRESS` | 1 |
 | `DONE` | 96 |
 | `DEFERRED` | 36 |
 
@@ -951,7 +951,7 @@ Append-only rounds remain distinct from the current latest-review projection. Le
 | CAP-local-project-storage (`CAP-02`) — Local projects, durable storage, security, and recovery | `NONE` | `PENDING` | 4/5 | 13/16 | - |
 | CAP-research-domain-workflows (`CAP-03`) — Canonical domain, research intent, provenance, and durable workflows | `NONE` | `PENDING` | 6/6 | 20/20 | - |
 | CAP-scholarly-ingestion (`CAP-04`) — Scholarly ingestion, connectors, canonicalization, and corpus governance | `NONE` | `PENDING` | 5/5 | 15/15 | - |
-| CAP-document-inspection (`CAP-05`) — Document acquisition, parsing, source inspection, and page anchors | `NONE` | `PENDING` | 4/6 | 14/18 | - |
+| CAP-document-inspection (`CAP-05`) — Document acquisition, parsing, source inspection, and page anchors | `NONE` | `PENDING` | 4/6 | 14/18 | `CAP-05.S05.T03` |
 | CAP-search-screening (`CAP-06`) — Local search, discovery, corpus diagnostics, and screening | `NONE` | `PENDING` | 0/6 | 0/18 | - |
 | CAP-model-gateway (`CAP-07`) — Provider-neutral model gateway and governed AI execution | `NONE` | `PENDING` | 1/5 | 3/15 | - |
 | CAP-evidence-verification (`CAP-08`) — Evidence schemas, extraction, verification, and adjudication | `NONE` | `PENDING` | 0/6 | 0/18 | - |
@@ -986,7 +986,9 @@ Append-only rounds remain distinct from the current latest-review projection. Le
 
 ## Active work
 
-No task is currently active.
+| Task | Status | Owner | Branch |
+|---|---|---|---|
+| `CAP-05.S05.T03` Represent tables and figures with captions and page anchors | `IN_PROGRESS` | codex-w2-implementation | `codex/w2-implementation` |
 
 ## Linked corrective tasks
 

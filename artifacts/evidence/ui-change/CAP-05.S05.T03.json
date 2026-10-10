@@ -1,0 +1,29 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "ui-change-evidence",
+  "taskId": "CAP-05.S05.T03",
+  "changeKind": "approved-reference-implementation",
+  "contractPath": "artifacts/evidence/ui-change/CAP-05.S05.T03.json",
+  "implementationAgent": "agent:codex-w2-implementation",
+  "changedFiles": [
+    "apps/desktop/src/app/DocumentViewerWorkspace.tsx",
+    "apps/desktop/src/app/ViewerTableFiguresPane.tsx",
+    "apps/desktop/src/app/documentTableFigures.ts"
+  ],
+  "reference": {
+    "referenceId": "RO-UI-ACADEMIC-MINIMAL-1.9",
+    "version": "1.9",
+    "packageSha256": "24b8d62356863980ae9a13db7d6a06b04b76c60e2f1920d2e888cadecfb24c4b",
+    "approvalCommit": "d4691f716f839f4aac5bb50563b56ac863b32685",
+    "approvedBy": "human:repository-owner",
+    "previousReferenceId": "RO-UI-ACADEMIC-MINIMAL-1.8"
+  },
+  "implementationScope": "Approved Document Reader table/figure inspection. One bounded sparse object and cell page retain exact original and accepted source identity, caption ambiguity, quality and explicit truncation. Existing protected original rendering remains beside extraction; current-authority source jumps and append-only human exclusion preserve the original parse. Preserve shared admission, selected-work/version return and lock/late-response clearing. No new route/reference, parser/model, image URL delivery, scholarly verification, hardware qualification or automation-framework work. Commit-bound proof and independent disposition remain required.",
+  "focusedEvidence": [
+    {
+      "command": "python -B -m unittest four selected table/figure cases in tests.desktop.test_document_viewer_interactions",
+      "result": "passed",
+      "scope": "Four authored mounted Reader journeys passed in CAP-05.S05.T03.mounted-development-01.log: inert captions, exact object/caption/cell source jumps, original-page selection, explicit human exclusion, keyboard actions, both themes at narrow width, selected-work/version return, object/cell paging with pins, stale/substituted source clearing, lock/late response and retained unknown IPC admission. Synthetic ports establish component behavior, not real Native dispatch or committed-candidate qualification."
+    }
+  ]
+}

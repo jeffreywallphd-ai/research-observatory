@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 59f9169624c9ce756ecef266d3926b06531a0cc34e68d04677771030a90593ca
+source_sha256: d12f2a9145820e9013316201cfb17c9131e30e1c1fd977cf67acad05c466973f
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -12094,13 +12094,13 @@ Original tasks and approvals remain unchanged.
 
 #### - [ ] CAP-05.S05.T03 - Represent tables and figures with captions and page anchors
 
-**Status / priority / estimate / risk:** `READY` / `P1` / `L` / `high`
+**Status / priority / estimate / risk:** `IN_PROGRESS` / `P1` / `L` / `high`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
 **Dependencies:** `CAP-05.S05.T02`, `CAP-05.S04.T02`
 
-**Owner / review:** - / - (`-`)
+**Owner / review:** codex-w2-implementation / - (`-`)
 
 **Objective:** Table/figure objects, captions, page locations, extracted text/cells where reliable, and image preview references.
 

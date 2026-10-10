@@ -1,0 +1,908 @@
+{
+  "$defs": {
+    "AcquisitionOrigin": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "remote-acquisition",
+          "title": "Kind",
+          "type": "string"
+        },
+        "locationId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "receiptSha256": {
+          "$ref": "#/$defs/Digest"
+        }
+      },
+      "required": [
+        "kind",
+        "locationId",
+        "receiptSha256"
+      ],
+      "title": "AcquisitionOrigin",
+      "type": "object"
+    },
+    "CodepointRange": {
+      "additionalProperties": false,
+      "properties": {
+        "start": {
+          "$ref": "#/$defs/Count"
+        },
+        "end": {
+          "$ref": "#/$defs/Count"
+        }
+      },
+      "required": [
+        "start",
+        "end"
+      ],
+      "title": "CodepointRange",
+      "type": "object"
+    },
+    "ConfidenceObservation": {
+      "additionalProperties": false,
+      "properties": {
+        "state": {
+          "enum": [
+            "reported",
+            "unknown",
+            "not-reported",
+            "not-applicable",
+            "unavailable"
+          ],
+          "title": "State",
+          "type": "string"
+        },
+        "value": {
+          "anyOf": [
+            {
+              "maximum": 1,
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Value"
+        }
+      },
+      "required": [
+        "state",
+        "value"
+      ],
+      "title": "ConfidenceObservation",
+      "type": "object"
+    },
+    "Coordinate": {
+      "minimum": 0,
+      "type": "number"
+    },
+    "Count": {
+      "maximum": 9007199254740991,
+      "minimum": 0,
+      "type": "integer"
+    },
+    "Digest": {
+      "pattern": "^[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "Format": {
+      "enum": [
+        "jats",
+        "tei",
+        "xml",
+        "html",
+        "pdf",
+        "docx",
+        "plain-text"
+      ],
+      "type": "string"
+    },
+    "Identity": {
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+      "type": "string"
+    },
+    "Instant": {
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z$",
+      "type": "string"
+    },
+    "LocalOrigin": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "local-import",
+          "title": "Kind",
+          "type": "string"
+        }
+      },
+      "required": [
+        "kind"
+      ],
+      "title": "LocalOrigin",
+      "type": "object"
+    },
+    "NodeKind": {
+      "enum": [
+        "region",
+        "title",
+        "abstract",
+        "section",
+        "paragraph",
+        "sentence",
+        "list",
+        "list-item",
+        "footnote",
+        "reference",
+        "citation-marker",
+        "table",
+        "table-cell",
+        "figure",
+        "caption",
+        "equation",
+        "unknown"
+      ],
+      "type": "string"
+    },
+    "OriginalStructurePreview": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "source-page-region",
+          "default": "source-page-region",
+          "title": "Kind",
+          "type": "string"
+        },
+        "sourceRevisionId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "objectSha256": {
+          "$ref": "#/$defs/Digest"
+        },
+        "nodeId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "locator": {
+          "$ref": "#/$defs/PageRegionLocator"
+        },
+        "basis": {
+          "enum": [
+            "object",
+            "cell"
+          ],
+          "title": "Basis",
+          "type": "string"
+        },
+        "scholarlyVerification": {
+          "const": "unverified",
+          "default": "unverified",
+          "title": "Scholarlyverification",
+          "type": "string"
+        }
+      },
+      "required": [
+        "sourceRevisionId",
+        "objectSha256",
+        "nodeId",
+        "locator",
+        "basis"
+      ],
+      "title": "OriginalStructurePreview",
+      "type": "object"
+    },
+    "PageRegionLocator": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "page-region",
+          "title": "Kind",
+          "type": "string"
+        },
+        "pageIndex": {
+          "exclusiveMaximum": 500,
+          "minimum": 0,
+          "title": "Pageindex",
+          "type": "integer"
+        },
+        "x0": {
+          "$ref": "#/$defs/Coordinate"
+        },
+        "y0": {
+          "$ref": "#/$defs/Coordinate"
+        },
+        "x1": {
+          "$ref": "#/$defs/Coordinate"
+        },
+        "y1": {
+          "$ref": "#/$defs/Coordinate"
+        },
+        "unit": {
+          "const": "points",
+          "title": "Unit",
+          "type": "string"
+        },
+        "origin": {
+          "const": "top-left",
+          "title": "Origin",
+          "type": "string"
+        },
+        "frame": {
+          "const": "unrotated-source-page",
+          "title": "Frame",
+          "type": "string"
+        }
+      },
+      "required": [
+        "kind",
+        "pageIndex",
+        "x0",
+        "y0",
+        "x1",
+        "y1",
+        "unit",
+        "origin",
+        "frame"
+      ],
+      "title": "PageRegionLocator",
+      "type": "object"
+    },
+    "ProjectIdentity": {
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[47][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+      "type": "string"
+    },
+    "SourceIdentity": {
+      "additionalProperties": false,
+      "properties": {
+        "projectId": {
+          "$ref": "#/$defs/ProjectIdentity"
+        },
+        "attachmentId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "documentId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "documentRevisionId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "candidateId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "sourceAssertionRevisionId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "workId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "workRevisionId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "versionId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "versionRevisionId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "objectSha256": {
+          "$ref": "#/$defs/Digest"
+        },
+        "byteLength": {
+          "maximum": 134217728,
+          "minimum": 0,
+          "title": "Bytelength",
+          "type": "integer"
+        },
+        "format": {
+          "$ref": "#/$defs/Format"
+        },
+        "provenance": {
+          "discriminator": {
+            "mapping": {
+              "local-import": "#/$defs/LocalOrigin",
+              "remote-acquisition": "#/$defs/AcquisitionOrigin"
+            },
+            "propertyName": "kind"
+          },
+          "oneOf": [
+            {
+              "$ref": "#/$defs/LocalOrigin"
+            },
+            {
+              "$ref": "#/$defs/AcquisitionOrigin"
+            }
+          ],
+          "title": "Provenance"
+        }
+      },
+      "required": [
+        "projectId",
+        "attachmentId",
+        "documentId",
+        "documentRevisionId",
+        "candidateId",
+        "sourceAssertionRevisionId",
+        "workId",
+        "workRevisionId",
+        "versionId",
+        "versionRevisionId",
+        "objectSha256",
+        "byteLength",
+        "format",
+        "provenance"
+      ],
+      "title": "SourceIdentity",
+      "type": "object"
+    },
+    "StructureJump": {
+      "additionalProperties": false,
+      "properties": {
+        "nodeId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "nodeKind": {
+          "$ref": "#/$defs/NodeKind"
+        },
+        "textOffset": {
+          "minimum": 0,
+          "title": "Textoffset",
+          "type": "integer"
+        },
+        "nodeTextStart": {
+          "minimum": 0,
+          "title": "Nodetextstart",
+          "type": "integer"
+        },
+        "normalizedRange": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/CodepointRange"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "pageNumber": {
+          "anyOf": [
+            {
+              "maximum": 500,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Pagenumber"
+        }
+      },
+      "required": [
+        "nodeId",
+        "nodeKind",
+        "textOffset",
+        "nodeTextStart",
+        "normalizedRange",
+        "pageNumber"
+      ],
+      "title": "StructureJump",
+      "type": "object"
+    },
+    "StructurePreview": {
+      "discriminator": {
+        "mapping": {
+          "source-page-region": "#/$defs/OriginalStructurePreview",
+          "unavailable": "#/$defs/UnavailableStructurePreview"
+        },
+        "propertyName": "kind"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/OriginalStructurePreview"
+        },
+        {
+          "$ref": "#/$defs/UnavailableStructurePreview"
+        }
+      ]
+    },
+    "StructureTextPreview": {
+      "additionalProperties": false,
+      "properties": {
+        "nodeId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "textPreview": {
+          "maxLength": 512,
+          "title": "Textpreview",
+          "type": "string"
+        },
+        "textLength": {
+          "maximum": 65536,
+          "minimum": 0,
+          "title": "Textlength",
+          "type": "integer"
+        },
+        "truncated": {
+          "title": "Truncated",
+          "type": "boolean"
+        },
+        "jump": {
+          "$ref": "#/$defs/StructureJump"
+        }
+      },
+      "required": [
+        "nodeId",
+        "textPreview",
+        "textLength",
+        "truncated",
+        "jump"
+      ],
+      "title": "StructureTextPreview",
+      "type": "object"
+    },
+    "TableCellPreview": {
+      "additionalProperties": false,
+      "properties": {
+        "nodeId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "textPreview": {
+          "maxLength": 512,
+          "title": "Textpreview",
+          "type": "string"
+        },
+        "textLength": {
+          "maximum": 65536,
+          "minimum": 0,
+          "title": "Textlength",
+          "type": "integer"
+        },
+        "truncated": {
+          "title": "Truncated",
+          "type": "boolean"
+        },
+        "jump": {
+          "$ref": "#/$defs/StructureJump"
+        },
+        "cellOrder": {
+          "exclusiveMaximum": 10000,
+          "minimum": 0,
+          "title": "Cellorder",
+          "type": "integer"
+        },
+        "row": {
+          "maximum": 100000,
+          "minimum": 0,
+          "title": "Row",
+          "type": "integer"
+        },
+        "column": {
+          "maximum": 100000,
+          "minimum": 0,
+          "title": "Column",
+          "type": "integer"
+        },
+        "rowSpan": {
+          "maximum": 100000,
+          "minimum": 1,
+          "title": "Rowspan",
+          "type": "integer"
+        },
+        "columnSpan": {
+          "maximum": 100000,
+          "minimum": 1,
+          "title": "Columnspan",
+          "type": "integer"
+        },
+        "headerState": {
+          "enum": [
+            "reported-header",
+            "reported-body",
+            "not-reported"
+          ],
+          "title": "Headerstate",
+          "type": "string"
+        },
+        "confidence": {
+          "$ref": "#/$defs/ConfidenceObservation"
+        },
+        "triage": {
+          "enum": [
+            "low-confidence",
+            "unknown-confidence",
+            "reported-confidence"
+          ],
+          "title": "Triage",
+          "type": "string"
+        }
+      },
+      "required": [
+        "nodeId",
+        "textPreview",
+        "textLength",
+        "truncated",
+        "jump",
+        "cellOrder",
+        "row",
+        "column",
+        "rowSpan",
+        "columnSpan",
+        "headerState",
+        "confidence",
+        "triage"
+      ],
+      "title": "TableCellPreview",
+      "type": "object"
+    },
+    "TableFigureExclusion": {
+      "additionalProperties": false,
+      "properties": {
+        "nodeId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "actorId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "commandId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "rationale": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Rationale",
+          "type": "string"
+        },
+        "occurredAt": {
+          "$ref": "#/$defs/Instant"
+        }
+      },
+      "required": [
+        "nodeId",
+        "actorId",
+        "commandId",
+        "rationale",
+        "occurredAt"
+      ],
+      "title": "TableFigureExclusion",
+      "type": "object"
+    },
+    "TableFigureReaderEntry": {
+      "additionalProperties": false,
+      "properties": {
+        "nodeId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "kind": {
+          "enum": [
+            "table",
+            "figure"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "order": {
+          "exclusiveMaximum": 1000,
+          "minimum": 0,
+          "title": "Order",
+          "type": "integer"
+        },
+        "jump": {
+          "$ref": "#/$defs/StructureJump"
+        },
+        "captionState": {
+          "enum": [
+            "reported",
+            "ambiguous",
+            "not-reported",
+            "unavailable"
+          ],
+          "title": "Captionstate",
+          "type": "string"
+        },
+        "captionCount": {
+          "maximum": 32,
+          "minimum": 0,
+          "title": "Captioncount",
+          "type": "integer"
+        },
+        "captions": {
+          "items": {
+            "$ref": "#/$defs/StructureTextPreview"
+          },
+          "maxItems": 4,
+          "title": "Captions",
+          "type": "array"
+        },
+        "labelCount": {
+          "maximum": 16,
+          "minimum": 0,
+          "title": "Labelcount",
+          "type": "integer"
+        },
+        "labels": {
+          "items": {
+            "$ref": "#/$defs/StructureTextPreview"
+          },
+          "maxItems": 4,
+          "title": "Labels",
+          "type": "array"
+        },
+        "rows": {
+          "anyOf": [
+            {
+              "maximum": 100000,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Rows"
+        },
+        "columns": {
+          "anyOf": [
+            {
+              "maximum": 100000,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Columns"
+        },
+        "gridState": {
+          "anyOf": [
+            {
+              "enum": [
+                "reported",
+                "ambiguous"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Gridstate"
+        },
+        "cellCount": {
+          "maximum": 10000,
+          "minimum": 0,
+          "title": "Cellcount",
+          "type": "integer"
+        },
+        "afterCell": {
+          "anyOf": [
+            {
+              "exclusiveMaximum": 10000,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Aftercell"
+        },
+        "nextAfterCell": {
+          "anyOf": [
+            {
+              "exclusiveMaximum": 10000,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Nextaftercell"
+        },
+        "cells": {
+          "items": {
+            "$ref": "#/$defs/TableCellPreview"
+          },
+          "maxItems": 8,
+          "title": "Cells",
+          "type": "array"
+        },
+        "confidence": {
+          "$ref": "#/$defs/ConfidenceObservation"
+        },
+        "preview": {
+          "$ref": "#/$defs/StructurePreview"
+        },
+        "retainedPreviewState": {
+          "enum": [
+            "not-reported",
+            "unavailable"
+          ],
+          "title": "Retainedpreviewstate",
+          "type": "string"
+        },
+        "warnings": {
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 32,
+          "title": "Warnings",
+          "type": "array"
+        },
+        "excluded": {
+          "title": "Excluded",
+          "type": "boolean"
+        },
+        "exclusion": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/TableFigureExclusion"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "nodeId",
+        "kind",
+        "order",
+        "jump",
+        "captionState",
+        "captionCount",
+        "captions",
+        "labelCount",
+        "labels",
+        "rows",
+        "columns",
+        "gridState",
+        "cellCount",
+        "afterCell",
+        "nextAfterCell",
+        "cells",
+        "confidence",
+        "preview",
+        "retainedPreviewState",
+        "warnings",
+        "excluded",
+        "exclusion"
+      ],
+      "title": "TableFigureReaderEntry",
+      "type": "object"
+    },
+    "UnavailableStructurePreview": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "unavailable",
+          "default": "unavailable",
+          "title": "Kind",
+          "type": "string"
+        },
+        "reason": {
+          "enum": [
+            "format-has-no-pages",
+            "not-reported",
+            "unsupported-location"
+          ],
+          "title": "Reason",
+          "type": "string"
+        }
+      },
+      "required": [
+        "reason"
+      ],
+      "title": "UnavailableStructurePreview",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schemaVersion": {
+      "const": "1.0",
+      "default": "1.0",
+      "title": "Schemaversion",
+      "type": "string"
+    },
+    "projectId": {
+      "$ref": "#/$defs/ProjectIdentity"
+    },
+    "source": {
+      "$ref": "#/$defs/SourceIdentity"
+    },
+    "documentRevisionId": {
+      "$ref": "#/$defs/Identity"
+    },
+    "collectionId": {
+      "$ref": "#/$defs/Identity"
+    },
+    "collectionRevisionId": {
+      "$ref": "#/$defs/Identity"
+    },
+    "contentSha256": {
+      "$ref": "#/$defs/Digest"
+    },
+    "structureSha256": {
+      "$ref": "#/$defs/Digest"
+    },
+    "total": {
+      "maximum": 1000,
+      "minimum": 0,
+      "title": "Total",
+      "type": "integer"
+    },
+    "afterOrder": {
+      "anyOf": [
+        {
+          "exclusiveMaximum": 1000,
+          "minimum": 0,
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Afterorder"
+    },
+    "nextAfterOrder": {
+      "anyOf": [
+        {
+          "exclusiveMaximum": 1000,
+          "minimum": 0,
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Nextafterorder"
+    },
+    "entries": {
+      "items": {
+        "$ref": "#/$defs/TableFigureReaderEntry"
+      },
+      "maxItems": 1,
+      "title": "Entries",
+      "type": "array"
+    },
+    "scholarlyVerification": {
+      "const": "unverified",
+      "default": "unverified",
+      "title": "Scholarlyverification",
+      "type": "string"
+    }
+  },
+  "required": [
+    "projectId",
+    "source",
+    "documentRevisionId",
+    "collectionId",
+    "collectionRevisionId",
+    "contentSha256",
+    "structureSha256",
+    "total",
+    "afterOrder",
+    "nextAfterOrder",
+    "entries"
+  ],
+  "title": "TableFigureReaderPage",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://research-observatory.local/contracts/documents/table-figure-reader-page.v1.schema.json",
+  "x-research-observatory-semanticRules": [
+    "canonical-table-figure-cell-identities-exact-original-and-accepted-source-with-v28-source-order-index",
+    "authenticated-retained-native-namespace-container-and-docling-relationships-no-first-caption-or-header-promotion",
+    "raw-nfc-cell-text-source-spans-sparse-merged-grid-confidence-and-ambiguity-remain-unverified",
+    "original-page-region-exact-source-digest-object-or-cell-basis-no-external-image-fetch-or-staged-id-permission",
+    "current-native-human-project-intent-privacy-inspect-derive-and-complete-fresh-material-inputs-through-delivery",
+    "expected-head-exact-retry-atomic-encrypted-canonical-provenance-outbox-and-replacement-propagation",
+    "human-exclusion-appends-rationale-and-preserves-original-parse-previous-observations-and-exclusions-on-refresh",
+    "cumulative-conservative-text-range-anchor-admission-before-copy-and-serialization-no-dense-grid-allocation",
+    "five-second-cooperative-operation-1000-objects-10000-cells-16-mib-encrypted-collection",
+    "one-64-kib-reader-object-eight-512-codepoint-cells-four-caption-and-label-previews-explicit-counts",
+    "object-and-cell-cursors-pin-collection-and-node-identity-current-rights-fenced-notice-never-delivers-stale-text",
+    "accepted-v1-original-literal-migration-and-storage-profile-unchanged-no-parser-model-ocr-or-verification"
+  ]
+}

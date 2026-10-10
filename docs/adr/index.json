@@ -482,6 +482,15 @@
       "linkedTasks": [
         "CAP-05.S05.T02"
       ]
+    },
+    {
+      "id": "ADR-0050",
+      "path": "docs/adr/ADR-0050-bind-table-figure-observations-to-existing-protected-document-authority.md",
+      "title": "Bind table and figure observations to existing protected document authority",
+      "status": "Proposed",
+      "linkedTasks": [
+        "CAP-05.S05.T03"
+      ]
     }
   ]
 }

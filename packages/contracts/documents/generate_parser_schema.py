@@ -22,6 +22,11 @@ from research_observatory_core.document_revisions import (  # noqa: E402
     DocumentRevisionAcceptance,
     RetainedParseResultReceipt,
 )
+from research_observatory_core.document_table_figures import (  # noqa: E402
+    TableFigureCollection,
+    TableFigureCommand,
+    TableFigureExcludeCommand,
+)
 from research_observatory_core.parsing.contracts import DocumentIR  # noqa: E402
 from research_observatory_core.parsing.native_contracts import NativeStructure  # noqa: E402
 from research_observatory_core.parsing.requests import ParseRequest, ParseResult  # noqa: E402
@@ -42,8 +47,14 @@ from research_observatory_core.ports.viewer_actions import (  # noqa: E402
     ViewerRightsReviewReceipt,
 )
 from research_observatory_core.reference_reader import ReferenceReaderNotice, ReferenceReaderPage  # noqa: E402
+from research_observatory_core.table_figure_reader import TableFigureReaderNotice, TableFigureReaderPage  # noqa: E402
 
 OUTPUTS: dict[str, TypeAdapter[Any]] = {
+    "table-figure-collection.v1.schema.json": TypeAdapter(TableFigureCollection),
+    "table-figure-command.v1.schema.json": TypeAdapter(TableFigureCommand),
+    "table-figure-exclusion-command.v1.schema.json": TypeAdapter(TableFigureExcludeCommand),
+    "table-figure-reader-page.v1.schema.json": TypeAdapter(TableFigureReaderPage),
+    "table-figure-reader-notice.v1.schema.json": TypeAdapter(TableFigureReaderNotice),
     "citation-collection.v1.schema.json": TypeAdapter(CitationCollection),
     "citation-enrichment-command.v1.schema.json": TypeAdapter(CitationEnrichmentCommand),
     "citation-reader-page.v1.schema.json": TypeAdapter(CitationReaderPage),
@@ -76,6 +87,7 @@ OUTPUTS: dict[str, TypeAdapter[Any]] = {
 VIEWER_SCHEMAS = {name for name in OUTPUTS if name.startswith("viewer-")}
 REFERENCE_SCHEMAS = {name for name in OUTPUTS if name.startswith("reference-")}
 CITATION_SCHEMAS = {name for name in OUTPUTS if name.startswith("citation-")}
+TABLE_FIGURE_SCHEMAS = {name for name in OUTPUTS if name.startswith("table-figure-")}
 REVISION_SCHEMAS = (
     set(OUTPUTS)
     - {
@@ -88,7 +100,22 @@ REVISION_SCHEMAS = (
     - VIEWER_SCHEMAS
     - REFERENCE_SCHEMAS
     - CITATION_SCHEMAS
+    - TABLE_FIGURE_SCHEMAS
 )
+TABLE_FIGURE_RULES = [
+    "canonical-table-figure-cell-identities-exact-original-and-accepted-source-with-v28-source-order-index",
+    "authenticated-retained-native-namespace-container-and-docling-relationships-no-first-caption-or-header-promotion",
+    "raw-nfc-cell-text-source-spans-sparse-merged-grid-confidence-and-ambiguity-remain-unverified",
+    "original-page-region-exact-source-digest-object-or-cell-basis-no-external-image-fetch-or-staged-id-permission",
+    "current-native-human-project-intent-privacy-inspect-derive-and-complete-fresh-material-inputs-through-delivery",
+    "expected-head-exact-retry-atomic-encrypted-canonical-provenance-outbox-and-replacement-propagation",
+    "human-exclusion-appends-rationale-and-preserves-original-parse-previous-observations-and-exclusions-on-refresh",
+    "cumulative-conservative-text-range-anchor-admission-before-copy-and-serialization-no-dense-grid-allocation",
+    "five-second-cooperative-operation-1000-objects-10000-cells-16-mib-encrypted-collection",
+    "one-64-kib-reader-object-eight-512-codepoint-cells-four-caption-and-label-previews-explicit-counts",
+    "object-and-cell-cursors-pin-collection-and-node-identity-current-rights-fenced-notice-never-delivers-stale-text",
+    "accepted-v1-original-literal-migration-and-storage-profile-unchanged-no-parser-model-ocr-or-verification",
+]
 CITATION_RULES = [
     "immutable-encrypted-canonical-collection-exact-reference-collection-id-revision-and-protected-payload-digest",
     "current-native-human-project-intent-privacy-source-inspect-derive-and-canonical-target-authority-through-delivery",
@@ -199,6 +226,8 @@ def schema(name: str) -> dict[str, object]:
             "no-later-revision-substitution-or-scholarly-verification-from-navigation",
         ]
         if name == "viewer-deep-link.v1.schema.json"
+        else TABLE_FIGURE_RULES
+        if name in TABLE_FIGURE_SCHEMAS
         else CITATION_RULES
         if name in CITATION_SCHEMAS
         else REFERENCE_RULES

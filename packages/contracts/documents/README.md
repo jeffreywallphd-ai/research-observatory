@@ -74,3 +74,8 @@ retain admission until physical settlement; lock/close clears visible previews.
 the opaque enrichment command and bounded Reader page/notice schemas. Contexts
 bind exact current references and accepted source locations; reported,
 inferred, ambiguous and unresolved observations remain distinct and unverified.
+
+[Tables and figures](table-figures.md) describes protected collections,
+extraction/exclusion commands and bounded Reader page/notice schemas. Exact
+source relationships, sparse cells, original-page previews and uncertainty stay
+unverified; explicit human exclusion appends history and preserves the parse.

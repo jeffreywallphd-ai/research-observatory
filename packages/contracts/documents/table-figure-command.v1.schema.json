@@ -1,0 +1,56 @@
+{
+  "$defs": {
+    "Identity": {
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schemaVersion": {
+      "const": "1.0",
+      "default": "1.0",
+      "title": "Schemaversion",
+      "type": "string"
+    },
+    "commandId": {
+      "$ref": "#/$defs/Identity"
+    },
+    "revisionId": {
+      "$ref": "#/$defs/Identity"
+    },
+    "expectedCollectionRevisionId": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Identity"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    }
+  },
+  "required": [
+    "commandId",
+    "revisionId",
+    "expectedCollectionRevisionId"
+  ],
+  "title": "TableFigureCommand",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://research-observatory.local/contracts/documents/table-figure-command.v1.schema.json",
+  "x-research-observatory-semanticRules": [
+    "canonical-table-figure-cell-identities-exact-original-and-accepted-source-with-v28-source-order-index",
+    "authenticated-retained-native-namespace-container-and-docling-relationships-no-first-caption-or-header-promotion",
+    "raw-nfc-cell-text-source-spans-sparse-merged-grid-confidence-and-ambiguity-remain-unverified",
+    "original-page-region-exact-source-digest-object-or-cell-basis-no-external-image-fetch-or-staged-id-permission",
+    "current-native-human-project-intent-privacy-inspect-derive-and-complete-fresh-material-inputs-through-delivery",
+    "expected-head-exact-retry-atomic-encrypted-canonical-provenance-outbox-and-replacement-propagation",
+    "human-exclusion-appends-rationale-and-preserves-original-parse-previous-observations-and-exclusions-on-refresh",
+    "cumulative-conservative-text-range-anchor-admission-before-copy-and-serialization-no-dense-grid-allocation",
+    "five-second-cooperative-operation-1000-objects-10000-cells-16-mib-encrypted-collection",
+    "one-64-kib-reader-object-eight-512-codepoint-cells-four-caption-and-label-previews-explicit-counts",
+    "object-and-cell-cursors-pin-collection-and-node-identity-current-rights-fenced-notice-never-delivers-stale-text",
+    "accepted-v1-original-literal-migration-and-storage-profile-unchanged-no-parser-model-ocr-or-verification"
+  ]
+}

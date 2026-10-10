@@ -32854,11 +32854,11 @@ capabilities:
       verification_commands:
       - python tools/verify.py --profile documents
       - python tools/verify.py --profile desktop
-      status: READY
-      owner: null
-      branch: null
-      started_at: null
-      updated_at: '2026-10-10T08:35:33+00:00'
+      status: IN_PROGRESS
+      owner: codex-w2-implementation
+      branch: codex/w2-implementation
+      started_at: '2026-10-10T08:59:30+00:00'
+      updated_at: '2026-10-10T08:59:30+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -32868,12 +32868,24 @@ capabilities:
         result: null
         reviewed_at: null
         notes: null
-      base_sha: null
-      lease: null
+      base_sha: 2b10a266c763e643b8739d79d494663eb00e3f21
+      lease:
+        claimed_by: codex-w2-implementation
+        claimed_at: '2026-10-10T08:59:30+00:00'
+        expires_at: '2026-10-10T16:59:30+00:00'
       verification_state: null
-      worktree: null
+      worktree: .
       platform_targets:
       - windows-x64
+      experience_change:
+        kind: approved-reference-implementation
+        contract_path: artifacts/evidence/ui-change/CAP-05.S05.T03.json
+        reference_id: RO-UI-ACADEMIC-MINIMAL-1.9
+        reference_version: '1.9'
+        reference_package_sha256: 24b8d62356863980ae9a13db7d6a06b04b76c60e2f1920d2e888cadecfb24c4b
+        reference_approval_commit: d4691f716f839f4aac5bb50563b56ac863b32685
+        previous_reference_id: RO-UI-ACADEMIC-MINIMAL-1.8
+        implementation_agent: agent:codex-w2-implementation
     platform_targets:
     - windows-x64
     completion:

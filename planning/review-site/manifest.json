@@ -24007,7 +24007,7 @@
             {
               "task_id": "CAP-05.S05.T03",
               "title": "Represent tables and figures with captions and page anchors",
-              "status": "READY",
+              "status": "IN_PROGRESS",
               "mode": "latest-review-only",
               "latest_review": {
                 "reviewer": null,
@@ -24060,19 +24060,22 @@
             {
               "task_id": "CAP-05.S05.T03",
               "title": "Represent tables and figures with captions and page anchors",
-              "status": "READY",
+              "status": "IN_PROGRESS",
               "page": "CAP-05/CAP-05.S05.T03.html",
               "dependencies": [
                 "CAP-05.S05.T02",
                 "CAP-05.S04.T02"
               ],
               "claim": {
-                "owner": null,
-                "branch": null,
-                "base_sha": null
+                "owner": "codex-w2-implementation",
+                "branch": "codex/w2-implementation",
+                "base_sha": "2b10a266c763e643b8739d79d494663eb00e3f21"
               },
               "plan_section_sha256": "94ebe343d75f6fcd868275c373eac009acc0268dadfa64cda5a0acce734633b2",
-              "worksheet": null
+              "worksheet": {
+                "path": "artifacts/evidence/CAP-05.S05.T03.task-start.md",
+                "sha256": "256d08a25fdeebdcd6c131899c58aa3a6298b371d2dc6131f137efc014d2ce9b"
+              }
             }
           ]
         },

@@ -1,0 +1,219 @@
+{
+  "$defs": {
+    "AcquisitionOrigin": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "remote-acquisition",
+          "title": "Kind",
+          "type": "string"
+        },
+        "locationId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "receiptSha256": {
+          "$ref": "#/$defs/Digest"
+        }
+      },
+      "required": [
+        "kind",
+        "locationId",
+        "receiptSha256"
+      ],
+      "title": "AcquisitionOrigin",
+      "type": "object"
+    },
+    "Digest": {
+      "pattern": "^[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "Format": {
+      "enum": [
+        "jats",
+        "tei",
+        "xml",
+        "html",
+        "pdf",
+        "docx",
+        "plain-text"
+      ],
+      "type": "string"
+    },
+    "Identity": {
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+      "type": "string"
+    },
+    "LocalOrigin": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "local-import",
+          "title": "Kind",
+          "type": "string"
+        }
+      },
+      "required": [
+        "kind"
+      ],
+      "title": "LocalOrigin",
+      "type": "object"
+    },
+    "ProjectIdentity": {
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[47][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+      "type": "string"
+    },
+    "SourceIdentity": {
+      "additionalProperties": false,
+      "properties": {
+        "projectId": {
+          "$ref": "#/$defs/ProjectIdentity"
+        },
+        "attachmentId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "documentId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "documentRevisionId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "candidateId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "sourceAssertionRevisionId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "workId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "workRevisionId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "versionId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "versionRevisionId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "objectSha256": {
+          "$ref": "#/$defs/Digest"
+        },
+        "byteLength": {
+          "maximum": 134217728,
+          "minimum": 0,
+          "title": "Bytelength",
+          "type": "integer"
+        },
+        "format": {
+          "$ref": "#/$defs/Format"
+        },
+        "provenance": {
+          "discriminator": {
+            "mapping": {
+              "local-import": "#/$defs/LocalOrigin",
+              "remote-acquisition": "#/$defs/AcquisitionOrigin"
+            },
+            "propertyName": "kind"
+          },
+          "oneOf": [
+            {
+              "$ref": "#/$defs/LocalOrigin"
+            },
+            {
+              "$ref": "#/$defs/AcquisitionOrigin"
+            }
+          ],
+          "title": "Provenance"
+        }
+      },
+      "required": [
+        "projectId",
+        "attachmentId",
+        "documentId",
+        "documentRevisionId",
+        "candidateId",
+        "sourceAssertionRevisionId",
+        "workId",
+        "workRevisionId",
+        "versionId",
+        "versionRevisionId",
+        "objectSha256",
+        "byteLength",
+        "format",
+        "provenance"
+      ],
+      "title": "SourceIdentity",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schemaVersion": {
+      "const": "1.0",
+      "default": "1.0",
+      "title": "Schemaversion",
+      "type": "string"
+    },
+    "projectId": {
+      "$ref": "#/$defs/ProjectIdentity"
+    },
+    "source": {
+      "$ref": "#/$defs/SourceIdentity"
+    },
+    "documentRevisionId": {
+      "$ref": "#/$defs/Identity"
+    },
+    "collectionId": {
+      "$ref": "#/$defs/Identity"
+    },
+    "collectionRevisionId": {
+      "$ref": "#/$defs/Identity"
+    },
+    "status": {
+      "const": "unavailable",
+      "default": "unavailable",
+      "title": "Status",
+      "type": "string"
+    },
+    "reasonCode": {
+      "enum": [
+        "viewer-resource-limit",
+        "table-figures-unavailable"
+      ],
+      "title": "Reasoncode",
+      "type": "string"
+    },
+    "scholarlyVerification": {
+      "const": "unverified",
+      "default": "unverified",
+      "title": "Scholarlyverification",
+      "type": "string"
+    }
+  },
+  "required": [
+    "projectId",
+    "source",
+    "documentRevisionId",
+    "collectionId",
+    "collectionRevisionId",
+    "reasonCode"
+  ],
+  "title": "TableFigureReaderNotice",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://research-observatory.local/contracts/documents/table-figure-reader-notice.v1.schema.json",
+  "x-research-observatory-semanticRules": [
+    "canonical-table-figure-cell-identities-exact-original-and-accepted-source-with-v28-source-order-index",
+    "authenticated-retained-native-namespace-container-and-docling-relationships-no-first-caption-or-header-promotion",
+    "raw-nfc-cell-text-source-spans-sparse-merged-grid-confidence-and-ambiguity-remain-unverified",
+    "original-page-region-exact-source-digest-object-or-cell-basis-no-external-image-fetch-or-staged-id-permission",
+    "current-native-human-project-intent-privacy-inspect-derive-and-complete-fresh-material-inputs-through-delivery",
+    "expected-head-exact-retry-atomic-encrypted-canonical-provenance-outbox-and-replacement-propagation",
+    "human-exclusion-appends-rationale-and-preserves-original-parse-previous-observations-and-exclusions-on-refresh",
+    "cumulative-conservative-text-range-anchor-admission-before-copy-and-serialization-no-dense-grid-allocation",
+    "five-second-cooperative-operation-1000-objects-10000-cells-16-mib-encrypted-collection",
+    "one-64-kib-reader-object-eight-512-codepoint-cells-four-caption-and-label-previews-explicit-counts",
+    "object-and-cell-cursors-pin-collection-and-node-identity-current-rights-fenced-notice-never-delivers-stale-text",
+    "accepted-v1-original-literal-migration-and-storage-profile-unchanged-no-parser-model-ocr-or-verification"
+  ]
+}

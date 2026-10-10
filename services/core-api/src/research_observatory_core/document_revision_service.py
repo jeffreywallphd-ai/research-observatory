@@ -362,6 +362,82 @@ class DocumentRevisionService:
 
         return self._references(command, trace_id, read, repository_factory=LocalDocumentCitationRepository)
 
+    def _table_figure_page(self, repository, collection, *, after_order=None, after_cell=None, cell_object_id=None):
+        from .table_figure_reader import reader_page
+
+        return reader_page(
+            collection,
+            repository._source(collection.document_revision_id),
+            repository.revisions.read(collection.document_revision_id),
+            after_order=after_order,
+            after_cell=after_cell,
+            cell_object_id=cell_object_id,
+        )
+
+    def table_figures_enrich(self, command, *, trace_id):
+        from .document_table_figure_repository import LocalDocumentTableFigureRepository
+
+        def enrich(repository, stopped):
+            return self._table_figure_page(repository, repository.enrich(command.enrichment, cancelled=stopped))
+
+        return self._references(command, trace_id, enrich, repository_factory=LocalDocumentTableFigureRepository)
+
+    def table_figures_exclude(self, command, *, trace_id):
+        from .document_table_figure_repository import LocalDocumentTableFigureRepository
+
+        def exclude(repository, stopped):
+            collection = repository.exclude(command.enrichment, cancelled=stopped)
+            index = next(e.order for e in collection.entries if e.node_id == command.enrichment.node_id)
+            return self._table_figure_page(repository, collection, after_order=index - 1 if index else None)
+
+        return self._references(command, trace_id, exclude, repository_factory=LocalDocumentTableFigureRepository)
+
+    def table_figures_read(self, command, *, trace_id):
+        from .document_table_figure_repository import LocalDocumentTableFigureRepository
+        from .table_figure_reader import TableFigureReaderNotice
+
+        def read(repository, stopped):
+            try:
+                collection = repository.read(command.revision_id, cancelled=stopped)
+                if collection is None:
+                    if (
+                        command.expected_collection_revision_id is not None
+                        or command.after_order is not None
+                        or command.after_cell is not None
+                    ):
+                        raise DocumentRevisionProblem("document-table-figures-page-unavailable")
+                    return None
+                if (
+                    command.expected_collection_revision_id is not None
+                    and collection.collection_revision_id != command.expected_collection_revision_id
+                ):
+                    raise DocumentRevisionProblem("document-table-figures-page-changed")
+                return self._table_figure_page(
+                    repository,
+                    collection,
+                    after_order=command.after_order,
+                    after_cell=command.after_cell,
+                    cell_object_id=command.cell_object_id,
+                )
+            except DocumentRevisionProblem as problem:
+                if stopped():
+                    raise
+                head = repository.current_head(command.revision_id)
+                if head is None:
+                    raise
+                return TableFigureReaderNotice(
+                    project_id=command.project_id,
+                    source=repository._source(command.revision_id),
+                    document_revision_id=command.revision_id,
+                    collection_id=head[1],
+                    collection_revision_id=head[0],
+                    reason_code="viewer-resource-limit"
+                    if problem.code == "viewer-resource-limit"
+                    else "table-figures-unavailable",
+                )
+
+        return self._references(command, trace_id, read, repository_factory=LocalDocumentTableFigureRepository)
+
     def anchor_create(self, command, *, trace_id):
         return self._anchors(
             command, trace_id, lambda repository: repository.create(command.command_id, command.selection)
