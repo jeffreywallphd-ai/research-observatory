@@ -33542,6 +33542,15 @@ capabilities:
       worktree: .
       platform_targets:
       - windows-x64
+      experience_change:
+        kind: approved-reference-implementation
+        contract_path: artifacts/evidence/ui-change/CAP-05.S06.T02.json
+        reference_id: RO-UI-ACADEMIC-MINIMAL-1.9
+        reference_version: '1.9'
+        reference_package_sha256: 24b8d62356863980ae9a13db7d6a06b04b76c60e2f1920d2e888cadecfb24c4b
+        reference_approval_commit: d4691f716f839f4aac5bb50563b56ac863b32685
+        previous_reference_id: RO-UI-ACADEMIC-MINIMAL-1.8
+        implementation_agent: agent:codex-w2-implementation
     - id: CAP-05.S06.T03
       capability_id: CAP-05
       slice_id: CAP-05.S06

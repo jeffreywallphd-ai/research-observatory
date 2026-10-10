@@ -6,15 +6,14 @@
   "contractPath": "artifacts/evidence/ui-change/CAP-05.S06.T02.json",
   "implementationAgent": "agent:codex-w2-implementation",
   "changedFiles": [
-    "apps/desktop/src/app/ParsingQualityWorkspace.tsx",
-    "apps/desktop/src/app/documentCorrections.ts",
-    "apps/desktop/src/app/ViewerHumanCorrectionsPane.tsx",
-    "apps/desktop/src/app/DocumentViewerWorkspace.tsx",
-    "apps/desktop/src/app/ApplicationRuntime.tsx",
-    "apps/desktop/src/app/workflowNavigationModel.ts",
     "apps/desktop/src/app.css",
-    "apps/desktop/scripts/assemble-application.mjs",
-    "apps/desktop/src/app/documentCitations.ts"
+    "apps/desktop/src/app/ApplicationRuntime.tsx",
+    "apps/desktop/src/app/DocumentViewerWorkspace.tsx",
+    "apps/desktop/src/app/ParsingQualityWorkspace.tsx",
+    "apps/desktop/src/app/ViewerHumanCorrectionsPane.tsx",
+    "apps/desktop/src/app/documentCitations.ts",
+    "apps/desktop/src/app/documentCorrections.ts",
+    "apps/desktop/src/app/workflowNavigationModel.ts"
   ],
   "reference": {
     "referenceId": "RO-UI-ACADEMIC-MINIMAL-1.9",
