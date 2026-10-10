@@ -24729,7 +24729,7 @@
             {
               "task_id": "CAP-05.S06.T03",
               "title": "Implement parser upgrade comparison and stale propagation",
-              "status": "READY",
+              "status": "IN_PROGRESS",
               "mode": "latest-review-only",
               "latest_review": {
                 "reviewer": null,
@@ -24781,18 +24781,21 @@
             {
               "task_id": "CAP-05.S06.T03",
               "title": "Implement parser upgrade comparison and stale propagation",
-              "status": "READY",
+              "status": "IN_PROGRESS",
               "page": "CAP-05/CAP-05.S06.T03.html",
               "dependencies": [
                 "CAP-05.S06.T02"
               ],
               "claim": {
-                "owner": null,
-                "branch": null,
-                "base_sha": null
+                "owner": "codex-w2-implementation",
+                "branch": "codex/w2-implementation",
+                "base_sha": "c7073e66de252514df6e1e209e011233a841d5ba"
               },
               "plan_section_sha256": "4a501a65d25a6e271577ef945fbdc1180dd0907fbf93f87134a724689306dbe2",
-              "worksheet": null
+              "worksheet": {
+                "path": "artifacts/evidence/CAP-05.S06.T03.task-start.md",
+                "sha256": "267d5bb57169cda35fe084d29cb5ca45551ca2686395bee700d9f2352aa4eb46"
+              }
             }
           ]
         }

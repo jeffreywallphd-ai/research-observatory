@@ -38,7 +38,7 @@
       <nav class="breadcrumbs" aria-label="Breadcrumb"><a href="../index.html">Planning review</a><span>/</span><a href="index.html">CAP-document-inspection</a><span>/</span><a href="CAP-05.S06.html">SLICE-parsing-quality-correction-and-reprocessing</a><span>/</span><span aria-current="page">CAP-05.S06.T03</span></nav>
 
 <section class="hero compact" data-task-page="CAP-05.S06.T03">
-  <div class="hero-top"><div><span class="eyebrow">CAP-05.S06.T03 · task 3 of 3</span><h1>Implement parser upgrade comparison and stale propagation</h1><p>Batch reparse preview, old/new structure diff, anchor migration candidates, acceptance, and dependent-output invalidation.</p></div><span class="status status-ready">Ready</span></div>
+  <div class="hero-top"><div><span class="eyebrow">CAP-05.S06.T03 · task 3 of 3</span><h1>Implement parser upgrade comparison and stale propagation</h1><p>Batch reparse preview, old/new structure diff, anchor migration candidates, acceptance, and dependent-output invalidation.</p></div><span class="status status-in-progress">In_Progress</span></div>
   <dl class="summary-grid"><div><dt>Wave</dt><dd>W2</dd></div><div><dt>Slice</dt><dd><a href="CAP-05.S06.html">SLICE-parsing-quality-correction-and-reprocessing</a></dd></div><div><dt>Risk / review</dt><dd>high / agent-review</dd></div><div><dt>Latest review</dt><dd>not reviewed</dd></div></dl>
 </section>
 <section class="task-summary"><div class="section-heading"><span class="eyebrow">Authoritative task record</span><h2>Scope and acceptance</h2></div>
@@ -49,7 +49,7 @@
 <section class="task-summary"><div class="section-heading"><span class="eyebrow">Verification inventory</span><h2>Profiles and commands</h2></div>
   <h3>Verification profiles</h3><ul class="gate-criteria"><li>documents</li><li>service</li><li>e2e-local</li></ul>
   <h3>Commands</h3><ul class="gate-criteria"><li>python tools/verify.py --profile documents</li><li>python tools/verify.py --profile service</li><li>python tools/verify.py --profile e2e-local</li></ul>
-  <p data-task-claim="CAP-05.S06.T03" data-task-owner="unclaimed" data-task-branch="none" data-task-base-sha="none"><strong>Claim projection:</strong> owner <code>unclaimed</code> · branch <code>none</code> · base <code>none</code></p>
+  <p data-task-claim="CAP-05.S06.T03" data-task-owner="codex-w2-implementation" data-task-branch="codex/w2-implementation" data-task-base-sha="c7073e66de252514df6e1e209e011233a841d5ba"><strong>Claim projection:</strong> owner <code>codex-w2-implementation</code> · branch <code>codex/w2-implementation</code> · base <code>c7073e66de252514df6e1e209e011233a841d5ba</code></p>
 </section>
 <section class="task-summary" data-task-plan="CAP-05.S06.T03" data-task-plan-sha256="4a501a65d25a6e271577ef945fbdc1180dd0907fbf93f87134a724689306dbe2"><div class="section-heading"><span class="eyebrow">Approved implementation intent</span><h2>Task plan</h2></div><article class="plan-article compact-article"><pre class='markdown-fallback'>### 9.3 `CAP-05.S06.T03` - Implement parser upgrade comparison and stale propagation
 **Objective:** Batch reparse preview, old/new structure diff, anchor migration candidates, acceptance, and dependent-output invalidation.
@@ -235,13 +235,63 @@ These sources constrain implementation choices but do not replace repository-spe
 **Plan status:** PROPOSED - HUMAN APPROVAL REQUIRED.
 **Authoritative work state remains:** `planning/backlog.yaml`.</pre></article></section>
 <section class="section-heading"><span class="eyebrow">Task-start planning</span><h2>Assigned worksheet</h2><p>The worksheet is an optional planning aid and does not create a new approval or task state.</p></section>
-<p class="decision-meta" data-task-worksheet-absent="CAP-05.S06.T03">No optional task-start worksheet is assigned. This does not block execution.</p>
+
+<details class="plan-details task-worksheet" open data-task-worksheet="CAP-05.S06.T03" data-worksheet-sha256="267d5bb57169cda35fe084d29cb5ca45551ca2686395bee700d9f2352aa4eb46">
+  <summary>Assigned task-start worksheet</summary>
+  <div class="worksheet-meta"><strong>Source:</strong> <code>artifacts/evidence/CAP-05.S06.T03.task-start.md</code> · <strong>SHA-256:</strong> <code>267d5bb57169cda35fe084d29cb5ca45551ca2686395bee700d9f2352aa4eb46</code></div>
+  <article class="plan-article"><pre class='markdown-fallback'># CAP-05.S06.T03 — acceptance closure
+
+Claim base: `c7073e66de252514df6e1e209e011233a841d5ba` on the active W2
+campaign, branch `codex/w2-implementation`, owner `codex-w2-implementation`.
+Predecessor CAP-05.S06.T02 is DONE, independently approved and locally integrated.
+The claim&#x27;s existing taskctl receipt reports matched-and-replaced publication.
+
+Authority: approved CAP-05.S06 section 9.3 and its failure/performance criteria;
+accepted ADR-0029 immutable document authority and per-document reprocessing;
+ADR-0025 durable job/attempt and explicit session continuation; existing protected
+revision/correction/anchor and dependency contracts; Academic Minimal 1.9 Parsing
+Quality, its Reprocess selected action, reconciliation ledger and impact region.
+This worksheet implements that scope and adds no approval or new experience.
+
+| Material boundary | Observable rule | Planned proof |
+|---|---|---|
+| Preview and explicit acceptance | Batch parsing and comparison leave accepted heads unchanged. Every new replacement of an accepted normalized revision requires the comparison/impact path. Initial ordinary acceptance and exact historical retries remain compatible. | Pure difference tests plus protected alternate-route denial, initial acceptance and historical retry characterization. |
+| Complete comparison | Fingerprint unchanged structure before bounded similarity work. Distinguish unchanged, moved, modified, added, removed, ambiguous and unresolvable objects/anchors. Exact repeated quotes produce ambiguity rather than a guessed migration. Complete server counts govern decisions despite paging. | Authored Unicode, geometry, repeated-quote and paged-tail fixtures; bounded comparison measurements. |
+| Reconciliation authority | Every effective retained human correction is accounted for, including labels, order, split/merge, exclusions, geometry and reference targets. Exact old decision/operation/source IDs and hashes, new receipt/job/attempt/parser selection, new targets/old-value hashes and current actor/rationale bind the confirmation. Unresolved or omitted obligations block acceptance. | Omission, duplicate, cross-item/job/attempt and valid same-text target substitution negatives; all operation-family carry-forward cases. |
+| One accepted publication | Machine candidate, reconciled correction, final head, human decisions, provenance/outbox and dependency intents compose on one current-source-fenced writer. No externally visible intermediate accepted head. Literal existing correction verification remains valid after reopen; new lineage starts at the authenticated new machine receipt. | Real encrypted SQLCipher mixed machine/correction acceptance, normal verifier readback and deterministic faults after each inner publication/impact boundary. |
+| Partial batch and recovery | Each document accepts independently. Cancellation stops future items and preserves completed acceptances. Reopen/continue revalidates remaining bases and rights; neither bulk acceptance nor blind retry is allowed. | Two-document partial acceptance, cancellation, failed item, reopen, changed base and exact-command deduplication tests. |
+| Session and current principal | Completed old-session facts remain readable under current authority. An unfinished parse needs explicit current-session continuation with a new immutable input/command/job; security-lock work never resumes automatically. Current exact Work/source authority governs rematches. | Actual Native/Core current and old-session, rights, stopped-delivery and explicit continuation proof; protected stale authority cases. |
+| Selective stale propagation | Authenticate current graph before append; record exact post-append run/checkpoint. Historical revision relations are non-material, so new accepted objects do not stale themselves. Apply small impact in the writer; larger impact remains explicitly pending until resumed. | Direct/indirect/conditional/non-material/unreported/unrelated graph cases; current new objects; immediate and pending propagation/restart. |
+| Governed journey | Reprocess selected, inspect old/new differences, reconcile every obligation, preview impact and explicitly accept each document before returning to Reader. Dirty/busy/unknown issued commands guard ordinary navigation, stage changes and Return. Unknown commands retain exact payloads; lock clears visible private state. | Strict codec/request negatives, production component/root journeys and one real Windows renderer/Native/supervised Core encrypted acceptance/reopen witness. Programmatic DOM checks alone do not claim OS accessibility. |
+| Evidence and compatibility | Preserve literal accepted storage/migration and document contracts, historical revisions/anchors and all adverse evidence. Qualifying checks bind a committed candidate with source/runtime inputs and shared HEAD held fixed. | Affected schemas/ADR/format/lint/type/UI authority, directly affected predecessor regressions and fresh criterion-linked report plus independent review. |
+
+The independent read-only design preflight is incorporated above. It exposed
+ordinary-accept bypass, old-session continuation, nested writer composition,
+literal correction-verifier obligations, self-staling new objects, incomplete
+reconciliation and dependency-checkpoint sequencing. These are prospective
+acceptance rows, not formal review findings or a new human gate.
+
+Add material failing/characterization tests before product edits where practical.
+Integration wiring follows the stable Core wire contract; existing T02 fixtures
+and authenticated source/revision history are the predecessor, rather than a
+new approximation. No migration or new cryptographic authority is demonstrated.
+
+Selected task checks cover the affected product modules, contracts, protected
+persistence/authority, direct regressions and bounded desktop journey. Full
+repository/profile, shipping/install/signing, cross-capability, actual OS
+accessibility and fresh Wave qualification stay at S06/W2 scope. All inherited
+architecture and lint failures remain unwaived. No new framework/controller,
+hook, scanner, policy or CI source work; strictly additive existing Python scope
+registration precedes the first affected UI commit. No 8/16 GiB execution, new
+minimum-memory claim or optional parser/Reader optimization. Larger model work
+remains W5; the approved Reader p95 target remains 3 seconds.</pre></article>
+</details>
 <section class="section-heading"><span class="eyebrow">Execution evidence</span><h2>Review packets, rounds, and current projection</h2><p>Append-only controls retain every immutable round and finding closure. Pre-policy tasks remain explicitly latest-review-only.</p></section>
 
 <section class="review-toolbar" data-task-review-id="CAP-05.S06.T03" data-review-mode="latest-review-only">
   <h3>CAP-05.S06.T03 — Implement parser upgrade comparison and stale propagation</h3>
   <p><strong>Legacy latest-review-only projection.</strong> No append-only review rounds are recorded; this view does not fabricate historical attempts.</p>
-  <dl class="summary-grid" data-current-review-projection="CAP-05.S06.T03" data-current-review-result="not-reviewed" data-current-reviewer="none" data-current-reviewed-at="none"><div><dt>Task status</dt><dd>READY</dd></div><div><dt>Latest result</dt><dd>not reviewed</dd></div><div><dt>Reviewer</dt><dd>none</dd></div><div><dt>Reviewed at</dt><dd><code>none</code></dd></div></dl>
+  <dl class="summary-grid" data-current-review-projection="CAP-05.S06.T03" data-current-review-result="not-reviewed" data-current-reviewer="none" data-current-reviewed-at="none"><div><dt>Task status</dt><dd>IN_PROGRESS</dd></div><div><dt>Latest result</dt><dd>not reviewed</dd></div><div><dt>Reviewer</dt><dd>none</dd></div><div><dt>Reviewed at</dt><dd><code>none</code></dd></div></dl>
   <p><strong>Latest notes:</strong> None</p>
 </section>
 <nav class="page-turn" aria-label="Task navigation"><a class="button button-quiet" href="CAP-05.S06.T02.html">Previous</a><a class="button button-primary" href="CAP-05.S06.html">Next</a></nav>

@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 011c7d97bce1e0b88264896887bac6be044202dd849c33d9848e2de241ee42f7
+source_sha256: da01e50fd23143c46317d56c89d04f6cbd6daf295592c603f29665dcfb72cd6d
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -12383,13 +12383,13 @@ Original tasks and approvals remain unchanged.
 
 #### - [ ] CAP-05.S06.T03 - Implement parser upgrade comparison and stale propagation
 
-**Status / priority / estimate / risk:** `READY` / `P0` / `L` / `high`
+**Status / priority / estimate / risk:** `IN_PROGRESS` / `P0` / `L` / `high`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
 **Dependencies:** `CAP-05.S06.T02`
 
-**Owner / review:** - / - (`-`)
+**Owner / review:** codex-w2-implementation / - (`-`)
 
 **Objective:** Batch reparse preview, old/new structure diff, anchor migration candidates, acceptance, and dependent-output invalidation.
 
