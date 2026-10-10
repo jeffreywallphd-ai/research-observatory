@@ -1,0 +1,490 @@
+{
+  "task_id": "CAP-05.S05.T03",
+  "attempt_id": "R01",
+  "reviewer": "agent:/root/reader_table_figure_review",
+  "result": "approved",
+  "reviewed_state_commit": "421747d5ebc6c7045b9d34dea9d1c6560c6c30c5",
+  "candidate_commit": "421747d5ebc6c7045b9d34dea9d1c6560c6c30c5",
+  "base_commit": "2b10a266c763e643b8739d79d494663eb00e3f21",
+  "findings": [],
+  "closures": [],
+  "acceptance_reviews": [
+    {
+      "criterion_index": 1,
+      "result": "satisfied",
+      "assessment": "Table and figure observations retain exact canonical object/cell/source identities, raw/NFC codepoint selectors, sparse row/column/merged spans and original-page geometry. Reported captions, labels and header semantics require reconstruction from authenticated retained native or Docling artifacts; supported namespaces/container ownership are enforced, competing relationships remain ambiguous and missing relationships are not promoted. Preview authority pins the exact original object/digest and unrotated region and remains distinct from receipt membership or an image URL. Every collection, object, cell and preview remains scholarly unverified; low and unknown confidence are visible triage states. Closed one-object/eight-cell Reader pages expose totals, truncation and pinned cursors. Fresh actual shipping initial/restart display reported captions and unknown/unverified quality, page through all ten retained cells, jump to the exact canonical caption and ninth cell, show the protected original table page 2 and figure page 3 of 50, append an explicit exclusion rationale and genuinely return to the selected work/version with protected text cleared. Encrypted post-observation confirms unchanged original/accepted source pins and identical retained collection after a new-process restart. Authored accepted parser IR proves wiring and state only."
+    },
+    {
+      "criterion_index": 2,
+      "result": "satisfied",
+      "assessment": "Fresh focused proof covers 14 extraction/Reader cases, 6 encrypted repository cases, 1 actual Windows Core/API authority case, 3 affected reference/citation service/API cases, 15 material dependency cases, 11 renderer contract cases, 30 mounted Reader journeys and 5 Native closed-command cases. Material challenges include foreign/shared wrapper ownership, missing/conflicting captions, sparse grid bounds, source/preview substitution, authenticated retained bytes, cumulative admission before copying/serialization, bounded codepoint truncation and pinned paging. The protected writer rechecks current human, Native/project/session, Intent/privacy and source inspect/derive authority through preparation, publication, exact retry and delivery; immutable source/material freshness, CAS, command reuse, actor change, denial, cancellation and precommit rollback have focused proof. Encrypted reopen and refresh preserve explicit exclusion history. Strict Core/Native/client shapes reject renderer grants and unsafe values; inert UI, keyboard/focus, both themes/narrow width, Lock/stale/late responses, exact source mismatch and unknown-issued admission retention are exercised. Actual protected Core/vault/SQLCipher and shipping Renderer/Wry/Native invoke establish separate real-principal boundaries. Both shipping processes exit 0 and leave zero owned descendants. The three adverse qualifying predecessors remain FAIL with narrow fresh replacements and preserved full assertions."
+    },
+    {
+      "criterion_index": 3,
+      "result": "satisfied",
+      "assessment": "The exact 39-path claim-base diff matches the frozen submission and is bounded to protected table/figure extraction/exclusion, opaque Core/Native commands, strict client, inert approved 1.9 Reader, schemas, fixtures/tests, documentation and normal task metadata. Separate enrichment revisions use the existing canonical writer/schema28 index/encrypted object/provenance/material-input/outbox contracts; original parse and earlier collections remain immutable. Complete material dependencies and current source authority fence publication, retry, refresh and delivery. Literal migration28, accepted structure/revision v1 and storage profile blobs are unchanged. Proposed ADR-0050 documents existing accepted authority without a new decision or supersession. Fresh affected format/lint/types/schema/ADR/style/UI mapping, frontend assembly and locked offline Native release/test builds pass. No automation framework/controller/hook/CI development, new identity store, model/parser/OCR execution, external graphic fetch, governed reference replacement, RAM-tier requirement, latency tuning or release criterion change was introduced."
+    }
+  ],
+  "advisory_resolution": {
+    "formal_round_statement": "The namespace ownership and delayed cumulative admission findings were informal pre-submission source preflight. First-failing regressions and corrections are preserved. R01 has no prior formal attempt or formal open finding; no historical round, controlled finding ID or controlled closure is invented.",
+    "current_candidate": "421747d5ebc6c7045b9d34dea9d1c6560c6c30c5",
+    "disposition": "resolved_at_current_candidate",
+    "controlled_closure_created": false,
+    "findings": [
+      {
+        "subject": "Foreign-namespace table-wrap must not establish caption ownership",
+        "first_failing_log": "artifacts/tmp/CAP-05.S05.T03.preflight-characterization-01.log",
+        "assessment": "The first-failing fixture showed a foreign namespace wrapper falsely reporting caption association. Current native relationship reconstruction permits only the authenticated supported JATS/XML namespace/container semantics; fresh exact-source proof replays the denial and legitimate/shared wrapper cases."
+      },
+      {
+        "subject": "Cumulative admission must precede whole-entry copying and serialization",
+        "first_failing_log": "artifacts/tmp/CAP-05.S05.T03.preflight-characterization-01.log",
+        "assessment": "The first-failing regression stopped whole-entry serialization and proved it was reached before rejection. Current extraction charges retained text/ranges/anchors and object overhead before construction or serialization, within the request cumulative artifact ledger. Fresh exact-source proof replays the regression."
+      }
+    ],
+    "check_ids": [
+      "table-figure-exact-source",
+      "encrypted-table-figure-publication",
+      "actual-core-table-figure-authority"
+    ]
+  },
+  "producer_boundaries": {
+    "disposition": "adequate_for_observed_proof",
+    "assessment": "Reader02 replaces a global one-name count search with the same complete count string joined only from accessible Text descendants of the unique exact owned table 1 region. Reader03 permits only exact-owned-region-not-unique:table 1:0 inside the existing 15-second cell-count loop while product data is intentionally cleared for a pending protected read. Duplicate regions and every other such error fail. Inherited at-most-two additional attempts apply solely to read-only dump/dump-region ElementNotAvailableException observations; writes are not retried. Passing runs retain each observation and subsequently prove complete count/cell/source/page/exclusion/return assertions. Fresh r04/r05 isolated fixtures preserve exact lawful authored source lineage. No product/HEAD change or assertion reduction occurred, and neither failed predecessor is reclassified as passing."
+  },
+  "independence": {
+    "implementation_owner": "codex-w2-implementation",
+    "statement": "I independently reviewed the applicable procedure, canonical task/dependencies, approved S05 material sections and UI1.9 mapping, task-start record, accepted ADR-0029 boundaries, exact claim-base source diff, authority/persistence/resource/cross-process paths, first-failing preflight corrections, owned qualification producers/raw results, complete selected input closure and frozen R01. I authored only this independent review ledger. I did not alter product, tests, planning, producer/controller, backlog, source or HEAD and ran no qualifying build/test/model/benchmark/clipboard replay. A bounded pure in-memory authored-source relationship trace informed the optional observation below. Normal atomic submit metadata publication occurred after product qualification and does not change its committed source proof."
+  },
+  "verification_selection": {
+    "selectedCommandIds": [
+      "desktop:application",
+      "desktop:unit",
+      "documents:unit",
+      "foundation:adr",
+      "foundation:quality",
+      "foundation:ui-change",
+      "graph:unit"
+    ],
+    "riskAnalysis": "Changed protected table/figure publication, exact source/image/caption identity, resource bounds and Core/Native/Reader contracts require narrow fresh schema/type/ADR/style/contract tests, actual SQLCipher/Core denial/publication, affected reference/citation API regression, material replacement, mounted journeys and actual shipping Native/restart proof. No migration/dependency/framework change. Hold the committed candidate and selected actual installed input closure stable.",
+    "deferred": [
+      "Integrated S05 task combination, downstream handoff, complete affected slice matrix and independent deep slice review remain required.",
+      "S06 implementation, fresh full affected/repository/profile W2 qualification and security/privacy/rights/accessibility/performance/packaging/platform matrix, independent Wave review and human G2 remain required.",
+      "No 8/16GiB run or minimum2/3GiB claim. Larger computing remains W5. Approved3s Reader latency and owner-accepted parser overage are not tuned/replayed at this task.",
+      "Inherited built-frame CSP/startup predicate and broad desktop lint/quality/inventory debt remain disclosed and unwaived. Broad desktop lint reported three unchanged findings; no automation-framework repair is performed."
+    ]
+  },
+  "scope_limits": {
+    "qualification": "CAP-05.S05.T03 R01 only at the exact committed candidate; no S05 integrated slice/checkpoint/Wave or human release approval.",
+    "synthetic_source": "Authored accepted parser/adapter IR and mounted ports are synthetic. No model/parser accuracy, scholarly correctness, numerical verification, study outcome or acceptance probability is claimed.",
+    "actual_principal": "Actual Windows vault/SQLCipher, supervised Core and shipping Renderer/Wry/Native invocation in an owned integration-harness project; unit/mounted substitution boundaries are separate.",
+    "runtime": "Fresh frontend and Native assembly plus authenticated installed fixture runtime/signed worker/guardian selectors. This is not a sealed installer, cold all-crate rebuild, signing or complete platform release qualification.",
+    "physical_closure": "Actual initial/restart Native exit and whole owned-process cleanup are proved. Mounted Lock/late and unknown-issued cases prove conservative client accounting with synthetic ports; no manual in-flight OS Lock, output/clipboard/printer or hardware-tier proof is invented.",
+    "resource": "Kernel aggregate committed peaks describe the whole owned process job and do not measure viewer-owned buffers, working-set peak, minimum RAM, maximum document throughput or latency. No 8/16GiB/model run, minimum2/3GiB claim or unchanged latency profile replay.",
+    "later_work": "Integrated S05 end-to-end/failure/denial/cancellation/restart matrix and independent deep slice review, S06, fresh full affected/repository/profile W2 security/privacy/rights/accessibility/performance/packaging/platform qualification, independent Wave review and separate human G2 remain required. Inherited unwaived CSP/startup and broad quality/inventory debt remains disclosed."
+  },
+  "preserved_adverse_observations": [
+    {
+      "path": "artifacts/tmp/CAP-05.S05.T03.qualifying-focused-01.json",
+      "sha256": "f351840484df4ec8138ff741ede8874d127b4601742983d7f1ca7dc16722ba0d",
+      "qualifyingAsWholeReport": false,
+      "disposition": "Original aggregate FAIL preserved. Five encrypted-publication cases passed, and one case failed in disposable project setUp with WinError 5 before table/figure behavior. A fresh unchanged-candidate six-case group retry passed."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S05.T03.qualifying-reader-01.initial.json",
+      "sha256": "dd725704146625b05a45520f6833e61490ac295f87c2c2ecea8ea481c21a24ac",
+      "qualifyingAsWholeReport": false,
+      "disposition": "Shipping UI displayed rows 9/10 but the count sentence was split across accessible Text descendants. Fresh reader02 joins the exact full count only inside the unique owned table 1 region and retains cell, source, page, exclusion, restart and cleanup assertions. Product unchanged."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S05.T03.qualifying-reader-02.initial.json",
+      "sha256": "3070d71508adc2d3adf1588b1a529eb1ddc79a5cfc615b42f74a0cb5e57ec307",
+      "qualifyingAsWholeReport": false,
+      "disposition": "The exact table region was intentionally absent while the cell read was pending. Reader03 polls only that exact zero-region observation inside the original 15s cell-status wait. Duplicate regions and other errors fail; the full count and source assertions remain unchanged."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S05.T03.adr-development-01.log",
+      "sha256": "0c3013cc5654d1c87a7589fcfb97a1b640f2d39980f72e7c82d6013bc2c9b5ec",
+      "qualifyingAsWholeReport": false
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S05.T03.candidate-commit-01.log",
+      "sha256": "208589260a30c6a236df4f5c5fddc57f3318d0a4b4226b82c2fa1e1b2bbe7a85",
+      "qualifyingAsWholeReport": false
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S05.T03.cell-paging-development-01.log",
+      "sha256": "2691d669a733911c82209c71a11fe6f9b385eb51ce9b059583cf78705ced10b4",
+      "qualifyingAsWholeReport": false
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S05.T03.claim-01.log",
+      "sha256": "05f3b8254d875735ab346ef374593a4aa4985e22d403f1c2d001733999ee3dac",
+      "qualifyingAsWholeReport": false
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S05.T03.claim-site-01.log",
+      "sha256": "ebd764e997cba93a5e4f771fedfbabc3a04f5a90d55a7b75197cfdfba3d16a7f",
+      "qualifyingAsWholeReport": false
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S05.T03.claim-views-01.log",
+      "sha256": "5c70bb33b88608bbe98be37b45436727ec04c5b01e06c6e384682f622921b27b",
+      "qualifyingAsWholeReport": false
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S05.T03.claim-views-check-01.log",
+      "sha256": "36ebe8ba5eed16d416087f957ce901132e936a4ed14c97dbcb91651c3e2678aa",
+      "qualifyingAsWholeReport": false
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S05.T03.client-characterization-01.log",
+      "sha256": "03ad1118f377312bb69b863b9bf7f3af211ac0831cbc71f36d55af1f074b6315",
+      "qualifyingAsWholeReport": false
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S05.T03.client-characterization-02.log",
+      "sha256": "690ce4ca0c02e456ddcd1926cd9d9bfdbc928a2f9035f68c5695b12a0207eb30",
+      "qualifyingAsWholeReport": false
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S05.T03.client-development-01.log",
+      "sha256": "99938d38b2e4cf2cdf2cf40f724b16c3d5b93a43c810a7238541f509de886ce7",
+      "qualifyingAsWholeReport": false
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S05.T03.docling-fixture-diagnostic-01.log",
+      "sha256": "6a400ea2e2b108247b15f94f300ec89b36de2f47344ee23a68dc6192dcc30b3e",
+      "qualifyingAsWholeReport": false
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S05.T03.domain-development-02.log",
+      "sha256": "19984e62dcc6879fda553731c4cc7affc7af5f1c0f953b739271865ed0991482",
+      "qualifyingAsWholeReport": false
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S05.T03.domain-development-03.log",
+      "sha256": "d7d25f4bc1b02df96c15b642774c7f7f069cf9c12dc65e842e8fe16453f7146b",
+      "qualifyingAsWholeReport": false
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S05.T03.experience-record-01.log",
+      "sha256": "1027e8f2ddd16ae768eb5c38bab229853a15e85091f9d3702b603aef51c568ee",
+      "qualifyingAsWholeReport": false
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S05.T03.first-characterization-01.log",
+      "sha256": "1d62bc43700e72a6e458ce59456ffb9d0ae4be837e0928e0a76dfa53dbba9805",
+      "qualifyingAsWholeReport": false
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S05.T03.lint-development-01.log",
+      "sha256": "3a3e15c114c1d22f57f369ca63ce0eafe7f0403453ce9f69bf2230e5edfd2c5c",
+      "qualifyingAsWholeReport": false
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S05.T03.lint-development-02.log",
+      "sha256": "fb8c82b5e1cbbbe9372158e65cf64b3418766d02926dffd35a244bba98d5b189",
+      "qualifyingAsWholeReport": false
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S05.T03.lint-development-03.log",
+      "sha256": "a4443afdcfb6d7363adb285762515ccf7cf50473b1a05c20c1a50f6bed4d26b0",
+      "qualifyingAsWholeReport": false
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S05.T03.mounted-build-development-01.log",
+      "sha256": "9ea6421a810ca1da5dd76c23d271fa3c04faba282931e7c53511507f2860655e",
+      "qualifyingAsWholeReport": false
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S05.T03.mounted-development-01.log",
+      "sha256": "5c1a43df5c061271e479819b23e2204799d45a071ce71c4f4f6e36c45e3b3413",
+      "qualifyingAsWholeReport": false
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S05.T03.native-development-01.log",
+      "sha256": "7bae17ada7ef173b5d2f483d9089a1d06165b715763fb82ea02cf91cd57196c5",
+      "qualifyingAsWholeReport": false
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S05.T03.pre-candidate-views-01.log",
+      "sha256": "33442ed1be8e637d6f75078049fbb7cbc65219ab6f4b397560e988edc278672b",
+      "qualifyingAsWholeReport": false
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S05.T03.pre-submit-campaign-01.log",
+      "sha256": "775cf3504c1e68c2d542f1d401a08f738f2c29d9c00243e91f4c8ff2625c4cf9",
+      "qualifyingAsWholeReport": false
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S05.T03.preflight-characterization-01.log",
+      "sha256": "f069aa91854cd0b1b03fa6748872989cc797602aa80656993d20abf7d9183a08",
+      "qualifyingAsWholeReport": false
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S05.T03.preflight-replay-01.log",
+      "sha256": "7f0cec645736a9bf2f7f027aa8d287772177af4f23b74d63495df07692a3c661",
+      "qualifyingAsWholeReport": false
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S05.T03.prepare-shipping-fixture-01.log",
+      "sha256": "93d615f54d93c39307e858ea29bc19e720796dfe26362b5c46ec09a6c41ff9ae",
+      "qualifyingAsWholeReport": false
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S05.T03.prepare-shipping-fixture-02.log",
+      "sha256": "f9d8ef8c4cd7c56a065caac1345507687f9d6ba595c190a0eb3e82fe63adbe0e",
+      "qualifyingAsWholeReport": false
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S05.T03.prepare-shipping-fixture-03.log",
+      "sha256": "ec27faccda8ba021170f1aea20bdba0c0ea84113b4ba0cf58483fec6260a6142",
+      "qualifyingAsWholeReport": false
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S05.T03.prepare-shipping-fixture-05.log",
+      "sha256": "bb113afd33b6ea5430ef7fec2c30c5dc9aaf6c28775995455bd7ca7452777019",
+      "qualifyingAsWholeReport": false
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S05.T03.publication-authority-development-01.log",
+      "sha256": "a079de1ace4948e7e7cf7d75118eaf710bd65f9c33447bcc27c180f64ce99cd1",
+      "qualifyingAsWholeReport": false
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S05.T03.reader-baseline-01.before.log",
+      "sha256": "195ef5280f4469179b83ff2c3ea6383c40b59774616988badb3f5a5aa913a7ae",
+      "qualifyingAsWholeReport": false
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S05.T03.reader-baseline-02.before.log",
+      "sha256": "bebd273d255a6648237c16b696ac49310946a7881ea4f64681ea51e46285d416",
+      "qualifyingAsWholeReport": false
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S05.T03.reader-baseline-03.before.log",
+      "sha256": "30a43b91eaa27a5eeece2f749ec6e2ebcfd94773512d3127ea63a13346652cf2",
+      "qualifyingAsWholeReport": false
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S05.T03.reader-characterization-01.log",
+      "sha256": "ede07d042523e128e3b0d8ff452dc70b5e1ae14d3b963b9e08be170b95d4d4fe",
+      "qualifyingAsWholeReport": false
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S05.T03.repository-characterization-01.log",
+      "sha256": "a4dfe6f8364db680d6c701339c5613bb437d17f17e9cb6b6228b0711486a42e8",
+      "qualifyingAsWholeReport": false
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S05.T03.repository-development-01.log",
+      "sha256": "8338595c51e7593448527ef19e3c6f3b5ab6bcfc95496c2b0bac9c03e84488a1",
+      "qualifyingAsWholeReport": false
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S05.T03.repository-development-02.log",
+      "sha256": "71771fa3103bffa0baa309deb6889981ac9fa06d47be4924478bf648eb0b5fed",
+      "qualifyingAsWholeReport": false
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S05.T03.repository-diagnostic-01.log",
+      "sha256": "118a61da43d2d45cabfbf0a10df7f878670f5420f02b2926d8994714722a96bf",
+      "qualifyingAsWholeReport": false
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S05.T03.repository-diagnostic-02.log",
+      "sha256": "06653efc3f3fd9bcd280206fdbafa03856583c6a77049f39a5ceba15d7109a0d",
+      "qualifyingAsWholeReport": false
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S05.T03.repository-reader-development-01.log",
+      "sha256": "f66f65d5cdc741491ed30a7f4288c071b4b0f8cb4062a3b8c59a84df9ff7598b",
+      "qualifyingAsWholeReport": false
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S05.T03.selector-rationale-characterization-01.log",
+      "sha256": "df5d61607ae800bcad4678b6496d709b963d12a4ea5a3ecfb247ea4886b3cf2f",
+      "qualifyingAsWholeReport": false
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S05.T03.service-characterization-01.log",
+      "sha256": "a5d0a9f8ed596a0973535a9cb2c533556b4be358e6935b395a52d13b21c06584",
+      "qualifyingAsWholeReport": false
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S05.T03.service-characterization-02.log",
+      "sha256": "2906e489fa3208901400312720c1870b106db025fb4f83becf7abb93c7571e2e",
+      "qualifyingAsWholeReport": false
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S05.T03.service-development-01.log",
+      "sha256": "3f08f590f1cdb406ac90946574b3b3c7bed01dbf1f86bda0c349f9abd6f739a3",
+      "qualifyingAsWholeReport": false
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S05.T03.typecheck-development-01.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "qualifyingAsWholeReport": false
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S05.T03.types-development-01.log",
+      "sha256": "de2096eeeb92db4f6f3be379e0680bf967925b021a2d00f91e774586b47712d9",
+      "qualifyingAsWholeReport": false
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S05.T03.types-development-02.log",
+      "sha256": "34515209d2287a8de97981285fe3df0928f1953deaadba47aab70fa02f28a671",
+      "qualifyingAsWholeReport": false
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S05.T03.types-development-03.log",
+      "sha256": "5a10f505b0263dbfed9c74f6fc359390515751d16bef6bb058b4a564b86f3b4e",
+      "qualifyingAsWholeReport": false
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S05.T03.types-development-04.log",
+      "sha256": "90df3634db1e5c4eb1c87d518844d286752381b0ba4b48e8d338ee91669f07fc",
+      "qualifyingAsWholeReport": false
+    }
+  ],
+  "adverse_assessment": "The original focused aggregate remains FAIL: five publication cases passed and one disposable-project setUp rename raised WinError5 before table/figure assertions; the same fresh six-case group passes. Reader01.initial remains FAIL for a composite accessible status string and Reader02.initial remains FAIL for the exact region absence during the intentional pending clear. Reader03 uses narrow observed read-only polling and preserves complete identity, cells, pages, exclusion, restart and cleanup assertions. Development first-failing, fixture, type/lint/schema, authored-source geometry and temporary access diagnostics remain preserved as nonqualifying evidence; unchanged broad lint debt is not waived. No formal prior attempt or third-submission root-cause requirement is invented from ignored producer retries.",
+  "evidence_reproduction": {
+    "artifact_authentication": {
+      "machine_artifact_count": 129,
+      "preserved_adverse_count": 52,
+      "artifact_raw_canonical_and_report_hash_comparisons": 253,
+      "selected_check_count": 24,
+      "changed_path_count": 39,
+      "changed_files_match_exact_base_diff": true,
+      "missing_or_mismatched_artifacts": [],
+      "missing_or_mismatched_check_bindings": [],
+      "selected_unique_hashed_path_count": 13192,
+      "selected_input_bytes": 710716165,
+      "selected_input_mismatches": [],
+      "cross_report_input_hash_conflicts": [],
+      "selected_input_rows_by_report": {
+        "artifacts/tmp/CAP-05.S05.T03.qualifying-focused-01.json": 14312,
+        "artifacts/tmp/CAP-05.S05.T03.qualifying-publication-retry-01.json": 14312,
+        "artifacts/tmp/CAP-05.S05.T03.qualifying-native-build-01.json": 446,
+        "artifacts/tmp/CAP-05.S05.T03.qualifying-native-tests-build-01.json": 446,
+        "artifacts/tmp/CAP-05.S05.T03.qualifying-native-units-01.json": 453,
+        "artifacts/tmp/CAP-05.S05.T03.qualifying-reader-03.initial.json": 10298,
+        "artifacts/tmp/CAP-05.S05.T03.qualifying-reader-03.restart.json": 10298
+      },
+      "selected_input_authentication_scope": "Deduplicated current source, installed dependencies/runtime, tools, producer and assembly paths authenticated read-only before atomic submit metadata publication; all seven report producer and candidate-before/after bindings match. Tracker publication afterwards is separate from stable product evidence.",
+      "current_source_inputs_changed_by_reviewer": false
+    },
+    "qualifying_measurements": {
+      "selected_case_counts": {
+        "extraction_and_reader": 14,
+        "encrypted_repository": 6,
+        "actual_core_api": 1,
+        "affected_reference_citation_inputs": 3,
+        "material_dependency_replacement": 15,
+        "renderer_units": 11,
+        "mounted_reader": 30,
+        "native_closed_commands": 5
+      },
+      "shipping_initial": {
+        "path": "artifacts/tmp/CAP-05.S05.T03.qualifying-reader-03.initial.json",
+        "result": "PASS",
+        "duration_seconds": 77.24677640001755,
+        "owned_exit": 0,
+        "owned_cleanup_active_processes": 0,
+        "explicit_fresh_extraction": true,
+        "exact_objects_cells_caption_source_and_distinct_original_pages": true,
+        "reasoned_exclusion_and_genuine_return": true
+      },
+      "shipping_restart": {
+        "path": "artifacts/tmp/CAP-05.S05.T03.qualifying-reader-03.restart.json",
+        "result": "PASS",
+        "duration_seconds": 67.98183229996357,
+        "owned_exit": 0,
+        "owned_cleanup_active_processes": 0,
+        "retained_encrypted_collection_identical_to_initial": true,
+        "exact_original_accepted_and_cell_source_pins": true
+      },
+      "package": {
+        "files": 197,
+        "frontend_source_pins": 246,
+        "current_core_contract_source_pins": 1024,
+        "actual_installed_runtime_files": 8758,
+        "signed_worker_files": 61,
+        "source_manifest_sha256": "bc6a2e877001c53958a60586387ebe7170f6a8143795a837deedd4bbb4dea654",
+        "native_build_record_sha256": "d6096d03d10d74bf0426b1cd4cd03b85f7cd35b20d8dc86d0630808f5c42316e"
+      }
+    },
+    "reviewer_current_candidate_qualifying_tests_executed": [],
+    "frozen_packet_authentication": {
+      "result": "PASS",
+      "existing_read_only_binding_function": "taskctl.task_submission_packet_errors",
+      "errors": [],
+      "manifest_binding_function": "taskctl.validate_task_evidence",
+      "manifest_errors": [],
+      "submitted_at": "2026-10-10T10:22:14+00:00",
+      "status_before_review": "REVIEW",
+      "submitted_by": "codex-w2-implementation",
+      "packet_sha256": "2d52451ae5e18c6884650c8429f6126e526cf926600216f83dd9f3d2a244d0d1",
+      "evidence_reference": {
+        "type": "criterion-manifest",
+        "path": "artifacts/evidence/CAP-05.S05.T03.R01.json",
+        "sha256": "8de2f34f0fd0cc641416ce4cf159a300fab1e123a47f6cb26b72eae14fe295e9",
+        "commit": "421747d5ebc6c7045b9d34dea9d1c6560c6c30c5",
+        "recorded_at": "2026-10-10T10:22:14+00:00"
+      },
+      "evidence_raw_sha256": "17bbfe22cffc27434e1d156732a3152709aa66db1e93ac74f83c57fe4b0b0621",
+      "evidence_hash_convention": "UTF-8 text with CRLF/CR normalized to LF; raw SHA256 separately retained",
+      "acceptance_criteria_sha256": "f5c3970923df91fbc51a32615c8c0306b91ac1cecb8fe732bf245e8a20452ec3",
+      "selection_sha256": "624149a72e6198ebdcd260ffa286f39210844b70fa145b08ccc247c22cfa5134",
+      "prior_attempt_id": null,
+      "prior_formal_attempt_count": 0,
+      "formal_open_finding_ids_before_review": [],
+      "selected_command_id_count": 7,
+      "selected_check_count": 24,
+      "base_ancestry_verified": true,
+      "head_verified": "421747d5ebc6c7045b9d34dea9d1c6560c6c30c5",
+      "backlog_snapshot_raw_sha256": "fa91727a9e7d9d5dcc981116225967eac59dec4106fab051cfa0240595d71a0d",
+      "existing_submit_receipt": {
+        "path": "artifacts/tmp/CAP-05.S05.T03.taskctl-submit-R01.log",
+        "status": "COMMITTED",
+        "cas_outcome": "matched-and-replaced",
+        "successor_sha256": "fa91727a9e7d9d5dcc981116225967eac59dec4106fab051cfa0240595d71a0d"
+      }
+    },
+    "reviewer_authentication_diagnostics": "The existing interpreter real-location warning accompanied successful read-only inspection/hash/binding commands. An initial broad file inventory encountered access-denied paths in unrelated protected fixture directories; exact task-owned files were read directly. Some initial unfiltered report displays were truncated; subsequent targeted fields and full byte hashes supplied complete relevant authentication. No qualification or product finding is inferred from these inspection diagnostics."
+  },
+  "optional_adjacent_findings": [
+    {
+      "subject": "Reject oversize native wrapper relation fanout earlier",
+      "blocking": false,
+      "criterion_boundary": "Criterion2 material resource admission; approved S05 bounded table/figure inspection",
+      "location": {
+        "path": "services/core-api/src/research_observatory_core/document_table_figures.py",
+        "line": 405
+      },
+      "observation": "_native_relationships appends each shared-wrapper caption/label ID to its candidate tables before the extractor checks the per-object 32-caption/16-label caps. A pure in-memory retained native source formed by <article><body><table-wrap> plus 33 copies of <caption>x</caption> and 100 copies of <table/> plus matching closing tags produced 100 objects and 3300 caption references, with 33 per object.",
+      "measured_trace": {
+        "source_bytes": 1517,
+        "accepted_bytes": 128008,
+        "structure_ir_bytes": 81218,
+        "retained_native_bytes": 27852,
+        "objects": 100,
+        "caption_references": 3300,
+        "max_captions_per_object": 33,
+        "outcome": "structure-operation-limit before entry construction"
+      },
+      "assessment": "This trace is within the real admitted retained-native population and correctly rejects before any table/figure entry construction. The shipping _references route admits cumulative accepted/result/native artifacts first through ViewerArtifactReads, charging 128 times protected artifact bytes plus per-read overhead and a fixed24MiB frame/context allowance; larger unchecked IR populations cannot bypass this admission. The observed relation scratch is bounded within this admitted case, and no material public allocation defect or accepted source semantic violation was demonstrated. Earlier relation-count rejection would be an efficiency improvement, not a criterion blocker. No source change or extra qualification scope is requested."
+    }
+  ],
+  "notes": "Independent expanded CAP-05.S05.T03 R01 review approves the exact candidate and all three criteria. Exact source/preview/caption/cell identities, current authority, immutable exclusion/refresh, admitted resources, closed cross-process shapes and credible Reader failure/restart paths are supported by authenticated focused and actual shipping proof. Informal preflight corrections and all adverse qualification predecessors remain preserved; no active blocking finding or prior formal round exists. Slice/Wave/release and disclosed inherited debt remain open.",
+  "task_approval": true,
+  "slice_approval": false,
+  "wave_completion": false,
+  "release_approval": false,
+  "reviewed_at": "2026-10-10T10:34:10.251880+00:00",
+  "packet_sha256": "2d52451ae5e18c6884650c8429f6126e526cf926600216f83dd9f3d2a244d0d1",
+  "evidence_sha256": "8de2f34f0fd0cc641416ce4cf159a300fab1e123a47f6cb26b72eae14fe295e9",
+  "acceptance_criteria_sha256": "f5c3970923df91fbc51a32615c8c0306b91ac1cecb8fe732bf245e8a20452ec3",
+  "selection_sha256": "624149a72e6198ebdcd260ffa286f39210844b70fa145b08ccc247c22cfa5134"
+}

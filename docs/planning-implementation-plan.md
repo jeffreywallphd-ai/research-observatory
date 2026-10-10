@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: d12f2a9145820e9013316201cfb17c9131e30e1c1fd977cf67acad05c466973f
+source_sha256: 90e18d38b0d4f906d32c7342ec53f41268e0fa03495990973cd13363da941c3d
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -12092,15 +12092,15 @@ Original tasks and approvals remain unchanged.
 
 **Currently open findings:** -
 
-#### - [ ] CAP-05.S05.T03 - Represent tables and figures with captions and page anchors
+#### - [x] CAP-05.S05.T03 - Represent tables and figures with captions and page anchors
 
-**Status / priority / estimate / risk:** `IN_PROGRESS` / `P1` / `L` / `high`
+**Status / priority / estimate / risk:** `DONE` / `P1` / `L` / `high`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
 **Dependencies:** `CAP-05.S05.T02`, `CAP-05.S04.T02`
 
-**Owner / review:** codex-w2-implementation / - (`-`)
+**Owner / review:** codex-w2-implementation / agent:/root/reader_table_figure_review (`approved`)
 
 **Objective:** Table/figure objects, captions, page locations, extracted text/cells where reliable, and image preview references.
 
@@ -12119,13 +12119,51 @@ Original tasks and approvals remain unchanged.
 - python tools/verify.py --profile documents
 - python tools/verify.py --profile desktop
 
+**Evidence:**
+
+- `artifacts/evidence/CAP-05.S05.T03.R01.json` at `421747d5ebc6c7045b9d34dea9d1c6560c6c30c5`
+
 ##### Review history — CAP-05.S05.T03
 
-**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+**Review mode:** `append-only v1` / 1 completed round(s)
 
-**Current latest-review projection:** `-` by - at `-`
+###### Round R01
 
-**Latest notes:** -
+**Immutable submission packet:** `R01` / packet SHA-256 `2d52451ae5e18c6884650c8429f6126e526cf926600216f83dd9f3d2a244d0d1`
+
+- Candidate / base / branch: `421747d5ebc6c7045b9d34dea9d1c6560c6c30c5` / `2b10a266c763e643b8739d79d494663eb00e3f21` / `codex/w2-implementation`
+- Submitted by / at: codex-w2-implementation / `2026-10-10T10:22:14+00:00`
+- Evidence: `artifacts/evidence/CAP-05.S05.T03.R01.json` / `8de2f34f0fd0cc641416ce4cf159a300fab1e123a47f6cb26b72eae14fe295e9` / `421747d5ebc6c7045b9d34dea9d1c6560c6c30c5`
+- Acceptance-criteria SHA-256: `f5c3970923df91fbc51a32615c8c0306b91ac1cecb8fe732bf245e8a20452ec3`
+- Verification-selection SHA-256: `624149a72e6198ebdcd260ffa286f39210844b70fa145b08ccc247c22cfa5134`
+- Changed paths: `apps/desktop/src-tauri/src/document_reader.rs`, `apps/desktop/src-tauri/src/lib.rs`, `apps/desktop/src-tauri/src/supervisor.rs`, `apps/desktop/src/app/DocumentViewerWorkspace.tsx`, `apps/desktop/src/app/ViewerTableFiguresPane.tsx`, `apps/desktop/src/app/documentTableFigures.test.ts`, `apps/desktop/src/app/documentTableFigures.ts`, `artifacts/evidence/CAP-05.S05.T03.task-start.md`, `artifacts/evidence/ui-change/CAP-05.S05.T03.json`, `docs/adr/ADR-0050-bind-table-figure-observations-to-existing-protected-document-authority.md`, `docs/adr/index.json`, `docs/planning-implementation-plan.md`, `packages/contracts/documents/README.md`, `packages/contracts/documents/generate_parser_schema.py`, `packages/contracts/documents/table-figure-collection.v1.schema.json`, `packages/contracts/documents/table-figure-command.v1.schema.json`, `packages/contracts/documents/table-figure-exclusion-command.v1.schema.json`, `packages/contracts/documents/table-figure-reader-notice.v1.schema.json`, `packages/contracts/documents/table-figure-reader-page.v1.schema.json`, `packages/contracts/documents/table-figures.md`, `planning/backlog.yaml`, `planning/review-site/CAP-05/CAP-05.S05.T03.html`, `planning/review-site/CAP-05/CAP-05.S05.html`, `planning/review-site/manifest.json`, `planning/review-site/waves/W2.html`, `planning/status-summary.md`, `services/core-api/src/research_observatory_core/document_revision_api.py`, `services/core-api/src/research_observatory_core/document_revision_service.py`, `services/core-api/src/research_observatory_core/document_table_figure_repository.py`, `services/core-api/src/research_observatory_core/document_table_figures.py`, `services/core-api/src/research_observatory_core/object_store.py`, `services/core-api/src/research_observatory_core/table_figure_reader.py`, `tests/desktop/fixtures/document-viewer.tsx`, `tests/desktop/fixtures/table-figure-reader.ts`, `tests/desktop/test_document_viewer_interactions.py`, `tests/documents/test_table_figure_reader.py`, `tests/documents/test_table_figure_repository.py`, `tests/documents/test_table_figure_service.py`, `tests/documents/test_table_figures.py`
+- Selected checks: `.local\toolchains\rustup\toolchains\1.96.1-x86_64-pc-windows-msvc\bin\rustfmt.exe --check --edition 2021 apps/desktop/src-tauri/src/document_reader.rs`, `.venv\Scripts\python.exe -B -m ruff format --check packages/contracts/documents/generate_parser_schema.py services/core-api/src/research_observatory_core/document_revision_api.py services/core-api/src/research_observatory_core/document_revision_service.py services/core-api/src/research_observatory_core/document_table_figure_repository.py services/core-api/src/research_observatory_core/document_table_figures.py services/core-api/src/research_observatory_core/object_store.py services/core-api/src/research_observatory_core/table_figure_reader.py tests/desktop/test_document_viewer_interactions.py tests/documents/test_table_figure_reader.py tests/documents/test_table_figure_repository.py tests/documents/test_table_figure_service.py tests/documents/test_table_figures.py`, `.venv\Scripts\python.exe -B -m ruff check packages/contracts/documents/generate_parser_schema.py services/core-api/src/research_observatory_core/document_revision_api.py services/core-api/src/research_observatory_core/document_revision_service.py services/core-api/src/research_observatory_core/document_table_figure_repository.py services/core-api/src/research_observatory_core/document_table_figures.py services/core-api/src/research_observatory_core/object_store.py services/core-api/src/research_observatory_core/table_figure_reader.py tests/desktop/test_document_viewer_interactions.py tests/documents/test_table_figure_reader.py tests/documents/test_table_figure_repository.py tests/documents/test_table_figure_service.py tests/documents/test_table_figures.py`, `.venv\Scripts\python.exe -B -m mypy services/core-api/src/research_observatory_core/document_revision_api.py services/core-api/src/research_observatory_core/document_revision_service.py services/core-api/src/research_observatory_core/document_table_figure_repository.py services/core-api/src/research_observatory_core/document_table_figures.py services/core-api/src/research_observatory_core/object_store.py services/core-api/src/research_observatory_core/table_figure_reader.py`, `.venv\Scripts\python.exe -B packages/contracts/documents/generate_parser_schema.py --check`, `.venv\Scripts\python.exe -B tools/adr_check.py --repo . --base 2b10a266c763e643b8739d79d494663eb00e3f21 --head 421747d5ebc6c7045b9d34dea9d1c6560c6c30c5`, `.venv\Scripts\python.exe -B tools/product_style_check.py --repo .`, `.venv\Scripts\python.exe -B tools/ui_change_gate.py --repo . --base 2b10a266c763e643b8739d79d494663eb00e3f21 --head 421747d5ebc6c7045b9d34dea9d1c6560c6c30c5`, `.local\toolchains\node-v24.19.0-win-x64\node.exe apps/desktop/node_modules/typescript/bin/tsc --noEmit -p apps/desktop/tsconfig.json`, `.local\toolchains\node-v24.19.0-win-x64\node.exe apps/desktop/node_modules/vitest/vitest.mjs run apps/desktop/src/app/documentTableFigures.test.ts apps/desktop/src/app/documentReferences.test.ts apps/desktop/src/app/documentViewerNative.test.ts`, `.venv\Scripts\python.exe -B -m unittest -v tests.documents.test_table_figures tests.documents.test_table_figure_reader`, `.venv\Scripts\python.exe -B -m unittest -v tests.documents.test_table_figure_service`, `.venv\Scripts\python.exe -B -m unittest -v tests.documents.test_citation_service tests.documents.test_reference_service tests.service.test_reference_api`, `.venv\Scripts\python.exe -B -m unittest -v tests.graph.test_dependency_impacts`, `.local\toolchains\node-v24.19.0-win-x64\node.exe tests/desktop/fixtures/document-viewer.mjs artifacts\tmp\CAP-05.S05.T03.mounted-qualification-01`, `.venv\Scripts\python.exe -B -m unittest -v tests.desktop.test_document_viewer_interactions`, `.local\toolchains\node-v24.19.0-win-x64\node.exe apps\desktop\node_modules\vite\bin\vite.js build --config vite.product.config.ts`, `.local\toolchains\node-v24.19.0-win-x64\node.exe apps/desktop/scripts/assemble-application.mjs`, `.venv\Scripts\python.exe -B -m unittest -v tests.documents.test_table_figure_repository`, `.local\toolchains\rustup\toolchains\1.96.1-x86_64-pc-windows-msvc\bin\cargo.exe build --manifest-path apps/desktop/src-tauri/Cargo.toml --release --locked --offline --features integration-harness --example project_contract_probe -j 1 --message-format json-render-diagnostics`, `.local\toolchains\rustup\toolchains\1.96.1-x86_64-pc-windows-msvc\bin\cargo.exe test --manifest-path apps/desktop/src-tauri/Cargo.toml --locked --offline --features integration-harness --lib --no-run -j 1 --message-format json-render-diagnostics`, `artifacts\tmp\CAP-05.S05.T03.qualifying-native-units-01\reference-contract-tests.exe document_reader::tests:: --nocapture --test-threads=1`, `.venv/Scripts/python.exe -B artifacts/tmp/CAP-05.S05.T03.qualifying-reader-03.py 421747d5ebc6c7045b9d34dea9d1c6560c6c30c5 initial`, `.venv/Scripts/python.exe -B artifacts/tmp/CAP-05.S05.T03.qualifying-reader-03.py 421747d5ebc6c7045b9d34dea9d1c6560c6c30c5 restart`
+- Deferred checks: `Integrated S05 task combination, downstream handoff, complete affected slice matrix and independent deep slice review remain required.`, `S06 implementation, fresh full affected/repository/profile W2 qualification and security/privacy/rights/accessibility/performance/packaging/platform matrix, independent Wave review and human G2 remain required.`, `No 8/16GiB run or minimum2/3GiB claim. Larger computing remains W5. Approved3s Reader latency and owner-accepted parser overage are not tuned/replayed at this task.`, `Inherited built-frame CSP/startup predicate and broad desktop lint/quality/inventory debt remain disclosed and unwaived. Broad desktop lint reported three unchanged findings; no automation-framework repair is performed.`
+- Selection rationale: Changed protected table/figure publication, exact source/image/caption identity, resource bounds and Core/Native/Reader contracts require narrow fresh schema/type/ADR/style/contract tests, actual SQLCipher/Core denial/publication, affected reference/citation API regression, material replacement, mounted journeys and actual shipping Native/restart proof. No migration/dependency/framework change. Hold the committed candidate and selected actual installed input closure stable.
+- Prior round / replayed open findings: `-` / -
+- Root-cause escalation: -
+
+**Disposition / reviewer / time:** `approved` / agent:/root/reader_table_figure_review / `2026-10-10T10:34:40+00:00`
+
+**Immutable review ledger:** `artifacts/evidence/CAP-05.S05.T03.review-R01.json` / `147c775f9213d93b24b672f85326aa3fe71cdebee4f9c1e924190584f9257e33`
+
+**Review notes:** Independent expanded CAP-05.S05.T03 R01 review approves the exact candidate and all three criteria. Exact source/preview/caption/cell identities, current authority, immutable exclusion/refresh, admitted resources, closed cross-process shapes and credible Reader failure/restart paths are supported by authenticated focused and actual shipping proof. Informal preflight corrections and all adverse qualification predecessors remain preserved; no active blocking finding or prior formal round exists. Slice/Wave/release and disclosed inherited debt remain open.
+
+**Findings opened:**
+
+- None
+
+**Prior finding closures:**
+
+- None
+
+**Current immutable submission awaiting review:** None
+
+**Current latest-review projection:** `approved` by agent:/root/reader_table_figure_review at `2026-10-10T10:34:40+00:00`
+
+**Latest notes:** Independent expanded CAP-05.S05.T03 R01 review approves the exact candidate and all three criteria. Exact source/preview/caption/cell identities, current authority, immutable exclusion/refresh, admitted resources, closed cross-process shapes and credible Reader failure/restart paths are supported by authenticated focused and actual shipping proof. Informal preflight corrections and all adverse qualification predecessors remain preserved; no active blocking finding or prior formal round exists. Slice/Wave/release and disclosed inherited debt remain open.
+
+**Currently open findings:** -
 
 ### SLICE-parsing-quality-correction-and-reprocessing (`CAP-05.S06`) - Parsing quality, correction, and reprocessing
 
