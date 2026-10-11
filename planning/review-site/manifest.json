@@ -48775,9 +48775,9 @@
       "approval_path": "planning/wave-amendment-approvals/W2.A06.json",
       "approval_sha256": "3ecf2b98806f1589be7bd63fcc4f25cf0ee2df79bc95a3a0fefda2ce5666e4b2",
       "approval_status": "APPROVED",
-      "lifecycle_status": "MATERIALIZED",
+      "lifecycle_status": "ACTIVE",
       "bootstrap_status": "APPROVED",
-      "campaign_status": "NONE",
+      "campaign_status": "ACTIVE",
       "bootstrap_attempts": [
         {
           "id": "R01",
@@ -49127,7 +49127,7 @@
         {
           "task_id": "W2.A06.T01",
           "title": "Restore explicit reviewed project recovery and durable owned-session proof",
-          "status": "NOT_STARTED",
+          "status": "READY",
           "mode": "latest-review-only",
           "latest_review": {
             "reviewer": null,

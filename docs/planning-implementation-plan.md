@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 155638b73010f910f4b449902a55f6d236e4e568058aa5c692ffb4f9495b0979
+source_sha256: ca711c409e75685a5ea83e54adcef7844d2bfbd6afc4f74a039bdc504f4cffa0
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -55,7 +55,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 | `W2` | `W2.A03` | `ECR-0011` | `planning/wave-amendment-approvals/W2.A03.json` | `ADOPTED` |
 | `W2` | `W2.A04` | `ECR-0012` | `planning/wave-amendment-approvals/W2.A04.json` | `ADOPTED` |
 | `W2` | `W2.A05` | `ECR-0013` | `planning/wave-amendment-approvals/W2.A05.json` | `ADOPTED` |
-| `W2` | `W2.A06` | `ECR-0014` | `planning/wave-amendment-approvals/W2.A06.json` | `MATERIALIZED` |
+| `W2` | `W2.A06` | `ECR-0014` | `planning/wave-amendment-approvals/W2.A06.json` | `ACTIVE` |
 
 ## Waves
 
@@ -3297,12 +3297,13 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 **Approval record:** `planning/wave-amendment-approvals/W2.A06.json` (`3ecf2b98806f1589be7bd63fcc4f25cf0ee2df79bc95a3a0fefda2ce5666e4b2`)
 
-**Lifecycle / bootstrap / campaign / completion:** `MATERIALIZED` / `APPROVED` / `NONE` / `PENDING`
+**Lifecycle / bootstrap / campaign / completion:** `ACTIVE` / `APPROVED` / `ACTIVE` / `PENDING`
 
 **Append-only lifecycle history:**
 
 - `E01` `APPROVED` at `2026-10-11T13:27:13.517641+00:00` by human:repository-owner: The repository owner answered 'Approved, please continue' to the exact complete ECR-0014/W2.A06 batch request identifying candidate ac6b664a2ced6b2263ff7b5ab48535c3f39798ce, packet SHA-256 6293590db74b9a3ec4ce6019a1713def568798ac3a71208a5583bfcff78f7a34 and independent R01 ledger a31e42a11fcd1b7eaf52639f174f7885e2d08d49f5ec1a3a8099bdc1ac3e7193 at 87e44188dbb0e54039f8b77d3613ed2728bcd51b. This single grant binds the complete reviewed three ordered recovery/verification tasks, narrow durable current-user and same-machine ownership witness, exact 45 AST plus 3 literal finite method contracts, exact Reader CSP predicate, unchanged one-file formatter-debt disposition, complete quality data inventory, conditional original-fixture recovery only when actual evidence authenticates, the exact current W2.C18.T01 method packet and bounded pre-admission/final source and evidence recording. Conforming details inside these exact contracts require no second owner answer. W1 restoration in W2 is already authorized. Actual C18 completion and quiescence precede B00 submission, review, exact materialization and activation; every admitted task still requires claim, implementation, actual checks, independent disposition and normal integration. All original approvals, adverse findings and immutable evidence remain preserved. No additional framework development, unknown predicate or scope exemption, 8/16GiB variant, task/Slice/Wave completion or W2 release approval is granted. This timestamp records binding of the actual answer, not an invented message timestamp.
 - `E02` `MATERIALIZED` at `2026-10-11T19:28:34+00:00` by codex-w2-implementation: Materialized the exact human-approved task inventory.
+- `E03` `ACTIVE` at `2026-10-11T20:02:04+00:00` by codex-w2-implementation: Activated the bounded amendment campaign.
 
 ### Amendment-exit review and adoption — W2.A06
 
@@ -3322,7 +3323,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 ### - [ ] W2.A06.T01 - Restore explicit reviewed project recovery and durable owned-session proof
 
-**Status / owner / review:** `NOT_STARTED` / - / - (`-`)
+**Status / owner / review:** `READY` / - / - (`-`)
 
 **Dependencies:** `W2.A06.B00`
 

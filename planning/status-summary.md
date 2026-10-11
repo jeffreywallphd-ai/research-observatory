@@ -1,7 +1,7 @@
 ---
 document_type: generated-backlog-status-summary
 source: planning/backlog.yaml
-source_sha256: 155638b73010f910f4b449902a55f6d236e4e568058aa5c692ffb4f9495b0979
+source_sha256: ca711c409e75685a5ea83e54adcef7844d2bfbd6afc4f74a039bdc504f4cffa0
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -60,15 +60,16 @@ manual_edit: prohibited
 
 | Status | Count |
 |---|---:|
+| `ACTIVE` | 1 |
 | `ADOPTED` | 13 |
-| `MATERIALIZED` | 1 |
 | `SUPERSEDED` | 1 |
 
 ### Enabler task state
 
 | Status | Count |
 |---|---:|
-| `NOT_STARTED` | 3 |
+| `NOT_STARTED` | 2 |
+| `READY` | 1 |
 | `DONE` | 23 |
 
 ## Wave authority and append-only amendments
@@ -93,7 +94,7 @@ Proposal approval, materialization lifecycle, and campaign state remain distinct
 | `W2` | `W2.A03` | `ECR-0011` | `planning/wave-amendment-approvals/W2.A03.json` | `ADOPTED` | `APPROVED` | `COMPLETE` | 2 |
 | `W2` | `W2.A04` | `ECR-0012` | `planning/wave-amendment-approvals/W2.A04.json` | `ADOPTED` | `APPROVED` | `COMPLETE` | 1 |
 | `W2` | `W2.A05` | `ECR-0013` | `planning/wave-amendment-approvals/W2.A05.json` | `ADOPTED` | `APPROVED` | `COMPLETE` | 2 |
-| `W2` | `W2.A06` | `ECR-0014` | `planning/wave-amendment-approvals/W2.A06.json` | `MATERIALIZED` | `APPROVED` | `NONE` | 3 |
+| `W2` | `W2.A06` | `ECR-0014` | `planning/wave-amendment-approvals/W2.A06.json` | `ACTIVE` | `APPROVED` | `ACTIVE` | 3 |
 
 ## Amendment-exit review and adoption projections
 
