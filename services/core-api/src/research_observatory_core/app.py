@@ -63,6 +63,10 @@ from .models import (
     ProjectDeleteRequest,
     ProjectPrivacyRequest,
     ProjectProjection,
+    ProjectRecoveryConfirmRequest,
+    ProjectRecoveryPreviewRequest,
+    ProjectRecoveryProjection,
+    ProjectRecoveryStatusRequest,
     ProjectRootRequest,
     ProvenanceLineageNode,
     ProvenanceLineagePage,
@@ -407,7 +411,7 @@ def create_app(
         if context.reconciliation is not None:
             context.reconciliation.signal_stop(root)
 
-    def run_project_action(request: Request, action: Callable[[], ProjectProjection]) -> ProjectProjection:
+    def run_project_action[T](request: Request, action: Callable[[], T]) -> T:
         try:
             return action()
         except ProjectLifecycleProblem as error:
@@ -785,11 +789,80 @@ def create_app(
                     context.document_revisions.detach(projection.root)
                 if context.imports is not None:
                     context.imports.detach(projection.root)
+                context.projects.record_recovery_open(root=projection.root, succeeded=False)
                 context.projects.close(root=projection.root, trace_id=request.state.trace_id)
                 raise
+            context.projects.record_recovery_open(root=projection.root, succeeded=True)
             return projection
 
         return run_project_action(request, open_and_attach)
+
+    @app.post(
+        "/projects/recovery/preview",
+        response_model=ProjectRecoveryProjection,
+        operation_id="previewProjectRecovery",
+        tags=["projects"],
+        responses={409: {"model": ProblemDetail}, 422: {"model": ProblemDetail}},
+    )
+    def preview_project_recovery(request: Request, command: ProjectRecoveryPreviewRequest) -> ProjectRecoveryProjection:
+        return run_project_action(
+            request,
+            lambda: runtime(request).projects.preview_recovery(
+                root=command.root,
+                destination_root=command.destination_root,
+                trace_id=request.state.trace_id,
+            ),
+        )
+
+    @app.post(
+        "/projects/recovery/confirm",
+        response_model=ProjectRecoveryProjection,
+        operation_id="confirmProjectRecovery",
+        tags=["projects"],
+        responses={409: {"model": ProblemDetail}, 422: {"model": ProblemDetail}},
+    )
+    def confirm_project_recovery(request: Request, command: ProjectRecoveryConfirmRequest) -> ProjectRecoveryProjection:
+        return run_project_action(
+            request,
+            lambda: runtime(request).projects.confirm_recovery(
+                root=command.root,
+                preview_id=command.preview_id,
+                confirmation=command.confirmation,
+                trace_id=request.state.trace_id,
+            ),
+        )
+
+    @app.post(
+        "/projects/recovery/cancel",
+        response_model=ProjectRecoveryProjection,
+        operation_id="cancelProjectRecovery",
+        tags=["projects"],
+        responses={409: {"model": ProblemDetail}, 422: {"model": ProblemDetail}},
+    )
+    def cancel_project_recovery(request: Request, command: ProjectRecoveryStatusRequest) -> ProjectRecoveryProjection:
+        return run_project_action(
+            request,
+            lambda: runtime(request).projects.cancel_recovery(
+                root=command.root,
+                preview_id=command.preview_id,
+            ),
+        )
+
+    @app.post(
+        "/projects/recovery/status",
+        response_model=ProjectRecoveryProjection,
+        operation_id="projectRecoveryStatus",
+        tags=["projects"],
+        responses={409: {"model": ProblemDetail}, 422: {"model": ProblemDetail}},
+    )
+    def project_recovery_status(request: Request, command: ProjectRecoveryStatusRequest) -> ProjectRecoveryProjection:
+        return run_project_action(
+            request,
+            lambda: runtime(request).projects.recovery_status(
+                root=command.root,
+                preview_id=command.preview_id,
+            ),
+        )
 
     @app.post(
         "/projects/close",

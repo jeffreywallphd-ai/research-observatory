@@ -93,6 +93,51 @@ metadata is reported as `RO-CORE-PROJECT-DAMAGED`; missing required entries are
 reported as `RO-CORE-PROJECT-INCOMPLETE`. Both fail before any package write and
 direct repair to a verified working copy rather than the original.
 
-Stale-lock recovery and secure purge remain separate explicit workflows; this
-boundary never guesses that an unfamiliar lock is safe to break and never
-claims that recoverable trash is cryptographic erasure.
+## Explicit recovery copy
+
+ADR-0054 records the ECR-0014 recovery implementation under W2.A06. Recovery is
+available only for newly proof-eligible Windows sessions. Native binds its own
+actual process and owned Core child, creation times, executable file identities,
+current principal and fresh launch identity through the inherited private pipe.
+Public project API bodies cannot supply or replace that authority. A dedicated
+nonportable profile store emits immutable current-user-then-machine DPAPI
+witnesses and protected issuance receipts before lock publication and after
+successful open. The existing project encryption and portable seven-field lock
+format are unchanged. Failure to seal proof permits only an ordinarily owned,
+nonrecoverable session while its stable private exclusion remains held.
+
+Recovery preview, confirmation, status and cancellation are separate authenticated
+commands. Both predecessor Native and Core owners must be proven dead; a live,
+reused or uninspectable identity, foreign principal/host, missing or changed
+witness, invalid heartbeat or terminal close denies recovery. The ten-second
+heartbeat is an exact owned-record refresh and never grants an age-based takeover.
+Close, rollback and shutdown remove only the complete current owned record and
+file identity; changed or unknown locks remain untouched.
+
+Confirmation copies held original files into a new private staging sibling.
+This recovery inventory includes database/WAL, objects, configuration, exports
+and operational logs/locks so that the original session evidence is retained;
+it does not change the portable export inventory. Complete membership, identities
+and bytes are checked before any staged SQLite access. The copied old lock is
+archived inside staging. A read-only staging authority then verifies every
+canonical table/row/cell and the complete physical object inventory, authenticates
+all available encrypted objects with retained keys and rights, and checks source
+stability again. Only a verified copy receives its own bounded operational audit
+event and a held no-replace directory publication. Failed or cancelled copies are
+retained under an operation-owned quarantine name. Original files, old locks,
+accepted facts and ciphertexts are never repaired or removed.
+
+A temporary root-level recovery completion marker is flushed before copying
+and remains until the final published inventory/identity check completes.
+Canonical copy bytes stay held through marker removal. Ordinary layout
+validation rejects the marker, including on fresh Core startup after failed
+quarantine or interruption; removal failure grants no ready/open authority.
+Successful recovery removes it and leaves the existing package format unchanged.
+
+The copy remains closed until the researcher uses normal open, which obtains a
+new lock and worker authority. Copy verification alone does not report recovered.
+Legacy sessions without original durable proof are denied rather than backfilled.
+W2.A06.T01 requires actual whole Native/Core termination and fresh startup,
+protected readback and principal/path/fault evidence. W2.A06.T02 adds actual
+shipping Native/Core/UI recovery evidence. Secure purge remains a separate explicit
+workflow; recoverable trash is not cryptographic erasure.

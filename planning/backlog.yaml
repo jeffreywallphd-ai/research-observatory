@@ -62817,14 +62817,17 @@ wave_amendments:
     - Unchanged ADR check against actual task base/candidate, affected quality and exact protected-source review; architecture
       original FAIL plus only the separately granted closed45+3 proof where needed. Expanded independent commit-bound disposition.
     packet_task_sha256: ff85fb7100c811c43c766aaba5cc20e35ee265c4c8813282f7d0a753cd2ccf74
-    status: READY
-    owner: null
-    branch: null
-    base_sha: null
-    worktree: null
-    lease: null
-    started_at: null
-    updated_at: '2026-10-11T20:02:04+00:00'
+    status: IN_PROGRESS
+    owner: codex-w2-implementation
+    branch: codex/w2-implementation
+    base_sha: 15c2ab7bcc9b7ef111f44ffcb465628729fd4a5d
+    worktree: .
+    lease:
+      claimed_by: codex-w2-implementation
+      claimed_at: '2026-10-11T20:36:17+00:00'
+      expires_at: '2026-10-12T04:36:17+00:00'
+    started_at: '2026-10-11T20:36:17+00:00'
+    updated_at: '2026-10-11T20:36:17+00:00'
     completed_at: null
     blocker: null
     implementation_notes: ''

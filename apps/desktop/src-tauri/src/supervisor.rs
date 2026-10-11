@@ -5,7 +5,7 @@ use std::fs;
 use std::io::{BufRead, BufReader, Read, Write};
 use std::net::{IpAddr, Ipv4Addr, SocketAddr, TcpStream};
 use std::path::{Path, PathBuf};
-use std::process::{Child, ChildStdin, Command, Stdio};
+use std::process::{Child, Command, Stdio};
 use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::{Arc, Condvar, Mutex, Weak, mpsc};
 use std::thread;
@@ -255,7 +255,7 @@ impl SupervisorConfig {
 
 struct RunningProcess {
     child: Child,
-    stdin: ChildStdin,
+    stdin: mpsc::SyncSender<Vec<u8>>,
     containment: ProcessTreeContainment,
     capability_token: CapabilityToken,
     cancellation: Arc<AtomicBool>,
@@ -621,8 +621,9 @@ impl NativeDocumentAction {
 impl NativeImportConnection {
     #[cfg(all(test, windows))]
     pub(crate) fn action_test_connection(project: &str, closed: bool) -> Self {
-        let result=Self::unavailable_for_attachment_test(project);
-        result.physically_closed.store(closed,Ordering::Release); result
+        let result = Self::unavailable_for_attachment_test(project);
+        result.physically_closed.store(closed, Ordering::Release);
+        result
     }
     #[cfg(all(test, windows))]
     pub(crate) fn unavailable_for_attachment_test(project_id: &str) -> Self {
@@ -673,8 +674,27 @@ impl NativeImportConnection {
             return Err("RO-DOCUMENT-PROJECT-UNAVAILABLE");
         }
         let body = body.to_string();
-        let correction = matches!(action, NativeDocumentAction::CorrectionQueue | NativeDocumentAction::CorrectionPage | NativeDocumentAction::CorrectionSave | NativeDocumentAction::CorrectionAccept | NativeDocumentAction::CorrectionDiscard | NativeDocumentAction::CorrectionDraft | NativeDocumentAction::CorrectionImpact | NativeDocumentAction::CorrectionTargets
-            | NativeDocumentAction::ReprocessingQueue | NativeDocumentAction::ReprocessingCreate | NativeDocumentAction::ReprocessingRead | NativeDocumentAction::ReprocessingReadImpact | NativeDocumentAction::ReprocessingCompare | NativeDocumentAction::ReprocessingReconcile | NativeDocumentAction::ReprocessingAccept | NativeDocumentAction::ReprocessingContinue | NativeDocumentAction::ReprocessingCancel | NativeDocumentAction::ReprocessingResumeImpact);
+        let correction = matches!(
+            action,
+            NativeDocumentAction::CorrectionQueue
+                | NativeDocumentAction::CorrectionPage
+                | NativeDocumentAction::CorrectionSave
+                | NativeDocumentAction::CorrectionAccept
+                | NativeDocumentAction::CorrectionDiscard
+                | NativeDocumentAction::CorrectionDraft
+                | NativeDocumentAction::CorrectionImpact
+                | NativeDocumentAction::CorrectionTargets
+                | NativeDocumentAction::ReprocessingQueue
+                | NativeDocumentAction::ReprocessingCreate
+                | NativeDocumentAction::ReprocessingRead
+                | NativeDocumentAction::ReprocessingReadImpact
+                | NativeDocumentAction::ReprocessingCompare
+                | NativeDocumentAction::ReprocessingReconcile
+                | NativeDocumentAction::ReprocessingAccept
+                | NativeDocumentAction::ReprocessingContinue
+                | NativeDocumentAction::ReprocessingCancel
+                | NativeDocumentAction::ReprocessingResumeImpact
+        );
         if body.len() > if correction { 65536 } else { 8192 } {
             return Err("RO-DOCUMENT-REQUEST-INVALID");
         }
@@ -1611,6 +1631,9 @@ fn launch(
         (RuntimeState::Crashed, code)
     })?;
     let pid = child.id();
+    let cancellation = Arc::new(AtomicBool::new(false));
+    let control_tx = recovery_control_writer(stdin);
+    let recovery_session = recovery_owned_session(&child);
     let stdout = child
         .stdout
         .take()
@@ -1621,6 +1644,8 @@ fn launch(
         .ok_or((RuntimeState::Crashed, "RO-CORE-LOG-PIPE-FAILED"))?;
     let (handshake_tx, handshake_rx) = mpsc::sync_channel(1);
     let stdout_inner = Arc::downgrade(&shared);
+    let recovery_control = control_tx.clone();
+    let recovery_cancellation = cancellation.clone();
     thread::spawn(move || {
         let mut reader = BufReader::new(stdout);
         let mut first = Vec::new();
@@ -1629,7 +1654,13 @@ fn launch(
             .take((MAX_HANDSHAKE_BYTES + 1) as u64)
             .read_until(b'\n', &mut first);
         let _ = handshake_tx.send(read.map(|_| first));
-        drain_log(reader, stdout_inner, "stdout");
+        drain_core_output(
+            reader,
+            stdout_inner,
+            recovery_control,
+            recovery_session,
+            recovery_cancellation,
+        );
     });
     let stderr_inner = Arc::downgrade(&shared);
     thread::spawn(move || drain_log(BufReader::new(stderr), stderr_inner, "stderr"));
@@ -1672,6 +1703,7 @@ fn launch(
     let port = match startup {
         Ok(port) => port,
         Err(error) => {
+            cancellation.store(true, Ordering::Release);
             containment.terminate();
             let _ = child.wait();
             return Err(error);
@@ -1679,10 +1711,10 @@ fn launch(
     };
     Ok(RunningProcess {
         child,
-        stdin,
+        stdin: control_tx,
         containment,
         capability_token,
-        cancellation: Arc::new(AtomicBool::new(false)),
+        cancellation,
         physically_closed: Arc::new(AtomicBool::new(false)),
         port,
     })
@@ -2459,6 +2491,30 @@ fn validate_project_api_request(path: &str, body: &str) -> bool {
                             .bytes()
                             .all(|byte| byte.is_ascii_hexdigit() || byte == b'-')
                 });
+    }
+    if path == "/projects/recovery/preview" {
+        let Some(value) = exact_json_strings(body, &["root", "destinationRoot"]) else {
+            return false;
+        };
+        return canonical_project_root(value["root"].as_str().unwrap_or_default())
+            && canonical_project_root(value["destinationRoot"].as_str().unwrap_or_default());
+    }
+    if matches!(
+        path,
+        "/projects/recovery/confirm" | "/projects/recovery/cancel" | "/projects/recovery/status"
+    ) {
+        let fields: &[&str] = if path == "/projects/recovery/confirm" {
+            &["root", "previewId", "confirmation"]
+        } else {
+            &["root", "previewId"]
+        };
+        let Some(value) = exact_json_strings(body, fields) else {
+            return false;
+        };
+        return canonical_project_root(value["root"].as_str().unwrap_or_default())
+            && recovery_hex(value["previewId"].as_str().unwrap_or_default(), 32)
+            && (path != "/projects/recovery/confirm"
+                || value["confirmation"] == "recover-working-copy");
     }
     if matches!(
         path,
@@ -4250,13 +4306,28 @@ pub(crate) fn fill_secure_random(target: &mut [u8]) -> Result<(), &'static str> 
         .map_err(|_| "RO-CORE-AUTH-RANDOM-FAILED")
 }
 
+fn recovery_control_writer(mut stdin: std::process::ChildStdin) -> mpsc::SyncSender<Vec<u8>> {
+    // One owned writer keeps a blocked pipe out of shutdown and API mutexes.
+    let (control_tx, control_rx) = mpsc::sync_channel::<Vec<u8>>(8);
+    thread::spawn(move || {
+        while let Ok(mut record) = control_rx.recv() {
+            let result = stdin.write_all(&record).and_then(|_| stdin.flush());
+            zeroize_bytes(&mut record);
+            if result.is_err() {
+                break;
+            }
+        }
+    });
+    control_tx
+}
+
 fn stop_running_process(process: &mut RunningProcess, security_stop: &AtomicBool) -> bool {
+    process.cancellation.store(true, Ordering::Release);
     if security_stop.load(Ordering::Acquire) {
         return stop_running_process_immediately(process);
     }
-    let _ = process.stdin.write_all(b"shutdown\n");
-    let _ = process.stdin.flush();
     let deadline = Instant::now() + STOP_TIMEOUT;
+    let _ = process.stdin.try_send(b"shutdown\n".to_vec());
     let stopped = loop {
         if security_stop.load(Ordering::Acquire) {
             break stop_running_process_immediately(process);
@@ -4270,7 +4341,9 @@ fn stop_running_process(process: &mut RunningProcess, security_stop: &AtomicBool
             }
         }
     };
-    if stopped { process.physically_closed.store(true, Ordering::Release); }
+    if stopped {
+        process.physically_closed.store(true, Ordering::Release);
+    }
     stopped
 }
 
@@ -4279,7 +4352,9 @@ fn stop_running_process_immediately(process: &mut RunningProcess) -> bool {
     process.containment.terminate();
     let _ = process.child.kill();
     let stopped = process.child.wait().is_ok();
-    if stopped { process.physically_closed.store(true, Ordering::Release); }
+    if stopped {
+        process.physically_closed.store(true, Ordering::Release);
+    }
     stopped
 }
 
@@ -4304,6 +4379,616 @@ fn readiness_is_compatible(response: &[u8]) -> bool {
             .map(String::as_str)
             .eq(EXPECTED_CORE_CAPABILITIES.iter().copied())
         && payload.ready
+}
+
+const RECOVERY_CONTROL_PREFIX: &[u8] = b"ro-project-control-v1 ";
+const MAX_RECOVERY_CONTROL_BYTES: usize = 16 * 1024;
+
+#[derive(Clone, Debug, Eq, PartialEq, Deserialize, Serialize)]
+#[serde(deny_unknown_fields)]
+struct RecoveryProcessIdentity {
+    process_id: u32,
+    creation_filetime: String,
+    executable_identity: String,
+}
+
+#[derive(Clone, Debug, Eq, PartialEq, Deserialize, Serialize)]
+#[serde(deny_unknown_fields)]
+struct RecoveryNativeSession {
+    principal_reference: String,
+    launch_session: String,
+    native: RecoveryProcessIdentity,
+    core: RecoveryProcessIdentity,
+}
+
+#[derive(Debug, Deserialize)]
+#[serde(deny_unknown_fields)]
+struct RecoveryOwnershipWitness {
+    schema_version: String,
+    purpose: String,
+    witness_id: String,
+    project_id: String,
+    canonical_root: String,
+    root_file_identity: String,
+    core_instance_id: String,
+    recovery_token_sha256: String,
+    initial_heartbeat: String,
+    manifest_sha256: String,
+    native_session: RecoveryNativeSession,
+    disposition: String,
+    audit_byte_count: u64,
+    audit_sha256: String,
+}
+
+#[derive(Debug, Deserialize)]
+#[serde(tag = "kind", deny_unknown_fields)]
+enum RecoveryControlRequest {
+    #[serde(rename = "hello")]
+    Hello { schema_version: String },
+    #[serde(rename = "inspect")]
+    Inspect {
+        schema_version: String,
+        request_id: String,
+        witness: Box<RecoveryOwnershipWitness>,
+        source: String,
+        destination: String,
+    },
+}
+
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "camelCase", deny_unknown_fields)]
+struct RecoveryProjectLock {
+    schema_version: String,
+    document_type: String,
+    project_id: String,
+    instance_id: String,
+    process_id: u32,
+    heartbeat_at: String,
+    recovery_token: String,
+}
+
+fn recovery_timestamp(value: &str) -> Option<(u16, u8, u8, u8, u8, u8, u16)> {
+    let bytes = value.as_bytes();
+    if !(bytes.len() == 20 || (22..=24).contains(&bytes.len()))
+        || bytes[4] != b'-'
+        || bytes[7] != b'-'
+        || bytes[10] != b'T'
+        || bytes[13] != b':'
+        || bytes[16] != b':'
+        || bytes.last() != Some(&b'Z')
+        || (bytes.len() != 20 && bytes[19] != b'.')
+    {
+        return None;
+    }
+    let number = |start: usize, end: usize| -> Option<u16> {
+        bytes[start..end].iter().try_fold(0_u16, |result, byte| {
+            byte.is_ascii_digit()
+                .then(|| result * 10 + u16::from(byte - b'0'))
+        })
+    };
+    let year = number(0, 4)?;
+    let month = u8::try_from(number(5, 7)?).ok()?;
+    let day = u8::try_from(number(8, 10)?).ok()?;
+    let hour = u8::try_from(number(11, 13)?).ok()?;
+    let minute = u8::try_from(number(14, 16)?).ok()?;
+    let second = u8::try_from(number(17, 19)?).ok()?;
+    let leap = year % 4 == 0 && (year % 100 != 0 || year % 400 == 0);
+    let days = match month {
+        1 | 3 | 5 | 7 | 8 | 10 | 12 => 31,
+        4 | 6 | 9 | 11 => 30,
+        2 if leap => 29,
+        2 => 28,
+        _ => return None,
+    };
+    if year == 0 || day == 0 || day > days || hour > 23 || minute > 59 || second > 59 {
+        return None;
+    }
+    let millisecond = if bytes.len() == 20 {
+        0
+    } else {
+        number(20, bytes.len() - 1)? * 10_u16.pow((24 - bytes.len()) as u32)
+    };
+    Some((year, month, day, hour, minute, second, millisecond))
+}
+
+fn recovery_hex(value: &str, length: usize) -> bool {
+    value.len() == length
+        && value
+            .bytes()
+            .all(|c| c.is_ascii_digit() || (b'a'..=b'f').contains(&c))
+}
+
+fn recovery_send(control: &mpsc::SyncSender<Vec<u8>>, value: &serde_json::Value) {
+    let Ok(encoded) = serde_json::to_vec(value) else {
+        return;
+    };
+    if encoded.len() + RECOVERY_CONTROL_PREFIX.len() + 1 > MAX_RECOVERY_CONTROL_BYTES {
+        return;
+    }
+    let mut record = RECOVERY_CONTROL_PREFIX.to_vec();
+    record.extend_from_slice(&encoded);
+    record.push(b'\n');
+    let _ = control.try_send(record);
+}
+
+fn drain_core_output<R: BufRead>(
+    mut reader: R,
+    shared: Weak<SupervisorShared>,
+    control: mpsc::SyncSender<Vec<u8>>,
+    session: Option<RecoveryNativeSession>,
+    cancellation: Arc<AtomicBool>,
+) {
+    // OS inspections are isolated from the stdout drain, runtime mutex and
+    // shutdown writer. A full queue denies by timeout, never by guessed proof.
+    let (inspect_tx, inspect_rx) = mpsc::sync_channel::<(RecoveryControlRequest, Instant)>(4);
+    let inspection_control = control.clone();
+    let inspection_session = session.clone();
+    let inspection_cancellation = cancellation.clone();
+    thread::spawn(move || {
+        while let Ok((request, deadline)) = inspect_rx.recv() {
+            if !recovery_inspection_active(&inspection_cancellation, deadline) {
+                continue;
+            }
+            let RecoveryControlRequest::Inspect {
+                schema_version,
+                request_id,
+                witness,
+                source,
+                destination,
+            } = request
+            else {
+                continue;
+            };
+            if schema_version != "1.0" || !recovery_hex(&request_id, 32) {
+                continue;
+            }
+            let inspection = inspection_session.as_ref().and_then(|current| {
+                recovery_inspect(
+                    current,
+                    &witness,
+                    &source,
+                    &destination,
+                    &inspection_cancellation,
+                    deadline,
+                )
+            });
+            if !recovery_inspection_active(&inspection_cancellation, deadline) {
+                continue;
+            }
+            recovery_send(
+                &inspection_control,
+                &serde_json::json!({
+                    "kind": "inspection", "schema_version": "1.0", "request_id": request_id,
+                    "inspection": inspection,
+                }),
+            );
+        }
+    });
+    let mut line = Vec::new();
+    let mut bound = false;
+    loop {
+        if cancellation.load(Ordering::Acquire) {
+            break;
+        }
+        line.clear();
+        let count = reader
+            .by_ref()
+            .take((MAX_RECOVERY_CONTROL_BYTES + 1) as u64)
+            .read_until(b'\n', &mut line);
+        if !matches!(count, Ok(n) if n > 0) {
+            break;
+        }
+        if line.len() > MAX_RECOVERY_CONTROL_BYTES || line.last() != Some(&b'\n') {
+            // Do not reinterpret a suffix of an oversize/private record.
+            break;
+        }
+        if let Some(payload) = line.strip_prefix(RECOVERY_CONTROL_PREFIX) {
+            let Ok(request) = serde_json::from_slice::<RecoveryControlRequest>(payload) else {
+                continue;
+            };
+            match request {
+                RecoveryControlRequest::Hello { schema_version }
+                    if schema_version == "1.0" && !bound =>
+                {
+                    if let Some(current) = &session {
+                        recovery_send(
+                            &control,
+                            &serde_json::json!({
+                                "kind": "bind", "schema_version": "1.0", "session": current,
+                            }),
+                        );
+                        bound = true;
+                    }
+                }
+                request @ RecoveryControlRequest::Inspect { .. } if bound => {
+                    let _ = inspect_tx.try_send((request, Instant::now() + Duration::from_secs(2)));
+                }
+                _ => {}
+            }
+            zeroize_bytes(&mut line);
+            continue;
+        }
+        let Some(shared) = shared.upgrade() else {
+            break;
+        };
+        if let Ok(mut locked) = shared.inner.lock() {
+            locked.record(
+                if line.len() > 8192 {
+                    "RO-CORE-LOG-OVERSIZE"
+                } else {
+                    "RO-CORE-RUNTIME-LOG"
+                },
+                "stdout",
+                None,
+            );
+        }
+    }
+    cancellation.store(true, Ordering::Release);
+    zeroize_bytes(&mut line);
+}
+
+fn recovery_inspection_active(cancellation: &AtomicBool, deadline: Instant) -> bool {
+    !cancellation.load(Ordering::Acquire) && Instant::now() < deadline
+}
+
+#[cfg(windows)]
+fn recovery_file_identity(file: &fs::File) -> Option<String> {
+    use std::os::windows::io::AsRawHandle;
+    use windows_sys::Win32::Storage::FileSystem::{
+        BY_HANDLE_FILE_INFORMATION, FILE_ATTRIBUTE_DIRECTORY, FILE_ATTRIBUTE_REPARSE_POINT,
+        GetFileInformationByHandle,
+    };
+    let mut info = std::mem::MaybeUninit::<BY_HANDLE_FILE_INFORMATION>::zeroed();
+    if unsafe { GetFileInformationByHandle(file.as_raw_handle(), info.as_mut_ptr()) } == 0 {
+        return None;
+    }
+    let info = unsafe { info.assume_init() };
+    if info.dwFileAttributes & FILE_ATTRIBUTE_REPARSE_POINT != 0
+        || (info.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY == 0 && info.nNumberOfLinks != 1)
+    {
+        return None;
+    }
+    Some(format!(
+        "{:08x}:{:016x}",
+        info.dwVolumeSerialNumber,
+        (u64::from(info.nFileIndexHigh) << 32) | u64::from(info.nFileIndexLow)
+    ))
+}
+
+#[cfg(windows)]
+fn recovery_process_identity(
+    handle: windows_sys::Win32::Foundation::HANDLE,
+    pid: u32,
+) -> Option<RecoveryProcessIdentity> {
+    use sha2::{Digest, Sha256};
+    use std::os::windows::ffi::OsStringExt;
+    use std::os::windows::fs::OpenOptionsExt;
+    use windows_sys::Win32::Foundation::FILETIME;
+    use windows_sys::Win32::Storage::FileSystem::{
+        FILE_FLAG_OPEN_REPARSE_POINT, FILE_SHARE_READ, FILE_SHARE_WRITE,
+    };
+    use windows_sys::Win32::System::Threading::{GetProcessTimes, QueryFullProcessImageNameW};
+    let (mut created, mut exited, mut kernel, mut user) = (
+        FILETIME::default(),
+        FILETIME::default(),
+        FILETIME::default(),
+        FILETIME::default(),
+    );
+    if unsafe { GetProcessTimes(handle, &mut created, &mut exited, &mut kernel, &mut user) } == 0 {
+        return None;
+    }
+    let mut path = [0_u16; 4096];
+    let mut size = path.len() as u32;
+    if unsafe { QueryFullProcessImageNameW(handle, 0, path.as_mut_ptr(), &mut size) } == 0 {
+        return None;
+    }
+    let path = PathBuf::from(std::ffi::OsString::from_wide(&path[..size as usize]));
+    let file = fs::OpenOptions::new()
+        .read(true)
+        .share_mode(FILE_SHARE_READ | FILE_SHARE_WRITE)
+        .custom_flags(FILE_FLAG_OPEN_REPARSE_POINT)
+        .open(path)
+        .ok()?;
+    let metadata = file.metadata().ok()?;
+    if !metadata.is_file() {
+        return None;
+    }
+    let identity = recovery_file_identity(&file)?;
+    Some(RecoveryProcessIdentity {
+        process_id: pid,
+        creation_filetime: format!(
+            "{:016x}",
+            (u64::from(created.dwHighDateTime) << 32) | u64::from(created.dwLowDateTime)
+        ),
+        executable_identity: format!("{:x}", Sha256::digest(identity.as_bytes())),
+    })
+}
+
+#[cfg(windows)]
+fn recovery_current_principal() -> Option<String> {
+    use sha2::{Digest, Sha256};
+    use windows_sys::Win32::Foundation::CloseHandle;
+    use windows_sys::Win32::Security::{
+        GetLengthSid, GetTokenInformation, IsValidSid, TOKEN_QUERY, TOKEN_USER, TokenUser,
+    };
+    use windows_sys::Win32::System::Threading::{GetCurrentProcess, OpenProcessToken};
+    unsafe {
+        let mut token = std::ptr::null_mut();
+        if OpenProcessToken(GetCurrentProcess(), TOKEN_QUERY, &mut token) == 0 {
+            return None;
+        }
+        let mut needed = 0;
+        GetTokenInformation(token, TokenUser, std::ptr::null_mut(), 0, &mut needed);
+        if !(8..=65536).contains(&needed) {
+            CloseHandle(token);
+            return None;
+        }
+        let mut buffer = vec![0_usize; (needed as usize).div_ceil(std::mem::size_of::<usize>())];
+        let queried = GetTokenInformation(
+            token,
+            TokenUser,
+            buffer.as_mut_ptr().cast(),
+            needed,
+            &mut needed,
+        );
+        CloseHandle(token);
+        if queried == 0 {
+            return None;
+        }
+        let user = &*buffer.as_ptr().cast::<TOKEN_USER>();
+        if IsValidSid(user.User.Sid) == 0 {
+            return None;
+        }
+        let size = GetLengthSid(user.User.Sid) as usize;
+        let bytes = std::slice::from_raw_parts(user.User.Sid.cast::<u8>(), size);
+        if size < 8 || bytes[0] != 1 || size != 8 + 4 * usize::from(bytes[1]) {
+            return None;
+        }
+        let authority = bytes[2..8]
+            .iter()
+            .fold(0_u64, |v, b| (v << 8) | u64::from(*b));
+        let mut text = format!("S-1-{authority}");
+        for sub in bytes[8..].chunks_exact(4) {
+            text.push_str(&format!("-{}", u32::from_le_bytes(sub.try_into().ok()?)));
+        }
+        Some(format!("{:x}", Sha256::digest(text.as_bytes())))
+    }
+}
+
+#[cfg(windows)]
+fn recovery_owned_session(child: &Child) -> Option<RecoveryNativeSession> {
+    use std::os::windows::io::AsRawHandle;
+    use windows_sys::Win32::System::Threading::GetCurrentProcess;
+    let mut random = [0_u8; 32];
+    fill_secure_random(&mut random).ok()?;
+    let mut hex = Vec::new();
+    append_hex(&random, &mut hex);
+    zeroize_bytes(&mut random);
+    Some(RecoveryNativeSession {
+        principal_reference: recovery_current_principal()?,
+        launch_session: String::from_utf8(hex).ok()?,
+        native: recovery_process_identity(unsafe { GetCurrentProcess() }, std::process::id())?,
+        core: recovery_process_identity(child.as_raw_handle().cast(), child.id())?,
+    })
+}
+
+#[cfg(not(windows))]
+fn recovery_owned_session(_child: &Child) -> Option<RecoveryNativeSession> {
+    None
+}
+
+#[cfg(windows)]
+fn recovery_owner_state(expected: &RecoveryProcessIdentity) -> &'static str {
+    use windows_sys::Win32::Foundation::{
+        CloseHandle, ERROR_NO_MORE_FILES, GetLastError, INVALID_HANDLE_VALUE,
+    };
+    use windows_sys::Win32::System::Diagnostics::ToolHelp::{
+        CreateToolhelp32Snapshot, PROCESSENTRY32W, Process32FirstW, Process32NextW,
+        TH32CS_SNAPPROCESS,
+    };
+    use windows_sys::Win32::System::Threading::{OpenProcess, PROCESS_QUERY_LIMITED_INFORMATION};
+    unsafe {
+        let snapshot = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
+        if snapshot == INVALID_HANDLE_VALUE {
+            return "unknown";
+        }
+        let mut entry = PROCESSENTRY32W {
+            dwSize: std::mem::size_of::<PROCESSENTRY32W>() as u32,
+            ..Default::default()
+        };
+        let mut present = false;
+        let mut more = Process32FirstW(snapshot, &mut entry) != 0;
+        while more {
+            if entry.th32ProcessID == expected.process_id {
+                present = true;
+                break;
+            }
+            more = Process32NextW(snapshot, &mut entry) != 0;
+        }
+        let complete = present || GetLastError() == ERROR_NO_MORE_FILES;
+        CloseHandle(snapshot);
+        if !complete {
+            return "unknown";
+        }
+        if !present {
+            return "dead";
+        }
+        let process = OpenProcess(PROCESS_QUERY_LIMITED_INFORMATION, 0, expected.process_id);
+        if process.is_null() {
+            return "unknown";
+        }
+        let actual = recovery_process_identity(process, expected.process_id);
+        CloseHandle(process);
+        match actual {
+            Some(actual) if actual.creation_filetime != expected.creation_filetime => "pid-reused",
+            Some(actual) if actual == *expected => "live",
+            _ => "unknown",
+        }
+    }
+}
+
+#[cfg(windows)]
+fn recovery_inspect(
+    current: &RecoveryNativeSession,
+    witness: &RecoveryOwnershipWitness,
+    source: &str,
+    destination: &str,
+    cancellation: &AtomicBool,
+    deadline: Instant,
+) -> Option<serde_json::Value> {
+    use sha2::{Digest, Sha256};
+    use std::os::windows::fs::OpenOptionsExt;
+    use windows_sys::Win32::Storage::FileSystem::{
+        FILE_ADD_SUBDIRECTORY, FILE_FLAG_BACKUP_SEMANTICS, FILE_FLAG_OPEN_REPARSE_POINT,
+        FILE_READ_ATTRIBUTES, FILE_SHARE_READ, FILE_SHARE_WRITE,
+    };
+    if !recovery_inspection_active(cancellation, deadline) {
+        return None;
+    }
+    if witness.schema_version != "1.0"
+        || witness.purpose != "project-session-recovery"
+        || !matches!(witness.disposition.as_str(), "created" | "opened")
+        || witness.native_session.principal_reference != current.principal_reference
+        || witness.canonical_root != source
+        || !canonical_project_id(&witness.project_id)
+        || !canonical_project_id(&witness.core_instance_id)
+        || !recovery_hex(&witness.witness_id, 64)
+        || !recovery_hex(&witness.recovery_token_sha256, 64)
+        || !recovery_hex(&witness.manifest_sha256, 64)
+        || !recovery_hex(&witness.audit_sha256, 64)
+        || !recovery_hex(&witness.native_session.launch_session, 64)
+        || witness.audit_byte_count > 8 * 1024 * 1024
+    {
+        return None;
+    }
+    for owner in [&witness.native_session.native, &witness.native_session.core] {
+        if owner.process_id == 0
+            || !recovery_hex(&owner.creation_filetime, 16)
+            || !recovery_hex(&owner.executable_identity, 64)
+        {
+            return None;
+        }
+    }
+    let source = Path::new(source);
+    let destination = Path::new(destination);
+    if !crate::directory_picker::local_path_syntax(destination.to_str()?)
+        || destination.try_exists().ok()?
+    {
+        return None;
+    }
+    let parent = destination.parent()?;
+    if parent == source || parent.starts_with(source) || source.starts_with(destination) {
+        return None;
+    }
+    let source_guards = crate::import_source::pin_directory(source).ok()?;
+    if !recovery_inspection_active(cancellation, deadline) {
+        return None;
+    }
+    let _lock_guards = crate::import_source::pin_directory(&source.join(".locks")).ok()?;
+    if !recovery_inspection_active(cancellation, deadline) {
+        return None;
+    }
+    let destination_guards = crate::import_source::pin_directory(parent).ok()?;
+    if !recovery_inspection_active(cancellation, deadline) {
+        return None;
+    }
+    // Identity alone is not creation permission. This held Native handle asks
+    // for the actual add-subdirectory right without creating a probe artifact.
+    let destination_access = fs::OpenOptions::new()
+        .access_mode(FILE_READ_ATTRIBUTES | FILE_ADD_SUBDIRECTORY)
+        .share_mode(FILE_SHARE_READ | FILE_SHARE_WRITE)
+        .custom_flags(FILE_FLAG_OPEN_REPARSE_POINT | FILE_FLAG_BACKUP_SEMANTICS)
+        .open(parent)
+        .ok()?;
+    if recovery_file_identity(&destination_access)?
+        != recovery_file_identity(destination_guards.last()?)?
+        || !recovery_inspection_active(cancellation, deadline)
+    {
+        return None;
+    }
+    let root_identity = recovery_file_identity(source_guards.last()?)?;
+    if root_identity != witness.root_file_identity {
+        return None;
+    }
+    let held_read = |path: &Path, limit: u64| -> Option<(fs::File, Vec<u8>)> {
+        if !recovery_inspection_active(cancellation, deadline) {
+            return None;
+        }
+        let mut file = fs::OpenOptions::new()
+            .read(true)
+            .share_mode(FILE_SHARE_READ)
+            .custom_flags(FILE_FLAG_OPEN_REPARSE_POINT)
+            .open(path)
+            .ok()?;
+        let metadata = file.metadata().ok()?;
+        if !metadata.is_file()
+            || metadata.len() > limit
+            || crate::directory_picker::is_reparse(&metadata)
+        {
+            return None;
+        }
+        let identity = recovery_file_identity(&file)?;
+        let mut bytes = Vec::new();
+        Read::by_ref(&mut file)
+            .take(limit + 1)
+            .read_to_end(&mut bytes)
+            .ok()?;
+        if bytes.len() as u64 != metadata.len()
+            || recovery_file_identity(&file)? != identity
+            || !recovery_inspection_active(cancellation, deadline)
+        {
+            return None;
+        }
+        Some((file, bytes))
+    };
+    let (_manifest_guard, manifest) = held_read(&source.join("project.ro.json"), 256 * 1024)?;
+    let manifest_document: serde_json::Value = serde_json::from_slice(&manifest).ok()?;
+    if manifest_document["projectId"].as_str()? != witness.project_id
+        || format!("{:x}", Sha256::digest(&manifest)) != witness.manifest_sha256
+    {
+        return None;
+    }
+    let (_lock_guard, lock) = held_read(&source.join(".locks/session.lock"), 4096)?;
+    let lock: RecoveryProjectLock = serde_json::from_slice(&lock).ok()?;
+    if lock.schema_version != "1.0"
+        || lock.document_type != "research-observatory-project-lock"
+        || lock.project_id != witness.project_id
+        || lock.instance_id != witness.core_instance_id
+        || lock.process_id != witness.native_session.core.process_id
+        || recovery_timestamp(&lock.heartbeat_at)? < recovery_timestamp(&witness.initial_heartbeat)?
+        || !recovery_hex(&lock.recovery_token, 64)
+        || format!("{:x}", Sha256::digest(lock.recovery_token.as_bytes()))
+            != witness.recovery_token_sha256
+    {
+        return None;
+    }
+    let native_owner_state = recovery_owner_state(&witness.native_session.native);
+    if !recovery_inspection_active(cancellation, deadline) {
+        return None;
+    }
+    let core_owner_state = recovery_owner_state(&witness.native_session.core);
+    if !recovery_inspection_active(cancellation, deadline) {
+        return None;
+    }
+    Some(serde_json::json!({
+        "launch_session": current.launch_session, "principal_reference": current.principal_reference,
+        "native_owner_state": native_owner_state,
+        "core_owner_state": core_owner_state,
+        "source_file_identity": root_identity,
+        "destination_parent_identity": recovery_file_identity(destination_guards.last()?)?,
+    }))
+}
+
+#[cfg(not(windows))]
+fn recovery_inspect(
+    _current: &RecoveryNativeSession,
+    _witness: &RecoveryOwnershipWitness,
+    _source: &str,
+    _destination: &str,
+    _cancellation: &AtomicBool,
+    _deadline: Instant,
+) -> Option<serde_json::Value> {
+    None
 }
 
 fn drain_log<R: BufRead>(mut reader: R, shared: Weak<SupervisorShared>, stream: &'static str) {
@@ -4527,6 +5212,155 @@ impl ProcessTreeContainment {
 #[cfg(test)]
 mod tests {
     use super::{CoreApiResponse, ImportProjectSelection};
+
+    #[test]
+    fn recovery_heartbeat_requires_a_real_utc_calendar_date() {
+        use super::recovery_timestamp;
+        assert!(recovery_timestamp("2024-02-29T23:59:59.123Z").is_some());
+        assert!(
+            recovery_timestamp("2026-10-11T21:40:00.1Z").unwrap()
+                > recovery_timestamp("2026-10-11T21:40:00Z").unwrap()
+        );
+        assert_eq!(
+            recovery_timestamp("2026-10-11T21:40:00.1Z"),
+            recovery_timestamp("2026-10-11T21:40:00.100Z")
+        );
+        for value in [
+            "2026-02-29T00:00:00Z",
+            "2026-13-01T00:00:00Z",
+            "2026-10-11T24:00:00Z",
+            "2026-10-11T00:00:60Z",
+            "0000-01-01T00:00:00Z",
+            "2026-10-11T00:00:00.1234Z",
+            "2026-10-11T00:00:00+00:00",
+            "2026-10-11T00:00:0/Z",
+            "",
+        ] {
+            assert!(recovery_timestamp(value).is_none(), "{value}");
+        }
+    }
+
+    #[test]
+    fn recovery_owned_lock_denies_duplicate_unknown_and_wrong_type_fields() {
+        let value = serde_json::json!({
+            "schemaVersion":"1.0", "documentType":"research-observatory-project-lock",
+            "projectId":"01900000-0000-4000-8000-000000000001",
+            "instanceId":"01900000-0000-4000-8000-000000000002",
+            "processId":42, "heartbeatAt":"2026-10-11T21:40:00Z", "recoveryToken":"a".repeat(64),
+        });
+        let encoded = serde_json::to_string(&value).unwrap();
+        assert!(serde_json::from_str::<super::RecoveryProjectLock>(&encoded).is_ok());
+        let duplicate = encoded.replacen('{', "{\"processId\":41,", 1);
+        assert!(serde_json::from_str::<super::RecoveryProjectLock>(&duplicate).is_err());
+        for replacement in [
+            serde_json::json!(true),
+            serde_json::json!(-1),
+            serde_json::json!(1.5),
+        ] {
+            let mut changed = value.clone();
+            changed["processId"] = replacement;
+            assert!(serde_json::from_value::<super::RecoveryProjectLock>(changed).is_err());
+        }
+        let mut extra = value;
+        extra["callerProof"] = serde_json::json!("trusted");
+        assert!(serde_json::from_value::<super::RecoveryProjectLock>(extra).is_err());
+        for record in [
+            r#"{"kind":"hello","schema_version":"1.0","schema_version":"1.0"}"#,
+            r#"{"kind":"hello","schema_version":"1.0","principal":"caller"}"#,
+        ] {
+            assert!(serde_json::from_str::<super::RecoveryControlRequest>(record).is_err());
+        }
+    }
+
+    #[test]
+    fn recovery_private_channel_cancels_on_eof_or_oversize_without_public_logging() {
+        for bytes in [Vec::new(), vec![b'x'; super::MAX_RECOVERY_CONTROL_BYTES + 1],
+            b"ro-project-control-v1 {\"kind\":\"hello\",\"schema_version\":\"1.0\",\"callerProof\":true}\n".to_vec()] {
+            let supervisor = RuntimeSupervisor::new(Err("RO-CORE-NOT-PACKAGED"));
+            let initial_diagnostics = supervisor.diagnostics();
+            let cancellation = Arc::new(AtomicBool::new(false));
+            let (control, replies) = mpsc::sync_channel(8);
+            super::drain_core_output(std::io::Cursor::new(bytes), Arc::downgrade(&supervisor.shared),
+                control, None, Arc::clone(&cancellation));
+            assert!(cancellation.load(Ordering::Acquire));
+            assert!(!super::recovery_inspection_active(&cancellation, Instant::now() + Duration::from_secs(2)));
+            assert!(replies.try_recv().is_err());
+            assert_eq!(supervisor.diagnostics(), initial_diagnostics);
+        }
+    }
+
+    #[test]
+    fn recovery_public_routes_accept_only_reviewed_commands_and_no_caller_proof() {
+        let root = "C:/Synthetic/project";
+        let preview = intent_request(
+            "/projects/recovery/preview",
+            serde_json::json!({
+                "root":root, "destinationRoot":"C:/Synthetic/verified-copy",
+            }),
+            None,
+        );
+        assert!(validate_api_request(&preview).is_ok());
+        for path in [
+            "/projects/recovery/preview/",
+            "/projects/recovery/preview?proof=1",
+            "/projects/recovery/unknown",
+        ] {
+            assert!(
+                validate_api_request(&CoreApiRequest {
+                    path: path.into(),
+                    ..preview.clone()
+                })
+                .is_err()
+            );
+        }
+        assert!(
+            validate_api_request(&CoreApiRequest {
+                method: "GET".into(),
+                ..preview.clone()
+            })
+            .is_err()
+        );
+        for path in [
+            "/projects/recovery/confirm",
+            "/projects/recovery/cancel",
+            "/projects/recovery/status",
+        ] {
+            let mut body = serde_json::json!({"root":root, "previewId":"a".repeat(32)});
+            if path.ends_with("confirm") {
+                body["confirmation"] = serde_json::json!("recover-working-copy");
+            }
+            assert!(validate_api_request(&intent_request(path, body.clone(), None)).is_ok());
+            body["witness"] = serde_json::json!({"processId":1,"ownerDead":true});
+            assert!(validate_api_request(&intent_request(path, body, None)).is_err());
+        }
+        assert!(
+            validate_api_request(&intent_request(
+                "/projects/recovery/confirm",
+                serde_json::json!({
+                    "root":root, "previewId":"a".repeat(32), "confirmation":"take-over",
+                }),
+                None
+            ))
+            .is_err()
+        );
+    }
+
+    #[cfg(windows)]
+    #[test]
+    fn recovery_actual_owner_query_distinguishes_live_and_reused_birth() {
+        let own = super::recovery_process_identity(
+            unsafe { windows_sys::Win32::System::Threading::GetCurrentProcess() },
+            std::process::id(),
+        )
+        .unwrap();
+        assert_eq!(super::recovery_owner_state(&own), "live");
+        let mut changed = own.clone();
+        changed.creation_filetime = "0000000000000000".into();
+        assert_eq!(super::recovery_owner_state(&changed), "pid-reused");
+        changed = own;
+        changed.executable_identity = "0".repeat(64);
+        assert_eq!(super::recovery_owner_state(&changed), "unknown");
+    }
 
     #[cfg(windows)]
     #[test]
@@ -4753,7 +5587,7 @@ mod tests {
             let mut inner = fixture.0.shared.inner.lock().unwrap();
             inner.process = Some(RunningProcess {
                 child,
-                stdin,
+                stdin: super::recovery_control_writer(stdin),
                 containment,
                 capability_token: token,
                 cancellation: Arc::new(AtomicBool::new(false)),
@@ -7338,7 +8172,7 @@ mod tests {
         let containment = ProcessTreeContainment::attach_and_resume(&child).unwrap();
         let mut process = RunningProcess {
             child,
-            stdin,
+            stdin: super::recovery_control_writer(stdin),
             containment,
             capability_token: CapabilityToken::generate().unwrap(),
             cancellation: Arc::new(AtomicBool::new(false)),
@@ -7347,6 +8181,7 @@ mod tests {
         };
         let security = Arc::new(AtomicBool::new(false));
         let signal = Arc::clone(&security);
+        let cancellation = Arc::clone(&process.cancellation);
         let started = Instant::now();
         let waiter = thread::spawn(move || {
             stop_running_process(&mut process, &signal);
@@ -7354,6 +8189,10 @@ mod tests {
             assert!(process.cancellation.load(Ordering::Acquire));
         });
         thread::sleep(Duration::from_millis(100));
+        assert!(
+            cancellation.load(Ordering::Acquire),
+            "inspection stops before the child wait finishes"
+        );
         security.store(true, Ordering::Release);
         waiter.join().unwrap();
         assert!(started.elapsed() < Duration::from_secs(3));

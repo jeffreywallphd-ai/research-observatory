@@ -6795,6 +6795,150 @@
         "title": "ProjectRecoveryAction",
         "type": "string"
       },
+      "ProjectRecoveryConfirmRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "confirmation": {
+            "const": "recover-working-copy",
+            "title": "Confirmation",
+            "type": "string"
+          },
+          "previewId": {
+            "pattern": "^[0-9a-f]{32}$",
+            "title": "Previewid",
+            "type": "string"
+          },
+          "root": {
+            "maxLength": 4096,
+            "minLength": 1,
+            "title": "Root",
+            "type": "string"
+          }
+        },
+        "required": [
+          "root",
+          "previewId",
+          "confirmation"
+        ],
+        "title": "ProjectRecoveryConfirmRequest",
+        "type": "object"
+      },
+      "ProjectRecoveryPreviewRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "destinationRoot": {
+            "maxLength": 4096,
+            "minLength": 1,
+            "title": "Destinationroot",
+            "type": "string"
+          },
+          "root": {
+            "maxLength": 4096,
+            "minLength": 1,
+            "title": "Root",
+            "type": "string"
+          }
+        },
+        "required": [
+          "root",
+          "destinationRoot"
+        ],
+        "title": "ProjectRecoveryPreviewRequest",
+        "type": "object"
+      },
+      "ProjectRecoveryProjection": {
+        "additionalProperties": false,
+        "properties": {
+          "destinationDisplayLabel": {
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Destinationdisplaylabel",
+            "type": "string"
+          },
+          "previewId": {
+            "pattern": "^[0-9a-f]{32}$",
+            "title": "Previewid",
+            "type": "string"
+          },
+          "reasonCodes": {
+            "items": {
+              "type": "string"
+            },
+            "maxItems": 8,
+            "title": "Reasoncodes",
+            "type": "array"
+          },
+          "requiresConfirmation": {
+            "title": "Requiresconfirmation",
+            "type": "boolean"
+          },
+          "sourceDisplayLabel": {
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Sourcedisplaylabel",
+            "type": "string"
+          },
+          "state": {
+            "enum": [
+              "unavailable-proof",
+              "denied",
+              "preview-ready",
+              "cancelled",
+              "copying",
+              "verification-failed",
+              "verified-copy-ready",
+              "open-failed",
+              "recovered"
+            ],
+            "title": "State",
+            "type": "string"
+          },
+          "verifiedFactSummary": {
+            "anyOf": [
+              {
+                "maxLength": 240,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Verifiedfactsummary"
+          }
+        },
+        "required": [
+          "previewId",
+          "state",
+          "reasonCodes",
+          "requiresConfirmation",
+          "sourceDisplayLabel",
+          "destinationDisplayLabel"
+        ],
+        "title": "ProjectRecoveryProjection",
+        "type": "object"
+      },
+      "ProjectRecoveryStatusRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "previewId": {
+            "pattern": "^[0-9a-f]{32}$",
+            "title": "Previewid",
+            "type": "string"
+          },
+          "root": {
+            "maxLength": 4096,
+            "minLength": 1,
+            "title": "Root",
+            "type": "string"
+          }
+        },
+        "required": [
+          "root",
+          "previewId"
+        ],
+        "title": "ProjectRecoveryStatusRequest",
+        "type": "object"
+      },
       "ProjectRootRequest": {
         "additionalProperties": false,
         "properties": {
@@ -19602,6 +19746,210 @@
         "summary": "Version Works",
         "tags": [
           "reconciliation"
+        ]
+      }
+    },
+    "/projects/recovery/cancel": {
+      "post": {
+        "operationId": "cancelProjectRecovery",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProjectRecoveryStatusRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectRecoveryProjection"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Unprocessable Content"
+          }
+        },
+        "summary": "Cancel Project Recovery",
+        "tags": [
+          "projects"
+        ]
+      }
+    },
+    "/projects/recovery/confirm": {
+      "post": {
+        "operationId": "confirmProjectRecovery",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProjectRecoveryConfirmRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectRecoveryProjection"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Unprocessable Content"
+          }
+        },
+        "summary": "Confirm Project Recovery",
+        "tags": [
+          "projects"
+        ]
+      }
+    },
+    "/projects/recovery/preview": {
+      "post": {
+        "operationId": "previewProjectRecovery",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProjectRecoveryPreviewRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectRecoveryProjection"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Unprocessable Content"
+          }
+        },
+        "summary": "Preview Project Recovery",
+        "tags": [
+          "projects"
+        ]
+      }
+    },
+    "/projects/recovery/status": {
+      "post": {
+        "operationId": "projectRecoveryStatus",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProjectRecoveryStatusRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectRecoveryProjection"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Unprocessable Content"
+          }
+        },
+        "summary": "Project Recovery Status",
+        "tags": [
+          "projects"
         ]
       }
     },

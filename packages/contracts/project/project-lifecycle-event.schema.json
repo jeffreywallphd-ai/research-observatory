@@ -7,7 +7,7 @@
   "required": ["schemaVersion", "event", "state", "recordedAt", "traceId"],
   "properties": {
     "schemaVersion": {"const": "1.0"},
-    "event": {"enum": ["project.created", "project.opened", "project.closed", "project.archived", "project.restored", "project.trashed", "project.trash-rollback"]},
+    "event": {"enum": ["project.created", "project.opened", "project.closed", "project.archived", "project.restored", "project.trashed", "project.trash-rollback", "project.recovery-copy-verified"]},
     "state": {"enum": ["active", "archived", "trash"]},
     "recordedAt": {"type": "string", "format": "date-time", "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z$"},
     "traceId": {"type": "string", "pattern": "^[0-9a-f]{32}$"}

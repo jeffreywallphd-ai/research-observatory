@@ -49127,7 +49127,7 @@
         {
           "task_id": "W2.A06.T01",
           "title": "Restore explicit reviewed project recovery and durable owned-session proof",
-          "status": "READY",
+          "status": "IN_PROGRESS",
           "mode": "latest-review-only",
           "latest_review": {
             "reviewer": null,

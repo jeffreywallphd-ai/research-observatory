@@ -1,0 +1,25 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "append-only-approved-W2-A06-T01-single-adapter-scope-addendum",
+  "taskId": "W2.A06.T01",
+  "decision": "APPROVED",
+  "reviewedCandidate": "c6a9e21944e3d5299b5aed299fa3e4d0953d5728",
+  "approvedOriginalProposalSHA256": "b57b5df1c9d96ef1d9ad5a4aef32cd22c72e2b7f582e883afab7d9d75d865cfe",
+  "independentOriginalReadinessSHA256": "91946301590a735dc995a9f1f045570be6f00a9e695726c89c7b1c9bea46ccf7",
+  "additionalProductPath": "services/core-api/src/research_observatory_core/object_store.py",
+  "grant": "Only the approved recovery-copy verification entrypoint inside the existing adapter, its exact typed composition, subsequent criterion-linked checks and evidence recording. All original scope and gates remain. No framework or release approval.",
+  "records": [
+    {
+      "path": "artifacts/evidence/W2.A06.T01.object-inventory-scope-addendum-01.proposal.json",
+      "sha256": "b57b5df1c9d96ef1d9ad5a4aef32cd22c72e2b7f582e883afab7d9d75d865cfe",
+      "originalRawSHA256": "b57b5df1c9d96ef1d9ad5a4aef32cd22c72e2b7f582e883afab7d9d75d865cfe",
+      "representation": "UTF-8 with Git LF; values unchanged"
+    },
+    {
+      "path": "artifacts/evidence/W2.A06.T01.object-inventory-scope-addendum-01.independent-readiness-R01.json",
+      "sha256": "91946301590a735dc995a9f1f045570be6f00a9e695726c89c7b1c9bea46ccf7",
+      "originalRawSHA256": "91946301590a735dc995a9f1f045570be6f00a9e695726c89c7b1c9bea46ccf7",
+      "representation": "UTF-8 with Git LF; values unchanged"
+    }
+  ]
+}

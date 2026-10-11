@@ -16,7 +16,7 @@ import stat
 import struct
 import threading
 from collections.abc import Callable, Iterator
-from contextlib import contextmanager, nullcontext, suppress
+from contextlib import ExitStack, closing, contextmanager, nullcontext, suppress
 from dataclasses import dataclass, replace
 from datetime import UTC, datetime
 from pathlib import Path
@@ -70,12 +70,20 @@ from .ports.object_store import (
     VerifiedObjectStream,
 )
 from .ports.object_store_keys import ObjectMasterKey, ObjectMasterKeyProvider
+from .ports.project_recovery import (
+    RecoveryCopyVerificationRequest,
+    RecoveryCopyVerifiedFacts,
+    RecoveryLocalReadAuthority,
+    RecoveryVerificationProblem,
+)
 from .projects import ProjectLifecycleProblem, _atomic_audit_append, _stable_directories
 from .storage import (
+    EXPECTED_TABLES,
     MAX_SAFE_INTEGER,
     CanonicalConnection,
     StorageProblem,
     _open_thread_transferable_canonical_database,
+    database_integrity_report,
     open_canonical_database,
 )
 
@@ -1228,16 +1236,20 @@ def _directory_chain(root: Path, parent: Path) -> tuple[Path, ...]:
     return tuple(reversed(chain))
 
 
-def _scan_regular_files(root: Path) -> tuple[_FileFact, ...]:
+def _scan_regular_files(
+    root: Path, *, cancellation_requested: Callable[[], bool] | None = None
+) -> tuple[_FileFact, ...]:
     if not root.exists():
         return ()
     authority = _canonical_directory(root)
     pending = [authority]
     facts: list[_FileFact] = []
     while pending:
+        _check_read_cancel(cancellation_requested)
         directory = pending.pop()
         with os.scandir(directory) as entries:
             for entry in entries:
+                _check_read_cancel(cancellation_requested)
                 path = Path(entry.path)
                 status = path.stat(follow_symlinks=False)
                 if stat.S_ISDIR(status.st_mode):
@@ -4140,6 +4152,199 @@ def upgrade_local_object_envelopes(
     )
     with _STORES.reconciliation(state):
         _reconcile_store_state(state)
+
+
+def _recovery_canonical_facts(
+    connection: CanonicalConnection, cancellation_requested: Callable[[], bool]
+) -> tuple[str, int]:
+    """Fingerprint every canonical cell without a migration or omitted column."""
+
+    digest = hashlib.sha256()
+    row_count = 0
+    actual_tables = tuple(
+        sorted(
+            str(row[1])
+            for row in connection.execute("PRAGMA table_list")
+            if row[2] == "table" and not str(row[1]).startswith("sqlite_")
+        )
+    )
+    if actual_tables != tuple(sorted(EXPECTED_TABLES)):
+        raise RecoveryVerificationProblem("database-inventory-mismatch")
+    for table in sorted(EXPECTED_TABLES):
+        _check_read_cancel(cancellation_requested)
+        columns = tuple(connection.execute(f'PRAGMA table_info("{table}")'))
+        primary = sorted((int(row[5]), str(row[1])) for row in columns if row[5])
+        order = [name for _, name in primary] or [str(row[1]) for row in columns]
+        ordering = ",".join('"' + name.replace('"', '""') + '"' for name in order)
+        digest.update(table.encode("ascii") + b"\0")
+        digest.update(json.dumps([str(row[1]) for row in columns], separators=(",", ":")).encode("utf-8"))
+        cursor = connection.execute(f'SELECT * FROM "{table}" ORDER BY {ordering}')
+        while rows := cursor.fetchmany(64):
+            _check_read_cancel(cancellation_requested)
+            for row in rows:
+                digest.update(b"row\0")
+                for cell in row:
+                    if cell is None:
+                        encoded = b"null"
+                    elif isinstance(cell, bytes):
+                        encoded = b"bytes:" + cell
+                    else:
+                        encoded = (type(cell).__name__ + ":" + str(cell)).encode("utf-8")
+                    digest.update(len(encoded).to_bytes(8, "big"))
+                    digest.update(encoded)
+                row_count += 1
+    return digest.hexdigest(), row_count
+
+
+def verify_recovery_working_copy(request: RecoveryCopyVerificationRequest) -> RecoveryCopyVerifiedFacts:
+    """Verify all current objects and facts in a private copy, without repairing it.
+
+    The coordinator supplies an already copied, exclusively owned staging root
+    and validated local privacy authority. The original is never passed here.
+    Unlike ordinary ObjectStore.open, this entrypoint never updates verified_at,
+    quarantines metadata, migrates a schema, or reconciles an envelope journal.
+    """
+
+    if not isinstance(request, RecoveryCopyVerificationRequest) or not callable(request.cancellation_requested):
+        raise RecoveryVerificationProblem("verification-authority-invalid")
+    authority = request.local_read
+    if (
+        not isinstance(authority, RecoveryLocalReadAuthority)
+        or authority.project_id != request.project_id
+        or type(authority.policy_revision) is not int
+        or not 0 <= authority.policy_revision <= MAX_SAFE_INTEGER
+        or authority.network_policy not in ("offline", "metadata-only", "approved-providers")
+    ):
+        raise RecoveryVerificationProblem("privacy-policy-unavailable")
+    connection: CanonicalConnection | None = None
+    execution = ExitStack()
+    interrupted = False
+
+    def stop_requested() -> bool:
+        nonlocal interrupted
+        try:
+            _check_read_cancel(request.cancellation_requested)
+        except ObjectReadCancelled:
+            interrupted = True
+            return True
+        return False
+
+    try:
+        _check_read_cancel(request.cancellation_requested)
+        root, state_directory, objects, temporary = _canonical_root(request.root)
+        with _stable_directories([root, state_directory, objects, temporary]):
+            connection = open_canonical_database(
+                state_directory / "project.sqlite3", expected_project_id=request.project_id
+            )
+            execution.enter_context(connection.interrupt_when(stop_requested))
+            # Keep the canonical authorizer intact; it forbids changing query_only.
+            # This adapter executes only SELECT, integrity PRAGMAs and read transactions.
+            connection.execute("BEGIN")
+            integrity = database_integrity_report(connection, expected_project_id=request.project_id)
+            _check_read_cancel(request.cancellation_requested)
+            if not integrity.ok:
+                raise RecoveryVerificationProblem("database-integrity-failed")
+            before, row_count = _recovery_canonical_facts(connection, request.cancellation_requested)
+            if (
+                connection.execute(
+                    "SELECT 1 FROM object_records WHERE project_id<>? LIMIT 1", (request.project_id,)
+                ).fetchone()
+                is not None
+            ):
+                raise RecoveryVerificationProblem("object-project-mismatch")
+            expected: dict[Path, tuple[tuple[int, int], int, int]] = {}
+            available = deleted = byte_count = 0
+            cursor = connection.execute(
+                "SELECT object_sha256 FROM object_records WHERE project_id=? ORDER BY object_sha256",
+                (request.project_id,),
+            )
+            while rows := cursor.fetchmany(64):
+                for row in rows:
+                    _check_read_cancel(request.cancellation_requested)
+                    metadata = _metadata(connection, request.project_id, _validate_sha256(str(row[0])))
+                    if metadata is None:
+                        raise RecoveryVerificationProblem("object-inventory-changed")
+                    relative = _object_relative_path(request.project_id, metadata.object_sha256)
+                    destination = objects / relative
+                    if metadata.storage_state == "deleted":
+                        if metadata.reference_count or destination.exists() or destination.is_symlink():
+                            raise RecoveryVerificationProblem("deleted-object-inconsistent")
+                        deleted += 1
+                        continue
+                    if metadata.storage_state != "available":
+                        raise RecoveryVerificationProblem("object-state-unavailable")
+                    if metadata.rights_status not in _READABLE_RIGHTS:
+                        raise RecoveryVerificationProblem("object-rights-denied")
+                    if (
+                        metadata.envelope_version != _ENCRYPTED_ENVELOPE
+                        or metadata.protection_profile != _ENCRYPTED_PROFILE
+                    ):
+                        raise RecoveryVerificationProblem("object-profile-unsupported")
+                    destination, buckets = _object_path(
+                        objects, request.project_id, metadata.object_sha256, create=False
+                    )
+                    with _stable_directories([root, objects, *buckets]):
+                        status = destination.stat(follow_symlinks=False)
+                        if not stat.S_ISREG(status.st_mode) or status.st_nlink != 1 or _redirect(destination):
+                            raise RecoveryVerificationProblem("object-path-unsafe")
+                        identity = (status.st_dev, status.st_ino)
+                        if status.st_size != metadata.ciphertext_byte_length:
+                            raise RecoveryVerificationProblem("object-length-mismatch")
+                        wrapped_key, wrap_nonce = _encryption_material(
+                            connection, request.project_id, metadata.object_sha256
+                        )
+                        with closing(
+                            _verified_encrypted_reader(
+                                destination,
+                                project_id=request.project_id,
+                                object_sha256=metadata.object_sha256,
+                                byte_length=metadata.byte_length,
+                                ciphertext_byte_length=metadata.ciphertext_byte_length,
+                                key_version=metadata.key_version,
+                                wrapped_key=wrapped_key,
+                                wrap_nonce=wrap_nonce,
+                                key_provider=request.key_provider,
+                                cancellation_requested=request.cancellation_requested,
+                            )
+                        ) as reader:
+                            while reader.read(_CHUNK_BYTES):
+                                _check_read_cancel(request.cancellation_requested)
+                            if not _held_reader_matches(destination, reader):
+                                raise RecoveryVerificationProblem("object-inventory-changed")
+                        expected[relative] = (identity, int(status.st_size), int(status.st_mtime_ns))
+                    available += 1
+                    byte_count += metadata.byte_length
+            physical_facts = _scan_regular_files(objects, cancellation_requested=request.cancellation_requested)
+            actual = {
+                fact.path.relative_to(objects): (fact.identity, fact.byte_count, fact.modified_ns)
+                for fact in physical_facts
+                if fact.exclusive
+            }
+            if actual != expected or len(actual) != len(physical_facts):
+                raise RecoveryVerificationProblem("object-inventory-mismatch")
+            connection.execute("ROLLBACK")
+            connection.execute("BEGIN")
+            after, after_count = _recovery_canonical_facts(connection, request.cancellation_requested)
+            if (after, after_count) != (before, row_count):
+                raise RecoveryVerificationProblem("canonical-facts-changed")
+            if _scan_regular_files(objects, cancellation_requested=request.cancellation_requested) != physical_facts:
+                raise RecoveryVerificationProblem("object-inventory-changed")
+            _check_read_cancel(request.cancellation_requested)
+            return RecoveryCopyVerifiedFacts(before, row_count, available, deleted, byte_count)
+    except RecoveryVerificationProblem:
+        raise
+    except ObjectStoreProblem as problem:
+        reason = "cancelled" if isinstance(problem, ObjectReadCancelled) else "object-verification-failed"
+        raise RecoveryVerificationProblem(reason) from None
+    except OSError, sqlite3.Error, StorageProblem, ProjectLifecycleProblem:
+        raise RecoveryVerificationProblem("cancelled" if interrupted else "copy-verification-unavailable") from None
+    finally:
+        execution.close()
+        if connection is not None:
+            if connection.in_transaction:
+                with suppress(sqlite3.Error, StorageProblem):
+                    connection.execute("ROLLBACK")
+            connection.close()
 
 
 def create_local_object_store(

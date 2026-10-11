@@ -31,6 +31,8 @@ import {
   evaluateCoreApiCompatibility,
   parseOperationEventStream,
   type CoreApiResponse,
+  type CoreApiOperationId,
+  type ProjectRecoveryProjection,
   type CorpusReportDrillPage,
   type CorpusReportSnapshot,
   type ProvenanceLineagePage,
@@ -60,6 +62,43 @@ function response(status: number, body: unknown, contentType = "application/json
 }
 
 describe("generated Core API client", () => {
+  it("binds the four explicit recovery commands without exposing private ownership proof", () => {
+    const openapi = JSON.parse(readFileSync(fileURLToPath(new URL("./openapi.json", import.meta.url)), "utf8"));
+    const commands: readonly [string, CoreApiOperationId, readonly string[]][] = [
+      ["preview", "previewProjectRecovery", ["destinationRoot", "root"]],
+      ["confirm", "confirmProjectRecovery", ["confirmation", "previewId", "root"]],
+      ["cancel", "cancelProjectRecovery", ["previewId", "root"]],
+      ["status", "projectRecoveryStatus", ["previewId", "root"]],
+    ];
+    for (const [action, operationId, fields] of commands) {
+      const route = openapi.paths[`/projects/recovery/${action}`];
+      expect(Object.keys(route)).toEqual(["post"]);
+      expect(route.post.operationId).toBe(operationId);
+      const requestReference = route.post.requestBody.content["application/json"].schema.$ref;
+      const request = openapi.components.schemas[requestReference.split("/").at(-1)];
+      expect(request.additionalProperties).toBe(false);
+      expect(Object.keys(request.properties).sort()).toEqual(fields);
+      expect(request.required.toSorted()).toEqual(fields);
+      expect(route.post.responses["200"].content["application/json"].schema.$ref)
+        .toBe("#/components/schemas/ProjectRecoveryProjection");
+    }
+    expect(openapi.components.schemas.ProjectRecoveryConfirmRequest.properties.confirmation.const)
+      .toBe("recover-working-copy");
+    const projection = openapi.components.schemas.ProjectRecoveryProjection;
+    expect(projection.additionalProperties).toBe(false);
+    expect(Object.keys(projection.properties).sort()).toEqual([
+      "destinationDisplayLabel", "previewId", "reasonCodes", "requiresConfirmation",
+      "sourceDisplayLabel", "state", "verifiedFactSummary",
+    ]);
+    const ready: ProjectRecoveryProjection = {
+      previewId: "a".repeat(32), state: "verified-copy-ready", reasonCodes: [], requiresConfirmation: false,
+      sourceDisplayLabel: "Original study", destinationDisplayLabel: "Recovery copy",
+      verifiedFactSummary: "Verified canonical facts and protected objects",
+    };
+    expect(projection.properties.state.enum).toContain(ready.state);
+    expect(projection.properties.state.enum).toHaveLength(9);
+  });
+
   it("binds generated source to the exact OpenAPI bytes", () => {
     const path = fileURLToPath(new URL("./openapi.json", import.meta.url));
     expect(createHash("sha256").update(readFileSync(path)).digest("hex")).toBe(CORE_API_OPENAPI_SHA256);

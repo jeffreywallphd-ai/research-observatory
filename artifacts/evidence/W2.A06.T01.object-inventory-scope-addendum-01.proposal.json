@@ -1,0 +1,79 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "proposed-append-only-W2-A06-product-source-scope-addendum",
+  "status": "PENDING_OWNER_APPROVAL",
+  "amendmentId": "W2.A06",
+  "taskId": "W2.A06.T01",
+  "observedCandidate": "c6a9e21944e3d5299b5aed299fa3e4d0953d5728",
+  "preparedAt": "2026-10-11T18:35:36.531493+00:00",
+  "problem": "Complete recovery verification must reject a database-referenced encrypted object whose file is absent. The approved18-path envelope has no complete inventory seam. Existing usage scans only present files; database integrity checks cannot establish external ciphertext existence.",
+  "authority": [
+    {
+      "path": "planning/enabler-change-requests/ECR-0014.packet.json",
+      "sha256": "6293590db74b9a3ec4ce6019a1713def568798ac3a71208a5583bfcff78f7a34"
+    },
+    {
+      "path": "planning/enabler-change-requests/ECR-0014.md",
+      "sha256": "7c70aeebc5a60ab606bd5f6170b48e2012becab8cf7547f7ad8cd75482291496"
+    },
+    {
+      "path": "planning/wave-amendment-approvals/W2.A06.json",
+      "sha256": "3ecf2b98806f1589be7bd63fcc4f25cf0ee2df79bc95a3a0fefda2ce5666e4b2"
+    },
+    {
+      "path": "docs/adr/ADR-0015-use-project-scoped-opaque-content-addressed-object-storage.md",
+      "sha256": "f138d6a6f468e597d7346ae92a369cf12f60b58774bba5d72121196fd46cfde7"
+    }
+  ],
+  "independentBasis": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/W2.A06.T01.object-inventory-advisory-01.json",
+    "sha256": "6eefc8480023d4cedfaf9dba531a06c083d903d52eedd3183dc0e10fc131bfb8"
+  },
+  "evidenceStatus": "The completeness gap is established by finite source/interface inspection; the missing-object counterexample has not been executed. No product edit, runtime PASS, task claim or independent final review is claimed.",
+  "recommendedChange": {
+    "additionalProductPath": {
+      "path": "services/core-api/src/research_observatory_core/object_store.py",
+      "sha256": "c0994d3d4f59b375db1682f9ae2249cb91744d261a057c0094ee8d921a3f9788"
+    },
+    "boundedImplementation": "Add one recovery-copy verification entrypoint inside the existing concrete object-store adapter. Declare its typed input/output in the already authorized ports/project_recovery.py, compose it in already authorized main.py, and use it from projects.py. Do not extend the public ObjectStore port or add a new adapter/module. Normal conforming implementation names and details are covered by this finite grant.",
+    "algorithm": [
+      "Operate only on the privately owned staging copy after raw portable inventory has been copied and the source remains held unchanged. Validate compatible canonical project/database identity before object-store construction; never migrate, checkpoint, reconcile or repair the original.",
+      "Enumerate the complete canonical object_records inventory through bounded batches and existing canonical connection controls inside object_store.py. Bind expected project/content identities, states, opaque physical paths, lengths, key versions, rights and reference authority. Reject unexpected foreign-project records and unsafe path/hardlink/redirect substitutions.",
+      "Compare expected current object membership against the complete copied physical inventory. Missing database-referenced or required available ciphertext, unexplained physical entries, inconsistent identities/lengths, pending/quarantined required objects or unsupported state deny verified-copy publication. Preserve valid deleted/tombstoned semantics; never silently delete, promote, repair or accept source data.",
+      "Use existing object metadata, key-provider, rights/access checks and authenticated controlled streams for all expected available objects. Drain bounded chunks, validate exact identity/length and complete authentication before reporting content-free verified facts. No new cryptography, plaintext file, research-content projection or whole-object/model RAM allocation.",
+      "Return only a typed content-free success summary after complete database-to-file coverage and existing database/WAL integrity succeed. Honor cancellation during enumeration/readback. Any missing key, denial, corruption, cancellation, concurrent drift, disk or verification/audit error prevents target publication and retains/quarantines the owned partial copy. Existing final source/cancel/publication barriers remain required."
+    ]
+  },
+  "scopeRelationship": "Append only the named existing object_store.py path to T01 implementation authority. Keep all original frozen task IDs, criteria, dependencies, hashes, approval bytes and adverse history unchanged. The added implementation fulfills original T01-AC03/04 completeness rather than reducing them. Same-task ADR0054/index notes explicitly name this adapter entrypoint; Proposed/Accepted state remains factual.",
+  "verification": [
+    "After normal B00 review/materialization/activation and legal T01 claim, add failing tests in already authorized tests/security/test_project_recovery.py using runner-owned original/staging copies. Remove one current database-referenced ciphertext only from staging while keeping metadata/reference rows; complete verification must deny before publication and preserve the original.",
+    "Cover complete valid/empty inventories, absent/corrupt/wrong-key objects, unknown/quarantined states, opaque-path/hardlink/redirect swaps, foreign project identity, cancellation and concurrent input changes. Retain original failure streams; doubles do not prove Native/principal/DPAPI boundaries.",
+    "Run affected existing object-store regression, quality/type/ADR/architecture checks and real staged protected readback at the exact committed task candidate. The unchanged architecture checker must accept new adapter SQL in object_store.py, with no new false-positive exemption.",
+    "Expanded independent T01 security/interface review and later integrated recovery/UI review bind actual committed source/test/evidence hashes. Whole actual shipping Native/Core death and fresh restart remain required.",
+    "T03/current-build lineage may additionally recognize only this exact independently reviewed, admitted/claimed T01 object_store.py delta. Append actual source/candidate/claim/owner/addendum/review pins and independently reviewed negative controls before executing the existing finite proof successor. All other current-build predicates and original FAILs remain unchanged; this grants no additional architecture/lint/CSP exemption."
+  ],
+  "exclusions": [
+    "No automation/framework/controller/checker/hook source development or policy change.",
+    "No portable project, lock, encryption, API security-authority, governed UX, baseline, latency, RAM variant or release criterion change.",
+    "No original-fixture alteration, arbitrary legacy recovery, implicit recovery, source key escrow or plaintext export.",
+    "No task/Slice/Wave/G2 completion or W3 execution approval."
+  ],
+  "alternatives": [
+    {
+      "id": "A",
+      "choice": "Existing adapter entrypoint (recommended)",
+      "impact": "One additional existing product source path; preserves current architecture and completes the required missing-object denial."
+    },
+    {
+      "id": "B",
+      "choice": "Extend the public ObjectStore interface",
+      "impact": "Requires both object_store.py and ports/object_store.py additions and exposes a broader interface. Can meet completeness with the same checks, but adds scope without a recovery-only need."
+    },
+    {
+      "id": "C",
+      "choice": "Defer this product correction",
+      "impact": "Recovery copy cannot be claimed fully verified; T01 and W2 completion remain pending. No criteria waiver is implied."
+    }
+  ],
+  "resumeCondition": "Explicit owner approval of this exact proposal plus actual independent scope readiness permits only the stated single-path product addition and its bounded lineage recording. All existing B00/admission/claim/task/security/integration/release gates remain. Other approved work can continue while this addition awaits the decision."
+}

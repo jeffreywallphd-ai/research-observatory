@@ -49,3 +49,19 @@ The profile owns the display name and template selection inside the package;
 the lock owns exclusive local session identity; lifecycle events contain only
 bounded event/state/trace/time metadata. None permits project content, absolute
 paths, credentials, or arbitrary extension fields.
+
+Explicit Windows recovery uses four authenticated Core API commands for preview,
+confirm, status and cancel. The portable lock retains its exact seven fields.
+Native-owned process/principal proof and immutable dual-DPAPI witnesses live in
+the private application profile, outside the project/export contract. Missing,
+changed or terminal proof and any live, reused or unknown owner deny recovery;
+heartbeat age never grants authority.
+
+Confirmation verifies a new staging copy, including complete canonical facts and
+encrypted object inventory, while preserving all original bytes and the old
+lock. Its staged old lock is archived as operational evidence. A successful copy
+adds only the existing five-field lifecycle record with event
+`project.recovery-copy-verified`, then publishes into an absent destination.
+Normal explicit open supplies new ownership; verification alone leaves the copy
+closed. See ADR-0054 and `docs/architecture/project-package.md` for the private
+authority, cancellation and operation-owned quarantine boundaries.

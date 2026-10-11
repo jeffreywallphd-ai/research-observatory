@@ -57,7 +57,7 @@ from .model_catalog import ModelCatalogService
 from .model_gateway_service import ProjectModelGatewayService
 from .model_registry_repository import SqliteModelRoutingRepository, sqlite_model_catalog_repository
 from .modules import default_module_registry
-from .object_store import create_local_object_store, upgrade_local_object_envelopes
+from .object_store import create_local_object_store, upgrade_local_object_envelopes, verify_recovery_working_copy
 from .plugin_admin_service import PluginAdminService
 from .plugin_consent import PluginConsentService
 from .plugin_grant_repository import SqlitePluginGrantRepository
@@ -78,6 +78,12 @@ from .ports.document_attachments import (
 from .ports.import_previews import PreviewProblem
 from .ports.object_store import ObjectStore
 from .ports.object_store_keys import ObjectMasterKeyProvider
+from .ports.project_recovery import (
+    RecoveryCopyVerificationRequest,
+    RecoveryLocalReadAuthority,
+    RecoveryNativeAuthority,
+    RecoveryVerificationProblem,
+)
 from .privacy import ProjectPrivacyService
 from .projects import ProjectLifecycleProblem, ProjectLifecycleService, _ProjectActionScope
 from .provenance import ProvenanceService
@@ -105,6 +111,8 @@ from .storage import (
 from .task_center import TaskCenterService
 from .windows_credentials import (
     WindowsCredentialStore,
+    WindowsProjectRecoveryWitnessStore,
+    WindowsRecoveryNativeAuthority,
     create_windows_database_key_provider,
     create_windows_local_actor_identity,
     create_windows_object_key_provider,
@@ -480,6 +488,7 @@ def create_runtime_app(
     profile_vault_root: Path | None = None,
     workflow_context: NativeWorkflowContext | None = None,
     connector_settings: ConnectorSettings | None | object = _DEFAULT_CONNECTOR_SETTINGS,
+    recovery_native_authority: RecoveryNativeAuthority | None = None,
 ) -> FastAPI:
     """Compose Core with the Windows profile vault and mandatory pre-open upgrades."""
 
@@ -492,12 +501,14 @@ def create_runtime_app(
             raise ValueError("object-key provider is invalid")
         resolved_provider = object_key_provider
 
+    resolved_database_provider: DatabaseKeyProvider | None = None
     if database_key_provider is _DEFAULT_DATABASE_KEY_PROVIDER:
         if os.name != "nt":
             if database_protection_profile() != DEVELOPMENT_PLAINTEXT_PROFILE:
                 raise RuntimeError("the W1 protected database profile requires Windows")
         else:
-            configure_protected_database_provider(create_windows_database_key_provider(profile_vault_root))
+            resolved_database_provider = create_windows_database_key_provider(profile_vault_root)
+            configure_protected_database_provider(resolved_database_provider)
     elif database_key_provider is None:
         if database_protection_profile() != DEVELOPMENT_PLAINTEXT_PROFILE:
             raise ValueError("plaintext database operation is allowed only in the explicit development fixture profile")
@@ -506,7 +517,8 @@ def create_runtime_app(
             raise ValueError("an injected database-key provider cannot also select a profile vault root")
         if not isinstance(database_key_provider, DatabaseKeyProvider):
             raise ValueError("database-key provider is invalid")
-        configure_protected_database_provider(database_key_provider)
+        resolved_database_provider = database_key_provider
+        configure_protected_database_provider(resolved_database_provider)
 
     if local_actor_id is _DEFAULT_LOCAL_ACTOR_ID:
         if os.name == "nt":
@@ -526,10 +538,43 @@ def create_runtime_app(
     else:
         raise ValueError("local actor identity is invalid")
 
+    recovery_store = None
+    if recovery_native_authority is not None and os.name == "nt":
+        try:
+            recovery_store = WindowsProjectRecoveryWitnessStore(
+                (profile_vault_root or default_windows_profile_vault_path()) / "project-recovery"
+            )
+        except RecoveryVerificationProblem:
+            emit_log_record(
+                "project.recovery-unavailable", level="WARNING", fields={"reasonCode": "ownership-storage-unavailable"}
+            )
     projects = ProjectLifecycleService(
-        object_upgrade=partial(upgrade_local_object_envelopes, key_provider=resolved_provider)
+        object_upgrade=partial(upgrade_local_object_envelopes, key_provider=resolved_provider),
+        recovery_witness_store=recovery_store,
+        recovery_native_authority=recovery_native_authority,
+        require_recovery_exclusion=recovery_native_authority is not None,
     )
     privacy = ProjectPrivacyService(projects, sqlite_privacy_policy_repository)
+
+    def verify_recovery_copy(path, identity, project_scope, cancellation_requested):
+        policy = privacy.get(root=str(path), project_scope=project_scope)
+        return verify_recovery_working_copy(
+            RecoveryCopyVerificationRequest(
+                path,
+                identity,
+                RecoveryLocalReadAuthority(identity, policy.revision, policy.network_policy.value),
+                resolved_provider,
+                cancellation_requested,
+            )
+        )
+
+    def recovery_key_access(identity):
+        if resolved_database_provider is None or resolved_provider is None:
+            raise RecoveryVerificationProblem("retained-key-unavailable")
+        with resolved_database_provider.active_key(identity, create=False):
+            resolved_provider.active_object_master_key()
+
+    projects.configure_recovery_verifier(verify_recovery_copy, key_access=recovery_key_access)
     # One process-wide resource ledger, with explicit interactive headroom.
     # These are conservative admission reservations, not OS-enforced quotas.
     controller = LocalAdmissionController(interactive_reserve=WorkerResources(1, 256 * 1024**2, 0, 256 * 1024**2))
@@ -864,14 +909,23 @@ def supervision_handshake(*, host: str, port: int) -> dict[str, object]:
     }
 
 
-def _watch_supervisor(server: uvicorn.Server) -> None:
+def _watch_supervisor(server: uvicorn.Server, recovery_native: WindowsRecoveryNativeAuthority | None = None) -> None:
     """Stop cleanly when the supervisor requests shutdown or closes its pipe."""
 
     try:
-        command = sys.stdin.readline()
+        while True:
+            command = sys.stdin.buffer.readline(WindowsRecoveryNativeAuthority.MAX_BYTES + 1)
+            if command in (b"shutdown\n", b""):
+                break
+            if len(command) > WindowsRecoveryNativeAuthority.MAX_BYTES or not command.endswith(b"\n"):
+                break
+            if recovery_native is not None and command.startswith(WindowsRecoveryNativeAuthority.PREFIX):
+                recovery_native.receive(command[len(WindowsRecoveryNativeAuthority.PREFIX) :])
     except OSError, UnicodeError:
-        command = ""
-    if command == "shutdown\n" or command == "":
+        pass
+    finally:
+        if recovery_native is not None:
+            recovery_native.close()
         server.should_exit = True
 
 
@@ -895,6 +949,7 @@ def run_supervised(settings: CoreSettings, *, profile_vault_root: Path | None = 
         )
         return EXIT_CONFIGURATION_ERROR
     listener = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    recovery_native = WindowsRecoveryNativeAuthority(sys.stdout.buffer) if os.name == "nt" else None
     try:
         listener.bind((settings.bind_host, settings.bind_port))
         assigned_host, assigned_port = listener.getsockname()
@@ -906,6 +961,7 @@ def run_supervised(settings: CoreSettings, *, profile_vault_root: Path | None = 
                 expected_authority=authority,
                 profile_vault_root=profile_vault_root,
                 workflow_context=workflow_context,
+                recovery_native_authority=recovery_native,
             ),
             host=assigned_host,
             port=assigned_port,
@@ -918,10 +974,16 @@ def run_supervised(settings: CoreSettings, *, profile_vault_root: Path | None = 
         del capability_digest
         server = uvicorn.Server(configuration)
         print(json.dumps(supervision_handshake(host=assigned_host, port=assigned_port), sort_keys=True), flush=True)
-        watcher = threading.Thread(target=_watch_supervisor, args=(server,), name="supervisor-control", daemon=True)
+        watcher = threading.Thread(
+            target=_watch_supervisor, args=(server, recovery_native), name="supervisor-control", daemon=True
+        )
         watcher.start()
+        if recovery_native is not None:
+            recovery_native.announce()
         server.run(sockets=[listener])
     finally:
+        if recovery_native is not None:
+            recovery_native.close()
         listener.close()
     return 0
 

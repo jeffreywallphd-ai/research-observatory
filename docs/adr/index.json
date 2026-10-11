@@ -520,6 +520,17 @@
       ]
     },
     {
+      "id": "ADR-0054",
+      "path": "docs/adr/ADR-0054-bind-explicit-project-recovery-and-complete-quality-inventory.md",
+      "title": "Bind explicit project recovery and complete quality inventory",
+      "status": "Proposed",
+      "linkedTasks": [
+        "W2.A06.T01",
+        "W2.A06.T02",
+        "W2.A06.T03"
+      ]
+    },
+    {
       "id": "ADR-0055",
       "path": "docs/adr/ADR-0055-recognize-independently-reviewed-approved-corrective-metadata.md",
       "title": "Recognize independently reviewed approved corrective metadata",

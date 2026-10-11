@@ -261,6 +261,50 @@ class ProjectDeleteRequest(ProjectRootRequest):
     confirmation: str = Field(min_length=1, max_length=80)
 
 
+class ProjectRecoveryPreviewRequest(ProjectRootRequest):
+    destination_root: str = Field(min_length=1, max_length=4096)
+
+
+class ProjectRecoveryStatusRequest(ProjectRootRequest):
+    preview_id: str = Field(pattern=r"^[0-9a-f]{32}$")
+
+
+class ProjectRecoveryConfirmRequest(ProjectRecoveryStatusRequest):
+    confirmation: Literal["recover-working-copy"]
+
+
+class ProjectRecoveryProjection(ContractModel):
+    preview_id: str = Field(pattern=r"^[0-9a-f]{32}$")
+    state: Literal[
+        "unavailable-proof",
+        "denied",
+        "preview-ready",
+        "cancelled",
+        "copying",
+        "verification-failed",
+        "verified-copy-ready",
+        "open-failed",
+        "recovered",
+    ]
+    reason_codes: tuple[str, ...] = Field(max_length=8)
+    requires_confirmation: bool
+    source_display_label: str = Field(min_length=1, max_length=120)
+    destination_display_label: str = Field(min_length=1, max_length=120)
+    verified_fact_summary: str | None = Field(default=None, max_length=240)
+
+    @model_validator(mode="after")
+    def validate_recovery_state(self) -> ProjectRecoveryProjection:
+        if self.requires_confirmation != (self.state == "preview-ready"):
+            raise ValueError("recovery confirmation must match preview readiness")
+        if self.verified_fact_summary is not None and self.state not in (
+            "verified-copy-ready",
+            "open-failed",
+            "recovered",
+        ):
+            raise ValueError("unverified recovery cannot project verified facts")
+        return self
+
+
 class ProjectProjection(ContractModel):
     schema_version: str = CORE_API_SCHEMA_VERSION
     project_id: str = Field(pattern=r"^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$")

@@ -1,0 +1,126 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "independent-product-source-scope-addendum-readiness",
+  "amendmentId": "W2.A06",
+  "taskId": "W2.A06.T01",
+  "candidateCommit": "c6a9e21944e3d5299b5aed299fa3e4d0953d5728",
+  "reviewer": "agent:/root/c18_runtime_disposition",
+  "proposalAuthor": "agent:/root",
+  "result": "READY_FOR_OWNER_DECISION",
+  "proposal": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/a06-object-inventory-scope-addendum-01/proposal.json",
+    "sha256": "b57b5df1c9d96ef1d9ad5a4aef32cd22c72e2b7f582e883afab7d9d75d865cfe"
+  },
+  "reviewBrief": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/a06-object-inventory-scope-addendum-01/review.html",
+    "sha256": "ead622eb5356a636e8f9b4db3600e21a492aa91a523a7ea0d8a3d2c6c2ff60d3",
+    "reproducesExactProposal": true
+  },
+  "independentBasis": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/W2.A06.T01.object-inventory-advisory-01.json",
+    "sha256": "6eefc8480023d4cedfaf9dba531a06c083d903d52eedd3183dc0e10fc131bfb8",
+    "author": "agent:/root/c17_independent_disposition",
+    "scope": "Finite source/interface inspection only; the missing-object runtime counterexample is not executed."
+  },
+  "authorityPins": [
+    {
+      "path": "planning/enabler-change-requests/ECR-0014.packet.json",
+      "sha256": "6293590db74b9a3ec4ce6019a1713def568798ac3a71208a5583bfcff78f7a34"
+    },
+    {
+      "path": "planning/enabler-change-requests/ECR-0014.md",
+      "sha256": "7c70aeebc5a60ab606bd5f6170b48e2012becab8cf7547f7ad8cd75482291496"
+    },
+    {
+      "path": "planning/wave-amendment-approvals/W2.A06.json",
+      "sha256": "3ecf2b98806f1589be7bd63fcc4f25cf0ee2df79bc95a3a0fefda2ce5666e4b2"
+    }
+  ],
+  "sourcePins": [
+    {
+      "path": "docs/adr/ADR-0015-use-project-scoped-opaque-content-addressed-object-storage.md",
+      "rawSha256": "f138d6a6f468e597d7346ae92a369cf12f60b58774bba5d72121196fd46cfde7",
+      "gitBlob": "275d020b13aab9d85be27d981e828507a8b43a6f"
+    },
+    {
+      "path": "docs/adr/ADR-0016-upgrade-local-object-envelopes-through-a-durable-verified-copy-on-write-state-machine.md",
+      "rawSha256": "6160708d0ccfed7272f0142c4800f0aaf8c93d85e201cdf8068ecf775548a7da",
+      "gitBlob": "8eec4364794cd337cc98d4ead709ebb6cb00ac61"
+    },
+    {
+      "path": "services/core-api/src/research_observatory_core/object_store.py",
+      "rawSha256": "c0994d3d4f59b375db1682f9ae2249cb91744d261a057c0094ee8d921a3f9788",
+      "gitBlob": "a25fb1f117e68fdcfe1ec98278a1d3953525716a"
+    },
+    {
+      "path": "services/core-api/src/research_observatory_core/ports/object_store.py",
+      "rawSha256": "c0c4f557b90c104c635159ebbef4494dc2d5ad32580632bce5602e897b966dc5",
+      "gitBlob": "737a0573f6eee10ef909436219ad8b5d4435d144"
+    },
+    {
+      "path": "services/core-api/src/research_observatory_core/ports/plugin_packages.py",
+      "rawSha256": "215c3369a3c7b21096ee500cd97d776dc5aab38d6cf5fcbd0e29c601d7e41ebb",
+      "gitBlob": "bf8432bbc528671f915b609db3b22fddb5131099"
+    },
+    {
+      "path": "services/core-api/src/research_observatory_core/ports/repositories.py",
+      "rawSha256": "1635ffde693edb41ae90fb71f559ddf0b4d3688152ce9840fd3ea2d8f8334ce8",
+      "gitBlob": "a75dc8a142c2456bf825808d44f19660d2b8f6c2"
+    },
+    {
+      "path": "services/core-api/src/research_observatory_core/storage.py",
+      "rawSha256": "2aa938a64111ece6e85616277082e2d77a394036babd6b8a83cdbda6393294b4",
+      "gitBlob": "83545cc03d95426ec9b233c8b0597900f5a95c30"
+    },
+    {
+      "path": "tools/architecture_check.py",
+      "rawSha256": "767da862d9817cb69f1156816b2a2a00289c9dee957c3f83e3d51a6275e9072f",
+      "gitBlob": "9ffad94d878126c35f17bd5dd54866eb70f8fc2e"
+    }
+  ],
+  "assessments": [
+    {
+      "boundary": "Necessity and existing authority",
+      "result": "satisfied",
+      "assessment": "T01-AC03/04 already require complete protected object inventory/authentication before a verified copy is published. Finite independent inspection confirms that ObjectStore accepts known object IDs, aggregate/lineage/package readers require known domain IDs, usage iterates only present files after constructing a private metadata map, reconciliation covers partial operation inventories, and database_integrity_report covers relational/cipher integrity rather than external ciphertext membership. A valid referenced row with absent ciphertext is therefore a concrete untested completeness counterexample to these existing public seams. Filename scanning cannot invert the accepted opaque physical identity. The original recovery source envelope excludes object_store.py and its public port, so a single explicit append-only owner grant is necessary before dependent edits."
+    },
+    {
+      "boundary": "Minimal architecture-preserving implementation",
+      "result": "satisfied",
+      "assessment": "The request adds one existing concrete adapter path. Complete database enumeration remains inside object_store.py, already recognized as a data adapter by the unchanged architecture checker. The already authorized project_recovery port carries typed content-free inputs/results; main.py only composes and projects.py orchestrates through that port. No public ObjectStore expansion, new adapter/module, business SQL, checker change, controller permission or false-positive exemption is requested. Existing adapter entrypoint is narrower than extending the public ObjectStore port; deferral truthfully leaves recovery completeness pending."
+    },
+    {
+      "boundary": "Original-source, encryption and rights preservation",
+      "result": "satisfied",
+      "assessment": "Verification is confined to the privately owned staged copy while the original remains held unchanged. The proposed complete canonical membership/state/identity/length/key/reference checks, safe opaque paths and full authenticated bounded readback preserve ADR0015 and ADR0016. They neither introduce cryptography nor expose plaintext files, full-object RAM allocation, research-content projections, key escrow or portability/security authority. Required unavailable/quarantined/unknown states, unsafe path substitutions, missing keys and authentication or audit failures deny publication. Deleted/tombstoned semantics are explicitly preserved. Existing construction can invoke migration and known-ID open can update verification/quarantine state; the proposal's compatible identity check before construction and staged-copy-only confinement must remain enforced during implementation, as already stated, with no original reconciliation, repair or migration."
+    },
+    {
+      "boundary": "Verification and downstream lineage",
+      "result": "satisfied",
+      "assessment": "The plan requires a failing staged missing-ciphertext regression after normal legal claim, valid/empty and corrupt/key/state/path/principal/identity/cancellation/concurrent-change denials, affected existing object-store checks, real protected staged readback and expanded independent security/interface review. Actual whole Native/Core termination and fresh restart remain required. Additional future-lineage recognition is limited to this exact admitted/claimed/reviewed T01 source delta with actual owner/addendum/claim/source/candidate/review hashes and independent negative controls before execution. No new architecture/lint/CSP or other predicate exemption is conferred; all original failures remain preserved."
+    },
+    {
+      "boundary": "Decision completeness and exclusions",
+      "result": "satisfied",
+      "assessment": "The exact brief reproduces the proposal and supplies the problem, single added path, bounded algorithm, retained criteria/gates, alternatives and recommendation, and explicit approval/resume conditions. The grant covers conforming implementation details only within this finite addition. Original packet/approval bytes and IDs remain immutable. No further framework development, governed UX/baseline/RAM/release change, original-fixture alteration or implicit legacy recovery is requested. Normal B00 admission/review, task claim, security review, integration and release gates remain separate; the active view integrity run is not claimed complete by this readiness record."
+    }
+  ],
+  "blockingFindings": [],
+  "recommendation": "Approve alternative A: the single existing object-store adapter entrypoint and its exact conditional lineage recording, then follow the unchanged normal B00/admission/claim/security/evidence routes. This closes a concrete source-envelope omission without reducing complete-copy verification or developing the automation framework.",
+  "resumeCondition": "Explicit owner approval of the exact proposal hash, preserved append-only with this actual independent readiness and actual introductions, followed by required normal B00 review/materialization/activation and legal T01 claim. Future source and proof readiness must be bound only after real implementation/review/negative-control evidence exists.",
+  "limits": {
+    "ownerApprovalIssued": false,
+    "scopeAuthorized": false,
+    "productImplementationReviewed": false,
+    "testsOrProducersExecuted": false,
+    "productRuntimeImported": false,
+    "missingObjectRuntimeCounterexampleExecuted": false,
+    "productOrTrackedSourceEdited": false,
+    "taskctlOrGitMutations": false,
+    "wholeRestartOrRecoveryProven": false,
+    "taskApproved": false,
+    "waveComplete": false,
+    "releaseApproved": false
+  },
+  "reviewMethod": "Independent finite read-only review of the exact proposal, brief, governing original task criteria and path envelope, accepted object identity/envelope ADRs, selected concrete adapter/port/database/architecture code and actual source hashes. No historical audit, tests, production imports, proof execution or source mutation. Only this ignored readiness ledger is authored."
+}

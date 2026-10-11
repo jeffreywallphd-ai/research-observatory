@@ -1,0 +1,108 @@
+---
+id: ADR-0054
+title: Bind explicit project recovery and complete quality inventory
+status: Proposed
+date: 2026-10-11
+deciders: []
+linked_tasks:
+  - W2.A06.T01
+  - W2.A06.T02
+  - W2.A06.T03
+decision_scope: Explicit reviewed local repair-copy recovery, Native-owned durable operational session identity, and complete quality inventory data. No shared boundary/checker policy change.
+affected_paths:
+  - services/core-api/src/research_observatory_core/ports/project_recovery.py
+  - packages/contracts/core-api/**
+  - packages/contracts/project/**
+  - quality-scope.json
+supersedes: []
+superseded_by: null
+---
+
+# ADR-0054: Bind explicit project recovery and complete quality inventory
+
+## Context
+
+CAP-02.S01 requires explicit reviewed stale-lock recovery. Retained whole-process termination exposed the unimplemented recovery path. ADR-0008 keeps Native process/host authority; ADR-0012 preserves portable projects; ADR-0001 requires a task-linked indexed record for protected API/port/quality data changes. W2 restoration of W1 behavior is explicitly authorized. Original adverse evidence and task history stay immutable.
+
+## Candidates
+
+1. Restore reviewed recovery with a verified working copy and a durable typed operational ownership witness; synchronize all governed quality data and retain every checker. Recommended.
+2. Limit action to separately reviewed original-fixture operator recovery and defer the product feature. This does not satisfy whole Desktop/Core production recovery and must not reduce Wave criteria silently.
+
+## Decision
+
+Proposed under ECR-0014/W2.A06, not yet accepted: Native owns actual current principal, same-machine and parent/child process birth/executable/session authority and provides a typed controlled startup binding. Core owns preview/confirm/cancel/status, heartbeat and verified copy via a typed port. Renderer evidence never grants host authority. Persist a dedicated private nonportable witness with inner current-user DPAPI and outer same-machine DPAPI, containing no project key, vault root or research content. Existing project-key/current-user protections remain unchanged. New sessions publish a recoverable lock only after durable witness publication; failures never grant eligibility. Unknown/living/reused process, foreign host/user, absent/tampered proof, changed source/heartbeat, redirect/hard link, key/integrity/collision/concurrency failure denies. Ten-second heartbeat is metadata, never a stale-age takeover permission.
+
+Explicit human preview/confirm creates only a verified empty-destination working copy; original project, old lock and old ciphertexts remain untouched. Verify database/WAL consistency, object authentication/inventory, IDs/revisions and accepted facts before atomic publication. Normal explicit open acquires new operational authority on the copy. No automatic unlink/takeover/reparse/acceptance or arbitrary legacy override. Existing approved Projects recovery/lifecycle region and focus/dialog patterns are restored, not redesigned. Old unproven R03 cannot receive a backfilled witness; any separately authorized one-use operator attempt requires exact preserved proof and independent closure.
+
+quality-scope.json must cover complete actual governed discovery under unchanged six roots/exclusions, preserving every valid entry and adding omissions/new sources. No checker, formatter, architecture-protected-path or release-gate source changes. Exact verification-method choices are separately bound in the ECR proposal and retain original FAILs.
+
+## Consequences
+
+Windows x64 local-only operational proof survives complete Native/Core death for newly eligible sessions. It is not portable host authority or protection against administrator/OS/credential compromise. No project/vault format migration or new scholarly-object encryption. Legacy unknown sessions are denied truthfully. Each linked task updates only its own implementation/verification notes in this same indexed record; no fabricated Accepted state or generalized policy change.
+
+## Verification
+
+Required actual owned whole Native/Core termination and fresh startup, protected readback, real principal/foreign-host/PID reuse/unknown query/tamper/path/key/copy/audit/cancel/race denials. Existing reference UI keyboard/focus/theme/reflow proof and exact source/task/review hashes. Complete quality discovery/check; originals retain truthful outcomes, with only explicit ECR finite methods. Existing ADR check against each actual task base/candidate. No results exist in this Proposed record.
+
+## Task links
+
+- W2.A06.T01: security/port/API/witness/copy implementation and actual security evidence.
+- W2.A06.T02: existing Projects state/action/focus restoration and shipping integration evidence.
+- W2.A06.T03: complete quality data and exact finite verification qualification.
+
+## W2.A06.T01 implementation in progress
+
+The original ECR-0014 contract above remains Proposed. The exact owner-approved
+single-adapter addendum is recorded in
+`artifacts/evidence/W2.A06.T01.object-inventory-scope-addendum-01.owner-decision.json`.
+Its additional existing `object_store.py` entrypoint verifies only a privately
+owned recovery staging copy through complete canonical facts, current object
+metadata and physical inventory, retained rights/key authority, bounded existing
+authenticated streams and cancellation. It does not repair or open the original
+project, extend the public ObjectStore port, change scholarly encryption, or
+replace existing canonical connection controls.
+
+The additive `NativeRecoveryContractTests` drives the actual compiled Native
+supervisor and protected Core in two separately owned Windows Jobs. It binds
+current build inputs and holds source/executable files against write/delete,
+abruptly terminates the original whole pair, verifies an original-derived copy,
+then obtains fresh ordinary open and protected lineage/intent/object readback.
+It grants no shipping UI or frontend predicate exemption. The original general
+probe builder and its desktop assertions remain; its zero-test setup failure is
+preserved. Shipping Native/Core/UI recovery belongs to W2.A06.T02.
+
+Current observations remain development evidence from uncommitted source.
+An isolated anonymous-thread check proves private witness ACL and inner
+current-user DPAPI denial followed by owner readback after reversion; it does
+not claim a different Windows login or foreign host. Foreign-machine wrapper
+proof and exact committed-candidate review remain outstanding. No task, slice,
+Wave, release, or accepted ADR status is inferred from these observations.
+
+Independent development review identified terminal-preview admission exhaustion
+and a gap between staged authentication and publication. Regression cases retain
+the original failures. Terminal entries may be reclaimed only after validation
+and any worker finish; pending validation, active copies and unopened verified
+targets retain their authority bindings. Staged database, committed WAL and
+portable content receive strict file holds before verification. Only SQLite's
+derived shared-memory index, a newly created empty WAL, and the exact owned
+audit append may change. Windows directory publication requires closing child
+handles, so complete content/identity binding is compared again under fresh
+strict destination holds before ready/open authority. Changed published content
+is quarantined by the operation-owned root identity. These are implementation
+details within the approved criteria, not a new verification exemption.
+
+The 64-entry limit bounds active preview/copy sessions. Completed terminal
+entries may be reclaimed; ready previews remain until cancellation or Core
+restart. This limit grants no expired or discarded preview confirmation.
+Each owned staging copy receives a flushed temporary root completion marker
+before copying. Ordinary package validation rejects this extra entry, so failed
+quarantine and interrupted publication remain denied across a fresh Core
+startup. Complete published bytes stay held through final marker removal;
+removal failure retains an incomplete copy and cannot report ready. Successful
+copies retain the existing project format without the temporary marker.
+
+The owner confirmed no second Windows PC or VM is available. The original
+foreign-host criterion remains unverified and unchanged; local checks cannot
+claim its completion. A separate verification decision is required before this
+hardware-dependent gate can be deferred.
