@@ -1,0 +1,2465 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "batch-conforming-method-source-record",
+  "batchGrant": {
+    "path": "planning/wave-amendment-approvals/W2.A06.json",
+    "sha256": "3ecf2b98806f1589be7bd63fcc4f25cf0ee2df79bc95a3a0fefda2ce5666e4b2",
+    "introductionCommit": "ab3c35369a8cd57876a1890db90263e5ab2ba395"
+  },
+  "planContract": {
+    "path": "planning/enabler-change-requests/ECR-0014.md",
+    "sha256": "7c70aeebc5a60ab606bd5f6170b48e2012becab8cf7547f7ad8cd75482291496"
+  },
+  "methodId": "exact-current-reader-local-worker-csp",
+  "candidateCommit": "6bc633960b3e3606fb24b58ab6a3faf717a1b018",
+  "producer": {
+    "path": "artifacts/tmp/W2.A06.C18.shipping-reader-csp-03.py",
+    "sha256": "df8d21507099d2a884def8b2101618d421206e8c63d541dc4b050490b59b9167",
+    "retainedSourceBytesReference": {
+      "path": "artifacts/evidence/W2.A06.pre-admission-method-records-source-capture-07.json",
+      "sha256": "ccaab4f3a3ff4bc14134cdd0acc48be3aa06154a433b5c1508e4c2f0a100f917"
+    }
+  },
+  "allowedPredicateIds": [
+    "exact-current-reader-local-worker-csp"
+  ],
+  "selectedInputs": [
+    {
+      "path": "artifacts/tmp/W2.A06.C18.shipping-reader-csp-03.py",
+      "sha256": "df8d21507099d2a884def8b2101618d421206e8c63d541dc4b050490b59b9167",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.C18.prepare-mini-reader-02.py",
+      "sha256": "9db7629ae892ea8d5af8f0c217dd006c313a194569e6c55343ef8071ba8723f0",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/mini-reader-source-preflight-02.json",
+      "sha256": "423b92994b5f9968c9eba67bed3c77789061f554c5b9e53b849e5242a9aefc94",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S04.T01.owned-native-job-01.py",
+      "sha256": "991d6cc09aa992ba3675e3107058d934c9e0d56750aa9457ae4b3d1e642efe58",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.slice-uia-06.ps1",
+      "sha256": "20c5927e6284122f927d30b69ff4580fafe7473039d5594651ad07bb439330d8",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.slice-uia-06.cs",
+      "sha256": "4a5c7428a87f903cd89b80f53dab81cfef3cc54cfa413ded41884f2ffba00f4e",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.C18.csp-method-03.py",
+      "sha256": "d17f2341cc596d5a84b280bbe8779be577df9befdf4918bd4ae11c081adfc984",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/shipping-header-compile-02.receipt.json",
+      "sha256": "a86308b11e938fdda4da053078fe7b23fa0f2fa5f24cb64cdb62ea3b92e09509",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.shipping-baseline-02.py",
+      "sha256": "9e18b907e2dca679883aa12cdd9750216fe1e5391aa51fa670248698f34aefc0",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.prepare-shipping-fixture-02.py",
+      "sha256": "a9574f4b82ac245948cde48e2da49d1b28bedb7bf877f8dc3eec6d564b85949f",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "planning/wave-amendment-approvals/W2.A06.json",
+      "sha256": "3ecf2b98806f1589be7bd63fcc4f25cf0ee2df79bc95a3a0fefda2ce5666e4b2",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "planning/enabler-change-requests/ECR-0014.md",
+      "sha256": "7c70aeebc5a60ab606bd5f6170b48e2012becab8cf7547f7ad8cd75482291496",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.C18.T01.current-build-lineage-02.py",
+      "sha256": "9ca3f254cfdda423d1ed645a8c1dc3187b4dd0d31ea11f64e25d07386ced3788",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "apps/desktop/src/app/pdfDocumentViewer.ts",
+      "sha256": "07772bce5d177a3b2f3ee2649b2625130fcf397c705d258de019a80bd16cd18a",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "apps/desktop/src/app/DocumentViewerWorkspace.tsx",
+      "sha256": "d1bc9137edf8acee418bd0369e195263ff6db4aee69b5b0dbf25a5572c7fb48a",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/shipping-header-compile-02.build.log",
+      "sha256": "86d1b1fdad36a57f59dc3c0a6dc87e46d62dcd8dfd327a625cf5ff82672ad08a",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/shipping-header-compile-02.resolution.log",
+      "sha256": "943613172e2944854e27eea433ab0d3bd2a92d97a5f7e344429c43690a964d5e",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "target/release/w2-a06-shipping-header-companion.exe",
+      "sha256": "37f568a4e0c0f2ffd9530b6fb0fe0e55b9091590156043823099268d2d87acf1",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "apps/desktop/src-tauri/tauri.conf.json",
+      "sha256": "1b774c7be68f3f6573cdd03cdf121d748c208c9aa935317e2365668815ba88e9",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "apps/desktop/src-tauri/Cargo.toml",
+      "sha256": "d84274e9b37b1070fe96896d468df44db5b6afb8e9fd44230ae13674e2af8d37",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/assets/application-manifest.json",
+      "sha256": "20ea4b574eb4cd4d5bdba4c81a10f32a433f8ca3f179ee88c706893f7a0282ac",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/assets/assets/78-EUC-H.bcmap",
+      "sha256": "d92a261336dc18b8c03a46eb4d462382d33f4338fa195d303256b2031434c874",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/assets/assets/78-EUC-V.bcmap",
+      "sha256": "61670bebc4e4827b67230c054fd0d820d6e30c3584d02e386804e62bbedc032a",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/assets/assets/78-H.bcmap",
+      "sha256": "ece6415b853d61e1b2560165151407d35cf16e6556932b85a13ea75276b77402",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/assets/assets/78-RKSJ-H.bcmap",
+      "sha256": "696b1f973c97623496703809eaaa5f9b40696c77540057413f4b826a08edfa7b",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/assets/assets/78-RKSJ-V.bcmap",
+      "sha256": "53cb6d560ab377da48cf65d6dcacb0bdb31f13fab7066c580de38c12a73a7ff9",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/assets/assets/78-V.bcmap",
+      "sha256": "289000f02fd34872b6975503217f33abae6bee676e7d28f640473a67c8db1712",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/assets/assets/78ms-RKSJ-H.bcmap",
+      "sha256": "a2442595218f5f8bd8e1b42188e368587d876cfe0cc4cd87196f077c878f72e2",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/assets/assets/78ms-RKSJ-V.bcmap",
+      "sha256": "f8ddceba96bfd9d3740bd1789ee30d1f47c78371520a8084f71f7df58f19be0b",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/assets/assets/83pv-RKSJ-H.bcmap",
+      "sha256": "44040051ec818fe09b9703472bea72efd2759d5eeb5ff0d77c718d6bb5e6d1df",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/assets/assets/90ms-RKSJ-H.bcmap",
+      "sha256": "c13e043e85ff715b75bb03801e8fd0fb8f3a75e4a48496faa6baaf92b5b48ba1",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/assets/assets/90ms-RKSJ-V.bcmap",
+      "sha256": "499bb916ce1adbe4289b6e5811f4dc20eb238cdc2ffad20cf26ae56716885bab",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/assets/assets/90msp-RKSJ-H.bcmap",
+      "sha256": "7b8b3b8bbf821702e9a4df9f3596ce292380c8c1b0925dedadbb4e4b2d80498b",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/assets/assets/90msp-RKSJ-V.bcmap",
+      "sha256": "6296c2b5c07dca8128e96d5296d621a3268803d4fa0e5812a21e52fe2802aacb",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/assets/assets/90pv-RKSJ-H.bcmap",
+      "sha256": "fb5103f03d3a34547e18d316e52b6d9b26e485c662999222f84d2ba54c2e4fa8",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/assets/assets/90pv-RKSJ-V.bcmap",
+      "sha256": "7bcb5ad2ba55b9662ce379e16c2d9cc2b82d621a579807353741172e4af615c2",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/assets/assets/Add-H.bcmap",
+      "sha256": "a2ffab28b990998181bcca9b0e914bb2207820f100ae31d5c469444892e5ad8e",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/assets/assets/Add-RKSJ-H.bcmap",
+      "sha256": "b29f4b52e2465d0485856d5e69f1ba69927deb2848d8fd328c8035583b35bb7e",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/assets/assets/Add-RKSJ-V.bcmap",
+      "sha256": "2aa2232c283a3f5d0997c2834a36cead0b79ce2657944cfeed08140c293460ff",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/assets/assets/Add-V.bcmap",
+      "sha256": "25125d3b1be64e86b2df5b3344170b45a42bcaa0b46e43a34314ef73c166e542",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/assets/assets/Adobe-CNS1-0.bcmap",
+      "sha256": "8c65be9d51a9f269a547dc12460707aaf4031ab67ebe8a2900f4b4cc6b3e450e",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/assets/assets/Adobe-CNS1-1.bcmap",
+      "sha256": "73152bc1a59cc594b414ac6068be48e5512b96ae85920c40e32a99269fdb0c04",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/assets/assets/Adobe-CNS1-2.bcmap",
+      "sha256": "a1b8d353bdef9584c820464e8f1c9e2013d64ebf433cba0aa831dddf515818c2",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/assets/assets/Adobe-CNS1-3.bcmap",
+      "sha256": "2ffc0c75c79fafde506163d3c08c390d183251009f3fbf6ae50d1167d14b9570",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/assets/assets/Adobe-CNS1-4.bcmap",
+      "sha256": "98a1f470c878c6b9691a4d7aef776af8ac9b55f5587c9fafa00547f3bf655716",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/assets/assets/Adobe-CNS1-5.bcmap",
+      "sha256": "ddd6e29955eb8cb545f2ebd09c628c3bbda5023256eda1b728f743c75fb77829",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/assets/assets/Adobe-CNS1-6.bcmap",
+      "sha256": "317bb2db71e0e5b7b0c47b75de1da915c2e22f65f0c0861507f9ca7ba238f8a2",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/assets/assets/Adobe-CNS1-UCS2.bcmap",
+      "sha256": "e665837f2197c6bd08cd8955ad4d6932cee2398e2e328b25b00e6bfb3bd72af9",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/assets/assets/Adobe-GB1-0.bcmap",
+      "sha256": "8b81cce8a11d510e505704953cfa4e4ab080c1a0cab991145a3512ee433946b9",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/assets/assets/Adobe-GB1-1.bcmap",
+      "sha256": "0426983081788ec7202703e71f1efa4b860f75b936994236010b39d89251a81e",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/assets/assets/Adobe-GB1-2.bcmap",
+      "sha256": "e67b37a83b160ab3831306a71a605893b24454ee81ac9b6123bf2d3984d268d5",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/assets/assets/Adobe-GB1-3.bcmap",
+      "sha256": "aa299afc3e12a28726147305f191be28c7498078c8b182ece7886ac79cd99078",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/assets/assets/Adobe-GB1-4.bcmap",
+      "sha256": "8fbd7d74c2ddb1350c1cecce54a73fde3f5453093d4bed445283ec0033d2097f",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/assets/assets/Adobe-GB1-5.bcmap",
+      "sha256": "c22cb2fcff24112fa31dab2111bdc51957006576d31aad5a25e67793ac01428c",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/assets/assets/Adobe-GB1-UCS2.bcmap",
+      "sha256": "20507620260c0c935c35afc1e70e5888aa7125d5ec7ffc03cef1959feb2c1641",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/assets/assets/Adobe-Japan1-0.bcmap",
+      "sha256": "464f08905236f5703b1f5cf8358767c8b18e6bcc808840d081f1de2c7ab38134",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/assets/assets/Adobe-Japan1-1.bcmap",
+      "sha256": "4c823848722187d1ffe75ae3f5f9126ccd2d7895a05fad14c919fb119e037008",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/assets/assets/Adobe-Japan1-2.bcmap",
+      "sha256": "7810fb808e367e70429e90a9478fe6a3fdc3e214f25c7582ce9c2da6a242315c",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/assets/assets/Adobe-Japan1-3.bcmap",
+      "sha256": "84deb1828711ad3d390c9899c38abce1bf619d65ff7bf1a326ec95acc45f08f8",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/assets/assets/Adobe-Japan1-4.bcmap",
+      "sha256": "3f8a4f974919c2b8bae5d10175ffa2673be140481e00840542c85d48ef184067",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/assets/assets/Adobe-Japan1-5.bcmap",
+      "sha256": "1d3ce4ff28d977f8cf37a912ae4ec811f4175c3167b1ec0b2567feec3e79e1db",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/assets/assets/Adobe-Japan1-6.bcmap",
+      "sha256": "5609797b9401b30be72ef9645da62a87829f058c3be4b5c623383119f584b1d9",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/assets/assets/Adobe-Japan1-UCS2.bcmap",
+      "sha256": "66c5d0dc4964f4093e77b194023f3a0f689324028ec8330e1e1d0570bcba7c2f",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/assets/assets/Adobe-Korea1-0.bcmap",
+      "sha256": "dfb8c3874f0e5a8c3acf597d2c12d2b63e90bc5e4f0fce990ec4c56077d80b32",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/assets/assets/Adobe-Korea1-1.bcmap",
+      "sha256": "62f277b7b1c441c007797ae707d5c37258d029ce4661a2b911e2e1ee35e6adc1",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/assets/assets/Adobe-Korea1-2.bcmap",
+      "sha256": "1d77068af462f96d7ad28ad7e7d43eef6423c685b479d7dc25ff5df38db0380d",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/assets/assets/Adobe-Korea1-UCS2.bcmap",
+      "sha256": "857b723088be97255053562bfa41bd1075a7f7910d3bab59a0645c8bbc7060ff",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/assets/assets/app.css",
+      "sha256": "91b08a0553c603f1a910fe989e1d220d625f15367fdc96449467c8624cb7321b",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/assets/assets/app.js",
+      "sha256": "05954c69270c1c69cb73bbd7e5e1c708542f8a8f102c04baec14126ca8a6cf18",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/assets/assets/app.js.map",
+      "sha256": "9d2a0a4e4213e1750f0ca1ca7ceef4d0be7adab2e616cad16dcd158c1f6d7fb7",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/assets/assets/B5-H.bcmap",
+      "sha256": "718ad0ffbef4c34f8f3f31292c462e519cd567a5511fc8b346c60010d64f4ef9",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/assets/assets/B5-V.bcmap",
+      "sha256": "b5c37383517477620ced927b6b4ffd4f4cc6230d8051b5b46a21d6768e07f7d8",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/assets/assets/B5pc-H.bcmap",
+      "sha256": "bab6028aead1d6149400e904ab10cfd319082d826473ed4c582c8eeed920f17e",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/assets/assets/B5pc-V.bcmap",
+      "sha256": "41543142b9767f3b76133899fc8453282b01ad3c653acaeea42d78c5a7d08c63",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/assets/assets/CNS-EUC-H.bcmap",
+      "sha256": "e8f89cd61e6486b948205da46499d659ed0aed949b7095fd3c8e95ffe2b0e7a9",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/assets/assets/CNS-EUC-V.bcmap",
+      "sha256": "cae422bec2ac6dbe86bf921cec942bacd2d0b733ffcca5f91b3ba14e917025a0",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/assets/assets/CNS1-H.bcmap",
+      "sha256": "e8487971ab20cd16f3de3e8ac56ec994b72b658ad113f2818239dfd5108f501a",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/assets/assets/CNS1-V.bcmap",
+      "sha256": "42df8076aaa7574505e7304af83a3323ec032c4177d64b1309db8c043d594a8a",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/assets/assets/CNS2-H.bcmap",
+      "sha256": "bc6024d274d440f0625c69e25f37036ef6cb6689432ceaa160d3432a2a716ca7",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/assets/assets/CNS2-V.bcmap",
+      "sha256": "2e4f70a8afd23a121030fc2e5b5f3816e903b11e7ba8b8c09654b31c80399c38",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/assets/assets/documentAttachment.js",
+      "sha256": "57ceed83822110099a4251912e6ad8cc402494391149d419170cdf58c55f74f4",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/assets/assets/documentAttachment.js.map",
+      "sha256": "ddfccc10c3c1355c54c35e3e1a4b220a2f1f5c8e8cd2821dc5b329c81d4e7f75",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/assets/assets/documentCorrections.js",
+      "sha256": "6e3fae7291b54aa8f420d5389416a625d1ba32dfd6839c2c4733d93b38365d32",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/assets/assets/documentCorrections.js.map",
+      "sha256": "1cdf6f63de1ff54310b54ec91d37bf942a6bccb036fda203d537a0fbc49ac55b",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/assets/assets/documentViewer.worker.js",
+      "sha256": "cae8f34ab9c1f98922e4bd1d5d094e152893080882b89a96806c9af86549a507",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/assets/assets/documentViewer.worker.js.map",
+      "sha256": "889fb6cc9352e2f022427e22fe70bea0b9b884c2dc280dd9bd733415a1c18cf7",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/assets/assets/DocumentViewerWorkspace.js",
+      "sha256": "c1708fc18fb2457fd8bd026bafa612c1109fecd6651f3d6f0c43975ba42a8b3b",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/assets/assets/DocumentViewerWorkspace.js.map",
+      "sha256": "8932242484e3ff371fab4ae07a79038bf34027ac5c61ab7ffed13f61eccab778",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/assets/assets/ETen-B5-H.bcmap",
+      "sha256": "87ee6b3f5bfda5fe26fa35431264c7d73070d10dbbf398a75185d63ae322c18d",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/assets/assets/ETen-B5-V.bcmap",
+      "sha256": "47dc0d2c21e3bde317947aec1675ceabc1d5460a60bf9c24334b8c407a17172c",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/assets/assets/ETenms-B5-H.bcmap",
+      "sha256": "d5f5a73da4173b7da9a3a20e16f26f9cd5d12deb1553409919e0cec6fd37fdee",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/assets/assets/ETenms-B5-V.bcmap",
+      "sha256": "18252fca90f472f479af1bddd60d6ab51c8e1b55dcf6845951426504934543e0",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/assets/assets/ETHK-B5-H.bcmap",
+      "sha256": "d2f10fa519336bc4efcc7b6deb9604b75429946b40d82e311cb3a97a1994c89a",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/assets/assets/ETHK-B5-V.bcmap",
+      "sha256": "1fea3fd0d9f0f679f80505800851ef2e4131d81127e18c006938ffa2f4c8b247",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/assets/assets/EUC-H.bcmap",
+      "sha256": "f9939cd57fccdc65c5d9f4c205fd497ebdbd283643308da5663801a8c1d9c595",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/assets/assets/EUC-V.bcmap",
+      "sha256": "1283a50a706507c4436da83ede9ad7a4440be25378f2e96f6c81a430081426a3",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/assets/assets/Ext-H.bcmap",
+      "sha256": "4000ed4e61a1c668ef453bbd0603cfa383defa793abd46a57ed870d7f527350b",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/assets/assets/Ext-RKSJ-H.bcmap",
+      "sha256": "e0d2f0df337660e73813238dd4a725f11f0621b90f3273857db253d0e7694caa",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/assets/assets/Ext-RKSJ-V.bcmap",
+      "sha256": "f617a22b6d67febb187990952006c91a9f5a4db21155d268c656252d0c21985d",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/assets/assets/Ext-V.bcmap",
+      "sha256": "c2087fb845a9e3acea0c2922cd40e6af67e11957bec74dcd597f1285edd490ce",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/assets/assets/FoxitDingbats.pfb",
+      "sha256": "845c752392b6c914fb989c75a08b7792b88f542d2499042ef2889f8c814a16ed",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/assets/assets/FoxitFixed.pfb",
+      "sha256": "b6c8fe53f134b8b6d4578cd2d544df4cee9624c4efa8d51a560fb40ea296101b",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/assets/assets/FoxitFixedBold.pfb",
+      "sha256": "f1b7159702973f54fc86254ea38bcf3712b2a736eb3a0995751e9f4bb45ad603",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/assets/assets/FoxitFixedBoldItalic.pfb",
+      "sha256": "8a000945843bd31add06aee63bf9fd41b7578b4f3242a4b7cd46349ad9d24d4d",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/assets/assets/FoxitFixedItalic.pfb",
+      "sha256": "5007faf8320fa1fcc08b8894b356ad976f60b992ba29ee5272578bbdebaf3876",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/assets/assets/FoxitSerif.pfb",
+      "sha256": "4f57d2b9d884af8f907bf22df6019b52d86cbf6214fdbd02b1ae05472a543f35",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/assets/assets/FoxitSerifBold.pfb",
+      "sha256": "0bdf4b04e964139818d51eda03d566ba999fc3ba2421b1c6c51f9dc969022e80",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/assets/assets/FoxitSerifBoldItalic.pfb",
+      "sha256": "a406cac82583bf98175cb62c87ed5e95c45fbb34eece63a10b0a13e793cb2e10",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/assets/assets/FoxitSerifItalic.pfb",
+      "sha256": "610ae0687198045c4db5d1a6650fd5e92536631706382eb8b72e38df578d0ae9",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/assets/assets/FoxitSymbol.pfb",
+      "sha256": "47967d055530e7357088a08403115425643ec2cdfd6201ba8af0fbd7116c1539",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/assets/assets/GB-EUC-H.bcmap",
+      "sha256": "928bad06fd84a48f5ba7150d7716609119fb660f2aaa73eccad81ddab9b9d203",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/assets/assets/GB-EUC-V.bcmap",
+      "sha256": "a9ad88ac2479da529b16dc48abc5952332e27bc355335f91df5729a587533324",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/assets/assets/GB-H.bcmap",
+      "sha256": "1018c777a8910b5bb46d7d54a4aee9d51ca5cff8addb2b41c969d9101cb3fd1c",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/assets/assets/GB-V.bcmap",
+      "sha256": "0b96789143c0bbf9f1641ae7165b3456dccd14dabffcbb0bd654d5bf6f94f863",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/assets/assets/GBK-EUC-H.bcmap",
+      "sha256": "2103fed28650ede096a2281104a1a8a4304dae0db414342c636867522307123b",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/assets/assets/GBK-EUC-V.bcmap",
+      "sha256": "a7fd35dd14d9dbdb955f34e6c0630618b6620dfd09d4283b2f65a65ce77fcaea",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/assets/assets/GBK2K-H.bcmap",
+      "sha256": "3d919ae72af16c5cc6846ec87a4326a9f125e493c59d3628429d35c2c95fe8c4",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/assets/assets/GBK2K-V.bcmap",
+      "sha256": "b927fdfd595c07ce9158bf2ec13f4641b2e83b01c70989dadfabd6ed7c6ac2dc",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/assets/assets/GBKp-EUC-H.bcmap",
+      "sha256": "d15ebd8e81fb4fe8a244f1b1e877922e03500ac69eddf5001093e502430451d2",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/assets/assets/GBKp-EUC-V.bcmap",
+      "sha256": "fdc736d46e642625dccc8ad8c59f2c69fc7db7a13f2e799c6c6b779e707bb97a",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/assets/assets/GBpc-EUC-H.bcmap",
+      "sha256": "3c4a4eb82f05abe51f6650985c630e180438bfdd491318f5d20d2ec29236e1c3",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/assets/assets/GBpc-EUC-V.bcmap",
+      "sha256": "215bdfa2842705624b4cf4cd29b8e3c720f1e192365e0305c11030a424c84d7c",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/assets/assets/GBT-EUC-H.bcmap",
+      "sha256": "dc5f44e48a39f3367ae28665027d8ab1d8cedb5a9dcc5068a900acd6709f60f9",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/assets/assets/GBT-EUC-V.bcmap",
+      "sha256": "a1ad24e63653b8aa388c18fa5e498f007564e43dde699a9f91ccb4645c999be8",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/assets/assets/GBT-H.bcmap",
+      "sha256": "8afda745a505763f3ff54c8126eeb48ef376ea9ed07d9f42ff9a22c5c547ec57",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/assets/assets/GBT-V.bcmap",
+      "sha256": "cdc2ec5c3c7c7033290c9a8894878202f08674eb9b1ae7d36218430326768771",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/assets/assets/GBTpc-EUC-H.bcmap",
+      "sha256": "7b23e2f7bfdb6c918f567b7324bf858f398bd8cd5f268d74ece19a3c91bf4f32",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/assets/assets/GBTpc-EUC-V.bcmap",
+      "sha256": "d7a1b13ead9ab511cf2cd01de6ce8b02aa8e8767e84895337d7a3b67f039f93b",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/assets/assets/H.bcmap",
+      "sha256": "a0233e21047ec00b852125b243cbcf30abee511155b6d8159c24f944384bc9ee",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/assets/assets/Hankaku.bcmap",
+      "sha256": "b454701f7aecd7856769016dfd04ca64280a060f2c67a2466d50b4395d24974e",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/assets/assets/Hiragana.bcmap",
+      "sha256": "2ed669394756dd9458651cd9995ab29ab691ecb7686659003306cdf22767a414",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/assets/assets/HKdla-B5-H.bcmap",
+      "sha256": "5242bce18fb13ab4cc59b146a03eba36e4ce42667eeff09e10981a9d2aa4996b",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/assets/assets/HKdla-B5-V.bcmap",
+      "sha256": "2e0537f786c0791d41a925f72bad2d4e7268aa6cbf15a1400a722672cec38e2c",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/assets/assets/HKdlb-B5-H.bcmap",
+      "sha256": "fdc8159984bf5dbe475c0d5dfcb621ecee4dea07c38c668bd77f4c679e23b9b3",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/assets/assets/HKdlb-B5-V.bcmap",
+      "sha256": "b249eb9dcb915ab45057c5d4d7aa55ef88d0efbb092af6bae0b2d4705d139abf",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/assets/assets/HKgccs-B5-H.bcmap",
+      "sha256": "ab64c7fc5e9b2e97750cc4f269b0da14fd8649e49151b7598c8df86599bac591",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/assets/assets/HKgccs-B5-V.bcmap",
+      "sha256": "02ebdf7cdffb5395fb21091cd58a013a18ae5388922822f9dc6292ef16b98956",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/assets/assets/HKm314-B5-H.bcmap",
+      "sha256": "bfd8bbde6b36a9da4c1c902c74121a30d9807a7079a00eeea218be6adc223cef",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/assets/assets/HKm314-B5-V.bcmap",
+      "sha256": "2a64a815cfb6fdd480674a868762e3d161fda17543b20c9209978559f0667164",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/assets/assets/HKm471-B5-H.bcmap",
+      "sha256": "49d7c037758826b5b6c0fa329c35bbf25d3943197754e72ecd30c6fb04d745e6",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/assets/assets/HKm471-B5-V.bcmap",
+      "sha256": "be24c109e78aa4fe3c1f27d30aab3ed0741e783fa1b6b6c2719741072b54b132",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/assets/assets/HKscs-B5-H.bcmap",
+      "sha256": "08599378f41d96b40537adef6e6edcc4a787bc63f5accf47c026df4905a13914",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/assets/assets/HKscs-B5-V.bcmap",
+      "sha256": "d073542b7dad1c4cbf01c1af5f0cd13218d1281a491956e310c55702fc8705c4",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/assets/assets/Katakana.bcmap",
+      "sha256": "3b6ca6642fbf8822da00d5e58a8aa275216d5c32dbf2bd73e934197fc9fc5c53",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/assets/assets/KSC-EUC-H.bcmap",
+      "sha256": "6784e16dbc5861c036c23d3e55f0d4ba0975a3e464da0ee8e49bcfff0be070c4",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/assets/assets/KSC-EUC-V.bcmap",
+      "sha256": "fdb36bad85e9924823d49db374067988e024cf80fc894711f2c9178951cbbe95",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/assets/assets/KSC-H.bcmap",
+      "sha256": "c1f6d61f1d3304fd539a65ae72624fa567ecc3853bf52e283958a7a2515b3eee",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/assets/assets/KSC-Johab-H.bcmap",
+      "sha256": "939993d213f68db763bf156217c217ae23af082b91a0eacecf3d11eb4ff8ef8c",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/assets/assets/KSC-Johab-V.bcmap",
+      "sha256": "5d61967aac0e666def721e8b8d0fed8f95a879a14f2e76ce516c3d11c621e519",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/assets/assets/KSC-V.bcmap",
+      "sha256": "d7da5afd9f1fe74816d79c9325f0139a4efb6438664ebfdf9a7aa92f3034360f",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/assets/assets/KSCms-UHC-H.bcmap",
+      "sha256": "5b70d8f6a4fa9e2283dc649f0ff95d906d56efbee50a20e8d2faec3a8fed078e",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/assets/assets/KSCms-UHC-HW-H.bcmap",
+      "sha256": "a5e6ba22aceb02fdedee11bfb9ed138463d89e85b87810b9f075b469d936f8ec",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/assets/assets/KSCms-UHC-HW-V.bcmap",
+      "sha256": "890332a6a26880d463a12f2a6ff048bf9cf7e45077cfb1ca8815b89baa7bf411",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/assets/assets/KSCms-UHC-V.bcmap",
+      "sha256": "1631b531c9a40c8cbe24c2317dba107362e49fa6e18af620414d627c111d570c",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/assets/assets/KSCpc-EUC-H.bcmap",
+      "sha256": "709480682c55cedbb0124b9960d78e28febeee0df2e34607d61aac6601647ec7",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/assets/assets/KSCpc-EUC-V.bcmap",
+      "sha256": "031707887d6fc2378a36cdb6775334fd7a236c3f95048d8436abf43fe26fc49d",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/assets/assets/LiberationSans-Bold.ttf",
+      "sha256": "361c61b82d575c5c35fd9157fda8b0194bcfcd0d88ea8521a4fb5dd53d33dddc",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/assets/assets/LiberationSans-BoldItalic.ttf",
+      "sha256": "a224075ac17495ad0a3af3bc0a419ac0704a8b3fd1095456201fb9b095fc281d",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/assets/assets/LiberationSans-Italic.ttf",
+      "sha256": "832b4406dbef23628800d3aaad21048534ac84d7e3ad955be83b8172ed8ef512",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/assets/assets/LiberationSans-Regular.ttf",
+      "sha256": "f8ace1f892b2bd9dc1792ba7f097fa7588f84fed48321480e04de5390828221f",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/assets/assets/LICENSE_FOXIT",
+      "sha256": "b578cdd2345840ada550bd12519533812320d5f1d21cf4c1c7e1b1b0a31c98b7",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/assets/assets/LICENSE_LIBERATION",
+      "sha256": "d2c4d5b3e115a519cb58eb691aa64538397e2611f9ebe801392cf9667997e7dc",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/assets/assets/NWP-H.bcmap",
+      "sha256": "286c6c9e335da330928a01edc3c97a3a623f1f7f3c42762b0a7dc2f651b1a78f",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/assets/assets/NWP-V.bcmap",
+      "sha256": "3a75fb7b59adfb172710758c425d8ac6c93fd5360a64dd4afd5dd04e60ab4b4d",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/assets/assets/ParsingQualityWorkspace.js",
+      "sha256": "f5531baaa36051f615b4ac588c18cbcb252a4567dc5229b8f2e018a2cbfdd1d1",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/assets/assets/ParsingQualityWorkspace.js.map",
+      "sha256": "c1894b98598454aea6aa1c6d08a8489f6a7520b61c3895f8804b224318e153cf",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/assets/assets/pdf.worker.js",
+      "sha256": "15908d67d6cc0ee52a4788ccbdcb554181e80f2a0800b03800a5014adcbdd835",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/assets/assets/pdf.worker.js.map",
+      "sha256": "45c3e49b7ff505297156b28028b0e3f3f4027972afcdde31d158f6b978d44b5e",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/assets/assets/pdfjs.LICENSE",
+      "sha256": "0d542e0c8804e39aa7f37eb00da5a762149dc682d7829451287e11b938e94594",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/assets/assets/preload-helper.js",
+      "sha256": "f17af72d3e410196d3c6a19e44bd9bed44409c3f8458f30fffeacdc03e19b473",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/assets/assets/preload-helper.js.map",
+      "sha256": "4a8f41194fdb61d2d988c9a572cfcef3c02f30e66134490fa135107d49f81493",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/assets/assets/RKSJ-H.bcmap",
+      "sha256": "a70de61a22a898f693f02cc011c3e3cff2e10aaa7cddb4661e456a21ae859f78",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/assets/assets/RKSJ-V.bcmap",
+      "sha256": "68c1a64506471a524ea5cfc3b3a9f8f70031989a6bd95427b1351f33ccf50b06",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/assets/assets/rolldown-runtime.js",
+      "sha256": "a2b9cf4b963756dc2cae1ebdd1c0e51ef5780dd5bf64a55b90e21679c2b2434f",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/assets/assets/Roman.bcmap",
+      "sha256": "1c6b3ef9d9e5cb1aa329142ce9414b90f9b6d7f9182a2a9e927378dab8f0d43f",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/assets/assets/UniCNS-UCS2-H.bcmap",
+      "sha256": "779428116752f34e2490a1941d24e4634c71e3c22d053b811d2090ae2fb3c704",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/assets/assets/UniCNS-UCS2-V.bcmap",
+      "sha256": "1e5cc184b850ea44abc2df8ae5674279df668e8edf5e2a1a2ea2bd77adbd280f",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/assets/assets/UniCNS-UTF16-H.bcmap",
+      "sha256": "32ff139b3c7b91d6ad25f994701f3ce7b242906022c418fd73e6493fc228bfe5",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/assets/assets/UniCNS-UTF16-V.bcmap",
+      "sha256": "278eb1e68d1a236c60ef59472cf0176ee0d45f364285e76ca12419a08d46fb9a",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/assets/assets/UniCNS-UTF32-H.bcmap",
+      "sha256": "bf26eb67fe19ee5ba915799e80ca72408400aa8342fdf6a244a4f44de8f97336",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/assets/assets/UniCNS-UTF32-V.bcmap",
+      "sha256": "f7da3caf83ceb1cb37936fa10700d9ba6e9c3f72c5bc9724e3ac79bff0c0179e",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/assets/assets/UniCNS-UTF8-H.bcmap",
+      "sha256": "2f2a742bcd1a84a148a4a518b9eed51a8f9c6ca5ed3bc5e2e41fff97de5dc2d8",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/assets/assets/UniCNS-UTF8-V.bcmap",
+      "sha256": "b7c3f10780a8c62dd1c8ff6c30dc1e4e23b6cdc87c3a96fcd514cc98ffd3af9d",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/assets/assets/UniGB-UCS2-H.bcmap",
+      "sha256": "9201569b402e81ad8860650bd86350c4fa28e5dd5971f05fcacaf40f51de18ed",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/assets/assets/UniGB-UCS2-V.bcmap",
+      "sha256": "f10282335e4d64203bc2a653a3a47d745ec76c8ae04549f4d50180c1899be216",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/assets/assets/UniGB-UTF16-H.bcmap",
+      "sha256": "386fd39581245c034da016a92d23f3df1117d169f996100050b264fc09a84e35",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/assets/assets/UniGB-UTF16-V.bcmap",
+      "sha256": "0473cfbba612b92dd9918f0ff8aee9112897c48e0ffdc0eb82da3144ed8ea84a",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/assets/assets/UniGB-UTF32-H.bcmap",
+      "sha256": "f48a145dc4e3ed1dca1dde7111716a72306a2a4191ab05c6bae3a5c3a961cd2f",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/assets/assets/UniGB-UTF32-V.bcmap",
+      "sha256": "106acc49b7118bdef944e32107b4f348238f3929a0a15d3b7aab7b9101535993",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/assets/assets/UniGB-UTF8-H.bcmap",
+      "sha256": "f217b439c80ee5fa1bc2cf6d1defcc319f8d84483d166a00ee199e05a68588df",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/assets/assets/UniGB-UTF8-V.bcmap",
+      "sha256": "a64df947632878eacc532fa193c735c92a383b7d66e6f8374ac193af7c64fc63",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/assets/assets/UniJIS-UCS2-H.bcmap",
+      "sha256": "ad2352f40870880fbf7f8ee5abadff743fbd025fbf9830b8ada472d1c5e4da0b",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/assets/assets/UniJIS-UCS2-HW-H.bcmap",
+      "sha256": "16e87edca954177c0881c874859d6783220925d821b5cdfb8755b61ebd93f9ce",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/assets/assets/UniJIS-UCS2-HW-V.bcmap",
+      "sha256": "1973457e2c0192819947e56068625b34fb9a72ecc8a476ce6d7eaae5f73e2e5c",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/assets/assets/UniJIS-UCS2-V.bcmap",
+      "sha256": "42a133d8e2ce9dd6d2288018e01592d2bf2435b326d39b94ea0b6e6a44ac33d3",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/assets/assets/UniJIS-UTF16-H.bcmap",
+      "sha256": "f6a89c5688978548c83fcee990e205bc63c74274d5c69b49032a3bd4c49a05ee",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/assets/assets/UniJIS-UTF16-V.bcmap",
+      "sha256": "c67126fc7c73850855186bb0d6482ac0a365057e0b58778c4ab9f234683fef53",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/assets/assets/UniJIS-UTF32-H.bcmap",
+      "sha256": "96195950ce0fe24443d8eb426fa6b88534ec421d7bef9046f0b2362809cfba73",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/assets/assets/UniJIS-UTF32-V.bcmap",
+      "sha256": "ed4dafda402bdd19c4d5d8bf2ab41473c0f86f384552b4c7b963d6627daedeb1",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/assets/assets/UniJIS-UTF8-H.bcmap",
+      "sha256": "798fb0bf06ab0788d1f6a91c2db7de581612eef03c628f10e8f7ecd8f70ab448",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/assets/assets/UniJIS-UTF8-V.bcmap",
+      "sha256": "1021611424f913b2df0bfdbe94bd327c04e224ec89d8e821c6501ea3d21f4265",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/assets/assets/UniJIS2004-UTF16-H.bcmap",
+      "sha256": "710a32d7cb43fd6bd9dbf30da5971f8c941590f74441e208d852c2be0e74cc97",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/assets/assets/UniJIS2004-UTF16-V.bcmap",
+      "sha256": "3b149aff5c5707b57fb3215d1775852c8b1f413ec0f679ea628f25cf87fe098d",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/assets/assets/UniJIS2004-UTF32-H.bcmap",
+      "sha256": "8d2658e18741af7937d586a57c89729a6fec0d86121197c1f8518aa58b29cdfb",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/assets/assets/UniJIS2004-UTF32-V.bcmap",
+      "sha256": "6dd475782f2897648a683c48b2fa015a15b8f06856760bddc8a17a63f418bacb",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/assets/assets/UniJIS2004-UTF8-H.bcmap",
+      "sha256": "691c614ce432b3e62486efb54e5c84c6da5afe9b51b21253bde4758feb484183",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/assets/assets/UniJIS2004-UTF8-V.bcmap",
+      "sha256": "40a8c7ea2d46711c5f78fc9a878a7db68b1543ba5cd60ecf14f519a2deb829b7",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/assets/assets/UniJISPro-UCS2-HW-V.bcmap",
+      "sha256": "6826f94d789d7bf1960668c1c5819c34c9585c1b23152fbc19ee81c7df08524b",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/assets/assets/UniJISPro-UCS2-V.bcmap",
+      "sha256": "493de9fd1a08f7946065d8ab58f0c3c9fe489f5a0f109f2d05a3169b4bd5789f",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/assets/assets/UniJISPro-UTF8-V.bcmap",
+      "sha256": "6181d382cf736c5e09492e8be9f26f31fa25b7462253f23ab16646af432cad81",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/assets/assets/UniJISX0213-UTF32-H.bcmap",
+      "sha256": "692044e1fb33445668632bc9fe7386805c624864be1ddeb29d65bb0c99fc630c",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/assets/assets/UniJISX0213-UTF32-V.bcmap",
+      "sha256": "dd54e16ca7bffb3a886242549b2bf7d78a277087f7c60d2636f118c21a5b0646",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/assets/assets/UniJISX02132004-UTF32-H.bcmap",
+      "sha256": "f80ea5a989be30ccda5a8804baef6d3b4b044d2b339bf8b31c671b2466171cf6",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/assets/assets/UniJISX02132004-UTF32-V.bcmap",
+      "sha256": "94c22bd99e771c5fbe0dd8dc39850570d4db0075074aca13e272813edd7cc57f",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/assets/assets/UniKS-UCS2-H.bcmap",
+      "sha256": "a1081396ab4adb6f4a5b6c15f896963c244c1c9bcb65ce5616d06096a1b9811c",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/assets/assets/UniKS-UCS2-V.bcmap",
+      "sha256": "6cab547431958fbdc1d401d06ebd4dd61a73f5509a10f974df32bcbca11a2e43",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/assets/assets/UniKS-UTF16-H.bcmap",
+      "sha256": "42d35b396286499dfae1737a07adb3a64500df37b426580bfb1d3ea872938519",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/assets/assets/UniKS-UTF16-V.bcmap",
+      "sha256": "5bdb7390c80dcc136cb47d41dc7460082560969c17322ee739fe3020fb642410",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/assets/assets/UniKS-UTF32-H.bcmap",
+      "sha256": "3a01ec51ed1b828101351e337ffb8250abe11880032e5210f881170fed2588de",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/assets/assets/UniKS-UTF32-V.bcmap",
+      "sha256": "dfda895eceaed081af030dbbb962b49629eea817fc3c02bae15db93d0c68acd7",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/assets/assets/UniKS-UTF8-H.bcmap",
+      "sha256": "3fac9c65145f72d7d42157a3b9c5ed6904632184e6a0888f2b828699afd2002f",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/assets/assets/UniKS-UTF8-V.bcmap",
+      "sha256": "9ecc6cf30dd354b9778ddba163b6cc7302b087ce9f39d1ba73472d2b75ed13ca",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/assets/assets/V.bcmap",
+      "sha256": "b9ad1c0c09ff14bca52f9a28a9767eb857ad0e8946e64ba14c7387a7eb69866a",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/assets/assets/WP-Symbol.bcmap",
+      "sha256": "543923bead225732aba30976690ee89095a19628277b5863efecc2c728d5d7bf",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/assets/index.html",
+      "sha256": "011b42b80092870192b60d373022d3e4a46b66bda2f9c802785e7e4388e15f80",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/build.rs",
+      "sha256": "cd0ac1f2fb0555a110a0298f504469b11502fe59744a2c7e6b1b2aa4aac425df",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/capabilities/main-window.json",
+      "sha256": "77e504e7052502291ea77737b5664e2b339692d8c3c2aa2c19adb2d44214995e",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/Cargo.lock",
+      "sha256": "a36b93a0ca0f8206f2ed4a7a4a650085ba379f24fb79f89c2248d907b14e1ee9",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/Cargo.toml",
+      "sha256": "456ab703c0db3d95b606ecae00e3dbca2800a47e164ebaa2dbf562285c5ac010",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/icons/icon.ico",
+      "sha256": "ec10d37be4351bde0389de3a15e279273b71d5b082a00a8305c786ff69677b33",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/icons/icon.png",
+      "sha256": "516818a974a59c0379b616a3913eade623f131c2f2202838d98df7649eabc2a0",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/src/main.rs",
+      "sha256": "7a3ea60f232936aee7f795d6ddde1bef310800be753a94f73fbc5a0438bbbd23",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.shipping-header-companion-01/tauri.conf.json",
+      "sha256": "67e111ba08687f88e340d87b6fe3130e47c8af414eac9c7259467072683a4342",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".local/toolchains/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/tauri-utils-2.9.3/src/html2.rs",
+      "sha256": "04beee12c794585d349cf1e45850483d5f7eeea73df7268dbd2470d8675bb7b3",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".local/toolchains/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/tauri-utils-2.9.3/src/assets.rs",
+      "sha256": "7d7ae635a4abc79088ebe537c3e96d1cb493748782963674b33e42e727857f81",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".local/toolchains/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/tauri-codegen-2.6.3/src/embedded_assets.rs",
+      "sha256": "95d96bdf8295ee6edadc8c091c347533bcc7c3963be7db4da95005d9598380ee",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".local/toolchains/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/tauri-codegen-2.6.3/src/context.rs",
+      "sha256": "ea13b70394f0166813d3aa1938d423ddd3ed809f81ecf541586c2f32f15255bd",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".local/toolchains/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/tauri-2.11.5/src/manager/mod.rs",
+      "sha256": "3b35d04bded3a068d3d9e1737d52a66a69ccfbc4b2300ec00ed6a5deaa85c79a",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".local/toolchains/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/tauri-2.11.5/src/protocol/tauri.rs",
+      "sha256": "54f375940676fe774a1bc0f2303781472f24de9bc69dcafc32f80025201bc1ea",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".local/toolchains/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/tauri-macros-2.6.3/src/context.rs",
+      "sha256": "11792baac8002f7875518a36e41f482e6ee7ca93de30bc459d23581b55e3b3ae",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/_virtualenv.py",
+      "sha256": "cfb3db86aaa53bb62b5ff764970bec2d71c9228590a0ebec57f6ec926cc0bf1a",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/_distutils_hack/__init__.py",
+      "sha256": "ced72e54431ecf2d8d7dbd8a1e27724f1b171af3ca1503c304bf11c59a7fe861",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/attr/_compat.py",
+      "sha256": "c7483b88450e9c15490bbdb3c850a06f578aab2c52fbb7f62c69cdc99febf79b",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/attr/_config.py",
+      "sha256": "746ab7c51e9f819105e9406dfcbd13f9e507201e22e37911987d0fdbcb09570f",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/attr/exceptions.py",
+      "sha256": "6f8bcc6e7a10dd5a7059986aad88bfb2c5d508af28d9ce074124b4f5c49433da",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/attr/setters.py",
+      "sha256": "e7e75c4fadc640adf938d1334a07d70a46c1ee93e4691faabf5e669b83d54b34",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/attr/_make.py",
+      "sha256": "1fb387d9e592e429c1ccb5233451355b299f3eb985d6bf1fbf644f76df4cb980",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/attr/converters.py",
+      "sha256": "1a50de3b33de4c581e0412db8fd1b9ec4cf994093af2e85200b45827f7b17bce",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/attr/filters.py",
+      "sha256": "64188a58ba774742df099b2aed7d75a67f565fc36c952db05cce23b272ce19cf",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/attr/validators.py",
+      "sha256": "9b7411cd94c036be1fd82e1e55d528160d753605d66a4f166ade2a4131a1bdcb",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/attr/_cmp.py",
+      "sha256": "dcd9f54e3c659546225ff9c9a159c4917a0393484cd4360a8f90c4ec665ee22d",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/attr/_funcs.py",
+      "sha256": "231e481134dfcf9174d45fb5d8c17f0921689889f687c6faec4555cf6802b411",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/attr/_next_gen.py",
+      "sha256": "050b42525cf08368161d3617050beb118067cc152b0ef3b9eeed0fcba5023e17",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/attr/_version_info.py",
+      "sha256": "c3847e1580b734afe43241945899583f87150251fd1d1682fae9b77dc8d89073",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/attr/__init__.py",
+      "sha256": "7ce608bedd5e192a90adee2e092dec256299d26c00b82f140faa9b6b9392f7f5",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/attrs/converters.py",
+      "sha256": "f244258eb5707d24d1bbc20dc0493c488d1e1abce659fb6c4fbaccd04ab2a213",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/attrs/exceptions.py",
+      "sha256": "0020829a0d7dfaf0c56833d8f6f165d7df523d709030dfdb10db380c02e3ce6b",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/attrs/filters.py",
+      "sha256": "54e50c66e83db8453a754b80d1d1758c89d42b43cbddf2e03f45414b977e0831",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/attrs/setters.py",
+      "sha256": "78bd5889d6105774f687dfd2608652651d4501c1c66f54ee093cb41342efd925",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/attrs/validators.py",
+      "sha256": "c5ccbac03e53b5391d086d5fe1759ba1c3d23b47da06393921f5497cfe92523d",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/attrs/__init__.py",
+      "sha256": "47168064dc1888487e7dcbc72d936943f0d62a78bbdccfe3c443c47ed8aad597",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/rpds/rpds.cp314-win_amd64.pyd",
+      "sha256": "fa9d92af52fffb7f31d142c91058b0f0ddad8a5205c4971ee5aa956b98d0332c",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/rpds/__init__.py",
+      "sha256": "c373205d6ee5a530880b0d0a5dbc36d105f9ef7fe46ec12758878cb0202e82f3",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/typing_extensions.py",
+      "sha256": "4040ca1a1ecbee00d1385c12a93084d1c5bd46f0b774f07e5ae7e91c4f55e696",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/referencing/_attrs.py",
+      "sha256": "6e04fe28c84354b786b56c4cfd218a61e2da6411734f691454574090e7178bc8",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/referencing/exceptions.py",
+      "sha256": "cc581a120e9688a793e7c310b8a36c8060e71ecce9dba738a11782eac17d8073",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/referencing/typing.py",
+      "sha256": "5a351b9d9ea33c0777d5c9c214069e588544373c87b47749c8e95e96fd4663bd",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/referencing/_core.py",
+      "sha256": "d923c67da4efcc0dec46a6e3ff8476c02fbe7e25e8942515a4b14b249eb3759f",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/referencing/__init__.py",
+      "sha256": "e4864a5da007fc55b20894646939f55dca6d2df83d72f78b6fdbb99d853124ab",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/jsonschema/_utils.py",
+      "sha256": "5efebfc0a2ac941265c328fdfa3d9cf090c5c3ee33e1a5859d57b6a57f21ed4e",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/jsonschema/exceptions.py",
+      "sha256": "6f8da150339f3c5729ac8e1994da630de2cabfc93dbce86059cb768f20e5c739",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/fqdn/_compat.py",
+      "sha256": "b627858d2b709b4b68a031fd8219dd01df838324a22b87f58a6e1ca6f31c71d8",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/fqdn/__init__.py",
+      "sha256": "79a4dd669a9a77c3f62fa28e33bd20dce86d03fc5afa44f43e612fd445cc7240",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/idna/idnadata.py",
+      "sha256": "01ffa6a3c5819a48402ba4f25ca3901fcf0e5f49903432ad74bed45ad429a699",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/idna/intranges.py",
+      "sha256": "838f6c70b4a4a89b4084b98e3836bb8551eb8928e66fad2d893b04a287097412",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/idna/core.py",
+      "sha256": "49f3abd713b73e8134443631edb31c8809e38b28c93db3f0ffddc007921460ec",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/idna/package_data.py",
+      "sha256": "4de23de04a8014015a5df049c2c38f50c2e7dbdebdba2acf6be0da79a71e0325",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/idna/__init__.py",
+      "sha256": "30fa8d0cb65b5ea19a35d5f1005862a853ca1105e3bb68cd42109ecbafb97893",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/rfc3986_validator.py",
+      "sha256": "95fc6d48642f111952b25c040947765bccba669210c8c140b7ed9647fd7e470c",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/lark/utils.py",
+      "sha256": "14dfbde47312db3681b968a81f341561953d7e0bb2ff8be8b673d9321eaa4a38",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/lark/exceptions.py",
+      "sha256": "a884df43aff35190cc347f124a56bc3c19bcf14108845c1cce0aa7bf28adff11",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/lark/grammar.py",
+      "sha256": "2cec2b32822aa72dc4469ababe590863c289871c09cd9e0b943b96ad59c9b695",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/lark/lexer.py",
+      "sha256": "21e54a0878b770401fc7ff59d7354d99503924fa5b5739ac84a278beb7bb467e",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/lark/tree.py",
+      "sha256": "aa0c0ef3fca86543ae70e1359954ddd7e890738e540b0b18c19c551e40439282",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/lark/visitors.py",
+      "sha256": "935a05079021e8b06bc64b14d6f215bcd2bc065fbb408f701a01544790e685e2",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/lark/parse_tree_builder.py",
+      "sha256": "82bada705614a1bd9e43970cb46293b684d7a519af380f197e03f7d832a60452",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/lark/parsers/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/lark/common.py",
+      "sha256": "33df8214050fdfef8e91fb72c968e47be29cd7ea5031ccd3d4c96e1c2170772e",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/lark/parsers/grammar_analysis.py",
+      "sha256": "ad0e129fd10ff208d719365712258b5b4281c8f3e978aa4de6148841980d9772",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/lark/parsers/earley_common.py",
+      "sha256": "7b67ba36b36e730f96322355f07a90fd3a46c7a3fbbff4bc7f9684705d1392aa",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/lark/parsers/earley_forest.py",
+      "sha256": "c382536f8b5531ec2e7bc74bfa008ef7af94a34c1de016d051f49f221afbb716",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/lark/parsers/earley.py",
+      "sha256": "2142cc9b9265e26932ce7501b67406171364a4271c2298d00ea265feeced5335",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/lark/parsers/xearley.py",
+      "sha256": "bca2d19a95e1fd6338b3982903a165fe55c1837cb1167714327d536d37e4f80b",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/lark/parsers/cyk.py",
+      "sha256": "73718b93792adb75f06fc32a50e8ef8afc0fe3cf0a258e8d516831a9e479f7cd",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/lark/parsers/lalr_analysis.py",
+      "sha256": "064663426337af81ed13c42651d11ea1299b2c96812c850373dc35beaae308ff",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/lark/parsers/lalr_parser_state.py",
+      "sha256": "419d76a780adbdcbc5008288aa4783049620114de7b509650490d85dbe35f65b",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/lark/parsers/lalr_interactive_parser.py",
+      "sha256": "2ec81f4f581d9def295c74c2b0de9b97acc3e8f761d9d0eaa75ac858ece9ed8c",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/lark/parsers/lalr_parser.py",
+      "sha256": "4c639213403ab1eb849924c2a8335c7099168c486cba0147164ee8d3aa1f4144",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/lark/parser_frontends.py",
+      "sha256": "c78cf01febc82fcfbed994b1de9d42f1038ed2b1b134903c946de76991c62d42",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/lark/load_grammar.py",
+      "sha256": "ded1fd02534bc3c257d09d77885cc31c06d21e4dec57c356e6feca1360f9da46",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/lark/lark.py",
+      "sha256": "be9e5c96ba62375dc9d9fc1bc5fdc79ca8fd1f9b21629da2a1fcdaae09460d2a",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/lark/__init__.py",
+      "sha256": "d0e3cee5cc961578ab60dfcf7ef31eae685b1362913da5af0f96a621f50e5139",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/rfc3987_syntax/utils.py",
+      "sha256": "e63e28c89b9446a63aabb0c1e2484b218fff6ed9342d728e1a9fad921b4db50a",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/rfc3987_syntax/syntax_helpers.py",
+      "sha256": "775d776cfc5aa23f93147cca7a7a0c362452e4d85537c2453aaab5478557ce29",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/rfc3987_syntax/__init__.py",
+      "sha256": "495c22fb129fdb84f53049cf07bc5b2a48c063ae39772931da205b86c66932fb",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/six.py",
+      "sha256": "c51c91f703d3d4b3696c923cb5fec213e05e75d9215393befac7f2fa6a3904df",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/rfc3339_validator.py",
+      "sha256": "c220cb9495da5215a53ab173f695060294df2d1042a9cbaaf0cc622bcba09d6e",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/webcolors/_definitions.py",
+      "sha256": "0e0ab8390bdfb4191485f4a85927d49dbea2f908199312c625c91688b2497923",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/webcolors/_types.py",
+      "sha256": "6c8bda9bcd297c1bd8016a69cd188f1ba6b74eb09684002061087e5cc8d58f4c",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/webcolors/_normalization.py",
+      "sha256": "5fecd93499670c22de2c155421395e1c82a32fa17de0019193b25e970188d987",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/webcolors/_conversion.py",
+      "sha256": "0c4bd9402f534a182cb47f040e3fd2a3706d3b960e98367125fe93869bf4c233",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/webcolors/_html5.py",
+      "sha256": "1679db7fd722f18f2fec129b84fe1dbd1bda7f62c08f45f49b9db9d4c9593ed3",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/webcolors/__init__.py",
+      "sha256": "4fbd0146c09bcf41fabaf265e48842af8a7db9ed0c2d29114451545544d320a7",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/jsonpointer.py",
+      "sha256": "8fcd6596bee332f11d024e38845a988e787e2c0faec2e5fe791e156d165cc277",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/uri_template/charset.py",
+      "sha256": "e192605d97861e3c4772d3ed752f3286e613a9dd512b100cbe94c0769a1567e7",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/uri_template/variable.py",
+      "sha256": "52db3f7ce050468e5fa5c9128c5570d54d672b3ffba95d21ebf251f8e7da35c6",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/uri_template/expansions.py",
+      "sha256": "81f5ad86652ddc4ab3f9a59fd5412e9b0f8336dab6f132cc76cc19e64f50ffaa",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/uri_template/uritemplate.py",
+      "sha256": "1160b8d6cf6ee1a34fddc28de67085fd981282931ae77a75822fbdbff91e2f9d",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/uri_template/__init__.py",
+      "sha256": "4a43b438db4bee3f37217e6723fcfac3897ba589b22724dbe84d87f8b11f115d",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/isoduration/constants.py",
+      "sha256": "a9afca1581f0083273ae20b583ac8d717ac0d85eb8f106ed463a99a20828b884",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/isoduration/formatter/exceptions.py",
+      "sha256": "6fe77114e1685e276108c41add9b7cb972fa0d38c9825f45c7bcff48c08cf431",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/isoduration/formatter/checking.py",
+      "sha256": "065c6aede0cbe859ffea6b273ba1ebf6b03b74bbc8b2ecd1e87a67f2365cd730",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/isoduration/formatter/formatting.py",
+      "sha256": "b9a995d429f5344ffaa293f6bef7f61063ec8d4924ffd5155da376a976a9b4b5",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/isoduration/formatter/__init__.py",
+      "sha256": "26f48c5d3eceab623a3e834dea73b5736dc022a103a1c50cf0b4fe3546ac7f66",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/isoduration/parser/exceptions.py",
+      "sha256": "4b206ecb67c60ec69cbeca5ce60f985f42dff446eea1299886f35e6267862e4e",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/arrow/_version.py",
+      "sha256": "f148686045c7b3539a8bb056fc4c419aec169d123ec8c1bfbb57d0017322cc74",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/dateutil/_version.py",
+      "sha256": "055d37d4ec430c09b2e7c9de520e72caa2e42daa88c3b89b2bd02cde388c89bd",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/dateutil/__init__.py",
+      "sha256": "32a6a6ebb58ef4891399417223aeaf4ba2284974e9f46dfcf0369d1f62c230b6",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/dateutil/tz/_common.py",
+      "sha256": "720cc34c036c397bc473ce9c605efb12c962b9269bf0fbb0a6c979f9b5f7fd2e",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/dateutil/tz/_factories.py",
+      "sha256": "ba76fa5d0357acf32f7a4b13094f8083c8e6559b384a88e83d47001e95a7aef5",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/dateutil/tz/win.py",
+      "sha256": "c49b335a04b0135c4fc7f1c98f86647a9cae902fe1372d35e9631c5e16d1681f",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/dateutil/tz/tz.py",
+      "sha256": "1149c474c7de4e15e263a978b21f7205a6d9eb7fcf3b3cb4d734ac87db619f5a",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/dateutil/tz/__init__.py",
+      "sha256": "17e333d77bfa8d8b1e92541ff537bd27a9f370b0e6ab8ee03916bad4adf9fc50",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/dateutil/_common.py",
+      "sha256": "efbc34cb2b64af19586d29fefa50d53d431a6d45d147d237941bffbd0454a946",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/dateutil/relativedelta.py",
+      "sha256": "218fe6825323a196d87ebbe5a1363671ed366a25633c892265faa03536517ee0",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/arrow/locales.py",
+      "sha256": "87ac80d93d4dabb183f77629aafa96fef5902e9039136f2de1a714e3261f84fc",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/arrow/constants.py",
+      "sha256": "cff3cc420315708b9979833270efbeb74b00c2e1030a5e73874d74c81c439916",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/arrow/formatter.py",
+      "sha256": "6a6da8d7331ae308f2f71f1c4071d8f93430c882bd84a049a9ee27b60893091e",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/dateutil/rrule.py",
+      "sha256": "289cca95a09dd6311bbb8037f1996db256a801487d9d26dd6ce15d8e9ef429ec",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/arrow/util.py",
+      "sha256": "c670debea47235e6166e5df1fa7fd3ca8e1c3a01dc7606f1144085b09d57a047",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/arrow/parser.py",
+      "sha256": "f736b5b53cc5317503ec4d7b8a278d7c6876b37391aab2cdbd7855dd80171a42",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/arrow/arrow.py",
+      "sha256": "2a1ad15d91e91c6fc8c33d9a71fa62e5ab38672b7b6aaebdd894b2edaf52fead",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/arrow/factory.py",
+      "sha256": "9d4119efab4da3a7cd5b556969b673ff833623b5cb6a6aab55fa9bfa619a643b",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/arrow/api.py",
+      "sha256": "89b607f6cbc6b6fa19d82169f5219dbd3a4badfff7a634da4b43fc5c2fb03a1d",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/arrow/__init__.py",
+      "sha256": "820d3004bbceb2d8427c62ebe1e7e7e5a6f5222033205e222bff5c1b33372033",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/isoduration/parser/util.py",
+      "sha256": "268500b90d0280c1baa58abd1e8b6e1f048a0f0a3842ddb95c696e0bcc4ad605",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/isoduration/operations/util.py",
+      "sha256": "2f1c0dcc62c875d7f59ba73888a0b7fd94a43e59974420e4d4e1b60e9efead2d",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/isoduration/operations/__init__.py",
+      "sha256": "d27abd1e0b81ce882b8ab4526cc14000911cdb400d4cd7bc565b04bb35eb75ac",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/isoduration/types.py",
+      "sha256": "843c2cbdbfc110d6f4c06e9ff8880350093350236f432acbea5c76c5af8bf153",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/isoduration/parser/parsing.py",
+      "sha256": "8fa3b93769b9a49bd6b9c772198fcafd0e93d9ce5faac0aea7e8779339b38a8b",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/isoduration/parser/__init__.py",
+      "sha256": "5d429d962910f296c016a1102be17bcf07b18fe28febd43b951ba5108390ca2a",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/isoduration/__init__.py",
+      "sha256": "67f4be60102beb9974574ddd8a72f144bbbb4058de3330376a116950e42649d0",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/jsonschema/_format.py",
+      "sha256": "96bb3553b892076657f59d846a5b113987909b577d91e7f0d822e8d3c1bc3f8b",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/jsonschema/_types.py",
+      "sha256": "7ff9e44c36eb8dadc4ddfb083530bbdf2fe03174d4db5d08fc7eea2b434ddf47",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/referencing/jsonschema.py",
+      "sha256": "8d767ab7ac7da13bd31cc202d2d4726858d6e6bdaa78739b62ebbb52149f2b74",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/jsonschema_specifications/_core.py",
+      "sha256": "b4585cd42325789dc024e2bf6e3c4ea4541376bb140a51467c5c4f054fc279b3",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/jsonschema_specifications/__init__.py",
+      "sha256": "aa84c1d83298eeabcdac684c3c7ea0b6600944b8a599543e7c56704faaf2ab0d",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/jsonschema/_keywords.py",
+      "sha256": "afcfc3aea01f9fa40bc109e65c4820bde89253e51a20bda9da7b8f20d7a57c57",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/jsonschema/_legacy_keywords.py",
+      "sha256": "dad5aec113d66d84bb10097cc01202feb69b1aebf527875f60ba8d10fa528610",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/jsonschema/protocols.py",
+      "sha256": "960cabc951ea1628d2151033f79721dd5376173fa84c5ca18fd39b732e4ffc22",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/jsonschema/_typing.py",
+      "sha256": "a572e71b2de336d2144ead37ee451fab4c1ed7bd3ce5e1ed2700c9dadfbe9901",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/jsonschema/validators.py",
+      "sha256": "97f171b995b4b0ca05530a9366a1252fb1753f99f3cb7b1068b6d9aab1096fa5",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/jsonschema/__init__.py",
+      "sha256": "a7e470e134bfd0e3c76482722260d6b1d5a099de823d61cc5cbabb06e4314c67",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "tools/build_manifest.py",
+      "sha256": "7aa71fb296c8b7e093bec3fe73c9de06f98ca47f3f761077bfe6ab423f7c6dcf",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/yaml/error.py",
+      "sha256": "021f73fada072546c4f63f8cf18a7181244ce4280b09cc15cc980b2d1176171a",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/yaml/tokens.py",
+      "sha256": "953408cd2570f0c83dc2fe39f7e4e388e41eeb05738aa69196a5f6ffcf6ba79e",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/yaml/events.py",
+      "sha256": "e74fd392c810884e2ea7e94aa3f57e9c1cbeb402319083d0c58e6a0e1282787c",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/yaml/nodes.py",
+      "sha256": "80f28d8fca4a09d87677882bde021820d9cf39a3b11a12405226211919cf13ce",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/yaml/reader.py",
+      "sha256": "d1d9b38ab3a20c6e17a38d519ee412ecaf6b918df18c78956ac7c330d4ea08dc",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/yaml/scanner.py",
+      "sha256": "60433788b652690c17710460da5d91e0c753d3318fd85f5e1e42862a71f25906",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/yaml/parser.py",
+      "sha256": "8a55a9e6fbe0a07146cef3990c8b45a068c3e83e369e1959ad9ca30306b4a09a",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/yaml/composer.py",
+      "sha256": "fcaa37d16afa783594794a5ab94193dcb720f503c19ce3d59539c8311189f453",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/yaml/constructor.py",
+      "sha256": "90d8247da78b524c10618fd0e857f54f3d97570fe91b5c5513d024ef3faf88b0",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/yaml/resolver.py",
+      "sha256": "f4bf9561f9b89961f1503d558385fbae30d12bfed565de9bf76c33abb63620a6",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/yaml/loader.py",
+      "sha256": "5156becc8aa6905482218abf3e04869b835226db4763645fff3438fdbd5f1cdd",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/yaml/emitter.py",
+      "sha256": "8e086d694ede170837d5b1b407b45979aff6f40762f422a65eafd08e04290a44",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/yaml/serializer.py",
+      "sha256": "0a1b85826854d35863e31808f0668abfabdf33606e8f06bd8bb7761401e3edc0",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/yaml/representer.py",
+      "sha256": "22e58ff9c016f6c1ca1274b4802a926bcf78935060e1c813c5a0f021c6d143e6",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/yaml/dumper.py",
+      "sha256": "3cb72d66563064ba7b5e679477046ebf89d8399d940670c8532f3e94a7cb17ea",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/yaml/_yaml.cp314-win_amd64.pyd",
+      "sha256": "ef5cde08b05f7c8222a458fa49ca5ec891e54d4c721ffdbe1d6a609e26a26718",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/yaml/cyaml.py",
+      "sha256": "e99ac01bd7c062f7557b614aff0d21997a06ed962ca185306a91bc0a20bbd87d",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/yaml/__init__.py",
+      "sha256": "b19dfcc333d6a75dfd73073901164507252f271b41d3b5f7d85510033a0547a7",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/bs4/_typing.py",
+      "sha256": "ccd731ed1d720932bc5b0b6e98fdbc85cec2277a4cc995e3fd501e61a3573190",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/soupsieve/__meta__.py",
+      "sha256": "1963634ae3a8537af6defe83d4fdfcb44b3ea5abe73a3895a6a13239f0ec3019",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/soupsieve/util.py",
+      "sha256": "4343151fbedc5015ccb4a5740f67fc4b27fdd2b7a63ded047cba9eebe9ac01e2",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/soupsieve/pretty.py",
+      "sha256": "89233e34a0b3aee2500b012b8904fbd8bac5e2c971b226fb4c1e79d87d9bb2a0",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/soupsieve/css_types.py",
+      "sha256": "3b14ecd69d9b64ae27bcf8c9bbe4d580f615acc5e743043b446ab471fcd9c02d",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/soupsieve/css_match.py",
+      "sha256": "526087fe5b5a9165480f2c9f281b3ad7db6da72c3d9c035b35576497767ae533",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/soupsieve/css_parser.py",
+      "sha256": "92ac01283cc5831c479ffa6b77ddc3f284dac34d12911b717547fb8c8b5345ab",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/soupsieve/__init__.py",
+      "sha256": "155e0e97615195dcbbac6f789d01cd1e82536487506d425d6641a15e4237b621",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/bs4/css.py",
+      "sha256": "fe6fe5ff84865879d8eb6d15276d63fea407d515f7a7dd6c6157a680ac5a2ec3",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/bs4/_deprecation.py",
+      "sha256": "9e21c90a4dfb00f83c284b8539ae7b6576b12dd06673fd95eaeb9a26abbbaf7d",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/bs4/dammit.py",
+      "sha256": "64959af4adf65fa3768a614795ea94ab47a47f9f76c1e53596f50b37f5985989",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/bs4/formatter.py",
+      "sha256": "b814f493a5bc3b9909f4f0ae2588eb6bdef2a14a82f9d94cf43feffa844cd2bf",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/bs4/_warnings.py",
+      "sha256": "66e3844e072711b660c363749e73579fac2fb6b9f6badec017477df1bbe43057",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/bs4/filter.py",
+      "sha256": "af0f193614c32c425508489289fa2ee6d651ff7cc12debaf032a2e63cdaa53f1",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/bs4/element.py",
+      "sha256": "a179a3ecb1bfd8da6c0caf749aaef7ab43cc2b416314120649e4d324b570c137",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/bs4/exceptions.py",
+      "sha256": "43d14e69d35ef1046fcc331a2925ded96b65f092bfa00656ee66c564154ffc61",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/bs4/builder/_htmlparser.py",
+      "sha256": "0a750b3d0576ae6e2f2e88c9001a50ed79bd76275d9c4671d96733fd54c2d4c8",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/lxml/__init__.py",
+      "sha256": "6aa181c6c2b59070e3397155e29f1eeb8dec232ac3705133a94c6f573c2a962c",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/lxml/_elementpath.cp314-win_amd64.pyd",
+      "sha256": "3284023fbbc06f8dc563b7660813c29aadacc0cf40772424a3d29761fbfac744",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/lxml/etree.cp314-win_amd64.pyd",
+      "sha256": "4feb5ab02430ea17458fc82f0e1164808f4ef31de1af180ec7fc40b08518c7cd",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/bs4/builder/_lxml.py",
+      "sha256": "92cd5ef1ba00fe7380da8a26021c5eb9d71c47a4e16c413e125945a874683cb0",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/bs4/builder/__init__.py",
+      "sha256": "465e2a8ce5ef772cb28dac8e16a6e4828528a3cd48828c8a0fe47059e54ae7d8",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/bs4/__init__.py",
+      "sha256": "13bc22569ee840ad0985d018c697a165af1daefdd6fec26fe6879316205f479a",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/playwright/__init__.py",
+      "sha256": "06c3acdadd13e2813fcb95ad91d53ee3885c2b5f473beccc45a579d9ceead70b",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/playwright/_impl/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/playwright/_impl/_api_structures.py",
+      "sha256": "84d32352c553683852f067e8382242bda38b15161b4158bb946db874b6c344b4",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/playwright/_impl/_errors.py",
+      "sha256": "9b8431a8e40848a18ace1ea38557d87bf51e09af9023eadd8b256b4f97ea0773",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/pyee/base.py",
+      "sha256": "4b39e4d616ba26df139d4c6f43c35e650a7b3b01a91c5cbc65dd1deafb892b6f",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/pyee/__init__.py",
+      "sha256": "aa4f9a8ede4618ab005b60bf8751769ed424bbdc65ae0a65ed025aebebad9b81",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/pyee/asyncio.py",
+      "sha256": "5b2a46661b00f08876efb9ff4d95c1a2518c5839fad0db3dc410d457fc7474af",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/playwright/_impl/_map.py",
+      "sha256": "606086b53edc29605a5ff0b22147dfc640e38c65089df790063aed9cb89bfaa7",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/playwright/_impl/_impl_to_api_mapping.py",
+      "sha256": "86dc40006a97ee2f1129b721142b92b86c90377974fb5703be884d68fb743839",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/greenlet/_greenlet.cp314-win_amd64.pyd",
+      "sha256": "67b0cf4381a64ee0453d3ad2d6b00740b945099cc2aed6f3f9592a651fb6cb61",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/greenlet/__init__.py",
+      "sha256": "410d9d8590853c159cf7046b3a84341841119bb1c5e8e749da118cce0316980b",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/playwright/_impl/_greenlets.py",
+      "sha256": "27456c0ecfc181a04a6a1245e0f72549129e3af0b611e60607cb5d29f4fe2634",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/playwright/_impl/_glob.py",
+      "sha256": "af927c1cc1a33e12094224ca96158964ce2c7ad9f4b4de3ac60e16e0baf9f887",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/playwright/_impl/_str_utils.py",
+      "sha256": "0ff1b72ae6d0dfefc92939fca4cc0c2dcb7efe4fd8e520c72c630a6bd94b0fe3",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/playwright/_impl/_helper.py",
+      "sha256": "1bb682d7e5d0d2c61306b0206307075a94bc6b680f12269cd3e241f35161434c",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/playwright/_repo_version.py",
+      "sha256": "ae35fe11bd16b79195cbe59aba8451b7b28241250103fa81bb06669a2fcbd88f",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/playwright/_impl/_driver.py",
+      "sha256": "9a15469de4b0e15773169d32df12a2a694298a8b03ee68655c504532a27d4eaa",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/playwright/_impl/_transport.py",
+      "sha256": "896dda8a25b612f46119fa25bcaed0f026ee719a85bd7b47972612ae47b6d00f",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/playwright/_impl/_connection.py",
+      "sha256": "bc474593abd8cf676156b3e0c16d463edd027c61cf715462bb6f3c96ffdad9cc",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/playwright/_impl/_event_context_manager.py",
+      "sha256": "55ea0fab5a17acbb3f6f797610cf20a77efcbc7b62e8c19bac53a138f39c7127",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/playwright/_impl/_waiter.py",
+      "sha256": "027f7d3df42649780b39bf397925a333c8bc847030b663650081e90398718180",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/playwright/_impl/_network.py",
+      "sha256": "c2528eaf76b59e45cc86c03152abfafcf694d3c39f6a4c8a55ce8f0ecb270926",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/playwright/_impl/_stream.py",
+      "sha256": "8a016483e4d62ff5a64b4454a6e67ec5610b385cb16c5e849819bd30149a9df2",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/playwright/_impl/_artifact.py",
+      "sha256": "3596db711366248a193c6a0f1be8547034987b7274c949d2ccbe3c6d3198ac71",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/playwright/_impl/_tracing.py",
+      "sha256": "3ad0096319569f93202b592a225e1e33a71433176e81737633fabe9650a89bf2",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/playwright/_impl/_fetch.py",
+      "sha256": "a7ac7d7cf02a8a8ccda0eea3a8d8a9b6308075dd67292592b5292c9deb4dc3c6",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/playwright/_impl/_js_handle.py",
+      "sha256": "2db455b97af07dbf007e114ee3f546139ee09ab2f7a1d6b15293cdfb61792d79",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/playwright/_impl/_writable_stream.py",
+      "sha256": "25fea9a4f7725300fe78d096c59843af97a3a13175359fc61862bdf7d79070bf",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/playwright/_impl/_set_input_files_helpers.py",
+      "sha256": "a1ce8e5a4103719e6a9cf569a9192e5f48dfdf91199cf572d02a7715d0d471e0",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/playwright/_impl/_element_handle.py",
+      "sha256": "05d57f4e98a780a7081ebae8a5076fa99507adf46e0df2cb3284531431947e6d",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/playwright/_impl/_locator.py",
+      "sha256": "c218bc19fc68af9f80a91d5922362ce468d6f08329b19e72f6ec1d64b726833a",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/playwright/_impl/_clock.py",
+      "sha256": "49c61ec40edfa7eddc264c6f4610515431fff376f303276a3db37a3a23e2fe40",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/playwright/_impl/_console_message.py",
+      "sha256": "2019003d9c716d4d98d7152617bd67f07c90d34529f93e6e7b76b5f15d060164",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/playwright/_impl/_download.py",
+      "sha256": "064d6807d82b5dcd8094a2f1b910c1d336363bf135200ee194fef1ec3ba75e04",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/playwright/_impl/_file_chooser.py",
+      "sha256": "b51fd516285582608c8551812fb490ab8ea269528b2ba2557aeff0dec8c332a0",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/playwright/_impl/_frame.py",
+      "sha256": "aca1189c7a19267dbe8c8ec4418176898f4fe4cdcd79c9239327849e952bca10",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/playwright/_impl/_local_utils.py",
+      "sha256": "897eb7904b26bde5dc4f50ff0865d6b1cc47a61046d4150cd277e34c5c684fa9",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/playwright/_impl/_har_router.py",
+      "sha256": "70ef9eff2d400b1a5f175c05f2a49cfdf7c0010ec9ba2d1f749c0fe117f6cf03",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/playwright/_impl/_input.py",
+      "sha256": "00462564d19a5b9c46ae6e5fe81bdf0c9557d7de16202dedf20b0751839c2475",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/playwright/_impl/_video.py",
+      "sha256": "424048548c4475ea62bd785668ab8282ef1a1ae524681fa8979b7233a34593b2",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/playwright/_impl/_page.py",
+      "sha256": "d30c762a52d9ff4ab241fa4dc651337b2d47ab9eb972d55e480756292c27bcf8",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/playwright/_impl/_assertions.py",
+      "sha256": "be01b145fbe7bfb221ab688959259c4218c6f4caf68c6555b43b30a70726b366",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/playwright/_impl/_cdp_session.py",
+      "sha256": "01a035300cee19eb85d65a6415db54f6180962fdff06848102a8bbe476b32328",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/playwright/_impl/_dialog.py",
+      "sha256": "0821d5ae637252dfc2603958e8e6ebc2550413c418f12aba22fc5d923c9f0855",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/playwright/_impl/_web_error.py",
+      "sha256": "ff3b4c6b7c62b14100dda87861413d4f30676bf34fdd108e9928713721a3211f",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/playwright/_impl/_browser_context.py",
+      "sha256": "6dc0b13b26dc74b85c2bb999d36ede2c4cd56828d1b8a95a980b79bee99204e4",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/playwright/_impl/_browser.py",
+      "sha256": "eea23d3d9bd813b23ab8a323c8b0c176db1338ecf393966b2fc5745cbe4bf284",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/playwright/_impl/_json_pipe.py",
+      "sha256": "d6839b40db3ced87646e72c8e55c508226b11350ca4bfb9cbffc4ec1ef826469",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/playwright/_impl/_browser_type.py",
+      "sha256": "cae4b33f44b264e112aa058c08d363de6d31ea4434a309a1f56d81dae59f5801",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/playwright/_impl/_selectors.py",
+      "sha256": "b57b4cc6cdbf574ee51313f8d997aee1463ac912643a0051f51d5f6e263f05b6",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/playwright/_impl/_playwright.py",
+      "sha256": "9656f14fc1d521b1cb54925599646d5aa00721b164b6b263256727712370c825",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/playwright/_impl/_sync_base.py",
+      "sha256": "90a23c3bcd581164a8ea954ae7fed1b450a2402eb88b0267500ae87a6ceb83e9",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/playwright/sync_api/_generated.py",
+      "sha256": "666f99ee867ce46d2f70198b595100a2156388e865168c126aaf9bf3e8f8c388",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/playwright/_impl/_object_factory.py",
+      "sha256": "be818aefb96d794e18977ec6134ef6e9acac50c2e957e682a3e50fa783121ee1",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/playwright/sync_api/_context_manager.py",
+      "sha256": "d40604253e11521d64029b7154e164f81e33e1d11269da6b412015d6bb4b291b",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Lib/site-packages/playwright/sync_api/__init__.py",
+      "sha256": "efa1f482dabb6ff044d604e724ba337c2329840d58df9d31594e863f28dbeb8a",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "tools/product_layout_measurements.py",
+      "sha256": "f11e65b73166166c37bf8ba1947e53314a78fedad1ebd0436d0fa6679bd9a2a1",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "tools/ui_reference_check.py",
+      "sha256": "77cee156dc22574c53521a05b71a82d8da7db99cc9022e85ab712de963b8a1f6",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "tools/ui_conformance.py",
+      "sha256": "8be73d09a2b3ee81a1a5079593b8f1cf57539d067cebe99f2744de4fc975b8e2",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "tools/desktop_app_check.py",
+      "sha256": "cb617d6448e8a358317ecf530266d5bd64ed6ff7212729c4cdf8895449e813c8",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "workers/__init__.py",
+      "sha256": "9bba9f89881c259add94411a3c61abed0541efe9156c9529417a5e2e9d4c7ca8",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "workers/windows/__init__.py",
+      "sha256": "92d732c305650f9de906a9befe7b04ec441644d3501433629dc5f829b337bcdf",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "workers/windows/protocol.py",
+      "sha256": "2c4be8c33741fe7c8d4ec0ae3553fb8af96b02e8749a3347668e25621315d701",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "workers/windows/lpac_launcher.py",
+      "sha256": "698e0127083cbc4d98385af7d900f674a6bc0a21c86bf617b9cd2344347a01d0",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": ".venv/Scripts/python.exe",
+      "sha256": "20f9f153434a7cbadb44594b0796e85707f444bd21deda9d0bfb0be94cff290a",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/shipping-reader-csp-source-preflight-03.json",
+      "sha256": "5d8158293225049825138447abe5c15f56be664aefa90e4b6644b0fd89a474e5",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/shipping-reader-capture-07/W2.A06.pre-admission-method-records-source-capture-07.json",
+      "sha256": "ccaab4f3a3ff4bc14134cdd0acc48be3aa06154a433b5c1508e4c2f0a100f917",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/shipping-reader-capture-07/W2.A06.pre-admission-method-records-source-capture-07-part-01.json",
+      "sha256": "8f171682b85a3a0faa40bf6743298f6165279d52106603058f41fa3334d541a9",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/shipping-reader-capture-07/W2.A06.pre-admission-method-records-source-capture-07-part-02.json",
+      "sha256": "308012c2aab4d30e4f313fcb399a94d5ba86d35d8e3f4afe5b9c9b60ae92819c",
+      "role": "Exact finite method input; private installed runtime closure retained only in ignored digest-bound control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/shipping-reader-csp-classifier-controls-03/receipt.json",
+      "sha256": "8808beb40912ea3cdf53b577d91ca32a92a0dfd170bdda12048bbdcad320f722",
+      "role": "Actual27case classifier and multipart integrity controls; no Native or Reader execution"
+    },
+    {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/shipping-reader-csp-source-preflight-01.json",
+      "sha256": "36b2b2bc2f9efab5a904cb6dc7fc2dda1d573950646f7430ae64cecc149af22d",
+      "role": "Preserved source01 adverse findings"
+    },
+    {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/shipping-reader-csp-source-preflight-02.json",
+      "sha256": "35e37953f69c4c3bcc6386b9c2325114b3a759d787a708789e083651fb78b5a4",
+      "role": "Preserved independently reviewed source02"
+    },
+    {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/shipping-reader-source-readiness-01.json",
+      "sha256": "dfe0cdb3dc8b2f3019d2f4854fca42269a41a0f57dc0e3fe81fbbd360553506b",
+      "role": "Preserved actual source02 control readiness; oversized container never introduced"
+    },
+    {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/shipping-reader-method-record-05.unpublished.json",
+      "sha256": "d0d8ab5be4d57e098a78b63a23f0fdca64b03f8a575fb3d32438a160f1f5a261",
+      "role": "Exact unintroduced source02 record retained locally"
+    },
+    {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/shipping-reader-source-capture-05.unpublished.json",
+      "sha256": "fec25fd138112c9d225ccdb21f12561fbca4b2c6d4749ecef5261720c344b64c",
+      "role": "Exact oversized unintroduced215bytecapture retained locally"
+    },
+    {
+      "path": ".local/W2.remaining-corrections-batch-01/privacy-review-03.blocked-size-disposition.json",
+      "sha256": "da1802f0e3133a8b6a33ca41697368d0ee4348a7fb16dbdb707b8cef05c4c17a",
+      "role": "Actual independent hard-size-limit blocker, unchanged registry and hook"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.C18.shipping-reader-csp-02.py",
+      "sha256": "58297c0732f10df3a766d0fdb9e3d8757f0d37e2177893cd3e1ffbb8d4eb0f0f",
+      "role": "Preserved original independently ready source02 bytes"
+    }
+  ],
+  "negativeControls": {
+    "receiptPath": "artifacts/tmp/W2.remaining-corrections-batch-01/shipping-reader-csp-classifier-controls-03/receipt.json",
+    "sha256": "8808beb40912ea3cdf53b577d91ca32a92a0dfd170bdda12048bbdcad320f722",
+    "actualResult": "PASS_CLASSIFIER_CONTROLS_ONLY"
+  },
+  "independentReadiness": {
+    "reviewer": "agent:/root/a03_closeout_review",
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/shipping-reader-source-readiness-02.json",
+    "sha256": "66656fc24b060c46af07214e461292d00657e637dcc013aeab942adf0ada3963",
+    "result": "SOURCE_READY"
+  },
+  "createdAt": "2026-10-11T15:18:13.943701+00:00",
+  "executionScope": "Actual protected miniature shipping Reader plus effective CSP inferred from authenticated identical-asset passive Native companion",
+  "prohibitedChanges": {
+    "productSource": false,
+    "sharedFramework": false,
+    "securityPolicy": false,
+    "governedReference": false,
+    "releaseCriteria": false,
+    "releaseApproval": false
+  },
+  "sourcePreflight": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/shipping-reader-csp-source-preflight-03.json",
+    "sha256": "5d8158293225049825138447abe5c15f56be664aefa90e4b6644b0fd89a474e5"
+  },
+  "limits": "Source03/control recording only. Source01 adverse findings, exact source02/control readiness and oversized unpublished05 originals preserved. Separate actual shipping Reader/PDF worker and isolated Native denials still require qualification/disposition. No new authority predicate, policy/hook/product/framework/reference/release change.",
+  "captureFormat": "Exact215rawsourcebytes retained as two bounded immutable parts authenticated by SHA256/size/sourceCount and exact union. No compression or source/assertion omission. Allpart/manifestsourcesheld in controls/runtime."
+}

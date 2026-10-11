@@ -1,0 +1,19 @@
+{
+  "schemaVersion": "1.0",
+  "kind": "batch-conforming-multipart-source-bytes-capture",
+  "methodId": "exact-current-reader-local-worker-csp",
+  "parts": [
+    {
+      "name": "W2.A06.pre-admission-method-records-source-capture-07-part-01.json",
+      "sha256": "8f171682b85a3a0faa40bf6743298f6165279d52106603058f41fa3334d541a9",
+      "size": 8585758,
+      "sourceCount": 107
+    },
+    {
+      "name": "W2.A06.pre-admission-method-records-source-capture-07-part-02.json",
+      "sha256": "308012c2aab4d30e4f313fcb399a94d5ba86d35d8e3f4afe5b9c9b60ae92819c",
+      "size": 8585785,
+      "sourceCount": 108
+    }
+  ]
+}
