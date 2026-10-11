@@ -141,7 +141,7 @@ main > .workflow-context { margin-block: 0 var(--space-5); }
 .intent-form fieldset label { display: inline-flex; align-items: flex-start; gap: var(--space-2); color: var(--text-default); font-weight: 400; }
 .intent-form fieldset input { margin-block-start: var(--space-1); }
 .intent-three-column { grid-template-columns: repeat(auto-fit, minmax(min(13rem, 100%), 1fr)); }
-.intent-three-column label { display: grid; gap: var(--space-2); }
+.intent-three-column label, .shortcut-dialog dl, .shortcut-dialog dl div, .parsing-quality-workspace label { display: grid; gap: var(--space-2); }
 .intent-guidance, .intent-impact { --ro-card-gap: var(--space-2); }
 .intent-guidance p, .intent-impact p { margin: 0; }
 .intent-actions { --ro-cluster-gap: var(--space-3); }
@@ -235,7 +235,6 @@ main > .workflow-context { margin-block: 0 var(--space-5); }
 @media print { .protected-document-viewer { display: none !important; } }
 @media (max-width: 75rem) { .source-anchor-layout { grid-template-columns: 1fr; } }
 .locked-error { color: var(--danger); }
-.shortcut-dialog dl, .shortcut-dialog dl div { display: grid; gap: var(--space-2); }
 .shortcut-dialog dl { margin: 0; }
 .shortcut-dialog dl div { grid-template-columns: 7rem minmax(0, 1fr); padding-block: var(--space-2); border-block-end: 1px solid var(--border-subtle); }
 .shortcut-dialog dt, .shortcut-dialog dd { margin: 0; }
@@ -278,7 +277,6 @@ kbd { padding: var(--space-1) var(--space-2); color: var(--text-strong); backgro
 .quality-node-list li { margin-block-end: var(--space-4); }
 .quality-id, .quality-private-text, .quality-layout p, .quality-layout dd { overflow-wrap: anywhere; }
 .quality-fields { display: grid; gap: var(--space-3); }
-.parsing-quality-workspace label { display: grid; gap: var(--space-2); }
 .parsing-quality-workspace select, .parsing-quality-workspace input, .parsing-quality-workspace textarea { max-width: 100%; min-width: 0; }
 .quality-layout > *, .quality-comparison > * { min-width: 0; }
 @media (max-width: 68rem) { .quality-layout, .quality-comparison { grid-template-columns: minmax(0, 1fr); } }
