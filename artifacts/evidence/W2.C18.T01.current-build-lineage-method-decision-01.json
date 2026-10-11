@@ -1,0 +1,68 @@
+{
+  "schemaVersion": "1.0",
+  "id": "W2.C18.T01.current-build-lineage-method-decision-01",
+  "status": "APPROVED",
+  "approvedBy": "human:repository-owner",
+  "recordedAt": "2026-10-11T13:30:59.154805+00:00",
+  "decision": "The owner answered 'Approved, please continue' to the exact ECR-0014/W2.A06 batch. That actual immutable grant explicitly includes this exact C18 packet and its four reviewed producer sources. Record the approved C18-only method and direct recording authority; the separate batch contracts govern any later finite classifier/CSP successor. Preserve all original adverse results and underlying recovery findings. No completion or release is approved.",
+  "approvalEvidence": "Exact complete batch request and subsequent owner answer in this chat; immutable planning/wave-amendment-approvals/W2.A06.json at ab3c35369a8cd57876a1890db90263e5ab2ba395 authenticates that grant.",
+  "methodSubstitutionApproved": true,
+  "directRecordingProcedureApproved": true,
+  "scope": "W2.C18.T01 exact CSS restoration; CAP-05.S06, CP-09 and W2 current-build lineage only",
+  "reviewedCandidateCommit": "429efd41d6bccd27b4c25b468475b6fddeb4a9f6",
+  "preservedMethod": {
+    "path": "artifacts/evidence/CAP-05.S06.current-build-method-decision-01.json",
+    "commit": "15bd1939a852bd8262b4b39b556f2793c0852957",
+    "sha256": "07e3d589d0ae1c7623696b8de5bc55df98d989fa10b11ef57c90065699c1e651"
+  },
+  "restoration": {
+    "taskId": "W2.C18.T01",
+    "originTaskId": "CAP-05.S06.T02",
+    "originSha256": "ea16178d8814da61bc71d291c49b582d4abaf529150d363701dfbbeaa429e856",
+    "claimBase": "302c1d14818230629b2991a61ae4ff4862c7aece",
+    "claimCommit": "a1b2bca193472ea657c3e5d4f09fd05038ee3a3f",
+    "sourceCommit": "429efd41d6bccd27b4c25b468475b6fddeb4a9f6",
+    "spec": {
+      "path": "artifacts/evidence/W2.C18.T01.spec.json",
+      "sha256": "5c3e65f9159dff1a4b3ef2db48cf8e78b7d1ef44f06cc196c273171be6acd114",
+      "commit": "302c1d14818230629b2991a61ae4ff4862c7aece"
+    },
+    "path": "apps/desktop/src/app.css",
+    "beforeSha256": "7cce690e1f0ba6c3436a82551fd99652bb7ed7a1dda6619fadc3af1e12bb2c9b",
+    "afterSha256": "3db0b1572bcbefd31f33b56696fb6e072bdcf124abcdcb75208e786705f64de6"
+  },
+  "authorizedProducers": {
+    "lineage": "9ca3f254cfdda423d1ed645a8c1dc3187b4dd0d31ea11f64e25d07386ced3788",
+    "conformance": "d95cd9262af76ab5abc06110818643c71a3ecf389266150c43e24918cf316ddd",
+    "fixture": "d08e71545a419fc3008de1e918add772cbed04848f8b10fd6ce3bdb16da8a398",
+    "frontend": "4833fdbea6bc4662668a66d300158a80d4cbe048a5696194aa0289d881b74f0a"
+  },
+  "proposal": {
+    "path": "artifacts/evidence/W2.C18.T01.current-build-lineage-method-proposal-01.json",
+    "sha256": "7d3a96c506aa469eaf733f7046bba4ade8a35f5102689bfc4c3dd8e7fe3d402e",
+    "commit": "ded7c9ce3d0b7d7d159dc4b2233b40db6054534d"
+  },
+  "readinessReview": {
+    "path": "artifacts/evidence/W2.C18.T01.current-build-lineage-method-readiness-01.json",
+    "sha256": "47e2f4facf9158e53a314e3ffe80b0e56087260751ab106cfa334a5f4b608e36",
+    "commit": "ded7c9ce3d0b7d7d159dc4b2233b40db6054534d"
+  },
+  "reviewBrief": {
+    "path": "artifacts/tmp/W2.C18.T01.current-build-lineage-method-02/review.html",
+    "sha256": "3c39836ebf9514fc44408bc6f8d7582a140e84b64f5868e95738785e3bb872bc"
+  },
+  "batchGrant": {
+    "path": "planning/wave-amendment-approvals/W2.A06.json",
+    "sha256": "3ecf2b98806f1589be7bd63fcc4f25cf0ee2df79bc95a3a0fefda2ce5666e4b2",
+    "introductionCommit": "ab3c35369a8cd57876a1890db90263e5ab2ba395"
+  },
+  "frameworkSourceChangesAuthorized": false,
+  "productChangesAuthorized": false,
+  "referenceOrBaselineChangesAuthorized": false,
+  "additionalPredicateExemptionsAuthorized": false,
+  "modelOrHardwareQualificationAuthorized": false,
+  "releaseApproval": false,
+  "taskApproval": false,
+  "sliceApproval": false,
+  "waveCompletion": false
+}
