@@ -4817,25 +4817,19 @@ waves:
       id: W2.C17.T01
       wave: W2
       priority: P0
-      status: BLOCKED
+      status: IN_PROGRESS
       owner: codex-w2-implementation
       branch: codex/w2-implementation
       base_sha: a8681406463cc246999ef29e40a5f4d3b918f468
       worktree: .
-      lease: null
+      lease:
+        claimed_by: codex-w2-implementation
+        claimed_at: '2026-10-11T00:49:10+00:00'
+        expires_at: '2026-10-11T08:49:10+00:00'
       started_at: '2026-10-10T22:12:09+00:00'
-      updated_at: '2026-10-10T22:56:43+00:00'
+      updated_at: '2026-10-11T00:49:10+00:00'
       completed_at: null
-      blocker:
-        reason: Exact owner restorative classification and source-free verification-method decision pending for independently
-          reviewed candidate aa43e3fcee791ffa73e41d5969bbaff3ff42476e. All affected product checks pass; unchanged public
-          UI authority command fails at unsupported original-task metadata selectors.
-        next_action: Review artifacts/evidence/W2.C17.T01.ui-authority-method-01.review.html and approve exact proposal a20b84f2fa2d4a8085ddad24d24afe2f439644e141fe8e2e81bc64e0b760e2a8
-          with independent readiness fe281171f1759a46b476d55af29246bcca59ac3941f97e684df00dcdc8bf0ef3. After direct approval,
-          record the append-only decision, reopen only this owned correction through taskctl, execute the pinned proof, submit
-          criterion-linked evidence and obtain normal independent review. No framework source change or release approval.
-        recorded_at: '2026-10-10T22:56:43+00:00'
-        owner: codex-w2-implementation
+      blocker: null
       implementation_notes: ''
       evidence: []
       verification_state: null

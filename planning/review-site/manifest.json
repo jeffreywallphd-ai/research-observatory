@@ -3575,7 +3575,7 @@
         {
           "task_id": "W2.C17.T01",
           "title": "Implement parser upgrade comparison and stale propagation",
-          "status": "BLOCKED",
+          "status": "IN_PROGRESS",
           "acceptance_criteria": [
             "A parser upgrade cannot silently replace accepted structure; changed anchors are reported; accepted reparse marks only affected evidence and outputs stale.",
             "Automated tests cover the expected path and at least one material failure or boundary condition.",
@@ -3605,7 +3605,7 @@
           "task_review": {
             "task_id": "W2.C17.T01",
             "title": "Implement parser upgrade comparison and stale propagation",
-            "status": "BLOCKED",
+            "status": "IN_PROGRESS",
             "mode": "append-only",
             "latest_review": {
               "reviewer": null,
