@@ -1,0 +1,52 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "exact-publication-repair-owner-decision",
+  "taskId": "W2.C18.T01",
+  "status": "APPROVED",
+  "approvedBy": "human:repository-owner",
+  "recordedAt": "2026-10-11T10:45:26.005934+00:00",
+  "reviewedCandidate": "ac5f891db456a3eb54cb376f9d9a4082c3f3236b",
+  "approvalReply": {
+    "questionItemId": "[\"request_user_input_async\",\"call_761fafe5402a4e84aefa902f913da29e\",0]",
+    "answer": "Approve this exact origin-only correction"
+  },
+  "actualPublicationCommit": "ee5f3ac59b12f3a9806d1ab8431d317c327c0808",
+  "publishedRecords": [
+    {
+      "path": "artifacts/evidence/W2.C18.T01.spec.json",
+      "sha256": "5c3e65f9159dff1a4b3ef2db48cf8e78b7d1ef44f06cc196c273171be6acd114",
+      "commit": "ee5f3ac59b12f3a9806d1ab8431d317c327c0808"
+    },
+    {
+      "path": "artifacts/evidence/W2.C18.T01.origin-correction-01.original.json",
+      "sha256": "d7405321feb42da0143becc869c171a5d9d6cd337930c76f74e1b073409f2f2c",
+      "commit": "ee5f3ac59b12f3a9806d1ab8431d317c327c0808"
+    },
+    {
+      "path": "artifacts/evidence/W2.C18.T01.origin-publication-repair-01.proposal.json",
+      "sha256": "82eeb29c8c342ee95f97676a5ba96fda628e5e249f5a22313292b75d2b19896b",
+      "commit": "ee5f3ac59b12f3a9806d1ab8431d317c327c0808"
+    },
+    {
+      "path": "artifacts/evidence/W2.C18.T01.origin-publication-repair-01.readiness.json",
+      "sha256": "e40f54cc1aca903f0c6ee8e13ec87158b5008cc81f57fe84b537d518d12e7697",
+      "commit": "ee5f3ac59b12f3a9806d1ab8431d317c327c0808"
+    }
+  ],
+  "original": {
+    "path": "artifacts/evidence/W2.C18.T01.spec.json",
+    "commit": "ac5f891db456a3eb54cb376f9d9a4082c3f3236b",
+    "sha256": "d7405321feb42da0143becc869c171a5d9d6cd337930c76f74e1b073409f2f2c"
+  },
+  "scope": "Only the exact three origin fields for unadmitted C18, exact publication/preservation and append-only actual decision/provenance recording. All remaining taskctl and product gates remain required.",
+  "excludedAuthority": [
+    "product scope expansion",
+    "framework changes",
+    "proof method replacement",
+    "reference or baseline changes",
+    "restart recovery policy",
+    "additional exemption",
+    "task/slice/checkpoint/Wave completion",
+    "release or W3 approval"
+  ]
+}
