@@ -1490,7 +1490,7 @@ waves:
     notes: Owner explicitly approved the complete W2 execution packet and requested implementation; G1 prototype limitations
       remain recorded, not waived.
   campaign:
-    status: ACTIVE
+    status: PAUSED
     scope: wave
     owner: codex-w2-implementation
     branch: codex/w2-implementation
@@ -1499,13 +1499,19 @@ waves:
     profile: LOC
     platform: windows-x64
     started_at: '2026-09-19T17:21:58+00:00'
-    updated_at: '2026-10-11T02:18:09+00:00'
-    pause_reason: null
-    pause_category: null
-    lease:
-      claimed_by: codex-w2-implementation
-      claimed_at: '2026-10-11T02:18:09+00:00'
-      expires_at: '2026-10-11T10:18:09+00:00'
+    updated_at: '2026-10-11T04:06:33+00:00'
+    pause_reason: W2.C17.T01 is DONE, independently approved and locally integrated. All 33 ordinary tasks, 17 corrective
+      tasks and five adopted amendments are complete; CAP-05.S06 integration and CP-09 remain pending. Fresh shipping UIA
+      R11 and protected state were independently approved at 59ba1aa732c58b9ba5bdf4fdea95cd0799c27ebd (artifacts/tmp/CAP-05.S06.shipping-uia-r11.independent-disposition-01.json);
+      this does not close the separate forced-shutdown recovery P1 CAP-05.S06.restart-boundary-r10-R01-F01 (artifacts/tmp/CAP-05.S06.restart-boundary-r10.independent-disposition-01.json).
+      The exact current-build conformance method is still awaiting its already-requested owner decision (artifacts/tmp/CAP-05.S06.current-build-method-02/review.html);
+      no duplicate request or producer execution. Preserve the locked R03 adverse fixture and safe existing-lock denial; authenticate
+      applicable explicit recovery authority or prepare a narrow product remedy before implementing new recovery semantics.
+      Full Wave checks retain 45 architecture and three desktop-lint classifier failures, unwaived. No shared automation/framework
+      work after A05; no actual 8/16 GiB workload variants. W2 qualification, independent Wave review, G2 release and the
+      complete W3 packet approval remain pending.
+    pause_category: human-decision
+    lease: null
     corrective_tasks:
     - title: Implement idempotent import commits and import manifests
       objective: Batch transaction and manifest linking source file hash, parser version, record decisions, errors, and resulting
@@ -5287,7 +5293,7 @@ waves:
       correction indicated, no checker repair or release waiver. Prior adverse findings, CSP/quality/type debt, minimum hardware/configurable
       model decisions, full profiles/installer/Wave/G2 remain pending and unwaived. Resume CAP-05.S05.T01 after local integration.'
   completion:
-    status: IN_PROGRESS
+    status: PAUSED
     reviewer: null
     reviewed_at: null
     evidence: []
