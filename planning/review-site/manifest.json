@@ -3575,7 +3575,7 @@
         {
           "task_id": "W2.C17.T01",
           "title": "Implement parser upgrade comparison and stale propagation",
-          "status": "IN_PROGRESS",
+          "status": "DONE",
           "acceptance_criteria": [
             "A parser upgrade cannot silently replace accepted structure; changed anchors are reported; accepted reparse marks only affected evidence and outputs stale.",
             "Automated tests cover the expected path and at least one material failure or boundary condition.",
@@ -3605,17 +3605,122 @@
           "task_review": {
             "task_id": "W2.C17.T01",
             "title": "Implement parser upgrade comparison and stale propagation",
-            "status": "IN_PROGRESS",
+            "status": "DONE",
             "mode": "append-only",
             "latest_review": {
-              "reviewer": null,
-              "result": null,
-              "reviewed_at": null,
-              "notes": null
+              "reviewer": "agent:/root/c17_independent_disposition",
+              "result": "approved",
+              "reviewed_at": "2026-10-11T01:34:43+00:00",
+              "notes": "Approve the exact W2.C17.T01 R01 candidate 716e75b28dfbac09ef24bb58432b16346fa529bf and its frozen criterion evidence. The two-file restoration preserves dirty/busy/issued-unknown ownership and reports navigation truthfully, with allowed recovery and zero implicit acceptance. Fresh affected product checks and the exact owner-approved source-free two-selector authority proof pass. No material blocking finding remains; all original adverse evidence, inherited authority and broader slice/Wave/release obligations are preserved."
             },
             "review_control": {
               "version": 1,
-              "attempts": [],
+              "attempts": [
+                {
+                  "submission": {
+                    "id": "R01",
+                    "submitted_by": "codex-w2-implementation",
+                    "submitted_at": "2026-10-11T01:16:56+00:00",
+                    "candidate_commit": "716e75b28dfbac09ef24bb58432b16346fa529bf",
+                    "base_commit": "a8681406463cc246999ef29e40a5f4d3b918f468",
+                    "branch": "codex/w2-implementation",
+                    "evidence_reference": {
+                      "type": "criterion-manifest",
+                      "path": "artifacts/evidence/W2.C17.T01.R01.json",
+                      "sha256": "102a6af68769f6941490d902f5ac39197af96bf3cbdb753309f6424d38b25e50",
+                      "commit": "716e75b28dfbac09ef24bb58432b16346fa529bf",
+                      "recorded_at": "2026-10-11T01:16:56+00:00"
+                    },
+                    "acceptance_criteria_sha256": "5b2333078d3f1b0c98ff2ec26db1377fcafed7be0e0ce7d1c74b8ae28073db58",
+                    "changed_paths": [
+                      "apps/desktop/src/app/ApplicationRuntime.tsx",
+                      "artifacts/evidence/W2.C17.T01.product-fix-02.patch",
+                      "artifacts/evidence/W2.C17.T01.ui-authority-method-01.review.html",
+                      "artifacts/evidence/W2.C17.T01.ui-authority-method-decision-01.json",
+                      "artifacts/evidence/W2.C17.T01.ui-authority-method-proposal-01.json",
+                      "artifacts/evidence/W2.C17.T01.ui-authority-method-readiness-01.json",
+                      "artifacts/evidence/ui-change/W2.C17.T01.json",
+                      "docs/planning-implementation-plan.md",
+                      "planning/backlog.yaml",
+                      "planning/review-site/index.html",
+                      "planning/review-site/manifest.json",
+                      "planning/review-site/waves/W2.html",
+                      "planning/status-summary.md",
+                      "tests/desktop/test_reprocessing_workflow_navigation.py"
+                    ],
+                    "selected_checks": [
+                      ".venv\\Scripts\\python.exe -B -m ruff format --check tests/desktop/test_reprocessing_workflow_navigation.py",
+                      ".venv\\Scripts\\python.exe -B -m ruff check tests/desktop/test_reprocessing_workflow_navigation.py",
+                      ".venv\\Scripts\\python.exe -B -m mypy --no-incremental --follow-imports=silent tests/desktop/test_reprocessing_workflow_navigation.py",
+                      ".local\\toolchains\\node-v24.19.0-win-x64\\node.exe apps\\desktop\\node_modules\\typescript\\bin\\tsc --noEmit",
+                      ".local\\toolchains\\node-v24.19.0-win-x64\\node.exe apps\\desktop\\node_modules\\vitest\\vitest.mjs run src/app/ApplicationRuntime.test.tsx src/app/workflowNavigation.test.ts src/app/WorkflowNavigation.test.tsx",
+                      ".local\\toolchains\\node-v24.19.0-win-x64\\node.exe tests/desktop/fixtures/reprocessing-navigation.mjs artifacts\\tmp\\W2.C17.T01.qualifying-04.attempt-01.fixture",
+                      ".venv\\Scripts\\python.exe -B -m unittest -v tests.desktop.test_reprocessing_workflow_navigation",
+                      ".venv\\Scripts\\python.exe -B artifacts\\tmp\\W2.C17.T01-ui-authority-proof-03.py --repo . --candidate 716e75b28dfbac09ef24bb58432b16346fa529bf --owner-record-commit 8e34f3e25a8131a5f829c89450e2ca6dddc9d515 --owner-record-sha256 042683ff3d605e30ace7e09e98d767668d15733ed683ed2b799e3f96fe5814f1 --proposal-sha256 a20b84f2fa2d4a8085ddad24d24afe2f439644e141fe8e2e81bc64e0b760e2a8 --readiness-sha256 fe281171f1759a46b476d55af29246bcca59ac3941f97e684df00dcdc8bf0ef3 --report artifacts/tmp/W2.C17.T01-ui-authority-proof-r03.json"
+                    ],
+                    "deferred_checks": [
+                      "Normal criterion manifest, independent formal W2.C17.T01 corrective integration review and local integration",
+                      "CAP-05.S06 real shipping Native/Core/UIA, protected-state, current 1.9 conformance, recovery and performance evidence with independent slice review",
+                      "Remaining shared-interface checkpoint and fresh full W2 qualification, retained broad-check and hardware/resource gaps, independent Wave review",
+                      "Separate human G2 release decision after its prerequisites are complete",
+                      "W3 initiation, refinement, complete packet review and exact Wave approval before execution",
+                      "No 8/16-GiB variant or minimum 2/3-GiB hardware qualification, new model execution, optional optimization, framework development or release authority."
+                    ],
+                    "selection_rationale": "Navigation was refused while Parsing Quality owned a dirty, busy or issued-unknown command, but Source Manager, Project Home and application-settings callbacks overwrote the denial with an opened success notice. The workspace and command were still retained. navigateWorkspaceState returns an explicit allowed result. Success notices and Home/settings side effects run only after allowed navigation. Denied navigation retains the existing truthful notice, workspace, rationale and exact command; navigation succeeds after Undo, completion or exact retry. No implicit acceptance occurs. Select the seven affected product checks and the exact approved source-free authority proof; keep source and evidence inputs stable. Deep shipping/Core/OS and full repository/profile coverage remain slice/Wave work.",
+                    "selection_sha256": "ecc2c6ade0324b47d1c64b60ebcd270b1ca911c512ada0890bc53263f68242c9",
+                    "prior_attempt_id": null,
+                    "open_finding_ids": [],
+                    "root_cause_analysis": null,
+                    "selected_command_ids": [
+                      "desktop:application",
+                      "desktop:unit",
+                      "foundation:quality",
+                      "foundation:ui-change"
+                    ],
+                    "packet_sha256": "8ec9a7cca4cdb435e6c84b94103a67f20d4d305a978f378c8b3f3d772dde9f96"
+                  },
+                  "review": {
+                    "reviewer": "agent:/root/c17_independent_disposition",
+                    "result": "approved",
+                    "reviewed_at": "2026-10-11T01:34:43+00:00",
+                    "notes": "Approve the exact W2.C17.T01 R01 candidate 716e75b28dfbac09ef24bb58432b16346fa529bf and its frozen criterion evidence. The two-file restoration preserves dirty/busy/issued-unknown ownership and reports navigation truthfully, with allowed recovery and zero implicit acceptance. Fresh affected product checks and the exact owner-approved source-free two-selector authority proof pass. No material blocking finding remains; all original adverse evidence, inherited authority and broader slice/Wave/release obligations are preserved."
+                  },
+                  "ledger": {
+                    "path": "artifacts/evidence/W2.C17.T01.review-R01.json",
+                    "sha256": "ff13ad1eab599e37ed6443d27383b469cb00893869be134d9e9446428f5978dd"
+                  },
+                  "findings": [],
+                  "closures": [],
+                  "telemetry": {
+                    "task_id": "W2.C17.T01",
+                    "amendment_id": null,
+                    "attempt_id": "R01",
+                    "submitted_at": "2026-10-11T01:16:56+00:00",
+                    "reviewed_at": "2026-10-11T01:34:43+00:00",
+                    "duration_seconds": 1067,
+                    "outcome": "approved",
+                    "finding_counts": {
+                      "critical": 0,
+                      "high": 0,
+                      "medium": 0,
+                      "low": 0,
+                      "blocking": 0,
+                      "total": 0
+                    },
+                    "command_ids": [
+                      "desktop:application",
+                      "desktop:unit",
+                      "foundation:quality",
+                      "foundation:ui-change"
+                    ],
+                    "remediation": {
+                      "prior_attempt_id": null,
+                      "replayed_finding_ids": [],
+                      "closed_finding_ids": []
+                    }
+                  }
+                }
+              ],
               "current_submission": null
             }
           }

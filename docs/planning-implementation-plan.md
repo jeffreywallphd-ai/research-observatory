@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 0e2ff98a39eb0cc4a96b0eb6cd04a27872e7d978a6b392d84504bda181b33b42
+source_sha256: 0a62292512db6c7ab72a15e787ffcd301ea75e69ae09473c734d1699c52a30d4
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -4565,7 +4565,7 @@ Original tasks and approvals remain unchanged.
 
 ### W2.C17.T01 — Implement parser upgrade comparison and stale propagation
 
-**Status:** `IN_PROGRESS`. **Original task:** `CAP-05.S06.T03`. **Latest review:** `-`.
+**Status:** `DONE`. **Original task:** `CAP-05.S06.T03`. **Latest review:** `approved`.
 
 **Reproduction:** Independent static shipping-UIA preflight at b7e6d0bbe4a1adb9efb8430c83d194fd2db673c3 identifies a truthful-outcome defect in ApplicationRuntime. While Parsing Quality owns a dirty, pending or issued-unknown correction/reconciliation, qualityNavigationAllowed refuses ordinary navigation and schedules the required denial announcement. The All tools callback then unconditionally schedules sources opened, overwriting that denial even though the workspace and exact command remain owned. Evidence: artifacts/tmp/CAP-05.S06.shipping-uia-preflight-01.json SHA256 966a72a4a8e3f49a97c64a6b5a9eb5fabded4bfc8408357bed49377936be5f30. A fresh independent mounted production-root diagnostic at committed 58a290f08668558083cc13fc074831164be537c7 reproduces the false sources opened announcement after two animation frames in all three states, preserves exact command/owner/rationale, and observes successful navigation after Undo, release or exact retry. Report: artifacts/tmp/CAP-05.S06.navigation-announcement-diagnostic-01.attempt-01.json SHA256 14b4df1380ff974a67fb6d91d4684d7231c3e9609e1e0f10bf3a38fd28183dcd. Its 5786 source/runtime and 198 fixture inputs remain fixed; sandbox startup denial is preserved. Diagnostic uses authored ports/transport, not Native/OS/Core/encrypted qualification. The prepared strict shipping assertion remains unchanged and has not yet executed. Add the production-root behavioral characterization before product edits.
 
@@ -4581,13 +4581,43 @@ Original tasks and approvals remain unchanged.
 - tests/desktop/test_reprocessing_workflow_navigation.py
 #### Review history — W2.C17.T01
 
-**Review mode:** `append-only v1` / 0 completed round(s)
+**Review mode:** `append-only v1` / 1 completed round(s)
+
+##### Round R01
+
+**Immutable submission packet:** `R01` / packet SHA-256 `8ec9a7cca4cdb435e6c84b94103a67f20d4d305a978f378c8b3f3d772dde9f96`
+
+- Candidate / base / branch: `716e75b28dfbac09ef24bb58432b16346fa529bf` / `a8681406463cc246999ef29e40a5f4d3b918f468` / `codex/w2-implementation`
+- Submitted by / at: codex-w2-implementation / `2026-10-11T01:16:56+00:00`
+- Evidence: `artifacts/evidence/W2.C17.T01.R01.json` / `102a6af68769f6941490d902f5ac39197af96bf3cbdb753309f6424d38b25e50` / `716e75b28dfbac09ef24bb58432b16346fa529bf`
+- Acceptance-criteria SHA-256: `5b2333078d3f1b0c98ff2ec26db1377fcafed7be0e0ce7d1c74b8ae28073db58`
+- Verification-selection SHA-256: `ecc2c6ade0324b47d1c64b60ebcd270b1ca911c512ada0890bc53263f68242c9`
+- Changed paths: `apps/desktop/src/app/ApplicationRuntime.tsx`, `artifacts/evidence/W2.C17.T01.product-fix-02.patch`, `artifacts/evidence/W2.C17.T01.ui-authority-method-01.review.html`, `artifacts/evidence/W2.C17.T01.ui-authority-method-decision-01.json`, `artifacts/evidence/W2.C17.T01.ui-authority-method-proposal-01.json`, `artifacts/evidence/W2.C17.T01.ui-authority-method-readiness-01.json`, `artifacts/evidence/ui-change/W2.C17.T01.json`, `docs/planning-implementation-plan.md`, `planning/backlog.yaml`, `planning/review-site/index.html`, `planning/review-site/manifest.json`, `planning/review-site/waves/W2.html`, `planning/status-summary.md`, `tests/desktop/test_reprocessing_workflow_navigation.py`
+- Selected checks: `.venv\Scripts\python.exe -B -m ruff format --check tests/desktop/test_reprocessing_workflow_navigation.py`, `.venv\Scripts\python.exe -B -m ruff check tests/desktop/test_reprocessing_workflow_navigation.py`, `.venv\Scripts\python.exe -B -m mypy --no-incremental --follow-imports=silent tests/desktop/test_reprocessing_workflow_navigation.py`, `.local\toolchains\node-v24.19.0-win-x64\node.exe apps\desktop\node_modules\typescript\bin\tsc --noEmit`, `.local\toolchains\node-v24.19.0-win-x64\node.exe apps\desktop\node_modules\vitest\vitest.mjs run src/app/ApplicationRuntime.test.tsx src/app/workflowNavigation.test.ts src/app/WorkflowNavigation.test.tsx`, `.local\toolchains\node-v24.19.0-win-x64\node.exe tests/desktop/fixtures/reprocessing-navigation.mjs artifacts\tmp\W2.C17.T01.qualifying-04.attempt-01.fixture`, `.venv\Scripts\python.exe -B -m unittest -v tests.desktop.test_reprocessing_workflow_navigation`, `.venv\Scripts\python.exe -B artifacts\tmp\W2.C17.T01-ui-authority-proof-03.py --repo . --candidate 716e75b28dfbac09ef24bb58432b16346fa529bf --owner-record-commit 8e34f3e25a8131a5f829c89450e2ca6dddc9d515 --owner-record-sha256 042683ff3d605e30ace7e09e98d767668d15733ed683ed2b799e3f96fe5814f1 --proposal-sha256 a20b84f2fa2d4a8085ddad24d24afe2f439644e141fe8e2e81bc64e0b760e2a8 --readiness-sha256 fe281171f1759a46b476d55af29246bcca59ac3941f97e684df00dcdc8bf0ef3 --report artifacts/tmp/W2.C17.T01-ui-authority-proof-r03.json`
+- Deferred checks: `Normal criterion manifest, independent formal W2.C17.T01 corrective integration review and local integration`, `CAP-05.S06 real shipping Native/Core/UIA, protected-state, current 1.9 conformance, recovery and performance evidence with independent slice review`, `Remaining shared-interface checkpoint and fresh full W2 qualification, retained broad-check and hardware/resource gaps, independent Wave review`, `Separate human G2 release decision after its prerequisites are complete`, `W3 initiation, refinement, complete packet review and exact Wave approval before execution`, `No 8/16-GiB variant or minimum 2/3-GiB hardware qualification, new model execution, optional optimization, framework development or release authority.`
+- Selection rationale: Navigation was refused while Parsing Quality owned a dirty, busy or issued-unknown command, but Source Manager, Project Home and application-settings callbacks overwrote the denial with an opened success notice. The workspace and command were still retained. navigateWorkspaceState returns an explicit allowed result. Success notices and Home/settings side effects run only after allowed navigation. Denied navigation retains the existing truthful notice, workspace, rationale and exact command; navigation succeeds after Undo, completion or exact retry. No implicit acceptance occurs. Select the seven affected product checks and the exact approved source-free authority proof; keep source and evidence inputs stable. Deep shipping/Core/OS and full repository/profile coverage remain slice/Wave work.
+- Prior round / replayed open findings: `-` / -
+- Root-cause escalation: -
+
+**Disposition / reviewer / time:** `approved` / agent:/root/c17_independent_disposition / `2026-10-11T01:34:43+00:00`
+
+**Immutable review ledger:** `artifacts/evidence/W2.C17.T01.review-R01.json` / `ff13ad1eab599e37ed6443d27383b469cb00893869be134d9e9446428f5978dd`
+
+**Review notes:** Approve the exact W2.C17.T01 R01 candidate 716e75b28dfbac09ef24bb58432b16346fa529bf and its frozen criterion evidence. The two-file restoration preserves dirty/busy/issued-unknown ownership and reports navigation truthfully, with allowed recovery and zero implicit acceptance. Fresh affected product checks and the exact owner-approved source-free two-selector authority proof pass. No material blocking finding remains; all original adverse evidence, inherited authority and broader slice/Wave/release obligations are preserved.
+
+**Findings opened:**
+
+- None
+
+**Prior finding closures:**
+
+- None
 
 **Current immutable submission awaiting review:** None
 
-**Current latest-review projection:** `-` by - at `-`
+**Current latest-review projection:** `approved` by agent:/root/c17_independent_disposition at `2026-10-11T01:34:43+00:00`
 
-**Latest notes:** -
+**Latest notes:** Approve the exact W2.C17.T01 R01 candidate 716e75b28dfbac09ef24bb58432b16346fa529bf and its frozen criterion evidence. The two-file restoration preserves dirty/busy/issued-unknown ownership and reports navigation truthfully, with allowed recovery and zero implicit acceptance. Fresh affected product checks and the exact owner-approved source-free two-selector authority proof pass. No material blocking finding remains; all original adverse evidence, inherited authority and broader slice/Wave/release obligations are preserved.
 
 **Currently open findings:** -
 

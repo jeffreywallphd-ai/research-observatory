@@ -1,0 +1,462 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "W2.C17.T01",
+  "baseCommit": "a8681406463cc246999ef29e40a5f4d3b918f468",
+  "commit": "716e75b28dfbac09ef24bb58432b16346fa529bf",
+  "branch": "codex/w2-implementation",
+  "changedFiles": [
+    "apps/desktop/src/app/ApplicationRuntime.tsx",
+    "artifacts/evidence/W2.C17.T01.product-fix-02.patch",
+    "artifacts/evidence/W2.C17.T01.ui-authority-method-01.review.html",
+    "artifacts/evidence/W2.C17.T01.ui-authority-method-decision-01.json",
+    "artifacts/evidence/W2.C17.T01.ui-authority-method-proposal-01.json",
+    "artifacts/evidence/W2.C17.T01.ui-authority-method-readiness-01.json",
+    "artifacts/evidence/ui-change/W2.C17.T01.json",
+    "docs/planning-implementation-plan.md",
+    "planning/backlog.yaml",
+    "planning/review-site/index.html",
+    "planning/review-site/manifest.json",
+    "planning/review-site/waves/W2.html",
+    "planning/status-summary.md",
+    "tests/desktop/test_reprocessing_workflow_navigation.py"
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "checkIds": [
+        "stable-announcement-and-recovery",
+        "owner-approved-source-free-ui-authority",
+        "root-and-workflow-regression"
+      ],
+      "evidence": [
+        "All 18 dirty, busy and issued-unknown navigation cases retain the exact command, workspace and correction rationale; implicit acceptance remains zero. Exact retry reconciles once, and Undo/completion/retry permits truthful navigation. Unmodified accepted IR, affected-output marking, Core/Native/parser and original independently approved T03 boundaries are preserved by exact authenticated source/history equality and the explicitly retained original R01 disposition. No fresh model, encrypted Core or shipping claim is made by this correction."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "checkIds": [
+        "stable-announcement-and-recovery",
+        "root-and-workflow-regression",
+        "production-root-fixture-build"
+      ],
+      "evidence": [
+        "Fresh build and 18 actual production-root route/state cases prove stable denial after two animation frames, retained owner without unmount, exact issued command and recovery. The existing 29 root/workflow unit cases pass. The nine pre-fix false-announcement failures and all setup/selector/lint/authority adverse results remain immutable."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "checkIds": [
+        "affected-python-format",
+        "affected-python-lint",
+        "affected-python-types",
+        "desktop-types",
+        "root-and-workflow-regression",
+        "production-root-fixture-build",
+        "stable-announcement-and-recovery",
+        "owner-approved-source-free-ui-authority"
+      ],
+      "evidence": [
+        "Only the admitted ApplicationRuntime callbacks and existing navigation regression change product/test behavior. Current approved Academic Minimal1.9 and every security, acceptance, schema, migration, rights, dependency, parser, resource and framework contract remain unchanged. Exact owner-approved proof03 and fresh affected formatting, lint, types, existing root tests and integration pass at this committed candidate."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "verificationSelection": {
+    "selectedCommandIds": [
+      "desktop:application",
+      "desktop:unit",
+      "foundation:quality",
+      "foundation:ui-change"
+    ],
+    "riskAnalysis": "Navigation was refused while Parsing Quality owned a dirty, busy or issued-unknown command, but Source Manager, Project Home and application-settings callbacks overwrote the denial with an opened success notice. The workspace and command were still retained. navigateWorkspaceState returns an explicit allowed result. Success notices and Home/settings side effects run only after allowed navigation. Denied navigation retains the existing truthful notice, workspace, rationale and exact command; navigation succeeds after Undo, completion or exact retry. No implicit acceptance occurs. Select the seven affected product checks and the exact approved source-free authority proof; keep source and evidence inputs stable. Deep shipping/Core/OS and full repository/profile coverage remain slice/Wave work.",
+    "deferred": [
+      "Normal criterion manifest, independent formal W2.C17.T01 corrective integration review and local integration",
+      "CAP-05.S06 real shipping Native/Core/UIA, protected-state, current 1.9 conformance, recovery and performance evidence with independent slice review",
+      "Remaining shared-interface checkpoint and fresh full W2 qualification, retained broad-check and hardware/resource gaps, independent Wave review",
+      "Separate human G2 release decision after its prerequisites are complete",
+      "W3 initiation, refinement, complete packet review and exact Wave approval before execution",
+      "No 8/16-GiB variant or minimum 2/3-GiB hardware qualification, new model execution, optional optimization, framework development or release authority."
+    ]
+  },
+  "checks": [
+    {
+      "id": "affected-python-format",
+      "commandId": "foundation:quality",
+      "exitCode": 0,
+      "durationSeconds": 0.12248709995765239,
+      "command": ".venv\\Scripts\\python.exe -B -m ruff format --check tests/desktop/test_reprocessing_workflow_navigation.py",
+      "workingDirectory": ".",
+      "commit": "716e75b28dfbac09ef24bb58432b16346fa529bf",
+      "result": "PASS",
+      "rawOutput": "artifacts/tmp/W2.C17.T01.qualifying-04.attempt-01.affected-python-format.log",
+      "rawOutputSha256": "fd2299c9f1c6dc869070883e281051bfe93aacf66c1a3b0069f45b4aa410ca50",
+      "rawOutputCanonicalSha256": "fd2299c9f1c6dc869070883e281051bfe93aacf66c1a3b0069f45b4aa410ca50",
+      "inputReport": "artifacts/tmp/W2.C17.T01.qualifying-04.attempt-01.json",
+      "inputReportSha256": "d7c0d6447308076501f7fcf8620163f4c667397db90128fd7f9468cb5499601b",
+      "producerSha256": "567c375906453d37bc1dc985a9a33f00d46b9adc10b7e9656733a7822a7ed342",
+      "provenance": "Fresh committed candidate with selected source/runtime/dependency/browser and built-fixture inputs held fixed. Actual production root with authored project/workflow/command ports. No Native/Core/OS/model or minimum hardware qualification."
+    },
+    {
+      "id": "affected-python-lint",
+      "commandId": "foundation:quality",
+      "exitCode": 0,
+      "durationSeconds": 0.10086040000896901,
+      "command": ".venv\\Scripts\\python.exe -B -m ruff check tests/desktop/test_reprocessing_workflow_navigation.py",
+      "workingDirectory": ".",
+      "commit": "716e75b28dfbac09ef24bb58432b16346fa529bf",
+      "result": "PASS",
+      "rawOutput": "artifacts/tmp/W2.C17.T01.qualifying-04.attempt-01.affected-python-lint.log",
+      "rawOutputSha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18",
+      "rawOutputCanonicalSha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18",
+      "inputReport": "artifacts/tmp/W2.C17.T01.qualifying-04.attempt-01.json",
+      "inputReportSha256": "d7c0d6447308076501f7fcf8620163f4c667397db90128fd7f9468cb5499601b",
+      "producerSha256": "567c375906453d37bc1dc985a9a33f00d46b9adc10b7e9656733a7822a7ed342",
+      "provenance": "Fresh committed candidate with selected source/runtime/dependency/browser and built-fixture inputs held fixed. Actual production root with authored project/workflow/command ports. No Native/Core/OS/model or minimum hardware qualification."
+    },
+    {
+      "id": "affected-python-types",
+      "commandId": "foundation:quality",
+      "exitCode": 0,
+      "durationSeconds": 1.6322044000262395,
+      "command": ".venv\\Scripts\\python.exe -B -m mypy --no-incremental --follow-imports=silent tests/desktop/test_reprocessing_workflow_navigation.py",
+      "workingDirectory": ".",
+      "commit": "716e75b28dfbac09ef24bb58432b16346fa529bf",
+      "result": "PASS",
+      "rawOutput": "artifacts/tmp/W2.C17.T01.qualifying-04.attempt-01.affected-python-types.log",
+      "rawOutputSha256": "8e63ae22e8213e327a5e9cbd584067681681bd8ef7f25c869877887ccdcfc4ff",
+      "rawOutputCanonicalSha256": "5d4b6d285b77932e3d08212c3b4974d0a803f98ec60408ac6ccf6a063fa6c19e",
+      "inputReport": "artifacts/tmp/W2.C17.T01.qualifying-04.attempt-01.json",
+      "inputReportSha256": "d7c0d6447308076501f7fcf8620163f4c667397db90128fd7f9468cb5499601b",
+      "producerSha256": "567c375906453d37bc1dc985a9a33f00d46b9adc10b7e9656733a7822a7ed342",
+      "provenance": "Fresh committed candidate with selected source/runtime/dependency/browser and built-fixture inputs held fixed. Actual production root with authored project/workflow/command ports. No Native/Core/OS/model or minimum hardware qualification."
+    },
+    {
+      "id": "desktop-types",
+      "commandId": "desktop:application",
+      "exitCode": 0,
+      "durationSeconds": 1.0370228000101633,
+      "command": ".local\\toolchains\\node-v24.19.0-win-x64\\node.exe apps\\desktop\\node_modules\\typescript\\bin\\tsc --noEmit",
+      "workingDirectory": "apps/desktop",
+      "commit": "716e75b28dfbac09ef24bb58432b16346fa529bf",
+      "result": "PASS",
+      "rawOutput": "artifacts/tmp/W2.C17.T01.qualifying-04.attempt-01.desktop-types.log",
+      "rawOutputSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "rawOutputCanonicalSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "inputReport": "artifacts/tmp/W2.C17.T01.qualifying-04.attempt-01.json",
+      "inputReportSha256": "d7c0d6447308076501f7fcf8620163f4c667397db90128fd7f9468cb5499601b",
+      "producerSha256": "567c375906453d37bc1dc985a9a33f00d46b9adc10b7e9656733a7822a7ed342",
+      "provenance": "Fresh committed candidate with selected source/runtime/dependency/browser and built-fixture inputs held fixed. Actual production root with authored project/workflow/command ports. No Native/Core/OS/model or minimum hardware qualification."
+    },
+    {
+      "id": "root-and-workflow-regression",
+      "commandId": "desktop:unit",
+      "exitCode": 0,
+      "durationSeconds": 1.50782459997572,
+      "command": ".local\\toolchains\\node-v24.19.0-win-x64\\node.exe apps\\desktop\\node_modules\\vitest\\vitest.mjs run src/app/ApplicationRuntime.test.tsx src/app/workflowNavigation.test.ts src/app/WorkflowNavigation.test.tsx",
+      "workingDirectory": "apps/desktop",
+      "commit": "716e75b28dfbac09ef24bb58432b16346fa529bf",
+      "result": "PASS",
+      "rawOutput": "artifacts/tmp/W2.C17.T01.qualifying-04.attempt-01.root-and-workflow-regression.log",
+      "rawOutputSha256": "2b8e8a1952c9b8c429fbbf0f4a4daf48d6f600f9eeaff494f9dcc41b4e5b6d5f",
+      "rawOutputCanonicalSha256": "2b8e8a1952c9b8c429fbbf0f4a4daf48d6f600f9eeaff494f9dcc41b4e5b6d5f",
+      "inputReport": "artifacts/tmp/W2.C17.T01.qualifying-04.attempt-01.json",
+      "inputReportSha256": "d7c0d6447308076501f7fcf8620163f4c667397db90128fd7f9468cb5499601b",
+      "producerSha256": "567c375906453d37bc1dc985a9a33f00d46b9adc10b7e9656733a7822a7ed342",
+      "provenance": "Fresh committed candidate with selected source/runtime/dependency/browser and built-fixture inputs held fixed. Actual production root with authored project/workflow/command ports. No Native/Core/OS/model or minimum hardware qualification."
+    },
+    {
+      "id": "production-root-fixture-build",
+      "commandId": "desktop:application",
+      "exitCode": 0,
+      "durationSeconds": 1.2346663000062108,
+      "command": ".local\\toolchains\\node-v24.19.0-win-x64\\node.exe tests/desktop/fixtures/reprocessing-navigation.mjs artifacts\\tmp\\W2.C17.T01.qualifying-04.attempt-01.fixture",
+      "workingDirectory": ".",
+      "commit": "716e75b28dfbac09ef24bb58432b16346fa529bf",
+      "result": "PASS",
+      "rawOutput": "artifacts/tmp/W2.C17.T01.qualifying-04.attempt-01.production-root-fixture-build.log",
+      "rawOutputSha256": "b566697482f32b633a48396e0d777cf81c332f8df2179cb8374172d5618725ee",
+      "rawOutputCanonicalSha256": "b566697482f32b633a48396e0d777cf81c332f8df2179cb8374172d5618725ee",
+      "inputReport": "artifacts/tmp/W2.C17.T01.qualifying-04.attempt-01.json",
+      "inputReportSha256": "d7c0d6447308076501f7fcf8620163f4c667397db90128fd7f9468cb5499601b",
+      "producerSha256": "567c375906453d37bc1dc985a9a33f00d46b9adc10b7e9656733a7822a7ed342",
+      "provenance": "Fresh committed candidate with selected source/runtime/dependency/browser and built-fixture inputs held fixed. Actual production root with authored project/workflow/command ports. No Native/Core/OS/model or minimum hardware qualification."
+    },
+    {
+      "id": "stable-announcement-and-recovery",
+      "commandId": "desktop:unit",
+      "exitCode": 0,
+      "durationSeconds": 19.952515400014818,
+      "command": ".venv\\Scripts\\python.exe -B -m unittest -v tests.desktop.test_reprocessing_workflow_navigation",
+      "workingDirectory": ".",
+      "commit": "716e75b28dfbac09ef24bb58432b16346fa529bf",
+      "result": "PASS",
+      "rawOutput": "artifacts/tmp/W2.C17.T01.qualifying-04.attempt-01.stable-announcement-and-recovery.log",
+      "rawOutputSha256": "783b7f4fa7329b3d8e6c20f971b928afeab4f9917e96cb3aad4b3a9fbb6cf38b",
+      "rawOutputCanonicalSha256": "20f8fbb1cc42f0150c46bc9878ee4bd3f056a6d4d85462010beeedc770b5edb7",
+      "inputReport": "artifacts/tmp/W2.C17.T01.qualifying-04.attempt-01.json",
+      "inputReportSha256": "d7c0d6447308076501f7fcf8620163f4c667397db90128fd7f9468cb5499601b",
+      "producerSha256": "567c375906453d37bc1dc985a9a33f00d46b9adc10b7e9656733a7822a7ed342",
+      "provenance": "Fresh committed candidate with selected source/runtime/dependency/browser and built-fixture inputs held fixed. Actual production root with authored project/workflow/command ports. No Native/Core/OS/model or minimum hardware qualification."
+    },
+    {
+      "id": "owner-approved-source-free-ui-authority",
+      "commandId": "foundation:ui-change",
+      "exitCode": 0,
+      "durationSeconds": 103.58859830000438,
+      "command": ".venv\\Scripts\\python.exe -B artifacts\\tmp\\W2.C17.T01-ui-authority-proof-03.py --repo . --candidate 716e75b28dfbac09ef24bb58432b16346fa529bf --owner-record-commit 8e34f3e25a8131a5f829c89450e2ca6dddc9d515 --owner-record-sha256 042683ff3d605e30ace7e09e98d767668d15733ed683ed2b799e3f96fe5814f1 --proposal-sha256 a20b84f2fa2d4a8085ddad24d24afe2f439644e141fe8e2e81bc64e0b760e2a8 --readiness-sha256 fe281171f1759a46b476d55af29246bcca59ac3941f97e684df00dcdc8bf0ef3 --report artifacts/tmp/W2.C17.T01-ui-authority-proof-r03.json",
+      "workingDirectory": ".",
+      "commit": "716e75b28dfbac09ef24bb58432b16346fa529bf",
+      "result": "PASS",
+      "rawOutput": "artifacts/tmp/W2.C17.T01-ui-authority-proof-r03.log",
+      "rawOutputSha256": "869bb5b9d9af1fe05f27a5c0f2290021dec1de8611f7a689a2922ced5b766e47",
+      "rawOutputCanonicalSha256": "ea2b88e02138f355de16b2753ba6ef5d3a31e0acb997d67112362247d72dd331",
+      "inputReport": "artifacts/tmp/W2.C17.T01-ui-authority-proof-r03.json",
+      "inputReportSha256": "ea2b88e02138f355de16b2753ba6ef5d3a31e0acb997d67112362247d72dd331",
+      "producerSha256": "9c61d1de18fbf21e502f2d607f26489f44a708b76105ea0b5161a67091cd20b9",
+      "provenance": "Actual pinned proof03 after exact owner approval substitutes only the two approved origin metadata selectors. Unchanged ordinary helpers enforce claim, scope, schema, lease, approved reference and history; current and original source inventories are authenticated. This is not a PASS for the original public UI checker."
+    }
+  ],
+  "machineArtifacts": [
+    {
+      "path": "artifacts/tmp/W2.C17.T01.qualifying-04.attempt-01.json",
+      "sha256": "d7c0d6447308076501f7fcf8620163f4c667397db90128fd7f9468cb5499601b"
+    },
+    {
+      "path": "artifacts/tmp/W2.C17.T01-ui-authority-proof-r03.json",
+      "sha256": "ea2b88e02138f355de16b2753ba6ef5d3a31e0acb997d67112362247d72dd331"
+    },
+    {
+      "path": "artifacts/tmp/W2.C17.T01-ui-authority-proof-r03.execution.json",
+      "sha256": "89db3b3fe102b24352940f80b6e8d19fe023184be7a7bcb3d7fe403a8896e3ba"
+    },
+    {
+      "path": "artifacts/tmp/W2.C17.T01-ui-authority-proof-r03.log",
+      "sha256": "869bb5b9d9af1fe05f27a5c0f2290021dec1de8611f7a689a2922ced5b766e47"
+    },
+    {
+      "path": "artifacts/tmp/W2.C17.T01-focused-04.py",
+      "sha256": "567c375906453d37bc1dc985a9a33f00d46b9adc10b7e9656733a7822a7ed342"
+    },
+    {
+      "path": "artifacts/tmp/W2.C17.T01-ui-authority-proof-03.py",
+      "sha256": "9c61d1de18fbf21e502f2d607f26489f44a708b76105ea0b5161a67091cd20b9"
+    },
+    {
+      "path": "artifacts/evidence/W2.C17.T01.spec.json",
+      "sha256": "c4657306427a53613f1db94668e585e7dea6f4cd2ea8e20639833057866abc4f"
+    },
+    {
+      "path": "artifacts/evidence/ui-change/W2.C17.T01.json",
+      "sha256": "260a251b0302e250285dda45e752288b018b577e923d99f8f5753a983e0395b1"
+    },
+    {
+      "path": "artifacts/evidence/W2.C17.T01.ui-authority-method-proposal-01.json",
+      "sha256": "a20b84f2fa2d4a8085ddad24d24afe2f439644e141fe8e2e81bc64e0b760e2a8"
+    },
+    {
+      "path": "artifacts/evidence/W2.C17.T01.ui-authority-method-readiness-01.json",
+      "sha256": "fe281171f1759a46b476d55af29246bcca59ac3941f97e684df00dcdc8bf0ef3"
+    },
+    {
+      "path": "artifacts/evidence/W2.C17.T01.ui-authority-method-decision-01.json",
+      "sha256": "042683ff3d605e30ace7e09e98d767668d15733ed683ed2b799e3f96fe5814f1"
+    },
+    {
+      "path": "artifacts/evidence/W2.C17.T01.product-fix-02.patch",
+      "sha256": "26f6f2c9c9ac092e6aeb39657a928e4649401cf1a812e48756eb37cc4ca7be31"
+    },
+    {
+      "path": "artifacts/evidence/CAP-05.S06.T03.R01.json",
+      "sha256": "1674249fb33640f7b33d66fa6232938ac706b5a053127cdf1788cbff02603ce4"
+    },
+    {
+      "path": "artifacts/evidence/CAP-05.S06.T03.review-R01.json",
+      "sha256": "76f959391a8b2cb73f2d49e4a03d51080030118bc69e8ed37a3ed13786a606ee"
+    },
+    {
+      "path": "artifacts/tmp/W2.C17.T01.product-restoration-assessment-01.json",
+      "sha256": "c233e085462d20c271820c92364a7c3e611ce3f39502349f4fe36a8a0ed8de39"
+    },
+    {
+      "path": "artifacts/tmp/W2.C17.T01.ui-authority-proof-preflight-03.json",
+      "sha256": "c931a72958bc3bd10c3e0a47a59c4b26e0817eb83d811b3659c5dc5b3bd91178"
+    },
+    {
+      "path": "artifacts/tmp/W2.C17.T01-ui-authority-identity-characterization-run03.json",
+      "sha256": "48efcdb5e1e129f86f6dce22956ca3b46611db3492cd0a8da2cc2f79d9539885"
+    },
+    {
+      "path": "artifacts/tmp/W2.C17.T01.qualifying-04.attempt-01.affected-python-format.log",
+      "sha256": "fd2299c9f1c6dc869070883e281051bfe93aacf66c1a3b0069f45b4aa410ca50"
+    },
+    {
+      "path": "artifacts/tmp/W2.C17.T01.qualifying-04.attempt-01.affected-python-lint.log",
+      "sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18"
+    },
+    {
+      "path": "artifacts/tmp/W2.C17.T01.qualifying-04.attempt-01.affected-python-types.log",
+      "sha256": "8e63ae22e8213e327a5e9cbd584067681681bd8ef7f25c869877887ccdcfc4ff"
+    },
+    {
+      "path": "artifacts/tmp/W2.C17.T01.qualifying-04.attempt-01.desktop-types.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "artifacts/tmp/W2.C17.T01.qualifying-04.attempt-01.root-and-workflow-regression.log",
+      "sha256": "2b8e8a1952c9b8c429fbbf0f4a4daf48d6f600f9eeaff494f9dcc41b4e5b6d5f"
+    },
+    {
+      "path": "artifacts/tmp/W2.C17.T01.qualifying-04.attempt-01.production-root-fixture-build.log",
+      "sha256": "b566697482f32b633a48396e0d777cf81c332f8df2179cb8374172d5618725ee"
+    },
+    {
+      "path": "artifacts/tmp/W2.C17.T01.qualifying-04.attempt-01.stable-announcement-and-recovery.log",
+      "sha256": "783b7f4fa7329b3d8e6c20f971b928afeab4f9917e96cb3aad4b3a9fbb6cf38b"
+    },
+    {
+      "path": "artifacts/tmp/W2.C17.T01.red-03.attempt-01.json",
+      "sha256": "405cdf21130f88cd88f5f6c49c3ee42f0716c211efd2d4cd1144a354da01ed86"
+    },
+    {
+      "path": "artifacts/tmp/W2.C17.T01.red-locator-remediation-01.json",
+      "sha256": "80cacfdbcfdc0d7805cd0a21dd6a2f026cd3d77531bbf8afbfea6728c91a5f99"
+    },
+    {
+      "path": "artifacts/tmp/W2.C17.T01.red-03.attempt-02.json",
+      "sha256": "6732190035ab0f1721e7ce60d6bc21e89b5b2d35f487f6c7950f7e083fa426a4"
+    },
+    {
+      "path": "artifacts/tmp/W2.C17.T01.red-test-source-02.py",
+      "sha256": "2a4c0bc89101a8dc61a0513a5f5105f8f7fce6a5885dc898cce8d43c2ae9938f"
+    },
+    {
+      "path": "artifacts/tmp/W2.C17.T01.development-01.json",
+      "sha256": "42b29c252af9ac6eee622d761304fd4cd6de2b78155f082e36c476b574cbe51b"
+    },
+    {
+      "path": "artifacts/tmp/W2.C17.T01.development-02.json",
+      "sha256": "7541d0f666233c4ac1b60b5eab3e3a81742d05edf7ab6bb700f3556619e0553a"
+    },
+    {
+      "path": "artifacts/tmp/W2.C17.T01.qualifying-03.attempt-01.json",
+      "sha256": "a54f99a987d7837c3f2454aaa4f49d45fd2dfd267913b6c4328f1a08f1347f2c"
+    },
+    {
+      "path": "artifacts/tmp/W2.C17.T01.ui-authority-proof-preflight-01.json",
+      "sha256": "9b85e7d7dc8f2efd9d60e5b8b92a883a27133f2b4aa38fc608557c6f93e66e9f"
+    },
+    {
+      "path": "artifacts/tmp/W2.C17.T01.ui-authority-proof-preflight-02.json",
+      "sha256": "26d94ee1872289d2fd56dbd0613c6644f2894af4daa6e6628b5c992a0b423a88"
+    },
+    {
+      "path": "artifacts/tmp/W2.C17.T01.qualifying-03.attempt-02.json",
+      "sha256": "059fcccf3b15ab2736ac31fb1b40dd4f3c96385a73db4785bd8587f546f62817"
+    },
+    {
+      "path": "artifacts/tmp/W2.C17.T01.qualifying-03.attempt-02.ui-change-authority.log",
+      "sha256": "ef82e3ca8224de8628b94733be8114cf3e812e0bc900a54744ab2b1fba7e10dc"
+    }
+  ],
+  "preservedAdverseObservations": [
+    {
+      "path": "artifacts/tmp/W2.C17.T01.red-03.attempt-01.json",
+      "sha256": "405cdf21130f88cd88f5f6c49c3ee42f0716c211efd2d4cd1144a354da01ed86",
+      "qualifyingAsWholeReport": false,
+      "disposition": "Preserved original observation; not reclassified as a passing run."
+    },
+    {
+      "path": "artifacts/tmp/W2.C17.T01.red-locator-remediation-01.json",
+      "sha256": "80cacfdbcfdc0d7805cd0a21dd6a2f026cd3d77531bbf8afbfea6728c91a5f99",
+      "qualifyingAsWholeReport": false,
+      "disposition": "Preserved original observation; not reclassified as a passing run."
+    },
+    {
+      "path": "artifacts/tmp/W2.C17.T01.red-03.attempt-02.json",
+      "sha256": "6732190035ab0f1721e7ce60d6bc21e89b5b2d35f487f6c7950f7e083fa426a4",
+      "qualifyingAsWholeReport": false,
+      "disposition": "Preserved original observation; not reclassified as a passing run."
+    },
+    {
+      "path": "artifacts/tmp/W2.C17.T01.red-test-source-02.py",
+      "sha256": "2a4c0bc89101a8dc61a0513a5f5105f8f7fce6a5885dc898cce8d43c2ae9938f",
+      "qualifyingAsWholeReport": false,
+      "disposition": "Preserved original observation; not reclassified as a passing run."
+    },
+    {
+      "path": "artifacts/tmp/W2.C17.T01.development-01.json",
+      "sha256": "42b29c252af9ac6eee622d761304fd4cd6de2b78155f082e36c476b574cbe51b",
+      "qualifyingAsWholeReport": false,
+      "disposition": "Preserved original observation; not reclassified as a passing run."
+    },
+    {
+      "path": "artifacts/tmp/W2.C17.T01.development-02.json",
+      "sha256": "7541d0f666233c4ac1b60b5eab3e3a81742d05edf7ab6bb700f3556619e0553a",
+      "qualifyingAsWholeReport": false,
+      "disposition": "Preserved original observation; not reclassified as a passing run."
+    },
+    {
+      "path": "artifacts/tmp/W2.C17.T01.qualifying-03.attempt-01.json",
+      "sha256": "a54f99a987d7837c3f2454aaa4f49d45fd2dfd267913b6c4328f1a08f1347f2c",
+      "qualifyingAsWholeReport": false,
+      "disposition": "Preserved original observation; not reclassified as a passing run."
+    },
+    {
+      "path": "artifacts/tmp/W2.C17.T01.ui-authority-proof-preflight-01.json",
+      "sha256": "9b85e7d7dc8f2efd9d60e5b8b92a883a27133f2b4aa38fc608557c6f93e66e9f",
+      "qualifyingAsWholeReport": false,
+      "disposition": "Preserved original observation; not reclassified as a passing run."
+    },
+    {
+      "path": "artifacts/tmp/W2.C17.T01.ui-authority-proof-preflight-02.json",
+      "sha256": "26d94ee1872289d2fd56dbd0613c6644f2894af4daa6e6628b5c992a0b423a88",
+      "qualifyingAsWholeReport": false,
+      "disposition": "Preserved original observation; not reclassified as a passing run."
+    },
+    {
+      "path": "artifacts/tmp/W2.C17.T01.qualifying-03.attempt-02.json",
+      "sha256": "059fcccf3b15ab2736ac31fb1b40dd4f3c96385a73db4785bd8587f546f62817",
+      "qualifyingAsWholeReport": false,
+      "disposition": "Seven affected children passed; aggregate FAIL from the original unsupported-origin selector remains FAIL. Actual approved method proof is a separately named current-candidate check."
+    },
+    {
+      "path": "artifacts/tmp/W2.C17.T01.qualifying-03.attempt-02.ui-change-authority.log",
+      "sha256": "ef82e3ca8224de8628b94733be8114cf3e812e0bc900a54744ab2b1fba7e10dc",
+      "exitCode": 1,
+      "qualifyingAsWholeReport": false,
+      "disposition": "Original public UI checker actual FAIL remains preserved; no unchanged rerun or fabricated PASS."
+    }
+  ],
+  "correctiveIntegration": {
+    "originSha256": "5c7e4e19a4ea321dfd53ba3b4a4c40f2719e4c12991dd34692fcb4757369231a",
+    "authorityPreserved": true,
+    "affectedChecks": [
+      ".venv\\Scripts\\python.exe -B -m ruff format --check tests/desktop/test_reprocessing_workflow_navigation.py",
+      ".venv\\Scripts\\python.exe -B -m ruff check tests/desktop/test_reprocessing_workflow_navigation.py",
+      ".venv\\Scripts\\python.exe -B -m mypy --no-incremental --follow-imports=silent tests/desktop/test_reprocessing_workflow_navigation.py",
+      ".local\\toolchains\\node-v24.19.0-win-x64\\node.exe apps\\desktop\\node_modules\\typescript\\bin\\tsc --noEmit",
+      ".local\\toolchains\\node-v24.19.0-win-x64\\node.exe apps\\desktop\\node_modules\\vitest\\vitest.mjs run src/app/ApplicationRuntime.test.tsx src/app/workflowNavigation.test.ts src/app/WorkflowNavigation.test.tsx",
+      ".local\\toolchains\\node-v24.19.0-win-x64\\node.exe tests/desktop/fixtures/reprocessing-navigation.mjs artifacts\\tmp\\W2.C17.T01.qualifying-04.attempt-01.fixture",
+      ".venv\\Scripts\\python.exe -B -m unittest -v tests.desktop.test_reprocessing_workflow_navigation",
+      ".venv\\Scripts\\python.exe -B artifacts\\tmp\\W2.C17.T01-ui-authority-proof-03.py --repo . --candidate 716e75b28dfbac09ef24bb58432b16346fa529bf --owner-record-commit 8e34f3e25a8131a5f829c89450e2ca6dddc9d515 --owner-record-sha256 042683ff3d605e30ace7e09e98d767668d15733ed683ed2b799e3f96fe5814f1 --proposal-sha256 a20b84f2fa2d4a8085ddad24d24afe2f439644e141fe8e2e81bc64e0b760e2a8 --readiness-sha256 fe281171f1759a46b476d55af29246bcca59ac3941f97e684df00dcdc8bf0ef3 --report artifacts/tmp/W2.C17.T01-ui-authority-proof-r03.json"
+    ],
+    "reusedEvidence": [
+      {
+        "path": "artifacts/evidence/CAP-05.S06.T03.R01.json",
+        "sha256": "1674249fb33640f7b33d66fa6232938ac706b5a053127cdf1788cbff02603ce4",
+        "rationale": "Original immutable independently approved T03 boundary support only; source-free proof authenticates unchanged non-correction source and original review. Current navigation restoration and affected checks are freshly observed; this does not claim a new full profile, model, Native, encrypted Core or shipping run."
+      },
+      {
+        "path": "artifacts/evidence/CAP-05.S06.T03.review-R01.json",
+        "sha256": "76f959391a8b2cb73f2d49e4a03d51080030118bc69e8ed37a3ed13786a606ee",
+        "rationale": "Original immutable independently approved T03 boundary support only; source-free proof authenticates unchanged non-correction source and original review. Current navigation restoration and affected checks are freshly observed; this does not claim a new full profile, model, Native, encrypted Core or shipping run."
+      }
+    ],
+    "rationale": "Restore truthful denied navigation inside the original approved T03 authority. Actual current-candidate production-root integration proves the affected refusal/ownership/exact retry/recovery boundary. Exact owner classification and independent readiness precede the approved two-selector proof; original task and adverse evidence remain unchanged. Formal task review, shipping/slice integration, Wave qualification and release remain separate."
+  },
+  "taskApproval": false,
+  "sliceApproval": false,
+  "waveCompletion": false,
+  "releaseApproval": false
+}
