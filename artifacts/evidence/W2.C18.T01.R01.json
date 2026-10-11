@@ -1,0 +1,366 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "W2.C18.T01",
+  "baseCommit": "302c1d14818230629b2991a61ae4ff4862c7aece",
+  "commit": "9b1903b235e4abbbdac023b4fd094ee615062bfd",
+  "branch": "codex/w2-implementation",
+  "changedFiles": [
+    "apps/desktop/src/app.css",
+    "artifacts/evidence/W2-C18-T01-approved-metadata.evidence-01.json",
+    "artifacts/evidence/W2-C18-T01-approved-metadata.maintenance-01.md",
+    "artifacts/evidence/W2-C18-T01-approved-metadata.review-01.json",
+    "artifacts/evidence/W2.A06.pre-admission-method-records-01.json",
+    "artifacts/evidence/W2.A06.pre-admission-method-records-02.json",
+    "artifacts/evidence/W2.A06.pre-admission-method-records-03.json",
+    "artifacts/evidence/W2.A06.pre-admission-method-records-04.json",
+    "artifacts/evidence/W2.A06.pre-admission-method-records-06.json",
+    "artifacts/evidence/W2.A06.pre-admission-method-records-07.json",
+    "artifacts/evidence/W2.A06.pre-admission-method-records-source-capture-01.json",
+    "artifacts/evidence/W2.A06.pre-admission-method-records-source-capture-02.json",
+    "artifacts/evidence/W2.A06.pre-admission-method-records-source-capture-03.json",
+    "artifacts/evidence/W2.A06.pre-admission-method-records-source-capture-04.json",
+    "artifacts/evidence/W2.A06.pre-admission-method-records-source-capture-06.json",
+    "artifacts/evidence/W2.A06.pre-admission-method-records-source-capture-07-part-01.json",
+    "artifacts/evidence/W2.A06.pre-admission-method-records-source-capture-07-part-02.json",
+    "artifacts/evidence/W2.A06.pre-admission-method-records-source-capture-07.json",
+    "artifacts/evidence/W2.C18.T01.closeout-compatibility-decision-01.json",
+    "artifacts/evidence/W2.C18.T01.closeout-compatibility-proposal-01.json",
+    "artifacts/evidence/W2.C18.T01.closeout-compatibility-readiness-R01.json",
+    "artifacts/evidence/W2.C18.T01.current-build-lineage-method-decision-01.json",
+    "artifacts/evidence/W2.C18.T01.current-build-lineage-method-proposal-01.json",
+    "artifacts/evidence/W2.C18.T01.current-build-lineage-method-readiness-01.json",
+    "artifacts/evidence/W2.C18.T01.generated-integrity-01.json",
+    "artifacts/evidence/W2.C18.T01.metadata-scope-R01.json",
+    "artifacts/evidence/W2.C18.T01.ui-authority-method-record-01.json",
+    "artifacts/evidence/W2.C18.T01.ui-authority-source-capture-01.json",
+    "artifacts/evidence/W2.C18.T01.ui-authority-source-readiness-01.json",
+    "artifacts/evidence/ui-change/W2.C18.T01.json",
+    "docs/adr/ADR-0055-recognize-independently-reviewed-approved-corrective-metadata.md",
+    "docs/adr/index.json",
+    "docs/planning-implementation-plan.md",
+    "planning/backlog.yaml",
+    "planning/enabler-change-requests/ECR-0014-review.html",
+    "planning/enabler-change-requests/ECR-0014.md",
+    "planning/enabler-change-requests/ECR-0014.packet.json",
+    "planning/enabler-change-requests/ECR-0014.review-R01.json",
+    "planning/review-site/README.md",
+    "planning/review-site/enablers/ECR-0014.html",
+    "planning/review-site/enablers/index.html",
+    "planning/review-site/index.html",
+    "planning/review-site/manifest.json",
+    "planning/review-site/waves/W2.html",
+    "planning/status-summary.md",
+    "planning/wave-amendment-approvals/W2.A06.json",
+    "tests/foundation/test_taskctl_workflow.py",
+    "tests/foundation/test_ui_change_gate.py",
+    "tools/ui_change_gate.py"
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "checkIds": [
+        "css-equivalence",
+        "approved-ui-authority"
+      ],
+      "evidence": [
+        "The sole CSS source restoration retains all selectors, specificity, tokens and full computed styles/geometry in 12 real component contexts. The fresh approved two-selector authority proof authenticates the original DONE/approved T02 snapshot and history, current approved 1.9 reference, exact CSS-only product range, actual independently accepted maintenance and complete approved metadata. Parser output, actor/rationale/revision, downstream acceptance and Core/Native product sources remain unchanged; original reviewed evidence is retained as historical support."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "checkIds": [
+        "product-style",
+        "css-equivalence"
+      ],
+      "evidence": [
+        "Fresh installed product style analysis passes after the preserved pre-change style failure. Actual computed style and rounded geometry equality passes for Intent labels, Root shortcut dialog and Parsing Quality labels at widths760/1440 in effective light and dark themes. Every compared descendant style and rectangle is equal; actual theme/token assertions replay the prior dark-theme finding. This is focused CSS integration, with broader shipping and complete capture qualification deferred to S06 after its approved product recovery tasks."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "checkIds": [
+        "product-style",
+        "approved-ui-authority"
+      ],
+      "evidence": [
+        "Fresh normal schema/reference/claim/owner/lease/origin/scope/history proof passes through the exact independently reviewed source02. Only the two explicitly approved inherited-origin selectors are substituted. The installed normal maintenance consumer authenticates the actual accepted six-path source/evidence/review chain, and normal approved-metadata recognition authenticates the complete independent disposition. All original decisions and adverse history remain immutable; no policy, reference, threshold, acceptance, migration, rights, dependency or release authority is changed."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "verificationSelection": {
+    "selectedCommandIds": [
+      "desktop:application",
+      "foundation:ui-change"
+    ],
+    "riskAnalysis": "W2.C18.T01 consolidates an identical two-declaration CSS group without changing any selector or token. Select only installed product-style analysis, fresh affected component cascade/geometry equivalence and the exact approved task authority proof. The desktop:application ID identifies this focused existing style/component subset, not completion of the whole application command. Accepted source maintenance has its own actual real-Git/control/taskctl checks and independent normal review; that evidence is authenticated without rerunning it. Generated projections have a separate actual installed two-check PASS and independent semantic disposition. No credible Core/Native/parser/runtime/dependency change arises from the CSS restoration, so fresh full profiles and broader shipping/recovery/84 captures remain S06/Wave work under section8.1.",
+    "deferred": [
+      "Formal independent C18 task/corrective integration disposition and local integration remain required before DONE.",
+      "W2.A06's three ordered already-approved recovery/verification tasks, retained original restart P1 and 48 architecture/lint findings remain unfinished.",
+      "CAP-05.S06 fresh shipping Native/Core/Reader, protected-state, current 1.9 full conformance/84 capture, recovery and performance qualification with independent slice review.",
+      "CP09 and fresh complete affected/repository/deployment-profile W2 qualification, packaging and required platform evidence, independent Wave review.",
+      "Separate human G2 release decision only after its prerequisites; W3 packet refinement/approval precedes W3 execution.",
+      "No 8/16-GiB variants or larger-model execution; larger hardware features remain W5. No optional optimization or further shared framework development."
+    ]
+  },
+  "checks": [
+    {
+      "id": "product-style",
+      "commandId": "desktop:application",
+      "command": ".venv/Scripts/python.exe -B -s tools/product_style_check.py --repo .",
+      "exitCode": 0,
+      "durationSeconds": 0.9851490000146441,
+      "logs": [
+        {
+          "path": "artifacts/tmp/W2.remaining-corrections-batch-01/c18-focused-qualification-01/product-style.stdout.log",
+          "sha256": "448a69ba949f847672b7f5b6e682e1f7c1f8e79827836eb9b8b3b0f81935a465"
+        },
+        {
+          "path": "artifacts/tmp/W2.remaining-corrections-batch-01/c18-focused-qualification-01/product-style.stderr.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      ],
+      "workingDirectory": ".",
+      "commit": "9b1903b235e4abbbdac023b4fd094ee615062bfd",
+      "result": "PASS",
+      "inputReport": "artifacts/tmp/W2.remaining-corrections-batch-01/c18-focused-qualification-01/receipt.json",
+      "inputReportSha256": "3346bb762decefa6585d18ce8b3a25637cd92f6307b069a159654722891b9ba9",
+      "provenance": "Fresh exact committed candidate. Selected source, compiled component assets, installed browser/assertion inputs held against writes/deletion. CSS geometry/style and approved static task authority only; no full desktop application, shipping Native/Core/Reader, model or full-profile claim."
+    },
+    {
+      "id": "css-equivalence",
+      "commandId": "desktop:application",
+      "command": ".venv/Scripts/python.exe -B -s artifacts/tmp/W2.C18.T01.css-equivalence-01/compare-03.py --candidate 9b1903b235e4abbbdac023b4fd094ee615062bfd",
+      "exitCode": 0,
+      "durationSeconds": 5.618829999992158,
+      "logs": [
+        {
+          "path": "artifacts/tmp/W2.remaining-corrections-batch-01/c18-focused-qualification-01/css-equivalence.stdout.log",
+          "sha256": "dfcfb1a6916ce9b6d4404dc550ef4eff61b3ddc95ce366cf3b4c1128dd5e2cc5"
+        },
+        {
+          "path": "artifacts/tmp/W2.remaining-corrections-batch-01/c18-focused-qualification-01/css-equivalence.stderr.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      ],
+      "workingDirectory": ".",
+      "commit": "9b1903b235e4abbbdac023b4fd094ee615062bfd",
+      "result": "PASS",
+      "inputReport": "artifacts/tmp/W2.remaining-corrections-batch-01/c18-focused-qualification-01/receipt.json",
+      "inputReportSha256": "3346bb762decefa6585d18ce8b3a25637cd92f6307b069a159654722891b9ba9",
+      "provenance": "Fresh exact committed candidate. Selected source, compiled component assets, installed browser/assertion inputs held against writes/deletion. CSS geometry/style and approved static task authority only; no full desktop application, shipping Native/Core/Reader, model or full-profile claim."
+    },
+    {
+      "id": "approved-ui-authority",
+      "commandId": "foundation:ui-change",
+      "command": ".venv/Scripts/python.exe -B -s artifacts/tmp/W2.C18.T01-ui-authority-proof-02.py --repo . --candidate 9b1903b235e4abbbdac023b4fd094ee615062bfd --method-record-commit 9b1903b235e4abbbdac023b4fd094ee615062bfd --method-record-sha256 ba0bf35d6778fcccc170bfef08cd9c15fc224ea15ccd1bf7cab2561ba78a3b78 --report artifacts/tmp/W2.C18.T01-ui-authority-proof-qualifying-01.json",
+      "exitCode": 0,
+      "durationSeconds": 336.8774781000102,
+      "logs": [
+        {
+          "path": "artifacts/tmp/W2.remaining-corrections-batch-01/c18-focused-qualification-01/approved-ui-authority.stdout.log",
+          "sha256": "1706e4b128da2802ad192fe76af5b2a7ac14aad2a6a64e217ec2e088c3906818"
+        },
+        {
+          "path": "artifacts/tmp/W2.remaining-corrections-batch-01/c18-focused-qualification-01/approved-ui-authority.stderr.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      ],
+      "workingDirectory": ".",
+      "commit": "9b1903b235e4abbbdac023b4fd094ee615062bfd",
+      "result": "PASS",
+      "inputReport": "artifacts/tmp/W2.remaining-corrections-batch-01/c18-focused-qualification-01/receipt.json",
+      "inputReportSha256": "3346bb762decefa6585d18ce8b3a25637cd92f6307b069a159654722891b9ba9",
+      "provenance": "Fresh exact committed candidate. Selected source, compiled component assets, installed browser/assertion inputs held against writes/deletion. CSS geometry/style and approved static task authority only; no full desktop application, shipping Native/Core/Reader, model or full-profile claim."
+    }
+  ],
+  "machineArtifacts": [
+    {
+      "path": "artifacts/evidence/W2-C18-T01-approved-metadata.evidence-01.json",
+      "sha256": "6c4919ee6f14d004f288a682e078ad3c85b6d2390df588e38f4e136520061390"
+    },
+    {
+      "path": "artifacts/evidence/W2-C18-T01-approved-metadata.review-01.json",
+      "sha256": "7ea155f1b45cf2801d359a1643b445b7346a9ebd336cebbbe8ee380a5a5e9431"
+    },
+    {
+      "path": "artifacts/evidence/W2.C18.T01.closeout-compatibility-decision-01.json",
+      "sha256": "c43b56dd0140b12ef6e1fbf0c7ddae68414f0d0f05601a4f43549576be38674a"
+    },
+    {
+      "path": "artifacts/evidence/W2.C18.T01.generated-integrity-01.json",
+      "sha256": "43eae24db2d4e314ee5209598349848a1379f7b1efb4e35db7a44e15a0001953"
+    },
+    {
+      "path": "artifacts/evidence/W2.C18.T01.metadata-scope-R01.json",
+      "sha256": "0f068e1c56580b4d3b6281fc5f2c971ec2582c9ae176687755fd717a60130230"
+    },
+    {
+      "path": "artifacts/evidence/W2.C18.T01.ui-authority-method-record-01.json",
+      "sha256": "ba0bf35d6778fcccc170bfef08cd9c15fc224ea15ccd1bf7cab2561ba78a3b78"
+    },
+    {
+      "path": "artifacts/evidence/W2.C18.T01.ui-authority-source-capture-01.json",
+      "sha256": "394a474f74dbd52a368b30f0ece3c7681873f962c8e8bdf900bf8e126c8c7692"
+    },
+    {
+      "path": "artifacts/evidence/W2.C18.T01.ui-authority-source-readiness-01.json",
+      "sha256": "72534057a749b50c11ebc65357d7fe1657b7b86270d1e240effee0854e25eebf"
+    },
+    {
+      "path": "artifacts/tmp/W2.C18.T01-ui-authority-proof-02.py",
+      "sha256": "44a948fe9e3b1e5da5cdaeb4a3e5f2878f42fbd8ce4dcf426a0e3db05df7ff04"
+    },
+    {
+      "path": "artifacts/tmp/W2.C18.T01-ui-authority-proof-qualifying-01.json",
+      "sha256": "62822b7dfb25389749dead08b39f65eeb1b24c6437b62f1c7f92364eb103a065"
+    },
+    {
+      "path": "artifacts/tmp/W2.C18.T01.css-equivalence-01/compare-03.py",
+      "sha256": "c971ac0bcfa74bf82600d89b601c9fb0d43d99376196c94ed9cbfe858a1efe68"
+    },
+    {
+      "path": "artifacts/tmp/W2.C18.T01.css-equivalence-01/comparison-03/intent-dark-1440.json",
+      "sha256": "992c68629ab64f5eaa72ed671ff43ce410156bfef88b579a6f8c14e1be86269a"
+    },
+    {
+      "path": "artifacts/tmp/W2.C18.T01.css-equivalence-01/comparison-03/intent-dark-760.json",
+      "sha256": "f175d6998636112d82619f34dfed3e9942969d02fa60f2e2f27de5ddc6c346e9"
+    },
+    {
+      "path": "artifacts/tmp/W2.C18.T01.css-equivalence-01/comparison-03/intent-light-1440.json",
+      "sha256": "84126ebb034e8e8d8fe701384fb4308fc3377d460bd20c087bbc75ff26682072"
+    },
+    {
+      "path": "artifacts/tmp/W2.C18.T01.css-equivalence-01/comparison-03/intent-light-760.json",
+      "sha256": "f4ed92e14ff3623e037c3e098205f947de47c0cfff08d89ac9041acb69ec5107"
+    },
+    {
+      "path": "artifacts/tmp/W2.C18.T01.css-equivalence-01/comparison-03/navigation-dark-1440.json",
+      "sha256": "e2d1e062abba5c03b058672ce757010d60704d8b4a38f288aaa49d5b7c38d7fe"
+    },
+    {
+      "path": "artifacts/tmp/W2.C18.T01.css-equivalence-01/comparison-03/navigation-dark-760.json",
+      "sha256": "65a515b221158ad86586b6b74553039a4bbf3861115fa6d756cebcd48883f3ea"
+    },
+    {
+      "path": "artifacts/tmp/W2.C18.T01.css-equivalence-01/comparison-03/navigation-light-1440.json",
+      "sha256": "b11faa2e87c3524640878b66c8c2e5a998e04bfd39dfd52dfe6496457f73b0b5"
+    },
+    {
+      "path": "artifacts/tmp/W2.C18.T01.css-equivalence-01/comparison-03/navigation-light-760.json",
+      "sha256": "1e108ea6a7fc4e9d12ca39c019a591e536ad7e2e44e9295b741ac21e12dc246b"
+    },
+    {
+      "path": "artifacts/tmp/W2.C18.T01.css-equivalence-01/comparison-03/quality-dark-1440.json",
+      "sha256": "163bba9b55c534e95d34b436ef7c3efc6fb50ccc449e8a9edfa1f22a0b51f498"
+    },
+    {
+      "path": "artifacts/tmp/W2.C18.T01.css-equivalence-01/comparison-03/quality-dark-760.json",
+      "sha256": "ee85d18f4dc69c64422a82f3d72adb4bb366c4dce89204f1ec530ad68eea9de6"
+    },
+    {
+      "path": "artifacts/tmp/W2.C18.T01.css-equivalence-01/comparison-03/quality-light-1440.json",
+      "sha256": "821c525c0c1e402c2c266fe31e7d09d0344eddc19107904aab7b28bc343e73af"
+    },
+    {
+      "path": "artifacts/tmp/W2.C18.T01.css-equivalence-01/comparison-03/quality-light-760.json",
+      "sha256": "79ce8b56642715be440bafc11ed490eaa326e6ed4cce7f25985137df6216ee4b"
+    },
+    {
+      "path": "artifacts/tmp/W2.C18.T01.css-equivalence-01/comparison-03/report.json",
+      "sha256": "909824f21fb3548e7c5c58219f9eeb4c77f11b3fb21ca7a131a7f4ac14a5ecf1"
+    },
+    {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/c18-focused-qualification-01.py",
+      "sha256": "ba4226c0584ef7177f908f1a92fbb4f20e2ff1d1be46de14e7d5489d2689588e"
+    },
+    {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/c18-focused-qualification-01/approved-ui-authority.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/c18-focused-qualification-01/approved-ui-authority.stdout.log",
+      "sha256": "1706e4b128da2802ad192fe76af5b2a7ac14aad2a6a64e217ec2e088c3906818"
+    },
+    {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/c18-focused-qualification-01/css-equivalence.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/c18-focused-qualification-01/css-equivalence.stdout.log",
+      "sha256": "dfcfb1a6916ce9b6d4404dc550ef4eff61b3ddc95ce366cf3b4c1128dd5e2cc5"
+    },
+    {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/c18-focused-qualification-01/product-style.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/c18-focused-qualification-01/product-style.stdout.log",
+      "sha256": "448a69ba949f847672b7f5b6e682e1f7c1f8e79827836eb9b8b3b0f81935a465"
+    },
+    {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/c18-focused-qualification-01/receipt.json",
+      "sha256": "3346bb762decefa6585d18ce8b3a25637cd92f6307b069a159654722891b9ba9"
+    }
+  ],
+  "preservedAdverseObservations": [
+    {
+      "path": "artifacts/tmp/CAP-05.S06.W2-1.9-observations-03/conformance-report.json",
+      "sha256": "5c82d66365a1965eccb4d5288ccb6b97b1702a5c5059d16856457b2f832f393d",
+      "qualifyingAsWholeReport": false,
+      "disposition": "Preserved actual adverse observation. No original FAIL is relabeled PASS; unrelated S06 recovery/qualification findings remain pending under approved W2.A06."
+    },
+    {
+      "path": "artifacts/tmp/W2.C18.T01.css-equivalence-01/comparison-01/report.json",
+      "sha256": "a5754ef1dc650ed460a5b1883ed7136a6523b8abbd3e877747c0d3573be62138",
+      "qualifyingAsWholeReport": false,
+      "disposition": "Preserved actual adverse observation. No original FAIL is relabeled PASS; unrelated S06 recovery/qualification findings remain pending under approved W2.A06."
+    },
+    {
+      "path": "artifacts/tmp/W2.C18.T01.css-equivalence-01/independent-source-disposition-01.json",
+      "sha256": "74140b322bcbbdc2481803df13aed4d9ada5dc972eb8c1a81b72f40eb945dda6",
+      "qualifyingAsWholeReport": false,
+      "disposition": "Preserved actual adverse observation. No original FAIL is relabeled PASS; unrelated S06 recovery/qualification findings remain pending under approved W2.A06."
+    },
+    {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/shipping-reader-csp-runtime-01/receipt.json",
+      "sha256": "bc84ad968971a1121353c411484a478df14dd047c80b8f2be1fdd449aec282f9",
+      "qualifyingAsWholeReport": false,
+      "disposition": "Preserved actual adverse observation. No original FAIL is relabeled PASS; unrelated S06 recovery/qualification findings remain pending under approved W2.A06."
+    },
+    {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/c18-conformance-02/conformance-report.json",
+      "sha256": "e081887b24af49ef3494d16b1b9959c8f25300e592215063198211ceb1aabf1e",
+      "qualifyingAsWholeReport": false,
+      "disposition": "Preserved actual adverse observation. No original FAIL is relabeled PASS; unrelated S06 recovery/qualification findings remain pending under approved W2.A06."
+    }
+  ],
+  "correctiveIntegration": {
+    "originSha256": "ea16178d8814da61bc71d291c49b582d4abaf529150d363701dfbbeaa429e856",
+    "authorityPreserved": true,
+    "affectedChecks": [
+      ".venv/Scripts/python.exe -B -s tools/product_style_check.py --repo .",
+      ".venv/Scripts/python.exe -B -s artifacts/tmp/W2.C18.T01.css-equivalence-01/compare-03.py --candidate 9b1903b235e4abbbdac023b4fd094ee615062bfd",
+      ".venv/Scripts/python.exe -B -s artifacts/tmp/W2.C18.T01-ui-authority-proof-02.py --repo . --candidate 9b1903b235e4abbbdac023b4fd094ee615062bfd --method-record-commit 9b1903b235e4abbbdac023b4fd094ee615062bfd --method-record-sha256 ba0bf35d6778fcccc170bfef08cd9c15fc224ea15ccd1bf7cab2561ba78a3b78 --report artifacts/tmp/W2.C18.T01-ui-authority-proof-qualifying-01.json"
+    ],
+    "reusedEvidence": [
+      {
+        "path": "artifacts/evidence/CAP-05.S06.T02.R01.json",
+        "sha256": "110961428e9aeefb1546f723efb284a52089ba1f87fa3990f5b9f997d612872b",
+        "rationale": "Original immutable independently approved T02 boundary support only. Fresh authority proof authenticates the preserved origin, original review and unchanged non-correction product source. This is not a fresh Core/parser/Native or full-profile observation."
+      },
+      {
+        "path": "artifacts/evidence/CAP-05.S06.T02.review-R01.json",
+        "sha256": "36286739e24cff1516576c03e79ce2eff061aec83ff86e52e2ed02b1bbcbb181",
+        "rationale": "Original immutable independently approved T02 boundary support only. Fresh authority proof authenticates the preserved origin, original review and unchanged non-correction product source. This is not a fresh Core/parser/Native or full-profile observation."
+      }
+    ],
+    "rationale": "Restore shared-style compliance within the original approved correction task. Fresh affected components preserve complete computed behavior; the exact already-approved bounded method preserves all normal task and source authority. Actual normal maintenance review and complete approved metadata disposition precede qualifying use. No original adverse evidence, S06 recovery/verification finding or later slice/Wave/release gate is closed by this CSS task."
+  },
+  "taskApproval": false,
+  "sliceApproval": false,
+  "waveCompletion": false,
+  "releaseApproval": false
+}

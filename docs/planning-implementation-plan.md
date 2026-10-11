@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: bb026c6ae736eb4fbbfd00b1073931521087d72c10c718cb7cff330fb9b0bfa4
+source_sha256: 970fac99bc847db9d833ba0c01e3c810f990a8628f026c00acc320562f2760dc
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -4623,7 +4623,7 @@ Original tasks and approvals remain unchanged.
 
 ### W2.C18.T01 — Build manual structural correction and annotation tools
 
-**Status:** `IN_PROGRESS`. **Original task:** `CAP-05.S06.T02`. **Latest review:** `-`.
+**Status:** `REVIEW`. **Original task:** `CAP-05.S06.T02`. **Latest review:** `-`.
 
 **Reproduction:** Fresh approved S06 current-build conformance05 at candidate15bd1939a852bd8262b4b39b556f2793c0852957 passed all five preserved reference/token/route/workflow/accessibility/visual checks, then failed the existing production style check. Report artifacts/tmp/CAP-05.S06.W2-1.9-observations-03/conformance-report.json SHA256 5c82d66365a1965eccb4d5288ccb6b97b1702a5c5059d16856457b2f832f393d. Three global CSS rules repeat the identical display:grid; gap:var(--space-2) group for .intent-three-column label, .shortcut-dialog dl/.shortcut-dialog dl div, and .parsing-quality-workspace label. Original report and output remain preserved; no component capture or Slice/Wave PASS is claimed.
 
@@ -4640,7 +4640,19 @@ Original tasks and approvals remain unchanged.
 
 **Review mode:** `append-only v1` / 0 completed round(s)
 
-**Current immutable submission awaiting review:** None
+**Current immutable submission awaiting review:** `R01` / packet SHA-256 `e87787162b6431dbe8a3c9ce9662509a6cb0159a7e10d1f6c34eed4ad1304294`
+
+- Candidate / base / branch: `9b1903b235e4abbbdac023b4fd094ee615062bfd` / `302c1d14818230629b2991a61ae4ff4862c7aece` / `codex/w2-implementation`
+- Submitted by / at: codex-w2-implementation / `2026-10-11T17:04:35+00:00`
+- Evidence: `artifacts/evidence/W2.C18.T01.R01.json` / `eaf8950726fd37eebe675fbf95319cffd3b8d7c51baf8498b0f46c7c48f6c527` / `9b1903b235e4abbbdac023b4fd094ee615062bfd`
+- Acceptance-criteria SHA-256: `5d58bcf6badaaf4a77de4b4e000263ba750ccdbf8afbd74f9df38cae14c666e1`
+- Verification-selection SHA-256: `e013d904a09a7f552c1289b4b6ffdf23989c6c9e0b8cfc797b5eae662aaef01e`
+- Changed paths: `apps/desktop/src/app.css`, `artifacts/evidence/W2-C18-T01-approved-metadata.evidence-01.json`, `artifacts/evidence/W2-C18-T01-approved-metadata.maintenance-01.md`, `artifacts/evidence/W2-C18-T01-approved-metadata.review-01.json`, `artifacts/evidence/W2.A06.pre-admission-method-records-01.json`, `artifacts/evidence/W2.A06.pre-admission-method-records-02.json`, `artifacts/evidence/W2.A06.pre-admission-method-records-03.json`, `artifacts/evidence/W2.A06.pre-admission-method-records-04.json`, `artifacts/evidence/W2.A06.pre-admission-method-records-06.json`, `artifacts/evidence/W2.A06.pre-admission-method-records-07.json`, `artifacts/evidence/W2.A06.pre-admission-method-records-source-capture-01.json`, `artifacts/evidence/W2.A06.pre-admission-method-records-source-capture-02.json`, `artifacts/evidence/W2.A06.pre-admission-method-records-source-capture-03.json`, `artifacts/evidence/W2.A06.pre-admission-method-records-source-capture-04.json`, `artifacts/evidence/W2.A06.pre-admission-method-records-source-capture-06.json`, `artifacts/evidence/W2.A06.pre-admission-method-records-source-capture-07-part-01.json`, `artifacts/evidence/W2.A06.pre-admission-method-records-source-capture-07-part-02.json`, `artifacts/evidence/W2.A06.pre-admission-method-records-source-capture-07.json`, `artifacts/evidence/W2.C18.T01.closeout-compatibility-decision-01.json`, `artifacts/evidence/W2.C18.T01.closeout-compatibility-proposal-01.json`, `artifacts/evidence/W2.C18.T01.closeout-compatibility-readiness-R01.json`, `artifacts/evidence/W2.C18.T01.current-build-lineage-method-decision-01.json`, `artifacts/evidence/W2.C18.T01.current-build-lineage-method-proposal-01.json`, `artifacts/evidence/W2.C18.T01.current-build-lineage-method-readiness-01.json`, `artifacts/evidence/W2.C18.T01.generated-integrity-01.json`, `artifacts/evidence/W2.C18.T01.metadata-scope-R01.json`, `artifacts/evidence/W2.C18.T01.ui-authority-method-record-01.json`, `artifacts/evidence/W2.C18.T01.ui-authority-source-capture-01.json`, `artifacts/evidence/W2.C18.T01.ui-authority-source-readiness-01.json`, `artifacts/evidence/ui-change/W2.C18.T01.json`, `docs/adr/ADR-0055-recognize-independently-reviewed-approved-corrective-metadata.md`, `docs/adr/index.json`, `docs/planning-implementation-plan.md`, `planning/backlog.yaml`, `planning/enabler-change-requests/ECR-0014-review.html`, `planning/enabler-change-requests/ECR-0014.md`, `planning/enabler-change-requests/ECR-0014.packet.json`, `planning/enabler-change-requests/ECR-0014.review-R01.json`, `planning/review-site/README.md`, `planning/review-site/enablers/ECR-0014.html`, `planning/review-site/enablers/index.html`, `planning/review-site/index.html`, `planning/review-site/manifest.json`, `planning/review-site/waves/W2.html`, `planning/status-summary.md`, `planning/wave-amendment-approvals/W2.A06.json`, `tests/foundation/test_taskctl_workflow.py`, `tests/foundation/test_ui_change_gate.py`, `tools/ui_change_gate.py`
+- Selected checks: `.venv/Scripts/python.exe -B -s tools/product_style_check.py --repo .`, `.venv/Scripts/python.exe -B -s artifacts/tmp/W2.C18.T01.css-equivalence-01/compare-03.py --candidate 9b1903b235e4abbbdac023b4fd094ee615062bfd`, `.venv/Scripts/python.exe -B -s artifacts/tmp/W2.C18.T01-ui-authority-proof-02.py --repo . --candidate 9b1903b235e4abbbdac023b4fd094ee615062bfd --method-record-commit 9b1903b235e4abbbdac023b4fd094ee615062bfd --method-record-sha256 ba0bf35d6778fcccc170bfef08cd9c15fc224ea15ccd1bf7cab2561ba78a3b78 --report artifacts/tmp/W2.C18.T01-ui-authority-proof-qualifying-01.json`
+- Deferred checks: `Formal independent C18 task/corrective integration disposition and local integration remain required before DONE.`, `W2.A06's three ordered already-approved recovery/verification tasks, retained original restart P1 and 48 architecture/lint findings remain unfinished.`, `CAP-05.S06 fresh shipping Native/Core/Reader, protected-state, current 1.9 full conformance/84 capture, recovery and performance qualification with independent slice review.`, `CP09 and fresh complete affected/repository/deployment-profile W2 qualification, packaging and required platform evidence, independent Wave review.`, `Separate human G2 release decision only after its prerequisites; W3 packet refinement/approval precedes W3 execution.`, `No 8/16-GiB variants or larger-model execution; larger hardware features remain W5. No optional optimization or further shared framework development.`
+- Selection rationale: W2.C18.T01 consolidates an identical two-declaration CSS group without changing any selector or token. Select only installed product-style analysis, fresh affected component cascade/geometry equivalence and the exact approved task authority proof. The desktop:application ID identifies this focused existing style/component subset, not completion of the whole application command. Accepted source maintenance has its own actual real-Git/control/taskctl checks and independent normal review; that evidence is authenticated without rerunning it. Generated projections have a separate actual installed two-check PASS and independent semantic disposition. No credible Core/Native/parser/runtime/dependency change arises from the CSS restoration, so fresh full profiles and broader shipping/recovery/84 captures remain S06/Wave work under section8.1.
+- Prior round / replayed open findings: `-` / -
+- Root-cause escalation: -
 
 **Current latest-review projection:** `-` by - at `-`
 

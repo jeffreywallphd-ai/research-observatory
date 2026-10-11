@@ -1,7 +1,7 @@
 ---
 document_type: generated-backlog-status-summary
 source: planning/backlog.yaml
-source_sha256: bb026c6ae736eb4fbbfd00b1073931521087d72c10c718cb7cff330fb9b0bfa4
+source_sha256: 970fac99bc847db9d833ba0c01e3c810f990a8628f026c00acc320562f2760dc
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -930,7 +930,7 @@ Append-only rounds remain distinct from the current latest-review projection. Le
 | `W2.C15.T01` | `append-only v1` | 1 | `-` | approved / agent:/root/s01_integration_review | - |
 | `W2.C16.T01` | `append-only v1` | 1 | `-` | approved / agent:/root/reader_table_figure_review | - |
 | `W2.C17.T01` | `append-only v1` | 1 | `-` | approved / agent:/root/c17_independent_disposition | - |
-| `W2.C18.T01` | `append-only v1` | 0 | `-` | - / - | - |
+| `W2.C18.T01` | `append-only v1` | 0 | `R01` | - / - | - |
 ## Wave progress
 
 | Wave | Pre-Wave approval | Campaign | Qualification | Approved slices | Done tasks | Exit gate |
@@ -994,7 +994,7 @@ Append-only rounds remain distinct from the current latest-review projection. Le
 
 | Task | Status | Owner | Branch |
 |---|---|---|---|
-| `W2.C18.T01` Build manual structural correction and annotation tools | `IN_PROGRESS` | codex-w2-implementation | `codex/w2-implementation` |
+| `W2.C18.T01` Build manual structural correction and annotation tools | `REVIEW` | codex-w2-implementation | `codex/w2-implementation` |
 
 ## Linked corrective tasks
 
@@ -1090,5 +1090,5 @@ Original tasks and approvals remain unchanged.
 
 ### W2.C18.T01 — Build manual structural correction and annotation tools
 
-**Status:** `IN_PROGRESS`. **Original task:** `CAP-05.S06.T02`. **Latest review:** `-`.
+**Status:** `REVIEW`. **Original task:** `CAP-05.S06.T02`. **Latest review:** `-`.
 
