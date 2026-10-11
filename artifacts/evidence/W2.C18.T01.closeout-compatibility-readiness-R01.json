@@ -1,0 +1,203 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "independent-bounded-closeout-compatibility-decision-readiness-review",
+  "reviewId": "W2.C18.T01.closeout-compatibility-readiness-R01",
+  "taskId": "W2.C18.T01",
+  "candidateCommit": "1d930f61aea49da5b8233f4a6684c6af7ccba5ec",
+  "reviewer": "agent:/root/a03_closeout_review",
+  "reviewedAt": "2026-10-11T15:43:28.236815+00:00",
+  "result": "READY_FOR_OWNER_DECISION",
+  "proposal": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/c18-closeout-compatibility-amendment-01/proposal-02.json",
+    "sha256": "4ae509a443c66eb6106edf3003844d1c7b41e9f796fabf41fd48a68140129708"
+  },
+  "intendedPublicProposal": {
+    "path": "artifacts/evidence/W2.C18.T01.closeout-compatibility-proposal-01.json",
+    "sha256": "4ae509a443c66eb6106edf3003844d1c7b41e9f796fabf41fd48a68140129708",
+    "publicationObserved": false
+  },
+  "reviewBrief": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/c18-closeout-compatibility-amendment-01/review-02.html",
+    "sha256": "9815c0e3712156d266ce605bb50d396399793348d75215daf545cdf1fdc17495"
+  },
+  "patch": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/c18-metadata-scope-consumer-repair-01.patch",
+    "sha256": "8a52b46b19e965d506a496550ad1cd2374f970d808eb637c1b5c4e9ba984dd4f"
+  },
+  "sourceEnvelopeAddendum": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/c18-metadata-scope-consumer-repair-proposal-02.json",
+    "sha256": "8ffad661ac9174a2e83abba937c825bc560ce89b7c088c237f49386c5f0f1284"
+  },
+  "independence": {
+    "proposalOrPatchAuthoredByReviewer": false,
+    "liveImplementationAuthoredByReviewer": false,
+    "reviewScope": "Exact owner-decision plan and inert patch; not live source, integration or task approval."
+  },
+  "findings": [],
+  "blockingFindings": [],
+  "openFindingIds": [],
+  "observations": [
+    {
+      "criterion": "Exact proposal, authority and provenance",
+      "result": "SATISFIED_FOR_DECISION",
+      "evidence": "Latest proposal and brief raw hashes match; all 13 proposal path/SHA references match current bytes. Addendum references also match. ECR-0014 packet and W2.A06 approval equal the named immutable Git versions and current Git/local canonical bytes; introduction commits are ancestors of fixed clean candidate. Original proposal/patch/proof/adverse records are preserved."
+    },
+    {
+      "criterion": "Owner exception is explicit and finite",
+      "result": "SATISFIED_FOR_DECISION",
+      "evidence": "Existing product restoration and ECR approval do not authorize this framework repair. The new requested decision explicitly excepts the no-framework-after-A05 direction for one generic read-only metadata consumer, two named minimum foundation test files, one exact Proposed ADR0055 and index entry, and normal maintenance evidence. It denies taskctl/kernel/schema/generator/product/reference/security/release expansion; materially changed predicates still stop."
+    },
+    {
+      "criterion": "Complete metadata scope, not permission by filename",
+      "result": "FEASIBLE_UNTESTED",
+      "evidence": "The inert patch authenticates same-Wave immutable v4.1 owner/independent packet authority, independent task-owned disposition and full ordered extra-commit inventory. It checks exact regular Git path/blob/raw bindings, sole-parent rows, unique authority/method additions, generated versions, unchanged generator inputs and retained independent integrity evidence, then supplements the existing full corrective-scope check. Absent, malformed, incomplete, changed or unsupported inputs deny by design. Real positive/negative Git/persistence and normal submission tests remain prerequisites; no execution result is inferred."
+    },
+    {
+      "criterion": "Installed maintenance/ADR route remains feasible",
+      "result": "SATISFIED_FOR_DECISION",
+      "evidence": "Installed maintenance_proposed_adr_paths and legacy_control_maintenance_errors admit one jointly introduced new Proposed/deciders[] ADR plus append-only index within an exact independently accepted maintenance chain. Successor names ADR-0055-recognize-independently-reviewed-approved-corrective-metadata.md, ordinary linked_tasks CAP-05.S06.T02, corrective C18 context and actually changed protected tools/ui_change_gate.py. ADR0054 remains reserved; neither 0054 nor 0055 currently exists. Actual source candidate/evidence/review ordering and exact inventories must satisfy the unchanged consumer before use."
+    },
+    {
+      "criterion": "Exact C18 restoration and two selector substitutions",
+      "result": "SATISFIED_FOR_DECISION",
+      "evidence": "Original admitted origin/base/spec and current IN_PROGRESS state are retained. Independently read Git CSS SHA before429 is7cce690e... and after429/current is3db0b157... matching exact proposal. The requested direct owner classification replaces only pinned linked_correction_authority:1779 and validate:6975-6977 origin selectors. It does not borrow C17 authority, rewrite origin, add restorationClassification or replace the conditional144 classifier. Current claim/lease/branch/worktree/origin/reference/criterion/security and formal task controls remain required."
+    },
+    {
+      "criterion": "Finite current-build lineage successor",
+      "result": "SATISFIED_FOR_DECISION",
+      "evidence": "New method may recognize only actual independent normal maintenance chains for the five named source/test/ProposedADR/index paths and their installed-format delivery, alongside exact original CSS429/C17 bindings. All intermediate versions, raw/Git bytes and complete selected inputs remain bound; unreviewed, extra source/control/reference/schema/product/merge histories deny. Original helper/records remain unchanged; future source preflight, actual negative controls, SOURCE_READY and immutable source-byte recording precede qualifying execution."
+    },
+    {
+      "criterion": "Truthful evidence, prerequisites and owner choices",
+      "result": "SATISFIED_FOR_DECISION",
+      "evidence": "Authenticated runtime disposition reports partial Native/package/isolated-CSP passes and Reader FAIL before Reader launch. Source04 controls/readiness do not prove Reader success. Conformance failed before first capture; source11 preflight preserves89assertions/84inventory and does not identify a proven product defect or passing capture. Brief distinguishes this decision from C18 task, A06 admission, S06/CP09/W2 qualification, G2 release and W3 authority. Deferral preserves the block; exact approval enables only the staged bounded repair/method route."
+    }
+  ],
+  "requiredBeforeUse": [
+    "Publish exact proposal/readiness and record actual direct human approval immutably; this ledger is not that approval.",
+    "Implement only the named envelope after approval. Run actual failing characterization, real Git/persistence positive and denial controls, affected correction submission tests and appropriate style/type/ADR checks; independently review actual source/evidence before integration or use.",
+    "Publish actual complete independent metadata dispositions and finite direct-selector/maintenance-lineage source/control/readiness records before qualification. No future source/test hash or PASS may be inferred from this plan.",
+    "Complete fresh actual Reader/capture and risk-selected C18 proofs on a stable committed held-input candidate, then normal atomic submit, independent task disposition, projections and integration.",
+    "Only actual C18 DONE/approved/quiescence allows approved A06 bootstrap/materialization/activation. Recovery, quality, S06/CP09/fresh Wave and separate human G2 remain required."
+  ],
+  "preservedAdverseHistory": [
+    "W2.C18.T01.SCOPE-P01-F01: actual mandatory generic scope API rejection of8commits/22paths; not closed by proposed source.",
+    "W2.C18.T01.UI-CLOSEOUT-P01-F01/F02/F03: immutable origin-selector and conditional capture/authentication diagnoses retained; no normal UI-gate PASS fabricated.",
+    "W2.C18.T01.shipping-reader-runtime-01-R01-F01: actual FAIL retained; source-only normalization readiness cannot close fresh Reader runtime obligation.",
+    "W2.C18.T01.conformance-diagnostic-R01-F01: original capture FAIL and stalled/interrupted bounded diagnostic retained; preflight11 is source-only.",
+    "CAP-05.S06.restart-boundary-r10-R01-F01 and all45architecture+3literal/quality findings remain unresolved by this decision.",
+    "Original proposal01, repair proposals01/02, original source/proof failures and all prior owner/independent records remain immutable."
+  ],
+  "currentPrerequisites": {
+    "W2": "PAUSED",
+    "C18": "IN_PROGRESS",
+    "ordinaryTasksDone": 33,
+    "ordinaryTasksTotal": 33,
+    "correctiveTasksDone": 17,
+    "correctiveTasksTotal": 18,
+    "slicesDone": 10,
+    "slicesTotal": 11,
+    "A06": "APPROVED_NOT_ADMITTED_OR_ACTIVATED",
+    "CP09": "PENDING",
+    "G2": "PENDING",
+    "W3": "NOT_APPROVED_OR_STARTED"
+  },
+  "authenticatedReferences": [
+    {
+      "path": "planning/enabler-change-requests/ECR-0014.packet.json",
+      "sha256": "6293590db74b9a3ec4ce6019a1713def568798ac3a71208a5583bfcff78f7a34"
+    },
+    {
+      "path": "planning/wave-amendment-approvals/W2.A06.json",
+      "sha256": "3ecf2b98806f1589be7bd63fcc4f25cf0ee2df79bc95a3a0fefda2ce5666e4b2"
+    },
+    {
+      "path": "planning/enabler-change-requests/ECR-0014.md",
+      "sha256": "7c70aeebc5a60ab606bd5f6170b48e2012becab8cf7547f7ad8cd75482291496"
+    },
+    {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/c18-closeout-scope-assessment-01.json",
+      "sha256": "773ccfbc0fd4a843146b4916fd751405d0ed42f0310e3d836f9ca0bda9203ab8"
+    },
+    {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/c18-ui-closeout-preparation-01.json",
+      "sha256": "977ad73f49e84dc306656d045146516117482832c0884fcd4a725afe5f81e076"
+    },
+    {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/c18-metadata-scope-consumer-repair-01.patch",
+      "sha256": "8a52b46b19e965d506a496550ad1cd2374f970d808eb637c1b5c4e9ba984dd4f"
+    },
+    {
+      "path": "tools/ui_change_gate.py",
+      "sha256": "fa77fdf99c05b64954c4ce62956e137f2a97f09b96f42d4d75aeb68c05cde126"
+    },
+    {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/c18-metadata-scope-consumer-repair-proposal-01.json",
+      "sha256": "f21d7c005da6f989a656bd169a4b0cc92ebf943db349aed43244ecf09fdbdefd"
+    },
+    {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/c18-metadata-scope-consumer-repair-proposal-02.json",
+      "sha256": "8ffad661ac9174a2e83abba937c825bc560ce89b7c088c237f49386c5f0f1284"
+    },
+    {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/c18-runtime-independent-disposition-01.json",
+      "sha256": "7b38a8a62ed30de1a95347c6e90809678dc32d72a58f38b0ca1e66291748fc16"
+    },
+    {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/shipping-reader-source-readiness-03.json",
+      "sha256": "c9bfce1578437eb66cd4c209d9f03d559114f3fc37954680444a2f8f6444764c"
+    },
+    {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/conformance-source-preflight-11.json",
+      "sha256": "a7120ff4e4fe961f84859748a150b75f71b38e562096b7a24aa1a8085f901ca2"
+    },
+    {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/c18-closeout-compatibility-amendment-01/proposal.json",
+      "sha256": "396b1e79ebe9e6a719d1ab5b45d063212d12351d9baefa2191a10f3c78b171c8"
+    },
+    {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/c18-metadata-scope-consumer-repair-proposal-01.json",
+      "sha256": "f21d7c005da6f989a656bd169a4b0cc92ebf943db349aed43244ecf09fdbdefd"
+    },
+    {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/c18-metadata-scope-consumer-repair-01.patch",
+      "sha256": "8a52b46b19e965d506a496550ad1cd2374f970d808eb637c1b5c4e9ba984dd4f"
+    },
+    {
+      "path": "docs/adr/index.json",
+      "sha256": "92fd29729a40f941077c649a04d19c54eeebad1247d444ea9193e0878c4d6b1d"
+    },
+    {
+      "path": "artifacts/tmp/W2.C18.T01.current-build-lineage-02.py",
+      "sha256": "9ca3f254cfdda423d1ed645a8c1dc3187b4dd0d31ea11f64e25d07386ced3788"
+    }
+  ],
+  "governingSources": [
+    "AGENTS.md",
+    "docs/automation/workflow-efficiency.md#bounded-maintenance",
+    "docs/automation/workflow-efficiency.md#use-the-linked-correction-route",
+    "docs/automation/project-automation-guide.md#81-verification-breadth-by-workflow-stage",
+    "docs/automation/project-automation-guide.md#22-controlled-enabler-amendment-lane",
+    "docs/automation/project-automation-guide.md#31-decision-complete-stopped-gate-handoff",
+    "docs/automation/codex-tracking-guide.md#independent-review",
+    "docs/governance/repository-governance.md#mismatch-protocol",
+    "tools/ui_change_gate.py"
+  ],
+  "proofLimits": {
+    "patchApplied": false,
+    "patchedModuleImported": false,
+    "testsExecuted": false,
+    "NativeExecuted": false,
+    "qualifyingProducersExecuted": false,
+    "trackedFilesMutated": false,
+    "gitMutationPerformed": false,
+    "liveSourceReady": false,
+    "normalScopeOrUIGatePass": false,
+    "humanApprovalGranted": false,
+    "taskApproved": false,
+    "sliceApproved": false,
+    "waveComplete": false,
+    "releaseApproved": false,
+    "W3Approved": false
+  }
+}

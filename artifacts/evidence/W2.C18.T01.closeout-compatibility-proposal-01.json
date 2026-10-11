@@ -1,0 +1,167 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "bounded-closeout-compatibility-amendment-proposal",
+  "status": "PROPOSED_PENDING_INDEPENDENT_READINESS_AND_OWNER_DECISION",
+  "taskId": "W2.C18.T01",
+  "originTaskId": "CAP-05.S06.T02",
+  "waveId": "W2",
+  "candidateCommit": "1d930f61aea49da5b8233f4a6684c6af7ccba5ec",
+  "createdAt": "2026-10-11T15:39:48.294241+00:00",
+  "requestedDecision": "Approve one finite exception to the no-framework-work-after-A05 direction, solely to recognize the already-approved ECR-0014 metadata in normal corrective submission, together with this exact C18 direct restorative UI classification and the named maintenance-history lineage successor. Conforming implementation, bounded remediation, tests and immutable source/readiness recording within these explicit choices need no further owner approval. All product, task, independent review and release gates remain required.",
+  "predecessorAuthority": {
+    "packet": {
+      "path": "planning/enabler-change-requests/ECR-0014.packet.json",
+      "sha256": "6293590db74b9a3ec4ce6019a1713def568798ac3a71208a5583bfcff78f7a34",
+      "commit": "ac6b664a2ced6b2263ff7b5ab48535c3f39798ce"
+    },
+    "ownerGrant": {
+      "path": "planning/wave-amendment-approvals/W2.A06.json",
+      "sha256": "3ecf2b98806f1589be7bd63fcc4f25cf0ee2df79bc95a3a0fefda2ce5666e4b2",
+      "introductionCommit": "ab3c35369a8cd57876a1890db90263e5ab2ba395"
+    },
+    "canonicalPlan": {
+      "path": "planning/enabler-change-requests/ECR-0014.md",
+      "sha256": "7c70aeebc5a60ab606bd5f6170b48e2012becab8cf7547f7ad8cd75482291496"
+    }
+  },
+  "whyAnotherDecisionIsRequired": [
+    "The approved batch grants inert ECR/approval/derived-view/pre-admission-method metadata, but installed corrective_scope_errors cannot consume that authority: actual mandatory normal API rejects eight commits containing22paths.",
+    "The owner forbids further framework development after A05. The batch also forbids shared framework changes and additional unnamed predicate exemptions. Neither substantive W1 restoration authority nor an evidence filename can authorize this consumer repair.",
+    "The immutable origin is agent-review plus approved-reference-implementation1.9 without an amendment. Existing linked-origin selectors reject that exact combination. This proposal explicitly supplies direct current-fix owner classification at those two selectors, without relabeling original history or borrowing the old conformance fallback."
+  ],
+  "actualFindings": [
+    {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/c18-closeout-scope-assessment-01.json",
+      "sha256": "773ccfbc0fd4a843146b4916fd751405d0ed42f0310e3d836f9ca0bda9203ab8"
+    },
+    {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/c18-ui-closeout-preparation-01.json",
+      "sha256": "977ad73f49e84dc306656d045146516117482832c0884fcd4a725afe5f81e076"
+    }
+  ],
+  "choices": {
+    "metadataRecognition": {
+      "sourcePatch": {
+        "path": "artifacts/tmp/W2.remaining-corrections-batch-01/c18-metadata-scope-consumer-repair-01.patch",
+        "sha256": "8a52b46b19e965d506a496550ad1cd2374f970d808eb637c1b5c4e9ba984dd4f"
+      },
+      "sourcePredecessor": {
+        "path": "tools/ui_change_gate.py",
+        "sha256": "fa77fdf99c05b64954c4ce62956e137f2a97f09b96f42d4d75aeb68c05cde126"
+      },
+      "preparedProposal": {
+        "path": "artifacts/tmp/W2.remaining-corrections-batch-01/c18-metadata-scope-consumer-repair-proposal-01.json",
+        "sha256": "f21d7c005da6f989a656bd169a4b0cc92ebf943db349aed43244ecf09fdbdefd"
+      },
+      "behavior": "One generic read-only recognizer consumes an immutable independent task-owned metadata disposition bound to an actual owner-approved4.1packet, every exact extra commit/path/blob/hash version and preserved generated-view integrity. Its result supplements the existing full-history scope check; absent, incomplete, stale, forged or unsupported data denies. No global path allowance, new controller/task state or live monkeypatch.",
+      "implementationEnvelope": [
+        "tools/ui_change_gate.py",
+        "tests/foundation/test_ui_change_gate.py",
+        "tests/foundation/test_taskctl_workflow.py",
+        "docs/adr/ADR-0055-recognize-independently-reviewed-approved-corrective-metadata.md",
+        "docs/adr/index.json"
+      ],
+      "documentation": "One bounded task-linked maintenance note and normal evidence/review records in existing C18 evidence namespace. Proposed indexed ADR0055 uses the exact path in the envelope, ordinary linked_tasks CAP-05.S06.T02, corrective W2.C18.T01 context, and affected_paths only actually changed protected tools/ui_change_gate.py. Publish a single new Proposed/deciders[] companion and appended index entry under existing associated-ADR rules. Reserved ADR0054 remains the approved product-recovery record; no Accepted/superseding decision fabricated.",
+      "recordContract": "Use the proposed task-owned independent-corrective-metadata-disposition data fields, exact approved packet paths and actual complete history. Initial22paths plus later conforming finite method records need real append-only independent dispositions. Approved patterns alone grant no path; existing scope/control-maintenance and submission checks stay required.",
+      "tests": "Before use: actual failing characterization and positive/negative real Git/persistence checks for exact authority, complete history, current candidate/diff, independent identity, forged/changed approval or bytes, unapproved source/reference/schema, merge/redirect/add-revert, missing/duplicated/reordered inventory and stale generated receipts. Select affected existing correction tests and source style/type/ADR checks; no Native or broad product suite for the consumer patch itself.",
+      "remediationLimit": "The inert initial patch is concrete but untested. Permit only minimal conforming corrections within this behavior/envelope if meaningful tests or independent review reveal implementation bugs. No adjacent framework cleanup, new schema/controller/policy, broader source permission or product change.",
+      "envelopeAndLineageAddendum": {
+        "path": "artifacts/tmp/W2.remaining-corrections-batch-01/c18-metadata-scope-consumer-repair-proposal-02.json",
+        "sha256": "8ffad661ac9174a2e83abba937c825bc560ce89b7c088c237f49386c5f0f1284"
+      }
+    },
+    "uiRestorativeClassification": {
+      "substitutionPredicates": [
+        "linked_correction_authority:1779",
+        "validate:6975-6977"
+      ],
+      "meaning": "Authenticate this exact direct owner classification and independent current CSS-restoration assessment instead of the two origin-metadata selectors. These are logical predicates in the pinned predecessor; source line numbers may move under the approved metadata consumer repair.",
+      "exactProductPaths": [
+        "apps/desktop/src/app.css"
+      ],
+      "sourceCommit": "429efd41d6bccd27b4c25b468475b6fddeb4a9f6",
+      "beforeSHA256": "7cce690e1f0ba6c3436a82551fd99652bb7ed7a1dda6619fadc3af1e12bb2c9b",
+      "afterSHA256": "3db0b1572bcbefd31f33b56696fb6e072bdcf124abcdcb75208e786705f64de6",
+      "originCommit": "ac5f891db456a3eb54cb376f9d9a4082c3f3236b",
+      "originSnapshotSHA256": "ea16178d8814da61bc71d291c49b582d4abaf529150d363701dfbbeaa429e856",
+      "claimBase": "302c1d14818230629b2991a61ae4ff4862c7aece",
+      "claimCommit": "a1b2bca193472ea657c3e5d4f09fd05038ee3a3f",
+      "reference": {
+        "referenceId": "RO-UI-ACADEMIC-MINIMAL-1.9",
+        "packageSHA256": "24b8d62356863980ae9a13db7d6a06b04b76c60e2f1920d2e888cadecfb24c4b",
+        "approvalCommit": "d4691f716f839f4aac5bb50563b56ac863b32685"
+      },
+      "classification": "Three identical display:grid/gap:var(--space-2) declarations are consolidated into one selector list; restore unchanged approved geometry/behavior, with actual CSS-equivalence and independent affected evidence. No intentional experience/reference change is authorized.",
+      "proofBoundary": "Prepare one finite ignored exact-task authority proof with independent source/control readiness before use. Current owner/branch/worktree/lease/claim/spec/origin/full history/regular objects/reference/schema/criterion and normal atomic submit/review checks remain. No restorationClassification field; its unchanged conditional144consumer is neither invoked nor substituted. Focused captures and geometry retain their truthful actual scope; no missing144PASS is claimed."
+    },
+    "maintenanceLineageRecognition": {
+      "predicate": "W2.C18.T01.current-build-lineage-02.validate_c18_rows: product_rows must consist solely of CSS source429",
+      "replacement": "Permit only the exact new metadata-consumer maintenance source/test/ProposedADR0055/index commits authenticated by the existing independent bounded-maintenance chain, alongside the unchanged exact CSS source429/C17 bindings. Deny any other source/product/control/reference/spec/merge/intermediate add-revert or unreviewed commit. Bind actual approved exception, exact source blobs and complete live candidate inputs.",
+      "recording": "Prepare conforming ignored lineage/direct-consumer successors only after actual maintenance review; retain all original producers/decisions/adverse outcomes. Independent source preflight, meaningful negative controls, actual SOURCE_READY and immutable method/source-byte records precede qualifying use. No origin-only, security, CSP, capture, baseline, resource/performance or release predicate gets an additional exemption."
+    }
+  },
+  "alreadyAuthorizedGroundwork": {
+    "observedRuntimeDisposition": {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/c18-runtime-independent-disposition-01.json",
+      "sha256": "7b38a8a62ed30de1a95347c6e90809678dc32d72a58f38b0ca1e66291748fc16"
+    },
+    "actualPasses": [
+      "Fresh Nativebuild03 and current shipping package04 at the actual candidate",
+      "Isolated NativeCSP04: five enforce denials, local worker positive, missing/malformed worker failures, fixed inputs, eight owned processes cleaned to zero"
+    ],
+    "reader": "Actual Reader/CSP attempt01 FAIL before mini-fixture/Reader launch, solely five bare crossorigin attributes serialized as empty quoted values. Ignored source04 preserves complete HTML equality and all old assertions; actual32classifier controls and independent SOURCE_READY03 passed. Original FAIL and actual companion7to0cleanup remain retained. Fresh actual Reader proof still required.",
+    "readerSourceReadiness": {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/shipping-reader-source-readiness-03.json",
+      "sha256": "c9bfce1578437eb66cd4c209d9f03d559114f3fc37954680444a2f8f6444764c"
+    },
+    "conformance": "All five existing reference token/route/workflow/accessibility/theme/controlled-baseline checks passed; component capture run FAIL with an unidentified interaction assertion before first retained capture. One diagnostic stalled and was terminated through its own session. Source11 adds retained case/stage/metrics and real keyboard modality, preserving all89assertions and84capture inventory; source preflight only. No product defect or passing capture claimed.",
+    "conformancePreflight": {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/conformance-source-preflight-11.json",
+      "sha256": "a7120ff4e4fe961f84859748a150b75f71b38e562096b7a24aa1a8085f901ca2"
+    },
+    "executionEfficiency": "Wait for compatible reviewed source and one stable committed candidate before fresh qualifying Native/Reader/conformance runs, avoiding repeated build/test rounds while the authority gap remains unresolved."
+  },
+  "remainingPrerequisites": {
+    "W2": "PAUSED",
+    "ordinaryTasks": "33of33DONE",
+    "correctiveTasks": "17of18DONE; W2.C18.T01IN_PROGRESS",
+    "slices": "10of11DONE/approved; CAP-05.S06pending",
+    "A06": "Ownerapproved but not materialized/admitted/activated; T01/T02/T03 unstarted",
+    "CP09": "PENDING",
+    "G2": "PENDING, releaseapprovalnotlegalyet",
+    "W3": "Notapproved/notstarted"
+  },
+  "scopeNotAuthorized": [
+    "Further framework improvement after this bounded increment",
+    "Any product/reference/baseline/crypto/principal authority change beyond already-approved ECR0014",
+    "Origin/spec/base/history/approval rewrite",
+    "Manual DONE, controller monkeypatch or fabricated original-check PASS",
+    "8or16GiB tests/models; larger computing remains W5",
+    "W2release or W3execution approval"
+  ],
+  "alternatives": [
+    {
+      "option": "Approve this one bounded compatibility exception and exact method choices",
+      "recommended": true,
+      "effect": "Repair the demonstrated acceptance gap, complete C18 normally, then existing A06T01T02T03 and remaining W2 qualification/release prerequisites."
+    },
+    {
+      "option": "Keep the no-framework-work constraint unchanged",
+      "recommended": false,
+      "effect": "Preserve all results; C18 normal submission and therefore A06/W2 remain blocked. No safe data-only installed submission route was found."
+    }
+  ],
+  "resumeCondition": "After exact proposal readiness and direct owner approval are recorded immutably, apply only bounded maintenance; actual affected tests and independent review before integration/use. Publish actual metadata disposition and finite authority/lineage source readiness, then fresh risk-selected C18 checks, normal taskctl submit/review and local integration. Only actual C18DONE/approved/quiescence permits approved A06bootstrap/materialization/activation/ordered tasks. Complete S06/CP09/freshW2 review, request separate G2 release only when legal, then initiate/refine/approve W3 before its execution.",
+  "completionClaims": {
+    "taskApproved": false,
+    "sliceApproved": false,
+    "waveComplete": false,
+    "releaseApproved": false,
+    "W3Approved": false
+  },
+  "approvalLegality": "This limited implementation/method decision may be considered now. W2G2 release cannot be approved while C18/A06/S06/CP09/qualification are incomplete.",
+  "preservedPreparation": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/c18-closeout-compatibility-amendment-01/proposal.json",
+    "sha256": "396b1e79ebe9e6a719d1ab5b45d063212d12351d9baefa2191a10f3c78b171c8"
+  }
+}
