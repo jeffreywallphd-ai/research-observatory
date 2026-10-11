@@ -1,0 +1,136 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "W2.A06.B00",
+  "commit": "c6a9e21944e3d5299b5aed299fa3e4d0953d5728",
+  "baseCommit": "ab3c35369a8cd57876a1890db90263e5ab2ba395",
+  "branch": "codex/w2-implementation",
+  "changedFiles": [
+    "artifacts/evidence/W2-C18-T01-approved-metadata.evidence-01.json",
+    "artifacts/evidence/W2-C18-T01-approved-metadata.maintenance-01.md",
+    "artifacts/evidence/W2-C18-T01-approved-metadata.review-01.json",
+    "artifacts/evidence/W2.A06.pre-admission-method-records-01.json",
+    "artifacts/evidence/W2.A06.pre-admission-method-records-02.json",
+    "artifacts/evidence/W2.A06.pre-admission-method-records-03.json",
+    "artifacts/evidence/W2.A06.pre-admission-method-records-04.json",
+    "artifacts/evidence/W2.A06.pre-admission-method-records-06.json",
+    "artifacts/evidence/W2.A06.pre-admission-method-records-07.json",
+    "artifacts/evidence/W2.A06.pre-admission-method-records-source-capture-01.json",
+    "artifacts/evidence/W2.A06.pre-admission-method-records-source-capture-02.json",
+    "artifacts/evidence/W2.A06.pre-admission-method-records-source-capture-03.json",
+    "artifacts/evidence/W2.A06.pre-admission-method-records-source-capture-04.json",
+    "artifacts/evidence/W2.A06.pre-admission-method-records-source-capture-06.json",
+    "artifacts/evidence/W2.A06.pre-admission-method-records-source-capture-07-part-01.json",
+    "artifacts/evidence/W2.A06.pre-admission-method-records-source-capture-07-part-02.json",
+    "artifacts/evidence/W2.A06.pre-admission-method-records-source-capture-07.json",
+    "artifacts/evidence/W2.C18.T01.R01.json",
+    "artifacts/evidence/W2.C18.T01.closeout-compatibility-decision-01.json",
+    "artifacts/evidence/W2.C18.T01.closeout-compatibility-proposal-01.json",
+    "artifacts/evidence/W2.C18.T01.closeout-compatibility-readiness-R01.json",
+    "artifacts/evidence/W2.C18.T01.current-build-lineage-method-decision-01.json",
+    "artifacts/evidence/W2.C18.T01.current-build-lineage-method-proposal-01.json",
+    "artifacts/evidence/W2.C18.T01.current-build-lineage-method-readiness-01.json",
+    "artifacts/evidence/W2.C18.T01.generated-integrity-01.json",
+    "artifacts/evidence/W2.C18.T01.metadata-scope-R01.json",
+    "artifacts/evidence/W2.C18.T01.review-R01.json",
+    "artifacts/evidence/W2.C18.T01.ui-authority-method-record-01.json",
+    "artifacts/evidence/W2.C18.T01.ui-authority-source-capture-01.json",
+    "artifacts/evidence/W2.C18.T01.ui-authority-source-readiness-01.json",
+    "artifacts/evidence/ui-change/W2.C18.T01.json",
+    "docs/adr/ADR-0055-recognize-independently-reviewed-approved-corrective-metadata.md",
+    "docs/adr/index.json",
+    "docs/planning-implementation-plan.md",
+    "planning/backlog.yaml",
+    "planning/review-site/enablers/ECR-0014.html",
+    "planning/review-site/enablers/index.html",
+    "planning/review-site/index.html",
+    "planning/review-site/manifest.json",
+    "planning/review-site/waves/W2.html",
+    "planning/status-summary.md",
+    "planning/wave-amendment-approvals/W2.A06.B00.addendum-01.json",
+    "planning/wave-amendment-approvals/W2.A06.B00.addendum-02.json",
+    "planning/wave-amendment-approvals/W2.A06.B00.addendum-03.json",
+    "tests/foundation/test_taskctl_workflow.py",
+    "tests/foundation/test_ui_change_gate.py",
+    "tools/ui_change_gate.py"
+  ],
+  "checks": [
+    {
+      "command": ".venv/Scripts/python.exe -B -s tools/planctl.py --repo . ecr validate ECR-0014 --require-approved",
+      "exitCode": 0,
+      "result": "Actual approved ECR validation at this candidate; retained raw streams and receipt.",
+      "receipt": {
+        "path": "artifacts/tmp/W2.remaining-corrections-batch-01/a06-b00-ecr-validation-01.receipt.json",
+        "sha256": "0bab3384eb4285561f7bb09ce56c64697ef17a0cc34a98a7c6c6056de2db92a9"
+      }
+    },
+    {
+      "command": ".venv/Scripts/python.exe -B -s artifacts/tmp/W2.remaining-corrections-batch-01/build-a06-b00-manifest-02.py --output-review artifacts/tmp/W2.remaining-corrections-batch-01/c18-a06-combined-output-review-02.json --output-review-sha256 cf5a5283f6d61421f448eec271e3c3328cb2aa8c25369d0c89c80b7df91a3e03",
+      "exitCode": 0,
+      "result": "Actual unchanged installed addendum introduction/blob/path consumers accept all36 finite leaves and complete candidate diff; exact quiescence/task definitions authenticated.",
+      "receipt": {
+        "path": "artifacts/tmp/W2.remaining-corrections-batch-01/a06-b00-scope-observation-01.json",
+        "sha256": "f983670322387c4837f8571dd053be1666f51ac0af5b3442744780a415c4f23f"
+      }
+    },
+    {
+      "command": ".venv/Scripts/python.exe -B -s tools/plan_review_check.py --repo . --report artifacts/tmp/W2.remaining-corrections-batch-01/c18-a06-combined-site-check-01.json",
+      "exitCode": 0,
+      "result": "Actual combined normal derived projection integrity PASS before its metadata-only commit. No source/backlog/approval/addendum/worksheet/view input changed between this checked state and this candidate.",
+      "receipt": {
+        "path": "artifacts/tmp/W2.remaining-corrections-batch-01/c18-a06-combined-view-receipt-01.json",
+        "sha256": "27a68326cfad04dbfec36f5483e28bd3068fe67e30e353860060165855f61ee2"
+      },
+      "report": {
+        "path": "artifacts/tmp/W2.remaining-corrections-batch-01/c18-a06-combined-site-check-01.json",
+        "sha256": "9b82695cffcb506a6346b9b04d310602a1231ca882ceb676bf1704a85e8bc6c0"
+      }
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "Immutable ECR0014 packet6293590, independent packet reviewa31e42a at87e44188, original A06 owner grant3ecf2b98 atab3c and bounded C18 owner decisionc43b56dd at1a28 authenticate exact existing authority. Actual approved ECR validation passes. All five W2 predecessor amendments are ADOPTED; immutable Wave base/current1.9/GOV-MIG0001 and finite canonical recovery/method/source contracts are preserved."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "Actual C18 DONE/approved/nulllease successor and formal independent ledger are committed in this candidate and locally integrated. W2 remains PAUSED/wave/nulllease. All33 ordinary+18 corrective tasks are DONE, no competing active task/review/amendment/recovery hold exists, and A06 is absent. No new task state is hand-edited."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "Exactly36 owner-authorized finite leaves are bound by three unchanged-schema existing-authority records and actual installed introduction/blob/path checks. The later narrow C18 exception explicitly covers its already accepted maintenance source/test/ProposedADR/index delivery; it grants no further framework work. Original packet, grants, adverse records, method/source/control/readiness/classification and independent C18 evidence are immutable. Current combined generated HTML/Markdown pass actual normal integrity and focused independent output review.",
+        "The inherited Completed badge aggregates51/51 implemented tasks only. Actual10/11 approved slices, Wave review PAUSED and G2 PENDING remain visible and authoritative; no Wave qualification or release is claimed."
+      ]
+    },
+    {
+      "criterion_index": 4,
+      "evidence": [
+        "Exact three packet task IDs/dependencies/hash definitions and existing normal submit/review/materialize/activate commands are independently prepared at c0b54d8557c1092f0569c98dac32e2184e0ee063b48dfabf26f4ba8d72d54819. Actual A06 shell/B00 submission/review/materialization/activation has not occurred; those transitions and all product criteria remain future work."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "verificationSelection": {
+    "riskAnalysis": "Bounded existing-authority data bootstrap. Actual official ECR validation, normal installed finite scope consumers, persisted task quiescence/exact task hashes, actual final generated integrity and independent diff review cover admission. No shared source/dependency/product changes in this preparation; no duplicate full profile/history scan.",
+    "deferred": "Normal bootstrap mutation validates the full backlog again at publication. Actual independently reviewed B00 shell, materialization/activation, ordered A06 implementation, S06/CP09/fresh W2 profile/platform/package/installer/release and separate W3 approval remain due."
+  },
+  "actualBindings": {
+    "scopeObservation": {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/a06-b00-scope-observation-01.json",
+      "sha256": "f983670322387c4837f8571dd053be1666f51ac0af5b3442744780a415c4f23f"
+    },
+    "outputReview": {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/c18-a06-combined-output-review-02.json",
+      "sha256": "cf5a5283f6d61421f448eec271e3c3328cb2aa8c25369d0c89c80b7df91a3e03"
+    },
+    "finiteInventory": {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/a06-finite-recording-03.inventory.json",
+      "sha256": "79ee3b7f7da4c88d77c53d8f69a7393012b658e59f9285f838bcbb34710c629a"
+    }
+  }
+}

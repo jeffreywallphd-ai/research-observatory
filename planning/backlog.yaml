@@ -62699,3 +62699,66 @@ wave_amendments:
     effectiveStateCommit: 771e54a3657cdc5ff308d3a53d7b71eb48bb9214
     recordSha256: bdad5e81327e32ee322db436dc569898ce314d29058e53b0cfe67ed6192e0b03
     returnPolicy: paused-predecessor
+- id: W2.A06
+  change_request_id: ECR-0014
+  target_wave: W2
+  kind: product-scope-security-experience
+  approval_reference:
+    path: planning/wave-amendment-approvals/W2.A06.json
+    sha256: 3ecf2b98806f1589be7bd63fcc4f25cf0ee2df79bc95a3a0fefda2ce5666e4b2
+    introduction_commit: ab3c35369a8cd57876a1890db90263e5ab2ba395
+  lifecycle:
+    status: APPROVED
+    history:
+    - id: E01
+      status: APPROVED
+      actor: human:repository-owner
+      at: '2026-10-11T13:27:13.517641+00:00'
+      rationale: The repository owner answered 'Approved, please continue' to the exact complete ECR-0014/W2.A06 batch request
+        identifying candidate ac6b664a2ced6b2263ff7b5ab48535c3f39798ce, packet SHA-256 6293590db74b9a3ec4ce6019a1713def568798ac3a71208a5583bfcff78f7a34
+        and independent R01 ledger a31e42a11fcd1b7eaf52639f174f7885e2d08d49f5ec1a3a8099bdc1ac3e7193 at 87e44188dbb0e54039f8b77d3613ed2728bcd51b.
+        This single grant binds the complete reviewed three ordered recovery/verification tasks, narrow durable current-user
+        and same-machine ownership witness, exact 45 AST plus 3 literal finite method contracts, exact Reader CSP predicate,
+        unchanged one-file formatter-debt disposition, complete quality data inventory, conditional original-fixture recovery
+        only when actual evidence authenticates, the exact current W2.C18.T01 method packet and bounded pre-admission/final
+        source and evidence recording. Conforming details inside these exact contracts require no second owner answer. W1
+        restoration in W2 is already authorized. Actual C18 completion and quiescence precede B00 submission, review, exact
+        materialization and activation; every admitted task still requires claim, implementation, actual checks, independent
+        disposition and normal integration. All original approvals, adverse findings and immutable evidence remain preserved.
+        No additional framework development, unknown predicate or scope exemption, 8/16GiB variant, task/Slice/Wave completion
+        or W2 release approval is granted. This timestamp records binding of the actual answer, not an invented message timestamp.
+  bootstrap:
+    id: W2.A06.B00
+    status: REVIEW
+    implementer: codex-w2-implementation
+    implementation_commit: c6a9e21944e3d5299b5aed299fa3e4d0953d5728
+    submission_branch: codex/w2-implementation
+    scope_addenda:
+    - path: planning/wave-amendment-approvals/W2.A06.B00.addendum-01.json
+      sha256: b13b2fdf265180d34d2a8a54ea6649f0d58983443fc41f43f10fa678475f9f7e
+      introduction_commit: c6a9e21944e3d5299b5aed299fa3e4d0953d5728
+    - path: planning/wave-amendment-approvals/W2.A06.B00.addendum-02.json
+      sha256: 54ecc4445832cad4421c7e90a49c69cf9b25c6b5bd8d9b62b6305dd539333933
+      introduction_commit: c6a9e21944e3d5299b5aed299fa3e4d0953d5728
+    - path: planning/wave-amendment-approvals/W2.A06.B00.addendum-03.json
+      sha256: d213d66228707540850dd208cbe3b247fa0d8fa47e8a01524d0554b00b0cbcec
+      introduction_commit: c6a9e21944e3d5299b5aed299fa3e4d0953d5728
+    evidence:
+    - type: criterion-manifest
+      path: artifacts/evidence/W2.A06.B00.json
+      sha256: bb2349b0c527014ac0dd64aba34edea35cdc61e28c68b5d4a0acb80a2a7b5492
+      commit: c6a9e21944e3d5299b5aed299fa3e4d0953d5728
+      recorded_at: '2026-10-11T18:23:12+00:00'
+    review:
+      reviewer: null
+      result: null
+      reviewed_at: null
+      notes: null
+  campaign: null
+  tasks: []
+  completion:
+    status: PENDING
+    reviewer: null
+    reviewed_at: null
+    evidence: []
+    notes: null

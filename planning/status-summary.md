@@ -1,7 +1,7 @@
 ---
 document_type: generated-backlog-status-summary
 source: planning/backlog.yaml
-source_sha256: 6b60984c163f2e259a1766b2a46e560ccec24c0ac0ed83e61ab2acacd7a19aba
+source_sha256: 7c942db3887f738ae6e5bc804e4926bb687ed55e57298a80e56921d3ea69b254
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -20,7 +20,7 @@ manual_edit: prohibited
 | Enabler tasks | 23 |
 | Waves | 12 |
 | Wave approval bases | 2 |
-| Wave amendments | 14 |
+| Wave amendments | 15 |
 | Release gates | 12 |
 
 ## Status distributions
@@ -61,6 +61,7 @@ manual_edit: prohibited
 | Status | Count |
 |---|---:|
 | `ADOPTED` | 13 |
+| `APPROVED` | 1 |
 | `SUPERSEDED` | 1 |
 
 ### Enabler task state
@@ -91,6 +92,7 @@ Proposal approval, materialization lifecycle, and campaign state remain distinct
 | `W2` | `W2.A03` | `ECR-0011` | `planning/wave-amendment-approvals/W2.A03.json` | `ADOPTED` | `APPROVED` | `COMPLETE` | 2 |
 | `W2` | `W2.A04` | `ECR-0012` | `planning/wave-amendment-approvals/W2.A04.json` | `ADOPTED` | `APPROVED` | `COMPLETE` | 1 |
 | `W2` | `W2.A05` | `ECR-0013` | `planning/wave-amendment-approvals/W2.A05.json` | `ADOPTED` | `APPROVED` | `COMPLETE` | 2 |
+| `W2` | `W2.A06` | `ECR-0014` | `planning/wave-amendment-approvals/W2.A06.json` | `APPROVED` | `REVIEW` | `NONE` | 0 |
 
 ## Amendment-exit review and adoption projections
 
@@ -777,6 +779,20 @@ Immutable exit rounds, the latest completion projection, and bound adoption chec
 
 - `W2.CP05` `security` by codex-w2-implementation at `2026-10-05T11:24:12+00:00` — Adopt independently approved A05 repair and completion segment; return the exact whole paused A03 record with both original tasks DONE. Separate A03 activation, original finding replay and own exit/security/adoption remain due before ordinary W2 resume. No further framework source development after A05.
   - amendment `W2.A05` / `artifacts/evidence/W2.A05.adoption.json` / `3ca9bde2358d0dde17582a39fa7b40ec6d518e0ec14b7afbdc6af7b20c7567d7` / `6599d2ffd43bdc5bf7234955f4c69cd3000ecdd0`
+
+### Amendment-exit review and adoption — W2.A06
+
+**Exit-review mode:** `legacy latest-completion-only projection` — no immutable exit rounds are recorded; this view does not fabricate history.
+
+**Latest completion projection:** `PENDING` by - at `-`
+
+**Latest completion evidence:** -
+
+**Latest completion notes:** -
+
+**Bound amendment-adoption checkpoints:**
+
+- None
 
 
 ## Task review history projections

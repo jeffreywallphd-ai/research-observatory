@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 6b60984c163f2e259a1766b2a46e560ccec24c0ac0ed83e61ab2acacd7a19aba
+source_sha256: 7c942db3887f738ae6e5bc804e4926bb687ed55e57298a80e56921d3ea69b254
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -30,7 +30,7 @@ This YAML file is the authoritative task, dependency, gate, and progress ledger.
 | Enabler tasks | 23 |
 | Waves | 12 |
 | Wave approval bases | 2 |
-| Wave amendments | 14 |
+| Wave amendments | 15 |
 | Release gates | 12 |
 
 See `planning/status-summary.md` for the generated status distributions and capability progress table.
@@ -55,6 +55,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 | `W2` | `W2.A03` | `ECR-0011` | `planning/wave-amendment-approvals/W2.A03.json` | `ADOPTED` |
 | `W2` | `W2.A04` | `ECR-0012` | `planning/wave-amendment-approvals/W2.A04.json` | `ADOPTED` |
 | `W2` | `W2.A05` | `ECR-0013` | `planning/wave-amendment-approvals/W2.A05.json` | `ADOPTED` |
+| `W2` | `W2.A06` | `ECR-0014` | `planning/wave-amendment-approvals/W2.A06.json` | `APPROVED` |
 
 ## Waves
 
@@ -3289,6 +3290,34 @@ See `planning/status-summary.md` for the generated status distributions and capa
 **Latest notes:** Independent expanded accessibility/control/ADR/evidence review of exact W2.A05.T02 source candidate 03e501c4 and its committed supported REVIEW submission ba1e0d17. Frozen criteria equal the immutable owner-approved ECR-0013 task. The two-commit claim-base range has exactly four approved regular source paths and six task-owned or supported claim/planning outputs; no intermediate source add-revert or outside-source edit. Independently approved T01 is DONE and local main is its a1105c30 disposition before the separate T02 claim. The static helper changes only the existing label slot, retains the established ordered name sources, uses identity and first-ID/first-labelable-descendant association, and rejects the required adverse associations without weakening duplicate-ID, reference-drift or unnamed-control failures. The 1364-byte ADR41 body append preserves its entire prior prefix, Proposed metadata and index. All 15 qualifying raw output hashes, all three qualifying producer hashes, six execution receipt digests, both detailed reports and five listed adverse evidence digests independently match. Retained verbose logs contain six naming and four compatibility methods passing with no skips. Actual pinned Windows x64 Chromium records the unchanged and label-after-control positives plus label-removal/wrong-target negatives; negative names truthfully retain the UA Choose File fallback. The unmodified official accessibility command exits 0 over 33 pages and 66 responsive/visual states with empty errors. Selected quality, ADR, UI authority, reference, backlog, views and site proof pass. The actual five-method/25-failure test-first result, prior official failure and initial ignored invariant-script KeyError remain distinct adverse observations. Only this canonical ledger is authored; no source, manifest, producer, backlog or reference authorship, no suite reruns and no task-state mutation. Approval is limited to this task-stage implementation and evidence. Actual A05 integrated S01/exit/separate security/adoption and paused-A03 return, then separate A03 activation/fresh F01 replay/review-02/exit/security/adoption, ordinary W2 resume, product/native/Core and Wave qualification, and human release remain due. No additional framework development is authorized after A05.
 
 **Currently open findings:** -
+
+## W2.A06 - ECR-0014
+
+**Target Wave / class:** `W2` / `product-scope-security-experience`
+
+**Approval record:** `planning/wave-amendment-approvals/W2.A06.json` (`3ecf2b98806f1589be7bd63fcc4f25cf0ee2df79bc95a3a0fefda2ce5666e4b2`)
+
+**Lifecycle / bootstrap / campaign / completion:** `APPROVED` / `REVIEW` / `NONE` / `PENDING`
+
+**Append-only lifecycle history:**
+
+- `E01` `APPROVED` at `2026-10-11T13:27:13.517641+00:00` by human:repository-owner: The repository owner answered 'Approved, please continue' to the exact complete ECR-0014/W2.A06 batch request identifying candidate ac6b664a2ced6b2263ff7b5ab48535c3f39798ce, packet SHA-256 6293590db74b9a3ec4ce6019a1713def568798ac3a71208a5583bfcff78f7a34 and independent R01 ledger a31e42a11fcd1b7eaf52639f174f7885e2d08d49f5ec1a3a8099bdc1ac3e7193 at 87e44188dbb0e54039f8b77d3613ed2728bcd51b. This single grant binds the complete reviewed three ordered recovery/verification tasks, narrow durable current-user and same-machine ownership witness, exact 45 AST plus 3 literal finite method contracts, exact Reader CSP predicate, unchanged one-file formatter-debt disposition, complete quality data inventory, conditional original-fixture recovery only when actual evidence authenticates, the exact current W2.C18.T01 method packet and bounded pre-admission/final source and evidence recording. Conforming details inside these exact contracts require no second owner answer. W1 restoration in W2 is already authorized. Actual C18 completion and quiescence precede B00 submission, review, exact materialization and activation; every admitted task still requires claim, implementation, actual checks, independent disposition and normal integration. All original approvals, adverse findings and immutable evidence remain preserved. No additional framework development, unknown predicate or scope exemption, 8/16GiB variant, task/Slice/Wave completion or W2 release approval is granted. This timestamp records binding of the actual answer, not an invented message timestamp.
+
+### Amendment-exit review and adoption — W2.A06
+
+**Exit-review mode:** `legacy latest-completion-only projection` — no immutable exit rounds are recorded; this view does not fabricate history.
+
+**Latest completion projection:** `PENDING` by - at `-`
+
+**Latest completion evidence:** -
+
+**Latest completion notes:** -
+
+**Bound amendment-adoption checkpoints:**
+
+- None
+
+**Bounded tasks:**
 
 
 ## Linked corrective tasks
