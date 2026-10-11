@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 970fac99bc847db9d833ba0c01e3c810f990a8628f026c00acc320562f2760dc
+source_sha256: 6b60984c163f2e259a1766b2a46e560ccec24c0ac0ed83e61ab2acacd7a19aba
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -4623,7 +4623,7 @@ Original tasks and approvals remain unchanged.
 
 ### W2.C18.T01 — Build manual structural correction and annotation tools
 
-**Status:** `REVIEW`. **Original task:** `CAP-05.S06.T02`. **Latest review:** `-`.
+**Status:** `DONE`. **Original task:** `CAP-05.S06.T02`. **Latest review:** `approved`.
 
 **Reproduction:** Fresh approved S06 current-build conformance05 at candidate15bd1939a852bd8262b4b39b556f2793c0852957 passed all five preserved reference/token/route/workflow/accessibility/visual checks, then failed the existing production style check. Report artifacts/tmp/CAP-05.S06.W2-1.9-observations-03/conformance-report.json SHA256 5c82d66365a1965eccb4d5288ccb6b97b1702a5c5059d16856457b2f832f393d. Three global CSS rules repeat the identical display:grid; gap:var(--space-2) group for .intent-three-column label, .shortcut-dialog dl/.shortcut-dialog dl div, and .parsing-quality-workspace label. Original report and output remain preserved; no component capture or Slice/Wave PASS is claimed.
 
@@ -4638,9 +4638,11 @@ Original tasks and approvals remain unchanged.
 - apps/desktop/src/app.css
 #### Review history — W2.C18.T01
 
-**Review mode:** `append-only v1` / 0 completed round(s)
+**Review mode:** `append-only v1` / 1 completed round(s)
 
-**Current immutable submission awaiting review:** `R01` / packet SHA-256 `e87787162b6431dbe8a3c9ce9662509a6cb0159a7e10d1f6c34eed4ad1304294`
+##### Round R01
+
+**Immutable submission packet:** `R01` / packet SHA-256 `e87787162b6431dbe8a3c9ce9662509a6cb0159a7e10d1f6c34eed4ad1304294`
 
 - Candidate / base / branch: `9b1903b235e4abbbdac023b4fd094ee615062bfd` / `302c1d14818230629b2991a61ae4ff4862c7aece` / `codex/w2-implementation`
 - Submitted by / at: codex-w2-implementation / `2026-10-11T17:04:35+00:00`
@@ -4654,9 +4656,25 @@ Original tasks and approvals remain unchanged.
 - Prior round / replayed open findings: `-` / -
 - Root-cause escalation: -
 
-**Current latest-review projection:** `-` by - at `-`
+**Disposition / reviewer / time:** `approved` / agent:/root/c18_runtime_disposition / `2026-10-11T17:23:28+00:00`
 
-**Latest notes:** -
+**Immutable review ledger:** `artifacts/evidence/W2.C18.T01.review-R01.json` / `f65bb726f66ab4c8929fcb2baa3ce712b9208462fe87847efa22b866274aabdd`
+
+**Review notes:** Independent focused W2.C18.T01 R01 review approves the exact committed CSS correction and its three inherited criteria. Actual fixed-candidate style, 12 complete theme/width/component CSS comparisons and approved two-selector task-authority evidence are authenticated, together with exact accepted normal maintenance, independently reviewed metadata and source/method introductions. The actual frozen R01 packet, criterion/selection/evidence hashes and four-path delivery commit match. No active blocking C18 finding remains. Original dark-theme and other adverse reports remain preserved; separate A06 recovery work, restart P1, 48 architecture/lint findings, Reader/CSP and conformance failures, fresh S06/Wave/platform/package qualification and the human release gate remain required. Ongoing review-site regeneration is not represented as completed.
+
+**Findings opened:**
+
+- None
+
+**Prior finding closures:**
+
+- None
+
+**Current immutable submission awaiting review:** None
+
+**Current latest-review projection:** `approved` by agent:/root/c18_runtime_disposition at `2026-10-11T17:23:28+00:00`
+
+**Latest notes:** Independent focused W2.C18.T01 R01 review approves the exact committed CSS correction and its three inherited criteria. Actual fixed-candidate style, 12 complete theme/width/component CSS comparisons and approved two-selector task-authority evidence are authenticated, together with exact accepted normal maintenance, independently reviewed metadata and source/method introductions. The actual frozen R01 packet, criterion/selection/evidence hashes and four-path delivery commit match. No active blocking C18 finding remains. Original dark-theme and other adverse reports remain preserved; separate A06 recovery work, restart P1, 48 architecture/lint findings, Reader/CSP and conformance failures, fresh S06/Wave/platform/package qualification and the human release gate remain required. Ongoing review-site regeneration is not represented as completed.
 
 **Currently open findings:** -
 

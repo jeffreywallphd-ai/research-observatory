@@ -1,0 +1,28 @@
+{
+  "$schema": "./bootstrap-scope-addendum.schema.json",
+  "schemaVersion": "1.0",
+  "documentType": "wave-amendment-bootstrap-scope-addendum",
+  "amendmentId": "W2.A06",
+  "bootstrapUnit": "W2.A06.B00",
+  "status": "APPROVED",
+  "approvedBy": "human:repository-owner",
+  "approvedAt": "2026-10-11T16:05:25.2524487Z",
+  "baseApprovalCommit": "ab3c35369a8cd57876a1890db90263e5ab2ba395",
+  "candidateAtDecision": "75321c996d3485c62415651bb124abfc8df86bd8",
+  "authorizedAdditionalPaths": [
+    "artifacts/evidence/ui-change/W2.C18.T01.json",
+    "docs/adr/ADR-0055-recognize-independently-reviewed-approved-corrective-metadata.md",
+    "docs/adr/index.json",
+    "tests/foundation/test_taskctl_workflow.py",
+    "tests/foundation/test_ui_change_gate.py",
+    "tools/ui_change_gate.py"
+  ],
+  "decision": "Finite installed recording of existing owner grants, with no new owner answer: planning/wave-amendment-approvals/W2.A06.json SHA256 3ecf2b98806f1589be7bd63fcc4f25cf0ee2df79bc95a3a0fefda2ce5666e4b2; artifacts/evidence/W2.C18.T01.closeout-compatibility-decision-01.json SHA256 c43b56dd0140b12ef6e1fbf0c7ddae68414f0d0f05601a4f43549576be38674a. The retained timestamps are original approval-binding times, not new message timestamps. A06 grants conforming proof/evidence recording and C18 closeout. The later exact C18 exception grants its named maintenance source, tests, Proposed ADR/index, classification and independently reviewed methods. These finite current blobs implement those already-authorized choices; this record grants no future edits.",
+  "constraints": [
+    "Bind only the exact listed candidate blobs at this record's immutable introduction. No wildcard or future namespace authority.",
+    "Preserve frozen ECR-0014 packet, original A06 grant, C18 exception, all adverse evidence, approvals and history.",
+    "No additional framework development, product/reference/security/migration/threshold change or verification substitution.",
+    "Actual C18 DONE and independent approval precede this recording. The combined metadata checkpoint must pass normal generated integrity, independent diff review, commit and local integration before B00 submission.",
+    "No task, slice, Wave completion, W2 release or W3 execution approval is conferred. No 8/16-GiB workload."
+  ]
+}

@@ -3728,7 +3728,7 @@
         {
           "task_id": "W2.C18.T01",
           "title": "Build manual structural correction and annotation tools",
-          "status": "IN_PROGRESS",
+          "status": "DONE",
           "acceptance_criteria": [
             "Corrections preserve original parser output, actor, rationale, and revision; downstream objects point to the corrected revision only after explicit acceptance.",
             "Automated tests cover the expected path and at least one material failure or boundary condition.",
@@ -3757,17 +3757,148 @@
           "task_review": {
             "task_id": "W2.C18.T01",
             "title": "Build manual structural correction and annotation tools",
-            "status": "IN_PROGRESS",
+            "status": "DONE",
             "mode": "append-only",
             "latest_review": {
-              "reviewer": null,
-              "result": null,
-              "reviewed_at": null,
-              "notes": null
+              "reviewer": "agent:/root/c18_runtime_disposition",
+              "result": "approved",
+              "reviewed_at": "2026-10-11T17:23:28+00:00",
+              "notes": "Independent focused W2.C18.T01 R01 review approves the exact committed CSS correction and its three inherited criteria. Actual fixed-candidate style, 12 complete theme/width/component CSS comparisons and approved two-selector task-authority evidence are authenticated, together with exact accepted normal maintenance, independently reviewed metadata and source/method introductions. The actual frozen R01 packet, criterion/selection/evidence hashes and four-path delivery commit match. No active blocking C18 finding remains. Original dark-theme and other adverse reports remain preserved; separate A06 recovery work, restart P1, 48 architecture/lint findings, Reader/CSP and conformance failures, fresh S06/Wave/platform/package qualification and the human release gate remain required. Ongoing review-site regeneration is not represented as completed."
             },
             "review_control": {
               "version": 1,
-              "attempts": [],
+              "attempts": [
+                {
+                  "submission": {
+                    "id": "R01",
+                    "submitted_by": "codex-w2-implementation",
+                    "submitted_at": "2026-10-11T17:04:35+00:00",
+                    "candidate_commit": "9b1903b235e4abbbdac023b4fd094ee615062bfd",
+                    "base_commit": "302c1d14818230629b2991a61ae4ff4862c7aece",
+                    "branch": "codex/w2-implementation",
+                    "evidence_reference": {
+                      "type": "criterion-manifest",
+                      "path": "artifacts/evidence/W2.C18.T01.R01.json",
+                      "sha256": "eaf8950726fd37eebe675fbf95319cffd3b8d7c51baf8498b0f46c7c48f6c527",
+                      "commit": "9b1903b235e4abbbdac023b4fd094ee615062bfd",
+                      "recorded_at": "2026-10-11T17:04:35+00:00"
+                    },
+                    "acceptance_criteria_sha256": "5d58bcf6badaaf4a77de4b4e000263ba750ccdbf8afbd74f9df38cae14c666e1",
+                    "changed_paths": [
+                      "apps/desktop/src/app.css",
+                      "artifacts/evidence/W2-C18-T01-approved-metadata.evidence-01.json",
+                      "artifacts/evidence/W2-C18-T01-approved-metadata.maintenance-01.md",
+                      "artifacts/evidence/W2-C18-T01-approved-metadata.review-01.json",
+                      "artifacts/evidence/W2.A06.pre-admission-method-records-01.json",
+                      "artifacts/evidence/W2.A06.pre-admission-method-records-02.json",
+                      "artifacts/evidence/W2.A06.pre-admission-method-records-03.json",
+                      "artifacts/evidence/W2.A06.pre-admission-method-records-04.json",
+                      "artifacts/evidence/W2.A06.pre-admission-method-records-06.json",
+                      "artifacts/evidence/W2.A06.pre-admission-method-records-07.json",
+                      "artifacts/evidence/W2.A06.pre-admission-method-records-source-capture-01.json",
+                      "artifacts/evidence/W2.A06.pre-admission-method-records-source-capture-02.json",
+                      "artifacts/evidence/W2.A06.pre-admission-method-records-source-capture-03.json",
+                      "artifacts/evidence/W2.A06.pre-admission-method-records-source-capture-04.json",
+                      "artifacts/evidence/W2.A06.pre-admission-method-records-source-capture-06.json",
+                      "artifacts/evidence/W2.A06.pre-admission-method-records-source-capture-07-part-01.json",
+                      "artifacts/evidence/W2.A06.pre-admission-method-records-source-capture-07-part-02.json",
+                      "artifacts/evidence/W2.A06.pre-admission-method-records-source-capture-07.json",
+                      "artifacts/evidence/W2.C18.T01.closeout-compatibility-decision-01.json",
+                      "artifacts/evidence/W2.C18.T01.closeout-compatibility-proposal-01.json",
+                      "artifacts/evidence/W2.C18.T01.closeout-compatibility-readiness-R01.json",
+                      "artifacts/evidence/W2.C18.T01.current-build-lineage-method-decision-01.json",
+                      "artifacts/evidence/W2.C18.T01.current-build-lineage-method-proposal-01.json",
+                      "artifacts/evidence/W2.C18.T01.current-build-lineage-method-readiness-01.json",
+                      "artifacts/evidence/W2.C18.T01.generated-integrity-01.json",
+                      "artifacts/evidence/W2.C18.T01.metadata-scope-R01.json",
+                      "artifacts/evidence/W2.C18.T01.ui-authority-method-record-01.json",
+                      "artifacts/evidence/W2.C18.T01.ui-authority-source-capture-01.json",
+                      "artifacts/evidence/W2.C18.T01.ui-authority-source-readiness-01.json",
+                      "artifacts/evidence/ui-change/W2.C18.T01.json",
+                      "docs/adr/ADR-0055-recognize-independently-reviewed-approved-corrective-metadata.md",
+                      "docs/adr/index.json",
+                      "docs/planning-implementation-plan.md",
+                      "planning/backlog.yaml",
+                      "planning/enabler-change-requests/ECR-0014-review.html",
+                      "planning/enabler-change-requests/ECR-0014.md",
+                      "planning/enabler-change-requests/ECR-0014.packet.json",
+                      "planning/enabler-change-requests/ECR-0014.review-R01.json",
+                      "planning/review-site/README.md",
+                      "planning/review-site/enablers/ECR-0014.html",
+                      "planning/review-site/enablers/index.html",
+                      "planning/review-site/index.html",
+                      "planning/review-site/manifest.json",
+                      "planning/review-site/waves/W2.html",
+                      "planning/status-summary.md",
+                      "planning/wave-amendment-approvals/W2.A06.json",
+                      "tests/foundation/test_taskctl_workflow.py",
+                      "tests/foundation/test_ui_change_gate.py",
+                      "tools/ui_change_gate.py"
+                    ],
+                    "selected_checks": [
+                      ".venv/Scripts/python.exe -B -s tools/product_style_check.py --repo .",
+                      ".venv/Scripts/python.exe -B -s artifacts/tmp/W2.C18.T01.css-equivalence-01/compare-03.py --candidate 9b1903b235e4abbbdac023b4fd094ee615062bfd",
+                      ".venv/Scripts/python.exe -B -s artifacts/tmp/W2.C18.T01-ui-authority-proof-02.py --repo . --candidate 9b1903b235e4abbbdac023b4fd094ee615062bfd --method-record-commit 9b1903b235e4abbbdac023b4fd094ee615062bfd --method-record-sha256 ba0bf35d6778fcccc170bfef08cd9c15fc224ea15ccd1bf7cab2561ba78a3b78 --report artifacts/tmp/W2.C18.T01-ui-authority-proof-qualifying-01.json"
+                    ],
+                    "deferred_checks": [
+                      "Formal independent C18 task/corrective integration disposition and local integration remain required before DONE.",
+                      "W2.A06's three ordered already-approved recovery/verification tasks, retained original restart P1 and 48 architecture/lint findings remain unfinished.",
+                      "CAP-05.S06 fresh shipping Native/Core/Reader, protected-state, current 1.9 full conformance/84 capture, recovery and performance qualification with independent slice review.",
+                      "CP09 and fresh complete affected/repository/deployment-profile W2 qualification, packaging and required platform evidence, independent Wave review.",
+                      "Separate human G2 release decision only after its prerequisites; W3 packet refinement/approval precedes W3 execution.",
+                      "No 8/16-GiB variants or larger-model execution; larger hardware features remain W5. No optional optimization or further shared framework development."
+                    ],
+                    "selection_rationale": "W2.C18.T01 consolidates an identical two-declaration CSS group without changing any selector or token. Select only installed product-style analysis, fresh affected component cascade/geometry equivalence and the exact approved task authority proof. The desktop:application ID identifies this focused existing style/component subset, not completion of the whole application command. Accepted source maintenance has its own actual real-Git/control/taskctl checks and independent normal review; that evidence is authenticated without rerunning it. Generated projections have a separate actual installed two-check PASS and independent semantic disposition. No credible Core/Native/parser/runtime/dependency change arises from the CSS restoration, so fresh full profiles and broader shipping/recovery/84 captures remain S06/Wave work under section8.1.",
+                    "selection_sha256": "e013d904a09a7f552c1289b4b6ffdf23989c6c9e0b8cfc797b5eae662aaef01e",
+                    "prior_attempt_id": null,
+                    "open_finding_ids": [],
+                    "root_cause_analysis": null,
+                    "selected_command_ids": [
+                      "desktop:application",
+                      "foundation:ui-change"
+                    ],
+                    "packet_sha256": "e87787162b6431dbe8a3c9ce9662509a6cb0159a7e10d1f6c34eed4ad1304294"
+                  },
+                  "review": {
+                    "reviewer": "agent:/root/c18_runtime_disposition",
+                    "result": "approved",
+                    "reviewed_at": "2026-10-11T17:23:28+00:00",
+                    "notes": "Independent focused W2.C18.T01 R01 review approves the exact committed CSS correction and its three inherited criteria. Actual fixed-candidate style, 12 complete theme/width/component CSS comparisons and approved two-selector task-authority evidence are authenticated, together with exact accepted normal maintenance, independently reviewed metadata and source/method introductions. The actual frozen R01 packet, criterion/selection/evidence hashes and four-path delivery commit match. No active blocking C18 finding remains. Original dark-theme and other adverse reports remain preserved; separate A06 recovery work, restart P1, 48 architecture/lint findings, Reader/CSP and conformance failures, fresh S06/Wave/platform/package qualification and the human release gate remain required. Ongoing review-site regeneration is not represented as completed."
+                  },
+                  "ledger": {
+                    "path": "artifacts/evidence/W2.C18.T01.review-R01.json",
+                    "sha256": "f65bb726f66ab4c8929fcb2baa3ce712b9208462fe87847efa22b866274aabdd"
+                  },
+                  "findings": [],
+                  "closures": [],
+                  "telemetry": {
+                    "task_id": "W2.C18.T01",
+                    "amendment_id": null,
+                    "attempt_id": "R01",
+                    "submitted_at": "2026-10-11T17:04:35+00:00",
+                    "reviewed_at": "2026-10-11T17:23:28+00:00",
+                    "duration_seconds": 1133,
+                    "outcome": "approved",
+                    "finding_counts": {
+                      "critical": 0,
+                      "high": 0,
+                      "medium": 0,
+                      "low": 0,
+                      "blocking": 0,
+                      "total": 0
+                    },
+                    "command_ids": [
+                      "desktop:application",
+                      "foundation:ui-change"
+                    ],
+                    "remediation": {
+                      "prior_attempt_id": null,
+                      "replayed_finding_ids": [],
+                      "closed_finding_ids": []
+                    }
+                  }
+                }
+              ],
               "current_submission": null
             }
           }
@@ -48906,7 +49037,68 @@
         ],
         "referenceApprovalStatus": "approved"
       },
-      "scope_addenda": [],
+      "scope_addenda": [
+        {
+          "path": "planning/wave-amendment-approvals/W2.A06.B00.addendum-01.json",
+          "sha256": "b13b2fdf265180d34d2a8a54ea6649f0d58983443fc41f43f10fa678475f9f7e",
+          "approved_by": "human:repository-owner",
+          "approved_at": "2026-10-11T13:27:13.517641+00:00",
+          "authorized_additional_paths": [
+            "artifacts/evidence/W2.A06.pre-admission-method-records-01.json",
+            "artifacts/evidence/W2.A06.pre-admission-method-records-02.json",
+            "artifacts/evidence/W2.A06.pre-admission-method-records-03.json",
+            "artifacts/evidence/W2.A06.pre-admission-method-records-04.json",
+            "artifacts/evidence/W2.A06.pre-admission-method-records-06.json",
+            "artifacts/evidence/W2.A06.pre-admission-method-records-07.json",
+            "artifacts/evidence/W2.A06.pre-admission-method-records-source-capture-01.json",
+            "artifacts/evidence/W2.A06.pre-admission-method-records-source-capture-02.json",
+            "artifacts/evidence/W2.A06.pre-admission-method-records-source-capture-03.json",
+            "artifacts/evidence/W2.A06.pre-admission-method-records-source-capture-04.json",
+            "artifacts/evidence/W2.A06.pre-admission-method-records-source-capture-06.json",
+            "artifacts/evidence/W2.A06.pre-admission-method-records-source-capture-07-part-01.json",
+            "artifacts/evidence/W2.A06.pre-admission-method-records-source-capture-07-part-02.json",
+            "artifacts/evidence/W2.A06.pre-admission-method-records-source-capture-07.json"
+          ]
+        },
+        {
+          "path": "planning/wave-amendment-approvals/W2.A06.B00.addendum-02.json",
+          "sha256": "54ecc4445832cad4421c7e90a49c69cf9b25c6b5bd8d9b62b6305dd539333933",
+          "approved_by": "human:repository-owner",
+          "approved_at": "2026-10-11T16:05:25.2524487Z",
+          "authorized_additional_paths": [
+            "artifacts/evidence/W2-C18-T01-approved-metadata.evidence-01.json",
+            "artifacts/evidence/W2-C18-T01-approved-metadata.maintenance-01.md",
+            "artifacts/evidence/W2-C18-T01-approved-metadata.review-01.json",
+            "artifacts/evidence/W2.C18.T01.R01.json",
+            "artifacts/evidence/W2.C18.T01.closeout-compatibility-decision-01.json",
+            "artifacts/evidence/W2.C18.T01.closeout-compatibility-proposal-01.json",
+            "artifacts/evidence/W2.C18.T01.closeout-compatibility-readiness-R01.json",
+            "artifacts/evidence/W2.C18.T01.current-build-lineage-method-decision-01.json",
+            "artifacts/evidence/W2.C18.T01.current-build-lineage-method-proposal-01.json",
+            "artifacts/evidence/W2.C18.T01.current-build-lineage-method-readiness-01.json",
+            "artifacts/evidence/W2.C18.T01.generated-integrity-01.json",
+            "artifacts/evidence/W2.C18.T01.metadata-scope-R01.json",
+            "artifacts/evidence/W2.C18.T01.review-R01.json",
+            "artifacts/evidence/W2.C18.T01.ui-authority-method-record-01.json",
+            "artifacts/evidence/W2.C18.T01.ui-authority-source-capture-01.json",
+            "artifacts/evidence/W2.C18.T01.ui-authority-source-readiness-01.json"
+          ]
+        },
+        {
+          "path": "planning/wave-amendment-approvals/W2.A06.B00.addendum-03.json",
+          "sha256": "d213d66228707540850dd208cbe3b247fa0d8fa47e8a01524d0554b00b0cbcec",
+          "approved_by": "human:repository-owner",
+          "approved_at": "2026-10-11T16:05:25.2524487Z",
+          "authorized_additional_paths": [
+            "artifacts/evidence/ui-change/W2.C18.T01.json",
+            "docs/adr/ADR-0055-recognize-independently-reviewed-approved-corrective-metadata.md",
+            "docs/adr/index.json",
+            "tests/foundation/test_taskctl_workflow.py",
+            "tests/foundation/test_ui_change_gate.py",
+            "tools/ui_change_gate.py"
+          ]
+        }
+      ],
       "task_reviews": [],
       "exit_review": {
         "amendment_id": "W2.A06",
