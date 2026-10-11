@@ -1,0 +1,103 @@
+{
+  "schemaVersion": "1.0",
+  "id": "CAP-05.S06.current-build-method-02",
+  "status": "PROPOSED",
+  "candidateCommit": "59ba1aa732c58b9ba5bdf4fdea95cd0799c27ebd",
+  "wave": "W2",
+  "scope": "CAP-05.S06 integration, CP-09 and W2 qualification; exact current artifact and Reader/Quality build predicates only",
+  "problem": "The inherited EX01 helper preserves two old build predicates: four artifacts only, and Reader/Parsing Quality classified as reference-only route strings. Current approved Reader implementation requires bundled pinned PDF.js resources and async chunks; the approved 1.9 experience includes both functional page contracts. These exact predicates reject current approved product bytes before any conformance capture.",
+  "requestedAuthority": [
+    "Use the three exact ignored producers below to replace only those two predicates within inherited approved 1.9 conformance consumption.",
+    "Record this exact owner decision append-only at artifacts/evidence/CAP-05.S06.current-build-method-decision-01.json and commit it through ordinary repository operations. This is a finite recording-procedure exception for this method; it authorizes no new controller or automation-framework changes.",
+    "Consume the named result only for CAP-05.S06 integration, CP-09 and W2 qualification. Required independent reviews, all remaining checks and the separate G2 release gate remain mandatory."
+  ],
+  "replacementProof": [
+    "Exact current assembler artifact allowlist, including pinned PDF.js file SHA-256 values and approved async chunk names; extra, missing, changed or redirected assets fail.",
+    "Current accepted document-reader.html and parsing-quality.html page contracts are permitted as contract names; every other reference-only route string remains prohibited across all current text assets. Actual reference-only HTML pages remain prohibited."
+  ],
+  "unchangedObligations": [
+    "All original desktop product manifest identity, source/output inventory, Tauri frontend, reference-only HTML/markers, security/CSP and design-system assertions.",
+    "Exact owner/reference/publication/history/candidate/source/renderer/font bindings and immutable approved 1.9 baseline.",
+    "Every existing route, region, workflow, keyboard/focus/accessibility/responsive/theme and controlled visual comparison; complete current product captures and independent visual disposition.",
+    "No original public command is relabelled PASS. Original and adverse evidence is preserved. Every unexpected error or later incompatibility remains blocking."
+  ],
+  "preservedAdverse": [
+    {
+      "path": "artifacts/tmp/CAP-05.S06.W2-1.9-observations-02/conformance-report.json",
+      "sha256": "8ce4a42d42862a61f2598b13caac033cec40b4a3360a399c37b0a68d827d3d5d"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.W2-1.9-observations-02-attempt-02/conformance-report.json",
+      "sha256": "b1783503ddde4705b512475e57b41f5bac55e3fcd179e05af4fba6204c1ee625"
+    }
+  ],
+  "independentAuthorityAssessment": {
+    "path": "artifacts/tmp/CAP-05.S06.W2-1.9-current-build-authority-assessment-01.json",
+    "sha256": "e847ec2161ef370b770bc6425f429f430a851c256e897924ec32efc4d37e70e4"
+  },
+  "authorityReason": "EX01 nonInjectableRuntimePaths expressly substitutes only the 1.9 admission and says additional incompatibilities are not automatically exempted. Its unchangedProofInterfaces retains desktop_app_check.product_build_errors. AGENTS.md requires explicit approval for replacement of approved verification/release criteria; its immutable approval rule prevents silently expanding EX01.",
+  "producers": [
+    {
+      "name": "guard",
+      "path": "artifacts/tmp/CAP-05.S06-current-build-guard-01.py",
+      "sha256": "aed3e4428869b7b9641998660877f432f726c36dad61fc5fa87df928c5225e9c",
+      "executed": false
+    },
+    {
+      "name": "runtime",
+      "path": "artifacts/tmp/CAP-05.S06-current-build-runtime-01.py",
+      "sha256": "d554d53913d7973d3262f920cf547cc51b4446a36fac115e52adc6131eb15807",
+      "executed": false
+    },
+    {
+      "name": "conformance",
+      "path": "artifacts/tmp/CAP-05.S06.W2-1.9-conformance-05.py",
+      "sha256": "23188e3b3630a851beee1cd20d5e8f06cdec865bd894373a1b105a8d93ec4fdd",
+      "executed": false
+    }
+  ],
+  "alternatives": [
+    {
+      "option": "Approve this exact isolated current-contract proof",
+      "consequence": "Resume fresh visual conformance against the approved current product without shared framework edits. Recommended."
+    },
+    {
+      "option": "Keep these old predicates unchanged",
+      "consequence": "Keep CAP-05.S06/W2 conformance blocked; the approved PDF/Reader product cannot satisfy the old four-file and route-name restrictions."
+    },
+    {
+      "option": "Replan product scope or develop shared verifier changes",
+      "consequence": "Requires separate approval and additional work; not recommended and shared framework work remains prohibited."
+    }
+  ],
+  "resumeCondition": "Independent readiness for these exact producer/proposal bytes has no blocking findings and owner approves this exact packet. Append-only decision binds proposal/candidate/readiness/producers, then fresh conformance executes at a clean committed candidate. No additional incompatibility is exempted.",
+  "frameworkSourceChangesAuthorized": false,
+  "productChangesAuthorized": false,
+  "newReferenceAuthorized": false,
+  "baselineChangeAuthorized": false,
+  "modelOrHardwareQualificationAuthorized": false,
+  "taskApproval": false,
+  "sliceApproval": false,
+  "waveCompletion": false,
+  "releaseApproval": false,
+  "reviewBrief": {
+    "path": "artifacts/tmp/CAP-05.S06.current-build-method-02/review.html",
+    "sha256": "c88d2323086e6efcf84ea6db4c52faf45f2a25a2f4aa2b17c3a5c4b40149b36b"
+  },
+  "preservedReadinessFinding": {
+    "path": "artifacts/tmp/CAP-05.S06.current-build-method-01/readiness-review-01.json",
+    "sha256": "ae343d9b58ef6a6b71763d9da0b971fd71f345e28e2fbc02b2ba9d9c8cb26572",
+    "id": "CAP-05.S06.current-build-method-01-R01-F01",
+    "remedy": "Authenticate the exact human/method/direct-record procedure decision, proposal/readiness/brief hashes, actual independent reviewer, immutable regular committed additions and ancestry before loading the substituted runtime; reauthenticate decision closure under held input locks. All first-draft bytes remain preserved unexecuted."
+  },
+  "publishedRecordContract": {
+    "proposal": "artifacts/evidence/CAP-05.S06.current-build-method-proposal-01.json",
+    "readiness": "artifacts/evidence/CAP-05.S06.current-build-method-readiness-01.json",
+    "decision": "artifacts/evidence/CAP-05.S06.current-build-method-decision-01.json",
+    "refShape": "Decision references contain path/sha256/commit. Independent readiness binds proposal path/sha256 before publication, plus exact producer hashes, reviewBrief, candidateCommit, result SOURCE_READY, blockingFindings [], actual reviewer, methodReady true and directRecordingProcedureReady true. Published bytes must remain identical to the reviewed proposal/readiness bytes, as exact immutable regular Git additions; the later human decision names their actual introduction commits."
+  },
+  "otherKnownW2GateLimits": [
+    "This exact method does not dispose of the retained 45 architecture-classifier and three desktop-lint false-positive findings documented at artifacts/tmp/CAP-05.S06.full-check-triage-01.json. Their original full checks remain adverse/unwaived; the fresh complete Wave suite and authorized independent disposition still remain required.",
+    "No hardware/model profile or latency target is changed. No 8/16GiB workload variants are authorized."
+  ]
+}
