@@ -1,0 +1,359 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "bounded-governance-maintenance-evidence",
+  "candidateCommit": "b840a1ab1d6e54847cc0c2981a584e423d802e69",
+  "predecessorCommit": "1a28d59ef019c5dbfa0abd2530a1f3d5e6d4a327",
+  "recordedAt": "2026-10-11T16:34:49.319209+00:00",
+  "implementer": "agent:/root/c17_independent_disposition",
+  "riskTier": 2,
+  "selectedChecksStatus": "PASS",
+  "contract": "artifacts/evidence/W2-C18-T01-approved-metadata.maintenance-01.md",
+  "changedFiles": [
+    {
+      "path": "artifacts/evidence/W2-C18-T01-approved-metadata.maintenance-01.md",
+      "blob": "68ce633fefad46e46cbd3e9d7968d8765b38fe10",
+      "sha256": "a2d7bae2ad4855a64554c11333c30f80b7df94f8b4e127ac59a67755da223755"
+    },
+    {
+      "path": "docs/adr/ADR-0055-recognize-independently-reviewed-approved-corrective-metadata.md",
+      "blob": "43d9fe884eb5134c6854dcb67bb05ee9e70cdd91",
+      "sha256": "f95daa78a6e23aae044ad94e36c029a5c1005d9f22bd77cdb10639a6a3050417"
+    },
+    {
+      "path": "docs/adr/index.json",
+      "blob": "76f4673cd1f50d11dba869dd662e9f1fdbee516a",
+      "sha256": "588c9f0168bd0d61ef3849078749424eab694495732da7d38ec70560d41d2112"
+    },
+    {
+      "path": "tests/foundation/test_taskctl_workflow.py",
+      "blob": "73283492b09a84c105b3da525baa925a85fb322a",
+      "sha256": "d17a6565997410cc7a9d86336afbbb23477d6bc39dd865326666f329ebcc1b3f"
+    },
+    {
+      "path": "tests/foundation/test_ui_change_gate.py",
+      "blob": "a7b16df83bdb4cab892d21919b3077a22e8ed32c",
+      "sha256": "ca12c3430e11810272087e21c468c2d3bb5d8a39d44b6f2b33f2850969f03460"
+    },
+    {
+      "path": "tools/ui_change_gate.py",
+      "blob": "99d6bd8383fab26dcd999e7e9f13232284992f41",
+      "sha256": "54e99373061053c61acd0ad1e39560be1833777293dffc411ae810e35dfe58c9"
+    }
+  ],
+  "sourceCommits": [
+    {
+      "commit": "b840a1ab1d6e54847cc0c2981a584e423d802e69",
+      "changedFiles": [
+        {
+          "path": "artifacts/evidence/W2-C18-T01-approved-metadata.maintenance-01.md",
+          "gitBlob": "68ce633fefad46e46cbd3e9d7968d8765b38fe10",
+          "sha256": "a2d7bae2ad4855a64554c11333c30f80b7df94f8b4e127ac59a67755da223755"
+        },
+        {
+          "path": "docs/adr/ADR-0055-recognize-independently-reviewed-approved-corrective-metadata.md",
+          "gitBlob": "43d9fe884eb5134c6854dcb67bb05ee9e70cdd91",
+          "sha256": "f95daa78a6e23aae044ad94e36c029a5c1005d9f22bd77cdb10639a6a3050417"
+        },
+        {
+          "path": "docs/adr/index.json",
+          "gitBlob": "76f4673cd1f50d11dba869dd662e9f1fdbee516a",
+          "sha256": "588c9f0168bd0d61ef3849078749424eab694495732da7d38ec70560d41d2112"
+        },
+        {
+          "path": "tests/foundation/test_taskctl_workflow.py",
+          "gitBlob": "73283492b09a84c105b3da525baa925a85fb322a",
+          "sha256": "d17a6565997410cc7a9d86336afbbb23477d6bc39dd865326666f329ebcc1b3f"
+        },
+        {
+          "path": "tests/foundation/test_ui_change_gate.py",
+          "gitBlob": "a7b16df83bdb4cab892d21919b3077a22e8ed32c",
+          "sha256": "ca12c3430e11810272087e21c468c2d3bb5d8a39d44b6f2b33f2850969f03460"
+        },
+        {
+          "path": "tools/ui_change_gate.py",
+          "gitBlob": "99d6bd8383fab26dcd999e7e9f13232284992f41",
+          "sha256": "54e99373061053c61acd0ad1e39560be1833777293dffc411ae810e35dfe58c9"
+        }
+      ]
+    }
+  ],
+  "checks": [
+    {
+      "command": ".venv/Scripts/python.exe -B -s -m ruff check tools/ui_change_gate.py tests/foundation/test_ui_change_gate.py tests/foundation/test_taskctl_workflow.py",
+      "exitCode": 0,
+      "durationSeconds": 0.09563329996308312,
+      "logs": [
+        {
+          "path": "artifacts/tmp/W2.remaining-corrections-batch-01/c18-maintenance-qualification-01/ruff-lint.stdout.log",
+          "sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18"
+        },
+        {
+          "path": "artifacts/tmp/W2.remaining-corrections-batch-01/c18-maintenance-qualification-01/ruff-lint.stderr.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      ]
+    },
+    {
+      "command": ".venv/Scripts/python.exe -B -s -m ruff format --check tools/ui_change_gate.py tests/foundation/test_ui_change_gate.py tests/foundation/test_taskctl_workflow.py",
+      "exitCode": 0,
+      "durationSeconds": 0.11064029997214675,
+      "logs": [
+        {
+          "path": "artifacts/tmp/W2.remaining-corrections-batch-01/c18-maintenance-qualification-01/ruff-format.stdout.log",
+          "sha256": "eee76f865de5a9f2456950f710ae5d5f9b5bd0ea02aa54f614c5eed6642a0bfd"
+        },
+        {
+          "path": "artifacts/tmp/W2.remaining-corrections-batch-01/c18-maintenance-qualification-01/ruff-format.stderr.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      ]
+    },
+    {
+      "command": ".venv/Scripts/python.exe -B -s -m mypy tools/ui_change_gate.py tests/foundation/test_ui_change_gate.py tests/foundation/test_taskctl_workflow.py",
+      "exitCode": 0,
+      "durationSeconds": 0.2664694999693893,
+      "logs": [
+        {
+          "path": "artifacts/tmp/W2.remaining-corrections-batch-01/c18-maintenance-qualification-01/mypy.stdout.log",
+          "sha256": "281a094c39385b4d7b53e5db635f52158036861433c2a4975b9039e77a627a24"
+        },
+        {
+          "path": "artifacts/tmp/W2.remaining-corrections-batch-01/c18-maintenance-qualification-01/mypy.stderr.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      ]
+    },
+    {
+      "command": ".venv/Scripts/python.exe -B -s tools/adr_check.py --repo . --base 1a28d59ef019c5dbfa0abd2530a1f3d5e6d4a327 --head b840a1ab1d6e54847cc0c2981a584e423d802e69",
+      "exitCode": 0,
+      "durationSeconds": 2.0544509000028484,
+      "logs": [
+        {
+          "path": "artifacts/tmp/W2.remaining-corrections-batch-01/c18-maintenance-qualification-01/adr.stdout.log",
+          "sha256": "4d668a71f8995fbcab6bdef230db1f933470a398a20c961917a27855b62c3dc0"
+        },
+        {
+          "path": "artifacts/tmp/W2.remaining-corrections-batch-01/c18-maintenance-qualification-01/adr.stderr.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      ]
+    },
+    {
+      "command": ".venv/Scripts/python.exe -B -s -m unittest -v test_ui_change_gate.UiChangeGateTests.test_corrective_metadata_scope_authenticates_real_git_authority test_ui_change_gate.UiChangeGateTests.test_corrective_metadata_scope_denies_unapproved_authority_and_history test_ui_change_gate.UiChangeGateTests.test_corrective_metadata_scope_denies_incomplete_or_malformed_disposition test_ui_change_gate.UiChangeGateTests.test_corrective_metadata_scope_requires_exact_append_only_review_round test_ui_change_gate.UiChangeGateTests.test_corrective_metadata_scope_preserves_every_prior_round test_ui_change_gate.UiChangeGateTests.test_linked_source_remediation_preserves_exact_intermediate_control_history test_ui_change_gate.UiChangeGateTests.test_linked_public_scope_rejects_unattributed_control_contract_and_delivery test_ui_change_gate.UiChangeGateTests.test_linked_control_maintenance_requires_exact_reviewed_commit_attribution test_ui_change_gate.UiChangeGateTests.test_legacy_control_maintenance_authenticates_existing_protocol test_ui_change_gate.UiChangeGateTests.test_maintenance_proposed_adr_association_preserves_prior_authority test_ui_change_gate.UiChangeGateTests.test_linked_correction_accepts_only_review_bound_proposed_adr_delivery test_ui_change_gate.UiChangeGateTests.test_legacy_control_maintenance_rejects_false_or_late_authority test_ui_change_gate.UiChangeGateTests.test_legacy_control_maintenance_requires_valid_implementer_identity test_taskctl_workflow.CorrectiveTaskWorkflowTests",
+      "exitCode": 0,
+      "durationSeconds": 360.79516519996105,
+      "logs": [
+        {
+          "path": "artifacts/tmp/W2.remaining-corrections-batch-01/c18-maintenance-qualification-01/affected-real-git-tests.stdout.log",
+          "sha256": "a21faf9764bc100424dac4578cfe3d879adc506b7e13e2be483d78e2238d973a"
+        },
+        {
+          "path": "artifacts/tmp/W2.remaining-corrections-batch-01/c18-maintenance-qualification-01/affected-real-git-tests.stderr.log",
+          "sha256": "e4ebecc76c3cc6d2d34ec11bc86ee2c7223ae2188f437df01365b553f21cf259"
+        }
+      ]
+    }
+  ],
+  "freshObservation": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/c18-maintenance-qualification-01/receipt.json",
+    "sha256": "a26fc88f1ab2c9e9aed0fea2e0da657ea1e5cfabe46452bd1db21032a83fb78e",
+    "startedAt": "2026-10-11T16:28:15.371637+00:00",
+    "finishedAt": "2026-10-11T16:34:19.188432+00:00",
+    "reuse": false
+  },
+  "sourceRawInputs": [
+    {
+      "path": "tools/ui_change_gate.py",
+      "sha256": "54e99373061053c61acd0ad1e39560be1833777293dffc411ae810e35dfe58c9"
+    },
+    {
+      "path": "tests/foundation/test_ui_change_gate.py",
+      "sha256": "ca12c3430e11810272087e21c468c2d3bb5d8a39d44b6f2b33f2850969f03460"
+    },
+    {
+      "path": "tests/foundation/test_taskctl_workflow.py",
+      "sha256": "d17a6565997410cc7a9d86336afbbb23477d6bc39dd865326666f329ebcc1b3f"
+    },
+    {
+      "path": "docs/adr/index.json",
+      "sha256": "588c9f0168bd0d61ef3849078749424eab694495732da7d38ec70560d41d2112"
+    },
+    {
+      "path": "docs/adr/ADR-0055-recognize-independently-reviewed-approved-corrective-metadata.md",
+      "sha256": "f95daa78a6e23aae044ad94e36c029a5c1005d9f22bd77cdb10639a6a3050417"
+    },
+    {
+      "path": "artifacts/evidence/W2-C18-T01-approved-metadata.maintenance-01.md",
+      "sha256": "a2d7bae2ad4855a64554c11333c30f80b7df94f8b4e127ac59a67755da223755"
+    }
+  ],
+  "verificationSelection": {
+    "riskAnalysis": "Read-only admission recognizes exact owner-approved and independently reviewed metadata. Real Git tests challenge complete intermediate history, immutable rounds, actual authority consumers, source/reference/schema/merge/redirect denial, generated-source/receipt integrity and unchanged normal taskctl candidate/diff/criterion/failed-check boundaries. Changed-file style/type and protected-path ADR association are affected.",
+    "selected": [
+      "new metadata real Git positive/denial tests",
+      "directly affected linked correction and normal maintenance tests",
+      "CorrectiveTaskWorkflowTests",
+      "changed-file Ruff lint/format and mypy",
+      "ADR registry and changed protected-path association"
+    ],
+    "deferred": [
+      "whole foundation module/profile",
+      "Native/Core/parser/Reader/CSP/runtime and capture suites",
+      "full repository and deployment profiles"
+    ],
+    "deferredRationale": "No product, dependency, runtime, reference, schema or platform input changed. Product and fresh full Wave qualification remain required at their own scope."
+  },
+  "preservedCharacterizationAndDevelopment": [
+    {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/c18-metadata-maintenance-01/adr-01.receipt.json",
+      "sha256": "8efe8202ee482d2627dd43618177663616c3fbf6e6e5628e34418b4d2ff936f6",
+      "exitCode": 0,
+      "durationSeconds": 2.2919226000085473,
+      "qualifying": false
+    },
+    {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/c18-metadata-maintenance-01/characterization-01.receipt.json",
+      "sha256": "9cbf65199564873540e91b2832045f73148fa6a0d6b838d949558ed7226b2b5e",
+      "exitCode": 1,
+      "durationSeconds": 1.032990499981679,
+      "qualifying": false
+    },
+    {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/c18-metadata-maintenance-01/characterization-02.receipt.json",
+      "sha256": "d872f4ae2088766e979aee733d943cc2d5fac5071f8f6461e18578c07beb6776",
+      "exitCode": 1,
+      "durationSeconds": 2.882412300037686,
+      "qualifying": false
+    },
+    {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/c18-metadata-maintenance-01/characterization-03.receipt.json",
+      "sha256": "8a8c7cc16562add1a923774feb451cd68dd23acbe37af641d8d8f1712ff44c9c",
+      "exitCode": 1,
+      "durationSeconds": 2.8126580000389367,
+      "qualifying": false
+    },
+    {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/c18-metadata-maintenance-01/characterization-04.receipt.json",
+      "sha256": "048d183d108df772aa685473adce1411d23ecc42a79fe170f024f982ce5b552a",
+      "exitCode": 1,
+      "durationSeconds": 2.7860737000009976,
+      "qualifying": false
+    },
+    {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/c18-metadata-maintenance-01/characterization-05.receipt.json",
+      "sha256": "ee8b5517b14392c1bf221b295529f7f7e3c78de6a8741c4e406d82e1d093f801",
+      "exitCode": 1,
+      "durationSeconds": 3.934314199956134,
+      "qualifying": false
+    },
+    {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/c18-metadata-maintenance-01/development-01.receipt.json",
+      "sha256": "2992c9f44cace66290ee6883fe4de3ab08081561d045b168ddbf1604aa0078fa",
+      "exitCode": 1,
+      "durationSeconds": 74.12060560000828,
+      "qualifying": false
+    },
+    {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/c18-metadata-maintenance-01/development-02.receipt.json",
+      "sha256": "e5da782ce59f8c3b8c5993569c15be35f2e22a21cbf1d8825429fbae85e42123",
+      "exitCode": 0,
+      "durationSeconds": 223.84139110002434,
+      "qualifying": false
+    },
+    {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/c18-metadata-maintenance-01/development-03.receipt.json",
+      "sha256": "a82731dd0322e36e6176885876d0e3386144d283e8b5945b65c64d41fd4c5433",
+      "exitCode": 0,
+      "durationSeconds": 32.45681359997252,
+      "qualifying": false
+    },
+    {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/c18-metadata-maintenance-01/mypy-01.receipt.json",
+      "sha256": "4ad7b7eade14e14fdf6311c5c248f78390336b38d7257c6507c7e3558e8e97d6",
+      "exitCode": 1,
+      "durationSeconds": 3.5890663000172935,
+      "qualifying": false
+    },
+    {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/c18-metadata-maintenance-01/mypy-02.receipt.json",
+      "sha256": "ef86915cfec6afc999a84f4d90ee65cdab7c5d9fdfe81b1965713984d3164a9c",
+      "exitCode": 2,
+      "durationSeconds": 0.5728071000194177,
+      "qualifying": false
+    },
+    {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/c18-metadata-maintenance-01/mypy-03.receipt.json",
+      "sha256": "a65240cc3563c5749ff8fbd2a77182d217e0369cd76e54436c9b491580f57af6",
+      "exitCode": 0,
+      "durationSeconds": 4.356982600002084,
+      "qualifying": false
+    },
+    {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/c18-metadata-maintenance-01/ruff-format-01.receipt.json",
+      "sha256": "ece8ca3609c67f341852f0519d1ce1e28c16dc0e29ece36dda846cf8ac93b55c",
+      "exitCode": 0,
+      "durationSeconds": 0.1261365000391379,
+      "qualifying": false
+    },
+    {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/c18-metadata-maintenance-01/ruff-format-02.receipt.json",
+      "sha256": "d15f5eaff0c93c3480512ed96e0263ef0a32b6f02261364c2117cfc7463dc56f",
+      "exitCode": 0,
+      "durationSeconds": 0.13506380002945662,
+      "qualifying": false
+    },
+    {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/c18-metadata-maintenance-01/ruff-format-check-02.receipt.json",
+      "sha256": "72289eaff29b347d177b1d0c1edb95a0ac71dd659f0f7f6a2a56c154741e5cdd",
+      "exitCode": 0,
+      "durationSeconds": 0.23664219997590408,
+      "qualifying": false
+    },
+    {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/c18-metadata-maintenance-01/ruff-format-check-03.receipt.json",
+      "sha256": "75e80f502c9a95df642335e8657d1cb31131d1e0a321caee6e1ec450c7c05aee",
+      "exitCode": 0,
+      "durationSeconds": 0.10110500000882894,
+      "qualifying": false
+    },
+    {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/c18-metadata-maintenance-01/ruff-lint-01.receipt.json",
+      "sha256": "e1e272dfd790147c2003d5126f42669d988cd76754106f1b3993f8905c6b7b97",
+      "exitCode": 1,
+      "durationSeconds": 0.17393360001733527,
+      "qualifying": false
+    },
+    {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/c18-metadata-maintenance-01/ruff-lint-02.receipt.json",
+      "sha256": "7f59a23735352199995f38e4ca8e77e4aa66dd7fcda524eb8a7e211b831764f3",
+      "exitCode": 0,
+      "durationSeconds": 0.13564880000194535,
+      "qualifying": false
+    },
+    {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/c18-metadata-maintenance-01/ruff-lint-03.receipt.json",
+      "sha256": "10b7583b2b2b990f50204bd37bfb653d98a9b3bf18f21d905042f57588a728bd",
+      "exitCode": 0,
+      "durationSeconds": 0.10294980002800003,
+      "qualifying": false
+    }
+  ],
+  "advisoryFindings": [
+    {
+      "id": "W2-C18-T01-approved-metadata-advisory-R01-F01",
+      "regression": "test_corrective_metadata_scope_preserves_every_prior_round",
+      "closure": "Authenticate retained and historically touched immutable RNN records; real Git rewrite, deletion and rewrite/revert deny."
+    },
+    {
+      "id": "W2-C18-T01-approved-metadata-advisory-R01-F02",
+      "regression": "test_corrective_metadata_scope_denies_incomplete_or_malformed_disposition",
+      "closure": "Require actual 64-character hexadecimal authority and integrity receipt digests; present-null cannot select optional unhashed mode."
+    }
+  ],
+  "independentReviewPending": true,
+  "taskApproved": false,
+  "sliceApproved": false,
+  "waveComplete": false,
+  "releaseApproved": false,
+  "limits": "This is actual selected control-maintenance evidence only. Independent maintenance acceptance, C18 task submission/review, A06 admission/tasks, S06/CP09 and separate W2 release remain required. Original adverse observations and approvals are preserved."
+}
