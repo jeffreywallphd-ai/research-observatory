@@ -1,0 +1,53 @@
+{
+  "taskId": "W2.C17.T01",
+  "originTaskId": "CAP-05.S06.T03",
+  "candidateCommit": "aa43e3fcee791ffa73e41d5969bbaff3ff42476e",
+  "exactProductPaths": [
+    "apps/desktop/src/app/ApplicationRuntime.tsx",
+    "tests/desktop/test_reprocessing_workflow_navigation.py"
+  ],
+  "reference": {
+    "referenceId": "RO-UI-ACADEMIC-MINIMAL-1.9",
+    "version": "1.9",
+    "packageSha256": "24b8d62356863980ae9a13db7d6a06b04b76c60e2f1920d2e888cadecfb24c4b",
+    "approvalCommit": "d4691f716f839f4aac5bb50563b56ac863b32685",
+    "approvedBy": "human:repository-owner",
+    "previousReferenceId": "RO-UI-ACADEMIC-MINIMAL-1.8"
+  },
+  "substitutionPredicates": [
+    "linked_correction_authority:1779",
+    "validate:6975-6977"
+  ],
+  "producer": {
+    "path": "artifacts/tmp/W2.C17.T01-ui-authority-proof-03.py",
+    "sha256": "9c61d1de18fbf21e502f2d607f26489f44a708b76105ea0b5161a67091cd20b9"
+  },
+  "taskApproval": false,
+  "waveCompletion": false,
+  "releaseApproval": false,
+  "frameworkSourceChangesAuthorized": false,
+  "schemaVersion": "1.0",
+  "documentType": "exact-source-free-ui-restoration-method-owner-decision",
+  "status": "APPROVED",
+  "approvedBy": "human:repository-owner",
+  "recordedAt": "2026-10-11T00:48:52.344588+00:00",
+  "methodSubstitutionApproved": true,
+  "restorativeClassificationApproved": true,
+  "decision": "Classify this exact two-file committed fix as restoration of the unchanged owner-approved Academic Minimal 1.9 behavior. Authorize only this task-owned, source-free verification method to supply the missing human restorative classification with independent current-candidate review at the two named origin selectors. Preserve every other normal claim, scope, reference, schema, history, criterion, lease, submission and independent review requirement. This approval precedes alternate method use; it does not claim to precede the already authorized restoration code.",
+  "approvalEvidence": "The repository owner explicitly approved this exact reviewed W2.C17.T01 packet in this campaign after viewing artifacts/evidence/W2.C17.T01.ui-authority-method-01.review.html: Approved. Please proceed with the exact W2.C17.T01 packet, finish W2, and then move directly into W3 using the workflow and AGENTS.md.",
+  "proposal": {
+    "path": "artifacts/evidence/W2.C17.T01.ui-authority-method-proposal-01.json",
+    "sha256": "a20b84f2fa2d4a8085ddad24d24afe2f439644e141fe8e2e81bc64e0b760e2a8",
+    "commit": "6abd5b1c5ba161a900938c6079e96c8c2d29c315"
+  },
+  "readinessReview": {
+    "path": "artifacts/evidence/W2.C17.T01.ui-authority-method-readiness-01.json",
+    "sha256": "fe281171f1759a46b476d55af29246bcca59ac3941f97e684df00dcdc8bf0ef3",
+    "commit": "1a3f0ca68a659527254a752366c6e373b2f44c70"
+  },
+  "remainingRequirements": [
+    "Normal criterion-linked corrective task evidence and independent commit-bound disposition.",
+    "Local main integration, CAP-05.S06 integration, fresh W2 qualification and independent Wave review.",
+    "Separate human G2 release decision and the W3 initiation and exact Wave approval route."
+  ]
+}
