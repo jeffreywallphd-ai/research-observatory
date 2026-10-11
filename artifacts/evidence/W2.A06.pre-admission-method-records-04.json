@@ -1,0 +1,131 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "batch-conforming-method-source-record",
+  "batchGrant": {
+    "path": "planning/wave-amendment-approvals/W2.A06.json",
+    "sha256": "3ecf2b98806f1589be7bd63fcc4f25cf0ee2df79bc95a3a0fefda2ce5666e4b2",
+    "introductionCommit": "ab3c35369a8cd57876a1890db90263e5ab2ba395"
+  },
+  "planContract": {
+    "path": "planning/enabler-change-requests/ECR-0014.md",
+    "sha256": "7c70aeebc5a60ab606bd5f6170b48e2012becab8cf7547f7ad8cd75482291496"
+  },
+  "methodId": "exact-current-build-bounded-recovery-lineage",
+  "candidateCommit": "4b4bd3e53b72fdcabeb8311b931265a8ba94c94e",
+  "producer": {
+    "path": "artifacts/tmp/CAP-05.S06.qualifying-native-build-03.py",
+    "sha256": "3ba35554fa9cb348d459f6f022e888f5ed3038518791f97d84ca832c6dbf7154",
+    "retainedSourceBytesReference": {
+      "path": "artifacts/evidence/W2.A06.pre-admission-method-records-source-capture-04.json",
+      "sha256": "f49834c35e3e6767247c205139be1b068a9e2a395b2b68b9b00f702d46d8f7e6"
+    }
+  },
+  "additionalProducer": {
+    "path": "artifacts/tmp/CAP-05.S06.qualifying-package-04.py",
+    "sha256": "22b0a61bb3999a12d1e4025a1cf9b427f90e00707bf7bb016a1d4e4cfdd85f49"
+  },
+  "allowedPredicateIds": [
+    "exact-current-build-bounded-recovery-lineage"
+  ],
+  "selectedInputs": [
+    {
+      "path": "artifacts/tmp/CAP-05.S06.qualifying-native-build-03.py",
+      "sha256": "3ba35554fa9cb348d459f6f022e888f5ed3038518791f97d84ca832c6dbf7154",
+      "role": "Exact direct build/package consumer and inherited unchanged C18 lineage guard"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.qualifying-package-04.py",
+      "sha256": "22b0a61bb3999a12d1e4025a1cf9b427f90e00707bf7bb016a1d4e4cfdd85f49",
+      "role": "Exact direct build/package consumer and inherited unchanged C18 lineage guard"
+    },
+    {
+      "path": "planning/wave-amendment-approvals/W2.A06.json",
+      "sha256": "3ecf2b98806f1589be7bd63fcc4f25cf0ee2df79bc95a3a0fefda2ce5666e4b2",
+      "role": "Exact direct build/package consumer and inherited unchanged C18 lineage guard"
+    },
+    {
+      "path": "planning/enabler-change-requests/ECR-0014.md",
+      "sha256": "7c70aeebc5a60ab606bd5f6170b48e2012becab8cf7547f7ad8cd75482291496",
+      "role": "Exact direct build/package consumer and inherited unchanged C18 lineage guard"
+    },
+    {
+      "path": "artifacts/tmp/W2.C18.T01.current-build-lineage-method-02/preparation-checks-01.json",
+      "sha256": "2faa7a31a3457fd4bc13f48dd8a1cd621838e861b23be4244b9d76b0473b33e6",
+      "role": "Exact direct build/package consumer and inherited unchanged C18 lineage guard"
+    },
+    {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/shipping-leaves-source-preflight-02.json",
+      "sha256": "b432fbf78423c1eddf15b54a07e398803dc19bdd94e293bc331768693f85915e",
+      "role": "Exact direct build/package consumer and inherited unchanged C18 lineage guard"
+    },
+    {
+      "path": "artifacts/tmp/W2.C18.T01.current-build-lineage-02.py",
+      "sha256": "9ca3f254cfdda423d1ed645a8c1dc3187b4dd0d31ea11f64e25d07386ced3788",
+      "role": "Exact direct build/package consumer and inherited unchanged C18 lineage guard"
+    },
+    {
+      "path": "artifacts/evidence/W2.C17.T01.review-R01.json",
+      "sha256": "ff13ad1eab599e37ed6443d27383b469cb00893869be134d9e9446428f5978dd",
+      "role": "Exact direct build/package consumer and inherited unchanged C18 lineage guard"
+    },
+    {
+      "path": "artifacts/evidence/W2.C18.T01.current-build-lineage-method-proposal-01.json",
+      "sha256": "7d3a96c506aa469eaf733f7046bba4ade8a35f5102689bfc4c3dd8e7fe3d402e",
+      "role": "Exact direct build/package consumer and inherited unchanged C18 lineage guard"
+    },
+    {
+      "path": "artifacts/evidence/W2.C18.T01.current-build-lineage-method-readiness-01.json",
+      "sha256": "47e2f4facf9158e53a314e3ffe80b0e56087260751ab106cfa334a5f4b608e36",
+      "role": "Exact direct build/package consumer and inherited unchanged C18 lineage guard"
+    },
+    {
+      "path": "artifacts/evidence/W2.C18.T01.current-build-lineage-method-decision-01.json",
+      "sha256": "067b178e7b64217b85853ade1bb85645026da4399f94754ed368a299c07eac69",
+      "role": "Exact direct build/package consumer and inherited unchanged C18 lineage guard"
+    },
+    {
+      "path": "tools/build_manifest.py",
+      "sha256": "7aa71fb296c8b7e093bec3fe73c9de06f98ca47f3f761077bfe6ab423f7c6dcf",
+      "role": "Exact direct build/package consumer and inherited unchanged C18 lineage guard"
+    },
+    {
+      "path": "apps/desktop/src-tauri/Cargo.toml",
+      "sha256": "d84274e9b37b1070fe96896d468df44db5b6afb8e9fd44230ae13674e2af8d37",
+      "role": "Exact direct build/package consumer and inherited unchanged C18 lineage guard"
+    },
+    {
+      "path": "Cargo.lock",
+      "sha256": "bb0d97076e3dd73427065bf65e9805be056a0bbc1274eafddbfd1c66ac46a2c3",
+      "role": "Exact direct build/package consumer and inherited unchanged C18 lineage guard"
+    },
+    {
+      "path": "apps/desktop/src-tauri/tauri.conf.json",
+      "sha256": "1b774c7be68f3f6573cdd03cdf121d748c208c9aa935317e2365668815ba88e9",
+      "role": "Exact direct build/package consumer and inherited unchanged C18 lineage guard"
+    }
+  ],
+  "negativeControls": {
+    "receiptPath": "artifacts/tmp/W2.C18.T01.current-build-lineage-method-02/preparation-checks-01.json",
+    "sha256": "2faa7a31a3457fd4bc13f48dd8a1cd621838e861b23be4244b9d76b0473b33e6",
+    "actualResult": "PASS_PREPARATION_ONLY",
+    "reused": true,
+    "rationale": "Unchanged helper02 exact bytes and nine genuine previously executed guard controls. Independent source review permits this precise reuse for direct consumers; no build or runtime result reused."
+  },
+  "independentReadiness": {
+    "reviewer": "agent:/root/a03_closeout_review",
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/shipping-leaves-source-readiness-01.json",
+    "sha256": "ccae88811aee0e39b55a652d37e1ebe01fe28999ae84bf9495b9579b871954dc",
+    "result": "SOURCE_READY"
+  },
+  "createdAt": "2026-10-11T14:33:15.129306+00:00",
+  "executionScope": "Fresh standard Native build and package binding for exact C18-only candidate; no future recovery product lineage, CSP replacement or runtime qualification",
+  "prohibitedChanges": {
+    "productSource": false,
+    "sharedFramework": false,
+    "securityPolicy": false,
+    "governedReference": false,
+    "releaseCriteria": false,
+    "releaseApproval": false
+  },
+  "limits": "Guard controls remain preparation-only. New Native build and package inputs/results must be collected fresh at the actual fixed candidate. Shipping Reader remains separate."
+}

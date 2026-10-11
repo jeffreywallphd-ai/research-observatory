@@ -1,0 +1,235 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "batch-conforming-method-source-record",
+  "batchGrant": {
+    "path": "planning/wave-amendment-approvals/W2.A06.json",
+    "sha256": "3ecf2b98806f1589be7bd63fcc4f25cf0ee2df79bc95a3a0fefda2ce5666e4b2",
+    "introductionCommit": "ab3c35369a8cd57876a1890db90263e5ab2ba395"
+  },
+  "planContract": {
+    "path": "planning/enabler-change-requests/ECR-0014.md",
+    "sha256": "7c70aeebc5a60ab606bd5f6170b48e2012becab8cf7547f7ad8cd75482291496"
+  },
+  "methodId": "exact-current-reader-local-worker-csp",
+  "candidateCommit": "4b4bd3e53b72fdcabeb8311b931265a8ba94c94e",
+  "producer": {
+    "path": "artifacts/tmp/W2.A06.C18.csp-native-proof-03.py",
+    "sha256": "75fd247a5a9706d64490a47284ea774194da9a18bba1e73f57f01429ac83b019",
+    "retainedSourceBytesReference": {
+      "path": "artifacts/evidence/W2.A06.pre-admission-method-records-source-capture-03.json",
+      "sha256": "467064148ebcf386f4c3525a05fe314c34dc6fbe3dbbebbe5fc7b41901939d99"
+    }
+  },
+  "allowedPredicateIds": [
+    "exact-current-reader-local-worker-csp"
+  ],
+  "selectedInputs": [
+    {
+      "path": "artifacts/tmp/W2.A06.C18.csp-native-proof-03.py",
+      "sha256": "75fd247a5a9706d64490a47284ea774194da9a18bba1e73f57f01429ac83b019",
+      "role": "Exact finite method input; full private installed-runtime closure expanded from digest-bound actual control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.csp-native-fixture-03/Cargo.toml",
+      "sha256": "4419505b2ffe93928be1f4d7ba3d7f23bcebf0b7e7a4202047141f1a97e0eaa1",
+      "role": "Exact finite method input; full private installed-runtime closure expanded from digest-bound actual control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.csp-native-fixture-03/Cargo.lock",
+      "sha256": "49e1d031587db6bc42bf770393292d1be6e21db7abf48924d87fb463d6c1bc3d",
+      "role": "Exact finite method input; full private installed-runtime closure expanded from digest-bound actual control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.csp-native-fixture-03/build.rs",
+      "sha256": "6aeeab41bc35efde4e3c2b644a6248f7fc06d24ae30b75c0d33491cbb0c1fa31",
+      "role": "Exact finite method input; full private installed-runtime closure expanded from digest-bound actual control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.csp-native-fixture-03/src/main.rs",
+      "sha256": "78b5a6b24e97cd0b2f9b816551d6f347859f4a5d18733509835b959d260ca22d",
+      "role": "Exact finite method input; full private installed-runtime closure expanded from digest-bound actual control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.csp-native-fixture-03/tauri.conf.json",
+      "sha256": "60f11930701cbb2777e4ec7e3fd84c33f165bda93394047dce67545a96de0ec4",
+      "role": "Exact finite method input; full private installed-runtime closure expanded from digest-bound actual control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.csp-native-fixture-03/capabilities/main-window.json",
+      "sha256": "77e504e7052502291ea77737b5664e2b339692d8c3c2aa2c19adb2d44214995e",
+      "role": "Exact finite method input; full private installed-runtime closure expanded from digest-bound actual control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.csp-native-fixture-03/icons/icon.ico",
+      "sha256": "ec10d37be4351bde0389de3a15e279273b71d5b082a00a8305c786ff69677b33",
+      "role": "Exact finite method input; full private installed-runtime closure expanded from digest-bound actual control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.csp-native-fixture-03/icons/icon.png",
+      "sha256": "516818a974a59c0379b616a3913eade623f131c2f2202838d98df7649eabc2a0",
+      "role": "Exact finite method input; full private installed-runtime closure expanded from digest-bound actual control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.csp-native-fixture-03/assets/index.html",
+      "sha256": "dc7913afb839edda8cd2538c94bd58d7a78d64c0637f8242ae0d92b566fb1201",
+      "role": "Exact finite method input; full private installed-runtime closure expanded from digest-bound actual control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.csp-native-fixture-03/assets/main.js",
+      "sha256": "1ea210ac301def62be5c0283c88901aab2d42bc7c1472f99c67d106409f8e1eb",
+      "role": "Exact finite method input; full private installed-runtime closure expanded from digest-bound actual control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.csp-native-fixture-03/assets/local-worker.js",
+      "sha256": "18e9ab624772baba7fee09e1830a99baf72e5c41986a8f77d9f1916639ec53dc",
+      "role": "Exact finite method input; full private installed-runtime closure expanded from digest-bound actual control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.csp-native-fixture-03/assets/malformed-worker.js",
+      "sha256": "d0b06da981952bd787fe5b8b8bd73e182d008f6cc60bef9fbef68aa40f627858",
+      "role": "Exact finite method input; full private installed-runtime closure expanded from digest-bound actual control receipt"
+    },
+    {
+      "path": "planning/wave-amendment-approvals/W2.A06.json",
+      "sha256": "3ecf2b98806f1589be7bd63fcc4f25cf0ee2df79bc95a3a0fefda2ce5666e4b2",
+      "role": "Exact finite method input; full private installed-runtime closure expanded from digest-bound actual control receipt"
+    },
+    {
+      "path": "planning/enabler-change-requests/ECR-0014.md",
+      "sha256": "7c70aeebc5a60ab606bd5f6170b48e2012becab8cf7547f7ad8cd75482291496",
+      "role": "Exact finite method input; full private installed-runtime closure expanded from digest-bound actual control receipt"
+    },
+    {
+      "path": "tools/desktop_app_check.py",
+      "sha256": "cb617d6448e8a358317ecf530266d5bd64ed6ff7212729c4cdf8895449e813c8",
+      "role": "Exact finite method input; full private installed-runtime closure expanded from digest-bound actual control receipt"
+    },
+    {
+      "path": "apps/desktop/src-tauri/tauri.conf.json",
+      "sha256": "1b774c7be68f3f6573cdd03cdf121d748c208c9aa935317e2365668815ba88e9",
+      "role": "Exact finite method input; full private installed-runtime closure expanded from digest-bound actual control receipt"
+    },
+    {
+      "path": "apps/desktop/src-tauri/capabilities/main-window.json",
+      "sha256": "77e504e7052502291ea77737b5664e2b339692d8c3c2aa2c19adb2d44214995e",
+      "role": "Exact finite method input; full private installed-runtime closure expanded from digest-bound actual control receipt"
+    },
+    {
+      "path": "docs/adr/ADR-0029-preserve-document-revisions-and-mediate-source-viewing.md",
+      "sha256": "ffee796414cdde9155667c8c3a710e7c904197971b7714832c7c5bc950687e7b",
+      "role": "Exact finite method input; full private installed-runtime closure expanded from digest-bound actual control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.C18.T01.current-build-lineage-02.py",
+      "sha256": "9ca3f254cfdda423d1ed645a8c1dc3187b4dd0d31ea11f64e25d07386ced3788",
+      "role": "Exact finite method input; full private installed-runtime closure expanded from digest-bound actual control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/csp-native-classifier-controls-03/receipt.json",
+      "sha256": "5c1fd8d5d4c79095676b7b6ed4721858986752bdd5a152fa13b881ded7241fc0",
+      "role": "Exact finite method input; full private installed-runtime closure expanded from digest-bound actual control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.C18.csp-method-03.py",
+      "sha256": "d17f2341cc596d5a84b280bbe8779be577df9befdf4918bd4ae11c081adfc984",
+      "role": "Exact finite method input; full private installed-runtime closure expanded from digest-bound actual control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.C18.csp-controls-03.py",
+      "sha256": "899f27e31fc05934dc13cc00b165f1cda4aab42dea3d0fcb88b7b2d853f53833",
+      "role": "Exact finite method input; full private installed-runtime closure expanded from digest-bound actual control receipt"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S04.T01.owned-native-job-01.py",
+      "sha256": "991d6cc09aa992ba3675e3107058d934c9e0d56750aa9457ae4b3d1e642efe58",
+      "role": "Exact finite method input; full private installed-runtime closure expanded from digest-bound actual control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/csp-native-compile-02.receipt.json",
+      "sha256": "92ab072d8f35d3af11437f688825783733cd7f5c96de5b6e28cae59de62369c4",
+      "role": "Exact finite method input; full private installed-runtime closure expanded from digest-bound actual control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/csp-native-compile-02.build.log",
+      "sha256": "415863d3067ee3eed82cd852d3abccad8d3a54efafe953881096c2fa9c6ff6be",
+      "role": "Exact finite method input; full private installed-runtime closure expanded from digest-bound actual control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/csp-native-compile-02.resolution.log",
+      "sha256": "943613172e2944854e27eea433ab0d3bd2a92d97a5f7e344429c43690a964d5e",
+      "role": "Exact finite method input; full private installed-runtime closure expanded from digest-bound actual control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/csp-native-source-preflight-03.json",
+      "sha256": "7298caf409abf51cee1a4714e717bd0db8f68e88c66ae62a09c9c62c763bdac6",
+      "role": "Exact finite method input; full private installed-runtime closure expanded from digest-bound actual control receipt"
+    },
+    {
+      "path": "target/release/w2-a06-csp-native-fixture-r03.exe",
+      "sha256": "ccd78ca970739058d6764f33457e984a0efe945d1c61d46b6a83e0ab6f47b8e1",
+      "role": "Exact finite method input; full private installed-runtime closure expanded from digest-bound actual control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/csp-native-runtime-remediation-assessment-01.json",
+      "sha256": "9e9f812e975ad2f1b299f1357e1c91a95eacdf32a435d5c402db571ceeebd35e",
+      "role": "Exact finite method input; full private installed-runtime closure expanded from digest-bound actual control receipt"
+    },
+    {
+      "path": ".local/toolchains/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/tauri-utils-2.9.3/src/html2.rs",
+      "sha256": "04beee12c794585d349cf1e45850483d5f7eeea73df7268dbd2470d8675bb7b3",
+      "role": "Exact finite method input; full private installed-runtime closure expanded from digest-bound actual control receipt"
+    },
+    {
+      "path": ".local/toolchains/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/tauri-utils-2.9.3/src/assets.rs",
+      "sha256": "7d7ae635a4abc79088ebe537c3e96d1cb493748782963674b33e42e727857f81",
+      "role": "Exact finite method input; full private installed-runtime closure expanded from digest-bound actual control receipt"
+    },
+    {
+      "path": ".local/toolchains/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/tauri-codegen-2.6.3/src/embedded_assets.rs",
+      "sha256": "95d96bdf8295ee6edadc8c091c347533bcc7c3963be7db4da95005d9598380ee",
+      "role": "Exact finite method input; full private installed-runtime closure expanded from digest-bound actual control receipt"
+    },
+    {
+      "path": ".local/toolchains/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/tauri-codegen-2.6.3/src/context.rs",
+      "sha256": "ea13b70394f0166813d3aa1938d423ddd3ed809f81ecf541586c2f32f15255bd",
+      "role": "Exact finite method input; full private installed-runtime closure expanded from digest-bound actual control receipt"
+    },
+    {
+      "path": ".local/toolchains/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/tauri-2.11.5/src/manager/mod.rs",
+      "sha256": "3b35d04bded3a068d3d9e1737d52a66a69ccfbc4b2300ec00ed6a5deaa85c79a",
+      "role": "Exact finite method input; full private installed-runtime closure expanded from digest-bound actual control receipt"
+    },
+    {
+      "path": ".local/toolchains/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/tauri-2.11.5/src/protocol/tauri.rs",
+      "sha256": "54f375940676fe774a1bc0f2303781472f24de9bc69dcafc32f80025201bc1ea",
+      "role": "Exact finite method input; full private installed-runtime closure expanded from digest-bound actual control receipt"
+    }
+  ],
+  "negativeControls": {
+    "receiptPath": "artifacts/tmp/W2.remaining-corrections-batch-01/csp-native-classifier-controls-03/receipt.json",
+    "sha256": "5c1fd8d5d4c79095676b7b6ed4721858986752bdd5a152fa13b881ded7241fc0",
+    "actualResult": "PASS_CLASSIFIER_CONTROLS_ONLY"
+  },
+  "independentReadiness": {
+    "reviewer": "agent:/root/c17_independent_disposition",
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/csp-native-source-readiness-02.json",
+    "sha256": "e6a36f2d01b3fd202dc8f6707f1024ccf2f8dc0b5cf6a83b8647f68647c71f61",
+    "result": "SOURCE_READY"
+  },
+  "createdAt": "2026-10-11T14:30:49.147676+00:00",
+  "executionScope": "Isolated owned Native CSP enforcement only; shipping protected Reader remains separate",
+  "prohibitedChanges": {
+    "productSource": false,
+    "sharedFramework": false,
+    "securityPolicy": false,
+    "governedReference": false,
+    "releaseCriteria": false,
+    "releaseApproval": false
+  },
+  "preservedAdverseRuntime": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/csp-native-runtime-01/receipt.json",
+    "sha256": "3a923a877f351cf9182f81131b8931cce01d02f3b4d8cc717b2d72b37f8225e0",
+    "status": "FAIL"
+  },
+  "limits": "Actual source/control recording only. No shipping Reader, task, slice, Wave or release completion."
+}
