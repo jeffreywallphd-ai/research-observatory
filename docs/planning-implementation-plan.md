@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: c43af60e280f388cdd214408e1aaa5cc188c53584490c7fbef03b62b7c6de02d
+source_sha256: 155638b73010f910f4b449902a55f6d236e4e568058aa5c692ffb4f9495b0979
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -27,7 +27,7 @@ This YAML file is the authoritative task, dependency, gate, and progress ledger.
 | Capabilities | 20 |
 | Slices | 117 |
 | Tasks | 356 |
-| Enabler tasks | 23 |
+| Enabler tasks | 26 |
 | Waves | 12 |
 | Wave approval bases | 2 |
 | Wave amendments | 15 |
@@ -55,7 +55,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 | `W2` | `W2.A03` | `ECR-0011` | `planning/wave-amendment-approvals/W2.A03.json` | `ADOPTED` |
 | `W2` | `W2.A04` | `ECR-0012` | `planning/wave-amendment-approvals/W2.A04.json` | `ADOPTED` |
 | `W2` | `W2.A05` | `ECR-0013` | `planning/wave-amendment-approvals/W2.A05.json` | `ADOPTED` |
-| `W2` | `W2.A06` | `ECR-0014` | `planning/wave-amendment-approvals/W2.A06.json` | `APPROVED` |
+| `W2` | `W2.A06` | `ECR-0014` | `planning/wave-amendment-approvals/W2.A06.json` | `MATERIALIZED` |
 
 ## Waves
 
@@ -3297,11 +3297,12 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 **Approval record:** `planning/wave-amendment-approvals/W2.A06.json` (`3ecf2b98806f1589be7bd63fcc4f25cf0ee2df79bc95a3a0fefda2ce5666e4b2`)
 
-**Lifecycle / bootstrap / campaign / completion:** `APPROVED` / `APPROVED` / `NONE` / `PENDING`
+**Lifecycle / bootstrap / campaign / completion:** `MATERIALIZED` / `APPROVED` / `NONE` / `PENDING`
 
 **Append-only lifecycle history:**
 
 - `E01` `APPROVED` at `2026-10-11T13:27:13.517641+00:00` by human:repository-owner: The repository owner answered 'Approved, please continue' to the exact complete ECR-0014/W2.A06 batch request identifying candidate ac6b664a2ced6b2263ff7b5ab48535c3f39798ce, packet SHA-256 6293590db74b9a3ec4ce6019a1713def568798ac3a71208a5583bfcff78f7a34 and independent R01 ledger a31e42a11fcd1b7eaf52639f174f7885e2d08d49f5ec1a3a8099bdc1ac3e7193 at 87e44188dbb0e54039f8b77d3613ed2728bcd51b. This single grant binds the complete reviewed three ordered recovery/verification tasks, narrow durable current-user and same-machine ownership witness, exact 45 AST plus 3 literal finite method contracts, exact Reader CSP predicate, unchanged one-file formatter-debt disposition, complete quality data inventory, conditional original-fixture recovery only when actual evidence authenticates, the exact current W2.C18.T01 method packet and bounded pre-admission/final source and evidence recording. Conforming details inside these exact contracts require no second owner answer. W1 restoration in W2 is already authorized. Actual C18 completion and quiescence precede B00 submission, review, exact materialization and activation; every admitted task still requires claim, implementation, actual checks, independent disposition and normal integration. All original approvals, adverse findings and immutable evidence remain preserved. No additional framework development, unknown predicate or scope exemption, 8/16GiB variant, task/Slice/Wave completion or W2 release approval is granted. This timestamp records binding of the actual answer, not an invented message timestamp.
+- `E02` `MATERIALIZED` at `2026-10-11T19:28:34+00:00` by codex-w2-implementation: Materialized the exact human-approved task inventory.
 
 ### Amendment-exit review and adoption — W2.A06
 
@@ -3318,6 +3319,96 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - None
 
 **Bounded tasks:**
+
+### - [ ] W2.A06.T01 - Restore explicit reviewed project recovery and durable owned-session proof
+
+**Status / owner / review:** `NOT_STARTED` / - / - (`-`)
+
+**Dependencies:** `W2.A06.B00`
+
+**Objective:** Restore CAP-02.S01 explicit reviewed recovery in W2, with Native-owned durable current-user and same-machine proof, Core verified-copy orchestration and conservative denials.
+
+**Acceptance criteria:**
+
+- T01-AC01: Implement only the canonical ECR-0014 proposal recovery/API/witness contract and exact T01 path envelope; preserve W1 history, ADR0008 Native authority and existing project-key/current-user protection. Publish indexed task-linked ADR0054 in the same protected change set.
+- T01-AC02: New proof-eligible sessions have durable typed dual-scope ownership witness before writable lock publication, exact Native/Core process birth/executable/session/principal/project/lock binding, 10-second owned heartbeat and matched close/cancellation. Missing/unknown proof, live owner or PID reuse denies recovery.
+- T01-AC03: Explicit preview/confirm creates a verified local working copy only; original tree/lock/accepted facts/ciphertexts remain unchanged. Verify source stability, database/WAL, protected object authentication and IDs before atomic empty-target publication and normal fresh open.
+- T01-AC04: Actual whole Native AND Core owned termination/fresh startup plus protected readback proves eligible-session recovery; real principal/foreign-host/untrusted-witness/path/concurrency/key/audit/interrupted-copy/cancel denials preserve source and grant no false success. Core-only restart is additional coverage.
+- T01-AC05: Independently review exact committed security/interface scope and actual negative/positive evidence. Original R03 P1 remains open unless the separately bound one-use operator recovery has real authenticated readback and independent finding closure; no new fixture substitution.
+
+**Verification:**
+
+- Focused failing characterization and pytest tests/security/test_project_recovery.py tests/service/test_project_lifecycle.py tests/service/test_native_project_contract.py; contract generator/schema/client checks on exact changed API/event contracts.
+- Actual Windows Native/Core owned session, dual user/machine witness, whole-process abrupt restart, protected readback, alternative principal/host/path/API denials and heartbeat/copy/close races at fixed committed candidate; retain all streams and owned cleanup.
+- Unchanged ADR check against actual task base/candidate, affected quality and exact protected-source review; architecture original FAIL plus only the separately granted closed45+3 proof where needed. Expanded independent commit-bound disposition.
+
+#### Review history — W2.A06.T01
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
+
+### - [ ] W2.A06.T02 - Integrate explicit recovery review into the approved Projects experience
+
+**Status / owner / review:** `NOT_STARTED` / - / - (`-`)
+
+**Dependencies:** `W2.A06.B00`, `W2.A06.T01`
+
+**Objective:** Restore approved Projects recovery states using existing Native directory picker, semantic dialogs, keyboard/focus and protected Core lifecycle authority.
+
+**Acceptance criteria:**
+
+- T02-AC01: Implement only the canonical state/action/focus map and T02 exact path envelope under approved RO-UI-ACADEMIC-MINIMAL-1.9 Projects recovery/lifecycle patterns, using T01 API and existing directory picker. No new wizard/reference, auto recovery, renderer host attestation or scope/security change.
+- T02-AC02: Display unavailable/denied/preview/cancel/copy failure/verified-copy/open failure/recovered states truthfully; explicit confirm and open remain separate human actions, original untouched and no automatic reparse/acceptance.
+- T02-AC03: Actual shipping Native/Core/UI evidence proves keyboard Tab/Enter/Space/Escape, strict focus, cancel/failure, denied alternate routes, protected before/after facts, themes/reflow and recovery after whole-process restart. Static mocks/screenshots alone are insufficient.
+- T02-AC04: Same-task indexed ADR0054 implementation notes and exact independent security/UI/reference disposition bind candidate and actual source hashes. A demonstrated material experience/policy change stops, while conforming restoration needs no further owner ask.
+
+**Verification:**
+
+- Focused existing ProjectsWorkspace.test.tsx and affected native/project/security tests; machine-check actual state/action projections, inaccessible/denied/cancelled and success paths.
+- Fresh real shipping UIA and protected project readbacks for exact recovery fixture; actual keyboard/focus/theme/reflow semantics, whole Native/Core restart and owned cleanup; independently authenticated evidence.
+- Existing UI approval/reference/token/route/workflow/accessibility/visual/ADR predicates, with only explicit finite C18/current-build/CSP method successors after real independent readiness/source recording. Expanded commit-bound UI/security disposition.
+
+#### Review history — W2.A06.T02
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
+
+### - [ ] W2.A06.T03 - Synchronize quality inventory and qualify the finite approved verification methods
+
+**Status / owner / review:** `NOT_STARTED` / - / - (`-`)
+
+**Dependencies:** `W2.A06.B00`, `W2.A06.T01`, `W2.A06.T02`
+
+**Objective:** Complete governed Python inventory and execute exact closed45+3, current Reader CSP, unchanged formatter-debt and bounded current-build lineage contracts without shared checker/controller changes.
+
+**Acceptance criteria:**
+
+- T03-AC01: Update only quality-scope.json data plus same-task indexed ADR0054 notes/index to include complete actual six-root Python filesystem discovery under unchanged exclusions, preserving existing valid entries and all current/new admitted sources; do not equate tracked lower bound with full discovery.
+- T03-AC02: Preserve unchanged original architecture/desktop lint/security/quality checkers and complete FAIL receipts. Independently preflight exact ignored producers/negative controls and append actual readiness/source hashes under this batch before proof; match exact45 AST+3 literal multiset, never counts/prefix exemptions.
+- T03-AC03: Replace only the explicit current Reader CSP equality predicate with the exact pinned directive/source map; actual local shipping Reader worker positive and isolated external-source CSP denials are required. Asset-hash preflight and missing/malformed worker errors do not imply a new runtime cryptographic worker verifier.
+- T03-AC04: Any fresh quality error besides exact unchanged tools/plan_review_site.py formatter debt remains blocking. Original quality status/exit stays truthful; permit only explicitly granted one-file debt disposition with existing generated-view integrity and independent actual evidence. No shared source edits or whole-quality PASS relabel.
+- T03-AC05: Authenticated actual task admission/claim/spec/finite source/security/UI dispositions bind every C18/recovery20/quality-data delta before conforming ignored lineage successor preparation/execution. Missing/changed/unapproved/new inputs deny. All original conformance guards, input locks and adverse rounds remain.
+- T03-AC06: Final affected checks/build/package/current-reference capture are fresh at one fixed integrated committed candidate after all selected changes. Independent task/combined contribution review follows; CAP05S06, CP09, W2 full profile/platform/model/installer and G2 remain separate unmet gates until actual qualification.
+
+**Verification:**
+
+- Existing complete quality discovery/check at final candidate; preserve scope/format/lint/type outputs and exact approved one-file debt disposition only. Existing plan_review_check and ADR checks for actual metadata state.
+- Unchanged architecture/desktop lint/security originals plus exclusive closed45+3 and exact CSP negative-control/proof receipts under actual independent source/readiness records; complete output multiset and all unexpected findings remain blocking.
+- Actual independently authenticated task/claim/spec/source/review lineage records; finite held-input producer negative controls, fresh standard frontend/Native/Core build/package/current-reference capture and affected integrated recovery/UI tests; independent combined security/verification disposition.
+
+#### Review history — W2.A06.T03
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
 
 
 ## Linked corrective tasks

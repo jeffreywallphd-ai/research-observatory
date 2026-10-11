@@ -48775,7 +48775,7 @@
       "approval_path": "planning/wave-amendment-approvals/W2.A06.json",
       "approval_sha256": "3ecf2b98806f1589be7bd63fcc4f25cf0ee2df79bc95a3a0fefda2ce5666e4b2",
       "approval_status": "APPROVED",
-      "lifecycle_status": "APPROVED",
+      "lifecycle_status": "MATERIALIZED",
       "bootstrap_status": "APPROVED",
       "campaign_status": "NONE",
       "bootstrap_attempts": [
@@ -49123,7 +49123,47 @@
           ]
         }
       ],
-      "task_reviews": [],
+      "task_reviews": [
+        {
+          "task_id": "W2.A06.T01",
+          "title": "Restore explicit reviewed project recovery and durable owned-session proof",
+          "status": "NOT_STARTED",
+          "mode": "latest-review-only",
+          "latest_review": {
+            "reviewer": null,
+            "result": null,
+            "reviewed_at": null,
+            "notes": null
+          },
+          "review_control": null
+        },
+        {
+          "task_id": "W2.A06.T02",
+          "title": "Integrate explicit recovery review into the approved Projects experience",
+          "status": "NOT_STARTED",
+          "mode": "latest-review-only",
+          "latest_review": {
+            "reviewer": null,
+            "result": null,
+            "reviewed_at": null,
+            "notes": null
+          },
+          "review_control": null
+        },
+        {
+          "task_id": "W2.A06.T03",
+          "title": "Synchronize quality inventory and qualify the finite approved verification methods",
+          "status": "NOT_STARTED",
+          "mode": "latest-review-only",
+          "latest_review": {
+            "reviewer": null,
+            "result": null,
+            "reviewed_at": null,
+            "notes": null
+          },
+          "review_control": null
+        }
+      ],
       "exit_review": {
         "amendment_id": "W2.A06",
         "mode": "latest-completion-only",
