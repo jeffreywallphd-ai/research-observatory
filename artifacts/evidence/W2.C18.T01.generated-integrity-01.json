@@ -1,0 +1,93 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "corrective-generated-output-integrity-observation",
+  "taskId": "W2.C18.T01",
+  "candidateCommit": "caf334239490739ddb554e152dd98ff2fe41777d",
+  "startedAt": "2026-10-11T16:38:52.041526+00:00",
+  "checks": [
+    {
+      "command": ".venv/Scripts/python.exe -B -s tools/backlog_views.py --repo . --check",
+      "exitCode": 0,
+      "durationSeconds": 3.2034811000339687,
+      "logs": [
+        {
+          "path": "artifacts/tmp/W2.remaining-corrections-batch-01/c18-generated-integrity-01/backlog-views.stdout.log",
+          "sha256": "36ebe8ba5eed16d416087f957ce901132e936a4ed14c97dbcb91651c3e2678aa"
+        },
+        {
+          "path": "artifacts/tmp/W2.remaining-corrections-batch-01/c18-generated-integrity-01/backlog-views.stderr.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      ]
+    },
+    {
+      "command": ".venv/Scripts/python.exe -B -s tools/plan_review_check.py --repo . --report artifacts/tmp/W2.remaining-corrections-batch-01/c18-generated-integrity-01/site-report.json",
+      "exitCode": 0,
+      "durationSeconds": 498.09745250002015,
+      "logs": [
+        {
+          "path": "artifacts/tmp/W2.remaining-corrections-batch-01/c18-generated-integrity-01/review-site.stdout.log",
+          "sha256": "8ed03f177e807963487580f83a52495cd6e1afd56254abfc4fc5a6730c7c6ba1"
+        },
+        {
+          "path": "artifacts/tmp/W2.remaining-corrections-batch-01/c18-generated-integrity-01/review-site.stderr.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      ]
+    }
+  ],
+  "result": "PASS",
+  "inputBindings": [
+    {
+      "path": "tools/backlog_views.py",
+      "gitBlob": "aecf636cade452a9b74450ce4fd0afcdccc95cb9",
+      "sha256": "6cd3926e3b52a7a097a3a4b70fdcd39fb26f882c6631825a0d7b7cc587bb9e29",
+      "workingRawSHA256": "6cd3926e3b52a7a097a3a4b70fdcd39fb26f882c6631825a0d7b7cc587bb9e29"
+    },
+    {
+      "path": "tools/plan_review_check.py",
+      "gitBlob": "9d7305a0195b96969a11131cacd31125d7351b8a",
+      "sha256": "fa26bc169a1b2d167d85a90ee70da06eab3bf378d36c940d754fa8d87e3e418d",
+      "workingRawSHA256": "fa26bc169a1b2d167d85a90ee70da06eab3bf378d36c940d754fa8d87e3e418d"
+    },
+    {
+      "path": "tools/plan_review_site.py",
+      "gitBlob": "7bd2158970512e416b238020a7355bd601d825b7",
+      "sha256": "2a19af60c4e7bd0efb679fd291c4675de8d41f6716f40382214293a071657b12",
+      "workingRawSHA256": "2a19af60c4e7bd0efb679fd291c4675de8d41f6716f40382214293a071657b12"
+    },
+    {
+      "path": "planning/backlog.yaml",
+      "gitBlob": "52bcfa5045fb396ea5066abccfa814fb5dc62259",
+      "sha256": "bb026c6ae736eb4fbbfd00b1073931521087d72c10c718cb7cff330fb9b0bfa4",
+      "workingRawSHA256": "c95faaab98c725f80e3e785d7ca31dfc197fc09c268aee5bcea33cadfeef9da1"
+    }
+  ],
+  "derivedOutputs": [
+    {
+      "path": "planning/review-site/README.md",
+      "gitBlob": "f744b12b1ddb1944a8beca787986fccf67b8c935",
+      "sha256": "aed64ba14cfbb5eeae1a28ceccf53d8954a021a2a237c88c0ff3ecc3aa997480",
+      "workingRawSHA256": "bc9500e028b5aa82cf230603ade1e3ba8b1cb8b4d1350ad9ed46793519ac7413"
+    },
+    {
+      "path": "planning/review-site/enablers/ECR-0014.html",
+      "gitBlob": "f7f136a7c9f2190b084b7eee144f67c5d0478b63",
+      "sha256": "ea349190ac5a689852c34e13f66bb1df006660c9d16355541424d5416756f83a",
+      "workingRawSHA256": "d26c7323d57061c7bb4439ed08c2ce569c4ece9d7d17984b1110b1f6427b4394"
+    },
+    {
+      "path": "planning/review-site/index.html",
+      "gitBlob": "0cd9a0aceaf9938674ecc877e9ed7c1da7b22773",
+      "sha256": "dc21b27590334971abb3a7b3dbc55e3ea02448ed64a52632819d81b5b9b332a7",
+      "workingRawSHA256": "b262e08d8ba9c6ff8c6dcbbff5426010268b1c4d314cea94f5510851d694566f"
+    }
+  ],
+  "producer": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/c18-generated-integrity-checks-01.py",
+    "sha256": "f4b475f27dc5e7684a62252f65aff49245b23d9e7a96593bbc1c5229cb73b88a"
+  },
+  "limits": "Actual fresh installed generator/check observations, followed by independent semantic assessment. No task, Slice, Wave or release approval; raw Windows and Git LF representations remain distinct.",
+  "finishedAt": "2026-10-11T16:47:14.021730+00:00",
+  "selectedInputsUnchanged": true
+}
