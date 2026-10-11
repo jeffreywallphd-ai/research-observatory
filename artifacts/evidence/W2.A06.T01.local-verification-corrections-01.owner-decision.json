@@ -1,0 +1,44 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "exact-owner-approved-local-verification-correction-batch",
+  "taskId": "W2.A06.T01",
+  "waveId": "W2",
+  "amendmentId": "W2.A06",
+  "decision": "APPROVED_BOTH_EXACT_CORRECTIONS_AND_ONE_USE_DIRECT_RECORDING_EXCEPTIONS",
+  "recordedAt": "2026-10-11T23:10:50.632053+00:00",
+  "approvalEvidence": {
+    "kind": "actual-human-chat-reply",
+    "answer": "Approve both exact corrections and recording exceptions (Recommended)",
+    "retainedLocalResponseSHA256": "3d0963b150b3e3b5f646c5edec7eae77553e7d272e72e8eee1f29a486ff79eff"
+  },
+  "inspectedCandidate": "3a6b09ae52edae77565a07e3278fb9a9583cd779",
+  "packetAuthoritiesUnchangedThroughCandidate": "9a244a77fd4e04ed031f43d1097d9429e39902ec",
+  "approvedPublishedPackets": [
+    {
+      "path": "artifacts/evidence/W2.A06.T01.foreign-host-timing-amendment-01.proposal.json",
+      "sha256": "85e25fd8031e6d81a038b8f96f16d081033ee4e0152badf80a71a002ae65c48c"
+    },
+    {
+      "path": "artifacts/evidence/W2.A06.T01.foreign-host-timing-amendment-01.readiness.json",
+      "sha256": "089c4f4f10f4a8871369fbe3b226b8329302cd535372227dac50867f84654956"
+    },
+    {
+      "path": "artifacts/evidence/W2.A06.T01.object-test-scope-addendum-01.proposal.json",
+      "sha256": "a35ea71f0a3f773288ff8e3dfd73e31b066da0dcbda55877e30aeefd4d9cd4b7"
+    },
+    {
+      "path": "artifacts/evidence/W2.A06.T01.object-test-scope-addendum-01.readiness.json",
+      "sha256": "1d5910135bc1e2c816784af4abc9c33f41128af2c3fa07fb62d4d8758c5a6bc8"
+    },
+    {
+      "path": "artifacts/evidence/W2.A06.T01.object-test-scope-addendum-01.exact.patch",
+      "sha256": "629d82d79f0f1f4b289e62e2b08ea3dda02a8835133dbe2e323719f5c5a19b3d"
+    }
+  ],
+  "grant": [
+    "Exact physical foreign-Windows-machine test timing delta and its one-use direct append-only recording exception.",
+    "Exact single existing test path and two-line keyword acceptance/forwarding patch, and its separate one-use direct append-only recording exception."
+  ],
+  "preservation": "Every original frozen ECR, approval, packet, backlog criterion and adverse outcome remains immutable. Neither physical-host execution nor task/Wave/release approval is claimed.",
+  "limits": "No framework/controller/checker/hook change, other source path, weakened assertion/time bound, product security change, hardware spend, external effect or release decision."
+}

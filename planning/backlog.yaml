@@ -62817,19 +62817,24 @@ wave_amendments:
     - Unchanged ADR check against actual task base/candidate, affected quality and exact protected-source review; architecture
       original FAIL plus only the separately granted closed45+3 proof where needed. Expanded independent commit-bound disposition.
     packet_task_sha256: ff85fb7100c811c43c766aaba5cc20e35ee265c4c8813282f7d0a753cd2ccf74
-    status: IN_PROGRESS
+    status: BLOCKED
     owner: codex-w2-implementation
     branch: codex/w2-implementation
     base_sha: 15c2ab7bcc9b7ef111f44ffcb465628729fd4a5d
     worktree: .
-    lease:
-      claimed_by: codex-w2-implementation
-      claimed_at: '2026-10-11T20:36:17+00:00'
-      expires_at: '2026-10-12T04:36:17+00:00'
+    lease: null
     started_at: '2026-10-11T20:36:17+00:00'
-    updated_at: '2026-10-11T20:36:17+00:00'
+    updated_at: '2026-10-11T22:59:38+00:00'
     completed_at: null
-    blocker: null
+    blocker:
+      reason: Physical foreign-host witness test needs a second Windows installation, which is unavailable. Exact hardware-timing
+        and single-test scope/recording packets await owner decision; local candidate9a244a77 has independently authenticated
+        selected checks and API finding closure, not task approval.
+      next_action: Obtain owner decision on a06-foreign-host-deferral-01 and a06-object-test-seam-addendum-02 review packets.
+        If approved, reopen the same owned task, append exact decisions and supplements, apply only the reviewed two-line
+        test patch, then finish selected proof and independent taskctl review. No W2 release approval.
+      recorded_at: '2026-10-11T22:59:38+00:00'
+      owner: codex-w2-implementation
     implementation_notes: ''
     evidence: []
     verification_state: null

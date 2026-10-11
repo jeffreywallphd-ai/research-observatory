@@ -1,0 +1,43 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "authoritative-owner-approved-one-criterion-timing-supplement",
+  "taskId": "W2.A06.T01",
+  "waveId": "W2",
+  "amendmentId": "W2.A06",
+  "authority": {
+    "path": "artifacts/evidence/W2.A06.T01.local-verification-corrections-01.owner-decision.json",
+    "sha256": "18003828f9dfc9999087709febf7bf4171edfe4cb2eea016528e5969e81ab5ef"
+  },
+  "proposal": {
+    "path": "artifacts/evidence/W2.A06.T01.foreign-host-timing-amendment-01.proposal.json",
+    "sha256": "85e25fd8031e6d81a038b8f96f16d081033ee4e0152badf80a71a002ae65c48c"
+  },
+  "independentReadiness": {
+    "path": "artifacts/evidence/W2.A06.T01.foreign-host-timing-amendment-01.readiness.json",
+    "sha256": "089c4f4f10f4a8871369fbe3b226b8329302cd535372227dac50867f84654956"
+  },
+  "appliesTo": [
+    "T01-AC04 physical foreign-host fragment",
+    "matching T01 verification",
+    "W2.A06.S01 physical-host proof accounting",
+    "A06-AC03/04 physical-host proof accounting",
+    "W2 recovery/security qualification and G2 residual disclosure"
+  ],
+  "approvedDue": "First available genuine independent Windows installation, mandatory no later than W5 exit. If still unavailable then, W5 remains gated pending a new explicit owner decision.",
+  "dueNowTreatment": "Only this physical foreign-host test is a disclosed future obligation outside due-now T01/S01/A06/W2 completion. It is not an executed test or PASS. All other checks and independent/release gates remain required.",
+  "futureProof": {
+    "fixture": "Tiny synthetic typed ownership witness with no private research content, project key or vault credential.",
+    "requiredBoundary": "Two genuine independent Windows installations with independently initialized machine protection, not an anonymous thread, changed account, corrupted blob or another process on this computer.",
+    "positive": "Authentic producer-machine dual-scope witness publication and permitted-owner round-trip.",
+    "negative": "Authentic other-machine same-machine-wrapped ciphertext is denied by the receiving machine; preserve authenticated provenance, exact candidate, raw execution streams and denial outcome.",
+    "review": "Independent security disposition must bind both actual platform executions and the preserved witness bytes. No fabricated foreign-host PASS or private credential transfer."
+  },
+  "implementationUnchanged": "Inner current-user and outer same-machine DPAPI, foreign-host/user and unknown identity denial, Native authority, protected project/key/vault formats and every local failure/cancellation/recovery obligation are unchanged.",
+  "recordingAuthority": "Owner explicitly approved only this one-use section2.2 direct append-only recording exception. No ECR/bootstrap campaign, controller overlay or generic bypass is claimed.",
+  "residual": {
+    "physicalForeignHostTestExecuted": false,
+    "physicalForeignHostTestPassed": false,
+    "mandatoryFutureWave": "W5",
+    "carryIntoW5PlanningAndQualification": true
+  }
+}

@@ -1,0 +1,47 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "independent-single-test-scope-decision-readiness",
+  "taskId": "W2.A06.T01",
+  "reviewer": "agent:/root/a03_t01_lineage_audit",
+  "reviewedCandidate": "3a6b09ae52edae77565a07e3278fb9a9583cd779",
+  "result": "READY_FOR_EXPLICIT_OWNER_DECISION_ON_EXACT_PATH_AND_ONE_USE_RECORDING",
+  "proposal": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/a06-object-test-seam-addendum-02/proposal.json",
+    "sha256": "a35ea71f0a3f773288ff8e3dfd73e31b066da0dcbda55877e30aeefd4d9cd4b7"
+  },
+  "exactPatch": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/a06-object-test-seam-addendum-02/exact.patch",
+    "sha256": "629d82d79f0f1f4b289e62e2b08ea3dda02a8835133dbe2e323719f5c5a19b3d"
+  },
+  "reviewPage": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/a06-object-test-seam-addendum-02/review.html",
+    "sha256": "8039a4dfdae4ed1cf6b93c718c0adf3488ca734f3fce38dab38f7e81e9898b21",
+    "embeddedProposalAndPatchMatch": true
+  },
+  "authenticatedSource": {
+    "additionalPath": "tests/data/test_local_object_store.py",
+    "currentSha256": "202157cb8c6ac371bb28492a089fec0d9a3ac52a1cb524a13a463c20d5b47a51",
+    "proposedSha256": "685e2b25ef61052bbaaec9fecb514f6a932ffc0a97f756388e2d22c9c9eb3e54",
+    "proposedSnapshotSha256": "685e2b25ef61052bbaaec9fecb514f6a932ffc0a97f756388e2d22c9c9eb3e54",
+    "exactPatchOccurrences": 1
+  },
+  "basis": [
+    "At the current and claimed-base product behavior, plaintext ordinary open reaches _verified_reader with keyword cancellation_requested. The existing test wrapper at lines 629-630 accepts only three positional arguments, so it raises before signaling verified; the exact committed regression receipt preserves that failure.",
+    "The proposed two-line patch accepts and forwards the optional keyword to the real verification reader. A byte-level reconstruction produces the proposal's exact post-patch SHA-256. All concurrency, rights, denial, retry, stream, transaction, and timing assertions remain unchanged.",
+    "The isolated proposed test passed once in 0.621 seconds. This is development preparation only; selected exact committed checks are still required after authorized application. The earlier incorrect helper-retargeting proposal and its failed isolated run remain adverse and unapproved.",
+    "The additional test file is outside frozen T01 scope. The proposal and review page ask for that one exact path plus a one-use direct append-only decision/provenance procedure. The original ECR, approved packet, task criteria and selected security requirements remain intact."
+  ],
+  "approvalAndExecutionConditions": [
+    "Owner approval must explicitly authorize BOTH this exact additional file/patch and the one-use direct-record procedure exception to the ordinary ECR/bootstrap route under project-automation-guide section 2.2; approval of the separate physical-host packet does not grant this test scope.",
+    "After approval, preserve an immutable exact decision/addendum/introduction record, apply only the reviewed two-line patch, and run fresh selected checks on a clean committed candidate. Preserve the failed committed regression and the rejected unapproved hypothesis unchanged.",
+    "No product, framework, checker or other test path becomes authorized; no test assertion/time limit may be relaxed. This readiness is not task, slice, Wave or release approval."
+  ],
+  "claims": {
+    "ownerApproved": false,
+    "testPatchApplied": false,
+    "isolatedProposedTestPassed": true,
+    "formalCommittedCheckPassed": false,
+    "taskApproved": false,
+    "waveComplete": false
+  }
+}

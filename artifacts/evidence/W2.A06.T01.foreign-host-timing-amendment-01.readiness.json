@@ -1,0 +1,46 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "independent-one-criterion-decision-readiness",
+  "id": "W2.A06.T01.FH01-R01",
+  "reviewedCandidate": "3a6b09ae52edae77565a07e3278fb9a9583cd779",
+  "reviewedProposal": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/a06-foreign-host-deferral-01/proposal.json",
+    "sha256": "85e25fd8031e6d81a038b8f96f16d081033ee4e0152badf80a71a002ae65c48c"
+  },
+  "reviewedPage": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/a06-foreign-host-deferral-01/review.html",
+    "sha256": "46a3b222819cf31eeb97b4a2a25e85ca3ff4a467b62a548991fe71ed4356284e",
+    "embeddedProposalMatches": true
+  },
+  "authorityAuthenticated": [
+    "ECR-0014.md SHA-256 7c70aeebc5a60ab606bd5f6170b48e2012becab8cf7547f7ad8cd75482291496",
+    "ECR-0014.packet.json SHA-256 6293590db74b9a3ec4ce6019a1713def568798ac3a71208a5583bfcff78f7a34",
+    "W2.A06.json SHA-256 3ecf2b98806f1589be7bd63fcc4f25cf0ee2df79bc95a3a0fefda2ce5666e4b2",
+    "AGENTS.md SHA-256 2e8ccaa9fef27187e5ac8c775544128aa96d8ee780732ba9873501aba74f6dd3",
+    "project-automation-guide.md SHA-256 3fbc6f4bf6c045d5a9422ef9bfa8fcf1371cf99f6a4a8d509cf1c371c4242364",
+    "ADR-0054 SHA-256 80e231223452389a6170916b6819fad01693f31fb864976529431a486a3177eb"
+  ],
+  "disposition": "READY_FOR_EXPLICIT_OWNER_DECISION_ON_BOTH_EXACT_REQUESTS",
+  "basis": [
+    "The proposal isolates only the actual denial of a genuine other-Windows-machine-wrapped ownership witness. ECR-0014 and T01-AC04 currently require it before W2 completion; the owner reported that no second Windows PC or VM is available.",
+    "The requested timing change states the original and proposed due points, retains the test as a disclosed W5 obligation with an explicit gate if hardware remains unavailable, and never reports an executed foreign-host test or PASS.",
+    "The second request is an explicit one-use owner override of project-automation-guide section 2.2 for append-only recording of this criterion. It does not pretend an ECR/bootstrap campaign occurred or grant a controller bypass. Frozen ECR, packet, approval, backlog criteria, and adverse evidence remain unchanged.",
+    "Same-host whole Native/Core, protected readback, real-principal and foreign-instance denials, every other local security/recovery check, independent reviews, Wave qualification, and the separate G2 release decision remain due now. The security implementation and deny policy remain unchanged.",
+    "The review page presents the two requested decisions together, shows the exact proposal hash and candidate, and embeds the same proposal content. Alternatives include retaining the original stop or using the ordinary ECR route."
+  ],
+  "conditions": [
+    "Obtain explicit human approval of both the exact physical-test timing deferral and the one-use section 2.2 direct-record exception; the hardware availability answer alone is not approval.",
+    "After approval, commit an immutable exact decision, authoritative supplement, and introduction provenance; cite their exact hashes in T01 and downstream independent proof accounting. No original criterion or adverse result may be edited or marked PASS.",
+    "Preserve the physical other-machine obligation into W5 and execute it on the first available genuine independent Windows installation. If still unavailable by W5 exit, hold that gate pending another explicit owner decision.",
+    "Do not use this decision to waive any other due-now check or to close the currently open T01 product review finding. Ordinary task, slice, amendment, Wave, and release gates remain separate."
+  ],
+  "currentClaims": {
+    "ownerApprovedTiming": false,
+    "ownerApprovedProcedureException": false,
+    "foreignHostTestExecuted": false,
+    "foreignHostTestPassed": false,
+    "taskApproved": false,
+    "waveComplete": false,
+    "releaseApproved": false
+  }
+}

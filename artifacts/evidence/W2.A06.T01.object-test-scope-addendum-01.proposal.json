@@ -1,0 +1,24 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "single-product-test-synchronization-seam-scope-addendum-proposal",
+  "taskId": "W2.A06.T01",
+  "waveId": "W2",
+  "amendmentId": "W2.A06",
+  "status": "PROPOSED_NON_EXECUTABLE",
+  "inspectedCandidate": "3a6b09ae52edae77565a07e3278fb9a9583cd779",
+  "additionalPath": "tests/data/test_local_object_store.py",
+  "originalBlobSHA256": "202157cb8c6ac371bb28492a089fec0d9a3ac52a1cb524a13a463c20d5b47a51",
+  "proposedBlobSHA256": "685e2b25ef61052bbaaec9fecb514f6a932ffc0a97f756388e2d22c9c9eb3e54",
+  "exactPatchSHA256": "629d82d79f0f1f4b289e62e2b08ea3dda02a8835133dbe2e323719f5c5a19b3d",
+  "problem": "Current and claimed-base plaintext ordinary open pass the cancellation_requested keyword to _verified_reader. The existing test's delayed_reader wrapper lacks that keyword, so the worker raises TypeError before its synchronization event and unchanged rights/stream assertions.",
+  "requestedScope": "Authorize only this exact existing test-file seam correction, its affected verification and exact append-only approval/provenance recording within W2.A06.T01. No other test or product/framework source path is added.",
+  "preservedAssertions": "All existing rights, deletion, stream, transaction ordering, retryability, denial assertions and every 5-second/0.1-second timing bound remain unchanged. The test calls the real current verification helper before delaying; no integrity or security assertion is weakened.",
+  "adverseEvidence": "a06-t01-committed-02-existing-object-regression receipt and raw streams remain preserved as FAIL, not retrospectively relabeled. The isolated proposed test is preparation only; formal checks follow explicit scope approval and committed application.",
+  "recording": "One exact direct append-only single-test path addendum, with independent readiness and explicit owner decision, instead of an executable ECR/bootstrap campaign. Original ECR/approval/task criteria are preserved; no generic scope bypass or controller change.",
+  "limits": "No product implementation change, framework/checker/hook change, assertion/time-limit relaxation, release waiver or task/slice/Wave approval.",
+  "supersedesUnapprovedPreparation": "a06-object-test-seam-addendum-01 remains preserved as an incorrect unapproved helper-retargeting hypothesis and failed isolated run; it grants no authority or PASS.",
+  "alternatives": [
+    "Approve the exact existing test seam correction and affected verification.",
+    "Retain the unchanged test and its known unmet synchronization failure; W2 full qualification remains blocked."
+  ]
+}
