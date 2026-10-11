@@ -1,0 +1,33 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "bounded-closeout-compatibility-owner-decision",
+  "taskId": "W2.C18.T01",
+  "originTaskId": "CAP-05.S06.T02",
+  "waveId": "W2",
+  "status": "APPROVED",
+  "approvedBy": "human:repository-owner",
+  "recordedAt": "2026-10-11T16:05:25.2524487Z",
+  "actualAnswer": "Approve this one bounded exception (Recommended)",
+  "answerProvenance": "Direct owner answer to the exact pending approval question; recordedAt is binding time, not an invented message timestamp.",
+  "publishedCandidate": "75321c996d3485c62415651bb124abfc8df86bd8",
+  "proposal": {
+    "path": "artifacts/evidence/W2.C18.T01.closeout-compatibility-proposal-01.json",
+    "sha256": "4ae509a443c66eb6106edf3003844d1c7b41e9f796fabf41fd48a68140129708",
+    "introductionCommit": "75321c996d3485c62415651bb124abfc8df86bd8"
+  },
+  "independentReadiness": {
+    "path": "artifacts/evidence/W2.C18.T01.closeout-compatibility-readiness-R01.json",
+    "sha256": "7ac85ea6b0992abd2cc134146aaa081d9e902910c9d054825de0a6bb9e2c67ca",
+    "introductionCommit": "75321c996d3485c62415651bb124abfc8df86bd8",
+    "reviewer": "agent:/root/a03_closeout_review",
+    "result": "READY_FOR_OWNER_DECISION"
+  },
+  "grant": "Only the exact published proposal: one finite metadata-consumer source/test/Proposed ADR0055/index maintenance exception, two named direct restorative UI selectors, and finite independently authenticated maintenance-lineage successor. Conforming implementation, bounded remediation, tests and source/readiness recording within that scope need no further owner approval. All actual tests, independent reviews, task transitions and separate release gates remain required.",
+  "frameworkRestriction": "No further framework work after this bounded increment.",
+  "preservation": "Original ECR-0014/W2.A06 grant, proposal/readiness, all failed checks, origin/spec/base/claim/history and prior source records remain unchanged.",
+  "taskApproved": false,
+  "sliceApproved": false,
+  "waveComplete": false,
+  "releaseApproved": false,
+  "W3Approved": false
+}
