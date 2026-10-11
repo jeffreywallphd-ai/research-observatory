@@ -1490,21 +1490,22 @@ waves:
     notes: Owner explicitly approved the complete W2 execution packet and requested implementation; G1 prototype limitations
       remain recorded, not waived.
   campaign:
-    status: PAUSED
+    status: ACTIVE
     scope: wave
     owner: codex-w2-implementation
     branch: codex/w2-implementation
     worktree: .
-    base_sha: 85628b3c81f55f38f899590c2d42058cc5dd0b68
+    base_sha: d9cb8247da850621ed2a02bf2f7b01afd693fcb1
     profile: LOC
     platform: windows-x64
     started_at: '2026-09-19T17:21:58+00:00'
-    updated_at: '2026-10-10T21:49:21+00:00'
-    pause_reason: 'Pause ordinary execution at the required linked-correction boundary for W2.C17.T01: restore truthful approved
-      blocked-navigation announcements after independent S06 shipping preflight. No new reference or owner decision is required;
-      continue the corrective task immediately after its clean admission.'
-    pause_category: approved-design-gate
-    lease: null
+    updated_at: '2026-10-11T02:18:09+00:00'
+    pause_reason: null
+    pause_category: null
+    lease:
+      claimed_by: codex-w2-implementation
+      claimed_at: '2026-10-11T02:18:09+00:00'
+      expires_at: '2026-10-11T10:18:09+00:00'
     corrective_tasks:
     - title: Implement idempotent import commits and import manifests
       objective: Batch transaction and manifest linking source file hash, parser version, record decisions, errors, and resulting
@@ -5182,6 +5183,18 @@ waves:
       platform: windows-x64
       actor: codex-w2-implementation
       resumed_at: '2026-10-10T13:41:20+00:00'
+    - id: W2.R17
+      wave_id: W2
+      control_revision: 12
+      prior_status: PAUSED
+      pre_resume_commit: d9cb8247da850621ed2a02bf2f7b01afd693fcb1
+      prior_campaign_sha256: 7d1d15f2ed7e690cc6eb4e259d2356f9f1d376ad23522e7f664687924814f0fb
+      branch: codex/w2-implementation
+      worktree: .
+      profile: LOC
+      platform: windows-x64
+      actor: codex-w2-implementation
+      resumed_at: '2026-10-11T02:18:09+00:00'
   checkpoints:
   - id: W2.CP01
     kind: risk-cluster
@@ -5274,7 +5287,7 @@ waves:
       correction indicated, no checker repair or release waiver. Prior adverse findings, CSP/quality/type debt, minimum hardware/configurable
       model decisions, full profiles/installer/Wave/G2 remain pending and unwaived. Resume CAP-05.S05.T01 after local integration.'
   completion:
-    status: PAUSED
+    status: IN_PROGRESS
     reviewer: null
     reviewed_at: null
     evidence: []
