@@ -1,0 +1,30 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "ui-change-evidence",
+  "changeKind": "defect-restoration",
+  "implementationAgent": "agent:codex-w2-implementation",
+  "reference": {
+    "referenceId": "RO-UI-ACADEMIC-MINIMAL-1.9",
+    "version": "1.9",
+    "packageSha256": "24b8d62356863980ae9a13db7d6a06b04b76c60e2f1920d2e888cadecfb24c4b",
+    "approvalCommit": "d4691f716f839f4aac5bb50563b56ac863b32685",
+    "approvedBy": "human:repository-owner",
+    "previousReferenceId": "RO-UI-ACADEMIC-MINIMAL-1.8"
+  },
+  "taskId": "W2.C18.T01",
+  "contractPath": "artifacts/evidence/ui-change/W2.C18.T01.json",
+  "changedFiles": [
+    "apps/desktop/src/app.css"
+  ],
+  "restoration": {
+    "defect": "The existing production style check rejects three identical global display:grid and gap:var(--space-2) declaration groups in Intent, shortcut dialog and Parsing Quality.",
+    "expectedBehavior": "Consolidate those identical declarations into one selector list, retaining every selector, specificity, token and computed geometry. Preserve approved Academic Minimal 1.9 behavior, DOM, workflows, rights, rationale/revision state and explicit acceptance. No intentional experience or reference change."
+  },
+  "focusedEvidence": [
+    {
+      "command": ".venv/Scripts/python.exe artifacts/tmp/W2.C18.T01.css-equivalence-01/compare-02.py --candidate 429efd41d6bccd27b4c25b468475b6fddeb4a9f6",
+      "result": "passed",
+      "scope": "Actual retained CSS source comparison at committed restoration429: all12 Intent/shortcut/Quality cases across two widths and actual light/dark themes have equal complete computed styles and rounded geometry. Report artifacts/tmp/W2.C18.T01.css-equivalence-01/comparison-02/report.json raw SHA256 e1b06b7899ebd435cc334295fc27dc7f20fef4b45a94b1ecd1ef9742664cbe59; independent bounded source/layout disposition02 raw SHA25666c3858b87fbb02b51c3a26e7382b564eb5b62358f2a78763b9f84aad07965c0. Original dark-theme FAIL remains preserved. This entry reports the actual earlier source comparison, not fresh current-build, Native/Core/Reader, complete capture, slice, Wave or release qualification. Required current candidate evidence and independent formal task disposition remain separate."
+    }
+  ]
+}
