@@ -1,0 +1,195 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "batch-conforming-method-source-record",
+  "batchGrant": {
+    "path": "planning/wave-amendment-approvals/W2.A06.json",
+    "sha256": "3ecf2b98806f1589be7bd63fcc4f25cf0ee2df79bc95a3a0fefda2ce5666e4b2",
+    "introductionCommit": "ab3c35369a8cd57876a1890db90263e5ab2ba395"
+  },
+  "planContract": {
+    "path": "planning/enabler-change-requests/ECR-0014.md",
+    "sha256": "7c70aeebc5a60ab606bd5f6170b48e2012becab8cf7547f7ad8cd75482291496"
+  },
+  "methodId": "exact-current-reader-local-worker-csp",
+  "candidateCommit": "1c9ea3b75efb8b9c762fa0357070f263f9a9b782",
+  "producer": {
+    "path": "artifacts/tmp/W2.A06.C18.csp-native-proof-02.py",
+    "sha256": "791a9ba5a681c8732246ca61123d68e0aef57999745aa300d6961b6dd36b2cfc",
+    "retainedSourceBytesReference": {
+      "path": "artifacts/evidence/W2.A06.pre-admission-method-records-source-capture-02.json",
+      "sha256": "858a3d7cfe3d1f71a6a992c9a053120bb1ff4fff0fb941b4343ad57da612de7e"
+    }
+  },
+  "allowedPredicateIds": [
+    "exact-current-reader-local-worker-csp"
+  ],
+  "selectedInputs": [
+    {
+      "path": "artifacts/tmp/W2.A06.C18.csp-native-proof-02.py",
+      "sha256": "791a9ba5a681c8732246ca61123d68e0aef57999745aa300d6961b6dd36b2cfc",
+      "role": "exact method input; private runtime closure expanded from digest-bound local control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.csp-native-fixture-02/Cargo.toml",
+      "sha256": "97ad68f63af1efaf18121ccb40ac445b74fe6bd9ce7d4c9cfbd4aa0cc2a6e718",
+      "role": "exact method input; private runtime closure expanded from digest-bound local control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.csp-native-fixture-02/Cargo.lock",
+      "sha256": "61489f000e4977524fcf4070ec4a50bc71db97a234fd1c11faf4d19ad1eecfe0",
+      "role": "exact method input; private runtime closure expanded from digest-bound local control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.csp-native-fixture-02/build.rs",
+      "sha256": "6aeeab41bc35efde4e3c2b644a6248f7fc06d24ae30b75c0d33491cbb0c1fa31",
+      "role": "exact method input; private runtime closure expanded from digest-bound local control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.csp-native-fixture-02/src/main.rs",
+      "sha256": "78b5a6b24e97cd0b2f9b816551d6f347859f4a5d18733509835b959d260ca22d",
+      "role": "exact method input; private runtime closure expanded from digest-bound local control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.csp-native-fixture-02/tauri.conf.json",
+      "sha256": "60f11930701cbb2777e4ec7e3fd84c33f165bda93394047dce67545a96de0ec4",
+      "role": "exact method input; private runtime closure expanded from digest-bound local control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.csp-native-fixture-02/capabilities/main-window.json",
+      "sha256": "77e504e7052502291ea77737b5664e2b339692d8c3c2aa2c19adb2d44214995e",
+      "role": "exact method input; private runtime closure expanded from digest-bound local control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.csp-native-fixture-02/icons/icon.ico",
+      "sha256": "ec10d37be4351bde0389de3a15e279273b71d5b082a00a8305c786ff69677b33",
+      "role": "exact method input; private runtime closure expanded from digest-bound local control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.csp-native-fixture-02/icons/icon.png",
+      "sha256": "516818a974a59c0379b616a3913eade623f131c2f2202838d98df7649eabc2a0",
+      "role": "exact method input; private runtime closure expanded from digest-bound local control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.csp-native-fixture-02/assets/index.html",
+      "sha256": "dc7913afb839edda8cd2538c94bd58d7a78d64c0637f8242ae0d92b566fb1201",
+      "role": "exact method input; private runtime closure expanded from digest-bound local control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.csp-native-fixture-02/assets/main.js",
+      "sha256": "8a9b18593d4971b6a5ff3ea483f0553c244d7224d375cabc1db76b73b387d5ee",
+      "role": "exact method input; private runtime closure expanded from digest-bound local control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.csp-native-fixture-02/assets/local-worker.js",
+      "sha256": "18e9ab624772baba7fee09e1830a99baf72e5c41986a8f77d9f1916639ec53dc",
+      "role": "exact method input; private runtime closure expanded from digest-bound local control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.csp-native-fixture-02/assets/malformed-worker.js",
+      "sha256": "d0b06da981952bd787fe5b8b8bd73e182d008f6cc60bef9fbef68aa40f627858",
+      "role": "exact method input; private runtime closure expanded from digest-bound local control receipt"
+    },
+    {
+      "path": "planning/wave-amendment-approvals/W2.A06.json",
+      "sha256": "3ecf2b98806f1589be7bd63fcc4f25cf0ee2df79bc95a3a0fefda2ce5666e4b2",
+      "role": "exact method input; private runtime closure expanded from digest-bound local control receipt"
+    },
+    {
+      "path": "planning/enabler-change-requests/ECR-0014.md",
+      "sha256": "7c70aeebc5a60ab606bd5f6170b48e2012becab8cf7547f7ad8cd75482291496",
+      "role": "exact method input; private runtime closure expanded from digest-bound local control receipt"
+    },
+    {
+      "path": "tools/desktop_app_check.py",
+      "sha256": "cb617d6448e8a358317ecf530266d5bd64ed6ff7212729c4cdf8895449e813c8",
+      "role": "exact method input; private runtime closure expanded from digest-bound local control receipt"
+    },
+    {
+      "path": "apps/desktop/src-tauri/tauri.conf.json",
+      "sha256": "1b774c7be68f3f6573cdd03cdf121d748c208c9aa935317e2365668815ba88e9",
+      "role": "exact method input; private runtime closure expanded from digest-bound local control receipt"
+    },
+    {
+      "path": "apps/desktop/src-tauri/capabilities/main-window.json",
+      "sha256": "77e504e7052502291ea77737b5664e2b339692d8c3c2aa2c19adb2d44214995e",
+      "role": "exact method input; private runtime closure expanded from digest-bound local control receipt"
+    },
+    {
+      "path": "docs/adr/ADR-0029-preserve-document-revisions-and-mediate-source-viewing.md",
+      "sha256": "ffee796414cdde9155667c8c3a710e7c904197971b7714832c7c5bc950687e7b",
+      "role": "exact method input; private runtime closure expanded from digest-bound local control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.C18.T01.current-build-lineage-02.py",
+      "sha256": "9ca3f254cfdda423d1ed645a8c1dc3187b4dd0d31ea11f64e25d07386ced3788",
+      "role": "exact method input; private runtime closure expanded from digest-bound local control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/csp-native-classifier-controls-01/receipt.json",
+      "sha256": "55517f22635cf44c44459105ddf1496d0dcccb314cd7a7d9fdfdaed70e5e3891",
+      "role": "exact method input; private runtime closure expanded from digest-bound local control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.C18.csp-method-03.py",
+      "sha256": "d17f2341cc596d5a84b280bbe8779be577df9befdf4918bd4ae11c081adfc984",
+      "role": "exact method input; private runtime closure expanded from digest-bound local control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.A06.C18.csp-controls-03.py",
+      "sha256": "899f27e31fc05934dc13cc00b165f1cda4aab42dea3d0fcb88b7b2d853f53833",
+      "role": "exact method input; private runtime closure expanded from digest-bound local control receipt"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S04.T01.owned-native-job-01.py",
+      "sha256": "991d6cc09aa992ba3675e3107058d934c9e0d56750aa9457ae4b3d1e642efe58",
+      "role": "exact method input; private runtime closure expanded from digest-bound local control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/csp-native-compile-01.receipt.json",
+      "sha256": "2b1eeebf4817801e055a8363b9b05ecabfa5899c00adb7095bb6f755382acad8",
+      "role": "exact method input; private runtime closure expanded from digest-bound local control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/csp-native-compile-01.build.log",
+      "sha256": "18b29d061ca4c3c723552e1014277c0df56c403e626f57dcc70f3494b2e85e64",
+      "role": "exact method input; private runtime closure expanded from digest-bound local control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/csp-native-compile-01.resolution.log",
+      "sha256": "bdf5210c328c00644ce4f4a4229ed81265ea967357c15aa85534fb9016212944",
+      "role": "exact method input; private runtime closure expanded from digest-bound local control receipt"
+    },
+    {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/csp-native-source-preflight-02.json",
+      "sha256": "1740738c4d83000bea3e6792878a53ac5f9656cf871de44065f2afa4993324c4",
+      "role": "exact method input; private runtime closure expanded from digest-bound local control receipt"
+    },
+    {
+      "path": "target/release/w2-a06-csp-native-fixture.exe",
+      "sha256": "9f7e564f85ad391e67d60c45116a85797f76b7b0092592f0aaa89cef650b29a2",
+      "role": "exact method input; private runtime closure expanded from digest-bound local control receipt"
+    }
+  ],
+  "negativeControls": {
+    "receiptPath": "artifacts/tmp/W2.remaining-corrections-batch-01/csp-native-classifier-controls-01/receipt.json",
+    "sha256": "55517f22635cf44c44459105ddf1496d0dcccb314cd7a7d9fdfdaed70e5e3891",
+    "actualResult": "PASS_CLASSIFIER_CONTROLS_ONLY"
+  },
+  "independentReadiness": {
+    "reviewer": "agent:/root/c17_independent_disposition",
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/csp-native-source-readiness-01.json",
+    "sha256": "1b0672eb141f8522b76c825193d9cbdd1883e4cde9427611eaf5fae169e65664",
+    "result": "SOURCE_READY"
+  },
+  "createdAt": "2026-10-11T14:08:19.353155+00:00",
+  "executionScope": "Isolated owned Native CSP enforcement only; shipping protected Reader remains separate",
+  "prohibitedChanges": {
+    "productSource": false,
+    "sharedFramework": false,
+    "securityPolicy": false,
+    "governedReference": false,
+    "releaseCriteria": false,
+    "releaseApproval": false
+  },
+  "limits": "Actual source/control recording only. Separate actual evidence and task/slice/Wave/release gates remain required."
+}
