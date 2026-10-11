@@ -1,0 +1,252 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "independent-corrective-metadata-disposition",
+  "taskId": "W2.C18.T01",
+  "baseCommit": "302c1d14818230629b2991a61ae4ff4862c7aece",
+  "candidateCommit": "cab24a1469214c847b81391de95c68ba3f21210c",
+  "implementationOwner": "codex-w2-implementation",
+  "reviewer": "agent:/root/c18_runtime_disposition",
+  "disposition": "approved",
+  "authorityPreserved": true,
+  "formalTaskApproval": false,
+  "notes": "Independently authenticated complete ordered eight-extra-commit/22-path/24-version metadata inventory through this exact candidate. Nineteen canonical authority/method paths are immutable single regular additions; three derived paths follow unchanged installed generators and actual canonical backlog/ECR/grant state. Actual generator checks passed at caf334 with498pages/errors[]/warnings[] and exact selected source/output equality. Each historical derived version was independently reviewed against its unchanged canonical proposal/approval and installed renderer; CRLF working and LF Git representations remain distinct. Excluded only the exact three-commit normal maintenance chain accepted by the unchanged installed authenticators. No filename-only permission, product/source/reference/controller scope, ordinary task approval or broader qualification is granted. Original scope, Reader, conformance and recovery failures stay preserved at their own scopes.",
+  "authority": {
+    "path": "planning/wave-amendment-approvals/W2.A06.json",
+    "sha256": "3ecf2b98806f1589be7bd63fcc4f25cf0ee2df79bc95a3a0fefda2ce5666e4b2",
+    "commit": "ab3c35369a8cd57876a1890db90263e5ab2ba395"
+  },
+  "commits": [
+    {
+      "commit": "ac6b664a2ced6b2263ff7b5ab48535c3f39798ce",
+      "changedFiles": [
+        {
+          "path": "planning/enabler-change-requests/ECR-0014-review.html",
+          "gitBlob": "e6cd40bd3d815cc74b4ae6e28b1c5389fa55ac16",
+          "sha256": "e7b0308696ae7e04e8a99df1217bbc0f4df67c925bba17c4bcdbf989367ab6f9"
+        },
+        {
+          "path": "planning/enabler-change-requests/ECR-0014.md",
+          "gitBlob": "5f760c77af91dd6a4f5c8f13785ac6a5f7a78b6b",
+          "sha256": "7c70aeebc5a60ab606bd5f6170b48e2012becab8cf7547f7ad8cd75482291496"
+        },
+        {
+          "path": "planning/enabler-change-requests/ECR-0014.packet.json",
+          "gitBlob": "5b624a5e713562a0fbd7015b3637257505f9aedc",
+          "sha256": "6293590db74b9a3ec4ce6019a1713def568798ac3a71208a5583bfcff78f7a34"
+        },
+        {
+          "path": "planning/review-site/README.md",
+          "gitBlob": "f744b12b1ddb1944a8beca787986fccf67b8c935",
+          "sha256": "aed64ba14cfbb5eeae1a28ceccf53d8954a021a2a237c88c0ff3ecc3aa997480"
+        },
+        {
+          "path": "planning/review-site/enablers/ECR-0014.html",
+          "gitBlob": "be30e3865be6adc740f7a4f750c9b2e26c3586dd",
+          "sha256": "dae664e9ee6d501eaeee11b8107be16d2937ce510420342816317a9fd759665e"
+        },
+        {
+          "path": "planning/review-site/enablers/index.html",
+          "gitBlob": "558bed2ed3db2865b051203eb2a61a771613b288",
+          "sha256": "5828487b7e12a770af63a412a20935619d2a151580bc46ded79e6ec063924a44"
+        }
+      ]
+    },
+    {
+      "commit": "87e44188dbb0e54039f8b77d3613ed2728bcd51b",
+      "changedFiles": [
+        {
+          "path": "planning/enabler-change-requests/ECR-0014.review-R01.json",
+          "gitBlob": "4b847c05267b11f5f2bd5f1b1381c969e3b1d097",
+          "sha256": "a31e42a11fcd1b7eaf52639f174f7885e2d08d49f5ec1a3a8099bdc1ac3e7193"
+        }
+      ]
+    },
+    {
+      "commit": "ab3c35369a8cd57876a1890db90263e5ab2ba395",
+      "changedFiles": [
+        {
+          "path": "planning/wave-amendment-approvals/W2.A06.json",
+          "gitBlob": "c874a91c7738abcbd42746bd80641ad56c6a01a8",
+          "sha256": "3ecf2b98806f1589be7bd63fcc4f25cf0ee2df79bc95a3a0fefda2ce5666e4b2"
+        }
+      ]
+    },
+    {
+      "commit": "1c9ea3b75efb8b9c762fa0357070f263f9a9b782",
+      "changedFiles": [
+        {
+          "path": "planning/review-site/enablers/ECR-0014.html",
+          "gitBlob": "f7f136a7c9f2190b084b7eee144f67c5d0478b63",
+          "sha256": "ea349190ac5a689852c34e13f66bb1df006660c9d16355541424d5416756f83a"
+        },
+        {
+          "path": "planning/review-site/enablers/index.html",
+          "gitBlob": "739ea3b6763dc37441bd34d3680e16017dd491ad",
+          "sha256": "2e6f05bdb168d2e85c961b979bbff975845243ff9e8745be6db2244128730455"
+        }
+      ]
+    },
+    {
+      "commit": "4b4bd3e53b72fdcabeb8311b931265a8ba94c94e",
+      "changedFiles": [
+        {
+          "path": "artifacts/evidence/W2.A06.pre-admission-method-records-01.json",
+          "gitBlob": "fd57cebf3259dfc0e7803ab19fad54860faddf63",
+          "sha256": "9f82e25a7d1c991ffb1fbd5ec29d7dfeb0b2035031fa8eb34100826223079cce"
+        },
+        {
+          "path": "artifacts/evidence/W2.A06.pre-admission-method-records-02.json",
+          "gitBlob": "1f2d9f15f68f092a167fa1fba234ca31eb0b7523",
+          "sha256": "918258748c74f7c50a7fa6060da3c1e52e046c3c9fb9a45bc979caa04890904f"
+        },
+        {
+          "path": "artifacts/evidence/W2.A06.pre-admission-method-records-source-capture-01.json",
+          "gitBlob": "bf70a5141cd9ecba92a2c9cfdc5067ba9ff118a7",
+          "sha256": "6596800efdf45993fce32101618ebca4a462ac5298cec6a9e2cb3ad21e76d874"
+        },
+        {
+          "path": "artifacts/evidence/W2.A06.pre-admission-method-records-source-capture-02.json",
+          "gitBlob": "f4a32c59b8d6aa223ca27ce8ee94dd65fbb81590",
+          "sha256": "858a3d7cfe3d1f71a6a992c9a053120bb1ff4fff0fb941b4343ad57da612de7e"
+        }
+      ]
+    },
+    {
+      "commit": "a0f5eaca172741a85719b11061564ed9a23e6d74",
+      "changedFiles": [
+        {
+          "path": "artifacts/evidence/W2.A06.pre-admission-method-records-03.json",
+          "gitBlob": "3e643a557cb688bd093b3d724f5416a7cf8c3cf3",
+          "sha256": "4844e1b35cd18d8c8222dc923ec7106dcca1d10e496cdb3c9df214a75e724590"
+        },
+        {
+          "path": "artifacts/evidence/W2.A06.pre-admission-method-records-04.json",
+          "gitBlob": "8caac3fe7e24476ccef095233869c73124cd642c",
+          "sha256": "5515af3fa640a0d8de067dd4dbf5c1d45d7e7e4183840dfe00d58923de9f4802"
+        },
+        {
+          "path": "artifacts/evidence/W2.A06.pre-admission-method-records-source-capture-03.json",
+          "gitBlob": "ee2adfa058d0ecef57debc6503c075f36ef33acc",
+          "sha256": "467064148ebcf386f4c3525a05fe314c34dc6fbe3dbbebbe5fc7b41901939d99"
+        },
+        {
+          "path": "artifacts/evidence/W2.A06.pre-admission-method-records-source-capture-04.json",
+          "gitBlob": "e3c5ff674726f8c534b5b452fc0684eb135de76f",
+          "sha256": "f49834c35e3e6767247c205139be1b068a9e2a395b2b68b9b00f702d46d8f7e6"
+        }
+      ]
+    },
+    {
+      "commit": "6bc633960b3e3606fb24b58ab6a3faf717a1b018",
+      "changedFiles": [
+        {
+          "path": "artifacts/evidence/W2.A06.pre-admission-method-records-06.json",
+          "gitBlob": "3fb8d48f5a8f69b929fe32d8972b4c01202a030e",
+          "sha256": "c20ff7e68c2d98db3ca71ca6e0ffdd0079738653c01b135f66e125f12698ec12"
+        },
+        {
+          "path": "artifacts/evidence/W2.A06.pre-admission-method-records-source-capture-06.json",
+          "gitBlob": "c18ed767059c5fc1008afa8c871e97c0e7f2af83",
+          "sha256": "2b18f27b5b4c6a133668feafd69c8b46e83e1a1774c774f7e78b166b25e3dfe7"
+        }
+      ]
+    },
+    {
+      "commit": "1d930f61aea49da5b8233f4a6684c6af7ccba5ec",
+      "changedFiles": [
+        {
+          "path": "artifacts/evidence/W2.A06.pre-admission-method-records-07.json",
+          "gitBlob": "39bf311741e85401f1f44f408105cfd6a279f2fd",
+          "sha256": "d4ebee8c2ba47d6a122c91c6044f807b655d4ae359989d141719ba951e112b90"
+        },
+        {
+          "path": "artifacts/evidence/W2.A06.pre-admission-method-records-source-capture-07-part-01.json",
+          "gitBlob": "f224a7b99e4020a3a51189fd3f2d472badcb7ed6",
+          "sha256": "8f171682b85a3a0faa40bf6743298f6165279d52106603058f41fa3334d541a9"
+        },
+        {
+          "path": "artifacts/evidence/W2.A06.pre-admission-method-records-source-capture-07-part-02.json",
+          "gitBlob": "11073424ee28d5982267d1dfaddf5f715616dfd6",
+          "sha256": "308012c2aab4d30e4f313fcb399a94d5ba86d35d8e3f4afe5b9c9b60ae92819c"
+        },
+        {
+          "path": "artifacts/evidence/W2.A06.pre-admission-method-records-source-capture-07.json",
+          "gitBlob": "ad0d9ea51d88f6905ea8c01186af409e3292dd6f",
+          "sha256": "ccaab4f3a3ff4bc14134cdd0acc48be3aa06154a433b5c1508e4c2f0a100f917"
+        }
+      ]
+    }
+  ],
+  "derivedOutputIntegrity": {
+    "reviewed": true,
+    "inputs": [
+      {
+        "path": "tools/backlog_views.py",
+        "gitBlob": "aecf636cade452a9b74450ce4fd0afcdccc95cb9",
+        "sha256": "6cd3926e3b52a7a097a3a4b70fdcd39fb26f882c6631825a0d7b7cc587bb9e29"
+      },
+      {
+        "path": "tools/plan_review_check.py",
+        "gitBlob": "9d7305a0195b96969a11131cacd31125d7351b8a",
+        "sha256": "fa26bc169a1b2d167d85a90ee70da06eab3bf378d36c940d754fa8d87e3e418d"
+      },
+      {
+        "path": "tools/plan_review_site.py",
+        "gitBlob": "7bd2158970512e416b238020a7355bd601d825b7",
+        "sha256": "2a19af60c4e7bd0efb679fd291c4675de8d41f6716f40382214293a071657b12"
+      }
+    ],
+    "evidence": [
+      {
+        "path": "artifacts/evidence/W2.C18.T01.generated-integrity-01.json",
+        "sha256": "43eae24db2d4e314ee5209598349848a1379f7b1efb4e35db7a44e15a0001953",
+        "commit": "cab24a1469214c847b81391de95c68ba3f21210c"
+      }
+    ]
+  },
+  "normalMaintenanceAuthenticated": {
+    "sourceCandidate": "b840a1ab1d6e54847cc0c2981a584e423d802e69",
+    "evidence": {
+      "path": "artifacts/evidence/W2-C18-T01-approved-metadata.evidence-01.json",
+      "sha256": "6c4919ee6f14d004f288a682e078ad3c85b6d2390df588e38f4e136520061390",
+      "commit": "86bad9946947b0cc54164ee7be8bedf4405f3b06"
+    },
+    "review": {
+      "path": "artifacts/evidence/W2-C18-T01-approved-metadata.review-01.json",
+      "sha256": "7ea155f1b45cf2801d359a1643b445b7346a9ebd336cebbbe8ee380a5a5e9431",
+      "commit": "15d9c6a738c584f7c5cf632e9eb2fbf5a80e3ad8"
+    },
+    "actualCompleteCommitMap": {
+      "b840a1ab1d6e54847cc0c2981a584e423d802e69": [
+        "artifacts/evidence/W2-C18-T01-approved-metadata.maintenance-01.md",
+        "docs/adr/ADR-0055-recognize-independently-reviewed-approved-corrective-metadata.md",
+        "docs/adr/index.json",
+        "tests/foundation/test_taskctl_workflow.py",
+        "tests/foundation/test_ui_change_gate.py",
+        "tools/ui_change_gate.py"
+      ],
+      "86bad9946947b0cc54164ee7be8bedf4405f3b06": [
+        "artifacts/evidence/W2-C18-T01-approved-metadata.evidence-01.json"
+      ],
+      "15d9c6a738c584f7c5cf632e9eb2fbf5a80e3ad8": [
+        "artifacts/evidence/W2-C18-T01-approved-metadata.review-01.json"
+      ]
+    },
+    "normalConsumerErrors": []
+  },
+  "independentSemanticObservations": [
+    "README change is ECR count13 to14; existing Wave/capability/slice/task/recovery/release counts remain unchanged.",
+    "At ac6, enablers index adds only ECR0014/W2.A06 card in Pending state. The previous13cards remain unchanged.",
+    "At1c9, enabler index changes only ECR0014 Pending toApproved.",
+    "At1c9, ECR detail adds actual owner grant actor/time/path/digest and authorized rather than proposed task badges. Canonical body, task inventory, dependencies, source/reference scope and original base remain unchanged.",
+    "Both ECR detail versions retain NOT_MATERIALIZED/NOT_SUBMITTED/NONE; approval is separate from adoption, task or Wave release."
+  ],
+  "derivedVersionInterpretation": "Exact embedded canonical body matches the pinned read_frontmatter/strip_first_h1/fallback transformation. Receipt derivedOutputs is a selected subset including root index; installed plan_review_check generated_site_byte_errors checks every actual/expected output byte, including the separately inventoried enablers/index.html. No subset-only claim or invented historical fresh run.",
+  "scopeLimits": {
+    "taskApproved": false,
+    "sliceApproved": false,
+    "waveComplete": false,
+    "releaseApproved": false,
+    "NativeReaderCspOrCaptureQualified": false
+  }
+}
