@@ -861,6 +861,45 @@ class RecoveryCoordinatorTests(unittest.TestCase):
             self.assertEqual(self.facts_before, canonical_facts(self.destination, self.project_id))
             self.assertEqual(self.original_before, byte_inventory(self.root))
 
+    def test_api_completion_guard_failure_releases_attached_workers_and_new_lock(self) -> None:
+        preview = self.preview()
+        self.assertEqual("verified-copy-ready", self.confirm(preview).state)
+        imports = Mock(spec=ImportPreviewService)
+        authority = "127.0.0.1:49152"
+        token = "1" * 64
+        app = create_app(
+            settings=CoreSettings(),
+            capability_digest=capability_token_digest(token),
+            expected_authority=authority,
+            projects=self.service,
+            imports=cast(ImportPreviewService, imports),
+        )
+        actual_completion = self.service.record_recovery_open
+
+        def deny_completion(*, root, succeeded):
+            if succeeded:
+                raise self.service._recovery_problem()
+            return actual_completion(root=root, succeeded=succeeded)
+
+        with (
+            patch.object(self.service, "record_recovery_open", deny_completion),
+            TestClient(
+                app,
+                base_url=f"http://{authority}",
+                client=("127.0.0.1", 50000),
+                headers={"Authorization": f"Bearer {token}", "X-Trace-Id": "b" * 32},
+            ) as client,
+        ):
+            response = client.post("/projects/open", json={"root": str(self.destination)})
+            self.assertEqual(409, response.status_code)
+            self.assertFalse(self.service._opened)
+            self.assertFalse((self.destination / ".locks/session.lock").exists())
+            imports.attach.assert_called_once_with(str(self.destination))
+            imports.detach.assert_called_once_with(str(self.destination))
+            status = self.service.recovery_status(root=str(self.root), preview_id=preview.preview_id)
+            self.assertEqual("open-failed", status.state)
+        self.assertEqual(self.original_before, byte_inventory(self.root))
+
     def test_live_unknown_and_reused_owner_responses_deny_without_copy(self) -> None:
         states: tuple[Literal["dead", "live", "pid-reused", "unknown"], ...] = ("live", "unknown", "pid-reused")
         for state in states:

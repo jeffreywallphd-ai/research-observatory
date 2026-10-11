@@ -775,6 +775,7 @@ def create_app(
                     context.plugin_worker.attach(projection.root)
                 if context.reconciliation is not None and projection.access_mode.value == "read-write":
                     context.reconciliation.attach(projection.root)
+                context.projects.record_recovery_open(root=projection.root, succeeded=True)
             except Exception:
                 # This call acquired the new session; do not strand it on a
                 # failed worker binding and then reject the user's open retry.
@@ -792,7 +793,6 @@ def create_app(
                 context.projects.record_recovery_open(root=projection.root, succeeded=False)
                 context.projects.close(root=projection.root, trace_id=request.state.trace_id)
                 raise
-            context.projects.record_recovery_open(root=projection.root, succeeded=True)
             return projection
 
         return run_project_action(request, open_and_attach)
