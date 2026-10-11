@@ -1,0 +1,82 @@
+{
+  "schemaVersion": "1.0",
+  "id": "CAP-05.S06.current-build-method-decision-01",
+  "status": "APPROVED",
+  "approvedBy": "human:repository-owner",
+  "recordedAt": "2026-10-11T10:00:40.460699+00:00",
+  "decision": "Approve the exact current-build method02 and its direct append-only recording procedure, with only the separately approved 103-CRLF-to-LF publication correction and actual independent successor readiness.",
+  "approvalEvidence": "Actual user reply to request_user_input_async call_vbeIlZyrPx61iGxZFXZRBzip: Approve this exact method and recording. Actual subsequent user reply to request_user_input_async call_6add05ff5d6040e0b355d419c995862f: Approve this exact data-only correction. The first grant binds method candidate59ba and original proposal2f/readinessa133; the second binds publication candidate10a5, exact correction packet648116, LF proposal908862 and actual successor readiness59ad890.",
+  "methodSubstitutionApproved": true,
+  "directRecordingProcedureApproved": true,
+  "scope": "CAP-05.S06 integration, CP-09 and W2 qualification; exact current artifact and Reader/Quality build predicates only",
+  "reviewedCandidateCommit": "59ba1aa732c58b9ba5bdf4fdea95cd0799c27ebd",
+  "reviewBrief": {
+    "path": "artifacts/tmp/CAP-05.S06.current-build-method-02/review.html",
+    "sha256": "c88d2323086e6efcf84ea6db4c52faf45f2a25a2f4aa2b17c3a5c4b40149b36b"
+  },
+  "authorizedProducers": {
+    "guard": "aed3e4428869b7b9641998660877f432f726c36dad61fc5fa87df928c5225e9c",
+    "runtime": "d554d53913d7973d3262f920cf547cc51b4446a36fac115e52adc6131eb15807",
+    "conformance": "23188e3b3630a851beee1cd20d5e8f06cdec865bd894373a1b105a8d93ec4fdd"
+  },
+  "proposal": {
+    "path": "artifacts/evidence/CAP-05.S06.current-build-method-proposal-01.json",
+    "sha256": "908862410a48eadd4589cf2ea72b4c71dfee6eb3b276dca4e5403a495494840b",
+    "commit": "cce1d85f9bf997e355126b37668cde8e1d30b099"
+  },
+  "readinessReview": {
+    "path": "artifacts/evidence/CAP-05.S06.current-build-method-readiness-01.json",
+    "sha256": "59ad890601cbac393731162b268636ffbe854276573695314e185fee9b2d7de3",
+    "commit": "cce1d85f9bf997e355126b37668cde8e1d30b099"
+  },
+  "publicationCorrection": {
+    "approved": true,
+    "reviewedCandidateCommit": "10a5eaa654eb0d9a446ed859e3d233dec72f7281",
+    "packet": {
+      "path": "artifacts/tmp/CAP-05.S06.current-build-publication-repair-01/exact-packet.json",
+      "sha256": "648116e6bafd7cc04a613b13086ea8a63e41e679255dedbe06f7eb34333e6d57"
+    },
+    "brief": {
+      "path": "artifacts/tmp/CAP-05.S06.current-build-publication-repair-01/review.html",
+      "sha256": "75c1b81a09858d88aabd348128aed340c4c12758ffc24a1f71c7c433e76b0e29"
+    },
+    "kind": "103 CRLF line endings to LF only; parsed proposal JSON and all values unchanged; independently authored successor readiness binds LF digest.",
+    "sourceChangesAuthorized": false
+  },
+  "originalApprovedPair": {
+    "proposal": {
+      "path": "artifacts/tmp/CAP-05.S06.current-build-method-02/proposal.json",
+      "sha256": "2f0684c0eca3e150523a50b062116f49c8373212ed974c0416a2db3559f55f6b",
+      "bytes": 7761
+    },
+    "readiness": {
+      "path": "artifacts/tmp/CAP-05.S06.current-build-method-02/readiness-review-01.json",
+      "sha256": "a1330c9031c7dd7e03cb816905c1ce51efedadbab89eb77d4d3c1ebc9613ea90",
+      "bytes": 10641
+    }
+  },
+  "originalApprovalPreservation": {
+    "path": "artifacts/tmp/CAP-05.S06.current-build-publication-repair-01/owner-approval-preservation-01.json",
+    "sha256": "e1bab71308321bf162a6192b334a7351f06254fca5ac34a41b464d01b7fb63f3",
+    "bytes": 1379
+  },
+  "adversePublicationFinding": {
+    "path": "artifacts/tmp/CAP-05.S06.current-build-method-02/publication-line-endings-review-01.json",
+    "sha256": "b62884d78285d0b6a54b7fedf341649690eed020cf0d7e5c4c3a010a8ea9e893",
+    "bytes": 12428
+  },
+  "frameworkSourceChangesAuthorized": false,
+  "productChangesAuthorized": false,
+  "referenceOrBaselineChangesAuthorized": false,
+  "additionalPredicateExemptionsAuthorized": false,
+  "modelOrHardwareQualificationAuthorized": false,
+  "releaseApproval": false,
+  "taskApproval": false,
+  "sliceApproval": false,
+  "waveCompletion": false,
+  "remainingGates": [
+    "CAP-05.S06.restart-boundary-r10-R01-F01 remains open; this repair grants no lock recovery or source/security change.",
+    "45 architecture-classifier and three desktop-lint findings remain adverse and unwaived.",
+    "CAP-05.S06 integration, CP-09, fresh full qualification, independent Wave review, G2 and separate W3 packet approval remain pending."
+  ]
+}
