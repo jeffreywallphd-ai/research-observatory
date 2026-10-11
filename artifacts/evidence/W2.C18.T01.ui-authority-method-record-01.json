@@ -1,0 +1,232 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "exact-task-ui-authority-source-record",
+  "status": "RECORDED_FOR_APPROVED_BOUNDED_PROOF",
+  "taskId": "W2.C18.T01",
+  "originTaskId": "CAP-05.S06.T02",
+  "candidateCommit": "cab24a1469214c847b81391de95c68ba3f21210c",
+  "restoration": {
+    "taskId": "W2.C18.T01",
+    "originTaskId": "CAP-05.S06.T02",
+    "originCommit": "ac5f891db456a3eb54cb376f9d9a4082c3f3236b",
+    "originSha256": "ea16178d8814da61bc71d291c49b582d4abaf529150d363701dfbbeaa429e856",
+    "claimBase": "302c1d14818230629b2991a61ae4ff4862c7aece",
+    "claimCommit": "a1b2bca193472ea657c3e5d4f09fd05038ee3a3f",
+    "sourceCommit": "429efd41d6bccd27b4c25b468475b6fddeb4a9f6",
+    "spec": {
+      "path": "artifacts/evidence/W2.C18.T01.spec.json",
+      "sha256": "5c3e65f9159dff1a4b3ef2db48cf8e78b7d1ef44f06cc196c273171be6acd114",
+      "commit": "302c1d14818230629b2991a61ae4ff4862c7aece"
+    },
+    "exactProductPaths": [
+      "apps/desktop/src/app.css"
+    ],
+    "beforeSha256": "7cce690e1f0ba6c3436a82551fd99652bb7ed7a1dda6619fadc3af1e12bb2c9b",
+    "afterSha256": "3db0b1572bcbefd31f33b56696fb6e072bdcf124abcdcb75208e786705f64de6",
+    "reference": {
+      "referenceId": "RO-UI-ACADEMIC-MINIMAL-1.9",
+      "version": "1.9",
+      "packageSha256": "24b8d62356863980ae9a13db7d6a06b04b76c60e2f1920d2e888cadecfb24c4b",
+      "approvalCommit": "d4691f716f839f4aac5bb50563b56ac863b32685",
+      "approvedBy": "human:repository-owner",
+      "previousReferenceId": "RO-UI-ACADEMIC-MINIMAL-1.8"
+    }
+  },
+  "substitutionPredicates": [
+    "linked_correction_authority:1779",
+    "validate:6975-6977"
+  ],
+  "ownerDecision": {
+    "path": "artifacts/evidence/W2.C18.T01.closeout-compatibility-decision-01.json",
+    "sha256": "c43b56dd0140b12ef6e1fbf0c7ddae68414f0d0f05601a4f43549576be38674a",
+    "commit": "1a28d59ef019c5dbfa0abd2530a1f3d5e6d4a327"
+  },
+  "producer": {
+    "path": "artifacts/tmp/W2.C18.T01-ui-authority-proof-02.py",
+    "sha256": "44a948fe9e3b1e5da5cdaeb4a3e5f2878f42fbd8ce4dcf426a0e3db05df7ff04"
+  },
+  "sourceAuthor": "agent:/root/a03_closeout_review",
+  "maintenance": {
+    "predecessorCommit": "1a28d59ef019c5dbfa0abd2530a1f3d5e6d4a327",
+    "candidateCommit": "b840a1ab1d6e54847cc0c2981a584e423d802e69",
+    "sourceCommits": [
+      {
+        "commit": "b840a1ab1d6e54847cc0c2981a584e423d802e69",
+        "changedFiles": [
+          {
+            "path": "artifacts/evidence/W2-C18-T01-approved-metadata.maintenance-01.md",
+            "gitBlob": "68ce633fefad46e46cbd3e9d7968d8765b38fe10",
+            "sha256": "a2d7bae2ad4855a64554c11333c30f80b7df94f8b4e127ac59a67755da223755"
+          },
+          {
+            "path": "docs/adr/ADR-0055-recognize-independently-reviewed-approved-corrective-metadata.md",
+            "gitBlob": "43d9fe884eb5134c6854dcb67bb05ee9e70cdd91",
+            "sha256": "f95daa78a6e23aae044ad94e36c029a5c1005d9f22bd77cdb10639a6a3050417"
+          },
+          {
+            "path": "docs/adr/index.json",
+            "gitBlob": "76f4673cd1f50d11dba869dd662e9f1fdbee516a",
+            "sha256": "588c9f0168bd0d61ef3849078749424eab694495732da7d38ec70560d41d2112"
+          },
+          {
+            "path": "tests/foundation/test_taskctl_workflow.py",
+            "gitBlob": "73283492b09a84c105b3da525baa925a85fb322a",
+            "sha256": "d17a6565997410cc7a9d86336afbbb23477d6bc39dd865326666f329ebcc1b3f"
+          },
+          {
+            "path": "tests/foundation/test_ui_change_gate.py",
+            "gitBlob": "a7b16df83bdb4cab892d21919b3077a22e8ed32c",
+            "sha256": "ca12c3430e11810272087e21c468c2d3bb5d8a39d44b6f2b33f2850969f03460"
+          },
+          {
+            "path": "tools/ui_change_gate.py",
+            "gitBlob": "99d6bd8383fab26dcd999e7e9f13232284992f41",
+            "sha256": "54e99373061053c61acd0ad1e39560be1833777293dffc411ae810e35dfe58c9"
+          }
+        ]
+      }
+    ],
+    "sourceHashes": {
+      "docs/adr/ADR-0055-recognize-independently-reviewed-approved-corrective-metadata.md": "f95daa78a6e23aae044ad94e36c029a5c1005d9f22bd77cdb10639a6a3050417",
+      "docs/adr/index.json": "588c9f0168bd0d61ef3849078749424eab694495732da7d38ec70560d41d2112",
+      "tests/foundation/test_taskctl_workflow.py": "d17a6565997410cc7a9d86336afbbb23477d6bc39dd865326666f329ebcc1b3f",
+      "tests/foundation/test_ui_change_gate.py": "ca12c3430e11810272087e21c468c2d3bb5d8a39d44b6f2b33f2850969f03460",
+      "tools/ui_change_gate.py": "54e99373061053c61acd0ad1e39560be1833777293dffc411ae810e35dfe58c9"
+    },
+    "evidence": {
+      "path": "artifacts/evidence/W2-C18-T01-approved-metadata.evidence-01.json",
+      "sha256": "6c4919ee6f14d004f288a682e078ad3c85b6d2390df588e38f4e136520061390",
+      "commit": "86bad9946947b0cc54164ee7be8bedf4405f3b06"
+    },
+    "review": {
+      "path": "artifacts/evidence/W2-C18-T01-approved-metadata.review-01.json",
+      "sha256": "7ea155f1b45cf2801d359a1643b445b7346a9ebd336cebbbe8ee380a5a5e9431",
+      "commit": "15d9c6a738c584f7c5cf632e9eb2fbf5a80e3ad8"
+    },
+    "contract": {
+      "path": "artifacts/evidence/W2-C18-T01-approved-metadata.maintenance-01.md",
+      "gitBlob": "68ce633fefad46e46cbd3e9d7968d8765b38fe10",
+      "sha256": "a2d7bae2ad4855a64554c11333c30f80b7df94f8b4e127ac59a67755da223755"
+    }
+  },
+  "independentReadiness": {
+    "path": "artifacts/evidence/W2.C18.T01.ui-authority-source-readiness-01.json",
+    "sha256": "72534057a749b50c11ebc65357d7fe1657b7b86270d1e240effee0854e25eebf",
+    "commit": "43602717feb02efd60a2597fdbab3578909c2958"
+  },
+  "sourceCapture": {
+    "path": "artifacts/evidence/W2.C18.T01.ui-authority-source-capture-01.json",
+    "sha256": "394a474f74dbd52a368b30f0ece3c7681873f962c8e8bdf900bf8e126c8c7692",
+    "commit": "caf334239490739ddb554e152dd98ff2fe41777d"
+  },
+  "negativeControls": {
+    "path": "artifacts/tmp/W2.C18.T01-ui-authority-controls-02.receipt.json",
+    "sha256": "e8c0d729ad07007f04726c03dbd936148f84c77d85da0681fec974f7f0650488",
+    "actualResult": "PASS_SOURCE_CONTROLS_ONLY",
+    "cases": 28,
+    "scope": "Pure isolated source conditions; no live Git/gate/runtime proof."
+  },
+  "selectedInputs": [
+    {
+      "path": "artifacts/tmp/W2.C18.T01-ui-authority-proof-02.py",
+      "sha256": "44a948fe9e3b1e5da5cdaeb4a3e5f2878f42fbd8ce4dcf426a0e3db05df7ff04"
+    },
+    {
+      "path": "artifacts/tmp/W2.C18.T01-ui-authority-controls-02.py",
+      "sha256": "ba4ffd3252e0da2c1e71363080c63c3aa42df06bb836041dd5fe5790a434c5a1"
+    },
+    {
+      "path": "artifacts/evidence/W2.C18.T01.closeout-compatibility-decision-01.json",
+      "sha256": "c43b56dd0140b12ef6e1fbf0c7ddae68414f0d0f05601a4f43549576be38674a"
+    },
+    {
+      "path": "artifacts/evidence/W2.C18.T01.closeout-compatibility-proposal-01.json",
+      "sha256": "4ae509a443c66eb6106edf3003844d1c7b41e9f796fabf41fd48a68140129708"
+    },
+    {
+      "path": "artifacts/evidence/W2.C18.T01.closeout-compatibility-readiness-R01.json",
+      "sha256": "7ac85ea6b0992abd2cc134146aaa081d9e902910c9d054825de0a6bb9e2c67ca"
+    },
+    {
+      "path": "artifacts/evidence/W2.C18.T01.spec.json",
+      "sha256": "5c3e65f9159dff1a4b3ef2db48cf8e78b7d1ef44f06cc196c273171be6acd114"
+    },
+    {
+      "path": "artifacts/evidence/CAP-05.S06.T02.review-R01.json",
+      "sha256": "36286739e24cff1516576c03e79ce2eff061aec83ff86e52e2ed02b1bbcbb181"
+    },
+    {
+      "path": "planning/wave-amendment-approvals/W2.A06.json",
+      "sha256": "3ecf2b98806f1589be7bd63fcc4f25cf0ee2df79bc95a3a0fefda2ce5666e4b2"
+    },
+    {
+      "path": "planning/enabler-change-requests/ECR-0014.packet.json",
+      "sha256": "6293590db74b9a3ec4ce6019a1713def568798ac3a71208a5583bfcff78f7a34"
+    },
+    {
+      "path": "planning/enabler-change-requests/ECR-0014.md",
+      "sha256": "7c70aeebc5a60ab606bd5f6170b48e2012becab8cf7547f7ad8cd75482291496"
+    },
+    {
+      "path": "tools/taskctl.py",
+      "sha256": "9337fe41e90fd4b4d9bf39c32ca299ccca1c26f6f6b6a1d0b426a8ac062bc7e3"
+    },
+    {
+      "path": "artifacts/evidence/ui-change/W2.C18.T01.json",
+      "sha256": "a09b59926a524688e4fbbd1c3d9a5cb1aab3719a909eee7051ebda849c3a97cb"
+    },
+    {
+      "path": "artifacts/evidence/W2.C18.T01.ui-authority-source-capture-01.json",
+      "sha256": "394a474f74dbd52a368b30f0ece3c7681873f962c8e8bdf900bf8e126c8c7692"
+    },
+    {
+      "path": "docs/adr/ADR-0055-recognize-independently-reviewed-approved-corrective-metadata.md",
+      "sha256": "f95daa78a6e23aae044ad94e36c029a5c1005d9f22bd77cdb10639a6a3050417"
+    },
+    {
+      "path": "docs/adr/index.json",
+      "sha256": "588c9f0168bd0d61ef3849078749424eab694495732da7d38ec70560d41d2112"
+    },
+    {
+      "path": "tests/foundation/test_taskctl_workflow.py",
+      "sha256": "d17a6565997410cc7a9d86336afbbb23477d6bc39dd865326666f329ebcc1b3f"
+    },
+    {
+      "path": "tests/foundation/test_ui_change_gate.py",
+      "sha256": "ca12c3430e11810272087e21c468c2d3bb5d8a39d44b6f2b33f2850969f03460"
+    },
+    {
+      "path": "tools/ui_change_gate.py",
+      "sha256": "54e99373061053c61acd0ad1e39560be1833777293dffc411ae810e35dfe58c9"
+    },
+    {
+      "path": "artifacts/evidence/W2-C18-T01-approved-metadata.evidence-01.json",
+      "sha256": "6c4919ee6f14d004f288a682e078ad3c85b6d2390df588e38f4e136520061390"
+    },
+    {
+      "path": "artifacts/evidence/W2-C18-T01-approved-metadata.review-01.json",
+      "sha256": "7ea155f1b45cf2801d359a1643b445b7346a9ebd336cebbbe8ee380a5a5e9431"
+    },
+    {
+      "path": "artifacts/evidence/W2-C18-T01-approved-metadata.maintenance-01.md",
+      "sha256": "a2d7bae2ad4855a64554c11333c30f80b7df94f8b4e127ac59a67755da223755"
+    },
+    {
+      "path": "artifacts/evidence/W2.C18.T01.generated-integrity-01.json",
+      "sha256": "43eae24db2d4e314ee5209598349848a1379f7b1efb4e35db7a44e15a0001953"
+    },
+    {
+      "path": "artifacts/evidence/W2.C18.T01.metadata-scope-R01.json",
+      "sha256": "0f068e1c56580b4d3b6281fc5f2c971ec2582c9ae176687755fd717a60130230"
+    }
+  ],
+  "taskApproved": false,
+  "sliceApproved": false,
+  "waveComplete": false,
+  "releaseApproved": false,
+  "normalUiCommandPassClaimed": false,
+  "conditional144Replacement": false,
+  "unboundPrerequisites": [],
+  "recordingProcedure": "Actual independent source readiness and normal maintenance chain are published and bound by their actual immutable introductions. Execute only this exact approved bounded source proof at a later clean committed candidate; all ordinary submission, task review and broader slice/Wave/release gates remain.",
+  "recordedAt": "2026-10-11T16:57:06.142117+00:00"
+}
