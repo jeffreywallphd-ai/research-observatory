@@ -1,0 +1,217 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "independent-amendment-bootstrap-review",
+  "taskId": "W2.A06.B00",
+  "amendmentId": "W2.A06",
+  "result": "approved",
+  "reviewer": "agent:/root/a03_closeout_review",
+  "implementer": "codex-w2-implementation",
+  "reviewedAt": "2026-10-11T18:57:51.778264+00:00",
+  "candidateCommit": "c6a9e21944e3d5299b5aed299fa3e4d0953d5728",
+  "deliveryCommit": "48562034a1cbdd8878085acb61c960db8302ce59",
+  "approvalCommit": "ab3c35369a8cd57876a1890db90263e5ab2ba395",
+  "evidence": {
+    "path": "artifacts/evidence/W2.A06.B00.json",
+    "sha256": "bb2349b0c527014ac0dd64aba34edea35cdc61e28c68b5d4a0acb80a2a7b5492"
+  },
+  "findings": [],
+  "openFindingIds": [],
+  "blockingFindings": [],
+  "criteria": [
+    {
+      "criterion_index": 1,
+      "result": "verified",
+      "observation": "Exact approved ECR-0014 packet, original owner grant and five ADOPTED predecessors are authenticated by unchanged independent criterion preparation and actual official ECR approval validation. No later authority is inferred."
+    },
+    {
+      "criterion_index": 2,
+      "result": "verified",
+      "observation": "Pre-submit candidate has actual independently approved C18 DONE and quiescent PAUSED Wave. The delivery backlog differs semantically only by the supported append of the exact A06 APPROVED/B00 REVIEW empty shell; every prior task/campaign/lease/gate record remains equal."
+    },
+    {
+      "criterion_index": 3,
+      "result": "verified",
+      "observation": "Original 47-path candidate inventory, three exact addenda/36 finite leaves and installed source/blob observer remain bound. The separately approved named C18 maintenance is preserved; B00 introduces only the exact eight normal metadata/evidence paths, with no new product/framework/reference/grant change. Actual submitted normal integrity and mandatory privacy hook passed."
+    },
+    {
+      "criterion_index": 4,
+      "result": "verified",
+      "observation": "All three frozen task identities, ordered dependencies and canonical definition hashes remain prepared and unchanged. Actual supported bootstrap-submit persisted the exact REVIEW shell and candidate/manifest/addenda binding. Materialization, activation and product claims have not occurred."
+    }
+  ],
+  "authenticatedPreparation": {
+    "criterionReview": {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/W2.A06.B00.independent-review-preparation-01.json",
+      "sha256": "2ca66093a70a8149cd244c212029d0256ef569abd6462a8d487e9b41c4e3ba40"
+    },
+    "submittedShellReview": {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/W2.A06.B00.submitted-shell-review-preparation-01.json",
+      "sha256": "85e714b49206189c0cb982e86f2bfd52c27aee8f7d41404b39261178fb438fdc"
+    },
+    "submittedOutputClosure": {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/W2.A06.B00.submitted-output-preparation-01.json",
+      "sha256": "b54e0174b9ae9fde448874556cbead9fd33fe74e3c122d67a21071f5ccb5a0a0"
+    },
+    "correctedPriorOutputReview": {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/c18-a06-combined-output-review-02.json",
+      "sha256": "cf5a5283f6d61421f448eec271e3c3328cb2aa8c25369d0c89c80b7df91a3e03"
+    }
+  },
+  "actualExecutionEvidence": {
+    "bootstrapSubmitReceipt": {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/a06-b00-bootstrap-submit-01.receipt.json",
+      "sha256": "4775cd26b288bfe07089d92583498443535220ce9c9f8eade77e5f1be541b1f8"
+    },
+    "submittedViewsReceipt": {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/a06-b00-submitted-views-01.receipt.json",
+      "sha256": "4727ad0db7a0f78535a77b79ece5c262f043090bb86bc4ef38aeed787881bdd0"
+    },
+    "submittedSiteReport": {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/a06-b00-submitted-site-check-01.json",
+      "sha256": "9b82695cffcb506a6346b9b04d310602a1231ca882ceb676bf1704a85e8bc6c0"
+    },
+    "successfulDeliveryCommitReceipt": {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/a06-b00-submission-commit-02.receipt.json",
+      "sha256": "e98daa38da1f7b182eaea3b21667cbe0574d31b227d2bb79aaf1fdcce4783cd8"
+    },
+    "privacyDisposition": {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/a06-b00-submission-privacy-review-01.json",
+      "sha256": "4ca2c0057cd4231dc179263d237c744710f5ada0c6cb3836165a456771cc2fff"
+    }
+  },
+  "deliveryAuthentication": {
+    "singleParent": "c6a9e21944e3d5299b5aed299fa3e4d0953d5728",
+    "exactEightPathInventory": [
+      {
+        "path": "artifacts/evidence/W2.A06.B00.json",
+        "mode": "100644",
+        "gitBlob": "e2b87e21e6f10907fe94251668c319076b20aac8",
+        "sha256": "bb2349b0c527014ac0dd64aba34edea35cdc61e28c68b5d4a0acb80a2a7b5492",
+        "size": 9097,
+        "worktreeSHA256": "bb2349b0c527014ac0dd64aba34edea35cdc61e28c68b5d4a0acb80a2a7b5492",
+        "worktreeEqualsOriginalCheckedRaw": true
+      },
+      {
+        "path": "docs/planning-implementation-plan.md",
+        "mode": "100644",
+        "gitBlob": "937cf68c01ee2de00c499d063a8389f922af7502",
+        "sha256": "f0b598ace0aa14180a5553226c5c614524689fb2a8ab1676ced430354d3aa68c",
+        "size": 3110017,
+        "worktreeSHA256": "f0b598ace0aa14180a5553226c5c614524689fb2a8ab1676ced430354d3aa68c",
+        "worktreeEqualsOriginalCheckedRaw": true
+      },
+      {
+        "path": "planning/backlog.yaml",
+        "mode": "100644",
+        "gitBlob": "bba32eafbcf6bddb3fbe85d77b4f5ce34c81c383",
+        "sha256": "7c942db3887f738ae6e5bc804e4926bb687ed55e57298a80e56921d3ea69b254",
+        "size": 3899668,
+        "worktreeSHA256": "3a9421b35f5bdf89bbe85cffd1b39511e0733a5452b2410e70ba04460a769c82",
+        "worktreeEqualsOriginalCheckedRaw": true
+      },
+      {
+        "path": "planning/review-site/enablers/ECR-0014.html",
+        "mode": "100644",
+        "gitBlob": "33ec824b424eb2387fb9fb09564d407ba8ff2a89",
+        "sha256": "b174d85ef56bb23fe0a14236fc6de589486385e3f77a3563c041d7f704d31f3e",
+        "size": 130070,
+        "worktreeSHA256": "2b8baf26bd3a9b2a41a5fbe9169424bf07670fa1c09e887074a5072e5631e6d2",
+        "worktreeEqualsOriginalCheckedRaw": true
+      },
+      {
+        "path": "planning/review-site/enablers/index.html",
+        "mode": "100644",
+        "gitBlob": "1240066437203997a3ac1d0c449608dd51e7574e",
+        "sha256": "1a8cb4f3061d9a5f9810651c72a0e0ad6584ca1c64e3521f0a6f06258ffcae1f",
+        "size": 15148,
+        "worktreeSHA256": "2564e2aa2edccaa8617289dff766d7c5a6b69f65b092164a04d14793375b526c",
+        "worktreeEqualsOriginalCheckedRaw": true
+      },
+      {
+        "path": "planning/review-site/manifest.json",
+        "mode": "100644",
+        "gitBlob": "b645ff043111413d9a212c30c12bbffddce1ab5f",
+        "sha256": "84caa802d93c0eb7cf3b4129e43b76b0749568c1d793def9ea656ee7885ccba6",
+        "size": 3944463,
+        "worktreeSHA256": "3e0f44ffdbfb72c7d3484c894c2135b7b44e0be7a615d590a411da168e2b53ce",
+        "worktreeEqualsOriginalCheckedRaw": true
+      },
+      {
+        "path": "planning/review-site/waves/W2.html",
+        "mode": "100644",
+        "gitBlob": "eb7dc0b65b7d4ae92f1e3dac08510691e1a817d2",
+        "sha256": "235c50880aa78f85606ddcd23afad7908b973081f6328a5f28149915746da22d",
+        "size": 275299,
+        "worktreeSHA256": "42fd1b62a9b26c79e7984dcf03836e8b0143de0394e2b1858911ee4d6aa14113",
+        "worktreeEqualsOriginalCheckedRaw": true
+      },
+      {
+        "path": "planning/status-summary.md",
+        "mode": "100644",
+        "gitBlob": "8a7fafd58fe7fd59abf3019c7810cfe9db58c489",
+        "sha256": "e689ba0fbdbaf5f7415dc31ca389e8c1b26295b2f6c79222df059204db5eedb8",
+        "size": 138026,
+        "worktreeSHA256": "e689ba0fbdbaf5f7415dc31ca389e8c1b26295b2f6c79222df059204db5eedb8",
+        "worktreeEqualsOriginalCheckedRaw": true
+      }
+    ],
+    "manifestUniqueRegularIntroduction": "48562034a1cbdd8878085acb61c960db8302ce59",
+    "submittedShellCanonicalSHA256": "979a7b402aaf58a16fd8e0aa63655fe0887a58d74db0c6be7164bd5680b8b558",
+    "backlogGitSHA256": "7c942db3887f738ae6e5bc804e4926bb687ed55e57298a80e56921d3ea69b254",
+    "entirePredecessorSemanticDocumentPreserved": true,
+    "selectedSourceRows": 441,
+    "selectedOutputRows": 502,
+    "allPreparedSelectedGitBlobsEqualDelivery": true,
+    "allRemainingTrackedTreeInputsUnchangedByDeliveryRange": true,
+    "sixDiscoverySetsPreservedByExactTreeDelta": true
+  },
+  "executionDistinctions": {
+    "qualifyingCandidate": "c6a9e21944e3d5299b5aed299fa3e4d0953d5728",
+    "laterSubmittedDelivery": "48562034a1cbdd8878085acb61c960db8302ce59",
+    "bootstrapSubmitWrapperIsToolEmittedCASReceipt": false,
+    "bootstrapSubmitCASAssessment": "The actual wrapper and raw streams report observed execution/before-after bytes. The unchanged supported route calls save_validated directly, with expected raw predecessor and save_atomic lock/CAS/fsync/replace; it emits no taskctl-transition-receipt JSON.",
+    "freshSubmittedSiteIntegritySeconds": 499.2609914999921,
+    "freshSubmittedGenerationSeconds": 494.9160331999883,
+    "freshSubmittedIntegrityResult": "pass",
+    "reviewerReranChecks": false,
+    "normalBootstrapReviewStillPending": true
+  },
+  "preservedAdverseHistory": [
+    {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/a06-b00-manifest-preparation-01.receipt.json",
+      "sha256": "99a7b54c64b5f9784dcf15ecd7f2a697a4b17ed700f7cdc0b2267a2b7c6c5a54"
+    },
+    {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/c18-a06-combined-output-preparation-01.json",
+      "sha256": "5e59ad959ff2c625a9ef757085fd5d4406f121d1005410c859939bb6ba592dc4"
+    },
+    {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/c18-a06-combined-output-review-01.json",
+      "sha256": "cadb479f87392a1dd47b1eff9d4c8e4c1a31dcdfeebd1c1bbfa28ac3eacb63f0"
+    },
+    {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/a06-b00-submission-commit-01.receipt.json",
+      "sha256": "f378c5db6eb744f3a0f76d30f810350cf4dcffe349c4533692f11dadfb78007e"
+    },
+    {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/a06-b00-submission-credential-diagnostic-01.json",
+      "sha256": "e2aaf5798900dbca264e99f87cc8164d1826026bd05aea7ac591d2b13c4c3a3b"
+    }
+  ],
+  "priorFindingReplay": [
+    {
+      "findingId": "W2.A06.B00.combined-output-review-R01-F01",
+      "result": "fixed",
+      "observation": "Original blanket newline conversion of the PNG was incorrect and caused actual helper01 denial. Corrected closure02 binds true binary Git bytes and raw source equality; successor helper02 passed. Original false assertion/adverse records remain retained."
+    }
+  ],
+  "proofLimits": [
+    "Existing Completed badge means currently materialized implementation-task aggregation, not Wave completion.",
+    "Existing addendum mechanical-generation wording does not establish manual source/test/ADR authorship or new human byte-level approval.",
+    "Approval is limited to this exact W2.A06.B00 bootstrap disposition; the normal bootstrap-review --note transition, exact task materialization and activation remain root-owned future operations.",
+    "Current shell retains null independent controller review, tasks[], campaignnull and completionPENDING until supported transitions occur. No task implementation, amendment exit/adoption, Slice/checkpoint/Wave/G2/release approval is inferred.",
+    "One-file product adapter scope addendum is still pending and receives no authority from B00. No new security/UX/product/framework edits or future-method waiver is granted.",
+    "Restart P1, 48 quality findings, required recovery/verification tasks and fresh complete Wave/platform/package/installer qualification remain open.",
+    "Publishable references are repository-relative digest bindings only; ignored raw machine reports/runtime paths or scanner values are not embedded."
+  ]
+}
