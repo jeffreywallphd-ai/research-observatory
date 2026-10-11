@@ -1,7 +1,7 @@
 ---
 document_type: generated-backlog-status-summary
 source: planning/backlog.yaml
-source_sha256: db7a0e487541615834f2edcbd1584ab4747cabb841f1e7a5e2f4c65b77748d2a
+source_sha256: bb026c6ae736eb4fbbfd00b1073931521087d72c10c718cb7cff330fb9b0bfa4
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -930,13 +930,14 @@ Append-only rounds remain distinct from the current latest-review projection. Le
 | `W2.C15.T01` | `append-only v1` | 1 | `-` | approved / agent:/root/s01_integration_review | - |
 | `W2.C16.T01` | `append-only v1` | 1 | `-` | approved / agent:/root/reader_table_figure_review | - |
 | `W2.C17.T01` | `append-only v1` | 1 | `-` | approved / agent:/root/c17_independent_disposition | - |
+| `W2.C18.T01` | `append-only v1` | 0 | `-` | - / - | - |
 ## Wave progress
 
 | Wave | Pre-Wave approval | Campaign | Qualification | Approved slices | Done tasks | Exit gate |
 |---|---|---|---|---:|---:|---|
 | `W0` - Engineering foundation | `APPROVED` | `NONE` | `APPROVED` — Historical W0 qualification predates the Wave-campaign controller. | 6/6 | 19/19 | `G0` / `APPROVED` |
 | `W1` - Windows local runtime and durable core | `APPROVED` | `COMPLETE` | `APPROVED` — OWNER-ACCEPTED CORE COMPLETE: explicit 2026-09-13 owner approval closes W1 prototype core with retained qualification gaps, not a full-suite PASS. Reasonable test and UX-control repairs continue between Waves. G1 and W2 activation remain separate; see artifacts/evidence/W1.owner-core-acceptance-01.md. | 15/15 | 53/53 | `G1` / `APPROVED` |
-| `W2` - Windows local evidence foundation | `APPROVED` | `PAUSED` | `PAUSED` | 10/11 | 50/50 | `G2` / `PENDING` |
+| `W2` - Windows local evidence foundation | `APPROVED` | `PAUSED` | `PAUSED` | 10/11 | 50/51 | `G2` / `PENDING` |
 | `W3` - Windows local research workbench | `PENDING` | `NONE` | `PENDING` | 0/16 | 0/48 | `G3` / `PENDING` |
 | `W4` - Windows scholarly reasoning and novelty MVP | `PENDING` | `NONE` | `PENDING` | 0/9 | 0/27 | `G4` / `PENDING` |
 | `W5` - Windows PC/lab production release | `PENDING` | `NONE` | `PENDING` | 0/8 | 0/25 | `G5` / `PENDING` |
@@ -991,7 +992,9 @@ Append-only rounds remain distinct from the current latest-review projection. Le
 
 ## Active work
 
-No task is currently active.
+| Task | Status | Owner | Branch |
+|---|---|---|---|
+| `W2.C18.T01` Build manual structural correction and annotation tools | `IN_PROGRESS` | codex-w2-implementation | `codex/w2-implementation` |
 
 ## Linked corrective tasks
 
@@ -1084,4 +1087,8 @@ Original tasks and approvals remain unchanged.
 ### W2.C17.T01 — Implement parser upgrade comparison and stale propagation
 
 **Status:** `DONE`. **Original task:** `CAP-05.S06.T03`. **Latest review:** `approved`.
+
+### W2.C18.T01 — Build manual structural correction and annotation tools
+
+**Status:** `IN_PROGRESS`. **Original task:** `CAP-05.S06.T02`. **Latest review:** `-`.
 

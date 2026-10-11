@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: db7a0e487541615834f2edcbd1584ab4747cabb841f1e7a5e2f4c65b77748d2a
+source_sha256: bb026c6ae736eb4fbbfd00b1073931521087d72c10c718cb7cff330fb9b0bfa4
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -4618,6 +4618,33 @@ Original tasks and approvals remain unchanged.
 **Current latest-review projection:** `approved` by agent:/root/c17_independent_disposition at `2026-10-11T01:34:43+00:00`
 
 **Latest notes:** Approve the exact W2.C17.T01 R01 candidate 716e75b28dfbac09ef24bb58432b16346fa529bf and its frozen criterion evidence. The two-file restoration preserves dirty/busy/issued-unknown ownership and reports navigation truthfully, with allowed recovery and zero implicit acceptance. Fresh affected product checks and the exact owner-approved source-free two-selector authority proof pass. No material blocking finding remains; all original adverse evidence, inherited authority and broader slice/Wave/release obligations are preserved.
+
+**Currently open findings:** -
+
+### W2.C18.T01 — Build manual structural correction and annotation tools
+
+**Status:** `IN_PROGRESS`. **Original task:** `CAP-05.S06.T02`. **Latest review:** `-`.
+
+**Reproduction:** Fresh approved S06 current-build conformance05 at candidate15bd1939a852bd8262b4b39b556f2793c0852957 passed all five preserved reference/token/route/workflow/accessibility/visual checks, then failed the existing production style check. Report artifacts/tmp/CAP-05.S06.W2-1.9-observations-03/conformance-report.json SHA256 5c82d66365a1965eccb4d5288ccb6b97b1702a5c5059d16856457b2f832f393d. Three global CSS rules repeat the identical display:grid; gap:var(--space-2) group for .intent-three-column label, .shortcut-dialog dl/.shortcut-dialog dl div, and .parsing-quality-workspace label. Original report and output remain preserved; no component capture or Slice/Wave PASS is claimed.
+
+**Inherited criteria:**
+
+- Corrections preserve original parser output, actor, rationale, and revision; downstream objects point to the corrected revision only after explicit acceptance.
+- Automated tests cover the expected path and at least one material failure or boundary condition.
+- Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.
+
+**Bounded changed paths:**
+
+- apps/desktop/src/app.css
+#### Review history — W2.C18.T01
+
+**Review mode:** `append-only v1` / 0 completed round(s)
+
+**Current immutable submission awaiting review:** None
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
 
 **Currently open findings:** -
 

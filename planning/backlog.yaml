@@ -4996,6 +4996,88 @@ waves:
           correction before local integration; perform fresh shipping UIA/Core readback, full slice/checkpoint and fresh W2
           qualification afterward. No new scope, reference, criterion, threshold, framework/controller change, hardware/model
           run or release approval.
+    - title: Build manual structural correction and annotation tools
+      objective: Controlled edits for section labels/order, merged/split blocks, reference matches, page anchors, and exclusion
+        of corrupted regions.
+      dependencies:
+      - CAP-05.S06.T01
+      - CAP-05.S05.T01
+      acceptance_criteria:
+      - Corrections preserve original parser output, actor, rationale, and revision; downstream objects point to the corrected
+        revision only after explicit acceptance.
+      - Automated tests cover the expected path and at least one material failure or boundary condition.
+      - Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.
+      verification_commands:
+      - python tools/verify.py --profile desktop
+      - python tools/verify.py --profile documents
+      deployment_profiles:
+      - LOC
+      - LAB
+      - ALL
+      platform_targets:
+      - windows-x64
+      verification_profiles:
+      - desktop
+      - documents
+      id: W2.C18.T01
+      wave: W2
+      priority: P0
+      status: IN_PROGRESS
+      owner: codex-w2-implementation
+      branch: codex/w2-implementation
+      base_sha: 302c1d14818230629b2991a61ae4ff4862c7aece
+      worktree: .
+      lease:
+        claimed_by: codex-w2-implementation
+        claimed_at: '2026-10-11T10:47:18+00:00'
+        expires_at: '2026-10-11T18:47:18+00:00'
+      started_at: '2026-10-11T10:47:18+00:00'
+      updated_at: '2026-10-11T10:47:18+00:00'
+      completed_at: null
+      blocker: null
+      implementation_notes: ''
+      evidence: []
+      verification_state: null
+      review:
+        reviewer: null
+        result: null
+        reviewed_at: null
+        notes: null
+      review_control:
+        version: 1
+        attempts: []
+        current_submission: null
+      correction:
+        origin_task_id: CAP-05.S06.T02
+        origin_commit: ac5f891db456a3eb54cb376f9d9a4082c3f3236b
+        paused_state_sha256: 2a2fcd5eedea65c35915796890d2e0964c9f4e0dc3c5cf57122037ac51809395
+        origin_sha256: ea16178d8814da61bc71d291c49b582d4abaf529150d363701dfbbeaa429e856
+        origin_contract_sha256: 64b11b61c0a46ed87fafdd4dae56ab8e72820bf23ad65e77e325df50cc612d3f
+        origin_history_sha256: 8c7da45a2a550dd921a28ab10ddee86313d4b9a3fb0d26aa7deffd4e9dd049fb
+        origin_amendment_id: null
+        authority_sha256: c92ce7e9bac1b8a49d13d649a5980fea61e56ee953d238c734d8ff5f04f4c9e5
+        spec:
+          path: artifacts/evidence/W2.C18.T01.spec.json
+          sha256: 5c3e65f9159dff1a4b3ef2db48cf8e78b7d1ef44f06cc196c273171be6acd114
+          commit: 302c1d14818230629b2991a61ae4ff4862c7aece
+        reproduction: Fresh approved S06 current-build conformance05 at candidate15bd1939a852bd8262b4b39b556f2793c0852957
+          passed all five preserved reference/token/route/workflow/accessibility/visual checks, then failed the existing production
+          style check. Report artifacts/tmp/CAP-05.S06.W2-1.9-observations-03/conformance-report.json SHA256 5c82d66365a1965eccb4d5288ccb6b97b1702a5c5059d16856457b2f832f393d.
+          Three global CSS rules repeat the identical display:grid; gap:var(--space-2) group for .intent-three-column label,
+          .shortcut-dialog dl/.shortcut-dialog dl div, and .parsing-quality-workspace label. Original report and output remain
+          preserved; no component capture or Slice/Wave PASS is claimed.
+        changed_paths:
+        - apps/desktop/src/app.css
+        impact_analysis: Restore existing shared-style compliance by consolidating the identical two-declaration group into
+          one selector list. Preserve each selector, specificity, token value and computed behavior across Intent, keyboard
+          shortcuts and Parsing Quality. No semantic DOM, workflow, Core/Native/parser/rights/permission/state/source-acceptance,
+          reference, baseline, dependency, threshold or framework changes. This is required defect restoration, with no elective
+          structural refactoring allocation. Use existing product-style analysis as failing characterization and post-change
+          regression; prove computed CSS/geometry equivalence on affected production fixture contexts under current fonts/themes/viewports.
+          Preserve original task approval and unrelated restart P1/48 full-check findings. The previously exact approved conformance
+          helper refuses product changes after C17. Do not bypass it; authenticate the new correction and obtain any exact
+          method authority needed before replacing that frozen proof. Independent commit-bound correction/classification/integration
+          review remains required before completion and local integration. No completion or release gate is waived.
     resume_records:
     - id: W2.R01
       wave_id: W2
