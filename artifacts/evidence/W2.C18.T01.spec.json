@@ -2,9 +2,9 @@
   "schemaVersion": "1.0",
   "kind": "authority-preserving-correction",
   "origin": {
-    "taskId": "CAP-05.S06.T01",
-    "commit": "15bd1939a852bd8262b4b39b556f2793c0852957",
-    "sha256": "d89134d7c19c58539b91636792e2240592cf29203956fb527b55a12b83783f74"
+    "taskId": "CAP-05.S06.T02",
+    "commit": "ac5f891db456a3eb54cb376f9d9a4082c3f3236b",
+    "sha256": "ea16178d8814da61bc71d291c49b582d4abaf529150d363701dfbbeaa429e856"
   },
   "reproduction": "Fresh approved S06 current-build conformance05 at candidate15bd1939a852bd8262b4b39b556f2793c0852957 passed all five preserved reference/token/route/workflow/accessibility/visual checks, then failed the existing production style check. Report artifacts/tmp/CAP-05.S06.W2-1.9-observations-03/conformance-report.json SHA256 5c82d66365a1965eccb4d5288ccb6b97b1702a5c5059d16856457b2f832f393d. Three global CSS rules repeat the identical display:grid; gap:var(--space-2) group for .intent-three-column label, .shortcut-dialog dl/.shortcut-dialog dl div, and .parsing-quality-workspace label. Original report and output remain preserved; no component capture or Slice/Wave PASS is claimed.",
   "changedPaths": [

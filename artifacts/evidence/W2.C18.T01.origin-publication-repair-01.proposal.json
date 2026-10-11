@@ -1,0 +1,54 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "exact-data-only-publication-repair-proposal",
+  "taskId": "W2.C18.T01",
+  "reviewedCandidate": "ac5f891db456a3eb54cb376f9d9a4082c3f3236b",
+  "recordedAt": "2026-10-11T10:32:58.890864+00:00",
+  "status": "PENDING_EXPLICIT_OWNER_APPROVAL",
+  "targetPath": "artifacts/evidence/W2.C18.T01.spec.json",
+  "original": {
+    "commit": "ac5f891db456a3eb54cb376f9d9a4082c3f3236b",
+    "gitBlob": "dba15a804179b1332b546ef1ed768980cdd8145b",
+    "sha256": "d7405321feb42da0143becc869c171a5d9d6cd337930c76f74e1b073409f2f2c",
+    "origin": {
+      "taskId": "CAP-05.S06.T01",
+      "commit": "15bd1939a852bd8262b4b39b556f2793c0852957",
+      "sha256": "d89134d7c19c58539b91636792e2240592cf29203956fb527b55a12b83783f74"
+    },
+    "exactLocalCopy": "artifacts/tmp/W2.C18.T01.origin-publication-repair-01/original.json"
+  },
+  "corrected": {
+    "sha256": "5c3e65f9159dff1a4b3ef2db48cf8e78b7d1ef44f06cc196c273171be6acd114",
+    "origin": {
+      "taskId": "CAP-05.S06.T02",
+      "commit": "ac5f891db456a3eb54cb376f9d9a4082c3f3236b",
+      "sha256": "ea16178d8814da61bc71d291c49b582d4abaf529150d363701dfbbeaa429e856"
+    },
+    "exactLocalCopy": "artifacts/tmp/W2.C18.T01.origin-publication-repair-01/corrected.json"
+  },
+  "patch": {
+    "path": "artifacts/tmp/W2.C18.T01.origin-publication-repair-01/exact.patch",
+    "sha256": "652f51523dd4c264c989689536148d60ddce0be2d6697ddfa17d42ddbfef500a"
+  },
+  "independentRouteAssessment": {
+    "path": "artifacts/tmp/W2.C18.T01.origin-correction-01/route-readiness-independent-disposition-01.json",
+    "sha256": "6056928986912acc660ba0905b5f2686c4c3adb183a34d815e5f290bc390ae16"
+  },
+  "scope": [
+    "Publish only these three origin fields at the existing taskctl fixed path in a new ordinary commit.",
+    "Preserve the old Git commit/blob without amend/reset/removal and add an exact original archive at artifacts/evidence/W2.C18.T01.origin-correction-01.original.json.",
+    "Add append-only provenance and owner decision records binding this exact packet, approval, independent readiness and actual successor commit/hash.",
+    "After publication, admit only through unchanged taskctl and perform the approved bounded stylesheet restoration with all existing checks and reviews."
+  ],
+  "reason": "Parsing Quality display was implemented and independently approved in CAP-05.S06.T02; the unadmitted C18 proposal incorrectly identifies metrics-only T01. T02 and its complete task snapshot are independently authenticated. All other spec values remain byte-equivalent.",
+  "risk": "Changes a committed governance proposal at its mandatory path; immutable predecessor copies/history and append-only decision/provenance prevent loss or retrospective relabeling. No task has yet been admitted, no product has changed and the interrupted claim wrote no state.",
+  "automaticRejections": [
+    "First overwrite rejected for append-only preservation.",
+    "Second transparent re-review rejected because broad W2 authorization does not specifically approve this governance-record mutation; independent review cannot authorize it."
+  ],
+  "excludedAuthority": [
+    "No proof code, framework/controller, task schema, approved reference, visual baseline or release-criterion change.",
+    "No additional verification exemption, restart recovery policy, release approval, slice/checkpoint/Wave completion or W3 approval."
+  ],
+  "resumeCondition": "Exact owner approval, lawful exact publication, then successful normal taskctl admission. The stylesheet defect, frozen later-proof lineage gap, restart P1 and 48 broader findings remain open until their actual required evidence and dispositions."
+}

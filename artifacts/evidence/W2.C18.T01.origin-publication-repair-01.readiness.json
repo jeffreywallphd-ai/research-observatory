@@ -1,0 +1,152 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "independent-exact-owner-handoff-readiness",
+  "taskId": "W2.C18.T01",
+  "candidateCommit": "ac5f891db456a3eb54cb376f9d9a4082c3f3236b",
+  "reviewer": "agent:/root/a03_closeout_review",
+  "reviewedAt": "2026-10-11T10:34:12.286430+00:00",
+  "result": "OWNER_DECISION_READY",
+  "decisionReady": true,
+  "blockingFindings": [],
+  "findings": [],
+  "proposal": {
+    "path": "artifacts/tmp/W2.C18.T01.origin-publication-repair-01/exact-packet.json",
+    "sha256": "82eeb29c8c342ee95f97676a5ba96fda628e5e249f5a22313292b75d2b19896b"
+  },
+  "reviewBrief": {
+    "path": "artifacts/tmp/W2.C18.T01.origin-publication-repair-01/review.html",
+    "sha256": "c87ff350fb256c14e2735bd6cea76072789a33a7f075001d15e7385d55e7be6c"
+  },
+  "evidence": [
+    {
+      "path": "artifacts/tmp/W2.C18.T01.origin-publication-repair-01/exact-packet.json",
+      "sha256": "82eeb29c8c342ee95f97676a5ba96fda628e5e249f5a22313292b75d2b19896b"
+    },
+    {
+      "path": "artifacts/tmp/W2.C18.T01.origin-publication-repair-01/exact.patch",
+      "sha256": "652f51523dd4c264c989689536148d60ddce0be2d6697ddfa17d42ddbfef500a"
+    },
+    {
+      "path": "artifacts/tmp/W2.C18.T01.origin-publication-repair-01/review.html",
+      "sha256": "c87ff350fb256c14e2735bd6cea76072789a33a7f075001d15e7385d55e7be6c"
+    },
+    {
+      "path": "artifacts/tmp/W2.C18.T01.origin-publication-repair-01/original.json",
+      "sha256": "d7405321feb42da0143becc869c171a5d9d6cd337930c76f74e1b073409f2f2c"
+    },
+    {
+      "path": "artifacts/tmp/W2.C18.T01.origin-publication-repair-01/corrected.json",
+      "sha256": "5c3e65f9159dff1a4b3ef2db48cf8e78b7d1ef44f06cc196c273171be6acd114"
+    },
+    {
+      "path": "artifacts/tmp/W2.C18.T01.origin-correction-01/route-readiness-independent-disposition-01.json",
+      "sha256": "6056928986912acc660ba0905b5f2686c4c3adb183a34d815e5f290bc390ae16"
+    }
+  ],
+  "independence": {
+    "role": "Independent route and owner-packet readiness reviewer",
+    "authoredOwnerPacket": false,
+    "authoredPublicSpec": false,
+    "authoredPreparedCorrection": false,
+    "performedWriteOrAdmission": false,
+    "basis": "Reused authenticated prior bounded route assessment and independently read/authenticated this exact packet, patch, brief and byte-identical proposal copies. No producer/test/taskctl execution or source imports."
+  },
+  "criterionLinkedObservations": [
+    {
+      "criterion": "Exact requested origin-only mutation",
+      "observation": "The five prepared files are regular files and match all supplied raw SHA-256 digests. Original copy equals current public local and ac5 committed blob byte-for-byte; corrected copy equals the previously reviewed prepared correction. Only the origin taskId/commit/sha256 values differ; replacing exactly those three original scalar values reproduces all corrected bytes. All other specification values and changedPaths remain identical."
+    },
+    {
+      "criterion": "Reviewable exact patch and brief",
+      "observation": "Independently regenerated the standard unified diff in memory and matched the entire patch bytes. Decoded the brief embedded pre block and matched that same exact patch. Brief shows old/new origin values, immutable candidate, packet/corrected/patch digests, specific rejected-write boundary, preservation and excluded authority."
+    },
+    {
+      "criterion": "Correct task authority",
+      "observation": "Unchanged prior assessment 60569289 authenticates T02 ownership via the original b029 CSS addition and the T01/T02 manifests, complete T02 approved snapshot ea16178d, current PAUSED W2 and 17 DONE correctives with no C18. Same clean candidate and exact predecessor public bytes remain in place; this review does not repeat full task or history audits."
+    },
+    {
+      "criterion": "Immutable predecessor and finite publication authority",
+      "observation": "Packet names current fixed public path, original ac5 commit/dba15 blob/d740 digest and exact local copy; requests a new ordinary successor commit, exact original archive at artifacts/evidence/W2.C18.T01.origin-correction-01.original.json and append-only provenance/owner records. It forbids amend/reset/removal and binds future publication to actual references rather than an invented commit. No spec02 alias or unchanged-source bypass is offered."
+    },
+    {
+      "criterion": "Actual owner boundary and stop truth",
+      "observation": "Packet remains PENDING_EXPLICIT_OWNER_APPROVAL. Parent reports the second transparent retry was rejected before execution because the previously rejected committed overwrite needs specific owner authority; general W2 direction and independent route review are insufficient. This packet asks that exact limited decision and does not claim approval or an executed mutation."
+    },
+    {
+      "criterion": "No implicit later authority",
+      "observation": "The owner request concerns only fixed-path origin publication plus preservation records. Already-approved bounded T02 restoration can follow only successful normal unchanged taskctl admission and required product checks/reviews. Packet excludes framework/proof-code/schema/reference/baseline/release changes, further verification exemptions, restart policy, broader completion and W3 approval. The separately frozen proof-lineage gap remains unresolved by this packet."
+    }
+  ],
+  "ownerDecisionScope": {
+    "targetPath": "artifacts/evidence/W2.C18.T01.spec.json",
+    "predecessorCommit": "ac5f891db456a3eb54cb376f9d9a4082c3f3236b",
+    "predecessorBlob": "dba15a804179b1332b546ef1ed768980cdd8145b",
+    "predecessorSha256": "d7405321feb42da0143becc869c171a5d9d6cd337930c76f74e1b073409f2f2c",
+    "successorSpecSha256": "5c3e65f9159dff1a4b3ef2db48cf8e78b7d1ef44f06cc196c273171be6acd114",
+    "exactOrigin": {
+      "taskId": "CAP-05.S06.T02",
+      "commit": "ac5f891db456a3eb54cb376f9d9a4082c3f3236b",
+      "sha256": "ea16178d8814da61bc71d291c49b582d4abaf529150d363701dfbbeaa429e856"
+    },
+    "allowedDataDelta": [
+      "origin.taskId",
+      "origin.commit",
+      "origin.sha256"
+    ],
+    "preservationRequired": [
+      "Exact original archive",
+      "Original immutable Git commit/blob",
+      "Append-only owner decision and provenance binding exact packet/readiness and actual successor refs"
+    ],
+    "sourceChangesAuthorized": false,
+    "newMethodAuthorityAuthorized": false,
+    "restartPolicyAuthorized": false,
+    "releaseAuthorityAuthorized": false
+  },
+  "preservedOpenObligations": [
+    {
+      "id": "W2.C18.T01.origin-correction-R01-F01",
+      "status": "OPEN until actual lawful corrected publication and normal admission; prepared/readiness records do not close it."
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.W2-1.9-observations-03/conformance-report.json",
+      "sha256": "5c82d66365a1965eccb4d5288ccb6b97b1702a5c5059d16856457b2f832f393d",
+      "status": "Original stylesheet FAIL preserved; product remedy/qualifying proof pending."
+    },
+    {
+      "id": "CAP-05.S06.restart-boundary-r10-R01-F01",
+      "status": "OPEN; no recovery change or locked-fixture mutation authorized."
+    },
+    {
+      "status": "45 architecture plus three desktop-lint fullcheck findings remain open/unwaived; frozen later-proof lineage gap remains open."
+    }
+  ],
+  "executionObservation": {
+    "headBeforeAfter": "ac5f891db456a3eb54cb376f9d9a4082c3f3236b",
+    "trackedStatusClean": true,
+    "publicSpecUnchanged": true,
+    "taskAdmissionOccurred": false,
+    "productOrFrameworkEditOccurred": false,
+    "indexOrGitMutationOccurred": false,
+    "onlyNewArtifact": "artifacts/tmp/W2.C18.T01.origin-publication-repair-01/independent-readiness-01.json"
+  },
+  "limits": [
+    "Decision-ready concerns only presentation of this exact pending owner request.",
+    "This ledger is not write authorization and does not override either automatic rejection.",
+    "Actual owner authority, lawful exact publication, append preservation/actual refs and normal taskctl admission remain prerequisites.",
+    "No tests, taskctl, hook, producer, source import, qualification or gate review ran here.",
+    "No task/slice/checkpoint/Wave/release completion, later proof-method exemption, restart policy or product restoration is approved."
+  ],
+  "approvals": {
+    "ownerApproval": false,
+    "writeAuthorization": false,
+    "taskAdmission": false,
+    "productRestoration": false,
+    "proofMethodSubstitution": false,
+    "task": false,
+    "slice": false,
+    "checkpoint": false,
+    "wave": false,
+    "release": false
+  }
+}
