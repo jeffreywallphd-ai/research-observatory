@@ -48625,6 +48625,303 @@
         }
       ],
       "page": "enablers/ECR-0013.html"
+    },
+    {
+      "change_request_id": "ECR-0014",
+      "amendment_id": "W2.A06",
+      "target_wave": "W2",
+      "classification": "product-scope-security-experience",
+      "proposal_status": "pending-approval",
+      "proposal_execution_state": "non-executable",
+      "packet_path": "planning/enabler-change-requests/ECR-0014.packet.json",
+      "packet_sha256": "6293590db74b9a3ec4ce6019a1713def568798ac3a71208a5583bfcff78f7a34",
+      "proposal_path": "planning/enabler-change-requests/ECR-0014.md",
+      "proposal_sha256": "7c70aeebc5a60ab606bd5f6170b48e2012becab8cf7547f7ad8cd75482291496",
+      "review_path": "planning/enabler-change-requests/ECR-0014-review.html",
+      "review_sha256": "e7b0308696ae7e04e8a99df1217bbc0f4df67c925bba17c4bcdbf989367ab6f9",
+      "approval_path": null,
+      "approval_sha256": null,
+      "approval_status": "PENDING",
+      "lifecycle_status": "NOT_MATERIALIZED",
+      "bootstrap_status": "NOT_SUBMITTED",
+      "campaign_status": "NONE",
+      "bootstrap_attempts": [],
+      "slice_contributions": [
+        {
+          "id": "W2.A06.S01",
+          "capabilityId": "CAP-02",
+          "title": "Explicit reviewed recovery restoration in W2",
+          "objective": "Restore original approved local lifecycle/recovery contract with bounded operational identity and existing Projects integration.",
+          "workType": "new-product-work",
+          "refactorTaskIds": [],
+          "taskIds": [
+            "W2.A06.T01",
+            "W2.A06.T02"
+          ],
+          "acceptanceCriteria": [
+            "Actual security/UI/recovery invariants and real whole-process/protected/principal proof satisfy T01/T02. Original W1 authority/history stays unchanged; no W5 transfer suite or project/vault format redesign."
+          ]
+        },
+        {
+          "id": "W2.A06.S02",
+          "capabilityId": "CAP-05",
+          "title": "Finite verification and quality data qualification",
+          "objective": "Close named S06 verification barriers with complete data inventory and explicit finite independently authenticated methods.",
+          "workType": "new-product-work",
+          "refactorTaskIds": [],
+          "taskIds": [
+            "W2.A06.T03"
+          ],
+          "acceptanceCriteria": [
+            "Actual T03 complete data, exact method/negative-control/source/review lineage and fresh final evidence; original checker FAILs and all extra findings remain truthful, whole Slice/Wave qualification and G2 separate."
+          ]
+        }
+      ],
+      "authorized_task_ids": [
+        "W2.A06.T01",
+        "W2.A06.T02",
+        "W2.A06.T03"
+      ],
+      "refactor_budget": {
+        "baseline": {
+          "waveId": "W2",
+          "sourceCommit": "c85a59f3a293f8e3f2eaf6454682c9a14b1efa55",
+          "sourcePath": "planning/backlog.yaml",
+          "estimateScale": {
+            "S": 1,
+            "M": 3,
+            "L": 5
+          },
+          "tasks": [
+            {
+              "id": "CAP-04.S01.T01",
+              "estimate": "L",
+              "points": 5
+            },
+            {
+              "id": "CAP-04.S01.T02",
+              "estimate": "M",
+              "points": 3
+            },
+            {
+              "id": "CAP-04.S01.T03",
+              "estimate": "L",
+              "points": 5
+            },
+            {
+              "id": "CAP-04.S02.T01",
+              "estimate": "M",
+              "points": 3
+            },
+            {
+              "id": "CAP-04.S02.T02",
+              "estimate": "L",
+              "points": 5
+            },
+            {
+              "id": "CAP-04.S02.T03",
+              "estimate": "L",
+              "points": 5
+            },
+            {
+              "id": "CAP-04.S03.T01",
+              "estimate": "L",
+              "points": 5
+            },
+            {
+              "id": "CAP-04.S03.T02",
+              "estimate": "L",
+              "points": 5
+            },
+            {
+              "id": "CAP-04.S03.T03",
+              "estimate": "L",
+              "points": 5
+            },
+            {
+              "id": "CAP-04.S04.T01",
+              "estimate": "M",
+              "points": 3
+            },
+            {
+              "id": "CAP-04.S04.T02",
+              "estimate": "L",
+              "points": 5
+            },
+            {
+              "id": "CAP-04.S04.T03",
+              "estimate": "M",
+              "points": 3
+            },
+            {
+              "id": "CAP-04.S05.T01",
+              "estimate": "M",
+              "points": 3
+            },
+            {
+              "id": "CAP-04.S05.T02",
+              "estimate": "L",
+              "points": 5
+            },
+            {
+              "id": "CAP-04.S05.T03",
+              "estimate": "M",
+              "points": 3
+            },
+            {
+              "id": "CAP-05.S01.T01",
+              "estimate": "M",
+              "points": 3
+            },
+            {
+              "id": "CAP-05.S01.T02",
+              "estimate": "L",
+              "points": 5
+            },
+            {
+              "id": "CAP-05.S01.T03",
+              "estimate": "M",
+              "points": 3
+            },
+            {
+              "id": "CAP-05.S02.T01",
+              "estimate": "L",
+              "points": 5
+            },
+            {
+              "id": "CAP-05.S02.T02",
+              "estimate": "L",
+              "points": 5
+            },
+            {
+              "id": "CAP-05.S02.T03",
+              "estimate": "L",
+              "points": 5
+            },
+            {
+              "id": "CAP-05.S03.T01",
+              "estimate": "L",
+              "points": 5
+            },
+            {
+              "id": "CAP-05.S03.T02",
+              "estimate": "L",
+              "points": 5
+            },
+            {
+              "id": "CAP-05.S03.T03",
+              "estimate": "M",
+              "points": 3
+            },
+            {
+              "id": "CAP-05.S04.T01",
+              "estimate": "L",
+              "points": 5
+            },
+            {
+              "id": "CAP-05.S04.T02",
+              "estimate": "L",
+              "points": 5
+            },
+            {
+              "id": "CAP-05.S04.T03",
+              "estimate": "M",
+              "points": 3
+            },
+            {
+              "id": "CAP-05.S05.T01",
+              "estimate": "L",
+              "points": 5
+            },
+            {
+              "id": "CAP-05.S05.T02",
+              "estimate": "L",
+              "points": 5
+            },
+            {
+              "id": "CAP-05.S05.T03",
+              "estimate": "L",
+              "points": 5
+            },
+            {
+              "id": "CAP-05.S06.T01",
+              "estimate": "M",
+              "points": 3
+            },
+            {
+              "id": "CAP-05.S06.T02",
+              "estimate": "L",
+              "points": 5
+            },
+            {
+              "id": "CAP-05.S06.T03",
+              "estimate": "L",
+              "points": 5
+            }
+          ],
+          "totalPoints": 143
+        },
+        "refactorAllocations": [],
+        "refactorPoints": 0,
+        "refactorSharePercent": 0,
+        "limitPolicy": {
+          "mode": "standard-15-percent",
+          "limitPercent": 15
+        },
+        "refactorTaskIds": [],
+        "method": "Original itemized W2 33-task/143-point baseline remains immutable. A06 L/M/L13 points are planned restoration/verification sizes, not hours or supplemental cleanup. Empty allocations apply only to this packet; preserve cumulative prior R/P, reconcile prior spending before later optional refactor, no budget reset or unknown-as-zero."
+      },
+      "governed_experience": {
+        "referenceId": "RO-UI-ACADEMIC-MINIMAL-1.9",
+        "approvalRequired": true,
+        "files": [
+          {
+            "path": "design/ui-reference/APPROVAL.yaml",
+            "sha256": "2d7b07c508ebcae2ed7f65a1a4988c3a34323aaf61ce538672125012a0c5f8ce"
+          },
+          {
+            "path": "design/ui-reference/REFERENCE_MANIFEST.yaml",
+            "sha256": "19f4be307c9adc5ed24642c6ada8c57988f3eaca4e2f1903ebfd6b600d4d076b"
+          },
+          {
+            "path": "design/ui-reference/STYLE_GUIDE.md",
+            "sha256": "d805d491ef4249129698148c2585cc4560748dfad5345caeb15e4b7d7e3e98b5"
+          },
+          {
+            "path": "design/ui-reference/WORKFLOW_CATALOG.json",
+            "sha256": "9d859b75772106f806928a91cb8300c297ed9f00257e22397882d17ebb6a142d"
+          },
+          {
+            "path": "design/ui-reference/SITE_MANIFEST.json",
+            "sha256": "0ba1d5dd9beda4509ab21af7b57439cbc58c415c0d502851ac81f2691abb1488"
+          },
+          {
+            "path": "design/ui-reference/projects.html",
+            "sha256": "854d920ebcf78b17c4b9bfc049c6f7d3a1541296de70a0c8d14bedf6980e6858"
+          },
+          {
+            "path": "planning/reference-approvals/RO-UI-ACADEMIC-MINIMAL-1.9.json",
+            "sha256": "b7882588a15a7a178cb8ebac65fda174d26969dca5b08c6559feb3b0d258404e"
+          }
+        ],
+        "referenceApprovalStatus": "approved"
+      },
+      "scope_addenda": [],
+      "task_reviews": [],
+      "exit_review": {
+        "amendment_id": "W2.A06",
+        "mode": "latest-completion-only",
+        "latest_completion": {
+          "status": null,
+          "reviewer": null,
+          "reviewed_at": null,
+          "evidence": null,
+          "notes": null
+        },
+        "exit_review_control": null
+      },
+      "adoption_checkpoints": [],
+      "page": "enablers/ECR-0014.html"
     }
   ],
   "governance_recoveries": [

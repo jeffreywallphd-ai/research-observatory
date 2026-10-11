@@ -1,0 +1,484 @@
+{
+  "$schema": "./enabler-change-request.v4.1.schema.json",
+  "schemaVersion": "4.1-proposal",
+  "documentType": "enabler-change-request-packet",
+  "changeRequestId": "ECR-0014",
+  "proposedAmendmentId": "W2.A06",
+  "targetWave": "W2",
+  "status": "pending-approval",
+  "executionState": "non-executable",
+  "classification": "product-scope-security-experience",
+  "authorityChain": {
+    "waveBase": {
+      "waveId": "W2",
+      "packetCommit": "c85a59f3a293f8e3f2eaf6454682c9a14b1efa55",
+      "approvalRecordCommit": "3bc1c1828efab50efc730bf3907c3036eff58a2f"
+    },
+    "orderedAmendments": [
+      {
+        "id": "W2.A01",
+        "changeRequestId": "ECR-0009",
+        "status": "ADOPTED",
+        "packetCommit": "3fb76d6cb6bce6eaf16774931704de68c6168500",
+        "approvalReference": {
+          "path": "planning/wave-amendment-approvals/W2.A01.json",
+          "sha256": "6fe58c9791d224a51367f42ced40e27a45a0d83ee07464e237fc2a302edc4096",
+          "introductionCommit": "f8a49a2ec7ff4daf6e1c5e14da369e06ddff5287"
+        },
+        "effectiveStateCommit": "56187d40ca5d38f72f7c9dfb132070b034032a57"
+      },
+      {
+        "id": "W2.A02",
+        "changeRequestId": "ECR-0010",
+        "status": "ADOPTED",
+        "packetCommit": "60e8a2d3bbd3ba50cc4809a7ebe799764e6b00db",
+        "approvalReference": {
+          "path": "planning/wave-amendment-approvals/W2.A02.json",
+          "sha256": "d99be15aa110248b0e10e7090210787fe5cfa8e929e759f91a7d84a8e57a8d79",
+          "introductionCommit": "5fbeea66e84bac5ab24cf1bb8d2522838529a0ba"
+        },
+        "effectiveStateCommit": "04d6ae3fb29a133e6e31c8191ba1d6b80fa0b0cf"
+      },
+      {
+        "id": "W2.A03",
+        "changeRequestId": "ECR-0011",
+        "status": "ADOPTED",
+        "packetCommit": "746c05dcd7dbabaa7f5eebee8e3fa56b8ac6b9b5",
+        "approvalReference": {
+          "path": "planning/wave-amendment-approvals/W2.A03.json",
+          "sha256": "8852d6631a6656e94cc75e4f9dc705c7095ecf111786748e5630fe13b8fa9087",
+          "introductionCommit": "c972e2116113afa7ad84f0e43bdad58660cc69bb"
+        },
+        "effectiveStateCommit": "0b20d78426a053ea3818089d7126c123c0be7a65"
+      },
+      {
+        "id": "W2.A04",
+        "changeRequestId": "ECR-0012",
+        "status": "ADOPTED",
+        "packetCommit": "7f35c7a8e49eb8415ffdffa5a2e04374161f0eae",
+        "approvalReference": {
+          "path": "planning/wave-amendment-approvals/W2.A04.json",
+          "sha256": "e769cb71efbf8725c0fadeac079713f4484f57f7cf871cdfb037ef9a4df27807",
+          "introductionCommit": "ba95f68bd2747ebce99e67eeb4daec53ed3ba87b"
+        },
+        "effectiveStateCommit": "8f1a47f8a334fe32330e75f637f9b71b83669a03"
+      },
+      {
+        "id": "W2.A05",
+        "changeRequestId": "ECR-0013",
+        "status": "ADOPTED",
+        "packetCommit": "55c6389ce39a656f4da3851cae32ae12ac80e796",
+        "approvalReference": {
+          "path": "planning/wave-amendment-approvals/W2.A05.json",
+          "sha256": "9ad5b3f5fca7d3fd9c7fd8a42200f570f46250d506765b30e2705e299c7e8101",
+          "introductionCommit": "b54f24c222f631700056574a08056f660696d305"
+        },
+        "effectiveStateCommit": "79556040fff511246a6a4cc6d9858254f8713911"
+      }
+    ],
+    "reservedAmendments": []
+  },
+  "migrationAuthority": {
+    "id": "GOV-MIG-0001",
+    "path": "planning/governance-migrations/GOV-MIG-0001.json",
+    "sha256": "4851bcb71d47e5adc3541a6ca0c39b20241cf740e41f644c52ba210288fe105d",
+    "commit": "d8adf48e9c2e0319e4ece573a9381f6ec305310e"
+  },
+  "activationBoundary": {
+    "waveStatus": "PAUSED",
+    "ordinaryTaskStatesDenied": [
+      "IN_PROGRESS",
+      "REVIEW"
+    ],
+    "reviewCandidateMutationDenied": true,
+    "otherEnablerCampaignDenied": true,
+    "activeRecoveryHolds": []
+  },
+  "bootstrapUnit": {
+    "id": "W2.A06.B00",
+    "kind": "append-only-amendment-bootstrap",
+    "exceptionReason": "Use the installed postmigration v4.1 data lane for authorized prior-Wave restoration and exact new method/security choices; no controller bootstrap development.",
+    "authorizedPaths": [
+      "planning/backlog.yaml",
+      "docs/planning-implementation-plan.md",
+      "planning/status-summary.md",
+      "planning/review-site/**",
+      "artifacts/evidence/W2.C18.T01.*.json",
+      "artifacts/evidence/W2.A06.pre-admission-method-records-*.json"
+    ],
+    "requiredOutcomes": [
+      "B00-01: Authenticate immutable complete ECR0014 single owner grant, W2 base/all five actually adopted predecessors/current1.9/GOV-MIG0001, actual independent packet review and exact task inventory/source/method contracts.",
+      "B00-02: Actual C18 normal completion is DONE/independently approved at quiescent PAUSED Wave boundary before bootstrap submit/materialize/activate; no other open corrective/ordinary work, active recovery hold or amendment campaign. Preserve all task approvals/adverse records.",
+      "B00-03: Approval-to-candidate diff is confined to named normal backlog/generated outputs, C18 task JSON evidence/classification/append-only review rounds and pre-admission-method-record JSON namespaces plus B00 own evidence. Each C18 JSON belongs only to the unchanged approved correction, normal criterion evidence/ui-change classification/review rounds or exact granted method records; no new authority/policy, altered source envelope or invented evidence. Pre-admission method records capture only actual independently reviewed sources/negative-control/readiness/input hashes implementing the finite batch predicates; current four sources and all prior rounds remain unchanged. No product/quality/ADR/framework changes in B00.",
+      "B00-04: At the pre-submit evidence candidate, exact three-task definitions/dependencies/source envelopes and the installed data-only bootstrap/materialize/activate command sequence are prepared and independently authenticated. No A06 shell/submission/review/materialization/activation has already occurred. Only after this candidate is submitted may the installed transition append its empty shell; independent B00 review, exact materialization and same-owner/branch activation remain later normal operations. No Wave/gate completion implied."
+    ],
+    "prohibitedOutcomes": [
+      "No shared framework/controller implementation or checker edit, hand-edited task state, W1 reactivation/history rewrite, source/data recovery implementation before normal claim, fake proof/owner/hash or Slice/Wave/G2 approval.",
+      "Bounded JSON namespaces do not authorize new task/policy/security/UX/predicate authority, non-JSON evidence/source, arbitrary metadata or any source change. Required normal task/source/review/method authentication and generated-view integrity remain mandatory. Do not perform or claim downstream transitions in pre-submit evidence.",
+      "planning/review-site/** is derived data only from the unchanged pinned installed generator and actual normal backlog/ECR state. Require existing plan_review_check integrity and independent output-diff review. No hand-edited pages, source/assets behavior changes, new generator/template/UX policy or arbitrary metadata by path-prefix matching."
+    ]
+  },
+  "sliceContributions": [
+    {
+      "id": "W2.A06.S01",
+      "capabilityId": "CAP-02",
+      "title": "Explicit reviewed recovery restoration in W2",
+      "objective": "Restore original approved local lifecycle/recovery contract with bounded operational identity and existing Projects integration.",
+      "workType": "new-product-work",
+      "refactorTaskIds": [],
+      "taskIds": [
+        "W2.A06.T01",
+        "W2.A06.T02"
+      ],
+      "acceptanceCriteria": [
+        "Actual security/UI/recovery invariants and real whole-process/protected/principal proof satisfy T01/T02. Original W1 authority/history stays unchanged; no W5 transfer suite or project/vault format redesign."
+      ]
+    },
+    {
+      "id": "W2.A06.S02",
+      "capabilityId": "CAP-05",
+      "title": "Finite verification and quality data qualification",
+      "objective": "Close named S06 verification barriers with complete data inventory and explicit finite independently authenticated methods.",
+      "workType": "new-product-work",
+      "refactorTaskIds": [],
+      "taskIds": [
+        "W2.A06.T03"
+      ],
+      "acceptanceCriteria": [
+        "Actual T03 complete data, exact method/negative-control/source/review lineage and fresh final evidence; original checker FAILs and all extra findings remain truthful, whole Slice/Wave qualification and G2 separate."
+      ]
+    }
+  ],
+  "authorizedTaskIds": [
+    "W2.A06.T01",
+    "W2.A06.T02",
+    "W2.A06.T03"
+  ],
+  "taskInventory": [
+    {
+      "id": "W2.A06.T01",
+      "title": "Restore explicit reviewed project recovery and durable owned-session proof",
+      "objective": "Restore CAP-02.S01 explicit reviewed recovery in W2, with Native-owned durable current-user and same-machine proof, Core verified-copy orchestration and conservative denials.",
+      "estimate": "L",
+      "dependencies": [
+        "W2.A06.B00"
+      ],
+      "acceptanceCriteria": [
+        "T01-AC01: Implement only the canonical ECR-0014 proposal recovery/API/witness contract and exact T01 path envelope; preserve W1 history, ADR0008 Native authority and existing project-key/current-user protection. Publish indexed task-linked ADR0054 in the same protected change set.",
+        "T01-AC02: New proof-eligible sessions have durable typed dual-scope ownership witness before writable lock publication, exact Native/Core process birth/executable/session/principal/project/lock binding, 10-second owned heartbeat and matched close/cancellation. Missing/unknown proof, live owner or PID reuse denies recovery.",
+        "T01-AC03: Explicit preview/confirm creates a verified local working copy only; original tree/lock/accepted facts/ciphertexts remain unchanged. Verify source stability, database/WAL, protected object authentication and IDs before atomic empty-target publication and normal fresh open.",
+        "T01-AC04: Actual whole Native AND Core owned termination/fresh startup plus protected readback proves eligible-session recovery; real principal/foreign-host/untrusted-witness/path/concurrency/key/audit/interrupted-copy/cancel denials preserve source and grant no false success. Core-only restart is additional coverage.",
+        "T01-AC05: Independently review exact committed security/interface scope and actual negative/positive evidence. Original R03 P1 remains open unless the separately bound one-use operator recovery has real authenticated readback and independent finding closure; no new fixture substitution."
+      ],
+      "verification": [
+        "Focused failing characterization and pytest tests/security/test_project_recovery.py tests/service/test_project_lifecycle.py tests/service/test_native_project_contract.py; contract generator/schema/client checks on exact changed API/event contracts.",
+        "Actual Windows Native/Core owned session, dual user/machine witness, whole-process abrupt restart, protected readback, alternative principal/host/path/API denials and heartbeat/copy/close races at fixed committed candidate; retain all streams and owned cleanup.",
+        "Unchanged ADR check against actual task base/candidate, affected quality and exact protected-source review; architecture original FAIL plus only the separately granted closed45+3 proof where needed. Expanded independent commit-bound disposition."
+      ]
+    },
+    {
+      "id": "W2.A06.T02",
+      "title": "Integrate explicit recovery review into the approved Projects experience",
+      "objective": "Restore approved Projects recovery states using existing Native directory picker, semantic dialogs, keyboard/focus and protected Core lifecycle authority.",
+      "estimate": "M",
+      "dependencies": [
+        "W2.A06.B00",
+        "W2.A06.T01"
+      ],
+      "acceptanceCriteria": [
+        "T02-AC01: Implement only the canonical state/action/focus map and T02 exact path envelope under approved RO-UI-ACADEMIC-MINIMAL-1.9 Projects recovery/lifecycle patterns, using T01 API and existing directory picker. No new wizard/reference, auto recovery, renderer host attestation or scope/security change.",
+        "T02-AC02: Display unavailable/denied/preview/cancel/copy failure/verified-copy/open failure/recovered states truthfully; explicit confirm and open remain separate human actions, original untouched and no automatic reparse/acceptance.",
+        "T02-AC03: Actual shipping Native/Core/UI evidence proves keyboard Tab/Enter/Space/Escape, strict focus, cancel/failure, denied alternate routes, protected before/after facts, themes/reflow and recovery after whole-process restart. Static mocks/screenshots alone are insufficient.",
+        "T02-AC04: Same-task indexed ADR0054 implementation notes and exact independent security/UI/reference disposition bind candidate and actual source hashes. A demonstrated material experience/policy change stops, while conforming restoration needs no further owner ask."
+      ],
+      "verification": [
+        "Focused existing ProjectsWorkspace.test.tsx and affected native/project/security tests; machine-check actual state/action projections, inaccessible/denied/cancelled and success paths.",
+        "Fresh real shipping UIA and protected project readbacks for exact recovery fixture; actual keyboard/focus/theme/reflow semantics, whole Native/Core restart and owned cleanup; independently authenticated evidence.",
+        "Existing UI approval/reference/token/route/workflow/accessibility/visual/ADR predicates, with only explicit finite C18/current-build/CSP method successors after real independent readiness/source recording. Expanded commit-bound UI/security disposition."
+      ]
+    },
+    {
+      "id": "W2.A06.T03",
+      "title": "Synchronize quality inventory and qualify the finite approved verification methods",
+      "objective": "Complete governed Python inventory and execute exact closed45+3, current Reader CSP, unchanged formatter-debt and bounded current-build lineage contracts without shared checker/controller changes.",
+      "estimate": "L",
+      "dependencies": [
+        "W2.A06.B00",
+        "W2.A06.T01",
+        "W2.A06.T02"
+      ],
+      "acceptanceCriteria": [
+        "T03-AC01: Update only quality-scope.json data plus same-task indexed ADR0054 notes/index to include complete actual six-root Python filesystem discovery under unchanged exclusions, preserving existing valid entries and all current/new admitted sources; do not equate tracked lower bound with full discovery.",
+        "T03-AC02: Preserve unchanged original architecture/desktop lint/security/quality checkers and complete FAIL receipts. Independently preflight exact ignored producers/negative controls and append actual readiness/source hashes under this batch before proof; match exact45 AST+3 literal multiset, never counts/prefix exemptions.",
+        "T03-AC03: Replace only the explicit current Reader CSP equality predicate with the exact pinned directive/source map; actual local shipping Reader worker positive and isolated external-source CSP denials are required. Asset-hash preflight and missing/malformed worker errors do not imply a new runtime cryptographic worker verifier.",
+        "T03-AC04: Any fresh quality error besides exact unchanged tools/plan_review_site.py formatter debt remains blocking. Original quality status/exit stays truthful; permit only explicitly granted one-file debt disposition with existing generated-view integrity and independent actual evidence. No shared source edits or whole-quality PASS relabel.",
+        "T03-AC05: Authenticated actual task admission/claim/spec/finite source/security/UI dispositions bind every C18/recovery20/quality-data delta before conforming ignored lineage successor preparation/execution. Missing/changed/unapproved/new inputs deny. All original conformance guards, input locks and adverse rounds remain.",
+        "T03-AC06: Final affected checks/build/package/current-reference capture are fresh at one fixed integrated committed candidate after all selected changes. Independent task/combined contribution review follows; CAP05S06, CP09, W2 full profile/platform/model/installer and G2 remain separate unmet gates until actual qualification."
+      ],
+      "verification": [
+        "Existing complete quality discovery/check at final candidate; preserve scope/format/lint/type outputs and exact approved one-file debt disposition only. Existing plan_review_check and ADR checks for actual metadata state.",
+        "Unchanged architecture/desktop lint/security originals plus exclusive closed45+3 and exact CSP negative-control/proof receipts under actual independent source/readiness records; complete output multiset and all unexpected findings remain blocking.",
+        "Actual independently authenticated task/claim/spec/source/review lineage records; finite held-input producer negative controls, fresh standard frontend/Native/Core build/package/current-reference capture and affected integrated recovery/UI tests; independent combined security/verification disposition."
+      ]
+    }
+  ],
+  "refactorBudget": {
+    "baseline": {
+      "waveId": "W2",
+      "sourceCommit": "c85a59f3a293f8e3f2eaf6454682c9a14b1efa55",
+      "sourcePath": "planning/backlog.yaml",
+      "estimateScale": {
+        "S": 1,
+        "M": 3,
+        "L": 5
+      },
+      "tasks": [
+        {
+          "id": "CAP-04.S01.T01",
+          "estimate": "L",
+          "points": 5
+        },
+        {
+          "id": "CAP-04.S01.T02",
+          "estimate": "M",
+          "points": 3
+        },
+        {
+          "id": "CAP-04.S01.T03",
+          "estimate": "L",
+          "points": 5
+        },
+        {
+          "id": "CAP-04.S02.T01",
+          "estimate": "M",
+          "points": 3
+        },
+        {
+          "id": "CAP-04.S02.T02",
+          "estimate": "L",
+          "points": 5
+        },
+        {
+          "id": "CAP-04.S02.T03",
+          "estimate": "L",
+          "points": 5
+        },
+        {
+          "id": "CAP-04.S03.T01",
+          "estimate": "L",
+          "points": 5
+        },
+        {
+          "id": "CAP-04.S03.T02",
+          "estimate": "L",
+          "points": 5
+        },
+        {
+          "id": "CAP-04.S03.T03",
+          "estimate": "L",
+          "points": 5
+        },
+        {
+          "id": "CAP-04.S04.T01",
+          "estimate": "M",
+          "points": 3
+        },
+        {
+          "id": "CAP-04.S04.T02",
+          "estimate": "L",
+          "points": 5
+        },
+        {
+          "id": "CAP-04.S04.T03",
+          "estimate": "M",
+          "points": 3
+        },
+        {
+          "id": "CAP-04.S05.T01",
+          "estimate": "M",
+          "points": 3
+        },
+        {
+          "id": "CAP-04.S05.T02",
+          "estimate": "L",
+          "points": 5
+        },
+        {
+          "id": "CAP-04.S05.T03",
+          "estimate": "M",
+          "points": 3
+        },
+        {
+          "id": "CAP-05.S01.T01",
+          "estimate": "M",
+          "points": 3
+        },
+        {
+          "id": "CAP-05.S01.T02",
+          "estimate": "L",
+          "points": 5
+        },
+        {
+          "id": "CAP-05.S01.T03",
+          "estimate": "M",
+          "points": 3
+        },
+        {
+          "id": "CAP-05.S02.T01",
+          "estimate": "L",
+          "points": 5
+        },
+        {
+          "id": "CAP-05.S02.T02",
+          "estimate": "L",
+          "points": 5
+        },
+        {
+          "id": "CAP-05.S02.T03",
+          "estimate": "L",
+          "points": 5
+        },
+        {
+          "id": "CAP-05.S03.T01",
+          "estimate": "L",
+          "points": 5
+        },
+        {
+          "id": "CAP-05.S03.T02",
+          "estimate": "L",
+          "points": 5
+        },
+        {
+          "id": "CAP-05.S03.T03",
+          "estimate": "M",
+          "points": 3
+        },
+        {
+          "id": "CAP-05.S04.T01",
+          "estimate": "L",
+          "points": 5
+        },
+        {
+          "id": "CAP-05.S04.T02",
+          "estimate": "L",
+          "points": 5
+        },
+        {
+          "id": "CAP-05.S04.T03",
+          "estimate": "M",
+          "points": 3
+        },
+        {
+          "id": "CAP-05.S05.T01",
+          "estimate": "L",
+          "points": 5
+        },
+        {
+          "id": "CAP-05.S05.T02",
+          "estimate": "L",
+          "points": 5
+        },
+        {
+          "id": "CAP-05.S05.T03",
+          "estimate": "L",
+          "points": 5
+        },
+        {
+          "id": "CAP-05.S06.T01",
+          "estimate": "M",
+          "points": 3
+        },
+        {
+          "id": "CAP-05.S06.T02",
+          "estimate": "L",
+          "points": 5
+        },
+        {
+          "id": "CAP-05.S06.T03",
+          "estimate": "L",
+          "points": 5
+        }
+      ],
+      "totalPoints": 143
+    },
+    "refactorAllocations": [],
+    "refactorPoints": 0,
+    "refactorSharePercent": 0,
+    "limitPolicy": {
+      "mode": "standard-15-percent",
+      "limitPercent": 15
+    },
+    "refactorTaskIds": [],
+    "method": "Original itemized W2 33-task/143-point baseline remains immutable. A06 L/M/L13 points are planned restoration/verification sizes, not hours or supplemental cleanup. Empty allocations apply only to this packet; preserve cumulative prior R/P, reconcile prior spending before later optional refactor, no budget reset or unknown-as-zero."
+  },
+  "governedExperience": {
+    "referenceId": "RO-UI-ACADEMIC-MINIMAL-1.9",
+    "approvalRequired": true,
+    "files": [
+      {
+        "path": "design/ui-reference/APPROVAL.yaml",
+        "sha256": "2d7b07c508ebcae2ed7f65a1a4988c3a34323aaf61ce538672125012a0c5f8ce"
+      },
+      {
+        "path": "design/ui-reference/REFERENCE_MANIFEST.yaml",
+        "sha256": "19f4be307c9adc5ed24642c6ada8c57988f3eaca4e2f1903ebfd6b600d4d076b"
+      },
+      {
+        "path": "design/ui-reference/STYLE_GUIDE.md",
+        "sha256": "d805d491ef4249129698148c2585cc4560748dfad5345caeb15e4b7d7e3e98b5"
+      },
+      {
+        "path": "design/ui-reference/WORKFLOW_CATALOG.json",
+        "sha256": "9d859b75772106f806928a91cb8300c297ed9f00257e22397882d17ebb6a142d"
+      },
+      {
+        "path": "design/ui-reference/SITE_MANIFEST.json",
+        "sha256": "0ba1d5dd9beda4509ab21af7b57439cbc58c415c0d502851ac81f2691abb1488"
+      },
+      {
+        "path": "design/ui-reference/projects.html",
+        "sha256": "854d920ebcf78b17c4b9bfc049c6f7d3a1541296de70a0c8d14bedf6980e6858"
+      },
+      {
+        "path": "planning/reference-approvals/RO-UI-ACADEMIC-MINIMAL-1.9.json",
+        "sha256": "b7882588a15a7a178cb8ebac65fda174d26969dca5b08c6559feb3b0d258404e"
+      }
+    ]
+  },
+  "acceptanceCriteria": [
+    "A06-AC01: The exact canonical proposal governs recovery18 plus named ADR0054/index, fixed API/Native authority/witness/denials and approved1.9 state/focus map. Preserve all immutable W1/W2 task approvals and accepted architecture.",
+    "A06-AC02: Exact current C18 proposal/readiness and finite pre-admission/later source-record method contracts form one grant. C18 remains an existing external prerequisite, not a new A06 task. Actual candidate/task/claim/source/security/UI/readiness/negative-control hashes precede execution.",
+    "A06-AC03: Three ordered exact tasks independently satisfy every criterion at committed candidate; recovery explicit/whole-process, verification complete-multiset/CSP/data/formatter limits and protected facts all required. Any unknown/unapproved finding remains open.",
+    "A06-AC04: Required combined security/interface/recovery/verification review and actual amendment exit/adoption checkpoint use normal installed operations; W2 remains paused until normal resume, no S06/CP09/W2/G2 completion inferred."
+  ],
+  "verificationObligations": [
+    "Risk-selected focused task checks plus real Native/Core whole-process/principal/protected recovery proof and shipping UI focus/theme/reflow evidence; mocks/static alone never establish real boundary.",
+    "Exact closed45+3 multiset/negative controls; exact current Reader CSP positive and actual external-source denials, asset integrity preflight distinguished from runtime CSP. No extra checker exemptions.",
+    "Complete actual quality discovery/data/check, original outputs retained and only exact unchanged one-file format debt disposition; ADR same-change-set/index/task coverage and unchanged generated-view integrity.",
+    "Fresh integrated final build/package/capture/input-lock stability and independent task/combined review; full affected/repository/profile/installer/platform/model/restart/recovery and human release gate remain later required."
+  ],
+  "rollback": [
+    "Preserve original source/lock/crypto/adverse outputs; quarantine incomplete recovery copies, never remove old source/lock or overwrite approvals. Revert only the bounded product commit if needed; amendment history is append-only, no destructive rollback to make receipts green.",
+    "Abort denied/unknown proof without success, preserve original lock/project and quarantine partial target. Do not backfill legacy witness, relabel FAIL or remove historic records."
+  ],
+  "nonGoals": [
+    "No shared framework/formatter/checker/controller development, 8/16GiB variants, future hardware/model/budget changes, arbitrary legacy/cross-host takeover, automatic lock unlink/reparse/acceptance, vault/project-format redesign, W5 transfer suite, hosted deployment, blanket waiver or human release approval."
+  ],
+  "files": [
+    {
+      "path": "planning/enabler-change-requests/ECR-0014.md",
+      "sha256": "7c70aeebc5a60ab606bd5f6170b48e2012becab8cf7547f7ad8cd75482291496",
+      "role": "canonical-proposal"
+    },
+    {
+      "path": "planning/enabler-change-requests/enabler-change-request.v4.1.schema.json",
+      "sha256": "f51e2162aa45ca0a1c9b88adadaf4a5fe4536ec086cfcf7503054d9c0827786c",
+      "role": "proposal-schema"
+    },
+    {
+      "path": "planning/enabler-change-requests/ECR-0014-review.html",
+      "sha256": "e7b0308696ae7e04e8a99df1217bbc0f4df67c925bba17c4bcdbf989367ab6f9",
+      "role": "human-review"
+    }
+  ]
+}

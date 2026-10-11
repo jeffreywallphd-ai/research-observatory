@@ -1,0 +1,1267 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title>ECR-0014 Restore explicit project recovery and finite verification in W2 - Research Observatory Planning Review</title>
+  <link rel="stylesheet" href="../assets/review.css">
+</head>
+<body data-page-type="enabler-detail">
+  <a class="skip-link" href="#main-content">Skip to content</a>
+  <header class="site-header">
+    <a class="brand" href="../index.html" aria-label="Planning review home">
+      <span class="brand-mark" aria-hidden="true">RO</span>
+      <span><strong>Research Observatory</strong><small>Planning Review</small></span>
+    </a>
+    <div class="header-actions">
+      <button class="button button-quiet" type="button" data-theme-toggle aria-label="Toggle light and dark theme">Theme</button>
+    </div>
+  </header>
+
+  <div class="page-frame">
+    <aside class="side-panel" aria-label="Planning navigation">
+<div class="planning-nav" data-planning-nav data-default-tab="waves">
+  <div class="planning-nav-tabs" role="tablist" aria-label="Planning views">
+    <button id="planning-tab-capabilities" class="planning-nav-tab" type="button" role="tab" aria-selected="false" aria-controls="planning-panel-capabilities" data-nav-tab="capabilities">Capabilities</button>
+    <button id="planning-tab-waves" class="planning-nav-tab" type="button" role="tab" aria-selected="true" aria-controls="planning-panel-waves" data-nav-tab="waves">Waves</button>
+  </div>
+  <section id="planning-panel-capabilities" class="planning-nav-panel" role="tabpanel" aria-labelledby="planning-tab-capabilities" data-nav-panel="capabilities" hidden>
+    <nav class='cap-nav' aria-label='Capabilities'><a class="nav-item" href="../CAP-01/index.html"><span>CAP-windows-desktop-runtime</span><small>CAP-01 · Windows-first desktop shell and supervised local runtime</small></a><a class="nav-item" href="../CAP-02/index.html"><span>CAP-local-project-storage</span><small>CAP-02 · Local projects, durable storage, security, and recovery</small></a><a class="nav-item" href="../CAP-03/index.html"><span>CAP-research-domain-workflows</span><small>CAP-03 · Canonical domain, research intent, provenance, and durable workflows</small></a><a class="nav-item" href="../CAP-04/index.html"><span>CAP-scholarly-ingestion</span><small>CAP-04 · Scholarly ingestion, connectors, canonicalization, and corpus governance</small></a><a class="nav-item" href="../CAP-05/index.html"><span>CAP-document-inspection</span><small>CAP-05 · Document acquisition, parsing, source inspection, and page anchors</small></a><a class="nav-item" href="../CAP-06/index.html"><span>CAP-search-screening</span><small>CAP-06 · Local search, discovery, corpus diagnostics, and screening</small></a><a class="nav-item" href="../CAP-07/index.html"><span>CAP-model-gateway</span><small>CAP-07 · Provider-neutral model gateway and governed AI execution</small></a><a class="nav-item" href="../CAP-08/index.html"><span>CAP-evidence-verification</span><small>CAP-08 · Evidence schemas, extraction, verification, and adjudication</small></a><a class="nav-item" href="../CAP-09/index.html"><span>CAP-scholarly-graph-synthesis</span><small>CAP-09 · Scholarly graph, comparison sets, synthesis, and reproducibility</small></a><a class="nav-item" href="../CAP-10/index.html"><span>CAP-novelty-opportunities</span><small>CAP-10 · Novelty auditing, research opportunities, and plural research modes</small></a><a class="nav-item" href="../CAP-11/index.html"><span>CAP-windows-release</span><small>CAP-11 · Windows PC/lab product hardening, validation, packaging, and release</small></a><a class="nav-item" href="../CAP-12/index.html"><span>CAP-university-hosting</span><small>CAP-12 · University-hosted deployment, institutional identity, collaboration, and operations</small></a><a class="nav-item" href="../CAP-13/index.html"><span>CAP-cloud-platform</span><small>CAP-13 · Managed cloud control plane, tenant data planes, governance, and SaaS operations</small></a><a class="nav-item" href="../CAP-14/index.html"><span>CAP-cross-platform-desktop</span><small>CAP-14 · Cross-platform desktop qualification and release</small></a><a class="nav-item" href="../CAP-15/index.html"><span>CAP-study-design</span><small>CAP-15 · Empirical study design and protocol development</small></a><a class="nav-item" href="../CAP-16/index.html"><span>CAP-manuscript-blueprints</span><small>CAP-16 · Manuscript blueprint, venue profiles, and article architecture</small></a><a class="nav-item" href="../CAP-17/index.html"><span>CAP-results-integration</span><small>CAP-17 · Technical report and study-results integration</small></a><a class="nav-item" href="../CAP-18/index.html"><span>CAP-manuscript-drafting</span><small>CAP-18 · Source-grounded manuscript drafting and publication artifacts</small></a><a class="nav-item" href="../CAP-19/index.html"><span>CAP-review-revision</span><small>CAP-19 · Reviewer simulation, editorial synthesis, and revision</small></a></nav>
+  </section>
+  <section id="planning-panel-waves" class="planning-nav-panel" role="tabpanel" aria-labelledby="planning-tab-waves" data-nav-panel="waves">
+    <nav class='cap-nav' aria-label='Waves'><a class="nav-item" href="../waves/W0.html"><span>W0</span><small>Engineering foundation</small></a><a class="nav-item" href="../waves/W1.html"><span>W1</span><small>Windows local runtime and durable core</small></a><a class="nav-item active" href="../waves/W2.html"><span>W2</span><small>Windows local evidence foundation</small></a><a class="nav-item" href="../waves/W3.html"><span>W3</span><small>Windows local research workbench</small></a><a class="nav-item" href="../waves/W4.html"><span>W4</span><small>Windows scholarly reasoning and novelty MVP</small></a><a class="nav-item" href="../waves/W5.html"><span>W5</span><small>Windows PC/lab production release</small></a><a class="nav-item" href="../waves/W6.html"><span>W6</span><small>Cross-platform desktop qualification</small></a><a class="nav-item" href="../waves/W7.html"><span>W7</span><small>Study design and manuscript foundations</small></a><a class="nav-item" href="../waves/W8.html"><span>W8</span><small>Results integration, manuscript drafting, and reviewer simulation</small></a><a class="nav-item" href="../waves/W9.html"><span>W9</span><small>Advanced research-intelligence preview</small></a><a class="nav-item" href="../waves/W10.html"><span>W10</span><small>University-hosted pilot</small></a><a class="nav-item" href="../waves/W11.html"><span>W11</span><small>Managed cloud delivery</small></a></nav>
+  </section>
+</div>
+</aside>
+    <main id="main-content" class="main-panel">
+      <nav class="breadcrumbs" aria-label="Breadcrumb"><a href="../index.html">Planning review</a><span>/</span><a href="index.html">Enabler change requests</a><span>/</span><span aria-current="page">ECR-0014</span></nav>
+
+<section class="hero compact">
+  <div class="hero-top"><div><span class="eyebrow">W2.A06 · W2</span><h1>ECR-0014 — Restore explicit project recovery and finite verification in W2</h1></div><span class="status status-pending">Pending</span></div>
+  <p>product-scope-security-experience. This page preserves the distinction between authorized scope and executable state.</p>
+</section>
+<section class="review-toolbar">
+  <h2>Proposal, approval, materialization, and campaign state</h2>
+  <dl class="summary-grid"><div><dt>Proposal record</dt><dd>pending-approval / non-executable</dd></div><div><dt>Human approval</dt><dd>PENDING</dd></div><div><dt>Amendment lifecycle</dt><dd>NOT_MATERIALIZED</dd></div><div><dt>Bootstrap</dt><dd>NOT_SUBMITTED</dd></div><div><dt>Amendment campaign</dt><dd>NONE</dd></div></dl>
+  <p>No human approval is recorded. The proposal is non-executable and grants no bootstrap, task, amendment, Wave-resume, or release-gate authority.</p>
+</section>
+<section class="review-toolbar">
+  <h2>Hash-bound source records</h2>
+  <table><thead><tr><th>Record</th><th>Repository-relative path</th><th>SHA-256</th></tr></thead><tbody>
+  <tr><th>Proposal</th><td><code>planning/enabler-change-requests/ECR-0014.md</code></td><td><code>7c70aeebc5a60ab606bd5f6170b48e2012becab8cf7547f7ad8cd75482291496</code></td></tr>
+  <tr><th>Packet</th><td><code>planning/enabler-change-requests/ECR-0014.packet.json</code></td><td><code>6293590db74b9a3ec4ce6019a1713def568798ac3a71208a5583bfcff78f7a34</code></td></tr>
+  <tr><th>Human review</th><td><code>planning/enabler-change-requests/ECR-0014-review.html</code></td><td><code>e7b0308696ae7e04e8a99df1217bbc0f4df67c925bba17c4bcdbf989367ab6f9</code></td></tr>
+  <tr><th>Approval</th><td><code>pending</code></td><td><code>pending</code></td></tr>
+
+  </tbody></table>
+</section>
+<section class="review-toolbar">
+  <h2>Append-only bootstrap scope addenda</h2>
+  <ul class="gate-criteria"><li>None</li></ul>
+</section>
+<section class="review-toolbar">
+  <h2>Append-only bootstrap review attempts</h2>
+  <table><thead><tr><th>Attempt</th><th>Frozen candidate</th><th>Disposition / state</th><th>Reviewer</th></tr></thead><tbody><tr><td colspan="4">Not submitted</td></tr></tbody></table>
+</section>
+<section class="review-toolbar">
+  <h2>Ordered Wave authority chain</h2>
+  <table><thead><tr><th>Authority</th><th>Packet commit / hash</th><th>Record commit / hash</th><th>Meaning</th></tr></thead><tbody><tr><th>W2 base approval</th><td><code>c85a59f3a293f8e3f2eaf6454682c9a14b1efa55</code></td><td><code>3bc1c1828efab50efc730bf3907c3036eff58a2f</code></td><td>Original complete Wave packet</td></tr><tr><th>W2.A01</th><td><code>3fb76d6cb6bce6eaf16774931704de68c6168500</code></td><td><code>f8a49a2ec7ff4daf6e1c5e14da369e06ddff5287</code></td><td>Adopted predecessor authority; preserved unchanged</td></tr><tr><th>W2.A02</th><td><code>60e8a2d3bbd3ba50cc4809a7ebe799764e6b00db</code></td><td><code>5fbeea66e84bac5ab24cf1bb8d2522838529a0ba</code></td><td>Adopted predecessor authority; preserved unchanged</td></tr><tr><th>W2.A03</th><td><code>746c05dcd7dbabaa7f5eebee8e3fa56b8ac6b9b5</code></td><td><code>c972e2116113afa7ad84f0e43bdad58660cc69bb</code></td><td>Adopted predecessor authority; preserved unchanged</td></tr><tr><th>W2.A04</th><td><code>7f35c7a8e49eb8415ffdffa5a2e04374161f0eae</code></td><td><code>ba95f68bd2747ebce99e67eeb4daec53ed3ba87b</code></td><td>Adopted predecessor authority; preserved unchanged</td></tr><tr><th>W2.A05</th><td><code>55c6389ce39a656f4da3851cae32ae12ac80e796</code></td><td><code>b54f24c222f631700056574a08056f660696d305</code></td><td>Adopted predecessor authority; preserved unchanged</td></tr><tr><th>GOV-MIG-0001</th><td><code>d8adf48e9c2e0319e4ece573a9381f6ec305310e</code></td><td><code>4851bcb71d47e5adc3541a6ca0c39b20241cf740e41f644c52ba210288fe105d</code></td><td>Post-migration governance authority; does not grant product execution</td></tr><tr><th>W2.A06</th><td><code>6293590db74b9a3ec4ce6019a1713def568798ac3a71208a5583bfcff78f7a34</code></td><td><code>pending</code></td><td>Pending, non-executable proposal; no bootstrap/task authority</td></tr></tbody></table>
+  <p>Effective ordinary W2 authority remains the approved base plus adopted ordered amendments. W2.A06 is pending and non-executable. If separately approved, it would authorize only bootstrap unit <code>W2.A06.B00</code> and the exact bounded task inventory below.</p>
+</section>
+<section class="review-toolbar">
+  <h2>Proposed slice contributions</h2>
+  <p>These slices are packet data, not hard-coded review-page inventory. They remain non-executable until exact approval and independently approved bootstrap materialization.</p>
+  <details class="plan-details"><summary>W2.A06.S01 — Explicit reviewed recovery restoration in W2</summary><p>Restore original approved local lifecycle/recovery contract with bounded operational identity and existing Projects integration.</p><p><strong>Work type:</strong> new-product-work. <strong>Tasks:</strong> W2.A06.T01, W2.A06.T02. <strong>Refactor tasks:</strong> none.</p><ul class="gate-criteria"><li>Actual security/UI/recovery invariants and real whole-process/protected/principal proof satisfy T01/T02. Original W1 authority/history stays unchanged; no W5 transfer suite or project/vault format redesign.</li></ul></details><details class="plan-details"><summary>W2.A06.S02 — Finite verification and quality data qualification</summary><p>Close named S06 verification barriers with complete data inventory and explicit finite independently authenticated methods.</p><p><strong>Work type:</strong> new-product-work. <strong>Tasks:</strong> W2.A06.T03. <strong>Refactor tasks:</strong> none.</p><ul class="gate-criteria"><li>Actual T03 complete data, exact method/negative-control/source/review lineage and fresh final evidence; original checker FAILs and all extra findings remain truthful, whole Slice/Wave qualification and G2 separate.</li></ul></details>
+</section>
+<section class="review-toolbar">
+  <h2>Refactor allocation and planning exception</h2>
+  <dl class="summary-grid"><div><dt>Approved-Wave baseline</dt><dd>143 points at <code>c85a59f3a293f8e3f2eaf6454682c9a14b1efa55</code></dd></div><div><dt>Refactor allocation</dt><dd>0 points / 0%</dd></div><div><dt>Policy</dt><dd>standard-15-percent</dd></div><div><dt>Method</dt><dd>Original itemized W2 33-task/143-point baseline remains immutable. A06 L/M/L13 points are planned restoration/verification sizes, not hours or supplemental cleanup. Empty allocations apply only to this packet; preserve cumulative prior R/P, reconcile prior spending before later optional refactor, no budget reset or unknown-as-zero.</dd></div></dl>
+  <table><thead><tr><th>Refactor task</th><th>Estimate</th><th>Points</th></tr></thead><tbody><tr><td colspan="3">No refactor task declared</td></tr></tbody></table>
+  <p>Standard refactor limit: 15%</p>
+</section>
+<section class="review-toolbar">
+  <h2>Governed experience proposal</h2>
+  <p>Reference <code>RO-UI-ACADEMIC-MINIMAL-1.9</code> is already human-approved. Human approval of this ECR reaffirms and binds that existing authority unchanged; it does not reserve a new reference or authorize bootstrap materialization of reference approval.</p>
+  <ul class="gate-criteria"><li><a href="../../../design/ui-reference/APPROVAL.yaml">design/ui-reference/APPROVAL.yaml</a> — <code>2d7b07c508ebcae2ed7f65a1a4988c3a34323aaf61ce538672125012a0c5f8ce</code></li><li><a href="../../../design/ui-reference/REFERENCE_MANIFEST.yaml">design/ui-reference/REFERENCE_MANIFEST.yaml</a> — <code>19f4be307c9adc5ed24642c6ada8c57988f3eaca4e2f1903ebfd6b600d4d076b</code></li><li><a href="../../../design/ui-reference/STYLE_GUIDE.md">design/ui-reference/STYLE_GUIDE.md</a> — <code>d805d491ef4249129698148c2585cc4560748dfad5345caeb15e4b7d7e3e98b5</code></li><li><a href="../../../design/ui-reference/WORKFLOW_CATALOG.json">design/ui-reference/WORKFLOW_CATALOG.json</a> — <code>9d859b75772106f806928a91cb8300c297ed9f00257e22397882d17ebb6a142d</code></li><li><a href="../../../design/ui-reference/SITE_MANIFEST.json">design/ui-reference/SITE_MANIFEST.json</a> — <code>0ba1d5dd9beda4509ab21af7b57439cbc58c415c0d502851ac81f2691abb1488</code></li><li><a href="../../../design/ui-reference/projects.html">design/ui-reference/projects.html</a> — <code>854d920ebcf78b17c4b9bfc049c6f7d3a1541296de70a0c8d14bedf6980e6858</code></li><li><a href="../../../planning/reference-approvals/RO-UI-ACADEMIC-MINIMAL-1.9.json">planning/reference-approvals/RO-UI-ACADEMIC-MINIMAL-1.9.json</a> — <code>b7882588a15a7a178cb8ebac65fda174d26969dca5b08c6559feb3b0d258404e</code></li></ul>
+</section>
+<section class="review-toolbar">
+  <h2>Proposed bounded inventory</h2><ul class="wave-slice-list"><li><span><strong>W2.A06.T01 — Restore explicit reviewed project recovery and durable owned-session proof</strong><small>Restore CAP-02.S01 explicit reviewed recovery in W2, with Native-owned durable current-user and same-machine proof, Core verified-copy orchestration and conservative denials.</small><small>Estimate L · dependencies: W2.A06.B00</small></span><span class="status status-pending">Pending</span></li><li><span><strong>W2.A06.T02 — Integrate explicit recovery review into the approved Projects experience</strong><small>Restore approved Projects recovery states using existing Native directory picker, semantic dialogs, keyboard/focus and protected Core lifecycle authority.</small><small>Estimate M · dependencies: W2.A06.B00, W2.A06.T01</small></span><span class="status status-pending">Pending</span></li><li><span><strong>W2.A06.T03 — Synchronize quality inventory and qualify the finite approved verification methods</strong><small>Complete governed Python inventory and execute exact closed45+3, current Reader CSP, unchanged formatter-debt and bounded current-build lineage contracts without shared checker/controller changes.</small><small>Estimate L · dependencies: W2.A06.B00, W2.A06.T01, W2.A06.T02</small></span><span class="status status-pending">Pending</span></li></ul>
+  <h3>Exit criteria</h3><ul class="gate-criteria"><li>A06-AC01: The exact canonical proposal governs recovery18 plus named ADR0054/index, fixed API/Native authority/witness/denials and approved1.9 state/focus map. Preserve all immutable W1/W2 task approvals and accepted architecture.</li><li>A06-AC02: Exact current C18 proposal/readiness and finite pre-admission/later source-record method contracts form one grant. C18 remains an existing external prerequisite, not a new A06 task. Actual candidate/task/claim/source/security/UI/readiness/negative-control hashes precede execution.</li><li>A06-AC03: Three ordered exact tasks independently satisfy every criterion at committed candidate; recovery explicit/whole-process, verification complete-multiset/CSP/data/formatter limits and protected facts all required. Any unknown/unapproved finding remains open.</li><li>A06-AC04: Required combined security/interface/recovery/verification review and actual amendment exit/adoption checkpoint use normal installed operations; W2 remains paused until normal resume, no S06/CP09/W2/G2 completion inferred.</li></ul>
+</section>
+<section class="section-heading"><span class="eyebrow">Executable projection</span><h2>Materialized task review packets and history</h2><p>The proposed packet inventory above remains distinct from current task state. Each task below shows either its complete append-only review control or an explicit legacy latest-review-only projection.</p></section>
+<p>No amendment task has been materialized.</p>
+
+<section data-amendment-exit-id="W2.A06" data-exit-review-mode="latest-completion-only">
+  <div class="section-heading"><span class="eyebrow">Amendment exit and adoption</span><h2>Independent amendment-exit review</h2></div>
+
+  <p><strong>Legacy latest-completion-only projection.</strong> No immutable amendment-exit rounds are recorded; this view does not fabricate exit-review history.</p>
+  <section class="review-toolbar" data-latest-completion-projection="W2.A06" data-latest-completion-status="PENDING" data-latest-completion-reviewer="none" data-latest-completion-reviewed-at="none" data-latest-completion-notes="none"><h3>Latest completion projection</h3><dl class="summary-grid"><div><dt>Status</dt><dd>PENDING</dd></div><div><dt>Reviewer</dt><dd>none</dd></div><div><dt>Reviewed at</dt><dd><code>none</code></dd></div><div><dt>Evidence</dt><dd>None</dd></div></dl><p><strong>Latest notes:</strong> None</p></section>
+  <div class="section-heading"><span class="eyebrow">Bound Wave checkpoint evidence</span><h3>Adoption checkpoints</h3><p>These typed references are retained separately from exit-review evidence and do not rewrite completion history.</p></div>
+<p>No bound amendment-adoption checkpoint is recorded.</p>
+</section>
+<section class="callout callout-warning">
+  <div><span class="eyebrow">Ordinary Wave execution remains stopped</span><h2>Safe resume boundary</h2><p>First obtain independent approval of this exact packet and explicit human approval. Only then may the amendment continue through independently approved bootstrap, materialization, completion and independent approval of all 3 tasks, amendment-exit control/security review, and the W2 adoption checkpoint. The alternatives are an append-only defer or withdraw disposition with an explicit safe resume condition; editing or reapproving W2 in place is prohibited.</p></div>
+</section>
+<details class="plan-details"><summary>Rollback and recovery duties</summary><ul class="gate-criteria"><li>Preserve original source/lock/crypto/adverse outputs; quarantine incomplete recovery copies, never remove old source/lock or overwrite approvals. Revert only the bounded product commit if needed; amendment history is append-only, no destructive rollback to make receipts green.</li><li>Abort denied/unknown proof without success, preserve original lock/project and quarantine partial target. Do not backfill legacy witness, relabel FAIL or remove historic records.</li></ul></details>
+<details class="plan-details"><summary>Read the canonical proposal</summary><article class="plan-article"><pre class='markdown-fallback'>This proposed packet is inert and unadmitted. W2 restoration of W1 defects is
+already authorized. One exact owner batch binds the disclosed narrow security
+and verification choices; it does not approve a task, Slice, Wave or release.
+
+Four groups cover two product restorations: existing W2.C18.T01 CSS and explicit
+project recovery. Three new ordered tasks are W2.A06.T01 (L, Core recovery and
+Native-owned durable identity), T02 (M, approved Projects integration), and T03
+(L, complete quality data and finite verification). These13 planning points are
+size estimates, not measured duration or a refactoring budget reset.
+
+Recommended: approve the exact finite full batch, including the private typed
+current-user and same-machine operational witness, closed45 AST+3 literal
+classifier proof, exact current Reader CSP, one unchanged formatter-debt
+disposition, complete inventory and bounded independent source/hash recording.
+Conforming later details require no second owner answer; materially new policy,
+scope, experience or predicates stop. The alternate C18/verification-only plan
+leaves product recovery/P1 unmet; retaining frozen methods leaves qualification
+blocked. Neither alternative grants a release waiver.
+
+After actual grant, independently ready ignored finite methods may finish the
+already claimed C18. Actual C18 DONE/approved and quiescence precede metadata-only
+B00 submission. B00 proves prepared/authenticated data; installed shell append,
+independent B00 review, materialization and activation are later operations.
+Recovery/data implementation begins only after normal task admission and claim.
+Original FAILs, immutable approval history and open recovery P1 remain preserved.
+Fresh product restart/recovery, S06/CP09/W2 qualification and G2 remain required.
+
+## Complete unchanged admission-02 contract
+
+The JSON object below is the COMPLETE unmodified admission-02 canonical proposal.
+Its original raw UTF-8 bytes (including terminal LF) have SHA-256
+`03ac9c2580fb5f39de0c517abe65c35656474f434cc80e0c63592ad9abd176ec`.
+This supported Markdown/frontmatter wrapper changes only the canonical file
+envelope. Every task, dependency, estimate, source/security/UI/method contract,
+authority binding and prerequisite remains exactly that reviewed proposal data.
+No plan approval, future result, public file mutation or framework fix is implied.
+
+```json
+{
+  &quot;schemaVersion&quot;: &quot;1.0&quot;,
+  &quot;documentType&quot;: &quot;canonical-W2-finite-recovery-verification-batch-proposal&quot;,
+  &quot;changeRequestId&quot;: &quot;ECR-0014&quot;,
+  &quot;proposedAmendmentId&quot;: &quot;W2.A06&quot;,
+  &quot;status&quot;: &quot;PROPOSED_NON_EXECUTABLE&quot;,
+  &quot;preparedAt&quot;: &quot;2026-10-11T12:11:55.635999+00:00&quot;,
+  &quot;inspectedCandidateCommit&quot;: &quot;429efd41d6bccd27b4c25b468475b6fddeb4a9f6&quot;,
+  &quot;summary&quot;: {
+    &quot;groups&quot;: 4,
+    &quot;newOrderedTasks&quot;: 3,
+    &quot;productRestorations&quot;: [
+      &quot;Existing W2.C18.T01 CSS restoration&quot;,
+      &quot;Explicit reviewed project recovery&quot;
+    ],
+    &quot;newPlanningEstimates&quot;: {
+      &quot;W2.A06.T01&quot;: &quot;L&quot;,
+      &quot;W2.A06.T02&quot;: &quot;M&quot;,
+      &quot;W2.A06.T03&quot;: &quot;L&quot;
+    },
+    &quot;newPlanningPoints&quot;: 13,
+    &quot;estimatesAre&quot;: &quot;Planning sizes only; no measured time, duration guarantee or points-to-hours conversion.&quot;
+  },
+  &quot;settledAuthority&quot;: &quot;W2 may restore W1 defects; W1 origin is not a permission barrier. The amendment accommodates metadata and binds the disclosed new narrow operational witness/method/criterion choices, not renewed permission for ordinary restoration.&quot;,
+  &quot;predecessors&quot;: [
+    {
+      &quot;path&quot;: &quot;artifacts/tmp/W2.remaining-corrections-batch-01/inventory-02.json&quot;,
+      &quot;sha256&quot;: &quot;30ad1a924483c649dbb6d65ac823f6ac41ee57e2553aec3d5ae1e76326a5a0eb&quot;,
+      &quot;hashConvention&quot;: &quot;raw-bytes&quot;
+    },
+    {
+      &quot;path&quot;: &quot;artifacts/tmp/W2.remaining-corrections-batch-01/plan-02-addendum-01.json&quot;,
+      &quot;sha256&quot;: &quot;27dfd47ca50dc96555807dc410ab4f8e3039e99d88ff7c1817b9eab7922f6624&quot;,
+      &quot;hashConvention&quot;: &quot;raw-bytes&quot;
+    },
+    {
+      &quot;path&quot;: &quot;artifacts/tmp/W2.remaining-corrections-batch-01/plan-review-02.json&quot;,
+      &quot;sha256&quot;: &quot;fb5c6517e30ed448d7535b00342d6489c197571d96598ec3180cb72f226dac8c&quot;,
+      &quot;hashConvention&quot;: &quot;raw-bytes&quot;
+    }
+  ],
+  &quot;exactFindings&quot;: {
+    &quot;path&quot;: &quot;artifacts/tmp/W2.remaining-corrections-batch-01/verification-findings.json&quot;,
+    &quot;sha256&quot;: &quot;243053b0fc22f7f1dcbd39828eadee9677850d1fb584f06d917d2063c05f3785&quot;,
+    &quot;hashConvention&quot;: &quot;raw-bytes&quot;
+  },
+  &quot;authorityObservation&quot;: {
+    &quot;candidateCommit&quot;: &quot;429efd41d6bccd27b4c25b468475b6fddeb4a9f6&quot;,
+    &quot;backlog&quot;: {
+      &quot;path&quot;: &quot;planning/backlog.yaml&quot;,
+      &quot;sha256&quot;: &quot;c95faaab98c725f80e3e785d7ca31dfc197fc09c268aee5bcea33cadfeef9da1&quot;,
+      &quot;hashConvention&quot;: &quot;raw-bytes&quot;
+    },
+    &quot;unusedProposedIds&quot;: [
+      &quot;ECR-0014&quot;,
+      &quot;W2.A06&quot;,
+      &quot;ADR-0054&quot;
+    ],
+    &quot;currentAdoptedAuthority&quot;: [
+      {
+        &quot;id&quot;: &quot;W2.A01&quot;,
+        &quot;changeRequestId&quot;: &quot;ECR-0009&quot;,
+        &quot;status&quot;: &quot;ADOPTED&quot;,
+        &quot;packetCommit&quot;: &quot;3fb76d6cb6bce6eaf16774931704de68c6168500&quot;,
+        &quot;approvalReference&quot;: {
+          &quot;path&quot;: &quot;planning/wave-amendment-approvals/W2.A01.json&quot;,
+          &quot;sha256&quot;: &quot;6fe58c9791d224a51367f42ced40e27a45a0d83ee07464e237fc2a302edc4096&quot;,
+          &quot;introductionCommit&quot;: &quot;f8a49a2ec7ff4daf6e1c5e14da369e06ddff5287&quot;
+        },
+        &quot;effectiveStateCommit&quot;: &quot;56187d40ca5d38f72f7c9dfb132070b034032a57&quot;
+      },
+      {
+        &quot;id&quot;: &quot;W2.A02&quot;,
+        &quot;changeRequestId&quot;: &quot;ECR-0010&quot;,
+        &quot;status&quot;: &quot;ADOPTED&quot;,
+        &quot;packetCommit&quot;: &quot;60e8a2d3bbd3ba50cc4809a7ebe799764e6b00db&quot;,
+        &quot;approvalReference&quot;: {
+          &quot;path&quot;: &quot;planning/wave-amendment-approvals/W2.A02.json&quot;,
+          &quot;sha256&quot;: &quot;d99be15aa110248b0e10e7090210787fe5cfa8e929e759f91a7d84a8e57a8d79&quot;,
+          &quot;introductionCommit&quot;: &quot;5fbeea66e84bac5ab24cf1bb8d2522838529a0ba&quot;
+        },
+        &quot;effectiveStateCommit&quot;: &quot;04d6ae3fb29a133e6e31c8191ba1d6b80fa0b0cf&quot;
+      },
+      {
+        &quot;id&quot;: &quot;W2.A03&quot;,
+        &quot;changeRequestId&quot;: &quot;ECR-0011&quot;,
+        &quot;status&quot;: &quot;ADOPTED&quot;,
+        &quot;packetCommit&quot;: &quot;746c05dcd7dbabaa7f5eebee8e3fa56b8ac6b9b5&quot;,
+        &quot;approvalReference&quot;: {
+          &quot;path&quot;: &quot;planning/wave-amendment-approvals/W2.A03.json&quot;,
+          &quot;sha256&quot;: &quot;8852d6631a6656e94cc75e4f9dc705c7095ecf111786748e5630fe13b8fa9087&quot;,
+          &quot;introductionCommit&quot;: &quot;c972e2116113afa7ad84f0e43bdad58660cc69bb&quot;
+        },
+        &quot;effectiveStateCommit&quot;: &quot;0b20d78426a053ea3818089d7126c123c0be7a65&quot;
+      },
+      {
+        &quot;id&quot;: &quot;W2.A04&quot;,
+        &quot;changeRequestId&quot;: &quot;ECR-0012&quot;,
+        &quot;status&quot;: &quot;ADOPTED&quot;,
+        &quot;packetCommit&quot;: &quot;7f35c7a8e49eb8415ffdffa5a2e04374161f0eae&quot;,
+        &quot;approvalReference&quot;: {
+          &quot;path&quot;: &quot;planning/wave-amendment-approvals/W2.A04.json&quot;,
+          &quot;sha256&quot;: &quot;e769cb71efbf8725c0fadeac079713f4484f57f7cf871cdfb037ef9a4df27807&quot;,
+          &quot;introductionCommit&quot;: &quot;ba95f68bd2747ebce99e67eeb4daec53ed3ba87b&quot;
+        },
+        &quot;effectiveStateCommit&quot;: &quot;8f1a47f8a334fe32330e75f637f9b71b83669a03&quot;
+      },
+      {
+        &quot;id&quot;: &quot;W2.A05&quot;,
+        &quot;changeRequestId&quot;: &quot;ECR-0013&quot;,
+        &quot;status&quot;: &quot;ADOPTED&quot;,
+        &quot;packetCommit&quot;: &quot;55c6389ce39a656f4da3851cae32ae12ac80e796&quot;,
+        &quot;approvalReference&quot;: {
+          &quot;path&quot;: &quot;planning/wave-amendment-approvals/W2.A05.json&quot;,
+          &quot;sha256&quot;: &quot;9ad5b3f5fca7d3fd9c7fd8a42200f570f46250d506765b30e2705e299c7e8101&quot;,
+          &quot;introductionCommit&quot;: &quot;b54f24c222f631700056574a08056f660696d305&quot;
+        },
+        &quot;effectiveStateCommit&quot;: &quot;79556040fff511246a6a4cc6d9858254f8713911&quot;
+      }
+    ],
+    &quot;laterAdoptionTransitionObservations&quot;: [
+      {
+        &quot;id&quot;: &quot;W2.A03&quot;,
+        &quot;commit&quot;: &quot;0b20d78426a053ea3818089d7126c123c0be7a65&quot;,
+        &quot;state&quot;: &quot;ADOPTED&quot;,
+        &quot;parentState&quot;: &quot;REVIEW&quot;
+      },
+      {
+        &quot;id&quot;: &quot;W2.A05&quot;,
+        &quot;commit&quot;: &quot;79556040fff511246a6a4cc6d9858254f8713911&quot;,
+        &quot;state&quot;: &quot;ADOPTED&quot;,
+        &quot;parentState&quot;: &quot;REVIEW&quot;
+      }
+    ],
+    &quot;reservedAmendments&quot;: [],
+    &quot;pausedPredecessor&quot;: null,
+    &quot;limits&quot;: &quot;Finite read-only identity/blob/ancestry inspection. No namespace reservation, admission, approval, native run or full controller validation.&quot;
+  },
+  &quot;sourceEnvelopes&quot;: {
+    &quot;W2.A06.T01&quot;: [
+      &quot;services/core-api/src/research_observatory_core/projects.py&quot;,
+      &quot;services/core-api/src/research_observatory_core/app.py&quot;,
+      &quot;services/core-api/src/research_observatory_core/models.py&quot;,
+      &quot;apps/desktop/src-tauri/src/supervisor.rs&quot;,
+      &quot;tests/service/test_project_lifecycle.py&quot;,
+      &quot;tests/service/test_native_project_contract.py&quot;,
+      &quot;packages/contracts/core-api/openapi.json&quot;,
+      &quot;packages/contracts/core-api/generated.ts&quot;,
+      &quot;packages/contracts/core-api/generated.test.ts&quot;,
+      &quot;packages/contracts/project/project-lifecycle-event.schema.json&quot;,
+      &quot;packages/contracts/project/README.md&quot;,
+      &quot;docs/architecture/project-package.md&quot;,
+      &quot;services/core-api/src/research_observatory_core/main.py&quot;,
+      &quot;services/core-api/src/research_observatory_core/windows_credentials.py&quot;,
+      &quot;services/core-api/src/research_observatory_core/ports/project_recovery.py&quot;,
+      &quot;tests/security/test_project_recovery.py&quot;,
+      &quot;docs/adr/ADR-0054-bind-explicit-project-recovery-and-complete-quality-inventory.md&quot;,
+      &quot;docs/adr/index.json&quot;
+    ],
+    &quot;W2.A06.T02&quot;: [
+      &quot;apps/desktop/src/app/ProjectsWorkspace.tsx&quot;,
+      &quot;apps/desktop/src/app/ProjectsWorkspace.test.tsx&quot;,
+      &quot;tests/service/test_native_project_contract.py&quot;,
+      &quot;tests/security/test_project_recovery.py&quot;,
+      &quot;docs/adr/ADR-0054-bind-explicit-project-recovery-and-complete-quality-inventory.md&quot;,
+      &quot;docs/adr/index.json&quot;
+    ],
+    &quot;W2.A06.T03&quot;: [
+      &quot;quality-scope.json&quot;,
+      &quot;docs/adr/ADR-0054-bind-explicit-project-recovery-and-complete-quality-inventory.md&quot;,
+      &quot;docs/adr/index.json&quot;
+    ],
+    &quot;recovery18&quot;: [
+      &quot;services/core-api/src/research_observatory_core/projects.py&quot;,
+      &quot;services/core-api/src/research_observatory_core/app.py&quot;,
+      &quot;services/core-api/src/research_observatory_core/models.py&quot;,
+      &quot;apps/desktop/src-tauri/src/supervisor.rs&quot;,
+      &quot;apps/desktop/src/app/ProjectsWorkspace.tsx&quot;,
+      &quot;apps/desktop/src/app/ProjectsWorkspace.test.tsx&quot;,
+      &quot;tests/service/test_project_lifecycle.py&quot;,
+      &quot;tests/service/test_native_project_contract.py&quot;,
+      &quot;packages/contracts/core-api/openapi.json&quot;,
+      &quot;packages/contracts/core-api/generated.ts&quot;,
+      &quot;packages/contracts/core-api/generated.test.ts&quot;,
+      &quot;packages/contracts/project/project-lifecycle-event.schema.json&quot;,
+      &quot;packages/contracts/project/README.md&quot;,
+      &quot;docs/architecture/project-package.md&quot;,
+      &quot;services/core-api/src/research_observatory_core/main.py&quot;,
+      &quot;services/core-api/src/research_observatory_core/windows_credentials.py&quot;,
+      &quot;services/core-api/src/research_observatory_core/ports/project_recovery.py&quot;,
+      &quot;tests/security/test_project_recovery.py&quot;
+    ],
+    &quot;ADRDocumentationAdditions&quot;: [
+      &quot;docs/adr/ADR-0054-bind-explicit-project-recovery-and-complete-quality-inventory.md&quot;,
+      &quot;docs/adr/index.json&quot;
+    ],
+    &quot;recovery20&quot;: [
+      &quot;services/core-api/src/research_observatory_core/projects.py&quot;,
+      &quot;services/core-api/src/research_observatory_core/app.py&quot;,
+      &quot;services/core-api/src/research_observatory_core/models.py&quot;,
+      &quot;apps/desktop/src-tauri/src/supervisor.rs&quot;,
+      &quot;apps/desktop/src/app/ProjectsWorkspace.tsx&quot;,
+      &quot;apps/desktop/src/app/ProjectsWorkspace.test.tsx&quot;,
+      &quot;tests/service/test_project_lifecycle.py&quot;,
+      &quot;tests/service/test_native_project_contract.py&quot;,
+      &quot;packages/contracts/core-api/openapi.json&quot;,
+      &quot;packages/contracts/core-api/generated.ts&quot;,
+      &quot;packages/contracts/core-api/generated.test.ts&quot;,
+      &quot;packages/contracts/project/project-lifecycle-event.schema.json&quot;,
+      &quot;packages/contracts/project/README.md&quot;,
+      &quot;docs/architecture/project-package.md&quot;,
+      &quot;services/core-api/src/research_observatory_core/main.py&quot;,
+      &quot;services/core-api/src/research_observatory_core/windows_credentials.py&quot;,
+      &quot;services/core-api/src/research_observatory_core/ports/project_recovery.py&quot;,
+      &quot;tests/security/test_project_recovery.py&quot;,
+      &quot;docs/adr/ADR-0054-bind-explicit-project-recovery-and-complete-quality-inventory.md&quot;,
+      &quot;docs/adr/index.json&quot;
+    ]
+  },
+  &quot;ADRContract&quot;: {
+    &quot;id&quot;: &quot;ADR-0054&quot;,
+    &quot;path&quot;: &quot;docs/adr/ADR-0054-bind-explicit-project-recovery-and-complete-quality-inventory.md&quot;,
+    &quot;proposedDraftSHA256&quot;: &quot;2bd84499fa6841acdf405920cb34d9da05f7f172d103d62cd20f03837b990725&quot;,
+    &quot;indexPath&quot;: &quot;docs/adr/index.json&quot;,
+    &quot;publication&quot;: &quot;After actual task admission, publish this semantic contract as Proposed with actual task links and exact index entry. Each protected task change set includes only its own implementation/verification notes in this same indexed record. Real review alone may accept it; no future acceptance/commit fabricated.&quot;,
+    &quot;allowedChanges&quot;: &quot;Exact accepted-batch policy publication and independently reviewed task implementation/verification notes only. No superseding protected boundary/checker/crypto policy.&quot;
+  },
+  &quot;ADRProposedSemanticText&quot;: &quot;---\nid: ADR-0054\ntitle: Bind explicit project recovery and complete quality inventory\nstatus: Proposed\ndate: 2026-10-11\ndeciders: []\nlinked_tasks:\n  - W2.A06.T01\n  - W2.A06.T02\n  - W2.A06.T03\ndecision_scope: Explicit reviewed local repair-copy recovery, Native-owned durable operational session identity, and complete quality inventory data. No shared boundary/checker policy change.\naffected_paths:\n  - services/core-api/src/research_observatory_core/ports/project_recovery.py\n  - packages/contracts/core-api/**\n  - packages/contracts/project/**\n  - quality-scope.json\nsupersedes: []\nsuperseded_by: null\n---\n\n# ADR-0054: Bind explicit project recovery and complete quality inventory\n\n## Context\n\nCAP-02.S01 requires explicit reviewed stale-lock recovery. Retained whole-process termination exposed the unimplemented recovery path. ADR-0008 keeps Native process/host authority; ADR-0012 preserves portable projects; ADR-0001 requires a task-linked indexed record for protected API/port/quality data changes. W2 restoration of W1 behavior is explicitly authorized. Original adverse evidence and task history stay immutable.\n\n## Candidates\n\n1. Restore reviewed recovery with a verified working copy and a durable typed operational ownership witness; synchronize all governed quality data and retain every checker. Recommended.\n2. Limit action to separately reviewed original-fixture operator recovery and defer the product feature. This does not satisfy whole Desktop/Core production recovery and must not reduce Wave criteria silently.\n\n## Decision\n\nProposed under ECR-0014/W2.A06, not yet accepted: Native owns actual current principal, same-machine and parent/child process birth/executable/session authority and provides a typed controlled startup binding. Core owns preview/confirm/cancel/status, heartbeat and verified copy via a typed port. Renderer evidence never grants host authority. Persist a dedicated private nonportable witness with inner current-user DPAPI and outer same-machine DPAPI, containing no project key, vault root or research content. Existing project-key/current-user protections remain unchanged. New sessions publish a recoverable lock only after durable witness publication; failures never grant eligibility. Unknown/living/reused process, foreign host/user, absent/tampered proof, changed source/heartbeat, redirect/hard link, key/integrity/collision/concurrency failure denies. Ten-second heartbeat is metadata, never a stale-age takeover permission.\n\nExplicit human preview/confirm creates only a verified empty-destination working copy; original project, old lock and old ciphertexts remain untouched. Verify database/WAL consistency, object authentication/inventory, IDs/revisions and accepted facts before atomic publication. Normal explicit open acquires new operational authority on the copy. No automatic unlink/takeover/reparse/acceptance or arbitrary legacy override. Existing approved Projects recovery/lifecycle region and focus/dialog patterns are restored, not redesigned. Old unproven R03 cannot receive a backfilled witness; any separately authorized one-use operator attempt requires exact preserved proof and independent closure.\n\nquality-scope.json must cover complete actual governed discovery under unchanged six roots/exclusions, preserving every valid entry and adding omissions/new sources. No checker, formatter, architecture-protected-path or release-gate source changes. Exact verification-method choices are separately bound in the ECR proposal and retain original FAILs.\n\n## Consequences\n\nWindows x64 local-only operational proof survives complete Native/Core death for newly eligible sessions. It is not portable host authority or protection against administrator/OS/credential compromise. No project/vault format migration or new scholarly-object encryption. Legacy unknown sessions are denied truthfully. Each linked task updates only its own implementation/verification notes in this same indexed record; no fabricated Accepted state or generalized policy change.\n\n## Verification\n\nRequired actual owned whole Native/Core termination and fresh startup, protected readback, real principal/foreign-host/PID reuse/unknown query/tamper/path/key/copy/audit/cancel/race denials. Existing reference UI keyboard/focus/theme/reflow proof and exact source/task/review hashes. Complete quality discovery/check; originals retain truthful outcomes, with only explicit ECR finite methods. Existing ADR check against each actual task base/candidate. No results exist in this Proposed record.\n\n## Task links\n\n- W2.A06.T01: security/port/API/witness/copy implementation and actual security evidence.\n- W2.A06.T02: existing Projects state/action/focus restoration and shipping integration evidence.\n- W2.A06.T03: complete quality data and exact finite verification qualification.\n&quot;,
+  &quot;recovery&quot;: {
+    &quot;name&quot;: &quot;Core-owned explicit reviewed recovery restoration&quot;,
+    &quot;sourceScope&quot;: [
+      &quot;services/core-api/src/research_observatory_core/projects.py&quot;,
+      &quot;services/core-api/src/research_observatory_core/app.py&quot;,
+      &quot;services/core-api/src/research_observatory_core/models.py&quot;,
+      &quot;apps/desktop/src-tauri/src/supervisor.rs&quot;,
+      &quot;apps/desktop/src/app/ProjectsWorkspace.tsx&quot;,
+      &quot;apps/desktop/src/app/ProjectsWorkspace.test.tsx&quot;,
+      &quot;tests/service/test_project_lifecycle.py&quot;,
+      &quot;tests/service/test_native_project_contract.py&quot;,
+      &quot;packages/contracts/core-api/openapi.json&quot;,
+      &quot;packages/contracts/core-api/generated.ts&quot;,
+      &quot;packages/contracts/core-api/generated.test.ts&quot;,
+      &quot;packages/contracts/project/project-lifecycle-event.schema.json&quot;,
+      &quot;packages/contracts/project/README.md&quot;,
+      &quot;docs/architecture/project-package.md&quot;,
+      &quot;services/core-api/src/research_observatory_core/main.py&quot;,
+      &quot;services/core-api/src/research_observatory_core/windows_credentials.py&quot;,
+      &quot;services/core-api/src/research_observatory_core/ports/project_recovery.py&quot;,
+      &quot;tests/security/test_project_recovery.py&quot;,
+      &quot;docs/adr/ADR-0054-bind-explicit-project-recovery-and-complete-quality-inventory.md&quot;,
+      &quot;docs/adr/index.json&quot;
+    ],
+    &quot;smallestRestoration&quot;: [
+      &quot;Separate Core-owned preview/confirm/cancel/status under authenticated projects.lifecycle, through the unchanged Native core_api_request seam. Freeze the exact endpoint/request/projection contract below; ordinary open, concurrency denial and owned close remain unchanged.&quot;,
+      &quot;Refresh heartbeat only on currently owned regular locks; cancel refresh on close/shutdown. Freeze cadence in the concrete lifecycle contract; no stale-age threshold ever grants takeover permission.&quot;,
+      &quot;Before writable lock publication, durably seal a typed ownership witness in private nonportable application storage. Bind actual Core/Native process-creation identities, current principal, projectId, canonical root/file authority, lock instance and recovery-token digest. It survives both process deaths; no witness means no generic recovery permission.&quot;,
+      &quot;Preview binds canonical source and explicitly reviewed destination selected through the existing native directory picker, projectId and exact lock/instance/heartbeat to actual Native-owned same-host session evidence. Native/Core validate filesystem authority/access/empty destination and held source inputs independently; picker path selection is not a cryptographic receipt. Require compatible/quiescent source and current permitted principal/project-key access. Missing process/host proof means denied, not override.&quot;,
+      &quot;Explicit confirm creates and verifies a repair working copy of the original portable manifest/database/encrypted objects/config/exports inventory. Preserve original R03 tree and old lock untouched. This is a narrow local repair copy, not the future full bundle/clone/transfer suite.&quot;,
+      &quot;Verify database/WAL consistency, object inventory/authentication, IDs/revisions/accepted facts and audit lineage before atomic publication to an empty target. Normal Core open/worker attachment then acquires a new session lock on the recovered copy; old operational lock is archived as evidence, not replayed into that copy.&quot;,
+      &quot;Show denied/unavailable-proof, preview, cancelled-unchanged, verification-failed, verified-copy-ready, open-failed and recovered states in existing Projects recovery region. Explicit confirmation, no automatic reopen/reparse/acceptance; preserve keyboard/focus/theme/semantic patterns and redacted audit facts.&quot;
+    ],
+    &quot;fixedPolicy&quot;: [
+      &quot;Deny unknown instance/host identity, PID reuse, any live owner, missing host/termination proof, changing heartbeat/lock/source inventory, redirect/hard-link critical inputs, wrong/missing key, incompatible/damaged source and target collision.&quot;,
+      &quot;Match actual immutable Native/Core owned-session receipts and protected project identity, not renderer-supplied PID/host/JSON assertions. PID absence, age, lock digest/token possession or current-key access alone is insufficient.&quot;,
+      &quot;No automatic unlink/takeover, credential escrow/vault export, arbitrary project recovery, parser replay or acceptance. Legacy unproven locks receive truthful unavailable guidance.&quot;,
+      &quot;A persisted typed current-user AND same-machine ownership witness is required for new proof-eligible sessions. It is not optional if full Desktop+Core abrupt restart is claimed. Preserve existing current-user credential/project-key protection unchanged; never reinterpret workflow resume_epoch/launch_nonce as project ownership.&quot;
+    ],
+    &quot;referenceAssessment&quot;: &quot;Restore the existing RO-UI-ACADEMIC-MINIMAL-1.9 Projects recovery region, lifecycle confirmation dialogs, directory picker, semantic status, focus return and keyboard patterns. No new wizard/reference is proposed. ADR-0054 is required for protected port/API/quality paths regardless of this restoration. A demonstrated material experience change beyond the frozen state/action map stops for its concrete design decision.&quot;,
+    &quot;proofLimit&quot;: &quot;Full Desktop+Core abrupt-restart qualification now requires the actual persisted typed dual-scope witness and actual whole-application restart proof. Without it, claim only narrow Core restart/operator B and leave required general recovery open. No recovered-source PASS or new security approval is invented.&quot;,
+    &quot;batchGrant&quot;: &quot;Authorize the conservative recovery working-copy plan AND explicitly select the typed dual-scope operational ownership witness above, through the actual data-only W2 packet. New algorithms/credential scope/project format/legacy override/material UX beyond this precise contract stop; ordinary conforming API field names, bounded adapter code and test details use independent review/hash recording under this same grant, not another owner ask.&quot;,
+    &quot;beforeCode&quot;: [
+      &quot;Add failing recovery/denial characterization before product edits where practical.&quot;,
+      &quot;Actual task admission/claim and exact committed base; implement only this already frozen contract.&quot;,
+      &quot;Indexed ADR-0054 and same-task implementation notes accompany each protected task change set; Proposed is truthful until accepted by real review.&quot;,
+      &quot;Independent expanded security/interface review and existing-reference mapping before qualification; ordinary conforming details need no new owner answer.&quot;
+    ],
+    &quot;validation&quot;: [
+      &quot;Live-owner ordinary open denial and foreign-instance close denial; owned close unchanged.&quot;,
+      &quot;Actual owned Job termination on miniature retained encrypted project, exact identity/heartbeat/host witness, preview/confirm, verified copy, actual fresh Native/Core open and protected readback after restart.&quot;,
+      &quot;PID reuse, foreign host, wrong instance/changed digest/token, absent or untrusted witness, unknown legacy identity: denial with original unchanged and no target published.&quot;,
+      &quot;Owned atomic heartbeat refresh, shutdown cancellation, replaced/redirected/hard-linked lock denial.&quot;,
+      &quot;Changed source between preview/confirm, simultaneous confirms, duplicate active projectId, target collision, reparse escape and cancellation: fail closed; at most one authoritative writable recovered session.&quot;,
+      &quot;Missing/wrong key, corrupt/missing object, database/WAL inconsistency, interrupted copy/disk/audit failure: no success publication; original preserved, partial target quarantined.&quot;,
+      &quot;Real Windows principal and alternative Native/API route denials; renderer body/endpoint injection; no content/token/private-path leaks; keyboard/focus/semantics/themes/reflow.&quot;,
+      &quot;R03 follow-up captures actual response on failure or exact accepted/source/reparse/ciphertext facts on successful copy recovery. Independent F01 replay, not a new fixture, decides closure.&quot;
+    ],
+    &quot;rollback&quot;: &quot;Original source/lock/ciphertexts/FAILs stay immutable; recovery never replaces original. Quarantine partial target and retain receipts. Revert only bounded new product commit if necessary; no silent deletion of retained output or human facts.&quot;,
+    &quot;alternative&quot;: &quot;B exact one-use reviewed R03 recovery below; in-place lock removal or general identity migration is a larger policy choice and is not default.&quot;,
+    &quot;estimate&quot;: null,
+    &quot;persistentWitness&quot;: {
+      &quot;necessity&quot;: &quot;Existing Core instance/Native child handles are volatile. workflow_session.rs durable marker has only schemaVersion/resumeEpoch/launchNonce/disposition and intentionally no project/lock/process-birth binding. It protects workflow recovery epoch, not ownership of a retained project session.&quot;,
+      &quot;selectedDesign&quot;: &quot;Dedicated typed local operational owner record, not a new generic controller or project-format migration. Proposed sealing: inner current-user DPAPI of the typed witness, then outer same-machine DPAPI of that inner ciphertext. Neither layer contains a project key, vault root or research content. Keep existing WindowsCurrentUserDataProtector/credential behavior unchanged; a separately typed witness adapter in windows_credentials.py owns the machine wrapper only.&quot;,
+      &quot;explicitSecurityChoice&quot;: &quot;The outer machine binding is a new narrow operational proof policy and must be named in the single batch grant/packet. Machine-only protection alone is rejected because other users on the host can unwrap it. Both layers must authenticate/decrypt successfully, current permitted project key access must pass, and the exact lock/witness identity must match. This is proposed design, not a tested security guarantee or inherited approval.&quot;,
+      &quot;fields&quot;: [
+        &quot;record schema/version and purpose&quot;,
+        &quot;random witness id and opaque stable current principal reference&quot;,
+        &quot;projectId and canonical root/volume/file identity binding&quot;,
+        &quot;Core instanceId, recovery-token SHA256 and initial heartbeat&quot;,
+        &quot;Native and Core PID plus Windows process creation FILETIME and executable identity at owned startup&quot;,
+        &quot;nonportable Native launch/session identity; created/opened/closed disposition and bounded audit linkage&quot;
+      ],
+      &quot;publication&quot;: &quot;Create-new staged sealed record, regular/nonredirected private parent, current-user access, flush + atomic publication before publishing writable session.lock. New session recovery eligibility fails closed if witness creation/authentication cannot complete. Explicit ordinary open availability behavior must be preserved; never publish a lock labeled recoverable without its witness. Close marks only matching owned witness terminal. Partial/orphan records grant nothing.&quot;,
+      &quot;heartbeat&quot;: &quot;Freeze a10-second owned heartbeat refresh cadence for this bounded implementation; interval is liveness metadata, never a stale/expiry takeover threshold. Match fixed instance/token identity while validating heartbeat is valid/nondecreasing and &gt;=witness acquisition; preview/confirm binds exact current bytes. Refresh/close races must cancel safely.&quot;,
+      &quot;recovery&quot;: &quot;After full Desktop+Core restart, fresh permitted principal decrypts both layers, authenticates exact source/witness/lock identity, and obtains actual process liveness/creation facts through the Windows adapter. Any active original owner, reused PID, inaccessible/unknown process query, changed identities, foreign host/user, missing witness or changed source denies. Age/PID absence alone never qualifies. Explicit human review/confirmation and verified working copy remain mandatory.&quot;,
+      &quot;legacyR03&quot;: &quot;Old R03 has no such record. Do not backfill a fictitious witness or mark it product-qualified. B may recover it only via independently authenticated exact retained operator/job/principal evidence under the separately explicit one-use batch clause; otherwise original P1 stays open.&quot;,
+      &quot;limits&quot;: &quot;No proof against an administrator/OS compromise, profile/machine secret compromise or malicious authenticated account; no arbitrary legacy or cross-host recovery. These limits are disclosed. No escrow, exported credential/root, new encryption of scholarly objects or machine-scoped source keys.&quot;,
+      &quot;requiredActualTests&quot;: [
+        &quot;Full Native AND Core owned termination then fresh whole-application restart; actual protected readback on original-derived verified copy.&quot;,
+        &quot;Core-only restart is additional coverage, never substitute.&quot;,
+        &quot;Other principal/foreign host wrapper, forged/missing/tampered record, swapped inner/outer layers, changed executable/process birth, PID reuse/inaccessible process, path redirection and concurrency all deny.&quot;,
+        &quot;Failure between witness stage/publication/lock acquisition, heartbeat/close, audit/copy/publication and user cancel preserves source and refuses success.&quot;
+      ],
+      &quot;primarySources&quot;: [
+        {
+          &quot;url&quot;: &quot;https://learn.microsoft.com/en-us/windows/win32/api/dpapi/nf-dpapi-cryptprotectdata&quot;,
+          &quot;support&quot;: &quot;Default user scope can roam; machine scope binds computer but permits users on that computer. Nested dual scope is our proposed composition, not a Microsoft-certified design.&quot;
+        },
+        {
+          &quot;url&quot;: &quot;https://learn.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-getprocesstimes&quot;,
+          &quot;support&quot;: &quot;Windows process query exposes process creation FILETIME; inability to query must be unknown/denied, not absence.&quot;
+        }
+      ],
+      &quot;authorityOwner&quot;: &quot;Native owns host, parent/child creation/executable and launch-session authority under ADR-0008. Native obtains actual OS identity, provides the typed trusted startup binding to the owned Core through its existing controlled launch/bootstrap seam, and independently validates binding on fresh startup. Core owns recovery/copy/lock orchestration and consumes a typed port; renderer/request JSON is never a host/session attestation. main.py only wires the typed startup/port adapter; windows_credentials.py keeps existing project-key/current-user protection unchanged and adds only the narrow typed ownership-witness sealing adapter.&quot;,
+      &quot;failurePolicy&quot;: &quot;Witness failure never grants recovery eligibility. Preserve ordinary project open behavior with a truthful nonrecoverable session disposition where existing contract permits it; no session may advertise eligible recovery without successful durable witness publication. Unknown liveness/query/birth/host/principal or witness corruption always denies recovery. No automatic lock unlink/takeover.&quot;
+    },
+    &quot;scopeDeltaFromPLAN02&quot;: &quot;Recovery18 plus two exact ADR-0001 documentation paths; no other policy or implementation path expansion.&quot;
+  },
+  &quot;recoveryAPIContract&quot;: {
+    &quot;capability&quot;: &quot;projects.lifecycle&quot;,
+    &quot;transport&quot;: &quot;existing Native core_api_request; no direct renderer HTTP/native endpoint or arbitrary host evidence&quot;,
+    &quot;endpoints&quot;: [
+      {
+        &quot;method&quot;: &quot;POST&quot;,
+        &quot;path&quot;: &quot;/projects/recovery/preview&quot;,
+        &quot;operationId&quot;: &quot;previewProjectRecovery&quot;,
+        &quot;requestFields&quot;: [
+          &quot;root&quot;,
+          &quot;destinationRoot&quot;
+        ]
+      },
+      {
+        &quot;method&quot;: &quot;POST&quot;,
+        &quot;path&quot;: &quot;/projects/recovery/confirm&quot;,
+        &quot;operationId&quot;: &quot;confirmProjectRecovery&quot;,
+        &quot;requestFields&quot;: [
+          &quot;root&quot;,
+          &quot;previewId&quot;,
+          &quot;confirmation&quot;
+        ],
+        &quot;confirmationLiteral&quot;: &quot;recover-working-copy&quot;
+      },
+      {
+        &quot;method&quot;: &quot;POST&quot;,
+        &quot;path&quot;: &quot;/projects/recovery/cancel&quot;,
+        &quot;operationId&quot;: &quot;cancelProjectRecovery&quot;,
+        &quot;requestFields&quot;: [
+          &quot;root&quot;,
+          &quot;previewId&quot;
+        ]
+      },
+      {
+        &quot;method&quot;: &quot;POST&quot;,
+        &quot;path&quot;: &quot;/projects/recovery/status&quot;,
+        &quot;operationId&quot;: &quot;projectRecoveryStatus&quot;,
+        &quot;requestFields&quot;: [
+          &quot;root&quot;,
+          &quot;previewId&quot;
+        ]
+      }
+    ],
+    &quot;validation&quot;: &quot;Strict extra-field denial; existing choose_project_directory / chooseProjectDirectory only (create-parent/open-project purposes unchanged), explicit human source/destination selection and canonical review. Use the existing parent selection plus a new recovery-copy leaf, then Native/Core independently validate canonical local source/destination filesystem authority, access, nonredirected/non-hardlinked critical inputs, target emptiness/nonexistence and stability. The picker returns a selected path, not a cryptographic or durable picker receipt; no new picker attestation, lib.rs/directory_picker.rs change or security permission follows from a renderer path string. Random opaque single-use previewId binds exact held source/lock/witness/input inventory; revalidate on confirm. Native process/host authority remains actual trusted OS evidence, never renderer JSON. Never authorize by age or PID absence alone.&quot;,
+    &quot;states&quot;: [
+      &quot;unavailable-proof&quot;,
+      &quot;denied&quot;,
+      &quot;preview-ready&quot;,
+      &quot;cancelled&quot;,
+      &quot;copying&quot;,
+      &quot;verification-failed&quot;,
+      &quot;verified-copy-ready&quot;,
+      &quot;open-failed&quot;,
+      &quot;recovered&quot;
+    ],
+    &quot;projectionFields&quot;: [
+      &quot;previewId&quot;,
+      &quot;state&quot;,
+      &quot;reasonCodes&quot;,
+      &quot;requiresConfirmation&quot;,
+      &quot;sourceDisplayLabel&quot;,
+      &quot;destinationDisplayLabel&quot;,
+      &quot;verifiedFactSummary&quot;
+    ],
+    &quot;privacy&quot;: &quot;No witness bytes, DPAPI payload, recovery token, principal SID, executable private path, research content or operational host proof in public API diagnostics. Existing selected project projection remains the normal protected authority.&quot;,
+    &quot;cancellation&quot;: &quot;Before publication, cancel or failure leaves original unchanged and no success target; retain/quarantine partial copy. Status cannot turn an incomplete operation into success.&quot;,
+    &quot;heartbeatCadenceSeconds&quot;: 10,
+    &quot;copyScope&quot;: &quot;Verified local repair working copy only: preserve portable manifest/database/WAL-consistent state/encrypted objects/config/exports and accepted facts; no W5 bundle/clone/transfer feature or project format migration.&quot;
+  },
+  &quot;recoveryUIStateMap&quot;: [
+    {
+      &quot;state&quot;: &quot;unavailable-proof/denied&quot;,
+      &quot;region&quot;: &quot;existing Projects backup/transfer/recovery region&quot;,
+      &quot;actions&quot;: [
+        &quot;Review recovery explanation&quot;,
+        &quot;Choose another project&quot;
+      ],
+      &quot;focus&quot;: &quot;restore original invoking button; no implicit mutation&quot;
+    },
+    {
+      &quot;state&quot;: &quot;preview-ready&quot;,
+      &quot;region&quot;: &quot;existing lifecycle confirmation dialog&quot;,
+      &quot;actions&quot;: [
+        &quot;Create verified recovery copy&quot;,
+        &quot;Cancel&quot;
+      ],
+      &quot;focus&quot;: &quot;semantic dialog, first safe action, Escape cancel, invoking-button return&quot;
+    },
+    {
+      &quot;state&quot;: &quot;copying&quot;,
+      &quot;region&quot;: &quot;existing progress/status pattern&quot;,
+      &quot;actions&quot;: [
+        &quot;Cancel before publication&quot;
+      ],
+      &quot;focus&quot;: &quot;announced status; no navigation or source authority change&quot;
+    },
+    {
+      &quot;state&quot;: &quot;verification-failed/cancelled/open-failed&quot;,
+      &quot;region&quot;: &quot;existing failure/remediation notification&quot;,
+      &quot;actions&quot;: [
+        &quot;Review explanation&quot;,
+        &quot;Return to project&quot;
+      ],
+      &quot;focus&quot;: &quot;restore invoking button; original source unchanged&quot;
+    },
+    {
+      &quot;state&quot;: &quot;verified-copy-ready&quot;,
+      &quot;region&quot;: &quot;existing project card/actions&quot;,
+      &quot;actions&quot;: [
+        &quot;Open verified recovery copy&quot;
+      ],
+      &quot;focus&quot;: &quot;explicit action; never automatic reopen, reparse or acceptance&quot;
+    },
+    {
+      &quot;state&quot;: &quot;recovered&quot;,
+      &quot;region&quot;: &quot;existing open-project state&quot;,
+      &quot;actions&quot;: [
+        &quot;Existing approved project actions&quot;
+      ],
+      &quot;focus&quot;: &quot;normal current project/navigation context; accepted facts unchanged&quot;
+    }
+  ],
+  &quot;legacyOriginalFixtureOption&quot;: {
+    &quot;includedIfChosen&quot;: &quot;One-use exact original R03 operator recovery B; not required to claim generic recovery PASS, never a replacement for A/whole-process qualification.&quot;,
+    &quot;contract&quot;: {
+      &quot;name&quot;: &quot;One-use operator-reviewed recovery of exact original R03 only&quot;,
+      &quot;sourceScope&quot;: &quot;No product/framework change. Exact retained R03/root/projectId/lock digest/actual owned Job receipts only; deny other projects.&quot;,
+      &quot;sequence&quot;: [
+        &quot;Authenticate original fixture/baseline/Job ownership/termination/lock identity/heartbeat and unchanged protected principal/key identity. PID absence alone is insufficient; missing evidence aborts.&quot;,
+        &quot;Bind reviewed one-use action to original canonical root and empty owned recovery-copy destination. Reject live owner/PID reuse/unknown host/source changes/foreign project.&quot;,
+        &quot;Preserve original tree/lock in place; verify repair copy using existing portable inventory, archive old lock as evidence, exclude its operational session authority from recovered copy. No fresh project fabrication.&quot;,
+        &quot;Actual ordinary Core/Native open on copy and full protected readback against original baseline. Capture actual failure response or success facts, old ciphertext bytes and permitted retained proposal delta.&quot;,
+        &quot;Independent review decides narrow F01 closure. Keep product/general legacy recovery gap explicit.&quot;
+      ],
+      &quot;criteriaAssessment&quot;: &quot;Existing explicit reviewed recovery/working-copy contract can support this narrow actual operator action if exact ownership/principal/protected facts authenticate. It is not test cleanup. It does not implement production recovery UX or prove arbitrary restart recovery; substituting it for required product/Slice/Wave coverage would be a criterion reduction requiring separate concrete authority. No such reduction recommended. B can never demonstrate the new whole-process product witness feature. Preserve that distinct claim and do not reduce required Wave recovery.&quot;,
+      &quot;limits&quot;: &quot;Old R03 facts remain missing until measured; R11 cannot supply them. No lock unlink now or blanket cleanup grant.&quot;,
+      &quot;rollback&quot;: &quot;Original unchanged; retain/archive receipts and quarantine partial copy.&quot;,
+      &quot;estimate&quot;: null
+    },
+    &quot;evidence&quot;: {
+      &quot;path&quot;: &quot;artifacts/tmp/CAP-05.S06.restart-boundary-r10.independent-disposition-01.json&quot;,
+      &quot;sha256&quot;: &quot;6b85c1c7de15c0de6b96c4cb182a1da4a829aae427962c50315bf2e9054ddc81&quot;,
+      &quot;hashConvention&quot;: &quot;raw-bytes&quot;
+    },
+    &quot;selection&quot;: &quot;Recommended to authorize only this exact bounded operator attempt in addition to A, subject to actual identity/protected evidence. Missing evidence aborts; old P1 does not close automatically.&quot;
+  },
+  &quot;verification&quot;: {
+    &quot;methodContract&quot;: [
+      &quot;Authenticate original checkers/governors and selected source closure. Fresh output compared as complete path/rule/AST-statement multisets and exact literal hashes; never counts only or blanket filename exclusions.&quot;,
+      &quot;Permit only individually reviewed45 statements and3 matches. New/changed/missing/unknown findings or altered source pins deny until separately inspected. Recovery product delta grants no extra architecture exemption.&quot;,
+      &quot;Preserve actual business/domain/port SQL and concrete-adapter bans; resolve level1 sibling ports.object_store correctly. Preserve typing/offline behavior using syntax/operation-specific controls, not deleted or disguised rejection literals.&quot;,
+      &quot;Negative controls: real business SQL/concrete import, true port-to-root import, legal sibling port import, true TS any, prose any, active fetch/WebSocket/navigation/endpoint use and inert denial strings.&quot;,
+      &quot;No monkeypatch shared helper, weakening assertion or filtering unexpected output. Exact committed candidate, closed regular held inputs/stability and real independent disposition required; static triage is not qualification.&quot;,
+      &quot;Closed method48: exact current45 path/rule/AST statement multiset +3 exact literal/source bindings in preserved verification-findings.json. Run unchanged originals and retain full FAIL streams; compare complete actual output, never count-only suppressions. Permit exactly those reviewed false positives, no newly introduced errors.&quot;,
+      &quot;Quality inventory is a separate exact data synchronization, not a checker method or source edit: retain every existing valid entry and add all actual governed Python discovery under existing exclusions. Never omit unlisted product/test/tool sources to avoid errors.&quot;,
+      &quot;Exact additional CSP predicate below is separately named in the batch grant; earlier EX01 authority does not extend to it automatically. Retain all other desktop security/static predicates.&quot;
+    ],
+    &quot;recordContract&quot;: {
+      &quot;documentType&quot;: &quot;batch-conforming-method-source-record&quot;,
+      &quot;requiredFields&quot;: [
+        &quot;schemaVersion&quot;,
+        &quot;batchGrant{path,sha256,introductionCommit}&quot;,
+        &quot;planContract{path,sha256}&quot;,
+        &quot;methodId&quot;,
+        &quot;candidateCommit&quot;,
+        &quot;producer{path,sha256,retainedSourceBytesReference}&quot;,
+        &quot;allowedPredicateIds&quot;,
+        &quot;selectedInputs[{path,sha256,role}]&quot;,
+        &quot;negativeControls{receiptPath,sha256,actualResult}&quot;,
+        &quot;independentReadiness{reviewer,path,sha256,result}&quot;,
+        &quot;createdAt&quot;,
+        &quot;executionScope&quot;,
+        &quot;prohibitedChanges&quot;
+      ],
+      &quot;authority&quot;: &quot;Immutable owner batch grants the finite semantics in this PLAN. Later record captures actual source bytes/hashes/review only; it does not change that grant. Ignored sources receive no invented Git introduction; preserve their exact bytes in the approved immutable capture/receipt procedure.&quot;,
+      &quot;independence&quot;: &quot;Actual reviewer must differ from implementation/execution owner. SOURCE_READY requires real source review and actual qualifying negative-control receipt; an author assertion or static count is insufficient.&quot;,
+      &quot;sequence&quot;: [
+        &quot;After batch grant prepare exclusive ignored finite producer/controls implementing only this contract.&quot;,
+        &quot;Independent source preflight before any qualifying execution; execute only approved bounded negative controls at fixed inputs.&quot;,
+        &quot;Independent authenticate actual control outcomes and source/closure, then exclusively record actual readiness/source/input hashes under the batch grant.&quot;,
+        &quot;Only then execute qualifying proof at exact committed candidate with regular-file write/delete-denying holds and final input checks; preserve complete streams/exit/time/raw receipts.&quot;,
+        &quot;Independent actual-evidence disposition follows. No additional human ask for conforming implementation/preparation/recording/execution; new material predicate/scope/security/reference decision still stops.&quot;
+      ],
+      &quot;failClosed&quot;: [
+        &quot;Missing/forged/changed grant or plan contract&quot;,
+        &quot;Source/inputs changed after readiness&quot;,
+        &quot;Missing actual controls or nonindependent review&quot;,
+        &quot;New/missing/changed findings outside exact permitted multiset&quot;,
+        &quot;New rule/exemption/source scope or weakened assertion&quot;,
+        &quot;Unfrozen/dirty candidate, stale build or unavailable boundary&quot;
+      ]
+    },
+    &quot;qualityInventory&quot;: {
+      &quot;evidence&quot;: {
+        &quot;path&quot;: &quot;artifacts/tmp/W2.remaining-corrections-batch-01/root-quality-inventory-01.json&quot;,
+        &quot;sha256&quot;: &quot;d21e9380eaf483de6b38a070ebf0014998c6983daf9f297cd9d58415da2d48ab&quot;,
+        &quot;hashConvention&quot;: &quot;raw-bytes&quot;
+      },
+      &quot;scope&quot;: {
+        &quot;path&quot;: &quot;quality-scope.json&quot;,
+        &quot;sha256&quot;: &quot;41e048cec0a4a90d8f54bc7ff269813597d34f5933606e9e4a262ba743e077cf&quot;,
+        &quot;hashConvention&quot;: &quot;raw-bytes&quot;
+      },
+      &quot;checker&quot;: {
+        &quot;path&quot;: &quot;tools/quality_check.py&quot;,
+        &quot;sha256&quot;: &quot;32cb0e3444e17c24d18ca827a970cd04a6d27b61ce7d6ab2c8dabaefa9cc9c69&quot;,
+        &quot;hashConvention&quot;: &quot;raw-bytes&quot;
+      },
+      &quot;observed&quot;: &quot;584 declared,728 tracked governed Python paths,144 tracked omissions. This finite diagnosis excludes complete ignored/untracked filesystem discovery.&quot;,
+      &quot;authorizedDataPath&quot;: &quot;quality-scope.json&quot;,
+      &quot;remedy&quot;: &quot;Synchronize using the actual existing six-root filesystem discovery with unchanged node_modules/symlink/junction exclusions; complete current sources, preserve valid entries, add newly admitted recovery sources when present. Do not blindly equate tracked inventory with complete discovery.&quot;,
+      &quot;qualification&quot;: &quot;Run unchanged quality scope/check afterward at final candidate; preserve original/any fresh FAIL and inspect real errors. This is necessary bookkeeping, not complete quality PASS.&quot;,
+      &quot;retainedFormatter&quot;: &quot;Exact earlier tools/plan_review_site.py format debt remains outside shared-framework edit permission. A narrow disposition must pin actual unchanged source/log and verify generated view integrity if still failing; do not call whole quality PASS or exempt other formatter files.&quot;,
+      &quot;specificTypeRestorations&quot;: {
+        &quot;pageAnnotation&quot;: {
+          &quot;path&quot;: &quot;tests/contracts/test_plugin_worker_contract.py&quot;,
+          &quot;sha256&quot;: &quot;198b2ea3dfaeb5ee15ac7b60d5dc5a7a9598dc0ed76b5dee951c17cf633e5a39&quot;,
+          &quot;hashConvention&quot;: &quot;raw-bytes&quot;
+        },
+        &quot;pickerCast&quot;: {
+          &quot;path&quot;: &quot;tests/desktop/test_windows_document_picker_probe.py&quot;,
+          &quot;sha256&quot;: &quot;ef960584611b2363645d28366b9afef5fd2b4ada0e4bc40e724f6fc8e39a6598&quot;,
+          &quot;hashConvention&quot;: &quot;raw-bytes&quot;
+        },
+        &quot;observation&quot;: &quot;Root inspected page:dict[str,object] and cast(Path,ReparseEntry()) restoring the two named historical Mypy errors. No new correction tasks for those same errors; no fresh Mypy PASS claimed.&quot;
+      }
+    },
+    &quot;cspMethod&quot;: {
+      &quot;methodId&quot;: &quot;exact-current-reader-local-worker-csp&quot;,
+      &quot;authority&quot;: {
+        &quot;path&quot;: &quot;docs/adr/ADR-0029-preserve-document-revisions-and-mediate-source-viewing.md&quot;,
+        &quot;sha256&quot;: &quot;ffee796414cdde9155667c8c3a710e7c904197971b7714832c7c5bc950687e7b&quot;,
+        &quot;hashConvention&quot;: &quot;raw-bytes&quot;
+      },
+      &quot;sourceInputs&quot;: [
+        {
+          &quot;path&quot;: &quot;tools/desktop_app_check.py&quot;,
+          &quot;sha256&quot;: &quot;cb617d6448e8a358317ecf530266d5bd64ed6ff7212729c4cdf8895449e813c8&quot;,
+          &quot;hashConvention&quot;: &quot;raw-bytes&quot;
+        },
+        {
+          &quot;path&quot;: &quot;apps/desktop/src-tauri/tauri.conf.json&quot;,
+          &quot;sha256&quot;: &quot;1b774c7be68f3f6573cdd03cdf121d748c208c9aa935317e2365668815ba88e9&quot;,
+          &quot;hashConvention&quot;: &quot;raw-bytes&quot;
+        }
+      ],
+      &quot;reproduction&quot;: &quot;Original EXPECTED_CSP omits worker-src and connect-src self; current source policy contains only worker-src self and adds only self to existing IPC connections. Accepted ADR0029 requires locally bundled pinned PDF.js worker and no remote asset fetch.&quot;,
+      &quot;originalExpectedCSP&quot;: {
+        &quot;default-src&quot;: [
+          &quot;&#x27;self&#x27;&quot;
+        ],
+        &quot;img-src&quot;: [
+          &quot;&#x27;self&#x27;&quot;,
+          &quot;data:&quot;
+        ],
+        &quot;style-src&quot;: [
+          &quot;&#x27;self&#x27;&quot;,
+          &quot;&#x27;unsafe-inline&#x27;&quot;
+        ],
+        &quot;script-src&quot;: [
+          &quot;&#x27;self&#x27;&quot;
+        ],
+        &quot;connect-src&quot;: [
+          &quot;ipc:&quot;,
+          &quot;http://ipc.localhost&quot;
+        ],
+        &quot;font-src&quot;: [
+          &quot;&#x27;self&#x27;&quot;
+        ],
+        &quot;object-src&quot;: [
+          &quot;&#x27;none&#x27;&quot;
+        ],
+        &quot;base-uri&quot;: [
+          &quot;&#x27;none&#x27;&quot;
+        ],
+        &quot;frame-ancestors&quot;: [
+          &quot;&#x27;none&#x27;&quot;
+        ],
+        &quot;form-action&quot;: [
+          &quot;&#x27;self&#x27;&quot;
+        ]
+      },
+      &quot;proposedExactExpectedCSP&quot;: {
+        &quot;default-src&quot;: [
+          &quot;&#x27;self&#x27;&quot;
+        ],
+        &quot;img-src&quot;: [
+          &quot;&#x27;self&#x27;&quot;,
+          &quot;data:&quot;
+        ],
+        &quot;style-src&quot;: [
+          &quot;&#x27;self&#x27;&quot;,
+          &quot;&#x27;unsafe-inline&#x27;&quot;
+        ],
+        &quot;script-src&quot;: [
+          &quot;&#x27;self&#x27;&quot;
+        ],
+        &quot;worker-src&quot;: [
+          &quot;&#x27;self&#x27;&quot;
+        ],
+        &quot;connect-src&quot;: [
+          &quot;&#x27;self&#x27;&quot;,
+          &quot;ipc:&quot;,
+          &quot;http://ipc.localhost&quot;
+        ],
+        &quot;font-src&quot;: [
+          &quot;&#x27;self&#x27;&quot;
+        ],
+        &quot;object-src&quot;: [
+          &quot;&#x27;none&#x27;&quot;
+        ],
+        &quot;base-uri&quot;: [
+          &quot;&#x27;none&#x27;&quot;
+        ],
+        &quot;frame-ancestors&quot;: [
+          &quot;&#x27;none&#x27;&quot;
+        ],
+        &quot;form-action&quot;: [
+          &quot;&#x27;self&#x27;&quot;
+        ]
+      },
+      &quot;grant&quot;: &quot;Explicitly replace only this exact stale CSP equality predicate for the current governed Reader policy; this is an additional batch method decision, not covered by old EX01. No source tauri CSP rewrite and no shared checker change. Preserve all remote-source/security denials and every other desktop check.&quot;,
+      &quot;positiveProof&quot;: &quot;Actual shipping Native/WebView local Reader loads the exact hashed bundled PDF.js worker/assets and successfully renders the protected miniature local source under the current enforced CSP. Capture actual asset/worker/source/effective-policy provenance and failures; synthetic static CSP alone is insufficient. Bundled-asset integrity is authenticated preflight evidence, distinct from actual CSP enforcement; no new production integrity feature.&quot;,
+      &quot;negativeProof&quot;: &quot;Use a separately isolated owned Native WebView fixture enforcing the exact current policy to demonstrate external connect/script/worker/object/frame denials with actual CSP violation/error observations. Independently authenticate the shipping bundled asset/hash inventory before launch; an isolated missing or malformed local worker must emit its real load/parse error. A semantically harmless byte alteration is an asset preflight hash mismatch, not claimed runtime cryptographic refusal. No production worker verifier/SRI, CSP rewrite, project content/key transfer or production JS injection.&quot;,
+      &quot;bounds&quot;: &quot;No https/http remote origin, wildcard, unsafe-eval, blob/data worker, relaxed object/base/frame/form or script source. Exact IPC allowance retained. Platform-generated nonces/effective-policy augmentation must be explicitly authenticated rather than ignored. Any extra policy directive/source or unknown transformation stays blocking.&quot;,
+      &quot;status&quot;: &quot;PROPOSED_FINITE_METHOD_NOT_EXECUTED_OR_APPROVED&quot;
+    },
+    &quot;formatterDisposition&quot;: {
+      &quot;methodId&quot;: &quot;exact-unchanged-review-site-format-debt&quot;,
+      &quot;source&quot;: {
+        &quot;path&quot;: &quot;tools/plan_review_site.py&quot;,
+        &quot;sha256&quot;: &quot;2a19af60c4e7bd0efb679fd291c4675de8d41f6716f40382214293a071657b12&quot;,
+        &quot;hashConvention&quot;: &quot;raw-bytes&quot;
+      },
+      &quot;retainedLog&quot;: {
+        &quot;path&quot;: &quot;artifacts/tmp/CAP-04.S05.selected-06-6a2e7487.quality.log&quot;,
+        &quot;sha256&quot;: &quot;3c0dd6e03dc22d1995aed8fb56da1f62c08d9bfe19e60e68b6870805e02be83d&quot;,
+        &quot;hashConvention&quot;: &quot;raw-bytes&quot;
+      },
+      &quot;grant&quot;: &quot;Single batch explicitly permits bounded disposition of ONLY formatting debt in this exact unchanged source, with full original/fresh FAIL retained. This is a narrow verification-criterion decision, not permission to edit shared formatter source or declare the quality command passed.&quot;,
+      &quot;contract&quot;: &quot;After complete governed inventory synchronization, run the original full quality command and retain all streams. Match the entire actual formatter finding set against only tools/plan_review_site.py at the pinned unchanged source. Any other format/lint/type/scope error remains blocking and outside this disposition. Original types/lint/security checks must actually pass; no source/test omission.&quot;,
+      &quot;substituteEvidence&quot;: &quot;Require current generated MD/review HTML integrity through the existing unchanged required plan_review_check route at the final metadata state, plus independent actual source/evidence disposition. No newly invented formatter test/helper or source repair.&quot;,
+      &quot;recording&quot;: &quot;Use the same finite actual-source/readiness/hash contract above; conforming execution/disposition needs no new human ask once this exact clause is granted.&quot;,
+      &quot;resultLimit&quot;: &quot;Name an exact bounded format-debt disposition; whole quality check remains its actual exit/status. If the required gate refuses a truthful exact substitute, report that concrete incompatibility instead of rewriting the command receipt or weakening its validator.&quot;,
+      &quot;actualCurrentEvidence&quot;: {
+        &quot;command&quot;: &quot;python -B -m ruff format --check --config pyproject.toml -- tools/plan_review_site.py&quot;,
+        &quot;exitCode&quot;: 1,
+        &quot;durationSeconds&quot;: 0.2476,
+        &quot;source&quot;: {
+          &quot;path&quot;: &quot;tools/plan_review_site.py&quot;,
+          &quot;sha256&quot;: &quot;2a19af60c4e7bd0efb679fd291c4675de8d41f6716f40382214293a071657b12&quot;,
+          &quot;hashConvention&quot;: &quot;raw-bytes&quot;
+        },
+        &quot;configuration&quot;: {
+          &quot;path&quot;: &quot;pyproject.toml&quot;,
+          &quot;sha256&quot;: &quot;93b58c4f4ebae3fed22286ed4b9426d3e1397ad94624b75aabbfe63ce089f4e7&quot;,
+          &quot;hashConvention&quot;: &quot;raw-bytes&quot;
+        },
+        &quot;rawLog&quot;: {
+          &quot;path&quot;: &quot;artifacts/tmp/W2.remaining-corrections-batch-01/root-framework-format-01.log&quot;,
+          &quot;sha256&quot;: &quot;eb8400f8481a94510dc2e4a82ffe81ee76af0c5a36a2610e4418be71b5c85731&quot;,
+          &quot;hashConvention&quot;: &quot;raw-bytes&quot;
+        }
+      }
+    }
+  },
+  &quot;currentC18&quot;: {
+    &quot;proposal&quot;: {
+      &quot;path&quot;: &quot;artifacts/tmp/W2.C18.T01.current-build-lineage-method-02/proposal.json&quot;,
+      &quot;sha256&quot;: &quot;7d3a96c506aa469eaf733f7046bba4ade8a35f5102689bfc4c3dd8e7fe3d402e&quot;,
+      &quot;hashConvention&quot;: &quot;raw-bytes&quot;
+    },
+    &quot;brief&quot;: {
+      &quot;path&quot;: &quot;artifacts/tmp/W2.C18.T01.current-build-lineage-method-02/review.html&quot;,
+      &quot;sha256&quot;: &quot;3c39836ebf9514fc44408bc6f8d7582a140e84b64f5868e95738785e3bb872bc&quot;,
+      &quot;hashConvention&quot;: &quot;raw-bytes&quot;
+    },
+    &quot;fullPacketReadiness&quot;: {
+      &quot;path&quot;: &quot;artifacts/tmp/W2.C18.T01.current-build-lineage-method-02/readiness-review-01.json&quot;,
+      &quot;sha256&quot;: &quot;47e2f4facf9158e53a314e3ffe80b0e56087260751ab106cfa334a5f4b608e36&quot;,
+      &quot;hashConvention&quot;: &quot;raw-bytes&quot;
+    },
+    &quot;producerPins&quot;: [
+      {
+        &quot;name&quot;: &quot;lineage&quot;,
+        &quot;path&quot;: &quot;artifacts/tmp/W2.C18.T01.current-build-lineage-02.py&quot;,
+        &quot;sha256&quot;: &quot;9ca3f254cfdda423d1ed645a8c1dc3187b4dd0d31ea11f64e25d07386ced3788&quot;
+      },
+      {
+        &quot;name&quot;: &quot;conformance&quot;,
+        &quot;path&quot;: &quot;artifacts/tmp/CAP-05.S06.W2-1.9-conformance-07.py&quot;,
+        &quot;sha256&quot;: &quot;d95cd9262af76ab5abc06110818643c71a3ecf389266150c43e24918cf316ddd&quot;
+      },
+      {
+        &quot;name&quot;: &quot;fixture&quot;,
+        &quot;path&quot;: &quot;artifacts/tmp/CAP-05.S06.W2-1.9-fixture-build-04.py&quot;,
+        &quot;sha256&quot;: &quot;d08e71545a419fc3008de1e918add772cbed04848f8b10fd6ce3bdb16da8a398&quot;
+      },
+      {
+        &quot;name&quot;: &quot;frontend&quot;,
+        &quot;path&quot;: &quot;artifacts/tmp/CAP-05.S06.shipping-frontend-build-04.py&quot;,
+        &quot;sha256&quot;: &quot;4833fdbea6bc4662668a66d300158a80d4cbe048a5696194aa0289d881b74f0a&quot;
+      }
+    ],
+    &quot;readinessScope&quot;: &quot;Actual independent full packet SOURCE_READY, no blocking findings, as reported by parent and authenticated here. Source readiness is not owner approval or execution.&quot;
+  },
+  &quot;futureLineage&quot;: {
+    &quot;grantContract&quot;: [
+      &quot;Only exact C18 CSS, admitted/claimed W2.A06.T01/T02 recovery18 + named ADR0054/index notes, and T03 quality-scope.json/ADR documentation. No other product delta or architecture exemption.&quot;,
+      &quot;Before future capture, record actual committed base/candidate, taskctl admission/claim/origin/spec/review hashes, finite path diff and independent source/security/contract/UI disposition. No guessed task IDs, future source hashes or completion records.&quot;,
+      &quot;Batch may authorize recording actual later pins under this frozen finite procedure after independent approval. It may not accept extra paths/tasks, changed policy/reference/criteria, new artifact/page exemptions, weaker guards or new controller code. New material findings remain separate.&quot;,
+      &quot;Authenticate exact owner grant/immutable records; preserve all inherited guard/static/security/reference/token/route/workflow/accessibility/visual/runtime assertions and complete source/tool/runtime/font/browser/build held-input closure/stability.&quot;,
+      &quot;Retain taskctl/governance_kernel executable input closure fixed in helper02. Keep every old helper/proof/method/readiness/adverse round unchanged; no shared helper monkeypatch.&quot;,
+      &quot;After all selected product changes are committed/reviewed, freeze final candidate and execute one fresh standard build/package/capture and risk-selected task checks, then integrated Slice/checkpoint/Wave/profile matrix. Unexpected failures remain blockers.&quot;,
+      &quot;ADR0054/index deltas must be confined to this exact accepted batch policy, actual task links and reviewed implementation/verification notes; no unbound architecture policy or index rewrite.&quot;
+    ],
+    &quot;recordContract&quot;: {
+      &quot;documentType&quot;: &quot;batch-conforming-current-build-lineage-record&quot;,
+      &quot;requiredFields&quot;: [
+        &quot;schemaVersion&quot;,
+        &quot;batchGrant{path,sha256,introductionCommit}&quot;,
+        &quot;planContract{path,sha256}&quot;,
+        &quot;methodId&quot;,
+        &quot;candidateCommit&quot;,
+        &quot;producer{path,sha256,retainedSourceBytesReference}&quot;,
+        &quot;allowedPredicateIds&quot;,
+        &quot;selectedInputs[{path,sha256,role}]&quot;,
+        &quot;negativeControls{receiptPath,sha256,actualResult}&quot;,
+        &quot;independentReadiness{reviewer,path,sha256,result}&quot;,
+        &quot;createdAt&quot;,
+        &quot;executionScope&quot;,
+        &quot;prohibitedChanges&quot;
+      ],
+      &quot;authority&quot;: &quot;Immutable owner batch grants the finite semantics in this PLAN. Later record captures actual source bytes/hashes/review only; it does not change that grant. Ignored sources receive no invented Git introduction; preserve their exact bytes in the approved immutable capture/receipt procedure.&quot;,
+      &quot;independence&quot;: &quot;Actual reviewer must differ from implementation/execution owner. SOURCE_READY requires real source review and actual qualifying negative-control receipt; an author assertion or static count is insufficient.&quot;,
+      &quot;sequence&quot;: [
+        &quot;After batch grant prepare exclusive ignored finite producer/controls implementing only this contract.&quot;,
+        &quot;Independent source preflight before any qualifying execution; execute only approved bounded negative controls at fixed inputs.&quot;,
+        &quot;Independent authenticate actual control outcomes and source/closure, then exclusively record actual readiness/source/input hashes under the batch grant.&quot;,
+        &quot;Only then execute qualifying proof at exact committed candidate with regular-file write/delete-denying holds and final input checks; preserve complete streams/exit/time/raw receipts.&quot;,
+        &quot;Independent actual-evidence disposition follows. No additional human ask for conforming implementation/preparation/recording/execution; new material predicate/scope/security/reference decision still stops.&quot;
+      ],
+      &quot;failClosed&quot;: [
+        &quot;Missing/forged/changed grant or plan contract&quot;,
+        &quot;Source/inputs changed after readiness&quot;,
+        &quot;Missing actual controls or nonindependent review&quot;,
+        &quot;New/missing/changed findings outside exact permitted multiset&quot;,
+        &quot;New rule/exemption/source scope or weakened assertion&quot;,
+        &quot;Unfrozen/dirty candidate, stale build or unavailable boundary&quot;
+      ],
+      &quot;additionalRequiredFields&quot;: [
+        &quot;admittedTaskIds&quot;,
+        &quot;admission{packetPath,sha256,approvalReference,materializationReceipt}&quot;,
+        &quot;taskClaims[{taskId,baseCommit,specPath,specSHA256}]&quot;,
+        &quot;productDelta[{path,beforeSHA256,afterSHA256,introductionCommit,taskId}]&quot;,
+        &quot;independentDispositions[{taskId,path,sha256,candidateCommit,securityReviewed,referenceMapping}]&quot;,
+        &quot;metadataOutputPaths&quot;,
+        &quot;preservedPredicateIds&quot;,
+        &quot;C18ProofMethodDependencies[{methodId,sourceRecordPath,sha256}]&quot;
+      ],
+      &quot;finiteScopes&quot;: {
+        &quot;C18&quot;: [
+          &quot;apps/desktop/src/app.css&quot;
+        ],
+        &quot;recovery&quot;: [
+          &quot;services/core-api/src/research_observatory_core/projects.py&quot;,
+          &quot;services/core-api/src/research_observatory_core/app.py&quot;,
+          &quot;services/core-api/src/research_observatory_core/models.py&quot;,
+          &quot;apps/desktop/src-tauri/src/supervisor.rs&quot;,
+          &quot;apps/desktop/src/app/ProjectsWorkspace.tsx&quot;,
+          &quot;apps/desktop/src/app/ProjectsWorkspace.test.tsx&quot;,
+          &quot;tests/service/test_project_lifecycle.py&quot;,
+          &quot;tests/service/test_native_project_contract.py&quot;,
+          &quot;packages/contracts/core-api/openapi.json&quot;,
+          &quot;packages/contracts/core-api/generated.ts&quot;,
+          &quot;packages/contracts/core-api/generated.test.ts&quot;,
+          &quot;packages/contracts/project/project-lifecycle-event.schema.json&quot;,
+          &quot;packages/contracts/project/README.md&quot;,
+          &quot;docs/architecture/project-package.md&quot;,
+          &quot;services/core-api/src/research_observatory_core/main.py&quot;,
+          &quot;services/core-api/src/research_observatory_core/windows_credentials.py&quot;,
+          &quot;services/core-api/src/research_observatory_core/ports/project_recovery.py&quot;,
+          &quot;tests/security/test_project_recovery.py&quot;,
+          &quot;docs/adr/ADR-0054-bind-explicit-project-recovery-and-complete-quality-inventory.md&quot;,
+          &quot;docs/adr/index.json&quot;
+        ],
+        &quot;verificationData&quot;: [
+          &quot;quality-scope.json&quot;
+        ],
+        &quot;futureProductIds&quot;: [
+          &quot;W2.A06.T01&quot;,
+          &quot;W2.A06.T02&quot;
+        ],
+        &quot;verificationTaskId&quot;: &quot;W2.A06.T03&quot;
+      },
+      &quot;requirement&quot;: &quot;Every source/data delta belongs to an actual admitted/claimed task and closed finite scope; actual independent source/contract/security/UI disposition and exact hashes recorded before capture. Metadata outputs separately authenticated; no arbitrary generated-output/path-prefix exemption.&quot;,
+      &quot;producerSemantics&quot;: &quot;Retain all current C18 exact guard/static/security/source-closure functions and append only this approved bounded recording recognizer. Do not add unrelated artifact/page/CSP/architecture exemptions to lineage; those explicit methods are independently bound to this batch and actual sources.&quot;,
+      &quot;implementationAllowance&quot;: &quot;Conforming ignored successor preparation and execution after real readiness/hash recording is already authorized by the single batch. New scope/predicate/security/reference changes stop. The C18-only producer is unchanged and does not already accept future recovery.&quot;
+    }
+  },
+  &quot;preAdmissionC18MethodPhase&quot;: {
+    &quot;purpose&quot;: &quot;Avoid C18-first method deadlock without product/data work before admission&quot;,
+    &quot;grant&quot;: &quot;The single owner batch authorizes conforming exclusive ignored closed45+3/CSP/current-build successor preparation, bounded negative controls, independent readiness/hash records and proof execution needed to finish the already claimed C18 before A06 admission. No new owner answer for conforming details.&quot;,
+    &quot;conditions&quot;: [
+      &quot;Actual immutable owner batch grant authenticates before any execution.&quot;,
+      &quot;Current four C18 sources/proposal/readiness stay exact and retained; they do not implement the additional classifier/CSP methods. Prepare separate successors only within the frozen contracts, with actual independent source/control readiness and raw hashes before use.&quot;,
+      &quot;This phase changes no recovery product, quality-scope.json, ADR/index or shared source. Actual C18 source429 is already committed; no new product delta is allowed.&quot;,
+      &quot;Retain original checker/old producer FAILs and all assertion/input/security/reference predicates outside explicitly named replacements.&quot;,
+      &quot;Record needed method sources/actual receipts and exact C18 R01/independent review through normal taskctl; actual C18 DONE/approved and no open corrective work precede B00 submission.&quot;,
+      &quot;T03 later authenticates/reuses the method source contracts, rechecks final data/source closure and supplies fresh final integrated candidate evidence; pre-admission proof cannot stand in for later product qualification.&quot;,
+      &quot;Append each actual finite method-source record under artifacts/evidence/W2.A06.pre-admission-method-records-*.json; only the exact granted semantics and actual independent readiness/hashes qualify. Later C18 normal evidence/UI classification/review rounds may use artifacts/evidence/W2.C18.T01.*.json, preserving every earlier immutable round. No source/policy grant derives merely from filename matching.&quot;
+    ],
+    &quot;noClaims&quot;: [
+      &quot;No existing four-producer implementation of the new methods&quot;,
+      &quot;No A06 admission&quot;,
+      &quot;No product recovery or Slice/Wave approval&quot;,
+      &quot;No fake future source/control hashes&quot;
+    ]
+  },
+  &quot;taskInventory&quot;: [
+    {
+      &quot;id&quot;: &quot;W2.A06.T01&quot;,
+      &quot;title&quot;: &quot;Restore explicit reviewed project recovery and durable owned-session proof&quot;,
+      &quot;objective&quot;: &quot;Restore CAP-02.S01 explicit reviewed recovery in W2, with Native-owned durable current-user and same-machine proof, Core verified-copy orchestration and conservative denials.&quot;,
+      &quot;estimate&quot;: &quot;L&quot;,
+      &quot;dependencies&quot;: [
+        &quot;W2.A06.B00&quot;
+      ],
+      &quot;acceptanceCriteria&quot;: [
+        &quot;T01-AC01: Implement only the canonical ECR-0014 proposal recovery/API/witness contract and exact T01 path envelope; preserve W1 history, ADR0008 Native authority and existing project-key/current-user protection. Publish indexed task-linked ADR0054 in the same protected change set.&quot;,
+        &quot;T01-AC02: New proof-eligible sessions have durable typed dual-scope ownership witness before writable lock publication, exact Native/Core process birth/executable/session/principal/project/lock binding, 10-second owned heartbeat and matched close/cancellation. Missing/unknown proof, live owner or PID reuse denies recovery.&quot;,
+        &quot;T01-AC03: Explicit preview/confirm creates a verified local working copy only; original tree/lock/accepted facts/ciphertexts remain unchanged. Verify source stability, database/WAL, protected object authentication and IDs before atomic empty-target publication and normal fresh open.&quot;,
+        &quot;T01-AC04: Actual whole Native AND Core owned termination/fresh startup plus protected readback proves eligible-session recovery; real principal/foreign-host/untrusted-witness/path/concurrency/key/audit/interrupted-copy/cancel denials preserve source and grant no false success. Core-only restart is additional coverage.&quot;,
+        &quot;T01-AC05: Independently review exact committed security/interface scope and actual negative/positive evidence. Original R03 P1 remains open unless the separately bound one-use operator recovery has real authenticated readback and independent finding closure; no new fixture substitution.&quot;
+      ],
+      &quot;verification&quot;: [
+        &quot;Focused failing characterization and pytest tests/security/test_project_recovery.py tests/service/test_project_lifecycle.py tests/service/test_native_project_contract.py; contract generator/schema/client checks on exact changed API/event contracts.&quot;,
+        &quot;Actual Windows Native/Core owned session, dual user/machine witness, whole-process abrupt restart, protected readback, alternative principal/host/path/API denials and heartbeat/copy/close races at fixed committed candidate; retain all streams and owned cleanup.&quot;,
+        &quot;Unchanged ADR check against actual task base/candidate, affected quality and exact protected-source review; architecture original FAIL plus only the separately granted closed45+3 proof where needed. Expanded independent commit-bound disposition.&quot;
+      ]
+    },
+    {
+      &quot;id&quot;: &quot;W2.A06.T02&quot;,
+      &quot;title&quot;: &quot;Integrate explicit recovery review into the approved Projects experience&quot;,
+      &quot;objective&quot;: &quot;Restore approved Projects recovery states using existing Native directory picker, semantic dialogs, keyboard/focus and protected Core lifecycle authority.&quot;,
+      &quot;estimate&quot;: &quot;M&quot;,
+      &quot;dependencies&quot;: [
+        &quot;W2.A06.B00&quot;,
+        &quot;W2.A06.T01&quot;
+      ],
+      &quot;acceptanceCriteria&quot;: [
+        &quot;T02-AC01: Implement only the canonical state/action/focus map and T02 exact path envelope under approved RO-UI-ACADEMIC-MINIMAL-1.9 Projects recovery/lifecycle patterns, using T01 API and existing directory picker. No new wizard/reference, auto recovery, renderer host attestation or scope/security change.&quot;,
+        &quot;T02-AC02: Display unavailable/denied/preview/cancel/copy failure/verified-copy/open failure/recovered states truthfully; explicit confirm and open remain separate human actions, original untouched and no automatic reparse/acceptance.&quot;,
+        &quot;T02-AC03: Actual shipping Native/Core/UI evidence proves keyboard Tab/Enter/Space/Escape, strict focus, cancel/failure, denied alternate routes, protected before/after facts, themes/reflow and recovery after whole-process restart. Static mocks/screenshots alone are insufficient.&quot;,
+        &quot;T02-AC04: Same-task indexed ADR0054 implementation notes and exact independent security/UI/reference disposition bind candidate and actual source hashes. A demonstrated material experience/policy change stops, while conforming restoration needs no further owner ask.&quot;
+      ],
+      &quot;verification&quot;: [
+        &quot;Focused existing ProjectsWorkspace.test.tsx and affected native/project/security tests; machine-check actual state/action projections, inaccessible/denied/cancelled and success paths.&quot;,
+        &quot;Fresh real shipping UIA and protected project readbacks for exact recovery fixture; actual keyboard/focus/theme/reflow semantics, whole Native/Core restart and owned cleanup; independently authenticated evidence.&quot;,
+        &quot;Existing UI approval/reference/token/route/workflow/accessibility/visual/ADR predicates, with only explicit finite C18/current-build/CSP method successors after real independent readiness/source recording. Expanded commit-bound UI/security disposition.&quot;
+      ]
+    },
+    {
+      &quot;id&quot;: &quot;W2.A06.T03&quot;,
+      &quot;title&quot;: &quot;Synchronize quality inventory and qualify the finite approved verification methods&quot;,
+      &quot;objective&quot;: &quot;Complete governed Python inventory and execute exact closed45+3, current Reader CSP, unchanged formatter-debt and bounded current-build lineage contracts without shared checker/controller changes.&quot;,
+      &quot;estimate&quot;: &quot;L&quot;,
+      &quot;dependencies&quot;: [
+        &quot;W2.A06.B00&quot;,
+        &quot;W2.A06.T01&quot;,
+        &quot;W2.A06.T02&quot;
+      ],
+      &quot;acceptanceCriteria&quot;: [
+        &quot;T03-AC01: Update only quality-scope.json data plus same-task indexed ADR0054 notes/index to include complete actual six-root Python filesystem discovery under unchanged exclusions, preserving existing valid entries and all current/new admitted sources; do not equate tracked lower bound with full discovery.&quot;,
+        &quot;T03-AC02: Preserve unchanged original architecture/desktop lint/security/quality checkers and complete FAIL receipts. Independently preflight exact ignored producers/negative controls and append actual readiness/source hashes under this batch before proof; match exact45 AST+3 literal multiset, never counts/prefix exemptions.&quot;,
+        &quot;T03-AC03: Replace only the explicit current Reader CSP equality predicate with the exact pinned directive/source map; actual local shipping Reader worker positive and isolated external-source CSP denials are required. Asset-hash preflight and missing/malformed worker errors do not imply a new runtime cryptographic worker verifier.&quot;,
+        &quot;T03-AC04: Any fresh quality error besides exact unchanged tools/plan_review_site.py formatter debt remains blocking. Original quality status/exit stays truthful; permit only explicitly granted one-file debt disposition with existing generated-view integrity and independent actual evidence. No shared source edits or whole-quality PASS relabel.&quot;,
+        &quot;T03-AC05: Authenticated actual task admission/claim/spec/finite source/security/UI dispositions bind every C18/recovery20/quality-data delta before conforming ignored lineage successor preparation/execution. Missing/changed/unapproved/new inputs deny. All original conformance guards, input locks and adverse rounds remain.&quot;,
+        &quot;T03-AC06: Final affected checks/build/package/current-reference capture are fresh at one fixed integrated committed candidate after all selected changes. Independent task/combined contribution review follows; CAP05S06, CP09, W2 full profile/platform/model/installer and G2 remain separate unmet gates until actual qualification.&quot;
+      ],
+      &quot;verification&quot;: [
+        &quot;Existing complete quality discovery/check at final candidate; preserve scope/format/lint/type outputs and exact approved one-file debt disposition only. Existing plan_review_check and ADR checks for actual metadata state.&quot;,
+        &quot;Unchanged architecture/desktop lint/security originals plus exclusive closed45+3 and exact CSP negative-control/proof receipts under actual independent source/readiness records; complete output multiset and all unexpected findings remain blocking.&quot;,
+        &quot;Actual independently authenticated task/claim/spec/source/review lineage records; finite held-input producer negative controls, fresh standard frontend/Native/Core build/package/current-reference capture and affected integrated recovery/UI tests; independent combined security/verification disposition.&quot;
+      ]
+    }
+  ],
+  &quot;singleBatchChoices&quot;: [
+    {
+      &quot;option&quot;: &quot;Recommended finite full batch&quot;,
+      &quot;consequence&quot;: &quot;Restore recovery A with Native-owned durable dual-scope witness, allow exact operator B only if actual proof authenticates, grant closed45+3/exact CSP/one-file formatter debt methods, complete inventory, current C18 and bounded later source/hash recording. Conforming details need no further human answer.&quot;
+    },
+    {
+      &quot;option&quot;: &quot;C18/verification only and defer product recovery&quot;,
+      &quot;consequence&quot;: &quot;May resolve current visual/classifier barriers, but production whole-process recovery and original P1 remain unmet. No silent recovery criterion reduction or G2 approval.&quot;
+    },
+    {
+      &quot;option&quot;: &quot;Retain existing frozen methods and defer&quot;,
+      &quot;consequence&quot;: &quot;C18/current qualification remains blocked; original failures and recovery limits remain truthful. No framework work authorized.&quot;
+    }
+  ],
+  &quot;requiredDecision&quot;: &quot;Choose the exact finite batch or state explicit departures/rationale. Any material new crypto/security/UX/predicate/scope beyond this packet stops; normal conforming code/source/readiness records do not require another owner ask.&quot;,
+  &quot;operationalSequence&quot;: [
+    &quot;Publish immutable complete packet/proposal/brief and required independent packet-review ledger; no task admission yet.&quot;,
+    &quot;One exact owner answer binds ECR-0014/W2.A06, the current C18 packet, conservative recovery/witness policy and finite method/criterion choices; record actual answer with installed approval schema/ordering and no fabricated identity/commit.&quot;,
+    &quot;Use only the granted pre-admission ignored method preparation/readiness/recording route where C18 original CSP/classifiers block. Publish exact C18 proposal/readiness/decision from real owner answer; finish C18 normal submit/review and reach actual DONE/approved/quiescence.&quot;,
+    &quot;On a strict descendant of actual approval introduction, commit only allowed B00 prerequisite lineage/normal views/evidence. Submit metadata-only B00 through installed v4.1 route; independent bootstrap review, exact task materialization and same owner/branch amendment activation.&quot;,
+    &quot;Claim ordered T01, implement/commit/check/independently review; then T02, then T03. Add all actual source/security/UI/readiness hashes under the batch recording contract before final qualification.&quot;,
+    &quot;Complete actual combined amendment security checkpoint/exit/review/adopt; W2 remains PAUSED for normal explicit resume. Fresh S06/CP09/W2 qualification and G2 are later separate gates.&quot;
+  ],
+  &quot;commandShapes&quot;: [
+    &quot;python tools/planctl.py --repo . ecr validate ECR-0014&quot;,
+    &quot;python tools/planctl.py --repo . ecr review ECR-0014&quot;,
+    &quot;python tools/planctl.py --repo . ecr approve ECR-0014 --record &lt;actual-reviewed-owner-record&gt; --by &lt;actual-owner&gt; --commit &lt;actual-packet-commit&gt;&quot;,
+    &quot;python tools/planctl.py --repo . ecr validate ECR-0014 --require-approved&quot;,
+    &quot;python tools/taskctl.py --file planning/backlog.yaml amendment bootstrap-submit W2.A06 --agent &lt;existing-wave-owner&gt; --approval-commit &lt;actual-approval-introduction&gt; --implementation-commit &lt;actual-B00-candidate&gt; --evidence artifacts/evidence/W2.A06.B00.R01.json&quot;,
+    &quot;python tools/taskctl.py --file planning/backlog.yaml amendment bootstrap-review W2.A06 --reviewer &lt;actual-independent-reviewer&gt; --result approved --note &lt;actual-bounded-review&gt;&quot;,
+    &quot;python tools/taskctl.py --file planning/backlog.yaml amendment materialize W2.A06 --agent &lt;existing-wave-owner&gt;&quot;,
+    &quot;python tools/taskctl.py --file planning/backlog.yaml amendment activate W2.A06 --agent &lt;existing-wave-owner&gt; --branch &lt;existing-codex-branch&gt; --base-sha &lt;actual-clean-HEAD&gt; --worktree . --profile LOC --platform windows-x64&quot;,
+    &quot;python tools/taskctl.py --file planning/backlog.yaml claim W2.A06.T01 --agent &lt;existing-wave-owner&gt; --branch &lt;existing-codex-branch&gt; --base-sha &lt;actual-clean-HEAD&gt; --worktree . --profile LOC --platform windows-x64&quot;,
+    &quot;Normal task submit/review for exact T01/T02/T03; amendment submit/review/adopt with actual committed exit/checkpoint evidence. Placeholders are missing future facts, not executable commands now.&quot;
+  ],
+  &quot;bootstrapEnvelope&quot;: {
+    &quot;authorizedPaths&quot;: [
+      &quot;planning/backlog.yaml&quot;,
+      &quot;docs/planning-implementation-plan.md&quot;,
+      &quot;planning/status-summary.md&quot;,
+      &quot;planning/review-site/**&quot;,
+      &quot;artifacts/evidence/W2.C18.T01.*.json&quot;,
+      &quot;artifacts/evidence/W2.A06.pre-admission-method-records-*.json&quot;
+    ],
+    &quot;limits&quot;: &quot;Only normal C18 task evidence/ui-change classification/append-only review rounds and exact granted method records use the bounded JSON namespaces. The review-site namespace is derived data only from unchanged pinned installed generator and actual normal backlog/ECR state, authenticated by existing plan_review_check and independent output-diff review; no manual pages/source/assets behavior or new policy. This grants no new source/policy/method predicate or arbitrary artifact authority. Normal immutable receipts remain required; current four C18 sources and all earlier rounds stay unchanged. B00 own evidence prefix is already recognized by installed taskctl.&quot;,
+    &quot;chronology&quot;: &quot;Before B00 submission, demonstrate only data preparation/authentication and actual C18 DONE/quiescence. Installed bootstrap-submit appends the shell afterward; independent B00 review/materialize/activate are later operations, never prior passing outcomes.&quot;
+  },
+  &quot;proofAndReleaseLimits&quot;: [
+    {
+      &quot;id&quot;: &quot;quality-after-inventory&quot;,
+      &quot;status&quot;: &quot;KNOWN_INVENTORY_AND_FORBIDDEN_FORMATTER_DEBT; ADDITIONAL_ERRORS_UNKNOWN&quot;,
+      &quot;issue&quot;: &quot;144 tracked omissions confirmed; two named historical types restored in source but not freshly qualified; exact formatter source remains forbidden.&quot;,
+      &quot;nextAction&quot;: &quot;Complete actual governed discovery synchronization, retain fresh format/type outcomes and apply only exact approved finite disposition. No whole quality PASS assumed.&quot;
+    },
+    {
+      &quot;id&quot;: &quot;resources-model&quot;,
+      &quot;status&quot;: &quot;UNQUALIFIED_NO_8_OR_16_GIB_VARIANTS&quot;,
+      &quot;issue&quot;: &quot;Resource/model minimum tier and larger-tier limitations; old62.5333542s/60s warm FAIL retains bounded historical owner acceptance.&quot;,
+      &quot;nextAction&quot;: &quot;Carry actual host/model limits; no tier/model tuning or new budgets in this grant. Any new product decision needs concrete scope, not inferred qualification.&quot;
+    },
+    {
+      &quot;id&quot;: &quot;shipping-installer-platform&quot;,
+      &quot;status&quot;: &quot;QUALIFICATION_PREREQUISITE&quot;,
+      &quot;issue&quot;: &quot;Sealed shipping Core/global runtime/installer/full installed product/platform matrix still required.&quot;,
+      &quot;nextAction&quot;: &quot;After fixes/method grant, execute approved required Windows qualification on fixed candidate; actual fixture UIA is not installer/release proof.&quot;
+    },
+    {
+      &quot;id&quot;: &quot;slice-wave-gates&quot;,
+      &quot;status&quot;: &quot;PENDING&quot;,
+      &quot;issue&quot;: &quot;S06 integrated review, CP09, fresh W2 qualification/independent review and G2.&quot;,
+      &quot;nextAction&quot;: &quot;Normal campaign/taskctl/integration/review sequence; separate human release only after real prerequisites. Batch does not close gates.&quot;
+    }
+  ],
+  &quot;cumulativeBudget&quot;: &quot;Original W2 P and prior allocations do not reset. This amendment adds13 planning points of selected restoration/verification, zero supplemental refactor allocations for this packet; this is not a claim that cumulative historical R is zero or that capacity remains. Optional structural cleanup is excluded; reconcile actual prior R before any later refactor.&quot;,
+  &quot;rollback&quot;: &quot;Preserve original source/lock/crypto/adverse outputs; quarantine incomplete recovery copies, never remove old source/lock or overwrite approvals. Revert only the bounded product commit if needed; amendment history is append-only, no destructive rollback to make receipts green.&quot;,
+  &quot;validationStatus&quot;: &quot;Inert source/data planning only. No future owner record, task admission, producer preparation/readiness, native run or product PASS exists. Full installed canonical CLI validation follows reviewed publication, not this ignored staging directory.&quot;,
+  &quot;preservedAdmission01&quot;: [
+    {
+      &quot;path&quot;: &quot;artifacts/tmp/W2.remaining-corrections-batch-01/admission-01/ECR-0014.proposal.json&quot;,
+      &quot;sha256&quot;: &quot;ee3aedfbb4fe6384e79922bdaf7f5eb34233080417e21e4e54267ea4388e244d&quot;,
+      &quot;hashConvention&quot;: &quot;raw-bytes&quot;
+    },
+    {
+      &quot;path&quot;: &quot;artifacts/tmp/W2.remaining-corrections-batch-01/admission-01/ECR-0014.packet.json&quot;,
+      &quot;sha256&quot;: &quot;542c586cef928c9e6de26f68ff67f3b70da1abb65f10c491f555ded7bb9530cb&quot;,
+      &quot;hashConvention&quot;: &quot;raw-bytes&quot;
+    },
+    {
+      &quot;path&quot;: &quot;artifacts/tmp/W2.remaining-corrections-batch-01/admission-01/ECR-0014-review.html&quot;,
+      &quot;sha256&quot;: &quot;99084bb687b8b4dfdd70546aaf6131ce6cc32f9382adee3c4814eb2f9c305929&quot;,
+      &quot;hashConvention&quot;: &quot;raw-bytes&quot;
+    },
+    {
+      &quot;path&quot;: &quot;artifacts/tmp/W2.remaining-corrections-batch-01/admission-01/structural-validation-01.json&quot;,
+      &quot;sha256&quot;: &quot;a5f1bfe4a9f0d9a69ce244f8db5399713f7b073cedd1d1a964cfafb53bbfbf72&quot;,
+      &quot;hashConvention&quot;: &quot;raw-bytes&quot;
+    }
+  ],
+  &quot;generatedOutputAuthentication&quot;: {
+    &quot;existingNormalOutputs&quot;: [
+      {
+        &quot;path&quot;: &quot;docs/planning-implementation-plan.md&quot;,
+        &quot;sha256&quot;: &quot;df3f0206a85f5fd83a25b4bec6d79cd523c315bdf256aac8b4fd487bd82770a1&quot;,
+        &quot;hashConvention&quot;: &quot;raw-bytes&quot;
+      },
+      {
+        &quot;path&quot;: &quot;planning/status-summary.md&quot;,
+        &quot;sha256&quot;: &quot;3d662c831c04390b1aadb7b9880d3c69e65ccde744c0230daf36a23be9de4301&quot;,
+        &quot;hashConvention&quot;: &quot;raw-bytes&quot;
+      },
+      {
+        &quot;path&quot;: &quot;planning/review-site/CAP-05/index.html&quot;,
+        &quot;sha256&quot;: &quot;b15969390db02147da77d7476a24f3eb97d1235a80ac003a5e0af6b4596e08d5&quot;,
+        &quot;hashConvention&quot;: &quot;raw-bytes&quot;
+      },
+      {
+        &quot;path&quot;: &quot;planning/review-site/CAP-05/CAP-05.S06.html&quot;,
+        &quot;sha256&quot;: &quot;062868341c0ee2b0b0e3a9592cd22eaf1cb2d123983cdf17900d664b4ba92604&quot;,
+        &quot;hashConvention&quot;: &quot;raw-bytes&quot;
+      },
+      {
+        &quot;path&quot;: &quot;planning/review-site/CAP-05/CAP-05.S06.T02.html&quot;,
+        &quot;sha256&quot;: &quot;54734f7aefa632aff9494735ab103ea23f962e4ebd923ed242738523b3a9d7ca&quot;,
+        &quot;hashConvention&quot;: &quot;raw-bytes&quot;
+      },
+      {
+        &quot;path&quot;: &quot;planning/review-site/CAP-05/CAP-05.S06.T03.html&quot;,
+        &quot;sha256&quot;: &quot;12044ab2334f84f47b22997a3759c0286d4f2c2b4e1e179904ed302109b5a106&quot;,
+        &quot;hashConvention&quot;: &quot;raw-bytes&quot;
+      },
+      {
+        &quot;path&quot;: &quot;planning/review-site/waves/W2.html&quot;,
+        &quot;sha256&quot;: &quot;76759846004e941051eafe8aab785b809f234f1c9834f5317a15f186345a22cc&quot;,
+        &quot;hashConvention&quot;: &quot;raw-bytes&quot;
+      },
+      {
+        &quot;path&quot;: &quot;planning/review-site/enablers/index.html&quot;,
+        &quot;sha256&quot;: &quot;323eb3c5f08c7aa9acc86fc1a4d55f07c5c23f06576da2f1319d6ebd2321a949&quot;,
+        &quot;hashConvention&quot;: &quot;raw-bytes&quot;
+      },
+      {
+        &quot;path&quot;: &quot;planning/review-site/index.html&quot;,
+        &quot;sha256&quot;: &quot;ff0c1c5db3d8f28d19abe061013b05972ac9fe396af884e3fd0e1c32b40c93b0&quot;,
+        &quot;hashConvention&quot;: &quot;raw-bytes&quot;
+      },
+      {
+        &quot;path&quot;: &quot;planning/review-site/manifest.json&quot;,
+        &quot;sha256&quot;: &quot;738aebc865392a314595ae7f1ab3c69c157587a77bc7862a27aacda87c13308a&quot;,
+        &quot;hashConvention&quot;: &quot;raw-bytes&quot;
+      }
+    ],
+    &quot;sourceRoutes&quot;: [
+      {
+        &quot;path&quot;: &quot;tools/backlog_views.py&quot;,
+        &quot;sha256&quot;: &quot;6cd3926e3b52a7a097a3a4b70fdcd39fb26f882c6631825a0d7b7cc587bb9e29&quot;,
+        &quot;hashConvention&quot;: &quot;raw-bytes&quot;
+      },
+      {
+        &quot;path&quot;: &quot;tools/plan_review_site.py&quot;,
+        &quot;sha256&quot;: &quot;2a19af60c4e7bd0efb679fd291c4675de8d41f6716f40382214293a071657b12&quot;,
+        &quot;hashConvention&quot;: &quot;raw-bytes&quot;
+      },
+      {
+        &quot;path&quot;: &quot;apps/desktop/src/app/directoryPicker.ts&quot;,
+        &quot;sha256&quot;: &quot;a5dad978d59aed5145999b45a2e5c2f41d006f2e18ce74b82b73e3e439cfcd14&quot;,
+        &quot;hashConvention&quot;: &quot;raw-bytes&quot;
+      }
+    ],
+    &quot;futureECRPage&quot;: &quot;planning/review-site/enablers/ECR-0014.html is a proposed generated destination, not claimed present.&quot;,
+    &quot;facts&quot;: &quot;Installed backlog_views constants target docs/planning-implementation-plan.md and planning/status-summary.md; no planning/backlog.md. Installed site writer and actual files confirm CAP-05/index.html and named S06 pages. Future review-site outputs use derived-data-only namespace under this pinned unchanged generator, actual normal state, existing plan_review_check and independent output-diff review; no hand edits/source/assets behavior changes. Source/destination picker uses existing selected-path contract, no new witness receipt.&quot;,
+    &quot;limits&quot;: &quot;Finite source/path authentication only. No view generation, product run or claim that a future actual diff is already approved; normal source/content/lineage checks still deny unauthorized changes.&quot;
+  },
+  &quot;admission02Delta&quot;: {
+    &quot;schemaVersion&quot;: &quot;1.0&quot;,
+    &quot;documentType&quot;: &quot;inert-admission-append-only-successor-delta&quot;,
+    &quot;candidateCommit&quot;: &quot;429efd41d6bccd27b4c25b468475b6fddeb4a9f6&quot;,
+    &quot;createdAt&quot;: &quot;2026-10-11T12:11:55.635999+00:00&quot;,
+    &quot;predecessor&quot;: {
+      &quot;path&quot;: &quot;artifacts/tmp/W2.remaining-corrections-batch-01/admission-01/ECR-0014.packet.json&quot;,
+      &quot;sha256&quot;: &quot;542c586cef928c9e6de26f68ff67f3b70da1abb65f10c491f555ded7bb9530cb&quot;,
+      &quot;hashConvention&quot;: &quot;raw-bytes&quot;
+    },
+    &quot;changes&quot;: [
+      &quot;B00-04 is feasible preparation/authentication at pre-submit candidate; append/review/materialize/activate remain later operations.&quot;,
+      &quot;Bounded C18 task JSON classification/evidence/append-only rounds and exact pre-admission method-record JSON namespaces permit conforming later records without another owner answer; no source/policy authority by filename.&quot;,
+      &quot;Replace nonexistent planning/backlog.md with actual installed docs/planning-implementation-plan.md and planning/status-summary.md. Actual current CAP-05/index.html and named S06/W2/enabler pages authenticated; review-site/** is derived-data-only under pinned unchanged generator/actual normal state/integrity and independent output-diff review, no hand-edit or source/behavior grant.&quot;,
+      &quot;Existing picker path and explicit human canonical review clarified; filesystem authority validated by Native/Core, no cryptographic picker receipt/new native picker source.&quot;,
+      &quot;All recovery18+ADR2 paths, policy, estimates/tasks/dependencies, exact methods, current C18 pins, authority chain and adverse records preserved.&quot;
+    ],
+    &quot;noChanges&quot;: [
+      &quot;HEAD/index/backlog/approved history/product/shared source&quot;,
+      &quot;Task inventory/security/method scope&quot;,
+      &quot;Native/test/build/model execution&quot;,
+      &quot;Actual approval/admission/completion&quot;
+    ]
+  }
+}
+```</pre></article></details>
+
+    </main>
+  </div>
+
+  <footer class="site-footer">
+    <span>Static, local-first review surface</span>
+    <span>Capability decisions precede implementation</span>
+  </footer>
+  <script src="../assets/review.js"></script>
+</body>
+</html>
