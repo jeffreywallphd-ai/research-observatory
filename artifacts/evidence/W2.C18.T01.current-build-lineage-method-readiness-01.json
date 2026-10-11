@@ -1,0 +1,211 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "independent-exact-method-packet-readiness-review",
+  "id": "W2.C18.T01.current-build-lineage-method-02.readiness-review-01",
+  "taskId": "W2.C18.T01",
+  "candidateCommit": "429efd41d6bccd27b4c25b468475b6fddeb4a9f6",
+  "reviewer": "agent:/root/a03_closeout_review",
+  "reviewedAt": "2026-10-11T11:38:19.143297+00:00",
+  "result": "SOURCE_READY",
+  "approvalScope": "EXACT_SOURCE_AND_DIRECT_RECORDING_PACKET_READINESS_FOR_OWNER_BATCH_DECISION",
+  "proposal": {
+    "path": "artifacts/evidence/W2.C18.T01.current-build-lineage-method-proposal-01.json",
+    "sha256": "7d3a96c506aa469eaf733f7046bba4ade8a35f5102689bfc4c3dd8e7fe3d402e"
+  },
+  "preparedProposal": {
+    "path": "artifacts/tmp/W2.C18.T01.current-build-lineage-method-02/proposal.json",
+    "sha256": "7d3a96c506aa469eaf733f7046bba4ade8a35f5102689bfc4c3dd8e7fe3d402e"
+  },
+  "authorizedProducers": {
+    "lineage": "9ca3f254cfdda423d1ed645a8c1dc3187b4dd0d31ea11f64e25d07386ced3788",
+    "conformance": "d95cd9262af76ab5abc06110818643c71a3ecf389266150c43e24918cf316ddd",
+    "fixture": "d08e71545a419fc3008de1e918add772cbed04848f8b10fd6ce3bdb16da8a398",
+    "frontend": "4833fdbea6bc4662668a66d300158a80d4cbe048a5696194aa0289d881b74f0a"
+  },
+  "preparedSources": [
+    {
+      "name": "lineage",
+      "path": "artifacts/tmp/W2.C18.T01.current-build-lineage-02.py",
+      "sha256": "9ca3f254cfdda423d1ed645a8c1dc3187b4dd0d31ea11f64e25d07386ced3788"
+    },
+    {
+      "name": "conformance",
+      "path": "artifacts/tmp/CAP-05.S06.W2-1.9-conformance-07.py",
+      "sha256": "d95cd9262af76ab5abc06110818643c71a3ecf389266150c43e24918cf316ddd"
+    },
+    {
+      "name": "fixture",
+      "path": "artifacts/tmp/CAP-05.S06.W2-1.9-fixture-build-04.py",
+      "sha256": "d08e71545a419fc3008de1e918add772cbed04848f8b10fd6ce3bdb16da8a398"
+    },
+    {
+      "name": "frontend",
+      "path": "artifacts/tmp/CAP-05.S06.shipping-frontend-build-04.py",
+      "sha256": "4833fdbea6bc4662668a66d300158a80d4cbe048a5696194aa0289d881b74f0a"
+    }
+  ],
+  "reviewBrief": {
+    "path": "artifacts/tmp/W2.C18.T01.current-build-lineage-method-02/review.html",
+    "sha256": "3c39836ebf9514fc44408bc6f8d7582a140e84b64f5868e95738785e3bb872bc"
+  },
+  "methodReady": true,
+  "directRecordingProcedureReady": true,
+  "findings": [],
+  "blockingFindings": [],
+  "openFindingIds": [],
+  "scope": "W2.C18.T01 exact CSS restoration; CAP-05.S06, CP-09 and W2 current-build lineage only",
+  "preservedMethod": {
+    "path": "artifacts/evidence/CAP-05.S06.current-build-method-decision-01.json",
+    "commit": "15bd1939a852bd8262b4b39b556f2793c0852957",
+    "sha256": "07e3d589d0ae1c7623696b8de5bc55df98d989fa10b11ef57c90065699c1e651"
+  },
+  "restoration": {
+    "taskId": "W2.C18.T01",
+    "originTaskId": "CAP-05.S06.T02",
+    "originSha256": "ea16178d8814da61bc71d291c49b582d4abaf529150d363701dfbbeaa429e856",
+    "claimBase": "302c1d14818230629b2991a61ae4ff4862c7aece",
+    "claimCommit": "a1b2bca193472ea657c3e5d4f09fd05038ee3a3f",
+    "sourceCommit": "429efd41d6bccd27b4c25b468475b6fddeb4a9f6",
+    "spec": {
+      "path": "artifacts/evidence/W2.C18.T01.spec.json",
+      "sha256": "5c3e65f9159dff1a4b3ef2db48cf8e78b7d1ef44f06cc196c273171be6acd114",
+      "commit": "302c1d14818230629b2991a61ae4ff4862c7aece"
+    },
+    "path": "apps/desktop/src/app.css",
+    "beforeSha256": "7cce690e1f0ba6c3436a82551fd99652bb7ed7a1dda6619fadc3af1e12bb2c9b",
+    "afterSha256": "3db0b1572bcbefd31f33b56696fb6e072bdcf124abcdcb75208e786705f64de6"
+  },
+  "independence": {
+    "role": "Independent source/control and exact owner-packet readiness reviewer",
+    "authoredProposalOrSuccessorSources": false,
+    "authoredThisDisposition": true,
+    "basis": "Direct proposal/brief/source reading, finite raw-hash and Git/attribute observations, read-only AST comparison, and authenticated retained independent source/layout dispositions. No producer import, test, build, capture, qualification, taskctl or Git/state mutation."
+  },
+  "predecessorReviews": [
+    {
+      "path": "artifacts/tmp/W2.C18.T01.current-build-lineage-method-01/source-readiness-01.json",
+      "sha256": "33f4f36f209775f41720776c4637d5ace0640202852e5e077826203aaf4a7916",
+      "result": "changes_requested",
+      "preserved": true
+    },
+    {
+      "path": "artifacts/tmp/W2.C18.T01.current-build-lineage-method-02/source-readiness-02.json",
+      "sha256": "2039b162bd343ae95c20dbd38c918adf332e7c72859e50d365d7c5e26f6ae0e7",
+      "result": "approved",
+      "scope": "REMEDIATED_SOURCE_PREPARATION_ONLY",
+      "preserved": true
+    }
+  ],
+  "supersession": "This exact final proposal/brief packet resolves the previously pending packet-readiness prerequisite. It does not rewrite either prior source review or turn their preparation checks into qualification.",
+  "findingDispositions": [
+    {
+      "id": "W2.C18.T01.current-build-lineage-R01-F01",
+      "severity": "P2",
+      "status": "FIXED_SOURCE_CLOSURE",
+      "closure": "Replayed prior independent closure. Helper02 explicitly includes unchanged tools/taskctl.py and tools/governance_kernel.py in lineage_input_paths. All three consumers inherit that exact list into their existing selected-input hashing, regular-file checks, Windows locks and final rechecks. Latest proposal and brief pin the exact four remediated sources."
+    },
+    {
+      "id": "W2.C18.T01.css-equivalence-R01-F01",
+      "severity": "P2",
+      "status": "FIXED_BOUNDED_LAYOUT_PROOF",
+      "closure": "Retained independent disposition02 authenticated the actual localStorage theme seed, effective theme and distinct approved palette token for both observations in the bounded twelve-case comparison. This packet accurately cites that limited source/layout result without claiming complete capture or integration."
+    }
+  ],
+  "criterionLinkedObservations": [
+    {
+      "criterion": "Exact final packet identity and truthful status",
+      "observation": "Proposal7d3a and brief3c39 raw digests match the requested packet. Both contain zero CRLF, are regular local files, and identify the held clean429 candidate. Proposal remains PROPOSED; the brief presents a named owner-batch item, with no successor builds or captures represented as executed."
+    },
+    {
+      "criterion": "Finite C18 restoration only",
+      "observation": "Exact scope, original T02 canonical origin, frozen spec5c3, original302c claim base, a1b2 claim,429 CSS commit and before/after raw CSS digests match the previously reviewed lineage. The helper permits only one protected product row:429 with single parenta1b2 and sole app.css path. It rejects additional protected source/test/verifier/reference deltas, unsupported merges and add/revert product history. No future recovery source is authorized."
+    },
+    {
+      "criterion": "Unaffected original assertions and authority preserved",
+      "observation": "The old immutable decision is still regular100644 with single introduction15bd and exact raw/local/Git07e3 digest. Original guard/runtime/conformance05 raw hashes remain unchanged. Latest conformance07/fixture04 function ASTs equal their immediate predecessors; helper02 only changes lineage_input_paths beyond producer/brief constants. Frontend04 changes helper pins and owned output prefix. Existing measurements, approved artifact/page substitutions, reference/baseline, routes, workflows, token geometry, accessibility, resource checks and static/security/design-system checks remain required."
+    },
+    {
+      "criterion": "Complete explicit executable input closure",
+      "observation": "The prior missing taskctl/kernel inputs are now explicit. Source preparation02 retains original drafts/diffs/tests and pins latest consumer/helper bytes; no shared framework or product source was changed by these preparations. Fresh selected-input locks and authentication remain mandatory at actual execution; this static review does not assert an already held qualifying lock."
+    },
+    {
+      "criterion": "Fail-closed exact owner and independent readiness gate",
+      "observation": "No new public proposal/readiness/decision record exists at429. method_authority requires a unique regular immutable new decision, human owner APPROVED status, nonempty actual decision/evidence/time, both method and direct-recording grants, exact scope/restoration/preserved method/source hashes, explicit false extra-authority flags, exact proposal and independent SOURCE_READY schema, and exact brief bytes. Authority must authenticate before substituted build/conformance work. This readiness is not an owner grant."
+    },
+    {
+      "criterion": "Feasible immutable LF data-only publication",
+      "observation": "Target proposal/readiness paths have Git text set and eol LF. The reviewed proposal is already LF, and this successor readiness is emitted as LF. Separate regular immutable additions can preserve both exact raw digests. A later decision must cite their actual unique introduction commits and actual owner/batch reply. No future commit is fabricated in this prepublication readiness. Earlier method records and adverse evidence are retained."
+    },
+    {
+      "criterion": "Live task control and later gates remain distinct",
+      "observation": "Helper checks historical claim and current frozen definition; it does not grant a current branch/lease or formal correction approval. Installed UI correction classification, current independent product/reference capture authentication, taskctl submission/review, correctiveIntegration and local integration remain mandatory. Approval of this batch item cannot authorize later recovery product changes."
+    }
+  ],
+  "evidence": [
+    {
+      "path": "artifacts/tmp/W2.C18.T01.current-build-lineage-method-02/proposal.json",
+      "sha256": "7d3a96c506aa469eaf733f7046bba4ade8a35f5102689bfc4c3dd8e7fe3d402e"
+    },
+    {
+      "path": "artifacts/tmp/W2.C18.T01.current-build-lineage-method-02/review.html",
+      "sha256": "3c39836ebf9514fc44408bc6f8d7582a140e84b64f5868e95738785e3bb872bc"
+    },
+    {
+      "path": "artifacts/tmp/W2.C18.T01.current-build-lineage-method-02/preparation-checks-01.json",
+      "sha256": "2faa7a31a3457fd4bc13f48dd8a1cd621838e861b23be4244b9d76b0473b33e6",
+      "classification": "PARENT_EXECUTED_PREPARATION_ONLY_9_PASS_NOT_QUALIFICATION"
+    },
+    {
+      "path": "artifacts/tmp/W2.C18.T01.css-equivalence-01/independent-source-disposition-01.json",
+      "sha256": "74140b322bcbbdc2481803df13aed4d9ada5dc972eb8c1a81b72f40eb945dda6"
+    },
+    {
+      "path": "artifacts/tmp/W2.C18.T01.css-equivalence-01/independent-source-disposition-02.json",
+      "sha256": "66c3858b87fbb02b51c3a26e7382b564eb5b62358f2a78763b9f84aad07965c0"
+    }
+  ],
+  "preservedAdverseHistory": [
+    {
+      "path": "artifacts/tmp/CAP-05.S06.W2-1.9-observations-03/conformance-report.json",
+      "sha256": "5c82d66365a1965eccb4d5288ccb6b97b1702a5c5059d16856457b2f832f393d",
+      "basis": "Retained previously authenticated report; no heavy rehash or execution repeated"
+    },
+    {
+      "findingId": "CAP-05.S06.restart-boundary-r10-R01-F01",
+      "status": "OPEN_UNWAIVED"
+    },
+    {
+      "scope": "45 architecture and3 desktop-lint findings",
+      "status": "48_OPEN_UNWAIVED"
+    },
+    {
+      "scope": "Original CSS comparison/preparation failures and earlier source readiness finding",
+      "status": "PRESERVED_APPEND_ONLY_WITH_BOUNDED_EXPLICIT_CLOSURES"
+    }
+  ],
+  "resumePrerequisites": [
+    "Actual owner approval of this exact named proposal/source/brief/readiness item in the batch; no standalone approval request is made by this reviewer.",
+    "Byte-identical LF regular proposal/readiness publication and later immutable actual owner decision with introduction commits and exact four source pins.",
+    "Actual authority authentication and fresh frontend/fixture/conformance evidence at a stable committed candidate, followed by independent captures/classification and formal corrective review/integration."
+  ],
+  "proofLimits": [
+    "SOURCE_READY covers only the exact prepared source/procedure packet for an owner decision; it is not human approval, write authorization or permission to execute before that decision.",
+    "No producers/tests were executed or imported; no build, capture, heavy inventory, public gate or qualification was replayed. Only read-only targeted observations and this exclusive ignored ledger were made.",
+    "No promise of installed public wrapper PASS or taskctl approval. No existing reference, baseline, threshold, source, framework or frozen method record is changed.",
+    "No recovery/security policy, future product change, native/principal/hardware/model qualification, task/slice/checkpoint/Wave completion or release approval follows.",
+    "S06 integration, CP-09, fresh full Wave matrix, independent Wave disposition, G2 human release and W3 planning approval remain pending."
+  ],
+  "approvals": {
+    "exactPacketReadiness": true,
+    "ownerAuthority": false,
+    "methodExecution": false,
+    "qualification": false,
+    "captureClassification": false,
+    "correctiveIntegration": false,
+    "task": false,
+    "slice": false,
+    "checkpoint": false,
+    "wave": false,
+    "release": false
+  }
+}

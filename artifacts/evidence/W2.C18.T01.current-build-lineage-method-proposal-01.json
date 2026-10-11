@@ -1,0 +1,121 @@
+{
+  "schemaVersion": "1.0",
+  "id": "W2.C18.T01.current-build-lineage-method-02",
+  "status": "PROPOSED",
+  "candidateCommit": "429efd41d6bccd27b4c25b468475b6fddeb4a9f6",
+  "wave": "W2",
+  "scope": "W2.C18.T01 exact CSS restoration; CAP-05.S06, CP-09 and W2 current-build lineage only",
+  "preservedMethod": {
+    "path": "artifacts/evidence/CAP-05.S06.current-build-method-decision-01.json",
+    "commit": "15bd1939a852bd8262b4b39b556f2793c0852957",
+    "sha256": "07e3d589d0ae1c7623696b8de5bc55df98d989fa10b11ef57c90065699c1e651"
+  },
+  "restoration": {
+    "taskId": "W2.C18.T01",
+    "originTaskId": "CAP-05.S06.T02",
+    "originSha256": "ea16178d8814da61bc71d291c49b582d4abaf529150d363701dfbbeaa429e856",
+    "claimBase": "302c1d14818230629b2991a61ae4ff4862c7aece",
+    "claimCommit": "a1b2bca193472ea657c3e5d4f09fd05038ee3a3f",
+    "sourceCommit": "429efd41d6bccd27b4c25b468475b6fddeb4a9f6",
+    "spec": {
+      "path": "artifacts/evidence/W2.C18.T01.spec.json",
+      "sha256": "5c3e65f9159dff1a4b3ef2db48cf8e78b7d1ef44f06cc196c273171be6acd114",
+      "commit": "302c1d14818230629b2991a61ae4ff4862c7aece"
+    },
+    "path": "apps/desktop/src/app.css",
+    "beforeSha256": "7cce690e1f0ba6c3436a82551fd99652bb7ed7a1dda6619fadc3af1e12bb2c9b",
+    "afterSha256": "3db0b1572bcbefd31f33b56696fb6e072bdcf124abcdcb75208e786705f64de6"
+  },
+  "producers": [
+    {
+      "name": "lineage",
+      "path": "artifacts/tmp/W2.C18.T01.current-build-lineage-02.py",
+      "sha256": "9ca3f254cfdda423d1ed645a8c1dc3187b4dd0d31ea11f64e25d07386ced3788"
+    },
+    {
+      "name": "conformance",
+      "path": "artifacts/tmp/CAP-05.S06.W2-1.9-conformance-07.py",
+      "sha256": "d95cd9262af76ab5abc06110818643c71a3ecf389266150c43e24918cf316ddd"
+    },
+    {
+      "name": "fixture",
+      "path": "artifacts/tmp/CAP-05.S06.W2-1.9-fixture-build-04.py",
+      "sha256": "d08e71545a419fc3008de1e918add772cbed04848f8b10fd6ce3bdb16da8a398"
+    },
+    {
+      "name": "frontend",
+      "path": "artifacts/tmp/CAP-05.S06.shipping-frontend-build-04.py",
+      "sha256": "4833fdbea6bc4662668a66d300158a80d4cbe048a5696194aa0289d881b74f0a"
+    }
+  ],
+  "reviewBrief": {
+    "path": "artifacts/tmp/W2.C18.T01.current-build-lineage-method-02/review.html",
+    "sha256": "3c39836ebf9514fc44408bc6f8d7582a140e84b64f5868e95738785e3bb872bc"
+  },
+  "problem": "Frozen S06 lineage prohibits every product delta after C17; the exact independently reviewed C18 CSS restoration must authenticate before current conformance capture.",
+  "requestedAuthority": [
+    "Use only these exact finite ignored successor sources for the exact C18 CSS restoration.",
+    "Record the exact owner grant append-only through the data-only publication procedure below, with actual independent readiness and actual introduction commits."
+  ],
+  "preservedChecks": [
+    "Original approved artifact/page predicate replacements only; no added exemption.",
+    "All original reference/token/route/workflow/accessibility/visual and product static/security/design-system checks.",
+    "Complete producer/build/renderer/font/source/authority inputs under existing hash/Windows lock/recheck paths.",
+    "Exact taskctl/installed-conformance correction classification, independently authenticated product/reference captures, criterion-linked review and separate release gates."
+  ],
+  "preservedAdverse": [
+    {
+      "path": "artifacts/tmp/CAP-05.S06.W2-1.9-observations-03/conformance-report.json",
+      "sha256": "5c82d66365a1965eccb4d5288ccb6b97b1702a5c5059d16856457b2f832f393d"
+    },
+    {
+      "path": "artifacts/tmp/W2.C18.T01.css-equivalence-01/independent-source-disposition-01.json",
+      "sha256": "74140b322bcbbdc2481803df13aed4d9ada5dc972eb8c1a81b72f40eb945dda6"
+    },
+    {
+      "path": "artifacts/tmp/W2.C18.T01.current-build-lineage-method-01/source-readiness-01.json",
+      "sha256": "33f4f36f209775f41720776c4637d5ace0640202852e5e077826203aaf4a7916"
+    }
+  ],
+  "boundedPositiveGroundwork": [
+    {
+      "path": "artifacts/tmp/W2.C18.T01.css-equivalence-01/independent-source-disposition-02.json",
+      "sha256": "66c3858b87fbb02b51c3a26e7382b564eb5b62358f2a78763b9f84aad07965c0"
+    },
+    {
+      "path": "artifacts/tmp/W2.C18.T01.current-build-lineage-method-02/source-readiness-02.json",
+      "sha256": "2039b162bd343ae95c20dbd38c918adf332e7c72859e50d365d7c5e26f6ae0e7"
+    },
+    {
+      "path": "artifacts/tmp/W2.C18.T01.current-build-lineage-method-02/preparation-checks-01.json",
+      "sha256": "2faa7a31a3457fd4bc13f48dd8a1cd621838e861b23be4244b9d76b0473b33e6"
+    }
+  ],
+  "publishedRecordContract": {
+    "proposal": "artifacts/evidence/W2.C18.T01.current-build-lineage-method-proposal-01.json",
+    "readiness": "artifacts/evidence/W2.C18.T01.current-build-lineage-method-readiness-01.json",
+    "decision": "artifacts/evidence/W2.C18.T01.current-build-lineage-method-decision-01.json",
+    "procedure": "Publish reviewed proposal and actual readiness as separate immutable regular LF Git additions, preserving exact raw digests. A later decision binds their actual introduction commits, original approved method ref, exact restoration fields, actual owner/batch reply and exact successor source hashes. Never invent future commits or rewrite approved/adverse evidence.",
+    "readinessFields": "Actual independent reviewer, candidateCommit429efd41d6bccd27b4c25b468475b6fddeb4a9f6, resultSOURCE_READY, blockingFindings[], proposal path/sha256 at final public destination, exact authorizedProducers mapping, exact reviewBrief mapping, methodReadytrue and directRecordingProcedureReadytrue."
+  },
+  "alternatives": [
+    {
+      "option": "Approve exact successor in batch",
+      "consequence": "Permit fresh C18 conformance without shared framework edits; recommended."
+    },
+    {
+      "option": "Retain frozen guard",
+      "consequence": "Required C18 conformance stays blocked."
+    }
+  ],
+  "resumeCondition": "Independent full exact-packet readiness has no blocking finding; owner approves this exact named batch item; actual append-only records authenticate before execution.",
+  "frameworkSourceChangesAuthorized": false,
+  "productChangesAuthorized": false,
+  "referenceOrBaselineChangesAuthorized": false,
+  "additionalPredicateExemptionsAuthorized": false,
+  "modelOrHardwareQualificationAuthorized": false,
+  "releaseApproval": false,
+  "taskApproval": false,
+  "sliceApproval": false,
+  "waveCompletion": false
+}
