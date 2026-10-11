@@ -1,0 +1,188 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "bounded-governance-maintenance-independent-review",
+  "reviewId": "W2-C18-T01-approved-metadata.review-01",
+  "reviewer": "agent:/root/a03_closeout_review",
+  "reviewedAt": "2026-10-11T16:36:19.248766+00:00",
+  "reviewedCommit": "b840a1ab1d6e54847cc0c2981a584e423d802e69",
+  "predecessorCommit": "1a28d59ef019c5dbfa0abd2530a1f3d5e6d4a327",
+  "disposition": "ACCEPTED",
+  "evidence": {
+    "path": "artifacts/evidence/W2-C18-T01-approved-metadata.evidence-01.json",
+    "sha256": "6c4919ee6f14d004f288a682e078ad3c85b6d2390df588e38f4e136520061390",
+    "introductionCommit": "86bad9946947b0cc54164ee7be8bedf4405f3b06",
+    "gitBlob": "8e6827734e50fde1d383c20c58eb1aacf104fcb7"
+  },
+  "independence": {
+    "implementer": "agent:/root/c17_independent_disposition",
+    "implementationAuthoredByReviewer": false,
+    "separateIgnoredUIProofAuthoredByReviewer": true,
+    "separateUIProofRequiresItsOwnIndependentReview": true
+  },
+  "reviewedArtifacts": [
+    {
+      "path": "artifacts/evidence/W2-C18-T01-approved-metadata.maintenance-01.md",
+      "gitBlob": "68ce633fefad46e46cbd3e9d7968d8765b38fe10",
+      "sha256": "a2d7bae2ad4855a64554c11333c30f80b7df94f8b4e127ac59a67755da223755"
+    },
+    {
+      "path": "docs/adr/ADR-0055-recognize-independently-reviewed-approved-corrective-metadata.md",
+      "gitBlob": "43d9fe884eb5134c6854dcb67bb05ee9e70cdd91",
+      "sha256": "f95daa78a6e23aae044ad94e36c029a5c1005d9f22bd77cdb10639a6a3050417"
+    },
+    {
+      "path": "docs/adr/index.json",
+      "gitBlob": "76f4673cd1f50d11dba869dd662e9f1fdbee516a",
+      "sha256": "588c9f0168bd0d61ef3849078749424eab694495732da7d38ec70560d41d2112"
+    },
+    {
+      "path": "tests/foundation/test_taskctl_workflow.py",
+      "gitBlob": "73283492b09a84c105b3da525baa925a85fb322a",
+      "sha256": "d17a6565997410cc7a9d86336afbbb23477d6bc39dd865326666f329ebcc1b3f"
+    },
+    {
+      "path": "tests/foundation/test_ui_change_gate.py",
+      "gitBlob": "a7b16df83bdb4cab892d21919b3077a22e8ed32c",
+      "sha256": "ca12c3430e11810272087e21c468c2d3bb5d8a39d44b6f2b33f2850969f03460"
+    },
+    {
+      "path": "tools/ui_change_gate.py",
+      "gitBlob": "99d6bd8383fab26dcd999e7e9f13232284992f41",
+      "sha256": "54e99373061053c61acd0ad1e39560be1833777293dffc411ae810e35dfe58c9"
+    }
+  ],
+  "sourceCommits": [
+    {
+      "commit": "b840a1ab1d6e54847cc0c2981a584e423d802e69",
+      "changedFiles": [
+        {
+          "path": "artifacts/evidence/W2-C18-T01-approved-metadata.maintenance-01.md",
+          "gitBlob": "68ce633fefad46e46cbd3e9d7968d8765b38fe10",
+          "sha256": "a2d7bae2ad4855a64554c11333c30f80b7df94f8b4e127ac59a67755da223755"
+        },
+        {
+          "path": "docs/adr/ADR-0055-recognize-independently-reviewed-approved-corrective-metadata.md",
+          "gitBlob": "43d9fe884eb5134c6854dcb67bb05ee9e70cdd91",
+          "sha256": "f95daa78a6e23aae044ad94e36c029a5c1005d9f22bd77cdb10639a6a3050417"
+        },
+        {
+          "path": "docs/adr/index.json",
+          "gitBlob": "76f4673cd1f50d11dba869dd662e9f1fdbee516a",
+          "sha256": "588c9f0168bd0d61ef3849078749424eab694495732da7d38ec70560d41d2112"
+        },
+        {
+          "path": "tests/foundation/test_taskctl_workflow.py",
+          "gitBlob": "73283492b09a84c105b3da525baa925a85fb322a",
+          "sha256": "d17a6565997410cc7a9d86336afbbb23477d6bc39dd865326666f329ebcc1b3f"
+        },
+        {
+          "path": "tests/foundation/test_ui_change_gate.py",
+          "gitBlob": "a7b16df83bdb4cab892d21919b3077a22e8ed32c",
+          "sha256": "ca12c3430e11810272087e21c468c2d3bb5d8a39d44b6f2b33f2850969f03460"
+        },
+        {
+          "path": "tools/ui_change_gate.py",
+          "gitBlob": "99d6bd8383fab26dcd999e7e9f13232284992f41",
+          "sha256": "54e99373061053c61acd0ad1e39560be1833777293dffc411ae810e35dfe58c9"
+        }
+      ]
+    }
+  ],
+  "findings": [],
+  "openFindingIds": [],
+  "findingClosures": [
+    {
+      "id": "W2-C18-T01-approved-metadata-advisory-R01-F01",
+      "severity": "P2",
+      "disposition": "FIXED",
+      "criterion": "Every historical metadata-scope round remains immutable and retained.",
+      "closure": "Candidate checker unions current round paths with complete paths_by_commit history and authenticates every immutable_record before choosing latest. Actual fresh test_corrective_metadata_scope_preserves_every_prior_round passed; real-Git prior-round rewrite, deletion and rewrite/revert controls deny while the untouched R01/R02 chain passes."
+    },
+    {
+      "id": "W2-C18-T01-approved-metadata-advisory-R01-F02",
+      "severity": "P2",
+      "disposition": "FIXED",
+      "criterion": "Mandatory authority and generated-integrity references retain exact declared SHA bindings.",
+      "closure": "Candidate requires string canonical lowercase64hex digests before immutable_record. Actual fresh test_corrective_metadata_scope_denies_incomplete_or_malformed_disposition passed, including authority-null-hash and receipt-null-hash controls; null cannot select the optional unhashed helper mode."
+    }
+  ],
+  "observations": [
+    {
+      "criterion": "Exact finite approved source and delivery scope",
+      "assessment": "Source candidate has one parent and exactly the five authorized checker/test/Proposed-ADR/index paths plus its existing-format maintenance contract. All six local bytes equal regular committed Git blobs and exact raw digests. Evidence is the sole-path sole-parent successor; sourceCommits above exactly repeats its complete source history row."
+    },
+    {
+      "criterion": "Authority, complete history and independent admission",
+      "assessment": "Previously reviewed generic read-only recognizer retains installed v4.1 human/packet-review consumers, same-Wave authority, independent reviewer, immutable records, complete ordered commit/path/blob/raw bindings and unchanged generated-input/receipt integrity. Actual isolated real-Git positives and denials passed. It grants no filename-only permission, schema/reference/source allowance, task approval or new controller."
+    },
+    {
+      "criterion": "Incremental source and architecture preservation",
+      "assessment": "Checker equals advisory02 bytes. Final test changes are explicit typing/local cleanup and package-qualified existing helper import. Proposed ADR0055 has empty deciders and ordinary CAP-05.S06.T02 task link; index appends only its entry and preserves ADR0054. Neither direct UI selector nor conditional144 consumer is changed by this increment."
+    },
+    {
+      "criterion": "Normal taskctl and maintenance boundaries",
+      "assessment": "Fresh directly affected UI tests plus CorrectiveTaskWorkflowTests passed33 tests in359.686s (outer360.795165s), including actual Git/CAS, exact evidence candidate/diff/branch/worktree/criterion/failed-check denial, independent maintenance attribution and associated Proposed ADR preservation. Synthetic fixture authorities are controls only; no actual task disposition is inferred."
+    },
+    {
+      "criterion": "Fresh evidence provenance and affected quality",
+      "assessment": "Authenticated exact receipt and producer, all five check rows/raw stream digests, complete source inputs and retained adverse receipt hashes. Actual fresh Ruff lint/format, mypy and changed-range ADR checks passed at b840 with coordinated fixed HEAD and source equality. This evidence is fresh and explicitly is not a reusable runtime-closure receipt."
+    }
+  ],
+  "freshObservation": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/c18-maintenance-qualification-01/receipt.json",
+    "sha256": "a26fc88f1ab2c9e9aed0fea2e0da657ea1e5cfabe46452bd1db21032a83fb78e",
+    "startedAt": "2026-10-11T16:28:15.371637+00:00",
+    "finishedAt": "2026-10-11T16:34:19.188432+00:00",
+    "reuse": false
+  },
+  "checksReviewed": {
+    "status": "PASS",
+    "checks": 5,
+    "affectedTests": 33,
+    "testElapsedSeconds": 359.686,
+    "testOuterSeconds": 360.79516519996105,
+    "coverage": [
+      "metadata authority/shape/history/round real-Git controls",
+      "affected linked correction and normal maintenance cases",
+      "CorrectiveTaskWorkflowTests",
+      "changed-file Ruff lint/format and mypy",
+      "changed-range ADR association"
+    ]
+  },
+  "preservedPriorRecords": [
+    {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/c18-metadata-source-advisory-01/preflight-01.json",
+      "sha256": "a579de6962d2619aa53e30ad1fceb1893dd657936de55149e25ddcd96dfcf59c"
+    },
+    {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/c18-metadata-source-advisory-02/preflight-02.json",
+      "sha256": "fd79bafb38281832ab0bafac270cdfe2ab4a464fa6dc4a68e25fddfea24a262c"
+    },
+    {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/c18-metadata-maintenance-01/normal-review-preparation-01.json",
+      "sha256": "35f2a3bae5d1264dd8debe5e8a5c415dc91394f31380b135fd19ef5e9e4c35c0"
+    },
+    {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/c18-metadata-maintenance-01/implementation-handoff-01.json",
+      "sha256": "513a5abd2f8c16d0e8a0ce722d81df63f9cc0dbb68445c5bf749ac496af92476"
+    }
+  ],
+  "preservedAdverseHistory": [
+    "Characterization01-04 setup failures, actual characterization05 original-scope rejection, development01 malformed-shape errors and initial lint/type/import failures remain retained distinctly. Successful development and fresh qualification do not relabel them.",
+    "Original C18 UI/scope/runtime/conformance/restart and48 quality findings remain open at their own scopes; this acceptance closes only the two named maintenance advisory findings."
+  ],
+  "authorityPreserved": true,
+  "limits": {
+    "acceptanceScope": "Exact bounded metadata-consumer maintenance candidate and evidence only. Review-only sole-parent publication and normal local integration remain for root.",
+    "testsRerunByReviewer": false,
+    "qualifyingProofExecutedByReviewer": false,
+    "productOrNativeRuntimeProven": false,
+    "C18UISelectorsOr144PredicatesApprovedByThisReview": false,
+    "C18TaskApproved": false,
+    "A06AdmittedByThisReview": false,
+    "sliceApproved": false,
+    "waveComplete": false,
+    "releaseApproved": false,
+    "furtherFrameworkWorkAuthorized": false
+  }
+}
