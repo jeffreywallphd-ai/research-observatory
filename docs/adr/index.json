@@ -518,6 +518,15 @@
       "linkedTasks": [
         "CAP-05.S06.T03"
       ]
+    },
+    {
+      "id": "ADR-0055",
+      "path": "docs/adr/ADR-0055-recognize-independently-reviewed-approved-corrective-metadata.md",
+      "title": "Recognize independently reviewed approved corrective metadata",
+      "status": "Proposed",
+      "linkedTasks": [
+        "CAP-05.S06.T02"
+      ]
     }
   ]
 }

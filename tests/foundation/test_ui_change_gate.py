@@ -5873,6 +5873,349 @@ class UiChangeGateTests(unittest.TestCase):
 
         self.assertTrue(result["ok"], result["errors"])
 
+    def metadata_scope_fixture(
+        self, temporary: str, mutation: str = "", *, publish: bool = True
+    ) -> tuple[Path, dict[str, Any], str, dict[str, Any]]:
+        """Synthetic approval/review data, authenticated by real consumers and Git."""
+        import planctl
+
+        root = Path(temporary) / "metadata-scope"
+        root.mkdir()
+        self.git(root, "init", "-b", "fixture")
+        self.git(root, "config", "user.name", "Scope Test")
+        self.git(root, "config", "user.email", "scope@example.invalid")
+        self.git(root, "config", "core.autocrlf", "false")
+        schema = "planning/enabler-change-requests/enabler-change-request.v4.1.schema.json"
+        approval_schema = "planning/wave-amendment-approvals/wave-amendment-approval.schema.json"
+        sources = ["tools/backlog_views.py", "tools/plan_review_check.py", "tools/plan_review_site.py"]
+        for relative in [schema, approval_schema, *sources]:
+            target = root / relative
+            target.parent.mkdir(parents=True, exist_ok=True)
+            target.write_bytes((REPO / relative).read_bytes().replace(b"\r\n", b"\n"))
+        base = self.commit(root, "fixture predecessor and installed authority schemas")
+        task: dict[str, Any] = {
+            "id": "W9.C01.T01",
+            "wave": "W9",
+            "owner": "fixture-implementer",
+            "branch": "fixture",
+            "worktree": ".",
+            "base_sha": base,
+            "acceptance_criteria": ["Exact approved metadata is reviewed without widening source scope."],
+            "correction": {"changed_paths": ["apps/desktop/src/app.css"], "origin_sha256": "a" * 64},
+        }
+        packet = json.loads((REPO / "planning/enabler-change-requests/ECR-0014.packet.json").read_bytes())
+
+        def renamed(value: Any) -> Any:
+            if isinstance(value, str):
+                return (
+                    value.replace("W2.A06", "W9.A01")
+                    .replace("W2.C18.T01", task["id"])
+                    .replace("ECR-0014", "ECR-0901")
+                    .replace("W2", "W9")
+                )
+            if isinstance(value, list):
+                return [renamed(item) for item in value]
+            if isinstance(value, dict):
+                return {key: renamed(item) for key, item in value.items()}
+            return value
+
+        packet = renamed(packet)
+        packet["authorityChain"] = {
+            "waveBase": {"waveId": "W9", "packetCommit": base, "approvalRecordCommit": base},
+            "orderedAmendments": [],
+            "reservedAmendments": [],
+        }
+        canonical = "planning/enabler-change-requests/ECR-0901.md"
+        human = "planning/enabler-change-requests/ECR-0901-review.html"
+        (root / canonical).write_text("---\nid: ECR-0901\ntitle: Synthetic scope fixture\n---\n", encoding="utf-8")
+        (root / human).write_text(
+            "<p>Synthetic authority fixture, not an actual owner decision.</p>\n", encoding="utf-8"
+        )
+        packet["files"] = [
+            {"path": path, "sha256": hashlib.sha256((root / path).read_bytes()).hexdigest(), "role": role}
+            for path, role in [(canonical, "canonical-proposal"), (schema, "proposal-schema"), (human, "human-review")]
+        ]
+        if mutation == "missing-grant":
+            packet["bootstrapUnit"]["authorizedPaths"].remove(f"artifacts/evidence/{task['id']}.*.json")
+        self.assertEqual([], list(Draft202012Validator(json.loads((root / schema).read_bytes())).iter_errors(packet)))
+        packet_path = "planning/enabler-change-requests/ECR-0901.packet.json"
+        self.write_json(root / packet_path, packet)
+        packet_commit = self.commit(root, "synthetic v4.1 packet")
+        packet_sha = hashlib.sha256((root / packet_path).read_bytes()).hexdigest()
+        ledger_path = "planning/enabler-change-requests/ECR-0901.review-R01.json"
+        ledger = {
+            "documentType": "enabler-change-request-packet-review",
+            "changeRequestId": "ECR-0901",
+            "proposedAmendmentId": "W9.A01",
+            "attemptId": "R01",
+            "candidateCommit": packet_commit,
+            "packetSha256": packet_sha,
+            "reviewer": "agent:fixture-packet-reviewer",
+            "result": "approved",
+            "approvalAvailable": True,
+            "findings": [],
+            "closures": [],
+        }
+        if mutation == "adverse-packet-review":
+            ledger["findings"] = [{"id": "fixture-blocker"}]
+        self.write_json(root / ledger_path, ledger)
+        ledger_commit = self.commit(root, "synthetic independent packet review only")
+        approval_path = "planning/wave-amendment-approvals/W9.A01.json"
+        approval = {
+            "schemaVersion": "1.0",
+            "documentType": "wave-amendment-approval",
+            "amendmentId": "W9.A01",
+            "changeRequestId": "ECR-0901",
+            "targetWave": "W9",
+            "status": "APPROVED",
+            "approvedBy": "human:fixture-owner",
+            "approvedAt": "2026-10-11T00:00:00Z",
+            "decision": "Synthetic test data only",
+            "bootstrapUnit": packet["bootstrapUnit"]["id"],
+            "packet": {
+                "path": packet_path,
+                "sha256": packet_sha,
+                "commit": packet_commit,
+                "proposalPath": canonical,
+                "proposalSha256": packet["files"][0]["sha256"],
+            },
+            "effectiveBase": packet["authorityChain"],
+            "authorizedTaskIds": packet["authorizedTaskIds"],
+            "independentPacketReview": {
+                "reviewer": ledger["reviewer"],
+                "candidateCommit": packet_commit,
+                "reviewedStateCommit": ledger_commit,
+                "result": "APPROVED",
+                "attemptId": "R01",
+                "findingIdsClosed": [],
+                "ledger": {
+                    "path": ledger_path,
+                    "sha256": hashlib.sha256((root / ledger_path).read_bytes()).hexdigest(),
+                    "introductionCommit": ledger_commit,
+                },
+            },
+        }
+        if mutation == "forged-human":
+            approval["approvedBy"] = "agent:fixture-implementer"
+        if mutation == "wrong-wave":
+            approval["targetWave"] = "W8"
+        if mutation == "forged-review-hash":
+            approval["independentPacketReview"]["ledger"]["sha256"] = "0" * 64
+        self.write_json(root / approval_path, approval)
+        approval_commit = self.commit(root, "synthetic human approval only")
+        if not mutation:
+            self.assertEqual((packet_commit, []), planctl._approved_experience_packet_commit(root, packet))
+            self.assertEqual(approval, taskctl.load_amendment_authority(root, "W9.A01")[0])
+        method = "artifacts/evidence/W9.A01.pre-admission-method-records-01.json"
+        self.write_json(root / method, {"syntheticFixture": True})
+        view = root / "planning/review-site/enablers/ECR-0901.html"
+        view.parent.mkdir(parents=True, exist_ok=True)
+        view.write_text("<p>Synthetic generated view.</p>\n", encoding="utf-8")
+        if mutation in {"product", "reference", "schema", "other-record"}:
+            extra_path = {
+                "product": "services/core-api/unapproved.py",
+                "reference": "design/ui-reference/unapproved.json",
+                "schema": "planning/enabler-change-requests/unapproved.schema.json",
+                "other-record": "artifacts/evidence/W9.A02.pre-admission-method-records-01.json",
+            }[mutation]
+            self.write_json(root / extra_path, {"unauthorized": True})
+        if mutation == "hidden-revert":
+            hidden_source = root / "services/core-api/unapproved.py"
+            hidden_source.parent.mkdir(parents=True, exist_ok=True)
+            hidden_source.write_text("UNAPPROVED = True\n", encoding="utf-8")
+            self.commit(root, "hidden source addition")
+            hidden_source.unlink()
+        self.commit(root, "synthetic finite method and generated view")
+        if mutation == "executable":
+            self.git(root, "update-index", "--chmod=+x", view.relative_to(root).as_posix())
+            self.git(root, "commit", "-m", "unsupported executable metadata")
+        if mutation == "authority-rewrite-revert":
+            original = (root / canonical).read_bytes()
+            (root / canonical).write_bytes(original + b"unapproved\n")
+            self.commit(root, "unapproved canonical rewrite")
+            (root / canonical).write_bytes(original)
+            self.commit(root, "revert canonical rewrite")
+        if mutation == "merge":
+            self.git(root, "checkout", "-b", "side", approval_commit)
+            self.write_json(root / "artifacts/evidence/W9.A01.pre-admission-method-records-side.json", {})
+            self.commit(root, "side metadata")
+            self.git(root, "checkout", "fixture")
+            self.git(root, "merge", "--no-ff", "side", "-m", "unsupported merge")
+        receipt = f"artifacts/evidence/{task['id']}.generated-integrity-01.json"
+        self.write_json(
+            root / receipt, {"syntheticFixture": True, "scope": "retained generated-view integrity fixture"}
+        )
+        through = self.commit(root, "synthetic generated integrity receipt")
+
+        def binding(path: str, commit: str) -> dict[str, str]:
+            return {
+                "path": path,
+                "gitBlob": self.git(root, "rev-parse", f"{commit}:{path}"),
+                "sha256": hashlib.sha256(ui_gate.blob(root, commit, path)).hexdigest(),
+            }
+
+        rows = []
+        for commit in self.git(root, "rev-list", "--reverse", f"{base}..{through}").splitlines():
+            paths = sorted(
+                path for path in ui_gate.commit_paths(root, commit) if not ui_gate.corrective_path_admitted(task, path)
+            )
+            if paths:
+                # Deletion is deliberately retained as an invalid regular-blob binding.
+                rows.append(
+                    {
+                        "commit": commit,
+                        "changedFiles": [
+                            binding(path, commit)
+                            if ui_gate.tree_entry(root, commit, path)
+                            else {"path": path, "gitBlob": "0" * 40, "sha256": "0" * 64}
+                            for path in paths
+                        ],
+                    }
+                )
+        review = {
+            "schemaVersion": "1.0",
+            "documentType": "independent-corrective-metadata-disposition",
+            "taskId": task["id"],
+            "baseCommit": base,
+            "candidateCommit": through,
+            "implementationOwner": task["owner"],
+            "reviewer": "agent:fixture-metadata-reviewer",
+            "disposition": "approved",
+            "authorityPreserved": True,
+            "formalTaskApproval": False,
+            "notes": "Synthetic independent metadata disposition for real Git boundary tests only.",
+            "authority": {
+                "path": approval_path,
+                "sha256": hashlib.sha256((root / approval_path).read_bytes()).hexdigest(),
+                "commit": approval_commit,
+            },
+            "commits": rows,
+            "derivedOutputIntegrity": {
+                "reviewed": True,
+                "inputs": [binding(path, through) for path in sources],
+                "evidence": [
+                    {
+                        "path": receipt,
+                        "sha256": hashlib.sha256((root / receipt).read_bytes()).hexdigest(),
+                        "commit": through,
+                    }
+                ],
+            },
+        }
+        if publish:
+            self.write_json(root / f"artifacts/evidence/{task['id']}.metadata-scope-R01.json", review)
+            through = self.commit(root, "synthetic independent metadata disposition only")
+        return root, task, through, review
+
+    def test_corrective_metadata_scope_authenticates_real_git_authority(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root, task, head, _ = self.metadata_scope_fixture(temporary)
+            self.assertEqual(
+                [], ui_gate.corrective_scope_errors(root, task, head), "exact independently approved metadata"
+            )
+
+    def test_corrective_metadata_scope_denies_unapproved_authority_and_history(self) -> None:
+        for mutation in (
+            "missing-grant",
+            "forged-human",
+            "wrong-wave",
+            "forged-review-hash",
+            "adverse-packet-review",
+            "product",
+            "reference",
+            "schema",
+            "other-record",
+            "hidden-revert",
+            "authority-rewrite-revert",
+            "merge",
+            "executable",
+        ):
+            with self.subTest(mutation=mutation), tempfile.TemporaryDirectory() as temporary:
+                root, task, head, _ = self.metadata_scope_fixture(temporary, mutation)
+                self.assertTrue(ui_gate.corrective_scope_errors(root, task, head))
+
+    def test_corrective_metadata_scope_denies_incomplete_or_malformed_disposition(self) -> None:
+        mutations = {
+            "self-review": lambda r, t: r.update(reviewer=f"agent:{t['owner']}"),
+            "owner": lambda r, t: r.update(implementationOwner="other-implementer"),
+            "task": lambda r, t: r.update(taskId="W9.C02.T01"),
+            "base": lambda r, t: r.update(baseCommit=r["candidateCommit"]),
+            "missing-row": lambda r, t: r["commits"].pop(),
+            "reordered": lambda r, t: r["commits"].reverse(),
+            "duplicate": lambda r, t: r["commits"].append(copy.deepcopy(r["commits"][0])),
+            "raw-hash": lambda r, t: r["commits"][0]["changedFiles"][0].update(sha256="0" * 64),
+            "git-blob": lambda r, t: r["commits"][0]["changedFiles"][0].update(gitBlob="0" * 40),
+            "authority-shape": lambda r, t: r.update(authority=[]),
+            "authority-null-hash": lambda r, t: r["authority"].update(sha256=None),
+            "notes-shape": lambda r, t: r.update(notes=["not a review note"]),
+            "derived-shape": lambda r, t: r.update(derivedOutputIntegrity=["invalid"]),
+            "source-hash": lambda r, t: r["derivedOutputIntegrity"]["inputs"][0].update(sha256="0" * 64),
+            "missing-receipt": lambda r, t: r["derivedOutputIntegrity"].update(evidence=[]),
+            "receipt-shape": lambda r, t: r["derivedOutputIntegrity"].update(evidence=["invalid"]),
+            "receipt-hash": lambda r, t: r["derivedOutputIntegrity"]["evidence"][0].update(sha256="0" * 64),
+            "receipt-null-hash": lambda r, t: r["derivedOutputIntegrity"]["evidence"][0].update(sha256=None),
+        }
+        for name, mutate in mutations.items():
+            with self.subTest(mutation=name), tempfile.TemporaryDirectory() as temporary:
+                root, task, _, review = self.metadata_scope_fixture(temporary, publish=False)
+                mutate(review, task)
+                self.write_json(root / f"artifacts/evidence/{task['id']}.metadata-scope-R01.json", review)
+                head = self.commit(root, "invalid independent disposition")
+                self.assertTrue(ui_gate.corrective_scope_errors(root, task, head))
+
+    def test_corrective_metadata_scope_requires_exact_append_only_review_round(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root, task, _head, review = self.metadata_scope_fixture(temporary)
+            path = root / "artifacts/evidence/W9.A01.pre-admission-method-records-02.json"
+            self.write_json(path, {"syntheticFixture": True})
+            unknown = self.commit(root, "new approved-pattern data without independent exact review")
+            self.assertTrue(ui_gate.corrective_scope_errors(root, task, unknown))
+            review["candidateCommit"] = unknown
+            review["commits"].append(
+                {
+                    "commit": unknown,
+                    "changedFiles": [
+                        {
+                            "path": path.relative_to(root).as_posix(),
+                            "gitBlob": self.git(root, "rev-parse", f"{unknown}:{path.relative_to(root).as_posix()}"),
+                            "sha256": hashlib.sha256(path.read_bytes()).hexdigest(),
+                        }
+                    ],
+                }
+            )
+            self.write_json(root / f"artifacts/evidence/{task['id']}.metadata-scope-R02.json", review)
+            reviewed = self.commit(root, "new immutable complete independent disposition")
+            self.assertEqual([], ui_gate.corrective_scope_errors(root, task, reviewed))
+            # A source add/revert after the reviewed range still cannot disappear in the net diff.
+            source = root / "services/core-api/unapproved.py"
+            source.parent.mkdir(parents=True, exist_ok=True)
+            source.write_text("UNAPPROVED = True\n", encoding="utf-8")
+            self.commit(root, "later unreviewed source")
+            source.unlink()
+            reverted = self.commit(root, "later source revert")
+            self.assertTrue(ui_gate.corrective_scope_errors(root, task, reverted))
+
+    def test_corrective_metadata_scope_preserves_every_prior_round(self) -> None:
+        for mutation in ("rewrite", "delete", "rewrite-revert"):
+            with self.subTest(mutation=mutation), tempfile.TemporaryDirectory() as temporary:
+                root, task, head, review = self.metadata_scope_fixture(temporary)
+                review["candidateCommit"] = head
+                self.write_json(root / f"artifacts/evidence/{task['id']}.metadata-scope-R02.json", review)
+                reviewed = self.commit(root, "independent successor round")
+                self.assertEqual([], ui_gate.corrective_scope_errors(root, task, reviewed))
+                prior = root / f"artifacts/evidence/{task['id']}.metadata-scope-R01.json"
+                original = prior.read_bytes()
+                if mutation == "delete":
+                    prior.unlink()
+                else:
+                    prior.write_bytes(original.replace(b"Synthetic independent", b"Altered independent"))
+                altered = self.commit(root, "unauthorized prior round mutation")
+                self.assertTrue(ui_gate.corrective_scope_errors(root, task, altered))
+                if mutation == "rewrite-revert":
+                    prior.write_bytes(original)
+                    reverted = self.commit(root, "revert prior round mutation")
+                    self.assertTrue(ui_gate.corrective_scope_errors(root, task, reverted))
+
     def git(self, root: Path, *args: str) -> str:
         return subprocess.run(["git", *args], cwd=root, check=True, capture_output=True, text=True).stdout.strip()
 

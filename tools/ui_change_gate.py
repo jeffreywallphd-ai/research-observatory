@@ -1370,6 +1370,194 @@ def immutable_interruption_notes(repo: Path, task: dict[str, Any], paths_by_comm
     return notes
 
 
+def reviewed_corrective_metadata_commits(
+    repo: Path,
+    base: str,
+    head: str,
+    task: dict[str, Any],
+    paths_by_commit: dict[str, set[str]],
+    maintenance: dict[str, set[str]],
+) -> dict[str, set[str]]:
+    """Recognize exact independently reviewed approved metadata, never source scope."""
+    from planctl import _approved_experience_packet_commit, _packet_file_errors
+    from taskctl import load_amendment_authority
+
+    prefix = f"artifacts/evidence/{task['id']}.metadata-scope-R"
+    names = git(repo, "ls-tree", "-r", "--name-only", head, "--", "artifacts/evidence").decode().splitlines()
+    historical = {path for paths in paths_by_commit.values() for path in paths}
+    records = sorted(
+        name for name in set(names) | historical if re.fullmatch(re.escape(prefix) + r"[0-9]{2}\.json", name)
+    )
+    if not records:
+        return {}
+    authenticated = [immutable_record(repo, head, path) for path in records]
+    review, introduction = authenticated[-1]
+    through = str(review.get("candidateCommit"))
+    if (
+        review.get("schemaVersion") != "1.0"
+        or review.get("documentType") != "independent-corrective-metadata-disposition"
+        or review.get("taskId") != task["id"]
+        or review.get("baseCommit") != base
+        or review.get("implementationOwner") != task.get("owner")
+        or review.get("disposition") != "approved"
+        or review.get("authorityPreserved") is not True
+        or review.get("formalTaskApproval") is not False
+        or not independent_identity(review.get("reviewer"), task.get("owner"))
+        or not isinstance(review.get("notes"), str)
+        or not review["notes"].strip()
+        or through == introduction
+        or not is_ancestor(repo, base, through)
+        or not is_ancestor(repo, through, introduction)
+        or not is_ancestor(repo, introduction, head)
+    ):
+        raise ValueError("metadata disposition is not independent and bound to this correction range")
+    reference = review.get("authority")
+    if (
+        not isinstance(reference, dict)
+        or set(reference) != {"path", "sha256", "commit"}
+        or not isinstance(reference["sha256"], str)
+        or re.fullmatch(r"[0-9a-f]{64}", reference["sha256"]) is None
+    ):
+        raise ValueError("metadata authority reference must have exact immutable bindings")
+    approval_path = canonical_path(str(reference.get("path") or ""))
+    match = re.fullmatch(r"planning/wave-amendment-approvals/(W[0-9]+\.A[0-9]{2})\.json", approval_path)
+    if match is None:
+        raise ValueError("metadata authority must name an immutable amendment approval")
+    approval, approval_intro = immutable_record(repo, head, approval_path, reference.get("sha256"))
+    if (
+        reference.get("commit") != approval_intro
+        or approval.get("targetWave") != task.get("wave")
+        or HUMAN_ID.fullmatch(str(approval.get("approvedBy"))) is None
+        or not is_ancestor(repo, base, approval_intro)
+        or not is_ancestor(repo, approval_intro, through)
+    ):
+        raise ValueError("metadata grant does not bind this Wave and reviewed range")
+    try:
+        loaded, packet, payload = load_amendment_authority(repo, match[1])
+    except (SystemExit, OSError, KeyError, TypeError, AttributeError) as exc:
+        raise ValueError(f"metadata amendment authority is invalid: {exc}") from exc
+    if (
+        loaded != approval
+        or payload != blob(repo, head, approval_path)
+        or packet.get("schemaVersion") != "4.1-proposal"
+    ):
+        raise ValueError("metadata approval differs from the committed v4.1 authority")
+    packet_commit, errors = _approved_experience_packet_commit(repo, packet)
+    if packet_commit is None or errors or _packet_file_errors(repo, packet, packet_commit):
+        raise ValueError("metadata packet and independent packet review are not authenticated")
+    packet_path = f"planning/enabler-change-requests/{packet['changeRequestId']}.packet.json"
+    if blob(repo, head, packet_path) != blob(repo, packet_commit, packet_path):
+        raise ValueError("metadata packet changed after owner approval")
+    patterns = (packet.get("bootstrapUnit") or {}).get("authorizedPaths") or []
+    if not isinstance(patterns, list) or any(not isinstance(pattern, str) for pattern in patterns):
+        raise ValueError("metadata grant requires explicit path patterns")
+    if f"artifacts/evidence/{task['id']}.*.json" not in patterns:
+        raise ValueError("approved packet does not explicitly bind this corrective task metadata")
+    canonical = {approval_path, packet_path, approval["independentPacketReview"]["ledger"]["path"]}
+    canonical.update(item["path"] for item in packet["files"] if item["role"] in {"canonical-proposal", "human-review"})
+    record_prefix = f"artifacts/evidence/{match[1]}.pre-admission-method-records-"
+
+    def permitted(path: str) -> bool:
+        canonical_path(path)
+        if path in LEGACY_GOVERNANCE_CONTROL_PATHS or path.startswith("design/ui-reference/"):
+            return False
+        if path in canonical:
+            return True
+        inert = (
+            path.startswith("planning/review-site/") and PurePosixPath(path).suffix in {".html", ".md", ".json"}
+        ) or (path.startswith(record_prefix) and path.endswith(".json"))
+        return inert and any(fnmatch.fnmatchcase(path, pattern) for pattern in patterns)
+
+    sequence = git(repo, "rev-list", "--reverse", f"{base}..{through}").decode().splitlines()
+    if any(len(git(repo, "rev-list", "--parents", "-n", "1", commit).decode().split()) != 2 for commit in sequence):
+        raise ValueError("metadata scope cannot authorize a merge")
+    notes = immutable_interruption_notes(repo, task, paths_by_commit)
+    expected = {
+        commit: sorted(
+            path for path in paths_by_commit[commit] if not corrective_path_admitted(task, path) and path not in notes
+        )
+        for commit in sequence
+        if maintenance.get(commit) != paths_by_commit[commit]
+        and any(not corrective_path_admitted(task, path) and path not in notes for path in paths_by_commit[commit])
+    }
+    rows = review.get("commits")
+    if (
+        not isinstance(rows, list)
+        or not rows
+        or len(rows) > 64
+        or any(not isinstance(row, dict) or set(row) != {"commit", "changedFiles"} for row in rows)
+        or [row["commit"] for row in rows] != list(expected)
+    ):
+        raise ValueError("metadata disposition must cover the complete ordered extra-path inventory")
+    admitted: dict[str, set[str]] = {}
+    for row in rows:
+        commit = row["commit"]
+        bindings = row.get("changedFiles")
+        if (
+            not isinstance(bindings, list)
+            or [item.get("path") for item in bindings if isinstance(item, dict)] != expected[commit]
+        ):
+            raise ValueError("metadata disposition paths differ from complete actual Git history")
+        for item in bindings:
+            path = item["path"]
+            if (
+                set(item) != {"path", "gitBlob", "sha256"}
+                or not permitted(path)
+                or tree_entry(repo, commit, path) != ("100644", "blob")
+                or git(repo, "rev-parse", f"{commit}:{path}").decode().strip() != item["gitBlob"]
+                or hashlib.sha256(blob(repo, commit, path)).hexdigest() != item["sha256"]
+            ):
+                raise ValueError("metadata scope contains unsupported paths or mismatched committed bytes")
+            if not path.startswith("planning/review-site/"):
+                changes = git(repo, "log", "--format=%H", head, "--", path).decode().splitlines()
+                if changes != [commit] or tree_entry(repo, f"{commit}^", path) is not None:
+                    raise ValueError("approved authority and method metadata must remain immutable additions")
+        admitted[commit] = paths_by_commit[commit]
+    derived = review.get("derivedOutputIntegrity")
+    if not isinstance(derived, dict) or derived.get("reviewed") is not True:
+        raise ValueError("metadata disposition must independently review generated-view integrity")
+    source_rows = derived.get("inputs")
+    required = ["tools/backlog_views.py", "tools/plan_review_check.py", "tools/plan_review_site.py"]
+    if (
+        not isinstance(source_rows, list)
+        or len(source_rows) != len(required)
+        or any(not isinstance(item, dict) for item in source_rows)
+        or [item["path"] for item in source_rows] != required
+    ):
+        raise ValueError("generated-view disposition must bind unchanged installed source inputs")
+    for item in source_rows:
+        path = item["path"]
+        if (
+            set(item) != {"path", "gitBlob", "sha256"}
+            or tree_entry(repo, through, path) != ("100644", "blob")
+            or git(repo, "rev-parse", f"{through}:{path}").decode().strip() != item["gitBlob"]
+            or hashlib.sha256(blob(repo, through, path)).hexdigest() != item["sha256"]
+            or git(repo, "log", "--format=%H", f"{through}..{head}", "--", path).strip()
+        ):
+            raise ValueError("generated-view source binding is stale or altered")
+    evidence = derived.get("evidence")
+    if not isinstance(evidence, list) or not evidence:
+        raise ValueError("generated-view integrity requires retained independently reviewed evidence")
+    for item in evidence:
+        if (
+            not isinstance(item, dict)
+            or set(item) != {"path", "sha256", "commit"}
+            or not isinstance(item["sha256"], str)
+            or re.fullmatch(r"[0-9a-f]{64}", item["sha256"]) is None
+            or not str(item.get("path") or "").startswith(f"artifacts/evidence/{task['id']}.")
+        ):
+            raise ValueError("generated-view evidence must use this correction's normal namespace")
+        canonical_path(item["path"])
+        _receipt, delivered = immutable_record(repo, head, item["path"], item["sha256"])
+        if (
+            item.get("commit") != delivered
+            or not is_ancestor(repo, base, delivered)
+            or not is_ancestor(repo, delivered, introduction)
+        ):
+            raise ValueError("generated-view evidence differs from its reviewed immutable delivery")
+    return admitted
+
+
 def corrective_scope_errors(
     repo: Path, task: dict[str, Any], candidate: str, declared: list[object] | None = None
 ) -> list[str]:
@@ -1390,6 +1578,10 @@ def corrective_scope_errors(
         if not extra_commits and not extra:
             return []
         maintenance = reviewed_control_maintenance_commits(repo, base, candidate)
+        metadata = reviewed_corrective_metadata_commits(repo, base, candidate, task, paths_by_commit, maintenance)
+        if set(maintenance) & set(metadata):
+            raise ValueError("metadata and control-maintenance authority overlap")
+        maintenance = {**maintenance, **metadata}
         if any(maintenance.get(commit) != paths for commit, paths in extra_commits.items()):
             raise ValueError("out-of-scope commit lacks exact independent control-only review")
         covered = {path for paths in maintenance.values() for path in paths}

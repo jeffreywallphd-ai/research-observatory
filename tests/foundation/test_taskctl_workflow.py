@@ -8061,6 +8061,58 @@ class CorrectiveTaskWorkflowTests(unittest.TestCase):
                         with self.subTest(prior_binding=prior_binding == ".", target=target):
                             self.assertTrue(wave_resume_record_errors(data, wave["id"], changed, clone))
 
+    def test_approved_metadata_scope_retains_normal_exact_evidence_boundary(self) -> None:
+        from tests.foundation.test_ui_change_gate import UiChangeGateTests
+
+        helper = UiChangeGateTests()
+        with tempfile.TemporaryDirectory() as temporary:
+            root, task, head, _ = helper.metadata_scope_fixture(temporary)
+            manifest = {
+                "taskId": task["id"],
+                "commit": head,
+                "baseCommit": task["base_sha"],
+                "branch": task["branch"],
+                "changedFiles": sorted(helper.git(root, "diff", "--name-only", task["base_sha"], head).splitlines()),
+                "checks": [{"command": "synthetic real Git scope boundary", "exitCode": 0}],
+                "acceptanceCriteria": [{"criterion_index": 1, "evidence": ["Synthetic boundary fixture only."]}],
+                "unverifiedItems": [],
+                "correctiveIntegration": {
+                    "originSha256": task["correction"]["origin_sha256"],
+                    "authorityPreserved": True,
+                    "affectedChecks": ["synthetic real Git scope boundary"],
+                    "reusedEvidence": [],
+                    "rationale": "Synthetic exact authority fixture; no live task transition.",
+                },
+            }
+            self.assertEqual([], exact_commit_errors(task, manifest, root))
+            for field, value, expected in (
+                ("changedFiles", manifest["changedFiles"][:-1], "exactly match"),
+                ("commit", task["base_sha"], "current HEAD"),
+                ("branch", "other-branch", "branch"),
+                ("acceptanceCriteria", [], "criterion evidence"),
+                ("checks", [{"command": "synthetic real Git scope boundary", "exitCode": 1}], "check failed"),
+            ):
+                with self.subTest(field=field):
+                    changed = copy.deepcopy(manifest)
+                    changed[field] = value
+                    self.assertTrue(any(expected in error for error in exact_commit_errors(task, changed, root)))
+            # Tracked worktree drift is still refused even when its committed scope is approved.
+            source = root / "tools/backlog_views.py"
+            original = source.read_bytes()
+            source.write_bytes(original + b"\n# uncommitted drift\n")
+            self.assertTrue(any("tracked worktree" in error for error in exact_commit_errors(task, manifest, root)))
+            source.write_bytes(original)
+            self.assertEqual([], exact_commit_errors(task, manifest, root))
+            helper.write_json(root / "artifacts/evidence/W9.A01.pre-admission-method-records-unreviewed.json", {})
+            later = helper.commit(root, "pattern alone does not admit later metadata")
+            manifest["commit"] = later
+            manifest["changedFiles"] = sorted(
+                helper.git(root, "diff", "--name-only", task["base_sha"], later).splitlines()
+            )
+            self.assertTrue(
+                any("corrective changedFiles" in error for error in exact_commit_errors(task, manifest, root))
+            )
+
 
 if __name__ == "__main__":
     unittest.main()
