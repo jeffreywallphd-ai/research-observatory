@@ -1,0 +1,14 @@
+{
+  "schemaVersion": "1.0",
+  "kind": "authority-preserving-correction",
+  "origin": {
+    "taskId": "CAP-05.S06.T01",
+    "commit": "15bd1939a852bd8262b4b39b556f2793c0852957",
+    "sha256": "d89134d7c19c58539b91636792e2240592cf29203956fb527b55a12b83783f74"
+  },
+  "reproduction": "Fresh approved S06 current-build conformance05 at candidate15bd1939a852bd8262b4b39b556f2793c0852957 passed all five preserved reference/token/route/workflow/accessibility/visual checks, then failed the existing production style check. Report artifacts/tmp/CAP-05.S06.W2-1.9-observations-03/conformance-report.json SHA256 5c82d66365a1965eccb4d5288ccb6b97b1702a5c5059d16856457b2f832f393d. Three global CSS rules repeat the identical display:grid; gap:var(--space-2) group for .intent-three-column label, .shortcut-dialog dl/.shortcut-dialog dl div, and .parsing-quality-workspace label. Original report and output remain preserved; no component capture or Slice/Wave PASS is claimed.",
+  "changedPaths": [
+    "apps/desktop/src/app.css"
+  ],
+  "impactAnalysis": "Restore existing shared-style compliance by consolidating the identical two-declaration group into one selector list. Preserve each selector, specificity, token value and computed behavior across Intent, keyboard shortcuts and Parsing Quality. No semantic DOM, workflow, Core/Native/parser/rights/permission/state/source-acceptance, reference, baseline, dependency, threshold or framework changes. This is required defect restoration, with no elective structural refactoring allocation. Use existing product-style analysis as failing characterization and post-change regression; prove computed CSS/geometry equivalence on affected production fixture contexts under current fonts/themes/viewports. Preserve original task approval and unrelated restart P1/48 full-check findings. The previously exact approved conformance helper refuses product changes after C17. Do not bypass it; authenticate the new correction and obtain any exact method authority needed before replacing that frozen proof. Independent commit-bound correction/classification/integration review remains required before completion and local integration. No completion or release gate is waived."
+}
