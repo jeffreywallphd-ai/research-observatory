@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: f285bf27769fda89b6da054015beaca951eb9613b7b9740d1dc8ed156345a4ba
+source_sha256: b1b910a6960a1ab6cf510eadf2e25e7f8a4262ab887d1670db0691449dfff15a
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -3391,7 +3391,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 ### - [ ] W2.A06.T02 - Integrate explicit recovery review into the approved Projects experience
 
-**Status / owner / review:** `IN_PROGRESS` / codex-w2-implementation / - (`-`)
+**Status / owner / review:** `REVIEW` / codex-w2-implementation / - (`-`)
 
 **Dependencies:** `W2.A06.B00`, `W2.A06.T01`
 
@@ -3410,13 +3410,33 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - Fresh real shipping UIA and protected project readbacks for exact recovery fixture; actual keyboard/focus/theme/reflow semantics, whole Native/Core restart and owned cleanup; independently authenticated evidence.
 - Existing UI approval/reference/token/route/workflow/accessibility/visual/ADR predicates, with only explicit finite C18/current-build/CSP method successors after real independent readiness/source recording. Expanded commit-bound UI/security disposition.
 
+**Evidence:**
+
+- `artifacts/evidence/W2.A06.T02.R01.json` at `df93798ba55571d6258f720dc4a8ed2766f0aee7`
+
 #### Review history — W2.A06.T02
 
-**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+**Review mode:** `append-only v1` / 0 completed round(s)
+
+**Current immutable submission awaiting review:** `R01` / packet SHA-256 `f17db4a336720f07bae623896133c2b15bee6b2927fa0496853d7bd36917db67`
+
+- Candidate / base / branch: `df93798ba55571d6258f720dc4a8ed2766f0aee7` / `dd59d8b3cd170dee00794f225271ce6b7e5d7116` / `codex/w2-implementation`
+- Submitted by / at: codex-w2-implementation / `2026-10-12T17:22:48+00:00`
+- Evidence: `artifacts/evidence/W2.A06.T02.R01.json` / `9207dfd86ac8ad37b34267296e0ede6e0eda1444a2910ea9f26c02b1bc848e59` / `df93798ba55571d6258f720dc4a8ed2766f0aee7`
+- Acceptance-criteria SHA-256: `89dcfef5e414aaa96edbb424261a1d814282658927f3e668ce5968edf467a6a5`
+- Verification-selection SHA-256: `39de5b1c36e22bcf0ed11d9465d5a62000a94274966fd1d3670f92702e1b7181`
+- Changed paths: `apps/desktop/src/app/ProjectsWorkspace.test.tsx`, `apps/desktop/src/app/ProjectsWorkspace.tsx`, `docs/adr/ADR-0054-bind-explicit-project-recovery-and-complete-quality-inventory.md`, `docs/planning-implementation-plan.md`, `planning/backlog.yaml`, `planning/review-site/enablers/ECR-0014.html`, `planning/review-site/manifest.json`, `planning/status-summary.md`
+- Selected checks: `corepack pnpm exec vitest run src/app/ProjectsWorkspace.test.tsx --maxWorkers=1`, `corepack pnpm run typecheck`, `python -B -s tools/adr_check.py --repo . --base dd59d8b3cd170dee00794f225271ce6b7e5d7116 --head df93798ba55571d6258f720dc4a8ed2766f0aee7`, `python -B -s tools/ui_reference_check.py --repo . --reference design/ui-reference`, `python -B -s artifacts/tmp/W2.remaining-corrections-batch-01/a06-t02-shipping-build-01.py df93798ba55571d6258f720dc4a8ed2766f0aee7 r02`, `python -B -s artifacts/tmp/W2.remaining-corrections-batch-01/a06-t02-shipping-recovery-06.py df93798ba55571d6258f720dc4a8ed2766f0aee7`, `python -B -s artifacts/tmp/W2.remaining-corrections-batch-01/a06-t02-shipping-live-denial-01.py df93798ba55571d6258f720dc4a8ed2766f0aee7`, `python -B -s artifacts/tmp/W2.remaining-corrections-batch-01/a06-t02-layered-reply-loss-01.py df93798ba55571d6258f720dc4a8ed2766f0aee7`, `.venv/Scripts/python.exe -B -s artifacts/tmp/W2.A06.T02.reference-proof-02.py`
+- Deferred checks: `T03 and downstream slice/checkpoint/Wave: complete quality inventory, full closed45+3/current Reader native CSP/final-build matrix, installed packaging and fresh full affected/repository/profile qualification.`, `Unchanged T01 Native/Core/security/API implementation remains independently DONE/approved; shipping integrations exercise its actual boundary at current source.`, `Physical independent Windows installation test remains explicitly untested under approved byW5-exit deferral.`, `Original canonical R03 restart finding remains OPEN pending separately approved one-use recovery copy and protected ordinary Native/Core readback; new-session fixture never closes it.`
+- Selection rationale: Affected Projects TSX/test and indexed ADR only; no Core/Native/contracts/shared-framework change. Fresh eight-unit state/action/strict-decoder tests, desktop types, ADR/reference, exact current shipping build, real shipping failure/cancel/status/focus/reflow/denial/whole-pair recovery and protected readback, additive genuine Native/Core lost-response proof, and five explicit approved reference predicates. Expanded independent task review covers this cross-process/security/UX integration. Unchanged T01 backend tests and full profiles are deferred by affected-path risk rather than repeated.
+- Prior round / replayed open findings: `-` / -
+- Root-cause escalation: -
 
 **Current latest-review projection:** `-` by - at `-`
 
 **Latest notes:** -
+
+**Currently open findings:** -
 
 ### - [ ] W2.A06.T03 - Synchronize quality inventory and qualify the finite approved verification methods
 

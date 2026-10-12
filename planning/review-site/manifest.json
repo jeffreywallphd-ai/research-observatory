@@ -49284,15 +49284,77 @@
         {
           "task_id": "W2.A06.T02",
           "title": "Integrate explicit recovery review into the approved Projects experience",
-          "status": "IN_PROGRESS",
-          "mode": "latest-review-only",
+          "status": "REVIEW",
+          "mode": "append-only",
           "latest_review": {
             "reviewer": null,
             "result": null,
             "reviewed_at": null,
             "notes": null
           },
-          "review_control": null
+          "review_control": {
+            "version": 1,
+            "attempts": [],
+            "current_submission": {
+              "id": "R01",
+              "submitted_by": "codex-w2-implementation",
+              "submitted_at": "2026-10-12T17:22:48+00:00",
+              "candidate_commit": "df93798ba55571d6258f720dc4a8ed2766f0aee7",
+              "base_commit": "dd59d8b3cd170dee00794f225271ce6b7e5d7116",
+              "branch": "codex/w2-implementation",
+              "evidence_reference": {
+                "type": "criterion-manifest",
+                "path": "artifacts/evidence/W2.A06.T02.R01.json",
+                "sha256": "9207dfd86ac8ad37b34267296e0ede6e0eda1444a2910ea9f26c02b1bc848e59",
+                "commit": "df93798ba55571d6258f720dc4a8ed2766f0aee7",
+                "recorded_at": "2026-10-12T17:22:48+00:00"
+              },
+              "acceptance_criteria_sha256": "89dcfef5e414aaa96edbb424261a1d814282658927f3e668ce5968edf467a6a5",
+              "changed_paths": [
+                "apps/desktop/src/app/ProjectsWorkspace.test.tsx",
+                "apps/desktop/src/app/ProjectsWorkspace.tsx",
+                "docs/adr/ADR-0054-bind-explicit-project-recovery-and-complete-quality-inventory.md",
+                "docs/planning-implementation-plan.md",
+                "planning/backlog.yaml",
+                "planning/review-site/enablers/ECR-0014.html",
+                "planning/review-site/manifest.json",
+                "planning/status-summary.md"
+              ],
+              "selected_checks": [
+                "corepack pnpm exec vitest run src/app/ProjectsWorkspace.test.tsx --maxWorkers=1",
+                "corepack pnpm run typecheck",
+                "python -B -s tools/adr_check.py --repo . --base dd59d8b3cd170dee00794f225271ce6b7e5d7116 --head df93798ba55571d6258f720dc4a8ed2766f0aee7",
+                "python -B -s tools/ui_reference_check.py --repo . --reference design/ui-reference",
+                "python -B -s artifacts/tmp/W2.remaining-corrections-batch-01/a06-t02-shipping-build-01.py df93798ba55571d6258f720dc4a8ed2766f0aee7 r02",
+                "python -B -s artifacts/tmp/W2.remaining-corrections-batch-01/a06-t02-shipping-recovery-06.py df93798ba55571d6258f720dc4a8ed2766f0aee7",
+                "python -B -s artifacts/tmp/W2.remaining-corrections-batch-01/a06-t02-shipping-live-denial-01.py df93798ba55571d6258f720dc4a8ed2766f0aee7",
+                "python -B -s artifacts/tmp/W2.remaining-corrections-batch-01/a06-t02-layered-reply-loss-01.py df93798ba55571d6258f720dc4a8ed2766f0aee7",
+                ".venv/Scripts/python.exe -B -s artifacts/tmp/W2.A06.T02.reference-proof-02.py"
+              ],
+              "deferred_checks": [
+                "T03 and downstream slice/checkpoint/Wave: complete quality inventory, full closed45+3/current Reader native CSP/final-build matrix, installed packaging and fresh full affected/repository/profile qualification.",
+                "Unchanged T01 Native/Core/security/API implementation remains independently DONE/approved; shipping integrations exercise its actual boundary at current source.",
+                "Physical independent Windows installation test remains explicitly untested under approved byW5-exit deferral.",
+                "Original canonical R03 restart finding remains OPEN pending separately approved one-use recovery copy and protected ordinary Native/Core readback; new-session fixture never closes it."
+              ],
+              "selection_rationale": "Affected Projects TSX/test and indexed ADR only; no Core/Native/contracts/shared-framework change. Fresh eight-unit state/action/strict-decoder tests, desktop types, ADR/reference, exact current shipping build, real shipping failure/cancel/status/focus/reflow/denial/whole-pair recovery and protected readback, additive genuine Native/Core lost-response proof, and five explicit approved reference predicates. Expanded independent task review covers this cross-process/security/UX integration. Unchanged T01 backend tests and full profiles are deferred by affected-path risk rather than repeated.",
+              "selection_sha256": "39de5b1c36e22bcf0ed11d9465d5a62000a94274966fd1d3670f92702e1b7181",
+              "prior_attempt_id": null,
+              "open_finding_ids": [],
+              "root_cause_analysis": null,
+              "selected_command_ids": [
+                "desktop:application",
+                "desktop:ui-accessibility",
+                "desktop:ui-reference-integrity",
+                "desktop:ui-route-page",
+                "desktop:ui-token",
+                "desktop:ui-visual-regression",
+                "desktop:ui-workflow",
+                "foundation:adr"
+              ],
+              "packet_sha256": "f17db4a336720f07bae623896133c2b15bee6b2927fa0496853d7bd36917db67"
+            }
+          }
         },
         {
           "task_id": "W2.A06.T03",
