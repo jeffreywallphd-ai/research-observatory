@@ -1,0 +1,250 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "independent-one-use-T03-typing-scope-addendum-readiness",
+  "proposalId": "W2.A06.T03.TY01",
+  "taskId": "W2.A06.T03",
+  "amendmentId": "W2.A06",
+  "waveId": "W2",
+  "reviewer": "agent:/root/a05_packet_review",
+  "reviewedAt": "2026-10-12T20:07:47.830757+00:00",
+  "result": "READY_FOR_OWNER_SCOPE_DECISION",
+  "blockingFindings": [],
+  "findings": [],
+  "proposal": {
+    "path": "artifacts/evidence/W2.A06.T03.typing-scope-addendum-01.proposal.json",
+    "sha256": "2d3fcbf36da82c2e99c1492a959b8f2c5a494682445a0348572623798d6deeab"
+  },
+  "reviewHTML": {
+    "path": "artifacts/evidence/W2.A06.T03.typing-scope-addendum-01.review.html",
+    "sha256": "580edc38d1c318edcc7e0559a1aa5be49f183e41028ba5938a390673c5aa0f88"
+  },
+  "inspectedCandidate": "3aa8824e6c15502d46e6fffd83f33a21b94b58ae",
+  "taskBaseCommit": "060623d7fef3274f69168a7a2e21b35a157f3efa",
+  "immutableTaskSnapshotSHA256": "79b25773fece0b6c557c7cde1276031a0a88225d99c03d92c1644bc2fbd1cd0e",
+  "independence": {
+    "implementationAndPacketOwner": "agent:/root",
+    "reviewer": "agent:/root/a05_packet_review",
+    "reviewerAuthoredProposalHTMLSourceOrTracking": false,
+    "repairOrQualifyingCheckExecutedByReviewer": false,
+    "basis": "Independent exact packet/contract/source inventory/actual raw diagnostic evidence and source-plan review. Only this append-only readiness authored."
+  },
+  "authenticatedEvidence": {
+    "independentTriage": {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/a06-t03-quality-type-triage-plan-01.json",
+      "sha256": "c1ec159a81fdb90b70bdb9db5613277bf21b3ef9061371bac0df132c8f984b19"
+    },
+    "qualityReceipt": {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/quality-transport-04/receipt.json",
+      "sha256": "6c4e8d94aad5c84d3a248676574d6c6ade703f7ae22ee7ea8f3d0c4afc389e32"
+    },
+    "qualityReport": {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/quality-transport-04/quality-report.json",
+      "sha256": "5d7cbeb8fa1bfee69f7168519603f62e8a066c9b89b2205535ad79acfdf60c18"
+    },
+    "qualityProducer": {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/a06-t03-quality-transport-04.py",
+      "sha256": "2919aa27f0737101022f1e046865ebec35e0a165f8d3161ce9ea9cf478e57a69"
+    },
+    "qualityReadiness": {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/a06-t03-quality-transport-04.source-readiness-01.json",
+      "sha256": "4f3203a981f0d77c305e9d51efacbc7699cc340966fa437479ce5fb59bd5fee3"
+    },
+    "argfileCapability": {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/quality-argfile-capability-02/receipt.json",
+      "sha256": "280abd7f482c109cfb8f223c6388d5db2a5ae192005645b3486353ac7ad35194"
+    },
+    "originalAuthority": [
+      {
+        "path": "planning/enabler-change-requests/ECR-0014.packet.json",
+        "sha256": "6293590db74b9a3ec4ce6019a1713def568798ac3a71208a5583bfcff78f7a34"
+      },
+      {
+        "path": "planning/enabler-change-requests/ECR-0014.md",
+        "sha256": "7c70aeebc5a60ab606bd5f6170b48e2012becab8cf7547f7ad8cd75482291496"
+      },
+      {
+        "path": "planning/wave-amendment-approvals/W2.A06.json",
+        "sha256": "3ecf2b98806f1589be7bd63fcc4f25cf0ee2df79bc95a3a0fefda2ce5666e4b2"
+      },
+      {
+        "path": "AGENTS.md",
+        "sha256": "2e8ccaa9fef27187e5ac8c775544128aa96d8ee780732ba9873501aba74f6dd3"
+      },
+      {
+        "path": "docs/automation/workflow-efficiency.md",
+        "sha256": "ea20768a09770226772e53c045a6b5cd911f1d6d9bed34c7a94e73257d76a97e"
+      }
+    ],
+    "authenticationToolChunk": "f9eec3",
+    "allDeclaredAuthorityInventoryAndRawStreamPinsEqualActual": true,
+    "completeActualDiagnosticMultisetEqualsTriage": true,
+    "actualDiagnosticCount": 196,
+    "actualDiagnosticFiles": 63,
+    "testDiagnostics": 195,
+    "testDiagnosticFiles": 62,
+    "annotationOnlyGeneratorDiagnostics": 1,
+    "originalFormatLintTypesExitCodes": [
+      1,
+      0,
+      1
+    ],
+    "wholeQualityExitCode": 1,
+    "wholeQualityStatus": "FAIL",
+    "completeEffectiveSourceFiles": 730,
+    "recordedHeldInputs": 8190,
+    "receiptIsExecutionProofAuthenticatedThroughIndependentTriageNotReviewerRerun": true
+  },
+  "scopeAssessment": {
+    "initialPlannedPaths": 39,
+    "initialExistingSourceRepairPaths": 32,
+    "initialExistingTestRepairPaths": 31,
+    "initialGeneratorPaths": 1,
+    "newEmptyMarkerPaths": [
+      "tests/documents/__init__.py",
+      "tests/foundation/__init__.py",
+      "tests/desktop/fixtures/__init__.py",
+      "tests/desktop/tools/__init__.py",
+      "tests/service/fixtures/__init__.py"
+    ],
+    "initialDataADRPaths": [
+      "quality-scope.json",
+      "docs/adr/ADR-0054-bind-explicit-project-recovery-and-complete-quality-inventory.md"
+    ],
+    "initialPathUnionAndCountsExact": true,
+    "closedExistingTestUpperBound": 386,
+    "closedTestPathsEqualActualRGInventoryQualityReportAndTriageInventory": true,
+    "all386CurrentRawBeforeHashesAuthenticated": true,
+    "all32InitialExistingSourceBeforeHashesAuthenticated": true,
+    "allFiveMarkerPathsCurrentlyAbsent": true,
+    "upperBoundMeaning": "Only demonstrated current or follow-on typing closure in the individually named existing tests; no permission to edit all386, add other files, perform cleanup, change implementation/policy or suppress an error. Actual smaller changed set must carry per-error necessity and independent committed source review.",
+    "annotationOnlyGenerator": {
+      "path": "packages/contracts/anchors/generate_anchor_schema.py",
+      "sha256": "c8a0902b9800af2b7176744d0e72a55e4384c7fc8c44aa95da2daa6827427c97"
+    },
+    "observedEightSchemaOutputBeforePins": [
+      {
+        "path": "packages/contracts/anchors/source-anchor.v1.schema.json",
+        "sha256": "f2a8158dc49a70595d1ee585e4d5b77fb37bce7186b563390f0590bbff7442d0"
+      },
+      {
+        "path": "packages/contracts/anchors/source-anchor-target.v1.schema.json",
+        "sha256": "1d52915e23ed1a5832b1379883d19056a580bf15688b497a5cae55111534e50f"
+      },
+      {
+        "path": "packages/contracts/anchors/anchor-selection.v1.schema.json",
+        "sha256": "f58b1134b5c4d0305841a7123443f9aee50824e3260c9e91dbbbb00fcce00425"
+      },
+      {
+        "path": "packages/contracts/anchors/page-region.v1.schema.json",
+        "sha256": "89b36317b81db5131280824a45a78660130e4d55404f32a0015040f5d0d0da7b"
+      },
+      {
+        "path": "packages/contracts/anchors/reader-outline.v1.schema.json",
+        "sha256": "203526003e379bb04462c50baa04bc87676e282ab806dce0222bba6ecbe2b5a7"
+      },
+      {
+        "path": "packages/contracts/anchors/reader-revisions.v1.schema.json",
+        "sha256": "9cbc525a6889e14fe7d94324415dfe246505152ad69c1ce193068cfefbd8fd98"
+      },
+      {
+        "path": "packages/contracts/anchors/anchor-resolution.v1.schema.json",
+        "sha256": "b375e70a3b3428a0985b1d51cb40d1560e44e7527c9ac795494a0390f13c5087"
+      },
+      {
+        "path": "packages/contracts/anchors/citation-links.v1.schema.json",
+        "sha256": "0791906c6bfe75ae58e1999a01d873d2c2fc5fc7422db9e032abca6d9c0000f6"
+      }
+    ],
+    "generatorOutputRequirement": "Keep the same eight Pydantic model choices/schema serialization and byte-identical output; annotation-only source diff and existing generator --check/contract tests remain actual implementation gates.",
+    "fiveMarkersAssessment": "Empty markers address actual import-resolution diagnostics under unchanged no-namespace-packages behavior. Authenticate resulting discovery/import behavior and follow-on diagnostics; initial735 is not a count gate. Preserve existing730 paths/order and unchanged exclusions/options.",
+    "frameworkTestOnlyException": {
+      "path": "tests/foundation/test_taskctl_workflow.py",
+      "allowed": "Only necessary TEST annotations/import-resolution/narrowing; retain every controller/state/Git/approval/denial scenario/assertion. No shared framework implementation."
+    },
+    "frameworkExceptionAssessment": "An explicit owner decision must include the narrowly named existing taskctl test typing/import/narrowing exception to the no-framework-work direction. It grants no framework/controller/checker implementation or new test feature. All original state/Git/approval/denial scenarios and assertions remain.",
+    "refactoringBudget": "No optional refactoring or cleanup is proposed; no cumulative Wave budget, original estimate or prior allocation is reset or enlarged. Any mixed/refactoring portion must remain under existing accounting, not inferred from this readiness."
+  },
+  "criterionAndAuthorityAssessment": {
+    "frozenPacketTaskHash79bAuthenticated": true,
+    "frozenACAndVerificationBytesStillUnchangedAt3aa": true,
+    "T01T02CommittedDONEAndApprovedAuthenticated": true,
+    "originalT03StateAtInspectedCandidate": "IN_PROGRESS, no task submission/evidence/review completion",
+    "originalEnvelopeConflict": "T03-AC01 freezes quality-scope data and own ADR/index only; T03-AC04 leaves all fresh errors blocking. Exact test/generator/marker correction authority is therefore presently missing, rather than supplied by a general continue instruction.",
+    "reconciliation": "The proposed append-only source-envelope addition preserves original criteria, checks, approved experience/security, task identity/claim/dependencies and adverse history. It does not relabel quality FAIL or rewrite the original grant/packet/task.",
+    "preservedObligations": [
+      "All assertions, original invalid inputs/rejection outcomes and faithful fixture/double used outcomes/faults; fail unexpected calls rather than weaken contracts.",
+      "No new ignores, global suppression, blanket Any, hiding cast, model_construct bypass, SQLCipher substitution or option/config/dependency change.",
+      "All19 inherited lineage guards, complete45 Core AST+3 desktop literal multiset, exact CSP and current UI/reference/keyboard/visual predicates with complete held input closure.",
+      "Full actual six-root discovery and complete unchanged quality checks at the final clean candidate; all errors except the separately granted exact formatter debt remain blocking.",
+      "Actual source/security/reference/necessary-error disposition and affected existing tests, byte-sensitive PDF/schema stability, final fresh integrated build/package/reference/CSP/recovery/UI evidence.",
+      "Normal taskctl task review, amendment exit/control/security checkpoint/adoption, explicit paused Wave resume, Slice/checkpoint/Wave/platform/model/installer qualification and separate release/W3 approval gates."
+    ],
+    "linkedCorrectionAssessment": "The active unfinished A06/T03 and multi-origin diagnostic batch do not meet existing adopted-origin/quiescent linked-correction prerequisites. No new corrective identity or bypass is inferred."
+  },
+  "oneUseRecordingAssessment": {
+    "procedure": "The exact human decision must explicitly approve this one-use §2.2 direct append-only addendum recording and finite future-lineage scope extension; current guidance does not itself grant it. This readiness does not confer the exception.",
+    "scope": [
+      "artifacts/evidence/W2.A06.T03.typing-scope-addendum-01.proposal.json",
+      "artifacts/evidence/W2.A06.T03.typing-scope-addendum-01.readiness.json",
+      "artifacts/evidence/W2.A06.T03.typing-scope-addendum-01.review.html",
+      "artifacts/evidence/W2.A06.T03.typing-scope-addendum-01.owner-decision.json",
+      "artifacts/evidence/W2.A06.T03.typing-scope-addendum-01.supplement.json",
+      "artifacts/evidence/W2.A06.T03.typing-scope-addendum-01.publication-provenance.json"
+    ],
+    "bounds": "Only actual reviewed necessary deltas in the closed test/generator/marker/data/ADR envelope and exact addendum metadata records. No wildcard/prefix trust, hidden add-revert permission, arbitrary metadata output, new exemption, shared helper monkeypatch or new controller.",
+    "sequence": "Publish immutable exact proposal/readiness and obtain the direct human exact-hash decision; append actual decision/evidence/introduction/supplement/provenance; resume/renew/reopen only through legal normal taskctl transitions as appropriate to actual state. Independently review committed fixes, then actual source preflight/negative controls/SOURCE_READY/capture/record before qualifying the finite successor.",
+    "requiredActualPins": [
+      "Original frozen grant/packet/task/base/claim/spec and exact human addendum decision/introduction/proposal/readiness references.",
+      "Actual per-row/path/mode/blob/before-after/introduction, diagnostic-linked necessity and source/security/reference dispositions.",
+      "Actual controls/readiness/source-byte capture and complete source/runtime/authority input closure; unknown/changed/unreviewed/extra rows deny."
+    ],
+    "noNewOwnerGateForConformingLaterDetails": "After this exact scope/recording decision, conforming implementation/proof/record details need no repeated scope approval. New material source/security/reference/predicate choices still stop.",
+    "unchangedValidatorIncompatibility": "A concrete unchanged validator refusal must be preserved and reported; the exception is not permission to forge records, bypass taskctl or edit a controller."
+  },
+  "decisionCompleteness": {
+    "alternatives": [
+      {
+        "id": "approve-bounded-repair",
+        "recommended": true,
+        "impact": "Authorize this single necessity-only scope/record batch and correct all fresh typing failures without weakening tests."
+      },
+      {
+        "id": "retain-current-scope",
+        "recommended": false,
+        "impact": "Keep T03 blocked; AC04/A06/W2 cannot complete until an independently approved correction route exists."
+      },
+      {
+        "id": "ordinary-ecr-procedure",
+        "recommended": false,
+        "impact": "Use a separate ECR/bootstrap campaign for the same bounded typing scope; additional procedure does not fix or waive any error."
+      }
+    ],
+    "recommendation": "Ready to offer the exact bounded repair plus one-use recording exception for owner decision. Retaining present scope leaves T03/A06/W2 blocked; separate ordinary ECR machinery changes procedure, not error obligations.",
+    "rollback": "Ordinary revert of specific new repair source commit, reconcile actual scope, requalify affected inputs; preserve owner addendum, approvals, failures, source/review history. No resets/deletions or research project/vault/key modification.",
+    "resume": "Append/commit exact owner decision/supplement/provenance, renew same amendment campaign and reopen T03 through normal taskctl, then implement only necessary named repairs and finish all unchanged task/A06/Slice/Wave gates. Never infer a quality PASS, task completion or release from scope approval.",
+    "futureBlockedTracking": "Proposal intentionally binds the inspected3aa claim state. Root reports normal renewal/block/view recording is separately running; its future receipts/metadata must remain append-only actual facts and are not invented here.",
+    "remainingGates": "No source repair before actual scope approval. No quality/type/task/amendment/Wave/release/W3 approval is supplied. Existing partial48 proof at3aa must be rebound or rerun where input closure changes; final qualification stays fresh after typing settles."
+  },
+  "presentationAdvisories": [
+    {
+      "severity": "nonblocking",
+      "subject": "HTML spacing",
+      "observation": "A few numeric phrases omit spaces (for example across63 and byW5). Counts/meaning match canonical proposal; optional readability issue only, no packet/source change required by this review."
+    }
+  ],
+  "limitations": [
+    "Scope readiness only. No patch has been authored/reviewed or affected test executed by this reviewer, and no future repair PASS is predicted.",
+    "Future marker resolution may expose additional diagnostics. Necessary edits remain confined to the386 exact existing tests; extra generator/production/framework/source paths or security/reference changes require a separate material decision.",
+    "Actual196 errors and the original quality FAIL remain blocking until real corrections/checks/review.",
+    "Physical independent-Windows-host proof remains explicitly untested under the already approved W5 timing deferral; this addendum grants no new timing waiver.",
+    "Only readiness written; no proposal/HTML/source/HEAD/Git/index/hooks/backlog/task mutation by this reviewer."
+  ],
+  "ownerApproved": false,
+  "sourceRepairAuthorized": false,
+  "sourceRepairApplied": false,
+  "qualityPassed": false,
+  "taskApproved": false,
+  "waveQualified": false,
+  "releaseApproved": false,
+  "W3Approved": false
+}

@@ -1,0 +1,24 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "authoritative-one-use-T03-typing-scope-supplement",
+  "id": "W2.A06.T03.TY01",
+  "taskId": "W2.A06.T03",
+  "waveId": "W2",
+  "amendmentId": "W2.A06",
+  "ownerDecision": {
+    "path": "artifacts/evidence/W2.A06.T03.typing-scope-addendum-01.owner-decision.json",
+    "sha256": "aa07a79108cfa4158d68702ed16c9d27dff374a1bc90c782e500fa0bcf847fda"
+  },
+  "proposal": {
+    "path": "artifacts/evidence/W2.A06.T03.typing-scope-addendum-01.proposal.json",
+    "sha256": "2d3fcbf36da82c2e99c1492a959b8f2c5a494682445a0348572623798d6deeab"
+  },
+  "readiness": {
+    "path": "artifacts/evidence/W2.A06.T03.typing-scope-addendum-01.readiness.json",
+    "sha256": "b7ac5f2e73b0c19da29c4442e685fea8a73af6c9324c359d390b3d9cf20f5932"
+  },
+  "authorityDelta": "Apply only the approved proposal exactSourceEnvelope, criterionReconciliation and oneUseRecordingPermission. Supplement appends authority; it never rewrites original frozen criteria or approvals.",
+  "verificationUnchanged": "All new errors block. Original complete quality outcomes remain truthful; exact formatter debt is separate. All19 lineage guards/exact45+3/CSP/UI/input-hold/adverse obligations and final task/amendment/Wave reviews remain.",
+  "useLimit": "One closed necessity-only T03 typing-restoration batch and conforming recording; no general future permission.",
+  "resumeCondition": "Append/commit exact owner decision/supplement/provenance, renew same amendment campaign and reopen T03 through normal taskctl, then implement only necessary named repairs and finish all unchanged task/A06/Slice/Wave gates. Never infer a quality PASS, task completion or release from scope approval."
+}

@@ -1,0 +1,41 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "exact-owner-approved-T03-typing-scope-and-one-use-recording-decision",
+  "id": "W2.A06.T03.TY01",
+  "taskId": "W2.A06.T03",
+  "waveId": "W2",
+  "amendmentId": "W2.A06",
+  "decision": "APPROVED_EXACT_SINGLE_BATCH_AND_RECORDING_EXCEPTION",
+  "recordedAt": "2026-10-12T20:10:16.955801+00:00",
+  "inspectedSourceCandidate": "3aa8824e6c15502d46e6fffd83f33a21b94b58ae",
+  "approvalEvidence": {
+    "kind": "actual-human-chat-reply",
+    "answer": "Approve this exact single batch and recording exception (Recommended)",
+    "retainedLocalResponseSHA256": "cd367b3527801b06e0da1d0a39f6bddc0fe77cafcbcd67dc875342a09cf91ae4"
+  },
+  "approvedProposal": {
+    "path": "artifacts/evidence/W2.A06.T03.typing-scope-addendum-01.proposal.json",
+    "sha256": "2d3fcbf36da82c2e99c1492a959b8f2c5a494682445a0348572623798d6deeab"
+  },
+  "independentReadiness": {
+    "path": "artifacts/evidence/W2.A06.T03.typing-scope-addendum-01.readiness.json",
+    "sha256": "b7ac5f2e73b0c19da29c4442e685fea8a73af6c9324c359d390b3d9cf20f5932",
+    "reviewer": "agent:/root/a05_packet_review",
+    "result": "READY_FOR_OWNER_SCOPE_DECISION"
+  },
+  "grant": [
+    "The exact closed necessity-only T03 typing source envelope and criterion reconciliation in the approved proposal.",
+    "The explicit typing-only exception for the existing taskctl test; no shared framework implementation.",
+    "The exact one-use append-only recording and future-lineage scope exception, with all original guards and remaining gates retained."
+  ],
+  "publicationSemantics": "The actual human approved these exact locally saved LF bytes at the inspected source candidate. Their real Git introduction commits are recorded append-only after guarded publication; no future introduction or implementation result is invented.",
+  "preservation": "Every frozen ECR/approval/packet/task criterion, original/adverse result and independent finding remains immutable. Conforming details within this batch need no further owner ask.",
+  "completionClaims": {
+    "sourceRepairsApplied": false,
+    "qualityPassed": false,
+    "taskApproved": false,
+    "WaveComplete": false,
+    "releaseApproved": false,
+    "W3Approved": false
+  }
+}

@@ -62778,12 +62778,12 @@ wave_amendments:
     profile: LOC
     platform: windows-x64
     started_at: '2026-10-11T20:02:04+00:00'
-    updated_at: '2026-10-11T20:02:04+00:00'
+    updated_at: '2026-10-12T20:04:00+00:00'
     pause_reason: null
     lease:
       claimed_by: codex-w2-implementation
-      claimed_at: '2026-10-11T20:02:04+00:00'
-      expires_at: '2026-10-12T20:02:04+00:00'
+      claimed_at: '2026-10-12T20:04:00+00:00'
+      expires_at: '2026-10-13T04:04:00+00:00'
   tasks:
   - id: W2.A06.T01
     amendment_id: W2.A06
@@ -63192,19 +63192,24 @@ wave_amendments:
       controls, fresh standard frontend/Native/Core build/package/current-reference capture and affected integrated recovery/UI
       tests; independent combined security/verification disposition.
     packet_task_sha256: 79b25773fece0b6c557c7cde1276031a0a88225d99c03d92c1644bc2fbd1cd0e
-    status: IN_PROGRESS
+    status: BLOCKED
     owner: codex-w2-implementation
     branch: codex/w2-implementation
     base_sha: 060623d7fef3274f69168a7a2e21b35a157f3efa
     worktree: .
-    lease:
-      claimed_by: codex-w2-implementation
-      claimed_at: '2026-10-12T18:32:26+00:00'
-      expires_at: '2026-10-13T02:32:26+00:00'
+    lease: null
     started_at: '2026-10-12T18:32:26+00:00'
-    updated_at: '2026-10-12T18:32:26+00:00'
+    updated_at: '2026-10-12T20:13:22+00:00'
     completed_at: null
-    blocker: null
+    blocker:
+      reason: Complete730-file quality exposed196 Mypy errors/63 files beyond frozen T03 data/ADR source authority. Exact
+        necessity-only typing scope and one-use recording addendum awaits independent readiness and owner decision; original
+        FAILs retained.
+      next_action: Approve artifacts/evidence/W2.A06.T03.typing-scope-addendum-01.proposal.json after exact independent readiness,
+        then append actual decision/supplement/provenance and reopen same T03 through normal taskctl before necessary named
+        source fixes. No quality waiver or W2/W3 approval.
+      recorded_at: '2026-10-12T20:13:22+00:00'
+      owner: codex-w2-implementation
     implementation_notes: ''
     evidence: []
     verification_state: null

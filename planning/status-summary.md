@@ -1,7 +1,7 @@
 ---
 document_type: generated-backlog-status-summary
 source: planning/backlog.yaml
-source_sha256: eb1f64daeb566f70dcd8f1174dffbff049fc153c4b2f6563c9966ccd6c3996fb
+source_sha256: 428bc4c8f2b044ff9ea5c3dcd9162d06ee220405ae7256be994268bd4c71eb93
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -68,7 +68,7 @@ manual_edit: prohibited
 
 | Status | Count |
 |---|---:|
-| `IN_PROGRESS` | 1 |
+| `BLOCKED` | 1 |
 | `DONE` | 25 |
 
 ## Wave authority and append-only amendments
@@ -1013,7 +1013,7 @@ Append-only rounds remain distinct from the current latest-review projection. Le
 
 | Task | Status | Owner | Branch |
 |---|---|---|---|
-| `W2.A06.T03` Synchronize quality inventory and qualify the finite approved verification methods | `IN_PROGRESS` | codex-w2-implementation | `codex/w2-implementation` |
+| `W2.A06.T03` Synchronize quality inventory and qualify the finite approved verification methods | `BLOCKED` | codex-w2-implementation | `codex/w2-implementation` |
 
 ## Linked corrective tasks
 
