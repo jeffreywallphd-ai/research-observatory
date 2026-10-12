@@ -9,9 +9,9 @@ import unittest
 from concurrent.futures import ThreadPoolExecutor
 from contextlib import closing
 from dataclasses import replace
+from typing import NotRequired, TypedDict
 from unittest.mock import patch
 
-import sqlcipher3.dbapi2 as sqlcipher
 from fastapi.testclient import TestClient
 from research_observatory_core import object_store, storage
 from research_observatory_core.anchors.contracts import AnchorSelection
@@ -26,8 +26,25 @@ from research_observatory_core.ingestion.import_drafts import ImportRights
 from research_observatory_core.ingestion.preview_activity import _GuardedSource
 from research_observatory_core.ingestion.source_chunks import ChunkedImportSource, put_source_chunk
 from research_observatory_core.main import DocumentAttachmentRuntime
+from research_observatory_core.parsing.contracts import CodepointRange
 
+from tests.database_key_fixtures import InMemoryDatabaseKeyProvider
 from tests.documents import test_document_revision_workflow as workflows
+
+sqlcipher = storage.sqlcipher
+
+
+class ViewerSelectorWire(TypedDict):
+    attachmentId: str
+    documentRevisionId: str
+    normalizedRevisionId: NotRequired[str | None]
+
+
+class ViewerCommandWire(TypedDict):
+    root: str
+    projectId: str
+    sessionId: str
+    selector: ViewerSelectorWire
 
 
 class DocumentViewerApiTests(unittest.TestCase):
@@ -40,7 +57,7 @@ class DocumentViewerApiTests(unittest.TestCase):
         anchor = repository.source_anchors().create(
             new_uuid_v7(),
             AnchorSelection(
-                revision_id=accepted.revision_id, node_id=node.node_id, normalized_range={"start": 0, "end": 9}
+                revision_id=accepted.revision_id, node_id=node.node_id, normalized_range=CodepointRange(start=0, end=9)
             ),
         )
         return dict(
@@ -101,6 +118,7 @@ class DocumentViewerApiTests(unittest.TestCase):
         # PRAGMA authorizer to obtain a diagnostic connection with timeout=0.
         with storage._DATABASE_PROTECTION_LOCK:
             keys = storage._DATABASE_PROTECTION.provider
+        assert isinstance(keys, InMemoryDatabaseKeyProvider)
         material = keys.active_material_for_test(self.f.f.source.project_id)
         with closing(
             sqlcipher.connect(
@@ -164,10 +182,12 @@ class DocumentViewerApiTests(unittest.TestCase):
                 client=("127.0.0.1", 50000),
             )
         )
-        self.command = {
+        session = self.imports.native_context(self.f.command.root, self.f.command.project_id)
+        assert session is not None
+        self.command: ViewerCommandWire = {
             "root": self.f.command.root,
             "projectId": self.f.command.project_id,
-            "sessionId": self.imports.native_context(self.f.command.root, self.f.command.project_id),
+            "sessionId": session,
             "selector": {
                 "attachmentId": self.f.f.source.attachment_id,
                 "documentRevisionId": self.f.f.source.document_revision_id,
@@ -358,10 +378,12 @@ class DocumentViewerApiTests(unittest.TestCase):
     def test_viewer_outline_denies_substituted_original_or_derive_permission(self):
         repository = self.f.fixture.repository
         accepted = repository.accept(self.f.fixture.command(self.f.fixture.parse()))
-        selected = dict(
-            self.command, selector=dict(self.command["selector"], normalizedRevisionId=accepted.revision_id)
-        )
-        wrong = dict(selected, selector=dict(selected["selector"], documentRevisionId=new_uuid_v7()))
+        selector: ViewerSelectorWire = {
+            **self.command["selector"],
+            "normalizedRevisionId": accepted.revision_id,
+        }
+        selected = dict(self.command, selector=selector)
+        wrong = dict(selected, selector=dict(selector, documentRevisionId=new_uuid_v7()))
         self.assertEqual(409, self.client.post(self.path + "/outline", json=wrong).status_code)
         self.f.f.permit(derive="denied")
         self.assertEqual(409, self.client.post(self.path + "/outline", json=selected).status_code)

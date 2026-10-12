@@ -8,6 +8,7 @@ from unittest.mock import patch
 from research_observatory_core.document_revisions import DocumentRevisionProblem
 from research_observatory_core.document_viewer_repository import LocalDocumentViewerRepository
 from research_observatory_core.domain_contracts import new_uuid_v7
+from research_observatory_core.object_store import _LocalObjectStore
 from research_observatory_core.ports.document_viewer import ViewerSourceSelector
 from research_observatory_core.ports.object_store import ObjectAccessDenied
 from research_observatory_core.storage import open_canonical_database
@@ -20,6 +21,9 @@ class ViewerSourceAuthorityTests(unittest.TestCase):
         self.f = revisions.DocumentRevisionRepositoryTests(methodName="runTest")
         self.f.setUp()
         self.addCleanup(self.f.doCleanups)
+        store = self.f.f.fixture.store
+        assert isinstance(store, _LocalObjectStore)
+        self.store = store
         self.viewer = LocalDocumentViewerRepository(self.f.repository)
         self.selector = ViewerSourceSelector(
             attachment_id=self.f.f.source.attachment_id,
@@ -32,7 +36,7 @@ class ViewerSourceAuthorityTests(unittest.TestCase):
         self.assertEqual(self.f.f.source, metadata.source)
         self.assertEqual(b"Synthetic", self.viewer.read_range(self.selector, start=0, end=9))
         with self.assertRaises(ObjectAccessDenied):
-            self.f.f.fixture.store.open_parse_source(self.f.f.source, actor=self.f.actor)
+            self.store.open_parse_source(self.f.f.source, actor=self.f.actor)
 
     def test_normalized_revision_resolves_exact_original_and_substitutions_deny(self):
         parsed = self.f.parse()
@@ -93,8 +97,10 @@ class ViewerSourceAuthorityTests(unittest.TestCase):
         self.assertLessEqual(len(value.text), 4096)
         self.assertEqual((), self.f.repository.source_anchors().list(normalized.revision_id))
         for offset in (-1, True, 1.5, 2**30):
-            with self.subTest(offset=offset), self.assertRaises(DocumentRevisionProblem):
-                self.viewer.text_chunk(selector, node_id=node.node_id, offset=offset)
+            with self.subTest(offset=offset):
+                self.assertRaises(
+                    DocumentRevisionProblem, self.viewer.text_chunk, selector, node_id=node.node_id, offset=offset
+                )
         with self.assertRaises(DocumentRevisionProblem):
             self.viewer.text_chunk(selector, node_id=new_uuid_v7(), offset=0)
 
@@ -113,7 +119,7 @@ class ViewerSourceAuthorityTests(unittest.TestCase):
         normalized = self.f.repository.accept(self.f.command(parsed))
         selector = self.selector.model_copy(update={"normalized_revision_id": normalized.revision_id})
         node = next(item for item in normalized.structure.nodes if item.text is not None)
-        store_type = type(self.f.f.fixture.store)
+        store_type = type(self.store)
         read_context = store_type._read_authorized_document_context
 
         def revoke_after_close(store, *args, **kwargs):
@@ -137,7 +143,7 @@ class ViewerSourceAuthorityTests(unittest.TestCase):
                 (new_uuid_v7(), self.f.f.source.candidate_id),
             )
         with self.assertRaises(ObjectAccessDenied):
-            self.f.f.fixture.store._read_inspected_document_range(
+            self.store._read_inspected_document_range(
                 self.f.f.source.model_copy(update={"work_revision_id": new_uuid_v7()}),
                 start=0,
                 end=9,
@@ -146,7 +152,7 @@ class ViewerSourceAuthorityTests(unittest.TestCase):
         self.assertEqual(b"Synthetic", self.viewer.read_range(self.selector, start=0, end=9))
 
     def test_rights_changed_after_reader_close_deny_delivery_of_successful_old_bytes(self):
-        store = self.f.f.fixture.store
+        store = self.store
         original = store._read_inspected_document_range
 
         def revoke_after_close(_store, *args, **kwargs):

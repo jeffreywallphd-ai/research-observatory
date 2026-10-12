@@ -20,12 +20,12 @@ from research_observatory_core.app import create_app  # noqa: E402
 from research_observatory_core.authentication import capability_token_digest  # noqa: E402
 from research_observatory_core.domain_contracts import new_uuid_v7  # noqa: E402
 
-from tests.documents import test_document_revision_workflow as workflow_fixtures  # noqa: E402
+from tests.documents.test_document_revision_workflow import DocumentRevisionWorkflowTests  # noqa: E402
 
 
 class NativeAnchorCompositionTests(unittest.TestCase):
     def setUp(self):
-        self.f = workflow_fixtures.DocumentRevisionWorkflowTests(methodName="runTest")
+        self.f = DocumentRevisionWorkflowTests(methodName="runTest")
         self.f.setUp()
         self.addCleanup(self.f.doCleanups)
         result = self.f.fixture.parse("First synthetic passage. Second synthetic passage.")

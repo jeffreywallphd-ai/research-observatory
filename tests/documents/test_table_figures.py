@@ -17,9 +17,13 @@ from research_observatory_core.document_revisions import (  # noqa: E402
     content_sha256,
     protected_json,
 )
-from research_observatory_core.document_table_figures import extract_table_figures  # noqa: E402
+from research_observatory_core.document_table_figures import (  # noqa: E402
+    OriginalStructurePreview,
+    extract_table_figures,
+)
 from research_observatory_core.parsing.docling import decode_docling  # noqa: E402
 from research_observatory_core.parsing.pipeline import decode_delivery  # noqa: E402
+from research_observatory_core.parsing.requests import ParseSuccess  # noqa: E402
 
 from tests.documents.test_reference_entries import accepted_native  # noqa: E402
 from tests.parsing import test_docling_parsing as docling  # noqa: E402
@@ -38,7 +42,9 @@ def derive(raw, format="jats", *, retained=True):
 def accepted_docling(value):
     request = docling.request()
     delivery = docling.delivery(request, value)
-    ir = decode_delivery(request, decode_docling(request, delivery)).ir
+    result = decode_delivery(request, decode_docling(request, delivery))
+    assert isinstance(result, ParseSuccess)
+    ir = result.ir
     structure, mapping = canonicalize_structure(ir)
     # Detached authored adapter fixture. It does not qualify a runtime/model.
     wire = accepted_native(b"<article><body>Authored synthetic fixture</body></article>").model_dump(
@@ -208,6 +214,9 @@ class TableFigureTests(unittest.TestCase):
         for entry in (table, figure):
             self.assertEqual("reported", entry.caption_state)
             self.assertEqual("Synthetic caption", entry.captions[0].raw_text)
+            assert entry.captions[0].anchor is not None
+            assert entry.captions[0].anchor.page_region is not None
+            assert isinstance(entry.preview, OriginalStructurePreview)
             self.assertEqual(90, entry.captions[0].anchor.page_region.rotation)
             self.assertEqual("object", entry.preview.basis)
             self.assertEqual(accepted.structure.binding.source.document_revision_id, entry.preview.source_revision_id)

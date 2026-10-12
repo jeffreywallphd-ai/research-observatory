@@ -25,8 +25,8 @@ def write_bounded_pdf(stream: BinaryIO, *, pages: int, byte_length: int) -> None
         text = f"BT /F1 16 Tf 50 700 Td (Synthetic Page {number}) Tj "
         for line in range(20):
             text += f"0 -22 Td (Inert bounded source line {line + 1}. Original text is unverified.) Tj "
-        text = (text + "ET").encode()
-        objects.append(b"<< /Length " + str(len(text)).encode() + b" >>\nstream\n" + text + b"\nendstream")
+        text_bytes = (text + "ET").encode()
+        objects.append(b"<< /Length " + str(len(text_bytes)).encode() + b" >>\nstream\n" + text_bytes + b"\nendstream")
     stream.write(b"%PDF-1.7\n%\xe2\xe3\xcf\xd3\n")
     offsets = [0]
     for number, value in enumerate(objects, 1):

@@ -8,13 +8,18 @@ import os
 import time
 import unittest
 from pathlib import Path
+from typing import ClassVar
 
-from playwright.sync_api import sync_playwright
+from playwright.sync_api import Browser, Playwright, sync_playwright
 
 REPO = Path(__file__).resolve().parents[2]
 
 
 class DocumentViewerInteractionsTests(unittest.TestCase):
+    directory: ClassVar[Path]
+    runtime: ClassVar[Playwright]
+    browser: ClassVar[Browser]
+
     def test_tables_caption_cell_source_preview_exclusion_keyboard_themes_and_return(self):
         self.select_text()
         self.page.get_by_role("button", name="Inspect tables and figures", exact=True).click()
@@ -261,7 +266,8 @@ class DocumentViewerInteractionsTests(unittest.TestCase):
     def setUp(self):
         self.context = self.browser.new_context(viewport={"width": 1280, "height": 900})
         self.addCleanup(self.context.close)
-        self.requests, self.errors = [], []
+        self.requests: list[str] = []
+        self.errors: list[str] = []
 
         def route(request):
             url = request.request.url

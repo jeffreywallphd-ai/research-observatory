@@ -16,10 +16,11 @@ from typing import cast
 from unittest.mock import patch
 
 ROOT = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(ROOT))
 sys.path.insert(0, str(ROOT / "tests/desktop/tools"))
 
-import run_windows_document_drop_probe as drop  # noqa: E402
-import run_windows_document_picker_probe as picker  # noqa: E402
+from tests.desktop.tools import run_windows_document_drop_probe as drop  # noqa: E402
+from tests.desktop.tools import run_windows_document_picker_probe as picker  # noqa: E402
 
 CANCEL_OPERATION = "01a1001f-caed-7a8b-8163-b6760593f112"
 SELECT_OPERATION = "01a1001f-e009-74be-be23-c1f397ed34fd"

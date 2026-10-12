@@ -48,6 +48,7 @@ class DocumentRevisionContractTests(unittest.TestCase):
             self.assertEqual(old.order, new.order)
             self.assertEqual(old.source_element_type, new.source_element_type)
             if old.text:
+                assert new.text is not None
                 self.assertEqual(by_role["projection", old.text.projection_id], new.text.projection_id)
                 self.assertEqual(old.text.normalized_range, new.text.normalized_range)
                 self.assertEqual(old.text.raw_ranges, new.text.raw_ranges)
@@ -85,6 +86,7 @@ class DocumentRevisionContractTests(unittest.TestCase):
         self.assertEqual("Caf\u00e9\n\U0001f4da", current.normalized_text)
         self.assertEqual(projection.mappings, current.mappings)
         self.assertEqual("sentence", structure.nodes[0].kind)
+        assert structure.nodes[0].text is not None
         self.assertEqual(6, structure.nodes[0].text.normalized_range.end)
 
     def test_incomplete_structure_is_denied_but_ambiguity_remains_for_human_review(self):

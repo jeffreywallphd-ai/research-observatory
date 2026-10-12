@@ -5,6 +5,8 @@ import json
 import sys
 from pathlib import Path
 
+from pydantic import BaseModel
+
 ROOT = Path(__file__).resolve().parents[3]
 sys.path.insert(0, str(ROOT / "services/core-api/src"))
 
@@ -19,7 +21,7 @@ from research_observatory_core.anchors.contracts import (  # noqa: E402
     SourceAnchorTarget,
 )
 
-OUTPUTS = {
+OUTPUTS: dict[str, type[BaseModel]] = {
     "source-anchor.v1.schema.json": SourceAnchorReceipt,
     "source-anchor-target.v1.schema.json": SourceAnchorTarget,
     "anchor-selection.v1.schema.json": AnchorSelection,

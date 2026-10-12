@@ -9,12 +9,16 @@ import unittest
 import zlib
 from io import BytesIO
 from pathlib import Path
+from types import ModuleType
+from typing import ClassVar
 
 from tests.parsing.pdf_fixtures import pdf_objects, scholarly_pdf
 
 
 @unittest.skipUnless(os.environ.get("RO_PARSER_NATIVE_TEST"), "explicit native build required")
 class NativePageAdmissionTests(unittest.TestCase):
+    module: ClassVar[ModuleType]
+
     @classmethod
     def setUpClass(cls) -> None:
         # Upstream native resource discovery imports this package through the

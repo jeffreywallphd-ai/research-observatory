@@ -19,12 +19,12 @@ from research_observatory_core.object_store import _object_relative_path  # noqa
 from research_observatory_core.source_anchor_repository import LocalSourceAnchorRepository  # noqa: E402
 from research_observatory_core.storage import open_canonical_database  # noqa: E402
 
-from tests.documents import test_document_revision_repository as revision_fixtures  # noqa: E402
+from tests.documents.test_document_revision_repository import DocumentRevisionRepositoryTests  # noqa: E402
 
 
 class AnchorRepositoryTests(unittest.TestCase):
     def setUp(self):
-        self.f = revision_fixtures.DocumentRevisionRepositoryTests(methodName="runTest")
+        self.f = DocumentRevisionRepositoryTests(methodName="runTest")
         self.f.setUp()
         self.addCleanup(self.f.doCleanups)
         result = self.f.parse("First synthetic passage. Second synthetic passage.")

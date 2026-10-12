@@ -45,6 +45,7 @@ class ReferenceCatalogTests(unittest.TestCase):
             snapshot = self.repository.snapshot(connection, aggregates, self.entries, resolve=self.resolve)
             self.assertEqual(before, connection.execute("SELECT total_changes()").fetchone()[0])
         matched = match_reference_entries(self.entries, snapshot.works, snapshot.assessments)
+        assert matched[0].target is not None
         self.assertEqual(self.f.work_id, matched[0].target.work_id)
         self.assertEqual(self.f.work_revision_id, matched[0].target.revision_id)
         self.assertEqual("exact-linked", matched[0].link_state)

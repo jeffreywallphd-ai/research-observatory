@@ -9,6 +9,7 @@ from __future__ import annotations
 import sys
 import unittest
 from dataclasses import replace
+from operator import setitem
 from pathlib import Path
 from unittest.mock import patch
 
@@ -88,8 +89,7 @@ class DocumentParseAdmissionTests(unittest.TestCase):
         handlers["document-parse"] = lambda *_: self.fail("Unselected parser ran")
         self.mapping.clear()
         self.assertIn("document-parse", self.policy.activity_demands)
-        with self.assertRaises(TypeError):
-            self.policy.activity_demands["document-parse"] = self.mapping  # type: ignore[index, assignment]
+        self.assertRaises(TypeError, setitem, self.policy.activity_demands, "document-parse", self.mapping)
         with (
             patch.object(
                 self.fixture.repository, "recover_expired", wraps=self.fixture.repository.recover_expired
@@ -177,8 +177,7 @@ class DocumentParseAdmissionTests(unittest.TestCase):
             )
         with self.assertRaises(ValueError):
             replace(self.policy, activity_demands={"bad activity": self.mapping["document-parse"]})
-        with self.assertRaises(ValueError):
-            ActivityWorkerDemand("document", self.parser, exclusive=1)
+        self.assertRaises(ValueError, ActivityWorkerDemand, "document", self.parser, exclusive=1)
 
 
 if __name__ == "__main__":

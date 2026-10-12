@@ -25,7 +25,9 @@ from pathlib import Path
 from typing import Any, Protocol
 from uuid import UUID
 
-import run_windows_document_drop_probe as drop
+sys.path.insert(0, str(Path(__file__).resolve().parents[3]))
+
+from tests.desktop.tools import run_windows_document_drop_probe as drop
 
 ACTION_WRAPPER = Path(__file__).with_name("windows_file_dialog_action.ps1")
 DATABASE_VERIFIER = Path(__file__).with_name("verify_document_attachment_fixture.py")

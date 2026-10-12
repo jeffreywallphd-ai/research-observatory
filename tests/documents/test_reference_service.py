@@ -33,6 +33,12 @@ class ReferenceServiceTests(unittest.TestCase):
         for name in ("projects", "vault", "temporary", "application-data", "webview"):
             (root / name).mkdir()
         selected = seed(root)
+
+        def identity(key: str) -> str:
+            value = selected[key]
+            assert isinstance(value, str)
+            return value
+
         project = root / "projects/document-drop-project"
         helper = runtime_fixture.ImportRuntimeCompositionTests()
         app = create_runtime_app(
@@ -53,7 +59,7 @@ class ReferenceServiceTests(unittest.TestCase):
             revisions = app.state.runtime.document_revisions
             revisions.shutdown()  # No installed model/parser can claim the authored fixture.
             runtime = app.state.runtime.attachments
-            session = runtime.context(str(project), selected["projectId"])
+            session = runtime.context(str(project), identity("projectId"))
 
             def attach(service, actor):
                 def inspect(stream, **_):
@@ -66,18 +72,18 @@ class ReferenceServiceTests(unittest.TestCase):
                     )
 
                 local = LocalDocumentAttachmentService(
-                    service._database, selected["projectId"], service._objects, inspector=inspect
+                    service._database, identity("projectId"), service._objects, inspector=inspect
                 )
                 operation = new_uuid_v7()
                 candidate = local.stage(
                     io.BytesIO(RAW.encode()),
                     source_name="synthetic-reference.txt",
                     declared_media_type="text/plain",
-                    source_assertion_revision_id=selected["sourceAssertionRevisionId"],
-                    work_id=selected["workId"],
-                    work_revision_id=selected["workRevisionId"],
-                    version_id=selected["versionId"],
-                    version_revision_id=selected["versionRevisionId"],
+                    source_assertion_revision_id=identity("sourceAssertionRevisionId"),
+                    work_id=identity("workId"),
+                    work_revision_id=identity("workRevisionId"),
+                    version_id=identity("versionId"),
+                    version_revision_id=identity("versionRevisionId"),
                     actor=actor,
                     operation_id=operation,
                     session_id=session,
@@ -91,25 +97,22 @@ class ReferenceServiceTests(unittest.TestCase):
                     session_id=session,
                     match_confirmed=True,
                     permitted_use="project-only",
-                    exact_selection=tuple(
-                        selected[k]
-                        for k in (
-                            "sourceAssertionRevisionId",
-                            "workId",
-                            "workRevisionId",
-                            "versionId",
-                            "versionRevisionId",
-                        )
+                    exact_selection=(
+                        identity("sourceAssertionRevisionId"),
+                        identity("workId"),
+                        identity("workRevisionId"),
+                        identity("versionId"),
+                        identity("versionRevisionId"),
                     ),
                 )
                 return candidate, attached
 
-            candidate, attached = runtime._action(str(project), selected["projectId"], session, "1" * 32, attach)
-            publish_derive(runtime, project, selected["projectId"], session, candidate, "permitted")
+            candidate, attached = runtime._action(str(project), identity("projectId"), session, "1" * 32, attach)
+            publish_derive(runtime, project, identity("projectId"), session, candidate, "permitted")
             accepted = seed_revision(
-                app, project, selected["projectId"], session, attached.attachment_id, RAW, reference=True
+                app, project, identity("projectId"), session, attached.attachment_id, RAW, reference=True
             )
-            address = {"root": str(project), "projectId": selected["projectId"], "sessionId": session}
+            address = {"root": str(project), "projectId": identity("projectId"), "sessionId": session}
             read = {
                 **address,
                 "revisionId": accepted.revision_id,
@@ -129,7 +132,7 @@ class ReferenceServiceTests(unittest.TestCase):
             self.assertEqual(200, response.status_code, response.text)
             page = response.json()
             self.assertEqual("exact-linked", page["entries"][0]["linkState"])
-            self.assertEqual(selected["workId"], page["entries"][0]["target"]["workId"])
+            self.assertEqual(identity("workId"), page["entries"][0]["target"]["workId"])
             self.assertEqual(RAW, page["entries"][0]["rawPreview"])
             self.assertEqual("unverified", page["scholarlyVerification"])
             self.assertEqual(page, client.post("/native/document-revisions/references-enrich", json=enrich).json())
@@ -142,16 +145,16 @@ class ReferenceServiceTests(unittest.TestCase):
                 self.assertEqual("viewer-resource-limit", limited.json()["reasonCode"])
                 self.assertNotIn(RAW, limited.text)
                 self.assertEqual(page["collectionRevisionId"], limited.json()["collectionRevisionId"])
-            publish_derive(runtime, project, selected["projectId"], session, candidate, "denied")
+            publish_derive(runtime, project, identity("projectId"), session, candidate, "denied")
             denied = client.post("/native/document-revisions/references-read", json=read)
             self.assertEqual(409, denied.status_code)
             self.assertNotIn(RAW, denied.text)
             self.assertNotIn("collectionRevisionId", denied.text)
-            publish_derive(runtime, project, selected["projectId"], session, candidate, "permitted")
+            publish_derive(runtime, project, identity("projectId"), session, candidate, "permitted")
             self.assertEqual(200, client.post("/projects/close", json={"root": str(project)}).status_code)
             self.assertEqual(200, client.post("/projects/open", json={"root": str(project)}).status_code)
             self.assertEqual(409, client.post("/native/document-revisions/references-read", json=read).status_code)
-            session = runtime.context(str(project), selected["projectId"])
+            session = runtime.context(str(project), identity("projectId"))
             read["sessionId"] = session
             notice = client.post("/native/document-revisions/references-read", json=read)
             self.assertEqual(200, notice.status_code, notice.text)
@@ -172,7 +175,7 @@ class ReferenceServiceTests(unittest.TestCase):
                 {
                     "scope": "actual Windows vault/Core/SQLCipher/current resolver; synthetic parse",
                     "modelExecuted": False,
-                    "projectId": selected["projectId"],
+                    "projectId": identity("projectId"),
                     "revisionId": accepted.revision_id,
                     "collectionRevisionId": refreshed.json()["collectionRevisionId"],
                 }

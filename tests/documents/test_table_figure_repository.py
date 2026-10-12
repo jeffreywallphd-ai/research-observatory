@@ -5,6 +5,7 @@ import sys
 import unittest
 from contextlib import closing
 from dataclasses import replace
+from operator import call
 from pathlib import Path
 from unittest.mock import patch
 
@@ -196,7 +197,7 @@ class TableFigureRepositoryTests(unittest.TestCase):
         self.assertEqual(before, self.counts())
         first = self.repository.enrich(self.command())
         before = self.counts()
-        self.f.actor = replace(self.f.actor, actor_type="worker")
+        self.f.actor = call(replace, self.f.actor, actor_type="worker")
         with self.assertRaises(DocumentRevisionProblem):
             self.repository.read(self.accepted.revision_id)
         self.assertEqual(before, self.counts())
@@ -220,7 +221,7 @@ class TableFigureRepositoryTests(unittest.TestCase):
 
         def revoke(step):
             if step == "table-figures-prepared":
-                self.f.actor = replace(original_actor, actor_type="worker")
+                self.f.actor = call(replace, original_actor, actor_type="worker")
 
         try:
             with (

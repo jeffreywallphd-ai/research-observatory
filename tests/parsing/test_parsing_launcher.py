@@ -14,6 +14,7 @@ from workers.windows import connector_launcher as parent  # noqa: E402
 from workers.windows import parsing_launcher as parser  # noqa: E402
 from workers.windows.lpac_launcher import LPACError  # noqa: E402
 from workers.windows.protocol import MAX_BINARY_FRAME, MAX_DOCUMENT_CHUNK  # noqa: E402
+from workers.windows.runtime_inventory import SignedWorkerRuntime  # noqa: E402
 
 
 class ParsingLauncherTests(unittest.TestCase):
@@ -37,6 +38,9 @@ class ParsingLauncherTests(unittest.TestCase):
             output, calls = kwargs["dialogue"](None, 1, 2, request)
             return parent.WorkerResult(output, {}, calls)
 
+        runtime = SignedWorkerRuntime(
+            Path("synthetic-unit-only-package"), b"synthetic-inventory", b"synthetic-signature", b"synthetic-public-key"
+        )
         with (
             patch.object(parent, "_run_signed_worker", run),
             patch.object(parent, "_read_exact", side_effect=lambda _k, _h, n: wire.read(n)),
@@ -45,7 +49,7 @@ class ParsingLauncherTests(unittest.TestCase):
             patch.object(parser.win, "_write"),
         ):
             return parser.parse_document(
-                None, BytesIO(source), format="txt", length=len(source), sha256=hashlib.sha256(source).hexdigest()
+                runtime, BytesIO(source), format="txt", length=len(source), sha256=hashlib.sha256(source).hexdigest()
             )
 
     def test_valid_large_output_remains_one_megabyte_chunks(self):

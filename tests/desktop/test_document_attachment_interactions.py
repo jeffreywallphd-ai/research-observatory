@@ -15,6 +15,7 @@ import sys
 import unittest
 from contextlib import ExitStack
 from pathlib import Path
+from typing import Literal
 
 from playwright.sync_api import sync_playwright
 
@@ -360,7 +361,14 @@ class DocumentAttachmentInteractionTests(unittest.TestCase):
                 if capture_root is None:
                     return
                 viewport = page.viewport_size
-                old_theme = page.locator("html").get_attribute("data-theme") or "light"
+                assert viewport is not None
+                observed_theme = page.locator("html").get_attribute("data-theme") or "light"
+                if observed_theme == "dark":
+                    old_theme: Literal["dark", "light"] = "dark"
+                elif observed_theme == "light":
+                    old_theme = "light"
+                else:
+                    self.fail("unsupported prior theme in approved attachment fixture")
                 for theme in ("light", "dark"):
                     for width in (1440, 720):
                         page.set_viewport_size({"width": width, "height": 1000})

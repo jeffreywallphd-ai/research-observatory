@@ -6,8 +6,9 @@ import time
 import unittest
 import zlib
 from pathlib import Path
+from typing import ClassVar
 
-from playwright.sync_api import sync_playwright
+from playwright.sync_api import Browser, Playwright, sync_playwright
 
 REPO = Path(__file__).resolve().parents[2]
 ORIGIN = "http://tauri.localhost/"
@@ -61,6 +62,10 @@ def authored_pdf(*, active=False, huge_page=False, compressed_bomb=False):
 
 
 class ViewerDecoderTests(unittest.TestCase):
+    directory: ClassVar[Path]
+    runtime: ClassVar[Playwright]
+    browser: ClassVar[Browser]
+
     @classmethod
     def setUpClass(cls):
         cls.directory = Path(os.environ["RO_VIEWER_DECODER_FIXTURE"]).resolve()
@@ -119,6 +124,7 @@ class ViewerDecoderTests(unittest.TestCase):
                 break
             time.sleep(0.05)
         self.assertIsNotNone(result, "actual decoder did not settle")
+        assert result is not None
         self.assertIn("heldAfterClose", result, "decoder did not finish drain/cleanup")
         self.assertEqual(0, result["heldAfterClose"])
         self.assertEqual([0, 0], result["canvasAfterClose"])

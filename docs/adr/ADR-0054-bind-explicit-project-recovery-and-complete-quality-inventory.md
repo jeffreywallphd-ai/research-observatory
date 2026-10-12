@@ -202,3 +202,32 @@ independent source/control readiness and fresh final-candidate evidence.
 Missing, changed, duplicate or additional findings remain blocking. Original
 failures and approval records stay preserved; no shared checker exemption,
 accepted ADR state, task completion or Wave release is inferred here.
+
+
+#### W2.A06.T03 TY01 typed fixture repair
+
+The exact owner-approved TY01 supplement appends only necessary test typing
+repairs, one annotation-only anchor schema generator and four empty test package
+markers to this task's source envelope. The original ECR, packet, approval and
+criteria remain immutable. The one-use recording exception binds the actual
+decision, reviewed source hashes and later introduction provenance; it grants
+no shared framework implementation or additional verification exemption.
+
+The repair retains every original test assertion and invalid-input
+rejection, uses faithful service/port doubles that reject unexpected calls,
+and adds required-present narrowing and actual fixture/container declarations.
+The schema generator's model choices and the PDF fixture's authored byte logic
+remain unchanged. The inventory preserves all730 valid entries and adds only
+the four actual empty markers;734 is an observation, never a count-only gate.
+The initially prepared fifth marker was removed before commit when diagnosis
+showed that it changed the existing Foundation discovery namespace. The original
+Foundation namespace and all its other tests remain unchanged; only the approved
+taskctl test receives its necessary import correction. Diagnostic-driven
+follow-on repairs remain within the exact existing-test upper bound in TY01.
+
+Complete fresh unchanged quality, byte-sensitive outputs, affected existing
+tests and actual independent committed source/security/reference review are
+required. Every newly exposed error still blocks. The original196-error FAIL,
+the separate prelaunch transport failure and exact formatter debt stay retained.
+Fresh final integrated build/CSP/recovery evidence and all task/amendment/Wave
+reviews and release decisions remain due; no PASS is asserted by this note.

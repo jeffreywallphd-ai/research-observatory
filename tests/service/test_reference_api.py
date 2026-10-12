@@ -3,6 +3,7 @@
 import sys
 import unittest
 from pathlib import Path
+from unittest.mock import create_autospec
 
 from fastapi.testclient import TestClient
 
@@ -10,12 +11,17 @@ ROOT = Path(__file__).resolve().parents[2]
 sys.path[:0] = [str(ROOT / "services/core-api/src"), str(ROOT)]
 from research_observatory_core.app import create_app  # noqa: E402
 from research_observatory_core.authentication import capability_token_digest  # noqa: E402
+from research_observatory_core.document_revision_api import (  # noqa: E402
+    DocumentReferenceEnrichCommand,
+    DocumentReferenceReadCommand,
+)
+from research_observatory_core.document_revision_service import DocumentRevisionService  # noqa: E402
 from research_observatory_core.domain_contracts import new_uuid_v7  # noqa: E402
 
 
 class ReferenceApiTests(unittest.TestCase):
     def setUp(self):
-        self.calls = []
+        self.calls: list[DocumentReferenceEnrichCommand | DocumentReferenceReadCommand] = []
         owner = self
 
         class SyntheticService:
@@ -34,10 +40,18 @@ class ReferenceApiTests(unittest.TestCase):
 
             references_read = reference_enrich
 
+        behavior = SyntheticService()
+        service = create_autospec(DocumentRevisionService, instance=True, spec_set=True)
+        for name, member in vars(DocumentRevisionService).items():
+            if not name.startswith("_") and callable(member):
+                getattr(service, name).side_effect = AssertionError("unexpected service call in native route fixture")
+        for name in ("start", "shutdown", "signal_stop", "reference_enrich", "references_read"):
+            getattr(service, name).side_effect = getattr(behavior, name)
+
         self.client = self.enterContext(
             TestClient(
                 create_app(
-                    document_revisions=SyntheticService(),
+                    document_revisions=service,
                     capability_digest=capability_token_digest("a" * 64),
                     expected_authority="127.0.0.1:49152",
                 ),

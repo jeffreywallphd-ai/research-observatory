@@ -71,6 +71,7 @@ class ViewerObjectRangeTests(unittest.TestCase):
 
     def test_changed_inspect_rights_deny_every_range(self):
         current = self.f.f.rights.current(self.f.candidate.rights_subject, actor=self.f.f.corpus.actor)
+        assert current is not None
         self.f.f.publish_right(self.f.candidate, value="denied", predecessor=current.revision_id, inspect=True)
         with self.assertRaises(ObjectAccessDenied):
             self.read(0, 32)

@@ -21,7 +21,11 @@ sys.path.insert(0, str(SERVICE_SRC))
 from research_observatory_core.app import create_app  # noqa: E402
 from research_observatory_core.authentication import capability_token_digest  # noqa: E402
 from research_observatory_core.config import CoreSettings  # noqa: E402
-from research_observatory_core.projects import ProjectLifecycleProblem, ProjectLifecycleService  # noqa: E402
+from research_observatory_core.projects import (  # noqa: E402
+    ProjectLifecycleProblem,
+    ProjectLifecycleService,
+    _ProjectActionScope,
+)
 from research_observatory_core.repositories import (  # noqa: E402
     sqlite_dependency_impact_repository,
     sqlite_intent_revision_repository,
@@ -66,7 +70,7 @@ class ProjectLifecycleTests(unittest.TestCase):
     def test_nested_project_scope_is_local_to_the_held_guard_and_rechecks_metadata(self) -> None:
         project = self.create()
         self.service.open(root=project.root, trace_id=TRACE)
-        scopes = []
+        scopes: list[_ProjectActionScope] = []
 
         def current(path, identity):
             scope = scopes[0]

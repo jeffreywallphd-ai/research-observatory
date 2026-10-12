@@ -8,7 +8,7 @@ import unittest
 from dataclasses import replace
 from datetime import UTC, datetime
 from pathlib import Path
-from unittest.mock import patch
+from unittest.mock import create_autospec, patch
 
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / "services/core-api/src"))
@@ -21,6 +21,7 @@ from research_observatory_core.document_revision_api import DocumentParseCommand
 from research_observatory_core.document_revision_service import DocumentRevisionService  # noqa: E402
 from research_observatory_core.domain_contracts import new_uuid_v7  # noqa: E402
 from research_observatory_core.main import DocumentAttachmentRuntime  # noqa: E402
+from research_observatory_core.ports.reconciliation import ReconciliationConnectorSourceService  # noqa: E402
 from research_observatory_core.repositories import (  # noqa: E402
     _SqliteWorkflowQueueRepository,
     sqlite_intent_authority_snapshot,
@@ -75,7 +76,7 @@ class DocumentRevisionWorkflowTests(unittest.TestCase):
                 ).encode()
 
         self.running, self.cancelled = threading.Event(), threading.Event()
-        self.on_parse, self.delay = lambda: None, 0
+        self.on_parse, self.delay = lambda: None, 0.0
         self.controller = LocalAdmissionController(interactive_reserve=WorkerResources(1, 256 * 1024**2, 0, 0))
 
         def admission(path, project):
@@ -86,6 +87,17 @@ class DocumentRevisionWorkflowTests(unittest.TestCase):
             )
             return replace(binding, capacity=lambda: WorkerCapacity(8, 8 * 1024**3, 0, 8 * 1024**3))
 
+        connectors = create_autospec(ReconciliationConnectorSourceService, instance=True, spec_set=True)
+        for name in (
+            "reconciliation_pages",
+            "reconciliation_sources",
+            "reconciliation_source",
+            "reconciliation_address",
+        ):
+            getattr(connectors, name).side_effect = AssertionError(
+                "unexpected connector call in parser workflow fixture"
+            )
+
         self.service = DocumentRevisionService(
             DocumentAttachmentRuntime(
                 self.f.preview.service,
@@ -93,7 +105,7 @@ class DocumentRevisionWorkflowTests(unittest.TestCase):
                     self.f.preview.service._projects,
                     self.f.preview.service._privacy,
                     imports=self.f.preview.service,
-                    connectors=None,
+                    connectors=connectors,
                     repository_factory=lambda path, project: SqliteCorpusRepository(
                         path / "state/project.sqlite3", project
                     ),

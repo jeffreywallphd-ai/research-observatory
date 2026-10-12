@@ -33,7 +33,8 @@ class DocumentRevisionIndexTests(unittest.TestCase):
                         self.observations[0] += 1
                         return self.parent
 
-                nodes, identities = [], []
+                nodes: list[Node] = []
+                identities: list[SimpleNamespace] = []
                 for index in range(count):
                     parent = nodes[-1].node_id if nodes and topology == "chain" else None
                     node = Node(index, parent, reads)

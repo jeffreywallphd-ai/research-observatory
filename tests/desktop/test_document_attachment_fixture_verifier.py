@@ -8,12 +8,14 @@ import unittest
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(ROOT))
 sys.path.insert(0, str(ROOT / "tests/desktop/tools"))
 sys.path.insert(0, str(ROOT / "services/core-api/src"))
 
 from research_observatory_core.ports.repositories import AggregateRevision, AtomicRepositoryEvent  # noqa: E402
 from research_observatory_core.provenance import canonical_aggregate_provenance_event  # noqa: E402
-from verify_document_attachment_fixture import (  # noqa: E402
+
+from tests.desktop.tools.verify_document_attachment_fixture import (  # noqa: E402
     Expected,
     FixtureFailure,
     _project_id,

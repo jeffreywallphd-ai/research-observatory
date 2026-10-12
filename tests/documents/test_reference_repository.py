@@ -4,6 +4,7 @@ import sys
 import unittest
 from contextlib import closing
 from dataclasses import replace
+from operator import call
 from pathlib import Path
 from unittest.mock import patch
 
@@ -118,7 +119,7 @@ class ReferenceRepositoryTests(unittest.TestCase):
     def test_current_rights_and_human_principal_required_for_read_and_retry(self):
         command = self.command()
         self.repository.enrich(command)
-        self.f.actor = replace(self.f.actor, actor_type="worker")
+        self.f.actor = call(replace, self.f.actor, actor_type="worker")
         with self.assertRaises(DocumentRevisionProblem):
             self.repository.enrich(command)
         self.f.actor = replace(self.f.actor, actor_type="human")
@@ -191,7 +192,7 @@ class ReferenceRepositoryTests(unittest.TestCase):
             )
 
     def test_new_work_after_preparation_invalidates_complete_snapshot_without_partial_output(self):
-        fired = []
+        fired: list[bool] = []
 
         def change(step):
             if step == "reference-prepared" and not fired:

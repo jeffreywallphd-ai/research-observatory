@@ -74,6 +74,8 @@ class OwnedHttpsFixture:
         owner = self
 
         class Handler(BaseHTTPRequestHandler):
+            raw_requestline: bytes
+
             def do_GET(self):
                 owner.requests.append(self.raw_requestline + self.headers.as_bytes())
                 self.send_response(200)
@@ -168,9 +170,10 @@ class AcquisitionTlsTests(unittest.TestCase):
 class AcquisitionPrincipalTests(unittest.TestCase):
     @unittest.skipUnless(os.name == "nt", "Windows signed LPAC acquisition")
     def test_current_core_session_through_verified_tls_encrypted_stage_and_signed_lpac(self):
-        import sqlcipher3.dbapi2 as sqlcipher
         from fastapi.testclient import TestClient
         from research_observatory_core import storage
+
+        sqlcipher = storage.sqlcipher
         from research_observatory_core.app import create_app
         from research_observatory_core.authentication import capability_token_digest
         from research_observatory_core.corpus_repository import SqliteCorpusRepository
@@ -412,6 +415,7 @@ class AcquisitionPrincipalTests(unittest.TestCase):
         )
         retained_source = restarted.source_for_revision(attachment.document_revision_id, actor=selected.actor)
         self.assertIsNotNone(retained_source)
+        assert retained_source is not None
         location, receipt = retained_source
         self.assertEqual(selected.location, location)
         self.assertEqual("cc-by-4.0", location.license)
@@ -425,6 +429,7 @@ class AcquisitionPrincipalTests(unittest.TestCase):
             selected.objects.open_document_attachment(attachment.attachment_id, new_uuid_v7(), actor=selected.actor)
         prior_policy = selected.repository.rights.current(candidate.rights_subject, actor=selected.actor)
         self.assertIsNotNone(prior_policy)
+        assert prior_policy is not None
         selected.repository.rights.publish_draft(
             candidate.rights_subject,
             (

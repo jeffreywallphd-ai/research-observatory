@@ -303,7 +303,7 @@ class NativeResolutionCompositionTests(unittest.TestCase):
     def test_failed_or_foreign_source_resolution_closes_writer_before_protected_context(self):
         original = LocalSourceAnchorRepository._source
         for mode in ("failed", "foreign-project"):
-            connections = []
+            connections: list[storage.CanonicalConnection] = []
 
             def source(repository, connection, revision_id, mode=mode, connections=connections):
                 connections.append(connection)

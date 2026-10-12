@@ -17,7 +17,7 @@ from research_observatory_core.parsing.inspection import (  # noqa: E402
     prepare_inspection_request,
 )
 from research_observatory_core.parsing.pipeline import decode_delivery  # noqa: E402
-from research_observatory_core.parsing.requests import ParseCancelled, ParseFailure  # noqa: E402
+from research_observatory_core.parsing.requests import ParseCancelled, ParseFailure, ParseSuccess  # noqa: E402
 from research_observatory_core.ports.parsing import ParseProblem  # noqa: E402
 from research_observatory_core.ports.pdf_inspection import AuthenticatedInspectionDelivery  # noqa: E402
 
@@ -66,7 +66,9 @@ class PdfInspectionTests(unittest.TestCase):
         )
 
     def test_degraded_output_preserves_raw_text_and_explicit_missing_quality(self):
-        ir = decode_delivery(self.request, decode_inspection(self.request, self.delivery())).ir
+        result = decode_delivery(self.request, decode_inspection(self.request, self.delivery()))
+        assert isinstance(result, ParseSuccess)
+        ir = result.ir
         self.assertEqual("inspection-only", ir.disposition)
         self.assertEqual("Cafe\u0301 \ufffd", ir.text_projections[0].raw_text)
         self.assertEqual("Café \ufffd", ir.text_projections[0].normalized_text)

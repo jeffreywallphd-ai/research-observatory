@@ -16,7 +16,7 @@ import unittest
 from collections.abc import Callable
 from dataclasses import replace
 from pathlib import Path
-from typing import BinaryIO, cast
+from typing import BinaryIO, NoReturn, cast
 from unittest.mock import patch
 
 from fastapi.testclient import TestClient
@@ -27,7 +27,14 @@ sys.path.insert(0, str(REPO / "services/core-api/src"))
 from research_observatory_core.app import create_app
 from research_observatory_core.authentication import capability_token_digest
 from research_observatory_core.corpus_service import CorpusService
-from research_observatory_core.document_attachment_api import DocumentCommit, DocumentStageCommand, DocumentStatusQuery
+from research_observatory_core.document_attachment_api import (
+    DocumentAccessNeedCommand,
+    DocumentCandidateRecovery,
+    DocumentCommit,
+    DocumentRecoveryQuery,
+    DocumentStageCommand,
+    DocumentStatusQuery,
+)
 from research_observatory_core.document_attachment_repository import (
     AttachmentCandidate,
     AttachmentProblem,
@@ -36,6 +43,7 @@ from research_observatory_core.document_attachment_repository import (
 from research_observatory_core.domain_contracts import new_uuid_v7
 from research_observatory_core.import_preview_service import ImportPreviewService
 from research_observatory_core.main import DocumentAttachmentRuntime
+from research_observatory_core.ports.acquisition import AcquisitionSelection
 from research_observatory_core.ports.corpus import CorpusActor
 from research_observatory_core.ports.document_attachments import DocumentAttachment, DocumentAttachmentStatus
 from research_observatory_core.ports.import_previews import PreviewProblem
@@ -44,7 +52,7 @@ from research_observatory_core.reconciliation.contracts import SourceAddress
 from research_observatory_core.rights_policy import RightsSubject
 from research_observatory_core.storage import open_canonical_database
 
-from tests.documents import test_local_attachment as attachment_fixtures  # type: ignore[import-not-found]
+from tests.documents import test_local_attachment as attachment_fixtures
 
 
 class _AttachmentRuntime:
@@ -172,6 +180,39 @@ class _AttachmentRuntime:
 
     def commit(self, command: DocumentCommit, *, trace_id: str) -> DocumentAttachment:
         raise AssertionError("the route-double must not commit a document")
+
+    def acquisition_locations(
+        self, root: str, project_id: str, session_id: str, source_assertion_revision_id: str, *, trace_id: str
+    ) -> NoReturn:
+        raise AssertionError("unexpected acquisition locations call in route fixture")
+
+    def acquisition_preview(
+        self, root: str, project_id: str, session_id: str, selection: AcquisitionSelection, *, trace_id: str
+    ) -> NoReturn:
+        raise AssertionError("unexpected acquisition preview call in route fixture")
+
+    def acquisition_download(
+        self,
+        root: str,
+        project_id: str,
+        session_id: str,
+        preview_id: str,
+        *,
+        confirmation: str,
+        operation_id: str,
+        trace_id: str,
+        cancellation_requested: Callable[[], bool],
+    ) -> NoReturn:
+        raise AssertionError("unexpected acquisition download call in route fixture")
+
+    def recover_candidate(self, command: DocumentCandidateRecovery, *, trace_id: str) -> NoReturn:
+        raise AssertionError("unexpected candidate recovery call in route fixture")
+
+    def record_access_need(self, command: DocumentAccessNeedCommand, *, trace_id: str) -> NoReturn:
+        raise AssertionError("unexpected access need call in route fixture")
+
+    def retained_candidates(self, command: DocumentRecoveryQuery, *, trace_id: str) -> NoReturn:
+        raise AssertionError("unexpected retained candidates call in route fixture")
 
 
 class DocumentAttachmentApiTests(unittest.TestCase):

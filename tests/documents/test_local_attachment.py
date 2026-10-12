@@ -31,7 +31,7 @@ from research_observatory_core.document_attachment_repository import (  # noqa: 
 )
 from research_observatory_core.domain_contracts import new_uuid_v7  # noqa: E402
 from research_observatory_core.migrations import runner  # noqa: E402
-from research_observatory_core.object_store import create_local_object_store  # noqa: E402
+from research_observatory_core.object_store import _LocalObjectStore, create_local_object_store  # noqa: E402
 from research_observatory_core.ports.object_store import (  # noqa: E402
     ObjectAccessDenied,
     ObjectConflict,
@@ -552,7 +552,9 @@ class LocalAttachmentServiceTests(unittest.TestCase):
         f = self.corpus
         self.project_root = f.database.parent.parent
         self.keys = MemoryKeyProvider({"object-key-v1": b"Z" * 32}, "object-key-v1")
-        self.store = create_local_object_store(self.project_root, f.project, key_provider=self.keys)
+        store = create_local_object_store(self.project_root, f.project, key_provider=self.keys)
+        assert isinstance(store, _LocalObjectStore)
+        self.store = store
 
         def inspector(stream, *, filename, declared_media_type, cancel):
             self.assertEqual("paper.txt", filename)

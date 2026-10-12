@@ -739,6 +739,10 @@
     "workers/windows/file_paths.py",
     "workers/windows/parser_cpu_affinity.py",
     "workers/windows/parser_worker.py",
-    "workers/windows/parsing_launcher.py"
+    "workers/windows/parsing_launcher.py",
+    "tests/desktop/fixtures/__init__.py",
+    "tests/desktop/tools/__init__.py",
+    "tests/documents/__init__.py",
+    "tests/service/fixtures/__init__.py"
   ]
 }

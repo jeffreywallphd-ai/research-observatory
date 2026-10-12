@@ -8062,7 +8062,7 @@ class CorrectiveTaskWorkflowTests(unittest.TestCase):
                             self.assertTrue(wave_resume_record_errors(data, wave["id"], changed, clone))
 
     def test_approved_metadata_scope_retains_normal_exact_evidence_boundary(self) -> None:
-        from tests.foundation.test_ui_change_gate import UiChangeGateTests
+        from test_ui_change_gate import UiChangeGateTests
 
         helper = UiChangeGateTests()
         with tempfile.TemporaryDirectory() as temporary:

@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 428bc4c8f2b044ff9ea5c3dcd9162d06ee220405ae7256be994268bd4c71eb93
+source_sha256: 07def4fc3ab9e2e5c1e6c3e91be42ab01cbbb94645928938c64a2456c27426d9
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -3458,7 +3458,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 ### - [ ] W2.A06.T03 - Synchronize quality inventory and qualify the finite approved verification methods
 
-**Status / owner / review:** `BLOCKED` / codex-w2-implementation / - (`-`)
+**Status / owner / review:** `IN_PROGRESS` / codex-w2-implementation / - (`-`)
 
 **Dependencies:** `W2.A06.B00`, `W2.A06.T01`, `W2.A06.T02`
 
@@ -3485,7 +3485,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 **Current latest-review projection:** `-` by - at `-`
 
-**Latest notes:** -
+**Latest notes:** Reopened: Exact TY01 necessity-only typing scope and one-use recording exception approved by owner; proposal2d3f/readinessb7ac/decisionaa07/supplementc68 published at b075c9b with true provenance830e3ac. Preserve taskbase060623 and all original errors/guards; no quality/task/Wave/release approval.
 
 
 ## Linked corrective tasks

@@ -43,7 +43,11 @@ class ParserArtifactTests(unittest.TestCase):
         self.addCleanup(f.doCleanups)
         f.permit()
         self.database = f.fixture.corpus.database
-        self.objects = f.fixture.store
+        from research_observatory_core.object_store import _LocalObjectStore
+
+        objects = f.fixture.store
+        assert isinstance(objects, _LocalObjectStore)
+        self.objects = objects
         self.queue = _SqliteWorkflowQueueRepository(self.database, f.source.project_id)
         definition, snapshot, job_id = workflows.runnable_contracts()
         document = json.loads(json.dumps([definition, snapshot]).replace(workflows.PROJECT_ID, f.source.project_id))

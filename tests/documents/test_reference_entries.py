@@ -85,6 +85,7 @@ class ReferenceExtractionTests(unittest.TestCase):
         self.assertEqual([r.reference_id for r in value.structure.references], [e.reference_id for e in entries])
         for entry, original in zip(entries, value.structure.references, strict=True):
             self.assertEqual(original.raw_text, entry.raw_text_span)
+            assert entry.anchor is not None
             self.assertEqual(value.revision_id, entry.anchor.revision_id)
             self.assertEqual(original.node_id, entry.anchor.node_id)
             self.assertEqual("unverified", entry.scholarly_verification)
@@ -319,6 +320,8 @@ class ReferenceExtractionTests(unittest.TestCase):
         entry = extract_references(accepted_native(raw))[0]
         self.assertEqual("Cafe\u0301\r\n📚 synthetic", entry.raw_text)
         self.assertEqual("Café\n📚 synthetic", entry.normalized_text)
+        assert entry.anchor is not None
+        assert entry.anchor.quote is not None
         self.assertEqual("Café\n📚 synthetic", entry.anchor.quote.exact)
 
     def test_explicit_cancellation_fails_without_changing_accepted_value(self):

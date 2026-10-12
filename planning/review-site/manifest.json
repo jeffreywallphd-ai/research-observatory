@@ -49407,13 +49407,13 @@
         {
           "task_id": "W2.A06.T03",
           "title": "Synchronize quality inventory and qualify the finite approved verification methods",
-          "status": "BLOCKED",
+          "status": "IN_PROGRESS",
           "mode": "latest-review-only",
           "latest_review": {
             "reviewer": null,
             "result": null,
             "reviewed_at": null,
-            "notes": null
+            "notes": "Reopened: Exact TY01 necessity-only typing scope and one-use recording exception approved by owner; proposal2d3f/readinessb7ac/decisionaa07/supplementc68 published at b075c9b with true provenance830e3ac. Preserve taskbase060623 and all original errors/guards; no quality/task/Wave/release approval."
           },
           "review_control": null
         }

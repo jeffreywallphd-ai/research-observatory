@@ -13,7 +13,7 @@ import tempfile
 import unittest
 from contextlib import closing, contextmanager
 from pathlib import Path
-from unittest.mock import patch
+from unittest.mock import create_autospec, patch
 from zipfile import ZipFile
 
 REPO = Path(__file__).resolve().parents[2]
@@ -113,7 +113,9 @@ class LocationSelectionTests(unittest.TestCase):
             ),
             ("semantic-scholar", "openAccessPdf", {"url": "https://copies.example/d.pdf", "license": "cc-by-4.0"}),
         ):
-            replacements = (SourceField(namespace=provider, name=name, encoding="json", value=json.dumps(value)),)
+            replacements: tuple[SourceField, ...] = (
+                SourceField(namespace=provider, name=name, encoding="json", value=json.dumps(value)),
+            )
             if provider == "semantic-scholar":
                 replacements += (SourceField(namespace=provider, name="isOpenAccess", encoding="json", value="true"),)
             # Synthetic retained fields exercise optional provider observations;
@@ -226,7 +228,7 @@ class AcquisitionStreamTests(unittest.TestCase):
     def test_empty_chunk_loop_still_checks_deadline_and_cancellation(self):
         from research_observatory_core.ports.acquisition import AcquisitionProblem
 
-        checks = []
+        checks: list[None] = []
 
         def checkpoint():
             checks.append(None)
@@ -280,7 +282,7 @@ class AcquisitionStreamTests(unittest.TestCase):
         from research_observatory_core.acquisition.transport import _CheckedStream
         from research_observatory_core.ports.acquisition import AcquisitionProblem
 
-        checkpoints = []
+        checkpoints: list[None] = []
         reads = []
 
         def checkpoint():
@@ -412,6 +414,7 @@ class AcquisitionMigrationTests(unittest.TestCase):
         self.assertEqual(("0024_open_access_acquisition", "0025_document_intake_recovery"), plan.migration_ids)
         result = runner.migrate_database(self.database, expected_project_id=self.manifest["projectId"])
         self.assertEqual(before, self.rows())
+        assert result.backup_relative_path is not None
         with closing(sqlite3.connect(self.project / result.backup_relative_path)) as db:
             self.assertEqual(23, db.execute("PRAGMA user_version").fetchone()[0])
             self.assertEqual(self.manifest["schemaSha256"], _schema_fingerprint(db))
@@ -508,6 +511,7 @@ class AcquisitionIntegrationTests(unittest.TestCase):
         result = repo.reconcile(
             self.address, command_id=new_uuid_v7(), actor=reconcile_actor, resolve=lambda _address: self.source
         )
+        assert result.work_id is not None
         self.work_id = result.work_id
         with closing(open_canonical_database(self.database, expected_project_id=self.project)) as db:
             self.assertion_id = db.execute(
@@ -540,14 +544,18 @@ class AcquisitionIntegrationTests(unittest.TestCase):
             ).fetchone()[0]
         intents = sqlite_intent_revision_repository(Path(f.root), self.project)
         bridge = intents.project_identity()
+        assert bridge is not None
         _, revisions, _, _ = validated_workflow_authority(intents, expected_project_id=bridge.domain_project_id)
         intent = revisions[0]
+        intent_revision_id, intent_content_hash = intent["revisionId"], intent["revisionContentHash"]
+        assert isinstance(intent_revision_id, str)
+        assert isinstance(intent_content_hash, str)
         self.actor = CorpusActor(
             actor_id=new_uuid_v7(),
             trace_id="d" * 32,
             occurred_at=f.clock.now(),
-            intent_revision_id=intent["revisionId"],
-            intent_sha256=intent["revisionContentHash"].removeprefix("sha256:"),
+            intent_revision_id=intent_revision_id,
+            intent_sha256=intent_content_hash.removeprefix("sha256:"),
             policy_sha256=fingerprint(f.privacy.get(f.root).model_dump(mode="json", by_alias=True)).removeprefix(
                 "sha256:"
             ),
@@ -567,8 +575,10 @@ class AcquisitionIntegrationTests(unittest.TestCase):
             self.database, self.project, f.repository.source_record, self.attachments
         )
         self.location = self.repository.locations(self.assertion_id, actor=self.actor)[0]
-        self.calls = []
-        self.responses = [(200, [(b"content-type", b"text/plain")], [b"Synthetic acquired full text.\n"])]
+        self.calls: list[str] = []
+        self.responses: list[tuple[int, list[tuple[bytes, bytes]], list[bytes | Exception]]] = [
+            (200, [(b"content-type", b"text/plain")], [b"Synthetic acquired full text.\n"])
+        ]
         self.before_network = lambda: None
         self.during_stream = lambda: None
         owner = self
@@ -582,6 +592,9 @@ class AcquisitionIntegrationTests(unittest.TestCase):
                 status, headers, chunks = owner.responses.pop(0)
 
                 class Response:
+                    status: int
+                    headers: list[tuple[bytes, bytes]]
+
                     def iter_stream(self):
                         for chunk in chunks:
                             owner.during_stream()
@@ -631,10 +644,14 @@ class AcquisitionIntegrationTests(unittest.TestCase):
     def permission(self, value="permitted"):
         from research_observatory_core.domain_contracts import new_uuid_v7
         from research_observatory_core.ports.rights import RightsPermissionDraft
-        from research_observatory_core.rights_policy import RightsUse
+        from research_observatory_core.rights_policy import RightsAction, RightsUse
 
         subject = self.location.rights_subject
         prior = self.repository.rights.current(subject, actor=self.actor)
+        uses: tuple[tuple[RightsAction, str], ...] = (
+            ("store", "document-acquisition"),
+            ("inspect", "document-analysis"),
+        )
         permissions = tuple(
             RightsPermissionDraft(
                 use=RightsUse(action=action, purpose=purpose, destination_kind="local-project"),
@@ -646,7 +663,7 @@ class AcquisitionIntegrationTests(unittest.TestCase):
                 license_observation_revision_id=None,
                 entitlement_revision_id=None,
             )
-            for action, purpose in (("store", "document-acquisition"), ("inspect", "document-analysis"))
+            for action, purpose in uses
         )
         return self.repository.rights.publish_draft(
             subject,
@@ -793,18 +810,25 @@ class AcquisitionIntegrationTests(unittest.TestCase):
         self.assertEqual(0, self.count("document_acquisition_sources"))
 
     def test_runtime_session_loss_cancels_owned_post_transfer_inspection(self):
-        from types import SimpleNamespace
-
+        from research_observatory_core.corpus_service import CorpusService
         from research_observatory_core.domain_contracts import new_uuid_v7
+        from research_observatory_core.import_preview_service import ImportPreviewService
         from research_observatory_core.main import DocumentAttachmentRuntime
         from research_observatory_core.ports.object_store import ObjectStagingCancelled
 
         self.permission()
         preview = self.service.preview(self.selection(), actor=self.actor)
-        current_session = [self.session]
+        current_session: list[str | None] = [self.session]
+        imports = create_autospec(ImportPreviewService, instance=True, spec_set=True)
+        corpus = create_autospec(CorpusService, instance=True, spec_set=True)
+        for service, contract in ((imports, ImportPreviewService), (corpus, CorpusService)):
+            for name, member in vars(contract).items():
+                if not name.startswith("_") and callable(member):
+                    getattr(service, name).side_effect = AssertionError("unexpected session-loss fixture service call")
+        imports.native_context.side_effect = lambda *_args: current_session[0]
         runtime = DocumentAttachmentRuntime(
-            SimpleNamespace(native_context=lambda *_args: current_session[0]),
-            None,
+            imports,
+            corpus,
             lambda *_args: self.objects,
         )
         original_inspect = self.attachments._inspector
@@ -858,6 +882,7 @@ class AcquisitionIntegrationTests(unittest.TestCase):
 
         self.permission()
         data = self.responses[0][2][0]
+        assert isinstance(data, bytes)
         candidate = self.acquire(expected_sha256=hashlib.sha256(data).hexdigest())
         attachment = self.attachments.commit(
             candidate.candidate_id,
@@ -873,7 +898,9 @@ class AcquisitionIntegrationTests(unittest.TestCase):
         restarted = AcquisitionRepository(
             self.database, self.project, self.fixture.repository.source_record, self.attachments
         )
-        location, receipt = restarted.source_for_revision(attachment.document_revision_id, actor=self.actor)
+        retained_source = restarted.source_for_revision(attachment.document_revision_id, actor=self.actor)
+        assert retained_source is not None
+        location, receipt = retained_source
         self.assertEqual(self.location, location)
         self.assertEqual("cc-by-4.0", location.license)
         self.assertEqual("acceptedVersion", location.version)
@@ -1014,7 +1041,7 @@ class AcquisitionIntegrationTests(unittest.TestCase):
                 "response-invalid",
             ),
         ):
-            self.responses = [(200, headers, chunks)]
+            self.responses = [(200, headers, [*chunks])]
             with self.subTest(code=code), self.assertRaisesRegex(AcquisitionProblem, code):
                 self.acquire()
         self.assertEqual(0, self.count("document_attachment_candidates"))
@@ -1117,7 +1144,9 @@ class AcquisitionIntegrationTests(unittest.TestCase):
         self.permission()
         candidate = self.acquire()
         attachment = self.commit(candidate)
-        _, receipt = self.repository.source_for_revision(attachment.document_revision_id, actor=self.actor)
+        retained_source = self.repository.source_for_revision(attachment.document_revision_id, actor=self.actor)
+        assert retained_source is not None
+        _, receipt = retained_source
         self.assertIsNone(receipt.expected_sha256)
         with closing(open_canonical_database(self.database, expected_project_id=self.project)) as db:
             for table in (

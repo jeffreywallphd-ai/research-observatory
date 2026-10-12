@@ -14,7 +14,7 @@ sys.path.insert(0, str(ROOT))
 sys.path.insert(0, str(ROOT / "services/core-api/src"))
 sys.path.insert(0, str(ROOT / "tests/service/fixtures"))
 
-from native_integration_sidecar import _StageExceptionProbe  # noqa: E402
+from tests.service.fixtures.native_integration_sidecar import _StageExceptionProbe  # noqa: E402
 
 
 class DocumentStageFixtureProbeTests(unittest.TestCase):

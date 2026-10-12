@@ -53,5 +53,4 @@ class ViewerArtifactBudgetTests(unittest.TestCase):
         self.assertEqual(32 * 1024 * 1024, viewer_core_allowance(128 * 1024 * 1024))
         self.assertEqual(150 * 1024 * 1024, viewer_core_allowance(10 * 1024 * 1024))
         for invalid in (True, -1, 0, 128 * 1024 * 1024 + 1, 1.5):
-            with self.assertRaisesRegex(DocumentRevisionProblem, "viewer-resource-limit"):
-                viewer_core_allowance(invalid)
+            self.assertRaisesRegex(DocumentRevisionProblem, "viewer-resource-limit", viewer_core_allowance, invalid)

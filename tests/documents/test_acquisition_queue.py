@@ -140,9 +140,20 @@ class AcquisitionQueueTests(unittest.TestCase):
             policy=ProjectWorkerPolicy(c.project, demand, {"document": demand}, {"document": 1}),
         )
         binding = replace(binding, capacity=lambda: WorkerCapacity(16, 16 * 1024**3, 0, 64 * 1024**3))
-        runtime = DocumentAttachmentRuntime(
-            c.fixture.service, c.fixture.service, lambda *_: c.objects, admission_factory=lambda *_: binding
-        )
+        from unittest.mock import create_autospec
+
+        from research_observatory_core.corpus_service import CorpusService
+        from research_observatory_core.import_preview_service import ImportPreviewService
+
+        imports = create_autospec(ImportPreviewService, instance=True, spec_set=True)
+        corpus = create_autospec(CorpusService, instance=True, spec_set=True)
+        for service, contract in ((imports, ImportPreviewService), (corpus, CorpusService)):
+            for name, member in vars(contract).items():
+                if not name.startswith("_") and callable(member):
+                    getattr(service, name).side_effect = AssertionError(
+                        "unexpected acquisition reservation fixture call"
+                    )
+        runtime = DocumentAttachmentRuntime(imports, corpus, lambda *_: c.objects, admission_factory=lambda *_: binding)
         held = controller.reserve(binding, "document", local_limit=1)
         self.assertIsNotNone(held)
         operation = new_uuid_v7()
@@ -161,7 +172,10 @@ class AcquisitionQueueTests(unittest.TestCase):
             self.assertEqual(0, c.count("document_intake_jobs"))
             self.assertEqual([], c.calls)
             controller.release(held)
-            with patch.object(c.fixture.service, "native_context", return_value=c.session, create=True):
+            with (
+                patch.object(imports.native_context, "side_effect", None),
+                patch.object(imports.native_context, "return_value", c.session),
+            ):
                 runtime.acquisition_download(
                     c.fixture.root,
                     c.project,

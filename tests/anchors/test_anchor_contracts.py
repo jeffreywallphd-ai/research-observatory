@@ -20,7 +20,7 @@ from research_observatory_core.document_revisions import (  # noqa: E402
     content_sha256,
     protected_json,
 )
-from research_observatory_core.parsing.contracts import DocumentIR, TextProjection  # noqa: E402
+from research_observatory_core.parsing.contracts import CodepointRange, DocumentIR, TextProjection  # noqa: E402
 
 from tests.parsing import contract_fixtures as f  # noqa: E402
 
@@ -90,13 +90,15 @@ class AnchorContractTests(unittest.TestCase):
         return AnchorSelection(
             revision_id=value.revision_id,
             node_id=value.structure.nodes[0].node_id,
-            normalized_range={"start": start, "end": end},
+            normalized_range=CodepointRange(start=start, end=end),
         )
 
     def test_repeated_quote_keeps_exact_position_and_serialized_identity(self):
         value = accepted()
         target = build_target(value, self.selection(value, 28, 45))
+        assert target.quote is not None
         self.assertEqual("Synthetic passage", target.quote.exact)
+        assert target.text_position is not None
         self.assertEqual(28, target.text_position.start)
         self.assertEqual(value.revision_id, target.revision_id)
         self.assertEqual(value.structure.nodes[0].node_id, target.node_id)
@@ -107,6 +109,8 @@ class AnchorContractTests(unittest.TestCase):
     def test_nfc_crlf_and_supplementary_offsets_are_codepoints(self):
         value = accepted("Cafe\u0301\r\n\U0001f4da research")
         target = build_target(value, self.selection(value, 5, 6))
+        assert target.quote is not None
+        assert target.context is not None
         self.assertEqual("\U0001f4da", target.quote.exact)
         self.assertEqual("Caf\u00e9\n\U0001f4da research", target.context.text)
         self.assertEqual(5, target.context.highlight.start)
@@ -118,6 +122,7 @@ class AnchorContractTests(unittest.TestCase):
         value = accepted(geometry=True)
         target = build_target(value, self.selection(value))
         region = target.page_region
+        assert region is not None
         self.assertEqual(0, region.page_index)
         self.assertEqual(1, region.page_number)
         self.assertEqual((0.1, 0.2, 0.5, 0.5), (region.x0, region.y0, region.x1, region.y1))
@@ -131,6 +136,7 @@ class AnchorContractTests(unittest.TestCase):
         target = build_target(value, self.selection(value))
         self.assertIsNone(target.page_region)
         self.assertEqual("format-has-no-pages", target.coordinates_state)
+        assert target.quote is not None
         self.assertEqual("Synthetic passage", target.quote.exact)
 
     def test_wrong_revision_node_or_outside_node_span_is_denied(self):
@@ -160,6 +166,8 @@ class AnchorContractTests(unittest.TestCase):
     def test_protected_context_is_bounded_without_shifting_selected_span(self):
         value = accepted("a" * 20_000 + "chosen" + "z" * 20_000)
         target = build_target(value, self.selection(value, 20_000, 20_006))
+        assert target.quote is not None
+        assert target.context is not None
         self.assertEqual("chosen", target.quote.exact)
         self.assertLessEqual(len(target.context.text), 8192)
         self.assertEqual(20_000, target.context.start + target.context.highlight.start)

@@ -134,8 +134,9 @@ class PdfPageTests(unittest.TestCase):
         self.assertIsNone(failure.exception.__context__)
         worker.reset_mock()
         for cancellation in (lambda: True, lambda: "invalid"):
-            with self.assertRaises(ParseProblem):
-                render_page(self.request, 1, worker, sources, actor=Mock(), cancelled=cancellation)
+            self.assertRaises(
+                ParseProblem, render_page, self.request, 1, worker, sources, actor=Mock(), cancelled=cancellation
+            )
         worker.render_page.assert_not_called()
         sources.denied = False
         observations = iter((False, True, False))

@@ -141,6 +141,12 @@ class CitationServiceTests(unittest.TestCase):
         for name in ("projects", "vault", "temporary", "application-data", "webview"):
             (root / name).mkdir()
         selected = seed(root)
+
+        def identity(key: str) -> str:
+            value = selected[key]
+            assert isinstance(value, str)
+            return value
+
         project = root / "projects/document-drop-project"
         helper = runtime_fixture.ImportRuntimeCompositionTests()
         app = create_runtime_app(
@@ -161,7 +167,7 @@ class CitationServiceTests(unittest.TestCase):
             revisions = app.state.runtime.document_revisions
             revisions.shutdown()  # No installed model/parser can claim the authored fixture.
             runtime = app.state.runtime.attachments
-            session = runtime.context(str(project), selected["projectId"])
+            session = runtime.context(str(project), identity("projectId"))
 
             source_bytes = io.BytesIO()
             if paged:
@@ -181,18 +187,18 @@ class CitationServiceTests(unittest.TestCase):
                     )
 
                 local = LocalDocumentAttachmentService(
-                    service._database, selected["projectId"], service._objects, inspector=inspect
+                    service._database, identity("projectId"), service._objects, inspector=inspect
                 )
                 operation = new_uuid_v7()
                 candidate = local.stage(
                     source_bytes,
                     source_name="synthetic-fifty-page.pdf" if paged else "synthetic-reference.txt",
                     declared_media_type="application/pdf" if paged else "text/plain",
-                    source_assertion_revision_id=selected["sourceAssertionRevisionId"],
-                    work_id=selected["workId"],
-                    work_revision_id=selected["workRevisionId"],
-                    version_id=selected["versionId"],
-                    version_revision_id=selected["versionRevisionId"],
+                    source_assertion_revision_id=identity("sourceAssertionRevisionId"),
+                    work_id=identity("workId"),
+                    work_revision_id=identity("workRevisionId"),
+                    version_id=identity("versionId"),
+                    version_revision_id=identity("versionRevisionId"),
                     actor=actor,
                     operation_id=operation,
                     session_id=session,
@@ -206,24 +212,21 @@ class CitationServiceTests(unittest.TestCase):
                     session_id=session,
                     match_confirmed=True,
                     permitted_use="project-only",
-                    exact_selection=tuple(
-                        selected[k]
-                        for k in (
-                            "sourceAssertionRevisionId",
-                            "workId",
-                            "workRevisionId",
-                            "versionId",
-                            "versionRevisionId",
-                        )
+                    exact_selection=(
+                        identity("sourceAssertionRevisionId"),
+                        identity("workId"),
+                        identity("workRevisionId"),
+                        identity("versionId"),
+                        identity("versionRevisionId"),
                     ),
                 )
                 return candidate, attached
 
-            candidate, attached = runtime._action(str(project), selected["projectId"], session, "1" * 32, attach)
-            publish_derive(runtime, project, selected["projectId"], session, candidate, "permitted")
+            candidate, attached = runtime._action(str(project), identity("projectId"), session, "1" * 32, attach)
+            publish_derive(runtime, project, identity("projectId"), session, candidate, "permitted")
             if paged:
                 accepted = seed_paged_citation_revision(
-                    app, project, selected["projectId"], session, attached.attachment_id
+                    app, project, identity("projectId"), session, attached.attachment_id
                 )
                 self.assertEqual(50, len(accepted.structure.pages))
                 self.assertGreater(len(accepted.model_dump_json(by_alias=True).encode()), 60000)
@@ -231,13 +234,13 @@ class CitationServiceTests(unittest.TestCase):
                 accepted = seed_revision(
                     app,
                     project,
-                    selected["projectId"],
+                    identity("projectId"),
                     session,
                     attached.attachment_id,
                     RAW,
                     change=lambda value: citation_ir(value, raw=RAW, identifier="10.99999/document-drop"),
                 )
-            address = {"root": str(project), "projectId": selected["projectId"], "sessionId": session}
+            address = {"root": str(project), "projectId": identity("projectId"), "sessionId": session}
 
             def post(action, fields):
                 return client.post("/native/document-revisions/" + action, json={**address, **fields})
@@ -273,7 +276,7 @@ class CitationServiceTests(unittest.TestCase):
             self.assertEqual("[1]", page["entries"][0]["markerPreview"])
             self.assertEqual("candidate", page["entries"][0]["resolution"])
             self.assertIn("Missing [9]", page["entries"][0]["paragraph"]["textPreview"])
-            self.assertEqual(selected["workId"], page["entries"][0]["targets"][0]["references"][0]["target"]["workId"])
+            self.assertEqual(identity("workId"), page["entries"][0]["targets"][0]["references"][0]["target"]["workId"])
             self.assertEqual("unverified", page["scholarlyVerification"])
             self.assertEqual(page, post("citations-enrich", dict(enrichment=command)).json())
             next_page = post(
@@ -293,16 +296,16 @@ class CitationServiceTests(unittest.TestCase):
                 self.assertEqual(200, limited.status_code, limited.text)
                 self.assertEqual("viewer-resource-limit", limited.json()["reasonCode"])
                 self.assertNotIn("markerPreview", limited.text)
-            publish_derive(runtime, project, selected["projectId"], session, candidate, "denied")
+            publish_derive(runtime, project, identity("projectId"), session, candidate, "denied")
             denied = post("citations-read", read)
             self.assertEqual(409, denied.status_code)
             self.assertNotIn("markerPreview", denied.text)
             self.assertNotIn("collectionRevisionId", denied.text)
-            publish_derive(runtime, project, selected["projectId"], session, candidate, "permitted")
+            publish_derive(runtime, project, identity("projectId"), session, candidate, "permitted")
             self.assertEqual(200, client.post("/projects/close", json={"root": str(project)}).status_code)
             self.assertEqual(200, client.post("/projects/open", json={"root": str(project)}).status_code)
             self.assertEqual(409, post("citations-read", read).status_code)
-            session = runtime.context(str(project), selected["projectId"])
+            session = runtime.context(str(project), identity("projectId"))
             address["sessionId"] = session
             self.assertEqual(page, post("citations-read", read).json())
             refreshed = post(
@@ -332,7 +335,7 @@ class CitationServiceTests(unittest.TestCase):
             self.assertEqual(replacement.json(), post("citations-enrich", dict(enrichment=new_command)).json())
             self.assertEqual(
                 accepted,
-                revisions._repository(str(project), selected["projectId"], session, "1" * 32)[0].read(
+                revisions._repository(str(project), identity("projectId"), session, "1" * 32)[0].read(
                     accepted.revision_id
                 ),
             )

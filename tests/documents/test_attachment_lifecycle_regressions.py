@@ -32,7 +32,7 @@ from research_observatory_core.migrations.versions import v0023_attachment_opera
 from research_observatory_core.ports.import_previews import PreviewProblem
 from research_observatory_core.storage import DATABASE_SCHEMA_VERSION, open_canonical_database
 
-from tests.documents import test_local_attachment as attachment_fixtures  # type: ignore[import-not-found]
+from tests.documents import test_local_attachment as attachment_fixtures
 
 
 class AttachmentLifecycleRegressionTests(unittest.TestCase):

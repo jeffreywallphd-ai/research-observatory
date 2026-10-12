@@ -8,7 +8,9 @@ import tempfile
 import types
 import unittest
 import zipfile
+from importlib.abc import Loader as SourceLoader
 from pathlib import Path
+from unittest.mock import patch
 
 REPO = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(REPO))
@@ -43,7 +45,7 @@ class ParserSourceBundleTests(unittest.TestCase):
             root = Path(temporary)
             self.bundle(root)
 
-            class Loader:
+            class Loader(SourceLoader):
                 path = str(root / "torch/synthetic.py")
 
                 def get_source(self, fullname):
@@ -54,16 +56,15 @@ class ParserSourceBundleTests(unittest.TestCase):
             module.__file__, module.__loader__ = loader.path, loader
             exec(compile(self.source, loader.path, "exec"), module.__dict__)
             sys.modules[module.__name__] = module
-            original = Loader.get_source
-            try:
-                with self.assertRaises(OSError):
-                    inspect.getsource(module.declared_function)
-                install_source_loader(root, Loader)
-                self.assertEqual(self.source.decode(), inspect.getsource(module.declared_function))
-                self.assertFalse(Path(loader.path).exists())
-            finally:
-                Loader.get_source = original
-                sys.modules.pop(module.__name__, None)
+            with patch.object(Loader, "get_source", Loader.get_source):
+                try:
+                    with self.assertRaises(OSError):
+                        inspect.getsource(module.declared_function)
+                    install_source_loader(root, Loader)
+                    self.assertEqual(self.source.decode(), inspect.getsource(module.declared_function))
+                    self.assertFalse(Path(loader.path).exists())
+                finally:
+                    sys.modules.pop(module.__name__, None)
 
     def test_unlisted_traversal_or_altered_archive_fails_closed(self):
         with tempfile.TemporaryDirectory(dir=REPO / "artifacts/tmp") as temporary:

@@ -5,6 +5,7 @@ import sys
 import unittest
 from contextlib import closing
 from dataclasses import replace
+from operator import call
 from pathlib import Path
 from unittest.mock import patch
 
@@ -155,7 +156,7 @@ class CitationRepositoryTests(unittest.TestCase):
     def test_current_rights_principal_and_target_authority_are_required(self):
         command = self.command()
         self.repository.enrich(command)
-        self.f.actor = replace(self.f.actor, actor_type="worker")
+        self.f.actor = call(replace, self.f.actor, actor_type="worker")
         with self.assertRaises(DocumentRevisionProblem):
             self.repository.read(self.accepted.revision_id)
         self.f.actor = replace(self.f.actor, actor_type="human")
@@ -201,7 +202,7 @@ class CitationRepositoryTests(unittest.TestCase):
         self.assertIsNotNone(self.repository.enrich(self.command()))
 
     def test_concurrent_reference_refresh_cannot_publish_stale_target_context(self):
-        fired = []
+        fired: list[bool] = []
 
         def refresh(step):
             if step == "citation-prepared" and not fired:

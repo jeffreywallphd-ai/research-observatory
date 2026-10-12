@@ -4,6 +4,8 @@ import json
 import sys
 import unittest
 from pathlib import Path
+from typing import TypedDict
+from unittest.mock import create_autospec
 
 from fastapi.testclient import TestClient
 
@@ -12,12 +14,32 @@ sys.path.insert(0, str(ROOT / "services/core-api/src"))
 
 from research_observatory_core.app import create_app  # noqa: E402
 from research_observatory_core.authentication import capability_token_digest  # noqa: E402
+from research_observatory_core.document_revision_api import (  # noqa: E402
+    CitationLinksCommand,
+    SourceAnchorCreateCommand,
+    SourceAnchorReadCommand,
+)
+from research_observatory_core.document_revision_service import DocumentRevisionService  # noqa: E402
 from research_observatory_core.domain_contracts import new_uuid_v7  # noqa: E402
+
+
+class SelectionWire(TypedDict):
+    revisionId: str
+    nodeId: str
+    normalizedRange: dict[str, int]
+
+
+class AnchorCreateWire(TypedDict):
+    root: str
+    projectId: str
+    sessionId: str
+    commandId: str
+    selection: SelectionWire
 
 
 class SourceAnchorApiTests(unittest.TestCase):
     def setUp(self):
-        self.calls = []
+        self.calls: list[SourceAnchorCreateCommand | SourceAnchorReadCommand | CitationLinksCommand] = []
         owner = self
 
         class SyntheticService:
@@ -37,10 +59,18 @@ class SourceAnchorApiTests(unittest.TestCase):
             anchor_resolve = anchor_create
             citation_links = anchor_create
 
+        behavior = SyntheticService()
+        service = create_autospec(DocumentRevisionService, instance=True, spec_set=True)
+        for name, member in vars(DocumentRevisionService).items():
+            if not name.startswith("_") and callable(member):
+                getattr(service, name).side_effect = AssertionError("unexpected service call in native route fixture")
+        for name in ("start", "shutdown", "signal_stop", "anchor_create", "anchor_resolve", "citation_links"):
+            getattr(service, name).side_effect = getattr(behavior, name)
+
         self.client = self.enterContext(
             TestClient(
                 create_app(
-                    document_revisions=SyntheticService(),
+                    document_revisions=service,
                     capability_digest=capability_token_digest("a" * 64),
                     expected_authority="127.0.0.1:49152",
                 ),
@@ -49,7 +79,7 @@ class SourceAnchorApiTests(unittest.TestCase):
                 client=("127.0.0.1", 50000),
             )
         )
-        self.command = {
+        self.command: AnchorCreateWire = {
             "root": "C:/synthetic-project",
             "projectId": new_uuid_v7(),
             "sessionId": "b" * 32,
