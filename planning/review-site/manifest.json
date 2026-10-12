@@ -49407,7 +49407,7 @@
         {
           "task_id": "W2.A06.T03",
           "title": "Synchronize quality inventory and qualify the finite approved verification methods",
-          "status": "READY",
+          "status": "IN_PROGRESS",
           "mode": "latest-review-only",
           "latest_review": {
             "reviewer": null,

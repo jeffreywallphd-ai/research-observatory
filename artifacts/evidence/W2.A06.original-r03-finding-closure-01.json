@@ -1,0 +1,129 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "append-only-original-recovery-finding-closure",
+  "taskId": "W2.A06.T03",
+  "canonicalFindingId": "CAP-05.S06.restart-boundary-r10-R01-F01",
+  "findingDisposition": "CLOSED_FOR_EXACT_ORIGINAL_R03",
+  "recordedAt": "2026-10-12T18:50:08.933868+00:00",
+  "executedCandidate": "2d2d4e34eadba04e71a1d939eff6e46116d8adb0",
+  "independentDisposition": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/r03-option-B-original-finding-independent-disposition-01.json",
+    "sha256": "5bf2320188b6be9454dfce38a21ef6d8e8820521bdfc01299128172b961aeb4a",
+    "reviewer": "agent:/root/a03_t01_lineage_audit",
+    "result": "NARROW_EXACT_ORIGINAL_R03_F01_CLOSURE_SUPPORTED"
+  },
+  "scope": "Approved ECR-0014 legacyOriginalFixtureOption; exact original CAP-05.S06 R03 one-use operator copy only",
+  "criterionLinkedDisposition": {
+    "isolatedRecoveryCopy": "One fresh private owned copy of the exact original R03 was verified before no-replace publication. The original portable signature and session.lock SHA remained unchanged. The old lock was byte-identically archived under copied logs and removed only as operational authority in the copy. The destination exists with no incomplete marker; earlier adverse copies remain quarantined.",
+    "ordinaryNativeCore": "Raw Native JSONL ends with three genuine public 200 responses on the recovered copy: read-write /projects/open, /projects/intent with the exact baseline accepted revisionId and accepted status, and /projects/close. The report binds created/opened/closed same-owner witness facts; the owned Job ended at active0 of total4. Six newly issued immutable witness files currently hash to the report, and previous vault files were reported byte/identity unchanged.",
+    "originalAuthorityAndCustody": "Prior append-only independent custody and key-link dispositions authenticate retained R10 actual Job/lock/Core source lineage, seven original Win32 directory identities, current owner PID object absence (87), local-SAM relation, unchanged original key version and protected source facts. Original old-host/SID/PID-birth witness was never captured; the Job-to-lock/host continuity is expressly an inference admitted only for this finite B. No contrary evidence appeared in the held actual run.",
+    "priorAdversePreserved": "Attempts 04, 05, 06, 08 remain FAIL evidence; 06 and 08 retained quarantined copies. The final source10 result does not relabel them as passes.",
+    "protectedReadback": "The actual source10 report records original, pre-publication copy and post-Native same-copy current-user-key protected snapshots exactly equal. SQLCipher MAC/integrity/schema checks, allowed accepted and machine revision wire payloads, two retained parser receipts/payloads, full comparison record, complete 987 canonical cell facts, and all 12 object metadata/ciphertexts/physical membership were checked against the original baseline. No permitted retained proposal delta was observed. The one unknown-rights source remained opaque; its ordinary ObjectStore.open was denied before stream. Generic typed all-object verifier PASS is expressly not claimed."
+  },
+  "evidence": [
+    {
+      "path": "planning/enabler-change-requests/ECR-0014.md",
+      "sha256": "7c70aeebc5a60ab606bd5f6170b48e2012becab8cf7547f7ad8cd75482291496"
+    },
+    {
+      "path": "planning/wave-amendment-approvals/W2.A06.json",
+      "sha256": "3ecf2b98806f1589be7bd63fcc4f25cf0ee2df79bc95a3a0fefda2ce5666e4b2"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.restart-boundary-r10.independent-disposition-01.json",
+      "sha256": "6b85c1c7de15c0de6b96c4cb182a1da4a829aae427962c50315bf2e9054ddc81"
+    },
+    {
+      "path": "artifacts/tmp/CAP-05.S06.shipping-baseline-02.full-r10.before.json",
+      "sha256": "295ac94ceca3cecc1f8fab05fe10c4e15b26a51fb12e971f373780e90695d0d0"
+    },
+    {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/r03-option-B-current-custody-independent-disposition-01.json",
+      "sha256": "a6ea67e2a0e6ed77681306b215518fae3155ef36e7c63d83e40b8f2ead05f918"
+    },
+    {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/r03-option-B-current-custody-independent-disposition-01.clarification-01.json",
+      "sha256": "0633c4864474bf57c89adaa95ffb029ca65033289a6694c5465dd2de04ac70f5"
+    },
+    {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/r03-option-B-protected-key-link-independent-disposition-02.json",
+      "sha256": "df59ec7fe4fe9cfd218bf64b48fc7c594a25d91b6488036506fd755e0e4a74c7"
+    },
+    {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/r03-option-B-unknown-rights-boundary-clarification-02.json",
+      "sha256": "ea1ac5e38b30377c1a36cadc776673f1d7a3afd38d3481551797a3d868877649"
+    },
+    {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/r03-option-B-one-use-operator-10.py",
+      "sha256": "4b93a00ab7aa478f121cf6cc2b552c1b0e7749e8429f10dc135ae617d279b7cd"
+    },
+    {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/r03-option-B-one-use-operator-10.source-readiness.json",
+      "sha256": "a670b6358e9f95ba0abcc87a806da802f062bd6226f21307e757ed1bf123276d"
+    },
+    {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/r03-option-B-one-use-operator-10.report.json",
+      "sha256": "d4dbc12c2a8dcfc998007f93dfa61122069a93f3d4cf56cf41c163063ff6c99d"
+    },
+    {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/r03-option-B-one-use-operator-10.actual-process-output.log",
+      "sha256": "cf9618ac18e8a223cca4ae28455e964fef5c2254bdc1d62d63f0549d8e0e6dc3"
+    },
+    {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/r03-option-B-one-use-operator-10.native.stdout.jsonl",
+      "sha256": "ddaea8fb0bfbe1889d89ba47344c5a5acaa3b9aced2b26d734711130206f2392"
+    },
+    {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/r03-option-B-one-use-operator-10.native.stderr.log",
+      "sha256": "425d68cce5f2b87195c7b4873bc5c857ff2a2af3f5aee605812aa6ac143956e6"
+    }
+  ],
+  "adverseAttempts": [
+    {
+      "attempt": "04",
+      "copyAttempted": false,
+      "ordinaryNativeOpenAttempted": false,
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/r03-option-B-one-use-operator-04.report.json",
+      "preservedOwnedCopy": null,
+      "sha256": "bd5c6a468bcfbedeb7a0ebe55ecefb4ae295a02fbfea211575b7af6a8d3fc0c8",
+      "status": "FAIL"
+    },
+    {
+      "attempt": "05",
+      "copyAttempted": false,
+      "ordinaryNativeOpenAttempted": false,
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/r03-option-B-one-use-operator-05.report.json",
+      "preservedOwnedCopy": null,
+      "sha256": "3707083859d8099724a7353387ea130decee87589c1739d60109122d10fa0cd1",
+      "status": "FAIL"
+    },
+    {
+      "attempt": "06",
+      "copyAttempted": true,
+      "ordinaryNativeOpenAttempted": false,
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/r03-option-B-one-use-operator-06.report.json",
+      "preservedOwnedCopy": "artifacts/tmp/directory-dialog-s06-shipping-20261011-r03/projects/.bf1",
+      "sha256": "8972e6166c3f85fa4af16e8c9faf61833316374bb0faa665341a5ba698a1bf37",
+      "status": "FAIL"
+    },
+    {
+      "attempt": "08",
+      "copyAttempted": true,
+      "ordinaryNativeOpenAttempted": true,
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/r03-option-B-one-use-operator-08.report.json",
+      "preservedOwnedCopy": "artifacts/tmp/directory-dialog-s06-shipping-20261011-r03/projects/.cf1",
+      "sha256": "818fc2dfc28641a5043da45f2bce54d5604f601a3603f5b380c35bd12c617dc4",
+      "status": "FAIL"
+    }
+  ],
+  "limits": [
+    "Closure is narrow to the actual original R03 finding under approved one-use Option B. It does not qualify generic legacy recovery A, arbitrary restarts, a new whole-process product witness, all W2 recovery, W2 exit, or release.",
+    "No physical original-host or old SID/PID-birth witness is invented; retained custody/Job source linkage remains a disclosed finite-route inference. Known migration or contrary host evidence would invalidate this route.",
+    "The public Native/Core readback was open, accepted Intent, close. Allowed scholarly baseline and complete canonical/opaque ciphertexts were independently read via real current-user key on the same copy after that open/close. No internal Native document bridge call or raw unknown-rights payload read is claimed.",
+    "The reviewer authenticated source, receipts, raw Native responses and current bounded files read-only. The parent reported process exit 0 in its execution tool result; no separate machine execution receipt was present among the source10 files. Original fixture/vault/current project were not mutated by this review."
+  ],
+  "physicalSecondWindowsInstallationTest": "UNTESTED; approved deferral to first available independent Windows installation, required by W5 exit",
+  "productRecoveryQualifiedByThisRecord": false,
+  "waveQualified": false,
+  "releaseApproved": false
+}

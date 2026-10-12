@@ -63192,14 +63192,17 @@ wave_amendments:
       controls, fresh standard frontend/Native/Core build/package/current-reference capture and affected integrated recovery/UI
       tests; independent combined security/verification disposition.
     packet_task_sha256: 79b25773fece0b6c557c7cde1276031a0a88225d99c03d92c1644bc2fbd1cd0e
-    status: READY
-    owner: null
-    branch: null
-    base_sha: null
-    worktree: null
-    lease: null
-    started_at: null
-    updated_at: '2026-10-12T17:57:59+00:00'
+    status: IN_PROGRESS
+    owner: codex-w2-implementation
+    branch: codex/w2-implementation
+    base_sha: 060623d7fef3274f69168a7a2e21b35a157f3efa
+    worktree: .
+    lease:
+      claimed_by: codex-w2-implementation
+      claimed_at: '2026-10-12T18:32:26+00:00'
+      expires_at: '2026-10-13T02:32:26+00:00'
+    started_at: '2026-10-12T18:32:26+00:00'
+    updated_at: '2026-10-12T18:32:26+00:00'
     completed_at: null
     blocker: null
     implementation_notes: ''

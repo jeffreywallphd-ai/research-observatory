@@ -184,3 +184,21 @@ found that Tab after the last recovery button could leave the dialog. That
 failure is retained. Recovery now uses the existing Task Center dialog pattern
 to wrap forward and reverse Tab between enabled dialog controls. Fresh shipping
 keyboard verification at the corrected committed candidate remains required.
+
+### W2.A06.T03 complete quality inventory
+
+The claimed T03 data update preserves all 584 valid declared Python paths and
+adds the 146 omissions found by complete filesystem discovery across the six
+unchanged governed roots. Discovery excludes only node_modules and linked
+directories, as the existing quality governor does; it is not limited to tracked
+files. The observed complete set has 730 paths and no stale or untracked Python
+entries. Exact fresh set equality, formatting, lint and types remain required;
+this observation is not a permanent expected count or a quality PASS.
+
+Original architecture, desktop lint, security and quality checkers remain
+unchanged. The owner-approved finite 45 AST plus three literal method, exact
+Reader CSP method and one unchanged formatter-debt disposition require actual
+independent source/control readiness and fresh final-candidate evidence.
+Missing, changed, duplicate or additional findings remain blocking. Original
+failures and approval records stay preserved; no shared checker exemption,
+accepted ADR state, task completion or Wave release is inferred here.
