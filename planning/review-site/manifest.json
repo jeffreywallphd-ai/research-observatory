@@ -49127,13 +49127,13 @@
         {
           "task_id": "W2.A06.T01",
           "title": "Restore explicit reviewed project recovery and durable owned-session proof",
-          "status": "BLOCKED",
+          "status": "IN_PROGRESS",
           "mode": "latest-review-only",
           "latest_review": {
             "reviewer": null,
             "result": null,
             "reviewed_at": null,
-            "notes": null
+            "notes": "Reopened: Owner approved both exact local verification corrections and one-use append-only recording exceptions; committed supplements resolve the recorded hardware-timing and single-test scope blocker. Preserve physical-host proof as untested through mandatory W5 exit; finish all remaining local checks and independent review."
           },
           "review_control": null
         },

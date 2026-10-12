@@ -1,0 +1,58 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "append-only-approved-local-verification-corrections-publication-provenance",
+  "taskId": "W2.A06.T01",
+  "actualPublicationCommit": "ca4ec3f658e1bffe810d9aa8c590ad5ac290ed7c",
+  "recordedAt": "2026-10-11T23:31:47.784550+00:00",
+  "records": [
+    {
+      "path": "artifacts/evidence/W2.A06.T01.foreign-host-timing-amendment-01.proposal.json",
+      "sha256": "85e25fd8031e6d81a038b8f96f16d081033ee4e0152badf80a71a002ae65c48c",
+      "introductionCommit": "ca4ec3f658e1bffe810d9aa8c590ad5ac290ed7c",
+      "representation": "exact UTF-8 LF bytes"
+    },
+    {
+      "path": "artifacts/evidence/W2.A06.T01.foreign-host-timing-amendment-01.readiness.json",
+      "sha256": "089c4f4f10f4a8871369fbe3b226b8329302cd535372227dac50867f84654956",
+      "introductionCommit": "ca4ec3f658e1bffe810d9aa8c590ad5ac290ed7c",
+      "representation": "exact UTF-8 LF bytes"
+    },
+    {
+      "path": "artifacts/evidence/W2.A06.T01.object-test-scope-addendum-01.proposal.json",
+      "sha256": "a35ea71f0a3f773288ff8e3dfd73e31b066da0dcbda55877e30aeefd4d9cd4b7",
+      "introductionCommit": "ca4ec3f658e1bffe810d9aa8c590ad5ac290ed7c",
+      "representation": "exact UTF-8 LF bytes"
+    },
+    {
+      "path": "artifacts/evidence/W2.A06.T01.object-test-scope-addendum-01.readiness.json",
+      "sha256": "1d5910135bc1e2c816784af4abc9c33f41128af2c3fa07fb62d4d8758c5a6bc8",
+      "introductionCommit": "ca4ec3f658e1bffe810d9aa8c590ad5ac290ed7c",
+      "representation": "exact UTF-8 LF bytes"
+    },
+    {
+      "path": "artifacts/evidence/W2.A06.T01.object-test-scope-addendum-01.exact.patch",
+      "sha256": "629d82d79f0f1f4b289e62e2b08ea3dda02a8835133dbe2e323719f5c5a19b3d",
+      "introductionCommit": "ca4ec3f658e1bffe810d9aa8c590ad5ac290ed7c",
+      "representation": "exact UTF-8 LF bytes"
+    },
+    {
+      "path": "artifacts/evidence/W2.A06.T01.foreign-host-timing-amendment-01.supplement.json",
+      "sha256": "3c4d2fccad15c5415767a2e1f4155ad2b760652d8d2629898aea2452aa02ba49",
+      "introductionCommit": "ca4ec3f658e1bffe810d9aa8c590ad5ac290ed7c",
+      "representation": "exact UTF-8 LF bytes"
+    },
+    {
+      "path": "artifacts/evidence/W2.A06.T01.object-test-scope-addendum-01.supplement.json",
+      "sha256": "0b4db45f947a3af3663d9b44ffa67e05c2d236be031da2ac8fb48049d44c4d8b",
+      "introductionCommit": "ca4ec3f658e1bffe810d9aa8c590ad5ac290ed7c",
+      "representation": "exact UTF-8 LF bytes"
+    },
+    {
+      "path": "artifacts/evidence/W2.A06.T01.local-verification-corrections-01.owner-decision.json",
+      "sha256": "18003828f9dfc9999087709febf7bf4171edfe4cb2eea016528e5969e81ab5ef",
+      "introductionCommit": "ca4ec3f658e1bffe810d9aa8c590ad5ac290ed7c",
+      "representation": "exact UTF-8 LF bytes"
+    }
+  ],
+  "limits": "Actual Git publication only. Preserves both exact proposals/readiness records, owner decision, supplements and patch. No new authority, test outcome, task completion, framework change or release decision."
+}

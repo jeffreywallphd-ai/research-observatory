@@ -588,6 +588,35 @@ class NativeRecoveryContractTests(unittest.TestCase):
         )
         self.assertIn(live_preview["state"], ("denied", "unavailable-proof"))
         self.assertFalse((projects / "live-owner-copy").exists())
+        # A genuinely separate same-host Native/Core instance cannot close the
+        # original owner's project or retire its still-live recovery authority.
+        foreign = _RecoveryNativeDriver(fixture, vault, self.environment, "foreign-close-pair")
+        try:
+            self.assertNotEqual(first.process.pid, foreign.process.pid)
+            denied_close = foreign.exchange(
+                {
+                    "method": "POST",
+                    "path": "/projects/close",
+                    "body": json.dumps({"root": str(root)}),
+                    "ifMatch": None,
+                    "idempotencyKey": None,
+                }
+            )
+            self.assertEqual("response", denied_close["kind"], denied_close)
+            self.assertEqual(409, denied_close["response"]["status"], denied_close)
+            self.assertEqual("RO-CORE-PROJECT-OPEN-ELSEWHERE", json.loads(denied_close["response"]["body"])["code"])
+            after_denial = json.loads(lock_path.read_bytes())
+            self.assertEqual(
+                {key: value for key, value in lock.items() if key != "heartbeatAt"},
+                {key: value for key, value in after_denial.items() if key != "heartbeatAt"},
+            )
+            self.assertEqual(
+                old_witness,
+                witness_store.read(project_id, lock["instanceId"], "opened", token_sha256=token_hash),
+            )
+            self.assertEqual(project_id, first.request("/projects/intent", {"root": str(root)})["projectId"])
+        finally:
+            foreign.close()
         before_death = first.job.observe()
         self.assertGreaterEqual(before_death["active"], 2)
         after_death = first.job.terminate()
@@ -705,6 +734,7 @@ class NativeRecoveryContractTests(unittest.TestCase):
                         "actualProtectedIntentReadback": True,
                         "authenticatedObjectSha256": stored.object_sha256,
                         "liveOwnerDenied": True,
+                        "actualSameHostForeignInstanceCloseDenied": True,
                         "fixtureRetained": fixture.relative_to(REPO).as_posix(),
                         "shippingGuiQualification": False,
                     },

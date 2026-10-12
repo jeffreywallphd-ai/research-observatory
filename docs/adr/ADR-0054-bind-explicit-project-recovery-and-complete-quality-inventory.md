@@ -106,3 +106,43 @@ The owner confirmed no second Windows PC or VM is available. The original
 foreign-host criterion remains unverified and unchanged; local checks cannot
 claim its completion. A separate verification decision is required before this
 hardware-dependent gate can be deferred.
+
+### Approved local proof corrections
+
+The two exact owner-approved corrections are published at
+`ca4ec3f658e1bffe810d9aa8c590ad5ac290ed7c`, with immutable decision,
+supplement and actual introduction records under
+`artifacts/evidence/W2.A06.T01.local-verification-corrections-01.*`.
+The physical second-Windows-installation witness denial is explicitly untested;
+the approved timing supplement carries it to the first available independent
+Windows installation and requires it by W5 exit. All local security obligations,
+both DPAPI scopes and subsequent independent/release gates remain required.
+The separate single-test scope supplement permits only the reviewed two-line
+cancellation keyword forwarding correction in `test_local_object_store.py`;
+its assertions and timing bounds are unchanged. Original failures remain.
+
+The due-now acceptance review identified three missing explicit negative cases:
+an actual reversed DPAPI artifact against fixed trusted issuance order, an
+actual OS-denied process query under an anonymous thread principal, and a
+separate same-host Native/Core instance attempting to close the live owner's
+project. Focused characterization tests close those evidence gaps within the
+existing T01 source envelope. Their actual committed results and independent
+disposition remain pending; this note grants no Accepted ADR or task status.
+
+The actual anonymous-principal process-query characterization initially failed:
+Windows supplied a complete restricted snapshot that omitted the still-live
+owner, and Native reported `dead`. The owned query now corroborates absent PID
+enumeration with `OpenProcess` invalid-parameter absence before returning
+`dead`; an actual access denial remains `unknown`. The original failure and
+focused successor are retained. This restores conservative owner-query denial
+inside the approved Native scope, without granting new authority.
+
+The combined whole-pair successor then exposed a retained-handle case:
+`OpenProcess` can still open a terminated process object, and the conservative
+query denied recovery with `owner-death-unproven`. That adverse result remains
+preserved. Native now requests process synchronization alongside limited query
+access and uses a zero-time OS process wait: a signaled object proves termination,
+a timeout preserves the existing process-birth and executable checks, and any
+other wait result remains `unknown`. Access denial still remains `unknown`.
+These bounded local checks are development evidence; committed qualification,
+task review and later Wave gates remain pending.

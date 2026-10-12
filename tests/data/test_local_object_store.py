@@ -626,8 +626,8 @@ class LocalObjectStoreTests(unittest.TestCase):
         writer_done = threading.Event()
         original_verified_reader = object_store_module._verified_reader
 
-        def delayed_reader(path: Path, digest: str, length: int):
-            reader = original_verified_reader(path, digest, length)
+        def delayed_reader(path: Path, digest: str, length: int, *, cancellation_requested=None):
+            reader = original_verified_reader(path, digest, length, cancellation_requested=cancellation_requested)
             if digest == rights_object.object_sha256:
                 verified.set()
                 self.assertTrue(continue_open.wait(5))

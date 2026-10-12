@@ -4780,13 +4780,16 @@ fn recovery_owned_session(_child: &Child) -> Option<RecoveryNativeSession> {
 #[cfg(windows)]
 fn recovery_owner_state(expected: &RecoveryProcessIdentity) -> &'static str {
     use windows_sys::Win32::Foundation::{
-        CloseHandle, ERROR_NO_MORE_FILES, GetLastError, INVALID_HANDLE_VALUE,
+        CloseHandle, ERROR_INVALID_PARAMETER, ERROR_NO_MORE_FILES, GetLastError,
+        INVALID_HANDLE_VALUE, WAIT_OBJECT_0, WAIT_TIMEOUT,
     };
     use windows_sys::Win32::System::Diagnostics::ToolHelp::{
         CreateToolhelp32Snapshot, PROCESSENTRY32W, Process32FirstW, Process32NextW,
         TH32CS_SNAPPROCESS,
     };
-    use windows_sys::Win32::System::Threading::{OpenProcess, PROCESS_QUERY_LIMITED_INFORMATION};
+    use windows_sys::Win32::System::Threading::{
+        OpenProcess, PROCESS_QUERY_LIMITED_INFORMATION, PROCESS_SYNCHRONIZE, WaitForSingleObject,
+    };
     unsafe {
         let snapshot = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
         if snapshot == INVALID_HANDLE_VALUE {
@@ -4810,11 +4813,27 @@ fn recovery_owner_state(expected: &RecoveryProcessIdentity) -> &'static str {
         if !complete {
             return "unknown";
         }
-        if !present {
+        let process = OpenProcess(
+            PROCESS_QUERY_LIMITED_INFORMATION | PROCESS_SYNCHRONIZE,
+            0,
+            expected.process_id,
+        );
+        if process.is_null() {
+            // A restricted snapshot may omit a live inaccessible owner. Only
+            // corroborated absence may become dead; access denial stays unknown.
+            return if !present && GetLastError() == ERROR_INVALID_PARAMETER {
+                "dead"
+            } else {
+                "unknown"
+            };
+        }
+        let wait = WaitForSingleObject(process, 0);
+        if wait == WAIT_OBJECT_0 {
+            CloseHandle(process);
             return "dead";
         }
-        let process = OpenProcess(PROCESS_QUERY_LIMITED_INFORMATION, 0, expected.process_id);
-        if process.is_null() {
+        if wait != WAIT_TIMEOUT {
+            CloseHandle(process);
             return "unknown";
         }
         let actual = recovery_process_identity(process, expected.process_id);
@@ -5360,6 +5379,41 @@ mod tests {
         changed = own;
         changed.executable_identity = "0".repeat(64);
         assert_eq!(super::recovery_owner_state(&changed), "unknown");
+    }
+
+    #[cfg(windows)]
+    #[test]
+    fn recovery_actual_inaccessible_owner_query_denies_under_anonymous_principal() {
+        use windows_sys::Win32::Foundation::{ERROR_ACCESS_DENIED, GetLastError};
+        use windows_sys::Win32::Security::{ImpersonateAnonymousToken, RevertToSelf};
+        use windows_sys::Win32::System::Threading::{
+            GetCurrentProcess, GetCurrentThread, OpenProcess, PROCESS_QUERY_LIMITED_INFORMATION,
+        };
+        struct RevertThread;
+        impl Drop for RevertThread {
+            fn drop(&mut self) {
+                assert_ne!(unsafe { RevertToSelf() }, 0, "Test principal must revert");
+            }
+        }
+        let owner =
+            super::recovery_process_identity(unsafe { GetCurrentProcess() }, std::process::id())
+                .unwrap();
+        assert_eq!(super::recovery_owner_state(&owner), "live");
+        let observed = {
+            assert_ne!(unsafe { ImpersonateAnonymousToken(GetCurrentThread()) }, 0);
+            let _revert = RevertThread;
+            let process =
+                unsafe { OpenProcess(PROCESS_QUERY_LIMITED_INFORMATION, 0, owner.process_id) };
+            let error = unsafe { GetLastError() };
+            assert!(
+                process.is_null(),
+                "Actual anonymous owner query must be denied"
+            );
+            assert_eq!(error, ERROR_ACCESS_DENIED);
+            super::recovery_owner_state(&owner)
+        };
+        assert_eq!(observed, "unknown");
+        assert_eq!(super::recovery_owner_state(&owner), "live");
     }
 
     #[cfg(windows)]

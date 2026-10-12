@@ -1,7 +1,7 @@
 ---
 document_type: generated-backlog-status-summary
 source: planning/backlog.yaml
-source_sha256: 00137e19fcb0c1f9a98376983e6717a577e0c93fec1aa27017f3abf06c74ac1f
+source_sha256: 9e6d554ee3733194c31f0c253e361b0053c9f1ae934cb1777daeedda5d7226d7
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -69,7 +69,7 @@ manual_edit: prohibited
 | Status | Count |
 |---|---:|
 | `NOT_STARTED` | 2 |
-| `BLOCKED` | 1 |
+| `IN_PROGRESS` | 1 |
 | `DONE` | 23 |
 
 ## Wave authority and append-only amendments
@@ -1012,7 +1012,7 @@ Append-only rounds remain distinct from the current latest-review projection. Le
 
 | Task | Status | Owner | Branch |
 |---|---|---|---|
-| `W2.A06.T01` Restore explicit reviewed project recovery and durable owned-session proof | `BLOCKED` | codex-w2-implementation | `codex/w2-implementation` |
+| `W2.A06.T01` Restore explicit reviewed project recovery and durable owned-session proof | `IN_PROGRESS` | codex-w2-implementation | `codex/w2-implementation` |
 
 ## Linked corrective tasks
 

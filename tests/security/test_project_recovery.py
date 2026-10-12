@@ -17,7 +17,7 @@ import unittest
 import uuid
 from collections.abc import Callable
 from contextlib import contextmanager
-from dataclasses import replace
+from dataclasses import asdict, replace
 from pathlib import Path
 from typing import BinaryIO, Literal, cast
 from unittest.mock import Mock, patch
@@ -435,6 +435,56 @@ class WindowsWitnessStoreTests(unittest.TestCase):
             )
         finally:
             exclusion.close()
+
+    def test_actual_reversed_dpapi_layers_deny_against_fixed_issuance_order(self) -> None:
+        """Real reversed artifact; trusted issuance is not an attacker-forgeable receipt."""
+        exclusion = self.store.acquire_project(PROJECT_ID)
+        try:
+            self.store.issue(self.witness)
+        finally:
+            exclusion.close()
+        sealed = next(self.store.root.glob("*.sealed"))
+        anchor = next(self.store.root.glob("*.issuance.json"))
+        original_sealed, original_anchor = sealed.read_bytes(), anchor.read_bytes()
+        material = json.dumps(asdict(self.witness), sort_keys=True, separators=(",", ":")).encode()
+        machine_inner = bytearray(windows_credentials_module._recovery_machine_protect(material))
+        protector = windows_credentials_module.WindowsCurrentUserDataProtector()
+        user_outer = protector.protect(machine_inner)
+        # Authenticate that this is valid Windows encryption in the wrong order,
+        # rather than a damaged blob or an inconsistent length/hash substitute.
+        decoded_inner = protector.unprotect(user_outer)
+        decoded_material = protector.unprotect(bytes(decoded_inner))
+        try:
+            self.assertEqual(machine_inner, bytes(decoded_inner))
+            self.assertEqual(material, bytes(decoded_material))
+        finally:
+            windows_credentials_module._zero(decoded_inner)
+            windows_credentials_module._zero(decoded_material)
+        reversed_receipt = json.loads(original_anchor)
+        reversed_receipt.update(
+            innerFlags=5,
+            outerFlags=1,
+            order="machine-then-user",
+            innerSHA256=hashlib.sha256(machine_inner).hexdigest(),
+            innerBytes=len(machine_inner),
+            sealedSHA256=hashlib.sha256(user_outer).hexdigest(),
+            sealedBytes=len(user_outer),
+        )
+        try:
+            sealed.write_bytes(user_outer)
+            anchor.write_bytes(json.dumps(reversed_receipt, sort_keys=True, separators=(",", ":")).encode())
+            before = byte_inventory(self.parent)
+            with self.assertRaises(RecoveryVerificationProblem) as denied:
+                self.store.read(PROJECT_ID, self.instance, "created", token_sha256=self.witness.recovery_token_sha256)
+            self.assertEqual("ownership-issuance-invalid", denied.exception.reason_code)
+            self.assertEqual(before, byte_inventory(self.parent))
+        finally:
+            sealed.write_bytes(original_sealed)
+            anchor.write_bytes(original_anchor)
+        self.assertEqual(
+            self.witness,
+            self.store.read(PROJECT_ID, self.instance, "created", token_sha256=self.witness.recovery_token_sha256),
+        )
 
     def test_actual_anonymous_principal_denies_private_witness_and_user_dpapi(self) -> None:
         """Real anonymous thread boundary; no other-machine/login claim."""

@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 00137e19fcb0c1f9a98376983e6717a577e0c93fec1aa27017f3abf06c74ac1f
+source_sha256: 9e6d554ee3733194c31f0c253e361b0053c9f1ae934cb1777daeedda5d7226d7
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -3323,7 +3323,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 ### - [ ] W2.A06.T01 - Restore explicit reviewed project recovery and durable owned-session proof
 
-**Status / owner / review:** `BLOCKED` / codex-w2-implementation / - (`-`)
+**Status / owner / review:** `IN_PROGRESS` / codex-w2-implementation / - (`-`)
 
 **Dependencies:** `W2.A06.B00`
 
@@ -3349,7 +3349,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 **Current latest-review projection:** `-` by - at `-`
 
-**Latest notes:** -
+**Latest notes:** Reopened: Owner approved both exact local verification corrections and one-use append-only recording exceptions; committed supplements resolve the recorded hardware-timing and single-test scope blocker. Preserve physical-host proof as untested through mandatory W5 exit; finish all remaining local checks and independent review.
 
 ### - [ ] W2.A06.T02 - Integrate explicit recovery review into the approved Projects experience
 
