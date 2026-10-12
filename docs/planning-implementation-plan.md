@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 9e6d554ee3733194c31f0c253e361b0053c9f1ae934cb1777daeedda5d7226d7
+source_sha256: 775e7d0e3323ee323d773c290fc0abef1c7f1bf1e03977a7df1d4dfbc2e0fce0
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -3323,7 +3323,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 ### - [ ] W2.A06.T01 - Restore explicit reviewed project recovery and durable owned-session proof
 
-**Status / owner / review:** `IN_PROGRESS` / codex-w2-implementation / - (`-`)
+**Status / owner / review:** `REVIEW` / codex-w2-implementation / - (`-`)
 
 **Dependencies:** `W2.A06.B00`
 
@@ -3343,13 +3343,33 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - Actual Windows Native/Core owned session, dual user/machine witness, whole-process abrupt restart, protected readback, alternative principal/host/path/API denials and heartbeat/copy/close races at fixed committed candidate; retain all streams and owned cleanup.
 - Unchanged ADR check against actual task base/candidate, affected quality and exact protected-source review; architecture original FAIL plus only the separately granted closed45+3 proof where needed. Expanded independent commit-bound disposition.
 
+**Evidence:**
+
+- `artifacts/evidence/W2.A06.T01.R01.json` at `eb570817f57a24756e2d675e974f7ee429c5dfc7`
+
 #### Review history — W2.A06.T01
 
-**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+**Review mode:** `append-only v1` / 0 completed round(s)
+
+**Current immutable submission awaiting review:** `R01` / packet SHA-256 `73a6fedab2870549c2e22b0ab070eff9d17630d96a496b2df3e7faf57fb063d4`
+
+- Candidate / base / branch: `eb570817f57a24756e2d675e974f7ee429c5dfc7` / `15c2ab7bcc9b7ef111f44ffcb465628729fd4a5d` / `codex/w2-implementation`
+- Submitted by / at: codex-w2-implementation / `2026-10-12T11:45:29+00:00`
+- Evidence: `artifacts/evidence/W2.A06.T01.R01.json` / `a2c50c398a7ae901e7ee65dfc6da46b017ace9f9feb35584edc440db7f56e171` / `eb570817f57a24756e2d675e974f7ee429c5dfc7`
+- Acceptance-criteria SHA-256: `4cfc9ccd2d583dc3285510b3420312d2b778a94cd11c5272eadc54afc6fa321a`
+- Verification-selection SHA-256: `2c2673a088af8443669088e39d85923b1939a5d64b79deaff2176e947d0b8eab`
+- Changed paths: `apps/desktop/src-tauri/src/supervisor.rs`, `artifacts/evidence/W2.A06.T01.foreign-host-timing-amendment-01.proposal.json`, `artifacts/evidence/W2.A06.T01.foreign-host-timing-amendment-01.readiness.json`, `artifacts/evidence/W2.A06.T01.foreign-host-timing-amendment-01.supplement.json`, `artifacts/evidence/W2.A06.T01.local-verification-corrections-01.owner-decision.json`, `artifacts/evidence/W2.A06.T01.local-verification-corrections-01.publication-provenance.json`, `artifacts/evidence/W2.A06.T01.object-inventory-scope-addendum-01.independent-readiness-R01.json`, `artifacts/evidence/W2.A06.T01.object-inventory-scope-addendum-01.owner-decision.json`, `artifacts/evidence/W2.A06.T01.object-inventory-scope-addendum-01.proposal.json`, `artifacts/evidence/W2.A06.T01.object-inventory-scope-addendum-01.publication-provenance.json`, `artifacts/evidence/W2.A06.T01.object-test-scope-addendum-01.exact.patch`, `artifacts/evidence/W2.A06.T01.object-test-scope-addendum-01.proposal.json`, `artifacts/evidence/W2.A06.T01.object-test-scope-addendum-01.readiness.json`, `artifacts/evidence/W2.A06.T01.object-test-scope-addendum-01.supplement.json`, `docs/adr/ADR-0054-bind-explicit-project-recovery-and-complete-quality-inventory.md`, `docs/adr/index.json`, `docs/architecture/project-package.md`, `docs/planning-implementation-plan.md`, `packages/contracts/core-api/generated.test.ts`, `packages/contracts/core-api/generated.ts`, `packages/contracts/core-api/openapi.json`, `packages/contracts/project/README.md`, `packages/contracts/project/project-lifecycle-event.schema.json`, `planning/backlog.yaml`, `planning/review-site/enablers/ECR-0014.html`, `planning/review-site/manifest.json`, `planning/status-summary.md`, `services/core-api/src/research_observatory_core/app.py`, `services/core-api/src/research_observatory_core/main.py`, `services/core-api/src/research_observatory_core/models.py`, `services/core-api/src/research_observatory_core/object_store.py`, `services/core-api/src/research_observatory_core/ports/project_recovery.py`, `services/core-api/src/research_observatory_core/projects.py`, `services/core-api/src/research_observatory_core/windows_credentials.py`, `tests/data/test_local_object_store.py`, `tests/security/test_project_recovery.py`, `tests/service/test_native_project_contract.py`
+- Selected checks: `[cwd=packages/contracts] corepack pnpm exec vitest run core-api/generated.test.ts --maxWorkers=1`, `[cwd=packages/contracts] corepack pnpm run typecheck`, `[cwd=apps/desktop] corepack pnpm run typecheck`, `[cwd=.] .venv/Scripts/python.exe -B -s -m unittest -v tests.data.test_local_object_store tests.data.test_encrypted_object_store tests.security.test_windows_credentials`, `[cwd=.] .venv/Scripts/python.exe -B -s tools/core_api_contract.py --repo . --check`, `[cwd=.] rustfmt --edition 2024 --check apps/desktop/src-tauri/src/supervisor.rs`, `[cwd=.] cargo test --offline --locked --manifest-path apps/desktop/src-tauri/Cargo.toml --lib recovery_ -- --nocapture --test-threads=1`, `[cwd=.] cargo test --offline --locked --manifest-path apps/desktop/src-tauri/Cargo.toml --lib security_stop_interrupts_an_already_started_graceful_wait -- --nocapture --test-threads=1`, `[cwd=.] .venv/Scripts/python.exe -B -s -m ruff format --check services/core-api/src/research_observatory_core/projects.py services/core-api/src/research_observatory_core/app.py services/core-api/src/research_observatory_core/models.py services/core-api/src/research_observatory_core/main.py services/core-api/src/research_observatory_core/windows_credentials.py services/core-api/src/research_observatory_core/object_store.py services/core-api/src/research_observatory_core/ports/project_recovery.py tests/security/test_project_recovery.py tests/service/test_native_project_contract.py tests/data/test_local_object_store.py`, `[cwd=.] .venv/Scripts/python.exe -B -s -m unittest -v tests.security.test_project_recovery tests.service.test_project_lifecycle`, `[cwd=.] .venv/Scripts/python.exe -B -s -m ruff check services/core-api/src/research_observatory_core/projects.py services/core-api/src/research_observatory_core/app.py services/core-api/src/research_observatory_core/models.py services/core-api/src/research_observatory_core/main.py services/core-api/src/research_observatory_core/windows_credentials.py services/core-api/src/research_observatory_core/object_store.py services/core-api/src/research_observatory_core/ports/project_recovery.py tests/security/test_project_recovery.py tests/service/test_native_project_contract.py tests/data/test_local_object_store.py`, `[cwd=.] .venv/Scripts/python.exe -B -s -m mypy services/core-api/src/research_observatory_core/projects.py services/core-api/src/research_observatory_core/app.py services/core-api/src/research_observatory_core/models.py services/core-api/src/research_observatory_core/main.py services/core-api/src/research_observatory_core/windows_credentials.py services/core-api/src/research_observatory_core/object_store.py services/core-api/src/research_observatory_core/ports/project_recovery.py tests/security/test_project_recovery.py tests/service/test_native_project_contract.py tests/data/test_local_object_store.py`, `[cwd=.] .venv/Scripts/python.exe -B -s tools/adr_check.py --repo . --base 15c2ab7bcc9b7ef111f44ffcb465628729fd4a5d --head eb570817f57a24756e2d675e974f7ee429c5dfc7`, `[cwd=.] .venv/Scripts/python.exe -B -s -m unittest -v tests.service.test_native_project_contract.NativeRecoveryContractTests.test_whole_native_core_death_recovers_verified_protected_copy`, `[cwd=.] .venv/Scripts/python.exe -B -s artifacts/tmp/W2.remaining-corrections-batch-01/run-a06-core-proof-01.py qualify --prefix a06-core-qualification-01 --readiness artifacts/tmp/W2.remaining-corrections-batch-01/W2.A06.T01.Core45.SOURCE_READY-02.json --readiness-sha256 0e898f1ce087c958f1c03cd0c1a41c1e61ef77b66014d0228e551450eec3f23a`
+- Deferred checks: `W2.A06.T02: shipping Projects recovery UI and existing-reference keyboard/focus/theme/reflow and actual renderer/native/Core integration.`, `W2.A06.T03 and downstream checkpoints/Wave: complete quality inventory, original whole-workspace formatter debt disposition and full closed45+3/desktop/CSP methods; fresh complete affected/repository/profile matrix.`, `Physical independent Windows installation test: explicitly unexecuted, first available installation and mandatory byW5 exit under owner-approved timing supplement.`
+- Selection rationale: High-risk Native-owned persisted recovery proof and protected copy/API change: selected all affected Python source format/lint/types, 67 recovery/lifecycle cases, 37 existing object/credential regression cases with one explicit capability skip, actual whole Native/Core protected recovery plus foreign close, eight Native owner/protocol tests and stop regression, generated contract/client/types, desktop types, task ADR and separately authorized exact Core45 proof. The final Native birth fix changes the candidate, so all selected checks are fresh; installed dependency closure does not authorize receipt reuse. No full profile at ordinary T01 scope; current source/interface and actual principal/failure boundaries are covered.
+- Prior round / replayed open findings: `-` / -
+- Root-cause escalation: -
 
 **Current latest-review projection:** `-` by - at `-`
 
 **Latest notes:** Reopened: Owner approved both exact local verification corrections and one-use append-only recording exceptions; committed supplements resolve the recorded hardware-timing and single-test scope blocker. Preserve physical-host proof as untested through mandatory W5 exit; finish all remaining local checks and independent review.
+
+**Currently open findings:** -
 
 ### - [ ] W2.A06.T02 - Integrate explicit recovery review into the approved Projects experience
 

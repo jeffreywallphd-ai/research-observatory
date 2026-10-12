@@ -1,7 +1,7 @@
 ---
 document_type: generated-backlog-status-summary
 source: planning/backlog.yaml
-source_sha256: 9e6d554ee3733194c31f0c253e361b0053c9f1ae934cb1777daeedda5d7226d7
+source_sha256: 775e7d0e3323ee323d773c290fc0abef1c7f1bf1e03977a7df1d4dfbc2e0fce0
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -69,7 +69,7 @@ manual_edit: prohibited
 | Status | Count |
 |---|---:|
 | `NOT_STARTED` | 2 |
-| `IN_PROGRESS` | 1 |
+| `REVIEW` | 1 |
 | `DONE` | 23 |
 
 ## Wave authority and append-only amendments
@@ -926,6 +926,7 @@ Append-only rounds remain distinct from the current latest-review projection. Le
 | `W2.A04.T01` | `append-only v1` | 1 | `-` | approved / agent:/root/a03_t02_authority_review | - |
 | `W2.A05.T01` | `append-only v1` | 1 | `-` | approved / agent:/root/a05_t01_review | - |
 | `W2.A05.T02` | `append-only v1` | 1 | `-` | approved / agent:/root/a05_t02_review | - |
+| `W2.A06.T01` | `append-only v1` | 0 | `R01` | - / - | - |
 | `W1.C01.T01` | `append-only v1` | 1 | `-` | approved / agent:/root/ui_guard_planning | - |
 | `W1.C02.T01` | `append-only v1` | 1 | `-` | approved / agent:/root/cap07_slice_review | - |
 | `W1.C03.T01` | `append-only v1` | 1 | `-` | approved / agent:/root/cap07_slice_review | - |
@@ -1012,7 +1013,7 @@ Append-only rounds remain distinct from the current latest-review projection. Le
 
 | Task | Status | Owner | Branch |
 |---|---|---|---|
-| `W2.A06.T01` Restore explicit reviewed project recovery and durable owned-session proof | `IN_PROGRESS` | codex-w2-implementation | `codex/w2-implementation` |
+| `W2.A06.T01` Restore explicit reviewed project recovery and durable owned-session proof | `REVIEW` | codex-w2-implementation | `codex/w2-implementation` |
 
 ## Linked corrective tasks
 

@@ -1,0 +1,570 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "W2.A06.T01",
+  "baseCommit": "15c2ab7bcc9b7ef111f44ffcb465628729fd4a5d",
+  "commit": "eb570817f57a24756e2d675e974f7ee429c5dfc7",
+  "branch": "codex/w2-implementation",
+  "changedFiles": [
+    "apps/desktop/src-tauri/src/supervisor.rs",
+    "artifacts/evidence/W2.A06.T01.foreign-host-timing-amendment-01.proposal.json",
+    "artifacts/evidence/W2.A06.T01.foreign-host-timing-amendment-01.readiness.json",
+    "artifacts/evidence/W2.A06.T01.foreign-host-timing-amendment-01.supplement.json",
+    "artifacts/evidence/W2.A06.T01.local-verification-corrections-01.owner-decision.json",
+    "artifacts/evidence/W2.A06.T01.local-verification-corrections-01.publication-provenance.json",
+    "artifacts/evidence/W2.A06.T01.object-inventory-scope-addendum-01.independent-readiness-R01.json",
+    "artifacts/evidence/W2.A06.T01.object-inventory-scope-addendum-01.owner-decision.json",
+    "artifacts/evidence/W2.A06.T01.object-inventory-scope-addendum-01.proposal.json",
+    "artifacts/evidence/W2.A06.T01.object-inventory-scope-addendum-01.publication-provenance.json",
+    "artifacts/evidence/W2.A06.T01.object-test-scope-addendum-01.exact.patch",
+    "artifacts/evidence/W2.A06.T01.object-test-scope-addendum-01.proposal.json",
+    "artifacts/evidence/W2.A06.T01.object-test-scope-addendum-01.readiness.json",
+    "artifacts/evidence/W2.A06.T01.object-test-scope-addendum-01.supplement.json",
+    "docs/adr/ADR-0054-bind-explicit-project-recovery-and-complete-quality-inventory.md",
+    "docs/adr/index.json",
+    "docs/architecture/project-package.md",
+    "docs/planning-implementation-plan.md",
+    "packages/contracts/core-api/generated.test.ts",
+    "packages/contracts/core-api/generated.ts",
+    "packages/contracts/core-api/openapi.json",
+    "packages/contracts/project/README.md",
+    "packages/contracts/project/project-lifecycle-event.schema.json",
+    "planning/backlog.yaml",
+    "planning/review-site/enablers/ECR-0014.html",
+    "planning/review-site/manifest.json",
+    "planning/status-summary.md",
+    "services/core-api/src/research_observatory_core/app.py",
+    "services/core-api/src/research_observatory_core/main.py",
+    "services/core-api/src/research_observatory_core/models.py",
+    "services/core-api/src/research_observatory_core/object_store.py",
+    "services/core-api/src/research_observatory_core/ports/project_recovery.py",
+    "services/core-api/src/research_observatory_core/projects.py",
+    "services/core-api/src/research_observatory_core/windows_credentials.py",
+    "tests/data/test_local_object_store.py",
+    "tests/security/test_project_recovery.py",
+    "tests/service/test_native_project_contract.py"
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "checkIds": [
+        "generated-contracts",
+        "contract-client",
+        "contract-types",
+        "desktop-types",
+        "python-static",
+        "python-format",
+        "python-types",
+        "task-adr",
+        "approved-core45-architecture-proof"
+      ],
+      "evidence": [
+        "Implements the exact admitted ECR-0014 recovery/API/witness and indexed ADR0054 contract, including the separately approved single object adapter and exact two-line existing-test correction. Existing Native authority, project-key/current-user protection and immutable history remain unchanged."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "checkIds": [
+        "python-recovery",
+        "native-recovery",
+        "native-stop",
+        "whole-native-core"
+      ],
+      "evidence": [
+        "Actual protected-session witness, owned heartbeat/close and publication/cleanup tests pass. Native live owner, creation mismatch, inaccessible anonymous-principal query and retained terminated process birth mismatch deny appropriately; matching terminated identity supports verified recovery. Actual reversed DPAPI layers against fixed trusted issuance are denied."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "checkIds": [
+        "python-recovery",
+        "existing-object-regression",
+        "whole-native-core"
+      ],
+      "evidence": [
+        "Explicit preview/confirm publishes only a verified recovery working copy after source/lock/heartbeat/database/WAL/object/fact checks. Actual whole-pair proof preserves original bytes and all39 canonical rows before normal fresh open, protected intent and lineage readback, and authentic object readback. Failure/cancel/key/path/race/audit and post-open cleanup cases pass."
+      ]
+    },
+    {
+      "criterion_index": 4,
+      "checkIds": [
+        "python-recovery",
+        "existing-object-regression",
+        "native-recovery",
+        "whole-native-core"
+      ],
+      "evidence": [
+        "Actual separate Native/Core Jobs terminate and a fresh pair recovers original-derived protected state. Actual same-host foreign-instance close is denied with the owner usable and its lock/witness unchanged. Anonymous Windows principal, inner-user DPAPI and local path/tamper/unknown/owner denials pass. This is headless Native/Core proof, not shipping GUI qualification. Physical foreign-Windows-machine proof remains explicitly untested under the exact owner-approved timing supplement and is mandatory byW5 exit; it is outside this task's due-now completion. One pre-existing Windows vault-symlink case is skipped because this token cannot create it; other actual junction/hardlink denials are measured, and the skip is not a PASS."
+      ]
+    },
+    {
+      "criterion_index": 5,
+      "checkIds": [
+        "python-recovery",
+        "native-recovery",
+        "whole-native-core",
+        "approved-core45-architecture-proof",
+        "task-adr"
+      ],
+      "evidence": [
+        "Current evidence binds exact committed security/interface scope and truthful positive/negative results. Expanded independent commit-bound task disposition is requested separately; prior actual API completion-guard cleanup regression and the new birth-before-death regression pass. Original R03 P1 remains OPEN pending separately authorized original-fixture evidence and independent closure; a new-session fixture never closes it.",
+        "The actual expanded independent commit-bound evidence advisory authenticates the exact final security/interface scope, positive/negative execution streams, prior cleanup and retained-process-birth finding closures, Core45 method and truthful residuals at this candidate. Formal controlled task disposition remains a separate required step."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "checks": [
+    {
+      "id": "contract-client",
+      "commandId": "contracts:unit",
+      "command": "[cwd=packages/contracts] corepack pnpm exec vitest run core-api/generated.test.ts --maxWorkers=1",
+      "workingDirectory": "packages/contracts",
+      "commit": "eb570817f57a24756e2d675e974f7ee429c5dfc7",
+      "exitCode": 0,
+      "result": "PASS",
+      "durationSeconds": 3.663341899984516,
+      "inputReport": "artifacts/tmp/W2.remaining-corrections-batch-01/a06-t01-committed-06-contract-client.receipt.json",
+      "inputReportSha256": "58977241244d4c60bb8a0e5068c0051571261d0659fdfe2bdc00b5d0ec4b0dc6",
+      "producerSha256": "668ac5461cf60bbe83ef59ca9ce52f35a259abdf12c31d01d94d91d939474f2d",
+      "rawStreams": {
+        "stdout": {
+          "path": "artifacts/tmp/W2.remaining-corrections-batch-01/a06-t01-committed-06-contract-client.stdout.log",
+          "sha256": "93f8e67422f7ca4953de62ee2c7007ab73afbc6d03f399126a0da5ca6e53b712"
+        },
+        "stderr": {
+          "path": "artifacts/tmp/W2.remaining-corrections-batch-01/a06-t01-committed-06-contract-client.stderr.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      "provenance": "Fresh actual child at the fixed clean candidate with selected source write/delete-denying holds. Ignored report preserves actual argv, runtime hashes and full stream hashes; no reused test result.",
+      "actualCommandDisplay": "corepack pnpm exec vitest run core-api/generated.test.ts --maxWorkers=1"
+    },
+    {
+      "id": "contract-types",
+      "commandId": "contracts:unit",
+      "command": "[cwd=packages/contracts] corepack pnpm run typecheck",
+      "workingDirectory": "packages/contracts",
+      "commit": "eb570817f57a24756e2d675e974f7ee429c5dfc7",
+      "exitCode": 0,
+      "result": "PASS",
+      "durationSeconds": 0.9084157000179403,
+      "inputReport": "artifacts/tmp/W2.remaining-corrections-batch-01/a06-t01-committed-06-contract-types.receipt.json",
+      "inputReportSha256": "a340c6a465a558c44dfd3e916d1e96689c37aa2d9bf3b52659c50b3bf9f8590e",
+      "producerSha256": "668ac5461cf60bbe83ef59ca9ce52f35a259abdf12c31d01d94d91d939474f2d",
+      "rawStreams": {
+        "stdout": {
+          "path": "artifacts/tmp/W2.remaining-corrections-batch-01/a06-t01-committed-06-contract-types.stdout.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stderr": {
+          "path": "artifacts/tmp/W2.remaining-corrections-batch-01/a06-t01-committed-06-contract-types.stderr.log",
+          "sha256": "70685b4df7789c854b9e1ceab7d78a6d0f9a0831c11eb0010b7b5fdbe0e50c39"
+        }
+      },
+      "provenance": "Fresh actual child at the fixed clean candidate with selected source write/delete-denying holds. Ignored report preserves actual argv, runtime hashes and full stream hashes; no reused test result.",
+      "actualCommandDisplay": "corepack pnpm run typecheck"
+    },
+    {
+      "id": "desktop-types",
+      "commandId": "desktop:application",
+      "command": "[cwd=apps/desktop] corepack pnpm run typecheck",
+      "workingDirectory": "apps/desktop",
+      "commit": "eb570817f57a24756e2d675e974f7ee429c5dfc7",
+      "exitCode": 0,
+      "result": "PASS",
+      "durationSeconds": 0.9977767000091262,
+      "inputReport": "artifacts/tmp/W2.remaining-corrections-batch-01/a06-t01-committed-06-desktop-types.receipt.json",
+      "inputReportSha256": "f1edbaac4583a9655c9dab50c5cf5f9ff6275a075512597b3cbe3ed2caedfa58",
+      "producerSha256": "668ac5461cf60bbe83ef59ca9ce52f35a259abdf12c31d01d94d91d939474f2d",
+      "rawStreams": {
+        "stdout": {
+          "path": "artifacts/tmp/W2.remaining-corrections-batch-01/a06-t01-committed-06-desktop-types.stdout.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stderr": {
+          "path": "artifacts/tmp/W2.remaining-corrections-batch-01/a06-t01-committed-06-desktop-types.stderr.log",
+          "sha256": "8366207267355d3e3d5bf3bf6e8c94c5f93f6078c34f08973fa2b38cdda6cc92"
+        }
+      },
+      "provenance": "Fresh actual child at the fixed clean candidate with selected source write/delete-denying holds. Ignored report preserves actual argv, runtime hashes and full stream hashes; no reused test result.",
+      "actualCommandDisplay": "corepack pnpm run typecheck"
+    },
+    {
+      "id": "existing-object-regression",
+      "commandId": "data:unit",
+      "command": "[cwd=.] .venv/Scripts/python.exe -B -s -m unittest -v tests.data.test_local_object_store tests.data.test_encrypted_object_store tests.security.test_windows_credentials",
+      "workingDirectory": ".",
+      "commit": "eb570817f57a24756e2d675e974f7ee429c5dfc7",
+      "exitCode": 0,
+      "result": "PASS",
+      "durationSeconds": 10.702078900008928,
+      "inputReport": "artifacts/tmp/W2.remaining-corrections-batch-01/a06-t01-committed-06-existing-object-regression.receipt.json",
+      "inputReportSha256": "caf0ab6669e98cf1660ed6ee2a72c679bea99812b0ab3b6b84eb9bc934b1cdc8",
+      "producerSha256": "668ac5461cf60bbe83ef59ca9ce52f35a259abdf12c31d01d94d91d939474f2d",
+      "rawStreams": {
+        "stdout": {
+          "path": "artifacts/tmp/W2.remaining-corrections-batch-01/a06-t01-committed-06-existing-object-regression.stdout.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stderr": {
+          "path": "artifacts/tmp/W2.remaining-corrections-batch-01/a06-t01-committed-06-existing-object-regression.stderr.log",
+          "sha256": "b600cfd400846d891cb24b4a3c35130ec2ee7518609aefdd11ac8efe4a804701"
+        }
+      },
+      "provenance": "Fresh actual child at the fixed clean candidate with selected source write/delete-denying holds. Ignored report preserves actual argv, runtime hashes and full stream hashes; no reused test result.",
+      "actualCommandDisplay": ".venv/Scripts/python.exe -B -s -m unittest -v tests.data.test_local_object_store tests.data.test_encrypted_object_store tests.security.test_windows_credentials"
+    },
+    {
+      "id": "generated-contracts",
+      "commandId": "contracts:unit",
+      "command": "[cwd=.] .venv/Scripts/python.exe -B -s tools/core_api_contract.py --repo . --check",
+      "workingDirectory": ".",
+      "commit": "eb570817f57a24756e2d675e974f7ee429c5dfc7",
+      "exitCode": 0,
+      "result": "PASS",
+      "durationSeconds": 2.7743251000065356,
+      "inputReport": "artifacts/tmp/W2.remaining-corrections-batch-01/a06-t01-committed-06-generated-contracts.receipt.json",
+      "inputReportSha256": "fb721d9ba12e3cbd2d90662e948ff79e993587e225668a6b17056e2699c1bbf2",
+      "producerSha256": "668ac5461cf60bbe83ef59ca9ce52f35a259abdf12c31d01d94d91d939474f2d",
+      "rawStreams": {
+        "stdout": {
+          "path": "artifacts/tmp/W2.remaining-corrections-batch-01/a06-t01-committed-06-generated-contracts.stdout.log",
+          "sha256": "d0de6df4695ae12810b382025f30caee94c9e9bc81887720850df6345026980f"
+        },
+        "stderr": {
+          "path": "artifacts/tmp/W2.remaining-corrections-batch-01/a06-t01-committed-06-generated-contracts.stderr.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      "provenance": "Fresh actual child at the fixed clean candidate with selected source write/delete-denying holds. Ignored report preserves actual argv, runtime hashes and full stream hashes; no reused test result.",
+      "actualCommandDisplay": ".venv/Scripts/python.exe -B -s tools/core_api_contract.py --repo . --check"
+    },
+    {
+      "id": "native-format",
+      "commandId": "desktop:application",
+      "command": "[cwd=.] rustfmt --edition 2024 --check apps/desktop/src-tauri/src/supervisor.rs",
+      "workingDirectory": ".",
+      "commit": "eb570817f57a24756e2d675e974f7ee429c5dfc7",
+      "exitCode": 0,
+      "result": "PASS",
+      "durationSeconds": 0.33591489994432777,
+      "inputReport": "artifacts/tmp/W2.remaining-corrections-batch-01/a06-t01-committed-06-native-format.receipt.json",
+      "inputReportSha256": "edf92d80f6c2144e1f326fec43cc295dfd448ce1a383e1523ea98db5109fd42b",
+      "producerSha256": "668ac5461cf60bbe83ef59ca9ce52f35a259abdf12c31d01d94d91d939474f2d",
+      "rawStreams": {
+        "stdout": {
+          "path": "artifacts/tmp/W2.remaining-corrections-batch-01/a06-t01-committed-06-native-format.stdout.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stderr": {
+          "path": "artifacts/tmp/W2.remaining-corrections-batch-01/a06-t01-committed-06-native-format.stderr.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      "provenance": "Fresh actual child at the fixed clean candidate with selected source write/delete-denying holds. Ignored report preserves actual argv, runtime hashes and full stream hashes; no reused test result.",
+      "actualCommandDisplay": "rustfmt --edition 2024 --check apps/desktop/src-tauri/src/supervisor.rs"
+    },
+    {
+      "id": "native-recovery",
+      "commandId": "desktop:application",
+      "command": "[cwd=.] cargo test --offline --locked --manifest-path apps/desktop/src-tauri/Cargo.toml --lib recovery_ -- --nocapture --test-threads=1",
+      "workingDirectory": ".",
+      "commit": "eb570817f57a24756e2d675e974f7ee429c5dfc7",
+      "exitCode": 0,
+      "result": "PASS",
+      "durationSeconds": 7.457002600014675,
+      "inputReport": "artifacts/tmp/W2.remaining-corrections-batch-01/a06-t01-committed-06-native-recovery.receipt.json",
+      "inputReportSha256": "7a26f75cbf84ce8f0968e2471156cd361804e032bd97a3dddae9f1dc308151a0",
+      "producerSha256": "668ac5461cf60bbe83ef59ca9ce52f35a259abdf12c31d01d94d91d939474f2d",
+      "rawStreams": {
+        "stdout": {
+          "path": "artifacts/tmp/W2.remaining-corrections-batch-01/a06-t01-committed-06-native-recovery.stdout.log",
+          "sha256": "fd9bf6631cf50ba7279858f9e9efffb9db021c53234688a8552826a2040df9b6"
+        },
+        "stderr": {
+          "path": "artifacts/tmp/W2.remaining-corrections-batch-01/a06-t01-committed-06-native-recovery.stderr.log",
+          "sha256": "d24bcd51e60525a3756c14597396d28b263eae570a431536b44ee3f7dfb18547"
+        }
+      },
+      "provenance": "Fresh actual child at the fixed clean candidate with selected source write/delete-denying holds. Ignored report preserves actual argv, runtime hashes and full stream hashes; no reused test result.",
+      "actualCommandDisplay": "cargo test --offline --locked --manifest-path apps/desktop/src-tauri/Cargo.toml --lib recovery_ -- --nocapture --test-threads=1"
+    },
+    {
+      "id": "native-stop",
+      "commandId": "desktop:application",
+      "command": "[cwd=.] cargo test --offline --locked --manifest-path apps/desktop/src-tauri/Cargo.toml --lib security_stop_interrupts_an_already_started_graceful_wait -- --nocapture --test-threads=1",
+      "workingDirectory": ".",
+      "commit": "eb570817f57a24756e2d675e974f7ee429c5dfc7",
+      "exitCode": 0,
+      "result": "PASS",
+      "durationSeconds": 5.948154299985617,
+      "inputReport": "artifacts/tmp/W2.remaining-corrections-batch-01/a06-t01-committed-06-native-stop.receipt.json",
+      "inputReportSha256": "7e51a784694419bd353c5f1ac961a00ccac57deafb3af51e7010a14f7a0f6521",
+      "producerSha256": "668ac5461cf60bbe83ef59ca9ce52f35a259abdf12c31d01d94d91d939474f2d",
+      "rawStreams": {
+        "stdout": {
+          "path": "artifacts/tmp/W2.remaining-corrections-batch-01/a06-t01-committed-06-native-stop.stdout.log",
+          "sha256": "24807a520be14a6e65c997bd5bcdcbf86a149a1169eeab8460246aed65025bd3"
+        },
+        "stderr": {
+          "path": "artifacts/tmp/W2.remaining-corrections-batch-01/a06-t01-committed-06-native-stop.stderr.log",
+          "sha256": "02374c96ff84b9b37cc9c608682368486ddf3d5506f9c8b37436fa41fcebc0bb"
+        }
+      },
+      "provenance": "Fresh actual child at the fixed clean candidate with selected source write/delete-denying holds. Ignored report preserves actual argv, runtime hashes and full stream hashes; no reused test result.",
+      "actualCommandDisplay": "cargo test --offline --locked --manifest-path apps/desktop/src-tauri/Cargo.toml --lib security_stop_interrupts_an_already_started_graceful_wait -- --nocapture --test-threads=1"
+    },
+    {
+      "id": "python-format",
+      "commandId": "foundation:quality",
+      "command": "[cwd=.] .venv/Scripts/python.exe -B -s -m ruff format --check services/core-api/src/research_observatory_core/projects.py services/core-api/src/research_observatory_core/app.py services/core-api/src/research_observatory_core/models.py services/core-api/src/research_observatory_core/main.py services/core-api/src/research_observatory_core/windows_credentials.py services/core-api/src/research_observatory_core/object_store.py services/core-api/src/research_observatory_core/ports/project_recovery.py tests/security/test_project_recovery.py tests/service/test_native_project_contract.py tests/data/test_local_object_store.py",
+      "workingDirectory": ".",
+      "commit": "eb570817f57a24756e2d675e974f7ee429c5dfc7",
+      "exitCode": 0,
+      "result": "PASS",
+      "durationSeconds": 0.24758339999243617,
+      "inputReport": "artifacts/tmp/W2.remaining-corrections-batch-01/a06-t01-committed-06-python-format.receipt.json",
+      "inputReportSha256": "1fa43e796f2fb21899e116e958c35c25ed9d2055229ff30346b4348fa66322a9",
+      "producerSha256": "668ac5461cf60bbe83ef59ca9ce52f35a259abdf12c31d01d94d91d939474f2d",
+      "rawStreams": {
+        "stdout": {
+          "path": "artifacts/tmp/W2.remaining-corrections-batch-01/a06-t01-committed-06-python-format.stdout.log",
+          "sha256": "5b9f70ad96522f492ef846065642c069b5627379aff2ab3f74acd2e3b9ecfe34"
+        },
+        "stderr": {
+          "path": "artifacts/tmp/W2.remaining-corrections-batch-01/a06-t01-committed-06-python-format.stderr.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      "provenance": "Fresh actual child at the fixed clean candidate with selected source write/delete-denying holds. Ignored report preserves actual argv, runtime hashes and full stream hashes; no reused test result.",
+      "actualCommandDisplay": ".venv/Scripts/python.exe -B -s -m ruff format --check services/core-api/src/research_observatory_core/projects.py services/core-api/src/research_observatory_core/app.py services/core-api/src/research_observatory_core/models.py services/core-api/src/research_observatory_core/main.py services/core-api/src/research_observatory_core/windows_credentials.py services/core-api/src/research_observatory_core/object_store.py services/core-api/src/research_observatory_core/ports/project_recovery.py tests/security/test_project_recovery.py tests/service/test_native_project_contract.py tests/data/test_local_object_store.py"
+    },
+    {
+      "id": "python-recovery",
+      "commandId": "security-local:unit",
+      "command": "[cwd=.] .venv/Scripts/python.exe -B -s -m unittest -v tests.security.test_project_recovery tests.service.test_project_lifecycle",
+      "workingDirectory": ".",
+      "commit": "eb570817f57a24756e2d675e974f7ee429c5dfc7",
+      "exitCode": 0,
+      "result": "PASS",
+      "durationSeconds": 32.08221700001741,
+      "inputReport": "artifacts/tmp/W2.remaining-corrections-batch-01/a06-t01-committed-06-python-recovery.receipt.json",
+      "inputReportSha256": "5f6e496fab7bdec4ef7fd5c331ae8b38e8c6f06cb3a055e1623c424723f9ad16",
+      "producerSha256": "668ac5461cf60bbe83ef59ca9ce52f35a259abdf12c31d01d94d91d939474f2d",
+      "rawStreams": {
+        "stdout": {
+          "path": "artifacts/tmp/W2.remaining-corrections-batch-01/a06-t01-committed-06-python-recovery.stdout.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stderr": {
+          "path": "artifacts/tmp/W2.remaining-corrections-batch-01/a06-t01-committed-06-python-recovery.stderr.log",
+          "sha256": "ee32d5147d11da89fbb72ff1aae1c72144288c90371cae7828dad99c081f2237"
+        }
+      },
+      "provenance": "Fresh actual child at the fixed clean candidate with selected source write/delete-denying holds. Ignored report preserves actual argv, runtime hashes and full stream hashes; no reused test result.",
+      "actualCommandDisplay": ".venv/Scripts/python.exe -B -s -m unittest -v tests.security.test_project_recovery tests.service.test_project_lifecycle"
+    },
+    {
+      "id": "python-static",
+      "commandId": "foundation:quality",
+      "command": "[cwd=.] .venv/Scripts/python.exe -B -s -m ruff check services/core-api/src/research_observatory_core/projects.py services/core-api/src/research_observatory_core/app.py services/core-api/src/research_observatory_core/models.py services/core-api/src/research_observatory_core/main.py services/core-api/src/research_observatory_core/windows_credentials.py services/core-api/src/research_observatory_core/object_store.py services/core-api/src/research_observatory_core/ports/project_recovery.py tests/security/test_project_recovery.py tests/service/test_native_project_contract.py tests/data/test_local_object_store.py",
+      "workingDirectory": ".",
+      "commit": "eb570817f57a24756e2d675e974f7ee429c5dfc7",
+      "exitCode": 0,
+      "result": "PASS",
+      "durationSeconds": 0.26580079999985173,
+      "inputReport": "artifacts/tmp/W2.remaining-corrections-batch-01/a06-t01-committed-06-python-static.receipt.json",
+      "inputReportSha256": "f678b115b4018d3381599b46e53c17f34758080c312ad8185b8ddeebca270242",
+      "producerSha256": "668ac5461cf60bbe83ef59ca9ce52f35a259abdf12c31d01d94d91d939474f2d",
+      "rawStreams": {
+        "stdout": {
+          "path": "artifacts/tmp/W2.remaining-corrections-batch-01/a06-t01-committed-06-python-static.stdout.log",
+          "sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18"
+        },
+        "stderr": {
+          "path": "artifacts/tmp/W2.remaining-corrections-batch-01/a06-t01-committed-06-python-static.stderr.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      "provenance": "Fresh actual child at the fixed clean candidate with selected source write/delete-denying holds. Ignored report preserves actual argv, runtime hashes and full stream hashes; no reused test result.",
+      "actualCommandDisplay": ".venv/Scripts/python.exe -B -s -m ruff check services/core-api/src/research_observatory_core/projects.py services/core-api/src/research_observatory_core/app.py services/core-api/src/research_observatory_core/models.py services/core-api/src/research_observatory_core/main.py services/core-api/src/research_observatory_core/windows_credentials.py services/core-api/src/research_observatory_core/object_store.py services/core-api/src/research_observatory_core/ports/project_recovery.py tests/security/test_project_recovery.py tests/service/test_native_project_contract.py tests/data/test_local_object_store.py"
+    },
+    {
+      "id": "python-types",
+      "commandId": "foundation:quality",
+      "command": "[cwd=.] .venv/Scripts/python.exe -B -s -m mypy services/core-api/src/research_observatory_core/projects.py services/core-api/src/research_observatory_core/app.py services/core-api/src/research_observatory_core/models.py services/core-api/src/research_observatory_core/main.py services/core-api/src/research_observatory_core/windows_credentials.py services/core-api/src/research_observatory_core/object_store.py services/core-api/src/research_observatory_core/ports/project_recovery.py tests/security/test_project_recovery.py tests/service/test_native_project_contract.py tests/data/test_local_object_store.py",
+      "workingDirectory": ".",
+      "commit": "eb570817f57a24756e2d675e974f7ee429c5dfc7",
+      "exitCode": 0,
+      "result": "PASS",
+      "durationSeconds": 0.9944137000129558,
+      "inputReport": "artifacts/tmp/W2.remaining-corrections-batch-01/a06-t01-committed-06-python-types.receipt.json",
+      "inputReportSha256": "d8b293626ab915d94746fa8b38b36cee5460429d946dff209470ce3fe132c87a",
+      "producerSha256": "668ac5461cf60bbe83ef59ca9ce52f35a259abdf12c31d01d94d91d939474f2d",
+      "rawStreams": {
+        "stdout": {
+          "path": "artifacts/tmp/W2.remaining-corrections-batch-01/a06-t01-committed-06-python-types.stdout.log",
+          "sha256": "e522fa370334927ac2ccb7106100045b572938dd238093267de825336e6704f2"
+        },
+        "stderr": {
+          "path": "artifacts/tmp/W2.remaining-corrections-batch-01/a06-t01-committed-06-python-types.stderr.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      "provenance": "Fresh actual child at the fixed clean candidate with selected source write/delete-denying holds. Ignored report preserves actual argv, runtime hashes and full stream hashes; no reused test result.",
+      "actualCommandDisplay": ".venv/Scripts/python.exe -B -s -m mypy services/core-api/src/research_observatory_core/projects.py services/core-api/src/research_observatory_core/app.py services/core-api/src/research_observatory_core/models.py services/core-api/src/research_observatory_core/main.py services/core-api/src/research_observatory_core/windows_credentials.py services/core-api/src/research_observatory_core/object_store.py services/core-api/src/research_observatory_core/ports/project_recovery.py tests/security/test_project_recovery.py tests/service/test_native_project_contract.py tests/data/test_local_object_store.py"
+    },
+    {
+      "id": "task-adr",
+      "commandId": "foundation:adr",
+      "command": "[cwd=.] .venv/Scripts/python.exe -B -s tools/adr_check.py --repo . --base 15c2ab7bcc9b7ef111f44ffcb465628729fd4a5d --head eb570817f57a24756e2d675e974f7ee429c5dfc7",
+      "workingDirectory": ".",
+      "commit": "eb570817f57a24756e2d675e974f7ee429c5dfc7",
+      "exitCode": 0,
+      "result": "PASS",
+      "durationSeconds": 2.265683799982071,
+      "inputReport": "artifacts/tmp/W2.remaining-corrections-batch-01/a06-t01-committed-06-task-adr.receipt.json",
+      "inputReportSha256": "446d2ba985c7118af3b5891a24218e473bbbf0a4026f0f4632d4f9a2fecc3c26",
+      "producerSha256": "668ac5461cf60bbe83ef59ca9ce52f35a259abdf12c31d01d94d91d939474f2d",
+      "rawStreams": {
+        "stdout": {
+          "path": "artifacts/tmp/W2.remaining-corrections-batch-01/a06-t01-committed-06-task-adr.stdout.log",
+          "sha256": "7f09b11dca5657f18d105f2996b04d32c4f476ca0537113bcfa480b6c86820f9"
+        },
+        "stderr": {
+          "path": "artifacts/tmp/W2.remaining-corrections-batch-01/a06-t01-committed-06-task-adr.stderr.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      "provenance": "Fresh actual child at the fixed clean candidate with selected source write/delete-denying holds. Ignored report preserves actual argv, runtime hashes and full stream hashes; no reused test result.",
+      "actualCommandDisplay": ".venv/Scripts/python.exe -B -s tools/adr_check.py --repo . --base 15c2ab7bcc9b7ef111f44ffcb465628729fd4a5d --head eb570817f57a24756e2d675e974f7ee429c5dfc7"
+    },
+    {
+      "id": "whole-native-core",
+      "commandId": "service:unit",
+      "command": "[cwd=.] .venv/Scripts/python.exe -B -s -m unittest -v tests.service.test_native_project_contract.NativeRecoveryContractTests.test_whole_native_core_death_recovers_verified_protected_copy",
+      "workingDirectory": ".",
+      "commit": "eb570817f57a24756e2d675e974f7ee429c5dfc7",
+      "exitCode": 0,
+      "result": "PASS",
+      "durationSeconds": 38.9503260999918,
+      "inputReport": "artifacts/tmp/W2.remaining-corrections-batch-01/a06-t01-committed-06-whole-native-core.receipt.json",
+      "inputReportSha256": "1a766b26f96ba43d5cbd25fd7556a372aa03cbbdf7d42255a3a7e5b846989933",
+      "producerSha256": "668ac5461cf60bbe83ef59ca9ce52f35a259abdf12c31d01d94d91d939474f2d",
+      "rawStreams": {
+        "stdout": {
+          "path": "artifacts/tmp/W2.remaining-corrections-batch-01/a06-t01-committed-06-whole-native-core.stdout.log",
+          "sha256": "7ceab7aba391ec09d635ce4ce41bb297b88827ce0504174d6ff8c6bc73a41ef1"
+        },
+        "stderr": {
+          "path": "artifacts/tmp/W2.remaining-corrections-batch-01/a06-t01-committed-06-whole-native-core.stderr.log",
+          "sha256": "a0ff6c203bf59bf630cd3d3a5ded13bd97b8f234426b15bf17d77050814b4964"
+        }
+      },
+      "provenance": "Fresh actual child at the fixed clean candidate with selected source write/delete-denying holds. Ignored report preserves actual argv, runtime hashes and full stream hashes; no reused test result.",
+      "actualCommandDisplay": ".venv/Scripts/python.exe -B -s -m unittest -v tests.service.test_native_project_contract.NativeRecoveryContractTests.test_whole_native_core_death_recovers_verified_protected_copy"
+    },
+    {
+      "id": "approved-core45-architecture-proof",
+      "commandId": "foundation:architecture",
+      "command": "[cwd=.] .venv/Scripts/python.exe -B -s artifacts/tmp/W2.remaining-corrections-batch-01/run-a06-core-proof-01.py qualify --prefix a06-core-qualification-01 --readiness artifacts/tmp/W2.remaining-corrections-batch-01/W2.A06.T01.Core45.SOURCE_READY-02.json --readiness-sha256 0e898f1ce087c958f1c03cd0c1a41c1e61ef77b66014d0228e551450eec3f23a",
+      "workingDirectory": ".",
+      "commit": "eb570817f57a24756e2d675e974f7ee429c5dfc7",
+      "exitCode": 0,
+      "result": "PASS",
+      "durationSeconds": 6.999386699986644,
+      "inputReport": "artifacts/tmp/W2.remaining-corrections-batch-01/a06-core-qualification-01.receipt.json",
+      "inputReportSha256": "8ada0031252ae16c4a714b762876759aaa768a15629162503ebe41fe480cf187",
+      "executionReport": "artifacts/tmp/W2.remaining-corrections-batch-01/a06-core-qualification-01.execution.receipt.json",
+      "executionReportSha256": "eaaf67bad0a804c13a47df8b093de2d3fbdd1c933146faad85046417984a9c0f",
+      "producerSha256": "a68f372b5f4a3521cec7af536afafc247bdb41d845e3136625ba8e20c6003e2e",
+      "rawStreams": {
+        "stdout": {
+          "path": "artifacts/tmp/W2.remaining-corrections-batch-01/a06-core-qualification-01.execution.stdout.log",
+          "sha256": "58435e5ce97c1d4a666fca4dd40e37756f74d3448cf6dadf331a33cd509d5334"
+        },
+        "stderr": {
+          "path": "artifacts/tmp/W2.remaining-corrections-batch-01/a06-core-qualification-01.execution.stderr.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      "provenance": "Owner-approved Core45 only: actual six negative controls, independently authenticated SOURCE_READY and method-source record, unchanged original checker executed from verified held snapshot, complete exact path/rule/line/AST/source multiset. Original FAIL remains preserved; desktop3/full48 is T03.",
+      "actualCommandDisplay": ".venv/Scripts/python.exe -B -s artifacts/tmp/W2.remaining-corrections-batch-01/run-a06-core-proof-01.py qualify --prefix a06-core-qualification-01 --readiness artifacts/tmp/W2.remaining-corrections-batch-01/W2.A06.T01.Core45.SOURCE_READY-02.json --readiness-sha256 0e898f1ce087c958f1c03cd0c1a41c1e61ef77b66014d0228e551450eec3f23a"
+    }
+  ],
+  "verificationSelection": {
+    "riskAnalysis": "High-risk Native-owned persisted recovery proof and protected copy/API change: selected all affected Python source format/lint/types, 67 recovery/lifecycle cases, 37 existing object/credential regression cases with one explicit capability skip, actual whole Native/Core protected recovery plus foreign close, eight Native owner/protocol tests and stop regression, generated contract/client/types, desktop types, task ADR and separately authorized exact Core45 proof. The final Native birth fix changes the candidate, so all selected checks are fresh; installed dependency closure does not authorize receipt reuse. No full profile at ordinary T01 scope; current source/interface and actual principal/failure boundaries are covered.",
+    "selectedCommandIds": [
+      "contracts:unit",
+      "data:unit",
+      "desktop:application",
+      "foundation:adr",
+      "foundation:architecture",
+      "foundation:quality",
+      "security-local:unit",
+      "service:unit"
+    ],
+    "deferred": [
+      "W2.A06.T02: shipping Projects recovery UI and existing-reference keyboard/focus/theme/reflow and actual renderer/native/Core integration.",
+      "W2.A06.T03 and downstream checkpoints/Wave: complete quality inventory, original whole-workspace formatter debt disposition and full closed45+3/desktop/CSP methods; fresh complete affected/repository/profile matrix.",
+      "Physical independent Windows installation test: explicitly unexecuted, first available installation and mandatory byW5 exit under owner-approved timing supplement."
+    ],
+    "reusedEvidence": []
+  },
+  "reviewerDisposition": {
+    "openFindingIds": [],
+    "note": "No earlier formal task submission round. The pre-submission Native birth finding and earlier API cleanup finding are linked to actual failing regression/successor proof; independent formal task review remains required."
+  },
+  "preservedAdverseEvidence": {
+    "originalArchitecture": {
+      "receipt": "artifacts/tmp/W2.remaining-corrections-batch-01/a06-t01-committed-06-original-architecture.receipt.json",
+      "sha256": "5cdeeeac93e2f95ac19f2aa2554665c4b6bdb74f8a28f5b8a1ec09f50b43394a",
+      "disposition": "PRESERVED_ORIGINAL_FAIL",
+      "streams": {
+        "stdout": {
+          "path": "artifacts/tmp/W2.remaining-corrections-batch-01/a06-t01-committed-06-original-architecture.stdout.log",
+          "sha256": "b7aa2057c4ecc9ac022e3441cb24c5cfee501bae4c85325b77ee2f2c1c75dd2b"
+        },
+        "stderr": {
+          "path": "artifacts/tmp/W2.remaining-corrections-batch-01/a06-t01-committed-06-original-architecture.stderr.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      }
+    },
+    "historyPrefixes": [
+      "a06-t01-committed-03",
+      "a06-t01-committed-05",
+      "a06-local-proof-development-01",
+      "a06-local-proof-development-02",
+      "a06-local-proof-development-03",
+      "a06-local-proof-development-04",
+      "a06-local-proof-development-05",
+      "a06-local-proof-development-06",
+      "a06-local-proof-development-08",
+      "a06-local-proof-development-09",
+      "a06-local-proof-development-10"
+    ],
+    "limits": "Original product failures, setup errors, skips, privacy pending14 and owner-stop-interrupted planning validation remain preserved in their existing ignored local artifacts; no adverse outcome is relabeled PASS."
+  },
+  "methodAuthority": {
+    "grant": "planning/wave-amendment-approvals/W2.A06.json",
+    "methodSourceRecord": "artifacts/tmp/W2.remaining-corrections-batch-01/W2.A06.T01.Core45.method-source-record-02.json",
+    "methodSourceRecordSha256": "e28937d4ab5e1d538e5a8dc32ad0a632e59b2f86bb4418e2380510c6b7bfe6a0",
+    "readiness": "artifacts/tmp/W2.remaining-corrections-batch-01/W2.A06.T01.Core45.SOURCE_READY-02.json",
+    "readinessSha256": "0e898f1ce087c958f1c03cd0c1a41c1e61ef77b66014d0228e551450eec3f23a"
+  },
+  "approvedSupplement": "artifacts/evidence/W2.A06.T01.foreign-host-timing-amendment-01.supplement.json",
+  "retainedOpenWaveFinding": "W1-R03-P1",
+  "completionLimits": "No shipping GUI, full-profile, slice/amendment/Wave completion, W3 activation or release approval is claimed by this task manifest.",
+  "independentEvidenceAdvisory": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/W2.A06.T01.commit-bound-independent-evidence-advisory-03.json",
+    "sha256": "2775d1931248c51415194d8e74865f77cbc6c6deff9fbdedcd17269539c71b94",
+    "candidateCommit": "eb570817f57a24756e2d675e974f7ee429c5dfc7",
+    "formalTaskApproval": false
+  },
+  "submissionPreparationCorrection": {
+    "preservedRejectedManifest": "artifacts/tmp/W2.remaining-corrections-batch-01/W2.A06.T01.R01.rejected-manifest-01.json",
+    "sha256": "b639fb8e78715c5b585e201ad584c5046f225429847a67a662621bc6810972f1",
+    "reason": "The same actual typecheck argv runs in two distinct package working directories; checked-command identity now states the real working directory. Actual argv, working directories, checks, candidate, assertions and results are unchanged."
+  }
+}
