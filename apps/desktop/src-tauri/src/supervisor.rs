@@ -4780,7 +4780,7 @@ fn recovery_owned_session(_child: &Child) -> Option<RecoveryNativeSession> {
 #[cfg(windows)]
 fn recovery_owner_state(expected: &RecoveryProcessIdentity) -> &'static str {
     use windows_sys::Win32::Foundation::{
-        CloseHandle, ERROR_INVALID_PARAMETER, ERROR_NO_MORE_FILES, GetLastError,
+        CloseHandle, ERROR_INVALID_PARAMETER, ERROR_NO_MORE_FILES, FILETIME, GetLastError,
         INVALID_HANDLE_VALUE, WAIT_OBJECT_0, WAIT_TIMEOUT,
     };
     use windows_sys::Win32::System::Diagnostics::ToolHelp::{
@@ -4788,7 +4788,8 @@ fn recovery_owner_state(expected: &RecoveryProcessIdentity) -> &'static str {
         TH32CS_SNAPPROCESS,
     };
     use windows_sys::Win32::System::Threading::{
-        OpenProcess, PROCESS_QUERY_LIMITED_INFORMATION, PROCESS_SYNCHRONIZE, WaitForSingleObject,
+        GetProcessTimes, OpenProcess, PROCESS_QUERY_LIMITED_INFORMATION, PROCESS_SYNCHRONIZE,
+        WaitForSingleObject,
     };
     unsafe {
         let snapshot = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
@@ -4829,8 +4830,27 @@ fn recovery_owner_state(expected: &RecoveryProcessIdentity) -> &'static str {
         }
         let wait = WaitForSingleObject(process, 0);
         if wait == WAIT_OBJECT_0 {
+            let (mut created, mut exited, mut kernel, mut user) = (
+                FILETIME::default(),
+                FILETIME::default(),
+                FILETIME::default(),
+                FILETIME::default(),
+            );
+            let queried =
+                GetProcessTimes(process, &mut created, &mut exited, &mut kernel, &mut user);
             CloseHandle(process);
-            return "dead";
+            if queried == 0 {
+                return "unknown";
+            }
+            let creation_filetime = format!(
+                "{:016x}",
+                (u64::from(created.dwHighDateTime) << 32) | u64::from(created.dwLowDateTime)
+            );
+            return if creation_filetime == expected.creation_filetime {
+                "dead"
+            } else {
+                "pid-reused"
+            };
         }
         if wait != WAIT_TIMEOUT {
             CloseHandle(process);
@@ -5379,6 +5399,63 @@ mod tests {
         changed = own;
         changed.executable_identity = "0".repeat(64);
         assert_eq!(super::recovery_owner_state(&changed), "unknown");
+    }
+
+    #[cfg(windows)]
+    #[test]
+    fn recovery_actual_terminated_owner_preserves_reused_birth_denial() {
+        use std::io::{Read, Write};
+        use std::os::windows::io::AsRawHandle;
+        use windows_sys::Win32::Foundation::{CloseHandle, WAIT_OBJECT_0};
+        use windows_sys::Win32::System::Threading::{
+            OpenProcess, PROCESS_QUERY_LIMITED_INFORMATION, PROCESS_SYNCHRONIZE,
+            WaitForSingleObject,
+        };
+        const CHILD_MODE: &str = "RO_TEST_RETAINED_OWNER_CHILD";
+        if std::env::var_os(CHILD_MODE).is_some() {
+            std::io::stdin().read_exact(&mut [0_u8; 1]).unwrap();
+            return;
+        }
+        struct OwnedChild(std::process::Child);
+        impl Drop for OwnedChild {
+            fn drop(&mut self) {
+                let _ = self.0.kill();
+                let _ = self.0.wait();
+            }
+        }
+        let mut child = OwnedChild(
+            std::process::Command::new(std::env::current_exe().unwrap())
+                .args([
+                    "--exact",
+                    "supervisor::tests::recovery_actual_terminated_owner_preserves_reused_birth_denial",
+                ])
+                .env(CHILD_MODE, "1")
+                .stdin(std::process::Stdio::piped())
+                .stdout(std::process::Stdio::null())
+                .stderr(std::process::Stdio::null())
+                .spawn()
+                .unwrap(),
+        );
+        let owner =
+            super::recovery_process_identity(child.0.as_raw_handle(), child.0.id()).unwrap();
+        assert_eq!(super::recovery_owner_state(&owner), "live");
+        child.0.stdin.take().unwrap().write_all(b"x").unwrap();
+        assert!(child.0.wait().unwrap().success());
+        let retained = unsafe {
+            OpenProcess(
+                PROCESS_QUERY_LIMITED_INFORMATION | PROCESS_SYNCHRONIZE,
+                0,
+                child.0.id(),
+            )
+        };
+        assert!(!retained.is_null());
+        let signaled = unsafe { WaitForSingleObject(retained, 0) };
+        unsafe { CloseHandle(retained) };
+        assert_eq!(signaled, WAIT_OBJECT_0);
+        assert_eq!(super::recovery_owner_state(&owner), "dead");
+        let mut changed = owner;
+        changed.creation_filetime = "0000000000000000".into();
+        assert_eq!(super::recovery_owner_state(&changed), "pid-reused");
     }
 
     #[cfg(windows)]

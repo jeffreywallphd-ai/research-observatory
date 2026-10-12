@@ -146,3 +146,13 @@ a timeout preserves the existing process-birth and executable checks, and any
 other wait result remains `unknown`. Access denial still remains `unknown`.
 These bounded local checks are development evidence; committed qualification,
 task review and later Wave gates remain pending.
+
+A further criterion-linked review found that signaled termination alone skipped
+the trusted process-birth comparison. The actual retained Native test-process
+characterization reproduced `dead` for a mismatched creation time; its failed
+run and earlier test-fixture setup errors are retained separately. The signaled
+branch now reads the OS creation FILETIME from the opened process handle before
+classifying the owner: matching birth permits `dead`, mismatched birth returns
+`pid-reused`, and unavailable birth remains `unknown`. The actual retained-handle
+case and other selected Native recovery cases pass in development; fresh final
+candidate proof and independent task disposition are still required.
