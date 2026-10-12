@@ -368,6 +368,18 @@ function ProjectRecoveryRegion({ sourceRoot, transport, announce, disabled, onBu
     </div> : null}
     {failure ? <Notification tone="warning" title={failure.title}>{failure.message}</Notification> : null}
     {state === "preview-ready" && !reviewDismissed ? <dialog ref={dialog} className="ro-dialog" aria-labelledby="project-recovery-review-title" aria-describedby="project-recovery-review-description"
+      onKeyDown={(event) => {
+        if (event.key !== "Tab") return;
+        const controls = Array.from(event.currentTarget.querySelectorAll<HTMLButtonElement>("button:not(:disabled)"));
+        const first = controls[0];
+        const last = controls.at(-1);
+        if (!first || !last) return;
+        if (event.shiftKey && document.activeElement === first) {
+          event.preventDefault(); last.focus();
+        } else if (!event.shiftKey && document.activeElement === last) {
+          event.preventDefault(); first.focus();
+        }
+      }}
       onCancel={(event) => { event.preventDefault(); dismissReview(); }}>
       <Typography id="project-recovery-review-title" as="h2" variant="section-title">Review recovery copy</Typography>
       <div className="ro-dialog__body ro-stack"><p id="project-recovery-review-description">Create a verified working copy of {flow?.projection.sourceDisplayLabel}. The original is preserved. This does not reopen, reparse or accept research results.</p>

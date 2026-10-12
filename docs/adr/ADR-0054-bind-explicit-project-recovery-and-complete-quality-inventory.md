@@ -178,3 +178,9 @@ These are implementation notes within the approved T02 envelope. Development
 unit/type checks are not shipping desktop, task, slice or Wave qualification.
 Fresh actual Native/Core/UI, keyboard, failure, cancellation, protected-readback
 and restart evidence plus independent review remain required.
+
+The actual shipping check at `8f26edfbcfcbde64a5df18deffb184f51bd1c2e2`
+found that Tab after the last recovery button could leave the dialog. That
+failure is retained. Recovery now uses the existing Task Center dialog pattern
+to wrap forward and reverse Tab between enabled dialog controls. Fresh shipping
+keyboard verification at the corrected committed candidate remains required.
