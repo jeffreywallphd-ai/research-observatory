@@ -1,0 +1,41 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "actual-T03-typing-addendum-publication-provenance",
+  "taskId": "W2.A06.T03",
+  "proposalId": "W2.A06.T03.TY01",
+  "inspectedSourceCandidate": "3aa8824e6c15502d46e6fffd83f33a21b94b58ae",
+  "actualIntroductionCommit": "b075c9ba85500269be09a5717e98bb494abf0a15",
+  "publishedExactLFRecords": [
+    {
+      "path": "artifacts/evidence/W2.A06.T03.typing-scope-addendum-01.proposal.json",
+      "sha256": "2d3fcbf36da82c2e99c1492a959b8f2c5a494682445a0348572623798d6deeab",
+      "introductionCommit": "b075c9ba85500269be09a5717e98bb494abf0a15"
+    },
+    {
+      "path": "artifacts/evidence/W2.A06.T03.typing-scope-addendum-01.readiness.json",
+      "sha256": "b7ac5f2e73b0c19da29c4442e685fea8a73af6c9324c359d390b3d9cf20f5932",
+      "introductionCommit": "b075c9ba85500269be09a5717e98bb494abf0a15"
+    },
+    {
+      "path": "artifacts/evidence/W2.A06.T03.typing-scope-addendum-01.review.html",
+      "sha256": "580edc38d1c318edcc7e0559a1aa5be49f183e41028ba5938a390673c5aa0f88",
+      "introductionCommit": "b075c9ba85500269be09a5717e98bb494abf0a15"
+    },
+    {
+      "path": "artifacts/evidence/W2.A06.T03.typing-scope-addendum-01.owner-decision.json",
+      "sha256": "aa07a79108cfa4158d68702ed16c9d27dff374a1bc90c782e500fa0bcf847fda",
+      "introductionCommit": "b075c9ba85500269be09a5717e98bb494abf0a15"
+    },
+    {
+      "path": "artifacts/evidence/W2.A06.T03.typing-scope-addendum-01.supplement.json",
+      "sha256": "c68abf1b6711dbca800381d3c5ddf9d254f11257a65b9cfd87e217c800b0ad6c",
+      "introductionCommit": "b075c9ba85500269be09a5717e98bb494abf0a15"
+    }
+  ],
+  "normalGateReceipt": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/a06-t03-scope-gate-and-views-01.receipt.json",
+    "sha256": "3764b62ae87b85b0e21f31bb8cb8c8b9cf90efeefb71fcad307530534cc85b92"
+  },
+  "orderingDisclosure": "The exact human approval arrived while the normal gate/view pipeline was running. The blocker reason was prepared before that reply; the separately published owner decision supersedes pending-decision wording. Normal same-task reopen follows this actual authority/provenance publication.",
+  "limits": "No source repair, quality PASS, task/amendment/Wave approval, W2 release or W3 approval inferred. Original packet/history/adverses unchanged."
+}
