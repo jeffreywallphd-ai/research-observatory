@@ -63024,18 +63024,15 @@ wave_amendments:
     - Existing UI approval/reference/token/route/workflow/accessibility/visual/ADR predicates, with only explicit finite C18/current-build/CSP
       method successors after real independent readiness/source recording. Expanded commit-bound UI/security disposition.
     packet_task_sha256: 55e87dd78ab0b676534b1e21cf3753487896f486d18b0a3b07c24ff1b21b86ad
-    status: REVIEW
+    status: DONE
     owner: codex-w2-implementation
     branch: codex/w2-implementation
     base_sha: dd59d8b3cd170dee00794f225271ce6b7e5d7116
     worktree: .
-    lease:
-      claimed_by: codex-w2-implementation
-      claimed_at: '2026-10-12T12:42:41+00:00'
-      expires_at: '2026-10-12T20:42:41+00:00'
+    lease: null
     started_at: '2026-10-12T12:42:41+00:00'
-    updated_at: '2026-10-12T17:22:48+00:00'
-    completed_at: null
+    updated_at: '2026-10-12T17:57:59+00:00'
+    completed_at: '2026-10-12T17:57:59+00:00'
     blocker: null
     implementation_notes: ''
     evidence:
@@ -63045,76 +63042,118 @@ wave_amendments:
       commit: df93798ba55571d6258f720dc4a8ed2766f0aee7
       recorded_at: '2026-10-12T17:22:48+00:00'
     verification_state: passed
-    review:
-      reviewer: null
-      result: null
-      reviewed_at: null
-      notes: null
+    review: &id196
+      reviewer: agent:/root/a06_t02_ui_security_review
+      result: approved
+      reviewed_at: '2026-10-12T17:57:59+00:00'
+      notes: Approves only W2.A06.T02 R01 at the exact product candidate and authenticated submitted REVIEW delivery. Original
+        five public selector FAILs before checks, first reference inventory failure, public Native debug-environment rejection
+        and prior source/shipping/measurement/fault-setup/path adverses remain preserved; no failed original command is relabeled
+        PASS. Additive lost-response proof simulates browser picker/runtime only and does not replace shipping or Native security
+        qualification. Original W1-R03-P1 remains OPEN and physical independent Windows installation remains untested under
+        existing owner-timed byW5 authority. W2.A06.T03 complete quality/full closed45+3/current Reader Native CSP/final-build
+        matrix, installed packaging, downstream fresh full affected/repository/profile/Slice/checkpoint/Wave qualification
+        and separate human release gate remain required.
     review_control:
       version: 1
-      attempts: []
-      current_submission:
-        id: R01
-        submitted_by: codex-w2-implementation
-        submitted_at: '2026-10-12T17:22:48+00:00'
-        candidate_commit: df93798ba55571d6258f720dc4a8ed2766f0aee7
-        base_commit: dd59d8b3cd170dee00794f225271ce6b7e5d7116
-        branch: codex/w2-implementation
-        evidence_reference:
-          type: criterion-manifest
-          path: artifacts/evidence/W2.A06.T02.R01.json
-          sha256: 9207dfd86ac8ad37b34267296e0ede6e0eda1444a2910ea9f26c02b1bc848e59
-          commit: df93798ba55571d6258f720dc4a8ed2766f0aee7
-          recorded_at: '2026-10-12T17:22:48+00:00'
-        acceptance_criteria_sha256: 89dcfef5e414aaa96edbb424261a1d814282658927f3e668ce5968edf467a6a5
-        changed_paths:
-        - apps/desktop/src/app/ProjectsWorkspace.test.tsx
-        - apps/desktop/src/app/ProjectsWorkspace.tsx
-        - docs/adr/ADR-0054-bind-explicit-project-recovery-and-complete-quality-inventory.md
-        - docs/planning-implementation-plan.md
-        - planning/backlog.yaml
-        - planning/review-site/enablers/ECR-0014.html
-        - planning/review-site/manifest.json
-        - planning/status-summary.md
-        selected_checks:
-        - corepack pnpm exec vitest run src/app/ProjectsWorkspace.test.tsx --maxWorkers=1
-        - corepack pnpm run typecheck
-        - python -B -s tools/adr_check.py --repo . --base dd59d8b3cd170dee00794f225271ce6b7e5d7116 --head df93798ba55571d6258f720dc4a8ed2766f0aee7
-        - python -B -s tools/ui_reference_check.py --repo . --reference design/ui-reference
-        - python -B -s artifacts/tmp/W2.remaining-corrections-batch-01/a06-t02-shipping-build-01.py df93798ba55571d6258f720dc4a8ed2766f0aee7
-          r02
-        - python -B -s artifacts/tmp/W2.remaining-corrections-batch-01/a06-t02-shipping-recovery-06.py df93798ba55571d6258f720dc4a8ed2766f0aee7
-        - python -B -s artifacts/tmp/W2.remaining-corrections-batch-01/a06-t02-shipping-live-denial-01.py df93798ba55571d6258f720dc4a8ed2766f0aee7
-        - python -B -s artifacts/tmp/W2.remaining-corrections-batch-01/a06-t02-layered-reply-loss-01.py df93798ba55571d6258f720dc4a8ed2766f0aee7
-        - .venv/Scripts/python.exe -B -s artifacts/tmp/W2.A06.T02.reference-proof-02.py
-        deferred_checks:
-        - 'T03 and downstream slice/checkpoint/Wave: complete quality inventory, full closed45+3/current Reader native CSP/final-build
-          matrix, installed packaging and fresh full affected/repository/profile qualification.'
-        - Unchanged T01 Native/Core/security/API implementation remains independently DONE/approved; shipping integrations
-          exercise its actual boundary at current source.
-        - Physical independent Windows installation test remains explicitly untested under approved byW5-exit deferral.
-        - Original canonical R03 restart finding remains OPEN pending separately approved one-use recovery copy and protected
-          ordinary Native/Core readback; new-session fixture never closes it.
-        selection_rationale: Affected Projects TSX/test and indexed ADR only; no Core/Native/contracts/shared-framework change.
-          Fresh eight-unit state/action/strict-decoder tests, desktop types, ADR/reference, exact current shipping build,
-          real shipping failure/cancel/status/focus/reflow/denial/whole-pair recovery and protected readback, additive genuine
-          Native/Core lost-response proof, and five explicit approved reference predicates. Expanded independent task review
-          covers this cross-process/security/UX integration. Unchanged T01 backend tests and full profiles are deferred by
-          affected-path risk rather than repeated.
-        selection_sha256: 39de5b1c36e22bcf0ed11d9465d5a62000a94274966fd1d3670f92702e1b7181
-        prior_attempt_id: null
-        open_finding_ids: []
-        root_cause_analysis: null
-        selected_command_ids:
-        - desktop:application
-        - desktop:ui-accessibility
-        - desktop:ui-reference-integrity
-        - desktop:ui-route-page
-        - desktop:ui-token
-        - desktop:ui-visual-regression
-        - desktop:ui-workflow
-        - foundation:adr
-        packet_sha256: f17db4a336720f07bae623896133c2b15bee6b2927fa0496853d7bd36917db67
+      attempts:
+      - submission:
+          id: R01
+          submitted_by: codex-w2-implementation
+          submitted_at: '2026-10-12T17:22:48+00:00'
+          candidate_commit: df93798ba55571d6258f720dc4a8ed2766f0aee7
+          base_commit: dd59d8b3cd170dee00794f225271ce6b7e5d7116
+          branch: codex/w2-implementation
+          evidence_reference:
+            type: criterion-manifest
+            path: artifacts/evidence/W2.A06.T02.R01.json
+            sha256: 9207dfd86ac8ad37b34267296e0ede6e0eda1444a2910ea9f26c02b1bc848e59
+            commit: df93798ba55571d6258f720dc4a8ed2766f0aee7
+            recorded_at: '2026-10-12T17:22:48+00:00'
+          acceptance_criteria_sha256: 89dcfef5e414aaa96edbb424261a1d814282658927f3e668ce5968edf467a6a5
+          changed_paths:
+          - apps/desktop/src/app/ProjectsWorkspace.test.tsx
+          - apps/desktop/src/app/ProjectsWorkspace.tsx
+          - docs/adr/ADR-0054-bind-explicit-project-recovery-and-complete-quality-inventory.md
+          - docs/planning-implementation-plan.md
+          - planning/backlog.yaml
+          - planning/review-site/enablers/ECR-0014.html
+          - planning/review-site/manifest.json
+          - planning/status-summary.md
+          selected_checks:
+          - corepack pnpm exec vitest run src/app/ProjectsWorkspace.test.tsx --maxWorkers=1
+          - corepack pnpm run typecheck
+          - python -B -s tools/adr_check.py --repo . --base dd59d8b3cd170dee00794f225271ce6b7e5d7116 --head df93798ba55571d6258f720dc4a8ed2766f0aee7
+          - python -B -s tools/ui_reference_check.py --repo . --reference design/ui-reference
+          - python -B -s artifacts/tmp/W2.remaining-corrections-batch-01/a06-t02-shipping-build-01.py df93798ba55571d6258f720dc4a8ed2766f0aee7
+            r02
+          - python -B -s artifacts/tmp/W2.remaining-corrections-batch-01/a06-t02-shipping-recovery-06.py df93798ba55571d6258f720dc4a8ed2766f0aee7
+          - python -B -s artifacts/tmp/W2.remaining-corrections-batch-01/a06-t02-shipping-live-denial-01.py df93798ba55571d6258f720dc4a8ed2766f0aee7
+          - python -B -s artifacts/tmp/W2.remaining-corrections-batch-01/a06-t02-layered-reply-loss-01.py df93798ba55571d6258f720dc4a8ed2766f0aee7
+          - .venv/Scripts/python.exe -B -s artifacts/tmp/W2.A06.T02.reference-proof-02.py
+          deferred_checks:
+          - 'T03 and downstream slice/checkpoint/Wave: complete quality inventory, full closed45+3/current Reader native CSP/final-build
+            matrix, installed packaging and fresh full affected/repository/profile qualification.'
+          - Unchanged T01 Native/Core/security/API implementation remains independently DONE/approved; shipping integrations
+            exercise its actual boundary at current source.
+          - Physical independent Windows installation test remains explicitly untested under approved byW5-exit deferral.
+          - Original canonical R03 restart finding remains OPEN pending separately approved one-use recovery copy and protected
+            ordinary Native/Core readback; new-session fixture never closes it.
+          selection_rationale: Affected Projects TSX/test and indexed ADR only; no Core/Native/contracts/shared-framework
+            change. Fresh eight-unit state/action/strict-decoder tests, desktop types, ADR/reference, exact current shipping
+            build, real shipping failure/cancel/status/focus/reflow/denial/whole-pair recovery and protected readback, additive
+            genuine Native/Core lost-response proof, and five explicit approved reference predicates. Expanded independent
+            task review covers this cross-process/security/UX integration. Unchanged T01 backend tests and full profiles are
+            deferred by affected-path risk rather than repeated.
+          selection_sha256: 39de5b1c36e22bcf0ed11d9465d5a62000a94274966fd1d3670f92702e1b7181
+          prior_attempt_id: null
+          open_finding_ids: []
+          root_cause_analysis: null
+          selected_command_ids:
+          - desktop:application
+          - desktop:ui-accessibility
+          - desktop:ui-reference-integrity
+          - desktop:ui-route-page
+          - desktop:ui-token
+          - desktop:ui-visual-regression
+          - desktop:ui-workflow
+          - foundation:adr
+          packet_sha256: f17db4a336720f07bae623896133c2b15bee6b2927fa0496853d7bd36917db67
+        review: *id196
+        ledger:
+          path: artifacts/evidence/W2.A06.T02.review-R01.json
+          sha256: ba61a41249cd04559bd2035105552d2d21dff620b4995d139500490a53bcff3c
+        findings: []
+        closures: []
+        telemetry:
+          task_id: W2.A06.T02
+          amendment_id: W2.A06
+          attempt_id: R01
+          submitted_at: '2026-10-12T17:22:48+00:00'
+          reviewed_at: '2026-10-12T17:57:59+00:00'
+          duration_seconds: 2111
+          outcome: approved
+          finding_counts:
+            critical: 0
+            high: 0
+            medium: 0
+            low: 0
+            blocking: 0
+            total: 0
+          command_ids:
+          - desktop:application
+          - desktop:ui-accessibility
+          - desktop:ui-reference-integrity
+          - desktop:ui-route-page
+          - desktop:ui-token
+          - desktop:ui-visual-regression
+          - desktop:ui-workflow
+          - foundation:adr
+          remediation:
+            prior_attempt_id: null
+            replayed_finding_ids: []
+            closed_finding_ids: []
+      current_submission: null
   - id: W2.A06.T03
     amendment_id: W2.A06
     title: Synchronize quality inventory and qualify the finite approved verification methods
@@ -63153,14 +63192,14 @@ wave_amendments:
       controls, fresh standard frontend/Native/Core build/package/current-reference capture and affected integrated recovery/UI
       tests; independent combined security/verification disposition.
     packet_task_sha256: 79b25773fece0b6c557c7cde1276031a0a88225d99c03d92c1644bc2fbd1cd0e
-    status: NOT_STARTED
+    status: READY
     owner: null
     branch: null
     base_sha: null
     worktree: null
     lease: null
     started_at: null
-    updated_at: null
+    updated_at: '2026-10-12T17:57:59+00:00'
     completed_at: null
     blocker: null
     implementation_notes: ''

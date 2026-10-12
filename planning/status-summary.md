@@ -1,7 +1,7 @@
 ---
 document_type: generated-backlog-status-summary
 source: planning/backlog.yaml
-source_sha256: b1b910a6960a1ab6cf510eadf2e25e7f8a4262ab887d1670db0691449dfff15a
+source_sha256: ebde405a8811e1190f024ec3b5bd26255c5ac6b6154b0c8288659d151e6399f1
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -68,9 +68,8 @@ manual_edit: prohibited
 
 | Status | Count |
 |---|---:|
-| `NOT_STARTED` | 1 |
-| `REVIEW` | 1 |
-| `DONE` | 24 |
+| `READY` | 1 |
+| `DONE` | 25 |
 
 ## Wave authority and append-only amendments
 
@@ -927,7 +926,7 @@ Append-only rounds remain distinct from the current latest-review projection. Le
 | `W2.A05.T01` | `append-only v1` | 1 | `-` | approved / agent:/root/a05_t01_review | - |
 | `W2.A05.T02` | `append-only v1` | 1 | `-` | approved / agent:/root/a05_t02_review | - |
 | `W2.A06.T01` | `append-only v1` | 1 | `-` | approved / agent:/root/a03_t01_lineage_audit | - |
-| `W2.A06.T02` | `append-only v1` | 0 | `R01` | - / - | - |
+| `W2.A06.T02` | `append-only v1` | 1 | `-` | approved / agent:/root/a06_t02_ui_security_review | - |
 | `W1.C01.T01` | `append-only v1` | 1 | `-` | approved / agent:/root/ui_guard_planning | - |
 | `W1.C02.T01` | `append-only v1` | 1 | `-` | approved / agent:/root/cap07_slice_review | - |
 | `W1.C03.T01` | `append-only v1` | 1 | `-` | approved / agent:/root/cap07_slice_review | - |
@@ -1012,9 +1011,7 @@ Append-only rounds remain distinct from the current latest-review projection. Le
 
 ## Active work
 
-| Task | Status | Owner | Branch |
-|---|---|---|---|
-| `W2.A06.T02` Integrate explicit recovery review into the approved Projects experience | `REVIEW` | codex-w2-implementation | `codex/w2-implementation` |
+No task is currently active.
 
 ## Linked corrective tasks
 

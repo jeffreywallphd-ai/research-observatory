@@ -1,0 +1,168 @@
+{
+  "task_id": "W2.A06.T02",
+  "attempt_id": "R01",
+  "candidate_commit": "df93798ba55571d6258f720dc4a8ed2766f0aee7",
+  "reviewed_state_commit": "2d2d4e34eadba04e71a1d939eff6e46116d8adb0",
+  "base_commit": "dd59d8b3cd170dee00794f225271ce6b7e5d7116",
+  "reviewer": "agent:/root/a06_t02_ui_security_review",
+  "result": "approved",
+  "packet_sha256": "f17db4a336720f07bae623896133c2b15bee6b2927fa0496853d7bd36917db67",
+  "evidence_sha256": "9207dfd86ac8ad37b34267296e0ede6e0eda1444a2910ea9f26c02b1bc848e59",
+  "acceptance_criteria_sha256": "89dcfef5e414aaa96edbb424261a1d814282658927f3e668ce5968edf467a6a5",
+  "selection_sha256": "39de5b1c36e22bcf0ed11d9465d5a62000a94274966fd1d3670f92702e1b7181",
+  "findings": [],
+  "closures": [],
+  "pre_submission_finding_replay": [
+    {
+      "id": "W2.A06.T02-pre-submission-lost-response",
+      "criteria": ["T02-AC01", "T02-AC02", "T02-AC03"],
+      "result": "closed",
+      "assessment": "No existing read-only ProjectProjection API was found and none was fabricated. The exact reviewed source displays successful recovery with project details unconfirmed after a lost Open reply, requires explicit real status readback and offers a separate human Close through the existing API. Actual additive production-component evidence retains the genuine Native/Core successful Open200, drops only its delivery once, proves no automatic replay or invented parent details, and then receives the sole genuine closed-project projection from human Close with natural surviving status focus. Browser picker/runtime portions are explicitly simulated; shipping Native/Core integration is independently proved by the unmodified shipping cases."
+    },
+    {
+      "id": "W2.A06.T02-pre-submission-modal-access",
+      "criteria": ["T02-AC01", "T02-AC02", "T02-AC03"],
+      "result": "closed",
+      "assessment": "The semantic recovery dialog is locally dismissible by Escape even during unavailable or pending transport, without claiming successful Core cancellation. Safe Cancel initially receives focus, stale/late results cannot restore a removed modal, retained source/destination labels survive status changes, and genuine shipping checks exercise cancellation, Escape and safe invoker focus. Source-level generation, mounted and pending refs preserve duplicate, picker, parent-mutation, late-unmount and application-lock guards. The eight helper/static tests are not represented as mounted race or Native proof."
+    },
+    {
+      "id": "W2.A06.T02-pre-submission-completion-focus-announcements",
+      "criteria": ["T02-AC01", "T02-AC02", "T02-AC03"],
+      "result": "closed",
+      "assessment": "Owned command completion sets restoreActionFocus before clearing busy, so repeated identical open-failed/status results and recovered Close still focus the surviving enabled action or status. Polling announces material state/reason/fact changes only. Actual exclusive Copy database sharing denial proves genuine Open failure, explicit status and repeated natural Open retry focus, followed by a separate successful Open after the barrier is released; additive reply-loss proves natural Close completion focus without forced SetFocus."
+    },
+    {
+      "id": "W2.A06.T02-pre-submission-dialog-tab-wrap",
+      "criteria": ["T02-AC01", "T02-AC03"],
+      "result": "closed",
+      "assessment": "The real shipping last-to-first Tab failure at the original product commit is preserved. The bounded committed correction reuses TaskCenter's enabled-button first/last forward and reverse containment pattern. Fresh current-candidate shipping recovery proves natural Cancel, Tab to Confirm, last-to-first wrap and Escape. Reverse containment is source-reviewed rather than claimed as a separately executed branch. No valid keyboard assertion was weakened."
+    },
+    {
+      "id": "W2.A06.T02-pre-submission-proof-measurement-and-setup",
+      "criteria": ["T02-AC03", "T02-AC04"],
+      "result": "closed-with-explicit-proof-limits",
+      "assessment": "Root-scoped actual UIA focused rows must all prove bounded RawView ancestry; only proved focused ancestors are removed, and exactly one expected named leaf plus owned Win32 focus/widget binding remains mandatory. Modal teardown polling catches only ElementNotAvailable within its original deadline and never passes from a stale observation. Invalid read-sharing fault setup was replaced by an actual no-write exclusive barrier; the longer fixture-path copy failure/quarantine stays adverse with path-limit causation unproven. Native debug-environment rejection remains FAIL and no guard bypass follows; the existing transport seam supplies separately labeled additive lost-reply evidence. All prior failures and abandoned setup artifacts remain preserved."
+    },
+    {
+      "id": "W2.A06.T02-pre-submission-command-representation",
+      "criteria": ["T02-AC04"],
+      "result": "closed",
+      "assessment": "The first normal submit was rejected before packet freeze for repeated selected command strings. The final manifest truthfully groups five predicate outcomes under their single actual producer command, retaining every canonical domain, exact result and predicate timing. All nine selected commands are unique. This is evidence representation only, with no changed test, producer assertion, gate, source or outcome; the rejected unadmitted snapshot is not fabricated as a formal review round."
+    }
+  ],
+  "acceptance_reviews": [
+    {
+      "criterion_index": 1,
+      "result": "satisfied",
+      "check_ids": ["projects-unit", "desktop-types", "reference", "task-adr", "approved-reference-predicates"],
+      "assessment": "Exact canonical recovery POST bodies, strict seven-key response/trace/content-type/preview decoding, retained identity and state/action/focus guards conform to the approved T02 six-file envelope and recoveryUIStateMap. Only ProjectsWorkspace, its test and append-only indexed ADR0054 contain product changes; five other base-to-candidate paths are routine inspected claim projections and the other three envelope files remain unchanged. Existing Native picker, semantic dialog/notice/status/card primitives and RO-UI-ACADEMIC-MINIMAL-1.9 sections1.2/2-6/9/Projects contract are preserved. Fresh unit8, desktop TypeScript, ADR/reference and approved token/route/workflow checks pass. No shared Core/Native/API authority, wizard, host attestation or reference/CSS/token redesign was introduced."
+    },
+    {
+      "criterion_index": 2,
+      "result": "satisfied",
+      "check_ids": ["projects-unit", "shipping-recovery", "shipping-live-denial", "layered-lost-reply"],
+      "assessment": "Actual shipping recovery06 and fresh live-denial01 exercise truthful unavailable/denied/preview/cancel/worker-copy-failure/verified/open-failed/recovered states, no overwrite and separate human confirm/open. Protected Original and canonical39/object facts remain unchanged. Additive production-component/real-Native evidence loses exactly one genuine successful Open reply, displays unknown outcome and then explicit recovered/details-unconfirmed status, publishes no fabricated Current project details, performs no automatic replay, and obtains genuine closed details only after separate human Close. Parent mutation, unmount, application-lock and stale-status protections remain in the exact source; recovery supplies no reparse, scholarly acceptance or original-source mutation authority."
+    },
+    {
+      "criterion_index": 3,
+      "result": "satisfied",
+      "check_ids": ["shipping-build", "shipping-recovery", "shipping-live-denial", "layered-lost-reply", "approved-reference-predicates"],
+      "assessment": "Fresh current release composition and real unmodified shipping Native/Core/UIA establish Tab/Enter/Space/Escape, safe natural Cancel and failure/denial invoker focus, forward modal wrap, cancellation, target-drift copy failure, exclusive-barrier ordinary Open failure, explicit status/retry, separate successful Open/normal Close, themes and selected reflow. Current shipping recovers the unchanged Original after the pinned actual whole Native AND Core fixture death; the older owner07 receipt is fixture history, not a fresh current-candidate PASS. Genuine owner/witness/lock and protected canonical39/object readbacks bind real process jobs and cleanup. Fresh separate-owner shipping denial is explicit. The five unchanged approved reference predicates pass under exact finite-method source/control/readiness/input bindings. Additive browser transport proof is separately labeled and cannot substitute for shipping picker/Win32/CSP/installation qualification."
+    },
+    {
+      "criterion_index": 4,
+      "result": "satisfied",
+      "check_ids": ["task-adr", "reference", "approved-reference-predicates"],
+      "assessment": "Same-task indexed append-only ADR0054 and expanded independent UI/security/source/reference review bind the actual claim, approved T01 predecessor ledger, product deltas, reference authority and actual receipts. All nine selected command reports and their thirteen predicates pass with honest execution/input custody and matching bound raw streams. Current finite source record, controls, independent readiness and independent a05 actual-reference disposition preserve only the approved ECR/EX01/C18 methods. The admitted frozen R01 packet and actual submitted REVIEW metadata commit are independently authenticated; this ledger supplies the required commit-bound formal task disposition without changing product, controller, assertions or approval scope."
+    }
+  ],
+  "verification_selection": {
+    "selected_command_ids": ["desktop:application", "desktop:ui-accessibility", "desktop:ui-reference-integrity", "desktop:ui-route-page", "desktop:ui-token", "desktop:ui-visual-regression", "desktop:ui-workflow", "foundation:adr"],
+    "selected_unique_commands": 9,
+    "selected_actual_predicates": 13,
+    "assessment": "Narrow changed Projects/ADR checks plus expanded source/security/UI/reference review and genuine Native/Core shipping integration are appropriate to this ordinary T02 unit. The grouped reference row preserves five unchanged canonical predicates under their one actual command. Unchanged independently approved T01 backend suites are not repeated. T03 and downstream complete quality, full closed45+3/current Reader Native CSP/final-build matrix, installed packaging and fresh full affected/repository/profile/Slice/checkpoint/Wave qualification remain due. Static style/design/CSP source results are bounded and do not imply nativeRuntimeQualified or complete runtime/profile approval."
+  },
+  "source_security_reference_authentication": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/W2.A06.T02.source-security-reference-disposition-01.json",
+    "sha256": "8006c6a2b6ec0acd70aeba00372e6587912d588a008902b4ac1685d01b4bb931",
+    "assessment": "Exact raw and Git source, claim/grant/spec, six-file envelope, unchanged three files, T01 predecessor and1.9 section/page mapping were independently authenticated. Later actual proofs close only that disposition's listed outstanding task evidence; its prior bounded incomplete state is not rewritten.",
+    "product_raw_sha256": {
+      "apps/desktop/src/app/ProjectsWorkspace.tsx": "edf073aaae1f6d4ab283ed953faa3ac4182823ea331333d55eb9aa784410d1b0",
+      "apps/desktop/src/app/ProjectsWorkspace.test.tsx": "e8f0b282dee40307769290fcf33e66a9fa203110d03595cc8389ffecc914137a",
+      "docs/adr/ADR-0054-bind-explicit-project-recovery-and-complete-quality-inventory.md": "6a4d809bace0c90fa7cc2d60de2b5497a803c7c798f35d00e8f18ad8b6d975aa"
+    },
+    "predecessor_ledger": {
+      "path": "artifacts/evidence/W2.A06.T01.review-R01.json",
+      "sha256": "18063b4e220f43a8ec278f535b7d939b042ebbaaa6cc4402c9a599105825972e",
+      "introduction_commit": "dd59d8b3cd170dee00794f225271ce6b7e5d7116",
+      "result": "approved"
+    },
+    "reference_id": "RO-UI-ACADEMIC-MINIMAL-1.9",
+    "governing_reference_sections": ["1.2", "2", "3", "4", "5", "6", "9"],
+    "new_reference_or_security_authority": false
+  },
+  "evidence_authentication": {
+    "pre_submit_advisory": {"path": "artifacts/tmp/W2.remaining-corrections-batch-01/W2.A06.T02.pre-submit-source-evidence-advisory-01.md", "sha256": "0a2e8d4394f989544789c5946fa15723674f1a2f553ff1d2b6a5d38c1b0a0573"},
+    "grouping_advisory": {"path": "artifacts/tmp/W2.remaining-corrections-batch-01/W2.A06.T02.pre-submit-grouping-advisory-02.md", "sha256": "6377f3fb77955483bbb797446ac8779663c0f30eeda8c837c3df34b361e3d48a"},
+    "shipping_build_report_sha256": "ef83026eef05254dff6c07b20d6cd8ff45a48ccb2b64c9c262c1578f086fdbc1",
+    "shipping_recovery_disposition": {"path": "artifacts/tmp/W2.remaining-corrections-batch-01/a06-t02-shipping-recovery-06.actual-disposition-01.md", "sha256": "47b7b020515d176fff9b4bc1614ae9d53876edd0c6593314ff15531c1541fd08"},
+    "shipping_live_denial_disposition": {"path": "artifacts/tmp/W2.remaining-corrections-batch-01/a06-t02-shipping-live-denial-01.actual-disposition-01.md", "sha256": "1ed8b036ffdfed9cea084ef5ce26a3535a522ad666cbe53083f0e7b81f4b9bc8"},
+    "layered_lost_reply_disposition": {"path": "artifacts/tmp/W2.remaining-corrections-batch-01/a06-t02-layered-reply-loss-01.actual-disposition-01.md", "sha256": "d8799ebe9496a024bc140805cf0c32f82b588eaa3d4038094a39d59b5d99ddfb"},
+    "reference_actual_disposition": {"path": "artifacts/tmp/W2.remaining-corrections-batch-01/a06-t02-reference-proof-02.actual-disposition-01.json", "sha256": "014949658855a863ea800f635f4d6cf57e34011c2fa6730a722344f510a0cd8d"},
+    "reference_execution_observation": {"path": "artifacts/tmp/W2.remaining-corrections-batch-01/a06-t02-reference-proof-02.execution-observation-01.json", "sha256": "dc78ed1bdbd6f8a3d1687b0a98601694db5f4187265753d11659be6ab555e8e2"},
+    "finite_source_record_sha256": "8fcd46d526d13e1e678cbf6385adf4c56df5e4a2a0c4d2408182842d8ae3a390",
+    "finite_source_readiness_sha256": "e802aa01f3ba7363dc18192611dfe0446ee2c7cff011d5fcee40d16ae55b0195",
+    "selected_reports_authenticated": 9,
+    "preserved_adverse_reports_authenticated": 12,
+    "final_manifest_bound_references_authenticated": 32,
+    "digest_mismatches": [],
+    "result": "EXACT_COMMITTED_SOURCE_EVIDENCE_AND_FROZEN_R01_AUTHENTICATED"
+  },
+  "frozen_submission_authentication": {
+    "delivery_commit": "2d2d4e34eadba04e71a1d939eff6e46116d8adb0",
+    "delivery_parent": "df93798ba55571d6258f720dc4a8ed2766f0aee7",
+    "delivery_changed_paths": ["artifacts/evidence/W2.A06.T02.R01.json", "docs/planning-implementation-plan.md", "planning/backlog.yaml", "planning/review-site/enablers/ECR-0014.html", "planning/review-site/manifest.json", "planning/status-summary.md"],
+    "evidence_introduction_commit": "2d2d4e34eadba04e71a1d939eff6e46116d8adb0",
+    "backlog_git_blob": "2fd410b66919c5db50a2ef3eb06dd26b3bcb21bc",
+    "backlog_git_show_sha256": "b1b910a6960a1ab6cf510eadf2e25e7f8a4262ab887d1670db0691449dfff15a",
+    "backlog_raw_sha256": "31412fe1ff76737c21cbf5f34fa8553315ce8a91a529c260c83abb129e175433",
+    "packet_sha256": "f17db4a336720f07bae623896133c2b15bee6b2927fa0496853d7bd36917db67",
+    "packet_validation_errors": [],
+    "candidate_criteria_owner_origin_and_lease_preserved": true,
+    "product_tools_contracts_and_reference_unchanged_by_delivery": true,
+    "normal_submit_and_current_views_receipt": {"path": "artifacts/tmp/W2.remaining-corrections-batch-01/a06-t02-submit-and-views-02.receipt.json", "sha256": "c7354fd1512fd8d9d2eddc2e8b6b478d9a5de313e8204bdb766cbff96b2b2dbc", "status": "PASS_NORMAL_SUBMISSION_AND_CURRENT_VIEWS", "all_five_step_exit_codes": 0, "bound_stream_hash_mismatches": []},
+    "review_site_validation": {"status": "pass", "html_pages": 498, "evidence": "Actual normal plan_review_check stdout and exit0 are bound by the normal-submit receipt; no separate JSON validation report is invented."},
+    "submission_privacy_readiness": {"path": ".local/W2.remaining-corrections-batch-01/privacy-review-19.readiness.json", "sha256": "bbd79c2ed3bc93b4147290401527c3ee20927bfc5308904b4322fc20c46ac872", "committed_exact_files": 6, "committed_bytes_match": true},
+    "submission_privacy_scanner_streams": {"path": ".local/W2.remaining-corrections-batch-01/privacy-review-19.scanner-streams.json", "sha256": "b689d3405c0652bdd22187f366d31723b2c524d67952f7fc810c84b293345227", "embedded_stream_hashes_match": true},
+    "normal_commit_tool_observation": {"path": "artifacts/tmp/W2.remaining-corrections-batch-01/a06-t02-submission-commit-01.tool-observation.json", "sha256": "d1bf68b3c279a8d8df5332531a63c1bddfa7add7c06f0dbbc130d77ba4b19348", "assessment": "Authenticated root observation of actual session99744 completion, exit0, unchanged normal-hook PASS for six entries/zero commits/findings[] and message privacy PASS. It is not a separately captured stdout/stderr stream or independent execution claim; Git independently establishes the delivery tree."}
+  },
+  "independence": {
+    "task_owner": false,
+    "product_edits": false,
+    "qualifying_suites_or_producers_rerun_by_reviewer": false,
+    "shared_HEAD_mutation": false,
+    "review_method": "Independent read-only governing contract, exact source/security/reference, adverse-finding replay, producer readiness and actual final-candidate receipt/raw-stream/input/packet/delivery authentication. Authored only ignored independent advisories/readiness/preparation and this formal disposition, not task implementation, qualifying producer code, ownership or execution."
+  },
+  "scope_limits": {
+    "formal_task_approval_issued": true,
+    "approved_task": "W2.A06.T02 R01 only",
+    "shipping_UI_assertions_approved_for_selected_T02_cases": true,
+    "additive_browser_picker_and_runtime_are_simulated": true,
+    "same_shipping_host_lost_response_instrumentation_passed": false,
+    "physical_keyboard_device_or_global_foreground_input_proved": false,
+    "complete_visual_or_accessibility_runtime_qualification_claimed": false,
+    "Reader_native_CSP_runtime_qualified_by_T02": false,
+    "installed_package_qualified_by_T02": false,
+    "long_path_causation_or_support_proved": false,
+    "physical_foreign_host_test_executed": false,
+    "physical_foreign_host_test_passed": false,
+    "physical_foreign_host_proof_due_by": "W5 exit under existing explicit owner timing authority",
+    "existing_W1_R03_P1_closed": false,
+    "slice_approved": false,
+    "amendment_exit_approved": false,
+    "wave_complete": false,
+    "W3_approved": false,
+    "release_approved": false
+  },
+  "notes": "Approves only W2.A06.T02 R01 at the exact product candidate and authenticated submitted REVIEW delivery. Original five public selector FAILs before checks, first reference inventory failure, public Native debug-environment rejection and prior source/shipping/measurement/fault-setup/path adverses remain preserved; no failed original command is relabeled PASS. Additive lost-response proof simulates browser picker/runtime only and does not replace shipping or Native security qualification. Original W1-R03-P1 remains OPEN and physical independent Windows installation remains untested under existing owner-timed byW5 authority. W2.A06.T03 complete quality/full closed45+3/current Reader Native CSP/final-build matrix, installed packaging, downstream fresh full affected/repository/profile/Slice/checkpoint/Wave qualification and separate human release gate remain required."
+}
