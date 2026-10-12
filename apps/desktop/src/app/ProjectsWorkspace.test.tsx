@@ -1,9 +1,9 @@
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it, vi } from "vitest";
 
-import type { ProjectProjection, WorkflowProfileCatalogProjection } from "@research-observatory/contracts/core-api";
+import type { CoreApiResponse, ProjectProjection, ProjectRecoveryProjection, WorkflowProfileCatalogProjection } from "@research-observatory/contracts/core-api";
 
-import { projectActionLabels, projectCompatibilityGuidance, ProjectsWorkspace } from "./ProjectsWorkspace";
+import { decodeProjectRecoveryProjection, projectActionLabels, projectCompatibilityGuidance, projectRecoveryActionLabels, projectRecoveryCanAdvance, ProjectsWorkspace, requestProjectRecovery } from "./ProjectsWorkspace";
 
 const project: ProjectProjection = {
   schemaVersion: "1.0",
@@ -54,7 +54,78 @@ const catalog: WorkflowProfileCatalogProjection = {
   }],
 };
 
+const recovery: ProjectRecoveryProjection = {
+  previewId: "b".repeat(32), state: "preview-ready", reasonCodes: [], requiresConfirmation: true,
+  sourceDisplayLabel: "Synthetic retained project", destinationDisplayLabel: "recovered-working-copy", verifiedFactSummary: null,
+};
+const recoveryResponse = (projection: ProjectRecoveryProjection): CoreApiResponse => ({
+  status: 200, contentType: "application/json", traceId: "a".repeat(32), etag: null, body: JSON.stringify(projection),
+});
+
+describe("reviewed project recovery boundary", () => {
+  it("decodes canonical states and rejects authority fields, false confirmation and unverified facts", () => {
+    expect(decodeProjectRecoveryProjection(recovery)).toEqual(recovery);
+    expect(decodeProjectRecoveryProjection({ ...recovery, processId: 7 })).toBeNull();
+    expect(decodeProjectRecoveryProjection({ ...recovery, requiresConfirmation: false })).toBeNull();
+    expect(decodeProjectRecoveryProjection({ ...recovery, state: "copying", requiresConfirmation: false, verifiedFactSummary: "Verified" })).toBeNull();
+    expect(decodeProjectRecoveryProjection({ ...recovery, reasonCodes: ["C:/private/host"] })).toBeNull();
+    expect(decodeProjectRecoveryProjection({ ...recovery, sourceDisplayLabel: "\u0000" })).toBeNull();
+    expect(decodeProjectRecoveryProjection({ ...recovery, state: "automatically-opened" })).toBeNull();
+    const hostile = { ...recovery, get reasonCodes(): string[] { throw new Error("private exception"); } };
+    expect(decodeProjectRecoveryProjection(hostile)).toBeNull();
+  });
+
+  it("keeps confirmation and opening separate and prevents stale status regression", () => {
+    expect(projectRecoveryActionLabels("preview-ready")).toEqual(["Cancel", "Create verified recovery copy"]);
+    expect(projectRecoveryActionLabels("copying")).toEqual(["Cancel before publication"]);
+    expect(projectRecoveryActionLabels("verified-copy-ready")).toEqual(["Open verified recovery copy"]);
+    expect(projectRecoveryActionLabels("open-failed")).toEqual(["Open verified recovery copy"]);
+    for (const state of ["denied", "unavailable-proof", "cancelled", "verification-failed"] as const) {
+      expect(projectRecoveryActionLabels(state)).not.toContain("Open verified recovery copy");
+      expect(projectRecoveryActionLabels(state)).not.toContain("Create verified recovery copy");
+    }
+    expect(projectRecoveryCanAdvance("preview-ready", "verified-copy-ready")).toBe(true);
+    expect(projectRecoveryCanAdvance("copying", "cancelled")).toBe(true);
+    expect(projectRecoveryCanAdvance("copying", "recovered")).toBe(false);
+    expect(projectRecoveryCanAdvance("verified-copy-ready", "copying")).toBe(false);
+    expect(projectRecoveryCanAdvance("cancelled", "preview-ready")).toBe(false);
+    expect(projectRecoveryCanAdvance("open-failed", "recovered")).toBe(true);
+  });
+
+  it("sends only the exact preview through Native transport with no implicit confirmation or open", async () => {
+    const transport = vi.fn().mockResolvedValue(recoveryResponse(recovery));
+    await expect(requestProjectRecovery(transport, "preview", { root: "C:/Research/original", destinationRoot: "C:/Research/recovered-working-copy" })).resolves.toEqual(recovery);
+    expect(transport).toHaveBeenCalledOnce();
+    expect(transport.mock.calls[0]?.[0]).toEqual({ method: "POST", path: "/projects/recovery/preview",
+      body: JSON.stringify({ root: "C:/Research/original", destinationRoot: "C:/Research/recovered-working-copy" }), ifMatch: null, idempotencyKey: null });
+    transport.mockClear();
+    await expect(requestProjectRecovery(transport, "preview", { root: "C:/Research/original", destinationRoot: "C:/Research/copy", host: "asserted-host" })).rejects.toThrow("RO-CORE-REQUEST-INVALID");
+    await expect(requestProjectRecovery(transport, "preview", { root: "C:/../private", destinationRoot: "C:/Research/copy" })).rejects.toThrow("RO-CORE-REQUEST-INVALID");
+    await expect(requestProjectRecovery(transport, "confirm", { root: "C:/Research/original", previewId: recovery.previewId, confirmation: "automatic" })).rejects.toThrow("RO-CORE-REQUEST-INVALID");
+    expect(transport).not.toHaveBeenCalled();
+  });
+
+  it("rejects switched previews, content types and impossible preview success", async () => {
+    const command = { root: "C:/Research/original", previewId: recovery.previewId };
+    await expect(requestProjectRecovery(async () => recoveryResponse({ ...recovery, previewId: "c".repeat(32) }), "status", command)).rejects.toThrow("RO-CORE-RESPONSE-INVALID");
+    await expect(requestProjectRecovery(async () => ({ ...recoveryResponse(recovery), contentType: "text/html" }), "status", command)).rejects.toThrow("RO-CORE-RESPONSE-INVALID");
+    await expect(requestProjectRecovery(async () => ({ ...recoveryResponse(recovery), traceId: null as unknown as string }), "status", command)).rejects.toThrow("RO-CORE-RESPONSE-INVALID");
+    await expect(requestProjectRecovery(async () => recoveryResponse({ ...recovery, state: "recovered", requiresConfirmation: false }), "preview", { root: command.root, destinationRoot: "C:/Research/copy" })).rejects.toThrow("RO-CORE-RESPONSE-INVALID");
+  });
+});
+
 describe("functional local projects workspace", () => {
+  it("offers explicit recovery review with a native-selected copy destination and original preservation", () => {
+    const markup = renderToStaticMarkup(<ProjectsWorkspace announce={vi.fn()} initialCatalog={catalog} />);
+    expect(markup).toContain("Recover a project");
+    expect(markup).toContain("Review recovery");
+    expect(markup).toContain("Recovery copy parent folder");
+    expect(markup).toContain("The original project remains unchanged");
+    expect(markup).not.toMatch(/<input[^>]+id="project-recovery-parent"/);
+    expect(markup).not.toContain("Create verified recovery copy");
+    expect(markup).not.toContain("Open verified recovery copy");
+  });
+
   it("renders implemented create and open workflows without reference-only application pages", () => {
     const markup = renderToStaticMarkup(<ProjectsWorkspace announce={vi.fn()} initialCatalog={catalog} />);
     expect(markup).toContain('data-projects-workspace="true"');

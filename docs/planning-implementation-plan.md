@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: a2eeb18e534449452455b6b605fbda4e9730003c50e8fd6a40f47c402e388bd7
+source_sha256: f285bf27769fda89b6da054015beaca951eb9613b7b9740d1dc8ed156345a4ba
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -3391,7 +3391,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 ### - [ ] W2.A06.T02 - Integrate explicit recovery review into the approved Projects experience
 
-**Status / owner / review:** `READY` / - / - (`-`)
+**Status / owner / review:** `IN_PROGRESS` / codex-w2-implementation / - (`-`)
 
 **Dependencies:** `W2.A06.B00`, `W2.A06.T01`
 

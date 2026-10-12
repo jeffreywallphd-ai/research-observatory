@@ -1,7 +1,7 @@
 ---
 document_type: generated-backlog-status-summary
 source: planning/backlog.yaml
-source_sha256: a2eeb18e534449452455b6b605fbda4e9730003c50e8fd6a40f47c402e388bd7
+source_sha256: f285bf27769fda89b6da054015beaca951eb9613b7b9740d1dc8ed156345a4ba
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -69,7 +69,7 @@ manual_edit: prohibited
 | Status | Count |
 |---|---:|
 | `NOT_STARTED` | 1 |
-| `READY` | 1 |
+| `IN_PROGRESS` | 1 |
 | `DONE` | 24 |
 
 ## Wave authority and append-only amendments
@@ -1011,7 +1011,9 @@ Append-only rounds remain distinct from the current latest-review projection. Le
 
 ## Active work
 
-No task is currently active.
+| Task | Status | Owner | Branch |
+|---|---|---|---|
+| `W2.A06.T02` Integrate explicit recovery review into the approved Projects experience | `IN_PROGRESS` | codex-w2-implementation | `codex/w2-implementation` |
 
 ## Linked corrective tasks
 

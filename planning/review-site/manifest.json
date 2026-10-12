@@ -49284,7 +49284,7 @@
         {
           "task_id": "W2.A06.T02",
           "title": "Integrate explicit recovery review into the approved Projects experience",
-          "status": "READY",
+          "status": "IN_PROGRESS",
           "mode": "latest-review-only",
           "latest_review": {
             "reviewer": null,

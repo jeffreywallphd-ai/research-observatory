@@ -156,3 +156,25 @@ classifying the owner: matching birth permits `dead`, mismatched birth returns
 `pid-reused`, and unavailable birth remains `unknown`. The actual retained-handle
 case and other selected Native recovery cases pass in development; fresh final
 candidate proof and independent task disposition are still required.
+
+### W2.A06.T02 recovery controls
+
+The Projects workspace now provides an explicit recovery review using the
+existing native directory picker and the exact Core recovery projection.
+Confirmation creates only the verified working copy; opening uses the normal
+project API after a separate human action. The retained source, destination and
+preview identity stay bound while status advances. Unavailable or malformed
+responses cannot grant confirmation, opening, success or cancellation.
+
+The native modal starts at Cancel, supports local dismissal even when Core is
+unavailable, and restores focus to an enabled action or the recovery status.
+Dismissal does not claim that Core cancelled the operation. Polling announces
+only material changes. A lost open response requires explicit status readback;
+if Core reports the copy opened without confirmed project details, the user can
+explicitly close that exact copy through the existing project API to obtain a
+genuine closed projection. Opening is never replayed automatically.
+
+These are implementation notes within the approved T02 envelope. Development
+unit/type checks are not shipping desktop, task, slice or Wave qualification.
+Fresh actual Native/Core/UI, keyboard, failure, cancellation, protected-readback
+and restart evidence plus independent review remain required.
