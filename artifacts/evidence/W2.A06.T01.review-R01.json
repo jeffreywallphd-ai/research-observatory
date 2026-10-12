@@ -1,0 +1,119 @@
+{
+  "task_id": "W2.A06.T01",
+  "attempt_id": "R01",
+  "candidate_commit": "eb570817f57a24756e2d675e974f7ee429c5dfc7",
+  "reviewed_state_commit": "969a46e5b173f504c0635bd5cfda9df2a16a439c",
+  "base_commit": "15c2ab7bcc9b7ef111f44ffcb465628729fd4a5d",
+  "reviewer": "agent:/root/a03_t01_lineage_audit",
+  "result": "approved",
+  "packet_sha256": "73a6fedab2870549c2e22b0ab070eff9d17630d96a496b2df3e7faf57fb063d4",
+  "evidence_sha256": "a2c50c398a7ae901e7ee65dfc6da46b017ace9f9feb35584edc440db7f56e171",
+  "acceptance_criteria_sha256": "4cfc9ccd2d583dc3285510b3420312d2b778a94cd11c5272eadc54afc6fa321a",
+  "selection_sha256": "2c2673a088af8443669088e39d85923b1939a5d64b79deaff2176e947d0b8eab",
+  "findings": [],
+  "closures": [],
+  "pre_submission_finding_replay": [
+    {
+      "id": "W2.A06.T01-R01-F01",
+      "criteria": ["T01-AC03", "T01-AC04"],
+      "result": "closed",
+      "assessment": "The previously identified open-and-attach completion-guard defect was reproduced before correction and fixed within the existing API scope. The reviewed committed app source keeps successful completion inside the attachment cleanup guard; the actual final-candidate 67-case recovery/lifecycle receipt includes the regression and passes. Prior adverse evidence and independent advisory-02 remain preserved."
+    },
+    {
+      "id": "W2.A06.T01-pre-submission-owner-birth-F01",
+      "criteria": ["T01-AC02", "T01-AC04"],
+      "result": "closed",
+      "assessment": "Development10 reproduced a real retained terminated-process object with altered expected birth returning dead, after two separately preserved setup failures. The final committed Native code checks GetProcessTimes on the exact opened signaled handle before reporting dead, returns pid-reused for a birth mismatch, and treats query uncertainty as unknown. The fresh final-candidate Native receipt reports all eight selected recovery tests passing, including actual terminated-child matching/mismatching birth and anonymous-principal inaccessible-query denial."
+    },
+    {
+      "id": "W2.A06.T01-development-publication-findings",
+      "criteria": ["T01-AC03", "T01-AC04"],
+      "result": "closed",
+      "assessment": "Prior independent staged-copy, terminal-preview, complete-content custody, durable incomplete-marker and exact audit-line findings were fixed with their original failures retained. The projects/object-store/main source bytes reviewed in the prior committed advisory are unchanged by the final Native/ADR correction; fresh 67-case recovery/lifecycle and actual whole Native/Core protected readback exercise the final candidate. This closure is limited to those recorded findings, not an adjacent code audit."
+    }
+  ],
+  "acceptance_reviews": [
+    {
+      "criterion_index": 1,
+      "result": "satisfied",
+      "check_ids": ["generated-contracts", "contract-client", "contract-types", "desktop-types", "python-static", "python-format", "python-types", "task-adr"],
+      "assessment": "The submitted 37-path base-to-candidate inventory equals Git exactly and stays within the approved ECR-0014 T01 implementation and recording envelope, including separately owner-approved object-inventory and two-line existing-test corrections. Exact generated API/client/schema checks, affected static/format/types and unchanged task-linked ADR check pass on eb570817. Native retains actual host/process authority and Core the typed recovery/copy orchestration; no project-key protection or W1 history is rewritten. The only final product delta after the prior commit-bound source review is supervisor.rs plus indexed ADR0054 notes, independently reviewed at exact bytes."
+    },
+    {
+      "criterion_index": 2,
+      "result": "satisfied",
+      "check_ids": ["python-recovery", "native-recovery", "native-stop", "whole-native-core"],
+      "assessment": "Fresh 67 Core/lifecycle cases and eight actual Native recovery cases exercise witness issuance before writable lock, current-user and same-machine protection, live/unknown/reused owner denial, birth/executable/session checks, heartbeat, matched close/cancellation and anonymous-principal inaccessible process query. The final actual retained terminated-child test distinguishes matching birth from a reused birth on a signaled process object. Whole Native/Core evidence confirms new eligible ownership after owned pair death without treating age or a missing PID alone as authority."
+    },
+    {
+      "criterion_index": 3,
+      "result": "satisfied",
+      "check_ids": ["python-recovery", "existing-object-regression", "whole-native-core"],
+      "assessment": "The actual owned whole-pair recovery produces a fresh protected copy with all 39 canonical rows present before open, authenticated object bytes and protected intent/lineage readback, while the original bytes remain unchanged. The 67-case recovery/lifecycle suite covers source stability, database and WAL, retained keys/object inventory, exact audit append, complete stage holds, target collision, cancellation, mutation and fresh-service quarantine failure. The approved existing-object test correction preserves its assertions: 37 tests are OK with one expressly disclosed Windows vault-symlink capability skip. Other actual hardlink/junction and source-path denials are present; the skipped test is not counted as passed."
+    },
+    {
+      "criterion_index": 4,
+      "result": "satisfied",
+      "check_ids": ["python-recovery", "existing-object-regression", "native-recovery", "whole-native-core"],
+      "assessment": "An actual owned Native AND Core termination and fresh startup yields different process identities, protected readback, unchanged original, live-owner denial and a separately owned same-host Native/Core instance whose close attempt is denied. Current tests additionally exercise actual reversed DPAPI layer order, anonymous inaccessible process query, retained terminated PID-birth mismatch, tamper/path/key/audit/copy/cancel/concurrency denials. The physical second-independent-Windows-installation foreign-host test has not been run and is not PASS; the explicit owner-approved one-criterion timing supplement moves only that test to the first available real installation, mandatory by W5 exit, without weakening foreign-host denial or any other due-now check."
+    },
+    {
+      "criterion_index": 5,
+      "result": "satisfied",
+      "check_ids": ["python-recovery", "native-recovery", "whole-native-core", "approved-core45-architecture-proof", "task-adr"],
+      "assessment": "Independent exact-commit source and evidence review replayed the API, publication and owner-birth findings through actual final-candidate receipts. All 14 selected product/static/contract receipts pass with held stable inputs and matching raw stream hashes. The separately approved Core45 method ran the unchanged original architecture checker on a held verified snapshot and matched every one of the pinned 45 path/line/rule/AST-statement/source-hash tuples, with no added, missing or changed finding; the original checker remains truthful FAIL exit 1. The historical W1-R03-P1 finding remains OPEN: this new-session proof cannot supply a retrospective witness or authorize the separate operator recovery."
+    }
+  ],
+  "verification_selection": {
+    "selected_command_ids": ["contracts:unit", "data:unit", "desktop:application", "foundation:adr", "foundation:architecture", "foundation:quality", "security-local:unit", "service:unit"],
+    "assessment": "These are risk-selected T01 source, contract, actual Windows/DPAPI/process and protected-copy checks at the exact fixed candidate. The original architecture receipt is retained as FAIL outside the passing check list; the exclusive Core45 proof is limited to T01's affected 45 findings. Shipping UI, desktop3 literal findings, full closed48, complete quality inventory, complete repository/profile/platform checks and Wave qualification remain scheduled at T02, T03 and downstream gates under the approved packet."
+  },
+  "independence": {
+    "task_owner": false,
+    "product_edits": false,
+    "qualifying_suites_rerun_by_reviewer": false,
+    "review_method": "Independent read-only source, contract, adverse-finding and final-candidate evidence review. The reviewer authored only ignored independent source-readiness/advisory metadata and this disposition, not product code, qualifying producers, task ownership or execution. Exact receipt, stream, source, packet and delivery bindings were checked separately from the implementer."
+  },
+  "evidence_authentication": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/W2.A06.T01.commit-bound-independent-evidence-advisory-03.json",
+    "sha256": "2775d1931248c51415194d8e74865f77cbc6c6deff9fbdedcd17269539c71b94",
+    "core45_readiness_sha256": "0e898f1ce087c958f1c03cd0c1a41c1e61ef77b66014d0228e551450eec3f23a",
+    "core45_qualification_sha256": "8ada0031252ae16c4a714b762876759aaa768a15629162503ebe41fe480cf187",
+    "result": "EXACT_COMMITTED_EVIDENCE_AND_FROZEN_R01_AUTHENTICATED"
+  },
+  "scope_limits": {
+    "formal_task_approval_issued": true,
+    "physical_foreign_host_test_executed": false,
+    "physical_foreign_host_test_passed": false,
+    "physical_foreign_host_proof_due_by": "W5 exit under owner-approved W2.A06.T01 timing supplement",
+    "existing_W1_R03_P1_closed": false,
+    "windows_vault_symlink_capability_skip_disclosed": true,
+    "shipping_ui_approved": false,
+    "slice_approved": false,
+    "amendment_exit_approved": false,
+    "wave_complete": false,
+    "release_approved": false
+  },
+  "frozen_submission_authentication": {
+    "delivery_commit": "969a46e5b173f504c0635bd5cfda9df2a16a439c",
+    "delivery_parent": "eb570817f57a24756e2d675e974f7ee429c5dfc7",
+    "delivery_changed_paths": ["artifacts/evidence/W2.A06.T01.R01.json", "docs/planning-implementation-plan.md", "planning/backlog.yaml", "planning/review-site/enablers/ECR-0014.html", "planning/review-site/manifest.json", "planning/status-summary.md"],
+    "evidence_introduction_commit": "969a46e5b173f504c0635bd5cfda9df2a16a439c",
+    "backlog_git_blob": "43446cd774226e7e468f721602e99997f1b0e560",
+    "backlog_git_show_sha256": "775e7d0e3323ee323d773c290fc0abef1c7f1bf1e03977a7df1d4dfbc2e0fce0",
+    "backlog_raw_sha256": "372dee2ae9ca36b25ff657375e422f595d883bc85e390d8471fc0e3703abc232",
+    "packet_sha256": "73a6fedab2870549c2e22b0ab070eff9d17630d96a496b2df3e7faf57fb063d4",
+    "candidate_criteria_owner_origin_and_lease_preserved": true,
+    "review_site_regeneration_claimed_complete": true,
+    "review_site_validation": {
+      "report": "artifacts/tmp/W2.remaining-corrections-batch-01/a06-t01-submitted-site-validation-01.report.json",
+      "sha256": "9b82695cffcb506a6346b9b04d310602a1231ca882ceb676bf1704a85e8bc6c0",
+      "status": "pass",
+      "html_pages": 498,
+      "errors": 0,
+      "warnings": 0
+    },
+    "submission_delivery_privacy_registry_sha256": "fa208e84f117d9c01ff280d3b1266e7b8f646d743da166ceacf60fd0082c291c"
+  },
+  "notes": "Approves only W2.A06.T01 R01 at the exact product candidate and frozen delivery. The original architecture checker FAIL, one Windows symlink capability skip, unexecuted genuine foreign-host test deferred by explicit owner timing authority, and separate W1-R03-P1 historical finding remain truthful. W2.A06.T02 shipping Projects UI, W2.A06.T03 complete quality/full48, slice/amendment/checkpoint/Wave qualification and the separate human release gate remain required."
+}

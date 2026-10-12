@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 775e7d0e3323ee323d773c290fc0abef1c7f1bf1e03977a7df1d4dfbc2e0fce0
+source_sha256: a2eeb18e534449452455b6b605fbda4e9730003c50e8fd6a40f47c402e388bd7
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -3321,9 +3321,9 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 **Bounded tasks:**
 
-### - [ ] W2.A06.T01 - Restore explicit reviewed project recovery and durable owned-session proof
+### - [x] W2.A06.T01 - Restore explicit reviewed project recovery and durable owned-session proof
 
-**Status / owner / review:** `REVIEW` / codex-w2-implementation / - (`-`)
+**Status / owner / review:** `DONE` / codex-w2-implementation / agent:/root/a03_t01_lineage_audit (`approved`)
 
 **Dependencies:** `W2.A06.B00`
 
@@ -3349,9 +3349,11 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 #### Review history — W2.A06.T01
 
-**Review mode:** `append-only v1` / 0 completed round(s)
+**Review mode:** `append-only v1` / 1 completed round(s)
 
-**Current immutable submission awaiting review:** `R01` / packet SHA-256 `73a6fedab2870549c2e22b0ab070eff9d17630d96a496b2df3e7faf57fb063d4`
+##### Round R01
+
+**Immutable submission packet:** `R01` / packet SHA-256 `73a6fedab2870549c2e22b0ab070eff9d17630d96a496b2df3e7faf57fb063d4`
 
 - Candidate / base / branch: `eb570817f57a24756e2d675e974f7ee429c5dfc7` / `15c2ab7bcc9b7ef111f44ffcb465628729fd4a5d` / `codex/w2-implementation`
 - Submitted by / at: codex-w2-implementation / `2026-10-12T11:45:29+00:00`
@@ -3365,15 +3367,31 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - Prior round / replayed open findings: `-` / -
 - Root-cause escalation: -
 
-**Current latest-review projection:** `-` by - at `-`
+**Disposition / reviewer / time:** `approved` / agent:/root/a03_t01_lineage_audit / `2026-10-12T12:16:12+00:00`
 
-**Latest notes:** Reopened: Owner approved both exact local verification corrections and one-use append-only recording exceptions; committed supplements resolve the recorded hardware-timing and single-test scope blocker. Preserve physical-host proof as untested through mandatory W5 exit; finish all remaining local checks and independent review.
+**Immutable review ledger:** `artifacts/evidence/W2.A06.T01.review-R01.json` / `18063b4e220f43a8ec278f535b7d939b042ebbaaa6cc4402c9a599105825972e`
+
+**Review notes:** Approves only W2.A06.T01 R01 at the exact product candidate and frozen delivery. The original architecture checker FAIL, one Windows symlink capability skip, unexecuted genuine foreign-host test deferred by explicit owner timing authority, and separate W1-R03-P1 historical finding remain truthful. W2.A06.T02 shipping Projects UI, W2.A06.T03 complete quality/full48, slice/amendment/checkpoint/Wave qualification and the separate human release gate remain required.
+
+**Findings opened:**
+
+- None
+
+**Prior finding closures:**
+
+- None
+
+**Current immutable submission awaiting review:** None
+
+**Current latest-review projection:** `approved` by agent:/root/a03_t01_lineage_audit at `2026-10-12T12:16:12+00:00`
+
+**Latest notes:** Approves only W2.A06.T01 R01 at the exact product candidate and frozen delivery. The original architecture checker FAIL, one Windows symlink capability skip, unexecuted genuine foreign-host test deferred by explicit owner timing authority, and separate W1-R03-P1 historical finding remain truthful. W2.A06.T02 shipping Projects UI, W2.A06.T03 complete quality/full48, slice/amendment/checkpoint/Wave qualification and the separate human release gate remain required.
 
 **Currently open findings:** -
 
 ### - [ ] W2.A06.T02 - Integrate explicit recovery review into the approved Projects experience
 
-**Status / owner / review:** `NOT_STARTED` / - / - (`-`)
+**Status / owner / review:** `READY` / - / - (`-`)
 
 **Dependencies:** `W2.A06.B00`, `W2.A06.T01`
 
