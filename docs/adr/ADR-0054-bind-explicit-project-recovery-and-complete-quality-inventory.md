@@ -13,6 +13,7 @@ affected_paths:
   - services/core-api/src/research_observatory_core/ports/project_recovery.py
   - packages/contracts/core-api/**
   - packages/contracts/project/**
+  - packages/contracts/anchors/generate_anchor_schema.py
   - quality-scope.json
 supersedes: []
 superseded_by: null
