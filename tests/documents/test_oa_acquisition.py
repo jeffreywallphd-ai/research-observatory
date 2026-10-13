@@ -411,7 +411,16 @@ class AcquisitionMigrationTests(unittest.TestCase):
         before = self.rows()
         self.assertEqual({table: len(rows) for table, rows in before.items()}, self.manifest["counts"])
         plan = runner.plan_database_migration(self.database, expected_project_id=self.manifest["projectId"])
-        self.assertEqual(("0024_open_access_acquisition", "0025_document_intake_recovery"), plan.migration_ids)
+        self.assertEqual(
+            (
+                "0024_open_access_acquisition",
+                "0025_document_intake_recovery",
+                "0026_document_revisions",
+                "0027_revision_invalidations",
+                "0028_document_enrichments",
+            ),
+            plan.migration_ids,
+        )
         result = runner.migrate_database(self.database, expected_project_id=self.manifest["projectId"])
         self.assertEqual(before, self.rows())
         assert result.backup_relative_path is not None
@@ -419,7 +428,7 @@ class AcquisitionMigrationTests(unittest.TestCase):
             self.assertEqual(23, db.execute("PRAGMA user_version").fetchone()[0])
             self.assertEqual(self.manifest["schemaSha256"], _schema_fingerprint(db))
         with closing(sqlite3.connect(self.database)) as db:
-            self.assertEqual(25, db.execute("PRAGMA user_version").fetchone()[0])
+            self.assertEqual(28, db.execute("PRAGMA user_version").fetchone()[0])
             self.assertEqual([], db.execute("PRAGMA foreign_key_check").fetchall())
             self.assertEqual(0, db.execute("SELECT count(*) FROM acquisition_locations").fetchone()[0])
         for item in self.manifest["ciphertext"]:

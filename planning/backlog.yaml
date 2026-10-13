@@ -5213,6 +5213,84 @@ waves:
           helper refuses product changes after C17. Do not bypass it; authenticate the new correction and obtain any exact
           method authority needed before replacing that frozen proof. Independent commit-bound correction/classification/integration
           review remains required before completion and local integration. No completion or release gate is waived.
+    - title: Create acquisition queue, conflict, and entitlement placeholders
+      objective: Resumable download/import jobs, alternative copies, unavailable state, and manual/institutional entitlement
+        request placeholders.
+      dependencies:
+      - CAP-05.S01.T02
+      acceptance_criteria:
+      - Partial acquisitions resume or clean up safely; multiple copies remain distinguishable; lack of full text does not
+        remove the metadata record or fabricate availability.
+      - Automated tests cover the expected path and at least one material failure or boundary condition.
+      - Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.
+      verification_commands:
+      - python tools/verify.py --profile documents
+      - python tools/verify.py --profile service
+      deployment_profiles:
+      - LOC
+      - LAB
+      - ALL
+      platform_targets:
+      - windows-x64
+      verification_profiles:
+      - documents
+      - service
+      id: W2.C19.T01
+      wave: W2
+      priority: P0
+      status: IN_PROGRESS
+      owner: codex-w2-implementation
+      branch: codex/w2-implementation
+      base_sha: aba41aae4fe5a530718c37a72a3213c68f6eb944
+      worktree: .
+      lease:
+        claimed_by: codex-w2-implementation
+        claimed_at: '2026-10-13T03:16:45+00:00'
+        expires_at: '2026-10-13T11:16:45+00:00'
+      started_at: '2026-10-13T03:16:45+00:00'
+      updated_at: '2026-10-13T03:16:45+00:00'
+      completed_at: null
+      blocker: null
+      implementation_notes: ''
+      evidence: []
+      verification_state: null
+      review:
+        reviewer: null
+        result: null
+        reviewed_at: null
+        notes: null
+      review_control:
+        version: 1
+        attempts: []
+        current_submission: null
+      correction:
+        origin_task_id: CAP-05.S01.T03
+        origin_commit: 28fcb3abfda20f393994433812b1a50ac06005c1
+        paused_state_sha256: d7511f56f3042ca60c58583f7c6bbbe4eec05c29f266acba9348a4a2dbae1183
+        origin_sha256: f74b32f21cdea4d6810e2651e892075295f377fba52d8cb924d1e74d9d76b16e
+        origin_contract_sha256: 9888e05207eba4d5d6522ec99045921af07f9276eee574fde9678d8856ebd70f
+        origin_history_sha256: 8d69b13955e098543a486bb9eb6af5ac45859ed841104f81f6057c9a276b88d2
+        origin_amendment_id: null
+        authority_sha256: c92ce7e9bac1b8a49d13d649a5980fea61e56ee953d238c734d8ff5f04f4c9e5
+        spec:
+          path: artifacts/evidence/W2.C19.T01.spec.json
+          sha256: 21b1331c33e85886a07ed4c935e38e843e19a9f6c317674d31968827854b81f4
+          commit: aba41aae4fe5a530718c37a72a3213c68f6eb944
+        reproduction: 'The preserved complete 331-case T03 typing-source execution has five failures: literal v21/v22/v23
+          migration plans omit installed migrations 0026-0028, and five target-version assertions expect 25 while the current
+          approved migration runner reaches 28. Replay the five named affected migration cases plus the existing material
+          v24 interruption case against all six original v21/v22/v23 JSON/ZIP fixtures. Original failed execution remains
+          adverse.'
+        changed_paths:
+        - tests/documents/test_local_attachment.py
+        - tests/documents/test_oa_acquisition.py
+        impact_analysis: 'Restore current approved migration expectations in exactly two original task-owned tests: append
+          0026_document_revisions, 0027_revision_invalidations, 0028_document_enrichments to three complete migration sequences
+          and expect target 28 in five assertions. Preserve every predecessor, verified-backup, schema, foreign-key, rollback,
+          retry, row, rights and ciphertext assertion and all six literal fixture bytes. No production, migration, security-authority,
+          reference, framework or release change. Focused real SQLite migration/failure checks and affected lint/format/types
+          plus independent correction/integration review prove this restorative delta; broader fresh qualification remains
+          at S06/checkpoint/W2.'
     resume_records:
     - id: W2.R01
       wave_id: W2

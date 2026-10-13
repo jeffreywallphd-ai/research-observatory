@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: b6eb217f62d47c5deb3312ad20eade0e4abe637175ae7b5ab4090bf42ade3a2f
+source_sha256: a14012413fbfd0fd1b95a36749a5b91982731b23bd8264a7b18b382c40e62fc4
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -4943,6 +4943,34 @@ Original tasks and approvals remain unchanged.
 **Current latest-review projection:** `approved` by agent:/root/c18_runtime_disposition at `2026-10-11T17:23:28+00:00`
 
 **Latest notes:** Independent focused W2.C18.T01 R01 review approves the exact committed CSS correction and its three inherited criteria. Actual fixed-candidate style, 12 complete theme/width/component CSS comparisons and approved two-selector task-authority evidence are authenticated, together with exact accepted normal maintenance, independently reviewed metadata and source/method introductions. The actual frozen R01 packet, criterion/selection/evidence hashes and four-path delivery commit match. No active blocking C18 finding remains. Original dark-theme and other adverse reports remain preserved; separate A06 recovery work, restart P1, 48 architecture/lint findings, Reader/CSP and conformance failures, fresh S06/Wave/platform/package qualification and the human release gate remain required. Ongoing review-site regeneration is not represented as completed.
+
+**Currently open findings:** -
+
+### W2.C19.T01 — Create acquisition queue, conflict, and entitlement placeholders
+
+**Status:** `IN_PROGRESS`. **Original task:** `CAP-05.S01.T03`. **Latest review:** `-`.
+
+**Reproduction:** The preserved complete 331-case T03 typing-source execution has five failures: literal v21/v22/v23 migration plans omit installed migrations 0026-0028, and five target-version assertions expect 25 while the current approved migration runner reaches 28. Replay the five named affected migration cases plus the existing material v24 interruption case against all six original v21/v22/v23 JSON/ZIP fixtures. Original failed execution remains adverse.
+
+**Inherited criteria:**
+
+- Partial acquisitions resume or clean up safely; multiple copies remain distinguishable; lack of full text does not remove the metadata record or fabricate availability.
+- Automated tests cover the expected path and at least one material failure or boundary condition.
+- Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.
+
+**Bounded changed paths:**
+
+- tests/documents/test_local_attachment.py
+- tests/documents/test_oa_acquisition.py
+#### Review history — W2.C19.T01
+
+**Review mode:** `append-only v1` / 0 completed round(s)
+
+**Current immutable submission awaiting review:** None
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
 
 **Currently open findings:** -
 
