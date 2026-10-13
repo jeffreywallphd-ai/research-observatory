@@ -1,0 +1,130 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "independent-wave-amendment-adoption-security-review",
+  "amendmentId": "W2.A06",
+  "targetWave": "W2",
+  "reviewer": "agent:/root/a03_t01_lineage_audit",
+  "reviewedAt": "2026-10-13T02:47:41.711237+00:00",
+  "result": "approved",
+  "reviewedManifest": {
+    "path": "artifacts/evidence/W2.A06.adoption.json",
+    "introductionCommit": "d3e4b9e6f42a712ebef6d5579f1d3d0ee707630b",
+    "gitBlob": "d82d29f4f82453c1737cf9407d31f7f463d5719e",
+    "sha256": "66e31041bfe11d41c367818dfb0211237f8cd3d8d5562fc2fd9e9a3242f33c6c"
+  },
+  "approvedExit": {
+    "attemptId": "R01",
+    "reviewedCompletionCommit": "a5398d07cdeb80802ad664ca412c514051362e86",
+    "actualApprovalPublicationCommit": "a5398d07cdeb80802ad664ca412c514051362e86",
+    "reviewedStateCommit": "67cdf5eb629b6612b2fc77875eea0cec38a00028",
+    "evidence": {
+      "path": "artifacts/evidence/W2.A06.exit.json",
+      "sha256": "4483ca0f36f2b34fc27e379b6b1db4e0555d26fc797c5dc9a534332c25d22371",
+      "introductionCommit": "2a06465f38966064974bd7ae7eceb537ed1dcb32"
+    },
+    "ledger": {
+      "path": "artifacts/evidence/W2.A06.exit-review-R01.json",
+      "sha256": "cf32930e62184a3ae1617a76c38dd6527437ab393744f5f17f27c6a3859825e1",
+      "introductionCommit": "a5398d07cdeb80802ad664ca412c514051362e86"
+    }
+  },
+  "independence": {
+    "campaignOwner": "codex-w2-implementation",
+    "exitReviewer": "agent:/root/a06_exit_review",
+    "combinedContributionReviewer": "agent:/root/a06_t02_ui_security_review",
+    "priorT03TaskReviewer": "agent:/root/a03_t01_lineage_audit",
+    "statement": "I am independent of the campaign owner and disclose my earlier independent T03 task review and local privacy admission. I authored no A06 product implementation, exit/adoption manifest, owner grant, selected proof producer or taskctl state transition. I reused completed task, contribution and exit dispositions and reviewed only the exact committed completion/adoption suffix, security boundaries and paused return. Read-only Git, hash, backlog and installed semantic validation only; no suite, Native, model, controller mutation or ref change."
+  },
+  "security_dispositions": [
+    {
+      "boundary": "Exact immutable approved exit and adoption checkpoint authority",
+      "result": "approved",
+      "basis": "The adoption manifest was introduced as the sole path at d3e4b9e6f42a712ebef6d5579f1d3d0ee707630b, a direct child of actual approved completion a5398d07cdeb80802ad664ca412c514051362e86. Git blob d82d29f4f82453c1737cf9407d31f7f463d5719e and raw SHA-256 66e31041bfe11d41c367818dfb0211237f8cd3d8d5562fc2fd9e9a3242f33c6c equal the worktree bytes. The sole exit R01 is approved with no findings/closures, exact ledger cf32930e and fixed REVIEW state 67cdf5eb629b6612b2fc77875eea0cec38a00028. Installed amendment_exit_ledger_errors and amendment_adoption_reference_errors both return empty lists. No adoption checkpoint exists yet."
+    },
+    {
+      "boundary": "Task, contribution, source and owner authority",
+      "result": "approved-with-existing-proof-limits",
+      "basis": "Manifest taskBindings equal the exact three approved exit bindings; each committed criterion manifest and independent R01 ledger raw SHA matches. The committed combined S01/S02 review SHA96d9315 is approved. Existing ECR-0014 owner authority, ADR0054, approved 1.9 reference and exact T03 owner-approved publication correction remain unchanged. No product, checker, hook, contract, reference or task source path changed between qualified product b49 and this evidence-only adoption manifest."
+    },
+    {
+      "boundary": "Recovery security, rights, privacy and original fixture",
+      "result": "approved-for-bounded-checkpoint",
+      "basis": "Completed T01/T02/T03 and combined reviews bind actual local whole-process recovery, conservative principal/machine/PID/path/key/ownership denials, protected verified-copy facts, UI state and finite verification proof. The original R03 finding closure is exact one-use approved Option B, not a generic legacy override or newly fabricated witness. Current adoption suffix performs no project/vault mutation or private research disclosure. Prior privacy-rejected public T03 R01 remains preserved; corrected display bytes were explicitly owner-approved and normal guard admitted exact artifacts."
+    },
+    {
+      "boundary": "Paused Wave return and next checkpoint",
+      "result": "approved-contract-actual-adoption-pending",
+      "basis": "Current A06 lifecycle is REVIEW, campaign COMPLETE, completion APPROVED; ordinary W2 remains PAUSED under its amendment hold and active_amendment is null. There are zero A06 security checkpoints before this review. Manifest proposes only the same paused return; supported adoption must record the actual next security checkpoint and leave W2 paused. CAP-05.S06 is still IN_PROGRESS and CP09/W2/G2 are not complete."
+    },
+    {
+      "boundary": "Adverse evidence and future qualification",
+      "result": "approved-with-explicit-open-obligations",
+      "basis": "Original complete quality FAIL1 retains only the authorized exact one-file formatter debt; five historical migration expectations remain OPEN for an ordinary linked CAP-05.S01.T03 correction after A06 adoption/quiescence and before S06/Wave migration qualification. Physical independent second Windows host remains UNTESTED under exact W5 timing authority. Shipping CSP header attribution remains an inference. Neither prior selected checks nor this checkpoint constitute full profile/platform/model/installer, Wave security review, G2 or W3 approval."
+    }
+  ],
+  "reused_completed_reviews": [
+    {
+      "path": "artifacts/evidence/W2.A06.T01.review-R01.json",
+      "sha256": "18063b4e220f43a8ec278f535b7d939b042ebbaaa6cc4402c9a599105825972e"
+    },
+    {
+      "path": "artifacts/evidence/W2.A06.T02.review-R01.json",
+      "sha256": "ba61a41249cd04559bd2035105552d2d21dff620b4995d139500490a53bcff3c"
+    },
+    {
+      "path": "artifacts/evidence/W2.A06.T03.review-R01.json",
+      "sha256": "0c45eeb64501dc8dc58f25cf64ed1ee627ab4456ca65c15f91708b1359a477c6"
+    },
+    {
+      "path": "artifacts/evidence/W2.A06.contributions.review-01.json",
+      "sha256": "96d931526fc86a5ac91464e04da827ede0b8a1f1fdf1783ee621be25dfbc5894"
+    }
+  ],
+  "proof_limits": [
+    "This pre-adoption security approval binds only the exact committed adoption manifest and approved exit history. The separate review commit must follow manifest introduction and precede supported adoption; actual adoption/checkpoint identity and post-adoption Wave state require fresh observation.",
+    "No test, Native, project recovery, full-history lineage, model or installer proof was rerun for this evidence-only suffix. Earlier actual selected task results retain their original candidate, adverse results and limits.",
+    "Original complete quality FAIL1, exact unchanged formatter debt and five migration expectations OPEN are not relabeled PASS or closed by this review. The planned restorative patch updates three migration-ID tuple expectations and version expectations but is unadmitted and unexecuted.",
+    "Physical other-Windows-installation proof remains UNTESTED and mandatory by W5 exit; same-machine or anonymous-principal denials are not substitutes. CSP shipping header equality remains authenticated inference rather than direct capture.",
+    "No ordinary W2 resume, CAP-05.S06 integration, CP09, full Wave/repository/profile/security/privacy/accessibility/performance/packaging/platform qualification, G2 human release or W3 approval is inferred."
+  ],
+  "actual_pre_adoption_state": {
+    "head": "d3e4b9e6f42a712ebef6d5579f1d3d0ee707630b",
+    "localMain": "8937b021250431695f5d5ba3f17c27ab7ffb3db3",
+    "branch": "codex/w2-implementation",
+    "amendmentLifecycle": "REVIEW",
+    "completionStatus": "APPROVED",
+    "campaignStatus": "COMPLETE",
+    "activeAmendment": null,
+    "recordedA06SecurityCheckpointCount": 0,
+    "ordinaryWaveCampaign": "PAUSED/amendment-hold",
+    "CAP05S06Status": "IN_PROGRESS",
+    "actualAdoptionObserved": false,
+    "releaseApprovalGranted": false
+  },
+  "required_next_transitions": [
+    "Commit this separate canonical security review after the reviewed A06 manifest and before supported taskctl adoption.",
+    "Perform supported A06 adoption against the exact committed manifest, publish its actual checkpoint and independently observe the unchanged paused W2 return.",
+    "At a clean quiescent boundary, admit and review the ordinary linked CAP-05.S01.T03 migration-test correction, then explicitly resume W2 and complete S06, CP09 and fresh Wave qualification before any separate G2 release decision."
+  ],
+  "retained_open_external_finding_ids": [
+    "T03-MIGRATION-OBS-01",
+    "T03-MIGRATION-OBS-02",
+    "T03-MIGRATION-OBS-03",
+    "T03-MIGRATION-OBS-04",
+    "T03-MIGRATION-OBS-05"
+  ],
+  "findings": [],
+  "closures": [],
+  "openFindingIds": [],
+  "reviewerSafety": {
+    "sourceMutation": false,
+    "backlogOrViewMutation": false,
+    "producerMutation": false,
+    "gitRefMutation": false,
+    "suiteOrObserverReruns": 0,
+    "canonicalFilesAuthored": [
+      "artifacts/evidence/W2.A06.adoption.review-01.json"
+    ]
+  },
+  "notes": "Separate independent pre-adoption security approval of the exact committed W2.A06 checkpoint. The approved exit ledger/completion is immutable at a5398d07cdeb80802ad664ca412c514051362e86 and the manifest is the sole addition at d3e4b9e6f42a712ebef6d5579f1d3d0ee707630b. This review authenticates prior three-task and combined contribution proofs with their original limits; it does not assert that taskctl adoption, CP09, Wave resumption, later migration correction or release has occurred."
+}
