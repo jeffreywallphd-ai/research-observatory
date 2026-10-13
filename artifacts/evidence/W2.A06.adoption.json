@@ -1,0 +1,90 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "wave-amendment-adoption-evidence",
+  "amendmentId": "W2.A06",
+  "targetWave": "W2",
+  "branch": "codex/w2-implementation",
+  "candidateCommit": "a5398d07cdeb80802ad664ca412c514051362e86",
+  "reviewedCompletionCommit": "a5398d07cdeb80802ad664ca412c514051362e86",
+  "approvedExitAttempt": "R01",
+  "approvedExitEvidence": {
+    "type": "amendment-exit-evidence",
+    "amendment_id": "W2.A06",
+    "path": "artifacts/evidence/W2.A06.exit.json",
+    "sha256": "4483ca0f36f2b34fc27e379b6b1db4e0555d26fc797c5dc9a534332c25d22371",
+    "commit": "2a06465f38966064974bd7ae7eceb537ed1dcb32"
+  },
+  "approvedExitLedger": {
+    "path": "artifacts/evidence/W2.A06.exit-review-R01.json",
+    "sha256": "cf32930e62184a3ae1617a76c38dd6527437ab393744f5f17f27c6a3859825e1"
+  },
+  "taskBindings": [
+    {
+      "taskId": "W2.A06.T01",
+      "candidateCommit": "eb570817f57a24756e2d675e974f7ee429c5dfc7",
+      "manifestReference": {
+        "type": "criterion-manifest",
+        "path": "artifacts/evidence/W2.A06.T01.R01.json",
+        "sha256": "a2c50c398a7ae901e7ee65dfc6da46b017ace9f9feb35584edc440db7f56e171",
+        "commit": "eb570817f57a24756e2d675e974f7ee429c5dfc7",
+        "recorded_at": "2026-10-12T11:45:29+00:00"
+      },
+      "reviewLedger": {
+        "path": "artifacts/evidence/W2.A06.T01.review-R01.json",
+        "sha256": "18063b4e220f43a8ec278f535b7d939b042ebbaaa6cc4402c9a599105825972e"
+      }
+    },
+    {
+      "taskId": "W2.A06.T02",
+      "candidateCommit": "df93798ba55571d6258f720dc4a8ed2766f0aee7",
+      "manifestReference": {
+        "type": "criterion-manifest",
+        "path": "artifacts/evidence/W2.A06.T02.R01.json",
+        "sha256": "9207dfd86ac8ad37b34267296e0ede6e0eda1444a2910ea9f26c02b1bc848e59",
+        "commit": "df93798ba55571d6258f720dc4a8ed2766f0aee7",
+        "recorded_at": "2026-10-12T17:22:48+00:00"
+      },
+      "reviewLedger": {
+        "path": "artifacts/evidence/W2.A06.T02.review-R01.json",
+        "sha256": "ba61a41249cd04559bd2035105552d2d21dff620b4995d139500490a53bcff3c"
+      }
+    },
+    {
+      "taskId": "W2.A06.T03",
+      "candidateCommit": "b49a5d3fa0e1a6812eab1788606b3696f237cf44",
+      "manifestReference": {
+        "type": "criterion-manifest",
+        "path": "artifacts/evidence/W2.A06.T03.R01.json",
+        "sha256": "7561666ccc2cc5b8dcc792c83924b303cefb3018e2c735926f67cf783dfa4287",
+        "commit": "b49a5d3fa0e1a6812eab1788606b3696f237cf44",
+        "recorded_at": "2026-10-13T00:35:31+00:00"
+      },
+      "reviewLedger": {
+        "path": "artifacts/evidence/W2.A06.T03.review-R01.json",
+        "sha256": "0c45eeb64501dc8dc58f25cf64ed1ee627ab4456ca65c15f91708b1359a477c6"
+      }
+    }
+  ],
+  "combinedContributionReview": {
+    "path": "artifacts/evidence/W2.A06.contributions.review-01.json",
+    "sha256": "96d931526fc86a5ac91464e04da827ede0b8a1f1fdf1783ee621be25dfbc5894"
+  },
+  "checkpointScope": {
+    "kind": "security",
+    "actualScope": "Adopt only the exact independently approved three-task ECR-0014 completion and combined S01/S02 contribution. Normal adoption records its next actual checkpoint ID; ordinary W2 remains paused until explicit supported resume.",
+    "statusAfterAdoption": "PAUSED"
+  },
+  "carriedLimits": [
+    "Original complete quality FAIL1 retains only the exact approved formatter-debt disposition.",
+    "Five migration expectations remain OPEN for the next ordinary linked current-Wave correction before migration/S06/Wave qualification.",
+    "Physical independent-Windows-host witness test remains UNTESTED and required by W5 exit under the exact owner deferral.",
+    "Shipping CSP header attribution remains an authenticated inference; no direct shipping-header capture or runtime crypto verifier is claimed.",
+    "No8/16GiB model workloads. Full S06/next cluster checkpoint, fresh W2 matrix/platform/installer/performance/independent Wave review/G2 and W3 approval remain separate."
+  ],
+  "requiredNextTransitions": [
+    "Separate independent security review of this exact committed checkpoint, preserved and committed before supported adoption.",
+    "Normal taskctl amendment adopt W2.A06 from this committed evidence; record actual checkpoint and unchanged paused Wave.",
+    "At clean quiescence, ordinary linked correction of CAP-05.S01.T03 migration-test drift, then normal W2 resume and remaining qualification."
+  ],
+  "transitionTruth": "Proposed adoption checkpoint binds actual approved exit history. It does not claim security review, actual adoption/resume, migration finding closure, Wave completion or human release."
+}
