@@ -1491,7 +1491,7 @@ waves:
       remain recorded, not waived.
   campaign:
     status: PAUSED
-    scope: amendment-hold
+    scope: wave
     owner: codex-w2-implementation
     branch: codex/w2-implementation
     worktree: .
@@ -5509,6 +5509,17 @@ waves:
       seconds with exit0 and owned0. Architecture exit1 preserved: eight independently diagnosed classifier defects, no product
       correction indicated, no checker repair or release waiver. Prior adverse findings, CSP/quality/type debt, minimum hardware/configurable
       model decisions, full profiles/installer/Wave/G2 remain pending and unwaived. Resume CAP-05.S05.T01 after local integration.'
+  - id: W2.CP09
+    kind: security
+    recorded_by: codex-w2-implementation
+    recorded_at: '2026-10-13T02:48:25+00:00'
+    evidence:
+    - type: amendment-adoption-evidence
+      amendment_id: W2.A06
+      path: artifacts/evidence/W2.A06.adoption.json
+      sha256: 66e31041bfe11d41c367818dfb0211237f8cd3d8d5562fc2fd9e9a3242f33c6c
+      commit: 29241f6c8008ff0dd72fdbec862e25f5ed3122f2
+    notes: Adopted W2.A06 control-plane amendment.
   completion:
     status: PAUSED
     reviewer: null
@@ -62708,7 +62719,7 @@ wave_amendments:
     sha256: 3ecf2b98806f1589be7bd63fcc4f25cf0ee2df79bc95a3a0fefda2ce5666e4b2
     introduction_commit: ab3c35369a8cd57876a1890db90263e5ab2ba395
   lifecycle:
-    status: REVIEW
+    status: ADOPTED
     history:
     - id: E01
       status: APPROVED
@@ -62742,6 +62753,11 @@ wave_amendments:
       actor: codex-w2-implementation
       at: '2026-10-13T02:21:14+00:00'
       rationale: Submitted amendment exit for review.
+    - id: E05
+      status: ADOPTED
+      actor: codex-w2-implementation
+      at: '2026-10-13T02:48:25+00:00'
+      rationale: Adopted via W2.CP09.
   bootstrap:
     id: W2.A06.B00
     status: APPROVED
