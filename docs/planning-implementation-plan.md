@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: cc4a0ef97ddb1dce9cc257012ecc85374db19f53fced61b595f83775cc02be45
+source_sha256: c23f329861467523a52e466db0ebe91263293fd89391efe06143a04f25a4361d
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -3297,7 +3297,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 **Approval record:** `planning/wave-amendment-approvals/W2.A06.json` (`3ecf2b98806f1589be7bd63fcc4f25cf0ee2df79bc95a3a0fefda2ce5666e4b2`)
 
-**Lifecycle / bootstrap / campaign / completion:** `REVIEW` / `APPROVED` / `REVIEW` / `REVIEW`
+**Lifecycle / bootstrap / campaign / completion:** `REVIEW` / `APPROVED` / `COMPLETE` / `APPROVED`
 
 **Append-only lifecycle history:**
 
@@ -3308,9 +3308,11 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 ### Amendment-exit review and adoption — W2.A06
 
-**Exit-review mode:** `append-only v1` / 0 completed round(s)
+**Exit-review mode:** `append-only v1` / 1 completed round(s)
 
-**Current immutable amendment-exit submission awaiting review:** `R01` / packet SHA-256 `d2e14c4d2a4e289452cba100f064e1e96a19f91d8526925e03edfb983f8dc64e`
+#### Exit round R01
+
+**Immutable amendment-exit packet:** `R01` / packet SHA-256 `d2e14c4d2a4e289452cba100f064e1e96a19f91d8526925e03edfb983f8dc64e`
 
 - Candidate / declared candidate / branch: `2a06465f38966064974bd7ae7eceb537ed1dcb32` / `89b03dbdef7d6111f2d7f271871a73f9de962a74` / `codex/w2-implementation`
 - Submitted by / at: codex-w2-implementation / `2026-10-13T02:21:14+00:00`
@@ -3320,11 +3322,29 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - Selected checks: `.venv/Scripts/python.exe -B -s artifacts/tmp/W2.remaining-corrections-batch-01/prepare-a06-exit-01.py`
 - Prior round / replayed open findings: `-` / -
 
-**Latest completion projection:** `REVIEW` by - at `-`
+**Disposition / reviewer / time:** `approved` / agent:/root/a06_exit_review / `2026-10-13T02:34:54+00:00`
+
+**Reviewed state commit:** `67cdf5eb629b6612b2fc77875eea0cec38a00028`
+
+**Immutable exit-review ledger:** `artifacts/evidence/W2.A06.exit-review-R01.json` / `cf32930e62184a3ae1617a76c38dd6527437ab393744f5f17f27c6a3859825e1`
+
+**Review notes:** Approves only normal W2.A06 exit R01 against exact frozen REVIEW delivery 67cdf5eb629b6612b2fc77875eea0cec38a00028. All four approved ECR criteria are satisfied at this exit stage, with actual independent three-task and two-contribution dispositions and source equality. Original complete quality FAIL1, exact one-file formatter debt, five OPEN migration expectations, physical second Windows host UNTESTED by W5 obligation, shipping CSP attribution inference and all prior adverses remain truthful. The separate committed adoption checkpoint, normal adoption, queued HTML refresh, normal Wave resume, linked migration correction, downstream fresh qualification and human release gates remain required.
+
+**Findings opened:**
+
+- None
+
+**Prior finding closures:**
+
+- None
+
+**Current immutable amendment-exit submission awaiting review:** None
+
+**Latest completion projection:** `APPROVED` by agent:/root/a06_exit_review at `2026-10-13T02:34:54+00:00`
 
 **Latest completion evidence:** `artifacts/evidence/W2.A06.exit.json`
 
-**Latest completion notes:** -
+**Latest completion notes:** Approves only normal W2.A06 exit R01 against exact frozen REVIEW delivery 67cdf5eb629b6612b2fc77875eea0cec38a00028. All four approved ECR criteria are satisfied at this exit stage, with actual independent three-task and two-contribution dispositions and source equality. Original complete quality FAIL1, exact one-file formatter debt, five OPEN migration expectations, physical second Windows host UNTESTED by W5 obligation, shipping CSP attribution inference and all prior adverses remain truthful. The separate committed adoption checkpoint, normal adoption, queued HTML refresh, normal Wave resume, linked migration correction, downstream fresh qualification and human release gates remain required.
 
 **Bound amendment-adoption checkpoints:**
 

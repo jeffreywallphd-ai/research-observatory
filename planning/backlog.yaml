@@ -62774,7 +62774,7 @@ wave_amendments:
         submitted view integrity and privacy hooks passed. Task materialization, activation, implementation and later approval/release
         gates remain.'
   campaign:
-    status: REVIEW
+    status: COMPLETE
     scope: wave-amendment
     owner: codex-w2-implementation
     branch: codex/w2-implementation
@@ -62783,7 +62783,7 @@ wave_amendments:
     profile: LOC
     platform: windows-x64
     started_at: '2026-10-11T20:02:04+00:00'
-    updated_at: '2026-10-13T02:21:14+00:00'
+    updated_at: '2026-10-13T02:34:54+00:00'
     pause_reason: null
     lease: null
   tasks:
@@ -63476,32 +63476,55 @@ wave_amendments:
             closed_finding_ids: []
       current_submission: null
   completion:
-    status: REVIEW
-    reviewer: null
-    reviewed_at: null
+    status: APPROVED
+    reviewer: agent:/root/a06_exit_review
+    reviewed_at: '2026-10-13T02:34:54+00:00'
     evidence:
     - artifacts/evidence/W2.A06.exit.json
-    notes: ''
+    notes: Approves only normal W2.A06 exit R01 against exact frozen REVIEW delivery 67cdf5eb629b6612b2fc77875eea0cec38a00028.
+      All four approved ECR criteria are satisfied at this exit stage, with actual independent three-task and two-contribution
+      dispositions and source equality. Original complete quality FAIL1, exact one-file formatter debt, five OPEN migration
+      expectations, physical second Windows host UNTESTED by W5 obligation, shipping CSP attribution inference and all prior
+      adverses remain truthful. The separate committed adoption checkpoint, normal adoption, queued HTML refresh, normal Wave
+      resume, linked migration correction, downstream fresh qualification and human release gates remain required.
     exit_review_control:
       version: 1
-      attempts: []
-      current_submission:
-        id: R01
-        submitted_by: codex-w2-implementation
-        submitted_at: '2026-10-13T02:21:14+00:00'
-        candidate_commit: 2a06465f38966064974bd7ae7eceb537ed1dcb32
-        declared_candidate_commit: 89b03dbdef7d6111f2d7f271871a73f9de962a74
-        branch: codex/w2-implementation
-        evidence_reference:
-          type: amendment-exit-evidence
-          amendment_id: W2.A06
-          path: artifacts/evidence/W2.A06.exit.json
-          sha256: 4483ca0f36f2b34fc27e379b6b1db4e0555d26fc797c5dc9a534332c25d22371
-          commit: 2a06465f38966064974bd7ae7eceb537ed1dcb32
-        acceptance_criteria_sha256: 245cd08ff7411c4e78814f4daaa3aeb6e1b97f6cc31807b41ec1bade9570f611
-        selected_checks:
-        - .venv/Scripts/python.exe -B -s artifacts/tmp/W2.remaining-corrections-batch-01/prepare-a06-exit-01.py
-        selected_checks_sha256: 197b32a9e55ccefb78769617ab4b5ea25f02f2f37b86c38900494bf33772a192
-        prior_attempt_id: null
-        open_finding_ids: []
-        packet_sha256: d2e14c4d2a4e289452cba100f064e1e96a19f91d8526925e03edfb983f8dc64e
+      attempts:
+      - submission:
+          id: R01
+          submitted_by: codex-w2-implementation
+          submitted_at: '2026-10-13T02:21:14+00:00'
+          candidate_commit: 2a06465f38966064974bd7ae7eceb537ed1dcb32
+          declared_candidate_commit: 89b03dbdef7d6111f2d7f271871a73f9de962a74
+          branch: codex/w2-implementation
+          evidence_reference:
+            type: amendment-exit-evidence
+            amendment_id: W2.A06
+            path: artifacts/evidence/W2.A06.exit.json
+            sha256: 4483ca0f36f2b34fc27e379b6b1db4e0555d26fc797c5dc9a534332c25d22371
+            commit: 2a06465f38966064974bd7ae7eceb537ed1dcb32
+          acceptance_criteria_sha256: 245cd08ff7411c4e78814f4daaa3aeb6e1b97f6cc31807b41ec1bade9570f611
+          selected_checks:
+          - .venv/Scripts/python.exe -B -s artifacts/tmp/W2.remaining-corrections-batch-01/prepare-a06-exit-01.py
+          selected_checks_sha256: 197b32a9e55ccefb78769617ab4b5ea25f02f2f37b86c38900494bf33772a192
+          prior_attempt_id: null
+          open_finding_ids: []
+          packet_sha256: d2e14c4d2a4e289452cba100f064e1e96a19f91d8526925e03edfb983f8dc64e
+        review:
+          reviewer: agent:/root/a06_exit_review
+          result: approved
+          reviewed_at: '2026-10-13T02:34:54+00:00'
+          reviewed_state_commit: 67cdf5eb629b6612b2fc77875eea0cec38a00028
+          notes: Approves only normal W2.A06 exit R01 against exact frozen REVIEW delivery 67cdf5eb629b6612b2fc77875eea0cec38a00028.
+            All four approved ECR criteria are satisfied at this exit stage, with actual independent three-task and two-contribution
+            dispositions and source equality. Original complete quality FAIL1, exact one-file formatter debt, five OPEN migration
+            expectations, physical second Windows host UNTESTED by W5 obligation, shipping CSP attribution inference and all
+            prior adverses remain truthful. The separate committed adoption checkpoint, normal adoption, queued HTML refresh,
+            normal Wave resume, linked migration correction, downstream fresh qualification and human release gates remain
+            required.
+        ledger:
+          path: artifacts/evidence/W2.A06.exit-review-R01.json
+          sha256: cf32930e62184a3ae1617a76c38dd6527437ab393744f5f17f27c6a3859825e1
+        findings: []
+        closures: []
+      current_submission: null

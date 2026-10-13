@@ -1,0 +1,409 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "independent-wave-amendment-exit-review",
+  "amendment_id": "W2.A06",
+  "change_request_id": "ECR-0014",
+  "attempt_id": "R01",
+  "reviewer": "agent:/root/a06_exit_review",
+  "result": "approved",
+  "reviewed_at": "2026-10-13T02:34:18.329722+00:00",
+  "reviewed_state_commit": "67cdf5eb629b6612b2fc77875eea0cec38a00028",
+  "candidate_commit": "2a06465f38966064974bd7ae7eceb537ed1dcb32",
+  "declared_candidate_commit": "89b03dbdef7d6111f2d7f271871a73f9de962a74",
+  "qualified_product_candidate": "b49a5d3fa0e1a6812eab1788606b3696f237cf44",
+  "branch": "codex/w2-implementation",
+  "packet_sha256": "d2e14c4d2a4e289452cba100f064e1e96a19f91d8526925e03edfb983f8dc64e",
+  "acceptance_criteria_sha256": "245cd08ff7411c4e78814f4daaa3aeb6e1b97f6cc31807b41ec1bade9570f611",
+  "selected_checks_sha256": "197b32a9e55ccefb78769617ab4b5ea25f02f2f37b86c38900494bf33772a192",
+  "evidence": {
+    "path": "artifacts/evidence/W2.A06.exit.json",
+    "sha256": "4483ca0f36f2b34fc27e379b6b1db4e0555d26fc797c5dc9a534332c25d22371",
+    "commit": "2a06465f38966064974bd7ae7eceb537ed1dcb32"
+  },
+  "findings": [],
+  "closures": [],
+  "acceptance_reviews": [
+    {
+      "criterion_index": 1,
+      "criterion": "A06-AC01: The exact canonical proposal governs recovery18 plus named ADR0054/index, fixed API/Native authority/witness/denials and approved1.9 state/focus map. Preserve all immutable W1/W2 task approvals and accepted architecture.",
+      "result": "satisfied",
+      "assessment": "T01/T02 immutable independent task dispositions and combined S01 review bind the canonical API, dual current-user/same-machine witness, conservative denials, explicit verified-copy lifecycle, indexed ADR0054 and approved 1.9 state/focus map. No product/framework/reference bytes changed after the qualified b49 candidate; original W1/W2 approvals and accepted architecture are retained."
+    },
+    {
+      "criterion_index": 2,
+      "criterion": "A06-AC02: Exact current C18 proposal/readiness and finite pre-admission/later source-record method contracts form one grant. C18 remains an existing external prerequisite, not a new A06 task. Actual candidate/task/claim/source/security/UI/readiness/negative-control hashes precede execution.",
+      "result": "satisfied",
+      "assessment": "C18 is the existing DONE independently approved external prerequisite. T03 and combined S02 review authenticate exact finite source/readiness/negative-control lineage before actual selected executions. Current public manifest756 and frozen task packet427 bind the owner-approved portable publication exception only; original privacy-rejected unintroduced bytes and failure remain locally preserved. No new predicate or exemption is inferred."
+    },
+    {
+      "criterion_index": 3,
+      "criterion": "A06-AC03: Three ordered exact tasks independently satisfy every criterion at committed candidate; recovery explicit/whole-process, verification complete-multiset/CSP/data/formatter limits and protected facts all required. Any unknown/unapproved finding remains open.",
+      "result": "satisfied",
+      "assessment": "Exactly three ordered tasks are DONE with independent dispositions satisfying 5,4,6 task criteria. Existing b49 actual Reader09, Recovery10/live denial, separate regular zero-WAL03 readback, complete734 quality inventory/lint/types, exact45 AST+3literal controls and final build/package/reference proof remain historical authenticated task execution. Original complete quality FAIL1, exact one-file formatter debt and five OPEN migration expectations are retained. No new Native execution or whole-profile PASS is claimed."
+    },
+    {
+      "criterion_index": 4,
+      "criterion": "A06-AC04: Required combined security/interface/recovery/verification review and actual amendment exit/adoption checkpoint use normal installed operations; W2 remains paused until normal resume, no S06/CP09/W2/G2 completion inferred.",
+      "result": "satisfied",
+      "assessment": "Both existing A06 contributions have a committed independent combined security/interface/recovery/verification disposition. Normal installed taskctl amendment submit actually completed and delivered the exact frozen R01 REVIEW state at 67cdf5e; this independent disposition authenticates that submitted state and is for the exit boundary only. The separate committed adoption security checkpoint, normal adopt and subsequent explicit normal Wave resume remain required. W2 is still PAUSED; no S06/CP09/W2/G2 completion is inferred. HTML refresh is queued at the closeout milestone and is not claimed current for this delivery."
+    }
+  ],
+  "task_authentication": [
+    {
+      "id": "W2.A06.T01",
+      "taskHashEqualsFrozenDefinition": true,
+      "exactCriteria": true,
+      "exactDependencies": true,
+      "taskStatus": "DONE",
+      "taskReviewResult": "approved",
+      "reviewerIndependentFromTaskOwner": true,
+      "attemptSubmissionCandidate": "eb570817f57a24756e2d675e974f7ee429c5dfc7",
+      "attemptPacketEqualsReview": true,
+      "attemptEvidenceEqualsReview": true,
+      "attemptReviewMatches": true,
+      "attemptLedgerHash": "18063b4e220f43a8ec278f535b7d939b042ebbaaa6cc4402c9a599105825972e",
+      "actualReviewGitHash": "18063b4e220f43a8ec278f535b7d939b042ebbaaa6cc4402c9a599105825972e",
+      "acceptanceReviewCount": 5,
+      "allCriteriaSatisfied": true
+    },
+    {
+      "id": "W2.A06.T02",
+      "taskHashEqualsFrozenDefinition": true,
+      "exactCriteria": true,
+      "exactDependencies": true,
+      "taskStatus": "DONE",
+      "taskReviewResult": "approved",
+      "reviewerIndependentFromTaskOwner": true,
+      "attemptSubmissionCandidate": "df93798ba55571d6258f720dc4a8ed2766f0aee7",
+      "attemptPacketEqualsReview": true,
+      "attemptEvidenceEqualsReview": true,
+      "attemptReviewMatches": true,
+      "attemptLedgerHash": "ba61a41249cd04559bd2035105552d2d21dff620b4995d139500490a53bcff3c",
+      "actualReviewGitHash": "ba61a41249cd04559bd2035105552d2d21dff620b4995d139500490a53bcff3c",
+      "acceptanceReviewCount": 4,
+      "allCriteriaSatisfied": true
+    },
+    {
+      "id": "W2.A06.T03",
+      "taskHashEqualsFrozenDefinition": true,
+      "exactCriteria": true,
+      "exactDependencies": true,
+      "taskStatus": "DONE",
+      "taskReviewResult": "approved",
+      "reviewerIndependentFromTaskOwner": true,
+      "attemptSubmissionCandidate": "b49a5d3fa0e1a6812eab1788606b3696f237cf44",
+      "attemptPacketEqualsReview": true,
+      "attemptEvidenceEqualsReview": true,
+      "attemptReviewMatches": true,
+      "attemptLedgerHash": "0c45eeb64501dc8dc58f25cf64ed1ee627ab4456ca65c15f91708b1359a477c6",
+      "actualReviewGitHash": "0c45eeb64501dc8dc58f25cf64ed1ee627ab4456ca65c15f91708b1359a477c6",
+      "acceptanceReviewCount": 6,
+      "allCriteriaSatisfied": true
+    }
+  ],
+  "existing_C18_external_prerequisite": {
+    "status": "DONE",
+    "reviewResult": "approved",
+    "reviewerIndependent": true,
+    "existingExternalPrerequisite": true
+  },
+  "combined_contribution_review": {
+    "path": "artifacts/evidence/W2.A06.contributions.review-01.json",
+    "sha256": "96d931526fc86a5ac91464e04da827ede0b8a1f1fdf1783ee621be25dfbc5894",
+    "reviewer": "agent:/root/a06_t02_ui_security_review",
+    "result": "approved",
+    "slice_ids": [
+      "W2.A06.S01",
+      "W2.A06.S02"
+    ],
+    "introduction_commit": "89b03dbdef7d6111f2d7f271871a73f9de962a74"
+  },
+  "frozen_submission_authentication": {
+    "delivery_commit": "67cdf5eb629b6612b2fc77875eea0cec38a00028",
+    "delivery_parent": "2a06465f38966064974bd7ae7eceb537ed1dcb32",
+    "delivery_changed_paths": [
+      "docs/planning-implementation-plan.md",
+      "planning/backlog.yaml",
+      "planning/status-summary.md"
+    ],
+    "actual_frozen_submission": {
+      "id": "R01",
+      "submitted_by": "codex-w2-implementation",
+      "submitted_at": "2026-10-13T02:21:14+00:00",
+      "candidate_commit": "2a06465f38966064974bd7ae7eceb537ed1dcb32",
+      "declared_candidate_commit": "89b03dbdef7d6111f2d7f271871a73f9de962a74",
+      "branch": "codex/w2-implementation",
+      "evidence_reference": {
+        "type": "amendment-exit-evidence",
+        "amendment_id": "W2.A06",
+        "path": "artifacts/evidence/W2.A06.exit.json",
+        "sha256": "4483ca0f36f2b34fc27e379b6b1db4e0555d26fc797c5dc9a534332c25d22371",
+        "commit": "2a06465f38966064974bd7ae7eceb537ed1dcb32"
+      },
+      "acceptance_criteria_sha256": "245cd08ff7411c4e78814f4daaa3aeb6e1b97f6cc31807b41ec1bade9570f611",
+      "selected_checks": [
+        ".venv/Scripts/python.exe -B -s artifacts/tmp/W2.remaining-corrections-batch-01/prepare-a06-exit-01.py"
+      ],
+      "selected_checks_sha256": "197b32a9e55ccefb78769617ab4b5ea25f02f2f37b86c38900494bf33772a192",
+      "prior_attempt_id": null,
+      "open_finding_ids": [],
+      "packet_sha256": "d2e14c4d2a4e289452cba100f064e1e96a19f91d8526925e03edfb983f8dc64e"
+    },
+    "packet_criteria_selection_and_evidence_hashes_recomputed": true,
+    "bound_evidence_Git_LF_canonical_sha256": "4483ca0f36f2b34fc27e379b6b1db4e0555d26fc797c5dc9a534332c25d22371",
+    "task_histories_capabilities_other_amendments_and_paused_Wave_campaign_unchanged": true,
+    "campaign_status": "REVIEW",
+    "completion_status": "REVIEW",
+    "active_amendment": null,
+    "W2_campaign_status": "PAUSED",
+    "prior_exit_attempts": 0,
+    "open_exit_finding_ids": [],
+    "actual_normal_submit_root_observation": {
+      "tool_chunk": "c4f3e7",
+      "exit_code": 0,
+      "outcome": "COMMITTED_CAS_MATCHED",
+      "provenance": "Actual root tool completion supplied directly to this independent reviewer; Git independently authenticates the delivered exact frozen state. No separate execution stream is invented."
+    },
+    "current_HTML_refresh_claimed": false,
+    "HTML_refresh_status": "Queued by root for the closeout milestone; this review does not claim post-submit HTML current."
+  },
+  "evidence_authentication": {
+    "method": "Independent read-only authentication of exact committed task and contribution dispositions, approved criteria, actual root exit observation, selected evidence digests, source equality and normal frozen delivery. Original b49 Native/build/test facts remain their earlier task observations, not fresh reviewer execution or cached qualification at the metadata exit.",
+    "direct_reference_pairs_rehashed": 29,
+    "raw_digest_mismatches": [],
+    "references": {
+      "ecrPacket": {
+        "path": "planning/enabler-change-requests/ECR-0014.packet.json",
+        "sha256": "6293590db74b9a3ec4ce6019a1713def568798ac3a71208a5583bfcff78f7a34"
+      },
+      "ecrApproval": {
+        "path": "planning/wave-amendment-approvals/W2.A06.json",
+        "sha256": "3ecf2b98806f1589be7bd63fcc4f25cf0ee2df79bc95a3a0fefda2ce5666e4b2"
+      },
+      "t01Review": {
+        "path": "artifacts/evidence/W2.A06.T01.review-R01.json",
+        "sha256": "18063b4e220f43a8ec278f535b7d939b042ebbaaa6cc4402c9a599105825972e"
+      },
+      "t02Review": {
+        "path": "artifacts/evidence/W2.A06.T02.review-R01.json",
+        "sha256": "ba61a41249cd04559bd2035105552d2d21dff620b4995d139500490a53bcff3c"
+      },
+      "c18Manifest": {
+        "path": "artifacts/evidence/W2.C18.T01.R01.json",
+        "sha256": "eaf8950726fd37eebe675fbf95319cffd3b8d7c51baf8498b0f46c7c48f6c527"
+      },
+      "sourceSecurityReference": {
+        "path": "artifacts/tmp/W2.remaining-corrections-batch-01/W2.A06.T03.TY01.commit-bound-source-security-reference-disposition-02.json",
+        "sha256": "543643879bee293e38b767ca0e3c643c4eaeb035e366443fce3e09b5039773ef"
+      },
+      "recoveryActual": {
+        "path": "artifacts/tmp/W2.remaining-corrections-batch-01/a06-t03-fresh-recovery-group-10.actual-independent-disposition-01.json",
+        "sha256": "72631b5874aea796c69d392f7d17cf2b4289357541e0411dc50349041a55915a"
+      },
+      "zeroWalActual": {
+        "path": "artifacts/tmp/W2.remaining-corrections-batch-01/a06-t03-protected-readback-03.zero-wal-branch-01.actual-disposition.json",
+        "sha256": "a6677705b37187f011a8b4bb9f588bd16a7d2af216bb46ef14f050ea2e5cd237"
+      },
+      "readerActual": {
+        "path": "artifacts/tmp/W2.remaining-corrections-batch-01/a06-t03-shipping-reader-runtime-09.independent-actual-disposition-01.json",
+        "sha256": "024dca8558bd09c3cee9c75964449ca130a91c20abc2c85f681b792c595d86e5"
+      },
+      "migrationTriage": {
+        "path": "artifacts/tmp/W2.remaining-corrections-batch-01/a06-t03-historical-migration-failure-triage-01.json",
+        "sha256": "eceaa9441e54e5246a5a7696ac2e37c631cb4f21553369c37d01c72f213c05b1"
+      },
+      "physicalTimingSupplement": {
+        "path": "artifacts/evidence/W2.A06.T01.foreign-host-timing-amendment-01.supplement.json",
+        "sha256": "3c4d2fccad15c5415767a2e1f4155ad2b760652d8d2629898aea2452aa02ba49"
+      },
+      "physicalOwnerDecision": {
+        "path": "artifacts/evidence/W2.A06.T01.local-verification-corrections-01.owner-decision.json",
+        "sha256": "18003828f9dfc9999087709febf7bf4171edfe4cb2eea016528e5969e81ab5ef"
+      },
+      "originalR03Closure": {
+        "path": "artifacts/evidence/W2.A06.original-r03-finding-closure-01.json",
+        "sha256": "472a4464691c1682f6479068c167c274fdf950f3dfae6b46a1b27960d5e521a5"
+      },
+      "t03CorrectedManifest": {
+        "path": "artifacts/evidence/W2.A06.T03.R01.json",
+        "sha256": "7561666ccc2cc5b8dcc792c83924b303cefb3018e2c735926f67cf783dfa4287"
+      },
+      "t03FormalReview": {
+        "path": "artifacts/evidence/W2.A06.T03.review-R01.json",
+        "sha256": "0c45eeb64501dc8dc58f25cf64ed1ee627ab4456ca65c15f91708b1359a477c6"
+      },
+      "ownADRSourceSecurityReference": {
+        "path": "artifacts/tmp/W2.remaining-corrections-batch-01/W2.A06.T03.own-ADR.commit-bound-source-security-reference-disposition-02.json",
+        "sha256": "f6359cc12bdf644b1043dde34f504da4c4234176b25d077c98fa0e90c94c6859"
+      },
+      "currentPackage": {
+        "path": "artifacts/tmp/W2.A06.T03.qualifying-package-01.final-01.json",
+        "sha256": "dc21a44cd3afe8b4ab63541294753a5507c5440537bae827194eb7a1211b76bc"
+      },
+      "currentReferenceActual": {
+        "path": "artifacts/tmp/W2.remaining-corrections-batch-01/a06-t03-reference-proof-03.independent-actual-disposition-01.json",
+        "sha256": "1280113f4e772d6d5589028cec401e1cb07f7680e64b5fea04ceeb967fc5ddc5"
+      },
+      "currentExactDebtActual": {
+        "path": "artifacts/tmp/W2.remaining-corrections-batch-01/a06-t03-closed48-format-debt-actual-disposition-04.json",
+        "sha256": "431df6fd6b98db0639044efdf2e43d01547c306798508b3de989a2f58604d0a0"
+      },
+      "openMigrationContractDisposition": {
+        "path": "artifacts/tmp/W2.remaining-corrections-batch-01/a06-t03-open-migration-findings-contract-disposition-01.json",
+        "sha256": "15dffd956f248a879f3287d257ed6afd253e1dfc6aa8aee1ec6b04cd7cbb6983"
+      },
+      "exitManifest": {
+        "path": "artifacts/evidence/W2.A06.exit.json",
+        "sha256": "4483ca0f36f2b34fc27e379b6b1db4e0555d26fc797c5dc9a534332c25d22371"
+      },
+      "contributionReview": {
+        "path": "artifacts/evidence/W2.A06.contributions.review-01.json",
+        "sha256": "96d931526fc86a5ac91464e04da827ede0b8a1f1fdf1783ee621be25dfbc5894"
+      },
+      "observer": {
+        "path": "artifacts/tmp/W2.remaining-corrections-batch-01/W2.A06.exit-observation-01.json",
+        "sha256": "0c4c7ddcbbc22e6672d1c1456e6bfd2b5e471ad4c3beea3edbca87078f04aa1c"
+      },
+      "W2.A06.T01Manifest": {
+        "type": "criterion-manifest",
+        "path": "artifacts/evidence/W2.A06.T01.R01.json",
+        "sha256": "a2c50c398a7ae901e7ee65dfc6da46b017ace9f9feb35584edc440db7f56e171",
+        "commit": "eb570817f57a24756e2d675e974f7ee429c5dfc7",
+        "recorded_at": "2026-10-12T11:45:29+00:00"
+      },
+      "W2.A06.T01Review": {
+        "path": "artifacts/evidence/W2.A06.T01.review-R01.json",
+        "sha256": "18063b4e220f43a8ec278f535b7d939b042ebbaaa6cc4402c9a599105825972e"
+      },
+      "W2.A06.T02Manifest": {
+        "type": "criterion-manifest",
+        "path": "artifacts/evidence/W2.A06.T02.R01.json",
+        "sha256": "9207dfd86ac8ad37b34267296e0ede6e0eda1444a2910ea9f26c02b1bc848e59",
+        "commit": "df93798ba55571d6258f720dc4a8ed2766f0aee7",
+        "recorded_at": "2026-10-12T17:22:48+00:00"
+      },
+      "W2.A06.T02Review": {
+        "path": "artifacts/evidence/W2.A06.T02.review-R01.json",
+        "sha256": "ba61a41249cd04559bd2035105552d2d21dff620b4995d139500490a53bcff3c"
+      },
+      "W2.A06.T03Manifest": {
+        "type": "criterion-manifest",
+        "path": "artifacts/evidence/W2.A06.T03.R01.json",
+        "sha256": "7561666ccc2cc5b8dcc792c83924b303cefb3018e2c735926f67cf783dfa4287",
+        "commit": "b49a5d3fa0e1a6812eab1788606b3696f237cf44",
+        "recorded_at": "2026-10-13T00:35:31+00:00"
+      },
+      "W2.A06.T03Review": {
+        "path": "artifacts/evidence/W2.A06.T03.review-R01.json",
+        "sha256": "0c45eeb64501dc8dc58f25cf64ed1ee627ab4456ca65c15f91708b1359a477c6"
+      }
+    },
+    "exit_observer": {
+      "root_tool_chunk": "925d6e",
+      "exit_code": 0,
+      "report_path": "artifacts/tmp/W2.remaining-corrections-batch-01/W2.A06.exit-observation-01.json",
+      "report_sha256": "0c4c7ddcbbc22e6672d1c1456e6bfd2b5e471ad4c3beea3edbca87078f04aa1c",
+      "actual_execution_candidate": "89b03dbdef7d6111f2d7f271871a73f9de962a74",
+      "assessment": "The exact ignored observer source and root-supplied actual exit0 authenticate completed task records, task evidence/review hashes and source equality. This is metadata boundary evidence; no suite or Native replay is inferred."
+    },
+    "candidate_to_exit_metadata_paths": [
+      "artifacts/evidence/W2.A06.T03.R01.json",
+      "artifacts/evidence/W2.A06.T03.publication-repair-01.owner.json",
+      "artifacts/evidence/W2.A06.T03.review-R01.json",
+      "artifacts/evidence/W2.A06.contributions.review-01.json",
+      "artifacts/evidence/W2.A06.exit.json",
+      "docs/planning-implementation-plan.md",
+      "planning/backlog.yaml",
+      "planning/review-site/enablers/ECR-0014.html",
+      "planning/review-site/manifest.json",
+      "planning/status-summary.md"
+    ],
+    "product_framework_contract_reference_bytes_unchanged_since_qualified_b49": true,
+    "review_preparation": {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/W2.A06.exit-review-R01.preparation-01.json",
+      "sha256": "deeff080bef53cefedbaa9870dc872d9e4ac093c7bf17a722353e147db902a61"
+    },
+    "review_inspection_adverse": "One read-only diagnostic initially expected evidence_sha256 directly in submission; actual schema stores it under evidence_reference. The inspection failed before writing or changing repository state and was corrected. Original tool result remains available."
+  },
+  "carried_findings_and_timing_obligations": [
+    {
+      "ids": [
+        "T03-MIGRATION-OBS-01",
+        "T03-MIGRATION-OBS-02",
+        "T03-MIGRATION-OBS-03",
+        "T03-MIGRATION-OBS-04",
+        "T03-MIGRATION-OBS-05"
+      ],
+      "status": "OPEN",
+      "scope": "Migration/S06/CP09/Wave qualification",
+      "basis": "Five target25/tuple<=0025 expectations conflict with unchanged current target28/0026-28; no typing-production regression shown. Later preservation assertions remain unproved for failing cases, and original broad331 FAIL/custody gap remains. No waiver, assertion removal, blanket omission or closure by59selected passes.",
+      "nextRoute": "One ordinary linked CAP-05.S01.T03 correction only after A06 adoption and clean committed paused/quiescent boundary; preserve literal predecessors/backups/rows/rights/ciphertexts/rollback/FK/discovery and include exact fixtures in fresh affected proof. TY01 necessity-only typing grant does not authorize runtime expected-result repair."
+    },
+    {
+      "id": "PHYSICAL-FOREIGN-WINDOWS-HOST",
+      "status": "UNTESTED_OWNER_TIMED_FUTURE_OBLIGATION",
+      "scope": "First available genuine independent Windows installation; mandatory by W5 exit",
+      "authority": {
+        "path": "artifacts/evidence/W2.A06.T01.foreign-host-timing-amendment-01.supplement.json",
+        "sha256": "3c4d2fccad15c5415767a2e1f4155ad2b760652d8d2629898aea2452aa02ba49"
+      },
+      "basis": "Only this physical foreign-host test is a disclosed future obligation outside due-now T01/S01/A06/W2 completion. It is not an executed test or PASS. All other checks and independent/release gates remain required.",
+      "futureProof": {
+        "fixture": "Tiny synthetic typed ownership witness with no private research content, project key or vault credential.",
+        "requiredBoundary": "Two genuine independent Windows installations with independently initialized machine protection, not an anonymous thread, changed account, corrupted blob or another process on this computer.",
+        "positive": "Authentic producer-machine dual-scope witness publication and permitted-owner round-trip.",
+        "negative": "Authentic other-machine same-machine-wrapped ciphertext is denied by the receiving machine; preserve authenticated provenance, exact candidate, raw execution streams and denial outcome.",
+        "review": "Independent security disposition must bind both actual platform executions and the preserved witness bytes. No fabricated foreign-host PASS or private credential transfer."
+      },
+      "notClaimed": "Anonymous thread, changed account, corrupted/reordered blob and same-machine different process are not a second Windows installation."
+    }
+  ],
+  "verification_limits": [
+    "Complete quality remains FAIL/exit1; lint and types pass over734 actual governed files. Only the exact unchanged tools/plan_review_site.py formatter debt is owner-authorized, with no new waiver or whole qualityPASS.",
+    "Five unchanged historical migration target/history expectations remain OPEN. Broad331-run FAIL and its fixture custody gap remain adverse; selected59+1 proof does not prove those later migration assertions or close them. Their ordinary linked correction is due after A06 adoption/quiescence and before S06/Wave migration qualification.",
+    "Physical independent Windows installation proof is UNTESTED under exact owner timing authority at first available independent installation, mandatory no laterW5 exit. Same-machine/anonymous/corrupt-blob tests do not replace it.",
+    "Reader09 proves actual protected64KiB worker/range/render page1 of3. Actual CSP header is observed in a same-assets/config/runtime Native companion; attribution to the shipping process is an explicit inference. Separate actual isolated external-source denials are not direct shipping header capture or a new runtime crypto-verifier/SRI claim.",
+    "Recovery10 proves current shipping integration-harness Native/WebView behavior with fixture-local policy/vault/profile substitution; it does not qualify an installed/sealed package or ordinary research profile. Modal tests prove owned logical focus/key dispatch, not physical keyboard/global foreground.",
+    "Lost successful response remains the approved additive production-component existing-transport proof with actual Native/Core reply and one delivery drop; browser host/picker are simulated. Native debug-environment denial remains preserved; no guard bypass or same-host CDP proof is invented.",
+    "Fresh r05 group proved absentWAL; separate preservedr03 helper03 actual invocation proved regular zeroWAL/SHM held and unchanged with39 canonical/object facts. Neither proves nonemptyWAL recovery or arbitrary legacy recovery.",
+    "Recovery stale-observation pure controls do not claim an actual retry trigger in group10. Earlier Tab/death/focus/emptyWAL/staleUIA/path/faultsetup/encoding/build/quality/selector/runtime adverses remain preserved without relabelling.",
+    "Three logical command displays retain their disclosed absence of exact full original interpreter argv; actual source/receipt/tool delivery remains bound.",
+    "Full affected/repository/deployment profiles, installed packaging/installer, performance/platform/model/8-16GiB variants, downstream S06/CP09/W2 matrix, independent Wave review, G2 release and W3 approval remain separate pending obligations."
+  ],
+  "original_R03_closure": {
+    "publicRecord": {
+      "path": "artifacts/evidence/W2.A06.original-r03-finding-closure-01.json",
+      "sha256": "472a4464691c1682f6479068c167c274fdf950f3dfae6b46a1b27960d5e521a5"
+    },
+    "findingDisposition": "CLOSED_FOR_EXACT_ORIGINAL_R03",
+    "scope": "Approved ECR-0014 legacyOriginalFixtureOption; exact original CAP-05.S06 R03 one-use operator copy only",
+    "executedCandidate": "2d2d4e34eadba04e71a1d939eff6e46116d8adb0",
+    "notClosedByNewFixture": true
+  },
+  "publication_correction": {
+    "owner_record_path": "artifacts/evidence/W2.A06.T03.publication-repair-01.owner.json",
+    "owner_record_sha256": "fcf58de2bbc4ba766d133ba310017df0f6e74752f6c188b5d1b9ded3573beaee",
+    "proposal_sha256": "52ca1b0fffde4eab7ffceed6fdb1f40f1363cc2362bf534717fa05d27a1cc2d9",
+    "independent_readiness_sha256": "692a131bb61fafd6b3a045e15bcc901b4e800c37426a8cab1b226853aa4df591",
+    "current_public_manifest_sha256": "7561666ccc2cc5b8dcc792c83924b303cefb3018e2c735926f67cf783dfa4287",
+    "current_task_packet_sha256": "427d52341d0b65be4867c0a114a73e1c592302dc8876d69e6847c5a1f71547be",
+    "original_unintroduced_failure_and_bytes_privately_preserved": true,
+    "scope": "Exact owner-approved portable display recording and dependent hashes only; no source, assertion, criterion, selection, command, outcome, duration or raw receipt changed."
+  },
+  "independence": {
+    "campaign_or_task_owner": false,
+    "product_framework_reference_or_producer_edits": false,
+    "qualifying_suites_producers_Native_or_models_run": false,
+    "HEAD_backlog_claim_hook_configuration_or_runtime_mutated": false,
+    "only_review_record_outputs_written": true
+  },
+  "approval_limits": {
+    "normal_A06_exit_R01_only": true,
+    "adoption_checkpoint_recorded": false,
+    "A06_adopted": false,
+    "W2_resumed": false,
+    "full_Slice_checkpoint_Wave_profile_platform_installer_or_model_qualification": false,
+    "G2_release_or_W3_approval": false
+  },
+  "notes": "Approves only normal W2.A06 exit R01 against exact frozen REVIEW delivery 67cdf5eb629b6612b2fc77875eea0cec38a00028. All four approved ECR criteria are satisfied at this exit stage, with actual independent three-task and two-contribution dispositions and source equality. Original complete quality FAIL1, exact one-file formatter debt, five OPEN migration expectations, physical second Windows host UNTESTED by W5 obligation, shipping CSP attribution inference and all prior adverses remain truthful. The separate committed adoption checkpoint, normal adoption, queued HTML refresh, normal Wave resume, linked migration correction, downstream fresh qualification and human release gates remain required."
+}
