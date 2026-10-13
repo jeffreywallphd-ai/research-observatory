@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 415c6c6e688decdda75395e4e5d9de2ec336a67df4ec55a5278071b5b754fdac
+source_sha256: cc4a0ef97ddb1dce9cc257012ecc85374db19f53fced61b595f83775cc02be45
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -55,7 +55,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 | `W2` | `W2.A03` | `ECR-0011` | `planning/wave-amendment-approvals/W2.A03.json` | `ADOPTED` |
 | `W2` | `W2.A04` | `ECR-0012` | `planning/wave-amendment-approvals/W2.A04.json` | `ADOPTED` |
 | `W2` | `W2.A05` | `ECR-0013` | `planning/wave-amendment-approvals/W2.A05.json` | `ADOPTED` |
-| `W2` | `W2.A06` | `ECR-0014` | `planning/wave-amendment-approvals/W2.A06.json` | `ACTIVE` |
+| `W2` | `W2.A06` | `ECR-0014` | `planning/wave-amendment-approvals/W2.A06.json` | `REVIEW` |
 
 ## Waves
 
@@ -3297,21 +3297,32 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 **Approval record:** `planning/wave-amendment-approvals/W2.A06.json` (`3ecf2b98806f1589be7bd63fcc4f25cf0ee2df79bc95a3a0fefda2ce5666e4b2`)
 
-**Lifecycle / bootstrap / campaign / completion:** `ACTIVE` / `APPROVED` / `ACTIVE` / `PENDING`
+**Lifecycle / bootstrap / campaign / completion:** `REVIEW` / `APPROVED` / `REVIEW` / `REVIEW`
 
 **Append-only lifecycle history:**
 
 - `E01` `APPROVED` at `2026-10-11T13:27:13.517641+00:00` by human:repository-owner: The repository owner answered 'Approved, please continue' to the exact complete ECR-0014/W2.A06 batch request identifying candidate ac6b664a2ced6b2263ff7b5ab48535c3f39798ce, packet SHA-256 6293590db74b9a3ec4ce6019a1713def568798ac3a71208a5583bfcff78f7a34 and independent R01 ledger a31e42a11fcd1b7eaf52639f174f7885e2d08d49f5ec1a3a8099bdc1ac3e7193 at 87e44188dbb0e54039f8b77d3613ed2728bcd51b. This single grant binds the complete reviewed three ordered recovery/verification tasks, narrow durable current-user and same-machine ownership witness, exact 45 AST plus 3 literal finite method contracts, exact Reader CSP predicate, unchanged one-file formatter-debt disposition, complete quality data inventory, conditional original-fixture recovery only when actual evidence authenticates, the exact current W2.C18.T01 method packet and bounded pre-admission/final source and evidence recording. Conforming details inside these exact contracts require no second owner answer. W1 restoration in W2 is already authorized. Actual C18 completion and quiescence precede B00 submission, review, exact materialization and activation; every admitted task still requires claim, implementation, actual checks, independent disposition and normal integration. All original approvals, adverse findings and immutable evidence remain preserved. No additional framework development, unknown predicate or scope exemption, 8/16GiB variant, task/Slice/Wave completion or W2 release approval is granted. This timestamp records binding of the actual answer, not an invented message timestamp.
 - `E02` `MATERIALIZED` at `2026-10-11T19:28:34+00:00` by codex-w2-implementation: Materialized the exact human-approved task inventory.
 - `E03` `ACTIVE` at `2026-10-11T20:02:04+00:00` by codex-w2-implementation: Activated the bounded amendment campaign.
+- `E04` `REVIEW` at `2026-10-13T02:21:14+00:00` by codex-w2-implementation: Submitted amendment exit for review.
 
 ### Amendment-exit review and adoption — W2.A06
 
-**Exit-review mode:** `legacy latest-completion-only projection` — no immutable exit rounds are recorded; this view does not fabricate history.
+**Exit-review mode:** `append-only v1` / 0 completed round(s)
 
-**Latest completion projection:** `PENDING` by - at `-`
+**Current immutable amendment-exit submission awaiting review:** `R01` / packet SHA-256 `d2e14c4d2a4e289452cba100f064e1e96a19f91d8526925e03edfb983f8dc64e`
 
-**Latest completion evidence:** -
+- Candidate / declared candidate / branch: `2a06465f38966064974bd7ae7eceb537ed1dcb32` / `89b03dbdef7d6111f2d7f271871a73f9de962a74` / `codex/w2-implementation`
+- Submitted by / at: codex-w2-implementation / `2026-10-13T02:21:14+00:00`
+- Bound exit evidence: amendment `W2.A06` / `artifacts/evidence/W2.A06.exit.json` / `4483ca0f36f2b34fc27e379b6b1db4e0555d26fc797c5dc9a534332c25d22371` / `2a06465f38966064974bd7ae7eceb537ed1dcb32`
+- Acceptance-criteria SHA-256: `245cd08ff7411c4e78814f4daaa3aeb6e1b97f6cc31807b41ec1bade9570f611`
+- Selected-check SHA-256: `197b32a9e55ccefb78769617ab4b5ea25f02f2f37b86c38900494bf33772a192`
+- Selected checks: `.venv/Scripts/python.exe -B -s artifacts/tmp/W2.remaining-corrections-batch-01/prepare-a06-exit-01.py`
+- Prior round / replayed open findings: `-` / -
+
+**Latest completion projection:** `REVIEW` by - at `-`
+
+**Latest completion evidence:** `artifacts/evidence/W2.A06.exit.json`
 
 **Latest completion notes:** -
 

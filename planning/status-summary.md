@@ -1,7 +1,7 @@
 ---
 document_type: generated-backlog-status-summary
 source: planning/backlog.yaml
-source_sha256: 415c6c6e688decdda75395e4e5d9de2ec336a67df4ec55a5278071b5b754fdac
+source_sha256: cc4a0ef97ddb1dce9cc257012ecc85374db19f53fced61b595f83775cc02be45
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -60,8 +60,8 @@ manual_edit: prohibited
 
 | Status | Count |
 |---|---:|
-| `ACTIVE` | 1 |
 | `ADOPTED` | 13 |
+| `REVIEW` | 1 |
 | `SUPERSEDED` | 1 |
 
 ### Enabler task state
@@ -92,7 +92,7 @@ Proposal approval, materialization lifecycle, and campaign state remain distinct
 | `W2` | `W2.A03` | `ECR-0011` | `planning/wave-amendment-approvals/W2.A03.json` | `ADOPTED` | `APPROVED` | `COMPLETE` | 2 |
 | `W2` | `W2.A04` | `ECR-0012` | `planning/wave-amendment-approvals/W2.A04.json` | `ADOPTED` | `APPROVED` | `COMPLETE` | 1 |
 | `W2` | `W2.A05` | `ECR-0013` | `planning/wave-amendment-approvals/W2.A05.json` | `ADOPTED` | `APPROVED` | `COMPLETE` | 2 |
-| `W2` | `W2.A06` | `ECR-0014` | `planning/wave-amendment-approvals/W2.A06.json` | `ACTIVE` | `APPROVED` | `ACTIVE` | 3 |
+| `W2` | `W2.A06` | `ECR-0014` | `planning/wave-amendment-approvals/W2.A06.json` | `REVIEW` | `APPROVED` | `REVIEW` | 3 |
 
 ## Amendment-exit review and adoption projections
 
@@ -782,11 +782,21 @@ Immutable exit rounds, the latest completion projection, and bound adoption chec
 
 ### Amendment-exit review and adoption — W2.A06
 
-**Exit-review mode:** `legacy latest-completion-only projection` — no immutable exit rounds are recorded; this view does not fabricate history.
+**Exit-review mode:** `append-only v1` / 0 completed round(s)
 
-**Latest completion projection:** `PENDING` by - at `-`
+**Current immutable amendment-exit submission awaiting review:** `R01` / packet SHA-256 `d2e14c4d2a4e289452cba100f064e1e96a19f91d8526925e03edfb983f8dc64e`
 
-**Latest completion evidence:** -
+- Candidate / declared candidate / branch: `2a06465f38966064974bd7ae7eceb537ed1dcb32` / `89b03dbdef7d6111f2d7f271871a73f9de962a74` / `codex/w2-implementation`
+- Submitted by / at: codex-w2-implementation / `2026-10-13T02:21:14+00:00`
+- Bound exit evidence: amendment `W2.A06` / `artifacts/evidence/W2.A06.exit.json` / `4483ca0f36f2b34fc27e379b6b1db4e0555d26fc797c5dc9a534332c25d22371` / `2a06465f38966064974bd7ae7eceb537ed1dcb32`
+- Acceptance-criteria SHA-256: `245cd08ff7411c4e78814f4daaa3aeb6e1b97f6cc31807b41ec1bade9570f611`
+- Selected-check SHA-256: `197b32a9e55ccefb78769617ab4b5ea25f02f2f37b86c38900494bf33772a192`
+- Selected checks: `.venv/Scripts/python.exe -B -s artifacts/tmp/W2.remaining-corrections-batch-01/prepare-a06-exit-01.py`
+- Prior round / replayed open findings: `-` / -
+
+**Latest completion projection:** `REVIEW` by - at `-`
+
+**Latest completion evidence:** `artifacts/evidence/W2.A06.exit.json`
 
 **Latest completion notes:** -
 
