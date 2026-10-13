@@ -1,0 +1,119 @@
+{
+  "task_id": "W2.C19.T01",
+  "attempt_id": "R01",
+  "candidate_commit": "c9da0705d4b01ef3b2a77979482c71b9aff9640f",
+  "base_commit": "aba41aae4fe5a530718c37a72a3213c68f6eb944",
+  "reviewed_state_commit": "9e4448fc6a68e73767a7fb4f4cfb178e65b1716b",
+  "reviewer": "agent:/root/c19_correction_review",
+  "result": "approved",
+  "reviewed_at": "2026-10-13T04:06:59Z",
+  "packet_sha256": "dc82ac26fa2a88502e7c4003a927df0d55035441d1eedc8a85f134978fe01aef",
+  "evidence_sha256": "7f72d0a61ed03a72213b747d2f1035592d9ec1e4f3bf442629ad1df22adfe91f",
+  "acceptance_criteria_sha256": "b883d7d0c83c26edeafbf97cf02f0dde8e3e38b55b4629d221960d1acaa72e43",
+  "selection_sha256": "3c9816f844eb7f2b7e17f5d6fa242046bb4ec930411120e654931b0e24bad2da",
+  "findings": [],
+  "closures": [],
+  "acceptance_reviews": [
+    {
+      "criterion_index": 1,
+      "result": "satisfied",
+      "check_ids": ["migration-and-acquisition-regressions"],
+      "assessment": "The correction changes only migration-test expectations. Original CAP-05.S01.T03 is still DONE and independently approved, and its complete original snapshot and inherited criteria remain exact. Fresh selected acquisition integration cases preserve cleanup-failure dominance with one transport call and no candidate publication, unrelated retained bytes and metadata; fresh-session candidate recovery without redownload or original operation/session rewrite; and distinct local access-need states without transport, attachment availability or permission. Production copy identities and behavior are unchanged. Original approval supplies historical authority only, not fresh proof of every original behavior."
+    },
+    {
+      "criterion_index": 2,
+      "result": "satisfied",
+      "check_ids": ["migration-and-acquisition-regressions"],
+      "assessment": "All nine named current cases finish ok, with Ran 9 tests and OK and no skipped methods. The five previously failing migration cases and existing material v24 interruption case execute against the six unchanged literal v21/v22/v23 JSON/ZIP fixtures. Exact predecessor, schema, verified-backup, row, rights, ciphertext, foreign-key, interruption and retry assertions remain intact. The original complete 331-test execution remains FAIL with its five stale-expectation findings; this focused pass does not replace that adverse result or claim a whole-profile pass."
+    },
+    {
+      "criterion_index": 3,
+      "result": "satisfied",
+      "check_ids": ["migration-and-acquisition-regressions", "affected-format", "affected-lint", "configured-source-types"],
+      "assessment": "The exact committed test delta replaces five terminal target-25 literals with 28 and appends installed 0026_document_revisions, 0027_revision_invalidations and 0028_document_enrichments to three complete expected migration sequences. Current storage authority declares version 28 and the runner inventory contains those exact migrations. No production, migration, fixture, framework, reference, checker setting or protected assertion changes. The six additional candidate paths are normal correction tracking and generated views; delivery adds only the evidence manifest and three tracking paths. Fresh two-file format/lint pass. The separately executed configured type command covers the exact full 734-source inventory with the existing namespace setting, declared source environment and a fresh isolated cache, without source edits or suppressions. Both prior type failures remain adverse."
+    }
+  ],
+  "corrective_integration": {
+    "evidence_sha256": "7f72d0a61ed03a72213b747d2f1035592d9ec1e4f3bf442629ad1df22adfe91f",
+    "authority_preserved": true,
+    "affected_integration_reviewed": true,
+    "notes": "The exact test-only restoration preserves inherited approved behavior and all protected migration assertions. Actual current SQLite migration/interruption/retry and acquisition cleanup/recovery/availability integration outputs pass at the fixed candidate, with all six fixtures and installed inputs authenticated. Two-file formatting/lint and a separate complete configured type invocation supply fresh passing proof. The first focused producer remains overall FAIL and the second type invocation remains FAIL; only their actual passing rows and the separate final type receipt are accepted. Original task history and the original 331-test FAIL remain unchanged. This disposition does not approve S06, a Wave, release, model or Native qualification, or W3 activation."
+  },
+  "verification_selection": {
+    "selected_command_ids": ["documents:unit", "foundation:quality"],
+    "assessment": "Five exact migration failures, the material v24 predecessor interruption case and three acquisition invariant cases cover the changed test boundary and inherited affected integration. Two-file formatting/lint are sufficient for the literal changes. The initial incomplete type context justified checking the existing complete 734-source inventory; the final invocation changes source context and cache together, so no factorial isolation of their causal effects is claimed. No credible unchanged product, runtime, dependency, Native or model impact requires another behavioral suite. Full profiles and required S06/checkpoint/fresh W2 qualification remain at their proper scopes."
+  },
+  "evidence_authentication": {
+    "review_method": "Read-only exact source diff, protected assertion and inherited-contract review; authentication of producer source, executed receipts, verbose case outcomes, log digests, fixture/runtime pins and committed frozen submission. No qualifying suite was executed by the reviewer.",
+    "focused_receipt": {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/c19-focused-01/receipt.json",
+      "sha256": "5f0a2ee96b8d492cef6f8415c0c6ffa022d92630e244e36d8d739b00c4d7bba6",
+      "status": "FAIL",
+      "actual_exit_codes": [0, 0, 0, 1],
+      "held_input_count": 8555,
+      "passing_case_count": 9,
+      "skipped_method_count": 0
+    },
+    "second_types_receipt": {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/c19-types-02/receipt.json",
+      "sha256": "31db3f690f79b9b61cfb049960c5e41d48c6e378691c265e786c25110ef0e006",
+      "status": "FAIL",
+      "exit_code": 1,
+      "diagnostic_count": 2
+    },
+    "passing_types_receipt": {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/c19-types-03/receipt.json",
+      "sha256": "eacd5761a7fbd6bba90aaa4ff1f6ffaa0a0bbee31a0fa3c8392600dcba8823de",
+      "status": "PASS_CONFIGURED_COMPLETE_SOURCE_TYPES_ONLY",
+      "exit_code": 0,
+      "source_count": 734,
+      "held_input_count": 8558,
+      "source_argfile_sha256": "22486fe61a72d3c5a67d56a17f18a4fc3a07d1d5b40dfd38c683101410ea7b71",
+      "nine_tests_repeated": false
+    },
+    "all_prior_held_inputs_preserved_in_passing_types": true,
+    "all_current_held_input_hashes_exact": true,
+    "all_six_fixture_hashes_exact": true,
+    "all_actual_producer_and_stream_hashes_exact": true,
+    "initial_type_diagnostics": "44 import-untyped diagnostics from the two-file invocation remain preserved.",
+    "second_type_diagnostics": "Two attr-defined import diagnostics remain preserved. The final fresh-cache invocation also supplies the declared source environment; the individual contribution of those two execution-context changes was not isolated.",
+    "original_331_test_failure_preserved": true
+  },
+  "frozen_submission_authentication": {
+    "delivery_commit": "9e4448fc6a68e73767a7fb4f4cfb178e65b1716b",
+    "delivery_parent": "c9da0705d4b01ef3b2a77979482c71b9aff9640f",
+    "delivery_changed_paths": [
+      "artifacts/evidence/W2.C19.T01.R01.json",
+      "docs/planning-implementation-plan.md",
+      "planning/backlog.yaml",
+      "planning/status-summary.md"
+    ],
+    "backlog_git_sha256": "7b8cee22006fff92b807b183d279bc97bfc19096d3428c46e3d3cc9d9a76ad5d",
+    "origin_commit": "28fcb3abfda20f393994433812b1a50ac06005c1",
+    "origin_sha256": "f74b32f21cdea4d6810e2651e892075295f377fba52d8cb924d1e74d9d76b16e",
+    "origin_snapshot_unchanged_and_done_approved": true,
+    "inherited_contract_fields_exact": true,
+    "manifest_git_and_worktree_bytes_exact": true,
+    "candidate_changed_paths_exact": true,
+    "packet_criteria_and_selection_digests_recomputed_exact": true,
+    "candidate_base_owner_branch_and_lease_preserved": true,
+    "prior_attempts_and_open_findings_empty": true,
+    "ordinary_w2_remains_paused": true,
+    "current_review_site_refresh_claimed_complete": false
+  },
+  "independence": {
+    "task_owner": false,
+    "source_edits": false,
+    "qualifying_suites_rerun_by_reviewer": false,
+    "reviewer_authored_only_this_ledger": true
+  },
+  "scope_limits": {
+    "formal_task_approval_issued": true,
+    "slice_approved": false,
+    "wave_complete": false,
+    "release_approved": false,
+    "native_or_model_qualification_claimed": false,
+    "w3_activation_approved": false
+  },
+  "notes": "Independent focused W2.C19.T01 R01 review approves the exact committed migration-test restoration and its affected integration. The frozen delivery, original approved snapshot, inherited criteria, candidate inventory, criterion/selection/packet/evidence digests and actual passing output are authenticated. No criterion-bound blocker remains. The original 331-test FAIL and both subsequent type failures remain adverse; final passing type evidence is limited to the actual configured 734-source invocation. Normal site refresh is outside the fixed reviewed boundary and is not claimed complete. Required S06/checkpoint/W2 qualification, independent Wave review and human release decisions remain separate."
+}
