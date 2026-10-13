@@ -1,0 +1,241 @@
+{
+  "task_id": "W2.A06.T03",
+  "attempt_id": "R01",
+  "candidate_commit": "b49a5d3fa0e1a6812eab1788606b3696f237cf44",
+  "reviewed_state_commit": "d6847dc902a54f7ca3fe29778fa887aacd73507f",
+  "base_commit": "060623d7fef3274f69168a7a2e21b35a157f3efa",
+  "reviewer": "agent:/root/a03_t01_lineage_audit",
+  "result": "approved",
+  "packet_sha256": "427d52341d0b65be4867c0a114a73e1c592302dc8876d69e6847c5a1f71547be",
+  "evidence_sha256": "7561666ccc2cc5b8dcc792c83924b303cefb3018e2c735926f67cf783dfa4287",
+  "acceptance_criteria_sha256": "e4269ce8d1beb5e32de23e8fe55c145cb2776256c91de4cb538c3fa117cc78c7",
+  "selection_sha256": "103495fd33decb6241eac4d022414d2c851b9974c3da0c4b403c56521e3e9dc4",
+  "findings": [],
+  "closures": [],
+  "pre_submission_finding_replay": {
+    "task_prior_attempts": 0,
+    "formal_task_findings_replayed": [],
+    "adverse_quality_reader_recovery_receipts_preserved": true,
+    "historical_migration_observations_open_count": 5,
+    "historical_migration_observations_not_fabricated_as_formal_T03_review_findings": true
+  },
+  "acceptance_reviews": [
+    {
+      "criterion_index": 1,
+      "result": "satisfied",
+      "check_ids": [
+        "quality-lint-734",
+        "quality-types-734",
+        "task-adr-current"
+      ],
+      "assessment": "Current governed six-root Python inventory has734 discovered entries under unchanged exclusions; exact quality data and indexed ADR delta are source-reviewed at b49. Original whole-quality FAIL remains explicit."
+    },
+    {
+      "criterion_index": 2,
+      "result": "satisfied",
+      "check_ids": [
+        "core45-bounded",
+        "desktop-literal-exact-three",
+        "finite-lineage-negative-controls-23"
+      ],
+      "assessment": "Unchanged original FAIL receipts and exact closed45 AST plus desktop3 literal method are bounded by independent source/readiness/control records;23 negative controls pass without count/prefix exemptions."
+    },
+    {
+      "criterion_index": 3,
+      "result": "satisfied",
+      "check_ids": [
+        "isolated-native-csp-current",
+        "actual-shipping-reader-and-csp-bridge"
+      ],
+      "assessment": "Fresh actual shipping Reader09 protected worker positive and isolated Native CSP external-source denials are independently dispositioned. Shipping effective CSP attribution is an authenticated identical-assets/config/runtime inference, not direct shipping header capture; no runtime crypto-verifier claim."
+    },
+    {
+      "criterion_index": 4,
+      "result": "satisfied",
+      "check_ids": [
+        "quality-lint-734",
+        "quality-types-734",
+        "review-site-current",
+        "core45-bounded",
+        "desktop-literal-exact-three"
+      ],
+      "assessment": "Original complete quality FAIL1 retained; exact governed lint/types pass and only unchanged one-file formatter debt is separately authorized/dispositioned. Current generated-view site check passes."
+    },
+    {
+      "criterion_index": 5,
+      "result": "satisfied",
+      "check_ids": [
+        "finite-lineage-negative-controls-23",
+        "reference-five-current"
+      ],
+      "assessment": "Finite inventory and current reference report authenticate current task/claim/spec,53 source rows,59 immutable records,77 current bindings and unchanged original guards. Actual reference report includes lineage execution; controls alone are preparatory."
+    },
+    {
+      "criterion_index": 6,
+      "result": "satisfied",
+      "check_ids": [
+        "typing-risk-59",
+        "typing-foundation-1",
+        "unchanged-anchor-schema-bytes",
+        "frontend-current",
+        "native-current",
+        "package-current",
+        "reference-five-current",
+        "fresh-protected-shipping-recovery-and-live-denial",
+        "actual-shipping-reader-and-csp-bridge"
+      ],
+      "assessment": "Seventeen unique fresh bounded checks at fixed b49 include focused typing, current frontend/Native/package, approved 1.9 reference, actual Reader and protected recovery/live-owner denial. Separate real regular zero-WAL branch is independently bounded. No full-profile, model, installed-package or Wave claim."
+    }
+  ],
+  "verification_selection": {
+    "selected_command_ids": [
+      "foundation:quality",
+      "foundation:architecture",
+      "documents:unit",
+      "foundation:unit",
+      "documents:anchor-schemas",
+      "desktop:application",
+      "foundation:build-manifest",
+      "foundation:adr",
+      "foundation:backlog-views",
+      "desktop:ui-reference-integrity",
+      "desktop:ui-token",
+      "desktop:ui-route-page",
+      "desktop:ui-workflow",
+      "desktop:ui-accessibility",
+      "desktop:ui-visual-regression",
+      "foundation:ui-change"
+    ],
+    "selected_unique_commands": 17,
+    "assessment": "Seventeen distinct selected check commands at fixed b49, including bounded closed45+3, actual shipping Reader and protected recovery/live denial, current builds/reference and finite source execution. Original whole quality FAIL1 and five historical migration expectations are preserved; full profile/platform/model/installer/Wave remains due. Three logical command displays lack retained exact full interpreter argv but bind actual source/receipt/tool delivery, disclosed in the manifest."
+  },
+  "source_security_reference_authentication": {
+    "TY01_source_security_reference": {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/W2.A06.T03.TY01.commit-bound-source-security-reference-disposition-02.json",
+      "sha256": "543643879bee293e38b767ca0e3c643c4eaeb035e366443fce3e09b5039773ef"
+    },
+    "own_ADR_source_security_reference": {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/W2.A06.T03.own-ADR.commit-bound-source-security-reference-disposition-02.json",
+      "sha256": "f6359cc12bdf644b1043dde34f504da4c4234176b25d077c98fa0e90c94c6859"
+    },
+    "approved_reference_id": "RO-UI-ACADEMIC-MINIMAL-1.9",
+    "new_reference_or_security_authority": false,
+    "assessment": "Exact b49 TY01 53-source-data identity and one-line ADR successor independently reviewed; source-only dispositions are combined with fresh machine evidence, not upgraded in isolation."
+  },
+  "evidence_authentication": {
+    "public_manifest": {
+      "path": "artifacts/evidence/W2.A06.T03.R01.json",
+      "sha256": "7561666ccc2cc5b8dcc792c83924b303cefb3018e2c735926f67cf783dfa4287"
+    },
+    "selected_checks": 17,
+    "referenced_hash_pairs_authenticated": 87,
+    "digest_mismatches": [],
+    "reader09_independent": {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/a06-t03-shipping-reader-runtime-09.independent-actual-disposition-01.json",
+      "sha256": "024dca8558bd09c3cee9c75964449ca130a91c20abc2c85f681b792c595d86e5"
+    },
+    "recovery10_independent": {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/a06-t03-fresh-recovery-group-10.actual-independent-disposition-01.json",
+      "sha256": "72631b5874aea796c69d392f7d17cf2b4289357541e0411dc50349041a55915a"
+    },
+    "zero_WAL_independent": {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/a06-t03-protected-readback-03.zero-wal-branch-01.actual-disposition.json",
+      "sha256": "a6677705b37187f011a8b4bb9f588bd16a7d2af216bb46ef14f050ea2e5cd237"
+    },
+    "reference_independent": {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/a06-t03-reference-proof-03.independent-actual-disposition-01.json",
+      "sha256": "1280113f4e772d6d5589028cec401e1cb07f7680e64b5fea04ceeb967fc5ddc5"
+    },
+    "quality_debt_independent": {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/a06-t03-closed48-format-debt-actual-disposition-04.json",
+      "sha256": "431df6fd6b98db0639044efdf2e43d01547c306798508b3de989a2f58604d0a0"
+    },
+    "migration_contract_disposition": {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/a06-t03-open-migration-findings-contract-disposition-01.json",
+      "sha256": "15dffd956f248a879f3287d257ed6afd253e1dfc6aa8aee1ec6b04cd7cbb6983"
+    },
+    "owner_approved_publication_repair": {
+      "path": "artifacts/evidence/W2.A06.T03.publication-repair-01.owner.json",
+      "sha256": "fcf58de2bbc4ba766d133ba310017df0f6e74752f6c188b5d1b9ded3573beaee",
+      "assessment": "Exactly twelve argv-to-argvDisplay labels and fifteen root-prefix display values, with three dependent backlog digest scalars only; original unintroduced bytes privately retained."
+    }
+  },
+  "frozen_submission_authentication": {
+    "original_unintroduced_capture": {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/W2.A06.T03.R01.actual-submission-capture-02.json",
+      "sha256": "03279555df76d8cd0ced597722f1d47bc09413734732d92ded5722db50f1d631",
+      "originalPacketSHA256": "81d7c7dbd68192ff9e9dfae62276fb92196b7101abcff14dda0b5db81fd43707"
+    },
+    "ownerApprovedOneUsePublicationCorrection": {
+      "path": "artifacts/evidence/W2.A06.T03.publication-repair-01.owner.json",
+      "sha256": "fcf58de2bbc4ba766d133ba310017df0f6e74752f6c188b5d1b9ded3573beaee",
+      "actualHumanResponseSHA256": "70475cd3550ced2262cfb854b3c9103861bcf011e4c68c66599da3a2f2032f8f",
+      "proposalSHA256": "52ca1b0fffde4eab7ffceed6fdb1f40f1363cc2362bf534717fa05d27a1cc2d9",
+      "independentReadinessSHA256": "692a131bb61fafd6b3a045e15bcc901b4e800c37426a8cab1b226853aa4df591"
+    },
+    "correctedCurrentPacketSHA256": "427d52341d0b65be4867c0a114a73e1c592302dc8876d69e6847c5a1f71547be",
+    "correctedManifestSHA256": "7561666ccc2cc5b8dcc792c83924b303cefb3018e2c735926f67cf783dfa4287",
+    "currentSubmissionMatchesExactPublicPacket": true,
+    "criteriaSelectionCandidateAndSeventeenCommandsUnchanged": true,
+    "correctedBacklogRawSHA256": "4eeae384a821cc3bfbaad6a6368e5e9b2e59bc62fc84e05fce555981f5722c86",
+    "originalPrivateManifestPacketBacklogAndIndexPreserved": true,
+    "actualPrivacyGuardFailurePreserved": true,
+    "task_status_after_repair": "REVIEW",
+    "delivery_commit": "d6847dc902a54f7ca3fe29778fa887aacd73507f",
+    "delivery_changed_paths": [
+      "artifacts/evidence/W2.A06.T03.R01.json",
+      "artifacts/evidence/W2.A06.T03.publication-repair-01.owner.json",
+      "docs/planning-implementation-plan.md",
+      "planning/backlog.yaml",
+      "planning/review-site/enablers/ECR-0014.html",
+      "planning/review-site/manifest.json",
+      "planning/status-summary.md"
+    ],
+    "delivery_parent": "b49a5d3fa0e1a6812eab1788606b3696f237cf44",
+    "evidence_introduction_commit": "d6847dc902a54f7ca3fe29778fa887aacd73507f",
+    "backlog_git_blob": "515efd0f6d4225e326b80dddda70f1820f3a8906",
+    "backlog_git_show_sha256": "162da5ab0a8802eb9968d0f827cb5f7f5ce22450c2a374aef802b3617dfa244d",
+    "backlog_raw_sha256": "4eeae384a821cc3bfbaad6a6368e5e9b2e59bc62fc84e05fce555981f5722c86",
+    "packet_sha256": "427d52341d0b65be4867c0a114a73e1c592302dc8876d69e6847c5a1f71547be",
+    "packet_validation_errors": [],
+    "product_tools_contracts_and_reference_unchanged_by_delivery": true,
+    "normal_site_regeneration": {
+      "path": "artifacts/tmp/W2.A06.T03.publication-repair-01/generated-site-delta-01.json",
+      "sha256": "c769bfdbac30908d593655f1852639d67da995b6395c4173a8a8e5f4935bb2e9",
+      "status": "PASS_NARROW_HASH_ONLY_GENERATED_SITE_DELTA",
+      "unchanged_other_site_files": 500,
+      "changed_manifest_leaves": 2,
+      "full_498_page_check_not_repeated_for_hash_only_correction": true
+    },
+    "submission_delivery_privacy_registry_sha256": "c056fb2402d3ac15674de10f123733869dcde83bc5d98255b403c6cc9c10ba2a",
+    "normal_guarded_commit_observation": {
+      "root_tool": "root39edfe",
+      "exit_code": 0,
+      "full_unmasked_staged_scanner": "PASS_NO_FINDINGS",
+      "commit_message_guard": "PASS",
+      "independent_git_delivery_authentication": true
+    }
+  },
+  "independence": {
+    "task_owner": false,
+    "product_edits": false,
+    "qualifying_suites_or_producers_rerun_by_reviewer": false,
+    "shared_HEAD_mutation": false,
+    "review_method": "Independent commit-bound exact source/security/reference, six criterion, selected evidence/adverse, owner correction and immutable delivery assessment; no product edits or qualifying reruns by reviewer."
+  },
+  "scope_limits": {
+    "formal_task_approval_issued": true,
+    "approved_task": "W2.A06.T03 R01 only",
+    "original_complete_quality_passed": false,
+    "five_historical_migration_expectations_closed": false,
+    "same_shipping_process_CSP_header_directly_captured": false,
+    "actual_shipping_Reader_positive": true,
+    "protected_recovery_live_denial_selected_proof": true,
+    "physical_foreign_host_test_executed": false,
+    "physical_foreign_host_proof_due_by": "W5 exit under existing owner timing authority",
+    "full_profile_platform_model_installer_qualified": false,
+    "slice_or_amendment_or_wave_approved": false,
+    "release_approved": false
+  },
+  "notes": "Approves only W2.A06.T03 R01 at the exact b49 product candidate and d684 frozen REVIEW delivery. Owner-approved portable publication changed only display data and dependent hashes; original privacy-rejected R01 bytes and failure remain privately preserved. Original complete quality FAIL1 and exact one-file formatter debt remain truthful; five historical migration expectation failures remain OPEN for an ordinary linked CAP-05.S01.T03 correction after A06 adoption, before S06/Wave migration qualification. Shipping Reader and recovery selected proofs are bounded; shipping CSP header is inferred from authenticated equal assets/config/runtime, not directly captured. Physical foreign-host proof remains unexecuted under approved W5 timing. Full profile, platforms, model, installer, combined A06, slice/checkpoint/Wave qualification and separate human release remain due."
+}
