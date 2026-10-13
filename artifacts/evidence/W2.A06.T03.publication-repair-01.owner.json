@@ -1,0 +1,131 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "exact-owner-approved-unintroduced-task-publication-recording-exception",
+  "taskId": "W2.A06.T03",
+  "decision": "APPROVED_EXACT_DATA_ONLY_PUBLICATION_CORRECTION",
+  "recordedAt": "2026-10-13T01:36:26.413475+00:00",
+  "inspectedCandidate": "b49a5d3fa0e1a6812eab1788606b3696f237cf44",
+  "approvedProposalSHA256": "52ca1b0fffde4eab7ffceed6fdb1f40f1363cc2362bf534717fa05d27a1cc2d9",
+  "independentReadinessSHA256": "692a131bb61fafd6b3a045e15bcc901b4e800c37426a8cab1b226853aa4df591",
+  "independentReviewer": "agent:/root/a03_t01_lineage_audit",
+  "actualHumanResponseSHA256": "70475cd3550ced2262cfb854b3c9103861bcf011e4c68c66599da3a2f2032f8f",
+  "originalManifestSHA256": "3dd4a8cb5c9957bd043841e91e8b44cfd437b5e7b94c37fc4ff71df3a87fd467",
+  "originalFrozenPacketSHA256": "81d7c7dbd68192ff9e9dfae62276fb92196b7101abcff14dda0b5db81fd43707",
+  "originalBacklogSHA256": "58c6b8e9e04dcf975d863e4bb4d55b13f0a23f27b5be7a341701d234b3c3f054",
+  "publishedManifestSHA256": "7561666ccc2cc5b8dcc792c83924b303cefb3018e2c735926f67cf783dfa4287",
+  "publishedFrozenPacketSHA256": "427d52341d0b65be4867c0a114a73e1c592302dc8876d69e6847c5a1f71547be",
+  "argumentChanges": [
+    {
+      "checkId": "quality-lint-734",
+      "argumentIndex": 0,
+      "originalValueSHA256": "ab32f6ba10a6da166a43a08c7492474883c747c1fb280312a911b7a8d335b6da",
+      "publicValue": ".venv/Scripts/python.exe"
+    },
+    {
+      "checkId": "quality-types-734",
+      "argumentIndex": 0,
+      "originalValueSHA256": "ab32f6ba10a6da166a43a08c7492474883c747c1fb280312a911b7a8d335b6da",
+      "publicValue": ".venv/Scripts/python.exe"
+    },
+    {
+      "checkId": "core45-bounded",
+      "argumentIndex": 0,
+      "originalValueSHA256": "ab32f6ba10a6da166a43a08c7492474883c747c1fb280312a911b7a8d335b6da",
+      "publicValue": ".venv/Scripts/python.exe"
+    },
+    {
+      "checkId": "core45-bounded",
+      "argumentIndex": 3,
+      "originalValueSHA256": "070299061dabf9fbd98e18d91a7a22e9dfcbd012060dbdf995ceb755a4a39d10",
+      "publicValue": "artifacts/tmp/W2.remaining-corrections-batch-01/a06-core-architecture-proof-01.py"
+    },
+    {
+      "checkId": "typing-risk-59",
+      "argumentIndex": 0,
+      "originalValueSHA256": "ab32f6ba10a6da166a43a08c7492474883c747c1fb280312a911b7a8d335b6da",
+      "publicValue": ".venv/Scripts/python.exe"
+    },
+    {
+      "checkId": "typing-foundation-1",
+      "argumentIndex": 0,
+      "originalValueSHA256": "ab32f6ba10a6da166a43a08c7492474883c747c1fb280312a911b7a8d335b6da",
+      "publicValue": ".venv/Scripts/python.exe"
+    },
+    {
+      "checkId": "unchanged-anchor-schema-bytes",
+      "argumentIndex": 0,
+      "originalValueSHA256": "ab32f6ba10a6da166a43a08c7492474883c747c1fb280312a911b7a8d335b6da",
+      "publicValue": ".venv/Scripts/python.exe"
+    },
+    {
+      "checkId": "frontend-current",
+      "argumentIndex": 0,
+      "originalValueSHA256": "ab32f6ba10a6da166a43a08c7492474883c747c1fb280312a911b7a8d335b6da",
+      "publicValue": ".venv/Scripts/python.exe"
+    },
+    {
+      "checkId": "frontend-current",
+      "argumentIndex": 3,
+      "originalValueSHA256": "53099daeb368067936ffda494420b100915d90670a742f3f9a8f196290290f25",
+      "publicValue": "artifacts/tmp/W2.A06.T03.shipping-frontend-build-01.py"
+    },
+    {
+      "checkId": "native-current",
+      "argumentIndex": 0,
+      "originalValueSHA256": "ab32f6ba10a6da166a43a08c7492474883c747c1fb280312a911b7a8d335b6da",
+      "publicValue": ".venv/Scripts/python.exe"
+    },
+    {
+      "checkId": "native-current",
+      "argumentIndex": 3,
+      "originalValueSHA256": "0762dff4a67e20dae65b9b6107f7647c3e1b0843f0da205af1849c33dc6ba6a2",
+      "publicValue": "artifacts/tmp/W2.A06.T03.qualifying-native-build-01.py"
+    },
+    {
+      "checkId": "package-current",
+      "argumentIndex": 0,
+      "originalValueSHA256": "ab32f6ba10a6da166a43a08c7492474883c747c1fb280312a911b7a8d335b6da",
+      "publicValue": ".venv/Scripts/python.exe"
+    },
+    {
+      "checkId": "package-current",
+      "argumentIndex": 3,
+      "originalValueSHA256": "13e4d1b5bb4adfb27f78cb536ea13228898c389b485bbe2823726e6a9b472a96",
+      "publicValue": "artifacts/tmp/W2.A06.T03.qualifying-package-01.py"
+    },
+    {
+      "checkId": "reference-five-current",
+      "argumentIndex": 0,
+      "originalValueSHA256": "ab32f6ba10a6da166a43a08c7492474883c747c1fb280312a911b7a8d335b6da",
+      "publicValue": ".venv/Scripts/python.exe"
+    },
+    {
+      "checkId": "reference-five-current",
+      "argumentIndex": 3,
+      "originalValueSHA256": "bceefa8b2c86a91852ef42ec115646b03be3304f54b5514d9a84e206fd43777d",
+      "publicValue": "artifacts/tmp/W2.A06.T03.reference-proof-03.py"
+    }
+  ],
+  "renamedDisplayArrays": 12,
+  "publicationSemantics": "Rename recorded argv arrays to argvDisplay and convert only repository-root-prefixed interpreter/script arguments to portable repository-relative display. Exact original argument arrays and actual source/receipt/tool delivery remain preserved locally. No assertion, result, duration, criterion, check selection, command string, source, producer or raw receipt changes.",
+  "exactRecordingException": "One data-only substitution of the unintroduced public manifest and its two recorded evidence digests and derived current R01 packet digest. Preserve exact original frozen packet/backlog/manifest/index/failure bytes locally. Record actual owner approval and exact old/new identities append-only; regenerate projections by installed tools. No fabricated new task review or lost adverse round.",
+  "preservation": "Original unintroduced raw report, frozen packet, backlog, staged index bytes, actual guard failure, private source/receipts and actual approval response remain locally preserved. Original product candidate, task criteria, commands, selection, outcomes and all previous introduced Git history/approvals remain unchanged.",
+  "actualGuardFailure": {
+    "kind": "actual-installed-staged-privacy-guard-failure",
+    "toolStart": "26b3e6",
+    "toolCompletion": "979e30",
+    "exitCode": 1,
+    "commitsChecked": 0,
+    "entriesChecked": 6,
+    "findingPathSHA256": "8b3f283d49e8fe8f9e1bc39474ad369ad4a6a4f47bb36d8d361fccb54c083944",
+    "reason": "concrete-workspace-path",
+    "candidateUnchanged": "b49a5d3fa0e1a6812eab1788606b3696f237cf44"
+  },
+  "completionClaims": {
+    "taskApproved": false,
+    "amendmentAdopted": false,
+    "WaveComplete": false,
+    "releaseApproved": false,
+    "W3Approved": false
+  }
+}

@@ -1,7 +1,7 @@
 ---
 document_type: generated-backlog-status-summary
 source: planning/backlog.yaml
-source_sha256: 07def4fc3ab9e2e5c1e6c3e91be42ab01cbbb94645928938c64a2456c27426d9
+source_sha256: 162da5ab0a8802eb9968d0f827cb5f7f5ce22450c2a374aef802b3617dfa244d
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -68,7 +68,7 @@ manual_edit: prohibited
 
 | Status | Count |
 |---|---:|
-| `IN_PROGRESS` | 1 |
+| `REVIEW` | 1 |
 | `DONE` | 25 |
 
 ## Wave authority and append-only amendments
@@ -927,6 +927,7 @@ Append-only rounds remain distinct from the current latest-review projection. Le
 | `W2.A05.T02` | `append-only v1` | 1 | `-` | approved / agent:/root/a05_t02_review | - |
 | `W2.A06.T01` | `append-only v1` | 1 | `-` | approved / agent:/root/a03_t01_lineage_audit | - |
 | `W2.A06.T02` | `append-only v1` | 1 | `-` | approved / agent:/root/a06_t02_ui_security_review | - |
+| `W2.A06.T03` | `append-only v1` | 0 | `R01` | - / - | - |
 | `W1.C01.T01` | `append-only v1` | 1 | `-` | approved / agent:/root/ui_guard_planning | - |
 | `W1.C02.T01` | `append-only v1` | 1 | `-` | approved / agent:/root/cap07_slice_review | - |
 | `W1.C03.T01` | `append-only v1` | 1 | `-` | approved / agent:/root/cap07_slice_review | - |
@@ -1013,7 +1014,7 @@ Append-only rounds remain distinct from the current latest-review projection. Le
 
 | Task | Status | Owner | Branch |
 |---|---|---|---|
-| `W2.A06.T03` Synchronize quality inventory and qualify the finite approved verification methods | `IN_PROGRESS` | codex-w2-implementation | `codex/w2-implementation` |
+| `W2.A06.T03` Synchronize quality inventory and qualify the finite approved verification methods | `REVIEW` | codex-w2-implementation | `codex/w2-implementation` |
 
 ## Linked corrective tasks
 

@@ -1,0 +1,989 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-evidence-manifest",
+  "taskId": "W2.A06.T03",
+  "baseCommit": "060623d7fef3274f69168a7a2e21b35a157f3efa",
+  "commit": "b49a5d3fa0e1a6812eab1788606b3696f237cf44",
+  "branch": "codex/w2-implementation",
+  "changedFiles": [
+    "artifacts/evidence/W2.A06.T03.typing-scope-addendum-01.owner-decision.json",
+    "artifacts/evidence/W2.A06.T03.typing-scope-addendum-01.proposal.json",
+    "artifacts/evidence/W2.A06.T03.typing-scope-addendum-01.publication-provenance.json",
+    "artifacts/evidence/W2.A06.T03.typing-scope-addendum-01.readiness.json",
+    "artifacts/evidence/W2.A06.T03.typing-scope-addendum-01.review.html",
+    "artifacts/evidence/W2.A06.T03.typing-scope-addendum-01.supplement.json",
+    "artifacts/evidence/W2.A06.original-r03-finding-closure-01.json",
+    "docs/adr/ADR-0054-bind-explicit-project-recovery-and-complete-quality-inventory.md",
+    "docs/planning-implementation-plan.md",
+    "packages/contracts/anchors/generate_anchor_schema.py",
+    "planning/backlog.yaml",
+    "planning/review-site/enablers/ECR-0014.html",
+    "planning/review-site/manifest.json",
+    "planning/status-summary.md",
+    "quality-scope.json",
+    "tests/anchors/test_anchor_contracts.py",
+    "tests/anchors/test_anchor_repository.py",
+    "tests/anchors/test_native_anchor_composition.py",
+    "tests/anchors/test_native_resolution_composition.py",
+    "tests/desktop/fixtures/__init__.py",
+    "tests/desktop/fixtures/bounded_pdf.py",
+    "tests/desktop/test_document_attachment_fixture_verifier.py",
+    "tests/desktop/test_document_attachment_interactions.py",
+    "tests/desktop/test_document_stage_fixture_probe.py",
+    "tests/desktop/test_document_viewer_interactions.py",
+    "tests/desktop/test_seed_document_drop_fixture.py",
+    "tests/desktop/test_viewer_decoder.py",
+    "tests/desktop/test_windows_document_picker_probe.py",
+    "tests/desktop/tools/__init__.py",
+    "tests/desktop/tools/run_windows_document_picker_probe.py",
+    "tests/documents/__init__.py",
+    "tests/documents/test_acquisition_queue.py",
+    "tests/documents/test_acquisition_tls.py",
+    "tests/documents/test_attachment_lifecycle_regressions.py",
+    "tests/documents/test_citation_repository.py",
+    "tests/documents/test_citation_service.py",
+    "tests/documents/test_document_revision_contracts.py",
+    "tests/documents/test_document_revision_index.py",
+    "tests/documents/test_document_revision_workflow.py",
+    "tests/documents/test_local_attachment.py",
+    "tests/documents/test_oa_acquisition.py",
+    "tests/documents/test_reference_catalog.py",
+    "tests/documents/test_reference_entries.py",
+    "tests/documents/test_reference_repository.py",
+    "tests/documents/test_reference_service.py",
+    "tests/documents/test_table_figure_repository.py",
+    "tests/documents/test_table_figure_service.py",
+    "tests/documents/test_table_figures.py",
+    "tests/documents/test_viewer_artifact_budget.py",
+    "tests/documents/test_viewer_object_ranges.py",
+    "tests/documents/test_viewer_source_authority.py",
+    "tests/foundation/test_taskctl_workflow.py",
+    "tests/parsing/test_parser_artifacts.py",
+    "tests/parsing/test_parser_pdf_native.py",
+    "tests/parsing/test_parser_source_bundle.py",
+    "tests/parsing/test_parsing_launcher.py",
+    "tests/parsing/test_pdf_inspection.py",
+    "tests/parsing/test_pdf_pages.py",
+    "tests/service/fixtures/__init__.py",
+    "tests/service/test_document_attachment_api.py",
+    "tests/service/test_document_revision_api.py",
+    "tests/service/test_document_viewer_api.py",
+    "tests/service/test_project_lifecycle.py",
+    "tests/service/test_reference_api.py",
+    "tests/service/test_source_anchor_api.py",
+    "tests/workflows/test_document_parse_admission.py"
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "checkIds": [
+        "quality-lint-734",
+        "quality-types-734",
+        "task-adr-current"
+      ],
+      "evidence": [
+        "Complete current six-root governed Python inventory has 734 discovered entries under unchanged exclusions; quality-scope.json and indexed ADR0054 note are in the exact bounded Git delta. Independent source/security/reference review binds the final one-line ADR successor. Original complete quality receipt remains FAIL, with separate exact debt disposition.",
+        "The separately reviewed b49 TY01 source/security/reference disposition authenticates the 53 unchanged source/data paths plus the sole ADR successor; source-only review does not qualify task behavior."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "checkIds": [
+        "core45-bounded",
+        "desktop-literal-exact-three",
+        "finite-lineage-negative-controls-23"
+      ],
+      "evidence": [
+        "Exact current Core45 AST plus desktop3 literal findings were authenticated at b49 with originals and adverse FAILs retained. Controls/readiness/captures are actual and independent; no count or prefix exemption is claimed."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "checkIds": [
+        "isolated-native-csp-current",
+        "actual-shipping-reader-and-csp-bridge"
+      ],
+      "evidence": [
+        "At exact b49, shipping Reader09 rendered the protected3-page source through the real PDF.js Worker, displayed exact source hash and original-page canvas, and cleaned all owned processes. The current enforced-policy attribution remains explicitly an authenticated identical-assets/config/context/codegen inference from passive companion. Fresh isolated Native CSP denials and actual missing/malformed-worker errors are independently disposed. All controls/source/readiness records precede their qualifying execution; original FAILs remain."
+      ]
+    },
+    {
+      "criterion_index": 4,
+      "checkIds": [
+        "quality-lint-734",
+        "quality-types-734",
+        "review-site-current",
+        "core45-bounded",
+        "desktop-literal-exact-three"
+      ],
+      "evidence": [
+        "Original complete quality exit 1 and status FAIL preserved. Full governed lint/types passed; only unchanged tools/plan_review_site.py formatter debt has the expressly bounded independent disposition. Current 498-page site validation passed with zero errors/warnings."
+      ]
+    },
+    {
+      "criterion_index": 5,
+      "checkIds": [
+        "finite-lineage-negative-controls-23",
+        "reference-five-current"
+      ],
+      "evidence": [
+        "Actual T03 task/claim/typing authority, 53 finite source rows, 59 immutable records and 77 current control bindings were independently inventoried; finite source readiness, record/capture and negative controls bind the current b49 inputs. Current reference report replays original guards and five approved predicates without relabeling historical selector failures.",
+        "Exact committed TY01 source/security/reference disposition is independently bound at b49, in addition to the separate own-ADR successor review."
+      ]
+    },
+    {
+      "criterion_index": 6,
+      "checkIds": [
+        "typing-risk-59",
+        "typing-foundation-1",
+        "unchanged-anchor-schema-bytes",
+        "frontend-current",
+        "native-current",
+        "package-current",
+        "reference-five-current",
+        "fresh-protected-shipping-recovery-and-live-denial",
+        "actual-shipping-reader-and-csp-bridge"
+      ],
+      "evidence": [
+        "Fresh final b49 risk-selected59+1 existing cases and unchanged generated/PDF fixture bytes, actual current frontend/Native/package builds, five reference predicates, actual shipping Reader and protected recovery/live denial passed. Independent actual dispositions bind each new method. Formal task and combined A06 review follow this evidence; CAP05S06/CP09/full profile/platform/model/installer/G2 remain separate.",
+        "Fresh recovery10 preserves all39 canonical records and object contents through verified copy, restart, cancellation, target drift, unavailable proof and live-owner denial, with genuine held process-object identity and zero owned processes after cleanup. Its Original has no WAL; the separately executed preserved-r03 regular-zero-WAL readback03 branch passed under complete Original/input holds with Original/vault bytes unchanged. Physical independent-Windows-host proof remains explicitly untested under the approved W5 deferral."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "checks": [
+    {
+      "id": "quality-lint-734",
+      "commandId": "foundation:quality",
+      "command": ".venv/Scripts/python.exe -m ruff check --config pyproject.toml -- @artifacts/tmp/W2.remaining-corrections-batch-01/quality-transport-07/complete-files.args",
+      "workingDirectory": ".",
+      "commit": "b49a5d3fa0e1a6812eab1788606b3696f237cf44",
+      "exitCode": 0,
+      "result": "PASS_EXACT_734_SCOPE_LINT",
+      "inputReport": "artifacts/tmp/W2.remaining-corrections-batch-01/quality-transport-07/receipt.json",
+      "inputReportSha256": "10c0d503f46b8b9a81b14308404b37c727bd3ff33102fbbb543cbdcb34f14dc9",
+      "rawStreams": {
+        "stdout": {
+          "path": "artifacts/tmp/W2.remaining-corrections-batch-01/quality-transport-07/1.stdout.log",
+          "sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18"
+        },
+        "stderr": {
+          "path": "artifacts/tmp/W2.remaining-corrections-batch-01/quality-transport-07/1.stderr.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      "originalCompleteQualityExitCode": 1,
+      "responseFileSHA256": "22486fe61a72d3c5a67d56a17f18a4fc3a07d1d5b40dfd38c683101410ea7b71",
+      "completeEffectiveFileCount": 734,
+      "provenance": "This is the actual successful subcommand from the one complete quality dispatch. The formatter subcommand and whole quality remain FAIL/exit1.",
+      "argvDisplay": [
+        ".venv/Scripts/python.exe",
+        "-m",
+        "ruff",
+        "check",
+        "--config",
+        "pyproject.toml",
+        "--",
+        "@artifacts/tmp/W2.remaining-corrections-batch-01/quality-transport-07/complete-files.args"
+      ]
+    },
+    {
+      "id": "quality-types-734",
+      "commandId": "foundation:quality",
+      "command": ".venv/Scripts/python.exe -m mypy --config-file pyproject.toml --no-namespace-packages -- @artifacts/tmp/W2.remaining-corrections-batch-01/quality-transport-07/complete-files.args",
+      "workingDirectory": ".",
+      "commit": "b49a5d3fa0e1a6812eab1788606b3696f237cf44",
+      "exitCode": 0,
+      "result": "PASS_EXACT_734_SCOPE_TYPE",
+      "inputReport": "artifacts/tmp/W2.remaining-corrections-batch-01/quality-transport-07/receipt.json",
+      "inputReportSha256": "10c0d503f46b8b9a81b14308404b37c727bd3ff33102fbbb543cbdcb34f14dc9",
+      "rawStreams": {
+        "stdout": {
+          "path": "artifacts/tmp/W2.remaining-corrections-batch-01/quality-transport-07/2.stdout.log",
+          "sha256": "c642e5b33b5e7d157e7b2362ef94a292d50ab8abbba717375ca1704ad53de820"
+        },
+        "stderr": {
+          "path": "artifacts/tmp/W2.remaining-corrections-batch-01/quality-transport-07/2.stderr.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      "originalCompleteQualityExitCode": 1,
+      "responseFileSHA256": "22486fe61a72d3c5a67d56a17f18a4fc3a07d1d5b40dfd38c683101410ea7b71",
+      "completeEffectiveFileCount": 734,
+      "provenance": "This is the actual successful subcommand from the one complete quality dispatch. The formatter subcommand and whole quality remain FAIL/exit1.",
+      "argvDisplay": [
+        ".venv/Scripts/python.exe",
+        "-m",
+        "mypy",
+        "--config-file",
+        "pyproject.toml",
+        "--no-namespace-packages",
+        "--",
+        "@artifacts/tmp/W2.remaining-corrections-batch-01/quality-transport-07/complete-files.args"
+      ]
+    },
+    {
+      "id": "core45-bounded",
+      "commandId": "foundation:architecture",
+      "command": ".venv/Scripts/python.exe -B -s artifacts/tmp/W2.remaining-corrections-batch-01/a06-core-architecture-proof-01.py qualify --prefix a06-t03-core45-qualified-04-leaf --readiness artifacts/tmp/W2.remaining-corrections-batch-01/a06-t03-Core45-SOURCE_READY-04.json --readiness-sha256 57e881ecf1c72523b52ab557ab6cbce2690947d6352dfcd323d128442ce2bfa0",
+      "workingDirectory": ".",
+      "commit": "b49a5d3fa0e1a6812eab1788606b3696f237cf44",
+      "exitCode": 0,
+      "result": "PASS_BOUNDED_EXACT45_ORIGINAL_FAIL_PRESERVED",
+      "inputReport": "artifacts/tmp/W2.remaining-corrections-batch-01/a06-t03-core45-qualified-04.receipt.json",
+      "inputReportSha256": "98d185df50a8db22032fe8b5e60a2aadc2ce6fa3a74f811acddfe67afd89d214",
+      "rawStreams": {
+        "stdout": {
+          "path": "artifacts/tmp/W2.remaining-corrections-batch-01/a06-t03-core45-qualified-04.stdout.log",
+          "sha256": "7e3a27a239e754225165dc59b70f580aaa1c20c8c494343ccf7be0ac70d3d1ee"
+        },
+        "stderr": {
+          "path": "artifacts/tmp/W2.remaining-corrections-batch-01/a06-t03-core45-qualified-04.stderr.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      "producerSha256": "3dc509358013bf2de56809850e4fb499d5fcd87717349fe5455981eae7b59536",
+      "leafReceipt": {
+        "path": "artifacts/tmp/W2.remaining-corrections-batch-01/a06-t03-core45-qualified-04-leaf.receipt.json",
+        "sha256": "e420ef7a70ca98ee725ff0d718d5bd80825594b57f9036fdbca0fd46b0b9dacd"
+      },
+      "provenance": "Actual bounded qualification wrapper exit0; unchanged original architecture checker FAIL and exact AST multiset retained separately.",
+      "argvDisplay": [
+        ".venv/Scripts/python.exe",
+        "-B",
+        "-s",
+        "artifacts/tmp/W2.remaining-corrections-batch-01/a06-core-architecture-proof-01.py",
+        "qualify",
+        "--prefix",
+        "a06-t03-core45-qualified-04-leaf",
+        "--readiness",
+        "artifacts/tmp/W2.remaining-corrections-batch-01/a06-t03-Core45-SOURCE_READY-04.json",
+        "--readiness-sha256",
+        "57e881ecf1c72523b52ab557ab6cbce2690947d6352dfcd323d128442ce2bfa0"
+      ]
+    },
+    {
+      "id": "typing-risk-59",
+      "commandId": "documents:unit",
+      "command": ".venv/Scripts/python.exe -B -s -m unittest -v tests.anchors.test_anchor_contracts.AnchorContractTests.test_repeated_quote_keeps_exact_position_and_serialized_identity tests.anchors.test_anchor_contracts.AnchorContractTests.test_nfc_crlf_and_supplementary_offsets_are_codepoints tests.anchors.test_anchor_contracts.AnchorContractTests.test_geometry_normalizes_source_points_once_and_declares_rotation tests.anchors.test_anchor_contracts.AnchorContractTests.test_missing_coordinates_remain_visible_typed_fallback tests.anchors.test_anchor_contracts.AnchorContractTests.test_protected_context_is_bounded_without_shifting_selected_span tests.anchors.test_anchor_repository.AnchorRepositoryTests.test_restart_reads_exact_encrypted_anchor_with_atomic_provenance_dependencies tests.anchors.test_native_anchor_composition.NativeAnchorCompositionTests.test_create_reopen_highlight_input_and_current_authority_use_actual_composition tests.anchors.test_native_resolution_composition.NativeResolutionCompositionTests.test_failed_or_foreign_source_resolution_closes_writer_before_protected_context tests.service.test_document_revision_api.DocumentRevisionApiTests.test_untrusted_actor_content_duplicate_and_oversize_never_reach_core tests.service.test_document_revision_api.DocumentRevisionApiTests.test_native_authentication_origin_denial_redaction_and_schema_exclusion tests.service.test_reference_api.ReferenceApiTests.test_closed_commands_reject_research_text_authority_and_unbounded_paging tests.service.test_source_anchor_api.SourceAnchorApiTests.test_quote_actor_coordinates_and_extra_authority_never_reach_service tests.service.test_source_anchor_api.SourceAnchorApiTests.test_duplicate_and_oversize_requests_are_denied_before_service tests.service.test_source_anchor_api.SourceAnchorApiTests.test_native_authentication_origin_and_redacted_denial tests.service.test_source_anchor_api.SourceAnchorApiTests.test_resolution_and_reference_routes_reject_authority_and_unbounded_requests tests.service.test_document_attachment_api.DocumentAttachmentApiTests.test_acquisition_failures_preserve_safe_distinct_native_states tests.service.test_document_attachment_api.DocumentAttachmentApiTests.test_copy_actions_reject_unknown_authority_duplicate_json_and_oversized_commands tests.documents.test_acquisition_queue.AcquisitionQueueTests.test_runtime_resource_denial_precedes_intake_and_keeps_confirmation_unconsumed tests.documents.test_oa_acquisition.AcquisitionIntegrationTests.test_runtime_session_loss_cancels_owned_post_transfer_inspection tests.documents.test_document_revision_workflow.DocumentRevisionWorkflowTests.test_native_composition_retains_success_with_live_heartbeat_and_intervening_rights_write tests.documents.test_document_revision_workflow.DocumentRevisionWorkflowTests.test_current_copy_rights_revoke_during_inference_denies_success tests.documents.test_document_revision_workflow.DocumentRevisionWorkflowTests.test_native_close_latch_interrupts_without_waiting_for_lifecycle_mutex tests.documents.test_acquisition_tls.AcquisitionPrincipalTests.test_current_core_session_through_verified_tls_encrypted_stage_and_signed_lpac tests.documents.test_acquisition_tls.AcquisitionTlsTests.test_untrusted_and_wrong_hostname_tls_never_send_http tests.documents.test_citation_repository.CitationRepositoryTests.test_current_rights_principal_and_target_authority_are_required tests.documents.test_reference_repository.ReferenceRepositoryTests.test_current_rights_and_human_principal_required_for_read_and_retry tests.documents.test_table_figure_repository.TableFigureRepositoryTests.test_current_human_rights_and_physical_admission_are_required tests.documents.test_table_figure_repository.TableFigureRepositoryTests.test_human_authority_change_after_preparation_refuses_publication tests.workflows.test_document_parse_admission.DocumentParseAdmissionTests.test_filter_and_policy_are_frozen_and_identical_for_recovery_and_claim tests.workflows.test_document_parse_admission.DocumentParseAdmissionTests.test_wrong_class_invalid_activity_and_conflicting_policy_fail_before_claim tests.documents.test_viewer_artifact_budget.ViewerArtifactBudgetTests.test_authoritative_source_length_determines_allowance_without_changing_parser_limits tests.parsing.test_pdf_pages.PdfPageTests.test_current_authority_and_monotonic_cancellation_fence_delivery tests.service.test_document_viewer_api.DocumentViewerApiTests.test_retained_anchor_private_api_is_exact_and_rejects_renderer_authority tests.service.test_document_viewer_api.DocumentViewerApiTests.test_cancel_route_stops_the_owned_authentication_and_releases_its_actual_writer tests.service.test_document_viewer_api.DocumentViewerApiTests.test_viewer_outline_denies_substituted_original_or_derive_permission tests.documents.test_viewer_source_authority.ViewerSourceAuthorityTests.test_inspect_only_original_remains_readable_but_derivative_still_requires_derive tests.documents.test_viewer_source_authority.ViewerSourceAuthorityTests.test_rights_changed_after_reader_close_deny_delivery_of_successful_old_bytes tests.parsing.test_parser_artifacts.ParserArtifactTests.test_retained_raw_receipt_is_encrypted_durable_and_does_not_advance_original tests.documents.test_document_revision_contracts.DocumentRevisionContractTests.test_portable_revision_shapes_and_semantic_authority_are_separate tests.documents.test_document_revision_index.DocumentRevisionIndexTests.test_large_valid_chain_and_flat_hierarchy_have_bounded_parent_reads_and_exact_order tests.documents.test_reference_entries.ReferenceExtractionTests.test_raw_crlf_combining_and_astral_content_is_retained tests.documents.test_table_figures.TableFigureTests.test_docling_exact_retained_relationships_sparse_grid_and_rotated_original_preview tests.documents.test_reference_catalog.ReferenceCatalogTests.test_complete_current_catalog_uses_sealed_work_and_indexed_exact_assessment tests.documents.test_citation_service.CitationServiceTests.test_actual_runtime_citation_publication_reference_refresh_reopen_denial_and_budget tests.documents.test_reference_service.ReferenceServiceTests.test_actual_runtime_reference_publication_reopen_rights_session_and_budget tests.documents.test_table_figure_service.TableFigureServiceTests.test_actual_runtime_tables_exclusion_reopen_denial_session_and_budget tests.parsing.test_parser_source_bundle.ParserSourceBundleTests.test_source_introspection_works_for_compiled_module_without_plaintext_file tests.parsing.test_parser_source_bundle.ParserSourceBundleTests.test_unlisted_traversal_or_altered_archive_fails_closed tests.parsing.test_parsing_launcher.ParsingLauncherTests.test_valid_large_output_remains_one_megabyte_chunks tests.parsing.test_parsing_launcher.ParsingLauncherTests.test_bad_digest_length_and_ir_limit_refuse_delivery tests.parsing.test_pdf_inspection.PdfInspectionTests.test_degraded_output_preserves_raw_text_and_explicit_missing_quality tests.desktop.test_document_attachment_fixture_verifier.AttachmentProvenanceBindingTests.test_verifier_accepts_cores_canonical_document_event_and_rejects_wrong_bindings tests.desktop.test_document_stage_fixture_probe.DocumentStageFixtureProbeTests.test_stage_rejection_records_fixed_code_and_preserves_wire_response tests.desktop.test_seed_document_drop_fixture.PublishedSelectionTests.test_seed_uses_current_work_revision_after_version_publication tests.desktop.test_windows_document_picker_probe.PickerOperationPartitionTests.test_cancel_then_select_matches_distinct_pairs_despite_finish_order tests.desktop.test_windows_document_picker_probe.WindowsFileDialogActionContractTests.test_accept_diagnostic_redacts_unknown_control_names tests.documents.test_oa_acquisition.AcquisitionIntegrationTests.test_selected_source_license_checksum_survive_commit_and_restart tests.documents.test_oa_acquisition.AcquisitionIntegrationTests.test_expected_checksum_encoding_and_truncation_never_publish tests.service.test_project_lifecycle.ProjectLifecycleTests.test_nested_project_scope_is_local_to_the_held_guard_and_rechecks_metadata",
+      "workingDirectory": ".",
+      "commit": "b49a5d3fa0e1a6812eab1788606b3696f237cf44",
+      "exitCode": 0,
+      "result": "PASS_SELECTED_AFFECTED_EXISTING_CASES_OR_EXACT_BYTES",
+      "inputReport": "artifacts/tmp/W2.remaining-corrections-batch-01/typing-source-checks-03/receipt.json",
+      "inputReportSha256": "0fd30030e0cf5cde8ff93010b2ab7b8cbd004b6d8704ee29d1ee4fab85fb35d3",
+      "rawStreams": {
+        "stdout": {
+          "path": "artifacts/tmp/W2.remaining-corrections-batch-01/typing-source-checks-03/existing-material-typing-risk-cases.stdout.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stderr": {
+          "path": "artifacts/tmp/W2.remaining-corrections-batch-01/typing-source-checks-03/existing-material-typing-risk-cases.stderr.log",
+          "sha256": "a1309d8684561074ae9e473b34e6d96182a3930b32e46b3025ee31c32a5e39e2"
+        }
+      },
+      "producerSha256": "ced8762ac5aeb5c68d8484d4520668b421b25d391eccc742a67615f6d1b215dd",
+      "provenance": "Actual b49 focused check. The 59 plus one Foundation selection and unchanged generator/PDF bytes do not close five historical migration failures.",
+      "argvDisplay": [
+        ".venv/Scripts/python.exe",
+        "-B",
+        "-s",
+        "-m",
+        "unittest",
+        "-v",
+        "tests.anchors.test_anchor_contracts.AnchorContractTests.test_repeated_quote_keeps_exact_position_and_serialized_identity",
+        "tests.anchors.test_anchor_contracts.AnchorContractTests.test_nfc_crlf_and_supplementary_offsets_are_codepoints",
+        "tests.anchors.test_anchor_contracts.AnchorContractTests.test_geometry_normalizes_source_points_once_and_declares_rotation",
+        "tests.anchors.test_anchor_contracts.AnchorContractTests.test_missing_coordinates_remain_visible_typed_fallback",
+        "tests.anchors.test_anchor_contracts.AnchorContractTests.test_protected_context_is_bounded_without_shifting_selected_span",
+        "tests.anchors.test_anchor_repository.AnchorRepositoryTests.test_restart_reads_exact_encrypted_anchor_with_atomic_provenance_dependencies",
+        "tests.anchors.test_native_anchor_composition.NativeAnchorCompositionTests.test_create_reopen_highlight_input_and_current_authority_use_actual_composition",
+        "tests.anchors.test_native_resolution_composition.NativeResolutionCompositionTests.test_failed_or_foreign_source_resolution_closes_writer_before_protected_context",
+        "tests.service.test_document_revision_api.DocumentRevisionApiTests.test_untrusted_actor_content_duplicate_and_oversize_never_reach_core",
+        "tests.service.test_document_revision_api.DocumentRevisionApiTests.test_native_authentication_origin_denial_redaction_and_schema_exclusion",
+        "tests.service.test_reference_api.ReferenceApiTests.test_closed_commands_reject_research_text_authority_and_unbounded_paging",
+        "tests.service.test_source_anchor_api.SourceAnchorApiTests.test_quote_actor_coordinates_and_extra_authority_never_reach_service",
+        "tests.service.test_source_anchor_api.SourceAnchorApiTests.test_duplicate_and_oversize_requests_are_denied_before_service",
+        "tests.service.test_source_anchor_api.SourceAnchorApiTests.test_native_authentication_origin_and_redacted_denial",
+        "tests.service.test_source_anchor_api.SourceAnchorApiTests.test_resolution_and_reference_routes_reject_authority_and_unbounded_requests",
+        "tests.service.test_document_attachment_api.DocumentAttachmentApiTests.test_acquisition_failures_preserve_safe_distinct_native_states",
+        "tests.service.test_document_attachment_api.DocumentAttachmentApiTests.test_copy_actions_reject_unknown_authority_duplicate_json_and_oversized_commands",
+        "tests.documents.test_acquisition_queue.AcquisitionQueueTests.test_runtime_resource_denial_precedes_intake_and_keeps_confirmation_unconsumed",
+        "tests.documents.test_oa_acquisition.AcquisitionIntegrationTests.test_runtime_session_loss_cancels_owned_post_transfer_inspection",
+        "tests.documents.test_document_revision_workflow.DocumentRevisionWorkflowTests.test_native_composition_retains_success_with_live_heartbeat_and_intervening_rights_write",
+        "tests.documents.test_document_revision_workflow.DocumentRevisionWorkflowTests.test_current_copy_rights_revoke_during_inference_denies_success",
+        "tests.documents.test_document_revision_workflow.DocumentRevisionWorkflowTests.test_native_close_latch_interrupts_without_waiting_for_lifecycle_mutex",
+        "tests.documents.test_acquisition_tls.AcquisitionPrincipalTests.test_current_core_session_through_verified_tls_encrypted_stage_and_signed_lpac",
+        "tests.documents.test_acquisition_tls.AcquisitionTlsTests.test_untrusted_and_wrong_hostname_tls_never_send_http",
+        "tests.documents.test_citation_repository.CitationRepositoryTests.test_current_rights_principal_and_target_authority_are_required",
+        "tests.documents.test_reference_repository.ReferenceRepositoryTests.test_current_rights_and_human_principal_required_for_read_and_retry",
+        "tests.documents.test_table_figure_repository.TableFigureRepositoryTests.test_current_human_rights_and_physical_admission_are_required",
+        "tests.documents.test_table_figure_repository.TableFigureRepositoryTests.test_human_authority_change_after_preparation_refuses_publication",
+        "tests.workflows.test_document_parse_admission.DocumentParseAdmissionTests.test_filter_and_policy_are_frozen_and_identical_for_recovery_and_claim",
+        "tests.workflows.test_document_parse_admission.DocumentParseAdmissionTests.test_wrong_class_invalid_activity_and_conflicting_policy_fail_before_claim",
+        "tests.documents.test_viewer_artifact_budget.ViewerArtifactBudgetTests.test_authoritative_source_length_determines_allowance_without_changing_parser_limits",
+        "tests.parsing.test_pdf_pages.PdfPageTests.test_current_authority_and_monotonic_cancellation_fence_delivery",
+        "tests.service.test_document_viewer_api.DocumentViewerApiTests.test_retained_anchor_private_api_is_exact_and_rejects_renderer_authority",
+        "tests.service.test_document_viewer_api.DocumentViewerApiTests.test_cancel_route_stops_the_owned_authentication_and_releases_its_actual_writer",
+        "tests.service.test_document_viewer_api.DocumentViewerApiTests.test_viewer_outline_denies_substituted_original_or_derive_permission",
+        "tests.documents.test_viewer_source_authority.ViewerSourceAuthorityTests.test_inspect_only_original_remains_readable_but_derivative_still_requires_derive",
+        "tests.documents.test_viewer_source_authority.ViewerSourceAuthorityTests.test_rights_changed_after_reader_close_deny_delivery_of_successful_old_bytes",
+        "tests.parsing.test_parser_artifacts.ParserArtifactTests.test_retained_raw_receipt_is_encrypted_durable_and_does_not_advance_original",
+        "tests.documents.test_document_revision_contracts.DocumentRevisionContractTests.test_portable_revision_shapes_and_semantic_authority_are_separate",
+        "tests.documents.test_document_revision_index.DocumentRevisionIndexTests.test_large_valid_chain_and_flat_hierarchy_have_bounded_parent_reads_and_exact_order",
+        "tests.documents.test_reference_entries.ReferenceExtractionTests.test_raw_crlf_combining_and_astral_content_is_retained",
+        "tests.documents.test_table_figures.TableFigureTests.test_docling_exact_retained_relationships_sparse_grid_and_rotated_original_preview",
+        "tests.documents.test_reference_catalog.ReferenceCatalogTests.test_complete_current_catalog_uses_sealed_work_and_indexed_exact_assessment",
+        "tests.documents.test_citation_service.CitationServiceTests.test_actual_runtime_citation_publication_reference_refresh_reopen_denial_and_budget",
+        "tests.documents.test_reference_service.ReferenceServiceTests.test_actual_runtime_reference_publication_reopen_rights_session_and_budget",
+        "tests.documents.test_table_figure_service.TableFigureServiceTests.test_actual_runtime_tables_exclusion_reopen_denial_session_and_budget",
+        "tests.parsing.test_parser_source_bundle.ParserSourceBundleTests.test_source_introspection_works_for_compiled_module_without_plaintext_file",
+        "tests.parsing.test_parser_source_bundle.ParserSourceBundleTests.test_unlisted_traversal_or_altered_archive_fails_closed",
+        "tests.parsing.test_parsing_launcher.ParsingLauncherTests.test_valid_large_output_remains_one_megabyte_chunks",
+        "tests.parsing.test_parsing_launcher.ParsingLauncherTests.test_bad_digest_length_and_ir_limit_refuse_delivery",
+        "tests.parsing.test_pdf_inspection.PdfInspectionTests.test_degraded_output_preserves_raw_text_and_explicit_missing_quality",
+        "tests.desktop.test_document_attachment_fixture_verifier.AttachmentProvenanceBindingTests.test_verifier_accepts_cores_canonical_document_event_and_rejects_wrong_bindings",
+        "tests.desktop.test_document_stage_fixture_probe.DocumentStageFixtureProbeTests.test_stage_rejection_records_fixed_code_and_preserves_wire_response",
+        "tests.desktop.test_seed_document_drop_fixture.PublishedSelectionTests.test_seed_uses_current_work_revision_after_version_publication",
+        "tests.desktop.test_windows_document_picker_probe.PickerOperationPartitionTests.test_cancel_then_select_matches_distinct_pairs_despite_finish_order",
+        "tests.desktop.test_windows_document_picker_probe.WindowsFileDialogActionContractTests.test_accept_diagnostic_redacts_unknown_control_names",
+        "tests.documents.test_oa_acquisition.AcquisitionIntegrationTests.test_selected_source_license_checksum_survive_commit_and_restart",
+        "tests.documents.test_oa_acquisition.AcquisitionIntegrationTests.test_expected_checksum_encoding_and_truncation_never_publish",
+        "tests.service.test_project_lifecycle.ProjectLifecycleTests.test_nested_project_scope_is_local_to_the_held_guard_and_rechecks_metadata"
+      ]
+    },
+    {
+      "id": "typing-foundation-1",
+      "commandId": "foundation:unit",
+      "command": ".venv/Scripts/python.exe -B -s -m unittest discover -s tests/foundation -p test_taskctl_workflow.py -k test_approved_metadata_scope_retains_normal_exact_evidence_boundary -v",
+      "workingDirectory": ".",
+      "commit": "b49a5d3fa0e1a6812eab1788606b3696f237cf44",
+      "exitCode": 0,
+      "result": "PASS_SELECTED_AFFECTED_EXISTING_CASES_OR_EXACT_BYTES",
+      "inputReport": "artifacts/tmp/W2.remaining-corrections-batch-01/typing-source-checks-03/receipt.json",
+      "inputReportSha256": "0fd30030e0cf5cde8ff93010b2ab7b8cbd004b6d8704ee29d1ee4fab85fb35d3",
+      "rawStreams": {
+        "stdout": {
+          "path": "artifacts/tmp/W2.remaining-corrections-batch-01/typing-source-checks-03/existing-foundation-late-import-regression.stdout.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stderr": {
+          "path": "artifacts/tmp/W2.remaining-corrections-batch-01/typing-source-checks-03/existing-foundation-late-import-regression.stderr.log",
+          "sha256": "af104c89aa01f900e3e5178c4d44377cffb088984b4652ba8f019738c3264f01"
+        }
+      },
+      "producerSha256": "ced8762ac5aeb5c68d8484d4520668b421b25d391eccc742a67615f6d1b215dd",
+      "provenance": "Actual b49 focused check. The 59 plus one Foundation selection and unchanged generator/PDF bytes do not close five historical migration failures.",
+      "argvDisplay": [
+        ".venv/Scripts/python.exe",
+        "-B",
+        "-s",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tests/foundation",
+        "-p",
+        "test_taskctl_workflow.py",
+        "-k",
+        "test_approved_metadata_scope_retains_normal_exact_evidence_boundary",
+        "-v"
+      ]
+    },
+    {
+      "id": "unchanged-anchor-schema-bytes",
+      "commandId": "documents:anchor-schemas",
+      "command": ".venv/Scripts/python.exe -B -s packages/contracts/anchors/generate_anchor_schema.py --check",
+      "workingDirectory": ".",
+      "commit": "b49a5d3fa0e1a6812eab1788606b3696f237cf44",
+      "exitCode": 0,
+      "result": "PASS_SELECTED_AFFECTED_EXISTING_CASES_OR_EXACT_BYTES",
+      "inputReport": "artifacts/tmp/W2.remaining-corrections-batch-01/typing-source-checks-03/receipt.json",
+      "inputReportSha256": "0fd30030e0cf5cde8ff93010b2ab7b8cbd004b6d8704ee29d1ee4fab85fb35d3",
+      "rawStreams": {
+        "stdout": {
+          "path": "artifacts/tmp/W2.remaining-corrections-batch-01/typing-source-checks-03/unchanged-anchor-schema-bytes.stdout.log",
+          "sha256": "9e70564a6485362e4a4b36a9984490c9b0c58eae8639198fd926d8c964731ae3"
+        },
+        "stderr": {
+          "path": "artifacts/tmp/W2.remaining-corrections-batch-01/typing-source-checks-03/unchanged-anchor-schema-bytes.stderr.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      "producerSha256": "ced8762ac5aeb5c68d8484d4520668b421b25d391eccc742a67615f6d1b215dd",
+      "provenance": "Actual b49 focused check. The 59 plus one Foundation selection and unchanged generator/PDF bytes do not close five historical migration failures.",
+      "argvDisplay": [
+        ".venv/Scripts/python.exe",
+        "-B",
+        "-s",
+        "packages/contracts/anchors/generate_anchor_schema.py",
+        "--check"
+      ]
+    },
+    {
+      "id": "frontend-current",
+      "commandId": "desktop:application",
+      "command": ".venv/Scripts/python.exe -B -s artifacts/tmp/W2.A06.T03.shipping-frontend-build-01.py b49a5d3fa0e1a6812eab1788606b3696f237cf44 final-01",
+      "workingDirectory": ".",
+      "commit": "b49a5d3fa0e1a6812eab1788606b3696f237cf44",
+      "exitCode": 0,
+      "result": "PASS_READY_STANDARD_STEP_ONLY",
+      "inputReport": "artifacts/tmp/W2.remaining-corrections-batch-01/a06-t03-ready-frontend-01.receipt.json",
+      "inputReportSha256": "6297f033fa69d21f2a725fdc45f99851377f2e63c946a2f36884781a2102e606",
+      "rawStreams": {
+        "stdout": {
+          "path": "artifacts/tmp/W2.remaining-corrections-batch-01/a06-t03-ready-frontend-01.stdout.log",
+          "sha256": "66215ee73dc872b6ab1968e16551f3ea1537666491c97e2526dc64f4218822ad"
+        },
+        "stderr": {
+          "path": "artifacts/tmp/W2.remaining-corrections-batch-01/a06-t03-ready-frontend-01.stderr.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      "producerSha256": "698d029c2f8927e2f646ad76fc76ac5f6b19fe050671f5276c01605627c1291a",
+      "provenance": "Actual source/authority-held standard stage only; no installed-package, model, task or Wave qualification.",
+      "argvDisplay": [
+        ".venv/Scripts/python.exe",
+        "-B",
+        "-s",
+        "artifacts/tmp/W2.A06.T03.shipping-frontend-build-01.py",
+        "b49a5d3fa0e1a6812eab1788606b3696f237cf44",
+        "final-01"
+      ]
+    },
+    {
+      "id": "native-current",
+      "commandId": "desktop:application",
+      "command": ".venv/Scripts/python.exe -B -s artifacts/tmp/W2.A06.T03.qualifying-native-build-01.py b49a5d3fa0e1a6812eab1788606b3696f237cf44 artifacts/evidence/W2.C17.T01.review-R01.json final-01",
+      "workingDirectory": ".",
+      "commit": "b49a5d3fa0e1a6812eab1788606b3696f237cf44",
+      "exitCode": 0,
+      "result": "PASS_READY_STANDARD_STEP_ONLY",
+      "inputReport": "artifacts/tmp/W2.remaining-corrections-batch-01/a06-t03-ready-native-02.receipt.json",
+      "inputReportSha256": "91cc96e75a7113e342320e114fe87696ce361f92aadd084a3ec32876785a0621",
+      "rawStreams": {
+        "stdout": {
+          "path": "artifacts/tmp/W2.remaining-corrections-batch-01/a06-t03-ready-native-02.stdout.log",
+          "sha256": "ac200ccf3c7d145a7bc77f8a676548950d101ca93e2d817902903a58ad79a665"
+        },
+        "stderr": {
+          "path": "artifacts/tmp/W2.remaining-corrections-batch-01/a06-t03-ready-native-02.stderr.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      "producerSha256": "25ce4dba700ae12cd8ebffa72ebc0df6db5769b55b9f57ce2698ea64eb21e4f4",
+      "provenance": "Actual source/authority-held standard stage only; no installed-package, model, task or Wave qualification.",
+      "argvDisplay": [
+        ".venv/Scripts/python.exe",
+        "-B",
+        "-s",
+        "artifacts/tmp/W2.A06.T03.qualifying-native-build-01.py",
+        "b49a5d3fa0e1a6812eab1788606b3696f237cf44",
+        "artifacts/evidence/W2.C17.T01.review-R01.json",
+        "final-01"
+      ]
+    },
+    {
+      "id": "package-current",
+      "commandId": "foundation:build-manifest",
+      "command": ".venv/Scripts/python.exe -B -s artifacts/tmp/W2.A06.T03.qualifying-package-01.py b49a5d3fa0e1a6812eab1788606b3696f237cf44 artifacts/evidence/W2.C17.T01.review-R01.json artifacts/tmp/W2.A06.T03.qualifying-native-build-01.final-01.json final-01",
+      "workingDirectory": ".",
+      "commit": "b49a5d3fa0e1a6812eab1788606b3696f237cf44",
+      "exitCode": 0,
+      "result": "PASS_READY_STANDARD_STEP_ONLY",
+      "inputReport": "artifacts/tmp/W2.remaining-corrections-batch-01/a06-t03-ready-package-02.receipt.json",
+      "inputReportSha256": "32e7ef15e294b8aba7a2fd00856fd8b7a2066e69e4ae3bed929a04b9bc864661",
+      "rawStreams": {
+        "stdout": {
+          "path": "artifacts/tmp/W2.remaining-corrections-batch-01/a06-t03-ready-package-02.stdout.log",
+          "sha256": "eeb610db96b02ccadabbf6e48a8a88bb03f196afe84d5c9ac5197316b0ded1e1"
+        },
+        "stderr": {
+          "path": "artifacts/tmp/W2.remaining-corrections-batch-01/a06-t03-ready-package-02.stderr.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      "producerSha256": "a36364226408da3c20b7cb28183cb74c2470f14d151e199e74fe47ddf38bc466",
+      "provenance": "Actual source/authority-held standard stage only; no installed-package, model, task or Wave qualification.",
+      "argvDisplay": [
+        ".venv/Scripts/python.exe",
+        "-B",
+        "-s",
+        "artifacts/tmp/W2.A06.T03.qualifying-package-01.py",
+        "b49a5d3fa0e1a6812eab1788606b3696f237cf44",
+        "artifacts/evidence/W2.C17.T01.review-R01.json",
+        "artifacts/tmp/W2.A06.T03.qualifying-native-build-01.final-01.json",
+        "final-01"
+      ]
+    },
+    {
+      "id": "task-adr-current",
+      "commandId": "foundation:adr",
+      "command": ".venv/Scripts/python.exe -B -s tools/adr_check.py --repo . --base 060623d7fef3274f69168a7a2e21b35a157f3efa --head b49a5d3fa0e1a6812eab1788606b3696f237cf44",
+      "workingDirectory": ".",
+      "commit": "b49a5d3fa0e1a6812eab1788606b3696f237cf44",
+      "exitCode": 0,
+      "result": "PASS_ACTUAL_ROOT_TOOL_DELIVERY",
+      "inputReport": "artifacts/tmp/W2.remaining-corrections-batch-01/a06-t03-final-ADR-tool-delivery-01.json",
+      "inputReportSha256": "ae0c3e1f56c38352319d3f4de43246a9d81b5c0870afe3acb39710144be46331",
+      "toolDelivery": {
+        "path": "artifacts/tmp/W2.remaining-corrections-batch-01/a06-t03-final-ADR-tool-delivery-01.json",
+        "sha256": "ae0c3e1f56c38352319d3f4de43246a9d81b5c0870afe3acb39710144be46331"
+      },
+      "provenance": "Actual root tool delivery is retained separately from report bytes. No raw stdout/stderr or independent reviewer execution is invented.",
+      "argvDisplay": [
+        ".venv/Scripts/python.exe",
+        "-B",
+        "-s",
+        "tools/adr_check.py",
+        "--repo",
+        ".",
+        "--base",
+        "060623d7fef3274f69168a7a2e21b35a157f3efa",
+        "--head",
+        "b49a5d3fa0e1a6812eab1788606b3696f237cf44"
+      ]
+    },
+    {
+      "id": "review-site-current",
+      "commandId": "foundation:backlog-views",
+      "command": ".venv/Scripts/python.exe -B -s tools/plan_review_check.py --repo . --report artifacts/tmp/W2.remaining-corrections-batch-01/a06-t03-current-b49-review-site-04.json",
+      "workingDirectory": ".",
+      "commit": "b49a5d3fa0e1a6812eab1788606b3696f237cf44",
+      "exitCode": 0,
+      "result": "PASS_ACTUAL_ROOT_TOOL_DELIVERY",
+      "inputReport": "artifacts/tmp/W2.remaining-corrections-batch-01/a06-t03-current-site-tool-delivery-04.json",
+      "inputReportSha256": "dabba8292af64bc9be234d87f5327ad89268e94d12c0899a02b9f9ab5a9bda5d",
+      "toolDelivery": {
+        "path": "artifacts/tmp/W2.remaining-corrections-batch-01/a06-t03-current-site-tool-delivery-04.json",
+        "sha256": "dabba8292af64bc9be234d87f5327ad89268e94d12c0899a02b9f9ab5a9bda5d"
+      },
+      "provenance": "Actual root tool delivery is retained separately from report bytes. No raw stdout/stderr or independent reviewer execution is invented.",
+      "argvDisplay": [
+        ".venv/Scripts/python.exe",
+        "-B",
+        "-s",
+        "tools/plan_review_check.py",
+        "--repo",
+        ".",
+        "--report",
+        "artifacts/tmp/W2.remaining-corrections-batch-01/a06-t03-current-b49-review-site-04.json"
+      ]
+    },
+    {
+      "id": "reference-five-current",
+      "commandId": "desktop:ui-reference-integrity",
+      "command": ".venv/Scripts/python.exe -B -s artifacts/tmp/W2.A06.T03.reference-proof-03.py",
+      "workingDirectory": ".",
+      "commit": "b49a5d3fa0e1a6812eab1788606b3696f237cf44",
+      "exitCode": 0,
+      "result": "PASS_FIVE_CURRENT_REFERENCE_PREDICATES_ONLY",
+      "inputReport": "artifacts/tmp/W2.remaining-corrections-batch-01/a06-t03-ready-reference-proof-02.receipt.json",
+      "inputReportSha256": "d6ce9bbd97a1dfd05ae3686fdc88da59ff291ebb6782c0ac08d2093ec4445378",
+      "rawStreams": {
+        "stdout": {
+          "path": "artifacts/tmp/W2.remaining-corrections-batch-01/a06-t03-ready-reference-proof-02.stdout.log",
+          "sha256": "0465ae37f1636796c505c332ae33b0cb028ee8d113d21d427b3b296228646b5a"
+        },
+        "stderr": {
+          "path": "artifacts/tmp/W2.remaining-corrections-batch-01/a06-t03-ready-reference-proof-02.stderr.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      "producerSha256": "e841d15e25b0aeafa44fdb179b50387b25e824e640a8882a91ef201b8e7bec45",
+      "leafReport": {
+        "path": "artifacts/tmp/W2.remaining-corrections-batch-01/a06-t03-reference-proof-03/report.json",
+        "sha256": "1587fb856cbfb049e4745f766f0a67c75f8ab7255298b1aecb391b756d9377f7",
+        "actualStatus": "PASS_CHECKS_PENDING_INDEPENDENT_DISPOSITION"
+      },
+      "independentActualDisposition": {
+        "path": "artifacts/tmp/W2.remaining-corrections-batch-01/a06-t03-reference-proof-03.independent-actual-disposition-01.json",
+        "sha256": "1280113f4e772d6d5589028cec401e1cb07f7680e64b5fea04ceeb967fc5ddc5",
+        "actualStatus": "PASS_FIVE_CURRENT_REFERENCE_PREDICATES_ONLY"
+      },
+      "predicateIds": [
+        "tokens",
+        "routes",
+        "workflows",
+        "accessibility",
+        "visual"
+      ],
+      "provenance": "One actual retained dispatcher argv and exit0 runs all five unchanged approved-reference predicates. Command is the repository-relative display of the exact absolute argv retained here; no five duplicate CLI executions are asserted.",
+      "argvDisplay": [
+        ".venv/Scripts/python.exe",
+        "-B",
+        "-s",
+        "artifacts/tmp/W2.A06.T03.reference-proof-03.py"
+      ]
+    },
+    {
+      "id": "desktop-literal-exact-three",
+      "commandId": "desktop:application",
+      "command": ".venv/Scripts/python.exe -B -s artifacts/tmp/W2.remaining-corrections-batch-01/a06-t03-desktop-literal-proof-06.py qualify --prefix a06-t03-desktop-literal-qualified-08 --readiness artifacts/tmp/W2.remaining-corrections-batch-01/a06-t03-desktop-literal-SOURCE_READY-08.json --readiness-sha256 5ff50e5942e3055b104f50d1462f9019adad45bb969ec63917ec7e2475d83017",
+      "workingDirectory": ".",
+      "commit": "b49a5d3fa0e1a6812eab1788606b3696f237cf44",
+      "exitCode": 0,
+      "result": "PASS_BOUNDED_EXACT_THREE_ORIGINAL_FAIL_RETAINED",
+      "inputReport": "artifacts/tmp/W2.remaining-corrections-batch-01/a06-t03-desktop-literal-qualified-08.receipt.json",
+      "inputReportSha256": "71386319a7b99b7410ad9a3ad42363ec8e9f03a3698cef51d724b4a4cad80c4a",
+      "producerSha256": "9e3fb939924e466c08966a02c538a047e2fd713e8b76e9837553ad701ae6f3ba",
+      "originalExitCode": 1,
+      "originalDisposition": "PRESERVED_FAIL",
+      "wholeDesktopQualified": false,
+      "commandProvenance": {
+        "kind": "RECONSTRUCTED_LOGICAL_COMMAND",
+        "exactLogicalArguments": [
+          "qualify",
+          "--prefix",
+          "a06-t03-desktop-literal-qualified-08",
+          "--readiness",
+          "artifacts/tmp/W2.remaining-corrections-batch-01/a06-t03-desktop-literal-SOURCE_READY-08.json",
+          "--readiness-sha256",
+          "5ff50e5942e3055b104f50d1462f9019adad45bb969ec63917ec7e2475d83017"
+        ],
+        "basis": "Actual leaf receipt/result and unchanged producer CLI authenticate mode, output and readiness; parent-retained root tool observation f8f80d0 reports exit 0 and 4.2243302 seconds. The displayed interpreter path and -B -s flags are a reproducible conventional invocation; exact original full argv was not retained.",
+        "exactFullArgvRetained": false,
+        "qualifiesOnly": "three bounded literal desktop classifications; original checker FAIL retained, whole Desktop and shipping Reader unqualified"
+      }
+    },
+    {
+      "id": "isolated-native-csp-current",
+      "commandId": "desktop:application",
+      "command": ".venv/Scripts/python.exe -B -s artifacts/tmp/W2.A06.C18.csp-native-proof-04.py --candidate b49a5d3fa0e1a6812eab1788606b3696f237cf44 --output artifacts/tmp/W2.remaining-corrections-batch-01/t03-isolated-native-csp-final-01 --run --preflight artifacts/tmp/W2.remaining-corrections-batch-01/csp-native-source-preflight-04.json --preflight-sha256 fc9d7af7621b2f25cfd025979cffcf53411fa33617c3a67497098e42e19a3e2a",
+      "workingDirectory": ".",
+      "commit": "b49a5d3fa0e1a6812eab1788606b3696f237cf44",
+      "exitCode": 0,
+      "result": "PASS_BOUNDED_OBSERVED_ISOLATED_NATIVE_CSP",
+      "inputReport": "artifacts/tmp/W2.remaining-corrections-batch-01/t03-isolated-native-csp-final-01/receipt.json",
+      "inputReportSha256": "97b1474fb242c2e86a27ee50dcd361c21bb3acfc0b8203659e7aa06293b705b0",
+      "producerSha256": "e84956f808ec5cb914f8865fde6b770aa29608ccef4597de0f1f7ff50ad6156e",
+      "independentActualDisposition": {
+        "path": "artifacts/tmp/W2.remaining-corrections-batch-01/a06-t03-isolated-native-csp-final-01.independent-actual-disposition-01.json",
+        "sha256": "550a10ea2c2348241988ae18caeb808eb7028d8bfab0fec23cc44920be0b9b6b"
+      },
+      "shippingReaderQualified": false,
+      "commandProvenance": {
+        "kind": "RECONSTRUCTED_LOGICAL_COMMAND",
+        "basis": "Actual receipt exitCode 0 and source CLI authenticate candidate/output/run/preflight arguments; parent-retained root tool observation fdbd44 to 1b8c52 reports exit 0. The displayed interpreter path and -B -s flags are a reproducible conventional invocation; exact original full argv was not retained.",
+        "exactFullArgvRetained": false,
+        "qualifiesOnly": "isolated Native CSP; not shipping Reader"
+      }
+    },
+    {
+      "id": "finite-lineage-negative-controls-23",
+      "commandId": "foundation:ui-change",
+      "command": ".venv/Scripts/python.exe -B -s artifacts/tmp/W2.A06.T03.future-lineage-controls-02.py",
+      "workingDirectory": ".",
+      "commit": "b49a5d3fa0e1a6812eab1788606b3696f237cf44",
+      "exitCode": 0,
+      "result": "PASS_PREPARATORY_FINITE_23_NEGATIVE_CONTROLS",
+      "inputReport": "artifacts/tmp/W2.remaining-corrections-batch-01/a06-t03-finite-lineage-controls-02.json",
+      "inputReportSha256": "29272dece06861e4cfa72521df865c0642dac78e5135c3c5b1e0f58de4eeb749",
+      "producerSha256": "ba72cdceb6810c859536cf141e8666d88a45aca28027b7b56c4c42b31c1bca11",
+      "casesPassed": 23,
+      "commandProvenance": {
+        "kind": "RECONSTRUCTED_LOGICAL_COMMAND",
+        "basis": "Actual report PASS 23 cases and unchanged no-argument controls source; parent-retained root tool observation 62e4ed reports exit 0. The displayed interpreter path and -B -s flags are a reproducible conventional invocation; exact original full argv was not retained.",
+        "exactFullArgvRetained": false,
+        "qualifiesOnly": "finite lineage producer preparation controls; no task or Wave qualification"
+      }
+    },
+    {
+      "id": "fresh-protected-shipping-recovery-and-live-denial",
+      "commandId": "desktop:application",
+      "command": ".venv/Scripts/python.exe -B -s artifacts/tmp/W2.remaining-corrections-batch-01/run-t03-fresh-recovery-group-10.py artifacts/tmp/W2.remaining-corrections-batch-01/a06-t03-fresh-recovery-group-10.source-readiness-01.json 901a80720b00b6a72cc6471aa7acddf81854b274992c00282b5e9e1f286fb1c4",
+      "workingDirectory": ".",
+      "commit": "b49a5d3fa0e1a6812eab1788606b3696f237cf44",
+      "exitCode": 0,
+      "result": "PASS_FRESH_RECOVERY_GROUP_NOT_TASK_APPROVAL",
+      "durationSeconds": 209.28956820000894,
+      "inputReport": "artifacts/tmp/W2.remaining-corrections-batch-01/a06-t03-fresh-recovery-group-10.report.json",
+      "inputReportSha256": "1e2c1a91f5920d2f61d02734ac0ddceef0acc08b6094935ebc88bb036ffbcbe1",
+      "producerSha256": "be8d8ba00014508af85a5cfce6b919bfe009074913c00f7c0c1ef5fca59e7854",
+      "commandProvenance": "Exact root tools9f1690/session3786/completion599698 exit0; actual producer209.2895682s. Fresh five-stage group, actual owners/death/keyboard/recovery/readback/live denial. Leaf and outer stage timings retain their separate scope.",
+      "limits": "Tiny synthetic encrypted39-row fixture and object, no model or8/16GiB workload. Does not close historical original R03 by itself or qualify Task/Wave. Physical independent-host boundary remains explicitly untested under approved W5 deferral."
+    },
+    {
+      "id": "actual-shipping-reader-and-csp-bridge",
+      "commandId": "desktop:application",
+      "command": ".venv/Scripts/python.exe -B -s artifacts/tmp/W2.A06.T03.shipping-reader-csp-09.py --candidate b49a5d3fa0e1a6812eab1788606b3696f237cf44 --output artifacts/tmp/W2.remaining-corrections-batch-01/t03-shipping-reader-runtime-09 --run --package artifacts/tmp/W2.A06.T03.qualifying-package-01.final-01.json --preflight artifacts/tmp/W2.remaining-corrections-batch-01/a06-t03-shipping-reader-csp-09.source-preflight-01.json --preflight-sha256 9be8e6abeb5ece9d3dd1f8a6bcd46c447602a4adaf41e1a8279b46e52bb7de15 --source-record artifacts/tmp/W2.remaining-corrections-batch-01/a06-t03-shipping-reader-method-source-record-09.json --source-record-sha256 e8c8d4bab124a953b00a562e505f8d1c613c34c8b8980a1c5c7255a92284caa1",
+      "workingDirectory": ".",
+      "commit": "b49a5d3fa0e1a6812eab1788606b3696f237cf44",
+      "exitCode": 0,
+      "result": "PASS_ACTUAL_SHIPPING_READER_AND_AUTHENTICATED_CSP_BRIDGE",
+      "durationSeconds": 259.6560733000515,
+      "inputReport": "artifacts/tmp/W2.remaining-corrections-batch-01/t03-shipping-reader-runtime-09/receipt.json",
+      "inputReportSha256": "bcbdace8653f594851a0e6acd56eaf0f5660101845c12db7f993e41f286d30cd",
+      "producerSha256": "31d6c13024239e83c67b6e248f04e9371162d2b7e032873fb619ebbe4115d900",
+      "commandProvenance": "Exact root launch62646c/session67820/completion47099c exit0; actual producer259.6560733seconds. Original invocation and fixed package/source/readiness records retained locally.",
+      "limits": "Actual protected miniature3-page PDF and realWorker positive. Effective shipping CSP attribution is an authenticated identical-assets/config/codegen inference from passive companion, not directly captured shipping headers. No separate render duration was emitted. No model, larger-resource workload, full deployment or release qualification."
+    }
+  ],
+  "verificationSelection": {
+    "riskAnalysis": "Final fixed b49 has17 distinct risk-selected passing machine-command entries for complete governed734-file lint/types, exact approved45+3 classification,59+1 existing material typing cases and unchanged schema/PDF bytes, current ADR/site, actual frontend/Native/package builds, five current approved reference predicates, preparatory finite23 controls, fresh shipping Reader/CSP and protected recovery/live denial. Exact unchanged one-file formatter debt is separately disposed; complete original quality remains FAIL1. Three logical command displays retain their explicitly disclosed full-original-argv limitation with actual source/receipt/tool delivery. No whole Desktop/profile/migration/Wave pass is inferred; five stale migration expectations remain open for the next ordinary linked correction.",
+    "selectedCommandIds": [
+      "foundation:quality",
+      "foundation:architecture",
+      "documents:unit",
+      "foundation:unit",
+      "documents:anchor-schemas",
+      "desktop:application",
+      "foundation:build-manifest",
+      "foundation:adr",
+      "foundation:backlog-views",
+      "desktop:ui-reference-integrity",
+      "desktop:ui-token",
+      "desktop:ui-route-page",
+      "desktop:ui-workflow",
+      "desktop:ui-accessibility",
+      "desktop:ui-visual-regression",
+      "foundation:ui-change"
+    ],
+    "deferred": [
+      "CAP-05.S06, CP09, and W2 full profile/platform/model/installer and G2 require separate fresh qualification.",
+      "One ordinary linked correction of CAP-05.S01.T03 after A06 adoption/quiescence must close the five stale migration expectations before S06/Wave migration qualification."
+    ],
+    "reusedEvidence": []
+  },
+  "reviewerDisposition": {
+    "openFindingIds": [],
+    "note": "Machine evidence complete; formal atomic R01 independent task review is pending. Five historical migration observations remain OPEN outside TY01, explicitly gated before migration/S06/Wave qualification; no independent task approval is invented."
+  },
+  "methodAuthority": {
+    "ownerDecision": {
+      "path": "artifacts/evidence/W2.A06.T03.typing-scope-addendum-01.owner-decision.json",
+      "sha256": "aa07a79108cfa4158d68702ed16c9d27dff374a1bc90c782e500fa0bcf847fda"
+    },
+    "ownerSupplement": {
+      "path": "artifacts/evidence/W2.A06.T03.typing-scope-addendum-01.supplement.json",
+      "sha256": "c68abf1b6711dbca800381d3c5ddf9d254f11257a65b9cfd87e217c800b0ad6c"
+    },
+    "qualityTransport": {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/quality-transport-07/receipt.json",
+      "sha256": "10c0d503f46b8b9a81b14308404b37c727bd3ff33102fbbb543cbdcb34f14dc9",
+      "actualStatus": "COMPLETED_ORIGINAL_CHECK_OUTCOMES",
+      "limit": "Original complete quality command exited 1. Only exact unchanged formatter debt is separately disposed; no whole quality PASS."
+    },
+    "qualityDisposition": {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/a06-t03-closed48-format-debt-actual-disposition-04.json",
+      "sha256": "431df6fd6b98db0639044efdf2e43d01547c306798508b3de989a2f58604d0a0",
+      "actualStatus": "APPROVED_BOUNDED_48_AND_EXACT_UNCHANGED_FORMAT_DEBT"
+    },
+    "qualitySourceReview": {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/W2.A06.T03.quality-data-source-disposition-01.json",
+      "sha256": "3df8bba5521fce6b46517e9ca4bf761fbbff820c4401adfbb57434e8be3dfe90",
+      "actualStatus": "SOURCE_CONFORMING_PROSPECTIVE_COMMIT_ONLY"
+    },
+    "core45": {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/a06-t03-core45-qualified-04.receipt.json",
+      "sha256": "98d185df50a8db22032fe8b5e60a2aadc2ce6fa3a74f811acddfe67afd89d214",
+      "actualStatus": "PASS_EXACT45_ORIGINAL_FAIL_PRESERVED"
+    },
+    "desktop3": {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/a06-t03-desktop-literal-qualified-08.receipt.json",
+      "sha256": "71386319a7b99b7410ad9a3ad42363ec8e9f03a3698cef51d724b4a4cad80c4a",
+      "actualStatus": "PASS_EXACT_THREE_ORIGINAL_FAIL_RETAINED"
+    },
+    "typing": {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/typing-source-checks-03/receipt.json",
+      "sha256": "0fd30030e0cf5cde8ff93010b2ab7b8cbd004b6d8704ee29d1ee4fab85fb35d3",
+      "actualStatus": "PASS_AFFECTED_EXISTING_TESTS_AND_EXACT_BYTES_ONLY"
+    },
+    "typingDisposition": {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/a06-t03-typing-source-checks-03.actual-independent-disposition-01.json",
+      "sha256": "2cc99e87195e356cbda71b08ffd451484a4207c0d8e5dc35d20b6c86988644a4",
+      "actualStatus": "PASS_SELECTED_AFFECTED_BEHAVIOR_AND_EXACT_BYTES_ONLY"
+    },
+    "sourceSecurityReference": {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/W2.A06.T03.own-ADR.commit-bound-source-security-reference-disposition-02.json",
+      "sha256": "f6359cc12bdf644b1043dde34f504da4c4234176b25d077c98fa0e90c94c6859",
+      "actualStatus": "ONE_LINE_OWN_ADR_SOURCE_CONFORMING_QUALIFYING_EVIDENCE_PENDING"
+    },
+    "site": {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/a06-t03-current-b49-review-site-04.json",
+      "sha256": "9b82695cffcb506a6346b9b04d310602a1231ca882ceb676bf1704a85e8bc6c0",
+      "actualStatus": "pass"
+    },
+    "lineageControls": {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/a06-t03-finite-lineage-controls-02.json",
+      "sha256": "29272dece06861e4cfa72521df865c0642dac78e5135c3c5b1e0f58de4eeb749",
+      "actualStatus": "PASS"
+    },
+    "lineageInventory": {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/a06-t03-future-lineage-independent-actual-design-inventory-03.json",
+      "sha256": "63dfe93a74e3434923b9a7bf5f8d60455df5659df3b3c47015eacb653e492fd0",
+      "actualStatus": "DESIGN_INVENTORY_ONLY_NOT_SOURCE_READY"
+    },
+    "finiteSourceReadiness": {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/a06-t03-finite-method-source-readiness-03.json",
+      "sha256": "8d20b0e41e58bed7ae8d175fb7a943dd7cb3127ca9a7ebe7c147640592b52ea9",
+      "actualStatus": "SOURCE_READY"
+    },
+    "finiteSourceRecord": {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/a06-t03-finite-method-source-record-03.json",
+      "sha256": "01c27a8d81709c0e66af09ec77952eee7306f97b5770609f292b3ef0c03d4b19"
+    },
+    "finiteSourceCapture": {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/a06-t03-finite-method-source-capture-03.json",
+      "sha256": "2c164732708fb31d4120b57471612de16815310bcd99a60e6da6bd8ef8281963"
+    },
+    "finiteDeclarationClarification": {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/a06-t03-finite-method-record-03.declaration-clarification-independent-disposition-01.json",
+      "sha256": "b1901e19f8e41a4380c968104361ba3c4a0cd343819aeaaa751d2e6d324e055b",
+      "actualStatus": "CONFORMING_APPEND_ONLY_DECLARATION_CLARIFICATION"
+    },
+    "frontend": {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/a06-t03-ready-frontend-01.receipt.json",
+      "sha256": "6297f033fa69d21f2a725fdc45f99851377f2e63c946a2f36884781a2102e606",
+      "actualStatus": "PASS_READY_STANDARD_STEP_ONLY"
+    },
+    "native": {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/a06-t03-ready-native-02.receipt.json",
+      "sha256": "91cc96e75a7113e342320e114fe87696ce361f92aadd084a3ec32876785a0621",
+      "actualStatus": "PASS_READY_STANDARD_STEP_ONLY"
+    },
+    "package": {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/a06-t03-ready-package-02.receipt.json",
+      "sha256": "32e7ef15e294b8aba7a2fd00856fd8b7a2066e69e4ae3bed929a04b9bc864661",
+      "actualStatus": "PASS_READY_STANDARD_STEP_ONLY"
+    },
+    "reference": {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/a06-t03-reference-proof-03/report.json",
+      "sha256": "1587fb856cbfb049e4745f766f0a67c75f8ab7255298b1aecb391b756d9377f7",
+      "actualStatus": "PASS_CHECKS_PENDING_INDEPENDENT_DISPOSITION"
+    },
+    "referenceDisposition": {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/a06-t03-reference-proof-03.independent-actual-disposition-01.json",
+      "sha256": "1280113f4e772d6d5589028cec401e1cb07f7680e64b5fea04ceeb967fc5ddc5",
+      "actualStatus": "PASS_FIVE_CURRENT_REFERENCE_PREDICATES_ONLY"
+    },
+    "isolatedCsp": {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/t03-isolated-native-csp-final-01/receipt.json",
+      "sha256": "97b1474fb242c2e86a27ee50dcd361c21bb3acfc0b8203659e7aa06293b705b0",
+      "actualStatus": "PASS_OBSERVED_ISOLATED_CSP"
+    },
+    "isolatedCspDisposition": {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/a06-t03-isolated-native-csp-final-01.independent-actual-disposition-01.json",
+      "sha256": "550a10ea2c2348241988ae18caeb808eb7028d8bfab0fec23cc44920be0b9b6b",
+      "actualStatus": "PASS_OBSERVED_ISOLATED_NATIVE_CSP_ONLY"
+    },
+    "reader08Adverse": {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/t03-shipping-reader-runtime-08/receipt.json",
+      "sha256": "9d48cd2005e496966e14c065807c72f7e39f9b3f262b7eeb71866e34543a6482",
+      "actualStatus": "FAIL",
+      "limit": "Original Reader08 FAIL preserved; source-bounded successor09 passed actual shipping Reader and authenticated CSP bridge, with independent disposition linked separately."
+    },
+    "recovery07Adverse": {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/a06-t03-fresh-recovery-group-07.report.json",
+      "sha256": "f7907bc9e1175e24eec396b54bd61d67583ba2b122e0f542e28721b5085e7468",
+      "actualStatus": "FAIL",
+      "limit": "Original recovery07/09 FAIL preserved; reviewed successor10 passed the fresh recovery/live-denial group. Its absent-WAL branch and the separate actual preserved-r03 zero-WAL readback are explicitly distinguished."
+    },
+    "migrationBroadAdverse": {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/typing-source-checks-01/receipt.json",
+      "sha256": "888a63b629e2772201f287e8f21d2e5a8af7e97836703910ca9c1cd5a9e314b7",
+      "actualStatus": "FAIL",
+      "limit": "331-case exploratory broad run had five historical stale migration expectations; downstream assertions unproven."
+    },
+    "migrationTriage": {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/a06-t03-historical-migration-failure-triage-01.json",
+      "sha256": "eceaa9441e54e5246a5a7696ac2e37c631cb4f21553369c37d01c72f213c05b1",
+      "actualStatus": "AUTHENTICATED_ADVERSE_STALE_EXPECTATIONS_NOT_TYPING_REGRESSION"
+    },
+    "migrationContractDisposition": {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/a06-t03-open-migration-findings-contract-disposition-01.json",
+      "sha256": "15dffd956f248a879f3287d257ed6afd253e1dfc6aa8aee1ec6b04cd7cbb6983",
+      "actualStatus": "TASK_LEVEL_SELECTION_CAN_PROCEED_WITH_EXPLICIT_OPEN_MIGRATION_FINDINGS"
+    },
+    "TY01SourceSecurityReference": {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/W2.A06.T03.TY01.commit-bound-source-security-reference-disposition-02.json",
+      "sha256": "543643879bee293e38b767ca0e3c643c4eaeb035e366443fce3e09b5039773ef",
+      "actualStatus": "SOURCE_SECURITY_REFERENCE_REVIEWED_ONLY"
+    },
+    "reader08AndRecovery09RootDelivery": {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/a06-t03-reader08-and-recovery09-root-delivery-01.json",
+      "sha256": "fd1fd029070885475255eb5d85c828be5da81fb1c7add158a354a90f86b61233",
+      "limit": "Actual root tool delivery preserves two exit1 adverse runs; no qualification inferred."
+    },
+    "recovery09Adverse": {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/a06-t03-fresh-recovery-group-09.report.json",
+      "sha256": "6c87948df02b6b293fe585536406695b8f7b35d103a022037d6439e3d2675f3c",
+      "actualStatus": "FAIL",
+      "limit": "Original recovery07/09 FAIL preserved; reviewed successor10 passed the fresh recovery/live-denial group. Its absent-WAL branch and the separate actual preserved-r03 zero-WAL readback are explicitly distinguished."
+    },
+    "referenceDispatcher": {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/a06-t03-ready-reference-proof-02.receipt.json",
+      "sha256": "d6ce9bbd97a1dfd05ae3686fdc88da59ff291ebb6782c0ac08d2093ec4445378",
+      "actualStatus": "PASS_READY_STANDARD_STEP_ONLY"
+    },
+    "freshShippingRecovery": {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/a06-t03-fresh-recovery-group-10.report.json",
+      "sha256": "1e2c1a91f5920d2f61d02734ac0ddceef0acc08b6094935ebc88bb036ffbcbe1",
+      "actualStatus": "PASS_FRESH_RECOVERY_GROUP_NOT_TASK_APPROVAL"
+    },
+    "freshShippingRecoveryReadiness": {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/a06-t03-fresh-recovery-group-10.source-readiness-01.json",
+      "sha256": "901a80720b00b6a72cc6471aa7acddf81854b274992c00282b5e9e1f286fb1c4",
+      "actualStatus": "SOURCE_READY"
+    },
+    "shippingReaderActual": {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/t03-shipping-reader-runtime-09/receipt.json",
+      "sha256": "bcbdace8653f594851a0e6acd56eaf0f5660101845c12db7f993e41f286d30cd",
+      "actualStatus": "PASS_ACTUAL_SHIPPING_READER_AND_AUTHENTICATED_CSP_BRIDGE"
+    },
+    "shippingReaderActualDisposition": {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/a06-t03-shipping-reader-runtime-09.independent-actual-disposition-01.json",
+      "sha256": "024dca8558bd09c3cee9c75964449ca130a91c20abc2c85f681b792c595d86e5",
+      "actualStatus": "PASS_BOUNDED_ACTUAL_SHIPPING_READER_AND_AUTHENTICATED_CSP_BRIDGE"
+    },
+    "shippingRecoveryActualDisposition": {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/a06-t03-fresh-recovery-group-10.actual-independent-disposition-01.json",
+      "sha256": "72631b5874aea796c69d392f7d17cf2b4289357541e0411dc50349041a55915a",
+      "actualStatus": "PASS_BOUNDED_FRESH_RECOVERY_LIVE_DENIAL_AND_REAL_READBACK_BRANCH_NOT_TASK_APPROVAL"
+    },
+    "protectedZeroWALBranchDisposition": {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/a06-t03-protected-readback-03.zero-wal-branch-01.actual-disposition.json",
+      "sha256": "a6677705b37187f011a8b4bb9f588bd16a7d2af216bb46ef14f050ea2e5cd237",
+      "actualStatus": "PASS_REAL_REGULAR_ZERO_WAL_READBACK03_BRANCH_ONLY"
+    }
+  },
+  "preservedAdverseEvidence": [
+    {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/quality-transport-07/receipt.json",
+      "sha256": "10c0d503f46b8b9a81b14308404b37c727bd3ff33102fbbb543cbdcb34f14dc9",
+      "actualStatus": "FAIL",
+      "limit": "Original complete quality command exited 1. Only exact unchanged formatter debt is separately disposed; no whole quality PASS."
+    },
+    {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/t03-shipping-reader-runtime-08/receipt.json",
+      "sha256": "9d48cd2005e496966e14c065807c72f7e39f9b3f262b7eeb71866e34543a6482",
+      "actualStatus": "FAIL",
+      "limit": "Original Reader08 FAIL preserved; source-bounded successor09 passed actual shipping Reader and authenticated CSP bridge, with independent disposition linked separately."
+    },
+    {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/a06-t03-fresh-recovery-group-07.report.json",
+      "sha256": "f7907bc9e1175e24eec396b54bd61d67583ba2b122e0f542e28721b5085e7468",
+      "actualStatus": "FAIL",
+      "limit": "Original recovery07/09 FAIL preserved; reviewed successor10 passed the fresh recovery/live-denial group. Its absent-WAL branch and the separate actual preserved-r03 zero-WAL readback are explicitly distinguished."
+    },
+    {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/typing-source-checks-01/receipt.json",
+      "sha256": "888a63b629e2772201f287e8f21d2e5a8af7e97836703910ca9c1cd5a9e314b7",
+      "actualStatus": "FAIL",
+      "limit": "331-case exploratory broad run had five historical stale migration expectations; downstream assertions unproven."
+    },
+    {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/a06-t03-fresh-recovery-group-09.report.json",
+      "sha256": "6c87948df02b6b293fe585536406695b8f7b35d103a022037d6439e3d2675f3c",
+      "actualStatus": "FAIL",
+      "limit": "Original recovery07/09 FAIL preserved; reviewed successor10 passed the fresh recovery/live-denial group. Its absent-WAL branch and the separate actual preserved-r03 zero-WAL readback are explicitly distinguished."
+    }
+  ],
+  "completionLimits": [
+    "Formal independent task review, combined A06 contribution review/adoption and normal local integration remain required.",
+    "Original complete quality remains FAIL1; only exact unchanged tools/plan_review_site.py formatter debt is disposed by the approved batch.",
+    "Five historical migration expectation findings remain OPEN for one ordinary linked CAP-05.S01.T03 correction after A06 adoption/quiescence; no S06/CP09/Wave migration qualification is claimed.",
+    "No8/16GiB model workload or required physical second-Windows-host proof was performed. Approved larger-resource/foreign-host deferrals stay explicit.",
+    "W2 full profile/platform/installer and separate human G2 release, followed by whole-W3 planning approval, remain unmet gates."
+  ]
+}
