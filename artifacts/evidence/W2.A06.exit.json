@@ -1,0 +1,130 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "wave-amendment-exit-evidence",
+  "amendmentId": "W2.A06",
+  "changeRequestId": "ECR-0014",
+  "targetWave": "W2",
+  "branch": "codex/w2-implementation",
+  "candidateCommit": "89b03dbdef7d6111f2d7f271871a73f9de962a74",
+  "qualifiedProductCandidate": "b49a5d3fa0e1a6812eab1788606b3696f237cf44",
+  "taskBindings": [
+    {
+      "taskId": "W2.A06.T01",
+      "candidateCommit": "eb570817f57a24756e2d675e974f7ee429c5dfc7",
+      "manifestReference": {
+        "type": "criterion-manifest",
+        "path": "artifacts/evidence/W2.A06.T01.R01.json",
+        "sha256": "a2c50c398a7ae901e7ee65dfc6da46b017ace9f9feb35584edc440db7f56e171",
+        "commit": "eb570817f57a24756e2d675e974f7ee429c5dfc7",
+        "recorded_at": "2026-10-12T11:45:29+00:00"
+      },
+      "reviewLedger": {
+        "path": "artifacts/evidence/W2.A06.T01.review-R01.json",
+        "sha256": "18063b4e220f43a8ec278f535b7d939b042ebbaaa6cc4402c9a599105825972e"
+      },
+      "immutablePacketSHA256": "73a6fedab2870549c2e22b0ab070eff9d17630d96a496b2df3e7faf57fb063d4"
+    },
+    {
+      "taskId": "W2.A06.T02",
+      "candidateCommit": "df93798ba55571d6258f720dc4a8ed2766f0aee7",
+      "manifestReference": {
+        "type": "criterion-manifest",
+        "path": "artifacts/evidence/W2.A06.T02.R01.json",
+        "sha256": "9207dfd86ac8ad37b34267296e0ede6e0eda1444a2910ea9f26c02b1bc848e59",
+        "commit": "df93798ba55571d6258f720dc4a8ed2766f0aee7",
+        "recorded_at": "2026-10-12T17:22:48+00:00"
+      },
+      "reviewLedger": {
+        "path": "artifacts/evidence/W2.A06.T02.review-R01.json",
+        "sha256": "ba61a41249cd04559bd2035105552d2d21dff620b4995d139500490a53bcff3c"
+      },
+      "immutablePacketSHA256": "f17db4a336720f07bae623896133c2b15bee6b2927fa0496853d7bd36917db67"
+    },
+    {
+      "taskId": "W2.A06.T03",
+      "candidateCommit": "b49a5d3fa0e1a6812eab1788606b3696f237cf44",
+      "manifestReference": {
+        "type": "criterion-manifest",
+        "path": "artifacts/evidence/W2.A06.T03.R01.json",
+        "sha256": "7561666ccc2cc5b8dcc792c83924b303cefb3018e2c735926f67cf783dfa4287",
+        "commit": "b49a5d3fa0e1a6812eab1788606b3696f237cf44",
+        "recorded_at": "2026-10-13T00:35:31+00:00"
+      },
+      "reviewLedger": {
+        "path": "artifacts/evidence/W2.A06.T03.review-R01.json",
+        "sha256": "0c45eeb64501dc8dc58f25cf64ed1ee627ab4456ca65c15f91708b1359a477c6"
+      },
+      "immutablePacketSHA256": "427d52341d0b65be4867c0a114a73e1c592302dc8876d69e6847c5a1f71547be"
+    }
+  ],
+  "outcome": "ready-for-independent-amendment-exit-review",
+  "waveCampaign": {
+    "status": "PAUSED",
+    "scope": "amendment-hold",
+    "pauseReason": "W2.C17.T01 is DONE, independently approved and locally integrated. All 33 ordinary tasks, 17 corrective tasks and five adopted amendments are complete; CAP-05.S06 integration and CP-09 remain pending. Fresh shipping UIA R11 and protected state were independently approved at 59ba1aa732c58b9ba5bdf4fdea95cd0799c27ebd (artifacts/tmp/CAP-05.S06.shipping-uia-r11.independent-disposition-01.json); this does not close the separate forced-shutdown recovery P1 CAP-05.S06.restart-boundary-r10-R01-F01 (artifacts/tmp/CAP-05.S06.restart-boundary-r10.independent-disposition-01.json). The exact current-build conformance method is still awaiting its already-requested owner decision (artifacts/tmp/CAP-05.S06.current-build-method-02/review.html); no duplicate request or producer execution. Preserve the locked R03 adverse fixture and safe existing-lock denial; authenticate applicable explicit recovery authority or prepare a narrow product remedy before implementing new recovery semantics. Full Wave checks retain 45 architecture and three desktop-lint classifier failures, unwaived. No shared automation/framework work after A05; no actual 8/16 GiB workload variants. W2 qualification, independent Wave review, G2 release and the complete W3 packet approval remain pending."
+  },
+  "amendmentCampaign": {
+    "status": "ACTIVE",
+    "scope": "wave-amendment",
+    "pauseReason": null
+  },
+  "requiredNextTransition": "independent amendment exit review",
+  "acceptanceClosure": [
+    {
+      "criterionIndex": 1,
+      "criterion": "A06-AC01: The exact canonical proposal governs recovery18 plus named ADR0054/index, fixed API/Native authority/witness/denials and approved1.9 state/focus map. Preserve all immutable W1/W2 task approvals and accepted architecture.",
+      "status": "ready-for-independent-exit-disposition",
+      "basis": "Exact approved recovery/API/Native witness scope, accepted architecture and approved1.9 Projects contract are bound by the immutable independently approved T01/T02 histories and T03 source-security-reference/actual integration dispositions."
+    },
+    {
+      "criterionIndex": 2,
+      "criterion": "A06-AC02: Exact current C18 proposal/readiness and finite pre-admission/later source-record method contracts form one grant. C18 remains an existing external prerequisite, not a new A06 task. Actual candidate/task/claim/source/security/UI/readiness/negative-control hashes precede execution.",
+      "status": "ready-for-independent-exit-disposition",
+      "basis": "C18 is already DONE/approved; exact finite methods, independent source/readiness/negative controls and current held proof are authenticated in T03. Only the exact owner-approved portable unintroduced R01 recording correction changes publication representation."
+    },
+    {
+      "criterionIndex": 3,
+      "criterion": "A06-AC03: Three ordered exact tasks independently satisfy every criterion at committed candidate; recovery explicit/whole-process, verification complete-multiset/CSP/data/formatter limits and protected facts all required. Any unknown/unapproved finding remains open.",
+      "status": "ready-for-independent-exit-disposition",
+      "basis": "All three ordered tasks are actually DONE with independent commit-bound approvals. Fresh b49 Reader09, recovery10/live denial, actual zero-WAL03 branch, complete734 lint/types and unchanged45+3/source/reference controls are retained as their original task executions, not relabeled fresh at this metadata exit. Unknown/unapproved findings remain open; five stale migration expectations require the ordinary linked correction before migration/S06/Wave qualification."
+    },
+    {
+      "criterionIndex": 4,
+      "criterion": "A06-AC04: Required combined security/interface/recovery/verification review and actual amendment exit/adoption checkpoint use normal installed operations; W2 remains paused until normal resume, no S06/CP09/W2/G2 completion inferred.",
+      "status": "ready-for-independent-exit-disposition",
+      "basis": "The actual three-task/source observer passes and the independently prepared combined security/interface/recovery/verification assessment is retained. This exit requests its normal independent formal disposition; a separate committed adoption security checkpoint remains next, with W2 paused until normal resume."
+    }
+  ],
+  "checks": [
+    {
+      "command": ".venv/Scripts/python.exe -B -s artifacts/tmp/W2.remaining-corrections-batch-01/prepare-a06-exit-01.py",
+      "result": "passed",
+      "exitCode": 0,
+      "commit": "89b03dbdef7d6111f2d7f271871a73f9de962a74",
+      "rawOutput": "artifacts/tmp/W2.remaining-corrections-batch-01/W2.A06.exit-observation-01.json",
+      "rawOutputSha256": "0c4c7ddcbbc22e6672d1c1456e6bfd2b5e471ad4c3beea3edbca87078f04aa1c"
+    }
+  ],
+  "independentCombinedPreparation": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/W2.A06.pre-exit-combined-security-draft-01.json",
+    "sha256": "b3c870ac2a6ef496f6ad83e1539578934e46d8c8a7b23b066e6ccb9c2ec764b7",
+    "scope": "Actual pre-exit assessment, not formal approval; final formal disposition binds this completion and corrected T03 publication."
+  },
+  "carriedLimits": [
+    "Original complete quality FAIL1 retains the approved exact unchanged formatter-debt disposition.",
+    "Five historical migration expectations OPEN until the ordinary linked CAP-05.S01.T03 correction after A06 adoption/quiescence.",
+    "Physical second independent Windows installation UNTESTED; exact owner deferral requires first available installation and W5 exit.",
+    "Shipping CSP header attribution is the authenticated identical-assets/config inference, not direct shipping header capture.",
+    "No8/16GiB model workloads; no complete installer/whole deployment or fresh full Wave qualification is claimed.",
+    "S06 integration/next actual cluster checkpoint, fresh W2 matrix/independent Wave review/G2 and W3 planning approval remain separate."
+  ],
+  "combinedContributionReview": {
+    "path": "artifacts/evidence/W2.A06.contributions.review-01.json",
+    "sha256": "96d931526fc86a5ac91464e04da827ede0b8a1f1fdf1783ee621be25dfbc5894",
+    "result": "approved",
+    "sliceIds": [
+      "W2.A06.S01",
+      "W2.A06.S02"
+    ]
+  }
+}
