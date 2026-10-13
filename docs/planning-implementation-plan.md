@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 7b8cee22006fff92b807b183d279bc97bfc19096d3428c46e3d3cc9d9a76ad5d
+source_sha256: 7f008bf0888e0ca41484c151694d04c94b5e221e1add5093ea20d49a974653dc
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -4948,7 +4948,7 @@ Original tasks and approvals remain unchanged.
 
 ### W2.C19.T01 — Create acquisition queue, conflict, and entitlement placeholders
 
-**Status:** `REVIEW`. **Original task:** `CAP-05.S01.T03`. **Latest review:** `-`.
+**Status:** `DONE`. **Original task:** `CAP-05.S01.T03`. **Latest review:** `approved`.
 
 **Reproduction:** The preserved complete 331-case T03 typing-source execution has five failures: literal v21/v22/v23 migration plans omit installed migrations 0026-0028, and five target-version assertions expect 25 while the current approved migration runner reaches 28. Replay the five named affected migration cases plus the existing material v24 interruption case against all six original v21/v22/v23 JSON/ZIP fixtures. Original failed execution remains adverse.
 
@@ -4964,9 +4964,11 @@ Original tasks and approvals remain unchanged.
 - tests/documents/test_oa_acquisition.py
 #### Review history — W2.C19.T01
 
-**Review mode:** `append-only v1` / 0 completed round(s)
+**Review mode:** `append-only v1` / 1 completed round(s)
 
-**Current immutable submission awaiting review:** `R01` / packet SHA-256 `dc82ac26fa2a88502e7c4003a927df0d55035441d1eedc8a85f134978fe01aef`
+##### Round R01
+
+**Immutable submission packet:** `R01` / packet SHA-256 `dc82ac26fa2a88502e7c4003a927df0d55035441d1eedc8a85f134978fe01aef`
 
 - Candidate / base / branch: `c9da0705d4b01ef3b2a77979482c71b9aff9640f` / `aba41aae4fe5a530718c37a72a3213c68f6eb944` / `codex/w2-implementation`
 - Submitted by / at: codex-w2-implementation / `2026-10-13T03:52:46+00:00`
@@ -4980,9 +4982,25 @@ Original tasks and approvals remain unchanged.
 - Prior round / replayed open findings: `-` / -
 - Root-cause escalation: -
 
-**Current latest-review projection:** `-` by - at `-`
+**Disposition / reviewer / time:** `approved` / agent:/root/c19_correction_review / `2026-10-13T04:16:50+00:00`
 
-**Latest notes:** -
+**Immutable review ledger:** `artifacts/evidence/W2.C19.T01.review-R01.json` / `5d671b4a27641c92cc3faad7cd70a9b6a64fc825e4b91afdefb665998e7fc1c6`
+
+**Review notes:** Independent focused W2.C19.T01 R01 review approves the exact committed migration-test restoration and its affected integration. The frozen delivery, original approved snapshot, inherited criteria, candidate inventory, criterion/selection/packet/evidence digests and actual passing output are authenticated. No criterion-bound blocker remains. The original 331-test FAIL and both subsequent type failures remain adverse; final passing type evidence is limited to the actual configured 734-source invocation. Normal site refresh is outside the fixed reviewed boundary and is not claimed complete. Required S06/checkpoint/W2 qualification, independent Wave review and human release decisions remain separate.
+
+**Findings opened:**
+
+- None
+
+**Prior finding closures:**
+
+- None
+
+**Current immutable submission awaiting review:** None
+
+**Current latest-review projection:** `approved` by agent:/root/c19_correction_review at `2026-10-13T04:16:50+00:00`
+
+**Latest notes:** Independent focused W2.C19.T01 R01 review approves the exact committed migration-test restoration and its affected integration. The frozen delivery, original approved snapshot, inherited criteria, candidate inventory, criterion/selection/packet/evidence digests and actual passing output are authenticated. No criterion-bound blocker remains. The original 331-test FAIL and both subsequent type failures remain adverse; final passing type evidence is limited to the actual configured 734-source invocation. Normal site refresh is outside the fixed reviewed boundary and is not claimed complete. Required S06/checkpoint/W2 qualification, independent Wave review and human release decisions remain separate.
 
 **Currently open findings:** -
 
