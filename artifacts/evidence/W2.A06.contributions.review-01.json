@@ -1,0 +1,378 @@
+{
+  "schemaVersion": "1.0",
+  "amendmentId": "W2.A06",
+  "changeRequestId": "ECR-0014",
+  "sliceIds": [
+    "W2.A06.S01",
+    "W2.A06.S02"
+  ],
+  "reviewer": "agent:/root/a06_t02_ui_security_review",
+  "independentReviewer": "agent:/root/a06_t02_ui_security_review",
+  "reviewedAt": "2026-10-13T02:19:49.255913+00:00",
+  "candidateCommit": "b49a5d3fa0e1a6812eab1788606b3696f237cf44",
+  "reviewedCompletionDeliveryCommit": "8937b021250431695f5d5ba3f17c27ab7ffb3db3",
+  "taskSubmissionDeliveryCommit": "d6847dc902a54f7ca3fe29778fa887aacd73507f",
+  "reviewScope": "The two existing ECR-0014 A06 contributions and their combined security/interface/recovery/verification boundaries only. No amendment exit/adoption, downstream CAP-05.S06/CP09/W2, full profile or human release approval.",
+  "authority": {
+    "ecrPacket": {
+      "path": "planning/enabler-change-requests/ECR-0014.packet.json",
+      "sha256": "6293590db74b9a3ec4ce6019a1713def568798ac3a71208a5583bfcff78f7a34"
+    },
+    "ownerApproval": {
+      "path": "planning/wave-amendment-approvals/W2.A06.json",
+      "sha256": "3ecf2b98806f1589be7bd63fcc4f25cf0ee2df79bc95a3a0fefda2ce5666e4b2"
+    },
+    "approvedExperienceReferenceId": "RO-UI-ACADEMIC-MINIMAL-1.9",
+    "sliceContributionsCopiedFromFrozenPacket": true,
+    "newScopeOrPredicateExemption": false
+  },
+  "taskBindings": [
+    {
+      "taskId": "W2.A06.T01",
+      "status": "DONE",
+      "reviewResult": "approved",
+      "reviewer": "agent:/root/a03_t01_lineage_audit",
+      "productCandidateCommit": "eb570817f57a24756e2d675e974f7ee429c5dfc7",
+      "reviewedStateCommit": "969a46e5b173f504c0635bd5cfda9df2a16a439c",
+      "reviewLedger": {
+        "path": "artifacts/evidence/W2.A06.T01.review-R01.json",
+        "sha256": "18063b4e220f43a8ec278f535b7d939b042ebbaaa6cc4402c9a599105825972e"
+      },
+      "acceptanceCriteriaReviewed": 5,
+      "completedReviewPersisted": true,
+      "actualCompletionSnapshotCommit": "8937b021250431695f5d5ba3f17c27ab7ffb3db3"
+    },
+    {
+      "taskId": "W2.A06.T02",
+      "status": "DONE",
+      "reviewResult": "approved",
+      "reviewer": "agent:/root/a06_t02_ui_security_review",
+      "productCandidateCommit": "df93798ba55571d6258f720dc4a8ed2766f0aee7",
+      "reviewedStateCommit": "2d2d4e34eadba04e71a1d939eff6e46116d8adb0",
+      "reviewLedger": {
+        "path": "artifacts/evidence/W2.A06.T02.review-R01.json",
+        "sha256": "ba61a41249cd04559bd2035105552d2d21dff620b4995d139500490a53bcff3c"
+      },
+      "acceptanceCriteriaReviewed": 4,
+      "completedReviewPersisted": true,
+      "actualCompletionSnapshotCommit": "8937b021250431695f5d5ba3f17c27ab7ffb3db3"
+    },
+    {
+      "taskId": "W2.A06.T03",
+      "status": "DONE",
+      "reviewResult": "approved",
+      "reviewer": "agent:/root/a03_t01_lineage_audit",
+      "productCandidateCommit": "b49a5d3fa0e1a6812eab1788606b3696f237cf44",
+      "reviewedStateCommit": "d6847dc902a54f7ca3fe29778fa887aacd73507f",
+      "reviewLedger": {
+        "path": "artifacts/evidence/W2.A06.T03.review-R01.json",
+        "sha256": "0c45eeb64501dc8dc58f25cf64ed1ee627ab4456ca65c15f91708b1359a477c6"
+      },
+      "acceptanceCriteriaReviewed": 6,
+      "completedReviewPersisted": true,
+      "actualCompletionSnapshotCommit": "8937b021250431695f5d5ba3f17c27ab7ffb3db3"
+    }
+  ],
+  "contributionResults": [
+    {
+      "sliceId": "W2.A06.S01",
+      "capabilityId": "CAP-02",
+      "title": "Explicit reviewed recovery restoration in W2",
+      "taskIds": [
+        "W2.A06.T01",
+        "W2.A06.T02"
+      ],
+      "result": "approved",
+      "acceptanceReviews": [
+        {
+          "criterionIndex": 1,
+          "criterion": "Actual security/UI/recovery invariants and real whole-process/protected/principal proof satisfy T01/T02. Original W1 authority/history stays unchanged; no W5 transfer suite or project/vault format redesign.",
+          "result": "satisfied",
+          "assessment": "T01/T02 approved commit-bound source/security/UI reviews and actual Native/Core ownership, whole-pair death, verified protected copy, denial and human-controlled lifecycle proof satisfy the due-now contribution. Fresh final b49 package Recovery10/liveDenial10 repeats the approved strict modal and public Native/Core integration without weakening assertions; independent source/reference identities are unchanged. Original approvals and exact separate original-R03 closure are retained. The owner-timed physical-host fragment is explicitly untested byW5, not a local surrogate PASS.",
+          "proofReferenceKeys": [
+            "t01Review",
+            "t02Review",
+            "sourceSecurityReference",
+            "recoveryActual",
+            "zeroWalActual",
+            "currentPackage",
+            "currentReferenceActual",
+            "physicalTimingSupplement",
+            "originalR03Closure"
+          ]
+        }
+      ]
+    },
+    {
+      "sliceId": "W2.A06.S02",
+      "capabilityId": "CAP-05",
+      "title": "Finite verification and quality data qualification",
+      "taskIds": [
+        "W2.A06.T03"
+      ],
+      "result": "approved",
+      "acceptanceReviews": [
+        {
+          "criterionIndex": 1,
+          "criterion": "Actual T03 complete data, exact method/negative-control/source/review lineage and fresh final evidence; original checker FAILs and all extra findings remain truthful, whole Slice/Wave qualification and G2 separate.",
+          "result": "satisfied",
+          "assessment": "T03 is actually DONE/approved at b49 with corrected frozen manifest756/packet427 and committed independent review at completion8937. Complete734 discovery, exact45AST+3literal and finite controls/source/review lineage, necessity-only TY01 repairs, current reference/build/package, Reader09 and protected Recovery10/liveDenial10 are authenticated. Real readback03 zero-WAL invocation is separate from the absent-WAL group. Seventeen selected results pass within their exact criteria; original full quality FAIL1, formatter debt, five migration findings and prior adverse attempts remain truthful. Whole downstream slice/Wave/profile/G2 are not approved.",
+          "proofReferenceKeys": [
+            "t03FormalReview",
+            "t03CorrectedManifest",
+            "sourceSecurityReference",
+            "ownADRSourceSecurityReference",
+            "currentExactDebtActual",
+            "readerActual",
+            "recoveryActual",
+            "zeroWalActual",
+            "currentReferenceActual",
+            "currentPackage",
+            "openMigrationContractDisposition"
+          ]
+        }
+      ]
+    }
+  ],
+  "combinedSecurityCheckpointAssessment": [
+    {
+      "boundary": "Native/Core ownership and authority",
+      "assessment": "Supported within due-now scope",
+      "basis": "Native supplies real process/host/principal authority; Core owns eligibility/copy/lifecycle. Dual current-user and same-machine witness precedes writable lock; unknown/live/reused/inaccessible owner never grants recovery. T01 accepted local negative tests plus fresh b49 genuine witness/Job/birth/signaled whole-pair recovery and live-copy denial. No renderer host attestation or automatic lock unlink."
+    },
+    {
+      "boundary": "Protected copy, original facts, rights and publication",
+      "assessment": "Supported finite verified-copy scope",
+      "basis": "Current r05 exact39 canonical/object hashes match before/after Original and Copy; separate confirm/open/genuine close. Worker drift and no-overwrite/unavailable/open failure/status preserve original. Readback03 immutable main has complete file/dir guard and rejects nonzero WAL; actual preserved-r03 zero-WAL invocation retains all Original/vault bytes. This is not generic nonempty-WAL or arbitrary legacy recovery qualification."
+    },
+    {
+      "boundary": "Projects user authority/accessibility",
+      "assessment": "Supported approved1.9 recovery contract",
+      "basis": "Actual strict owned logical Tab containment, Escape natural return, Space confirm, Enter open/status/close, safe Cancel, repeated failure retry focus, themes and selected reflow. Lost successful reply remains supported by approved additive existing-transport component plus real Native evidence with simulated browser picker/runtime disclosed. No physical keyboard/global foreground or whole installed-app claim."
+    },
+    {
+      "boundary": "Reader/worker/CSP isolation",
+      "assessment": "Supported bounded fresh positive and separate denials",
+      "basis": "Reader09 protected64KiB source actual module worker renders page1 of3 with genuine range/hash/canvas/status. Actual header is observed in authenticated same-assets Native companion; attribution to shipping header is explicitly an inference. Separate fresh isolated external-source denials remain distinct. No new runtime crypto worker verifier/SRI or direct shipping-header capture claimed."
+    },
+    {
+      "boundary": "Evidence/quality/source authority",
+      "assessment": "Supported exact independently approved T03 contracts with retained failures",
+      "basis": "Unchanged original checkers and exact finite45+3/negative controls retain their FAIL outputs. Complete734-file discovery, canonical argfile transport, lint/types0 and source assertions/invalid inputs are independently authenticated. All17 selected current checks bind b49 and actual producer delivery. Whole quality remains FAIL1 for only exact approved unchanged formatter debt; broad331 FAIL/five migration findings remain OPEN. No full profile/model claim."
+    },
+    {
+      "boundary": "Historical original R03",
+      "assessment": "Narrow separate closure authenticated",
+      "basis": "Public472a closure supports only exact original R03 one-use OptionB with allowed987cell/12opaque-object preservation and public Native open/accepted Intent/close. No retrospective old-host/SID/PID-birth witness, generic all-object verifier/unknown-rights plaintext or generic legacy recovery claimed. New r05 evidence does not close or relabel it."
+    }
+  ],
+  "references": {
+    "ecrPacket": {
+      "path": "planning/enabler-change-requests/ECR-0014.packet.json",
+      "sha256": "6293590db74b9a3ec4ce6019a1713def568798ac3a71208a5583bfcff78f7a34"
+    },
+    "ecrApproval": {
+      "path": "planning/wave-amendment-approvals/W2.A06.json",
+      "sha256": "3ecf2b98806f1589be7bd63fcc4f25cf0ee2df79bc95a3a0fefda2ce5666e4b2"
+    },
+    "t01Review": {
+      "path": "artifacts/evidence/W2.A06.T01.review-R01.json",
+      "sha256": "18063b4e220f43a8ec278f535b7d939b042ebbaaa6cc4402c9a599105825972e"
+    },
+    "t02Review": {
+      "path": "artifacts/evidence/W2.A06.T02.review-R01.json",
+      "sha256": "ba61a41249cd04559bd2035105552d2d21dff620b4995d139500490a53bcff3c"
+    },
+    "c18Manifest": {
+      "path": "artifacts/evidence/W2.C18.T01.R01.json",
+      "sha256": "eaf8950726fd37eebe675fbf95319cffd3b8d7c51baf8498b0f46c7c48f6c527"
+    },
+    "sourceSecurityReference": {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/W2.A06.T03.TY01.commit-bound-source-security-reference-disposition-02.json",
+      "sha256": "543643879bee293e38b767ca0e3c643c4eaeb035e366443fce3e09b5039773ef"
+    },
+    "recoveryActual": {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/a06-t03-fresh-recovery-group-10.actual-independent-disposition-01.json",
+      "sha256": "72631b5874aea796c69d392f7d17cf2b4289357541e0411dc50349041a55915a"
+    },
+    "zeroWalActual": {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/a06-t03-protected-readback-03.zero-wal-branch-01.actual-disposition.json",
+      "sha256": "a6677705b37187f011a8b4bb9f588bd16a7d2af216bb46ef14f050ea2e5cd237"
+    },
+    "readerActual": {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/a06-t03-shipping-reader-runtime-09.independent-actual-disposition-01.json",
+      "sha256": "024dca8558bd09c3cee9c75964449ca130a91c20abc2c85f681b792c595d86e5"
+    },
+    "migrationTriage": {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/a06-t03-historical-migration-failure-triage-01.json",
+      "sha256": "eceaa9441e54e5246a5a7696ac2e37c631cb4f21553369c37d01c72f213c05b1"
+    },
+    "physicalTimingSupplement": {
+      "path": "artifacts/evidence/W2.A06.T01.foreign-host-timing-amendment-01.supplement.json",
+      "sha256": "3c4d2fccad15c5415767a2e1f4155ad2b760652d8d2629898aea2452aa02ba49"
+    },
+    "physicalOwnerDecision": {
+      "path": "artifacts/evidence/W2.A06.T01.local-verification-corrections-01.owner-decision.json",
+      "sha256": "18003828f9dfc9999087709febf7bf4171edfe4cb2eea016528e5969e81ab5ef"
+    },
+    "originalR03Closure": {
+      "path": "artifacts/evidence/W2.A06.original-r03-finding-closure-01.json",
+      "sha256": "472a4464691c1682f6479068c167c274fdf950f3dfae6b46a1b27960d5e521a5"
+    },
+    "t03CorrectedManifest": {
+      "path": "artifacts/evidence/W2.A06.T03.R01.json",
+      "sha256": "7561666ccc2cc5b8dcc792c83924b303cefb3018e2c735926f67cf783dfa4287"
+    },
+    "t03FormalReview": {
+      "path": "artifacts/evidence/W2.A06.T03.review-R01.json",
+      "sha256": "0c45eeb64501dc8dc58f25cf64ed1ee627ab4456ca65c15f91708b1359a477c6"
+    },
+    "ownADRSourceSecurityReference": {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/W2.A06.T03.own-ADR.commit-bound-source-security-reference-disposition-02.json",
+      "sha256": "f6359cc12bdf644b1043dde34f504da4c4234176b25d077c98fa0e90c94c6859"
+    },
+    "currentPackage": {
+      "path": "artifacts/tmp/W2.A06.T03.qualifying-package-01.final-01.json",
+      "sha256": "dc21a44cd3afe8b4ab63541294753a5507c5440537bae827194eb7a1211b76bc"
+    },
+    "currentReferenceActual": {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/a06-t03-reference-proof-03.independent-actual-disposition-01.json",
+      "sha256": "1280113f4e772d6d5589028cec401e1cb07f7680e64b5fea04ceeb967fc5ddc5"
+    },
+    "currentExactDebtActual": {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/a06-t03-closed48-format-debt-actual-disposition-04.json",
+      "sha256": "431df6fd6b98db0639044efdf2e43d01547c306798508b3de989a2f58604d0a0"
+    },
+    "openMigrationContractDisposition": {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/a06-t03-open-migration-findings-contract-disposition-01.json",
+      "sha256": "15dffd956f248a879f3287d257ed6afd253e1dfc6aa8aee1ec6b04cd7cbb6983"
+    }
+  },
+  "blockingFindings": [],
+  "findings": [],
+  "carriedFindingsAndTimingObligations": [
+    {
+      "ids": [
+        "T03-MIGRATION-OBS-01",
+        "T03-MIGRATION-OBS-02",
+        "T03-MIGRATION-OBS-03",
+        "T03-MIGRATION-OBS-04",
+        "T03-MIGRATION-OBS-05"
+      ],
+      "status": "OPEN",
+      "scope": "Migration/S06/CP09/Wave qualification",
+      "basis": "Five target25/tuple<=0025 expectations conflict with unchanged current target28/0026-28; no typing-production regression shown. Later preservation assertions remain unproved for failing cases, and original broad331 FAIL/custody gap remains. No waiver, assertion removal, blanket omission or closure by59selected passes.",
+      "nextRoute": "One ordinary linked CAP-05.S01.T03 correction only after A06 adoption and clean committed paused/quiescent boundary; preserve literal predecessors/backups/rows/rights/ciphertexts/rollback/FK/discovery and include exact fixtures in fresh affected proof. TY01 necessity-only typing grant does not authorize runtime expected-result repair."
+    },
+    {
+      "id": "PHYSICAL-FOREIGN-WINDOWS-HOST",
+      "status": "UNTESTED_OWNER_TIMED_FUTURE_OBLIGATION",
+      "scope": "First available genuine independent Windows installation; mandatory by W5 exit",
+      "authority": {
+        "path": "artifacts/evidence/W2.A06.T01.foreign-host-timing-amendment-01.supplement.json",
+        "sha256": "3c4d2fccad15c5415767a2e1f4155ad2b760652d8d2629898aea2452aa02ba49"
+      },
+      "basis": "Only this physical foreign-host test is a disclosed future obligation outside due-now T01/S01/A06/W2 completion. It is not an executed test or PASS. All other checks and independent/release gates remain required.",
+      "futureProof": {
+        "fixture": "Tiny synthetic typed ownership witness with no private research content, project key or vault credential.",
+        "requiredBoundary": "Two genuine independent Windows installations with independently initialized machine protection, not an anonymous thread, changed account, corrupted blob or another process on this computer.",
+        "positive": "Authentic producer-machine dual-scope witness publication and permitted-owner round-trip.",
+        "negative": "Authentic other-machine same-machine-wrapped ciphertext is denied by the receiving machine; preserve authenticated provenance, exact candidate, raw execution streams and denial outcome.",
+        "review": "Independent security disposition must bind both actual platform executions and the preserved witness bytes. No fabricated foreign-host PASS or private credential transfer."
+      },
+      "notClaimed": "Anonymous thread, changed account, corrupted/reordered blob and same-machine different process are not a second Windows installation."
+    }
+  ],
+  "originalR03Closure": {
+    "publicRecord": {
+      "path": "artifacts/evidence/W2.A06.original-r03-finding-closure-01.json",
+      "sha256": "472a4464691c1682f6479068c167c274fdf950f3dfae6b46a1b27960d5e521a5"
+    },
+    "findingDisposition": "CLOSED_FOR_EXACT_ORIGINAL_R03",
+    "scope": "Approved ECR-0014 legacyOriginalFixtureOption; exact original CAP-05.S06 R03 one-use operator copy only",
+    "executedCandidate": "2d2d4e34eadba04e71a1d939eff6e46116d8adb0",
+    "notClosedByNewFixture": true
+  },
+  "currentStateAuthentication": {
+    "HEAD": "8937b021250431695f5d5ba3f17c27ab7ffb3db3",
+    "localMain": "8937b021250431695f5d5ba3f17c27ab7ffb3db3",
+    "campaignBranch": "codex/w2-implementation",
+    "trackedAndUntrackedStatusBeforeRecord": "CLEAN",
+    "T01T02T03": "DONE_APPROVED",
+    "C18": "DONE_APPROVED_EXISTING_EXTERNAL_PREREQUISITE",
+    "W2Campaign": "PAUSED",
+    "A06Completion": "PENDING_NORMAL_EXIT",
+    "candidateToCompletionChangedPaths": [
+      "artifacts/evidence/W2.A06.T03.R01.json",
+      "artifacts/evidence/W2.A06.T03.publication-repair-01.owner.json",
+      "artifacts/evidence/W2.A06.T03.review-R01.json",
+      "docs/planning-implementation-plan.md",
+      "planning/backlog.yaml",
+      "planning/review-site/enablers/ECR-0014.html",
+      "planning/review-site/manifest.json",
+      "planning/status-summary.md"
+    ],
+    "productToolsContractsAndGovernedReferenceUnchangedSinceB49": true,
+    "completionParent": "d6847dc902a54f7ca3fe29778fa887aacd73507f",
+    "taskDeliveryParent": "b49a5d3fa0e1a6812eab1788606b3696f237cf44",
+    "T03ReviewGitBytesExactlyMatchRawFileWithOnlyLFCanonicalizationPermitted": true
+  },
+  "evidenceAuthentication": {
+    "method": "Read-only exact artifact digest and Git/backlog identity replay of already independently reviewed actual executions; no suite/producer/Native rerun. Frozen execution facts are historical b49 observations, not new execution at8937.",
+    "parentPreExitDraft": {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/W2.A06.pre-exit-combined-security-draft-01.json",
+      "sha256": "b3c870ac2a6ef496f6ad83e1539578934e46d8c8a7b23b066e6ccb9c2ec764b7"
+    },
+    "directCorrectedManifestPathDigestPairsRehashed": 62,
+    "manifestRawDigestMismatches": [],
+    "exactNamedReviewAuthorityProofReferencesRehashed": 20,
+    "selectedT03Checks": 17,
+    "allSelectedT03ChecksCandidate": "b49a5d3fa0e1a6812eab1788606b3696f237cf44",
+    "allSelectedT03ChecksExitCode": 0,
+    "T03CorrectedPacketSHA256": "427d52341d0b65be4867c0a114a73e1c592302dc8876d69e6847c5a1f71547be",
+    "T03CorrectedManifestSHA256": "7561666ccc2cc5b8dcc792c83924b303cefb3018e2c735926f67cf783dfa4287",
+    "T03FormalReviewSHA256": "0c45eeb64501dc8dc58f25cf64ed1ee627ab4456ca65c15f91708b1359a477c6",
+    "scope": "Original final-ready3dd snapshot remains historical; only corrected756 is the current manifest. No private original packet, scanner stream or runtime path is published here."
+  },
+  "verificationLimits": [
+    "Complete quality remains FAIL/exit1; lint and types pass over734 actual governed files. Only the exact unchanged tools/plan_review_site.py formatter debt is owner-authorized, with no new waiver or whole qualityPASS.",
+    "Five unchanged historical migration target/history expectations remain OPEN. Broad331-run FAIL and its fixture custody gap remain adverse; selected59+1 proof does not prove those later migration assertions or close them. Their ordinary linked correction is due after A06 adoption/quiescence and before S06/Wave migration qualification.",
+    "Physical independent Windows installation proof is UNTESTED under exact owner timing authority at first available independent installation, mandatory no laterW5 exit. Same-machine/anonymous/corrupt-blob tests do not replace it.",
+    "Reader09 proves actual protected64KiB worker/range/render page1 of3. Actual CSP header is observed in a same-assets/config/runtime Native companion; attribution to the shipping process is an explicit inference. Separate actual isolated external-source denials are not direct shipping header capture or a new runtime crypto-verifier/SRI claim.",
+    "Recovery10 proves current shipping integration-harness Native/WebView behavior with fixture-local policy/vault/profile substitution; it does not qualify an installed/sealed package or ordinary research profile. Modal tests prove owned logical focus/key dispatch, not physical keyboard/global foreground.",
+    "Lost successful response remains the approved additive production-component existing-transport proof with actual Native/Core reply and one delivery drop; browser host/picker are simulated. Native debug-environment denial remains preserved; no guard bypass or same-host CDP proof is invented.",
+    "Fresh r05 group proved absentWAL; separate preservedr03 helper03 actual invocation proved regular zeroWAL/SHM held and unchanged with39 canonical/object facts. Neither proves nonemptyWAL recovery or arbitrary legacy recovery.",
+    "Recovery stale-observation pure controls do not claim an actual retry trigger in group10. Earlier Tab/death/focus/emptyWAL/staleUIA/path/faultsetup/encoding/build/quality/selector/runtime adverses remain preserved without relabelling.",
+    "Three logical command displays retain their disclosed absence of exact full original interpreter argv; actual source/receipt/tool delivery remains bound.",
+    "Full affected/repository/deployment profiles, installed packaging/installer, performance/platform/model/8-16GiB variants, downstream S06/CP09/W2 matrix, independent Wave review, G2 release and W3 approval remain separate pending obligations."
+  ],
+  "independence": {
+    "taskOrCampaignOwner": false,
+    "productOrFrameworkEdits": false,
+    "qualifyingChecksExecutedForThisReview": false,
+    "NativeOrModelRunsForThisReview": false,
+    "sharedHEADBacklogClaimsHooksOrConfigMutated": false,
+    "onlyReviewRecordOutputsWritten": true
+  },
+  "approvalLimits": {
+    "contributionsOnly": true,
+    "approvedContributionIds": [
+      "W2.A06.S01",
+      "W2.A06.S02"
+    ],
+    "amendmentExitApproved": false,
+    "adoptionCheckpointRecorded": false,
+    "W2Resumed": false,
+    "downstreamSliceCheckpointWaveQualified": false,
+    "humanReleaseApproved": false
+  },
+  "nextNormalBoundary": "Root commits this contribution review, then uses normal installed amendment submit/review/adopt operations with exact exit/checkpoint evidence. This contribution record alone neither adopts A06 nor resumes W2.",
+  "documentType": "independent-a06-contributions-review",
+  "result": "approved",
+  "contributionsApproved": true,
+  "preExitSuccessor": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/W2.A06.contributions.pre-exit-draft-02.json",
+    "sha256": "3af8f993066e08bbd8aa289eba9a73f8f4bd85ff6715835ab05a4c35d49506f7"
+  },
+  "notes": "Approves only the two existing A06 contribution criteria at b49 and actual completion delivery8937. Combined security/interface/recovery/verification proof and immutable approvals are authenticated. Known five migration findings, physical-hostW5 obligation, CSP shipping attribution inference, original whole-quality FAIL1 and exact debt remain explicit. No source/framework/criterion change or additional owner gate is introduced. Normal amendment exit/adoption, W2 resume, downstream full qualification and human release are still required."
+}
