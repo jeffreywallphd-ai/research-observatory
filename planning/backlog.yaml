@@ -5238,7 +5238,7 @@ waves:
       id: W2.C19.T01
       wave: W2
       priority: P0
-      status: IN_PROGRESS
+      status: REVIEW
       owner: codex-w2-implementation
       branch: codex/w2-implementation
       base_sha: aba41aae4fe5a530718c37a72a3213c68f6eb944
@@ -5248,12 +5248,17 @@ waves:
         claimed_at: '2026-10-13T03:16:45+00:00'
         expires_at: '2026-10-13T11:16:45+00:00'
       started_at: '2026-10-13T03:16:45+00:00'
-      updated_at: '2026-10-13T03:16:45+00:00'
+      updated_at: '2026-10-13T03:52:46+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
-      evidence: []
-      verification_state: null
+      evidence:
+      - type: criterion-manifest
+        path: artifacts/evidence/W2.C19.T01.R01.json
+        sha256: 7f72d0a61ed03a72213b747d2f1035592d9ec1e4f3bf442629ad1df22adfe91f
+        commit: c9da0705d4b01ef3b2a77979482c71b9aff9640f
+        recorded_at: '2026-10-13T03:52:46+00:00'
+      verification_state: passed
       review:
         reviewer: null
         result: null
@@ -5262,7 +5267,64 @@ waves:
       review_control:
         version: 1
         attempts: []
-        current_submission: null
+        current_submission:
+          id: R01
+          submitted_by: codex-w2-implementation
+          submitted_at: '2026-10-13T03:52:46+00:00'
+          candidate_commit: c9da0705d4b01ef3b2a77979482c71b9aff9640f
+          base_commit: aba41aae4fe5a530718c37a72a3213c68f6eb944
+          branch: codex/w2-implementation
+          evidence_reference:
+            type: criterion-manifest
+            path: artifacts/evidence/W2.C19.T01.R01.json
+            sha256: 7f72d0a61ed03a72213b747d2f1035592d9ec1e4f3bf442629ad1df22adfe91f
+            commit: c9da0705d4b01ef3b2a77979482c71b9aff9640f
+            recorded_at: '2026-10-13T03:52:46+00:00'
+          acceptance_criteria_sha256: b883d7d0c83c26edeafbf97cf02f0dde8e3e38b55b4629d221960d1acaa72e43
+          changed_paths:
+          - docs/planning-implementation-plan.md
+          - planning/backlog.yaml
+          - planning/review-site/index.html
+          - planning/review-site/manifest.json
+          - planning/review-site/waves/W2.html
+          - planning/status-summary.md
+          - tests/documents/test_local_attachment.py
+          - tests/documents/test_oa_acquisition.py
+          selected_checks:
+          - .venv/Scripts/python.exe -B -s -m unittest -v tests.documents.test_local_attachment.AttachmentMigrationTests.test_interrupted_v22_migration_leaves_exact_v21_predecessor_retryable
+            tests.documents.test_local_attachment.AttachmentMigrationTests.test_literal_populated_v21_migrates_without_changing_work_version_or_ciphertext
+            tests.documents.test_local_attachment.AttachmentOperationMigrationTests.test_interrupted_v23_migration_leaves_populated_v22_source_retryable
+            tests.documents.test_local_attachment.AttachmentOperationMigrationTests.test_literal_populated_v22_migrates_without_changing_attachment_rights_or_ciphertext
+            tests.documents.test_oa_acquisition.AcquisitionMigrationTests.test_literal_v23_preserves_rows_ciphertext_and_verified_backup
+            tests.documents.test_oa_acquisition.AcquisitionMigrationTests.test_each_material_v24_interruption_retains_exact_v23
+            tests.documents.test_acquisition_queue.AcquisitionQueueTests.test_failed_owned_partial_cleanup_stops_http_retry_and_retains_safe_failure
+            tests.documents.test_acquisition_queue.AcquisitionQueueTests.test_fresh_session_recovers_candidate_without_redownload_or_rewriting_origin
+            tests.documents.test_acquisition_queue.AcquisitionQueueTests.test_local_access_need_keeps_metadata_without_network_permission_or_full_text
+          - .venv/Scripts/python.exe -B -s -m ruff format --check --config pyproject.toml -- tests/documents/test_local_attachment.py
+            tests/documents/test_oa_acquisition.py
+          - .venv/Scripts/python.exe -B -s -m ruff check --config pyproject.toml -- tests/documents/test_local_attachment.py
+            tests/documents/test_oa_acquisition.py
+          - .venv/Scripts/python.exe -B -s -m mypy --config-file pyproject.toml --no-namespace-packages --cache-dir artifacts/tmp/W2.remaining-corrections-batch-01/c19-types-03/mypy-cache
+            -- @artifacts/tmp/W2.remaining-corrections-batch-01/c19-types-03/source-files.args
+          deferred_checks:
+          - Full documents/service/desktop/e2e profiles and current Native/platform/installer/performance proof at S06/checkpoint/fresh
+            W2.
+          - Separate independent corrective disposition, local integration, ordinary W2 resume and all Wave/release gates.
+          selection_rationale: Only two test expectations drifted behind the approved target-28 runner. Select the exact five
+            failing cases, their material predecessor interruption counterpart, three acquisition invariant cases and two-file
+            format/lint. The initial targeted type invocation lacked the configured complete source context; all 734 governed
+            sources are therefore checked with the existing namespace setting, unchanged config and fresh isolated cache,
+            without source edits, suppressed errors or repeated behavioral tests. Existing input-denying file holds protect
+            current source, runtime and all six fixtures. These command IDs name this affected selection and configured types,
+            not complete profiles. Wider current qualification stays at S06/checkpoint/W2.
+          selection_sha256: 3c9816f844eb7f2b7e17f5d6fa242046bb4ec930411120e654931b0e24bad2da
+          prior_attempt_id: null
+          open_finding_ids: []
+          root_cause_analysis: null
+          selected_command_ids:
+          - documents:unit
+          - foundation:quality
+          packet_sha256: dc82ac26fa2a88502e7c4003a927df0d55035441d1eedc8a85f134978fe01aef
       correction:
         origin_task_id: CAP-05.S01.T03
         origin_commit: 28fcb3abfda20f393994433812b1a50ac06005c1

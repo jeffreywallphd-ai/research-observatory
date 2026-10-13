@@ -1,7 +1,7 @@
 ---
 document_type: generated-backlog-status-summary
 source: planning/backlog.yaml
-source_sha256: a14012413fbfd0fd1b95a36749a5b91982731b23bd8264a7b18b382c40e62fc4
+source_sha256: 7b8cee22006fff92b807b183d279bc97bfc19096d3428c46e3d3cc9d9a76ad5d
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -980,7 +980,7 @@ Append-only rounds remain distinct from the current latest-review projection. Le
 | `W2.C16.T01` | `append-only v1` | 1 | `-` | approved / agent:/root/reader_table_figure_review | - |
 | `W2.C17.T01` | `append-only v1` | 1 | `-` | approved / agent:/root/c17_independent_disposition | - |
 | `W2.C18.T01` | `append-only v1` | 1 | `-` | approved / agent:/root/c18_runtime_disposition | - |
-| `W2.C19.T01` | `append-only v1` | 0 | `-` | - / - | - |
+| `W2.C19.T01` | `append-only v1` | 0 | `R01` | - / - | - |
 ## Wave progress
 
 | Wave | Pre-Wave approval | Campaign | Qualification | Approved slices | Done tasks | Exit gate |
@@ -1044,7 +1044,7 @@ Append-only rounds remain distinct from the current latest-review projection. Le
 
 | Task | Status | Owner | Branch |
 |---|---|---|---|
-| `W2.C19.T01` Create acquisition queue, conflict, and entitlement placeholders | `IN_PROGRESS` | codex-w2-implementation | `codex/w2-implementation` |
+| `W2.C19.T01` Create acquisition queue, conflict, and entitlement placeholders | `REVIEW` | codex-w2-implementation | `codex/w2-implementation` |
 
 ## Linked corrective tasks
 
@@ -1144,5 +1144,5 @@ Original tasks and approvals remain unchanged.
 
 ### W2.C19.T01 — Create acquisition queue, conflict, and entitlement placeholders
 
-**Status:** `IN_PROGRESS`. **Original task:** `CAP-05.S01.T03`. **Latest review:** `-`.
+**Status:** `REVIEW`. **Original task:** `CAP-05.S01.T03`. **Latest review:** `-`.
 

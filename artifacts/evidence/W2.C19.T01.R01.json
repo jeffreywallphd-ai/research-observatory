@@ -1,0 +1,185 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "W2.C19.T01",
+  "baseCommit": "aba41aae4fe5a530718c37a72a3213c68f6eb944",
+  "commit": "c9da0705d4b01ef3b2a77979482c71b9aff9640f",
+  "branch": "codex/w2-implementation",
+  "changedFiles": [
+    "docs/planning-implementation-plan.md",
+    "planning/backlog.yaml",
+    "planning/review-site/index.html",
+    "planning/review-site/manifest.json",
+    "planning/review-site/waves/W2.html",
+    "planning/status-summary.md",
+    "tests/documents/test_local_attachment.py",
+    "tests/documents/test_oa_acquisition.py"
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "checkIds": [
+        "migration-and-acquisition-regressions"
+      ],
+      "evidence": [
+        "Fresh current SQLite migration and acquisition regression cases retain owned partial-cleanup refusal, fresh-session candidate recovery without redownload or origin rewrite, and local access needs without network permission or fabricated availability. The only admitted source delta updates migration-test expectations; product copy identities, accepted acquisition behavior and original independent approval remain unchanged by this correction. Original task proof is historical authority, not a fresh replay of all original behavior."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "checkIds": [
+        "migration-and-acquisition-regressions"
+      ],
+      "evidence": [
+        "The five previously failing migration cases and existing material v24 interruption case pass against all six exact literal v21/v22/v23 JSON/ZIP fixtures. Backup, predecessor, rights, ciphertext, rows, foreign keys, interruption and retry assertions remain present. Three current acquisition failure/recovery/availability cases also pass. Original 331-case FAIL stays preserved; no whole-profile PASS is inferred."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "checkIds": [
+        "migration-and-acquisition-regressions",
+        "affected-format",
+        "affected-lint",
+        "configured-source-types"
+      ],
+      "evidence": [
+        "Exactly two admitted test files restore target 28 and the three complete current migration sequences. Fresh two-file formatting and lint plus configured types across all 734 governed sources pass. The initial incomplete type invocation and its subsequent cached import errors remain FAIL; only the fresh-cache configured source check supplies type proof. No migration implementation, fixture, product, security authority, reference, framework, checker setting or assertion is removed or weakened. Broader fresh S06/checkpoint/W2 qualification and release remain separate."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "checks": [
+    {
+      "id": "migration-and-acquisition-regressions",
+      "command": ".venv/Scripts/python.exe -B -s -m unittest -v tests.documents.test_local_attachment.AttachmentMigrationTests.test_interrupted_v22_migration_leaves_exact_v21_predecessor_retryable tests.documents.test_local_attachment.AttachmentMigrationTests.test_literal_populated_v21_migrates_without_changing_work_version_or_ciphertext tests.documents.test_local_attachment.AttachmentOperationMigrationTests.test_interrupted_v23_migration_leaves_populated_v22_source_retryable tests.documents.test_local_attachment.AttachmentOperationMigrationTests.test_literal_populated_v22_migrates_without_changing_attachment_rights_or_ciphertext tests.documents.test_oa_acquisition.AcquisitionMigrationTests.test_literal_v23_preserves_rows_ciphertext_and_verified_backup tests.documents.test_oa_acquisition.AcquisitionMigrationTests.test_each_material_v24_interruption_retains_exact_v23 tests.documents.test_acquisition_queue.AcquisitionQueueTests.test_failed_owned_partial_cleanup_stops_http_retry_and_retains_safe_failure tests.documents.test_acquisition_queue.AcquisitionQueueTests.test_fresh_session_recovers_candidate_without_redownload_or_rewriting_origin tests.documents.test_acquisition_queue.AcquisitionQueueTests.test_local_access_need_keeps_metadata_without_network_permission_or_full_text",
+      "result": "passed",
+      "exitCode": 0,
+      "commit": "c9da0705d4b01ef3b2a77979482c71b9aff9640f",
+      "seconds": 17.07579600007739,
+      "streams": {
+        "stdout": {
+          "path": "artifacts/tmp/W2.remaining-corrections-batch-01/c19-focused-01/migration-and-acquisition-regressions.stdout.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stderr": {
+          "path": "artifacts/tmp/W2.remaining-corrections-batch-01/c19-focused-01/migration-and-acquisition-regressions.stderr.log",
+          "sha256": "ebd8e71a28061251c2a6102c94f2c65c14fd9bbe447cb58f93be336ad01d78b7"
+        }
+      }
+    },
+    {
+      "id": "affected-format",
+      "command": ".venv/Scripts/python.exe -B -s -m ruff format --check --config pyproject.toml -- tests/documents/test_local_attachment.py tests/documents/test_oa_acquisition.py",
+      "result": "passed",
+      "exitCode": 0,
+      "commit": "c9da0705d4b01ef3b2a77979482c71b9aff9640f",
+      "seconds": 0.12356290000025183,
+      "streams": {
+        "stdout": {
+          "path": "artifacts/tmp/W2.remaining-corrections-batch-01/c19-focused-01/affected-format.stdout.log",
+          "sha256": "3bc53bf3e981a98a34a852e175bf9b77af841edea74fca595d9aedcbaf9a4938"
+        },
+        "stderr": {
+          "path": "artifacts/tmp/W2.remaining-corrections-batch-01/c19-focused-01/affected-format.stderr.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      }
+    },
+    {
+      "id": "affected-lint",
+      "command": ".venv/Scripts/python.exe -B -s -m ruff check --config pyproject.toml -- tests/documents/test_local_attachment.py tests/documents/test_oa_acquisition.py",
+      "result": "passed",
+      "exitCode": 0,
+      "commit": "c9da0705d4b01ef3b2a77979482c71b9aff9640f",
+      "seconds": 0.09799539996311069,
+      "streams": {
+        "stdout": {
+          "path": "artifacts/tmp/W2.remaining-corrections-batch-01/c19-focused-01/affected-lint.stdout.log",
+          "sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18"
+        },
+        "stderr": {
+          "path": "artifacts/tmp/W2.remaining-corrections-batch-01/c19-focused-01/affected-lint.stderr.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      }
+    },
+    {
+      "id": "configured-source-types",
+      "command": ".venv/Scripts/python.exe -B -s -m mypy --config-file pyproject.toml --no-namespace-packages --cache-dir artifacts/tmp/W2.remaining-corrections-batch-01/c19-types-03/mypy-cache -- @artifacts/tmp/W2.remaining-corrections-batch-01/c19-types-03/source-files.args",
+      "result": "passed",
+      "exitCode": 0,
+      "commit": "c9da0705d4b01ef3b2a77979482c71b9aff9640f",
+      "seconds": 21.521594100049697,
+      "streams": {
+        "stdout": {
+          "path": "artifacts/tmp/W2.remaining-corrections-batch-01/c19-types-03/stdout.log",
+          "sha256": "c642e5b33b5e7d157e7b2362ef94a292d50ab8abbba717375ca1704ad53de820"
+        },
+        "stderr": {
+          "path": "artifacts/tmp/W2.remaining-corrections-batch-01/c19-types-03/stderr.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      }
+    }
+  ],
+  "executionReceipt": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/c19-focused-01/receipt.json",
+    "sha256": "5f0a2ee96b8d492cef6f8415c0c6ffa022d92630e244e36d8d739b00c4d7bba6"
+  },
+  "typesExecutionReceipt": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/c19-types-03/receipt.json",
+    "sha256": "eacd5761a7fbd6bba90aaa4ff1f6ffaa0a0bbee31a0fa3c8392600dcba8823de"
+  },
+  "executionTruth": "The original focused invocation remains overall FAIL with nine-tests/format/lint PASS and incomplete-context types FAIL. A second complete-source type invocation retains two import errors. A third configured full-source invocation with isolated cache and declared source context passes; it does not repeat or relabel the nine tests. Passing commands and their actual separate receipts are assembled transparently for this fixed candidate; no whole-profile PASS is claimed.",
+  "fixtureInputs": [
+    {
+      "path": "tests/fixtures/documents/v21-predecessor.json",
+      "sha256": "469d2d55ff71fa85ed7679c315fda4fc033afb8ed68ca8fb91d669c0e331b094"
+    },
+    {
+      "path": "tests/fixtures/documents/v21-predecessor.zip",
+      "sha256": "252e3d4371d955d8b27bd7348a3a6afed8fc0effcd91614207d2126f66c09aa1"
+    },
+    {
+      "path": "tests/fixtures/documents/v22-predecessor.json",
+      "sha256": "441a3ab873fc0919cdefba02dc4c00c667fe3157cb4152f9a1e7f8c4507c4518"
+    },
+    {
+      "path": "tests/fixtures/documents/v22-predecessor.zip",
+      "sha256": "1230d9462cdf94dddfb9eb121f16472441ce71b6d917cb92ab1c3ab090349f17"
+    },
+    {
+      "path": "tests/fixtures/documents/v23-predecessor.json",
+      "sha256": "f8439a465ffcdf83323783090a8a8245afd691affeb5dd02d6e9fe253eece8b3"
+    },
+    {
+      "path": "tests/fixtures/documents/v23-predecessor.zip",
+      "sha256": "d470258400cac2ff1445e91137b4f82cfb4bd29872692bba3d7e89074640b488"
+    }
+  ],
+  "verificationSelection": {
+    "selectedCommandIds": [
+      "documents:unit",
+      "foundation:quality"
+    ],
+    "riskAnalysis": "Only two test expectations drifted behind the approved target-28 runner. Select the exact five failing cases, their material predecessor interruption counterpart, three acquisition invariant cases and two-file format/lint. The initial targeted type invocation lacked the configured complete source context; all 734 governed sources are therefore checked with the existing namespace setting, unchanged config and fresh isolated cache, without source edits, suppressed errors or repeated behavioral tests. Existing input-denying file holds protect current source, runtime and all six fixtures. These command IDs name this affected selection and configured types, not complete profiles. Wider current qualification stays at S06/checkpoint/W2.",
+    "deferred": [
+      "Full documents/service/desktop/e2e profiles and current Native/platform/installer/performance proof at S06/checkpoint/fresh W2.",
+      "Separate independent corrective disposition, local integration, ordinary W2 resume and all Wave/release gates."
+    ]
+  },
+  "correctiveIntegration": {
+    "originSha256": "f74b32f21cdea4d6810e2651e892075295f377fba52d8cb924d1e74d9d76b16e",
+    "authorityPreserved": true,
+    "affectedChecks": [
+      ".venv/Scripts/python.exe -B -s -m unittest -v tests.documents.test_local_attachment.AttachmentMigrationTests.test_interrupted_v22_migration_leaves_exact_v21_predecessor_retryable tests.documents.test_local_attachment.AttachmentMigrationTests.test_literal_populated_v21_migrates_without_changing_work_version_or_ciphertext tests.documents.test_local_attachment.AttachmentOperationMigrationTests.test_interrupted_v23_migration_leaves_populated_v22_source_retryable tests.documents.test_local_attachment.AttachmentOperationMigrationTests.test_literal_populated_v22_migrates_without_changing_attachment_rights_or_ciphertext tests.documents.test_oa_acquisition.AcquisitionMigrationTests.test_literal_v23_preserves_rows_ciphertext_and_verified_backup tests.documents.test_oa_acquisition.AcquisitionMigrationTests.test_each_material_v24_interruption_retains_exact_v23 tests.documents.test_acquisition_queue.AcquisitionQueueTests.test_failed_owned_partial_cleanup_stops_http_retry_and_retains_safe_failure tests.documents.test_acquisition_queue.AcquisitionQueueTests.test_fresh_session_recovers_candidate_without_redownload_or_rewriting_origin tests.documents.test_acquisition_queue.AcquisitionQueueTests.test_local_access_need_keeps_metadata_without_network_permission_or_full_text",
+      ".venv/Scripts/python.exe -B -s -m ruff format --check --config pyproject.toml -- tests/documents/test_local_attachment.py tests/documents/test_oa_acquisition.py",
+      ".venv/Scripts/python.exe -B -s -m ruff check --config pyproject.toml -- tests/documents/test_local_attachment.py tests/documents/test_oa_acquisition.py",
+      ".venv/Scripts/python.exe -B -s -m mypy --config-file pyproject.toml --no-namespace-packages --cache-dir artifacts/tmp/W2.remaining-corrections-batch-01/c19-types-03/mypy-cache -- @artifacts/tmp/W2.remaining-corrections-batch-01/c19-types-03/source-files.args"
+    ],
+    "reusedEvidence": [
+      "Original CAP-05.S01.T03 DONE/independent approval is preserved as historical authority only; no prior execution is relabeled fresh or reused to claim current whole-profile completion."
+    ],
+    "rationale": "The exact current migration regressions close the stale-test findings without changing approved behavior or migration guarantees. The ordinary linked correction retains original identity/history and independently reviews affected integration before Wave resume."
+  }
+}

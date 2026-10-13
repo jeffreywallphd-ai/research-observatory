@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: a14012413fbfd0fd1b95a36749a5b91982731b23bd8264a7b18b382c40e62fc4
+source_sha256: 7b8cee22006fff92b807b183d279bc97bfc19096d3428c46e3d3cc9d9a76ad5d
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -4948,7 +4948,7 @@ Original tasks and approvals remain unchanged.
 
 ### W2.C19.T01 — Create acquisition queue, conflict, and entitlement placeholders
 
-**Status:** `IN_PROGRESS`. **Original task:** `CAP-05.S01.T03`. **Latest review:** `-`.
+**Status:** `REVIEW`. **Original task:** `CAP-05.S01.T03`. **Latest review:** `-`.
 
 **Reproduction:** The preserved complete 331-case T03 typing-source execution has five failures: literal v21/v22/v23 migration plans omit installed migrations 0026-0028, and five target-version assertions expect 25 while the current approved migration runner reaches 28. Replay the five named affected migration cases plus the existing material v24 interruption case against all six original v21/v22/v23 JSON/ZIP fixtures. Original failed execution remains adverse.
 
@@ -4966,7 +4966,19 @@ Original tasks and approvals remain unchanged.
 
 **Review mode:** `append-only v1` / 0 completed round(s)
 
-**Current immutable submission awaiting review:** None
+**Current immutable submission awaiting review:** `R01` / packet SHA-256 `dc82ac26fa2a88502e7c4003a927df0d55035441d1eedc8a85f134978fe01aef`
+
+- Candidate / base / branch: `c9da0705d4b01ef3b2a77979482c71b9aff9640f` / `aba41aae4fe5a530718c37a72a3213c68f6eb944` / `codex/w2-implementation`
+- Submitted by / at: codex-w2-implementation / `2026-10-13T03:52:46+00:00`
+- Evidence: `artifacts/evidence/W2.C19.T01.R01.json` / `7f72d0a61ed03a72213b747d2f1035592d9ec1e4f3bf442629ad1df22adfe91f` / `c9da0705d4b01ef3b2a77979482c71b9aff9640f`
+- Acceptance-criteria SHA-256: `b883d7d0c83c26edeafbf97cf02f0dde8e3e38b55b4629d221960d1acaa72e43`
+- Verification-selection SHA-256: `3c9816f844eb7f2b7e17f5d6fa242046bb4ec930411120e654931b0e24bad2da`
+- Changed paths: `docs/planning-implementation-plan.md`, `planning/backlog.yaml`, `planning/review-site/index.html`, `planning/review-site/manifest.json`, `planning/review-site/waves/W2.html`, `planning/status-summary.md`, `tests/documents/test_local_attachment.py`, `tests/documents/test_oa_acquisition.py`
+- Selected checks: `.venv/Scripts/python.exe -B -s -m unittest -v tests.documents.test_local_attachment.AttachmentMigrationTests.test_interrupted_v22_migration_leaves_exact_v21_predecessor_retryable tests.documents.test_local_attachment.AttachmentMigrationTests.test_literal_populated_v21_migrates_without_changing_work_version_or_ciphertext tests.documents.test_local_attachment.AttachmentOperationMigrationTests.test_interrupted_v23_migration_leaves_populated_v22_source_retryable tests.documents.test_local_attachment.AttachmentOperationMigrationTests.test_literal_populated_v22_migrates_without_changing_attachment_rights_or_ciphertext tests.documents.test_oa_acquisition.AcquisitionMigrationTests.test_literal_v23_preserves_rows_ciphertext_and_verified_backup tests.documents.test_oa_acquisition.AcquisitionMigrationTests.test_each_material_v24_interruption_retains_exact_v23 tests.documents.test_acquisition_queue.AcquisitionQueueTests.test_failed_owned_partial_cleanup_stops_http_retry_and_retains_safe_failure tests.documents.test_acquisition_queue.AcquisitionQueueTests.test_fresh_session_recovers_candidate_without_redownload_or_rewriting_origin tests.documents.test_acquisition_queue.AcquisitionQueueTests.test_local_access_need_keeps_metadata_without_network_permission_or_full_text`, `.venv/Scripts/python.exe -B -s -m ruff format --check --config pyproject.toml -- tests/documents/test_local_attachment.py tests/documents/test_oa_acquisition.py`, `.venv/Scripts/python.exe -B -s -m ruff check --config pyproject.toml -- tests/documents/test_local_attachment.py tests/documents/test_oa_acquisition.py`, `.venv/Scripts/python.exe -B -s -m mypy --config-file pyproject.toml --no-namespace-packages --cache-dir artifacts/tmp/W2.remaining-corrections-batch-01/c19-types-03/mypy-cache -- @artifacts/tmp/W2.remaining-corrections-batch-01/c19-types-03/source-files.args`
+- Deferred checks: `Full documents/service/desktop/e2e profiles and current Native/platform/installer/performance proof at S06/checkpoint/fresh W2.`, `Separate independent corrective disposition, local integration, ordinary W2 resume and all Wave/release gates.`
+- Selection rationale: Only two test expectations drifted behind the approved target-28 runner. Select the exact five failing cases, their material predecessor interruption counterpart, three acquisition invariant cases and two-file format/lint. The initial targeted type invocation lacked the configured complete source context; all 734 governed sources are therefore checked with the existing namespace setting, unchanged config and fresh isolated cache, without source edits, suppressed errors or repeated behavioral tests. Existing input-denying file holds protect current source, runtime and all six fixtures. These command IDs name this affected selection and configured types, not complete profiles. Wider current qualification stays at S06/checkpoint/W2.
+- Prior round / replayed open findings: `-` / -
+- Root-cause escalation: -
 
 **Current latest-review projection:** `-` by - at `-`
 
