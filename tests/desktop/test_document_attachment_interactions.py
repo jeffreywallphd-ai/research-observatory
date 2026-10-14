@@ -27,7 +27,6 @@ from desktop_app_check import (  # noqa: E402
     DIRECTORY_PICKER_FIXTURE,
     choose_fixture_directory,
     core_workflow_catalog_json,
-    inline_product_index,
 )
 
 from tests.reconciliation import test_version_api as version_fixture  # noqa: E402
@@ -53,8 +52,7 @@ def _serve_exact_shipping_fixture(route: Any, document: bytes) -> None:
     if (
         not url.path.startswith("/")
         or relative not in artifacts
-        or relative != "index.html"
-        and not relative.startswith("assets/")
+        or (relative != "index.html" and not relative.startswith("assets/"))
         or any(part in ("", ".", "..") for part in Path(relative).parts)
         or "%" in relative
         or "\\" in relative
