@@ -5857,6 +5857,85 @@ waves:
           increment. The five-segment architecture-guide companion is separately finite batch-authorized and outside this
           adapter scope; its existing guide-consistency check and actual delivery stay separate, never silently admitted here.
           Required task-independent correction review and remaining whole-W2 qualification remain due.
+    - title: Create import preview, mapping, and conflict UI
+      objective: Desktop wizard showing parsed records, field mapping, duplicate candidates, warnings, rights defaults, and
+        import options.
+      dependencies:
+      - CAP-04.S01.T01
+      acceptance_criteria:
+      - User can correct mapping before commit, exclude records, and download an error report; cancellation leaves no partial
+        canonical import.
+      - Automated tests cover the expected path and at least one material failure or boundary condition.
+      - Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.
+      verification_commands:
+      - python tools/verify.py --profile desktop
+      - python tools/verify.py --profile service
+      deployment_profiles:
+      - LOC
+      - LAB
+      - ALL
+      platform_targets:
+      - windows-x64
+      verification_profiles:
+      - desktop
+      - service
+      id: W2.C23.T01
+      wave: W2
+      priority: P0
+      status: IN_PROGRESS
+      owner: codex-w2-implementation
+      branch: codex/w2-implementation
+      base_sha: ddbf4799d800a14dd62580c25890a003b8b04ad6
+      worktree: .
+      lease:
+        claimed_by: codex-w2-implementation
+        claimed_at: '2026-10-14T11:55:09+00:00'
+        expires_at: '2026-10-14T19:55:09+00:00'
+      started_at: '2026-10-14T11:55:09+00:00'
+      updated_at: '2026-10-14T11:55:09+00:00'
+      completed_at: null
+      blocker: null
+      implementation_notes: ''
+      evidence: []
+      verification_state: null
+      review:
+        reviewer: null
+        result: null
+        reviewed_at: null
+        notes: null
+      review_control:
+        version: 1
+        attempts: []
+        current_submission: null
+      correction:
+        origin_task_id: CAP-04.S01.T02
+        origin_commit: c2eb41dd4488c26403f6ec0e167733b386ab3063
+        paused_state_sha256: b433937424fdc141ada899cd32acd3858867b5f267614a65cc11678a6b5b5e94
+        origin_sha256: 4951e92589c98d802968fb07d51402ddcbe4c2d60068c4a20ed5c4c91801133a
+        origin_contract_sha256: b55b20fcd5e92a1f3ca25029b6d6fe1e477cc8811dcf8e092a0a9ece431e6574
+        origin_history_sha256: 7f8d5314e0952d2af87bec9435fcd426160bbfbc72997b6cc8e70b4d69e9eb27
+        origin_amendment_id: null
+        authority_sha256: c92ce7e9bac1b8a49d13d649a5980fea61e56ee953d238c734d8ff5f04f4c9e5
+        spec:
+          path: artifacts/evidence/W2.C23.T01.spec.json
+          sha256: d0b659ddb337371be520000ba878bf32caef53f1b010fbc0a2203d4f67f1e7ba
+          commit: ddbf4799d800a14dd62580c25890a003b8b04ad6
+        reproduction: Retained final29 service cancellation fails by asserting immediate cancelled even though the approved
+          cooperative summary workflow can first return cancelling within its existing 5000 ms grace period. Retained final29
+          application-lock source check fails an obsolete immediate-first-statement assumption introduced before CAP-04.S01.T02's
+          checkpoint05 native-stop/drain callback. Both compatibility regressions have the same actual current-W2 original
+          task; preserve every original adverse and task identity.
+        changed_paths:
+        - tests/security/test_application_lock_source.py
+        - tests/service/test_import_review_api.py
+        impact_analysis: Use the exact independently reviewed test-only proposals. Observe the same preview/revision cancellation
+          to exact cancelled within the existing 5000 ms deadline, preserving all79 original API assertions and adding two
+          bounds/status checks. Replace only the invalid native adjacency assertion with a balanced actual spawn_blocking
+          callback witness that excludes comments/strings, requires exactly one picker cleanup body and rejects direct lock
+          acquisition; retain55 other original assertions and all local-window/no-Core-authority checks. Fresh two original
+          leaves plus two-file format/lint and configured source types prove only affected test/API fixture/static-source
+          risks. No production, native implementation, fixture, rights/security authority, deadline, framework, reference,
+          criteria or historical evidence edit; real Native cleanup/principal and broader unresolved W2 proof remain separate.
     resume_records:
     - id: W2.R01
       wave_id: W2

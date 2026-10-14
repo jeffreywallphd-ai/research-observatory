@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 9012fb81e3028d1132a545d87ce2b9ba87791e24d5a7c2d3af1531b964953d19
+source_sha256: e7ef691b7630564fc028a22323f939b6299d4fd117d84cacd9a3df385f1abce1
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -5173,6 +5173,34 @@ Original tasks and approvals remain unchanged.
 **Current immutable submission awaiting review:** None
 
 **Current latest-review projection:** `approved` by agent:/root/storage_profile_review at `2026-10-14T11:33:35+00:00`
+
+**Latest notes:** -
+
+**Currently open findings:** -
+
+### W2.C23.T01 — Create import preview, mapping, and conflict UI
+
+**Status:** `IN_PROGRESS`. **Original task:** `CAP-04.S01.T02`. **Latest review:** `-`.
+
+**Reproduction:** Retained final29 service cancellation fails by asserting immediate cancelled even though the approved cooperative summary workflow can first return cancelling within its existing 5000 ms grace period. Retained final29 application-lock source check fails an obsolete immediate-first-statement assumption introduced before CAP-04.S01.T02's checkpoint05 native-stop/drain callback. Both compatibility regressions have the same actual current-W2 original task; preserve every original adverse and task identity.
+
+**Inherited criteria:**
+
+- User can correct mapping before commit, exclude records, and download an error report; cancellation leaves no partial canonical import.
+- Automated tests cover the expected path and at least one material failure or boundary condition.
+- Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.
+
+**Bounded changed paths:**
+
+- tests/security/test_application_lock_source.py
+- tests/service/test_import_review_api.py
+#### Review history — W2.C23.T01
+
+**Review mode:** `append-only v1` / 0 completed round(s)
+
+**Current immutable submission awaiting review:** None
+
+**Current latest-review projection:** `-` by - at `-`
 
 **Latest notes:** -
 

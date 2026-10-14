@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import time
 import unittest
 from pathlib import Path
 
@@ -91,8 +92,16 @@ class ImportReviewApiTests(unittest.TestCase):
         started = self.post("summary/start", revision=1)
         self.assertEqual(200, started.status_code)
         job = started.json()["jobId"]
+        cancel_deadline = time.monotonic() + 5.0
         cancelled = self.post("summary/cancel", revision=1, jobId=job)
         self.assertEqual(200, cancelled.status_code)
+        while cancelled.json()["jobState"] == "cancelling" and time.monotonic() < cancel_deadline:
+            time.sleep(0.01)
+            cancelled = self.post("summary", revision=1)
+            self.assertEqual(200, cancelled.status_code)
+        self.assertLessEqual(
+            time.monotonic(), cancel_deadline, "summary cancellation exceeded its 5000 ms grace period"
+        )
         self.assertEqual("cancelled", cancelled.json()["jobState"])
         self.assertIsNone(cancelled.json()["counts"])
         self.assertEqual(200, self.post("records", revision=1).status_code)

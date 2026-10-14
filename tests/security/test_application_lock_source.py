@@ -170,7 +170,24 @@ class ApplicationLockSourceBoundaryTests(unittest.TestCase):
         builder = source.split("fn application_builder()", 1)[1].split("fn setup_runtime(", 1)[0]
         self.assertIn("picker.begin_close()", builder)
         self.assertIn("picker.wait_for_cleanup()", builder)
-        self.assertRegex(builder, r"spawn_blocking\(move \|\| \{\s*picker.wait_for_cleanup\(\)")
+        # Ignore comments/strings, then bound the witness to the actual callback.
+        code = re.sub(r'//[^\n]*|/\*.*?\*/|"(?:\\.|[^"\\])*"', "", builder, flags=re.DOTALL)
+        cleanup_bodies = []
+        for opening in re.finditer(r"spawn_blocking\(\s*move\s*\|\|\s*\{", code):
+            depth, end = 1, opening.end()
+            while end < len(code) and depth:
+                depth += (code[end] == "{") - (code[end] == "}")
+                end += 1
+            self.assertEqual(0, depth, "blocking callback must have a bounded body")
+            body = code[opening.end() : end - 1]
+            if re.search(r"\bpicker\.wait_for_cleanup\(\)\s*;", body):
+                cleanup_bodies.append(body)
+        self.assertEqual(1, len(cleanup_bodies), "picker cleanup must stay in one blocking callback")
+        self.assertRegex(cleanup_bodies[0], r"\bpicker\.wait_for_cleanup\(\)\s*;")
+        self.assertNotRegex(
+            cleanup_bodies[0],
+            r"\.\s*(?:lock|try_lock|lock_owned|try_lock_owned|read|try_read|write|try_write)\s*\(",
+        )
 
 
 if __name__ == "__main__":
