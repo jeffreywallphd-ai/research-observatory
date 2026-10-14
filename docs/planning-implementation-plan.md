@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 83b3323a065fe0b317b36ddd19273a65186a91a909a27eadf759ae47b3208968
+source_sha256: 3bc7456e8ab81d2b09e1adef72da2d2ae428357714c9f1f562d8e3fd7591301b
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -5408,6 +5408,36 @@ Original tasks and approvals remain unchanged.
 **Current immutable submission awaiting review:** None
 
 **Current latest-review projection:** `approved` by agent:/root/storage_profile_review at `2026-10-14T22:26:51+00:00`
+
+**Latest notes:** -
+
+**Currently open findings:** -
+
+### W2.C27.T01 — Restore explicit reviewed project recovery and durable owned-session proof
+
+**Status:** `IN_PROGRESS`. **Original task:** `W2.A06.T01`. **Latest review:** `-`.
+
+**Reproduction:** The original Native reconciliation regression returned 409 RO-CORE-PROJECT-RECOVERY-UNAVAILABLE instead of 200. The actual private parent is owned by the current user and has the standard Windows OWNER RIGHTS, SYSTEM and Administrators ACL. The nonexact parent checker rejects literal OWNER RIGHTS S-1-3-4 despite already verifying the actual owner. Original failure and owned-cleanup adverse evidence remain preserved in artifacts/tmp/W2.remaining-corrections-batch-01/native-reconciliation-root-cause-01/bounded-root-cause-and-restorative-scope-01.json.
+
+**Inherited criteria:**
+
+- T01-AC01: Implement only the canonical ECR-0014 proposal recovery/API/witness contract and exact T01 path envelope; preserve W1 history, ADR0008 Native authority and existing project-key/current-user protection. Publish indexed task-linked ADR0054 in the same protected change set.
+- T01-AC02: New proof-eligible sessions have durable typed dual-scope ownership witness before writable lock publication, exact Native/Core process birth/executable/session/principal/project/lock binding, 10-second owned heartbeat and matched close/cancellation. Missing/unknown proof, live owner or PID reuse denies recovery.
+- T01-AC03: Explicit preview/confirm creates a verified local working copy only; original tree/lock/accepted facts/ciphertexts remain unchanged. Verify source stability, database/WAL, protected object authentication and IDs before atomic empty-target publication and normal fresh open.
+- T01-AC04: Actual whole Native AND Core owned termination/fresh startup plus protected readback proves eligible-session recovery; real principal/foreign-host/untrusted-witness/path/concurrency/key/audit/interrupted-copy/cancel denials preserve source and grant no false success. Core-only restart is additional coverage.
+- T01-AC05: Independently review exact committed security/interface scope and actual negative/positive evidence. Original R03 P1 remains open unless the separately bound one-use operator recovery has real authenticated readback and independent finding closure; no new fixture substitution.
+
+**Bounded changed paths:**
+
+- services/core-api/src/research_observatory_core/windows_credentials.py
+- tests/security/test_project_recovery.py
+#### Review history — W2.C27.T01
+
+**Review mode:** `append-only v1` / 0 completed round(s)
+
+**Current immutable submission awaiting review:** None
+
+**Current latest-review projection:** `-` by - at `-`
 
 **Latest notes:** -
 

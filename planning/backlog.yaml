@@ -6561,6 +6561,99 @@ waves:
           negatives, no external or dynamic chunk imports, configFile/envDir/writefalse and original30s child deadlines. Product
           generated source, policies, security principals, criteria and approved references unchanged. Fresh original3 methods
           and affected sourcequality/current runtime custody plus normal independent corrective review required.
+    - title: Restore explicit reviewed project recovery and durable owned-session proof
+      objective: Restore CAP-02.S01 explicit reviewed recovery in W2, with Native-owned durable current-user and same-machine
+        proof, Core verified-copy orchestration and conservative denials.
+      dependencies:
+      - W2.A06.B00
+      acceptance_criteria:
+      - 'T01-AC01: Implement only the canonical ECR-0014 proposal recovery/API/witness contract and exact T01 path envelope;
+        preserve W1 history, ADR0008 Native authority and existing project-key/current-user protection. Publish indexed task-linked
+        ADR0054 in the same protected change set.'
+      - 'T01-AC02: New proof-eligible sessions have durable typed dual-scope ownership witness before writable lock publication,
+        exact Native/Core process birth/executable/session/principal/project/lock binding, 10-second owned heartbeat and matched
+        close/cancellation. Missing/unknown proof, live owner or PID reuse denies recovery.'
+      - 'T01-AC03: Explicit preview/confirm creates a verified local working copy only; original tree/lock/accepted facts/ciphertexts
+        remain unchanged. Verify source stability, database/WAL, protected object authentication and IDs before atomic empty-target
+        publication and normal fresh open.'
+      - 'T01-AC04: Actual whole Native AND Core owned termination/fresh startup plus protected readback proves eligible-session
+        recovery; real principal/foreign-host/untrusted-witness/path/concurrency/key/audit/interrupted-copy/cancel denials
+        preserve source and grant no false success. Core-only restart is additional coverage.'
+      - 'T01-AC05: Independently review exact committed security/interface scope and actual negative/positive evidence. Original
+        R03 P1 remains open unless the separately bound one-use operator recovery has real authenticated readback and independent
+        finding closure; no new fixture substitution.'
+      verification_commands:
+      - Focused failing characterization and pytest tests/security/test_project_recovery.py tests/service/test_project_lifecycle.py
+        tests/service/test_native_project_contract.py; contract generator/schema/client checks on exact changed API/event
+        contracts.
+      - Actual Windows Native/Core owned session, dual user/machine witness, whole-process abrupt restart, protected readback,
+        alternative principal/host/path/API denials and heartbeat/copy/close races at fixed committed candidate; retain all
+        streams and owned cleanup.
+      - Unchanged ADR check against actual task base/candidate, affected quality and exact protected-source review; architecture
+        original FAIL plus only the separately granted closed45+3 proof where needed. Expanded independent commit-bound disposition.
+      deployment_profiles:
+      - LOC
+      platform_targets:
+      - windows-x64
+      verification_profiles: []
+      id: W2.C27.T01
+      wave: W2
+      priority: P0
+      status: IN_PROGRESS
+      owner: codex-w2-implementation
+      branch: codex/w2-implementation
+      base_sha: bab353be50d95c7a1c1b6dc5e1bdc08927630b1d
+      worktree: .
+      lease:
+        claimed_by: codex-w2-implementation
+        claimed_at: '2026-10-14T22:50:24+00:00'
+        expires_at: '2026-10-15T06:50:24+00:00'
+      started_at: '2026-10-14T22:50:24+00:00'
+      updated_at: '2026-10-14T22:50:24+00:00'
+      completed_at: null
+      blocker: null
+      implementation_notes: ''
+      evidence: []
+      verification_state: null
+      review:
+        reviewer: null
+        result: null
+        reviewed_at: null
+        notes: null
+      review_control:
+        version: 1
+        attempts: []
+        current_submission: null
+      correction:
+        origin_task_id: W2.A06.T01
+        origin_commit: 83a84b5e2fde852281b2550e960fbc63b6a77646
+        paused_state_sha256: b433937424fdc141ada899cd32acd3858867b5f267614a65cc11678a6b5b5e94
+        origin_sha256: 9de3478fb791b93eac59060a51b5a76934799dc0758f05f38ee774b14d9ae24c
+        origin_contract_sha256: de60bc3793158849935920e5604fbe09c538032d736c069a35242034b25104fb
+        origin_history_sha256: d7e57ec494f8ad86cdcf849b575c0b3b960fff1ab272f7cf770dcda6504235f8
+        origin_amendment_id: W2.A06
+        authority_sha256: db3d4a8fa4c91ebccd6cb872b46be95356fb732bf7f2261fc110396fa0375f25
+        spec:
+          path: artifacts/evidence/W2.C27.T01.spec.json
+          sha256: b42a9db79599ffd12d1dd9c9466a2630632e610991962d93cba65285580168cd
+          commit: bab353be50d95c7a1c1b6dc5e1bdc08927630b1d
+        reproduction: The original Native reconciliation regression returned 409 RO-CORE-PROJECT-RECOVERY-UNAVAILABLE instead
+          of 200. The actual private parent is owned by the current user and has the standard Windows OWNER RIGHTS, SYSTEM
+          and Administrators ACL. The nonexact parent checker rejects literal OWNER RIGHTS S-1-3-4 despite already verifying
+          the actual owner. Original failure and owned-cleanup adverse evidence remain preserved in artifacts/tmp/W2.remaining-corrections-batch-01/native-reconciliation-root-cause-01/bounded-root-cause-and-restorative-scope-01.json.
+        changed_paths:
+        - services/core-api/src/research_observatory_core/windows_credentials.py
+        - tests/security/test_project_recovery.py
+        impact_analysis: Restore ordinary current-owner private-parent compatibility within the approved W2.A06.T01 recovery
+          contract. Recognize only literal S-1-3-4 in the nonexact parent branch after the unchanged actual owner check. Preserve
+          strict protected two-ACE witness children, foreign-writer and wrong-owner denial, unsupported ACE denial, path and
+          handle checks, DPAPI scopes and Native authority. Add a failing real Windows private-parent regression, focused
+          adjacent denials and existing witness regressions before the product fix where practical; run the unchanged affected
+          Native regression and two-file quality with normal configured type context. Independent expanded security and actual
+          affected-integration disposition remain required. No reference, framework, criteria, credential authority, original
+          task history or old result is changed. Native cleanup remains an independent unresolved finding until actual proof
+          closes it. Local-main integration remains pending the dependency candidate's fresh affected packaging and security
+          prerequisites.
     resume_records:
     - id: W2.R01
       wave_id: W2
