@@ -1,7 +1,7 @@
 ---
 document_type: generated-backlog-status-summary
 source: planning/backlog.yaml
-source_sha256: e7ef691b7630564fc028a22323f939b6299d4fd117d84cacd9a3df385f1abce1
+source_sha256: 58dbf1d1b12ae1a61bc3f933367338c462c14365f61ab46c25aa60bd516137cf
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -984,7 +984,7 @@ Append-only rounds remain distinct from the current latest-review projection. Le
 | `W2.C20.T01` | `append-only v1` | 1 | `-` | approved / agent:/root/a06_exit_review | - |
 | `W2.C21.T01` | `append-only v1` | 1 | `-` | approved / agent:/root/c21_closeout_review | - |
 | `W2.C22.T01` | `append-only v1` | 1 | `-` | approved / agent:/root/storage_profile_review | - |
-| `W2.C23.T01` | `append-only v1` | 0 | `-` | - / - | - |
+| `W2.C23.T01` | `append-only v1` | 0 | `R01` | - / - | - |
 ## Wave progress
 
 | Wave | Pre-Wave approval | Campaign | Qualification | Approved slices | Done tasks | Exit gate |
@@ -1048,7 +1048,7 @@ Append-only rounds remain distinct from the current latest-review projection. Le
 
 | Task | Status | Owner | Branch |
 |---|---|---|---|
-| `W2.C23.T01` Create import preview, mapping, and conflict UI | `IN_PROGRESS` | codex-w2-implementation | `codex/w2-implementation` |
+| `W2.C23.T01` Create import preview, mapping, and conflict UI | `REVIEW` | codex-w2-implementation | `codex/w2-implementation` |
 
 ## Linked corrective tasks
 
@@ -1164,5 +1164,5 @@ Original tasks and approvals remain unchanged.
 
 ### W2.C23.T01 — Create import preview, mapping, and conflict UI
 
-**Status:** `IN_PROGRESS`. **Original task:** `CAP-04.S01.T02`. **Latest review:** `-`.
+**Status:** `REVIEW`. **Original task:** `CAP-04.S01.T02`. **Latest review:** `-`.
 

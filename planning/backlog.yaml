@@ -5882,7 +5882,7 @@ waves:
       id: W2.C23.T01
       wave: W2
       priority: P0
-      status: IN_PROGRESS
+      status: REVIEW
       owner: codex-w2-implementation
       branch: codex/w2-implementation
       base_sha: ddbf4799d800a14dd62580c25890a003b8b04ad6
@@ -5892,12 +5892,17 @@ waves:
         claimed_at: '2026-10-14T11:55:09+00:00'
         expires_at: '2026-10-14T19:55:09+00:00'
       started_at: '2026-10-14T11:55:09+00:00'
-      updated_at: '2026-10-14T11:55:09+00:00'
+      updated_at: '2026-10-14T12:31:53+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
-      evidence: []
-      verification_state: null
+      evidence:
+      - type: criterion-manifest
+        path: artifacts/evidence/W2.C23.T01.R01.json
+        sha256: c8d7ec0c7c704b09479477c4f6f04d163ca8434cc3b503958a95f6c4ba970856
+        commit: 9d6c43db22818971ca55cac421f3aea8c2171b7a
+        recorded_at: '2026-10-14T12:31:53+00:00'
+      verification_state: passed
       review:
         reviewer: null
         result: null
@@ -5906,7 +5911,55 @@ waves:
       review_control:
         version: 1
         attempts: []
-        current_submission: null
+        current_submission:
+          id: R01
+          submitted_by: codex-w2-implementation
+          submitted_at: '2026-10-14T12:31:53+00:00'
+          candidate_commit: 9d6c43db22818971ca55cac421f3aea8c2171b7a
+          base_commit: ddbf4799d800a14dd62580c25890a003b8b04ad6
+          branch: codex/w2-implementation
+          evidence_reference:
+            type: criterion-manifest
+            path: artifacts/evidence/W2.C23.T01.R01.json
+            sha256: c8d7ec0c7c704b09479477c4f6f04d163ca8434cc3b503958a95f6c4ba970856
+            commit: 9d6c43db22818971ca55cac421f3aea8c2171b7a
+            recorded_at: '2026-10-14T12:31:53+00:00'
+          acceptance_criteria_sha256: 15ee48a45cf083283a8e716af99da052949cc64f73724a31810bd6a93b293770
+          changed_paths:
+          - docs/planning-implementation-plan.md
+          - planning/backlog.yaml
+          - planning/review-site/index.html
+          - planning/review-site/manifest.json
+          - planning/review-site/waves/W2.html
+          - planning/status-summary.md
+          - tests/security/test_application_lock_source.py
+          - tests/service/test_import_review_api.py
+          selected_checks:
+          - .venv/Scripts/python.exe -B -s -m unittest -v tests.service.test_import_review_api.ImportReviewApiTests.test_summary_cancel_is_separate_from_preview_and_rejects_other_job
+          - .venv/Scripts/python.exe -B -s -m unittest -v tests.security.test_application_lock_source.ApplicationLockSourceBoundaryTests.test_folder_bridges_require_local_window_and_do_not_wait_under_core_authority
+          - .venv/Scripts/python.exe -B -s -m ruff format --check --config pyproject.toml -- tests/service/test_import_review_api.py
+            tests/security/test_application_lock_source.py
+          - .venv/Scripts/python.exe -B -s -m ruff check --config pyproject.toml -- tests/service/test_import_review_api.py
+            tests/security/test_application_lock_source.py
+          - .venv/Scripts/python.exe -B -s -m mypy --config-file pyproject.toml --no-namespace-packages --cache-dir artifacts/tmp/W2.remaining-corrections-batch-01/W2.C23.T01.focused-01/mypy-cache
+            -- @artifacts/tmp/W2.remaining-corrections-batch-01/W2.C23.T01.focused-01/source-files.args
+          deferred_checks:
+          - Unresolved broader W2 findings and real Native/principal/packaging/runtime proof remain separate. Exit review
+            follows the owner's correction-affected-risk direction; no whole-profile PASS is inferred here.
+          selection_rationale: Two test-only compatibility regressions share the original current-W2 CAP-04.S01.T02 authority.
+            Select exactly the original cancellation method including its existing separation/denial branches and original
+            native bridge/source method including its existing command loop. Select two-file format/lint and complete configured
+            source type context with a fresh cache. Hold actual candidate/tracked/installed runtime and boundary inputs until
+            five owned jobs drain EMPTY. Canonical command IDs label the affected selections, not whole profiles.
+          selection_sha256: b5f20834af0f88dee5df5cebe20703a68370da7bccb362ca15ac7e9f77d5284d
+          prior_attempt_id: null
+          open_finding_ids: []
+          root_cause_analysis: null
+          selected_command_ids:
+          - service:unit
+          - security-local:unit
+          - foundation:quality
+          packet_sha256: b30df05522bc495cb4acaeaf342f1623f4ab796351e351199e0436fc0b0fd3be
       correction:
         origin_task_id: CAP-04.S01.T02
         origin_commit: c2eb41dd4488c26403f6ec0e167733b386ab3063

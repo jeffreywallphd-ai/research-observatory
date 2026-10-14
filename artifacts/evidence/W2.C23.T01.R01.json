@@ -1,0 +1,190 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "W2.C23.T01",
+  "baseCommit": "ddbf4799d800a14dd62580c25890a003b8b04ad6",
+  "commit": "9d6c43db22818971ca55cac421f3aea8c2171b7a",
+  "branch": "codex/w2-implementation",
+  "changedFiles": [
+    "docs/planning-implementation-plan.md",
+    "planning/backlog.yaml",
+    "planning/review-site/index.html",
+    "planning/review-site/manifest.json",
+    "planning/review-site/waves/W2.html",
+    "planning/status-summary.md",
+    "tests/security/test_application_lock_source.py",
+    "tests/service/test_import_review_api.py"
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "checkIds": [
+        "import-cancellation-regression",
+        "native-lock-source-regression"
+      ],
+      "evidence": [
+        "The original authenticated TestClient cancellation/separation method passes at this actual candidate: one cancel request and same preview/revision summary polling require exact cancelled within the unchanged 5000 ms cooperative grace, countsNone, retained preview records and original other-job/invalid-input denials. Its existing tiny synthetic import composition uses an explicit plaintext development database and in-memory object keys; this is API/worker fixture proof, not fresh Windows DPAPI, encrypted canonical database, actual native UI or model proof. The native leaf is a bounded static source witness: exact local-window/no-Core-authority bridge assertions remain, and one balanced actual blocking callback owns picker cleanup with direct lock acquisition rejected. Original CAP-04.S01.T02 functional/native/security approval remains historical authority only; no fresh replay of every original mapping/report/UI behavior is claimed."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "checkIds": [
+        "import-cancellation-regression",
+        "native-lock-source-regression"
+      ],
+      "evidence": [
+        "Both exact original affected leaves complete without skips, retaining all original source/command subcases, terminal identity/separation/denial checks and native bridge authority assertions. Original final29 service/security FAIL reports remain preserved; neither full profile is inferred to pass."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "checkIds": [
+        "import-cancellation-regression",
+        "native-lock-source-regression",
+        "affected-format",
+        "affected-lint",
+        "configured-source-types"
+      ],
+      "evidence": [
+        "Only two admitted test files restore reviewed cooperative observation and balanced static callback semantics. API79 original assertions remain plus two; native55 original assertions remain and only obsolete immediate-first-statement adjacency is replaced. Fresh two-file format/lint and unchanged configured source types pass. No production/native implementation, fixture, authority/reference, framework, checker setting, deadline, contract or original task history is changed."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "checks": [
+    {
+      "id": "import-cancellation-regression",
+      "command": ".venv/Scripts/python.exe -B -s -m unittest -v tests.service.test_import_review_api.ImportReviewApiTests.test_summary_cancel_is_separate_from_preview_and_rejects_other_job",
+      "commandSemantics": "DISPLAY repository-relative executable; exact actual argv is retained in the ignored execution receipt",
+      "result": "passed",
+      "exitCode": 0,
+      "commit": "9d6c43db22818971ca55cac421f3aea8c2171b7a",
+      "seconds": 4.916260300000431,
+      "raw": {
+        "path": "artifacts/tmp/W2.remaining-corrections-batch-01/W2.C23.T01.focused-01/import-cancellation-regression.raw.log",
+        "sha256": "14305f19ee9b667f4fc73925c57274dac9e6465fa3d05c51e5de3d94b4f31bd3"
+      }
+    },
+    {
+      "id": "native-lock-source-regression",
+      "command": ".venv/Scripts/python.exe -B -s -m unittest -v tests.security.test_application_lock_source.ApplicationLockSourceBoundaryTests.test_folder_bridges_require_local_window_and_do_not_wait_under_core_authority",
+      "commandSemantics": "DISPLAY repository-relative executable; exact actual argv is retained in the ignored execution receipt",
+      "result": "passed",
+      "exitCode": 0,
+      "commit": "9d6c43db22818971ca55cac421f3aea8c2171b7a",
+      "seconds": 0.17770970000128727,
+      "raw": {
+        "path": "artifacts/tmp/W2.remaining-corrections-batch-01/W2.C23.T01.focused-01/native-lock-source-regression.raw.log",
+        "sha256": "585d99dd2ee71f54e48ff35a491da5bb54a41d3d1e85a5a3786aebc273ba7dcb"
+      }
+    },
+    {
+      "id": "affected-format",
+      "command": ".venv/Scripts/python.exe -B -s -m ruff format --check --config pyproject.toml -- tests/service/test_import_review_api.py tests/security/test_application_lock_source.py",
+      "commandSemantics": "DISPLAY repository-relative executable; exact actual argv is retained in the ignored execution receipt",
+      "result": "passed",
+      "exitCode": 0,
+      "commit": "9d6c43db22818971ca55cac421f3aea8c2171b7a",
+      "seconds": 0.16446859999996377,
+      "raw": {
+        "path": "artifacts/tmp/W2.remaining-corrections-batch-01/W2.C23.T01.focused-01/affected-format.raw.log",
+        "sha256": "3bc53bf3e981a98a34a852e175bf9b77af841edea74fca595d9aedcbaf9a4938"
+      }
+    },
+    {
+      "id": "affected-lint",
+      "command": ".venv/Scripts/python.exe -B -s -m ruff check --config pyproject.toml -- tests/service/test_import_review_api.py tests/security/test_application_lock_source.py",
+      "commandSemantics": "DISPLAY repository-relative executable; exact actual argv is retained in the ignored execution receipt",
+      "result": "passed",
+      "exitCode": 0,
+      "commit": "9d6c43db22818971ca55cac421f3aea8c2171b7a",
+      "seconds": 0.15284590000010212,
+      "raw": {
+        "path": "artifacts/tmp/W2.remaining-corrections-batch-01/W2.C23.T01.focused-01/affected-lint.raw.log",
+        "sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18"
+      }
+    },
+    {
+      "id": "configured-source-types",
+      "command": ".venv/Scripts/python.exe -B -s -m mypy --config-file pyproject.toml --no-namespace-packages --cache-dir artifacts/tmp/W2.remaining-corrections-batch-01/W2.C23.T01.focused-01/mypy-cache -- @artifacts/tmp/W2.remaining-corrections-batch-01/W2.C23.T01.focused-01/source-files.args",
+      "commandSemantics": "DISPLAY repository-relative executable; exact actual argv is retained in the ignored execution receipt",
+      "result": "passed",
+      "exitCode": 0,
+      "commit": "9d6c43db22818971ca55cac421f3aea8c2171b7a",
+      "seconds": 18.77253429999837,
+      "raw": {
+        "path": "artifacts/tmp/W2.remaining-corrections-batch-01/W2.C23.T01.focused-01/configured-source-types.raw.log",
+        "sha256": "c642e5b33b5e7d157e7b2362ef94a292d50ab8abbba717375ca1704ad53de820"
+      }
+    }
+  ],
+  "executionReceipt": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/W2.C23.T01.focused-01/receipt.json",
+    "sha256": "d3f52d1ebac53224e52b36033cdbdd2e1e599f412108ae67ed6a75f680a8a91d"
+  },
+  "boundaryInputs": [
+    {
+      "path": "tests/service/test_import_preview_service.py",
+      "sha256": "89a279f2b1defc5ff1723020a5bafa8f3de12adcd2367da19b5248f252a733e3"
+    },
+    {
+      "path": "tests/data/test_import_source_chunks.py",
+      "sha256": "9bc44c1f4cbfe2d6dbc0631947969ba447c74016088fb65fb24a444af2911db8"
+    },
+    {
+      "path": "services/core-api/src/research_observatory_core/ingestion/preview_workflow.py",
+      "sha256": "56c981b887e73f93b3d801ee639766c60ce239b54ce7cddac3dee3111fefb5f8"
+    },
+    {
+      "path": "services/core-api/src/research_observatory_core/ingestion/summary_workflow.py",
+      "sha256": "7285e2afc6a708cd426ecb5c494a2591a3712f2b95887b434b2d66ee6a36638f"
+    },
+    {
+      "path": "apps/desktop/src-tauri/src/lib.rs",
+      "sha256": "e3e37677130eb497c452be2954764df33b9c8c5ed4f6819a8a6134f87439820c"
+    }
+  ],
+  "preservedFinal29Failures": [
+    {
+      "path": "artifacts/tmp/W2.final-wave-exit-never-started29-01.f01/commands/15.result.json",
+      "sha256": "62dc1c5bb4bf8d0b3e2edc6421c2475022e36aaa280c647a5fe5d24215966f2f",
+      "candidateCommit": "f62f171c44f5fbe5f92ccb973533b353ba470995",
+      "status": "FAIL",
+      "exitCode": 1
+    },
+    {
+      "path": "artifacts/tmp/W2.final-wave-exit-never-started29-01.f01/commands/28.result.json",
+      "sha256": "637e9ac41cca65f8909a5d0c37bf16b2a5a18b7cb07ed80f8fe31b7647428ce2",
+      "candidateCommit": "f62f171c44f5fbe5f92ccb973533b353ba470995",
+      "status": "FAIL",
+      "exitCode": 1
+    }
+  ],
+  "executionTruth": "Fresh focused outcomes only at the actual committed correction candidate. API/worker fixture uses plaintext development SQLite and in-memory object keys; native source leaf is static syntax/body/authority proof. No fresh DPAPI/SQLCipher/Native/principal/model/full-profile/Wave/release claim, and no previous result is relabelled. Other original final29 findings remain open until separately resolved. Failed attempts must retain distinct sources/receipts/raw outputs; this record does not invent their result.",
+  "verificationSelection": {
+    "selectedCommandIds": [
+      "service:unit",
+      "security-local:unit",
+      "foundation:quality"
+    ],
+    "riskAnalysis": "Two test-only compatibility regressions share the original current-W2 CAP-04.S01.T02 authority. Select exactly the original cancellation method including its existing separation/denial branches and original native bridge/source method including its existing command loop. Select two-file format/lint and complete configured source type context with a fresh cache. Hold actual candidate/tracked/installed runtime and boundary inputs until five owned jobs drain EMPTY. Canonical command IDs label the affected selections, not whole profiles.",
+    "deferred": [
+      "Unresolved broader W2 findings and real Native/principal/packaging/runtime proof remain separate. Exit review follows the owner's correction-affected-risk direction; no whole-profile PASS is inferred here."
+    ]
+  },
+  "correctiveIntegration": {
+    "originSha256": "4951e92589c98d802968fb07d51402ddcbe4c2d60068c4a20ed5c4c91801133a",
+    "authorityPreserved": true,
+    "affectedChecks": [
+      ".venv/Scripts/python.exe -B -s -m unittest -v tests.service.test_import_review_api.ImportReviewApiTests.test_summary_cancel_is_separate_from_preview_and_rejects_other_job",
+      ".venv/Scripts/python.exe -B -s -m unittest -v tests.security.test_application_lock_source.ApplicationLockSourceBoundaryTests.test_folder_bridges_require_local_window_and_do_not_wait_under_core_authority",
+      ".venv/Scripts/python.exe -B -s -m ruff format --check --config pyproject.toml -- tests/service/test_import_review_api.py tests/security/test_application_lock_source.py",
+      ".venv/Scripts/python.exe -B -s -m ruff check --config pyproject.toml -- tests/service/test_import_review_api.py tests/security/test_application_lock_source.py",
+      ".venv/Scripts/python.exe -B -s -m mypy --config-file pyproject.toml --no-namespace-packages --cache-dir artifacts/tmp/W2.remaining-corrections-batch-01/W2.C23.T01.focused-01/mypy-cache -- @artifacts/tmp/W2.remaining-corrections-batch-01/W2.C23.T01.focused-01/source-files.args"
+    ],
+    "reusedEvidence": [
+      "Original CAP-04.S01.T02 DONE/independent approval is preserved as historical authority only; no prior execution is relabelled fresh."
+    ],
+    "rationale": "Actual original migration-free test/API/static-source integration closes two stale assertions under their shared original task while preserving cancellation and native authority guarantees. Independent commit-bound correction review remains required before ordinary Wave resume."
+  }
+}

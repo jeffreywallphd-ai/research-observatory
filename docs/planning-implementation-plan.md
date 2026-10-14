@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: e7ef691b7630564fc028a22323f939b6299d4fd117d84cacd9a3df385f1abce1
+source_sha256: 58dbf1d1b12ae1a61bc3f933367338c462c14365f61ab46c25aa60bd516137cf
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -5180,7 +5180,7 @@ Original tasks and approvals remain unchanged.
 
 ### W2.C23.T01 — Create import preview, mapping, and conflict UI
 
-**Status:** `IN_PROGRESS`. **Original task:** `CAP-04.S01.T02`. **Latest review:** `-`.
+**Status:** `REVIEW`. **Original task:** `CAP-04.S01.T02`. **Latest review:** `-`.
 
 **Reproduction:** Retained final29 service cancellation fails by asserting immediate cancelled even though the approved cooperative summary workflow can first return cancelling within its existing 5000 ms grace period. Retained final29 application-lock source check fails an obsolete immediate-first-statement assumption introduced before CAP-04.S01.T02's checkpoint05 native-stop/drain callback. Both compatibility regressions have the same actual current-W2 original task; preserve every original adverse and task identity.
 
@@ -5198,7 +5198,19 @@ Original tasks and approvals remain unchanged.
 
 **Review mode:** `append-only v1` / 0 completed round(s)
 
-**Current immutable submission awaiting review:** None
+**Current immutable submission awaiting review:** `R01` / packet SHA-256 `b30df05522bc495cb4acaeaf342f1623f4ab796351e351199e0436fc0b0fd3be`
+
+- Candidate / base / branch: `9d6c43db22818971ca55cac421f3aea8c2171b7a` / `ddbf4799d800a14dd62580c25890a003b8b04ad6` / `codex/w2-implementation`
+- Submitted by / at: codex-w2-implementation / `2026-10-14T12:31:53+00:00`
+- Evidence: `artifacts/evidence/W2.C23.T01.R01.json` / `c8d7ec0c7c704b09479477c4f6f04d163ca8434cc3b503958a95f6c4ba970856` / `9d6c43db22818971ca55cac421f3aea8c2171b7a`
+- Acceptance-criteria SHA-256: `15ee48a45cf083283a8e716af99da052949cc64f73724a31810bd6a93b293770`
+- Verification-selection SHA-256: `b5f20834af0f88dee5df5cebe20703a68370da7bccb362ca15ac7e9f77d5284d`
+- Changed paths: `docs/planning-implementation-plan.md`, `planning/backlog.yaml`, `planning/review-site/index.html`, `planning/review-site/manifest.json`, `planning/review-site/waves/W2.html`, `planning/status-summary.md`, `tests/security/test_application_lock_source.py`, `tests/service/test_import_review_api.py`
+- Selected checks: `.venv/Scripts/python.exe -B -s -m unittest -v tests.service.test_import_review_api.ImportReviewApiTests.test_summary_cancel_is_separate_from_preview_and_rejects_other_job`, `.venv/Scripts/python.exe -B -s -m unittest -v tests.security.test_application_lock_source.ApplicationLockSourceBoundaryTests.test_folder_bridges_require_local_window_and_do_not_wait_under_core_authority`, `.venv/Scripts/python.exe -B -s -m ruff format --check --config pyproject.toml -- tests/service/test_import_review_api.py tests/security/test_application_lock_source.py`, `.venv/Scripts/python.exe -B -s -m ruff check --config pyproject.toml -- tests/service/test_import_review_api.py tests/security/test_application_lock_source.py`, `.venv/Scripts/python.exe -B -s -m mypy --config-file pyproject.toml --no-namespace-packages --cache-dir artifacts/tmp/W2.remaining-corrections-batch-01/W2.C23.T01.focused-01/mypy-cache -- @artifacts/tmp/W2.remaining-corrections-batch-01/W2.C23.T01.focused-01/source-files.args`
+- Deferred checks: `Unresolved broader W2 findings and real Native/principal/packaging/runtime proof remain separate. Exit review follows the owner's correction-affected-risk direction; no whole-profile PASS is inferred here.`
+- Selection rationale: Two test-only compatibility regressions share the original current-W2 CAP-04.S01.T02 authority. Select exactly the original cancellation method including its existing separation/denial branches and original native bridge/source method including its existing command loop. Select two-file format/lint and complete configured source type context with a fresh cache. Hold actual candidate/tracked/installed runtime and boundary inputs until five owned jobs drain EMPTY. Canonical command IDs label the affected selections, not whole profiles.
+- Prior round / replayed open findings: `-` / -
+- Root-cause escalation: -
 
 **Current latest-review projection:** `-` by - at `-`
 
