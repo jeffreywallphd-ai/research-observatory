@@ -3,157 +3,184 @@
   "documentType": "software-supply-chain-exceptions",
   "exceptions": [
     {
-      "findingKey": "license|Apache-2.0 OR BSD-2-Clause|Python|packaging",
-      "status": "approved",
-      "reviewedBy": "agent:maxwell",
-      "reviewedAt": "2026-08-11",
-      "expiresAt": "2026-09-07",
-      "rationale": "packaging 26.3 is a PyInstaller build-only dependency absent from the artifact; both declared alternatives are individually allowed, and this exact temporary exception addresses fail-closed SPDX disjunction handling only.",
-      "ticket": "CAP-01.S03.T02"
-    },
-    {
-      "findingKey": "license|GPL-2.0-only|Python|pyinstaller",
-      "status": "approved",
-      "reviewedBy": "agent:maxwell",
-      "reviewedAt": "2026-08-11",
-      "expiresAt": "2026-09-07",
-      "rationale": "Unmodified PyInstaller 6.21.0 is build-only; upstream GPL-2.0-or-later terms include the bootloader distribution exception and Apache-2.0 runtime hooks, while the builder package is absent from the artifact.",
-      "ticket": "CAP-01.S03.T02"
-    },
-    {
-      "findingKey": "license|GPL-2.0-only|Python|pyinstaller-hooks-contrib",
-      "status": "approved",
-      "reviewedBy": "agent:maxwell",
-      "reviewedAt": "2026-08-11",
-      "expiresAt": "2026-09-07",
-      "rationale": "PyInstaller hooks contrib 2026.6 standard hooks execute only during the approved build; runtime hooks are Apache-2.0 and the package itself is absent from the generated artifact.",
-      "ticket": "CAP-01.S03.T02"
-    },
-    {
-      "findingKey": "license|LGPL-3.0-only|Python|autocommand",
-      "status": "approved",
-      "reviewedBy": "agent:maxwell",
-      "reviewedAt": "2026-08-11",
-      "expiresAt": "2026-09-07",
-      "rationale": "autocommand 2.2.2 is vendored within build-only setuptools, which is explicitly excluded from the frozen runtime; this exception does not authorize redistribution.",
-      "ticket": "CAP-01.S03.T02"
-    },
-    {
-      "findingKey": "license|Apache-2.0 OR MIT|Node.js|@tauri-apps/api",
-      "status": "approved",
-      "reviewedBy": "agent:curie",
-      "reviewedAt": "2026-08-13",
-      "expiresAt": "2026-09-07",
-      "rationale": "@tauri-apps/api 2.11.1 is the direct runtime dependency and its code may enter the frontend, but both exact SPDX alternatives are individually policy-allowed permissive licenses; this exception covers only intentionally fail-closed OR-expression parsing and authorizes no unlisted license or package.",
-      "ticket": "CAP-01.S04.T03"
-    },
-    {
-      "findingKey": "license|Apache-2.0 OR MIT|Node.js|@tauri-apps/cli",
-      "status": "approved",
-      "reviewedBy": "agent:curie",
-      "reviewedAt": "2026-08-13",
-      "expiresAt": "2026-09-07",
-      "rationale": "@tauri-apps/cli 2.11.4 is a direct development dependency used for Tauri build and development and is absent from the shipped frontend and frozen Core sidecar; both alternatives are allowed, so this exception is limited to OR-expression parsing.",
-      "ticket": "CAP-01.S04.T03"
-    },
-    {
-      "findingKey": "license|Apache-2.0 OR MIT|Node.js|@tauri-apps/cli-win32-x64-msvc",
-      "status": "approved",
-      "reviewedBy": "agent:curie",
-      "reviewedAt": "2026-08-13",
-      "expiresAt": "2026-09-07",
-      "rationale": "The exact 2.11.4 Windows native package is an optional child of the build and development CLI and is absent from the shipped frontend and sidecar; both license alternatives are allowed and this exception covers only OR-expression parsing.",
-      "ticket": "CAP-01.S04.T03"
-    },
-    {
-      "findingKey": "vulnerability|CVE-2026-39822|.pnpm/@typescript+typescript-win32-x64@7.0.2/node_modules/@typescript/typescript-win32-x64/lib/tsc.exe|stdlib",
-      "status": "approved",
-      "reviewedBy": "nash-independent-security-reviewer",
-      "reviewedAt": "2026-08-28",
-      "expiresAt": "2026-09-04",
-      "rationale": "The vulnerable Go os.Root code is embedded only in the pinned development-only @typescript/typescript-win32-x64 7.0.2 compiler. It runs on governed repository source and configuration, is not authorized to compile researcher/imported content, and is excluded from the shipped desktop application and Core sidecar. TypeScript 7.0.2 remains the latest stable release; 7.1.0-dev.20260828.1 is prerelease and is not an equivalent stable remediation. Renew for seven days only, evaluate each new stable release immediately, replace at the first stable build containing the fixed Go runtime, and remove this exception.",
-      "ticket": "CAP-01.S04.T03"
-    },
-    {
-      "findingKey": "vulnerability|CVE-2026-56852|.pnpm/@typescript+typescript-win32-x64@7.0.2/node_modules/@typescript/typescript-win32-x64/lib/tsc.exe|golang.org/x/text",
-      "status": "approved",
-      "reviewedBy": "nash-independent-security-reviewer",
-      "reviewedAt": "2026-08-28",
-      "expiresAt": "2026-09-04",
-      "rationale": "The vulnerable golang.org/x/text code is embedded only in the pinned development-only @typescript/typescript-win32-x64 7.0.2 compiler. The invalid-UTF-8 denial-of-service boundary is limited to governed repository compilation and cannot enter the shipped desktop application or Core sidecar. TypeScript 7.0.2 remains the latest stable release; 7.1.0-dev.20260828.1 is prerelease and is not an equivalent stable remediation. Renew for seven days only, evaluate each new stable release immediately, replace at the first stable package containing x/text 0.39.0 or later, and remove this exception.",
-      "ticket": "CAP-01.S04.T03"
-    },
-    {
       "findingKey": "vulnerability|CVE-2026-33818|.pnpm/@typescript+typescript-win32-x64@7.0.2/node_modules/@typescript/typescript-win32-x64/lib/tsc.exe|stdlib",
       "status": "approved",
-      "reviewedBy": "agent:security-exception-reassessment",
-      "reviewedAt": "2026-09-01",
-      "expiresAt": "2026-09-08",
-      "rationale": "Go 1.26.4 embedded in the pinned development-only TypeScript 7.0.2 native compiler is affected by encoding/asn1 excessive-recursion denial of service. The compiler processes only governed repository source, receives no ASN.1 input, and is absent from the shipped desktop app and Core sidecar. Go 1.26.6 is fixed, but no patched stable TypeScript package exists; replace at the first patched stable release and remove this exception.",
-      "ticket": "CAP-02.S02"
+      "reviewedBy": "agent:/root/a03_closeout_review",
+      "reviewedAt": "2026-10-14",
+      "expiresAt": "2026-10-21",
+      "rationale": "Current exact dev compiler TypeScript7.0.2, WindowsAMD64 PE SHA256 f9ecfbdc93753d2c972d66a8d0d75f5bd737fd4a5f88b422d9091ea282bcb2c7, embeds Go1.26.4/x-text0.38.0. CVE-2026-33818: encoding/asn1: golang: Go encoding/asn1: Denial of Service via excessive recursion in Unmarshal; primary https://pkg.go.dev/vuln/GO-2026-5972; reported fixed 1.25.13, 1.26.6, 1.27.0-rc.3. Governed repo TS/config only; actual fresh F Native/frontend206-file inventory excludes compiler and retained Core directory/PE checks contain no compiler. Vulnerable dependency presence is real; compiler entrypoint/function nonreachability is not proven. Proposed temporary acceptance acknowledges residual local build-process risk, including malformed governed inputs, and does not declare fixed/harmless. Evidence artifacts/tmp/W2.remaining-corrections-batch-01/supply-chain-reassessment-02/current-binary-license-package-evidence-02.json SHA256 5a25316eb468c847ee1f80e11b00290e722fd9693185303e0feb9b68e9ac3852. No runtime-library/security threshold exception. Expires2026-10-21; stop at changed binary/version/source domain/packaging or patched stable successor; replacement must fix corresponding Go branch and x-text>=0.39.0 and pass affected checks. No automatic renewal.",
+      "ticket": "S27.COMPILER.01"
     },
     {
       "findingKey": "vulnerability|CVE-2026-39821|.pnpm/@typescript+typescript-win32-x64@7.0.2/node_modules/@typescript/typescript-win32-x64/lib/tsc.exe|stdlib",
       "status": "approved",
-      "reviewedBy": "agent:security-exception-reassessment",
-      "reviewedAt": "2026-09-01",
-      "expiresAt": "2026-09-08",
-      "rationale": "Go 1.26.4 embedded in the pinned development-only TypeScript 7.0.2 native compiler contains the x/net/idna Punycode-equivalence flaw. This compile-only tool performs no product authorization or attacker-controlled hostname normalization, processes only governed repository source, and is absent from the shipped desktop app and Core sidecar. Go 1.26.6 is fixed, but no patched stable TypeScript package exists; replace at the first patched stable release and remove this exception.",
-      "ticket": "CAP-02.S02"
+      "reviewedBy": "agent:/root/a03_closeout_review",
+      "reviewedAt": "2026-10-14",
+      "expiresAt": "2026-10-21",
+      "rationale": "Current exact dev compiler TypeScript7.0.2, WindowsAMD64 PE SHA256 f9ecfbdc93753d2c972d66a8d0d75f5bd737fd4a5f88b422d9091ea282bcb2c7, embeds Go1.26.4/x-text0.38.0. CVE-2026-39821: golang.org/x/net/idna: golang: net/http: golang.org/x/net/idna: Privilege escalation via incorrect Punycode label processing; primary https://pkg.go.dev/vuln/GO-2026-5026; reported fixed 1.25.13, 1.26.6, 1.27.0-rc.3. Governed repo TS/config only; actual fresh F Native/frontend206-file inventory excludes compiler and retained Core directory/PE checks contain no compiler. Vulnerable dependency presence is real; compiler entrypoint/function nonreachability is not proven. Proposed temporary acceptance acknowledges residual local build-process risk, including malformed governed inputs, and does not declare fixed/harmless. Evidence artifacts/tmp/W2.remaining-corrections-batch-01/supply-chain-reassessment-02/current-binary-license-package-evidence-02.json SHA256 5a25316eb468c847ee1f80e11b00290e722fd9693185303e0feb9b68e9ac3852. No runtime-library/security threshold exception. Expires2026-10-21; stop at changed binary/version/source domain/packaging or patched stable successor; replacement must fix corresponding Go branch and x-text>=0.39.0 and pass affected checks. No automatic renewal.",
+      "ticket": "S27.COMPILER.02"
+    },
+    {
+      "findingKey": "vulnerability|CVE-2026-39822|.pnpm/@typescript+typescript-win32-x64@7.0.2/node_modules/@typescript/typescript-win32-x64/lib/tsc.exe|stdlib",
+      "status": "approved",
+      "reviewedBy": "agent:/root/a03_closeout_review",
+      "reviewedAt": "2026-10-14",
+      "expiresAt": "2026-10-21",
+      "rationale": "Current exact dev compiler TypeScript7.0.2, WindowsAMD64 PE SHA256 f9ecfbdc93753d2c972d66a8d0d75f5bd737fd4a5f88b422d9091ea282bcb2c7, embeds Go1.26.4/x-text0.38.0. CVE-2026-39822: golang: Go os.Root: Symlink following vulnerability allows directory traversal; primary https://pkg.go.dev/vuln/GO-2026-4970; reported fixed 1.25.12, 1.26.5, 1.27.0-rc.2. Governed repo TS/config only; actual fresh F Native/frontend206-file inventory excludes compiler and retained Core directory/PE checks contain no compiler. Primary os.Root advisory is Unix-specific; current PE/GOOS is Windows, so this exact platform finding is proposed as bounded non-applicability rather than a blanket vulnerability waiver. Evidence artifacts/tmp/W2.remaining-corrections-batch-01/supply-chain-reassessment-02/current-binary-license-package-evidence-02.json SHA256 5a25316eb468c847ee1f80e11b00290e722fd9693185303e0feb9b68e9ac3852. No runtime-library/security threshold exception. Expires2026-10-21; stop at changed binary/version/source domain/packaging or patched stable successor; replacement must fix corresponding Go branch and x-text>=0.39.0 and pass affected checks. No automatic renewal.",
+      "ticket": "S27.COMPILER.03"
     },
     {
       "findingKey": "vulnerability|CVE-2026-46600|.pnpm/@typescript+typescript-win32-x64@7.0.2/node_modules/@typescript/typescript-win32-x64/lib/tsc.exe|stdlib",
       "status": "approved",
-      "reviewedBy": "agent:security-exception-reassessment",
-      "reviewedAt": "2026-09-01",
-      "expiresAt": "2026-09-08",
-      "rationale": "Go 1.26.4 embedded in the pinned development-only TypeScript 7.0.2 native compiler is affected by invalid DNS-record parsing denial of service. The compiler exposes no DNS client/server or untrusted DNS-packet boundary, processes only governed repository source, and is absent from the shipped desktop app and Core sidecar. Go 1.26.6 is fixed, but no patched stable TypeScript package exists; replace at the first patched stable release and remove this exception.",
-      "ticket": "CAP-02.S02"
+      "reviewedBy": "agent:/root/a03_closeout_review",
+      "reviewedAt": "2026-10-14",
+      "expiresAt": "2026-10-21",
+      "rationale": "Current exact dev compiler TypeScript7.0.2, WindowsAMD64 PE SHA256 f9ecfbdc93753d2c972d66a8d0d75f5bd737fd4a5f88b422d9091ea282bcb2c7, embeds Go1.26.4/x-text0.38.0. CVE-2026-46600: golang.org/x/net/dns/dnsmessage: golang.org/x/net/dns/dnsmessage: Denial of Service via invalid DNS record parsing; primary https://pkg.go.dev/vuln/GO-2026-5942; reported fixed 1.26.6, 1.27.0-rc.3. Governed repo TS/config only; actual fresh F Native/frontend206-file inventory excludes compiler and retained Core directory/PE checks contain no compiler. Vulnerable dependency presence is real; compiler entrypoint/function nonreachability is not proven. Proposed temporary acceptance acknowledges residual local build-process risk, including malformed governed inputs, and does not declare fixed/harmless. Evidence artifacts/tmp/W2.remaining-corrections-batch-01/supply-chain-reassessment-02/current-binary-license-package-evidence-02.json SHA256 5a25316eb468c847ee1f80e11b00290e722fd9693185303e0feb9b68e9ac3852. No runtime-library/security threshold exception. Expires2026-10-21; stop at changed binary/version/source domain/packaging or patched stable successor; replacement must fix corresponding Go branch and x-text>=0.39.0 and pass affected checks. No automatic renewal.",
+      "ticket": "S27.COMPILER.04"
+    },
+    {
+      "findingKey": "vulnerability|CVE-2026-56852|.pnpm/@typescript+typescript-win32-x64@7.0.2/node_modules/@typescript/typescript-win32-x64/lib/tsc.exe|golang.org/x/text",
+      "status": "approved",
+      "reviewedBy": "agent:/root/a03_closeout_review",
+      "reviewedAt": "2026-10-14",
+      "expiresAt": "2026-10-21",
+      "rationale": "Current exact dev compiler TypeScript7.0.2, WindowsAMD64 PE SHA256 f9ecfbdc93753d2c972d66a8d0d75f5bd737fd4a5f88b422d9091ea282bcb2c7, embeds Go1.26.4/x-text0.38.0. CVE-2026-56852: golang.org/x/text: golang.org/x/text: Denial of Service via invalid UTF-8 input; primary https://pkg.go.dev/vuln/GO-2026-5970; reported fixed 0.39.0. Governed repo TS/config only; actual fresh F Native/frontend206-file inventory excludes compiler and retained Core directory/PE checks contain no compiler. Vulnerable dependency presence is real; compiler entrypoint/function nonreachability is not proven. Proposed temporary acceptance acknowledges residual local build-process risk, including malformed governed inputs, and does not declare fixed/harmless. Evidence artifacts/tmp/W2.remaining-corrections-batch-01/supply-chain-reassessment-02/current-binary-license-package-evidence-02.json SHA256 5a25316eb468c847ee1f80e11b00290e722fd9693185303e0feb9b68e9ac3852. No runtime-library/security threshold exception. Expires2026-10-21; stop at changed binary/version/source domain/packaging or patched stable successor; replacement must fix corresponding Go branch and x-text>=0.39.0 and pass affected checks. No automatic renewal.",
+      "ticket": "S27.COMPILER.05"
     },
     {
       "findingKey": "vulnerability|CVE-2026-56853|.pnpm/@typescript+typescript-win32-x64@7.0.2/node_modules/@typescript/typescript-win32-x64/lib/tsc.exe|stdlib",
       "status": "approved",
-      "reviewedBy": "agent:security-exception-reassessment",
-      "reviewedAt": "2026-09-01",
-      "expiresAt": "2026-09-08",
-      "rationale": "Go 1.26.4 embedded in the pinned development-only TypeScript 7.0.2 native compiler is affected by the unencrypted HTTP/2 denial-of-service flaw. The compiler is not an HTTP server, processes only governed repository source, and is absent from the shipped desktop app and Core sidecar. Go 1.26.6 is fixed, but no patched stable TypeScript package exists; replace at the first patched stable release and remove this exception.",
-      "ticket": "CAP-02.S02"
+      "reviewedBy": "agent:/root/a03_closeout_review",
+      "reviewedAt": "2026-10-14",
+      "expiresAt": "2026-10-21",
+      "rationale": "Current exact dev compiler TypeScript7.0.2, WindowsAMD64 PE SHA256 f9ecfbdc93753d2c972d66a8d0d75f5bd737fd4a5f88b422d9091ea282bcb2c7, embeds Go1.26.4/x-text0.38.0. CVE-2026-56853: net/http: golang: Go net/http: Unencrypted HTTP/2 connections vulnerable to Denial of Service; primary https://pkg.go.dev/vuln/GO-2026-6089; reported fixed 1.25.13, 1.26.6, 1.27.0-rc.3. Governed repo TS/config only; actual fresh F Native/frontend206-file inventory excludes compiler and retained Core directory/PE checks contain no compiler. Vulnerable dependency presence is real; compiler entrypoint/function nonreachability is not proven. Proposed temporary acceptance acknowledges residual local build-process risk, including malformed governed inputs, and does not declare fixed/harmless. Evidence artifacts/tmp/W2.remaining-corrections-batch-01/supply-chain-reassessment-02/current-binary-license-package-evidence-02.json SHA256 5a25316eb468c847ee1f80e11b00290e722fd9693185303e0feb9b68e9ac3852. No runtime-library/security threshold exception. Expires2026-10-21; stop at changed binary/version/source domain/packaging or patched stable successor; replacement must fix corresponding Go branch and x-text>=0.39.0 and pass affected checks. No automatic renewal.",
+      "ticket": "S27.COMPILER.06"
     },
     {
       "findingKey": "vulnerability|CVE-2026-56858|.pnpm/@typescript+typescript-win32-x64@7.0.2/node_modules/@typescript/typescript-win32-x64/lib/tsc.exe|stdlib",
       "status": "approved",
-      "reviewedBy": "agent:security-exception-reassessment",
-      "reviewedAt": "2026-09-01",
-      "expiresAt": "2026-09-08",
-      "rationale": "Go 1.26.4 embedded in the pinned development-only TypeScript 7.0.2 native compiler contains the html/template pathological-input XSS flaw. The compiler does not render Go HTML templates into product UI, processes only governed repository source, and is absent from the shipped desktop app and Core sidecar. Go 1.26.6 is fixed, but no patched stable TypeScript package exists; replace at the first patched stable release and remove this exception.",
-      "ticket": "CAP-02.S02"
+      "reviewedBy": "agent:/root/a03_closeout_review",
+      "reviewedAt": "2026-10-14",
+      "expiresAt": "2026-10-21",
+      "rationale": "Current exact dev compiler TypeScript7.0.2, WindowsAMD64 PE SHA256 f9ecfbdc93753d2c972d66a8d0d75f5bd737fd4a5f88b422d9091ea282bcb2c7, embeds Go1.26.4/x-text0.38.0. CVE-2026-56858: html/template: golang: Go html/template: Cross-Site Scripting via pathological input; primary https://pkg.go.dev/vuln/GO-2026-6091; reported fixed 1.25.13, 1.26.6, 1.27.0-rc.3. Governed repo TS/config only; actual fresh F Native/frontend206-file inventory excludes compiler and retained Core directory/PE checks contain no compiler. Vulnerable dependency presence is real; compiler entrypoint/function nonreachability is not proven. Proposed temporary acceptance acknowledges residual local build-process risk, including malformed governed inputs, and does not declare fixed/harmless. Evidence artifacts/tmp/W2.remaining-corrections-batch-01/supply-chain-reassessment-02/current-binary-license-package-evidence-02.json SHA256 5a25316eb468c847ee1f80e11b00290e722fd9693185303e0feb9b68e9ac3852. No runtime-library/security threshold exception. Expires2026-10-21; stop at changed binary/version/source domain/packaging or patched stable successor; replacement must fix corresponding Go branch and x-text>=0.39.0 and pass affected checks. No automatic renewal.",
+      "ticket": "S27.COMPILER.07"
     },
     {
       "findingKey": "vulnerability|CVE-2026-56859|.pnpm/@typescript+typescript-win32-x64@7.0.2/node_modules/@typescript/typescript-win32-x64/lib/tsc.exe|stdlib",
       "status": "approved",
-      "reviewedBy": "agent:security-exception-reassessment",
-      "reviewedAt": "2026-09-01",
-      "expiresAt": "2026-09-08",
-      "rationale": "Go 1.26.4 embedded in the pinned development-only TypeScript 7.0.2 native compiler is affected by encoding/xml recursion-depth denial of service. The compile-only boundary does not accept researcher/imported XML, processes only governed repository source, and is absent from the shipped desktop app and Core sidecar. Go 1.26.6 is fixed, but no patched stable TypeScript package exists; replace at the first patched stable release and remove this exception.",
-      "ticket": "CAP-02.S02"
+      "reviewedBy": "agent:/root/a03_closeout_review",
+      "reviewedAt": "2026-10-14",
+      "expiresAt": "2026-10-21",
+      "rationale": "Current exact dev compiler TypeScript7.0.2, WindowsAMD64 PE SHA256 f9ecfbdc93753d2c972d66a8d0d75f5bd737fd4a5f88b422d9091ea282bcb2c7, embeds Go1.26.4/x-text0.38.0. CVE-2026-56859: encoding/xml: golang: Go: Denial of Service via XML decoding recursion depth issue; primary https://pkg.go.dev/vuln/GO-2026-6088; reported fixed 1.25.13, 1.26.6, 1.27.0-rc.3. Governed repo TS/config only; actual fresh F Native/frontend206-file inventory excludes compiler and retained Core directory/PE checks contain no compiler. Vulnerable dependency presence is real; compiler entrypoint/function nonreachability is not proven. Proposed temporary acceptance acknowledges residual local build-process risk, including malformed governed inputs, and does not declare fixed/harmless. Evidence artifacts/tmp/W2.remaining-corrections-batch-01/supply-chain-reassessment-02/current-binary-license-package-evidence-02.json SHA256 5a25316eb468c847ee1f80e11b00290e722fd9693185303e0feb9b68e9ac3852. No runtime-library/security threshold exception. Expires2026-10-21; stop at changed binary/version/source domain/packaging or patched stable successor; replacement must fix corresponding Go branch and x-text>=0.39.0 and pass affected checks. No automatic renewal.",
+      "ticket": "S27.COMPILER.08"
     },
     {
       "findingKey": "vulnerability|CVE-2026-56860|.pnpm/@typescript+typescript-win32-x64@7.0.2/node_modules/@typescript/typescript-win32-x64/lib/tsc.exe|stdlib",
       "status": "approved",
-      "reviewedBy": "agent:security-exception-reassessment",
-      "reviewedAt": "2026-09-01",
-      "expiresAt": "2026-09-08",
-      "rationale": "Go 1.26.4 embedded in the pinned development-only TypeScript 7.0.2 native compiler is affected by quadratic net/url path resolution. Compiler inputs and import paths are governed repository source rather than attacker-controlled URLs, and the compiler is absent from the shipped desktop app and Core sidecar. Go 1.26.6 is fixed, but no patched stable TypeScript package exists; replace at the first patched stable release and remove this exception.",
-      "ticket": "CAP-02.S02"
+      "reviewedBy": "agent:/root/a03_closeout_review",
+      "reviewedAt": "2026-10-14",
+      "expiresAt": "2026-10-21",
+      "rationale": "Current exact dev compiler TypeScript7.0.2, WindowsAMD64 PE SHA256 f9ecfbdc93753d2c972d66a8d0d75f5bd737fd4a5f88b422d9091ea282bcb2c7, embeds Go1.26.4/x-text0.38.0. CVE-2026-56860: net/url: golang: golang net/url: Denial of Service from quadratic complexity in path resolution; primary https://pkg.go.dev/vuln/GO-2026-6218; reported fixed 1.25.13, 1.26.6, 1.27.0-rc.3. Governed repo TS/config only; actual fresh F Native/frontend206-file inventory excludes compiler and retained Core directory/PE checks contain no compiler. Vulnerable dependency presence is real; compiler entrypoint/function nonreachability is not proven. Proposed temporary acceptance acknowledges residual local build-process risk, including malformed governed inputs, and does not declare fixed/harmless. Evidence artifacts/tmp/W2.remaining-corrections-batch-01/supply-chain-reassessment-02/current-binary-license-package-evidence-02.json SHA256 5a25316eb468c847ee1f80e11b00290e722fd9693185303e0feb9b68e9ac3852. No runtime-library/security threshold exception. Expires2026-10-21; stop at changed binary/version/source domain/packaging or patched stable successor; replacement must fix corresponding Go branch and x-text>=0.39.0 and pass affected checks. No automatic renewal.",
+      "ticket": "S27.COMPILER.09"
     },
     {
       "findingKey": "vulnerability|CVE-2026-56862|.pnpm/@typescript+typescript-win32-x64@7.0.2/node_modules/@typescript/typescript-win32-x64/lib/tsc.exe|stdlib",
       "status": "approved",
-      "reviewedBy": "agent:security-exception-reassessment",
-      "reviewedAt": "2026-09-01",
-      "expiresAt": "2026-09-08",
-      "rationale": "Go 1.26.4 embedded in the pinned development-only TypeScript 7.0.2 native compiler is affected by indefinite TLS KeyUpdate denial of service. The compiler exposes no TLS endpoint and accepts no peer TLS records, processes only governed repository source, and is absent from the shipped desktop app and Core sidecar. Go 1.26.6 is fixed, but no patched stable TypeScript package exists; replace at the first patched stable release and remove this exception.",
-      "ticket": "CAP-02.S02"
+      "reviewedBy": "agent:/root/a03_closeout_review",
+      "reviewedAt": "2026-10-14",
+      "expiresAt": "2026-10-21",
+      "rationale": "Current exact dev compiler TypeScript7.0.2, WindowsAMD64 PE SHA256 f9ecfbdc93753d2c972d66a8d0d75f5bd737fd4a5f88b422d9091ea282bcb2c7, embeds Go1.26.4/x-text0.38.0. CVE-2026-56862: crypto/tls: golang: Golang crypto/tls: Denial of Service via indefinite KeyUpdate messages; primary https://pkg.go.dev/vuln/GO-2026-6090; reported fixed 1.25.13, 1.26.6, 1.27.0-rc.3. Governed repo TS/config only; actual fresh F Native/frontend206-file inventory excludes compiler and retained Core directory/PE checks contain no compiler. Vulnerable dependency presence is real; compiler entrypoint/function nonreachability is not proven. Proposed temporary acceptance acknowledges residual local build-process risk, including malformed governed inputs, and does not declare fixed/harmless. Evidence artifacts/tmp/W2.remaining-corrections-batch-01/supply-chain-reassessment-02/current-binary-license-package-evidence-02.json SHA256 5a25316eb468c847ee1f80e11b00290e722fd9693185303e0feb9b68e9ac3852. No runtime-library/security threshold exception. Expires2026-10-21; stop at changed binary/version/source domain/packaging or patched stable successor; replacement must fix corresponding Go branch and x-text>=0.39.0 and pass affected checks. No automatic renewal.",
+      "ticket": "S27.COMPILER.10"
+    },
+    {
+      "findingKey": "vulnerability|CVE-2026-78667|.pnpm/@typescript+typescript-win32-x64@7.0.2/node_modules/@typescript/typescript-win32-x64/lib/tsc.exe|stdlib",
+      "status": "approved",
+      "reviewedBy": "agent:/root/a03_closeout_review",
+      "reviewedAt": "2026-10-14",
+      "expiresAt": "2026-10-21",
+      "rationale": "Current exact dev compiler TypeScript7.0.2, WindowsAMD64 PE SHA256 f9ecfbdc93753d2c972d66a8d0d75f5bd737fd4a5f88b422d9091ea282bcb2c7, embeds Go1.26.4/x-text0.38.0. CVE-2026-78667: net/http: golang: golang: Denial of Service via crafted HTTP Range headers; primary https://pkg.go.dev/vuln/GO-2026-6609; reported fixed 1.26.9, 1.27.2. Governed repo TS/config only; actual fresh F Native/frontend206-file inventory excludes compiler and retained Core directory/PE checks contain no compiler. Vulnerable dependency presence is real; compiler entrypoint/function nonreachability is not proven. Proposed temporary acceptance acknowledges residual local build-process risk, including malformed governed inputs, and does not declare fixed/harmless. Evidence artifacts/tmp/W2.remaining-corrections-batch-01/supply-chain-reassessment-02/current-binary-license-package-evidence-02.json SHA256 5a25316eb468c847ee1f80e11b00290e722fd9693185303e0feb9b68e9ac3852. No runtime-library/security threshold exception. Expires2026-10-21; stop at changed binary/version/source domain/packaging or patched stable successor; replacement must fix corresponding Go branch and x-text>=0.39.0 and pass affected checks. No automatic renewal.",
+      "ticket": "S27.COMPILER.11"
+    },
+    {
+      "findingKey": "vulnerability|CVE-2026-78669|.pnpm/@typescript+typescript-win32-x64@7.0.2/node_modules/@typescript/typescript-win32-x64/lib/tsc.exe|stdlib",
+      "status": "approved",
+      "reviewedBy": "agent:/root/a03_closeout_review",
+      "reviewedAt": "2026-10-14",
+      "expiresAt": "2026-10-21",
+      "rationale": "Current exact dev compiler TypeScript7.0.2, WindowsAMD64 PE SHA256 f9ecfbdc93753d2c972d66a8d0d75f5bd737fd4a5f88b422d9091ea282bcb2c7, embeds Go1.26.4/x-text0.38.0. CVE-2026-78669: net/http: net/http/internal/http2: golang.org/x/net/http2: net/http: Denial of Service via excessive HTTP/2 SETTINGS frames; primary https://pkg.go.dev/vuln/GO-2026-6611; reported fixed 1.26.9, 1.27.2. Governed repo TS/config only; actual fresh F Native/frontend206-file inventory excludes compiler and retained Core directory/PE checks contain no compiler. Vulnerable dependency presence is real; compiler entrypoint/function nonreachability is not proven. Proposed temporary acceptance acknowledges residual local build-process risk, including malformed governed inputs, and does not declare fixed/harmless. Evidence artifacts/tmp/W2.remaining-corrections-batch-01/supply-chain-reassessment-02/current-binary-license-package-evidence-02.json SHA256 5a25316eb468c847ee1f80e11b00290e722fd9693185303e0feb9b68e9ac3852. No runtime-library/security threshold exception. Expires2026-10-21; stop at changed binary/version/source domain/packaging or patched stable successor; replacement must fix corresponding Go branch and x-text>=0.39.0 and pass affected checks. No automatic renewal.",
+      "ticket": "S27.COMPILER.12"
+    },
+    {
+      "findingKey": "vulnerability|CVE-2026-97031|.pnpm/@typescript+typescript-win32-x64@7.0.2/node_modules/@typescript/typescript-win32-x64/lib/tsc.exe|stdlib",
+      "status": "approved",
+      "reviewedBy": "agent:/root/a03_closeout_review",
+      "reviewedAt": "2026-10-14",
+      "expiresAt": "2026-10-21",
+      "rationale": "Current exact dev compiler TypeScript7.0.2, WindowsAMD64 PE SHA256 f9ecfbdc93753d2c972d66a8d0d75f5bd737fd4a5f88b422d9091ea282bcb2c7, embeds Go1.26.4/x-text0.38.0. CVE-2026-97031: crypto/tls: golang: crypto/tls: Denial of Service via multiple ECH outer extension references; primary https://pkg.go.dev/vuln/GO-2026-6607; reported fixed 1.26.9, 1.27.2. Governed repo TS/config only; actual fresh F Native/frontend206-file inventory excludes compiler and retained Core directory/PE checks contain no compiler. Vulnerable dependency presence is real; compiler entrypoint/function nonreachability is not proven. Proposed temporary acceptance acknowledges residual local build-process risk, including malformed governed inputs, and does not declare fixed/harmless. Evidence artifacts/tmp/W2.remaining-corrections-batch-01/supply-chain-reassessment-02/current-binary-license-package-evidence-02.json SHA256 5a25316eb468c847ee1f80e11b00290e722fd9693185303e0feb9b68e9ac3852. No runtime-library/security threshold exception. Expires2026-10-21; stop at changed binary/version/source domain/packaging or patched stable successor; replacement must fix corresponding Go branch and x-text>=0.39.0 and pass affected checks. No automatic renewal.",
+      "ticket": "S27.COMPILER.13"
+    },
+    {
+      "findingKey": "license|Apache-2.0 OR BSD-2-Clause|Python|packaging",
+      "status": "approved",
+      "reviewedBy": "agent:/root/a03_closeout_review",
+      "reviewedAt": "2026-10-14",
+      "expiresAt": "2026-10-21",
+      "rationale": "Exact top-level packaging26.3 and setuptools-vendored packaging26.0 distributor METADATA and LICENSE/Apache/BSD files were re-read/hash-authenticated; both license alternatives are individually allowed and the license bytes are identical. Both occurrences are present in installed fixture selectors, so absence/build-only is not assumed. Select BSD-2-Clause or Apache-2.0 with corresponding notice duties if distributed. Only this exact OR-expression classification is accepted; no other packaging version or broad OR allowance. Current evidence artifacts/tmp/W2.remaining-corrections-batch-01/supply-chain-reassessment-02/current-binary-license-package-evidence-02.json SHA256 5a25316eb468c847ee1f80e11b00290e722fd9693185303e0feb9b68e9ac3852; expires2026-10-21, no automatic renewal. This is a fresh current exact decision, not carry-forward of the expired record.",
+      "ticket": "S27.LICENSE.01"
+    },
+    {
+      "findingKey": "license|GPL-2.0-only|Python|pyinstaller",
+      "status": "approved",
+      "reviewedBy": "agent:/root/a03_closeout_review",
+      "reviewedAt": "2026-10-14",
+      "expiresAt": "2026-10-21",
+      "rationale": "Exact unmodified installed PyInstaller6.21.0 COPYING.txt/METADATA was re-read/hash-authenticated: GPL2-or-later plus explicit compiled bootloader/loader combination distribution exception; runtime hooks Apache2. Builder files occur in installed local fixture selectors, while inspected retained frozen Core/worker contain only identified loader/runtime-hook components and no builder module. Accept local build-tool use/classification for this version only, preserve GPL for any separately redistributed/modified builder and existing bootloader/runtime-hook terms; no complete fresh frozen-Core/installer or general GPL redistribution approval. Current evidence artifacts/tmp/W2.remaining-corrections-batch-01/supply-chain-reassessment-02/current-binary-license-package-evidence-02.json SHA256 5a25316eb468c847ee1f80e11b00290e722fd9693185303e0feb9b68e9ac3852; expires2026-10-21, no automatic renewal. This is a fresh current exact decision, not carry-forward of the expired record.",
+      "ticket": "S27.LICENSE.02"
+    },
+    {
+      "findingKey": "license|GPL-2.0-only|Python|pyinstaller-hooks-contrib",
+      "status": "approved",
+      "reviewedBy": "agent:/root/a03_closeout_review",
+      "reviewedAt": "2026-10-14",
+      "expiresAt": "2026-10-21",
+      "rationale": "Exact installed2026.6 LICENSE/METADATA was re-read/hash-authenticated: standard analysis hooks GPL2-or-later; runtime hooks Apache2. Installed local fixture includes these files, so blanket absence is not claimed. Accept local build-tool use/classification for this version; preserve standard-hook GPL duties and Apache runtime-hook notices, prove actual final distributed inclusion/terms independently. No general GPL allowance or future package/version coverage. Current evidence artifacts/tmp/W2.remaining-corrections-batch-01/supply-chain-reassessment-02/current-binary-license-package-evidence-02.json SHA256 5a25316eb468c847ee1f80e11b00290e722fd9693185303e0feb9b68e9ac3852; expires2026-10-21, no automatic renewal. This is a fresh current exact decision, not carry-forward of the expired record.",
+      "ticket": "S27.LICENSE.03"
+    },
+    {
+      "findingKey": "license|LGPL-3.0-only|Python|autocommand",
+      "status": "approved",
+      "reviewedBy": "agent:/root/a03_closeout_review",
+      "reviewedAt": "2026-10-14",
+      "expiresAt": "2026-10-21",
+      "rationale": "Exact LGPLv3 LICENSE/METADATA for setuptools-vendored autocommand2.2.2 was re-read/hash-authenticated. This code is present on disk in the installed fixture selector; the frozen-sidecar contract excludes setuptools and actual retained Core/worker PYZ directories contain neither setuptools nor autocommand. Accept local unchanged development dependency/classification only, with no redistribution permission or complete fresh Core/installer absence claim. Any proposed artifact inclusion requires a separate actual license-compliance disposition before distribution. Current evidence artifacts/tmp/W2.remaining-corrections-batch-01/supply-chain-reassessment-02/current-binary-license-package-evidence-02.json SHA256 5a25316eb468c847ee1f80e11b00290e722fd9693185303e0feb9b68e9ac3852; expires2026-10-21, no automatic renewal. This is a fresh current exact decision, not carry-forward of the expired record.",
+      "ticket": "S27.LICENSE.04"
+    },
+    {
+      "findingKey": "license|Apache-2.0 OR MIT|Node.js|@tauri-apps/api",
+      "status": "approved",
+      "reviewedBy": "agent:/root/a03_closeout_review",
+      "reviewedAt": "2026-10-14",
+      "expiresAt": "2026-10-21",
+      "rationale": "Exact runtime API2.11.1 package.json plus package LICENSE_MIT and LICENSE_APACHE-2.0 were re-read/hash-authenticated. Fresh F frontend source maps show event/core/tslib inclusion; this is runtime code, not build-only. Select MIT, retain exact copyright and permission notice via the finite proposed third-party notice data remedy and final actual artifact proof. Accept only this exact permissive OR classification; no waiver of notices, release prerequisite or other package/version. Current evidence artifacts/tmp/W2.remaining-corrections-batch-01/supply-chain-reassessment-02/current-binary-license-package-evidence-02.json SHA256 5a25316eb468c847ee1f80e11b00290e722fd9693185303e0feb9b68e9ac3852; expires2026-10-21, no automatic renewal. This is a fresh current exact decision, not carry-forward of the expired record.",
+      "ticket": "S27.LICENSE.05"
+    },
+    {
+      "findingKey": "license|Apache-2.0 OR MIT|Node.js|@tauri-apps/cli",
+      "status": "approved",
+      "reviewedBy": "agent:/root/a03_closeout_review",
+      "reviewedAt": "2026-10-14",
+      "expiresAt": "2026-10-21",
+      "rationale": "Exact installed build/development CLI2.11.4 package.json/LICENSE_MIT/LICENSE_APACHE-2.0 and optional Windows child mapping were re-read/hash-authenticated. Both alternatives are allowed; select MIT and preserve notice duties. CLI code/native child are absent from fresh F Native/frontend files and source maps, but this is not complete future installer evidence. Accept only this exact OR classification/version, no general license-expression relaxation. Current evidence artifacts/tmp/W2.remaining-corrections-batch-01/supply-chain-reassessment-02/current-binary-license-package-evidence-02.json SHA256 5a25316eb468c847ee1f80e11b00290e722fd9693185303e0feb9b68e9ac3852; expires2026-10-21, no automatic renewal. This is a fresh current exact decision, not carry-forward of the expired record.",
+      "ticket": "S27.LICENSE.06"
+    },
+    {
+      "findingKey": "license|Apache-2.0 OR MIT|Node.js|@tauri-apps/cli-win32-x64-msvc",
+      "status": "approved",
+      "reviewedBy": "agent:/root/a03_closeout_review",
+      "reviewedAt": "2026-10-14",
+      "expiresAt": "2026-10-21",
+      "rationale": "Exact Windows CLI child2.11.4 package.json declares Apache2 OR MIT and exact same-version parent optional-child binding. Child ships no standalone license file; the publisher exact tauri-cli-v2.11.4 MIT/Apache primary source and authenticated parent license payloads establish terms. Child is not copied into the inspected F Native/frontend package. Accept only exact child permissive OR classification/version; preserve applicable notices if later distributed, not an inference of all future package exclusion. Current evidence artifacts/tmp/W2.remaining-corrections-batch-01/supply-chain-reassessment-02/current-binary-license-package-evidence-02.json SHA256 5a25316eb468c847ee1f80e11b00290e722fd9693185303e0feb9b68e9ac3852; expires2026-10-21, no automatic renewal. This is a fresh current exact decision, not carry-forward of the expired record.",
+      "ticket": "S27.LICENSE.07"
     }
   ]
 }
