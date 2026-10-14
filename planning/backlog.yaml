@@ -5732,7 +5732,7 @@ waves:
       id: W2.C22.T01
       wave: W2
       priority: P1
-      status: IN_PROGRESS
+      status: REVIEW
       owner: agent:/root
       branch: codex/w2-implementation
       base_sha: 8eae733c4c1761e18aaae277d42443aad977b1b2
@@ -5742,12 +5742,17 @@ waves:
         claimed_at: '2026-10-14T10:48:11+00:00'
         expires_at: '2026-10-14T18:48:11+00:00'
       started_at: '2026-10-14T10:48:11+00:00'
-      updated_at: '2026-10-14T10:48:11+00:00'
+      updated_at: '2026-10-14T11:12:36+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
-      evidence: []
-      verification_state: null
+      evidence:
+      - type: criterion-manifest
+        path: artifacts/evidence/W2.C22.T01.R01.json
+        sha256: 7132050389a7505d959f7abe5811c8c6f392add9fd3b0b53d60be04ac0e520a1
+        commit: 99fdff4a1e764a709074f8832ab819c82087676a
+        recorded_at: '2026-10-14T11:12:36+00:00'
+      verification_state: passed
       review:
         reviewer: null
         result: null
@@ -5756,7 +5761,47 @@ waves:
       review_control:
         version: 1
         attempts: []
-        current_submission: null
+        current_submission:
+          id: R01
+          submitted_by: agent:/root
+          submitted_at: '2026-10-14T11:12:36+00:00'
+          candidate_commit: 99fdff4a1e764a709074f8832ab819c82087676a
+          base_commit: 8eae733c4c1761e18aaae277d42443aad977b1b2
+          branch: codex/w2-implementation
+          evidence_reference:
+            type: criterion-manifest
+            path: artifacts/evidence/W2.C22.T01.R01.json
+            sha256: 7132050389a7505d959f7abe5811c8c6f392add9fd3b0b53d60be04ac0e520a1
+            commit: 99fdff4a1e764a709074f8832ab819c82087676a
+            recorded_at: '2026-10-14T11:12:36+00:00'
+          acceptance_criteria_sha256: 931d31132e89c951ea2680f40a6c3d54b82eb0122b9bcbfe717b3a4067a2f1e4
+          changed_paths:
+          - docs/planning-implementation-plan.md
+          - packages/contracts/storage/sqlite-profile.schema.json
+          - planning/backlog.yaml
+          - planning/review-site/index.html
+          - planning/review-site/manifest.json
+          - planning/review-site/waves/W2.html
+          - planning/status-summary.md
+          selected_checks:
+          - .venv/Scripts/python.exe -B -s -m unittest -v tests.data.test_sqlite_schema.SqliteSchemaTests.test_portable_profile_is_exact_and_schema_valid
+            tests.data.test_sqlite_schema.SqliteSchemaTests.test_initializes_exact_strict_wal_schema_and_reopens_after_restart
+          - .venv/Scripts/python.exe -B tools/build_manifest.py --repo . --output artifacts/tmp/W2.remaining-corrections-batch-01/W2.C22.T01.storage-profile-focused-01/build-manifest.json
+          deferred_checks:
+          - Full data/service/documents/security/Native/performance/packaging and final whole-W2 qualification remain separately
+            due; selected IDs do not mean full profiles passed.
+          selection_rationale: Exactly four JSON const payloads follow approved current metadata. Select two unchanged methods
+            and fresh content-inventory manifest, with optional separately scoped existing guide method only when explicitly
+            requested and exact docs delivery predates claim. Existing owned helper/source/runtime holds and common final
+            equality/drains bind actual input closure. No Python implementation or checker changes.
+          selection_sha256: 0e2412c665833c2e071724725c54b2e2c9cd76b25265e43ad1c5c8ce21a6f899
+          prior_attempt_id: null
+          open_finding_ids: []
+          root_cause_analysis: null
+          selected_command_ids:
+          - data:unit
+          - foundation:build-manifest
+          packet_sha256: b190527d8f0da10d3fe7d51cfac3457bf64ebdaf3904d986cc564292d5c62cc5
       correction:
         origin_task_id: CAP-05.S05.T01
         origin_commit: 5a3d5dbb44786ae643cbd32c95339b16af8e1e72

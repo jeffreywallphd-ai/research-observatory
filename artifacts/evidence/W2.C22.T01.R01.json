@@ -1,0 +1,214 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "W2.C22.T01",
+  "baseCommit": "8eae733c4c1761e18aaae277d42443aad977b1b2",
+  "commit": "99fdff4a1e764a709074f8832ab819c82087676a",
+  "branch": "codex/w2-implementation",
+  "changedFiles": [
+    "docs/planning-implementation-plan.md",
+    "packages/contracts/storage/sqlite-profile.schema.json",
+    "planning/backlog.yaml",
+    "planning/review-site/index.html",
+    "planning/review-site/manifest.json",
+    "planning/review-site/waves/W2.html",
+    "planning/status-summary.md"
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "checkIds": [
+        "schema-profile-consistency"
+      ],
+      "evidence": [
+        "The exact current portable profile validates against its restored schema and equals existing runtime expected metadata. Matching/extraction/raw-text/order/identifier/review behavior is unchanged by four JSON constant payloads; original CAP-05.S05.T01 approval is historical authority, not a fresh replay of reference/API/UI behavior."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "checkIds": [
+        "schema-profile-consistency"
+      ],
+      "evidence": [
+        "Two unchanged existing methods pass with no skips: portable profile/schema/runtime expected-constant validation plus unknown-property denial; actual exact strict-WAL SQLite initialization, identity/tables/triggers, ATTACH denial and reopen integrity. SqliteSchemaTests.setUp uses development_plaintext_database_fixture and a fresh TemporaryDirectory. The first method performs profile/static expected-constant checks; only the initialization/reopen method executes the database. No fresh SQLCipher, Windows DPAPI, encrypted-ciphertext, Native, model or full migration qualification is inferred."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "checkIds": [
+        "schema-profile-consistency",
+        "affected-build-manifest"
+      ],
+      "evidence": [
+        "Only admitted sqlite-profile.schema.json restores current version28, current fingerprint and four existing enrichment table entries in immutable/canonical lists to existing current profile584c. All other schema predicates and mutable-table policy remain unchanged; historical profiles/recovery/migrations/source/test assertions remain. Fresh unchanged build-manifest binds exact clean candidate and changed schema41e3 bytes. No Ruff/mypy or unrelated suite is added for this JSON-only increment. The documentation companion and its optional result are separate below, outside linked task source/criterion scope."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "checks": [
+    {
+      "id": "schema-profile-consistency",
+      "command": ".venv/Scripts/python.exe -B -s -m unittest -v tests.data.test_sqlite_schema.SqliteSchemaTests.test_portable_profile_is_exact_and_schema_valid tests.data.test_sqlite_schema.SqliteSchemaTests.test_initializes_exact_strict_wal_schema_and_reopens_after_restart",
+      "commandSemantics": "DISPLAY repository-relative executable; exact actual argv is retained in ignored execution receipt",
+      "result": "passed",
+      "exitCode": 0,
+      "commit": "99fdff4a1e764a709074f8832ab819c82087676a",
+      "seconds": 1.4051321999977517,
+      "raw": {
+        "path": "artifacts/tmp/W2.remaining-corrections-batch-01/W2.C22.T01.storage-profile-focused-01/schema-profile-consistency.raw.log",
+        "sha256": "e24eceb46bf2a84b198a7e88b957f07ada6a5d9be900d8e0dece87e8b7da50d3"
+      }
+    },
+    {
+      "id": "affected-build-manifest",
+      "command": ".venv/Scripts/python.exe -B tools/build_manifest.py --repo . --output artifacts/tmp/W2.remaining-corrections-batch-01/W2.C22.T01.storage-profile-focused-01/build-manifest.json",
+      "commandSemantics": "DISPLAY repository-relative executable; exact actual argv is retained in ignored execution receipt",
+      "result": "passed",
+      "exitCode": 0,
+      "commit": "99fdff4a1e764a709074f8832ab819c82087676a",
+      "seconds": 30.179018200000428,
+      "raw": {
+        "path": "artifacts/tmp/W2.remaining-corrections-batch-01/W2.C22.T01.storage-profile-focused-01/affected-build-manifest.raw.log",
+        "sha256": "46bf60f8d912eab89db211d660fdd1cdc85c7b9fda94baf3f394dbf34d1e6685"
+      }
+    }
+  ],
+  "executionReceipt": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/W2.C22.T01.storage-profile-focused-01/receipt.json",
+    "sha256": "38e12f6eca9dc06b05259f552b399fd459673c6c973fd4fe358d5a019dd95ca3"
+  },
+  "buildManifest": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/W2.C22.T01.storage-profile-focused-01/build-manifest.json",
+    "sha256": "6fd197e02ca6aab63bf6dfccf72b3694509d80363d8484addb6ee63673545479",
+    "sourceCommit": "99fdff4a1e764a709074f8832ab819c82087676a",
+    "dirty": false,
+    "schema": {
+      "id": "https://research-observatory.local/contracts/storage/sqlite-profile.schema.json",
+      "path": "packages/contracts/storage/sqlite-profile.schema.json",
+      "sha256": "41e3a07b6eeabd732885d1f113e1522a5e6b5e24b1b2f3278892df85b26627e8"
+    }
+  },
+  "fixtureInputs": [
+    {
+      "path": "packages/contracts/storage/README.md",
+      "sha256": "690a83adb9055fa5b21f116458c53cf2f24b8f11f91fee1056fdda7e2440ec46"
+    },
+    {
+      "path": "packages/contracts/storage/object-store-profile.schema.json",
+      "sha256": "9e5b96c1ae518d8776cac83ea7427e6b04c66d60350dfd28be65dff41e3afb3d"
+    },
+    {
+      "path": "packages/contracts/storage/object-store-profile.v1.json",
+      "sha256": "2bdabc65af4a0cce7edb9ad6d3142d7faa62c444b6354b1c04d5490f3b04926c"
+    },
+    {
+      "path": "packages/contracts/storage/protected-database-profile.schema.json",
+      "sha256": "245105bdefaa08b67a03a379803d5335d3a763bfc8c2591d9a56d8bb072e4f75"
+    },
+    {
+      "path": "packages/contracts/storage/protected-database-profile.v1.json",
+      "sha256": "9569f2afdad3585793551ee76a7523697bd0707b157dd5d4859d116f71145265"
+    },
+    {
+      "path": "packages/contracts/storage/sqlite-migration-recovery-v17.snapshot.json",
+      "sha256": "4388b3b35df43204ead46972d4fff67670084a5f82d40b046a09bc6a6fdb4d2a"
+    },
+    {
+      "path": "packages/contracts/storage/sqlite-migration-recovery-v18.snapshot.json",
+      "sha256": "3151702e1039ffe1e19a8d8d0470560c839661be5f3909743d27411e2aa50661"
+    },
+    {
+      "path": "packages/contracts/storage/sqlite-migration-recovery-v19.snapshot.json",
+      "sha256": "f58f50d884456e24ba7ac55af5bf5bb1216e1aa9924a3dc704f1a718f0766511"
+    },
+    {
+      "path": "packages/contracts/storage/sqlite-migration-recovery-v20.snapshot.json",
+      "sha256": "3e7dc972cd46605668cf7252946cd4104cfa02c5dee4a92be5ec8423e7f2edd0"
+    },
+    {
+      "path": "packages/contracts/storage/sqlite-migration-recovery-v23.snapshot.json",
+      "sha256": "48ed4acf04f10baec78431f79fcf5693590b9f6e75a0c0098e778df6b201d186"
+    },
+    {
+      "path": "packages/contracts/storage/sqlite-migration-recovery-v24.snapshot.json",
+      "sha256": "7ebdc90e46553b030de29a0cea4bb5f1c0e5780c11a3502b26095d0d36d3a893"
+    },
+    {
+      "path": "packages/contracts/storage/sqlite-migration-recovery.schema.json",
+      "sha256": "c21230ead18a9adb4d0a080f5aa4fb5807c58b728dfc30a3a1f41637cb3df9f4"
+    },
+    {
+      "path": "packages/contracts/storage/sqlite-migration-recovery.v16.snapshot.json",
+      "sha256": "80a7a5de635ec1b3d88ee76e16e910dadea6cb11250a0c07ca91689eee418384"
+    },
+    {
+      "path": "packages/contracts/storage/sqlite-profile.schema.json",
+      "sha256": "41e3a07b6eeabd732885d1f113e1522a5e6b5e24b1b2f3278892df85b26627e8"
+    },
+    {
+      "path": "packages/contracts/storage/sqlite-profile.v1.json",
+      "sha256": "584c2cd670067af8db73e14c6eebcf0253df9d04c4cfc4c130831aa1c582ae0a"
+    }
+  ],
+  "preservedFinal29DataFailure": {
+    "path": "artifacts/tmp/W2.final-wave-exit-never-started29-01.f01/commands/17.result.json",
+    "sha256": "0e0555de8feea9d7d100d98d74f26ec37cc2ea519cc48705f97ff272b6bfcbd4",
+    "candidateCommit": "f62f171c44f5fbe5f92ccb973533b353ba470995",
+    "status": "FAIL",
+    "exitCode": 1
+  },
+  "documentationCompanionEvidence": {
+    "outsideLinkedTaskScope": true,
+    "selected": true,
+    "delivery": {
+      "selected": true,
+      "outsideLinkedTaskScope": true,
+      "case": "tests.data.test_sqlite_schema.SqliteSchemaTests.test_architecture_guide_tracks_current_profile_recovery_and_mutable_projection",
+      "path": "docs/architecture/local-sqlite-storage.md",
+      "sha256": "20034a565bcf12c65442ad4e8f511de7d6d27e4efc4ba6677ad14f280065f0ad",
+      "separatelyDeliveredCommit": "5a3d5dbb44786ae643cbd32c95339b16af8e1e72",
+      "committedBlobSHA256": "5346f8b2dd2458614776087b8e9dc70b5d803016b6252e12d45c885757b07f25",
+      "canonicalLFSHA256": "5346f8b2dd2458614776087b8e9dc70b5d803016b6252e12d45c885757b07f25",
+      "lineEndingCustody": "Exact proposed CRLF working bytes; Git may normalize CRLF to LF only. Both digests retained; raw equality is not claimed."
+    },
+    "checks": [
+      {
+        "id": "documentation-companion-consistency",
+        "command": ".venv/Scripts/python.exe -B -s -m unittest -v tests.data.test_sqlite_schema.SqliteSchemaTests.test_architecture_guide_tracks_current_profile_recovery_and_mutable_projection",
+        "commandSemantics": "DISPLAY repository-relative executable; exact actual argv is retained in ignored execution receipt",
+        "result": "passed",
+        "exitCode": 0,
+        "commit": "99fdff4a1e764a709074f8832ab819c82087676a",
+        "seconds": 1.1896094999974594,
+        "raw": {
+          "path": "artifacts/tmp/W2.remaining-corrections-batch-01/W2.C22.T01.storage-profile-focused-01/documentation-companion-consistency.raw.log",
+          "sha256": "d3947ab3688c5f4f67fc7f350a8fa2ba19ab5130f38acc9e03c5b6bfdfd920be"
+        }
+      }
+    ],
+    "meaning": "A selected companion is a distinct existing guide-consistency check after separately delivered exact docs bytes before claim; it never expands this task changedPaths. If unselected, its original guide failure is not qualified or closed by this schema evidence."
+  },
+  "executionTruth": "Fresh narrow results at actual later clean claimed candidate only. Original F data:unit FAIL stays immutable. Static profile/expected constants and plaintext development-fixture SQLite initialization/reopen have distinct meanings; optional documentation is static guide consistency. No prior C20/C21 receipt, full profile, cryptographic, DPAPI, real-principal, Native, model, Wave/G2 or release proof is inferred. Failed attempts remain retained and must be named by any later successor.",
+  "verificationSelection": {
+    "selectedCommandIds": [
+      "data:unit",
+      "foundation:build-manifest"
+    ],
+    "riskAnalysis": "Exactly four JSON const payloads follow approved current metadata. Select two unchanged methods and fresh content-inventory manifest, with optional separately scoped existing guide method only when explicitly requested and exact docs delivery predates claim. Existing owned helper/source/runtime holds and common final equality/drains bind actual input closure. No Python implementation or checker changes.",
+    "deferred": [
+      "Full data/service/documents/security/Native/performance/packaging and final whole-W2 qualification remain separately due; selected IDs do not mean full profiles passed."
+    ]
+  },
+  "correctiveIntegration": {
+    "originSha256": "b9957922774b7ae204a72b1d8088a54c7bbeee4b554c18fd774238fd0d3d593e",
+    "authorityPreserved": true,
+    "affectedChecks": [
+      ".venv/Scripts/python.exe -B -s -m unittest -v tests.data.test_sqlite_schema.SqliteSchemaTests.test_portable_profile_is_exact_and_schema_valid tests.data.test_sqlite_schema.SqliteSchemaTests.test_initializes_exact_strict_wal_schema_and_reopens_after_restart",
+      ".venv/Scripts/python.exe -B tools/build_manifest.py --repo . --output artifacts/tmp/W2.remaining-corrections-batch-01/W2.C22.T01.storage-profile-focused-01/build-manifest.json"
+    ],
+    "reusedEvidence": [
+      "Original CAP-05.S05.T01 DONE independent approval and original snapshots/history preserved as historical authority only."
+    ],
+    "rationale": "Restore demonstrated current-W2 schema metadata omission without changing migrations/provider/recovery/matching/rights or valid tests. Separate documentation authority/delivery remains distinct. Actual frozen submission and different commit-bound correction/affected integration disposition are required before ordinary Wave resume."
+  }
+}

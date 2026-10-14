@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 9512da2cfe08674b252f8c9cbb89bfc257b06b5ce83f42a22d32ba55e182fe03
+source_sha256: 85313a4ce2c22c9aa07fa16855d1b78f3a55215d8561ef9df9b1a99e65265edb
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -5123,7 +5123,7 @@ Original tasks and approvals remain unchanged.
 
 ### W2.C22.T01 — Extract and reconcile reference-list entries
 
-**Status:** `IN_PROGRESS`. **Original task:** `CAP-05.S05.T01`. **Latest review:** `-`.
+**Status:** `REVIEW`. **Original task:** `CAP-05.S05.T01`. **Latest review:** `-`.
 
 **Reproduction:** The retained final29 data execution fails the unchanged portable-profile schema test: accepted current v28 profile/runtime metadata conflicts with four stale v27 constants in sqlite-profile.schema.json. Original CAP-05.S05.T01 introduced additive enrichment schema28 and advanced its current profile while retaining the old schema constants. Preserve the raw original FAIL and restore exact current version/fingerprint/immutable/canonical table literals, without changing the valid test or historical profile/recovery contracts.
 
@@ -5140,7 +5140,19 @@ Original tasks and approvals remain unchanged.
 
 **Review mode:** `append-only v1` / 0 completed round(s)
 
-**Current immutable submission awaiting review:** None
+**Current immutable submission awaiting review:** `R01` / packet SHA-256 `b190527d8f0da10d3fe7d51cfac3457bf64ebdaf3904d986cc564292d5c62cc5`
+
+- Candidate / base / branch: `99fdff4a1e764a709074f8832ab819c82087676a` / `8eae733c4c1761e18aaae277d42443aad977b1b2` / `codex/w2-implementation`
+- Submitted by / at: agent:/root / `2026-10-14T11:12:36+00:00`
+- Evidence: `artifacts/evidence/W2.C22.T01.R01.json` / `7132050389a7505d959f7abe5811c8c6f392add9fd3b0b53d60be04ac0e520a1` / `99fdff4a1e764a709074f8832ab819c82087676a`
+- Acceptance-criteria SHA-256: `931d31132e89c951ea2680f40a6c3d54b82eb0122b9bcbfe717b3a4067a2f1e4`
+- Verification-selection SHA-256: `0e2412c665833c2e071724725c54b2e2c9cd76b25265e43ad1c5c8ce21a6f899`
+- Changed paths: `docs/planning-implementation-plan.md`, `packages/contracts/storage/sqlite-profile.schema.json`, `planning/backlog.yaml`, `planning/review-site/index.html`, `planning/review-site/manifest.json`, `planning/review-site/waves/W2.html`, `planning/status-summary.md`
+- Selected checks: `.venv/Scripts/python.exe -B -s -m unittest -v tests.data.test_sqlite_schema.SqliteSchemaTests.test_portable_profile_is_exact_and_schema_valid tests.data.test_sqlite_schema.SqliteSchemaTests.test_initializes_exact_strict_wal_schema_and_reopens_after_restart`, `.venv/Scripts/python.exe -B tools/build_manifest.py --repo . --output artifacts/tmp/W2.remaining-corrections-batch-01/W2.C22.T01.storage-profile-focused-01/build-manifest.json`
+- Deferred checks: `Full data/service/documents/security/Native/performance/packaging and final whole-W2 qualification remain separately due; selected IDs do not mean full profiles passed.`
+- Selection rationale: Exactly four JSON const payloads follow approved current metadata. Select two unchanged methods and fresh content-inventory manifest, with optional separately scoped existing guide method only when explicitly requested and exact docs delivery predates claim. Existing owned helper/source/runtime holds and common final equality/drains bind actual input closure. No Python implementation or checker changes.
+- Prior round / replayed open findings: `-` / -
+- Root-cause escalation: -
 
 **Current latest-review projection:** `-` by - at `-`
 

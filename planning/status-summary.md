@@ -1,7 +1,7 @@
 ---
 document_type: generated-backlog-status-summary
 source: planning/backlog.yaml
-source_sha256: 9512da2cfe08674b252f8c9cbb89bfc257b06b5ce83f42a22d32ba55e182fe03
+source_sha256: 85313a4ce2c22c9aa07fa16855d1b78f3a55215d8561ef9df9b1a99e65265edb
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -983,7 +983,7 @@ Append-only rounds remain distinct from the current latest-review projection. Le
 | `W2.C19.T01` | `append-only v1` | 1 | `-` | approved / agent:/root/c19_correction_review | - |
 | `W2.C20.T01` | `append-only v1` | 1 | `-` | approved / agent:/root/a06_exit_review | - |
 | `W2.C21.T01` | `append-only v1` | 1 | `-` | approved / agent:/root/c21_closeout_review | - |
-| `W2.C22.T01` | `append-only v1` | 0 | `-` | - / - | - |
+| `W2.C22.T01` | `append-only v1` | 0 | `R01` | - / - | - |
 ## Wave progress
 
 | Wave | Pre-Wave approval | Campaign | Qualification | Approved slices | Done tasks | Exit gate |
@@ -1047,7 +1047,7 @@ Append-only rounds remain distinct from the current latest-review projection. Le
 
 | Task | Status | Owner | Branch |
 |---|---|---|---|
-| `W2.C22.T01` Extract and reconcile reference-list entries | `IN_PROGRESS` | agent:/root | `codex/w2-implementation` |
+| `W2.C22.T01` Extract and reconcile reference-list entries | `REVIEW` | agent:/root | `codex/w2-implementation` |
 
 ## Linked corrective tasks
 
@@ -1159,5 +1159,5 @@ Original tasks and approvals remain unchanged.
 
 ### W2.C22.T01 — Extract and reconcile reference-list entries
 
-**Status:** `IN_PROGRESS`. **Original task:** `CAP-05.S05.T01`. **Latest review:** `-`.
+**Status:** `REVIEW`. **Original task:** `CAP-05.S05.T01`. **Latest review:** `-`.
 
