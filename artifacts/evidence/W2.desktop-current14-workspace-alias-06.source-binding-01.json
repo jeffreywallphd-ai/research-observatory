@@ -1,0 +1,67 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "finite-preauthorized-current14-workspace-alias-source-binding",
+  "status": "APPROVED",
+  "preparedBy": "agent:/root/c21_closeout_review",
+  "prospectiveApprovedBy": "human:repository-owner",
+  "preauthorizationSHA256": "34e2e3c175dc9309080182e0673f776055b1cc3ba78639475c09ec54408d7d5f",
+  "originalDecision": {
+    "path": "artifacts/evidence/W2.completion-corrections-batch-02.decision-01.json",
+    "sha256": "738a9ed22b4da46a88c47c64b07607bbf1b27839e3bf657e7c7712763d76e9c2"
+  },
+  "originalDecisionIntroductionCommit": "db25c8c74e2432b6267d687edcfddae31dc070eb",
+  "scopeId": "W2-DESKTOP-CURRENT14-01",
+  "producer": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/desktop-workspace14-recipes-01/execution-envelope-01/current14-owned-06.py",
+    "sha256": "db3008873750d692279cdbb183ae8cb13a6ea4e22aea50d6536c8d27a3f1a1ac"
+  },
+  "preparation": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/desktop-workspace14-recipes-01/execution-envelope-01/preparation-06.json",
+    "sha256": "9b475848c72c04de5dfe8b39c46837c412e0620185957b2b188de118b1808c03"
+  },
+  "manifest": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/desktop-workspace14-recipes-01/execution-envelope-01/source-proposal-manifest-06.json",
+    "sha256": "803d3e02994230925f7a95e2271dfb0b82af72999133a8b00288067d6685bf23"
+  },
+  "originalProducer": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/desktop-workspace14-recipes-01/execution-envelope-01/current14-owned-05.py",
+    "sha256": "71aced0ea0c00c96f41881b9a5262e486a97589454afdb97da1908f43036e4e9"
+  },
+  "originalPreparation": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/desktop-workspace14-recipes-01/execution-envelope-01/preparation-05.json",
+    "sha256": "3ea4f05a87757e46856505c7e63fb65c37b65299e4a75880e2ee47773025a733"
+  },
+  "originalManifest": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/desktop-workspace14-recipes-01/execution-envelope-01/source-proposal-manifest-05.json",
+    "sha256": "dd4218f44913fe2c56f3d57302f084d553f6661dafc0e7d8478b304667a88c9b"
+  },
+  "originalReadiness": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/desktop-workspace14-recipes-01/execution-envelope-01/independent-source-readiness-05.json",
+    "sha256": "036b424806c36cbca9be78c2e97a49423ded4bc26f32ea4ffcbb537b683ea12a"
+  },
+  "diagnosis": {
+    "path": "artifacts/tmp/W2.C25.T01.runtime-alias-diagnostic-01.json",
+    "sha256": "beb53efe73e73fbbd808faf3a6db8b3f7a3d7730a584c792720c68b55a588b75"
+  },
+  "authorizedSources": {
+    "artifacts/tmp/W2.remaining-corrections-batch-01/desktop-workspace14-recipes-01/execution-envelope-01/current14-owned-06.py": "db3008873750d692279cdbb183ae8cb13a6ea4e22aea50d6536c8d27a3f1a1ac"
+  },
+  "sourceReadiness": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/desktop-workspace14-recipes-01/execution-envelope-01/independent-source-readiness-06.json",
+    "sha256": "49b332b05fd0eb4047fe9d2272178c04fd38f2c378161c3304ec5bc4cdfa855c"
+  },
+  "recordingReadiness": null,
+  "intendedPublicationPath": "artifacts/evidence/W2.desktop-current14-workspace-alias-06.source-binding-01.json",
+  "actualIntroductionCommit": null,
+  "decisionMeaning": "Apply actual prospective human34e authority to this finite conforming necessary closure after different source/recording review. Not an earlier approval of later bytes, publication/execution/PASS or G2. Existing738a decision and exact05 authority stay immutable.",
+  "scope": "One exact canonical desktop workspace alias and authentication of06 only; all other outside aliases denied. Same current14 recipes/assertions/180captures/90cases/deadlines/owned32ee. No broad source/native-output inventory, owner question/ECR/framework work.",
+  "sharedFrameworkChangeGranted": false,
+  "criteriaChangeGranted": false,
+  "baselineChangeGranted": false,
+  "executed": false,
+  "taskApproved": false,
+  "waveApproved": false,
+  "releaseApproved": false,
+  "publicationConditions": "Different source readiness must bind producer/preparation; separate recording readiness authenticates filled exact source binding before normal publication. Only then record statusAPPROVED/approvedByhuman:repository-owner prospectively and actual sourceReadiness path/SHA. No invented readiness/future introduction.",
+  "approvedBy": "human:repository-owner"
+}
