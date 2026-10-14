@@ -1,0 +1,14 @@
+{
+  "schemaVersion": "1.0",
+  "kind": "authority-preserving-correction",
+  "origin": {
+    "taskId": "W2.A01.T02",
+    "commit": "bada6a260cdf260d872d1393231f67f6bb6ef71d",
+    "sha256": "3a9dabb33cd0f6c70d7842792941f98fad8722d8c80c87c2c93630717ca39a04"
+  },
+  "reproduction": "Retained final29 selected-version attachment method fails its original readiness deadline while its inline module fixture host denies current manifest-bound relative chunks. Original file/method authoring is adopted W2.A01.T02; later CAP-05.S01.T03 expansion is preserved separately. Static source facts do not establish an exclusive first runtime cause; actual request/pageerror/console/adverse evidence must remain.",
+  "changedPaths": [
+    "tests/desktop/test_document_attachment_interactions.py"
+  ],
+  "impactAnalysis": "Deliver only the independently reviewed exact formatted attachment test proposal from desktop manifest02, complete-AST-identical to the preserved reviewed semantic proposal. Serve exact shipping index/manifest assets at original local URLs with closed traversal/redirect/unknown/other-origin denials; retain all148 assertion calls and original30s readiness deadline, selected Work/version rights/context/native-intent uncertainty/denial/cancellation/return behavior. No product/shared framework/reference/security policy, source principal, assertion/deadline/criterion or historical approval change. Original criteria and verification inventory are inherited. Fresh original affected mounted body, affected one-file quality/configured types, held actual source/live/reference/fixture/runtime closure, and normal independent commit-bound corrective integration remain required; other three desktop paths retain separate finite historical delivery, not this task's origin or scope."
+}
