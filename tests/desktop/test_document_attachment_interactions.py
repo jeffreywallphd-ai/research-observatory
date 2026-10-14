@@ -15,7 +15,7 @@ import sys
 import unittest
 from contextlib import ExitStack
 from pathlib import Path
-from typing import Literal
+from typing import Any, Literal
 
 from playwright.sync_api import sync_playwright
 
@@ -31,6 +31,72 @@ from desktop_app_check import (  # noqa: E402
 )
 
 from tests.reconciliation import test_version_api as version_fixture  # noqa: E402
+
+
+def _serve_exact_shipping_fixture(route: Any, document: bytes) -> None:
+    """Serve only exact shipping manifest members at their actual asset URLs."""
+    import hashlib
+    import json
+    import mimetypes
+    import stat
+    from urllib.parse import urlsplit
+
+    url = urlsplit(route.request.url)
+    root = (REPO / "apps/desktop/product-dist").resolve(strict=True)
+    manifest = json.loads((root / "application-manifest.json").read_bytes())
+    artifacts = manifest["artifacts"]
+    if url.scheme != "http" or url.netloc != "tauri.localhost" or url.query or url.fragment:
+        print("RO_LOCAL_RESOURCE=" + json.dumps({"url": route.request.url, "action": "DENY"}))
+        route.abort()
+        return
+    relative = url.path.removeprefix("/")
+    if (
+        not url.path.startswith("/")
+        or relative not in artifacts
+        or relative != "index.html"
+        and not relative.startswith("assets/")
+        or any(part in ("", ".", "..") for part in Path(relative).parts)
+        or "%" in relative
+        or "\\" in relative
+    ):
+        print("RO_LOCAL_RESOURCE=" + json.dumps({"url": route.request.url, "action": "DENY"}))
+        route.abort()
+        return
+    selected = root / relative
+    for part in (selected, *selected.parents):
+        if part == root.parent:
+            break
+        info = part.lstat()
+        if part.is_symlink() or getattr(info, "st_file_attributes", 0) & 0x400:
+            raise ValueError("Redirected shipping fixture member")
+    if not stat.S_ISREG(selected.stat().st_mode):
+        raise ValueError("Nonregular shipping fixture member")
+    body = document if relative == "index.html" else selected.read_bytes()
+    digest = hashlib.sha256(body).hexdigest()
+    if digest != artifacts[relative]:
+        raise ValueError("Shipping fixture bytes differ from exact manifest")
+    content_type = (
+        "text/html"
+        if relative == "index.html"
+        else (
+            "text/javascript"
+            if selected.suffix in (".js", ".mjs")
+            else mimetypes.guess_type(relative)[0] or "application/octet-stream"
+        )
+    )
+    print(
+        "RO_LOCAL_RESOURCE="
+        + json.dumps({"url": route.request.url, "member": relative, "sha256": digest, "action": "FULFILL"})
+    )
+    route.fulfill(status=200, content_type=content_type, body=body)
+
+
+def _observe_shipping_fixture(page: Any) -> None:
+    import json
+
+    page.on("pageerror", lambda error: print("RO_PAGE_ERROR=" + json.dumps(str(error))))
+    page.on("console", lambda message: print("RO_CONSOLE=" + json.dumps({"type": message.type, "text": message.text})))
+
 
 ATTACHMENT_HOST = r""";
 (() => {
@@ -317,16 +383,13 @@ class DocumentAttachmentInteractionTests(unittest.TestCase):
                 device_scale_factor=1,
             )
             cleanup.callback(context.close)
-            document = inline_product_index(REPO)
+            document = (REPO / "apps/desktop/product-dist/index.html").read_bytes()
             context.route(
                 "**/*",
-                lambda route: (
-                    route.fulfill(status=200, content_type="text/html", body=document)
-                    if route.request.url == "http://tauri.localhost/index.html"
-                    else route.abort()
-                ),
+                lambda route: _serve_exact_shipping_fixture(route, document),
             )
             page = context.new_page()
+            _observe_shipping_fixture(page)
             errors = []
             page.on("pageerror", lambda error: errors.append(str(error)))
             page.expose_function("__attachment_test_native", native)

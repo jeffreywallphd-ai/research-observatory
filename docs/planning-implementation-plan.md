@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 2036c16d1a294888760f1201ddf8aad96c9e58925d0ece2a95c59fbb054f5d57
+source_sha256: 17c831ff540b9e9409c955c59760b07618ece4d9d59a0ec93e0c1962c612eb3d
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -5289,6 +5289,36 @@ Original tasks and approvals remain unchanged.
 **Current immutable submission awaiting review:** None
 
 **Current latest-review projection:** `approved` by agent:/root/storage_profile_review at `2026-10-14T14:03:32+00:00`
+
+**Latest notes:** -
+
+**Currently open findings:** -
+
+### W2.C25.T01 — Publish Academic Minimal 1.8 and stage attachment UI
+
+**Status:** `IN_PROGRESS`. **Original task:** `W2.A01.T02`. **Latest review:** `-`.
+
+**Reproduction:** Retained final29 selected-version attachment method fails its original readiness deadline while its inline module fixture host denies current manifest-bound relative chunks. Original file/method authoring is adopted W2.A01.T02; later CAP-05.S01.T03 expansion is preserved separately. Static source facts do not establish an exclusive first runtime cause; actual request/pageerror/console/adverse evidence must remain.
+
+**Inherited criteria:**
+
+- Bind every governed proposal file by the SHA-256 inventory in this packet and authenticate its exact Git blob at the later immutable packet commit before independent packet review and owner approval; publish only those reviewed files to design/ui-reference with enumerated approval metadata substitutions, derived hashes and exact immutable human reference approval record.
+- Use a distinct reference publication/approval commit after the human decision and before every renderer implementation commit; maintain approved 1.7 historical bytes and a new 1.8 ID.
+- Implement the inline Ingestion Review panel from selected Work/version with typed opaque native command/event contract, explicit uncertain-match confirmation, rights/status, cancel/Escape/retry and actionable unsafe/password/oversize/denied/interrupted states from deterministic contract outcomes; exact-revision status/route and return context are modeled, with reader action disabled/pending until CAP-05.S04. Production choose/drop stays disabled or explicitly unavailable before native wiring; no renderer path/bytes, stock Tauri drop path event or broad filesystem grant.
+- Provide task-owned intentional UI evidence listing exact changed governed files, current approval/package/base/owner and focused product checks; the complete task-base UI gate and adversarial lineage checks pass.
+- Prove mounted keyboard/focus/denial/recovery and typed native-contract behavior with synthetic outcomes; do not claim mock UI as real Core/native admission. Freeze exact opaque command/event names and payloads so resumed CAP-05.S01.T01 can add fixed-action native-only picker/drop, stage/candidate/cancel/commit and real disposable-project safety, provenance, rights, interruption and cancellation proof without a renderer follow-up.
+- Complete independent expanded task and slice review before amendment exit/adoption; no premature ordinary W2 resume or Wave release.
+
+**Bounded changed paths:**
+
+- tests/desktop/test_document_attachment_interactions.py
+#### Review history — W2.C25.T01
+
+**Review mode:** `append-only v1` / 0 completed round(s)
+
+**Current immutable submission awaiting review:** None
+
+**Current latest-review projection:** `-` by - at `-`
 
 **Latest notes:** -
 

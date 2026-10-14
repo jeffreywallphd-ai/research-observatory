@@ -4712,6 +4712,56 @@
               "current_submission": null
             }
           }
+        },
+        {
+          "task_id": "W2.C25.T01",
+          "title": "Publish Academic Minimal 1.8 and stage attachment UI",
+          "status": "IN_PROGRESS",
+          "acceptance_criteria": [
+            "Bind every governed proposal file by the SHA-256 inventory in this packet and authenticate its exact Git blob at the later immutable packet commit before independent packet review and owner approval; publish only those reviewed files to design/ui-reference with enumerated approval metadata substitutions, derived hashes and exact immutable human reference approval record.",
+            "Use a distinct reference publication/approval commit after the human decision and before every renderer implementation commit; maintain approved 1.7 historical bytes and a new 1.8 ID.",
+            "Implement the inline Ingestion Review panel from selected Work/version with typed opaque native command/event contract, explicit uncertain-match confirmation, rights/status, cancel/Escape/retry and actionable unsafe/password/oversize/denied/interrupted states from deterministic contract outcomes; exact-revision status/route and return context are modeled, with reader action disabled/pending until CAP-05.S04. Production choose/drop stays disabled or explicitly unavailable before native wiring; no renderer path/bytes, stock Tauri drop path event or broad filesystem grant.",
+            "Provide task-owned intentional UI evidence listing exact changed governed files, current approval/package/base/owner and focused product checks; the complete task-base UI gate and adversarial lineage checks pass.",
+            "Prove mounted keyboard/focus/denial/recovery and typed native-contract behavior with synthetic outcomes; do not claim mock UI as real Core/native admission. Freeze exact opaque command/event names and payloads so resumed CAP-05.S01.T01 can add fixed-action native-only picker/drop, stage/candidate/cancel/commit and real disposable-project safety, provenance, rights, interruption and cancellation proof without a renderer follow-up.",
+            "Complete independent expanded task and slice review before amendment exit/adoption; no premature ordinary W2 resume or Wave release."
+          ],
+          "correction": {
+            "origin_task_id": "W2.A01.T02",
+            "origin_commit": "bada6a260cdf260d872d1393231f67f6bb6ef71d",
+            "paused_state_sha256": "b433937424fdc141ada899cd32acd3858867b5f267614a65cc11678a6b5b5e94",
+            "origin_sha256": "3a9dabb33cd0f6c70d7842792941f98fad8722d8c80c87c2c93630717ca39a04",
+            "origin_contract_sha256": "6cf94a7ed6e54adaf96ea6356fc0b964e3c00d326eef7dd21b202207f0efb227",
+            "origin_history_sha256": "0e6c316ecc93630be9bf0c7653e500c06fc14709a9cd42a5aa0ac9a0032a1783",
+            "origin_amendment_id": "W2.A01",
+            "authority_sha256": "ea2ccc413a6726425e6b97a88bd6fb20194e233cad1bd2c1c158c60c86755bb1",
+            "spec": {
+              "path": "artifacts/evidence/W2.C25.T01.spec.json",
+              "sha256": "d7ef116aaca234600c9b1dafa280d468b0b4848ecad2ca53624973c05bb148d7",
+              "commit": "8dd9e1e906a68937c315ad255107f0e4b75c95f0"
+            },
+            "reproduction": "Retained final29 selected-version attachment method fails its original readiness deadline while its inline module fixture host denies current manifest-bound relative chunks. Original file/method authoring is adopted W2.A01.T02; later CAP-05.S01.T03 expansion is preserved separately. Static source facts do not establish an exclusive first runtime cause; actual request/pageerror/console/adverse evidence must remain.",
+            "changed_paths": [
+              "tests/desktop/test_document_attachment_interactions.py"
+            ],
+            "impact_analysis": "Deliver only the independently reviewed exact formatted attachment test proposal from desktop manifest02, complete-AST-identical to the preserved reviewed semantic proposal. Serve exact shipping index/manifest assets at original local URLs with closed traversal/redirect/unknown/other-origin denials; retain all148 assertion calls and original30s readiness deadline, selected Work/version rights/context/native-intent uncertainty/denial/cancellation/return behavior. No product/shared framework/reference/security policy, source principal, assertion/deadline/criterion or historical approval change. Original criteria and verification inventory are inherited. Fresh original affected mounted body, affected one-file quality/configured types, held actual source/live/reference/fixture/runtime closure, and normal independent commit-bound corrective integration remain required; other three desktop paths retain separate finite historical delivery, not this task's origin or scope."
+          },
+          "task_review": {
+            "task_id": "W2.C25.T01",
+            "title": "Publish Academic Minimal 1.8 and stage attachment UI",
+            "status": "IN_PROGRESS",
+            "mode": "append-only",
+            "latest_review": {
+              "reviewer": null,
+              "result": null,
+              "reviewed_at": null,
+              "notes": null
+            },
+            "review_control": {
+              "version": 1,
+              "attempts": [],
+              "current_submission": null
+            }
+          }
         }
       ]
     },
