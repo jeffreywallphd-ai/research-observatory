@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 4cd7bf6bee4ca009f2d218b5955cded52743b47619deba3534906dea66c6cda9
+source_sha256: 754fdf307ac53e46a6a4d430dfb218e707e87c6c4783d1e1ab3a00696f4ef424
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -5349,6 +5349,35 @@ Original tasks and approvals remain unchanged.
 **Current immutable submission awaiting review:** None
 
 **Current latest-review projection:** `approved` by agent:/root/storage_profile_review at `2026-10-14T17:08:03+00:00`
+
+**Latest notes:** -
+
+**Currently open findings:** -
+
+### W2.C26.T01 — Build corpus provenance and source-overlap reports
+
+**Status:** `IN_PROGRESS`. **Original task:** `CAP-04.S04.T03`. **Latest review:** `-`.
+
+**Reproduction:** Actual original3 generated-client methods fail Node24.19 ERR_MODULE_NOT_FOUND for extensionless corpus-reports/generated import from current generated.ts. First report import arose6dec under S04T03; actual canonical completed origin is snapshot963b/latestapproved6da2, not that introduction commit.
+
+**Inherited criteria:**
+
+- Counts reconcile with canonical corpus state; users can drill from aggregates to records; reports identify unavailable or unknown data rather than imputing it.
+- Automated tests cover the expected path and at least one material failure or boundary condition.
+- Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.
+
+**Bounded changed paths:**
+
+- tests/reconciliation/test_client_contract.py
+- tests/reconciliation/verify-client.mjs
+- tests/reconciliation/verify-version-client.mjs
+#### Review history — W2.C26.T01
+
+**Review mode:** `append-only v1` / 0 completed round(s)
+
+**Current immutable submission awaiting review:** None
+
+**Current latest-review projection:** `-` by - at `-`
 
 **Latest notes:** -
 

@@ -4866,6 +4866,55 @@
               "current_submission": null
             }
           }
+        },
+        {
+          "task_id": "W2.C26.T01",
+          "title": "Build corpus provenance and source-overlap reports",
+          "status": "IN_PROGRESS",
+          "acceptance_criteria": [
+            "Counts reconcile with canonical corpus state; users can drill from aggregates to records; reports identify unavailable or unknown data rather than imputing it.",
+            "Automated tests cover the expected path and at least one material failure or boundary condition.",
+            "Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion."
+          ],
+          "correction": {
+            "origin_task_id": "CAP-04.S04.T03",
+            "origin_commit": "963bfb4ab67d8096530fda90b1a53a60440e1e69",
+            "paused_state_sha256": "b433937424fdc141ada899cd32acd3858867b5f267614a65cc11678a6b5b5e94",
+            "origin_sha256": "8c15764812e8e7b7bb594c0c098405d25c19881e5a4018c79657827fa2b05975",
+            "origin_contract_sha256": "73ca190063e629e5f6b9799a0c6155094936bf3f302ef9ef2541562d5931ac9d",
+            "origin_history_sha256": "10203b0522a99b3751852d5a6204e5ed3b1f817d0ff314c2df4acc73894ff23e",
+            "origin_amendment_id": null,
+            "authority_sha256": "c92ce7e9bac1b8a49d13d649a5980fea61e56ee953d238c734d8ff5f04f4c9e5",
+            "spec": {
+              "path": "artifacts/evidence/W2.C26.T01.spec.json",
+              "sha256": "1ea849252f26576521702306b818e4950127a6754ad7ad60617dcfff44b934f0",
+              "commit": "684f31f5c4df5ff545a406558e1e14b1db5f1793"
+            },
+            "reproduction": "Actual original3 generated-client methods fail Node24.19 ERR_MODULE_NOT_FOUND for extensionless corpus-reports/generated import from current generated.ts. First report import arose6dec under S04T03; actual canonical completed origin is snapshot963b/latestapproved6da2, not that introduction commit.",
+            "changed_paths": [
+              "tests/reconciliation/test_client_contract.py",
+              "tests/reconciliation/verify-client.mjs",
+              "tests/reconciliation/verify-version-client.mjs"
+            ],
+            "impact_analysis": "Restore supported generated TS client transport by closed local Vite bundling only. Preserve original JS/Python assertion bodies and real repository values, exact export names, forged-response/lineage/order/score/reversal/history negatives, no external or dynamic chunk imports, configFile/envDir/writefalse and original30s child deadlines. Product generated source, policies, security principals, criteria and approved references unchanged. Fresh original3 methods and affected sourcequality/current runtime custody plus normal independent corrective review required."
+          },
+          "task_review": {
+            "task_id": "W2.C26.T01",
+            "title": "Build corpus provenance and source-overlap reports",
+            "status": "IN_PROGRESS",
+            "mode": "append-only",
+            "latest_review": {
+              "reviewer": null,
+              "result": null,
+              "reviewed_at": null,
+              "notes": null
+            },
+            "review_control": {
+              "version": 1,
+              "attempts": [],
+              "current_submission": null
+            }
+          }
         }
       ]
     },
