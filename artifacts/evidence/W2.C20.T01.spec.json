@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "1.0",
+  "kind": "authority-preserving-correction",
+  "origin": {
+    "taskId": "CAP-04.S04.T02",
+    "commit": "118e5c1494e180e03e1336a5a5953c3a464c4a3a",
+    "sha256": "278db71aaeb1a96788fbfa50f97ef28e400c246dcdc2a0989a4a1164be536025"
+  },
+  "reproduction": "The retained W2 final29 rights and data runs fail eight original migration methods because literal predecessor plans omit approved migrations through 0028 and current-target assertions still expect 17 or 25. CAP-04.S04.T02 first advanced the current target beyond 17 to 18 while the three inherited import fixture tests retained terminal-17 expectations. Rights tests retain frozen v17 predecessors but current-target assertions stop at 25. Replay the three original rights methods and five import preview/summary/commit methods, preserving every source fixture, subcase, failure point and protected backup/retry/reopen assertion.",
+  "changedPaths": [
+    "tests/rights/test_migration.py",
+    "tests/data/test_import_preview_migration.py",
+    "tests/data/test_import_summary_migration.py",
+    "tests/data/test_import_commit_migration.py"
+  ],
+  "impactAnalysis": "Restore exact current-28 migration suffix and version expected data in four tests under the independently approved current-W2 rights task that first advanced the inherited target. Preserve all immutable v10/v11/v12/v17 fixture bytes, schema/profile/row hashes, source versions, verified backups, ciphertext, project identity, FK/integrity, rollback/failure points, rights/provenance, retry, reopen and idempotence assertions. No production, migration implementation, security authority, governed experience, framework implementation, release criterion or original task history changes. Only the eight affected original methods and file-scoped quality checks are selected for fresh corrective integration; the existing broad qualification failures remain adverse. Independent commit-bound correction review is required."
+}
