@@ -404,25 +404,35 @@ class PlanctlAmendmentTests(unittest.TestCase):
                 self.assertTrue(_returned_correction_errors(REPO, changed, changed_source, commit))
 
     def test_sequential_chain_composes_paused_authority_without_reordering_declared_adoptions(self) -> None:
-        import taskctl
+        from historical_witness_fixture import checkout_historical_repository
 
-        packet = json.loads(
-            subprocess.check_output(
-                [
-                    "git",
-                    "show",
-                    "7604e7ee94e930548d3078c691ade0f4934a76c9:planning/enabler-change-requests/ECR-0013.packet.json",
-                ],
-                cwd=REPO,
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary) / "repo"
+            checkout_historical_repository(
+                root, REPO, "7604e7ee94e930548d3078c691ade0f4934a76c9", "codex/historical-fixture"
             )
-        )
-        source = taskctl.historical_backlog_document(REPO, "771e54a3657cdc5ff308d3a53d7b71eb48bb9214")
-        assert source is not None
-        with patch("planctl.load_backlog", return_value=(source, {})):
-            self.assertEqual([], self._fixture_authority_chain_v4_errors(packet))
-            changed = copy.deepcopy(packet)
-            changed["authorityChain"]["orderedAmendments"].reverse()
-            self.assertTrue(any("reordered" in error for error in self._fixture_authority_chain_v4_errors(changed)))
+            with patch(__name__ + ".REPO", root):
+                import taskctl
+
+                packet = json.loads(
+                    subprocess.check_output(
+                        [
+                            "git",
+                            "show",
+                            "7604e7ee94e930548d3078c691ade0f4934a76c9:planning/enabler-change-requests/ECR-0013.packet.json",
+                        ],
+                        cwd=REPO,
+                    )
+                )
+                source = taskctl.historical_backlog_document(REPO, "771e54a3657cdc5ff308d3a53d7b71eb48bb9214")
+                assert source is not None
+                with patch("planctl.load_backlog", return_value=(source, {})):
+                    self.assertEqual([], self._fixture_authority_chain_v4_errors(packet))
+                    changed = copy.deepcopy(packet)
+                    changed["authorityChain"]["orderedAmendments"].reverse()
+                    self.assertTrue(
+                        any("reordered" in error for error in self._fixture_authority_chain_v4_errors(changed))
+                    )
 
     def test_paused_correction_schema_is_explicit_and_keeps_v4_bytes(self) -> None:
         relative = "planning/enabler-change-requests/enabler-change-request.v4.schema.json"

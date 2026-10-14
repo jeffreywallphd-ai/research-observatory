@@ -184,6 +184,7 @@ class UiChangeGateTests(unittest.TestCase):
         )
         t02["status"] = "READY"
         amendment["campaign"]["branch"] = "fixture"
+        amendment["campaign"]["lease"] = taskctl.new_lease(str(amendment["campaign"]["owner"]), 24)
         self.write_yaml(backlog_path, backlog)
         self.commit(root, "synthetic independent T01 disposition")
         later_index_path = root / "docs/adr/index.json"
@@ -3539,24 +3540,29 @@ class UiChangeGateTests(unittest.TestCase):
         self.assertTrue(list(validator.iter_errors(invalid)))
 
     def test_reference_activation_historical_gov26_and_c10_are_exact_reviewed_ranges(self) -> None:
-        head = self.git(REPO, "rev-parse", "HEAD")
-        backlog = yaml.safe_load((REPO / "planning/backlog.yaml").read_text(encoding="utf-8"))
-        admitted = ui_gate.reference_activation_historical_authority(REPO, head, backlog)
-        self.assertEqual(
-            {
-                "planning/governance-migrations/GOV-MAINT-0026.json",
-                "quality-scope.json",
-            },
-            admitted["6e396c5e18fefb255334e1ddeeea02eb4b6bdb2c"],
-        )
-        self.assertEqual(
-            {
-                "services/core-api/src/research_observatory_core/plugin_worker.py",
-                "tests/connectors/test_plugin_grant_migration.py",
-                "tests/connectors/test_plugin_worker_submission.py",
-            },
-            admitted["3dde91238b0be11847f68845a52b9785048dc8cd"],
-        )
+        with tempfile.TemporaryDirectory() as historical_temporary:
+            historical_root = self.activation_repair_clone(
+                historical_temporary, ref=self.activation_repair_fixture_prefix()
+            )
+            with patch(__name__ + ".REPO", historical_root):
+                head = self.git(REPO, "rev-parse", "HEAD")
+                backlog = yaml.safe_load((REPO / "planning/backlog.yaml").read_text(encoding="utf-8"))
+                admitted = ui_gate.reference_activation_historical_authority(REPO, head, backlog)
+                self.assertEqual(
+                    {
+                        "planning/governance-migrations/GOV-MAINT-0026.json",
+                        "quality-scope.json",
+                    },
+                    admitted["6e396c5e18fefb255334e1ddeeea02eb4b6bdb2c"],
+                )
+                self.assertEqual(
+                    {
+                        "services/core-api/src/research_observatory_core/plugin_worker.py",
+                        "tests/connectors/test_plugin_grant_migration.py",
+                        "tests/connectors/test_plugin_worker_submission.py",
+                    },
+                    admitted["3dde91238b0be11847f68845a52b9785048dc8cd"],
+                )
 
     def test_reference_activation_historical_t03_binds_reviewed_protected_source_commits(self) -> None:
         head = self.git(REPO, "rev-parse", "HEAD")
@@ -3626,28 +3632,35 @@ class UiChangeGateTests(unittest.TestCase):
                 immutable_record(root, rewritten, reference["path"], reference["sha256"], evidence=True)
 
     def test_reviewed_activation_inert_history_preserves_actual_net_inventory(self) -> None:
-        head = self.git(REPO, "rev-parse", "HEAD")
-        frozen = yaml.safe_load(ui_gate.blob(REPO, "771e54a3657cdc5ff308d3a53d7b71eb48bb9214", "planning/backlog.yaml"))
-        task = ui_gate.backlog_task(frozen, "W2.A03.T02")
-        assert task is not None
-        with self.assertRaisesRegex(ValueError, "hidden or overlapping"):
-            ui_gate.adopted_continuation_reviewed_task_commits(REPO, head, task)
-        projections = ui_gate.reference_activation_inert_projection_map(REPO, head)
-        self.assertEqual(6, len(projections))
-        self.assertEqual({"planning/review-site/waves/W2.html"}, set().union(*projections.values()))
-        ranges, commits = ui_gate.adopted_continuation_reviewed_task_commits(
-            REPO, head, task, inert_outputs=projections
-        )
-        self.assertEqual("ca8b1448e094b637bbd06c3129b69a78df792619", ranges[0]["base"])
-        self.assertEqual("06a69348c5de5c60cccecde400ab2271200ec50d", ranges[-1]["candidate"])
-        self.assertEqual(118, len(ranges[0]["paths"]))
-        self.assertNotIn("planning/review-site/waves/W2.html", ranges[0]["paths"])
-        self.assertTrue(set(projections).issubset(commits))
-        self.assertEqual(39, len(commits))
-        forged = copy.deepcopy(projections)
-        forged[next(iter(forged))].add("tools/ui_change_gate.py")
-        with self.assertRaisesRegex(ValueError, "inert projection"):
-            ui_gate.adopted_continuation_reviewed_task_commits(REPO, head, task, inert_outputs=forged)
+        with tempfile.TemporaryDirectory() as historical_temporary:
+            historical_root = self.activation_repair_clone(
+                historical_temporary, ref=self.activation_repair_fixture_prefix()
+            )
+            with patch(__name__ + ".REPO", historical_root):
+                head = self.git(REPO, "rev-parse", "HEAD")
+                frozen = yaml.safe_load(
+                    ui_gate.blob(REPO, "771e54a3657cdc5ff308d3a53d7b71eb48bb9214", "planning/backlog.yaml")
+                )
+                task = ui_gate.backlog_task(frozen, "W2.A03.T02")
+                assert task is not None
+                with self.assertRaisesRegex(ValueError, "hidden or overlapping"):
+                    ui_gate.adopted_continuation_reviewed_task_commits(REPO, head, task)
+                projections = ui_gate.reference_activation_inert_projection_map(REPO, head)
+                self.assertEqual(6, len(projections))
+                self.assertEqual({"planning/review-site/waves/W2.html"}, set().union(*projections.values()))
+                ranges, commits = ui_gate.adopted_continuation_reviewed_task_commits(
+                    REPO, head, task, inert_outputs=projections
+                )
+                self.assertEqual("ca8b1448e094b637bbd06c3129b69a78df792619", ranges[0]["base"])
+                self.assertEqual("06a69348c5de5c60cccecde400ab2271200ec50d", ranges[-1]["candidate"])
+                self.assertEqual(118, len(ranges[0]["paths"]))
+                self.assertNotIn("planning/review-site/waves/W2.html", ranges[0]["paths"])
+                self.assertTrue(set(projections).issubset(commits))
+                self.assertEqual(39, len(commits))
+                forged = copy.deepcopy(projections)
+                forged[next(iter(forged))].add("tools/ui_change_gate.py")
+                with self.assertRaisesRegex(ValueError, "inert projection"):
+                    ui_gate.adopted_continuation_reviewed_task_commits(REPO, head, task, inert_outputs=forged)
 
     def activation_repair_fixture_prefix(self) -> str:
         """Keep synthetic delivery at the actual immutable claim-stage candidate."""
@@ -3747,25 +3760,30 @@ class UiChangeGateTests(unittest.TestCase):
                     ui_gate.adopted_continuation_reviewed_task_commits(root, head, task, inert_outputs=projections)
 
     def test_reviewed_activation_preceding_sources_preserve_adverse_history_and_deny_substitution(self) -> None:
-        head = self.git(REPO, "rev-parse", "HEAD")
-        admitted = ui_gate.reference_activation_repair_preceding_sources(REPO, head)
-        self.assertEqual(5, len(admitted))
-        self.assertIn("57f5c3f264611f59cd2778ff13b5082b2726e24b", admitted)
-        for path in (
-            "tools/governance_kernel.py",
-            "tools/taskctl.py",
-            "planning/governance-migrations/GOV-MAINT-0027.review-R01.json",
-            "planning/governance-migrations/GOV-MAINT-0027.review-R02.json",
-            "planning/enabler-change-requests/ECR-0013.maintenance-binding.json",
-            "planning/wave-amendment-approvals/W2.A05.B00.addendum-01.json",
-        ):
-            with self.subTest(path=path), tempfile.TemporaryDirectory() as temporary:
-                root = self.activation_repair_clone(temporary)
-                target = root / path
-                target.write_bytes(target.read_bytes() + b"\n")
-                attack = self.commit(root, "synthetic preceding authority byte substitution")
-                with self.assertRaises(ValueError):
-                    ui_gate.reference_activation_repair_preceding_sources(root, attack)
+        with tempfile.TemporaryDirectory() as historical_temporary:
+            historical_root = self.activation_repair_clone(
+                historical_temporary, ref=self.activation_repair_fixture_prefix()
+            )
+            with patch(__name__ + ".REPO", historical_root):
+                head = self.git(REPO, "rev-parse", "HEAD")
+                admitted = ui_gate.reference_activation_repair_preceding_sources(REPO, head)
+                self.assertEqual(5, len(admitted))
+                self.assertIn("57f5c3f264611f59cd2778ff13b5082b2726e24b", admitted)
+                for path in (
+                    "tools/governance_kernel.py",
+                    "tools/taskctl.py",
+                    "planning/governance-migrations/GOV-MAINT-0027.review-R01.json",
+                    "planning/governance-migrations/GOV-MAINT-0027.review-R02.json",
+                    "planning/enabler-change-requests/ECR-0013.maintenance-binding.json",
+                    "planning/wave-amendment-approvals/W2.A05.B00.addendum-01.json",
+                ):
+                    with self.subTest(path=path), tempfile.TemporaryDirectory() as temporary:
+                        root = self.activation_repair_clone(temporary, source=historical_root, ref=head)
+                        target = root / path
+                        target.write_bytes(target.read_bytes() + b"\n")
+                        attack = self.commit(root, "synthetic preceding authority byte substitution")
+                        with self.assertRaises(ValueError):
+                            ui_gate.reference_activation_repair_preceding_sources(root, attack)
 
     def test_reviewed_activation_preceding_sources_deny_modes_omissions_and_extra_history(self) -> None:
         attacks = (
