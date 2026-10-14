@@ -1,0 +1,142 @@
+{
+  "task_id": "W2.C22.T01",
+  "attempt_id": "R01",
+  "candidate_commit": "99fdff4a1e764a709074f8832ab819c82087676a",
+  "base_commit": "8eae733c4c1761e18aaae277d42443aad977b1b2",
+  "reviewed_state_commit": "2522ab4d624f517462a0699d91900d21854f72d8",
+  "reviewer": "agent:/root/storage_profile_review",
+  "result": "approved",
+  "reviewed_at": "2026-10-14T11:32:53.295620+00:00",
+  "packet_sha256": "b190527d8f0da10d3fe7d51cfac3457bf64ebdaf3904d986cc564292d5c62cc5",
+  "evidence_sha256": "7132050389a7505d959f7abe5811c8c6f392add9fd3b0b53d60be04ac0e520a1",
+  "acceptance_criteria_sha256": "931d31132e89c951ea2680f40a6c3d54b82eb0122b9bcbfe717b3a4067a2f1e4",
+  "selection_sha256": "0e2412c665833c2e071724725c54b2e2c9cd76b25265e43ad1c5c8ce21a6f899",
+  "findings": [],
+  "closures": [],
+  "acceptance_reviews": [
+    {
+      "criterion_index": 1,
+      "check_ids": [
+        "schema-profile-consistency"
+      ],
+      "result": "satisfied",
+      "assessment": "Exact current portable-profile/schema/runtime metadata now agrees without changing reference ordering/raw text/extraction/exact-match/review behavior. Four JSON const restorations cannot modify that unchanged product behavior; original CAP-05.S05.T01 independent approval remains historical authority, not a fresh reference/API/UI replay."
+    },
+    {
+      "criterion_index": 2,
+      "check_ids": [
+        "schema-profile-consistency"
+      ],
+      "result": "satisfied",
+      "assessment": "Two original no-skip methods actually pass: static current profile/expected constants and hostile unknown-property denial, plus actual strict-WAL plaintext-development SQLite initialization/current identity/tables/triggers/ATTACH-denial/reopen integrity. The explicit development_plaintext_database_fixture setup is preserved. No new SQLCipher/DPAPI/ciphertext/principal/Native/model or whole migration proof is inferred."
+    },
+    {
+      "criterion_index": 3,
+      "check_ids": [
+        "schema-profile-consistency",
+        "affected-build-manifest"
+      ],
+      "result": "satisfied",
+      "assessment": "Exact one-schema proposal41e3 restores version28/fingerprint and existing four enrichment tables in immutable/canonical lists; reversing four const values recreates complete predecessor object. All other predicates/mutable policy/source/tests/history are unchanged. Fresh existing clean build-manifest99fd includes exactly one changed schema row with41e3 and passes; no unrelated Ruff/mypy or broad profile rerun for this JSON-only increment. Seven source-candidate changed paths comprise one admitted schema plus six ordinary task/derived metadata files. The guide remains separate."
+    }
+  ],
+  "corrective_integration": {
+    "evidence_sha256": "7132050389a7505d959f7abe5811c8c6f392add9fd3b0b53d60be04ac0e520a1",
+    "authority_preserved": true,
+    "affected_integration_reviewed": true,
+    "notes": "Exact one-schema restoration preserves original CAP-05.S05.T01 authority and original snapshotb995. Fresh two original schema methods and clean build-manifest prove static portable metadata/unknown-property denial and actual strict-WAL plaintext-development SQLite initialization/ATTACH-denial/reopen integrity. Separate guide delivery5a3d and its fresh static method remain outside normal task scope. No fresh SQLCipher/DPAPI/Native/principal/model/full-profile/Wave/G2 or release claim."
+  },
+  "verification_selection": {
+    "selected_command_ids": [
+      "data:unit",
+      "foundation:build-manifest"
+    ],
+    "assessment": "Only correction-affected schema contract, denial/reopen, inventory and exact separately labeled guide risks reviewed. No whole Wave exit, unchanged full suite or runtime/history re-audit."
+  },
+  "evidence_authentication": {
+    "actual_review_observations": {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/w2-c22-actual-affected-review-observations-01.json",
+      "sha256": "1e7663a804cd3ea50d5045a92ead1bc515a8632b70894fb99a38b247e12858fe"
+    },
+    "receipt": {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/W2.C22.T01.storage-profile-focused-01/receipt.json",
+      "sha256": "38e12f6eca9dc06b05259f552b399fd459673c6c973fd4fe358d5a019dd95ca3"
+    },
+    "producer": {
+      "path": "artifacts/tmp/W2.run-current-storage-profile-focused-01.py",
+      "sha256": "f2504119303616725d7eb9e71c23e73c161daf1fddf201b47d1768e0291aa083"
+    },
+    "source_readiness": {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/current-storage-profile-focused-source-readiness-01.json",
+      "sha256": "392e6f81969b5a773626ea02c2ec38d04d57529b40ccfa63f418b5d5171451e2"
+    },
+    "actual_methods": 3,
+    "normal_methods": 2,
+    "separate_guide_methods": 1,
+    "skips": 0,
+    "held_input_count": 14038,
+    "captured_original_installed_runtime_pins_equal": 7456,
+    "three_owned_jobs_empty_active0": true,
+    "original_adverse_preserved": true
+  },
+  "documentation_companion_disposition": {
+    "result": "APPROVED_AFFECTED_SEPARATE_GUIDE_DELIVERY",
+    "deliveryCommit": "5a3d5dbb44786ae643cbd32c95339b16af8e1e72",
+    "path": "docs/architecture/local-sqlite-storage.md",
+    "rawWorkingSHA256": "20034a565bcf12c65442ad4e8f511de7d6d27e4efc4ba6677ad14f280065f0ad",
+    "committedBlobAndNormalizedLFSHA256": "5346f8b2dd2458614776087b8e9dc70b5d803016b6252e12d45c885757b07f25",
+    "deliveryPrecedesClaimBase": true,
+    "authority": {
+      "path": "artifacts/evidence/W2.completion-corrections-batch-02.decision-01.json",
+      "sha256": "738a9ed22b4da46a88c47c64b07607bbf1b27839e3bf657e7c7712763d76e9c2",
+      "scope": "STORAGE-PROFILE-DOCS-VIEWER"
+    },
+    "freshExistingMethod": "tests.data.test_sqlite_schema.SqliteSchemaTests.test_architecture_guide_tracks_current_profile_recovery_and_mutable_projection",
+    "evidence": [
+      {
+        "id": "documentation-companion-consistency",
+        "command": ".venv/Scripts/python.exe -B -s -m unittest -v tests.data.test_sqlite_schema.SqliteSchemaTests.test_architecture_guide_tracks_current_profile_recovery_and_mutable_projection",
+        "commandSemantics": "DISPLAY repository-relative executable; exact actual argv is retained in ignored execution receipt",
+        "result": "passed",
+        "exitCode": 0,
+        "commit": "99fdff4a1e764a709074f8832ab819c82087676a",
+        "seconds": 1.1896094999974594,
+        "raw": {
+          "path": "artifacts/tmp/W2.remaining-corrections-batch-01/W2.C22.T01.storage-profile-focused-01/documentation-companion-consistency.raw.log",
+          "sha256": "d3947ab3688c5f4f67fc7f350a8fa2ba19ab5130f38acc9e03c5b6bfdfd920be"
+        }
+      }
+    ],
+    "meaning": "Separately delivered exact five current-authority prose segments change27/26 current metadata to28/27. Its immutable Version27 exact revision invalidation section and all other historical prose remain byte-identical after LF normalization. Fresh original static guide-consistency method passes/no skips at99fd; no actual recovery/migration or cryptographic execution claim. Docs delivery is not a normal schema changedPath/checkId/correctiveIntegration affectedCheck."
+  },
+  "frozen_submission_authentication": {
+    "delivery_commit": "2522ab4d624f517462a0699d91900d21854f72d8",
+    "delivery_parent": "99fdff4a1e764a709074f8832ab819c82087676a",
+    "delivery_changed_paths": [
+      "artifacts/evidence/W2.C22.T01.R01.json",
+      "docs/planning-implementation-plan.md",
+      "planning/backlog.yaml",
+      "planning/review-site/manifest.json",
+      "planning/review-site/waves/W2.html",
+      "planning/status-summary.md"
+    ],
+    "public_manifest_git_and_worktree_bytes_exact": true,
+    "frozen_packet_validation_errors": [],
+    "original_origin_snapshot_unchanged": true,
+    "source_runtime_dependency_delta_in_delivery": false
+  },
+  "independence": {
+    "sourceAuthor": false,
+    "taskOwner": false,
+    "guideAuthor": false,
+    "qualifyingChecksRerunByReviewer": false,
+    "onlyUnrelatedIgnoredPreparationAndReviewEvidenceAuthored": true
+  },
+  "scope_limits": {
+    "task_only": true,
+    "wave_approved": false,
+    "release_approved": false,
+    "qualifying_checks_rerun_by_reviewer": false,
+    "installed_runtime_rehash": false
+  }
+}

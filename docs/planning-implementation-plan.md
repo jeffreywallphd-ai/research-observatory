@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 85313a4ce2c22c9aa07fa16855d1b78f3a55215d8561ef9df9b1a99e65265edb
+source_sha256: 9012fb81e3028d1132a545d87ce2b9ba87791e24d5a7c2d3af1531b964953d19
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -5123,7 +5123,7 @@ Original tasks and approvals remain unchanged.
 
 ### W2.C22.T01 — Extract and reconcile reference-list entries
 
-**Status:** `REVIEW`. **Original task:** `CAP-05.S05.T01`. **Latest review:** `-`.
+**Status:** `DONE`. **Original task:** `CAP-05.S05.T01`. **Latest review:** `approved`.
 
 **Reproduction:** The retained final29 data execution fails the unchanged portable-profile schema test: accepted current v28 profile/runtime metadata conflicts with four stale v27 constants in sqlite-profile.schema.json. Original CAP-05.S05.T01 introduced additive enrichment schema28 and advanced its current profile while retaining the old schema constants. Preserve the raw original FAIL and restore exact current version/fingerprint/immutable/canonical table literals, without changing the valid test or historical profile/recovery contracts.
 
@@ -5138,9 +5138,11 @@ Original tasks and approvals remain unchanged.
 - packages/contracts/storage/sqlite-profile.schema.json
 #### Review history — W2.C22.T01
 
-**Review mode:** `append-only v1` / 0 completed round(s)
+**Review mode:** `append-only v1` / 1 completed round(s)
 
-**Current immutable submission awaiting review:** `R01` / packet SHA-256 `b190527d8f0da10d3fe7d51cfac3457bf64ebdaf3904d986cc564292d5c62cc5`
+##### Round R01
+
+**Immutable submission packet:** `R01` / packet SHA-256 `b190527d8f0da10d3fe7d51cfac3457bf64ebdaf3904d986cc564292d5c62cc5`
 
 - Candidate / base / branch: `99fdff4a1e764a709074f8832ab819c82087676a` / `8eae733c4c1761e18aaae277d42443aad977b1b2` / `codex/w2-implementation`
 - Submitted by / at: agent:/root / `2026-10-14T11:12:36+00:00`
@@ -5154,7 +5156,23 @@ Original tasks and approvals remain unchanged.
 - Prior round / replayed open findings: `-` / -
 - Root-cause escalation: -
 
-**Current latest-review projection:** `-` by - at `-`
+**Disposition / reviewer / time:** `approved` / agent:/root/storage_profile_review / `2026-10-14T11:33:35+00:00`
+
+**Immutable review ledger:** `artifacts/evidence/W2.C22.T01.review-R01.json` / `a3dad7b6b9acbf4a75f75e1558d8a0ac24655f8cb76e2112340a041f950e1233`
+
+**Review notes:** -
+
+**Findings opened:**
+
+- None
+
+**Prior finding closures:**
+
+- None
+
+**Current immutable submission awaiting review:** None
+
+**Current latest-review projection:** `approved` by agent:/root/storage_profile_review at `2026-10-14T11:33:35+00:00`
 
 **Latest notes:** -
 
