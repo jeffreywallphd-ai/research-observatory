@@ -1,0 +1,88 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "finite-necessary-httpx-universal-lock-metadata-exception",
+  "status": "APPROVED",
+  "approvedBy": "human:repository-owner",
+  "authorization": "Prospective necessary W2 completion authority; not an earlier exact-packet or release approval",
+  "preauthorization": {
+    "path": "artifacts/evidence/W2.completion-preauthorization-20261014-01.md",
+    "sha256": "34e2e3c175dc9309080182e0673f776055b1cc3ba78639475c09ec54408d7d5f"
+  },
+  "originalBatchDecision": {
+    "path": "artifacts/evidence/W2.completion-corrections-batch-02.decision-01.json",
+    "sha256": "738a9ed22b4da46a88c47c64b07607bbf1b27839e3bf657e7c7712763d76e9c2"
+  },
+  "originalPlan": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/security-five-path-delivery-01/commands-and-evidence-plan-01.json",
+    "sha256": "dbf3009a5ebbfeb76365a82a12dfe0b21897805631ccb9ed7fc2a959ebe3744c"
+  },
+  "actualResolverReceipt": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/security-five-path-delivery-01/actual-resolver-03/receipt.json",
+    "sha256": "62dda68359a39721649026fd2294877c82e9d50a515a2ba105dacd136b490794"
+  },
+  "actualCandidate": "6eb5fe6379c40d83ff4c999bee08cd39e35f6c4a",
+  "exactResolvedLocks": {
+    "uv.lock": "4969bc54752537b65cf0d4d4b9db6dfc9e0364a5fdba41ea6b7cd377d45d76da",
+    "pnpm-lock.yaml": "abbbcee5a16f6b8ce2891269313f4e30183b1a0af2605a8dd6ff22b8060f6875"
+  },
+  "boundedException": "Permit only the exact httpx2-jsfetch1.0 universal-lock record and platform markers required by approved HTTPX2.12.0 metadata, instead of the original same-package-name-set predicate. Every unrelated package record/version, root requirement and setting remains unchanged. Existing2.12 HTTP and1.2.2source-map targets and all5file limits remain.",
+  "exactAdditionalPackage": {
+    "name": "httpx2-jsfetch",
+    "version": "1.0",
+    "source": {
+      "registry": "https://pypi.org/simple"
+    },
+    "sdist": {
+      "url": "https://files.pythonhosted.org/packages/cd/c4/0e5636363151a2a1795e0a77617168b9ca438e1748ec05fc9b5687f93d64/httpx2_jsfetch-1.0.tar.gz",
+      "hash": "sha256:70a0e3eabfef7cce5ad9c629f7d01ca05e418f586646f4ddf14782e4c1454c60",
+      "size": 6872,
+      "upload-time": "2026-08-07T00:13:07.492Z"
+    },
+    "wheels": [
+      {
+        "url": "https://files.pythonhosted.org/packages/9b/43/832f631d32e4f1211caa2ba368317739fe71f0b8530e4c9d15dc454bac2a/httpx2_jsfetch-1.0-py3-none-any.whl",
+        "hash": "sha256:cb916b707601e69a07721aabc8f3f6659be3a6893bc1ff5c6f9e02241df2da32",
+        "size": 6382,
+        "upload-time": "2026-08-07T00:13:06.567Z"
+      }
+    ]
+  },
+  "exactDependencyEdge": {
+    "name": "httpx2-jsfetch",
+    "marker": "sys_platform == 'emscripten'"
+  },
+  "primaryMetadataSources": [
+    "https://pypi.org/pypi/httpx2/2.12.0/json",
+    "https://pypi.org/pypi/httpx2-jsfetch/1.0/json"
+  ],
+  "alternatives": [
+    {
+      "choice": "Keep exact required universal metadata",
+      "recommendation": true,
+      "reason": "Supports the approved patched HTTPX version without activating another platform."
+    },
+    {
+      "choice": "Remove the required dependency metadata",
+      "recommendation": false,
+      "reason": "Would no longer be a faithful valid lock for the approved upstream version."
+    },
+    {
+      "choice": "Retain prior HTTP versions",
+      "recommendation": false,
+      "reason": "Would not deliver the approved security correction."
+    }
+  ],
+  "freshWindowsProofRequired": "Frozen install must show httpx2-jsfetch remains uninstalled on Windows; existing HTTP dependencies and package licensing/security/transport checks remain required. Unexpected installed/version movement remains adverse.",
+  "scopeExclusions": [
+    "No Emscripten/browser product or supported-platform feature",
+    "No Windows installation or execution of httpx2-jsfetch",
+    "No source/scanner/security policy waiver or new dependency target",
+    "No framework implementation or release approval"
+  ],
+  "independentReadiness": null,
+  "actualIntroductionCommit": null,
+  "installed": false,
+  "securityPASSClaimed": false,
+  "waveApproved": false,
+  "releaseApproved": false
+}
