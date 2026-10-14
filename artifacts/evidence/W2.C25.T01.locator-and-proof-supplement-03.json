@@ -1,0 +1,240 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "finite-preauthorized-existing-c25-locator-and-proof-supplement",
+  "status": "APPROVED",
+  "preparedBy": "agent:/root/c21_closeout_review",
+  "prospectiveApprovedBy": "human:repository-owner",
+  "preauthorizationSHA256": "34e2e3c175dc9309080182e0673f776055b1cc3ba78639475c09ec54408d7d5f",
+  "originalDecision": {
+    "path": "artifacts/evidence/W2.completion-corrections-batch-02.decision-01.json",
+    "sha256": "738a9ed22b4da46a88c47c64b07607bbf1b27839e3bf657e7c7712763d76e9c2"
+  },
+  "originalPublicScope": {
+    "path": "artifacts/evidence/W2.desktop-input-restoration-01.scope-decision-01.json",
+    "sha256": "8322eb37714fff1942e9385d933a82fb228e4f76e39aa72eb13037a66a0a580a"
+  },
+  "originalTestSourceSHA256": {
+    "tests/desktop/test_ui_conformance.py": "b211b423bc4a97e498cef0162c717e73adfb006e392c0b1b40df766f1b581782",
+    "tests/desktop/test_product_layout_measurements.py": "f71a30b6b4d46e0670408c3c3b8782306eabc223680c2dea4fd82c5830fc2edf",
+    "tests/desktop/test_document_attachment_interactions.py": "c900698ed9d83eee6583eb2ff155083bb0761031e25e18ec68712688fc32fbbb",
+    "tests/desktop/test_desktop_app_check.py": "3037c0f0855d6eaa68cc8a139eca1e2aef5bcbd24c87e4fa28cb495036820f70"
+  },
+  "testSourceSHA256": {
+    "tests/desktop/test_ui_conformance.py": "b211b423bc4a97e498cef0162c717e73adfb006e392c0b1b40df766f1b581782",
+    "tests/desktop/test_product_layout_measurements.py": "f71a30b6b4d46e0670408c3c3b8782306eabc223680c2dea4fd82c5830fc2edf",
+    "tests/desktop/test_document_attachment_interactions.py": "f547b3f58d1301c54f53bc7ce3948a25650b7c06d0810b3cbb5ce5964adcb175",
+    "tests/desktop/test_desktop_app_check.py": "3037c0f0855d6eaa68cc8a139eca1e2aef5bcbd24c87e4fa28cb495036820f70"
+  },
+  "normalTaskId": "W2.C25.T01",
+  "originTaskId": "W2.A01.T02",
+  "originSHA256": "3a9dabb33cd0f6c70d7842792941f98fad8722d8c80c87c2c93630717ca39a04",
+  "changedPaths": [
+    "tests/desktop/test_document_attachment_interactions.py"
+  ],
+  "producer": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/desktop-input-consumers-01/collect-canonical-08.py",
+    "sha256": "3cb46e1fe0b04601ecaeb7bfdc46cb925390bd5c4583e4045b48c1beeec38171"
+  },
+  "preparation": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/desktop-input-consumers-01/execution-preparation-08.json",
+    "sha256": "470d9af5c4080c5517e57a3aef5e114f65da15dae13fd1d5c4f95ce4de5ee49b"
+  },
+  "qualityCollector": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/desktop-input-consumers-01/quality-05.py",
+    "sha256": "33ba31fb3bddc0e2637d76164e4512250e9b25dad0e92990edeb19906519f49f"
+  },
+  "evidenceSerializer": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/desktop-input-consumers-01/evidence-05.py",
+    "sha256": "f5a687b97fbf266f3f2af84599902ff5a397ce40d5fdc07f1db3f4e9fc9da1f2"
+  },
+  "qualityPreparation": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/desktop-input-consumers-01/quality-evidence-preparation-05.json",
+    "sha256": "95e23af19b8a6af860ee8ce092f41e278ad05ae92bcc0e8032e5f296ac71adaf"
+  },
+  "sourceReadiness": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/desktop-input-consumers-01/independent-remaining-five-source-readiness-08.json",
+    "sha256": "3fb93df7665f63a31760cce8c76d3f54d4a0a7b886e6288858ef617006b618f2"
+  },
+  "qualitySourceReadiness": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/desktop-input-consumers-01/independent-remaining-five-quality-evidence-source-readiness-05.json",
+    "sha256": "c04660c2422d35617db9c635909d8ff7a754882703bb31c21b8c75451e36f30d"
+  },
+  "recordingReadiness": null,
+  "reuseRecords": {
+    "fixtures48": {
+      "path": "artifacts/tmp/W2.desktop-input-restoration-01.f02/fixtures48/receipt.json",
+      "sha256": "fab16434ba98bc3270e1511c41f1230e98ea11fccd6ac93a523f6e4e6aee6901"
+    },
+    "negative3": {
+      "path": "artifacts/tmp/W2.desktop-input-restoration-01.f02/restorations8/receipt.json",
+      "sha256": "88329448a1ff1a6e504cbdbb3a19cb21834aef7e523ecffdcd558da871bbf942"
+    },
+    "assessment48": {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/w2-c25-fixtures48-actual-reporting-output-assessment-01.json",
+      "sha256": "003e9ff382a7f04d3d38d4c99bd2c6a7ce080f12d37ea962aa9211a56062fd68"
+    }
+  },
+  "reuseCandidate": "1a254248c381d509fc666dc3af6b6c6f6ed75e26",
+  "reuseClassification": "Earlier48 fixture bodies and3 UiConformance denials do not consume/import the attachment test module. Its exactlocator and one necessary post-S04 positive availability assertion are unconsumed conservative whole-repository hold changes for these51. All consumed source/fixtures/runtime/live/reference/environment must actually match at latercandidate; original1a/raw/FAIL parent identities remain unchanged.",
+  "freshSelectedCases": [
+    "tests.desktop.test_document_attachment_interactions.DocumentAttachmentInteractionTests.test_selected_version_native_intents_denial_cancel_and_return",
+    "tests.desktop.test_product_layout_measurements.ProductLayoutMeasurementsTests.test_actual_application_settings_label_and_keyboard_skip_contrast",
+    "tests.desktop.test_product_layout_measurements.ProductLayoutMeasurementsTests.test_actual_product_flow_and_sidebar_with_keyboard_scrolling",
+    "tests.desktop.test_desktop_app_check.DevelopmentEntryTests.test_actual_cli_processes_script_arguments_as_embedded_origin",
+    "tests.desktop.test_desktop_app_check.DevelopmentEntryTests.test_actual_cli_default_negative_control_and_duplicate_flag"
+  ],
+  "intendedPublicationPath": "artifacts/evidence/W2.C25.T01.locator-and-proof-supplement-03.json",
+  "actualIntroductionCommit": null,
+  "decisionMeaning": "Actual prospective34e/conforming738a applies to this independently supported necessary post-S04 test restoration. Original87a/554/source/frozen specification/readiness/adverses are not rewritten. Actual5/currentquality and51 old input equality remain required; no earlier owner approval of these later bytes or result is fabricated.",
+  "scope": "One existing normal C25 attachment test path: retain the previously reviewed exact current-reader locator and restore only its obsolete pre-S04 positive availability assertion at line736 from assertTrue(is_disabled) to assertFalse(is_disabled), as independently supported by the actual post-S04 condition assessment. Preserve all148 assertion sites, all other assertions/body bytes/denials/deadlines and original87a/frozenA4/spec history. Fresh5 methods and unchanged affected quality remain required;51 earlier bodies retain original1a execution/raw identity under exact consumed-input reuse. No product/reference/security/criterion threshold/shared-framework change or new task/ECR/owner question; no other assertion change is granted.",
+  "sharedFrameworkChangeGranted": false,
+  "criteriaChangeGranted": false,
+  "productChangeGranted": false,
+  "executed": false,
+  "taskApproved": false,
+  "waveApproved": false,
+  "releaseApproved": false,
+  "locatorSourceReadiness": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/desktop-input-consumers-01/independent-attachment-reader-locator-source-readiness-01.json",
+    "sha256": "9041adc71da3ee535ef736080ebceb53bb764db070baf2f195a26da2c28f960b"
+  },
+  "actualLocatorSourceIntroductionCommit": "4df27c7de5cb02856cd1118f4dcdd3caa4c917b5",
+  "supersedes": {
+    "path": "artifacts/evidence/W2.C25.T01.locator-and-proof-supplement-02.json",
+    "sha256": "87a15abb7f9e720caa8063a2c42bc6892c1d2025d80dda4d4cdd21605d1f777e"
+  },
+  "persistedTreeComparisonSuccessor": {
+    "predecessorProducer": {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/desktop-input-consumers-01/collect-canonical-06.py",
+      "sha256": "7989fa52ed8521845519158f2617445aa16bc939747abf4d11bf697324117b34"
+    },
+    "predecessorPreparation": {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/desktop-input-consumers-01/execution-preparation-06.json",
+      "sha256": "c1cc1f31fece43762b50a79ea8b41f92eb3a70b9ed2363a7741c81a43012bdaf"
+    },
+    "supersedes": {
+      "path": "artifacts/evidence/W2.C25.T01.locator-and-proof-supplement-01.json",
+      "sha256": "554d70d3e8499a046089fa12ac51d98cb3327eda30e9e02f21ada999498289aa"
+    },
+    "sourcePatch": {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/desktop-input-consumers-01/persisted-tree-tuples-07.patch",
+      "sha256": "c2687dfb9384991c6dfde88fa9c075c24ea16ead9bf4cde5564e4de4e3dacb2d"
+    },
+    "adverse": {
+      "path": "artifacts/tmp/W2.C25.T01.remaining5-03.raw.log",
+      "sha256": "94f9eb172729d46d6a6f6c465d7d2ca8171ee31a9e6cee2f582c09d5d7c06daa"
+    },
+    "adverseCandidate": "66570b",
+    "adverseMeaning": "Original06 stopped before jobs/tests/holds because in-memory tree identity tuples were compared to persisted JSON identity lists. Exclusive f03/remaining5 empty remains preserved; not a product/test failure.",
+    "delta": "Normalize only current data, current selected runtime membership and current fixture operands at the three comparisons against persisted JSON. Lossless JSON encode/decode preserves every hash/path/value/identity; live in-memory before/after guards remain byte-identical. New preparation/public-supplement and exclusive f04 output bindings only.",
+    "threeComparisonOperands": true,
+    "inverseRecoversExact06Source": true,
+    "integerIdentityLosslessExample": true,
+    "actualPreviousEnvironmentSHA256": "f58c599bce5b5e81184e42adaaac54283974d5f84770e1cdb7e2552c0ca7b2ef",
+    "runtimeOrEnvironmentScanPerformed": false,
+    "criteriaAssertionsDeadlinesChanged": false,
+    "executed": false
+  },
+  "adverseCandidateCommit": "66570b20417d5deefcbcb93f0093044fba9a052b",
+  "postS04ExpectationSuccessor": {
+    "proposal": {
+      "path": "artifacts/tmp/W2.C25.T01.attachment-post-s04-expectation.proposed.py",
+      "sha256": "f547b3f58d1301c54f53bc7ce3948a25650b7c06d0810b3cbb5ce5964adcb175"
+    },
+    "exactPatch": {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/desktop-input-consumers-01/post-s04-expectation-08.patch",
+      "sha256": "7f9d87d6dad0e7de41b2710213e7dcc101c97cf274249430eeaf293005f766a2"
+    },
+    "predecessorSourceSHA256": "a4a3c2ae853a1e244c4d4c620c754b6ef13cfcca456d49945d6aec612c7d5430",
+    "currentSourceSHA256": "f547b3f58d1301c54f53bc7ce3948a25650b7c06d0810b3cbb5ce5964adcb175",
+    "factualAssessment": {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/w2-c25-post-s04-reader-expectation-actual-assessment-01.json",
+      "sha256": "d1ade3b95edf110d059469f7b8ec84feca162ced653b2236ff5c81c5aa2c6df7"
+    },
+    "originalStageContract": {
+      "path": "planning/enabler-change-requests/ECR-0009.md",
+      "sha256": "19b25c2170a6401ce0ca4567835817c14a53dfdb3f65e7d95a7886aa484210c2"
+    },
+    "currentGovernedProgression": {
+      "path": "design/ui-reference/STYLE_GUIDE_SOURCE.md",
+      "sha256": "d805d491ef4249129698148c2585cc4560748dfad5345caeb15e4b7d7e3e98b5"
+    },
+    "preservedActualFailure": {
+      "path": "artifacts/tmp/W2.desktop-input-restoration-01.f04/remaining5/receipt.json",
+      "sha256": "8cdc29c3915daba6f9048a247e458a95759fa5ac44abfef064fcadcd924a5bdb"
+    },
+    "preservedActualRaw": {
+      "path": "artifacts/tmp/W2.desktop-input-restoration-01.f04/remaining5/test-01.raw.log",
+      "sha256": "b4a8f9cba4455733d8c59a8dcee26070a878248dd00c65b14f7e63e712bb3b65"
+    },
+    "actualFailedCandidate": "18b5aaf2322d20ade27cfa7f78c7ce8ed68da122",
+    "literalDelta": "Only line736 self.assertTrue becomes self.assertFalse; identical exact is_disabled locator. All148 assertion sites and every other body byte/clock/denial remain.",
+    "rationale": "Pending/disabled was explicitly staged only until S04. At this actual recorded-processing fixture with exact IDs/code=null, current post-S04 action is available and opens through separate freshCore authority. This is positive button availability only, no file-read/native permission claim.",
+    "trackedDeliveryClaimed": false,
+    "futureSourceIntroductionCommit": null,
+    "executed": false
+  },
+  "sourceAssertionRestorationGranted": "Only original line736 positive button availability changes assertTrue(is_disabled) to assertFalse(is_disabled) after S04. FrozenC25 a4/no-assertion-change wording stays immutable historical; this append-only finite exception records the necessary current contract restoration under existing34e/738a. No other assertion/denial, product/reference or criterion threshold change.",
+  "historicalLocatorSegment": {
+    "proposal": {
+      "path": "artifacts/tmp/W2.C25.T01.attachment-reader-locator.proposed.py",
+      "sha256": "a4a3c2ae853a1e244c4d4c620c754b6ef13cfcca456d49945d6aec612c7d5430"
+    },
+    "originalSourceSHA256": "c900698ed9d83eee6583eb2ff155083bb0761031e25e18ec68712688fc32fbbb",
+    "delta": "Historical locator-only delta at4df: exact current button name replaced obsolete pending-viewer label while original assertTrue(is_disabled) remained. Current post-S04 assertFalse change is separately defined by postS04ExpectationSuccessor.",
+    "originalSourceRetained": {
+      "path": "artifacts/tmp/W2.C25.T01.attachment-reader-locator.original.py",
+      "sha256": "c900698ed9d83eee6583eb2ff155083bb0761031e25e18ec68712688fc32fbbb"
+    },
+    "predicateLimit": "Preserve the actual inherited is_disabled assertion at its authored fixture state. No claim that processing universally disables Reader; fresh5 actual execution must establish this selected state.",
+    "segmentMeaning": "Historical original locator-only segment at actual4df commit and A4 source, before the separately disclosed post-S04 expectation restoration. These segment source/delta/earlier predicate notes are not current-test assertions or the currentF547 map.",
+    "locatorOnlySourceSHA256": "a4a3c2ae853a1e244c4d4c620c754b6ef13cfcca456d49945d6aec612c7d5430"
+  },
+  "currentTestSegment": {
+    "proposal": {
+      "path": "artifacts/tmp/W2.C25.T01.attachment-post-s04-expectation.proposed.py",
+      "sha256": "f547b3f58d1301c54f53bc7ce3948a25650b7c06d0810b3cbb5ce5964adcb175"
+    },
+    "exactPatch": {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/desktop-input-consumers-01/post-s04-expectation-08.patch",
+      "sha256": "7f9d87d6dad0e7de41b2710213e7dcc101c97cf274249430eeaf293005f766a2"
+    },
+    "predecessorSourceSHA256": "a4a3c2ae853a1e244c4d4c620c754b6ef13cfcca456d49945d6aec612c7d5430",
+    "currentSourceSHA256": "f547b3f58d1301c54f53bc7ce3948a25650b7c06d0810b3cbb5ce5964adcb175",
+    "factualAssessment": {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/w2-c25-post-s04-reader-expectation-actual-assessment-01.json",
+      "sha256": "d1ade3b95edf110d059469f7b8ec84feca162ced653b2236ff5c81c5aa2c6df7"
+    },
+    "originalStageContract": {
+      "path": "planning/enabler-change-requests/ECR-0009.md",
+      "sha256": "19b25c2170a6401ce0ca4567835817c14a53dfdb3f65e7d95a7886aa484210c2"
+    },
+    "currentGovernedProgression": {
+      "path": "design/ui-reference/STYLE_GUIDE_SOURCE.md",
+      "sha256": "d805d491ef4249129698148c2585cc4560748dfad5345caeb15e4b7d7e3e98b5"
+    },
+    "preservedActualFailure": {
+      "path": "artifacts/tmp/W2.desktop-input-restoration-01.f04/remaining5/receipt.json",
+      "sha256": "8cdc29c3915daba6f9048a247e458a95759fa5ac44abfef064fcadcd924a5bdb"
+    },
+    "preservedActualRaw": {
+      "path": "artifacts/tmp/W2.desktop-input-restoration-01.f04/remaining5/test-01.raw.log",
+      "sha256": "b4a8f9cba4455733d8c59a8dcee26070a878248dd00c65b14f7e63e712bb3b65"
+    },
+    "actualFailedCandidate": "18b5aaf2322d20ade27cfa7f78c7ce8ed68da122",
+    "literalDelta": "Only line736 self.assertTrue becomes self.assertFalse; identical exact is_disabled locator. All148 assertion sites and every other body byte/clock/denial remain.",
+    "rationale": "Pending/disabled was explicitly staged only until S04. At this actual recorded-processing fixture with exact IDs/code=null, current post-S04 action is available and opens through separate freshCore authority. This is positive button availability only, no file-read/native permission claim.",
+    "trackedDeliveryClaimed": false,
+    "futureSourceIntroductionCommit": null,
+    "executed": false
+  },
+  "supersedesUnpublishedDraft": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/desktop-input-consumers-01/c25-post-s04-expectation-supplement-03.draft.json",
+    "sha256": "f24f36425a694fd7c86c0e0f2f669cde3727b5995d32192cbb728fc09b9a7aae"
+  },
+  "approvedBy": "human:repository-owner",
+  "postS04ExpectationSourceReadiness": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/desktop-input-consumers-01/independent-attachment-post-s04-expectation-proposal-readiness-01.json",
+    "sha256": "3295fa9bc2f8e1ab8dca78c4ca764ac13013de74cdadc8fad80cfd85bf37ad57"
+  }
+}
