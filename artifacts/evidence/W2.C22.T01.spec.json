@@ -1,0 +1,14 @@
+{
+  "schemaVersion": "1.0",
+  "kind": "authority-preserving-correction",
+  "origin": {
+    "taskId": "CAP-05.S05.T01",
+    "commit": "5a3d5dbb44786ae643cbd32c95339b16af8e1e72",
+    "sha256": "b9957922774b7ae204a72b1d8088a54c7bbeee4b554c18fd774238fd0d3d593e"
+  },
+  "reproduction": "The retained final29 data execution fails the unchanged portable-profile schema test: accepted current v28 profile/runtime metadata conflicts with four stale v27 constants in sqlite-profile.schema.json. Original CAP-05.S05.T01 introduced additive enrichment schema28 and advanced its current profile while retaining the old schema constants. Preserve the raw original FAIL and restore exact current version/fingerprint/immutable/canonical table literals, without changing the valid test or historical profile/recovery contracts.",
+  "changedPaths": [
+    "packages/contracts/storage/sqlite-profile.schema.json"
+  ],
+  "impactAnalysis": "Only four const payloads in the current portable storage-profile schema change to the existing approved current profile. Every other schema predicate, mutable-table policy, compatibility guarantee, historical snapshot, fixture, runtime/DDL/encryption/provider, reference-matching implementation and task history remains unchanged. Select the two existing portable-profile validation/unknown-property denial and exact strict-WAL initialization/reopen methods plus fresh unchanged build-manifest inventory for the changed schema hash. Python quality/types, full data/documents/service, Native/model and broad migration suites have no changed implementation input and are not replayed for this data-only increment. The five-segment architecture-guide companion is separately finite batch-authorized and outside this adapter scope; its existing guide-consistency check and actual delivery stay separate, never silently admitted here. Required task-independent correction review and remaining whole-W2 qualification remain due."
+}
