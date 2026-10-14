@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "append-only-finite-historical-layout-type-tail-proof-binding",
+  "status": "APPROVED",
+  "approvedBy": "human:repository-owner",
+  "authorizationMeaning": "Prospective owner34e necessary completion authorization applied to this finite proof detail; not an earlier exact-packet approval, execution or release.",
+  "recordingState": "APPEND_ONLY_RECORDING_PENDING_ACTUAL_EXECUTION",
+  "preauthorizationSHA256": "34e2e3c175dc9309080182e0673f776055b1cc3ba78639475c09ec54408d7d5f",
+  "conformingBatchSHA256": "738a9ed22b4da46a88c47c64b07607bbf1b27839e3bf657e7c7712763d76e9c2",
+  "originalDecision": {
+    "path": "artifacts/evidence/W2.historical-layout-lint-closure-01.decision-01.json",
+    "sha256": "4df92708f220653c405b1a063580fc0e346082dc9245260165622936878f0182"
+  },
+  "sourceCommit": "f0d86964d6db9274195992c4ef59acb3c762182b",
+  "sourceSHA256": "f13891ad1b42054abd984dd2b44645547234038d843c6ecacba3ba79cf387bbb",
+  "originalSourceDeliveryBaseCommit": "3895acd57e7b8fbde1ba7f333fa7cb6bd3ddec7a",
+  "originalFailedParent": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/historical-layout-lint-closure-01/actual-proof-01/receipt.json",
+    "sha256": "5f370ad0b7affa6bf0ada13c4ddcbd53c82607928c590b30c7da2c04a5039b54"
+  },
+  "originalTypingFailure": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/historical-layout-lint-closure-01/actual-proof-01/layout-configured-types.raw.log",
+    "sha256": "1128101ac9f5c5da66c07396bffc35dac07ecf3d22e40c9cf8c653f4dabe9318"
+  },
+  "producer": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/historical-layout-lint-closure-01/owned-type-tail-01.py",
+    "sha256": "48e5a06c19c232d2f563b4d0c81edb73e202b2f4e6b3c8d1854e9441e8e585aa"
+  },
+  "reporter": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/historical-layout-lint-closure-01/report-composed-evidence-02.py",
+    "sha256": "ceb562b34e8ef26fdb14717d8fb9344c4a9a1fd5d0fcc5f1db3e4d226af0e907"
+  },
+  "preparation": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/historical-layout-lint-closure-01/type-tail-preparation-01.json",
+    "sha256": "75edcb64b8f01f8555cd9a9cd19cb1adfc3e7ba3252177a5bdef5488b0817cb0"
+  },
+  "sourceReadiness": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/historical-layout-lint-closure-01/independent-type-tail-source-readiness-01.json",
+    "sha256": "630f23467221c316d5aa6eb42a23c4e60e428f0e8accb1595185154632801c85"
+  },
+  "scope": "Only replay failed original typing check using unchanged configured734 source context; keep original2/format/lint at actualf0d, subject to genuine missing-closure witness/independent disposition. No checker/source/framework/assertion or threshold changes.",
+  "publicationTiming": "Finite record can be appended afterf0d source delivery; exact original source parent relationship and old approval bytes remain unchanged.",
+  "configuredTypeSourceCount": 734,
+  "checkerSettingsChanged": false,
+  "testsRepeated": false,
+  "sharedFrameworkChangeGranted": false,
+  "historicalTaskReopened": false,
+  "releaseApproved": false,
+  "executed": false,
+  "publicIntroductionCommit": null
+}
