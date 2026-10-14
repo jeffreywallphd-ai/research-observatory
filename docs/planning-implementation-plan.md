@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 4653ecc3ebc70bb73e20c159edc4b3d91796b5d53cc44dc54e4d3d56fa343727
+source_sha256: a7ff118cebbbaa0e840dbd82875c36b6fae7687ae04f353aefab5ce749d0da4d
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -5006,7 +5006,7 @@ Original tasks and approvals remain unchanged.
 
 ### W2.C20.T01 — Implement rights, license, entitlement, and permitted-use metadata
 
-**Status:** `REVIEW`. **Original task:** `CAP-04.S04.T02`. **Latest review:** `-`.
+**Status:** `DONE`. **Original task:** `CAP-04.S04.T02`. **Latest review:** `approved`.
 
 **Reproduction:** The retained W2 final29 rights and data runs fail eight original migration methods because literal predecessor plans omit approved migrations through 0028 and current-target assertions still expect 17 or 25. CAP-04.S04.T02 first advanced the current target beyond 17 to 18 while the three inherited import fixture tests retained terminal-17 expectations. Rights tests retain frozen v17 predecessors but current-target assertions stop at 25. Replay the three original rights methods and five import preview/summary/commit methods, preserving every source fixture, subcase, failure point and protected backup/retry/reopen assertion.
 
@@ -5024,9 +5024,11 @@ Original tasks and approvals remain unchanged.
 - tests/rights/test_migration.py
 #### Review history — W2.C20.T01
 
-**Review mode:** `append-only v1` / 0 completed round(s)
+**Review mode:** `append-only v1` / 1 completed round(s)
 
-**Current immutable submission awaiting review:** `R01` / packet SHA-256 `450f5bf1dca7c1b4b6157eaf57c4eb1270c80d830d90c8e830782f98a688a60d`
+##### Round R01
+
+**Immutable submission packet:** `R01` / packet SHA-256 `450f5bf1dca7c1b4b6157eaf57c4eb1270c80d830d90c8e830782f98a688a60d`
 
 - Candidate / base / branch: `056a89b97599147f36ef8350cec59d475d219570` / `f694166e4ec61eea6c3b53a2daa49ceaefdb642a` / `codex/w2-implementation`
 - Submitted by / at: codex-w2-implementation / `2026-10-14T03:42:58+00:00`
@@ -5040,9 +5042,25 @@ Original tasks and approvals remain unchanged.
 - Prior round / replayed open findings: `-` / -
 - Root-cause escalation: -
 
-**Current latest-review projection:** `-` by - at `-`
+**Disposition / reviewer / time:** `approved` / agent:/root/a06_exit_review / `2026-10-14T04:14:14+00:00`
 
-**Latest notes:** -
+**Immutable review ledger:** `artifacts/evidence/W2.C20.T01.review-R01.json` / `21b1d76b791abd4e8560080343dc0c7b9c0f3b70c42f2cb89ad0fe7ae7701c6f`
+
+**Review notes:** Independent W2.C20.T01 R01 review approves the exact committed four-file migration expected-data restoration and its affected integration. Actual frozen450f5 packet, e27 evidence, inherited278db origin snapshot, three criteria, candidate/delivery inventories, fresh eight-method/no-skip and four-file quality/734-source type proof authenticate. No criterion-bound blocker remains. Original broad failures, initial format failure and unexecuted initial quality checks remain adverse. This task-only disposition does not approve a full profile, Slice/checkpoint/Wave/G2/release or claim fresh real-DPAPI/Native/model proof.
+
+**Findings opened:**
+
+- None
+
+**Prior finding closures:**
+
+- None
+
+**Current immutable submission awaiting review:** None
+
+**Current latest-review projection:** `approved` by agent:/root/a06_exit_review at `2026-10-14T04:14:14+00:00`
+
+**Latest notes:** Independent W2.C20.T01 R01 review approves the exact committed four-file migration expected-data restoration and its affected integration. Actual frozen450f5 packet, e27 evidence, inherited278db origin snapshot, three criteria, candidate/delivery inventories, fresh eight-method/no-skip and four-file quality/734-source type proof authenticate. No criterion-bound blocker remains. Original broad failures, initial format failure and unexecuted initial quality checks remain adverse. This task-only disposition does not approve a full profile, Slice/checkpoint/Wave/G2/release or claim fresh real-DPAPI/Native/model proof.
 
 **Currently open findings:** -
 

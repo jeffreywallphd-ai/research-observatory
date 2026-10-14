@@ -1,0 +1,195 @@
+{
+  "task_id": "W2.C20.T01",
+  "attempt_id": "R01",
+  "candidate_commit": "056a89b97599147f36ef8350cec59d475d219570",
+  "base_commit": "f694166e4ec61eea6c3b53a2daa49ceaefdb642a",
+  "reviewed_state_commit": "86d87ee58d5a018e4cdd277e50889f7d5b954a6d",
+  "reviewer": "agent:/root/a06_exit_review",
+  "result": "approved",
+  "reviewed_at": "2026-10-14T04:12:39.159289+00:00",
+  "packet_sha256": "450f5bf1dca7c1b4b6157eaf57c4eb1270c80d830d90c8e830782f98a688a60d",
+  "evidence_sha256": "e27d698d5ff183a4c5562492b19016019b551afdc73659ac63e4f91423a85ef7",
+  "acceptance_criteria_sha256": "5dae578c71f0fb55b9ffe175f68585cfa4da67a8a2f8128f36d9e5445f092ce6",
+  "selection_sha256": "3f850c25561cd8824c201a6dc034f2e372b6d9d3f178cf054183a6bc950f206e",
+  "findings": [],
+  "closures": [],
+  "acceptance_reviews": [
+    {
+      "criterion_index": 1,
+      "check_ids": [
+        "migration-regressions"
+      ],
+      "assessment": "The correction preserves the inherited restrictive/source-specific/inspectable rights contract and original approved task snapshot. Fresh selected migration integration retains literal v10/v11/v12/v17 source versions, row/schema/project/rights pins, protected SQLCipher backup/retry/reopen and prior recoverability. Only current-target expected data changes; no rights decision implementation, authority grant or migration guarantee changes. Original rights approval is historical authority, not fresh proof of every original policy/API/DPAPI behavior.",
+      "result": "satisfied"
+    },
+    {
+      "criterion_index": 2,
+      "check_ids": [
+        "migration-regressions"
+      ],
+      "assessment": "All eight original selected methods complete ok, Ran8tests/OK with0skips; their existing material failure/source-path subcases remain unchanged. Original broad rights/data adverse reports and first committed8PASS+formatFAIL remain retained. Lint/types in the first attempt were unexecuted, never implicitly passed.",
+      "result": "satisfied"
+    },
+    {
+      "criterion_index": 3,
+      "check_ids": [
+        "migration-regressions",
+        "affected-format",
+        "affected-lint",
+        "configured-source-types"
+      ],
+      "assessment": "Four exact committed test files restore current28 and explicit approved migration suffixes through0028. All154 original assertion calls remain; only17 current expected operands change. The one subsequent rights formatter edit is fullAST-identical to the reviewed proposal. Fresh four-file format/lint PASS and full734configured source types PASS with fresh cache. Six other candidate paths are normal correction tracking/generated metadata; no production/migration/source fixture/controller/framework/reference/settings/source-policy edit.",
+      "result": "satisfied"
+    }
+  ],
+  "corrective_integration": {
+    "evidence_sha256": "e27d698d5ff183a4c5562492b19016019b551afdc73659ac63e4f91423a85ef7",
+    "authority_preserved": true,
+    "affected_integration_reviewed": true,
+    "notes": "The exact four-test restoration preserves inherited approved rights and migration authority. Fresh eight original migration methods and existing protected backup/failure/retry/reopen subcases pass at the fixed committed candidate, with unchanged literal fixtures and held source/installed-runtime inputs. Four-file format/lint and the full configured734-source type context pass with a fresh cache. The first committed eight-method PASS plus rights format FAIL is retained; its lint/types remain unexecuted. Original task history and broad qualification adverses are unchanged. This approves only C20 corrective integration, with no whole-profile, fresh real-DPAPI, Native/model, checkpoint, Wave/G2 or release claim."
+  },
+  "verification_selection": {
+    "selected_command_ids": [
+      "service:rights",
+      "data:unit",
+      "foundation:quality"
+    ],
+    "assessment": "The eight actual failures and their unchanged existing recovery/negative bodies are the smallest affected regression scope. Four-file quality plus full configured734-source types provides fresh proof. There is no changed product/runtime/framework input requiring a new behavioral full-suite replay for this test-only correction. Broader actual W2 qualification remains open as declared."
+  },
+  "evidence_authentication": {
+    "review_method": "Independent read-only exact source/AST/contract, actual receipt/raw-output and committed frozen-delivery authentication. Reviewer reran no qualifying tests. Prior exact source reviews and actual evidence authentication are reused, not repeated as new execution.",
+    "prepared_frozen_disposition": {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/w2-c20-prepared-independent-disposition-02.frozen-bound.json",
+      "sha256": "dcf95c11621746fc2594eec03d075127660b90eb15a89af206c525a4d08b9058"
+    },
+    "actual_evidence_authentication": {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/w2-c20-actual-evidence-authentication-01.json",
+      "sha256": "12cbbe3fee7abbe6344a1855b915874b066dc9a5ac33cb1e0800a2c495259b2a"
+    },
+    "origin_candidate_authentication": {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/w2-c20-origin-candidate-binding-authentication-01.json",
+      "sha256": "dcf2bac54639e35d78f42fff82ef00403037ffadc03a27821e3189ee059e4fe7"
+    },
+    "focused_receipt": {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/c20-focused-02/receipt.json",
+      "sha256": "14ce21d29bf0d625de2df233f9c1bfaaff9740648351b70b73d98c84311317a0"
+    },
+    "actual_case_count": 8,
+    "skipped_methods": 0,
+    "format_files": 4,
+    "lint_files": 4,
+    "configured_type_sources": 734,
+    "type_seconds": 18.795692400075495,
+    "overall_seconds": 32.7797595000593,
+    "held_input_count": 14014,
+    "original_installed_runtime_pins": 7456,
+    "four_owned_jobs_drained_empty_active0": true,
+    "qualifying_source_inputs_stable": true,
+    "ten_declared_fixture_raw_hashes_and_unchanged_git_blobs_exact": true,
+    "all154_original_assertion_calls_preserved": true,
+    "only17_current_expected_operands_changed": true,
+    "rights_formatter_full_ast_equality": true,
+    "raw_checks": [
+      {
+        "id": "migration-regressions",
+        "raw": {
+          "path": "artifacts/tmp/W2.remaining-corrections-batch-01/c20-focused-02/migration-regressions.raw.log",
+          "sha256": "130f8eaf6536df8d576c231d0ee4bfa4ef94c5873ac150c27d7a58473af14543"
+        },
+        "exit_code": 0,
+        "result": "passed"
+      },
+      {
+        "id": "affected-format",
+        "raw": {
+          "path": "artifacts/tmp/W2.remaining-corrections-batch-01/c20-focused-02/affected-format.raw.log",
+          "sha256": "177f260a5645724013185e4b140c7045cc39e56c0c97b120f5cb23599f85f0de"
+        },
+        "exit_code": 0,
+        "result": "passed"
+      },
+      {
+        "id": "affected-lint",
+        "raw": {
+          "path": "artifacts/tmp/W2.remaining-corrections-batch-01/c20-focused-02/affected-lint.raw.log",
+          "sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18"
+        },
+        "exit_code": 0,
+        "result": "passed"
+      },
+      {
+        "id": "configured-source-types",
+        "raw": {
+          "path": "artifacts/tmp/W2.remaining-corrections-batch-01/c20-focused-02/configured-source-types.raw.log",
+          "sha256": "c642e5b33b5e7d157e7b2362ef94a292d50ab8abbba717375ca1704ad53de820"
+        },
+        "exit_code": 0,
+        "result": "passed"
+      }
+    ],
+    "first_attempt": {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/c20-focused-01/receipt.json",
+      "sha256": "1929faf79c5c3a8820f14f423fea885fc2355abc554f2e3590b3f1c87782a9ca"
+    },
+    "first_attempt_truth": "Eight original methods PASS; rights formatFAIL1; lint/typesUNEXECUTED. Fresh successor four checks are actual qualifying evidence at056, with no old PASS relabel.",
+    "historical_fixture_line_endings": "The three unchanged historical v17 JSON files retain their original CRLF working bytes, matching actual raw fixture/held receipt hashes; unchanged Git blobs match LF-canonical bytes. No new fixture exception or mutation."
+  },
+  "frozen_submission_authentication": {
+    "delivery_commit": "86d87ee58d5a018e4cdd277e50889f7d5b954a6d",
+    "delivery_parent": "056a89b97599147f36ef8350cec59d475d219570",
+    "delivery_changed_paths": [
+      "artifacts/evidence/W2.C20.T01.R01.json",
+      "docs/planning-implementation-plan.md",
+      "planning/backlog.yaml",
+      "planning/review-site/manifest.json",
+      "planning/review-site/waves/W2.html",
+      "planning/status-summary.md"
+    ],
+    "delivery_authentication": {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/w2-c20-final-delivery-authentication-01.json",
+      "sha256": "5e9acb227ff6bbeefefa381b2a67b3331bfc5e0780cc0062f2f3c6cdedcd8e43"
+    },
+    "origin_commit": "118e5c1494e180e03e1336a5a5953c3a464c4a3a",
+    "origin_sha256": "278db71aaeb1a96788fbfa50f97ef28e400c246dcdc2a0989a4a1164be536025",
+    "original_done_approved_snapshot_unchanged": true,
+    "inherited_contract_fields_exact": true,
+    "frozen_packet_criteria_selection_digests_recomputed": true,
+    "manifest_git_and_worktree_bytes_exact": true,
+    "backlog_lf_canonical_git_and_worktree_bytes_exact": true,
+    "candidate_10_changed_paths_exact": true,
+    "delivery_only_manifest_and_five_normal_metadata_paths": true,
+    "candidate_source_and_dependency_delta_in_delivery": false,
+    "task_owner_branch_candidate_base_preserved": true,
+    "prior_attempts_and_open_findings_empty": true,
+    "ordinary_w2_paused": true,
+    "affected_site_projection": {
+      "receipt": {
+        "path": "artifacts/tmp/W2.c20-submitted-site-01.json",
+        "sha256": "12931509d6957a0f5993ae346eb2a5244951b9460bb3b846d9ca2835c1019774"
+      },
+      "status": "PASS_AFFECTED_CORRECTIVE_STATUS_PROJECTION",
+      "changed_files": 2,
+      "unchanged_files": 500,
+      "actual_output_hashes_exact": true,
+      "full_site_pass_claimed": false
+    }
+  },
+  "independence": {
+    "task_owner": false,
+    "correction_source_author": false,
+    "source_edits": false,
+    "qualifying_tests_rerun_by_reviewer": false,
+    "reviewer_authored_only_review_evidence_notes": true
+  },
+  "scope_limits": {
+    "formal_task_approval_issued": true,
+    "slice_approval_issued_by_this_ledger": false,
+    "checkpoint_approval_issued": false,
+    "wave_approval_issued": false,
+    "release_approval_issued": false,
+    "real_dpapi_or_native_or_model_qualification_claimed": false,
+    "whole_profile_pass_claimed": false,
+    "w3_implementation_authorized_by_this_ledger": false
+  },
+  "notes": "Independent W2.C20.T01 R01 review approves the exact committed four-file migration expected-data restoration and its affected integration. Actual frozen450f5 packet, e27 evidence, inherited278db origin snapshot, three criteria, candidate/delivery inventories, fresh eight-method/no-skip and four-file quality/734-source type proof authenticate. No criterion-bound blocker remains. Original broad failures, initial format failure and unexecuted initial quality checks remain adverse. This task-only disposition does not approve a full profile, Slice/checkpoint/Wave/G2/release or claim fresh real-DPAPI/Native/model proof."
+}
