@@ -1,0 +1,348 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "actual-portable-finite-four-foundation-test-input-evidence",
+  "reportedBy": "agent:/root/c21_closeout_review",
+  "candidateCommit": "e03ee569d95667c9b82a8f34e7dd1ebd5c15ebad",
+  "baseCommit": "97a81b58e18b54c58fdd847853acd382f8cc64fe",
+  "status": "COMPOSED_SELECTED_FOUNDATION_PROOF_PENDING_DIFFERENT_DISPOSITION",
+  "collector": {
+    "path": "artifacts/tmp/W2.run-foundation-test-inputs-focused-02.py",
+    "sha256": "04109109973edd82602645f80d237b1bee84565edc5ebebe8dfbe8e4d9e070f6"
+  },
+  "collectorPreparation": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/foundation-test-inputs-focused-preparation-02.json",
+    "sha256": "28f1bc1d21308edcc227b4b39995683b731163c6ff230c135165ffb0b68fdf13"
+  },
+  "collectorSourceReadiness": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/foundation-test-inputs-focused-source-readiness-02.json",
+    "sha256": "2ac046aef35aec705f331fb8f73a2bbc3e61b4533bf5e51cf147d5d572f903ec"
+  },
+  "typeTail": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/foundation-type-tail-01/owned-type-tail-01.py",
+    "sha256": "6039ca2378f2b3fa741ac6d778779f6129454957bb9d9565de5a04964047440a"
+  },
+  "typeTailSourceReadiness": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/foundation-type-tail-01/independent-source-readiness-01.json",
+    "sha256": "57ffbce2394af3137fda294e703121d83f9e6205a919970bb16fe087cf958a21"
+  },
+  "authority": {
+    "path": "artifacts/evidence/W2.completion-corrections-batch-02.decision-01.json",
+    "sha256": "738a9ed22b4da46a88c47c64b07607bbf1b27839e3bf657e7c7712763d76e9c2",
+    "scope": "FOUNDATION-TEST-INPUTS-4"
+  },
+  "componentAuthority": {
+    "proposal": {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/foundation-test-input-restoration-01/proposal-manifest-01.json",
+      "sha256": "691d392f13f9c1eaf3374fcaf5505eaabb91316e9575a06917e857b5229e66ab"
+    },
+    "scope": {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/foundation-test-input-restoration-01/scope-and-evidence-plan-01.json",
+      "sha256": "933ba125754c2340118728d263258f930d3a8742d6f26c256928b1cf03fff02d"
+    },
+    "review": {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/foundation-test-input-restoration-01/independent-proposal-readiness-01.json",
+      "sha256": "1beee42bc0d8bb9dad8e95adb74d9e7421cd421b3246548e8b649d369bcd94f9"
+    }
+  },
+  "appliedInputs": [
+    {
+      "path": "tests/foundation/test_adr_check.py",
+      "sha256": "0c283f2220b9408dd5c44fe48ff3b60b628ac125552528bed0f90d9bb5678602",
+      "originalCanonicalSHA256": "34e57d328e047c2f459887bea5198873865078f74a12bdeba6df94e8fd69ad41",
+      "proposedSource": {
+        "path": "artifacts/tmp/W2.remaining-corrections-batch-01/foundation-test-input-restoration-01/test_adr_check.py.proposed",
+        "sha256": "0c283f2220b9408dd5c44fe48ff3b60b628ac125552528bed0f90d9bb5678602"
+      },
+      "patch": {
+        "path": "artifacts/tmp/W2.remaining-corrections-batch-01/foundation-test-input-restoration-01/test_adr_check.py.patch",
+        "sha256": "bddbdd9c1d468af68bf9a3351b5292542a98a6d7de74d2a771ad6b2de336ec2a"
+      }
+    },
+    {
+      "path": "tests/foundation/test_ui_reference_check.py",
+      "sha256": "c45fb53742c3b32988eafdc933b8c318728449c8d637b269c8ddab5bc2f6c559",
+      "originalCanonicalSHA256": "8419bce238917cb3349ec41dbe3da279c667816a9e9d5a23253ee6c7611eea68",
+      "proposedSource": {
+        "path": "artifacts/tmp/W2.remaining-corrections-batch-01/foundation-test-input-restoration-01/test_ui_reference_check.py.proposed",
+        "sha256": "c45fb53742c3b32988eafdc933b8c318728449c8d637b269c8ddab5bc2f6c559"
+      },
+      "patch": {
+        "path": "artifacts/tmp/W2.remaining-corrections-batch-01/foundation-test-input-restoration-01/test_ui_reference_check.py.patch",
+        "sha256": "046853d4ada07bf8a8b10276bdb8b85baa85995546413cd19e91a7b8ed6a1b07"
+      }
+    },
+    {
+      "path": "tests/foundation/test_planctl_amendments.py",
+      "sha256": "12b38d67374eee4068d43c53b555d6db41b5595a0da11a287436a539c21d0b80",
+      "originalCanonicalSHA256": "90dd055ea7c44cc6ca1f0a454aa9f6c2ad1d3b3fa17c9ed3184b4d0e574f3a78",
+      "proposedSource": {
+        "path": "artifacts/tmp/W2.remaining-corrections-batch-01/foundation-test-input-restoration-02/test_planctl_amendments.py.proposed.formatted",
+        "sha256": "12b38d67374eee4068d43c53b555d6db41b5595a0da11a287436a539c21d0b80"
+      },
+      "patch": {
+        "path": "artifacts/tmp/W2.remaining-corrections-batch-01/foundation-test-input-restoration-01/test_planctl_amendments.py.patch",
+        "sha256": "132120d7621d0e73a4e496d02b300ea319f7a998aad73ab0425b40a6621218b9"
+      }
+    },
+    {
+      "path": "tests/foundation/test_ui_change_gate.py",
+      "sha256": "6e0cacd71cc64adc886a9b8672f84ec1089bcff39532ba4be0dcf41a590f88fe",
+      "originalCanonicalSHA256": "ca12c3430e11810272087e21c468c2d3bb5d8a39d44b6f2b33f2850969f03460",
+      "proposedSource": {
+        "path": "artifacts/tmp/W2.remaining-corrections-batch-01/foundation-test-input-restoration-02/test_ui_change_gate.py.proposed.formatted",
+        "sha256": "6e0cacd71cc64adc886a9b8672f84ec1089bcff39532ba4be0dcf41a590f88fe"
+      },
+      "patch": {
+        "path": "artifacts/tmp/W2.remaining-corrections-batch-01/foundation-test-input-restoration-01/test_ui_change_gate.py.patch",
+        "sha256": "bd0722f83aab86eae9f0f49f79a6dd3b3e25380635dcdfdc5f3a8cad9bd33fbb"
+      }
+    }
+  ],
+  "deliveryReceipt": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/foundation-finite-delivery-01/receipt.json",
+    "sha256": "8cea434bd471a7eed1045e541df766ae1bf965156083eb29fa146f4f85479dc3"
+  },
+  "qualificationReceipt": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/foundation-test-inputs-focused-02/receipt.json",
+    "sha256": "c3e8b395231a1ea2943c113235c4becb4039da11b2d9106e97cc49b4ba9e1904"
+  },
+  "typeTailReceipt": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/foundation-type-tail-01/actual-type-tail-01/receipt.json",
+    "sha256": "5dbbc571aa8f358055d66b28282d07b531361c0d831731a4b838f6fe9957624f"
+  },
+  "checks": [
+    {
+      "id": "seven-original-findings",
+      "argvKind": "display",
+      "argv": [
+        ".venv/Scripts/python.exe",
+        "-B",
+        "-s",
+        "-m",
+        "unittest",
+        "-v",
+        "test_adr_check.ArchitectureDecisionWorkflowTests.test_repository_adr_registry_and_task_links_are_valid",
+        "test_planctl_amendments.PlanctlAmendmentTests.test_sequential_chain_composes_paused_authority_without_reordering_declared_adoptions",
+        "test_ui_change_gate.UiChangeGateTests.test_intentional_amendment_exact_approved_packet_to_renderer_git_lineage",
+        "test_ui_change_gate.UiChangeGateTests.test_reference_activation_historical_gov26_and_c10_are_exact_reviewed_ranges",
+        "test_ui_change_gate.UiChangeGateTests.test_reviewed_activation_inert_history_preserves_actual_net_inventory",
+        "test_ui_change_gate.UiChangeGateTests.test_reviewed_activation_preceding_sources_preserve_adverse_history_and_deny_substitution",
+        "test_ui_reference_check.UiReferenceCheckTests.test_approved_reference_report_is_complete_and_deterministic"
+      ],
+      "commit": "e03ee569d95667c9b82a8f34e7dd1ebd5c15ebad",
+      "provenance": "retained original closed execution without replay",
+      "status": "PASS",
+      "exitCode": 0,
+      "seconds": 479.78027189999557,
+      "cwd": "tests/foundation",
+      "raw": {
+        "path": "artifacts/tmp/W2.remaining-corrections-batch-01/foundation-test-inputs-focused-02/seven-original-findings.raw.log",
+        "sha256": "4f01add97ae2f4f2932e9780661ef41ddd0af8e91e03240a058b514737793189"
+      },
+      "ownedJob": {
+        "drained": true,
+        "activeProcesses": 0,
+        "cleanupState": "EMPTY_CONFIRMED"
+      }
+    },
+    {
+      "id": "three-material-denials",
+      "argvKind": "display",
+      "argv": [
+        ".venv/Scripts/python.exe",
+        "-B",
+        "-s",
+        "-m",
+        "unittest",
+        "-v",
+        "test_adr_check.ArchitectureDecisionWorkflowTests.test_unindexed_adr_file_is_rejected",
+        "test_ui_reference_check.UiReferenceCheckTests.test_missing_modified_and_unapproved_governance_fail",
+        "test_ui_change_gate.UiChangeGateTests.test_intentional_amendment_live_claim_rejects_foreign_or_expired_state"
+      ],
+      "commit": "e03ee569d95667c9b82a8f34e7dd1ebd5c15ebad",
+      "provenance": "retained original closed execution without replay",
+      "status": "PASS",
+      "exitCode": 0,
+      "seconds": 13.661407899999176,
+      "cwd": "tests/foundation",
+      "raw": {
+        "path": "artifacts/tmp/W2.remaining-corrections-batch-01/foundation-test-inputs-focused-02/three-material-denials.raw.log",
+        "sha256": "41fc7a264e396f44dc5d076c671c7dba424954903d4ce4c4b1ad44ff0e32aa10"
+      },
+      "ownedJob": {
+        "drained": true,
+        "activeProcesses": 0,
+        "cleanupState": "EMPTY_CONFIRMED"
+      }
+    },
+    {
+      "id": "affected-format",
+      "argvKind": "display",
+      "argv": [
+        ".venv/Scripts/python.exe",
+        "-B",
+        "-s",
+        "-m",
+        "ruff",
+        "format",
+        "--check",
+        "--config",
+        "pyproject.toml",
+        "--",
+        "tests/foundation/test_adr_check.py",
+        "tests/foundation/test_ui_reference_check.py",
+        "tests/foundation/test_planctl_amendments.py",
+        "tests/foundation/test_ui_change_gate.py"
+      ],
+      "commit": "e03ee569d95667c9b82a8f34e7dd1ebd5c15ebad",
+      "provenance": "retained original closed execution without replay",
+      "status": "PASS",
+      "exitCode": 0,
+      "seconds": 0.18704330000036862,
+      "cwd": ".",
+      "raw": {
+        "path": "artifacts/tmp/W2.remaining-corrections-batch-01/foundation-test-inputs-focused-02/affected-format.raw.log",
+        "sha256": "177f260a5645724013185e4b140c7045cc39e56c0c97b120f5cb23599f85f0de"
+      },
+      "ownedJob": {
+        "drained": true,
+        "activeProcesses": 0,
+        "cleanupState": "EMPTY_CONFIRMED"
+      }
+    },
+    {
+      "id": "affected-lint",
+      "argvKind": "display",
+      "argv": [
+        ".venv/Scripts/python.exe",
+        "-B",
+        "-s",
+        "-m",
+        "ruff",
+        "check",
+        "--config",
+        "pyproject.toml",
+        "--",
+        "tests/foundation/test_adr_check.py",
+        "tests/foundation/test_ui_reference_check.py",
+        "tests/foundation/test_planctl_amendments.py",
+        "tests/foundation/test_ui_change_gate.py"
+      ],
+      "commit": "e03ee569d95667c9b82a8f34e7dd1ebd5c15ebad",
+      "provenance": "retained original closed execution without replay",
+      "status": "PASS",
+      "exitCode": 0,
+      "seconds": 0.16278649999730987,
+      "cwd": ".",
+      "raw": {
+        "path": "artifacts/tmp/W2.remaining-corrections-batch-01/foundation-test-inputs-focused-02/affected-lint.raw.log",
+        "sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18"
+      },
+      "ownedJob": {
+        "drained": true,
+        "activeProcesses": 0,
+        "cleanupState": "EMPTY_CONFIRMED"
+      }
+    },
+    {
+      "id": "configured-source-types",
+      "argvKind": "display",
+      "argv": [
+        ".venv/Scripts/python.exe",
+        "-B",
+        "-s",
+        "-m",
+        "mypy",
+        "--config-file",
+        "pyproject.toml",
+        "--no-namespace-packages",
+        "--cache-dir",
+        "artifacts/tmp/W2.remaining-corrections-batch-01/foundation-type-tail-01/actual-type-tail-01/mypy-cache",
+        "--",
+        "@artifacts/tmp/W2.remaining-corrections-batch-01/foundation-type-tail-01/actual-type-tail-01/source-files.args"
+      ],
+      "commit": "e03ee569d95667c9b82a8f34e7dd1ebd5c15ebad",
+      "provenance": "fresh type-only tail",
+      "status": "PASS",
+      "exitCode": 0,
+      "seconds": 22.676152799998817,
+      "cwd": ".",
+      "raw": {
+        "path": "artifacts/tmp/W2.remaining-corrections-batch-01/foundation-type-tail-01/actual-type-tail-01/configured-source-types.raw.log",
+        "sha256": "c642e5b33b5e7d157e7b2362ef94a292d50ab8abbba717375ca1704ad53de820"
+      },
+      "ownedJob": {
+        "drained": true,
+        "activeProcesses": 0,
+        "cleanupState": "EMPTY_CONFIRMED"
+      }
+    }
+  ],
+  "independentPassingRowsAssessment": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/foundation-selected-passing-rows-actual-assessment-01.json",
+    "sha256": "9a6c3db6bf086cb7cd725df3bdcc0383e121cc60aab0040db4807c009a0c9bb6"
+  },
+  "originalCases": [
+    "test_adr_check.ArchitectureDecisionWorkflowTests.test_repository_adr_registry_and_task_links_are_valid",
+    "test_planctl_amendments.PlanctlAmendmentTests.test_sequential_chain_composes_paused_authority_without_reordering_declared_adoptions",
+    "test_ui_change_gate.UiChangeGateTests.test_intentional_amendment_exact_approved_packet_to_renderer_git_lineage",
+    "test_ui_change_gate.UiChangeGateTests.test_reference_activation_historical_gov26_and_c10_are_exact_reviewed_ranges",
+    "test_ui_change_gate.UiChangeGateTests.test_reviewed_activation_inert_history_preserves_actual_net_inventory",
+    "test_ui_change_gate.UiChangeGateTests.test_reviewed_activation_preceding_sources_preserve_adverse_history_and_deny_substitution",
+    "test_ui_reference_check.UiReferenceCheckTests.test_approved_reference_report_is_complete_and_deterministic"
+  ],
+  "denialCases": [
+    "test_adr_check.ArchitectureDecisionWorkflowTests.test_unindexed_adr_file_is_rejected",
+    "test_ui_reference_check.UiReferenceCheckTests.test_missing_modified_and_unapproved_governance_fail",
+    "test_ui_change_gate.UiChangeGateTests.test_intentional_amendment_live_claim_rejects_foreign_or_expired_state"
+  ],
+  "configuredTypeSourceCount": 734,
+  "selectedCommandIds": [
+    "foundation:unit",
+    "foundation:quality"
+  ],
+  "preservedOriginalFailure": {
+    "candidateCommit": "f62f171c44f5fbe5f92ccb973533b353ba470995",
+    "receipt": {
+      "path": "artifacts/tmp/W2.final-foundation-unit-continuation-01.f01/receipt.json",
+      "sha256": "58cfec887643f8c9212de1b0e8703b8bdd5221990b17183a053be9080288b982"
+    },
+    "raw": {
+      "path": "artifacts/tmp/W2.final-foundation-unit-continuation-01.f01/combined-unittest-raw.log",
+      "sha256": "6f79d5c39381311e7f33dc8ef5a3ac4c7a59d4936c9547040c7eb0b887de2a76"
+    },
+    "independentDisposition": {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/w2-final-foundation-unit-continuation-01.actual-independent-disposition-01.json",
+      "sha256": "4cb404187ad21b26aaad46bcf1fcce7662375f3703e4546c0e6770a4f1b07285"
+    },
+    "outcome": {
+      "tests": 736,
+      "passed": 727,
+      "failures": 6,
+      "errors": 3,
+      "skips": 0,
+      "exitCode": 1
+    },
+    "meaning": "Actual original full foundation run remains FAIL; only seven named test-input findings are candidates for fresh affected closure. The other two build-inventory failures have their separate M evidence. No complete736 replay or full foundation PASS from this narrow run."
+  },
+  "preservedFailedParentStatus": "FAIL",
+  "preservedOriginalTypeFailure": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/foundation-test-inputs-focused-02/affected-types.raw.log",
+    "sha256": "ad78bd52ef62d2c6e13ec161838d59a2a42ef2479e2c8fee2976ccac1b649a05"
+  },
+  "originalParentCollectionSeconds": 498.85980050000217,
+  "freshTypingTailSeconds": 22.676152799998817,
+  "priorInputsStable": true,
+  "tailInputsStable": true,
+  "privateEnvironmentAndInputMapNotPublished": true,
+  "testsExecutedByReporter": false,
+  "originalTestsFormatLintRepeated": false,
+  "fullFoundationPassClaimed": false,
+  "waveApproved": false,
+  "releaseApproved": false,
+  "limits": [
+    "Only original seven findings/three denials/four-file format+lint at actuale03 plus fresh configured734 typing context. Whole originalfoundation FAIL remains; no full profile/Wave PASS.",
+    "Original failed parent/type raw remain unchanged. Genuine independent actual committed finite disposition remains due; source readiness is not execution approval or task closure.",
+    "No source/checker/settings/assertion/deadline/framework/security/release change; no old execution retargeted."
+  ]
+}
