@@ -1,0 +1,148 @@
+{
+  "documentType": "finite-historical-layout-lint-closure-evidence",
+  "commit": "eac656c2db802d026f187471bb88dd4ead843264",
+  "sourceCommit": "f0d86964d6db9274195992c4ef59acb3c762182b",
+  "deliveryBaseCommit": "3895acd57e7b8fbde1ba7f333fa7cb6bd3ddec7a",
+  "originalAuthoringTask": "W1.A08.T02",
+  "historicalTaskReopened": false,
+  "changedPaths": [
+    "tests/desktop/test_product_layout_measurements.py"
+  ],
+  "oldSourceSHA256": "f71a30b6b4d46e0670408c3c3b8782306eabc223680c2dea4fd82c5830fc2edf",
+  "newSourceSHA256": "f13891ad1b42054abd984dd2b44645547234038d843c6ecacba3ba79cf387bbb",
+  "assertionSites": 46,
+  "ASTEqualExceptUnusedImportAlias": true,
+  "originalSourceReadiness": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/historical-layout-lint-closure-01/independent-runtime-bound-source-readiness-01.json",
+    "sha256": "df43b3c247ec2e2fc0dd60a3dcdd0700487637a108d664f86debc9a3c4d147c1"
+  },
+  "sourceReadiness": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/historical-layout-lint-closure-01/independent-type-tail-source-readiness-01.json",
+    "sha256": "630f23467221c316d5aa6eb42a23c4e60e428f0e8accb1595185154632801c85"
+  },
+  "finiteDecision": {
+    "path": "artifacts/evidence/W2.historical-layout-lint-closure-01.decision-01.json",
+    "sha256": "4df92708f220653c405b1a063580fc0e346082dc9245260165622936878f0182"
+  },
+  "typeTailDecision": {
+    "path": "artifacts/evidence/W2.historical-layout-lint-closure-01.type-tail-decision-01.json",
+    "sha256": "adaf21fc2b9363939049811db61d515a29515f6e46b716b94f562dbf0d9e901a"
+  },
+  "checks": [
+    {
+      "id": "original-layout2",
+      "command": ".venv/Scripts/python.exe -B -s -m unittest -v tests.desktop.test_product_layout_measurements.ProductLayoutMeasurementsTests.test_actual_application_settings_label_and_keyboard_skip_contrast tests.desktop.test_product_layout_measurements.ProductLayoutMeasurementsTests.test_actual_product_flow_and_sidebar_with_keyboard_scrolling",
+      "commandSemantics": "DISPLAY relative argv; actual private receipt retains execution arguments",
+      "commit": "f0d86964d6db9274195992c4ef59acb3c762182b",
+      "provenance": "retained original execution independently qualified without replay",
+      "exitCode": 0,
+      "seconds": 14.592644800002745,
+      "raw": {
+        "path": "artifacts/tmp/W2.remaining-corrections-batch-01/historical-layout-lint-closure-01/actual-proof-01/original-layout2.raw.log",
+        "sha256": "c7cfb30b6dfd6378c90a0b5d7f25922e733312e3331ce9e72d0abf445c4819bf"
+      },
+      "ownedJob": {
+        "drained": true,
+        "activeProcesses": 0,
+        "cleanupState": "EMPTY_CONFIRMED"
+      }
+    },
+    {
+      "id": "layout-format",
+      "command": ".venv/Scripts/python.exe -B -s -m ruff format --check --config pyproject.toml -- tests/desktop/test_product_layout_measurements.py",
+      "commandSemantics": "DISPLAY relative argv; actual private receipt retains execution arguments",
+      "commit": "f0d86964d6db9274195992c4ef59acb3c762182b",
+      "provenance": "retained original execution independently qualified without replay",
+      "exitCode": 0,
+      "seconds": 0.1735716000039247,
+      "raw": {
+        "path": "artifacts/tmp/W2.remaining-corrections-batch-01/historical-layout-lint-closure-01/actual-proof-01/layout-format.raw.log",
+        "sha256": "fd2299c9f1c6dc869070883e281051bfe93aacf66c1a3b0069f45b4aa410ca50"
+      },
+      "ownedJob": {
+        "drained": true,
+        "activeProcesses": 0,
+        "cleanupState": "EMPTY_CONFIRMED"
+      }
+    },
+    {
+      "id": "layout-lint",
+      "command": ".venv/Scripts/python.exe -B -s -m ruff check --config pyproject.toml -- tests/desktop/test_product_layout_measurements.py",
+      "commandSemantics": "DISPLAY relative argv; actual private receipt retains execution arguments",
+      "commit": "f0d86964d6db9274195992c4ef59acb3c762182b",
+      "provenance": "retained original execution independently qualified without replay",
+      "exitCode": 0,
+      "seconds": 0.16715889999613864,
+      "raw": {
+        "path": "artifacts/tmp/W2.remaining-corrections-batch-01/historical-layout-lint-closure-01/actual-proof-01/layout-lint.raw.log",
+        "sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18"
+      },
+      "ownedJob": {
+        "drained": true,
+        "activeProcesses": 0,
+        "cleanupState": "EMPTY_CONFIRMED"
+      }
+    },
+    {
+      "id": "configured-source-types",
+      "command": ".venv/Scripts/python.exe -B -s -m mypy --config-file pyproject.toml --no-namespace-packages --cache-dir artifacts/tmp/W2.remaining-corrections-batch-01/historical-layout-lint-closure-01/actual-type-tail-01/mypy-cache -- @artifacts/tmp/W2.remaining-corrections-batch-01/historical-layout-lint-closure-01/actual-type-tail-01/source-files.args",
+      "commandSemantics": "DISPLAY relative argv; actual private receipt retains execution arguments",
+      "commit": "eac656c2db802d026f187471bb88dd4ead843264",
+      "provenance": "fresh type-only tail",
+      "exitCode": 0,
+      "seconds": 41.905977199996414,
+      "raw": {
+        "path": "artifacts/tmp/W2.remaining-corrections-batch-01/historical-layout-lint-closure-01/actual-type-tail-01/configured-source-types.raw.log",
+        "sha256": "c642e5b33b5e7d157e7b2362ef94a292d50ab8abbba717375ca1704ad53de820"
+      },
+      "ownedJob": {
+        "drained": true,
+        "activeProcesses": 0,
+        "cleanupState": "EMPTY_CONFIRMED"
+      }
+    }
+  ],
+  "actualNamedOriginalBodies": [
+    "tests.desktop.test_product_layout_measurements.ProductLayoutMeasurementsTests.test_actual_application_settings_label_and_keyboard_skip_contrast",
+    "tests.desktop.test_product_layout_measurements.ProductLayoutMeasurementsTests.test_actual_product_flow_and_sidebar_with_keyboard_scrolling"
+  ],
+  "actualVerifiedBodyCount": 2,
+  "configuredTypeSourceCount": 734,
+  "originalFailedParent": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/historical-layout-lint-closure-01/actual-proof-01/receipt.json",
+    "sha256": "5f370ad0b7affa6bf0ada13c4ddcbd53c82607928c590b30c7da2c04a5039b54"
+  },
+  "preservedOriginalTypingFailure": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/historical-layout-lint-closure-01/actual-proof-01/layout-configured-types.raw.log",
+    "sha256": "1128101ac9f5c5da66c07396bffc35dac07ecf3d22e40c9cf8c653f4dabe9318"
+  },
+  "independentOriginalThreeAssessment": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/historical-layout-lint-closure-01/independent-original-three-composability-assessment-01.json",
+    "sha256": "5a5ca75da9fb6b59370222d60d657f940364d0fe1183d007f8f39568d7f0705c"
+  },
+  "actualTypeTailReceipt": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/historical-layout-lint-closure-01/actual-type-tail-01/receipt.json",
+    "sha256": "c47680caec140b7310a30472926e8ccbe1cb952c441be419eaa662c6b9073bbb"
+  },
+  "preservedOriginalQualityAdverse": [
+    {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/w2-c25-task-local-quality-scope-actual-assessment-01.json",
+      "sha256": "c1021713f53eee8c4422a173711cc24b9353e04cd146dd40701a03b40f77ab66"
+    },
+    {
+      "path": "artifacts/tmp/W2.C25.T01.quality-lint-adverse-01.json",
+      "sha256": "12370e697bc5973d3bacd85fb42c65d7b85e5d3466974dd2b557e4ec571937b8"
+    },
+    {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/W2.C25.T01.desktop-quality-01/desktop-affected-lint.raw.log",
+      "sha256": "37d5137339149d889e2097fb49662ad325ba895c3e27655db81e47c895a7ac37"
+    }
+  ],
+  "coverageTruth": "Two original layout bodies, format and lint remain at actual f0d source candidate; only configured734 typing is fresh at the actual tail candidate. Original failed parent/type raw stay adverse. Different retained-three assessment supplies their closure judgment; the fresh tail does not invent missing original final flags. Earlier body groups retain their actual candidates. No full profile or Wave PASS.",
+  "historicalLintFindingStatus": "Different actual committed finite disposition remains required before removing the layout debt item.",
+  "checkerSettingsChanged": false,
+  "layoutFormatLintRepeated": false,
+  "fullProfilePassClaimed": false,
+  "waveApproved": false,
+  "releaseApproved": false
+}
