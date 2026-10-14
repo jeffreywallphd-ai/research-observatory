@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 36c79ef24cb84b3f64eef74516e121c899e9ba99488671df5ac13c298b733d83
+source_sha256: 4653ecc3ebc70bb73e20c159edc4b3d91796b5d53cc44dc54e4d3d56fa343727
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -5006,7 +5006,7 @@ Original tasks and approvals remain unchanged.
 
 ### W2.C20.T01 — Implement rights, license, entitlement, and permitted-use metadata
 
-**Status:** `IN_PROGRESS`. **Original task:** `CAP-04.S04.T02`. **Latest review:** `-`.
+**Status:** `REVIEW`. **Original task:** `CAP-04.S04.T02`. **Latest review:** `-`.
 
 **Reproduction:** The retained W2 final29 rights and data runs fail eight original migration methods because literal predecessor plans omit approved migrations through 0028 and current-target assertions still expect 17 or 25. CAP-04.S04.T02 first advanced the current target beyond 17 to 18 while the three inherited import fixture tests retained terminal-17 expectations. Rights tests retain frozen v17 predecessors but current-target assertions stop at 25. Replay the three original rights methods and five import preview/summary/commit methods, preserving every source fixture, subcase, failure point and protected backup/retry/reopen assertion.
 
@@ -5026,7 +5026,19 @@ Original tasks and approvals remain unchanged.
 
 **Review mode:** `append-only v1` / 0 completed round(s)
 
-**Current immutable submission awaiting review:** None
+**Current immutable submission awaiting review:** `R01` / packet SHA-256 `450f5bf1dca7c1b4b6157eaf57c4eb1270c80d830d90c8e830782f98a688a60d`
+
+- Candidate / base / branch: `056a89b97599147f36ef8350cec59d475d219570` / `f694166e4ec61eea6c3b53a2daa49ceaefdb642a` / `codex/w2-implementation`
+- Submitted by / at: codex-w2-implementation / `2026-10-14T03:42:58+00:00`
+- Evidence: `artifacts/evidence/W2.C20.T01.R01.json` / `e27d698d5ff183a4c5562492b19016019b551afdc73659ac63e4f91423a85ef7` / `056a89b97599147f36ef8350cec59d475d219570`
+- Acceptance-criteria SHA-256: `5dae578c71f0fb55b9ffe175f68585cfa4da67a8a2f8128f36d9e5445f092ce6`
+- Verification-selection SHA-256: `3f850c25561cd8824c201a6dc034f2e372b6d9d3f178cf054183a6bc950f206e`
+- Changed paths: `docs/planning-implementation-plan.md`, `planning/backlog.yaml`, `planning/review-site/index.html`, `planning/review-site/manifest.json`, `planning/review-site/waves/W2.html`, `planning/status-summary.md`, `tests/data/test_import_commit_migration.py`, `tests/data/test_import_preview_migration.py`, `tests/data/test_import_summary_migration.py`, `tests/rights/test_migration.py`
+- Selected checks: `.venv/Scripts/python.exe -B -s -m unittest -v tests.rights.test_migration.LiteralV17PredecessorTests.test_protected_v17_failure_backup_retry_and_reopen tests.rights.test_migration.LiteralV17PredecessorTests.test_v17_recovery_contract_is_retained_for_prior_verified_backups tests.rights.test_migration.LiteralV17PredecessorTests.test_v17_to_current_keeps_exact_history_and_verified_backup_for_both_source_paths tests.data.test_import_preview_migration.ImportPreviewMigrationTests.test_exact_v10_is_backed_up_and_preserved_without_fabricated_previews tests.data.test_import_summary_migration.ImportSummaryMigrationTests.test_exact_v11_backup_preserves_rows_and_does_not_fabricate_summaries tests.data.test_import_summary_migration.ProtectedImportSummaryMigrationTests.test_v11_sqlcipher_upgrade_keeps_verified_encrypted_backup tests.data.test_import_commit_migration.ImportCommitMigrationTests.test_exact_v12_upgrade_keeps_verified_backup_and_no_invented_commits tests.data.test_import_commit_migration.ProtectedImportCommitMigrationTests.test_encrypted_rollback_retry_backup_and_reopen`, `.venv/Scripts/python.exe -B -s -m ruff format --check --config pyproject.toml -- tests/rights/test_migration.py tests/data/test_import_preview_migration.py tests/data/test_import_summary_migration.py tests/data/test_import_commit_migration.py`, `.venv/Scripts/python.exe -B -s -m ruff check --config pyproject.toml -- tests/rights/test_migration.py tests/data/test_import_preview_migration.py tests/data/test_import_summary_migration.py tests/data/test_import_commit_migration.py`, `.venv/Scripts/python.exe -B -s -m mypy --config-file pyproject.toml --no-namespace-packages --cache-dir artifacts/tmp/W2.remaining-corrections-batch-01/c20-focused-02/mypy-cache -- @artifacts/tmp/W2.remaining-corrections-batch-01/c20-focused-02/source-files.args`
+- Deferred checks: `Broader data/rights/service/security/desktop/native/performance/packaging coverage remains at the actual W2 qualification and review gates.`
+- Selection rationale: Only four migration-test expected-data sets drifted behind approved schema28. Select the exact eight failing original methods, their existing historical/failure/subcases, four-file format/lint and the configured complete source type context with a fresh private cache. Existing owned jobs drain to EMPTY while the exact source/runtime/fixture inputs are held. These IDs identify this affected selection, not full profiles.
+- Prior round / replayed open findings: `-` / -
+- Root-cause escalation: -
 
 **Current latest-review projection:** `-` by - at `-`
 

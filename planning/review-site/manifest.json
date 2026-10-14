@@ -4041,7 +4041,7 @@
         {
           "task_id": "W2.C20.T01",
           "title": "Implement rights, license, entitlement, and permitted-use metadata",
-          "status": "IN_PROGRESS",
+          "status": "REVIEW",
           "acceptance_criteria": [
             "Unknown rights default to restrictive behavior; policy decisions are source-specific and inspectable; changing rights marks affected operations for re-evaluation.",
             "Automated tests cover the expected path and at least one material failure or boundary condition.",
@@ -4073,7 +4073,7 @@
           "task_review": {
             "task_id": "W2.C20.T01",
             "title": "Implement rights, license, entitlement, and permitted-use metadata",
-            "status": "IN_PROGRESS",
+            "status": "REVIEW",
             "mode": "append-only",
             "latest_review": {
               "reviewer": null,
@@ -4084,7 +4084,54 @@
             "review_control": {
               "version": 1,
               "attempts": [],
-              "current_submission": null
+              "current_submission": {
+                "id": "R01",
+                "submitted_by": "codex-w2-implementation",
+                "submitted_at": "2026-10-14T03:42:58+00:00",
+                "candidate_commit": "056a89b97599147f36ef8350cec59d475d219570",
+                "base_commit": "f694166e4ec61eea6c3b53a2daa49ceaefdb642a",
+                "branch": "codex/w2-implementation",
+                "evidence_reference": {
+                  "type": "criterion-manifest",
+                  "path": "artifacts/evidence/W2.C20.T01.R01.json",
+                  "sha256": "e27d698d5ff183a4c5562492b19016019b551afdc73659ac63e4f91423a85ef7",
+                  "commit": "056a89b97599147f36ef8350cec59d475d219570",
+                  "recorded_at": "2026-10-14T03:42:58+00:00"
+                },
+                "acceptance_criteria_sha256": "5dae578c71f0fb55b9ffe175f68585cfa4da67a8a2f8128f36d9e5445f092ce6",
+                "changed_paths": [
+                  "docs/planning-implementation-plan.md",
+                  "planning/backlog.yaml",
+                  "planning/review-site/index.html",
+                  "planning/review-site/manifest.json",
+                  "planning/review-site/waves/W2.html",
+                  "planning/status-summary.md",
+                  "tests/data/test_import_commit_migration.py",
+                  "tests/data/test_import_preview_migration.py",
+                  "tests/data/test_import_summary_migration.py",
+                  "tests/rights/test_migration.py"
+                ],
+                "selected_checks": [
+                  ".venv/Scripts/python.exe -B -s -m unittest -v tests.rights.test_migration.LiteralV17PredecessorTests.test_protected_v17_failure_backup_retry_and_reopen tests.rights.test_migration.LiteralV17PredecessorTests.test_v17_recovery_contract_is_retained_for_prior_verified_backups tests.rights.test_migration.LiteralV17PredecessorTests.test_v17_to_current_keeps_exact_history_and_verified_backup_for_both_source_paths tests.data.test_import_preview_migration.ImportPreviewMigrationTests.test_exact_v10_is_backed_up_and_preserved_without_fabricated_previews tests.data.test_import_summary_migration.ImportSummaryMigrationTests.test_exact_v11_backup_preserves_rows_and_does_not_fabricate_summaries tests.data.test_import_summary_migration.ProtectedImportSummaryMigrationTests.test_v11_sqlcipher_upgrade_keeps_verified_encrypted_backup tests.data.test_import_commit_migration.ImportCommitMigrationTests.test_exact_v12_upgrade_keeps_verified_backup_and_no_invented_commits tests.data.test_import_commit_migration.ProtectedImportCommitMigrationTests.test_encrypted_rollback_retry_backup_and_reopen",
+                  ".venv/Scripts/python.exe -B -s -m ruff format --check --config pyproject.toml -- tests/rights/test_migration.py tests/data/test_import_preview_migration.py tests/data/test_import_summary_migration.py tests/data/test_import_commit_migration.py",
+                  ".venv/Scripts/python.exe -B -s -m ruff check --config pyproject.toml -- tests/rights/test_migration.py tests/data/test_import_preview_migration.py tests/data/test_import_summary_migration.py tests/data/test_import_commit_migration.py",
+                  ".venv/Scripts/python.exe -B -s -m mypy --config-file pyproject.toml --no-namespace-packages --cache-dir artifacts/tmp/W2.remaining-corrections-batch-01/c20-focused-02/mypy-cache -- @artifacts/tmp/W2.remaining-corrections-batch-01/c20-focused-02/source-files.args"
+                ],
+                "deferred_checks": [
+                  "Broader data/rights/service/security/desktop/native/performance/packaging coverage remains at the actual W2 qualification and review gates."
+                ],
+                "selection_rationale": "Only four migration-test expected-data sets drifted behind approved schema28. Select the exact eight failing original methods, their existing historical/failure/subcases, four-file format/lint and the configured complete source type context with a fresh private cache. Existing owned jobs drain to EMPTY while the exact source/runtime/fixture inputs are held. These IDs identify this affected selection, not full profiles.",
+                "selection_sha256": "3f850c25561cd8824c201a6dc034f2e372b6d9d3f178cf054183a6bc950f206e",
+                "prior_attempt_id": null,
+                "open_finding_ids": [],
+                "root_cause_analysis": null,
+                "selected_command_ids": [
+                  "service:rights",
+                  "data:unit",
+                  "foundation:quality"
+                ],
+                "packet_sha256": "450f5bf1dca7c1b4b6157eaf57c4eb1270c80d830d90c8e830782f98a688a60d"
+              }
             }
           }
         }

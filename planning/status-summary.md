@@ -1,7 +1,7 @@
 ---
 document_type: generated-backlog-status-summary
 source: planning/backlog.yaml
-source_sha256: 36c79ef24cb84b3f64eef74516e121c899e9ba99488671df5ac13c298b733d83
+source_sha256: 4653ecc3ebc70bb73e20c159edc4b3d91796b5d53cc44dc54e4d3d56fa343727
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -981,7 +981,7 @@ Append-only rounds remain distinct from the current latest-review projection. Le
 | `W2.C17.T01` | `append-only v1` | 1 | `-` | approved / agent:/root/c17_independent_disposition | - |
 | `W2.C18.T01` | `append-only v1` | 1 | `-` | approved / agent:/root/c18_runtime_disposition | - |
 | `W2.C19.T01` | `append-only v1` | 1 | `-` | approved / agent:/root/c19_correction_review | - |
-| `W2.C20.T01` | `append-only v1` | 0 | `-` | - / - | - |
+| `W2.C20.T01` | `append-only v1` | 0 | `R01` | - / - | - |
 ## Wave progress
 
 | Wave | Pre-Wave approval | Campaign | Qualification | Approved slices | Done tasks | Exit gate |
@@ -1045,7 +1045,7 @@ Append-only rounds remain distinct from the current latest-review projection. Le
 
 | Task | Status | Owner | Branch |
 |---|---|---|---|
-| `W2.C20.T01` Implement rights, license, entitlement, and permitted-use metadata | `IN_PROGRESS` | codex-w2-implementation | `codex/w2-implementation` |
+| `W2.C20.T01` Implement rights, license, entitlement, and permitted-use metadata | `REVIEW` | codex-w2-implementation | `codex/w2-implementation` |
 
 ## Linked corrective tasks
 
@@ -1149,5 +1149,5 @@ Original tasks and approvals remain unchanged.
 
 ### W2.C20.T01 — Implement rights, license, entitlement, and permitted-use metadata
 
-**Status:** `IN_PROGRESS`. **Original task:** `CAP-04.S04.T02`. **Latest review:** `-`.
+**Status:** `REVIEW`. **Original task:** `CAP-04.S04.T02`. **Latest review:** `-`.
 

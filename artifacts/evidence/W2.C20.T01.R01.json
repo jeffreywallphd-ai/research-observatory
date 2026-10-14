@@ -1,0 +1,183 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "W2.C20.T01",
+  "baseCommit": "f694166e4ec61eea6c3b53a2daa49ceaefdb642a",
+  "commit": "056a89b97599147f36ef8350cec59d475d219570",
+  "branch": "codex/w2-implementation",
+  "changedFiles": [
+    "docs/planning-implementation-plan.md",
+    "planning/backlog.yaml",
+    "planning/review-site/index.html",
+    "planning/review-site/manifest.json",
+    "planning/review-site/waves/W2.html",
+    "planning/status-summary.md",
+    "tests/data/test_import_commit_migration.py",
+    "tests/data/test_import_preview_migration.py",
+    "tests/data/test_import_summary_migration.py",
+    "tests/rights/test_migration.py"
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "checkIds": [
+        "migration-regressions"
+      ],
+      "evidence": [
+        "Fresh original rights/predecessor and protected import migrations reach the approved current target while preserving exact historical rows, source hashes, ciphertext, verified backup, failure, retry and reopen assertions. The unchanged restrictive rights implementation and its original independent approval remain historical authority; this test-data correction does not claim a fresh replay of every original policy/API behavior."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "checkIds": [
+        "migration-regressions"
+      ],
+      "evidence": [
+        "All eight previously failing original methods pass without skips, retaining their original source-path subcases and recovery/failure assertions. The prior broad rights and data FAIL results remain preserved; no whole-profile PASS is inferred."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "checkIds": [
+        "migration-regressions",
+        "affected-format",
+        "affected-lint",
+        "configured-source-types"
+      ],
+      "evidence": [
+        "Exactly four admitted test files restore explicit current migration suffix and target-version operands. All 154 original assertion calls remain, with only 17 expected current-target operands changed. Fresh four-file format/lint and the unchanged configured complete source type context pass; no production, migration, source fixture, authority, reference, framework or checker setting is changed."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "checks": [
+    {
+      "id": "migration-regressions",
+      "command": ".venv/Scripts/python.exe -B -s -m unittest -v tests.rights.test_migration.LiteralV17PredecessorTests.test_protected_v17_failure_backup_retry_and_reopen tests.rights.test_migration.LiteralV17PredecessorTests.test_v17_recovery_contract_is_retained_for_prior_verified_backups tests.rights.test_migration.LiteralV17PredecessorTests.test_v17_to_current_keeps_exact_history_and_verified_backup_for_both_source_paths tests.data.test_import_preview_migration.ImportPreviewMigrationTests.test_exact_v10_is_backed_up_and_preserved_without_fabricated_previews tests.data.test_import_summary_migration.ImportSummaryMigrationTests.test_exact_v11_backup_preserves_rows_and_does_not_fabricate_summaries tests.data.test_import_summary_migration.ProtectedImportSummaryMigrationTests.test_v11_sqlcipher_upgrade_keeps_verified_encrypted_backup tests.data.test_import_commit_migration.ImportCommitMigrationTests.test_exact_v12_upgrade_keeps_verified_backup_and_no_invented_commits tests.data.test_import_commit_migration.ProtectedImportCommitMigrationTests.test_encrypted_rollback_retry_backup_and_reopen",
+      "commandSemantics": "DISPLAY repository-relative executable; exact actual argv is retained in the ignored execution receipt",
+      "result": "passed",
+      "exitCode": 0,
+      "commit": "056a89b97599147f36ef8350cec59d475d219570",
+      "seconds": 10.198159099905752,
+      "raw": {
+        "path": "artifacts/tmp/W2.remaining-corrections-batch-01/c20-focused-02/migration-regressions.raw.log",
+        "sha256": "130f8eaf6536df8d576c231d0ee4bfa4ef94c5873ac150c27d7a58473af14543"
+      }
+    },
+    {
+      "id": "affected-format",
+      "command": ".venv/Scripts/python.exe -B -s -m ruff format --check --config pyproject.toml -- tests/rights/test_migration.py tests/data/test_import_preview_migration.py tests/data/test_import_summary_migration.py tests/data/test_import_commit_migration.py",
+      "commandSemantics": "DISPLAY repository-relative executable; exact actual argv is retained in the ignored execution receipt",
+      "result": "passed",
+      "exitCode": 0,
+      "commit": "056a89b97599147f36ef8350cec59d475d219570",
+      "seconds": 0.15749849996063858,
+      "raw": {
+        "path": "artifacts/tmp/W2.remaining-corrections-batch-01/c20-focused-02/affected-format.raw.log",
+        "sha256": "177f260a5645724013185e4b140c7045cc39e56c0c97b120f5cb23599f85f0de"
+      }
+    },
+    {
+      "id": "affected-lint",
+      "command": ".venv/Scripts/python.exe -B -s -m ruff check --config pyproject.toml -- tests/rights/test_migration.py tests/data/test_import_preview_migration.py tests/data/test_import_summary_migration.py tests/data/test_import_commit_migration.py",
+      "commandSemantics": "DISPLAY repository-relative executable; exact actual argv is retained in the ignored execution receipt",
+      "result": "passed",
+      "exitCode": 0,
+      "commit": "056a89b97599147f36ef8350cec59d475d219570",
+      "seconds": 0.14970780001021922,
+      "raw": {
+        "path": "artifacts/tmp/W2.remaining-corrections-batch-01/c20-focused-02/affected-lint.raw.log",
+        "sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18"
+      }
+    },
+    {
+      "id": "configured-source-types",
+      "command": ".venv/Scripts/python.exe -B -s -m mypy --config-file pyproject.toml --no-namespace-packages --cache-dir artifacts/tmp/W2.remaining-corrections-batch-01/c20-focused-02/mypy-cache -- @artifacts/tmp/W2.remaining-corrections-batch-01/c20-focused-02/source-files.args",
+      "commandSemantics": "DISPLAY repository-relative executable; exact actual argv is retained in the ignored execution receipt",
+      "result": "passed",
+      "exitCode": 0,
+      "commit": "056a89b97599147f36ef8350cec59d475d219570",
+      "seconds": 18.795692400075495,
+      "raw": {
+        "path": "artifacts/tmp/W2.remaining-corrections-batch-01/c20-focused-02/configured-source-types.raw.log",
+        "sha256": "c642e5b33b5e7d157e7b2362ef94a292d50ab8abbba717375ca1704ad53de820"
+      }
+    }
+  ],
+  "executionReceipt": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/c20-focused-02/receipt.json",
+    "sha256": "14ce21d29bf0d625de2df233f9c1bfaaff9740648351b70b73d98c84311317a0"
+  },
+  "fixtureInputs": [
+    {
+      "path": "tests/fixtures/imports/README.md",
+      "sha256": "b3740ad1c4ffb37247f2a0171fb40cdeef46cf695d3245b36ef8c766995fb48d"
+    },
+    {
+      "path": "tests/fixtures/imports/performance-baseline.json",
+      "sha256": "6b5a7f196046423ce3fbc07f8d79af642a15b0ce353994b4f7ea0e4a11a34a92"
+    },
+    {
+      "path": "tests/fixtures/imports/preview-job-comma-v1.json",
+      "sha256": "3aab645b61e1903b19a8e73df782bd5f41009a07ff0794e3b89a7fa3c9ce7407"
+    },
+    {
+      "path": "tests/fixtures/imports/public-handoff-v1.json",
+      "sha256": "86ddf97918c900b35a0ab852caa8d9db8d4ad985cddfbdd2e8b75ca2fd330ec6"
+    },
+    {
+      "path": "tests/fixtures/imports/schema-v11-authority.json",
+      "sha256": "7a1dc71fc26039ed18191d3ee1be56aee402a738c5f005e4e4c6b6aac79c2fdc"
+    },
+    {
+      "path": "tests/fixtures/imports/schema-v12-authority.json",
+      "sha256": "4198ecedf14fc7ca5c7853f6bb08634f4a987f9c6b6a89cd2100b39680684952"
+    },
+    {
+      "path": "tests/rights/fixtures/README.md",
+      "sha256": "0aad8c5b38bba1db461b2674dabd5173ac6ef50a136442d470a82b44d5790adc"
+    },
+    {
+      "path": "tests/rights/fixtures/schema-v17-authority.json",
+      "sha256": "ce7f7cd7fdddd4b37814271fdd814809d0218a2bbed3eba561b6e3c15f97ba16"
+    },
+    {
+      "path": "tests/rights/fixtures/schema-v17-connector-corpus-populated.json",
+      "sha256": "3967ba1bebe858f53f6ddb1ae5307d409ecf88f3a4edae8815a002902e142429"
+    },
+    {
+      "path": "tests/rights/fixtures/schema-v17-import-corpus-populated.json",
+      "sha256": "f119f7c2af63f45dc41a191d1152389a5317f42c50a456f51427fa465b8a4375"
+    }
+  ],
+  "preservedFirstAttempt": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/c20-focused-01/receipt.json",
+    "sha256": "1929faf79c5c3a8820f14f423fea885fc2355abc554f2e3590b3f1c87782a9ca"
+  },
+  "executionTruth": "The initial committed attempt retains eight original test PASS results and one format FAIL; lint/types were not executed. One rights-file formatter delta has complete AST equality with its reviewed predecessor. The separate fresh successor supplies all four checks for the actual committed successor, preserving the original failed attempt.",
+  "verificationSelection": {
+    "selectedCommandIds": [
+      "service:rights",
+      "data:unit",
+      "foundation:quality"
+    ],
+    "riskAnalysis": "Only four migration-test expected-data sets drifted behind approved schema28. Select the exact eight failing original methods, their existing historical/failure/subcases, four-file format/lint and the configured complete source type context with a fresh private cache. Existing owned jobs drain to EMPTY while the exact source/runtime/fixture inputs are held. These IDs identify this affected selection, not full profiles.",
+    "deferred": [
+      "Broader data/rights/service/security/desktop/native/performance/packaging coverage remains at the actual W2 qualification and review gates."
+    ]
+  },
+  "correctiveIntegration": {
+    "originSha256": "278db71aaeb1a96788fbfa50f97ef28e400c246dcdc2a0989a4a1164be536025",
+    "authorityPreserved": true,
+    "affectedChecks": [
+      ".venv/Scripts/python.exe -B -s -m unittest -v tests.rights.test_migration.LiteralV17PredecessorTests.test_protected_v17_failure_backup_retry_and_reopen tests.rights.test_migration.LiteralV17PredecessorTests.test_v17_recovery_contract_is_retained_for_prior_verified_backups tests.rights.test_migration.LiteralV17PredecessorTests.test_v17_to_current_keeps_exact_history_and_verified_backup_for_both_source_paths tests.data.test_import_preview_migration.ImportPreviewMigrationTests.test_exact_v10_is_backed_up_and_preserved_without_fabricated_previews tests.data.test_import_summary_migration.ImportSummaryMigrationTests.test_exact_v11_backup_preserves_rows_and_does_not_fabricate_summaries tests.data.test_import_summary_migration.ProtectedImportSummaryMigrationTests.test_v11_sqlcipher_upgrade_keeps_verified_encrypted_backup tests.data.test_import_commit_migration.ImportCommitMigrationTests.test_exact_v12_upgrade_keeps_verified_backup_and_no_invented_commits tests.data.test_import_commit_migration.ProtectedImportCommitMigrationTests.test_encrypted_rollback_retry_backup_and_reopen",
+      ".venv/Scripts/python.exe -B -s -m ruff format --check --config pyproject.toml -- tests/rights/test_migration.py tests/data/test_import_preview_migration.py tests/data/test_import_summary_migration.py tests/data/test_import_commit_migration.py",
+      ".venv/Scripts/python.exe -B -s -m ruff check --config pyproject.toml -- tests/rights/test_migration.py tests/data/test_import_preview_migration.py tests/data/test_import_summary_migration.py tests/data/test_import_commit_migration.py",
+      ".venv/Scripts/python.exe -B -s -m mypy --config-file pyproject.toml --no-namespace-packages --cache-dir artifacts/tmp/W2.remaining-corrections-batch-01/c20-focused-02/mypy-cache -- @artifacts/tmp/W2.remaining-corrections-batch-01/c20-focused-02/source-files.args"
+    ],
+    "reusedEvidence": [
+      "Original CAP-04.S04.T02 DONE/independent approval is preserved as historical authority only; no prior execution is relabelled fresh."
+    ],
+    "rationale": "The exact affected original migration and recovery checks close stale current-target expectations without changing migration/rights guarantees or original task identity/history. Independent commit-bound correction and affected integration disposition remains required before ordinary Wave resume."
+  }
+}
