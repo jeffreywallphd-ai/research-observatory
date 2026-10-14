@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 754fdf307ac53e46a6a4d430dfb218e707e87c6c4783d1e1ab3a00696f4ef424
+source_sha256: a7d7ca694ac81620df2977720ecb0a33b1211bfef90bd024b75e89b9741bc4e7
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -5356,7 +5356,7 @@ Original tasks and approvals remain unchanged.
 
 ### W2.C26.T01 — Build corpus provenance and source-overlap reports
 
-**Status:** `IN_PROGRESS`. **Original task:** `CAP-04.S04.T03`. **Latest review:** `-`.
+**Status:** `REVIEW`. **Original task:** `CAP-04.S04.T03`. **Latest review:** `-`.
 
 **Reproduction:** Actual original3 generated-client methods fail Node24.19 ERR_MODULE_NOT_FOUND for extensionless corpus-reports/generated import from current generated.ts. First report import arose6dec under S04T03; actual canonical completed origin is snapshot963b/latestapproved6da2, not that introduction commit.
 
@@ -5375,7 +5375,19 @@ Original tasks and approvals remain unchanged.
 
 **Review mode:** `append-only v1` / 0 completed round(s)
 
-**Current immutable submission awaiting review:** None
+**Current immutable submission awaiting review:** `R01` / packet SHA-256 `026c09ea19279c03cefbf0021d32d658699b45d3bcad3d388775d3281842dc28`
+
+- Candidate / base / branch: `588dd5f3545d069b795998b3daaebc620c378a9a` / `684f31f5c4df5ff545a406558e1e14b1db5f1793` / `codex/w2-implementation`
+- Submitted by / at: codex-w2-implementation / `2026-10-14T22:00:06+00:00`
+- Evidence: `artifacts/evidence/W2.C26.T01.R01.json` / `1b32dbd1bbba1189eb88f4418742e74ae81bd3b66a3d1ee4a41f25ea165bd82a` / `588dd5f3545d069b795998b3daaebc620c378a9a`
+- Acceptance-criteria SHA-256: `386ec34b613489cba113f76abd364204fcd30375ab86a3d1ca28c9f2dd6081e1`
+- Verification-selection SHA-256: `94cb31cb96d29007e658c928ac6492828521559bc3f30a8af3c0eb959fd109b9`
+- Changed paths: `docs/planning-implementation-plan.md`, `planning/backlog.yaml`, `planning/review-site/index.html`, `planning/review-site/manifest.json`, `planning/review-site/waves/W2.html`, `planning/status-summary.md`, `tests/reconciliation/test_client_contract.py`, `tests/reconciliation/verify-client.mjs`, `tests/reconciliation/verify-version-client.mjs`
+- Selected checks: `.venv/Scripts/python.exe -B -s -m unittest -v tests.reconciliation.test_client_contract.ReconciliationClientContractTests.test_generated_client_checks_actual_candidates_inspection_and_reversible_review tests.reconciliation.test_client_contract.ReconciliationClientContractTests.test_generated_client_preserves_persisted_review_order_and_original_scores tests.reconciliation.test_version_client.VersionClientTests.test_generated_client_binds_versions_preferences_and_status_to_commands`, `.venv/Scripts/python.exe -B -s -m ruff format --check --config pyproject.toml -- tests/reconciliation/test_client_contract.py`, `.venv/Scripts/python.exe -B -s -m ruff check --config pyproject.toml -- tests/reconciliation/test_client_contract.py`
+- Deferred checks: `Whole configured type check at final source qualification: Python typed control flow is unchanged beyond embedded JS string content.`, `Broader service/search/desktop profiles, Native/principal/package and full Wave qualification are separate; no repeated196-case or whole-exit review.`
+- Selection rationale: Changed test consumers load a supported generated TypeScript graph. Select the three previously failing original client bodies plus changed Python fixture format/lint. New single-result handling changes only a transport guard; all original assertions and client deadlines retained.
+- Prior round / replayed open findings: `-` / -
+- Root-cause escalation: -
 
 **Current latest-review projection:** `-` by - at `-`
 

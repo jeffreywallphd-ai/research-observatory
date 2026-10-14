@@ -1,0 +1,168 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "W2.C26.T01",
+  "baseCommit": "684f31f5c4df5ff545a406558e1e14b1db5f1793",
+  "commit": "588dd5f3545d069b795998b3daaebc620c378a9a",
+  "branch": "codex/w2-implementation",
+  "changedFiles": [
+    "docs/planning-implementation-plan.md",
+    "planning/backlog.yaml",
+    "planning/review-site/index.html",
+    "planning/review-site/manifest.json",
+    "planning/review-site/waves/W2.html",
+    "planning/status-summary.md",
+    "tests/reconciliation/test_client_contract.py",
+    "tests/reconciliation/verify-client.mjs",
+    "tests/reconciliation/verify-version-client.mjs"
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "checkIds": [
+        "original-node-three"
+      ],
+      "evidence": [
+        "Restores execution of the supported report-connected generated API graph and validates canonical candidate/context/review/version data against unchanged real repository projections. Original report implementation, count semantics, source/unknown-data policy and independent CAP-04.S04.T03 acceptance remain inherited; no aggregate report or UI rewrite is made or newly claimed."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "checkIds": [
+        "original-node-three"
+      ],
+      "evidence": [
+        "Three individually named original cases run without skip; original successful and forged-response, ordering, score, lineage, reversal, version/preference/status assertions and30s client deadlines remain. Actual bundler returns one result wrapper and one closed ESM chunk; zero/multiple results, external/dynamic imports and extra outputs remain rejected."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "checkIds": [
+        "original-node-three",
+        "affected-format",
+        "affected-lint"
+      ],
+      "evidence": [
+        "Only three declared test consumers change beyond normal claim projections. Actual fresh Ruff format/lint pass. No product, contract generator, migration, policy, reference, shared framework or deadline changes; full typing/profile/Native/package qualification remains a Wave obligation."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "checks": [
+    {
+      "id": "original-node-three",
+      "command": ".venv/Scripts/python.exe -B -s -m unittest -v tests.reconciliation.test_client_contract.ReconciliationClientContractTests.test_generated_client_checks_actual_candidates_inspection_and_reversible_review tests.reconciliation.test_client_contract.ReconciliationClientContractTests.test_generated_client_preserves_persisted_review_order_and_original_scores tests.reconciliation.test_version_client.VersionClientTests.test_generated_client_binds_versions_preferences_and_status_to_commands",
+      "commandSemantics": "DISPLAY repository-relative executable; actual invocation is preserved in the ignored receipt",
+      "result": "passed",
+      "exitCode": 0,
+      "commit": "588dd5f3545d069b795998b3daaebc620c378a9a",
+      "coverage": "fresh-current-candidate",
+      "seconds": 19.606007800000953,
+      "raw": {
+        "path": "artifacts/tmp/W2.C26.T01.focused-proof-03/original-node-three.raw.log",
+        "sha256": "48bb6a730f259c0ac17ef41ed0c3434c8df2bc39415d8e1a21b6c295f0ef8a20"
+      },
+      "ownedJob": {
+        "drained": true,
+        "cleanupState": "EMPTY_CONFIRMED",
+        "activeProcesses": 0
+      }
+    },
+    {
+      "id": "affected-format",
+      "command": ".venv/Scripts/python.exe -B -s -m ruff format --check --config pyproject.toml -- tests/reconciliation/test_client_contract.py",
+      "commandSemantics": "DISPLAY repository-relative executable; actual invocation is preserved in the ignored receipt",
+      "result": "passed",
+      "exitCode": 0,
+      "commit": "588dd5f3545d069b795998b3daaebc620c378a9a",
+      "coverage": "fresh-current-candidate",
+      "seconds": 0.1656938000014634,
+      "raw": {
+        "path": "artifacts/tmp/W2.C26.T01.focused-proof-03/affected-format.raw.log",
+        "sha256": "fd2299c9f1c6dc869070883e281051bfe93aacf66c1a3b0069f45b4aa410ca50"
+      },
+      "ownedJob": {
+        "drained": true,
+        "cleanupState": "EMPTY_CONFIRMED",
+        "activeProcesses": 0
+      }
+    },
+    {
+      "id": "affected-lint",
+      "command": ".venv/Scripts/python.exe -B -s -m ruff check --config pyproject.toml -- tests/reconciliation/test_client_contract.py",
+      "commandSemantics": "DISPLAY repository-relative executable; actual invocation is preserved in the ignored receipt",
+      "result": "passed",
+      "exitCode": 0,
+      "commit": "588dd5f3545d069b795998b3daaebc620c378a9a",
+      "coverage": "fresh-current-candidate",
+      "seconds": 0.16512599999987287,
+      "raw": {
+        "path": "artifacts/tmp/W2.C26.T01.focused-proof-03/affected-lint.raw.log",
+        "sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18"
+      },
+      "ownedJob": {
+        "drained": true,
+        "cleanupState": "EMPTY_CONFIRMED",
+        "activeProcesses": 0
+      }
+    }
+  ],
+  "actualNamedOriginalBodies": [
+    "tests.reconciliation.test_client_contract.ReconciliationClientContractTests.test_generated_client_checks_actual_candidates_inspection_and_reversible_review",
+    "tests.reconciliation.test_client_contract.ReconciliationClientContractTests.test_generated_client_preserves_persisted_review_order_and_original_scores",
+    "tests.reconciliation.test_version_client.VersionClientTests.test_generated_client_binds_versions_preferences_and_status_to_commands"
+  ],
+  "actualVerifiedBodyCount": 3,
+  "executionReceipt": {
+    "path": "artifacts/tmp/W2.C26.T01.focused-proof-03/receipt.json",
+    "sha256": "939ceaedfc92e07ce4b391d5610a692315fb9c1442d294d7523d3b77da903975"
+  },
+  "executionProducer": {
+    "path": "artifacts/tmp/W2.C26.T01.focused-proof-03.py",
+    "sha256": "2e8b979ec6f8696fae0a0bf6b4675b03e6a386231ce8a0d4aa4da0f14eda5a5c"
+  },
+  "runtimeInputCaptureSHA256": "456482ea03c3545a03c63e36e5f0bb098c7e20c95e2d2f5efa2f52381b2d4188",
+  "actualInputClosure": "Tracked current candidate and selected Python/Node/Git bytes, namespaces, aliases, absence and environment held/checked across normal owned drains; no compiler/browser selected. Detailed machine-local maps remain ignored.",
+  "preservedAdverse": [
+    {
+      "path": "artifacts/tmp/W2.C26.T01.focused-proof-02/receipt.json",
+      "sha256": "349d06e6f8d3f8cb00f8fefbec2b4496a5bfc7085e93613ec5a080a83c581763",
+      "meaning": "All original3 reached but failed the erroneous return-shape guard; normal owned drain/final input closure retained."
+    },
+    {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/unreached-core-imports-owned-01/actual-proof-01/receipt.json",
+      "sha256": "1090cfd6826c48550b01ae6f736a074d210fd69bcc19d8d4ed4facd4badcd038",
+      "meaning": "Original Core aggregate FAIL and cleanup fault remain unchanged."
+    }
+  ],
+  "knownUnresolvedWaveFindings": [
+    "Ten migration expectation failures remain in separate normal corrections.",
+    "Native ownership OWNER RIGHTS compatibility defect and owned descendant cleanup remain unresolved.",
+    "Affected signed Core/Native/package/security, current14, model/gateway and protected performance qualification, S06/CP10/G2 remain separate."
+  ],
+  "fullProfilePassClaimed": false,
+  "verificationSelection": {
+    "selectedCommandIds": [
+      "service:unit",
+      "foundation:quality"
+    ],
+    "riskAnalysis": "Changed test consumers load a supported generated TypeScript graph. Select the three previously failing original client bodies plus changed Python fixture format/lint. New single-result handling changes only a transport guard; all original assertions and client deadlines retained.",
+    "deferred": [
+      "Whole configured type check at final source qualification: Python typed control flow is unchanged beyond embedded JS string content.",
+      "Broader service/search/desktop profiles, Native/principal/package and full Wave qualification are separate; no repeated196-case or whole-exit review."
+    ]
+  },
+  "correctiveIntegration": {
+    "originSha256": "8c15764812e8e7b7bb594c0c098405d25c19881e5a4018c79657827fa2b05975",
+    "authorityPreserved": true,
+    "affectedChecks": [
+      ".venv/Scripts/python.exe -B -s -m unittest -v tests.reconciliation.test_client_contract.ReconciliationClientContractTests.test_generated_client_checks_actual_candidates_inspection_and_reversible_review tests.reconciliation.test_client_contract.ReconciliationClientContractTests.test_generated_client_preserves_persisted_review_order_and_original_scores tests.reconciliation.test_version_client.VersionClientTests.test_generated_client_binds_versions_preferences_and_status_to_commands",
+      ".venv/Scripts/python.exe -B -s -m ruff format --check --config pyproject.toml -- tests/reconciliation/test_client_contract.py",
+      ".venv/Scripts/python.exe -B -s -m ruff check --config pyproject.toml -- tests/reconciliation/test_client_contract.py"
+    ],
+    "reusedEvidence": [
+      "Original CAP-04.S04.T03 reviewed source/criteria remain historical authority; no old execution is labelled fresh."
+    ],
+    "rationale": "Supported in-memory bundling restores the three original generated-client consumers. One actual Vite wrapper is normalized without accepting additional results/chunks/imports. Fresh exact-candidate cases and affected quality passed; independent normal task disposition remains required."
+  }
+}
