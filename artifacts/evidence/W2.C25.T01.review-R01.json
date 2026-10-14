@@ -1,0 +1,210 @@
+{
+  "task_id": "W2.C25.T01",
+  "attempt_id": "R01",
+  "candidate_commit": "fb10b8279f207d169d292bc2e1878314e4ce3929",
+  "base_commit": "8dd9e1e906a68937c315ad255107f0e4b75c95f0",
+  "reviewed_state_commit": "2f7b7c2cdd8fff24a49a7523e7171e92726c3039",
+  "reviewer": "agent:/root/storage_profile_review",
+  "result": "approved",
+  "reviewed_at": "2026-10-14T17:07:08.430845+00:00",
+  "packet_sha256": "cf4db3ecea45fb5d00d6c630194861d104592fa6c2fbb88be81a38ae026b713e",
+  "evidence_sha256": "14e6399a7ff3d370efac242b9b4225db8226017700762a81cd33b27980d8682a",
+  "acceptance_criteria_sha256": "a88ca37f57ae373595f4a7939bdb7e4b68215f0b6d34ef6d87e295c016e7d286",
+  "selection_sha256": "d051d79e4303435c78c0fcf608a04b46715970efdb7a042b920975f8e5c762cc",
+  "findings": [],
+  "closures": [],
+  "acceptance_reviews": [
+    {
+      "criterion_index": 1,
+      "check_ids": [
+        "reused-negative3"
+      ],
+      "result": "satisfied",
+      "assessment": "Original genuine W2.A01.T02 R02 reference packet/publication approval is preserved and hash-authenticated via17c4/e561/adoptionc9a0; current change has no governed reference/proposal/approval-byte edit. Genuine earlier authority/source reviews reused; no new full publication replay."
+    },
+    {
+      "criterion_index": 2,
+      "check_ids": [
+        "reused-negative3"
+      ],
+      "result": "satisfied",
+      "assessment": "Original reference-before-renderer/adoption chronology remains immutable. All three separately restored historical desktop inputs and scope were present at the normal C25 task base8dd; only attachment is in the normal code diff. No original task/author/history relabeling."
+    },
+    {
+      "criterion_index": 3,
+      "check_ids": [
+        "fresh-remaining5-local-assets-first",
+        "desktop-affected-format",
+        "desktop-affected-lint"
+      ],
+      "result": "satisfied",
+      "assessment": "Actual whole original attachment method completes atfb10 with all148 assertion sites, rights/unconfirmed/native-intent/cancel/Escape/retry/focus/context/return and original deadlines. Current exact Reader label/post-S04 positive availability restore accepted temporal contract with separate fresh viewing authority; exact shipping index/chunks remain closed local-resource data, no rendered path/byte grant."
+    },
+    {
+      "criterion_index": 4,
+      "check_ids": [
+        "reused-negative3",
+        "desktop-affected-format",
+        "desktop-affected-lint",
+        "configured-source-types"
+      ],
+      "result": "satisfied",
+      "assessment": "Original UI generation/reference-lineage gate remains genuine unaffected historical proof; no product/renderer/reference/framework edit in this task. Current one-file source scope/prospective finite supplements, negative asset/witness cases and one-file Ruff/configured734 typing are authenticated. Original broad gate is not replayed or newly claimed."
+    },
+    {
+      "criterion_index": 5,
+      "check_ids": [
+        "reused-fixtures48-test_document_viewer_interactions.DocumentViewerInteractionsTests",
+        "reused-fixtures48-test_parsing_quality_interactions.ParsingQualityInteractionsTests",
+        "reused-fixtures48-test_quality_workflow_navigation.QualityWorkflowNavigationTests",
+        "reused-fixtures48-test_reprocessing_interactions.ReprocessingInteractionsTests",
+        "reused-fixtures48-test_reprocessing_workflow_navigation.ReprocessingWorkflowNavigationTests",
+        "reused-fixtures48-test_viewer_decoder.ViewerDecoderTests",
+        "reused-negative3",
+        "fresh-remaining5-local-assets-first",
+        "fresh-remaining5-local-assets-rest",
+        "fresh-remaining5-cleanup2"
+      ],
+      "result": "satisfied",
+      "assessment": "All56 distinct original named cases actually executed:51 at1a with preserved raw FAIL parents and independent003e output-boundary/own-success assessment,5 fresh atfb10. Current consumed-input equality and exact3 derived PNG classification hold through owned drains. Synthetic typed Native-intent/component ports stay distinct from actual owned Node/Tauri CLI captures and do not prove trusted Native UI/principal/model."
+    },
+    {
+      "criterion_index": 6,
+      "check_ids": [
+        "fresh-remaining5-local-assets-first",
+        "fresh-remaining5-local-assets-rest",
+        "fresh-remaining5-cleanup2",
+        "configured-source-types"
+      ],
+      "result": "satisfied",
+      "assessment": "Original A01 expanded review/adoption remains authenticated historical prerequisite. Genuine different-agent actual correction source/proof review8517 and frozen/current public-delivery authentication establish this normal correction disposition. Only this correction is approved; actual local integration is a later root action. Historical layout2 remains explicit unmet W2 exit prerequisite."
+    }
+  ],
+  "corrective_integration": {
+    "evidence_sha256": "14e6399a7ff3d370efac242b9b4225db8226017700762a81cd33b27980d8682a",
+    "authority_preserved": true,
+    "affected_integration_reviewed": true,
+    "notes": "Normal C25 preserves genuine W2.A01.T02 origin3a9d and its conditional pending-until-S04 authority, all148 assertion sites/current rights/native-intent/uncertainty/denial/cancellation/focus/context/return and authored clocks. Exact closed shipping fixture/Reader label, independently supported post-S04 positive availability and unused-import/AST-identical parentheses restore current approved behavior. Three historical desktop paths preexist base8dd and remain separate. Actual5 original methods atfb10 plus51 old1a named outcomes/003e current consumed-input equality retain FAIL parents and exact3 derived PNG classification; six current owned jobs EMPTY0/stable. Actual one-file Ruff and734configured types pass. Layout F401/RUF021 remain separately unmet before W2 exit; no aggregate four-file/profile/Native/principal/model/Wave/release claim."
+  },
+  "verification_selection": {
+    "selected_command_ids": [
+      "desktop:unit",
+      "foundation:quality"
+    ],
+    "assessment": "Only correction-affected source/assertion/asset/conditional-S04 authority, exact proof/ownership/current input closure, and actual frozen/public delivery are reviewed. Existing genuine unaffected historical evidence and prior source dispositions reused; no full exit/history/runtime review or test replay."
+  },
+  "evidence_authentication": {
+    "actual_review_observations": {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/w2-c25-actual-affected-review-observations-01.json",
+      "sha256": "8517cbe795d9903a1f8c416d3e5259e8772083dc39fe7547481f1bf1af718a02"
+    },
+    "actual_frozen_authentication": {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/w2-c25-actual-frozen-r01-authentication-01.json",
+      "sha256": "d3ebe6de3d0f2be76275e08ea4d390e88d050f6c5b30fd04cb201d522d8b2964"
+    },
+    "fresh_receipt": {
+      "path": "artifacts/tmp/W2.desktop-input-restoration-01.f06/remaining5/receipt.json",
+      "sha256": "d9c07878553f3ad18a24b2e2ef52b8d189f1de1a7e69da7a59095e7d94b9a631"
+    },
+    "quality_receipt": {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/W2.C25.T01.desktop-quality-02/receipt.json",
+      "sha256": "b4a6ef46d3e0c94923d9329247f6c2f312ea369b0b98fd4ae5e6edc031cfa5fc"
+    },
+    "actual_named_methods": 56,
+    "fresh_current_candidate_methods": 5,
+    "reused_original_1a_methods": 51,
+    "machine_rows": 19,
+    "skips": 0,
+    "configured_type_sources": 734,
+    "fresh_held_input_count": 6643,
+    "quality_held_input_count": 14104,
+    "six_current_owned_jobs_empty_active0": true,
+    "actual_current_reused_input_equality_stable": true,
+    "original_parent_fails_preserved": true,
+    "original_decoder_row_incomplete_preserved": true,
+    "only_three_authored_derived_pngs_permitted": true,
+    "original_historical_evidence": [
+      {
+        "path": "artifacts/evidence/W2.A01.T02-R02.json",
+        "sha256": "17c4a33cec767a6a8d12137a9bbf0e5dbd48cf2dfb5649c926e16e83a5152e4c"
+      },
+      {
+        "path": "artifacts/evidence/W2.A01.T02.review-R02.json",
+        "sha256": "e56190d1c45e41d0f07d47b46030131b2b873bdb7f4b9cbed7916784cf79eec6"
+      },
+      {
+        "path": "artifacts/evidence/W2.A01.adoption.json",
+        "sha256": "c9a0c04eea44bcb97fbb0b2cfd262320ad27daa03a532f229ef6df9e5ebd0d30"
+      }
+    ]
+  },
+  "frozen_submission_authentication": {
+    "delivery_commit": "2f7b7c2cdd8fff24a49a7523e7171e92726c3039",
+    "delivery_parent": "fb10b8279f207d169d292bc2e1878314e4ce3929",
+    "delivery_changed_paths": [
+      "artifacts/evidence/W2.C25.T01.R01.json",
+      "docs/planning-implementation-plan.md",
+      "planning/backlog.yaml",
+      "planning/review-site/manifest.json",
+      "planning/review-site/waves/W2.html",
+      "planning/status-summary.md"
+    ],
+    "public_manifest_git_and_worktree_bytes_exact": true,
+    "frozen_packet_validation_errors": [],
+    "original_origin_snapshot_unchanged": true,
+    "actual_origin_sha256": "3a9dabb33cd0f6c70d7842792941f98fad8722d8c80c87c2c93630717ca39a04",
+    "source_runtime_dependency_delta_in_delivery": false,
+    "new_formal_ledger_not_in_prior_frozen_packet": true
+  },
+  "known_unresolved_wave_findings": [
+    {
+      "path": "tests/desktop/test_product_layout_measurements.py",
+      "findingCodes": [
+        "F401 unused inline_product_index",
+        "RUF021 explicit AND precedence parentheses"
+      ],
+      "evidence": {
+        "path": "artifacts/tmp/W2.remaining-corrections-batch-01/W2.C25.T01.desktop-quality-01/desktop-affected-lint.raw.log",
+        "sha256": "37d5137339149d889e2097fb49662ad325ba895c3e27655db81e47c895a7ac37"
+      },
+      "status": "KNOWN_UNRESOLVED_FINITE_HISTORICAL_WAVE_DEBT",
+      "reason": "Historical layout file is present before C25base and outside its sole attachment source/one-file quality specification. It remains owed before W2 exit; no C25 action or source/approval rewrite disposes it.",
+      "unmetBeforeWaveExit": true,
+      "requiredResumeCondition": "Separate finite historical layout source repair plus fresh affected format/lint evidence and independent disposition before W2 exit."
+    }
+  ],
+  "quality_coverage": {
+    "ruffFormatAndLintPaths": [
+      "tests/desktop/test_document_attachment_interactions.py"
+    ],
+    "custodyPaths": [
+      "tests/desktop/test_ui_conformance.py",
+      "tests/desktop/test_product_layout_measurements.py",
+      "tests/desktop/test_document_attachment_interactions.py",
+      "tests/desktop/test_desktop_app_check.py"
+    ],
+    "configuredTypes": "Existing unchanged configured734-source context; no checker/config/assertion/cache-policy change.",
+    "authority": "Current C25spec requires affected one-file quality; prior four-file over-selection was collector breadth only. Existing layout lint failures remain separate finite historical Wave debt, not hidden, waived or taskPASS evidence."
+  },
+  "four_file_quality_pass_claimed": false,
+  "full_profile_pass_claimed": false,
+  "independence": {
+    "taskOwner": false,
+    "sourceAuthor": false,
+    "productSourceEdits": false,
+    "qualifyingTestsRerunByReviewer": false,
+    "onlyIndependentIgnoredReviewsAndUnrelatedPreparationAuthored": true
+  },
+  "proof_limits": [
+    "Component/headless-browser synthetic typed Native-intent and existing test ports; real owned CLI process/lifetime captures. No fresh trusted Native UI, DPAPI/encrypted database credential/principal, model/parser/hardware, whole profile/Wave/release result.",
+    "Original1a raw individual outcomes are reused with current consumed-input equality; original FAIL parents and actual priorfea/b319 five-success/9686 four-file qualityFAIL remain preserved. One-file Ruff/configured types does not pass unresolved historical layout quality.",
+    "Only actual correction affected source, old findings, current proof/ownership/closure/criterion lineage reviewed; no full exit/unaffected history/runtime audit or test replay."
+  ],
+  "scope_limits": {
+    "task_only": true,
+    "wave_approved": false,
+    "release_approved": false,
+    "qualifying_checks_rerun_by_reviewer": false,
+    "installed_runtime_rehash": false
+  }
+}

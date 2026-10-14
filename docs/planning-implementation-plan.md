@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 5482fce40c383e99ac491c74113e86c047849a2efb2cc1c427002a569f059cee
+source_sha256: 4cd7bf6bee4ca009f2d218b5955cded52743b47619deba3534906dea66c6cda9
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -5296,7 +5296,7 @@ Original tasks and approvals remain unchanged.
 
 ### W2.C25.T01 — Publish Academic Minimal 1.8 and stage attachment UI
 
-**Status:** `REVIEW`. **Original task:** `W2.A01.T02`. **Latest review:** `-`.
+**Status:** `DONE`. **Original task:** `W2.A01.T02`. **Latest review:** `approved`.
 
 **Reproduction:** Retained final29 selected-version attachment method fails its original readiness deadline while its inline module fixture host denies current manifest-bound relative chunks. Original file/method authoring is adopted W2.A01.T02; later CAP-05.S01.T03 expansion is preserved separately. Static source facts do not establish an exclusive first runtime cause; actual request/pageerror/console/adverse evidence must remain.
 
@@ -5314,9 +5314,11 @@ Original tasks and approvals remain unchanged.
 - tests/desktop/test_document_attachment_interactions.py
 #### Review history — W2.C25.T01
 
-**Review mode:** `append-only v1` / 0 completed round(s)
+**Review mode:** `append-only v1` / 1 completed round(s)
 
-**Current immutable submission awaiting review:** `R01` / packet SHA-256 `cf4db3ecea45fb5d00d6c630194861d104592fa6c2fbb88be81a38ae026b713e`
+##### Round R01
+
+**Immutable submission packet:** `R01` / packet SHA-256 `cf4db3ecea45fb5d00d6c630194861d104592fa6c2fbb88be81a38ae026b713e`
 
 - Candidate / base / branch: `fb10b8279f207d169d292bc2e1878314e4ce3929` / `8dd9e1e906a68937c315ad255107f0e4b75c95f0` / `codex/w2-implementation`
 - Submitted by / at: codex-w2-implementation / `2026-10-14T16:44:00+00:00`
@@ -5330,7 +5332,23 @@ Original tasks and approvals remain unchanged.
 - Prior round / replayed open findings: `-` / -
 - Root-cause escalation: -
 
-**Current latest-review projection:** `-` by - at `-`
+**Disposition / reviewer / time:** `approved` / agent:/root/storage_profile_review / `2026-10-14T17:08:03+00:00`
+
+**Immutable review ledger:** `artifacts/evidence/W2.C25.T01.review-R01.json` / `0b02291fd2ee3f2de7d1970c10161204969c91e4c0154a2d8016f70b4c7f7090`
+
+**Review notes:** -
+
+**Findings opened:**
+
+- None
+
+**Prior finding closures:**
+
+- None
+
+**Current immutable submission awaiting review:** None
+
+**Current latest-review projection:** `approved` by agent:/root/storage_profile_review at `2026-10-14T17:08:03+00:00`
 
 **Latest notes:** -
 
