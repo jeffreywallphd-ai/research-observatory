@@ -1,0 +1,101 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "actual-finite-two-method-w2-qualification-evidence",
+  "reportedBy": "agent:/root",
+  "candidateCommit": "500cca61264fd4263f46cd7d77375ccc1bdf559d",
+  "status": "PASS_TWO_FINITE_AFFECTED_METHODS_ONLY",
+  "decision": {
+    "path": "artifacts/evidence/W2.data-control-vault-junction-methods-01.decision-01.json",
+    "sha256": "f34918a0ccd722ebf926bb09b4ec4cdde83600fb7482aca161c4dee87003a7c4"
+  },
+  "decisionIntroductionCommit": "500cca61264fd4263f46cd7d77375ccc1bdf559d",
+  "producer": {
+    "path": "artifacts/tmp/W2.run-data-tail-vault-junction-focused-02.py",
+    "sha256": "7d14d986bf1c187957e3cab76d9dc5620807c60631e6405026249a53327af3fb"
+  },
+  "sourceReadiness": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/data-control-vault-junction-methods-01/independent-envelope-source-readiness-02.json",
+    "sha256": "8cdc5b7afc90117c868c4eadb881069af04a373fa1f1f16fc47316eb70779f8c"
+  },
+  "executionReceipt": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/data-control-vault-junction-methods-01/actual-proof-01/receipt.json",
+    "sha256": "0839e4efcc4a412b4f6ecd6ea6d59187781acd3358a8dc82ea098b40b422449b"
+  },
+  "checks": [
+    {
+      "raw": {
+        "path": "artifacts/tmp/W2.remaining-corrections-batch-01/data-control-vault-junction-methods-01/actual-proof-01/original-data-hostile-tail.raw.log",
+        "sha256": "735342f2059774cc3305fdbaeec6d114b1f29511846b5035e159c07ea74e6971"
+      },
+      "commandSemantics": "DISPLAY of the selected finite method; exact actual argv, environment and held inputs remain in the ignored receipt",
+      "seconds": 0.3050924000017403,
+      "actualSkips": 0,
+      "leafReceipt": {
+        "path": "artifacts/tmp/W2.remaining-corrections-batch-01/data-control-vault-junction-methods-01/actual-proof-01/original-data-hostile-tail/receipt.json",
+        "sha256": "43ea895d01f8dc60f4acbee14de981abc12b66ac08cb55710529bc51bc1fffd1"
+      },
+      "exitCode": 0,
+      "actualCases": 1,
+      "command": ".venv/Scripts/python.exe -B -s artifacts/tmp/W2.remaining-corrections-batch-01/data-control-vault-junction-methods-01/exact-data-control-tail-01.py --candidate 500cca61264fd4263f46cd7d77375ccc1bdf559d --output artifacts/tmp/W2.remaining-corrections-batch-01/data-control-vault-junction-methods-01/actual-proof-01/original-data-hostile-tail",
+      "ownedJob": {
+        "cleanupState": "EMPTY_CONFIRMED",
+        "activeProcesses": 0,
+        "drained": true
+      },
+      "id": "original-data-hostile-tail",
+      "result": "passed"
+    },
+    {
+      "raw": {
+        "path": "artifacts/tmp/W2.remaining-corrections-batch-01/data-control-vault-junction-methods-01/actual-proof-01/real-vault-junction-denial.raw.log",
+        "sha256": "53f2b1084585a911f4dbf0682079323722c0720e281cd30279c0e6ed260dc909"
+      },
+      "commandSemantics": "DISPLAY of the selected finite method; exact actual argv, environment and held inputs remain in the ignored receipt",
+      "seconds": 0.3336094999976922,
+      "actualSkips": 0,
+      "leafReceipt": {
+        "path": "artifacts/tmp/W2.remaining-corrections-batch-01/data-control-vault-junction-methods-01/actual-proof-01/real-vault-junction-denial/receipt.json",
+        "sha256": "cb5b16d22a28d7a68f72bfc51c8ee9853b8a37195a71dc1ff3bfde43c1e8be34"
+      },
+      "exitCode": 0,
+      "actualCases": 1,
+      "command": ".venv/Scripts/python.exe -B -s artifacts/tmp/W2.remaining-corrections-batch-01/data-control-vault-junction-methods-01/real-vault-junction-denial-02.py --candidate 500cca61264fd4263f46cd7d77375ccc1bdf559d --output artifacts/tmp/W2.remaining-corrections-batch-01/data-control-vault-junction-methods-01/actual-proof-01/real-vault-junction-denial --cmd-exe <held-system-cmd>",
+      "ownedJob": {
+        "cleanupState": "EMPTY_CONFIRMED",
+        "activeProcesses": 0,
+        "drained": true
+      },
+      "id": "real-vault-junction-denial",
+      "result": "passed"
+    }
+  ],
+  "verifiedMethodCases": 2,
+  "actualSkips": 0,
+  "collectionSeconds": 3.8225232000004326,
+  "inputsStable": true,
+  "writeDeleteDenyingHolds": true,
+  "heldInputCount": 14043,
+  "actualSystemCmdSHA256": "15cd209c995b7d3009c91ca40892d5b8f1fb162f3e5f10716642ea278e8e0d7b",
+  "privateEnvironmentAndInputMapNotPublished": true,
+  "verificationSelection": {
+    "rationale": "Only exact previously unreached static concrete-import/SQL denials and the original vault redirection assertions using a verified owned junction. Existing approved45 classifier and original failures/skips are preserved; no full profile or unchanged exit review is repeated.",
+    "selectedCommandIds": [
+      "data:unit",
+      "security-local:unit"
+    ]
+  },
+  "reusedClassification": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/w2-final44-architecture-classification-01.json",
+    "sha256": "3cc63d2cf1b3f355cd873daf7e05f94c99e9b4f6162d0b39fccf7465e080f12f"
+  },
+  "executionTruth": [
+    "Data leaf compiles only six unchanged original statements with two original static denial assertions and unmodified pinned checker. It executes no business SQL or canonical database operation and does not pass the original full method.",
+    "Vault leaf uses the unchanged real WindowsCredentialStore/default protector with original denial and untouched-target assertions. Actual owned directory junction tag0xa0000003 is verified, rejected and removed as a link only; target remains empty. No DPAPI encryption/decryption or original symlink capability is claimed."
+  ],
+  "originalFullDataTestPassClaimed": false,
+  "originalSymlinkPassClaimed": false,
+  "originalFailuresAndSkipsPreserved": true,
+  "independentDispositionPending": true,
+  "waveApproved": false,
+  "releaseApproved": false
+}
