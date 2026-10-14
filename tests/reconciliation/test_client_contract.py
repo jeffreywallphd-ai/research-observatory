@@ -31,7 +31,19 @@ class ReconciliationClientContractTests(unittest.TestCase):
         script = """
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { createCoreApiClient, decodeCandidatePage } from './packages/contracts/core-api/generated.ts';
+import { build } from './packages/contracts/node_modules/vite/dist/node/index.js';
+import { resolve } from 'node:path';
+const built = await build({
+  root: resolve('packages/contracts'), configFile: false, envDir: false, logLevel: 'silent',
+  build: { write: false, emptyOutDir: false, copyPublicDir: false, minify: false,
+    lib: { entry: resolve('packages/contracts/core-api/generated.ts'), formats: ['es'] } },
+});
+if (Array.isArray(built) || !Array.isArray(built.output) || built.output.length !== 1
+    || built.output[0].type !== 'chunk' || built.output[0].imports.length !== 0
+    || built.output[0].dynamicImports.length !== 0)
+  throw new Error('generated client test transport must produce one closed ESM chunk');
+const { createCoreApiClient, decodeCandidatePage } = await import(
+  'data:text/javascript;base64,' + Buffer.from(built.output[0].code).toString('base64'));
 const original = JSON.parse(readFileSync(process.argv[1], 'utf8'));
 assert.deepEqual(JSON.parse(JSON.stringify(decodeCandidatePage(original))), original);
 const client = createCoreApiClient(async () => ({status: 200, contentType: 'application/json',

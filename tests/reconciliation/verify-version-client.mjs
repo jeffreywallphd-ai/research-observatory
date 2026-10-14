@@ -1,6 +1,18 @@
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
-import { createCoreApiClient, decodeVersionContext, decodeVersionPlan, decodeVersionOutcome, decodeVersionPreview, decodeVersionWorkPage } from "../../packages/contracts/core-api/generated.ts";
+import { build } from '../../packages/contracts/node_modules/vite/dist/node/index.js';
+import { fileURLToPath } from 'node:url';
+const built = await build({
+  root: fileURLToPath(new URL('../../packages/contracts/', import.meta.url)), configFile: false, envDir: false, logLevel: 'silent',
+  build: { write: false, emptyOutDir: false, copyPublicDir: false, minify: false,
+    lib: { entry: fileURLToPath(new URL('../../packages/contracts/core-api/generated.ts', import.meta.url)), formats: ['es'] } },
+});
+if (Array.isArray(built) || !Array.isArray(built.output) || built.output.length !== 1
+    || built.output[0].type !== 'chunk' || built.output[0].imports.length !== 0
+    || built.output[0].dynamicImports.length !== 0)
+  throw new Error('generated client test transport must produce one closed ESM chunk');
+const { createCoreApiClient, decodeVersionContext, decodeVersionPlan, decodeVersionOutcome, decodeVersionPreview, decodeVersionWorkPage } = await import(
+  'data:text/javascript;base64,' + Buffer.from(built.output[0].code).toString('base64'));
 const values = JSON.parse(readFileSync(process.argv[2], "utf8"));
 for (const [name, decode] of Object.entries({context: decodeVersionContext, updated: decodeVersionContext, plan: decodeVersionPlan, outcome: decodeVersionOutcome, preview: decodeVersionPreview, page: decodeVersionWorkPage})) {
   assert.deepEqual(JSON.parse(JSON.stringify(decode(values[name]))), values[name], name);
