@@ -1737,18 +1737,89 @@ class DevelopmentEntryTests(unittest.TestCase):
                 time.sleep(0.05)
 
     def run_process(self, args: list[str], *, cwd: Path) -> subprocess.CompletedProcess[str]:
-        return subprocess.run(
-            args,
-            cwd=cwd,
-            env=self.environment,
-            capture_output=True,
-            text=True,
-            encoding="utf-8",
-            errors="replace",
-            timeout=30,
-            check=False,
-            creationflags=subprocess.CREATE_NO_WINDOW,
+        if len(args) < 2 or args[:2] != [str(self.node), str(self.cli)]:
+            return subprocess.run(
+                args,
+                cwd=cwd,
+                env=self.environment,
+                capture_output=True,
+                text=True,
+                encoding="utf-8",
+                errors="replace",
+                timeout=30,
+                check=False,
+                creationflags=subprocess.CREATE_NO_WINDOW,
+            )
+        # This exact test-only wrapper keeps the original real CLI argv/env and
+        # timeout30. Separate capture runs inside unchanged32ee containment; its
+        # job must be EMPTY before the original TemporaryDirectory cleanup.
+        import hashlib
+        import importlib.util
+
+        owned_path = REPO / "artifacts/tmp/w1_owned_job_01.py"
+        capture = (
+            REPO / "artifacts/tmp/W2.remaining-corrections-batch-01/desktop-input-consumers-01/cli-capture-child-01.py"
         )
+        if (
+            hashlib.sha256(owned_path.read_bytes()).hexdigest()
+            != "32eea1c170a2a07b42d9657fd5c4404c53d0d7b19285cb726adc148927bebc0c"
+        ):
+            raise ValueError("Original owned CLI helper differs")
+        if (
+            hashlib.sha256(capture.read_bytes()).hexdigest()
+            != "b38302bee07b4622e644074d2ce4c0a13e3d6f279d8b01b77ff7337465af66bb"
+        ):
+            raise ValueError("Exact CLI capture child differs")
+        spec = importlib.util.spec_from_file_location("desktop_cli_existing_owned", owned_path)
+        if spec is None or spec.loader is None:
+            raise ValueError("Original owned CLI helper is unavailable")
+        owned = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(owned)
+        folder = self.fixture / ("owned-cli-" + uuid4().hex)
+        folder.mkdir()
+        request = folder / "request.json"
+        response = folder / "response.json"
+        request.write_text(
+            json.dumps({"args": args, "cwd": str(cwd), "environment": self.environment, "timeout": 30}),
+            encoding="utf-8",
+            newline="\n",
+        )
+        job: dict[str, Any] = {}
+        try:
+            with (folder / "wrapper.log").open("xb") as stream:
+                code = owned.run_owned(
+                    [sys.executable, "-B", "-s", str(capture), str(request), str(response)],
+                    cwd=cwd,
+                    env=self.environment,
+                    stdout=stream,
+                    timeout_seconds=30,
+                    receipt=job,
+                )
+            if (
+                code != 0
+                or not job.get("drained")
+                or job.get("cleanupState") != "EMPTY_CONFIRMED"
+                or job.get("activeProcesses") != 0
+            ):
+                raise RuntimeError("Owned CLI capture did not close successfully")
+            outcome = json.loads(response.read_bytes())
+            if (
+                outcome.get("status") != "CAPTURED"
+                or outcome.get("args") != args
+                or outcome.get("cwd") != str(cwd)
+                or outcome.get("requestSHA256") != hashlib.sha256(request.read_bytes()).hexdigest()
+            ):
+                raise ValueError("Separate actual CLI capture identity differs")
+            return subprocess.CompletedProcess(args, outcome["returncode"], outcome["stdout"], outcome["stderr"])
+        finally:
+            print("RO_OWNED_CLI=" + json.dumps(job))
+            retained = os.environ.get("RO_DESKTOP_CLI_CAPTURE_ROOT")
+            if retained is None:
+                raise ValueError("Declared task-owned CLI raw capture root is absent")
+            parent = Path(retained).resolve(strict=True)
+            if not parent.is_relative_to((REPO / "artifacts/tmp").resolve()):
+                raise ValueError("CLI raw capture root is not owned")
+            shutil.copytree(folder, parent / folder.name)
 
     def prepare_entry_fixture(self) -> None:
         # Execute the real pinned pnpm and actual checked-in scripts, but replace

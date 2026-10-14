@@ -5,6 +5,7 @@ import re
 import sys
 import unittest
 from pathlib import Path
+from typing import Any
 
 from playwright.sync_api import sync_playwright
 
@@ -25,6 +26,71 @@ from product_layout_measurements import (  # noqa: E402
     panel_flow_errors,
     shell_geometry_errors,
 )
+
+
+def _serve_exact_shipping_fixture(route: Any, document: bytes) -> None:
+    """Serve only exact shipping manifest members at their actual asset URLs."""
+    import hashlib
+    import json
+    import mimetypes
+    import stat
+    from urllib.parse import urlsplit
+
+    url = urlsplit(route.request.url)
+    root = (REPO / "apps/desktop/product-dist").resolve(strict=True)
+    manifest = json.loads((root / "application-manifest.json").read_bytes())
+    artifacts = manifest["artifacts"]
+    if url.scheme != "http" or url.netloc != "tauri.localhost" or url.query or url.fragment:
+        print("RO_LOCAL_RESOURCE=" + json.dumps({"url": route.request.url, "action": "DENY"}))
+        route.abort()
+        return
+    relative = url.path.removeprefix("/")
+    if (
+        not url.path.startswith("/")
+        or relative not in artifacts
+        or relative != "index.html"
+        and not relative.startswith("assets/")
+        or any(part in ("", ".", "..") for part in Path(relative).parts)
+        or "%" in relative
+        or "\\" in relative
+    ):
+        print("RO_LOCAL_RESOURCE=" + json.dumps({"url": route.request.url, "action": "DENY"}))
+        route.abort()
+        return
+    selected = root / relative
+    for part in (selected, *selected.parents):
+        if part == root.parent:
+            break
+        info = part.lstat()
+        if part.is_symlink() or getattr(info, "st_file_attributes", 0) & 0x400:
+            raise ValueError("Redirected shipping fixture member")
+    if not stat.S_ISREG(selected.stat().st_mode):
+        raise ValueError("Nonregular shipping fixture member")
+    body = document if relative == "index.html" else selected.read_bytes()
+    digest = hashlib.sha256(body).hexdigest()
+    if digest != artifacts[relative]:
+        raise ValueError("Shipping fixture bytes differ from exact manifest")
+    content_type = (
+        "text/html"
+        if relative == "index.html"
+        else (
+            "text/javascript"
+            if selected.suffix in (".js", ".mjs")
+            else mimetypes.guess_type(relative)[0] or "application/octet-stream"
+        )
+    )
+    print(
+        "RO_LOCAL_RESOURCE="
+        + json.dumps({"url": route.request.url, "member": relative, "sha256": digest, "action": "FULFILL"})
+    )
+    route.fulfill(status=200, content_type=content_type, body=body)
+
+
+def _observe_shipping_fixture(page: Any) -> None:
+    import json
+
+    page.on("pageerror", lambda error: print("RO_PAGE_ERROR=" + json.dumps(str(error))))
+    page.on("console", lambda message: print("RO_CONSOLE=" + json.dumps({"type": message.type, "text": message.text})))
 
 
 def valid_flow():
@@ -110,7 +176,7 @@ class ProductLayoutMeasurementsTests(unittest.TestCase):
             self.assert_opaque_text_pair(sample)
 
     def test_actual_application_settings_label_and_keyboard_skip_contrast(self):
-        document = inline_product_index(REPO)
+        document = (REPO / "apps/desktop/product-dist/index.html").read_bytes()
         adapter = (REPO / "tests/desktop/fixtures/task_center_interactions.js").read_text(encoding="utf-8")
         adapter = adapter.replace("__WORKFLOW_CATALOG__", core_workflow_catalog_json(REPO)) + DIRECTORY_PICKER_FIXTURE
         sample = r"""node => {
@@ -136,13 +202,10 @@ class ProductLayoutMeasurementsTests(unittest.TestCase):
                 context.add_init_script(adapter)
                 context.route(
                     "**/*",
-                    lambda route: (
-                        route.fulfill(status=200, content_type="text/html", body=document)
-                        if route.request.url == "http://tauri.localhost/index.html"
-                        else route.abort()
-                    ),
+                    lambda route: _serve_exact_shipping_fixture(route, document),
                 )
                 page = context.new_page()
+                _observe_shipping_fixture(page)
                 page.goto("http://tauri.localhost/index.html")
                 page.wait_for_function("document.body.dataset.applicationReady === 'true'")
                 page.get_by_role("button", name="Local profile", exact=True).click()
@@ -430,7 +493,7 @@ class ProductLayoutMeasurementsTests(unittest.TestCase):
                 browser.close()
 
     def test_actual_product_flow_and_sidebar_with_keyboard_scrolling(self):
-        document = inline_product_index(REPO)
+        document = (REPO / "apps/desktop/product-dist/index.html").read_bytes()
         adapter = (REPO / "tests/desktop/fixtures/task_center_interactions.js").read_text(encoding="utf-8")
         adapter = adapter.replace("__WORKFLOW_CATALOG__", core_workflow_catalog_json(REPO)) + DIRECTORY_PICKER_FIXTURE
         with sync_playwright() as playwright:
@@ -440,13 +503,10 @@ class ProductLayoutMeasurementsTests(unittest.TestCase):
                 context.add_init_script(adapter)
                 context.route(
                     "**/*",
-                    lambda route: (
-                        route.fulfill(status=200, content_type="text/html", body=document)
-                        if route.request.url == "http://tauri.localhost/index.html"
-                        else route.abort()
-                    ),
+                    lambda route: _serve_exact_shipping_fixture(route, document),
                 )
                 page = context.new_page()
+                _observe_shipping_fixture(page)
                 page.goto("http://tauri.localhost/index.html")
                 page.wait_for_function("document.body.dataset.applicationReady === 'true'")
                 for width, height in ((1440, 900), (1280, 720), (720, 450)):

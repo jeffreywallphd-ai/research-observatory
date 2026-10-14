@@ -404,6 +404,10 @@ class UiConformanceTests(unittest.TestCase):
             fixture_config = json.loads(
                 (REPO / "verification" / "extensions" / "desktop-ui.json").read_text(encoding="utf-8")
             )
+            fixture_config["referenceId"] = "RO-UI-ACADEMIC-MINIMAL-1.9"
+            fixture_config["referencePackageSha256"] = (
+                "24b8d62356863980ae9a13db7d6a06b04b76c60e2f1920d2e888cadecfb24c4b"
+            )
             fixture_config["mode"] = "approved-reference-fixture"
             fixture_config["targetRoot"] = "design/ui-reference"
             self.write_json(root / "verification" / "extensions" / "desktop-ui.json", fixture_config)
@@ -477,10 +481,12 @@ class UiConformanceTests(unittest.TestCase):
             source.parent.mkdir(parents=True)
             source.write_text("export const View = () => null;\n", encoding="utf-8", newline="\n")
             (root / "verification" / "extensions").mkdir(parents=True)
-            shutil.copy2(
-                REPO / "verification" / "extensions" / "desktop-ui.json",
-                root / "verification" / "extensions" / "desktop-ui.json",
+            fixture_config = json.loads((REPO / "verification/extensions/desktop-ui.json").read_bytes())
+            fixture_config["referenceId"] = "RO-UI-ACADEMIC-MINIMAL-1.9"
+            fixture_config["referencePackageSha256"] = (
+                "24b8d62356863980ae9a13db7d6a06b04b76c60e2f1920d2e888cadecfb24c4b"
             )
+            self.write_json(root / "verification/extensions/desktop-ui.json", fixture_config)
             shutil.copy2(
                 REPO / "verification" / "desktop-ui.schema.json",
                 root / "verification" / "desktop-ui.schema.json",
@@ -926,19 +932,67 @@ class UiConformanceTests(unittest.TestCase):
 
         self.assertTrue(any("approved Wave authority commit cannot be resolved" in error for error in errors), errors)
 
-    def test_active_presentation_requires_its_exact_compatibility_witness(self) -> None:
-        with (
-            mock.patch(
-                "ui_conformance.presentation_compatibility_errors", return_value=["missing exact witness"]
-            ) as verify,
-            self.assertRaisesRegex(ValueError, "invalid presentation compatibility.*missing exact witness"),
-        ):
-            load_context(REPO)
-        verify.assert_called_once_with(
-            REPO,
-            "RO-UI-ACADEMIC-MINIMAL-1.8",
-            "cd8995fdcea2fe44452eaa1fdd258b6f9fab5714cbd443a81a8e5b4251220b94",
+    def witness_application_fixture(self, temporary: str) -> Path:
+        """Owned synthetic build input for the original exact witness denial."""
+        root = Path(temporary) / "repo"
+        shutil.copytree(REFERENCE, root / "design/ui-reference")
+        target = root / "apps/desktop/dist"
+        shutil.copytree(REFERENCE, target)
+        config = json.loads((REPO / "verification/extensions/desktop-ui.json").read_bytes())
+        config["referenceId"] = "RO-UI-ACADEMIC-MINIMAL-1.9"
+        config["referencePackageSha256"] = "24b8d62356863980ae9a13db7d6a06b04b76c60e2f1920d2e888cadecfb24c4b"
+        self.write_json(root / "verification/extensions/desktop-ui.json", config)
+        shutil.copy2(REPO / "verification/desktop-ui.schema.json", root / "verification/desktop-ui.schema.json")
+        source = root / "apps/desktop/src/View.tsx"
+        source.parent.mkdir(parents=True)
+        source.write_text("export const View = () => null;\n", encoding="utf-8", newline="\n")
+        external = (
+            "Cargo.toml",
+            "Cargo.lock",
+            "package.json",
+            "pnpm-lock.yaml",
+            "verification/extensions/desktop-ui.json",
         )
+        for relative in external[:-1]:
+            shutil.copy2(REPO / relative, root / relative)
+        source_files = file_inventory(
+            root, root / "apps/desktop", excluded_directories=APPLICATION_EXCLUDED_DIRECTORIES
+        )
+        source_files.update(
+            {relative: hashlib.sha256((root / relative).read_bytes()).hexdigest() for relative in external}
+        )
+        artifacts = file_inventory(root, target)
+        manifest = {
+            "schemaVersion": "1.0",
+            "documentType": "desktop-application-build-manifest",
+            "referenceId": config["referenceId"],
+            "referencePackageSha256": config["referencePackageSha256"],
+            "sourceFiles": dict(sorted(source_files.items())),
+            "artifacts": dict(
+                sorted(
+                    (Path(relative).relative_to(target.relative_to(root)).as_posix(), digest)
+                    for relative, digest in artifacts.items()
+                )
+            ),
+        }
+        self.write_json(target / "application-manifest.json", manifest)
+        return root
+
+    def test_active_presentation_requires_its_exact_compatibility_witness(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = self.witness_application_fixture(temporary)
+            with (
+                mock.patch(
+                    "ui_conformance.presentation_compatibility_errors", return_value=["missing exact witness"]
+                ) as verify,
+                self.assertRaisesRegex(ValueError, "invalid presentation compatibility.*missing exact witness"),
+            ):
+                load_context(root)
+            verify.assert_called_once_with(
+                root,
+                "RO-UI-ACADEMIC-MINIMAL-1.9",
+                "24b8d62356863980ae9a13db7d6a06b04b76c60e2f1920d2e888cadecfb24c4b",
+            )
 
     def test_actual_amendment_bound_v16_approval_shape_is_exact(self) -> None:
         # Historical approval shape must not read whichever reference is active now.

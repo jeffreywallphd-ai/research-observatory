@@ -1,0 +1,314 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "finite-preauthorized-desktop-test-input-delivery-decision-draft",
+  "draftAuthor": "agent:/root/c21_closeout_review",
+  "preparedAtUtc": "2026-10-14T11:55:59.085299+00:00",
+  "status": "APPROVED",
+  "approvedBy": "human:repository-owner",
+  "preauthorizationSHA256": "34e2e3c175dc9309080182e0673f776055b1cc3ba78639475c09ec54408d7d5f",
+  "preauthorization": {
+    "path": "artifacts/evidence/W2.completion-preauthorization-20261014-01.md",
+    "sha256": "34e2e3c175dc9309080182e0673f776055b1cc3ba78639475c09ec54408d7d5f",
+    "actualIntroductionCommit": "118e5c1494e180e03e1336a5a5953c3a464c4a3a"
+  },
+  "completionDecision": {
+    "path": "artifacts/evidence/W2.completion-corrections-batch-02.decision-01.json",
+    "sha256": "738a9ed22b4da46a88c47c64b07607bbf1b27839e3bf657e7c7712763d76e9c2",
+    "actualIntroductionCommit": "db25c8c74e2432b6267d687edcfddae31dc070eb"
+  },
+  "meaning": "Preserved successor ignored draft of9a2 applies unchanged actual prospective owner authority to the same four finite routes with four complete-AST-identical formatted payloads. APPROVED remains only the intended later recorded scope field. New different source and recording readiness is required before publication;655d/e8c authenticate only their preserved original records. No future publication/introduction/task/result/PASS is asserted.",
+  "intendedPublicPath": "artifacts/evidence/W2.desktop-input-restoration-01.scope-decision-01.json",
+  "proposalManifest": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/desktop-input-consumers-01/test-proposal-manifest-02.json",
+    "sha256": "23dbe68f50a58530ba5cf8eaea326855e9931feac602b7f6b6a39b9f79007d99",
+    "size": 7828
+  },
+  "consumer": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/desktop-input-consumers-01/collect-canonical-04.py",
+    "sha256": "7205f08e651bc6928a4acddaef2b9fe646c1bf8145a065efdd5a2c37e505429f",
+    "size": 19077
+  },
+  "consumerPreparation": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/desktop-input-consumers-01/execution-preparation-04.json",
+    "sha256": "abba1d5cb4698a63769e8ce80ae5da491cc25659511d53a40eb6d796342ff7e5",
+    "size": 34037
+  },
+  "independentSourceReadinessSHA256": "7261dd4fa4b6b352ff160e46a3aa89493c5c190d5b17730b5ba695e6f89d0ecc",
+  "originFacts": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/desktop-input-consumers-01/origins-and-recording-prerequisites-01.json",
+    "sha256": "0b33974534423a7c3549cc5885b96fbbc1282abc4982b6ea361e9458a4347129"
+  },
+  "testSourceSHA256": {
+    "tests/desktop/test_ui_conformance.py": "b211b423bc4a97e498cef0162c717e73adfb006e392c0b1b40df766f1b581782",
+    "tests/desktop/test_product_layout_measurements.py": "f71a30b6b4d46e0670408c3c3b8782306eabc223680c2dea4fd82c5830fc2edf",
+    "tests/desktop/test_document_attachment_interactions.py": "c900698ed9d83eee6583eb2ff155083bb0761031e25e18ec68712688fc32fbbb",
+    "tests/desktop/test_desktop_app_check.py": "3037c0f0855d6eaa68cc8a139eca1e2aef5bcbd24c87e4fa28cb495036820f70"
+  },
+  "exactFourTestDeliveries": [
+    {
+      "target": "tests/desktop/test_ui_conformance.py",
+      "predecessor": {
+        "path": "artifacts/tmp/W2.remaining-corrections-batch-01/desktop-input-consumers-01/tests--desktop--test_ui_conformance.py.original",
+        "sha256": "ea2039a7971625bf3b756d3fbf6c81d1a169458d1cc509dccf4ea8fab0314625",
+        "size": 90512
+      },
+      "proposed": {
+        "path": "artifacts/tmp/W2.desktop-input-source-format-preflight-01/00.proposed.formatted",
+        "sha256": "b211b423bc4a97e498cef0162c717e73adfb006e392c0b1b40df766f1b581782",
+        "size": 93422
+      },
+      "patch": {
+        "path": "artifacts/tmp/W2.remaining-corrections-batch-01/desktop-input-consumers-01/tests--desktop--test_ui_conformance.py.patch",
+        "sha256": "78d36f9a2694bbecf9615d32b86af9a50aaaa7f81135c16498198720986cdf1c",
+        "size": 5489
+      },
+      "originalAuthoringTask": "CAP-00.S06.T04",
+      "originalAuthoringWave": "W0",
+      "selectedMethodOriginal": "W1.A09.T01",
+      "deliveryRoute": "EXACT_FINITE_HISTORICAL_TEST_ONLY_DIRECT_DELIVERY",
+      "routeConditions": "Only this exact reviewed test byte successor through normal privacy-hooked Git delivery under recorded prospective authority. Released W0/W1 task/status/approvals remain immutable, no artificial current-W2 origin or taskclaim.",
+      "firstExclusiveRegressionCauseClaimed": false,
+      "reviewedSemanticProposal": {
+        "path": "artifacts/tmp/W2.remaining-corrections-batch-01/desktop-input-consumers-01/tests--desktop--test_ui_conformance.py.proposed",
+        "sha256": "8374ac93ebea514fe612b3c1379a3cba7abb98da200deab4588f0f0450dbad3c",
+        "size": 93226
+      },
+      "fullPythonASTEqualsReviewedSemanticProposal": true,
+      "patchMeaning": "Preserved original-to-semantic-proposal patch; formatted stdout adds only complete-AST-identical layout. This original patch is not claimed as an exact original-to-formatted byte diff."
+    },
+    {
+      "target": "tests/desktop/test_product_layout_measurements.py",
+      "predecessor": {
+        "path": "artifacts/tmp/W2.remaining-corrections-batch-01/desktop-input-consumers-01/tests--desktop--test_product_layout_measurements.py.original",
+        "sha256": "1e27b877da180a9ec7c6ebfd312b54330bedda44dcafbb3dc0cddc92f9f432e6",
+        "size": 29885
+      },
+      "proposed": {
+        "path": "artifacts/tmp/W2.desktop-input-source-format-preflight-01/01.proposed.formatted",
+        "sha256": "f71a30b6b4d46e0670408c3c3b8782306eabc223680c2dea4fd82c5830fc2edf",
+        "size": 32292
+      },
+      "patch": {
+        "path": "artifacts/tmp/W2.remaining-corrections-batch-01/desktop-input-consumers-01/tests--desktop--test_product_layout_measurements.py.patch",
+        "sha256": "65ac8e1765822f9cdd8b27ca755deb2bb6ecaae820143fc0e82f6d3c778886e4",
+        "size": 5709
+      },
+      "originalAuthoringTask": "W1.A08.T02",
+      "originalAuthoringWave": "W1",
+      "selectedMethodOriginal": null,
+      "deliveryRoute": "EXACT_FINITE_HISTORICAL_TEST_ONLY_DIRECT_DELIVERY",
+      "routeConditions": "Only this exact reviewed test byte successor through normal privacy-hooked Git delivery under recorded prospective authority. Released W0/W1 task/status/approvals remain immutable, no artificial current-W2 origin or taskclaim.",
+      "firstExclusiveRegressionCauseClaimed": false,
+      "reviewedSemanticProposal": {
+        "path": "artifacts/tmp/W2.remaining-corrections-batch-01/desktop-input-consumers-01/tests--desktop--test_product_layout_measurements.py.proposed",
+        "sha256": "a28447e4ad283a5f0ab2881a0a186c2844be0aa067baa9d372e517a8bf7f4a11",
+        "size": 32205
+      },
+      "fullPythonASTEqualsReviewedSemanticProposal": true,
+      "patchMeaning": "Preserved original-to-semantic-proposal patch; formatted stdout adds only complete-AST-identical layout. This original patch is not claimed as an exact original-to-formatted byte diff."
+    },
+    {
+      "target": "tests/desktop/test_document_attachment_interactions.py",
+      "predecessor": {
+        "path": "artifacts/tmp/W2.remaining-corrections-batch-01/desktop-input-consumers-01/tests--desktop--test_document_attachment_interactions.py.original",
+        "sha256": "cbae5ddd1c6d5f15193d643ccefdb5a50b2485c01cafecc356ce2b4ec452845f",
+        "size": 76386
+      },
+      "proposed": {
+        "path": "artifacts/tmp/W2.desktop-input-source-format-preflight-01/02.proposed.formatted",
+        "sha256": "c900698ed9d83eee6583eb2ff155083bb0761031e25e18ec68712688fc32fbbb",
+        "size": 78901
+      },
+      "patch": {
+        "path": "artifacts/tmp/W2.remaining-corrections-batch-01/desktop-input-consumers-01/tests--desktop--test_document_attachment_interactions.py.patch",
+        "sha256": "99f1a29b048b56f11f664d8c96002eb54bc26d4637f948e387d35c82d8bae91b",
+        "size": 3974
+      },
+      "originalAuthoringTask": "W2.A01.T02",
+      "originalAuthoringWave": "W2",
+      "selectedMethodOriginal": null,
+      "deliveryRoute": "NORMAL_CURRENT_W2_LINKED_CORRECTION_IF_ACTUALLY_ELIGIBLE",
+      "routeConditions": "Authenticate original/adopted W2.A01.T02 fixture-host scope/current DONE independent approval and normal taskctl eligibility. Later CAP-05.S01.T03 extension is distinct, not first author. Actual spec/claim/lease/candidate/result must be recorded; no future correction ID or normal-admission result asserted.",
+      "firstExclusiveRegressionCauseClaimed": false,
+      "reviewedSemanticProposal": {
+        "path": "artifacts/tmp/W2.remaining-corrections-batch-01/desktop-input-consumers-01/tests--desktop--test_document_attachment_interactions.py.proposed",
+        "sha256": "a3dd7c70fca7d2864c8ac502486473e3d6a1a6237e7920f6ffcf9c1a7d039a6e",
+        "size": 78813
+      },
+      "fullPythonASTEqualsReviewedSemanticProposal": true,
+      "patchMeaning": "Preserved original-to-semantic-proposal patch; formatted stdout adds only complete-AST-identical layout. This original patch is not claimed as an exact original-to-formatted byte diff."
+    },
+    {
+      "target": "tests/desktop/test_desktop_app_check.py",
+      "predecessor": {
+        "path": "artifacts/tmp/W2.remaining-corrections-batch-01/desktop-input-consumers-01/tests--desktop--test_desktop_app_check.py.original",
+        "sha256": "2dbdad92c434960801b477b8205f93a53a6e46202adf762a4b57f946de1cf71f",
+        "size": 102700
+      },
+      "proposed": {
+        "path": "artifacts/tmp/W2.desktop-input-source-format-preflight-01/03.proposed.formatted",
+        "sha256": "3037c0f0855d6eaa68cc8a139eca1e2aef5bcbd24c87e4fa28cb495036820f70",
+        "size": 106263
+      },
+      "patch": {
+        "path": "artifacts/tmp/W2.remaining-corrections-batch-01/desktop-input-consumers-01/tests--desktop--test_desktop_app_check.py.patch",
+        "sha256": "2756e2a7aa9bf0c6feea5152a763f6c5ed630422b0153dd3d0e6cc33e39ad0e1",
+        "size": 4171
+      },
+      "originalAuthoringTask": "CAP-01.S01.T01",
+      "originalAuthoringWave": "W1",
+      "selectedMethodOriginal": "W1.C01.T01",
+      "deliveryRoute": "EXACT_FINITE_HISTORICAL_TEST_ONLY_DIRECT_DELIVERY",
+      "routeConditions": "Only this exact reviewed test byte successor through normal privacy-hooked Git delivery under recorded prospective authority. Released W0/W1 task/status/approvals remain immutable, no artificial current-W2 origin or taskclaim.",
+      "firstExclusiveRegressionCauseClaimed": false,
+      "reviewedSemanticProposal": {
+        "path": "artifacts/tmp/W2.remaining-corrections-batch-01/desktop-input-consumers-01/tests--desktop--test_desktop_app_check.py.proposed",
+        "sha256": "1d01b004d8271c2ebc270b79a1417257ae1d32f57d0da4e281c2b21309234384",
+        "size": 105763
+      },
+      "fullPythonASTEqualsReviewedSemanticProposal": true,
+      "patchMeaning": "Preserved original-to-semantic-proposal patch; formatted stdout adds only complete-AST-identical layout. This original patch is not claimed as an exact original-to-formatted byte diff."
+    }
+  ],
+  "additionalHistoricalDirectPaths": [
+    "tests/desktop/test_ui_conformance.py",
+    "tests/desktop/test_product_layout_measurements.py",
+    "tests/desktop/test_desktop_app_check.py"
+  ],
+  "ordinaryCurrentW2Paths": [
+    "tests/desktop/test_document_attachment_interactions.py"
+  ],
+  "frozenBatchTwelvePathsUnchanged": true,
+  "frozenBatchTwelveAuthority": {
+    "path": "artifacts/evidence/W2.completion-corrections-batch-02.plan-01.json",
+    "sha256": "4fe8a9b8b7cb8b913c59e1cad4bc928fa267cbe1b59834f2fb596c7b487da0ae"
+  },
+  "oneUse": true,
+  "sharedFrameworkChangeGranted": false,
+  "normalRouteRecommendation": "Wait for actual current owned/controller/site closeout and clean paused ordinary boundary. Prefer unchanged taskctl linked correction for the one current-W2 attachment path under authenticated adopted original fixture-host scope. Deliver exactly the other three historical test paths directly under this separately recorded finite procedural scope. Then the8-body consumer binds all four actual committed proposed hashes and this committed record. If the claimed W2 origin cannot satisfy ordinary eligibility/scope, preserve the concrete denial and record any necessary separate exact route before delivery; no implicit fallback permission or relabeling is granted by this draft.",
+  "permittedEffects": [
+    "Restore current1.9 identity/package and owned synthetic negative fixture prerequisites to reach original fixture/missing-manifest/witness denials; only witness root/id/package assertion operands change.",
+    "Serve exact manifest-authenticated local index/assets at actual local URLs for three original interaction bodies; all original navigation, context, rights, uncertainty, denial and readiness assertions remain.",
+    "Contain only two original real Node/Tauri CLI calls through unchanged32ee with original argv/environment/separate real stdout/stderr/returncode and inner30s timeout, requiring actual EMPTY/active0 before original temporary-root cleanup. Outer30 containment is conservative capture overhead, not a longer original deadline."
+  ],
+  "prohibitedEffects": [
+    "No assertion removed or skipped, valid predicate weakened, fake successful principal/Native/model result or injected/copied test module.",
+    "No broadened remote egress/origin/asset fallthrough, applicationReady forcing, longer body/readiness/CLI deadline, shared framework/controller/checker/reference/product/security-policy change.",
+    "No W0/W1 reopen/status rewrite, invented W2 regression origin, new ECR/bootstrap/campaign/taskclaim, changed frozen12 path list or automatic gate/release approval."
+  ],
+  "freshRequiredCoverage": {
+    "restorationGroups": [
+      [
+        "negative3",
+        [
+          "tests.desktop.test_ui_conformance.UiConformanceTests.test_fixture_mode_refuses_to_mask_an_application_implementation",
+          "tests.desktop.test_ui_conformance.UiConformanceTests.test_application_mode_requires_a_bound_build_manifest",
+          "tests.desktop.test_ui_conformance.UiConformanceTests.test_active_presentation_requires_its_exact_compatibility_witness"
+        ]
+      ],
+      [
+        "local-assets-first",
+        [
+          "tests.desktop.test_document_attachment_interactions.DocumentAttachmentInteractionTests.test_selected_version_native_intents_denial_cancel_and_return"
+        ]
+      ],
+      [
+        "local-assets-rest",
+        [
+          "tests.desktop.test_product_layout_measurements.ProductLayoutMeasurementsTests.test_actual_application_settings_label_and_keyboard_skip_contrast",
+          "tests.desktop.test_product_layout_measurements.ProductLayoutMeasurementsTests.test_actual_product_flow_and_sidebar_with_keyboard_scrolling"
+        ]
+      ],
+      [
+        "cleanup2",
+        [
+          "tests.desktop.test_desktop_app_check.DevelopmentEntryTests.test_actual_cli_processes_script_arguments_as_embedded_origin",
+          "tests.desktop.test_desktop_app_check.DevelopmentEntryTests.test_actual_cli_default_negative_control_and_duplicate_flag"
+        ]
+      ]
+    ],
+    "restorationBodies": 8,
+    "sixOriginalFixtureBuildersAndFortyEightBodies": {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/desktop-input-consumers-01/execution-preparation-04.json",
+      "sha256": "abba1d5cb4698a63769e8ce80ae5da491cc25659511d53a40eb6d796342ff7e5",
+      "size": 34037
+    },
+    "fixtureBodies": 48,
+    "totalCanonicalBodies": 56,
+    "quality": "Fresh affected canonical four-file format/lint/configured source-context types at actual delivered candidate; no ignored-copy __file__/REPO substitution.",
+    "actualRuntime": "Actual installed source/live/reference/fixture/package/tool/browser closure, original no-skip assertions/deadlines/denials, raw observations/custody/owned EMPTY; source readiness cannot substitute for execution."
+  },
+  "publicationAndImplementationPrerequisites": [
+    "Actual C21 DONE/independently approved/null lease and normal controller/site/owned closeout, clean fixed candidate and no held/running producer before publication/delivery.",
+    "Actual different source review of formatted manifest02/collector04/preparation04 and different recording review of this exact successor draft; replace only pending readiness placeholders with those actual reviewed records before root ordinary privacy-hooked publication. Preserve original655d/e8c and use real introductions only after existence.",
+    "Authenticate original four bytes immediately before application. Normal attachment origin/spec/claim/review and three finite direct test deliveries remain distinct actual records; neither route bypasses actual failures or input closure.",
+    "Actual affected four-file quality and all56 canonical cases/raw observations/custody, source/runtime equality and owned drains; every negative/source/principal/runtime scope outside this finite method stays separately due.",
+    "Different committed affected-integration/pre-integration review, then ordinary local-main integration; final Wave/release and W3 planning prerequisites remain separate."
+  ],
+  "preservedAdverses": [
+    [
+      {
+        "path": "artifacts/tmp/W2.remaining-corrections-batch-01/w2-final29-desktop-unit-reconciliation-incremental-disposition-01.json",
+        "sha256": "15cd3b275f1c271eaa07fa5202e7f858bc3e002bce757aac5dbb2c93b5ad7255"
+      },
+      {
+        "path": "artifacts/tmp/W2.remaining-corrections-batch-01/desktop-input-verification-restoration-01/case-scope-and-source-bindings-01.json",
+        "sha256": "399d085e1e719b0a934735cc684a2190bafff8b2d0e39658c18710f05cfc51c3"
+      }
+    ],
+    {
+      "path": "artifacts/tmp/W2.final-wave-exit-never-started29-01.f01/receipt.json",
+      "sha256": "be786f6bdab828f0b4b2e5fb2011c79b54d95ed48953b6730c9a5c0524b85591"
+    },
+    {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/desktop-input-consumers-01/independent-source-preflight-R01.json",
+      "sha256": "21b1d442dfd2f06f0fdfe82296e564deba3c1eb736bdd548feb454fe955fdff1"
+    }
+  ],
+  "claims": {
+    "published": false,
+    "futureIntroductionCommitClaimed": false,
+    "normalTaskAdmittedOrDone": false,
+    "sourceAppliedByDraft": false,
+    "casePassClaimed": false,
+    "qualificationComplete": false,
+    "releaseApproved": false,
+    "waveApproved": false,
+    "recordingReadinessSelfApproved": false
+  },
+  "releaseApproved": false,
+  "supersedes": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/desktop-input-consumers-01/scope-decision-01.draft.json",
+    "sha256": "9a2a6603346007c69a3ebfd79f4bf5601cb6dd93a32e3d38a33cb9454bcd0f09",
+    "size": 16274
+  },
+  "preservedPreviousRecordingReadiness": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/desktop-input-consumers-01/independent-recording-readiness-01.json",
+    "sha256": "e8c0ca4deb2d49b3ea6286612b559feb16e73fc10b484c2e222f0c933f08997d",
+    "size": 9531
+  },
+  "preservedSemanticSourceReadiness": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/desktop-input-consumers-01/independent-source-readiness-R02.json",
+    "sha256": "655d347906251f4d0201479d19129f1ef9e426136bd5451f3f9e9c0502729bae"
+  },
+  "sourceReadiness": {
+    "status": "PENDING_ACTUAL_DIFFERENT_SOURCE_REVIEW",
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/desktop-input-consumers-01/independent-format-source-readiness-01.json",
+    "sha256": "7261dd4fa4b6b352ff160e46a3aa89493c5c190d5b17730b5ba695e6f89d0ecc"
+  },
+  "sourceFormatObservation": {
+    "path": "artifacts/tmp/W2.desktop-input-source-format-preflight-01/receipt.json",
+    "sha256": "ea47b9fd8eacb2ce391974f7683b24a72c419eed70c8fe34e642e27ed01190e9",
+    "size": 14433
+  },
+  "result": "UNPUBLISHED_DRAFT_PENDING_DIFFERENT_SOURCE_AND_RECORDING_READINESS",
+  "formatOnlySuccessorLimits": {
+    "collectorChanges": [
+      "Only preparation filename03-to04",
+      "Existing different-source-author denial also excludes actual successor author C21"
+    ],
+    "proposalChanges": "Four exact Ruff stdout bytes have complete AST equality to already reviewed semantic proposals. No assertion, method, deadline, selected56-body table, asset predicate, realCLI or owned/runtime helper change.",
+    "originalFormatCheckFailuresPreserved": true,
+    "qualificationClaimed": false
+  }
+}
