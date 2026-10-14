@@ -1,0 +1,15 @@
+{
+  "schemaVersion": "1.0",
+  "kind": "authority-preserving-correction",
+  "origin": {
+    "taskId": "CAP-05.S06.T03",
+    "commit": "873d2fd8ff55b2db02367e3bcf1e8e0613bf6d46",
+    "sha256": "5c7e4e19a4ea321dfd53ba3b4a4c40f2719e4c12991dd34692fcb4757369231a"
+  },
+  "reproduction": "Retained final29 viewer later-head and two anchor resolution/citation methods fail while creating a second accepted parser head through direct repository.accept. The first strict replacement fence is absent at original S06T03 basec707 and first186d11 parent, present at first186d11 and approvedb7e; both fixture blobs remain unchanged. Preserve original viewer authoring CAP-05.S04.T02 and anchors authoring CAP-05.S03.T03 separately from this actual common current-W2 regression origin.",
+  "changedPaths": [
+    "tests/documents/test_viewer_anchor_context.py",
+    "tests/anchors/test_anchor_resolution.py"
+  ],
+  "impactAnalysis": "Use exactly reviewed fixture-only proposals: seed later accepted heads through existing reprocess_uncorrected_fixture with the actual current base, explicit comparison, unchanged zero-obligation guard, empty reconciliation, confirmation/graph-bound acceptance. Retain all17 viewer and31 anchor assertion calls, old immutable IDs/revisions/rights/context, reopen behavior and all three citation uncertainty/pagination subcases. No production/fence/helper/fixture/parser/model/reference/authority/criterion/history change or direct bypass. Fresh three original methods, two-file format/lint and unchanged configured source types plus independent corrective integration prove the affected setup restoration only; prior task approvals remain historical and broader original adverse findings remain open."
+}
