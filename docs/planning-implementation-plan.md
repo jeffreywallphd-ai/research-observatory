@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 286388e0e380cc0df3686f9981ff8278192813e427d3c399e3cbd4063c105044
+source_sha256: fa2d7eaa7ca3f87fb0c0a03174c7032eab8b498d1b63f8d38a69f695e057d6a1
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -5238,7 +5238,7 @@ Original tasks and approvals remain unchanged.
 
 ### W2.C24.T01 — Implement parser upgrade comparison and stale propagation
 
-**Status:** `IN_PROGRESS`. **Original task:** `CAP-05.S06.T03`. **Latest review:** `-`.
+**Status:** `REVIEW`. **Original task:** `CAP-05.S06.T03`. **Latest review:** `-`.
 
 **Reproduction:** Retained final29 viewer later-head and two anchor resolution/citation methods fail while creating a second accepted parser head through direct repository.accept. The first strict replacement fence is absent at original S06T03 basec707 and first186d11 parent, present at first186d11 and approvedb7e; both fixture blobs remain unchanged. Preserve original viewer authoring CAP-05.S04.T02 and anchors authoring CAP-05.S03.T03 separately from this actual common current-W2 regression origin.
 
@@ -5256,7 +5256,19 @@ Original tasks and approvals remain unchanged.
 
 **Review mode:** `append-only v1` / 0 completed round(s)
 
-**Current immutable submission awaiting review:** None
+**Current immutable submission awaiting review:** `R01` / packet SHA-256 `8f8c8754ea7142bd6512f0d2b7db60002814702890b56547d96d1cc06a64ceca`
+
+- Candidate / base / branch: `01ada170798e9f4159ce306f7e2268642896e018` / `ea0c4cb6bdf4aebb81f7ab1cd54ebc9c0ad7ff59` / `codex/w2-implementation`
+- Submitted by / at: codex-w2-implementation / `2026-10-14T13:42:05+00:00`
+- Evidence: `artifacts/evidence/W2.C24.T01.R01.json` / `ab956fbd17a18a8f6c7aaf0ae3b77c6d3273bb352d6fb79a9b95e43f5e838c2c` / `01ada170798e9f4159ce306f7e2268642896e018`
+- Acceptance-criteria SHA-256: `5b2333078d3f1b0c98ff2ec26db1377fcafed7be0e0ce7d1c74b8ae28073db58`
+- Verification-selection SHA-256: `e687e831e16a57c3d91c30aed91b47c7804355d4b3e4e61d4f156491d1b162c0`
+- Changed paths: `docs/planning-implementation-plan.md`, `planning/backlog.yaml`, `planning/review-site/index.html`, `planning/review-site/manifest.json`, `planning/review-site/waves/W2.html`, `planning/status-summary.md`, `tests/anchors/test_anchor_resolution.py`, `tests/documents/test_viewer_anchor_context.py`
+- Selected checks: `.venv/Scripts/python.exe -B -s -m unittest -v tests.documents.test_viewer_anchor_context.ViewerAnchorContextTests.test_later_accepted_head_does_not_move_a_viewer_link tests.anchors.test_anchor_resolution.AnchorResolutionTests.test_exact_context_metadata_and_old_revision_survive_reopen_without_pdf_or_ir tests.anchors.test_anchor_resolution.AnchorResolutionTests.test_citation_links_preserve_exact_canonical_candidates_and_uncertainty`, `.venv/Scripts/python.exe -B -s -m ruff format --check --config pyproject.toml -- tests/documents/test_viewer_anchor_context.py tests/anchors/test_anchor_resolution.py`, `.venv/Scripts/python.exe -B -s -m ruff check --config pyproject.toml -- tests/documents/test_viewer_anchor_context.py tests/anchors/test_anchor_resolution.py`, `.venv/Scripts/python.exe -B -s -m mypy --config-file pyproject.toml --no-namespace-packages --cache-dir artifacts/tmp/W2.remaining-corrections-batch-01/W2.C24.T01.viewer-anchor-focused-01/mypy-cache -- @artifacts/tmp/W2.remaining-corrections-batch-01/W2.C24.T01.viewer-anchor-focused-01/source-files.args`
+- Deferred checks: `Other unresolved W2 findings and real Native/principal/parser/model/packaging checks remain separate. No unchanged whole-Wave review or full-profile PASS is inferred.`
+- Selection rationale: Exactly three original later-head viewer/context/citation methods are affected by strict explicit reprocessing. Preserve original subcases and choose two-file format/lint plus unchanged complete configured source types with fresh cache. All actual tracked/fixture/runtime inputs remain held until four owned jobs drain. Canonical IDs identify affected selections only.
+- Prior round / replayed open findings: `-` / -
+- Root-cause escalation: -
 
 **Current latest-review projection:** `-` by - at `-`
 

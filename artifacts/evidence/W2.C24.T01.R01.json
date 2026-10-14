@@ -1,0 +1,177 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "W2.C24.T01",
+  "baseCommit": "ea0c4cb6bdf4aebb81f7ab1cd54ebc9c0ad7ff59",
+  "commit": "01ada170798e9f4159ce306f7e2268642896e018",
+  "branch": "codex/w2-implementation",
+  "changedFiles": [
+    "docs/planning-implementation-plan.md",
+    "planning/backlog.yaml",
+    "planning/review-site/index.html",
+    "planning/review-site/manifest.json",
+    "planning/review-site/waves/W2.html",
+    "planning/status-summary.md",
+    "tests/anchors/test_anchor_resolution.py",
+    "tests/documents/test_viewer_anchor_context.py"
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "checkIds": [
+        "viewer-anchor-regressions"
+      ],
+      "evidence": [
+        "Fresh three original affected methods create later accepted fixture heads through the unchanged explicit reprocessing route and retain old viewer links, anchor context/reopen and exact citation candidates/uncertainty. The existing helper requires the actual current base, real comparison, zero correction obligations, explicit empty reconciliation and confirmation/graph-bound acceptance; no direct replacement or fence bypass. Fixture parser output is authored synthetic data, with original SQLCipher/protected repository composition and in-memory fixture keys. No real Windows DPAPI/native UI/parser/model process or whole reprocessing behavior is inferred. Original CAP-05.S06.T03 approval remains historical authority only."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "checkIds": [
+        "viewer-anchor-regressions"
+      ],
+      "evidence": [
+        "All three exact original methods pass without skips, retaining old revision/reopen assertions and all three citation resolution subcases. Original documents/anchors broad FAIL reports remain preserved; no full profile is inferred."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "checkIds": [
+        "viewer-anchor-regressions",
+        "affected-format",
+        "affected-lint",
+        "configured-source-types"
+      ],
+      "evidence": [
+        "Two admitted test fixture setups use their exact reviewed existing reprocessing helper. All17 viewer and31 anchor assertion ASTs remain, with original data/helpers/production fence/authority/reference/criteria unchanged. Fresh two-file format/lint and unchanged configured source types pass. Original authoring tasks remain CAP-05.S04.T02 and CAP-05.S03.T03, distinct from the actual S06T03 regression origin."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "checks": [
+    {
+      "id": "viewer-anchor-regressions",
+      "command": ".venv/Scripts/python.exe -B -s -m unittest -v tests.documents.test_viewer_anchor_context.ViewerAnchorContextTests.test_later_accepted_head_does_not_move_a_viewer_link tests.anchors.test_anchor_resolution.AnchorResolutionTests.test_exact_context_metadata_and_old_revision_survive_reopen_without_pdf_or_ir tests.anchors.test_anchor_resolution.AnchorResolutionTests.test_citation_links_preserve_exact_canonical_candidates_and_uncertainty",
+      "commandSemantics": "DISPLAY repository-relative executable; exact actual argv is retained in the ignored execution receipt",
+      "result": "passed",
+      "exitCode": 0,
+      "commit": "01ada170798e9f4159ce306f7e2268642896e018",
+      "seconds": 32.07226359999913,
+      "raw": {
+        "path": "artifacts/tmp/W2.remaining-corrections-batch-01/W2.C24.T01.viewer-anchor-focused-01/viewer-anchor-regressions.raw.log",
+        "sha256": "be40a0ca2a98276431b33c0ebe84b3daa155c34bd02212c37f7a19a8b75a6aa5"
+      }
+    },
+    {
+      "id": "affected-format",
+      "command": ".venv/Scripts/python.exe -B -s -m ruff format --check --config pyproject.toml -- tests/documents/test_viewer_anchor_context.py tests/anchors/test_anchor_resolution.py",
+      "commandSemantics": "DISPLAY repository-relative executable; exact actual argv is retained in the ignored execution receipt",
+      "result": "passed",
+      "exitCode": 0,
+      "commit": "01ada170798e9f4159ce306f7e2268642896e018",
+      "seconds": 0.1870572000007087,
+      "raw": {
+        "path": "artifacts/tmp/W2.remaining-corrections-batch-01/W2.C24.T01.viewer-anchor-focused-01/affected-format.raw.log",
+        "sha256": "3bc53bf3e981a98a34a852e175bf9b77af841edea74fca595d9aedcbaf9a4938"
+      }
+    },
+    {
+      "id": "affected-lint",
+      "command": ".venv/Scripts/python.exe -B -s -m ruff check --config pyproject.toml -- tests/documents/test_viewer_anchor_context.py tests/anchors/test_anchor_resolution.py",
+      "commandSemantics": "DISPLAY repository-relative executable; exact actual argv is retained in the ignored execution receipt",
+      "result": "passed",
+      "exitCode": 0,
+      "commit": "01ada170798e9f4159ce306f7e2268642896e018",
+      "seconds": 0.16737110000030953,
+      "raw": {
+        "path": "artifacts/tmp/W2.remaining-corrections-batch-01/W2.C24.T01.viewer-anchor-focused-01/affected-lint.raw.log",
+        "sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18"
+      }
+    },
+    {
+      "id": "configured-source-types",
+      "command": ".venv/Scripts/python.exe -B -s -m mypy --config-file pyproject.toml --no-namespace-packages --cache-dir artifacts/tmp/W2.remaining-corrections-batch-01/W2.C24.T01.viewer-anchor-focused-01/mypy-cache -- @artifacts/tmp/W2.remaining-corrections-batch-01/W2.C24.T01.viewer-anchor-focused-01/source-files.args",
+      "commandSemantics": "DISPLAY repository-relative executable; exact actual argv is retained in the ignored execution receipt",
+      "result": "passed",
+      "exitCode": 0,
+      "commit": "01ada170798e9f4159ce306f7e2268642896e018",
+      "seconds": 19.142957100000785,
+      "raw": {
+        "path": "artifacts/tmp/W2.remaining-corrections-batch-01/W2.C24.T01.viewer-anchor-focused-01/configured-source-types.raw.log",
+        "sha256": "c642e5b33b5e7d157e7b2362ef94a292d50ab8abbba717375ca1704ad53de820"
+      }
+    }
+  ],
+  "executionReceipt": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/W2.C24.T01.viewer-anchor-focused-01/receipt.json",
+    "sha256": "cf7172aa37f155e96ea7ef968450a7282cf5c575a7669ad41fc23ff894008570"
+  },
+  "boundaryInputs": [
+    {
+      "path": "tests/documents/test_document_revision_repository.py",
+      "sha256": "004ddef214fc120a5af16995c27c0060bf5a2f278776931c9a579c48b5c9d303"
+    },
+    {
+      "path": "tests/anchors/test_anchor_repository.py",
+      "sha256": "527e748922e008e983f8cb493c19a956984c5ecb538f7dc8546d0d7e5658f5ef"
+    },
+    {
+      "path": "tests/parsing/test_protected_parse_source.py",
+      "sha256": "030507a9c9713d0c20ccf052b1fe99479cdaebba3cf654b7fe29cfd1f7fea6c6"
+    },
+    {
+      "path": "tests/parsing/contract_fixtures.py",
+      "sha256": "15f06d8d9c176226bd0ca8d2c7c616daa9b3b5ff434e7380c9938e1e2cc93ca2"
+    },
+    {
+      "path": "services/core-api/src/research_observatory_core/document_revision_repository.py",
+      "sha256": "e6dada145fbc11566e75381b8ce61522904f3a33a2d05904f9929e99f103bcce"
+    },
+    {
+      "path": "services/core-api/src/research_observatory_core/document_reprocessing.py",
+      "sha256": "9661cf987d92eef90c37344ae9443bdddbd376c5628b564bd5c35636e70b860b"
+    }
+  ],
+  "preservedFinal29Failures": [
+    {
+      "path": "artifacts/tmp/W2.final-wave-exit-never-started29-01.f01/commands/20.result.json",
+      "sha256": "0249c54ba7f086a393c6b477d476cd53c730c68bd9a01b545df14b05a7f23c1f",
+      "candidateCommit": "f62f171c44f5fbe5f92ccb973533b353ba470995",
+      "status": "FAIL",
+      "exitCode": 1
+    },
+    {
+      "path": "artifacts/tmp/W2.final-wave-exit-never-started29-01.f01/commands/21.result.json",
+      "sha256": "dc0e8b9f5a5714c019ea015b223f34ae10b96d984a60a30e211e54689ab7def4",
+      "candidateCommit": "f62f171c44f5fbe5f92ccb973533b353ba470995",
+      "status": "FAIL",
+      "exitCode": 1
+    }
+  ],
+  "executionTruth": "Fresh focused outcomes at actual committed correction only, with authored synthetic parser output and original protected repository fixture/in-memory keys. No real Windows DPAPI/native UI/parser/model/principal, whole-profile/Wave/release result is inferred. Original broad documents/anchors adverses remain, and original task/source history is not relabeled.",
+  "verificationSelection": {
+    "selectedCommandIds": [
+      "documents:unit",
+      "documents:anchors",
+      "foundation:quality"
+    ],
+    "riskAnalysis": "Exactly three original later-head viewer/context/citation methods are affected by strict explicit reprocessing. Preserve original subcases and choose two-file format/lint plus unchanged complete configured source types with fresh cache. All actual tracked/fixture/runtime inputs remain held until four owned jobs drain. Canonical IDs identify affected selections only.",
+    "deferred": [
+      "Other unresolved W2 findings and real Native/principal/parser/model/packaging checks remain separate. No unchanged whole-Wave review or full-profile PASS is inferred."
+    ]
+  },
+  "correctiveIntegration": {
+    "originSha256": "5c7e4e19a4ea321dfd53ba3b4a4c40f2719e4c12991dd34692fcb4757369231a",
+    "authorityPreserved": true,
+    "affectedChecks": [
+      ".venv/Scripts/python.exe -B -s -m unittest -v tests.documents.test_viewer_anchor_context.ViewerAnchorContextTests.test_later_accepted_head_does_not_move_a_viewer_link tests.anchors.test_anchor_resolution.AnchorResolutionTests.test_exact_context_metadata_and_old_revision_survive_reopen_without_pdf_or_ir tests.anchors.test_anchor_resolution.AnchorResolutionTests.test_citation_links_preserve_exact_canonical_candidates_and_uncertainty",
+      ".venv/Scripts/python.exe -B -s -m ruff format --check --config pyproject.toml -- tests/documents/test_viewer_anchor_context.py tests/anchors/test_anchor_resolution.py",
+      ".venv/Scripts/python.exe -B -s -m ruff check --config pyproject.toml -- tests/documents/test_viewer_anchor_context.py tests/anchors/test_anchor_resolution.py",
+      ".venv/Scripts/python.exe -B -s -m mypy --config-file pyproject.toml --no-namespace-packages --cache-dir artifacts/tmp/W2.remaining-corrections-batch-01/W2.C24.T01.viewer-anchor-focused-01/mypy-cache -- @artifacts/tmp/W2.remaining-corrections-batch-01/W2.C24.T01.viewer-anchor-focused-01/source-files.args"
+    ],
+    "reusedEvidence": [
+      "Original CAP-05.S06.T03 DONE/independent approval remains historical authority; no ancestral execution relabeled fresh."
+    ],
+    "rationale": "Same actual original source fence causes both stale setup routes. Existing explicit acceptance helper restores setup while retaining original guarantees, IDs, failure/uncertainty assertions and authoring identities. Independent actual correction review remains required before normal Wave resume."
+  }
+}

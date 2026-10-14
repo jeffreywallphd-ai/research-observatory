@@ -6043,7 +6043,7 @@ waves:
       id: W2.C24.T01
       wave: W2
       priority: P0
-      status: IN_PROGRESS
+      status: REVIEW
       owner: codex-w2-implementation
       branch: codex/w2-implementation
       base_sha: ea0c4cb6bdf4aebb81f7ab1cd54ebc9c0ad7ff59
@@ -6053,12 +6053,17 @@ waves:
         claimed_at: '2026-10-14T13:12:58+00:00'
         expires_at: '2026-10-14T21:12:58+00:00'
       started_at: '2026-10-14T13:12:58+00:00'
-      updated_at: '2026-10-14T13:12:58+00:00'
+      updated_at: '2026-10-14T13:42:05+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
-      evidence: []
-      verification_state: null
+      evidence:
+      - type: criterion-manifest
+        path: artifacts/evidence/W2.C24.T01.R01.json
+        sha256: ab956fbd17a18a8f6c7aaf0ae3b77c6d3273bb352d6fb79a9b95e43f5e838c2c
+        commit: 01ada170798e9f4159ce306f7e2268642896e018
+        recorded_at: '2026-10-14T13:42:05+00:00'
+      verification_state: passed
       review:
         reviewer: null
         result: null
@@ -6067,7 +6072,55 @@ waves:
       review_control:
         version: 1
         attempts: []
-        current_submission: null
+        current_submission:
+          id: R01
+          submitted_by: codex-w2-implementation
+          submitted_at: '2026-10-14T13:42:05+00:00'
+          candidate_commit: 01ada170798e9f4159ce306f7e2268642896e018
+          base_commit: ea0c4cb6bdf4aebb81f7ab1cd54ebc9c0ad7ff59
+          branch: codex/w2-implementation
+          evidence_reference:
+            type: criterion-manifest
+            path: artifacts/evidence/W2.C24.T01.R01.json
+            sha256: ab956fbd17a18a8f6c7aaf0ae3b77c6d3273bb352d6fb79a9b95e43f5e838c2c
+            commit: 01ada170798e9f4159ce306f7e2268642896e018
+            recorded_at: '2026-10-14T13:42:05+00:00'
+          acceptance_criteria_sha256: 5b2333078d3f1b0c98ff2ec26db1377fcafed7be0e0ce7d1c74b8ae28073db58
+          changed_paths:
+          - docs/planning-implementation-plan.md
+          - planning/backlog.yaml
+          - planning/review-site/index.html
+          - planning/review-site/manifest.json
+          - planning/review-site/waves/W2.html
+          - planning/status-summary.md
+          - tests/anchors/test_anchor_resolution.py
+          - tests/documents/test_viewer_anchor_context.py
+          selected_checks:
+          - .venv/Scripts/python.exe -B -s -m unittest -v tests.documents.test_viewer_anchor_context.ViewerAnchorContextTests.test_later_accepted_head_does_not_move_a_viewer_link
+            tests.anchors.test_anchor_resolution.AnchorResolutionTests.test_exact_context_metadata_and_old_revision_survive_reopen_without_pdf_or_ir
+            tests.anchors.test_anchor_resolution.AnchorResolutionTests.test_citation_links_preserve_exact_canonical_candidates_and_uncertainty
+          - .venv/Scripts/python.exe -B -s -m ruff format --check --config pyproject.toml -- tests/documents/test_viewer_anchor_context.py
+            tests/anchors/test_anchor_resolution.py
+          - .venv/Scripts/python.exe -B -s -m ruff check --config pyproject.toml -- tests/documents/test_viewer_anchor_context.py
+            tests/anchors/test_anchor_resolution.py
+          - .venv/Scripts/python.exe -B -s -m mypy --config-file pyproject.toml --no-namespace-packages --cache-dir artifacts/tmp/W2.remaining-corrections-batch-01/W2.C24.T01.viewer-anchor-focused-01/mypy-cache
+            -- @artifacts/tmp/W2.remaining-corrections-batch-01/W2.C24.T01.viewer-anchor-focused-01/source-files.args
+          deferred_checks:
+          - Other unresolved W2 findings and real Native/principal/parser/model/packaging checks remain separate. No unchanged
+            whole-Wave review or full-profile PASS is inferred.
+          selection_rationale: Exactly three original later-head viewer/context/citation methods are affected by strict explicit
+            reprocessing. Preserve original subcases and choose two-file format/lint plus unchanged complete configured source
+            types with fresh cache. All actual tracked/fixture/runtime inputs remain held until four owned jobs drain. Canonical
+            IDs identify affected selections only.
+          selection_sha256: e687e831e16a57c3d91c30aed91b47c7804355d4b3e4e61d4f156491d1b162c0
+          prior_attempt_id: null
+          open_finding_ids: []
+          root_cause_analysis: null
+          selected_command_ids:
+          - documents:unit
+          - documents:anchors
+          - foundation:quality
+          packet_sha256: 8f8c8754ea7142bd6512f0d2b7db60002814702890b56547d96d1cc06a64ceca
       correction:
         origin_task_id: CAP-05.S06.T03
         origin_commit: 873d2fd8ff55b2db02367e3bcf1e8e0613bf6d46

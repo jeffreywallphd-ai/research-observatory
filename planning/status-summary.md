@@ -1,7 +1,7 @@
 ---
 document_type: generated-backlog-status-summary
 source: planning/backlog.yaml
-source_sha256: 286388e0e380cc0df3686f9981ff8278192813e427d3c399e3cbd4063c105044
+source_sha256: fa2d7eaa7ca3f87fb0c0a03174c7032eab8b498d1b63f8d38a69f695e057d6a1
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -985,7 +985,7 @@ Append-only rounds remain distinct from the current latest-review projection. Le
 | `W2.C21.T01` | `append-only v1` | 1 | `-` | approved / agent:/root/c21_closeout_review | - |
 | `W2.C22.T01` | `append-only v1` | 1 | `-` | approved / agent:/root/storage_profile_review | - |
 | `W2.C23.T01` | `append-only v1` | 1 | `-` | approved / agent:/root/storage_profile_review | - |
-| `W2.C24.T01` | `append-only v1` | 0 | `-` | - / - | - |
+| `W2.C24.T01` | `append-only v1` | 0 | `R01` | - / - | - |
 ## Wave progress
 
 | Wave | Pre-Wave approval | Campaign | Qualification | Approved slices | Done tasks | Exit gate |
@@ -1049,7 +1049,7 @@ Append-only rounds remain distinct from the current latest-review projection. Le
 
 | Task | Status | Owner | Branch |
 |---|---|---|---|
-| `W2.C24.T01` Implement parser upgrade comparison and stale propagation | `IN_PROGRESS` | codex-w2-implementation | `codex/w2-implementation` |
+| `W2.C24.T01` Implement parser upgrade comparison and stale propagation | `REVIEW` | codex-w2-implementation | `codex/w2-implementation` |
 
 ## Linked corrective tasks
 
@@ -1169,5 +1169,5 @@ Original tasks and approvals remain unchanged.
 
 ### W2.C24.T01 — Implement parser upgrade comparison and stale propagation
 
-**Status:** `IN_PROGRESS`. **Original task:** `CAP-05.S06.T03`. **Latest review:** `-`.
+**Status:** `REVIEW`. **Original task:** `CAP-05.S06.T03`. **Latest review:** `-`.
 
