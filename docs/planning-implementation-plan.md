@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: a7d7ca694ac81620df2977720ecb0a33b1211bfef90bd024b75e89b9741bc4e7
+source_sha256: 83b3323a065fe0b317b36ddd19273a65186a91a909a27eadf759ae47b3208968
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -5356,7 +5356,7 @@ Original tasks and approvals remain unchanged.
 
 ### W2.C26.T01 — Build corpus provenance and source-overlap reports
 
-**Status:** `REVIEW`. **Original task:** `CAP-04.S04.T03`. **Latest review:** `-`.
+**Status:** `DONE`. **Original task:** `CAP-04.S04.T03`. **Latest review:** `approved`.
 
 **Reproduction:** Actual original3 generated-client methods fail Node24.19 ERR_MODULE_NOT_FOUND for extensionless corpus-reports/generated import from current generated.ts. First report import arose6dec under S04T03; actual canonical completed origin is snapshot963b/latestapproved6da2, not that introduction commit.
 
@@ -5373,9 +5373,11 @@ Original tasks and approvals remain unchanged.
 - tests/reconciliation/verify-version-client.mjs
 #### Review history — W2.C26.T01
 
-**Review mode:** `append-only v1` / 0 completed round(s)
+**Review mode:** `append-only v1` / 1 completed round(s)
 
-**Current immutable submission awaiting review:** `R01` / packet SHA-256 `026c09ea19279c03cefbf0021d32d658699b45d3bcad3d388775d3281842dc28`
+##### Round R01
+
+**Immutable submission packet:** `R01` / packet SHA-256 `026c09ea19279c03cefbf0021d32d658699b45d3bcad3d388775d3281842dc28`
 
 - Candidate / base / branch: `588dd5f3545d069b795998b3daaebc620c378a9a` / `684f31f5c4df5ff545a406558e1e14b1db5f1793` / `codex/w2-implementation`
 - Submitted by / at: codex-w2-implementation / `2026-10-14T22:00:06+00:00`
@@ -5389,7 +5391,23 @@ Original tasks and approvals remain unchanged.
 - Prior round / replayed open findings: `-` / -
 - Root-cause escalation: -
 
-**Current latest-review projection:** `-` by - at `-`
+**Disposition / reviewer / time:** `approved` / agent:/root/storage_profile_review / `2026-10-14T22:26:51+00:00`
+
+**Immutable review ledger:** `artifacts/evidence/W2.C26.T01.review-R01.json` / `9bbee9cbfb45d1d1ff473ee9bf0c6020b3716710654717a7f2bae05f3d936cb1`
+
+**Review notes:** -
+
+**Findings opened:**
+
+- None
+
+**Prior finding closures:**
+
+- None
+
+**Current immutable submission awaiting review:** None
+
+**Current latest-review projection:** `approved` by agent:/root/storage_profile_review at `2026-10-14T22:26:51+00:00`
 
 **Latest notes:** -
 
