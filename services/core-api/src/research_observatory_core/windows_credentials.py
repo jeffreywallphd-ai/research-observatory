@@ -267,7 +267,7 @@ def _recovery_check_acl(handle: int, sid: str, *, exact: bool) -> None:
             if exact:
                 if trustee not in (sid, "S-1-5-18") or mask != 0x001F01FF or trustee in permitted:
                     raise RecoveryVerificationProblem("ownership-security-invalid")
-            elif trustee not in (sid, "S-1-5-18", "S-1-5-32-544") and mask & 0x500D0156:
+            elif trustee not in (sid, "S-1-5-18", "S-1-5-32-544", "S-1-3-4") and mask & 0x500D0156:
                 raise RecoveryVerificationProblem("ownership-parent-write-authority")
             permitted.add(trustee)
         if exact and permitted != {sid, "S-1-5-18"}:
