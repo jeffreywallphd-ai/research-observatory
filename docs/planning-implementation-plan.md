@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: e302166abc7ce332b6a35f1f988aebead7799398ed6bc8f7f4a1d1e3a8052252
+source_sha256: 286388e0e380cc0df3686f9981ff8278192813e427d3c399e3cbd4063c105044
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -5231,6 +5231,34 @@ Original tasks and approvals remain unchanged.
 **Current immutable submission awaiting review:** None
 
 **Current latest-review projection:** `approved` by agent:/root/storage_profile_review at `2026-10-14T12:51:49+00:00`
+
+**Latest notes:** -
+
+**Currently open findings:** -
+
+### W2.C24.T01 — Implement parser upgrade comparison and stale propagation
+
+**Status:** `IN_PROGRESS`. **Original task:** `CAP-05.S06.T03`. **Latest review:** `-`.
+
+**Reproduction:** Retained final29 viewer later-head and two anchor resolution/citation methods fail while creating a second accepted parser head through direct repository.accept. The first strict replacement fence is absent at original S06T03 basec707 and first186d11 parent, present at first186d11 and approvedb7e; both fixture blobs remain unchanged. Preserve original viewer authoring CAP-05.S04.T02 and anchors authoring CAP-05.S03.T03 separately from this actual common current-W2 regression origin.
+
+**Inherited criteria:**
+
+- A parser upgrade cannot silently replace accepted structure; changed anchors are reported; accepted reparse marks only affected evidence and outputs stale.
+- Automated tests cover the expected path and at least one material failure or boundary condition.
+- Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.
+
+**Bounded changed paths:**
+
+- tests/anchors/test_anchor_resolution.py
+- tests/documents/test_viewer_anchor_context.py
+#### Review history — W2.C24.T01
+
+**Review mode:** `append-only v1` / 0 completed round(s)
+
+**Current immutable submission awaiting review:** None
+
+**Current latest-review projection:** `-` by - at `-`
 
 **Latest notes:** -
 

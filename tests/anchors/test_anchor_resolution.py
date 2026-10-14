@@ -100,7 +100,7 @@ class AnchorResolutionTests(unittest.TestCase):
         self.assertEqual(self.anchor.target.source, result.source)
         self.assertEqual("unverified", result.scholarly_verification)
         later = self.f.f.parse("Later accepted synthetic source text.")
-        self.f.f.repository.accept(self.f.f.command(later, expected=self.revision))
+        self.f.f.reprocess_uncorrected_fixture(later, self.f.f.repository.read(self.revision))
         self.assertEqual(result, self.resolve(self.f.reopen()))
 
     def test_authenticated_broken_context_commits_exact_stale_dependents_once_after_reopen(self):
@@ -190,7 +190,7 @@ class AnchorResolutionTests(unittest.TestCase):
 
             retained = self.f.f.parse(change=rich)
             expected = self.f.f.repository.history(self.f.accepted.document_id)[-1]
-            accepted = self.f.f.repository.accept(self.f.f.command(retained, expected=expected))
+            accepted = self.f.f.reprocess_uncorrected_fixture(retained, self.f.f.repository.read(expected))
             citation = accepted.structure.citations[0]
             links = self.f.reopen().citation_links(accepted.revision_id, citation.citation_id, limit=1)
             self.assertEqual(resolution, links.resolution)

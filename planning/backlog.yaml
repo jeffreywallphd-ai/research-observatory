@@ -6016,6 +6016,86 @@ waves:
           leaves plus two-file format/lint and configured source types prove only affected test/API fixture/static-source
           risks. No production, native implementation, fixture, rights/security authority, deadline, framework, reference,
           criteria or historical evidence edit; real Native cleanup/principal and broader unresolved W2 proof remain separate.
+    - title: Implement parser upgrade comparison and stale propagation
+      objective: Batch reparse preview, old/new structure diff, anchor migration candidates, acceptance, and dependent-output
+        invalidation.
+      dependencies:
+      - CAP-05.S06.T02
+      acceptance_criteria:
+      - A parser upgrade cannot silently replace accepted structure; changed anchors are reported; accepted reparse marks
+        only affected evidence and outputs stale.
+      - Automated tests cover the expected path and at least one material failure or boundary condition.
+      - Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.
+      verification_commands:
+      - python tools/verify.py --profile documents
+      - python tools/verify.py --profile service
+      - python tools/verify.py --profile e2e-local
+      deployment_profiles:
+      - LOC
+      - LAB
+      - ALL
+      platform_targets:
+      - windows-x64
+      verification_profiles:
+      - documents
+      - service
+      - e2e-local
+      id: W2.C24.T01
+      wave: W2
+      priority: P0
+      status: IN_PROGRESS
+      owner: codex-w2-implementation
+      branch: codex/w2-implementation
+      base_sha: ea0c4cb6bdf4aebb81f7ab1cd54ebc9c0ad7ff59
+      worktree: .
+      lease:
+        claimed_by: codex-w2-implementation
+        claimed_at: '2026-10-14T13:12:58+00:00'
+        expires_at: '2026-10-14T21:12:58+00:00'
+      started_at: '2026-10-14T13:12:58+00:00'
+      updated_at: '2026-10-14T13:12:58+00:00'
+      completed_at: null
+      blocker: null
+      implementation_notes: ''
+      evidence: []
+      verification_state: null
+      review:
+        reviewer: null
+        result: null
+        reviewed_at: null
+        notes: null
+      review_control:
+        version: 1
+        attempts: []
+        current_submission: null
+      correction:
+        origin_task_id: CAP-05.S06.T03
+        origin_commit: 873d2fd8ff55b2db02367e3bcf1e8e0613bf6d46
+        paused_state_sha256: b433937424fdc141ada899cd32acd3858867b5f267614a65cc11678a6b5b5e94
+        origin_sha256: 5c7e4e19a4ea321dfd53ba3b4a4c40f2719e4c12991dd34692fcb4757369231a
+        origin_contract_sha256: bc8b8f8d7525ca4d8d4d6259aa928dc42a9e42d61eeff4cc82fe8fe5c860d666
+        origin_history_sha256: 85a1b7caec9f8bd0b8be97d8ede97900482c0b73eda18dd04fe6f255cba2acb7
+        origin_amendment_id: null
+        authority_sha256: c92ce7e9bac1b8a49d13d649a5980fea61e56ee953d238c734d8ff5f04f4c9e5
+        spec:
+          path: artifacts/evidence/W2.C24.T01.spec.json
+          sha256: 5f77cd4f320c80cadb75812f0f886d5014bc2edc012957a4a8c8f1cf64d4db94
+          commit: ea0c4cb6bdf4aebb81f7ab1cd54ebc9c0ad7ff59
+        reproduction: Retained final29 viewer later-head and two anchor resolution/citation methods fail while creating a
+          second accepted parser head through direct repository.accept. The first strict replacement fence is absent at original
+          S06T03 basec707 and first186d11 parent, present at first186d11 and approvedb7e; both fixture blobs remain unchanged.
+          Preserve original viewer authoring CAP-05.S04.T02 and anchors authoring CAP-05.S03.T03 separately from this actual
+          common current-W2 regression origin.
+        changed_paths:
+        - tests/anchors/test_anchor_resolution.py
+        - tests/documents/test_viewer_anchor_context.py
+        impact_analysis: 'Use exactly reviewed fixture-only proposals: seed later accepted heads through existing reprocess_uncorrected_fixture
+          with the actual current base, explicit comparison, unchanged zero-obligation guard, empty reconciliation, confirmation/graph-bound
+          acceptance. Retain all17 viewer and31 anchor assertion calls, old immutable IDs/revisions/rights/context, reopen
+          behavior and all three citation uncertainty/pagination subcases. No production/fence/helper/fixture/parser/model/reference/authority/criterion/history
+          change or direct bypass. Fresh three original methods, two-file format/lint and unchanged configured source types
+          plus independent corrective integration prove the affected setup restoration only; prior task approvals remain historical
+          and broader original adverse findings remain open.'
     resume_records:
     - id: W2.R01
       wave_id: W2

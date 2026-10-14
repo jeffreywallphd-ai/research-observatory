@@ -49,7 +49,8 @@ class ViewerAnchorContextTests(unittest.TestCase):
 
     def test_later_accepted_head_does_not_move_a_viewer_link(self):
         later = self.f.f.parse("Changed later synthetic source representation.")
-        accepted = self.f.f.repository.accept(self.f.f.command(later, expected=self.selector.normalized_revision_id))
+        base = self.f.f.repository.read(self.selector.normalized_revision_id)
+        accepted = self.f.f.reprocess_uncorrected_fixture(later, base)
         self.assertNotEqual(self.selector.normalized_revision_id, accepted.revision_id)
         result = self.viewer().resolve_anchor(self.selector, anchor_id=self.anchor.anchor_id)
         self.assertEqual(self.anchor.target, result.target)
