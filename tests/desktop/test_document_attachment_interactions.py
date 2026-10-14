@@ -733,7 +733,7 @@ class DocumentAttachmentInteractionTests(unittest.TestCase):
             panel.get_by_role("button", name="Retry same attachment decision").wait_for()
             panel.get_by_role("button", name="Retry same attachment decision").click()
             panel.get_by_text("Native attachment response reported", exact=False).wait_for()
-            self.assertTrue(panel.get_by_role("button", name="Open in Document Reader · pending viewer").is_disabled())
+            self.assertTrue(panel.get_by_role("button", name="Open in Document Reader", exact=True).is_disabled())
             requests = page.evaluate("window.__ATTACH_TEST__")
             self.assertEqual("choose", requests["begin"][0]["mode"])
             self.assertEqual(version["versionId"], requests["begin"][0]["selection"]["versionId"])
