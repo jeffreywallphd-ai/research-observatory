@@ -1,0 +1,114 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "independent-committed-finite-four-foundation-test-input-disposition",
+  "reviewer": "agent:/root/security_resolution_review",
+  "result": "APPROVED_FINITE_FOUNDATION_TEST_INPUT_RESTORATION_AND_AFFECTED_PROOF",
+  "blockingFindings": [],
+  "candidateCommit": "e03ee569d95667c9b82a8f34e7dd1ebd5c15ebad",
+  "baseCommit": "97a81b58e18b54c58fdd847853acd382f8cc64fe",
+  "evidenceIntroductionCommit": "06bec277793b08266c398feae2a06a87d19f117e",
+  "evidence": {
+    "path": "artifacts/evidence/W2.foundation-test-inputs-04.evidence-01.json",
+    "sha256": "91e6f302f98d898f4f5242afe7b241cc68ddeda9094c2230b7b57b52814a6ccb"
+  },
+  "authority": {
+    "path": "artifacts/evidence/W2.completion-corrections-batch-02.decision-01.json",
+    "sha256": "738a9ed22b4da46a88c47c64b07607bbf1b27839e3bf657e7c7712763d76e9c2",
+    "scope": "FOUNDATION-TEST-INPUTS-4"
+  },
+  "reviewScope": "Only the four approved foundation test-input restorations, original seven findings and three material denials, four-file quality and actual configured typing tail. Prior independent component/source judgments are authenticated and reused; no whole foundation, historical Git or Wave exit audit is repeated.",
+  "appliedInputs": [
+    {
+      "path": "tests/foundation/test_adr_check.py",
+      "sha256": "0c283f2220b9408dd5c44fe48ff3b60b628ac125552528bed0f90d9bb5678602"
+    },
+    {
+      "path": "tests/foundation/test_ui_reference_check.py",
+      "sha256": "c45fb53742c3b32988eafdc933b8c318728449c8d637b269c8ddab5bc2f6c559"
+    },
+    {
+      "path": "tests/foundation/test_planctl_amendments.py",
+      "sha256": "12b38d67374eee4068d43c53b555d6db41b5595a0da11a287436a539c21d0b80"
+    },
+    {
+      "path": "tests/foundation/test_ui_change_gate.py",
+      "sha256": "6e0cacd71cc64adc886a9b8672f84ec1089bcff39532ba4be0dcf41a590f88fe"
+    }
+  ],
+  "reusedIndependentJudgments": [
+    {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/foundation-test-input-restoration-01/independent-proposal-readiness-01.json",
+      "sha256": "1beee42bc0d8bb9dad8e95adb74d9e7421cd421b3246548e8b649d369bcd94f9",
+      "remit": "Exact approved expected data and confined historical/synthetic fixture restoration, preserved assertions and validators."
+    },
+    {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/foundation-test-inputs-focused-source-readiness-02.json",
+      "sha256": "2ac046aef35aec705f331fb8f73a2bbc3e61b4533bf5e51cf147d5d572f903ec",
+      "remit": "Different source review of actual collector02 and two complete-AST-equivalent formatted payloads, with prior formatting failure preserved."
+    },
+    {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/foundation-selected-passing-rows-actual-assessment-01.json",
+      "sha256": "9a6c3db6bf086cb7cd725df3bdcc0383e121cc60aab0040db4807c009a0c9bb6",
+      "remit": "Actual passing-row/raw/drain/selected-input composition under genuine different source approval; disclosed formatter/preparation authorship is preserved."
+    },
+    {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/foundation-type-tail-01/independent-source-readiness-01.json",
+      "sha256": "57ffbce2394af3137fda294e703121d83f9e6205a919970bb16fe087cf958a21",
+      "remit": "Different source review of configured type-only tail and honest C21 reporter composition, unchanged checker settings."
+    }
+  ],
+  "actualEvidenceAssessment": {
+    "sourceCommitIsSoleFourPathDirectChildOfBase": true,
+    "sourceCommitBlobsAndCurrentBytesMatchAppliedHashes": true,
+    "committedEvidenceBlobMatchesExactPublicDigest": true,
+    "originalReceipt": {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/foundation-test-inputs-focused-02/receipt.json",
+      "sha256": "c3e8b395231a1ea2943c113235c4becb4039da11b2d9106e97cc49b4ba9e1904",
+      "status": "FAIL",
+      "inputsStable": true,
+      "ownedJobsEmpty": 5
+    },
+    "retainedPassingRows": [
+      "seven-original-findings: actual seven named bodies, Ran7, finalOK, zero skips",
+      "three-material-denials: actual three named bodies, Ran3, finalOK, zero skips",
+      "affected-format: exact four delivered source paths, exit0",
+      "affected-lint: exact four delivered source paths, exit0"
+    ],
+    "freshTypeTail": {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/foundation-type-tail-01/actual-type-tail-01/receipt.json",
+      "sha256": "5dbbc571aa8f358055d66b28282d07b531361c0d831731a4b838f6fe9957624f",
+      "candidateCommit": "e03ee569d95667c9b82a8f34e7dd1ebd5c15ebad",
+      "configuredSourceCount": 734,
+      "exitCode": 0,
+      "seconds": 22.676152799998817,
+      "inputsStable": true,
+      "drained": true,
+      "activeProcesses": 0,
+      "cleanupState": "EMPTY_CONFIRMED",
+      "raw": {
+        "path": "artifacts/tmp/W2.remaining-corrections-batch-01/foundation-type-tail-01/actual-type-tail-01/configured-source-types.raw.log",
+        "sha256": "c642e5b33b5e7d157e7b2362ef94a292d50ab8abbba717375ca1704ad53de820",
+        "observation": "Success: no issues found in 734 source files"
+      }
+    },
+    "reporterProvenance": "C21 actually serialized the exact reviewed report03 after successful typing. Public evidence preserves old four rows at their actual e03 source/durations/raw digests, explicitly labels fresh typing and portable display argv, and leaves original parent FAIL unchanged.",
+    "qualificationMeaning": "Seven approved input-defect findings are closed by their original method bodies plus material denials, affected quality and actual configured typing.734 is analysis source context, not734 newly executed tests. No full foundation/profile PASS is inferred."
+  },
+  "materialDisposition": [
+    "Explicit accepted ADR and UI reference expectations now correspond to actual approved sources; exact-set/determinism/integrity assertions remain.",
+    "Historical ECR/A05/GOV26/C10 tests use the approved confined historical snapshot inputs and synthetic live parent lease while current validators and hostile substitution/order/ownership denials remain intact. No W1 task reopen, authority hash rewrite, new reference or framework implementation occurred.",
+    "Initial11 local import-untyped errors arose from incomplete analysis context and stay adverse. The unchanged configured734-source mypy command passed with its ordinary configuration and flags; no ignores, stubs or checker relaxation were added.",
+    "Immutable original full736 FAIL, formatting failure and failed isolated typing remain preserved. Unchanged passing method bodies were not replayed for better reporting. Remaining product/native/dependency/security/Wave exit proof is outside this finite disposition."
+  ],
+  "limits": {
+    "reviewerAuthoredDeliveredSourceOrCollectors": false,
+    "testsOrTypingReplayed": false,
+    "installedRuntimeRehashed": false,
+    "fullHistoryAuditRepeated": false,
+    "fullFoundationPassClaimed": false,
+    "oldFailuresRelabeled": false,
+    "waveApproved": false,
+    "releaseApproved": false,
+    "localIntegration": "Root may integrate this finite unit under the normal local-main procedure; this disposition is not W2 release."
+  }
+}
