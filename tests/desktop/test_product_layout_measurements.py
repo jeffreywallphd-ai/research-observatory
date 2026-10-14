@@ -17,7 +17,6 @@ from desktop_app_check import (  # noqa: E402
     choose_fixture_directory,
     contrast_ratio,
     core_workflow_catalog_json,
-    inline_product_index,
 )
 from product_layout_measurements import (  # noqa: E402
     PANEL_FLOW_GEOMETRY,
@@ -48,8 +47,7 @@ def _serve_exact_shipping_fixture(route: Any, document: bytes) -> None:
     if (
         not url.path.startswith("/")
         or relative not in artifacts
-        or relative != "index.html"
-        and not relative.startswith("assets/")
+        or (relative != "index.html" and not relative.startswith("assets/"))
         or any(part in ("", ".", "..") for part in Path(relative).parts)
         or "%" in relative
         or "\\" in relative
