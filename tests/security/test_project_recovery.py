@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import ctypes
 import hashlib
 import io
 import json
@@ -17,6 +18,7 @@ import unittest
 import uuid
 from collections.abc import Callable
 from contextlib import contextmanager
+from ctypes import wintypes
 from dataclasses import asdict, replace
 from pathlib import Path
 from typing import BinaryIO, Literal, cast
@@ -383,6 +385,141 @@ class WindowsWitnessStoreTests(unittest.TestCase):
             0,
             hashlib.sha256(b"").hexdigest(),
         )
+
+    @contextmanager
+    def _raw_acl_directory(self, path: Path):
+        """Actual directory metadata handle; bypass no OS access decision."""
+        api = windows_credentials_module._recovery_windows_api()
+        handle = api["CreateFileW"](str(path), 0x00020000, 7, None, 3, 0x02200000, None)
+        self.assertNotIn(handle, (None, 0, ctypes.c_void_p(-1).value))
+        try:
+            yield handle
+        finally:
+            self.assertTrue(api["CloseHandle"](handle))
+
+    def _directory_acl(self, path: Path) -> tuple[str, int, tuple[tuple[int, int, int, str], ...]]:
+        api = windows_credentials_module._recovery_windows_api()
+        owner, dacl, descriptor = ctypes.c_void_p(), ctypes.c_void_p(), ctypes.c_void_p()
+        with self._raw_acl_directory(path) as handle:
+            self.assertEqual(
+                0,
+                api["GetSecurityInfo"](
+                    handle, 1, 5, ctypes.byref(owner), None, ctypes.byref(dacl), None, ctypes.byref(descriptor)
+                ),
+            )
+            try:
+                assert dacl.value is not None
+                control, revision = wintypes.WORD(), wintypes.DWORD()
+                self.assertTrue(
+                    api["GetSecurityDescriptorControl"](descriptor, ctypes.byref(control), ctypes.byref(revision))
+                )
+                entries: list[tuple[int, int, int, str]] = []
+                for index in range(ctypes.c_ushort.from_address(dacl.value + 4).value):
+                    ace = ctypes.c_void_p()
+                    self.assertTrue(api["GetAce"](dacl, index, ctypes.byref(ace)))
+                    assert ace.value is not None
+                    ace_type, flags = ctypes.string_at(ace, 2)
+                    entries.append(
+                        (
+                            ace_type,
+                            flags,
+                            ctypes.c_uint32.from_address(ace.value + 4).value,
+                            windows_credentials_module._recovery_sid_text(ace.value + 8),
+                        )
+                    )
+                return windows_credentials_module._recovery_sid_text(owner.value), control.value, tuple(entries)
+            finally:
+                api["LocalFree"](descriptor)
+
+    def _directory_with_acl(self, name: str, dacl: str) -> Path:
+        """Disposable real Windows descriptor; no production ACL is rewritten."""
+        path = Path(self.temporary.name).resolve() / name
+        api = windows_credentials_module._recovery_windows_api()
+        descriptor = ctypes.c_void_p()
+        self.assertTrue(
+            api["ConvertStringSecurityDescriptorToSecurityDescriptorW"](
+                f"O:{self.store.sid}D:P{dacl}", 1, ctypes.byref(descriptor), None
+            )
+        )
+        try:
+            attributes = windows_credentials_module._RecoverySecurityAttributes(
+                ctypes.sizeof(windows_credentials_module._RecoverySecurityAttributes), descriptor, False
+            )
+            self.assertTrue(api["CreateDirectoryW"](str(path), ctypes.byref(attributes)))
+        finally:
+            api["LocalFree"](descriptor)
+        return path
+
+    def test_standard_windows_private_parent_preserves_acl_and_round_trips_witness(self) -> None:
+        parent = Path(self.temporary.name).resolve() / "ordinary-private-parent"
+        parent.mkdir(mode=0o700)
+        original_acl = self._directory_acl(parent)
+        self.assertEqual(self.store.sid, original_acl[0])
+        self.assertTrue(any(entry[3] == "S-1-3-4" for entry in original_acl[2]))
+        store = WindowsProjectRecoveryWitnessStore(parent / "private-witnesses")
+        witness = replace(self.witness, canonical_root=str(parent))
+        exclusion = store.acquire_project(PROJECT_ID)
+        try:
+            store.issue(witness)
+            exclusion.validate()
+        finally:
+            exclusion.close()
+        fresh = WindowsProjectRecoveryWitnessStore(store.root)
+        self.assertEqual(
+            witness, fresh.read(PROJECT_ID, self.instance, "created", token_sha256=witness.recovery_token_sha256)
+        )
+        self.assertEqual(original_acl, self._directory_acl(parent))
+        for path in (store.root, *store.root.iterdir()):
+            with windows_credentials_module._recovery_open(path, store.sid, directory=path.is_dir()):
+                pass
+
+    def test_owner_rights_parent_still_denies_foreign_writer_and_wrong_owner_binding(self) -> None:
+        sid = self.store.sid
+        parent = self._directory_with_acl(
+            "foreign-writable-parent", f"(A;;FA;;;{sid})(A;;FA;;;S-1-3-4)(A;;FA;;;S-1-1-0)"
+        )
+        with self.assertRaises(RecoveryVerificationProblem) as denied:
+            WindowsProjectRecoveryWitnessStore(parent / "private-witnesses")
+        self.assertEqual("ownership-parent-write-authority", denied.exception.reason_code)
+        self.assertFalse((parent / "private-witnesses").exists())
+        own = self._directory_with_acl("own-parent", f"(A;;FA;;;{sid})(A;;FA;;;S-1-3-4)")
+        with self._raw_acl_directory(own) as handle, self.assertRaises(RecoveryVerificationProblem) as denied:
+            # Actual held object with deliberately wrong SID: predicate proof, not another login.
+            windows_credentials_module._recovery_check_acl(handle, "S-1-5-18", exact=False)
+        self.assertEqual("ownership-security-invalid", denied.exception.reason_code)
+
+    def test_exact_witness_acl_rejects_owner_rights_substitution(self) -> None:
+        child = self._directory_with_acl("owner-rights-child", "(A;;FA;;;S-1-3-4)(A;;FA;;;SY)")
+        with self._raw_acl_directory(child) as handle, self.assertRaises(RecoveryVerificationProblem) as denied:
+            windows_credentials_module._recovery_check_acl(handle, self.store.sid, exact=True)
+        self.assertEqual("ownership-security-invalid", denied.exception.reason_code)
+
+    def test_owner_rights_does_not_admit_unknown_object_or_callback_ace_forms(self) -> None:
+        """Controlled ACE-type seam on a real held ACL; no extra-principal claim."""
+        parent = self._directory_with_acl("unsupported-ace-parent", f"(A;;FA;;;{self.store.sid})(A;;FA;;;S-1-3-4)")
+        api = windows_credentials_module._recovery_windows_api()
+        real_get_ace = api["GetAce"]
+        buffers: list[ctypes.Array[ctypes.c_char]] = []
+        for unsupported_type in (3, 5, 9):
+            with self.subTest(ace_type=unsupported_type):
+
+                def unsupported_ace(dacl, index, result, ace_type=unsupported_type):
+                    if not real_get_ace(dacl, index, result):
+                        return False
+                    pointer = ctypes.cast(result, ctypes.POINTER(ctypes.c_void_p))
+                    address = pointer.contents.value
+                    assert address is not None
+                    size = ctypes.c_ushort.from_address(address + 2).value
+                    copied = ctypes.create_string_buffer(ctypes.string_at(address, size))
+                    copied[0] = bytes([ace_type])
+                    buffers.append(copied)
+                    pointer.contents.value = ctypes.addressof(copied)
+                    return True
+
+                with self._raw_acl_directory(parent) as handle, patch.dict(api, GetAce=unsupported_ace):
+                    with self.assertRaises(RecoveryVerificationProblem) as denied:
+                        windows_credentials_module._recovery_check_acl(handle, self.store.sid, exact=False)
+                    self.assertEqual("ownership-security-invalid", denied.exception.reason_code)
 
     def test_persistent_exclusion_denies_second_store_and_reopens_same_resource_after_release(self) -> None:
         first = self.store.acquire_project(PROJECT_ID)
