@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: a7ff118cebbbaa0e840dbd82875c36b6fae7687ae04f353aefab5ce749d0da4d
+source_sha256: 5a55c1d831e0a44ce92831ac3b9fd84ba0d97f8a4c33b3172b5838f8d3cc7d25
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -5061,6 +5061,33 @@ Original tasks and approvals remain unchanged.
 **Current latest-review projection:** `approved` by agent:/root/a06_exit_review at `2026-10-14T04:14:14+00:00`
 
 **Latest notes:** Independent W2.C20.T01 R01 review approves the exact committed four-file migration expected-data restoration and its affected integration. Actual frozen450f5 packet, e27 evidence, inherited278db origin snapshot, three criteria, candidate/delivery inventories, fresh eight-method/no-skip and four-file quality/734-source type proof authenticate. No criterion-bound blocker remains. Original broad failures, initial format failure and unexecuted initial quality checks remain adverse. This task-only disposition does not approve a full profile, Slice/checkpoint/Wave/G2/release or claim fresh real-DPAPI/Native/model proof.
+
+**Currently open findings:** -
+
+### W2.C21.T01 — Build corpus provenance and source-overlap reports
+
+**Status:** `IN_PROGRESS`. **Original task:** `CAP-04.S04.T03`. **Latest review:** `-`.
+
+**Reproduction:** The retained W2 final29 report tests fail three original populated v18/v19 migration/recovery methods: current plans stop at 0020 and current recovery-contract assertions expect target20 although approved additive migrations reach28. Replay all original source-path and interruption subcases. Preserve the literal v18/v19 predecessors and independently pin the existing immutable v20 recovery snapshot, rather than treating current evolving recovery data as its frozen predecessor.
+
+**Inherited criteria:**
+
+- Counts reconcile with canonical corpus state; users can drill from aggregates to records; reports identify unavailable or unknown data rather than imputing it.
+- Automated tests cover the expected path and at least one material failure or boundary condition.
+- Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.
+
+**Bounded changed paths:**
+
+- tests/reports/test_migration.py
+#### Review history — W2.C21.T01
+
+**Review mode:** `append-only v1` / 0 completed round(s)
+
+**Current immutable submission awaiting review:** None
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
 
 **Currently open findings:** -
 

@@ -5550,6 +5550,85 @@ waves:
           security authority, governed experience, framework implementation, release criterion or original task history changes.
           Only the eight affected original methods and file-scoped quality checks are selected for fresh corrective integration;
           the existing broad qualification failures remain adverse. Independent commit-bound correction review is required.
+    - title: Build corpus provenance and source-overlap reports
+      objective: Reports of source contribution, duplicate overlap, missing identifiers, OA/full-text status, years, venues,
+        disciplines, languages, and discovery routes.
+      dependencies:
+      - CAP-04.S04.T02
+      acceptance_criteria:
+      - Counts reconcile with canonical corpus state; users can drill from aggregates to records; reports identify unavailable
+        or unknown data rather than imputing it.
+      - Automated tests cover the expected path and at least one material failure or boundary condition.
+      - Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.
+      verification_commands:
+      - python tools/verify.py --profile desktop
+      - python tools/verify.py --profile service
+      - python tools/verify.py --profile search
+      deployment_profiles:
+      - LOC
+      - LAB
+      - ALL
+      platform_targets:
+      - windows-x64
+      verification_profiles:
+      - desktop
+      - service
+      - search
+      id: W2.C21.T01
+      wave: W2
+      priority: P0
+      status: IN_PROGRESS
+      owner: codex-w2-implementation
+      branch: codex/w2-implementation
+      base_sha: 9647906654758d0946e91a6cc2f9650cb83289a1
+      worktree: .
+      lease:
+        claimed_by: codex-w2-implementation
+        claimed_at: '2026-10-14T04:41:23+00:00'
+        expires_at: '2026-10-14T12:41:23+00:00'
+      started_at: '2026-10-14T04:41:23+00:00'
+      updated_at: '2026-10-14T04:41:23+00:00'
+      completed_at: null
+      blocker: null
+      implementation_notes: ''
+      evidence: []
+      verification_state: null
+      review:
+        reviewer: null
+        result: null
+        reviewed_at: null
+        notes: null
+      review_control:
+        version: 1
+        attempts: []
+        current_submission: null
+      correction:
+        origin_task_id: CAP-04.S04.T03
+        origin_commit: db25c8c74e2432b6267d687edcfddae31dc070eb
+        paused_state_sha256: b433937424fdc141ada899cd32acd3858867b5f267614a65cc11678a6b5b5e94
+        origin_sha256: 8c15764812e8e7b7bb594c0c098405d25c19881e5a4018c79657827fa2b05975
+        origin_contract_sha256: 73ca190063e629e5f6b9799a0c6155094936bf3f302ef9ef2541562d5931ac9d
+        origin_history_sha256: 10203b0522a99b3751852d5a6204e5ed3b1f817d0ff314c2df4acc73894ff23e
+        origin_amendment_id: null
+        authority_sha256: c92ce7e9bac1b8a49d13d649a5980fea61e56ee953d238c734d8ff5f04f4c9e5
+        spec:
+          path: artifacts/evidence/W2.C21.T01.spec.json
+          sha256: 81b675cc9dadfe438100803eb4dfd3e3152fa89763d4c0b4df86631377a750ad
+          commit: 9647906654758d0946e91a6cc2f9650cb83289a1
+        reproduction: 'The retained W2 final29 report tests fail three original populated v18/v19 migration/recovery methods:
+          current plans stop at 0020 and current recovery-contract assertions expect target20 although approved additive migrations
+          reach28. Replay all original source-path and interruption subcases. Preserve the literal v18/v19 predecessors and
+          independently pin the existing immutable v20 recovery snapshot, rather than treating current evolving recovery data
+          as its frozen predecessor.'
+        changed_paths:
+        - tests/reports/test_migration.py
+        impact_analysis: Restore three explicit current migration suffixes through0028 and retain all original v18/v19 hashes/rows/source
+          histories/backfill/rights/ciphertext/verified backup/failure/rollback/retry/reopen assertions. Pin existing committed
+          v20 snapshot bytes and exact20 schema identity separately; compare the current21-28 recovery map to eight explicit
+          reviewed expected version/hash pairs with duplicate/missing/extra guards. No production, migration, immutable fixture/snapshot/contract,
+          authority, reference, framework or release-criterion edit. Fresh three original methods and one-file format/lint
+          with configured source types plus independent correction/integration review prove this bounded restoration; broad
+          original FAIL remains adverse.
     resume_records:
     - id: W2.R01
       wave_id: W2

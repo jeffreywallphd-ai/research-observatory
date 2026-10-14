@@ -190,7 +190,20 @@ class CorpusReportMigrationTests(unittest.TestCase):
                 promote_to_frozen_v19(database, project)
                 planned = runner.plan_database_migration(database, expected_project_id=project)
                 self.assertEqual(19, planned.source_schema_version)
-                self.assertEqual((v0020_corpus_source_projection.revision,), planned.migration_ids)
+                self.assertEqual(
+                    (
+                        v0020_corpus_source_projection.revision,
+                        "0021_plugin_grants",
+                        "0022_document_attachments",
+                        "0023_attachment_operations",
+                        "0024_open_access_acquisition",
+                        "0025_document_intake_recovery",
+                        "0026_document_revisions",
+                        "0027_revision_invalidations",
+                        "0028_document_enrichments",
+                    ),
+                    planned.migration_ids,
+                )
 
                 def interrupt(step: str, expected: str = failpoint) -> None:
                     if step == expected:
@@ -205,7 +218,20 @@ class CorpusReportMigrationTests(unittest.TestCase):
                     self.assertEqual(storage.CORPUS_REPORT_SCHEMA_SHA256, _schema_sha256(predecessor))
                     self.assertEqual((19,), predecessor.execute("PRAGMA user_version").fetchone())
                 completed = runner.migrate_database(database, expected_project_id=project)
-                self.assertEqual((v0020_corpus_source_projection.revision,), completed.migration_ids)
+                self.assertEqual(
+                    (
+                        v0020_corpus_source_projection.revision,
+                        "0021_plugin_grants",
+                        "0022_document_attachments",
+                        "0023_attachment_operations",
+                        "0024_open_access_acquisition",
+                        "0025_document_intake_recovery",
+                        "0026_document_revisions",
+                        "0027_revision_invalidations",
+                        "0028_document_enrichments",
+                    ),
+                    completed.migration_ids,
+                )
                 assert completed.backup_relative_path is not None
                 with closing(sqlite3.connect(database.parent.parent / completed.backup_relative_path)) as backup:
                     self.assertEqual(storage.CORPUS_REPORT_SCHEMA_SHA256, _schema_sha256(backup))
@@ -232,15 +258,49 @@ class CorpusReportMigrationTests(unittest.TestCase):
             hashlib.sha256(v19_raw).hexdigest(),
         )
         frozen_v19 = json.loads(v19_raw)
+        v20_raw = (REPO / "packages/contracts/storage/sqlite-migration-recovery-v20.snapshot.json").read_bytes()
+        self.assertEqual(
+            "3e7dc972cd46605668cf7252946cd4104cfa02c5dee4a92be5ec8423e7f2edd0",
+            hashlib.sha256(v20_raw).hexdigest(),
+        )
+        frozen_v20 = json.loads(v20_raw)
         current = json.loads(
             (REPO / "packages/contracts/storage/sqlite-migration-recovery.schema.json").read_text(encoding="utf-8")
         )
+        expected_targets = {
+            21: "c0aa9be9916fbe517f1ae94a86aeac13f19a92ec366b1a4d4d816bff614da034",
+            22: "32dc9a2b87efdd8b69b92271b8b1841e40da07bbc86e9943f59dbe5784f2617e",
+            23: "0d5eb89a3975aa1d95fa4d190ce8debfee2ae43d390669ce8b3acb5f10a1a41e",
+            24: "8078a6f7132200e6cf9e729f116c7b8ad6cd7c2bcf61d56f337e594dc7552a97",
+            25: "5c2090bb9586117f8f0e521efcb74ab10bd64a855fdcdc943035385cd1742951",
+            26: "39e3fdd0fffedd2b226f74ebf48190efdecc0e53b9376dfce30e924de2206f2c",
+            27: "6dd6d3f62c0236dd3f810a01ac7b88370ba17b483cf3612fde34b82b29ade913",
+            28: "3f29b29cface11d5355f704c943459243fc7f9d0baf07725747c73547b1e4cb6",
+        }
+        current_targets: dict[int, str] = {}
+        for rule in current["allOf"]:
+            version = rule.get("if", {}).get("properties", {}).get("targetSchemaVersion", {}).get("const")
+            if version is None:
+                continue
+            consequent = rule["then"]
+            for clause in (consequent, *consequent.get("allOf", [])):
+                target_hash = clause.get("properties", {}).get("targetSchemaSha256", {}).get("const")
+                if target_hash is not None:
+                    self.assertNotIn(version, current_targets)
+                    current_targets[version] = target_hash
+        self.assertEqual(expected_targets, current_targets)
+        self.assertEqual(list(expected_targets.values()), current["properties"]["targetSchemaSha256"]["enum"])
         self.assertEqual(18, frozen["properties"]["targetSchemaVersion"]["const"])
         self.assertEqual(19, frozen_v19["properties"]["targetSchemaVersion"]["const"])
-        self.assertEqual(20, current["properties"]["targetSchemaVersion"]["const"])
+        self.assertEqual(20, frozen_v20["properties"]["targetSchemaVersion"]["const"])
+        self.assertEqual([21, 22, 23, 24, 25, 26, 27, 28], current["properties"]["targetSchemaVersion"]["enum"])
         self.assertEqual(SCHEMA_SHA256, frozen["properties"]["targetSchemaSha256"]["const"])
         self.assertEqual(storage.CORPUS_REPORT_SCHEMA_SHA256, frozen_v19["properties"]["targetSchemaSha256"]["const"])
-        self.assertEqual(storage.EXPECTED_SCHEMA_SHA256, current["properties"]["targetSchemaSha256"]["const"])
+        self.assertEqual(
+            "c6bdef5f65d5f688747a1effed96f3cd79556e37891946e1985841bce4ae1cd6",
+            frozen_v20["properties"]["targetSchemaSha256"]["const"],
+        )
+        self.assertEqual(storage.EXPECTED_SCHEMA_SHA256, current_targets[28])
 
     def test_populated_v18_import_and_connector_histories_survive_v19_with_verified_backup(self) -> None:
         for kind in ("import-corpus", "connector-corpus"):
@@ -252,7 +312,18 @@ class CorpusReportMigrationTests(unittest.TestCase):
                 planned = runner.plan_database_migration(fixture.database, expected_project_id=project)
                 self.assertEqual(18, planned.source_schema_version)
                 self.assertEqual(
-                    (v0019_corpus_reports.revision, v0020_corpus_source_projection.revision),
+                    (
+                        v0019_corpus_reports.revision,
+                        v0020_corpus_source_projection.revision,
+                        "0021_plugin_grants",
+                        "0022_document_attachments",
+                        "0023_attachment_operations",
+                        "0024_open_access_acquisition",
+                        "0025_document_intake_recovery",
+                        "0026_document_revisions",
+                        "0027_revision_invalidations",
+                        "0028_document_enrichments",
+                    ),
                     planned.migration_ids,
                 )
                 completed = runner.migrate_database(fixture.database, expected_project_id=project)
