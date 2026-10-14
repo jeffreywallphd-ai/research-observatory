@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 09d4dd873405ee53b845c6d0cfceb94601efb489fb1bc37096e9eaf54ff6a06c
+source_sha256: b7f3dc7ff54223cd58f7c0f20e09e2852bdc2fce24e53f148cbb44d420344c4a
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -5066,7 +5066,7 @@ Original tasks and approvals remain unchanged.
 
 ### W2.C21.T01 — Build corpus provenance and source-overlap reports
 
-**Status:** `REVIEW`. **Original task:** `CAP-04.S04.T03`. **Latest review:** `-`.
+**Status:** `DONE`. **Original task:** `CAP-04.S04.T03`. **Latest review:** `approved`.
 
 **Reproduction:** The retained W2 final29 report tests fail three original populated v18/v19 migration/recovery methods: current plans stop at 0020 and current recovery-contract assertions expect target20 although approved additive migrations reach28. Replay all original source-path and interruption subcases. Preserve the literal v18/v19 predecessors and independently pin the existing immutable v20 recovery snapshot, rather than treating current evolving recovery data as its frozen predecessor.
 
@@ -5081,9 +5081,11 @@ Original tasks and approvals remain unchanged.
 - tests/reports/test_migration.py
 #### Review history — W2.C21.T01
 
-**Review mode:** `append-only v1` / 0 completed round(s)
+**Review mode:** `append-only v1` / 1 completed round(s)
 
-**Current immutable submission awaiting review:** `R01` / packet SHA-256 `d0a87ec14089618605ad0076904a64707255a3024880f60def01b4b6860c80e3`
+##### Round R01
+
+**Immutable submission packet:** `R01` / packet SHA-256 `d0a87ec14089618605ad0076904a64707255a3024880f60def01b4b6860c80e3`
 
 - Candidate / base / branch: `4938494aa74ab9e07500efbfbdda91a31d0afe8d` / `9647906654758d0946e91a6cc2f9650cb83289a1` / `codex/w2-implementation`
 - Submitted by / at: codex-w2-implementation / `2026-10-14T05:13:21+00:00`
@@ -5097,9 +5099,25 @@ Original tasks and approvals remain unchanged.
 - Prior round / replayed open findings: `-` / -
 - Root-cause escalation: -
 
-**Current latest-review projection:** `-` by - at `-`
+**Disposition / reviewer / time:** `approved` / agent:/root/c21_closeout_review / `2026-10-14T10:26:16+00:00`
 
-**Latest notes:** -
+**Immutable review ledger:** `artifacts/evidence/W2.C21.T01.review-R01.json` / `34f71965a1b0a1da53524023116a207b0ceb117719a159c28f40b0ce8cb2e76c`
+
+**Review notes:** Independent focused W2.C21.T01 R01 review approves only the exact committed report migration expected-data restoration and affected integration. No criterion-bound blocker remains. Historical approvals and adverse results remain immutable; broader actual W2 qualification and unresolved findings retain their own gates.
+
+**Findings opened:**
+
+- None
+
+**Prior finding closures:**
+
+- None
+
+**Current immutable submission awaiting review:** None
+
+**Current latest-review projection:** `approved` by agent:/root/c21_closeout_review at `2026-10-14T10:26:16+00:00`
+
+**Latest notes:** Independent focused W2.C21.T01 R01 review approves only the exact committed report migration expected-data restoration and affected integration. No criterion-bound blocker remains. Historical approvals and adverse results remain immutable; broader actual W2 qualification and unresolved findings retain their own gates.
 
 **Currently open findings:** -
 
