@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 58dbf1d1b12ae1a61bc3f933367338c462c14365f61ab46c25aa60bd516137cf
+source_sha256: e302166abc7ce332b6a35f1f988aebead7799398ed6bc8f7f4a1d1e3a8052252
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -5180,7 +5180,7 @@ Original tasks and approvals remain unchanged.
 
 ### W2.C23.T01 — Create import preview, mapping, and conflict UI
 
-**Status:** `REVIEW`. **Original task:** `CAP-04.S01.T02`. **Latest review:** `-`.
+**Status:** `DONE`. **Original task:** `CAP-04.S01.T02`. **Latest review:** `approved`.
 
 **Reproduction:** Retained final29 service cancellation fails by asserting immediate cancelled even though the approved cooperative summary workflow can first return cancelling within its existing 5000 ms grace period. Retained final29 application-lock source check fails an obsolete immediate-first-statement assumption introduced before CAP-04.S01.T02's checkpoint05 native-stop/drain callback. Both compatibility regressions have the same actual current-W2 original task; preserve every original adverse and task identity.
 
@@ -5196,9 +5196,11 @@ Original tasks and approvals remain unchanged.
 - tests/service/test_import_review_api.py
 #### Review history — W2.C23.T01
 
-**Review mode:** `append-only v1` / 0 completed round(s)
+**Review mode:** `append-only v1` / 1 completed round(s)
 
-**Current immutable submission awaiting review:** `R01` / packet SHA-256 `b30df05522bc495cb4acaeaf342f1623f4ab796351e351199e0436fc0b0fd3be`
+##### Round R01
+
+**Immutable submission packet:** `R01` / packet SHA-256 `b30df05522bc495cb4acaeaf342f1623f4ab796351e351199e0436fc0b0fd3be`
 
 - Candidate / base / branch: `9d6c43db22818971ca55cac421f3aea8c2171b7a` / `ddbf4799d800a14dd62580c25890a003b8b04ad6` / `codex/w2-implementation`
 - Submitted by / at: codex-w2-implementation / `2026-10-14T12:31:53+00:00`
@@ -5212,7 +5214,23 @@ Original tasks and approvals remain unchanged.
 - Prior round / replayed open findings: `-` / -
 - Root-cause escalation: -
 
-**Current latest-review projection:** `-` by - at `-`
+**Disposition / reviewer / time:** `approved` / agent:/root/storage_profile_review / `2026-10-14T12:51:49+00:00`
+
+**Immutable review ledger:** `artifacts/evidence/W2.C23.T01.review-R01.json` / `1e6ad9bb9578d651ae8cd507fa1e2990881b0f4992406eb4f22f6eb8a8e3307d`
+
+**Review notes:** -
+
+**Findings opened:**
+
+- None
+
+**Prior finding closures:**
+
+- None
+
+**Current immutable submission awaiting review:** None
+
+**Current latest-review projection:** `approved` by agent:/root/storage_profile_review at `2026-10-14T12:51:49+00:00`
 
 **Latest notes:** -
 

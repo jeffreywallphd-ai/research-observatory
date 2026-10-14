@@ -1,0 +1,124 @@
+{
+  "task_id": "W2.C23.T01",
+  "attempt_id": "R01",
+  "candidate_commit": "9d6c43db22818971ca55cac421f3aea8c2171b7a",
+  "base_commit": "ddbf4799d800a14dd62580c25890a003b8b04ad6",
+  "reviewed_state_commit": "9e717aa67cc118d5550892b7855e0051f6e621b7",
+  "reviewer": "agent:/root/storage_profile_review",
+  "result": "approved",
+  "reviewed_at": "2026-10-14T12:51:23.782021+00:00",
+  "packet_sha256": "b30df05522bc495cb4acaeaf342f1623f4ab796351e351199e0436fc0b0fd3be",
+  "evidence_sha256": "c8d7ec0c7c704b09479477c4f6f04d163ca8434cc3b503958a95f6c4ba970856",
+  "acceptance_criteria_sha256": "15ee48a45cf083283a8e716af99da052949cc64f73724a31810bd6a93b293770",
+  "selection_sha256": "b5f20834af0f88dee5df5cebe20703a68370da7bccb362ca15ac7e9f77d5284d",
+  "findings": [],
+  "closures": [],
+  "acceptance_reviews": [
+    {
+      "criterion_index": 1,
+      "check_ids": [
+        "import-cancellation-regression",
+        "native-lock-source-regression"
+      ],
+      "result": "satisfied",
+      "assessment": "Exact reviewed API fixture preserves one same-preview/revision cancellation request and polls only existing cancelling state to exact cancelled within unchanged5000ms deadline, retaining terminal countsNone, preview availability and foreign-job/invalid-input denial. Native static source method preserves local-window/no-Core authority and bridges, with exactly one balanced cleanup callback/no direct lock acquisition. Product/native/mapping/report behavior remains unchanged and original CAP-04.S01.T02 approval is historical authority only; no full original journey replay inferred."
+    },
+    {
+      "criterion_index": 2,
+      "check_ids": [
+        "import-cancellation-regression",
+        "native-lock-source-regression"
+      ],
+      "result": "satisfied",
+      "assessment": "Both original selected methods genuinely pass with unique canonical name/Ran1/finalOK/no skips and unchanged denial/source command subcases. API output includes three INFO logs before its standaloneok; the independently reviewed private serializer02 correctly reports that existing stdout shape and keeps Native inlineok. Five actual owned jobs exit0/drainEMPTY/active0; original F15/F28 FAILs and original private serializer01 AssertionError remain preserved."
+    },
+    {
+      "criterion_index": 3,
+      "check_ids": [
+        "import-cancellation-regression",
+        "native-lock-source-regression",
+        "affected-format",
+        "affected-lint",
+        "configured-source-types"
+      ],
+      "result": "satisfied",
+      "assessment": "Exact two committed test-only restorations match source-reviewed formattede86/d323 bytes. All79 original API assertions plus two timer/status bounds and55 original native assertions remain except replaced obsolete adjacency witness. Fresh two-file Ruff format/lint and configured734-source types pass with unchanged settings/private cache. Eight source-candidate paths comprise these two admitted tests plus six ordinary tracking/derived metadata; no product/framework/permission/reference/deadline/criterion/history mutation. Current raw/producer/config/fixture/runtime input closure and original failures are authenticated without execution replay."
+    }
+  ],
+  "corrective_integration": {
+    "evidence_sha256": "c8d7ec0c7c704b09479477c4f6f04d163ca8434cc3b503958a95f6c4ba970856",
+    "authority_preserved": true,
+    "affected_integration_reviewed": true,
+    "notes": "Exact APIe86 and natived323 test restorations preserve inherited CAP-04.S01.T02 authority/original snapshot4951. Fresh original cancellation/denial and static source/bridge methods plus two-file format/lint/configured734-source types close the affected compatibility regressions. API uses plaintext-development SQLite/in-memory object keys; Native leaf is static callback/local-window/no-Core proof. No actual Native UI/transitive-lock/DPAPI/SQLCipher/principal/model/full-profile/Wave/G2/release claim."
+  },
+  "verification_selection": {
+    "selected_command_ids": [
+      "service:unit",
+      "security-local:unit",
+      "foundation:quality"
+    ],
+    "assessment": "Only correction-affected API observation/denial, source callback authority, assertions, quality and actual evidence/delivery reviewed. Existing original/source findings are authenticated; no unchanged full exit/history/runtime review or execution replay."
+  },
+  "evidence_authentication": {
+    "actual_review_observations": {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/w2-c23-actual-affected-review-observations-01.json",
+      "sha256": "e16a2f6c3188005355650838d0d85b264f46747b884682f80b961905e7099acd"
+    },
+    "receipt": {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/W2.C23.T01.focused-01/receipt.json",
+      "sha256": "d3f52d1ebac53224e52b36033cdbdd2e1e599f412108ae67ed6a75f680a8a91d"
+    },
+    "producer_sha256": "f4fc5484260dd7b348fa3d0a107fb3054c0b52f218f1b1e42858aee61c3d4418",
+    "actual_methods": 2,
+    "skips": 0,
+    "configured_type_sources": 734,
+    "held_input_count": 14029,
+    "captured_original_runtime_pins_equal": 7456,
+    "five_owned_jobs_empty_active0": true,
+    "original_adverse_preserved": true,
+    "private_reporting_failure": {
+      "path": "artifacts/tmp/W2.c23-evidence-reporting-adverse-01.json",
+      "sha256": "3f14f74429f0f4dcffa736844ba715b603c1ba3f9b1e0aabffc29f0efe852e69",
+      "meaning": "Private serialization failure only, before any public evidence/submission. Original proof stayed successful and was not rerun; original writer3dfc and genuine output retained."
+    },
+    "reporting_successor_readiness": {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/w2-c23-reporting-successor-source-readiness-01.json",
+      "sha256": "96e3bb21dc867b64c59279796f921d29723b0b32131daaa237f2223981218269"
+    },
+    "interleaved_api_output_truth": "One unique canonical API header, actual INFO logs then standaloneok, Ran1/finalOK/no skips; native remains inlineok. Exact private reporter02 changes only this output guard; no tests repeated."
+  },
+  "frozen_submission_authentication": {
+    "delivery_commit": "9e717aa67cc118d5550892b7855e0051f6e621b7",
+    "delivery_parent": "9d6c43db22818971ca55cac421f3aea8c2171b7a",
+    "delivery_changed_paths": [
+      "artifacts/evidence/W2.C23.T01.R01.json",
+      "docs/planning-implementation-plan.md",
+      "planning/backlog.yaml",
+      "planning/review-site/manifest.json",
+      "planning/review-site/waves/W2.html",
+      "planning/status-summary.md"
+    ],
+    "public_manifest_git_and_worktree_bytes_exact": true,
+    "frozen_packet_validation_errors": [],
+    "original_origin_snapshot_unchanged": true,
+    "source_runtime_dependency_delta_in_delivery": false
+  },
+  "independence": {
+    "taskOwner": false,
+    "sourceAuthor": false,
+    "productSourceEdits": false,
+    "qualifyingTestsRerunByReviewer": false,
+    "onlyIgnoredReviewAndUnrelatedPreparationAuthored": true
+  },
+  "proof_limits": [
+    "API/worker fixture uses explicit plaintext-development SQLite and in-memory object keys; native leaf is bounded static source/bridge/callback proof. No real Windows DPAPI/SQLCipher/native UI/transitive lock/principal/model or complete-profile/Wave/release outcome.",
+    "Independent review is only this correction affected contract/assertion/denial/source/evidence integration. Existing original/task/semantic/source-ready findings are authenticated and reused; no full exit/history/runtime audit or new optional requirement."
+  ],
+  "scope_limits": {
+    "task_only": true,
+    "wave_approved": false,
+    "release_approved": false,
+    "qualifying_checks_rerun_by_reviewer": false,
+    "installed_runtime_rehash": false
+  }
+}
