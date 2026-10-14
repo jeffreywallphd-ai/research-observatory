@@ -1,0 +1,154 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "finite-preauthorized-existing-c25-locator-and-proof-supplement",
+  "status": "APPROVED",
+  "preparedBy": "agent:/root/c21_closeout_review",
+  "prospectiveApprovedBy": "human:repository-owner",
+  "preauthorizationSHA256": "34e2e3c175dc9309080182e0673f776055b1cc3ba78639475c09ec54408d7d5f",
+  "originalDecision": {
+    "path": "artifacts/evidence/W2.completion-corrections-batch-02.decision-01.json",
+    "sha256": "738a9ed22b4da46a88c47c64b07607bbf1b27839e3bf657e7c7712763d76e9c2"
+  },
+  "originalPublicScope": {
+    "path": "artifacts/evidence/W2.desktop-input-restoration-01.scope-decision-01.json",
+    "sha256": "8322eb37714fff1942e9385d933a82fb228e4f76e39aa72eb13037a66a0a580a"
+  },
+  "originalTestSourceSHA256": {
+    "tests/desktop/test_ui_conformance.py": "b211b423bc4a97e498cef0162c717e73adfb006e392c0b1b40df766f1b581782",
+    "tests/desktop/test_product_layout_measurements.py": "f71a30b6b4d46e0670408c3c3b8782306eabc223680c2dea4fd82c5830fc2edf",
+    "tests/desktop/test_document_attachment_interactions.py": "c900698ed9d83eee6583eb2ff155083bb0761031e25e18ec68712688fc32fbbb",
+    "tests/desktop/test_desktop_app_check.py": "3037c0f0855d6eaa68cc8a139eca1e2aef5bcbd24c87e4fa28cb495036820f70"
+  },
+  "testSourceSHA256": {
+    "tests/desktop/test_ui_conformance.py": "b211b423bc4a97e498cef0162c717e73adfb006e392c0b1b40df766f1b581782",
+    "tests/desktop/test_product_layout_measurements.py": "f71a30b6b4d46e0670408c3c3b8782306eabc223680c2dea4fd82c5830fc2edf",
+    "tests/desktop/test_document_attachment_interactions.py": "a4a3c2ae853a1e244c4d4c620c754b6ef13cfcca456d49945d6aec612c7d5430",
+    "tests/desktop/test_desktop_app_check.py": "3037c0f0855d6eaa68cc8a139eca1e2aef5bcbd24c87e4fa28cb495036820f70"
+  },
+  "normalTaskId": "W2.C25.T01",
+  "originTaskId": "W2.A01.T02",
+  "originSHA256": "3a9dabb33cd0f6c70d7842792941f98fad8722d8c80c87c2c93630717ca39a04",
+  "changedPaths": [
+    "tests/desktop/test_document_attachment_interactions.py"
+  ],
+  "locator": {
+    "proposal": {
+      "path": "artifacts/tmp/W2.C25.T01.attachment-reader-locator.proposed.py",
+      "sha256": "a4a3c2ae853a1e244c4d4c620c754b6ef13cfcca456d49945d6aec612c7d5430"
+    },
+    "originalSourceSHA256": "c900698ed9d83eee6583eb2ff155083bb0761031e25e18ec68712688fc32fbbb",
+    "currentSourceSHA256": "a4a3c2ae853a1e244c4d4c620c754b6ef13cfcca456d49945d6aec612c7d5430",
+    "delta": "Exactly one disabled-reader button locator changes to current exact label; original assertTrue(is_disabled), all148 calls/body/deadlines remain.",
+    "originalSourceRetained": {
+      "path": "artifacts/tmp/W2.C25.T01.attachment-reader-locator.original.py",
+      "sha256": "c900698ed9d83eee6583eb2ff155083bb0761031e25e18ec68712688fc32fbbb"
+    },
+    "predicateLimit": "Preserve the actual inherited is_disabled assertion at its authored fixture state. No claim that processing universally disables Reader; fresh5 actual execution must establish this selected state."
+  },
+  "producer": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/desktop-input-consumers-01/collect-canonical-07.py",
+    "sha256": "10815dba95f41863c138dfb4b3890e207e83bc8e0e25b899d87a3619c52c3f20"
+  },
+  "preparation": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/desktop-input-consumers-01/execution-preparation-07.json",
+    "sha256": "924bb77ce9f8f1ad39b7f95b07d6123f0cd24f597df70eb8553ece7a0b0c8399"
+  },
+  "qualityCollector": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/desktop-input-consumers-01/quality-04.py",
+    "sha256": "5bb6c594c8960fc3eba792b026a140a5a0517a85d6155a8444b5dacde1170cf8"
+  },
+  "evidenceSerializer": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/desktop-input-consumers-01/evidence-04.py",
+    "sha256": "8756d4f67e54320816e86ff0feaa75ed77ca39e4f318a3890f2cc2b692635741"
+  },
+  "qualityPreparation": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/desktop-input-consumers-01/quality-evidence-preparation-04.json",
+    "sha256": "adec02329a60b2818b86766d725b77e935c9b39839938c1d6d82ab3c32b39dc4"
+  },
+  "sourceReadiness": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/desktop-input-consumers-01/independent-remaining-five-source-readiness-07.json",
+    "sha256": "1676304f1c62ed873358f64f9a4c9f0a42143bc590db824b9df2fdd882116f57"
+  },
+  "qualitySourceReadiness": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/desktop-input-consumers-01/independent-remaining-five-quality-evidence-source-readiness-04.json",
+    "sha256": "f393eacc1b68d07686c28c0d66fb191c5ba91dec7f1818e61243423714a58fda"
+  },
+  "recordingReadiness": null,
+  "reuseRecords": {
+    "fixtures48": {
+      "path": "artifacts/tmp/W2.desktop-input-restoration-01.f02/fixtures48/receipt.json",
+      "sha256": "fab16434ba98bc3270e1511c41f1230e98ea11fccd6ac93a523f6e4e6aee6901"
+    },
+    "negative3": {
+      "path": "artifacts/tmp/W2.desktop-input-restoration-01.f02/restorations8/receipt.json",
+      "sha256": "88329448a1ff1a6e504cbdbb3a19cb21834aef7e523ecffdcd558da871bbf942"
+    },
+    "assessment48": {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/w2-c25-fixtures48-actual-reporting-output-assessment-01.json",
+      "sha256": "003e9ff382a7f04d3d38d4c99bd2c6a7ce080f12d37ea962aa9211a56062fd68"
+    }
+  },
+  "reuseCandidate": "1a254248c381d509fc666dc3af6b6c6f6ed75e26",
+  "reuseClassification": "Prior48 fixture bodies and3 UiConformance denials do not consume/import the attachment test module. Its single disabled-button locator edit is an unconsumed conservative whole-repository hold change for these51. All consumed source/fixtures/runtime/live/reference/environment inputs must actually match at the later candidate; source-readiness review authenticates this finite classification. Prior candidate/raw/FAIL parents remain1a; no result is retargeted fresh.",
+  "freshSelectedCases": [
+    "tests.desktop.test_document_attachment_interactions.DocumentAttachmentInteractionTests.test_selected_version_native_intents_denial_cancel_and_return",
+    "tests.desktop.test_product_layout_measurements.ProductLayoutMeasurementsTests.test_actual_application_settings_label_and_keyboard_skip_contrast",
+    "tests.desktop.test_product_layout_measurements.ProductLayoutMeasurementsTests.test_actual_product_flow_and_sidebar_with_keyboard_scrolling",
+    "tests.desktop.test_desktop_app_check.DevelopmentEntryTests.test_actual_cli_processes_script_arguments_as_embedded_origin",
+    "tests.desktop.test_desktop_app_check.DevelopmentEntryTests.test_actual_cli_default_negative_control_and_duplicate_flag"
+  ],
+  "intendedPublicationPath": "artifacts/evidence/W2.C25.T01.locator-and-proof-supplement-02.json",
+  "actualIntroductionCommit": null,
+  "decisionMeaning": "Apply existing actual prospective34e/conforming738a authority to the smallest ordinary persisted-tree representation correction. Preserve original554/06/03 authority/source/readiness/adverse and actual1a reused51 identities. No prior approval is edited, execution retargeted, new owner/ECR/framework or criteria/policy change inferred. Actual different incremental source and recording readiness/publication remain required.",
+  "scope": "One existing normal C25 attachment locator only; bounded5 fresh original methods plus51 reused by actual unchanged consumed-input classification, corrected raw completion reporting and exactly3 authored PNG output classification. No product/reference/criterion/assertion/deadline/security or shared framework change, new task/ECR/owner question or51 body replay.",
+  "sharedFrameworkChangeGranted": false,
+  "criteriaChangeGranted": false,
+  "productChangeGranted": false,
+  "executed": false,
+  "taskApproved": false,
+  "waveApproved": false,
+  "releaseApproved": false,
+  "locatorSourceReadiness": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/desktop-input-consumers-01/independent-attachment-reader-locator-source-readiness-01.json",
+    "sha256": "9041adc71da3ee535ef736080ebceb53bb764db070baf2f195a26da2c28f960b"
+  },
+  "actualLocatorSourceIntroductionCommit": "4df27c7de5cb02856cd1118f4dcdd3caa4c917b5",
+  "supersedes": {
+    "path": "artifacts/evidence/W2.C25.T01.locator-and-proof-supplement-01.json",
+    "sha256": "554d70d3e8499a046089fa12ac51d98cb3327eda30e9e02f21ada999498289aa"
+  },
+  "persistedTreeComparisonSuccessor": {
+    "predecessorProducer": {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/desktop-input-consumers-01/collect-canonical-06.py",
+      "sha256": "7989fa52ed8521845519158f2617445aa16bc939747abf4d11bf697324117b34"
+    },
+    "predecessorPreparation": {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/desktop-input-consumers-01/execution-preparation-06.json",
+      "sha256": "c1cc1f31fece43762b50a79ea8b41f92eb3a70b9ed2363a7741c81a43012bdaf"
+    },
+    "supersedes": {
+      "path": "artifacts/evidence/W2.C25.T01.locator-and-proof-supplement-01.json",
+      "sha256": "554d70d3e8499a046089fa12ac51d98cb3327eda30e9e02f21ada999498289aa"
+    },
+    "sourcePatch": {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/desktop-input-consumers-01/persisted-tree-tuples-07.patch",
+      "sha256": "c2687dfb9384991c6dfde88fa9c075c24ea16ead9bf4cde5564e4de4e3dacb2d"
+    },
+    "adverse": {
+      "path": "artifacts/tmp/W2.C25.T01.remaining5-03.raw.log",
+      "sha256": "94f9eb172729d46d6a6f6c465d7d2ca8171ee31a9e6cee2f582c09d5d7c06daa"
+    },
+    "adverseCandidate": "66570b",
+    "adverseMeaning": "Original06 stopped before jobs/tests/holds because in-memory tree identity tuples were compared to persisted JSON identity lists. Exclusive f03/remaining5 empty remains preserved; not a product/test failure.",
+    "delta": "Normalize only current data, current selected runtime membership and current fixture operands at the three comparisons against persisted JSON. Lossless JSON encode/decode preserves every hash/path/value/identity; live in-memory before/after guards remain byte-identical. New preparation/public-supplement and exclusive f04 output bindings only.",
+    "threeComparisonOperands": true,
+    "inverseRecoversExact06Source": true,
+    "integerIdentityLosslessExample": true,
+    "actualPreviousEnvironmentSHA256": "f58c599bce5b5e81184e42adaaac54283974d5f84770e1cdb7e2552c0ca7b2ef",
+    "runtimeOrEnvironmentScanPerformed": false,
+    "criteriaAssertionsDeadlinesChanged": false,
+    "executed": false
+  },
+  "adverseCandidateCommit": "66570b20417d5deefcbcb93f0093044fba9a052b",
+  "approvedBy": "human:repository-owner"
+}
