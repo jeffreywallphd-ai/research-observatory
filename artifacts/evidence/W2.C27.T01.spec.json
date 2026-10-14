@@ -1,0 +1,15 @@
+{
+  "schemaVersion": "1.0",
+  "kind": "authority-preserving-correction",
+  "origin": {
+    "taskId": "W2.A06.T01",
+    "commit": "83a84b5e2fde852281b2550e960fbc63b6a77646",
+    "sha256": "9de3478fb791b93eac59060a51b5a76934799dc0758f05f38ee774b14d9ae24c"
+  },
+  "reproduction": "The original Native reconciliation regression returned 409 RO-CORE-PROJECT-RECOVERY-UNAVAILABLE instead of 200. The actual private parent is owned by the current user and has the standard Windows OWNER RIGHTS, SYSTEM and Administrators ACL. The nonexact parent checker rejects literal OWNER RIGHTS S-1-3-4 despite already verifying the actual owner. Original failure and owned-cleanup adverse evidence remain preserved in artifacts/tmp/W2.remaining-corrections-batch-01/native-reconciliation-root-cause-01/bounded-root-cause-and-restorative-scope-01.json.",
+  "changedPaths": [
+    "services/core-api/src/research_observatory_core/windows_credentials.py",
+    "tests/security/test_project_recovery.py"
+  ],
+  "impactAnalysis": "Restore ordinary current-owner private-parent compatibility within the approved W2.A06.T01 recovery contract. Recognize only literal S-1-3-4 in the nonexact parent branch after the unchanged actual owner check. Preserve strict protected two-ACE witness children, foreign-writer and wrong-owner denial, unsupported ACE denial, path and handle checks, DPAPI scopes and Native authority. Add a failing real Windows private-parent regression, focused adjacent denials and existing witness regressions before the product fix where practical; run the unchanged affected Native regression and two-file quality with normal configured type context. Independent expanded security and actual affected-integration disposition remain required. No reference, framework, criteria, credential authority, original task history or old result is changed. Native cleanup remains an independent unresolved finding until actual proof closes it. Local-main integration remains pending the dependency candidate's fresh affected packaging and security prerequisites."
+}
