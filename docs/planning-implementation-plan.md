@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: fa2d7eaa7ca3f87fb0c0a03174c7032eab8b498d1b63f8d38a69f695e057d6a1
+source_sha256: 2036c16d1a294888760f1201ddf8aad96c9e58925d0ece2a95c59fbb054f5d57
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -5238,7 +5238,7 @@ Original tasks and approvals remain unchanged.
 
 ### W2.C24.T01 — Implement parser upgrade comparison and stale propagation
 
-**Status:** `REVIEW`. **Original task:** `CAP-05.S06.T03`. **Latest review:** `-`.
+**Status:** `DONE`. **Original task:** `CAP-05.S06.T03`. **Latest review:** `approved`.
 
 **Reproduction:** Retained final29 viewer later-head and two anchor resolution/citation methods fail while creating a second accepted parser head through direct repository.accept. The first strict replacement fence is absent at original S06T03 basec707 and first186d11 parent, present at first186d11 and approvedb7e; both fixture blobs remain unchanged. Preserve original viewer authoring CAP-05.S04.T02 and anchors authoring CAP-05.S03.T03 separately from this actual common current-W2 regression origin.
 
@@ -5254,9 +5254,11 @@ Original tasks and approvals remain unchanged.
 - tests/documents/test_viewer_anchor_context.py
 #### Review history — W2.C24.T01
 
-**Review mode:** `append-only v1` / 0 completed round(s)
+**Review mode:** `append-only v1` / 1 completed round(s)
 
-**Current immutable submission awaiting review:** `R01` / packet SHA-256 `8f8c8754ea7142bd6512f0d2b7db60002814702890b56547d96d1cc06a64ceca`
+##### Round R01
+
+**Immutable submission packet:** `R01` / packet SHA-256 `8f8c8754ea7142bd6512f0d2b7db60002814702890b56547d96d1cc06a64ceca`
 
 - Candidate / base / branch: `01ada170798e9f4159ce306f7e2268642896e018` / `ea0c4cb6bdf4aebb81f7ab1cd54ebc9c0ad7ff59` / `codex/w2-implementation`
 - Submitted by / at: codex-w2-implementation / `2026-10-14T13:42:05+00:00`
@@ -5270,7 +5272,23 @@ Original tasks and approvals remain unchanged.
 - Prior round / replayed open findings: `-` / -
 - Root-cause escalation: -
 
-**Current latest-review projection:** `-` by - at `-`
+**Disposition / reviewer / time:** `approved` / agent:/root/storage_profile_review / `2026-10-14T14:03:32+00:00`
+
+**Immutable review ledger:** `artifacts/evidence/W2.C24.T01.review-R01.json` / `4e84f4a1024b7b50b48c6386e4b2a28fc7060fac7e8a1aa5f675543fa6977cbd`
+
+**Review notes:** -
+
+**Findings opened:**
+
+- None
+
+**Prior finding closures:**
+
+- None
+
+**Current immutable submission awaiting review:** None
+
+**Current latest-review projection:** `approved` by agent:/root/storage_profile_review at `2026-10-14T14:03:32+00:00`
 
 **Latest notes:** -
 

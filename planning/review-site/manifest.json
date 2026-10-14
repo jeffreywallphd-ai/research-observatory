@@ -4580,7 +4580,7 @@
         {
           "task_id": "W2.C24.T01",
           "title": "Implement parser upgrade comparison and stale propagation",
-          "status": "REVIEW",
+          "status": "DONE",
           "acceptance_criteria": [
             "A parser upgrade cannot silently replace accepted structure; changed anchors are reported; accepted reparse marks only affected evidence and outputs stale.",
             "Automated tests cover the expected path and at least one material failure or boundary condition.",
@@ -4610,63 +4610,106 @@
           "task_review": {
             "task_id": "W2.C24.T01",
             "title": "Implement parser upgrade comparison and stale propagation",
-            "status": "REVIEW",
+            "status": "DONE",
             "mode": "append-only",
             "latest_review": {
-              "reviewer": null,
-              "result": null,
-              "reviewed_at": null,
-              "notes": null
+              "reviewer": "agent:/root/storage_profile_review",
+              "result": "approved",
+              "reviewed_at": "2026-10-14T14:03:32+00:00",
+              "notes": ""
             },
             "review_control": {
               "version": 1,
-              "attempts": [],
-              "current_submission": {
-                "id": "R01",
-                "submitted_by": "codex-w2-implementation",
-                "submitted_at": "2026-10-14T13:42:05+00:00",
-                "candidate_commit": "01ada170798e9f4159ce306f7e2268642896e018",
-                "base_commit": "ea0c4cb6bdf4aebb81f7ab1cd54ebc9c0ad7ff59",
-                "branch": "codex/w2-implementation",
-                "evidence_reference": {
-                  "type": "criterion-manifest",
-                  "path": "artifacts/evidence/W2.C24.T01.R01.json",
-                  "sha256": "ab956fbd17a18a8f6c7aaf0ae3b77c6d3273bb352d6fb79a9b95e43f5e838c2c",
-                  "commit": "01ada170798e9f4159ce306f7e2268642896e018",
-                  "recorded_at": "2026-10-14T13:42:05+00:00"
-                },
-                "acceptance_criteria_sha256": "5b2333078d3f1b0c98ff2ec26db1377fcafed7be0e0ce7d1c74b8ae28073db58",
-                "changed_paths": [
-                  "docs/planning-implementation-plan.md",
-                  "planning/backlog.yaml",
-                  "planning/review-site/index.html",
-                  "planning/review-site/manifest.json",
-                  "planning/review-site/waves/W2.html",
-                  "planning/status-summary.md",
-                  "tests/anchors/test_anchor_resolution.py",
-                  "tests/documents/test_viewer_anchor_context.py"
-                ],
-                "selected_checks": [
-                  ".venv/Scripts/python.exe -B -s -m unittest -v tests.documents.test_viewer_anchor_context.ViewerAnchorContextTests.test_later_accepted_head_does_not_move_a_viewer_link tests.anchors.test_anchor_resolution.AnchorResolutionTests.test_exact_context_metadata_and_old_revision_survive_reopen_without_pdf_or_ir tests.anchors.test_anchor_resolution.AnchorResolutionTests.test_citation_links_preserve_exact_canonical_candidates_and_uncertainty",
-                  ".venv/Scripts/python.exe -B -s -m ruff format --check --config pyproject.toml -- tests/documents/test_viewer_anchor_context.py tests/anchors/test_anchor_resolution.py",
-                  ".venv/Scripts/python.exe -B -s -m ruff check --config pyproject.toml -- tests/documents/test_viewer_anchor_context.py tests/anchors/test_anchor_resolution.py",
-                  ".venv/Scripts/python.exe -B -s -m mypy --config-file pyproject.toml --no-namespace-packages --cache-dir artifacts/tmp/W2.remaining-corrections-batch-01/W2.C24.T01.viewer-anchor-focused-01/mypy-cache -- @artifacts/tmp/W2.remaining-corrections-batch-01/W2.C24.T01.viewer-anchor-focused-01/source-files.args"
-                ],
-                "deferred_checks": [
-                  "Other unresolved W2 findings and real Native/principal/parser/model/packaging checks remain separate. No unchanged whole-Wave review or full-profile PASS is inferred."
-                ],
-                "selection_rationale": "Exactly three original later-head viewer/context/citation methods are affected by strict explicit reprocessing. Preserve original subcases and choose two-file format/lint plus unchanged complete configured source types with fresh cache. All actual tracked/fixture/runtime inputs remain held until four owned jobs drain. Canonical IDs identify affected selections only.",
-                "selection_sha256": "e687e831e16a57c3d91c30aed91b47c7804355d4b3e4e61d4f156491d1b162c0",
-                "prior_attempt_id": null,
-                "open_finding_ids": [],
-                "root_cause_analysis": null,
-                "selected_command_ids": [
-                  "documents:unit",
-                  "documents:anchors",
-                  "foundation:quality"
-                ],
-                "packet_sha256": "8f8c8754ea7142bd6512f0d2b7db60002814702890b56547d96d1cc06a64ceca"
-              }
+              "attempts": [
+                {
+                  "submission": {
+                    "id": "R01",
+                    "submitted_by": "codex-w2-implementation",
+                    "submitted_at": "2026-10-14T13:42:05+00:00",
+                    "candidate_commit": "01ada170798e9f4159ce306f7e2268642896e018",
+                    "base_commit": "ea0c4cb6bdf4aebb81f7ab1cd54ebc9c0ad7ff59",
+                    "branch": "codex/w2-implementation",
+                    "evidence_reference": {
+                      "type": "criterion-manifest",
+                      "path": "artifacts/evidence/W2.C24.T01.R01.json",
+                      "sha256": "ab956fbd17a18a8f6c7aaf0ae3b77c6d3273bb352d6fb79a9b95e43f5e838c2c",
+                      "commit": "01ada170798e9f4159ce306f7e2268642896e018",
+                      "recorded_at": "2026-10-14T13:42:05+00:00"
+                    },
+                    "acceptance_criteria_sha256": "5b2333078d3f1b0c98ff2ec26db1377fcafed7be0e0ce7d1c74b8ae28073db58",
+                    "changed_paths": [
+                      "docs/planning-implementation-plan.md",
+                      "planning/backlog.yaml",
+                      "planning/review-site/index.html",
+                      "planning/review-site/manifest.json",
+                      "planning/review-site/waves/W2.html",
+                      "planning/status-summary.md",
+                      "tests/anchors/test_anchor_resolution.py",
+                      "tests/documents/test_viewer_anchor_context.py"
+                    ],
+                    "selected_checks": [
+                      ".venv/Scripts/python.exe -B -s -m unittest -v tests.documents.test_viewer_anchor_context.ViewerAnchorContextTests.test_later_accepted_head_does_not_move_a_viewer_link tests.anchors.test_anchor_resolution.AnchorResolutionTests.test_exact_context_metadata_and_old_revision_survive_reopen_without_pdf_or_ir tests.anchors.test_anchor_resolution.AnchorResolutionTests.test_citation_links_preserve_exact_canonical_candidates_and_uncertainty",
+                      ".venv/Scripts/python.exe -B -s -m ruff format --check --config pyproject.toml -- tests/documents/test_viewer_anchor_context.py tests/anchors/test_anchor_resolution.py",
+                      ".venv/Scripts/python.exe -B -s -m ruff check --config pyproject.toml -- tests/documents/test_viewer_anchor_context.py tests/anchors/test_anchor_resolution.py",
+                      ".venv/Scripts/python.exe -B -s -m mypy --config-file pyproject.toml --no-namespace-packages --cache-dir artifacts/tmp/W2.remaining-corrections-batch-01/W2.C24.T01.viewer-anchor-focused-01/mypy-cache -- @artifacts/tmp/W2.remaining-corrections-batch-01/W2.C24.T01.viewer-anchor-focused-01/source-files.args"
+                    ],
+                    "deferred_checks": [
+                      "Other unresolved W2 findings and real Native/principal/parser/model/packaging checks remain separate. No unchanged whole-Wave review or full-profile PASS is inferred."
+                    ],
+                    "selection_rationale": "Exactly three original later-head viewer/context/citation methods are affected by strict explicit reprocessing. Preserve original subcases and choose two-file format/lint plus unchanged complete configured source types with fresh cache. All actual tracked/fixture/runtime inputs remain held until four owned jobs drain. Canonical IDs identify affected selections only.",
+                    "selection_sha256": "e687e831e16a57c3d91c30aed91b47c7804355d4b3e4e61d4f156491d1b162c0",
+                    "prior_attempt_id": null,
+                    "open_finding_ids": [],
+                    "root_cause_analysis": null,
+                    "selected_command_ids": [
+                      "documents:unit",
+                      "documents:anchors",
+                      "foundation:quality"
+                    ],
+                    "packet_sha256": "8f8c8754ea7142bd6512f0d2b7db60002814702890b56547d96d1cc06a64ceca"
+                  },
+                  "review": {
+                    "reviewer": "agent:/root/storage_profile_review",
+                    "result": "approved",
+                    "reviewed_at": "2026-10-14T14:03:32+00:00",
+                    "notes": ""
+                  },
+                  "ledger": {
+                    "path": "artifacts/evidence/W2.C24.T01.review-R01.json",
+                    "sha256": "4e84f4a1024b7b50b48c6386e4b2a28fc7060fac7e8a1aa5f675543fa6977cbd"
+                  },
+                  "findings": [],
+                  "closures": [],
+                  "telemetry": {
+                    "task_id": "W2.C24.T01",
+                    "amendment_id": null,
+                    "attempt_id": "R01",
+                    "submitted_at": "2026-10-14T13:42:05+00:00",
+                    "reviewed_at": "2026-10-14T14:03:32+00:00",
+                    "duration_seconds": 1287,
+                    "outcome": "approved",
+                    "finding_counts": {
+                      "critical": 0,
+                      "high": 0,
+                      "medium": 0,
+                      "low": 0,
+                      "blocking": 0,
+                      "total": 0
+                    },
+                    "command_ids": [
+                      "documents:unit",
+                      "documents:anchors",
+                      "foundation:quality"
+                    ],
+                    "remediation": {
+                      "prior_attempt_id": null,
+                      "replayed_finding_ids": [],
+                      "closed_finding_ids": []
+                    }
+                  }
+                }
+              ],
+              "current_submission": null
             }
           }
         }

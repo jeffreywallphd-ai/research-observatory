@@ -1,0 +1,120 @@
+{
+  "task_id": "W2.C24.T01",
+  "attempt_id": "R01",
+  "candidate_commit": "01ada170798e9f4159ce306f7e2268642896e018",
+  "base_commit": "ea0c4cb6bdf4aebb81f7ab1cd54ebc9c0ad7ff59",
+  "reviewed_state_commit": "1d49be4fd66c3ddaf3563485bed083292d367bbd",
+  "reviewer": "agent:/root/storage_profile_review",
+  "result": "approved",
+  "reviewed_at": "2026-10-14T14:02:51.600041+00:00",
+  "packet_sha256": "8f8c8754ea7142bd6512f0d2b7db60002814702890b56547d96d1cc06a64ceca",
+  "evidence_sha256": "ab956fbd17a18a8f6c7aaf0ae3b77c6d3273bb352d6fb79a9b95e43f5e838c2c",
+  "acceptance_criteria_sha256": "5b2333078d3f1b0c98ff2ec26db1377fcafed7be0e0ce7d1c74b8ae28073db58",
+  "selection_sha256": "e687e831e16a57c3d91c30aed91b47c7804355d4b3e4e61d4f156491d1b162c0",
+  "findings": [],
+  "closures": [],
+  "acceptance_reviews": [
+    {
+      "criterion_index": 1,
+      "check_ids": [
+        "viewer-anchor-regressions"
+      ],
+      "result": "satisfied",
+      "assessment": "Actual exact three original fixture-head methods now enter unchanged explicit reprocessing using current read base, actual compare, zero obligations, empty reconcile, confirmation and graph-bound accept. Viewer link/old revision/reopen/citation candidate/uncertainty assertions remain; current test bytes equal source-reviewed44443/4c88. Synthetic parser IR plus real SQLCipher repository/in-memory fixture keys are disclosed; original S06T03 is the authenticated common regression origin while original viewer/anchor authors remain distinct."
+    },
+    {
+      "criterion_index": 2,
+      "check_ids": [
+        "viewer-anchor-regressions"
+      ],
+      "result": "satisfied",
+      "assessment": "Actual three exact original cases complete with unique ordered headers and their own standaloneok after INFO logs, Ran3/finalOK/no skip, rawbe40 and ownedEMPTY0. Old broad documents/anchors FAILs remain immutable. Original serializer02 inline-only guard was not executed and is preserved as a preflight incompatibility; exact successor03 reports actual output without test replay."
+    },
+    {
+      "criterion_index": 3,
+      "check_ids": [
+        "viewer-anchor-regressions",
+        "affected-format",
+        "affected-lint",
+        "configured-source-types"
+      ],
+      "result": "satisfied",
+      "assessment": "All17 viewer/31 anchor assertion AST calls equal original source-base assertions; only two admitted fixture setup paths changed, plus six normal tracking projections. Actual two-file format/lint and configured734 source types PASS. Four owned jobs are drained EMPTY/active0; actual held input equality and original captured7456 runtime pins are exact. No production, fence/helper, parser/model/reference/authority/criteria/deadline/history or normal origin substitution."
+    }
+  ],
+  "corrective_integration": {
+    "evidence_sha256": "ab956fbd17a18a8f6c7aaf0ae3b77c6d3273bb352d6fb79a9b95e43f5e838c2c",
+    "authority_preserved": true,
+    "affected_integration_reviewed": true,
+    "notes": "Exact two fixture setup restorations preserve common CAP-05.S06.T03 origin5c7 and distinct original viewer/anchor authoring identities. Three actual original methods exercise current-base explicit reprocessing/compare/zero-obligation/empty-reconcile/confirmation/graph-bound accept, retaining all17/31 assertion ASTs, old viewer revision/reopen and exact citation uncertainty. Actual two-file quality/configured734 types and owned/held custody pass. Synthetic parser IR and real SQLCipher repository/in-memory fixture keys are explicit; no Windows DPAPI/native UI/parser/model/principal/full-profile/Wave/release claim."
+  },
+  "verification_selection": {
+    "selected_command_ids": [
+      "documents:unit",
+      "documents:anchors",
+      "foundation:quality"
+    ],
+    "assessment": "Only this correction's affected fixture setup, original assertions, current reprocessing fence/acceptance authority, exact source and actual evidence/delivery reviewed. Prior genuine common-origin/source review reused; no unchanged whole-Wave/history/runtime audit or execution replay."
+  },
+  "evidence_authentication": {
+    "actual_review_observations": {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/w2-c24-actual-affected-review-observations-01.json",
+      "sha256": "e701655e25cfb34bbbace2f726bf320b417f4acb808172915a8236b672395b6b"
+    },
+    "receipt": {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/W2.C24.T01.viewer-anchor-focused-01/receipt.json",
+      "sha256": "cf7172aa37f155e96ea7ef968450a7282cf5c575a7669ad41fc23ff894008570"
+    },
+    "producer_sha256": "eaec4f7b378445d1911a68c52f184f1bb2d987a9a44bce7fedc7c1519651a4c2",
+    "actual_methods": 3,
+    "skips": 0,
+    "configured_type_sources": 734,
+    "held_input_count": 14032,
+    "captured_original_runtime_pins_equal": 7456,
+    "four_owned_jobs_empty_active0": true,
+    "original_adverse_preserved": true,
+    "private_reporting_incompatibility": {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/w2-c24-evidence-reporting-incompatibility-01.json",
+      "sha256": "00db5f9a671e0e6f3414479b5f2df266f2d8918bac28d67b286dea11bde449de"
+    },
+    "reporting_successor_readiness": {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/w2-c24-reporting-successor-source-readiness-01.json",
+      "sha256": "5a5f06f5216175a0b97a4e8f053594171a9fb9ebd2e0d77e722f78dbf7b109da"
+    },
+    "original_output_truth": "Each of three unique ordered original headers has INFO logs then its own standaloneok; actual Ran3/finalOK/no skips. Original02 inline-only writer was not executed, and its source-only incompatibility is retained. Exact private03 reports preserved actual proof without replay."
+  },
+  "frozen_submission_authentication": {
+    "delivery_commit": "1d49be4fd66c3ddaf3563485bed083292d367bbd",
+    "delivery_parent": "01ada170798e9f4159ce306f7e2268642896e018",
+    "delivery_changed_paths": [
+      "artifacts/evidence/W2.C24.T01.R01.json",
+      "docs/planning-implementation-plan.md",
+      "planning/backlog.yaml",
+      "planning/review-site/manifest.json",
+      "planning/review-site/waves/W2.html",
+      "planning/status-summary.md"
+    ],
+    "public_manifest_git_and_worktree_bytes_exact": true,
+    "frozen_packet_validation_errors": [],
+    "original_origin_snapshot_unchanged": true,
+    "source_runtime_dependency_delta_in_delivery": false
+  },
+  "independence": {
+    "taskOwner": false,
+    "sourceAuthor": false,
+    "productSourceEdits": false,
+    "qualifyingTestsRerunByReviewer": false,
+    "onlyIgnoredReviewAndUnrelatedPreparationAuthored": true
+  },
+  "proof_limits": [
+    "Authored synthetic parser IR and protected SQLCipher repository/in-memory test-key fixtures. No real Windows DPAPI/native UI/parser/model/principal, whole reprocessing/whole documents or anchor profile/Wave/release outcome. Existing real Native anchor interaction skip remains separately unresolved.",
+    "This review covers only actual C24 setup assertion/reprocessing/denial/source/evidence integration risks. Already genuine common-origin/source findings are reused; no full exit/history/runtime audit, execution replay or new optional criterion."
+  ],
+  "scope_limits": {
+    "task_only": true,
+    "wave_approved": false,
+    "release_approved": false,
+    "qualifying_checks_rerun_by_reviewer": false,
+    "installed_runtime_rehash": false
+  }
+}
