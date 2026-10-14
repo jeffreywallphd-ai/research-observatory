@@ -1,0 +1,83 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "finite-preauthorized-historical-layout-lint-closure-decision",
+  "status": "APPROVED",
+  "preparedBy": "agent:/root/c21_closeout_review",
+  "prospectiveApprovedBy": "human:repository-owner",
+  "preauthorizationSHA256": "34e2e3c175dc9309080182e0673f776055b1cc3ba78639475c09ec54408d7d5f",
+  "conformingBatch": {
+    "path": "artifacts/evidence/W2.completion-corrections-batch-02.decision-01.json",
+    "sha256": "738a9ed22b4da46a88c47c64b07607bbf1b27839e3bf657e7c7712763d76e9c2"
+  },
+  "originalPublicScope": {
+    "path": "artifacts/evidence/W2.desktop-input-restoration-01.scope-decision-01.json",
+    "sha256": "8322eb37714fff1942e9385d933a82fb228e4f76e39aa72eb13037a66a0a580a"
+  },
+  "changedPaths": [
+    "tests/desktop/test_product_layout_measurements.py"
+  ],
+  "oldSourceSHA256": "f71a30b6b4d46e0670408c3c3b8782306eabc223680c2dea4fd82c5830fc2edf",
+  "newSourceSHA256": "f13891ad1b42054abd984dd2b44645547234038d843c6ecacba3ba79cf387bbb",
+  "proposal": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/historical-layout-lint-closure-01/test_product_layout_measurements.py.proposed",
+    "sha256": "f13891ad1b42054abd984dd2b44645547234038d843c6ecacba3ba79cf387bbb"
+  },
+  "producer": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/historical-layout-lint-closure-01/owned-layout-proof-01.py",
+    "sha256": "78bd94876aac3627b57e007dbfcb14de56933d837fadca5f27f4cd98d4133975"
+  },
+  "reporter": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/historical-layout-lint-closure-01/report-evidence-01.py",
+    "sha256": "d743ec612e7e9bb0f67bcf0e816b92edeed0b02562b26059a3e70190f23f0290"
+  },
+  "deliveryCustody": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/historical-layout-lint-closure-01/delivery-custody-01.py",
+    "sha256": "c4747910f1cd8bd93d83fa1ebaa998447aad87df096cefe691d74cc621e767f3"
+  },
+  "preparation": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/historical-layout-lint-closure-01/preparation-01.json",
+    "sha256": "5ebdaea1508c539e58677b38edf71ff768cfc072a74959ffaea3cecb041b0b36"
+  },
+  "sourceReadiness": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/historical-layout-lint-closure-01/independent-runtime-bound-source-readiness-01.json",
+    "sha256": "df43b3c247ec2e2fc0dd60a3dcdd0700487637a108d664f86debc9a3c4d147c1"
+  },
+  "recordingReadiness": null,
+  "originalAuthoringTask": "W1.A08.T02",
+  "historicalTaskReopened": false,
+  "assertionSites": 46,
+  "originalAdverse": [
+    {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/w2-c25-task-local-quality-scope-actual-assessment-01.json",
+      "sha256": "c1021713f53eee8c4422a173711cc24b9353e04cd146dd40701a03b40f77ab66"
+    },
+    {
+      "path": "artifacts/tmp/W2.C25.T01.quality-lint-adverse-01.json",
+      "sha256": "12370e697bc5973d3bacd85fb42c65d7b85e5d3466974dd2b557e4ec571937b8"
+    },
+    {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/W2.C25.T01.desktop-quality-01/desktop-affected-lint.raw.log",
+      "sha256": "37d5137339149d889e2097fb49662ad325ba895c3e27655db81e47c895a7ac37"
+    }
+  ],
+  "scope": "Only finite historical layout test unused-import/removable-lint/AST-identical AND parentheses restoration, plus original2 layout methods/onefile configured quality proof at actual new candidate. No layout styling/product/reference/denial/assertion/deadline/shared framework change, normal task identity/reopen,56-body/full-profile or earlier candidate retargeting.",
+  "deliveryConditions": [
+    "Actual C25 DONE with independent reviewapproved/leaseNone and all owned runs/view/controller/source handles drained; a pending C25 prevents delivery.",
+    "Different finite source and recording readiness; actual prospective34e/738a decision recorded append-only before source copy. Preserve original8322/f71/37d/C102/12370 and all earlier two-layout/other-method receipt histories. No artificial normal correction/task origin or W1 reopen.",
+    "Run custody-only script once at clean actual base with no-held/running assertion; retain exact old f71 original exclusively before root copies this one exact proposal and privacy-hooks commits only one source path. Actual copy/commit/integration are later root actions."
+  ],
+  "priorFindingsUnmetUntilActualDisposition": true,
+  "actualIntroductionCommit": null,
+  "intendedPublicationPath": "artifacts/evidence/W2.historical-layout-lint-closure-01.decision-01.json",
+  "sharedFrameworkChangeGranted": false,
+  "criteriaChangeGranted": false,
+  "executed": false,
+  "taskApproved": false,
+  "waveApproved": false,
+  "releaseApproved": false,
+  "approvedBy": "human:repository-owner",
+  "runtimeInputs": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/historical-layout-lint-closure-01/actual-runtime-capture-03/receipt.json",
+    "sha256": "90f6ca99d71c7fbf84db1d540807dc256714486dba7da3c5f3d3491014a53c57"
+  }
+}
