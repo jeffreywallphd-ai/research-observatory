@@ -4037,6 +4037,56 @@
               "current_submission": null
             }
           }
+        },
+        {
+          "task_id": "W2.C20.T01",
+          "title": "Implement rights, license, entitlement, and permitted-use metadata",
+          "status": "IN_PROGRESS",
+          "acceptance_criteria": [
+            "Unknown rights default to restrictive behavior; policy decisions are source-specific and inspectable; changing rights marks affected operations for re-evaluation.",
+            "Automated tests cover the expected path and at least one material failure or boundary condition.",
+            "Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion."
+          ],
+          "correction": {
+            "origin_task_id": "CAP-04.S04.T02",
+            "origin_commit": "118e5c1494e180e03e1336a5a5953c3a464c4a3a",
+            "paused_state_sha256": "b433937424fdc141ada899cd32acd3858867b5f267614a65cc11678a6b5b5e94",
+            "origin_sha256": "278db71aaeb1a96788fbfa50f97ef28e400c246dcdc2a0989a4a1164be536025",
+            "origin_contract_sha256": "d59067e93ed17343abf3beed9d3754c99d6c741fa3b32a0ed8a9f808c65ac17f",
+            "origin_history_sha256": "947aa23acb09da8163539fa8e4a7516358b4e66ebcc365a29a192e23c9ccf778",
+            "origin_amendment_id": null,
+            "authority_sha256": "c92ce7e9bac1b8a49d13d649a5980fea61e56ee953d238c734d8ff5f04f4c9e5",
+            "spec": {
+              "path": "artifacts/evidence/W2.C20.T01.spec.json",
+              "sha256": "1a89a13fa5a9749fd0b05fad1e2b3cb4a2b6e4a98d235361fbc2154ff68b43f2",
+              "commit": "f694166e4ec61eea6c3b53a2daa49ceaefdb642a"
+            },
+            "reproduction": "The retained W2 final29 rights and data runs fail eight original migration methods because literal predecessor plans omit approved migrations through 0028 and current-target assertions still expect 17 or 25. CAP-04.S04.T02 first advanced the current target beyond 17 to 18 while the three inherited import fixture tests retained terminal-17 expectations. Rights tests retain frozen v17 predecessors but current-target assertions stop at 25. Replay the three original rights methods and five import preview/summary/commit methods, preserving every source fixture, subcase, failure point and protected backup/retry/reopen assertion.",
+            "changed_paths": [
+              "tests/data/test_import_commit_migration.py",
+              "tests/data/test_import_preview_migration.py",
+              "tests/data/test_import_summary_migration.py",
+              "tests/rights/test_migration.py"
+            ],
+            "impact_analysis": "Restore exact current-28 migration suffix and version expected data in four tests under the independently approved current-W2 rights task that first advanced the inherited target. Preserve all immutable v10/v11/v12/v17 fixture bytes, schema/profile/row hashes, source versions, verified backups, ciphertext, project identity, FK/integrity, rollback/failure points, rights/provenance, retry, reopen and idempotence assertions. No production, migration implementation, security authority, governed experience, framework implementation, release criterion or original task history changes. Only the eight affected original methods and file-scoped quality checks are selected for fresh corrective integration; the existing broad qualification failures remain adverse. Independent commit-bound correction review is required."
+          },
+          "task_review": {
+            "task_id": "W2.C20.T01",
+            "title": "Implement rights, license, entitlement, and permitted-use metadata",
+            "status": "IN_PROGRESS",
+            "mode": "append-only",
+            "latest_review": {
+              "reviewer": null,
+              "result": null,
+              "reviewed_at": null,
+              "notes": null
+            },
+            "review_control": {
+              "version": 1,
+              "attempts": [],
+              "current_submission": null
+            }
+          }
         }
       ]
     },

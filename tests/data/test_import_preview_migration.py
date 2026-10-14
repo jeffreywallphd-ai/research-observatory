@@ -89,6 +89,17 @@ class ImportPreviewMigrationTests(unittest.TestCase):
                 "0015_reconciliation_review",
                 "0016_work_versions",
                 "0017_corpus_items",
+                "0018_rights_policy",
+                "0019_corpus_reports",
+                "0020_corpus_source_projection",
+                "0021_plugin_grants",
+                "0022_document_attachments",
+                "0023_attachment_operations",
+                "0024_open_access_acquisition",
+                "0025_document_intake_recovery",
+                "0026_document_revisions",
+                "0027_revision_invalidations",
+                "0028_document_enrichments",
             ),
             plan.migration_ids,
         )
@@ -103,7 +114,7 @@ class ImportPreviewMigrationTests(unittest.TestCase):
             backup.close()
         current = storage.open_canonical_database(self.database, expected_project_id=predecessor.PROJECT_ID)
         try:
-            self.assertEqual(17, current.execute("PRAGMA user_version").fetchone()[0])
+            self.assertEqual(28, current.execute("PRAGMA user_version").fetchone()[0])
             for table in PREVIEW_TABLES:
                 self.assertEqual(0, current.execute(f"SELECT count(*) FROM {table}").fetchone()[0])
             self.assertEqual("dark", current.execute("SELECT text_value FROM settings").fetchone()[0])

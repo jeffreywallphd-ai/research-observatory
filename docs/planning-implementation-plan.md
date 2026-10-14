@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 6bfa56550f11d5fb085309ffad6d97eabe992d14231630d8c75f5b1d9a81e378
+source_sha256: 36c79ef24cb84b3f64eef74516e121c899e9ba99488671df5ac13c298b733d83
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -5001,6 +5001,36 @@ Original tasks and approvals remain unchanged.
 **Current latest-review projection:** `approved` by agent:/root/c19_correction_review at `2026-10-13T04:16:50+00:00`
 
 **Latest notes:** Independent focused W2.C19.T01 R01 review approves the exact committed migration-test restoration and its affected integration. The frozen delivery, original approved snapshot, inherited criteria, candidate inventory, criterion/selection/packet/evidence digests and actual passing output are authenticated. No criterion-bound blocker remains. The original 331-test FAIL and both subsequent type failures remain adverse; final passing type evidence is limited to the actual configured 734-source invocation. Normal site refresh is outside the fixed reviewed boundary and is not claimed complete. Required S06/checkpoint/W2 qualification, independent Wave review and human release decisions remain separate.
+
+**Currently open findings:** -
+
+### W2.C20.T01 — Implement rights, license, entitlement, and permitted-use metadata
+
+**Status:** `IN_PROGRESS`. **Original task:** `CAP-04.S04.T02`. **Latest review:** `-`.
+
+**Reproduction:** The retained W2 final29 rights and data runs fail eight original migration methods because literal predecessor plans omit approved migrations through 0028 and current-target assertions still expect 17 or 25. CAP-04.S04.T02 first advanced the current target beyond 17 to 18 while the three inherited import fixture tests retained terminal-17 expectations. Rights tests retain frozen v17 predecessors but current-target assertions stop at 25. Replay the three original rights methods and five import preview/summary/commit methods, preserving every source fixture, subcase, failure point and protected backup/retry/reopen assertion.
+
+**Inherited criteria:**
+
+- Unknown rights default to restrictive behavior; policy decisions are source-specific and inspectable; changing rights marks affected operations for re-evaluation.
+- Automated tests cover the expected path and at least one material failure or boundary condition.
+- Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.
+
+**Bounded changed paths:**
+
+- tests/data/test_import_commit_migration.py
+- tests/data/test_import_preview_migration.py
+- tests/data/test_import_summary_migration.py
+- tests/rights/test_migration.py
+#### Review history — W2.C20.T01
+
+**Review mode:** `append-only v1` / 0 completed round(s)
+
+**Current immutable submission awaiting review:** None
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
 
 **Currently open findings:** -
 

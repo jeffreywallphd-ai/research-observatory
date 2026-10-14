@@ -216,7 +216,7 @@ class LiteralV17PredecessorTests(unittest.TestCase):
                 project = restore_v17(database, kind)["projectId"]
                 plan = runner.plan_database_migration(database, expected_project_id=project)
                 self.assertEqual(17, plan.source_schema_version)
-                self.assertEqual(25, plan.target_schema_version)
+                self.assertEqual(28, plan.target_schema_version)
                 self.assertEqual(
                     (
                         v0018_rights_policy.revision,
@@ -227,6 +227,9 @@ class LiteralV17PredecessorTests(unittest.TestCase):
                         v0023_attachment_operations.revision,
                         v0024_open_access_acquisition.revision,
                         v0025_document_intake_recovery.revision,
+                        "0026_document_revisions",
+                        "0027_revision_invalidations",
+                        "0028_document_enrichments",
                     ),
                     plan.migration_ids,
                 )
@@ -243,6 +246,9 @@ class LiteralV17PredecessorTests(unittest.TestCase):
                         v0023_attachment_operations.revision,
                         v0024_open_access_acquisition.revision,
                         v0025_document_intake_recovery.revision,
+                        "0026_document_revisions",
+                        "0027_revision_invalidations",
+                        "0028_document_enrichments",
                     ),
                     result.migration_ids,
                 )
@@ -260,7 +266,7 @@ class LiteralV17PredecessorTests(unittest.TestCase):
                 validator = Draft202012Validator(schema, format_checker=FormatChecker())
                 self.assertEqual([], list(validator.iter_errors(manifest)))
                 self.assertEqual(17, manifest["sourceSchemaVersion"])
-                self.assertEqual(25, manifest["targetSchemaVersion"])
+                self.assertEqual(28, manifest["targetSchemaVersion"])
                 self.assertEqual(
                     [
                         v0018_rights_policy.revision,
@@ -271,6 +277,9 @@ class LiteralV17PredecessorTests(unittest.TestCase):
                         v0023_attachment_operations.revision,
                         v0024_open_access_acquisition.revision,
                         v0025_document_intake_recovery.revision,
+                        "0026_document_revisions",
+                        "0027_revision_invalidations",
+                        "0028_document_enrichments",
                     ],
                     manifest["migrationIds"],
                 )
@@ -333,7 +342,7 @@ class LiteralV17PredecessorTests(unittest.TestCase):
                     with closing(storage.open_canonical_database(database, expected_project_id=project)) as reopened:
                         report = storage.database_integrity_report(reopened, expected_project_id=project)
                         self.assertTrue(report.ok, report.errors)
-                        self.assertEqual(25, report.schema_version)
+                        self.assertEqual(28, report.schema_version)
                         for table in (
                             "document_intake_jobs",
                             "document_intake_results",
@@ -357,7 +366,9 @@ class LiteralV17PredecessorTests(unittest.TestCase):
             (REPO / "packages/contracts/storage/sqlite-migration-recovery.schema.json").read_text(encoding="utf-8")
         )
         self.assertEqual(17, old["properties"]["targetSchemaVersion"]["const"])
-        self.assertEqual([21, 22, 23, 24, 25], current["properties"]["targetSchemaVersion"]["enum"])
+        self.assertEqual(
+            [21, 22, 23, 24, 25, 26, 27, 28], current["properties"]["targetSchemaVersion"]["enum"]
+        )
         self.assertEqual(SCHEMA_SHA256, old["properties"]["targetSchemaSha256"]["const"])
         self.assertIn(storage.EXPECTED_SCHEMA_SHA256, current["properties"]["targetSchemaSha256"]["enum"])
         # A structural historical witness remains interpretable by the frozen
@@ -470,6 +481,9 @@ class LiteralV17PredecessorTests(unittest.TestCase):
                 v0023_attachment_operations.revision,
                 v0024_open_access_acquisition.revision,
                 v0025_document_intake_recovery.revision,
+                "0026_document_revisions",
+                "0027_revision_invalidations",
+                "0028_document_enrichments",
             ),
             result.migration_ids,
         )
@@ -484,7 +498,7 @@ class LiteralV17PredecessorTests(unittest.TestCase):
             with closing(storage.open_canonical_database(fixture.database, expected_project_id=project)) as current:
                 report = storage.database_integrity_report(current, expected_project_id=project)
                 self.assertTrue(report.ok, report.errors)
-                self.assertEqual(25, report.schema_version)
+                self.assertEqual(28, report.schema_version)
                 for table in (
                     "document_intake_jobs",
                     "document_intake_results",

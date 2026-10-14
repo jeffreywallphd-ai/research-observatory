@@ -89,6 +89,17 @@ class ImportCommitMigrationTests(unittest.TestCase):
                 "0015_reconciliation_review",
                 "0016_work_versions",
                 "0017_corpus_items",
+                "0018_rights_policy",
+                "0019_corpus_reports",
+                "0020_corpus_source_projection",
+                "0021_plugin_grants",
+                "0022_document_attachments",
+                "0023_attachment_operations",
+                "0024_open_access_acquisition",
+                "0025_document_intake_recovery",
+                "0026_document_revisions",
+                "0027_revision_invalidations",
+                "0028_document_enrichments",
             ),
             plan.migration_ids,
         )
@@ -100,7 +111,7 @@ class ImportCommitMigrationTests(unittest.TestCase):
             self.assertEqual(12, backup.execute("PRAGMA user_version").fetchone()[0])
         for _ in range(2):
             with storage.open_canonical_database(self.database, expected_project_id=project_id) as connection:
-                self.assertEqual(17, connection.execute("PRAGMA user_version").fetchone()[0])
+                self.assertEqual(28, connection.execute("PRAGMA user_version").fetchone()[0])
                 self.assertEqual(1, connection.execute("SELECT COUNT(*) FROM import_previews").fetchone()[0])
                 for table in COMMIT_TABLES:
                     self.assertEqual(0, connection.execute(f"SELECT COUNT(*) FROM {table}").fetchone()[0])
@@ -189,7 +200,7 @@ class ProtectedImportCommitMigrationTests(unittest.TestCase):
             saved.close()
         for _ in range(2):
             with storage.open_canonical_database(self.database, expected_project_id=identity) as current:
-                self.assertEqual(17, current.execute("PRAGMA user_version").fetchone()[0])
+                self.assertEqual(28, current.execute("PRAGMA user_version").fetchone()[0])
                 self.assertEqual(
                     predecessor.PREVIEW, current.execute("SELECT preview_id FROM import_previews").fetchone()[0]
                 )

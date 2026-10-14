@@ -108,6 +108,17 @@ class ImportSummaryMigrationTests(unittest.TestCase):
                 "0015_reconciliation_review",
                 "0016_work_versions",
                 "0017_corpus_items",
+                "0018_rights_policy",
+                "0019_corpus_reports",
+                "0020_corpus_source_projection",
+                "0021_plugin_grants",
+                "0022_document_attachments",
+                "0023_attachment_operations",
+                "0024_open_access_acquisition",
+                "0025_document_intake_recovery",
+                "0026_document_revisions",
+                "0027_revision_invalidations",
+                "0028_document_enrichments",
             ),
             plan.migration_ids,
         )
@@ -122,7 +133,7 @@ class ImportSummaryMigrationTests(unittest.TestCase):
             backup.close()
         current = storage.open_canonical_database(self.database, expected_project_id=identity)
         try:
-            self.assertEqual(17, current.execute("PRAGMA user_version").fetchone()[0])
+            self.assertEqual(28, current.execute("PRAGMA user_version").fetchone()[0])
             self.assertEqual(
                 "synthetic-preserved.csv", current.execute("SELECT source_name FROM import_previews").fetchone()[0]
             )
@@ -210,7 +221,7 @@ class ProtectedImportSummaryMigrationTests(unittest.TestCase):
             saved.close()
         current = storage.open_canonical_database(self.database, expected_project_id=identity)
         try:
-            self.assertEqual(17, current.execute("PRAGMA user_version").fetchone()[0])
+            self.assertEqual(28, current.execute("PRAGMA user_version").fetchone()[0])
             self.assertEqual(PREVIEW, current.execute("SELECT preview_id FROM import_previews").fetchone()[0])
         finally:
             current.close()
