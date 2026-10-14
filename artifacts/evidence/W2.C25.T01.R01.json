@@ -1,0 +1,872 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "W2.C25.T01",
+  "baseCommit": "8dd9e1e906a68937c315ad255107f0e4b75c95f0",
+  "commit": "fb10b8279f207d169d292bc2e1878314e4ce3929",
+  "branch": "codex/w2-implementation",
+  "changedFiles": [
+    "artifacts/evidence/W2.C25.T01.locator-and-proof-supplement-01.json",
+    "artifacts/evidence/W2.C25.T01.locator-and-proof-supplement-02.json",
+    "artifacts/evidence/W2.C25.T01.locator-and-proof-supplement-03.json",
+    "artifacts/evidence/W2.C25.T01.locator-and-proof-supplement-04.json",
+    "docs/planning-implementation-plan.md",
+    "planning/backlog.yaml",
+    "planning/review-site/index.html",
+    "planning/review-site/manifest.json",
+    "planning/review-site/waves/W2.html",
+    "planning/status-summary.md",
+    "tests/desktop/test_document_attachment_interactions.py"
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "checkIds": [
+        "reused-fixture-build-1",
+        "reused-fixture-build-2",
+        "reused-fixture-build-3",
+        "reused-fixture-build-4",
+        "reused-fixture-build-5",
+        "reused-fixture-build-6",
+        "reused-fixtures48-test_document_viewer_interactions.DocumentViewerInteractionsTests",
+        "reused-fixtures48-test_parsing_quality_interactions.ParsingQualityInteractionsTests",
+        "reused-fixtures48-test_quality_workflow_navigation.QualityWorkflowNavigationTests",
+        "reused-fixtures48-test_reprocessing_interactions.ReprocessingInteractionsTests",
+        "reused-fixtures48-test_reprocessing_workflow_navigation.ReprocessingWorkflowNavigationTests",
+        "reused-fixtures48-test_viewer_decoder.ViewerDecoderTests",
+        "reused-negative3",
+        "fresh-remaining5-local-assets-first",
+        "fresh-remaining5-local-assets-rest",
+        "fresh-remaining5-cleanup2",
+        "desktop-affected-format",
+        "desktop-affected-lint",
+        "configured-source-types"
+      ],
+      "evidence": [
+        "Original exact reference proposal/publication approval and R02 evidence remain immutable historical proof. The source-only attachment fixture-host correction changes no governed reference/proposal, packet, approval metadata or security authority; current individually verified original bodies and affected quality preserve its interaction intent. No fresh reference-generation or complete original packet replay is claimed."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "checkIds": [
+        "reused-fixture-build-1",
+        "reused-fixture-build-2",
+        "reused-fixture-build-3",
+        "reused-fixture-build-4",
+        "reused-fixture-build-5",
+        "reused-fixture-build-6",
+        "reused-fixtures48-test_document_viewer_interactions.DocumentViewerInteractionsTests",
+        "reused-fixtures48-test_parsing_quality_interactions.ParsingQualityInteractionsTests",
+        "reused-fixtures48-test_quality_workflow_navigation.QualityWorkflowNavigationTests",
+        "reused-fixtures48-test_reprocessing_interactions.ReprocessingInteractionsTests",
+        "reused-fixtures48-test_reprocessing_workflow_navigation.ReprocessingWorkflowNavigationTests",
+        "reused-fixtures48-test_viewer_decoder.ViewerDecoderTests",
+        "reused-negative3",
+        "fresh-remaining5-local-assets-first",
+        "fresh-remaining5-local-assets-rest",
+        "fresh-remaining5-cleanup2",
+        "desktop-affected-format",
+        "desktop-affected-lint",
+        "configured-source-types"
+      ],
+      "evidence": [
+        "Original reference-before-renderer chronology and historic1.7/approved1.8 publication remain preserved authority through the adopted A01 task. Current source correction changes only the original attachment test fixture host; three finite historical source deliveries and scope are proven present before its actual spec/claim base. No retrospective chronology, authoring origin or approval is fabricated."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "checkIds": [
+        "reused-fixture-build-1",
+        "reused-fixture-build-2",
+        "reused-fixture-build-3",
+        "reused-fixture-build-4",
+        "reused-fixture-build-5",
+        "reused-fixture-build-6",
+        "reused-fixtures48-test_document_viewer_interactions.DocumentViewerInteractionsTests",
+        "reused-fixtures48-test_parsing_quality_interactions.ParsingQualityInteractionsTests",
+        "reused-fixtures48-test_quality_workflow_navigation.QualityWorkflowNavigationTests",
+        "reused-fixtures48-test_reprocessing_interactions.ReprocessingInteractionsTests",
+        "reused-fixtures48-test_reprocessing_workflow_navigation.ReprocessingWorkflowNavigationTests",
+        "reused-fixtures48-test_viewer_decoder.ViewerDecoderTests",
+        "reused-negative3",
+        "fresh-remaining5-local-assets-first",
+        "fresh-remaining5-local-assets-rest",
+        "fresh-remaining5-cleanup2",
+        "desktop-affected-format",
+        "desktop-affected-lint",
+        "configured-source-types"
+      ],
+      "evidence": [
+        "Corrected original canonical selected-version native-intent/denial/cancel/return method and original2layout+2realCLI methods execute fresh at the later committed candidate with original assertions/deadlines. Reused48component/double fixture methods and3denials retain actual1a execution/raw identity and require explicit consumed-input equality and unrelated attachment-locator classification; no prior parentFAIL is rewritten."
+      ]
+    },
+    {
+      "criterion_index": 4,
+      "checkIds": [
+        "reused-fixture-build-1",
+        "reused-fixture-build-2",
+        "reused-fixture-build-3",
+        "reused-fixture-build-4",
+        "reused-fixture-build-5",
+        "reused-fixture-build-6",
+        "reused-fixtures48-test_document_viewer_interactions.DocumentViewerInteractionsTests",
+        "reused-fixtures48-test_parsing_quality_interactions.ParsingQualityInteractionsTests",
+        "reused-fixtures48-test_quality_workflow_navigation.QualityWorkflowNavigationTests",
+        "reused-fixtures48-test_reprocessing_interactions.ReprocessingInteractionsTests",
+        "reused-fixtures48-test_reprocessing_workflow_navigation.ReprocessingWorkflowNavigationTests",
+        "reused-fixtures48-test_viewer_decoder.ViewerDecoderTests",
+        "reused-negative3",
+        "fresh-remaining5-local-assets-first",
+        "fresh-remaining5-local-assets-rest",
+        "fresh-remaining5-cleanup2",
+        "desktop-affected-format",
+        "desktop-affected-lint",
+        "configured-source-types"
+      ],
+      "evidence": [
+        "Original task-owned intentional UI gate and governed changed-file/reference lineage stay historical, unaffected authority; this correction has one test-only source path and no renderer/reference/control edit. Current exact normal source diff, finite prior historical delivery, canonical negative/restoration cases and affected quality are authenticated; no whole task-base original UI gate replay is inferred."
+      ]
+    },
+    {
+      "criterion_index": 5,
+      "checkIds": [
+        "reused-fixture-build-1",
+        "reused-fixture-build-2",
+        "reused-fixture-build-3",
+        "reused-fixture-build-4",
+        "reused-fixture-build-5",
+        "reused-fixture-build-6",
+        "reused-fixtures48-test_document_viewer_interactions.DocumentViewerInteractionsTests",
+        "reused-fixtures48-test_parsing_quality_interactions.ParsingQualityInteractionsTests",
+        "reused-fixtures48-test_quality_workflow_navigation.QualityWorkflowNavigationTests",
+        "reused-fixtures48-test_reprocessing_interactions.ReprocessingInteractionsTests",
+        "reused-fixtures48-test_reprocessing_workflow_navigation.ReprocessingWorkflowNavigationTests",
+        "reused-fixtures48-test_viewer_decoder.ViewerDecoderTests",
+        "reused-negative3",
+        "fresh-remaining5-local-assets-first",
+        "fresh-remaining5-local-assets-rest",
+        "fresh-remaining5-cleanup2",
+        "desktop-affected-format",
+        "desktop-affected-lint",
+        "configured-source-types"
+      ],
+      "evidence": [
+        "All56 named original bodies require actual completion:51 earlier at1a with preserved raw/assessment/FAIL parents and authenticated input reuse;5 freshly at the current correction candidate. Original keyboard/focus/denial/recovery/closed-local-asset and real owned Node/Tauri CLI assertions/deadlines remain. Derived3Reader PNG outputs stay separately classified. No trusted Native/principal/DPAPI/model/full-profile inference."
+      ]
+    },
+    {
+      "criterion_index": 6,
+      "checkIds": [
+        "reused-fixture-build-1",
+        "reused-fixture-build-2",
+        "reused-fixture-build-3",
+        "reused-fixture-build-4",
+        "reused-fixture-build-5",
+        "reused-fixture-build-6",
+        "reused-fixtures48-test_document_viewer_interactions.DocumentViewerInteractionsTests",
+        "reused-fixtures48-test_parsing_quality_interactions.ParsingQualityInteractionsTests",
+        "reused-fixtures48-test_quality_workflow_navigation.QualityWorkflowNavigationTests",
+        "reused-fixtures48-test_reprocessing_interactions.ReprocessingInteractionsTests",
+        "reused-fixtures48-test_reprocessing_workflow_navigation.ReprocessingWorkflowNavigationTests",
+        "reused-fixtures48-test_viewer_decoder.ViewerDecoderTests",
+        "reused-negative3",
+        "fresh-remaining5-local-assets-first",
+        "fresh-remaining5-local-assets-rest",
+        "fresh-remaining5-cleanup2",
+        "desktop-affected-format",
+        "desktop-affected-lint",
+        "configured-source-types"
+      ],
+      "evidence": [
+        "Original A01 expanded task/slice/exit approval and adoption remain genuine historical prerequisites. Fresh actual committed test-only integration/body/quality evidence is submitted for a separate different-author normal correction disposition; this evidence writer cannot approve that disposition or any Wave/release gate. All other unresolved correction-affected exit risks remain due."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "knownUnresolvedWaveFindings": [
+    {
+      "path": "tests/desktop/test_product_layout_measurements.py",
+      "findingCodes": [
+        "F401 unused inline_product_index",
+        "RUF021 explicit AND precedence parentheses"
+      ],
+      "evidence": {
+        "path": "artifacts/tmp/W2.remaining-corrections-batch-01/W2.C25.T01.desktop-quality-01/desktop-affected-lint.raw.log",
+        "sha256": "37d5137339149d889e2097fb49662ad325ba895c3e27655db81e47c895a7ac37"
+      },
+      "status": "KNOWN_UNRESOLVED_FINITE_HISTORICAL_WAVE_DEBT",
+      "reason": "Historical layout file is present before C25base and outside its sole attachment source/one-file quality specification. It remains owed before W2 exit; no C25 action or source/approval rewrite disposes it.",
+      "unmetBeforeWaveExit": true,
+      "requiredResumeCondition": "Separate finite historical layout source repair plus fresh affected format/lint evidence and independent disposition before W2 exit."
+    }
+  ],
+  "qualityCoverage": {
+    "ruffFormatAndLintPaths": [
+      "tests/desktop/test_document_attachment_interactions.py"
+    ],
+    "custodyPaths": [
+      "tests/desktop/test_ui_conformance.py",
+      "tests/desktop/test_product_layout_measurements.py",
+      "tests/desktop/test_document_attachment_interactions.py",
+      "tests/desktop/test_desktop_app_check.py"
+    ],
+    "configuredTypes": "Existing unchanged configured734-source context; no checker/config/assertion/cache-policy change.",
+    "authority": "Current C25spec requires affected one-file quality; prior four-file over-selection was collector breadth only. Existing layout lint failures remain separate finite historical Wave debt, not hidden, waived or taskPASS evidence."
+  },
+  "fourFileQualityPassClaimed": false,
+  "fullProfilePassClaimed": false,
+  "checks": [
+    {
+      "id": "reused-fixture-build-1",
+      "command": ".local/toolchains/node-v24.19.0-win-x64/node.exe tests/desktop/fixtures/document-viewer.mjs artifacts/tmp/W2.desktop-input-restoration-01.f02/fixtures48/fixtures/01-ro_viewer_ui_fixture",
+      "commandSemantics": "DISPLAY repository-relative argv; actual argv/environment remain in ignored receipt",
+      "result": "passed",
+      "exitCode": 0,
+      "commit": "1a254248c381d509fc666dc3af6b6c6f6ed75e26",
+      "coverage": "reused-original-1a-candidate",
+      "originalRowStatus": "BUILT_HELD_PENDING_ORIGINAL_BODIES",
+      "seconds": 1.6468348999987938,
+      "raw": {
+        "path": "artifacts/tmp/W2.desktop-input-restoration-01.f02/fixtures48/fixture-01.raw.log",
+        "sha256": "b566697482f32b633a48396e0d777cf81c332f8df2179cb8374172d5618725ee"
+      },
+      "ownedJob": {
+        "drained": true,
+        "cleanupState": "EMPTY_CONFIRMED",
+        "activeProcesses": 0
+      }
+    },
+    {
+      "id": "reused-fixture-build-2",
+      "command": ".local/toolchains/node-v24.19.0-win-x64/node.exe tests/desktop/fixtures/parsing-quality.mjs artifacts/tmp/W2.desktop-input-restoration-01.f02/fixtures48/fixtures/02-ro_quality_ui_fixture",
+      "commandSemantics": "DISPLAY repository-relative argv; actual argv/environment remain in ignored receipt",
+      "result": "passed",
+      "exitCode": 0,
+      "commit": "1a254248c381d509fc666dc3af6b6c6f6ed75e26",
+      "coverage": "reused-original-1a-candidate",
+      "originalRowStatus": "BUILT_HELD_PENDING_ORIGINAL_BODIES",
+      "seconds": 1.1567769999965094,
+      "raw": {
+        "path": "artifacts/tmp/W2.desktop-input-restoration-01.f02/fixtures48/fixture-02.raw.log",
+        "sha256": "b566697482f32b633a48396e0d777cf81c332f8df2179cb8374172d5618725ee"
+      },
+      "ownedJob": {
+        "drained": true,
+        "cleanupState": "EMPTY_CONFIRMED",
+        "activeProcesses": 0
+      }
+    },
+    {
+      "id": "reused-fixture-build-3",
+      "command": ".local/toolchains/node-v24.19.0-win-x64/node.exe tests/desktop/fixtures/quality-navigation.mjs artifacts/tmp/W2.desktop-input-restoration-01.f02/fixtures48/fixtures/03-ro_quality_navigation_fixture",
+      "commandSemantics": "DISPLAY repository-relative argv; actual argv/environment remain in ignored receipt",
+      "result": "passed",
+      "exitCode": 0,
+      "commit": "1a254248c381d509fc666dc3af6b6c6f6ed75e26",
+      "coverage": "reused-original-1a-candidate",
+      "originalRowStatus": "BUILT_HELD_PENDING_ORIGINAL_BODIES",
+      "seconds": 1.1486574000009568,
+      "raw": {
+        "path": "artifacts/tmp/W2.desktop-input-restoration-01.f02/fixtures48/fixture-03.raw.log",
+        "sha256": "b566697482f32b633a48396e0d777cf81c332f8df2179cb8374172d5618725ee"
+      },
+      "ownedJob": {
+        "drained": true,
+        "cleanupState": "EMPTY_CONFIRMED",
+        "activeProcesses": 0
+      }
+    },
+    {
+      "id": "reused-fixture-build-4",
+      "command": ".local/toolchains/node-v24.19.0-win-x64/node.exe tests/desktop/fixtures/reprocessing.mjs artifacts/tmp/W2.desktop-input-restoration-01.f02/fixtures48/fixtures/04-ro_reprocessing_ui_fixture",
+      "commandSemantics": "DISPLAY repository-relative argv; actual argv/environment remain in ignored receipt",
+      "result": "passed",
+      "exitCode": 0,
+      "commit": "1a254248c381d509fc666dc3af6b6c6f6ed75e26",
+      "coverage": "reused-original-1a-candidate",
+      "originalRowStatus": "BUILT_HELD_PENDING_ORIGINAL_BODIES",
+      "seconds": 0.30627950000052806,
+      "raw": {
+        "path": "artifacts/tmp/W2.desktop-input-restoration-01.f02/fixtures48/fixture-04.raw.log",
+        "sha256": "b566697482f32b633a48396e0d777cf81c332f8df2179cb8374172d5618725ee"
+      },
+      "ownedJob": {
+        "drained": true,
+        "cleanupState": "EMPTY_CONFIRMED",
+        "activeProcesses": 0
+      }
+    },
+    {
+      "id": "reused-fixture-build-5",
+      "command": ".local/toolchains/node-v24.19.0-win-x64/node.exe tests/desktop/fixtures/reprocessing-navigation.mjs artifacts/tmp/W2.desktop-input-restoration-01.f02/fixtures48/fixtures/05-ro_reprocessing_navigation_fixture",
+      "commandSemantics": "DISPLAY repository-relative argv; actual argv/environment remain in ignored receipt",
+      "result": "passed",
+      "exitCode": 0,
+      "commit": "1a254248c381d509fc666dc3af6b6c6f6ed75e26",
+      "coverage": "reused-original-1a-candidate",
+      "originalRowStatus": "BUILT_HELD_PENDING_ORIGINAL_BODIES",
+      "seconds": 1.152952099997492,
+      "raw": {
+        "path": "artifacts/tmp/W2.desktop-input-restoration-01.f02/fixtures48/fixture-05.raw.log",
+        "sha256": "b566697482f32b633a48396e0d777cf81c332f8df2179cb8374172d5618725ee"
+      },
+      "ownedJob": {
+        "drained": true,
+        "cleanupState": "EMPTY_CONFIRMED",
+        "activeProcesses": 0
+      }
+    },
+    {
+      "id": "reused-fixture-build-6",
+      "command": ".local/toolchains/node-v24.19.0-win-x64/node.exe tests/desktop/fixtures/viewer-decoder.mjs",
+      "commandSemantics": "DISPLAY repository-relative argv; actual argv/environment remain in ignored receipt",
+      "result": "passed",
+      "exitCode": 0,
+      "commit": "1a254248c381d509fc666dc3af6b6c6f6ed75e26",
+      "coverage": "reused-original-1a-candidate",
+      "originalRowStatus": "BUILT_HELD_PENDING_ORIGINAL_BODIES",
+      "seconds": 0.8879690999965533,
+      "raw": {
+        "path": "artifacts/tmp/W2.desktop-input-restoration-01.f02/fixtures48/fixture-06.raw.log",
+        "sha256": "6c46ea63d4d1111d73c9f5d7516dfd38d4a7f5795f9714a6ff95341774223920"
+      },
+      "ownedJob": {
+        "drained": true,
+        "cleanupState": "EMPTY_CONFIRMED",
+        "activeProcesses": 0
+      }
+    },
+    {
+      "id": "reused-fixtures48-test_document_viewer_interactions.DocumentViewerInteractionsTests",
+      "command": ".venv/Scripts/python.exe -B -s -m unittest -v tests.desktop.test_document_viewer_interactions.DocumentViewerInteractionsTests.test_tables_caption_cell_source_preview_exclusion_keyboard_themes_and_return tests.desktop.test_document_viewer_interactions.DocumentViewerInteractionsTests.test_table_object_cell_paging_stale_notice_refresh_and_substituted_source tests.desktop.test_document_viewer_interactions.DocumentViewerInteractionsTests.test_lock_discards_late_table_result tests.desktop.test_document_viewer_interactions.DocumentViewerInteractionsTests.test_unknown_table_ipc_retains_admission_and_blocks_unaccounted_retry tests.desktop.test_document_viewer_interactions.DocumentViewerInteractionsTests.test_citation_extraction_exact_source_offset_reference_inspection_and_return tests.desktop.test_document_viewer_interactions.DocumentViewerInteractionsTests.test_citation_pagination_stale_notice_refresh_and_substituted_target_clear tests.desktop.test_document_viewer_interactions.DocumentViewerInteractionsTests.test_lock_discards_late_citation_result_and_context tests.desktop.test_document_viewer_interactions.DocumentViewerInteractionsTests.test_unknown_citation_ipc_keeps_admission_and_does_not_allow_unaccounted_retry tests.desktop.test_document_viewer_interactions.DocumentViewerInteractionsTests.test_unavailable_reference_head_refreshes_without_displaying_stale_text tests.desktop.test_document_viewer_interactions.DocumentViewerInteractionsTests.test_ambiguous_reference_read_keeps_admission_and_denies_unaccounted_retry tests.desktop.test_document_viewer_interactions.DocumentViewerInteractionsTests.test_references_preserve_inert_text_current_source_and_opaque_commands tests.desktop.test_document_viewer_interactions.DocumentViewerInteractionsTests.test_reference_uncertainty_target_inspection_and_source_substitution_denial tests.desktop.test_document_viewer_interactions.DocumentViewerInteractionsTests.test_lock_clears_late_reference_without_substituting_text tests.desktop.test_document_viewer_interactions.DocumentViewerInteractionsTests.test_page_zoom_text_keyboard_return_and_responsive_regions tests.desktop.test_document_viewer_interactions.DocumentViewerInteractionsTests.test_late_text_after_lock_and_cancelled_search_are_never_published tests.desktop.test_document_viewer_interactions.DocumentViewerInteractionsTests.test_exact_source_substitution_denies_then_fresh_retry_recovers tests.desktop.test_document_viewer_interactions.DocumentViewerInteractionsTests.test_optional_revision_lookup_waits_for_first_page_and_stays_available_afterwards tests.desktop.test_document_viewer_interactions.DocumentViewerInteractionsTests.test_structured_resource_denial_retains_original_navigation_and_recovers tests.desktop.test_document_viewer_interactions.DocumentViewerInteractionsTests.test_retry_keeps_previous_structured_ipc_charge_until_its_real_settlement tests.desktop.test_document_viewer_interactions.DocumentViewerInteractionsTests.test_two_anchors_unicode_geometry_zoom_reflow_and_exact_return tests.desktop.test_document_viewer_interactions.DocumentViewerInteractionsTests.test_saved_link_reopens_without_prior_handoff_and_missing_anchor_has_revision_and_source_review tests.desktop.test_document_viewer_interactions.DocumentViewerInteractionsTests.test_new_link_revision_replaces_context_with_and_without_prior_handoff tests.desktop.test_document_viewer_interactions.DocumentViewerInteractionsTests.test_late_previous_link_revision_cannot_replace_new_context tests.desktop.test_document_viewer_interactions.DocumentViewerInteractionsTests.test_late_anchor_after_lock_and_substituted_source_cannot_publish_context tests.desktop.test_document_viewer_interactions.DocumentViewerInteractionsTests.test_rotated_geometry_and_mismatch_preserve_structural_context tests.desktop.test_document_viewer_interactions.DocumentViewerInteractionsTests.test_ambiguous_anchor_transport_denies_context_and_unaccounted_retry tests.desktop.test_document_viewer_interactions.DocumentViewerInteractionsTests.test_rights_review_is_explicit_separate_and_does_not_execute_output tests.desktop.test_document_viewer_interactions.DocumentViewerInteractionsTests.test_alternate_copy_context_menu_and_print_shortcut_only_request_denial tests.desktop.test_document_viewer_interactions.DocumentViewerInteractionsTests.test_unknown_action_closure_prevents_retry_and_never_claims_completion tests.desktop.test_document_viewer_interactions.DocumentViewerInteractionsTests.test_partial_output_warning_action_specific_permissions_and_source_return",
+      "commandSemantics": "DISPLAY repository-relative argv; actual argv/environment remain in ignored receipt",
+      "result": "passed",
+      "exitCode": 0,
+      "commit": "1a254248c381d509fc666dc3af6b6c6f6ed75e26",
+      "coverage": "reused-original-1a-candidate",
+      "originalRowStatus": "ORIGINAL_BODIES_CAPTURED_PENDING_DISPOSITION",
+      "seconds": 11.501727700000629,
+      "raw": {
+        "path": "artifacts/tmp/W2.desktop-input-restoration-01.f02/fixtures48/test-01.raw.log",
+        "sha256": "a6641d59180215a936e9234cbb119bf7a77e918eef0669acdb192c5af88afb9a"
+      },
+      "ownedJob": {
+        "drained": true,
+        "cleanupState": "EMPTY_CONFIRMED",
+        "activeProcesses": 0
+      },
+      "originalCases": [
+        "tests.desktop.test_document_viewer_interactions.DocumentViewerInteractionsTests.test_tables_caption_cell_source_preview_exclusion_keyboard_themes_and_return",
+        "tests.desktop.test_document_viewer_interactions.DocumentViewerInteractionsTests.test_table_object_cell_paging_stale_notice_refresh_and_substituted_source",
+        "tests.desktop.test_document_viewer_interactions.DocumentViewerInteractionsTests.test_lock_discards_late_table_result",
+        "tests.desktop.test_document_viewer_interactions.DocumentViewerInteractionsTests.test_unknown_table_ipc_retains_admission_and_blocks_unaccounted_retry",
+        "tests.desktop.test_document_viewer_interactions.DocumentViewerInteractionsTests.test_citation_extraction_exact_source_offset_reference_inspection_and_return",
+        "tests.desktop.test_document_viewer_interactions.DocumentViewerInteractionsTests.test_citation_pagination_stale_notice_refresh_and_substituted_target_clear",
+        "tests.desktop.test_document_viewer_interactions.DocumentViewerInteractionsTests.test_lock_discards_late_citation_result_and_context",
+        "tests.desktop.test_document_viewer_interactions.DocumentViewerInteractionsTests.test_unknown_citation_ipc_keeps_admission_and_does_not_allow_unaccounted_retry",
+        "tests.desktop.test_document_viewer_interactions.DocumentViewerInteractionsTests.test_unavailable_reference_head_refreshes_without_displaying_stale_text",
+        "tests.desktop.test_document_viewer_interactions.DocumentViewerInteractionsTests.test_ambiguous_reference_read_keeps_admission_and_denies_unaccounted_retry",
+        "tests.desktop.test_document_viewer_interactions.DocumentViewerInteractionsTests.test_references_preserve_inert_text_current_source_and_opaque_commands",
+        "tests.desktop.test_document_viewer_interactions.DocumentViewerInteractionsTests.test_reference_uncertainty_target_inspection_and_source_substitution_denial",
+        "tests.desktop.test_document_viewer_interactions.DocumentViewerInteractionsTests.test_lock_clears_late_reference_without_substituting_text",
+        "tests.desktop.test_document_viewer_interactions.DocumentViewerInteractionsTests.test_page_zoom_text_keyboard_return_and_responsive_regions",
+        "tests.desktop.test_document_viewer_interactions.DocumentViewerInteractionsTests.test_late_text_after_lock_and_cancelled_search_are_never_published",
+        "tests.desktop.test_document_viewer_interactions.DocumentViewerInteractionsTests.test_exact_source_substitution_denies_then_fresh_retry_recovers",
+        "tests.desktop.test_document_viewer_interactions.DocumentViewerInteractionsTests.test_optional_revision_lookup_waits_for_first_page_and_stays_available_afterwards",
+        "tests.desktop.test_document_viewer_interactions.DocumentViewerInteractionsTests.test_structured_resource_denial_retains_original_navigation_and_recovers",
+        "tests.desktop.test_document_viewer_interactions.DocumentViewerInteractionsTests.test_retry_keeps_previous_structured_ipc_charge_until_its_real_settlement",
+        "tests.desktop.test_document_viewer_interactions.DocumentViewerInteractionsTests.test_two_anchors_unicode_geometry_zoom_reflow_and_exact_return",
+        "tests.desktop.test_document_viewer_interactions.DocumentViewerInteractionsTests.test_saved_link_reopens_without_prior_handoff_and_missing_anchor_has_revision_and_source_review",
+        "tests.desktop.test_document_viewer_interactions.DocumentViewerInteractionsTests.test_new_link_revision_replaces_context_with_and_without_prior_handoff",
+        "tests.desktop.test_document_viewer_interactions.DocumentViewerInteractionsTests.test_late_previous_link_revision_cannot_replace_new_context",
+        "tests.desktop.test_document_viewer_interactions.DocumentViewerInteractionsTests.test_late_anchor_after_lock_and_substituted_source_cannot_publish_context",
+        "tests.desktop.test_document_viewer_interactions.DocumentViewerInteractionsTests.test_rotated_geometry_and_mismatch_preserve_structural_context",
+        "tests.desktop.test_document_viewer_interactions.DocumentViewerInteractionsTests.test_ambiguous_anchor_transport_denies_context_and_unaccounted_retry",
+        "tests.desktop.test_document_viewer_interactions.DocumentViewerInteractionsTests.test_rights_review_is_explicit_separate_and_does_not_execute_output",
+        "tests.desktop.test_document_viewer_interactions.DocumentViewerInteractionsTests.test_alternate_copy_context_menu_and_print_shortcut_only_request_denial",
+        "tests.desktop.test_document_viewer_interactions.DocumentViewerInteractionsTests.test_unknown_action_closure_prevents_retry_and_never_claims_completion",
+        "tests.desktop.test_document_viewer_interactions.DocumentViewerInteractionsTests.test_partial_output_warning_action_specific_permissions_and_source_return"
+      ]
+    },
+    {
+      "id": "reused-fixtures48-test_parsing_quality_interactions.ParsingQualityInteractionsTests",
+      "command": ".venv/Scripts/python.exe -B -s -m unittest -v tests.desktop.test_parsing_quality_interactions.ParsingQualityInteractionsTests.test_saved_preview_explicit_acceptance_themes_keyboard_and_reader_return tests.desktop.test_parsing_quality_interactions.ParsingQualityInteractionsTests.test_undo_discard_and_exact_unknown_command_recovery tests.desktop.test_parsing_quality_interactions.ParsingQualityInteractionsTests.test_lock_discards_late_saved_proposal_and_denied_state_has_no_content",
+      "commandSemantics": "DISPLAY repository-relative argv; actual argv/environment remain in ignored receipt",
+      "result": "passed",
+      "exitCode": 0,
+      "commit": "1a254248c381d509fc666dc3af6b6c6f6ed75e26",
+      "coverage": "reused-original-1a-candidate",
+      "originalRowStatus": "ORIGINAL_BODIES_CAPTURED_PENDING_DISPOSITION",
+      "seconds": 2.146009199997934,
+      "raw": {
+        "path": "artifacts/tmp/W2.desktop-input-restoration-01.f02/fixtures48/test-02.raw.log",
+        "sha256": "e9e9b0b7fbe0ca0085e27a8cb4cdbf3b12462ed2b0b713b55c9f22302e036694"
+      },
+      "ownedJob": {
+        "drained": true,
+        "cleanupState": "EMPTY_CONFIRMED",
+        "activeProcesses": 0
+      },
+      "originalCases": [
+        "tests.desktop.test_parsing_quality_interactions.ParsingQualityInteractionsTests.test_saved_preview_explicit_acceptance_themes_keyboard_and_reader_return",
+        "tests.desktop.test_parsing_quality_interactions.ParsingQualityInteractionsTests.test_undo_discard_and_exact_unknown_command_recovery",
+        "tests.desktop.test_parsing_quality_interactions.ParsingQualityInteractionsTests.test_lock_discards_late_saved_proposal_and_denied_state_has_no_content"
+      ]
+    },
+    {
+      "id": "reused-fixtures48-test_quality_workflow_navigation.QualityWorkflowNavigationTests",
+      "command": ".venv/Scripts/python.exe -B -s -m unittest -v tests.desktop.test_quality_workflow_navigation.QualityWorkflowNavigationTests.test_guided_stage_and_return_keep_dirty_busy_and_unknown_command_ownership",
+      "commandSemantics": "DISPLAY repository-relative argv; actual argv/environment remain in ignored receipt",
+      "result": "passed",
+      "exitCode": 0,
+      "commit": "1a254248c381d509fc666dc3af6b6c6f6ed75e26",
+      "coverage": "reused-original-1a-candidate",
+      "originalRowStatus": "ORIGINAL_BODIES_CAPTURED_PENDING_DISPOSITION",
+      "seconds": 3.904778299998725,
+      "raw": {
+        "path": "artifacts/tmp/W2.desktop-input-restoration-01.f02/fixtures48/test-03.raw.log",
+        "sha256": "e791c01c02d22e130384cec324fff1d3ca5b1b755496cea80c847610e2b48678"
+      },
+      "ownedJob": {
+        "drained": true,
+        "cleanupState": "EMPTY_CONFIRMED",
+        "activeProcesses": 0
+      },
+      "originalCases": [
+        "tests.desktop.test_quality_workflow_navigation.QualityWorkflowNavigationTests.test_guided_stage_and_return_keep_dirty_busy_and_unknown_command_ownership"
+      ]
+    },
+    {
+      "id": "reused-fixtures48-test_reprocessing_interactions.ReprocessingInteractionsTests",
+      "command": ".venv/Scripts/python.exe -B -s -m unittest -v tests.desktop.test_reprocessing_interactions.ReprocessingInteractionsTests.test_explicit_acceptance_inert_content_themes_and_reader_return tests.desktop.test_reprocessing_interactions.ReprocessingInteractionsTests.test_lost_post_commit_reply_retains_exact_command_and_blocks_navigation tests.desktop.test_reprocessing_interactions.ReprocessingInteractionsTests.test_committed_reconciliation_lost_reply_retains_exact_command_and_one_plan tests.desktop.test_reprocessing_interactions.ReprocessingInteractionsTests.test_dirty_reconciliation_guard_and_lock_suppresses_late_private_reply tests.desktop.test_reprocessing_interactions.ReprocessingInteractionsTests.test_create_another_batch_after_inspecting_an_existing_one tests.desktop.test_reprocessing_interactions.ReprocessingInteractionsTests.test_non_rematch_correction_on_reference_node_keeps_null_reference_mapping tests.desktop.test_reprocessing_interactions.ReprocessingInteractionsTests.test_quality_vector_regression_remains_visible_without_a_new_triage_reason tests.desktop.test_reprocessing_interactions.ReprocessingInteractionsTests.test_candidate_pages_keep_selected_target_and_bounded_selector_options tests.desktop.test_reprocessing_interactions.ReprocessingInteractionsTests.test_restart_discovers_original_checkpoint_after_batch_cancel_and_exact_lost_resume",
+      "commandSemantics": "DISPLAY repository-relative argv; actual argv/environment remain in ignored receipt",
+      "result": "passed",
+      "exitCode": 0,
+      "commit": "1a254248c381d509fc666dc3af6b6c6f6ed75e26",
+      "coverage": "reused-original-1a-candidate",
+      "originalRowStatus": "ORIGINAL_BODIES_CAPTURED_PENDING_DISPOSITION",
+      "seconds": 5.199798399997235,
+      "raw": {
+        "path": "artifacts/tmp/W2.desktop-input-restoration-01.f02/fixtures48/test-04.raw.log",
+        "sha256": "4802dba498b92707fe4e3cb698d93b542fd6bf1b1e1f6778d33696d480228082"
+      },
+      "ownedJob": {
+        "drained": true,
+        "cleanupState": "EMPTY_CONFIRMED",
+        "activeProcesses": 0
+      },
+      "originalCases": [
+        "tests.desktop.test_reprocessing_interactions.ReprocessingInteractionsTests.test_explicit_acceptance_inert_content_themes_and_reader_return",
+        "tests.desktop.test_reprocessing_interactions.ReprocessingInteractionsTests.test_lost_post_commit_reply_retains_exact_command_and_blocks_navigation",
+        "tests.desktop.test_reprocessing_interactions.ReprocessingInteractionsTests.test_committed_reconciliation_lost_reply_retains_exact_command_and_one_plan",
+        "tests.desktop.test_reprocessing_interactions.ReprocessingInteractionsTests.test_dirty_reconciliation_guard_and_lock_suppresses_late_private_reply",
+        "tests.desktop.test_reprocessing_interactions.ReprocessingInteractionsTests.test_create_another_batch_after_inspecting_an_existing_one",
+        "tests.desktop.test_reprocessing_interactions.ReprocessingInteractionsTests.test_non_rematch_correction_on_reference_node_keeps_null_reference_mapping",
+        "tests.desktop.test_reprocessing_interactions.ReprocessingInteractionsTests.test_quality_vector_regression_remains_visible_without_a_new_triage_reason",
+        "tests.desktop.test_reprocessing_interactions.ReprocessingInteractionsTests.test_candidate_pages_keep_selected_target_and_bounded_selector_options",
+        "tests.desktop.test_reprocessing_interactions.ReprocessingInteractionsTests.test_restart_discovers_original_checkpoint_after_batch_cancel_and_exact_lost_resume"
+      ]
+    },
+    {
+      "id": "reused-fixtures48-test_reprocessing_workflow_navigation.ReprocessingWorkflowNavigationTests",
+      "command": ".venv/Scripts/python.exe -B -s -m unittest -v tests.desktop.test_reprocessing_workflow_navigation.ReprocessingWorkflowNavigationTests.test_actual_pending_reconciliation_guards_guided_stage_and_return",
+      "commandSemantics": "DISPLAY repository-relative argv; actual argv/environment remain in ignored receipt",
+      "result": "passed",
+      "exitCode": 0,
+      "commit": "1a254248c381d509fc666dc3af6b6c6f6ed75e26",
+      "coverage": "reused-original-1a-candidate",
+      "originalRowStatus": "ORIGINAL_BODIES_CAPTURED_PENDING_DISPOSITION",
+      "seconds": 21.417250099999364,
+      "raw": {
+        "path": "artifacts/tmp/W2.desktop-input-restoration-01.f02/fixtures48/test-05.raw.log",
+        "sha256": "4015ef3f5be765fdb77c2d84676fc58e97ab4dcae1cb4d5a93e40de1245c14d5"
+      },
+      "ownedJob": {
+        "drained": true,
+        "cleanupState": "EMPTY_CONFIRMED",
+        "activeProcesses": 0
+      },
+      "originalCases": [
+        "tests.desktop.test_reprocessing_workflow_navigation.ReprocessingWorkflowNavigationTests.test_actual_pending_reconciliation_guards_guided_stage_and_return"
+      ]
+    },
+    {
+      "id": "reused-fixtures48-test_viewer_decoder.ViewerDecoderTests",
+      "command": ".venv/Scripts/python.exe -B -s -m unittest -v tests.desktop.test_viewer_decoder.ViewerDecoderTests.test_active_actions_links_and_widgets_remain_inert_with_actual_worker tests.desktop.test_viewer_decoder.ViewerDecoderTests.test_missing_page_tree_is_denied_and_fresh_source_recovers tests.desktop.test_viewer_decoder.ViewerDecoderTests.test_oversized_page_surface_is_denied_before_canvas_allocation tests.desktop.test_viewer_decoder.ViewerDecoderTests.test_compressed_content_expansion_hits_worker_quota_then_recovers",
+      "commandSemantics": "DISPLAY repository-relative argv; actual argv/environment remain in ignored receipt",
+      "result": "passed",
+      "exitCode": 0,
+      "commit": "1a254248c381d509fc666dc3af6b6c6f6ed75e26",
+      "coverage": "reused-original-1a-candidate",
+      "originalRowStatus": "INCOMPLETE",
+      "seconds": 3.342410799996287,
+      "raw": {
+        "path": "artifacts/tmp/W2.desktop-input-restoration-01.f02/fixtures48/test-06.raw.log",
+        "sha256": "9d49b7471d39d84bfedf216450b8a89bc993b1949f283ce121679eecf26a1033"
+      },
+      "ownedJob": {
+        "drained": true,
+        "cleanupState": "EMPTY_CONFIRMED",
+        "activeProcesses": 0
+      },
+      "originalCases": [
+        "tests.desktop.test_viewer_decoder.ViewerDecoderTests.test_active_actions_links_and_widgets_remain_inert_with_actual_worker",
+        "tests.desktop.test_viewer_decoder.ViewerDecoderTests.test_missing_page_tree_is_denied_and_fresh_source_recovers",
+        "tests.desktop.test_viewer_decoder.ViewerDecoderTests.test_oversized_page_surface_is_denied_before_canvas_allocation",
+        "tests.desktop.test_viewer_decoder.ViewerDecoderTests.test_compressed_content_expansion_hits_worker_quota_then_recovers"
+      ]
+    },
+    {
+      "id": "reused-negative3",
+      "command": ".venv/Scripts/python.exe -B -s -m unittest -v tests.desktop.test_ui_conformance.UiConformanceTests.test_fixture_mode_refuses_to_mask_an_application_implementation tests.desktop.test_ui_conformance.UiConformanceTests.test_application_mode_requires_a_bound_build_manifest tests.desktop.test_ui_conformance.UiConformanceTests.test_active_presentation_requires_its_exact_compatibility_witness",
+      "commandSemantics": "DISPLAY repository-relative argv; actual argv/environment remain in ignored receipt",
+      "result": "passed",
+      "exitCode": 0,
+      "commit": "1a254248c381d509fc666dc3af6b6c6f6ed75e26",
+      "coverage": "reused-original-1a-candidate",
+      "originalRowStatus": "ORIGINAL_BODIES_CAPTURED_PENDING_DISPOSITION",
+      "seconds": 7.778883599996334,
+      "raw": {
+        "path": "artifacts/tmp/W2.desktop-input-restoration-01.f02/restorations8/test-01.raw.log",
+        "sha256": "fb6f80e68c5a2a28e866b7081b6941745d9fef714329f8bc9deaae46c4c89c12"
+      },
+      "ownedJob": {
+        "drained": true,
+        "cleanupState": "EMPTY_CONFIRMED",
+        "activeProcesses": 0
+      },
+      "originalCases": [
+        "tests.desktop.test_ui_conformance.UiConformanceTests.test_fixture_mode_refuses_to_mask_an_application_implementation",
+        "tests.desktop.test_ui_conformance.UiConformanceTests.test_application_mode_requires_a_bound_build_manifest",
+        "tests.desktop.test_ui_conformance.UiConformanceTests.test_active_presentation_requires_its_exact_compatibility_witness"
+      ]
+    },
+    {
+      "id": "fresh-remaining5-local-assets-first",
+      "command": ".venv/Scripts/python.exe -B -s -m unittest -v tests.desktop.test_document_attachment_interactions.DocumentAttachmentInteractionTests.test_selected_version_native_intents_denial_cancel_and_return",
+      "commandSemantics": "DISPLAY repository-relative argv; actual argv/environment remain in ignored receipt",
+      "result": "passed",
+      "exitCode": 0,
+      "commit": "fb10b8279f207d169d292bc2e1878314e4ce3929",
+      "coverage": "fresh-current-candidate",
+      "originalRowStatus": "ORIGINAL_BODIES_CAPTURED_PENDING_DISPOSITION",
+      "seconds": 44.64806530000351,
+      "raw": {
+        "path": "artifacts/tmp/W2.desktop-input-restoration-01.f06/remaining5/test-01.raw.log",
+        "sha256": "a1bfece050cf54ebbd98f1d52a88907373b69e8d76f8594f990c291dd7c8069c"
+      },
+      "ownedJob": {
+        "drained": true,
+        "cleanupState": "EMPTY_CONFIRMED",
+        "activeProcesses": 0
+      },
+      "originalCases": [
+        "tests.desktop.test_document_attachment_interactions.DocumentAttachmentInteractionTests.test_selected_version_native_intents_denial_cancel_and_return"
+      ]
+    },
+    {
+      "id": "fresh-remaining5-local-assets-rest",
+      "command": ".venv/Scripts/python.exe -B -s -m unittest -v tests.desktop.test_product_layout_measurements.ProductLayoutMeasurementsTests.test_actual_application_settings_label_and_keyboard_skip_contrast tests.desktop.test_product_layout_measurements.ProductLayoutMeasurementsTests.test_actual_product_flow_and_sidebar_with_keyboard_scrolling",
+      "commandSemantics": "DISPLAY repository-relative argv; actual argv/environment remain in ignored receipt",
+      "result": "passed",
+      "exitCode": 0,
+      "commit": "fb10b8279f207d169d292bc2e1878314e4ce3929",
+      "coverage": "fresh-current-candidate",
+      "originalRowStatus": "ORIGINAL_BODIES_CAPTURED_PENDING_DISPOSITION",
+      "seconds": 14.1175762999992,
+      "raw": {
+        "path": "artifacts/tmp/W2.desktop-input-restoration-01.f06/remaining5/test-02.raw.log",
+        "sha256": "7ac9ea988f5ca487825acbb3e8c8d166fb8579d532403d268367ab503078d049"
+      },
+      "ownedJob": {
+        "drained": true,
+        "cleanupState": "EMPTY_CONFIRMED",
+        "activeProcesses": 0
+      },
+      "originalCases": [
+        "tests.desktop.test_product_layout_measurements.ProductLayoutMeasurementsTests.test_actual_application_settings_label_and_keyboard_skip_contrast",
+        "tests.desktop.test_product_layout_measurements.ProductLayoutMeasurementsTests.test_actual_product_flow_and_sidebar_with_keyboard_scrolling"
+      ]
+    },
+    {
+      "id": "fresh-remaining5-cleanup2",
+      "command": ".venv/Scripts/python.exe -B -s -m unittest -v tests.desktop.test_desktop_app_check.DevelopmentEntryTests.test_actual_cli_processes_script_arguments_as_embedded_origin tests.desktop.test_desktop_app_check.DevelopmentEntryTests.test_actual_cli_default_negative_control_and_duplicate_flag",
+      "commandSemantics": "DISPLAY repository-relative argv; actual argv/environment remain in ignored receipt",
+      "result": "passed",
+      "exitCode": 0,
+      "commit": "fb10b8279f207d169d292bc2e1878314e4ce3929",
+      "coverage": "fresh-current-candidate",
+      "originalRowStatus": "ORIGINAL_BODIES_CAPTURED_PENDING_DISPOSITION",
+      "seconds": 4.28535120000015,
+      "raw": {
+        "path": "artifacts/tmp/W2.desktop-input-restoration-01.f06/remaining5/test-03.raw.log",
+        "sha256": "51531a29726713cb8f4e5c5fc682d6ff5dd31d3a2bf182855664c743ae2574ba"
+      },
+      "ownedJob": {
+        "drained": true,
+        "cleanupState": "EMPTY_CONFIRMED",
+        "activeProcesses": 0
+      },
+      "originalCases": [
+        "tests.desktop.test_desktop_app_check.DevelopmentEntryTests.test_actual_cli_processes_script_arguments_as_embedded_origin",
+        "tests.desktop.test_desktop_app_check.DevelopmentEntryTests.test_actual_cli_default_negative_control_and_duplicate_flag"
+      ]
+    },
+    {
+      "id": "desktop-affected-format",
+      "command": ".venv/Scripts/python.exe -B -s -m ruff format --check --config pyproject.toml -- tests/desktop/test_document_attachment_interactions.py",
+      "commandSemantics": "DISPLAY repository-relative argv; actual argv/environment remain in ignored receipt",
+      "result": "passed",
+      "exitCode": 0,
+      "commit": "fb10b8279f207d169d292bc2e1878314e4ce3929",
+      "coverage": "fresh-current-candidate",
+      "originalRowStatus": "PASS",
+      "seconds": 0.18857599999319063,
+      "raw": {
+        "path": "artifacts/tmp/W2.remaining-corrections-batch-01/W2.C25.T01.desktop-quality-02/desktop-affected-format.raw.log",
+        "sha256": "fd2299c9f1c6dc869070883e281051bfe93aacf66c1a3b0069f45b4aa410ca50"
+      },
+      "ownedJob": {
+        "drained": true,
+        "cleanupState": "EMPTY_CONFIRMED",
+        "activeProcesses": 0
+      }
+    },
+    {
+      "id": "desktop-affected-lint",
+      "command": ".venv/Scripts/python.exe -B -s -m ruff check --config pyproject.toml -- tests/desktop/test_document_attachment_interactions.py",
+      "commandSemantics": "DISPLAY repository-relative argv; actual argv/environment remain in ignored receipt",
+      "result": "passed",
+      "exitCode": 0,
+      "commit": "fb10b8279f207d169d292bc2e1878314e4ce3929",
+      "coverage": "fresh-current-candidate",
+      "originalRowStatus": "PASS",
+      "seconds": 0.15449439999792958,
+      "raw": {
+        "path": "artifacts/tmp/W2.remaining-corrections-batch-01/W2.C25.T01.desktop-quality-02/desktop-affected-lint.raw.log",
+        "sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18"
+      },
+      "ownedJob": {
+        "drained": true,
+        "cleanupState": "EMPTY_CONFIRMED",
+        "activeProcesses": 0
+      }
+    },
+    {
+      "id": "configured-source-types",
+      "command": ".venv/Scripts/python.exe -B -s -m mypy --config-file pyproject.toml --no-namespace-packages --cache-dir artifacts/tmp/W2.remaining-corrections-batch-01/W2.C25.T01.desktop-quality-02/mypy-cache -- @artifacts/tmp/W2.remaining-corrections-batch-01/W2.C25.T01.desktop-quality-02/source-files.args",
+      "commandSemantics": "DISPLAY repository-relative argv; actual argv/environment remain in ignored receipt",
+      "result": "passed",
+      "exitCode": 0,
+      "commit": "fb10b8279f207d169d292bc2e1878314e4ce3929",
+      "coverage": "fresh-current-candidate",
+      "originalRowStatus": "PASS",
+      "seconds": 19.030182599999534,
+      "raw": {
+        "path": "artifacts/tmp/W2.remaining-corrections-batch-01/W2.C25.T01.desktop-quality-02/configured-source-types.raw.log",
+        "sha256": "c642e5b33b5e7d157e7b2362ef94a292d50ab8abbba717375ca1704ad53de820"
+      },
+      "ownedJob": {
+        "drained": true,
+        "cleanupState": "EMPTY_CONFIRMED",
+        "activeProcesses": 0
+      }
+    }
+  ],
+  "desktopExecutionReceipts": [
+    {
+      "path": "artifacts/tmp/W2.desktop-input-restoration-01.f02/fixtures48/receipt.json",
+      "sha256": "fab16434ba98bc3270e1511c41f1230e98ea11fccd6ac93a523f6e4e6aee6901",
+      "executionCandidate": "1a254248c381d509fc666dc3af6b6c6f6ed75e26",
+      "originalParentStatus": "FAIL",
+      "coverage": "reused51-individual-methods-only"
+    },
+    {
+      "path": "artifacts/tmp/W2.desktop-input-restoration-01.f02/restorations8/receipt.json",
+      "sha256": "88329448a1ff1a6e504cbdbb3a19cb21834aef7e523ecffdcd558da871bbf942",
+      "executionCandidate": "1a254248c381d509fc666dc3af6b6c6f6ed75e26",
+      "originalParentStatus": "FAIL",
+      "coverage": "reused51-individual-methods-only"
+    },
+    {
+      "path": "artifacts/tmp/W2.desktop-input-restoration-01.f06/remaining5/receipt.json",
+      "sha256": "d9c07878553f3ad18a24b2e2ef52b8d189f1de1a7e69da7a59095e7d94b9a631",
+      "executionCandidate": "fb10b8279f207d169d292bc2e1878314e4ce3929",
+      "coverage": "fresh5-plus-actual51-input-equality"
+    }
+  ],
+  "qualityExecutionReceipt": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/W2.C25.T01.desktop-quality-02/receipt.json",
+    "sha256": "b4a6ef46d3e0c94923d9329247f6c2f312ea369b0b98fd4ae5e6edc031cfa5fc"
+  },
+  "desktopExecutionSourceReadiness": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/desktop-input-consumers-01/independent-remaining-five-source-readiness-09.json",
+    "sha256": "f9303a74b7a80536095cf34c521813a572fd6f80996f354c9ffbacb661afa237"
+  },
+  "proofSupplement": {
+    "path": "artifacts/evidence/W2.C25.T01.locator-and-proof-supplement-04.json",
+    "sha256": "588b535a18a434bde65c3053b634d105a04a35b1a275a964eff523d8aab7da75"
+  },
+  "reuseAssessment": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/w2-c25-fixtures48-actual-reporting-output-assessment-01.json",
+    "sha256": "003e9ff382a7f04d3d38d4c99bd2c6a7ce080f12d37ea962aa9211a56062fd68"
+  },
+  "reuseClassification": "Earlier48 fixture bodies and3 UiConformance denials do not consume/import the attachment test module. Its exactlocator and one necessary post-S04 positive availability assertion are unconsumed conservative whole-repository hold changes for these51. All consumed source/fixtures/runtime/live/reference/environment must actually match at latercandidate; original1a/raw/FAIL parent identities remain unchanged.",
+  "reusedBodyCount": 51,
+  "freshBodyCount": 5,
+  "executionConsumerCorrection": {
+    "inheritedCanonicalSourceReadiness": {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/desktop-input-consumers-01/independent-format-source-readiness-01.json",
+      "sha256": "7261dd4fa4b6b352ff160e46a3aa89493c5c190d5b17730b5ba695e6f89d0ecc"
+    },
+    "actualSuccessorSourceReadiness": {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/desktop-input-consumers-01/independent-workspace-alias-source-readiness-01.json",
+      "sha256": "06e5382627da140dd753bce7444b791d9d94a86999a07d0457181e5968bb25df"
+    },
+    "meaning": "Exact normal installed desktop workspace alias closure; unchanged test payloads/body/assertion/deadline/authority and original scope8322. Source-only consumer successor, no product or shared framework change.",
+    "preservedSetupAdverse": {
+      "path": "artifacts/tmp/W2.C25.T01.desktop-input-setup-adverse-01.json",
+      "sha256": "d5540952266e724c1c5f737a89c43de7d645f441aeb1d1f51efda0ce5fd8c0f1"
+    },
+    "preservedSourceBindingFinding": {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/desktop-input-consumers-01/quality-successor-binding-gap-observation-01.json",
+      "sha256": "0d0b5c9806dc62515f2608e6790a8bf202de8b1fb368190e0a7a1bd45b77bd5e"
+    }
+  },
+  "publicScope": {
+    "path": "artifacts/evidence/W2.desktop-input-restoration-01.scope-decision-01.json",
+    "sha256": "8322eb37714fff1942e9385d933a82fb228e4f76e39aa72eb13037a66a0a580a"
+  },
+  "desktopSourceReadiness": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/desktop-input-consumers-01/independent-format-source-readiness-01.json",
+    "sha256": "7261dd4fa4b6b352ff160e46a3aa89493c5c190d5b17730b5ba695e6f89d0ecc"
+  },
+  "qualitySourceReadiness": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/desktop-input-consumers-01/independent-remaining-five-quality-evidence-source-readiness-06.json",
+    "sha256": "ed7fe1bbe1ff676c0d63b501f11e0d2cdeea9afd4caa0be61d2bf0af8227b324"
+  },
+  "actualNamedOriginalBodies": [
+    "tests.desktop.test_document_viewer_interactions.DocumentViewerInteractionsTests.test_tables_caption_cell_source_preview_exclusion_keyboard_themes_and_return",
+    "tests.desktop.test_document_viewer_interactions.DocumentViewerInteractionsTests.test_table_object_cell_paging_stale_notice_refresh_and_substituted_source",
+    "tests.desktop.test_document_viewer_interactions.DocumentViewerInteractionsTests.test_lock_discards_late_table_result",
+    "tests.desktop.test_document_viewer_interactions.DocumentViewerInteractionsTests.test_unknown_table_ipc_retains_admission_and_blocks_unaccounted_retry",
+    "tests.desktop.test_document_viewer_interactions.DocumentViewerInteractionsTests.test_citation_extraction_exact_source_offset_reference_inspection_and_return",
+    "tests.desktop.test_document_viewer_interactions.DocumentViewerInteractionsTests.test_citation_pagination_stale_notice_refresh_and_substituted_target_clear",
+    "tests.desktop.test_document_viewer_interactions.DocumentViewerInteractionsTests.test_lock_discards_late_citation_result_and_context",
+    "tests.desktop.test_document_viewer_interactions.DocumentViewerInteractionsTests.test_unknown_citation_ipc_keeps_admission_and_does_not_allow_unaccounted_retry",
+    "tests.desktop.test_document_viewer_interactions.DocumentViewerInteractionsTests.test_unavailable_reference_head_refreshes_without_displaying_stale_text",
+    "tests.desktop.test_document_viewer_interactions.DocumentViewerInteractionsTests.test_ambiguous_reference_read_keeps_admission_and_denies_unaccounted_retry",
+    "tests.desktop.test_document_viewer_interactions.DocumentViewerInteractionsTests.test_references_preserve_inert_text_current_source_and_opaque_commands",
+    "tests.desktop.test_document_viewer_interactions.DocumentViewerInteractionsTests.test_reference_uncertainty_target_inspection_and_source_substitution_denial",
+    "tests.desktop.test_document_viewer_interactions.DocumentViewerInteractionsTests.test_lock_clears_late_reference_without_substituting_text",
+    "tests.desktop.test_document_viewer_interactions.DocumentViewerInteractionsTests.test_page_zoom_text_keyboard_return_and_responsive_regions",
+    "tests.desktop.test_document_viewer_interactions.DocumentViewerInteractionsTests.test_late_text_after_lock_and_cancelled_search_are_never_published",
+    "tests.desktop.test_document_viewer_interactions.DocumentViewerInteractionsTests.test_exact_source_substitution_denies_then_fresh_retry_recovers",
+    "tests.desktop.test_document_viewer_interactions.DocumentViewerInteractionsTests.test_optional_revision_lookup_waits_for_first_page_and_stays_available_afterwards",
+    "tests.desktop.test_document_viewer_interactions.DocumentViewerInteractionsTests.test_structured_resource_denial_retains_original_navigation_and_recovers",
+    "tests.desktop.test_document_viewer_interactions.DocumentViewerInteractionsTests.test_retry_keeps_previous_structured_ipc_charge_until_its_real_settlement",
+    "tests.desktop.test_document_viewer_interactions.DocumentViewerInteractionsTests.test_two_anchors_unicode_geometry_zoom_reflow_and_exact_return",
+    "tests.desktop.test_document_viewer_interactions.DocumentViewerInteractionsTests.test_saved_link_reopens_without_prior_handoff_and_missing_anchor_has_revision_and_source_review",
+    "tests.desktop.test_document_viewer_interactions.DocumentViewerInteractionsTests.test_new_link_revision_replaces_context_with_and_without_prior_handoff",
+    "tests.desktop.test_document_viewer_interactions.DocumentViewerInteractionsTests.test_late_previous_link_revision_cannot_replace_new_context",
+    "tests.desktop.test_document_viewer_interactions.DocumentViewerInteractionsTests.test_late_anchor_after_lock_and_substituted_source_cannot_publish_context",
+    "tests.desktop.test_document_viewer_interactions.DocumentViewerInteractionsTests.test_rotated_geometry_and_mismatch_preserve_structural_context",
+    "tests.desktop.test_document_viewer_interactions.DocumentViewerInteractionsTests.test_ambiguous_anchor_transport_denies_context_and_unaccounted_retry",
+    "tests.desktop.test_document_viewer_interactions.DocumentViewerInteractionsTests.test_rights_review_is_explicit_separate_and_does_not_execute_output",
+    "tests.desktop.test_document_viewer_interactions.DocumentViewerInteractionsTests.test_alternate_copy_context_menu_and_print_shortcut_only_request_denial",
+    "tests.desktop.test_document_viewer_interactions.DocumentViewerInteractionsTests.test_unknown_action_closure_prevents_retry_and_never_claims_completion",
+    "tests.desktop.test_document_viewer_interactions.DocumentViewerInteractionsTests.test_partial_output_warning_action_specific_permissions_and_source_return",
+    "tests.desktop.test_parsing_quality_interactions.ParsingQualityInteractionsTests.test_saved_preview_explicit_acceptance_themes_keyboard_and_reader_return",
+    "tests.desktop.test_parsing_quality_interactions.ParsingQualityInteractionsTests.test_undo_discard_and_exact_unknown_command_recovery",
+    "tests.desktop.test_parsing_quality_interactions.ParsingQualityInteractionsTests.test_lock_discards_late_saved_proposal_and_denied_state_has_no_content",
+    "tests.desktop.test_quality_workflow_navigation.QualityWorkflowNavigationTests.test_guided_stage_and_return_keep_dirty_busy_and_unknown_command_ownership",
+    "tests.desktop.test_reprocessing_interactions.ReprocessingInteractionsTests.test_explicit_acceptance_inert_content_themes_and_reader_return",
+    "tests.desktop.test_reprocessing_interactions.ReprocessingInteractionsTests.test_lost_post_commit_reply_retains_exact_command_and_blocks_navigation",
+    "tests.desktop.test_reprocessing_interactions.ReprocessingInteractionsTests.test_committed_reconciliation_lost_reply_retains_exact_command_and_one_plan",
+    "tests.desktop.test_reprocessing_interactions.ReprocessingInteractionsTests.test_dirty_reconciliation_guard_and_lock_suppresses_late_private_reply",
+    "tests.desktop.test_reprocessing_interactions.ReprocessingInteractionsTests.test_create_another_batch_after_inspecting_an_existing_one",
+    "tests.desktop.test_reprocessing_interactions.ReprocessingInteractionsTests.test_non_rematch_correction_on_reference_node_keeps_null_reference_mapping",
+    "tests.desktop.test_reprocessing_interactions.ReprocessingInteractionsTests.test_quality_vector_regression_remains_visible_without_a_new_triage_reason",
+    "tests.desktop.test_reprocessing_interactions.ReprocessingInteractionsTests.test_candidate_pages_keep_selected_target_and_bounded_selector_options",
+    "tests.desktop.test_reprocessing_interactions.ReprocessingInteractionsTests.test_restart_discovers_original_checkpoint_after_batch_cancel_and_exact_lost_resume",
+    "tests.desktop.test_reprocessing_workflow_navigation.ReprocessingWorkflowNavigationTests.test_actual_pending_reconciliation_guards_guided_stage_and_return",
+    "tests.desktop.test_viewer_decoder.ViewerDecoderTests.test_active_actions_links_and_widgets_remain_inert_with_actual_worker",
+    "tests.desktop.test_viewer_decoder.ViewerDecoderTests.test_missing_page_tree_is_denied_and_fresh_source_recovers",
+    "tests.desktop.test_viewer_decoder.ViewerDecoderTests.test_oversized_page_surface_is_denied_before_canvas_allocation",
+    "tests.desktop.test_viewer_decoder.ViewerDecoderTests.test_compressed_content_expansion_hits_worker_quota_then_recovers",
+    "tests.desktop.test_ui_conformance.UiConformanceTests.test_fixture_mode_refuses_to_mask_an_application_implementation",
+    "tests.desktop.test_ui_conformance.UiConformanceTests.test_application_mode_requires_a_bound_build_manifest",
+    "tests.desktop.test_ui_conformance.UiConformanceTests.test_active_presentation_requires_its_exact_compatibility_witness",
+    "tests.desktop.test_document_attachment_interactions.DocumentAttachmentInteractionTests.test_selected_version_native_intents_denial_cancel_and_return",
+    "tests.desktop.test_product_layout_measurements.ProductLayoutMeasurementsTests.test_actual_application_settings_label_and_keyboard_skip_contrast",
+    "tests.desktop.test_product_layout_measurements.ProductLayoutMeasurementsTests.test_actual_product_flow_and_sidebar_with_keyboard_scrolling",
+    "tests.desktop.test_desktop_app_check.DevelopmentEntryTests.test_actual_cli_processes_script_arguments_as_embedded_origin",
+    "tests.desktop.test_desktop_app_check.DevelopmentEntryTests.test_actual_cli_default_negative_control_and_duplicate_flag"
+  ],
+  "actualVerifiedBodyCount": 56,
+  "configuredTypeSourceCount": 734,
+  "preservedOriginalAdverse": [
+    {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/w2-final29-desktop-unit-reconciliation-incremental-disposition-01.json",
+      "sha256": "15cd3b275f1c271eaa07fa5202e7f858bc3e002bce757aac5dbb2c93b5ad7255"
+    },
+    {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/desktop-input-verification-restoration-01/case-scope-and-source-bindings-01.json",
+      "sha256": "399d085e1e719b0a934735cc684a2190bafff8b2d0e39658c18710f05cfc51c3"
+    }
+  ],
+  "originalHistoricalEvidence": [
+    {
+      "path": "artifacts/evidence/W2.A01.T02-R02.json",
+      "sha256": "17c4a33cec767a6a8d12137a9bbf0e5dbd48cf2dfb5649c926e16e83a5152e4c"
+    },
+    {
+      "path": "artifacts/evidence/W2.A01.T02.review-R02.json",
+      "sha256": "e56190d1c45e41d0f07d47b46030131b2b873bdb7f4b9cbed7916784cf79eec6"
+    },
+    {
+      "path": "artifacts/evidence/W2.A01.adoption.json",
+      "sha256": "c9a0c04eea44bcb97fbb0b2cfd262320ad27daa03a532f229ef6df9e5ebd0d30"
+    }
+  ],
+  "executionTruth": "Actual56 individually named original bodies:51 at original1a candidate with raw FAIL parents unchanged and different48 output/reporting assessment plus current consumed-input equality;5 fresh at current candidate. Quality fresh at current candidate. No prior execution retargeted, whole parentPASS, fresh trusted Native/principal/DPAPI/model/profile/Wave/release claim.",
+  "verificationSelection": {
+    "selectedCommandIds": [
+      "desktop:unit",
+      "foundation:quality"
+    ],
+    "riskAnalysis": "One normal current-W2 attachment fixture-host correction; three exact historical desktop test inputs and finite scope were committed before its spec/claim and do not enter its source diff. Verify all actually executed original canonical fixture/restoration bodies, exact asset/negative/CLI boundaries and affected quality under unchanged owned/input closure; no other source, reference, criterion, deadline or identity edit.",
+    "deferred": [
+      "Unrelated earlier verified areas are reused without another full exit review; unresolved product/platform/security/model/recovery risks remain separate, and source/runtime failure cannot be relabelled PASS."
+    ]
+  },
+  "correctiveIntegration": {
+    "originSha256": "3a9dabb33cd0f6c70d7842792941f98fad8722d8c80c87c2c93630717ca39a04",
+    "authorityPreserved": true,
+    "affectedChecks": [
+      ".local/toolchains/node-v24.19.0-win-x64/node.exe tests/desktop/fixtures/document-viewer.mjs artifacts/tmp/W2.desktop-input-restoration-01.f02/fixtures48/fixtures/01-ro_viewer_ui_fixture",
+      ".local/toolchains/node-v24.19.0-win-x64/node.exe tests/desktop/fixtures/parsing-quality.mjs artifacts/tmp/W2.desktop-input-restoration-01.f02/fixtures48/fixtures/02-ro_quality_ui_fixture",
+      ".local/toolchains/node-v24.19.0-win-x64/node.exe tests/desktop/fixtures/quality-navigation.mjs artifacts/tmp/W2.desktop-input-restoration-01.f02/fixtures48/fixtures/03-ro_quality_navigation_fixture",
+      ".local/toolchains/node-v24.19.0-win-x64/node.exe tests/desktop/fixtures/reprocessing.mjs artifacts/tmp/W2.desktop-input-restoration-01.f02/fixtures48/fixtures/04-ro_reprocessing_ui_fixture",
+      ".local/toolchains/node-v24.19.0-win-x64/node.exe tests/desktop/fixtures/reprocessing-navigation.mjs artifacts/tmp/W2.desktop-input-restoration-01.f02/fixtures48/fixtures/05-ro_reprocessing_navigation_fixture",
+      ".local/toolchains/node-v24.19.0-win-x64/node.exe tests/desktop/fixtures/viewer-decoder.mjs",
+      ".venv/Scripts/python.exe -B -s -m unittest -v tests.desktop.test_document_viewer_interactions.DocumentViewerInteractionsTests.test_tables_caption_cell_source_preview_exclusion_keyboard_themes_and_return tests.desktop.test_document_viewer_interactions.DocumentViewerInteractionsTests.test_table_object_cell_paging_stale_notice_refresh_and_substituted_source tests.desktop.test_document_viewer_interactions.DocumentViewerInteractionsTests.test_lock_discards_late_table_result tests.desktop.test_document_viewer_interactions.DocumentViewerInteractionsTests.test_unknown_table_ipc_retains_admission_and_blocks_unaccounted_retry tests.desktop.test_document_viewer_interactions.DocumentViewerInteractionsTests.test_citation_extraction_exact_source_offset_reference_inspection_and_return tests.desktop.test_document_viewer_interactions.DocumentViewerInteractionsTests.test_citation_pagination_stale_notice_refresh_and_substituted_target_clear tests.desktop.test_document_viewer_interactions.DocumentViewerInteractionsTests.test_lock_discards_late_citation_result_and_context tests.desktop.test_document_viewer_interactions.DocumentViewerInteractionsTests.test_unknown_citation_ipc_keeps_admission_and_does_not_allow_unaccounted_retry tests.desktop.test_document_viewer_interactions.DocumentViewerInteractionsTests.test_unavailable_reference_head_refreshes_without_displaying_stale_text tests.desktop.test_document_viewer_interactions.DocumentViewerInteractionsTests.test_ambiguous_reference_read_keeps_admission_and_denies_unaccounted_retry tests.desktop.test_document_viewer_interactions.DocumentViewerInteractionsTests.test_references_preserve_inert_text_current_source_and_opaque_commands tests.desktop.test_document_viewer_interactions.DocumentViewerInteractionsTests.test_reference_uncertainty_target_inspection_and_source_substitution_denial tests.desktop.test_document_viewer_interactions.DocumentViewerInteractionsTests.test_lock_clears_late_reference_without_substituting_text tests.desktop.test_document_viewer_interactions.DocumentViewerInteractionsTests.test_page_zoom_text_keyboard_return_and_responsive_regions tests.desktop.test_document_viewer_interactions.DocumentViewerInteractionsTests.test_late_text_after_lock_and_cancelled_search_are_never_published tests.desktop.test_document_viewer_interactions.DocumentViewerInteractionsTests.test_exact_source_substitution_denies_then_fresh_retry_recovers tests.desktop.test_document_viewer_interactions.DocumentViewerInteractionsTests.test_optional_revision_lookup_waits_for_first_page_and_stays_available_afterwards tests.desktop.test_document_viewer_interactions.DocumentViewerInteractionsTests.test_structured_resource_denial_retains_original_navigation_and_recovers tests.desktop.test_document_viewer_interactions.DocumentViewerInteractionsTests.test_retry_keeps_previous_structured_ipc_charge_until_its_real_settlement tests.desktop.test_document_viewer_interactions.DocumentViewerInteractionsTests.test_two_anchors_unicode_geometry_zoom_reflow_and_exact_return tests.desktop.test_document_viewer_interactions.DocumentViewerInteractionsTests.test_saved_link_reopens_without_prior_handoff_and_missing_anchor_has_revision_and_source_review tests.desktop.test_document_viewer_interactions.DocumentViewerInteractionsTests.test_new_link_revision_replaces_context_with_and_without_prior_handoff tests.desktop.test_document_viewer_interactions.DocumentViewerInteractionsTests.test_late_previous_link_revision_cannot_replace_new_context tests.desktop.test_document_viewer_interactions.DocumentViewerInteractionsTests.test_late_anchor_after_lock_and_substituted_source_cannot_publish_context tests.desktop.test_document_viewer_interactions.DocumentViewerInteractionsTests.test_rotated_geometry_and_mismatch_preserve_structural_context tests.desktop.test_document_viewer_interactions.DocumentViewerInteractionsTests.test_ambiguous_anchor_transport_denies_context_and_unaccounted_retry tests.desktop.test_document_viewer_interactions.DocumentViewerInteractionsTests.test_rights_review_is_explicit_separate_and_does_not_execute_output tests.desktop.test_document_viewer_interactions.DocumentViewerInteractionsTests.test_alternate_copy_context_menu_and_print_shortcut_only_request_denial tests.desktop.test_document_viewer_interactions.DocumentViewerInteractionsTests.test_unknown_action_closure_prevents_retry_and_never_claims_completion tests.desktop.test_document_viewer_interactions.DocumentViewerInteractionsTests.test_partial_output_warning_action_specific_permissions_and_source_return",
+      ".venv/Scripts/python.exe -B -s -m unittest -v tests.desktop.test_parsing_quality_interactions.ParsingQualityInteractionsTests.test_saved_preview_explicit_acceptance_themes_keyboard_and_reader_return tests.desktop.test_parsing_quality_interactions.ParsingQualityInteractionsTests.test_undo_discard_and_exact_unknown_command_recovery tests.desktop.test_parsing_quality_interactions.ParsingQualityInteractionsTests.test_lock_discards_late_saved_proposal_and_denied_state_has_no_content",
+      ".venv/Scripts/python.exe -B -s -m unittest -v tests.desktop.test_quality_workflow_navigation.QualityWorkflowNavigationTests.test_guided_stage_and_return_keep_dirty_busy_and_unknown_command_ownership",
+      ".venv/Scripts/python.exe -B -s -m unittest -v tests.desktop.test_reprocessing_interactions.ReprocessingInteractionsTests.test_explicit_acceptance_inert_content_themes_and_reader_return tests.desktop.test_reprocessing_interactions.ReprocessingInteractionsTests.test_lost_post_commit_reply_retains_exact_command_and_blocks_navigation tests.desktop.test_reprocessing_interactions.ReprocessingInteractionsTests.test_committed_reconciliation_lost_reply_retains_exact_command_and_one_plan tests.desktop.test_reprocessing_interactions.ReprocessingInteractionsTests.test_dirty_reconciliation_guard_and_lock_suppresses_late_private_reply tests.desktop.test_reprocessing_interactions.ReprocessingInteractionsTests.test_create_another_batch_after_inspecting_an_existing_one tests.desktop.test_reprocessing_interactions.ReprocessingInteractionsTests.test_non_rematch_correction_on_reference_node_keeps_null_reference_mapping tests.desktop.test_reprocessing_interactions.ReprocessingInteractionsTests.test_quality_vector_regression_remains_visible_without_a_new_triage_reason tests.desktop.test_reprocessing_interactions.ReprocessingInteractionsTests.test_candidate_pages_keep_selected_target_and_bounded_selector_options tests.desktop.test_reprocessing_interactions.ReprocessingInteractionsTests.test_restart_discovers_original_checkpoint_after_batch_cancel_and_exact_lost_resume",
+      ".venv/Scripts/python.exe -B -s -m unittest -v tests.desktop.test_reprocessing_workflow_navigation.ReprocessingWorkflowNavigationTests.test_actual_pending_reconciliation_guards_guided_stage_and_return",
+      ".venv/Scripts/python.exe -B -s -m unittest -v tests.desktop.test_viewer_decoder.ViewerDecoderTests.test_active_actions_links_and_widgets_remain_inert_with_actual_worker tests.desktop.test_viewer_decoder.ViewerDecoderTests.test_missing_page_tree_is_denied_and_fresh_source_recovers tests.desktop.test_viewer_decoder.ViewerDecoderTests.test_oversized_page_surface_is_denied_before_canvas_allocation tests.desktop.test_viewer_decoder.ViewerDecoderTests.test_compressed_content_expansion_hits_worker_quota_then_recovers",
+      ".venv/Scripts/python.exe -B -s -m unittest -v tests.desktop.test_ui_conformance.UiConformanceTests.test_fixture_mode_refuses_to_mask_an_application_implementation tests.desktop.test_ui_conformance.UiConformanceTests.test_application_mode_requires_a_bound_build_manifest tests.desktop.test_ui_conformance.UiConformanceTests.test_active_presentation_requires_its_exact_compatibility_witness",
+      ".venv/Scripts/python.exe -B -s -m unittest -v tests.desktop.test_document_attachment_interactions.DocumentAttachmentInteractionTests.test_selected_version_native_intents_denial_cancel_and_return",
+      ".venv/Scripts/python.exe -B -s -m unittest -v tests.desktop.test_product_layout_measurements.ProductLayoutMeasurementsTests.test_actual_application_settings_label_and_keyboard_skip_contrast tests.desktop.test_product_layout_measurements.ProductLayoutMeasurementsTests.test_actual_product_flow_and_sidebar_with_keyboard_scrolling",
+      ".venv/Scripts/python.exe -B -s -m unittest -v tests.desktop.test_desktop_app_check.DevelopmentEntryTests.test_actual_cli_processes_script_arguments_as_embedded_origin tests.desktop.test_desktop_app_check.DevelopmentEntryTests.test_actual_cli_default_negative_control_and_duplicate_flag",
+      ".venv/Scripts/python.exe -B -s -m ruff format --check --config pyproject.toml -- tests/desktop/test_document_attachment_interactions.py",
+      ".venv/Scripts/python.exe -B -s -m ruff check --config pyproject.toml -- tests/desktop/test_document_attachment_interactions.py",
+      ".venv/Scripts/python.exe -B -s -m mypy --config-file pyproject.toml --no-namespace-packages --cache-dir artifacts/tmp/W2.remaining-corrections-batch-01/W2.C25.T01.desktop-quality-02/mypy-cache -- @artifacts/tmp/W2.remaining-corrections-batch-01/W2.C25.T01.desktop-quality-02/source-files.args"
+    ],
+    "reusedEvidence": [
+      "Original adopted W2.A01.T02 R02, independent approval and A01 adoption remain historical authority; no old result is relabelled fresh."
+    ],
+    "rationale": "Current fixture hosting and exact S04-progressed disabled-reader locator restore approved typed interaction under genuine original W2.A01.T02. Historical three-file delivery and8322/c900 remain distinct. Different commit-bound normal correction/integration disposition is still required before ordinary Wave resume."
+  }
+}

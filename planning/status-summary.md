@@ -1,7 +1,7 @@
 ---
 document_type: generated-backlog-status-summary
 source: planning/backlog.yaml
-source_sha256: 17c831ff540b9e9409c955c59760b07618ece4d9d59a0ec93e0c1962c612eb3d
+source_sha256: 5482fce40c383e99ac491c74113e86c047849a2efb2cc1c427002a569f059cee
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -986,7 +986,7 @@ Append-only rounds remain distinct from the current latest-review projection. Le
 | `W2.C22.T01` | `append-only v1` | 1 | `-` | approved / agent:/root/storage_profile_review | - |
 | `W2.C23.T01` | `append-only v1` | 1 | `-` | approved / agent:/root/storage_profile_review | - |
 | `W2.C24.T01` | `append-only v1` | 1 | `-` | approved / agent:/root/storage_profile_review | - |
-| `W2.C25.T01` | `append-only v1` | 0 | `-` | - / - | - |
+| `W2.C25.T01` | `append-only v1` | 0 | `R01` | - / - | - |
 ## Wave progress
 
 | Wave | Pre-Wave approval | Campaign | Qualification | Approved slices | Done tasks | Exit gate |
@@ -1050,7 +1050,7 @@ Append-only rounds remain distinct from the current latest-review projection. Le
 
 | Task | Status | Owner | Branch |
 |---|---|---|---|
-| `W2.C25.T01` Publish Academic Minimal 1.8 and stage attachment UI | `IN_PROGRESS` | codex-w2-implementation | `codex/w2-implementation` |
+| `W2.C25.T01` Publish Academic Minimal 1.8 and stage attachment UI | `REVIEW` | codex-w2-implementation | `codex/w2-implementation` |
 
 ## Linked corrective tasks
 
@@ -1174,5 +1174,5 @@ Original tasks and approvals remain unchanged.
 
 ### W2.C25.T01 — Publish Academic Minimal 1.8 and stage attachment UI
 
-**Status:** `IN_PROGRESS`. **Original task:** `W2.A01.T02`. **Latest review:** `-`.
+**Status:** `REVIEW`. **Original task:** `W2.A01.T02`. **Latest review:** `-`.
 
