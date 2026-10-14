@@ -1,0 +1,15 @@
+{
+  "schemaVersion": "1.0",
+  "kind": "authority-preserving-correction",
+  "origin": {
+    "taskId": "CAP-04.S01.T02",
+    "commit": "c2eb41dd4488c26403f6ec0e167733b386ab3063",
+    "sha256": "4951e92589c98d802968fb07d51402ddcbe4c2d60068c4a20ed5c4c91801133a"
+  },
+  "reproduction": "Retained final29 service cancellation fails by asserting immediate cancelled even though the approved cooperative summary workflow can first return cancelling within its existing 5000 ms grace period. Retained final29 application-lock source check fails an obsolete immediate-first-statement assumption introduced before CAP-04.S01.T02's checkpoint05 native-stop/drain callback. Both compatibility regressions have the same actual current-W2 original task; preserve every original adverse and task identity.",
+  "changedPaths": [
+    "tests/service/test_import_review_api.py",
+    "tests/security/test_application_lock_source.py"
+  ],
+  "impactAnalysis": "Use the exact independently reviewed test-only proposals. Observe the same preview/revision cancellation to exact cancelled within the existing 5000 ms deadline, preserving all79 original API assertions and adding two bounds/status checks. Replace only the invalid native adjacency assertion with a balanced actual spawn_blocking callback witness that excludes comments/strings, requires exactly one picker cleanup body and rejects direct lock acquisition; retain55 other original assertions and all local-window/no-Core-authority checks. Fresh two original leaves plus two-file format/lint and configured source types prove only affected test/API fixture/static-source risks. No production, native implementation, fixture, rights/security authority, deadline, framework, reference, criteria or historical evidence edit; real Native cleanup/principal and broader unresolved W2 proof remain separate."
+}
