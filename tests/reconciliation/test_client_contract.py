@@ -38,12 +38,13 @@ const built = await build({
   build: { write: false, emptyOutDir: false, copyPublicDir: false, minify: false,
     lib: { entry: resolve('packages/contracts/core-api/generated.ts'), formats: ['es'] } },
 });
-if (Array.isArray(built) || !Array.isArray(built.output) || built.output.length !== 1
-    || built.output[0].type !== 'chunk' || built.output[0].imports.length !== 0
-    || built.output[0].dynamicImports.length !== 0)
+const buildResult = Array.isArray(built) ? (built.length === 1 ? built[0] : null) : built;
+if (!buildResult || !Array.isArray(buildResult.output) || buildResult.output.length !== 1
+    || buildResult.output[0].type !== 'chunk' || buildResult.output[0].imports.length !== 0
+    || buildResult.output[0].dynamicImports.length !== 0)
   throw new Error('generated client test transport must produce one closed ESM chunk');
 const { createCoreApiClient, decodeCandidatePage } = await import(
-  'data:text/javascript;base64,' + Buffer.from(built.output[0].code).toString('base64'));
+  'data:text/javascript;base64,' + Buffer.from(buildResult.output[0].code).toString('base64'));
 const original = JSON.parse(readFileSync(process.argv[1], 'utf8'));
 assert.deepEqual(JSON.parse(JSON.stringify(decodeCandidatePage(original))), original);
 const client = createCoreApiClient(async () => ({status: 200, contentType: 'application/json',
