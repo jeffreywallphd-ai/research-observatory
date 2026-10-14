@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: b7f3dc7ff54223cd58f7c0f20e09e2852bdc2fce24e53f148cbb44d420344c4a
+source_sha256: 9512da2cfe08674b252f8c9cbb89bfc257b06b5ce83f42a22d32ba55e182fe03
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -5118,6 +5118,33 @@ Original tasks and approvals remain unchanged.
 **Current latest-review projection:** `approved` by agent:/root/c21_closeout_review at `2026-10-14T10:26:16+00:00`
 
 **Latest notes:** Independent focused W2.C21.T01 R01 review approves only the exact committed report migration expected-data restoration and affected integration. No criterion-bound blocker remains. Historical approvals and adverse results remain immutable; broader actual W2 qualification and unresolved findings retain their own gates.
+
+**Currently open findings:** -
+
+### W2.C22.T01 — Extract and reconcile reference-list entries
+
+**Status:** `IN_PROGRESS`. **Original task:** `CAP-05.S05.T01`. **Latest review:** `-`.
+
+**Reproduction:** The retained final29 data execution fails the unchanged portable-profile schema test: accepted current v28 profile/runtime metadata conflicts with four stale v27 constants in sqlite-profile.schema.json. Original CAP-05.S05.T01 introduced additive enrichment schema28 and advanced its current profile while retaining the old schema constants. Preserve the raw original FAIL and restore exact current version/fingerprint/immutable/canonical table literals, without changing the valid test or historical profile/recovery contracts.
+
+**Inherited criteria:**
+
+- Reference order and raw text are preserved; exact identifiers reconcile automatically; uncertain matches remain candidates with scores and review state.
+- Automated tests cover the expected path and at least one material failure or boundary condition.
+- Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.
+
+**Bounded changed paths:**
+
+- packages/contracts/storage/sqlite-profile.schema.json
+#### Review history — W2.C22.T01
+
+**Review mode:** `append-only v1` / 0 completed round(s)
+
+**Current immutable submission awaiting review:** None
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
 
 **Currently open findings:** -
 

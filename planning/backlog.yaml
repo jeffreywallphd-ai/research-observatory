@@ -5707,6 +5707,85 @@ waves:
           authority, reference, framework or release-criterion edit. Fresh three original methods and one-file format/lint
           with configured source types plus independent correction/integration review prove this bounded restoration; broad
           original FAIL remains adverse.
+    - title: Extract and reconcile reference-list entries
+      objective: Parsed references, identifiers, raw strings, author/year/title fields, and links to canonical works or unresolved
+        candidates.
+      dependencies:
+      - CAP-05.S03.T03
+      acceptance_criteria:
+      - Reference order and raw text are preserved; exact identifiers reconcile automatically; uncertain matches remain candidates
+        with scores and review state.
+      - Automated tests cover the expected path and at least one material failure or boundary condition.
+      - Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.
+      verification_commands:
+      - python tools/verify.py --profile documents
+      - python tools/verify.py --profile service
+      deployment_profiles:
+      - LOC
+      - LAB
+      - ALL
+      platform_targets:
+      - windows-x64
+      verification_profiles:
+      - documents
+      - service
+      id: W2.C22.T01
+      wave: W2
+      priority: P1
+      status: IN_PROGRESS
+      owner: agent:/root
+      branch: codex/w2-implementation
+      base_sha: 8eae733c4c1761e18aaae277d42443aad977b1b2
+      worktree: .
+      lease:
+        claimed_by: agent:/root
+        claimed_at: '2026-10-14T10:48:11+00:00'
+        expires_at: '2026-10-14T18:48:11+00:00'
+      started_at: '2026-10-14T10:48:11+00:00'
+      updated_at: '2026-10-14T10:48:11+00:00'
+      completed_at: null
+      blocker: null
+      implementation_notes: ''
+      evidence: []
+      verification_state: null
+      review:
+        reviewer: null
+        result: null
+        reviewed_at: null
+        notes: null
+      review_control:
+        version: 1
+        attempts: []
+        current_submission: null
+      correction:
+        origin_task_id: CAP-05.S05.T01
+        origin_commit: 5a3d5dbb44786ae643cbd32c95339b16af8e1e72
+        paused_state_sha256: b433937424fdc141ada899cd32acd3858867b5f267614a65cc11678a6b5b5e94
+        origin_sha256: b9957922774b7ae204a72b1d8088a54c7bbeee4b554c18fd774238fd0d3d593e
+        origin_contract_sha256: a3fedd52498f6de2154c7a1a2020868cde933ff167ba2f0c0a2a9c97bc6984db
+        origin_history_sha256: 67b9f095c5f726d77c5253406dd029c6d218e8ce1bc8ca9baa2e2cc692e3582b
+        origin_amendment_id: null
+        authority_sha256: c92ce7e9bac1b8a49d13d649a5980fea61e56ee953d238c734d8ff5f04f4c9e5
+        spec:
+          path: artifacts/evidence/W2.C22.T01.spec.json
+          sha256: a7052fcff898b3347319a3f6febf9648a604780994958e815c56515913d9678d
+          commit: 8eae733c4c1761e18aaae277d42443aad977b1b2
+        reproduction: 'The retained final29 data execution fails the unchanged portable-profile schema test: accepted current
+          v28 profile/runtime metadata conflicts with four stale v27 constants in sqlite-profile.schema.json. Original CAP-05.S05.T01
+          introduced additive enrichment schema28 and advanced its current profile while retaining the old schema constants.
+          Preserve the raw original FAIL and restore exact current version/fingerprint/immutable/canonical table literals,
+          without changing the valid test or historical profile/recovery contracts.'
+        changed_paths:
+        - packages/contracts/storage/sqlite-profile.schema.json
+        impact_analysis: Only four const payloads in the current portable storage-profile schema change to the existing approved
+          current profile. Every other schema predicate, mutable-table policy, compatibility guarantee, historical snapshot,
+          fixture, runtime/DDL/encryption/provider, reference-matching implementation and task history remains unchanged.
+          Select the two existing portable-profile validation/unknown-property denial and exact strict-WAL initialization/reopen
+          methods plus fresh unchanged build-manifest inventory for the changed schema hash. Python quality/types, full data/documents/service,
+          Native/model and broad migration suites have no changed implementation input and are not replayed for this data-only
+          increment. The five-segment architecture-guide companion is separately finite batch-authorized and outside this
+          adapter scope; its existing guide-consistency check and actual delivery stay separate, never silently admitted here.
+          Required task-independent correction review and remaining whole-W2 qualification remain due.
     resume_records:
     - id: W2.R01
       wave_id: W2

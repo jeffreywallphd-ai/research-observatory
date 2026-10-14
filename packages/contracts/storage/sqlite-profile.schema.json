@@ -35,13 +35,13 @@
       "const": "sqlite-wal-v1"
     },
     "databaseSchemaVersion": {
-      "const": 27
+      "const": 28
     },
     "applicationId": {
       "const": 1380926035
     },
     "schemaFingerprintSha256": {
-      "const": "6dd6d3f62c0236dd3f810a01ac7b88370ba17b483cf3612fde34b82b29ade913"
+      "const": "3f29b29cface11d5355f704c943459243fc7f9d0baf07725747c73547b1e4cb6"
     },
     "minimumSqliteVersion": {
       "const": "3.37.0"
@@ -186,7 +186,11 @@
         "document_parse_jobs",
         "document_parse_results",
         "document_normalized_revisions",
-        "document_structure_elements"
+        "document_structure_elements",
+        "document_enrichments",
+        "document_enrichment_elements",
+        "document_enrichment_identifiers",
+        "document_enrichment_targets"
       ]
     },
     "mutableStateTables": {
@@ -349,7 +353,11 @@
         "document_parse_jobs",
         "document_parse_results",
         "document_normalized_revisions",
-        "document_structure_elements"
+        "document_structure_elements",
+        "document_enrichments",
+        "document_enrichment_elements",
+        "document_enrichment_identifiers",
+        "document_enrichment_targets"
       ]
     }
   }
