@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 5a55c1d831e0a44ce92831ac3b9fd84ba0d97f8a4c33b3172b5838f8d3cc7d25
+source_sha256: 09d4dd873405ee53b845c6d0cfceb94601efb489fb1bc37096e9eaf54ff6a06c
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -5066,7 +5066,7 @@ Original tasks and approvals remain unchanged.
 
 ### W2.C21.T01 — Build corpus provenance and source-overlap reports
 
-**Status:** `IN_PROGRESS`. **Original task:** `CAP-04.S04.T03`. **Latest review:** `-`.
+**Status:** `REVIEW`. **Original task:** `CAP-04.S04.T03`. **Latest review:** `-`.
 
 **Reproduction:** The retained W2 final29 report tests fail three original populated v18/v19 migration/recovery methods: current plans stop at 0020 and current recovery-contract assertions expect target20 although approved additive migrations reach28. Replay all original source-path and interruption subcases. Preserve the literal v18/v19 predecessors and independently pin the existing immutable v20 recovery snapshot, rather than treating current evolving recovery data as its frozen predecessor.
 
@@ -5083,7 +5083,19 @@ Original tasks and approvals remain unchanged.
 
 **Review mode:** `append-only v1` / 0 completed round(s)
 
-**Current immutable submission awaiting review:** None
+**Current immutable submission awaiting review:** `R01` / packet SHA-256 `d0a87ec14089618605ad0076904a64707255a3024880f60def01b4b6860c80e3`
+
+- Candidate / base / branch: `4938494aa74ab9e07500efbfbdda91a31d0afe8d` / `9647906654758d0946e91a6cc2f9650cb83289a1` / `codex/w2-implementation`
+- Submitted by / at: codex-w2-implementation / `2026-10-14T05:13:21+00:00`
+- Evidence: `artifacts/evidence/W2.C21.T01.R01.json` / `465b0bad500e15962cc933c2eb91f53915ef29461a913800959c586ac9e3e92c` / `4938494aa74ab9e07500efbfbdda91a31d0afe8d`
+- Acceptance-criteria SHA-256: `386ec34b613489cba113f76abd364204fcd30375ab86a3d1ca28c9f2dd6081e1`
+- Verification-selection SHA-256: `6065c7d63055f11cde1f3581d6cea68c0d29da50cee977c5ba1b0b1666236a8f`
+- Changed paths: `docs/planning-implementation-plan.md`, `planning/backlog.yaml`, `planning/review-site/index.html`, `planning/review-site/manifest.json`, `planning/review-site/waves/W2.html`, `planning/status-summary.md`, `tests/reports/test_migration.py`
+- Selected checks: `.venv/Scripts/python.exe -B -s -m unittest -v tests.reports.test_migration.CorpusReportMigrationTests.test_populated_v18_import_and_connector_histories_survive_v19_with_verified_backup tests.reports.test_migration.CorpusReportMigrationTests.test_frozen_v18_recovery_contract_survives_successor tests.reports.test_migration.CorpusReportMigrationTests.test_populated_v19_projection_backfill_interruption_and_backup_recovery`, `.venv/Scripts/python.exe -B -s -m ruff format --check --config pyproject.toml -- tests/reports/test_migration.py`, `.venv/Scripts/python.exe -B -s -m ruff check --config pyproject.toml -- tests/reports/test_migration.py`, `.venv/Scripts/python.exe -B -s -m mypy --config-file pyproject.toml --no-namespace-packages --cache-dir artifacts/tmp/W2.remaining-corrections-batch-01/c21-focused-01/mypy-cache -- @artifacts/tmp/W2.remaining-corrections-batch-01/c21-focused-01/source-files.args`
+- Deferred checks: `Broader corpus-report/service/data/security/desktop/native/performance/packaging coverage remains at the actual W2 qualification and review gates.`
+- Selection rationale: One report-migration fixture file retains obsolete current suffix/selector expectations. Select its exact three original affected populated migration/recovery/backfill methods and all existing subcases, one-file format/lint and the complete configured source type context with a fresh private cache. Existing owned jobs drain to EMPTY while exact source/runtime/immutable fixture/snapshot inputs are held. These command IDs identify affected selection, not full profiles.
+- Prior round / replayed open findings: `-` / -
+- Root-cause escalation: -
 
 **Current latest-review projection:** `-` by - at `-`
 

@@ -1,0 +1,170 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "W2.C21.T01",
+  "baseCommit": "9647906654758d0946e91a6cc2f9650cb83289a1",
+  "commit": "4938494aa74ab9e07500efbfbdda91a31d0afe8d",
+  "branch": "codex/w2-implementation",
+  "changedFiles": [
+    "docs/planning-implementation-plan.md",
+    "planning/backlog.yaml",
+    "planning/review-site/index.html",
+    "planning/review-site/manifest.json",
+    "planning/review-site/waves/W2.html",
+    "planning/status-summary.md",
+    "tests/reports/test_migration.py"
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "checkIds": [
+        "migration-regressions"
+      ],
+      "evidence": [
+        "The two fresh populated report migration and projection-backfill interruption methods reach the approved current target while preserving exact historical rows, source/schema/project/rights hashes, verified backup, failure, retry and reopen assertions. Both database-executing methods use SqliteMigrationTests.setUp and its explicit development_plaintext_database_fixture, providing plaintext development-fixture SQLite/report migration consistency and recovery proof. The third selected frozen-v18 recovery-contract method performs static immutable/current recovery-schema byte, hash and mapping assertions without database execution. These checks do not provide fresh SQLCipher, Windows DPAPI, encrypted-ciphertext, Native or model qualification. Original CAP-04.S04.T03 approval is historical authority; this fixture-data correction does not claim a fresh replay of every report aggregation, API or UI behavior."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "checkIds": [
+        "migration-regressions"
+      ],
+      "evidence": [
+        "All three original affected methods pass without skips, retaining their original populated import/connector source-path subcases and backfill/recovery/failure assertions. The prior final29 corpus-report FAIL remains preserved; no full corpus-report or whole-profile PASS is inferred."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "checkIds": [
+        "migration-regressions",
+        "affected-format",
+        "affected-lint",
+        "configured-source-types"
+      ],
+      "evidence": [
+        "Exactly one admitted report-test file restores explicit current suffixes through0028 and separates the immutable v20 recovery snapshot from the evolving21-28 recovery map. Historical v18/v19 hashes, source fixtures and original negative/failure/backup assertions remain; current mapping uses eight explicit reviewed version/hash expectations with duplicate/missing/extra guards. Fresh one-file format/lint and unchanged configured complete source types pass. No production, migration implementation, immutable fixture/snapshot/contract, authority, reference, framework or checker setting is changed."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "checks": [
+    {
+      "id": "migration-regressions",
+      "command": ".venv/Scripts/python.exe -B -s -m unittest -v tests.reports.test_migration.CorpusReportMigrationTests.test_populated_v18_import_and_connector_histories_survive_v19_with_verified_backup tests.reports.test_migration.CorpusReportMigrationTests.test_frozen_v18_recovery_contract_survives_successor tests.reports.test_migration.CorpusReportMigrationTests.test_populated_v19_projection_backfill_interruption_and_backup_recovery",
+      "commandSemantics": "DISPLAY repository-relative executable; exact actual argv is retained in the ignored execution receipt",
+      "result": "passed",
+      "exitCode": 0,
+      "commit": "4938494aa74ab9e07500efbfbdda91a31d0afe8d",
+      "seconds": 9.79060169996228,
+      "raw": {
+        "path": "artifacts/tmp/W2.remaining-corrections-batch-01/c21-focused-01/migration-regressions.raw.log",
+        "sha256": "01974ed0ba5bd4ad5c0b378425774d95ca03251843cbccff13dd91edbb7ff6a9"
+      }
+    },
+    {
+      "id": "affected-format",
+      "command": ".venv/Scripts/python.exe -B -s -m ruff format --check --config pyproject.toml -- tests/reports/test_migration.py",
+      "commandSemantics": "DISPLAY repository-relative executable; exact actual argv is retained in the ignored execution receipt",
+      "result": "passed",
+      "exitCode": 0,
+      "commit": "4938494aa74ab9e07500efbfbdda91a31d0afe8d",
+      "seconds": 0.16537430009339005,
+      "raw": {
+        "path": "artifacts/tmp/W2.remaining-corrections-batch-01/c21-focused-01/affected-format.raw.log",
+        "sha256": "fd2299c9f1c6dc869070883e281051bfe93aacf66c1a3b0069f45b4aa410ca50"
+      }
+    },
+    {
+      "id": "affected-lint",
+      "command": ".venv/Scripts/python.exe -B -s -m ruff check --config pyproject.toml -- tests/reports/test_migration.py",
+      "commandSemantics": "DISPLAY repository-relative executable; exact actual argv is retained in the ignored execution receipt",
+      "result": "passed",
+      "exitCode": 0,
+      "commit": "4938494aa74ab9e07500efbfbdda91a31d0afe8d",
+      "seconds": 0.1532154999440536,
+      "raw": {
+        "path": "artifacts/tmp/W2.remaining-corrections-batch-01/c21-focused-01/affected-lint.raw.log",
+        "sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18"
+      }
+    },
+    {
+      "id": "configured-source-types",
+      "command": ".venv/Scripts/python.exe -B -s -m mypy --config-file pyproject.toml --no-namespace-packages --cache-dir artifacts/tmp/W2.remaining-corrections-batch-01/c21-focused-01/mypy-cache -- @artifacts/tmp/W2.remaining-corrections-batch-01/c21-focused-01/source-files.args",
+      "commandSemantics": "DISPLAY repository-relative executable; exact actual argv is retained in the ignored execution receipt",
+      "result": "passed",
+      "exitCode": 0,
+      "commit": "4938494aa74ab9e07500efbfbdda91a31d0afe8d",
+      "seconds": 18.868743400089443,
+      "raw": {
+        "path": "artifacts/tmp/W2.remaining-corrections-batch-01/c21-focused-01/configured-source-types.raw.log",
+        "sha256": "c642e5b33b5e7d157e7b2362ef94a292d50ab8abbba717375ca1704ad53de820"
+      }
+    }
+  ],
+  "executionReceipt": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/c21-focused-01/receipt.json",
+    "sha256": "5adb453270bb391108dc9acf55fe946115f5aa8f5b7498f54b3db570cb185ef3"
+  },
+  "fixtureInputs": [
+    {
+      "path": "packages/contracts/storage/sqlite-migration-recovery-v18.snapshot.json",
+      "sha256": "3151702e1039ffe1e19a8d8d0470560c839661be5f3909743d27411e2aa50661"
+    },
+    {
+      "path": "packages/contracts/storage/sqlite-migration-recovery-v19.snapshot.json",
+      "sha256": "f58f50d884456e24ba7ac55af5bf5bb1216e1aa9924a3dc704f1a718f0766511"
+    },
+    {
+      "path": "packages/contracts/storage/sqlite-migration-recovery-v20.snapshot.json",
+      "sha256": "3e7dc972cd46605668cf7252946cd4104cfa02c5dee4a92be5ec8423e7f2edd0"
+    },
+    {
+      "path": "packages/contracts/storage/sqlite-migration-recovery.schema.json",
+      "sha256": "c21230ead18a9adb4d0a080f5aa4fb5807c58b728dfc30a3a1f41637cb3df9f4"
+    },
+    {
+      "path": "tests/reports/fixtures/schema-v18-authority.json",
+      "sha256": "657740df06dc04ca7574e0b08e3a9e07fa2fc3488512f686df9d4164c3843c01"
+    },
+    {
+      "path": "tests/reports/fixtures/schema-v18-connector-corpus-populated.json",
+      "sha256": "3b80af94fd4ce63c9d9b2e4839e1229cfec7e8fdf74c5ed061756c9de5734b70"
+    },
+    {
+      "path": "tests/reports/fixtures/schema-v18-import-corpus-populated.json",
+      "sha256": "a643a561c0340f6b4b3d5ec9613bedb20b6fb5418aba53f4c3f1d4082cad4493"
+    }
+  ],
+  "preservedFinal29ReportFailure": {
+    "path": "artifacts/tmp/W2.final-wave-exit-never-started29-01.f01/commands/13.result.json",
+    "sha256": "d318a9f157f187ea9d47f62086ac40c56c728b0b34dc9073e392a582205650e8",
+    "candidateCommit": "f62f171c44f5fbe5f92ccb973533b353ba470995",
+    "status": "FAIL",
+    "exitCode": 1
+  },
+  "executionTruth": "These are fresh focused results at the actual clean committed C21 candidate. The original final29 corpus-report FAIL is retained, not relabelled. Two selected methods execute databases under the explicit plaintext development fixture, providing SQLite/report migration consistency and recovery proof; the third selected frozen-v18 method provides static immutable/current recovery-schema byte, hash and mapping proof without database execution. No fresh SQLCipher, Windows DPAPI, encrypted-ciphertext, Native or model qualification, prior C20 result, whole report/profile pass or real-principal proof is inferred. Original protected/security authority remains at its original and required Wave checks. Any separate C21 failed attempt must remain retained and be named by a later successor; no such outcome is invented here.",
+  "verificationSelection": {
+    "selectedCommandIds": [
+      "service:corpus-reports",
+      "foundation:quality"
+    ],
+    "riskAnalysis": "One report-migration fixture file retains obsolete current suffix/selector expectations. Select its exact three original affected populated migration/recovery/backfill methods and all existing subcases, one-file format/lint and the complete configured source type context with a fresh private cache. Existing owned jobs drain to EMPTY while exact source/runtime/immutable fixture/snapshot inputs are held. These command IDs identify affected selection, not full profiles.",
+    "deferred": [
+      "Broader corpus-report/service/data/security/desktop/native/performance/packaging coverage remains at the actual W2 qualification and review gates."
+    ]
+  },
+  "correctiveIntegration": {
+    "originSha256": "8c15764812e8e7b7bb594c0c098405d25c19881e5a4018c79657827fa2b05975",
+    "authorityPreserved": true,
+    "affectedChecks": [
+      ".venv/Scripts/python.exe -B -s -m unittest -v tests.reports.test_migration.CorpusReportMigrationTests.test_populated_v18_import_and_connector_histories_survive_v19_with_verified_backup tests.reports.test_migration.CorpusReportMigrationTests.test_frozen_v18_recovery_contract_survives_successor tests.reports.test_migration.CorpusReportMigrationTests.test_populated_v19_projection_backfill_interruption_and_backup_recovery",
+      ".venv/Scripts/python.exe -B -s -m ruff format --check --config pyproject.toml -- tests/reports/test_migration.py",
+      ".venv/Scripts/python.exe -B -s -m ruff check --config pyproject.toml -- tests/reports/test_migration.py",
+      ".venv/Scripts/python.exe -B -s -m mypy --config-file pyproject.toml --no-namespace-packages --cache-dir artifacts/tmp/W2.remaining-corrections-batch-01/c21-focused-01/mypy-cache -- @artifacts/tmp/W2.remaining-corrections-batch-01/c21-focused-01/source-files.args"
+    ],
+    "reusedEvidence": [
+      "Original CAP-04.S04.T03 DONE/independent approval is preserved as historical authority only; no prior execution is relabelled fresh."
+    ],
+    "rationale": "The exact affected original report migration/recovery/backfill checks close stale current suffix/selector expectations without changing corpus report, historical recovery, migration or rights guarantees or original task identity/history. Independent commit-bound correction and affected integration disposition remains required before ordinary Wave resume."
+  }
+}
