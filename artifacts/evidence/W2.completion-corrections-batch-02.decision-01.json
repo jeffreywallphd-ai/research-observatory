@@ -1,0 +1,826 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "finite-preauthorized-w2-completion-decision",
+  "packetId": "W2.completion-corrections-batch-02",
+  "status": "APPROVED",
+  "approvedBy": "human:repository-owner",
+  "recordedBy": "agent:/root/a03_closeout_review",
+  "approvalEvidence": "artifacts/evidence/W2.completion-preauthorization-20261014-01.md SHA256 34e2e3c175dc9309080182e0673f776055b1cc3ba78639475c09ec54408d7d5f",
+  "approvalAuthority": {
+    "record": {
+      "path": "artifacts/evidence/W2.completion-preauthorization-20261014-01.md",
+      "sha256": "34e2e3c175dc9309080182e0673f776055b1cc3ba78639475c09ec54408d7d5f"
+    },
+    "commit": "118e5c1494e180e03e1336a5a5953c3a464c4a3a"
+  },
+  "authorityMeaning": "Actual prospective owner instruction preauthorizes necessary W2 completion and conditional transition decisions without another user question. It is not relabeled as earlier approval of later bytes. Different consolidated readiness, exact append-only recording and real implementation/qualification prerequisites remain required.",
+  "decisionMeaning": "This prepared decision applies the actual prospective owner preauthorization to the exact differently reviewed plan and finite component bytes. It does not assert that the owner previously inspected later bytes, that this ignored template has been published, or that any execution, task, Wave or release succeeded.",
+  "plan": {
+    "path": "artifacts/evidence/W2.completion-corrections-batch-02.plan-01.json",
+    "sha256": "4fe8a9b8b7cb8b913c59e1cad4bc928fa267cbe1b59834f2fb596c7b487da0ae"
+  },
+  "independentReadiness": {
+    "path": "artifacts/evidence/W2.completion-corrections-batch-02.readiness-R01.json",
+    "sha256": "b760cd106e138769720420a1455179599f640bb1466e14bf1159e90dda4f3f48"
+  },
+  "independentReviewer": "agent:/root/c19_correction_review",
+  "approvedScopes": [
+    "FOUNDATION-TEST-INPUTS-4",
+    "W2-DESKTOP-CURRENT14-01",
+    "GATEWAY-D1-D5",
+    "SERVICE-TRANSPORT-CANCEL",
+    "STORAGE-PROFILE-DOCS-VIEWER",
+    "RIGHTS-REPORTS-MIGRATION-DATA",
+    "ANCHORS-NATIVE-WITNESS",
+    "SECURITY-20-DEPENDENCIES",
+    "PROTECTED-CANONICAL-PERFORMANCE"
+  ],
+  "authorizedSources": {
+    "artifacts/tmp/W2.remaining-corrections-batch-01/desktop-workspace14-recipes-01/execution-envelope-01/current14-owned-05.py": "71aced0ea0c00c96f41881b9a5262e486a97589454afdb97da1908f43036e4e9",
+    "artifacts/tmp/W2.remaining-corrections-batch-01/desktop-workspace14-recipes-01/proposed/desktop-workspace14-current-07.py": "510dd437e95185f5c1b6bcc446d88b2f7620bd7d79916fcfb3cda9d1004b62d6",
+    "artifacts/tmp/W2.remaining-corrections-batch-01/desktop-workspace14-recipes-01/proposed/workspace14-recipes.py": "7b3ce5291b35d7c1051d440e4d711dba419f681267a572187bf06530ad86709e",
+    "artifacts/tmp/W2.remaining-corrections-batch-01/desktop-workspace14-recipes-01/proposed/workspace14-navigation-02.mjs": "ff608dd528d7bb3b88ed44a72690dade1f75f1de715f7130c6c55e49ec8cbeef",
+    "artifacts/tmp/W2.remaining-corrections-batch-01/desktop-workspace14-recipes-01/proposed/workspace14-navigation.tsx": "42efe01903935f06ff9d03909e0efb66c40dfe37f274bc79e87a15d38dc7840f",
+    "artifacts/tmp/W2.remaining-corrections-batch-01/desktop-workspace14-recipes-01/proposed/document-reader-root-ports.tsx": "2456049aadf8e7f3b25d46b620af4305c89f137e3ea82197416f3851921e0e67",
+    "artifacts/tmp/W2.remaining-corrections-batch-01/desktop-workspace14-recipes-01/proposed/document-correction-current-root.ts": "543bec87e63bf0b56ddd9b491a4bbd32f4994962a77b3845d89da9048bb09ec7"
+  },
+  "releaseApproved": false,
+  "componentBindings": {
+    "foundation": {
+      "proposal": {
+        "path": "artifacts/tmp/W2.remaining-corrections-batch-01/foundation-test-input-restoration-01/proposal-manifest-01.json",
+        "sha256": "691d392f13f9c1eaf3374fcaf5505eaabb91316e9575a06917e857b5229e66ab"
+      },
+      "scope": {
+        "path": "artifacts/tmp/W2.remaining-corrections-batch-01/foundation-test-input-restoration-01/scope-and-evidence-plan-01.json",
+        "sha256": "933ba125754c2340118728d263258f930d3a8742d6f26c256928b1cf03fff02d"
+      },
+      "review": {
+        "path": "artifacts/tmp/W2.remaining-corrections-batch-01/foundation-test-input-restoration-01/independent-proposal-readiness-01.json",
+        "sha256": "1beee42bc0d8bb9dad8e95adb74d9e7421cd421b3246548e8b649d369bcd94f9"
+      }
+    },
+    "desktop": {
+      "proposal": {
+        "path": "artifacts/tmp/W2.remaining-corrections-batch-01/desktop-workspace14-recipes-01/proposal-manifest-06.json",
+        "sha256": "c49620ce3539130babbd3a01d5f5cdab05828867a6e5b38ed2a266b0c591a205"
+      },
+      "sourceManifest": {
+        "path": "artifacts/tmp/W2.remaining-corrections-batch-01/desktop-workspace14-recipes-01/execution-envelope-01/source-proposal-manifest-05.json",
+        "sha256": "dd4218f44913fe2c56f3d57302f084d553f6661dafc0e7d8478b304667a88c9b"
+      },
+      "review": {
+        "path": "artifacts/tmp/W2.remaining-corrections-batch-01/desktop-workspace14-recipes-01/execution-envelope-01/independent-source-readiness-05.json",
+        "sha256": "036b424806c36cbca9be78c2e97a49423ded4bc26f32ea4ffcbb537b683ea12a"
+      },
+      "ordinarySetupPlan": {
+        "path": "artifacts/tmp/W2.remaining-corrections-batch-01/desktop-input-verification-restoration-01/plan-01.json",
+        "sha256": "50ce8754bba31f691762ab82ddb6960eedb12c418d54da3b3ac3564a8f6bbc0f"
+      },
+      "plan": {
+        "path": "artifacts/tmp/W2.remaining-corrections-batch-01/desktop-workspace14-recipes-01/concrete-two-row-owner-plan-04.json",
+        "sha256": "fa6213ca91acd269a2361022655676871b5dbcd57716e442f4f829b3f293cbba"
+      }
+    },
+    "gateway": {
+      "proposal": {
+        "path": "artifacts/tmp/W2.remaining-corrections-batch-01/gateway-latency-criterion-amendment-01/proposal-02.json",
+        "sha256": "e00aa5bb8e6c0789ea200dc329a23a1ff5f5830f6d506560c2d831e1e482edbc"
+      },
+      "review": {
+        "path": "artifacts/tmp/W2.remaining-corrections-batch-01/gateway-latency-criterion-amendment-01/proposal-02.independent-readiness-review-R01.json",
+        "sha256": "17fcb82040925bcf968b997accadd1dea35dd54c2be22c59ce75ae50cfb8e079"
+      },
+      "baselineReview": {
+        "path": "artifacts/tmp/W2.remaining-corrections-batch-01/gateway-latency-criterion-amendment-01/gateway-baseline-02.independent-review-R01.json",
+        "sha256": "51fbe30ead0429aeed72b7f9d79b243660d157886bd1e696bd84b200d3a05a48"
+      }
+    },
+    "service": {
+      "proposal": {
+        "path": "artifacts/tmp/W2.remaining-corrections-batch-01/service-test-input-transport-proposals-01/proposal-manifest-01.json",
+        "sha256": "eb221326da03acfbc62945d23405d22d213c92e08869a6f9bf96d667337d88fc"
+      },
+      "review": {
+        "path": "artifacts/tmp/W2.remaining-corrections-batch-01/service-test-input-transport-proposals-01/independent-source-preflight-01.json",
+        "sha256": "32c826fbe3b652e84efaf09389b01a321e01c7d062c0b47e07e603b58d3516ef"
+      }
+    },
+    "product": {
+      "proposal": {
+        "path": "artifacts/tmp/W2.remaining-corrections-batch-01/product-data-restorations-02/proposal-manifest-02.json",
+        "sha256": "bf6261acd768a796c2db08e4a953bf8e62f854001970d8955517323125e87094"
+      },
+      "dataMigrationProposal": {
+        "path": "artifacts/tmp/W2.remaining-corrections-batch-01/current-migration-test-data-restorations-01/proposal-manifest-01.json",
+        "sha256": "b71c476a9f0813684252b4d096655ebee76536ff3d6e8e0565d3e0d0597a61ff"
+      },
+      "review": {
+        "path": "artifacts/tmp/W2.remaining-corrections-batch-01/root-product-and-migration-restoration-proposals-independent-source-review-01.json",
+        "sha256": "6e5526d589fc8c2e0ecebf5ccbb7e4c8167f243ee9fa54d1042c3534380af2df"
+      },
+      "origins": {
+        "path": "artifacts/tmp/W2.remaining-corrections-batch-01/current-w2-fixture-data-regression-origin-review-01.json",
+        "sha256": "50708bf9fd6b5164fc83cb175faaf7a993401a8f1f551822fb594348532b2861"
+      }
+    },
+    "rightsReports": {
+      "proposal": {
+        "path": "artifacts/tmp/W2.remaining-corrections-batch-01/rights-reports-migration-test-data-proposals-02/proposal-manifest-02.json",
+        "sha256": "943c5731182ca0ae1a527ad5d31edb1687aba214c34a537f9eb5a78b4c052e4d"
+      },
+      "review": {
+        "path": "artifacts/tmp/W2.remaining-corrections-batch-01/rights-reports-migration-test-data-proposals-02/independent-source-preflight-01.json",
+        "sha256": "555cd91a5079dac42f898f7139bb0b99f884cb95b18d09bd0131faed866c6e0f"
+      }
+    },
+    "anchorsCleanup": {
+      "anchors": {
+        "path": "artifacts/tmp/W2.remaining-corrections-batch-01/anchor-native-cleanup-test-input-proposals-01/anchor-proposal-manifest-01.json",
+        "sha256": "fd55159855f3bae2202e22f2acaa58c074967f65dc58780b2cd2d5c68116d29b"
+      },
+      "cleanup": {
+        "path": "artifacts/tmp/W2.remaining-corrections-batch-01/anchor-native-cleanup-test-input-proposals-01/native-cleanup-proposal-manifest-01.json",
+        "sha256": "8308b28b881f66aed8622c1062456b18f717a133c6afee38305bbf144fcb0d4e"
+      },
+      "review": {
+        "path": "artifacts/tmp/W2.remaining-corrections-batch-01/anchor-native-cleanup-test-input-proposals-01/independent-source-readiness-01.json",
+        "sha256": "bd6372743df49ca5bbb0060b5c8dc8965556e54310be6a3aa7f0638e1827df1d"
+      },
+      "origins": {
+        "path": "artifacts/tmp/W2.remaining-corrections-batch-01/anchor-native-cleanup-test-input-proposals-01/regression-origins-01.json",
+        "sha256": "262f6722a62c2be994db3a49fdef2d3c50b3d417dfb91c8b3d60beebbf6854b2"
+      }
+    },
+    "security": {
+      "proposal": {
+        "path": "artifacts/tmp/W2.remaining-corrections-batch-01/supply-chain-reassessment-02/correction-and-owner-choices-02.json",
+        "sha256": "33d56854223edd3d57dc3b9977ebd314cc42abe5518c4126c942607d4719def0"
+      },
+      "projection": {
+        "path": "artifacts/tmp/W2.remaining-corrections-batch-01/supply-chain-reassessment-02/security-exceptions.active-projection-02.proposed.json",
+        "sha256": "19903d94cb6ba6ac9c17704c5cbe8e51bf95048f463f93a5045c690b9c2ea09e"
+      },
+      "review": {
+        "path": "artifacts/tmp/W2.remaining-corrections-batch-01/supply-chain-reassessment-02/independent-readiness-review-R01.json",
+        "sha256": "450a792f9549450eff267ecd725343ff24f1aad98280ef4f395f0a83a24f6b61"
+      },
+      "privateMetadataEvidence": {
+        "path": "artifacts/tmp/W2.remaining-corrections-batch-01/supply-chain-reassessment-02/current-binary-license-package-evidence-02.json",
+        "sha256": "5a25316eb468c847ee1f80e11b00290e722fd9693185303e0feb9b68e9ac3852"
+      }
+    },
+    "protectedPerformance": {
+      "manifest": {
+        "path": "artifacts/tmp/W2.remaining-corrections-batch-01/protected-performance-bootstrap-01/manifest-01.json",
+        "sha256": "1008209ee369e52612f07c895e76f375af7b8e163f5bd5e532cf634d021dd8b6"
+      },
+      "preparation": {
+        "path": "artifacts/tmp/W2.remaining-corrections-batch-01/protected-performance-bootstrap-01/preparation-01.json",
+        "sha256": "3bec957ef7c69569b336ba7093600a3f7e1ba48f588574f8bb94589be3158a45"
+      },
+      "producer": {
+        "path": "artifacts/tmp/W2.remaining-corrections-batch-01/protected-performance-bootstrap-01/protected-performance-owned-02.py",
+        "sha256": "06a34a91aec5f6f2d3afd1c8b3eb8d4a5f0244608ebf94b3b95fd7111cbb0845"
+      },
+      "review": {
+        "path": "artifacts/tmp/W2.remaining-corrections-batch-01/protected-performance-bootstrap-01/independent-source-readiness-01.json",
+        "sha256": "e571149841331158c3bcdade99c4d83b40b0f49a83137330044bd28c12dc6484"
+      }
+    }
+  },
+  "selectedDecisions": [
+    {
+      "id": "FOUNDATION-TEST-INPUTS-4",
+      "route": "One-use exact4 foundation test-only source delivery exception; no invented product origin or shared implementation.",
+      "scope": [
+        {
+          "target": "tests/foundation/test_adr_check.py",
+          "original": {
+            "path": "artifacts/tmp/W2.remaining-corrections-batch-01/foundation-test-input-restoration-01/test_adr_check.py.original",
+            "sha256": "34e57d328e047c2f459887bea5198873865078f74a12bdeba6df94e8fd69ad41"
+          },
+          "proposed": {
+            "path": "artifacts/tmp/W2.remaining-corrections-batch-01/foundation-test-input-restoration-01/test_adr_check.py.proposed",
+            "sha256": "0c283f2220b9408dd5c44fe48ff3b60b628ac125552528bed0f90d9bb5678602"
+          },
+          "patch": {
+            "path": "artifacts/tmp/W2.remaining-corrections-batch-01/foundation-test-input-restoration-01/test_adr_check.py.patch",
+            "sha256": "bddbdd9c1d468af68bf9a3351b5292542a98a6d7de74d2a771ad6b2de336ec2a"
+          }
+        },
+        {
+          "target": "tests/foundation/test_ui_reference_check.py",
+          "original": {
+            "path": "artifacts/tmp/W2.remaining-corrections-batch-01/foundation-test-input-restoration-01/test_ui_reference_check.py.original",
+            "sha256": "8419bce238917cb3349ec41dbe3da279c667816a9e9d5a23253ee6c7611eea68"
+          },
+          "proposed": {
+            "path": "artifacts/tmp/W2.remaining-corrections-batch-01/foundation-test-input-restoration-01/test_ui_reference_check.py.proposed",
+            "sha256": "c45fb53742c3b32988eafdc933b8c318728449c8d637b269c8ddab5bc2f6c559"
+          },
+          "patch": {
+            "path": "artifacts/tmp/W2.remaining-corrections-batch-01/foundation-test-input-restoration-01/test_ui_reference_check.py.patch",
+            "sha256": "046853d4ada07bf8a8b10276bdb8b85baa85995546413cd19e91a7b8ed6a1b07"
+          }
+        },
+        {
+          "target": "tests/foundation/test_planctl_amendments.py",
+          "original": {
+            "path": "artifacts/tmp/W2.remaining-corrections-batch-01/foundation-test-input-restoration-01/test_planctl_amendments.py.original",
+            "sha256": "90dd055ea7c44cc6ca1f0a454aa9f6c2ad1d3b3fa17c9ed3184b4d0e574f3a78"
+          },
+          "proposed": {
+            "path": "artifacts/tmp/W2.remaining-corrections-batch-01/foundation-test-input-restoration-01/test_planctl_amendments.py.proposed",
+            "sha256": "26c77b1aae762e263fdd2abc6c51d51b9e976da626e2ae9a78e8facc46f3bfee"
+          },
+          "patch": {
+            "path": "artifacts/tmp/W2.remaining-corrections-batch-01/foundation-test-input-restoration-01/test_planctl_amendments.py.patch",
+            "sha256": "132120d7621d0e73a4e496d02b300ea319f7a998aad73ab0425b40a6621218b9"
+          }
+        },
+        {
+          "target": "tests/foundation/test_ui_change_gate.py",
+          "original": {
+            "path": "artifacts/tmp/W2.remaining-corrections-batch-01/foundation-test-input-restoration-01/test_ui_change_gate.py.original",
+            "sha256": "ca12c3430e11810272087e21c468c2d3bb5d8a39d44b6f2b33f2850969f03460"
+          },
+          "proposed": {
+            "path": "artifacts/tmp/W2.remaining-corrections-batch-01/foundation-test-input-restoration-01/test_ui_change_gate.py.proposed",
+            "sha256": "bab9a1a61b72e64176748303d07e1f7149f968e7e5717c50c55b06f378c67bc5"
+          },
+          "patch": {
+            "path": "artifacts/tmp/W2.remaining-corrections-batch-01/foundation-test-input-restoration-01/test_ui_change_gate.py.patch",
+            "sha256": "bd0722f83aab86eae9f0f49f79a6dd3b3e25380635dcdfdc5f3a8cad9bd33fbb"
+          }
+        }
+      ],
+      "effect": "Explicit55/current1.9 snapshots and coherent historical repository/packet/backlog/HEAD plus synthetic parent lease. Preserve assertions except named expected operands, original denial helpers, fixtures and immutable history. No tools/checker/controller or historical_witness_fixture edit.",
+      "fresh": "Exact7 formerly failing leaves plus3 material denial leaves and changed4-file Ruff format/lint/mypy from the bound scope plan; different actual commit-bound review. Full affected Wave coverage remains due."
+    },
+    {
+      "id": "W2-DESKTOP-CURRENT14-01",
+      "route": "Exact ignored method/recording exception, manifest06 and review05.",
+      "authorizedSources": {
+        "artifacts/tmp/W2.remaining-corrections-batch-01/desktop-workspace14-recipes-01/execution-envelope-01/current14-owned-05.py": "71aced0ea0c00c96f41881b9a5262e486a97589454afdb97da1908f43036e4e9",
+        "artifacts/tmp/W2.remaining-corrections-batch-01/desktop-workspace14-recipes-01/proposed/desktop-workspace14-current-07.py": "510dd437e95185f5c1b6bcc446d88b2f7620bd7d79916fcfb3cda9d1004b62d6",
+        "artifacts/tmp/W2.remaining-corrections-batch-01/desktop-workspace14-recipes-01/proposed/workspace14-recipes.py": "7b3ce5291b35d7c1051d440e4d711dba419f681267a572187bf06530ad86709e",
+        "artifacts/tmp/W2.remaining-corrections-batch-01/desktop-workspace14-recipes-01/proposed/workspace14-navigation-02.mjs": "ff608dd528d7bb3b88ed44a72690dade1f75f1de715f7130c6c55e49ec8cbeef",
+        "artifacts/tmp/W2.remaining-corrections-batch-01/desktop-workspace14-recipes-01/proposed/workspace14-navigation.tsx": "42efe01903935f06ff9d03909e0efb66c40dfe37f274bc79e87a15d38dc7840f",
+        "artifacts/tmp/W2.remaining-corrections-batch-01/desktop-workspace14-recipes-01/proposed/document-reader-root-ports.tsx": "2456049aadf8e7f3b25d46b620af4305c89f137e3ea82197416f3851921e0e67",
+        "artifacts/tmp/W2.remaining-corrections-batch-01/desktop-workspace14-recipes-01/proposed/document-correction-current-root.ts": "543bec87e63bf0b56ddd9b491a4bbd32f4994962a77b3845d89da9048bb09ec7"
+      },
+      "effect": "Retain12 original workspace rows/metrics/3boundaries; add only accepted Reader/Quality rows with exact root handoff/ports/synthetic wire alignment, closed local assets, supported envDir:false. Wrapper05/private07/builder02/recipes exact pins; no shared UI checker/reference/runtime edit or Native/principal claim.",
+      "futureDecisionFields": {
+        "status": "APPROVED",
+        "approvedBy": "human:repository-owner",
+        "approvalEvidence": "artifacts/evidence/W2.completion-preauthorization-20261014-01.md SHA256 34e2e3c175dc9309080182e0673f776055b1cc3ba78639475c09ec54408d7d5f",
+        "approvedScopes": [
+          "W2-DESKTOP-CURRENT14-01"
+        ],
+        "authorizedSources": {
+          "artifacts/tmp/W2.remaining-corrections-batch-01/desktop-workspace14-recipes-01/execution-envelope-01/current14-owned-05.py": "71aced0ea0c00c96f41881b9a5262e486a97589454afdb97da1908f43036e4e9",
+          "artifacts/tmp/W2.remaining-corrections-batch-01/desktop-workspace14-recipes-01/proposed/desktop-workspace14-current-07.py": "510dd437e95185f5c1b6bcc446d88b2f7620bd7d79916fcfb3cda9d1004b62d6",
+          "artifacts/tmp/W2.remaining-corrections-batch-01/desktop-workspace14-recipes-01/proposed/workspace14-recipes.py": "7b3ce5291b35d7c1051d440e4d711dba419f681267a572187bf06530ad86709e",
+          "artifacts/tmp/W2.remaining-corrections-batch-01/desktop-workspace14-recipes-01/proposed/workspace14-navigation-02.mjs": "ff608dd528d7bb3b88ed44a72690dade1f75f1de715f7130c6c55e49ec8cbeef",
+          "artifacts/tmp/W2.remaining-corrections-batch-01/desktop-workspace14-recipes-01/proposed/workspace14-navigation.tsx": "42efe01903935f06ff9d03909e0efb66c40dfe37f274bc79e87a15d38dc7840f",
+          "artifacts/tmp/W2.remaining-corrections-batch-01/desktop-workspace14-recipes-01/proposed/document-reader-root-ports.tsx": "2456049aadf8e7f3b25d46b620af4305c89f137e3ea82197416f3851921e0e67",
+          "artifacts/tmp/W2.remaining-corrections-batch-01/desktop-workspace14-recipes-01/proposed/document-correction-current-root.ts": "543bec87e63bf0b56ddd9b491a4bbd32f4994962a77b3845d89da9048bb09ec7"
+        },
+        "releaseApproved": false
+      },
+      "fresh": "Actual current14 build/capture metrics/negative checks, package/decoded modules/browser/runtime holds, output custody/owned EMPTY and independent results. Separately provide6 declared fixture builds/child-local variables for48 original bodies and exact negative3/local-asset3/cleanup2 input restorations. Their still-absent consumers need conforming source readiness, not inferred PASS or unseen tracked patches."
+    },
+    {
+      "id": "GATEWAY-D1-D5",
+      "route": "Exact current-only criterion/baseline plus D3 direct record exception; separate D5 one-path W1 source delivery.",
+      "decisions": [
+        {
+          "id": "D1",
+          "decision": "Only effective current-version gateway hard p95 changes25->50ms, still strict<. Append-only addendum supplies authority; frozen original§11/Wave/task approvals remain unchanged."
+        },
+        {
+          "id": "D2",
+          "decision": "Adopt exact F one-cold/100-warm baseline02 p95=33.056800020858645ms for this current version. Retain20% prospectively:<=39.668160025030375ms AND strict<50ms. Explicitly accept disclosed incomplete F hardware/load comparability as a narrow current-version calibration choice; do not erase old regression, invent a cause or grant any future method/hardware waiver. Fresh actual hardware documentation/independent comparison remains required."
+        },
+        {
+          "id": "D3",
+          "decision": "Approve exact single-criterion direct append-only proposal/readiness/baseline/baseline-review/addendum/decision recording exception to§2.2 ECR/bootstrap, without new campaign/framework/controller work. Different independent packet/baseline reviewers and exact human authority required."
+        },
+        {
+          "id": "D4",
+          "decision": "Authorize only the exact one-operand test change25->50 after F29 terminal/cleanup and immutable exact owner authority. Its source-delivery procedure is separately D5, not an unspecified claim mechanism. No skip/method/sample/security changes or optimization."
+        },
+        {
+          "id": "D5",
+          "decision": "Grant this separate finite W2-qualification-only source-delivery procedural exception for exactly tests/service/test_model_routing_integration.py and its reviewed assertLess25->50 patch. The W1 CAP07S01T03 origin is COMPLETE and cannot use the current-unreleased-Wave correction adapter. After exact owner recording and F29 terminal/owned cleanup, permit ordinary Git delivery of this one-path committed successor without a new task/campaign/claim, W1 reopen/status rewrite or invented W2 origin; perform fresh committed checks and a different independent pre-integration review before localmain integration. No adapter bypass/controller/framework/source-policy edit, automatic qualification or DONE claim is granted."
+        }
+      ],
+      "patch": {
+        "path": "artifacts/tmp/W2.remaining-corrections-batch-01/gateway-latency-criterion-amendment-01/gateway-latency-criterion-amendment-01.patch",
+        "sha256": "af5598033dad301fd43fc5756415b66be6a1581fa391feeded64c2dacfd6b64a",
+        "size": 413
+      },
+      "proposedSource": {
+        "path": "artifacts/tmp/W2.remaining-corrections-batch-01/gateway-latency-criterion-amendment-01/test_model_routing_integration.proposed.py",
+        "sha256": "5f24d4e742f2e25c19b0e6f2175f11ddaba905cf0f3ef77cf30d271a8aa57b21",
+        "size": 9363
+      },
+      "baseline": {
+        "path": "artifacts/tmp/W2.remaining-corrections-batch-01/gateway-latency-criterion-amendment-01/gateway-baseline-02.proposed.json",
+        "sha256": "5fe8f767c80d1c5353ebe51e74495250383aeab9503f534d7860a0903cc616d2",
+        "size": 9562
+      },
+      "baselineReview": {
+        "path": "artifacts/tmp/W2.remaining-corrections-batch-01/gateway-latency-criterion-amendment-01/gateway-baseline-02.independent-review-R01.json",
+        "sha256": "51fbe30ead0429aeed72b7f9d79b243660d157886bd1e696bd84b200d3a05a48"
+      },
+      "criterionAddendum": {
+        "path": "artifacts/tmp/W2.remaining-corrections-batch-01/gateway-latency-criterion-amendment-01/gateway-criterion-amendment-01.proposed.json",
+        "sha256": "659613ef4f5f616c8af9a440e1000369fa02470f44272b3447be5eb00b609dae",
+        "size": 2930
+      },
+      "effect": "Historical22.406999953091145ms and20% ceiling26.888399943709373ms remain. Adopt F100-warm baseline33.056800020858645ms and prospective20% ceiling39.668160025030375ms AND strict<50ms. Exact tests/service/test_model_routing_integration.py25->50 operand only; all samples/nearest-rank/model exclusion/security/other targets preserved. Incomplete hardware/load comparability is disclosed current-version calibration acceptance, not a fabricated cause or future waiver.",
+      "fresh": "Actual committed original100-warm/cold method, source/runtime/fixture/current hardware; machine compare BOTH new limits against exact adopted baseline. Original test only checks50, so separate both-limit evidence is mandatory; any conforming ignored evaluator first needs different source readiness. Different pre-integration review; no W1 reopen/status rewrite/new claim/campaign or old FAIL relabel."
+    },
+    {
+      "id": "SERVICE-TRANSPORT-CANCEL",
+      "scope": [
+        {
+          "target": "tests/service/test_import_review_api.py",
+          "original": {
+            "path": "artifacts/tmp/W2.remaining-corrections-batch-01/service-test-input-transport-proposals-01/test_import_review_api.original.py",
+            "sha256": "c65ce1081589c446371d7b2570480a715de6940e545d3f260dd1e725d29d89f5",
+            "bytes": 13172
+          },
+          "proposed": {
+            "path": "artifacts/tmp/W2.remaining-corrections-batch-01/service-test-input-transport-proposals-01/test_import_review_api.proposed.py",
+            "sha256": "0178065c8f435e3b2bfcfff495191c83640f4989824157ee1d6fc44478a76e49",
+            "bytes": 13597
+          },
+          "patch": {
+            "path": "artifacts/tmp/W2.remaining-corrections-batch-01/service-test-input-transport-proposals-01/test_import_review_api.patch",
+            "sha256": "8c997fa66e2e7ecf3329b682464c7dd9efc7baa82f40e31d662bca5133c7230b",
+            "bytes": 1120
+          }
+        },
+        {
+          "target": "tests/service/test_model_registry_service.py",
+          "original": {
+            "path": "artifacts/tmp/W2.remaining-corrections-batch-01/service-test-input-transport-proposals-01/test_model_registry_service.original.py",
+            "sha256": "e7cffa3c48cf629ebd4f5fd385a239cdf1388042a8cb54ac430cc8464c2152a6",
+            "bytes": 13736
+          },
+          "proposed": {
+            "path": "artifacts/tmp/W2.remaining-corrections-batch-01/service-test-input-transport-proposals-01/test_model_registry_service.proposed.py",
+            "sha256": "0a26768efe25574196b90967696d05dd47485528f76090723ef64eebcaed1529",
+            "bytes": 14570
+          },
+          "patch": {
+            "path": "artifacts/tmp/W2.remaining-corrections-batch-01/service-test-input-transport-proposals-01/test_model_registry_service.patch",
+            "sha256": "a1895cb11dab070b9e7b8682aa87d933954e9858a38d6e5940e8ac382085a9ff",
+            "bytes": 1812
+          }
+        }
+      ],
+      "normalCancellationOrigin": "CAP-04.S01.T02",
+      "excludedW1TransportOrigin": "CAP-07.S01.T02",
+      "effect": "Cancellation remains normal current-W2 linked correction, single request/same job and revision, existing5000ms grace and79 terminal/count/separation/denial assertions. W1 tests/service/test_model_registry_service.py gets one-use qualification-only delivery of its exact reviewed transport patch, without W1 reopen/fake W2 origin. Vite8.2.1 supported build must yield one closed ESM chunk;49 original HTTP/auth/revision/protected-store assertions remain. No generated/API/resolver/production CSP change.",
+      "fresh": "Two named methods and original material auth/foreign-job/invalid-state denials; actual Vite/transitive/node/generated-client/env discovery closure, original __file__/REPO binding and owned cleanup. Ignored-location imports are not original canonical execution."
+    },
+    {
+      "id": "STORAGE-PROFILE-DOCS-VIEWER",
+      "scope": [
+        {
+          "target": "packages/contracts/storage/sqlite-profile.schema.json",
+          "originalSHA256": "a614d0d6eb65f3472574f0c66d776474744151ad88d6c94f0090fa491639da3f",
+          "proposed": {
+            "path": "artifacts/tmp/W2.remaining-corrections-batch-01/product-data-restorations-01/packages--contracts--storage--sqlite-profile.schema.json.proposed",
+            "sha256": "41e3a07b6eeabd732885d1f113e1522a5e6b5e24b1b2f3278892df85b26627e8"
+          },
+          "patch": {
+            "path": "artifacts/tmp/W2.remaining-corrections-batch-01/product-data-restorations-01/packages--contracts--storage--sqlite-profile.schema.json.patch",
+            "sha256": "d5635751ad88ea6e4493f6f377ca865027f6b39ecb28c0b918961453acb220bd"
+          }
+        },
+        {
+          "target": "docs/architecture/local-sqlite-storage.md",
+          "originalSHA256": "31dde2538ab6621730a72a6bcafdefbf7681be88352ae6c48982a45d38d1c5fe",
+          "proposed": {
+            "path": "artifacts/tmp/W2.remaining-corrections-batch-01/product-data-restorations-02/local-sqlite-storage.md.proposed",
+            "sha256": "20034a565bcf12c65442ad4e8f511de7d6d27e4efc4ba6677ad14f280065f0ad"
+          },
+          "patch": {
+            "path": "artifacts/tmp/W2.remaining-corrections-batch-01/product-data-restorations-02/local-sqlite-storage.md.patch",
+            "sha256": "53a521eba81f0d8b687288ab13de52df4cfde6f3ae54c73d18ff962131a3c2db"
+          }
+        },
+        {
+          "target": "tests/documents/test_viewer_anchor_context.py",
+          "originalSHA256": "9e10bb265e0c543dfcb8ede012a9fb836649ff6950ac51ef5bff5bae854dd016",
+          "proposed": {
+            "path": "artifacts/tmp/W2.remaining-corrections-batch-01/product-data-restorations-01/tests--documents--test_viewer_anchor_context.py.proposed",
+            "sha256": "44443ead68d36793258c3c0332440b9b00500a2c6debbb59f074084451f9f4bc"
+          },
+          "patch": {
+            "path": "artifacts/tmp/W2.remaining-corrections-batch-01/product-data-restorations-01/tests--documents--test_viewer_anchor_context.py.patch",
+            "sha256": "e19c50a8def1a870f4a24de1abbee3a4482453008949c1c4bbdf7ddb5d920fbc"
+          }
+        }
+      ],
+      "normalSchemaRegressionOrigin": "CAP-05.S05.T01",
+      "viewerFixtureDeliveryOrigin": "CAP-05.S04.T02",
+      "viewerCompatibilityFenceOrigin": "CAP-05.S06.T03",
+      "effect": "Restore exactly4 current schema constants to accepted v28/hash/4 ordered enrichment tables, every other object unchanged. Separately record one-file docs companion exception for exactly5 current prose segments; preserve historicalv27 and rawCRLF/canonical identities, never hide docs in ordinary changedPaths. Viewer current-head fixture uses existing explicit reprocessing helper;17 assertions retained. Authenticate its original W2 fixture delivery while separately retaining later S06T03 fence cause; no last-writer or W1 relabel.",
+      "fresh": "Current profile/schema equality, original guide/data contract checks and material history/backup denial cases; actual viewer later-head/reopen/immutable link and rights/foreign-context denials. Normal eligible correction/spec/claim/review and separate exact docs delivery/integration remain."
+    },
+    {
+      "id": "RIGHTS-REPORTS-MIGRATION-DATA",
+      "scope": [
+        {
+          "path": "artifacts/tmp/W2.remaining-corrections-batch-01/rights-reports-migration-test-data-proposals-02/proposal-manifest-02.json",
+          "sha256": "943c5731182ca0ae1a527ad5d31edb1687aba214c34a537f9eb5a78b4c052e4d"
+        },
+        {
+          "path": "artifacts/tmp/W2.remaining-corrections-batch-01/current-migration-test-data-restorations-01/proposal-manifest-01.json",
+          "sha256": "b71c476a9f0813684252b4d096655ebee76536ff3d6e8e0565d3e0d0597a61ff"
+        }
+      ],
+      "normalOrigins": {
+        "rightsAnd3DataFixtures": "CAP-04.S04.T02",
+        "reports": "CAP-04.S04.T03"
+      },
+      "effect": "Continue root intendedC20 admission for rights+3 inherited data fixtures; no success/state asserted here. Then normal report correction. Preserve protected DB/rows/cipher/FK/backup/rollback/failpoint/retry/reopen assertions, historical18/19 and immutable20. Exact21-28 mappings/suffixes are literal, not runner-derived. No executable migration or guarantee change.",
+      "fresh": "All6 named rights/report methods/all original subcases and five affected original methods across three data-fixture modules, including original backup/interruption/retry/reopen/denials. Actual canonical origin snapshot/spec/controller admission and actual next correction identity; no invented future C-number."
+    },
+    {
+      "id": "ANCHORS-NATIVE-WITNESS",
+      "scope": [
+        {
+          "path": "artifacts/tmp/W2.remaining-corrections-batch-01/anchor-native-cleanup-test-input-proposals-01/anchor-proposal-manifest-01.json",
+          "sha256": "fd55159855f3bae2202e22f2acaa58c074967f65dc58780b2cd2d5c68116d29b"
+        },
+        {
+          "path": "artifacts/tmp/W2.remaining-corrections-batch-01/anchor-native-cleanup-test-input-proposals-01/native-cleanup-proposal-manifest-01.json",
+          "sha256": "8308b28b881f66aed8622c1062456b18f717a133c6afee38305bbf144fcb0d4e"
+        }
+      ],
+      "normalRegressionOrigins": {
+        "anchors": "CAP-05.S06.T03",
+        "nativeCleanup": "CAP-04.S01.T02"
+      },
+      "effect": "Exact2 anchor setup replacements use current-base helper retaining zero-correction-obligation guard and31 assertions/3 citation subcases. Native replaces only invalid first-statement adjacency by exactly1 balanced blocking callback/no direct lock acquisition,55 other assertions retained. First stop/checkpoint05 is S01T02, not later Reader cleanup; W1 test authorship unchanged.",
+      "fresh": "Context/reopen and complete unresolved/candidate/ambiguous citation loop plus material denials. Folder bridge source leaf and affected actual Native shutdown/owned cleanup. Bounded syntax witness is not generic Rust/indirect-lock/runtime proof. May combine native witness and cancellation under sharedS01T02 origin only if actual spec/controller admit exact paths."
+    },
+    {
+      "id": "SECURITY-20-DEPENDENCIES",
+      "scope": [
+        "pyproject.toml",
+        "uv.lock",
+        "pnpm-lock.yaml",
+        "security-exceptions.json",
+        "services/core-api/THIRD_PARTY_NOTICES.txt"
+      ],
+      "projection": {
+        "path": "artifacts/tmp/W2.remaining-corrections-batch-01/supply-chain-reassessment-02/security-exceptions.active-projection-02.proposed.json",
+        "sha256": "19903d94cb6ba6ac9c17704c5cbe8e51bf95048f463f93a5045c690b9c2ea09e"
+      },
+      "preparedData": {
+        "pyproject": {
+          "path": "artifacts/tmp/W2.remaining-corrections-batch-01/supply-chain-reassessment-02/pyproject.toml.proposed",
+          "sha256": "f1ed6f3797005cb2269e27e15e94dcacb0bb30990f6930fce9c3c25861412163",
+          "bytes": 1304
+        },
+        "noticeData": {
+          "path": "artifacts/tmp/W2.remaining-corrections-batch-01/supply-chain-reassessment-02/THIRD_PARTY_NOTICES.txt.proposed",
+          "sha256": "b82be078ecf068190e4f9b68a5271a226e9010e330b9b474da86de356f461101",
+          "bytes": 6660
+        },
+        "patches": [
+          {
+            "path": "artifacts/tmp/W2.remaining-corrections-batch-01/supply-chain-reassessment-02/httpx2-httpcore2-pins-02.patch",
+            "sha256": "40f87a8b42444c6bb059939eabc8d1311368bd5d97db0662b115bd07e4b921e7",
+            "bytes": 284
+          },
+          {
+            "path": "artifacts/tmp/W2.remaining-corrections-batch-01/supply-chain-reassessment-02/third-party-notice-data-02.patch",
+            "sha256": "9df2c1728d42d3a786ca1c310033ad5cfec83985dcd82401fb179e17fda9e66b",
+            "bytes": 1964
+          }
+        ]
+      },
+      "effect": "Exactly13 compiler+7 license key-specific current decisions, reviewed2026-10-14/expires2026-10-21, distinct tickets/current evidence. Old17 bytes/Git/expired rationale and186 original findings retained. Active successor replaces expired/duplicate entries only after actual recorded decision; unchanged date/unused-key validator remains. Pair HTTP2 libraries2.12.0 and source-map-js1.2.2; actual future uv/pnpm distribution/resolution constrained to unchanged unrelated versions.5-path source/data procedure exception is finite because root paths/released-W1 origins are outside adapter. No runtime vulnerability exception, global Go/SPDX/license/policy relaxation or compiler nonreachability fiction.",
+      "fresh": "Actual lock/install/distro equality, HTTP/TLS/raw decode/host/egress/redirect/cancel tests; desktop/contracts typecheck/build/source-map/CSP; current frozen Core/whole-package SBOM/notices/inventory and unchanged security scan+boundary suite. Review remaining WARN/privacy/rights findings. Runtime Tauri requires actual MIT notice delivery. Complete installer exclusion and compiler-function reachability remain unproven. Expired/drifted binary/version/key/scope denies; no blind renewal."
+    },
+    {
+      "id": "PROTECTED-CANONICAL-PERFORMANCE",
+      "scope": {
+        "manifest": {
+          "path": "artifacts/tmp/W2.remaining-corrections-batch-01/protected-performance-bootstrap-01/manifest-01.json",
+          "sha256": "1008209ee369e52612f07c895e76f375af7b8e163f5bd5e532cf634d021dd8b6"
+        },
+        "preparation": {
+          "path": "artifacts/tmp/W2.remaining-corrections-batch-01/protected-performance-bootstrap-01/preparation-01.json",
+          "sha256": "3bec957ef7c69569b336ba7093600a3f7e1ba48f588574f8bb94589be3158a45"
+        },
+        "producer": {
+          "path": "artifacts/tmp/W2.remaining-corrections-batch-01/protected-performance-bootstrap-01/protected-performance-owned-02.py",
+          "sha256": "06a34a91aec5f6f2d3afd1c8b3eb8d4a5f0244608ebf94b3b95fd7111cbb0845"
+        },
+        "review": {
+          "path": "artifacts/tmp/W2.remaining-corrections-batch-01/protected-performance-bootstrap-01/independent-source-readiness-01.json",
+          "sha256": "e571149841331158c3bcdade99c4d83b40b0f49a83137330044bd28c12dc6484"
+        }
+      },
+      "effect": "Existing real current-user DPAPI provider installed once in fresh child before unchanged canonical lifecycle/storage tools. No protector injection, plaintext canonical SQLite substitute, old-vault mutation, measure-only/rebaseline or altered method/budget. Existing synthetic plaintext derived/cache fixtures disclosed.",
+      "fresh": "Serialize lifecycle then storage using actual manifest commands/current clean candidate and exact different review. Retain truthful OS/bootstrap vs canonical argv, complete source/Python/Git/import holds, private encrypted output custody, raw samples/hardware/old baselines/unchanged thresholds and owned EMPTY; source readiness is not qualification."
+    }
+  ],
+  "finiteExcludedDeliveryPaths": [
+    "tests/foundation/test_adr_check.py",
+    "tests/foundation/test_ui_reference_check.py",
+    "tests/foundation/test_planctl_amendments.py",
+    "tests/foundation/test_ui_change_gate.py",
+    "tests/service/test_model_routing_integration.py",
+    "tests/service/test_model_registry_service.py",
+    "docs/architecture/local-sqlite-storage.md",
+    "pyproject.toml",
+    "uv.lock",
+    "pnpm-lock.yaml",
+    "security-exceptions.json",
+    "services/core-api/THIRD_PARTY_NOTICES.txt"
+  ],
+  "securityActivePolicyDecision": {
+    "projection": {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/supply-chain-reassessment-02/security-exceptions.active-projection-02.proposed.json",
+      "sha256": "19903d94cb6ba6ac9c17704c5cbe8e51bf95048f463f93a5045c690b9c2ea09e"
+    },
+    "exactKeyCount": 20,
+    "compilerKeyCount": 13,
+    "licenseKeyCount": 7,
+    "maximumValidityDays": 7,
+    "reviewedAt": "2026-10-14",
+    "expiresAt": "2026-10-21",
+    "keys": [
+      {
+        "findingKey": "vulnerability|CVE-2026-33818|.pnpm/@typescript+typescript-win32-x64@7.0.2/node_modules/@typescript/typescript-win32-x64/lib/tsc.exe|stdlib",
+        "status": "approved",
+        "reviewedBy": "agent:/root/a03_closeout_review",
+        "reviewedAt": "2026-10-14",
+        "expiresAt": "2026-10-21",
+        "rationale": "Current exact dev compiler TypeScript7.0.2, WindowsAMD64 PE SHA256 f9ecfbdc93753d2c972d66a8d0d75f5bd737fd4a5f88b422d9091ea282bcb2c7, embeds Go1.26.4/x-text0.38.0. CVE-2026-33818: encoding/asn1: golang: Go encoding/asn1: Denial of Service via excessive recursion in Unmarshal; primary https://pkg.go.dev/vuln/GO-2026-5972; reported fixed 1.25.13, 1.26.6, 1.27.0-rc.3. Governed repo TS/config only; actual fresh F Native/frontend206-file inventory excludes compiler and retained Core directory/PE checks contain no compiler. Vulnerable dependency presence is real; compiler entrypoint/function nonreachability is not proven. Proposed temporary acceptance acknowledges residual local build-process risk, including malformed governed inputs, and does not declare fixed/harmless. Evidence artifacts/tmp/W2.remaining-corrections-batch-01/supply-chain-reassessment-02/current-binary-license-package-evidence-02.json SHA256 5a25316eb468c847ee1f80e11b00290e722fd9693185303e0feb9b68e9ac3852. No runtime-library/security threshold exception. Expires2026-10-21; stop at changed binary/version/source domain/packaging or patched stable successor; replacement must fix corresponding Go branch and x-text>=0.39.0 and pass affected checks. No automatic renewal.",
+        "ticket": "S27.COMPILER.01"
+      },
+      {
+        "findingKey": "vulnerability|CVE-2026-39821|.pnpm/@typescript+typescript-win32-x64@7.0.2/node_modules/@typescript/typescript-win32-x64/lib/tsc.exe|stdlib",
+        "status": "approved",
+        "reviewedBy": "agent:/root/a03_closeout_review",
+        "reviewedAt": "2026-10-14",
+        "expiresAt": "2026-10-21",
+        "rationale": "Current exact dev compiler TypeScript7.0.2, WindowsAMD64 PE SHA256 f9ecfbdc93753d2c972d66a8d0d75f5bd737fd4a5f88b422d9091ea282bcb2c7, embeds Go1.26.4/x-text0.38.0. CVE-2026-39821: golang.org/x/net/idna: golang: net/http: golang.org/x/net/idna: Privilege escalation via incorrect Punycode label processing; primary https://pkg.go.dev/vuln/GO-2026-5026; reported fixed 1.25.13, 1.26.6, 1.27.0-rc.3. Governed repo TS/config only; actual fresh F Native/frontend206-file inventory excludes compiler and retained Core directory/PE checks contain no compiler. Vulnerable dependency presence is real; compiler entrypoint/function nonreachability is not proven. Proposed temporary acceptance acknowledges residual local build-process risk, including malformed governed inputs, and does not declare fixed/harmless. Evidence artifacts/tmp/W2.remaining-corrections-batch-01/supply-chain-reassessment-02/current-binary-license-package-evidence-02.json SHA256 5a25316eb468c847ee1f80e11b00290e722fd9693185303e0feb9b68e9ac3852. No runtime-library/security threshold exception. Expires2026-10-21; stop at changed binary/version/source domain/packaging or patched stable successor; replacement must fix corresponding Go branch and x-text>=0.39.0 and pass affected checks. No automatic renewal.",
+        "ticket": "S27.COMPILER.02"
+      },
+      {
+        "findingKey": "vulnerability|CVE-2026-39822|.pnpm/@typescript+typescript-win32-x64@7.0.2/node_modules/@typescript/typescript-win32-x64/lib/tsc.exe|stdlib",
+        "status": "approved",
+        "reviewedBy": "agent:/root/a03_closeout_review",
+        "reviewedAt": "2026-10-14",
+        "expiresAt": "2026-10-21",
+        "rationale": "Current exact dev compiler TypeScript7.0.2, WindowsAMD64 PE SHA256 f9ecfbdc93753d2c972d66a8d0d75f5bd737fd4a5f88b422d9091ea282bcb2c7, embeds Go1.26.4/x-text0.38.0. CVE-2026-39822: golang: Go os.Root: Symlink following vulnerability allows directory traversal; primary https://pkg.go.dev/vuln/GO-2026-4970; reported fixed 1.25.12, 1.26.5, 1.27.0-rc.2. Governed repo TS/config only; actual fresh F Native/frontend206-file inventory excludes compiler and retained Core directory/PE checks contain no compiler. Primary os.Root advisory is Unix-specific; current PE/GOOS is Windows, so this exact platform finding is proposed as bounded non-applicability rather than a blanket vulnerability waiver. Evidence artifacts/tmp/W2.remaining-corrections-batch-01/supply-chain-reassessment-02/current-binary-license-package-evidence-02.json SHA256 5a25316eb468c847ee1f80e11b00290e722fd9693185303e0feb9b68e9ac3852. No runtime-library/security threshold exception. Expires2026-10-21; stop at changed binary/version/source domain/packaging or patched stable successor; replacement must fix corresponding Go branch and x-text>=0.39.0 and pass affected checks. No automatic renewal.",
+        "ticket": "S27.COMPILER.03"
+      },
+      {
+        "findingKey": "vulnerability|CVE-2026-46600|.pnpm/@typescript+typescript-win32-x64@7.0.2/node_modules/@typescript/typescript-win32-x64/lib/tsc.exe|stdlib",
+        "status": "approved",
+        "reviewedBy": "agent:/root/a03_closeout_review",
+        "reviewedAt": "2026-10-14",
+        "expiresAt": "2026-10-21",
+        "rationale": "Current exact dev compiler TypeScript7.0.2, WindowsAMD64 PE SHA256 f9ecfbdc93753d2c972d66a8d0d75f5bd737fd4a5f88b422d9091ea282bcb2c7, embeds Go1.26.4/x-text0.38.0. CVE-2026-46600: golang.org/x/net/dns/dnsmessage: golang.org/x/net/dns/dnsmessage: Denial of Service via invalid DNS record parsing; primary https://pkg.go.dev/vuln/GO-2026-5942; reported fixed 1.26.6, 1.27.0-rc.3. Governed repo TS/config only; actual fresh F Native/frontend206-file inventory excludes compiler and retained Core directory/PE checks contain no compiler. Vulnerable dependency presence is real; compiler entrypoint/function nonreachability is not proven. Proposed temporary acceptance acknowledges residual local build-process risk, including malformed governed inputs, and does not declare fixed/harmless. Evidence artifacts/tmp/W2.remaining-corrections-batch-01/supply-chain-reassessment-02/current-binary-license-package-evidence-02.json SHA256 5a25316eb468c847ee1f80e11b00290e722fd9693185303e0feb9b68e9ac3852. No runtime-library/security threshold exception. Expires2026-10-21; stop at changed binary/version/source domain/packaging or patched stable successor; replacement must fix corresponding Go branch and x-text>=0.39.0 and pass affected checks. No automatic renewal.",
+        "ticket": "S27.COMPILER.04"
+      },
+      {
+        "findingKey": "vulnerability|CVE-2026-56852|.pnpm/@typescript+typescript-win32-x64@7.0.2/node_modules/@typescript/typescript-win32-x64/lib/tsc.exe|golang.org/x/text",
+        "status": "approved",
+        "reviewedBy": "agent:/root/a03_closeout_review",
+        "reviewedAt": "2026-10-14",
+        "expiresAt": "2026-10-21",
+        "rationale": "Current exact dev compiler TypeScript7.0.2, WindowsAMD64 PE SHA256 f9ecfbdc93753d2c972d66a8d0d75f5bd737fd4a5f88b422d9091ea282bcb2c7, embeds Go1.26.4/x-text0.38.0. CVE-2026-56852: golang.org/x/text: golang.org/x/text: Denial of Service via invalid UTF-8 input; primary https://pkg.go.dev/vuln/GO-2026-5970; reported fixed 0.39.0. Governed repo TS/config only; actual fresh F Native/frontend206-file inventory excludes compiler and retained Core directory/PE checks contain no compiler. Vulnerable dependency presence is real; compiler entrypoint/function nonreachability is not proven. Proposed temporary acceptance acknowledges residual local build-process risk, including malformed governed inputs, and does not declare fixed/harmless. Evidence artifacts/tmp/W2.remaining-corrections-batch-01/supply-chain-reassessment-02/current-binary-license-package-evidence-02.json SHA256 5a25316eb468c847ee1f80e11b00290e722fd9693185303e0feb9b68e9ac3852. No runtime-library/security threshold exception. Expires2026-10-21; stop at changed binary/version/source domain/packaging or patched stable successor; replacement must fix corresponding Go branch and x-text>=0.39.0 and pass affected checks. No automatic renewal.",
+        "ticket": "S27.COMPILER.05"
+      },
+      {
+        "findingKey": "vulnerability|CVE-2026-56853|.pnpm/@typescript+typescript-win32-x64@7.0.2/node_modules/@typescript/typescript-win32-x64/lib/tsc.exe|stdlib",
+        "status": "approved",
+        "reviewedBy": "agent:/root/a03_closeout_review",
+        "reviewedAt": "2026-10-14",
+        "expiresAt": "2026-10-21",
+        "rationale": "Current exact dev compiler TypeScript7.0.2, WindowsAMD64 PE SHA256 f9ecfbdc93753d2c972d66a8d0d75f5bd737fd4a5f88b422d9091ea282bcb2c7, embeds Go1.26.4/x-text0.38.0. CVE-2026-56853: net/http: golang: Go net/http: Unencrypted HTTP/2 connections vulnerable to Denial of Service; primary https://pkg.go.dev/vuln/GO-2026-6089; reported fixed 1.25.13, 1.26.6, 1.27.0-rc.3. Governed repo TS/config only; actual fresh F Native/frontend206-file inventory excludes compiler and retained Core directory/PE checks contain no compiler. Vulnerable dependency presence is real; compiler entrypoint/function nonreachability is not proven. Proposed temporary acceptance acknowledges residual local build-process risk, including malformed governed inputs, and does not declare fixed/harmless. Evidence artifacts/tmp/W2.remaining-corrections-batch-01/supply-chain-reassessment-02/current-binary-license-package-evidence-02.json SHA256 5a25316eb468c847ee1f80e11b00290e722fd9693185303e0feb9b68e9ac3852. No runtime-library/security threshold exception. Expires2026-10-21; stop at changed binary/version/source domain/packaging or patched stable successor; replacement must fix corresponding Go branch and x-text>=0.39.0 and pass affected checks. No automatic renewal.",
+        "ticket": "S27.COMPILER.06"
+      },
+      {
+        "findingKey": "vulnerability|CVE-2026-56858|.pnpm/@typescript+typescript-win32-x64@7.0.2/node_modules/@typescript/typescript-win32-x64/lib/tsc.exe|stdlib",
+        "status": "approved",
+        "reviewedBy": "agent:/root/a03_closeout_review",
+        "reviewedAt": "2026-10-14",
+        "expiresAt": "2026-10-21",
+        "rationale": "Current exact dev compiler TypeScript7.0.2, WindowsAMD64 PE SHA256 f9ecfbdc93753d2c972d66a8d0d75f5bd737fd4a5f88b422d9091ea282bcb2c7, embeds Go1.26.4/x-text0.38.0. CVE-2026-56858: html/template: golang: Go html/template: Cross-Site Scripting via pathological input; primary https://pkg.go.dev/vuln/GO-2026-6091; reported fixed 1.25.13, 1.26.6, 1.27.0-rc.3. Governed repo TS/config only; actual fresh F Native/frontend206-file inventory excludes compiler and retained Core directory/PE checks contain no compiler. Vulnerable dependency presence is real; compiler entrypoint/function nonreachability is not proven. Proposed temporary acceptance acknowledges residual local build-process risk, including malformed governed inputs, and does not declare fixed/harmless. Evidence artifacts/tmp/W2.remaining-corrections-batch-01/supply-chain-reassessment-02/current-binary-license-package-evidence-02.json SHA256 5a25316eb468c847ee1f80e11b00290e722fd9693185303e0feb9b68e9ac3852. No runtime-library/security threshold exception. Expires2026-10-21; stop at changed binary/version/source domain/packaging or patched stable successor; replacement must fix corresponding Go branch and x-text>=0.39.0 and pass affected checks. No automatic renewal.",
+        "ticket": "S27.COMPILER.07"
+      },
+      {
+        "findingKey": "vulnerability|CVE-2026-56859|.pnpm/@typescript+typescript-win32-x64@7.0.2/node_modules/@typescript/typescript-win32-x64/lib/tsc.exe|stdlib",
+        "status": "approved",
+        "reviewedBy": "agent:/root/a03_closeout_review",
+        "reviewedAt": "2026-10-14",
+        "expiresAt": "2026-10-21",
+        "rationale": "Current exact dev compiler TypeScript7.0.2, WindowsAMD64 PE SHA256 f9ecfbdc93753d2c972d66a8d0d75f5bd737fd4a5f88b422d9091ea282bcb2c7, embeds Go1.26.4/x-text0.38.0. CVE-2026-56859: encoding/xml: golang: Go: Denial of Service via XML decoding recursion depth issue; primary https://pkg.go.dev/vuln/GO-2026-6088; reported fixed 1.25.13, 1.26.6, 1.27.0-rc.3. Governed repo TS/config only; actual fresh F Native/frontend206-file inventory excludes compiler and retained Core directory/PE checks contain no compiler. Vulnerable dependency presence is real; compiler entrypoint/function nonreachability is not proven. Proposed temporary acceptance acknowledges residual local build-process risk, including malformed governed inputs, and does not declare fixed/harmless. Evidence artifacts/tmp/W2.remaining-corrections-batch-01/supply-chain-reassessment-02/current-binary-license-package-evidence-02.json SHA256 5a25316eb468c847ee1f80e11b00290e722fd9693185303e0feb9b68e9ac3852. No runtime-library/security threshold exception. Expires2026-10-21; stop at changed binary/version/source domain/packaging or patched stable successor; replacement must fix corresponding Go branch and x-text>=0.39.0 and pass affected checks. No automatic renewal.",
+        "ticket": "S27.COMPILER.08"
+      },
+      {
+        "findingKey": "vulnerability|CVE-2026-56860|.pnpm/@typescript+typescript-win32-x64@7.0.2/node_modules/@typescript/typescript-win32-x64/lib/tsc.exe|stdlib",
+        "status": "approved",
+        "reviewedBy": "agent:/root/a03_closeout_review",
+        "reviewedAt": "2026-10-14",
+        "expiresAt": "2026-10-21",
+        "rationale": "Current exact dev compiler TypeScript7.0.2, WindowsAMD64 PE SHA256 f9ecfbdc93753d2c972d66a8d0d75f5bd737fd4a5f88b422d9091ea282bcb2c7, embeds Go1.26.4/x-text0.38.0. CVE-2026-56860: net/url: golang: golang net/url: Denial of Service from quadratic complexity in path resolution; primary https://pkg.go.dev/vuln/GO-2026-6218; reported fixed 1.25.13, 1.26.6, 1.27.0-rc.3. Governed repo TS/config only; actual fresh F Native/frontend206-file inventory excludes compiler and retained Core directory/PE checks contain no compiler. Vulnerable dependency presence is real; compiler entrypoint/function nonreachability is not proven. Proposed temporary acceptance acknowledges residual local build-process risk, including malformed governed inputs, and does not declare fixed/harmless. Evidence artifacts/tmp/W2.remaining-corrections-batch-01/supply-chain-reassessment-02/current-binary-license-package-evidence-02.json SHA256 5a25316eb468c847ee1f80e11b00290e722fd9693185303e0feb9b68e9ac3852. No runtime-library/security threshold exception. Expires2026-10-21; stop at changed binary/version/source domain/packaging or patched stable successor; replacement must fix corresponding Go branch and x-text>=0.39.0 and pass affected checks. No automatic renewal.",
+        "ticket": "S27.COMPILER.09"
+      },
+      {
+        "findingKey": "vulnerability|CVE-2026-56862|.pnpm/@typescript+typescript-win32-x64@7.0.2/node_modules/@typescript/typescript-win32-x64/lib/tsc.exe|stdlib",
+        "status": "approved",
+        "reviewedBy": "agent:/root/a03_closeout_review",
+        "reviewedAt": "2026-10-14",
+        "expiresAt": "2026-10-21",
+        "rationale": "Current exact dev compiler TypeScript7.0.2, WindowsAMD64 PE SHA256 f9ecfbdc93753d2c972d66a8d0d75f5bd737fd4a5f88b422d9091ea282bcb2c7, embeds Go1.26.4/x-text0.38.0. CVE-2026-56862: crypto/tls: golang: Golang crypto/tls: Denial of Service via indefinite KeyUpdate messages; primary https://pkg.go.dev/vuln/GO-2026-6090; reported fixed 1.25.13, 1.26.6, 1.27.0-rc.3. Governed repo TS/config only; actual fresh F Native/frontend206-file inventory excludes compiler and retained Core directory/PE checks contain no compiler. Vulnerable dependency presence is real; compiler entrypoint/function nonreachability is not proven. Proposed temporary acceptance acknowledges residual local build-process risk, including malformed governed inputs, and does not declare fixed/harmless. Evidence artifacts/tmp/W2.remaining-corrections-batch-01/supply-chain-reassessment-02/current-binary-license-package-evidence-02.json SHA256 5a25316eb468c847ee1f80e11b00290e722fd9693185303e0feb9b68e9ac3852. No runtime-library/security threshold exception. Expires2026-10-21; stop at changed binary/version/source domain/packaging or patched stable successor; replacement must fix corresponding Go branch and x-text>=0.39.0 and pass affected checks. No automatic renewal.",
+        "ticket": "S27.COMPILER.10"
+      },
+      {
+        "findingKey": "vulnerability|CVE-2026-78667|.pnpm/@typescript+typescript-win32-x64@7.0.2/node_modules/@typescript/typescript-win32-x64/lib/tsc.exe|stdlib",
+        "status": "approved",
+        "reviewedBy": "agent:/root/a03_closeout_review",
+        "reviewedAt": "2026-10-14",
+        "expiresAt": "2026-10-21",
+        "rationale": "Current exact dev compiler TypeScript7.0.2, WindowsAMD64 PE SHA256 f9ecfbdc93753d2c972d66a8d0d75f5bd737fd4a5f88b422d9091ea282bcb2c7, embeds Go1.26.4/x-text0.38.0. CVE-2026-78667: net/http: golang: golang: Denial of Service via crafted HTTP Range headers; primary https://pkg.go.dev/vuln/GO-2026-6609; reported fixed 1.26.9, 1.27.2. Governed repo TS/config only; actual fresh F Native/frontend206-file inventory excludes compiler and retained Core directory/PE checks contain no compiler. Vulnerable dependency presence is real; compiler entrypoint/function nonreachability is not proven. Proposed temporary acceptance acknowledges residual local build-process risk, including malformed governed inputs, and does not declare fixed/harmless. Evidence artifacts/tmp/W2.remaining-corrections-batch-01/supply-chain-reassessment-02/current-binary-license-package-evidence-02.json SHA256 5a25316eb468c847ee1f80e11b00290e722fd9693185303e0feb9b68e9ac3852. No runtime-library/security threshold exception. Expires2026-10-21; stop at changed binary/version/source domain/packaging or patched stable successor; replacement must fix corresponding Go branch and x-text>=0.39.0 and pass affected checks. No automatic renewal.",
+        "ticket": "S27.COMPILER.11"
+      },
+      {
+        "findingKey": "vulnerability|CVE-2026-78669|.pnpm/@typescript+typescript-win32-x64@7.0.2/node_modules/@typescript/typescript-win32-x64/lib/tsc.exe|stdlib",
+        "status": "approved",
+        "reviewedBy": "agent:/root/a03_closeout_review",
+        "reviewedAt": "2026-10-14",
+        "expiresAt": "2026-10-21",
+        "rationale": "Current exact dev compiler TypeScript7.0.2, WindowsAMD64 PE SHA256 f9ecfbdc93753d2c972d66a8d0d75f5bd737fd4a5f88b422d9091ea282bcb2c7, embeds Go1.26.4/x-text0.38.0. CVE-2026-78669: net/http: net/http/internal/http2: golang.org/x/net/http2: net/http: Denial of Service via excessive HTTP/2 SETTINGS frames; primary https://pkg.go.dev/vuln/GO-2026-6611; reported fixed 1.26.9, 1.27.2. Governed repo TS/config only; actual fresh F Native/frontend206-file inventory excludes compiler and retained Core directory/PE checks contain no compiler. Vulnerable dependency presence is real; compiler entrypoint/function nonreachability is not proven. Proposed temporary acceptance acknowledges residual local build-process risk, including malformed governed inputs, and does not declare fixed/harmless. Evidence artifacts/tmp/W2.remaining-corrections-batch-01/supply-chain-reassessment-02/current-binary-license-package-evidence-02.json SHA256 5a25316eb468c847ee1f80e11b00290e722fd9693185303e0feb9b68e9ac3852. No runtime-library/security threshold exception. Expires2026-10-21; stop at changed binary/version/source domain/packaging or patched stable successor; replacement must fix corresponding Go branch and x-text>=0.39.0 and pass affected checks. No automatic renewal.",
+        "ticket": "S27.COMPILER.12"
+      },
+      {
+        "findingKey": "vulnerability|CVE-2026-97031|.pnpm/@typescript+typescript-win32-x64@7.0.2/node_modules/@typescript/typescript-win32-x64/lib/tsc.exe|stdlib",
+        "status": "approved",
+        "reviewedBy": "agent:/root/a03_closeout_review",
+        "reviewedAt": "2026-10-14",
+        "expiresAt": "2026-10-21",
+        "rationale": "Current exact dev compiler TypeScript7.0.2, WindowsAMD64 PE SHA256 f9ecfbdc93753d2c972d66a8d0d75f5bd737fd4a5f88b422d9091ea282bcb2c7, embeds Go1.26.4/x-text0.38.0. CVE-2026-97031: crypto/tls: golang: crypto/tls: Denial of Service via multiple ECH outer extension references; primary https://pkg.go.dev/vuln/GO-2026-6607; reported fixed 1.26.9, 1.27.2. Governed repo TS/config only; actual fresh F Native/frontend206-file inventory excludes compiler and retained Core directory/PE checks contain no compiler. Vulnerable dependency presence is real; compiler entrypoint/function nonreachability is not proven. Proposed temporary acceptance acknowledges residual local build-process risk, including malformed governed inputs, and does not declare fixed/harmless. Evidence artifacts/tmp/W2.remaining-corrections-batch-01/supply-chain-reassessment-02/current-binary-license-package-evidence-02.json SHA256 5a25316eb468c847ee1f80e11b00290e722fd9693185303e0feb9b68e9ac3852. No runtime-library/security threshold exception. Expires2026-10-21; stop at changed binary/version/source domain/packaging or patched stable successor; replacement must fix corresponding Go branch and x-text>=0.39.0 and pass affected checks. No automatic renewal.",
+        "ticket": "S27.COMPILER.13"
+      },
+      {
+        "findingKey": "license|Apache-2.0 OR BSD-2-Clause|Python|packaging",
+        "status": "approved",
+        "reviewedBy": "agent:/root/a03_closeout_review",
+        "reviewedAt": "2026-10-14",
+        "expiresAt": "2026-10-21",
+        "rationale": "Exact top-level packaging26.3 and setuptools-vendored packaging26.0 distributor METADATA and LICENSE/Apache/BSD files were re-read/hash-authenticated; both license alternatives are individually allowed and the license bytes are identical. Both occurrences are present in installed fixture selectors, so absence/build-only is not assumed. Select BSD-2-Clause or Apache-2.0 with corresponding notice duties if distributed. Only this exact OR-expression classification is accepted; no other packaging version or broad OR allowance. Current evidence artifacts/tmp/W2.remaining-corrections-batch-01/supply-chain-reassessment-02/current-binary-license-package-evidence-02.json SHA256 5a25316eb468c847ee1f80e11b00290e722fd9693185303e0feb9b68e9ac3852; expires2026-10-21, no automatic renewal. This is a fresh current exact decision, not carry-forward of the expired record.",
+        "ticket": "S27.LICENSE.01"
+      },
+      {
+        "findingKey": "license|GPL-2.0-only|Python|pyinstaller",
+        "status": "approved",
+        "reviewedBy": "agent:/root/a03_closeout_review",
+        "reviewedAt": "2026-10-14",
+        "expiresAt": "2026-10-21",
+        "rationale": "Exact unmodified installed PyInstaller6.21.0 COPYING.txt/METADATA was re-read/hash-authenticated: GPL2-or-later plus explicit compiled bootloader/loader combination distribution exception; runtime hooks Apache2. Builder files occur in installed local fixture selectors, while inspected retained frozen Core/worker contain only identified loader/runtime-hook components and no builder module. Accept local build-tool use/classification for this version only, preserve GPL for any separately redistributed/modified builder and existing bootloader/runtime-hook terms; no complete fresh frozen-Core/installer or general GPL redistribution approval. Current evidence artifacts/tmp/W2.remaining-corrections-batch-01/supply-chain-reassessment-02/current-binary-license-package-evidence-02.json SHA256 5a25316eb468c847ee1f80e11b00290e722fd9693185303e0feb9b68e9ac3852; expires2026-10-21, no automatic renewal. This is a fresh current exact decision, not carry-forward of the expired record.",
+        "ticket": "S27.LICENSE.02"
+      },
+      {
+        "findingKey": "license|GPL-2.0-only|Python|pyinstaller-hooks-contrib",
+        "status": "approved",
+        "reviewedBy": "agent:/root/a03_closeout_review",
+        "reviewedAt": "2026-10-14",
+        "expiresAt": "2026-10-21",
+        "rationale": "Exact installed2026.6 LICENSE/METADATA was re-read/hash-authenticated: standard analysis hooks GPL2-or-later; runtime hooks Apache2. Installed local fixture includes these files, so blanket absence is not claimed. Accept local build-tool use/classification for this version; preserve standard-hook GPL duties and Apache runtime-hook notices, prove actual final distributed inclusion/terms independently. No general GPL allowance or future package/version coverage. Current evidence artifacts/tmp/W2.remaining-corrections-batch-01/supply-chain-reassessment-02/current-binary-license-package-evidence-02.json SHA256 5a25316eb468c847ee1f80e11b00290e722fd9693185303e0feb9b68e9ac3852; expires2026-10-21, no automatic renewal. This is a fresh current exact decision, not carry-forward of the expired record.",
+        "ticket": "S27.LICENSE.03"
+      },
+      {
+        "findingKey": "license|LGPL-3.0-only|Python|autocommand",
+        "status": "approved",
+        "reviewedBy": "agent:/root/a03_closeout_review",
+        "reviewedAt": "2026-10-14",
+        "expiresAt": "2026-10-21",
+        "rationale": "Exact LGPLv3 LICENSE/METADATA for setuptools-vendored autocommand2.2.2 was re-read/hash-authenticated. This code is present on disk in the installed fixture selector; the frozen-sidecar contract excludes setuptools and actual retained Core/worker PYZ directories contain neither setuptools nor autocommand. Accept local unchanged development dependency/classification only, with no redistribution permission or complete fresh Core/installer absence claim. Any proposed artifact inclusion requires a separate actual license-compliance disposition before distribution. Current evidence artifacts/tmp/W2.remaining-corrections-batch-01/supply-chain-reassessment-02/current-binary-license-package-evidence-02.json SHA256 5a25316eb468c847ee1f80e11b00290e722fd9693185303e0feb9b68e9ac3852; expires2026-10-21, no automatic renewal. This is a fresh current exact decision, not carry-forward of the expired record.",
+        "ticket": "S27.LICENSE.04"
+      },
+      {
+        "findingKey": "license|Apache-2.0 OR MIT|Node.js|@tauri-apps/api",
+        "status": "approved",
+        "reviewedBy": "agent:/root/a03_closeout_review",
+        "reviewedAt": "2026-10-14",
+        "expiresAt": "2026-10-21",
+        "rationale": "Exact runtime API2.11.1 package.json plus package LICENSE_MIT and LICENSE_APACHE-2.0 were re-read/hash-authenticated. Fresh F frontend source maps show event/core/tslib inclusion; this is runtime code, not build-only. Select MIT, retain exact copyright and permission notice via the finite proposed third-party notice data remedy and final actual artifact proof. Accept only this exact permissive OR classification; no waiver of notices, release prerequisite or other package/version. Current evidence artifacts/tmp/W2.remaining-corrections-batch-01/supply-chain-reassessment-02/current-binary-license-package-evidence-02.json SHA256 5a25316eb468c847ee1f80e11b00290e722fd9693185303e0feb9b68e9ac3852; expires2026-10-21, no automatic renewal. This is a fresh current exact decision, not carry-forward of the expired record.",
+        "ticket": "S27.LICENSE.05"
+      },
+      {
+        "findingKey": "license|Apache-2.0 OR MIT|Node.js|@tauri-apps/cli",
+        "status": "approved",
+        "reviewedBy": "agent:/root/a03_closeout_review",
+        "reviewedAt": "2026-10-14",
+        "expiresAt": "2026-10-21",
+        "rationale": "Exact installed build/development CLI2.11.4 package.json/LICENSE_MIT/LICENSE_APACHE-2.0 and optional Windows child mapping were re-read/hash-authenticated. Both alternatives are allowed; select MIT and preserve notice duties. CLI code/native child are absent from fresh F Native/frontend files and source maps, but this is not complete future installer evidence. Accept only this exact OR classification/version, no general license-expression relaxation. Current evidence artifacts/tmp/W2.remaining-corrections-batch-01/supply-chain-reassessment-02/current-binary-license-package-evidence-02.json SHA256 5a25316eb468c847ee1f80e11b00290e722fd9693185303e0feb9b68e9ac3852; expires2026-10-21, no automatic renewal. This is a fresh current exact decision, not carry-forward of the expired record.",
+        "ticket": "S27.LICENSE.06"
+      },
+      {
+        "findingKey": "license|Apache-2.0 OR MIT|Node.js|@tauri-apps/cli-win32-x64-msvc",
+        "status": "approved",
+        "reviewedBy": "agent:/root/a03_closeout_review",
+        "reviewedAt": "2026-10-14",
+        "expiresAt": "2026-10-21",
+        "rationale": "Exact Windows CLI child2.11.4 package.json declares Apache2 OR MIT and exact same-version parent optional-child binding. Child ships no standalone license file; the publisher exact tauri-cli-v2.11.4 MIT/Apache primary source and authenticated parent license payloads establish terms. Child is not copied into the inspected F Native/frontend package. Accept only exact child permissive OR classification/version; preserve applicable notices if later distributed, not an inference of all future package exclusion. Current evidence artifacts/tmp/W2.remaining-corrections-batch-01/supply-chain-reassessment-02/current-binary-license-package-evidence-02.json SHA256 5a25316eb468c847ee1f80e11b00290e722fd9693185303e0feb9b68e9ac3852; expires2026-10-21, no automatic renewal. This is a fresh current exact decision, not carry-forward of the expired record.",
+        "ticket": "S27.LICENSE.07"
+      }
+    ],
+    "oldHistoryPreserved": true,
+    "runtimeVulnerabilityExceptionGranted": false,
+    "automaticRenewalGranted": false
+  },
+  "normalRoute": "Current-W2 product/test restoration remains sequential taskctl correct/claim/lease/check/submit/independent review/local-main under actual original approved contract, clean paused boundary, no competing review/hold/lease. RootC20 is underway, not made complete by this plan. Excluded companion/source procedures preserve original tasks/DONE history and grant no new task or generic adapter bypass.",
+  "implementationOrder": [
+    "Finish root normal pause/metadata checkpoint and actual intendedC20 rights+3data admission; preserve held inputs and actual success/failure receipts.",
+    "Different consolidated readiness of this portable exact plan; normal publication of plan/review then exact decision binding real preauthorization, component hashes/patches/scopes and preserved adverses. Supply actual current14 required fields/source map above; actual Git introductions only after existence.",
+    "Finish C20 focused proof/controlled review/integration; then report migration, schema plus separately recorded docs companion, viewer/anchor fixture compatibility and cancellation/native witness corrections through exact normal origins. No unapproved concurrent controller mutation.",
+    "Deliver exact foundation4, W1 test transport and gateway operand through finite recorded procedures; prepare any still-absent canonical consumer/fixture inputs with different source/control readiness, preserving assertions and original __file__/REPO.",
+    "After holds drain, deliver exact dependency/notice remedies and20-key active policy; authenticate actual resolver/distro/package equality and unchanged-security proof. Unrelated versions or expired/drifted projection fail closed.",
+    "At final stable committed source/runtime, supply authentic signed worker/guardian/principal/Native and6 desktop fixture inputs. Execute narrow original failed/missing cases and current14, gateway100-warm BOTH limits, then serialize protected lifecycle/storage tools; retain raw outcomes/equality/owned EMPTY and different result reviews.",
+    "Complete fresh full affected/repository/Wave qualification at final candidate: exact impact governs reuse; unknown closure requires fresh checks. Replay blockers and prove required cross-capability happy/failure/denial/cancel/migration/restart/recovery, Native/Core/current principal, security/privacy/rights/accessibility/performance/packaging/provenance. Missing/unexecuted stays missing.",
+    "After every task/slice/checkpoint/qualification and different Wave disposition is actually complete, record conditional preauthorized release/transition through normal guarded gates. Prepare complete W3 planning against Vision/accepted architecture/current primary evidence/W2 findings; stop when W3 planning complete. No W3 implementation authority from this packet."
+  ],
+  "verificationSelection": "Narrow affected criteria/denials first; reuse only authenticated unchanged closure and prior independent dispositions. No duplicate full historical audits. Real runtime/dependency impact and final Wave criteria require fresh affected full coverage. Receipts/source readiness do not close runtime findings. No8/16GiB model workload; larger computing remains W5. Physical foreign-host proof remains explicitly deferred to first independent Windows installation/required byW5 exit, not claimed now.",
+  "preservedAdverseSummary": {
+    "foundation": "Original736/727ok/6FAIL/3ERROR remains FAIL.",
+    "desktop": "Original21FAIL/13ERROR and48 missing-body/setup deficits retained; old84 S06 conformance is not current14 proof.",
+    "gateway": "F33.056800020858645ms fails original25 and old20% rule; all cold/100warm samples retained.",
+    "serviceDataDocuments": "Cancelling/import transport/stale data/viewer/anchor failures and worker/principal missing inputs/skips remain until actual closure.",
+    "security": "Original621 packages/186 findings/10BLOCK/17 expired errors remains FAIL;20 choices do not excuse available runtime fixes/other findings.",
+    "protectedPerformance": "Original missing-key-authority failures/tombstones remain NONQUALIFYING; no samples invented.",
+    "F29terminal": {
+      "path": "artifacts/tmp/W2.final-wave-exit-never-started29-01.f01/receipt.json",
+      "sha256": "be786f6bdab828f0b4b2e5fb2011c79b54d95ed48953b6730c9a5c0524b85591",
+      "facts": "FAIL,29 terminal,0 unexecuted,31672 inputs unchanged,owned drained EMPTY_CONFIRMED/active0; no successful security/performance outcome inferred."
+    },
+    "thisPreparation": {
+      "toolChunk": "5ed5e4",
+      "exitCode": 1,
+      "cause": "Initial long metadata-only inline command refused by launcher206 before process creation; no artifact/tracked/input mutation or completed preparation. Short ignored script successor used.",
+      "secondAttempt": {
+        "toolChunk": "b881ae",
+        "exitCode": 1,
+        "source": {
+          "path": "artifacts/tmp/W2.completion-corrections-batch-02/prepare-plan-01.py",
+          "sha256": "a9fc9f609de673bb0e9550bee5d04f6e458b728238e2c5b14019d5be2f7cc57f"
+        },
+        "cause": "Overbroad private-drive lexical guard matched trailing letters inside the actual reviewer identity URI. Failed before packet write; no public/tracked mutation. Read-only diagnostic4d6641 identified author as sole match, no user path. Successor only adds lexical drive boundary; does not strip reviewer identity or permit real absolute paths."
+      },
+      "thirdAttempt": {
+        "toolChunk": "cd1b46",
+        "exitCode": 1,
+        "source": {
+          "path": "artifacts/tmp/W2.completion-corrections-batch-02/prepare-plan-02.py",
+          "sha256": "c7d75195bc67e66fb6714bb9080e164bb0cf787deb95258b14795e69ff8226d9"
+        },
+        "cause": "Corrected path guard correctly refused the second-attempt explanation because it quoted its original URI-tail token as a standalone drive-like token. No packet/tracked mutation. Successor preserves raw predecessor source and describes that non-path observation without inserting a drive-like literal into the portable packet."
+      }
+    }
+  },
+  "remainingEvidence": [
+    "Actual future lock-resolution/install/complete current frozen Core/notices/security disposition.",
+    "Actual benchmark samples/hardware/both limits and declared Native/principal/fixture case results.",
+    "Any still-absent canonical execution consumer/record requires concrete source/control readiness and exact input closure; no automatic success or human reask for routine conforming details.",
+    "Actual C20/next correction/controller/integration/gate states remain root-owned."
+  ],
+  "publicationProcedure": {
+    "oneUse": true,
+    "requiredBeforePublication": "Actual C20 DONE, controlled different independent approval, null lease, committed exact review/evidence and clean later actual Git candidate. This template claims none of those future facts.",
+    "exactPublicCopies": true,
+    "ordinaryPrivacyAndCommitHooksRequired": true,
+    "introductionCommits": "Record only after actual normal publication; no future introduction SHA is supplied.",
+    "noControllerMutation": true,
+    "noFrameworkImplementation": true
+  },
+  "limits": {
+    "taskApprovedByThisDecision": false,
+    "sliceApproved": false,
+    "waveComplete": false,
+    "releaseOrG2Approved": false,
+    "implementationApplied": false,
+    "testsExecutedByThisDecision": false,
+    "oldFailuresRelabeled": false,
+    "newCampaignOrTaskGranted": false,
+    "W1ReopenOrHistoryRewriteGranted": false,
+    "genericAdapterBypassGranted": false,
+    "unrelatedFrameworkWorkGranted": false
+  }
+}
