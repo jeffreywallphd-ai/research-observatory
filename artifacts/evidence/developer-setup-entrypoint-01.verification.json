@@ -1,0 +1,122 @@
+{
+  "documentType": "bounded-windows-setup-entrypoint-verification",
+  "candidateCommit": "4478c4728e084e40cf4dd421992c5b925420ec97",
+  "recordedAt": "2026-10-15T11:21:59.643564+00:00",
+  "result": "PASS_FOR_SELECTED_SETUP_BOUNDARIES",
+  "sourceFiles": [
+    {
+      "path": "README.md",
+      "actualTestedWorktreeSha256": "af3aff97f0ba0b7c31bb67eaba6e2773999c76f004640bcad03ec676f11c1fe4",
+      "committedBlobSha256": "af3aff97f0ba0b7c31bb67eaba6e2773999c76f004640bcad03ec676f11c1fe4"
+    },
+    {
+      "path": "setup.cmd",
+      "actualTestedWorktreeSha256": "107fc3c18d80ac5d7bea9473f9e4d73242d11bb403add8ecb160693328058020",
+      "committedBlobSha256": "107fc3c18d80ac5d7bea9473f9e4d73242d11bb403add8ecb160693328058020"
+    },
+    {
+      "path": "setup-pinned-runtimes.cmd",
+      "actualTestedWorktreeSha256": "01990ef01729282234233de7e8283ac89765453b48160e0d73f8bddc628076bc",
+      "committedBlobSha256": "01990ef01729282234233de7e8283ac89765453b48160e0d73f8bddc628076bc"
+    },
+    {
+      "path": "tools/setup-pinned-runtimes.ps1",
+      "actualTestedWorktreeSha256": "61737d238abab1a07190af84bb1209ee610944fa35ec82fd3789a6696151934c",
+      "committedBlobSha256": "61737d238abab1a07190af84bb1209ee610944fa35ec82fd3789a6696151934c"
+    },
+    {
+      "path": "tests/foundation/test_bootstrap.py",
+      "actualTestedWorktreeSha256": "f86759b99875d5dc11c9d7bb746d3878019991a0954822e724133a1302b5475e",
+      "committedBlobSha256": "f86759b99875d5dc11c9d7bb746d3878019991a0954822e724133a1302b5475e"
+    },
+    {
+      "path": "docs/automation/developer-bootstrap.md",
+      "actualTestedWorktreeSha256": "301d02160ecd4328a86d154669aee973f32ec43c4a3eb307e7b2d0d475cabe36",
+      "committedBlobSha256": "301d02160ecd4328a86d154669aee973f32ec43c4a3eb307e7b2d0d475cabe36"
+    },
+    {
+      "path": "artifacts/evidence/developer-setup-entrypoint-01.maintenance.md",
+      "actualTestedWorktreeSha256": "12db8d08fd5a863dc66e5de7b56d8702b41c6b2b3723357673da042fad0bd033",
+      "committedBlobSha256": "12db8d08fd5a863dc66e5de7b56d8702b41c6b2b3723357673da042fad0bd033"
+    }
+  ],
+  "actualFocusedReceipt": {
+    "path": "artifacts/tmp/setup-entrypoint-01/committed-verification-01.json",
+    "sha256": "46c54264d75efa0f8aec7b06114bbb4e847b31006d9377615aed2c33e0be84fa"
+  },
+  "focusedChecks": [
+    {
+      "id": "bootstrap-and-setup-six-cases",
+      "exitCode": 0,
+      "seconds": 1.1575413000100525,
+      "rawPath": "artifacts/tmp/setup-entrypoint-01/bootstrap-and-setup-six-cases.committed-01.raw.log",
+      "rawSha256": "cf711224f08ce89e89aa5ea9218952d2bbb462ff9b061e92e893cdeffc34f264"
+    },
+    {
+      "id": "affected-format",
+      "exitCode": 0,
+      "seconds": 0.09999620000598952,
+      "rawPath": "artifacts/tmp/setup-entrypoint-01/affected-format.committed-01.raw.log",
+      "rawSha256": "4f52b5d2a9c23cb2465a5aa3c25d1ecbf60116d01d4c794a43b155944f99ce3c"
+    },
+    {
+      "id": "affected-lint",
+      "exitCode": 0,
+      "seconds": 0.09767930000089109,
+      "rawPath": "artifacts/tmp/setup-entrypoint-01/affected-lint.committed-01.raw.log",
+      "rawSha256": "40d459ecb50c5b63073d7194070aaddae58fe5859b23fe2b1694964fc08285de"
+    },
+    {
+      "id": "affected-types",
+      "exitCode": 0,
+      "seconds": 0.6067427000089083,
+      "rawPath": "artifacts/tmp/setup-entrypoint-01/affected-types.committed-01.raw.log",
+      "rawSha256": "79055a7c3dadad5bf6bae84916aa07efff084dda097573fcacde01f86396ec91"
+    },
+    {
+      "id": "windows-powershell51-syntax",
+      "exitCode": 0,
+      "seconds": 0.22299209999619052,
+      "rawPath": "artifacts/tmp/setup-entrypoint-01/windows-powershell51-syntax.committed-01.raw.log",
+      "rawSha256": "e27e5dbb9f7ab810a2fd820fe4fa366976e9b8734c5cb00c0bdbe29b103cb4c1"
+    },
+    {
+      "id": "git-whitespace",
+      "exitCode": 0,
+      "seconds": 0.03515660000266507,
+      "rawPath": "artifacts/tmp/setup-entrypoint-01/git-whitespace.committed-01.raw.log",
+      "rawSha256": "abc30023955fb1415cb6df613a2f287897377fa4b0a607d322483e2bd51a91d1"
+    }
+  ],
+  "coverage": {
+    "existingBootstrapFakeRunnerCases": 2,
+    "realWindowsCmdPowerShellCases": 4,
+    "affectedPythonTypingFiles": 3,
+    "windowsPowerShellSyntax": "5.1 parser; zero errors",
+    "allSelectedCheckExitCodes": 0,
+    "stableCommittedInputs": true
+  },
+  "actualFreshClone": {
+    "receiptPath": "artifacts/tmp/setup-entrypoint-01/fresh-clone-verification-01.json",
+    "receiptSha256": "e8d486992cd56af1a356a7f3daa3d2abb5ae7daed2b2669d56a4cc15c80fdc9d",
+    "status": "PASS",
+    "sharedLocalClone": true,
+    "calledFromOutsideClone": true,
+    "pathContainsSpaces": true,
+    "planExitCode": 0,
+    "cleanAfterPlan": true,
+    "deletedAfterTesting": true
+  },
+  "priorRuntimeHelperSourceDisposition": {
+    "path": "artifacts/tmp/pinned-runtime-setup-01/independent-source-review-01.json",
+    "sha256": "a1f18fb628b2c5b3a5b6e33384f40745cab1a0bab2702b94fa068bd4f73f9ed3",
+    "promotedPowerShellSha256": "61737d238abab1a07190af84bb1209ee610944fa35ec82fd3789a6696151934c"
+  },
+  "limits": [
+    "No runtime downloads or installation were executed.",
+    "No actual dependency bootstrap or foundation smoke gate was executed; two existing bootstrap tests use their retained fake command runner.",
+    "Actual Windows CMD/PowerShell proof covers plan-only, argument and exit propagation, invalid project root, and changed-pin denial.",
+    "No product, shared taskctl, locked version, approved criterion, Wave completion or release decision changed.",
+    "Local raw logs and adverse precommit attempts remain preserved under ignored artifacts/tmp/setup-entrypoint-01; no account paths or runtime settings are newly published."
+  ]
+}

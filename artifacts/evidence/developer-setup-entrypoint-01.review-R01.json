@@ -1,0 +1,201 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "independent-bounded-windows-developer-setup-commit-review",
+  "reviewer": "agent:/root/storage_profile_review",
+  "implementationAuthor": "agent:/root/c21_closeout_review",
+  "integrationOwner": "agent:/root",
+  "reviewedAtUtc": "2026-10-15T11:24:08.617649+00:00",
+  "candidateCommit": "4478c4728e084e40cf4dd421992c5b925420ec97",
+  "baseCommit": "9cc5151acffb1dec70011eeece170602274e294a",
+  "result": "approved",
+  "findings": [],
+  "blockingFindings": [],
+  "reviewScope": "Owner-requested one-call tracked Windows setup developer unit; exact seven committed files, actual focused host/clone evidence and fail-closed local runtime behavior. No whole product/profile/history/exit review.",
+  "sourceFiles": [
+    {
+      "path": "README.md",
+      "actualTestedWorktreeSha256": "af3aff97f0ba0b7c31bb67eaba6e2773999c76f004640bcad03ec676f11c1fe4",
+      "committedBlobSha256": "af3aff97f0ba0b7c31bb67eaba6e2773999c76f004640bcad03ec676f11c1fe4"
+    },
+    {
+      "path": "setup.cmd",
+      "actualTestedWorktreeSha256": "107fc3c18d80ac5d7bea9473f9e4d73242d11bb403add8ecb160693328058020",
+      "committedBlobSha256": "107fc3c18d80ac5d7bea9473f9e4d73242d11bb403add8ecb160693328058020"
+    },
+    {
+      "path": "setup-pinned-runtimes.cmd",
+      "actualTestedWorktreeSha256": "01990ef01729282234233de7e8283ac89765453b48160e0d73f8bddc628076bc",
+      "committedBlobSha256": "01990ef01729282234233de7e8283ac89765453b48160e0d73f8bddc628076bc"
+    },
+    {
+      "path": "tools/setup-pinned-runtimes.ps1",
+      "actualTestedWorktreeSha256": "61737d238abab1a07190af84bb1209ee610944fa35ec82fd3789a6696151934c",
+      "committedBlobSha256": "61737d238abab1a07190af84bb1209ee610944fa35ec82fd3789a6696151934c"
+    },
+    {
+      "path": "tests/foundation/test_bootstrap.py",
+      "actualTestedWorktreeSha256": "f86759b99875d5dc11c9d7bb746d3878019991a0954822e724133a1302b5475e",
+      "committedBlobSha256": "f86759b99875d5dc11c9d7bb746d3878019991a0954822e724133a1302b5475e"
+    },
+    {
+      "path": "docs/automation/developer-bootstrap.md",
+      "actualTestedWorktreeSha256": "301d02160ecd4328a86d154669aee973f32ec43c4a3eb307e7b2d0d475cabe36",
+      "committedBlobSha256": "301d02160ecd4328a86d154669aee973f32ec43c4a3eb307e7b2d0d475cabe36"
+    },
+    {
+      "path": "artifacts/evidence/developer-setup-entrypoint-01.maintenance.md",
+      "actualTestedWorktreeSha256": "12db8d08fd5a863dc66e5de7b56d8702b41c6b2b3723357673da042fad0bd033",
+      "committedBlobSha256": "12db8d08fd5a863dc66e5de7b56d8702b41c6b2b3723357673da042fad0bd033"
+    }
+  ],
+  "actualVerificationReport": {
+    "path": "artifacts/evidence/developer-setup-entrypoint-01.verification.json",
+    "sha256": "35a4fe8600de2a6a020709834c9a552e903b30262658c17c9e18cfe911a45a27"
+  },
+  "actualFocusedReceipt": {
+    "path": "artifacts/tmp/setup-entrypoint-01/committed-verification-01.json",
+    "sha256": "46c54264d75efa0f8aec7b06114bbb4e847b31006d9377615aed2c33e0be84fa"
+  },
+  "actualFreshCloneReceipt": {
+    "path": "artifacts/tmp/setup-entrypoint-01/fresh-clone-verification-01.json",
+    "sha256": "e8d486992cd56af1a356a7f3daa3d2abb5ae7daed2b2669d56a4cc15c80fdc9d"
+  },
+  "actualCheckProducer": {
+    "path": "artifacts/tmp/setup-entrypoint-01/verify-committed-candidate-01.py",
+    "sha256": "35842a426879820bb42ba6e1c4c3be090afaf3b094b78f59a52b26a3180b2840"
+  },
+  "priorDifferentHelperSourceReview": {
+    "path": "artifacts/tmp/pinned-runtime-setup-01/independent-source-review-01.json",
+    "sha256": "a1f18fb628b2c5b3a5b6e33384f40745cab1a0bab2702b94fa068bd4f73f9ed3"
+  },
+  "sourceAndBehaviorDisposition": [
+    {
+      "boundary": "One-call entry point and forwarding",
+      "assessment": "Tracked setup.cmd locates its own checkout with quoted %~dp0 paths, calls the tracked secondary wrapper with explicit own-root/RunBootstrap and forwarded arguments, captures exact errorlevel and exits immediately on nonzero before its future-step placeholder. Secondary wrapper resolves tracked tools/setup-pinned-runtimes.ps1 relative to itself and forwards exact PowerShell exit status. Actual real CMD fixture confirms unrelated cwd, path/argument spaces and exit37 without success fallthrough."
+    },
+    {
+      "boundary": "Pinned helper promotion and guarded writes",
+      "assessment": "Committed PowerShell helper is byte-identical to independently reviewed61737; this review also read its actual tracked path. It validates exact reviewed Node/Python/pnpm/uv contract and declaration consistency, Windowsx64 and selected setup-root redirection before installation; incomplete/incompatible existing Node/.venv fail before download. Node fixed official ZIP SHA256 is checked before extraction/execution. Existing exactuv installs managed Python in checkout-local store without bin/registry registration and creates .venv only when absent with a second existence check/UV_VENV_CLEAR0. Local Corepack prepares exactpnpm without global shim enable. No recursive delete, silent replacement, persistent PATH/registry or system trust change is introduced. Existing runtimes are version checked, not newly binary-authenticated."
+    },
+    {
+      "boundary": "Plan-only and failure denial",
+      "assessment": "PlanOnly exits before uv lookup/version tool execution/download/directory creation/Corepack/bootstrap. Actual changed-pin and invalid-root fixtures fail without writes; actual real plan from outside spaced checkout leaves fixture source bytes unchanged with no.local/.venv/bootstrap marker. Missing prerequisites and install failures remain real errors; no retry/suppression/fallback runtime or changed project pin."
+    },
+    {
+      "boundary": "Bootstrap preservation and documentation",
+      "assessment": "Existing two fake-runner bootstrap test class AST remains identical, preserving frozen dependency sequence/failure config guarantee. Actual helper invokes unchanged bootstrap only with RunBootstrap; setup supplies that switch, preserving original bootstrap validation/smoke behavior. Docs and README truthfully provide setup.cmd for fresh clones, separately explain existing uv/Rust/VisualStudio prerequisites, optional runtime-only/plan paths, local outputs and untouched original bootstrap. Root-added maintenance note records exact predecessors/README discoverability without changing source authority."
+    },
+    {
+      "boundary": "Fresh clone availability",
+      "assessment": "All required setup CMD/PS files are in actual seven-file candidate4478. Root genuine shared local clone at4478, launched outside a spaced clone path with -PlanOnly, returned0 and clean; its raw plan contains expected pinned versions and RunBootstrapTrue while plan exits before bootstrap. Clone was removed per explicit owner instruction. This proves tracked-source plan availability, not dependency/bootstrap or clean-machine installation success."
+    }
+  ],
+  "actualChecks": [
+    {
+      "id": "bootstrap-and-setup-six-cases",
+      "exitCode": 0,
+      "seconds": 1.1575413000100525,
+      "raw": {
+        "path": "artifacts/tmp/setup-entrypoint-01/bootstrap-and-setup-six-cases.committed-01.raw.log",
+        "sha256": "cf711224f08ce89e89aa5ea9218952d2bbb462ff9b061e92e893cdeffc34f264"
+      },
+      "actualCases": 6,
+      "actualUnittestSeconds": 1.015,
+      "failures": 0,
+      "errors": 0,
+      "skips": 0
+    },
+    {
+      "id": "affected-format",
+      "exitCode": 0,
+      "seconds": 0.09999620000598952,
+      "raw": {
+        "path": "artifacts/tmp/setup-entrypoint-01/affected-format.committed-01.raw.log",
+        "sha256": "4f52b5d2a9c23cb2465a5aa3c25d1ecbf60116d01d4c794a43b155944f99ce3c"
+      }
+    },
+    {
+      "id": "affected-lint",
+      "exitCode": 0,
+      "seconds": 0.09767930000089109,
+      "raw": {
+        "path": "artifacts/tmp/setup-entrypoint-01/affected-lint.committed-01.raw.log",
+        "sha256": "40d459ecb50c5b63073d7194070aaddae58fe5859b23fe2b1694964fc08285de"
+      }
+    },
+    {
+      "id": "affected-types",
+      "exitCode": 0,
+      "seconds": 0.6067427000089083,
+      "raw": {
+        "path": "artifacts/tmp/setup-entrypoint-01/affected-types.committed-01.raw.log",
+        "sha256": "79055a7c3dadad5bf6bae84916aa07efff084dda097573fcacde01f86396ec91"
+      }
+    },
+    {
+      "id": "windows-powershell51-syntax",
+      "exitCode": 0,
+      "seconds": 0.22299209999619052,
+      "raw": {
+        "path": "artifacts/tmp/setup-entrypoint-01/windows-powershell51-syntax.committed-01.raw.log",
+        "sha256": "e27e5dbb9f7ab810a2fd820fe4fa366976e9b8734c5cb00c0bdbe29b103cb4c1"
+      }
+    },
+    {
+      "id": "git-whitespace",
+      "exitCode": 0,
+      "seconds": 0.03515660000266507,
+      "raw": {
+        "path": "artifacts/tmp/setup-entrypoint-01/git-whitespace.committed-01.raw.log",
+        "sha256": "abc30023955fb1415cb6df613a2f287897377fa4b0a607d322483e2bd51a91d1"
+      }
+    }
+  ],
+  "actualInputAuthentication": {
+    "allSevenWorktreeBytesEqualCommittedBlobsAndHostReceipt": true,
+    "focusedReceiptCandidateAndPublicReportMatch": true,
+    "allSixRawCheckLogsAuthenticated": true,
+    "freshClonePlanRaw": {
+      "path": "artifacts/tmp/setup-entrypoint-01/fresh-clone-plan-01.raw.log",
+      "sha256": "74dcf9a1e37760343f327f3e6effc860877ed72a54d50d64e7aa1dcd9bdd1661"
+    },
+    "stableCommittedInputsReportedAndSourceBytesAuthenticated": true,
+    "existingFakeRunnerClassASTUnchanged": true,
+    "powershellHelperMatchesPriorReviewedSHA256": "61737d238abab1a07190af84bb1209ee610944fa35ec82fd3789a6696151934c",
+    "precommitSourceManifest": {
+      "path": "artifacts/tmp/setup-entrypoint-01/source-manifest-01.json",
+      "sha256": "d2a171661cfa89483ba08817b6fbc6a228adb40bfc9a9feb4c648010e7138441"
+    },
+    "precommitValidation": {
+      "path": "artifacts/tmp/setup-entrypoint-01/precommit-validation-04.json",
+      "sha256": "72a0eca34233ce903364dcc476ffea7fe462f2d52d4b0eb4f8db5f4336c80345"
+    }
+  },
+  "verificationSelection": "Six focused tests (four real Windows CMD/PowerShell plan/failure/forwarding cases and two unchanged fake-runner cases), affected-file Ruff format/lint, three affected Python typing modules, actualWindowsPowerShell5.1 parser and recorded clean-worktree diffcheck are proportionate to this additive setup entrypoint. No tests were repeated by this reviewer and no unrelated full profile/history scan is needed.",
+  "preservation": "Precommit sandbox temporary-directory denial, initial CMD transport failure, lint finding and syntax-parser execution-policy denial remain in original ignored receipts/logs. Exact predecessor source bytes remain in Git/local notes. No old evidence/approval/source history is rewritten.",
+  "integrationRecommendation": {
+    "recommendation": "Integrate the bounded setup unit after publishing exact verification/report and this independent ledger in a metadata-only descendant; fast-forward local main without discarding history and retain campaign checkout while W2 gates remain.",
+    "preIntegrationIndependentReviewComplete": true,
+    "futureMetadataDeliveryCommit": null,
+    "productOrWaveReleaseApproval": false
+  },
+  "limits": [
+    "No runtime acquisition/download/checksum-of-live-download/archive extraction/uv Python install/Corepack network operation or actual dependency bootstrap/foundation smoke gate was executed in this unit qualification. Source security review of those paths is not installation success.",
+    "Fresh clone uses shared local Git objects and actual existing Windows tooling, not a separate clean Windows installation. Missing network/storage/toolchain/permissions can still fail actual setup; such failures must remain visible.",
+    "Two legacy bootstrap tests retain an explicit fake command runner; only four new wrapper paths are actual CMD/PowerShell. PlanOnly is no-write/no-install, not full bootstrap proof.",
+    "Committed check producer git-whitespace row records git diff --check against the then-clean worktree; it is not misrepresented as a standalone whole-history whitespace audit.",
+    "Process-local environment/TLS/location restoration and existing-install preservation are source-reviewed; these selected tests do not exercise every acquisition/error recovery branch.",
+    "Approves only this owner-requested bounded developer setup source/selected evidence at4478. No framework expansion, project pin/lockfile/criterion/product change, W2 completion/release or W3 implementation approval."
+  ],
+  "reviewerActions": {
+    "sourceGitAndRecordedEvidenceRead": true,
+    "testsOrSyntaxOrRuntimeChecksRerun": false,
+    "downloadsInstallBootstrapExecuted": false,
+    "canonicalSourceOrHEADChanged": false,
+    "controllerOrBacklogMutated": false
+  },
+  "runtimeInstallationQualified": false,
+  "fullBootstrapQualified": false,
+  "waveApproved": false,
+  "releaseApproved": false
+}
