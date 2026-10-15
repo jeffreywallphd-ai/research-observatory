@@ -6916,6 +6916,80 @@ waves:
           impacts. No generic >=/prefix-only assertion or assertion deletion. Fresh only8 affected methods/newly reached preservation
           clauses and necessary related denials/quality/configuredtypes under actual source/input holds plus independent migration
           correction disposition; no rerun205 successful occurrences absent material closure risk.
+    - title: Implement plugin isolation, configuration, and secret access controls
+      objective: Restricted execution boundary, allowlisted network destinations, scoped credentials, timeouts, quotas, and
+        redacted logging.
+      dependencies:
+      - CAP-04.S05.T01
+      acceptance_criteria:
+      - A malicious test connector cannot read unrelated secrets or project files; network and export attempts outside manifest
+        permissions are blocked and audited.
+      - Automated tests cover the expected path and at least one material failure or boundary condition.
+      - Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.
+      verification_commands:
+      - python tools/verify.py --profile service
+      - python tools/verify.py --profile security-local
+      deployment_profiles:
+      - LOC
+      - LAB
+      - UNI
+      - CLD
+      platform_targets:
+      - windows-x64
+      verification_profiles:
+      - service
+      - security-local
+      id: W2.C29.T01
+      wave: W2
+      priority: P1
+      status: IN_PROGRESS
+      owner: codex-w2-implementation
+      branch: codex/w2-implementation
+      base_sha: 7c1346d4550fc11927aa3289cf9384d6b6dc99c0
+      worktree: .
+      lease:
+        claimed_by: codex-w2-implementation
+        claimed_at: '2026-10-15T01:45:58+00:00'
+        expires_at: '2026-10-15T09:45:58+00:00'
+      started_at: '2026-10-15T01:45:58+00:00'
+      updated_at: '2026-10-15T01:45:58+00:00'
+      completed_at: null
+      blocker: null
+      implementation_notes: ''
+      evidence: []
+      verification_state: null
+      review:
+        reviewer: null
+        result: null
+        reviewed_at: null
+        notes: null
+      review_control:
+        version: 1
+        attempts: []
+        current_submission: null
+      correction:
+        origin_task_id: CAP-04.S05.T02
+        origin_commit: 963bfb4ab67d8096530fda90b1a53a60440e1e69
+        paused_state_sha256: b433937424fdc141ada899cd32acd3858867b5f267614a65cc11678a6b5b5e94
+        origin_sha256: a9faa34a543433fdfe1665e54ade2892554e6bf893a1824c6155d8114d3bd994
+        origin_contract_sha256: 4a867aa5a62b1d48a6f2465487d4a35c07471b761047991fbe02407923211142
+        origin_history_sha256: 2954c8a730902f5fdf78d205c3ad8166a9dbefd78f1ce4b654f4a8dab7505843
+        origin_amendment_id: null
+        authority_sha256: c92ce7e9bac1b8a49d13d649a5980fea61e56ee953d238c734d8ff5f04f4c9e5
+        spec:
+          path: artifacts/evidence/W2.C29.T01.spec.json
+          sha256: 66cb9ba494526372ea326929790667fe2617409a37c71224d7d81219cacd97ae
+          commit: 7c1346d4550fc11927aa3289cf9384d6b6dc99c0
+        reproduction: Actual2 corpus migration methods expect current20 and onward tuple onlythrough0020 while validated current28
+          requires0021..0028. First20->21 plugin progression2cc is groundwork diagnosis only; canonical completed original
+          snapshot963b/latestapproved5a767 governs admission.
+        changed_paths:
+        - tests/reconciliation/test_corpus_migration.py
+        impact_analysis: Extend exact plan/result/recovery-manifest migration IDs through0028 and current schema report to
+          pinned DATABASE_SCHEMA_VERSION28. Frozen literal v16 predecessor hashes/counts/rows/schema/source fingerprint, backups/current
+          fingerprints/rights/corpus/source-projection/rollbacks/denials and assertions stay intact. No migration/product/sharedframework/security/reference/criterion
+          change. Fresh only2 affected original methods/newly reached row/backup/preservation/denial clauses and affected
+          quality/configuredtypes with genuine selected input closure and independent normal corrective disposition.
     resume_records:
     - id: W2.R01
       wave_id: W2

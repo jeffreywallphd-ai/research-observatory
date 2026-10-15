@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 020891faf5297814ae415fff6d1ccf98a2c9fa04581fe71acba137c75b9229eb
+source_sha256: 3f3549ef17417d485880476637a3ffde0f3ce4ba7be488bf62747e2da6dc6f37
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -5527,6 +5527,33 @@ Original tasks and approvals remain unchanged.
 **Current immutable submission awaiting review:** None
 
 **Current latest-review projection:** `approved` by agent:/root/security_resolution_review at `2026-10-15T01:25:52+00:00`
+
+**Latest notes:** -
+
+**Currently open findings:** -
+
+### W2.C29.T01 — Implement plugin isolation, configuration, and secret access controls
+
+**Status:** `IN_PROGRESS`. **Original task:** `CAP-04.S05.T02`. **Latest review:** `-`.
+
+**Reproduction:** Actual2 corpus migration methods expect current20 and onward tuple onlythrough0020 while validated current28 requires0021..0028. First20->21 plugin progression2cc is groundwork diagnosis only; canonical completed original snapshot963b/latestapproved5a767 governs admission.
+
+**Inherited criteria:**
+
+- A malicious test connector cannot read unrelated secrets or project files; network and export attempts outside manifest permissions are blocked and audited.
+- Automated tests cover the expected path and at least one material failure or boundary condition.
+- Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.
+
+**Bounded changed paths:**
+
+- tests/reconciliation/test_corpus_migration.py
+#### Review history — W2.C29.T01
+
+**Review mode:** `append-only v1` / 0 completed round(s)
+
+**Current immutable submission awaiting review:** None
+
+**Current latest-review projection:** `-` by - at `-`
 
 **Latest notes:** -
 
