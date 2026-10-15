@@ -1,0 +1,155 @@
+{
+  "documentType": "finite-current-protected-storage-baseline",
+  "status": "READY_FOR_INDEPENDENT_ADOPTION_NOT_QUALIFICATION",
+  "reportedBy": "agent:/root/c21_closeout_review",
+  "reportingCandidate": "8392e43397e9aa28301cdf5689d653389fc1c561",
+  "producer": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/protected-storage-current-calibration-01/evaluate-and-report-02.py",
+    "sha256": "8ae422ea9b201908dfa5d671188a1b6874d31fa70aab724ef82e07a290e10a0b"
+  },
+  "preparation": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/protected-storage-current-calibration-01/evaluation-preparation-02.json",
+    "sha256": "793c46d1e077c3e8dee7765e2280b6507f02ecc0a2af9c26d561cd64d0d43537"
+  },
+  "sourceReadiness": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/protected-storage-current-calibration-01/independent-evaluator-execution-source-readiness-02.json",
+    "sha256": "f3794aa6ef06f496c23af02c8a5b8936341e3192de405293e247fcdc33435aa1"
+  },
+  "sourceManifest": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/protected-storage-current-calibration-01/execution-source-manifest-02.json",
+    "sha256": "8720df3d4353ec8d9e810a017ae7dfc77de331f37e859abf48b950af1b752488"
+  },
+  "criterionDecision": {
+    "path": "artifacts/evidence/W2.protected-storage-current-calibration-01.decision-01.json",
+    "sha256": "6d5a0c9faf39f48e580539be7a8528a95de7757b8c9a39bf3120bbc4e58cde81"
+  },
+  "criterion": {
+    "cleanupP95AbsoluteMs": 10000.0,
+    "usagePreviewP95AbsoluteMs": 2000.0,
+    "allSixStreamingP50MinimumMiBPerSecond": 5.0,
+    "relativeRegressionPercent": 20
+  },
+  "run1Admission": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/protected-storage-current-calibration-01/independent-retained-run1-admission-01.json",
+    "sha256": "71948dc1b4d98977cc7a243928a6583e9c66071ddbfd59d38d82dd0b7ab720ef"
+  },
+  "calibrationRuns": [
+    {
+      "receipt": {
+        "path": "artifacts/tmp/W2.protected-storage-maintenance-performance-04.f01/receipt.json",
+        "sha256": "da41e9d10a9efdd2cc283ce7da86c28badeb6add223d8608911671e72fde6d42"
+      },
+      "candidateCommit": "31b375263ac9ac6e1127500d5ee0a4b7e937aa0b",
+      "canonicalReport": {
+        "path": "artifacts/tmp/W2.protected-storage-maintenance-performance-04.f01/canonical-report.json",
+        "sha256": "bf7eafdf5bca8f8af6156771091d27ee9deaf0d36adb5f14712d1f05b1c43e0d"
+      },
+      "canonicalQualified": false,
+      "canonicalExitCode": 1,
+      "measurements": {
+        "usagePreview": 393.5447,
+        "cleanup": 6342.4796,
+        "putPdf": 17.377009868403903,
+        "openPdf": 35.03473694167768,
+        "putReport": 52.70626927896506,
+        "openReport": 94.04926770888929,
+        "putModel": 124.0657269204793,
+        "openModel": 147.28570849949003
+      },
+      "hardware": {
+        "operatingSystem": "Windows-11-10.0.26200-SP0",
+        "system": "Windows",
+        "release": "11",
+        "version": "10.0.26200",
+        "machine": "AMD64",
+        "processor": "Intel64 Family 6 Model 183 Stepping 1, GenuineIntel",
+        "logicalCpuCount": 20,
+        "physicalMemoryBytes": 16984227840
+      },
+      "cohortSHA256": "9c7782f372d970b12999a56db248be63d1e1d859e576819c31662e477a31884b"
+    },
+    {
+      "receipt": {
+        "path": "artifacts/tmp/W2.protected-storage-current-calibration-02.f01/receipt.json",
+        "sha256": "585ba693f9321654a89578167043a08696ec7d8c051e9d572bddc5b7ecc67c36"
+      },
+      "candidateCommit": "8392e43397e9aa28301cdf5689d653389fc1c561",
+      "canonicalReport": {
+        "path": "artifacts/tmp/W2.protected-storage-current-calibration-02.f01/canonical-report.json",
+        "sha256": "c68cada7b4c468588d7667ddb6eec7891ccb05e427a2fdd8fb77a13e11b3068b"
+      },
+      "canonicalQualified": false,
+      "canonicalExitCode": 1,
+      "measurements": {
+        "usagePreview": 387.2863,
+        "cleanup": 6259.5045,
+        "putPdf": 17.922592323753708,
+        "openPdf": 37.418147801683816,
+        "putReport": 52.19506339090449,
+        "openReport": 93.6555396080984,
+        "putModel": 114.27493979139109,
+        "openModel": 142.08430572280062
+      },
+      "hardware": {
+        "operatingSystem": "Windows-11-10.0.26200-SP0",
+        "system": "Windows",
+        "release": "11",
+        "version": "10.0.26200",
+        "machine": "AMD64",
+        "processor": "Intel64 Family 6 Model 183 Stepping 1, GenuineIntel",
+        "logicalCpuCount": 20,
+        "physicalMemoryBytes": 16984227840
+      },
+      "cohortSHA256": "9c7782f372d970b12999a56db248be63d1e1d859e576819c31662e477a31884b"
+    },
+    {
+      "receipt": {
+        "path": "artifacts/tmp/W2.protected-storage-current-calibration-03.f01/receipt.json",
+        "sha256": "98adb45a05ef3351e0d7f4a5a566b0d559e951892ffd401be0a98a79342f8146"
+      },
+      "candidateCommit": "8392e43397e9aa28301cdf5689d653389fc1c561",
+      "canonicalReport": {
+        "path": "artifacts/tmp/W2.protected-storage-current-calibration-03.f01/canonical-report.json",
+        "sha256": "d0bae823ab02c715b3167caf4ee5c2dbc378900a858e7011be5db301b824eb0a"
+      },
+      "canonicalQualified": false,
+      "canonicalExitCode": 1,
+      "measurements": {
+        "usagePreview": 382.6121,
+        "cleanup": 6102.0562,
+        "putPdf": 17.905840347946288,
+        "openPdf": 36.55772464721796,
+        "putReport": 53.96370131630958,
+        "openReport": 94.2151874882231,
+        "putModel": 120.65728053571833,
+        "openModel": 142.43061403618094
+      },
+      "hardware": {
+        "operatingSystem": "Windows-11-10.0.26200-SP0",
+        "system": "Windows",
+        "release": "11",
+        "version": "10.0.26200",
+        "machine": "AMD64",
+        "processor": "Intel64 Family 6 Model 183 Stepping 1, GenuineIntel",
+        "logicalCpuCount": 20,
+        "physicalMemoryBytes": 16984227840
+      },
+      "cohortSHA256": "9c7782f372d970b12999a56db248be63d1e1d859e576819c31662e477a31884b"
+    }
+  ],
+  "measurements": {
+    "usagePreview": 393.5447,
+    "cleanup": 6342.4796,
+    "putPdf": 17.377009868403903,
+    "openPdf": 35.03473694167768,
+    "putReport": 52.19506339090449,
+    "openReport": 93.6555396080984,
+    "putModel": 114.27493979139109,
+    "openModel": 142.08430572280062
+  },
+  "baselineAdopted": false,
+  "performanceQualified": false,
+  "canonicalResultsRewritten": false,
+  "waveApproved": false,
+  "releaseApproved": false
+}

@@ -1,0 +1,130 @@
+{
+  "documentType": "independent-current-protected-storage-baseline-adoption",
+  "reviewer": "agent:/root/storage_profile_review",
+  "reviewedAtUtc": "2026-10-15T08:24:39.821756+00:00",
+  "result": "ADOPTED_CURRENT_PROTECTED_BASELINE",
+  "blockingFindings": [],
+  "baseline": {
+    "path": "artifacts/evidence/W2.protected-storage-current-calibration-01.baseline-01.json",
+    "sha256": "4c730672f28efe1d9dfdfb2eed0bf7c5c052de886364c17e90812120366d5d18"
+  },
+  "preparedBaseline": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/protected-storage-current-calibration-01/prepared-baseline-02.json",
+    "sha256": "4c730672f28efe1d9dfdfb2eed0bf7c5c052de886364c17e90812120366d5d18"
+  },
+  "criterionDecision": {
+    "path": "artifacts/evidence/W2.protected-storage-current-calibration-01.decision-01.json",
+    "sha256": "6d5a0c9faf39f48e580539be7a8528a95de7757b8c9a39bf3120bbc4e58cde81"
+  },
+  "criterionReadiness": {
+    "path": "artifacts/evidence/W2.protected-storage-current-calibration-01.readiness-01.json",
+    "sha256": "9edb8fcfd02e3576c5f0ba160b25ec8b94fa73065670c1f70e33e4b842eb529c"
+  },
+  "criterionIntroductionCommit": "761bbe2c485034bcf613d2cf1585fae02480a50a",
+  "calibrationReceipts": [
+    {
+      "path": "artifacts/tmp/W2.protected-storage-maintenance-performance-04.f01/receipt.json",
+      "sha256": "da41e9d10a9efdd2cc283ce7da86c28badeb6add223d8608911671e72fde6d42"
+    },
+    {
+      "path": "artifacts/tmp/W2.protected-storage-current-calibration-02.f01/receipt.json",
+      "sha256": "585ba693f9321654a89578167043a08696ec7d8c051e9d572bddc5b7ecc67c36"
+    },
+    {
+      "path": "artifacts/tmp/W2.protected-storage-current-calibration-03.f01/receipt.json",
+      "sha256": "98adb45a05ef3351e0d7f4a5a566b0d559e951892ffd401be0a98a79342f8146"
+    }
+  ],
+  "calibrationExecutionReadiness": [
+    {
+      "stage": "calibration2",
+      "receipt": {
+        "path": "artifacts/tmp/W2.protected-storage-current-calibration-02.f01/receipt.json",
+        "sha256": "585ba693f9321654a89578167043a08696ec7d8c051e9d572bddc5b7ecc67c36"
+      },
+      "sourceReadiness": {
+        "path": "artifacts/tmp/W2.remaining-corrections-batch-01/protected-storage-current-calibration-01/independent-calibration2-execution-source-readiness-02.json",
+        "sha256": "2d901f0f8792328978416f341fb19f37b2bd6608e8b6f7f08ce2f6d17ee3375c"
+      }
+    },
+    {
+      "stage": "calibration3",
+      "receipt": {
+        "path": "artifacts/tmp/W2.protected-storage-current-calibration-03.f01/receipt.json",
+        "sha256": "98adb45a05ef3351e0d7f4a5a566b0d559e951892ffd401be0a98a79342f8146"
+      },
+      "sourceReadiness": {
+        "path": "artifacts/tmp/W2.remaining-corrections-batch-01/protected-storage-current-calibration-01/independent-calibration3-execution-source-readiness-02.json",
+        "sha256": "3603abc3b5952fed99608e5790a536fae32bc582bfd5d859d82302a277e28b49"
+      }
+    }
+  ],
+  "run1Admission": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/protected-storage-current-calibration-01/independent-retained-run1-admission-01.json",
+    "sha256": "71948dc1b4d98977cc7a243928a6583e9c66071ddbfd59d38d82dd0b7ab720ef"
+  },
+  "dataReviewObservations": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/protected-storage-baseline-adoption-01/independent-three-run-data-observations-01.json",
+    "sha256": "4ca421e7a85c85e0f19312d347cb40665bfa7012a272d648c03a5c1c4683193c"
+  },
+  "dataReviewRecipe": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/protected-storage-baseline-adoption-01/review-three-actual-datasets-01.py",
+    "sha256": "7e6e8ea624b38f83b0ceb7cb5e7e1214900cd4c6c2e2062c861982dc5e4e9ea7"
+  },
+  "conservativeMeasurements": {
+    "usagePreview": 393.5447,
+    "cleanup": 6342.4796,
+    "putPdf": 17.377009868403903,
+    "openPdf": 35.03473694167768,
+    "putReport": 52.19506339090449,
+    "openReport": 93.6555396080984,
+    "putModel": 114.27493979139109,
+    "openModel": 142.08430572280062
+  },
+  "cohortSHA256": "9c7782f372d970b12999a56db248be63d1e1d859e576819c31662e477a31884b",
+  "exactCalibrationRunCount": 3,
+  "exactSampleCountPerRun": 80,
+  "totalSamplesRetained": 240,
+  "adoptionJudgment": [
+    "Actual evaluator serialization by the different C21 author produced exactly the three complete original datasets. This reviewer independently authenticated the receipts, producer/preparation/source-readiness and report/bootstrap/raw hashes, terminal raw reports and normal owned cleanup, without invoking a producer or benchmark.",
+    "The retained original run has normal21-process EMPTY0 cleanup; each fresh run has normal39-process EMPTY0 cleanup. All have selectedInputsUnchanged true. Every retained installed/import tree byte pin, namespace/identity, measured product/config/contract source, environment, fixture, methodology, current-user protected-provider principal reference and reported hardware agrees within the explicitly reviewed cohort boundary. No runtime bytes were rehashed or rescanned during this review.",
+    "All eight original groups retain ten finite positive samples per run. Rounded nearest-rank fields and separate unrounded raw p95/p50 fields agree. This record adopts the maximum of all three raw p95 values for each latency and the minimum of all three raw p50 values for each throughput; it discards no sample/run and does not pool percentiles. The proposed absolute caps are satisfied by all three calibration datasets.",
+    "Each canonical report remains qualifiedfalse, okfalse and exit1 with exactly its original old performance-threshold error. The original tool, baseline and reports are unmodified. Admission and baseline adoption under the exact published criterion do not manufacture a canonical PASS.",
+    "Adoption is bound to the exact4c730 baseline bytes at the owner-assigned public destination. The baseline document intentionally retains READY_FOR_INDEPENDENT_ADOPTION_NOT_QUALIFICATION and baselineAdoptedfalse as its immutable serialization-time state; this separate actual independent record supplies adoption authority. Public byte-identical copy and actual introduction authentication are required before a holdout can launch."
+  ],
+  "publication": {
+    "publicBaselinePath": "artifacts/evidence/W2.protected-storage-current-calibration-01.baseline-01.json",
+    "requiredByteIdenticalPreparedBaseline": {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/protected-storage-current-calibration-01/prepared-baseline-02.json",
+      "sha256": "4c730672f28efe1d9dfdfb2eed0bf7c5c052de886364c17e90812120366d5d18"
+    },
+    "actualIntroductionCommit": null,
+    "state": "PENDING_OWNER_PUBLIC_COPY_AND_ACTUAL_INTRODUCTION_AUTHENTICATION",
+    "noFutureIntroductionClaimed": true
+  },
+  "freshHoldout": {
+    "required": true,
+    "maximumRuns": 1,
+    "output": "artifacts/tmp/W2.protected-storage-current-holdout-01.f01",
+    "actualReceipt": null,
+    "requirement": "Exactly one separately fresh complete80-sample holdout after this adoption and actual baseline publication. Authenticate the adopted exact baseline and criterion, actual normal owned drain/stability/cohort, then independently dispose all absolute and20percent relative predicates. No calibration rerun, optional optimization or retry-until-pass."
+  },
+  "limits": [
+    "Only the disclosed protected Windows x64 storage-maintenance cohort is adopted. The6.34second bulk2100-item maintenance pause remains a real observed usability risk; adoption does not prove nonblocking background work or waive interactive response criteria.",
+    "The1/4/16MiB payloads are original synthetic bytes, not model execution or8/16GiB workloads. Hardware/load causation, other machines, live providers and unmeasured end-user latency are not inferred.",
+    "Benchmark measurements do not independently establish every rights, active-reader, cancellation, restart, recovery or audit boundary; their existing required proofs remain separate. This is no whole-Wave review, local-main integration decision or release approval."
+  ],
+  "baselineAdopted": true,
+  "performanceQualified": false,
+  "canonicalResultsRewritten": false,
+  "oldBaseline": {
+    "path": "verification/baselines/storage-maintenance-performance.json",
+    "sha256": "a79cd4f1697ab9e69572f380e182935b8ebd27adf6b30529b067ff835b6d3f98"
+  },
+  "reviewerExecutedTestsOrBenchmarks": false,
+  "producerOrProductImportedByReviewer": false,
+  "installedRuntimeScannedOrRehashedByReviewer": false,
+  "trackedWrites": false,
+  "waveComplete": false,
+  "releaseApproved": false
+}

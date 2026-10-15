@@ -1,0 +1,162 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "independent-finite-lifecycle05-two-retained-runs-remaining03-source-readiness",
+  "reviewer": "agent:/root/c21_closeout_review",
+  "implementer": "agent:/root/storage_profile_review",
+  "reviewedAt": "2026-10-15T08:06:35.528695+00:00",
+  "result": "SOURCE_READY_TWO_EXACT_RETAINED_RUNS_ONLY_REMAINING03_AND_FRESH_HOLDOUT_PENDING_COMMITTED_DECISION",
+  "blockingFindings": [],
+  "producer": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/protected-lifecycle-current-calibration-01/protected-performance-output-selector-08.py",
+    "sha256": "ec66741f5ad7250894c38285eaec8ab9d24877a5e73781ed3d6cd73c7878f962"
+  },
+  "runner": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/protected-lifecycle-current-calibration-01/collect-and-evaluate-05.py",
+    "sha256": "3994def78903699881ff329b07264ef058b73cc4c10ee553e9d45be571d1c2e7"
+  },
+  "preparation": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/protected-lifecycle-current-calibration-01/execution-preparation-05.json",
+    "sha256": "295984b600a930124709f09fbed5af59cf2e644c5997c1ea6ba2c85982ed6602"
+  },
+  "proposal": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/protected-lifecycle-current-calibration-01/proposal-05.json",
+    "sha256": "4e8029957ada4e508d4c935efc33811fa4975d6af1265f9b2024319b1afb2cc0"
+  },
+  "reviewedDecisionDraft": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/protected-lifecycle-current-calibration-01/decision-05.draft.json",
+    "sha256": "6bb04947001a068c021e44687d2e33837e7bab0ffdabe4bbc212627289f3cbae"
+  },
+  "manifest": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/protected-lifecycle-current-calibration-01/two-retained-runs-remaining03-source-manifest-05.json",
+    "sha256": "df8702b975e03b5502eac30e6e7924068e1d98889915f1d7eb8fd2508ec9bc7b"
+  },
+  "exactDelta": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/protected-lifecycle-current-calibration-01/two-retained-runs-remaining03-source-delta-05.json",
+    "sha256": "9f1e829a3d41999682424fb053ae779a6f306f2b9b635b9d2891faf4de998065"
+  },
+  "reusedDifferentPredecessorSourceJudgment": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/protected-lifecycle-current-calibration-01/independent-single-fixture-replacement-execution-readiness-04.json",
+    "sha256": "9ad1f2859d98ce601149a2c88dd43241112f8ddf17667e6cefef98b6bc759e9a"
+  },
+  "actualDifferentTwoRunComparability": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/lifecycle-run2-cache-equivalence-01/independent-actual-comparability-disposition-01.json",
+    "sha256": "050e110888f4f655abcd0eea7cc4c3cd8249edb26f2200d45b5789431e54a279"
+  },
+  "exact86ActualValidation": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/lifecycle-run2-cache-equivalence-01/actual-validation-01/receipt.json",
+    "sha256": "e35b0f4d626307d52c4aa91f9433a99c7f5505db47bd12f3174cb3f123b35370"
+  },
+  "completedAdmittedRuns": [
+    {
+      "run": 1,
+      "receipt": {
+        "path": "artifacts/tmp/W2.protected-lifecycle-current-calibration-02.calibration-01.f01/receipt.json",
+        "sha256": "f6ad0bbff7acb28e73e4e3de0496a0bd68487a3229672475c0cca6fe6d752ae9"
+      },
+      "inputManifest": {
+        "path": "artifacts/tmp/W2.protected-lifecycle-current-calibration-02.calibration-01.f01/input-manifest.json",
+        "sha256": "5df263ff6884aa6ca644a78f368d03bc51bd6ba2811d377c253cd656d8f70b66"
+      },
+      "canonicalReport": {
+        "path": "artifacts/tmp/W2.protected-lifecycle-current-calibration-02.calibration-01.f01/canonical-report.json",
+        "sha256": "ea305a3bb593c8c438704c85674f2d92fe7f1dc23664e2f2b4a939912fe43a52"
+      },
+      "raw": {
+        "path": "artifacts/tmp/W2.protected-lifecycle-current-calibration-02.calibration-01.f01/combined-raw.log",
+        "sha256": "ae3b14dc632bb67db6f8e0b797a6e569b64299da07f0765d609e7ada4fa5046a"
+      },
+      "bootstrapEntry": {
+        "path": "artifacts/tmp/W2.protected-lifecycle-current-calibration-02.calibration-01.f01/bootstrap-entry.json",
+        "sha256": "d2429b6e4a7b16dcb3ceafb66942f0cac3b96567bddc4ae6be1fae916e5386a2"
+      },
+      "candidateCommit": "389e1776c93e62b0a941cf0fce96d5110ff274b0",
+      "commonMapSHA256": "fee840174a2dc4b694064c7a35461d3d20f851b70749e4f13359096f59308187",
+      "sampleCount": 40,
+      "rawP95Ms": {
+        "freshServiceOpen": 29.7914,
+        "warmServiceReopen": 29.7366
+      },
+      "originalCanonicalStatus": "FAIL_CANONICAL_PERFORMANCE_TOOL",
+      "originalExitCode": 1,
+      "normalOwnedCleanup": true,
+      "selectedInputsUnchanged": true
+    },
+    {
+      "run": 2,
+      "receipt": {
+        "path": "artifacts/tmp/W2.protected-lifecycle-current-calibration-03.calibration-02.f02/receipt.json",
+        "sha256": "84273582f571b9f28b9d0e9cfdce22079d42aa1bcd1f16995f2f74db001a37af"
+      },
+      "inputManifest": {
+        "path": "artifacts/tmp/W2.protected-lifecycle-current-calibration-03.calibration-02.f02/input-manifest.json",
+        "sha256": "9c6abaa70cdcfa4ec0ec3a8ac53ab34280d9d2241a35e2ad79e78734f6799004"
+      },
+      "canonicalReport": {
+        "path": "artifacts/tmp/W2.protected-lifecycle-current-calibration-03.calibration-02.f02/canonical-report.json",
+        "sha256": "021280385024df0b6e1c3abf572a374886bff3859326e47473ed6fb3f0c7b008"
+      },
+      "raw": {
+        "path": "artifacts/tmp/W2.protected-lifecycle-current-calibration-03.calibration-02.f02/combined-raw.log",
+        "sha256": "132b2f1589e7950754a4bfc25d996a8f2bec60d7c33c923d17b9c53f65185bd7"
+      },
+      "bootstrapEntry": {
+        "path": "artifacts/tmp/W2.protected-lifecycle-current-calibration-03.calibration-02.f02/bootstrap-entry.json",
+        "sha256": "ef6334d4618d5a77193316c97b1343bc9315f8dffb25a1b6bf1cf9c60654cdb7"
+      },
+      "candidateCommit": "8392e43397e9aa28301cdf5689d653389fc1c561",
+      "commonMapSHA256": "0cb4b641f5accf6d9a51f69896646fe89fa6883847912724866117da9814cff6",
+      "sampleCount": 40,
+      "rawP95Ms": {
+        "freshServiceOpen": 35.6379,
+        "warmServiceReopen": 28.4776
+      },
+      "originalCanonicalStatus": "FAIL_CANONICAL_PERFORMANCE_TOOL",
+      "originalExitCode": 1,
+      "normalOwnedCleanup": true,
+      "selectedInputsUnchanged": true
+    }
+  ],
+  "futureCommonMapSHA256": "0cb4b641f5accf6d9a51f69896646fe89fa6883847912724866117da9814cff6",
+  "sourceDisposition": [
+    "Independently authenticated complete three substitutions of wrapper07-to08 and12 runner04-to05 substitutions. Forward and reverse transformations match entire actual predecessor/successor bytes. All83 finite control refs (82unique, original duplicate retained) authenticate; no installed executable/module/cache/runtime bytes were read or rehashed.",
+    "Reused genuine different9ad1 predecessor source judgment; unchanged canonical methods/provider/security/principal/hardware/40samples20cold20warm3warmups/nearest-rank/rawp95/caps/owned/input/error custody were not re-audited or executed. Actual currentWindows credential4582 and other measured source pins remain exact.",
+    "Actual genuine050 different comparability and e35 exact86 validation are pinned and checked for their actual result shape. Distinct fee840 and0cb4 cohorts remain physically unequal; source-equivalent caches may affect timing, and no zero-effect/generation-cause or arbitrary cache exception is inferred.",
+    "completed_measurements admits fee840 only via exact actualrun1 receipt/input/report/bootstrap/candidate; actualrun2 likewise binds exact8427 receipt and0cb4. Future records default exclusively to0cb4. Both80 actual samples/rawp95/oldFAILs/fullmaps are retained; exact admitted raw identities and values remain required.",
+    "Wrapper08 permits only new calibration03 and oneholdout outputs, not completed01/02. Before dispatch it hashes the actual existing common5-root map against exact0cb4 and inheritedf58; existing final held-input equality remains mandatory. Unknown current cohort/config/source drift denies without retries or reruns.",
+    "Runner05 retains exactly the two admitted actual runs under holds and collects only unperformed03, then preserves existing conservative max-raw-p95 over allthree complete runs. Different actual baseline adoption remains required before one fresh holdout with500ms/20%; no automatic adoption/performancePASS is added.",
+    "Current proposal4e802/decisiondraft6bb04/prep29598 bind actual050/e35 and exact sourceec667/3994. Draft remains unapproved/unpublished with nullactualintro/result/readiness; its sourceScope now truthfully describes05 and labels old04 fixture-replacement clauses historical only."
+  ],
+  "allowedFinalDecisionRecording": {
+    "preserveExactDraft": {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/protected-lifecycle-current-calibration-01/decision-05.draft.json",
+      "sha256": "6bb04947001a068c021e44687d2e33837e7bab0ffdabe4bbc212627289f3cbae"
+    },
+    "intendedPublicationPath": "artifacts/evidence/W2.protected-lifecycle-current-calibration-05.decision-01.json",
+    "allowedFields": [
+      "status",
+      "sourceReadiness",
+      "proposalReadiness",
+      "recordingSemantics"
+    ],
+    "status": "APPROVED",
+    "sourceAndProposalReadiness": "Bind this actual issued independent ledger path/hash, without inventing future reviews or rewriting original04 approvals.",
+    "recordingSemantics": "Apply existing prospective owner34e to this finite remaining-only05 method after genuine source/recording review; preserve all actual run1/run2/86 validation/maps/canonicalFAILs, numerical500ms/20%, max3+oneholdout and no future result.",
+    "recordingReadinessRemainsNullUntilDifferentExternalLedger": true,
+    "actualIntroductionCommitRemainsNullUntilActualPublication": true,
+    "allOtherScopeSourceCohortCriteriaAndResultFieldsRemainUnchanged": true
+  },
+  "executionPrerequisites": [
+    "Root finalizes only allowed exact decision recording fields, obtains a different narrow recording disposition and publishes actual byte-bound decision before running05. No new owner/ECR/controller campaign is required for this conforming scope.",
+    "Wait for active storage calibration and every competing benchmark/heavy owned workload to drain; run only unperformed lifecycle03 serially at actualclean source-bound candidate with exact0cb4/f58/source/principal/hardware/method guards.",
+    "Only after allthree actual datasets and genuine separate independent baseline adoption may one fresh original holdout run. Any new setup/cohort/security/performance failure remains retained; no automatic retries or completed-run replay."
+  ],
+  "newCalibrationExecuted": false,
+  "runtimeScannedOrRehashed": false,
+  "sourceOrProducerImported": false,
+  "trackedWrites": false,
+  "fullReviewOrOldMeasurementReplay": false,
+  "baselineAdopted": false,
+  "performancePASSClaimed": false,
+  "waveApproved": false,
+  "releaseApproved": false
+}

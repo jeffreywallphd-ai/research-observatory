@@ -1,0 +1,126 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "finite-preauthorized-canonical-import100k-exact-six-crlf-execution-method",
+  "status": "APPROVED",
+  "preparedBy": "agent:/root/storage_profile_review",
+  "prospectiveApprovedBy": "human:repository-owner",
+  "preauthorizationSHA256": "34e2e3c175dc9309080182e0673f776055b1cc3ba78639475c09ec54408d7d5f",
+  "finiteAuthoritySHA256": "738a9ed22b4da46a88c47c64b07607bbf1b27839e3bf657e7c7712763d76e9c2",
+  "producer": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/import-performance-current-owned-01/owned-canonical-import100k-02.py",
+    "sha256": "bf9032247fd6ae7f00603588dbccc22ad58e1920922b63ef1ce570e456e095b6"
+  },
+  "bootstrap": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/import-performance-current-owned-01/bootstrap-canonical-import100k-02.py",
+    "sha256": "7c6d85b91555d600621e37f297f5319b8eaa38f16c04ee3ed123ec10cb565530"
+  },
+  "preparation": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/import-performance-current-owned-01/preparation-02.json",
+    "sha256": "b01e237f320000377e417eed8c4f813fc48a480f4b0bc465740052ed8fc69471"
+  },
+  "sourceReadiness": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/import-performance-current-owned-01/independent-source-readiness-02.json",
+    "sha256": "0d12134082c3fc81874d7aaf3eb06cd48c8e979322c236ef98da38e6c4e83001"
+  },
+  "recordingReadiness": null,
+  "actualIntroductionCommit": null,
+  "intendedPublicationPath": "artifacts/evidence/W2.import-performance-six-contract-crlf-method-02.decision-01.json",
+  "exactSixPairs": [
+    {
+      "path": "packages/contracts/documents/acquisition-location.v1.schema.json",
+      "crlfOnly": true,
+      "rawSHA256": "7445e5e952c4f6a5636d03ec0cb2349913b3b4878c75507de5a6c976ae6a4805",
+      "gitSHA256": "7f911a72fb8ac62dbd211062d5a1e3dea9405779f7bf02341851bdab7567bfd3"
+    },
+    {
+      "path": "packages/contracts/documents/acquisition-receipt.v1.schema.json",
+      "crlfOnly": true,
+      "rawSHA256": "021c0ee3ece04c70dae9e006c2c63bbd0012cb084d93068a85be1eb7e43f5f10",
+      "gitSHA256": "7a160a499c9eda49176b979f4a4bc41e82a816650b3925f25b786e1c22766948"
+    },
+    {
+      "path": "packages/contracts/documents/acquisition-selection.v1.schema.json",
+      "crlfOnly": true,
+      "rawSHA256": "0df7528b6479b7a130c0fe70b6ec24534854ce754582ea739218d71c081f2bb4",
+      "gitSHA256": "2f11d944b4ca2444987998565a06327cf18c3cb0db1baaf44498e19be1420c45"
+    },
+    {
+      "path": "packages/contracts/storage/sqlite-migration-recovery-v24.snapshot.json",
+      "crlfOnly": true,
+      "rawSHA256": "7ebdc90e46553b030de29a0cea4bb5f1c0e5780c11a3502b26095d0d36d3a893",
+      "gitSHA256": "076fdb3c86f222c602943025c8836fe4af938c4df7ed986e780eaac8e024f57c"
+    },
+    {
+      "path": "packages/contracts/storage/sqlite-migration-recovery.schema.json",
+      "crlfOnly": true,
+      "rawSHA256": "c21230ead18a9adb4d0a080f5aa4fb5807c58b728dfc30a3a1f41637cb3df9f4",
+      "gitSHA256": "616712eca2900cc567e2807f09139482a5045d1d4e74cb640e9b36c08cf4b2d1"
+    },
+    {
+      "path": "packages/contracts/storage/sqlite-profile.v1.json",
+      "crlfOnly": true,
+      "rawSHA256": "584c2cd670067af8db73e14c6eebcf0253df9d04c4cfc4c130831aa1c582ae0a",
+      "gitSHA256": "cd2e41dc5941a022a7735962ffeb6f6b50922d7a51ac1772ef4b629661e9625b"
+    }
+  ],
+  "observation": {
+    "path": "artifacts/tmp/W2.import-performance-input-line-endings-observation-01.json",
+    "sha256": "1ea934da4180afcc5e3ad8592b9014cb4882f8978a58bca8a6df2c5a79910a5c"
+  },
+  "preservedOriginalFailure": {
+    "receipt": {
+      "path": "artifacts/tmp/W2.import-performance-current-01.f01/receipt.json",
+      "sha256": "106d0bf8a6004454b6ffb2f3c51e7d53fe0f3ff551af92e79e062a43e2d27f47"
+    },
+    "report": {
+      "path": "artifacts/tmp/W2.import-performance-current-01.f01/report.json",
+      "sha256": "eacdcb31cc21a0ba48cee44d281ef4974dd1908f44c20bc063a3b0737e6480f8"
+    },
+    "raw": {
+      "path": "artifacts/tmp/W2.import-performance-current-01.f01/canonical-tool.raw.log",
+      "sha256": "93aa5ed9e5b356e9a64b3e8fbe744fd7974e901ffa1824cd2404ce3b833d5206"
+    }
+  },
+  "scope": "Execute unchanged canonical import100k workload through private child-only adapter of inherited assert_committed_inputs for only the exactsix recorded CRLF/GitLF contract bytepairs. Every original nonadmitted path uses originalguard; all six preserve original governed snapshot/link/identity/current-byte checks, fixedraw/Gitblobdigests, exactCRLF-to-LF equality andJSONequivalence on everyguardcall. Originalcleanstate/candidate checks remain. Child installs onlybefore canonicalrunpy import and restoresfinally withactualmethodreceipt. No originalworktree/schema/tool/test/baseline bytes changed; alloriginal sixparser+twoReview+twoCommit observations/thresholds/clocks required.",
+  "rationale": "Actualfailed106/eacd contains0observations; rootactualobservation found only6of203contractJSONs have exactCRLF/LF-only normalization and nofreshfrontend sourcepin intersections. Private transport preserves capturedrawbytes and all other heldproofinputs; changing6worktreefiles would unnecessarily change those inputs. No unadapted-original guard claim.",
+  "alternatives": [
+    {
+      "choice": "Private exactsix scoped adapter",
+      "effect": "Preserve allworktreebytes and sourceproofclosure; explicitly supplement only raw-to-Git textual line-ending transport with6 exactdigest pairs."
+    },
+    {
+      "choice": "Rewrite sixworktree files toLF",
+      "effect": "Would change capturedphysical inputbytes and invalidate their affected inputproof; not selected or authorized bythis method."
+    },
+    {
+      "choice": "Keep originalstrict guard unchanged",
+      "effect": "Canonicaltool remainsblocked before samples; no qualification inferred."
+    }
+  ],
+  "oneUseAppendOnlyRecordingException": {
+    "purpose": "Record exactfinite prospective34e/738methodwithoutanotherECR/controllercampaign; do not edit anyfrozen predecessor/evidence/approval.",
+    "permittedTarget": "artifacts/evidence/W2.import-performance-six-contract-crlf-method-02.decision-01.json",
+    "permittedFinalizationFields": [
+      "status=APPROVED",
+      "approvedBy=human:repository-owner",
+      "sourceReadiness=actualdifferentexactreference",
+      "recordingSemantics=truthfulexternalactualreviewstatement"
+    ],
+    "recordingReadinessAndIntroduction": "Remain outsidehasheddecision ifnull toavoidselfhash/futurecommitcycle; exactactualpublicationcommit and decisionhash mayberecorded onceappend-only aftercommit, nooldpacketrewrite.",
+    "decisionMeaning": "Thisdraftis notapproval; actualprospectiveownergrant applies onlyaftergenuinedifferentfinite source+recording review and exactpublicpublication.",
+    "noPermissionFor": "Anycontroller/framework/source/test/criterion numerical/baseline/security/releasechange or rewritingadverse/approvalhistory."
+  },
+  "sourceUnchanged": true,
+  "sharedFrameworkChange": false,
+  "productSchemaChange": false,
+  "numericalCriterionChange": false,
+  "baselineChange": false,
+  "workloadChange": false,
+  "unadaptedOriginalGuardClaimed": false,
+  "executed": false,
+  "performanceApproved": false,
+  "waveApproved": false,
+  "releaseApproved": false,
+  "approvedBy": "human:repository-owner",
+  "recordingSemantics": "Recorded under actual prospective owner authorization34e after genuine independent exact source/method readiness0d12. The owner did not inspect these later bytes; the necessary finite six-contract CRLF/Git-LF guard adaptation and its one append-only recording exception use that prospective authority. Exact independent recording disposition and actual public introduction remain separate append-only facts, not invented here. Original106/eacd zero-sample FAIL and all prior bytes remain immutable. This does not change product/schema/shared framework/source bytes, numerical budgets, baseline or workloads, and claims no unadapted guard execution, measurement, performance approval, Wave or release completion."
+}
