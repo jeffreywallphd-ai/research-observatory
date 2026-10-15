@@ -1,7 +1,7 @@
 ---
 document_type: generated-backlog-status-summary
 source: planning/backlog.yaml
-source_sha256: f129d7f829c0d1b563ffe4b03e52b678bb78b1ede05b29c1c4436d51b87f18d6
+source_sha256: 8e9c9e28f85492dac97851eed86f64198697184e18d23d2bcabc119b889f8952
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -993,7 +993,7 @@ Append-only rounds remain distinct from the current latest-review projection. Le
 | `W2.C29.T01` | `append-only v1` | 1 | `-` | approved / agent:/root/security_resolution_review | - |
 | `W2.C30.T01` | `append-only v1` | 1 | `-` | approved / agent:/root/security_resolution_review | - |
 | `W2.C31.T01` | `append-only v1` | 1 | `-` | approved / agent:/root/security_resolution_review | - |
-| `W2.C32.T01` | `append-only v1` | 0 | `-` | - / - | - |
+| `W2.C32.T01` | `append-only v1` | 0 | `R01` | - / - | - |
 ## Wave progress
 
 | Wave | Pre-Wave approval | Campaign | Qualification | Approved slices | Done tasks | Exit gate |
@@ -1057,7 +1057,7 @@ Append-only rounds remain distinct from the current latest-review projection. Le
 
 | Task | Status | Owner | Branch |
 |---|---|---|---|
-| `W2.C32.T01` Implement plugin isolation, configuration, and secret access controls | `IN_PROGRESS` | agent:/root | `codex/w2-implementation` |
+| `W2.C32.T01` Implement plugin isolation, configuration, and secret access controls | `REVIEW` | agent:/root | `codex/w2-implementation` |
 
 ## Linked corrective tasks
 
@@ -1209,5 +1209,5 @@ Original tasks and approvals remain unchanged.
 
 ### W2.C32.T01 — Implement plugin isolation, configuration, and secret access controls
 
-**Status:** `IN_PROGRESS`. **Original task:** `CAP-04.S05.T02`. **Latest review:** `-`.
+**Status:** `REVIEW`. **Original task:** `CAP-04.S05.T02`. **Latest review:** `-`.
 

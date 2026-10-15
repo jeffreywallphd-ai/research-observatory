@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: f129d7f829c0d1b563ffe4b03e52b678bb78b1ede05b29c1c4436d51b87f18d6
+source_sha256: 8e9c9e28f85492dac97851eed86f64198697184e18d23d2bcabc119b889f8952
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -5705,7 +5705,7 @@ Original tasks and approvals remain unchanged.
 
 ### W2.C32.T01 — Implement plugin isolation, configuration, and secret access controls
 
-**Status:** `IN_PROGRESS`. **Original task:** `CAP-04.S05.T02`. **Latest review:** `-`.
+**Status:** `REVIEW`. **Original task:** `CAP-04.S05.T02`. **Latest review:** `-`.
 
 **Reproduction:** At clean candidate 8392e43397e9aa28301cdf5689d653389fc1c561 the unchanged original signed-worker one-second method fails its mandatory broker-before-timeout assumption. Retained actual LPAC aggregate receipt20f242f3654da413f2e4efcbff4e9571cd2767c235cc1aa3a049649761128d46 and rawb9a7cc6b9a1fb42529336c6e13d2dd5560e5ba0378645938edc3c1e0f4b4e1d1 preserve that FAIL and abnormal owned cleanup. Bounded observation-only diagnostic artifacts/tmp/W2.lpac-one-second-diagnostic-01.f01/receipt.json SHA256a1d90a16594dcf75fb0d594aa9b05ffb3511e339987d153452a4a2a16e52ca42 observes exact lpac-worker-timeout after3.1842202s, no broker or worker handles, one guardian exit0 and exact resources removed, normal owned EMPTY0 and unchanged source/control inputs. It is nonqualifying and does not prove running-loop termination. The production total clock correctly includes trusted verification/copy/seal/ACL preparation; reaching malicious code before one second is not guaranteed. Original sourcec1634f6cd3b8cdfae7ab3c0e8120e8f9c18c1bb005cc66a8fc582bc409967198 is byte-identical to approved5a76725c.
 
@@ -5722,7 +5722,19 @@ Original tasks and approvals remain unchanged.
 
 **Review mode:** `append-only v1` / 0 completed round(s)
 
-**Current immutable submission awaiting review:** None
+**Current immutable submission awaiting review:** `R01` / packet SHA-256 `56a17bb2eff04176571f10df19e03e4a2d3fab57167152a8c8e37ecf8c29aaaa`
+
+- Candidate / base / branch: `817c745e9c81a74939c7abdebbf01309039f0194` / `a976eb1b7c2f4ef3e1c6c73d3f1f13a768dc0160` / `codex/w2-implementation`
+- Submitted by / at: agent:/root / `2026-10-15T10:27:57+00:00`
+- Evidence: `artifacts/evidence/W2.C32.T01.R01.json` / `c199b6d8eedffca4a5b9661d0ad281e9e1269e49177c3a831fc0322bcaae3229` / `817c745e9c81a74939c7abdebbf01309039f0194`
+- Acceptance-criteria SHA-256: `831c2a4cc6c6cf0bd8ca53f4c85cce254f359e6c80f198692babeaf6a7f96dd5`
+- Verification-selection SHA-256: `95a24ba0bbab801d99fbd4891efff8e83904b7d713731a9648a2ec2db41eea28`
+- Changed paths: `artifacts/evidence/W2.C32.T01.execution-segment-rebind-01.json`, `artifacts/evidence/W2.C32.T01.execution-segment-rebind-readiness-01.json`, `docs/planning-implementation-plan.md`, `planning/backlog.yaml`, `planning/review-site/manifest.json`, `planning/status-summary.md`, `tests/connectors/test_plugin_lpac_boundary.py`
+- Selected checks: `.venv/Scripts/python.exe -B -s -m ruff format --check --config pyproject.toml -- tests/connectors/test_plugin_lpac_boundary.py`, `.venv/Scripts/python.exe -B -s -m ruff check --config pyproject.toml -- tests/connectors/test_plugin_lpac_boundary.py`, `.venv/Scripts/python.exe -B -s -m mypy --config-file pyproject.toml --no-namespace-packages -- @artifacts/tmp/W2.remaining-corrections-batch-01/quality-transport-07/complete-files.args`, `.venv/Scripts/python.exe -B -s -m unittest -v tests.connectors.test_plugin_lpac_boundary`
+- Deferred checks: `Remaining original connector tail has its own actual selection and current-input continuity.`, `Current14, protected/storage/import performance, anchors, shipping/security and finalS06/Wave/release remain separate.`
+- Selection rationale: Affected fullLPAC16 module because prior15 native owned lifetimes failed normal cleanup; revised public1s/prepared1s and unchanged memory/security/guardian/protocol methods, one-file Ruff and governed734-context typing. No HTTP/177prefix/fullprofile replay. Actual fresh four-check candidate is db1; later delivery changes only the independently reviewed exact two open-task binding fields, task-scoped provenance and derived navigation. Exact28 consumed source/runtime/artifact trees, retained individual input bytes, actual environment and43 configuration absences are freshly authenticated by 2c576. The specific native/principal metadata-only projection is authorized by actual prospective34e and independentfc960, not the generic reuse pilot. No product check is rerun solely for inert metadata.
+- Prior round / replayed open findings: `-` / -
+- Root-cause escalation: -
 
 **Current latest-review projection:** `-` by - at `-`
 

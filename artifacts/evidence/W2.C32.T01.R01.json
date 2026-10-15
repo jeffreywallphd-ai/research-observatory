@@ -1,0 +1,306 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "W2.C32.T01",
+  "baseCommit": "a976eb1b7c2f4ef3e1c6c73d3f1f13a768dc0160",
+  "commit": "817c745e9c81a74939c7abdebbf01309039f0194",
+  "branch": "codex/w2-implementation",
+  "changedFiles": [
+    "artifacts/evidence/W2.C32.T01.execution-segment-rebind-01.json",
+    "artifacts/evidence/W2.C32.T01.execution-segment-rebind-readiness-01.json",
+    "docs/planning-implementation-plan.md",
+    "planning/backlog.yaml",
+    "planning/review-site/manifest.json",
+    "planning/status-summary.md",
+    "tests/connectors/test_plugin_lpac_boundary.py"
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "checkIds": [
+        "original-lpac-module"
+      ],
+      "evidence": [
+        "Original CAP-04.S05.T02 R01/R02 malicious-connector isolation, manifest broker/secret/export/network protections and content-free durable failure audit remain historical authority at actual5a767; no product source/policy changed. Fresh full LPAC module16 passes all original isolation/token/ACL/guardian and256MiB memory assertions with current application-signed worker59 and frozenCore guardian784. This is local application test signing and synthetic broker input, not production trust, live provider behavior or per-syscall auditing."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "checkIds": [
+        "original-lpac-module"
+      ],
+      "evidence": [
+        "Fresh full16/zero failures/errors/skips and normal unchanged32ee5s drain qualifies the affected native lifetimes that priorLPAC15 abnormal cleanup did not qualify. Original public signed1s total-budget case requires phase-consistent typed timeout/no successful WorkerResult and exact cleanup; it need not reach malicious code during trusted setup. Separately a valid synthetic20s setup profile reaches real lower launch, tightens only remaining wall_seconds to1.0 after asserting>=1, and requires the exact broker marker, actual LPAC token, worker exit, guardian/profile/runtime removal and unchanged sentinel. Original memory helper and13 original nonpublic method ASTs remain unchanged versus c163; allother15 methods are unchanged versus48d. Only the compiler-fixture setup uses existing _RecoveryNativeJob to explicitly terminate/drain nested compiler descendants before LPAC launch; actual accounting is recorded separately from required natural outer32ee drain. Existing helper failed-launch-before-return does not explicitly close unreturned Popen handles; a258 discloses this inherited bounded limit. No product deadline moves or budget increases."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "checkIds": [
+        "original-lpac-module",
+        "affected-format",
+        "affected-lint",
+        "affected-configured-types"
+      ],
+      "evidence": [
+        "Only the existing LPAC test path changes under the normal linked correction. Original capture900s watchdog, public elapsed<30s/retained-handle5000ms/real typed failure/security assertions remain. One-file Ruff format/lint and configured734-source typing pass with fresh exclusive caches and held runtime/compiler/artifact/current-source/config inputs through normal owned lifetime and final stability. No framework/security/schema/migration/governed experience/acceptance change and no177connector-prefix replay."
+      ]
+    }
+  ],
+  "checks": [
+    {
+      "id": "affected-format",
+      "command": ".venv/Scripts/python.exe -B -s -m ruff format --check --config pyproject.toml -- tests/connectors/test_plugin_lpac_boundary.py",
+      "commandSemantics": "DISPLAY repository-relative executable/paths; exact invocation retained in ignored actual receipt.",
+      "result": "passed",
+      "exitCode": 0,
+      "commit": "db1acd24b28f8a88a0fc5cb23538545f98267f57",
+      "coverage": "actual-db1-fresh-check-projected-only-across-reviewed-inert-metadata-with-exact-consumed-inputs",
+      "seconds": 0.2475029000052018,
+      "raw": {
+        "path": "artifacts/tmp/W2.C32.T01.focused-proof-02.f01/affected-format.raw.log",
+        "sha256": "fd2299c9f1c6dc869070883e281051bfe93aacf66c1a3b0069f45b4aa410ca50"
+      },
+      "ownedJob": {
+        "drained": true,
+        "activeProcesses": 0,
+        "cleanupState": "EMPTY_CONFIRMED"
+      }
+    },
+    {
+      "id": "affected-lint",
+      "command": ".venv/Scripts/python.exe -B -s -m ruff check --config pyproject.toml -- tests/connectors/test_plugin_lpac_boundary.py",
+      "commandSemantics": "DISPLAY repository-relative executable/paths; exact invocation retained in ignored actual receipt.",
+      "result": "passed",
+      "exitCode": 0,
+      "commit": "db1acd24b28f8a88a0fc5cb23538545f98267f57",
+      "coverage": "actual-db1-fresh-check-projected-only-across-reviewed-inert-metadata-with-exact-consumed-inputs",
+      "seconds": 0.21716230000311043,
+      "raw": {
+        "path": "artifacts/tmp/W2.C32.T01.focused-proof-02.f01/affected-lint.raw.log",
+        "sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18"
+      },
+      "ownedJob": {
+        "drained": true,
+        "activeProcesses": 0,
+        "cleanupState": "EMPTY_CONFIRMED"
+      }
+    },
+    {
+      "id": "affected-configured-types",
+      "command": ".venv/Scripts/python.exe -B -s -m mypy --config-file pyproject.toml --no-namespace-packages -- @artifacts/tmp/W2.remaining-corrections-batch-01/quality-transport-07/complete-files.args",
+      "commandSemantics": "DISPLAY repository-relative executable/paths; exact invocation retained in ignored actual receipt.",
+      "result": "passed",
+      "exitCode": 0,
+      "commit": "db1acd24b28f8a88a0fc5cb23538545f98267f57",
+      "coverage": "actual-db1-fresh-check-projected-only-across-reviewed-inert-metadata-with-exact-consumed-inputs",
+      "seconds": 18.873838700004853,
+      "raw": {
+        "path": "artifacts/tmp/W2.C32.T01.focused-proof-02.f01/affected-configured-types.raw.log",
+        "sha256": "c642e5b33b5e7d157e7b2362ef94a292d50ab8abbba717375ca1704ad53de820"
+      },
+      "ownedJob": {
+        "drained": true,
+        "activeProcesses": 0,
+        "cleanupState": "EMPTY_CONFIRMED"
+      }
+    },
+    {
+      "id": "original-lpac-module",
+      "command": ".venv/Scripts/python.exe -B -s -m unittest -v tests.connectors.test_plugin_lpac_boundary",
+      "commandSemantics": "DISPLAY repository-relative executable/paths; exact invocation retained in ignored actual receipt.",
+      "result": "passed",
+      "exitCode": 0,
+      "commit": "db1acd24b28f8a88a0fc5cb23538545f98267f57",
+      "coverage": "actual-db1-fresh-check-projected-only-across-reviewed-inert-metadata-with-exact-consumed-inputs",
+      "seconds": 44.87865699999384,
+      "raw": {
+        "path": "artifacts/tmp/W2.C32.T01.focused-proof-02.f01/original-lpac-module.raw.log",
+        "sha256": "2ac8666665816d2008c66aa9fc0a1c68a2aa01ce725d10fd5c0c6d7fd3fdf32c"
+      },
+      "ownedJob": {
+        "drained": true,
+        "activeProcesses": 0,
+        "cleanupState": "EMPTY_CONFIRMED"
+      },
+      "testsRun": 16,
+      "failures": 0,
+      "errors": 0,
+      "skips": 0,
+      "caseIds": [
+        "tests.connectors.test_plugin_lpac_boundary.PluginLPACBoundaryTests.test_application_signed_runtime_rejects_redirected_root_and_ancestor",
+        "tests.connectors.test_plugin_lpac_boundary.PluginLPACBoundaryTests.test_application_signed_runtime_rejects_tamper_and_self_trust",
+        "tests.connectors.test_plugin_lpac_boundary.PluginLPACBoundaryTests.test_binary_frame_has_an_independent_limit_and_exact_length",
+        "tests.connectors.test_plugin_lpac_boundary.PluginLPACBoundaryTests.test_control_frame_rejects_oversize_duplicate_and_wrong_job",
+        "tests.connectors.test_plugin_lpac_boundary.PluginLPACBoundaryTests.test_fixed_worker_uses_bounded_broker_frames_without_plugin_paths",
+        "tests.connectors.test_plugin_lpac_boundary.PluginLPACBoundaryTests.test_guardian_recovers_before_seal_after_core_crash",
+        "tests.connectors.test_plugin_lpac_boundary.PluginLPACBoundaryTests.test_guardian_recovers_exact_job_after_core_crash",
+        "tests.connectors.test_plugin_lpac_boundary.PluginLPACBoundaryTests.test_guardian_retries_after_delayed_os_lock",
+        "tests.connectors.test_plugin_lpac_boundary.PluginLPACBoundaryTests.test_loopback_report_does_not_promote_startup_failure_to_connect_denial",
+        "tests.connectors.test_plugin_lpac_boundary.PluginLPACBoundaryTests.test_packaged_worker_is_lpac_and_denies_ambient_authority",
+        "tests.connectors.test_plugin_lpac_boundary.PluginLPACBoundaryTests.test_prepared_signed_product_worker_enforces_one_second_running_limit",
+        "tests.connectors.test_plugin_lpac_boundary.PluginLPACBoundaryTests.test_product_launcher_rejects_unpinned_or_uninstalled_runtime",
+        "tests.connectors.test_plugin_lpac_boundary.PluginLPACBoundaryTests.test_signed_product_worker_denies_ambient_authority",
+        "tests.connectors.test_plugin_lpac_boundary.PluginLPACBoundaryTests.test_signed_product_worker_enforces_committed_memory_limit",
+        "tests.connectors.test_plugin_lpac_boundary.PluginLPACBoundaryTests.test_signed_product_worker_enforces_one_second_wall_limit",
+        "tests.connectors.test_plugin_lpac_boundary.PluginLPACBoundaryTests.test_worker_exit_wait_remains_cancellable_after_result_frame"
+      ],
+      "publicProfileSeconds": 1,
+      "additionalPreparedProfileSeconds": 20,
+      "preparedProductionLowerWallSeconds": 1,
+      "collectionWatchdogSeconds": 900,
+      "nestedCompilerFixtureCleanup": {
+        "afterCleanup": {
+          "active": 0,
+          "total": 49
+        },
+        "beforeCleanup": {
+          "active": 2,
+          "total": 49
+        },
+        "builderRootExitCode": 0,
+        "scope": "test-owned compiler descendants only; LPAC probe starts after EMPTY",
+        "terminationRequested": true
+      }
+    }
+  ],
+  "unverifiedItems": [],
+  "executionReceipts": [
+    {
+      "path": "artifacts/tmp/W2.C32.T01.focused-proof-02.f01/receipt.json",
+      "sha256": "221a8f8f6fcad0740ccab165dc41530a765d75a8f2a1db7ba282b42af123a558"
+    }
+  ],
+  "executionProducers": [
+    {
+      "path": "artifacts/tmp/W2.C32.T01.focused-proof-02.py",
+      "sha256": "c666d795001b9def6ca35c180d70c2c210df11a34d458e5f70a6ae9884ff874f"
+    }
+  ],
+  "executionPreparation": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/lpac-one-second-paired-test-restoration-02/focused-proof-preparation-02.json",
+    "sha256": "52c4c3112e09ce396fb868dae106aff22416af5a4057e8635c509f902de91756"
+  },
+  "inputManifest": {
+    "path": "artifacts/tmp/W2.C32.T01.focused-proof-02.f01/input-manifest.json",
+    "sha256": "325b08c0833697fa9ff467550dd4b61cb9e66a19f1edb7159667090ccb9a9262"
+  },
+  "sourceApplication": {
+    "path": "artifacts/tmp/W2.C32.T01.source-application-02.json",
+    "sha256": "b076d40761e9a10cbf385fafa17b96f9a3c7f70d498f3cf4014180e68e783e80"
+  },
+  "sourceReadiness": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/lpac-one-second-paired-test-restoration-02/compiler-fixture-job-source-01/independent-source-readiness-01.json",
+    "sha256": "a2588808299f07037e98fb56c630b01be7879278f6e9a2b2b8075f528b062e5b"
+  },
+  "proofSourceReadiness": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/lpac-one-second-paired-test-restoration-02/independent-collector02-source-readiness-01.json",
+    "sha256": "f0e5fc4c372df94934aaeb80999da8ea077ceb712e1e5f8d9f580722f2e1acb0"
+  },
+  "compilerFixtureSourceReadiness": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/lpac-one-second-paired-test-restoration-02/compiler-fixture-job-source-01/independent-source-readiness-01.json",
+    "sha256": "a2588808299f07037e98fb56c630b01be7879278f6e9a2b2b8075f528b062e5b"
+  },
+  "currentRemediationAdverses": [
+    {
+      "path": "artifacts/tmp/W2.C32.T01.focused-proof-01.f01/receipt.json",
+      "sha256": "0183faad6aa16bb6bf008c53c2901e943af7adfedc1902f3108d100a28f26660"
+    },
+    {
+      "path": "artifacts/tmp/W2.C32.T01.focused-proof-01.f01/original-lpac-module.raw.log",
+      "sha256": "1e9b67b37bb02093e7a4191a3bd7b6621eb6aa0ecdb659a4285e623c31f4a8a0"
+    },
+    {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/C32-lpac-survivor-diagnostic-owned-01/actual-diagnostic-01/receipt.json",
+      "sha256": "05626e24a03640e368975500ea662e9439e3ae288a94e01117cb4ac65e39629a"
+    },
+    {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/C32-lpac-survivor-diagnostic-owned-01/actual-diagnostic-01/independent-actual-diagnostic-disposition-01.json",
+      "sha256": "821834d5a5156762bb7fe641c39e450e27e31834382ef34b3be248e46e8a37b9"
+    }
+  ],
+  "priorAdverseEvidence": [
+    {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/unreached-connector-tail-owned-01/actual-tail-01/receipt.json",
+      "sha256": "20f242f3654da413f2e4efcbff4e9571cd2767c235cc1aa3a049649761128d46"
+    },
+    {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/unreached-connector-tail-owned-01/actual-tail-01/08-test_plugin_lpac_boundary.raw.log",
+      "sha256": "b9a7cc6b9a1fb42529336c6e13d2dd5560e5ba0378645938edc3c1e0f4b4e1d1"
+    },
+    {
+      "path": "artifacts/tmp/W2.lpac-one-second-diagnostic-01.f01/receipt.json",
+      "sha256": "a1d90a16594dcf75fb0d594aa9b05ffb3511e339987d153452a4a2a16e52ca42"
+    }
+  ],
+  "verificationSelection": {
+    "selectedCommandIds": [
+      "security-local:unit",
+      "foundation:quality"
+    ],
+    "riskAnalysis": "Affected fullLPAC16 module because prior15 native owned lifetimes failed normal cleanup; revised public1s/prepared1s and unchanged memory/security/guardian/protocol methods, one-file Ruff and governed734-context typing. No HTTP/177prefix/fullprofile replay. Actual fresh four-check candidate is db1; later delivery changes only the independently reviewed exact two open-task binding fields, task-scoped provenance and derived navigation. Exact28 consumed source/runtime/artifact trees, retained individual input bytes, actual environment and43 configuration absences are freshly authenticated by 2c576. The specific native/principal metadata-only projection is authorized by actual prospective34e and independentfc960, not the generic reuse pilot. No product check is rerun solely for inert metadata.",
+    "deferred": [
+      "Remaining original connector tail has its own actual selection and current-input continuity.",
+      "Current14, protected/storage/import performance, anchors, shipping/security and finalS06/Wave/release remain separate."
+    ]
+  },
+  "correctiveIntegration": {
+    "originSha256": "a9faa34a543433fdfe1665e54ade2892554e6bf893a1824c6155d8114d3bd994",
+    "authorityPreserved": true,
+    "affectedChecks": [
+      ".venv/Scripts/python.exe -B -s -m unittest -v tests.connectors.test_plugin_lpac_boundary",
+      ".venv/Scripts/python.exe -B -s -m ruff format --check --config pyproject.toml -- tests/connectors/test_plugin_lpac_boundary.py",
+      ".venv/Scripts/python.exe -B -s -m ruff check --config pyproject.toml -- tests/connectors/test_plugin_lpac_boundary.py",
+      ".venv/Scripts/python.exe -B -s -m mypy --config-file pyproject.toml --no-namespace-packages -- @artifacts/tmp/W2.remaining-corrections-batch-01/quality-transport-07/complete-files.args"
+    ],
+    "reusedEvidence": [
+      {
+        "path": "artifacts/evidence/CAP-04.S05.T02.R02.json",
+        "sha256": "a68ef1f82ea3716e94a76c57c75dff0b2ab2860a27fba0becf66bdabeba2a994",
+        "byteScope": "committed-Git-blob",
+        "commit": "db1acd24b28f8a88a0fc5cb23538545f98267f57",
+        "qualifyingHistoricalCandidate": "5a76725cfb521448a3da7a20b993c370ca854ba6"
+      }
+    ],
+    "rationale": "Original approved LPAC product/history/security authority stays unchanged. Correct the conflated trusted-setup versus running-loop expectation through two explicit real phases; public1s remains and additive synthetic20s setup only tightens the real lower budget to1s. Fresh whole16/normalcleanup covers unqualified prior native lifetimes. Original15FAIL/abnormalowned, public1s nonqualifying diagnostic, actual0183 all16bodyOK/outercleanupFAIL and05626/821834 actualvctip diagnostic remain immutable. The same-file compiler fixture contains/cleans only its own actual nested compilerJob before realLPAC execution; no guardian/process policy change. No HTTP177/fullprofile/product/framework/release claim. Original50d claim/spec introduction/source applications and fullbe1+db1 source review remain preserved in actual68b component. The exact owner-preauthorized independently reviewed two-field execution-segment exception changes only current submission binding to a976, which contains unchanged spec. Actual later metadata-only delivery projection and exact consumed-input continuity are disclosed separately; this does not relabel the real db1 native run as fresh at later HEAD."
+  },
+  "correctionSpecification": {
+    "path": "artifacts/evidence/W2.C32.T01.spec.json",
+    "sha256": "f983cb3a8acea503ea96306cdfb0e4afbac66a30668363b4d67da3df0644fd12"
+  },
+  "fullProfilePassClaimed": false,
+  "waveComplete": false,
+  "releaseApproved": false,
+  "unsubmittedPredecessor": {
+    "path": "artifacts/tmp/W2.C32.T01.execution-segment-rebind-01/original-unsubmitted-manifest.json",
+    "sha256": "9cee6438cfa66d83c5160717f4444d86683201038f39067ccc38f930314b7ece"
+  },
+  "metadataOnlyVerificationProjection": {
+    "actualFreshProofCandidate": "db1acd24b28f8a88a0fc5cb23538545f98267f57",
+    "metadataDeliveryCandidate": "817c745e9c81a74939c7abdebbf01309039f0194",
+    "originalAdmissionBase": "50d1e64c57e0348ad5c028e0dc1d6c2968b349ae",
+    "resumedSubmissionSegmentBase": "a976eb1b7c2f4ef3e1c6c73d3f1f13a768dc0160",
+    "originalSpecIntroduction": "50d1e64c57e0348ad5c028e0dc1d6c2968b349ae",
+    "containingSpecCommitMeaning": "a976 contains unchanged f983 spec; it is not introduction or a new claim.",
+    "decision": {
+      "path": "artifacts/evidence/W2.C32.T01.execution-segment-rebind-01.json",
+      "sha256": "7df576051b29df32729ce2fa3823e7d52fdff754eda9e35e6b23c8c659c63c3d"
+    },
+    "independentReadiness": {
+      "path": "artifacts/evidence/W2.C32.T01.execution-segment-rebind-readiness-01.json",
+      "sha256": "fc960249f8d72121734e990a080a4453c154a6bfd7b02e282cd4677edd73f96b"
+    },
+    "continuitySourceReadiness": {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/lpac-one-second-paired-test-restoration-02/independent-metadata-continuity-source-readiness-01.json",
+      "sha256": "a428ca6e2f70ce59a5eea6e32050fba161083db6149a458d477b08e2b408bec4"
+    },
+    "actualContinuity": {
+      "path": "artifacts/tmp/W2.C32.T01.metadata-projection-continuity-01.actual.json",
+      "sha256": "2c5762b2552e43c0b53c93869145719e1dd15dc44ac9d09dcccc56ea9c74e663"
+    },
+    "fullOriginalSourceReview": {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/lpac-one-second-paired-test-restoration-02/independent-actual-component-disposition-01.json",
+      "sha256": "68b6320de3a7305922fac2fcab0e956942f7efe8e65980bfaa77ff485e22c81a"
+    },
+    "semantics": "Specific prospective owner34e metadata-only native/principal verification exception, not generic cached native proof or fresh observation at delivery HEAD. All actual check commits/durations/cases/normal cleanup remain db1. Full original50d..db1 paired and compiler source delta is independently reviewed; only metadata submission segment starts a976. Earlier normal submission failed before mutation/freeze and exact9cee bytes remain preserved."
+  }
+}
