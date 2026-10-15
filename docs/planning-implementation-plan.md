@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: b0be2420222216d354e4a9e4911c67def0fed2e005d583234f6a7aaad9d73bc0
+source_sha256: 703fc202f880876c0621b42b5f2f0a73643c08b06fe452a32775bc0f9845f04e
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -5534,7 +5534,7 @@ Original tasks and approvals remain unchanged.
 
 ### W2.C29.T01 — Implement plugin isolation, configuration, and secret access controls
 
-**Status:** `REVIEW`. **Original task:** `CAP-04.S05.T02`. **Latest review:** `-`.
+**Status:** `DONE`. **Original task:** `CAP-04.S05.T02`. **Latest review:** `approved`.
 
 **Reproduction:** Actual2 corpus migration methods expect current20 and onward tuple onlythrough0020 while validated current28 requires0021..0028. First20->21 plugin progression2cc is groundwork diagnosis only; canonical completed original snapshot963b/latestapproved5a767 governs admission.
 
@@ -5549,9 +5549,11 @@ Original tasks and approvals remain unchanged.
 - tests/reconciliation/test_corpus_migration.py
 #### Review history — W2.C29.T01
 
-**Review mode:** `append-only v1` / 0 completed round(s)
+**Review mode:** `append-only v1` / 1 completed round(s)
 
-**Current immutable submission awaiting review:** `R01` / packet SHA-256 `53da22cb748ac2d628ef8ec8736614c398cf628efd564eb8e45d40524a7c5615`
+##### Round R01
+
+**Immutable submission packet:** `R01` / packet SHA-256 `53da22cb748ac2d628ef8ec8736614c398cf628efd564eb8e45d40524a7c5615`
 
 - Candidate / base / branch: `26202ec497ce94e3b1f86f0c614b56f7f6b748d7` / `7c1346d4550fc11927aa3289cf9384d6b6dc99c0` / `codex/w2-implementation`
 - Submitted by / at: codex-w2-implementation / `2026-10-15T02:08:59+00:00`
@@ -5565,7 +5567,23 @@ Original tasks and approvals remain unchanged.
 - Prior round / replayed open findings: `-` / -
 - Root-cause escalation: -
 
-**Current latest-review projection:** `-` by - at `-`
+**Disposition / reviewer / time:** `approved` / agent:/root/security_resolution_review / `2026-10-15T02:28:51+00:00`
+
+**Immutable review ledger:** `artifacts/evidence/W2.C29.T01.review-R01.json` / `b342818594abb4608e032be0d88752913628f9ce7d12a9341468590f43155e55`
+
+**Review notes:** -
+
+**Findings opened:**
+
+- None
+
+**Prior finding closures:**
+
+- None
+
+**Current immutable submission awaiting review:** None
+
+**Current latest-review projection:** `approved` by agent:/root/security_resolution_review at `2026-10-15T02:28:51+00:00`
 
 **Latest notes:** -
 
