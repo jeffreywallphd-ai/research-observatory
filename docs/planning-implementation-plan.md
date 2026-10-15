@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: b0a5076ce2489e0be59844aa666856e40d1297754a00c53d73940c39f44173ec
+source_sha256: 788d0c65da94e3e60a1eb8b71f6859fb15fc7e82e821911a10c060e46d32d23e
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -5648,7 +5648,7 @@ Original tasks and approvals remain unchanged.
 
 ### W2.C31.T01 — Implement Unpaywall and Semantic Scholar adapters
 
-**Status:** `REVIEW`. **Original task:** `CAP-04.S02.T03`. **Latest review:** `-`.
+**Status:** `DONE`. **Original task:** `CAP-04.S02.T03`. **Latest review:** `approved`.
 
 **Reproduction:** At exact clean candidate a984703caacdb4f405dabf177353e403fce064af, the unchanged original Graph/Unpaywall restart method reproducibly stalls on its first direct private repository replay while the normal worker finishes its output receipt. Actual reviewed diagnostic reaches its unchanged 300-second collection watchdog: terminal receipt artifacts/tmp/W2.connector-restart-diagnostic-01.f01/receipt.json SHA256 032dcb3be9ce6a80d0078110cff1cbf018f472ce0d55fee41565f1eba1e948a6; raw d7263590974406a1960aa2d48219aac0404dafba5a415f7f759c0dfa4490f7f1; retained thread-stacks 2c75d5be5ea55b5929cd9ce3fdff4e25c26fa42c5e6bfd2b22442ee4ea65bdc8. The first complete snapshot and code show the test holding object-store lock then requesting privacy/lifecycle authority while the worker holds real lifecycle authority then requests the same object-store lock. Normal product worker/inspection paths already use project-then-object order. All three private test replays need the same real lifecycle read-action seam. The diagnostic FAIL, forced owned termination with active0, and earlier suite interruption remain preserved; no product deadlock or historical-cause claim beyond the demonstrated test path.
 
@@ -5663,9 +5663,11 @@ Original tasks and approvals remain unchanged.
 - tests/connectors/test_graph_oa_runtime.py
 #### Review history — W2.C31.T01
 
-**Review mode:** `append-only v1` / 0 completed round(s)
+**Review mode:** `append-only v1` / 1 completed round(s)
 
-**Current immutable submission awaiting review:** `R01` / packet SHA-256 `9da415f0c969f64f8c57109ee6907aec217ed46239659b47ccdd7273f8980120`
+##### Round R01
+
+**Immutable submission packet:** `R01` / packet SHA-256 `9da415f0c969f64f8c57109ee6907aec217ed46239659b47ccdd7273f8980120`
 
 - Candidate / base / branch: `5cd948d5f58a06d9ca83e9d416ac93655cee91b2` / `9e5da954e2fab49f0c49326414e7bf4a369aa899` / `codex/w2-implementation`
 - Submitted by / at: codex-w2-implementation / `2026-10-15T06:12:18+00:00`
@@ -5679,7 +5681,23 @@ Original tasks and approvals remain unchanged.
 - Prior round / replayed open findings: `-` / -
 - Root-cause escalation: -
 
-**Current latest-review projection:** `-` by - at `-`
+**Disposition / reviewer / time:** `approved` / agent:/root/security_resolution_review / `2026-10-15T06:35:25+00:00`
+
+**Immutable review ledger:** `artifacts/evidence/W2.C31.T01.review-R01.json` / `1b5a4b0ad7537b6a3ed7eb14557bfa11f3fc3bf655f6919d474a4d01c61e9736`
+
+**Review notes:** -
+
+**Findings opened:**
+
+- None
+
+**Prior finding closures:**
+
+- None
+
+**Current immutable submission awaiting review:** None
+
+**Current latest-review projection:** `approved` by agent:/root/security_resolution_review at `2026-10-15T06:35:25+00:00`
 
 **Latest notes:** -
 
