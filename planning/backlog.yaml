@@ -7412,7 +7412,7 @@ waves:
       status: IN_PROGRESS
       owner: agent:/root
       branch: codex/w2-implementation
-      base_sha: 50d1e64c57e0348ad5c028e0dc1d6c2968b349ae
+      base_sha: a976eb1b7c2f4ef3e1c6c73d3f1f13a768dc0160
       worktree: .
       lease:
         claimed_by: agent:/root
@@ -7446,7 +7446,7 @@ waves:
         spec:
           path: artifacts/evidence/W2.C32.T01.spec.json
           sha256: f983cb3a8acea503ea96306cdfb0e4afbac66a30668363b4d67da3df0644fd12
-          commit: 50d1e64c57e0348ad5c028e0dc1d6c2968b349ae
+          commit: a976eb1b7c2f4ef3e1c6c73d3f1f13a768dc0160
         reproduction: At clean candidate 8392e43397e9aa28301cdf5689d653389fc1c561 the unchanged original signed-worker one-second
           method fails its mandatory broker-before-timeout assumption. Retained actual LPAC aggregate receipt20f242f3654da413f2e4efcbff4e9571cd2767c235cc1aa3a049649761128d46
           and rawb9a7cc6b9a1fb42529336c6e13d2dd5560e5ba0378645938edc3c1e0f4b4e1d1 preserve that FAIL and abnormal owned cleanup.
