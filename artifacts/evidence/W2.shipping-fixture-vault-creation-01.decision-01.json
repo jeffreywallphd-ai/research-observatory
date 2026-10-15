@@ -1,0 +1,72 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "finite-prospective-first-creation-only-shipping-vault-fixture-scope-decision",
+  "status": "APPROVED",
+  "recordedBy": "agent:/root",
+  "recordedAt": "2026-10-15T08:36:30.446323+00:00",
+  "approvedBy": "human:repository-owner",
+  "approvalBasis": "Prospective necessary W2 completion authority; no assertion the owner inspected this later packet.",
+  "prospectiveOwnerAuthority": {
+    "path": "artifacts/evidence/W2.completion-preauthorization-20261014-01.md",
+    "sha256": "34e2e3c175dc9309080182e0673f776055b1cc3ba78639475c09ec54408d7d5f"
+  },
+  "proposal": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/shipping-seed-ownership-diagnosis-01/creation-only-scope-proposal-01.json",
+    "sha256": "0f65217b4f5c492e5279bd3e180a3d4e54040e8c28d402945328f3100a1b9254"
+  },
+  "independentScopeReadiness": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/shipping-seed-ownership-diagnosis-01/independent-creation-only-scope-readiness-01.json",
+    "sha256": "bd707689d0ab2c39624069b76ba179eb07fb1612f9fdb044c7e5f400c4c120f1"
+  },
+  "currentW2OutcomeOrigin": "W2.A06.T02",
+  "sourceAuthorshipDistinction": {
+    "path": "apps/desktop/src-tauri/src/lib.rs",
+    "boundedBlameLines": "3484-3498",
+    "rootCreationAuthoringCommit": "3f4b2153a90eb29ee74c9f55f628eb3d15884922",
+    "directoryLoopAuthoringCommit": "cf0cfab10191503a6a61515bd544ea001ba07ab4",
+    "historicalTasks": [
+      "W1.A09.T03",
+      "W1.A09.T04"
+    ],
+    "meaning": "Original Native fixture code was authored during W1. W2.A06.T02 owns the current approved shipping recovery outcome/proof prerequisite, not original Native source authorship. CAP-05.S06.T02 manual document structure-correction scope is unrelated and must not be relabeled as origin."
+  },
+  "changedPaths": [
+    "apps/desktop/src-tauri/src/lib.rs"
+  ],
+  "scope": "Inside cfg(all(feature=\"integration-harness\", windows)) directory_integration_harness only: replace first creation of previously absent fixture/vault with protected CurrentSID/SYSTEM atomic CreateDirectoryW semantics and bounded same-file tests. All other fixture directories/layout/receipt/revalidation remain unchanged. This is a disclosed necessary fixture-setup scope addition to current recovery proof, not a change to production owner/security policy.",
+  "creationRequirements": [
+    "Derive actual process current SID from real Windows token; no caller/renderer-supplied principal.",
+    "Prepare protected DACL granting full control only actual current SID and SYSTEM, with object/container inheritance for freshly created children. Keep witness-store exact two-ACE leaf checks unchanged.",
+    "CreateDirectoryW must atomically create only absent vault, with explicit security attributes at creation. An occupied path, reparse/alias/missing principal/API failure remains an error; do not open to set/rewrite DACL and do not retry.",
+    "Use existing windows-sys Security/FileSystem features and original process/fixture containment. No new dependency/toolchain/security source or generalized fixture framework.",
+    "Keep original path root/vault in Fixture::layout and supervisor_config; original receipt directory identities/nonce/missing/changed receipt and path containment checks remain authoritative.",
+    "Preserve old failed01 fixture/vault unmodified and all existing bootstrapPASS/seedFAIL/adverse bytes. New source proof uses a new exclusive nonce/control output, never substitutes into the old fixture or rewrites its receipt."
+  ],
+  "explicitExclusions": [
+    "No SetKernelObjectSecurity/SetNamedSecurityInfo/ACL normalization of any existing directory.",
+    "No Windows credentials owner/DACL exception, foreign-writer allowance, principal fallback, witness minting/repair or changed recovery threshold.",
+    "No split Python-only vault while GUI uses fixture/vault.",
+    "No product UX/reference change, new installer/frozen-GUI criterion, generalized harness/controller or new ECR.",
+    "No old receipt/result relabeling, 8392 proof retargeting, release approval or baseline adoption from this proposal."
+  ],
+  "normalLinkedClaimRequiredBeforeSourceEdits": true,
+  "canonicalOriginSnapshotRequired": true,
+  "actualSourceAndProofIndependentDispositionRequired": true,
+  "freshChangedSourceNativePackageAndFiveStageShippingProofRequired": true,
+  "preservedAdverse": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/current-shipping-native-core-package-plan-01/shipping-ui-bindings-04/actual-owned-shipping-chain-01/receipt.json",
+    "sha256": "8262a2b64a0978f57f02f7fbc98d5a2c8d07369f17cbd66d6d80939081d74dd7"
+  },
+  "preservedSeparateWholeNative": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/current-shipping-native-core-package-plan-01/shipping-ui-bindings-04/actual-owned-whole-native-01/independent-component-disposition-01.json",
+    "sha256": "9ffe857e60555745657491af7fcfd5ee2423ea4ac5307a245c4a0f8a9869fcaf"
+  },
+  "actualIntroductionCommit": null,
+  "recordingReadiness": null,
+  "futureSourcePatch": null,
+  "futureResults": null,
+  "waveApproved": false,
+  "releaseApproved": false,
+  "intendedPublicationPath": "artifacts/evidence/W2.shipping-fixture-vault-creation-01.decision-01.json",
+  "recordingSemantics": "Exact creation-only scope selected after genuine different scope review under actual34e. Necessary subsequent conforming implementation/proof and its normal linked task remain required. No earlier approved packet, ACL, failed fixture, result or approval is rewritten."
+}
