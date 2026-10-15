@@ -27,6 +27,9 @@ from research_observatory_core.migrations.versions import (  # noqa: E402
     v0023_attachment_operations,
     v0024_open_access_acquisition,
     v0025_document_intake_recovery,
+    v0026_document_revisions,
+    v0027_revision_invalidations,
+    v0028_document_enrichments,
 )
 
 from tests.database_key_fixtures import InMemoryDatabaseKeyProvider  # noqa: E402
@@ -39,6 +42,9 @@ MIGRATION_IDS = (
     v0023_attachment_operations.revision,
     v0024_open_access_acquisition.revision,
     v0025_document_intake_recovery.revision,
+    v0026_document_revisions.revision,
+    v0027_revision_invalidations.revision,
+    v0028_document_enrichments.revision,
 )
 
 
@@ -113,11 +119,11 @@ class PluginGrantMigrationTests(unittest.TestCase):
             connection.close()
         self.assertNotEqual(b"SQLite format 3\x00", self.database.read_bytes()[:16])
 
-    def _assert_current_v25_history(self) -> None:
+    def _assert_current_v28_history(self) -> None:
         current = storage.open_canonical_database(self.database, expected_project_id=PROJECT_ID)
         try:
-            self.assertEqual(25, current.execute("PRAGMA user_version").fetchone()[0])
-            self.assertEqual(v0025_document_intake_recovery.TARGET_SCHEMA_SHA256, storage._schema_fingerprint(current))
+            self.assertEqual(28, current.execute("PRAGMA user_version").fetchone()[0])
+            self.assertEqual(v0028_document_enrichments.TARGET_SCHEMA_SHA256, storage._schema_fingerprint(current))
             self.assertEqual(storage.EXPECTED_SCHEMA_SHA256, storage._schema_fingerprint(current))
             self.assertEqual(0, current.execute("SELECT count(*) FROM plugin_grant_events").fetchone()[0])
             for table in (*storage.ACQUISITION_TABLES, *storage.DOCUMENT_INTAKE_TABLES):
@@ -159,6 +165,27 @@ class PluginGrantMigrationTests(unittest.TestCase):
                         v0024_open_access_acquisition.TARGET_SCHEMA_SHA256,
                         v0025_document_intake_recovery.TARGET_SCHEMA_SHA256,
                     ),
+                    (
+                        v0026_document_revisions.revision,
+                        25,
+                        26,
+                        v0025_document_intake_recovery.TARGET_SCHEMA_SHA256,
+                        v0026_document_revisions.TARGET_SCHEMA_SHA256,
+                    ),
+                    (
+                        v0027_revision_invalidations.revision,
+                        26,
+                        27,
+                        v0026_document_revisions.TARGET_SCHEMA_SHA256,
+                        v0027_revision_invalidations.TARGET_SCHEMA_SHA256,
+                    ),
+                    (
+                        v0028_document_enrichments.revision,
+                        27,
+                        28,
+                        v0027_revision_invalidations.TARGET_SCHEMA_SHA256,
+                        v0028_document_enrichments.TARGET_SCHEMA_SHA256,
+                    ),
                 ],
                 [
                     tuple(row)
@@ -180,14 +207,14 @@ class PluginGrantMigrationTests(unittest.TestCase):
         self.assertEqual("migrated", result.status)
         self.assertEqual(MIGRATION_IDS, result.migration_ids)
         self.assertEqual("current", migrate_database(self.database, expected_project_id=PROJECT_ID).status)
-        self._assert_current_v25_history()
+        self._assert_current_v28_history()
         assert result.recovery_manifest_relative_path is not None
         manifest_path = self.state.parent / result.recovery_manifest_relative_path
         manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
         backup_path = self.state.parent / manifest["backup"]["relativePath"]
         self.assertEqual(hashlib.sha256(backup_path.read_bytes()).hexdigest(), manifest["backup"]["sha256"])
         self.assertEqual(20, manifest["sourceSchemaVersion"])
-        self.assertEqual(25, manifest["targetSchemaVersion"])
+        self.assertEqual(28, manifest["targetSchemaVersion"])
         self.assertEqual(list(MIGRATION_IDS), manifest["migrationIds"])
 
     def test_each_v21_step_failure_rolls_back_exact_v20_and_retries(self) -> None:
@@ -214,12 +241,12 @@ class PluginGrantMigrationTests(unittest.TestCase):
         result = migrate_database(self.database, expected_project_id=PROJECT_ID)
         self.assertEqual("migrated", result.status)
         self.assertEqual(MIGRATION_IDS, result.migration_ids)
-        self._assert_current_v25_history()
+        self._assert_current_v28_history()
         assert result.recovery_manifest_relative_path is not None
         manifest_path = self.state.parent / result.recovery_manifest_relative_path
         manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
         backup_path = self.state.parent / manifest["backup"]["relativePath"]
         self.assertEqual(hashlib.sha256(backup_path.read_bytes()).hexdigest(), manifest["backup"]["sha256"])
         self.assertEqual(20, manifest["sourceSchemaVersion"])
-        self.assertEqual(25, manifest["targetSchemaVersion"])
+        self.assertEqual(28, manifest["targetSchemaVersion"])
         self.assertEqual(list(MIGRATION_IDS), manifest["migrationIds"])

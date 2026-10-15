@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 703fc202f880876c0621b42b5f2f0a73643c08b06fe452a32775bc0f9845f04e
+source_sha256: 1e192eb39d712c54bd1086e749c55d91627ea654d1330ab56353d8f959b30781
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -5584,6 +5584,33 @@ Original tasks and approvals remain unchanged.
 **Current immutable submission awaiting review:** None
 
 **Current latest-review projection:** `approved` by agent:/root/security_resolution_review at `2026-10-15T02:28:51+00:00`
+
+**Latest notes:** -
+
+**Currently open findings:** -
+
+### W2.C30.T01 — Extract and reconcile reference-list entries
+
+**Status:** `IN_PROGRESS`. **Original task:** `CAP-05.S05.T01`. **Latest review:** `-`.
+
+**Reproduction:** Current tests/connectors/test_plugin_grant_migration.py at SHA25697e1378764e659ffdc1be1a3c7606a61d8539f68930d075411405ea4f1d888db still expects the complete encrypted v20 migration to end at schema25, five ordered migration IDs21-25, v25 fingerprint and two recovery manifests target25. Accepted current storage.DATABASE_SCHEMA_VERSION is28; the approved runner appends0026_document_revisions,0027_revision_invalidations and0028_document_enrichments with current fingerprint3f29b29cface11d5355f704c943459243fc7f9d0baf07725747c73547b1e4cb6. This is a demonstrated source-contract mismatch in the two original unannounced connector-tail bodies, not a newly executed failure or product migration defect. Preserve historical C15/cdf802 target25 source, all original evidence and approvals.
+
+**Inherited criteria:**
+
+- Reference order and raw text are preserved; exact identifiers reconcile automatically; uncertain matches remain candidates with scores and review state.
+- Automated tests cover the expected path and at least one material failure or boundary condition.
+- Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.
+
+**Bounded changed paths:**
+
+- tests/connectors/test_plugin_grant_migration.py
+#### Review history — W2.C30.T01
+
+**Review mode:** `append-only v1` / 0 completed round(s)
+
+**Current immutable submission awaiting review:** None
+
+**Current latest-review projection:** `-` by - at `-`
 
 **Latest notes:** -
 

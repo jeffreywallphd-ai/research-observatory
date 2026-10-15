@@ -5418,6 +5418,53 @@
               "current_submission": null
             }
           }
+        },
+        {
+          "task_id": "W2.C30.T01",
+          "title": "Extract and reconcile reference-list entries",
+          "status": "IN_PROGRESS",
+          "acceptance_criteria": [
+            "Reference order and raw text are preserved; exact identifiers reconcile automatically; uncertain matches remain candidates with scores and review state.",
+            "Automated tests cover the expected path and at least one material failure or boundary condition.",
+            "Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion."
+          ],
+          "correction": {
+            "origin_task_id": "CAP-05.S05.T01",
+            "origin_commit": "5a3d5dbb44786ae643cbd32c95339b16af8e1e72",
+            "paused_state_sha256": "b433937424fdc141ada899cd32acd3858867b5f267614a65cc11678a6b5b5e94",
+            "origin_sha256": "b9957922774b7ae204a72b1d8088a54c7bbeee4b554c18fd774238fd0d3d593e",
+            "origin_contract_sha256": "a3fedd52498f6de2154c7a1a2020868cde933ff167ba2f0c0a2a9c97bc6984db",
+            "origin_history_sha256": "67b9f095c5f726d77c5253406dd029c6d218e8ce1bc8ca9baa2e2cc692e3582b",
+            "origin_amendment_id": null,
+            "authority_sha256": "c92ce7e9bac1b8a49d13d649a5980fea61e56ee953d238c734d8ff5f04f4c9e5",
+            "spec": {
+              "path": "artifacts/evidence/W2.C30.T01.spec.json",
+              "sha256": "c435d3301d4510176702455e4b3d946a9292802d3f52486298eeca5cd57d3f98",
+              "commit": "001abf085f5673e417fb61743490bf815b890dbd"
+            },
+            "reproduction": "Current tests/connectors/test_plugin_grant_migration.py at SHA25697e1378764e659ffdc1be1a3c7606a61d8539f68930d075411405ea4f1d888db still expects the complete encrypted v20 migration to end at schema25, five ordered migration IDs21-25, v25 fingerprint and two recovery manifests target25. Accepted current storage.DATABASE_SCHEMA_VERSION is28; the approved runner appends0026_document_revisions,0027_revision_invalidations and0028_document_enrichments with current fingerprint3f29b29cface11d5355f704c943459243fc7f9d0baf07725747c73547b1e4cb6. This is a demonstrated source-contract mismatch in the two original unannounced connector-tail bodies, not a newly executed failure or product migration defect. Preserve historical C15/cdf802 target25 source, all original evidence and approvals.",
+            "changed_paths": [
+              "tests/connectors/test_plugin_grant_migration.py"
+            ],
+            "impact_analysis": "Restore only the existing SDK encrypted migration test current-target expectations through accepted schema28 under the original CAP-05.S05.T01 fixture/migration compatibility obligation. Append explicit0026/0027/0028 imports, IDs and exact three history tuples after the unchanged first five rows; advance only final PRAGMA/fingerprint/helper name and the two recovery manifest target values25-to28. Keep exact encrypted v20 constructor/source metadata/profile/schema fingerprints, all eight original v21 material-step fault subtests, rollback classification/replan/retry, verified backup hashes and reopen, encrypted-source checks, existing empty grant/acquisition/intake assertions, both original method bodies apart from necessary current-helper/target operands, and all deadlines. No product/schema/runner/permission/security/rights/UX/framework/criterion or predecessor approval change. Run the full affected original two-method class with all unchanged subtests and no skips, one-file Ruff format/lint, and unchanged configured mypy context with an exclusive fresh cache. Obtain independent commit-bound correction/integration disposition before normal integration. Reuse unchanged completed coverage; no full connector prefix/Wave review replay."
+          },
+          "task_review": {
+            "task_id": "W2.C30.T01",
+            "title": "Extract and reconcile reference-list entries",
+            "status": "IN_PROGRESS",
+            "mode": "append-only",
+            "latest_review": {
+              "reviewer": null,
+              "result": null,
+              "reviewed_at": null,
+              "notes": null
+            },
+            "review_control": {
+              "version": 1,
+              "attempts": [],
+              "current_submission": null
+            }
+          }
         }
       ]
     },
