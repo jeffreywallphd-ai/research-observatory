@@ -1,0 +1,16 @@
+{
+  "schemaVersion": "1.0",
+  "kind": "authority-preserving-correction",
+  "origin": {
+    "taskId": "CAP-04.S04.T02",
+    "commit": "963bfb4ab67d8096530fda90b1a53a60440e1e69",
+    "sha256": "278db71aaeb1a96788fbfa50f97ef28e400c246dcdc2a0989a4a1164be536025"
+  },
+  "reproduction": "Actual8 original migration methods fail obsolete current17 or exact migration tuples stopping0017 against validated current28. First17->18 source progression is rights S04T02; literal historical fixtures/authoring remain S03 and unchanged.",
+  "changedPaths": [
+    "tests/reconciliation/test_migration.py",
+    "tests/reconciliation/test_review_migration.py",
+    "tests/reconciliation/test_version_migration.py"
+  ],
+  "impactAnalysis": "Restore CURRENT target to pinned storage.DATABASE_SCHEMA_VERSION28 and complete exact ordered onward migration IDs through0028. Preserve literal v13/v14/v15 DDL/data/fingerprints/rows/backup versions and source hashes, protected current-userDPAPI/SQLCipher/in-memory fixtures as originallyselected, long paths/sharedWAL/read-only/device-prefix/security/rollback/interruption/retry/pending impacts. No generic >=/prefix-only assertion or assertion deletion. Fresh only8 affected methods/newly reached preservation clauses and necessary related denials/quality/configuredtypes under actual source/input holds plus independent migration correction disposition; no rerun205 successful occurrences absent material closure risk."
+}
