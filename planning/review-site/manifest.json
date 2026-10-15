@@ -5688,7 +5688,7 @@
         {
           "task_id": "W2.C32.T01",
           "title": "Implement plugin isolation, configuration, and secret access controls",
-          "status": "IN_PROGRESS",
+          "status": "DONE",
           "acceptance_criteria": [
             "A malicious test connector cannot read unrelated secrets or project files; network and export attempts outside manifest permissions are blocked and audited.",
             "Automated tests cover the expected path and at least one material failure or boundary condition.",
@@ -5717,17 +5717,103 @@
           "task_review": {
             "task_id": "W2.C32.T01",
             "title": "Implement plugin isolation, configuration, and secret access controls",
-            "status": "IN_PROGRESS",
+            "status": "DONE",
             "mode": "append-only",
             "latest_review": {
-              "reviewer": null,
-              "result": null,
-              "reviewed_at": null,
-              "notes": null
+              "reviewer": "agent:/root/storage_profile_review",
+              "result": "approved",
+              "reviewed_at": "2026-10-15T10:49:29+00:00",
+              "notes": ""
             },
             "review_control": {
               "version": 1,
-              "attempts": [],
+              "attempts": [
+                {
+                  "submission": {
+                    "id": "R01",
+                    "submitted_by": "agent:/root",
+                    "submitted_at": "2026-10-15T10:27:57+00:00",
+                    "candidate_commit": "817c745e9c81a74939c7abdebbf01309039f0194",
+                    "base_commit": "a976eb1b7c2f4ef3e1c6c73d3f1f13a768dc0160",
+                    "branch": "codex/w2-implementation",
+                    "evidence_reference": {
+                      "type": "criterion-manifest",
+                      "path": "artifacts/evidence/W2.C32.T01.R01.json",
+                      "sha256": "c199b6d8eedffca4a5b9661d0ad281e9e1269e49177c3a831fc0322bcaae3229",
+                      "commit": "817c745e9c81a74939c7abdebbf01309039f0194",
+                      "recorded_at": "2026-10-15T10:27:57+00:00"
+                    },
+                    "acceptance_criteria_sha256": "831c2a4cc6c6cf0bd8ca53f4c85cce254f359e6c80f198692babeaf6a7f96dd5",
+                    "changed_paths": [
+                      "artifacts/evidence/W2.C32.T01.execution-segment-rebind-01.json",
+                      "artifacts/evidence/W2.C32.T01.execution-segment-rebind-readiness-01.json",
+                      "docs/planning-implementation-plan.md",
+                      "planning/backlog.yaml",
+                      "planning/review-site/manifest.json",
+                      "planning/status-summary.md",
+                      "tests/connectors/test_plugin_lpac_boundary.py"
+                    ],
+                    "selected_checks": [
+                      ".venv/Scripts/python.exe -B -s -m ruff format --check --config pyproject.toml -- tests/connectors/test_plugin_lpac_boundary.py",
+                      ".venv/Scripts/python.exe -B -s -m ruff check --config pyproject.toml -- tests/connectors/test_plugin_lpac_boundary.py",
+                      ".venv/Scripts/python.exe -B -s -m mypy --config-file pyproject.toml --no-namespace-packages -- @artifacts/tmp/W2.remaining-corrections-batch-01/quality-transport-07/complete-files.args",
+                      ".venv/Scripts/python.exe -B -s -m unittest -v tests.connectors.test_plugin_lpac_boundary"
+                    ],
+                    "deferred_checks": [
+                      "Remaining original connector tail has its own actual selection and current-input continuity.",
+                      "Current14, protected/storage/import performance, anchors, shipping/security and finalS06/Wave/release remain separate."
+                    ],
+                    "selection_rationale": "Affected fullLPAC16 module because prior15 native owned lifetimes failed normal cleanup; revised public1s/prepared1s and unchanged memory/security/guardian/protocol methods, one-file Ruff and governed734-context typing. No HTTP/177prefix/fullprofile replay. Actual fresh four-check candidate is db1; later delivery changes only the independently reviewed exact two open-task binding fields, task-scoped provenance and derived navigation. Exact28 consumed source/runtime/artifact trees, retained individual input bytes, actual environment and43 configuration absences are freshly authenticated by 2c576. The specific native/principal metadata-only projection is authorized by actual prospective34e and independentfc960, not the generic reuse pilot. No product check is rerun solely for inert metadata.",
+                    "selection_sha256": "95a24ba0bbab801d99fbd4891efff8e83904b7d713731a9648a2ec2db41eea28",
+                    "prior_attempt_id": null,
+                    "open_finding_ids": [],
+                    "root_cause_analysis": null,
+                    "selected_command_ids": [
+                      "security-local:unit",
+                      "foundation:quality"
+                    ],
+                    "packet_sha256": "56a17bb2eff04176571f10df19e03e4a2d3fab57167152a8c8e37ecf8c29aaaa"
+                  },
+                  "review": {
+                    "reviewer": "agent:/root/storage_profile_review",
+                    "result": "approved",
+                    "reviewed_at": "2026-10-15T10:49:29+00:00",
+                    "notes": ""
+                  },
+                  "ledger": {
+                    "path": "artifacts/evidence/W2.C32.T01.review-R01.json",
+                    "sha256": "11c8128d50bcb4b16f92b86bbc5cd490f32ad05a98329d3d1e3567ede27c739a"
+                  },
+                  "findings": [],
+                  "closures": [],
+                  "telemetry": {
+                    "task_id": "W2.C32.T01",
+                    "amendment_id": null,
+                    "attempt_id": "R01",
+                    "submitted_at": "2026-10-15T10:27:57+00:00",
+                    "reviewed_at": "2026-10-15T10:49:29+00:00",
+                    "duration_seconds": 1292,
+                    "outcome": "approved",
+                    "finding_counts": {
+                      "critical": 0,
+                      "high": 0,
+                      "medium": 0,
+                      "low": 0,
+                      "blocking": 0,
+                      "total": 0
+                    },
+                    "command_ids": [
+                      "security-local:unit",
+                      "foundation:quality"
+                    ],
+                    "remediation": {
+                      "prior_attempt_id": null,
+                      "replayed_finding_ids": [],
+                      "closed_finding_ids": []
+                    }
+                  }
+                }
+              ],
               "current_submission": null
             }
           }

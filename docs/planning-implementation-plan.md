@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 8e9c9e28f85492dac97851eed86f64198697184e18d23d2bcabc119b889f8952
+source_sha256: 859de819240f2fe0d418f9d26eee8c4559815bd7e265d3472c2e05f111758dd1
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -5705,7 +5705,7 @@ Original tasks and approvals remain unchanged.
 
 ### W2.C32.T01 — Implement plugin isolation, configuration, and secret access controls
 
-**Status:** `REVIEW`. **Original task:** `CAP-04.S05.T02`. **Latest review:** `-`.
+**Status:** `DONE`. **Original task:** `CAP-04.S05.T02`. **Latest review:** `approved`.
 
 **Reproduction:** At clean candidate 8392e43397e9aa28301cdf5689d653389fc1c561 the unchanged original signed-worker one-second method fails its mandatory broker-before-timeout assumption. Retained actual LPAC aggregate receipt20f242f3654da413f2e4efcbff4e9571cd2767c235cc1aa3a049649761128d46 and rawb9a7cc6b9a1fb42529336c6e13d2dd5560e5ba0378645938edc3c1e0f4b4e1d1 preserve that FAIL and abnormal owned cleanup. Bounded observation-only diagnostic artifacts/tmp/W2.lpac-one-second-diagnostic-01.f01/receipt.json SHA256a1d90a16594dcf75fb0d594aa9b05ffb3511e339987d153452a4a2a16e52ca42 observes exact lpac-worker-timeout after3.1842202s, no broker or worker handles, one guardian exit0 and exact resources removed, normal owned EMPTY0 and unchanged source/control inputs. It is nonqualifying and does not prove running-loop termination. The production total clock correctly includes trusted verification/copy/seal/ACL preparation; reaching malicious code before one second is not guaranteed. Original sourcec1634f6cd3b8cdfae7ab3c0e8120e8f9c18c1bb005cc66a8fc582bc409967198 is byte-identical to approved5a76725c.
 
@@ -5720,9 +5720,11 @@ Original tasks and approvals remain unchanged.
 - tests/connectors/test_plugin_lpac_boundary.py
 #### Review history — W2.C32.T01
 
-**Review mode:** `append-only v1` / 0 completed round(s)
+**Review mode:** `append-only v1` / 1 completed round(s)
 
-**Current immutable submission awaiting review:** `R01` / packet SHA-256 `56a17bb2eff04176571f10df19e03e4a2d3fab57167152a8c8e37ecf8c29aaaa`
+##### Round R01
+
+**Immutable submission packet:** `R01` / packet SHA-256 `56a17bb2eff04176571f10df19e03e4a2d3fab57167152a8c8e37ecf8c29aaaa`
 
 - Candidate / base / branch: `817c745e9c81a74939c7abdebbf01309039f0194` / `a976eb1b7c2f4ef3e1c6c73d3f1f13a768dc0160` / `codex/w2-implementation`
 - Submitted by / at: agent:/root / `2026-10-15T10:27:57+00:00`
@@ -5736,7 +5738,23 @@ Original tasks and approvals remain unchanged.
 - Prior round / replayed open findings: `-` / -
 - Root-cause escalation: -
 
-**Current latest-review projection:** `-` by - at `-`
+**Disposition / reviewer / time:** `approved` / agent:/root/storage_profile_review / `2026-10-15T10:49:29+00:00`
+
+**Immutable review ledger:** `artifacts/evidence/W2.C32.T01.review-R01.json` / `11c8128d50bcb4b16f92b86bbc5cd490f32ad05a98329d3d1e3567ede27c739a`
+
+**Review notes:** -
+
+**Findings opened:**
+
+- None
+
+**Prior finding closures:**
+
+- None
+
+**Current immutable submission awaiting review:** None
+
+**Current latest-review projection:** `approved` by agent:/root/storage_profile_review at `2026-10-15T10:49:29+00:00`
 
 **Latest notes:** -
 

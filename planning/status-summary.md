@@ -1,7 +1,7 @@
 ---
 document_type: generated-backlog-status-summary
 source: planning/backlog.yaml
-source_sha256: 8e9c9e28f85492dac97851eed86f64198697184e18d23d2bcabc119b889f8952
+source_sha256: 859de819240f2fe0d418f9d26eee8c4559815bd7e265d3472c2e05f111758dd1
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -993,14 +993,14 @@ Append-only rounds remain distinct from the current latest-review projection. Le
 | `W2.C29.T01` | `append-only v1` | 1 | `-` | approved / agent:/root/security_resolution_review | - |
 | `W2.C30.T01` | `append-only v1` | 1 | `-` | approved / agent:/root/security_resolution_review | - |
 | `W2.C31.T01` | `append-only v1` | 1 | `-` | approved / agent:/root/security_resolution_review | - |
-| `W2.C32.T01` | `append-only v1` | 0 | `R01` | - / - | - |
+| `W2.C32.T01` | `append-only v1` | 1 | `-` | approved / agent:/root/storage_profile_review | - |
 ## Wave progress
 
 | Wave | Pre-Wave approval | Campaign | Qualification | Approved slices | Done tasks | Exit gate |
 |---|---|---|---|---:|---:|---|
 | `W0` - Engineering foundation | `APPROVED` | `NONE` | `APPROVED` — Historical W0 qualification predates the Wave-campaign controller. | 6/6 | 19/19 | `G0` / `APPROVED` |
 | `W1` - Windows local runtime and durable core | `APPROVED` | `COMPLETE` | `APPROVED` — OWNER-ACCEPTED CORE COMPLETE: explicit 2026-09-13 owner approval closes W1 prototype core with retained qualification gaps, not a full-suite PASS. Reasonable test and UX-control repairs continue between Waves. G1 and W2 activation remain separate; see artifacts/evidence/W1.owner-core-acceptance-01.md. | 15/15 | 53/53 | `G1` / `APPROVED` |
-| `W2` - Windows local evidence foundation | `APPROVED` | `PAUSED` | `PAUSED` | 10/11 | 64/65 | `G2` / `PENDING` |
+| `W2` - Windows local evidence foundation | `APPROVED` | `PAUSED` | `PAUSED` | 10/11 | 65/65 | `G2` / `PENDING` |
 | `W3` - Windows local research workbench | `PENDING` | `NONE` | `PENDING` | 0/16 | 0/48 | `G3` / `PENDING` |
 | `W4` - Windows scholarly reasoning and novelty MVP | `PENDING` | `NONE` | `PENDING` | 0/9 | 0/27 | `G4` / `PENDING` |
 | `W5` - Windows PC/lab production release | `PENDING` | `NONE` | `PENDING` | 0/8 | 0/25 | `G5` / `PENDING` |
@@ -1055,9 +1055,7 @@ Append-only rounds remain distinct from the current latest-review projection. Le
 
 ## Active work
 
-| Task | Status | Owner | Branch |
-|---|---|---|---|
-| `W2.C32.T01` Implement plugin isolation, configuration, and secret access controls | `REVIEW` | agent:/root | `codex/w2-implementation` |
+No task is currently active.
 
 ## Linked corrective tasks
 
@@ -1209,5 +1207,5 @@ Original tasks and approvals remain unchanged.
 
 ### W2.C32.T01 — Implement plugin isolation, configuration, and secret access controls
 
-**Status:** `REVIEW`. **Original task:** `CAP-04.S05.T02`. **Latest review:** `-`.
+**Status:** `DONE`. **Original task:** `CAP-04.S05.T02`. **Latest review:** `approved`.
 
