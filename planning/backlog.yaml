@@ -6752,6 +6752,82 @@ waves:
           task history or old result is changed. Native cleanup remains an independent unresolved finding until actual proof
           closes it. Local-main integration remains pending the dependency candidate's fresh affected packaging and security
           prerequisites.
+    - title: Implement rights, license, entitlement, and permitted-use metadata
+      objective: Rights vocabulary and policies for metadata, full text, derived text, embeddings, model egress, collaboration,
+        and export.
+      dependencies:
+      - CAP-04.S04.T01
+      acceptance_criteria:
+      - Unknown rights default to restrictive behavior; policy decisions are source-specific and inspectable; changing rights
+        marks affected operations for re-evaluation.
+      - Automated tests cover the expected path and at least one material failure or boundary condition.
+      - Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.
+      verification_commands:
+      - python tools/verify.py --profile service
+      - python tools/verify.py --profile security-local
+      deployment_profiles:
+      - LOC
+      - LAB
+      - ALL
+      platform_targets:
+      - windows-x64
+      verification_profiles:
+      - service
+      - security-local
+      id: W2.C28.T01
+      wave: W2
+      priority: P0
+      status: IN_PROGRESS
+      owner: codex-w2-implementation
+      branch: codex/w2-implementation
+      base_sha: 460a1f5320fcb879c8ffa4acd8d915facc132a94
+      worktree: .
+      lease:
+        claimed_by: codex-w2-implementation
+        claimed_at: '2026-10-15T00:36:18+00:00'
+        expires_at: '2026-10-15T08:36:18+00:00'
+      started_at: '2026-10-15T00:36:18+00:00'
+      updated_at: '2026-10-15T00:36:18+00:00'
+      completed_at: null
+      blocker: null
+      implementation_notes: ''
+      evidence: []
+      verification_state: null
+      review:
+        reviewer: null
+        result: null
+        reviewed_at: null
+        notes: null
+      review_control:
+        version: 1
+        attempts: []
+        current_submission: null
+      correction:
+        origin_task_id: CAP-04.S04.T02
+        origin_commit: 963bfb4ab67d8096530fda90b1a53a60440e1e69
+        paused_state_sha256: b433937424fdc141ada899cd32acd3858867b5f267614a65cc11678a6b5b5e94
+        origin_sha256: 278db71aaeb1a96788fbfa50f97ef28e400c246dcdc2a0989a4a1164be536025
+        origin_contract_sha256: d59067e93ed17343abf3beed9d3754c99d6c741fa3b32a0ed8a9f808c65ac17f
+        origin_history_sha256: 947aa23acb09da8163539fa8e4a7516358b4e66ebcc365a29a192e23c9ccf778
+        origin_amendment_id: null
+        authority_sha256: c92ce7e9bac1b8a49d13d649a5980fea61e56ee953d238c734d8ff5f04f4c9e5
+        spec:
+          path: artifacts/evidence/W2.C28.T01.spec.json
+          sha256: cba8444a26c0aaf7a8ce41d78440b80e164b2a97fbcc17fc0ea9c519e08a8f73
+          commit: 460a1f5320fcb879c8ffa4acd8d915facc132a94
+        reproduction: Actual8 original migration methods fail obsolete current17 or exact migration tuples stopping0017 against
+          validated current28. First17->18 source progression is rights S04T02; literal historical fixtures/authoring remain
+          S03 and unchanged.
+        changed_paths:
+        - tests/reconciliation/test_migration.py
+        - tests/reconciliation/test_review_migration.py
+        - tests/reconciliation/test_version_migration.py
+        impact_analysis: Restore CURRENT target to pinned storage.DATABASE_SCHEMA_VERSION28 and complete exact ordered onward
+          migration IDs through0028. Preserve literal v13/v14/v15 DDL/data/fingerprints/rows/backup versions and source hashes,
+          protected current-userDPAPI/SQLCipher/in-memory fixtures as originallyselected, long paths/sharedWAL/read-only/device-prefix/security/rollback/interruption/retry/pending
+          impacts. No generic >=/prefix-only assertion or assertion deletion. Fresh only8 affected methods/newly reached preservation
+          clauses and necessary related denials/quality/configuredtypes under actual source/input holds plus independent migration
+          correction disposition; no rerun205 successful occurrences absent material closure risk.
     resume_records:
     - id: W2.R01
       wave_id: W2

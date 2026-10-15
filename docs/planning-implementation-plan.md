@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: c3cf34fddbfa725664266dae9c97c847f83df77ccde8ee4fefc60654d4b66280
+source_sha256: 941f1cb133d8c26b033d65831cc2204305971f53223bb4f77bd077aae05ac3e9
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -5468,6 +5468,35 @@ Original tasks and approvals remain unchanged.
 **Current immutable submission awaiting review:** None
 
 **Current latest-review projection:** `approved` by agent:/root/security_resolution_review at `2026-10-15T00:15:55+00:00`
+
+**Latest notes:** -
+
+**Currently open findings:** -
+
+### W2.C28.T01 — Implement rights, license, entitlement, and permitted-use metadata
+
+**Status:** `IN_PROGRESS`. **Original task:** `CAP-04.S04.T02`. **Latest review:** `-`.
+
+**Reproduction:** Actual8 original migration methods fail obsolete current17 or exact migration tuples stopping0017 against validated current28. First17->18 source progression is rights S04T02; literal historical fixtures/authoring remain S03 and unchanged.
+
+**Inherited criteria:**
+
+- Unknown rights default to restrictive behavior; policy decisions are source-specific and inspectable; changing rights marks affected operations for re-evaluation.
+- Automated tests cover the expected path and at least one material failure or boundary condition.
+- Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.
+
+**Bounded changed paths:**
+
+- tests/reconciliation/test_migration.py
+- tests/reconciliation/test_review_migration.py
+- tests/reconciliation/test_version_migration.py
+#### Review history — W2.C28.T01
+
+**Review mode:** `append-only v1` / 0 completed round(s)
+
+**Current immutable submission awaiting review:** None
+
+**Current latest-review projection:** `-` by - at `-`
 
 **Latest notes:** -
 
