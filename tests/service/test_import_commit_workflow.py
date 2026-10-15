@@ -163,9 +163,7 @@ class ProtectedProfileQueueLineageTests(unittest.TestCase):
         shared_mapping = None
         source_ids = None
 
-        def run_job(
-            kind: str, inputs: PreviewJobInput | PreviewDelimitedJobInput | SummaryJobInput | CommitJobInput
-        ):
+        def run_job(kind: str, inputs: PreviewJobInput | PreviewDelimitedJobInput | SummaryJobInput | CommitJobInput):
             # Reconstruct the durable queue/admission before every activity, as
             # on an ordinary reader reload. Project/Intent/policy guard is an
             # explicit synthetic data-fixture boundary, not principal evidence.
@@ -187,6 +185,7 @@ class ProtectedProfileQueueLineageTests(unittest.TestCase):
                 if isinstance(selected, CommitJobInput):
                     return bind_commit_claim(authority, claim, selected)
                 return bind_preview_claim(authority, claim, selected)
+
             job = queue.enqueue(submission, actor=data_fixture.worker_fixture.SYSTEM)
             self.assertEqual("runnable", job.state)
             demand = WorkerResources(1, 64 * 1024**2, 0, 1024**2)

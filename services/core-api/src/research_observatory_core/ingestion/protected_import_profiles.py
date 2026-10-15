@@ -15,9 +15,9 @@ type ParserProfile = Literal["legacy-preview-120s-v1", "protected-preview-900s-v
 LEGACY_PROFILE: Literal["legacy-preview-120s-v1"] = "legacy-preview-120s-v1"
 PROTECTED_PROFILE: Literal["protected-preview-900s-v1"] = "protected-preview-900s-v1"
 LEGACY_LIMITS_HASH = "sha256:3c90557e7cd47abf3454450b22673a9de3b250cde501372b515e1c50c03b524f"
-PROTECTED_LIMITS_HASH: Literal[
+PROTECTED_LIMITS_HASH: Literal["sha256:eee2a0c5d0b4c8a2ea8b13d393819f4807aa51f2b4ad95cc78168654dd122495"] = (
     "sha256:eee2a0c5d0b4c8a2ea8b13d393819f4807aa51f2b4ad95cc78168654dd122495"
-] = "sha256:eee2a0c5d0b4c8a2ea8b13d393819f4807aa51f2b4ad95cc78168654dd122495"
+)
 
 
 def profile_limits(profile: ParserProfile) -> ImportLimits:
