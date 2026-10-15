@@ -1,0 +1,41 @@
+{
+  "documentType": "actual-one-use-lifecycle05-owner-field-recording-correction",
+  "status": "APPROVED_AND_APPLIED_PENDING_ACTUAL_COMMIT",
+  "recordedBy": "agent:/root",
+  "recordedAt": "2026-10-15T09:36:18.321242+00:00",
+  "approvedBy": "human:repository-owner",
+  "approvalBasis": {
+    "path": "artifacts/evidence/W2.completion-preauthorization-20261014-01.md",
+    "sha256": "34e2e3c175dc9309080182e0673f776055b1cc3ba78639475c09ec54408d7d5f",
+    "meaning": "Actual prospective necessary W2-completion authority applied after concrete different delta review; no later owner inspection or earlier exact-packet approval invented."
+  },
+  "proposal": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/lifecycle05-owner-field-recording-repair-01/proposal-01.json",
+    "sha256": "4d4f8a7f0b466fbe8e55bee7b1141bc95df6ae668fe4b5849e371515d65274ca"
+  },
+  "independentDeltaReadiness": {
+    "path": "artifacts/evidence/W2.protected-lifecycle-current-calibration-05.recording-correction-readiness-01.json",
+    "sha256": "4410fabc70133372a1f0c9ad3cfa1d4305ed8fcd57f5d241921662152ba088a8"
+  },
+  "original": {
+    "path": "artifacts/evidence/W2.protected-lifecycle-current-calibration-05.decision-01.json",
+    "sha256": "56eb49fbed575ee20daf37932ae87adb054dbebbb22aaf187d69cd38873e0b7d",
+    "introductionCommit": "79590d7f071a179d2596caad5d8240d0ab67ba79",
+    "preservedLocalPath": "artifacts/tmp/W2.remaining-corrections-batch-01/lifecycle05-owner-field-recording-repair-01/original-decision-05.json",
+    "gitHistoryPreserved": true
+  },
+  "corrected": {
+    "path": "artifacts/evidence/W2.protected-lifecycle-current-calibration-05.decision-01.json",
+    "sha256": "d5cd114d979500051fea2d11b56044a19ef32f1fb037c2c324447d034c531fee"
+  },
+  "exactDelta": "Add only approvedBy=human:repository-owner. Removal exactly recreates original56eb bytes. Existing actualstatusAPPROVED/prospectiveApprovedBy/owner34e attribution and allother values/source references/criteria remain unchanged.",
+  "oneUseRecordingExceptionApplied": true,
+  "failedSetupPreserved": "Original3994 runner denied missing approvalkey at cleanbe1f5c9 beforeCONTROLdirectory creation; zero new observations. Originaltooloutput and exactcause retained locally/in conversation. No precheck or original result is relabeled PASS.",
+  "sharedFrameworkOrProductSourceChanged": false,
+  "newSamples": 0,
+  "allOriginalCanonicalFailuresPreserved": true,
+  "futureQualificationRequired": true,
+  "actualIntroductionCommit": null,
+  "waveApproved": false,
+  "releaseApproved": false
+}
