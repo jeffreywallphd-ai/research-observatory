@@ -1,0 +1,206 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "W2.C30.T01",
+  "baseCommit": "001abf085f5673e417fb61743490bf815b890dbd",
+  "commit": "af3250cec072ced8ddf8eb08af38ec4ce6abc06f",
+  "branch": "codex/w2-implementation",
+  "changedFiles": [
+    "docs/planning-implementation-plan.md",
+    "planning/backlog.yaml",
+    "planning/review-site/index.html",
+    "planning/review-site/manifest.json",
+    "planning/review-site/waves/W2.html",
+    "planning/status-summary.md",
+    "tests/connectors/test_plugin_grant_migration.py"
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "checkIds": [
+        "migration-boundaries"
+      ],
+      "evidence": [
+        "Reference extraction, raw order, exact identifier matching and uncertain-candidate product implementation are unchanged. Original independently approved CAP-05.S05.T01 R01 at b3eade remains historical outcome evidence; no reference-extraction run is falsely claimed fresh. The current test-only delta restores its additive schema28 migration fixture obligation without changing any product code."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "checkIds": [
+        "migration-boundaries"
+      ],
+      "evidence": [
+        "Both original encrypted populated v20 migration methods pass with no skips. Every original v21 failure-injection step, exact predecessor rollback, retry, verified encrypted backup, complete retained prior rows and current reopen/foreign-key/idempotency checks remain. Synthetic in-memory key provider plus real SQLCipher is not represented as Windows DPAPI or Native proof."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "checkIds": [
+        "migration-boundaries",
+        "affected-format",
+        "affected-lint",
+        "affected-configured-types"
+      ],
+      "evidence": [
+        "Current25 expectations advance to the accepted current28 chain/fingerprint/target manifests, appending exact26/27/28 history tuples. The frozen v20 constructor restores exactly one preserved pre-v27 impact table statement with a count1 guard. The immutable c6bd predecessor fingerprint, firstfive history tuples, all32 original assertions and eight fault steps stay intact. One-file Ruff format/lint and governed734-source configured typing pass with exclusive fresh caches and actual held source/runtime stability through normal owned drain. No product, schema, migration algorithm, security, UX, framework or criterion change."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "checks": [
+    {
+      "id": "migration-boundaries",
+      "command": ".venv/Scripts/python.exe -B -s -m unittest -v tests.connectors.test_plugin_grant_migration.PluginGrantMigrationTests.test_exact_encrypted_v20_migrates_with_verified_backup_and_reopens tests.connectors.test_plugin_grant_migration.PluginGrantMigrationTests.test_each_v21_step_failure_rolls_back_exact_v20_and_retries",
+      "commandSemantics": "DISPLAY repository-relative executable and paths; exact invocation is retained in ignored actual receipt.",
+      "result": "passed",
+      "exitCode": 0,
+      "commit": "af3250cec072ced8ddf8eb08af38ec4ce6abc06f",
+      "coverage": "fresh-current-candidate",
+      "seconds": 3.9058502999978373,
+      "raw": {
+        "path": "artifacts/tmp/W2.C30.T01.focused-proof-02/migration-boundaries.raw.log",
+        "sha256": "f22f3ea8b430c321e1a77a5b99f92d20e3fba13f395a9f99524025ebf3ff0502"
+      },
+      "ownedJob": {
+        "drained": true,
+        "activeProcesses": 0,
+        "cleanupState": "EMPTY_CONFIRMED"
+      },
+      "testsRun": 2,
+      "failures": 0,
+      "errors": 0,
+      "skips": 0
+    },
+    {
+      "id": "affected-format",
+      "command": ".venv/Scripts/python.exe -B -s -m ruff format --check --config pyproject.toml -- tests/connectors/test_plugin_grant_migration.py",
+      "commandSemantics": "DISPLAY repository-relative executable and paths; exact invocation is retained in ignored actual receipt.",
+      "result": "passed",
+      "exitCode": 0,
+      "commit": "af3250cec072ced8ddf8eb08af38ec4ce6abc06f",
+      "coverage": "fresh-current-candidate",
+      "seconds": 0.237475900008576,
+      "raw": {
+        "path": "artifacts/tmp/W2.C30.T01.focused-proof-02/affected-format.raw.log",
+        "sha256": "fd2299c9f1c6dc869070883e281051bfe93aacf66c1a3b0069f45b4aa410ca50"
+      },
+      "ownedJob": {
+        "drained": true,
+        "activeProcesses": 0,
+        "cleanupState": "EMPTY_CONFIRMED"
+      }
+    },
+    {
+      "id": "affected-lint",
+      "command": ".venv/Scripts/python.exe -B -s -m ruff check --config pyproject.toml -- tests/connectors/test_plugin_grant_migration.py",
+      "commandSemantics": "DISPLAY repository-relative executable and paths; exact invocation is retained in ignored actual receipt.",
+      "result": "passed",
+      "exitCode": 0,
+      "commit": "af3250cec072ced8ddf8eb08af38ec4ce6abc06f",
+      "coverage": "fresh-current-candidate",
+      "seconds": 0.219910500003607,
+      "raw": {
+        "path": "artifacts/tmp/W2.C30.T01.focused-proof-02/affected-lint.raw.log",
+        "sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18"
+      },
+      "ownedJob": {
+        "drained": true,
+        "activeProcesses": 0,
+        "cleanupState": "EMPTY_CONFIRMED"
+      }
+    },
+    {
+      "id": "affected-configured-types",
+      "command": ".venv/Scripts/python.exe -B -s -m mypy --config-file pyproject.toml --no-namespace-packages -- @artifacts/tmp/W2.remaining-corrections-batch-01/quality-transport-07/complete-files.args",
+      "commandSemantics": "DISPLAY repository-relative executable and paths; exact invocation is retained in ignored actual receipt.",
+      "result": "passed",
+      "exitCode": 0,
+      "commit": "af3250cec072ced8ddf8eb08af38ec4ce6abc06f",
+      "coverage": "fresh-current-candidate",
+      "seconds": 19.109193099997356,
+      "raw": {
+        "path": "artifacts/tmp/W2.C30.T01.focused-proof-02/affected-configured-types.raw.log",
+        "sha256": "c642e5b33b5e7d157e7b2362ef94a292d50ab8abbba717375ca1704ad53de820"
+      },
+      "ownedJob": {
+        "drained": true,
+        "activeProcesses": 0,
+        "cleanupState": "EMPTY_CONFIRMED"
+      }
+    }
+  ],
+  "executionReceipts": [
+    {
+      "path": "artifacts/tmp/W2.C30.T01.focused-proof-02/receipt.json",
+      "sha256": "d46c7ca713867705352c87593242329fccf5e6431088ed01a2c866392c007468"
+    }
+  ],
+  "executionProducers": [
+    {
+      "path": "artifacts/tmp/W2.C30.T01.focused-proof-02.py",
+      "sha256": "bcecc0b64911357315960a0be2ce04c362ce002d4a837f93dcb0647f0281c747"
+    }
+  ],
+  "sourceApplication": {
+    "path": "artifacts/tmp/W2.C30.T01.delivery-01/actual-source-application-03.json",
+    "sha256": "a44dce18ca90d19564055a91500d1a6de7566ce773efccdc1701eddc2cd2b593"
+  },
+  "priorAdverseEvidence": [
+    {
+      "path": "artifacts/tmp/W2.C30.T01.focused-proof-01/receipt.json",
+      "sha256": "901545fbdb23274149a1a632162b9702e2407535ae729c9c1bc03e63862e8c93"
+    },
+    {
+      "path": "artifacts/tmp/W2.C30.T01.focused-proof-01/migration-boundaries.raw.log",
+      "sha256": "4f375f1088ea2d23fb058d57839dce9d65ff5ee55e815957577e42883cb5cd1d"
+    }
+  ],
+  "sourceReadiness": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/W2.C30.T01.exact-v20-fixture-02/independent-source-readiness-02.json",
+    "sha256": "ce5846b890d18e0acbcc0c8cea40590b83723fd7855c4c7df10efa321eaf37fb"
+  },
+  "proofSourceReadiness": {
+    "path": "artifacts/tmp/W2.C30.T01.focused-proof-02.source-readiness-01.json",
+    "sha256": "e180b807b5d00dcef8b211e13dc24f5db478892bb0dc38ed22325d5812512e18"
+  },
+  "runtimeInputCaptureSHA256": "456482ea03c3545a03c63e36e5f0bb098c7e20c95e2d2f5efa2f52381b2d4188",
+  "actualInputClosure": "Actual current committed source and consumed Python/base/Git runtime/config/environment/absence inputs are held and rechecked through normal owned drain. Detailed local maps remain ignored; fresh empty test bytecode prefix and exclusive fresh typing cache avoid stale cache inputs.",
+  "reproduction": "Actual first focused proof at31b375 failed both methods before migration because the frozen v20 fixture inherited the current v27 impact-table replacement. The original two setupFAILs and normal cleanup/stability are preserved. Constructor-only exact literal restoration retains c6bd; current28 target assertions also restored. No product source changed.",
+  "verificationSelection": {
+    "selectedCommandIds": [
+      "search:connectors",
+      "foundation:quality"
+    ],
+    "riskAnalysis": "Exactly the two affected original grant migration methods and unchanged eight v21 fault-step subtests, one-file Ruff and governed734-source configured typing. No unrelated profile replay; broad source context is required by the existing ordinary-import typing configuration.",
+    "deferred": [
+      "Unchanged reference/parser/UX product evidence remains historical; this test-only restoration does not rerun or newly qualify those boundaries.",
+      "Current14, protected/storage/import performance, security leaf, C31 Graph test seam restoration, remaining connector coverage, anchors, shipping/package/security and S06/Wave/G2 remain separate. No8/16GiB model workload or full exit re-audit."
+    ]
+  },
+  "correctiveIntegration": {
+    "originSha256": "b9957922774b7ae204a72b1d8088a54c7bbeee4b554c18fd774238fd0d3d593e",
+    "authorityPreserved": true,
+    "affectedChecks": [
+      ".venv/Scripts/python.exe -B -s -m unittest -v tests.connectors.test_plugin_grant_migration.PluginGrantMigrationTests.test_exact_encrypted_v20_migrates_with_verified_backup_and_reopens tests.connectors.test_plugin_grant_migration.PluginGrantMigrationTests.test_each_v21_step_failure_rolls_back_exact_v20_and_retries",
+      ".venv/Scripts/python.exe -B -s -m ruff format --check --config pyproject.toml -- tests/connectors/test_plugin_grant_migration.py",
+      ".venv/Scripts/python.exe -B -s -m ruff check --config pyproject.toml -- tests/connectors/test_plugin_grant_migration.py",
+      ".venv/Scripts/python.exe -B -s -m mypy --config-file pyproject.toml --no-namespace-packages -- @artifacts/tmp/W2.remaining-corrections-batch-01/quality-transport-07/complete-files.args"
+    ],
+    "reusedEvidence": [
+      {
+        "path": "artifacts/evidence/CAP-05.S05.T01.R01.json",
+        "sha256": "47f60ad734c856849fa44fbf793cb08da20cc9c973ddc8f75ad889f93d583515",
+        "byteScope": "original-committed-Git-blob",
+        "commit": "af3250cec072ced8ddf8eb08af38ec4ce6abc06f"
+      }
+    ],
+    "rationale": "Original approved CAP-05.S05.T01 schema28 implementation and outcome remain immutable; exact current-chain fixture expectations are restored. All selected original migration and quality checks pass at the declared candidate, preserving predecessor/encryption/backup/rollback authority. Normal independent frozen disposition remains required. No product/framework/criteria/release change."
+  },
+  "correctionSpecification": {
+    "path": "artifacts/evidence/W2.C30.T01.spec.json",
+    "sha256": "c435d3301d4510176702455e4b3d946a9292802d3f52486298eeca5cd57d3f98"
+  },
+  "fullProfilePassClaimed": false,
+  "waveComplete": false,
+  "releaseApproved": false
+}

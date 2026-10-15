@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 1e192eb39d712c54bd1086e749c55d91627ea654d1330ab56353d8f959b30781
+source_sha256: f23f433c0475253147bda8257e1be4a53ae497a75955dadca9747aa2c90d3f17
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -5591,7 +5591,7 @@ Original tasks and approvals remain unchanged.
 
 ### W2.C30.T01 — Extract and reconcile reference-list entries
 
-**Status:** `IN_PROGRESS`. **Original task:** `CAP-05.S05.T01`. **Latest review:** `-`.
+**Status:** `REVIEW`. **Original task:** `CAP-05.S05.T01`. **Latest review:** `-`.
 
 **Reproduction:** Current tests/connectors/test_plugin_grant_migration.py at SHA25697e1378764e659ffdc1be1a3c7606a61d8539f68930d075411405ea4f1d888db still expects the complete encrypted v20 migration to end at schema25, five ordered migration IDs21-25, v25 fingerprint and two recovery manifests target25. Accepted current storage.DATABASE_SCHEMA_VERSION is28; the approved runner appends0026_document_revisions,0027_revision_invalidations and0028_document_enrichments with current fingerprint3f29b29cface11d5355f704c943459243fc7f9d0baf07725747c73547b1e4cb6. This is a demonstrated source-contract mismatch in the two original unannounced connector-tail bodies, not a newly executed failure or product migration defect. Preserve historical C15/cdf802 target25 source, all original evidence and approvals.
 
@@ -5608,7 +5608,19 @@ Original tasks and approvals remain unchanged.
 
 **Review mode:** `append-only v1` / 0 completed round(s)
 
-**Current immutable submission awaiting review:** None
+**Current immutable submission awaiting review:** `R01` / packet SHA-256 `0cf0b455024759565f79dc6402e72a91f33ca195c76a2952e5dd749bc87bde33`
+
+- Candidate / base / branch: `af3250cec072ced8ddf8eb08af38ec4ce6abc06f` / `001abf085f5673e417fb61743490bf815b890dbd` / `codex/w2-implementation`
+- Submitted by / at: codex-w2-implementation / `2026-10-15T05:03:19+00:00`
+- Evidence: `artifacts/evidence/W2.C30.T01.R01.json` / `f70b5de41d461880271abe376788ebfe76d0ae4f884b72a880228129fabce10f` / `af3250cec072ced8ddf8eb08af38ec4ce6abc06f`
+- Acceptance-criteria SHA-256: `931d31132e89c951ea2680f40a6c3d54b82eb0122b9bcbfe717b3a4067a2f1e4`
+- Verification-selection SHA-256: `2f425e198b4bac5923c8468f5cd44bc197116771afdbc08490edb078a54d7bdc`
+- Changed paths: `docs/planning-implementation-plan.md`, `planning/backlog.yaml`, `planning/review-site/index.html`, `planning/review-site/manifest.json`, `planning/review-site/waves/W2.html`, `planning/status-summary.md`, `tests/connectors/test_plugin_grant_migration.py`
+- Selected checks: `.venv/Scripts/python.exe -B -s -m unittest -v tests.connectors.test_plugin_grant_migration.PluginGrantMigrationTests.test_exact_encrypted_v20_migrates_with_verified_backup_and_reopens tests.connectors.test_plugin_grant_migration.PluginGrantMigrationTests.test_each_v21_step_failure_rolls_back_exact_v20_and_retries`, `.venv/Scripts/python.exe -B -s -m ruff format --check --config pyproject.toml -- tests/connectors/test_plugin_grant_migration.py`, `.venv/Scripts/python.exe -B -s -m ruff check --config pyproject.toml -- tests/connectors/test_plugin_grant_migration.py`, `.venv/Scripts/python.exe -B -s -m mypy --config-file pyproject.toml --no-namespace-packages -- @artifacts/tmp/W2.remaining-corrections-batch-01/quality-transport-07/complete-files.args`
+- Deferred checks: `Unchanged reference/parser/UX product evidence remains historical; this test-only restoration does not rerun or newly qualify those boundaries.`, `Current14, protected/storage/import performance, security leaf, C31 Graph test seam restoration, remaining connector coverage, anchors, shipping/package/security and S06/Wave/G2 remain separate. No8/16GiB model workload or full exit re-audit.`
+- Selection rationale: Exactly the two affected original grant migration methods and unchanged eight v21 fault-step subtests, one-file Ruff and governed734-source configured typing. No unrelated profile replay; broad source context is required by the existing ordinary-import typing configuration.
+- Prior round / replayed open findings: `-` / -
+- Root-cause escalation: -
 
 **Current latest-review projection:** `-` by - at `-`
 
