@@ -1,0 +1,94 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "finite-prospective-protected-lifecycle-current-version-calibration-decision",
+  "status": "APPROVED",
+  "preparedBy": "agent:/root",
+  "prospectiveApprovedBy": "human:repository-owner",
+  "preauthorizationSHA256": "34e2e3c175dc9309080182e0673f776055b1cc3ba78639475c09ec54408d7d5f",
+  "batchSHA256": "738a9ed22b4da46a88c47c64b07607bbf1b27839e3bf657e7c7712763d76e9c2",
+  "batchScope": "PROTECTED-CANONICAL-PERFORMANCE",
+  "scopeId": "W2-PROTECTED-LIFECYCLE-CURRENT-CALIBRATION-02",
+  "proposal": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/protected-lifecycle-current-calibration-01/proposal-02.json",
+    "sha256": "04ac8bbde3604015efb89f1088aaf3d94b5e3db8b1a6932ebdcdee338359a98b"
+  },
+  "proposalReadiness": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/protected-lifecycle-current-calibration-01/independent-current-source-execution-readiness-02.json",
+    "sha256": "39ad6b3ab0f1be40be0569e30e91524d2565b821fcac1f87fb0b041c6eb45510"
+  },
+  "producer": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/protected-lifecycle-current-calibration-01/protected-performance-output-selector-05.py",
+    "sha256": "63d3ab9c517296b1de7a0a2d804b8c8bd1c3b933c6f3733ff658f7dadca8f248"
+  },
+  "runner": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/protected-lifecycle-current-calibration-01/collect-and-evaluate-02.py",
+    "sha256": "70ba7a3b51809191b6e5a3715bcd3f2b3d1082fc3c533d677bf4daac8f54b280"
+  },
+  "preparation": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/protected-lifecycle-current-calibration-01/execution-preparation-02.json",
+    "sha256": "ebd875cc37b12a1c1cb2d5b29510a573f27a38959d42f31183bc89fa8a3b883c"
+  },
+  "sourceReadiness": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/protected-lifecycle-current-calibration-01/independent-current-source-execution-readiness-02.json",
+    "sha256": "39ad6b3ab0f1be40be0569e30e91524d2565b821fcac1f87fb0b041c6eb45510"
+  },
+  "recordingReadiness": null,
+  "currentVersionSources": {
+    "tool": {
+      "path": "tools/project_lifecycle_performance_check.py",
+      "sha256": "956123d538f9799e412f1cb96194bb8dc8da606d5281c8b79b4d4764e13f4152"
+    },
+    "project": {
+      "path": "services/core-api/src/research_observatory_core/projects.py",
+      "sha256": "3dc13522aae66632a930782d31dd49e1edbe8cc34bce2be419ce977cc82bf977"
+    },
+    "storage": {
+      "path": "services/core-api/src/research_observatory_core/storage.py",
+      "sha256": "2aa938a64111ece6e85616277082e2d77a394036babd6b8a83cdbda6393294b4"
+    },
+    "windowsCredentials": {
+      "path": "services/core-api/src/research_observatory_core/windows_credentials.py",
+      "sha256": "4582bb3321c9c9028d5d88b3367671bdb5acdd77302c58f10a95f16e05bc536d"
+    }
+  },
+  "currentVersionCriterionGranted": true,
+  "absoluteBudgetMs": 500.0,
+  "prospectiveRegressionPercent": 20,
+  "calibrationCount": 3,
+  "holdoutCount": 1,
+  "selectionRule": "maximum rawunroundedp95 permetric over3 fresh complete original40-sample current-source protectedruns; separatefresh holdout limit min(500ms,max*1.20)",
+  "oldCanonicalBaselineAndToolChanged": false,
+  "automaticRebaselineGranted": false,
+  "originalHistoricFAILRetained": true,
+  "currentCalibrationAdoption": "Only after actual3 fresh complete matching-current-source measurements and different actualbaseline/calibration disposition. Old03 remains historicalFAIL only, not currentrun1. No values/PASS/adoption predicted.",
+  "roundingTruth": "Canonical samples are rounded displayvalues; actualrawP95 usedunrounded. No inventedrawns samples.",
+  "scope": "One initial currentprotected-version lifecycle criterion only; all canonicalfixtures/security/40samples/20cold20warm3warmups/clocks/hardware/500ms remain. Neitherstorage criteria norframework/product/test/principal/release changes granted.",
+  "intendedPublicationPath": "artifacts/evidence/W2.protected-lifecycle-current-calibration-02.decision-01.json",
+  "actualIntroductionCommit": null,
+  "futureCalibrationOrHoldout": null,
+  "sourceExecuted": false,
+  "baselineAdopted": false,
+  "oldCanonicalPASSInferred": false,
+  "waveApproved": false,
+  "releaseApproved": false,
+  "approvedBy": "human:repository-owner",
+  "preservedInitialDecision": {
+    "path": "artifacts/evidence/W2.protected-lifecycle-current-calibration-01.decision-01.json",
+    "sha256": "4c01dcc566415457a1de921e0c5debf4d0429c2102e38004206d28cc02eedfa7"
+  },
+  "currentSourceSuccessorPlan": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/protected-lifecycle-current-calibration-01/current-source-successor-plan-02.json",
+    "sha256": "7cf3117de02b63dd3ddfb3e2a2d92a587b50207daa19b80c225cbc528533badf"
+  },
+  "preservedHistoricalMeasurementReceipt": {
+    "path": "artifacts/tmp/W2.protected-project-lifecycle-performance-03.f01/receipt.json",
+    "sha256": "d1a560f86705d55b5ac7e21e9142e83291c5cc790e0975e993d0009ed9a5d07e"
+  },
+  "preservedHistoricalMeasurementReport": {
+    "path": "artifacts/tmp/W2.protected-project-lifecycle-performance-03.f01/canonical-report.json",
+    "sha256": "69670fa34149f2357d9f14b70867c2d1d09f85d300c4b54255ddba440418fb88"
+  },
+  "decisionMeaning": "Applies actual prospective owner34e/738a authority to this finite independently reviewed current-source successor; it does not assert owner inspection of later source bytes, new measurement results, baseline adoption, task or release approval.",
+  "recordedBy": "agent:/root",
+  "recordingSemantics": "This exact decision is reviewed separately for append-only recording; recording readiness is an external hash-bound ledger, avoiding a self-referential decision hash. Source/proposal readiness is actual39ad, not a future output. All measurements/baseline adoption/currentcriterion/release remain unapproved and unexecuted."
+}
