@@ -1,0 +1,119 @@
+{
+  "task_id": "W2.C31.T01",
+  "attempt_id": "R01",
+  "candidate_commit": "5cd948d5f58a06d9ca83e9d416ac93655cee91b2",
+  "base_commit": "9e5da954e2fab49f0c49326414e7bf4a369aa899",
+  "reviewed_state_commit": "ee2e4c85f2717f1b593d0ca1cf200e1c5e522506",
+  "reviewer": "agent:/root/security_resolution_review",
+  "result": "approved",
+  "reviewed_at": "2026-10-15T06:34:55.416051+00:00",
+  "packet_sha256": "9da415f0c969f64f8c57109ee6907aec217ed46239659b47ccdd7273f8980120",
+  "evidence_sha256": "f1a4459cc8cb07683e04238c26a815199e4993b208d1f0345e81d5e105d288db",
+  "acceptance_criteria_sha256": "da6250e28360c4881c7bdb40244de051d7a1bbda9d8dc54b3be88b1cf0505999",
+  "selection_sha256": "8dc7605c85b0839edd7af25ec70051b0bd30048c50d1515d3b8f14016d27b43b",
+  "findings": [],
+  "closures": [],
+  "acceptance_reviews": [
+    {
+      "criterion_index": 1,
+      "check_ids": [
+        "original-graph-restart"
+      ],
+      "result": "satisfied",
+      "assessment": "Original independently approved CAP-04.S02.T03 provider/OA-license-host/direction/source and degraded-provider outcomes at1e68 remain exact historical authority. Adapter/product policy is unchanged. The fresh original method exercises affected OA/Graph provider-failure, redaction and durable restart observations with its original synthetic external HTTP/capacity/native-context seams. No live-provider or shipping Native IPC proof is inferred."
+    },
+    {
+      "criterion_index": 2,
+      "check_ids": [
+        "original-graph-restart"
+      ],
+      "result": "satisfied",
+      "assessment": "The complete original method passes all32 unchanged assertions, exactly1 test/zero skips, within the unchanged300s watchdog:24.359s unittest body and28.84636279998813s owned check. Three private replay reads acquire existing real lifecycle read authority before the object-store lock, retaining require_write=False and assessed callback path/project identity. Active workers, durable observations, close/reopen, redaction and provider-failure preservation checks remain. Actual root0/normalEMPTY0/no timeout/outliving/forced termination and final held-input stability qualify the result; original032d timeout/forced cleanup/stacks remain adverse."
+    },
+    {
+      "criterion_index": 3,
+      "check_ids": [
+        "original-graph-restart",
+        "affected-format",
+        "affected-lint",
+        "affected-configured-types"
+      ],
+      "result": "satisfied",
+      "assessment": "Independent inversion of exactly three wrappers recovers the entire base module AST. All35 module assertion ASTs, requests, helper bodies, workers, privacy, restart and deadlines remain unchanged. Only declared test_graph_oa_runtime.py is behaviorally restored at its private test seam. Existing lifecycle read-action validates actual read authority/database while holding project mutex; no production lock/privacy/object-store change. One-file Ruff format/lint and unchanged configured734-source typing pass with fresh caches and held inputs. No product, schema, migration, framework, experience or criterion expansion."
+    }
+  ],
+  "corrective_integration": {
+    "evidence_sha256": "f1a4459cc8cb07683e04238c26a815199e4993b208d1f0345e81d5e105d288db",
+    "authority_preserved": true,
+    "affected_integration_reviewed": true,
+    "notes": "Actual CAP-04.S02.T03/035f/f963 origin, original DONE task/approval/history and inherited criteria remain unchanged in committed backlog. Source5cd948/fe2b matches actual three-guard restoration/applicationd107. Actualab5a authenticates all4 PASS outputs and normal3/4/4/3-process EMPTY0 jobs with final stability. Deliveryee2e4 is a direct metadata/evidence/site-only child of source5cd948; no source/runtime changed after qualification. Original032d/d726/stacks and earlier suite interruption remain preserved. This approves C31 only; broader connector/current14/performance/anchors/shipping/security/Wave prerequisites remain separate."
+  },
+  "verification_selection": {
+    "selected_command_ids": [
+      "search:connectors",
+      "foundation:quality"
+    ],
+    "assessment": "Exactly the demonstrated private replay lock-order regression and complete original32-assertion method, one-file Ruff and existing734 ordinary-import typing context cover this test-only restoration. Unchanged provider evidence is explicitly historical. Remaining connector coverage and affected Wave checks remain separate; no unchanged81 prefix, full profile/history/exit review or large model replay is required or claimed."
+  },
+  "evidence_authentication": {
+    "actual_frozen_authentication": {
+      "path": "artifacts/tmp/W2.C31.T01.independent-frozen-authentication-01.json",
+      "sha256": "6008ca07757cf0e39184d1db2a346f5195d41103b60b3973ceb1de89951e4abf"
+    },
+    "actual_component_assessment": {
+      "path": "artifacts/tmp/W2.C31.T01.focused-proof-01/independent-component-disposition-01.json",
+      "sha256": "168d38ffa8dd1e931a4fcfeb7193ef07d65739495d9af1d16a41d30d04e1401f"
+    },
+    "actual_focused_receipt": {
+      "path": "artifacts/tmp/W2.C31.T01.focused-proof-01/receipt.json",
+      "sha256": "ab5a01eef3adf9610d460ae213a142f2cec5c26e88b786214f194a42a24acd41"
+    },
+    "actual_execution_producer": {
+      "path": "artifacts/tmp/W2.C31.T01.focused-proof-01.py",
+      "sha256": "eb586e1a689c6d9b8ac93509590647dc7f961fda67c6a7ef910ba6bf71a58dc7"
+    },
+    "source_readiness": {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/connector-replay-lifecycle-test-restoration-01/independent-formatted-proposal-source-readiness-01.json",
+      "sha256": "3f31558a7a523c872513f69a5ca1ab66c7e18e98983bd06822104e9a0b404173"
+    },
+    "proof_source_readiness": {
+      "path": "artifacts/tmp/W2.C31.T01.focused-proof-01.source-readiness-01.json",
+      "sha256": "de3b70bb97593b36481577d23e968f9f72fb358fbc68514de19baaebc02222f2"
+    },
+    "source_application": {
+      "path": "artifacts/tmp/W2.C31.T01.delivery-01/actual-source-application-01.json",
+      "sha256": "d10700dc28b4835167b00b1b0cb814afa7cb09bb02c6e8685c1064c4c35ebf2c"
+    },
+    "frozen_packet_and_selection_recomputed": true,
+    "four_raw_check_outputs_authenticated": true,
+    "exact_three_wrapper_inverse_restores_base_module_AST": true,
+    "all_original35_module_and32_method_assertions_preserved": true,
+    "actual_fresh_check_ids": [
+      "original-graph-restart",
+      "affected-format",
+      "affected-lint",
+      "affected-configured-types"
+    ],
+    "original_one_method": "1PASS_NO_SKIP",
+    "affected_Ruff": "FORMAT_AND_LINT_PASS",
+    "configured734_types": "PASS_CURRENT_5CD948",
+    "owned_cleanup": "ALL_FOUR_NORMAL_EMPTY0_NO_OUTLIVING_OR_TERMINATION",
+    "final_input_stability": true
+  },
+  "full_profile_pass_claimed": false,
+  "independence": {
+    "implementation_owner": "codex-w2-implementation",
+    "independent_reviewer": "agent:/root/security_resolution_review",
+    "reviewer_authored_implementation_or_execution_producer": false,
+    "reviewer_reran_tests_or_runtime_scans": false
+  },
+  "proof_limits": [
+    "Original method uses its real production Core and only DPAPI/SQLCipher behavior actually present in unchanged fixtures; external HTTP/capacity/native-context seams remain synthetic. This is not shipping Native IPC or live-provider proof.",
+    "Original300s diagnosticFAIL/forced cleanup and retained lock stacks remain immutable. Only actual corrected5cd948 qualifies; no old result is relabeled.",
+    "Remaining connector tail/current14, protected/storage/import performance, anchors, package/artifact/security and independent Wave/release prerequisites remain separate."
+  ],
+  "scope_limits": [
+    "Approves only exact frozen W2.C31.T01 R01 at5cd948 and deliveryee2e4; root must record normal taskctl review/integration.",
+    "No product/framework/refactoring/reference/approval-history/scope/verification criterion, W2 release or W3 implementation authority is granted."
+  ]
+}
