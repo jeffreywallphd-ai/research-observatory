@@ -1,0 +1,266 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "independent-actual-finite-native-three-current-build-qualification",
+  "reviewer": "agent:/root/storage_profile_review",
+  "reviewedAt": "2026-10-15T04:17:06.941241+00:00",
+  "result": "QUALIFIED_EXACT_THREE_ORIGINAL_NATIVE_CURRENT_BUILD_METHODS_WITH_DISCLOSED_BOUNDARY_LIMITS",
+  "blockingFindings": [],
+  "candidateCommit": "3df7a415cb212d4a0d4ece47c05f155692426b86",
+  "producer": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/native-project-contract-current-build-01/original-native-project-contract-current-build-06.py",
+    "sha256": "1cfb83a5562836a13b940b391d7d7202777ac71ac258a53ae48fea2b0a1331e7"
+  },
+  "ownedEnvelope": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/native-project-contract-current-build-01/owned-native-three-05.py",
+    "sha256": "843758a9bbea5ff1e535ee2e5d12a9d6a85ea8efa563ba8daf793762bd3027e9"
+  },
+  "preparation": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/native-project-contract-current-build-01/preparation-06.json",
+    "sha256": "73328a8778fc5a098e8b5c16ff623ee69b3468348e39a8690b26d37ffc9e2858"
+  },
+  "sourceReadiness": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/native-project-contract-current-build-01/independent-protected-fixture-runtime-readiness-07.json",
+    "sha256": "218c1d28fae3f89f3adb4b61ebf0f72aec34ae118865b3eeecc3bba58dfd4757"
+  },
+  "runtimeInputs": {
+    "path": "artifacts/tmp/W2.current-native-source-input-overlay-02.actual-receipt-01.json",
+    "sha256": "65f17c94c4f49779b74fe4acc60b6d82aa32c686f3076b5aa9e8fb071aa6d3b3"
+  },
+  "freshProductReceipt": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/fresh-product-build-postinstall-01/actual-build-01/receipt.json",
+    "sha256": "0a7465c71165f8832691dfca4a6c2db310b00460de4e3c04d29f345e0600183f"
+  },
+  "actualReceipt": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/native-project-contract-current-build-01/actual-native-three-04/receipt.json",
+    "sha256": "a373258dd32e154cff93c12dadae15c89c67642083121609741853c783afb645"
+  },
+  "actualLeafReport": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/native-project-contract-current-build-01/actual-native-three-04/leaf-report.json",
+    "sha256": "b7ac3da109aebd6ec264eb9307fafe190597970c445961c09a81e1896797503a"
+  },
+  "actualRaw": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/native-project-contract-current-build-01/actual-native-three-04/native-three.raw.log",
+    "sha256": "5c50fcd7e51492fcbd9a76bb31ffad70408e6eb127f92ab68587553d567facc2"
+  },
+  "actualHeldInputManifest": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/native-project-contract-current-build-01/actual-native-three-04/input-manifest.json",
+    "sha256": "d27a8271f2721af60d0345b4ee6091990f5983f86d1af029bfd0a5b10e6bce0f"
+  },
+  "actualPassiveMembership": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/native-project-contract-current-build-01/actual-native-three-04/actual-owned-job-membership.json",
+    "sha256": "f79ee3f355ecaf371fbc6d81d4faa033284f34c74a1ac42f885855e13138b5b7"
+  },
+  "reviewedQualificationSummaryDraft": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/native-project-contract-current-build-01/actual-qualification-summary-01.draft.json",
+    "sha256": "cb30ed78c862e337653241239e7296cb3c55cfd1bfa50c5937ca4bf63caab5d5"
+  },
+  "reusedIndependentSourceJudgments": [
+    {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/native-project-contract-current-build-01/independent-current-client-transport-observer-runtime-readiness-06.json",
+      "sha256": "4cb0c2dc6f4c6174d77ca4b2c8dd4e5f80f874fb38fd517e9274d4957ff22b6c"
+    },
+    {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/native-project-contract-current-build-01/independent-current-source-projection-runtime-readiness-05.json",
+      "sha256": "f24e723d1cf4f38cb837411fdf6623ed2aa3c9a6c185ee77f9a8923211f663e8"
+    },
+    {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/native-project-contract-current-build-01/independent-runtime-bound-readiness-02.json",
+      "sha256": "53d24202cd2cba92ded1da276445e0907c669157f53737853be32336b36bc51c"
+    }
+  ],
+  "fixturePrerequisiteDiagnosis": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/native-project-contract-current-build-01/independent-native-fixture-recovery-prerequisite-diagnosis-01.json",
+    "sha256": "d405598e5dfdb424118faeb6925fd250ddc2eae3927984b0b60a55e29ed38f98"
+  },
+  "immutableOriginals": [
+    {
+      "path": "tests/service/test_native_project_contract.py",
+      "sha256": "c34089ceb320771e227c85d0e04cbb63a892bbfd48a0ac94b459d02085e929e7"
+    },
+    {
+      "path": "artifacts/evidence/W1.A09.T02.native-check-01.mjs",
+      "sha256": "66af98ac2c960523e01f482d8abd1c96fc490be3dfdb774089692a63d810df23"
+    }
+  ],
+  "currentBuildMethodAuthority": {
+    "decision": {
+      "path": "artifacts/evidence/CAP-05.S06.current-build-method-decision-01.json",
+      "commit": "15bd1939a852bd8262b4b39b556f2793c0852957",
+      "sha256": "07e3d589d0ae1c7623696b8de5bc55df98d989fa10b11ef57c90065699c1e651"
+    },
+    "proposal": {
+      "path": "artifacts/evidence/CAP-05.S06.current-build-method-proposal-01.json",
+      "sha256": "908862410a48eadd4589cf2ea72b4c71dfee6eb3b276dca4e5403a495494840b",
+      "commit": "cce1d85f9bf997e355126b37668cde8e1d30b099"
+    },
+    "readiness": {
+      "path": "artifacts/evidence/CAP-05.S06.current-build-method-readiness-01.json",
+      "sha256": "59ad890601cbac393731162b268636ffbe854276573695314e185fee9b2d7de3",
+      "commit": "cce1d85f9bf997e355126b37668cde8e1d30b099"
+    }
+  },
+  "finiteProspectiveAuthority": [
+    {
+      "path": "artifacts/evidence/W2.completion-preauthorization-20261014-01.md",
+      "sha256": "34e2e3c175dc9309080182e0673f776055b1cc3ba78639475c09ec54408d7d5f"
+    },
+    {
+      "path": "artifacts/evidence/W2.completion-corrections-batch-02.decision-01.json",
+      "sha256": "738a9ed22b4da46a88c47c64b07607bbf1b27839e3bf657e7c7712763d76e9c2"
+    }
+  ],
+  "coverage": {
+    "selectedOriginalMethods": [
+      "tests.service.test_native_project_contract.NativeProjectContractTests.test_packaged_path_spelling_does_not_admit_redirected_executable",
+      "tests.service.test_native_project_contract.NativeProjectContractTests.test_generated_requests_reach_actual_native_and_protected_core",
+      "tests.service.test_native_project_contract.NativeProjectContractTests.test_probe_rejects_missing_or_substituted_build_binding_before_launch"
+    ],
+    "actualIsolatedCaseIDs": [
+      "__main__.NativeProjectContractTests.test_packaged_path_spelling_does_not_admit_redirected_executable",
+      "__main__.NativeProjectContractTests.test_generated_requests_reach_actual_native_and_protected_core",
+      "__main__.NativeProjectContractTests.test_probe_rejects_missing_or_substituted_build_binding_before_launch"
+    ],
+    "testsRun": 3,
+    "failures": 0,
+    "errors": 0,
+    "skips": [],
+    "unittestSeconds": 13.686,
+    "measuredOwnedEnvelopeSeconds": 81.54143950001162,
+    "measurementLimit": "Envelope duration begins after prelaunch input admission; it is not end-user latency or total invocation time.",
+    "meaning": "Actual fresh isolated execution of exactly three original methods at the exact candidate, under already approved current-build method and disclosed private transport/fixture setup. Not a new full public-module/profile invocation."
+  },
+  "criteriaDisposition": [
+    {
+      "originalMethod": "tests.service.test_native_project_contract.NativeProjectContractTests.test_packaged_path_spelling_does_not_admit_redirected_executable",
+      "status": "QUALIFIED_DECLARED_ORIGINAL_METHOD_WITH_DISCLOSED_PLATFORM_LIMIT",
+      "evidence": "Raw named original resultOK. Plain and verbatim packaged paths accepted; junction redirects denied. Original branch reports symbolic-link creation unavailable to this token.",
+      "limit": "Symbolic-link denial is not freshly witnessed by this run; unavailable is not denied. Original conditional branch and all valid assertions remain intact."
+    },
+    {
+      "originalMethod": "tests.service.test_native_project_contract.NativeProjectContractTests.test_generated_requests_reach_actual_native_and_protected_core",
+      "status": "QUALIFIED",
+      "evidence": "Actual generated TypeScript closed-client transport reaches compiled asynchronous Native supervisor, per-launch authenticated source-Core, actual CurrentUser DPAPI/SQLCipher persistence and original canonical lineage fixture. Raw named resultOK and bounded outcomeJSON complete.",
+      "outcomes": {
+        "authenticatedCatalogProfiles": 14,
+        "liveLineageSubstitutionsDenied": 8,
+        "multilineCreatedExactly": true,
+        "notReadyDenied": true,
+        "preReadinessSubstitutionsDenied": 6,
+        "readRetryCreatedNothing": true,
+        "restartPreservedIntentWorkflowAndLineage": true,
+        "retainedLineageNodes": 6,
+        "unknownRevisionFailsClosed": true,
+        "wrongProjectFailsClosed": true
+      },
+      "runtimeStates": [
+        "starting",
+        "ready",
+        "stopped"
+      ],
+      "normalProbeExit": 0,
+      "limit": "Headless integration-harness dispatch, not TauriIPC/shippingGUI, packaged no-fallback qualification, live-provider/model or whole recovery-copy proof."
+    },
+    {
+      "originalMethod": "tests.service.test_native_project_contract.NativeProjectContractTests.test_probe_rejects_missing_or_substituted_build_binding_before_launch",
+      "status": "QUALIFIED",
+      "evidence": "Raw named original resultOK for missing/substituted exact build binding. Same unchanged rejection assertions run with private transport; original build-input guard precedes bundle evaluation/fixture/probe launch.",
+      "limit": "Does not qualify arbitrary binaries, unselected original methods or unrelated packaging predicates."
+    }
+  ],
+  "freshBuildAndCustody": {
+    "classSetupExecutedOnce": true,
+    "compiledOutputHeldAcrossOriginalThree": true,
+    "profile": "debug",
+    "freshProbeExecutable": {
+      "path": "target/debug/examples/project_contract_probe.exe",
+      "sha256": "762ccad491a2702493cb76fb13347e6f379280963718adb2fd4a091fff9e8367"
+    },
+    "embeddedCommonControls6AsInvokerVerified": true,
+    "executablePathConfirmedByCargo": true,
+    "selectedHeldInputCount": 45219,
+    "receiptAndHeldManifestMapsEqual": true,
+    "buildSourcePinsMatchActualHeldMap": true,
+    "generatedClientSourcePinCount": 351,
+    "nodeSourcePinsMatchActualHeldMapOrFreshHeldPE": true,
+    "inputsStable": true,
+    "writeDeleteDenyingHolds": true,
+    "qualificationBasis": "Actual producer/preparation/readiness/derived-runtime/product refs, raw/leaf/held-manifest digests, candidate identity, exact case outcomes and successful final guards authenticate. Parent freshly rehashed and held consumed bytes and bounded Node topology through normal owned drain; reviewer did not replay installed-runtime hashing."
+  },
+  "ownedJob": {
+    "mechanism": "CreateProcessW/PROC_THREAD_ATTRIBUTE_JOB_LIST",
+    "launched": true,
+    "killOnJobClose": true,
+    "breakawayAllowed": false,
+    "drained": true,
+    "timedOut": false,
+    "rootExitCode": 0,
+    "totalProcesses": 104,
+    "activeProcesses": 0,
+    "cleanupState": "EMPTY_CONFIRMED"
+  },
+  "normalCleanup": {
+    "rootExitCode": 0,
+    "totalProcesses": 104,
+    "activeProcesses": 0,
+    "cleanupState": "EMPTY_CONFIRMED",
+    "descendantsOutlivedRoot": false,
+    "terminationRequested": false,
+    "meaning": "Current run completed and drained normally. Process total is not a survivor count. Passive observations do not replace unchanged32ee cleanup authority."
+  },
+  "setupDisposition": "Only fresh ignored fixture vault creation and private supported generated-client ESM transport were restored. Existing real Windows SID/security-attributes/CreateDirectoryW/exact strongACL checks were retained. No product ACL/witness/provider/native authority/current-build predicate/original assertion was weakened; public66af/c340 remain byte-exact.",
+  "preservedAdverse": [
+    {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/native-project-contract-current-build-01/actual-native-three-02/receipt.json",
+      "sha256": "5c55956d2f85d4e28b4aee4672586055df7414b0ce67016dbe953b222520a382"
+    },
+    {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/native-project-contract-current-build-01/actual-native-three-02/native-three.raw.log",
+      "sha256": "8857c15bebf6c2cd7d0304fccfd9ff112439cdc5625f5449a6a5917eb6a372b5"
+    },
+    {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/native-project-contract-current-build-01/actual-native-three-03/receipt.json",
+      "sha256": "8ba6d303ac3a2cf986963f42df1c48912fe222870bdc2515ddabc5b88e91a918"
+    },
+    {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/native-project-contract-current-build-01/actual-native-three-03/native-three.raw.log",
+      "sha256": "3188a69d4840600f86cfbe7cc16d163a5b89e656161282dd1c08b92c6e512c5a"
+    },
+    {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/native-project-contract-current-build-01/actual-native-three-03/actual-owned-job-membership.json",
+      "sha256": "8728b64f7077aa1eed816c7c982f254a39c5ccf1e6ec840d2eca83f3e08240bf"
+    }
+  ],
+  "adverseLimits": [
+    "Original Native02/03 FAILs and missing final-stability flags remain immutable; current success does not retarget or rewrite them.",
+    "Original Native02 outliving-process actor remains UNKNOWN; normal current104-process evidence does not establish its historical cause."
+  ],
+  "remainingLimits": [
+    "Original full public suite/profile, shippingGUI/TauriIPC, packaged/signed Core no-fallback, complete recovery-copy/platform/connector/security/Wave coverage remain separate.",
+    "Symbolic-link creation was unavailable; actual junction rejection is qualified separately.",
+    "No model workload, automatic main integration of other work, W2/G2 release or W3 implementation approval."
+  ],
+  "allowedSummaryFinalRecording": {
+    "preserveDraft": {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/native-project-contract-current-build-01/actual-qualification-summary-01.draft.json",
+      "sha256": "cb30ed78c862e337653241239e7296cb3c55cfd1bfa50c5937ca4bf63caab5d5"
+    },
+    "allowedChangedFields": [
+      "status",
+      "independentDisposition"
+    ],
+    "status": "ACTUAL_SELECTED_BOUNDARY_QUALIFIED_PENDING_WAVE_INTEGRATION",
+    "independentDisposition": "Reference this genuine independent disposition by actual repository-relative path and exact digest after normal exact-byte publication.",
+    "allOtherFactsLimitsAndSourceReferencesRemainUnchanged": true,
+    "newWholeWaveOrReleaseApproval": false
+  },
+  "reviewScope": "Only new actual result/custody and disclosed fixture/transport correction; prior genuine bounded source/runtime judgments reused. No fullWave/unaffected review repeated.",
+  "currentNativeThreeQualified": true,
+  "originalPublicSuitePASSClaimed": false,
+  "shippingGUIQualified": false,
+  "testsExecutedByReviewer": false,
+  "runtimeScannedOrRehashedByReviewer": false,
+  "trackedWritesByReviewer": false,
+  "modelExecuted": false,
+  "waveApproved": false,
+  "releaseApproved": false
+}

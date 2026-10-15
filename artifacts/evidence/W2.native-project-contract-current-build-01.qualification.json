@@ -1,0 +1,85 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "wave-affected-native-project-contract-qualification",
+  "recordedBy": "agent:/root",
+  "candidateCommit": "3df7a415cb212d4a0d4ece47c05f155692426b86",
+  "status": "ACTUAL_SELECTED_BOUNDARY_QUALIFIED_PENDING_WAVE_INTEGRATION",
+  "actualReceipt": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/native-project-contract-current-build-01/actual-native-three-04/receipt.json",
+    "sha256": "a373258dd32e154cff93c12dadae15c89c67642083121609741853c783afb645"
+  },
+  "leafReport": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/native-project-contract-current-build-01/actual-native-three-04/leaf-report.json",
+    "sha256": "b7ac3da109aebd6ec264eb9307fafe190597970c445961c09a81e1896797503a"
+  },
+  "raw": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/native-project-contract-current-build-01/actual-native-three-04/native-three.raw.log",
+    "sha256": "5c50fcd7e51492fcbd9a76bb31ffad70408e6eb127f92ab68587553d567facc2"
+  },
+  "producer": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/native-project-contract-current-build-01/original-native-project-contract-current-build-06.py",
+    "sha256": "1cfb83a5562836a13b940b391d7d7202777ac71ac258a53ae48fea2b0a1331e7"
+  },
+  "ownedEnvelope": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/native-project-contract-current-build-01/owned-native-three-05.py",
+    "sha256": "843758a9bbea5ff1e535ee2e5d12a9d6a85ea8efa563ba8daf793762bd3027e9"
+  },
+  "sourceReadiness": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/native-project-contract-current-build-01/independent-protected-fixture-runtime-readiness-07.json",
+    "sha256": "218c1d28fae3f89f3adb4b61ebf0f72aec34ae118865b3eeecc3bba58dfd4757"
+  },
+  "runtimeInputs": {
+    "path": "artifacts/tmp/W2.current-native-source-input-overlay-02.actual-receipt-01.json",
+    "sha256": "65f17c94c4f49779b74fe4acc60b6d82aa32c686f3076b5aa9e8fb071aa6d3b3"
+  },
+  "freshProductReceipt": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/fresh-product-build-postinstall-01/actual-build-01/receipt.json",
+    "sha256": "0a7465c71165f8832691dfca4a6c2db310b00460de4e3c04d29f345e0600183f"
+  },
+  "exactMethods": [
+    "tests.service.test_native_project_contract.NativeProjectContractTests.test_packaged_path_spelling_does_not_admit_redirected_executable",
+    "tests.service.test_native_project_contract.NativeProjectContractTests.test_generated_requests_reach_actual_native_and_protected_core",
+    "tests.service.test_native_project_contract.NativeProjectContractTests.test_probe_rejects_missing_or_substituted_build_binding_before_launch"
+  ],
+  "counts": {
+    "testsRun": 3,
+    "failures": 0,
+    "errors": 0,
+    "skips": 0
+  },
+  "freshOriginalBuildClassSetupOnce": true,
+  "compiledOutputHeldAcrossOriginalThree": true,
+  "ownedProcesses": 104,
+  "normalOwnedDrain": {
+    "drained": true,
+    "activeProcesses": 0,
+    "cleanupState": "EMPTY_CONFIRMED",
+    "rootExitCode": 0,
+    "timedOut": false
+  },
+  "inputsStable": true,
+  "measuredOwnedEnvelopeSeconds": 81.54143950001162,
+  "measurementLimit": "Envelope duration begins after prelaunch input admission; it is not end-user latency or total invocation time.",
+  "restoration": "Only private supported generated-client ESM transport and absent disposable vault strong current-user/SYSTEM parent creation. Real Native/Core recovery checks and original assertions/denials remain. No existing ACL, witness injection, product/security/framework/predicate edit.",
+  "preservedAdverseEvidence": [
+    {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/native-project-contract-current-build-01/actual-native-three-02/receipt.json",
+      "sha256": "5c55956d2f85d4e28b4aee4672586055df7414b0ce67016dbe953b222520a382"
+    },
+    {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/native-project-contract-current-build-01/actual-native-three-03/receipt.json",
+      "sha256": "8ba6d303ac3a2cf986963f42df1c48912fe222870bdc2515ddabc5b88e91a918"
+    }
+  ],
+  "coverageLimits": [
+    "Isolated current-build original three-method composition, not original public suite aggregate or whole shipping GUI.",
+    "Fresh actual success does not relabel old failures or establish the cause of the old descendant-outlived-root observation.",
+    "No model workload, Wave completion or release approval."
+  ],
+  "independentDisposition": {
+    "path": "artifacts/evidence/W2.native-project-contract-current-build-01.review-01.json",
+    "sha256": "54a63bfec09abdf86fa1f8a33371ccd799b0e68d75e094295e92acc39a0798e0"
+  },
+  "waveApproved": false,
+  "releaseApproved": false
+}

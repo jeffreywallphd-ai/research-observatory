@@ -1,0 +1,111 @@
+{
+  "documentType": "independent-current-worker-core-build-metadata-disposition",
+  "reviewer": "agent:/root/c21_closeout_review",
+  "reviewedAtUtc": "2026-10-15T04:05:58.741311+00:00",
+  "result": "APPROVED_ACTUAL_CURRENT_WORKER_AND_CORE_BUILD_METADATA_ONLY",
+  "candidateCommit": "ac0657ebce07770c9adf33538588dc5b033e0baa",
+  "blockingFindings": [],
+  "workerReceipt": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/current-signed-core-worker-package-plan-01/actual-worker-build-01/receipt.json",
+    "sha256": "f4212d4cf5e2e6e0d22f20b6a3a2f8248a62ecb67e524d166aaeddc29cef9d5a"
+  },
+  "coreReceipt": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/current-signed-core-worker-package-plan-01/actual-core-build-02/receipt.json",
+    "sha256": "91942ab98b1c23b264307b9457fdbb0227fda1ad995b689f6837c40748be46a9"
+  },
+  "coreReport": {
+    "path": "artifacts/tmp/W2.current-core-package-02.report.json",
+    "sha256": "f84cb2bef2428f41a8c91f0a23bd27d8e0b09ccee42fe8816a2006f7a0af02e2"
+  },
+  "coreInputManifest": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/current-signed-core-worker-package-plan-01/actual-core-build-02/input-manifest.json",
+    "sha256": "d3a13811662f94749bc5e563d30eba75dbcfe2ba878a68b73b6a4b775ffcaa9d"
+  },
+  "coreRaw": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/current-signed-core-worker-package-plan-01/actual-core-build-02/build.raw.log",
+    "sha256": "d35e7e3d3eec5ecd082ee240a1ef3b5b02a9fb1e3eacafe84448ad5bc6709e5d"
+  },
+  "reusedWorkerAuthentication": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/current-signed-core-worker-package-plan-01/actual-worker-metadata-authentication-01.json",
+    "sha256": "95bdb11c06b3e4064159827bc2523e5ac9f831bad42f99aab25af55db1c973c6"
+  },
+  "reusedCoreSourceReadiness": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/current-signed-core-worker-package-plan-01/independent-build-source-readiness-03.json",
+    "sha256": "bc751d491262fad4e92ebaf1d83010c0675e39d650017d34827c9ec9ceaee5bc"
+  },
+  "preservedAdverseCoreReceipt": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/current-signed-core-worker-package-plan-01/actual-core-build-01/receipt.json",
+    "sha256": "570b8675677f228443771f3ebb2d219de46793b9b80579cf8e752d1152a99d6d"
+  },
+  "pathDiagnosis": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/current-signed-core-worker-package-plan-01/actual-core-path-failure-diagnosis-01.json",
+    "sha256": "3c2209ecf8b98914820c2402b517ca16cd356c21dd1d90839aaf2219ea3f4426"
+  },
+  "observations": {
+    "workerBuildSeconds": 29.514261499993154,
+    "coreBuildSeconds": 63.73461869999301,
+    "workerOwnedJob": {
+      "mechanism": "CreateProcessW/PROC_THREAD_ATTRIBUTE_JOB_LIST",
+      "launched": true,
+      "killOnJobClose": true,
+      "breakawayAllowed": false,
+      "drained": true,
+      "timedOut": false,
+      "processId": 7104,
+      "rootExitCode": 0,
+      "totalProcesses": 97,
+      "activeProcesses": 0,
+      "cleanupState": "EMPTY_CONFIRMED"
+    },
+    "coreOwnedJob": {
+      "mechanism": "CreateProcessW/PROC_THREAD_ATTRIBUTE_JOB_LIST",
+      "launched": true,
+      "killOnJobClose": true,
+      "breakawayAllowed": false,
+      "drained": true,
+      "timedOut": false,
+      "processId": 8780,
+      "rootExitCode": 0,
+      "totalProcesses": 37,
+      "activeProcesses": 0,
+      "cleanupState": "EMPTY_CONFIRMED"
+    },
+    "workerSignedInventoryFiles": 59,
+    "coreManifestFiles": 784,
+    "coreManifestBytes": 75440673,
+    "coreEntrypointSHA256": "e7b5f456640538f95f7534cea3901a1a0eb7abf614486ba839eec067056a6355",
+    "coreArtifactInventoryFiles": 801,
+    "coreArtifactInventoryDirectories": 50,
+    "coreArtifactInventoryLinks": 0,
+    "sourceRuntimeInputsStable": true
+  },
+  "authentication": [
+    "Both actual0 receipts bind same committedac0657 and authenticated reviewed producer02/03, preparations/readiness and runtime4564. Core03 input manifest holds real completedworker02 receiptf421 and complete138-file worker artifactInventory; explicit lineage agrees with prior real source02/prepe971/readinessf156.",
+    "Core raw shows completed original PyInstaller COLLECT. Actual63.7346s parent recorded normal37 lifetime/EMPTY0/no timeout/inputsStable. Actual reportf84 binds artifact+artifactRoot canonicalc15, current candidate and exact guardiane7b5.",
+    "All784 unique Core manifest entries match corresponding parent artifactInventory hash records; sum bytes75440673 matches manifest. All59 signed worker inventory entries exactly match copied Core plugin-worker manifest entries; copied inventory/signature hash records match original actual082e/d218.",
+    "Prior95bd independently verified the actual worker Ed25519 signature/pinned public key. That genuine authentication is reused; no PE runtime bytes or installed runtime tree rehashed here. Source03 success establishes unchanged build-time artifact verifier completion; no independent Authenticode command was run.",
+    "Failed264-character Core01 receipt570b/raw remains preserved; c15 actual build succeeded without changing builder, registry, source, signing identity, worker or criteria."
+  ],
+  "packageMetadataBlockers": [],
+  "remainingPrerequisites": [
+    "Actual stripped Core --check and --check-worker-runtime.",
+    "Four unchanged original acquisition/document/attachment real LPAC methods with actual current signed worker and guardian; original synthetic fixture/patch seams retain limits.",
+    "Opt-in original frozen import/reimport/cancel/restart journey and its normal owned cleanup.",
+    "Other separate packaging/platform/security/release prerequisites; no W2 gate inferred."
+  ],
+  "limits": [
+    "Build metadata disposition only. Existing local worker signing identity is test trust; no Core Authenticode signature or production certificate/trust assertion.",
+    "No actual LPAC, installed workflow, native GUI, installer, crash recovery, performance, model or Wave/release PASS.",
+    "No builds/tests/imports/runtime or PE scan/re-signing/outputs/tracked/HEAD mutations performed by reviewer."
+  ],
+  "claims": {
+    "testsOrBuildsExecuted": false,
+    "productImported": false,
+    "runtimeOrPEPackageRehashed": false,
+    "trackedWrites": false,
+    "HEADChanged": false,
+    "realPrincipalPASS": false,
+    "CoreAuthenticodeClaimed": false,
+    "waveOrReleaseApproved": false
+  }
+}

@@ -1,0 +1,235 @@
+{
+  "documentType": "independent-finite-current-artifact-principal-frozen-disposition",
+  "reviewer": "agent:/root/c21_closeout_review",
+  "reviewedAtUtc": "2026-10-15T04:16:13.367595+00:00",
+  "result": "APPROVED_BOUNDED_CURRENT_SIGNED_ARTIFACT_PRINCIPAL_AND_FROZEN_QUALIFICATION",
+  "qualificationCommit": "a984703caacdb4f405dabf177353e403fce064af",
+  "productBuildCommit": "ac0657ebce07770c9adf33538588dc5b033e0baa",
+  "blockingFindings": [],
+  "reviewScope": "Only actual correction-affected two binary checks, four original real-LPAC methods and one original frozen import/reimport/cancel/restart result. Prior source/build reviews reused; no whole-Wave review or body replay.",
+  "receipt": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/current-signed-core-worker-package-plan-01/actual-principal-and-frozen-01/receipt.json",
+    "sha256": "4451ecf60c7f9767cef8819a6eda616a42ca1f50555e2e7d58ecf7f9594cf932"
+  },
+  "inputManifest": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/current-signed-core-worker-package-plan-01/actual-principal-and-frozen-01/input-manifest.json",
+    "sha256": "5adfe259608b2e2330863b6f93be1da1def91b36b905e886f7a9159a9f314762"
+  },
+  "producer": {
+    "path": "artifacts/tmp/W2.prove-current-signed-artifacts-01.py",
+    "sha256": "b84250c33e40862dc84944748839c913c088ea81119cea4869392f03991d37fe"
+  },
+  "preparation": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/current-signed-core-worker-package-plan-01/principal-preparation-01.json",
+    "sha256": "e2060179198d64dfc3bfabada369083a901457ff06617c328e9fa50985d4c3d7"
+  },
+  "sourceReadiness": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/current-signed-core-worker-package-plan-01/independent-principal-source-readiness-01.json",
+    "sha256": "0910c2de612bf204c0bfca2cc486cb0225e7c415d396c2feb678d564f6cb4953"
+  },
+  "runtimeInputs": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/postinstall-consumed-runtime-capture-01/actual-runtime-capture-04/receipt.json",
+    "sha256": "456482ea03c3545a03c63e36e5f0bb098c7e20c95e2d2f5efa2f52381b2d4188"
+  },
+  "actualBuildMetadataDisposition": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/current-signed-core-worker-package-plan-01/independent-actual-build-metadata-disposition-01.json",
+    "sha256": "9f640c66b2d8467953212bd1ad62fae7d4a00844f65cf39777025daad4a03ba6"
+  },
+  "buildReceipts": [
+    {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/current-signed-core-worker-package-plan-01/actual-worker-build-01/receipt.json",
+      "sha256": "f4212d4cf5e2e6e0d22f20b6a3a2f8248a62ecb67e524d166aaeddc29cef9d5a"
+    },
+    {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/current-signed-core-worker-package-plan-01/actual-core-build-02/receipt.json",
+      "sha256": "91942ab98b1c23b264307b9457fdbb0227fda1ad995b689f6837c40748be46a9"
+    }
+  ],
+  "coreReport": {
+    "path": "artifacts/tmp/W2.current-core-package-02.report.json",
+    "sha256": "f84cb2bef2428f41a8c91f0a23bd27d8e0b09ccee42fe8816a2006f7a0af02e2"
+  },
+  "guardianSHA256": "e7b5f456640538f95f7534cea3901a1a0eb7abf614486ba839eec067056a6355",
+  "actualTotalSeconds": 176.1919259999995,
+  "checks": [
+    {
+      "check": "configuration",
+      "disposition": "PASS",
+      "qualificationCommit": "a984703caacdb4f405dabf177353e403fce064af",
+      "seconds": 1.6319086000003153,
+      "raw": {
+        "path": "artifacts/tmp/W2.remaining-corrections-batch-01/current-signed-core-worker-package-plan-01/actual-principal-and-frozen-01/configuration.raw.log",
+        "sha256": "99f80014ed7f91d261c578d7dc74d68c3e7b74112eab55991bfe8936621eb929"
+      },
+      "owned": {
+        "mechanism": "CreateProcessW/PROC_THREAD_ATTRIBUTE_JOB_LIST",
+        "killOnJobClose": true,
+        "breakawayAllowed": false,
+        "drained": true,
+        "timedOut": false,
+        "rootExitCode": 0,
+        "totalProcesses": 2,
+        "activeProcesses": 0,
+        "cleanupState": "EMPTY_CONFIRMED"
+      },
+      "binaryArgument": "--check",
+      "actualStatus": "configuration-valid"
+    },
+    {
+      "check": "installed-worker",
+      "disposition": "PASS",
+      "qualificationCommit": "a984703caacdb4f405dabf177353e403fce064af",
+      "seconds": 0.16994469999917783,
+      "raw": {
+        "path": "artifacts/tmp/W2.remaining-corrections-batch-01/current-signed-core-worker-package-plan-01/actual-principal-and-frozen-01/installed-worker.raw.log",
+        "sha256": "69aaf4c34260dbebd9ce55b558a80374d0bc9055ed66fb5cba074b0d780c8fca"
+      },
+      "owned": {
+        "mechanism": "CreateProcessW/PROC_THREAD_ATTRIBUTE_JOB_LIST",
+        "killOnJobClose": true,
+        "breakawayAllowed": false,
+        "drained": true,
+        "timedOut": false,
+        "rootExitCode": 0,
+        "totalProcesses": 2,
+        "activeProcesses": 0,
+        "cleanupState": "EMPTY_CONFIRMED"
+      },
+      "binaryArgument": "--check-worker-runtime",
+      "actualStatus": "worker-runtime-valid"
+    },
+    {
+      "check": "principals",
+      "disposition": "PASS",
+      "qualificationCommit": "a984703caacdb4f405dabf177353e403fce064af",
+      "seconds": 77.46106109999528,
+      "raw": {
+        "path": "artifacts/tmp/W2.remaining-corrections-batch-01/current-signed-core-worker-package-plan-01/actual-principal-and-frozen-01/principals.raw.log",
+        "sha256": "2d15266506416ee59af06bf0b51c97fc5761dff07bbb9a1062d99634d8ebcaf4"
+      },
+      "owned": {
+        "mechanism": "CreateProcessW/PROC_THREAD_ATTRIBUTE_JOB_LIST",
+        "killOnJobClose": true,
+        "breakawayAllowed": false,
+        "drained": true,
+        "timedOut": false,
+        "rootExitCode": 0,
+        "totalProcesses": 2209,
+        "activeProcesses": 0,
+        "cleanupState": "EMPTY_CONFIRMED"
+      },
+      "methodResults": {
+        "path": "artifacts/tmp/W2.remaining-corrections-batch-01/current-signed-core-worker-package-plan-01/actual-principal-and-frozen-01/principals-result.json",
+        "sha256": "aa50c8fec836db632a28ba8f95f8727ea874c259a154bcd4794da39d1dbd9780"
+      },
+      "methods": [
+        "tests.documents.test_acquisition_tls.AcquisitionPrincipalTests.test_current_core_session_through_verified_tls_encrypted_stage_and_signed_lpac",
+        "tests.documents.test_format_inspection.DocumentWorkerProtocolTests.test_signed_lpac_worker_inspects_stream_over_ten_mib",
+        "tests.documents.test_format_inspection.DocumentWorkerProtocolTests.test_signed_lpac_worker_format_password_and_size_probes",
+        "tests.service.test_document_attachment_api.DocumentAttachmentRealPortTests.test_native_route_to_encrypted_stage_and_signed_lpac_worker"
+      ],
+      "testsRun": 4,
+      "failures": 0,
+      "errors": 0,
+      "skips": 0,
+      "expectedFailures": 0,
+      "unexpectedSuccesses": 0
+    },
+    {
+      "check": "frozen",
+      "disposition": "PASS",
+      "qualificationCommit": "a984703caacdb4f405dabf177353e403fce064af",
+      "seconds": 57.62288999999873,
+      "raw": {
+        "path": "artifacts/tmp/W2.remaining-corrections-batch-01/current-signed-core-worker-package-plan-01/actual-principal-and-frozen-01/frozen.raw.log",
+        "sha256": "ac292f9d29fe38cedc180b14abaefba2d13c0450b1a9312b15e931f819c61073"
+      },
+      "owned": {
+        "mechanism": "CreateProcessW/PROC_THREAD_ATTRIBUTE_JOB_LIST",
+        "killOnJobClose": true,
+        "breakawayAllowed": false,
+        "drained": true,
+        "timedOut": false,
+        "rootExitCode": 0,
+        "totalProcesses": 26,
+        "activeProcesses": 0,
+        "cleanupState": "EMPTY_CONFIRMED"
+      },
+      "methodResults": {
+        "path": "artifacts/tmp/W2.remaining-corrections-batch-01/current-signed-core-worker-package-plan-01/actual-principal-and-frozen-01/frozen-result.json",
+        "sha256": "2963f16f178c013471805dea1ee16fb2929cb81f3a8ebcf80122c6f4c6a0f3c4"
+      },
+      "methods": [
+        "tests.packaging.test_import_frozen_windows.ImportFrozenWindowsTests.test_frozen_import_reimport_cancel_and_restart"
+      ],
+      "testsRun": 1,
+      "failures": 0,
+      "errors": 0,
+      "skips": 0,
+      "expectedFailures": 0,
+      "unexpectedSuccesses": 0
+    }
+  ],
+  "frozenJourney": {
+    "privateReport": {
+      "path": "artifacts/tmp/import-frozen-windows-059y4u64/result.json",
+      "sha256": "11602f6652160727e87dfd4c690cd40b1eef9241a91cc48008f4819cd57859ef"
+    },
+    "outcome": "passed",
+    "currentToolSHA256": "3e4d69eb21347f0e1b745b38e833f00c5c9188027831d1ca7fc98d088965f633",
+    "productCommit": "ac0657ebce07770c9adf33538588dc5b033e0baa",
+    "packageReportSHA256": "f84cb2bef2428f41a8c91f0a23bd27d8e0b09ccee42fe8816a2006f7a0af02e2",
+    "entrypointSHA256": "e7b5f456640538f95f7534cea3901a1a0eb7abf614486ba839eec067056a6355",
+    "afterCancellation": {
+      "import_source_records": 0,
+      "import_manifests": 0,
+      "import_manifest_members": 0,
+      "import_manifest_seals": 0
+    },
+    "afterReimportAndRestart": {
+      "import_source_records": 2,
+      "import_manifests": 2,
+      "import_manifest_members": 6,
+      "import_manifest_seals": 2
+    },
+    "frozenCoreLaunches": 2,
+    "diagnosticSHA256": "9ddb1eb5ff6d3ebe4b17ef873d4c769f48db4e3d1f6bb1abd8330d29a7d466a2",
+    "originalLimitations": [
+      "synthetic supervisor, not native app",
+      "not signing or performance proof",
+      "not crash recovery"
+    ]
+  },
+  "inputAndExecutionAuthentication": [
+    "Actual producer/preparation/source-readiness references equal previously independently reviewed b842/e206/0910. Actual5adf input manifest binds the same qualification candidate, producer and6632 selected file pins, three installed runtime roots and both complete actual worker/Core artifact trees. Exact recorded build trees equal independently dispositioned f421/91942 build artifactInventory metadata. No runtime or PE bytes rescanned by reviewer.",
+    "Two frozen binary raws independently read as configuration-valid and worker-runtime-valid. Four original named real-LPAC results and one original named frozen result independently match exact requested method lists, candidate, verbose Ran4/Ran1+OK and structured zero failures/errors/skips/expectedFailures/unexpectedSuccesses.",
+    "All four owned jobs report normal root0, notimedout, kill-on-close/no-breakaway and EMPTY_CONFIRMED active0. Lifetime process totals are factual counts2/2/2209/26, not a claim about concurrent process count or leak cause. Parent actual inputsStable istrue only after final source/runtime/artifact/absence/environment/clean-candidate checks in authenticated producer.",
+    "Actual frozen private report matches current tool3e4d, buildac0657, reportf84 and guardiane7b5. Cancellation leaves four canonical tables empty; reimport and clean restart preserve exact2source records/2manifests/6members/2seals with two ordinary frozen Core launches. Original mapping identity/rights/privacy assertions ran unchanged."
+  ],
+  "preservedAdverses": [
+    {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/current-signed-core-worker-package-plan-01/actual-core-build-01/receipt.json",
+      "sha256": "570b8675677f228443771f3ebb2d219de46793b9b80579cf8e752d1152a99d6d"
+    },
+    {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/current-signed-core-worker-package-plan-01/actual-core-path-failure-diagnosis-01.json",
+      "sha256": "3c2209ecf8b98914820c2402b517ca16cd356c21dd1d90839aaf2219ea3f4426"
+    }
+  ],
+  "limits": [
+    "Existing worker inventory/PE signing uses the existing local test authority. No Core Authenticode signature or production certificate/trust assertion.",
+    "Four source-composed LPAC bodies retain their exact original fixture-provider/permission/guardian-loader and localTCP seams; passing them proves those actual worker/streaming/format/password/oversize/encrypted-stage boundaries, not every installedNativeUI principal path.",
+    "Frozen journey uses its original synthetic supervisor and protected-storage fixtures. No nativeGUI, crash recovery, installer/clean-machine, performance, model or full service/repository/Wave-profile claim.",
+    "This finite disposition does not resolve separate Native cleanup/Graph or other remaining findings and is not a W2 release approval."
+  ],
+  "reviewerActions": {
+    "actualMetadataRawAndStructuredResultsRead": true,
+    "testsOrBuildsExecuted": false,
+    "producerOrProductImported": false,
+    "runtimeOrPEPackageScannedOrRehashed": false,
+    "signingRun": false,
+    "trackedWrites": false,
+    "HEADChanged": false
+  },
+  "releaseApproved": false
+}
