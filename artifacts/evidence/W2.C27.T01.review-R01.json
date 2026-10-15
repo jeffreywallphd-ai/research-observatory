@@ -1,0 +1,157 @@
+{
+  "task_id": "W2.C27.T01",
+  "attempt_id": "R01",
+  "candidate_commit": "a039aada275db35035a9a71fc89622915e5a346c",
+  "base_commit": "bab353be50d95c7a1c1b6dc5e1bdc08927630b1d",
+  "reviewed_state_commit": "50164806afae6828dab194aecad1ce0f99c8e0a0",
+  "reviewer": "agent:/root/security_resolution_review",
+  "result": "approved",
+  "reviewed_at": "2026-10-15T00:11:28.201825+00:00",
+  "packet_sha256": "d38875d13c331b2ac3652ee2bb2859896077f502e60272a66e1e87655ee264b5",
+  "evidence_sha256": "958898c1bf80bae211b3c516e22fb2fa0b216a29bd64f06cc90ebb6c49da7299",
+  "acceptance_criteria_sha256": "4cfc9ccd2d583dc3285510b3420312d2b778a94cd11c5272eadc54afc6fa321a",
+  "selection_sha256": "0f497eb5380357b297b4c0045f5b38b24eb5bc52bab00d18472ab36765843a5a",
+  "findings": [],
+  "closures": [],
+  "acceptance_reviews": [
+    {
+      "criterion_index": 1,
+      "check_ids": [
+        "witness-boundaries",
+        "affected-adr"
+      ],
+      "result": "satisfied",
+      "assessment": "Exactly one literal OWNER RIGHTS SID is recognized only in the existing nonexact parent trustee branch, after actual held owner equals currentSID. Exact protected two-ACE currentSID/SYSTEM witness children, unsupported ACE/type/mask/path/handle/DPAPI/Native authority and public contracts remain unchanged. Actual-base ADR passes; no new security authority or indexed-record acceptance is inferred."
+    },
+    {
+      "criterion_index": 2,
+      "check_ids": [
+        "witness-boundaries"
+      ],
+      "result": "satisfied",
+      "assessment": "Four additive boundary methods and five retained actual Windows witness cases pass without skips at exacta039. Ordinary mkdir0700 parent owner/DACL remains unchanged through exclusion, dual-DPAPI issuance and fresh-store readback; exact child ACL validation, foreign writer, actual anonymous privateACL/current-user DPAPI denial and same-resource exclusion remain. Wrong-SID and copied unsupported-ACE seams are truthfully gate-logic proof, not another login, shipping session or foreign-host proof. Original witness process IDs remain explicitly synthetic."
+    },
+    {
+      "criterion_index": 3,
+      "check_ids": [
+        "witness-boundaries",
+        "original-native-integration"
+      ],
+      "result": "satisfied",
+      "assessment": "No copy/lifecycle/API/format/object-persistence source changed, so original independently approved recovery-copy/readback facts remain inherited historical authority. Fresh unchanged original Native review/retry/reversal/restart/version/history behavior passes at currenta039 with genuine protected Core/current-user setup and normal owned drain. No new original-fixture substitution or full whole-pair recovery qualification is claimed."
+    },
+    {
+      "criterion_index": 4,
+      "check_ids": [
+        "witness-boundaries",
+        "original-native-integration"
+      ],
+      "result": "satisfied",
+      "assessment": "Real anonymous/privateACL/current-user DPAPI and nine selected witness boundaries plus the original actual Native integration pass. Latest receipt6087 has root0,21lifetime processes, normalEMPTY0, no timeout/outliving/termination and genuine final selected input equality. The read-only true Job observer preserves original helper decisions. Earlier failures and unknown intermittent survivor remain visible Wave risk; a current50ms conhost observation is not attributed to the old30-process failure. Existing broader whole-pair and approved physical-host deferral remain unchanged."
+    },
+    {
+      "criterion_index": 5,
+      "check_ids": [
+        "witness-boundaries",
+        "affected-format",
+        "affected-lint",
+        "configured-types",
+        "affected-adr",
+        "original-native-integration"
+      ],
+      "result": "satisfied",
+      "assessment": "The actual committed before-product regression fails on original5b2 ownership-parent-write-authority; fixed4582 plus additiveb612 tests pass the material boundaries. Exact two-file Ruff, unchanged configured734-file typing with authenticated response file and prior reviewed isolated derived cache, actual-base ADR and fresh original Native/normalcleanup pass with held inputs. Original206/default-cache errors/Native failures remain adverse. Exact frozen R01 source, six checks, five criteria, selection and corrective integration are independently authenticated; no full Wave audit is repeated."
+    }
+  ],
+  "corrective_integration": {
+    "evidence_sha256": "958898c1bf80bae211b3c516e22fb2fa0b216a29bd64f06cc90ebb6c49da7299",
+    "authority_preserved": true,
+    "affected_integration_reviewed": true,
+    "notes": "Frozen specb42a and actual W2.A06.T01 origin9de347 retain all five inherited criteria and original approval/history. Source delta is one parent SID literal plus137 additive test lines; full original test-module AST is preserved outside seven helper/test methods and two ctypes imports. Actual nine Windows boundaries, two-file Ruff, configured734types, actual-baseADR and original Native1 pass at a039. Genuine final normal Job cleanup is current-run evidence only. Original409, prior forceddrain/unknown survivor and all cache/transport failures stay preserved; independent intermittent cleanup risk remains for required Wave cold/compiler/package/whole-pair qualification. Direct-child public delivery501648 contains only evidence and normal backlog/Markdown projections, no product/dependency changes. No new scope, baseline, framework, reference, criterion or release authority."
+  },
+  "verification_selection": {
+    "selected_command_ids": [
+      "security-local:unit",
+      "service:reconciliation",
+      "foundation:quality",
+      "foundation:adr"
+    ],
+    "assessment": "Review only the changed Windows parent ACL boundary, adjacent denial/regression behavior, current Native integration and affected source/quality/ADR/frozen evidence controls. Reuse genuine independent source, actual component, typing/ADR and Native dispositions. Unchanged196 Core cases, original broad recovery design, unrelated history and full exit audits were not replayed. Physical foreign-host hardware and larger model restrictions retain original owner decisions."
+  },
+  "evidence_authentication": {
+    "actual_frozen_authentication": {
+      "path": "artifacts/tmp/W2.C27.T01.independent-frozen-authentication-01.json",
+      "sha256": "d6436e25e148b7cc3c81463f1b834bdbea746363483d8f8f8fce39deb309e681"
+    },
+    "source_and_windows_component_disposition": {
+      "path": "artifacts/tmp/W2.C27.T01.focused-proof-01/independent-source-and-component-disposition-01.json",
+      "sha256": "139e1029018cdfac7ee7f4cd13d38ede29c51917418cda659f8af94a6cc8a4f1"
+    },
+    "configured_types_and_adr_disposition": {
+      "path": "artifacts/tmp/W2.C27.T01.remaining-quality-04.independent-disposition-01.json",
+      "sha256": "35c06a321a4b7be534f6c4eb2956f3558dd2e9a0d4b189353c4289acaa507ba2"
+    },
+    "actual_native_normal_cleanup_disposition": {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/native-reconciliation-open-diagnostic-01/independent-actual-rerun-disposition-04.json",
+      "sha256": "0df598a8f6b292e775455e832523c1ed2a4bc713811f110727dd8898b232cd2c"
+    },
+    "task_boundary_clarification": {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/native-reconciliation-open-diagnostic-01/independent-c27-task-boundary-clarification-01.json",
+      "sha256": "1dfc00a0f0ccb5a64d081c6ac203f807868e84c32eae9c2796fb177ebbd074c2"
+    },
+    "actual_windows_methods": 9,
+    "actual_native_methods": 1,
+    "machine_check_rows": 6,
+    "skips": 0,
+    "all_selected_actual_jobs_normal_empty_active0": true,
+    "actual_inputs_stable": true,
+    "reviewed_immutable_receipt_producer_disposition_refs": 12,
+    "typing_method": "Authentic full734responsefile/unchanged flags and source plus initially absent child-local derived MYPY_CACHE_DIR, matching prior independently reviewed quality method. No source/import suppression, schema/config/checker-policy change or shared-cache deletion. All default-cache failures remain unchanged."
+  },
+  "frozen_submission_authentication": {
+    "delivery_commit": "50164806afae6828dab194aecad1ce0f99c8e0a0",
+    "delivery_parent": "a039aada275db35035a9a71fc89622915e5a346c",
+    "delivery_changed_paths": [
+      "artifacts/evidence/W2.C27.T01.R01.json",
+      "docs/planning-implementation-plan.md",
+      "planning/backlog.yaml",
+      "planning/status-summary.md"
+    ],
+    "public_manifest_git_and_worktree_bytes_exact": true,
+    "whole_packet_canonical_digest_matches": true,
+    "criteria_canonical_digest_matches": true,
+    "selection_canonical_digest_and_commands_and_deferred_match": true,
+    "actual_origin_sha256": "9de3478fb791b93eac59060a51b5a76934799dc0758f05f38ee774b14d9ae24c",
+    "source_runtime_dependency_delta_in_delivery": false,
+    "new_formal_ledger_not_in_prior_frozen_packet": true,
+    "mutable_HEAD_or_generated_HTML_not_used_for_binding": true
+  },
+  "known_unresolved_wave_findings": [
+    "Earlier same-candidate Native cleanup exceeded5seconds and required termination with30lifetime processes; actor and cause remain unknown. Current21-lifetime normalcleanup does not erase that adverse or prove equivalent cold/compiler/package circumstances. Carry risk into already-required fresh affected cold/compiler/package and whole-pair/recovery qualification; no optional identical warm replay or invented actor attribution.",
+    "Separate migration8+2, current Native3/current14/model/gateway, signed Core/worker/package/security/principal/restart/anchor/scale/storage/protected performance and final S06/checkpoint/G2 remain outside this correction disposition."
+  ],
+  "quality_coverage": {
+    "affected_two_file_format_and_lint": "PASS",
+    "configured734_source_types": "PASS_FRESH_CURRENT_A039_WITH_PRIOR_REVIEWED_ISOLATED_DERIVED_CACHE",
+    "actual_base_adr": "PASS",
+    "actual_windows_witness_boundaries": "9PASS",
+    "original_native_method_and_current_normal_owned_cleanup": "1PASS"
+  },
+  "full_profile_pass_claimed": false,
+  "independence": {
+    "implementation_owner": "codex-w2-implementation",
+    "independent_reviewer": "agent:/root/security_resolution_review",
+    "reviewer_authored_implementation_or_execution_producer": false,
+    "reviewer_reran_product_tests_or_runtime_scans": false,
+    "prior_separate_source_privacy_review_disclosed": "This reviewer independently adjudicated exact source scanner false positives and authored ignored byte-bound admission data before publication. It did not implement product/test/owned execution source or activate hooks."
+  },
+  "proof_limits": [
+    "Witness process identities are synthetic; wrong-SID and unsupported-ACE copied descriptor cases are gate-logic probes. Actual anonymous thread ACL/DPAPI and actual Native protected Core integration are separate real observations, not a foreign login or second-machine result.",
+    "Original NativeRenderer fixture is development Native/debug and generated-client/browser integration, not signed packaged production, Tauri IPC no-fallback, current14 completeness or a physical foreign-host proof.",
+    "Current original method normalcleanup qualifies this selected task integration; prior intermittent cleanup remains Wave risk and all old failures remain immutable. No older survivor is identified from current successful membership sample."
+  ],
+  "scope_limits": [
+    "Approves only exact frozen W2.C27.T01 R01 at sourcea039/publicdelivery501648. Root normal taskctl review recording and local integration remain subsequent operations under their own prerequisites.",
+    "No full exit re-review, prior approval/history rewrite, new criteria, framework/refactor, release or W3 implementation approval."
+  ]
+}
