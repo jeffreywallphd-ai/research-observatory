@@ -1,0 +1,149 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "finite-prospective-protected-lifecycle-current-version-calibration-decision",
+  "status": "APPROVED",
+  "preparedBy": "agent:/root",
+  "prospectiveApprovedBy": "human:repository-owner",
+  "preauthorizationSHA256": "34e2e3c175dc9309080182e0673f776055b1cc3ba78639475c09ec54408d7d5f",
+  "batchSHA256": "738a9ed22b4da46a88c47c64b07607bbf1b27839e3bf657e7c7712763d76e9c2",
+  "batchScope": "PROTECTED-CANONICAL-PERFORMANCE",
+  "scopeId": "W2-PROTECTED-LIFECYCLE-CURRENT-CALIBRATION-04",
+  "proposal": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/protected-lifecycle-current-calibration-01/proposal-04.json",
+    "sha256": "0256a588e1c0d44cb0218123cdd5a42985d7f18d9792c420f56861b92212c972"
+  },
+  "proposalReadiness": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/protected-lifecycle-current-calibration-01/independent-single-fixture-replacement-execution-readiness-04.json",
+    "sha256": "9ad1f2859d98ce601149a2c88dd43241112f8ddf17667e6cefef98b6bc759e9a"
+  },
+  "producer": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/protected-lifecycle-current-calibration-01/protected-performance-output-selector-07.py",
+    "sha256": "a1d40c308cc6e60d60befcc8b70b0dd00e82eafc49cbacb154dad08f28d1194f"
+  },
+  "runner": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/protected-lifecycle-current-calibration-01/collect-and-evaluate-04.py",
+    "sha256": "1b83d86c09adfd8c2dd9b303811bd5ca25099b7738e14d124557a659b08ba443"
+  },
+  "preparation": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/protected-lifecycle-current-calibration-01/execution-preparation-04.json",
+    "sha256": "b456fd898357c5dabda7ef2eb41bbc232372874d6410e4fe800ddb23a53bd8a4"
+  },
+  "sourceReadiness": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/protected-lifecycle-current-calibration-01/independent-single-fixture-replacement-execution-readiness-04.json",
+    "sha256": "9ad1f2859d98ce601149a2c88dd43241112f8ddf17667e6cefef98b6bc759e9a"
+  },
+  "recordingReadiness": null,
+  "currentVersionSources": {
+    "tool": {
+      "path": "tools/project_lifecycle_performance_check.py",
+      "sha256": "956123d538f9799e412f1cb96194bb8dc8da606d5281c8b79b4d4764e13f4152"
+    },
+    "project": {
+      "path": "services/core-api/src/research_observatory_core/projects.py",
+      "sha256": "3dc13522aae66632a930782d31dd49e1edbe8cc34bce2be419ce977cc82bf977"
+    },
+    "storage": {
+      "path": "services/core-api/src/research_observatory_core/storage.py",
+      "sha256": "2aa938a64111ece6e85616277082e2d77a394036babd6b8a83cdbda6393294b4"
+    },
+    "windowsCredentials": {
+      "path": "services/core-api/src/research_observatory_core/windows_credentials.py",
+      "sha256": "4582bb3321c9c9028d5d88b3367671bdb5acdd77302c58f10a95f16e05bc536d"
+    }
+  },
+  "currentVersionCriterionGranted": true,
+  "absoluteBudgetMs": 500.0,
+  "prospectiveRegressionPercent": 20,
+  "calibrationCount": 3,
+  "holdoutCount": 1,
+  "selectionRule": "maximum rawunroundedp95 permetric over3 fresh complete original40-sample current-source protectedruns; separatefresh holdout limit min(500ms,max*1.20)",
+  "oldCanonicalBaselineAndToolChanged": false,
+  "automaticRebaselineGranted": false,
+  "originalHistoricFAILRetained": true,
+  "currentCalibrationAdoption": "Only after actual current run1 retained at389e plus fresh02/03 all complete under exactfee840 source/runtime cohort, different actual max3 baseline adoption, then distinct fresh holdout. No old03 seed, discarded observation or priorFAIL rewrite.",
+  "roundingTruth": "Canonical samples are rounded displayvalues; actualrawP95 usedunrounded. No inventedrawns samples.",
+  "scope": "One initial currentprotected-version lifecycle criterion only; all canonicalfixtures/security/40samples/20cold20warm3warmups/clocks/hardware/500ms remain. Neitherstorage criteria norframework/product/test/principal/release changes granted.",
+  "intendedPublicationPath": "artifacts/evidence/W2.protected-lifecycle-current-calibration-04.decision-01.json",
+  "actualIntroductionCommit": null,
+  "futureCalibrationOrHoldout": null,
+  "sourceExecuted": false,
+  "baselineAdopted": false,
+  "oldCanonicalPASSInferred": false,
+  "waveApproved": false,
+  "releaseApproved": false,
+  "approvedBy": "human:repository-owner",
+  "preservedInitialDecision": {
+    "path": "artifacts/evidence/W2.protected-lifecycle-current-calibration-01.decision-01.json",
+    "sha256": "4c01dcc566415457a1de921e0c5debf4d0429c2102e38004206d28cc02eedfa7"
+  },
+  "currentSourceSuccessorPlan": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/protected-lifecycle-current-calibration-01/current-source-successor-plan-02.json",
+    "sha256": "7cf3117de02b63dd3ddfb3e2a2d92a587b50207daa19b80c225cbc528533badf"
+  },
+  "preservedHistoricalMeasurementReceipt": {
+    "path": "artifacts/tmp/W2.protected-project-lifecycle-performance-03.f01/receipt.json",
+    "sha256": "d1a560f86705d55b5ac7e21e9142e83291c5cc790e0975e993d0009ed9a5d07e"
+  },
+  "preservedHistoricalMeasurementReport": {
+    "path": "artifacts/tmp/W2.protected-project-lifecycle-performance-03.f01/canonical-report.json",
+    "sha256": "69670fa34149f2357d9f14b70867c2d1d09f85d300c4b54255ddba440418fb88"
+  },
+  "decisionMeaning": "Existing prospective34e/738 finite authority applied to exactly one fresh replacement for zero-observation calibration02 setup failure, preserving all failed controls and the unchanged criterion/cohort. No new product/framework change, cause assumption, discarded samples, automatic retry or result/release approval.",
+  "recordedBy": "agent:/root",
+  "recordingSemantics": "Existing prospective owner34e/finite738 authority applied to exact source07/runner04/preparation04/proposal04 through actual independent9ad1f285. Preserve actual completed current run1 and nonqualifying successful tiny create; prior WinError5 failed before any observations and its raw/control remain FAIL. Exactly one unexecuted setup replacement02.f02, unperformed03, independent max3 adoption and fresh holdout remain. No failure cause, current calibration completion, baseline adoption or PASS is established. External recording ledger is separate and actualIntroductionCommit remains unknown until normal publication.",
+  "preservedImmediateDecision": {
+    "path": "artifacts/evidence/W2.protected-lifecycle-current-calibration-03.decision-01.json",
+    "sha256": "2fe97395446028329e6c9fba2974899044c88e81ab52bde7b85953c8aa94626e"
+  },
+  "currentCacheCohortDerivation": {
+    "actualInputManifest": {
+      "path": "artifacts/tmp/W2.protected-lifecycle-current-calibration-02.calibration-01.f01/input-manifest.json",
+      "sha256": "5df263ff6884aa6ca644a78f368d03bc51bd6ba2811d377c253cd656d8f70b66"
+    },
+    "differentActualDisposition": {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/protected-lifecycle-current-calibration-01/independent-current-run1-cache-cohort-disposition-01.json",
+      "sha256": "cbb840cec957ac946fac84c9c3ff5bc5f2060311fdd5aea86edf0e3c0675e354"
+    },
+    "actualCommonMapSHA256": "fee840174a2dc4b694064c7a35461d3d20f851b70749e4f13359096f59308187",
+    "meaning": "Exact actually held current cohort from completed current-source run1, independently adjudicated:55 added HTTP pyc,1 changed credential pyc,6 cache directories; other bytes/identities unchanged. No cache exemption, deletion, reinstall, source change or cache-generation cause claim. Every remaining collector must match this complete actual cohort or fail.",
+    "priorExpectedComparisonSHA256": "68eb7be673d7e6d71616d24838ffae3e059dd72558c59b41c82b77ab15e73416"
+  },
+  "completedCurrentRunReadiness": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/protected-lifecycle-current-calibration-01/independent-current-run1-cache-cohort-disposition-01.json",
+    "sha256": "cbb840cec957ac946fac84c9c3ff5bc5f2060311fdd5aea86edf0e3c0675e354"
+  },
+  "completedFirstCurrentRun": {
+    "path": "artifacts/tmp/W2.protected-lifecycle-current-calibration-02.calibration-01.f01/receipt.json",
+    "sha256": "f6ad0bbff7acb28e73e4e3de0496a0bd68487a3229672475c0cca6fe6d752ae9"
+  },
+  "preservedFailedControl": {
+    "path": "artifacts/tmp/W2.lifecycle-current-calibration-control-02/calibrate-receipt.json",
+    "sha256": "d7dcbc15462f424838f121f4d322c3250fa0904f72edb91068ec86fb9fd67c99"
+  },
+  "singleBoundedFixtureReplacement": {
+    "failedZeroObservationAttempt": {
+      "path": "artifacts/tmp/W2.protected-lifecycle-current-calibration-03.calibration-02.f01/receipt.json",
+      "sha256": "7bc749f5f741c6cf0a0b68c58c354a3e7025425da7211ec92bab2b5b4bffa9b3"
+    },
+    "failedRaw": {
+      "path": "artifacts/tmp/W2.protected-lifecycle-current-calibration-03.calibration-02.f01/combined-raw.log",
+      "sha256": "f2a3cdec1c6e6cd79617c0dbe5d9cf28e27194bcd6bd18d4db35ff19875f9ebb"
+    },
+    "failedControl": {
+      "path": "artifacts/tmp/W2.lifecycle-current-calibration-control-03/calibrate-receipt.json",
+      "sha256": "002c437ed114aa6d734d61fe3e81bc1db9be214498005c0fce420a893b2dae59"
+    },
+    "tinyProductionCreateDiagnostic": {
+      "path": "artifacts/tmp/W2.project-create-rename-diagnostic-01/receipt.json",
+      "sha256": "789c220c8bc2d88e4af7e23e1ab2f88f4e7f8103003f173ff234860f701a36b3"
+    },
+    "tinyCreateReport": {
+      "path": "artifacts/tmp/W2.project-create-rename-diagnostic-01/single-create-report.json",
+      "sha256": "270668ec72b881413d70e5fef65d1bcc53a7366a2a280b621ce0639fa9a9a715"
+    },
+    "reason": "Actual WinError5 at atomic staging rename occurred before fixture population or any timing observations. One subsequent same-source real protected production create succeeded. Cause remains unknown; no AV/sharing or product-fix claim.",
+    "maximumAdditionalCalibration02Attempts": 1,
+    "behaviorOnFailure": "Retain all failed/partial outputs and stop this affected performance group for project-publication diagnosis. No automatic retry or loop until PASS.",
+    "unchanged": "Same fee840 full cohort, actual retained run1, all40 observations per successful run, only unperformed02/03, max3 baseline,500ms/20%, independent adoption and fresh holdout. No observations discarded from failed attempt because none existed."
+  }
+}
