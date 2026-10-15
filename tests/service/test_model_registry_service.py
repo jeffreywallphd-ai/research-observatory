@@ -227,7 +227,19 @@ class ModelCatalogServiceTests(unittest.TestCase):
 import { pathToFileURL } from 'node:url';
 let input = ''; for await (const chunk of process.stdin) input += chunk;
 const config = JSON.parse(input);
-const { createCoreApiClient } = await import(pathToFileURL(config.client).href);
+const { build } = await import(pathToFileURL(config.vite).href);
+const built = await build({
+  root: config.contractRoot, configFile: false, envDir: false, logLevel: 'silent',
+  build: { write: false, emptyOutDir: false, copyPublicDir: false, minify: false,
+    lib: { entry: config.client, formats: ['es'] } },
+});
+const buildResult = Array.isArray(built) ? (built.length === 1 ? built[0] : null) : built;
+if (!buildResult || !Array.isArray(buildResult.output) || buildResult.output.length !== 1
+    || buildResult.output[0].type !== 'chunk' || buildResult.output[0].imports.length !== 0
+    || buildResult.output[0].dynamicImports.length !== 0)
+  throw new Error('generated client transport must produce one closed ESM chunk');
+const { createCoreApiClient } = await import(
+  'data:text/javascript;base64,' + Buffer.from(buildResult.output[0].code).toString('base64'));
 const client = createCoreApiClient(async request => {
   const response = await fetch(config.origin + request.path, {
     method: request.method, body: request.body, signal: AbortSignal.timeout(10000),
@@ -266,6 +278,8 @@ process.stdout.write(JSON.stringify({ revisions: [before.revision, saved.revisio
                 input=json.dumps(
                     {
                         "client": str(REPO / "packages/contracts/core-api/generated.ts"),
+                        "vite": str(REPO / "packages/contracts/node_modules/vite/dist/node/index.js"),
+                        "contractRoot": str(REPO / "packages/contracts"),
                         "origin": f"http://{host}:{port}",
                         "root": self.project.root,
                         "token": TOKEN,
