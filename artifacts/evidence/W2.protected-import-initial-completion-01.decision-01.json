@@ -1,0 +1,359 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "finite-prospective-protected-import-initial-completion-decision",
+  "status": "APPROVED",
+  "recordedBy": "agent:/root",
+  "recordedAt": "2026-10-15T21:19:34.964416+00:00",
+  "approvedBy": "human:repository-owner",
+  "approvalBasis": "Actual prospective necessary W2 completion authority; owner is not claimed to have inspected this later packet.",
+  "prospectiveOwnerAuthority": {
+    "path": "artifacts/evidence/W2.completion-preauthorization-20261014-01.md",
+    "sha256": "34e2e3c175dc9309080182e0673f776055b1cc3ba78639475c09ec54408d7d5f"
+  },
+  "proposal": {
+    "path": "artifacts/tmp/W2.protected-import-completion-proposal-01/proposal-02.json",
+    "sha256": "db75c59f92c70d598fc1d478e4468598d6950c5813abbcb5d2180fa50fcfeeae"
+  },
+  "independentScopeReadiness": {
+    "path": "artifacts/tmp/W2.protected-import-completion-proposal-01/independent-finite-scope-readiness-02.json",
+    "sha256": "66f002b9614b823f063faa3e94f698c9ef59e8c8221785d09e8c15b864215b5b"
+  },
+  "recordedAtActualCleanC34Boundary": "2e0f9e88cb0ea95ddef324501a9d37185573f578",
+  "originalOutcomeTask": "CAP-04.S01.T02",
+  "observedBasis": {
+    "original100k": {
+      "candidate": "1c20b883a0adac7645913568d057a7c146feffcb",
+      "receipt": {
+        "path": "artifacts/tmp/W2.import-performance-current-03.f01/receipt.json",
+        "sha256": "45a56d543cb85cd8d65343fc88619eb259fa87efcaedc55b2bb652055cf5e8ab"
+      },
+      "result": "FAIL_RETAINED_NO_RETRY",
+      "terminalJob": "attempt1/import-timeout",
+      "parseRows": 20800,
+      "requiredParseRows": 100001,
+      "protectedSamplesCompleted": 0,
+      "partialPeakWorkingSetBytes": 191070208,
+      "oldReviewCeilingBytes": 166305792,
+      "normalEmpty": true,
+      "inputsStable": true
+    },
+    "tinyDiagnostic": {
+      "receipt": {
+        "path": "artifacts/tmp/W2.import-small-protected-diagnostic-01.f01/receipt.json",
+        "sha256": "51c63e954cfac79c2d48e15c7c480aed0a0742e3dda8e0a59bce0a4acc27ef4d"
+      },
+      "observation": {
+        "path": "artifacts/tmp/W2.import-small-protected-diagnostic-01.f01/observation.json",
+        "sha256": "fdb79cc585e223a6c40231ae69ba7317c6401db40347da5063c63959d5f2dece"
+      },
+      "recordCount": 1000,
+      "allOriginalScaledAssertionsPassed": true,
+      "qualification": false,
+      "causation": "Overlapping wall buckets do not attribute100k latency; idle Corpus denials and stopped-binding exceptions are not a demonstrated principal/DLL failure or selected optimization target."
+    },
+    "historicalComparableMethodContext": "Public C01 c7d185/a8ff records complete prior review521.231/521.845s and commit1095.993/1092.482s, unchanged old baseline/tool, all4 samples passed. Old ignored aggregates are absent now; no fresh raw/runtime equality claimed."
+  },
+  "alternatives": [
+    {
+      "name": "Retain120s and old20percent/four-sample method",
+      "consequence": "Would require a concrete authority-preserving defect restoration/optimization before current100k completion. No such cause is established; the owner defers optional optimization toW9. Do not retry unchanged."
+    },
+    {
+      "name": "Creation-only protected-preview900s plus finite initial observation",
+      "recommended": true,
+      "consequence": "Material finite production-budget and verification change, openly reviewed under34e. No default120 change, record reduction, timeout-as-pass, old job reinterpretation or claim that the unchanged canonical benchmark passed."
+    }
+  ],
+  "profiles": {
+    "legacy": {
+      "id": "legacy-preview-120s-v1",
+      "limits": {
+        "max_source_bytes": 268435456,
+        "max_record_bytes": 1048576,
+        "max_field_bytes": 65536,
+        "max_records": 200000,
+        "max_fields": 256,
+        "max_depth": 64,
+        "max_macros": 256,
+        "max_seconds": 120.0
+      },
+      "limitsHash": "sha256:3c90557e7cd47abf3454450b22673a9de3b250cde501372b515e1c50c03b524f",
+      "selection": "Every preview with no reserved parser settings or exact version1.0 settings remains120, including previously unscheduled old previews, pending jobs, accepted parses/summaries/commits and stored commit requests. Never backfill/upgrade on read or schedule."
+    },
+    "newCreation": {
+      "id": "protected-preview-900s-v1",
+      "limits": {
+        "max_source_bytes": 268435456,
+        "max_record_bytes": 1048576,
+        "max_field_bytes": 65536,
+        "max_records": 200000,
+        "max_fields": 256,
+        "max_depth": 64,
+        "max_macros": 256,
+        "max_seconds": 900.0
+      },
+      "limitsHash": "sha256:eee2a0c5d0b4c8a2ea8b13d393819f4807aa51f2b4ad95cc78168654dd122495",
+      "selection": "Only newly created previews get immutable private settings version1.1 atomically with their creation. Only their later new scheduling selects900. Existing previews of every state remain legacy120."
+    }
+  },
+  "selectedNewCreationProfile": "protected-preview-900s-v1",
+  "requiredImplementation": [
+    "Use existing settings key imports.preview.<previewId>, immutable revision0/text/single-row constraints, and a separate private version1.1 parser-settings model. Keep exact old version1.0 model/serialization and missing-row behavior. No schema/DDL/migration or legacy-row update.",
+    "Carry profile identity only on internal PreviewState. preview_job_input derives its existing parserLimitsHash from immutable state; _PreviewInput validates membership in the two fixed known hashes. Keep PreviewJobInput/PreviewDelimitedJobInput field names/order/schema/definition fingerprints unchanged. All old queue/input hashes remain exact.",
+    "ImportPreviewActivity resolves the same state profile and passes its actual limits to ImportSession. Preserve120 default/pure parser code and unchanged byte/count/field/depth limits, guarded reads,100-record/8MiB batch, current rights, poll/cancel/heartbeat/lease/source EOF/completeness/atomic receipt semantics.",
+    "New900 parse session and parser-configuration receipt must match immutable profile; reject mismatched actual session limits or receipt binding before acceptance and on accepted-read lineage. Retain legacy120 receipt/acceptance semantics and exact historical bytes; do not retroactively require newly added fields on old receipts.",
+    "Summary/commit factories already rebuild their nested preview through preview_job_input(state). Ensure service _inputs/_run and every repository reconstruction use that immutable state profile, including pending/restart/continuation, _current_commit, saved requests and accepted manifest reads; no guessing a profile from current defaults or opaque configuration hashes.",
+    "For900 summaries, add a versioned profile-aware summary receipt binding including the actual parser-limits hash; producer and repository must agree. Preserve exact old120 fingerprint/receipt-version branch for all accepted historical summaries.",
+    "Commit job/request configuration already embeds PreviewInput. Commit outputs already cite the exact accepted parser receipt as a direct source-revision/provenance input. Verify that900 profile is transitively authenticated there; keep deterministic record/source-assertion/import scientific content keys unchanged, so new operational budget does not duplicate identical records. No public manifest/DTO shape change is needed."
+  ],
+  "criticalCompatibilityAndAuthorityInvariants": [
+    "Read actual private settings revision0/text/single-row/project-preview-format-encoding/delimiter reconstruction and creation transaction. Existing schema1.0 class/serialization and absent-row behavior must remain exact. New model is a separate private version; no schema/DDL/migration or old row update. New internal PreviewState field defaults to legacy for old/synthetic construction, not new-profile inference from current defaults.",
+    "Read actual PreviewInput parser hash validator, configuration fingerprint, comma/noncomma job input and workflow definition/schema construction. A closed two-hash membership check can preserve exact field names/order/schema and legacy definition/configuration bytes while state-derived new900 hash changes new execution authority. Pending/restart/continuation must reconstruct from immutable state; neither a caller hash nor a known hash alone authorizes switching an old preview.",
+    "Read actual ImportPreviewActivity ImportSession construction/guarded source,100-record/8MiB flush/poll/lease/heartbeat and parser-configuration receipt of actual session limits. New900 needs both actual session==immutable selected profile and exact source/format/encoding/delimiter/limits receipt before acceptance and accepted-read lineage. Preserve old120 receipt semantics; do not retroactively require new fields on legacy accepted data.",
+    "Read actual accepted-attempt, summary producer/fingerprint and repository binding. New900 versioned summary fingerprint must authenticate actual parser profile/accepted parse and the same producer/repository branch; old120 fingerprint, receipt version, accepted rows and pending authority remain byte-exact. Accepted summary lineage cannot merely trust a profile label or current default.",
+    "Read nested summary/commit preview_job_input state propagation, stored request configuration and direct accepted parser receipt provenance. Individually named service/summary/commit reconstruction surfaces cover pending/reload/_current_commit/accepted manifest paths. Add only necessary profile-consistency adjustments; preserve C01 same-transaction authority, atomic publication, rights/lease/cancellation/fault/replay behavior and one protected read per identity page.",
+    "Read scientific import_identity/source_assertion_key serialization. Execution parser profile is distinct from mapping-profile/scientific authority: new execution configuration/provenance must differ when appropriate, while identical record/source-assertion/effective draft scientific identity and reimport deduplication must remain exact. No profile-based duplicate canonical records.",
+    "Actual native IntakeStatus/PreviewProgress and public preview_item/ReviewSummary project fields explicitly; PreviewState/private settings are not directly exposed by existing routes, and OpenAPI producer obtains create_app().openapi. Therefore internal-only design is plausible, not already proved for future source. Actual API contract --check and no-selector/no-leak tests must establish unchanged generated/public bytes; unexpected leakage is a failure, not permission to regenerate public fields."
+  ],
+  "finitePathEnvelope": {
+    "productPaths": [
+      {
+        "path": "services/core-api/src/research_observatory_core/ingestion/protected_import_profiles.py",
+        "intent": "new",
+        "necessaryScope": "Finite pure two-profile registry: exact frozen120/900 float-valued limits and known hashes; no runtime settings or arbitrary duration selector."
+      },
+      {
+        "path": "services/core-api/src/research_observatory_core/ports/import_previews.py",
+        "intent": "planned",
+        "necessaryScope": "Add only an internal PreviewState profile identity, defaulting legacy for synthetic/old state construction; no field on public IntakeCreate, PreviewProgress, ImportPreviewItem, ReviewSummary or renderer request."
+      },
+      {
+        "path": "services/core-api/src/research_observatory_core/import_preview_repository.py",
+        "intent": "planned",
+        "necessaryScope": "Private immutable parser-settings version dispatch; creation-only900 rows; preserve missing/v1 legacy120 without backfill; enforce actual new900 session/parse-receipt profile before acceptance and when accepted data is read, using current transaction."
+      },
+      {
+        "path": "services/core-api/src/research_observatory_core/ingestion/preview_workflow.py",
+        "intent": "planned",
+        "necessaryScope": "Resolve existing parser_limits_hash against closed registry and derive it from immutable state profile; keep legacy input/model names/fields/schema/definition/configuration bytes exact."
+      },
+      {
+        "path": "services/core-api/src/research_observatory_core/ingestion/preview_activity.py",
+        "intent": "planned",
+        "necessaryScope": "Pass actual frozen profile limits to ImportSession, retaining source reads/polls/rights/lease/batch/receipt code; parser-configuration receipt fingerprint records actual effective limits."
+      },
+      {
+        "path": "services/core-api/src/research_observatory_core/ingestion/import_summaries.py",
+        "intent": "planned",
+        "necessaryScope": "Profile-aware new900 summary-receipt fingerprint branch; exact old120 fingerprint bytes retained. Result/content algorithm remains unchanged."
+      },
+      {
+        "path": "services/core-api/src/research_observatory_core/ingestion/summary_activity.py",
+        "intent": "planned",
+        "necessaryScope": "Supply actual nested preview profile hash into new900 receipt binding; old120 branch unchanged."
+      },
+      {
+        "path": "services/core-api/src/research_observatory_core/import_summary_repository.py",
+        "intent": "planned",
+        "necessaryScope": "Recompute/check the same new900 summary binding from immutable state/accepted parse, preserving old accepted summary receipt branch."
+      },
+      {
+        "path": "services/core-api/src/research_observatory_core/import_preview_service.py",
+        "intent": "bounded compatibility surface",
+        "necessaryScope": "Audit/adjust only profile propagation in _inputs/_run/_summary_inputs/_commit_inputs/_stored_commit/_current_commit as necessary; existing reconstruction should inherit state-profile selection rather than current defaults."
+      },
+      {
+        "path": "services/core-api/src/research_observatory_core/ingestion/summary_workflow.py",
+        "intent": "bounded compatibility surface",
+        "necessaryScope": "Audit/adjust only profile propagation and exact old/new claim/continuation reconstruction. Existing preview_job_input(state) propagation may require no edit."
+      },
+      {
+        "path": "services/core-api/src/research_observatory_core/ingestion/commit_workflow.py",
+        "intent": "bounded compatibility surface",
+        "necessaryScope": "Audit/adjust only profile propagation and exact old/new request/claim/origin/continuation binding. Existing nested PreviewInput schema must remain unchanged."
+      },
+      {
+        "path": "services/core-api/src/research_observatory_core/import_commit_repository.py",
+        "intent": "bounded compatibility surface",
+        "necessaryScope": "Audit/adjust only state-based reconstruction, saved requests and accepted parser-provenance validation if needed; no extra protected connection per page or change to C01 atomic/idempotent publication."
+      }
+    ],
+    "testPaths": [
+      {
+        "path": "tests/data/test_import_preview_repository.py",
+        "necessaryScope": "Private settings immutability/rollback/no-backfill/unknown-version/profile-hash mismatch; update existing synthetic session/receipt helper to its actual selected profile, keep all old assertions."
+      },
+      {
+        "path": "tests/service/test_import_preview_workflow.py",
+        "necessaryScope": "Frozen comma and noncomma legacy definition/hash replay; known900 reconstruction; substituted/unknown hash denial."
+      },
+      {
+        "path": "tests/service/test_import_preview_activity.py",
+        "necessaryScope": "Actual900/legacy120 limits and receipt binding, controlled-clock timeout/cancellation/rights/lease denial; no real900-second test."
+      },
+      {
+        "path": "tests/service/test_import_preview_service.py",
+        "necessaryScope": "New preview900; both missing/v1 old unscheduled previews remain120; queued/restarted old/new profile identity and idempotent scheduling."
+      },
+      {
+        "path": "tests/data/test_import_summary_repository.py",
+        "necessaryScope": "Existing manual receipt helper matches actual profile; legacy accepted summary exactness and new900 mismatch denial."
+      },
+      {
+        "path": "tests/service/test_import_summary_workflow.py",
+        "necessaryScope": "Legacy/new queued, accepted and continuation/restart summary reconstruction; no policy/intent/draft substitution."
+      },
+      {
+        "path": "tests/service/test_import_commit_workflow.py",
+        "necessaryScope": "Legacy/new nested profile fingerprints, origin validation and continuation denial for profile substitution."
+      },
+      {
+        "path": "tests/service/test_import_commit_service.py",
+        "necessaryScope": "Old persisted commit-request reload and accepted manifest/reopen; new900 chain and current-authority checks."
+      },
+      {
+        "path": "tests/data/test_import_commit_publication.py",
+        "necessaryScope": "New-profile parser-provenance mismatch rejection while retaining all existing fault/rollback/retry/lease/rights assertions."
+      },
+      {
+        "path": "tests/service/test_import_commit_identity.py",
+        "necessaryScope": "Operational profile change does not duplicate identical scientific record/source assertion identity; execution/provenance hashes must differ."
+      },
+      {
+        "path": "tests/service/test_import_intake_api.py",
+        "necessaryScope": "No profile/limits selector accepted or leaked by response projections; no public schema/client update."
+      }
+    ],
+    "newLegacyFixture": "tests/fixtures/imports/protected-preview-legacy120-authority-v1.json",
+    "documentationPath": "docs/architecture/reference-imports.md",
+    "documentationMode": "Append exact current policy to existing architecture contract; preserve historical pure-parser120 description and all immutable approvals.",
+    "requiredDecisionClarification": "Replace proposal scopeRule final exact-modified-subset-before-claim requirement with the individually named finite necessary path envelope. Normal spec may list this exact envelope with per-path purpose/optional compatibility designation; actual modified subset is bound by application/diff/evidence. Already-listed conforming optional compatibility paths need no later scope addendum. Unnecessary edits remain excluded and any unlisted material path/scope change still needs concrete review.",
+    "compatibilityPathsMayRemainUnchanged": [
+      "services/core-api/src/research_observatory_core/import_preview_service.py",
+      "services/core-api/src/research_observatory_core/ingestion/summary_workflow.py",
+      "services/core-api/src/research_observatory_core/ingestion/commit_workflow.py",
+      "services/core-api/src/research_observatory_core/import_commit_repository.py"
+    ],
+    "broadPrefixAuthority": false
+  },
+  "scopeClarification": "Replace proposal scopeRule final exact-modified-subset-before-claim requirement with the individually named finite necessary path envelope. Normal spec may list this exact envelope with per-path purpose/optional compatibility designation; actual modified subset is bound by application/diff/evidence. Already-listed conforming optional compatibility paths need no later scope addendum. Unnecessary edits remain excluded and any unlisted material path/scope change still needs concrete review.",
+  "initialEvidencePolicy": {
+    "status": "APPROVED_INITIAL_W2_POLICY_PENDING_ACTUAL_PROOF",
+    "productParserSeconds": 900.0,
+    "pureParserDefaultSeconds": 120.0,
+    "pureParserMemoryTestExistingExplicitSeconds": 600,
+    "protectedParseStageCompletionAndObserverSeconds": 930,
+    "reviewSummaryWorkerSeconds": 900,
+    "commitWorkerSeconds": 1800,
+    "reviewCompletedSampleSeconds": 1800,
+    "commitCompletedSampleSeconds": 2400,
+    "processPeakWorkingSetBytesMaximum": 268435456,
+    "memoryMeaning": "Same original workload current-process peakWorkingSetSize: Core+ASGI+test runner.256MiB is a finite proposed observation ceiling aligned with current metadata admission estimate, not an OS/job-tree/whole-app memory guarantee. Reservation policy itself is unchanged.",
+    "observerSafety": {
+      "parseWaitSeconds": 930,
+      "summaryWaitSeconds": 930,
+      "commitWaitSeconds": 1830,
+      "reviewOverallObservationSeconds": 1860,
+      "commitOverallObservationSeconds": 2460,
+      "perChildWatchdogSeconds": {
+        "review": 1920,
+        "commit": 2520
+      },
+      "outerCollectionSeconds": 10800,
+      "ownedNormalDrainSeconds": 5
+    },
+    "rationale": "Explicit conservative initial engineering ceilings, not measurements or extrapolation. Prior complete521s review/1093s commit are context; current120s timeout and182.2MiB partial peak show old choices do not qualify current execution. Keep a finite total/phase bound and256MiB peak rather than optimize now. These proposed relaxed comparisons require different review and root selection before any measurement.",
+    "protectedWorkloadSelection": {
+      "freshComplete100kReview": 1,
+      "freshComplete100kCommit": 1,
+      "recordsEach": 100000,
+      "allOriginalFunctionalAssertionsRetained": true,
+      "noAutomaticRetry": true,
+      "noNewPercentileOrBaseline": true,
+      "meaning": "This expressly replaces old two-review+two-commit/20percent comparison for this finite initial completion choice. It is not a passing invocation of unchanged canonical tool/baseline. One observation per workload is reported raw; any median ofn=1 is trivial and has no distribution/percentile claim."
+    },
+    "oldAdverseRule": "Preserve every old failed/incomplete attempt and effective old120 configuration. No failed timeout is a latency sample or discardable outlier. New900 observations are a different declared configuration cohort, not replacement histories. Any new failure remains a failure and stops this selected group; no retry-to-pass."
+  },
+  "independentCriterionAssessmentAtReview": {
+    "selectedPolicy": {
+      "status": "PROPOSED_NOT_ADOPTED",
+      "productParserSeconds": 900.0,
+      "pureParserDefaultSeconds": 120.0,
+      "pureParserMemoryTestExistingExplicitSeconds": 600,
+      "protectedParseStageCompletionAndObserverSeconds": 930,
+      "reviewSummaryWorkerSeconds": 900,
+      "commitWorkerSeconds": 1800,
+      "reviewCompletedSampleSeconds": 1800,
+      "commitCompletedSampleSeconds": 2400,
+      "processPeakWorkingSetBytesMaximum": 268435456,
+      "memoryMeaning": "Same original workload current-process peakWorkingSetSize: Core+ASGI+test runner.256MiB is a finite proposed observation ceiling aligned with current metadata admission estimate, not an OS/job-tree/whole-app memory guarantee. Reservation policy itself is unchanged.",
+      "observerSafety": {
+        "parseWaitSeconds": 930,
+        "summaryWaitSeconds": 930,
+        "commitWaitSeconds": 1830,
+        "reviewOverallObservationSeconds": 1860,
+        "commitOverallObservationSeconds": 2460,
+        "perChildWatchdogSeconds": {
+          "review": 1920,
+          "commit": 2520
+        },
+        "outerCollectionSeconds": 10800,
+        "ownedNormalDrainSeconds": 5
+      },
+      "rationale": "Explicit conservative initial engineering ceilings, not measurements or extrapolation. Prior complete521s review/1093s commit are context; current120s timeout and182.2MiB partial peak show old choices do not qualify current execution. Keep a finite total/phase bound and256MiB peak rather than optimize now. These proposed relaxed comparisons require different review and root selection before any measurement.",
+      "protectedWorkloadSelection": {
+        "freshComplete100kReview": 1,
+        "freshComplete100kCommit": 1,
+        "recordsEach": 100000,
+        "allOriginalFunctionalAssertionsRetained": true,
+        "noAutomaticRetry": true,
+        "noNewPercentileOrBaseline": true,
+        "meaning": "This expressly replaces old two-review+two-commit/20percent comparison for this finite initial completion choice. It is not a passing invocation of unchanged canonical tool/baseline. One observation per workload is reported raw; any median ofn=1 is trivial and has no distribution/percentile claim."
+      },
+      "oldAdverseRule": "Preserve every old failed/incomplete attempt and effective old120 configuration. No failed timeout is a latency sample or discardable outlier. New900 observations are a different declared configuration cohort, not replacement histories. Any new failure remains a failure and stops this selected group; no retry-to-pass."
+    },
+    "acceptableAsExplicitFiniteInitialChoice": true,
+    "actualCapsPredictCompletion": false,
+    "oldFourSampleTwentyPercentMethodReplacedOnlyByExplicitDecision": true,
+    "canonicalToolAndBaselineMustRemainImmutable": true,
+    "resourceStatistic": "Hard per-process peakWorkingSetSize maximum268435456bytes for each completed workload. No median/outlier rule converts resource, failure, timeout, rights, cancellation or cleanup violation to PASS.",
+    "timingMeaning": "One complete100k review and one complete100k commit, each with all original functional assertions.900.0 is the new protected parser product limit;930/900/1800 phase and1800/2400 complete-sample limits plus stated watchdog slack are explicit finite observation/evaluation policy. Summary/commit worker timing fields do not invent an already-enforced product deadline. No population/distribution/percentile/regression claim from one observation; no new baseline or holdout.",
+    "retainedRisk": "This deliberately relaxes old sample count, relative comparison, latency and observed-process-memory ceilings. Actual regression/cause is not concealed: old120 timeout/partial peak, old historical comparisons and every future raw value remain. No evidence currently proves new900 or256MiB will suffice; any new failure stops this group without automatic retry or optimization."
+  },
+  "pureParserComponentReuse": {
+    "actualReport": {
+      "path": "artifacts/tmp/W2.import-performance-current-03.f01/report.json",
+      "sha256": "425f74b124955c4f31b4cd0e8194dcd988fa884c430b89d88159c4b2bb7a93fe"
+    },
+    "actualRaw": {
+      "path": "artifacts/tmp/import-performance-fxk_tr_t/parser-1.log",
+      "sha256": "3340c65e686d2f8375f27f3fd0f9fa3afab80edd06e723886997b33401c51f55"
+    },
+    "inventory": "RIS/BibTeX/CSV100k each twice, six exact successful observations, exclusive16MiB traced memory; latency descriptive.",
+    "eligibleOnlyIf": "Different actual component judgment authenticates original raw/candidate/runtime/input closure and proves final correction leaves reference_imports.py, pure test, package __init__ files, stdlib/Python and relevant environment unchanged. New protected profile module is not imported by that standalone pure case. Do not infer reuse from hashes alone or from this proposal.",
+    "otherwise": "State the exact changed/unknown imported input. Only the original one-case/six-observation parser component then needs fresh execution; no broader suite."
+  },
+  "requiredProof": [
+    "Normal C34 closeout/quiescent clean boundary, explicit finite decision with actual proposal/readiness/34e and named envelope, then actual linked CAP-04.S01.T02 origin snapshot/spec/claim before any product edit. Future task/base/source/candidate/results remain unknown here.",
+    "Before product edits, capture genuine predecessor legacy120 missing/v1 settings plus comma/noncomma definition/input/configuration, queued/accepted parse+summary and stored/accepted commit-request/manifest authority. Preserve existing frozen comma fixture unchanged. Fixtures record actual predecessor bytes, not invented or900-relabeled authority.",
+    "Focused positive/negative old/new tests cover unscheduled missing/v1, pending/recovered/continued and accepted lineage, unknown/mismatched profile/hash/version, immutable settings rollback/identity/revision denial, real session and receipt equality, cancellation/lease/rights/EOF completeness. Keep original assertions; deterministic controlled clocks avoid real900s negative tests.",
+    "Exact old scientific dedupe/definition/schema/receipt bytes, C01 hot-path read count and commit atomic/fault/rollback/idempotency/replay/current-rights tests, affected Ruff/configured types and unchanged public Core API contract/no-leak proof at actual final source. No broad unaffected profiles solely for an internal profile.",
+    "Actual independently source-reviewed one-use observers/evaluator must disclose every phase/whole-operation clock change while retaining original100k cases/assertions and metrics; after committed candidate, run one real protected100k review and one100k commit serially under genuine held runtime/source/environment and normal owned EMPTY0. No smaller-record substitute, automatic retry, timeout-as-latency or missing result.",
+    "Pure parser six-observation component reuse is only a future separate actual closed-input/coverage judgment. Current proposal/hash equality alone is insufficient; exact changed/unknown pure imported input instead requires only that original parser component fresh, not broader replay.",
+    "Final changed Core source requires genuinely current affected Core package/source-input/principal/artifact proof after source settles. Old frozen c15 package/source bindings cannot be relabeled current. Unrelated Rust/frontend/native bodies repeat only for a demonstrated affected-input reason.",
+    "Different actual source/security/criterion and committed frozen task review remain required. No source proposal, implementation, benchmark, package, task, Wave or release acceptance is inferred from this scope readiness."
+  ],
+  "unchangedControlsAndHistory": [
+    "Pure parser algorithm/default120/source bytes/count/size/depth/macro fields; all rights/security/private-content/cancellation/lease/transaction/migration/cleanup guarantees.",
+    "Canonical tools/import_performance_check.py, frozen6b5 baseline, original 100k test source/reports and old C01/CAP04 approvals remain unchanged. Only a later exact approved ignored observer/method successor may implement the finite observation policy.",
+    "Idle Corpus denial/no-work logging is not part of this correction; no accepted Intent fabricated and no authority bypass to remove warnings.",
+    "W9 owns optional optimization. No model run,8/16GiB workload, hardware requirement, new installer/controller/framework, automatic release/Wave approval."
+  ],
+  "delivery": "Publish this finite decision, normal spec and the approved architecture-contract append before the normal product claim. The normal spec lists the exact named product/test/fixture envelope only; the architecture append is a separately authorized pre-claim policy record, not a relabeled product path or framework change. Existing taskctl remains unchanged. Conforming implementation/evidence remains subject to actual normal task review; no additional recording/controller/bootstrap gate is invented.",
+  "criterionException": "This explicit decision supplies the necessary bounded profile and initial verification-policy change under actual prospective34e. It does not edit inherited task criteria, frozen Wave plans, canonical tools/baselines, old approvals or adverse results, and does not claim the unchanged canonical benchmark passed.",
+  "futureImplementationCandidate": null,
+  "futureActualResults": null,
+  "taskApproved": false,
+  "waveApproved": false,
+  "releaseApproved": false
+}

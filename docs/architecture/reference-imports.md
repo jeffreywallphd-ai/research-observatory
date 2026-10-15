@@ -400,3 +400,51 @@ Primary format references consulted: [CSL input schema](https://github.com/citat
 [BibTeX implementation specification](https://tug.ctan.org/info/knuth-pdf/bibtex/bibtex.pdf),
 and [DOI handbook](https://www.doi.org/doi-handbook/html/).
 All checked-in test metadata is explicitly synthetic and is not research evidence.
+
+## Protected-preview processing profiles
+
+The approved W2 initial-completion policy is recorded in
+`artifacts/evidence/W2.protected-import-initial-completion-01.decision-01.json`.
+This is an explicit configuration and verification-policy change under the
+owner's prospective completion authorization. The decision supplies scope;
+committed implementation and actual independent evidence establish delivery.
+It does not turn the preserved 120-second timeout into a successful benchmark.
+
+Only newly created previews select the fixed `protected-preview-900s-v1`
+profile, atomically through immutable private parser settings version 1.1.
+Its parser wall budget is exactly `900.0` seconds. Missing settings and exact
+version 1.0 settings always select `legacy-preview-120s-v1` with `120.0` seconds,
+including old unscheduled previews, queued or recovered work, accepted parses
+and summaries, and saved or accepted commit requests. Reading, scheduling and
+retrying cannot upgrade an existing preview. Unknown versions, identities,
+tuples or substituted hashes fail closed. No public DTO or environment setting
+selects a profile.
+
+The pure parser default remains 120 seconds. Both protected profiles retain
+the same source, record, field, record-count, field-count, depth and macro caps.
+Their canonical limits hashes are respectively
+`sha256:3c90557e7cd47abf3454450b22673a9de3b250cde501372b515e1c50c03b524f`
+and `sha256:eee2a0c5d0b4c8a2ea8b13d393819f4807aa51f2b4ad95cc78168654dd122495`.
+Immutable preview state, actual parser-session limits and parser receipts must
+agree. New-profile summary receipts bind the actual parser-limits hash; legacy
+definition, configuration and receipt bytes remain compatible. Execution and
+provenance configurations distinguish profiles, while scientific record and
+source-assertion identities preserve idempotent reimport. Rights, cancellation,
+leases, verified EOF, guarded batches and atomic publication remain required.
+
+The finite initial proof uses one complete 100,000-record protected review and
+one complete commit, retaining all original functional assertions. The selected
+phase ceilings are 930 seconds for completed parsing, 900 for summary work and
+1,800 for commit work; complete observations allow 1,800 and 2,400 seconds for
+review and commit respectively. Each original observed process has a 256 MiB
+peak-working-set ceiling. This is an observation limit, not an OS-enforced or
+whole-application memory guarantee. The decision records separate observer
+watchdogs and normal owned cleanup. Worker observation ceilings do not invent
+additional already-enforced product deadlines.
+
+This expressly replaces the old four-sample relative timing comparison for
+this initial proof; the canonical benchmark, reviewed baseline and original
+reports remain unchanged. A single observation supplies no percentile or
+distribution claim. Failed, incomplete and timed-out trials remain failures;
+new-profile measurements form a separate configuration cohort. Resource and
+cleanup limits still apply. Optional optimization remains future W9 work.
