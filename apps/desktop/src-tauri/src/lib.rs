@@ -8,23 +8,17 @@ pub mod directory_picker;
 #[cfg(windows)]
 mod document_attachment;
 #[cfg(windows)]
+mod document_corrections;
+#[cfg(windows)]
 mod document_drop;
 #[cfg(windows)]
 mod document_reader;
-#[cfg(windows)]
-mod document_corrections;
 #[cfg(windows)]
 mod document_reprocessing;
 #[cfg(windows)]
 mod document_runtime;
 #[cfg(windows)]
 mod document_viewer;
-#[cfg(windows)]
-mod viewer_actions;
-#[cfg(windows)]
-mod viewer_export;
-#[cfg(windows)]
-mod viewer_print;
 #[cfg(windows)]
 mod import_report;
 mod import_runtime;
@@ -34,6 +28,12 @@ mod plugin_intake;
 mod reconciliation_admission;
 pub mod supervisor;
 pub mod support_bundle;
+#[cfg(windows)]
+mod viewer_actions;
+#[cfg(windows)]
+mod viewer_export;
+#[cfg(windows)]
+mod viewer_print;
 mod workflow_session;
 
 use application_lock::{
@@ -787,7 +787,8 @@ async fn application_lock_now(
     let (snapshot, changed) = lock.lock(ApplicationLockReason::Manual);
     if changed {
         #[cfg(windows)]
-        app.state::<viewer_actions::ViewerActionManager>().cancel_all();
+        app.state::<viewer_actions::ViewerActionManager>()
+            .cancel_all();
         picker.cancel_pending();
         support.clear_pending();
         emit_lock_snapshot(&app, lock.inner(), &snapshot);
@@ -798,7 +799,8 @@ async fn application_lock_now(
             .await
             .map_err(|_| "RO-CORE-SUPERVISOR-FAILED")?;
         #[cfg(windows)]
-        app.state::<viewer_actions::ViewerActionManager>().reconcile_closed();
+        app.state::<viewer_actions::ViewerActionManager>()
+            .reconcile_closed();
     }
     Ok(snapshot)
 }
@@ -870,7 +872,11 @@ async fn application_sign_in_transition_commit(
     .map_err(|_| "RO-SIGN-IN-TRANSITION-FAILED")?;
     if result.outcome == application_lock::PolicyTransitionOutcome::Committed {
         #[cfg(windows)]
-        { let actions=app.state::<viewer_actions::ViewerActionManager>(); actions.cancel_all(); actions.reconcile_closed(); }
+        {
+            let actions = app.state::<viewer_actions::ViewerActionManager>();
+            actions.cancel_all();
+            actions.reconcile_closed();
+        }
         picker.cancel_pending();
         let _ = app.emit("application-lock-changed", &result.snapshot);
     }
@@ -1154,7 +1160,10 @@ fn application_builder() -> tauri::Builder<tauri::Wry> {
                     .begin_terminal_exit();
                 let supervisor = window.state::<RuntimeSupervisor>().inner().clone();
                 #[cfg(windows)]
-                let viewer_actions = window.state::<viewer_actions::ViewerActionManager>().inner().clone();
+                let viewer_actions = window
+                    .state::<viewer_actions::ViewerActionManager>()
+                    .inner()
+                    .clone();
                 #[cfg(windows)]
                 viewer_actions.cancel_all();
                 supervisor.begin_native_exit();
@@ -3183,6 +3192,155 @@ pub mod directory_integration_harness {
         "application-data/security",
     ];
 
+    // Only first creation of this owned integration fixture's vault is special.
+    // Never reopen an occupied vault to replace its owner or DACL.
+    fn create_private_fixture_vault(root: &Path) -> Result<(), &'static str> {
+        use std::os::windows::ffi::OsStrExt;
+        use std::os::windows::io::{FromRawHandle, OwnedHandle};
+        use windows_sys::Win32::Foundation::{ERROR_INSUFFICIENT_BUFFER, GetLastError};
+        use windows_sys::Win32::Security::{
+            ACCESS_ALLOWED_ACE, ACL, ACL_REVISION, AddAccessAllowedAceEx, CONTAINER_INHERIT_ACE,
+            CreateWellKnownSid, GetLengthSid, GetTokenInformation, InitializeAcl,
+            InitializeSecurityDescriptor, IsValidSid, OBJECT_INHERIT_ACE, SE_DACL_PROTECTED,
+            SECURITY_ATTRIBUTES, SECURITY_DESCRIPTOR, SetSecurityDescriptorControl,
+            SetSecurityDescriptorDacl, SetSecurityDescriptorOwner, TOKEN_QUERY, TOKEN_USER,
+            TokenUser, WinLocalSystemSid,
+        };
+        use windows_sys::Win32::Storage::FileSystem::{CreateDirectoryW, FILE_ALL_ACCESS};
+        use windows_sys::Win32::System::Threading::{GetCurrentProcess, OpenProcessToken};
+
+        let parent = repository()?.join("artifacts/tmp");
+        let name = root.file_name().and_then(|name| name.to_str());
+        if root.parent() != Some(parent.as_path())
+            || !name
+                .and_then(|name| name.strip_prefix("directory-dialog-"))
+                .is_some_and(valid_nonce)
+        {
+            return Err("probe-fixture-name-invalid");
+        }
+        validate_directory(root)?;
+        let pins = pin_ancestors(root)?;
+        let mut token = std::ptr::null_mut();
+        if unsafe { OpenProcessToken(GetCurrentProcess(), TOKEN_QUERY, &mut token) } == 0
+            || token.is_null()
+        {
+            return Err("probe-vault-principal-unavailable");
+        }
+        // OwnedHandle closes the real token on every subsequent exit.
+        let token = unsafe { OwnedHandle::from_raw_handle(token) };
+        let mut required = 0;
+        if unsafe {
+            GetTokenInformation(
+                token.as_raw_handle(),
+                TokenUser,
+                std::ptr::null_mut(),
+                0,
+                &mut required,
+            )
+        } != 0
+            || unsafe { GetLastError() } != ERROR_INSUFFICIENT_BUFFER
+            || required < std::mem::size_of::<TOKEN_USER>() as u32
+            || required > 4096
+        {
+            return Err("probe-vault-principal-unavailable");
+        }
+        // Aligned, bounded storage keeps the TOKEN_USER and its SID alive.
+        let mut user_storage = [0usize; 512];
+        let capacity = std::mem::size_of_val(&user_storage) as u32;
+        if unsafe {
+            GetTokenInformation(
+                token.as_raw_handle(),
+                TokenUser,
+                user_storage.as_mut_ptr().cast(),
+                capacity,
+                &mut required,
+            )
+        } == 0
+            || required > capacity
+        {
+            return Err("probe-vault-principal-unavailable");
+        }
+        let user = unsafe { &*user_storage.as_ptr().cast::<TOKEN_USER>() };
+        let sid = user.User.Sid;
+        let start = user_storage.as_ptr() as usize;
+        let end = start + required as usize;
+        if (sid as usize) < start
+            || (sid as usize)
+                .checked_add(8)
+                .is_none_or(|limit| limit > end)
+            || unsafe { IsValidSid(sid) } == 0
+        {
+            return Err("probe-vault-principal-unavailable");
+        }
+        let sid_size = unsafe { GetLengthSid(sid) };
+        if sid_size > 68
+            || (sid as usize)
+                .checked_add(sid_size as usize)
+                .is_none_or(|limit| limit > end)
+        {
+            return Err("probe-vault-principal-unavailable");
+        }
+        let mut system_storage = [0u32; 17];
+        let mut system_size = std::mem::size_of_val(&system_storage) as u32;
+        let system_sid = system_storage.as_mut_ptr().cast();
+        if unsafe {
+            CreateWellKnownSid(
+                WinLocalSystemSid,
+                std::ptr::null_mut(),
+                system_sid,
+                &mut system_size,
+            )
+        } == 0
+            || system_size > std::mem::size_of_val(&system_storage) as u32
+        {
+            return Err("probe-vault-security-unavailable");
+        }
+        // All descriptor/ACL/SID memory is Rust-owned and drops without leaks.
+        let mut acl_storage = [0usize; 64];
+        let acl = acl_storage.as_mut_ptr().cast::<ACL>();
+        let ace_prefix =
+            (std::mem::size_of::<ACCESS_ALLOWED_ACE>() - std::mem::size_of::<u32>()) as u32;
+        let acl_size = std::mem::size_of::<ACL>() as u32 + 2 * ace_prefix + sid_size + system_size;
+        let inheritance = OBJECT_INHERIT_ACE | CONTAINER_INHERIT_ACE;
+        let mut descriptor = SECURITY_DESCRIPTOR::default();
+        let descriptor_ptr = std::ptr::addr_of_mut!(descriptor).cast();
+        if acl_size > std::mem::size_of_val(&acl_storage) as u32
+            || unsafe { InitializeAcl(acl, acl_size, ACL_REVISION) } == 0
+            || unsafe {
+                AddAccessAllowedAceEx(acl, ACL_REVISION, inheritance, FILE_ALL_ACCESS, sid)
+            } == 0
+            || unsafe {
+                AddAccessAllowedAceEx(acl, ACL_REVISION, inheritance, FILE_ALL_ACCESS, system_sid)
+            } == 0
+            || unsafe { InitializeSecurityDescriptor(descriptor_ptr, 1) } == 0
+            || unsafe { SetSecurityDescriptorOwner(descriptor_ptr, sid, 0) } == 0
+            || unsafe { SetSecurityDescriptorDacl(descriptor_ptr, 1, acl, 0) } == 0
+            || unsafe {
+                SetSecurityDescriptorControl(descriptor_ptr, SE_DACL_PROTECTED, SE_DACL_PROTECTED)
+            } == 0
+        {
+            return Err("probe-vault-security-unavailable");
+        }
+        let attributes = SECURITY_ATTRIBUTES {
+            nLength: std::mem::size_of::<SECURITY_ATTRIBUTES>() as u32,
+            lpSecurityDescriptor: descriptor_ptr,
+            bInheritHandle: 0,
+        };
+        let path = root.join("vault");
+        let name: Vec<u16> = path
+            .as_os_str()
+            .encode_wide()
+            .chain(std::iter::once(0))
+            .collect();
+        if unsafe { CreateDirectoryW(name.as_ptr(), &attributes) } == 0 {
+            return Err("probe-fixture-create-denied");
+        }
+        for pin in pins {
+            pin.revalidate()?;
+        }
+        Ok(())
+    }
+
     // This is fixture provenance, not a capability or a production controller.
     // Resume accepts only the original directory identities in our fixed test
     // namespace. Hostile same-account modification is not an isolation claim.
@@ -3492,7 +3650,11 @@ pub mod directory_integration_harness {
             let mut fixture = Self::layout(root);
             for relative in FIXTURE_DIRECTORIES {
                 let path = fixture.root.join(relative);
-                std::fs::create_dir(&path).map_err(|_| "probe-fixture-create-denied")?;
+                if relative == "vault" {
+                    create_private_fixture_vault(&fixture.root)?;
+                } else {
+                    std::fs::create_dir(&path).map_err(|_| "probe-fixture-create-denied")?;
+                }
                 pins.push(PinnedDirectory::acquire(path.clone())?);
                 validate_directory(&path)?;
             }
@@ -4409,6 +4571,117 @@ pub mod directory_integration_harness {
         }
 
         #[test]
+        fn lifecycle_vault_is_private_at_creation_and_establishes_recovery_ownership() {
+            let fixture = Fixture::create_lifecycle(&nonce()).unwrap();
+            let script = r#"
+import ctypes, sys
+from pathlib import Path
+sys.path.insert(0, str(Path.cwd() / 'services/core-api/src'))
+from research_observatory_core import windows_credentials as c
+vault = Path(sys.argv[1]).resolve(strict=True)
+sid = c._recovery_current_sid()
+api = c._recovery_windows_api()
+with c._recovery_open(vault, sid, directory=True, exact_acl=False) as held:
+    owner, dacl, descriptor = ctypes.c_void_p(), ctypes.c_void_p(), ctypes.c_void_p()
+    assert api['GetSecurityInfo'](held.handle, 1, 5, ctypes.byref(owner), None, ctypes.byref(dacl), None, ctypes.byref(descriptor)) == 0
+    try:
+        assert c._recovery_sid_text(owner.value) == sid
+        control, revision = c.wintypes.WORD(), c.wintypes.DWORD()
+        assert api['GetSecurityDescriptorControl'](descriptor, ctypes.byref(control), ctypes.byref(revision))
+        assert control.value & 0x1000 and dacl.value
+        assert ctypes.c_ushort.from_address(dacl.value + 4).value == 2
+        trustees = set()
+        for index in range(2):
+            ace = ctypes.c_void_p()
+            assert api['GetAce'](dacl, index, ctypes.byref(ace)) and ace.value
+            assert ctypes.string_at(ace, 2) == bytes((0, 3))
+            assert ctypes.c_uint32.from_address(ace.value + 4).value == 0x001F01FF
+            trustees.add(c._recovery_sid_text(ace.value + 8))
+        assert trustees == {sid, 'S-1-5-18'}
+    finally:
+        api['LocalFree'](descriptor)
+store = c.WindowsProjectRecoveryWitnessStore(vault / 'project-recovery')
+assert store.principal_reference == c.hashlib.sha256(sid.encode('utf-8')).hexdigest()
+with c._recovery_open(store.root, sid, directory=True):
+    pass
+"#;
+            let output =
+                std::process::Command::new(repository().unwrap().join(".venv/Scripts/python.exe"))
+                    .args(["-B", "-s", "-c", script])
+                    .arg(&fixture.vault)
+                    .current_dir(repository().unwrap())
+                    .env("PYTHONDONTWRITEBYTECODE", "1")
+                    .creation_flags(0x08000000)
+                    .output()
+                    .unwrap();
+            assert!(
+                output.status.success(),
+                "{}",
+                String::from_utf8_lossy(&output.stderr)
+            );
+            fixture.revalidate().unwrap();
+        }
+
+        #[test]
+        fn private_vault_creation_refuses_occupied_and_non_fixture_roots_unchanged() {
+            use std::os::windows::ffi::OsStrExt;
+            use windows_sys::Win32::Security::{
+                DACL_SECURITY_INFORMATION, GetFileSecurityW, OWNER_SECURITY_INFORMATION,
+            };
+            let fixture = Fixture::create_lifecycle(&nonce()).unwrap();
+            let marker = fixture.vault.join("unchanged-synthetic-marker");
+            std::fs::write(&marker, b"do not repair this occupied vault").unwrap();
+            let security = || {
+                let name: Vec<u16> = fixture
+                    .vault
+                    .as_os_str()
+                    .encode_wide()
+                    .chain(std::iter::once(0))
+                    .collect();
+                let mut bytes = [0usize; 512];
+                let mut needed = 0;
+                assert_ne!(
+                    unsafe {
+                        GetFileSecurityW(
+                            name.as_ptr(),
+                            OWNER_SECURITY_INFORMATION | DACL_SECURITY_INFORMATION,
+                            bytes.as_mut_ptr().cast(),
+                            std::mem::size_of_val(&bytes) as u32,
+                            &mut needed,
+                        )
+                    },
+                    0
+                );
+                assert!(needed > 0 && needed as usize <= std::mem::size_of_val(&bytes));
+                unsafe { std::slice::from_raw_parts(bytes.as_ptr().cast::<u8>(), needed as usize) }
+                    .to_vec()
+            };
+            let before = security();
+            let identities = fixture.directory_identities();
+            assert_eq!(
+                create_private_fixture_vault(&fixture.root),
+                Err("probe-fixture-create-denied")
+            );
+            for invalid in [
+                repository().unwrap(),
+                fixture.projects.clone(),
+                PathBuf::from(r"C:\"),
+            ] {
+                assert_eq!(
+                    create_private_fixture_vault(&invalid),
+                    Err("probe-fixture-name-invalid")
+                );
+            }
+            assert_eq!(security(), before);
+            assert_eq!(fixture.directory_identities(), identities);
+            assert_eq!(
+                std::fs::read(marker).unwrap(),
+                b"do not repair this occupied vault"
+            );
+            fixture.revalidate().unwrap();
+        }
+
+        #[test]
         fn lifecycle_starts_without_policy_and_resumes_only_original_fixture() {
             let name = nonce();
             let fixture = Fixture::create_lifecycle(&name).unwrap();
@@ -4676,7 +4949,8 @@ fn start_lock_monitor(
             }
             if let Some(snapshot) = lock.lock_if_idle() {
                 #[cfg(windows)]
-                app.state::<viewer_actions::ViewerActionManager>().cancel_all();
+                app.state::<viewer_actions::ViewerActionManager>()
+                    .cancel_all();
                 #[cfg(windows)]
                 app.state::<document_attachment::DocumentAttachmentManager>()
                     .cancel_all();
@@ -4685,7 +4959,8 @@ fn start_lock_monitor(
                 emit_lock_snapshot(&app, &lock, &snapshot);
                 supervisor.stop_for_application_lock();
                 #[cfg(windows)]
-                app.state::<viewer_actions::ViewerActionManager>().reconcile_closed();
+                app.state::<viewer_actions::ViewerActionManager>()
+                    .reconcile_closed();
             }
         }
     });

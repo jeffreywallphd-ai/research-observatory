@@ -5951,6 +5951,54 @@
               "current_submission": null
             }
           }
+        },
+        {
+          "task_id": "W2.C34.T01",
+          "title": "Integrate explicit recovery review into the approved Projects experience",
+          "status": "IN_PROGRESS",
+          "acceptance_criteria": [
+            "T02-AC01: Implement only the canonical state/action/focus map and T02 exact path envelope under approved RO-UI-ACADEMIC-MINIMAL-1.9 Projects recovery/lifecycle patterns, using T01 API and existing directory picker. No new wizard/reference, auto recovery, renderer host attestation or scope/security change.",
+            "T02-AC02: Display unavailable/denied/preview/cancel/copy failure/verified-copy/open failure/recovered states truthfully; explicit confirm and open remain separate human actions, original untouched and no automatic reparse/acceptance.",
+            "T02-AC03: Actual shipping Native/Core/UI evidence proves keyboard Tab/Enter/Space/Escape, strict focus, cancel/failure, denied alternate routes, protected before/after facts, themes/reflow and recovery after whole-process restart. Static mocks/screenshots alone are insufficient.",
+            "T02-AC04: Same-task indexed ADR0054 implementation notes and exact independent security/UI/reference disposition bind candidate and actual source hashes. A demonstrated material experience/policy change stops, while conforming restoration needs no further owner ask."
+          ],
+          "correction": {
+            "origin_task_id": "W2.A06.T02",
+            "origin_commit": "50d1e64c57e0348ad5c028e0dc1d6c2968b349ae",
+            "paused_state_sha256": "aa3c3792f383ddbedae3bdcfadd7f08cf2bfb3b47b1d85d945d42061cf810a82",
+            "origin_sha256": "0c9d18adeb8ec42f231cc485e5d500490e5137403e62f519cdead448f7d70914",
+            "origin_contract_sha256": "3f956347f19756edf8bd04582f173fc962c88bbb865fd5c13ec910209e308dba",
+            "origin_history_sha256": "77c1c5a29de08832dafb8c2a41f7e13045ef7813d3db265d5157a959dbc099a6",
+            "origin_amendment_id": "W2.A06",
+            "authority_sha256": "db3d4a8fa4c91ebccd6cb872b46be95356fb732bf7f2261fc110396fa0375f25",
+            "spec": {
+              "path": "artifacts/evidence/W2.C34.T01.spec.json",
+              "sha256": "0aa62dba5887bfb24ba8c4787e3c85db245857bd73759d702182f1c551cb5464",
+              "commit": "69cac3200fbf6d0e99769d43860c50f41d19390f"
+            },
+            "reproduction": "At committed8392e43397e9aa28301cdf5689d653389fc1c561, exact current release Native/frontend package27789d92a8e8c6cb15a485ad9e7178d19890be0d6cbfd90c3c6a0256a75528a8 bootstraps normally but the original same-path shipping recovery seed creates a protected project then receives409 RO-CORE-PROJECT-RECOVERY-UNAVAILABLE opening it. Actual aggregate8262a2b64a0978f57f02f7fbc98d5a2c8d07369f17cbd66d6d80939081d74dd7 preserves bootstrapPASS/seedFAIL, normal27/15 ownedEMPTY0 and stable inputs. Actual stdout90640f1409eed0937b5f7919fa56448d426f7c1428534acaf1f6e9f8e9a62672 and read-only ACL observation36882c367dc5c257ccc5284f6b1164f3a0511fd74d5fe51012d0f1df36f76771 establish inherited foreign writers on the disposable fixture vault. Current C27 correctly rejects this; no witness is issued. Native integration-harness create_with_policy currently uses ordinary create_dir for vault. Separate original strong-private-fixture wholeNative recovery actually passes a4110f57149775e39aac683135137d7086a3e2762dab636c848ff799621724f8. Original Native fixture authorship was W1.A09.T03/T04, while current approved W2.A06.T02 owns the real shipping recovery outcome. Finite necessary fixture-creation scope is disclosed in creation-only-scope-decision-01.final.json c3507cd43b18de1da5af301c5c05bce6ff1b0aad646729e97688795e612cc464 under actual owner34e and independent bd707/recordinged63; do not claim the frozen original six-file A06 task already authorized Native edits.",
+            "changed_paths": [
+              "apps/desktop/src-tauri/src/lib.rs"
+            ],
+            "impact_analysis": "Inside existing Windows integration-harness directory fixture only, atomically create a previously absent vault with real process-current SID owner and protected currentSID/SYSTEM full-control inheritable DACL, using existing Windows Security/FileSystem features and bounded released handles/descriptors. Keep exact root/vault path, remaining directories/layout/pins/receipt/resume/nonce/reparse/occupied-path/identity denials and product owner/witness/security/UX policy unchanged. No existing ACL may be set, repaired, replaced or normalized; preserve failed original fixture and every receipt. Add focused same-file real Windows creation/occupied-path/no-mutation/ownership regression, appropriate Rust format/lint/build checks, then a fresh current Native package and fresh consistent new-nonce five-stage shipping Native/Core/UIA death/recovery/live-owner-denial proof with original methods/assertions/deadlines and normal owned cleanup. Reuse unchanged frontend205/signedworker/frozen guardian only with actual continuity; sourceCore and frozen guardian remain distinct. Independently review actual changed source, source scope authority, negative cases and affected integration through normal taskctl. All baseline, previous product qualifications and later Wave/release gates remain separate; no new generic framework, dependency, owner-policy exception or installer criterion."
+          },
+          "task_review": {
+            "task_id": "W2.C34.T01",
+            "title": "Integrate explicit recovery review into the approved Projects experience",
+            "status": "IN_PROGRESS",
+            "mode": "append-only",
+            "latest_review": {
+              "reviewer": null,
+              "result": null,
+              "reviewed_at": null,
+              "notes": null
+            },
+            "review_control": {
+              "version": 1,
+              "attempts": [],
+              "current_submission": null
+            }
+          }
         }
       ]
     },

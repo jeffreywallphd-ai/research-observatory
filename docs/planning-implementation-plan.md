@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: b61e8491a54033bcf7e9ca6e55928295e5622df2355af07b1ccce02c3f689dc9
+source_sha256: 6b3bd9b77a05a0d3709d607f87b8fa148bfd7f0f9ab71caaf8f2fc027c3ef547
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -5812,6 +5812,34 @@ Original tasks and approvals remain unchanged.
 **Current immutable submission awaiting review:** None
 
 **Current latest-review projection:** `approved` by agent:/root/c21_closeout_review at `2026-10-15T14:59:48+00:00`
+
+**Latest notes:** -
+
+**Currently open findings:** -
+
+### W2.C34.T01 — Integrate explicit recovery review into the approved Projects experience
+
+**Status:** `IN_PROGRESS`. **Original task:** `W2.A06.T02`. **Latest review:** `-`.
+
+**Reproduction:** At committed8392e43397e9aa28301cdf5689d653389fc1c561, exact current release Native/frontend package27789d92a8e8c6cb15a485ad9e7178d19890be0d6cbfd90c3c6a0256a75528a8 bootstraps normally but the original same-path shipping recovery seed creates a protected project then receives409 RO-CORE-PROJECT-RECOVERY-UNAVAILABLE opening it. Actual aggregate8262a2b64a0978f57f02f7fbc98d5a2c8d07369f17cbd66d6d80939081d74dd7 preserves bootstrapPASS/seedFAIL, normal27/15 ownedEMPTY0 and stable inputs. Actual stdout90640f1409eed0937b5f7919fa56448d426f7c1428534acaf1f6e9f8e9a62672 and read-only ACL observation36882c367dc5c257ccc5284f6b1164f3a0511fd74d5fe51012d0f1df36f76771 establish inherited foreign writers on the disposable fixture vault. Current C27 correctly rejects this; no witness is issued. Native integration-harness create_with_policy currently uses ordinary create_dir for vault. Separate original strong-private-fixture wholeNative recovery actually passes a4110f57149775e39aac683135137d7086a3e2762dab636c848ff799621724f8. Original Native fixture authorship was W1.A09.T03/T04, while current approved W2.A06.T02 owns the real shipping recovery outcome. Finite necessary fixture-creation scope is disclosed in creation-only-scope-decision-01.final.json c3507cd43b18de1da5af301c5c05bce6ff1b0aad646729e97688795e612cc464 under actual owner34e and independent bd707/recordinged63; do not claim the frozen original six-file A06 task already authorized Native edits.
+
+**Inherited criteria:**
+
+- T02-AC01: Implement only the canonical state/action/focus map and T02 exact path envelope under approved RO-UI-ACADEMIC-MINIMAL-1.9 Projects recovery/lifecycle patterns, using T01 API and existing directory picker. No new wizard/reference, auto recovery, renderer host attestation or scope/security change.
+- T02-AC02: Display unavailable/denied/preview/cancel/copy failure/verified-copy/open failure/recovered states truthfully; explicit confirm and open remain separate human actions, original untouched and no automatic reparse/acceptance.
+- T02-AC03: Actual shipping Native/Core/UI evidence proves keyboard Tab/Enter/Space/Escape, strict focus, cancel/failure, denied alternate routes, protected before/after facts, themes/reflow and recovery after whole-process restart. Static mocks/screenshots alone are insufficient.
+- T02-AC04: Same-task indexed ADR0054 implementation notes and exact independent security/UI/reference disposition bind candidate and actual source hashes. A demonstrated material experience/policy change stops, while conforming restoration needs no further owner ask.
+
+**Bounded changed paths:**
+
+- apps/desktop/src-tauri/src/lib.rs
+#### Review history — W2.C34.T01
+
+**Review mode:** `append-only v1` / 0 completed round(s)
+
+**Current immutable submission awaiting review:** None
+
+**Current latest-review projection:** `-` by - at `-`
 
 **Latest notes:** -
 
