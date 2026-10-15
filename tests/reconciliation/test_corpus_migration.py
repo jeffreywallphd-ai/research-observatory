@@ -109,6 +109,14 @@ class CorpusMigrationTests(unittest.TestCase):
                 v0018_rights_policy.revision,
                 v0019_corpus_reports.revision,
                 v0020_corpus_source_projection.revision,
+                "0021_plugin_grants",
+                "0022_document_attachments",
+                "0023_attachment_operations",
+                "0024_open_access_acquisition",
+                "0025_document_intake_recovery",
+                "0026_document_revisions",
+                "0027_revision_invalidations",
+                "0028_document_enrichments",
             ),
             plan.migration_ids,
         )
@@ -120,6 +128,14 @@ class CorpusMigrationTests(unittest.TestCase):
                 v0018_rights_policy.revision,
                 v0019_corpus_reports.revision,
                 v0020_corpus_source_projection.revision,
+                "0021_plugin_grants",
+                "0022_document_attachments",
+                "0023_attachment_operations",
+                "0024_open_access_acquisition",
+                "0025_document_intake_recovery",
+                "0026_document_revisions",
+                "0027_revision_invalidations",
+                "0028_document_enrichments",
             ),
             result.migration_ids,
         )
@@ -142,6 +158,14 @@ class CorpusMigrationTests(unittest.TestCase):
                 v0018_rights_policy.revision,
                 v0019_corpus_reports.revision,
                 v0020_corpus_source_projection.revision,
+                "0021_plugin_grants",
+                "0022_document_attachments",
+                "0023_attachment_operations",
+                "0024_open_access_acquisition",
+                "0025_document_intake_recovery",
+                "0026_document_revisions",
+                "0027_revision_invalidations",
+                "0028_document_enrichments",
             ],
             manifest["migrationIds"],
         )
@@ -199,7 +223,7 @@ class CorpusMigrationTests(unittest.TestCase):
             with closing(storage.open_canonical_database(self.database, expected_project_id=PROJECT_ID)) as current:
                 report = storage.database_integrity_report(current, expected_project_id=PROJECT_ID)
                 self.assertTrue(report.ok, report.errors)
-                self.assertEqual(20, report.schema_version)
+                self.assertEqual(storage.DATABASE_SCHEMA_VERSION, report.schema_version)
                 self.assertEqual(1, current.execute("PRAGMA foreign_keys").fetchone()[0])
                 self.assertEqual(
                     "1.0.0",
@@ -246,7 +270,7 @@ class CorpusMigrationTests(unittest.TestCase):
             database, project_id=PROJECT_ID, project_created_at="2026-09-30T00:00:00.000Z"
         )
         self.assertTrue(report.ok, report.errors)
-        self.assertEqual(20, report.schema_version)
+        self.assertEqual(storage.DATABASE_SCHEMA_VERSION, report.schema_version)
         self.assertEqual(set(storage.EXPECTED_TABLES), set(report.strict_tables))
         self.assertTrue(
             {"rights_policy_subjects", "rights_policy_revisions", "rights_policy_rechecks"} <= set(report.strict_tables)
