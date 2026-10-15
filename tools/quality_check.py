@@ -4,17 +4,21 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import os
 import subprocess
 import sys
+import tempfile
 import time
 from collections.abc import Callable
+from contextlib import ExitStack
 from pathlib import Path, PurePosixPath
 from typing import Any
 
 CommandRunner = Callable[..., subprocess.CompletedProcess[str]]
 Clock = Callable[[], float]
+WINDOWS_COMMAND_LIMIT = 30_000
 
 
 def load_scope(repo: Path) -> list[str]:
@@ -67,11 +71,32 @@ def load_scope(repo: Path) -> list[str]:
     return sorted(files)
 
 
+def _windows_command_units(argv: list[str]) -> int:
+    return len(subprocess.list2cmdline(argv).encode("utf-16-le")) // 2 + 1
+
+
+def _ruff_file_chunks(prefix: list[str], files: list[str]) -> list[list[str]]:
+    chunks: list[list[str]] = []
+    current: list[str] = []
+    for path in files:
+        if _windows_command_units([*prefix, *current, path]) > WINDOWS_COMMAND_LIMIT:
+            if current:
+                chunks.append([*prefix, *current])
+                current = []
+            if _windows_command_units([*prefix, path]) > WINDOWS_COMMAND_LIMIT:
+                raise ValueError("A single quality file argument exceeds the Windows command-line budget")
+        current.append(path)
+    if current:
+        chunks.append([*prefix, *current])
+    return chunks
+
+
 def execute_quality(
     repo: Path,
     files: list[str],
     runner: CommandRunner = subprocess.run,
     clock: Clock = time.monotonic,
+    platform_name: str | None = None,
 ) -> tuple[int, dict[str, Any]]:
     checks = [
         ("format", [sys.executable, "-m", "ruff", "format", "--check", "--config", "pyproject.toml", "--", *files]),
@@ -92,18 +117,78 @@ def execute_quality(
     ]
     results: list[dict[str, Any]] = []
     exit_code = 0
-    for check_id, argv in checks:
-        started = clock()
-        try:
-            completed = runner(argv, cwd=repo, capture_output=True, text=True, check=False)
-            code = completed.returncode
-            stdout = completed.stdout or ""
-            stderr = completed.stderr or ""
-        except OSError as exc:
-            code, stdout, stderr = 127, "", str(exc)
-        duration = clock() - started
-        results.append(
-            {
+    effective_platform = os.name if platform_name is None else platform_name
+    with ExitStack() as cleanup:
+        for check_id, argv in checks:
+            started = clock()
+            invocations = [argv]
+            transport: str | None = None
+            response_metadata: dict[str, Any] | None = None
+            attempted: list[dict[str, Any]] = []
+            try:
+                if effective_platform == "nt" and _windows_command_units(argv) > WINDOWS_COMMAND_LIMIT:
+                    prefix = argv[: argv.index("--") + 1]
+                    if check_id == "types":
+                        if any("\r" in path or "\n" in path or path.startswith("@") for path in files):
+                            raise ValueError("Quality paths cannot inject lines or response files into mypy arguments")
+                        response = cleanup.enter_context(
+                            tempfile.NamedTemporaryFile(
+                                mode="w", encoding="utf-8", newline="\n", suffix=".args", delete_on_close=False
+                            )
+                        )
+                        content = "\n".join(files) + "\n"
+                        response.write(content)
+                        response.close()
+                        invocations = [[*prefix, f"@{response.name}"]]
+                        if _windows_command_units(invocations[0]) > WINDOWS_COMMAND_LIMIT:
+                            raise ValueError("The mypy response-file command exceeds the Windows command-line budget")
+                        transport = "mypy-response-file"
+                        response_metadata = {
+                            "encoding": "utf-8",
+                            "argumentCount": len(files),
+                            "sha256": hashlib.sha256(content.encode("utf-8")).hexdigest(),
+                        }
+                    else:
+                        invocations = _ruff_file_chunks(prefix, files)
+                        transport = "windows-file-chunks"
+                code = 0
+                stdout_parts: list[str] = []
+                stderr_parts: list[str] = []
+                for invocation in invocations:
+                    try:
+                        options: dict[str, Any] = {
+                            "cwd": repo,
+                            "capture_output": True,
+                            "text": True,
+                            "check": False,
+                        }
+                        if transport is not None:
+                            child_environment = dict(os.environ)
+                            child_environment["PYTHONIOENCODING"] = "utf-8"
+                            options.update(env=child_environment, encoding="utf-8")
+                        completed = runner(invocation, **options)
+                        invocation_code = completed.returncode
+                        invocation_stdout = completed.stdout or ""
+                        invocation_stderr = completed.stderr or ""
+                    except OSError as exc:
+                        invocation_code, invocation_stdout, invocation_stderr = 127, "", str(exc)
+                    attempted.append(
+                        {
+                            "argv": invocation,
+                            "exitCode": invocation_code,
+                            "stdout": invocation_stdout,
+                            "stderr": invocation_stderr,
+                        }
+                    )
+                    stdout_parts.append(invocation_stdout)
+                    stderr_parts.append(invocation_stderr)
+                    if invocation_code != 0 and code == 0:
+                        code = invocation_code
+                stdout, stderr = "".join(stdout_parts), "".join(stderr_parts)
+            except (OSError, ValueError) as exc:
+                code, stdout, stderr = 127, "", str(exc)
+            duration = clock() - started
+            result: dict[str, Any] = {
                 "id": check_id,
                 "argv": argv,
                 "status": "PASS" if code == 0 else "FAIL",
@@ -112,13 +197,23 @@ def execute_quality(
                 "stdout": stdout,
                 "stderr": stderr,
             }
-        )
-        if stdout:
-            print(stdout, end="" if stdout.endswith("\n") else "\n")
-        if stderr:
-            print(stderr, end="" if stderr.endswith("\n") else "\n", file=sys.stderr)
-        if code != 0 and exit_code == 0:
-            exit_code = code if code > 0 else 1
+            if transport is not None:
+                result.update(
+                    argvRole="logical-whole-scope",
+                    transport=transport,
+                    invocations=attempted,
+                    stdioEncoding="utf-8",
+                    childEnvironmentOverrides={"PYTHONIOENCODING": "utf-8"},
+                )
+                if response_metadata is not None:
+                    result["responseFile"] = response_metadata
+            results.append(result)
+            if stdout:
+                print(stdout, end="" if stdout.endswith("\n") else "\n")
+            if stderr:
+                print(stderr, end="" if stderr.endswith("\n") else "\n", file=sys.stderr)
+            if code != 0 and exit_code == 0:
+                exit_code = code if code > 0 else 1
     return exit_code, {
         "schemaVersion": "1.0",
         "documentType": "python-quality-report",
