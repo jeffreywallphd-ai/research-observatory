@@ -1,0 +1,112 @@
+{
+  "task_id": "W2.C29.T01",
+  "attempt_id": "R01",
+  "candidate_commit": "26202ec497ce94e3b1f86f0c614b56f7f6b748d7",
+  "base_commit": "7c1346d4550fc11927aa3289cf9384d6b6dc99c0",
+  "reviewed_state_commit": "22d77f566150eeef88ba4e88215bf6d05222c67f",
+  "reviewer": "agent:/root/security_resolution_review",
+  "result": "approved",
+  "reviewed_at": "2026-10-15T02:24:36.122975+00:00",
+  "packet_sha256": "53da22cb748ac2d628ef8ec8736614c398cf628efd564eb8e45d40524a7c5615",
+  "evidence_sha256": "8879ea6a913362f82c97bed441a809b8884b92987582597fd5e90527302b2bcd",
+  "acceptance_criteria_sha256": "831c2a4cc6c6cf0bd8ca53f4c85cce254f359e6c80f198692babeaf6a7f96dd5",
+  "selection_sha256": "b6bda0bafa159b8e9df66fa451573139d518d2cd87b3f2ab9c933c0659355d9c",
+  "findings": [],
+  "closures": [],
+  "acceptance_reviews": [
+    {
+      "criterion_index": 1,
+      "check_ids": [
+        "migration-boundaries"
+      ],
+      "result": "satisfied",
+      "assessment": "The original independently approved CAP-04.S05.T02 R02 plugin isolation, scoped secret, permission, network/export denial and audit judgment remains historical authority. This fixture-only correction changes none of that implementation or approved contract. Fresh two corpus migration cases establish the affected exact onward progression through0021 plugin grants to0028 while retaining corpus/rights/source-projection rows and recovery-manifest checks. No fresh malicious connector, LPAC, external network, secret-access or principal boundary result is inferred."
+    },
+    {
+      "criterion_index": 2,
+      "check_ids": [
+        "migration-boundaries"
+      ],
+      "result": "satisfied",
+      "assessment": "Both exact original failed corpus methods now execute successfully with no failures, errors or skips. The populated literal v16 fixture verifies prior row preservation, backup counts, recovery-manifest schema and negative migration/hash probes, widened-enum denial, foreign-key/quick-check integrity and repeated reopen; the fresh case verifies current tables, profile and schema fingerprint. These two selected methods use synthetic plaintext SQLite fixtures, not SQLCipher, DPAPI, other-machine or shipping Native proof. Other unchanged module methods are not claimed as executed."
+    },
+    {
+      "criterion_index": 3,
+      "check_ids": [
+        "migration-boundaries",
+        "affected-format",
+        "affected-lint",
+        "affected-configured-types"
+      ],
+      "result": "satisfied",
+      "assessment": "Only the declared test file changes obsolete current20 expectations to DATABASE_SCHEMA_VERSION28 and extends three exact ordered migration sequences with literal0021..0028. Reversing exactly those changes restores the complete original module AST, including all51 assertion sites, frozen v16 fixture values, source/hash/counts/backup versions, rollback and denial clauses. Actual one-file Ruff format/lint and governed734-source typing pass at the exact committed candidate with stable held inputs and normal cleanup. No product, migrator, security, framework, reference, scope or acceptance change."
+    }
+  ],
+  "corrective_integration": {
+    "evidence_sha256": "8879ea6a913362f82c97bed441a809b8884b92987582597fd5e90527302b2bcd",
+    "authority_preserved": true,
+    "affected_integration_reviewed": true,
+    "notes": "The completed CAP-04.S05.T02 origin snapshota9faa at963b and actual R02 candidate5a767 approval/history remain unchanged in the frozen backlog. Exact applied source0f61 equals the prior independent afac-reviewed proposal. The two original cases genuinely execute the newly reached onward migration, row-preservation, backup/manifest, integrity and denial assertions; all four actual checks pass with normal owned EMPTY0 and final inputsStable. Pure existing-map comparison authenticates15300 captured Python/base/Git pins with0 drift, plus the actual held producer, unchanged32ee/helper and governed734 response file; no installed-runtime scan was repeated. Public delivery22d77 is a direct data-only child of source26202. Original219/14FAIL/cleanup and C28 narrow18 import-untyped failure remain retained, and broader fresh Wave/security/package/principal qualification remains separate."
+  },
+  "verification_selection": {
+    "selected_command_ids": [
+      "service:reconciliation",
+      "foundation:quality"
+    ],
+    "assessment": "Exactly the two previously failed corpus methods and one-file Ruff cover this current-target fixture restoration. The governed734 response-file invocation and fresh isolated derived cache resolve the already demonstrated missing-context typing setup without source/config suppression or test replay. Historical original plugin/security approval is identified as historical, not fresh execution. No unchanged196-case replay, full Wave/history review or extra runtime capture is required for this task."
+  },
+  "evidence_authentication": {
+    "actual_frozen_authentication": {
+      "path": "artifacts/tmp/W2.C29.T01.independent-frozen-authentication-01.json",
+      "sha256": "49b3bb69c55bf6a4bf076706cad222dfd18d0cf1df210eb148077aeb5134808c"
+    },
+    "actual_focused_receipt": {
+      "path": "artifacts/tmp/W2.C29.T01.focused-proof-01/receipt.json",
+      "sha256": "9c70bf25204d9d76bce25e1b1c6278aaa27cc421046d0be7bb92ac83b277c537"
+    },
+    "actual_execution_producer": {
+      "path": "artifacts/tmp/W2.original-migration.focused-proof-02.py",
+      "sha256": "50a885045c43aedcdaf4a19f3938ad020e162765ee060bd96fdcce055da97d60"
+    },
+    "source_readiness": {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/core14-restorative-proposals-02/independent-migration-source-readiness-01.json",
+      "sha256": "afac7447914070deeb9b47c218e30d71db70a8b09cd71b39f8653271457e6fb1"
+    },
+    "frozen_packet_and_selection_recomputed": true,
+    "four_raw_check_outputs_authenticated": true,
+    "exact_source_AST_and51_assertion_sites_preserved": true,
+    "actual_selected_runtime_pin_map_comparison": {
+      "roots": 3,
+      "pins": 15300,
+      "mismatches": 0,
+      "runtime_files_rehashed_by_reviewer": false
+    },
+    "actual_fresh_check_ids": [
+      "migration-boundaries",
+      "affected-format",
+      "affected-lint",
+      "affected-configured-types"
+    ],
+    "original_two_corpus_cases": "2PASS_NO_SKIP",
+    "affected_Ruff": "FORMAT_AND_LINT_PASS",
+    "configured734_types": "PASS_CURRENT_26202",
+    "owned_cleanup": "ALL_FOUR_NORMAL_EMPTY0_NO_OUTLIVING_OR_TERMINATION",
+    "final_input_stability": true
+  },
+  "full_profile_pass_claimed": false,
+  "independence": {
+    "implementation_owner": "codex-w2-implementation",
+    "independent_reviewer": "agent:/root/security_resolution_review",
+    "reviewer_authored_implementation_or_execution_producer": false,
+    "reviewer_reran_tests_or_runtime_scans": false
+  },
+  "proof_limits": [
+    "Both selected cases use synthetic plaintext SQLite fixtures. Other protected SQLCipher/Windows/DPAPI/foreign-principal methods in the unchanged module were not selected.",
+    "The original plugin/LPAC/security R02 disposition is retained historical authority; this task supplies no fresh malicious connector or external network/secret boundary proof.",
+    "Original aggregate219/14FAIL and cleanup adverse findings, plus the earlier C28 narrow-context typing failure, remain immutable; broader affected Wave qualification and intermittent Native cold/compiler/package cleanup risk are not closed by this task."
+  ],
+  "scope_limits": [
+    "Approves only exact frozen W2.C29.T01 R01 at source26202 and delivery22d77. Root must still perform normal taskctl review recording and integration.",
+    "No product, framework/refactoring, reference, approval-history, scope, verification criterion, W2 release or W3 implementation change is authorized or inferred."
+  ]
+}
