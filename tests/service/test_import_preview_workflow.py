@@ -285,8 +285,9 @@ class ProtectedImportProfileCompatibilityTests(unittest.TestCase):
 
     def fresh_claim(self, stage):
         data = fixture.ImportPreviewRepositoryTests(methodName="runTest")
-        data.setUp()
-        self.addCleanup(data.tearDown)
+        lifecycle: unittest.TestCase = data
+        lifecycle.setUp()
+        self.addCleanup(lifecycle.tearDown)
         old = stage["authority"]
         job = stage["job"]
         submission = prepare_workflow_job(
@@ -316,8 +317,9 @@ class ProtectedImportProfileCompatibilityTests(unittest.TestCase):
         from research_observatory_core.storage import open_canonical_database
 
         data = fixture.ImportPreviewRepositoryTests(methodName="runTest")
-        data.setUp()
-        self.addCleanup(data.tearDown)
+        lifecycle: unittest.TestCase = data
+        lifecycle.setUp()
+        self.addCleanup(lifecycle.tearDown)
         preview = data.create()
         with closing(
             open_canonical_database(
@@ -336,12 +338,14 @@ class ProtectedImportProfileCompatibilityTests(unittest.TestCase):
 
     def test_two_frozen_profiles_preserve_pure_default_and_all_other_limits(self):
         from dataclasses import asdict
+        from typing import cast
 
         from research_observatory_core.ingestion.protected_import_profiles import (
             LEGACY_LIMITS_HASH,
             LEGACY_PROFILE,
             PROTECTED_LIMITS_HASH,
             PROTECTED_PROFILE,
+            ParserProfile,
             profile_limits,
             profile_limits_hash,
         )
@@ -360,7 +364,8 @@ class ProtectedImportProfileCompatibilityTests(unittest.TestCase):
         self.assertEqual(PROTECTED_LIMITS_HASH, profile_limits_hash(PROTECTED_PROFILE))
         for unknown in ("", "legacy", "protected-preview-901s-v1", 900, None):
             with self.subTest(unknown=unknown), self.assertRaises(ValueError):
-                profile_limits(unknown)
+                # Deliberately violate the static profile type to prove runtime denial.
+                profile_limits(cast(ParserProfile, unknown))
 
     def test_predecessor_input_schemas_remain_byte_equivalent(self):
         from research_observatory_core.ingestion.commit_workflow import CommitJobInput
@@ -372,10 +377,30 @@ class ProtectedImportProfileCompatibilityTests(unittest.TestCase):
                 self.assertEqual(self.captured()["schemas"][model.__name__], model.model_json_schema())
 
     def test_old_unscheduled_inputs_and_all_queued_authorities_reconstruct_exactly(self):
-        from research_observatory_core.ingestion.commit_workflow import bind_commit_claim, commit_job_input
+        from research_observatory_core.ingestion.commit_workflow import (
+            CommitJobInput,
+            bind_commit_claim,
+            commit_job_input,
+        )
         from research_observatory_core.ingestion.protected_import_profiles import LEGACY_PROFILE
-        from research_observatory_core.ingestion.summary_workflow import bind_summary_claim, summary_job_input
+        from research_observatory_core.ingestion.preview_workflow import PreviewDelimitedJobInput
+        from research_observatory_core.ingestion.summary_workflow import (
+            SummaryJobInput,
+            bind_summary_claim,
+            summary_job_input,
+        )
         from research_observatory_core.ports.import_previews import PreviewDraft, PreviewState
+
+        def bind(
+            authority,
+            claim,
+            selected: PreviewJobInput | PreviewDelimitedJobInput | SummaryJobInput | CommitJobInput,
+        ):
+            if isinstance(selected, SummaryJobInput):
+                return bind_summary_claim(authority, claim, selected)
+            if isinstance(selected, CommitJobInput):
+                return bind_commit_claim(authority, claim, selected)
+            return bind_preview_claim(authority, claim, selected)
 
         document = self.captured()
         intent = PreviewIntentContext.model_validate_json(json.dumps(document["syntheticContext"]["intent"]))
@@ -406,10 +431,10 @@ class ProtectedImportProfileCompatibilityTests(unittest.TestCase):
                 self.assertEqual(case["pendingSummary"]["inputs"], summary.model_dump(mode="json", by_alias=True))
                 self.assertEqual(saved, commit.model_dump(mode="json", by_alias=True))
                 self.assertEqual(case["savedCommitRequest"]["configurationHash"], commit.configuration_hash)
-                for selected, key, bind in (
-                    (inputs, "pendingPreview", bind_preview_claim),
-                    (summary, "pendingSummary", bind_summary_claim),
-                    (commit, "pendingCommit", bind_commit_claim),
+                for selected, key in (
+                    (inputs, "pendingPreview"),
+                    (summary, "pendingSummary"),
+                    (commit, "pendingCommit"),
                 ):
                     authority, claim = self.fresh_claim(case[key])
                     self.assertEqual(selected, bind(authority, claim, selected))

@@ -107,12 +107,14 @@ class ProtectedProfileQueueLineageTests(unittest.TestCase):
         from pathlib import Path
 
         from research_observatory_core.ingestion.commit_activity import ImportCommitActivity
-        from research_observatory_core.ingestion.commit_workflow import commit_job_input
+        from research_observatory_core.ingestion.commit_workflow import CommitJobInput, commit_job_input
         from research_observatory_core.ingestion.import_summaries import SUMMARY_ACTIVITY
         from research_observatory_core.ingestion.preview_activity import ImportPreviewActivity
         from research_observatory_core.ingestion.preview_workflow import (
             ACTIVITY,
+            PreviewDelimitedJobInput,
             PreviewIntentContext,
+            PreviewJobInput,
             bind_preview_claim,
             build_preview_job,
             preview_job_input,
@@ -123,6 +125,7 @@ class ProtectedProfileQueueLineageTests(unittest.TestCase):
         )
         from research_observatory_core.ingestion.summary_activity import ImportSummaryActivity
         from research_observatory_core.ingestion.summary_workflow import (
+            SummaryJobInput,
             bind_summary_claim,
             build_summary_job,
             summary_job_input,
@@ -145,8 +148,9 @@ class ProtectedProfileQueueLineageTests(unittest.TestCase):
         from tests.data import test_import_preview_repository as data_fixture
 
         data = data_fixture.ImportPreviewRepositoryTests(methodName="runTest")
-        data.setUp()
-        self.addCleanup(data.tearDown)
+        lifecycle: unittest.TestCase = data
+        lifecycle.setUp()
+        self.addCleanup(lifecycle.tearDown)
         repository = data.repository()
         frozen = json.loads(
             (Path(__file__).parents[1] / "fixtures/imports/protected-preview-legacy120-authority-v1.json").read_text()
@@ -159,17 +163,30 @@ class ProtectedProfileQueueLineageTests(unittest.TestCase):
         shared_mapping = None
         source_ids = None
 
-        def run_job(kind, inputs):
+        def run_job(
+            kind: str, inputs: PreviewJobInput | PreviewDelimitedJobInput | SummaryJobInput | CommitJobInput
+        ):
             # Reconstruct the durable queue/admission before every activity, as
             # on an ordinary reader reload. Project/Intent/policy guard is an
             # explicit synthetic data-fixture boundary, not principal evidence.
             queue = sqlite_workflow_queue_repository(data.project, intent.project_id)
-            build, bind = {
-                ACTIVITY: (build_preview_job, bind_preview_claim),
-                SUMMARY_ACTIVITY: (build_summary_job, bind_summary_claim),
-                COMMIT_ACTIVITY: (build_commit_job, bind_commit_claim),
-            }[kind]
-            submission = build(inputs, actor=data_fixture.worker_fixture.SYSTEM, now=now)
+            if isinstance(inputs, SummaryJobInput):
+                submission = build_summary_job(inputs, actor=data_fixture.worker_fixture.SYSTEM, now=now)
+            elif isinstance(inputs, CommitJobInput):
+                submission = build_commit_job(inputs, actor=data_fixture.worker_fixture.SYSTEM, now=now)
+            else:
+                submission = build_preview_job(inputs, actor=data_fixture.worker_fixture.SYSTEM, now=now)
+
+            def bind(
+                authority,
+                claim,
+                selected: PreviewJobInput | PreviewDelimitedJobInput | SummaryJobInput | CommitJobInput,
+            ):
+                if isinstance(selected, SummaryJobInput):
+                    return bind_summary_claim(authority, claim, selected)
+                if isinstance(selected, CommitJobInput):
+                    return bind_commit_claim(authority, claim, selected)
+                return bind_preview_claim(authority, claim, selected)
             job = queue.enqueue(submission, actor=data_fixture.worker_fixture.SYSTEM)
             self.assertEqual("runnable", job.state)
             demand = WorkerResources(1, 64 * 1024**2, 0, 1024**2)
@@ -183,15 +200,20 @@ class ProtectedProfileQueueLineageTests(unittest.TestCase):
             def handler(execution, claim):
                 authority = queue.authority(claim.job_id)
                 self.assertEqual(inputs, bind(authority, claim, inputs))
-                preview = inputs if kind == ACTIVITY else inputs.preview
+                preview = inputs.preview if isinstance(inputs, (SummaryJobInput, CommitJobInput)) else inputs
                 other = (
                     LEGACY_LIMITS_HASH if preview.parser_limits_hash == PROTECTED_LIMITS_HASH else PROTECTED_LIMITS_HASH
                 )
                 changed = preview.model_copy(update={"parser_limits_hash": other})
-                forged = changed if kind == ACTIVITY else inputs.model_copy(update={"preview": changed})
+                forged = (
+                    inputs.model_copy(update={"preview": changed})
+                    if isinstance(inputs, (SummaryJobInput, CommitJobInput))
+                    else changed
+                )
                 with self.assertRaises(PreviewProblem):
                     bind(authority, claim, forged)
-                if kind == ACTIVITY:
+                activity: ImportPreviewActivity | ImportSummaryActivity | ImportCommitActivity
+                if isinstance(inputs, (PreviewJobInput, PreviewDelimitedJobInput)):
                     activity = ImportPreviewActivity(
                         preview_id=inputs.preview_id,
                         repository=repository,
@@ -200,7 +222,7 @@ class ProtectedProfileQueueLineageTests(unittest.TestCase):
                         guard=lambda action: action(),
                         trace_id="5" * 32,
                     )
-                elif kind == SUMMARY_ACTIVITY:
+                elif isinstance(inputs, SummaryJobInput):
                     activity = ImportSummaryActivity(
                         inputs=inputs,
                         repository=repository,

@@ -88,6 +88,8 @@ class ImportPreviewActivityTests(unittest.TestCase):
         from unittest.mock import patch
 
         from research_observatory_core.ingestion import preview_activity
+        from research_observatory_core.ingestion.reference_imports import ImportSession
+        from research_observatory_core.ports.import_previews import PreviewActor
 
         original = preview_activity.ImportSession
         for legacy in (None, "missing-comma", "v1-comma"):
@@ -95,14 +97,17 @@ class ImportPreviewActivityTests(unittest.TestCase):
                 preview, _, _, claim, queue, actor = self.fixture.parse_attempt(
                     b"title\nSynthetic\n", legacy_variant=legacy
                 )
-                sessions = []
+                sessions: list[ImportSession] = []
 
-                def observe(*args, sessions=sessions, **kwargs):
+                def observe(*args, sessions: list[ImportSession] = sessions, **kwargs):
                     session = original(*args, **kwargs)
                     sessions.append(session)
                     return session
 
-                context = WorkflowActivityContext(queue, claim, lambda actor=actor: actor.occurred_at, 30000)
+                def current_time(actor: PreviewActor = actor) -> str:
+                    return actor.occurred_at
+
+                context = WorkflowActivityContext(queue, claim, current_time, 30000)
                 with patch.object(preview_activity, "ImportSession", side_effect=observe):
                     outputs = self.activity(preview, actor, lambda action: action())(context, claim)
                 self.assertEqual(1, len(sessions))
@@ -117,6 +122,7 @@ class ProtectedParserClockTests(unittest.TestCase):
     def test_profiles_keep_distinct_bounded_deadlines_and_cancellation(self):
         import hashlib
         import io
+        from collections.abc import Iterator
 
         from research_observatory_core.ingestion.protected_import_profiles import (
             LEGACY_PROFILE,
@@ -133,12 +139,16 @@ class ProtectedParserClockTests(unittest.TestCase):
             (PROTECTED_PROFILE, 901.0, False),
         ):
             ticks = iter((0.0,))
+
+            def clock(ticks: Iterator[float] = ticks, moment: float = moment) -> float:
+                return next(ticks, moment)
+
             session = ImportSession(
                 io.BytesIO(raw),
                 source,
                 "csv",
                 limits=profile_limits(profile),
-                clock=lambda ticks=ticks, moment=moment: next(ticks, moment),
+                clock=clock,
             )
             if completes:
                 self.assertEqual(2, len(tuple(session.records())))

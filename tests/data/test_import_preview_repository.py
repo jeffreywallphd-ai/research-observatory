@@ -754,8 +754,9 @@ class ImportPreviewRepositoryTests(unittest.TestCase):
         for mode in ("omitted", "python-name"):
             with self.subTest(mode=mode):
                 data = ImportPreviewRepositoryTests(methodName="runTest")
-                data.setUp()
-                self.addCleanup(data.tearDown)
+                lifecycle: unittest.TestCase = data
+                lifecycle.setUp()
+                self.addCleanup(lifecycle.tearDown)
                 preview = data.create_legacy("v1-comma", version_mode=mode)
                 state = data.repository().read(preview)
                 self.assertEqual("legacy-preview-120s-v1", state.parser_profile)
