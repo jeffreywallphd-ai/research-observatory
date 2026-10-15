@@ -1,0 +1,14 @@
+{
+  "schemaVersion": "1.0",
+  "kind": "authority-preserving-correction",
+  "origin": {
+    "taskId": "CAP-04.S05.T02",
+    "commit": "963bfb4ab67d8096530fda90b1a53a60440e1e69",
+    "sha256": "a9faa34a543433fdfe1665e54ade2892554e6bf893a1824c6155d8114d3bd994"
+  },
+  "reproduction": "Actual2 corpus migration methods expect current20 and onward tuple onlythrough0020 while validated current28 requires0021..0028. First20->21 plugin progression2cc is groundwork diagnosis only; canonical completed original snapshot963b/latestapproved5a767 governs admission.",
+  "changedPaths": [
+    "tests/reconciliation/test_corpus_migration.py"
+  ],
+  "impactAnalysis": "Extend exact plan/result/recovery-manifest migration IDs through0028 and current schema report to pinned DATABASE_SCHEMA_VERSION28. Frozen literal v16 predecessor hashes/counts/rows/schema/source fingerprint, backups/current fingerprints/rights/corpus/source-projection/rollbacks/denials and assertions stay intact. No migration/product/sharedframework/security/reference/criterion change. Fresh only2 affected original methods/newly reached row/backup/preservation/denial clauses and affected quality/configuredtypes with genuine selected input closure and independent normal corrective disposition."
+}
