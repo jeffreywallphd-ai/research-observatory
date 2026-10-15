@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 941f1cb133d8c26b033d65831cc2204305971f53223bb4f77bd077aae05ac3e9
+source_sha256: 658aa362a578dc07ef68a08e8f81218b99c215cade419f5d4aa830c449d58b88
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -5475,7 +5475,7 @@ Original tasks and approvals remain unchanged.
 
 ### W2.C28.T01 — Implement rights, license, entitlement, and permitted-use metadata
 
-**Status:** `IN_PROGRESS`. **Original task:** `CAP-04.S04.T02`. **Latest review:** `-`.
+**Status:** `REVIEW`. **Original task:** `CAP-04.S04.T02`. **Latest review:** `-`.
 
 **Reproduction:** Actual8 original migration methods fail obsolete current17 or exact migration tuples stopping0017 against validated current28. First17->18 source progression is rights S04T02; literal historical fixtures/authoring remain S03 and unchanged.
 
@@ -5494,7 +5494,19 @@ Original tasks and approvals remain unchanged.
 
 **Review mode:** `append-only v1` / 0 completed round(s)
 
-**Current immutable submission awaiting review:** None
+**Current immutable submission awaiting review:** `R01` / packet SHA-256 `5ec0cd4390f53eff3d263582f2c157b9c5e7c7ea34643edae7690058b97a6dac`
+
+- Candidate / base / branch: `66ba02840aec00748c5928c5c5a7f4d201570d8f` / `460a1f5320fcb879c8ffa4acd8d915facc132a94` / `codex/w2-implementation`
+- Submitted by / at: codex-w2-implementation / `2026-10-15T01:05:59+00:00`
+- Evidence: `artifacts/evidence/W2.C28.T01.R01.json` / `31c59ae50758a189a810d43d2088bf887f9426d575fa26fdea8edcd4c19e03b6` / `66ba02840aec00748c5928c5c5a7f4d201570d8f`
+- Acceptance-criteria SHA-256: `5dae578c71f0fb55b9ffe175f68585cfa4da67a8a2f8128f36d9e5445f092ce6`
+- Verification-selection SHA-256: `7c9017eddf9e10ffda41bf2896970ce4c9529dcde3bf666e92b1b79445e436eb`
+- Changed paths: `docs/planning-implementation-plan.md`, `planning/backlog.yaml`, `planning/review-site/index.html`, `planning/review-site/manifest.json`, `planning/review-site/waves/W2.html`, `planning/status-summary.md`, `tests/reconciliation/test_migration.py`, `tests/reconciliation/test_review_migration.py`, `tests/reconciliation/test_version_migration.py`
+- Selected checks: `.venv/Scripts/python.exe -B -s -m unittest -v tests.reconciliation.test_migration.ProtectedReconciliationMigrationTests.test_encrypted_populated_v13_rollback_retry_backup_and_reopen tests.reconciliation.test_migration.ReconciliationMigrationTests.test_exact_populated_predecessor_upgrade_preserves_sources_and_backup tests.reconciliation.test_review_migration.ProtectedReviewMigrationTests.test_populated_encrypted_backfill_rollback_backup_retry_and_reopen tests.reconciliation.test_review_migration.ReviewMigrationTests.test_populated_history_membership_order_unassigned_and_backup tests.reconciliation.test_version_migration.ProtectedVersionMigrationTests.test_encrypted_v15_failure_backup_retry_and_reopen_preserves_every_row tests.reconciliation.test_version_migration.ProtectedVersionMigrationTests.test_long_backup_paths_preserve_encrypted_predecessor_on_failure_retry_and_reopen tests.reconciliation.test_version_migration.VersionMigrationTests.test_long_plaintext_backup_preserves_literal_rows_and_relative_authority tests.reconciliation.test_version_migration.VersionMigrationTests.test_migration_preserves_every_prior_row_and_backup_then_resumes_pending_impacts`, `.venv/Scripts/python.exe -B -s -m ruff format --check --config pyproject.toml -- tests/reconciliation/test_migration.py tests/reconciliation/test_review_migration.py tests/reconciliation/test_version_migration.py`, `.venv/Scripts/python.exe -B -s -m ruff check --config pyproject.toml -- tests/reconciliation/test_migration.py tests/reconciliation/test_review_migration.py tests/reconciliation/test_version_migration.py`, `.venv/Scripts/python.exe -B -s -m mypy --config-file pyproject.toml --no-namespace-packages -- @artifacts/tmp/W2.remaining-corrections-batch-01/quality-transport-07/complete-files.args`
+- Deferred checks: `Separate two-case corpus migration fixture correction retains its distinct original task and is not covered here.`, `Current Native3/current14, finite model/gateway, signed package/security/principal/restart/anchor/scale/storage/protected-performance qualification and S06/final Wave closeout remain separate; no whole-profile or release pass is claimed.`, `The prior Native cleanup failure remains an independent Wave risk for required cold/compiler/package qualification. No8/16GiB model workloads; physical foreign-host proof retains the approvedW5 deferral.`
+- Selection rationale: Migration fixture restoration affects exact current progression and the newly reached original backup/rollback/retry/reopen/row/long-path clauses. Select exactly eight previously failing methods and affectedthree-file Ruff. Failed narrow typing requires original governed source context; complete734 configured types now pass at the same source candidate. No credible current product change justifies replay of196 unaffected unique Core cases or another full exit audit.
+- Prior round / replayed open findings: `-` / -
+- Root-cause escalation: -
 
 **Current latest-review projection:** `-` by - at `-`
 

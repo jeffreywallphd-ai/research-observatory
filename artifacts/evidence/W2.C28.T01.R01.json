@@ -1,0 +1,214 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "W2.C28.T01",
+  "baseCommit": "460a1f5320fcb879c8ffa4acd8d915facc132a94",
+  "commit": "66ba02840aec00748c5928c5c5a7f4d201570d8f",
+  "branch": "codex/w2-implementation",
+  "changedFiles": [
+    "docs/planning-implementation-plan.md",
+    "planning/backlog.yaml",
+    "planning/review-site/index.html",
+    "planning/review-site/manifest.json",
+    "planning/review-site/waves/W2.html",
+    "planning/status-summary.md",
+    "tests/reconciliation/test_migration.py",
+    "tests/reconciliation/test_review_migration.py",
+    "tests/reconciliation/test_version_migration.py"
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "checkIds": [
+        "migration-boundaries"
+      ],
+      "evidence": [
+        "Rights service, source-specific policy, grants, restrictive unknown-rights behavior and re-evaluation implementation remain unchanged. Reuse the original independently approved CAP-04.S04.T02 rights judgment as historical authority. Fresh eight original migration cases prove current schema progression and retained preservation/backup assertions; no new rights-service execution is claimed."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "checkIds": [
+        "migration-boundaries"
+      ],
+      "evidence": [
+        "All eight previously failing original methods now pass without skips: literal populated v13/v14/v15 predecessor data and hashes, SQLCipher backups, rollback/failure/retry/reopen, long-path authority, review membership/order and pending-impact resumption. The v13/v14 protected fixtures use in-memory keys; the v15 long protected-backup case uses the actual Windows provider. No claim that all eight exercise real DPAPI or another principal. Original assertions and method bodies remain except exact current-version/migration-sequence expectations."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "checkIds": [
+        "migration-boundaries",
+        "affected-format",
+        "affected-lint",
+        "configured-types"
+      ],
+      "evidence": [
+        "Only three fixture current-target expectations change from obsolete17 to actual DATABASE_SCHEMA_VERSION28 with the complete literal0018..0028 sequence. Frozen predecessor DDL/hash/data/source/backup versions and every assertion are preserved; product, migration, rights/security and governed experience source are unchanged. Three-file format/lint and configured734-source typing pass with normal owned cleanup and held stable inputs."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "checks": [
+    {
+      "id": "migration-boundaries",
+      "command": ".venv/Scripts/python.exe -B -s -m unittest -v tests.reconciliation.test_migration.ProtectedReconciliationMigrationTests.test_encrypted_populated_v13_rollback_retry_backup_and_reopen tests.reconciliation.test_migration.ReconciliationMigrationTests.test_exact_populated_predecessor_upgrade_preserves_sources_and_backup tests.reconciliation.test_review_migration.ProtectedReviewMigrationTests.test_populated_encrypted_backfill_rollback_backup_retry_and_reopen tests.reconciliation.test_review_migration.ReviewMigrationTests.test_populated_history_membership_order_unassigned_and_backup tests.reconciliation.test_version_migration.ProtectedVersionMigrationTests.test_encrypted_v15_failure_backup_retry_and_reopen_preserves_every_row tests.reconciliation.test_version_migration.ProtectedVersionMigrationTests.test_long_backup_paths_preserve_encrypted_predecessor_on_failure_retry_and_reopen tests.reconciliation.test_version_migration.VersionMigrationTests.test_long_plaintext_backup_preserves_literal_rows_and_relative_authority tests.reconciliation.test_version_migration.VersionMigrationTests.test_migration_preserves_every_prior_row_and_backup_then_resumes_pending_impacts",
+      "commandSemantics": "DISPLAY repository-relative executable/paths; exact actual invocation preserved in ignored receipt.",
+      "result": "passed",
+      "exitCode": 0,
+      "commit": "66ba02840aec00748c5928c5c5a7f4d201570d8f",
+      "coverage": "fresh-current-candidate",
+      "seconds": 42.06895729999815,
+      "raw": {
+        "path": "artifacts/tmp/W2.C28.T01.focused-proof-01/migration-boundaries.raw.log",
+        "sha256": "e2e9f1b764cb9881c2d71559d89ec56984091bb09515c44224f884ff486038e8"
+      },
+      "ownedJob": {
+        "drained": true,
+        "cleanupState": "EMPTY_CONFIRMED",
+        "activeProcesses": 0
+      },
+      "testsRun": 8,
+      "failures": 0,
+      "errors": 0,
+      "skips": 0
+    },
+    {
+      "id": "affected-format",
+      "command": ".venv/Scripts/python.exe -B -s -m ruff format --check --config pyproject.toml -- tests/reconciliation/test_migration.py tests/reconciliation/test_review_migration.py tests/reconciliation/test_version_migration.py",
+      "commandSemantics": "DISPLAY repository-relative executable/paths; exact actual invocation preserved in ignored receipt.",
+      "result": "passed",
+      "exitCode": 0,
+      "commit": "66ba02840aec00748c5928c5c5a7f4d201570d8f",
+      "coverage": "fresh-current-candidate",
+      "seconds": 0.18507530000351835,
+      "raw": {
+        "path": "artifacts/tmp/W2.C28.T01.focused-proof-01/affected-format.raw.log",
+        "sha256": "eee76f865de5a9f2456950f710ae5d5f9b5bd0ea02aa54f614c5eed6642a0bfd"
+      },
+      "ownedJob": {
+        "drained": true,
+        "cleanupState": "EMPTY_CONFIRMED",
+        "activeProcesses": 0
+      }
+    },
+    {
+      "id": "affected-lint",
+      "command": ".venv/Scripts/python.exe -B -s -m ruff check --config pyproject.toml -- tests/reconciliation/test_migration.py tests/reconciliation/test_review_migration.py tests/reconciliation/test_version_migration.py",
+      "commandSemantics": "DISPLAY repository-relative executable/paths; exact actual invocation preserved in ignored receipt.",
+      "result": "passed",
+      "exitCode": 0,
+      "commit": "66ba02840aec00748c5928c5c5a7f4d201570d8f",
+      "coverage": "fresh-current-candidate",
+      "seconds": 0.16602160000184085,
+      "raw": {
+        "path": "artifacts/tmp/W2.C28.T01.focused-proof-01/affected-lint.raw.log",
+        "sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18"
+      },
+      "ownedJob": {
+        "drained": true,
+        "cleanupState": "EMPTY_CONFIRMED",
+        "activeProcesses": 0
+      }
+    },
+    {
+      "id": "configured-types",
+      "command": ".venv/Scripts/python.exe -B -s -m mypy --config-file pyproject.toml --no-namespace-packages -- @artifacts/tmp/W2.remaining-corrections-batch-01/quality-transport-07/complete-files.args",
+      "commandSemantics": "DISPLAY repository-relative executable/paths; exact actual invocation preserved in ignored receipt.",
+      "result": "passed",
+      "exitCode": 0,
+      "commit": "66ba02840aec00748c5928c5c5a7f4d201570d8f",
+      "coverage": "fresh-current-candidate",
+      "seconds": 18.599051700002747,
+      "raw": {
+        "path": "artifacts/tmp/W2.C28.T01.remaining-types-01/configured-types.raw.log",
+        "sha256": "c642e5b33b5e7d157e7b2362ef94a292d50ab8abbba717375ca1704ad53de820"
+      },
+      "ownedJob": {
+        "drained": true,
+        "cleanupState": "EMPTY_CONFIRMED",
+        "activeProcesses": 0
+      }
+    }
+  ],
+  "executionReceipts": [
+    {
+      "path": "artifacts/tmp/W2.C28.T01.focused-proof-01/receipt.json",
+      "sha256": "a7bc69a0e6631fa8128df20dd6033b78f4eadbe50852c4eb038532268ae5ce4e"
+    },
+    {
+      "path": "artifacts/tmp/W2.C28.T01.remaining-types-01/receipt.json",
+      "sha256": "bfa30ad6838edbfddcf9210fffc7b1e921202636bce71573acaa1d4331f81ece"
+    }
+  ],
+  "executionProducers": [
+    {
+      "path": "artifacts/tmp/W2.original-migration.focused-proof-01.py",
+      "sha256": "281165258d453eb0225d49babd700d8c98e63e48f7f51e60efbf2a6b170c4fca"
+    },
+    {
+      "path": "artifacts/tmp/W2.C28.T01.remaining-types-01.py",
+      "sha256": "4d267bfe7c736c32a3b79f7e7eca6364fb19a313800048254b3b134f5776a617"
+    }
+  ],
+  "sourceApplication": {
+    "path": "artifacts/tmp/W2.C28.T01.delivery-01/actual-source-application-01.json",
+    "sha256": "8715727c292e4888e7cda3a06e42bf06fed93ed76909aeb2937223960d134dca"
+  },
+  "runtimeInputCaptureSHA256": "456482ea03c3545a03c63e36e5f0bb098c7e20c95e2d2f5efa2f52381b2d4188",
+  "actualInputClosure": "Exact committed candidate and selected Python/stdlib/Git/runtime/config/environment/absence inputs held and rechecked through normal owned drain. Detailed machine-local input maps remain ignored.",
+  "independentComponentDispositions": [
+    {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/core14-restorative-proposals-02/independent-migration-source-readiness-01.json",
+      "sha256": "afac7447914070deeb9b47c218e30d71db70a8b09cd71b39f8653271457e6fb1"
+    },
+    {
+      "path": "artifacts/tmp/W2.C28.T01.focused-proof-01/independent-component-disposition-01.json",
+      "sha256": "0091615d29c1aadb94f33820b4f52e4684d609b1b780a5237b5e3f4aafcc67f4"
+    }
+  ],
+  "preservedAdverse": [
+    {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/unreached-core-imports-owned-01/actual-proof-01/receipt.json",
+      "sha256": "1090cfd6826c48550b01ae6f736a074d210fd69bcc19d8d4ed4facd4badcd038"
+    },
+    {
+      "path": "artifacts/tmp/W2.C28.T01.focused-proof-01/receipt.json",
+      "sha256": "a7bc69a0e6631fa8128df20dd6033b78f4eadbe50852c4eb038532268ae5ce4e"
+    }
+  ],
+  "typingInvocationCorrection": "The initial narrow3-file mypy command omitted the existing Core source context and genuinely failed with18 import-untyped diagnostics. Only typing was continued with the unchanged governed734 response file/settings and an exclusive initially absent derived cache. No import suppression, checker/source configuration change or replay of eight passing methods. Both receipts remain immutable.",
+  "verificationSelection": {
+    "selectedCommandIds": [
+      "service:reconciliation",
+      "foundation:quality"
+    ],
+    "riskAnalysis": "Migration fixture restoration affects exact current progression and the newly reached original backup/rollback/retry/reopen/row/long-path clauses. Select exactly eight previously failing methods and affectedthree-file Ruff. Failed narrow typing requires original governed source context; complete734 configured types now pass at the same source candidate. No credible current product change justifies replay of196 unaffected unique Core cases or another full exit audit.",
+    "deferred": [
+      "Separate two-case corpus migration fixture correction retains its distinct original task and is not covered here.",
+      "Current Native3/current14, finite model/gateway, signed package/security/principal/restart/anchor/scale/storage/protected-performance qualification and S06/final Wave closeout remain separate; no whole-profile or release pass is claimed.",
+      "The prior Native cleanup failure remains an independent Wave risk for required cold/compiler/package qualification. No8/16GiB model workloads; physical foreign-host proof retains the approvedW5 deferral."
+    ]
+  },
+  "correctiveIntegration": {
+    "originSha256": "278db71aaeb1a96788fbfa50f97ef28e400c246dcdc2a0989a4a1164be536025",
+    "authorityPreserved": true,
+    "affectedChecks": [
+      ".venv/Scripts/python.exe -B -s -m unittest -v tests.reconciliation.test_migration.ProtectedReconciliationMigrationTests.test_encrypted_populated_v13_rollback_retry_backup_and_reopen tests.reconciliation.test_migration.ReconciliationMigrationTests.test_exact_populated_predecessor_upgrade_preserves_sources_and_backup tests.reconciliation.test_review_migration.ProtectedReviewMigrationTests.test_populated_encrypted_backfill_rollback_backup_retry_and_reopen tests.reconciliation.test_review_migration.ReviewMigrationTests.test_populated_history_membership_order_unassigned_and_backup tests.reconciliation.test_version_migration.ProtectedVersionMigrationTests.test_encrypted_v15_failure_backup_retry_and_reopen_preserves_every_row tests.reconciliation.test_version_migration.ProtectedVersionMigrationTests.test_long_backup_paths_preserve_encrypted_predecessor_on_failure_retry_and_reopen tests.reconciliation.test_version_migration.VersionMigrationTests.test_long_plaintext_backup_preserves_literal_rows_and_relative_authority tests.reconciliation.test_version_migration.VersionMigrationTests.test_migration_preserves_every_prior_row_and_backup_then_resumes_pending_impacts",
+      ".venv/Scripts/python.exe -B -s -m ruff format --check --config pyproject.toml -- tests/reconciliation/test_migration.py tests/reconciliation/test_review_migration.py tests/reconciliation/test_version_migration.py",
+      ".venv/Scripts/python.exe -B -s -m ruff check --config pyproject.toml -- tests/reconciliation/test_migration.py tests/reconciliation/test_review_migration.py tests/reconciliation/test_version_migration.py",
+      ".venv/Scripts/python.exe -B -s -m mypy --config-file pyproject.toml --no-namespace-packages -- @artifacts/tmp/W2.remaining-corrections-batch-01/quality-transport-07/complete-files.args"
+    ],
+    "reusedEvidence": [
+      "Original CAP-04.S04.T02 independently approved rights implementation and unaffected policy/denial judgment remain historical authority. Original rights/migration task history and approvals are unchanged."
+    ],
+    "rationale": "Exact reviewed current-target fixture restoration only. All eight newly reached original migration boundaries, affectedRuff and governed configured typing pass at66ba with normalEMPTY0 and input stability. Preserve original aggregate failures and narrow missing-context typing failure. Normal frozen independent task review remains required; no scope, criterion, framework, reference, authority or release change."
+  },
+  "correctionSpecification": {
+    "path": "artifacts/evidence/W2.C28.T01.spec.json",
+    "sha256": "cba8444a26c0aaf7a8ce41d78440b80e164b2a97fbcc17fc0ea9c519e08a8f73"
+  },
+  "fullProfilePassClaimed": false,
+  "waveComplete": false,
+  "releaseApproved": false
+}

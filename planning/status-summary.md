@@ -1,7 +1,7 @@
 ---
 document_type: generated-backlog-status-summary
 source: planning/backlog.yaml
-source_sha256: 941f1cb133d8c26b033d65831cc2204305971f53223bb4f77bd077aae05ac3e9
+source_sha256: 658aa362a578dc07ef68a08e8f81218b99c215cade419f5d4aa830c449d58b88
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -989,7 +989,7 @@ Append-only rounds remain distinct from the current latest-review projection. Le
 | `W2.C25.T01` | `append-only v1` | 1 | `-` | approved / agent:/root/storage_profile_review | - |
 | `W2.C26.T01` | `append-only v1` | 1 | `-` | approved / agent:/root/storage_profile_review | - |
 | `W2.C27.T01` | `append-only v1` | 1 | `-` | approved / agent:/root/security_resolution_review | - |
-| `W2.C28.T01` | `append-only v1` | 0 | `-` | - / - | - |
+| `W2.C28.T01` | `append-only v1` | 0 | `R01` | - / - | - |
 ## Wave progress
 
 | Wave | Pre-Wave approval | Campaign | Qualification | Approved slices | Done tasks | Exit gate |
@@ -1053,7 +1053,7 @@ Append-only rounds remain distinct from the current latest-review projection. Le
 
 | Task | Status | Owner | Branch |
 |---|---|---|---|
-| `W2.C28.T01` Implement rights, license, entitlement, and permitted-use metadata | `IN_PROGRESS` | codex-w2-implementation | `codex/w2-implementation` |
+| `W2.C28.T01` Implement rights, license, entitlement, and permitted-use metadata | `REVIEW` | codex-w2-implementation | `codex/w2-implementation` |
 
 ## Linked corrective tasks
 
@@ -1189,5 +1189,5 @@ Original tasks and approvals remain unchanged.
 
 ### W2.C28.T01 — Implement rights, license, entitlement, and permitted-use metadata
 
-**Status:** `IN_PROGRESS`. **Original task:** `CAP-04.S04.T02`. **Latest review:** `-`.
+**Status:** `REVIEW`. **Original task:** `CAP-04.S04.T02`. **Latest review:** `-`.
 
