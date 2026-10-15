@@ -7547,6 +7547,91 @@ waves:
           guardian/runtime closure, normal owned cleanup and stable inputs. Expanded independent commit-bound security/corrective
           integration review and normal taskctl submission remain required. This test-only restoration grants no release approval
           or unrelated optimization; original DONE history, prior FAILs and later slice/Wave gates remain unchanged.
+    - title: Implement Unpaywall and Semantic Scholar adapters
+      objective: Open-access location resolution, academic graph lookup, citations/references, and related-paper recommendations
+        with policy controls.
+      dependencies:
+      - CAP-04.S02.T02
+      acceptance_criteria:
+      - OA URLs retain license and host metadata; recommendation/citation results record direction and source; provider unavailability
+        degrades without corrupting the search run.
+      - Automated tests cover the expected path and at least one material failure or boundary condition.
+      - Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.
+      verification_commands:
+      - python tools/verify.py --profile service
+      - python tools/verify.py --profile search
+      deployment_profiles:
+      - LOC
+      - LAB
+      - ALL
+      platform_targets:
+      - windows-x64
+      verification_profiles:
+      - service
+      - search
+      id: W2.C33.T01
+      wave: W2
+      priority: P0
+      status: IN_PROGRESS
+      owner: agent:/root
+      branch: codex/w2-implementation
+      base_sha: e3e58ab545e25466ddd3d89c7f6e0e0e3fa2fab7
+      worktree: .
+      lease:
+        claimed_by: agent:/root
+        claimed_at: '2026-10-15T11:26:57+00:00'
+        expires_at: '2026-10-15T19:26:57+00:00'
+      started_at: '2026-10-15T11:26:57+00:00'
+      updated_at: '2026-10-15T11:26:57+00:00'
+      completed_at: null
+      blocker: null
+      implementation_notes: ''
+      evidence: []
+      verification_state: null
+      review:
+        reviewer: null
+        result: null
+        reviewed_at: null
+        notes: null
+      review_control:
+        version: 1
+        attempts: []
+        current_submission: null
+      correction:
+        origin_task_id: CAP-04.S02.T03
+        origin_commit: 035f11a3546658ed9c694acbae1c1a3ac4907724
+        paused_state_sha256: b433937424fdc141ada899cd32acd3858867b5f267614a65cc11678a6b5b5e94
+        origin_sha256: f963a91d00aff8748b2eb0f8606d9b86193c4a072463c81998e27b8eb8772028
+        origin_contract_sha256: a11832ad4e39fb547c2712fd83a70cf2908187548368998f317006d993993e6e
+        origin_history_sha256: 18171ad3c36da6087fc305544ff41a80dd5456f1736b6de5191c5c798c00f581
+        origin_amendment_id: null
+        authority_sha256: c92ce7e9bac1b8a49d13d649a5980fea61e56ee953d238c734d8ff5f04f4c9e5
+        spec:
+          path: artifacts/evidence/W2.C33.T01.spec.json
+          sha256: e1ecee1a49d980e9c9e556eb7d6fdf65dbb6e5f69258357d70ab55cdd4a8ff35
+          commit: e3e58ab545e25466ddd3d89c7f6e0e0e3fa2fab7
+        reproduction: At clean candidate8392e43397e9aa28301cdf5689d653389fc1c561 the unchanged original SourceSliceRuntimeTests.test_four_sources_cache_failure_denial_cancellation_and_restart
+          exceeds its original600s collection watchdog. Actual receipt artifacts/tmp/W2.remaining-corrections-batch-01/unreached-connector-tail-owned-01/actual-tail-remaining98-01/receipt.json
+          SHA256df124b843661b7cec00be68451b3531e0dbd801bed969b8d983d16226dc995b7 preserves timeout/forcedEMPTY0/stable heldinputs
+          and raw9f83894e5f13c667f65ef426a4c692fa64dc5d81f11c6cdf6eaf7a261441d124. Independent actual97-component disposition4b3613c89dca625f6f2f9181e590ca41fd42099d73033ba13990b0bd987fa02c
+          admits only preceding97 completed cases. Source inspection independently establishes12 private journal reads (7
+          replay,5 checkpoint) violate ConnectorRepository required current project/action authority, reaching ObjectStore.open
+          with inverted object/project lock ordering against active production workers. Existing C31 exact-path diagnosis
+          supports the risk; this invocation has no captured blocking stack, so its exact cause remains unproven. The helper
+          was introduced in later qualification source1ccf0f92 and currently6125e5b53fd3f0cf1f994f0cabf06a90700d08da79bb02101f7d3eba77881de8,
+          not present at original approved035f. It verifies inherited CAP-04.S02.T03 source integration; original task/history
+          remains unchanged.
+        changed_paths:
+        - tests/connectors/test_source_slice_runtime.py
+        impact_analysis: Restore the existing current-project caller contract around all12 private journal replay/checkpoint
+          reads using real runtime.projects.perform_open_project_action(require_write=False) and its assessed path/project
+          identity. Preserve original requests, stored observations/checkpoints, all assertions, provider and synthetic HTTP
+          fixtures, actual DPAPI/SQLCipher, active worker concurrency, failure/denial/cancellation/restart checks and original
+          clocks. No production locking/security/worker/framework/schema/UX or criterion change. Run only the original affected
+          source-slice integration and its directly consuming source-performance check at a stable committed candidate, plus
+          one-file lint/format and governed734 typing; independent review authenticates assertions/12sites and actualnormaldrain/stability.
+          Retain600s adverse, partial97 and all earlier prefix proof; no repeated unrelated connectors/profile/history audit.
+          Any actual further failure remains open; correction approval is separate from slice/Wave/release.
     resume_records:
     - id: W2.R01
       wave_id: W2

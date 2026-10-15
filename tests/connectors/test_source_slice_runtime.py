@@ -158,6 +158,14 @@ def run_workload(check, directory, *, count=100, boundaries=True):
         check.assertEqual(expected, response.status_code, response.text)
         return response.json()
 
+    def journal_read(runtime, action):
+        """Read the same private journal under current project authority."""
+        return runtime.projects.perform_open_project_action(
+            root=root,
+            require_write=False,
+            action=lambda path, project_id: action(runtime.connectors._adapters(path, project_id).pages),
+        )
+
     def preview(client, value):
         return post(
             client,
@@ -248,7 +256,7 @@ def run_workload(check, directory, *, count=100, boundaries=True):
                     value = source_request(provider, identity, count, cache=cache)
                     before = len(calls)
                     item, job, seconds = execute(client, value)
-                    saved = runtime.connectors._adapters(Path(root), identity).pages.replay(value)
+                    saved = journal_read(runtime, lambda pages: pages.replay(value))
                     check.assertIsNotNone(saved)
                     check.assertEqual(1 if provider == "unpaywall" else count, len(saved.records))
                     check.assertEqual("hit" if cache else "disabled", saved.cache.state)
@@ -319,7 +327,7 @@ def run_workload(check, directory, *, count=100, boundaries=True):
                 _, failed, _ = execute(client, source_request("semantic-scholar", identity, count), "failed")
                 check.assertIn("provider-unavailable", failed["diagnosticCode"])
                 for value, saved, _, _ in retained.values():
-                    check.assertEqual(saved, runtime.connectors._adapters(Path(root), identity).pages.replay(value))
+                    check.assertEqual(saved, journal_read(runtime, lambda pages: pages.replay(value)))
                 state["failure"] = False
                 execute(client, source_request("semantic-scholar", identity, count))
                 for provider, mode, code in (
@@ -329,20 +337,19 @@ def run_workload(check, directory, *, count=100, boundaries=True):
                     state["fault"] = mode
                     value = source_request(provider, identity, count)
                     value = value.model_copy(update={"policy": value.policy.model_copy(update={"timeout_ms": 20})})
-                    repository = runtime.connectors._adapters(Path(root), identity).pages
-                    checkpoint = repository.checkpoint(value)
+                    checkpoint = journal_read(runtime, lambda pages: pages.checkpoint(value))
                     before = len(calls)
                     item, job, _ = execute(client, value, "failed")
                     check.assertIn(code, job["diagnosticCode"])
                     check.assertEqual(before + 1, len(calls))
-                    failed_page = repository.replay(value)
+                    failed_page = journal_read(runtime, lambda pages: pages.replay(value))
                     check.assertIsNotNone(failed_page)
                     check.assertEqual("failed", failed_page.outcome)
                     check.assertEqual(code, failed_page.errors[0].code)
                     check.assertEqual((), failed_page.records)
                     check.assertIsNone(failed_page.next_cursor)
                     check.assertEqual("unavailable", failed_page.response.body_state)
-                    check.assertEqual(checkpoint, repository.checkpoint(value))
+                    check.assertEqual(checkpoint, journal_read(runtime, lambda pages: pages.checkpoint(value)))
                     failed_exchanges.append((value, failed_page, item, job, checkpoint))
                     diagnostic = post(
                         client, "/projects/connectors/diagnostics", {"root": root, "previewId": item["previewId"]}
@@ -354,9 +361,7 @@ def run_workload(check, directory, *, count=100, boundaries=True):
                 state["hold"], state["entered"] = True, False
                 cancelled_request = source_request("crossref", identity, count)
                 cancelled_preview = preview(client, cancelled_request)
-                preceding_checkpoint = runtime.connectors._adapters(Path(root), identity).pages.checkpoint(
-                    cancelled_request
-                )
+                preceding_checkpoint = journal_read(runtime, lambda pages: pages.checkpoint(cancelled_request))
                 pending = confirm(client, cancelled_preview)
                 deadline = time.monotonic() + 10
                 while not state["entered"] and time.monotonic() < deadline:
@@ -365,7 +370,7 @@ def run_workload(check, directory, *, count=100, boundaries=True):
                 post(client, "/projects/connectors/jobs/cancel", {"root": root, "jobId": pending["jobId"]})
                 check.assertEqual("cancelled", wait(client, pending)["state"])
                 state["hold"] = False
-                check.assertIsNone(runtime.connectors._adapters(Path(root), identity).pages.replay(cancelled_request))
+                check.assertIsNone(journal_read(runtime, lambda pages: pages.replay(cancelled_request)))
                 cancelled = (cancelled_request, cancelled_preview, pending, preceding_checkpoint)
             post(client, "/projects/close", {"root": root})
             closed = client.post(
@@ -388,7 +393,7 @@ def run_workload(check, directory, *, count=100, boundaries=True):
             check.assertEqual(422, invalid.status_code, invalid.text)
             for value, saved, item, job in retained.values():
                 check.assertEqual(
-                    saved, second.state.runtime.connectors._adapters(Path(root), identity).pages.replay(value)
+                    saved, journal_read(second.state.runtime, lambda pages: pages.replay(value))
                 )
                 status = post(client, "/projects/connectors/jobs/status", {"root": root, "jobId": job["jobId"]})
                 check.assertEqual("succeeded", status["state"])
@@ -413,9 +418,8 @@ def run_workload(check, directory, *, count=100, boundaries=True):
                 check.assertEqual(value.scientific_sha256(), inspection["scientificRequestSha256"])
             if cancelled is not None:
                 value, item, job, checkpoint = cancelled
-                repository = second.state.runtime.connectors._adapters(Path(root), identity).pages
-                check.assertIsNone(repository.replay(value))
-                check.assertEqual(checkpoint, repository.checkpoint(value))
+                check.assertIsNone(journal_read(second.state.runtime, lambda pages: pages.replay(value)))
+                check.assertEqual(checkpoint, journal_read(second.state.runtime, lambda pages: pages.checkpoint(value)))
                 inspection = post(
                     client,
                     "/projects/connectors/inspect",
@@ -429,9 +433,8 @@ def run_workload(check, directory, *, count=100, boundaries=True):
                     post(client, "/projects/connectors/jobs/status", {"root": root, "jobId": job["jobId"]})["state"],
                 )
             for value, failed_page, _item, job, checkpoint in failed_exchanges:
-                repository = second.state.runtime.connectors._adapters(Path(root), identity).pages
-                check.assertEqual(failed_page, repository.replay(value))
-                check.assertEqual(checkpoint, repository.checkpoint(value))
+                check.assertEqual(failed_page, journal_read(second.state.runtime, lambda pages: pages.replay(value)))
+                check.assertEqual(checkpoint, journal_read(second.state.runtime, lambda pages: pages.checkpoint(value)))
                 status = post(client, "/projects/connectors/jobs/status", {"root": root, "jobId": job["jobId"]})
                 check.assertEqual("failed", status["state"])
                 check.assertIn(failed_page.errors[0].code, status["diagnosticCode"])

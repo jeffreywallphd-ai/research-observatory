@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 859de819240f2fe0d418f9d26eee8c4559815bd7e265d3472c2e05f111758dd1
+source_sha256: 21a9ac3de1aacf76a729239ff89c6f987863d6b0d1e9a1e18f634d58dfa7c447
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -5755,6 +5755,33 @@ Original tasks and approvals remain unchanged.
 **Current immutable submission awaiting review:** None
 
 **Current latest-review projection:** `approved` by agent:/root/storage_profile_review at `2026-10-15T10:49:29+00:00`
+
+**Latest notes:** -
+
+**Currently open findings:** -
+
+### W2.C33.T01 — Implement Unpaywall and Semantic Scholar adapters
+
+**Status:** `IN_PROGRESS`. **Original task:** `CAP-04.S02.T03`. **Latest review:** `-`.
+
+**Reproduction:** At clean candidate8392e43397e9aa28301cdf5689d653389fc1c561 the unchanged original SourceSliceRuntimeTests.test_four_sources_cache_failure_denial_cancellation_and_restart exceeds its original600s collection watchdog. Actual receipt artifacts/tmp/W2.remaining-corrections-batch-01/unreached-connector-tail-owned-01/actual-tail-remaining98-01/receipt.json SHA256df124b843661b7cec00be68451b3531e0dbd801bed969b8d983d16226dc995b7 preserves timeout/forcedEMPTY0/stable heldinputs and raw9f83894e5f13c667f65ef426a4c692fa64dc5d81f11c6cdf6eaf7a261441d124. Independent actual97-component disposition4b3613c89dca625f6f2f9181e590ca41fd42099d73033ba13990b0bd987fa02c admits only preceding97 completed cases. Source inspection independently establishes12 private journal reads (7 replay,5 checkpoint) violate ConnectorRepository required current project/action authority, reaching ObjectStore.open with inverted object/project lock ordering against active production workers. Existing C31 exact-path diagnosis supports the risk; this invocation has no captured blocking stack, so its exact cause remains unproven. The helper was introduced in later qualification source1ccf0f92 and currently6125e5b53fd3f0cf1f994f0cabf06a90700d08da79bb02101f7d3eba77881de8, not present at original approved035f. It verifies inherited CAP-04.S02.T03 source integration; original task/history remains unchanged.
+
+**Inherited criteria:**
+
+- OA URLs retain license and host metadata; recommendation/citation results record direction and source; provider unavailability degrades without corrupting the search run.
+- Automated tests cover the expected path and at least one material failure or boundary condition.
+- Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.
+
+**Bounded changed paths:**
+
+- tests/connectors/test_source_slice_runtime.py
+#### Review history — W2.C33.T01
+
+**Review mode:** `append-only v1` / 0 completed round(s)
+
+**Current immutable submission awaiting review:** None
+
+**Current latest-review projection:** `-` by - at `-`
 
 **Latest notes:** -
 
