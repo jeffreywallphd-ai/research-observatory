@@ -91,11 +91,19 @@ class PluginGrantMigrationTests(unittest.TestCase):
                 storage.PLUGIN_GRANT_DDL,
                 storage._DDL_STATEMENTS[grant_start : grant_start + len(storage.PLUGIN_GRANT_DDL)],
             )
+            # v27 replaces an earlier table inside the prefix. Keep the
+            # frozen v20 predecessor on its preserved pre-v27 definition.
+            predecessor_ddl = storage._DDL_STATEMENTS[1:grant_start]
+            self.assertEqual(1, predecessor_ddl.count(storage.DEPENDENCY_IMPACT_RUNS_V27_DDL))
             for statement in (
                 storage.SCHEMA_METADATA_V20_DDL,
-                *storage._DDL_STATEMENTS[1:grant_start],
+                *predecessor_ddl,
             ):
-                connection.execute(statement)
+                connection.execute(
+                    storage.DEPENDENCY_IMPACT_RUNS_V26_DDL
+                    if statement == storage.DEPENDENCY_IMPACT_RUNS_V27_DDL
+                    else statement
+                )
             self.assertEqual(storage.PLUGIN_GRANT_PREDECESSOR_SCHEMA_SHA256, storage._schema_fingerprint(connection))
             connection.execute(
                 "INSERT INTO schema_metadata (singleton,schema_version,database_profile,application_id,"
