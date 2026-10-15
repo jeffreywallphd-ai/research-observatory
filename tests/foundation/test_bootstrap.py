@@ -12,7 +12,7 @@ from pathlib import Path
 REPO = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(REPO / "tools"))
 
-from bootstrap import BootstrapError, bootstrap  # noqa: E402
+from bootstrap import BootstrapError, bootstrap, run_step  # noqa: E402
 
 DECLARATION_FILES = [
     ".node-version",
@@ -80,6 +80,53 @@ class DeveloperBootstrapTests(unittest.TestCase):
             self.assertIn(["cargo", "fetch", "--locked"], runner.commands)
             self.assertTrue(any("tools/install_trivy.py" in command for command in runner.commands))
             self.assertTrue(any(command[0].endswith(".venv\\Scripts\\python.exe") for command in runner.commands))
+
+    def test_real_failed_step_preserves_stdout_and_stderr(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            checkout = Path(temporary)
+            command = [
+                sys.executable,
+                "-B",
+                "-s",
+                "-c",
+                "import sys; print('actual check failure'); "
+                "print('broad profile advisory', file=sys.stderr); sys.exit(23)",
+            ]
+
+            with self.assertRaises(BootstrapError) as failure:
+                run_step(checkout, "Controlled diagnostic", command, subprocess.run)
+
+            diagnostic = str(failure.exception)
+            self.assertIn("Controlled diagnostic failed with exit code 23", diagnostic)
+            self.assertIn("stdout:\nactual check failure", diagnostic)
+            self.assertIn("stderr:\nbroad profile advisory", diagnostic)
+
+    def test_failed_foundation_requests_report_and_does_not_publish_config(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            checkout = Path(temporary)
+            seed_checkout(checkout)
+            runner = ControlledRunner(failing_step="tools/verify.py")
+
+            with self.assertRaises(BootstrapError) as failure:
+                bootstrap(checkout, runner=runner, platform_name="nt")
+
+            self.assertIn("Foundation smoke gate failed with exit code 19", str(failure.exception))
+            self.assertIn(
+                "Foundation verification report path: artifacts/tmp/bootstrap-foundation-report.json",
+                str(failure.exception),
+            )
+            self.assertEqual(
+                [
+                    str(checkout / ".venv" / "Scripts" / "python.exe"),
+                    "tools/verify.py",
+                    "--profile",
+                    "foundation",
+                    "--report",
+                    "artifacts/tmp/bootstrap-foundation-report.json",
+                ],
+                runner.commands[-1],
+            )
+            self.assertFalse((checkout / ".local" / "development.json").exists())
 
     def test_failed_install_does_not_publish_development_config(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:

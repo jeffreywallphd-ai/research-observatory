@@ -45,7 +45,17 @@ _REPOSITORY_ADAPTER_MODULES = {
     "plugin_job_repository",
     "plugin_package_repository",
 }
-_DATA_ADAPTER_FILES = {"object_store.py", "storage.py"} | {f"{module}.py" for module in _REPOSITORY_ADAPTER_MODULES}
+_DATA_ADAPTER_FILES = {
+    "object_store.py",
+    "storage.py",
+    "document_citation_repository.py",
+    "document_reference_repository.py",
+    "document_table_figure_repository.py",
+    "document_viewer_allocations.py",
+    "document_viewer_repository.py",
+    "reference_matching_repository.py",
+    "viewer_action_repository.py",
+} | {f"{module}.py" for module in _REPOSITORY_ADAPTER_MODULES}
 
 
 def _is_storage_module(module: str) -> bool:
@@ -181,6 +191,17 @@ def _async_port_execution_calls(root: Path, tree: ast.Module) -> set[ast.Call]:
     return allowed
 
 
+def _resolved_import_from(node: ast.ImportFrom, relative: Path) -> str:
+    if node.level == 0:
+        return node.module or ""
+    package = ("research_observatory_core", *relative.parts[:-1])
+    if node.level > len(package):
+        return node.module or ""
+    prefix = package[: len(package) - node.level + 1]
+    suffix = tuple(node.module.split(".")) if node.module else ()
+    return ".".join((*prefix, *suffix))
+
+
 def core_data_boundary_errors(source_root: Path) -> list[str]:
     """Deny database dependencies and dynamic SQL outside Core data adapters."""
 
@@ -206,8 +227,8 @@ def core_data_boundary_errors(source_root: Path) -> list[str]:
                     if not is_adapter and path.name != "main.py" and _is_concrete_object_store_module(alias.name):
                         errors.append(f"{relative}:{node.lineno}: imports concrete object-store adapter")
             elif isinstance(node, ast.ImportFrom):
-                full_module = node.module or ""
-                module = full_module.split(".")[0]
+                full_module = _resolved_import_from(node, path.relative_to(root))
+                module = (node.module or "").split(".")[0]
                 imported = {alias.name for alias in node.names}
                 if (is_port or not is_adapter) and module in _DATABASE_MODULES:
                     errors.append(f"{relative}:{node.lineno}: database dependency outside adapter")
@@ -219,7 +240,7 @@ def core_data_boundary_errors(source_root: Path) -> list[str]:
                 if (
                     not is_adapter
                     and "storage" in imported
-                    and (not full_module or full_module.endswith("research_observatory_core"))
+                    and (not node.module or full_module.endswith("research_observatory_core"))
                 ):
                     errors.append(f"{relative}:{node.lineno}: imports storage connection authority")
                 if (
@@ -229,7 +250,7 @@ def core_data_boundary_errors(source_root: Path) -> list[str]:
                         _is_concrete_repository_module(full_module)
                         or (
                             bool(imported & _REPOSITORY_ADAPTER_MODULES)
-                            and (not full_module or full_module.endswith("research_observatory_core"))
+                            and (not node.module or full_module.endswith("research_observatory_core"))
                         )
                     )
                 ):
@@ -241,7 +262,7 @@ def core_data_boundary_errors(source_root: Path) -> list[str]:
                         _is_concrete_object_store_module(full_module)
                         or (
                             "object_store" in imported
-                            and (not full_module or full_module.endswith("research_observatory_core"))
+                            and (not node.module or full_module.endswith("research_observatory_core"))
                         )
                     )
                 ):

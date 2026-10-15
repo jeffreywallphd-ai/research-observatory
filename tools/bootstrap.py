@@ -17,6 +17,9 @@ from runtime_check import declaration_errors, installed_errors, load_contract
 CommandRunner = Callable[..., subprocess.CompletedProcess[str]]
 
 
+FOUNDATION_REPORT = "artifacts/tmp/bootstrap-foundation-report.json"
+
+
 class BootstrapError(RuntimeError):
     """A prerequisite, install, or smoke gate failed."""
 
@@ -35,7 +38,10 @@ def bootstrap_commands(repo: Path, platform_name: str) -> list[tuple[str, list[s
         ("Python environment", ["uv", "sync", "--frozen", "--no-install-project"]),
         ("Security scanner", [python, "tools/install_trivy.py", "--repo", str(repo)]),
         ("Rust dependencies", ["cargo", "fetch", "--locked"]),
-        ("Foundation smoke gate", [python, "tools/verify.py", "--profile", "foundation"]),
+        (
+            "Foundation smoke gate",
+            [python, "tools/verify.py", "--profile", "foundation", "--report", FOUNDATION_REPORT],
+        ),
     ]
 
 
@@ -47,7 +53,14 @@ def run_step(repo: Path, label: str, command: list[str], runner: CommandRunner) 
         raise BootstrapError(f"{label} could not start: {exc}") from exc
     if result.returncode == 0:
         return
-    details = (result.stderr or result.stdout).strip()
+    details = "\n".join(
+        f"{name}:\n{output.strip()}"
+        for name, output in (("stdout", result.stdout), ("stderr", result.stderr))
+        if output and output.strip()
+    )
+    if label == "Foundation smoke gate":
+        report_note = f"Foundation verification report path: {FOUNDATION_REPORT}"
+        details = f"{details}\n{report_note}" if details else report_note
     suffix = f"\n{details}" if details else ""
     raise BootstrapError(f"{label} failed with exit code {result.returncode}.{suffix}")
 

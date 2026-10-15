@@ -330,6 +330,100 @@ class ArchitectureContractTests(unittest.TestCase):
                 self.assertTrue(any("concrete" in error for error in errors))
                 path.unlink()
 
+    def test_document_data_adapters_are_owned_only_at_the_core_root(self) -> None:
+        adapters = (
+            "document_citation_repository",
+            "document_reference_repository",
+            "document_table_figure_repository",
+            "document_viewer_allocations",
+            "document_viewer_repository",
+            "reference_matching_repository",
+            "viewer_action_repository",
+        )
+        source = (
+            "import sqlite3\nfrom research_observatory_core.storage import open_canonical_database\n"
+            "from research_observatory_core.source_anchor_repository import LocalSourceAnchorRepository\n"
+            "def read(connection):\n    return connection.execute('SELECT 1')\n"
+        )
+        for adapter in adapters:
+            for prefix in ("", "business/", "ports/"):
+                with self.subTest(adapter=adapter, prefix=prefix), tempfile.TemporaryDirectory() as directory:
+                    root = Path(directory)
+                    path = root / f"{prefix}{adapter}.py"
+                    path.parent.mkdir(parents=True, exist_ok=True)
+                    path.write_text(source, encoding="utf-8")
+
+                    errors = core_data_boundary_errors(root)
+
+                    if prefix:
+                        self.assertTrue(any("database dependency outside adapter" in error for error in errors), errors)
+                        self.assertTrue(
+                            any("database call execute outside adapter" in error for error in errors), errors
+                        )
+                        self.assertTrue(any("concrete" in error for error in errors), errors)
+                    else:
+                        self.assertEqual([], errors)
+
+    def test_object_store_port_imports_resolve_from_the_consumer_package(self) -> None:
+        legal = (
+            "from .object_store import MAX_VIEWER_SOURCE_BYTES\n",
+            "from research_observatory_core.ports.object_store import MAX_VIEWER_SOURCE_BYTES\n",
+            "from research_observatory_core.ports import object_store\n",
+        )
+        illegal = (
+            "from ..object_store import LocalObjectStore\n",
+            "from .. import object_store\n",
+            "from research_observatory_core.object_store import LocalObjectStore\n",
+            "from research_observatory_core import object_store\n",
+        )
+        for source in (*legal, *illegal):
+            with self.subTest(source=source), tempfile.TemporaryDirectory() as directory:
+                root = Path(directory)
+                path = root / "ports/document_viewer.py"
+                path.parent.mkdir()
+                path.write_text(source, encoding="utf-8")
+
+                errors = core_data_boundary_errors(root)
+
+                if source in legal:
+                    self.assertEqual([], errors)
+                else:
+                    self.assertTrue(any("concrete object-store adapter" in error for error in errors), errors)
+
+    def test_empty_relative_object_store_imports_retain_existing_denial(self) -> None:
+        for location in ("business/service.py", "ports/document_viewer.py"):
+            with self.subTest(location=location), tempfile.TemporaryDirectory() as directory:
+                root = Path(directory)
+                path = root / location
+                path.parent.mkdir(parents=True)
+                path.write_text("from . import object_store\n", encoding="utf-8")
+
+                errors = core_data_boundary_errors(root)
+
+                self.assertTrue(any("concrete object-store adapter" in error for error in errors), errors)
+
+    def test_nested_relative_imports_still_deny_root_database_and_adapter_authority(self) -> None:
+        attacks = (
+            ("from ...sqlite3 import Connection\n", "database dependency outside adapter"),
+            ("from ...sqlalchemy import Connection\n", "database dependency outside adapter"),
+            ("from ...storage import open_canonical_database\n", "connection authority"),
+            ("from ... import storage\n", "storage connection authority"),
+            ("from ...repositories import SqliteRepository\n", "concrete repository adapter"),
+            ("from ... import repositories\n", "concrete repository adapter"),
+            ("from ...object_store import LocalObjectStore\n", "concrete object-store adapter"),
+            ("from ... import object_store\n", "concrete object-store adapter"),
+        )
+        for source, expected in attacks:
+            with self.subTest(source=source), tempfile.TemporaryDirectory() as directory:
+                root = Path(directory)
+                path = root / "ports/nested/consumer.py"
+                path.parent.mkdir(parents=True)
+                path.write_text(source, encoding="utf-8")
+
+                errors = core_data_boundary_errors(root)
+
+                self.assertTrue(any(expected in error for error in errors), errors)
+
     def test_typed_async_port_execution_is_not_a_database_call(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)

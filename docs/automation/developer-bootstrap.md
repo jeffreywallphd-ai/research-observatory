@@ -98,6 +98,9 @@ Package managers also use their normal user-level download caches outside the
 checkout. `.local/development.json` contains no credential or secret. Do not put
 tokens, passwords, or keys in that file or in any `.env` file.
 
-If setup fails, correct the reported prerequisite or frozen-install error and
+If setup fails, its error includes both standard output and standard error. The
+foundation gate saves its results, including the first failing check and its
+diagnostics, to `artifacts/tmp/bootstrap-foundation-report.json`. An error before
+verification starts may leave no current report. Correct the reported error and
 run the same command again. The configuration file is written atomically only
 after every dependency step and the smoke check pass.
