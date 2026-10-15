@@ -1,7 +1,7 @@
 ---
 document_type: generated-backlog-status-summary
 source: planning/backlog.yaml
-source_sha256: 6b3bd9b77a05a0d3709d607f87b8fa148bfd7f0f9ab71caaf8f2fc027c3ef547
+source_sha256: c2ed8eaf6a2f785bade536d66d9cbd6ba45d1e250930d5fae2884f68f7cfe5c9
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -995,7 +995,7 @@ Append-only rounds remain distinct from the current latest-review projection. Le
 | `W2.C31.T01` | `append-only v1` | 1 | `-` | approved / agent:/root/security_resolution_review | - |
 | `W2.C32.T01` | `append-only v1` | 1 | `-` | approved / agent:/root/storage_profile_review | - |
 | `W2.C33.T01` | `append-only v1` | 1 | `-` | approved / agent:/root/c21_closeout_review | - |
-| `W2.C34.T01` | `append-only v1` | 0 | `-` | - / - | - |
+| `W2.C34.T01` | `append-only v1` | 0 | `R01` | - / - | - |
 ## Wave progress
 
 | Wave | Pre-Wave approval | Campaign | Qualification | Approved slices | Done tasks | Exit gate |
@@ -1059,7 +1059,7 @@ Append-only rounds remain distinct from the current latest-review projection. Le
 
 | Task | Status | Owner | Branch |
 |---|---|---|---|
-| `W2.C34.T01` Integrate explicit recovery review into the approved Projects experience | `IN_PROGRESS` | agent:/root | `codex/w2-implementation` |
+| `W2.C34.T01` Integrate explicit recovery review into the approved Projects experience | `REVIEW` | agent:/root | `codex/w2-implementation` |
 
 ## Linked corrective tasks
 
@@ -1219,5 +1219,5 @@ Original tasks and approvals remain unchanged.
 
 ### W2.C34.T01 — Integrate explicit recovery review into the approved Projects experience
 
-**Status:** `IN_PROGRESS`. **Original task:** `W2.A06.T02`. **Latest review:** `-`.
+**Status:** `REVIEW`. **Original task:** `W2.A06.T02`. **Latest review:** `-`.
 

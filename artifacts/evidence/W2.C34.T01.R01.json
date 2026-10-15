@@ -1,0 +1,2718 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "W2.C34.T01",
+  "baseCommit": "69cac3200fbf6d0e99769d43860c50f41d19390f",
+  "commit": "1c20b883a0adac7645913568d057a7c146feffcb",
+  "branch": "codex/w2-implementation",
+  "changedFiles": [
+    "apps/desktop/src-tauri/src/lib.rs",
+    "docs/planning-implementation-plan.md",
+    "planning/backlog.yaml",
+    "planning/review-site/index.html",
+    "planning/review-site/manifest.json",
+    "planning/review-site/waves/W2.html",
+    "planning/status-summary.md"
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "inheritedCriterion": "T02-AC01: Implement only the canonical state/action/focus map and T02 exact path envelope under approved RO-UI-ACADEMIC-MINIMAL-1.9 Projects recovery/lifecycle patterns, using T01 API and existing directory picker. No new wizard/reference, auto recovery, renderer host attestation or scope/security change.",
+      "checkIds": [
+        "original-rust-tests",
+        "shipping-bootstrap",
+        "shipping-recovery",
+        "shipping-live-denial"
+      ],
+      "evidence": [
+        "Original approved state/action/focus/reference authority remains historical; only creation of absent fixed fixture vault changes. Original real shipping methods exercise affected current integration without new wizard, auto recovery or principal fallback."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "inheritedCriterion": "T02-AC02: Display unavailable/denied/preview/cancel/copy failure/verified-copy/open failure/recovered states truthfully; explicit confirm and open remain separate human actions, original untouched and no automatic reparse/acceptance.",
+      "checkIds": [
+        "shipping-bootstrap",
+        "shipping-seed",
+        "shipping-owner-death",
+        "shipping-recovery",
+        "shipping-live-denial"
+      ],
+      "evidence": [
+        "Actual same-candidate five-stage fresh nonce retains unavailable/denial/cancel/failure/verified-copy/separate explicit-open/recovered outcomes and protected source/copy observations. No old fixture repair or automatic recovery acceptance."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "inheritedCriterion": "T02-AC03: Actual shipping Native/Core/UI evidence proves keyboard Tab/Enter/Space/Escape, strict focus, cancel/failure, denied alternate routes, protected before/after facts, themes/reflow and recovery after whole-process restart. Static mocks/screenshots alone are insufficient.",
+      "checkIds": [
+        "shipping-bootstrap",
+        "shipping-owner-death",
+        "shipping-recovery",
+        "shipping-live-denial"
+      ],
+      "evidence": [
+        "Actual original shipping Native/Core/UIA bodies prove only their own recorded keyboard/focus/theme/reflow/whole-pair death/restart/readback/live-owner-denial assertions, real current-user DPAPI/SQLCipher, and normal outer cleanup. Source Core and frozen guardian remain distinct."
+      ]
+    },
+    {
+      "criterion_index": 4,
+      "inheritedCriterion": "T02-AC04: Same-task indexed ADR0054 implementation notes and exact independent security/UI/reference disposition bind candidate and actual source hashes. A demonstrated material experience/policy change stops, while conforming restoration needs no further owner ask.",
+      "checkIds": [
+        "rustfmt",
+        "original-rust-tests",
+        "compile-native"
+      ],
+      "evidence": [
+        "Existing indexed ADR0054 and original independent T02 security/UI/reference disposition remain original authority. Actual source/application/formatted-readiness/public scope and complete actual default Rust inventory/262passed/13explicitoptin ignored and original regression/build identities are bound; current task still requires genuine independent commit-bound review before approval."
+      ]
+    }
+  ],
+  "checks": [
+    {
+      "id": "rustfmt",
+      "command": "rustfmt --edition 2024 --config skip_children=true --check apps/desktop/src-tauri/src/lib.rs",
+      "commandSemantics": "DISPLAY inner command; exact private owned/compiler argv remains in bound receipts.",
+      "result": "passed",
+      "exitCode": 0,
+      "commit": "1c20b883a0adac7645913568d057a7c146feffcb",
+      "seconds": 2.187833400006639,
+      "raw": {
+        "path": "artifacts/tmp/W2.remaining-corrections-batch-01/current-shipping-native-core-package-plan-01/actual-build-package-c34-02/rustfmt.raw.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "ownedJob": {
+        "rootExitCode": 0,
+        "drained": true,
+        "activeProcesses": 0,
+        "cleanupState": "EMPTY_CONFIRMED"
+      },
+      "explicitNestedCompilerCleanup": {
+        "path": "artifacts/tmp/W2.remaining-corrections-batch-01/current-shipping-native-core-package-plan-01/actual-build-package-c34-02/rustfmt-compiler-job.json",
+        "sha256": "7ecfccb1d3f9f6d783fffbb29f7328e42ccf607bdd08024db25727bc1b323366"
+      },
+      "executionProvenance": {
+        "actualReceipt": {
+          "path": "artifacts/tmp/W2.remaining-corrections-batch-01/current-shipping-native-core-package-plan-01/actual-build-package-c34-02/receipt.json",
+          "sha256": "106e7f4136b652d1fd4b25f2a157a7ac9b79f7884d34f4e3ade6efcb324af798"
+        },
+        "candidateCommit": "1c20b883a0adac7645913568d057a7c146feffcb",
+        "executedInThisContinuation": false
+      }
+    },
+    {
+      "id": "compile-rust-tests",
+      "command": "cargo test --message-format=json --locked --offline -p research-observatory-desktop --features integration-harness --lib --no-run -j 1",
+      "commandSemantics": "DISPLAY inner command; exact private owned/compiler argv remains in bound receipts.",
+      "result": "passed",
+      "exitCode": 0,
+      "commit": "1c20b883a0adac7645913568d057a7c146feffcb",
+      "seconds": 52.88268640000024,
+      "raw": {
+        "path": "artifacts/tmp/W2.remaining-corrections-batch-01/current-shipping-native-core-package-plan-01/actual-build-package-c34-02/compile-rust-tests.raw.log",
+        "sha256": "ea78a2a02afa3e1aea766f8262a47814ed05c8f0bc2c3e37db111a98d45a1a99"
+      },
+      "ownedJob": {
+        "rootExitCode": 0,
+        "drained": true,
+        "activeProcesses": 0,
+        "cleanupState": "EMPTY_CONFIRMED"
+      },
+      "explicitNestedCompilerCleanup": {
+        "path": "artifacts/tmp/W2.remaining-corrections-batch-01/current-shipping-native-core-package-plan-01/actual-build-package-c34-02/rust-tests-compiler-job.json",
+        "sha256": "90974a0c620a5f59bbf0b33f5071899933129a83e1d4503058547ffb3f0b2f2f"
+      },
+      "executionProvenance": {
+        "actualReceipt": {
+          "path": "artifacts/tmp/W2.remaining-corrections-batch-01/current-shipping-native-core-package-plan-01/actual-build-package-c34-02/receipt.json",
+          "sha256": "106e7f4136b652d1fd4b25f2a157a7ac9b79f7884d34f4e3ade6efcb324af798"
+        },
+        "candidateCommit": "1c20b883a0adac7645913568d057a7c146feffcb",
+        "executedInThisContinuation": false
+      }
+    },
+    {
+      "id": "original-rust-list",
+      "command": "target/debug/deps/research_observatory_desktop_lib-1922d4e089438d1c.exe --list",
+      "commandSemantics": "DISPLAY inner command; exact private owned/compiler argv remains in bound receipts.",
+      "result": "passed",
+      "exitCode": 0,
+      "commit": "1c20b883a0adac7645913568d057a7c146feffcb",
+      "seconds": 0.48029419998056255,
+      "raw": {
+        "path": "artifacts/tmp/W2.remaining-corrections-batch-01/current-shipping-native-core-package-plan-01/actual-build-package-c34-02/original-rust-list.raw.log",
+        "sha256": "e90dca712258e1f1d6388075fa73c8effa3ab47fd5eb24513cf5d47bff96e435"
+      },
+      "ownedJob": {
+        "rootExitCode": 0,
+        "drained": true,
+        "activeProcesses": 0,
+        "cleanupState": "EMPTY_CONFIRMED"
+      },
+      "executionProvenance": {
+        "actualReceipt": {
+          "path": "artifacts/tmp/W2.remaining-corrections-batch-01/current-shipping-native-core-package-plan-01/actual-build-package-c34-02/receipt.json",
+          "sha256": "106e7f4136b652d1fd4b25f2a157a7ac9b79f7884d34f4e3ade6efcb324af798"
+        },
+        "candidateCommit": "1c20b883a0adac7645913568d057a7c146feffcb",
+        "executedInThisContinuation": false
+      }
+    },
+    {
+      "id": "original-rust-tests",
+      "command": "target/debug/deps/research_observatory_desktop_lib-1922d4e089438d1c.exe --test-threads=1",
+      "commandSemantics": "DISPLAY inner command; exact private owned/compiler argv remains in bound receipts.",
+      "result": "passed",
+      "exitCode": 0,
+      "commit": "1c20b883a0adac7645913568d057a7c146feffcb",
+      "seconds": 9.858436999988044,
+      "raw": {
+        "path": "artifacts/tmp/W2.remaining-corrections-batch-01/current-shipping-native-core-package-plan-01/actual-build-package-c34-02/original-rust-tests.raw.log",
+        "sha256": "74f06b4c2c8e8be5b51056dfeb6870e582ecdd80ab80445ebf17e6e8590f6a59"
+      },
+      "ownedJob": {
+        "rootExitCode": 0,
+        "drained": true,
+        "activeProcesses": 0,
+        "cleanupState": "EMPTY_CONFIRMED"
+      },
+      "executionProvenance": {
+        "actualReceipt": {
+          "path": "artifacts/tmp/W2.remaining-corrections-batch-01/current-shipping-native-core-package-plan-01/actual-build-package-c34-02/receipt.json",
+          "sha256": "106e7f4136b652d1fd4b25f2a157a7ac9b79f7884d34f4e3ade6efcb324af798"
+        },
+        "candidateCommit": "1c20b883a0adac7645913568d057a7c146feffcb",
+        "executedInThisContinuation": false
+      },
+      "testsRun": 275,
+      "passed": 262,
+      "ignored": 13,
+      "failures": 0,
+      "filtered": 0,
+      "passedCaseIds": [
+        "application_lock::tests::a_pending_transition_uses_the_same_native_verification_admission",
+        "application_lock::tests::admitted_lock_latches_before_its_stop_callback_and_exit_rejects_late_verification",
+        "application_lock::tests::application_lock_policy_child_process",
+        "application_lock::tests::cancellation_and_core_failure_release_the_reauthentication_reservation",
+        "application_lock::tests::child_process_publication_and_abandoned_mutex_preserve_exact_policy",
+        "application_lock::tests::concurrent_lock_invalidates_a_prepared_transition_without_publication",
+        "application_lock::tests::concurrent_reauthentication_admits_one_prompt_and_preserves_backoff",
+        "application_lock::tests::confirmed_commit_is_atomic_and_same_handle_returns_the_committed_receipt",
+        "application_lock::tests::corrupt_policy_requires_explicit_same_sid_password_recovery",
+        "application_lock::tests::denied_cancelled_and_failed_core_paths_remain_locked",
+        "application_lock::tests::every_verification_failure_is_typed_and_preserves_policy_bytes",
+        "application_lock::tests::expired_and_panicking_preparations_release_admission_without_mutation",
+        "application_lock::tests::explicit_none_is_the_default_and_never_enters_application_lock",
+        "application_lock::tests::idle_deadline_locks_in_native_state_even_without_renderer_activity",
+        "application_lock::tests::initial_restart_lock_rotates_old_epoch_but_unlocked_restart_retains_it",
+        "application_lock::tests::locked_recovery_starts_core_before_publication_and_stays_locked_on_start_failure",
+        "application_lock::tests::manual_lock_invalidates_actions_and_hides_profile_name",
+        "application_lock::tests::missing_confirmation_and_stale_writer_never_change_the_prior_policy",
+        "application_lock::tests::policy_contract_rejects_unknown_timeout_and_sensitive_name_controls",
+        "application_lock::tests::provider_outcome_matrix_only_starts_core_and_unlocks_on_success",
+        "application_lock::tests::provider_panic_releases_reservation_and_preserves_locked_state",
+        "application_lock::tests::publication_failure_is_typed_and_preserves_the_committed_bytes",
+        "application_lock::tests::release_runtime_is_single_instance_for_one_canonical_application_root",
+        "application_lock::tests::terminal_exit_denies_prepared_policy_without_changing_settings",
+        "application_lock::tests::terminal_exit_fences_actions_and_later_lock_admission",
+        "application_lock::tests::transitions_verify_the_exact_provider_sequence_before_preparation",
+        "application_lock::tests::unavailable_configured_provider_never_downgrades_without_explicit_recovery",
+        "application_lock::tests::unlocked_and_stale_attempts_cannot_invoke_or_publish_provider_success",
+        "application_lock::tests::verified_same_user_unlocks_without_restoring_sensitive_identity_to_audit",
+        "application_lock_verification::tests::provider_neutral_outcomes_have_stable_contract_values",
+        "application_lock_verification::tests::windows_hello_availability_contract_has_every_approved_state",
+        "application_lock_verification::tests::windows_hello_availability_is_truthful_on_release_platform",
+        "application_lock_verification::tests::windows_hello_availability_maps_every_os_state_without_prompting",
+        "application_lock_verification::tests::windows_hello_never_prompts_when_unavailable_or_missing_a_window",
+        "application_lock_verification::tests::windows_hello_verification_maps_every_result_and_never_falls_back",
+        "application_lock_verification::tests::windows_prompt_flags_and_logon_domain_mapping_are_exact",
+        "application_sign_in_policy::tests::absent_state_becomes_explicit_none_and_reopens",
+        "application_sign_in_policy::tests::compare_and_swap_denies_stale_manager_and_preserves_first_success",
+        "application_sign_in_policy::tests::equivalent_paths_share_one_canonical_store_and_mutex_identity",
+        "application_sign_in_policy::tests::exact_legacy_zero_and_nonzero_profiles_migrate_without_rewriting_predecessor",
+        "application_sign_in_policy::tests::invalid_canonical_never_falls_back_to_valid_legacy_or_none",
+        "application_sign_in_policy::tests::invalid_legacy_state_fails_locked_without_creating_a_canonical_downgrade",
+        "application_sign_in_policy::tests::policy_rejects_unknown_modes_fields_revisions_and_none_with_timeout",
+        "application_sign_in_policy::tests::restart_discards_orphan_staging_without_changing_committed_policy",
+        "connector_configuration::tests::cancellation_and_save_admission_have_one_order",
+        "connector_configuration::tests::cancellation_before_worker_start_is_not_lost_or_evicted",
+        "connector_configuration::tests::dropped_or_stale_acknowledgment_cannot_claim_cancellation",
+        "connector_configuration::tests::public_source_test_admission_preserves_the_fixed_contract",
+        "connector_configuration::tests::request_is_closed_and_never_accepts_credentials",
+        "connector_configuration::tests::source_diagnostics_accepts_only_exact_read_address",
+        "connector_configuration::tests::source_inspection_is_read_only_bounded_and_has_no_caller_authority",
+        "connector_configuration::tests::status_projection_rejects_value_leaks_and_wrong_provider",
+        "connector_configuration_dialog::tests::native_templates_are_aligned_bounded_and_provider_specific",
+        "directory_integration_harness::tests::created_fixture_pins_block_directory_substitution_through_consumer_lifetime",
+        "directory_integration_harness::tests::disposable_sidecar_can_import_core_document_worker_from_fixture_root",
+        "directory_integration_harness::tests::document_commit_probe_binds_native_reply_to_v4_project_seed",
+        "directory_integration_harness::tests::document_drop_decision_cannot_emit_source_identity_or_arbitrary_reason",
+        "directory_integration_harness::tests::document_probe_forwards_only_complete_explicit_signed_inputs",
+        "directory_integration_harness::tests::document_resume_receipt_requires_exact_seed_and_committed_ids",
+        "directory_integration_harness::tests::document_stage_diagnostics_emit_only_fixed_status_and_opaque_ids",
+        "directory_integration_harness::tests::document_transport_milestones_reject_arbitrary_content",
+        "directory_integration_harness::tests::fixture_allows_only_fixed_read_only_source_capability_route",
+        "directory_integration_harness::tests::fixture_core_boundary_denies_outside_and_substituted_roots",
+        "directory_integration_harness::tests::fixture_creation_denies_path_input_and_occupied_root_without_reuse",
+        "directory_integration_harness::tests::fixture_detects_same_account_in_place_reparse_mutation",
+        "directory_integration_harness::tests::fixture_pins_allow_core_style_staged_child_publication",
+        "directory_integration_harness::tests::harness_runs_setup_before_reading_managed_state",
+        "directory_integration_harness::tests::lifecycle_resume_denies_unowned_missing_and_path_inputs",
+        "directory_integration_harness::tests::lifecycle_resume_rejects_oversized_and_hardlinked_receipts",
+        "directory_integration_harness::tests::lifecycle_resume_rejects_receipt_changes_and_directory_replacement",
+        "directory_integration_harness::tests::lifecycle_starts_without_policy_and_resumes_only_original_fixture",
+        "directory_integration_harness::tests::lifecycle_vault_is_private_at_creation_and_establishes_recovery_ownership",
+        "directory_integration_harness::tests::menu_diagnostics_forward_once_and_preserve_result_even_after_budget",
+        "directory_integration_harness::tests::menu_diagnostics_require_same_nonzero_process_and_thread",
+        "directory_integration_harness::tests::menu_diagnostics_select_only_menu_messages_without_recording_key_content",
+        "directory_integration_harness::tests::occupied_junction_fixture_is_denied_without_target_changes",
+        "directory_integration_harness::tests::private_vault_creation_refuses_occupied_and_non_fixture_roots_unchanged",
+        "directory_integration_harness::tests::resource_probe_has_no_normal_setup_or_runtime_launch",
+        "directory_integration_harness::tests::status_diagnostic_budget_saturates_without_fixture_io",
+        "directory_integration_harness::tests::webview_environment_overrides_are_denied_without_environment_mutation",
+        "directory_picker::native::tests::real_dialog_interfaces_retain_the_same_com_identity",
+        "directory_picker::native::tests::real_owned_modal_close_dispatch_destroys_only_the_target_window",
+        "directory_picker::native::tests::real_sta_cancellation_survives_a_filtered_message_pump",
+        "directory_picker::native::tests::real_sta_cleanup_with_process_mta_does_not_retain_explicit_initialization",
+        "directory_picker::native::tests::real_sta_panic_releases_com_window_and_pending_handle",
+        "directory_picker::native::tests::real_sta_replays_cancel_before_hwnd_registration_and_cleans_up",
+        "directory_picker::native::tests::real_sta_timer_detects_generation_invalidation_without_a_cancel_post",
+        "directory_picker::native::tests::real_unshown_close_success_does_not_prove_dialog_dismissal",
+        "directory_picker::tests::actual_none_mode_manual_lock_is_noop_and_does_not_cancel_pending_selection",
+        "directory_picker::tests::actual_protected_lock_invalidates_ticket_and_cancels_pending_selection",
+        "directory_picker::tests::actual_protected_ticket_recheck_discards_late_path_without_cancel_notification",
+        "directory_picker::tests::admission_survives_cancel_and_releases_only_after_worker_cleanup",
+        "directory_picker::tests::authority_changes_before_work_and_after_selection_discard_paths",
+        "directory_picker::tests::close_is_single_admission_and_waits_without_holding_worker_locks",
+        "directory_picker::tests::document_selection_preserves_empty_and_oversize_denials_without_paths",
+        "directory_picker::tests::dropping_waiter_does_not_drop_native_reservation_or_result_guard",
+        "directory_picker::tests::errors_and_worker_panics_release_reservation_without_a_path",
+        "directory_picker::tests::existing_parent_checks_every_ancestor_and_installation_component_boundary",
+        "directory_picker::tests::existing_unicode_directory_is_preserved_and_discovery_does_not_provision",
+        "directory_picker::tests::fixture_creation_never_reuses_or_removes_an_existing_candidate",
+        "directory_picker::tests::import_transfer_keeps_reservation_until_held_file_cleanup_after_close",
+        "directory_picker::tests::native_import_never_consumes_a_file_for_an_invalid_owner",
+        "directory_picker::tests::native_paths_and_requests_reject_c1_controls_before_filesystem_access",
+        "directory_picker::tests::paths_reject_invalid_missing_file_installation_and_redirected_default",
+        "directory_picker::tests::poisoned_admission_denies_new_work_but_still_cancels_and_cleans_up",
+        "directory_picker::tests::real_shell_item_preserves_unicode_identity_for_supported_separators",
+        "directory_picker::tests::reparse_parent_and_ancestor_are_rejected_without_following",
+        "directory_picker::tests::report_destination_is_private_and_requires_a_real_owner",
+        "directory_picker::tests::report_publication_is_not_relabelled_cancelled_after_commit",
+        "directory_picker::tests::request_and_outcomes_are_exact_and_path_free_on_non_success",
+        "document_attachment::tests::cancel_and_commit_reservations_are_exclusive_and_ambiguous_cancel_reopens_native_admission",
+        "document_attachment::tests::cancellation_generation_fences_late_stage_publication",
+        "document_attachment::tests::candidate_racing_native_only_cancel_is_not_reported_as_confirmed_core_cancel",
+        "document_attachment::tests::commit_requires_researcher_confirmation_and_project_only_literal",
+        "document_attachment::tests::copy_review_and_download_do_not_accept_renderer_urls_or_secrets",
+        "document_attachment::tests::delayed_cancel_and_commit_cannot_clear_a_new_operation",
+        "document_attachment::tests::exact_core_status_never_claims_reader_available_or_relabels_legacy_as_missing",
+        "document_attachment::tests::exact_intake_status_preserves_phase_and_cleanup_denial_without_availability",
+        "document_attachment::tests::failed_candidate_cancel_receipt_never_confirms_core_cancellation",
+        "document_attachment::tests::pending_download_lock_wait_does_not_hold_attachment_state_or_block_cancellation",
+        "document_attachment::tests::remote_mode_cannot_enter_the_picker_or_drop_begin_route",
+        "document_attachment::tests::safe_copy_projection_strips_url_and_keeps_unknown_license_and_version",
+        "document_attachment::tests::stale_session_terminal_status_releases_only_exact_old_operation_without_retry",
+        "document_attachment::tests::strict_renderer_request_accepts_exact_ids_but_no_path_or_authority_fields",
+        "document_corrections::tests::closed_authority_and_bounds",
+        "document_drop::tests::changed_hover_point_reuses_one_timer_but_revokes_prior_exact_key",
+        "document_drop::tests::disabled_graphics_sibling_has_no_interactive_drop_authority",
+        "document_drop::tests::dom_callback_is_bound_to_dispatch_time_exact_key_and_active_hover_generation",
+        "document_drop::tests::drop_denial_diagnostic_matches_exact_cache_admission_without_identity_data",
+        "document_drop::tests::drop_zone_cache_denies_unknown_stale_operation_and_point",
+        "document_drop::tests::first_graphics_appearance_binds_once_without_granting_a_drop_target",
+        "document_drop::tests::graphics_name_or_transparency_alone_cannot_exclude_an_interactive_target",
+        "document_drop::tests::graphics_role_requires_unique_exact_chain_and_measured_owner_relationship",
+        "document_drop::tests::interactive_identity_changes_deny_and_outside_subtree_retains_no_authority",
+        "document_drop::tests::leave_and_new_operation_wait_for_old_physical_dom_callback",
+        "document_drop::tests::live_graphics_identity_or_role_substitution_revokes_admission",
+        "document_drop::tests::selects_verified_foreign_webview_leaf_but_denies_unknown_or_cross_tree_nodes",
+        "document_drop::tests::setup_diagnostic_redacts_unknown_class_and_traces_only_bounded_parent_classes",
+        "document_drop::tests::slow_same_point_dom_query_is_not_superseded_before_hard_timeout",
+        "document_drop::tests::stationary_hover_refreshes_before_drop_without_extending_sample_lifetime",
+        "document_drop::tests::still_hovering_requests_fresh_sample_before_hard_drop_expiry",
+        "document_reader::tests::citation_enrichment_requires_exact_reference_head_and_no_renderer_authority",
+        "document_reader::tests::reference_commands_are_closed_and_page_a_fixed_collection_revision",
+        "document_reader::tests::renderer_cannot_supply_root_actor_quote_or_geometry_authority",
+        "document_reader::tests::resolution_and_citation_links_accept_only_opaque_exact_identifiers",
+        "document_reader::tests::table_figure_cursors_and_exclusions_require_exact_ids_without_renderer_grants",
+        "document_reprocessing::tests::authority_is_native_and_request_bounds_are_closed",
+        "document_runtime::tests::candidate_requires_exact_held_digest_length_and_selection",
+        "document_runtime::tests::core_retry_hint_retains_required_boolean_wire_validation",
+        "document_runtime::tests::stage_diagnostics_expose_only_closed_path_free_phase_categories",
+        "document_runtime::tests::stage_failure_retains_only_a_correlated_bounded_core_problem",
+        "document_viewer::tests::anchor_context_binds_exact_original_normalized_revision_and_anchor",
+        "document_viewer::tests::bounded_binary_response_is_exact_and_substitution_denies",
+        "document_viewer::tests::cancellation_before_registration_cannot_admit_delayed_owned_work",
+        "document_viewer::tests::cancelled_active_or_unknown_owner_never_returns_a_drained_duplicate_verdict",
+        "document_viewer::tests::cancelled_registered_but_never_issued_identity_cannot_be_replayed",
+        "document_viewer::tests::drain_ack_is_exact_and_unknown_owned_termination_retains_admission",
+        "document_viewer::tests::native_cancel_is_bound_to_window_project_request_and_capacity",
+        "document_viewer::tests::renderer_authority_and_noninteger_ranges_are_rejected",
+        "document_viewer::tests::structured_text_is_correlated_and_bounded_before_delivery",
+        "document_viewer::tests::viewer_outline_is_exact_and_renderer_cannot_supply_authority",
+        "import_report::tests::report_failure_cancellation_and_private_staging_leave_no_partial_export",
+        "import_report::tests::report_pages_reject_wrong_identity_drift_skips_and_content",
+        "import_report::tests::report_stream_publishes_complete_verified_bytes_without_replacing_destination",
+        "import_report::tests::report_streams_one_hundred_thousand_records_with_multiple_diagnostics_and_one_header",
+        "import_runtime::tests::native_import_delimiter_request_is_explicit_and_csv_only",
+        "import_runtime::tests::native_intake_admission_cancellation_and_close_wait_for_the_owned_permit",
+        "import_runtime::tests::native_intake_cancel_before_worker_admission_prevents_any_preparation",
+        "import_runtime::tests::native_intake_pending_cancellations_are_bounded_without_eviction",
+        "import_runtime::tests::native_intake_request_never_accepts_a_source_path_actor_or_implicit_rights",
+        "import_runtime::tests::native_intake_status_is_bounded_and_bound_to_the_exact_preview",
+        "import_runtime::tests::report_request_binds_exact_draft_and_never_accepts_renderer_destination",
+        "import_source::tests::document_source_denies_over_128_mib_before_transfer",
+        "import_source::tests::document_source_rejects_empty_file_without_changing_bibliography_import",
+        "import_source::tests::held_source_denies_an_existing_writer_and_oversized_or_non_file_input",
+        "import_source::tests::held_source_denies_mutation_replacement_and_parent_rename_until_drop",
+        "import_source::tests::held_source_rejects_a_junction_ancestor",
+        "import_source::tests::held_source_revocation_and_receiver_failure_never_produce_a_seal",
+        "import_source::tests::held_source_streams_exact_bounded_chunks_and_verified_empty_eof",
+        "main_menu::tests::main_menu_shared_nontarget_and_nonblocked_messages_forward_unchanged_once",
+        "main_menu::tests::main_menu_shared_overlapping_and_nested_inputs_each_forward_once_without_busy_state",
+        "main_menu::tests::main_menu_shared_payload_checks_every_bit_and_preserves_original_scalars",
+        "main_menu::tests::main_menu_shared_post_failure_preserves_original_result_without_retry",
+        "main_menu::tests::main_menu_shared_private_alias_has_no_provenance_or_arbitrary_command_authority",
+        "main_menu::tests::main_menu_shared_teardown_removes_before_forwarding_and_ownership_is_exact",
+        "plugin_intake::tests::cancellation_before_native_picker_start_is_consumed",
+        "plugin_intake::tests::native_enable_confirmation_comes_from_current_core_identity_and_scope",
+        "plugin_intake::tests::renderer_cannot_supply_extra_authority_to_discard",
+        "plugin_intake::tests::renderer_cannot_supply_human_decision_facts",
+        "reconciliation_admission::tests::reconciliation_admission_accepts_bounded_routes_and_denies_extra_authority",
+        "reconciliation_admission::tests::reconciliation_admission_denies_incomplete_partition_and_overbounds",
+        "reconciliation_admission::tests::version_admission_accepts_decisions_and_denies_forged_authority",
+        "supervisor::tests::bounded_diagnostics_discard_oldest_without_raw_content",
+        "supervisor::tests::capability_tokens_are_256_bit_and_rotate",
+        "supervisor::tests::core_job_keeps_normal_child_contained_with_explicit_guardian_breakaway_available",
+        "supervisor::tests::corpus_report_native_admission_accepts_only_exact_bounded_requests",
+        "supervisor::tests::document_transport_closes_owned_socket_when_cancelled_after_upload",
+        "supervisor::tests::document_transport_recovers_a_correlated_early_problem_after_write_failure",
+        "supervisor::tests::document_transport_streams_exact_framed_held_bytes_without_a_renderer_body",
+        "supervisor::tests::handshake_is_exact_and_process_bound",
+        "supervisor::tests::import_review_bridge_admits_only_exact_bounded_review_operations",
+        "supervisor::tests::large_response_limits_cover_only_admitted_report_and_reconciliation_routes",
+        "supervisor::tests::late_log_records_do_not_replace_the_state_diagnostic",
+        "supervisor::tests::model_catalog_transport_rejects_forged_authority_and_preserves_bounded_routes",
+        "supervisor::tests::native_api_transport_accepts_all_generated_intent_request_shapes",
+        "supervisor::tests::native_api_transport_accepts_only_exact_recalculation_request_shapes",
+        "supervisor::tests::native_api_transport_allows_only_generated_local_routes",
+        "supervisor::tests::native_api_transport_binds_workflow_progress_commands_to_exact_shapes",
+        "supervisor::tests::native_api_transport_cancels_an_inflight_request_without_waiting_for_response",
+        "supervisor::tests::native_api_transport_denies_malformed_or_misbound_intent_requests",
+        "supervisor::tests::native_api_transport_parses_only_correlated_bounded_responses",
+        "supervisor::tests::native_import_private_routes_are_not_renderer_bridge_capabilities",
+        "supervisor::tests::native_import_project_authority_invalidates_before_change_and_rejects_late_completion",
+        "supervisor::tests::native_import_project_authority_requires_successful_open_writable_projection",
+        "supervisor::tests::native_import_wire_pins_project_and_process_but_allows_original_session_cleanup",
+        "supervisor::tests::native_intent_egress_matches_optional_core_contract",
+        "supervisor::tests::native_owned_request_revoked_after_connect_sends_zero_request_bytes",
+        "supervisor::tests::native_startup_enforces_the_generated_api_compatibility_range",
+        "supervisor::tests::packaged_core_accepts_equivalent_verbatim_path_only",
+        "supervisor::tests::private_byte_transport_sends_exact_body_and_rejects_lost_acknowledgment",
+        "supervisor::tests::process_stop_fixture_child",
+        "supervisor::tests::project_catalog_route_is_exact_before_service_readiness",
+        "supervisor::tests::project_creation_narrative_preserves_newlines_and_rejects_blank_controls",
+        "supervisor::tests::project_lineage_route_has_strict_body_and_envelope",
+        "supervisor::tests::recovery_actual_inaccessible_owner_query_denies_under_anonymous_principal",
+        "supervisor::tests::recovery_actual_owner_query_distinguishes_live_and_reused_birth",
+        "supervisor::tests::recovery_actual_terminated_owner_preserves_reused_birth_denial",
+        "supervisor::tests::recovery_heartbeat_requires_a_real_utc_calendar_date",
+        "supervisor::tests::recovery_owned_lock_denies_duplicate_unknown_and_wrong_type_fields",
+        "supervisor::tests::recovery_private_channel_cancels_on_eof_or_oversize_without_public_logging",
+        "supervisor::tests::recovery_public_routes_accept_only_reviewed_commands_and_no_caller_proof",
+        "supervisor::tests::security_stop_interrupts_an_already_started_graceful_wait",
+        "supervisor::tests::stop_cannot_launder_a_configuration_failure",
+        "supervisor::tests::supervised_core_denies_missing_or_redirected_local_app_data",
+        "supervisor::tests::supervised_core_uses_os_local_app_data_after_clearing_ambient_and_fixture_values",
+        "supervisor::tests::terminal_native_exit_seals_once_and_cannot_start_again",
+        "supervisor::tests::tiny_document_transport_denies_uncorrelated_core_error_without_exposing_reply",
+        "supervisor::tests::unverified_process_stop_cannot_publish_an_ordinary_exit",
+        "support_bundle::tests::lock_prevents_preview_and_export_publication_and_clears_pending_state",
+        "support_bundle::tests::malformed_preview_identity_is_denied_without_consuming_the_pending_preview",
+        "support_bundle::tests::preexisting_hardlink_at_the_exact_export_name_is_not_followed",
+        "support_bundle::tests::preview_is_bounded_redacted_and_export_is_single_use",
+        "support_bundle::tests::redirected_support_directory_is_rejected",
+        "tests::directory_commands_admit_only_the_local_main_window_origin",
+        "tests::main_window_event_capability_is_receive_only",
+        "tests::product_identity_is_stable",
+        "tests::production_entrypoint_has_no_fixture_switch_or_fixture_ipc",
+        "tests::status_diagnostics_are_fixture_only_without_new_ipc_or_workers",
+        "tests::userinfo_alone_denies_the_otherwise_allowed_directory_origin",
+        "viewer_actions::tests::caller_text_paths_authority_and_broad_use_purposes_are_rejected",
+        "viewer_actions::tests::cancellation_before_admission_survives_and_cannot_report_absence_as_drain",
+        "viewer_actions::tests::early_markers_are_window_owned_bounded_and_fail_closed_on_exhaustion",
+        "viewer_actions::tests::unknown_core_frame_retains_admission_after_actual_native_closure",
+        "viewer_export::tests::create_new_preserves_existing_files_and_failed_or_revoked_output_is_deleted",
+        "viewer_export::tests::explicit_verified_publication_survives_close_and_selected_application_cannot_be_replaced",
+        "viewer_export::tests::print_stream_is_bounded_and_rejects_reparse_destinations",
+        "viewer_print::tests::sealed_stream_rejects_late_callbacks_and_cannot_reopen_an_owned_output",
+        "workflow_session::tests::corrupt_or_replaced_marker_fails_closed_without_rewriting_evidence",
+        "workflow_session::tests::lock_without_child_and_crash_before_publication_cannot_resume_old_work",
+        "workflow_session::tests::ordinary_restart_retains_epoch_but_unresolved_native_restart_rotates_it",
+        "workflow_session::tests::same_native_child_restart_keeps_epoch_but_its_death_does_not",
+        "workflow_session::tests::security_latch_wins_ordinary_finalizer_and_lock_without_child"
+      ],
+      "ignoredCaseIds": [
+        "application_lock::tests::renderer_contract_witness",
+        "document_corrections::windows_integration_tests::actual_renderer_correction_save_accept_reader_and_reopen",
+        "document_reprocessing::windows_integration_tests::actual_renderer_corrected_reparse_accept_reader_and_reopen",
+        "document_viewer::windows_integration_tests::real_native_accepted_text_outline_rights_resource_and_close_fences",
+        "document_viewer::windows_integration_tests::real_native_maximum_cancel_releases_writer_and_preserves_exact_tail",
+        "supervisor::tests::document_held_source_reaches_real_core_route_and_signed_lpac",
+        "viewer_actions::windows_integration_tests::actual_native_rights_review_payload_and_local_output_preserve_source_identity",
+        "viewer_export::tests::actual_inert_consumer_reads_verified_original_without_private_environment",
+        "viewer_export::tests::actual_isolated_clipboard_contains_only_authored_identified_quotation_and_privacy_markers",
+        "viewer_export::tests::actual_pdf_driver_selection_is_local_and_qualified",
+        "viewer_export::tests::owned_incomplete_file_child",
+        "viewer_print::tests::actual_pdf_stream_lock_and_cancel_reject_delivery_and_keep_callback_ownership",
+        "viewer_print::tests::actual_windows_pdf_print_uses_held_stream_and_retains_source_identity"
+      ],
+      "ignoredReasons": {
+        "application_lock::tests::renderer_contract_witness": "ignored, invoked by the renderer contract integration harness",
+        "document_corrections::windows_integration_tests::actual_renderer_correction_save_accept_reader_and_reopen": "ignored, Requires opt-in owned Windows Wry fixture",
+        "document_reprocessing::windows_integration_tests::actual_renderer_corrected_reparse_accept_reader_and_reopen": "ignored, Requires opt-in owned Windows Wry fixture",
+        "document_viewer::windows_integration_tests::real_native_accepted_text_outline_rights_resource_and_close_fences": "ignored, opt-in real Windows principal, owned Wry event loop and synthetic accepted encrypted fixture",
+        "document_viewer::windows_integration_tests::real_native_maximum_cancel_releases_writer_and_preserves_exact_tail": "ignored, opt-in real Windows principal, owned Wry event loop and seeded encrypted maximum fixture",
+        "supervisor::tests::document_held_source_reaches_real_core_route_and_signed_lpac": "ignored, requires the ignored signed-LPAC/Uvicorn bridge fixture",
+        "viewer_actions::windows_integration_tests::actual_native_rights_review_payload_and_local_output_preserve_source_identity": "ignored, opt-in actual owned Wry/Core principal and authored encrypted source",
+        "viewer_export::tests::actual_inert_consumer_reads_verified_original_without_private_environment": "ignored, requires the bounded task-owned inert local consumer executable",
+        "viewer_export::tests::actual_isolated_clipboard_contains_only_authored_identified_quotation_and_privacy_markers": "ignored, runs alone in an owned child and an isolated window station; never the researcher's clipboard",
+        "viewer_export::tests::actual_pdf_driver_selection_is_local_and_qualified": "ignored, requires the installed local Microsoft PDF driver",
+        "viewer_export::tests::owned_incomplete_file_child": "ignored, bounded owned child; termination is controlled by the task proof producer",
+        "viewer_print::tests::actual_pdf_stream_lock_and_cancel_reject_delivery_and_keep_callback_ownership": "ignored, actual Windows PDF callbacks; authored output and lock/cancellation fixture only",
+        "viewer_print::tests::actual_windows_pdf_print_uses_held_stream_and_retains_source_identity": "ignored, requires the installed Windows PDF printer; owned authored synthetic fixture only"
+      },
+      "ignoredBoundaryDisposition": {
+        "path": "artifacts/tmp/W2.C34.T01.actual-build02-component-observations-01.json",
+        "sha256": "b45b099e9814ffa0c1aab773bc900b7feca995b7de6e7150c905061e62cde244"
+      },
+      "interleavedDiagnosticPassIds": [
+        "supervisor::tests::document_transport_closes_owned_socket_when_cancelled_after_upload",
+        "supervisor::tests::document_transport_recovers_a_correlated_early_problem_after_write_failure",
+        "supervisor::tests::document_transport_streams_exact_framed_held_bytes_without_a_renderer_body",
+        "supervisor::tests::tiny_document_transport_denies_uncorrelated_core_error_without_exposing_reply",
+        "support_bundle::tests::redirected_support_directory_is_rejected"
+      ],
+      "executionSemantics": "Actual original default Rust binary root0:262 passed and13 explicitly source-optin ignored. No ignored case is called passed or automatically launched."
+    },
+    {
+      "id": "compile-native",
+      "command": "cargo rustc --message-format=json --locked --offline -p research-observatory-desktop --features integration-harness --example project_contract_probe --release -j 1",
+      "commandSemantics": "DISPLAY inner command; exact private owned/compiler argv remains in bound receipts.",
+      "result": "passed",
+      "exitCode": 0,
+      "commit": "1c20b883a0adac7645913568d057a7c146feffcb",
+      "seconds": 214.11788589999196,
+      "raw": {
+        "path": "artifacts/tmp/W2.remaining-corrections-batch-01/current-shipping-native-core-package-plan-01/actual-build-package-c34-03/compile-native.raw.log",
+        "sha256": "172c09ab15c48b2ae18d40635056fc95d0e3a168915f61897901e872b36dfaf1"
+      },
+      "ownedJob": {
+        "rootExitCode": 0,
+        "drained": true,
+        "activeProcesses": 0,
+        "cleanupState": "EMPTY_CONFIRMED"
+      },
+      "explicitNestedCompilerCleanup": {
+        "path": "artifacts/tmp/W2.remaining-corrections-batch-01/current-shipping-native-core-package-plan-01/actual-build-package-c34-03/native-compiler-job.json",
+        "sha256": "4a6d5aaa4c7ac1863b80d48155b766a3a116ec22278d3231bf641e2d2ae0a6ba"
+      },
+      "executionReceipt": {
+        "path": "artifacts/tmp/W2.remaining-corrections-batch-01/current-shipping-native-core-package-plan-01/actual-build-package-c34-03/receipt.json",
+        "sha256": "f13d6b91a351a0ff6c65bd577d9d1dc152bf74eb16983838c41eb6c0ace1238b"
+      }
+    },
+    {
+      "id": "shipping-bootstrap",
+      "command": ".venv/Scripts/python.exe -B -s artifacts/tmp/W2.remaining-corrections-batch-01/current-shipping-native-core-package-plan-01/shipping-ui-bindings-c34-05/a06-t02-ui-bootstrap-01.py",
+      "commandSemantics": "DISPLAY recipe only; actual same-candidate/package/predecessor/readiness argv is authenticated in the ignored parent receipt.",
+      "result": "passed",
+      "exitCode": 0,
+      "commit": "1c20b883a0adac7645913568d057a7c146feffcb",
+      "seconds": 10.277612500009127,
+      "raw": {
+        "path": "artifacts/tmp/W2.remaining-corrections-batch-01/current-shipping-native-core-package-plan-01/shipping-ui-bindings-c34-05/actual-owned-shipping-chain-01/bootstrap.raw.log",
+        "sha256": "35c4645761c7ec019f0c60811b149355d5aa0973e8d0cc09d9bf7bd96a3f31f7"
+      },
+      "stageReport": {
+        "path": "artifacts/tmp/W2.remaining-corrections-batch-01/current-shipping-native-core-package-plan-01/shipping-ui-bindings-c34-05/actual-fresh-recovery-chain-01/a06-t02-ui-bootstrap-01.report.json",
+        "sha256": "0e9846ee6e2bcc5192123939e52399d48d6e87d9e9f15a3502e401bf9a77e865"
+      },
+      "ownedJob": {
+        "rootExitCode": 0,
+        "drained": true,
+        "activeProcesses": 0,
+        "cleanupState": "EMPTY_CONFIRMED"
+      }
+    },
+    {
+      "id": "shipping-seed",
+      "command": ".venv/Scripts/python.exe -B -s artifacts/tmp/W2.remaining-corrections-batch-01/current-shipping-native-core-package-plan-01/shipping-ui-bindings-c34-05/a06-t02-prepare-recovery-fixture-01.py",
+      "commandSemantics": "DISPLAY recipe only; actual same-candidate/package/predecessor/readiness argv is authenticated in the ignored parent receipt.",
+      "result": "passed",
+      "exitCode": 0,
+      "commit": "1c20b883a0adac7645913568d057a7c146feffcb",
+      "seconds": 9.238549100002274,
+      "raw": {
+        "path": "artifacts/tmp/W2.remaining-corrections-batch-01/current-shipping-native-core-package-plan-01/shipping-ui-bindings-c34-05/actual-owned-shipping-chain-01/seed.raw.log",
+        "sha256": "acb045e82b71a5ded54888464153295672a131b9a776a08f060f9b50efede1e5"
+      },
+      "stageReport": {
+        "path": "artifacts/tmp/W2.remaining-corrections-batch-01/current-shipping-native-core-package-plan-01/shipping-ui-bindings-c34-05/actual-fresh-recovery-chain-01/a06-t02-prepare-recovery-fixture-01.report.json",
+        "sha256": "270eb54fc982246a3b71aef803955729adf53569578494b8d00059fe0a62e891"
+      },
+      "ownedJob": {
+        "rootExitCode": 0,
+        "drained": true,
+        "activeProcesses": 0,
+        "cleanupState": "EMPTY_CONFIRMED"
+      }
+    },
+    {
+      "id": "shipping-owner-death",
+      "command": ".venv/Scripts/python.exe -B -s artifacts/tmp/W2.remaining-corrections-batch-01/current-shipping-native-core-package-plan-01/shipping-ui-bindings-c34-05/a06-t02-shipping-live-owner-07.py",
+      "commandSemantics": "DISPLAY recipe only; actual same-candidate/package/predecessor/readiness argv is authenticated in the ignored parent receipt.",
+      "result": "passed",
+      "exitCode": 0,
+      "commit": "1c20b883a0adac7645913568d057a7c146feffcb",
+      "seconds": 46.600776300008874,
+      "raw": {
+        "path": "artifacts/tmp/W2.remaining-corrections-batch-01/current-shipping-native-core-package-plan-01/shipping-ui-bindings-c34-05/actual-owned-shipping-chain-01/owner-death.raw.log",
+        "sha256": "ed28c61fdcac800ef5383ba2bd1e0829f4873471fb425b044f1df824e59346d3"
+      },
+      "stageReport": {
+        "path": "artifacts/tmp/W2.remaining-corrections-batch-01/current-shipping-native-core-package-plan-01/shipping-ui-bindings-c34-05/actual-fresh-recovery-chain-01/a06-t02-shipping-live-owner-07.report.json",
+        "sha256": "fd6f980a483cb53d9b2da3ac56d99f3a550d8120ef0f69dcb3902487a1f2d5cc"
+      },
+      "ownedJob": {
+        "rootExitCode": 0,
+        "drained": true,
+        "activeProcesses": 0,
+        "cleanupState": "EMPTY_CONFIRMED"
+      }
+    },
+    {
+      "id": "shipping-recovery",
+      "command": ".venv/Scripts/python.exe -B -s artifacts/tmp/W2.remaining-corrections-batch-01/current-shipping-native-core-package-plan-01/shipping-ui-bindings-c34-05/a06-t02-shipping-recovery-06.py",
+      "commandSemantics": "DISPLAY recipe only; actual same-candidate/package/predecessor/readiness argv is authenticated in the ignored parent receipt.",
+      "result": "passed",
+      "exitCode": 0,
+      "commit": "1c20b883a0adac7645913568d057a7c146feffcb",
+      "seconds": 126.23269409997738,
+      "raw": {
+        "path": "artifacts/tmp/W2.remaining-corrections-batch-01/current-shipping-native-core-package-plan-01/shipping-ui-bindings-c34-05/actual-owned-shipping-chain-01/recovery.raw.log",
+        "sha256": "f3a3999b0d5a07a19c9241e3064eb9c786c11c1b274c61e4141c5841c8cd98dc"
+      },
+      "stageReport": {
+        "path": "artifacts/tmp/W2.remaining-corrections-batch-01/current-shipping-native-core-package-plan-01/shipping-ui-bindings-c34-05/actual-fresh-recovery-chain-01/a06-t02-shipping-recovery-06.report.json",
+        "sha256": "025bac0762f8f2520d900070b7375cfbdbf215e66552a9e84d8b6c32ffe5fda2"
+      },
+      "ownedJob": {
+        "rootExitCode": 0,
+        "drained": true,
+        "activeProcesses": 0,
+        "cleanupState": "EMPTY_CONFIRMED"
+      }
+    },
+    {
+      "id": "shipping-live-denial",
+      "command": ".venv/Scripts/python.exe -B -s artifacts/tmp/W2.remaining-corrections-batch-01/current-shipping-native-core-package-plan-01/shipping-ui-bindings-c34-05/a06-t02-shipping-live-denial-01.py",
+      "commandSemantics": "DISPLAY recipe only; actual same-candidate/package/predecessor/readiness argv is authenticated in the ignored parent receipt.",
+      "result": "passed",
+      "exitCode": 0,
+      "commit": "1c20b883a0adac7645913568d057a7c146feffcb",
+      "seconds": 48.2258452999813,
+      "raw": {
+        "path": "artifacts/tmp/W2.remaining-corrections-batch-01/current-shipping-native-core-package-plan-01/shipping-ui-bindings-c34-05/actual-owned-shipping-chain-01/live-denial.raw.log",
+        "sha256": "a9d0b436e861feb3e4db82054dfef1d88af15821db0c74d1d23e529ac86f822a"
+      },
+      "stageReport": {
+        "path": "artifacts/tmp/W2.remaining-corrections-batch-01/current-shipping-native-core-package-plan-01/shipping-ui-bindings-c34-05/actual-fresh-recovery-chain-01/a06-t02-shipping-live-denial-01.report.json",
+        "sha256": "add8bd668effb148a6d9dd360809647b4e6f37b6c6f733d4be6f5fed66555f98"
+      },
+      "ownedJob": {
+        "rootExitCode": 0,
+        "drained": true,
+        "activeProcesses": 0,
+        "cleanupState": "EMPTY_CONFIRMED"
+      }
+    }
+  ],
+  "unverifiedItems": [],
+  "executionReceipts": [
+    {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/current-shipping-native-core-package-plan-01/actual-build-package-c34-03/receipt.json",
+      "sha256": "f13d6b91a351a0ff6c65bd577d9d1dc152bf74eb16983838c41eb6c0ace1238b"
+    },
+    {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/current-shipping-native-core-package-plan-01/shipping-ui-bindings-c34-05/actual-owned-shipping-chain-01/receipt.json",
+      "sha256": "cc4709403dcecd5e759ec4d6e542a875506e614cdc01cfdf7c8353852970c15d"
+    }
+  ],
+  "executionProducers": [
+    {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/current-shipping-native-core-package-plan-01/build-package-c34-03.py",
+      "sha256": "545ffe1990b6f5c2cea556682dc1445df9b8a668a3a8175c32d48b69bd444d31"
+    },
+    {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/current-shipping-native-core-package-plan-01/shipping-ui-bindings-c34-05/owned-shipping-and-whole-native-01.py",
+      "sha256": "3d26831cfa5b5d3d3179efa2658370b49d2532489a23bf6e0e7c9387b893538e"
+    }
+  ],
+  "assemblyProducer": {
+    "path": "artifacts/tmp/W2.C34.T01.manifest-draft-01/write-manifest-05.py",
+    "sha256": "7a6626f9093a72a31a9b68606bae736c7a67d8deb9d60b1974a9ae011b5e54a0"
+  },
+  "clippyDiagnosticObservation": {
+    "id": "clippy-diagnostic",
+    "command": "cargo clippy --message-format=json --locked --offline -p research-observatory-desktop --features integration-harness --lib --tests -j1 -- -D warnings --cap-lints=warn",
+    "commandSemantics": "DISPLAY nonqualifying capped diagnostic collection; this is not strict Clippy PASS.",
+    "result": "NONQUALIFYING_DIAGNOSTIC_CAPTURED",
+    "raw": {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/current-shipping-native-core-package-plan-01/actual-build-package-c34-02/clippy-diagnostic.raw.log",
+      "sha256": "d696003850765ca9311c09b91753e570f585412d300fb6f51eb89a7961d54ab2"
+    },
+    "seconds": 49.142482000024756,
+    "commit": "1c20b883a0adac7645913568d057a7c146feffcb",
+    "allDiagnosticMessagesRetainedInPrivateRaw": true,
+    "actualDiagnosticMessageCount": 36,
+    "strictPriorFailure": {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/current-shipping-native-core-package-plan-01/actual-quality-c34-01/receipt.json",
+      "sha256": "6a68dc95123b5139dffbb71413dfb614c8db568e543115612dca9db6c013c9e3"
+    },
+    "explicitNestedCompilerCleanup": {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/current-shipping-native-core-package-plan-01/actual-build-package-c34-02/clippy-diagnostic-compiler-job.json",
+      "sha256": "4619d0d67552562c8892dde79a19a1de4727545c5bf55d12c930598a3459f73a"
+    },
+    "canonicalClippyPassClaimed": false
+  },
+  "clippyActualDisposition": {
+    "path": "artifacts/tmp/W2.C34.T01.exact-clippy-style-debt-W9-disposition-01.json",
+    "sha256": "8e20cc5703963bbe2a23fb152b1186fc89919d926bf18b791dab359be94eca91"
+  },
+  "strictClippyPassClaimed": false,
+  "deferredStyleDebt": {
+    "documentType": "independent-exact-current-W2-Clippy-style-debt-disposition",
+    "reviewer": "agent:/root/security_resolution_review",
+    "result": "APPROVED_W2_ONLY_EXACT_CLIPPY_STYLE_DEBT_DEFERRED_TO_W9",
+    "blockingFindings": [],
+    "candidateCommit": "1c20b883a0adac7645913568d057a7c146feffcb",
+    "actualBuildReceipt": {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/current-shipping-native-core-package-plan-01/actual-build-package-c34-03/receipt.json",
+      "sha256": "f13d6b91a351a0ff6c65bd577d9d1dc152bf74eb16983838c41eb6c0ace1238b"
+    },
+    "actualCompoundBuildDisposition": {
+      "path": "artifacts/tmp/W2.C34.T01.actual-compound-build-package-disposition-01.json",
+      "sha256": "34a40d1110d543021b4a0b019ae2f20b950e08138a2c02c61ec4c9b0c2b74ab5"
+    },
+    "clippyDiagnosticRaw": {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/current-shipping-native-core-package-plan-01/actual-build-package-c34-02/clippy-diagnostic.raw.log",
+      "sha256": "d696003850765ca9311c09b91753e570f585412d300fb6f51eb89a7961d54ab2"
+    },
+    "clippyCompilerJob": {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/current-shipping-native-core-package-plan-01/actual-build-package-c34-02/clippy-diagnostic-compiler-job.json",
+      "sha256": "4619d0d67552562c8892dde79a19a1de4727545c5bf55d12c930598a3459f73a"
+    },
+    "strictPriorFailure": {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/current-shipping-native-core-package-plan-01/actual-quality-c34-01/receipt.json",
+      "sha256": "6a68dc95123b5139dffbb71413dfb614c8db568e543115612dca9db6c013c9e3"
+    },
+    "originalBuildAggregateFAIL": {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/current-shipping-native-core-package-plan-01/actual-build-package-c34-02/receipt.json",
+      "sha256": "106e7f4136b652d1fd4b25f2a157a7ac9b79f7884d34f4e3ade6efcb324af798"
+    },
+    "completeDiagnosticObservation": {
+      "path": "artifacts/tmp/W2.C34.T01.clippy-complete-diagnostic-observation-01.json",
+      "sha256": "f82f10fae137c743ba8261d5531144a850daf435ad0a20068103b73d4769ec2c"
+    },
+    "ownerAuthority": {
+      "path": "artifacts/evidence/W2.completion-preauthorization-20261014-01.md",
+      "sha256": "34e2e3c175dc9309080182e0673f776055b1cc3ba78639475c09ec54408d7d5f"
+    },
+    "approvedForCurrentW2": true,
+    "canonicalClippyPassClaimed": false,
+    "diagnosticCollectionQualifyingLintPass": false,
+    "compilerMessageOccurrenceCount": 36,
+    "uniqueFindingIdentityCount": 21,
+    "lintCounts": [
+      {
+        "code": "clippy::collapsible_if",
+        "occurrences": 13
+      },
+      {
+        "code": "clippy::int_plus_one",
+        "occurrences": 2
+      },
+      {
+        "code": "clippy::manual_is_multiple_of",
+        "occurrences": 5
+      },
+      {
+        "code": "clippy::needless_borrows_for_generic_args",
+        "occurrences": 4
+      },
+      {
+        "code": "clippy::nonminimal_bool",
+        "occurrences": 10
+      },
+      {
+        "code": "clippy::too_many_arguments",
+        "occurrences": 2
+      }
+    ],
+    "summaryCorrection": "Immutable f82 lintCounts display aggregate grouped dictionaries incorrectly as one blank-code row. These six counts are recomputed from all36 explicit occurrence.code values. All21 identities/36 occurrences and classification were correct and unchanged.",
+    "deferredFindingIdentities": [
+      {
+        "identityKey": "clippy::int_plus_one|apps/desktop/src-tauri/src/viewer_actions.rs|5992|6015",
+        "code": "clippy::int_plus_one",
+        "source": "apps/desktop/src-tauri/src/viewer_actions.rs",
+        "lineStart": 165,
+        "lineEnd": 165,
+        "columnStart": 22,
+        "columnEnd": 45,
+        "byteStart": 5992,
+        "byteEnd": 6015,
+        "sourceSHA256": "721733e44d3090bc062517a1eb119607de632ec34662ab92febc5ed6b2fc1167",
+        "primarySpanSHA256": "1ade3517baf906acce24830504708f6d8be8a182eb4522ed0f8ad7885882e00e",
+        "baseGitBlob": "2328516a763af06b323dbbadd68557e41624ccf5",
+        "candidateGitBlob": "2328516a763af06b323dbbadd68557e41624ccf5",
+        "entireFileUnchanged": true,
+        "unchangedWarningSiteBasis": "Entire source Git blob unchanged since C34 claim/scope base.",
+        "classification": "Nonfunctional source-expression/API-borrow/readability or argument-count style debt; no emitted compiler correctness/security diagnostic.",
+        "occurrences": [
+          {
+            "eventIndexZeroBased": 419,
+            "targetName": "research_observatory_desktop_lib",
+            "targetKind": [
+              "staticlib",
+              "cdylib",
+              "rlib"
+            ],
+            "targetRole": "normal-lib-artifact-group",
+            "targetRoleBasis": "Message/profile absent; bounded contiguous warning group immediately precedes the matching compiler-artifact whose profile.test is recorded."
+          },
+          {
+            "eventIndexZeroBased": 436,
+            "targetName": "research_observatory_desktop_lib",
+            "targetKind": [
+              "staticlib",
+              "cdylib",
+              "rlib"
+            ],
+            "targetRole": "test-lib-artifact-group",
+            "targetRoleBasis": "Message/profile absent; bounded contiguous warning group immediately precedes the matching compiler-artifact whose profile.test is recorded."
+          }
+        ]
+      },
+      {
+        "identityKey": "clippy::collapsible_if|apps/desktop/src-tauri/src/document_attachment.rs|17784|18171",
+        "code": "clippy::collapsible_if",
+        "source": "apps/desktop/src-tauri/src/document_attachment.rs",
+        "lineStart": 450,
+        "lineEnd": 457,
+        "columnStart": 13,
+        "columnEnd": 14,
+        "byteStart": 17784,
+        "byteEnd": 18171,
+        "sourceSHA256": "e3a24c3b51eac53211791834dd5be17d17f55d2d42e5b7e8f6fdb7ea6ee71f4f",
+        "primarySpanSHA256": "a0a198c2d0315e3ab650fc5ca655792cd3ac056b39186a7776c739da949cdb25",
+        "baseGitBlob": "ecd4e2ffd2c27a9537a4399e13f48640bb668831",
+        "candidateGitBlob": "ecd4e2ffd2c27a9537a4399e13f48640bb668831",
+        "entireFileUnchanged": true,
+        "unchangedWarningSiteBasis": "Entire source Git blob unchanged since C34 claim/scope base.",
+        "classification": "Nonfunctional source-expression/API-borrow/readability or argument-count style debt; no emitted compiler correctness/security diagnostic.",
+        "occurrences": [
+          {
+            "eventIndexZeroBased": 420,
+            "targetName": "research_observatory_desktop_lib",
+            "targetKind": [
+              "staticlib",
+              "cdylib",
+              "rlib"
+            ],
+            "targetRole": "normal-lib-artifact-group",
+            "targetRoleBasis": "Message/profile absent; bounded contiguous warning group immediately precedes the matching compiler-artifact whose profile.test is recorded."
+          },
+          {
+            "eventIndexZeroBased": 437,
+            "targetName": "research_observatory_desktop_lib",
+            "targetKind": [
+              "staticlib",
+              "cdylib",
+              "rlib"
+            ],
+            "targetRole": "test-lib-artifact-group",
+            "targetRoleBasis": "Message/profile absent; bounded contiguous warning group immediately precedes the matching compiler-artifact whose profile.test is recorded."
+          }
+        ]
+      },
+      {
+        "identityKey": "clippy::collapsible_if|apps/desktop/src-tauri/src/document_attachment.rs|22427|22625",
+        "code": "clippy::collapsible_if",
+        "source": "apps/desktop/src-tauri/src/document_attachment.rs",
+        "lineStart": 570,
+        "lineEnd": 575,
+        "columnStart": 5,
+        "columnEnd": 6,
+        "byteStart": 22427,
+        "byteEnd": 22625,
+        "sourceSHA256": "e3a24c3b51eac53211791834dd5be17d17f55d2d42e5b7e8f6fdb7ea6ee71f4f",
+        "primarySpanSHA256": "f4a92dd519ad38ee7cd5fd0b7778989277ee58af5550a45d554456d3c164ee13",
+        "baseGitBlob": "ecd4e2ffd2c27a9537a4399e13f48640bb668831",
+        "candidateGitBlob": "ecd4e2ffd2c27a9537a4399e13f48640bb668831",
+        "entireFileUnchanged": true,
+        "unchangedWarningSiteBasis": "Entire source Git blob unchanged since C34 claim/scope base.",
+        "classification": "Nonfunctional source-expression/API-borrow/readability or argument-count style debt; no emitted compiler correctness/security diagnostic.",
+        "occurrences": [
+          {
+            "eventIndexZeroBased": 421,
+            "targetName": "research_observatory_desktop_lib",
+            "targetKind": [
+              "staticlib",
+              "cdylib",
+              "rlib"
+            ],
+            "targetRole": "normal-lib-artifact-group",
+            "targetRoleBasis": "Message/profile absent; bounded contiguous warning group immediately precedes the matching compiler-artifact whose profile.test is recorded."
+          },
+          {
+            "eventIndexZeroBased": 438,
+            "targetName": "research_observatory_desktop_lib",
+            "targetKind": [
+              "staticlib",
+              "cdylib",
+              "rlib"
+            ],
+            "targetRole": "test-lib-artifact-group",
+            "targetRoleBasis": "Message/profile absent; bounded contiguous warning group immediately precedes the matching compiler-artifact whose profile.test is recorded."
+          }
+        ]
+      },
+      {
+        "identityKey": "clippy::nonminimal_bool|apps/desktop/src-tauri/src/document_viewer.rs|28079|28200",
+        "code": "clippy::nonminimal_bool",
+        "source": "apps/desktop/src-tauri/src/document_viewer.rs",
+        "lineStart": 775,
+        "lineEnd": 777,
+        "columnStart": 12,
+        "columnEnd": 57,
+        "byteStart": 28079,
+        "byteEnd": 28200,
+        "sourceSHA256": "e9da88241676012a346ec7308e0b5a160758b5dacde80977ae6c512c6fc1b5e2",
+        "primarySpanSHA256": "7d9995c7d7f1a582016de01199056c4903e5d1595f9658259fc5432bc20250e9",
+        "baseGitBlob": "9ffd13a33f70bdae9b0e03d048a07eaa47839a11",
+        "candidateGitBlob": "9ffd13a33f70bdae9b0e03d048a07eaa47839a11",
+        "entireFileUnchanged": true,
+        "unchangedWarningSiteBasis": "Entire source Git blob unchanged since C34 claim/scope base.",
+        "classification": "Nonfunctional source-expression/API-borrow/readability or argument-count style debt; no emitted compiler correctness/security diagnostic.",
+        "occurrences": [
+          {
+            "eventIndexZeroBased": 422,
+            "targetName": "research_observatory_desktop_lib",
+            "targetKind": [
+              "staticlib",
+              "cdylib",
+              "rlib"
+            ],
+            "targetRole": "normal-lib-artifact-group",
+            "targetRoleBasis": "Message/profile absent; bounded contiguous warning group immediately precedes the matching compiler-artifact whose profile.test is recorded."
+          },
+          {
+            "eventIndexZeroBased": 441,
+            "targetName": "research_observatory_desktop_lib",
+            "targetKind": [
+              "staticlib",
+              "cdylib",
+              "rlib"
+            ],
+            "targetRole": "test-lib-artifact-group",
+            "targetRoleBasis": "Message/profile absent; bounded contiguous warning group immediately precedes the matching compiler-artifact whose profile.test is recorded."
+          }
+        ]
+      },
+      {
+        "identityKey": "clippy::nonminimal_bool|apps/desktop/src-tauri/src/supervisor.rs|129363|129404",
+        "code": "clippy::nonminimal_bool",
+        "source": "apps/desktop/src-tauri/src/supervisor.rs",
+        "lineStart": 3600,
+        "lineEnd": 3600,
+        "columnStart": 9,
+        "columnEnd": 50,
+        "byteStart": 129363,
+        "byteEnd": 129404,
+        "sourceSHA256": "595d8b20197eb3b0cb6e05cae19df3f9523f2bb2eb3c22f99c56cdf0a5df2504",
+        "primarySpanSHA256": "30a6b7a6b315767880911a57c2100f75375f139800ee082e131dddd751b4f459",
+        "baseGitBlob": "e471b78a3e11d0889b1aad653c534156326ce22f",
+        "candidateGitBlob": "e471b78a3e11d0889b1aad653c534156326ce22f",
+        "entireFileUnchanged": true,
+        "unchangedWarningSiteBasis": "Entire source Git blob unchanged since C34 claim/scope base.",
+        "classification": "Nonfunctional source-expression/API-borrow/readability or argument-count style debt; no emitted compiler correctness/security diagnostic.",
+        "occurrences": [
+          {
+            "eventIndexZeroBased": 423,
+            "targetName": "research_observatory_desktop_lib",
+            "targetKind": [
+              "staticlib",
+              "cdylib",
+              "rlib"
+            ],
+            "targetRole": "normal-lib-artifact-group",
+            "targetRoleBasis": "Message/profile absent; bounded contiguous warning group immediately precedes the matching compiler-artifact whose profile.test is recorded."
+          },
+          {
+            "eventIndexZeroBased": 442,
+            "targetName": "research_observatory_desktop_lib",
+            "targetKind": [
+              "staticlib",
+              "cdylib",
+              "rlib"
+            ],
+            "targetRole": "test-lib-artifact-group",
+            "targetRoleBasis": "Message/profile absent; bounded contiguous warning group immediately precedes the matching compiler-artifact whose profile.test is recorded."
+          }
+        ]
+      },
+      {
+        "identityKey": "clippy::collapsible_if|apps/desktop/src-tauri/src/viewer_actions.rs|12699|12863",
+        "code": "clippy::collapsible_if",
+        "source": "apps/desktop/src-tauri/src/viewer_actions.rs",
+        "lineStart": 380,
+        "lineEnd": 384,
+        "columnStart": 9,
+        "columnEnd": 10,
+        "byteStart": 12699,
+        "byteEnd": 12863,
+        "sourceSHA256": "721733e44d3090bc062517a1eb119607de632ec34662ab92febc5ed6b2fc1167",
+        "primarySpanSHA256": "2600d3552dd23dbbf1082caddb9ebe87fc40fab3ea61e5779b79daa7cd4a6d1c",
+        "baseGitBlob": "2328516a763af06b323dbbadd68557e41624ccf5",
+        "candidateGitBlob": "2328516a763af06b323dbbadd68557e41624ccf5",
+        "entireFileUnchanged": true,
+        "unchangedWarningSiteBasis": "Entire source Git blob unchanged since C34 claim/scope base.",
+        "classification": "Nonfunctional source-expression/API-borrow/readability or argument-count style debt; no emitted compiler correctness/security diagnostic.",
+        "occurrences": [
+          {
+            "eventIndexZeroBased": 424,
+            "targetName": "research_observatory_desktop_lib",
+            "targetKind": [
+              "staticlib",
+              "cdylib",
+              "rlib"
+            ],
+            "targetRole": "normal-lib-artifact-group",
+            "targetRoleBasis": "Message/profile absent; bounded contiguous warning group immediately precedes the matching compiler-artifact whose profile.test is recorded."
+          },
+          {
+            "eventIndexZeroBased": 443,
+            "targetName": "research_observatory_desktop_lib",
+            "targetKind": [
+              "staticlib",
+              "cdylib",
+              "rlib"
+            ],
+            "targetRole": "test-lib-artifact-group",
+            "targetRoleBasis": "Message/profile absent; bounded contiguous warning group immediately precedes the matching compiler-artifact whose profile.test is recorded."
+          }
+        ]
+      },
+      {
+        "identityKey": "clippy::collapsible_if|apps/desktop/src-tauri/src/viewer_actions.rs|14797|14970",
+        "code": "clippy::collapsible_if",
+        "source": "apps/desktop/src-tauri/src/viewer_actions.rs",
+        "lineStart": 447,
+        "lineEnd": 451,
+        "columnStart": 9,
+        "columnEnd": 10,
+        "byteStart": 14797,
+        "byteEnd": 14970,
+        "sourceSHA256": "721733e44d3090bc062517a1eb119607de632ec34662ab92febc5ed6b2fc1167",
+        "primarySpanSHA256": "53c9a08b1b1a03ea88230b77722fcf69ac2aeea39d2a5dc21bee5e9cd87f20bd",
+        "baseGitBlob": "2328516a763af06b323dbbadd68557e41624ccf5",
+        "candidateGitBlob": "2328516a763af06b323dbbadd68557e41624ccf5",
+        "entireFileUnchanged": true,
+        "unchangedWarningSiteBasis": "Entire source Git blob unchanged since C34 claim/scope base.",
+        "classification": "Nonfunctional source-expression/API-borrow/readability or argument-count style debt; no emitted compiler correctness/security diagnostic.",
+        "occurrences": [
+          {
+            "eventIndexZeroBased": 425,
+            "targetName": "research_observatory_desktop_lib",
+            "targetKind": [
+              "staticlib",
+              "cdylib",
+              "rlib"
+            ],
+            "targetRole": "normal-lib-artifact-group",
+            "targetRoleBasis": "Message/profile absent; bounded contiguous warning group immediately precedes the matching compiler-artifact whose profile.test is recorded."
+          },
+          {
+            "eventIndexZeroBased": 444,
+            "targetName": "research_observatory_desktop_lib",
+            "targetKind": [
+              "staticlib",
+              "cdylib",
+              "rlib"
+            ],
+            "targetRole": "test-lib-artifact-group",
+            "targetRoleBasis": "Message/profile absent; bounded contiguous warning group immediately precedes the matching compiler-artifact whose profile.test is recorded."
+          }
+        ]
+      },
+      {
+        "identityKey": "clippy::collapsible_if|apps/desktop/src-tauri/src/viewer_actions.rs|16997|17195",
+        "code": "clippy::collapsible_if",
+        "source": "apps/desktop/src-tauri/src/viewer_actions.rs",
+        "lineStart": 503,
+        "lineEnd": 509,
+        "columnStart": 5,
+        "columnEnd": 6,
+        "byteStart": 16997,
+        "byteEnd": 17195,
+        "sourceSHA256": "721733e44d3090bc062517a1eb119607de632ec34662ab92febc5ed6b2fc1167",
+        "primarySpanSHA256": "50da0359eb82acb2ec9285d90072a1b35e31030fb1ae5fed31d67cae4b5d72a9",
+        "baseGitBlob": "2328516a763af06b323dbbadd68557e41624ccf5",
+        "candidateGitBlob": "2328516a763af06b323dbbadd68557e41624ccf5",
+        "entireFileUnchanged": true,
+        "unchangedWarningSiteBasis": "Entire source Git blob unchanged since C34 claim/scope base.",
+        "classification": "Nonfunctional source-expression/API-borrow/readability or argument-count style debt; no emitted compiler correctness/security diagnostic.",
+        "occurrences": [
+          {
+            "eventIndexZeroBased": 426,
+            "targetName": "research_observatory_desktop_lib",
+            "targetKind": [
+              "staticlib",
+              "cdylib",
+              "rlib"
+            ],
+            "targetRole": "normal-lib-artifact-group",
+            "targetRoleBasis": "Message/profile absent; bounded contiguous warning group immediately precedes the matching compiler-artifact whose profile.test is recorded."
+          },
+          {
+            "eventIndexZeroBased": 445,
+            "targetName": "research_observatory_desktop_lib",
+            "targetKind": [
+              "staticlib",
+              "cdylib",
+              "rlib"
+            ],
+            "targetRole": "test-lib-artifact-group",
+            "targetRoleBasis": "Message/profile absent; bounded contiguous warning group immediately precedes the matching compiler-artifact whose profile.test is recorded."
+          }
+        ]
+      },
+      {
+        "identityKey": "clippy::collapsible_if|apps/desktop/src-tauri/src/viewer_actions.rs|17018|17189",
+        "code": "clippy::collapsible_if",
+        "source": "apps/desktop/src-tauri/src/viewer_actions.rs",
+        "lineStart": 504,
+        "lineEnd": 508,
+        "columnStart": 9,
+        "columnEnd": 10,
+        "byteStart": 17018,
+        "byteEnd": 17189,
+        "sourceSHA256": "721733e44d3090bc062517a1eb119607de632ec34662ab92febc5ed6b2fc1167",
+        "primarySpanSHA256": "e8516d1953b9a289ed04afa470e6c10ebcb5811f6d452c73cc8c053e2215a941",
+        "baseGitBlob": "2328516a763af06b323dbbadd68557e41624ccf5",
+        "candidateGitBlob": "2328516a763af06b323dbbadd68557e41624ccf5",
+        "entireFileUnchanged": true,
+        "unchangedWarningSiteBasis": "Entire source Git blob unchanged since C34 claim/scope base.",
+        "classification": "Nonfunctional source-expression/API-borrow/readability or argument-count style debt; no emitted compiler correctness/security diagnostic.",
+        "occurrences": [
+          {
+            "eventIndexZeroBased": 427,
+            "targetName": "research_observatory_desktop_lib",
+            "targetKind": [
+              "staticlib",
+              "cdylib",
+              "rlib"
+            ],
+            "targetRole": "normal-lib-artifact-group",
+            "targetRoleBasis": "Message/profile absent; bounded contiguous warning group immediately precedes the matching compiler-artifact whose profile.test is recorded."
+          },
+          {
+            "eventIndexZeroBased": 446,
+            "targetName": "research_observatory_desktop_lib",
+            "targetKind": [
+              "staticlib",
+              "cdylib",
+              "rlib"
+            ],
+            "targetRole": "test-lib-artifact-group",
+            "targetRoleBasis": "Message/profile absent; bounded contiguous warning group immediately precedes the matching compiler-artifact whose profile.test is recorded."
+          }
+        ]
+      },
+      {
+        "identityKey": "clippy::nonminimal_bool|apps/desktop/src-tauri/src/viewer_actions.rs|25828|25955",
+        "code": "clippy::nonminimal_bool",
+        "source": "apps/desktop/src-tauri/src/viewer_actions.rs",
+        "lineStart": 732,
+        "lineEnd": 733,
+        "columnStart": 20,
+        "columnEnd": 92,
+        "byteStart": 25828,
+        "byteEnd": 25955,
+        "sourceSHA256": "721733e44d3090bc062517a1eb119607de632ec34662ab92febc5ed6b2fc1167",
+        "primarySpanSHA256": "d4e5a37ee16ec29ecdb7c0b4a5b2226d817c30c949a39229672fd71f7d9c0c82",
+        "baseGitBlob": "2328516a763af06b323dbbadd68557e41624ccf5",
+        "candidateGitBlob": "2328516a763af06b323dbbadd68557e41624ccf5",
+        "entireFileUnchanged": true,
+        "unchangedWarningSiteBasis": "Entire source Git blob unchanged since C34 claim/scope base.",
+        "classification": "Nonfunctional source-expression/API-borrow/readability or argument-count style debt; no emitted compiler correctness/security diagnostic.",
+        "occurrences": [
+          {
+            "eventIndexZeroBased": 428,
+            "targetName": "research_observatory_desktop_lib",
+            "targetKind": [
+              "staticlib",
+              "cdylib",
+              "rlib"
+            ],
+            "targetRole": "normal-lib-artifact-group",
+            "targetRoleBasis": "Message/profile absent; bounded contiguous warning group immediately precedes the matching compiler-artifact whose profile.test is recorded."
+          },
+          {
+            "eventIndexZeroBased": 447,
+            "targetName": "research_observatory_desktop_lib",
+            "targetKind": [
+              "staticlib",
+              "cdylib",
+              "rlib"
+            ],
+            "targetRole": "test-lib-artifact-group",
+            "targetRoleBasis": "Message/profile absent; bounded contiguous warning group immediately precedes the matching compiler-artifact whose profile.test is recorded."
+          }
+        ]
+      },
+      {
+        "identityKey": "clippy::nonminimal_bool|apps/desktop/src-tauri/src/viewer_actions.rs|28964|29012",
+        "code": "clippy::nonminimal_bool",
+        "source": "apps/desktop/src-tauri/src/viewer_actions.rs",
+        "lineStart": 824,
+        "lineEnd": 824,
+        "columnStart": 20,
+        "columnEnd": 68,
+        "byteStart": 28964,
+        "byteEnd": 29012,
+        "sourceSHA256": "721733e44d3090bc062517a1eb119607de632ec34662ab92febc5ed6b2fc1167",
+        "primarySpanSHA256": "b4e7c9b3f0398bacc8d8dfdac9e0a524066177ed1bf0e2e1dc39624bb4c78146",
+        "baseGitBlob": "2328516a763af06b323dbbadd68557e41624ccf5",
+        "candidateGitBlob": "2328516a763af06b323dbbadd68557e41624ccf5",
+        "entireFileUnchanged": true,
+        "unchangedWarningSiteBasis": "Entire source Git blob unchanged since C34 claim/scope base.",
+        "classification": "Nonfunctional source-expression/API-borrow/readability or argument-count style debt; no emitted compiler correctness/security diagnostic.",
+        "occurrences": [
+          {
+            "eventIndexZeroBased": 429,
+            "targetName": "research_observatory_desktop_lib",
+            "targetKind": [
+              "staticlib",
+              "cdylib",
+              "rlib"
+            ],
+            "targetRole": "normal-lib-artifact-group",
+            "targetRoleBasis": "Message/profile absent; bounded contiguous warning group immediately precedes the matching compiler-artifact whose profile.test is recorded."
+          },
+          {
+            "eventIndexZeroBased": 448,
+            "targetName": "research_observatory_desktop_lib",
+            "targetKind": [
+              "staticlib",
+              "cdylib",
+              "rlib"
+            ],
+            "targetRole": "test-lib-artifact-group",
+            "targetRoleBasis": "Message/profile absent; bounded contiguous warning group immediately precedes the matching compiler-artifact whose profile.test is recorded."
+          }
+        ]
+      },
+      {
+        "identityKey": "clippy::too_many_arguments|apps/desktop/src-tauri/src/viewer_actions.rs|27188|27507",
+        "code": "clippy::too_many_arguments",
+        "source": "apps/desktop/src-tauri/src/viewer_actions.rs",
+        "lineStart": 777,
+        "lineEnd": 786,
+        "columnStart": 1,
+        "columnEnd": 31,
+        "byteStart": 27188,
+        "byteEnd": 27507,
+        "sourceSHA256": "721733e44d3090bc062517a1eb119607de632ec34662ab92febc5ed6b2fc1167",
+        "primarySpanSHA256": "a65a6da1c65cbbc4c63db69be95ef3b8978bdba887c4e35dff77290acbc09edd",
+        "baseGitBlob": "2328516a763af06b323dbbadd68557e41624ccf5",
+        "candidateGitBlob": "2328516a763af06b323dbbadd68557e41624ccf5",
+        "entireFileUnchanged": true,
+        "unchangedWarningSiteBasis": "Entire source Git blob unchanged since C34 claim/scope base.",
+        "classification": "Nonfunctional source-expression/API-borrow/readability or argument-count style debt; no emitted compiler correctness/security diagnostic.",
+        "occurrences": [
+          {
+            "eventIndexZeroBased": 430,
+            "targetName": "research_observatory_desktop_lib",
+            "targetKind": [
+              "staticlib",
+              "cdylib",
+              "rlib"
+            ],
+            "targetRole": "normal-lib-artifact-group",
+            "targetRoleBasis": "Message/profile absent; bounded contiguous warning group immediately precedes the matching compiler-artifact whose profile.test is recorded."
+          },
+          {
+            "eventIndexZeroBased": 449,
+            "targetName": "research_observatory_desktop_lib",
+            "targetKind": [
+              "staticlib",
+              "cdylib",
+              "rlib"
+            ],
+            "targetRole": "test-lib-artifact-group",
+            "targetRoleBasis": "Message/profile absent; bounded contiguous warning group immediately precedes the matching compiler-artifact whose profile.test is recorded."
+          }
+        ]
+      },
+      {
+        "identityKey": "clippy::nonminimal_bool|apps/desktop/src-tauri/src/viewer_actions.rs|35231|35279",
+        "code": "clippy::nonminimal_bool",
+        "source": "apps/desktop/src-tauri/src/viewer_actions.rs",
+        "lineStart": 961,
+        "lineEnd": 961,
+        "columnStart": 24,
+        "columnEnd": 72,
+        "byteStart": 35231,
+        "byteEnd": 35279,
+        "sourceSHA256": "721733e44d3090bc062517a1eb119607de632ec34662ab92febc5ed6b2fc1167",
+        "primarySpanSHA256": "e1a3853de79cd10584649bbcaf9ce66536665869818b7e0e00daa4e76ce30bcf",
+        "baseGitBlob": "2328516a763af06b323dbbadd68557e41624ccf5",
+        "candidateGitBlob": "2328516a763af06b323dbbadd68557e41624ccf5",
+        "entireFileUnchanged": true,
+        "unchangedWarningSiteBasis": "Entire source Git blob unchanged since C34 claim/scope base.",
+        "classification": "Nonfunctional source-expression/API-borrow/readability or argument-count style debt; no emitted compiler correctness/security diagnostic.",
+        "occurrences": [
+          {
+            "eventIndexZeroBased": 431,
+            "targetName": "research_observatory_desktop_lib",
+            "targetKind": [
+              "staticlib",
+              "cdylib",
+              "rlib"
+            ],
+            "targetRole": "normal-lib-artifact-group",
+            "targetRoleBasis": "Message/profile absent; bounded contiguous warning group immediately precedes the matching compiler-artifact whose profile.test is recorded."
+          },
+          {
+            "eventIndexZeroBased": 450,
+            "targetName": "research_observatory_desktop_lib",
+            "targetKind": [
+              "staticlib",
+              "cdylib",
+              "rlib"
+            ],
+            "targetRole": "test-lib-artifact-group",
+            "targetRoleBasis": "Message/profile absent; bounded contiguous warning group immediately precedes the matching compiler-artifact whose profile.test is recorded."
+          }
+        ]
+      },
+      {
+        "identityKey": "clippy::manual_is_multiple_of|apps/desktop/src-tauri/src/viewer_export.rs|19590|19603",
+        "code": "clippy::manual_is_multiple_of",
+        "source": "apps/desktop/src-tauri/src/viewer_export.rs",
+        "lineStart": 567,
+        "lineEnd": 567,
+        "columnStart": 78,
+        "columnEnd": 91,
+        "byteStart": 19590,
+        "byteEnd": 19603,
+        "sourceSHA256": "bb08c1a7859a29c6e4f52ce3d2a2095b5df72d1b6db2c85562391b97c32cbe65",
+        "primarySpanSHA256": "ada690e3f7636c78562daf7919f03ccef79017ec79c49c55db0e729511a50a8e",
+        "baseGitBlob": "7f5262eab2032bf915f8fbf33fb76fb1d2a9588b",
+        "candidateGitBlob": "7f5262eab2032bf915f8fbf33fb76fb1d2a9588b",
+        "entireFileUnchanged": true,
+        "unchangedWarningSiteBasis": "Entire source Git blob unchanged since C34 claim/scope base.",
+        "classification": "Nonfunctional source-expression/API-borrow/readability or argument-count style debt; no emitted compiler correctness/security diagnostic.",
+        "occurrences": [
+          {
+            "eventIndexZeroBased": 432,
+            "targetName": "research_observatory_desktop_lib",
+            "targetKind": [
+              "staticlib",
+              "cdylib",
+              "rlib"
+            ],
+            "targetRole": "normal-lib-artifact-group",
+            "targetRoleBasis": "Message/profile absent; bounded contiguous warning group immediately precedes the matching compiler-artifact whose profile.test is recorded."
+          },
+          {
+            "eventIndexZeroBased": 451,
+            "targetName": "research_observatory_desktop_lib",
+            "targetKind": [
+              "staticlib",
+              "cdylib",
+              "rlib"
+            ],
+            "targetRole": "test-lib-artifact-group",
+            "targetRoleBasis": "Message/profile absent; bounded contiguous warning group immediately precedes the matching compiler-artifact whose profile.test is recorded."
+          }
+        ]
+      },
+      {
+        "identityKey": "clippy::manual_is_multiple_of|apps/desktop/src-tauri/src/viewer_export.rs|23006|23020",
+        "code": "clippy::manual_is_multiple_of",
+        "source": "apps/desktop/src-tauri/src/viewer_export.rs",
+        "lineStart": 649,
+        "lineEnd": 649,
+        "columnStart": 56,
+        "columnEnd": 70,
+        "byteStart": 23006,
+        "byteEnd": 23020,
+        "sourceSHA256": "bb08c1a7859a29c6e4f52ce3d2a2095b5df72d1b6db2c85562391b97c32cbe65",
+        "primarySpanSHA256": "d4a4703267158e040bcb57b9c2f8bdd0ed578dc2dfd028ebe315b2022b905b14",
+        "baseGitBlob": "7f5262eab2032bf915f8fbf33fb76fb1d2a9588b",
+        "candidateGitBlob": "7f5262eab2032bf915f8fbf33fb76fb1d2a9588b",
+        "entireFileUnchanged": true,
+        "unchangedWarningSiteBasis": "Entire source Git blob unchanged since C34 claim/scope base.",
+        "classification": "Nonfunctional source-expression/API-borrow/readability or argument-count style debt; no emitted compiler correctness/security diagnostic.",
+        "occurrences": [
+          {
+            "eventIndexZeroBased": 433,
+            "targetName": "research_observatory_desktop_lib",
+            "targetKind": [
+              "staticlib",
+              "cdylib",
+              "rlib"
+            ],
+            "targetRole": "normal-lib-artifact-group",
+            "targetRoleBasis": "Message/profile absent; bounded contiguous warning group immediately precedes the matching compiler-artifact whose profile.test is recorded."
+          },
+          {
+            "eventIndexZeroBased": 452,
+            "targetName": "research_observatory_desktop_lib",
+            "targetKind": [
+              "staticlib",
+              "cdylib",
+              "rlib"
+            ],
+            "targetRole": "test-lib-artifact-group",
+            "targetRoleBasis": "Message/profile absent; bounded contiguous warning group immediately precedes the matching compiler-artifact whose profile.test is recorded."
+          }
+        ]
+      },
+      {
+        "identityKey": "clippy::needless_borrows_for_generic_args|apps/desktop/src-tauri/src/document_corrections/windows_integration_tests.rs|2236|2413",
+        "code": "clippy::needless_borrows_for_generic_args",
+        "source": "apps/desktop/src-tauri/src/document_corrections/windows_integration_tests.rs",
+        "lineStart": 63,
+        "lineEnd": 63,
+        "columnStart": 17,
+        "columnEnd": 194,
+        "byteStart": 2236,
+        "byteEnd": 2413,
+        "sourceSHA256": "63b474c7baa6a11bad00c04d0d300e7ba0989ec9cfa158ca8739b393b53befb0",
+        "primarySpanSHA256": "56c7c7c5662ce847bf03f4803001a7a95103375e5772a06122276bec0afb212b",
+        "baseGitBlob": "87c2a0125e450887c7153da5a777155b180a5cea",
+        "candidateGitBlob": "87c2a0125e450887c7153da5a777155b180a5cea",
+        "entireFileUnchanged": true,
+        "unchangedWarningSiteBasis": "Entire source Git blob unchanged since C34 claim/scope base.",
+        "classification": "Nonfunctional source-expression/API-borrow/readability or argument-count style debt; no emitted compiler correctness/security diagnostic.",
+        "occurrences": [
+          {
+            "eventIndexZeroBased": 439,
+            "targetName": "research_observatory_desktop_lib",
+            "targetKind": [
+              "staticlib",
+              "cdylib",
+              "rlib"
+            ],
+            "targetRole": "test-lib-artifact-group",
+            "targetRoleBasis": "Message/profile absent; bounded contiguous warning group immediately precedes the matching compiler-artifact whose profile.test is recorded."
+          }
+        ]
+      },
+      {
+        "identityKey": "clippy::needless_borrows_for_generic_args|apps/desktop/src-tauri/src/document_reprocessing/windows_integration_tests.rs|2699|2879",
+        "code": "clippy::needless_borrows_for_generic_args",
+        "source": "apps/desktop/src-tauri/src/document_reprocessing/windows_integration_tests.rs",
+        "lineStart": 80,
+        "lineEnd": 80,
+        "columnStart": 17,
+        "columnEnd": 197,
+        "byteStart": 2699,
+        "byteEnd": 2879,
+        "sourceSHA256": "c9e0cfd76004f7fdf849b6f6f42c30fd06d8b0a3eabcd760a69e332b2471f9ab",
+        "primarySpanSHA256": "ba9cfac9baf26f8271a41cbc8ad49fafbdec5e335096f41d2e042dfc91c83c52",
+        "baseGitBlob": "860c305617c1e21cf5abadf6c8b4df83ad1fa4ee",
+        "candidateGitBlob": "860c305617c1e21cf5abadf6c8b4df83ad1fa4ee",
+        "entireFileUnchanged": true,
+        "unchangedWarningSiteBasis": "Entire source Git blob unchanged since C34 claim/scope base.",
+        "classification": "Nonfunctional source-expression/API-borrow/readability or argument-count style debt; no emitted compiler correctness/security diagnostic.",
+        "occurrences": [
+          {
+            "eventIndexZeroBased": 440,
+            "targetName": "research_observatory_desktop_lib",
+            "targetKind": [
+              "staticlib",
+              "cdylib",
+              "rlib"
+            ],
+            "targetRole": "test-lib-artifact-group",
+            "targetRoleBasis": "Message/profile absent; bounded contiguous warning group immediately precedes the matching compiler-artifact whose profile.test is recorded."
+          }
+        ]
+      },
+      {
+        "identityKey": "clippy::manual_is_multiple_of|apps/desktop/src-tauri/src/viewer_export.rs|35186|35199",
+        "code": "clippy::manual_is_multiple_of",
+        "source": "apps/desktop/src-tauri/src/viewer_export.rs",
+        "lineStart": 929,
+        "lineEnd": 929,
+        "columnStart": 38,
+        "columnEnd": 51,
+        "byteStart": 35186,
+        "byteEnd": 35199,
+        "sourceSHA256": "bb08c1a7859a29c6e4f52ce3d2a2095b5df72d1b6db2c85562391b97c32cbe65",
+        "primarySpanSHA256": "30b0595ccb325b14c95741c1ad56a96cc4313a5b26c46c215db8bec16f9597d2",
+        "baseGitBlob": "7f5262eab2032bf915f8fbf33fb76fb1d2a9588b",
+        "candidateGitBlob": "7f5262eab2032bf915f8fbf33fb76fb1d2a9588b",
+        "entireFileUnchanged": true,
+        "unchangedWarningSiteBasis": "Entire source Git blob unchanged since C34 claim/scope base.",
+        "classification": "Nonfunctional source-expression/API-borrow/readability or argument-count style debt; no emitted compiler correctness/security diagnostic.",
+        "occurrences": [
+          {
+            "eventIndexZeroBased": 453,
+            "targetName": "research_observatory_desktop_lib",
+            "targetKind": [
+              "staticlib",
+              "cdylib",
+              "rlib"
+            ],
+            "targetRole": "test-lib-artifact-group",
+            "targetRoleBasis": "Message/profile absent; bounded contiguous warning group immediately precedes the matching compiler-artifact whose profile.test is recorded."
+          }
+        ]
+      },
+      {
+        "identityKey": "clippy::collapsible_if|apps/desktop/src-tauri/src/viewer_print.rs|2709|3295",
+        "code": "clippy::collapsible_if",
+        "source": "apps/desktop/src-tauri/src/viewer_print.rs",
+        "lineStart": 86,
+        "lineEnd": 99,
+        "columnStart": 13,
+        "columnEnd": 14,
+        "byteStart": 2709,
+        "byteEnd": 3295,
+        "sourceSHA256": "370e46f082a74daaabd3c2565e2e29b444ed53243f2b868cfa1bad6509b8a5ec",
+        "primarySpanSHA256": "31429c4ce0f764d1f3cf8410fb40874a834ec20369cf3003d8182e1eff450afb",
+        "baseGitBlob": "cd06d59787592107db71e36f4931148ef4a41949",
+        "candidateGitBlob": "cd06d59787592107db71e36f4931148ef4a41949",
+        "entireFileUnchanged": true,
+        "unchangedWarningSiteBasis": "Entire source Git blob unchanged since C34 claim/scope base.",
+        "classification": "Nonfunctional source-expression/API-borrow/readability or argument-count style debt; no emitted compiler correctness/security diagnostic.",
+        "occurrences": [
+          {
+            "eventIndexZeroBased": 454,
+            "targetName": "research_observatory_desktop_lib",
+            "targetKind": [
+              "staticlib",
+              "cdylib",
+              "rlib"
+            ],
+            "targetRole": "test-lib-artifact-group",
+            "targetRoleBasis": "Message/profile absent; bounded contiguous warning group immediately precedes the matching compiler-artifact whose profile.test is recorded."
+          }
+        ]
+      },
+      {
+        "identityKey": "clippy::needless_borrows_for_generic_args|apps/desktop/src-tauri/src/lib.rs|183064|183076",
+        "code": "clippy::needless_borrows_for_generic_args",
+        "source": "apps/desktop/src-tauri/src/lib.rs",
+        "lineStart": 4351,
+        "lineEnd": 4351,
+        "columnStart": 55,
+        "columnEnd": 67,
+        "byteStart": 183064,
+        "byteEnd": 183076,
+        "sourceSHA256": "6b17452ac96708f9642d7b99e99c485dc2230fc10ee3eef883ab2697cb486780",
+        "primarySpanSHA256": "68d1e87cc58933acd8db7a417e6ac5d843e04b2f2847bb04a6dadb28e4643ba8",
+        "baseGitBlob": "5da763eb7c457730f7c734c0292a799a252beaea",
+        "candidateGitBlob": "4a9f8264996088aa6fcbb6a74024e819f0f4c9bf",
+        "entireFileUnchanged": false,
+        "unchangedWarningSiteBasis": "Existing menu_diagnostics_forward_once_and_preserve_result_even_after_budget test is line-exact before/after C34 (base4174-4218/current4336-4380); warning expressions are outside the new ownership fixture code.",
+        "classification": "Nonfunctional source-expression/API-borrow/readability or argument-count style debt; no emitted compiler correctness/security diagnostic.",
+        "occurrences": [
+          {
+            "eventIndexZeroBased": 455,
+            "targetName": "research_observatory_desktop_lib",
+            "targetKind": [
+              "staticlib",
+              "cdylib",
+              "rlib"
+            ],
+            "targetRole": "test-lib-artifact-group",
+            "targetRoleBasis": "Message/profile absent; bounded contiguous warning group immediately precedes the matching compiler-artifact whose profile.test is recorded."
+          }
+        ]
+      },
+      {
+        "identityKey": "clippy::needless_borrows_for_generic_args|apps/desktop/src-tauri/src/lib.rs|183387|183399",
+        "code": "clippy::needless_borrows_for_generic_args",
+        "source": "apps/desktop/src-tauri/src/lib.rs",
+        "lineStart": 4359,
+        "lineEnd": 4359,
+        "columnStart": 71,
+        "columnEnd": 83,
+        "byteStart": 183387,
+        "byteEnd": 183399,
+        "sourceSHA256": "6b17452ac96708f9642d7b99e99c485dc2230fc10ee3eef883ab2697cb486780",
+        "primarySpanSHA256": "68d1e87cc58933acd8db7a417e6ac5d843e04b2f2847bb04a6dadb28e4643ba8",
+        "baseGitBlob": "5da763eb7c457730f7c734c0292a799a252beaea",
+        "candidateGitBlob": "4a9f8264996088aa6fcbb6a74024e819f0f4c9bf",
+        "entireFileUnchanged": false,
+        "unchangedWarningSiteBasis": "Existing menu_diagnostics_forward_once_and_preserve_result_even_after_budget test is line-exact before/after C34 (base4174-4218/current4336-4380); warning expressions are outside the new ownership fixture code.",
+        "classification": "Nonfunctional source-expression/API-borrow/readability or argument-count style debt; no emitted compiler correctness/security diagnostic.",
+        "occurrences": [
+          {
+            "eventIndexZeroBased": 456,
+            "targetName": "research_observatory_desktop_lib",
+            "targetKind": [
+              "staticlib",
+              "cdylib",
+              "rlib"
+            ],
+            "targetRole": "test-lib-artifact-group",
+            "targetRoleBasis": "Message/profile absent; bounded contiguous warning group immediately precedes the matching compiler-artifact whose profile.test is recorded."
+          }
+        ]
+      }
+    ],
+    "allFindingOccurrences": [
+      {
+        "identityKey": "clippy::int_plus_one|apps/desktop/src-tauri/src/viewer_actions.rs|5992|6015",
+        "eventIndexZeroBased": 419,
+        "code": "clippy::int_plus_one",
+        "source": "apps/desktop/src-tauri/src/viewer_actions.rs",
+        "lineStart": 165,
+        "lineEnd": 165,
+        "columnStart": 22,
+        "columnEnd": 45,
+        "byteStart": 5992,
+        "byteEnd": 6015,
+        "sourceSHA256": "721733e44d3090bc062517a1eb119607de632ec34662ab92febc5ed6b2fc1167",
+        "primarySpanSHA256": "1ade3517baf906acce24830504708f6d8be8a182eb4522ed0f8ad7885882e00e",
+        "target": {
+          "eventIndexZeroBased": 419,
+          "targetName": "research_observatory_desktop_lib",
+          "targetKind": [
+            "staticlib",
+            "cdylib",
+            "rlib"
+          ],
+          "targetRole": "normal-lib-artifact-group",
+          "targetRoleBasis": "Message/profile absent; bounded contiguous warning group immediately precedes the matching compiler-artifact whose profile.test is recorded."
+        }
+      },
+      {
+        "identityKey": "clippy::collapsible_if|apps/desktop/src-tauri/src/document_attachment.rs|17784|18171",
+        "eventIndexZeroBased": 420,
+        "code": "clippy::collapsible_if",
+        "source": "apps/desktop/src-tauri/src/document_attachment.rs",
+        "lineStart": 450,
+        "lineEnd": 457,
+        "columnStart": 13,
+        "columnEnd": 14,
+        "byteStart": 17784,
+        "byteEnd": 18171,
+        "sourceSHA256": "e3a24c3b51eac53211791834dd5be17d17f55d2d42e5b7e8f6fdb7ea6ee71f4f",
+        "primarySpanSHA256": "a0a198c2d0315e3ab650fc5ca655792cd3ac056b39186a7776c739da949cdb25",
+        "target": {
+          "eventIndexZeroBased": 420,
+          "targetName": "research_observatory_desktop_lib",
+          "targetKind": [
+            "staticlib",
+            "cdylib",
+            "rlib"
+          ],
+          "targetRole": "normal-lib-artifact-group",
+          "targetRoleBasis": "Message/profile absent; bounded contiguous warning group immediately precedes the matching compiler-artifact whose profile.test is recorded."
+        }
+      },
+      {
+        "identityKey": "clippy::collapsible_if|apps/desktop/src-tauri/src/document_attachment.rs|22427|22625",
+        "eventIndexZeroBased": 421,
+        "code": "clippy::collapsible_if",
+        "source": "apps/desktop/src-tauri/src/document_attachment.rs",
+        "lineStart": 570,
+        "lineEnd": 575,
+        "columnStart": 5,
+        "columnEnd": 6,
+        "byteStart": 22427,
+        "byteEnd": 22625,
+        "sourceSHA256": "e3a24c3b51eac53211791834dd5be17d17f55d2d42e5b7e8f6fdb7ea6ee71f4f",
+        "primarySpanSHA256": "f4a92dd519ad38ee7cd5fd0b7778989277ee58af5550a45d554456d3c164ee13",
+        "target": {
+          "eventIndexZeroBased": 421,
+          "targetName": "research_observatory_desktop_lib",
+          "targetKind": [
+            "staticlib",
+            "cdylib",
+            "rlib"
+          ],
+          "targetRole": "normal-lib-artifact-group",
+          "targetRoleBasis": "Message/profile absent; bounded contiguous warning group immediately precedes the matching compiler-artifact whose profile.test is recorded."
+        }
+      },
+      {
+        "identityKey": "clippy::nonminimal_bool|apps/desktop/src-tauri/src/document_viewer.rs|28079|28200",
+        "eventIndexZeroBased": 422,
+        "code": "clippy::nonminimal_bool",
+        "source": "apps/desktop/src-tauri/src/document_viewer.rs",
+        "lineStart": 775,
+        "lineEnd": 777,
+        "columnStart": 12,
+        "columnEnd": 57,
+        "byteStart": 28079,
+        "byteEnd": 28200,
+        "sourceSHA256": "e9da88241676012a346ec7308e0b5a160758b5dacde80977ae6c512c6fc1b5e2",
+        "primarySpanSHA256": "7d9995c7d7f1a582016de01199056c4903e5d1595f9658259fc5432bc20250e9",
+        "target": {
+          "eventIndexZeroBased": 422,
+          "targetName": "research_observatory_desktop_lib",
+          "targetKind": [
+            "staticlib",
+            "cdylib",
+            "rlib"
+          ],
+          "targetRole": "normal-lib-artifact-group",
+          "targetRoleBasis": "Message/profile absent; bounded contiguous warning group immediately precedes the matching compiler-artifact whose profile.test is recorded."
+        }
+      },
+      {
+        "identityKey": "clippy::nonminimal_bool|apps/desktop/src-tauri/src/supervisor.rs|129363|129404",
+        "eventIndexZeroBased": 423,
+        "code": "clippy::nonminimal_bool",
+        "source": "apps/desktop/src-tauri/src/supervisor.rs",
+        "lineStart": 3600,
+        "lineEnd": 3600,
+        "columnStart": 9,
+        "columnEnd": 50,
+        "byteStart": 129363,
+        "byteEnd": 129404,
+        "sourceSHA256": "595d8b20197eb3b0cb6e05cae19df3f9523f2bb2eb3c22f99c56cdf0a5df2504",
+        "primarySpanSHA256": "30a6b7a6b315767880911a57c2100f75375f139800ee082e131dddd751b4f459",
+        "target": {
+          "eventIndexZeroBased": 423,
+          "targetName": "research_observatory_desktop_lib",
+          "targetKind": [
+            "staticlib",
+            "cdylib",
+            "rlib"
+          ],
+          "targetRole": "normal-lib-artifact-group",
+          "targetRoleBasis": "Message/profile absent; bounded contiguous warning group immediately precedes the matching compiler-artifact whose profile.test is recorded."
+        }
+      },
+      {
+        "identityKey": "clippy::collapsible_if|apps/desktop/src-tauri/src/viewer_actions.rs|12699|12863",
+        "eventIndexZeroBased": 424,
+        "code": "clippy::collapsible_if",
+        "source": "apps/desktop/src-tauri/src/viewer_actions.rs",
+        "lineStart": 380,
+        "lineEnd": 384,
+        "columnStart": 9,
+        "columnEnd": 10,
+        "byteStart": 12699,
+        "byteEnd": 12863,
+        "sourceSHA256": "721733e44d3090bc062517a1eb119607de632ec34662ab92febc5ed6b2fc1167",
+        "primarySpanSHA256": "2600d3552dd23dbbf1082caddb9ebe87fc40fab3ea61e5779b79daa7cd4a6d1c",
+        "target": {
+          "eventIndexZeroBased": 424,
+          "targetName": "research_observatory_desktop_lib",
+          "targetKind": [
+            "staticlib",
+            "cdylib",
+            "rlib"
+          ],
+          "targetRole": "normal-lib-artifact-group",
+          "targetRoleBasis": "Message/profile absent; bounded contiguous warning group immediately precedes the matching compiler-artifact whose profile.test is recorded."
+        }
+      },
+      {
+        "identityKey": "clippy::collapsible_if|apps/desktop/src-tauri/src/viewer_actions.rs|14797|14970",
+        "eventIndexZeroBased": 425,
+        "code": "clippy::collapsible_if",
+        "source": "apps/desktop/src-tauri/src/viewer_actions.rs",
+        "lineStart": 447,
+        "lineEnd": 451,
+        "columnStart": 9,
+        "columnEnd": 10,
+        "byteStart": 14797,
+        "byteEnd": 14970,
+        "sourceSHA256": "721733e44d3090bc062517a1eb119607de632ec34662ab92febc5ed6b2fc1167",
+        "primarySpanSHA256": "53c9a08b1b1a03ea88230b77722fcf69ac2aeea39d2a5dc21bee5e9cd87f20bd",
+        "target": {
+          "eventIndexZeroBased": 425,
+          "targetName": "research_observatory_desktop_lib",
+          "targetKind": [
+            "staticlib",
+            "cdylib",
+            "rlib"
+          ],
+          "targetRole": "normal-lib-artifact-group",
+          "targetRoleBasis": "Message/profile absent; bounded contiguous warning group immediately precedes the matching compiler-artifact whose profile.test is recorded."
+        }
+      },
+      {
+        "identityKey": "clippy::collapsible_if|apps/desktop/src-tauri/src/viewer_actions.rs|16997|17195",
+        "eventIndexZeroBased": 426,
+        "code": "clippy::collapsible_if",
+        "source": "apps/desktop/src-tauri/src/viewer_actions.rs",
+        "lineStart": 503,
+        "lineEnd": 509,
+        "columnStart": 5,
+        "columnEnd": 6,
+        "byteStart": 16997,
+        "byteEnd": 17195,
+        "sourceSHA256": "721733e44d3090bc062517a1eb119607de632ec34662ab92febc5ed6b2fc1167",
+        "primarySpanSHA256": "50da0359eb82acb2ec9285d90072a1b35e31030fb1ae5fed31d67cae4b5d72a9",
+        "target": {
+          "eventIndexZeroBased": 426,
+          "targetName": "research_observatory_desktop_lib",
+          "targetKind": [
+            "staticlib",
+            "cdylib",
+            "rlib"
+          ],
+          "targetRole": "normal-lib-artifact-group",
+          "targetRoleBasis": "Message/profile absent; bounded contiguous warning group immediately precedes the matching compiler-artifact whose profile.test is recorded."
+        }
+      },
+      {
+        "identityKey": "clippy::collapsible_if|apps/desktop/src-tauri/src/viewer_actions.rs|17018|17189",
+        "eventIndexZeroBased": 427,
+        "code": "clippy::collapsible_if",
+        "source": "apps/desktop/src-tauri/src/viewer_actions.rs",
+        "lineStart": 504,
+        "lineEnd": 508,
+        "columnStart": 9,
+        "columnEnd": 10,
+        "byteStart": 17018,
+        "byteEnd": 17189,
+        "sourceSHA256": "721733e44d3090bc062517a1eb119607de632ec34662ab92febc5ed6b2fc1167",
+        "primarySpanSHA256": "e8516d1953b9a289ed04afa470e6c10ebcb5811f6d452c73cc8c053e2215a941",
+        "target": {
+          "eventIndexZeroBased": 427,
+          "targetName": "research_observatory_desktop_lib",
+          "targetKind": [
+            "staticlib",
+            "cdylib",
+            "rlib"
+          ],
+          "targetRole": "normal-lib-artifact-group",
+          "targetRoleBasis": "Message/profile absent; bounded contiguous warning group immediately precedes the matching compiler-artifact whose profile.test is recorded."
+        }
+      },
+      {
+        "identityKey": "clippy::nonminimal_bool|apps/desktop/src-tauri/src/viewer_actions.rs|25828|25955",
+        "eventIndexZeroBased": 428,
+        "code": "clippy::nonminimal_bool",
+        "source": "apps/desktop/src-tauri/src/viewer_actions.rs",
+        "lineStart": 732,
+        "lineEnd": 733,
+        "columnStart": 20,
+        "columnEnd": 92,
+        "byteStart": 25828,
+        "byteEnd": 25955,
+        "sourceSHA256": "721733e44d3090bc062517a1eb119607de632ec34662ab92febc5ed6b2fc1167",
+        "primarySpanSHA256": "d4e5a37ee16ec29ecdb7c0b4a5b2226d817c30c949a39229672fd71f7d9c0c82",
+        "target": {
+          "eventIndexZeroBased": 428,
+          "targetName": "research_observatory_desktop_lib",
+          "targetKind": [
+            "staticlib",
+            "cdylib",
+            "rlib"
+          ],
+          "targetRole": "normal-lib-artifact-group",
+          "targetRoleBasis": "Message/profile absent; bounded contiguous warning group immediately precedes the matching compiler-artifact whose profile.test is recorded."
+        }
+      },
+      {
+        "identityKey": "clippy::nonminimal_bool|apps/desktop/src-tauri/src/viewer_actions.rs|28964|29012",
+        "eventIndexZeroBased": 429,
+        "code": "clippy::nonminimal_bool",
+        "source": "apps/desktop/src-tauri/src/viewer_actions.rs",
+        "lineStart": 824,
+        "lineEnd": 824,
+        "columnStart": 20,
+        "columnEnd": 68,
+        "byteStart": 28964,
+        "byteEnd": 29012,
+        "sourceSHA256": "721733e44d3090bc062517a1eb119607de632ec34662ab92febc5ed6b2fc1167",
+        "primarySpanSHA256": "b4e7c9b3f0398bacc8d8dfdac9e0a524066177ed1bf0e2e1dc39624bb4c78146",
+        "target": {
+          "eventIndexZeroBased": 429,
+          "targetName": "research_observatory_desktop_lib",
+          "targetKind": [
+            "staticlib",
+            "cdylib",
+            "rlib"
+          ],
+          "targetRole": "normal-lib-artifact-group",
+          "targetRoleBasis": "Message/profile absent; bounded contiguous warning group immediately precedes the matching compiler-artifact whose profile.test is recorded."
+        }
+      },
+      {
+        "identityKey": "clippy::too_many_arguments|apps/desktop/src-tauri/src/viewer_actions.rs|27188|27507",
+        "eventIndexZeroBased": 430,
+        "code": "clippy::too_many_arguments",
+        "source": "apps/desktop/src-tauri/src/viewer_actions.rs",
+        "lineStart": 777,
+        "lineEnd": 786,
+        "columnStart": 1,
+        "columnEnd": 31,
+        "byteStart": 27188,
+        "byteEnd": 27507,
+        "sourceSHA256": "721733e44d3090bc062517a1eb119607de632ec34662ab92febc5ed6b2fc1167",
+        "primarySpanSHA256": "a65a6da1c65cbbc4c63db69be95ef3b8978bdba887c4e35dff77290acbc09edd",
+        "target": {
+          "eventIndexZeroBased": 430,
+          "targetName": "research_observatory_desktop_lib",
+          "targetKind": [
+            "staticlib",
+            "cdylib",
+            "rlib"
+          ],
+          "targetRole": "normal-lib-artifact-group",
+          "targetRoleBasis": "Message/profile absent; bounded contiguous warning group immediately precedes the matching compiler-artifact whose profile.test is recorded."
+        }
+      },
+      {
+        "identityKey": "clippy::nonminimal_bool|apps/desktop/src-tauri/src/viewer_actions.rs|35231|35279",
+        "eventIndexZeroBased": 431,
+        "code": "clippy::nonminimal_bool",
+        "source": "apps/desktop/src-tauri/src/viewer_actions.rs",
+        "lineStart": 961,
+        "lineEnd": 961,
+        "columnStart": 24,
+        "columnEnd": 72,
+        "byteStart": 35231,
+        "byteEnd": 35279,
+        "sourceSHA256": "721733e44d3090bc062517a1eb119607de632ec34662ab92febc5ed6b2fc1167",
+        "primarySpanSHA256": "e1a3853de79cd10584649bbcaf9ce66536665869818b7e0e00daa4e76ce30bcf",
+        "target": {
+          "eventIndexZeroBased": 431,
+          "targetName": "research_observatory_desktop_lib",
+          "targetKind": [
+            "staticlib",
+            "cdylib",
+            "rlib"
+          ],
+          "targetRole": "normal-lib-artifact-group",
+          "targetRoleBasis": "Message/profile absent; bounded contiguous warning group immediately precedes the matching compiler-artifact whose profile.test is recorded."
+        }
+      },
+      {
+        "identityKey": "clippy::manual_is_multiple_of|apps/desktop/src-tauri/src/viewer_export.rs|19590|19603",
+        "eventIndexZeroBased": 432,
+        "code": "clippy::manual_is_multiple_of",
+        "source": "apps/desktop/src-tauri/src/viewer_export.rs",
+        "lineStart": 567,
+        "lineEnd": 567,
+        "columnStart": 78,
+        "columnEnd": 91,
+        "byteStart": 19590,
+        "byteEnd": 19603,
+        "sourceSHA256": "bb08c1a7859a29c6e4f52ce3d2a2095b5df72d1b6db2c85562391b97c32cbe65",
+        "primarySpanSHA256": "ada690e3f7636c78562daf7919f03ccef79017ec79c49c55db0e729511a50a8e",
+        "target": {
+          "eventIndexZeroBased": 432,
+          "targetName": "research_observatory_desktop_lib",
+          "targetKind": [
+            "staticlib",
+            "cdylib",
+            "rlib"
+          ],
+          "targetRole": "normal-lib-artifact-group",
+          "targetRoleBasis": "Message/profile absent; bounded contiguous warning group immediately precedes the matching compiler-artifact whose profile.test is recorded."
+        }
+      },
+      {
+        "identityKey": "clippy::manual_is_multiple_of|apps/desktop/src-tauri/src/viewer_export.rs|23006|23020",
+        "eventIndexZeroBased": 433,
+        "code": "clippy::manual_is_multiple_of",
+        "source": "apps/desktop/src-tauri/src/viewer_export.rs",
+        "lineStart": 649,
+        "lineEnd": 649,
+        "columnStart": 56,
+        "columnEnd": 70,
+        "byteStart": 23006,
+        "byteEnd": 23020,
+        "sourceSHA256": "bb08c1a7859a29c6e4f52ce3d2a2095b5df72d1b6db2c85562391b97c32cbe65",
+        "primarySpanSHA256": "d4a4703267158e040bcb57b9c2f8bdd0ed578dc2dfd028ebe315b2022b905b14",
+        "target": {
+          "eventIndexZeroBased": 433,
+          "targetName": "research_observatory_desktop_lib",
+          "targetKind": [
+            "staticlib",
+            "cdylib",
+            "rlib"
+          ],
+          "targetRole": "normal-lib-artifact-group",
+          "targetRoleBasis": "Message/profile absent; bounded contiguous warning group immediately precedes the matching compiler-artifact whose profile.test is recorded."
+        }
+      },
+      {
+        "identityKey": "clippy::int_plus_one|apps/desktop/src-tauri/src/viewer_actions.rs|5992|6015",
+        "eventIndexZeroBased": 436,
+        "code": "clippy::int_plus_one",
+        "source": "apps/desktop/src-tauri/src/viewer_actions.rs",
+        "lineStart": 165,
+        "lineEnd": 165,
+        "columnStart": 22,
+        "columnEnd": 45,
+        "byteStart": 5992,
+        "byteEnd": 6015,
+        "sourceSHA256": "721733e44d3090bc062517a1eb119607de632ec34662ab92febc5ed6b2fc1167",
+        "primarySpanSHA256": "1ade3517baf906acce24830504708f6d8be8a182eb4522ed0f8ad7885882e00e",
+        "target": {
+          "eventIndexZeroBased": 436,
+          "targetName": "research_observatory_desktop_lib",
+          "targetKind": [
+            "staticlib",
+            "cdylib",
+            "rlib"
+          ],
+          "targetRole": "test-lib-artifact-group",
+          "targetRoleBasis": "Message/profile absent; bounded contiguous warning group immediately precedes the matching compiler-artifact whose profile.test is recorded."
+        }
+      },
+      {
+        "identityKey": "clippy::collapsible_if|apps/desktop/src-tauri/src/document_attachment.rs|17784|18171",
+        "eventIndexZeroBased": 437,
+        "code": "clippy::collapsible_if",
+        "source": "apps/desktop/src-tauri/src/document_attachment.rs",
+        "lineStart": 450,
+        "lineEnd": 457,
+        "columnStart": 13,
+        "columnEnd": 14,
+        "byteStart": 17784,
+        "byteEnd": 18171,
+        "sourceSHA256": "e3a24c3b51eac53211791834dd5be17d17f55d2d42e5b7e8f6fdb7ea6ee71f4f",
+        "primarySpanSHA256": "a0a198c2d0315e3ab650fc5ca655792cd3ac056b39186a7776c739da949cdb25",
+        "target": {
+          "eventIndexZeroBased": 437,
+          "targetName": "research_observatory_desktop_lib",
+          "targetKind": [
+            "staticlib",
+            "cdylib",
+            "rlib"
+          ],
+          "targetRole": "test-lib-artifact-group",
+          "targetRoleBasis": "Message/profile absent; bounded contiguous warning group immediately precedes the matching compiler-artifact whose profile.test is recorded."
+        }
+      },
+      {
+        "identityKey": "clippy::collapsible_if|apps/desktop/src-tauri/src/document_attachment.rs|22427|22625",
+        "eventIndexZeroBased": 438,
+        "code": "clippy::collapsible_if",
+        "source": "apps/desktop/src-tauri/src/document_attachment.rs",
+        "lineStart": 570,
+        "lineEnd": 575,
+        "columnStart": 5,
+        "columnEnd": 6,
+        "byteStart": 22427,
+        "byteEnd": 22625,
+        "sourceSHA256": "e3a24c3b51eac53211791834dd5be17d17f55d2d42e5b7e8f6fdb7ea6ee71f4f",
+        "primarySpanSHA256": "f4a92dd519ad38ee7cd5fd0b7778989277ee58af5550a45d554456d3c164ee13",
+        "target": {
+          "eventIndexZeroBased": 438,
+          "targetName": "research_observatory_desktop_lib",
+          "targetKind": [
+            "staticlib",
+            "cdylib",
+            "rlib"
+          ],
+          "targetRole": "test-lib-artifact-group",
+          "targetRoleBasis": "Message/profile absent; bounded contiguous warning group immediately precedes the matching compiler-artifact whose profile.test is recorded."
+        }
+      },
+      {
+        "identityKey": "clippy::needless_borrows_for_generic_args|apps/desktop/src-tauri/src/document_corrections/windows_integration_tests.rs|2236|2413",
+        "eventIndexZeroBased": 439,
+        "code": "clippy::needless_borrows_for_generic_args",
+        "source": "apps/desktop/src-tauri/src/document_corrections/windows_integration_tests.rs",
+        "lineStart": 63,
+        "lineEnd": 63,
+        "columnStart": 17,
+        "columnEnd": 194,
+        "byteStart": 2236,
+        "byteEnd": 2413,
+        "sourceSHA256": "63b474c7baa6a11bad00c04d0d300e7ba0989ec9cfa158ca8739b393b53befb0",
+        "primarySpanSHA256": "56c7c7c5662ce847bf03f4803001a7a95103375e5772a06122276bec0afb212b",
+        "target": {
+          "eventIndexZeroBased": 439,
+          "targetName": "research_observatory_desktop_lib",
+          "targetKind": [
+            "staticlib",
+            "cdylib",
+            "rlib"
+          ],
+          "targetRole": "test-lib-artifact-group",
+          "targetRoleBasis": "Message/profile absent; bounded contiguous warning group immediately precedes the matching compiler-artifact whose profile.test is recorded."
+        }
+      },
+      {
+        "identityKey": "clippy::needless_borrows_for_generic_args|apps/desktop/src-tauri/src/document_reprocessing/windows_integration_tests.rs|2699|2879",
+        "eventIndexZeroBased": 440,
+        "code": "clippy::needless_borrows_for_generic_args",
+        "source": "apps/desktop/src-tauri/src/document_reprocessing/windows_integration_tests.rs",
+        "lineStart": 80,
+        "lineEnd": 80,
+        "columnStart": 17,
+        "columnEnd": 197,
+        "byteStart": 2699,
+        "byteEnd": 2879,
+        "sourceSHA256": "c9e0cfd76004f7fdf849b6f6f42c30fd06d8b0a3eabcd760a69e332b2471f9ab",
+        "primarySpanSHA256": "ba9cfac9baf26f8271a41cbc8ad49fafbdec5e335096f41d2e042dfc91c83c52",
+        "target": {
+          "eventIndexZeroBased": 440,
+          "targetName": "research_observatory_desktop_lib",
+          "targetKind": [
+            "staticlib",
+            "cdylib",
+            "rlib"
+          ],
+          "targetRole": "test-lib-artifact-group",
+          "targetRoleBasis": "Message/profile absent; bounded contiguous warning group immediately precedes the matching compiler-artifact whose profile.test is recorded."
+        }
+      },
+      {
+        "identityKey": "clippy::nonminimal_bool|apps/desktop/src-tauri/src/document_viewer.rs|28079|28200",
+        "eventIndexZeroBased": 441,
+        "code": "clippy::nonminimal_bool",
+        "source": "apps/desktop/src-tauri/src/document_viewer.rs",
+        "lineStart": 775,
+        "lineEnd": 777,
+        "columnStart": 12,
+        "columnEnd": 57,
+        "byteStart": 28079,
+        "byteEnd": 28200,
+        "sourceSHA256": "e9da88241676012a346ec7308e0b5a160758b5dacde80977ae6c512c6fc1b5e2",
+        "primarySpanSHA256": "7d9995c7d7f1a582016de01199056c4903e5d1595f9658259fc5432bc20250e9",
+        "target": {
+          "eventIndexZeroBased": 441,
+          "targetName": "research_observatory_desktop_lib",
+          "targetKind": [
+            "staticlib",
+            "cdylib",
+            "rlib"
+          ],
+          "targetRole": "test-lib-artifact-group",
+          "targetRoleBasis": "Message/profile absent; bounded contiguous warning group immediately precedes the matching compiler-artifact whose profile.test is recorded."
+        }
+      },
+      {
+        "identityKey": "clippy::nonminimal_bool|apps/desktop/src-tauri/src/supervisor.rs|129363|129404",
+        "eventIndexZeroBased": 442,
+        "code": "clippy::nonminimal_bool",
+        "source": "apps/desktop/src-tauri/src/supervisor.rs",
+        "lineStart": 3600,
+        "lineEnd": 3600,
+        "columnStart": 9,
+        "columnEnd": 50,
+        "byteStart": 129363,
+        "byteEnd": 129404,
+        "sourceSHA256": "595d8b20197eb3b0cb6e05cae19df3f9523f2bb2eb3c22f99c56cdf0a5df2504",
+        "primarySpanSHA256": "30a6b7a6b315767880911a57c2100f75375f139800ee082e131dddd751b4f459",
+        "target": {
+          "eventIndexZeroBased": 442,
+          "targetName": "research_observatory_desktop_lib",
+          "targetKind": [
+            "staticlib",
+            "cdylib",
+            "rlib"
+          ],
+          "targetRole": "test-lib-artifact-group",
+          "targetRoleBasis": "Message/profile absent; bounded contiguous warning group immediately precedes the matching compiler-artifact whose profile.test is recorded."
+        }
+      },
+      {
+        "identityKey": "clippy::collapsible_if|apps/desktop/src-tauri/src/viewer_actions.rs|12699|12863",
+        "eventIndexZeroBased": 443,
+        "code": "clippy::collapsible_if",
+        "source": "apps/desktop/src-tauri/src/viewer_actions.rs",
+        "lineStart": 380,
+        "lineEnd": 384,
+        "columnStart": 9,
+        "columnEnd": 10,
+        "byteStart": 12699,
+        "byteEnd": 12863,
+        "sourceSHA256": "721733e44d3090bc062517a1eb119607de632ec34662ab92febc5ed6b2fc1167",
+        "primarySpanSHA256": "2600d3552dd23dbbf1082caddb9ebe87fc40fab3ea61e5779b79daa7cd4a6d1c",
+        "target": {
+          "eventIndexZeroBased": 443,
+          "targetName": "research_observatory_desktop_lib",
+          "targetKind": [
+            "staticlib",
+            "cdylib",
+            "rlib"
+          ],
+          "targetRole": "test-lib-artifact-group",
+          "targetRoleBasis": "Message/profile absent; bounded contiguous warning group immediately precedes the matching compiler-artifact whose profile.test is recorded."
+        }
+      },
+      {
+        "identityKey": "clippy::collapsible_if|apps/desktop/src-tauri/src/viewer_actions.rs|14797|14970",
+        "eventIndexZeroBased": 444,
+        "code": "clippy::collapsible_if",
+        "source": "apps/desktop/src-tauri/src/viewer_actions.rs",
+        "lineStart": 447,
+        "lineEnd": 451,
+        "columnStart": 9,
+        "columnEnd": 10,
+        "byteStart": 14797,
+        "byteEnd": 14970,
+        "sourceSHA256": "721733e44d3090bc062517a1eb119607de632ec34662ab92febc5ed6b2fc1167",
+        "primarySpanSHA256": "53c9a08b1b1a03ea88230b77722fcf69ac2aeea39d2a5dc21bee5e9cd87f20bd",
+        "target": {
+          "eventIndexZeroBased": 444,
+          "targetName": "research_observatory_desktop_lib",
+          "targetKind": [
+            "staticlib",
+            "cdylib",
+            "rlib"
+          ],
+          "targetRole": "test-lib-artifact-group",
+          "targetRoleBasis": "Message/profile absent; bounded contiguous warning group immediately precedes the matching compiler-artifact whose profile.test is recorded."
+        }
+      },
+      {
+        "identityKey": "clippy::collapsible_if|apps/desktop/src-tauri/src/viewer_actions.rs|16997|17195",
+        "eventIndexZeroBased": 445,
+        "code": "clippy::collapsible_if",
+        "source": "apps/desktop/src-tauri/src/viewer_actions.rs",
+        "lineStart": 503,
+        "lineEnd": 509,
+        "columnStart": 5,
+        "columnEnd": 6,
+        "byteStart": 16997,
+        "byteEnd": 17195,
+        "sourceSHA256": "721733e44d3090bc062517a1eb119607de632ec34662ab92febc5ed6b2fc1167",
+        "primarySpanSHA256": "50da0359eb82acb2ec9285d90072a1b35e31030fb1ae5fed31d67cae4b5d72a9",
+        "target": {
+          "eventIndexZeroBased": 445,
+          "targetName": "research_observatory_desktop_lib",
+          "targetKind": [
+            "staticlib",
+            "cdylib",
+            "rlib"
+          ],
+          "targetRole": "test-lib-artifact-group",
+          "targetRoleBasis": "Message/profile absent; bounded contiguous warning group immediately precedes the matching compiler-artifact whose profile.test is recorded."
+        }
+      },
+      {
+        "identityKey": "clippy::collapsible_if|apps/desktop/src-tauri/src/viewer_actions.rs|17018|17189",
+        "eventIndexZeroBased": 446,
+        "code": "clippy::collapsible_if",
+        "source": "apps/desktop/src-tauri/src/viewer_actions.rs",
+        "lineStart": 504,
+        "lineEnd": 508,
+        "columnStart": 9,
+        "columnEnd": 10,
+        "byteStart": 17018,
+        "byteEnd": 17189,
+        "sourceSHA256": "721733e44d3090bc062517a1eb119607de632ec34662ab92febc5ed6b2fc1167",
+        "primarySpanSHA256": "e8516d1953b9a289ed04afa470e6c10ebcb5811f6d452c73cc8c053e2215a941",
+        "target": {
+          "eventIndexZeroBased": 446,
+          "targetName": "research_observatory_desktop_lib",
+          "targetKind": [
+            "staticlib",
+            "cdylib",
+            "rlib"
+          ],
+          "targetRole": "test-lib-artifact-group",
+          "targetRoleBasis": "Message/profile absent; bounded contiguous warning group immediately precedes the matching compiler-artifact whose profile.test is recorded."
+        }
+      },
+      {
+        "identityKey": "clippy::nonminimal_bool|apps/desktop/src-tauri/src/viewer_actions.rs|25828|25955",
+        "eventIndexZeroBased": 447,
+        "code": "clippy::nonminimal_bool",
+        "source": "apps/desktop/src-tauri/src/viewer_actions.rs",
+        "lineStart": 732,
+        "lineEnd": 733,
+        "columnStart": 20,
+        "columnEnd": 92,
+        "byteStart": 25828,
+        "byteEnd": 25955,
+        "sourceSHA256": "721733e44d3090bc062517a1eb119607de632ec34662ab92febc5ed6b2fc1167",
+        "primarySpanSHA256": "d4e5a37ee16ec29ecdb7c0b4a5b2226d817c30c949a39229672fd71f7d9c0c82",
+        "target": {
+          "eventIndexZeroBased": 447,
+          "targetName": "research_observatory_desktop_lib",
+          "targetKind": [
+            "staticlib",
+            "cdylib",
+            "rlib"
+          ],
+          "targetRole": "test-lib-artifact-group",
+          "targetRoleBasis": "Message/profile absent; bounded contiguous warning group immediately precedes the matching compiler-artifact whose profile.test is recorded."
+        }
+      },
+      {
+        "identityKey": "clippy::nonminimal_bool|apps/desktop/src-tauri/src/viewer_actions.rs|28964|29012",
+        "eventIndexZeroBased": 448,
+        "code": "clippy::nonminimal_bool",
+        "source": "apps/desktop/src-tauri/src/viewer_actions.rs",
+        "lineStart": 824,
+        "lineEnd": 824,
+        "columnStart": 20,
+        "columnEnd": 68,
+        "byteStart": 28964,
+        "byteEnd": 29012,
+        "sourceSHA256": "721733e44d3090bc062517a1eb119607de632ec34662ab92febc5ed6b2fc1167",
+        "primarySpanSHA256": "b4e7c9b3f0398bacc8d8dfdac9e0a524066177ed1bf0e2e1dc39624bb4c78146",
+        "target": {
+          "eventIndexZeroBased": 448,
+          "targetName": "research_observatory_desktop_lib",
+          "targetKind": [
+            "staticlib",
+            "cdylib",
+            "rlib"
+          ],
+          "targetRole": "test-lib-artifact-group",
+          "targetRoleBasis": "Message/profile absent; bounded contiguous warning group immediately precedes the matching compiler-artifact whose profile.test is recorded."
+        }
+      },
+      {
+        "identityKey": "clippy::too_many_arguments|apps/desktop/src-tauri/src/viewer_actions.rs|27188|27507",
+        "eventIndexZeroBased": 449,
+        "code": "clippy::too_many_arguments",
+        "source": "apps/desktop/src-tauri/src/viewer_actions.rs",
+        "lineStart": 777,
+        "lineEnd": 786,
+        "columnStart": 1,
+        "columnEnd": 31,
+        "byteStart": 27188,
+        "byteEnd": 27507,
+        "sourceSHA256": "721733e44d3090bc062517a1eb119607de632ec34662ab92febc5ed6b2fc1167",
+        "primarySpanSHA256": "a65a6da1c65cbbc4c63db69be95ef3b8978bdba887c4e35dff77290acbc09edd",
+        "target": {
+          "eventIndexZeroBased": 449,
+          "targetName": "research_observatory_desktop_lib",
+          "targetKind": [
+            "staticlib",
+            "cdylib",
+            "rlib"
+          ],
+          "targetRole": "test-lib-artifact-group",
+          "targetRoleBasis": "Message/profile absent; bounded contiguous warning group immediately precedes the matching compiler-artifact whose profile.test is recorded."
+        }
+      },
+      {
+        "identityKey": "clippy::nonminimal_bool|apps/desktop/src-tauri/src/viewer_actions.rs|35231|35279",
+        "eventIndexZeroBased": 450,
+        "code": "clippy::nonminimal_bool",
+        "source": "apps/desktop/src-tauri/src/viewer_actions.rs",
+        "lineStart": 961,
+        "lineEnd": 961,
+        "columnStart": 24,
+        "columnEnd": 72,
+        "byteStart": 35231,
+        "byteEnd": 35279,
+        "sourceSHA256": "721733e44d3090bc062517a1eb119607de632ec34662ab92febc5ed6b2fc1167",
+        "primarySpanSHA256": "e1a3853de79cd10584649bbcaf9ce66536665869818b7e0e00daa4e76ce30bcf",
+        "target": {
+          "eventIndexZeroBased": 450,
+          "targetName": "research_observatory_desktop_lib",
+          "targetKind": [
+            "staticlib",
+            "cdylib",
+            "rlib"
+          ],
+          "targetRole": "test-lib-artifact-group",
+          "targetRoleBasis": "Message/profile absent; bounded contiguous warning group immediately precedes the matching compiler-artifact whose profile.test is recorded."
+        }
+      },
+      {
+        "identityKey": "clippy::manual_is_multiple_of|apps/desktop/src-tauri/src/viewer_export.rs|19590|19603",
+        "eventIndexZeroBased": 451,
+        "code": "clippy::manual_is_multiple_of",
+        "source": "apps/desktop/src-tauri/src/viewer_export.rs",
+        "lineStart": 567,
+        "lineEnd": 567,
+        "columnStart": 78,
+        "columnEnd": 91,
+        "byteStart": 19590,
+        "byteEnd": 19603,
+        "sourceSHA256": "bb08c1a7859a29c6e4f52ce3d2a2095b5df72d1b6db2c85562391b97c32cbe65",
+        "primarySpanSHA256": "ada690e3f7636c78562daf7919f03ccef79017ec79c49c55db0e729511a50a8e",
+        "target": {
+          "eventIndexZeroBased": 451,
+          "targetName": "research_observatory_desktop_lib",
+          "targetKind": [
+            "staticlib",
+            "cdylib",
+            "rlib"
+          ],
+          "targetRole": "test-lib-artifact-group",
+          "targetRoleBasis": "Message/profile absent; bounded contiguous warning group immediately precedes the matching compiler-artifact whose profile.test is recorded."
+        }
+      },
+      {
+        "identityKey": "clippy::manual_is_multiple_of|apps/desktop/src-tauri/src/viewer_export.rs|23006|23020",
+        "eventIndexZeroBased": 452,
+        "code": "clippy::manual_is_multiple_of",
+        "source": "apps/desktop/src-tauri/src/viewer_export.rs",
+        "lineStart": 649,
+        "lineEnd": 649,
+        "columnStart": 56,
+        "columnEnd": 70,
+        "byteStart": 23006,
+        "byteEnd": 23020,
+        "sourceSHA256": "bb08c1a7859a29c6e4f52ce3d2a2095b5df72d1b6db2c85562391b97c32cbe65",
+        "primarySpanSHA256": "d4a4703267158e040bcb57b9c2f8bdd0ed578dc2dfd028ebe315b2022b905b14",
+        "target": {
+          "eventIndexZeroBased": 452,
+          "targetName": "research_observatory_desktop_lib",
+          "targetKind": [
+            "staticlib",
+            "cdylib",
+            "rlib"
+          ],
+          "targetRole": "test-lib-artifact-group",
+          "targetRoleBasis": "Message/profile absent; bounded contiguous warning group immediately precedes the matching compiler-artifact whose profile.test is recorded."
+        }
+      },
+      {
+        "identityKey": "clippy::manual_is_multiple_of|apps/desktop/src-tauri/src/viewer_export.rs|35186|35199",
+        "eventIndexZeroBased": 453,
+        "code": "clippy::manual_is_multiple_of",
+        "source": "apps/desktop/src-tauri/src/viewer_export.rs",
+        "lineStart": 929,
+        "lineEnd": 929,
+        "columnStart": 38,
+        "columnEnd": 51,
+        "byteStart": 35186,
+        "byteEnd": 35199,
+        "sourceSHA256": "bb08c1a7859a29c6e4f52ce3d2a2095b5df72d1b6db2c85562391b97c32cbe65",
+        "primarySpanSHA256": "30b0595ccb325b14c95741c1ad56a96cc4313a5b26c46c215db8bec16f9597d2",
+        "target": {
+          "eventIndexZeroBased": 453,
+          "targetName": "research_observatory_desktop_lib",
+          "targetKind": [
+            "staticlib",
+            "cdylib",
+            "rlib"
+          ],
+          "targetRole": "test-lib-artifact-group",
+          "targetRoleBasis": "Message/profile absent; bounded contiguous warning group immediately precedes the matching compiler-artifact whose profile.test is recorded."
+        }
+      },
+      {
+        "identityKey": "clippy::collapsible_if|apps/desktop/src-tauri/src/viewer_print.rs|2709|3295",
+        "eventIndexZeroBased": 454,
+        "code": "clippy::collapsible_if",
+        "source": "apps/desktop/src-tauri/src/viewer_print.rs",
+        "lineStart": 86,
+        "lineEnd": 99,
+        "columnStart": 13,
+        "columnEnd": 14,
+        "byteStart": 2709,
+        "byteEnd": 3295,
+        "sourceSHA256": "370e46f082a74daaabd3c2565e2e29b444ed53243f2b868cfa1bad6509b8a5ec",
+        "primarySpanSHA256": "31429c4ce0f764d1f3cf8410fb40874a834ec20369cf3003d8182e1eff450afb",
+        "target": {
+          "eventIndexZeroBased": 454,
+          "targetName": "research_observatory_desktop_lib",
+          "targetKind": [
+            "staticlib",
+            "cdylib",
+            "rlib"
+          ],
+          "targetRole": "test-lib-artifact-group",
+          "targetRoleBasis": "Message/profile absent; bounded contiguous warning group immediately precedes the matching compiler-artifact whose profile.test is recorded."
+        }
+      },
+      {
+        "identityKey": "clippy::needless_borrows_for_generic_args|apps/desktop/src-tauri/src/lib.rs|183064|183076",
+        "eventIndexZeroBased": 455,
+        "code": "clippy::needless_borrows_for_generic_args",
+        "source": "apps/desktop/src-tauri/src/lib.rs",
+        "lineStart": 4351,
+        "lineEnd": 4351,
+        "columnStart": 55,
+        "columnEnd": 67,
+        "byteStart": 183064,
+        "byteEnd": 183076,
+        "sourceSHA256": "6b17452ac96708f9642d7b99e99c485dc2230fc10ee3eef883ab2697cb486780",
+        "primarySpanSHA256": "68d1e87cc58933acd8db7a417e6ac5d843e04b2f2847bb04a6dadb28e4643ba8",
+        "target": {
+          "eventIndexZeroBased": 455,
+          "targetName": "research_observatory_desktop_lib",
+          "targetKind": [
+            "staticlib",
+            "cdylib",
+            "rlib"
+          ],
+          "targetRole": "test-lib-artifact-group",
+          "targetRoleBasis": "Message/profile absent; bounded contiguous warning group immediately precedes the matching compiler-artifact whose profile.test is recorded."
+        }
+      },
+      {
+        "identityKey": "clippy::needless_borrows_for_generic_args|apps/desktop/src-tauri/src/lib.rs|183387|183399",
+        "eventIndexZeroBased": 456,
+        "code": "clippy::needless_borrows_for_generic_args",
+        "source": "apps/desktop/src-tauri/src/lib.rs",
+        "lineStart": 4359,
+        "lineEnd": 4359,
+        "columnStart": 71,
+        "columnEnd": 83,
+        "byteStart": 183387,
+        "byteEnd": 183399,
+        "sourceSHA256": "6b17452ac96708f9642d7b99e99c485dc2230fc10ee3eef883ab2697cb486780",
+        "primarySpanSHA256": "68d1e87cc58933acd8db7a417e6ac5d843e04b2f2847bb04a6dadb28e4643ba8",
+        "target": {
+          "eventIndexZeroBased": 456,
+          "targetName": "research_observatory_desktop_lib",
+          "targetKind": [
+            "staticlib",
+            "cdylib",
+            "rlib"
+          ],
+          "targetRole": "test-lib-artifact-group",
+          "targetRoleBasis": "Message/profile absent; bounded contiguous warning group immediately precedes the matching compiler-artifact whose profile.test is recorded."
+        }
+      }
+    ],
+    "completeDiagnosticEvidence": {
+      "rawBytes": 483800,
+      "decodedJSONEvents": 459,
+      "compilerArtifactEvents": 385,
+      "codedWarningMessages": 36,
+      "uncodedMessages": 0,
+      "errorLevelMessages": 0,
+      "successfulBuildFinishedEvents": 1,
+      "normalLibArtifactObserved": true,
+      "testLibArtifactObserved": true,
+      "normalArtifactGroupWarningOccurrences": 15,
+      "testArtifactGroupWarningOccurrences": 21,
+      "targetGroupingLimit": "Messages omit profile.test. Role labels are contiguous groups preceding actual normal/test compiler-artifact JSON indexes434/457, not a direct message-profile assertion.",
+      "sourceSpanClassificationComplete": true,
+      "newOwnershipCodeFindingCount": 0
+    },
+    "reasonedDisposition": [
+      "Independently reviewed all36 warnings and21 exact primary source spans, including six extra test-compilation sites absent from the original first-target failure. No guessed15-count cap, hidden warning, uncoded/error diagnostic or new C34 ownership-code finding is accepted. Every occurrence/target-group fact is retained.",
+      "The six lint kinds request boolean/nested-if simplification, equivalent integer-boundary/multiple syntax, generic-argument borrow removal or argument-count refactoring. Actual source inspection establishes existing expression/API/readability/maintainability style findings, not emitted compiler correctness/security errors or a demonstrated functional/security defect. This bounded classification does not certify all functions defect-free.",
+      "All affected whole-file blobs except lib.rs are unchanged since C34 scope base. Two lib borrow sites are in the line-exact old menu diagnostics test (base4174-4218/current4336-4380), outside new fixture code. Actual compound closure authenticates source/tool inputs for normal/test compilation.",
+      "Under prospective owner34e, accept only this exact candidate-bound existing style debt for currentW2 and defer it toW9, avoiding unrelated multi-file refactoring or repeated Native qualification during the narrow restoration. This is an explicit finite current-W2 disposition, not a claim that earlier A06 Python/TypeScript methods authorized Rust exemptions.",
+      "Strict6a68FAIL remainsFAIL. Capped --cap-lints=warn root0 is nonqualifying collection and can downgrade source deny/forbid as well as command warnings. No checker/config/reference/source suppression, broad future-warning allowance, new security-finding waiver or canonicalClippyPASS is introduced.",
+      "The scope is only these21 identities/36 occurrences at this actual candidate and source/runtime closure. Different findings or material source/tool changes require affected disposition. Shipping/task/Wave/release and full-workspace quality remain separate."
+    ],
+    "W9Followup": {
+      "wave": "W9",
+      "status": "PROVISIONAL_FUTURE_OUTCOME",
+      "outcome": "Resolve or explicitly reassess these21 exact Rust style identities under the then-approved W9 plan and run affected Rust quality. Preserve all36 occurrences and strictFAIL as predecessor evidence.",
+      "findingIdentityCount": 21,
+      "occurrenceCount": 36,
+      "scope": "No W9 implementation or new immutable task ID is authorized here."
+    },
+    "privacy": {
+      "publicationSafe": true,
+      "reviewed": "Only relative source/artifact refs,digests,lint codes,spans,target-group facts are included. All36 occurrences retained. Raw Cargo src_path/rendered messages/argv/account paths/process/session/environment remain ignored private evidence."
+    },
+    "taskApproved": false,
+    "waveApproved": false,
+    "releaseApproved": false,
+    "qualifyingCheckExecutedByReviewer": false,
+    "runtimeOrArtifactScanByReviewer": false,
+    "trackedWrites": false
+  },
+  "currentFrontendComponentDisposition": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/fresh-product-build-postinstall-01/independent-c34-actual-component-disposition-01.json",
+    "sha256": "94cfac10b8ed2a133eae6f144cb2a5dbd75e786a56b90fd359645e0871ec116f"
+  },
+  "currentFrontendAggregateFAIL": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/fresh-product-build-postinstall-01/actual-build-c34-01/receipt.json",
+    "sha256": "85138a54cc5792a9ed13c091d85cfdc7fe8bf3349918ee533f14cd2a7546beae"
+  },
+  "originalBuildAggregateFAIL": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/current-shipping-native-core-package-plan-01/actual-build-package-c34-02/receipt.json",
+    "sha256": "106e7f4136b652d1fd4b25f2a157a7ac9b79f7884d34f4e3ade6efcb324af798"
+  },
+  "rustComponentObservation": {
+    "path": "artifacts/tmp/W2.C34.T01.actual-build02-component-observations-01.json",
+    "sha256": "b45b099e9814ffa0c1aab773bc900b7feca995b7de6e7150c905061e62cde244"
+  },
+  "actualPostClosureWitness": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/current-shipping-native-core-package-plan-01/actual-build-package-c34-03/prior-post-closure-witness.json",
+    "sha256": "b67f5c790f8e0b8cd55d98e06c8524b943e9a9129d528dfd5b00755034297997"
+  },
+  "compoundBuildSemantics": "Actual five prior components retained at original execution/candidate/timings, new held post-witness and only new release/package stage. Original106e final flag is never backfilled; no completed test is replayed.",
+  "shippingTransportSuccessor": {
+    "preservedFailures": [
+      {
+        "path": "artifacts/tmp/W2.remaining-corrections-batch-01/current-shipping-native-core-package-plan-01/shipping-ui-bindings-c34-03/actual-owned-shipping-chain-01/receipt.json",
+        "sha256": "2ebd7fc3c1e550f88850cbaf8ca6d1279a57b6747addb7881b0d5e0ca0abff42"
+      },
+      {
+        "path": "artifacts/tmp/W2.remaining-corrections-batch-01/current-shipping-native-core-package-plan-01/shipping-ui-bindings-c34-04/actual-owned-shipping-chain-01/receipt.json",
+        "sha256": "6d699d0b4f8b849ba6be52b572df2015b79f3960e4daabec91743ecc6fe8f90d"
+      },
+      {
+        "path": "artifacts/tmp/W2.remaining-corrections-batch-01/current-shipping-native-core-package-plan-01/shipping-ui-bindings-c34-04/actual-fresh-recovery-chain-01/a06-t02-shipping-live-owner-07.report.json",
+        "sha256": "9bbb670c3b73b162b1d9f32e458322b84564ab66cb96ab22a110a4244888d579"
+      },
+      {
+        "path": "artifacts/tmp/W2.remaining-corrections-batch-01/current-shipping-native-core-package-plan-01/shipping-ui-bindings-c34-04/actual-owned-shipping-chain-01/owner-death.raw.log",
+        "sha256": "440fc671bccbc15c7609bb50a4c17e76de800ccd583468b501cf0a698ca4d3a7"
+      }
+    ],
+    "fixtureNonce": "w2-c34-shipping-recovery-05",
+    "semantics": "New absent full-five synthetic fixture after old03 was genuinely opened/interrupted by failed04. Exact private C# fixture05 guard and BOM-free UTF8 Console output; original assertions/clocks/strict decode retained. No old failure becomes PASS or old fixture repair."
+  },
+  "sourceApplication": {
+    "path": "artifacts/tmp/W2.C34.T01.source-application-01/application.json",
+    "sha256": "1f3dcaff5583536c022a4b19a090937d26b561e3cf18c6607f3d2150174ddce0"
+  },
+  "sourceReadiness": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/shipping-seed-ownership-diagnosis-01/creation-only-source-proposal-01/independent-formatted-source-readiness-02.json",
+    "sha256": "aac377d5906cad220ad78419c595ccc70deac5b0899204718adbba2fe360cb0d"
+  },
+  "nativeSourceRestoration": {
+    "taskId": "W2.C34.T01",
+    "taskBase": "69cac3200fbf6d0e99769d43860c50f41d19390f",
+    "sourcePath": "apps/desktop/src-tauri/src/lib.rs",
+    "rawSourceSHA256": "6b17452ac96708f9642d7b99e99c485dc2230fc10ee3eef883ab2697cb486780",
+    "gitSourceSHA256": "6b17452ac96708f9642d7b99e99c485dc2230fc10ee3eef883ab2697cb486780",
+    "origin": {
+      "taskId": "W2.A06.T02",
+      "commit": "50d1e64c57e0348ad5c028e0dc1d6c2968b349ae",
+      "sha256": "0c9d18adeb8ec42f231cc485e5d500490e5137403e62f519cdead448f7d70914"
+    },
+    "source_application": {
+      "path": "artifacts/tmp/W2.C34.T01.source-application-01/application.json",
+      "sha256": "1f3dcaff5583536c022a4b19a090937d26b561e3cf18c6607f3d2150174ddce0"
+    },
+    "formatted_source_readiness": {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/shipping-seed-ownership-diagnosis-01/creation-only-source-proposal-01/independent-formatted-source-readiness-02.json",
+      "sha256": "aac377d5906cad220ad78419c595ccc70deac5b0899204718adbba2fe360cb0d"
+    },
+    "specification": {
+      "path": "artifacts/evidence/W2.C34.T01.spec.json",
+      "sha256": "0aa62dba5887bfb24ba8c4787e3c85db245857bd73759d702182f1c551cb5464"
+    },
+    "formattedSourcePayload": {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/shipping-seed-ownership-diagnosis-01/creation-only-source-proposal-01/lib.rs.proposed.rustfmt-02",
+      "sha256": "6b17452ac96708f9642d7b99e99c485dc2230fc10ee3eef883ab2697cb486780"
+    },
+    "scopeDecision": {
+      "path": "artifacts/evidence/W2.shipping-fixture-vault-creation-01.decision-01.json",
+      "sha256": "c3507cd43b18de1da5af301c5c05bce6ff1b0aad646729e97688795e612cc464"
+    },
+    "scopeIntroductionCommit": "69cac3200fbf6d0e99769d43860c50f41d19390f"
+  },
+  "creationScopePublication": {
+    "decision": {
+      "path": "artifacts/evidence/W2.shipping-fixture-vault-creation-01.decision-01.json",
+      "sha256": "c3507cd43b18de1da5af301c5c05bce6ff1b0aad646729e97688795e612cc464"
+    },
+    "actualIntroductionCommit": "69cac3200fbf6d0e99769d43860c50f41d19390f"
+  },
+  "actualPackage": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/current-shipping-native-core-package-plan-01/actual-build-package-c34-03/package.json",
+    "sha256": "1b30ea0cff986c30438150dc63ccd6307cc8b3e0981b5fd22655d9fd6602f9d4"
+  },
+  "priorAdverseEvidence": [
+    {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/current-shipping-native-core-package-plan-01/shipping-ui-bindings-04/actual-owned-shipping-chain-01/receipt.json",
+      "sha256": "8262a2b64a0978f57f02f7fbc98d5a2c8d07369f17cbd66d6d80939081d74dd7"
+    },
+    {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/current-shipping-native-core-package-plan-01/actual-quality-c34-01/receipt.json",
+      "sha256": "6a68dc95123b5139dffbb71413dfb614c8db568e543115612dca9db6c013c9e3"
+    },
+    {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/fresh-product-build-postinstall-01/actual-build-c34-01/receipt.json",
+      "sha256": "85138a54cc5792a9ed13c091d85cfdc7fe8bf3349918ee533f14cd2a7546beae"
+    },
+    {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/current-shipping-native-core-package-plan-01/actual-build-package-c34-02/receipt.json",
+      "sha256": "106e7f4136b652d1fd4b25f2a157a7ac9b79f7884d34f4e3ade6efcb324af798"
+    },
+    {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/current-shipping-native-core-package-plan-01/shipping-ui-bindings-c34-03/actual-owned-shipping-chain-01/receipt.json",
+      "sha256": "2ebd7fc3c1e550f88850cbaf8ca6d1279a57b6747addb7881b0d5e0ca0abff42"
+    },
+    {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/current-shipping-native-core-package-plan-01/shipping-ui-bindings-c34-04/actual-owned-shipping-chain-01/receipt.json",
+      "sha256": "6d699d0b4f8b849ba6be52b572df2015b79f3960e4daabec91743ecc6fe8f90d"
+    },
+    {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/current-shipping-native-core-package-plan-01/shipping-ui-bindings-c34-04/actual-fresh-recovery-chain-01/a06-t02-shipping-live-owner-07.report.json",
+      "sha256": "9bbb670c3b73b162b1d9f32e458322b84564ab66cb96ab22a110a4244888d579"
+    },
+    {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/current-shipping-native-core-package-plan-01/shipping-ui-bindings-c34-04/actual-owned-shipping-chain-01/owner-death.raw.log",
+      "sha256": "440fc671bccbc15c7609bb50a4c17e76de800ccd583468b501cf0a698ca4d3a7"
+    }
+  ],
+  "sourceAuthorshipDistinction": {
+    "path": "apps/desktop/src-tauri/src/lib.rs",
+    "boundedBlameLines": "3484-3498",
+    "rootCreationAuthoringCommit": "3f4b2153a90eb29ee74c9f55f628eb3d15884922",
+    "directoryLoopAuthoringCommit": "cf0cfab10191503a6a61515bd544ea001ba07ab4",
+    "historicalTasks": [
+      "W1.A09.T03",
+      "W1.A09.T04"
+    ],
+    "meaning": "Original Native fixture code was authored during W1. W2.A06.T02 owns the current approved shipping recovery outcome/proof prerequisite, not original Native source authorship. CAP-05.S06.T02 manual document structure-correction scope is unrelated and must not be relabeled as origin."
+  },
+  "verificationSelection": {
+    "selectedCommandIds": [
+      "desktop:unit",
+      "desktop:application",
+      "desktop:ui-accessibility"
+    ],
+    "riskAnalysis": "Only first-creation Native fixture ownership and original shipping recovery integration. Original default Rust binary lists275:262 pass and13 exact source-declared opt-in ignores mapped in actual component disposition; all39 C34 applicable lib IDs pass. No opt-in native/clipboard/GUI helper is blindly invoked, actual release package and five original shipping stages run with unchanged assertions/denials/clocks and normal owned cleanup. Fresh complete changed-file Rustfmt is an actual qualifying row. Full cappedClippy diagnostic remains nonqualifying and strict6a68FAIL remains preserved; any finite current-W2 disposition is separately bound to actual complete diagnostics and W9 follow-up, never canonicalClippyPASS.",
+    "deferred": [
+      "Unchanged original state/action/reference/ADR and separate wholeNative result remain historical, explicitly attributed evidence.",
+      "Wave qualification, security/package/notices/performance and separate human release remain required."
+    ]
+  },
+  "correctiveIntegration": {
+    "originSha256": "0c9d18adeb8ec42f231cc485e5d500490e5137403e62f519cdead448f7d70914",
+    "authorityPreserved": true,
+    "affectedChecks": [
+      "rustfmt --edition 2024 --config skip_children=true --check apps/desktop/src-tauri/src/lib.rs",
+      "cargo test --message-format=json --locked --offline -p research-observatory-desktop --features integration-harness --lib --no-run -j 1",
+      "target/debug/deps/research_observatory_desktop_lib-1922d4e089438d1c.exe --list",
+      "target/debug/deps/research_observatory_desktop_lib-1922d4e089438d1c.exe --test-threads=1",
+      "cargo rustc --message-format=json --locked --offline -p research-observatory-desktop --features integration-harness --example project_contract_probe --release -j 1",
+      ".venv/Scripts/python.exe -B -s artifacts/tmp/W2.remaining-corrections-batch-01/current-shipping-native-core-package-plan-01/shipping-ui-bindings-c34-05/a06-t02-ui-bootstrap-01.py",
+      ".venv/Scripts/python.exe -B -s artifacts/tmp/W2.remaining-corrections-batch-01/current-shipping-native-core-package-plan-01/shipping-ui-bindings-c34-05/a06-t02-prepare-recovery-fixture-01.py",
+      ".venv/Scripts/python.exe -B -s artifacts/tmp/W2.remaining-corrections-batch-01/current-shipping-native-core-package-plan-01/shipping-ui-bindings-c34-05/a06-t02-shipping-live-owner-07.py",
+      ".venv/Scripts/python.exe -B -s artifacts/tmp/W2.remaining-corrections-batch-01/current-shipping-native-core-package-plan-01/shipping-ui-bindings-c34-05/a06-t02-shipping-recovery-06.py",
+      ".venv/Scripts/python.exe -B -s artifacts/tmp/W2.remaining-corrections-batch-01/current-shipping-native-core-package-plan-01/shipping-ui-bindings-c34-05/a06-t02-shipping-live-denial-01.py"
+    ],
+    "reusedEvidence": [
+      {
+        "path": "artifacts/evidence/W2.A06.T02.R01.json",
+        "sha256": "9207dfd86ac8ad37b34267296e0ede6e0eda1444a2910ea9f26c02b1bc848e59",
+        "byteScope": "committed-Git-blob",
+        "commit": "1c20b883a0adac7645913568d057a7c146feffcb",
+        "qualifyingHistoricalCandidate": "df93798ba55571d6258f720dc4a8ed2766f0aee7"
+      }
+    ],
+    "rationale": "Current W2.A06.T02 owns approved shipping recovery outcome; W1.A09.T03/T04 authored original Native fixture. Finite public c350 explicitly adds creation-only scope, not a retroactive frozen A06 six-file authority. All old failures/ACLs/receipts stay immutable; fresh absent vault only, same-path current-user protected ACL at creation, no product policy/authority change or existing ACL repair."
+  },
+  "correctionSpecification": {
+    "path": "artifacts/evidence/W2.C34.T01.spec.json",
+    "sha256": "0aa62dba5887bfb24ba8c4787e3c85db245857bd73759d702182f1c551cb5464"
+  },
+  "fullProfilePassClaimed": false,
+  "waveComplete": false,
+  "releaseApproved": false,
+  "limits": [
+    "Real Windows Native/Core/UIA and current205frontend; business Core is current source Python, separately frozen c15 is guardian. No installer/frozen-GUI/Authenticode/production trust/fullWindowsDLL closure.",
+    "Compiler Jobs explicitly drain only trusted compilation; all eleven outer stages must drain normally. Exact Rust275 inventory/262passes/13sourceoptin ignores/five interleavedOK are authenticated; unknown ignores fail and separate boundary evidence remains explicit. No old failed runtime lifetime becomes PASS.",
+    "Fresh formatter row is distinct from source-only formatting review. Full capped Clippy diagnostics and actual finite debt disposition remain distinct from original strict Clippy FAIL; no standalone strictClippy or fullworkspace quality PASS."
+  ]
+}

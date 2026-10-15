@@ -7739,7 +7739,7 @@ waves:
       id: W2.C34.T01
       wave: W2
       priority: P0
-      status: IN_PROGRESS
+      status: REVIEW
       owner: agent:/root
       branch: codex/w2-implementation
       base_sha: 69cac3200fbf6d0e99769d43860c50f41d19390f
@@ -7749,12 +7749,17 @@ waves:
         claimed_at: '2026-10-15T17:57:51+00:00'
         expires_at: '2026-10-16T01:57:51+00:00'
       started_at: '2026-10-15T17:57:51+00:00'
-      updated_at: '2026-10-15T17:57:51+00:00'
+      updated_at: '2026-10-15T20:08:56+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
-      evidence: []
-      verification_state: null
+      evidence:
+      - type: criterion-manifest
+        path: artifacts/evidence/W2.C34.T01.R01.json
+        sha256: 17680b4c74eb1c3df955a6193f779d446475e434aa3abe4b2c2a5751b24f7e39
+        commit: 1c20b883a0adac7645913568d057a7c146feffcb
+        recorded_at: '2026-10-15T20:08:56+00:00'
+      verification_state: passed
       review:
         reviewer: null
         result: null
@@ -7763,7 +7768,61 @@ waves:
       review_control:
         version: 1
         attempts: []
-        current_submission: null
+        current_submission:
+          id: R01
+          submitted_by: agent:/root
+          submitted_at: '2026-10-15T20:08:56+00:00'
+          candidate_commit: 1c20b883a0adac7645913568d057a7c146feffcb
+          base_commit: 69cac3200fbf6d0e99769d43860c50f41d19390f
+          branch: codex/w2-implementation
+          evidence_reference:
+            type: criterion-manifest
+            path: artifacts/evidence/W2.C34.T01.R01.json
+            sha256: 17680b4c74eb1c3df955a6193f779d446475e434aa3abe4b2c2a5751b24f7e39
+            commit: 1c20b883a0adac7645913568d057a7c146feffcb
+            recorded_at: '2026-10-15T20:08:56+00:00'
+          acceptance_criteria_sha256: 89dcfef5e414aaa96edbb424261a1d814282658927f3e668ce5968edf467a6a5
+          changed_paths:
+          - apps/desktop/src-tauri/src/lib.rs
+          - docs/planning-implementation-plan.md
+          - planning/backlog.yaml
+          - planning/review-site/index.html
+          - planning/review-site/manifest.json
+          - planning/review-site/waves/W2.html
+          - planning/status-summary.md
+          selected_checks:
+          - rustfmt --edition 2024 --config skip_children=true --check apps/desktop/src-tauri/src/lib.rs
+          - cargo test --message-format=json --locked --offline -p research-observatory-desktop --features integration-harness
+            --lib --no-run -j 1
+          - target/debug/deps/research_observatory_desktop_lib-1922d4e089438d1c.exe --list
+          - target/debug/deps/research_observatory_desktop_lib-1922d4e089438d1c.exe --test-threads=1
+          - cargo rustc --message-format=json --locked --offline -p research-observatory-desktop --features integration-harness
+            --example project_contract_probe --release -j 1
+          - .venv/Scripts/python.exe -B -s artifacts/tmp/W2.remaining-corrections-batch-01/current-shipping-native-core-package-plan-01/shipping-ui-bindings-c34-05/a06-t02-ui-bootstrap-01.py
+          - .venv/Scripts/python.exe -B -s artifacts/tmp/W2.remaining-corrections-batch-01/current-shipping-native-core-package-plan-01/shipping-ui-bindings-c34-05/a06-t02-prepare-recovery-fixture-01.py
+          - .venv/Scripts/python.exe -B -s artifacts/tmp/W2.remaining-corrections-batch-01/current-shipping-native-core-package-plan-01/shipping-ui-bindings-c34-05/a06-t02-shipping-live-owner-07.py
+          - .venv/Scripts/python.exe -B -s artifacts/tmp/W2.remaining-corrections-batch-01/current-shipping-native-core-package-plan-01/shipping-ui-bindings-c34-05/a06-t02-shipping-recovery-06.py
+          - .venv/Scripts/python.exe -B -s artifacts/tmp/W2.remaining-corrections-batch-01/current-shipping-native-core-package-plan-01/shipping-ui-bindings-c34-05/a06-t02-shipping-live-denial-01.py
+          deferred_checks:
+          - Unchanged original state/action/reference/ADR and separate wholeNative result remain historical, explicitly attributed
+            evidence.
+          - Wave qualification, security/package/notices/performance and separate human release remain required.
+          selection_rationale: Only first-creation Native fixture ownership and original shipping recovery integration. Original
+            default Rust binary lists275:262 pass and13 exact source-declared opt-in ignores mapped in actual component disposition;
+            all39 C34 applicable lib IDs pass. No opt-in native/clipboard/GUI helper is blindly invoked, actual release package
+            and five original shipping stages run with unchanged assertions/denials/clocks and normal owned cleanup. Fresh
+            complete changed-file Rustfmt is an actual qualifying row. Full cappedClippy diagnostic remains nonqualifying
+            and strict6a68FAIL remains preserved; any finite current-W2 disposition is separately bound to actual complete
+            diagnostics and W9 follow-up, never canonicalClippyPASS.
+          selection_sha256: 6baa3a2483723e8e13bfa32bb503a606c61e946dce9f14c1bd14e3b99c233ac8
+          prior_attempt_id: null
+          open_finding_ids: []
+          root_cause_analysis: null
+          selected_command_ids:
+          - desktop:unit
+          - desktop:application
+          - desktop:ui-accessibility
+          packet_sha256: 1739a82d002f936463dc69f2cbb806120faeb151212576580281984f1c286e3c
       correction:
         origin_task_id: W2.A06.T02
         origin_commit: 50d1e64c57e0348ad5c028e0dc1d6c2968b349ae
