@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import base64
 import hashlib
+import json
 import unittest
 import uuid
 from contextlib import closing
@@ -16,7 +17,8 @@ from research_observatory_core.authentication import capability_token_digest
 from research_observatory_core.import_preview_repository import sqlite_import_preview_repository
 from research_observatory_core.ingestion.import_drafts import ImportPermission
 from research_observatory_core.ingestion.preview_workflow import fingerprint
-from research_observatory_core.ingestion.reference_imports import PARSER_VERSION, ImportLimits
+from research_observatory_core.ingestion.protected_import_profiles import profile_limits
+from research_observatory_core.ingestion.reference_imports import PARSER_VERSION
 from research_observatory_core.ports.import_previews import PreviewDraftChange
 from research_observatory_core.storage import open_canonical_database
 
@@ -167,7 +169,7 @@ class ImportIntakeApiTests(unittest.TestCase):
                         "format": "csv",
                         "encoding": "utf-8",
                         "delimiter": delimiter,
-                        "limits": asdict(ImportLimits()),
+                        "limits": asdict(profile_limits(repository.read(preview).parser_profile)),
                     }
                 )
                 self.assertEqual([expected], [row[0] for row in recorded])
@@ -365,6 +367,40 @@ class ImportIntakeApiTests(unittest.TestCase):
         self.fixture.projects.close(root=self.fixture.root, trace_id="1" * 32)
         self.fixture.projects.open(root=self.fixture.root, trace_id="1" * 32)
         self.assertEqual(409, self.post("report", address, revision=1, after=2, limit=1).status_code)
+
+
+class ProtectedProfileTransportTests(unittest.TestCase):
+    def test_profile_selection_is_not_a_public_create_field_or_response_field(self):
+        from pydantic import ValidationError
+        from research_observatory_core.import_intake_api import IntakeCreate
+        from research_observatory_core.import_review import preview_item
+        from research_observatory_core.ports.import_previews import PreviewState
+
+        document = json.loads(
+            (Path(__file__).parents[1] / "fixtures/imports/protected-preview-legacy120-authority-v1.json").read_text()
+        )
+        state = PreviewState.model_validate_json(json.dumps(document["cases"][0]["unscheduled"]["state"]))
+        for profile in ("legacy-preview-120s-v1", "protected-preview-900s-v1"):
+            exposed = preview_item(state.model_copy(update={"parser_profile": profile}), None).model_dump(
+                mode="json", by_alias=True
+            )
+            self.assertFalse(any("profile" in key.lower() or "limit" in key.lower() for key in exposed))
+        properties = IntakeCreate.model_json_schema()["properties"]
+        self.assertNotIn("parserProfile", properties)
+        self.assertNotIn("parserLimitsHash", properties)
+        values = {
+            "root": "synthetic",
+            "projectId": state.project_id,
+            "sessionId": "1" * 32,
+            "sourceName": "synthetic.csv",
+            "formatName": "csv",
+            "encoding": "utf-8",
+            "rights": state.rights.model_dump(mode="json", by_alias=True),
+        }
+        self.assertEqual("synthetic.csv", IntakeCreate.model_validate(values).source_name)
+        for key in ("parserProfile", "parserLimitsHash", "maxSeconds"):
+            with self.subTest(key=key), self.assertRaises(ValidationError):
+                IntakeCreate.model_validate({**values, key: 900})
 
 
 if __name__ == "__main__":

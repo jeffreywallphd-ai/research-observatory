@@ -14,6 +14,7 @@ from typing import Annotated, Literal, Self, cast
 from pydantic import Field, model_validator
 
 from .import_drafts import Digest, DraftValue, ImportRights, RecordDecision, review_record
+from .protected_import_profiles import LEGACY_LIMITS_HASH, PROTECTED_LIMITS_HASH
 from .reference_imports import ImportRecord, normalize_import_field
 
 SUMMARY_ALGORITHM = "draft-summary/1"
@@ -113,6 +114,14 @@ def summary_rows_sha256(rows: Iterable[SummaryRow]) -> str:
     return digest.hexdigest()
 
 
+def summary_receipt_version(parser_limits_hash: str) -> str:
+    if parser_limits_hash == LEGACY_LIMITS_HASH:
+        return "1.0.0"
+    if parser_limits_hash == PROTECTED_LIMITS_HASH:
+        return "2.0.0"
+    raise ValueError("summary-parser-profile-unknown")
+
+
 def summary_receipt_fingerprint(
     *,
     project_id: str,
@@ -124,7 +133,9 @@ def summary_receipt_fingerprint(
     source_sha256: str,
     manifest_sha256: str,
     result: SummaryResult,
+    parser_limits_hash: str = LEGACY_LIMITS_HASH,
 ) -> str:
+    version = summary_receipt_version(parser_limits_hash)
     binding = [
         SUMMARY_ALGORITHM,
         project_id,
@@ -137,6 +148,8 @@ def summary_receipt_fingerprint(
         manifest_sha256,
         result.sha256,
     ]
+    if version == "2.0.0":
+        binding = ["draft-summary-receipt/2", binding, parser_limits_hash]
     return "sha256:" + hashlib.sha256(json.dumps(binding, separators=(",", ":")).encode("ascii")).hexdigest()
 
 

@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: ae5767d51e349d4dfc43b509d2b049826c5d7be2a00e9b4dd51072e0c33650b5
+source_sha256: 2c44534d9ce38a9dee508b4668b88a81fc227a416fe259a81df5236edef4d6b2
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -5870,6 +5870,56 @@ Original tasks and approvals remain unchanged.
 **Current immutable submission awaiting review:** None
 
 **Current latest-review projection:** `approved` by agent:/root/security_resolution_review at `2026-10-15T20:39:28+00:00`
+
+**Latest notes:** -
+
+**Currently open findings:** -
+
+### W2.C35.T01 — Create import preview, mapping, and conflict UI
+
+**Status:** `IN_PROGRESS`. **Original task:** `CAP-04.S01.T02`. **Latest review:** `-`.
+
+**Reproduction:** Current actual100k protected import at1c20b883a0adac7645913568d057a7c146feffcb failed its unchanged120.0s parser budget after20800/100001 rows, with no accepted protected sample/output; actual45a56d receipt and f43d64 diagnostic preserve the timeout and191070208byte partial peak. The separate1000-record diagnostic is nonqualifying and establishes no100k timing/cause. CAP-04.S01.T02 owns protected preview/review; C01/T03 is later commit compatibility context. Actual finite decision at artifacts/evidence/W2.protected-import-initial-completion-01.decision-01.json selects creation-only900s and an explicit finite initial evidence policy after genuine different scope review66f002 under prospective owner34e. This is a disclosed material configuration/criterion decision, not an unchanged120s restoration or hidden canonical benchmark PASS.
+
+**Inherited criteria:**
+
+- User can correct mapping before commit, exclude records, and download an error report; cancellation leaves no partial canonical import.
+- Automated tests cover the expected path and at least one material failure or boundary condition.
+- Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.
+
+**Bounded changed paths:**
+
+- services/core-api/src/research_observatory_core/import_commit_repository.py
+- services/core-api/src/research_observatory_core/import_preview_repository.py
+- services/core-api/src/research_observatory_core/import_preview_service.py
+- services/core-api/src/research_observatory_core/import_summary_repository.py
+- services/core-api/src/research_observatory_core/ingestion/commit_workflow.py
+- services/core-api/src/research_observatory_core/ingestion/import_summaries.py
+- services/core-api/src/research_observatory_core/ingestion/preview_activity.py
+- services/core-api/src/research_observatory_core/ingestion/preview_workflow.py
+- services/core-api/src/research_observatory_core/ingestion/protected_import_profiles.py
+- services/core-api/src/research_observatory_core/ingestion/summary_activity.py
+- services/core-api/src/research_observatory_core/ingestion/summary_workflow.py
+- services/core-api/src/research_observatory_core/ports/import_previews.py
+- tests/data/test_import_commit_publication.py
+- tests/data/test_import_preview_repository.py
+- tests/data/test_import_summary_repository.py
+- tests/fixtures/imports/protected-preview-legacy120-authority-v1.json
+- tests/service/test_import_commit_identity.py
+- tests/service/test_import_commit_service.py
+- tests/service/test_import_commit_workflow.py
+- tests/service/test_import_intake_api.py
+- tests/service/test_import_preview_activity.py
+- tests/service/test_import_preview_service.py
+- tests/service/test_import_preview_workflow.py
+- tests/service/test_import_summary_workflow.py
+#### Review history — W2.C35.T01
+
+**Review mode:** `append-only v1` / 0 completed round(s)
+
+**Current immutable submission awaiting review:** None
+
+**Current latest-review projection:** `-` by - at `-`
 
 **Latest notes:** -
 

@@ -12,7 +12,12 @@ from unittest.mock import patch
 
 from research_observatory_core.domain_contracts import new_uuid_v7
 from research_observatory_core.ingestion.import_drafts import ImportPermission, ImportRights, review_record
-from research_observatory_core.ingestion.import_summaries import SUMMARY_ACTIVITY, summary_receipt_fingerprint
+from research_observatory_core.ingestion.import_summaries import (
+    SUMMARY_ACTIVITY,
+    summary_receipt_fingerprint,
+    summary_receipt_version,
+)
+from research_observatory_core.ingestion.protected_import_profiles import profile_limits_hash
 from research_observatory_core.ports.import_previews import PreviewActor, PreviewProblem
 from research_observatory_core.ports.repositories import (
     AggregateRevisionDraft,
@@ -106,6 +111,7 @@ class ImportSummaryRepositoryTests(unittest.TestCase):
             source_sha256=state.source_sha256,
             manifest_sha256=state.manifest_sha256,
             result=actual_result,
+            parser_limits_hash=profile_limits_hash(state.parser_profile),
         )
         binding.update(changes)
         factory = create_sqlite_unit_of_work_factory(self.project / "state/project.sqlite3", PROJECT_ID)
@@ -129,7 +135,7 @@ class ImportSummaryRepositoryTests(unittest.TestCase):
                             relation_type="direct",
                             revision_id=None,
                             configuration_id="import.draft-summary",
-                            configuration_version="1.0.0",
+                            configuration_version=summary_receipt_version(binding["parser_limits_hash"]),
                             fingerprint=summary_receipt_fingerprint(**binding),
                             governing_policy_id="dependency.material.v1",
                             governing_policy_version="1.0.0",
@@ -442,3 +448,31 @@ class ImportSummaryRepositoryTests(unittest.TestCase):
         self.assertEqual(1, result.counts.doi_duplicate_groups)
         self.assertLess(peak, 8 * 1024 * 1024)
         print(f"Summary query-only 100k rows: {elapsed:.3f}s; peak Python allocation {peak} bytes", flush=True)
+
+    def test_new_profile_cannot_accept_a_legacy_summary_receipt(self):
+        from research_observatory_core.ingestion.protected_import_profiles import LEGACY_LIMITS_HASH
+
+        preview, _, claim, actor = self.start()
+        result = self.fill(preview, claim, actor)
+        receipt = self.receipt(preview, claim, actor, result, parser_limits_hash=LEGACY_LIMITS_HASH)
+        with self.assertRaisesRegex(PreviewProblem, "preview-summary-receipt-authority-mismatch"):
+            self.repository().finish_summary(
+                preview, claim=claim, result=result, receipt_revision_id=receipt, actor=actor
+            )
+        self.assertIsNone(self.repository().summary(preview, revision=1))
+
+    def test_legacy_summary_still_accepts_its_original_receipt_version_after_reload(self):
+        original = self.fixture.fixture
+        with patch.object(original, "create", side_effect=lambda: original.create_legacy("v1-comma")):
+            preview, _, claim, actor = self.start()
+        self.assertEqual("legacy-preview-120s-v1", self.repository().read(preview).parser_profile)
+        result = self.fill(preview, claim, actor)
+        receipt = self.receipt(preview, claim, actor, result)
+        output = self.repository().finish_summary(
+            preview, claim=claim, result=result, receipt_revision_id=receipt, actor=actor
+        )
+        self.queue.stage_artifact(claim, artifact=output, role="output", now=NOW)
+        self.queue.complete(claim, now=NOW, outputs=(output,))
+        accepted = self.repository().summary(preview, revision=1)
+        self.assertEqual(result, accepted.result)
+        self.assertEqual(receipt, accepted.receipt_revision_id)

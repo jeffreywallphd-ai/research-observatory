@@ -12,6 +12,7 @@ import json
 import sqlite3
 from collections.abc import Iterator
 from contextlib import contextmanager
+from dataclasses import asdict
 from pathlib import Path
 from typing import Any, Literal
 
@@ -21,6 +22,14 @@ from sqlalchemy.dialects.sqlite import dialect
 from .domain_contracts import is_uuid_v7, new_uuid_v7
 from .ingestion.import_drafts import CsvDelimiter, DraftValue, Identity, ImportRights, ProjectIdentity
 from .ingestion.preview_records import StoredImportRecord
+from .ingestion.protected_import_profiles import (
+    LEGACY_PROFILE,
+    PROTECTED_LIMITS_HASH,
+    PROTECTED_PROFILE,
+    ParserProfile,
+    profile_limits,
+    profile_limits_hash,
+)
 from .ingestion.reference_imports import PARSER_VERSION, ImportRecord, ImportSession, ImportSource
 from .ingestion.source_chunks import CHUNK_BYTES, MAX_CHUNKS, MAX_SOURCE_BYTES, SourceChunk
 from .ports.import_commits import ImportRepository
@@ -40,6 +49,17 @@ class _ParserSettings(DraftValue):
     format_name: Literal["ris", "bibtex", "csl-json", "doi-list", "csv"]
     encoding: Literal["utf-8", "cp1252"]
     delimiter: CsvDelimiter
+
+
+class _ProtectedParserSettings(DraftValue):
+    schema_version: Literal["1.1"] = "1.1"
+    project_id: ProjectIdentity
+    preview_id: Identity
+    format_name: Literal["ris", "bibtex", "csl-json", "doi-list", "csv"]
+    encoding: Literal["utf-8", "cp1252"]
+    delimiter: CsvDelimiter
+    parser_profile: Literal["protected-preview-900s-v1"]
+    parser_limits_hash: Literal["sha256:eee2a0c5d0b4c8a2ea8b13d393819f4807aa51f2b4ad95cc78168654dd122495"]
 
 
 def _json(value: Any) -> str:
@@ -150,10 +170,22 @@ class _SqliteImportPreviewRepository:
             key="imports.preview." + preview_id,
         ).fetchall()
         delimiter: CsvDelimiter = ","  # Exact legacy behavior; never backfill on read.
+        parser_profile: ParserProfile = LEGACY_PROFILE
         if settings:
             if len(settings) != 1 or settings[0][0] != 0 or settings[0][1] != "text":
                 raise PreviewProblem("preview-parser-settings-invalid")
-            parsed = _ParserSettings.model_validate_json(settings[0][2])
+            document = json.loads(settings[0][2])
+            if not isinstance(document, dict):
+                raise PreviewProblem("preview-parser-settings-invalid")
+            version = document.get("schemaVersion", document.get("schema_version", "1.0"))
+            parsed: _ParserSettings | _ProtectedParserSettings
+            if version == "1.0":
+                parsed = _ParserSettings.model_validate_json(settings[0][2])
+            elif version == "1.1":
+                parsed = _ProtectedParserSettings.model_validate_json(settings[0][2])
+                parser_profile = parsed.parser_profile
+            else:
+                raise PreviewProblem("preview-parser-settings-invalid")
             if (parsed.project_id, parsed.preview_id, parsed.format_name, parsed.encoding) != (
                 self._project,
                 preview_id,
@@ -163,6 +195,7 @@ class _SqliteImportPreviewRepository:
                 raise PreviewProblem("preview-parser-settings-mismatch")
             delimiter = parsed.delimiter
         return PreviewState(
+            parser_profile=parser_profile,
             project_id=self._project,
             preview_id=preview_id,
             source_name=row[0],
@@ -228,7 +261,9 @@ class _SqliteImportPreviewRepository:
             )
             # One reserved immutable revision, atomically with a *new* preview.
             # No updater, public settings writer, legacy backfill or MAX(revision).
-            settings = _ParserSettings(
+            settings = _ProtectedParserSettings(
+                parser_profile=PROTECTED_PROFILE,
+                parser_limits_hash=PROTECTED_LIMITS_HASH,
                 project_id=self._project,
                 preview_id=command.preview_id,
                 format_name=command.format_name,
@@ -494,6 +529,31 @@ class _SqliteImportPreviewRepository:
                     record=payload,
                 )
 
+    def _parser_receipt(self, connection: CanonicalConnection, state: PreviewState, receipt: str) -> None:
+        # Legacy accepted receipts retain their original contract. New-profile
+        # acceptance must bind exactly one actual parser configuration, both at
+        # publication and at every accepted-read reconstruction.
+        if state.parser_profile == LEGACY_PROFILE:
+            return
+        parameters = {
+            "parserVersion": PARSER_VERSION,
+            "format": state.format_name,
+            "encoding": state.encoding,
+            "delimiter": state.delimiter,
+            "limits": asdict(profile_limits(state.parser_profile)),
+        }
+        expected = "sha256:" + hashlib.sha256(_json(parameters).encode("ascii")).hexdigest()
+        rows = _execute(
+            connection,
+            "SELECT dependency_kind, relation_type, configuration_version, fingerprint FROM material_dependencies "
+            "WHERE project_id=:project AND output_revision_id=:receipt "
+            "AND configuration_id='import.parser-configuration'",
+            project=self._project,
+            receipt=receipt,
+        ).fetchall()
+        if len(rows) != 1 or tuple(rows[0]) != ("parameter-set", "direct", "1.0.0", expected):
+            raise PreviewProblem("preview-parser-receipt-profile-mismatch")
+
     def finish_parse(
         self,
         preview_id: str,
@@ -518,6 +578,11 @@ class _SqliteImportPreviewRepository:
                 or session.delimiter != state.delimiter
             ):
                 raise PreviewProblem("preview-parse-source-mismatch")
+            if state.parser_profile != LEGACY_PROFILE:
+                observed_limits = "sha256:" + hashlib.sha256(_json(asdict(session.limits)).encode("ascii")).hexdigest()
+                if observed_limits != profile_limits_hash(state.parser_profile):
+                    raise PreviewProblem("preview-parser-session-profile-mismatch")
+                self._parser_receipt(connection, state, receipt_revision_id)
             receipt = _execute(
                 connection,
                 """
@@ -591,6 +656,7 @@ class _SqliteImportPreviewRepository:
         ).fetchone()
         if row is None or not any(item.get("revisionId") == row[1] for item in json.loads(row[2])["outputs"]):
             raise PreviewProblem("preview-not-accepted")
+        self._parser_receipt(connection, self._read(connection, preview_id), str(row[1]))
         return str(row[0])
 
     def _record_access(self, connection: CanonicalConnection, preview_id: str, ordinal: int) -> None:

@@ -84,6 +84,76 @@ class ImportPreviewActivityTests(unittest.TestCase):
         with self.assertRaises(PreviewProblem):
             self.fixture.repository().records_page(preview, after=0, limit=10)
 
+    def test_actual_activity_selects_frozen_new_or_legacy_limits(self):
+        from unittest.mock import patch
+
+        from research_observatory_core.ingestion import preview_activity
+
+        original = preview_activity.ImportSession
+        for legacy in (None, "missing-comma", "v1-comma"):
+            with self.subTest(legacy=legacy):
+                preview, _, _, claim, queue, actor = self.fixture.parse_attempt(
+                    b"title\nSynthetic\n", legacy_variant=legacy
+                )
+                sessions = []
+
+                def observe(*args, sessions=sessions, **kwargs):
+                    session = original(*args, **kwargs)
+                    sessions.append(session)
+                    return session
+
+                context = WorkflowActivityContext(queue, claim, lambda actor=actor: actor.occurred_at, 30000)
+                with patch.object(preview_activity, "ImportSession", side_effect=observe):
+                    outputs = self.activity(preview, actor, lambda action: action())(context, claim)
+                self.assertEqual(1, len(sessions))
+                self.assertEqual(900.0 if legacy is None else 120.0, sessions[0].limits.max_seconds)
+                self.assertTrue(sessions[0].complete)
+                queue.stage_artifact(context.claim, artifact=outputs[0], role="output", now=actor.occurred_at)
+                queue.complete(context.claim, outputs=outputs, now=actor.occurred_at)
+                self.assertEqual(2, len(self.fixture.repository().records_page(preview, after=0, limit=10)))
+
+
+class ProtectedParserClockTests(unittest.TestCase):
+    def test_profiles_keep_distinct_bounded_deadlines_and_cancellation(self):
+        import hashlib
+        import io
+
+        from research_observatory_core.ingestion.protected_import_profiles import (
+            LEGACY_PROFILE,
+            PROTECTED_PROFILE,
+            profile_limits,
+        )
+        from research_observatory_core.ingestion.reference_imports import ImportProblem, ImportSession, ImportSource
+
+        raw = b"title\nSynthetic\n"
+        source = ImportSource("synthetic.csv", hashlib.sha256(raw).hexdigest())
+        for profile, moment, completes in (
+            (LEGACY_PROFILE, 150.0, False),
+            (PROTECTED_PROFILE, 150.0, True),
+            (PROTECTED_PROFILE, 901.0, False),
+        ):
+            ticks = iter((0.0,))
+            session = ImportSession(
+                io.BytesIO(raw),
+                source,
+                "csv",
+                limits=profile_limits(profile),
+                clock=lambda ticks=ticks, moment=moment: next(ticks, moment),
+            )
+            if completes:
+                self.assertEqual(2, len(tuple(session.records())))
+                self.assertTrue(session.complete)
+            else:
+                with self.assertRaisesRegex(ImportProblem, "timeout"):
+                    tuple(session.records())
+                self.assertFalse(session.complete)
+        cancelled = ImportSession(
+            io.BytesIO(raw), source, "csv", limits=profile_limits(PROTECTED_PROFILE), cancelled=lambda: True
+        )
+        with self.assertRaisesRegex(ImportProblem, "cancelled"):
+            tuple(cancelled.records())
+        self.assertFalse(cancelled.complete)
+
 
 if __name__ == "__main__":
     unittest.main()

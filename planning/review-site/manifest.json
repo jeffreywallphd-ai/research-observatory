@@ -6093,6 +6093,76 @@
               "current_submission": null
             }
           }
+        },
+        {
+          "task_id": "W2.C35.T01",
+          "title": "Create import preview, mapping, and conflict UI",
+          "status": "IN_PROGRESS",
+          "acceptance_criteria": [
+            "User can correct mapping before commit, exclude records, and download an error report; cancellation leaves no partial canonical import.",
+            "Automated tests cover the expected path and at least one material failure or boundary condition.",
+            "Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion."
+          ],
+          "correction": {
+            "origin_task_id": "CAP-04.S01.T02",
+            "origin_commit": "b55c1285b33d17fca7b8ef37ed8ce16d1c83610a",
+            "paused_state_sha256": "aa3c3792f383ddbedae3bdcfadd7f08cf2bfb3b47b1d85d945d42061cf810a82",
+            "origin_sha256": "4951e92589c98d802968fb07d51402ddcbe4c2d60068c4a20ed5c4c91801133a",
+            "origin_contract_sha256": "b55b20fcd5e92a1f3ca25029b6d6fe1e477cc8811dcf8e092a0a9ece431e6574",
+            "origin_history_sha256": "7f8d5314e0952d2af87bec9435fcd426160bbfbc72997b6cc8e70b4d69e9eb27",
+            "origin_amendment_id": null,
+            "authority_sha256": "c92ce7e9bac1b8a49d13d649a5980fea61e56ee953d238c734d8ff5f04f4c9e5",
+            "spec": {
+              "path": "artifacts/evidence/W2.C35.T01.spec.json",
+              "sha256": "42fbaf9db73d3e07804b372520a0456cf246992fdaa11cbf30db813ba13a0f59",
+              "commit": "3ed9b568c7981f938204eedebca16b731f8d6008"
+            },
+            "reproduction": "Current actual100k protected import at1c20b883a0adac7645913568d057a7c146feffcb failed its unchanged120.0s parser budget after20800/100001 rows, with no accepted protected sample/output; actual45a56d receipt and f43d64 diagnostic preserve the timeout and191070208byte partial peak. The separate1000-record diagnostic is nonqualifying and establishes no100k timing/cause. CAP-04.S01.T02 owns protected preview/review; C01/T03 is later commit compatibility context. Actual finite decision at artifacts/evidence/W2.protected-import-initial-completion-01.decision-01.json selects creation-only900s and an explicit finite initial evidence policy after genuine different scope review66f002 under prospective owner34e. This is a disclosed material configuration/criterion decision, not an unchanged120s restoration or hidden canonical benchmark PASS.",
+            "changed_paths": [
+              "services/core-api/src/research_observatory_core/import_commit_repository.py",
+              "services/core-api/src/research_observatory_core/import_preview_repository.py",
+              "services/core-api/src/research_observatory_core/import_preview_service.py",
+              "services/core-api/src/research_observatory_core/import_summary_repository.py",
+              "services/core-api/src/research_observatory_core/ingestion/commit_workflow.py",
+              "services/core-api/src/research_observatory_core/ingestion/import_summaries.py",
+              "services/core-api/src/research_observatory_core/ingestion/preview_activity.py",
+              "services/core-api/src/research_observatory_core/ingestion/preview_workflow.py",
+              "services/core-api/src/research_observatory_core/ingestion/protected_import_profiles.py",
+              "services/core-api/src/research_observatory_core/ingestion/summary_activity.py",
+              "services/core-api/src/research_observatory_core/ingestion/summary_workflow.py",
+              "services/core-api/src/research_observatory_core/ports/import_previews.py",
+              "tests/data/test_import_commit_publication.py",
+              "tests/data/test_import_preview_repository.py",
+              "tests/data/test_import_summary_repository.py",
+              "tests/fixtures/imports/protected-preview-legacy120-authority-v1.json",
+              "tests/service/test_import_commit_identity.py",
+              "tests/service/test_import_commit_service.py",
+              "tests/service/test_import_commit_workflow.py",
+              "tests/service/test_import_intake_api.py",
+              "tests/service/test_import_preview_activity.py",
+              "tests/service/test_import_preview_service.py",
+              "tests/service/test_import_preview_workflow.py",
+              "tests/service/test_import_summary_workflow.py"
+            ],
+            "impact_analysis": "Implement only the individually named finite necessary envelope in the separately approved decision. New private immutable settings1.1 select exact900.0s; all absent/v1.0 old previews, unscheduled/pending/recovered/accepted jobs, receipts and stored commit requests retain exact120 authority. Pure default120, seven other limits, schema/definition bytes, scientific dedupe, current rights/lease/EOF/atomicity and C01 read-count behavior remain unchanged. Bind actual session/parse/summary/commit provenance to immutable state, deny unknown/substituted profiles and preserve public DTOs. Capture actual predecessor fixtures and failing characterizations before edits. Run focused existing+new old/new compatibility, denial/cancel/restart/rollback/identity/API/quality checks. After exact source review and committed candidate, run the explicitly selected real100k review+commit once each serially with all original functional assertions, stated phase/whole/memory ceilings and normal owned cleanup; retain every failure, no retry-to-pass or new baseline. Fresh affected Core package/current-principal/artifact proof and genuine separate commit-bound review remain required. Unchanged pure-parser component reuse needs an actual different input-closure judgment. The existing architecture-contract append is separately approved pre-claim policy, not part of product path scope. No UI/reference, migration, framework/controller, model/8GiB/16GiB workload, optional optimization, Wave/release claim or rewrite of history."
+          },
+          "task_review": {
+            "task_id": "W2.C35.T01",
+            "title": "Create import preview, mapping, and conflict UI",
+            "status": "IN_PROGRESS",
+            "mode": "append-only",
+            "latest_review": {
+              "reviewer": null,
+              "result": null,
+              "reviewed_at": null,
+              "notes": null
+            },
+            "review_control": {
+              "version": 1,
+              "attempts": [],
+              "current_submission": null
+            }
+          }
         }
       ]
     },

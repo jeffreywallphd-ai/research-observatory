@@ -9,7 +9,6 @@ from __future__ import annotations
 
 import hashlib
 import json
-from dataclasses import asdict
 from typing import Annotated, Any, Literal, Protocol, Self
 
 from pydantic import BaseModel, Field, TypeAdapter, model_validator
@@ -27,7 +26,8 @@ from ..ports.workflow_executor import (
 from ..workflow_contracts import workflow_record_sha256, workflow_snapshot_errors
 from ..workflow_executor import prepare_workflow_job
 from .import_drafts import Digest, DraftValue, Identity, ProjectIdentity
-from .reference_imports import PARSER_VERSION, ImportLimits, ImportSource
+from .protected_import_profiles import known_limits_hash, profile_limits_hash
+from .reference_imports import PARSER_VERSION, ImportSource
 
 type Fingerprint = Annotated[str, Field(pattern=r"^sha256:[0-9a-f]{64}$")]
 type ResumeEpoch = Annotated[str, Field(pattern=r"^[0-9a-f]{32}$")]
@@ -73,7 +73,7 @@ class _PreviewInput(DraftValue):
     @model_validator(mode="after")
     def exact_parser_and_project(self) -> Self:
         ImportSource(self.source_name, self.source_sha256, self.encoding)
-        if self.project_id != self.intent.project_id or self.parser_limits_hash != fingerprint(asdict(ImportLimits())):
+        if self.project_id != self.intent.project_id or not known_limits_hash(self.parser_limits_hash):
             raise ValueError("preview-parser-or-project-authority-invalid")
         return self
 
@@ -145,7 +145,7 @@ def preview_job_input(
             byte_length=state.byte_length,
             chunk_count=state.chunk_count,
             parser_version=PARSER_VERSION,
-            parser_limits_hash=fingerprint(asdict(ImportLimits())),
+            parser_limits_hash=profile_limits_hash(state.parser_profile),
             rights_hash=fingerprint(state.rights.model_dump(mode="json", by_alias=True)),
             intent=intent,
             policy_hash=policy_hash,

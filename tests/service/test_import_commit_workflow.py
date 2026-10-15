@@ -96,3 +96,186 @@ class ImportCommitWorkflowTests(unittest.TestCase):
         substituted = replace(previous[0], state="succeeded"), previous[1]
         with self.assertRaises(PreviewProblem):
             bind_commit_claim(authority, claim, self.inputs, predecessor=substituted)
+
+
+class ProtectedProfileQueueLineageTests(unittest.TestCase):
+    def test_legacy_and_new_profiles_survive_queue_reload_and_do_not_duplicate_scientific_records(self):
+        import hashlib
+        import json
+        from contextlib import closing
+        from dataclasses import replace
+        from pathlib import Path
+
+        from research_observatory_core.ingestion.commit_activity import ImportCommitActivity
+        from research_observatory_core.ingestion.commit_workflow import commit_job_input
+        from research_observatory_core.ingestion.import_summaries import SUMMARY_ACTIVITY
+        from research_observatory_core.ingestion.preview_activity import ImportPreviewActivity
+        from research_observatory_core.ingestion.preview_workflow import (
+            ACTIVITY,
+            PreviewIntentContext,
+            bind_preview_claim,
+            build_preview_job,
+            preview_job_input,
+        )
+        from research_observatory_core.ingestion.protected_import_profiles import (
+            LEGACY_LIMITS_HASH,
+            PROTECTED_LIMITS_HASH,
+        )
+        from research_observatory_core.ingestion.summary_activity import ImportSummaryActivity
+        from research_observatory_core.ingestion.summary_workflow import (
+            bind_summary_claim,
+            build_summary_job,
+            summary_job_input,
+        )
+        from research_observatory_core.ports.import_previews import PreviewDraftChange
+        from research_observatory_core.repositories import (
+            create_sqlite_unit_of_work_factory,
+            sqlite_workflow_admission_binding,
+            sqlite_workflow_queue_repository,
+        )
+        from research_observatory_core.storage import open_canonical_database
+        from research_observatory_core.workflow_executor import (
+            LocalAdmissionController,
+            LocalWorkerSupervisor,
+            ProjectWorkerPolicy,
+            WorkerCapacity,
+            WorkerResources,
+        )
+
+        from tests.data import test_import_preview_repository as data_fixture
+
+        data = data_fixture.ImportPreviewRepositoryTests(methodName="runTest")
+        data.setUp()
+        self.addCleanup(data.tearDown)
+        repository = data.repository()
+        frozen = json.loads(
+            (Path(__file__).parents[1] / "fixtures/imports/protected-preview-legacy120-authority-v1.json").read_text()
+        )
+        context = frozen["syntheticContext"]
+        intent = PreviewIntentContext.model_validate_json(json.dumps(context["intent"]))
+        raw = b"title,doi\nSynthetic,10.99999/EXAMPLE\n"
+        now = "2026-08-30T12:02:00.000Z"
+        database = data.project / "state/project.sqlite3"
+        shared_mapping = None
+        source_ids = None
+
+        def run_job(kind, inputs):
+            # Reconstruct the durable queue/admission before every activity, as
+            # on an ordinary reader reload. Project/Intent/policy guard is an
+            # explicit synthetic data-fixture boundary, not principal evidence.
+            queue = sqlite_workflow_queue_repository(data.project, intent.project_id)
+            build, bind = {
+                ACTIVITY: (build_preview_job, bind_preview_claim),
+                SUMMARY_ACTIVITY: (build_summary_job, bind_summary_claim),
+                COMMIT_ACTIVITY: (build_commit_job, bind_commit_claim),
+            }[kind]
+            submission = build(inputs, actor=data_fixture.worker_fixture.SYSTEM, now=now)
+            job = queue.enqueue(submission, actor=data_fixture.worker_fixture.SYSTEM)
+            self.assertEqual("runnable", job.state)
+            demand = WorkerResources(1, 64 * 1024**2, 0, 1024**2)
+            admission = sqlite_workflow_admission_binding(
+                queue,
+                controller=LocalAdmissionController(interactive_reserve=demand),
+                policy=ProjectWorkerPolicy(intent.project_id, demand, {"document": demand}, {"document": 1}),
+            )
+            admission = replace(admission, capacity=lambda: WorkerCapacity(4, 1024**3, 0, 1024**3))
+
+            def handler(execution, claim):
+                authority = queue.authority(claim.job_id)
+                self.assertEqual(inputs, bind(authority, claim, inputs))
+                preview = inputs if kind == ACTIVITY else inputs.preview
+                other = (
+                    LEGACY_LIMITS_HASH if preview.parser_limits_hash == PROTECTED_LIMITS_HASH else PROTECTED_LIMITS_HASH
+                )
+                changed = preview.model_copy(update={"parser_limits_hash": other})
+                forged = changed if kind == ACTIVITY else inputs.model_copy(update={"preview": changed})
+                with self.assertRaises(PreviewProblem):
+                    bind(authority, claim, forged)
+                if kind == ACTIVITY:
+                    activity = ImportPreviewActivity(
+                        preview_id=inputs.preview_id,
+                        repository=repository,
+                        store=data.store(),
+                        unit_of_work=create_sqlite_unit_of_work_factory(database, intent.project_id),
+                        guard=lambda action: action(),
+                        trace_id="5" * 32,
+                    )
+                elif kind == SUMMARY_ACTIVITY:
+                    activity = ImportSummaryActivity(
+                        inputs=inputs,
+                        repository=repository,
+                        unit_of_work=create_sqlite_unit_of_work_factory(database, intent.project_id),
+                        guard=lambda action: action(),
+                        trace_id="5" * 32,
+                    )
+                else:
+                    activity = ImportCommitActivity(
+                        inputs=inputs, repository=repository, guard=lambda action: action(), trace_id="5" * 32
+                    )
+                return activity(execution, claim)
+
+            worker = LocalWorkerSupervisor(
+                queue,
+                {kind: handler},
+                concurrency_limits={"document": 1},
+                now=lambda: now,
+                recovery_actor=data_fixture.worker_fixture.SYSTEM,
+                admission=admission,
+                activity_types=(kind,),
+            )
+            completed = worker.run_available()
+            self.assertEqual(1, len(completed))
+            self.assertEqual("succeeded", completed[0].state, completed[0].diagnostic_code)
+            return job.job_id
+
+        for variant in ("missing-comma", "v1-comma", None):
+            with self.subTest(variant=variant):
+                preview = data.create_legacy(variant) if variant is not None else data.create()
+                for index, chunk in enumerate(data.retain(raw), 1):
+                    repository.append_chunk(preview, ordinal=index, chunk=chunk)
+                state = repository.seal(
+                    preview,
+                    source_sha256=hashlib.sha256(raw).hexdigest(),
+                    byte_length=len(raw),
+                    chunk_count=1,
+                    actor=data.actor(),
+                )
+                expected_hash = LEGACY_LIMITS_HASH if variant is not None else PROTECTED_LIMITS_HASH
+                parsed = preview_job_input(state, intent, context["policyHash"], context["resumeEpoch"])
+                self.assertEqual(expected_hash, parsed.parser_limits_hash)
+                run_job(ACTIVITY, parsed)
+                draft = repository.revise_draft(
+                    preview, PreviewDraftChange(expected_revision=0, mapping=shared_mapping, actor=data.actor())
+                )
+                shared_mapping = draft.authority.mapping
+                state = repository.read(preview)
+                summary = summary_job_input(state, draft, intent, context["policyHash"], context["resumeEpoch"])
+                run_job(SUMMARY_ACTIVITY, summary)
+                self.assertIsNotNone(data.repository().summary(preview, revision=1))
+                inputs = commit_job_input(
+                    state,
+                    draft,
+                    intent,
+                    context["policyHash"],
+                    context["resumeEpoch"],
+                    request_id=new_uuid_v7(),
+                    previous_manifest_revision_id=None,
+                )
+                saved = repository.save_commit_request(inputs, actor=data.actor())
+                self.assertEqual(saved, data.repository().commit_request(inputs.request_id))
+                job_id = run_job(COMMIT_ACTIVITY, saved.inputs)
+                manifest = data.repository().accepted_manifest(saved.inputs, job_id=job_id)
+                self.assertEqual(2, manifest.record_count)
+                self.assertEqual(saved, data.repository().commit_request(inputs.request_id))
+                self.assertEqual(
+                    expected_hash, data.repository().commit_request(inputs.request_id).inputs.preview.parser_limits_hash
+                )
+                with closing(open_canonical_database(database, expected_project_id=intent.project_id)) as connection:
+                    current_ids = connection.execute(
+                        "SELECT revision_id FROM import_source_records ORDER BY revision_id"
+                    ).fetchall()
+                if source_ids is None:
+                    source_ids = current_ids
+                    self.assertEqual(1, len(source_ids))
+                else:
+                    self.assertEqual(source_ids, current_ids)

@@ -11,7 +11,7 @@ from ..ports.import_previews import ImportActionGuard, ImportPreviewRepository, 
 from ..ports.repositories import AggregateRevisionDraft, AtomicRepositoryEvent, MaterialDependency, UnitOfWorkFactory
 from ..ports.workflow_executor import WorkflowJobClaim, WorkflowOutputReference
 from ..workflow_executor import WorkflowActivityContext, WorkflowActivityError
-from .import_summaries import SummaryResult, summary_receipt_fingerprint
+from .import_summaries import SummaryResult, summary_receipt_fingerprint, summary_receipt_version
 from .summary_workflow import SummaryJobInput
 
 
@@ -41,6 +41,7 @@ class ImportSummaryActivity:
             source_sha256=inputs.preview.source_sha256,
             manifest_sha256=inputs.preview.manifest_sha256,
             result=result,
+            parser_limits_hash=inputs.preview.parser_limits_hash,
         )
         with self._units() as unit:
             receipt = unit.aggregates.append(
@@ -62,7 +63,7 @@ class ImportSummaryActivity:
                             relation_type="direct",
                             revision_id=None,
                             configuration_id="import.draft-summary",
-                            configuration_version="1.0.0",
+                            configuration_version=summary_receipt_version(inputs.preview.parser_limits_hash),
                             fingerprint=binding,
                             governing_policy_id="dependency.material.v1",
                             governing_policy_version="1.0.0",

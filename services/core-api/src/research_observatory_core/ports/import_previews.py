@@ -22,6 +22,7 @@ from ..ingestion.import_drafts import (
     Revision,
 )
 from ..ingestion.import_summaries import SummaryResult, SummaryRow
+from ..ingestion.protected_import_profiles import LEGACY_PROFILE, ParserProfile
 from ..ingestion.reference_imports import ImportRecord, ImportSession, ImportSource
 from ..ingestion.source_chunks import SourceChunk
 from .workflow_executor import WorkflowJobClaim, WorkflowOutputReference
@@ -61,6 +62,7 @@ class PreviewCreate(DraftValue):
 
 
 class PreviewState(DraftValue):
+    parser_profile: ParserProfile = LEGACY_PROFILE
     project_id: ProjectIdentity
     preview_id: Identity
     source_name: str

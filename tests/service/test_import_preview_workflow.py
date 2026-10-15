@@ -277,5 +277,208 @@ class ImportPreviewWorkflowTests(unittest.TestCase):
             self.fixture.repository().records_page(self.preview, after=0, limit=10)
 
 
+class ProtectedImportProfileCompatibilityTests(unittest.TestCase):
+    def captured(self):
+        return json.loads(
+            (Path(__file__).parents[1] / "fixtures/imports/protected-preview-legacy120-authority-v1.json").read_text()
+        )
+
+    def fresh_claim(self, stage):
+        data = fixture.ImportPreviewRepositoryTests(methodName="runTest")
+        data.setUp()
+        self.addCleanup(data.tearDown)
+        old = stage["authority"]
+        job = stage["job"]
+        submission = prepare_workflow_job(
+            json.loads(old["definition_json"]),
+            json.loads(old["snapshot_json"]),
+            job_id=job["job_id"],
+            concurrency_class="document",
+            priority=job["priority"],
+            available_at=job["available_at"],
+        )
+        self.assertEqual(old["definition_record_sha256"], submission.definition_record_sha256)
+        self.assertEqual(old["snapshot_record_sha256"], submission.snapshot_record_sha256)
+        queue = sqlite_workflow_queue_repository(data.project, fixture.fixture.PROJECT_ID)
+        queue.enqueue(submission, actor=fixture.worker_fixture.SYSTEM)
+        claim = queue.claim_next(
+            worker_id=fixture.worker_fixture.WORKER_A,
+            concurrency_classes=("document",),
+            now=job["available_at"],
+            lease_duration_ms=30000,
+        )
+        self.assertIsNotNone(claim)
+        return queue.authority(job["job_id"]), claim
+
+    def test_new_creation_persists900_before_scheduling(self):
+        from contextlib import closing
+
+        from research_observatory_core.storage import open_canonical_database
+
+        data = fixture.ImportPreviewRepositoryTests(methodName="runTest")
+        data.setUp()
+        self.addCleanup(data.tearDown)
+        preview = data.create()
+        with closing(
+            open_canonical_database(
+                data.project / "state/project.sqlite3", expected_project_id=fixture.fixture.PROJECT_ID
+            )
+        ) as connection:
+            row = connection.execute(
+                "SELECT text_value FROM settings WHERE setting_key=?", ("imports.preview." + preview,)
+            ).fetchone()
+        self.assertEqual("1.1", json.loads(row[0])["schemaVersion"])
+        self.assertEqual("protected-preview-900s-v1", json.loads(row[0])["parserProfile"])
+        self.assertEqual(
+            "sha256:eee2a0c5d0b4c8a2ea8b13d393819f4807aa51f2b4ad95cc78168654dd122495",
+            json.loads(row[0])["parserLimitsHash"],
+        )
+
+    def test_two_frozen_profiles_preserve_pure_default_and_all_other_limits(self):
+        from dataclasses import asdict
+
+        from research_observatory_core.ingestion.protected_import_profiles import (
+            LEGACY_LIMITS_HASH,
+            LEGACY_PROFILE,
+            PROTECTED_LIMITS_HASH,
+            PROTECTED_PROFILE,
+            profile_limits,
+            profile_limits_hash,
+        )
+        from research_observatory_core.ingestion.reference_imports import ImportLimits
+
+        old, new = profile_limits(LEGACY_PROFILE), profile_limits(PROTECTED_PROFILE)
+        self.assertEqual(120.0, ImportLimits().max_seconds)
+        self.assertEqual(120.0, old.max_seconds)
+        self.assertEqual(900.0, new.max_seconds)
+        self.assertIs(type(new.max_seconds), float)
+        left, right = asdict(old), asdict(new)
+        left.pop("max_seconds")
+        right.pop("max_seconds")
+        self.assertEqual(left, right)
+        self.assertEqual(LEGACY_LIMITS_HASH, profile_limits_hash(LEGACY_PROFILE))
+        self.assertEqual(PROTECTED_LIMITS_HASH, profile_limits_hash(PROTECTED_PROFILE))
+        for unknown in ("", "legacy", "protected-preview-901s-v1", 900, None):
+            with self.subTest(unknown=unknown), self.assertRaises(ValueError):
+                profile_limits(unknown)
+
+    def test_predecessor_input_schemas_remain_byte_equivalent(self):
+        from research_observatory_core.ingestion.commit_workflow import CommitJobInput
+        from research_observatory_core.ingestion.preview_workflow import PreviewDelimitedJobInput
+        from research_observatory_core.ingestion.summary_workflow import SummaryJobInput
+
+        for model in (PreviewJobInput, PreviewDelimitedJobInput, SummaryJobInput, CommitJobInput):
+            with self.subTest(model=model.__name__):
+                self.assertEqual(self.captured()["schemas"][model.__name__], model.model_json_schema())
+
+    def test_old_unscheduled_inputs_and_all_queued_authorities_reconstruct_exactly(self):
+        from research_observatory_core.ingestion.commit_workflow import bind_commit_claim, commit_job_input
+        from research_observatory_core.ingestion.protected_import_profiles import LEGACY_PROFILE
+        from research_observatory_core.ingestion.summary_workflow import bind_summary_claim, summary_job_input
+        from research_observatory_core.ports.import_previews import PreviewDraft, PreviewState
+
+        document = self.captured()
+        intent = PreviewIntentContext.model_validate_json(json.dumps(document["syntheticContext"]["intent"]))
+        for case in document["cases"]:
+            with self.subTest(variant=case["variant"]):
+                state = PreviewState.model_validate_json(json.dumps(case["unscheduled"]["state"]))
+                self.assertEqual(LEGACY_PROFILE, state.parser_profile)
+                inputs = preview_job_input(
+                    state,
+                    intent,
+                    document["syntheticContext"]["policyHash"],
+                    document["syntheticContext"]["resumeEpoch"],
+                )
+                self.assertEqual(case["unscheduled"]["inputs"], inputs.model_dump(mode="json", by_alias=True))
+                self.assertEqual(case["unscheduled"]["configurationHash"], inputs.configuration_hash)
+                draft = PreviewDraft.model_validate_json(json.dumps(case["draft"]))
+                summary = summary_job_input(state, draft, intent, inputs.policy_hash, inputs.resume_epoch)
+                saved = case["savedCommitRequest"]["inputs"]
+                commit = commit_job_input(
+                    state,
+                    draft,
+                    intent,
+                    inputs.policy_hash,
+                    inputs.resume_epoch,
+                    request_id=saved["requestId"],
+                    previous_manifest_revision_id=saved["previousManifestRevisionId"],
+                )
+                self.assertEqual(case["pendingSummary"]["inputs"], summary.model_dump(mode="json", by_alias=True))
+                self.assertEqual(saved, commit.model_dump(mode="json", by_alias=True))
+                self.assertEqual(case["savedCommitRequest"]["configurationHash"], commit.configuration_hash)
+                for selected, key, bind in (
+                    (inputs, "pendingPreview", bind_preview_claim),
+                    (summary, "pendingSummary", bind_summary_claim),
+                    (commit, "pendingCommit", bind_commit_claim),
+                ):
+                    authority, claim = self.fresh_claim(case[key])
+                    self.assertEqual(selected, bind(authority, claim, selected))
+
+    def test_known_new_hash_cannot_replace_old_queued_profile(self):
+        from research_observatory_core.ingestion.protected_import_profiles import PROTECTED_LIMITS_HASH
+
+        for case in self.captured()["cases"]:
+            old = case["unscheduled"]["inputs"]
+            model = (
+                PreviewJobInput
+                if old["schemaVersion"] == "1.0"
+                else __import__(
+                    "research_observatory_core.ingestion.preview_workflow", fromlist=["PreviewDelimitedJobInput"]
+                ).PreviewDelimitedJobInput
+            )
+            inputs = model.model_validate_json(json.dumps(old))
+            authority, claim = self.fresh_claim(case["pendingPreview"])
+            with self.assertRaises(PreviewProblem):
+                bind_preview_claim(
+                    authority, claim, inputs.model_copy(update={"parser_limits_hash": PROTECTED_LIMITS_HASH})
+                )
+            for bad in ("sha256:" + "0" * 64, "sha256:" + "f" * 64):
+                with self.assertRaises(ValueError):
+                    model.model_validate_json(json.dumps({**old, "parserLimitsHash": bad}))
+
+    def test_old_accepted_summary_receipts_keep_exact_fingerprint_and_version(self):
+        from research_observatory_core.ingestion.import_summaries import (
+            SummaryResult,
+            summary_receipt_fingerprint,
+            summary_receipt_version,
+        )
+        from research_observatory_core.ingestion.protected_import_profiles import (
+            LEGACY_LIMITS_HASH,
+            PROTECTED_LIMITS_HASH,
+        )
+
+        for case in self.captured()["cases"]:
+            summary = case["acceptedSummary"]
+            inputs = case["pendingSummary"]["inputs"]
+            arguments = dict(
+                project_id=summary["projectId"],
+                preview_id=summary["previewId"],
+                job_id=summary["jobId"],
+                summary_attempt_id=summary["summaryAttemptId"],
+                parse_attempt_id=summary["parseAttemptId"],
+                draft_revision=summary["draftRevision"],
+                source_sha256=inputs["preview"]["sourceSha256"],
+                manifest_sha256=inputs["preview"]["manifestSha256"],
+                result=SummaryResult.model_validate_json(json.dumps(summary["result"])),
+            )
+            original = next(
+                row
+                for row in case["summaryReceipt"]["material_dependencies"]
+                if row["configuration_id"] == "import.draft-summary"
+            )
+            self.assertEqual(original["fingerprint"], summary_receipt_fingerprint(**arguments))
+            self.assertEqual(
+                original["fingerprint"], summary_receipt_fingerprint(**arguments, parser_limits_hash=LEGACY_LIMITS_HASH)
+            )
+            self.assertEqual(original["configuration_version"], summary_receipt_version(LEGACY_LIMITS_HASH))
+            self.assertNotEqual(
+                original["fingerprint"],
+                summary_receipt_fingerprint(**arguments, parser_limits_hash=PROTECTED_LIMITS_HASH),
+            )
+            self.assertEqual("2.0.0", summary_receipt_version(PROTECTED_LIMITS_HASH))
+            with self.assertRaises(ValueError):
+                summary_receipt_fingerprint(**arguments, parser_limits_hash="sha256:" + "0" * 64)
+
+
 if __name__ == "__main__":
     unittest.main()

@@ -22,8 +22,10 @@ from .ingestion.import_summaries import (
     SummaryRow,
     summarize_record,
     summary_receipt_fingerprint,
+    summary_receipt_version,
     summary_rows_sha256,
 )
+from .ingestion.protected_import_profiles import profile_limits_hash
 from .ports.import_previews import (
     PreviewActor,
     PreviewDraft,
@@ -275,6 +277,7 @@ class SqliteImportSummaryRepository(SqliteImportDraftRepository):
             source_sha256=str(state.source_sha256),
             manifest_sha256=str(state.manifest_sha256),
             result=result,
+            parser_limits_hash=profile_limits_hash(state.parser_profile),
         )
         row = self._query(
             connection,
@@ -288,11 +291,12 @@ class SqliteImportSummaryRepository(SqliteImportDraftRepository):
                AND EXISTS (SELECT 1 FROM material_dependencies d
                  WHERE d.project_id=r.project_id AND d.output_revision_id=r.revision_id
                    AND d.dependency_kind='parameter-set' AND d.configuration_id='import.draft-summary'
-                   AND d.configuration_version='1.0.0' AND d.fingerprint=:binding)
+                   AND d.configuration_version=:receipt_version AND d.fingerprint=:binding)
         """,
             state.preview_id,
             receipt=receipt,
             binding=binding,
+            receipt_version=summary_receipt_version(profile_limits_hash(state.parser_profile)),
         ).fetchone()
         if row is None:
             raise PreviewProblem("preview-summary-receipt-authority-mismatch")

@@ -7,13 +7,16 @@ import io
 import json
 import sqlite3
 import unittest
+from dataclasses import asdict
 from pathlib import Path
 from unittest.mock import patch
 
 from research_observatory_core import storage
 from research_observatory_core.domain_contracts import new_uuid_v7
 from research_observatory_core.import_preview_repository import sqlite_import_preview_repository
-from research_observatory_core.ingestion.reference_imports import ImportSession, ImportSource
+from research_observatory_core.ingestion.preview_workflow import fingerprint
+from research_observatory_core.ingestion.protected_import_profiles import profile_limits
+from research_observatory_core.ingestion.reference_imports import PARSER_VERSION, ImportSession, ImportSource
 from research_observatory_core.ingestion.source_chunks import put_source_chunk
 from research_observatory_core.object_store import create_local_object_store
 from research_observatory_core.ports.import_previews import PreviewActor, PreviewCreate, PreviewProblem
@@ -168,7 +171,7 @@ class ImportPreviewRepositoryTests(unittest.TestCase):
         self.assertEqual("parse-started", self.repository().read(preview).state)
 
     def test_malformed_or_substituted_parser_settings_fail_without_publishing_preview(self):
-        from research_observatory_core.import_preview_repository import _ParserSettings
+        from research_observatory_core.import_preview_repository import _ProtectedParserSettings
 
         for mutation in (
             {"projectId": new_uuid_v7()},
@@ -177,6 +180,9 @@ class ImportPreviewRepositoryTests(unittest.TestCase):
             {"encoding": "cp1252"},
             {"delimiter": "|"},
             {"schemaVersion": "2.0"},
+            {"parserProfile": "legacy-preview-120s-v1"},
+            {"parserProfile": "unknown"},
+            {"parserLimitsHash": "sha256:" + "0" * 64},
             {"unexpected": True},
             None,
         ):
@@ -189,7 +195,9 @@ class ImportPreviewRepositoryTests(unittest.TestCase):
                 actor=self.actor(),
             )
             value = {
-                "schemaVersion": "1.0",
+                "schemaVersion": "1.1",
+                "parserProfile": "protected-preview-900s-v1",
+                "parserLimitsHash": "sha256:eee2a0c5d0b4c8a2ea8b13d393819f4807aa51f2b4ad95cc78168654dd122495",
                 "projectId": fixture.PROJECT_ID,
                 "previewId": command.preview_id,
                 "formatName": "csv",
@@ -198,7 +206,7 @@ class ImportPreviewRepositoryTests(unittest.TestCase):
             }
             payload = "invalid-json" if mutation is None else json.dumps({**value, **mutation})
             with (
-                patch.object(_ParserSettings, "model_dump_json", return_value=payload),
+                patch.object(_ProtectedParserSettings, "model_dump_json", return_value=payload),
                 self.assertRaises(PreviewProblem),
             ):
                 self.repository().create(command)
@@ -323,8 +331,8 @@ class ImportPreviewRepositoryTests(unittest.TestCase):
         finally:
             connection.close()
 
-    def parse_attempt(self, raw: bytes):
-        preview = self.create()
+    def parse_attempt(self, raw: bytes, *, legacy_variant=None):
+        preview = self.create_legacy(legacy_variant) if legacy_variant is not None else self.create()
         for index, chunk in enumerate(self.retain(raw), 1):
             self.repository().append_chunk(preview, ordinal=index, chunk=chunk)
         sealed = self.repository().seal(
@@ -357,11 +365,35 @@ class ImportPreviewRepositoryTests(unittest.TestCase):
         assert claim is not None
         queue.start(claim, now="2026-08-30T12:02:00.100Z")
         actor = PreviewActor(actor_id=claim.worker_id, trace_id="2" * 32, occurred_at="2026-08-30T12:02:00.200Z")
-        session = ImportSession(io.BytesIO(raw), ImportSource("references.csv", sealed.source_sha256), "csv")
+        session = ImportSession(
+            io.BytesIO(raw),
+            ImportSource(sealed.source_name, sealed.source_sha256),
+            "csv",
+            delimiter=sealed.delimiter,
+            limits=profile_limits(sealed.parser_profile),
+        )
         self.repository().begin_parse(preview, claim=claim, actor=actor)
         return preview, sealed, session, claim, queue, actor
 
-    def receipt_revision(self, preview: str, manifest: str, actor: PreviewActor):
+    def receipt_revision(
+        self,
+        preview: str,
+        manifest: str,
+        actor: PreviewActor,
+        *,
+        parser_configuration_hash=None,
+        include_parser_configuration=True,
+    ):
+        state = self.repository().read(preview)
+        configured = parser_configuration_hash or fingerprint(
+            {
+                "parserVersion": PARSER_VERSION,
+                "format": state.format_name,
+                "encoding": state.encoding,
+                "delimiter": state.delimiter,
+                "limits": asdict(profile_limits(state.parser_profile)),
+            }
+        )
         factory = create_sqlite_unit_of_work_factory(self.project / "state/project.sqlite3", fixture.PROJECT_ID)
         with factory() as unit:
             receipt = unit.aggregates.append(
@@ -387,6 +419,23 @@ class ImportPreviewRepositoryTests(unittest.TestCase):
                             fingerprint="sha256:" + manifest,
                             governing_policy_id="dependency.material.v1",
                             governing_policy_version="1.0.0",
+                        ),
+                        *(
+                            ()
+                            if not include_parser_configuration
+                            else (
+                                MaterialDependency(
+                                    dependency_id=new_uuid_v7(),
+                                    dependency_kind="parameter-set",
+                                    relation_type="direct",
+                                    revision_id=None,
+                                    configuration_id="import.parser-configuration",
+                                    configuration_version="1.0.0",
+                                    fingerprint=configured,
+                                    governing_policy_id="dependency.material.v1",
+                                    governing_policy_version="1.0.0",
+                                ),
+                            )
                         ),
                     ),
                 ),
@@ -506,3 +555,248 @@ class ImportPreviewRepositoryTests(unittest.TestCase):
         with self.assertRaises(PreviewProblem):
             self.repository().append_records(preview, claim=claim, records=(records[0], substituted), actor=actor)
         self.repository().append_records(preview, claim=claim, records=records, actor=actor)
+
+    def test_new_settings_select900_and_legacy_missing_or_v1_is_never_upgraded(self):
+        from research_observatory_core.ingestion.protected_import_profiles import LEGACY_PROFILE, PROTECTED_PROFILE
+
+        current = self.create()
+        self.assertEqual(PROTECTED_PROFILE, self.repository().read(current).parser_profile)
+        frozen = json.loads(
+            (Path(__file__).parents[1] / "fixtures/imports/protected-preview-legacy120-authority-v1.json").read_text()
+        )
+        for case in frozen["cases"]:
+            state = case["unscheduled"]["state"]
+            actor = self.actor()
+            connection = storage.open_canonical_database(
+                self.project / "state/project.sqlite3", expected_project_id=fixture.PROJECT_ID
+            )
+            try:
+                connection.execute(
+                    "INSERT INTO import_previews VALUES (?, ?, ?, 'csv', 'utf-8', ?, ?, ?, ?)",
+                    (
+                        state["previewId"],
+                        fixture.PROJECT_ID,
+                        state["sourceName"],
+                        json.dumps(state["rights"]),
+                        actor.actor_id,
+                        actor.trace_id,
+                        actor.occurred_at,
+                    ),
+                )
+                connection.execute(
+                    "INSERT INTO import_preview_events VALUES (?, ?, 1, 'created', ?, ?, ?)",
+                    (state["previewId"], fixture.PROJECT_ID, actor.actor_id, actor.trace_id, actor.occurred_at),
+                )
+                for row in case["unscheduled"]["settingsRows"]:
+                    columns = tuple(row)
+                    connection.execute(
+                        "INSERT INTO settings ("
+                        + ",".join(columns)
+                        + ") VALUES ("
+                        + ",".join("?" for _ in columns)
+                        + ")",
+                        tuple(row.values()),
+                    )
+                before = connection.execute(
+                    "SELECT * FROM settings WHERE setting_key=?", ("imports.preview." + state["previewId"],)
+                ).fetchall()
+                for _ in range(2):
+                    actual = self.repository().read(state["previewId"])
+                    self.assertEqual(LEGACY_PROFILE, actual.parser_profile)
+                    self.assertEqual(state["delimiter"], actual.delimiter)
+                self.assertEqual(
+                    before,
+                    connection.execute(
+                        "SELECT * FROM settings WHERE setting_key=?", ("imports.preview." + state["previewId"],)
+                    ).fetchall(),
+                )
+            finally:
+                connection.close()
+
+    def test_new_profile_rejects_actual_legacy_session_even_with_valid_new_receipt(self):
+        raw = b"title\nSynthetic\n"
+        preview, sealed, session, claim, _, actor = self.parse_attempt(raw)
+        self.repository().append_records(preview, claim=claim, records=tuple(session.records()), actor=actor)
+        old = ImportSession(io.BytesIO(raw), session.source, "csv")
+        tuple(old.records())
+        receipt = self.receipt_revision(preview, sealed.manifest_sha256, actor)
+        with self.assertRaisesRegex(PreviewProblem, "preview-parser-session-profile-mismatch"):
+            self.repository().finish_parse(preview, claim=claim, session=old, receipt_revision_id=receipt, actor=actor)
+        self.assertEqual("parse-started", self.repository().read(preview).state)
+
+    def test_new_settings_require_explicit_profile_hash_and_object_shape(self):
+        from research_observatory_core.import_preview_repository import _ProtectedParserSettings
+
+        for missing in ("parserProfile", "parserLimitsHash", "non-object"):
+            command = PreviewCreate(
+                preview_id=new_uuid_v7(),
+                source_name="synthetic.csv",
+                format_name="csv",
+                rights=fixture.RIGHTS,
+                actor=self.actor(),
+            )
+            value = {
+                "schemaVersion": "1.1",
+                "projectId": fixture.PROJECT_ID,
+                "previewId": command.preview_id,
+                "formatName": "csv",
+                "encoding": "utf-8",
+                "delimiter": ",",
+                "parserProfile": "protected-preview-900s-v1",
+                "parserLimitsHash": "sha256:eee2a0c5d0b4c8a2ea8b13d393819f4807aa51f2b4ad95cc78168654dd122495",
+            }
+            if missing == "non-object":
+                payload = "[]"
+            else:
+                del value[missing]
+                payload = json.dumps(value)
+            with (
+                self.subTest(missing=missing),
+                patch.object(_ProtectedParserSettings, "model_dump_json", return_value=payload),
+                self.assertRaises(PreviewProblem),
+            ):
+                self.repository().create(command)
+            with self.assertRaisesRegex(PreviewProblem, "preview-not-found"):
+                self.repository().read(command.preview_id)
+
+    def test_new_profile_rejects_wrong_actual_parser_receipt(self):
+        preview, sealed, session, claim, _, actor = self.parse_attempt(b"title\nSynthetic\n")
+        self.repository().append_records(preview, claim=claim, records=tuple(session.records()), actor=actor)
+        receipt = self.receipt_revision(
+            preview, sealed.manifest_sha256, actor, parser_configuration_hash="sha256:" + "0" * 64
+        )
+        with self.assertRaisesRegex(PreviewProblem, "preview-parser-receipt-profile-mismatch"):
+            self.repository().finish_parse(
+                preview, claim=claim, session=session, receipt_revision_id=receipt, actor=actor
+            )
+        with self.assertRaises(PreviewProblem):
+            self.repository().records_page(preview, after=0, limit=10)
+
+    def create_legacy(self, variant="v1-comma", *, version_mode="captured"):
+        document = json.loads(
+            (Path(__file__).parents[1] / "fixtures/imports/protected-preview-legacy120-authority-v1.json").read_text()
+        )
+        case = next(case for case in document["cases"] if case["variant"] == variant)
+        state = case["unscheduled"]["state"]
+        actor = self.actor()
+        connection = storage.open_canonical_database(
+            self.project / "state/project.sqlite3", expected_project_id=fixture.PROJECT_ID
+        )
+        try:
+            connection.execute(
+                "INSERT INTO import_previews VALUES (?, ?, ?, 'csv', 'utf-8', ?, ?, ?, ?)",
+                (
+                    state["previewId"],
+                    fixture.PROJECT_ID,
+                    state["sourceName"],
+                    json.dumps(state["rights"]),
+                    actor.actor_id,
+                    actor.trace_id,
+                    actor.occurred_at,
+                ),
+            )
+            connection.execute(
+                "INSERT INTO import_preview_events VALUES (?, ?, 1, 'created', ?, ?, ?)",
+                (state["previewId"], fixture.PROJECT_ID, actor.actor_id, actor.trace_id, actor.occurred_at),
+            )
+            for row in case["unscheduled"]["settingsRows"]:
+                row = dict(row)
+                value = json.loads(row["text_value"])
+                if version_mode == "omitted":
+                    del value["schemaVersion"]
+                elif version_mode == "python-name":
+                    value["schema_version"] = value.pop("schemaVersion")
+                elif version_mode == "unknown":
+                    value["schemaVersion"] = "2.0"
+                else:
+                    self.assertEqual("captured", version_mode)
+                if version_mode != "captured":
+                    row["text_value"] = json.dumps(value)
+                connection.execute(
+                    "INSERT INTO settings (" + ",".join(row) + ") VALUES (" + ",".join("?" for _ in row) + ")",
+                    tuple(row.values()),
+                )
+        finally:
+            connection.close()
+        return state["previewId"]
+
+    def test_legacy_source_only_receipt_still_accepts_without_profile_backfill(self):
+        for variant in ("missing-comma", "v1-comma"):
+            with self.subTest(variant=variant):
+                preview, sealed, session, claim, queue, actor = self.parse_attempt(
+                    b"title\nSynthetic\n", legacy_variant=variant
+                )
+                self.assertEqual(120.0, session.limits.max_seconds)
+                self.repository().append_records(preview, claim=claim, records=tuple(session.records()), actor=actor)
+                receipt = self.receipt_revision(
+                    preview, sealed.manifest_sha256, actor, include_parser_configuration=False
+                )
+                output = self.repository().finish_parse(
+                    preview, claim=claim, session=session, receipt_revision_id=receipt, actor=actor
+                )
+                queue.stage_artifact(claim, artifact=output, role="output", now=actor.occurred_at)
+                queue.complete(claim, outputs=(output,), now=actor.occurred_at)
+                restored = self.repository()
+                self.assertEqual(2, len(restored.records_page(preview, after=0, limit=10)))
+                self.assertEqual("legacy-preview-120s-v1", restored.read(preview).parser_profile)
+
+    def test_legacy_settings_default_and_python_version_name_keep_exact120_authority(self):
+        from contextlib import closing
+
+        from research_observatory_core.import_preview_repository import _ParserSettings
+        from research_observatory_core.ingestion.preview_workflow import PreviewIntentContext, preview_job_input
+
+        document = json.loads(
+            (Path(__file__).parents[1] / "fixtures/imports/protected-preview-legacy120-authority-v1.json").read_text()
+        )
+        frozen = next(case for case in document["cases"] if case["variant"] == "v1-comma")
+        context = document["syntheticContext"]
+        for mode in ("omitted", "python-name"):
+            with self.subTest(mode=mode):
+                data = ImportPreviewRepositoryTests(methodName="runTest")
+                data.setUp()
+                self.addCleanup(data.tearDown)
+                preview = data.create_legacy("v1-comma", version_mode=mode)
+                state = data.repository().read(preview)
+                self.assertEqual("legacy-preview-120s-v1", state.parser_profile)
+                with closing(
+                    storage.open_canonical_database(
+                        data.project / "state/project.sqlite3", expected_project_id=fixture.PROJECT_ID
+                    )
+                ) as connection:
+                    raw_settings = connection.execute(
+                        "SELECT text_value FROM settings WHERE setting_key=?", ("imports.preview." + preview,)
+                    ).fetchone()[0]
+                self.assertEqual("1.0", _ParserSettings.model_validate_json(raw_settings).schema_version)
+                raw = frozen["syntheticSourceUtf8"].encode("utf-8")
+                for ordinal, chunk in enumerate(data.retain(raw), 1):
+                    data.repository().append_chunk(preview, ordinal=ordinal, chunk=chunk)
+                sealed = data.repository().seal(
+                    preview,
+                    source_sha256=hashlib.sha256(raw).hexdigest(),
+                    byte_length=len(raw),
+                    chunk_count=1,
+                    actor=data.actor(),
+                )
+                inputs = preview_job_input(
+                    sealed,
+                    PreviewIntentContext.model_validate_json(json.dumps(context["intent"])),
+                    context["policyHash"],
+                    context["resumeEpoch"],
+                )
+                self.assertEqual(frozen["unscheduled"]["inputs"], inputs.model_dump(mode="json", by_alias=True))
+                self.assertEqual(frozen["unscheduled"]["configurationHash"], inputs.configuration_hash)
+                with closing(
+                    storage.open_canonical_database(
+                        data.project / "state/project.sqlite3", expected_project_id=fixture.PROJECT_ID
+                    )
+                ) as connection:
+                    self.assertEqual(
+                        raw_settings,
+                        connection.execute(
+                            "SELECT text_value FROM settings WHERE setting_key=?", ("imports.preview." + preview,)
+                        ).fetchone()[0],
+                    )
+        invalid = self.create_legacy("v1-comma", version_mode="unknown")
+        with self.assertRaises(PreviewProblem):
+            self.repository().read(invalid)

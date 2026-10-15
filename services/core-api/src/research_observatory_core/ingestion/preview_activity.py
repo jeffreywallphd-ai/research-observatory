@@ -27,6 +27,7 @@ from ..workflow_executor import WorkflowActivityContext, WorkflowActivityError
 from .import_drafts import ImportRights
 from .preview_records import StoredImportRecord
 from .preview_workflow import fingerprint
+from .protected_import_profiles import profile_limits
 from .reference_imports import PARSER_VERSION, ImportProblem, ImportRecord, ImportSession, ImportSource
 from .source_chunks import ChunkedImportSource
 
@@ -179,6 +180,7 @@ class ImportPreviewActivity:
             ImportSource(state.source_name, state.source_sha256, state.encoding),
             state.format_name,
             delimiter=state.delimiter,
+            limits=profile_limits(state.parser_profile),
             cancelled=poll,
         )
         digest = hashlib.sha256(b'["import-preview-records/1",[')
