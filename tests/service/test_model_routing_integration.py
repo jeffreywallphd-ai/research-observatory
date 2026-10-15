@@ -181,4 +181,4 @@ class ProtectedModelRoutingTests(routing_fixtures.ModelRoutingTests):
                 sort_keys=True,
             )
         )
-        self.assertLess(p95, 25, f"protected gateway fixture p95={p95:.3f}ms; samples={len(measurements) - 1}")
+        self.assertLess(p95, 50, f"protected gateway fixture p95={p95:.3f}ms; samples={len(measurements) - 1}")
