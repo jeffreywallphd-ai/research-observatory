@@ -1,0 +1,145 @@
+{
+  "task_id": "W2.C32.T01",
+  "attempt_id": "R01",
+  "candidate_commit": "817c745e9c81a74939c7abdebbf01309039f0194",
+  "base_commit": "a976eb1b7c2f4ef3e1c6c73d3f1f13a768dc0160",
+  "reviewed_state_commit": "b02974a08f8a812fe575b03a4a4c1c7226b67478",
+  "reviewer": "agent:/root/storage_profile_review",
+  "result": "approved",
+  "reviewed_at": "2026-10-15T10:48:38.552283+00:00",
+  "packet_sha256": "56a17bb2eff04176571f10df19e03e4a2d3fab57167152a8c8e37ecf8c29aaaa",
+  "evidence_sha256": "c199b6d8eedffca4a5b9661d0ad281e9e1269e49177c3a831fc0322bcaae3229",
+  "acceptance_criteria_sha256": "831c2a4cc6c6cf0bd8ca53f4c85cce254f359e6c80f198692babeaf6a7f96dd5",
+  "selection_sha256": "95a24ba0bbab801d99fbd4891efff8e83904b7d713731a9648a2ec2db41eea28",
+  "findings": [],
+  "closures": [],
+  "acceptance_reviews": [
+    {
+      "criterion_index": 1,
+      "check_ids": [
+        "original-lpac-module"
+      ],
+      "result": "satisfied",
+      "assessment": "Original CAP-04.S05.T02 approved product/security/manifest/broker/secret/export/network failure-audit authority and original DONE history remain immutable. This correction changes only the existing test. Fresh actual db1 full LPAC16 exercises real Windows token/ambient-denial/isolation/signature/guardian and256MiB memory assertions with exact locally signed worker59 and frozenCore784. Historical R02 remains bound to its real5a767 source; neither local application test signing nor synthetic broker input is promoted to production trust, live provider or per-syscall proof."
+    },
+    {
+      "criterion_index": 2,
+      "check_ids": [
+        "original-lpac-module"
+      ],
+      "result": "satisfied",
+      "assessment": "Actual db1 executes all16 unique named cases/zero failures/errors/skips:44.251s unittest body,44.87865699999384s owned check. Public total1s case retains exact typed timeout/no successful WorkerResult, phase-consistent actual launch/token/handle/broker observations and exact cleanup. Additive valid20s setup case reaches real lower launch, tightens only remaining wall_seconds to1.0 after asserting>=1, proves exact broker marker/real LPAC token/retained worker handle and actual timeout/worker exit/guardian/profile/runtime removal/sentinel. Original memory helper and13 other original methods remain AST-identical versusc163;15 other methods unchanged versuspaired48d. All4 outer owned jobs root0/naturally drained/EMPTY0 with no timeout/outliving/forced termination, including1377 total processes for the LPAC module. Inputs remain stable."
+    },
+    {
+      "criterion_index": 3,
+      "check_ids": [
+        "affected-format",
+        "affected-lint",
+        "affected-configured-types",
+        "original-lpac-module"
+      ],
+      "result": "satisfied",
+      "assessment": "Complete original50d..db1 source delta reviewed, including initialpairedbe1 before resumed submission segment and compilerfixtureb140. Compiler setup preserves all15 original assertion calls, original command/root0/120s deadline and exact postinventory source; adds one nestedEMPTY assertion and uses the existing suspended/no-breakaway Job to contain its own compiler descendants. Actual nested49 total/active2 explicitly terminated to0 before LPAC execution; this is separate from required natural outer cleanup. One-file Ruff format/lint and configured734-source typing with exclusive initiallyabsent cache pass. Actual exact two-field current binding exception under34e/fc960 and committed817 provenance preserve original50d admission/spec introduction, claim/lease, every criterion and original9cee unfrozen failed manifest. No product/framework/schema/security/experience or numeric acceptance change."
+    }
+  ],
+  "corrective_integration": {
+    "evidence_sha256": "c199b6d8eedffca4a5b9661d0ad281e9e1269e49177c3a831fc0322bcaae3229",
+    "authority_preserved": true,
+    "affected_integration_reviewed": true,
+    "notes": "Actual CAP-04.S05.T02/6506 origin a9faa and original DONE history/approval/criteria remain unchanged. Exact test sourceb140, paired48d and compilerfixture chain authenticate in68b against full original50d..db1; actual221a/four raw checks/normalowned/input closure are qualified there. Actual2c576 at817 confirms28 complete consumed source/runtime/artifact trees,45907 retained individual pins plus4 exact inert navigation exclusions, unchanged environment and43 absences under specific owner34e/differentfc960 metadata-only native/principal exception. All original check commits/durations/results remain actualdb1; delivery817 is not a new fresh run. Frozen56a17/c199 and direct-child four-path public deliveryb029 are independently authenticated. This approves only C32; root must record normal taskctl review/integration and finish queued current-site snapshot. Broader connector/current14/performance/anchors/shipping/security/Wave/release gates stay separate."
+  },
+  "verification_selection": {
+    "selected_command_ids": [
+      "security-local:unit",
+      "foundation:quality"
+    ],
+    "assessment": "Full affected LPAC16 is warranted by actual earlier abnormal native lifetimes and paired one-second restoration; one-file Ruff and configured734 context qualify current changed test. No unchanged connector prefix, fullprofile/history/exit review or large model replay. Exact inert delivery projection is finite34e/fc960 authority with actual consumed-input equality, never a generic native reuse rule."
+  },
+  "evidence_authentication": {
+    "actual_frozen_authentication": {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/lpac-one-second-paired-test-restoration-02/independent-frozen-delivery-authentication-01.json",
+      "sha256": "c0f1f3ada064d55322d42779c8ce1a5a155ac48938a33dd6624dd121af4c7a65"
+    },
+    "actual_component_assessment": {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/lpac-one-second-paired-test-restoration-02/independent-actual-component-disposition-01.json",
+      "sha256": "68b6320de3a7305922fac2fcab0e956942f7efe8e65980bfaa77ff485e22c81a"
+    },
+    "actual_metadata_recording_assessment": {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/lpac-one-second-paired-test-restoration-02/independent-actual-metadata-recording-disposition-01.json",
+      "sha256": "30ea36c7a9fe90e28a38e99b5387d2adcf17c4c2968a5611955fcf2afa9e7bf6"
+    },
+    "actual_continuity": {
+      "path": "artifacts/tmp/W2.C32.T01.metadata-projection-continuity-01.actual.json",
+      "sha256": "2c5762b2552e43c0b53c93869145719e1dd15dc44ac9d09dcccc56ea9c74e663"
+    },
+    "actual_focused_receipt": {
+      "path": "artifacts/tmp/W2.C32.T01.focused-proof-02.f01/receipt.json",
+      "sha256": "221a8f8f6fcad0740ccab165dc41530a765d75a8f2a1db7ba282b42af123a558"
+    },
+    "actual_input_manifest": {
+      "path": "artifacts/tmp/W2.C32.T01.focused-proof-02.f01/input-manifest.json",
+      "sha256": "325b08c0833697fa9ff467550dd4b61cb9e66a19f1edb7159667090ccb9a9262"
+    },
+    "actual_execution_producer": {
+      "path": "artifacts/tmp/W2.C32.T01.focused-proof-02.py",
+      "sha256": "c666d795001b9def6ca35c180d70c2c210df11a34d458e5f70a6ae9884ff874f"
+    },
+    "source_readiness": {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/lpac-one-second-paired-test-restoration-02/compiler-fixture-job-source-01/independent-source-readiness-01.json",
+      "sha256": "a2588808299f07037e98fb56c630b01be7879278f6e9a2b2b8075f528b062e5b"
+    },
+    "proof_source_readiness": {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/lpac-one-second-paired-test-restoration-02/independent-collector02-source-readiness-01.json",
+      "sha256": "f0e5fc4c372df94934aaeb80999da8ea077ceb712e1e5f8d9f580722f2e1acb0"
+    },
+    "source_application": {
+      "path": "artifacts/tmp/W2.C32.T01.source-application-02.json",
+      "sha256": "b076d40761e9a10cbf385fafa17b96f9a3c7f70d498f3cf4014180e68e783e80"
+    },
+    "finite_binding_decision": {
+      "path": "artifacts/evidence/W2.C32.T01.execution-segment-rebind-01.json",
+      "sha256": "7df576051b29df32729ce2fa3823e7d52fdff754eda9e35e6b23c8c659c63c3d"
+    },
+    "finite_binding_readiness": {
+      "path": "artifacts/evidence/W2.C32.T01.execution-segment-rebind-readiness-01.json",
+      "sha256": "fc960249f8d72121734e990a080a4453c154a6bfd7b02e282cd4677edd73f96b"
+    },
+    "frozen_packet_criteria_and_selection_recomputed": true,
+    "all_four_raw_check_outputs_previously_authenticated": true,
+    "fresh_check_candidate": "db1acd24b28f8a88a0fc5cb23538545f98267f57",
+    "delivery_candidate_projection": "817c745e9c81a74939c7abdebbf01309039f0194",
+    "four_check_ids": [
+      "affected-format",
+      "affected-lint",
+      "affected-configured-types",
+      "original-lpac-module"
+    ],
+    "original_module": "16PASS_ZERO_SKIP",
+    "affected_Ruff": "FORMAT_AND_LINT_PASS",
+    "configured734_types": "PASS_AT_ACTUAL_DB1_WITH_FRESH_EXCLUSIVE_CACHE",
+    "owned_cleanup": "ALL_FOUR_NORMAL_EMPTY0_NO_OUTLIVING_OR_TERMINATION",
+    "final_input_stability": true,
+    "nested_compiler_cleanup": "EXPLICIT_TERMINATION_EXPECTED_FIXTURE_CLEANUP_SEPARATE_FROM_NATURAL_OUTER_DRAIN"
+  },
+  "full_profile_pass_claimed": false,
+  "independence": {
+    "implementation_owner": "agent:/root",
+    "independent_reviewer": "agent:/root/storage_profile_review",
+    "test_implementation_author": "agent:/root/c21_closeout_review",
+    "reviewer_authored_test_implementation_or_qualifying_execution_producer": false,
+    "reviewer_authored_prior_nonqualifying_diagnostic_source": true,
+    "nonqualifying_diagnostic_actual_result_independently_disposed_by": "agent:/root/security_resolution_review",
+    "reviewer_reran_tests_or_runtime_scans": false
+  },
+  "proof_limits": [
+    "Current proof uses real Windows LPAC token/Job/ACL and current signedworker/frozenguardian within synthetic authored connector/loopback/broker conditions. Local application signing is not production trust, live-provider, shipping fullTauri or per-syscall audit qualification.",
+    "Nested compiler Job is explicitly terminated as fixture cleanup before LPAC. Existing helper failed-launch-before-return kills/waits root and caller closes Job but does not explicitly close its unreturned Popen handles/pipes; bounded inherited error-path finalization limit remains, with no stronger claim.",
+    "Original LPAC15FAIL/abnormal owned cleanup, public1s nonqualifying diagnostic, original0183 all16bodyOK/outercleanupFAIL, actual0562/8218 same-birth vctip diagnostic and failed unfrozen9cee submission remain preserved. No prior result is relabeled or unknown historical actor inferred.",
+    "All fresh checks remain actualdb1. Exact later inert metadata projection is independently bounded and observed at817; it does not waive future affected qualification or authorize broad native reuse.",
+    "Submitted HTML refresh is explicitly queued for final submit/review closeout. Existing actual-site-check proves only its recorded pre817 snapshot; no current interim UI status claim is made. Remaining connector/current14, performance/anchors/artifactsecurity/Wave qualification and separate release remain required."
+  ],
+  "scope_limits": [
+    "Approves only exact frozen W2.C32.T01 R01 packet56a17/c199 at817 and public deliveryb029, with complete original50d..db1 source scope and actualdb1 checks.",
+    "No Wave release, W3 implementation, shared framework change, scope/criteria/security relaxation or rewritten history is authorized."
+  ]
+}
