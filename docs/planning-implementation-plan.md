@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 21a9ac3de1aacf76a729239ff89c6f987863d6b0d1e9a1e18f634d58dfa7c447
+source_sha256: 591f832102a9c85857d6f16e1c118160f46557198c01a8355333687388451059
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -5762,7 +5762,7 @@ Original tasks and approvals remain unchanged.
 
 ### W2.C33.T01 — Implement Unpaywall and Semantic Scholar adapters
 
-**Status:** `IN_PROGRESS`. **Original task:** `CAP-04.S02.T03`. **Latest review:** `-`.
+**Status:** `REVIEW`. **Original task:** `CAP-04.S02.T03`. **Latest review:** `-`.
 
 **Reproduction:** At clean candidate8392e43397e9aa28301cdf5689d653389fc1c561 the unchanged original SourceSliceRuntimeTests.test_four_sources_cache_failure_denial_cancellation_and_restart exceeds its original600s collection watchdog. Actual receipt artifacts/tmp/W2.remaining-corrections-batch-01/unreached-connector-tail-owned-01/actual-tail-remaining98-01/receipt.json SHA256df124b843661b7cec00be68451b3531e0dbd801bed969b8d983d16226dc995b7 preserves timeout/forcedEMPTY0/stable heldinputs and raw9f83894e5f13c667f65ef426a4c692fa64dc5d81f11c6cdf6eaf7a261441d124. Independent actual97-component disposition4b3613c89dca625f6f2f9181e590ca41fd42099d73033ba13990b0bd987fa02c admits only preceding97 completed cases. Source inspection independently establishes12 private journal reads (7 replay,5 checkpoint) violate ConnectorRepository required current project/action authority, reaching ObjectStore.open with inverted object/project lock ordering against active production workers. Existing C31 exact-path diagnosis supports the risk; this invocation has no captured blocking stack, so its exact cause remains unproven. The helper was introduced in later qualification source1ccf0f92 and currently6125e5b53fd3f0cf1f994f0cabf06a90700d08da79bb02101f7d3eba77881de8, not present at original approved035f. It verifies inherited CAP-04.S02.T03 source integration; original task/history remains unchanged.
 
@@ -5779,7 +5779,19 @@ Original tasks and approvals remain unchanged.
 
 **Review mode:** `append-only v1` / 0 completed round(s)
 
-**Current immutable submission awaiting review:** None
+**Current immutable submission awaiting review:** `R01` / packet SHA-256 `34ccf5b1592b618b854d66e308934b7780a7dccf83a49b49fd5d2a668d44af74`
+
+- Candidate / base / branch: `fbe4038e0cd4354fca3824dd344053ebb1622828` / `e3e58ab545e25466ddd3d89c7f6e0e0e3fa2fab7` / `codex/w2-implementation`
+- Submitted by / at: agent:/root / `2026-10-15T14:13:50+00:00`
+- Evidence: `artifacts/evidence/W2.C33.T01.R01.json` / `60b02c29398d7c5d887bcf46c4c37973211fe6f7aed3bc4565922dc55b5759a2` / `fbe4038e0cd4354fca3824dd344053ebb1622828`
+- Acceptance-criteria SHA-256: `da6250e28360c4881c7bdb40244de051d7a1bbda9d8dc54b3be88b1cf0505999`
+- Verification-selection SHA-256: `fb0326cfc81e8a01a706871197f58c9d9ff03052906b12d4a6a107781addd2e6`
+- Changed paths: `docs/planning-implementation-plan.md`, `planning/backlog.yaml`, `planning/review-site/index.html`, `planning/review-site/manifest.json`, `planning/review-site/waves/W2.html`, `planning/status-summary.md`, `tests/connectors/test_source_slice_runtime.py`
+- Selected checks: `.venv/Scripts/python.exe -B -s -m ruff format --check --config pyproject.toml -- tests/connectors/test_source_slice_runtime.py`, `.venv/Scripts/python.exe -B -s -m ruff check --config pyproject.toml -- tests/connectors/test_source_slice_runtime.py`, `.venv/Scripts/python.exe -B -s -m mypy --config-file pyproject.toml --no-namespace-packages -- @artifacts/tmp/W2.remaining-corrections-batch-01/quality-transport-07/complete-files.args`, `.venv/Scripts/python.exe -B -s -m unittest -v tests.connectors.test_source_slice_runtime.SourceSliceRuntimeTests.test_four_sources_cache_failure_denial_cancellation_and_restart`, `.venv/Scripts/python.exe -B -s tools/source_performance_check.py --calibrate --report artifacts/tmp/W2.source-performance-current-03.f01/report.json`
+- Deferred checks: `Other connector/platform/package/performance/component evidence remains separately attributed to actual executed candidates.`, `Slice/Wave affected qualification and separate release gate remain required.`
+- Selection rationale: Only affected source-slice caller-authority contract, its directly consuming original SourcePerf, one-fileRuff/configured734typing. Complete separate benchmark mandatory; no97/177prefix, fullhistory or fullprofile replay.
+- Prior round / replayed open findings: `-` / -
+- Root-cause escalation: -
 
 **Current latest-review projection:** `-` by - at `-`
 

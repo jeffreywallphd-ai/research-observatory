@@ -5821,7 +5821,7 @@
         {
           "task_id": "W2.C33.T01",
           "title": "Implement Unpaywall and Semantic Scholar adapters",
-          "status": "IN_PROGRESS",
+          "status": "REVIEW",
           "acceptance_criteria": [
             "OA URLs retain license and host metadata; recommendation/citation results record direction and source; provider unavailability degrades without corrupting the search run.",
             "Automated tests cover the expected path and at least one material failure or boundary condition.",
@@ -5850,7 +5850,7 @@
           "task_review": {
             "task_id": "W2.C33.T01",
             "title": "Implement Unpaywall and Semantic Scholar adapters",
-            "status": "IN_PROGRESS",
+            "status": "REVIEW",
             "mode": "append-only",
             "latest_review": {
               "reviewer": null,
@@ -5861,7 +5861,52 @@
             "review_control": {
               "version": 1,
               "attempts": [],
-              "current_submission": null
+              "current_submission": {
+                "id": "R01",
+                "submitted_by": "agent:/root",
+                "submitted_at": "2026-10-15T14:13:50+00:00",
+                "candidate_commit": "fbe4038e0cd4354fca3824dd344053ebb1622828",
+                "base_commit": "e3e58ab545e25466ddd3d89c7f6e0e0e3fa2fab7",
+                "branch": "codex/w2-implementation",
+                "evidence_reference": {
+                  "type": "criterion-manifest",
+                  "path": "artifacts/evidence/W2.C33.T01.R01.json",
+                  "sha256": "60b02c29398d7c5d887bcf46c4c37973211fe6f7aed3bc4565922dc55b5759a2",
+                  "commit": "fbe4038e0cd4354fca3824dd344053ebb1622828",
+                  "recorded_at": "2026-10-15T14:13:50+00:00"
+                },
+                "acceptance_criteria_sha256": "da6250e28360c4881c7bdb40244de051d7a1bbda9d8dc54b3be88b1cf0505999",
+                "changed_paths": [
+                  "docs/planning-implementation-plan.md",
+                  "planning/backlog.yaml",
+                  "planning/review-site/index.html",
+                  "planning/review-site/manifest.json",
+                  "planning/review-site/waves/W2.html",
+                  "planning/status-summary.md",
+                  "tests/connectors/test_source_slice_runtime.py"
+                ],
+                "selected_checks": [
+                  ".venv/Scripts/python.exe -B -s -m ruff format --check --config pyproject.toml -- tests/connectors/test_source_slice_runtime.py",
+                  ".venv/Scripts/python.exe -B -s -m ruff check --config pyproject.toml -- tests/connectors/test_source_slice_runtime.py",
+                  ".venv/Scripts/python.exe -B -s -m mypy --config-file pyproject.toml --no-namespace-packages -- @artifacts/tmp/W2.remaining-corrections-batch-01/quality-transport-07/complete-files.args",
+                  ".venv/Scripts/python.exe -B -s -m unittest -v tests.connectors.test_source_slice_runtime.SourceSliceRuntimeTests.test_four_sources_cache_failure_denial_cancellation_and_restart",
+                  ".venv/Scripts/python.exe -B -s tools/source_performance_check.py --calibrate --report artifacts/tmp/W2.source-performance-current-03.f01/report.json"
+                ],
+                "deferred_checks": [
+                  "Other connector/platform/package/performance/component evidence remains separately attributed to actual executed candidates.",
+                  "Slice/Wave affected qualification and separate release gate remain required."
+                ],
+                "selection_rationale": "Only affected source-slice caller-authority contract, its directly consuming original SourcePerf, one-fileRuff/configured734typing. Complete separate benchmark mandatory; no97/177prefix, fullhistory or fullprofile replay.",
+                "selection_sha256": "fb0326cfc81e8a01a706871197f58c9d9ff03052906b12d4a6a107781addd2e6",
+                "prior_attempt_id": null,
+                "open_finding_ids": [],
+                "root_cause_analysis": null,
+                "selected_command_ids": [
+                  "search:connectors",
+                  "foundation:quality"
+                ],
+                "packet_sha256": "34ccf5b1592b618b854d66e308934b7780a7dccf83a49b49fd5d2a668d44af74"
+              }
             }
           }
         }
