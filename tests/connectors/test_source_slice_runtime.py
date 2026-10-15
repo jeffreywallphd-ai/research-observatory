@@ -392,9 +392,7 @@ def run_workload(check, directory, *, count=100, boundaries=True):
             )
             check.assertEqual(422, invalid.status_code, invalid.text)
             for value, saved, item, job in retained.values():
-                check.assertEqual(
-                    saved, journal_read(second.state.runtime, lambda pages: pages.replay(value))
-                )
+                check.assertEqual(saved, journal_read(second.state.runtime, lambda pages: pages.replay(value)))
                 status = post(client, "/projects/connectors/jobs/status", {"root": root, "jobId": job["jobId"]})
                 check.assertEqual("succeeded", status["state"])
                 inspection = post(
