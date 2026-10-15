@@ -1,0 +1,240 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "finite-gateway-actual-qualification",
+  "originTaskId": "CAP-07.S01.T03",
+  "originWave": "W1",
+  "qualificationWave": "W2",
+  "candidateCommit": "4e650e7abdb4ebe468110ab3b79554a6c2024d34",
+  "sourceBaseCommit": "f96018cd2fe0e279fa23567becb809bed1272f91",
+  "status": "ACTUAL_NUMERIC_LIMITS_MET_PENDING_DIFFERENT_DISPOSITION",
+  "authority": {
+    "path": "artifacts/evidence/W2.completion-corrections-batch-02.decision-01.json",
+    "sha256": "738a9ed22b4da46a88c47c64b07607bbf1b27839e3bf657e7c7712763d76e9c2",
+    "finiteScope": "GATEWAY-D1-D5"
+  },
+  "actualPublishedRecords": [
+    {
+      "path": "artifacts/evidence/CAP-07.S01.gateway-latency-criterion-amendment-01.proposal.json",
+      "sha256": "e00aa5bb8e6c0789ea200dc329a23a1ff5f5830f6d506560c2d831e1e482edbc",
+      "actualIntroductionCommit": "f96018cd2fe0e279fa23567becb809bed1272f91"
+    },
+    {
+      "path": "artifacts/evidence/CAP-07.S01.gateway-latency-criterion-amendment-01.readiness-review.json",
+      "sha256": "17fcb82040925bcf968b997accadd1dea35dd54c2be22c59ce75ae50cfb8e079",
+      "actualIntroductionCommit": "f96018cd2fe0e279fa23567becb809bed1272f91"
+    },
+    {
+      "path": "artifacts/evidence/CAP-07.S01.gateway-baseline-02.json",
+      "sha256": "5fe8f767c80d1c5353ebe51e74495250383aeab9503f534d7860a0903cc616d2",
+      "actualIntroductionCommit": "f96018cd2fe0e279fa23567becb809bed1272f91"
+    },
+    {
+      "path": "artifacts/evidence/CAP-07.S01.gateway-baseline-02.review-R01.json",
+      "sha256": "51fbe30ead0429aeed72b7f9d79b243660d157886bd1e696bd84b200d3a05a48",
+      "actualIntroductionCommit": "f96018cd2fe0e279fa23567becb809bed1272f91"
+    },
+    {
+      "path": "artifacts/evidence/CAP-07.S01.gateway-criterion-amendment-01.json",
+      "sha256": "659613ef4f5f616c8af9a440e1000369fa02470f44272b3447be5eb00b609dae",
+      "actualIntroductionCommit": "f96018cd2fe0e279fa23567becb809bed1272f91"
+    },
+    {
+      "path": "artifacts/evidence/CAP-07.S01.gateway-latency-criterion-amendment-01.decision.json",
+      "sha256": "a9341d858c8f32b801a3937e9b86e672bf4aafe63a86c4125b618f5afe6ce833",
+      "actualIntroductionCommit": "f96018cd2fe0e279fa23567becb809bed1272f91"
+    }
+  ],
+  "actualReceipt": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/gateway-latency-criterion-amendment-01/finite-delivery-proof-01/actual-benchmark-proof-01/receipt.json",
+    "sha256": "3549e40b59e13c7e3f378719992fbe068650dc8ac7aed2c1b7bef66532a0de3a"
+  },
+  "raw": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/gateway-latency-criterion-amendment-01/finite-delivery-proof-01/actual-benchmark-proof-01/original-benchmark.raw.log",
+    "sha256": "6461b6506ff24ad84321fe83e4f58a192453d1424c0620f7f16770376334efad"
+  },
+  "producer": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/gateway-latency-criterion-amendment-01/finite-delivery-proof-01/owned-original-benchmark-01.py",
+    "sha256": "563e48f2952d6fa59aa93fc8fe9480b39215cbf711ad4782206c0a23ac451359"
+  },
+  "sourceReadiness": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/gateway-latency-criterion-amendment-01/finite-delivery-proof-01/independent-runtime-bound-source-readiness-01.json",
+    "sha256": "931acd28e275c0336372183c05d37faf9675d333441cf9979616bd94514007ab"
+  },
+  "runtimeInputs": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/postinstall-consumed-runtime-capture-01/actual-runtime-capture-04/receipt.json",
+    "sha256": "456482ea03c3545a03c63e36e5f0bb098c7e20c95e2d2f5efa2f52381b2d4188"
+  },
+  "case": "tests.service.test_model_routing_integration.ProtectedModelRoutingTests.test_gateway_overhead_p95_excluding_model_execution",
+  "measurement": {
+    "benchmark": "protected-gateway-fixture",
+    "cold": 29.902900001616217,
+    "machine": "AMD64",
+    "percentileMethod": "nearest-rank; all 100 warm samples retained",
+    "platform": "Windows",
+    "processor": "Intel64 Family 6 Model 183 Stepping 1, GenuineIntel",
+    "python": "3.14.6",
+    "scope": "Protected SQLCipher with in-memory fixture keys; zero-delay synthetic adapter; excludes production lifecycle factory, packaging and live inference.",
+    "unit": "milliseconds",
+    "warmSamples": [
+      28.53869998943992,
+      33.96860000793822,
+      28.951399988727644,
+      28.09000000706874,
+      28.803099994547665,
+      28.620800003409386,
+      27.701099999831058,
+      27.84760000940878,
+      29.10379999957513,
+      28.379499999573454,
+      28.622099998756312,
+      28.40460000152234,
+      34.24280000035651,
+      34.630900001502596,
+      46.12460000498686,
+      34.118600000510924,
+      32.52569999312982,
+      28.614099996048026,
+      29.492200003005564,
+      28.24890000920277,
+      27.971299990895204,
+      27.885799994692206,
+      30.08100000442937,
+      29.132699986803345,
+      29.613999999128282,
+      28.864200008683838,
+      28.989500002353452,
+      27.950800009421073,
+      29.447299995808862,
+      29.068599993479438,
+      29.688299997360446,
+      29.772900001262315,
+      28.524099994683638,
+      29.231099993921816,
+      27.863700001034886,
+      28.45349999552127,
+      28.35250001226086,
+      30.268200003774837,
+      29.968700007884763,
+      29.103599998052232,
+      29.42299999995157,
+      29.643800007761456,
+      28.559900005348027,
+      28.44960000948049,
+      31.254100002115592,
+      28.950100007932633,
+      28.552300005685538,
+      27.67409999796655,
+      30.800400010775775,
+      29.64589999464806,
+      28.103799995733425,
+      28.058799987775274,
+      28.153899998869747,
+      30.494499995256774,
+      30.608100001700222,
+      27.493500005220994,
+      29.410699993604794,
+      29.596299995318986,
+      29.388299997663125,
+      28.99259999685455,
+      27.639700012514368,
+      27.0304000005126,
+      27.88910000526812,
+      31.378600004245527,
+      28.816900012316182,
+      28.653899993514642,
+      27.343100009602495,
+      28.970100000151433,
+      29.16630000981968,
+      27.76550000999123,
+      29.061599998385645,
+      29.51290000055451,
+      27.71789999678731,
+      28.390300009050407,
+      29.972499993164092,
+      33.60729999258183,
+      28.42899999814108,
+      28.29500001098495,
+      28.600500008906238,
+      28.973799999221228,
+      28.113099993788637,
+      28.38750000228174,
+      29.028699995251372,
+      32.15020000061486,
+      29.124699998646975,
+      27.862499991897494,
+      29.03070001048036,
+      28.839399994467385,
+      28.846899993368424,
+      31.297800000174902,
+      27.63180001056753,
+      28.74069999961648,
+      30.268200003774837,
+      28.384899997035973,
+      28.005600004689768,
+      28.689599988865666,
+      26.469199990970083,
+      29.407499998342246,
+      30.077200004598126,
+      28.376999995089136
+    ]
+  },
+  "recomputedP95Milliseconds": 33.60729999258183,
+  "hardLimit": {
+    "operator": "<",
+    "milliseconds": 50,
+    "met": true
+  },
+  "prospective20PercentLimit": {
+    "operator": "<=",
+    "milliseconds": 39.668160025030375,
+    "met": true
+  },
+  "all101SamplesRetained": true,
+  "normalOwnedProcesses": 3,
+  "normalOwnedEmptyActive0": true,
+  "inputsStable": true,
+  "knownFReportedFieldsMatch": {
+    "python": true,
+    "platform": true,
+    "machine": true,
+    "processor": true
+  },
+  "currentHardware": {
+    "python": "3.14.6",
+    "platform": "Windows",
+    "machine": "AMD64",
+    "processor": "Intel64 Family 6 Model 183 Stepping 1, GenuineIntel",
+    "osBuild": [
+      "11",
+      "10.0.26200",
+      "SP0",
+      "Multiprocessor Free"
+    ],
+    "logicalProcessors": 20,
+    "totalPhysicalBytes": 16984227840,
+    "availablePhysicalBytes": 4071575552,
+    "memoryLoadPercent": 76
+  },
+  "fullHistoricalHardwareLoadComparabilityEstablished": false,
+  "hardwareLimit": "Actual current hardware/load observed; F unknown fields remain unknown. Different material comparison/disposition still required; a numeric PASS is not automatic full comparable-hardware acceptance.",
+  "seconds": 8.456032900008722,
+  "verificationSelection": {
+    "selectedCommandIds": [
+      "service:unit"
+    ],
+    "riskAnalysis": "Exact one integer operand changes only the approved hard gateway threshold. Execute the original one-cold/100-warm method once with all samples, unchanged synthetic fixture, protected SQLCipher, original deadline and owned cleanup. Existing configured source-quality evidence is unaffected by this integer-only test assertion edit.",
+    "deferred": [
+      "Different actual hardware/commit disposition and global signedCore/Native/package/security qualification remain required."
+    ]
+  },
+  "limits": [
+    "Original W1 task DONE and approval history remain unchanged; no reopen, new task or retrospective completion claim.",
+    "Synthetic/in-memory key authority and zero-delay adapter exclude production lifecycle factory, packaging, live inference, foreign-principal and DPAPI proof.",
+    "Original failed baseline comparisons and all earlier aggregate failures remain preserved. This observation does not adopt a future baseline or qualify a full service profile, Wave or release."
+  ],
+  "modelExecuted": false,
+  "taskClaimedOrReopened": false,
+  "fullServiceProfilePassClaimed": false,
+  "waveComplete": false,
+  "releaseApproved": false
+}
