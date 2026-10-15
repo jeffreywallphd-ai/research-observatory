@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 9d056f15ad3a86ce155691c7485e9d2cd28178de9b4d1b122f9900279abf44e8
+source_sha256: c3cf34fddbfa725664266dae9c97c847f83df77ccde8ee4fefc60654d4b66280
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -5415,7 +5415,7 @@ Original tasks and approvals remain unchanged.
 
 ### W2.C27.T01 — Restore explicit reviewed project recovery and durable owned-session proof
 
-**Status:** `REVIEW`. **Original task:** `W2.A06.T01`. **Latest review:** `-`.
+**Status:** `DONE`. **Original task:** `W2.A06.T01`. **Latest review:** `approved`.
 
 **Reproduction:** The original Native reconciliation regression returned 409 RO-CORE-PROJECT-RECOVERY-UNAVAILABLE instead of 200. The actual private parent is owned by the current user and has the standard Windows OWNER RIGHTS, SYSTEM and Administrators ACL. The nonexact parent checker rejects literal OWNER RIGHTS S-1-3-4 despite already verifying the actual owner. Original failure and owned-cleanup adverse evidence remain preserved in artifacts/tmp/W2.remaining-corrections-batch-01/native-reconciliation-root-cause-01/bounded-root-cause-and-restorative-scope-01.json.
 
@@ -5433,9 +5433,11 @@ Original tasks and approvals remain unchanged.
 - tests/security/test_project_recovery.py
 #### Review history — W2.C27.T01
 
-**Review mode:** `append-only v1` / 0 completed round(s)
+**Review mode:** `append-only v1` / 1 completed round(s)
 
-**Current immutable submission awaiting review:** `R01` / packet SHA-256 `d38875d13c331b2ac3652ee2bb2859896077f502e60272a66e1e87655ee264b5`
+##### Round R01
+
+**Immutable submission packet:** `R01` / packet SHA-256 `d38875d13c331b2ac3652ee2bb2859896077f502e60272a66e1e87655ee264b5`
 
 - Candidate / base / branch: `a039aada275db35035a9a71fc89622915e5a346c` / `bab353be50d95c7a1c1b6dc5e1bdc08927630b1d` / `codex/w2-implementation`
 - Submitted by / at: codex-w2-implementation / `2026-10-14T23:54:13+00:00`
@@ -5449,7 +5451,23 @@ Original tasks and approvals remain unchanged.
 - Prior round / replayed open findings: `-` / -
 - Root-cause escalation: -
 
-**Current latest-review projection:** `-` by - at `-`
+**Disposition / reviewer / time:** `approved` / agent:/root/security_resolution_review / `2026-10-15T00:15:55+00:00`
+
+**Immutable review ledger:** `artifacts/evidence/W2.C27.T01.review-R01.json` / `aa0b32004d1c3d558d681ab090707e4b063cc666a9773b08789bf09ebc1af8a7`
+
+**Review notes:** -
+
+**Findings opened:**
+
+- None
+
+**Prior finding closures:**
+
+- None
+
+**Current immutable submission awaiting review:** None
+
+**Current latest-review projection:** `approved` by agent:/root/security_resolution_review at `2026-10-15T00:15:55+00:00`
 
 **Latest notes:** -
 
