@@ -352,6 +352,16 @@ adverse rounds; the third-submission root-cause requirement is unchanged.
 Read this section only when producing/reviewing performance evidence or changing
 a benchmark, package-execution boundary or baseline.
 
+When a check has multiple comparable timing trials, base its timing pass/fail
+on the median of all completed trials for each workload and state. Retain every
+individual timing and publish the minimum, median and maximum so outliers remain
+visible. Keep distinct providers, cold/cache states and hardware configurations
+separate; do not pool them or repeat trials until they pass. Failed or timed-out
+trials remain failures. This timing rule does not relax security, resource, rate or
+cleanup constraints. Preserve historical frozen reports and their original
+dispositions; record a later owner-selected statistic separately when assessing
+existing data.
+
 Performance baselines are reviewed inputs, not output fields that a benchmark may
 rewrite. A benchmark must bind its fixture and methodology, reject non-finite or
 out-of-budget baseline values, compare against an immutable reviewed baseline hash,

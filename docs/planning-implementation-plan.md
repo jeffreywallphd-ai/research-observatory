@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 591f832102a9c85857d6f16e1c118160f46557198c01a8355333687388451059
+source_sha256: b61e8491a54033bcf7e9ca6e55928295e5622df2355af07b1ccce02c3f689dc9
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -70,7 +70,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 | `W6` Cross-platform desktop qualification | cross-platform-desktop | Qualify the same desktop, project format, sidecars, security controls, and local workflows on macOS and Linux x86_64/ARM64 after the Windows release. | `G5` |
 | `W7` Study design and manuscript foundations | research-production | Add production-ready critical and hermeneutic research support, evidence-grounded empirical study design, and reusable conference/journal article blueprints for empirical, theory, and critical scholarship. | `G6` |
 | `W8` Results integration, manuscript drafting, and reviewer simulation | research-production | Ingest private technical reports, map verified results, draft source-grounded manuscripts, and conduct extended independent reviewer simulations and revision rounds. | `G7` |
-| `W9` Advanced research-intelligence preview | research-intelligence | Add advanced plural opportunity detectors, transparent portfolio ranking, convergence monitoring, and living research memory on the cross-platform research-production foundation. | `G8` |
+| `W9` Advanced research-intelligence preview | research-intelligence | Add advanced plural opportunity detectors, transparent portfolio ranking, convergence monitoring, and living research memory on the cross-platform research-production foundation. Also optimize scholarly-source search latency and resource usage deferred from W2, retaining the initial seven-second median timing target and recorded variability. This is provisional future work; W9 implementation remains unapproved. | `G8` |
 | `W10` University-hosted pilot | institutional | Move the same desktop and contracts to institution-controlled services, identity, collaboration, and operations after the complete local research-production gate. | `G8` |
 | `W11` Managed cloud delivery | cloud | Add tenant provisioning, regional isolation, metering, cloud operations, and commercial governance. | `G10` |
 
@@ -368,7 +368,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 **Ordered slices:** `CAP-10.S04`, `CAP-10.S06`, `CAP-10.S07`
 
-**Goal:** Add advanced plural opportunity detectors, transparent portfolio ranking, convergence monitoring, and living research memory on the cross-platform research-production foundation.
+**Goal:** Add advanced plural opportunity detectors, transparent portfolio ranking, convergence monitoring, and living research memory on the cross-platform research-production foundation. Also optimize scholarly-source search latency and resource usage deferred from W2, retaining the initial seven-second median timing target and recorded variability. This is provisional future work; W9 implementation remains unapproved.
 
 ## W10 - University-hosted pilot
 
@@ -5762,7 +5762,7 @@ Original tasks and approvals remain unchanged.
 
 ### W2.C33.T01 — Implement Unpaywall and Semantic Scholar adapters
 
-**Status:** `REVIEW`. **Original task:** `CAP-04.S02.T03`. **Latest review:** `-`.
+**Status:** `DONE`. **Original task:** `CAP-04.S02.T03`. **Latest review:** `approved`.
 
 **Reproduction:** At clean candidate8392e43397e9aa28301cdf5689d653389fc1c561 the unchanged original SourceSliceRuntimeTests.test_four_sources_cache_failure_denial_cancellation_and_restart exceeds its original600s collection watchdog. Actual receipt artifacts/tmp/W2.remaining-corrections-batch-01/unreached-connector-tail-owned-01/actual-tail-remaining98-01/receipt.json SHA256df124b843661b7cec00be68451b3531e0dbd801bed969b8d983d16226dc995b7 preserves timeout/forcedEMPTY0/stable heldinputs and raw9f83894e5f13c667f65ef426a4c692fa64dc5d81f11c6cdf6eaf7a261441d124. Independent actual97-component disposition4b3613c89dca625f6f2f9181e590ca41fd42099d73033ba13990b0bd987fa02c admits only preceding97 completed cases. Source inspection independently establishes12 private journal reads (7 replay,5 checkpoint) violate ConnectorRepository required current project/action authority, reaching ObjectStore.open with inverted object/project lock ordering against active production workers. Existing C31 exact-path diagnosis supports the risk; this invocation has no captured blocking stack, so its exact cause remains unproven. The helper was introduced in later qualification source1ccf0f92 and currently6125e5b53fd3f0cf1f994f0cabf06a90700d08da79bb02101f7d3eba77881de8, not present at original approved035f. It verifies inherited CAP-04.S02.T03 source integration; original task/history remains unchanged.
 
@@ -5777,9 +5777,11 @@ Original tasks and approvals remain unchanged.
 - tests/connectors/test_source_slice_runtime.py
 #### Review history — W2.C33.T01
 
-**Review mode:** `append-only v1` / 0 completed round(s)
+**Review mode:** `append-only v1` / 1 completed round(s)
 
-**Current immutable submission awaiting review:** `R01` / packet SHA-256 `34ccf5b1592b618b854d66e308934b7780a7dccf83a49b49fd5d2a668d44af74`
+##### Round R01
+
+**Immutable submission packet:** `R01` / packet SHA-256 `34ccf5b1592b618b854d66e308934b7780a7dccf83a49b49fd5d2a668d44af74`
 
 - Candidate / base / branch: `fbe4038e0cd4354fca3824dd344053ebb1622828` / `e3e58ab545e25466ddd3d89c7f6e0e0e3fa2fab7` / `codex/w2-implementation`
 - Submitted by / at: agent:/root / `2026-10-15T14:13:50+00:00`
@@ -5793,7 +5795,23 @@ Original tasks and approvals remain unchanged.
 - Prior round / replayed open findings: `-` / -
 - Root-cause escalation: -
 
-**Current latest-review projection:** `-` by - at `-`
+**Disposition / reviewer / time:** `approved` / agent:/root/c21_closeout_review / `2026-10-15T14:59:48+00:00`
+
+**Immutable review ledger:** `artifacts/evidence/W2.C33.T01.review-R01.json` / `addf38f1c9995896a597a0392d9dab97c4c331a47dc83a9f81067f6b439c62fa`
+
+**Review notes:** -
+
+**Findings opened:**
+
+- None
+
+**Prior finding closures:**
+
+- None
+
+**Current immutable submission awaiting review:** None
+
+**Current latest-review projection:** `approved` by agent:/root/c21_closeout_review at `2026-10-15T14:59:48+00:00`
 
 **Latest notes:** -
 

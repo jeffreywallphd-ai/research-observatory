@@ -1,0 +1,166 @@
+{
+  "task_id": "W2.C33.T01",
+  "attempt_id": "R01",
+  "candidate_commit": "fbe4038e0cd4354fca3824dd344053ebb1622828",
+  "base_commit": "e3e58ab545e25466ddd3d89c7f6e0e0e3fa2fab7",
+  "reviewed_state_commit": "a95917b785858dd01d61dc58610af9da827cb410",
+  "reviewer": "agent:/root/c21_closeout_review",
+  "result": "approved",
+  "reviewed_at": "2026-10-15T14:53:09.868319+00:00",
+  "packet_sha256": "34ccf5b1592b618b854d66e308934b7780a7dccf83a49b49fd5d2a668d44af74",
+  "evidence_sha256": "60b02c29398d7c5d887bcf46c4c37973211fe6f7aed3bc4565922dc55b5759a2",
+  "acceptance_criteria_sha256": "da6250e28360c4881c7bdb40244de051d7a1bbda9d8dc54b3be88b1cf0505999",
+  "selection_sha256": "fb0326cfc81e8a01a706871197f58c9d9ff03052906b12d4a6a107781addd2e6",
+  "findings": [],
+  "closures": [],
+  "acceptance_reviews": [
+    {
+      "criterion_index": 1,
+      "check_ids": [
+        "original-source-slice",
+        "owner-median-source-performance"
+      ],
+      "result": "satisfied",
+      "assessment": "Inherited CAP-04.S02.T03 OA/license/host, citation direction/source and degraded-provider acceptance and original DONE history remain immutable. The later1ccf source-integration fixture is disclosed separately from original035f authoring. Fresh current94aa/fbe original integration retains all63 assertions and12 private reads, actual production Core/DPAPI/SQLCipher/durable workers and provider/HTTP/cache/failure/denial/cancellation/restart behavior. Synthetic HTTP, native ASGI context and capacity seams remain explicit; no live-provider or NativeIPC proof is inferred. The three original benchmark processes retain100-record OpenAlex/Crossref/Semantic Scholar and one-DOI Unpaywall, eight cold/cache observations per process and actual rate/memory records."
+    },
+    {
+      "criterion_index": 2,
+      "check_ids": [
+        "original-source-slice",
+        "owner-median-source-performance"
+      ],
+      "result": "satisfied",
+      "assessment": "Actual338f qualifies the original one case with zero failures/errors/skips:105.285s unittest body,109.88909290000447s owned check, under original600s collection ceiling. All four functional/quality jobs naturally drain EMPTY0 with stable inputs. Separate actual67f/84ce contains all three completed original measurement processes and all24 page timings. Latest explicit owner5a8 selects each distinct phase median<=7s after measurement; all eight recomputed medians pass, range5.474036799991154 to6.9296940000058385s. No pooling, outlier discard, new measurement or optimization. Original maximum-based67f remains FAIL and canonical84ce remains MEASURED/performanceQualifying=false; six individual observations exceed7s and maximum10.3904285000026s remains reported. Every measured child peak<=300MiB, each rate wait<=1.3701023999601603s and original wire/concurrency/wait/correctness/authority/cleanup checks pass under their current finite criteria. Original baseline and all30 historical comparisons remain, including old relative failures."
+    },
+    {
+      "criterion_index": 3,
+      "check_ids": [
+        "affected-format",
+        "affected-lint",
+        "affected-configured-types",
+        "original-source-slice",
+        "owner-median-source-performance"
+      ],
+      "result": "satisfied",
+      "assessment": "The exact single test-file restoration wraps7 replay and5 checkpoint reads in existing synchronous project lifecycle read authority using assessed path/project identity. Ten value=value defaults bind the same current request; exact normalization recovers complete31b AST then reviewed4eb, preserving all63 assertions, requests, original clocks and active concurrency. Fresh one-file Ruff format/lint and configured734 typing pass. No production/schema/security/framework/UX source change. Actual finite34e ten-JSON Git-LF transport is separately recorded, backed up and independently authenticated: functional338f remains its original raw-CRLF cohort, benchmark current-LF differs only by the ten explicit JSON-equivalent pairs with allother21986 held pins and883 canonical inputs accounted for. No byte equality, prior run retargeting or adapter execution is claimed. Exact final median decision7b5 changes only four permitted fields from reviewed4b8 and binds genuinea3b; all13 embedded authority records authenticate to exact original bytes and parsed values. Spec/base/origin and adverse history remain unchanged."
+    }
+  ],
+  "corrective_integration": {
+    "evidence_sha256": "60b02c29398d7c5d887bcf46c4c37973211fe6f7aed3bc4565922dc55b5759a2",
+    "authority_preserved": true,
+    "affected_integration_reviewed": true,
+    "notes": "Approves only the exact current W2.C33.T01 frozen R01 at fbe with public evidence60b02 and clean direct-child deliverya959. Actual original CAP-04.S02.T03/035f/f963 approved task contract/history remains immutable; later qualification-fixture origin is disclosed. Fresh functional338f and complete three-process67f/84ce data satisfy the owner-selected per-phase median criterion under exact embedded7b5/a3b/5a8/8b78/34e authority and retained current resource/rate obligations. Exact normalization a081/64ae and separate raw-cohort disclosure preserve genuine provenance rather than infer unchanged bytes. No first409 or original600s timeout cause is invented. Root still records normal taskctl disposition and local integration; this is not slice/Wave/release or W3 execution approval."
+  },
+  "verification_selection": {
+    "selected_command_ids": [
+      "search:connectors",
+      "foundation:quality"
+    ],
+    "assessment": "The changed private read-authority helper directly affects its original integration and importing source benchmark, so original one case, complete three-process measurements, one-file Ruff and configured734 typing are selected. Existing97/177 connector prefixes, unrelated profiles, full history and whole-Wave review are not repeated. Component/platform/shipping/security/Wave obligations remain separately attributed."
+  },
+  "evidence_authentication": {
+    "frozen_authentication": {
+      "path": "artifacts/tmp/W2.C33.T01.focused-review-notes-01/frozen-R01-authentication-01.json",
+      "sha256": "aa429d200fcc2f0cbd2f9a1e396d8a85b5a52461756c9f7c7541f82eb8fb8b02"
+    },
+    "actual_functional_review": {
+      "path": "artifacts/tmp/W2.C33.T01.focused-review-notes-01/actual-functional-focused-notes-01.json",
+      "sha256": "bfe6b054532e58bc6871dc01c1bfea8fe6a9f63204d951785c1dc308edde48e9"
+    },
+    "source_advisory": {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/W2.C33.T01.source-slice-guard-proposal-01/independent-source-advisory-01.json",
+      "sha256": "7319ba624eb22528fdadc01b7507264d8505025f187efe5a7f9874cf8e1aca0b"
+    },
+    "loop_binding_source_judgment": {
+      "path": "artifacts/tmp/W2.C33.T01.loop-binding-proof-successor-01/independent-loop-binding-source-readiness-01.json",
+      "sha256": "d2a2642953529eea1c75cf44bd9e5f6e47417d9d3b9749965b38f7a210a42c67"
+    },
+    "functional_collector_readiness": {
+      "path": "artifacts/tmp/W2.C33.T01.loop-binding-proof-successor-01/independent-functional-collector-source-readiness-01.json",
+      "sha256": "d8aa3d27933b5e57edd2d0282565787c048d6133ba053108dc9fdf5e0824bde0"
+    },
+    "actual_measurement_validity": {
+      "path": "artifacts/tmp/W2.C33.T01.known-latency-exception-01/actual-measurement-assessment-01.json",
+      "sha256": "b8c015286103d56cdf2de2cf0253ecf11f672fbfacdb9d2fd40c759b39fc5e35"
+    },
+    "actual_median_assessment": {
+      "path": "artifacts/tmp/W2.C33.T01.owner-median-criterion-01/actual-median-assessment-01.json",
+      "sha256": "3d2c439dda85d6eb635dff3854eb779a9ecf9c0b848c11c94373d52464311853"
+    },
+    "finite_median_scope": {
+      "path": "artifacts/tmp/W2.C33.T01.owner-median-criterion-01/independent-median-scope-readiness-01.json",
+      "sha256": "a3b83126a0fb9bbd79f4ac9a46934d8456f27f450b2f0681b595cb9525578720"
+    },
+    "actual_final_median_decision": {
+      "path": "artifacts/tmp/W2.C33.T01.owner-median-criterion-01/decision-01.final.json",
+      "sha256": "7b5dbe24e9d2f469618eab92f612dcc1e5315655cbf8b41ade25b5e84ca8ca14"
+    },
+    "manifest_producer_readiness": {
+      "path": "artifacts/tmp/W2.C33.T01.write-manifest-08.source-readiness-01.json",
+      "sha256": "e12c8ed179727c1483fe3b4f1fa1d668c5013d16cee7b6d750eb1d622f38333a"
+    },
+    "normalization_continuity": {
+      "path": "artifacts/tmp/W2.C33.T01.normalization-post-index-refresh-02.independent-continuity-disposition-01.json",
+      "sha256": "64ae1ff10a3a20137d371d489ea600c0b0cf34a645ad0aa48d6bcccbe9cc28fc"
+    },
+    "submitted_site_host_check": {
+      "path": "artifacts/tmp/W2.C33.T01.submitted-review-site-host-01.json",
+      "sha256": "9b82695cffcb506a6346b9b04d310602a1231ca882ceb676bf1704a85e8bc6c0"
+    },
+    "embedded_authority_exact_byte_records_authenticated": 13,
+    "final_decision_only_permitted_four_fields_changed": true,
+    "actual_frozen_hashes_recomputed": true,
+    "delivery_committed_evidence_blob_authenticated": true,
+    "delivery_clean_before_ledger_write": true,
+    "actual_site_check": "PASS19CAP_111SLICE_337TASK_498PAGES_NO_ERRORS_OR_WARNINGS",
+    "tests_or_benchmarks_replayed_by_reviewer": false,
+    "runtime_or_history_reaudit_by_reviewer": false
+  },
+  "retained_reliability_observation": {
+    "advisory": {
+      "path": "artifacts/tmp/W2.C33.T01.first-attempt409-advisory-01.json",
+      "sha256": "b325e1573ef6775f3267ec46e714871a4b22ecd35ca29aaea708f6d25ee0e47e"
+    },
+    "actual_first_failure": {
+      "path": "artifacts/tmp/W2.C33.T01.focused-proof-01.f01/receipt.json",
+      "sha256": "41cef2b948e5a763d6b97503c9e55a6c93d5fefe80e3a0d0d812faffe3a902bf"
+    },
+    "cause": "unknown",
+    "fixed": false,
+    "risk_accepted": false,
+    "disposition": "The original2c85 jobs/status409 remains material unexplained intermittent availability adverse. Later diagnostics are nonqualifying and formatting/default changes are not a demonstrated reliability fix. It is not a blocking defect established in this bounded source-caller restoration: product behavior is unchanged, the caller-authority violation is independently supported, and complete fresh current-candidate functional and three-process measurements meet the actual selected criteria. This does not claim that the earlier failure was harmless, resolved or accepted for release. Any recurrence in remaining work must stop that affected group for concrete diagnosis before another retry."
+  },
+  "owner_requested_content_adjunct": {
+    "source_readiness": {
+      "path": "artifacts/tmp/W2.median-workflow-and-W9-content-readiness-02.json",
+      "sha256": "a4b2b8259a568690fc876ec913c0b8d60bb4101771d2c58ce1060573c7728f08"
+    },
+    "content_edits": {
+      "path": "artifacts/tmp/W2.median-workflow-and-W9-content-edits-02.json",
+      "sha256": "17a3f444ae79143d9ad4885b3cd31a355a532c0bc7f173f53c02a913f6258f74"
+    },
+    "status": "SOURCE_READY_APPLICATION_PENDING",
+    "meaning": "Exact owner-requested median workflow rule preserves failed/time-out/security/resource/rate/cleanup obligations, individual observations and historical outcomes; W9 adds only provisional deferred source-search optimization. This is not C33 product scope or W9 execution. Root applies after ordinary C33 review mutation before its already-required generated views; final pre-integration confirms actual two-content-edit equality with normal state changes. No separate recording gate."
+  },
+  "independence": {
+    "implementation_owner": "agent:/root",
+    "independent_reviewer": "agent:/root/c21_closeout_review",
+    "original_guard_proposal_author": "agent:/root/security_resolution_review",
+    "reviewer_authored_product_or_test_source": false,
+    "reviewer_authored_qualifying_execution_producers": false,
+    "reviewer_authored_original_non_authoritative_manifest_assembler": true,
+    "actual_serializer08_authored_by": "agent:/root",
+    "actual_serializer08_independently_source_reviewed_by": "agent:/root/security_resolution_review",
+    "actual_output_authenticated_independently": true,
+    "reviewer_reran_tests_or_benchmarks_or_runtime_scans": false
+  },
+  "proof_limits": [
+    "Actual source integration uses synthetic provider HTTP, native-ASGI and worker-capacity seams; production Core/DPAPI/SQLCipher/durable workflows are real. No live-provider, NativeIPC, combined-four-provider GUI latency, population percentile, total process-tree or whole-application memory guarantee.",
+    "The median statistic was explicitly selected by the owner after measurement. All24 values, phase min/median/max, six individual7s overruns and max10.3904285000026 remain; no noise attribution, prespecification claim, discarded trial or hidden target increase. Canonical84ce stays MEASURED/nonqualifying and strict67f stays FAIL; the separate owner-selected median evaluation qualifies this exact dataset only.",
+    "Original600s timeout/forcedcleanup, unexplained409, both diagnostics, format/lint failures, zero-sample transport failure, failed normalization invocation, old relative latency/memory failure and original strict maximum failure remain preserved. No historical failure or cause is rewritten.",
+    "Native/principal/performance/repository/platform/shipping/security and final Wave gates remain separately required. Owner-requested workflow/W9 edits are source-ready adjunct only pending actual normal application and pre-integration confirmation."
+  ],
+  "full_profile_pass_claimed": false,
+  "wave_complete": false,
+  "release_approved": false
+}
