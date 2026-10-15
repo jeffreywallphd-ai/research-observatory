@@ -743,6 +743,7 @@
     "tests/desktop/fixtures/__init__.py",
     "tests/desktop/tools/__init__.py",
     "tests/documents/__init__.py",
-    "tests/service/fixtures/__init__.py"
+    "tests/service/fixtures/__init__.py",
+    "services/core-api/src/research_observatory_core/ingestion/protected_import_profiles.py"
   ]
 }
