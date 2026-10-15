@@ -1,0 +1,14 @@
+{
+  "schemaVersion": "1.0",
+  "kind": "authority-preserving-correction",
+  "origin": {
+    "taskId": "CAP-04.S02.T03",
+    "commit": "035f11a3546658ed9c694acbae1c1a3ac4907724",
+    "sha256": "f963a91d00aff8748b2eb0f8606d9b86193c4a072463c81998e27b8eb8772028"
+  },
+  "reproduction": "At exact clean candidate a984703caacdb4f405dabf177353e403fce064af, the unchanged original Graph/Unpaywall restart method reproducibly stalls on its first direct private repository replay while the normal worker finishes its output receipt. Actual reviewed diagnostic reaches its unchanged 300-second collection watchdog: terminal receipt artifacts/tmp/W2.connector-restart-diagnostic-01.f01/receipt.json SHA256 032dcb3be9ce6a80d0078110cff1cbf018f472ce0d55fee41565f1eba1e948a6; raw d7263590974406a1960aa2d48219aac0404dafba5a415f7f759c0dfa4490f7f1; retained thread-stacks 2c75d5be5ea55b5929cd9ce3fdff4e25c26fa42c5e6bfd2b22442ee4ea65bdc8. The first complete snapshot and code show the test holding object-store lock then requesting privacy/lifecycle authority while the worker holds real lifecycle authority then requests the same object-store lock. Normal product worker/inspection paths already use project-then-object order. All three private test replays need the same real lifecycle read-action seam. The diagnostic FAIL, forced owned termination with active0, and earlier suite interruption remain preserved; no product deadlock or historical-cause claim beyond the demonstrated test path.",
+  "changedPaths": [
+    "tests/connectors/test_graph_oa_runtime.py"
+  ],
+  "impactAnalysis": "Restore the original CAP-04.S02.T03 durable/restart/provider-failure inspection verification contract using existing real projects.perform_open_project_action around exactly three same-method private pages.replay reads. Keep require_write=False and actual assessed project path/identity, identical original request/repository/result, all32 original method assertions, real production factory/DPAPI/SQLCipher, original synthetic external HTTP and capacity fixtures, active background workers, privacy, redaction, cancellation, restart and original deadlines. No product/mutex/object-store/privacy/worker/schema/security/framework/UX change or new mock. Execute only the corrected original method fresh with zero skips plus changed-file Ruff format/lint and configured typing, preserve the red diagnostic, obtain independent commit-bound correction/integration disposition through taskctl, then continue the remaining179 connector bodies and affected Wave qualification without replaying the unchanged81-case prefix. Original task history and all later S06/checkpoint/Wave/release gates remain separate."
+}

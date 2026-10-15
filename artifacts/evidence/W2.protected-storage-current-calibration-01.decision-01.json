@@ -1,0 +1,85 @@
+{
+  "documentType": "finite-W2-prospective-owner-authorization-application",
+  "recordedAtUtc": "2026-10-15T05:15:02.181076+00:00",
+  "preparedAtCandidate": "af3250cec072ced8ddf8eb08af38ec4ce6abc06f",
+  "status": "EXACT_FINITE_SCOPE_AUTHORIZED_UNDER_EXISTING_PROSPECTIVE_OWNER_DIRECTION",
+  "ownerAuthority": {
+    "path": "artifacts/evidence/W2.completion-preauthorization-20261014-01.md",
+    "sha256": "34e2e3c175dc9309080182e0673f776055b1cc3ba78639475c09ec54408d7d5f"
+  },
+  "authorityMeaning": "Applies the actual preauthorization to this exact independently reviewed necessary finite W2 correction; does not assert that the owner inspected this later packet. Separate738a bootstrap scope remains unchanged.",
+  "proposal": {
+    "path": "artifacts/evidence/W2.protected-storage-current-calibration-01.proposal-01.json",
+    "sha256": "6d9dcb468793b1518391733d7409cad0f6977a24f08d48891e17f1d2aee39982"
+  },
+  "independentReadiness": {
+    "path": "artifacts/evidence/W2.protected-storage-current-calibration-01.readiness-01.json",
+    "sha256": "9edb8fcfd02e3576c5f0ba160b25ec8b94fa73065670c1f70e33e4b842eb529c"
+  },
+  "criterion": {
+    "effectiveScope": "Only current protected Windows x64 storage-maintenance qualification for W2 at the exact admitted measurement cohort. Not a general benchmark exemption or W3 implementation approval.",
+    "cleanupP95AbsoluteMs": 10000.0,
+    "usagePreviewP95AbsoluteMs": 2000.0,
+    "allSixStreamingP50MinimumMiBPerSecond": 5.0,
+    "relativeRegressionPercent": 20,
+    "latencyAcceptance": "raw p95 <= min(absolute cap, independently adopted current protected baseline p95*1.2).",
+    "throughputAcceptance": "raw p50 >= max(5MiB/s, independently adopted current protected baseline p50*0.8).",
+    "baselineSelection": "For each latency choose maximum p95 across exactly the three retained calibration runs; for each throughput choose minimum p50 across exactly those three runs. No best-run selection, pooled percentile substitution, discarded sample or automatic adoption.",
+    "unchanged": "Eight groups, ten repetitions/group,80samples/run; nearest-rank p50(index5) and p95(index10), time.perf_counter_ns, same1/4/16MiB synthetic nonmodel payloads,2000cache+100derived64byteitems, fresh maintenance fixture each sample, no filesystem cache flush; construction/execution preview outside timers. All authenticated EOF/plaintext equality, counts/no skipped items, rights/reference/reader/recovery/rollback/audit checks remain unchanged."
+  },
+  "boundedRunPlan": {
+    "maximumCalibrationRunsIncludingRetained04": 3,
+    "maximumFreshCalibrationRuns": 2,
+    "maximumFreshHoldoutRuns": 1,
+    "serialOnly": true,
+    "retainedRun1": {
+      "receipt": {
+        "path": "artifacts/tmp/W2.protected-storage-maintenance-performance-04.f01/receipt.json",
+        "sha256": "da41e9d10a9efdd2cc283ce7da86c28badeb6add223d8608911671e72fde6d42"
+      },
+      "canonicalReport": {
+        "path": "artifacts/tmp/W2.protected-storage-maintenance-performance-04.f01/canonical-report.json",
+        "sha256": "bf7eafdf5bca8f8af6156771091d27ee9deaf0d36adb5f14712d1f05b1c43e0d"
+      },
+      "executionCandidate": "31b375263ac9ac6e1127500d5ee0a4b7e937aa0b",
+      "eligibility": "Conditional calibration data only after different independent source/runtime/config/provider/fixture/method/hardware and actual held-closure comparability disposition. Original old-criterion FAIL is retained, not changed or retargeted. All80 sample distributions and original unrounded raw p95/p50 fields remain linked."
+    },
+    "calibrationRun2Output": "artifacts/tmp/W2.protected-storage-current-calibration-02.f01",
+    "calibrationRun3Output": "artifacts/tmp/W2.protected-storage-current-calibration-03.f01",
+    "freshHoldoutOutput": "artifacts/tmp/W2.protected-storage-current-holdout-01.f01",
+    "sourceChoice": "Smallest suggested implementation: retain original canonical tool and old baseline unchanged, including original threshold evaluation. Future exclusive output-only successors of the existing protected storage owned04 invoke the same canonical qualification command. They capture complete80 measurements and actual canonical exit/status (likely old-criterion FAIL), which a separately reviewed finite data evaluator admits only as calibration/holdout data. No --measure-only branch, global module monkeypatch, new fixture, relaxed original canonical predicate or canonical PASS is needed.",
+    "expectedOldFailureHandling": "A normal root1 is not a passing benchmark. A finite data consumer may accept only the exact complete-report old performance-threshold failure after independently validating all80 measurements, method/hardware/source/input closure and normal owned drain. Setup exceptions, unknown source closure, missing samples, forced cleanup, wrong rights/counts or other failures invalidate the run and cannot seed the baseline.",
+    "cohortGuard": "Bind actual immutable measured Core/tools/provider sources, installed Python/SQLCipher/crypto/DPAPI runtime, commands, effective configuration/environment, fixtures and hardware at each actual clean committed candidate. Different data/test-only publication commits can be distinguished from measured-source differences explicitly; ancestry alone cannot establish equality. No hardware/load/cause equivalence is invented.",
+    "notAdmissibleRun1": "If retained04 comparability cannot be proven, stop this finite plan rather than secretly run three replacement calibrations. Preserve the unmet prerequisite and prepare a revised concrete bounded decision under existing owner authority; this proposal authorizes at most two fresh calibrations.",
+    "stopOnInvalidRun": "No automatic retry, fourth calibration, cherry-picking, baseline reset or optimization loop. All adverse attempts and partial bytes remain retained.",
+    "adoptionOrder": [
+      "Different independent source/recording review of this exact finite proposal and necessary small consumers.",
+      "Publish exact append-only34e criterion scope before new calibration dispatch; actual publication commit remains unknown here.",
+      "Different independent admission of retained04 as current measurement run1.",
+      "Collect at most two remaining complete serial calibration runs at actual stable current input cohort.",
+      "Independently review all three complete80-sample calibration reports, actual environment/hardware/held inputs and absolute proposed caps; construct immutable conservative baseline with all three raw provenance records.",
+      "Record independent baseline adoption bound to exact actual aggregate bytes and actual introduction commit. No baseline values are invented now.",
+      "Run exactly one separately fresh complete80-sample holdout after adoption, bind actual adopted baseline and evaluate all proposed absolute+20% rules with original raw statistical semantics.",
+      "Different independent holdout disposition; only its genuine success can support the amended W2 component criterion. Canonical old-criterion report identities/statuses stay unchanged."
+    ]
+  },
+  "usabilitySecurityRecoveryRisk": {
+    "observedCleanupP95Ms": 6342.4796,
+    "observedUsagePreviewP95Ms": 393.5447,
+    "usability": "6.34s is a real bulk maintenance pause risk: cleanup holds the object-store state lock across its loop. It is not demonstrated nonblocking/background work or a normal per-object action latency. A round10s initial ceiling is a disclosed tradeoff for2100-item maintenance, not a new interactive response target. Existing Reader/project-open/rendering/cancellation/responsiveness criteria are unaffected.",
+    "streaming": "Current median-derived1MiB put/open is approximately57.5/28.5ms and4MiB75.9/42.5ms; every absolute5MiB/s gate passed. These are size/rate conversions, not independently timed end-user actions.",
+    "security": "No DPAPI/SQLCipher/authentication/fsync/file-identity/reference/active-reader/preview-token/retention/audit check may be removed, cached globally or bypassed for speed.",
+    "recovery": "Per-object transaction/rollback/staged deletion and interruption/restart duties remain unchanged and independently required. Performance samples alone do not prove interruption/cancellation/recovery/rights-denial behavior.",
+    "futurePlanning": "Carry the actual bulk-maintenance wait and unmeasured connection-cost hypothesis into W3 planning as observed risk/debt for later selection. This decision grants no W3 product work or automatic future performance waiver.",
+    "modelLimit": "16MiB is the existing synthetic byte payload, not an8/16GiB model workload; no new parser/model/hardware test is selected."
+  },
+  "scope": "Only this exact current protected Windows x64 storage-maintenance criterion/calibration/adoption/one fresh holdout and necessary finite evidence compositions. No product/shared framework/baseline-history modification, extra runs, security weakening, interactive latency exemption or W3 implementation.",
+  "oldCanonicalToolAndReportsStayUnchangedAndFAIL": true,
+  "retainedRun1Admitted": false,
+  "baselineAdopted": false,
+  "performanceQualified": false,
+  "waveComplete": false,
+  "releaseApproved": false,
+  "actualIntroductionCommit": null,
+  "resumeCondition": "Different recording/source readiness and actual append-only publication authentication before new calibration dispatch; then actual run1 admission, at most2 remaining calibrations, independent conservative baseline adoption and exactly1 fresh holdout. Unknown prerequisites stop only this affected group."
+}

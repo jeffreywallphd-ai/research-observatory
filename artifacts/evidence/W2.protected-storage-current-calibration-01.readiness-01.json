@@ -1,0 +1,81 @@
+{
+  "documentType": "finite-independent-current-protected-storage-proposal-readiness",
+  "reviewer": "agent:/root/security_resolution_review",
+  "implementer": "agent:/root/c21_closeout_review",
+  "reviewedAt": "2026-10-15T05:12:06.976964+00:00",
+  "result": "DECISION_READY_FINITE_CRITERION_AND_CONDITIONAL_CALIBRATION_PLAN",
+  "blockingFindings": [],
+  "proposal": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/protected-storage-current-calibration-01/proposal-01.json",
+    "sha256": "6d9dcb468793b1518391733d7409cad0f6977a24f08d48891e17f1d2aee39982"
+  },
+  "ownerAuthority": {
+    "path": "artifacts/evidence/W2.completion-preauthorization-20261014-01.md",
+    "sha256": "34e2e3c175dc9309080182e0673f776055b1cc3ba78639475c09ec54408d7d5f"
+  },
+  "bootstrapOnlyAuthorityNotExtended": {
+    "path": "artifacts/evidence/W2.completion-corrections-batch-02.decision-01.json",
+    "sha256": "738a9ed22b4da46a88c47c64b07607bbf1b27839e3bf657e7c7712763d76e9c2"
+  },
+  "actualFailedRun": {
+    "path": "artifacts/tmp/W2.protected-storage-maintenance-performance-04.f01/receipt.json",
+    "sha256": "da41e9d10a9efdd2cc283ce7da86c28badeb6add223d8608911671e72fde6d42"
+  },
+  "actualCanonicalReport": {
+    "path": "artifacts/tmp/W2.protected-storage-maintenance-performance-04.f01/canonical-report.json",
+    "sha256": "bf7eafdf5bca8f8af6156771091d27ee9deaf0d36adb5f14712d1f05b1c43e0d"
+  },
+  "actualCalibrationRun1Admitted": false,
+  "baselineAdopted": false,
+  "performanceQualified": false,
+  "materialFindings": [
+    {
+      "area": "authority",
+      "assessment": "Actual34e prospectively authorizes necessary bounded criterion/verification decisions with concrete bytes, alternatives and independent disposition. This finite storage scope can use that authority without pretending the owner inspected future bytes.738a is expressly bootstrap-only and cannot authorize the budget or baseline change; Reader3s authority is not reused."
+    },
+    {
+      "area": "architecture and scope",
+      "assessment": "The existing Windows object-store architecture binds5s cleanup/2s preview/5MiB/s plus20percent. The proposal transparently changes only the current W2 protected bulk-cleanup cap to10s and establishes a current protected-source baseline; its exact append-only decision must name this existing authority and narrow effective scope. Accepted ADR0019 privacy and ADR0020 SQLCipher/DPAPI plus separate protected-database primitive budgets remain intact."
+    },
+    {
+      "area": "actual adverse evidence",
+      "assessment": "Actual04 has all80 retained samples/eight groups/ten each and only the explicit performance-threshold error. Cleanup rawp95=6342.4796ms actually fails old5s/relative4551.8784; usage393.5447ms passes2s but fails old relative386.2764; four smaller-object rates fail relative floors while all six absolute5MiB/s gates pass. Original report remainsFAIL permanently; no outlier/sample is discarded."
+    },
+    {
+      "area": "comparability and cause",
+      "assessment": "The reported actual hardware equals the historical baseline. Historical canonical metadata used plain sqlite whereas current setup uses the real configured protected database path. The disclosed repeated per-object database/key opens support a hypothesis, not measured causal attribution. No load/antivirus/precise overhead or full old-versus-current equivalence is invented; new baseline must be current-source, not a claim the old regression was false."
+    },
+    {
+      "area": "finite targets and method",
+      "assessment": "Round10s is a disclosed initial bulk-maintenance tradeoff, not a6343ms post-hoc cutoff. Keep2s preview/all six5MiB/s floors and original20percent guard against independently adopted current data. Three complete calibration runs choose max latency/min throughput by metric, no pooled statistics/best-run selection, then one independently fresh holdout. Absolute caps must reject out-of-cap baselines and holdouts."
+    },
+    {
+      "area": "retained run and controls",
+      "assessment": "Retained04 is potentially useful complete current measurement data, but remains conditional until a different exact source/runtime/provider/config/fixture/method/hardware/lifetime-closure admission. Ancestry or matching hardware alone is insufficient. At most two new calibration runs are authorized by this proposal; if04 is inadmissible, stop this plan rather than silently substitute a third new run."
+    },
+    {
+      "area": "security and usability",
+      "assessment": "No encryption/fsync/key authority/reader/reference/retention/delete token/file identity/transaction/audit/cancellation/recovery safeguard changes. Actual bulk cleanup holds an object-store lock and imposes a real multi-second pause; this is not proven background/nonblocking behavior or an interactive latency allowance. Existing reader/project-open/responsiveness/recovery gates remain separate and cannot be waived by10s storage qualification."
+    },
+    {
+      "area": "minimum adequate evidence",
+      "assessment": "No optional product tuning/profile experiment or new framework is needed. Preserve the canonical tool/baseline and their real thresholdFAIL outputs; a finite reviewed consumer may admit only complete data and known old performance errors. Necessary future consumers/recording/adoption/holdout controls still need exact source and actual result review; this decision-ready proposal does not imply those exist."
+    }
+  ],
+  "requiredBeforeNewDispatch": [
+    "Record/publish the exact finite34e criterion decision append-only, including this actual proposal/readiness, alternatives, narrow10s W2 cleanup amendment and preserved original5s/oldFAIL authority. Do not edit/reapprove frozen originals.",
+    "Prepare/review only the finite output/preparation successors and data evaluator. Admit retained04 independently using actual source/provider/runtime/config/environment/fixtures/hardware/held closure. No generic cache exception or snapshot equivalence from ancestry alone.",
+    "Serially collect at most two remaining80-sample calibrations; stop on setup/functional/unknown closure/abnormal cleanup/missing sample/out-of-cap data. No automatic retry or fourth calibration.",
+    "Different independent review must bind all three actual reports, exact raw finite positive statistics, actual cohort/hardware and conservative max/min baseline bytes before adoption. Record actual introduction/adoption before exactly one separate fresh80-sample holdout.",
+    "Only genuine holdout success under min(absolute,baseline*1.2) latency/max(5,baseline*.8) throughput plus actual functional/cleanup/closure checks can qualify the amended component. Canonical old-threshold results stay unchanged."
+  ],
+  "recordingLimits": "A final decision may state APPROVED under prospective34e with this exact proposal/readiness and explicit pending consumers/run1/adoption/holdout; it must leave actual introduction, baseline values, future candidates/results and adoption unset until genuine. The reviewer does not claim current performancePASS or owner inspection of future bytes.",
+  "W3PlanningCarryforward": "Record actual bulk-maintenance pause and unmeasured connection-cost hypothesis as observed product debt/risk for later selection; no W3 implementation or automatic future performance waiver is granted.",
+  "testsOrBenchmarksExecuted": false,
+  "producerOrProductImported": false,
+  "runtimeScannedOrRehashed": false,
+  "trackedWrites": false,
+  "baselineChanged": false,
+  "waveApproved": false,
+  "releaseApproved": false
+}

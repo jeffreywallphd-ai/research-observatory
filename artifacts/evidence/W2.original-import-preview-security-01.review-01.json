@@ -1,0 +1,103 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "independent-original-import-preview-security-component-disposition",
+  "reviewer": "agent:/root/security_resolution_review",
+  "reviewedAt": "2026-10-15T05:02:47.061470+00:00",
+  "result": "APPROVED_BOUNDED_ORIGINAL_SECURITY_COMPONENT",
+  "reviewedSourceCommit": "31b375263ac9ac6e1127500d5ee0a4b7e937aa0b",
+  "evidence": {
+    "receipt": {
+      "path": "artifacts/tmp/W2.original-security-leaf-proof-02.f01/receipt.json",
+      "sha256": "2afc6b41739600dd8dfb4695c0ada180041c019508ac1a768e5eedaf29a768e9"
+    },
+    "raw": {
+      "path": "artifacts/tmp/W2.original-security-leaf-proof-02.f01/original-security-method.raw.log",
+      "sha256": "7231c2a56bd3790c652b9067134e564b824eadc109763d51a9e5685dbf29fd4e"
+    }
+  },
+  "producer": {
+    "path": "artifacts/tmp/W2.original-security-leaf-proof-02.py",
+    "sha256": "20ca4e26511c76ba4df73aa6974cb510f66867ec44d79442d299512105a30106"
+  },
+  "sourceReadiness": {
+    "path": "artifacts/tmp/W2.original-security-leaf-proof-02.source-readiness-01.json",
+    "sha256": "f8a78b53463ee2ef731631cb1ceec9735da4553bb3b6770c4649fe3832b7042c"
+  },
+  "selectedMethod": "tests.security.test_import_preview_protection.ImportPreviewProtectionTests.test_v10_to_v12_retains_encrypted_verified_backup_and_reopens",
+  "actualOutcome": {
+    "status": "PASS",
+    "originalMethods": 1,
+    "skips": 0,
+    "unittestSeconds": 0.843,
+    "ownedCollectionSeconds": 3.384124399992288,
+    "envelopeSeconds": 12.08010030000878,
+    "rootExitCode": 0,
+    "lifetimeProcesses": 4,
+    "activeProcesses": 0,
+    "cleanupState": "EMPTY_CONFIRMED",
+    "forcedTermination": false,
+    "outlivingDescendants": false,
+    "inputsStable": true
+  },
+  "criterionDisposition": [
+    {
+      "criterion": "encrypted exact v10 migration retains a verified encrypted backup and reopens the current canonical database",
+      "result": "SUPPORTED",
+      "basis": "The unchanged original method actually passed. It verifies the first six ordered0011..0016 migrations, encrypted source/backup headers, backup cipher integrity and frozen v10 fingerprint/version, two current-schema reopens, preserved dark setting, empty summary completion state, foreign-key integrity and final migration idempotency."
+    },
+    {
+      "criterion": "actual boundary and evidence custody",
+      "result": "SUPPORTED_WITH_EXPLICIT_SCOPE",
+      "basis": "Real SQLCipher with the original synthetic InMemoryDatabaseKeyProvider. The exact candidate/source, captured Python/basePython/Git maps and captured cleanup executable are held; actual final stability and normal owned drain pass. No Windows DPAPI or foreign-principal proof is inferred."
+    }
+  ],
+  "custodySummary": {
+    "capturedRuntimeSHA256": "456482ea03c3545a03c63e36e5f0bb098c7e20c95e2d2f5efa2f52381b2d4188",
+    "configuredPythonFiles": 6259,
+    "configuredBasePythonFiles": 2541,
+    "configuredGitFiles": 6500,
+    "capturedCleanupExecutableSHA256": "cb9e55d4c02f4e55100724d2da9a1267f49e196bd39fcdf36cec6ea6314fad2a",
+    "heldInputs": 21933,
+    "sourcePins": [
+      {
+        "path": "tests/security/test_import_preview_protection.py",
+        "sha256": "88bdcd03567d396a247603e810f43b49cd0c43c228b746e9d0ebe3eb9d1b9d1a"
+      },
+      {
+        "path": "tests/security/test_protected_database.py",
+        "sha256": "a7e9a5ce0cd3cef7d12f12c4eff17762c9a65e0204383abca02a311106946cdb"
+      },
+      {
+        "path": "tests/data/test_import_preview_migration.py",
+        "sha256": "dd063aa3992e231b50848952ee57088fba6d5d6ccabb1f617eaa9a1e40f252d3"
+      },
+      {
+        "path": "services/core-api/src/research_observatory_core/storage.py",
+        "sha256": "2aa938a64111ece6e85616277082e2d77a394036babd6b8a83cdbda6393294b4"
+      },
+      {
+        "path": "services/core-api/src/research_observatory_core/migrations/runner.py",
+        "sha256": "f8ad597e16b30d3da24a5e50f49643cb6008ba041c1abb27f77c819def1f7565"
+      },
+      {
+        "path": "tests/database_key_fixtures.py",
+        "sha256": "ddc8913c85e1491ba0e6a15cb4bca5e7094b4098b89edb7879f64e000340a8bc"
+      }
+    ]
+  },
+  "preservedAdverseEvidence": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/w2-final29-terminal-anchor-security-actual-independent-disposition-01.json",
+    "sha256": "a3540838bdf950148446b0e63faeef0634e188946f4d8a197b406b6c3a89550a",
+    "meaning": "The earlier missing-Core-import error remains adverse. This actual one-method proof uses the normal child-local Core source path and does not rewrite that earlier run."
+  },
+  "limits": [
+    "Only this originally never-started method is qualified. No full security profile, DPAPI/current-principal/foreign-host, packaged Native, connector tail, performance or Wave exit/release PASS is claimed.",
+    "Later C30 test-only source changes do not retarget this actual31b375 run; subsequent integration must assess only material consumed-input changes.",
+    "No test rerun or runtime recapture was performed by the independent reviewer."
+  ],
+  "testsExecutedByReviewer": false,
+  "runtimeScannedOrRehashedByReviewer": false,
+  "trackedWritesByReviewer": false,
+  "waveApproved": false,
+  "releaseApproved": false
+}

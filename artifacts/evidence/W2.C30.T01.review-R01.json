@@ -1,0 +1,126 @@
+{
+  "task_id": "W2.C30.T01",
+  "attempt_id": "R01",
+  "candidate_commit": "af3250cec072ced8ddf8eb08af38ec4ce6abc06f",
+  "base_commit": "001abf085f5673e417fb61743490bf815b890dbd",
+  "reviewed_state_commit": "b6a16c9204715b560c227f61fabf86bce8ba8f2d",
+  "reviewer": "agent:/root/security_resolution_review",
+  "result": "approved",
+  "reviewed_at": "2026-10-15T05:26:08.538449+00:00",
+  "packet_sha256": "0cf0b455024759565f79dc6402e72a91f33ca195c76a2952e5dd749bc87bde33",
+  "evidence_sha256": "f70b5de41d461880271abe376788ebfe76d0ae4f884b72a880228129fabce10f",
+  "acceptance_criteria_sha256": "931d31132e89c951ea2680f40a6c3d54b82eb0122b9bcbfe717b3a4067a2f1e4",
+  "selection_sha256": "2f425e198b4bac5923c8468f5cd44bc197116771afdbc08490edb078a54d7bdc",
+  "findings": [],
+  "closures": [],
+  "acceptance_reviews": [
+    {
+      "criterion_index": 1,
+      "check_ids": [
+        "migration-boundaries"
+      ],
+      "result": "satisfied",
+      "assessment": "Original independently approved CAP-05.S05.T01 R01 reference extraction/raw-order/exact-identifier/uncertain-candidate behavior at b3eade remains unchanged historical outcome evidence. The original task/approval and frozen931d criteria remain exact. This correction changes only the inherited encrypted migration test fixture, not reference product code. The reused original committed Git evidence47f60 is authentic and normalizes exactly from retained working17018 CRLF bytes; its explicit byteScope does not retarget original results or invent fresh reference-extraction execution."
+    },
+    {
+      "criterion_index": 2,
+      "check_ids": [
+        "migration-boundaries"
+      ],
+      "result": "satisfied",
+      "assessment": "Both complete original methods now pass without skips. The frozen encrypted v20 constructor actually reaches unchanged c6bdef fingerprint and source20 metadata using exactly one existing pre-v27 table literal substitution guarded by count1. Every original32 assertion, eight v21 material-step interruptions, exact rollback classification/replan, successful retry, verified encrypted backup hash and full current28 history/manifest/reopen checks remain. Real SQLCipher uses the original synthetic InMemoryDatabaseKeyProvider; no DPAPI, foreign-principal or packaged Native proof is inferred."
+    },
+    {
+      "criterion_index": 3,
+      "check_ids": [
+        "migration-boundaries",
+        "affected-format",
+        "affected-lint",
+        "affected-configured-types"
+      ],
+      "result": "satisfied",
+      "assessment": "The one declared test file appends literal0026/0027/0028 current history links and advances obsolete25 final targets to28; all firstfive history rows and predecessor authorities remain. Constructor-only restoration swaps exactly the v27 impact-runs statement for its historically identical retained pre-v27 definition; unknown drift still fails count/fingerprint guards. Independent exact inverses and AST review preserve all original methods/assertions except these necessary operands and one added guard. Actual one-file Ruff format/lint and governed734-source typing pass with fresh caches, normal owned cleanup and final held-input stability. No product, migration algorithm, expected fingerprint, security, reference, framework or acceptance criterion changes."
+    }
+  ],
+  "corrective_integration": {
+    "evidence_sha256": "f70b5de41d461880271abe376788ebfe76d0ae4f884b72a880228129fabce10f",
+    "authority_preserved": true,
+    "affected_integration_reviewed": true,
+    "notes": "Completed origin CAP-05.S05.T01/b995/5a3d and its actual b3eade approval remain unchanged in committed backlog. Actual af3250 source9082 matches genuine4ac plus ce584 restorative review. The d46c receipt authenticates all4 fresh PASS checks, exact original2 cases and normal5/4/4/3-process EMPTY0 trees with final stability. Pure existing-map comparison15300 Python/base/Git pins plus capturedicacls has0 drift; no runtime rescan. Actual prior901545/raw4f375 two setup failures and application03a44d correction of a privately retained transcription error remain append-only. Deliveryb6a16 is a direct metadata/evidence/site-only child of af3250. This qualifies only C30; broader affected Wave/security/package/anchor/performance/principal work remains separate."
+  },
+  "verification_selection": {
+    "selected_command_ids": [
+      "search:connectors",
+      "foundation:quality"
+    ],
+    "assessment": "Exactly the two affected original encrypted grant-migration methods and all eight original fault subtests, one-file Ruff and existing full734 ordinary-import typing context cover this fixture-only restoration. The fresh cache/response-file transport preserves settings and avoids the known incomplete-context failure. Historical unchanged reference outcomes are explicitly historical. No full connectors/profile/history/exit review replay or large-model work is required or claimed."
+  },
+  "evidence_authentication": {
+    "actual_frozen_authentication": {
+      "path": "artifacts/tmp/W2.C30.T01.independent-frozen-authentication-01.json",
+      "sha256": "9de9fbae408d5ca51384e54648fb5030f920225cce88d6e49c33e47b6ed83fe1"
+    },
+    "actual_component_assessment": {
+      "path": "artifacts/tmp/W2.C30.T01.delivery-01/independent-components-pre-freeze-01.json",
+      "sha256": "cd7f148c3d74b6120dc0db11458fdb96a0ab1cd4e388bde07f6eb25563f65854"
+    },
+    "actual_focused_receipt": {
+      "path": "artifacts/tmp/W2.C30.T01.focused-proof-02/receipt.json",
+      "sha256": "d46c7ca713867705352c87593242329fccf5e6431088ed01a2c866392c007468"
+    },
+    "actual_execution_producer": {
+      "path": "artifacts/tmp/W2.C30.T01.focused-proof-02.py",
+      "sha256": "bcecc0b64911357315960a0be2ce04c362ce002d4a837f93dcb0647f0281c747"
+    },
+    "source_readiness": {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/W2.C30.T01.exact-v20-fixture-02/independent-source-readiness-02.json",
+      "sha256": "ce5846b890d18e0acbcc0c8cea40590b83723fd7855c4c7df10efa321eaf37fb"
+    },
+    "proof_source_readiness": {
+      "path": "artifacts/tmp/W2.C30.T01.focused-proof-02.source-readiness-01.json",
+      "sha256": "e180b807b5d00dcef8b211e13dc24f5db478892bb0dc38ed22325d5812512e18"
+    },
+    "source_application": {
+      "path": "artifacts/tmp/W2.C30.T01.delivery-01/actual-source-application-03.json",
+      "sha256": "a44dce18ca90d19564055a91500d1a6de7566ce773efccdc1701eddc2cd2b593"
+    },
+    "frozen_packet_and_selection_recomputed": true,
+    "four_raw_check_outputs_authenticated": true,
+    "all_original32_assertions_and8_fault_steps_preserved": true,
+    "one_new_exact_prefix_count_guard": true,
+    "actual_selected_runtime_pin_map_comparison": {
+      "roots": 3,
+      "pins": 15300,
+      "additional_icacls_pin": true,
+      "mismatches": 0,
+      "runtime_files_rehashed_by_reviewer": false
+    },
+    "actual_fresh_check_ids": [
+      "migration-boundaries",
+      "affected-format",
+      "affected-lint",
+      "affected-configured-types"
+    ],
+    "original_two_tests": "2PASS_NO_SKIP",
+    "affected_Ruff": "FORMAT_AND_LINT_PASS",
+    "configured734_types": "PASS_CURRENT_AF3250",
+    "owned_cleanup": "ALL_FOUR_NORMAL_EMPTY0_NO_OUTLIVING_OR_TERMINATION",
+    "final_input_stability": true
+  },
+  "full_profile_pass_claimed": false,
+  "independence": {
+    "implementation_owner": "codex-w2-implementation",
+    "independent_reviewer": "agent:/root/security_resolution_review",
+    "reviewer_authored_implementation_or_execution_producer": false,
+    "reviewer_reran_tests_or_runtime_scans": false
+  },
+  "proof_limits": [
+    "Original encrypted fixture uses real SQLCipher with synthetic in-memory key authority; Windows DPAPI/foreign-host/packaged Native boundaries are not supplied here.",
+    "Initial source-proven mismatch and actual31b375 two setupFAILs remain immutable. Actual constructor repair proof is af3250 only; no prior failed result is relabelled.",
+    "Current14, protected/storage/import performance, Graph/C31, remaining connector coverage, anchors, shipping/artifact security and independent Wave/G2 prerequisites remain separate; original broader adverse findings are not closed by this review."
+  ],
+  "scope_limits": [
+    "Approves only exact frozen W2.C30.T01 R01 at af3250 and deliveryb6a16; root must record normal taskctl review/integration.",
+    "No new product/framework/refactoring/reference/approval-history/scope/verification criterion, W2 release or W3 implementation authority is granted."
+  ]
+}
