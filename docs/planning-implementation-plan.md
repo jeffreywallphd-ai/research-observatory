@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 3f3549ef17417d485880476637a3ffde0f3ce4ba7be488bf62747e2da6dc6f37
+source_sha256: b0be2420222216d354e4a9e4911c67def0fed2e005d583234f6a7aaad9d73bc0
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -5534,7 +5534,7 @@ Original tasks and approvals remain unchanged.
 
 ### W2.C29.T01 — Implement plugin isolation, configuration, and secret access controls
 
-**Status:** `IN_PROGRESS`. **Original task:** `CAP-04.S05.T02`. **Latest review:** `-`.
+**Status:** `REVIEW`. **Original task:** `CAP-04.S05.T02`. **Latest review:** `-`.
 
 **Reproduction:** Actual2 corpus migration methods expect current20 and onward tuple onlythrough0020 while validated current28 requires0021..0028. First20->21 plugin progression2cc is groundwork diagnosis only; canonical completed original snapshot963b/latestapproved5a767 governs admission.
 
@@ -5551,7 +5551,19 @@ Original tasks and approvals remain unchanged.
 
 **Review mode:** `append-only v1` / 0 completed round(s)
 
-**Current immutable submission awaiting review:** None
+**Current immutable submission awaiting review:** `R01` / packet SHA-256 `53da22cb748ac2d628ef8ec8736614c398cf628efd564eb8e45d40524a7c5615`
+
+- Candidate / base / branch: `26202ec497ce94e3b1f86f0c614b56f7f6b748d7` / `7c1346d4550fc11927aa3289cf9384d6b6dc99c0` / `codex/w2-implementation`
+- Submitted by / at: codex-w2-implementation / `2026-10-15T02:08:59+00:00`
+- Evidence: `artifacts/evidence/W2.C29.T01.R01.json` / `8879ea6a913362f82c97bed441a809b8884b92987582597fd5e90527302b2bcd` / `26202ec497ce94e3b1f86f0c614b56f7f6b748d7`
+- Acceptance-criteria SHA-256: `831c2a4cc6c6cf0bd8ca53f4c85cce254f359e6c80f198692babeaf6a7f96dd5`
+- Verification-selection SHA-256: `b6bda0bafa159b8e9df66fa451573139d518d2cd87b3f2ab9c933c0659355d9c`
+- Changed paths: `docs/planning-implementation-plan.md`, `planning/backlog.yaml`, `planning/review-site/index.html`, `planning/review-site/manifest.json`, `planning/review-site/waves/W2.html`, `planning/status-summary.md`, `tests/reconciliation/test_corpus_migration.py`
+- Selected checks: `.venv/Scripts/python.exe -B -s -m unittest -v tests.reconciliation.test_corpus_migration.CorpusMigrationTests.test_fresh_v19_retains_corpus_tables_and_exact_profile tests.reconciliation.test_corpus_migration.CorpusMigrationTests.test_populated_v16_backup_rows_and_reopen_survive_common_table_rebuild`, `.venv/Scripts/python.exe -B -s -m ruff format --check --config pyproject.toml -- tests/reconciliation/test_corpus_migration.py`, `.venv/Scripts/python.exe -B -s -m ruff check --config pyproject.toml -- tests/reconciliation/test_corpus_migration.py`, `.venv/Scripts/python.exe -B -s -m mypy --config-file pyproject.toml --no-namespace-packages -- @artifacts/tmp/W2.remaining-corrections-batch-01/quality-transport-07/complete-files.args`
+- Deferred checks: `Original plugin/LPAC/security implementation judgment remains historical; this fixture-only correction does not rerun or newly qualify those boundaries. Broader fresh affected signed worker/Core/package/security/principal checks remain at Wave qualification.`, `Finite model/gateway, currentNative3/current14/restart/anchor/scale/storage/protected-performance and finalS06/checkpoint/integration/G2 remain separate. Prior intermittent Native cleanup failure stays a cold/compiler/package risk.`, `No8/16GiB model workloads. Physical foreign-host proof retains the explicit first-independent-Windows/requiredbyW5 deferral.`
+- Selection rationale: Fixture-only current-target restoration affects two original failed corpus migration bodies and their newly reached row/backup/manifest/denial/currentprofile clauses. Run exactly those two and one-file Ruff. Use the unchanged governed734 source context and exclusivefreshcache because C28 demonstrated test-only typing omits Core modules. Current two methods and all quality checks pass without replay of196 unaffected unique Core cases or full exit audit.
+- Prior round / replayed open findings: `-` / -
+- Root-cause escalation: -
 
 **Current latest-review projection:** `-` by - at `-`
 

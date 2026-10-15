@@ -1,0 +1,193 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "W2.C29.T01",
+  "baseCommit": "7c1346d4550fc11927aa3289cf9384d6b6dc99c0",
+  "commit": "26202ec497ce94e3b1f86f0c614b56f7f6b748d7",
+  "branch": "codex/w2-implementation",
+  "changedFiles": [
+    "docs/planning-implementation-plan.md",
+    "planning/backlog.yaml",
+    "planning/review-site/index.html",
+    "planning/review-site/manifest.json",
+    "planning/review-site/waves/W2.html",
+    "planning/status-summary.md",
+    "tests/reconciliation/test_corpus_migration.py"
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "checkIds": [
+        "migration-boundaries"
+      ],
+      "evidence": [
+        "Plugin isolation, manifest permissions, scoped credentials, network/export denials and audit implementation are unchanged. Reuse original CAP-04.S05.T02 independently approved R02 candidate5a767 security judgment as historical authority. Fresh two corpus migration cases establish exact current progression through0021plugin grants and0028 while preserving literal predecessor/corpus/rights/source-projection rows and recovery manifest checks. No fresh malicious-connector, LPAC, external-network, secret or principal proof is claimed here."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "checkIds": [
+        "migration-boundaries"
+      ],
+      "evidence": [
+        "Both previously failing original methods pass without skips: populated literalv16 backup/completepriorrows/recoverymanifest validation and negative enum/hash probes, reopen/currentprofile/foreign-key integrity, plus fresh database exact tables/profile. These selected two use synthetic plaintext SQLite fixtures. SQLCipher/Windows/principal assertions elsewhere in the unchanged module are not executed by this two-case selection."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "checkIds": [
+        "migration-boundaries",
+        "affected-format",
+        "affected-lint",
+        "affected-configured-types"
+      ],
+      "evidence": [
+        "Only obsolete current20 and exact migration tuples ending0020 are restored to actual current28 and literal0021..0028 in plan/result/recoverymanifest. Frozenv16source/hash/schema/counts/data/backupversions and all51 assertion sites remain unchanged. One-file Ruffformat/lint and configured734-source typing pass at the exact committed candidate with held stable inputs and normal owned cleanup. No product/migrator/security/reference/framework or acceptance criterion change."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "checks": [
+    {
+      "id": "migration-boundaries",
+      "command": ".venv/Scripts/python.exe -B -s -m unittest -v tests.reconciliation.test_corpus_migration.CorpusMigrationTests.test_fresh_v19_retains_corpus_tables_and_exact_profile tests.reconciliation.test_corpus_migration.CorpusMigrationTests.test_populated_v16_backup_rows_and_reopen_survive_common_table_rebuild",
+      "commandSemantics": "DISPLAY repository-relative executable/paths; exact actual invocation is preserved in ignored receipt.",
+      "result": "passed",
+      "exitCode": 0,
+      "commit": "26202ec497ce94e3b1f86f0c614b56f7f6b748d7",
+      "coverage": "fresh-current-candidate",
+      "seconds": 6.317283099997439,
+      "raw": {
+        "path": "artifacts/tmp/W2.C29.T01.focused-proof-01/migration-boundaries.raw.log",
+        "sha256": "afb03a6ff5f61dfaf4f06abf3d343f75b026892e4f3f27606f0012644cbdfd89"
+      },
+      "ownedJob": {
+        "drained": true,
+        "cleanupState": "EMPTY_CONFIRMED",
+        "activeProcesses": 0
+      },
+      "testsRun": 2,
+      "failures": 0,
+      "errors": 0,
+      "skips": 0
+    },
+    {
+      "id": "affected-format",
+      "command": ".venv/Scripts/python.exe -B -s -m ruff format --check --config pyproject.toml -- tests/reconciliation/test_corpus_migration.py",
+      "commandSemantics": "DISPLAY repository-relative executable/paths; exact actual invocation is preserved in ignored receipt.",
+      "result": "passed",
+      "exitCode": 0,
+      "commit": "26202ec497ce94e3b1f86f0c614b56f7f6b748d7",
+      "coverage": "fresh-current-candidate",
+      "seconds": 0.16172780000488274,
+      "raw": {
+        "path": "artifacts/tmp/W2.C29.T01.focused-proof-01/affected-format.raw.log",
+        "sha256": "fd2299c9f1c6dc869070883e281051bfe93aacf66c1a3b0069f45b4aa410ca50"
+      },
+      "ownedJob": {
+        "drained": true,
+        "cleanupState": "EMPTY_CONFIRMED",
+        "activeProcesses": 0
+      }
+    },
+    {
+      "id": "affected-lint",
+      "command": ".venv/Scripts/python.exe -B -s -m ruff check --config pyproject.toml -- tests/reconciliation/test_corpus_migration.py",
+      "commandSemantics": "DISPLAY repository-relative executable/paths; exact actual invocation is preserved in ignored receipt.",
+      "result": "passed",
+      "exitCode": 0,
+      "commit": "26202ec497ce94e3b1f86f0c614b56f7f6b748d7",
+      "coverage": "fresh-current-candidate",
+      "seconds": 0.1578523999924073,
+      "raw": {
+        "path": "artifacts/tmp/W2.C29.T01.focused-proof-01/affected-lint.raw.log",
+        "sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18"
+      },
+      "ownedJob": {
+        "drained": true,
+        "cleanupState": "EMPTY_CONFIRMED",
+        "activeProcesses": 0
+      }
+    },
+    {
+      "id": "affected-configured-types",
+      "command": ".venv/Scripts/python.exe -B -s -m mypy --config-file pyproject.toml --no-namespace-packages -- @artifacts/tmp/W2.remaining-corrections-batch-01/quality-transport-07/complete-files.args",
+      "commandSemantics": "DISPLAY repository-relative executable/paths; exact actual invocation is preserved in ignored receipt.",
+      "result": "passed",
+      "exitCode": 0,
+      "commit": "26202ec497ce94e3b1f86f0c614b56f7f6b748d7",
+      "coverage": "fresh-current-candidate",
+      "seconds": 18.61411300000327,
+      "raw": {
+        "path": "artifacts/tmp/W2.C29.T01.focused-proof-01/affected-configured-types.raw.log",
+        "sha256": "c642e5b33b5e7d157e7b2362ef94a292d50ab8abbba717375ca1704ad53de820"
+      },
+      "ownedJob": {
+        "drained": true,
+        "cleanupState": "EMPTY_CONFIRMED",
+        "activeProcesses": 0
+      }
+    }
+  ],
+  "executionReceipts": [
+    {
+      "path": "artifacts/tmp/W2.C29.T01.focused-proof-01/receipt.json",
+      "sha256": "9c70bf25204d9d76bce25e1b1c6278aaa27cc421046d0be7bb92ac83b277c537"
+    }
+  ],
+  "executionProducers": [
+    {
+      "path": "artifacts/tmp/W2.original-migration.focused-proof-02.py",
+      "sha256": "50a885045c43aedcdaf4a19f3938ad020e162765ee060bd96fdcce055da97d60"
+    }
+  ],
+  "sourceApplication": {
+    "path": "artifacts/tmp/W2.C29.T01.delivery-01/actual-source-application-01.json",
+    "sha256": "dba495652ecc1eb014f45f3674ecb7d9e4ea534955fdc7e4c992b0cbe4157344"
+  },
+  "sourceReadiness": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/core14-restorative-proposals-02/independent-migration-source-readiness-01.json",
+    "sha256": "afac7447914070deeb9b47c218e30d71db70a8b09cd71b39f8653271457e6fb1"
+  },
+  "runtimeInputCaptureSHA256": "456482ea03c3545a03c63e36e5f0bb098c7e20c95e2d2f5efa2f52381b2d4188",
+  "actualInputClosure": "Exact committed candidate and selected actual Python/stdlib/Git/runtime/config/environment/absence inputs held and rechecked through normal owned drain. Detailed machine-local maps stay ignored.",
+  "preservedAdverse": [
+    {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/unreached-core-imports-owned-01/actual-proof-01/receipt.json",
+      "sha256": "1090cfd6826c48550b01ae6f736a074d210fd69bcc19d8d4ed4facd4badcd038"
+    }
+  ],
+  "verificationSelection": {
+    "selectedCommandIds": [
+      "service:reconciliation",
+      "foundation:quality"
+    ],
+    "riskAnalysis": "Fixture-only current-target restoration affects two original failed corpus migration bodies and their newly reached row/backup/manifest/denial/currentprofile clauses. Run exactly those two and one-file Ruff. Use the unchanged governed734 source context and exclusivefreshcache because C28 demonstrated test-only typing omits Core modules. Current two methods and all quality checks pass without replay of196 unaffected unique Core cases or full exit audit.",
+    "deferred": [
+      "Original plugin/LPAC/security implementation judgment remains historical; this fixture-only correction does not rerun or newly qualify those boundaries. Broader fresh affected signed worker/Core/package/security/principal checks remain at Wave qualification.",
+      "Finite model/gateway, currentNative3/current14/restart/anchor/scale/storage/protected-performance and finalS06/checkpoint/integration/G2 remain separate. Prior intermittent Native cleanup failure stays a cold/compiler/package risk.",
+      "No8/16GiB model workloads. Physical foreign-host proof retains the explicit first-independent-Windows/requiredbyW5 deferral."
+    ]
+  },
+  "correctiveIntegration": {
+    "originSha256": "a9faa34a543433fdfe1665e54ade2892554e6bf893a1824c6155d8114d3bd994",
+    "authorityPreserved": true,
+    "affectedChecks": [
+      ".venv/Scripts/python.exe -B -s -m unittest -v tests.reconciliation.test_corpus_migration.CorpusMigrationTests.test_fresh_v19_retains_corpus_tables_and_exact_profile tests.reconciliation.test_corpus_migration.CorpusMigrationTests.test_populated_v16_backup_rows_and_reopen_survive_common_table_rebuild",
+      ".venv/Scripts/python.exe -B -s -m ruff format --check --config pyproject.toml -- tests/reconciliation/test_corpus_migration.py",
+      ".venv/Scripts/python.exe -B -s -m ruff check --config pyproject.toml -- tests/reconciliation/test_corpus_migration.py",
+      ".venv/Scripts/python.exe -B -s -m mypy --config-file pyproject.toml --no-namespace-packages -- @artifacts/tmp/W2.remaining-corrections-batch-01/quality-transport-07/complete-files.args"
+    ],
+    "reusedEvidence": [
+      "Original CAP-04.S05.T02 approved R02 candidate5a767 security/LPAC/secret/network/export/audit judgment remains historical authority. Original task and approval/history are unchanged; this is not a fresh runtime claim."
+    ],
+    "rationale": "Exact afac-reviewed one-file current-target restoration. Actual2original migration methods, one-fileRuff and configured734types pass at26202 with stableinputs and normalEMPTY0. Frozen predecessor/assertions and original aggregateFAIL remain immutable. Normal independent frozen review remains required. No source authority, security guarantee, criterion, framework/reference or release change."
+  },
+  "correctionSpecification": {
+    "path": "artifacts/evidence/W2.C29.T01.spec.json",
+    "sha256": "66cb9ba494526372ea326929790667fe2617409a37c71224d7d81219cacd97ae"
+  },
+  "fullProfilePassClaimed": false,
+  "waveComplete": false,
+  "releaseApproved": false
+}

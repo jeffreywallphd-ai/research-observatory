@@ -6942,7 +6942,7 @@ waves:
       id: W2.C29.T01
       wave: W2
       priority: P1
-      status: IN_PROGRESS
+      status: REVIEW
       owner: codex-w2-implementation
       branch: codex/w2-implementation
       base_sha: 7c1346d4550fc11927aa3289cf9384d6b6dc99c0
@@ -6952,12 +6952,17 @@ waves:
         claimed_at: '2026-10-15T01:45:58+00:00'
         expires_at: '2026-10-15T09:45:58+00:00'
       started_at: '2026-10-15T01:45:58+00:00'
-      updated_at: '2026-10-15T01:45:58+00:00'
+      updated_at: '2026-10-15T02:08:59+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
-      evidence: []
-      verification_state: null
+      evidence:
+      - type: criterion-manifest
+        path: artifacts/evidence/W2.C29.T01.R01.json
+        sha256: 8879ea6a913362f82c97bed441a809b8884b92987582597fd5e90527302b2bcd
+        commit: 26202ec497ce94e3b1f86f0c614b56f7f6b748d7
+        recorded_at: '2026-10-15T02:08:59+00:00'
+      verification_state: passed
       review:
         reviewer: null
         result: null
@@ -6966,7 +6971,55 @@ waves:
       review_control:
         version: 1
         attempts: []
-        current_submission: null
+        current_submission:
+          id: R01
+          submitted_by: codex-w2-implementation
+          submitted_at: '2026-10-15T02:08:59+00:00'
+          candidate_commit: 26202ec497ce94e3b1f86f0c614b56f7f6b748d7
+          base_commit: 7c1346d4550fc11927aa3289cf9384d6b6dc99c0
+          branch: codex/w2-implementation
+          evidence_reference:
+            type: criterion-manifest
+            path: artifacts/evidence/W2.C29.T01.R01.json
+            sha256: 8879ea6a913362f82c97bed441a809b8884b92987582597fd5e90527302b2bcd
+            commit: 26202ec497ce94e3b1f86f0c614b56f7f6b748d7
+            recorded_at: '2026-10-15T02:08:59+00:00'
+          acceptance_criteria_sha256: 831c2a4cc6c6cf0bd8ca53f4c85cce254f359e6c80f198692babeaf6a7f96dd5
+          changed_paths:
+          - docs/planning-implementation-plan.md
+          - planning/backlog.yaml
+          - planning/review-site/index.html
+          - planning/review-site/manifest.json
+          - planning/review-site/waves/W2.html
+          - planning/status-summary.md
+          - tests/reconciliation/test_corpus_migration.py
+          selected_checks:
+          - .venv/Scripts/python.exe -B -s -m unittest -v tests.reconciliation.test_corpus_migration.CorpusMigrationTests.test_fresh_v19_retains_corpus_tables_and_exact_profile
+            tests.reconciliation.test_corpus_migration.CorpusMigrationTests.test_populated_v16_backup_rows_and_reopen_survive_common_table_rebuild
+          - .venv/Scripts/python.exe -B -s -m ruff format --check --config pyproject.toml -- tests/reconciliation/test_corpus_migration.py
+          - .venv/Scripts/python.exe -B -s -m ruff check --config pyproject.toml -- tests/reconciliation/test_corpus_migration.py
+          - .venv/Scripts/python.exe -B -s -m mypy --config-file pyproject.toml --no-namespace-packages -- @artifacts/tmp/W2.remaining-corrections-batch-01/quality-transport-07/complete-files.args
+          deferred_checks:
+          - Original plugin/LPAC/security implementation judgment remains historical; this fixture-only correction does not
+            rerun or newly qualify those boundaries. Broader fresh affected signed worker/Core/package/security/principal
+            checks remain at Wave qualification.
+          - Finite model/gateway, currentNative3/current14/restart/anchor/scale/storage/protected-performance and finalS06/checkpoint/integration/G2
+            remain separate. Prior intermittent Native cleanup failure stays a cold/compiler/package risk.
+          - No8/16GiB model workloads. Physical foreign-host proof retains the explicit first-independent-Windows/requiredbyW5
+            deferral.
+          selection_rationale: Fixture-only current-target restoration affects two original failed corpus migration bodies
+            and their newly reached row/backup/manifest/denial/currentprofile clauses. Run exactly those two and one-file
+            Ruff. Use the unchanged governed734 source context and exclusivefreshcache because C28 demonstrated test-only
+            typing omits Core modules. Current two methods and all quality checks pass without replay of196 unaffected unique
+            Core cases or full exit audit.
+          selection_sha256: b6bda0bafa159b8e9df66fa451573139d518d2cd87b3f2ab9c933c0659355d9c
+          prior_attempt_id: null
+          open_finding_ids: []
+          root_cause_analysis: null
+          selected_command_ids:
+          - service:reconciliation
+          - foundation:quality
+          packet_sha256: 53da22cb748ac2d628ef8ec8736614c398cf628efd564eb8e45d40524a7c5615
       correction:
         origin_task_id: CAP-04.S05.T02
         origin_commit: 963bfb4ab67d8096530fda90b1a53a60440e1e69
