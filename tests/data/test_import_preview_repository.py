@@ -9,6 +9,7 @@ import sqlite3
 import unittest
 from dataclasses import asdict
 from pathlib import Path
+from typing import cast
 from unittest.mock import patch
 
 from research_observatory_core import storage
@@ -344,7 +345,7 @@ class ImportPreviewRepositoryTests(unittest.TestCase):
         )
         definition, snapshot, job = worker_fixture.runnable_contracts(identity_variant=True)
         snapshot["projectId"] = fixture.PROJECT_ID
-        snapshot["jobs"][0]["idempotencyKey"] = fingerprint({"previewId": preview})
+        cast(list[dict[str, object]], snapshot["jobs"])[0]["idempotencyKey"] = fingerprint({"previewId": preview})
         queue = sqlite_workflow_queue_repository(self.project, fixture.PROJECT_ID)
         queue.enqueue(
             prepare_workflow_job(
