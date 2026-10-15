@@ -5555,7 +5555,7 @@
         {
           "task_id": "W2.C31.T01",
           "title": "Implement Unpaywall and Semantic Scholar adapters",
-          "status": "IN_PROGRESS",
+          "status": "REVIEW",
           "acceptance_criteria": [
             "OA URLs retain license and host metadata; recommendation/citation results record direction and source; provider unavailability degrades without corrupting the search run.",
             "Automated tests cover the expected path and at least one material failure or boundary condition.",
@@ -5584,7 +5584,7 @@
           "task_review": {
             "task_id": "W2.C31.T01",
             "title": "Implement Unpaywall and Semantic Scholar adapters",
-            "status": "IN_PROGRESS",
+            "status": "REVIEW",
             "mode": "append-only",
             "latest_review": {
               "reviewer": null,
@@ -5595,7 +5595,51 @@
             "review_control": {
               "version": 1,
               "attempts": [],
-              "current_submission": null
+              "current_submission": {
+                "id": "R01",
+                "submitted_by": "codex-w2-implementation",
+                "submitted_at": "2026-10-15T06:12:18+00:00",
+                "candidate_commit": "5cd948d5f58a06d9ca83e9d416ac93655cee91b2",
+                "base_commit": "9e5da954e2fab49f0c49326414e7bf4a369aa899",
+                "branch": "codex/w2-implementation",
+                "evidence_reference": {
+                  "type": "criterion-manifest",
+                  "path": "artifacts/evidence/W2.C31.T01.R01.json",
+                  "sha256": "f1a4459cc8cb07683e04238c26a815199e4993b208d1f0345e81d5e105d288db",
+                  "commit": "5cd948d5f58a06d9ca83e9d416ac93655cee91b2",
+                  "recorded_at": "2026-10-15T06:12:18+00:00"
+                },
+                "acceptance_criteria_sha256": "da6250e28360c4881c7bdb40244de051d7a1bbda9d8dc54b3be88b1cf0505999",
+                "changed_paths": [
+                  "docs/planning-implementation-plan.md",
+                  "planning/backlog.yaml",
+                  "planning/review-site/index.html",
+                  "planning/review-site/manifest.json",
+                  "planning/review-site/waves/W2.html",
+                  "planning/status-summary.md",
+                  "tests/connectors/test_graph_oa_runtime.py"
+                ],
+                "selected_checks": [
+                  ".venv/Scripts/python.exe -B -s -m unittest -v tests.connectors.test_graph_oa_runtime.GraphOaRuntimeTests.test_normal_core_worker_configuration_and_observations_survive_restart",
+                  ".venv/Scripts/python.exe -B -s -m ruff format --check --config pyproject.toml -- tests/connectors/test_graph_oa_runtime.py",
+                  ".venv/Scripts/python.exe -B -s -m ruff check --config pyproject.toml -- tests/connectors/test_graph_oa_runtime.py",
+                  ".venv/Scripts/python.exe -B -s -m mypy --config-file pyproject.toml --no-namespace-packages -- @artifacts/tmp/W2.remaining-corrections-batch-01/quality-transport-07/complete-files.args"
+                ],
+                "deferred_checks": [
+                  "Remaining original connector tail has its own actual selection and current-input continuity.",
+                  "Current14, protected/storage/import performance, anchors, shipping/security and finalS06/Wave/release remain separate."
+                ],
+                "selection_rationale": "Only demonstrated private test lock-order inversion and its original durable/restart/denial contracts, one-file Ruff and governed734-context typing. No unchanged81 connector prefix or full profile replay.",
+                "selection_sha256": "8dc7605c85b0839edd7af25ec70051b0bd30048c50d1515d3b8f14016d27b43b",
+                "prior_attempt_id": null,
+                "open_finding_ids": [],
+                "root_cause_analysis": null,
+                "selected_command_ids": [
+                  "search:connectors",
+                  "foundation:quality"
+                ],
+                "packet_sha256": "9da415f0c969f64f8c57109ee6907aec217ed46239659b47ccdd7273f8980120"
+              }
             }
           }
         }

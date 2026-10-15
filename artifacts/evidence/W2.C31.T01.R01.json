@@ -1,0 +1,204 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "W2.C31.T01",
+  "baseCommit": "9e5da954e2fab49f0c49326414e7bf4a369aa899",
+  "commit": "5cd948d5f58a06d9ca83e9d416ac93655cee91b2",
+  "branch": "codex/w2-implementation",
+  "changedFiles": [
+    "docs/planning-implementation-plan.md",
+    "planning/backlog.yaml",
+    "planning/review-site/index.html",
+    "planning/review-site/manifest.json",
+    "planning/review-site/waves/W2.html",
+    "planning/status-summary.md",
+    "tests/connectors/test_graph_oa_runtime.py"
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "checkIds": [
+        "original-graph-restart"
+      ],
+      "evidence": [
+        "Original CAP-04.S02.T03 provider/OA/license/host/direction/source and degraded-search approval at1e68 remains historical authority. Product code and provider policy are unchanged. The exact original production Core restart/configuration/observation method freshly passes all32 assertions with the same original synthetic provider/capacity/native-context seams. No live provider or shipping Native/Tauri proof is inferred."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "checkIds": [
+        "original-graph-restart"
+      ],
+      "evidence": [
+        "The one original method now completes with zero failures/errors/skips under its unchanged300s collection watchdog. Three direct private repository replay reads enter the existing real project lifecycle read-action guard before the object-store lock; unchanged worker, durable observations, restart, privacy/confirmation/redaction/denial assertions remain. Original real Windows DPAPI/SQLCipher principal details are limited to what the original fixtures actually execute."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "checkIds": [
+        "original-graph-restart",
+        "affected-format",
+        "affected-lint",
+        "affected-configured-types"
+      ],
+      "evidence": [
+        "Only three private test replay reads gain the existing real lifecycle read-action seam with require_write=False and actual assessed path/project ID; identical requests/repository/results and all32 original method assertions/35 module assertions remain. No product lock, privacy, schema, migration, worker, framework, reference or acceptance change. One-file Ruff format/lint and configured734-source typing pass with fresh exclusive caches and held actual inputs through normal owned drain."
+      ]
+    }
+  ],
+  "checks": [
+    {
+      "id": "original-graph-restart",
+      "command": ".venv/Scripts/python.exe -B -s -m unittest -v tests.connectors.test_graph_oa_runtime.GraphOaRuntimeTests.test_normal_core_worker_configuration_and_observations_survive_restart",
+      "commandSemantics": "DISPLAY repository-relative executable/paths; exact invocation retained in ignored actual receipt.",
+      "result": "passed",
+      "exitCode": 0,
+      "commit": "5cd948d5f58a06d9ca83e9d416ac93655cee91b2",
+      "coverage": "fresh-current-candidate",
+      "seconds": 28.84636279998813,
+      "raw": {
+        "path": "artifacts/tmp/W2.C31.T01.focused-proof-01/original-graph-restart.raw.log",
+        "sha256": "57a2a91acef2934771d203c2c0c97e4479e1c7b563dbb30e1bf38c61509a4356"
+      },
+      "ownedJob": {
+        "drained": true,
+        "activeProcesses": 0,
+        "cleanupState": "EMPTY_CONFIRMED"
+      },
+      "testsRun": 1,
+      "failures": 0,
+      "errors": 0,
+      "skips": 0
+    },
+    {
+      "id": "affected-format",
+      "command": ".venv/Scripts/python.exe -B -s -m ruff format --check --config pyproject.toml -- tests/connectors/test_graph_oa_runtime.py",
+      "commandSemantics": "DISPLAY repository-relative executable/paths; exact invocation retained in ignored actual receipt.",
+      "result": "passed",
+      "exitCode": 0,
+      "commit": "5cd948d5f58a06d9ca83e9d416ac93655cee91b2",
+      "coverage": "fresh-current-candidate",
+      "seconds": 0.2358057999954326,
+      "raw": {
+        "path": "artifacts/tmp/W2.C31.T01.focused-proof-01/affected-format.raw.log",
+        "sha256": "fd2299c9f1c6dc869070883e281051bfe93aacf66c1a3b0069f45b4aa410ca50"
+      },
+      "ownedJob": {
+        "drained": true,
+        "activeProcesses": 0,
+        "cleanupState": "EMPTY_CONFIRMED"
+      }
+    },
+    {
+      "id": "affected-lint",
+      "command": ".venv/Scripts/python.exe -B -s -m ruff check --config pyproject.toml -- tests/connectors/test_graph_oa_runtime.py",
+      "commandSemantics": "DISPLAY repository-relative executable/paths; exact invocation retained in ignored actual receipt.",
+      "result": "passed",
+      "exitCode": 0,
+      "commit": "5cd948d5f58a06d9ca83e9d416ac93655cee91b2",
+      "coverage": "fresh-current-candidate",
+      "seconds": 0.22340560000156984,
+      "raw": {
+        "path": "artifacts/tmp/W2.C31.T01.focused-proof-01/affected-lint.raw.log",
+        "sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18"
+      },
+      "ownedJob": {
+        "drained": true,
+        "activeProcesses": 0,
+        "cleanupState": "EMPTY_CONFIRMED"
+      }
+    },
+    {
+      "id": "affected-configured-types",
+      "command": ".venv/Scripts/python.exe -B -s -m mypy --config-file pyproject.toml --no-namespace-packages -- @artifacts/tmp/W2.remaining-corrections-batch-01/quality-transport-07/complete-files.args",
+      "commandSemantics": "DISPLAY repository-relative executable/paths; exact invocation retained in ignored actual receipt.",
+      "result": "passed",
+      "exitCode": 0,
+      "commit": "5cd948d5f58a06d9ca83e9d416ac93655cee91b2",
+      "coverage": "fresh-current-candidate",
+      "seconds": 18.99852949999331,
+      "raw": {
+        "path": "artifacts/tmp/W2.C31.T01.focused-proof-01/affected-configured-types.raw.log",
+        "sha256": "c642e5b33b5e7d157e7b2362ef94a292d50ab8abbba717375ca1704ad53de820"
+      },
+      "ownedJob": {
+        "drained": true,
+        "activeProcesses": 0,
+        "cleanupState": "EMPTY_CONFIRMED"
+      }
+    }
+  ],
+  "unverifiedItems": [],
+  "executionReceipts": [
+    {
+      "path": "artifacts/tmp/W2.C31.T01.focused-proof-01/receipt.json",
+      "sha256": "ab5a01eef3adf9610d460ae213a142f2cec5c26e88b786214f194a42a24acd41"
+    }
+  ],
+  "executionProducers": [
+    {
+      "path": "artifacts/tmp/W2.C31.T01.focused-proof-01.py",
+      "sha256": "eb586e1a689c6d9b8ac93509590647dc7f961fda67c6a7ef910ba6bf71a58dc7"
+    }
+  ],
+  "sourceApplication": {
+    "path": "artifacts/tmp/W2.C31.T01.delivery-01/actual-source-application-01.json",
+    "sha256": "d10700dc28b4835167b00b1b0cb814afa7cb09bb02c6e8685c1064c4c35ebf2c"
+  },
+  "sourceReadiness": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/connector-replay-lifecycle-test-restoration-01/independent-formatted-proposal-source-readiness-01.json",
+    "sha256": "3f31558a7a523c872513f69a5ca1ab66c7e18e98983bd06822104e9a0b404173"
+  },
+  "proofSourceReadiness": {
+    "path": "artifacts/tmp/W2.C31.T01.focused-proof-01.source-readiness-01.json",
+    "sha256": "de3b70bb97593b36481577d23e968f9f72fb358fbc68514de19baaebc02222f2"
+  },
+  "priorAdverseEvidence": [
+    {
+      "path": "artifacts/tmp/W2.connector-restart-diagnostic-01.f01/receipt.json",
+      "sha256": "032dcb3be9ce6a80d0078110cff1cbf018f472ce0d55fee41565f1eba1e948a6"
+    },
+    {
+      "path": "artifacts/tmp/W2.connector-restart-diagnostic-01.f01/raw.log",
+      "sha256": "d7263590974406a1960aa2d48219aac0404dafba5a415f7f759c0dfa4490f7f1"
+    }
+  ],
+  "verificationSelection": {
+    "selectedCommandIds": [
+      "search:connectors",
+      "foundation:quality"
+    ],
+    "riskAnalysis": "Only demonstrated private test lock-order inversion and its original durable/restart/denial contracts, one-file Ruff and governed734-context typing. No unchanged81 connector prefix or full profile replay.",
+    "deferred": [
+      "Remaining original connector tail has its own actual selection and current-input continuity.",
+      "Current14, protected/storage/import performance, anchors, shipping/security and finalS06/Wave/release remain separate."
+    ]
+  },
+  "correctiveIntegration": {
+    "originSha256": "f963a91d00aff8748b2eb0f8606d9b86193c4a072463c81998e27b8eb8772028",
+    "authorityPreserved": true,
+    "affectedChecks": [
+      ".venv/Scripts/python.exe -B -s -m unittest -v tests.connectors.test_graph_oa_runtime.GraphOaRuntimeTests.test_normal_core_worker_configuration_and_observations_survive_restart",
+      ".venv/Scripts/python.exe -B -s -m ruff format --check --config pyproject.toml -- tests/connectors/test_graph_oa_runtime.py",
+      ".venv/Scripts/python.exe -B -s -m ruff check --config pyproject.toml -- tests/connectors/test_graph_oa_runtime.py",
+      ".venv/Scripts/python.exe -B -s -m mypy --config-file pyproject.toml --no-namespace-packages -- @artifacts/tmp/W2.remaining-corrections-batch-01/quality-transport-07/complete-files.args"
+    ],
+    "reusedEvidence": [
+      {
+        "path": "artifacts/evidence/CAP-04.S02.T03.json",
+        "sha256": "e7455ced5e7d7495dbb0b28c8b77bf7da3522ef65d946c982e834fa2b1edd88c",
+        "byteScope": "committed-Git-blob",
+        "commit": "5cd948d5f58a06d9ca83e9d416ac93655cee91b2",
+        "qualifyingHistoricalCandidate": "1e68cab433f194bf5d834bedc974bdac5a4f7cb6"
+      }
+    ],
+    "rationale": "The original approved provider implementation/history stays unchanged. The private test now uses existing real lifecycle read authority in the same project-before-object order as normal production paths. Actual unchanged original assertions complete freshly; original300s diagnosticFAIL/forced cleanup remains immutable. No product/security/framework/criteria/release change."
+  },
+  "correctionSpecification": {
+    "path": "artifacts/evidence/W2.C31.T01.spec.json",
+    "sha256": "cbfb17972619083ddff33bd9a7bfbd02a816f4b68775e94b705020a294bf4fe7"
+  },
+  "fullProfilePassClaimed": false,
+  "waveComplete": false,
+  "releaseApproved": false
+}

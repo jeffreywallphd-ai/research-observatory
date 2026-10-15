@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 595df14269d7ac45ca216cc8ab24246bdd462cd87b997171a23dc10260ad0831
+source_sha256: b0a5076ce2489e0be59844aa666856e40d1297754a00c53d73940c39f44173ec
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -5648,7 +5648,7 @@ Original tasks and approvals remain unchanged.
 
 ### W2.C31.T01 — Implement Unpaywall and Semantic Scholar adapters
 
-**Status:** `IN_PROGRESS`. **Original task:** `CAP-04.S02.T03`. **Latest review:** `-`.
+**Status:** `REVIEW`. **Original task:** `CAP-04.S02.T03`. **Latest review:** `-`.
 
 **Reproduction:** At exact clean candidate a984703caacdb4f405dabf177353e403fce064af, the unchanged original Graph/Unpaywall restart method reproducibly stalls on its first direct private repository replay while the normal worker finishes its output receipt. Actual reviewed diagnostic reaches its unchanged 300-second collection watchdog: terminal receipt artifacts/tmp/W2.connector-restart-diagnostic-01.f01/receipt.json SHA256 032dcb3be9ce6a80d0078110cff1cbf018f472ce0d55fee41565f1eba1e948a6; raw d7263590974406a1960aa2d48219aac0404dafba5a415f7f759c0dfa4490f7f1; retained thread-stacks 2c75d5be5ea55b5929cd9ce3fdff4e25c26fa42c5e6bfd2b22442ee4ea65bdc8. The first complete snapshot and code show the test holding object-store lock then requesting privacy/lifecycle authority while the worker holds real lifecycle authority then requests the same object-store lock. Normal product worker/inspection paths already use project-then-object order. All three private test replays need the same real lifecycle read-action seam. The diagnostic FAIL, forced owned termination with active0, and earlier suite interruption remain preserved; no product deadlock or historical-cause claim beyond the demonstrated test path.
 
@@ -5665,7 +5665,19 @@ Original tasks and approvals remain unchanged.
 
 **Review mode:** `append-only v1` / 0 completed round(s)
 
-**Current immutable submission awaiting review:** None
+**Current immutable submission awaiting review:** `R01` / packet SHA-256 `9da415f0c969f64f8c57109ee6907aec217ed46239659b47ccdd7273f8980120`
+
+- Candidate / base / branch: `5cd948d5f58a06d9ca83e9d416ac93655cee91b2` / `9e5da954e2fab49f0c49326414e7bf4a369aa899` / `codex/w2-implementation`
+- Submitted by / at: codex-w2-implementation / `2026-10-15T06:12:18+00:00`
+- Evidence: `artifacts/evidence/W2.C31.T01.R01.json` / `f1a4459cc8cb07683e04238c26a815199e4993b208d1f0345e81d5e105d288db` / `5cd948d5f58a06d9ca83e9d416ac93655cee91b2`
+- Acceptance-criteria SHA-256: `da6250e28360c4881c7bdb40244de051d7a1bbda9d8dc54b3be88b1cf0505999`
+- Verification-selection SHA-256: `8dc7605c85b0839edd7af25ec70051b0bd30048c50d1515d3b8f14016d27b43b`
+- Changed paths: `docs/planning-implementation-plan.md`, `planning/backlog.yaml`, `planning/review-site/index.html`, `planning/review-site/manifest.json`, `planning/review-site/waves/W2.html`, `planning/status-summary.md`, `tests/connectors/test_graph_oa_runtime.py`
+- Selected checks: `.venv/Scripts/python.exe -B -s -m unittest -v tests.connectors.test_graph_oa_runtime.GraphOaRuntimeTests.test_normal_core_worker_configuration_and_observations_survive_restart`, `.venv/Scripts/python.exe -B -s -m ruff format --check --config pyproject.toml -- tests/connectors/test_graph_oa_runtime.py`, `.venv/Scripts/python.exe -B -s -m ruff check --config pyproject.toml -- tests/connectors/test_graph_oa_runtime.py`, `.venv/Scripts/python.exe -B -s -m mypy --config-file pyproject.toml --no-namespace-packages -- @artifacts/tmp/W2.remaining-corrections-batch-01/quality-transport-07/complete-files.args`
+- Deferred checks: `Remaining original connector tail has its own actual selection and current-input continuity.`, `Current14, protected/storage/import performance, anchors, shipping/security and finalS06/Wave/release remain separate.`
+- Selection rationale: Only demonstrated private test lock-order inversion and its original durable/restart/denial contracts, one-file Ruff and governed734-context typing. No unchanged81 connector prefix or full profile replay.
+- Prior round / replayed open findings: `-` / -
+- Root-cause escalation: -
 
 **Current latest-review projection:** `-` by - at `-`
 
