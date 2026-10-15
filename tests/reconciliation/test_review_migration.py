@@ -35,6 +35,17 @@ class ReviewMigrationTests(unittest.TestCase):
                 "0015_reconciliation_review",
                 "0016_work_versions",
                 "0017_corpus_items",
+                "0018_rights_policy",
+                "0019_corpus_reports",
+                "0020_corpus_source_projection",
+                "0021_plugin_grants",
+                "0022_document_attachments",
+                "0023_attachment_operations",
+                "0024_open_access_acquisition",
+                "0025_document_intake_recovery",
+                "0026_document_revisions",
+                "0027_revision_invalidations",
+                "0028_document_enrichments",
             ),
             plan.migration_ids,
         )
@@ -46,7 +57,7 @@ class ReviewMigrationTests(unittest.TestCase):
             self.assertEqual(14, backup.execute("PRAGMA user_version").fetchone()[0])
         for _ in range(2):
             with storage.open_canonical_database(self.database, expected_project_id=self.identity) as db:
-                self.assertEqual(17, db.execute("PRAGMA user_version").fetchone()[0])
+                self.assertEqual(storage.DATABASE_SCHEMA_VERSION, db.execute("PRAGMA user_version").fetchone()[0])
                 for table, rows in self.before["tables"].items():
                     if table not in {"schema_metadata", "schema_migrations"}:
                         self.assertEqual(
@@ -243,7 +254,7 @@ class ProtectedReviewMigrationTests(unittest.TestCase):
                 self.assertEqual(rows, [list(row) for row in saved.execute('SELECT * FROM "' + table + '"')], table)
         for _ in range(2):
             with storage.open_canonical_database(fixture.database, expected_project_id=identity) as current:
-                self.assertEqual(17, current.execute("PRAGMA user_version").fetchone()[0])
+                self.assertEqual(storage.DATABASE_SCHEMA_VERSION, current.execute("PRAGMA user_version").fetchone()[0])
                 self.assertEqual([], current.execute("PRAGMA foreign_key_check").fetchall())
                 self.assertEqual("ok", current.execute("PRAGMA quick_check").fetchone()[0])
                 self.assertEqual(3, current.execute("SELECT COUNT(*) FROM reconciliation_work_states").fetchone()[0])

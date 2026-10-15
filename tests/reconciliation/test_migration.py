@@ -62,7 +62,23 @@ class ReconciliationMigrationTests(unittest.TestCase):
         before = json.loads((FIXTURES / "schema-v13-populated.json").read_text(encoding="utf-8"))["tables"]
         plan = runner.plan_database_migration(self.database, expected_project_id=self.identity)
         self.assertEqual(
-            ("0014_scholarly_reconciliation", "0015_reconciliation_review", "0016_work_versions", "0017_corpus_items"),
+            (
+                "0014_scholarly_reconciliation",
+                "0015_reconciliation_review",
+                "0016_work_versions",
+                "0017_corpus_items",
+                "0018_rights_policy",
+                "0019_corpus_reports",
+                "0020_corpus_source_projection",
+                "0021_plugin_grants",
+                "0022_document_attachments",
+                "0023_attachment_operations",
+                "0024_open_access_acquisition",
+                "0025_document_intake_recovery",
+                "0026_document_revisions",
+                "0027_revision_invalidations",
+                "0028_document_enrichments",
+            ),
             plan.migration_ids,
         )
         result = runner.migrate_database(self.database, expected_project_id=self.identity)
@@ -72,7 +88,7 @@ class ReconciliationMigrationTests(unittest.TestCase):
             self.assertEqual(V13_SCHEMA, storage._schema_fingerprint(backup))
         for _ in range(2):
             with storage.open_canonical_database(self.database, expected_project_id=self.identity) as db:
-                self.assertEqual(17, db.execute("PRAGMA user_version").fetchone()[0])
+                self.assertEqual(storage.DATABASE_SCHEMA_VERSION, db.execute("PRAGMA user_version").fetchone()[0])
                 for table in (
                     "aggregate_revisions",
                     "import_source_records",
@@ -179,7 +195,7 @@ class ProtectedReconciliationMigrationTests(unittest.TestCase):
         before = json.loads((FIXTURES / "schema-v13-populated.json").read_text(encoding="utf-8"))["tables"]
         for _ in range(2):
             with storage.open_canonical_database(self.database, expected_project_id=identity) as current:
-                self.assertEqual(17, current.execute("PRAGMA user_version").fetchone()[0])
+                self.assertEqual(storage.DATABASE_SCHEMA_VERSION, current.execute("PRAGMA user_version").fetchone()[0])
                 self.assertEqual([], current.execute("PRAGMA foreign_key_check").fetchall())
                 for table in (
                     "import_source_records",
