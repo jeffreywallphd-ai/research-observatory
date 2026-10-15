@@ -5422,7 +5422,7 @@
         {
           "task_id": "W2.C30.T01",
           "title": "Extract and reconcile reference-list entries",
-          "status": "REVIEW",
+          "status": "DONE",
           "acceptance_criteria": [
             "Reference order and raw text are preserved; exact identifiers reconcile automatically; uncertain matches remain candidates with scores and review state.",
             "Automated tests cover the expected path and at least one material failure or boundary condition.",
@@ -5451,62 +5451,104 @@
           "task_review": {
             "task_id": "W2.C30.T01",
             "title": "Extract and reconcile reference-list entries",
-            "status": "REVIEW",
+            "status": "DONE",
             "mode": "append-only",
             "latest_review": {
-              "reviewer": null,
-              "result": null,
-              "reviewed_at": null,
-              "notes": null
+              "reviewer": "agent:/root/security_resolution_review",
+              "result": "approved",
+              "reviewed_at": "2026-10-15T05:27:07+00:00",
+              "notes": ""
             },
             "review_control": {
               "version": 1,
-              "attempts": [],
-              "current_submission": {
-                "id": "R01",
-                "submitted_by": "codex-w2-implementation",
-                "submitted_at": "2026-10-15T05:03:19+00:00",
-                "candidate_commit": "af3250cec072ced8ddf8eb08af38ec4ce6abc06f",
-                "base_commit": "001abf085f5673e417fb61743490bf815b890dbd",
-                "branch": "codex/w2-implementation",
-                "evidence_reference": {
-                  "type": "criterion-manifest",
-                  "path": "artifacts/evidence/W2.C30.T01.R01.json",
-                  "sha256": "f70b5de41d461880271abe376788ebfe76d0ae4f884b72a880228129fabce10f",
-                  "commit": "af3250cec072ced8ddf8eb08af38ec4ce6abc06f",
-                  "recorded_at": "2026-10-15T05:03:19+00:00"
-                },
-                "acceptance_criteria_sha256": "931d31132e89c951ea2680f40a6c3d54b82eb0122b9bcbfe717b3a4067a2f1e4",
-                "changed_paths": [
-                  "docs/planning-implementation-plan.md",
-                  "planning/backlog.yaml",
-                  "planning/review-site/index.html",
-                  "planning/review-site/manifest.json",
-                  "planning/review-site/waves/W2.html",
-                  "planning/status-summary.md",
-                  "tests/connectors/test_plugin_grant_migration.py"
-                ],
-                "selected_checks": [
-                  ".venv/Scripts/python.exe -B -s -m unittest -v tests.connectors.test_plugin_grant_migration.PluginGrantMigrationTests.test_exact_encrypted_v20_migrates_with_verified_backup_and_reopens tests.connectors.test_plugin_grant_migration.PluginGrantMigrationTests.test_each_v21_step_failure_rolls_back_exact_v20_and_retries",
-                  ".venv/Scripts/python.exe -B -s -m ruff format --check --config pyproject.toml -- tests/connectors/test_plugin_grant_migration.py",
-                  ".venv/Scripts/python.exe -B -s -m ruff check --config pyproject.toml -- tests/connectors/test_plugin_grant_migration.py",
-                  ".venv/Scripts/python.exe -B -s -m mypy --config-file pyproject.toml --no-namespace-packages -- @artifacts/tmp/W2.remaining-corrections-batch-01/quality-transport-07/complete-files.args"
-                ],
-                "deferred_checks": [
-                  "Unchanged reference/parser/UX product evidence remains historical; this test-only restoration does not rerun or newly qualify those boundaries.",
-                  "Current14, protected/storage/import performance, security leaf, C31 Graph test seam restoration, remaining connector coverage, anchors, shipping/package/security and S06/Wave/G2 remain separate. No8/16GiB model workload or full exit re-audit."
-                ],
-                "selection_rationale": "Exactly the two affected original grant migration methods and unchanged eight v21 fault-step subtests, one-file Ruff and governed734-source configured typing. No unrelated profile replay; broad source context is required by the existing ordinary-import typing configuration.",
-                "selection_sha256": "2f425e198b4bac5923c8468f5cd44bc197116771afdbc08490edb078a54d7bdc",
-                "prior_attempt_id": null,
-                "open_finding_ids": [],
-                "root_cause_analysis": null,
-                "selected_command_ids": [
-                  "search:connectors",
-                  "foundation:quality"
-                ],
-                "packet_sha256": "0cf0b455024759565f79dc6402e72a91f33ca195c76a2952e5dd749bc87bde33"
-              }
+              "attempts": [
+                {
+                  "submission": {
+                    "id": "R01",
+                    "submitted_by": "codex-w2-implementation",
+                    "submitted_at": "2026-10-15T05:03:19+00:00",
+                    "candidate_commit": "af3250cec072ced8ddf8eb08af38ec4ce6abc06f",
+                    "base_commit": "001abf085f5673e417fb61743490bf815b890dbd",
+                    "branch": "codex/w2-implementation",
+                    "evidence_reference": {
+                      "type": "criterion-manifest",
+                      "path": "artifacts/evidence/W2.C30.T01.R01.json",
+                      "sha256": "f70b5de41d461880271abe376788ebfe76d0ae4f884b72a880228129fabce10f",
+                      "commit": "af3250cec072ced8ddf8eb08af38ec4ce6abc06f",
+                      "recorded_at": "2026-10-15T05:03:19+00:00"
+                    },
+                    "acceptance_criteria_sha256": "931d31132e89c951ea2680f40a6c3d54b82eb0122b9bcbfe717b3a4067a2f1e4",
+                    "changed_paths": [
+                      "docs/planning-implementation-plan.md",
+                      "planning/backlog.yaml",
+                      "planning/review-site/index.html",
+                      "planning/review-site/manifest.json",
+                      "planning/review-site/waves/W2.html",
+                      "planning/status-summary.md",
+                      "tests/connectors/test_plugin_grant_migration.py"
+                    ],
+                    "selected_checks": [
+                      ".venv/Scripts/python.exe -B -s -m unittest -v tests.connectors.test_plugin_grant_migration.PluginGrantMigrationTests.test_exact_encrypted_v20_migrates_with_verified_backup_and_reopens tests.connectors.test_plugin_grant_migration.PluginGrantMigrationTests.test_each_v21_step_failure_rolls_back_exact_v20_and_retries",
+                      ".venv/Scripts/python.exe -B -s -m ruff format --check --config pyproject.toml -- tests/connectors/test_plugin_grant_migration.py",
+                      ".venv/Scripts/python.exe -B -s -m ruff check --config pyproject.toml -- tests/connectors/test_plugin_grant_migration.py",
+                      ".venv/Scripts/python.exe -B -s -m mypy --config-file pyproject.toml --no-namespace-packages -- @artifacts/tmp/W2.remaining-corrections-batch-01/quality-transport-07/complete-files.args"
+                    ],
+                    "deferred_checks": [
+                      "Unchanged reference/parser/UX product evidence remains historical; this test-only restoration does not rerun or newly qualify those boundaries.",
+                      "Current14, protected/storage/import performance, security leaf, C31 Graph test seam restoration, remaining connector coverage, anchors, shipping/package/security and S06/Wave/G2 remain separate. No8/16GiB model workload or full exit re-audit."
+                    ],
+                    "selection_rationale": "Exactly the two affected original grant migration methods and unchanged eight v21 fault-step subtests, one-file Ruff and governed734-source configured typing. No unrelated profile replay; broad source context is required by the existing ordinary-import typing configuration.",
+                    "selection_sha256": "2f425e198b4bac5923c8468f5cd44bc197116771afdbc08490edb078a54d7bdc",
+                    "prior_attempt_id": null,
+                    "open_finding_ids": [],
+                    "root_cause_analysis": null,
+                    "selected_command_ids": [
+                      "search:connectors",
+                      "foundation:quality"
+                    ],
+                    "packet_sha256": "0cf0b455024759565f79dc6402e72a91f33ca195c76a2952e5dd749bc87bde33"
+                  },
+                  "review": {
+                    "reviewer": "agent:/root/security_resolution_review",
+                    "result": "approved",
+                    "reviewed_at": "2026-10-15T05:27:07+00:00",
+                    "notes": ""
+                  },
+                  "ledger": {
+                    "path": "artifacts/evidence/W2.C30.T01.review-R01.json",
+                    "sha256": "a1c9c18bb30918f02ab287adaa683fe1e6d49ae07e5bf5c851192194dcbf9e1f"
+                  },
+                  "findings": [],
+                  "closures": [],
+                  "telemetry": {
+                    "task_id": "W2.C30.T01",
+                    "amendment_id": null,
+                    "attempt_id": "R01",
+                    "submitted_at": "2026-10-15T05:03:19+00:00",
+                    "reviewed_at": "2026-10-15T05:27:07+00:00",
+                    "duration_seconds": 1428,
+                    "outcome": "approved",
+                    "finding_counts": {
+                      "critical": 0,
+                      "high": 0,
+                      "medium": 0,
+                      "low": 0,
+                      "blocking": 0,
+                      "total": 0
+                    },
+                    "command_ids": [
+                      "search:connectors",
+                      "foundation:quality"
+                    ],
+                    "remediation": {
+                      "prior_attempt_id": null,
+                      "replayed_finding_ids": [],
+                      "closed_finding_ids": []
+                    }
+                  }
+                }
+              ],
+              "current_submission": null
             }
           }
         }

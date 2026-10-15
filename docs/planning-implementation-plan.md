@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: f23f433c0475253147bda8257e1be4a53ae497a75955dadca9747aa2c90d3f17
+source_sha256: df073dd00d3cbf199359e50d4fd8d8a91dfa668dfb05ef8c929f7eb7aaefbcf0
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -5591,7 +5591,7 @@ Original tasks and approvals remain unchanged.
 
 ### W2.C30.T01 — Extract and reconcile reference-list entries
 
-**Status:** `REVIEW`. **Original task:** `CAP-05.S05.T01`. **Latest review:** `-`.
+**Status:** `DONE`. **Original task:** `CAP-05.S05.T01`. **Latest review:** `approved`.
 
 **Reproduction:** Current tests/connectors/test_plugin_grant_migration.py at SHA25697e1378764e659ffdc1be1a3c7606a61d8539f68930d075411405ea4f1d888db still expects the complete encrypted v20 migration to end at schema25, five ordered migration IDs21-25, v25 fingerprint and two recovery manifests target25. Accepted current storage.DATABASE_SCHEMA_VERSION is28; the approved runner appends0026_document_revisions,0027_revision_invalidations and0028_document_enrichments with current fingerprint3f29b29cface11d5355f704c943459243fc7f9d0baf07725747c73547b1e4cb6. This is a demonstrated source-contract mismatch in the two original unannounced connector-tail bodies, not a newly executed failure or product migration defect. Preserve historical C15/cdf802 target25 source, all original evidence and approvals.
 
@@ -5606,9 +5606,11 @@ Original tasks and approvals remain unchanged.
 - tests/connectors/test_plugin_grant_migration.py
 #### Review history — W2.C30.T01
 
-**Review mode:** `append-only v1` / 0 completed round(s)
+**Review mode:** `append-only v1` / 1 completed round(s)
 
-**Current immutable submission awaiting review:** `R01` / packet SHA-256 `0cf0b455024759565f79dc6402e72a91f33ca195c76a2952e5dd749bc87bde33`
+##### Round R01
+
+**Immutable submission packet:** `R01` / packet SHA-256 `0cf0b455024759565f79dc6402e72a91f33ca195c76a2952e5dd749bc87bde33`
 
 - Candidate / base / branch: `af3250cec072ced8ddf8eb08af38ec4ce6abc06f` / `001abf085f5673e417fb61743490bf815b890dbd` / `codex/w2-implementation`
 - Submitted by / at: codex-w2-implementation / `2026-10-15T05:03:19+00:00`
@@ -5622,7 +5624,23 @@ Original tasks and approvals remain unchanged.
 - Prior round / replayed open findings: `-` / -
 - Root-cause escalation: -
 
-**Current latest-review projection:** `-` by - at `-`
+**Disposition / reviewer / time:** `approved` / agent:/root/security_resolution_review / `2026-10-15T05:27:07+00:00`
+
+**Immutable review ledger:** `artifacts/evidence/W2.C30.T01.review-R01.json` / `a1c9c18bb30918f02ab287adaa683fe1e6d49ae07e5bf5c851192194dcbf9e1f`
+
+**Review notes:** -
+
+**Findings opened:**
+
+- None
+
+**Prior finding closures:**
+
+- None
+
+**Current immutable submission awaiting review:** None
+
+**Current latest-review projection:** `approved` by agent:/root/security_resolution_review at `2026-10-15T05:27:07+00:00`
 
 **Latest notes:** -
 
