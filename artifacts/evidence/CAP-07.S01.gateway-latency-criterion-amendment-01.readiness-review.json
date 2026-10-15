@@ -1,0 +1,222 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "independent-single-gateway-criterion-proposal-readiness",
+  "reviewer": "agent:/root/a06_exit_review",
+  "candidateCommit": "f62f171c44f5fbe5f92ccb973533b353ba470995",
+  "result": "SOURCE_READY_FOR_CONSOLIDATED_OWNER_DECISION_ONLY",
+  "proposal": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/gateway-latency-criterion-amendment-01/proposal-02.json",
+    "sha256": "e00aa5bb8e6c0789ea200dc329a23a1ff5f5830f6d506560c2d831e1e482edbc"
+  },
+  "ownerBrief": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/gateway-latency-criterion-amendment-01/review-02.html",
+    "sha256": "5763d810ce1ad6cd75e8a9cfed9b11eef2fb5b9514828e0f9772056624f74a0b"
+  },
+  "proposedBaseline": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/gateway-latency-criterion-amendment-01/gateway-baseline-02.proposed.json",
+    "sha256": "5fe8f767c80d1c5353ebe51e74495250383aeab9503f534d7860a0903cc616d2"
+  },
+  "independentBaselineReview": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/gateway-latency-criterion-amendment-01/gateway-baseline-02.independent-review-R01.json",
+    "sha256": "51fbe30ead0429aeed72b7f9d79b243660d157886bd1e696bd84b200d3a05a48"
+  },
+  "criterionAddendum": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/gateway-latency-criterion-amendment-01/gateway-criterion-amendment-01.proposed.json",
+    "sha256": "659613ef4f5f616c8af9a440e1000369fa02470f44272b3447be5eb00b609dae"
+  },
+  "patch": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/gateway-latency-criterion-amendment-01/gateway-latency-criterion-amendment-01.patch",
+    "sha256": "af5598033dad301fd43fc5756415b66be6a1581fa391feeded64c2dacfd6b64a"
+  },
+  "sourceChange": {
+    "original": {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/gateway-latency-criterion-amendment-01/test_model_routing_integration.original.py",
+      "sha256": "b28f636a0949920213ba52ebbb30e1d6aaa902690d6b7f3058b6511b77cb0877"
+    },
+    "proposed": {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/gateway-latency-criterion-amendment-01/test_model_routing_integration.proposed.py",
+      "sha256": "5f24d4e742f2e25c19b0e6f2175f11ddaba905cf0f3ef77cf30d271a8aa57b21"
+    },
+    "byteDeltaOnlyExactAssertLessSecondOperand25To50": true,
+    "reverseOneOperandMakesASTsAndAllOriginalBytesIdentical": true,
+    "productionFrameworkSecurityMethodSampleAssertionsOtherwiseUnchanged": true
+  },
+  "authenticatedExistingBindings": [
+    {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/gateway-latency-criterion-amendment-01/test_model_routing_integration.original.py",
+      "sha256": "b28f636a0949920213ba52ebbb30e1d6aaa902690d6b7f3058b6511b77cb0877"
+    },
+    {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/gateway-latency-criterion-amendment-01/test_model_routing_integration.proposed.py",
+      "sha256": "5f24d4e742f2e25c19b0e6f2175f11ddaba905cf0f3ef77cf30d271a8aa57b21"
+    },
+    {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/gateway-latency-criterion-amendment-01/gateway-latency-criterion-amendment-01.patch",
+      "sha256": "af5598033dad301fd43fc5756415b66be6a1581fa391feeded64c2dacfd6b64a"
+    },
+    {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/gateway-latency-criterion-amendment-01/observation-authentication-01.json",
+      "sha256": "04b75ee570472f13609f6e2eaee822c37645c714153c5b1547557ef3f388b63a"
+    },
+    {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/gateway-latency-criterion-amendment-01/gateway-baseline-02.proposed.json",
+      "sha256": "5fe8f767c80d1c5353ebe51e74495250383aeab9503f534d7860a0903cc616d2"
+    },
+    {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/gateway-latency-criterion-amendment-01/gateway-criterion-amendment-01.proposed.json",
+      "sha256": "659613ef4f5f616c8af9a440e1000369fa02470f44272b3447be5eb00b609dae"
+    },
+    {
+      "path": "tests/service/test_model_routing_integration.py",
+      "sha256": "b28f636a0949920213ba52ebbb30e1d6aaa902690d6b7f3058b6511b77cb0877"
+    },
+    {
+      "path": "planning/slice-plans/CAP-07/CAP-07.S01-model-task-provider-and-routing-contracts.md",
+      "sha256": "5c997b950032b2ebd66a6bb4823f150c7908adf656692dba05e32c12843b16e4"
+    },
+    {
+      "path": "planning/capability-plans/CAP-07.md",
+      "sha256": "b95fdb594bd4bbe52f66cdedae7f5642e15b5f0b300fa17498ae7e551cd0e80f"
+    },
+    {
+      "path": "docs/adr/ADR-0021-adopt-provider-neutral-model-task-and-result-contracts.md",
+      "sha256": "a8c037eb605d2f9c32c85978f8dda8a2e138ee5a6b0b10129b55031c9303a1b0"
+    },
+    {
+      "path": "docs/architecture/model-gateway-contracts.md",
+      "sha256": "a026288c16eea408e5bd2d037dbdbcfadbb4d8f8917d3b99d0492d446db54fda"
+    },
+    {
+      "path": "docs/automation/project-automation-guide.md",
+      "sha256": "3fbc6f4bf6c045d5a9422ef9bfa8fcf1371cf99f6a4a8d509cf1c371c4242364"
+    },
+    {
+      "path": "docs/automation/benchmark-registry.md",
+      "sha256": "7f2363ef7d470818a85d8416fafd2d63c9f44978fc58e2d178472cc94139087e"
+    },
+    {
+      "path": "docs/governance/repository-governance.md",
+      "sha256": "9c996d1185df331523b4c2d8a20a604e22cbff3eb878c66eb41556a2c12e333a"
+    },
+    {
+      "path": "evaluation/registry.json",
+      "sha256": "6876b449ceb06e0efdfc30109de8a98642291dc79dda59139fff112598228a1a"
+    },
+    {
+      "path": "artifacts/evidence/CAP-07.S01.gateway-baseline-01.json",
+      "sha256": "e79ba7cb82fa40111f4d8ccb047dbb2cd20b863f0838600147716182933e4fee"
+    },
+    {
+      "path": "artifacts/evidence/CAP-07.S01.qualification-01.review-R02.json",
+      "sha256": "ec855dd1b6ab2fdbb4b5c0d82bdd1be942c9fee9773fb9371ef413101d865d3e"
+    },
+    {
+      "path": "artifacts/evidence/CAP-07.S01.integration-01.json",
+      "sha256": "097f8a04d5d9c27ae3ed9a9ac702016672fea9a1fddb454402cf4ba486da67a9"
+    },
+    {
+      "path": "artifacts/evidence/CAP-07.S01.integration-01.review-R01.json",
+      "sha256": "da176c208acf0c8fbb94c42ea56582dc95a7905628559ea0318d4d2f6a84381d"
+    },
+    {
+      "path": "artifacts/evidence/CAP-07.S01.qualification-02.review-R01.json",
+      "sha256": "3c29a84d92f07fd28a0d0252213bddc8e28aaae34560d9aef036ea45effe27d6"
+    },
+    {
+      "path": "artifacts/evidence/CAP-07.S01.T03.performance-acceptance-01.json",
+      "sha256": "9701558f355b15baf8b059a7b3d60a25960c1f4d7b0a6f2d4b66b61065e3ce05"
+    },
+    {
+      "path": "artifacts/evidence/CAP-07.S01.T03.optimization-closeout-01.json",
+      "sha256": "b464696fd6627d5f11121424d29b43694b10642342b63103ea1a7e822081e971"
+    },
+    {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/w2-final29-service-data-performance-incremental-disposition-01.json",
+      "sha256": "9d839dc898e6435ca64f5cb167da57872cb42edcbeb7d84a5572682c70e4e45a"
+    },
+    {
+      "path": "artifacts/tmp/W2.final-wave-exit-never-started29-01.f01/commands/15.result.json",
+      "sha256": "62dc1c5bb4bf8d0b3e2edc6421c2475022e36aaa280c647a5fe5d24215966f2f"
+    },
+    {
+      "path": "artifacts/tmp/W2.final-wave-exit-never-started29-01.f01/commands/15.stdout.txt",
+      "sha256": "5fa6aa29073f3fccee111bc88490d74dba7a4ac3d2c5c12ac567b9bb04f617b6"
+    },
+    {
+      "path": "artifacts/tmp/W2.final-wave-exit-never-started29-01.f01/commands/15.stderr.txt",
+      "sha256": "369bdec2ecd3303151f0d040a9c0a4d24696ca92b5d5f84b652c20c3f88a64d2"
+    },
+    {
+      "path": "artifacts/tmp/W2.final-wave-exit-never-started29-01.f01/commands/15.started.json",
+      "sha256": "3e49faff43bba0da30cc7f1163f7c13c06f9aa37c6ea467374c4a04a469122ca"
+    },
+    {
+      "path": "artifacts/tmp/W2.final-wave-exit-never-started29-01.f01/commands/15.canonical-custody.json",
+      "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+    },
+    {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/gateway-latency-criterion-amendment-01/proposal.json",
+      "sha256": "0c6906c8cc94e49cadcb23a0775cfc70b2f4ecb3d3699ff72c3dd2cf41f30a9b"
+    },
+    {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/gateway-latency-criterion-amendment-01/review.html",
+      "sha256": "cc9b4b90261060f1a2dedc0f0a5723f7c84ca9a4651bd1b1ef2e0b087a197a17"
+    },
+    {
+      "path": "artifacts/evidence/CAP-07.S01.T03.json",
+      "sha256": "92f84bb9c2046a38835f8658deb709117117b48984a732d2757dfe7c8b40d0f6"
+    },
+    {
+      "path": "artifacts/evidence/CAP-07.S01.T03.review-R01.json",
+      "sha256": "113a451d66b249cba1209949e76725b8f8a237a3f9acd5129d630d9deeba693e"
+    },
+    {
+      "path": "tools/taskctl.py",
+      "sha256": "9337fe41e90fd4b4d9bf39c32ca299ccca1c26f6f6b6a1d0b426a8ac062bc7e3"
+    },
+    {
+      "path": "AGENTS.md",
+      "sha256": "2e8ccaa9fef27187e5ac8c775544128aa96d8ee780732ba9873501aba74f6dd3"
+    }
+  ],
+  "declaredFuturePublicationPathsNotPretendedExisting": [
+    "artifacts/evidence/CAP-07.S01.gateway-baseline-02.json",
+    "artifacts/evidence/CAP-07.S01.gateway-criterion-amendment-01.json"
+  ],
+  "materialCriteria": {
+    "originalAuthorityAndAdverses": "Plan§11 strict<25 and reviewed baseline01<=26.888399943709373 retain force until explicit decisions. F33.056800020858645 fails both, all100warm >=25. Historic25.3832 task-only exception and134.0222 failure/assembler adverses remain immutable and are not general target/baseline authority.",
+    "explicitEffectiveCriterion": "D1 strict<50 plus D2 exact F baseline02 with unchanged prospective20% cap39.668160025030375. Both decisions needed;50 alone does not close old20% failure. A fresh run is still mandatory, not using this same baseline observation as qualification.",
+    "recordingAuthority": "D3 separately requests append-only direct recording exception to normal ECR/bootstrap. No frozen Wave/task/plan/baseline/ADR/reference/catalog/source-policy edits, controller changes or implied routine-restoration authority. This valid-test target change remains inert before human authority.",
+    "sourceDeliveryRoute": "Proposal01 genuine W1 source-delivery/claim gap is closed as preparation by D5 explicit one-path currentW2-qualification-only normal Git procedural exception. tools/taskctl.py991-1030 admits only current unreleased Wave; origin CAP-07.S01.T03/W1 remains immutable/COMPLETE. D5 avoids a false W2 origin, W1 reopen, artificial task claim, adapter bypass or new campaign. Explicit human authority can authorize this narrow procedural departure from task-claim guidance; it cannot be used before an actual exact decision.",
+    "normalDeliveryPrerequisites": "After actual owner record and F29 terminal/owned cleanup/clean quiescence, verify predecessor exact bytes, apply only reviewed patch, normal privacy-hooked source/evidence commit, authenticate new source blob/candidate, fresh existing risk-selected checks and different commit-bound independent pre-integration disposition, then normal localmain fast-forward. Any demonstrated hook/consumer rejection remains adverse and requires its actual narrow resolution; no automatic wrapper/gate pass is promised.",
+    "hardwareAndCause": "Reported Python3.14.6/WindowsAMD64/processor match; earlier CPU/RAM/OS/disk facts are not contemporaneous F evidence. Incomplete hardware/load comparability and suite-vs-isolated invocation are fully disclosed; no inferred hardware/security cause, physical-equivalence or later waiver.",
+    "scope": "Protected source-built SQLCipher fixture only, excluding lifecycle factory/package/live inference/model footprint. Cancellation/discovery/determinism/all other resources/security/assertions remain unchanged; no8/16GiB or Wave/release claim."
+  },
+  "findingReplay": [
+    {
+      "id": "GATEWAY-PROPOSAL-01-SOURCE-DELIVERY-GAP",
+      "result": "CLOSED_IN_PROPOSAL02_D5_ONLY_PENDING_ACTUAL_OWNER_AUTHORITY",
+      "predecessor": {
+        "path": "artifacts/tmp/W2.remaining-corrections-batch-01/gateway-latency-criterion-amendment-01/proposal.json",
+        "sha256": "0c6906c8cc94e49cadcb23a0775cfc70b2f4ecb3d3699ff72c3dd2cf41f30a9b"
+      },
+      "closure": "D5 specifies exact single-path normal Git source delivery, actual committed fresh checks and independent pre-integration review instead of unspecified lawful claim. No authorization or delivery is presumed."
+    }
+  ],
+  "remainingRequiredActualActions": [
+    "Human explicitly selects D1-D5 or retains old criterion/defers; missing choice remains missing",
+    "Complete activeF29/owned drain and final input closure before source or immutable owner recording actions",
+    "Publish byte-identical reviewed records and actual append-only human authority; no public future path exists yet",
+    "Only then exact one-path committed successor under D5, fresh both-limit/hardware/source/runtime/fixture proof and different actual commit-bound review",
+    "Retain every unrelated W2 finding/gate and separate human release prerequisites"
+  ],
+  "blockingFindings": [],
+  "independentReviewScope": "Decision-ready proposal and authenticated proposed calibration only. Not effective criterion approval, adopted baseline, qualifying performance PASS, committed change disposition, task/slice/Wave/platform/release approval. No source/runtime/test/browser/build/HEAD/backlog/environment mutation or workload replay; only ignored review ledgers written.",
+  "ownerApproved": false,
+  "baselineAdopted": false,
+  "freshCriteriaSatisfied": false,
+  "taskApproved": false,
+  "sliceApproved": false,
+  "waveApproved": false,
+  "releaseApproved": false
+}

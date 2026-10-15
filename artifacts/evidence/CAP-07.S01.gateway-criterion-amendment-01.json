@@ -1,0 +1,57 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "proposed-current-version-single-gateway-criterion-addendum",
+  "id": "CAP-07.S01.gateway-criterion-amendment-01",
+  "author": "agent:/root/a03_closeout_review",
+  "preparedAtUtc": "2026-10-14T01:40:24.508417+00:00",
+  "candidateCommit": "f62f171c44f5fbe5f92ccb973533b353ba470995",
+  "status": "PROPOSED_PENDING_INDEPENDENT_REVIEW_AND_EXACT_OWNER_DECISION",
+  "originalAuthority": {
+    "slicePlan": {
+      "path": "planning/slice-plans/CAP-07/CAP-07.S01-model-task-provider-and-routing-contracts.md",
+      "mode": "100644",
+      "gitBlob": "a613173aa07be1fed698ccbab0102d6a52c0d4ef",
+      "sha256": "5c997b950032b2ebd66a6bb4823f150c7908adf656692dba05e32c12843b16e4",
+      "size": 36537
+    },
+    "section": "11 Performance and resource budgets",
+    "taskId": "CAP-07.S01.T03",
+    "baseline": {
+      "path": "artifacts/evidence/CAP-07.S01.gateway-baseline-01.json",
+      "sha256": "e79ba7cb82fa40111f4d8ccb047dbb2cd20b863f0838600147716182933e4fee",
+      "size": 298647
+    },
+    "baselineApproval": {
+      "path": "artifacts/evidence/CAP-07.S01.qualification-01.review-R02.json",
+      "sha256": "ec855dd1b6ab2fdbb4b5c0d82bdd1be942c9fee9773fb9371ef413101d865d3e",
+      "size": 11190
+    }
+  },
+  "effectiveCurrentOnlyDelta": {
+    "hardOperator": "<",
+    "hardP95Milliseconds": 50,
+    "baseline": {
+      "path": "artifacts/evidence/CAP-07.S01.gateway-baseline-02.json",
+      "sha256": "5fe8f767c80d1c5353ebe51e74495250383aeab9503f534d7860a0903cc616d2"
+    },
+    "baselineP95Milliseconds": 33.056800020858645,
+    "prospectiveRegressionFraction": 0.2,
+    "prospectiveOperator": "<=",
+    "prospectiveLimitMilliseconds": 39.668160025030375,
+    "scope": "Existing fixture/current software version assessed at F, with only exact one-operand method successor. Current W2 qualification must freshly satisfy both. No other task/later Wave/release gate approval."
+  },
+  "unchangedBudgets": {
+    "cancellationAcknowledgement": "<100ms; immediately propagate to adapter",
+    "registryDiscovery": "1000 manifests filtered/ranked<100ms",
+    "routingDeterminism": "Identical registry/policy/project state yields identical eligible order",
+    "allOtherResourceOrRegressionTargets": "unchanged"
+  },
+  "directRecordingExceptionRequested": "Exact single-criterion append-only records and independent reviews instead of§2.2 new ECR/bootstrap/campaign; no frozen plan/approval/evidence edit, manual task state, controller/schema/framework change. All remaining normal task/Wave/release operations stay required.",
+  "securityAndContractDelta": "none: ADR0021, policy/project authorization, protected journaling, rights/classification/egress/cost/deadline/circuit/cancellation/result validation unchanged",
+  "ownerApproved": false,
+  "criteriaSatisfiedByOldRun": false,
+  "taskApproved": false,
+  "sliceApproved": false,
+  "waveApproved": false,
+  "releaseApproved": false
+}
