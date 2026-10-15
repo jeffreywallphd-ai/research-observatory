@@ -1,0 +1,150 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "independent-finite-gateway-actual-preintegration-disposition",
+  "reviewer": "agent:/root/security_resolution_review",
+  "reviewedAt": "2026-10-15T03:13:32.562628+00:00",
+  "result": "approved",
+  "blockingFindings": [],
+  "candidate_commit": "4e650e7abdb4ebe468110ab3b79554a6c2024d34",
+  "base_commit": "f96018cd2fe0e279fa23567becb809bed1272f91",
+  "reviewed_state_commit": "63a05c3205b8da7ac4633acce9f36b986051211a",
+  "evidence": {
+    "path": "artifacts/evidence/W2.gateway-latency-criterion-01.qualification.json",
+    "sha256": "614d97106a6cf15971b2945f3e93f3b73613ada3f9f342d08980cb7cd2b13355",
+    "actualIntroductionCommit": "63a05c3205b8da7ac4633acce9f36b986051211a"
+  },
+  "actualReceipt": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/gateway-latency-criterion-amendment-01/finite-delivery-proof-01/actual-benchmark-proof-01/receipt.json",
+    "sha256": "3549e40b59e13c7e3f378719992fbe068650dc8ac7aed2c1b7bef66532a0de3a"
+  },
+  "raw": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/gateway-latency-criterion-amendment-01/finite-delivery-proof-01/actual-benchmark-proof-01/original-benchmark.raw.log",
+    "sha256": "6461b6506ff24ad84321fe83e4f58a192453d1424c0620f7f16770376334efad"
+  },
+  "producer": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/gateway-latency-criterion-amendment-01/finite-delivery-proof-01/owned-original-benchmark-01.py",
+    "sha256": "563e48f2952d6fa59aa93fc8fe9480b39215cbf711ad4782206c0a23ac451359"
+  },
+  "sourceReadiness": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/gateway-latency-criterion-amendment-01/finite-delivery-proof-01/independent-runtime-bound-source-readiness-01.json",
+    "sha256": "931acd28e275c0336372183c05d37faf9675d333441cf9979616bd94514007ab"
+  },
+  "runtimeInputs": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/postinstall-consumed-runtime-capture-01/actual-runtime-capture-04/receipt.json",
+    "sha256": "456482ea03c3545a03c63e36e5f0bb098c7e20c95e2d2f5efa2f52381b2d4188"
+  },
+  "reusedSourceAndRecordingReadiness": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/gateway-latency-criterion-amendment-01/finite-delivery-proof-01/independent-source-recording-readiness-01.json",
+    "sha256": "ba7d0947ac0e9f47be4134e847d9e23ba8e977758fc419303f5a3cf3b9e14e5e"
+  },
+  "authority": {
+    "preauthorizationSHA256": "34e2e3c175dc9309080182e0673f776055b1cc3ba78639475c09ec54408d7d5f",
+    "approvedBatchSHA256": "738a9ed22b4da46a88c47c64b07607bbf1b27839e3bf657e7c7712763d76e9c2",
+    "decision": {
+      "path": "artifacts/evidence/CAP-07.S01.gateway-latency-criterion-amendment-01.decision.json",
+      "sha256": "a9341d858c8f32b801a3937e9b86e672bf4aafe63a86c4125b618f5afe6ce833",
+      "actualIntroductionCommit": "f96018cd2fe0e279fa23567becb809bed1272f91"
+    },
+    "scopeId": "GATEWAY-D1-D5"
+  },
+  "sourceAndDeliveryAssessment": {
+    "sixExactRecordsActuallyPublishedAt": "f96018cd2fe0e279fa23567becb809bed1272f91",
+    "publicationParent": "daac3ad35290ed36d12131ef96ab29344b11e2cd",
+    "singleSourceDirectChild": true,
+    "onlyChangedSource": "tests/service/test_model_routing_integration.py",
+    "sourceSHA256": "5f24d4e742f2e25c19b0e6f2175f11ddaba905cf0f3ef77cf30d271a8aa57b21",
+    "change": "Only reviewed assertLess p95 operand25 to50; original method/setup/samples/assertions otherwise unchanged.",
+    "publicEvidenceIsSoleDataOnlyDirectChild": true,
+    "originalW1CAP07S01T03DONEAndApprovalHistoryUnchanged": true,
+    "scopeOrHistoryRewrite": false
+  },
+  "actualCriterionDisposition": {
+    "originalCase": "tests.service.test_model_routing_integration.ProtectedModelRoutingTests.test_gateway_overhead_p95_excluding_model_execution",
+    "testsRun": 1,
+    "failures": 0,
+    "errors": 0,
+    "skips": 0,
+    "coldSamples": 1,
+    "warmSamples": 100,
+    "all101SamplesRetained": true,
+    "coldMilliseconds": 29.902900001616217,
+    "warmP50Milliseconds": 28.846899993368424,
+    "warmP95Milliseconds": 33.60729999258183,
+    "warmMaximumMilliseconds": 46.12460000498686,
+    "p95Index": 94,
+    "strictHardLimit": {
+      "operator": "<",
+      "milliseconds": 50,
+      "passed": true
+    },
+    "prospective20PercentLimit": {
+      "operator": "<=",
+      "milliseconds": 39.668160025030375,
+      "passed": true
+    },
+    "changeFromApprovedCurrentBaselinePercent": 1.6653153704406343,
+    "actualUnittestBodySeconds": 3.075,
+    "actualOwnedCollectorSeconds": 8.456032900008722,
+    "meaning": "Both finite current-version gateway p95 criteria are satisfied by the original unchanged measurement method at the exact committed candidate. This is not a new baseline or general latency guarantee."
+  },
+  "inputAndCleanupDisposition": {
+    "actualCapturedPythonRuntimeRoots": 2,
+    "capturedInstalledAndStdlibFilePinsEqualActualHeldManifest": 8800,
+    "originalProducerHelpersAndPreparedControlsEqualActualHeldManifest": true,
+    "allSelectedCurrentCoreContractsFixturesSourceConfigHeldThroughOwnedDrain": true,
+    "inputsStable": true,
+    "ownedRootExitCode": 0,
+    "normalOwnedProcesses": 3,
+    "normalOwnedEmptyActive0": true,
+    "timedOut": false,
+    "outlivingOrTerminationFlagReported": false,
+    "normalReturnOfUnchangedOwned32eeConfirmed": true,
+    "originalNativeIntermittentCleanupRiskClosedByThisGatewayRun": false
+  },
+  "hardwareComparison": {
+    "fourFReportedRuntimeDescriptorsMatch": true,
+    "currentPython": "3.14.6",
+    "currentPlatform": "Windows AMD64",
+    "actualBeforeAfterHardwareIdentityFieldsStable": true,
+    "currentLogicalProcessors": 20,
+    "currentPhysicalMemoryBytes": 16984227840,
+    "currentWindowsBuild": "10.0.26200",
+    "currentAvailableMemoryBytesBefore": 4071575552,
+    "currentAvailableMemoryBytesAfter": 4088946688,
+    "currentMemoryLoadPercentBefore": 76,
+    "currentMemoryLoadPercentAfter": 75,
+    "privateTempVolumeMetadataEqualBeforeAfter": true,
+    "privateTempVolumeIdentityPublished": false,
+    "backgroundLoadControlled": false,
+    "filesystemCacheControlled": false,
+    "fullHistoricalHardwareLoadComparabilityEstablished": false,
+    "historicalUnknowns": [
+      "F contemporaneous RAM",
+      "F exact OS build",
+      "physical disk identity and complete F disk equivalence",
+      "physical core identity",
+      "background load and cache equivalence"
+    ],
+    "materialDisposition": "The original method/fixture and all four contemporaneously reported F runtime descriptors match. Actual current hardware and load are documented, with stable identity fields and no observed input or fixture-volume drift. Earlier platform inventory is compatible context, not proof of contemporaneous F RAM/disk/load. These facts are sufficient for this bounded initial current-version numeric criterion under D2 explicit acceptance of incomplete F comparability; full historical hardware/load equivalence remains unproved. No cause diagnosis, future hardware waiver or automatic rebaseline follows."
+  },
+  "verificationSelection": {
+    "selectedCommandIds": [
+      "service:unit"
+    ],
+    "assessment": "One actual original benchmark is the affected check for the approved single numeric assertion operand. Reuse exactba7d/931a source/runtime dispositions, existing baseline review51fbe and unchanged quality judgments. No repeat benchmark, full service/history/exit audit or installed-runtime scan was performed."
+  },
+  "preservedAdverseAndLimits": [
+    "The old strict25ms and original baseline01 prospective comparison remain FAIL. Original calibration and approval bytes, W1 task identity/DONE/history and all other aggregate adverse evidence remain immutable.",
+    "The workload uses protected SQLCipher with synthetic in-memory fixture keys and a zero-delay adapter. It excludes production lifecycle factory, shipping packaging, live inference, DPAPI, foreign principal and network-boundary proof.",
+    "Current numeric criterion and D2-limited hardware disposition do not qualify full service/security/package profiles, native cold/compiler cleanup reliability, cross-capability integration, Wave completion or release.",
+    "Root may proceed with normal bounded integration after publishing this exact independent disposition and satisfying the remaining integration prerequisites; all global signed Core/Native/package/security and W2 gates remain."
+  ],
+  "executionOrRuntimeScanByReviewer": false,
+  "trackedWritesByReviewer": false,
+  "baselineChangedOrAdoptedByReviewer": false,
+  "oldFailureRelabeled": false,
+  "taskReopenedOrRelabeled": false,
+  "fullServiceProfilePassClaimed": false,
+  "waveApproved": false,
+  "releaseApproved": false
+}
