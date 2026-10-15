@@ -44,20 +44,53 @@ class PluginLPACBoundaryTests(unittest.TestCase):
             root = Path(temporary)
             package = root / "package"
             report = root / "package.json"
-            subprocess.run(
-                [
-                    sys.executable,
-                    str(REPO / "tools" / "plugin_worker_probe_build.py"),
-                    "--output",
-                    str(package),
-                    "--report",
-                    str(report),
-                ],
-                cwd=REPO,
-                check=True,
-                capture_output=True,
-                text=True,
-                timeout=120,
+            from tests.service.test_native_project_contract import _RecoveryNativeJob
+
+            command = [
+                sys.executable,
+                str(REPO / "tools" / "plugin_worker_probe_build.py"),
+                "--output",
+                str(package),
+                "--report",
+                str(report),
+            ]
+            build_job = _RecoveryNativeJob()
+            builder = None
+            try:
+                builder = build_job.launch(command, dict(os.environ), subprocess.PIPE)
+                stdout, stderr = builder.communicate(timeout=120)
+                subprocess.CompletedProcess(command, builder.returncode, stdout, stderr).check_returncode()
+                before_cleanup = build_job.observe()
+            finally:
+                try:
+                    after_cleanup = build_job.terminate()
+                finally:
+                    try:
+                        if builder is not None:
+                            try:
+                                builder.wait(timeout=10)
+                            finally:
+                                for pipe in (builder.stdin, builder.stdout, builder.stderr):
+                                    if pipe is not None:
+                                        pipe.close()
+                                cast(Any, builder)._handle.Close()
+                    finally:
+                        build_job.close()
+            self.assertEqual(after_cleanup["active"], 0)
+            print(
+                json.dumps(
+                    {
+                        "fixtureBuildJob": {
+                            "builderRootExitCode": builder.returncode,
+                            "beforeCleanup": before_cleanup,
+                            "afterCleanup": after_cleanup,
+                            "terminationRequested": True,
+                            "scope": "test-owned compiler descendants only; LPAC probe starts after EMPTY",
+                        }
+                    },
+                    sort_keys=True,
+                ),
+                flush=True,
             )
             inventory = json.loads(report.read_text(encoding="utf-8"))
 
