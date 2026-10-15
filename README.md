@@ -13,7 +13,7 @@ monorepo with portable boundaries for later platforms and deployment profiles.
   governance, and automation authorities.
 - Validate the bootstrap foundation with
   `python tools/verify.py --profile foundation`.
-- Prepare a Windows development checkout with `.\bootstrap.cmd`; see
+- Prepare a Windows development checkout with `.\setup.cmd`; see
   [`docs/automation/developer-bootstrap.md`](docs/automation/developer-bootstrap.md)
   for prerequisites and the cross-platform command.
 - Launch the desktop development app with `.\dev.cmd` in PowerShell or
