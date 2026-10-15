@@ -110,7 +110,13 @@ class GraphOaRuntimeTests(unittest.TestCase):
                     value = oa_request(projectId=identity, invocationId=new_uuid_v7())
                     job = self.execute(client, root, value)
                     self.assertEqual("succeeded", job["state"])
-                    saved = runtime.connectors._adapters(Path(root), identity).pages.replay(value)
+                    saved = runtime.projects.perform_open_project_action(
+                        root=root,
+                        require_write=False,
+                        action=lambda path, project_id: runtime.connectors._adapters(path, project_id).pages.replay(
+                            value
+                        ),
+                    )
                     self.assertIsNotNone(saved)
                     self.assertNotIn(CONTACT, saved.model_dump_json())
                     self.assertEqual("applied", saved.response.redaction)
@@ -147,7 +153,13 @@ class GraphOaRuntimeTests(unittest.TestCase):
                     }
                     value2 = graph_request(query, projectId=identity, invocationId=new_uuid_v7())
                     self.assertEqual("succeeded", self.execute(client, root, value2)["state"])
-                    saved = runtime.connectors._adapters(Path(root), identity).pages.replay(value2)
+                    saved = runtime.projects.perform_open_project_action(
+                        root=root,
+                        require_write=False,
+                        action=lambda path, project_id: runtime.connectors._adapters(path, project_id).pages.replay(
+                            value2
+                        ),
+                    )
                     self.assertNotIn(KEY, saved.model_dump_json())
                     fail_graph = True
                     value3 = value2.model_copy(
@@ -159,7 +171,13 @@ class GraphOaRuntimeTests(unittest.TestCase):
                     failed = self.execute(client, root, value3)
                     self.assertEqual("failed", failed["state"])
                     self.assertIn("provider-unavailable", failed["diagnosticCode"])
-                    preserved = runtime.connectors._adapters(Path(root), identity).pages.replay(value2)
+                    preserved = runtime.projects.perform_open_project_action(
+                        root=root,
+                        require_write=False,
+                        action=lambda path, project_id: runtime.connectors._adapters(path, project_id).pages.replay(
+                            value2
+                        ),
+                    )
                     self.assertEqual(saved, preserved)
                     self.assertEqual(3, len(calls))
                     self.assertNotEqual(
