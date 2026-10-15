@@ -1629,7 +1629,9 @@ def _build_site_unlocked(repo: Path, output: Path, selected_capability: str | No
             esc(record["approval_status"])
         }</dd></div><div><dt>Amendment lifecycle</dt><dd>{
             esc(record["lifecycle_status"])
-        }</dd></div><div><dt>Bootstrap</dt><dd>{esc(record["bootstrap_status"])}</dd></div><div><dt>Amendment campaign</dt><dd>{esc(record["campaign_status"])}</dd></div></dl>
+        }</dd></div><div><dt>Bootstrap</dt><dd>{
+            esc(record["bootstrap_status"])
+        }</dd></div><div><dt>Amendment campaign</dt><dd>{esc(record["campaign_status"])}</dd></div></dl>
   <p>{approval_summary}</p>
 </section>
 <section class="review-toolbar">
