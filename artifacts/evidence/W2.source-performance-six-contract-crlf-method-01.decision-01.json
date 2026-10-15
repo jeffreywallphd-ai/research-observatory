@@ -1,0 +1,147 @@
+{
+  "documentType": "finite-preauthorized-canonical-source-performance-parent-exact-six-crlf-execution-method",
+  "status": "APPROVED",
+  "preparedBy": "agent:/root/storage_profile_review",
+  "prospectiveApprovedBy": "human:repository-owner",
+  "preauthorizationSHA256": "34e2e3c175dc9309080182e0673f776055b1cc3ba78639475c09ec54408d7d5f",
+  "finiteAuthoritySHA256": "738a9ed22b4da46a88c47c64b07607bbf1b27839e3bf657e7c7712763d76e9c2",
+  "producer": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/source-performance-six-contract-crlf-method-01/owned-canonical-source-performance-01.py",
+    "sha256": "a419e0ab195aa2c2e3ba202dbe688fdb92eeaf8d4173b96e2acd5820c5938e3a"
+  },
+  "bootstrap": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/source-performance-six-contract-crlf-method-01/bootstrap-canonical-source-performance-01.py",
+    "sha256": "aefe8ac91ef8e972fc0a039cecbb686caba35516da8e338772516c934abc2bac"
+  },
+  "preparation": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/source-performance-six-contract-crlf-method-01/preparation-01.json",
+    "sha256": "e2e250af46ae44f2a299e20888029cce5083d4fcb97f6401a37c238cbadd4bea"
+  },
+  "canonicalTool": {
+    "path": "tools/source_performance_check.py",
+    "sha256": "08139bc4f503b42c5fbae9ed2f550a24a7da3738ad8d172a4a353c014f955346"
+  },
+  "sourceSliceExpectedSHA256": "4eb1a90c070f5baf6ca2719832be83432f4c80e1477aa0014b6841a8c75b1f52",
+  "sourceReadiness": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/source-performance-six-contract-crlf-method-01/independent-source-scope-readiness-01.json",
+    "sha256": "365c7f0b2d94b77fe84d9bc823582a83f9955195c81a7eb9e4b225cf0f25257a"
+  },
+  "recordingReadiness": null,
+  "actualIntroductionCommit": null,
+  "methodScope": "canonical-source-performance-parent-only",
+  "intendedPublicationPath": "artifacts/evidence/W2.source-performance-six-contract-crlf-method-01.decision-01.json",
+  "exactSixPairs": [
+    {
+      "path": "packages/contracts/documents/acquisition-location.v1.schema.json",
+      "crlfOnly": true,
+      "rawSHA256": "7445e5e952c4f6a5636d03ec0cb2349913b3b4878c75507de5a6c976ae6a4805",
+      "gitSHA256": "7f911a72fb8ac62dbd211062d5a1e3dea9405779f7bf02341851bdab7567bfd3"
+    },
+    {
+      "path": "packages/contracts/documents/acquisition-receipt.v1.schema.json",
+      "crlfOnly": true,
+      "rawSHA256": "021c0ee3ece04c70dae9e006c2c63bbd0012cb084d93068a85be1eb7e43f5f10",
+      "gitSHA256": "7a160a499c9eda49176b979f4a4bc41e82a816650b3925f25b786e1c22766948"
+    },
+    {
+      "path": "packages/contracts/documents/acquisition-selection.v1.schema.json",
+      "crlfOnly": true,
+      "rawSHA256": "0df7528b6479b7a130c0fe70b6ec24534854ce754582ea739218d71c081f2bb4",
+      "gitSHA256": "2f11d944b4ca2444987998565a06327cf18c3cb0db1baaf44498e19be1420c45"
+    },
+    {
+      "path": "packages/contracts/storage/sqlite-migration-recovery-v24.snapshot.json",
+      "crlfOnly": true,
+      "rawSHA256": "7ebdc90e46553b030de29a0cea4bb5f1c0e5780c11a3502b26095d0d36d3a893",
+      "gitSHA256": "076fdb3c86f222c602943025c8836fe4af938c4df7ed986e780eaac8e024f57c"
+    },
+    {
+      "path": "packages/contracts/storage/sqlite-migration-recovery.schema.json",
+      "crlfOnly": true,
+      "rawSHA256": "c21230ead18a9adb4d0a080f5aa4fb5807c58b728dfc30a3a1f41637cb3df9f4",
+      "gitSHA256": "616712eca2900cc567e2807f09139482a5045d1d4e74cb640e9b36c08cf4b2d1"
+    },
+    {
+      "path": "packages/contracts/storage/sqlite-profile.v1.json",
+      "crlfOnly": true,
+      "rawSHA256": "584c2cd670067af8db73e14c6eebcf0253df9d04c4cfc4c130831aa1c582ae0a",
+      "gitSHA256": "cd2e41dc5941a022a7735962ffeb6f6b50922d7a51ac1772ef4b629661e9625b"
+    }
+  ],
+  "observation": {
+    "path": "artifacts/tmp/W2.import-performance-input-line-endings-observation-01.json",
+    "sha256": "1ea934da4180afcc5e3ad8592b9014cb4882f8978a58bca8a6df2c5a79910a5c"
+  },
+  "predecessorImportAuthorityNotBroadened": {
+    "decision": {
+      "path": "artifacts/evidence/W2.import-performance-six-contract-crlf-method-02.decision-01.json",
+      "sha256": "5590029faaeec650c16debcc5ac5b341eefbb1db24f4813113a53d6cbfdf8a3c"
+    },
+    "readiness": {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/import-performance-current-owned-01/independent-source-readiness-02.json",
+      "sha256": "0d12134082c3fc81874d7aaf3eb06cd48c8e979322c236ef98da38e6c4e83001"
+    },
+    "meaning": "Reuse only the genuinely reviewed exact adapter code and observations; this new separately reviewed decision applies solely to canonical source-performance parent, not an extension/edit of Import02."
+  },
+  "scope": "One separate necessary source-performance qualification invocation after actual same-candidate C33 original functional/quality proof; exact original three processes/count100/8cold-cache rows+ratewait+memory all original raw metrics/statistics and reviewed baseline. Only exact six original raw/Git CRLF pairs supplemented in canonical parent; no child/workload/tool/schema/framework/numerical change.",
+  "guardContract": "Adapter AST identical to approved Import02: only six exact path/rawSHA/GitSHA pairs; every call invokes originalguard+cleanstate for all other paths, original governed raw identity/snapshot on each six, fixed raw/Git bytes, CRLF-to-LF-only exact equality and JSON-equivalence, then original clean-state. No general normalization or unknown-path exemption.",
+  "parentAndChildren": "Only original source-performance parent imports changed inherited guard attribute in this fresh private owned child; install before its original from-import/runpy and restorefinally. Original canonical child() code launches three independent fresh interpreters with its original embedded script and explicit child environment; no child receives/imports this adapter or has its workload/assertions altered.",
+  "unchangedNumericalCriteria": {
+    "processes": 3,
+    "recordsPerPage": 100,
+    "unpaywallRecords": 1,
+    "coldCacheMetricRowsPerProcess": 8,
+    "canonicalChildTimeoutSeconds": 300,
+    "eachMetricAbsoluteSeconds": 30,
+    "peakWorkingSetAbsoluteBytes": 536870912,
+    "regressionAllowancePercent": 20,
+    "baseline": {
+      "path": "tests/fixtures/scholarly-metadata/source-performance-baseline.json",
+      "sha256": "d21fc40e3fedb71ecf0e0b274055d047b2fec4bb4278a1642894534d3c323822"
+    },
+    "allSamplesRequiredNoDiscardOrPooling": true
+  },
+  "alternatives": [
+    {
+      "choice": "Separate finite parent-only exact-six adapter",
+      "reason": "Preserves all physical source bytes and every original semantic/clean-state guard while disclosing only exact six CRLF/GitLF transport."
+    },
+    {
+      "choice": "Rewrite six worktree files to LF",
+      "reason": "Changes already captured input bytes and would invalidate other held proof; not selected."
+    },
+    {
+      "choice": "Leave original strict guard",
+      "reason": "Known six exact pairs block before benchmark observations; no known-bad speculative invocation selected."
+    }
+  ],
+  "oneUseAppendOnlyRecordingException": {
+    "permittedTarget": "artifacts/evidence/W2.source-performance-six-contract-crlf-method-01.decision-01.json",
+    "allowedFinalizationFields": [
+      "status=APPROVED",
+      "approvedBy=human:repository-owner",
+      "sourceReadiness=actualdifferentexactreference",
+      "recordingSemantics=truthfulprospective34eapplication"
+    ],
+    "originalDraftAndAllPredecessorsPreserved": true,
+    "recordingReadinessAndActualIntroductionExternalUntilActual": "No selfhash/futurecommit invention. Actual public byte-introduction authentication remains required before launch.",
+    "noPermissionFor": "Shared framework/product/tool/test/schema edits, worktree normalization, numerical criterion/baseline/fixture/provider/child-clock changes, extra workload/retry or rewriting old evidence/approval."
+  },
+  "sourceUnchanged": true,
+  "sharedFrameworkChange": false,
+  "productSchemaChange": false,
+  "numericalCriterionChange": false,
+  "baselineChange": false,
+  "workloadChange": false,
+  "canonicalChildrenChanged": false,
+  "unadaptedOriginalGuardClaimed": false,
+  "futureActualCandidate": null,
+  "futureFunctionalProof": null,
+  "futureActualResult": null,
+  "executed": false,
+  "performanceApproved": false,
+  "waveApproved": false,
+  "releaseApproved": false,
+  "approvedBy": "human:repository-owner",
+  "recordingSemantics": "Recorded by agent:/root after actual different source/scope readiness365c7 under the owner prospective34e necessary W2-completion authority. The owner did not inspect this later packet. This is a separate finite canonical SourcePerf-parent-only exact-six CRLF transport method; Import02 scope is not broadened. Original three child scripts/processes, workloads, clocks, baseline and numerical predicates remain unchanged. Actual exact public introduction and same-candidate C33 functional/quality proof are prerequisites; no execution, benchmark PASS or release is claimed."
+}
