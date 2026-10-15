@@ -1,0 +1,160 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "finite-W2-qualification-historical-W1-test-transport-correction-evidence",
+  "recordedAt": "2026-10-15T02:59:55.644897+00:00",
+  "status": "COMPONENTS_CAPTURED_PENDING_DIFFERENT_PREINTEGRATION_DISPOSITION",
+  "originTaskId": "CAP-07.S01.T02",
+  "originWave": "W1",
+  "qualificationWave": "W2",
+  "authority": {
+    "path": "artifacts/evidence/W2.completion-corrections-batch-02.decision-01.json",
+    "sha256": "738a9ed22b4da46a88c47c64b07607bbf1b27839e3bf657e7c7712763d76e9c2"
+  },
+  "scope": "SERVICE-TRANSPORT-CANCEL one-use test-only historical-W1 source-delivery exception",
+  "baseCommit": "8e0b25770458f85bb85816b5d9e8fecf6aa1a892",
+  "candidateCommit": "4b407b084c3314bfa05b85750585907057996d83",
+  "branch": "codex/w2-implementation",
+  "changedPaths": [
+    "tests/service/test_model_registry_service.py"
+  ],
+  "sourceSHA256": "b085711904270648073e4f577e3fc6d3ccac1466f86c5142278cfbe9cd72e1ea",
+  "originalSHA256": "e7cffa3c48cf629ebd4f5fd385a239cdf1388042a8cb54ac430cc8464c2152a6",
+  "implementation": "Only direct generatedTypeScript import becomes the supported closed localVite ESM bundle with envDirfalse/configFilefalse/writefalse. Exactlyone normalized result/closedchunk and no external/dynamicimports; zero/multiple results stilldeny. Original49 assertion sites and all originalHTTP/auth/protected-store/30s clocks remain unchanged; one originalintegrationmethod actuallyexecuted, notall49assertions claimedfresh.",
+  "checks": [
+    {
+      "id": "generated-client-loopback-regression",
+      "command": ".venv/Scripts/python.exe -B -s -m unittest -v tests.service.test_model_registry_service.ModelCatalogServiceTests.test_generated_client_crosses_real_loopback_authentication_and_protected_storage",
+      "commandSemantics": "DISPLAY repository-relative executable/paths; exact invocation stays in ignored actualreceipt.",
+      "result": "passed",
+      "exitCode": 0,
+      "commit": "4b407b084c3314bfa05b85750585907057996d83",
+      "seconds": 3.5278496999962954,
+      "raw": {
+        "path": "artifacts/tmp/W2.remaining-corrections-batch-01/model-generated-client-transport-02/focused-04/generated-client-loopback-regression.raw.log",
+        "sha256": "4e862538751e617a9a49840c3cca13fdf3e9d3cebbce911234fc1139de47eff4"
+      },
+      "ownedJob": {
+        "drained": true,
+        "cleanupState": "EMPTY_CONFIRMED",
+        "activeProcesses": 0
+      },
+      "testsRun": 1,
+      "failures": 0,
+      "errors": 0,
+      "skips": 0
+    },
+    {
+      "id": "affected-format",
+      "command": ".venv/Scripts/python.exe -B -s -m ruff format --check --config pyproject.toml -- tests/service/test_model_registry_service.py",
+      "commandSemantics": "DISPLAY repository-relative executable/paths; exact invocation stays in ignored actualreceipt.",
+      "result": "passed",
+      "exitCode": 0,
+      "commit": "4b407b084c3314bfa05b85750585907057996d83",
+      "seconds": 0.16316029999870807,
+      "raw": {
+        "path": "artifacts/tmp/W2.remaining-corrections-batch-01/model-generated-client-transport-02/focused-05/affected-format.raw.log",
+        "sha256": "fd2299c9f1c6dc869070883e281051bfe93aacf66c1a3b0069f45b4aa410ca50"
+      },
+      "ownedJob": {
+        "drained": true,
+        "cleanupState": "EMPTY_CONFIRMED",
+        "activeProcesses": 0
+      }
+    },
+    {
+      "id": "affected-lint",
+      "command": ".venv/Scripts/python.exe -B -s -m ruff check --config pyproject.toml -- tests/service/test_model_registry_service.py",
+      "commandSemantics": "DISPLAY repository-relative executable/paths; exact invocation stays in ignored actualreceipt.",
+      "result": "passed",
+      "exitCode": 0,
+      "commit": "4b407b084c3314bfa05b85750585907057996d83",
+      "seconds": 0.19211590000486467,
+      "raw": {
+        "path": "artifacts/tmp/W2.remaining-corrections-batch-01/model-generated-client-transport-02/focused-05/affected-lint.raw.log",
+        "sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18"
+      },
+      "ownedJob": {
+        "drained": true,
+        "cleanupState": "EMPTY_CONFIRMED",
+        "activeProcesses": 0
+      }
+    },
+    {
+      "id": "affected-types",
+      "command": ".venv/Scripts/python.exe -B -s -m mypy --config-file pyproject.toml --no-namespace-packages --cache-dir artifacts/tmp/W2.remaining-corrections-batch-01/model-generated-client-transport-02/focused-05/mypy-cache -- @artifacts/tmp/W2.remaining-corrections-batch-01/model-generated-client-transport-02/focused-05/source-files.args",
+      "commandSemantics": "DISPLAY repository-relative executable/paths; exact invocation stays in ignored actualreceipt.",
+      "result": "passed",
+      "exitCode": 0,
+      "commit": "4b407b084c3314bfa05b85750585907057996d83",
+      "seconds": 18.37182460000622,
+      "raw": {
+        "path": "artifacts/tmp/W2.remaining-corrections-batch-01/model-generated-client-transport-02/focused-05/affected-types.raw.log",
+        "sha256": "c642e5b33b5e7d157e7b2362ef94a292d50ab8abbba717375ca1704ad53de820"
+      },
+      "ownedJob": {
+        "drained": true,
+        "cleanupState": "EMPTY_CONFIRMED",
+        "activeProcesses": 0
+      }
+    }
+  ],
+  "executionReceipts": [
+    {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/model-generated-client-transport-02/focused-04/receipt.json",
+      "sha256": "726cf1f5c20d7911946b06dce24988b4d53cf73f2ddf7d7f14db002507610a11"
+    },
+    {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/model-generated-client-transport-02/focused-05/receipt.json",
+      "sha256": "20a009f6129a534aad5ef2249cb25c93c2aaf40e7faec873c65e9e6c5c5fb103"
+    }
+  ],
+  "sourceReadiness": [
+    {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/model-generated-client-transport-02/independent-single-build-result-source-readiness-03.json",
+      "sha256": "63db359be20b9cb82510018d277fef0629b5639dc224ef8c85c55dd93b146fd6"
+    },
+    {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/model-generated-client-transport-02/independent-postinstall-single-result-consumer-readiness-04.json",
+      "sha256": "b1a562e4cb5437d1cb44c791dc36ed6b21fc467f3dee9eebafbd05b9d92370dd"
+    },
+    {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/model-generated-client-transport-02/independent-remaining-quality-source-readiness-05.json",
+      "sha256": "4f00839571fc47955a83668d361b04244966c5aea6108581cda91868ddf91672"
+    }
+  ],
+  "preparation": {
+    "path": "artifacts/tmp/W2.remaining-corrections-batch-01/model-generated-client-transport-02/preparation-04.json",
+    "sha256": "bfe4b6baaca74d814edbc16fbb0d5e8402a987b13231542388d2dd3c3a8a162d"
+  },
+  "runtimeCaptureSHA256": "456482ea03c3545a03c63e36e5f0bb098c7e20c95e2d2f5efa2f52381b2d4188",
+  "sourceAndRuntimeClosure": "Each actualrun holds current trackedcandidate and selected installedPython/Node/Vite/source/config/environment/absence/topology inputs through normalowneddrain; actualfinal source+Node mapsstable. Detailed maps/argv/env remainignored. Continuation05 independentlyreadied and holds originalreceipt/raw/supplement; passing originalmethod is not repeated.",
+  "preservedAdverse": [
+    {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/model-generated-client-transport-02/focused-04/receipt.json",
+      "sha256": "726cf1f5c20d7911946b06dce24988b4d53cf73f2ddf7d7f14db002507610a11"
+    },
+    {
+      "path": "artifacts/tmp/W2.final-wave-exit-never-started29-01.f01/commands/15.result.json",
+      "sha256": "62dc1c5bb4bf8d0b3e2edc6421c2475022e36aaa280c647a5fe5d24215966f2f"
+    }
+  ],
+  "collectorFailureTruth": "Original04aggregate remainsFAIL: its exactcontiguous unittestheader-plus-ok string test rejects ordinary intervening CoreINFOlogs. Actualraw4e has one namedmethod, standaloneok, Ran1/OK and root0/normal7processEMPTY0. Genuine independent4f disposition qualifies thatactualcomponent. Only remaining3qualitychecks run05 andpass; no logging suppression, assertion weakening, methodreplay or oldFAILrewrite.",
+  "verificationSelection": {
+    "selectedCommandIds": [
+      "service:unit",
+      "foundation:quality"
+    ],
+    "riskAnalysis": "Changed testtransport/Vite resolution/closedchunk and originalreal loopbackHTTP/authentication/protectedSQLCipher readback, plus affectedformat/lint/configured734types. Reuse priorindependent source/actualcomponent judgment; complete onlyunexecutedquality. No fullservice/Wave/historyaudit replay.",
+    "deferred": [
+      "ProtectedSQLCipher keys are original in-memoryfixtures; no newactualWindowsDPAPI, NativeIPC/GUI, realmodel/provider credential, foreignprincipal or fullprofile proof.",
+      "Gateway/currentNative3/current14/signedCore-worker-package/security/principal/restart/anchor/scale/storage/performance andfinalWave gates remain separate."
+    ]
+  },
+  "historicalTaskReopenedOrRelabeled": false,
+  "newTaskOrCampaignClaimed": false,
+  "modelWorkloadExecuted": false,
+  "fullProfilePassClaimed": false,
+  "localMainIntegrated": false,
+  "waveComplete": false,
+  "releaseApproved": false
+}
