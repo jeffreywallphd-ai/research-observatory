@@ -5955,7 +5955,7 @@
         {
           "task_id": "W2.C34.T01",
           "title": "Integrate explicit recovery review into the approved Projects experience",
-          "status": "REVIEW",
+          "status": "DONE",
           "acceptance_criteria": [
             "T02-AC01: Implement only the canonical state/action/focus map and T02 exact path envelope under approved RO-UI-ACADEMIC-MINIMAL-1.9 Projects recovery/lifecycle patterns, using T01 API and existing directory picker. No new wizard/reference, auto recovery, renderer host attestation or scope/security change.",
             "T02-AC02: Display unavailable/denied/preview/cancel/copy failure/verified-copy/open failure/recovered states truthfully; explicit confirm and open remain separate human actions, original untouched and no automatic reparse/acceptance.",
@@ -5985,69 +5985,112 @@
           "task_review": {
             "task_id": "W2.C34.T01",
             "title": "Integrate explicit recovery review into the approved Projects experience",
-            "status": "REVIEW",
+            "status": "DONE",
             "mode": "append-only",
             "latest_review": {
-              "reviewer": null,
-              "result": null,
-              "reviewed_at": null,
-              "notes": null
+              "reviewer": "agent:/root/security_resolution_review",
+              "result": "approved",
+              "reviewed_at": "2026-10-15T20:39:28+00:00",
+              "notes": ""
             },
             "review_control": {
               "version": 1,
-              "attempts": [],
-              "current_submission": {
-                "id": "R01",
-                "submitted_by": "agent:/root",
-                "submitted_at": "2026-10-15T20:08:56+00:00",
-                "candidate_commit": "1c20b883a0adac7645913568d057a7c146feffcb",
-                "base_commit": "69cac3200fbf6d0e99769d43860c50f41d19390f",
-                "branch": "codex/w2-implementation",
-                "evidence_reference": {
-                  "type": "criterion-manifest",
-                  "path": "artifacts/evidence/W2.C34.T01.R01.json",
-                  "sha256": "17680b4c74eb1c3df955a6193f779d446475e434aa3abe4b2c2a5751b24f7e39",
-                  "commit": "1c20b883a0adac7645913568d057a7c146feffcb",
-                  "recorded_at": "2026-10-15T20:08:56+00:00"
-                },
-                "acceptance_criteria_sha256": "89dcfef5e414aaa96edbb424261a1d814282658927f3e668ce5968edf467a6a5",
-                "changed_paths": [
-                  "apps/desktop/src-tauri/src/lib.rs",
-                  "docs/planning-implementation-plan.md",
-                  "planning/backlog.yaml",
-                  "planning/review-site/index.html",
-                  "planning/review-site/manifest.json",
-                  "planning/review-site/waves/W2.html",
-                  "planning/status-summary.md"
-                ],
-                "selected_checks": [
-                  "rustfmt --edition 2024 --config skip_children=true --check apps/desktop/src-tauri/src/lib.rs",
-                  "cargo test --message-format=json --locked --offline -p research-observatory-desktop --features integration-harness --lib --no-run -j 1",
-                  "target/debug/deps/research_observatory_desktop_lib-1922d4e089438d1c.exe --list",
-                  "target/debug/deps/research_observatory_desktop_lib-1922d4e089438d1c.exe --test-threads=1",
-                  "cargo rustc --message-format=json --locked --offline -p research-observatory-desktop --features integration-harness --example project_contract_probe --release -j 1",
-                  ".venv/Scripts/python.exe -B -s artifacts/tmp/W2.remaining-corrections-batch-01/current-shipping-native-core-package-plan-01/shipping-ui-bindings-c34-05/a06-t02-ui-bootstrap-01.py",
-                  ".venv/Scripts/python.exe -B -s artifacts/tmp/W2.remaining-corrections-batch-01/current-shipping-native-core-package-plan-01/shipping-ui-bindings-c34-05/a06-t02-prepare-recovery-fixture-01.py",
-                  ".venv/Scripts/python.exe -B -s artifacts/tmp/W2.remaining-corrections-batch-01/current-shipping-native-core-package-plan-01/shipping-ui-bindings-c34-05/a06-t02-shipping-live-owner-07.py",
-                  ".venv/Scripts/python.exe -B -s artifacts/tmp/W2.remaining-corrections-batch-01/current-shipping-native-core-package-plan-01/shipping-ui-bindings-c34-05/a06-t02-shipping-recovery-06.py",
-                  ".venv/Scripts/python.exe -B -s artifacts/tmp/W2.remaining-corrections-batch-01/current-shipping-native-core-package-plan-01/shipping-ui-bindings-c34-05/a06-t02-shipping-live-denial-01.py"
-                ],
-                "deferred_checks": [
-                  "Unchanged original state/action/reference/ADR and separate wholeNative result remain historical, explicitly attributed evidence.",
-                  "Wave qualification, security/package/notices/performance and separate human release remain required."
-                ],
-                "selection_rationale": "Only first-creation Native fixture ownership and original shipping recovery integration. Original default Rust binary lists275:262 pass and13 exact source-declared opt-in ignores mapped in actual component disposition; all39 C34 applicable lib IDs pass. No opt-in native/clipboard/GUI helper is blindly invoked, actual release package and five original shipping stages run with unchanged assertions/denials/clocks and normal owned cleanup. Fresh complete changed-file Rustfmt is an actual qualifying row. Full cappedClippy diagnostic remains nonqualifying and strict6a68FAIL remains preserved; any finite current-W2 disposition is separately bound to actual complete diagnostics and W9 follow-up, never canonicalClippyPASS.",
-                "selection_sha256": "6baa3a2483723e8e13bfa32bb503a606c61e946dce9f14c1bd14e3b99c233ac8",
-                "prior_attempt_id": null,
-                "open_finding_ids": [],
-                "root_cause_analysis": null,
-                "selected_command_ids": [
-                  "desktop:unit",
-                  "desktop:application",
-                  "desktop:ui-accessibility"
-                ],
-                "packet_sha256": "1739a82d002f936463dc69f2cbb806120faeb151212576580281984f1c286e3c"
-              }
+              "attempts": [
+                {
+                  "submission": {
+                    "id": "R01",
+                    "submitted_by": "agent:/root",
+                    "submitted_at": "2026-10-15T20:08:56+00:00",
+                    "candidate_commit": "1c20b883a0adac7645913568d057a7c146feffcb",
+                    "base_commit": "69cac3200fbf6d0e99769d43860c50f41d19390f",
+                    "branch": "codex/w2-implementation",
+                    "evidence_reference": {
+                      "type": "criterion-manifest",
+                      "path": "artifacts/evidence/W2.C34.T01.R01.json",
+                      "sha256": "17680b4c74eb1c3df955a6193f779d446475e434aa3abe4b2c2a5751b24f7e39",
+                      "commit": "1c20b883a0adac7645913568d057a7c146feffcb",
+                      "recorded_at": "2026-10-15T20:08:56+00:00"
+                    },
+                    "acceptance_criteria_sha256": "89dcfef5e414aaa96edbb424261a1d814282658927f3e668ce5968edf467a6a5",
+                    "changed_paths": [
+                      "apps/desktop/src-tauri/src/lib.rs",
+                      "docs/planning-implementation-plan.md",
+                      "planning/backlog.yaml",
+                      "planning/review-site/index.html",
+                      "planning/review-site/manifest.json",
+                      "planning/review-site/waves/W2.html",
+                      "planning/status-summary.md"
+                    ],
+                    "selected_checks": [
+                      "rustfmt --edition 2024 --config skip_children=true --check apps/desktop/src-tauri/src/lib.rs",
+                      "cargo test --message-format=json --locked --offline -p research-observatory-desktop --features integration-harness --lib --no-run -j 1",
+                      "target/debug/deps/research_observatory_desktop_lib-1922d4e089438d1c.exe --list",
+                      "target/debug/deps/research_observatory_desktop_lib-1922d4e089438d1c.exe --test-threads=1",
+                      "cargo rustc --message-format=json --locked --offline -p research-observatory-desktop --features integration-harness --example project_contract_probe --release -j 1",
+                      ".venv/Scripts/python.exe -B -s artifacts/tmp/W2.remaining-corrections-batch-01/current-shipping-native-core-package-plan-01/shipping-ui-bindings-c34-05/a06-t02-ui-bootstrap-01.py",
+                      ".venv/Scripts/python.exe -B -s artifacts/tmp/W2.remaining-corrections-batch-01/current-shipping-native-core-package-plan-01/shipping-ui-bindings-c34-05/a06-t02-prepare-recovery-fixture-01.py",
+                      ".venv/Scripts/python.exe -B -s artifacts/tmp/W2.remaining-corrections-batch-01/current-shipping-native-core-package-plan-01/shipping-ui-bindings-c34-05/a06-t02-shipping-live-owner-07.py",
+                      ".venv/Scripts/python.exe -B -s artifacts/tmp/W2.remaining-corrections-batch-01/current-shipping-native-core-package-plan-01/shipping-ui-bindings-c34-05/a06-t02-shipping-recovery-06.py",
+                      ".venv/Scripts/python.exe -B -s artifacts/tmp/W2.remaining-corrections-batch-01/current-shipping-native-core-package-plan-01/shipping-ui-bindings-c34-05/a06-t02-shipping-live-denial-01.py"
+                    ],
+                    "deferred_checks": [
+                      "Unchanged original state/action/reference/ADR and separate wholeNative result remain historical, explicitly attributed evidence.",
+                      "Wave qualification, security/package/notices/performance and separate human release remain required."
+                    ],
+                    "selection_rationale": "Only first-creation Native fixture ownership and original shipping recovery integration. Original default Rust binary lists275:262 pass and13 exact source-declared opt-in ignores mapped in actual component disposition; all39 C34 applicable lib IDs pass. No opt-in native/clipboard/GUI helper is blindly invoked, actual release package and five original shipping stages run with unchanged assertions/denials/clocks and normal owned cleanup. Fresh complete changed-file Rustfmt is an actual qualifying row. Full cappedClippy diagnostic remains nonqualifying and strict6a68FAIL remains preserved; any finite current-W2 disposition is separately bound to actual complete diagnostics and W9 follow-up, never canonicalClippyPASS.",
+                    "selection_sha256": "6baa3a2483723e8e13bfa32bb503a606c61e946dce9f14c1bd14e3b99c233ac8",
+                    "prior_attempt_id": null,
+                    "open_finding_ids": [],
+                    "root_cause_analysis": null,
+                    "selected_command_ids": [
+                      "desktop:unit",
+                      "desktop:application",
+                      "desktop:ui-accessibility"
+                    ],
+                    "packet_sha256": "1739a82d002f936463dc69f2cbb806120faeb151212576580281984f1c286e3c"
+                  },
+                  "review": {
+                    "reviewer": "agent:/root/security_resolution_review",
+                    "result": "approved",
+                    "reviewed_at": "2026-10-15T20:39:28+00:00",
+                    "notes": ""
+                  },
+                  "ledger": {
+                    "path": "artifacts/evidence/W2.C34.T01.review-R01.json",
+                    "sha256": "bfd1406775d24c651e769158407b6da00b4624e79d99c88f717f8a5856f7ad95"
+                  },
+                  "findings": [],
+                  "closures": [],
+                  "telemetry": {
+                    "task_id": "W2.C34.T01",
+                    "amendment_id": null,
+                    "attempt_id": "R01",
+                    "submitted_at": "2026-10-15T20:08:56+00:00",
+                    "reviewed_at": "2026-10-15T20:39:28+00:00",
+                    "duration_seconds": 1832,
+                    "outcome": "approved",
+                    "finding_counts": {
+                      "critical": 0,
+                      "high": 0,
+                      "medium": 0,
+                      "low": 0,
+                      "blocking": 0,
+                      "total": 0
+                    },
+                    "command_ids": [
+                      "desktop:unit",
+                      "desktop:application",
+                      "desktop:ui-accessibility"
+                    ],
+                    "remediation": {
+                      "prior_attempt_id": null,
+                      "replayed_finding_ids": [],
+                      "closed_finding_ids": []
+                    }
+                  }
+                }
+              ],
+              "current_submission": null
             }
           }
         }

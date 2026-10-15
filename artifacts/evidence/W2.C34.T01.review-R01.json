@@ -1,0 +1,265 @@
+{
+  "task_id": "W2.C34.T01",
+  "attempt_id": "R01",
+  "candidate_commit": "1c20b883a0adac7645913568d057a7c146feffcb",
+  "base_commit": "69cac3200fbf6d0e99769d43860c50f41d19390f",
+  "reviewed_state_commit": "ba727b1af3b88fdc76d83ddb44590bd69e4a6960",
+  "reviewer": "agent:/root/security_resolution_review",
+  "result": "approved",
+  "reviewed_at": "2026-10-15T20:38:23.7432530+00:00",
+  "packet_sha256": "1739a82d002f936463dc69f2cbb806120faeb151212576580281984f1c286e3c",
+  "evidence_sha256": "17680b4c74eb1c3df955a6193f779d446475e434aa3abe4b2c2a5751b24f7e39",
+  "acceptance_criteria_sha256": "89dcfef5e414aaa96edbb424261a1d814282658927f3e668ce5968edf467a6a5",
+  "selection_sha256": "6baa3a2483723e8e13bfa32bb503a606c61e946dce9f14c1bd14e3b99c233ac8",
+  "findings": [],
+  "closures": [],
+  "acceptance_reviews": [
+    {
+      "criterion_index": 1,
+      "check_ids": [
+        "original-rust-tests",
+        "shipping-bootstrap",
+        "shipping-recovery",
+        "shipping-live-denial"
+      ],
+      "result": "satisfied",
+      "assessment": "Actual source and finite public c350 scope preserve the approved RO-UI-ACADEMIC-MINIMAL-1.9 Projects state/action/focus and T02 path envelope. The operative source change is confined to existing Windows integration-harness first creation of an absent fixture vault, with independently authenticated Rustfmt-only surrounding changes. Existing paths, nonce/receipt/identity/reparse/occupied-root denials and production Core owner/security/UX policy remain. Actual current Rust cases and real shipping bootstrap/recovery/live-denial support the affected restoration; no new wizard, automatic recovery, host attestation or policy relaxation."
+    },
+    {
+      "criterion_index": 2,
+      "check_ids": [
+        "shipping-bootstrap",
+        "shipping-seed",
+        "shipping-owner-death",
+        "shipping-recovery",
+        "shipping-live-denial"
+      ],
+      "result": "satisfied",
+      "assessment": "Fresh nonce05 bootstrap and no-repair protected seed precede real owner/death, recovery and live-denial. All five same-candidate stages pass under exact producer/package/predecessor/readiness bindings and natural normal owned cleanup. Actual unavailable, original-open denial, Escape cancellation, failed target drift without overwrite, verified copy before separate human open, normal open failure/status focus and separate live-copy/live-owner denial facts are retained. Source and copy protected readbacks have the same39 canonical rows, canonical facts digest and object plaintext digest, with originalFilesUnchanged true. Interrupted old03 fixture is not reused or repaired and all03/04 adverse reports remain."
+    },
+    {
+      "criterion_index": 3,
+      "check_ids": [
+        "shipping-bootstrap",
+        "shipping-owner-death",
+        "shipping-recovery",
+        "shipping-live-denial"
+      ],
+      "result": "satisfied",
+      "assessment": "Actual current206-file Native package and205 frontend drive the original real Windows Native/Core/UIA methods, with current source business Core and separately frozen c15 guardian distinguished. Actual Native/Core ownership binding, whole-pair death active0, fresh recovery copy ownership, explicit subsequent open, original keyboard/focus/cancel/theme/reflow assertions and separate live-owner denial pass. All five outer jobs root0/natural EMPTY0, no timeout/forced/outliving acceptance; parent261.6531090999779s final inputsStable=true. No mocks or screenshots replace these boundaries, and no frozen-GUI/installer/full-Windows closure is claimed."
+    },
+    {
+      "criterion_index": 4,
+      "check_ids": [
+        "rustfmt",
+        "original-rust-tests",
+        "compile-native"
+      ],
+      "result": "satisfied",
+      "assessment": "Exact source6b174/application1f3d/formatted readinessaac377 and claimed base/spec/public scope bind the actual committed candidate. Reused original A06 ADR0054/security/UI/reference authority remains attributed history, with true W2.A06.T02 outcome origin distinguished from W1 Native fixture authorship. Fresh rustfmt passes; actual default Rust binary lists275 with262passed,13 precise source-declared opt-in ignores,0failed/filtered; all39 applicable source cases including both new real Windows creation/occupied-path/no-mutation ownership cases pass. Actual release/package and reviewed compound input closure are valid. Strict Clippy failure remains FAIL; exact complete21 unchanged style identities/36 occurrences are independently accepted only as finite current-W2 debt deferred to W9 under34e, never canonicalClippyPASS."
+    }
+  ],
+  "corrective_integration": {
+    "evidence_sha256": "17680b4c74eb1c3df955a6193f779d446475e434aa3abe4b2c2a5751b24f7e39",
+    "authority_preserved": true,
+    "affected_integration_reviewed": true,
+    "notes": "Approve only frozen W2.C34.T01/R01 current Windows creation-only fixture restoration and affected real shipping integration at1c20 with actual clean direct-child deliveryba727. Public c350 prospective scope,34e authority and normal69cac claim/spec are real, with no claim that the owner inspected a later packet or original six-file A06 scope silently authorized Native edits. First creation uses actual process TokenUser owner and only currentSID/SYSTEM protected inheritable full-control DACL. Occupied vault/nonfixture/reparse paths fail without opening to alter security, retry, lock/witness/ACL repair or principal fallback. Actual new Windows tests and real full-five integration support the bounded result. Root still records normal review and integration; no slice/Wave/release approval."
+  },
+  "verification_selection": {
+    "selected_command_ids": [
+      "desktop:unit",
+      "desktop:application",
+      "desktop:ui-accessibility"
+    ],
+    "assessment": "Ten qualifying rows: one-file rustfmt, actual Rust compile/list/default execution, current release/native compile and original five-stage fresh shipping. Complete capped Clippy collection remains a separately disclosed nonqualifying diagnostic. Exact275 outcome/13opt-in mapping and all39 affected source cases prevent blind helper/GUI/clipboard execution. Unchanged original reference/history, separate wholeNative result and unrelated profiles are not replayed. Broader Wave/platform/package/security/performance gates remain separately required."
+  },
+  "evidence_authentication": {
+    "frozen_authentication": {
+      "path": "artifacts/tmp/W2.C34.T01.frozen-R01-authentication-01.json",
+      "sha256": "a9a34eb7a1b8ebaa87047aece99bbdb757108873eb455f2902c8303cf5074dc1"
+    },
+    "actual_shipping_receipt": {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/current-shipping-native-core-package-plan-01/shipping-ui-bindings-c34-05/actual-owned-shipping-chain-01/receipt.json",
+      "sha256": "cc4709403dcecd5e759ec4d6e542a875506e614cdc01cfdf7c8353852970c15d"
+    },
+    "shipping_source_index": {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/current-shipping-native-core-package-plan-01/shipping-ui-bindings-c34-05/independent-source-readiness-index-c34-05.json",
+      "sha256": "50c056c4773deb84c51cafa2656415a210f0c0ae5b918736057223072799fceb"
+    },
+    "writer_source_readiness": {
+      "path": "artifacts/tmp/W2.C34.T01.manifest-draft-01/independent-source-readiness-05.json",
+      "sha256": "83496ed9529a9bde5198787bb05599750c79dd5083a758cc48b686717c5a8a1d"
+    },
+    "original_creation_source_readiness": {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/shipping-seed-ownership-diagnosis-01/creation-only-source-proposal-01/independent-source-readiness-01.json",
+      "sha256": "92e584ddee8df44bcc9b54b97bed472523b241b6761fda355784e3304b0fcb48"
+    },
+    "formatted_source_readiness": {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/shipping-seed-ownership-diagnosis-01/creation-only-source-proposal-01/independent-formatted-source-readiness-02.json",
+      "sha256": "aac377d5906cad220ad78419c595ccc70deac5b0899204718adbba2fe360cb0d"
+    },
+    "source_application": {
+      "path": "artifacts/tmp/W2.C34.T01.source-application-01/application.json",
+      "sha256": "1f3dcaff5583536c022a4b19a090937d26b561e3cf18c6607f3d2150174ddce0"
+    },
+    "public_scope": {
+      "path": "artifacts/evidence/W2.shipping-fixture-vault-creation-01.decision-01.json",
+      "sha256": "c3507cd43b18de1da5af301c5c05bce6ff1b0aad646729e97688795e612cc464"
+    },
+    "actual_compound_build_disposition": {
+      "path": "artifacts/tmp/W2.C34.T01.actual-compound-build-package-disposition-01.json",
+      "sha256": "34a40d1110d543021b4a0b019ae2f20b950e08138a2c02c61ec4c9b0c2b74ab5"
+    },
+    "actual_package": {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/current-shipping-native-core-package-plan-01/actual-build-package-c34-03/package.json",
+      "sha256": "1b30ea0cff986c30438150dc63ccd6307cc8b3e0981b5fd22655d9fd6602f9d4"
+    },
+    "actual_style_debt_disposition": {
+      "path": "artifacts/tmp/W2.C34.T01.exact-clippy-style-debt-W9-disposition-01.json",
+      "sha256": "8e20cc5703963bbe2a23fb152b1186fc89919d926bf18b791dab359be94eca91"
+    },
+    "actual_style_debt_embedded_exact": true,
+    "shipping_fixed_refs_authenticated": 26,
+    "all_five_same_candidate_predecessor_hashes_authenticated": true,
+    "actual_frozen_hashes_recomputed": true,
+    "delivery_committed_evidence_source_spec_scope_blobs_authenticated": true,
+    "delivery_clean_before_ledger_write": true,
+    "actual_delivery_parent_is_candidate": true,
+    "delivery_delta": "Evidence/status/generated views only; lib.rs blob remains6b174 exact.",
+    "normal_submission_state": "Actual REVIEW/verificationpassed/zero completed review rounds; frozen packet present.",
+    "generated_site_status": "Normal submitted views generated. Root will perform affected generated-site validation once after actual DONE state before integration; no intermediate site PASS invented.",
+    "tests_builds_scans_or_runtime_recapture_by_reviewer": false
+  },
+  "actual_shipping_components": [
+    {
+      "id": "shipping-bootstrap",
+      "result": "passed",
+      "seconds": 10.277612500009127,
+      "raw": {
+        "path": "artifacts/tmp/W2.remaining-corrections-batch-01/current-shipping-native-core-package-plan-01/shipping-ui-bindings-c34-05/actual-owned-shipping-chain-01/bootstrap.raw.log",
+        "sha256": "35c4645761c7ec019f0c60811b149355d5aa0973e8d0cc09d9bf7bd96a3f31f7"
+      },
+      "stage_report": {
+        "path": "artifacts/tmp/W2.remaining-corrections-batch-01/current-shipping-native-core-package-plan-01/shipping-ui-bindings-c34-05/actual-fresh-recovery-chain-01/a06-t02-ui-bootstrap-01.report.json",
+        "sha256": "0e9846ee6e2bcc5192123939e52399d48d6e87d9e9f15a3502e401bf9a77e865"
+      }
+    },
+    {
+      "id": "shipping-seed",
+      "result": "passed",
+      "seconds": 9.238549100002274,
+      "raw": {
+        "path": "artifacts/tmp/W2.remaining-corrections-batch-01/current-shipping-native-core-package-plan-01/shipping-ui-bindings-c34-05/actual-owned-shipping-chain-01/seed.raw.log",
+        "sha256": "acb045e82b71a5ded54888464153295672a131b9a776a08f060f9b50efede1e5"
+      },
+      "stage_report": {
+        "path": "artifacts/tmp/W2.remaining-corrections-batch-01/current-shipping-native-core-package-plan-01/shipping-ui-bindings-c34-05/actual-fresh-recovery-chain-01/a06-t02-prepare-recovery-fixture-01.report.json",
+        "sha256": "270eb54fc982246a3b71aef803955729adf53569578494b8d00059fe0a62e891"
+      }
+    },
+    {
+      "id": "shipping-owner-death",
+      "result": "passed",
+      "seconds": 46.600776300008874,
+      "raw": {
+        "path": "artifacts/tmp/W2.remaining-corrections-batch-01/current-shipping-native-core-package-plan-01/shipping-ui-bindings-c34-05/actual-owned-shipping-chain-01/owner-death.raw.log",
+        "sha256": "ed28c61fdcac800ef5383ba2bd1e0829f4873471fb425b044f1df824e59346d3"
+      },
+      "stage_report": {
+        "path": "artifacts/tmp/W2.remaining-corrections-batch-01/current-shipping-native-core-package-plan-01/shipping-ui-bindings-c34-05/actual-fresh-recovery-chain-01/a06-t02-shipping-live-owner-07.report.json",
+        "sha256": "fd6f980a483cb53d9b2da3ac56d99f3a550d8120ef0f69dcb3902487a1f2d5cc"
+      }
+    },
+    {
+      "id": "shipping-recovery",
+      "result": "passed",
+      "seconds": 126.23269409997738,
+      "raw": {
+        "path": "artifacts/tmp/W2.remaining-corrections-batch-01/current-shipping-native-core-package-plan-01/shipping-ui-bindings-c34-05/actual-owned-shipping-chain-01/recovery.raw.log",
+        "sha256": "f3a3999b0d5a07a19c9241e3064eb9c786c11c1b274c61e4141c5841c8cd98dc"
+      },
+      "stage_report": {
+        "path": "artifacts/tmp/W2.remaining-corrections-batch-01/current-shipping-native-core-package-plan-01/shipping-ui-bindings-c34-05/actual-fresh-recovery-chain-01/a06-t02-shipping-recovery-06.report.json",
+        "sha256": "025bac0762f8f2520d900070b7375cfbdbf215e66552a9e84d8b6c32ffe5fda2"
+      }
+    },
+    {
+      "id": "shipping-live-denial",
+      "result": "passed",
+      "seconds": 48.2258452999813,
+      "raw": {
+        "path": "artifacts/tmp/W2.remaining-corrections-batch-01/current-shipping-native-core-package-plan-01/shipping-ui-bindings-c34-05/actual-owned-shipping-chain-01/live-denial.raw.log",
+        "sha256": "a9d0b436e861feb3e4db82054dfef1d88af15821db0c74d1d23e529ac86f822a"
+      },
+      "stage_report": {
+        "path": "artifacts/tmp/W2.remaining-corrections-batch-01/current-shipping-native-core-package-plan-01/shipping-ui-bindings-c34-05/actual-fresh-recovery-chain-01/a06-t02-shipping-live-denial-01.report.json",
+        "sha256": "add8bd668effb148a6d9dd360809647b4e6f37b6c6f733d4be6f5fed66555f98"
+      }
+    }
+  ],
+  "adverse_history": {
+    "original_seed_failure_preserved": {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/current-shipping-native-core-package-plan-01/shipping-ui-bindings-04/actual-owned-shipping-chain-01/receipt.json",
+      "sha256": "8262a2b64a0978f57f02f7fbc98d5a2c8d07369f17cbd66d6d80939081d74dd7"
+    },
+    "prior_build_reporter_failure": {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/current-shipping-native-core-package-plan-01/actual-build-package-c34-02/receipt.json",
+      "sha256": "106e7f4136b652d1fd4b25f2a157a7ac9b79f7884d34f4e3ade6efcb324af798"
+    },
+    "strict_clippy_failure": {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/current-shipping-native-core-package-plan-01/actual-quality-c34-01/receipt.json",
+      "sha256": "6a68dc95123b5139dffbb71413dfb614c8db568e543115612dca9db6c013c9e3"
+    },
+    "frontend_original_aggregate_failure": {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/fresh-product-build-postinstall-01/actual-build-c34-01/receipt.json",
+      "sha256": "85138a54cc5792a9ed13c091d85cfdc7fe8bf3349918ee533f14cd2a7546beae"
+    },
+    "shipping03_and04_preserved": [
+      {
+        "path": "artifacts/tmp/W2.remaining-corrections-batch-01/current-shipping-native-core-package-plan-01/shipping-ui-bindings-c34-03/actual-owned-shipping-chain-01/receipt.json",
+        "sha256": "2ebd7fc3c1e550f88850cbaf8ca6d1279a57b6747addb7881b0d5e0ca0abff42"
+      },
+      {
+        "path": "artifacts/tmp/W2.remaining-corrections-batch-01/current-shipping-native-core-package-plan-01/shipping-ui-bindings-c34-04/actual-owned-shipping-chain-01/receipt.json",
+        "sha256": "6d699d0b4f8b849ba6be52b572df2015b79f3960e4daabec91743ecc6fe8f90d"
+      },
+      {
+        "path": "artifacts/tmp/W2.remaining-corrections-batch-01/current-shipping-native-core-package-plan-01/shipping-ui-bindings-c34-04/actual-fresh-recovery-chain-01/a06-t02-shipping-live-owner-07.report.json",
+        "sha256": "9bbb670c3b73b162b1d9f32e458322b84564ab66cb96ab22a110a4244888d579"
+      },
+      {
+        "path": "artifacts/tmp/W2.remaining-corrections-batch-01/current-shipping-native-core-package-plan-01/shipping-ui-bindings-c34-04/actual-owned-shipping-chain-01/owner-death.raw.log",
+        "sha256": "440fc671bccbc15c7609bb50a4c17e76de800ccd583468b501cf0a698ca4d3a7"
+      }
+    ],
+    "shipping03_adverse_disposition": {
+      "path": "artifacts/tmp/W2.C34.T01.shipping03-stale-UI-guard-actual-disposition-01.json",
+      "sha256": "bafcb0002701cb07bf822fcf4df6155862a8047ea4fe4a1a9a58deb2c7196dd2"
+    },
+    "shipping04_adverse_disposition": {
+      "path": "artifacts/tmp/W2.C34.T01.shipping04-UTF8-adverse-disposition-01.json",
+      "sha256": "fb6a28f09dbe0fd888d0794a221e55101045a28912d5b6915ae4ae5dd325bbb2"
+    },
+    "meaning": "No failed invocation is relabeled. Exact private05 basename and BOM-free Console UTF8 restore the demonstrated transport/setup failures while strict Python UTF8/JSON and original assertions remain. New05 fixture is justified by genuine prior opening/interruption, not pristine-state fiction or retry-to-pass. Earlier Cargo/outliving and other historical qualification failures remain their own immutable records."
+  },
+  "independence": {
+    "implementation_owner": "agent:/root",
+    "product_source_author": "agent:/root/c21_closeout_review",
+    "original_product_source_reviewer": "agent:/root/storage_profile_review",
+    "independent_task_reviewer": "agent:/root/security_resolution_review",
+    "reviewer_authored_product_or_test_source": false,
+    "reviewer_authored_qualifying_execution_producers": false,
+    "reviewer_authored_actual_manifest_assembler": false,
+    "reviewer_executed_qualifying_workloads": false
+  },
+  "proof_limits": [
+    "Original106e lacked a final input-stability flag and remains FAIL. Only new actual post-witness/current held6912-to6928 input/23runtime equality and final f13d closure support bounded compound composition; no old flag backfill or historical debug executable hash is invented. Completed rows retain original execution/timing, not fresh labels.",
+    "Rust default inventory is275selected/262passed/13explicitoptinignored, never275passes/zeroignore. Distinct real-principal/clipboard/GUI/printer/helper obligations remain separately attributed and are not waived for final Wave qualification.",
+    "Strict Clippy6a68 remains FAIL. Capped complete diagnostics are not qualifying lint. Finite34e debt covers exactly21 unchanged source identities/36 occurrences/six lint kinds and current candidate only, with explicit W9 follow-up; no broad warnings/security acceptance or checker/reference change. f82 display-count defect is corrected only in final actual debt summary; individual identities were unchanged.",
+    "Current frontend85138 original aggregate remains FAIL while203 payloads are unchanged and two measured metadata outputs differ. Actual source-map180of198 token-string permutation/all-other-field equality is not per-source semantic equality or204-byte equality.",
+    "Source business Core, frozen guardian and actual Native/frontend package remain distinct. No installer, signing, frozen-GUI, complete OS/DLL isolation, canonical strictClippy, full-profile, Wave-exit or human release approval is claimed. Owner authority does not convert unknown evidence to PASS."
+  ],
+  "full_profile_pass_claimed": false,
+  "wave_complete": false,
+  "release_approved": false
+}

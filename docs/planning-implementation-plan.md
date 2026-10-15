@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: c2ed8eaf6a2f785bade536d66d9cbd6ba45d1e250930d5fae2884f68f7cfe5c9
+source_sha256: ae5767d51e349d4dfc43b509d2b049826c5d7be2a00e9b4dd51072e0c33650b5
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -5819,7 +5819,7 @@ Original tasks and approvals remain unchanged.
 
 ### W2.C34.T01 — Integrate explicit recovery review into the approved Projects experience
 
-**Status:** `REVIEW`. **Original task:** `W2.A06.T02`. **Latest review:** `-`.
+**Status:** `DONE`. **Original task:** `W2.A06.T02`. **Latest review:** `approved`.
 
 **Reproduction:** At committed8392e43397e9aa28301cdf5689d653389fc1c561, exact current release Native/frontend package27789d92a8e8c6cb15a485ad9e7178d19890be0d6cbfd90c3c6a0256a75528a8 bootstraps normally but the original same-path shipping recovery seed creates a protected project then receives409 RO-CORE-PROJECT-RECOVERY-UNAVAILABLE opening it. Actual aggregate8262a2b64a0978f57f02f7fbc98d5a2c8d07369f17cbd66d6d80939081d74dd7 preserves bootstrapPASS/seedFAIL, normal27/15 ownedEMPTY0 and stable inputs. Actual stdout90640f1409eed0937b5f7919fa56448d426f7c1428534acaf1f6e9f8e9a62672 and read-only ACL observation36882c367dc5c257ccc5284f6b1164f3a0511fd74d5fe51012d0f1df36f76771 establish inherited foreign writers on the disposable fixture vault. Current C27 correctly rejects this; no witness is issued. Native integration-harness create_with_policy currently uses ordinary create_dir for vault. Separate original strong-private-fixture wholeNative recovery actually passes a4110f57149775e39aac683135137d7086a3e2762dab636c848ff799621724f8. Original Native fixture authorship was W1.A09.T03/T04, while current approved W2.A06.T02 owns the real shipping recovery outcome. Finite necessary fixture-creation scope is disclosed in creation-only-scope-decision-01.final.json c3507cd43b18de1da5af301c5c05bce6ff1b0aad646729e97688795e612cc464 under actual owner34e and independent bd707/recordinged63; do not claim the frozen original six-file A06 task already authorized Native edits.
 
@@ -5835,9 +5835,11 @@ Original tasks and approvals remain unchanged.
 - apps/desktop/src-tauri/src/lib.rs
 #### Review history — W2.C34.T01
 
-**Review mode:** `append-only v1` / 0 completed round(s)
+**Review mode:** `append-only v1` / 1 completed round(s)
 
-**Current immutable submission awaiting review:** `R01` / packet SHA-256 `1739a82d002f936463dc69f2cbb806120faeb151212576580281984f1c286e3c`
+##### Round R01
+
+**Immutable submission packet:** `R01` / packet SHA-256 `1739a82d002f936463dc69f2cbb806120faeb151212576580281984f1c286e3c`
 
 - Candidate / base / branch: `1c20b883a0adac7645913568d057a7c146feffcb` / `69cac3200fbf6d0e99769d43860c50f41d19390f` / `codex/w2-implementation`
 - Submitted by / at: agent:/root / `2026-10-15T20:08:56+00:00`
@@ -5851,7 +5853,23 @@ Original tasks and approvals remain unchanged.
 - Prior round / replayed open findings: `-` / -
 - Root-cause escalation: -
 
-**Current latest-review projection:** `-` by - at `-`
+**Disposition / reviewer / time:** `approved` / agent:/root/security_resolution_review / `2026-10-15T20:39:28+00:00`
+
+**Immutable review ledger:** `artifacts/evidence/W2.C34.T01.review-R01.json` / `bfd1406775d24c651e769158407b6da00b4624e79d99c88f717f8a5856f7ad95`
+
+**Review notes:** -
+
+**Findings opened:**
+
+- None
+
+**Prior finding closures:**
+
+- None
+
+**Current immutable submission awaiting review:** None
+
+**Current latest-review projection:** `approved` by agent:/root/security_resolution_review at `2026-10-15T20:39:28+00:00`
 
 **Latest notes:** -
 
