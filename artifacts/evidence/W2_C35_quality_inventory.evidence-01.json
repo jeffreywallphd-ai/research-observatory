@@ -1,0 +1,52 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "bounded-governance-maintenance-evidence",
+  "candidateCommit": "444db15e09e19c30c7d9c067e16825318361a03d",
+  "predecessorCommit": "341566cb6b4f2e591e4bacc60ee19e33d6d8d89a",
+  "implementer": "agent:/root",
+  "riskTier": 2,
+  "contract": "artifacts/evidence/W2_C35_quality_inventory.maintenance-01.md",
+  "selectedChecksStatus": "PASS",
+  "changedFiles": [
+    {
+      "path": "artifacts/evidence/W2_C35_quality_inventory.maintenance-01.md",
+      "blob": "34eb9ab894e8e4a11230077647461398be2d75bf",
+      "sha256": "b0d080b654a17ff8520332456a309ac3562c2447925be3100c611b6655a24540"
+    },
+    {
+      "path": "quality-scope.json",
+      "blob": "ebc885fa6ae193d6260ea88e284da0ca2072f0f3",
+      "sha256": "1396e5c815a4917498f6826e4a711f085a624445f04dd9b94cedc96570222f66"
+    }
+  ],
+  "checks": [
+    {
+      "id": "actual-strict-addition-and-complete-discovery",
+      "status": "PASS",
+      "producer": {
+        "path": "artifacts/tmp/W2.C35.T01.quality-inventory-check-01.py",
+        "sha256": "2344c02e9055b0112f803c4a3f0c7e521b8af721414619395700eb4928b4610d"
+      },
+      "receipt": {
+        "path": "artifacts/tmp/W2.C35.T01.quality-inventory-check-01.json",
+        "sha256": "7c96fe00bc867e6fa854e415bbee64a69108bf11f69d5e81e153efb3409cb1f5"
+      },
+      "criteria": {
+        "exactTwoFileCommittedBoundary": true,
+        "old734EntriesAndOrderPreserved": true,
+        "onlyOneApprovedModuleAdded": true,
+        "metadataAndSixGovernedRootsUnchanged": true,
+        "newModuleExistsAsUnchangedRegularPredecessorProductBlob": true,
+        "actualUnchangedLoadScopeCompleteDiscovery": true,
+        "actualGovernedCount": 735,
+        "cleanStableCandidate": true
+      },
+      "moduleModeObserved": "100644"
+    }
+  ],
+  "authority": "artifacts/evidence/W2.completion-preauthorization-20261014-01.md",
+  "limits": "Registers exactly one already approved new product module, preserving all734 entries/order/metadata/roots and checker behavior. No product/framework implementation or test-setting changes. Actual product regression/typing/scale/package checks and normal task/Wave/release dispositions remain pending.",
+  "taskApproved": false,
+  "waveApproved": false,
+  "releaseApproved": false
+}
