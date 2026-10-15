@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 3bc7456e8ab81d2b09e1adef72da2d2ae428357714c9f1f562d8e3fd7591301b
+source_sha256: 9d056f15ad3a86ce155691c7485e9d2cd28178de9b4d1b122f9900279abf44e8
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -5415,7 +5415,7 @@ Original tasks and approvals remain unchanged.
 
 ### W2.C27.T01 — Restore explicit reviewed project recovery and durable owned-session proof
 
-**Status:** `IN_PROGRESS`. **Original task:** `W2.A06.T01`. **Latest review:** `-`.
+**Status:** `REVIEW`. **Original task:** `W2.A06.T01`. **Latest review:** `-`.
 
 **Reproduction:** The original Native reconciliation regression returned 409 RO-CORE-PROJECT-RECOVERY-UNAVAILABLE instead of 200. The actual private parent is owned by the current user and has the standard Windows OWNER RIGHTS, SYSTEM and Administrators ACL. The nonexact parent checker rejects literal OWNER RIGHTS S-1-3-4 despite already verifying the actual owner. Original failure and owned-cleanup adverse evidence remain preserved in artifacts/tmp/W2.remaining-corrections-batch-01/native-reconciliation-root-cause-01/bounded-root-cause-and-restorative-scope-01.json.
 
@@ -5435,7 +5435,19 @@ Original tasks and approvals remain unchanged.
 
 **Review mode:** `append-only v1` / 0 completed round(s)
 
-**Current immutable submission awaiting review:** None
+**Current immutable submission awaiting review:** `R01` / packet SHA-256 `d38875d13c331b2ac3652ee2bb2859896077f502e60272a66e1e87655ee264b5`
+
+- Candidate / base / branch: `a039aada275db35035a9a71fc89622915e5a346c` / `bab353be50d95c7a1c1b6dc5e1bdc08927630b1d` / `codex/w2-implementation`
+- Submitted by / at: codex-w2-implementation / `2026-10-14T23:54:13+00:00`
+- Evidence: `artifacts/evidence/W2.C27.T01.R01.json` / `958898c1bf80bae211b3c516e22fb2fa0b216a29bd64f06cc90ebb6c49da7299` / `a039aada275db35035a9a71fc89622915e5a346c`
+- Acceptance-criteria SHA-256: `4cfc9ccd2d583dc3285510b3420312d2b778a94cd11c5272eadc54afc6fa321a`
+- Verification-selection SHA-256: `0f497eb5380357b297b4c0045f5b38b24eb5bc52bab00d18472ab36765843a5a`
+- Changed paths: `docs/planning-implementation-plan.md`, `planning/backlog.yaml`, `planning/review-site/index.html`, `planning/review-site/manifest.json`, `planning/review-site/waves/W2.html`, `planning/status-summary.md`, `services/core-api/src/research_observatory_core/windows_credentials.py`, `tests/security/test_project_recovery.py`
+- Selected checks: `.venv/Scripts/python.exe -B -s -m unittest -v tests.security.test_project_recovery.WindowsWitnessStoreTests.test_standard_windows_private_parent_preserves_acl_and_round_trips_witness tests.security.test_project_recovery.WindowsWitnessStoreTests.test_owner_rights_parent_still_denies_foreign_writer_and_wrong_owner_binding tests.security.test_project_recovery.WindowsWitnessStoreTests.test_exact_witness_acl_rejects_owner_rights_substitution tests.security.test_project_recovery.WindowsWitnessStoreTests.test_owner_rights_does_not_admit_unknown_object_or_callback_ace_forms tests.security.test_project_recovery.WindowsWitnessStoreTests.test_actual_anonymous_principal_denies_private_witness_and_user_dpapi tests.security.test_project_recovery.WindowsWitnessStoreTests.test_persistent_exclusion_denies_second_store_and_reopens_same_resource_after_release tests.security.test_project_recovery.WindowsWitnessStoreTests.test_dual_scope_issuance_round_trip_and_fresh_store_readback tests.security.test_project_recovery.WindowsWitnessStoreTests.test_tampered_sealed_record_and_hardlinked_anchor_deny tests.security.test_project_recovery.WindowsWitnessStoreTests.test_failed_exclusion_read_closes_the_actual_opened_handle`, `.venv/Scripts/python.exe -B -s -m ruff format --check --config pyproject.toml -- services/core-api/src/research_observatory_core/windows_credentials.py tests/security/test_project_recovery.py`, `.venv/Scripts/python.exe -B -s -m ruff check --config pyproject.toml -- services/core-api/src/research_observatory_core/windows_credentials.py tests/security/test_project_recovery.py`, `.venv/Scripts/python.exe -B -s -m mypy --config-file pyproject.toml --no-namespace-packages -- @artifacts/tmp/W2.remaining-corrections-batch-01/quality-transport-07/complete-files.args`, `.venv/Scripts/python.exe -B -s tools/adr_check.py --repo . --base bab353be50d95c7a1c1b6dc5e1bdc08927630b1d --head a039aada275db35035a9a71fc89622915e5a346c`, `.venv/Scripts/python.exe -B -s artifacts/tmp/W2.remaining-corrections-batch-01/native-reconciliation-open-diagnostic-01/original-native-open-rerun-04.py --candidate a039aada275db35035a9a71fc89622915e5a346c --preparation-sha256 31c637c92f15b38456e1522b4e490f012e539ad9c80bad1b25e509ed3e19b585 --output artifacts/tmp/W2.remaining-corrections-batch-01/native-reconciliation-open-diagnostic-01/actual-original-rerun-03/leaf-report.json`
+- Deferred checks: `Previous Native cleanup failures stay preserved and exactoldcause unknown; remaining current coldcompiler/package qualification must consider that risk. This current Native run genuinely drains normally; no pass is inferred from prior forcedEMPTY0.`, `Unchanged original A06 full whole-pair/recovery and reviewed protected-copy/security facts remain historical authority; current broader affected Wave qualification is separate.`, `No8/16GiB model workloads; physical foreign-host obligation remains explicitly deferred until first independent Windows installation, required byW5 exit.`
+- Selection rationale: Changed current-owner Windows private-parent recognition is a security adapter restoration. Select four new actual Windows ACL/DPAPI denials plus five originalwitness cases, original affected Native integration, affectedtwo-file format/lint, configured734 types and actual-baseADR. All selected checks pass at current committed candidate with stableinputs and normal owned drains. Preserve previous206/sharedcache2errors/NativecleanupFAIL as genuine adverse history; broad profile qualification remains separate.
+- Prior round / replayed open findings: `-` / -
+- Root-cause escalation: -
 
 **Current latest-review projection:** `-` by - at `-`
 

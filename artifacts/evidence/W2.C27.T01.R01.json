@@ -1,0 +1,316 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "W2.C27.T01",
+  "baseCommit": "bab353be50d95c7a1c1b6dc5e1bdc08927630b1d",
+  "commit": "a039aada275db35035a9a71fc89622915e5a346c",
+  "branch": "codex/w2-implementation",
+  "changedFiles": [
+    "docs/planning-implementation-plan.md",
+    "planning/backlog.yaml",
+    "planning/review-site/index.html",
+    "planning/review-site/manifest.json",
+    "planning/review-site/waves/W2.html",
+    "planning/status-summary.md",
+    "services/core-api/src/research_observatory_core/windows_credentials.py",
+    "tests/security/test_project_recovery.py"
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "checkIds": [
+        "witness-boundaries",
+        "affected-adr"
+      ],
+      "evidence": [
+        "Only literal OWNER RIGHTS is admitted to the nonexact private-parent branch after the unchanged actual current-owner predicate. Exact protected two-ACE witness children, unsupported ACE forms, path/handle checks, DPAPI/Native authority, original indexed ADR and approved recovery/API contract remain unchanged."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "checkIds": [
+        "witness-boundaries"
+      ],
+      "evidence": [
+        "Four new real Windows private-parent/foreign-writer/wrong-owner/exact-child/unsupported-ACE cases plus five retained actual anonymous principal, DPAPI, exclusion, tamper/hardlink and opened-handle cases pass without skips. Synthetic process identities and controlled unsupported-ACE/wrong-SID seams are explicitly not additional real-login or foreign-host proof."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "checkIds": [
+        "original-native-integration",
+        "witness-boundaries"
+      ],
+      "evidence": [
+        "No copy/lifecycle/format/persistence facts source change. Original approved recovery-copy/protected-readback facts remain historical; the actual unchanged Native generated-client review/retry/reversal/two-restart/version/history assertions pass at current candidate. No new original-fixture substitution or whole-pair qualification claim."
+      ]
+    },
+    {
+      "criterion_index": 4,
+      "checkIds": [
+        "witness-boundaries",
+        "original-native-integration"
+      ],
+      "evidence": [
+        "Actual nine named Windows boundary cases and the unchanged original Native generated-client/review/reversal/retry/two-restart/history integration pass. The latest Native invocation drains normally toEMPTY0 without timeout, outliving descendants or containment termination, with input stability and independently source-reviewed passive actual-Job observations. Prior cleanup failures remain preserved; their unseen actor/cause is not inferred from this successful invocation. Historical whole-pair/recovery and owner-deferred physical foreign-host dispositions remain unchanged."
+      ]
+    },
+    {
+      "criterion_index": 5,
+      "checkIds": [
+        "witness-boundaries",
+        "affected-format",
+        "affected-lint",
+        "configured-types",
+        "affected-adr",
+        "original-native-integration"
+      ],
+      "evidence": [
+        "Before-product real regression failed with documented ownership-parent-write-authority. Exact committed correction now passes selectedWindows9, two-file format/lint, configured734 types with prior isolated-cache method, actual-baseADR, and fresh original Native integration/normal owned cleanup. Prior failures and independent source/component/boundary dispositions stay exact. Normal frozen task review remains separate."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "checks": [
+    {
+      "id": "witness-boundaries",
+      "command": ".venv/Scripts/python.exe -B -s -m unittest -v tests.security.test_project_recovery.WindowsWitnessStoreTests.test_standard_windows_private_parent_preserves_acl_and_round_trips_witness tests.security.test_project_recovery.WindowsWitnessStoreTests.test_owner_rights_parent_still_denies_foreign_writer_and_wrong_owner_binding tests.security.test_project_recovery.WindowsWitnessStoreTests.test_exact_witness_acl_rejects_owner_rights_substitution tests.security.test_project_recovery.WindowsWitnessStoreTests.test_owner_rights_does_not_admit_unknown_object_or_callback_ace_forms tests.security.test_project_recovery.WindowsWitnessStoreTests.test_actual_anonymous_principal_denies_private_witness_and_user_dpapi tests.security.test_project_recovery.WindowsWitnessStoreTests.test_persistent_exclusion_denies_second_store_and_reopens_same_resource_after_release tests.security.test_project_recovery.WindowsWitnessStoreTests.test_dual_scope_issuance_round_trip_and_fresh_store_readback tests.security.test_project_recovery.WindowsWitnessStoreTests.test_tampered_sealed_record_and_hardlinked_anchor_deny tests.security.test_project_recovery.WindowsWitnessStoreTests.test_failed_exclusion_read_closes_the_actual_opened_handle",
+      "commandSemantics": "DISPLAY repository-relative executable/paths; exact actual invocation is preserved in ignored receipt",
+      "result": "passed",
+      "exitCode": 0,
+      "commit": "a039aada275db35035a9a71fc89622915e5a346c",
+      "coverage": "fresh-current-candidate",
+      "seconds": 3.671802899996692,
+      "raw": {
+        "path": "artifacts/tmp/W2.C27.T01.focused-proof-01/witness-boundaries.raw.log",
+        "sha256": "4034a0a4d4418973d8110317dfe6aa2a732e49403f410b58a780739426c28675"
+      },
+      "ownedJob": {
+        "drained": true,
+        "cleanupState": "EMPTY_CONFIRMED",
+        "activeProcesses": 0
+      }
+    },
+    {
+      "id": "affected-format",
+      "command": ".venv/Scripts/python.exe -B -s -m ruff format --check --config pyproject.toml -- services/core-api/src/research_observatory_core/windows_credentials.py tests/security/test_project_recovery.py",
+      "commandSemantics": "DISPLAY repository-relative executable/paths; exact actual invocation is preserved in ignored receipt",
+      "result": "passed",
+      "exitCode": 0,
+      "commit": "a039aada275db35035a9a71fc89622915e5a346c",
+      "coverage": "fresh-current-candidate",
+      "seconds": 0.21103100000618724,
+      "raw": {
+        "path": "artifacts/tmp/W2.C27.T01.focused-proof-01/affected-format.raw.log",
+        "sha256": "3bc53bf3e981a98a34a852e175bf9b77af841edea74fca595d9aedcbaf9a4938"
+      },
+      "ownedJob": {
+        "drained": true,
+        "cleanupState": "EMPTY_CONFIRMED",
+        "activeProcesses": 0
+      }
+    },
+    {
+      "id": "affected-lint",
+      "command": ".venv/Scripts/python.exe -B -s -m ruff check --config pyproject.toml -- services/core-api/src/research_observatory_core/windows_credentials.py tests/security/test_project_recovery.py",
+      "commandSemantics": "DISPLAY repository-relative executable/paths; exact actual invocation is preserved in ignored receipt",
+      "result": "passed",
+      "exitCode": 0,
+      "commit": "a039aada275db35035a9a71fc89622915e5a346c",
+      "coverage": "fresh-current-candidate",
+      "seconds": 0.20019950000278186,
+      "raw": {
+        "path": "artifacts/tmp/W2.C27.T01.focused-proof-01/affected-lint.raw.log",
+        "sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18"
+      },
+      "ownedJob": {
+        "drained": true,
+        "cleanupState": "EMPTY_CONFIRMED",
+        "activeProcesses": 0
+      }
+    },
+    {
+      "id": "configured-types",
+      "command": ".venv/Scripts/python.exe -B -s -m mypy --config-file pyproject.toml --no-namespace-packages -- @artifacts/tmp/W2.remaining-corrections-batch-01/quality-transport-07/complete-files.args",
+      "commandSemantics": "DISPLAY repository-relative executable/paths; exact actual invocation is preserved in ignored receipt",
+      "result": "passed",
+      "exitCode": 0,
+      "commit": "a039aada275db35035a9a71fc89622915e5a346c",
+      "coverage": "fresh-current-candidate",
+      "seconds": 21.79924359999859,
+      "raw": {
+        "path": "artifacts/tmp/W2.C27.T01.remaining-quality-04/configured-types.raw.log",
+        "sha256": "c642e5b33b5e7d157e7b2362ef94a292d50ab8abbba717375ca1704ad53de820"
+      },
+      "ownedJob": {
+        "drained": true,
+        "cleanupState": "EMPTY_CONFIRMED",
+        "activeProcesses": 0
+      }
+    },
+    {
+      "id": "affected-adr",
+      "command": ".venv/Scripts/python.exe -B -s tools/adr_check.py --repo . --base bab353be50d95c7a1c1b6dc5e1bdc08927630b1d --head a039aada275db35035a9a71fc89622915e5a346c",
+      "commandSemantics": "DISPLAY repository-relative executable/paths; exact actual invocation is preserved in ignored receipt",
+      "result": "passed",
+      "exitCode": 0,
+      "commit": "a039aada275db35035a9a71fc89622915e5a346c",
+      "coverage": "fresh-current-candidate",
+      "seconds": 2.2932703999977093,
+      "raw": {
+        "path": "artifacts/tmp/W2.C27.T01.remaining-quality-04/affected-adr.raw.log",
+        "sha256": "fcb3defb79b14275193b4e49fd73c96fb9603148a7cbf7a68f42e9a5ec4bc5db"
+      },
+      "ownedJob": {
+        "drained": true,
+        "cleanupState": "EMPTY_CONFIRMED",
+        "activeProcesses": 0
+      }
+    },
+    {
+      "id": "original-native-integration",
+      "command": ".venv/Scripts/python.exe -B -s artifacts/tmp/W2.remaining-corrections-batch-01/native-reconciliation-open-diagnostic-01/original-native-open-rerun-04.py --candidate a039aada275db35035a9a71fc89622915e5a346c --preparation-sha256 31c637c92f15b38456e1522b4e490f012e539ad9c80bad1b25e509ed3e19b585 --output artifacts/tmp/W2.remaining-corrections-batch-01/native-reconciliation-open-diagnostic-01/actual-original-rerun-03/leaf-report.json",
+      "commandSemantics": "DISPLAY exact isolated original Native method leaf; actual held parent invocation/owned process proof preserved in receipt. All original assertions/principals/deadlines unchanged; only existing message diagnostic and passive Job observations.",
+      "result": "passed",
+      "exitCode": 0,
+      "commit": "a039aada275db35035a9a71fc89622915e5a346c",
+      "coverage": "fresh-current-original-native-integration",
+      "seconds": 83.969,
+      "testsRun": 1,
+      "failures": 0,
+      "errors": 0,
+      "skips": 0,
+      "raw": {
+        "path": "artifacts/tmp/W2.remaining-corrections-batch-01/native-reconciliation-open-diagnostic-01/actual-original-rerun-03/native-renderer.raw.log",
+        "sha256": "43591ae16f5ca3d7ed1e36ded28fecb24727adf7bd308a2b86d95c36f3ab3dc5"
+      },
+      "actualLeaf": {
+        "path": "artifacts/tmp/W2.remaining-corrections-batch-01/native-reconciliation-open-diagnostic-01/actual-original-rerun-03/leaf-report.json",
+        "sha256": "1a0bcc79f2a2269aa99e500871d50d742c2ebc02abf67460ae4e463bcbc862f8"
+      },
+      "ownedJob": {
+        "drained": true,
+        "cleanupState": "EMPTY_CONFIRMED",
+        "activeProcesses": 0
+      },
+      "actualJobMembershipObservations": {
+        "path": "artifacts/tmp/W2.remaining-corrections-batch-01/native-reconciliation-open-diagnostic-01/actual-original-rerun-03/actual-owned-job-membership-observations.json",
+        "sha256": "302a6dcbd08dd4b6b65b7fc1f4dbef8c0b6e039fc45f0244f30f4996e49b1e8e",
+        "meaning": "Read-only exact32ee accounting return observes actual Job membership; PID metadata gaps retained; unchanged32ee owns cleanup and original results."
+      }
+    }
+  ],
+  "executionReceipts": [
+    {
+      "path": "artifacts/tmp/W2.C27.T01.focused-proof-01/receipt.json",
+      "sha256": "8f3b544ca40b0a980f31441132f065b4c92f128dc612a7d69a53307d28cfc4ed"
+    },
+    {
+      "path": "artifacts/tmp/W2.C27.T01.remaining-quality-04/receipt.json",
+      "sha256": "136bf4828f6ee3f11b6bcc6d2983c2e4dc28224e33ebd09daec90cc59d2a32e8"
+    },
+    {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/native-reconciliation-open-diagnostic-01/actual-original-rerun-02/receipt.json",
+      "sha256": "bec6d1e44a30ae067f3a011da6bfe144019aa2d34c04077de0e0b18c2f620c69"
+    },
+    {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/native-reconciliation-open-diagnostic-01/actual-original-rerun-03/receipt.json",
+      "sha256": "608785d095c0df6b433d824e5d5025336f9df23fd54ee1b0f51dc54f618c8eba"
+    }
+  ],
+  "executionProducers": [
+    {
+      "path": "artifacts/tmp/W2.owner-rights.focused-proof-01.py",
+      "sha256": "8a23f3ca3452cb1de3b75ec2a164584f9cab654b1ce299e1c1d598e6bd4d47b3"
+    },
+    {
+      "path": "artifacts/tmp/W2.owner-rights.remaining-quality-04.py",
+      "sha256": "9d0901543e3c0f7f46ab67bdc2a8cce297f727c29670da8cc5a9fe752233662a"
+    },
+    {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/native-reconciliation-open-diagnostic-01/owned-original-native-open-rerun-03.py",
+      "sha256": "bdd4a39ef390c6b4240d8fd30e54a8891b4cefbde43dadf8764a8b60b057aa55"
+    },
+    {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/native-reconciliation-open-diagnostic-01/owned-original-native-open-rerun-04.py",
+      "sha256": "d7ccaa031d3e1ad843181645d7ef146a3ef255aacdc29ebd353fc09dd08ad02e"
+    }
+  ],
+  "runtimeInputCaptureSHA256": "456482ea03c3545a03c63e36e5f0bb098c7e20c95e2d2f5efa2f52381b2d4188",
+  "actualInputClosure": "Tracked current candidate and selected actual installed/runtime/config/environment/namespace/absence inputs held and rechecked across each owned drain. Final Native equality remains genuine despite preserved cleanup exception. Machine-local detailed maps remain ignored.",
+  "independentComponentDispositions": [
+    {
+      "path": "artifacts/tmp/W2.C27.T01.focused-proof-01/independent-source-and-component-disposition-01.json",
+      "sha256": "139e1029018cdfac7ee7f4cd13d38ede29c51917418cda659f8af94a6cc8a4f1"
+    },
+    {
+      "path": "artifacts/tmp/W2.C27.T01.remaining-quality-04.independent-disposition-01.json",
+      "sha256": "35c06a321a4b7be534f6c4eb2956f3558dd2e9a0d4b189353c4289acaa507ba2"
+    },
+    {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/native-reconciliation-open-diagnostic-01/independent-actual-rerun-disposition-03.json",
+      "sha256": "4b49145b8b72420043e6f60e170155e4cbecd60c4bfe0dcaa4854b12ccdd99c9"
+    },
+    {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/native-reconciliation-open-diagnostic-01/independent-c27-task-boundary-clarification-01.json",
+      "sha256": "1dfc00a0f0ccb5a64d081c6ac203f807868e84c32eae9c2796fb177ebbd074c2"
+    }
+  ],
+  "preservedAdverse": [
+    {
+      "path": "artifacts/tmp/W2.C27.T01.characterization-01/receipt.json",
+      "sha256": "ff0cf8ca292d7d7949405020e06621edf51ee185855dd75b2a633b36fccfb26e"
+    },
+    {
+      "path": "artifacts/tmp/W2.C27.T01.focused-proof-01/receipt.json",
+      "sha256": "8f3b544ca40b0a980f31441132f065b4c92f128dc612a7d69a53307d28cfc4ed"
+    },
+    {
+      "path": "artifacts/tmp/W2.C27.T01.remaining-quality-02/receipt.json",
+      "sha256": "9538ffa1ff65460f7ac1648697e224c10f7c064f61dfd0e8136afa69f65a3dc2"
+    },
+    {
+      "path": "artifacts/tmp/W2.C27.T01.remaining-quality-03/receipt.json",
+      "sha256": "48c322a92235ef5e6f8377268917fcf41c0046d76238d213a54108571caae32b"
+    },
+    {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/native-reconciliation-open-diagnostic-01/actual-original-rerun-02/receipt.json",
+      "sha256": "bec6d1e44a30ae067f3a011da6bfe144019aa2d34c04077de0e0b18c2f620c69"
+    }
+  ],
+  "knownUnresolvedWaveFindings": [
+    "Prior Native owned-descendant cleanup failed at the same candidate with30lifetime processes and forcedEMPTY0; exact old survivor/cause remains unknown. Latest current Native run passes normally with21lifetime processes and a50ms naturalconhost drain. Preserve prior failure and evaluate credible coldcompiler/package risk in remaining affected Wave qualification; no old failure is rewritten or old actor guessed.",
+    "Two separate migration fixture groups8+2, finite model/gateway corrections, affected current Native3/current14/signed Core/worker/package/security/principal/restart/anchor/scale/storage/protected performance qualification and final S06/checkpoint/G2 remain separate."
+  ],
+  "fullProfilePassClaimed": false,
+  "verificationSelection": {
+    "selectedCommandIds": [
+      "security-local:unit",
+      "service:reconciliation",
+      "foundation:quality",
+      "foundation:adr"
+    ],
+    "riskAnalysis": "Changed current-owner Windows private-parent recognition is a security adapter restoration. Select four new actual Windows ACL/DPAPI denials plus five originalwitness cases, original affected Native integration, affectedtwo-file format/lint, configured734 types and actual-baseADR. All selected checks pass at current committed candidate with stableinputs and normal owned drains. Preserve previous206/sharedcache2errors/NativecleanupFAIL as genuine adverse history; broad profile qualification remains separate.",
+    "deferred": [
+      "Previous Native cleanup failures stay preserved and exactoldcause unknown; remaining current coldcompiler/package qualification must consider that risk. This current Native run genuinely drains normally; no pass is inferred from prior forcedEMPTY0.",
+      "Unchanged original A06 full whole-pair/recovery and reviewed protected-copy/security facts remain historical authority; current broader affected Wave qualification is separate.",
+      "No8/16GiB model workloads; physical foreign-host obligation remains explicitly deferred until first independent Windows installation, required byW5 exit."
+    ]
+  },
+  "correctiveIntegration": {
+    "originSha256": "9de3478fb791b93eac59060a51b5a76934799dc0758f05f38ee774b14d9ae24c",
+    "authorityPreserved": true,
+    "affectedChecks": [
+      ".venv/Scripts/python.exe -B -s -m unittest -v tests.security.test_project_recovery.WindowsWitnessStoreTests.test_standard_windows_private_parent_preserves_acl_and_round_trips_witness tests.security.test_project_recovery.WindowsWitnessStoreTests.test_owner_rights_parent_still_denies_foreign_writer_and_wrong_owner_binding tests.security.test_project_recovery.WindowsWitnessStoreTests.test_exact_witness_acl_rejects_owner_rights_substitution tests.security.test_project_recovery.WindowsWitnessStoreTests.test_owner_rights_does_not_admit_unknown_object_or_callback_ace_forms tests.security.test_project_recovery.WindowsWitnessStoreTests.test_actual_anonymous_principal_denies_private_witness_and_user_dpapi tests.security.test_project_recovery.WindowsWitnessStoreTests.test_persistent_exclusion_denies_second_store_and_reopens_same_resource_after_release tests.security.test_project_recovery.WindowsWitnessStoreTests.test_dual_scope_issuance_round_trip_and_fresh_store_readback tests.security.test_project_recovery.WindowsWitnessStoreTests.test_tampered_sealed_record_and_hardlinked_anchor_deny tests.security.test_project_recovery.WindowsWitnessStoreTests.test_failed_exclusion_read_closes_the_actual_opened_handle",
+      ".venv/Scripts/python.exe -B -s -m ruff format --check --config pyproject.toml -- services/core-api/src/research_observatory_core/windows_credentials.py tests/security/test_project_recovery.py",
+      ".venv/Scripts/python.exe -B -s -m ruff check --config pyproject.toml -- services/core-api/src/research_observatory_core/windows_credentials.py tests/security/test_project_recovery.py",
+      ".venv/Scripts/python.exe -B -s -m mypy --config-file pyproject.toml --no-namespace-packages -- @artifacts/tmp/W2.remaining-corrections-batch-01/quality-transport-07/complete-files.args",
+      ".venv/Scripts/python.exe -B -s tools/adr_check.py --repo . --base bab353be50d95c7a1c1b6dc5e1bdc08927630b1d --head a039aada275db35035a9a71fc89622915e5a346c",
+      ".venv/Scripts/python.exe -B -s artifacts/tmp/W2.remaining-corrections-batch-01/native-reconciliation-open-diagnostic-01/original-native-open-rerun-04.py --candidate a039aada275db35035a9a71fc89622915e5a346c --preparation-sha256 31c637c92f15b38456e1522b4e490f012e539ad9c80bad1b25e509ed3e19b585 --output artifacts/tmp/W2.remaining-corrections-batch-01/native-reconciliation-open-diagnostic-01/actual-original-rerun-03/leaf-report.json"
+    ],
+    "reusedEvidence": [
+      "Original W2.A06.T01 approved contract, copy/protected-readback and unaffected process/principal judgment remain historical, not fresh execution."
+    ],
+    "rationale": "Minimal current-owner parent compatibility restoration, proven by genuine nine-caseWindows/currentNative/quality/ADR checks. Latest original Native case passes with normal ownedEMPTY0; earlier component and aggregate failures remain exactadverse. Independent normal frozen review remains required. No scope, reference, authority, criterion, framework, original history, broaderprofile or release change."
+  }
+}

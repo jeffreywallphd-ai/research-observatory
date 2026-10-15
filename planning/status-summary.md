@@ -1,7 +1,7 @@
 ---
 document_type: generated-backlog-status-summary
 source: planning/backlog.yaml
-source_sha256: 3bc7456e8ab81d2b09e1adef72da2d2ae428357714c9f1f562d8e3fd7591301b
+source_sha256: 9d056f15ad3a86ce155691c7485e9d2cd28178de9b4d1b122f9900279abf44e8
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -988,7 +988,7 @@ Append-only rounds remain distinct from the current latest-review projection. Le
 | `W2.C24.T01` | `append-only v1` | 1 | `-` | approved / agent:/root/storage_profile_review | - |
 | `W2.C25.T01` | `append-only v1` | 1 | `-` | approved / agent:/root/storage_profile_review | - |
 | `W2.C26.T01` | `append-only v1` | 1 | `-` | approved / agent:/root/storage_profile_review | - |
-| `W2.C27.T01` | `append-only v1` | 0 | `-` | - / - | - |
+| `W2.C27.T01` | `append-only v1` | 0 | `R01` | - / - | - |
 ## Wave progress
 
 | Wave | Pre-Wave approval | Campaign | Qualification | Approved slices | Done tasks | Exit gate |
@@ -1052,7 +1052,7 @@ Append-only rounds remain distinct from the current latest-review projection. Le
 
 | Task | Status | Owner | Branch |
 |---|---|---|---|
-| `W2.C27.T01` Restore explicit reviewed project recovery and durable owned-session proof | `IN_PROGRESS` | codex-w2-implementation | `codex/w2-implementation` |
+| `W2.C27.T01` Restore explicit reviewed project recovery and durable owned-session proof | `REVIEW` | codex-w2-implementation | `codex/w2-implementation` |
 
 ## Linked corrective tasks
 
@@ -1184,5 +1184,5 @@ Original tasks and approvals remain unchanged.
 
 ### W2.C27.T01 — Restore explicit reviewed project recovery and durable owned-session proof
 
-**Status:** `IN_PROGRESS`. **Original task:** `W2.A06.T01`. **Latest review:** `-`.
+**Status:** `REVIEW`. **Original task:** `W2.A06.T01`. **Latest review:** `-`.
 
