@@ -5150,7 +5150,7 @@
         {
           "task_id": "W2.C28.T01",
           "title": "Implement rights, license, entitlement, and permitted-use metadata",
-          "status": "REVIEW",
+          "status": "DONE",
           "acceptance_criteria": [
             "Unknown rights default to restrictive behavior; policy decisions are source-specific and inspectable; changing rights marks affected operations for re-evaluation.",
             "Automated tests cover the expected path and at least one material failure or boundary condition.",
@@ -5181,65 +5181,107 @@
           "task_review": {
             "task_id": "W2.C28.T01",
             "title": "Implement rights, license, entitlement, and permitted-use metadata",
-            "status": "REVIEW",
+            "status": "DONE",
             "mode": "append-only",
             "latest_review": {
-              "reviewer": null,
-              "result": null,
-              "reviewed_at": null,
-              "notes": null
+              "reviewer": "agent:/root/security_resolution_review",
+              "result": "approved",
+              "reviewed_at": "2026-10-15T01:25:52+00:00",
+              "notes": ""
             },
             "review_control": {
               "version": 1,
-              "attempts": [],
-              "current_submission": {
-                "id": "R01",
-                "submitted_by": "codex-w2-implementation",
-                "submitted_at": "2026-10-15T01:05:59+00:00",
-                "candidate_commit": "66ba02840aec00748c5928c5c5a7f4d201570d8f",
-                "base_commit": "460a1f5320fcb879c8ffa4acd8d915facc132a94",
-                "branch": "codex/w2-implementation",
-                "evidence_reference": {
-                  "type": "criterion-manifest",
-                  "path": "artifacts/evidence/W2.C28.T01.R01.json",
-                  "sha256": "31c59ae50758a189a810d43d2088bf887f9426d575fa26fdea8edcd4c19e03b6",
-                  "commit": "66ba02840aec00748c5928c5c5a7f4d201570d8f",
-                  "recorded_at": "2026-10-15T01:05:59+00:00"
-                },
-                "acceptance_criteria_sha256": "5dae578c71f0fb55b9ffe175f68585cfa4da67a8a2f8128f36d9e5445f092ce6",
-                "changed_paths": [
-                  "docs/planning-implementation-plan.md",
-                  "planning/backlog.yaml",
-                  "planning/review-site/index.html",
-                  "planning/review-site/manifest.json",
-                  "planning/review-site/waves/W2.html",
-                  "planning/status-summary.md",
-                  "tests/reconciliation/test_migration.py",
-                  "tests/reconciliation/test_review_migration.py",
-                  "tests/reconciliation/test_version_migration.py"
-                ],
-                "selected_checks": [
-                  ".venv/Scripts/python.exe -B -s -m unittest -v tests.reconciliation.test_migration.ProtectedReconciliationMigrationTests.test_encrypted_populated_v13_rollback_retry_backup_and_reopen tests.reconciliation.test_migration.ReconciliationMigrationTests.test_exact_populated_predecessor_upgrade_preserves_sources_and_backup tests.reconciliation.test_review_migration.ProtectedReviewMigrationTests.test_populated_encrypted_backfill_rollback_backup_retry_and_reopen tests.reconciliation.test_review_migration.ReviewMigrationTests.test_populated_history_membership_order_unassigned_and_backup tests.reconciliation.test_version_migration.ProtectedVersionMigrationTests.test_encrypted_v15_failure_backup_retry_and_reopen_preserves_every_row tests.reconciliation.test_version_migration.ProtectedVersionMigrationTests.test_long_backup_paths_preserve_encrypted_predecessor_on_failure_retry_and_reopen tests.reconciliation.test_version_migration.VersionMigrationTests.test_long_plaintext_backup_preserves_literal_rows_and_relative_authority tests.reconciliation.test_version_migration.VersionMigrationTests.test_migration_preserves_every_prior_row_and_backup_then_resumes_pending_impacts",
-                  ".venv/Scripts/python.exe -B -s -m ruff format --check --config pyproject.toml -- tests/reconciliation/test_migration.py tests/reconciliation/test_review_migration.py tests/reconciliation/test_version_migration.py",
-                  ".venv/Scripts/python.exe -B -s -m ruff check --config pyproject.toml -- tests/reconciliation/test_migration.py tests/reconciliation/test_review_migration.py tests/reconciliation/test_version_migration.py",
-                  ".venv/Scripts/python.exe -B -s -m mypy --config-file pyproject.toml --no-namespace-packages -- @artifacts/tmp/W2.remaining-corrections-batch-01/quality-transport-07/complete-files.args"
-                ],
-                "deferred_checks": [
-                  "Separate two-case corpus migration fixture correction retains its distinct original task and is not covered here.",
-                  "Current Native3/current14, finite model/gateway, signed package/security/principal/restart/anchor/scale/storage/protected-performance qualification and S06/final Wave closeout remain separate; no whole-profile or release pass is claimed.",
-                  "The prior Native cleanup failure remains an independent Wave risk for required cold/compiler/package qualification. No8/16GiB model workloads; physical foreign-host proof retains the approvedW5 deferral."
-                ],
-                "selection_rationale": "Migration fixture restoration affects exact current progression and the newly reached original backup/rollback/retry/reopen/row/long-path clauses. Select exactly eight previously failing methods and affectedthree-file Ruff. Failed narrow typing requires original governed source context; complete734 configured types now pass at the same source candidate. No credible current product change justifies replay of196 unaffected unique Core cases or another full exit audit.",
-                "selection_sha256": "7c9017eddf9e10ffda41bf2896970ce4c9529dcde3bf666e92b1b79445e436eb",
-                "prior_attempt_id": null,
-                "open_finding_ids": [],
-                "root_cause_analysis": null,
-                "selected_command_ids": [
-                  "service:reconciliation",
-                  "foundation:quality"
-                ],
-                "packet_sha256": "5ec0cd4390f53eff3d263582f2c157b9c5e7c7ea34643edae7690058b97a6dac"
-              }
+              "attempts": [
+                {
+                  "submission": {
+                    "id": "R01",
+                    "submitted_by": "codex-w2-implementation",
+                    "submitted_at": "2026-10-15T01:05:59+00:00",
+                    "candidate_commit": "66ba02840aec00748c5928c5c5a7f4d201570d8f",
+                    "base_commit": "460a1f5320fcb879c8ffa4acd8d915facc132a94",
+                    "branch": "codex/w2-implementation",
+                    "evidence_reference": {
+                      "type": "criterion-manifest",
+                      "path": "artifacts/evidence/W2.C28.T01.R01.json",
+                      "sha256": "31c59ae50758a189a810d43d2088bf887f9426d575fa26fdea8edcd4c19e03b6",
+                      "commit": "66ba02840aec00748c5928c5c5a7f4d201570d8f",
+                      "recorded_at": "2026-10-15T01:05:59+00:00"
+                    },
+                    "acceptance_criteria_sha256": "5dae578c71f0fb55b9ffe175f68585cfa4da67a8a2f8128f36d9e5445f092ce6",
+                    "changed_paths": [
+                      "docs/planning-implementation-plan.md",
+                      "planning/backlog.yaml",
+                      "planning/review-site/index.html",
+                      "planning/review-site/manifest.json",
+                      "planning/review-site/waves/W2.html",
+                      "planning/status-summary.md",
+                      "tests/reconciliation/test_migration.py",
+                      "tests/reconciliation/test_review_migration.py",
+                      "tests/reconciliation/test_version_migration.py"
+                    ],
+                    "selected_checks": [
+                      ".venv/Scripts/python.exe -B -s -m unittest -v tests.reconciliation.test_migration.ProtectedReconciliationMigrationTests.test_encrypted_populated_v13_rollback_retry_backup_and_reopen tests.reconciliation.test_migration.ReconciliationMigrationTests.test_exact_populated_predecessor_upgrade_preserves_sources_and_backup tests.reconciliation.test_review_migration.ProtectedReviewMigrationTests.test_populated_encrypted_backfill_rollback_backup_retry_and_reopen tests.reconciliation.test_review_migration.ReviewMigrationTests.test_populated_history_membership_order_unassigned_and_backup tests.reconciliation.test_version_migration.ProtectedVersionMigrationTests.test_encrypted_v15_failure_backup_retry_and_reopen_preserves_every_row tests.reconciliation.test_version_migration.ProtectedVersionMigrationTests.test_long_backup_paths_preserve_encrypted_predecessor_on_failure_retry_and_reopen tests.reconciliation.test_version_migration.VersionMigrationTests.test_long_plaintext_backup_preserves_literal_rows_and_relative_authority tests.reconciliation.test_version_migration.VersionMigrationTests.test_migration_preserves_every_prior_row_and_backup_then_resumes_pending_impacts",
+                      ".venv/Scripts/python.exe -B -s -m ruff format --check --config pyproject.toml -- tests/reconciliation/test_migration.py tests/reconciliation/test_review_migration.py tests/reconciliation/test_version_migration.py",
+                      ".venv/Scripts/python.exe -B -s -m ruff check --config pyproject.toml -- tests/reconciliation/test_migration.py tests/reconciliation/test_review_migration.py tests/reconciliation/test_version_migration.py",
+                      ".venv/Scripts/python.exe -B -s -m mypy --config-file pyproject.toml --no-namespace-packages -- @artifacts/tmp/W2.remaining-corrections-batch-01/quality-transport-07/complete-files.args"
+                    ],
+                    "deferred_checks": [
+                      "Separate two-case corpus migration fixture correction retains its distinct original task and is not covered here.",
+                      "Current Native3/current14, finite model/gateway, signed package/security/principal/restart/anchor/scale/storage/protected-performance qualification and S06/final Wave closeout remain separate; no whole-profile or release pass is claimed.",
+                      "The prior Native cleanup failure remains an independent Wave risk for required cold/compiler/package qualification. No8/16GiB model workloads; physical foreign-host proof retains the approvedW5 deferral."
+                    ],
+                    "selection_rationale": "Migration fixture restoration affects exact current progression and the newly reached original backup/rollback/retry/reopen/row/long-path clauses. Select exactly eight previously failing methods and affectedthree-file Ruff. Failed narrow typing requires original governed source context; complete734 configured types now pass at the same source candidate. No credible current product change justifies replay of196 unaffected unique Core cases or another full exit audit.",
+                    "selection_sha256": "7c9017eddf9e10ffda41bf2896970ce4c9529dcde3bf666e92b1b79445e436eb",
+                    "prior_attempt_id": null,
+                    "open_finding_ids": [],
+                    "root_cause_analysis": null,
+                    "selected_command_ids": [
+                      "service:reconciliation",
+                      "foundation:quality"
+                    ],
+                    "packet_sha256": "5ec0cd4390f53eff3d263582f2c157b9c5e7c7ea34643edae7690058b97a6dac"
+                  },
+                  "review": {
+                    "reviewer": "agent:/root/security_resolution_review",
+                    "result": "approved",
+                    "reviewed_at": "2026-10-15T01:25:52+00:00",
+                    "notes": ""
+                  },
+                  "ledger": {
+                    "path": "artifacts/evidence/W2.C28.T01.review-R01.json",
+                    "sha256": "864f8036fbe75d4c9be1e7ff113e9c6d09a5863deac75ace9fbea686d79c95c8"
+                  },
+                  "findings": [],
+                  "closures": [],
+                  "telemetry": {
+                    "task_id": "W2.C28.T01",
+                    "amendment_id": null,
+                    "attempt_id": "R01",
+                    "submitted_at": "2026-10-15T01:05:59+00:00",
+                    "reviewed_at": "2026-10-15T01:25:52+00:00",
+                    "duration_seconds": 1193,
+                    "outcome": "approved",
+                    "finding_counts": {
+                      "critical": 0,
+                      "high": 0,
+                      "medium": 0,
+                      "low": 0,
+                      "blocking": 0,
+                      "total": 0
+                    },
+                    "command_ids": [
+                      "service:reconciliation",
+                      "foundation:quality"
+                    ],
+                    "remediation": {
+                      "prior_attempt_id": null,
+                      "replayed_finding_ids": [],
+                      "closed_finding_ids": []
+                    }
+                  }
+                }
+              ],
+              "current_submission": null
             }
           }
         }

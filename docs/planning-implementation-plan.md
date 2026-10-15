@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 658aa362a578dc07ef68a08e8f81218b99c215cade419f5d4aa830c449d58b88
+source_sha256: 020891faf5297814ae415fff6d1ccf98a2c9fa04581fe71acba137c75b9229eb
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -5475,7 +5475,7 @@ Original tasks and approvals remain unchanged.
 
 ### W2.C28.T01 — Implement rights, license, entitlement, and permitted-use metadata
 
-**Status:** `REVIEW`. **Original task:** `CAP-04.S04.T02`. **Latest review:** `-`.
+**Status:** `DONE`. **Original task:** `CAP-04.S04.T02`. **Latest review:** `approved`.
 
 **Reproduction:** Actual8 original migration methods fail obsolete current17 or exact migration tuples stopping0017 against validated current28. First17->18 source progression is rights S04T02; literal historical fixtures/authoring remain S03 and unchanged.
 
@@ -5492,9 +5492,11 @@ Original tasks and approvals remain unchanged.
 - tests/reconciliation/test_version_migration.py
 #### Review history — W2.C28.T01
 
-**Review mode:** `append-only v1` / 0 completed round(s)
+**Review mode:** `append-only v1` / 1 completed round(s)
 
-**Current immutable submission awaiting review:** `R01` / packet SHA-256 `5ec0cd4390f53eff3d263582f2c157b9c5e7c7ea34643edae7690058b97a6dac`
+##### Round R01
+
+**Immutable submission packet:** `R01` / packet SHA-256 `5ec0cd4390f53eff3d263582f2c157b9c5e7c7ea34643edae7690058b97a6dac`
 
 - Candidate / base / branch: `66ba02840aec00748c5928c5c5a7f4d201570d8f` / `460a1f5320fcb879c8ffa4acd8d915facc132a94` / `codex/w2-implementation`
 - Submitted by / at: codex-w2-implementation / `2026-10-15T01:05:59+00:00`
@@ -5508,7 +5510,23 @@ Original tasks and approvals remain unchanged.
 - Prior round / replayed open findings: `-` / -
 - Root-cause escalation: -
 
-**Current latest-review projection:** `-` by - at `-`
+**Disposition / reviewer / time:** `approved` / agent:/root/security_resolution_review / `2026-10-15T01:25:52+00:00`
+
+**Immutable review ledger:** `artifacts/evidence/W2.C28.T01.review-R01.json` / `864f8036fbe75d4c9be1e7ff113e9c6d09a5863deac75ace9fbea686d79c95c8`
+
+**Review notes:** -
+
+**Findings opened:**
+
+- None
+
+**Prior finding closures:**
+
+- None
+
+**Current immutable submission awaiting review:** None
+
+**Current latest-review projection:** `approved` by agent:/root/security_resolution_review at `2026-10-15T01:25:52+00:00`
 
 **Latest notes:** -
 
