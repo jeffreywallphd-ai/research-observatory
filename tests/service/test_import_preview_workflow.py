@@ -382,8 +382,8 @@ class ProtectedImportProfileCompatibilityTests(unittest.TestCase):
             bind_commit_claim,
             commit_job_input,
         )
-        from research_observatory_core.ingestion.protected_import_profiles import LEGACY_PROFILE
         from research_observatory_core.ingestion.preview_workflow import PreviewDelimitedJobInput
+        from research_observatory_core.ingestion.protected_import_profiles import LEGACY_PROFILE
         from research_observatory_core.ingestion.summary_workflow import (
             SummaryJobInput,
             bind_summary_claim,
