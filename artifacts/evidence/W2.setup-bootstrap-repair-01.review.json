@@ -1,0 +1,347 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "independent-commit-bound-bounded-setup-bootstrap-maintenance-disposition",
+  "reviewer": "agent:/root/security_resolution_review",
+  "result": "APPROVED_BOUNDED_SETUP_REPAIR_FOR_LOCAL_INTEGRATION",
+  "blockingFindings": [],
+  "candidateCommit": "ce5ff5271d4f37041997faee04b1bc5c349342ae",
+  "baseCommit": "b84223b2770c35fd8430f711fd1e8d6899fa786a",
+  "sourceCommits": [
+    "8065d075a6c946b3771ae03d0dc73c6e916b4f3d",
+    "ab69651235321102f14a5676b35ce77f4aaaf616",
+    "ce5ff5271d4f37041997faee04b1bc5c349342ae"
+  ],
+  "sourceBoundary": {
+    "exactEightModifiedPaths": true,
+    "sourceBlobsAndCurrentRawBytesMatchReviewedHashes": true,
+    "files": [
+      {
+        "path": "tools/bootstrap.py",
+        "sha256": "ccf51ade41542c760007b9c4822e22f5c113fb7a734fdb82bdec68fc4a170b1b"
+      },
+      {
+        "path": "tests/foundation/test_bootstrap.py",
+        "sha256": "e62271179a7499f50d7f46b20a97ac1c0dac88be1fff4f7f00f98fd58a1742c9"
+      },
+      {
+        "path": "docs/automation/developer-bootstrap.md",
+        "sha256": "df1ea5cdadcf508582604cf1d61f514b48b8892ff02cae1fa9e7f4bfad907baf"
+      },
+      {
+        "path": "tools/architecture_check.py",
+        "sha256": "dd65bfb48c399b4f12294488ce972610ee267521513587adb8af7b3d668eed47"
+      },
+      {
+        "path": "tests/foundation/test_architecture_check.py",
+        "sha256": "2a97e6b9c77410d7565c4f6c154874c3f894820c3e1051fb09f0dff4e5a63e3b"
+      },
+      {
+        "path": "tools/quality_check.py",
+        "sha256": "5f39d4dc54a0ec89273e698bb1fa3990a531586d48c55f6a25844745236124c2"
+      },
+      {
+        "path": "tests/foundation/test_quality_check.py",
+        "sha256": "5cb8dd58c9ef43e038c5be39793534fb4b82209559e3e4d4be3aa46e17d3020c"
+      },
+      {
+        "path": "tools/plan_review_site.py",
+        "sha256": "1365d1a5e1c1d0b146d49919299c30f4ed747c4bb2cc274926bc1a3b7ee32928"
+      }
+    ],
+    "productDependenciesRuntimeAndVerificationConfigurationChanged": false
+  },
+  "authority": {
+    "ownerRequestedSetupRepair": true,
+    "prospectiveCompletionAuthority": {
+      "path": "artifacts/evidence/W2.completion-preauthorization-20261014-01.md",
+      "sha256": "34e2e3c175dc9309080182e0673f776055b1cc3ba78639475c09ec54408d7d5f"
+    },
+    "meaning": "Bounded restoration and risk-selected maintenance verification; no new product policy, release criterion, broad framework implementation or owner-inspection claim."
+  },
+  "independentSourceJudgments": {
+    "bootstrapArchitectureDiagnostics": {
+      "path": "artifacts/tmp/setup-bootstrap-diagnostics-repair-01/independent-source-readiness-06.json",
+      "sha256": "645933c7aae97bfcb563797fa209a307d4953e71dd5685a2a98ba92321a8716c"
+    },
+    "windowsQualityArgumentAndChildOutputTransport": {
+      "path": "artifacts/tmp/setup-quality-windows-transport-repair-01/independent-source-readiness-06.json",
+      "sha256": "58dddd2fd9e87767d1ebe6e9478642aa47855cd825f31015d8d9f0c35f9d8fe9"
+    },
+    "formatOnlyAndPriorQualityComponents": {
+      "path": "artifacts/tmp/setup-quality-format-only-independent-disposition-01.json",
+      "sha256": "75309bc13fe75d16a8ee3f06b53954949baf3f55675851bfb7c4265608858f53"
+    }
+  },
+  "criteriaAssessment": [
+    {
+      "criterion": "Restore the seven exact Core-root data roles and correct package-relative authority resolution while retaining original SQL/concrete/empty-import denials.",
+      "result": "PASS",
+      "sourceReview": {
+        "path": "artifacts/tmp/setup-bootstrap-diagnostics-repair-01/independent-source-readiness-06.json",
+        "sha256": "645933c7aae97bfcb563797fa209a307d4953e71dd5685a2a98ba92321a8716c"
+      },
+      "actualProof": "All26 bootstrap/architecture methods and canonical architecture check passed at8065; subsequent commits preserve their source and consumed architecture contracts."
+    },
+    {
+      "criterion": "Preserve complete bootstrap foundation gate and frozen dependency steps, show both failure streams/report pointer, and publish config only after success.",
+      "result": "PASS_AFFECTED_SOURCE_AND_METHOD_PROOF",
+      "sourceReview": {
+        "path": "artifacts/tmp/setup-bootstrap-diagnostics-repair-01/independent-source-readiness-06.json",
+        "sha256": "645933c7aae97bfcb563797fa209a307d4953e71dd5685a2a98ba92321a8716c"
+      },
+      "actualProof": "Genuine26-case proof includes real subprocess dual-stream failure and failed-foundation no-config controls. This does not claim a successful complete setup invocation."
+    },
+    {
+      "criterion": "Run unchanged full734 quality scope on Windows without command-length failure or lost whole-source type context.",
+      "result": "PASS_TRANSPORT_AND_LINT_TYPES; FORMAT_RESTORED_BY_AFFECTED_CHECK",
+      "sourceReview": {
+        "path": "artifacts/tmp/setup-quality-windows-transport-repair-01/independent-source-readiness-06.json",
+        "sha256": "58dddd2fd9e87767d1ebe6e9478642aa47855cd825f31015d8d9f0c35f9d8fe9"
+      },
+      "actualProof": "Full734 lint and mypy passed atab696. Formatter completed the whole ordered scope with733 formatted and one identified formatting debt. The sole later format repair preserves full AST/type comments and all comments; fresh file format/lint passed atce5ff."
+    },
+    {
+      "criterion": "Exercise the changed quality control methods and actual scope/error/output/cleanup behavior.",
+      "result": "PASS",
+      "actualProof": {
+        "candidateCommit": "ce5ff5271d4f37041997faee04b1bc5c349342ae",
+        "methodCount": 13,
+        "skips": 0,
+        "exitCode": 0,
+        "seconds": 6.701368400012143,
+        "normalOwnedEmptyZero": true,
+        "raw": {
+          "path": "artifacts/tmp/setup-foundation-remaining-continuation-04.f01/affected-quality-methods-13.raw.log",
+          "sha256": "298b1c020fa92643d47bdb3cf579be5818e84f388fced511669cb6ae95eb5dbd"
+        }
+      },
+      "defaultCLIUnicodeQualificationClaimed": false
+    },
+    {
+      "criterion": "Preserve input integrity and verify materially affected repository controls.",
+      "result": "PASS_BOUNDED_COMPONENTS",
+      "actualProof": "6664 tracked inputs were held through final owned drains; source/Git stayed fixed. Current manifest, UI-change and packaging checks passed normally in broad02. Final safety-timeout is recorded separately and not relabeled as normal cleanup."
+    },
+    {
+      "criterion": "Keep unrelated broad verification and final Wave requirements explicit.",
+      "result": "DEFERRED_OUTSIDE_MAINTENANCE_INTEGRATION",
+      "actualProof": "No755/full-unit/full-foundation/setup-end-to-end PASS is claimed. Backlog timeout and interrupted broad unit attempt remain adverse; final W2 state closure remains due."
+    }
+  ],
+  "actualComponentEvidence": {
+    "bootstrapArchitectureAndVersions": {
+      "candidateCommit": "8065d075a6c946b3771ae03d0dc73c6e916b4f3d",
+      "receipt": {
+        "path": "artifacts/tmp/setup-bootstrap-diagnostics-repair-01/actual-committed-checks-01/receipt.json",
+        "sha256": "671e66778c0d2cb126dd82eed8fb445595910bbb6364f30cb23615bd714d83c4"
+      },
+      "independentDisposition": {
+        "path": "artifacts/tmp/setup-bootstrap-diagnostics-repair-01/independent-actual-components-disposition-01.json",
+        "sha256": "abdedd64460fe2b81ccc5cc36cfbfba8b28a0ea70bf3bb6af9ac741614533957"
+      },
+      "focusedMethods": 26,
+      "canonicalArchitecture": "PASS",
+      "affectedRuffAndTypes": "PASS",
+      "runtimeVersionObservations": 5,
+      "installedRuntimeTreesRecaptured": false
+    },
+    "fullQuality": {
+      "candidateCommit": "ab69651235321102f14a5676b35ce77f4aaaf616",
+      "receipt": {
+        "path": "artifacts/tmp/setup-foundation-remaining-continuation-01.f01/receipt.json",
+        "sha256": "b45e13611acc6d13c8adb49cb3d6fbdb1021f7a9f96cce7d68abe984564a70ad"
+      },
+      "report": {
+        "path": "artifacts/tmp/setup-foundation-remaining-continuation-01.f01/quality-report.json",
+        "sha256": "56057ee77b0905f1a380d986a8b19a36f7c157b909937059e653aa289b1e04e2"
+      },
+      "governedFiles": 734,
+      "lint": "PASS",
+      "types": "PASS",
+      "typeSeconds": 25.848,
+      "format": "FAIL_ORIGINAL_RETAINED;733 formatted and one would reformat",
+      "independentAffectedProjection": {
+        "path": "artifacts/tmp/setup-quality-format-only-independent-disposition-01.json",
+        "sha256": "75309bc13fe75d16a8ee3f06b53954949baf3f55675851bfb7c4265608858f53"
+      }
+    },
+    "currentCandidateControls": {
+      "candidateCommit": "ce5ff5271d4f37041997faee04b1bc5c349342ae",
+      "receipt": {
+        "path": "artifacts/tmp/setup-foundation-remaining-continuation-02.f01/receipt.json",
+        "sha256": "cc2006ab402cb16510d3df88efe25151f92e06b040fa5d415672248dea0dcaf5"
+      },
+      "qualifiedRows": [
+        {
+          "id": "affected-format-plan-review-site",
+          "seconds": 0.241355799997109,
+          "raw": {
+            "path": "artifacts/tmp/setup-foundation-remaining-continuation-02.f01/affected-format-plan-review-site.raw.log",
+            "sha256": "fd2299c9f1c6dc869070883e281051bfe93aacf66c1a3b0069f45b4aa410ca50"
+          },
+          "normalOwnedEmptyZero": true
+        },
+        {
+          "id": "affected-lint-plan-review-site",
+          "seconds": 0.2790176000125939,
+          "raw": {
+            "path": "artifacts/tmp/setup-foundation-remaining-continuation-02.f01/affected-lint-plan-review-site.raw.log",
+            "sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18"
+          },
+          "normalOwnedEmptyZero": true
+        },
+        {
+          "id": "foundation:build-manifest",
+          "seconds": 35.43913169999723,
+          "raw": {
+            "path": "artifacts/tmp/setup-foundation-remaining-continuation-02.f01/foundation-build-manifest.raw.log",
+            "sha256": "1b46d635ff5beeb80569f2651c3d9f242fa7194fa238620628932bc40bd66e63"
+          },
+          "normalOwnedEmptyZero": true
+        },
+        {
+          "id": "foundation:ui-change",
+          "seconds": 6.2485893000121,
+          "raw": {
+            "path": "artifacts/tmp/setup-foundation-remaining-continuation-02.f01/foundation-ui-change.raw.log",
+            "sha256": "68cd7c0d115b9d788f7f1714acef8a2c04c032d61e7b1e7c8d08373e01377a86"
+          },
+          "normalOwnedEmptyZero": true
+        },
+        {
+          "id": "foundation:packaging-smoke",
+          "seconds": 0.601672899996629,
+          "raw": {
+            "path": "artifacts/tmp/setup-foundation-remaining-continuation-02.f01/foundation-packaging-smoke.raw.log",
+            "sha256": "94939e1e44e5de37c047c4da58b8c400f457088ad6402587403f2d7bbaf7e37f"
+          },
+          "normalOwnedEmptyZero": true
+        }
+      ]
+    },
+    "finalAffectedMethods": {
+      "candidateCommit": "ce5ff5271d4f37041997faee04b1bc5c349342ae",
+      "receipt": {
+        "path": "artifacts/tmp/setup-foundation-remaining-continuation-04.f01/receipt.json",
+        "sha256": "9671bde49ec0ffd7a29b3191eed3a9603c0886c2a1b7860784eb6dc11b118e3f"
+      },
+      "differentProducerSourceReview": {
+        "path": "artifacts/tmp/setup-foundation-remaining-continuation-04.independent-source-readiness-01.json",
+        "sha256": "d9bb4706410a8d381aa1ffad7a6edc82c2f684b093e101179846c49d8e3fee7e"
+      },
+      "exactCaseIDs": [
+        "tests.foundation.test_quality_check.PythonQualityCheckTests.test_expected_checks_report_success",
+        "tests.foundation.test_quality_check.PythonQualityCheckTests.test_large_non_windows_calls_keep_original_arguments",
+        "tests.foundation.test_quality_check.PythonQualityCheckTests.test_lint_failure_is_retained_while_other_checks_continue",
+        "tests.foundation.test_quality_check.PythonQualityCheckTests.test_mypy_response_file_is_removed_after_launch_error",
+        "tests.foundation.test_quality_check.PythonQualityCheckTests.test_oversized_ruff_argument_fails_without_omitting_type_context",
+        "tests.foundation.test_quality_check.PythonQualityCheckTests.test_quality_scope_is_explicit_and_valid",
+        "tests.foundation.test_quality_check.PythonQualityCheckTests.test_real_response_transport_preserves_spaces_unicode_and_cross_file_types",
+        "tests.foundation.test_quality_check.PythonQualityCheckTests.test_response_file_rejects_argument_injection",
+        "tests.foundation.test_quality_check.PythonQualityCheckTests.test_small_negative_returncode_keeps_original_report_value",
+        "tests.foundation.test_quality_check.PythonQualityCheckTests.test_unlisted_file_in_governed_root_is_rejected",
+        "tests.foundation.test_quality_check.PythonQualityCheckTests.test_windows_chunk_errors_preserve_outputs_and_continue_complete_scope",
+        "tests.foundation.test_quality_check.PythonQualityCheckTests.test_windows_large_scope_is_complete_in_chunks_and_one_mypy_context",
+        "tests.foundation.test_quality_check.PythonQualityCheckTests.test_windows_transport_uses_utf8_without_changing_parent_environment"
+      ],
+      "all13TerminalOK": true,
+      "zeroSkips": true,
+      "raw": {
+        "path": "artifacts/tmp/setup-foundation-remaining-continuation-04.f01/affected-quality-methods-13.raw.log",
+        "sha256": "298b1c020fa92643d47bdb3cf579be5818e84f388fced511669cb6ae95eb5dbd"
+      },
+      "normalOwnedProcessCount": 17,
+      "inputsStable": true
+    }
+  },
+  "retainedAdversesAndDeferrals": {
+    "originalFoundation": {
+      "receipt": {
+        "path": "artifacts/tmp/setup-bootstrap-diagnostics-repair-01/actual-committed-checks-01/receipt.json",
+        "sha256": "671e66778c0d2cb126dd82eed8fb445595910bbb6364f30cb23615bd714d83c4"
+      },
+      "report": {
+        "path": "artifacts/tmp/setup-bootstrap-diagnostics-repair-01/actual-committed-checks-01/foundation-report.json",
+        "sha256": "57dceaea6f0da379140e100135fcec589e31ea0701d9e8484b2f1cea94c5e8c0"
+      },
+      "status": "FAIL127:three Windows command launches exceeded the OS limit; later checks were not run"
+    },
+    "originalWholeQualityFormatFailure": {
+      "receipt": {
+        "path": "artifacts/tmp/setup-foundation-remaining-continuation-01.f01/receipt.json",
+        "sha256": "b45e13611acc6d13c8adb49cb3d6fbdb1021f7a9f96cce7d68abe984564a70ad"
+      },
+      "report": {
+        "path": "artifacts/tmp/setup-foundation-remaining-continuation-01.f01/quality-report.json",
+        "sha256": "56057ee77b0905f1a380d986a8b19a36f7c157b909937059e653aa289b1e04e2"
+      },
+      "status": "FAIL retained; later lint/type PASS components are not an aggregate PASS"
+    },
+    "broadUnitAttempt": {
+      "receipt": {
+        "path": "artifacts/tmp/setup-foundation-remaining-continuation-02.f01/receipt.json",
+        "sha256": "cc2006ab402cb16510d3df88efe25151f92e06b040fa5d415672248dea0dcaf5"
+      },
+      "stopRecord": {
+        "path": "artifacts/tmp/setup-foundation-remaining-continuation-02.f01/risk-selection-stop-01.json",
+        "sha256": "5da109a61b273de7729e3391ba15dd7521a13f7d6c8165a051dba26c7aa6b61b"
+      },
+      "status": "INTERRUPTED_NONQUALIFYING",
+      "rootExitCode": 4294967295,
+      "ownedEmptyZero": true,
+      "inputsStable": true,
+      "explicitOKObservations": 243,
+      "complete729Or755PassClaimed": false,
+      "remainingUnrelatedLegacyCoverageDeferred": true
+    },
+    "backlog": {
+      "receipt": {
+        "path": "artifacts/tmp/setup-foundation-remaining-continuation-04.f01/receipt.json",
+        "sha256": "9671bde49ec0ffd7a29b3191eed3a9603c0886c2a1b7860784eb6dc11b118e3f"
+      },
+      "raw": {
+        "path": "artifacts/tmp/setup-foundation-remaining-continuation-04.f01/foundation-backlog.raw.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "status": "UNRESOLVED_SAFETY_TIMEOUT",
+      "exitCode": null,
+      "seconds": 590.4300745999935,
+      "timedOut": true,
+      "terminationRequested": true,
+      "ownedProcessCount": 3654,
+      "ownedEmptyZero": true,
+      "normalCleanup": false,
+      "semanticOutputBytes": 0,
+      "semanticValidityOrInvalidityInferred": false,
+      "backlogBlobIdenticalToBase": true,
+      "backlogGitBlob": "eb6517e1322e1b79715d71fc91766a4e4c759238",
+      "backlogSHA256": "b61e8491a54033bcf7e9ca6e55928295e5622df2355af07b1ccce02c3f689dc9",
+      "scopeReason": "The eight-file maintenance range changes neither backlog nor its validators/schemas/configuration. Repeating this unchanged semantic/history validator is not required for bounded setup integration; a final current-W2-state disposition remains due.",
+      "deferredTo": "Final W2 state closure; no Wave/release requirement waived"
+    },
+    "earlierPrivateAndOriginalFailuresPreserved": true
+  },
+  "custodyAndAuthorship": {
+    "reviewerAuthoredProductOrCanonicalCheckerChanges": false,
+    "reviewerAuthoredPrivateContinuationCollectors": true,
+    "privateCollectorsReviewedByDifferentAgent": "agent:/root/storage_profile_review",
+    "actualRunsPerformedBy": "Root using unchanged owned-process helper",
+    "actualFinalElapsedSeconds": 600.4326352999924,
+    "actualFinalInputsStable": true,
+    "allFinalOwnedProcessesDrained": true,
+    "finalBacklogRequiredForcedTermination": true,
+    "rawArgvExecutablePathsAccountEnvironmentAndProcessIdentitiesRemainIgnored": true,
+    "noChecksOrRuntimeScansReplayedByReviewer": true
+  },
+  "integrationDisposition": {
+    "boundedMaintenanceSourceReadyForLocalMain": true,
+    "meaning": "Root may perform normal local fast-forward integration of this exact reviewed source and its review-record delivery, with a clean checkout and no additional source changes. This approval covers the setup repair and affected evidence only.",
+    "completeSetupPassClaimed": false,
+    "completeFoundationPassClaimed": false,
+    "fullFoundationUnitPassClaimed": false,
+    "oldResultsRetargetedAsNewExecutions": false,
+    "backlogValidationPassClaimed": false,
+    "waveExitOrReleaseApproved": false,
+    "remainingW2StateAndProductQualificationDebtPreserved": true
+  }
+}
