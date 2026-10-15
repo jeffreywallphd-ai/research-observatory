@@ -678,9 +678,216 @@ def invoke(input_data, broker, operation):
             if sentinel.exists():
                 sentinel.unlink()
 
+    def _prove_signed_worker_one_second_wall_limit(self, *, prepared: bool) -> None:
+        """Keep public total-time denial separate from an actual one-second running loop."""
+        import inspect
+        import secrets
+        import time
+        from ctypes import wintypes
+
+        from nacl.signing import SigningKey
+        from research_observatory_core.connectors.plugin_manifest import verify_plugin_package
+
+        from tests.connectors.test_plugin_manifest_contract import (
+            PATH,
+            PUBLISHER_ID,
+            _manifest_bytes,
+            _manifest_document,
+        )
+        from workers.windows import connector_launcher, recovery_guardian
+        from workers.windows.lpac_launcher import LPACError, _api
+        from workers.windows.recovery_guardian import GuardianProcess
+        from workers.windows.runtime_inventory import APPLICATION_INVENTORY_PUBLIC_KEY, SignedWorkerRuntime
+
+        build_path = os.environ.get("RO_W2_SIGNED_WORKER_BUILD")
+        sidecar_path = os.environ.get("RO_W2_CORE_SIDECAR_GUARDIAN")
+        if not build_path or not sidecar_path:
+            self.skipTest("locally signed worker and frozen Core guardian are required")
+        build = Path(build_path).resolve(strict=True)
+        sidecar = Path(sidecar_path).resolve(strict=True)
+        runtime = SignedWorkerRuntime(
+            build / "package",
+            (build / "inventory.json").read_bytes(),
+            (build / "inventory.sig").read_bytes(),
+            APPLICATION_INVENTORY_PUBLIC_KEY,
+        )
+        source = b"""
+def invoke(input_data, broker, operation):
+    broker({"operation": "lookup", "identifier": input_data.decode("ascii")})
+    while True:
+        pass
+"""
+        document = _manifest_document(package_file=source)
+        document["resourceProfile"] = {
+            "committedMemoryMiB": 256,
+            "maxJobsPerProject": 1,
+            "wallTimeSeconds": 20 if prepared else 1,
+        }
+        manifest = _manifest_bytes(document)
+        signing_key = SigningKey(b"\x42" * 32)
+        package = verify_plugin_package(
+            manifest,
+            signing_key.sign(manifest).signature,
+            {PATH: source},
+            {PUBLISHER_ID: bytes(signing_key.verify_key)},
+        )
+        self.assertEqual(package.manifest.resource_profile.wall_time_seconds, 20 if prepared else 1)
+        self.assertEqual(package.manifest.resource_profile.committed_memory_mi_b, 256)
+
+        kernel, _, _, _ = _api()
+        kernel.OpenProcess.argtypes = [wintypes.DWORD, wintypes.BOOL, wintypes.DWORD]
+        kernel.OpenProcess.restype = wintypes.HANDLE
+        guardians: list[GuardianProcess] = []
+        worker_handles: list[Any] = []
+        tokens: list[dict[str, Any]] = []
+        launches: list[tuple[float, float]] = []
+        calls: list[dict[str, Any]] = []
+        guardian_starts = token_queries = 0
+        original_start = connector_launcher.start_guardian
+        original_token = connector_launcher.win._token
+        original_launch = connector_launcher._launch_signed_worker
+        launch_signature = inspect.signature(original_launch)
+        runtime_parent = Path(os.environ["LOCALAPPDATA"]).resolve(strict=True) / "RoWorker"
+        runtime_parent.mkdir(exist_ok=True)
+        self.assertFalse(runtime_parent.is_symlink() or runtime_parent.is_junction())
+        sentinel = runtime_parent / f"synthetic-unrelated-{secrets.token_hex(8)}.txt"
+        sentinel.write_bytes(b"synthetic-only")
+        runtime_entries_before = {entry.name for entry in runtime_parent.iterdir()}
+
+        def observe_guardian() -> GuardianProcess:
+            nonlocal guardian_starts
+            guardian_starts += 1
+            guardian = original_start()
+            guardians.append(guardian)
+            return guardian
+
+        def observe_token(advapi: Any, launched_kernel: Any, process: int, sid_text: str) -> dict[str, Any]:
+            nonlocal token_queries
+            token_queries += 1
+            token = original_token(advapi, launched_kernel, process, sid_text)
+            launched_kernel.GetProcessId.argtypes = [wintypes.HANDLE]
+            launched_kernel.GetProcessId.restype = wintypes.DWORD
+            worker_pid = launched_kernel.GetProcessId(process)
+            self.assertNotEqual(worker_pid, 0)
+            handle = kernel.OpenProcess(0x101000, False, worker_pid)
+            self.assertTrue(handle, "could not retain the signed worker process handle")
+            worker_handles.append(handle)
+            tokens.append(dict(token))
+            return token
+
+        def observe_launch(*args: Any, **kwargs: Any) -> Any:
+            bound = launch_signature.bind(*args, **kwargs)
+            remaining = float(bound.arguments["wall_seconds"])
+            applied = remaining
+            if prepared:
+                self.assertGreaterEqual(remaining, 1.0, "trusted setup left less than the required running budget")
+                applied = min(remaining, 1.0)
+                self.assertEqual(applied, 1.0)
+                self.assertLessEqual(applied, remaining)
+                bound.arguments["wall_seconds"] = applied
+            launches.append((remaining, applied))
+            return original_launch(*bound.args, **bound.kwargs)
+
+        def record_marker(call: dict[str, Any]) -> bytes:
+            calls.append(call)
+            return b"synthetic-metadata"
+
+        started = time.monotonic()
+        try:
+            with (
+                patch.object(
+                    recovery_guardian,
+                    "_guardian_command",
+                    return_value=[str(sidecar), "--plugin-acl-guardian"],
+                ),
+                patch.object(connector_launcher, "start_guardian", side_effect=observe_guardian),
+                patch.object(connector_launcher.win, "_token", side_effect=observe_token),
+                patch.object(connector_launcher, "_launch_signed_worker", side_effect=observe_launch),
+            ):
+                try:
+                    outcome = connector_launcher.run_connector(
+                        runtime,
+                        package,
+                        {PATH: source},
+                        job_nonce=secrets.token_hex(16),
+                        invocation_id="synthetic-resource-exhaustion",
+                        operation="lookup",
+                        input_data=b"synthetic-1",
+                        broker_callback=record_marker,
+                    )
+                except LPACError as error:
+                    failure = str(error)
+                else:
+                    self.fail(f"resource exhaustion returned {len(outcome.output)} successful output bytes")
+            self.assertEqual(failure, "lpac-worker-timeout")
+            self.assertLess(time.monotonic() - started, 30)
+            self.assertLessEqual(len(launches), 1)
+            self.assertLessEqual(len(guardians), 1)
+            self.assertEqual(guardian_starts, len(guardians))
+            self.assertEqual(token_queries, len(tokens))
+            self.assertEqual(len(worker_handles), len(tokens))
+            self.assertIn(len(tokens), (0, 1))
+            self.assertIn(calls, ([], [{"operation": "lookup", "identifier": "synthetic-1"}]))
+            for token in tokens:
+                self.assertIs(token["appContainer"], True)
+                self.assertIs(token["lessPrivileged"], True)
+                self.assertEqual(token["capabilityCount"], 0)
+                self.assertIs(token["allApplicationPackagesDenied"], True)
+                self.assertEqual(token["integrityLevelRid"], 4096)
+            if not launches:
+                self.assertEqual(tokens, [])
+                self.assertEqual(worker_handles, [])
+                self.assertEqual(calls, [])
+            if calls:
+                self.assertEqual(len(launches), 1)
+                self.assertEqual(len(worker_handles), 1)
+            if prepared:
+                self.assertEqual(len(launches), 1)
+                self.assertEqual(launches[0][1], 1.0)
+                self.assertEqual(calls, [{"operation": "lookup", "identifier": "synthetic-1"}])
+                self.assertEqual(len(tokens), 1)
+                self.assertEqual(len(worker_handles), 1)
+                self.assertEqual(len(guardians), 1)
+            if not guardians:
+                self.assertEqual(launches, [])
+                self.assertEqual(tokens, [])
+                self.assertEqual(calls, [])
+                self.assertEqual({entry.name for entry in runtime_parent.iterdir()}, runtime_entries_before)
+            for handle in worker_handles:
+                self.assertEqual(kernel.WaitForSingleObject(handle, 5000), 0)
+            for guardian in guardians:
+                self.assertEqual(guardian.process.returncode, 0)
+                self.assertFalse(guardian.profile.parent.exists(), "guardian left the exact LPAC profile")
+                self.assertFalse(guardian.runtime.exists(), "guardian left the exact copied runtime")
+            self.assertEqual(sentinel.read_bytes(), b"synthetic-only")
+            print(
+                "signed-worker-wall-phase: "
+                + json.dumps(
+                    {
+                        "prepared": prepared,
+                        "phase": "lower-launch-entered" if launches else "before-lower-launch",
+                        "launches": len(launches),
+                        "tokens": len(tokens),
+                        "brokerCalls": len(calls),
+                        "guardians": len(guardians),
+                    },
+                    sort_keys=True,
+                ),
+                flush=True,
+            )
+        finally:
+            for handle in worker_handles:
+                kernel.CloseHandle(handle)
+            if sentinel.exists():
+                sentinel.unlink()
+
     @unittest.skipUnless(os.name == "nt", "Windows x64 LPAC qualification")
     def test_signed_product_worker_enforces_one_second_wall_limit(self) -> None:
-        self._prove_signed_worker_resource_exhaustion(memory=False)
+        self._prove_signed_worker_one_second_wall_limit(prepared=False)
+
+    @unittest.skipUnless(os.name == "nt", "Windows x64 LPAC qualification")
+    def test_prepared_signed_product_worker_enforces_one_second_running_limit(self) -> None:
+        self._prove_signed_worker_one_second_wall_limit(prepared=True)
 
     @unittest.skipUnless(os.name == "nt", "Windows x64 LPAC qualification")
     def test_signed_product_worker_enforces_committed_memory_limit(self) -> None:

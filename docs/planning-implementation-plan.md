@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 788d0c65da94e3e60a1eb8b71f6859fb15fc7e82e821911a10c060e46d32d23e
+source_sha256: c9e0f14c06aebbc9c9b2a4fc6bfac4814aa2138b0b1d48bb159f2025a5d6f130
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -5698,6 +5698,33 @@ Original tasks and approvals remain unchanged.
 **Current immutable submission awaiting review:** None
 
 **Current latest-review projection:** `approved` by agent:/root/security_resolution_review at `2026-10-15T06:35:25+00:00`
+
+**Latest notes:** -
+
+**Currently open findings:** -
+
+### W2.C32.T01 — Implement plugin isolation, configuration, and secret access controls
+
+**Status:** `IN_PROGRESS`. **Original task:** `CAP-04.S05.T02`. **Latest review:** `-`.
+
+**Reproduction:** At clean candidate 8392e43397e9aa28301cdf5689d653389fc1c561 the unchanged original signed-worker one-second method fails its mandatory broker-before-timeout assumption. Retained actual LPAC aggregate receipt20f242f3654da413f2e4efcbff4e9571cd2767c235cc1aa3a049649761128d46 and rawb9a7cc6b9a1fb42529336c6e13d2dd5560e5ba0378645938edc3c1e0f4b4e1d1 preserve that FAIL and abnormal owned cleanup. Bounded observation-only diagnostic artifacts/tmp/W2.lpac-one-second-diagnostic-01.f01/receipt.json SHA256a1d90a16594dcf75fb0d594aa9b05ffb3511e339987d153452a4a2a16e52ca42 observes exact lpac-worker-timeout after3.1842202s, no broker or worker handles, one guardian exit0 and exact resources removed, normal owned EMPTY0 and unchanged source/control inputs. It is nonqualifying and does not prove running-loop termination. The production total clock correctly includes trusted verification/copy/seal/ACL preparation; reaching malicious code before one second is not guaranteed. Original sourcec1634f6cd3b8cdfae7ab3c0e8120e8f9c18c1bb005cc66a8fc582bc409967198 is byte-identical to approved5a76725c.
+
+**Inherited criteria:**
+
+- A malicious test connector cannot read unrelated secrets or project files; network and export attempts outside manifest permissions are blocked and audited.
+- Automated tests cover the expected path and at least one material failure or boundary condition.
+- Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.
+
+**Bounded changed paths:**
+
+- tests/connectors/test_plugin_lpac_boundary.py
+#### Review history — W2.C32.T01
+
+**Review mode:** `append-only v1` / 0 completed round(s)
+
+**Current immutable submission awaiting review:** None
+
+**Current latest-review projection:** `-` by - at `-`
 
 **Latest notes:** -
 
