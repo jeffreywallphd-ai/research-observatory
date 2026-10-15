@@ -1,0 +1,203 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "independent-finite-model-transport-actual-preintegration-disposition",
+  "reviewer": "agent:/root/storage_profile_review",
+  "reviewedAt": "2026-10-15T03:02:29.017580+00:00",
+  "result": "approved",
+  "dispositionScope": "Bounded model-registry generated-client test transport source and composed evidence only",
+  "originTaskId": "CAP-07.S01.T02",
+  "originWave": "W1",
+  "qualificationWave": "W2",
+  "baseCommit": "8e0b25770458f85bb85816b5d9e8fecf6aa1a892",
+  "candidateCommit": "4b407b084c3314bfa05b85750585907057996d83",
+  "reviewedDeliveryCommit": "2d7c103bee7f9fedf5d91aefe930f793910dbb8a",
+  "committedEvidence": {
+    "path": "artifacts/evidence/W2.model-generated-client-transport-01.qualification.json",
+    "sha256": "0acfe6649d762710344dfff0d4982f83f4a207a0def384c8131409d8f06e1256"
+  },
+  "authority": {
+    "path": "artifacts/evidence/W2.completion-corrections-batch-02.decision-01.json",
+    "sha256": "738a9ed22b4da46a88c47c64b07607bbf1b27839e3bf657e7c7712763d76e9c2",
+    "scope": "SERVICE-TRANSPORT-CANCEL"
+  },
+  "sourceBinding": {
+    "target": "tests/service/test_model_registry_service.py",
+    "originalSHA256": "e7cffa3c48cf629ebd4f5fd385a239cdf1388042a8cb54ac430cc8464c2152a6",
+    "actualSourceSHA256": "b085711904270648073e4f577e3fc6d3ccac1466f86c5142278cfbe9cd72e1ea",
+    "sourceCommitHasOnlyTarget": true,
+    "publicEvidenceDeliveryDirectChildHasOnlyEvidenceFile": true,
+    "publicWorkingAndGitEvidenceBytesExact": true,
+    "historicalW1TaskAndApprovalHistoryPreserved": true,
+    "newTaskOrCampaignInvented": false
+  },
+  "reusedIndependentReadiness": [
+    {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/model-generated-client-transport-02/independent-single-build-result-source-readiness-03.json",
+      "sha256": "63db359be20b9cb82510018d277fef0629b5639dc224ef8c85c55dd93b146fd6"
+    },
+    {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/model-generated-client-transport-02/independent-postinstall-single-result-consumer-readiness-04.json",
+      "sha256": "b1a562e4cb5437d1cb44c791dc36ed6b21fc467f3dee9eebafbd05b9d92370dd"
+    },
+    {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/model-generated-client-transport-02/independent-remaining-quality-source-readiness-05.json",
+      "sha256": "4f00839571fc47955a83668d361b04244966c5aea6108581cda91868ddf91672"
+    }
+  ],
+  "executionReceipts": [
+    {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/model-generated-client-transport-02/focused-04/receipt.json",
+      "sha256": "726cf1f5c20d7911946b06dce24988b4d53cf73f2ddf7d7f14db002507610a11"
+    },
+    {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/model-generated-client-transport-02/focused-05/receipt.json",
+      "sha256": "20a009f6129a534aad5ef2249cb25c93c2aaf40e7faec873c65e9e6c5c5fb103"
+    }
+  ],
+  "actualQualifiedChecks": [
+    {
+      "id": "generated-client-loopback-regression",
+      "raw": {
+        "path": "artifacts/tmp/W2.remaining-corrections-batch-01/model-generated-client-transport-02/focused-04/generated-client-loopback-regression.raw.log",
+        "sha256": "4e862538751e617a9a49840c3cca13fdf3e9d3cebbce911234fc1139de47eff4"
+      },
+      "exitCode": 0,
+      "seconds": 3.5278496999962954,
+      "ownedProcesses": 7,
+      "normalOwnedEmptyActive0": true
+    },
+    {
+      "id": "affected-format",
+      "raw": {
+        "path": "artifacts/tmp/W2.remaining-corrections-batch-01/model-generated-client-transport-02/focused-05/affected-format.raw.log",
+        "sha256": "fd2299c9f1c6dc869070883e281051bfe93aacf66c1a3b0069f45b4aa410ca50"
+      },
+      "exitCode": 0,
+      "seconds": 0.16316029999870807,
+      "ownedProcesses": 4,
+      "normalOwnedEmptyActive0": true
+    },
+    {
+      "id": "affected-lint",
+      "raw": {
+        "path": "artifacts/tmp/W2.remaining-corrections-batch-01/model-generated-client-transport-02/focused-05/affected-lint.raw.log",
+        "sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18"
+      },
+      "exitCode": 0,
+      "seconds": 0.19211590000486467,
+      "ownedProcesses": 4,
+      "normalOwnedEmptyActive0": true
+    },
+    {
+      "id": "affected-types",
+      "raw": {
+        "path": "artifacts/tmp/W2.remaining-corrections-batch-01/model-generated-client-transport-02/focused-05/affected-types.raw.log",
+        "sha256": "c642e5b33b5e7d157e7b2362ef94a292d50ab8abbba717375ca1704ad53de820"
+      },
+      "exitCode": 0,
+      "seconds": 18.37182460000622,
+      "ownedProcesses": 3,
+      "normalOwnedEmptyActive0": true
+    }
+  ],
+  "componentComposition": {
+    "originalNamedMethod": "tests.service.test_model_registry_service.ModelCatalogServiceTests.test_generated_client_crosses_real_loopback_authentication_and_protected_storage",
+    "actualOriginalMethodCount": 1,
+    "originalUnittestSeconds": 1.633,
+    "actualOriginalComponentQualifiedBy": {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/model-generated-client-transport-02/independent-remaining-quality-source-readiness-05.json",
+      "sha256": "4f00839571fc47955a83668d361b04244966c5aea6108581cda91868ddf91672"
+    },
+    "passingMethodReplayed": false,
+    "qualityOnlyContinuationCommands": 3,
+    "qualityConfiguredSources": 734,
+    "actualMachineRows": 4,
+    "actualNormalOwnedJobProcessCounts": [
+      7,
+      4,
+      4,
+      3
+    ],
+    "allNormalOwnedDrainsEmptyActive0": true,
+    "prior04AggregateStatusRemains": "FAIL",
+    "priorReportingFailureDisposition": "Actual legal CoreINFO lines separate original exact header from standaloneok; actualRan1/OK/root0 and original normaldrain plus finalstable qualify only the original component. Remaining05 executes only unstartedquality; prior04FAIL is not rewritten.",
+    "allCurrentInputAndNodeResolutionMembershipClosuresStable": true,
+    "matchingCommon04And05HeldInputPins": 19640,
+    "differingCommonPins": 0,
+    "childEnvironmentHashesEqual": true
+  },
+  "assessments": [
+    {
+      "area": "source and original authority",
+      "result": "satisfied",
+      "assessment": "Exact63db judgment preserves all49 original assertion ASTs across the one testfile and complete unchanged auth/persistence/HTTP Node tail. Supported localVite uses configFile/envDir/writefalse and exactlyone normalized result/closedESMchunk withzeroexternal/dynamicimports. Zero/multiple arrays stilldeny; original30/10second clocks and no-model fixture limits remain."
+    },
+    {
+      "area": "actual original regression",
+      "result": "satisfied",
+      "assessment": "Genuine4f actual component qualifies the one canonical __file__/REPO original loopback/authentication/protectedSQLCipher method at4b. Header/log/standaloneok/Ran1/OK/root0/normal7processEMPTY0 and finally input+Node stability are authenticated.49 source assertion sites are preserved, not all49claimed freshexecuted."
+    },
+    {
+      "area": "remaining source quality",
+      "result": "satisfied",
+      "assessment": "Actual05runs only unaffected-command Ruffformat/lint and734source mypy, all0 withnormal4/4/3processEMPTY0 and finalstable. Current type context uses unchanged734scope/options and fresh derived cache. No additional originalmethod/model run, checker suppression or new source edit."
+    },
+    {
+      "area": "custody and portable evidence",
+      "result": "satisfied",
+      "assessment": "Actual same4b candidate/source/runtime controls and selected byte/maps held through each normalowneddrain; common map values match. Public0acf correctly composes priorqualifiedmethod and freshquality, binds immutable receipts/readiness and discloses originalFAIL. Metadata-only2d7child changes no source/runtime and exact portable publicbytesmatch Git."
+    }
+  ],
+  "findings": [],
+  "preservedAdverse": [
+    {
+      "path": "artifacts/tmp/W2.remaining-corrections-batch-01/model-generated-client-transport-02/focused-04/receipt.json",
+      "sha256": "726cf1f5c20d7911946b06dce24988b4d53cf73f2ddf7d7f14db002507610a11"
+    },
+    {
+      "path": "artifacts/tmp/W2.final-wave-exit-never-started29-01.f01/commands/15.result.json",
+      "sha256": "62dc1c5bb4bf8d0b3e2edc6421c2475022e36aaa280c647a5fe5d24215966f2f"
+    }
+  ],
+  "verificationSelection": {
+    "selectedCommandIds": [
+      "service:unit",
+      "foundation:quality"
+    ],
+    "riskAnalysis": "Changed testtransport/Vite resolution/closedchunk and originalreal loopbackHTTP/authentication/protectedSQLCipher readback, plus affectedformat/lint/configured734types. Reuse priorindependent source/actualcomponent judgment; complete onlyunexecutedquality. No fullservice/Wave/historyaudit replay.",
+    "deferred": [
+      "ProtectedSQLCipher keys are original in-memoryfixtures; no newactualWindowsDPAPI, NativeIPC/GUI, realmodel/provider credential, foreignprincipal or fullprofile proof.",
+      "Gateway/currentNative3/current14/signedCore-worker-package/security/principal/restart/anchor/scale/storage/performance andfinalWave gates remain separate."
+    ]
+  },
+  "independence": {
+    "sourceAndConsumersAuthoredByReviewer": false,
+    "reviewerAuthoredOnlyIndependentReadinessAndDisposition": true,
+    "testsOrModelsExecutedByReviewer": false,
+    "installedRuntimeRehashedByReviewer": false,
+    "wholeWaveOrUnchangedSourceAuditRepeated": false
+  },
+  "limits": [
+    "Qualifies only bounded one-file model transport and four actual evidence rows. Original CAP-07.S01.T02 stays DONE with immutable W1approval/history; no taskctl mutation or retrospective newDONE claim.",
+    "Actual loopbackHTTP/authentication and SQLCipher protectedreadback use original synthetic/in-memory fixture keys. No WindowsDPAPI, NativeGUI/IPC, liveprovider/model credential or modelinference/8or16GiBworkload proof is inferred.",
+    "Original04aggregate726FAIL and final29service failure remain unchanged; successful method composition does not turn those historical aggregates intoPASS.",
+    "No fullservice/profile/Wave/exit/release approval. Shared dependency integration still requires pending global signedCore/Native/package/security evidence and other required Wave gates."
+  ],
+  "integrationBoundary": {
+    "boundedPreintegrationDispositionComplete": true,
+    "localMainAdvancedByThisReview": false,
+    "automaticLocalMainIntegrationApproved": false,
+    "globalIntegrationPrerequisitesWaived": false,
+    "requiresParentControlledIntegrationAfterGlobalPrerequisites": true
+  },
+  "claims": {
+    "boundedSourceAndEvidenceQualified": true,
+    "historicalTaskReopenedOrRelabeled": false,
+    "newTaskOrCampaignClaimed": false,
+    "reviewerTrackedWrites": false,
+    "reviewerTestsOrRuntimeScans": false,
+    "fullProfilePassClaimed": false,
+    "waveComplete": false,
+    "releaseApproved": false
+  }
+}
