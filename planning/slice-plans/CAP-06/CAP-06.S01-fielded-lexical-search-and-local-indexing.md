@@ -211,3 +211,25 @@ Execution position is 1 within proposed CAP-06 W3 order: CAP-06.S01, CAP-06.S02,
 ## Canonical proposed-publication reconciliation
 
 Actual W2/G2 initial completion is recorded at1cc8131d8b74cf6c536d48ce4badc25933981bbb; the current planning predecessor and committed post-exit roadmap is2e2f1a9d042c3dd8db3f8f31b648a36ad004c505. See artifacts/evidence/W2.initial-exit-recording-receipt-20261016-01.json and the independent Wave/S06/CP10 records. Historical3541 product,1b377 build/reference/Native,fc694 full90 and ownerf86 identities remain distinct. Initial1000 functional commit is qualified, but100k publication/fullmanifest/replay/reopen and continuous performance remain UNQUALIFIED; no1000 productcap or W3metadata/vector100k import-throughput inference. All failed/UNKNOWN/UNTESTED evidence, parser-only2.5333542s acceptance, source-search median7s/all24raws, strictClippyFAIL,409UNKNOWN, security expiry and platform/installer gaps remain. Owner933b moves optional cosmetics and optimization/performance intake to newW10; functional/security qualification residuals remain separately trackedW9, and larger-computing product workW5. Before W3 approval, suggested soft median timing overage strictly<7s may be accepted with W10 debt; completed comparable trials/allraws retained, failed/timeouts and hard functional/security/resource/cancellation bounds unchanged. Hosted university/cloud labels areW11/W12. All48IDs/16slices/924hours including28once, ordered proof ownership, policy03 metrics/token semantics and serial admission are retained. ADR0056–58/reference1.10 remain Proposed, active1.9 unchanged and W3approvalPENDING; no implementation is authorized.
+
+## W3 authority recording — 2026-10-16
+
+The owner approved the complete reviewed W3 proposal at
+`45216934b81c4a437b3707df0f9e7f79a825e271` and directed implementation; see
+`artifacts/evidence/W3.owner-planning-approval-20261016-01.md`.
+ADR-0056, ADR-0057 and ADR-0058 are now Accepted. The exact reviewed experience
+is published as RO-UI-ACADEMIC-MINIMAL-1.10 at
+`3b47dfd4f332805e66c58542d3decd4e56c7f45e`, following its immutable human
+design approval record. This is authority recording and material-plan binding,
+with no change to selected decisions, task IDs, dependencies, criteria, proof
+ownership, estimates or allocations. Earlier proposed/private wording remains
+the original planning history. This paragraph applies only to the W3 contribution;
+inherited decisions and future Waves retain their own authority.
+
+The ordinary complete-Wave approval below/beside this plan binds the final
+acceptance snapshot once. Taskctl readiness and dependency-eligible claims remain
+mandatory; no actual model fit, quality, annotation, runtime, product proof or
+release approval is supplied by planning acceptance. Minor nonfunctional styling
+and eligible suggested-target median timing optimization go to W10 under the
+latest owner direction; all hard functional/security/rights/resource/cancellation
+limits and every raw failed or unknown result remain preserved.
