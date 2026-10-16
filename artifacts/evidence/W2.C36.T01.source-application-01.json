@@ -1,0 +1,27 @@
+{
+  "documentType": "actual-normal-claim-exact-C36-source-application",
+  "recordedAtUtc": "2026-10-16T07:02:42.631046+00:00",
+  "taskId": "W2.C36.T01",
+  "taskBase": "8530b65135d03194c1576745b11f327f2d3c4d0c",
+  "target": "apps/desktop/src/app.css",
+  "previousSHA256": "3db0b1572bcbefd31f33b56696fb6e072bdcf124abcdcb75208e786705f64de6",
+  "appliedSHA256": "894ee9cdb254eff8f126978dbb6f0ea77f0c8f8aebfc53e23b799a85c858428f",
+  "proposal": {
+    "path": "artifacts/tmp/W2.C36.T01.origin-preparation-01/app.proposed-02.css",
+    "sha256": "894ee9cdb254eff8f126978dbb6f0ea77f0c8f8aebfc53e23b799a85c858428f"
+  },
+  "sourceReadiness": {
+    "path": "artifacts/tmp/W2.C36.T01.origin-preparation-01/independent-source-readiness-02.json",
+    "sha256": "130fac5ce521545ab967dc697d2d2283087298dc5eaff8360b3015c62c3d42de"
+  },
+  "actualClaimBacklogSHA256": "055a8b4a7ae5a186b4cd7ecb45b2f9fd0c44d097ce71675a3d33e0f65d611d35",
+  "actualClaimCompletion": "artifacts/tmp/W2.C36.T01.normal-correct-01/completion.json",
+  "claimOwner": "codex-w2-implementation",
+  "claimLease": {
+    "claimed_by": "codex-w2-implementation",
+    "claimed_at": "2026-10-16T06:42:58+00:00",
+    "expires_at": "2026-10-16T14:42:58+00:00"
+  },
+  "productEditedAfterNormalClaim": true,
+  "qualificationClaimed": false
+}

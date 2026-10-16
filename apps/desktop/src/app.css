@@ -221,6 +221,7 @@ main > .workflow-context { margin-block: 0 var(--space-5); }
 .protected-document-viewer .document-outline { min-width: 0; }
 .document-outline .ro-panel > div { grid-template-columns: minmax(0, 1fr); }
 .protected-document-viewer .document-outline select, .protected-document-viewer .source-anchor-list > li { min-width: 0; }
+.protected-document-viewer .document-inspector > .ro-stack { grid-template-columns: minmax(0, 1fr); }
 .viewer-paper { min-width: 0; overflow-x: auto; padding: var(--space-5); }
 .viewer-page-surface { position: relative; width: fit-content; max-width: 100%; }
 .viewer-page-surface > canvas { display: block; max-width: 100%; height: auto; background: var(--surface-1); }
@@ -230,7 +231,7 @@ main > .workflow-context { margin-block: 0 var(--space-5); }
 .viewer-anchor-marker text { fill: var(--text-strong); stroke: var(--surface-1); stroke-width: .15; paint-order: stroke; font-size: 3px; font-weight: 700; }
 .viewer-anchor-context { border-block-start: 1px solid var(--border-default); padding-block-start: var(--space-3); }
 .viewer-thumbnails { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-2); margin-block-end: var(--space-4); }
-.viewer-thumbnails button { min-width: 0; max-width: 100%; display: grid; place-items: center; gap: var(--space-1); padding: var(--space-2); }
+.viewer-thumbnails button { min-width: 0; max-width: 100%; display: grid; place-items: center; gap: var(--space-1); padding-block: var(--space-2); }
 .viewer-thumbnails canvas { max-width: 100%; height: auto; }
 @media print { .protected-document-viewer { display: none !important; } }
 @media (max-width: 75rem) { .source-anchor-layout { grid-template-columns: 1fr; } }

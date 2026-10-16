@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: b94f8e18f2b992dc5057e711eaffe64fb842e8b6dd125d35492efc4926754a8b
+source_sha256: 19bc1a9d2693338cf59dacb32e5f9a391ed2e75793ee6f71dec6135c60b70511
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -5952,6 +5952,33 @@ Original tasks and approvals remain unchanged.
 **Current latest-review projection:** `approved` by agent:/root/security_resolution_review at `2026-10-16T03:02:10+00:00`
 
 **Latest notes:** Approve frozen W2.C35.T01/R01 only at3541 after exact source, actual affected-component and finite authority review. Creation-only900 preserves every missing/v1/default/Python-name legacy120 authority and the public/scientific contracts. Actual190 focused cases, selected quality/API, currentCore/five checks, bounded pure-parser continuity, selected100k review functional composition and one original1000 commit meet the expressly amended initial criteria. The original100k commit is UNQUALIFIED and old canonical/latency failures remain. This is not a full-profile, continuous100k benchmark, packaged GUI, Wave or release approval. Actual six-authority publication first occurs atddb9 after proof/freeze; no prior owner inspection or backdated introduction is claimed.
+
+**Currently open findings:** -
+
+### W2.C36.T01 — Build secure local PDF/page and structured-text viewer
+
+**Status:** `IN_PROGRESS`. **Original task:** `CAP-05.S04.T01`. **Latest review:** `-`.
+
+**Reproduction:** The actual unchanged Current14 f09 run at 5a6497910e1146d1778dbebc23332bc961ae7f3b failed 18 Reader control-token checks: each of three shared thumbnail Buttons in all six theme/viewport cases had 8px inline padding instead of the approved shared 16px. The exact source is apps/desktop/src/app.css .viewer-thumbnails button padding shorthand, introduced by CAP-05.S04.T01. Independently authenticated failure and source/authority diagnoses are preserved in W2.Current14-f09-complete-layout-findings-diagnosis-01.json (9a232320559bba33ea4c5896c4bfb4e5b38546e0c0fae52a794847a814c3125d) and W2.Current14-f09-product-fixture-layout-diagnosis-01.json (80020ec962de62085edd748737c69bd19dfb8827875a11f8e5e77ec5a956fcdc), both under artifacts/tmp. The failed aggregate and all other findings remain failures; this correction makes no earlier PASS claim. The subsequent independently source-reviewed nonqualifying correct-root diagnostic at the same 5a649 candidate retained all 18 padding violations and demonstrated real Reader-only overflow at 1280px in both themes: document1301/client1280, with ten crossing descendants belonging to the rights-aware actions stack. Its actual child receipt is artifacts/tmp/W2.Current14-f09-before-css-diagnostic-01/actual-01/receipt.json (c140d8acaf39f5192d8c7b7645fa8adc8827ec479eac57776da2aadd892a6e55); owned receipt ac129f1481d5d8417a537511db400a60acf166201be9f72c9d637a6cebed66cd records natural EMPTY0 and unchanged source/runtime/data. The corrected mount removed all 24 wrong-main shell relations. This diagnostic retains its missing78 inventory errors and is not qualification PASS.
+
+**Inherited criteria:**
+
+- Viewer opens local encrypted content through controlled streams, supports large documents without loading all pages, and never exposes direct file paths to untrusted content.
+- Automated tests cover the expected path and at least one material failure or boundary condition.
+- Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.
+
+**Bounded changed paths:**
+
+- apps/desktop/src/app.css
+#### Review history — W2.C36.T01
+
+**Review mode:** `append-only v1` / 0 completed round(s)
+
+**Current immutable submission awaiting review:** None
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
 
 **Currently open findings:** -
 

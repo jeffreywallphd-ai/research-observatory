@@ -1,0 +1,147 @@
+{
+  "documentType": "finite-C36-current-approved-reference-restoration-verification-method-proposal",
+  "status": "PROPOSED_NOT_SELECTED",
+  "author": "agent:/root/security_resolution_review",
+  "preparedAtUtc": "2026-10-16T06:55:59.971386+00:00",
+  "taskId": "W2.C36.T01",
+  "originTaskId": "CAP-05.S04.T01",
+  "waveId": "W2",
+  "ownerAuthority": {
+    "path": "artifacts/evidence/W2.completion-preauthorization-20261014-01.md",
+    "sha256": "34e2e3c175dc9309080182e0673f776055b1cc3ba78639475c09ec54408d7d5f"
+  },
+  "specification": {
+    "path": "artifacts/evidence/W2.C36.T01.spec.json",
+    "sha256": "4daaaf650dbb4f67bd9b0aaa934a36c5c0787cd2903d34edb468d81ac5e0e3d5"
+  },
+  "specIntroductionCommit": "8530b65135d03194c1576745b11f327f2d3c4d0c",
+  "proposedSource": {
+    "path": "artifacts/tmp/W2.C36.T01.origin-preparation-01/app.proposed-02.css",
+    "sha256": "894ee9cdb254eff8f126978dbb6f0ea77f0c8f8aebfc53e23b799a85c858428f"
+  },
+  "sourceReadiness": {
+    "path": "artifacts/tmp/W2.C36.T01.origin-preparation-01/independent-source-readiness-02.json",
+    "sha256": "130fac5ce521545ab967dc697d2d2283087298dc5eaff8360b3015c62c3d42de"
+  },
+  "originalTaskSnapshot": {
+    "path": "artifacts/tmp/W2.C36.T01.origin-preparation-01/origin-snapshot.json",
+    "sha256": "cdf70e7e478167016852706f94f9429413d17d208c1dfe186df6f7256814ffb4"
+  },
+  "originalTaskCanonicalSHA256": "26e4a67ef9ed4f5fe3c9e1e0f5c3227917ae16974000520ab8ce4314cb25c3fa",
+  "inspectedHead": "8530b65135d03194c1576745b11f327f2d3c4d0c",
+  "currentFacts": {
+    "originReviewGate": "agent-review",
+    "originExperienceChange": null,
+    "originAmendmentId": null,
+    "originClaimBase": "1bd33a6ba180487b239e3315e302b6db6aaea123",
+    "originReviewedCandidate": "91fe7b323d2cddb2cd7de287f05b961af3472bc8",
+    "originalWaveApprovedPacket": "c85a59f3a293f8e3f2eaf6454682c9a14b1efa55",
+    "referenceChangedPathsBetweenOriginalWavePacketAndInspectedHead": 52,
+    "referenceChangedPathsBetweenOriginClaimBaseAndInspectedHead": 0,
+    "referenceChangedPathsBetweenOriginReviewedCandidateAndInspectedHead": 0,
+    "approvalPayloadSHA256AtOriginClaimBaseOriginCandidateAndInspectedHead": "2d7b07c508ebcae2ed7f65a1a4988c3a34323aaf61ce538672125012a0c5f8ce",
+    "current19ApprovalIntroductionPrecedesOriginalClaimBase": true,
+    "meaning": "The actual original implementation was independently reviewed with the same current1.9 reference, after its human approval. The installed ordinary-origin alternative nevertheless compares to the older Wave packet reference; it cannot authenticate this origin lane without a finite method choice. No C36 product result is established here."
+  },
+  "currentReference": {
+    "referenceId": "RO-UI-ACADEMIC-MINIMAL-1.9",
+    "version": "1.9",
+    "packageSha256": "24b8d62356863980ae9a13db7d6a06b04b76c60e2f1920d2e888cadecfb24c4b",
+    "approvalCommit": "d4691f716f839f4aac5bb50563b56ac863b32685",
+    "approvedBy": "human:repository-owner",
+    "previousReferenceId": "RO-UI-ACADEMIC-MINIMAL-1.8",
+    "approvalPayload": {
+      "path": "design/ui-reference/APPROVAL.yaml",
+      "sha256": "2d7b07c508ebcae2ed7f65a1a4988c3a34323aaf61ce538672125012a0c5f8ce"
+    },
+    "humanDesignApprovalRecord": {
+      "path": "planning/reference-approvals/RO-UI-ACADEMIC-MINIMAL-1.9.json",
+      "sha256": "b7882588a15a7a178cb8ebac65fda174d26969dca5b08c6559feb3b0d258404e"
+    }
+  },
+  "sourceRouteInspection": {
+    "uiGate": {
+      "path": "tools/ui_change_gate.py",
+      "sha256": "54e99373061053c61acd0ad1e39560be1833777293dffc411ae810e35dfe58c9"
+    },
+    "taskctl": {
+      "path": "tools/taskctl.py",
+      "sha256": "9337fe41e90fd4b4d9bf39c32ca299ccca1c26f6f6b6a1d0b426a8ac062bc7e3"
+    },
+    "procedure": {
+      "path": "docs/automation/design-first-ui-changes.md",
+      "sha256": "161e0bf110b725da5213a59300c4b5d4c59c80ee18c35eba5b8c2940f70652c3"
+    },
+    "architectureDecision": {
+      "path": "docs/adr/ADR-0003-protect-design-first-ui-change-controls-and-immutable-lineage.md",
+      "sha256": "07187c865c4ce9ace1041d04bc71e14508788d822ff1cc7d3a96f05cba60b315"
+    },
+    "unsupportedPredicate": "linked_conformance_origin_errors2109-2110 rejects any design/ui-reference diff from original Wave packet. linked_correction_authority1971-1980 has no successful alternative for this agent-review/no-experience/no-amendment origin.",
+    "procedureBoundary": "Linked restoration documentation282-344 requires v1 defect-restoration, exact current task/admission and independent current product captures;339-340 specifies the correction-base current reference. An unsupported installed origin fails closed. This proposal does not call that existing lane supported.",
+    "ordinarySubmit": "command_submit10624 -> prepare_task_evidence10461 -> exact_commit_errors5504 -> committed_manifest_errors5413 -> validate_task_evidence1956. It checks exact committed candidate, declared/history scope, criterion mapping, successful actual checks and five-field correctiveIntegration; it does not execute ui_change_gate. Only exact historical T03 recovery runs that command automatically. Lack of autoexecution does not discharge UI authority/conformance obligations.",
+    "deliveryAdmission": "corrective_path_admitted1324-1339 already admits exact artifacts/evidence/ui-change/W2.C36.T01.json plus task-owned artifacts/evidence/W2.C36.T01.*. No path/policy/schema expansion is proposed."
+  },
+  "proposedFiniteSelection": {
+    "scope": "Only W2.C36.T01 and its CSS contribution to the current W2 affected-evidence composition; only apps/desktop/src/app.css two exact restorative edits. No other task/reference/implementation or global enforcement change.",
+    "meaning": "Use one task-owned exact current-reference authority/conformance disposition in place of claiming a successful unsupported ordinary-origin UI-gate verdict. Authenticate the original human Wave/task/slice and independent origin review, then the separately human-approved current1.9 reference already identical at the original claim/review and correction base; preserve all current restoration, source, identity, captures and visual obligations.",
+    "onlyUnavailableMachineAuthorityCondition": "Replace the original-Wave-packet reference-equality selector for this finite task with exact unchanged1.9 package/approval identity at the original reviewed candidate and C36 full base/candidate, including actual human approval ancestry. This is explicitly a task-owned verification-method exception, not a claim that the installed function passed.",
+    "canonicalUiChangeGatePassClaimed": false,
+    "allOtherProofObligationsPreserved": [
+      "Normal taskctl linked correction admission/owner/branch/full base/spec/origin digest/paused predecessor/unchanged inherited task criteria and all prior corrective history; exact regular Git UI blobs and every changed/intermediate path remain bound.",
+      "Existing schema1.0 defect-restoration UI contract at artifacts/evidence/ui-change/W2.C36.T01.json; exact implementation identity and changedFiles, current1.9 reference/approval/package, defect and expected approved behavior. Do not add experience_change/review_gate/amendment fields to the correction.",
+      "Actual fresh affected product205/reference renderer build and immutable generated fixture with exact source/candidate/runtime/input identity and natural owned cleanup; original producer_snapshot19 admission and existing authorized Current14 predicate/method contracts remain required.",
+      "One original full90-case/180-capture Current14 run after correction, retaining all original geometry/state/overflow/semantic/control/focus/keyboard/renderer/request/denial criteria. Its12 Reader/Quality cases are also the affected after-observations; no duplicate12 run is required. All failures/missing cases remain failures.",
+      "Current original-format task-owned product/reference capture bundle with full PNG/metadata/producer/Git/source/reference identities; genuine independent visual disposition and existing-format independent-ui-restoration classification bound to the actual candidate/base/origin digest and actual immutable introductions. No self-review or invented capture/reference/inspection identity.",
+      "Full changed-input provenance and no subsequent product/reference/producer-dependent edits after captures/classification, including add/revert history. If source changes or new findings appear, assess the actual changed risk; do not admit unknown failures.",
+      "Normal criterion-linked R01 evidence with only genuine successful commands in checks, exact verificationSelection rationale, five-field correctiveIntegration, frozen independent commit-bound task review, and all later affected S06/checkpoint/Wave/human-release obligations."
+    ],
+    "noSharedFrameworkWork": true,
+    "noMonkeypatchOrGateReturnSubstitution": true,
+    "noC18AuthorityBorrowed": true,
+    "noReferencePolicyPredicateCaptureThresholdOrProductScopeChange": true,
+    "unknownOrAdditionalGateFailureAccepted": false
+  },
+  "recordingPlan": [
+    "After genuine different finite scope review, root may select this exact necessary task-owned method under the already actual34e authority. Record exact proposal/readiness/decision bytes and actual introduction chronology in task-owned ordinary evidence; no new ECR/GRR/controller/schema or extra owner question.",
+    "Create/finalize the ordinary v1 UI contract and actual original-format classification/capture/visual records only from the real new candidate and completed proof. No placeholders represented as passing focusedEvidence.",
+    "Preserve any actual unsupported official ui_change_gate output/root1 outside qualifying checks and state canonicalUiChangeGatePassClaimed=false. At this preparation point no such command was run, so source-inferred ineligibility is not fabricated as an actual FAIL. Do not repeatedly run the known unsupported origin simply to rediscover it.",
+    "R01 records the selected finite method and current actual proof, with precise differences from the unmodified installed gate. Do not label a different command as a successful canonical ui_change_gate, do not fabricate check exit0, and do not hide a still-required actual product failure in an empty unverifiedItems list.",
+    "Normal taskctl submit/review and affected final composition consume only genuine completed evidence and independently reviewed task-owned selection. If ordinary scope/identity controls reject the proposed publication, preserve that actual rejection; do not mask it with source/framework edits or borrow historical recovery."
+  ],
+  "alternatives": [
+    {
+      "choice": "Try existing installed ordinary-origin route unchanged",
+      "assessment": "Structurally ineligible because the reference changed52 paths since c85; no full-proof result or source change can make the original packet reference1.7 equal current approved1.9. Do not manufacture an amendment or human-review task field."
+    },
+    {
+      "choice": "Use superseded1.7 or broaden C18 substitution grant",
+      "assessment": "Rejected: replaces current approved experience or borrows task-limited authority."
+    },
+    {
+      "choice": "Patch shared UI gate/framework or introduce another control task",
+      "assessment": "Not selected: unnecessary shared source/enforcement work for this finite actual current-reference restoration, contrary to the completion direction. Existing gate stays immutable."
+    },
+    {
+      "choice": "Use ordinary submit alone with no explicit finite method",
+      "assessment": "Rejected: technical non-execution of the UI gate cannot substitute for required UI authority/current conformance."
+    }
+  ],
+  "recommendation": "Select the finite task-owned method above only after genuine different scope disposition, then require the actual new product/reference/fullCurrent14 and independent classification/visual/task proof. There is no present UI/task/Wave PASS.",
+  "missingFutureFacts": {
+    "actualCorrectiveClaim": null,
+    "actualAppliedProductCandidate": null,
+    "actualNewRendererArtifacts": null,
+    "actualFullCurrent14": null,
+    "actualCaptureVisualClassification": null,
+    "actualIndependentScopeReadiness": null,
+    "actualRootMethodDecision": null,
+    "actualR01AndFormalReview": null
+  },
+  "adversePreservation": {
+    "f09FullMatrixStillFail": true,
+    "beforeCssDiagnosticStillNonqualifying": true,
+    "priorImmutableApprovalsAndAllFailuresUnmodified": true,
+    "C18ScopeRemainsItsExactOwnTwoSelectors": true
+  },
+  "reviewActions": "Static source/document/evidence reads, exact method-call inspection, finite named Git reference diffs and approval-ancestry checks, data-only canonical Wave approval lookup. No UI gate/taskctl/validator/product import, test/browser/build/runtime capture/scan, fixture access or canonical/HEAD/backlog/source writes. One new ignored proposal only."
+}

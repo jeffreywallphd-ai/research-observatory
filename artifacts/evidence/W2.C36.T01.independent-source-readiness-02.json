@@ -1,0 +1,112 @@
+{
+  "documentType": "independent-preapplication-C36-CSS-source-and-scope-readiness",
+  "reviewer": "agent:/root/security_resolution_review",
+  "sourceAuthor": "agent:/root",
+  "reviewedAtUtc": "2026-10-16T06:28:56.265686+00:00",
+  "result": "SOURCE_READY",
+  "blockingFindings": [],
+  "proposedTaskId": "W2.C36.T01",
+  "proposedSource": {
+    "path": "artifacts/tmp/W2.C36.T01.origin-preparation-01/app.proposed-02.css",
+    "sha256": "894ee9cdb254eff8f126978dbb6f0ea77f0c8f8aebfc53e23b799a85c858428f"
+  },
+  "predecessorSource": {
+    "path": "apps/desktop/src/app.css",
+    "sha256": "3db0b1572bcbefd31f33b56696fb6e072bdcf124abcdcb75208e786705f64de6"
+  },
+  "specification": {
+    "path": "artifacts/tmp/W2.C36.T01.origin-preparation-01/spec.draft-02.json",
+    "sha256": "4daaaf650dbb4f67bd9b0aaa934a36c5c0787cd2903d34edb468d81ac5e0e3d5"
+  },
+  "preparation": {
+    "path": "artifacts/tmp/W2.C36.T01.origin-preparation-01/batch-preparation-02.json",
+    "sha256": "52c110d3a5fc3dc0c1fbd97a33f2a983afaf3a4bb63bd01f3ea090d284c369ed"
+  },
+  "patch": {
+    "path": "artifacts/tmp/W2.C36.T01.origin-preparation-01/app.proposed-02.patch",
+    "sha256": "7ecbaa58a0c5d0080f69305246e813ac9e629fc8ed94d6ef4a8134f1b9500f61"
+  },
+  "origin": {
+    "taskId": "CAP-05.S04.T01",
+    "commit": "5a6497910e1146d1778dbebc23332bc961ae7f3b",
+    "sha256": "26e4a67ef9ed4f5fe3c9e1e0f5c3227917ae16974000520ab8ce4314cb25c3fa"
+  },
+  "originSnapshot": {
+    "path": "artifacts/tmp/W2.C36.T01.origin-preparation-01/origin-snapshot.json",
+    "sha256": "cdf70e7e478167016852706f94f9429413d17d208c1dfe186df6f7256814ffb4"
+  },
+  "priorScopePreflight": {
+    "path": "artifacts/tmp/W2.C36.T01.origin-preparation-01/independent-spec-preflight-01.json",
+    "sha256": "93c067b89a0a99a9dc743c67bd65f605d4164b2838b6fe20eab3d8347bade534"
+  },
+  "actualBeforeDiagnosticDisposition": {
+    "path": "artifacts/tmp/W2.Current14-before-css-independent-actual-disposition-01.json",
+    "sha256": "556cb67e3383be1c024dc078b8a8ab637d2a4d60153578bed01bab5097d637b7"
+  },
+  "actualOverflowSourceAttribution": {
+    "path": "artifacts/tmp/W2.Current14-before-css-product-overflow-cause-01.json",
+    "sha256": "2018a2da053d905866ac7a2b6f18d87748383fe60f99bd436cea03c44a9e5a61"
+  },
+  "sourceJudgment": {
+    "wholeByteInverseExact": true,
+    "productChangedPaths": [
+      "apps/desktop/src/app.css"
+    ],
+    "twoExactChanges": [
+      {
+        "selector": ".viewer-thumbnails button",
+        "change": "padding: var(--space-2) becomes padding-block: var(--space-2).",
+        "meaning": "Keep block8; existing shared .ro-button padding0/inline16 is no longer overwritten on the inline axis. Radius10, target44, three-column thumbnails, canvas bounds, grid/gap and all state/handlers remain unchanged."
+      },
+      {
+        "selector": ".protected-document-viewer .document-inspector > .ro-stack",
+        "change": "Add grid-template-columns: minmax(0, 1fr).",
+        "meaning": "Constrain the direct actions stack to its allocated inspector width using the same explicit zero-minimum track pattern already present for the outline. It changes neither the parent responsive columns nor the action control labels, presence, permission/rights/confirmation/cancellation logic."
+      }
+    ],
+    "actualNecessity": "Actual correct-root observations retain18 ordinary thumbnail inline8 violations and Reader1280 both-theme document1301/client1280. The10 observed crossing descendants match the rights-actions stack shape; source confirms a direct ro-stack implicit auto grid track around a native select. Existing max-width100% is relative to that expanded track. The proposed minmax0 remedy addresses that demonstrated containment path without hiding overflow, shrinking text/targets, widening viewports or weakening checks. The detailed parent allocation remains a source/geometry reconstruction, not a retained parent DOM measurement.",
+    "logicAndAuthorityChanges": false,
+    "sharedStyleOrReferenceEdits": false,
+    "predicateOrThresholdChanges": false,
+    "singleFileScopeAndOriginUnchanged": true,
+    "specOnlyReproductionAndImpactAnalysisExtended": true,
+    "domainActionCodeAndAllOriginalAssertionsUnchanged": true
+  },
+  "authority": {
+    "ownerPreauthorization": {
+      "path": "artifacts/evidence/W2.completion-preauthorization-20261014-01.md",
+      "sha256": "34e2e3c175dc9309080182e0673f776055b1cc3ba78639475c09ec54408d7d5f"
+    },
+    "originalTask": "CAP-05.S04.T01",
+    "meaning": "Restoration of the original approved Reader responsive/shared-component contract, within its one exact CSS path and existing prospective necessary W2 completion authority. This does not introduce a new governed reference, grant release authority or supply missing outcomes. Rights-action code has no change; its rendered containment is an affected integration risk of this scoped CSS restoration.",
+    "procedure": "Use the existing normal linked correction route: quiescent clean committed boundary, publish exact six-field spec, normal corrective claim before application, actual evidence and independent commit-bound disposition. No new correction number beyond C36 or new owner campaign is required solely for the second same-file conforming restoration."
+  },
+  "requiredFutureProof": [
+    "Authenticate normal C36 claim and exact applied/committed CSS bytes, preserving predecessor/scope/source01 drafts and all f09/diagnostic adverse findings.",
+    "Genuine same12 correct-root Reader/Quality after observations with unchanged original geometry, state, semantic, keyboard, focus and overflow predicates. Verify all3 thumbnails inline16/block8/radius10/target44 across6Reader tuples and the actions label/select/stack contained at1280,1440 and stacked720 without changing full labels or action availability.",
+    "Use actual current source/committed candidate and legitimate affected product/reference renderer builds with source/runtime/normal-cleanup closure. The old205/738ad/reference1e076 artifacts remain historical and cannot stand in for changed CSS bytes.",
+    "Complete original90-observation/180-capture qualification and independent disposition with actual new bindings; the12-case diagnostic cannot substitute for it. Reuse unchanged functional/security proof only with genuine causal input closure; no unrelated suites are demanded solely by this CSS patch."
+  ],
+  "preservation": {
+    "priorSpec": {
+      "path": "artifacts/tmp/W2.C36.T01.origin-preparation-01/spec.draft.json",
+      "sha256": "c9a34b81e9663f3d534cfccd7e38438f01260f5d478ed5a4876bcd6d42716b1b"
+    },
+    "priorProposedSource": {
+      "path": "artifacts/tmp/W2.C36.T01.origin-preparation-01/app.proposed.css",
+      "sha256": "6ea3919d9e8fcd01a36892f442a8c40c21219cd9acfbe8e3b3e610a6e7ea5ca3"
+    },
+    "priorF09RemainsFail": true,
+    "beforeDiagnosticRemainsNonqualifying": true,
+    "all48OriginalOccurrencesAnd21PixelCorrectRootObservationsRetained": true
+  },
+  "actualProductApplied": false,
+  "actualNewCandidate": null,
+  "actualBuilds": null,
+  "actualAfterProof": null,
+  "taskApproved": false,
+  "Current14Qualified": false,
+  "WaveApproved": false,
+  "releaseApproved": false,
+  "reviewActions": "Read exact proposed source/spec/preparation/patch, prior scope and actual diagnosis, affected CSS/component source and approved button contract; authenticate complete two-change raw inverse and exact origin snapshot hash. No product/control imports, checks/browser/build/runtime scan, fixture/HEAD/backlog/canonical/source mutation; write this ignored independent record only."
+}

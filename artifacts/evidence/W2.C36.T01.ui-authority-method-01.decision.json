@@ -1,0 +1,40 @@
+{
+  "documentType": "finite-C36-ui-reference-authority-method-selection",
+  "status": "SELECTED_PROSPECTIVELY_ACTUAL_PROOF_PENDING",
+  "selectedAtUtc": "2026-10-16T07:04:11.787993+00:00",
+  "recordedBy": "agent:/root",
+  "authorityPrincipal": "human:repository-owner",
+  "ownerAuthority": {
+    "path": "artifacts/evidence/W2.completion-preauthorization-20261014-01.md",
+    "sha256": "34e2e3c175dc9309080182e0673f776055b1cc3ba78639475c09ec54408d7d5f"
+  },
+  "taskId": "W2.C36.T01",
+  "claimBase": "8530b65135d03194c1576745b11f327f2d3c4d0c",
+  "actualClaimCompletion": "artifacts/tmp/W2.C36.T01.normal-correct-01/completion.json",
+  "exactProposal": {
+    "path": "artifacts/evidence/W2.C36.T01.ui-authority-method-01.proposal.json",
+    "sha256": "d167edca143d2ef90ba9092d5c8e35cb69b1dfa47031e2e38f4b707200d25617"
+  },
+  "independentScopeReadiness": {
+    "path": "artifacts/evidence/W2.C36.T01.ui-authority-method-01.readiness.json",
+    "sha256": "4e5a5f540572f419c4307cebb19e95ee865eb1fa2536ebdf002e7e4740d4d0de"
+  },
+  "selection": "Select only the exact finite C36 method in the immutable proposal, under the owner's existing necessary W2 completion authority. The original reviewed task and correction use identical approved1.9 reference bytes. Replace only the unsupported original-Wave-reference equality selector with explicit exact original-reviewed/current1.9 authority proof for this task; retain every other material contract, capture, source, predicate, visual, restoration and normal task review obligation.",
+  "normalTaskctlRequired": true,
+  "sharedFrameworkEdited": false,
+  "canonicalUiChangeGatePassClaimed": false,
+  "C18ExemptionBorrowed": false,
+  "newExperienceApproved": false,
+  "newReleaseApprovedByThisRecord": false,
+  "allActualProductBuildCaptureAndIndependentDispositionStillRequired": true,
+  "oneOriginalFull90Case180CaptureRunIncludesThe12AffectedAfterCases": true,
+  "actualProductCandidate": null,
+  "actualBuildEvidence": null,
+  "actualCurrent14": null,
+  "actualVisualClassification": null,
+  "taskApproved": false,
+  "WaveApproved": false,
+  "G2Complete": false,
+  "chronology": "This is a present prospective selection of the actual finite independently reviewed packet, not a claim of earlier exact owner packet approval or passing verification. Introduction commit is observed separately after publication; no self-referential future commit is fabricated.",
+  "retention": "Original f09 failure, before-CSS nonqualifying diagnostic, old immutable approvals and all adverse evidence remain unchanged. Any other actual failure remains a finding to resolve, not an accepted exception."
+}
